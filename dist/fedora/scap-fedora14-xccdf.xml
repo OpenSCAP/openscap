@@ -89,7 +89,7 @@
     <select idref="rule-2.2.4.2.b" selected="true" />		<!-- READY+ -->		<!-- Disable Core Dumps for SUID programs -->
     <select idref="rule-2.2.4.3.a" selected="true" />		<!-- READY+ -->		<!-- Enable ExecShield -->
     <select idref="rule-2.2.4.3.b" selected="true" />		<!-- READY+ -->		<!-- Enable ExecShield randomized placement of virtual memory regions -->
-    <select idref="rule-2.2.4.4.3.a" selected="false" />	<!-- DONE (unknown) -->	<!-- Enable NX or XD Support in the BIOS -->
+    <select idref="rule-2.2.4.4.2.a" selected="false" />	<!-- DONE (unknown) -->	<!-- Enable NX or XD Support in the BIOS -->
     <select idref="rule-2.3.1.1.a" selected="false" />		<!-- DONE -->		<!-- Restrict Root Logins to System Console -->
     <select idref="rule-2.3.1.1.b" selected="false" />		<!-- DONE -->		<!-- Restrict virtual console Root Logins -->
     <select idref="rule-2.3.1.1.c" selected="false" />		<!-- DONE -->		<!-- Restrict deprecated virtual console Root Logins -->
@@ -113,7 +113,7 @@
     <select idref="rule-2.3.3.2.a" selected="false" />		<!-- DONE -->		<!-- Set Lockouts for Failed Password Attempts -->
     <select idref="rule-2.3.3.2.b" selected="false" />		<!-- DONE (unknown) -->	<!-- Do not leak information on authorization failure -->
     <select idref="rule-2.3.3.4.a" selected="false" />		<!-- DONE -->		<!-- Restrict Execution of userhelper to Console Users -->
-    <select idref="rule-2.3.3.4.b" selected="false" />		<!-- DONE -->		<!-- Restrict Execution of userhelper to Console Users -->
+    <select idref="rule-2.3.3.4.b" selected="false" />		<!-- DONE -->		<!-- Restrict File permissions of userhelper -->
     <select idref="rule-2.3.3.5.a" selected="true" />		<!-- READY+ -->		<!-- Set Password hashing algorithm -->
     <select idref="rule-2.3.3.6.a" selected="false" />		<!-- DONE -->		<!-- Limit password reuse -->
     <select idref="rule-2.3.4.1.a" selected="true" />		<!-- READY+ -->		<!-- Ensure that No Dangerous Directories Exist in Root's Path -->
@@ -180,8 +180,8 @@
     <select idref="rule-2.5.3.2.5.e" selected="false" />	<!-- DONE -->		<!-- Limit Network-Transmitted Configuration via net.ipv6.conf.default.autoconf -->
     <select idref="rule-2.5.3.2.5.f" selected="false" />	<!-- DONE -->		<!-- Limit Network-Transmitted Configuration via net.ipv6.conf.default.dad_transmits -->
     <select idref="rule-2.5.3.2.5.g" selected="false" />	<!-- DONE -->		<!-- Limit Network-Transmitted Configuration via net.ipv6.conf.default.max_addresses -->
-    <select idref="rule-2.5.5.1.a" selected="true" />		<!-- DONE+ -->		<!-- Verify ip6tables is enabled -->
-    <select idref="rule-2.5.5.1.b" selected="true" />		<!-- DONE+ -->		<!-- Verify iptables is enabled -->
+    <select idref="rule-2.5.5.1.a" selected="true" />		<!-- READY+ -->		<!-- Verify ip6tables is enabled -->
+    <select idref="rule-2.5.5.1.b" selected="true" />		<!-- READY+ -->		<!-- Verify iptables is enabled -->
     <select idref="rule-2.5.5.3.1.a" selected="false" />	<!-- DONE -->		<!-- Change the default policy to DROP (from ACCEPT) for the INPUT built-in chain -->
     <select idref="rule-2.5.5.3.1.b" selected="false" />	<!-- DONE -->		<!-- Change the default policy to DROP (from ACCEPT) for the FORWARD built-in chain -->
     <select idref="rule-2.5.7.1.a" selected="false" />		<!-- ERASE -->		<!-- Disable Support for DCCP -->
@@ -191,7 +191,7 @@
     <select idref="rule-2.6.1.a" selected="true" />		<!-- DONE+ -->		<!-- Configure Syslog -->
     <select idref="rule-2.6.1.2.a" selected="true" />		<!-- DONE+ -->		<!-- Confirm user that owns System Log Files -->
     <select idref="rule-2.6.1.2.b" selected="true" />		<!-- DONE+ -->		<!-- Confirm group that owns System Log Files -->
-    <select idref="rule-2.6.1.2.c" selected="true" />		<!-- DONE -->		<!-- Confirm Permissions of System Log Files -->
+    <select idref="rule-2.6.1.2.c" selected="true" />		<!-- DONE+ -->		<!-- Confirm Permissions of System Log Files -->
     <select idref="rule-2.6.1.3.a" selected="false" />		<!-- OK -->		<!-- Send Logs to a Remote Loghost -->
     <select idref="rule-2.6.1.4.a" selected="false" />		<!-- F14 test needed--> <!-- Disable syslogd from Accepting Remote Messages on Loghosts Only -->
     <select idref="rule-2.6.1.5.a" selected="false" />		<!-- missing -->	<!-- Ensure All Logs are Rotated by logrotate -->
@@ -446,13 +446,13 @@
     <refine-value idref="var-2.3.3.4.a" selector="usergroup" />        <!-- Name of group containing human users -->
     <refine-value idref="var-2.3.3.4.b" selector="4710" />             <!-- userhelper file permissions -->
     <refine-value idref="var-2.3.3.5.a" selector="SHA-512" />          <!-- Password hashing algorithm -->
-    <refine-value idref="var-2.3.3.6.a" selector="0" />                <!-- Passwords to remember -->
+    <refine-value idref="var-2.3.3.6.a" selector="5" />                <!-- Passwords to remember -->
     <refine-value idref="var-2.3.4.4" selector="002" />                <!-- Sensible umask -->
     <refine-value idref="var-2.3.5.2.a" selector="root" />             <!-- User that owns /etc/grub.conf -->
     <refine-value idref="var-2.3.5.2.b" selector="root" />             <!-- Group that owns /etc/grub.conf -->
     <refine-value idref="var-2.3.5.2.c" selector="600" />              <!-- permissions on /etc/hrub.conf -->
     <refine-value idref="var-2.3.5.5" selector="15_minutes" />         <!-- Inactivity timout -->
-    <refine-value idref="var-2.3.7" selector="Empty_text" /> <!-- TODO: modify -->     <!-- login banner verbiage -->
+    <refine-value idref="var-2.3.7" selector="Empty_text" />           <!-- login banner verbiage -->
     <refine-value idref="var-2.4.2.c" selector="enforcing" />          <!-- SELinux state -->
     <refine-value idref="var-2.4.2.d" selector="targeted" />           <!-- SELinux policy -->
     <refine-value idref="var-2.5.1.2.a" selector="disabled" />         <!-- net.ipv4.conf.all.accept_source_route -->
@@ -2419,7 +2419,7 @@
               Check to see if the processor supports the PAE and NX
               features: <xhtml:code>$ cat /proc/cpuinfo</xhtml:code> If supported, the flags field will contain pae and nx.</description>
           </Group>
-          <Group id="group-2.2.4.4.3" hidden="false">
+          <Group id="group-2.2.4.4.2" hidden="false">
             <title xml:lang="en">Enable NX or XD Support in the BIOS</title>
             <description xml:lang="en">
               Computers with the ability to prevent this type of code
@@ -2428,16 +2428,15 @@
               <xhtml:br/>
               See Section 2.3.5.1 for information on protecting this and
               other BIOS settings.</description>
-            <Rule id="rule-2.2.4.4.3.a" selected="false" weight="10.0">
+            <Rule id="rule-2.2.4.4.2.a" selected="false" weight="10.0">
               <title>Enable NX or XD Support in the BIOS</title>
               <description>The XD/NX processor feature should be enabled in the BIOS</description>
               <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">12.2</reference>
               <ident system="http://cce.mitre.org">CCE-4177-2</ident>
-              <fixtext>(1) via BIOS</fixtext>
-              <fix>Reboot the system and enter the BIOS or 'Setup' configuration menu. Navigate the
+              <fixtext>Reboot the system and enter the BIOS or 'Setup' configuration menu. Navigate the
                 BIOS configuration menu and make sure that the option is enabled. The setting may be
                 located under a 'Security' section. Look for Execute Disable (XD) on Intel-based
-                systems and No Execute (NX) on AMD-based systems.</fix>
+                systems and No Execute (NX) on AMD-based systems.</fixtext>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20060" />
               </check>
@@ -2453,10 +2452,10 @@
         a certain login account, he can perform any action or access any file to which that account
         has access. Therefore, making it more difficult for unauthorized people to gain shell access
         to accounts, particularly to privileged accounts, is a necessary part of securing a system.
-        This section introduces mechanisms for restricting access to accounts under RHEL5.</description>
-  		<reference href="http://csrc.nist.gov/publications/nistpubs/800-53-Rev3/sp800-53-rev3-final-errata.pdf">AC-1 AC-2 AC-4 AC-6 CM-6 CM-7 PE-2</reference>
-  		<reference>ISO/IEC 27002-2005 10.1.2 11.6.1 12.4.1</reference>
-  		<reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">IAIA-1 IAIA-2 IAAC-1 ECLP-1</reference>
+        This section introduces mechanisms for restricting access to login accounts.</description>
+        <reference href="http://csrc.nist.gov/publications/nistpubs/800-53-Rev3/sp800-53-rev3-final-errata.pdf">AC-1 AC-2 AC-4 AC-6 CM-6 CM-7 PE-2</reference>
+	<reference>ISO/IEC 27002-2005 10.1.2 11.6.1 12.4.1</reference>
+	<reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">IAIA-1 IAIA-2 IAAC-1 ECLP-1</reference>
       <Group id="group-2.3.1" hidden="false">
         <title xml:lang="en">Protect Accounts by Restricting Password-Based Login</title>
         <description xml:lang="en">
@@ -2542,16 +2541,6 @@
         <Group id="group-2.3.1.2" hidden="false">
           <title xml:lang="en">Limit su Access to the Root Account</title>
           <description xml:lang="en">
-            <xhtml:ol>
-              <xhtml:li>Ensure that the group wheel exists, and that the usernames
-            of all administrators who should be allowed to execute commands as root are members of
-            that group. <xhtml:br/>
-                <xhtml:br/>
-                <xhtml:code># grep ^wheel /etc/group</xhtml:code></xhtml:li>
-              <xhtml:li>Edit the file /etc/pam.d/su. Add, uncomment, or
-                correct the line: <xhtml:br/>
-                <xhtml:code>auth required pam_wheel.so use_uid</xhtml:code></xhtml:li>
-            </xhtml:ol>
             The su command allows a user to gain the privileges of another user by entering the 
             password for that user's account. It is desirable to restrict the root user so that only 
             known administrators are ever allowed to access the root account. This restricts 
@@ -2561,12 +2550,14 @@
             By convention, the group wheel contains all users who are allowed to run privileged 
             commands. The PAM module pam_wheel.so is used to restrict root access to this set of 
             users.</description>
-    		  <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.3</reference>
+	  <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.3</reference>
           <Rule id="rule-2.3.1.2.a" selected="false" weight="10.0" severity="medium">
             <title>Limit su Access to the Root Account</title>
             <description>The wheel group should exist</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000840 GEN000850</reference>
-            <fixtext>(1) via /etc/group</fixtext>
+            <fixtext> Ensure that the group wheel exists, and that the usernames of all administrators 
+              who should be allowed to execute commands as root are members of that group.
+            </fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20065" />
             </check>
@@ -2575,7 +2566,10 @@
             <title>Limit su Access to the wheel group</title>
             <description>Command access to the root account should be restricted to the wheel group.</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN001020</reference>
-            <fixtext>(1) via /etc/pam.d/su</fixtext>
+            <fixtext> Edit the file /etc/pam.d/su. Add, uncomment, or correct the line: <xhtml:br/>
+              <xhtml:br/>
+              <xhtml:code>auth required pam_wheel.so use_uid</xhtml:code>
+            </fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20066" />
             </check>
@@ -2624,7 +2618,7 @@
             <description>Sudo privileges should granted to the wheel group</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002760</reference>
             <ident system="http://cce.mitre.org">CCE-4044-4</ident>
-            <fixtext>echo "%wheel ALL=(ALL) ALL" >> /etc/sudoers</fixtext>
+            <fix>echo "%wheel ALL=(ALL) ALL" >> /etc/sudoers</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20067" />
             </check>
@@ -2643,7 +2637,7 @@
             <xhtml:br/>
             For each identified system account SYSACCT , lock the account: <xhtml:br/>
             <xhtml:br/>
-            <xhtml:code># usermod -L SYSACCT <xhtml:br/></xhtml:code>
+            <xhtml:code># usermod -L SYSACCT <xhtml:br/></xhtml:code> <xhtml:br/>
             and disable its shell: <xhtml:br/>
             <xhtml:br/>
             <xhtml:code># usermod -s /sbin/nologin SYSACCT <xhtml:br/></xhtml:code>
@@ -2651,7 +2645,7 @@
             These are the accounts which are
             not associated with a human user of the system, but which exist to perform some
             administrative function. Make it more difficult for an attacker to use these accounts by
-            locking their passwords and by setting their shells to some non-valid shell. The RHEL5
+            locking their passwords and by setting their shells to some non-valid shell. The Fedora
             default non-valid shell is /sbin/nologin, but any command which will exit with a failure
             status and disallow execution of any further commands, such as /bin/false or /dev/null,
             will work.</description>
@@ -2664,7 +2658,7 @@
             <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">IAIA-1</reference>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000340 GEN000280 GEN000350 GEN002640</reference>
             <ident system="http://cce.mitre.org">CCE-3987-5</ident>
-            <fixtext>(1) via /etc/passwd</fixtext>
+            <fixtext>Edit /etc/passwd</fixtext>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20068" />
             </check>
@@ -3470,7 +3464,6 @@
             <title>Restrict Execution of userhelper to Console Users</title>
             <description>The /usr/sbin/userhelper file should be owned by the appropriate group.</description>
             <ident system="http://cce.mitre.org">CCE-4185-5</ident>
-            <fixtext>(1) via chgrp</fixtext>
             <fix># chgrp usergroup /usr/sbin/userhelper</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-export value-id="var-2.3.3.4.a" export-name="oval:org.fedoraproject.f14:var:20081" />
@@ -3481,7 +3474,6 @@
             <title>Restrict File permissions of userhelper</title>
             <description>File permissions for /usr/sbin/userhelper should be set correctly.</description>
             <ident system="http://cce.mitre.org">CCE-3952-9</ident>
-            <fixtext>(1) via chmod</fixtext>
             <fix># chmod 4710 /usr/sbin/userhelper</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-export value-id="var-2.3.3.4.b" export-name="oval:org.fedoraproject.f14:var:20082" />
@@ -3493,10 +3485,6 @@
           <title xml:lang="en">Password Hashing Algorithm</title>
           <description xml:lang="en">
             The default algorithm for storing password hashes should be SHA-512. 
-            In order to conﬁgure the system to use the SHA-512 algorithm, issue the command:
-            <xhtml:br/><xhtml:br/>
-            <xhtml:code># /usr/sbin/authconfig --passalgo=sha512 --update<xhtml:br/></xhtml:code>
-            <xhtml:br/>
           </description>
           <reference href="http://www.redhat.com/docs/en-US/Red_Hat_Enterprise_Linux/5.2/html/Release_Notes/singles/relnotesU2-x86.html#id2826367">Feature Updates</reference>
           <Value id="var-2.3.3.5.a" type="string" operator="equals">
@@ -3528,11 +3516,11 @@
           <description xml:lang="en">
             Do not allow users to reuse recent passwords. This can be 
             accomplished by using the remember option for the pam_unix PAM module. In order to 
-            prevent a user from re-using any of his or her last 5 passwords, append remember=5 to 
-            the password line which uses the pam_unix module in the ﬁle /etc/pam.d/system-auth, as
-            shown:<xhtml:br/>
+            prevent a user from re-using any of his or her last <sub idref="var-2.3.3.6.a"/> passwords, 
+            append remember=<sub idref="var-2.3.3.6.a"/> to the password line which uses the 
+            pam_unix module in the ﬁle /etc/pam.d/system-auth, as shown:<xhtml:br/>
             <xhtml:br/>
-            password sufficient pam_unix.so existing_options remember=5<xhtml:br/>
+            password sufficient pam_unix.so existing_options remember=<sub idref="var-2.3.3.6.a"/><xhtml:br/>
             <xhtml:br/>
             Old (and thus no longer valid) passwords are stored in the ﬁle /etc/security/opasswd.
           </description>
@@ -3546,7 +3534,6 @@
               alternating between the same password too frequently. </description>
             <question xml:lang="en">Enter how many last passwords will be saved to keep the user from alternating between the same password too frequently</question>
             <value>5</value>
-            <value selector="0">0</value>
             <value selector="5">5</value>
             <value selector="10">10</value>
             <match>^[\d]+$</match>
@@ -4230,34 +4217,6 @@
           <reference href="http://iase.disa.mil/policy-guidance/dod-banner-9may2008-ocr.pdf">DoD Policy on Use of DoD Information Systems - Standard Consent Banner and User Agreement</reference>
           <value></value>
           <value selector="Empty_text"></value>
-          <value selector="Army_text">You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.
-
-By using this IS (which includes any device attached to this IS), you consent to the following conditions:
-
-- The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.
-
-- At any time, the USG may inspect and seize data stored on this IS.
-
-- Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG authorized purpose.
-
-- This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.
-
-- Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details.
-</value>
-          <value selector="DOD_text">You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.
-
-By using this IS (which includes any device attached to this IS), you consent to the following conditions:
-
-- The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.
-
-- At any time, the USG may inspect and seize data stored on this IS.
-
-- Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG authorized purpose.
-
-- This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.
-
-- Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details.
-</value>
         </Value>
         <Group id="group-2.3.7.1" hidden="false">
           <title xml:lang="en">Modify the System Login Banner</title>
@@ -4275,8 +4234,7 @@ By using this IS (which includes any device attached to this IS), you consent to
             with a message compliant with the local site policy or a legal disclaimer.</description>
           <Rule id="rule-2.3.7.1.a" selected="false" weight="10.0" severity="medium">
             <title>Modify the System Login Banner</title>
-            <description>The system login banner text should be: 
-              <sub idref="var-2.3.7"/></description>
+            <description>The system login banner text should be: "<sub idref="var-2.3.7"/>"</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000400 GEN000420</reference>
             <ident system="http://cce.mitre.org">CCE-4060-0</ident>
             <fixtext>Take value of DOD_text and put it in /etc/issue</fixtext>
@@ -4320,8 +4278,7 @@ By using this IS (which includes any device attached to this IS), you consent to
           <reference href="http://library.gnome.org/admin/gdm/2.29/gdm.html">GNOME Display Manager Reference Manual</reference>
           <Rule id="rule-2.3.7.2.a" selected="false" weight="10.0" severity="medium">
             <title>Implement a GUI Warning Banner</title>
-            <description>The direct gnome login warning banner text should be: 
-              <sub idref="var-2.3.7"/></description>
+            <description>The direct gnome login warning banner text should be: "<sub idref="var-2.3.7"/>"</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000400 GEN000420</reference>
             <ident system="http://cce.mitre.org">CCE-4188-9</ident>
             <fixtext>(1) via RHEL.xml</fixtext>
@@ -4505,7 +4462,7 @@ By using this IS (which includes any device attached to this IS), you consent to
           <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECSC-1</reference>
           <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN008560</reference>
           <ident system="http://cce.mitre.org">CCE-3977-6</ident>
-          <fixtext>remove offending line from /etc/grub.conf</fixtext>
+          <fixtext>Remove offending line from /etc/grub.conf</fixtext>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20104" />
           </check>
@@ -4515,7 +4472,7 @@ By using this IS (which includes any device attached to this IS), you consent to
           <description>SELinux enforcement should NOT be disabled in /etc/grub.conf.  Check that enforcing=0 is not found.</description>
           <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECSC-1</reference>
           <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN008560</reference>
-          <fixtext>remove offending line from /etc/grub.conf</fixtext>
+          <fixtext>Remove offending line from /etc/grub.conf</fixtext>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20105" />
           </check>
@@ -4525,7 +4482,7 @@ By using this IS (which includes any device attached to this IS), you consent to
           <description>The SELinux state should be: <sub idref="var-2.4.2.c"/></description>
           <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECSC-1</reference>
           <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN008560</reference>
-          <fixtext>(1) via /etc/selinux/config</fixtext>
+          <fixtext>Edit /etc/selinux/config</fixtext>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <check-export value-id="var-2.4.2.c" export-name="oval:org.fedoraproject.f14:var:20106" />
             <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20106" /><!-- TBD -->
@@ -4535,7 +4492,7 @@ By using this IS (which includes any device attached to this IS), you consent to
           <title>Set the SELinux policy</title>
           <description>The SELinux policy should be set appropriately.</description>
           <ident system="http://cce.mitre.org">CCE-3624-4</ident>
-          <fixtext>(1) via /etc/selinux/config</fixtext>
+          <fixtext>Edit /etc/selinux/config</fixtext>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <check-export value-id="var-2.4.2.d" export-name="oval:org.fedoraproject.f14:var:20107" />
             <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20107" />
@@ -4958,7 +4915,7 @@ By using this IS (which includes any device attached to this IS), you consent to
             pass IP traffic between different networks? <xhtml:br/>
             If not, edit the file /etc/sysctl.conf and add or correct the following lines: <xhtml:br/>
             <xhtml:br/>
-            <xhtml:code>net.ipv4.ip forward = 0 <xhtml:br/>
+            <xhtml:code>net.ipv4.ip_forward = 0 <xhtml:br/>
             net.ipv4.conf.all.send_redirects = 0 <xhtml:br/>
             net.ipv4.conf.default.send_redirects = 0 <xhtml:br/></xhtml:code>
             <xhtml:br/>
@@ -6046,7 +6003,7 @@ By using this IS (which includes any device attached to this IS), you consent to
             <description>The ip6tables service should be enabled.</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN008510 GEN008520</reference>
             <ident system="http://cce.mitre.org">CCE-4167-3</ident>
-            <fixtext>(1) via chkconfig</fixtext>
+            <fix>chkconfig ip6tables on</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20146" />
             </check>
@@ -6056,7 +6013,7 @@ By using this IS (which includes any device attached to this IS), you consent to
             <description>The iptables service should be enabled.</description>
             <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN008510 GEN008520</reference>
             <ident system="http://cce.mitre.org">CCE-4189-7</ident>
-            <fixtext>(1) via chkconfig</fixtext>
+            <fix>chkconfig iptables on</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20147" />
             </check>
@@ -6683,23 +6640,19 @@ By using this IS (which includes any device attached to this IS), you consent to
       <Group id="group-2.6.1" hidden="false">
         <title xml:lang="en">Configure Syslog</title>
         <description xml:lang="en">
-          Syslog has been the default Unix logging mechanism for many
-          years. It has a number of downsides, including inconsistent log format, lack of
-          authentication for received messages, and lack of authentication, encryption, or reliable
-          transport for messages sent over a network. However, due to its long history, syslog is an
-          accepted standard which is supported by almost all Unix applications. This section
+          Syslog has been the default Unix logging mechanism for many years. This section
           discusses how to configure syslog for best effect, and how to use tools provided with the
           system to maintain and monitor your logs.</description>
-    		<reference href="http://csrc.nist.gov/publications/nistpubs/800-53-Rev3/sp800-53-rev3-final-errata.pdf">AU-2</reference>
-    		<reference>ISO/IEC 27002-2005 10.10.1</reference>
-    		<reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECAN-1 ECAT-1 ECAT-2 ECAR-1 ECAR-2</reference>
-    		<reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.16</reference>
-    		<reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002660</reference>
+	  <reference href="http://csrc.nist.gov/publications/nistpubs/800-53-Rev3/sp800-53-rev3-final-errata.pdf">AU-2</reference>
+    	  <reference>ISO/IEC 27002-2005 10.10.1</reference>
+    	  <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">ECAN-1 ECAT-1 ECAT-2 ECAR-1 ECAR-2</reference>
+    	  <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">3.16</reference>
+    	  <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN002660</reference>
         <Rule id="rule-2.6.1.a" selected="false" weight="10.0" severity="medium">
-          <title>Configure Syslog</title>
-          <description>The syslog service should be enabled.</description>
+          <title>Configure Rsyslog</title>
+          <description>The rsyslog service should be enabled.</description>
           <ident system="http://cce.mitre.org">CCE-3679-8</ident>
-          <fixtext>(1) via chkconfig</fixtext>
+          <fix>chkconfig rsyslog on</fix>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <check-content-ref href="scap-fedora14-oval.xml" name="oval:org.fedoraproject.f14:def:20148" />
           </check>

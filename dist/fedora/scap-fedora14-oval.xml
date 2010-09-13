@@ -1793,10 +1793,7 @@
                         <reference ref_id="CCE-4167-3" source="CCE"/>
                         <description>The ip6tables service should be enabled.</description>
                   </metadata>
-                  <criteria operator="OR" comment="Either IPv6 is disabled or this feature should be">
-                        <extend_definition definition_ref="oval:org.fedoraproject.f14:def:20131" comment="The default setting for IPv6 configuration should be disabled for network interfaces"/>
-                        <extend_definition definition_ref="oval:org.fedoraproject.f14:def:20132" comment="Global IPv6 initialization should be disabled"/>
-                        <extend_definition definition_ref="oval:org.fedoraproject.f14:def:20133" comment="IPv6 configuration should be disabled for all interfaces"/>
+                  <criteria>
                         <criterion comment="Conditions are satisfied" test_ref="oval:org.fedoraproject.f14:tst:20146"/>
                   </criteria>
             </definition>
