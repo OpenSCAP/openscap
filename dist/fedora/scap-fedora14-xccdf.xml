@@ -11,12 +11,12 @@
  resolved="0"
  id="scap-fedora14-xccdf.xml"
  xml:lang="en">
-  <status date="2010-08-25">draft</status>
+  <status date="2010-09-11">draft</status>
   <title>Guide to the Secure Configuration of Fedora Linux</title>
   <description>This guide has been created to assist IT professionals, in effectively securing systems with Fedora Linux.</description>
   <reference href="http://www.dtic.mil/whs/directives/corres/pdf/850002p.pdf">VIVM-1</reference>
   <reference href="http://iase.disa.mil/stigs/stig/unix-stig-v5r1.pdf">PDI GEN000100</reference>
-  <version>0.6.1</version>
+  <version>0.6.3</version>
   <model system="urn:xccdf:scoring:default" />
   <model system="urn:xccdf:scoring:flat" />
   <!-- ==================================================================================================== -->
@@ -502,11 +502,9 @@
     <title xml:lang="en">Introduction</title>
     <description xml:lang="en">
       The purpose of this guide is to provide security configuration
-      recommendations for the Red Hat Enterprise Linux (RHEL) 5 operating system. The guidance
-      provided here should be applicable to all variants (Desktop, Server, Advanced Platform) of the
-      product. Recommended settings for the basic operating system are provided, as well as for many
-      commonly-used services that the system can host in a network
-      environment.<xhtml:br/>
+      recommendations for Fedora Linux. Recommended settings for the basic 
+      operating system are provided, as well as for many commonly-used services 
+      that the system can host in a network environment.<xhtml:br/>
       <xhtml:br/>
       The guide is intended for system administrators. Readers are
       assumed to possess basic system administration skills for Unix-like systems, as well as some
