@@ -84,6 +84,9 @@ oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *mode
 	oval_agent_session_t *ag_sess;
 	struct oval_sysinfo *sysinfo;
 
+        /* Optimalization */
+        oval_definition_model_optimize_by_filter_propagation(model);
+
 	ag_sess = oscap_talloc(oval_agent_session_t);
         ag_sess->filename = oscap_strdup(name);
 	ag_sess->def_model = model;

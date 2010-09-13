@@ -723,8 +723,6 @@ const char * oval_definition_model_supported(void);
  * @memberof oval_definition_model
  */
 bool oval_definition_model_is_valid(struct oval_definition_model *definition_model);
-
-void oval_definition_model_optimize_by_filter_propagation(struct oval_definition_model *);
 /** @} */
 
 /**

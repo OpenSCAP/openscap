@@ -170,6 +170,8 @@ void oval_definition_model_add_object(struct oval_definition_model *, struct ova
 void oval_definition_model_add_state(struct oval_definition_model *, struct oval_state *);
 void oval_definition_model_add_variable(struct oval_definition_model *, struct oval_variable *);
 
+void oval_definition_model_optimize_by_filter_propagation(struct oval_definition_model *);
+
 //Synthetic object subtype for probing system info.
 #define  OVAL_INDEPENDENT_SYSCHAR_SUBTYPE 7999
 

@@ -557,7 +557,6 @@ class OSCAP_Object(object):
             if os.path.exists(f_OVAL): 
                 def_model = oval.definition_model_import(f_OVAL)
                 assert def_model.instance != None, "Cannot import definition model %s" % (f_OVAL,)
-                def_model.optimize_by_filter_propagation()
                 def_models.append(def_model)
                 sess = oval.agent_new_session(def_model, file)
                 assert sess != None and sess.instance != None, "Cannot create agent session for %s" % (f_OVAL,)
@@ -577,6 +576,8 @@ class OSCAP_Object(object):
         o_title = common.text()
         o_title.text = title
         result.title = o_title
+
+        oval.agent_export_sysinfo_to_xccdf_result(dir["sessions"][0], result)
         files = [file]
 
         for model in self.model.benchmark.models:
