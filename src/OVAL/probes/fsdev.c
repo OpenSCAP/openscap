@@ -134,7 +134,7 @@ static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 	if (fs == NULL) {
 		while ((ment = getmntent(fp)) != NULL) {
                         /* TODO: Is this check reliable? */
-                        if (stat (ment->mnt_fsname, &st) == 0) {
+                        if (stat (ment->mnt_fsname, &st) == 0 && (st.st_mode & S_IFCHR)) {
 				if (stat(ment->mnt_dir, &st) != 0)
 					continue;
 
