@@ -1,4 +1,8 @@
 
 #oscap-scan command line options:
-#OPTIONS="-q oval eval --report-file /var/log/oscap-scan.html.log --result-file /var/log/oscap-scan.xml.log /usr/share/openscap/scap-fedora12-oval.xml"
+#OPTIONS="-q xccdf eval
+#         --profile F14-Desktop
+#         --report-file /var/log/oscap-scan-log.html
+#         --result-file /var/log/oscap-scan-log.xml
+#         /usr/share/openscap/scap-xccdf.xml"
 
