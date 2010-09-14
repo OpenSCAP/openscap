@@ -1,3 +1,13 @@
+openscap-0.6.3                                                  14-09-2010
+- support filters inside objects
+- optimizing memory consumption
+- proper result for unsupported OVAL objects
+- many improvements in XSLT transformations
+- supporting  OVAL incomplete objects 
+- fixes in directories traversal (findfiles)
+- python API improvements
+- Fedora SCAP content improvements
+
 openscap-0.6.2                                                  25-08-2010
 - provide draft of fedora14 XCCDF and OVAL content
 - XSL transformations for generating report and guidance
