@@ -470,7 +470,7 @@ int app_xccdf_resolve(const struct oscap_action *action)
 
 static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show)
 {
-    const char *params[] = { "result-id", id, "show", show, NULL };
+    const char *params[] = { "result-id", id, "show", show, "verbosity", "", NULL };
     return app_xslt(infile, "xccdf-results-report.xsl", outfile, params);
 }
 
@@ -482,6 +482,7 @@ int app_xccdf_xslt(const struct oscap_action *action)
         "show",              action->show,
         "profile",           action->profile,
         "template",          action->tmpl,
+        "verbosity",         action->verbosity >= 0 ? "1" : "",
         "hide-profile-info", action->hide_profile_info ? "yes" : NULL,
         NULL };
     return app_xslt(action->f_xccdf, action->module->user, action->f_results, params);

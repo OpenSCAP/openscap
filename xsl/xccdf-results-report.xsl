@@ -35,6 +35,8 @@ Authors:
 <!--<xsl:include href="xccdf-common.xsl" />-->
 <xsl:import href="xccdf-apply-profile.xsl" />
 
+<xsl:param name='verbosity'/>
+
 <!--
      TODO:
      - human-readable URNs
@@ -98,8 +100,10 @@ Authors:
       <xsl:message terminate='yes'>This benchmark does not contain any test results.</xsl:message>
     </xsl:when>
     <xsl:when test='$result-id and $result'>
-      <xsl:message>TestResult ID: <xsl:value-of select='$result-id'/></xsl:message>
-      <xsl:message>Profile: <xsl:value-of select='$profile'/></xsl:message>
+      <xsl:if test='$verbosity'>
+        <xsl:message>TestResult ID: <xsl:value-of select='$result-id'/></xsl:message>
+        <xsl:message>Profile: <xsl:value-of select='$profile'/></xsl:message>
+      </xsl:if>
       <xsl:apply-templates select='$result' mode='result' />
     </xsl:when>
     <xsl:when test='$result-id'>
