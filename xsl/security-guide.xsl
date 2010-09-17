@@ -41,7 +41,7 @@ Authors:
 <xsl:import href='docbook-share.xsl'/>
 
 <xsl:param name='clean-profile-notes' select='1'/>
-<xsl:param name='no-profile-info'/>
+<xsl:param name='hide-profile-info'/>
 
 <xsl:output method="xml" encoding="UTF-8" indent="yes"/>
 
@@ -67,7 +67,7 @@ Authors:
     </preface>
     <xsl:apply-templates select='cdf:Rule'/>
     <xsl:apply-templates select='cdf:Group'/>
-    <xsl:if test='not($no-profile-info)'><xsl:call-template name='profileinfo'/></xsl:if>
+    <xsl:if test='not($hide-profile-info)'><xsl:call-template name='profile-info'/></xsl:if>
     <xsl:call-template name='references'><xsl:with-param name='elname' select='"bibliography"'/></xsl:call-template>
     <xsl:apply-templates select='cdf:rear-matter'/>
   </book>
@@ -216,5 +216,34 @@ Authors:
 <xsl:template match='cdf:rear-matter'><colophon id='rear-matter'><xsl:apply-templates select='.' mode='db'/></colophon></xsl:template>
 
 <xsl:template match='cdf:*'/>
+
+
+<xsl:template name='profile-info'>
+  <xsl:if test='$theprofile'>
+    <chapter id='rule-selection'>
+      <title>Rule Selection</title>
+      <para>Based on profile: <emphasis role='strong'><xsl:value-of select='$theprofile/cdf:title[1]'/></emphasis> (<xsl:value-of select='$theprofile/@id'/>)</para>
+      <xsl:apply-templates select='$theprofile/cdf:description[1]' mode='db'/>
+      <informaltable>
+        <tgroup>
+          <thead><row><entry>Rule</entry><entry>selection</entry></row></thead>
+          <tbody><xsl:apply-templates mode='profile-info' select='.//cdf:Rule[not(@hidden) or @hidden!="1" and @hidden!="true"]'/></tbody>
+        </tgroup>
+      </informaltable>
+    </chapter>
+  </xsl:if>
+</xsl:template>
+
+<xsl:template mode='profile-info' match='cdf:Rule'>
+  <row>
+    <entry><phrase xlink:href='#item-{@id}'><xsl:value-of select='cdf:title'/></phrase></entry>
+    <xsl:choose>
+      <xsl:when test='@selected!="1" and @selected!="true"'><entry role='rule-notselected'>not&#160;selected</entry></xsl:when>
+      <xsl:when test='ancestor::cdf:Group[@selected="0" or @selected="false"]'><entry role='rule-inactive'>inactive</entry></xsl:when>
+      <xsl:otherwise><entry role='rule-selected'>selected</entry></xsl:otherwise>
+    </xsl:choose>
+  </row>
+</xsl:template>
+
 
 </xsl:stylesheet>
