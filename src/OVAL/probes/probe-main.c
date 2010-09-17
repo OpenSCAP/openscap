@@ -133,63 +133,30 @@ static SEXP_t *probe_ste_fetch(SEXP_t * id_list)
 }
 
 /**
- * Evaluate an OVAL object identified by its id. Using a remote synchronous SEAP command, this function
- * executes evaluation of an OVAL object which resulst wasn't found in the probe cache. This indirectly
- * spawns a new thread in the probe process which evaluates the object and stores the result in the probe
- * cache. That result is not send to the library because it doesn't know how to handle it. Instead, the
- * result is fetched by this function from the cache and returned to the caller.
+ * Evaluate an OVAL object identified by its id. Using a remote
+ * synchronous SEAP command, this function executes evaluation of an
+ * OVAL object which results weren't found in the probe cache. This
+ * indirectly spawns a new thread in the probe process which evaluates
+ * the object and stores the result in the probe cache. That result is
+ * not send to the library because it doesn't know how to handle
+ * it. Instead, the result is fetched by this function from the cache
+ * and returned to the caller.
  * @param id the id of the OVAL object to be evaluated
  * @return the result of the evaluation of the object or NULL on failure
  */
 static SEXP_t *probe_obj_eval(SEXP_t * id)
 {
-	SEXP_t *res, *rid, *ret;
-	oval_syschar_collection_flag_t res_flag;
+	SEXP_t *res, *rid;
 
 	_LOGCALL_;
 
 	res = SEAP_cmd_exec(OSCAP_GSYM(ctx), OSCAP_GSYM(sd), 0, PROBECMD_OBJ_EVAL, id, SEAP_CMDTYPE_SYNC, NULL, NULL);
 
 	rid = SEXP_list_first(res);
-	ret = SEXP_list_last(res);
-
 	assume_r(SEXP_string_cmp(id, rid) == 0, NULL);
-	assume_r(SEXP_numberp(ret), NULL);
+	SEXP_vfree(res, rid, NULL);
 
-	res_flag = (oval_syschar_collection_flag_t)SEXP_number_getu(ret);
-
-	SEXP_vfree(res, rid, ret, NULL);
-
-	if (res_flag != SYSCHAR_FLAG_COMPLETE) {
-		res = pcache_sexp_get(OSCAP_GSYM(pcache), id);
-
-		if (res == NULL) {
-			SEXP_t *item, *cobj, *item_list, *r0, *attr;
-			char   *o_id;
-
-			attr = probe_attr_creat("message", r0 = SEXP_string_newf("This item was generated because evaluation of"
-										 " object %s resulted in an error (flag = %u)",
-										 o_id = SEXP_string_cstr(id), res_flag), NULL);
-			item = probe_item_creat("error_item", attr, NULL);
-
-			oscap_free(o_id);
-			probe_item_setstatus(item, OVAL_STATUS_ERROR);
-			cobj = _probe_cobj_new(res_flag, item_list = SEXP_list_new(item, NULL));
-			SEXP_vfree (item_list, item, attr, r0, NULL);
-
-			if (pcache_sexp_add(OSCAP_GSYM(pcache), id, cobj) != 0) {
-				SEXP_free (cobj);
-				SEXP_free (item);
-
-				return (NULL);
-			}
-
-			return cobj;
-		}
-
-		return res;
-	} else
-		return pcache_sexp_get(OSCAP_GSYM(pcache), id);
+	return pcache_sexp_get(OSCAP_GSYM(pcache), id);
 }
 
 SEXP_t *probe_prepare_filters(SEXP_t *obj)
@@ -327,7 +294,7 @@ bool probe_item_filtered(SEXP_t *item, SEXP_t *filters)
  */
 static SEXP_t *probe_set_combine(SEXP_t *cobj1, SEXP_t *cobj2, oval_setobject_operation_t op)
 {
-	char append;
+	bool append;
 	SEXP_t *res_items, *item1, *item2, *id1, *id2;
 	SEXP_t *res_cobj, *item_lst1, *item_lst2;
 	oval_syschar_collection_flag_t flag1, flag2, res_flag;
@@ -339,25 +306,25 @@ static SEXP_t *probe_set_combine(SEXP_t *cobj1, SEXP_t *cobj2, oval_setobject_op
 	if (cobj2 == NULL)
 		return SEXP_ref(cobj1);
 
-	item_lst1 = _probe_cobj_get_items(cobj1);
-	item_lst2 = _probe_cobj_get_items(cobj2);
-	flag1 = _probe_cobj_get_flag(cobj1);
-	flag2 = _probe_cobj_get_flag(cobj2);
+	item_lst1 = probe_cobj_get_items(cobj1);
+	item_lst2 = probe_cobj_get_items(cobj2);
+	flag1 = probe_cobj_get_flag(cobj1);
+	flag2 = probe_cobj_get_flag(cobj2);
 
-	res_flag = _probe_cobj_combine_flags(flag1, flag2, op);
+	res_flag = probe_cobj_combine_flags(flag1, flag2, op);
 	res_items = SEXP_list_new(NULL);
 
 	switch (op) {
 	case OVAL_SET_OPERATION_INTERSECTION:
 		SEXP_list_foreach(item1, item_lst1) {
 			id1 = probe_obj_getentval(item1, "id", 1);
-			append = 0;
+			append = false;
 
 			SEXP_list_foreach(item2, item_lst2) {
 				id2 = probe_obj_getentval(item2, "id", 1);
 
 				if (!SEXP_string_cmp(id1, id2)) {
-					append = 1;
+					append = true;
 
 					SEXP_free(id2);
 					SEXP_free(item2);
@@ -387,13 +354,13 @@ static SEXP_t *probe_set_combine(SEXP_t *cobj1, SEXP_t *cobj2, oval_setobject_op
 	case OVAL_SET_OPERATION_COMPLEMENT:
 		SEXP_list_foreach(item1, item_lst1) {
 			id1 = probe_obj_getentval(item1, "id", 1);
-			append = 1;
+			append = true;
 
 			SEXP_list_foreach(item2, item_lst2) {
 				id2 = probe_obj_getentval(item2, "id", 1);
 
 				if (!SEXP_string_cmp(id1, id2)) {
-					append = 0;
+					append = false;
 
 					SEXP_free(id2);
 					SEXP_free(item2);
@@ -412,13 +379,29 @@ static SEXP_t *probe_set_combine(SEXP_t *cobj1, SEXP_t *cobj2, oval_setobject_op
 		}
 		break;
 	default:
-		_D("Unexpected set operation: %d\n", op);
-		SEXP_vfree(item_lst1, item_lst2, res_items, NULL);
+		{
+			char msg[40];
+			SEXP_t *r0, *r1;
 
-		return NULL;
+			snprintf(msg, sizeof (msg), "Unexpected set operation: %d.\n", op);
+			_D(msg);
+			r0 = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, msg);
+			r1 = SEXP_list_new(r0, NULL);
+			res_cobj = probe_cobj_new(SYSCHAR_FLAG_ERROR, r1, NULL);
+			SEXP_vfree(item_lst1, item_lst2, res_items, r0, r1, NULL);
+			return res_cobj;
+		}
 	}
 
-	res_cobj = _probe_cobj_new(res_flag, res_items);
+	/*
+	 * If the collected information is complete but all the items are
+	 * removed, the flag is set to SYSCHAR_FLAG_DOES_NOT_EXIST
+	 */
+	if (res_flag == SYSCHAR_FLAG_COMPLETE
+	    && SEXP_list_length(res_items) == 0)
+		res_flag = SYSCHAR_FLAG_DOES_NOT_EXIST;
+
+	res_cobj = probe_cobj_new(res_flag, NULL, res_items);
 	SEXP_vfree(item_lst1, item_lst2, res_items, NULL);
 
 	// todo: variables
@@ -427,7 +410,7 @@ static SEXP_t *probe_set_combine(SEXP_t *cobj1, SEXP_t *cobj2, oval_setobject_op
 }
 
 /**
- * Apply a set of filter on collection of items.
+ * Apply a set of filters to a collected object.
  * @param cobj item collection
  * @param filter set (list) of filters
  * @return collection of items without items that match any of the filters in the input set
@@ -441,8 +424,8 @@ static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
 	_LOGCALL_;
 
 	result_items = SEXP_list_new(NULL);
-	flag = _probe_cobj_get_flag(cobj);
-	items = _probe_cobj_get_items(cobj);
+	flag = probe_cobj_get_flag(cobj);
+	items = probe_cobj_get_items(cobj);
 
 	SEXP_list_foreach(item, items) {
 		item_status = probe_ent_getstatus(item);
@@ -453,10 +436,18 @@ static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
 		case OVAL_STATUS_ERROR:
 			break;
 		case OVAL_STATUS_NOTCOLLECTED:
-			_D("Supplied item has an invalid status: %d\n", item_status);
-			SEXP_vfree(items, result_items, NULL);
+			{
+				char msg[50];
+				SEXP_t *r0, *r1;
 
-			return NULL;
+				snprintf(msg, sizeof (msg), "Supplied item has an invalid status: %d\n", item_status);
+				_D(msg);
+				r0 = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, msg);
+				r1 = SEXP_list_new(r0, NULL);
+				cobj = probe_cobj_new(SYSCHAR_FLAG_ERROR, r1, NULL);
+				SEXP_vfree(items, result_items, r0, r1, NULL);
+				return cobj;
+			}
 		default:
 			break;
 		}
@@ -466,7 +457,15 @@ static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
 		}
 	}
 
-	cobj = _probe_cobj_new(flag, result_items);
+	/*
+	 * If the collected information is complete but all the items are
+	 * filtered out, the flag is set to SYSCHAR_FLAG_DOES_NOT_EXIST
+	 */
+	if (flag == SYSCHAR_FLAG_COMPLETE
+	    && SEXP_list_length(result_items) == 0)
+		flag = SYSCHAR_FLAG_DOES_NOT_EXIST;
+
+	cobj = probe_cobj_new(flag, NULL, result_items);
 	SEXP_vfree(items, result_items, NULL);
 
 	return cobj;
@@ -496,15 +495,22 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 	int op_num;
 
 	SEXP_t *result;
+	char msg[70] = "probe_set_eval: Unspecified error condition.";
+	SEXP_t *r0, *r1;
 
 	_LOGCALL_;
 
 	if (depth > MAX_EVAL_DEPTH) {
-		_D("Too many levels: max=%zu\n", MAX_EVAL_DEPTH);
+		snprintf(msg, sizeof (msg), "probe_set_eval: Too many levels: max=%zu.\n", (size_t) MAX_EVAL_DEPTH);
+		_D(msg);
 #ifndef NDEBUG
 		abort();
 #endif
-		return (NULL);
+		r0 = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, msg);
+		r1 = SEXP_list_new(r0, NULL);
+		result = probe_cobj_new(SYSCHAR_FLAG_ERROR, r1, NULL);
+		SEXP_vfree(r0, r1, NULL);
+		return result;
 	}
 
 	filters_u = SEXP_list_new(NULL);	/* unavailable filters */
@@ -537,7 +543,8 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 
 	probe_set_foreach(member, set) {
 		if (probe_ent_getname_r(member, member_name, sizeof member_name) == 0) {
-			_D("FAIL: Invalid set element: ptr=%p, type=%s\n", member, SEXP_strtype(member));
+			snprintf(msg, sizeof (msg), "probe_set_eval: Invalid set element: ptr=%p, type=%s.\n", member, SEXP_strtype(member));
+			_D(msg);
 			goto eval_fail;
 		}
 
@@ -547,14 +554,17 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 					s_subset[s_subset_i] = probe_set_eval(member, depth + 1);
 
 					if (s_subset[s_subset_i] == NULL) {
-						_D("FAIL: recursive set evaluation failer: m=%p, d=%u\n",
-						   member, depth + 1);
+						snprintf(msg, sizeof (msg),
+							 "probe_set_eval: Recursive set evaluation failed: m=%p, d=%zu.\n",
+							 member, depth + 1);
+						_D(msg);
 						goto eval_fail;
 					}
 
 					++s_subset_i;
 				} else {
-					_D("FAIL: more than 2 \"set\"\n");
+					snprintf(msg, sizeof (msg), "probe_set_eval: More than 2 \"set\".\n");
+					_D(msg);
 					goto eval_fail;
 				}
 			}
@@ -566,7 +576,8 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 				id = probe_ent_getval(member);
 
 				if (id == NULL) {
-					_D("FAIL: set=%p: missing obj_ref value\n", set);
+					snprintf(msg, sizeof (msg), "probe_set_eval: set=%p: Missing obj_ref value.\n", set);
+					_D(msg);
 					goto eval_fail;
 				}
 
@@ -577,11 +588,12 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 					res = probe_obj_eval(id);
 
 					if (res == NULL) {
-#if !defined(NDEBUG)
 						char *tmp = SEXP_string_cstr(id);
-						_D("FAIL: obj=%s: evaluation failed.\n", tmp);
-						oscap_free(tmp);
+						snprintf(msg, sizeof (msg), "probe_set_eval: obj=%s: Evaluation failed.\n", tmp);
+#if !defined(NDEBUG)
+						_D(msg);
 #endif
+						oscap_free(tmp);
 						SEXP_free(id);
 						goto eval_fail;
 					}
@@ -593,8 +605,8 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 					o_subset[o_subset_i] = res;
 					++o_subset_i;
 				} else {
-					_D("FAIL: more than 2 obj_refs\n");
-
+					snprintf(msg, sizeof (msg), "probe_set_eval: More than 2 obj_refs.\n");
+					_D(msg);
 					SEXP_free(res);
 					goto eval_fail;
 				}
@@ -609,7 +621,8 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 				id = probe_ent_getval(member);
 
 				if (id == NULL) {
-					_D("FAIL: set=%p: missing filter value\n", set);
+					snprintf(msg, sizeof (msg), "probe_set_eval: set=%p: Missing filter value.\n", set);
+					_D(msg);
 					goto eval_fail;
 				}
 
@@ -626,7 +639,8 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 			}
 			break;
 		default:
-			_D("Unexpected set element: %s\n", member_name);
+			snprintf(msg, sizeof (msg), "probe_set_eval: Unexpected set element: %s.\n", member_name);
+			_D(msg);
 			goto eval_fail;
 		}
 #undef CASE
@@ -639,8 +653,9 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 	result = probe_ste_fetch(filters_u);
 
 	if (result == NULL) {
+		snprintf(msg, sizeof (msg), "probe_set_eval: Can't get unavailable filters:\n");
 #if !defined(NDEBUG)
-		_D("FAIL: can't get unavailable filters:\n");
+		_D(msg);
 		SEXP_list_foreach(result, filters_u) {
 			SEXP_fprintfa(stdout, result);
 			printf("\n");
@@ -661,7 +676,6 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 		filters_a = filters_j;
 	}
 
-	_A((s_subset_i > 0 || o_subset_i > 0));
 	_A((s_subset_i > 0 && o_subset_i == 0) || (s_subset_i == 0 && o_subset_i > 0));
 
 	if (o_subset_i > 0) {
@@ -670,8 +684,10 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 
 #ifndef NDEBUG
 			if (s_subset[s_subset_i] == NULL) {
-				_D("FAIL: apply_filters returned NULL: set=%p, filters=%p\n",
-				   o_subset[s_subset_i], filters_a);
+				snprintf(msg, sizeof (msg),
+					 "probe_set_eval: apply_filters returned NULL: set=%p, filters=%p.\n",
+					 o_subset[s_subset_i], filters_a);
+				_D(msg);
 				goto eval_fail;
 			}
 #endif
@@ -702,7 +718,11 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 	SEXP_free(filters_a);
 	SEXP_free(result);
 
-	return (NULL);
+	r0 = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, msg);
+	r1 = SEXP_list_new(r0, NULL);
+	result = probe_cobj_new(SYSCHAR_FLAG_ERROR, r1, NULL);
+	SEXP_vfree(r0, r1, NULL);
+	return result;
 }
 
 /**
@@ -1102,8 +1122,8 @@ static int probe_varref_iterate_ctx(struct probe_varref_ctx *ctx)
  */
 void *probe_worker(void *arg)
 {
-	int probe_ret;
-	SEXP_t *probe_in, *set, *probe_out;
+	int probe_ret = 0;
+	SEXP_t *probe_in, *set, *probe_out = NULL, *oid;
 	SEXP_t *varrefs;
 
 	SEAP_msg_t *seap_reply, *seap_request;
@@ -1119,31 +1139,21 @@ void *probe_worker(void *arg)
 		/* complex object */
 		probe_out = probe_set_eval(set, 0);
 		SEXP_free(set);
-		probe_ret = (probe_out == NULL ? PROBE_ESETEVAL : 0);
+		// todo: in case of an internal error set probe_ret accordingly
 	} else {
 		/* simple object */
 		varrefs = probe_obj_getent(probe_in, "varrefs", 1);
 
 		if (varrefs == NULL || !OSCAP_GSYM(varref_handling)) {
-			SEXP_t *r0;
-
 			_D("probe_main1\n");
-			probe_ret = -1;
-			probe_out = r0 = probe_main(probe_in, &probe_ret, OSCAP_GSYM(probe_arg));
-			if (r0 != NULL) {
-				probe_out = _probe_cobj_new(probe_ret != PROBE_ENOMEM ?
-							    SYSCHAR_FLAG_UNKNOWN : SYSCHAR_FLAG_INCOMPLETE, r0);
-				probe_ret = 0;
-				SEXP_free(r0);
-			}
-			_A(probe_ret != -1);
+			probe_out = probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, NULL, NULL);
+			probe_ret = probe_main(probe_in, probe_out, OSCAP_GSYM(probe_arg));
+			probe_cobj_compute_flag(probe_out);
 		} else {
 			/*
 			 * there are variable references in the object.
 			 * create ctx, iterate through all variable combinations
 			 */
-			SEXP_t *cobj = NULL;
-			SEXP_t *r0, *r1;
 			struct probe_varref_ctx *ctx;
 
 			_D("probe_main2\n");
@@ -1152,64 +1162,48 @@ void *probe_worker(void *arg)
 			SEXP_free(varrefs);
 
 			do {
-				probe_ret = -1;
-				probe_out = probe_main(ctx->pi2, &probe_ret, OSCAP_GSYM(probe_arg));
-				_A(probe_ret != -1);
+				SEXP_t *cobj, *r0;
 
-				if (probe_out == NULL || (probe_ret != 0 && probe_ret != PROBE_ENOMEM)) {
-					SEXP_free(cobj);
-					cobj = NULL;
-					break;
-				}
+				cobj = probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, NULL, NULL);
+				probe_ret = probe_main(ctx->pi2, cobj, OSCAP_GSYM(probe_arg));
+				probe_cobj_compute_flag(cobj);
+				r0 = probe_out;
+				probe_out = probe_set_combine(r0, cobj, OVAL_SET_OPERATION_UNION);
+				SEXP_vfree(cobj, r0, NULL);
+			} while (probe_ret == 0
+				 && probe_varref_iterate_ctx(ctx));
 
-				r0 = _probe_cobj_new(probe_ret != PROBE_ENOMEM ?
-						     SYSCHAR_FLAG_UNKNOWN : SYSCHAR_FLAG_INCOMPLETE, probe_out);
-				probe_ret = 0;
-
-				r1 = cobj;
-				cobj = probe_set_combine (r0, r1, OVAL_SET_OPERATION_UNION);
-
-				SEXP_vfree (probe_out, r0, r1, NULL);
-			} while (probe_varref_iterate_ctx(ctx));
-
-			probe_out = cobj;
 			probe_varref_destroy_ctx(ctx);
 		}
 	}
 
 	_D("probe_out = %p, probe_ret = %d\n", (void *)probe_out, probe_ret);
 
-	if (probe_out == NULL || probe_ret != 0) {
+	SEXP_VALIDATE(probe_out);
+
+	oid = probe_obj_getattrval(probe_in, "id");
+	_A(oid != NULL);
+	SEXP_free(probe_in);
+	if (pcache_sexp_add(OSCAP_GSYM(pcache), oid, probe_out) != 0) {
+		/* TODO */
+		abort();
+	}
+
+	SEXP_free(oid);
+
+	if (probe_ret != 0) {
 		if (SEAP_replyerr(OSCAP_GSYM(ctx), OSCAP_GSYM(sd), seap_request, probe_ret) == -1) {
 			int ret = errno;
 
 			_D("An error ocured while sending error status. errno=%u, %s.\n", errno, strerror(errno));
 
 			SEAP_msg_free(seap_request);
-                        SEXP_free(probe_in);
-
-                        if (probe_out != NULL)
-                                SEXP_free(probe_out);
+			SEXP_free(probe_out);
 
 			/* FIXME */
 			exit(ret);
 		}
 	} else {
-		SEXP_t *oid;
-
-		SEXP_VALIDATE(probe_out);
-
-		oid = probe_obj_getattrval(probe_in, "id");
-		_A(oid != NULL);
-                SEXP_free(probe_in);
-
-		if (pcache_sexp_add(OSCAP_GSYM(pcache), oid, probe_out) != 0) {
-			/* TODO */
-			abort();
-		}
-
-		SEXP_free(oid);
-
 		seap_reply = SEAP_msg_new();
 		SEAP_msg_set(seap_reply, probe_out);
 

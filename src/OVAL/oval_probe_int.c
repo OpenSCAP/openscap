@@ -98,7 +98,7 @@ static struct oval_syschar *oval_probe_envvar_eval(struct oval_object *obj, stru
         struct oval_syschar *sys;
         struct oval_value   *val;
         char *var_name, *var_value;
-	SEXP_t *items, *r0, *r1, *r2, *cobj;
+	SEXP_t *r0, *r1, *r2, *cobj;
 
         val = oval_object_getentval(obj, "name");
 
@@ -110,20 +110,20 @@ static struct oval_syschar *oval_probe_envvar_eval(struct oval_object *obj, stru
 
         var_name  = oval_value_get_text(val);
         var_value = getenv(var_name);
-	items     = SEXP_list_new(NULL);
+	cobj = probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, NULL, NULL);
 
 	if (var_value != NULL) {
 		r0 = probe_item_creat("environmentvariable_item", NULL,
 				      "name",  NULL, r1 = SEXP_string_new(var_name,  strlen(var_name)),
 				      "value", NULL, r2 = SEXP_string_new(var_value, strlen(var_value)),
 				      NULL);
-		SEXP_list_add(items, r0);
+		probe_cobj_add_item(cobj, r0);
 		SEXP_vfree (r0, r1, r2, NULL);
 	}
 
-	cobj = _probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, items);
+	probe_cobj_compute_flag(cobj);
 	sys  = oval_sexp2sysch(cobj, model, obj);
-	SEXP_vfree(items, cobj, NULL);
+	SEXP_vfree(cobj, NULL);
 
         return(sys);
 }
@@ -196,10 +196,10 @@ static struct oval_syschar *oval_probe_variable_eval(struct oval_object *obj, ov
 		flag = SYSCHAR_FLAG_ERROR;
 		goto fail;
 	} else {
-                SEXP_t *items, *r0, *item, *cobj, *vrent, *val_sexp;
+                SEXP_t *r0, *item, *cobj, *vrent, *val_sexp;
 		char *var_ref;
 
-                items = SEXP_list_new(NULL);
+                cobj = probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, NULL, NULL);
 
                 /* Create shared entity */
 		var_ref = oval_variable_get_id(var);
@@ -225,14 +225,14 @@ static struct oval_syschar *oval_probe_variable_eval(struct oval_object *obj, ov
 			SEXP_list_add(item, vrent);
 
 			/* Add item to the item list */
-			SEXP_list_add(items, item);
+			probe_cobj_add_item(cobj, item);
 			SEXP_vfree(item, val_sexp, NULL);
                 }
 
                 oval_value_iterator_free(vit);
-                cobj = _probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, items);
+		probe_cobj_compute_flag(cobj);
                 sys  = oval_sexp2sysch(cobj, sys_model, obj);
-                SEXP_vfree(cobj, items, vrent, NULL);
+                SEXP_vfree(cobj, vrent, NULL);
         }
 
         return(sys);

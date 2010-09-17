@@ -51,12 +51,15 @@
 #include <string.h>
 #include <sys/utsname.h>
 
-SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
+int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg)
 {
 	const char *processor;
 	struct utsname buf;
 	SEXP_t *r0, *r1, *r2, *r3, *r4, *r5, *item_sexp;
-	SEXP_t *probe_out = SEXP_list_new(NULL);
+
+	if (object == NULL || probe_out == NULL) {
+		return (PROBE_EINVAL);
+	}
 
 	// Collect the info
 	uname(&buf);
@@ -92,10 +95,8 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 		"processor_type", NULL, r5 = SEXP_string_newf("%s", processor),
 		NULL);
 	SEXP_vfree(r0, r1, r2, r3, r4, r5, NULL);
-	SEXP_list_add(probe_out, item_sexp);
+	probe_cobj_add_item(probe_out, item_sexp);
 	SEXP_free(item_sexp);
 
-	*err = 0;
-	return probe_out;
+	return 0;
 }
-

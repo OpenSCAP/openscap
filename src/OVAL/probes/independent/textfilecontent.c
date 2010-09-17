@@ -69,6 +69,7 @@
 #include <probe-entcmp.h>
 #include <findfile.h>
 #include <alloc.h>
+#include "common/assume.h"
 
 #define FILE_SEPARATOR '/'
 
@@ -203,7 +204,7 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
 struct pfdata {
 	char *pattern;
 	SEXP_t *filename_ent;
-	SEXP_t *item_list;
+	SEXP_t *cobj;
 };
 
 static int process_file(const char *path, const char *filename, void *arg)
@@ -231,32 +232,8 @@ static int process_file(const char *path, const char *filename, void *arg)
 	}
 #endif
 
-	if (filename == NULL) {
-		/*
-		SEXP_t *item;
-                SEXP_t *r0, *r1;
-
-		if (report_missing(pfd->filename_ent)) {
-			item = probe_item_creat ("textfilecontent_item", NULL,
-                                                 "path", NULL, r0 = SEXP_string_newf("%s", path),
-                                                 "filename", NULL, r1 = probe_ent_getval(pfd->filename_ent),
-                                                 NULL);
-                        SEXP_vfree (r0, r1, NULL);
-                        probe_item_setstatus (item, OVAL_STATUS_DOESNOTEXIST);
-		        probe_itement_setstatus (item, "filename", 1, OVAL_STATUS_DOESNOTEXIST);
-		} else {
-			item = probe_item_creat ("textfilecontent_item", NULL,
-                                                 "path", NULL, r0 = SEXP_string_newf("%s", path),
-                                                 NULL);
-                        SEXP_free(r0);
-		}
-
-		SEXP_list_add(pfd->item_list, item);
-                SEXP_free(item);
-		*/
-
+	if (filename == NULL)
 		goto cleanup;
-	}
 
 	path_len = strlen(path);
 	filename_len = strlen(filename);
@@ -289,7 +266,7 @@ static int process_file(const char *path, const char *filename, void *arg)
 			++cur_inst;
 			item = create_item(path, filename, pfd->pattern,
 					   cur_inst, substrs, substr_cnt);
-			SEXP_list_add(pfd->item_list, item);
+			probe_cobj_add_item(pfd->cobj, item);
 			SEXP_free(item);
 			for (k = 0; k < substr_cnt; ++k)
 				free(substrs[k]);
@@ -312,30 +289,35 @@ static int process_file(const char *path, const char *filename, void *arg)
 	return ret;
 }
 
-SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
+int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 {
-	SEXP_t *path_ent, *filename_ent, *behaviors_ent;
+	SEXP_t *path_ent, *filename_ent, *line_ent, *behaviors_ent;
         SEXP_t *r0, *r1;
 	char *pattern;
 
         (void)arg;
 
-	if (probe_in == NULL) {
-		*err = PROBE_EINVAL;
-		return NULL;
+	if (probe_in == NULL || probe_out == NULL) {
+		return(PROBE_EINVAL);
 	}
 
-	/* parse request */
-        r0 = NULL;
-	if ( (path_ent = probe_obj_getent(probe_in, "path", 1)) == NULL
-	     || (filename_ent = probe_obj_getent(probe_in, "filename", 1)) == NULL
-	     || (pattern = SEXP_string_cstr(r0 = probe_obj_getentval(probe_in, "line", 1))) == NULL) {
-                if (r0 != NULL)
-                        SEXP_free(r0);
-		*err = PROBE_ENOELM;
-		return NULL;
+	if ((path_ent = probe_obj_getent(probe_in, "path",     1)) == NULL)
+		return(PROBE_ENOELM);
+	if ((filename_ent = probe_obj_getent(probe_in, "filename", 1)) == NULL) {
+		SEXP_free(path_ent);
+		return(PROBE_ENOELM);
 	}
-        SEXP_free(r0);
+	if ((line_ent = probe_obj_getent(probe_in, "line",  1)) == NULL) {
+		SEXP_vfree(path_ent, filename_ent, NULL);
+		return(PROBE_ENOELM);
+	} else {
+		SEXP_t *ent_val;
+
+		ent_val = probe_ent_getval(line_ent);
+		pattern = SEXP_string_cstr(ent_val);
+		assume_d(pattern != NULL, -1);
+		SEXP_vfree(line_ent, ent_val, NULL);
+	}
 
 	/* canonicalize behaviors */
 	behaviors_ent = probe_obj_getent(probe_in, "behaviors", 1);
@@ -366,37 +348,24 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
 
 	pfd.pattern = pattern;
 	pfd.filename_ent = filename_ent;
-	pfd.item_list = SEXP_list_new(NULL);
+	pfd.cobj = probe_out;
 
 	fcnt = find_files(path_ent, filename_ent, behaviors_ent,
 			  process_file, (void *) &pfd);
-	if (fcnt == 0) {
-		/*
-		if (report_missing(pfd.filename_ent)) {
-			SEXP_t *item;
+	if (fcnt < 0) {
+		char s[50];
+		SEXP_t *msg;
 
-			item = probe_item_creat("textfilecontent_item", NULL,
-                                                "path", NULL,
-                                                r0 = probe_ent_getval(path_ent),
-                                                NULL);
-                        probe_item_setstatus(item, OVAL_STATUS_DOESNOTEXIST);
-			probe_itement_setstatus(item, "path", 1, OVAL_STATUS_DOESNOTEXIST);
-			SEXP_list_add(pfd.item_list, item);
-                        SEXP_vfree(r0, item, NULL);
-		}
-		*/
-	} else if (fcnt < 0) {
-		SEXP_t *item;
-		item = probe_item_creat("textfilecontent_item", NULL,
-                                        "path", NULL,
-                                        r0 = probe_ent_getval(path_ent),
-                                        NULL);
-                probe_item_setstatus(item, OVAL_STATUS_ERROR);
-		SEXP_list_add(pfd.item_list, item);
-                SEXP_vfree(r0, item, NULL);
+		snprintf(s, sizeof (s), "find_files returned error: %d", fcnt);
+		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, s);
+		probe_cobj_add_msg(probe_out, msg);
+		SEXP_free(msg);
+		probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
 	}
 
-	*err = 0;
-	return pfd.item_list;
+	SEXP_vfree(path_ent, filename_ent, behaviors_ent, NULL);
+	oscap_free(pattern);
+
+	return 0;
 }
 

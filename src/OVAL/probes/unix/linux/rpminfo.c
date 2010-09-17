@@ -267,28 +267,30 @@ void probe_fini (void *ptr)
         return;
 }
 
-SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
+int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg)
 {
-        SEXP_t *probe_out, *val, *item_sexp, *r0, *r1, *ent;
+        SEXP_t *val, *item_sexp, *r0, *r1, *ent;
 	int rpmret, i;
 
         struct rpminfo_req request_st;
         struct rpminfo_rep *reply_st;
 
+	if (object == NULL || probe_out == NULL) {
+		return (PROBE_EINVAL);
+	}
+
         ent = probe_obj_getent (object, "name", 1);
 
         if (ent == NULL) {
-                *err = PROBE_ENOENT;
-                return (NULL);
+                return (PROBE_ENOENT);
         }
 
         val = probe_ent_getval (ent);
 
         if (val == NULL) {
                 _D("%s: no value\n", "name");
-                *err = PROBE_ENOVAL;
                 SEXP_free (ent);
-                return (NULL);
+                return (PROBE_ENOVAL);
         }
 
         request_st.name = SEXP_string_cstr (val);
@@ -306,11 +308,10 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                 case OVAL_OPERATION_PATTERN_MATCH:
                         break;
                 default:
-                        *err = PROBE_EOPNOTSUPP;
                         SEXP_free (val);
                         SEXP_free (ent);
                         oscap_free (request_st.name);
-                        return (NULL);
+                        return (PROBE_EOPNOTSUPP);
                 }
 
                 SEXP_free (val);
@@ -320,18 +321,17 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                 switch (errno) {
                 case EINVAL:
                         _D("%s: invalid value type\n", "name");
-                        *err = PROBE_EINVAL;
+			return PROBE_EINVAL;
                         break;
                 case EFAULT:
                         _D("%s: element not found\n", "name");
-                        *err = PROBE_ENOELM;
+			return PROBE_ENOELM;
                         break;
+		default:
+			return PROBE_EUNKNOWN;
                 }
-
-                return (NULL);
         }
 
-        probe_out = SEXP_list_new (NULL);
         reply_st  = NULL;
 
         /* get info from RPM db */
@@ -349,7 +349,7 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
 
                 probe_item_setstatus (item_sexp, OVAL_STATUS_ERROR);
 
-                SEXP_list_add (probe_out, item_sexp);
+		probe_cobj_add_item(probe_out, item_sexp);
                 SEXP_free (item_sexp);
                 SEXP_free (r0);
 
@@ -382,7 +382,7 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
 					"signature_keyid", NULL,
 					r6 = SEXP_string_newf ("%s", reply_st[i].signature_keyid),
 					NULL);
-                                SEXP_list_add (probe_out, item_sexp);
+                                probe_cobj_add_item(probe_out, item_sexp);
 				SEXP_vfree(item_sexp, r0, r1, r2, r3, r4, r5, r6, NULL);
 
                                 __rpminfo_rep_free (&(reply_st[i]));
@@ -394,7 +394,6 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
 
 	SEXP_vfree(ent, NULL);
         oscap_free(request_st.name);
-        *err = 0;
 
-        return (probe_out);
+        return 0;
 }

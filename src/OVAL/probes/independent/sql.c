@@ -237,15 +237,15 @@ __fail:
 	return (-1);
 }
 
-static SEXP_t *dbSQL_eval(const char *engine, const char *version, const char *conn, const char *sql) {
-	SEXP_t     *items;
+static SEXP_t *dbSQL_eval(const char *engine, const char *version,
+			  const char *conn, const char *sql, SEXP_t *probe_out)
+{
+	int err = -1;
 	dbURIInfo_t uriInfo = { .host = NULL,
 				.port = 0,
 				.user = NULL,
 				.pass = NULL,
 				.db   = NULL};
-
-	items = NULL;
 
 	/*
 	 * parse the connection string
@@ -329,7 +329,7 @@ static SEXP_t *dbSQL_eval(const char *engine, const char *version, const char *c
 				odbx_result_finish(sql_dbr);
 			}
 
-			items = SEXP_list_new(item, NULL);
+			probe_cobj_add_item(probe_out, item);
 			SEXP_free(item);
 		}
 
@@ -339,15 +339,16 @@ static SEXP_t *dbSQL_eval(const char *engine, const char *version, const char *c
 		}
 	}
 
+	err = 0;
 __exit:
 	dbURIInfo_clear(&uriInfo);
-	return (items);
+	return (err);
 }
 
-SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
+int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 {
-	SEXP_t     *items;
 	char       *engine, *version, *conn, *sqlexp;
+	int err;
 
 #define get_string(dst, obj, ent_name)					\
 	do {								\
@@ -357,7 +358,7 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
 									\
 		if (__sval == NULL) {					\
 			dE("Missing entity or value: obj=%p, ent=%s\n", obj, #ent_name); \
-			*err = PROBE_ENOENT;				\
+			err = PROBE_ENOENT;				\
 			goto __exit;					\
 		}							\
 									\
@@ -365,14 +366,17 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
 									\
 		if ((dst) == NULL) {					\
 			SEXP_free(__sval);				\
-			*err = PROBE_EINVAL;				\
+			err = PROBE_EINVAL;				\
 			goto __exit;					\
 		}							\
 									\
 		SEXP_free(__sval);					\
 	} while (0)
 
-	items   = NULL;
+	if (probe_in == NULL || probe_out == NULL) {
+		return (PROBE_EINVAL);
+	}
+
 	engine  = NULL;
 	version = NULL;
 	conn    = NULL;
@@ -386,8 +390,7 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
 	/*
 	 * evaluate the SQL statement
 	 */
-	*err  = 0;
-	items = dbSQL_eval(engine, version, conn, sqlexp);
+	err = dbSQL_eval(engine, version, conn, sqlexp, probe_out);
 __exit:
 	if (sqlexp != NULL) {
 		__clearmem(sqlexp, strlen(sqlexp));
@@ -404,5 +407,5 @@ __exit:
 		oscap_free(version);
 	}
 
-	return (items);
+	return (err);
 }

@@ -84,7 +84,7 @@ static char *get_mac(const struct ifaddrs *ifa)
 	return mac_buf;
 }
 
-static int get_ifs(SEXP_t *name_ent, SEXP_t *item_list)
+static int get_ifs(SEXP_t *name_ent, SEXP_t *probe_out)
 {
 	struct ifaddrs *ifaddr, *ifa;
 	int family, rc=1;
@@ -92,12 +92,28 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *item_list)
 	SEXP_t *item;
 	SEXP_t *r0, *r1, *r2, *r3, *r4;
 
-	if (getifaddrs(&ifaddr) == -1)
+	if (getifaddrs(&ifaddr) == -1) {
+		SEXP_t *msg;
+
+		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, "getifaddrs() failed.");
+		probe_cobj_add_msg(probe_out, msg);
+		SEXP_free(msg);
+		probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
+
 		return rc;
+	}
 
 	fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
-	if (fd < 0)
+	if (fd < 0) {
+		SEXP_t *msg;
+
+		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, "socket() failed.");
+		probe_cobj_add_msg(probe_out, msg);
+		SEXP_free(msg);
+		probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
+
 		goto leave1;
+	}
 
         /* Walk through linked list, maintaining head pointer so we
 	   can free list later */
@@ -122,7 +138,14 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *item_list)
 			sizeof(struct sockaddr_in6), host, NI_MAXHOST,
 			NULL, 0, NI_NUMERICHOST);
 		if (rc) {
+			SEXP_t *msg;
+
+			msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, "getnameinfo() failed.");
+			probe_cobj_add_msg(probe_out, msg);
+			SEXP_free(msg);
+			probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
 			rc = 1;
+
 			goto leave2;
 		}
 		rc = getnameinfo(ifa->ifa_netmask, (family == AF_INET) ?
@@ -130,7 +153,14 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *item_list)
 			sizeof(struct sockaddr_in6), mask, NI_MAXHOST,
 			NULL, 0, NI_NUMERICHOST);
 		if (rc) {
+			SEXP_t *msg;
+
+			msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, "getnameinfo() failed.");
+			probe_cobj_add_msg(probe_out, msg);
+			SEXP_free(msg);
+			probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
 			rc = 1;
+
 			goto leave2;
 		}
 		if (family == AF_INET && ifa->ifa_flags & IFF_BROADCAST) {
@@ -139,7 +169,14 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *item_list)
 					 sizeof(struct sockaddr_in6), broad, NI_MAXHOST,
 					 NULL, 0, NI_NUMERICHOST);
 			if (rc) {
+				SEXP_t *msg;
+
+				msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, "getnameinfo() failed.");
+				probe_cobj_add_msg(probe_out, msg);
+				SEXP_free(msg);
+				probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
 				rc = 1;
+
 				goto leave2;
 			}
 		} else
@@ -158,7 +195,7 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *item_list)
                                 r4 = SEXP_string_new (mask, strlen (mask)),
 				NULL);
 
-		SEXP_list_add(item_list, item);
+		probe_cobj_add_item(probe_out, item);
 		SEXP_vfree(r0, r1, r2, r3, r4, item, NULL);
 	}
 
@@ -170,7 +207,7 @@ leave1:
 	return rc;
 }
 #else
-static int get_ifs(SEXP_t *name_ent, SEXP_t *item_list)
+static int get_ifs(SEXP_t *name_ent, SEXP_t *probe_out)
 {
 	/* todo */
 
@@ -190,39 +227,27 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *item_list)
 				r4 = SEXP_string_newf("255.255.255.0"),
 				NULL);
 
-	SEXP_list_add(item_list, item);
+	probe_cobj_add_item(probe_out, item);
 	SEXP_vfree(r0, r1, r2, r3, r4, item, NULL);
 
 	return (0);
 }
 #endif
 
-SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
+int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 {
-	SEXP_t *probe_out;
 	SEXP_t *name_ent;
 
-	if (probe_in == NULL) {
-		*err = PROBE_EINVAL;
-		return NULL;
+	if (probe_in == NULL || probe_out == NULL) {
+		return (PROBE_EINVAL);
 	}
 
 	name_ent = probe_obj_getent(probe_in, "name", 1);
 	if (name_ent == NULL) {
-		*err = PROBE_ENOELM;
-		return NULL;
+		return PROBE_ENOELM;
 	}
 
-	probe_out = SEXP_list_new(NULL);
-	if (get_ifs(name_ent, probe_out)) {
-                SEXP_t *eitm;
+	get_ifs(name_ent, probe_out);
 
-                eitm = probe_item_creat ("interface_item", NULL, NULL);
-                probe_item_setstatus (eitm, OVAL_STATUS_ERROR);
-                SEXP_list_add(probe_out, eitm);
-                SEXP_free(eitm);
-	}
-
-	*err = 0;
-	return probe_out;
+	return 0;
 }

@@ -598,6 +598,27 @@ SEXP_t *oval_state2sexp(struct oval_state *state, void *sess)
 	return NULL;
 }
 
+static struct oval_message *oval_sexp2msg(const SEXP_t *msg)
+{
+	struct oval_message *message;
+	SEXP_t *r0;
+	oval_message_level_t lvl;
+	char *str;
+
+	message = oval_message_new();
+	r0 = SEXP_list_first(msg);
+	lvl = SEXP_number_getu(r0);
+	SEXP_free(r0);
+	oval_message_set_level(message, lvl);
+	r0 = SEXP_list_nth(msg, 2);
+	str = SEXP_string_cstr(r0);
+	SEXP_free(r0);
+	oval_message_set_text(message, str);
+	oscap_free(str);
+
+	return message;
+}
+
 static struct oval_sysent *oval_sysent_from_sexp(struct oval_syschar_model *model, SEXP_t * sexp)
 {
 	_A(sexp);
@@ -739,59 +760,37 @@ static struct oval_sysitem *oval_sysitem_from_sexp(struct oval_syschar_model *mo
 	return sysitem;
 }
 
-struct oval_syschar *oval_sexp2sysch(const SEXP_t * s_exp, struct oval_syschar_model *model, struct oval_object *object)
+struct oval_syschar *oval_sexp2sysch(const SEXP_t *cobj, struct oval_syschar_model *model, struct oval_object *object)
 {
 	struct oval_syschar *sysch;
+	oval_syschar_collection_flag_t flag;
+	SEXP_t *messages, *msg, *items, *item;
 
-	_A(s_exp != NULL);
+	_A(cobj != NULL);
 
 	sysch = oval_syschar_new(model, object);
-
-	if (oval_sysch_apply_sexp(sysch, s_exp, object) != 0) {
-		// todo: remove syschar from model
-		return (NULL);
-	}
-
-	return (sysch);
-}
-
-int oval_sysch_apply_sexp(struct oval_syschar *sysch, const SEXP_t *cobj, struct oval_object *object)
-{
-	_A(cobj != NULL);
-	_A(sysch != NULL);
-
-	SEXP_t *s_exp, *items;
-	struct oval_sysitem *sysitem;
-	struct oval_syschar_model *model;
-	oval_syschar_collection_flag_t flag;
-
-	if (oval_syschar_get_object(sysch) == NULL) {
-		if (object != NULL)
-			oval_syschar_set_object(sysch, object);
-		else
-			return (-1);
-
-	} else if (object == NULL) {
-		object = oval_syschar_get_object(sysch);
-
-		if (object == NULL)
-			return (-1);
-	}
-
-	_A(object == oval_syschar_get_object(sysch));
-
-	model = oval_syschar_get_model(sysch);
-	flag = _probe_cobj_get_flag(cobj);
+	flag = probe_cobj_get_flag(cobj);
 	oval_syschar_set_flag(sysch, flag);
 
-	items = _probe_cobj_get_items(cobj);
-	SEXP_list_foreach(s_exp, items) {
-		sysitem = oval_sysitem_from_sexp(model, s_exp);
+	messages = probe_cobj_get_msgs(cobj);
+	SEXP_list_foreach(msg, messages) {
+		struct oval_message *omsg;
 
+		omsg = oval_sexp2msg(msg);
+		if (omsg != NULL)
+			oval_syschar_add_message(sysch, omsg);
+	}
+	SEXP_free(messages);
+
+	items = probe_cobj_get_items(cobj);
+	SEXP_list_foreach(item, items) {
+		struct oval_sysitem *sysitem;
+
+		sysitem = oval_sysitem_from_sexp(model, item);
 		if (sysitem != NULL)
 			oval_syschar_add_sysitem(sysch, sysitem);
 	}
 	SEXP_free(items);
 
-	return (0);
+	return sysch;
 }

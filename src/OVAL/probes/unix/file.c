@@ -94,7 +94,7 @@ static SEXP_t *strfiletype (mode_t mode)
 
 struct cbargs {
         SEXP_t *filename_ent;
-        SEXP_t *items;
+        SEXP_t *cobj;
 	SEXP_t *filters;
 	int     error;
 };
@@ -146,12 +146,12 @@ static void ID_cache_free(void)
 static int file_cb (const char *p, const char *f, void *ptr)
 {
         char path_buffer[PATH_MAX];
-        SEXP_t *res, *item, *filters;
+        SEXP_t *cobj, *item, *filters;
         struct cbargs *args = (struct cbargs *) ptr;
         struct stat st;
         const char *st_path;
 
-        res = args->items;
+        cobj = args->cobj;
 	filters = args->filters;
 
         if (f == NULL)
@@ -279,16 +279,15 @@ static int file_cb (const char *p, const char *f, void *ptr)
 		SEXP_vfree(r0, r1, r3, r4, r5, r6, r7, r8, NULL);
 
 		if (!probe_item_filtered(item, filters)) {
-			if (probe_result_additem(res, item) != 0) {
+			if (probe_cobj_add_item(cobj, item) != 0) {
 				if (errno == ENOMEM)
 					args->error = PROBE_ENOMEM;
 
 				SEXP_free(item);
 				return (-1);
 			}
-			/* the item is freed by the additem function */
-		} else
-			SEXP_free(item);
+		}
+		SEXP_free(item);
         }
 
         return (0);
@@ -373,17 +372,20 @@ void probe_fini (void *arg)
         return;
 }
 
-SEXP_t *probe_main (SEXP_t *probe_in, int *err, void *mutex)
+int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex)
 {
-        SEXP_t *path, *filename, *behaviors, *items;
+        SEXP_t *path, *filename, *behaviors;
         SEXP_t *r0, *r1, *r2, *r3, *r4;
-        int     filecnt;
+        int     filecnt, err;
         struct cbargs cbargs;
 
+	if (probe_in == NULL || probe_out == NULL) {
+		return (PROBE_EINVAL);
+	}
+
         if (mutex == NULL) {
-                *err = PROBE_EINIT;
-                return (NULL);
-        }
+                return PROBE_EINIT;
+	}
 
         _A(mutex == &__file_probe_mutex);
 
@@ -392,13 +394,11 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err, void *mutex)
         behaviors = probe_obj_getent (probe_in, "behaviors", 1);
 
         if (path == NULL || filename == NULL) {
-                *err = PROBE_ENOELM;
-
                 SEXP_free (behaviors);
                 SEXP_free (path);
                 SEXP_free (filename);
 
-                return (NULL);
+                return PROBE_ENOELM;
         }
 
         if (behaviors == NULL) {
@@ -449,40 +449,34 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err, void *mutex)
 
         _A(behaviors != NULL);
 
-        items = SEXP_list_new (NULL);
-
         switch (pthread_mutex_lock (&__file_probe_mutex)) {
         case 0:
                 break;
         default:
                 _D("Can't lock mutex(%p): %u, %s.\n", &__file_probe_mutex, errno, strerror (errno));
 
-                *err = PROBE_EFATAL;
-                return (NULL);
+                return PROBE_EFATAL;
         }
 
-        cbargs.items = items;
+        cbargs.cobj = probe_out;
         cbargs.filename_ent = filename;
 	cbargs.filters = probe_prepare_filters(probe_in);
 	cbargs.error = 0;
 
         filecnt = find_files (path, filename, behaviors, &file_cb, &cbargs);
-        *err    = 0;
+	err = 0;
 
         if (filecnt < 0) {
-                /* error */
-		if (cbargs.error != PROBE_ENOMEM) {
-			SEXP_free (items);
-			r0    = probe_item_creat ("file_item", NULL,
-						  /* entities */
-						  "path",     NULL, path,
-						  NULL);
-			probe_item_setstatus(r0, OVAL_STATUS_ERROR);
-			items = SEXP_list_new (r0, NULL);
-			SEXP_free (r0);
-		}
+		char s[50];
+		SEXP_t *msg;
 
-		*err = cbargs.error;
+		snprintf(s, sizeof (s), "find_files returned error: %d", filecnt);
+		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, s);
+		probe_cobj_add_msg(probe_out, msg);
+		SEXP_free(msg);
+		probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
+
+		err = cbargs.error;
         }
 
 	SEXP_vfree(behaviors, path, filename, cbargs.filters, NULL);
@@ -493,9 +487,8 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err, void *mutex)
         default:
                 _D("Can't unlock mutex(%p): %u, %s.\n", &__file_probe_mutex, errno, strerror (errno));
 
-                *err = PROBE_EFATAL;
-                return (NULL);
+                return PROBE_EFATAL;
         }
 
-        return (items);
+        return err;
 }

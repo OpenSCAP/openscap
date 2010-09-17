@@ -95,7 +95,7 @@ static void report_finding(struct result_info *res, SEXP_t *probe_out)
 		"user_id", NULL, r8 = SEXP_string_newf("%u", res->user_id),
 		NULL);
 	SEXP_vfree(r0, r1, r2, r3, r4, r5, r6, r7, r8, NULL);
-	SEXP_list_add(probe_out, item_sexp);
+	probe_cobj_add_item(probe_out, item_sexp);
 	SEXP_free(item_sexp);
 }
 
@@ -307,37 +307,42 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *probe_out)
 	return err;
 }
 
-SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
+int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg)
 {
-	SEXP_t *probe_out, *ent;
+	SEXP_t *ent;
+
+	if (object == NULL || probe_out == NULL) {
+		return (PROBE_EINVAL);
+	}
 
 	ent = probe_obj_getent(object, "command", 1);
 	if (ent == NULL) {
-		*err = PROBE_ENOVAL;
-		return NULL;
+		return PROBE_ENOVAL;
 	}
-	probe_out = SEXP_list_new(NULL);
 
 	if (read_process(ent, probe_out)) {
-		*err = PROBE_EACCES;
-		SEXP_free(probe_out);
-		probe_out = NULL;
-	} else
-		*err = 0;
+		SEXP_free(ent);
+		return PROBE_EACCES;
+	}
 
 	SEXP_free(ent);
-	return probe_out;
+
+	return 0;
 }
 #else
-SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
+int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg)
 {
-        SEXP_t *item_sexp, *probe_out;
+        SEXP_t *item_sexp;
+
+	if (object == NULL || probe_out == NULL) {
+		return (PROBE_EINVAL);
+	}
 
 	item_sexp = probe_obj_creat ("process_item", NULL, NULL);
         probe_item_setstatus (item_sexp, OVAL_STATUS_NOTCOLLECTED);
-        probe_out = SEXP_list_new (item_sexp, NULL);
+	probe_cobj_add_item(probe_out, item_sexp);
         SEXP_free (item_sexp);
 
-        return (probe_out);
+	return 0;
 }
 #endif /* __linux */

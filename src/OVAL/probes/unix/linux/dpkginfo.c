@@ -80,19 +80,22 @@ void probe_fini (void *ptr)
         return;
 }
 
-SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
+int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg)
 {
-        SEXP_t *probe_out, *val, *item_sexp, *r0;
+        SEXP_t *val, *item_sexp, *r0;
         char *request_st = NULL;
         struct dpkginfo_reply_t *dpkginfo_reply = NULL;
         int errflag;
+
+	if (object == NULL || probe_out == NULL) {
+		return (PROBE_EINVAL);
+	}
 
         val = probe_obj_getentval (object, "name", 1);
 
         if (val == NULL) {
                 _D("%s: no value\n", "name");
-                *err = PROBE_ENOVAL;
-                return (NULL);
+                return (PROBE_ENOVAL);
         }
 
         request_st = SEXP_string_cstr (val);
@@ -102,18 +105,16 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                 switch (errno) {
                 case EINVAL:
                         _D("%s: invalid value type\n", "name");
-                        *err = PROBE_EINVAL;
+			return PROBE_EINVAL;
                         break;
                 case EFAULT:
                         _D("%s: element not found\n", "name");
-                        *err = PROBE_ENOELM;
+			return PROBE_ENOELM;
                         break;
+		default:
+			return PROBE_EUNKNOWN;
                 }
-
-                return (NULL);
         }
-
-        probe_out = SEXP_list_new (NULL);
 
         /* get info from debian apt cache */
         pthread_mutex_lock (&(g_dpkg.mutex));
@@ -124,7 +125,7 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                 switch (errflag) {
                         case 0: /* Not found */
                                 _D("Package \"%s\" not found.\n", request_st);
-
+				/*
                                 item_sexp = probe_item_creat ("dpkginfo_item", NULL,
                                                 "name", NULL,
                                                 r0 = SEXP_string_newf(request_st),
@@ -133,24 +134,21 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                                 probe_item_setstatus (item_sexp, OVAL_STATUS_DOESNOTEXIST);
                                 probe_itement_setstatus (item_sexp, "name", 1, OVAL_STATUS_DOESNOTEXIST);
 
-                                SEXP_list_add (probe_out, item_sexp);
+				probe_cobj_add_item(probe_out, item_sexp);
                                 SEXP_free (item_sexp);
                                 SEXP_free (r0);
-
+				*/
                                 break;
                         case -1: /* Error */
-                                _D("get_dpkginfo failed\n");
+				char *s = "dpkginfo_get_by_name() failed.\n";
+				SEXP_t *msg;
 
-                                item_sexp = probe_item_creat ("dpkginfo_item", NULL,
-                                                "name", NULL,
-                                                r0 = SEXP_string_newf(request_st),
-                                                NULL);
+				_D(s);
 
-                                probe_item_setstatus (item_sexp, OVAL_STATUS_ERROR);
-
-                                SEXP_list_add (probe_out, item_sexp);
-                                SEXP_free (item_sexp);
-                                SEXP_free (r0);
+				msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, s);
+				probe_cobj_add_msg(probe_out, msg);
+				SEXP_free(msg);
+				probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
 
                                 break;
                 }
@@ -185,7 +183,7 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
 
                                         NULL);
 
-                        SEXP_list_add (probe_out, item_sexp);
+			probe_cobj_add_item(probe_out, item_sexp);
                         SEXP_free (item_sexp);
                         /* FIXME: this is... stupid */
                         SEXP_free (r0);
@@ -199,8 +197,5 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
                 }
         }
 
-        *err = 0;
-        return (probe_out);
+        return (0);
 }
-
-

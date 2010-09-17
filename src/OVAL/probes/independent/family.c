@@ -49,9 +49,9 @@
 #include <string.h>
 #include <probe-api.h>
 
-SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
+int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 {
-	SEXP_t *list, *item, *v_fm;
+	SEXP_t *item, *v_fm;
 
         (void)arg;
 
@@ -68,21 +68,18 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
         "error";
 #endif
 
-	if (probe_in == NULL) {
-		*err = PROBE_EINVAL;
-		return NULL;
+	if (probe_in == NULL || probe_out == NULL) {
+		return PROBE_EINVAL;
 	}
 
         item  = probe_item_creat ("family_item", NULL,
                                   /* entities */
                                   "family", NULL, v_fm = SEXP_string_new (family, strlen (family)),
                                   NULL);
-
-	list = SEXP_list_new (item, NULL);
+	probe_cobj_add_item(probe_out, item);
 
         SEXP_free (item);
         SEXP_free (v_fm);
 
-	*err = 0;
-	return (list);
+	return (0);
 }

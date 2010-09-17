@@ -274,12 +274,23 @@ size_t probe_obj_getname_r(const SEXP_t * obj, char *buffer, size_t buflen);
  * collected objects
  */
 
-SEXP_t *_probe_cobj_new(oval_syschar_collection_flag_t flag, const SEXP_t *item_list);
-SEXP_t *_probe_cobj_get_items(const SEXP_t *cobj);
-oval_syschar_collection_flag_t _probe_cobj_get_flag(const SEXP_t *cobj);
-oval_syschar_collection_flag_t _probe_cobj_combine_flags(oval_syschar_collection_flag_t f1,
-							 oval_syschar_collection_flag_t f2,
-							 oval_setobject_operation_t op);
+SEXP_t *probe_cobj_new(oval_syschar_collection_flag_t flag, SEXP_t *msg_list, SEXP_t *item_list);
+int probe_cobj_add_msg(SEXP_t *cobj, const SEXP_t *msg);
+SEXP_t *probe_cobj_get_msgs(const SEXP_t *cobj);
+int probe_cobj_add_item(SEXP_t *cobj, const SEXP_t *item);
+SEXP_t *probe_cobj_get_items(const SEXP_t *cobj);
+void probe_cobj_set_flag(SEXP_t *cobj, oval_syschar_collection_flag_t flag);
+oval_syschar_collection_flag_t probe_cobj_get_flag(const SEXP_t *cobj);
+oval_syschar_collection_flag_t probe_cobj_combine_flags(oval_syschar_collection_flag_t f1,
+							oval_syschar_collection_flag_t f2,
+							oval_setobject_operation_t op);
+oval_syschar_collection_flag_t probe_cobj_compute_flag(SEXP_t *cobj);
+
+/*
+ * messages
+ */
+
+SEXP_t *probe_msg_creat(oval_message_level_t level, char *message);
 
 /*
  * entities
@@ -431,7 +442,7 @@ void probe_free(SEXP_t * obj);
 
 void *probe_init(void) __attribute__ ((unused));
 void probe_fini(void *) __attribute__ ((unused));
-SEXP_t *probe_main(SEXP_t *, int *, void *) __attribute__ ((nonnull(1, 2)));
+int probe_main(SEXP_t *, SEXP_t *, void *) __attribute__ ((nonnull(1, 2)));
 
 #define PROBE_VARREF_HANDLING 0
 #define PROBE_RESULT_CACHING  1

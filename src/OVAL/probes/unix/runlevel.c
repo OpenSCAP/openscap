@@ -338,44 +338,43 @@ static int get_runlevel (struct runlevel_req *req, struct runlevel_rep **rep)
 # error "Sorry, your OS isn't supported."
 #endif
 
-SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
+int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg)
 {
-        SEXP_t *probe_out;
-
         struct runlevel_req request_st;
         struct runlevel_rep *reply_st = NULL;
+
+	if (object == NULL || probe_out == NULL) {
+		return (PROBE_EINVAL);
+	}
 
 	request_st.service_name_ent = probe_obj_getent(object, "service_name", 1);
 	if (request_st.service_name_ent == NULL) {
 		_D("%s: element not found\n", "service_name");
-		*err = PROBE_ENOELM;
 
-		return NULL;
+		return PROBE_ENOELM;
 	}
 
 	request_st.runlevel_ent = probe_obj_getent(object, "runlevel", 1);
 	if (request_st.runlevel_ent == NULL) {
 		SEXP_free(request_st.service_name_ent);
 		_D("%s: element not found\n", "runlevel");
-		*err = PROBE_ENOELM;
 
-		return NULL;
+		return PROBE_ENOELM;
 	}
 
 	if (get_runlevel(&request_st, &reply_st) == -1) {
-		SEXP_t *item_sexp;
+		char *s = "get_runlevel failed.\n";
+		SEXP_t *msg;
 
-                _D("get_runlevel failed\n");
+                _D(s);
 
-                item_sexp = probe_item_creat("runlevel_item", NULL, NULL);
-                probe_obj_setstatus(item_sexp, OVAL_STATUS_ERROR);
-		probe_out = SEXP_list_new(item_sexp, NULL);
-		SEXP_free(item_sexp);
+		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, s);
+		probe_cobj_add_msg(probe_out, msg);
+		SEXP_free(msg);
+		probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
 	} else {
 		struct runlevel_rep *next_rep;
 		SEXP_t *item_sexp;
-
-		probe_out = SEXP_list_new(NULL);
 
 		while (reply_st != NULL) {
 			SEXP_t *r0, *r1, *r2, *r3;
@@ -394,7 +393,7 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
 						     "kill", NULL,
 						     r3 = SEXP_number_newb(reply_st->kill),
 						     NULL);
-			SEXP_list_add(probe_out, item_sexp);
+			probe_cobj_add_item(probe_out, item_sexp);
 			SEXP_vfree(r0, r1, r2, r3, item_sexp, NULL);
 
 			next_rep = reply_st->next;
@@ -407,7 +406,6 @@ SEXP_t *probe_main (SEXP_t *object, int *err, void *arg)
 
         SEXP_free(request_st.runlevel_ent);
         SEXP_free(request_st.service_name_ent);
-        *err = 0;
 
-        return (probe_out);
+	return 0;
 }

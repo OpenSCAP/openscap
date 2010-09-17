@@ -527,80 +527,102 @@ size_t probe_obj_getname_r(const SEXP_t * obj, char *buffer, size_t buflen)
 /*
  * collected objects
  */
-
-SEXP_t *_probe_cobj_new(oval_syschar_collection_flag_t flag, const SEXP_t *item_list)
+SEXP_t *probe_cobj_new(oval_syschar_collection_flag_t flag, SEXP_t *msg_list, SEXP_t *item_list)
 {
-	SEXP_t *cobj, *item, *sflag;
-	int error_cnt = 0;
-	int exists_cnt = 0;
-	int does_not_exist_cnt = 0;
-	int not_collected_cnt = 0;
+	SEXP_t *cobj, *r0;
 
-	if (flag == SYSCHAR_FLAG_UNKNOWN) {
-		SEXP_list_foreach(item, item_list) {
-			switch (probe_ent_getstatus(item)) {
-			case SYSCHAR_STATUS_ERROR:
-				++error_cnt;
-				break;
-			case SYSCHAR_STATUS_EXISTS:
-				++exists_cnt;
-				break;
-			case SYSCHAR_STATUS_DOES_NOT_EXIST:
-				++does_not_exist_cnt;
-				break;
-			case SYSCHAR_STATUS_NOT_COLLECTED:
-				++not_collected_cnt;
-				break;
-			default:
-				SEXP_free(item);
-				return NULL;
-			}
-		}
-
-		if (error_cnt > 0) {
-			flag = SYSCHAR_FLAG_ERROR;
-		} else if (not_collected_cnt > 0) {
-			flag = SYSCHAR_FLAG_INCOMPLETE;
-		} else if (exists_cnt > 0) {
-			flag = SYSCHAR_FLAG_COMPLETE;
-		} else {
-			flag = SYSCHAR_FLAG_DOES_NOT_EXIST;
-		}
-	}
-
-	sflag = SEXP_number_newi(flag);
-	cobj = SEXP_list_new(sflag, item_list, NULL);
-	SEXP_free(sflag);
+	msg_list = (msg_list == NULL) ? SEXP_list_new(NULL) : SEXP_ref(msg_list);
+	item_list = (item_list == NULL) ? SEXP_list_new(NULL) : SEXP_ref(item_list);
+	cobj = SEXP_list_new(r0 = SEXP_number_newu(flag),
+			     msg_list,
+			     item_list,
+			     NULL);
+	SEXP_vfree(msg_list, item_list, r0, NULL);
 
 	return cobj;
 }
 
-SEXP_t *_probe_cobj_get_items(const SEXP_t *cobj)
+int probe_cobj_add_msg(SEXP_t *cobj, const SEXP_t *msg)
+{
+	SEXP_t *lst;
+
+	lst = SEXP_listref_nth(cobj, 2);
+	SEXP_list_add(lst, msg);
+	SEXP_free(lst);
+
+	return 0;
+}
+
+SEXP_t *probe_cobj_get_msgs(const SEXP_t *cobj)
 {
 	return SEXP_list_nth(cobj, 2);
 }
 
-oval_syschar_collection_flag_t _probe_cobj_get_flag(const SEXP_t *cobj)
+static SEXP_t *probe_item_optimize(const SEXP_t *item);
+static int probe_cobj_memcheck(size_t item_cnt);
+
+int probe_cobj_add_item(SEXP_t *cobj, const SEXP_t *item)
+{
+	SEXP_t *lst, *oitem;
+	size_t item_cnt;
+
+	lst = SEXP_listref_nth(cobj, 3);
+	item_cnt = SEXP_list_length(lst);
+	if (probe_cobj_memcheck(item_cnt) != 0) {
+		SEXP_t *msg;
+
+		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_WARNING, "Object is incomplete due to memory constraints.");
+		probe_cobj_add_msg(cobj, msg);
+		probe_cobj_set_flag(cobj, SYSCHAR_FLAG_INCOMPLETE);
+		SEXP_vfree(lst, msg, NULL);
+
+		return -1;
+	}
+
+	oitem = probe_item_optimize(item);
+	SEXP_list_add(lst, oitem);
+	SEXP_vfree(lst, oitem, NULL);
+
+	return 0;
+}
+
+SEXP_t *probe_cobj_get_items(const SEXP_t *cobj)
+{
+	return SEXP_list_nth(cobj, 3);
+}
+
+void probe_cobj_set_flag(SEXP_t *cobj, oval_syschar_collection_flag_t flag)
+{
+	SEXP_t *sflag, *old_sflag;
+	oval_syschar_collection_flag_t of;
+
+	sflag = SEXP_number_newu(flag);
+	old_sflag = SEXP_list_replace(cobj, 1, sflag);
+	of = SEXP_number_getu(old_sflag);
+	SEXP_free(old_sflag);
+	dI("old flag: %d, new flag: %d.\n", of, flag);
+}
+
+oval_syschar_collection_flag_t probe_cobj_get_flag(const SEXP_t *cobj)
 {
 	SEXP_t *sflag;
 	oval_syschar_collection_flag_t flag;
 
 	sflag = SEXP_list_first(cobj);
-
-	if (sflag != NULL) {
-		flag = SEXP_number_geti(sflag);
-		SEXP_free(sflag);
-		return flag;
+	if (sflag == NULL) {
+		dE("sflag == NULL.\n");
+		return SYSCHAR_FLAG_UNKNOWN;
 	}
 
-	dE("sflag == NULL: not a collected object?\n");
+	flag = SEXP_number_getu(sflag);
+	SEXP_free(sflag);
 
-	return SYSCHAR_FLAG_UNKNOWN;
+	return flag;
 }
 
-oval_syschar_collection_flag_t _probe_cobj_combine_flags(oval_syschar_collection_flag_t f1,
-							 oval_syschar_collection_flag_t f2,
-							 oval_setobject_operation_t op)
+oval_syschar_collection_flag_t probe_cobj_combine_flags(oval_syschar_collection_flag_t f1,
+							oval_syschar_collection_flag_t f2,
+							oval_setobject_operation_t op)
 {
 	oval_syschar_collection_flag_t result = SYSCHAR_FLAG_ERROR;
 
@@ -756,6 +778,70 @@ oval_syschar_collection_flag_t _probe_cobj_combine_flags(oval_syschar_collection
 	}
 
 	return result;
+}
+
+oval_syschar_collection_flag_t probe_cobj_compute_flag(SEXP_t *cobj)
+{
+	oval_syschar_collection_flag_t flag;
+	SEXP_t *items, *item;
+	int error_cnt = 0;
+	int exists_cnt = 0;
+	int does_not_exist_cnt = 0;
+	int not_collected_cnt = 0;
+
+	items = probe_cobj_get_items(cobj);
+	SEXP_list_foreach(item, items) {
+		switch (probe_ent_getstatus(item)) {
+		case SYSCHAR_STATUS_ERROR:
+			++error_cnt;
+			break;
+		case SYSCHAR_STATUS_EXISTS:
+			++exists_cnt;
+			break;
+		case SYSCHAR_STATUS_DOES_NOT_EXIST:
+			++does_not_exist_cnt;
+			break;
+		case SYSCHAR_STATUS_NOT_COLLECTED:
+			++not_collected_cnt;
+			break;
+		default:
+			SEXP_free(item);
+			flag = SYSCHAR_STATUS_ERROR;
+			goto cleanup;
+		}
+	}
+
+	if (error_cnt > 0) {
+		flag = SYSCHAR_FLAG_ERROR;
+	} else if (not_collected_cnt > 0) {
+		flag = SYSCHAR_FLAG_INCOMPLETE;
+	} else if (exists_cnt > 0) {
+		flag = SYSCHAR_FLAG_COMPLETE;
+	} else {
+		flag = SYSCHAR_FLAG_DOES_NOT_EXIST;
+	}
+
+	if (probe_cobj_get_flag(cobj) == SYSCHAR_FLAG_UNKNOWN)
+		probe_cobj_set_flag(cobj, flag);
+
+ cleanup:
+	SEXP_free(items);
+	return flag;
+}
+
+/*
+ * messages
+ */
+SEXP_t *probe_msg_creat(oval_message_level_t level, char *message)
+{
+	SEXP_t *lvl, *str, *msg;
+
+	lvl = SEXP_number_newu(level);
+	str = SEXP_string_newf("%s", message);
+	msg = SEXP_list_new(lvl, str, NULL);
+	SEXP_vfree(lvl, str, NULL);
+
+	return msg;
 }
 
 /*
@@ -1163,26 +1249,29 @@ void probe_free(SEXP_t * obj)
 }
 
 /**
- * Add and _free_ an item to result list.
+ * Return a copy of the supplied item with optimized memory representation
  */
-int probe_result_additem(SEXP_t *result, SEXP_t *item)
+static SEXP_t *probe_item_optimize(const SEXP_t *item)
 {
-	assume_d(result != NULL, -1);
-	assume_d(item   != NULL, -1);
-
-	if (!SEXP_listp (result)) {
-		errno = EINVAL;
-		return (-1);
-	}
+	// todo
+	return SEXP_ref(item);
+}
 
 #define PROBE_RESULT_MEMCHECK_CTRESHOLD  65535  /* item count */
 #define PROBE_RESULT_MEMCHECK_MINFREEMEM 128    /* MiB */
 #define PROBE_RESULT_MEMCHECK_MAXRATIO   0.80   /* max. memory usage ratio - used/total */
 
-	if (SEXP_list_length (result) > PROBE_RESULT_MEMCHECK_CTRESHOLD) {
+/**
+ * Return true if the memory constraints are not reached.
+ */
+static int probe_cobj_memcheck(size_t item_cnt)
+{
+	if (item_cnt > PROBE_RESULT_MEMCHECK_CTRESHOLD) {
 		struct memusage mu;
 		struct sysinfo  si;
 		float  c_ratio;
+
+		// todo: add an error message to the collected object?
 
 		if (memusage (&mu) != 0)
 			return (-1);
@@ -1200,17 +1289,16 @@ int probe_result_additem(SEXP_t *result, SEXP_t *item)
 		}
 
 		if (((si.freeram * si.mem_unit) / 1048576) < PROBE_RESULT_MEMCHECK_MINFREEMEM) {
-			dW("Minimum memory limit reached! limit=%zu, current=%zu\n",
+			dW("Minimum free memory limit reached! limit=%zu, current=%zu\n",
 			   PROBE_RESULT_MEMCHECK_MINFREEMEM, (si.freeram * si.mem_unit) / 1048576);
 			errno = ENOMEM;
 			return (-1);
 		}
 	}
 
-	/* TODO: optimize */
-
-	SEXP_list_add (result, item);
-	SEXP_free(item);
-
 	return (0);
 }
+
+#undef PROBE_RESULT_MEMCHECK_CTRESHOLD
+#undef PROBE_RESULT_MEMCHECK_MINFREEMEM
+#undef PROBE_RESULT_MEMCHECK_MAXRATIO

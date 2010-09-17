@@ -350,7 +350,7 @@ static void report_finding(struct result_info *res, llist *l, SEXP_t *probe_out)
 		"user_id", NULL, r9 = SEXP_string_newf("%u", n->uid),
 		NULL);
 	SEXP_vfree(r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, NULL);
-	SEXP_list_add(probe_out, item_sexp);
+	probe_cobj_add_item(probe_out, item_sexp);
 	SEXP_free(item_sexp);
 }
 
@@ -518,57 +518,48 @@ static int read_raw(const char *proc, const char *type, llist *l,
 	return 0;
 }
 
-SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
+int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg)
 {
+	int err;
 	llist ll;
-	SEXP_t *probe_out = NULL, *item_sexp;
+
+	if (object == NULL || probe_out == NULL) {
+		return (PROBE_EINVAL);
+	}
 
 	req.protocol_ent = probe_obj_getent(object, "protocol", 1);
 	if (req.protocol_ent == NULL) {
-		*err = PROBE_ENOVAL;
+		err = PROBE_ENOVAL;
 		goto cleanup;
 	}
 
 	req.local_address_ent = probe_obj_getent(object, "local_address", 1);
 	if (req.local_address_ent == NULL) {
-		*err = PROBE_ENOVAL;
+		err = PROBE_ENOVAL;
 		goto cleanup;
 	}
 
 	req.local_port_ent = probe_obj_getent(object, "local_port", 1);
 	if (req.local_port_ent == NULL) {
-		*err = PROBE_ENOVAL;
+		err = PROBE_ENOVAL;
 		goto cleanup;
 	}
-
-	probe_out = SEXP_list_new(NULL);
 
 	// Now start collecting the info
 	list_create(&ll);
 	if (collect_process_info(&ll) || perm_warn) {
-		_D("Permission error\n");
-		/* We had a bad day... */
-		SEXP_t *r1, *r2, *r3;
+		char *s = "Permission error.\n";
+		SEXP_t *msg;
 
-		r1 = probe_ent_getval(req.protocol_ent);
-		r2 = probe_ent_getval(req.local_address_ent);
-		r3 = probe_ent_getval(req.local_port_ent);
-		item_sexp = probe_item_creat("inetlisteningservers_item", NULL,
-			"protocol", NULL, r1,
-			"local_address", NULL, r2,
-			"local_port", NULL, r3,
-			"local_full_address", NULL, NULL,
-			"program_name", NULL, NULL,
-			"foreign_address", NULL, NULL,
-			"foreign_port", NULL, NULL,
-			"foreign_full_address", NULL, NULL,
-			"pid", NULL, NULL,
-			"user_id", NULL, NULL,
-			NULL);
-		probe_item_setstatus(item_sexp, OVAL_STATUS_ERROR);
-		SEXP_list_add(probe_out, item_sexp);
-		SEXP_free(item_sexp);
-		SEXP_vfree(r1, r2, r3, NULL);
+		_D(s);
+
+		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, s);
+		probe_cobj_add_msg(probe_out, msg);
+		SEXP_free(msg);
+		probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
+
+		err = PROBE_EUNKNOWN;
+		goto cleanup;
 	}
 
 	// Now we check the tcp socket list...
@@ -586,10 +577,9 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 
 	list_clear(&ll);
 
-	*err = 0;
+	err = 0;
  cleanup:
 	SEXP_vfree(req.protocol_ent, req.local_address_ent, req.local_port_ent, NULL);
 
-	return probe_out;
+	return err;
 }
-

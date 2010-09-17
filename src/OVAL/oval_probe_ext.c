@@ -539,8 +539,13 @@ static struct oval_sysinfo *oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, 
 	if (r0 == NULL)
 		return (NULL);
 
-	s_sinf = _probe_cobj_get_items(r0);
-	SEXP_free(r0);
+	r1 = probe_cobj_get_items(r0);
+	s_sinf = SEXP_list_first(r1);
+	SEXP_vfree(r0, r1, NULL);
+
+	if (s_sinf == NULL)
+		return (NULL);
+
 	sysinf = oval_sysinfo_new(model);
 
 	/*
@@ -821,7 +826,7 @@ int oval_probe_ext_init(oval_pext_t *pext)
 int oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext, struct oval_object *object, struct oval_syschar **syschar, int flags)
 {
         SEXP_t *s_obj, *s_sys;
-        struct oval_syschar *o_sys;
+        //struct oval_syschar *o_sys;
         struct oval_syschar_model *model = *(pext->model);
 
 	if (syschar == NULL) {

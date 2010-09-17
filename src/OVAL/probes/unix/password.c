@@ -80,7 +80,7 @@ static void report_finding(struct result_info *res, SEXP_t *probe_out)
 							res->login_shell),
 		NULL);
 	SEXP_vfree(r0, r1, r2, r3, r4, r5, r6, NULL);
-	SEXP_list_add(probe_out, item_sexp);
+	probe_cobj_add_item(probe_out, item_sexp);
 	SEXP_free(item_sexp);
 }
 
@@ -111,22 +111,23 @@ static int read_password(SEXP_t *un_ent, SEXP_t *probe_out)
 	return 0;
 }
 
-SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
+int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg)
 {
-	SEXP_t *probe_out, *ent;
+	SEXP_t *ent;
+
+	if (object == NULL || probe_out == NULL) {
+		return (PROBE_EINVAL);
+	}
 
 	ent = probe_obj_getent(object, "username", 1);
 	if (ent == NULL) {
-		*err = PROBE_ENOVAL;
-		return NULL;
+		return PROBE_ENOVAL;
 	}
-	probe_out = SEXP_list_new(NULL);
 
 	// Now we check the file...
 	read_password(ent, probe_out);
 	SEXP_free(ent);
 
-	*err = 0;
-	return probe_out;
+	return 0;
 }
 

@@ -171,7 +171,7 @@ static int filehash_cb (const char *p, const char *f, void *ptr)
                 SEXP_vfree (r0, r1, r2, r3, NULL);
         }
 
-        SEXP_list_add (res, itm);
+	probe_cobj_add_item(res, itm);
         SEXP_free (itm);
 
         return (0);
@@ -212,15 +212,18 @@ void probe_fini (void *arg)
         return;
 }
 
-SEXP_t *probe_main (SEXP_t *probe_in, int *err, void *mutex)
+int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex)
 {
-        SEXP_t *path, *filename, *behaviors, *items;
+        SEXP_t *path, *filename, *behaviors;
         SEXP_t *r0, *r1, *r2;
         int     filecnt;
 
+	if (probe_in == NULL || probe_out == NULL) {
+		return (PROBE_EINVAL);
+	}
+
         if (mutex == NULL) {
-                *err = PROBE_EINIT;
-                return (NULL);
+		return (PROBE_EINIT);
         }
 
         _A(mutex == &__filehash_probe_mutex);
@@ -230,13 +233,11 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err, void *mutex)
         behaviors = probe_obj_getent (probe_in, "behaviors", 1);
 
         if (path == NULL || filename == NULL) {
-                *err = PROBE_ENOELM;
-
                 SEXP_free (behaviors);
                 SEXP_free (path);
                 SEXP_free (filename);
 
-                return (NULL);
+		return (PROBE_ENOELM);
         }
 
         if (behaviors == NULL) {
@@ -271,33 +272,26 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err, void *mutex)
 
         _A(behaviors != NULL);
 
-        items = SEXP_list_new (NULL);
-
         switch (pthread_mutex_lock (&__filehash_probe_mutex)) {
         case 0:
                 break;
         default:
                 _D("Can't lock mutex(%p): %u, %s.\n", &__filehash_probe_mutex, errno, strerror (errno));
 
-                *err = PROBE_EFATAL;
-                return (NULL);
+		return (PROBE_EFATAL);
         }
 
-        filecnt = find_files (path, filename, behaviors, &filehash_cb, (void *)items);
-        *err    = 0;
+        filecnt = find_files (path, filename, behaviors, &filehash_cb, (void *) probe_out);
 
         if (filecnt < 0) {
-                /* error */
-                SEXP_free (items);
-                r0    = probe_obj_creat ("file_item", NULL,
-                                        /* entities */
-                                        "path",     NULL, path,
-                                         NULL);
+		char s[50];
+		SEXP_t *msg;
 
-                probe_item_setstatus(r0, OVAL_STATUS_ERROR);
-
-                SEXP_list_add (items, r0);
-                SEXP_free (r0);
+		snprintf(s, sizeof (s), "find_files returned error: %d", filecnt);
+		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, s);
+		probe_cobj_add_msg(probe_out, msg);
+		SEXP_free(msg);
+		probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
         }
 
         SEXP_free (behaviors);
@@ -310,9 +304,8 @@ SEXP_t *probe_main (SEXP_t *probe_in, int *err, void *mutex)
         default:
                 _D("Can't unlock mutex(%p): %u, %s.\n", &__filehash_probe_mutex, errno, strerror (errno));
 
-                *err = PROBE_EFATAL;
-                return (NULL);
+		return (PROBE_EFATAL);
         }
 
-        return (items);
+	return 0;
 }

@@ -164,7 +164,7 @@ static int get_ifs(SEXP_t *item)
 }
 #endif
 
-SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
+int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 {
 	SEXP_t *item;
         SEXP_t *r0, *r1, *r2, *r3;
@@ -173,14 +173,12 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
 
         (void)arg;
 
-	if (probe_in == NULL) {
-		*err = PROBE_EINVAL;
-		return NULL;
+	if (probe_in == NULL || probe_out == NULL) {
+		return PROBE_EINVAL;
 	}
 
         if (uname(&sname) == -1) {
-                *err = PROBE_EUNKNOWN;
-                return NULL;
+		return PROBE_EUNKNOWN;
         }
 
         os_name = sname.sysname;
@@ -197,11 +195,11 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
                                   NULL);
 
         if (get_ifs(item)) {
-               *err = PROBE_EUNKNOWN;
-               return NULL;
-       }
-        SEXP_vfree (r0, r1, r2, r3, NULL);
-	*err = 0;
+		return PROBE_EUNKNOWN;
+	}
 
-	return (item);
+	probe_cobj_add_item(probe_out, item);
+        SEXP_vfree (r0, r1, r2, r3, item, NULL);
+
+	return (0);
 }

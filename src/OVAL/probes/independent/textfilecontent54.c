@@ -205,7 +205,7 @@ struct pfdata {
 	char *pattern;
 	SEXP_t *filename_ent;
 	SEXP_t *instance_ent;
-	SEXP_t *item_list;
+	SEXP_t *cobj;
 };
 
 static int process_file(const char *path, const char *file, void *arg)
@@ -280,7 +280,7 @@ static int process_file(const char *path, const char *file, void *arg)
 
                                 item = create_item(path, file, pfd->pattern,
                                                    cur_inst, substrs, substr_cnt);
-                                SEXP_list_add(pfd->item_list, item);
+				probe_cobj_add_item(pfd->cobj, item);
                                 SEXP_free(item);
 
 				for (k = 0; k < substr_cnt; ++k)
@@ -304,7 +304,7 @@ static int process_file(const char *path, const char *file, void *arg)
 	return ret;
 }
 
-SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
+int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 {
 	SEXP_t *path_ent, *file_ent, *inst_ent, *bh_ent, *patt_ent;
         SEXP_t *r0, *r1;
@@ -314,29 +314,26 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
 
         (void)arg;
 
-	if (probe_in == NULL) {
-		*err = PROBE_EINVAL;
-		return NULL;
+	if (probe_in == NULL || probe_out == NULL) {
+		return(PROBE_EINVAL);
 	}
 
-        *err = PROBE_ENOELM;
-
         if ((path_ent = probe_obj_getent(probe_in, "path",     1)) == NULL)
-                return(NULL);
+		return(PROBE_ENOELM);
         if ((file_ent = probe_obj_getent(probe_in, "filename", 1)) == NULL) {
                 SEXP_free(path_ent);
-                return(NULL);
+		return(PROBE_ENOELM);
         }
         if ((inst_ent = probe_obj_getent(probe_in, "instance", 1)) == NULL) {
                 SEXP_free(path_ent);
                 SEXP_free(file_ent);
-                return(NULL);
+		return(PROBE_ENOELM);
         }
         if ((patt_ent = probe_obj_getent(probe_in, "pattern",  1)) == NULL) {
                 SEXP_free(path_ent);
                 SEXP_free(file_ent);
                 SEXP_free(inst_ent);
-                return(NULL);
+		return(PROBE_ENOELM);
         } else {
                 SEXP_t *ent_val;
 
@@ -374,19 +371,19 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
 	pfd.pattern      = pattern;
 	pfd.filename_ent = file_ent;
 	pfd.instance_ent = inst_ent;
-	pfd.item_list    = SEXP_list_new(NULL);
+	pfd.cobj         = probe_out;
 
 	fcnt = find_files(path_ent, file_ent, bh_ent, process_file, (void *) &pfd);
 
 	if (fcnt < 0) {
-		SEXP_t *item;
-		item = probe_item_creat("textfilecontent_item", NULL,
-                                        "path", NULL,
-                                        r0 = probe_ent_getval(path_ent),
-                                        NULL);
-                probe_item_setstatus(item, OVAL_STATUS_ERROR);
-		SEXP_list_add(pfd.item_list, item);
-                SEXP_vfree(r0, item, NULL);
+		char s[50];
+		SEXP_t *msg;
+
+		snprintf(s, sizeof (s), "find_files returned error: %d", fcnt);
+		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, s);
+		probe_cobj_add_msg(probe_out, msg);
+		SEXP_free(msg);
+		probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
 	}
 
         SEXP_free(file_ent);
@@ -395,7 +392,6 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
         SEXP_free(bh_ent);
         oscap_free(pattern);
 
-	*err = 0;
-	return pfd.item_list;
+	return 0;
 }
 

@@ -55,16 +55,20 @@
 #include <errno.h>
 
 #ifndef HAVE_SHADOW_H
-SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
+int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg)
 {
-        SEXP_t *item_sexp, *probe_out;
+        SEXP_t *item_sexp;
+
+	if (object == NULL || probe_out == NULL) {
+		return (PROBE_EINVAL);
+	}
 
 	item_sexp = probe_item_creat ("shadow_item", NULL, NULL);
         probe_item_setstatus (item_sexp, OVAL_STATUS_NOTCOLLECTED);
-        probe_out = SEXP_list_new (item_sexp, NULL);
+	probe_cobj_add_item(probe_out, item_sexp);
         SEXP_free (item_sexp);
 
-        return (probe_out);
+        return 0;
 }
 #else
 /* shadow.h is present */
@@ -100,7 +104,7 @@ static void report_finding(struct result_info *res, SEXP_t *probe_out)
 		"flag", NULL, r8 = SEXP_string_newf("%lu", res->flag),
 		NULL);
 	SEXP_vfree(r0, r1, r2, r3, r4, r5, r6, r7, r8, NULL);
-	SEXP_list_add(probe_out, item_sexp);
+	probe_cobj_add_item(probe_out, item_sexp);
 	SEXP_free(item_sexp);
 }
 
@@ -136,30 +140,23 @@ static int read_shadow(SEXP_t *un_ent, SEXP_t *probe_out)
 	return err;
 }
 
-SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
+int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg)
 {
-	SEXP_t *probe_out, *ent;
+	SEXP_t *ent;
+
+	if (object == NULL || probe_out == NULL) {
+		return (PROBE_EINVAL);
+	}
 
 	ent = probe_obj_getent(object, "username", 1);
 	if (ent == NULL) {
-		*err = PROBE_ENOVAL;
-		return NULL;
+		return PROBE_ENOVAL;
 	}
-	probe_out = SEXP_list_new(NULL);
-	*err = 0;
 
 	// Now we check the file...
-	if (read_shadow(ent, probe_out)) {
-                SEXP_t *eitm;
-
-                eitm = probe_item_creat ("shadow_item", NULL, NULL);
-                probe_item_setstatus (eitm, OVAL_STATUS_ERROR);
-                SEXP_list_add(probe_out, eitm);
-                SEXP_free(eitm);
-	}
-
+	read_shadow(ent, probe_out);
 	SEXP_free(ent);
 
-	return probe_out;
+	return 0;
 }
 #endif /* HAVE_SHADOW_H */

@@ -1419,31 +1419,37 @@ void probe_fini(void *arg)
 		xiconf_free(arg);
 }
 
-SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
+int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg)
 {
-	SEXP_t *item_list, *eval;
+	SEXP_t *eval;
 	char    srv_name[256];
 	char    srv_prot[256];
+	int     err;
 
 	xiconf_strans_t  *xres;
 	xiconf_t         *xcfg = (xiconf_t *)arg;
 
+	if (object == NULL || probe_out == NULL) {
+		err = PROBE_EINVAL;
+		goto fail;
+	}
+
 	if (arg == NULL) {
-		*err = PROBE_EINIT;
-		return (NULL);
+		err = PROBE_EINIT;
+		goto fail;
 	}
 
 	eval = probe_obj_getentval(object, "service_name", 1);
 
 	if (eval == NULL) {
-		*err = PROBE_ENOVAL;
-		return (NULL);
+		err = PROBE_ENOVAL;
+		goto fail;
 	}
 
 	if (SEXP_string_cstr_r (eval, srv_name, sizeof srv_name) == (size_t)-1) {
-		*err = PROBE_ERANGE;
 		SEXP_free (eval);
-		return (NULL);
+		err = PROBE_ERANGE;
+		goto fail;
 	}
 
 	SEXP_free (eval);
@@ -1451,14 +1457,14 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 
 	if (eval == NULL) {
 		oscap_free(srv_name);
-		*err = PROBE_ENOVAL;
-		return (NULL);
+		err = PROBE_ENOVAL;
+		goto fail;
 	}
 
 	if (SEXP_string_cstr_r (eval, srv_prot, sizeof srv_prot) == (size_t)-1) {
-		*err = PROBE_ERANGE;
 		SEXP_free (eval);
-		return (NULL);
+		err = PROBE_ERANGE;
+		goto fail;
 	}
 
 	SEXP_free (eval);
@@ -1466,16 +1472,14 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 	_D("Updating xinetd configuration cache");
 
 	if (xiconf_update(arg) != 0) {
-		/* generate an error item */
-		return(NULL);
+		err = PROBE_EUNKNOWN;
+		goto fail;
 	}
 
 	_D("Looking for service(s) that match: (%s && %s)\n", srv_name, srv_prot);
 	xres = xiconf_getservice(xcfg, srv_name, srv_prot);
 
 	/* TODO: distinguish between an error and "not found" result */
-
-	item_list = SEXP_list_new(NULL);
 
 	if (xres != NULL) {
 		SEXP_t *item;
@@ -1501,7 +1505,7 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 						"disabled",         NULL, r[0xC]= SEXP_number_newb(xres->srv[l]->disable),
 						NULL);
 
-			SEXP_list_add(item_list, item);
+			probe_cobj_add_item(probe_out, item);
 			SEXP_free(item);
 
 			/* TODO: get rid of useless S-exp refs */
@@ -1510,6 +1514,9 @@ SEXP_t *probe_main(SEXP_t *object, int *err, void *arg)
 		}
 	}
 
-	return (item_list);
+	return (0);
+ fail:
+	probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
+	return err;
 }
 #endif

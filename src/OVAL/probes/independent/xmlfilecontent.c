@@ -66,7 +66,7 @@
 struct pfdata {
 	SEXP_t *filename_ent;
 	char *xpath;
-	SEXP_t *item_list;
+	SEXP_t *cobj;
 };
 
 static void dummy_err_func(void * ctx, const char * msg, ...)
@@ -90,21 +90,6 @@ void probe_fini(void *arg)
 	xmlCleanupParser();
 }
 
-static int report_missing(SEXP_t *ent)
-{
-	oval_operation_t op;
-        SEXP_t *r0;
-
-        r0 = probe_ent_getattrval(ent, "operation");
-	op = SEXP_number_geti_32(r0);
-        SEXP_free (r0);
-
-	if (op == OVAL_OPERATION_EQUALS)
-		return 1;
-	else
-		return 0;
-}
-
 static int process_file(const char *path, const char *filename, void *arg)
 {
 	struct pfdata *pfd = (struct pfdata *) arg;
@@ -120,32 +105,8 @@ static int process_file(const char *path, const char *filename, void *arg)
 
         SEXP_t *r0, *r1, *r2;
 
-	if (filename == NULL) {
-		if (report_missing(pfd->filename_ent)) {
-                        item = probe_item_creat("xmlfilecontent_item", NULL,
-                                                /* entities */
-                                                "path",     NULL, r0 = SEXP_string_new (path, strlen (path)),
-                                                "filename", NULL, r1 = SEXP_string_new (filename, strlen (filename)),
-                                                NULL);
-
-                        SEXP_vfree (r0, r1, NULL);
-
-                        probe_item_setstatus(item, OVAL_STATUS_DOESNOTEXIST);
-                        probe_itement_setstatus(item, "filename", 1, OVAL_STATUS_DOESNOTEXIST);
-		} else {
-                        item = probe_item_creat("xmlfilecontent_item", NULL,
-                                                /* entities */
-                                                "path", NULL, r0 = SEXP_string_new (path, strlen (path)),
-                                                NULL);
-
-                        SEXP_free (r0);
-		}
-
-		SEXP_list_add(pfd->item_list, item);
-                SEXP_free (item);
-
+	if (filename == NULL)
 		goto cleanup;
-	}
 
 	path_len     = strlen(path);
 	filename_len = strlen(filename);
@@ -215,7 +176,7 @@ static int process_file(const char *path, const char *filename, void *arg)
 		}
 	}
 
-	SEXP_list_add(pfd->item_list, item);
+	probe_cobj_add_item(pfd->cobj, item);
         SEXP_free (item);
 
  cleanup:
@@ -231,26 +192,27 @@ static int process_file(const char *path, const char *filename, void *arg)
 	return ret;
 }
 
-SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
+int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 {
 	SEXP_t *path_ent, *filename_ent, *xpath_ent, *behaviors_ent;
         SEXP_t *r0, *r1, *r2;
 
         (void)arg;
 
-	if (probe_in == NULL) {
-		*err = PROBE_EINVAL;
-		return NULL;
+	if (probe_in == NULL || probe_out == NULL) {
+		return(PROBE_EINVAL);
 	}
 
-	/* parse request */
-	if ((path_ent = probe_obj_getent(probe_in, "path", 1)) == NULL ||
-	    (filename_ent = probe_obj_getent(probe_in, "filename", 1)) == NULL ||
-	    (xpath_ent = probe_obj_getent(probe_in, "xpath", 1)) == NULL)
-        {
-		*err = PROBE_ENOELM;
-		return NULL;
-	}
+        if ((path_ent = probe_obj_getent(probe_in, "path", 1)) == NULL)
+		return(PROBE_ENOELM);
+        if ((filename_ent = probe_obj_getent(probe_in, "filename", 1)) == NULL) {
+                SEXP_free(path_ent);
+		return(PROBE_ENOELM);
+        }
+        if ((xpath_ent = probe_obj_getent(probe_in, "xpath", 1)) == NULL) {
+                SEXP_vfree(path_ent, filename_ent, NULL);
+		return(PROBE_ENOELM);
+        }
 
 	/* canonicalize behaviors */
 	behaviors_ent = probe_obj_getent(probe_in, "behaviors", 1);
@@ -287,36 +249,19 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
         SEXP_free (r0);
 
 	pfd.filename_ent = filename_ent;
-	pfd.item_list = SEXP_list_new(NULL);
+	pfd.cobj = probe_out;
 
 	fcnt = find_files(path_ent, filename_ent, behaviors_ent,
 			  process_file, (void *) &pfd);
-	if (fcnt == 0) {
-		if (report_missing(pfd.filename_ent)) {
-			SEXP_t *item;
+	if (fcnt < 0) {
+		char s[50];
+		SEXP_t *msg;
 
-			item = probe_item_creat("xmlfilecontent_item", NULL,
-                                                /* entities */
-                                                "path", NULL, r0 = probe_ent_getval(path_ent),
-                                                NULL);
-                        SEXP_free (r0);
-
-                        probe_item_setstatus(item, OVAL_STATUS_DOESNOTEXIST);
-			probe_itement_setstatus(item, "path", 1, OVAL_STATUS_DOESNOTEXIST);
-			SEXP_list_add(pfd.item_list, item);
-                        SEXP_free (item);
-		}
-	} else if (fcnt < 0) {
-		SEXP_t *item;
-
-		item = probe_item_creat("xmlfilecontent_item", NULL,
-                                        /* entities */
-                                        "path", NULL, r0 = probe_ent_getval(path_ent),
-                                        NULL);
-                SEXP_free (r0);
-                probe_item_setstatus(item, OVAL_STATUS_ERROR);
-		SEXP_list_add(pfd.item_list, item);
-                SEXP_free (item);
+		snprintf(s, sizeof (s), "find_files returned error: %d", fcnt);
+		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, s);
+		probe_cobj_add_msg(probe_out, msg);
+		SEXP_free(msg);
+		probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
 	}
 
         SEXP_free (path_ent);
@@ -324,6 +269,5 @@ SEXP_t *probe_main(SEXP_t *probe_in, int *err, void *arg)
         SEXP_free (xpath_ent);
         SEXP_free (behaviors_ent);
 
-	*err = 0;
-	return pfd.item_list;
+	return 0;
 }
