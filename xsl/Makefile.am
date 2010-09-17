@@ -7,6 +7,7 @@ xsl_DATA =   security-guide.xsl \
              oscap-share.xsl \
              dc2docbook.xsl \
              html2docbook.xsl \
+			 dbout-html.xsl \
              docbook-share.xsl \
              fix.xsl \
              fixtpl-bash.xml \
@@ -19,6 +20,7 @@ EXTRA_DIST = security-guide.xsl \
              oval-results-report.xsl \
              dc2docbook.xsl \
              html2docbook.xsl \
+			 dbout-html.xsl \
              docbook-share.xsl \
              fix.xsl \
              fixtpl-bash.xml \
