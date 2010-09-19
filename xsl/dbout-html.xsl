@@ -32,11 +32,15 @@ Authors:
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:db="http://docbook.org/ns/docbook"
     xmlns:exsl="http://exslt.org/common"
+    xmlns:svg="http://www.w3.org/2000/svg"
     xmlns:xlink="http://www.w3.org/1999/xlink"
-    exclude-result-prefixes="xsl db exsl xlink htm"
+    exclude-result-prefixes="xsl db exsl htm"
 	>
 
-<xsl:output method="xml" encoding="UTF-8" indent="no"/>
+<xsl:output method="xml" encoding="UTF-8" indent="no"
+  doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
+  doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+/>
 
 <xsl:variable name='generator'/>
 
@@ -45,7 +49,7 @@ Authors:
 </xsl:template>
 
 <xsl:template mode='dbout.html' match='/'>
-  <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svg="http://www.w3.org/2000/svg">
     <head>
       <xsl:apply-templates mode='dbout.html.head'/>
       <meta name="generator" content="{$generator}"/>
@@ -339,6 +343,10 @@ Authors:
   </p>
 </xsl:template>
 
+<xsl:template mode='dbout.html.nav' match='db:section[@role="result-detail"]'>
+  <p class='link'><a href='#results'>results summary</a></p>
+</xsl:template>
+
 <xsl:template mode='dbout.html.nav' match='node()'/>
 
 <xsl:template name='dbout.html.nlink'>
@@ -362,6 +370,20 @@ Authors:
 </xsl:template>
 
 <xsl:template mode='dbout.html.head' match='node()'/>
+
+<!-- images & media -->
+
+<xsl:template mode='dbout.html' match='db:inlinemediaobject'>
+  <xsl:for-each select='(db:audioobject|db:imageobject|db:imageobjectco|db:textobject|db:videoobject)[1]'>
+    <span class='media'><xsl:call-template name='dbout.html.inline'/></span>
+  </xsl:for-each>
+</xsl:template>
+
+<xsl:template mode='dbout.html' match='db:imagedata'>
+  <xsl:apply-templates mode='dbout.html'/>
+</xsl:template>
+
+<xsl:template mode='dbout.html' match='svg:*'><xsl:copy-of select='.'/></xsl:template>
 
 <!-- functions -->
 
@@ -419,13 +441,17 @@ Authors:
     div#content h2 { border-bottom:2px dashed; margin-top:2em; margin-bottom:1.5em; text-align:center; }
     div#content h2#summary { margin-top:1em; }
     h1 { margin:1em 0; }
-    table.raw, table.raw td { border:none; width:auto; padding:0; }
-    table.raw { margin-left: 2em; }
-    table.raw td { padding: .1em .7em; }
+    div.raw table, div.raw table td { border:none; width:auto; padding:0; }
+    div.raw table { margin-left: 2em; }
+    div.raw table td { padding: .1em .7em; }
     pre.code { background: #ccc; padding:.2em; }
     ul.toc-struct li { list-style-type: none; }
     div.xccdf-rule { margin-left: 10%; }
     div#footer, p.remark, .link { font-size:.8em; }
+    thead tr td { font-weight:bold; text-align:center; }
+    .hidden { display:none; }
+    td.score-bar { text-align:center; }
+    td.score-bar span.media { width:100%; min-width:7em; height:.8em; display:block; margin:0; padding:0; }
   </style>
   <style type='text/css' media='screen'>
     div#content, div#header, div#footer { margin-left:5%; margin-right:25%; }
