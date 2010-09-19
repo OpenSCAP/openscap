@@ -95,7 +95,8 @@ static struct oscap_module XCCDF_EVAL = {
 
 #define GEN_OPTS \
         "Generate options:\n" \
-        "   --profile <profile-id>\r\t\t\t\t - Tailor XCCDF file with respect to a profile.\n"
+        "   --profile <profile-id>\r\t\t\t\t - Tailor XCCDF file with respect to a profile.\n" \
+        "   --format <fmt>\r\t\t\t\t - Select output format. Can be html or docbook.\n"
 
 static struct oscap_module XCCDF_GENERATE = {
     .name = "generate",
@@ -111,13 +112,13 @@ static struct oscap_module XCCDF_GENERATE = {
 static struct oscap_module XCCDF_GEN_REPORT = {
     .name = "report",
     .parent = &XCCDF_GENERATE,
-    .summary = "Generate results report HTML file",
+    .summary = "Generate results report",
     .usage = "[options] xccdf-file.xml",
     .help = GEN_OPTS
         "\nOptions:\n"
         "   --result-id <id>\r\t\t\t\t - TestResult ID to be processed. Default is the most recent one.\n"
         "   --show <result-type*>\r\t\t\t\t - Rule results to show. Defaults to everything but notselected and notapplicable.\n"
-        "   --output <file>\r\t\t\t\t - Write the HTML into file.",
+        "   --output <file>\r\t\t\t\t - Write the document into file.",
     .opt_parser = getopt_xccdf,
     .user = "xccdf-results-report.xsl",
     .func = app_xccdf_xslt
@@ -126,11 +127,11 @@ static struct oscap_module XCCDF_GEN_REPORT = {
 static struct oscap_module XCCDF_GEN_GUIDE = {
     .name = "guide",
     .parent = &XCCDF_GENERATE,
-    .summary = "Generate security guide HTML file",
+    .summary = "Generate security guide",
     .usage = "[options] xccdf-file.xml",
     .help = GEN_OPTS
         "\nOptions:\n"
-        "   --output <file>\r\t\t\t\t - Write the HTML into file.\n"
+        "   --output <file>\r\t\t\t\t - Write the document into file.\n"
         "   --hide-profile-info\r\t\t\t\t - Do not output additional information about selected profile.\n",
     .opt_parser = getopt_xccdf,
     .user = "security-guide.xsl",
@@ -482,6 +483,7 @@ int app_xccdf_xslt(const struct oscap_action *action)
         "show",              action->show,
         "profile",           action->profile,
         "template",          action->tmpl,
+        "format",            action->format,
         "verbosity",         action->verbosity >= 0 ? "1" : "",
         "hide-profile-info", action->hide_profile_info ? "yes" : NULL,
         NULL };
@@ -492,6 +494,7 @@ bool getopt_generate(int argc, char **argv, struct oscap_action *action)
 {
 	static const struct option long_options[] = {
 		{"profile", 1, 0, 3},
+		{"format", 1, 0, 4},
 		{0, 0, 0, 0}
 	};
 
@@ -499,6 +502,7 @@ bool getopt_generate(int argc, char **argv, struct oscap_action *action)
 	while ((c = getopt_long(argc, argv, "+", long_options, NULL)) != -1) {
 		switch (c) {
 		case 3: action->profile = optarg; break;
+		case 4: action->format = optarg; break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
 	}
@@ -524,6 +528,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"oval-results", 0, 0, 5},
 		{"show", 1, 0, 6},
 		{"template", 1, 0, 7},
+		{"format", 1, 0, 8},
 		{"hide-profile-info", 0, &action->hide_profile_info, 1},
 		{0, 0, 0, 0}
 	};
@@ -540,6 +545,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		case 5: action->oval_results = true; break;
 		case 6: action->show = optarg; break;
 		case 7: action->tmpl = optarg; break;
+		case 8: action->format = optarg; break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
 	}

@@ -111,6 +111,7 @@ struct oscap_action {
         char *profile;
         char *file_version;
         char *show;
+        char *format;
         const char *tmpl;
         char *id;
         int verbosity;

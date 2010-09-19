@@ -136,11 +136,14 @@ Generate another document form an XCCDF file such as security guide or result re
 \fB\-\-profile ID\fR
 Apply profile with given ID to the Benchmark before further processing takes place.
 .TP
+\fB\-\-format FMT\fR
+Specify output format. This option applies only on document generators (i.e. guide, report). Avalable formats: \fIhtml\fR (default), \fIdocbook\fR.
+.TP
 Available submodules:
 .TP
 .B \fBguide\fR  [\fIoptions\fR] xccdf-file
 .RS
-Generate a formatted HTML page containing a security guide from a XCCDF Benchmark. Unless the --output option is specified it will be written to the standard output.
+Generate a formatted document containing a security guide from a XCCDF Benchmark. Unless the --output option is specified it will be written to the standard output.
 .TP
 \fB\-\-output FILE\fR
 Write the guide to this file instead of standard output.
@@ -151,7 +154,7 @@ Information on chosen profile (e.g. rules selected by the profile) will be exclu
 .TP
 .B \fBreport\fR  [\fIoptions\fR] xccdf-file
 .RS
-Generate a formatted HTML page containing results of a XCCDF Benchmark execution. Unless the --output option is specified it will be written to the standard output. ID of the TestResult element to visualise defaults to the most recent result (according to the end-time attribute).
+Generate a document containing results of a XCCDF Benchmark execution. Unless the --output option is specified it will be written to the standard output. ID of the TestResult element to visualise defaults to the most recent result (according to the end-time attribute).
 .TP
 \fB\-\-output FILE\fR
 Write the report to this file instead of standard output.
