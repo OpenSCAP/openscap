@@ -38,7 +38,7 @@ Authors:
 </xsl:template>
 
 <!-- substitute cdf:instance -->
-<xsl:template match="cdf:instance" mode='sub'>
+<xsl:template match="cdf:fix//cdf:instance" mode='sub'>
   <xsl:variable name='ctx' select='@context'/>
   <xsl:choose>
     <xsl:when test='ancestor::cdf:rule-result'>

@@ -28,10 +28,14 @@ Authors:
     xmlns:exsl="http://exslt.org/common"
     xmlns:edate="http://exslt.org/dates-and-times">
 
+<!-- parametres -->
+<xsl:param name='oscap-version'/>
+<xsl:param name='verbosity'/>
+<xsl:param name='pwd'/>
+
 <!-- variable with current date/time -->
 <xsl:variable name='now' select='edate:date-time()'/>
+<!-- veriable w/ generator info -->
 <xsl:variable name='generator' select="'OpenSCAP stylesheet'"/>
-<xsl:param name="oscap-version"/>
-<xsl:param name='pwd'/>
 
 </xsl:stylesheet>
