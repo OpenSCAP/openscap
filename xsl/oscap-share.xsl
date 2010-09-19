@@ -32,5 +32,6 @@ Authors:
 <xsl:variable name='now' select='edate:date-time()'/>
 <xsl:variable name='generator' select="'OpenSCAP stylesheet'"/>
 <xsl:param name="oscap-version"/>
+<xsl:param name='pwd'/>
 
 </xsl:stylesheet>

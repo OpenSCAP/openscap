@@ -69,7 +69,7 @@ $val        - actual XCCDF fix text value (substitutions already performed, <fix
 	xmlns:cdf="http://checklists.nist.gov/xccdf/1.1"
 	>
 
-<xsl:import href="xccdf-apply-profile.xsl" />
+<xsl:import href="xccdf-share.xsl" />
 
 <xsl:output method="text" encoding="UTF-8"/>
 
@@ -77,8 +77,6 @@ $val        - actual XCCDF fix text value (substitutions already performed, <fix
 <xsl:param name='result-id'/>
 <xsl:param name='profile' select='string(/cdf:Benchmark/cdf:TestResult[@id=$result-id]/cdf:profile/@idref)'/>
 <xsl:param name='template' select='"bash"'/>
-<xsl:param name='pwd'/>
-<xsl:param name='oscap-version'/>
 
 <!-- variables -->
 <xsl:variable name='tplfile'>
@@ -96,10 +94,7 @@ $val        - actual XCCDF fix text value (substitutions already performed, <fix
 <xsl:variable name='dummy'>
   <xsl:if test='not($tpl)'><xsl:message terminate='yes'>Fix template '<xsl:value-of select='$template'/>' failed to load. Aborting.</xsl:message></xsl:if>
 </xsl:variable>
-<xsl:variable name='input'>
-  <xsl:apply-templates select='.' mode='apply-profile'/>
-</xsl:variable>
-<xsl:variable name='root' select='exsl:node-set($input)/cdf:Benchmark[1]'/>
+
 <xsl:variable name='benchmark' select='$root'/>
 <xsl:variable name='testresult' select='$root/cdf:TestResult[@id=$result-id]'/>
 <xsl:variable name='dummy2'>
@@ -110,13 +105,13 @@ $val        - actual XCCDF fix text value (substitutions already performed, <fix
 <xsl:key name='item' match='cdf:Rule|cdf:Group|cdf:Value' use='@id'/>
 
 <!-- templates -->
-<xsl:template match='/cdf:Benchmark'>
-  <xsl:call-template name='tpl.elem' select='.'><xsl:with-param name='elem' select='"before"'/></xsl:call-template>
+<xsl:template match='/'>
+  <xsl:call-template name='tpl.elem'><xsl:with-param name='elem' select='"before"'/></xsl:call-template>
   <xsl:choose>
     <xsl:when test='$testresult'><xsl:apply-templates select='$testresult/cdf:rule-result[cdf:result="fail"]'/></xsl:when>
     <xsl:otherwise><xsl:apply-templates select='$root//cdf:Rule[@selected="true" or @selected="1"]'/></xsl:otherwise>
   </xsl:choose>
-  <xsl:call-template name='tpl.elem' select='.'><xsl:with-param name='elem' select='"after"'/></xsl:call-template>
+  <xsl:call-template name='tpl.elem'><xsl:with-param name='elem' select='"after"'/></xsl:call-template>
 </xsl:template>
 
 <xsl:template match='cdf:Rule'>
