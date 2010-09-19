@@ -120,7 +120,7 @@ static struct oscap_module XCCDF_GEN_REPORT = {
         "   --show <result-type*>\r\t\t\t\t - Rule results to show. Defaults to everything but notselected and notapplicable.\n"
         "   --output <file>\r\t\t\t\t - Write the document into file.",
     .opt_parser = getopt_xccdf,
-    .user = "xccdf-results-report.xsl",
+    .user = "xccdf-report.xsl",
     .func = app_xccdf_xslt
 };
 
