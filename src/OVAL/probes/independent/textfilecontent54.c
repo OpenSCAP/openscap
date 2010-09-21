@@ -57,6 +57,7 @@
 #include <config.h>
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
@@ -226,12 +227,25 @@ static int process_file(const char *path, const char *file, void *arg)
 
 	re = pcre_compile(pfd->pattern, PCRE_UTF8, &error, &erroffset, NULL);
 	if (re == NULL) {
+		char s[1024];
+		SEXP_t *msg;
+		snprintf(s, sizeof (s), "pcre_compile() '%s' %s", pfd->pattern, error);
+		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, s);
+		probe_cobj_add_msg(pfd->cobj, msg);
+		SEXP_free(msg);
 		return -1;
 	}
 #elif defined USE_REGEX_POSIX
 	regex_t _re, *re = &_re;
 
-	if (regcomp(re, pfd->pattern, REG_EXTENDED | REG_NEWLINE) != 0) {
+	int err;
+	if ( (err=regcomp(re, pfd->pattern, REG_EXTENDED | REG_NEWLINE)) != 0) {
+		char s[1024];
+		SEXP_t *msg;
+		snprintf(s, sizeof (s), "regcomp() '%s' returned %d", pfd->pattern, err);
+		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, s);
+		probe_cobj_add_msg(pfd->cobj, msg);
+		SEXP_free(msg);
 		return -1;
 	}
 #endif
@@ -253,6 +267,12 @@ static int process_file(const char *path, const char *file, void *arg)
 
 	fp = fopen(whole_path, "rb");
 	if (fp == NULL) {
+		char s[1024];
+		SEXP_t *msg;
+		snprintf(s, sizeof (s), "fopen() '%s' %s", whole_path, strerror(errno));
+		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, s);
+		probe_cobj_add_msg(pfd->cobj, msg);
+		SEXP_free(msg);
 		ret = -2;
 		goto cleanup;
 	}
@@ -374,17 +394,8 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 	pfd.cobj         = probe_out;
 
 	fcnt = find_files(path_ent, file_ent, bh_ent, process_file, (void *) &pfd);
-
-	if (fcnt < 0) {
-		char s[50];
-		SEXP_t *msg;
-
-		snprintf(s, sizeof (s), "find_files returned error: %d", fcnt);
-		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, s);
-		probe_cobj_add_msg(probe_out, msg);
-		SEXP_free(msg);
+	if (fcnt < 0)
 		probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
-	}
 
         SEXP_free(file_ent);
         SEXP_free(path_ent);
