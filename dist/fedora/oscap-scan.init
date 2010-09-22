@@ -48,18 +48,18 @@ start() {
 	test x"$OPTIONS" != "x" || exit 6
 	echo  -n $"Starting $prog: "
 	$prog $OPTIONS
-	RETVAL=$?
-	if [ $RETVAL -eq 0 ] ; then
+	ERR=$?
+	if [ $ERR -eq 0 ] ; then
 		sleep 1
 		logger "OpenSCAP security scan: PASS"
-	elif [ $RETVAL -eq 1 ] ; then
+	elif [ $ERR -eq 1 ] ; then
 		sleep 1
 		logger "OpenSCAP security scan: ERROR. Run oscap scan from command line."
 	else
 		sleep 1
 		logger "OpenSCAP security scan: FAILED. See results in /var/log/oscap-scan.xml.log"
 	fi
-	[ "$RETVAL" -eq 0 ] && success $"$prog startup" || failure $"$prog startup"
+	[ "$ERR" -eq 0 ] && success $"$prog startup" || failure $"$prog startup"
 	echo
 }
 
@@ -72,15 +72,8 @@ case "$1" in
     start)
 	start
 	;;
-    stop)
-	stop
-	;;
-    restart)
-	stop
-	start
-	;;
     *)
-	echo $"Usage: $0 {start|stop|restart}"
+	echo $"Usage: $0 {start}"
 	RETVAL=2
 	;;
 esac
