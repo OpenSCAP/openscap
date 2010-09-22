@@ -378,6 +378,12 @@ bool xccdf_policy_add_value(struct xccdf_policy *, struct xccdf_value_binding *)
  * @return true if rule has been added succesfully
  */
 //bool xccdf_value_binding_add_check_export(struct xccdf_value_binding *, struct xccdf_check_export *);
+/**
+ * Get select from policy by specified ID of XCCDF Item
+ * @memberof xccdf_policy
+ * @return XCCDF Select
+ */
+struct xccdf_select * xccdf_policy_get_select_by_id(struct xccdf_policy * policy, const char *item_id);
 
 /************************************************************/
 /** @} End of Setters group */
