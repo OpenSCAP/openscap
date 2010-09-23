@@ -205,9 +205,13 @@ static callback * xccdf_policy_get_callback(struct xccdf_policy * policy, const 
  * Filter function returning true if the item is selected, false otherwise
  * This function is only called from iterator constructor
  */
-static bool xccdf_policy_filter_selected(void *item, void *foo)
+static bool xccdf_policy_filter_selected(void *item, void *policy)
 {
-        if (xccdf_select_get_selected((struct xccdf_select *) item))
+        struct xccdf_benchmark * benchmark 
+            = xccdf_policy_model_get_benchmark(xccdf_policy_get_model((struct xccdf_policy *) policy));
+
+        if ((xccdf_item_get_type(xccdf_benchmark_get_item(benchmark, xccdf_select_get_item((struct xccdf_select *) item))) == XCCDF_RULE) 
+            && (xccdf_select_get_selected((struct xccdf_select *) item)))
             return true;
         else 
             return false;
@@ -1352,7 +1356,7 @@ struct xccdf_select_iterator * xccdf_policy_get_selected_rules(struct xccdf_poli
 
     return (struct xccdf_select_iterator *) oscap_iterator_new_filter( policy->selects, 
                                                                        (oscap_filter_func) xccdf_policy_filter_selected, 
-                                                                       NULL);
+                                                                       policy);
 }
 
 /**
@@ -1384,9 +1388,19 @@ struct xccdf_policy * xccdf_policy_model_get_policy_by_id(struct xccdf_policy_mo
     struct xccdf_policy_iterator * policy_it;
     struct xccdf_policy          * policy;
 
-    if (id == NULL) return NULL;
-
     policy_it = xccdf_policy_model_get_policies(policy_model);
+    if (id == NULL) {
+        while (xccdf_policy_iterator_has_more(policy_it)) {
+            policy = xccdf_policy_iterator_next(policy_it);
+            if (xccdf_policy_get_id(policy) == NULL) {
+                xccdf_policy_iterator_free(policy_it);
+                return policy;
+            }
+        }
+        xccdf_policy_iterator_free(policy_it);
+        return NULL;
+    }
+
     while (xccdf_policy_iterator_has_more(policy_it)) {
         policy = xccdf_policy_iterator_next(policy_it);
         if (xccdf_policy_get_id(policy) == NULL) continue;
