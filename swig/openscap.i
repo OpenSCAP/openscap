@@ -404,6 +404,19 @@ int oval_agent_eval_system_py(oval_agent_session_t * asess, PyObject * func, PyO
     return oval_agent_eval_system(asess, output_callback_wrapper, (void *) new_usrdata);
 }
 
+bool oscap_validate_document_py(const char *xmlfile, oscap_document_type_t doctype, const char *version, PyObject *func, PyObject *usr) {
+    struct internal_usr *new_usrdata;
+    PyEval_InitThreads();
+    Py_INCREF(func);
+    Py_INCREF(usr);
+    new_usrdata = oscap_alloc(sizeof(struct internal_usr));
+    if (new_usrdata == NULL) return false;
+
+    new_usrdata->func = func;
+    new_usrdata->usr = usr;
+  
+    return oscap_validate_document(xmlfile, doctype, version, output_callback_wrapper, (void *)new_usrdata);
+}
 
 %}
 #endif
