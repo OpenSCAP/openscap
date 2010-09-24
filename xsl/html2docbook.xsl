@@ -15,7 +15,7 @@
 <!-- <br> to <para> conversion, wrap plaintext to <para> -->
 <xsl:template name='h2db.para'>
   <xsl:param name='in'/>
-  <xsl:variable name='delims' select='$in/html:br|$in/html:p'/>
+  <xsl:variable name='delims' select='$in/html:br|$in/html:p|$in/html:ul|$in/html:ol'/>
   <xsl:variable name='rest.r'>
     <xsl:choose>
       <xsl:when test='count($delims)!=0'><xsl:copy-of select='$delims[last()]/following-sibling::node()'/></xsl:when>
@@ -29,8 +29,8 @@
 </xsl:template>
 
 <xsl:template mode='h2db.para' match='html:*'>
-  <xsl:variable name='prev.delim' select='(preceding-sibling::html:br|preceding-sibling::html:p)[1]'/>
-  <xsl:variable name='chunk' select='preceding-sibling::node()[not($prev.delim) or generate-id((preceding-sibling::html:br|preceding-sibling::html:p)[1]) = generate-id($prev.delim)]'/>
+  <xsl:variable name='prev.delim' select='(preceding-sibling::html:br|preceding-sibling::html:p|preceding-sibling::html:ul|preceding-sibling::html:ol)[1]'/>
+  <xsl:variable name='chunk' select='preceding-sibling::node()[not($prev.delim) or generate-id((preceding-sibling::html:br|preceding-sibling::html:p|preceding-sibling::html:ul|preceding-sibling::html:ol)[1]) = generate-id($prev.delim)]'/>
   <xsl:if test='normalize-space($chunk)'><para><xsl:apply-templates mode='h2db' select='$chunk'/></para></xsl:if>
   <xsl:apply-templates select='.' mode='h2db'/>
 </xsl:template>

@@ -98,11 +98,8 @@ Authors:
 </xsl:template>
 
 <xsl:template mode='dbout.html' match='db:itemizedlist'>
-  <div>
-    <xsl:call-template name='dbout.html.attrs'/>
     <xsl:apply-templates mode='dbout.html.title' select='.'/>
-    <ul class='{local-name()}'><xsl:apply-templates mode='dbout.html' select='db:listitem'/></ul>
-  </div>
+    <ul class='{local-name()}'><xsl:call-template name='dbout.html.attrs'/><xsl:apply-templates mode='dbout.html' select='db:listitem'/></ul>
 </xsl:template>
 
 <xsl:template mode='dbout.html' match='db:revhistory'>
@@ -390,7 +387,7 @@ Authors:
 <xsl:template name='dbout.html.attrs'>
   <xsl:if test='@role'><xsl:attribute name='class'><xsl:value-of select='@role'/></xsl:attribute></xsl:if>
   <xsl:if test='@id'><xsl:attribute name='id'><xsl:value-of select='@id'/></xsl:attribute></xsl:if>
-  <xsl:if test='@xlink:href'><xsl:attribute name='id'><xsl:value-of select='@xlink:href'/></xsl:attribute></xsl:if>
+  <xsl:if test='@xlink:href'><xsl:attribute name='href'><xsl:value-of select='@xlink:href'/></xsl:attribute></xsl:if>
   <xsl:if test='db:alt'><xsl:attribute name='title'><xsl:value-of select='normalize-space(db:alt[1])'/></xsl:attribute></xsl:if>
 </xsl:template>
 
