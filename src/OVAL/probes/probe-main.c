@@ -186,15 +186,9 @@ SEXP_t *probe_prepare_filters(SEXP_t *obj)
 		}
 		SEXP_vfree(of, ste_id, NULL);
 
-		if (act) {
-			f = SEXP_list_new(ste, act, NULL);
-			SEXP_free(ste);
-		} else {
-			f = ste;
-		}
-
+		f = SEXP_list_new(act, ste, NULL);
 		SEXP_list_add(filters, f);
-		SEXP_vfree(act, f, NULL);
+		SEXP_vfree(act, ste, f, NULL);
 	}
 
 	return filters;
@@ -203,7 +197,7 @@ SEXP_t *probe_prepare_filters(SEXP_t *obj)
 bool probe_item_filtered(SEXP_t *item, SEXP_t *filters)
 {
 	bool filtered = false;
-	SEXP_t *filter, *filter_tmp;
+	SEXP_t *filter, *ste;
 
 	SEXP_list_foreach(filter, filters) {
 		SEXP_t *felm, *ste_res, *r0;
@@ -211,22 +205,13 @@ bool probe_item_filtered(SEXP_t *item, SEXP_t *filters)
 		oval_operator_t oopr;
 		oval_filter_action_t ofact;
 
-		r0 = SEXP_list_nth(filter, 2);
-		if (SEXP_listp(r0)) {
-			filter_tmp = NULL;
-			ofact = OVAL_FILTER_ACTION_EXCLUDE;
-		} else {
-			filter_tmp = filter;
-			filter = SEXP_list_first(filter_tmp);
-			SEXP_free(r0);
-			r0 = SEXP_list_nth(filter_tmp, 2);
-			ofact = SEXP_number_getu(r0);
-		}
+		r0 = SEXP_list_first(filter);
+		ofact = SEXP_number_getu(r0);
 		SEXP_free(r0);
-
+		ste = SEXP_list_nth(filter, 2);
 		ste_res = SEXP_list_new(NULL);
 
-		SEXP_sublist_foreach(felm, filter, 2, SEXP_LIST_END) {
+		SEXP_sublist_foreach(felm, ste, 2, SEXP_LIST_END) {
 			SEXP_t *ielm, *elm_res;
 			char *elm_name;
 			oval_check_t ochk;
@@ -264,15 +249,13 @@ bool probe_item_filtered(SEXP_t *item, SEXP_t *filters)
 			SEXP_free(elm_res);
 		}
 
-		r0 = probe_ent_getattrval(filter, "operator");
+		r0 = probe_ent_getattrval(ste, "operator");
 		if (r0 == NULL)
 			oopr = OVAL_OPERATOR_AND;
 		else
 			oopr = SEXP_number_geti_32(r0);
 		ores = probe_ent_result_byopr(ste_res, oopr);
-		SEXP_vfree(r0, ste_res, NULL);
-		if (filter_tmp)
-			SEXP_free(filter_tmp);
+		SEXP_vfree(ste, ste_res, r0, NULL);
 
 		if ((ores == OVAL_RESULT_TRUE && ofact == OVAL_FILTER_ACTION_EXCLUDE)
 		    || (ores = OVAL_RESULT_FALSE && ofact == OVAL_FILTER_ACTION_INCLUDE)) {
@@ -481,7 +464,7 @@ static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
  */
 static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 {
-	SEXP_t *filters_u, *filters_a;
+	SEXP_t *filters_u, *filters_a, *filters_req;
 
 	SEXP_t *s_subset[2];
 	size_t s_subset_i;
@@ -515,6 +498,7 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 
 	filters_u = SEXP_list_new(NULL);	/* unavailable filters */
 	filters_a = SEXP_list_new(NULL);	/* available filters (cached) */
+	filters_req = SEXP_list_new(NULL);	/* request list for probe_ste_fetch() */
 
 	s_subset[0] = NULL;
 	s_subset[1] = NULL;
@@ -615,27 +599,35 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 			break;
 
 			CASE('f', "ilter") {
-				// todo: process 'action' attribute
-				SEXP_t *id, *res;
+				SEXP_t *id, *act, *ste;
 
 				id = probe_ent_getval(member);
-
 				if (id == NULL) {
 					snprintf(msg, sizeof (msg), "probe_set_eval: set=%p: Missing filter value.\n", set);
 					_D(msg);
 					goto eval_fail;
 				}
 
-				res = pcache_sexp_get(OSCAP_GSYM(pcache), id);
+				act = probe_ent_getattrval(member, "action");
+				if (act == NULL) {
+					snprintf(msg, sizeof (msg), "probe_set_eval: set=%p: Missing filter action.\n", set);
+					_D(msg);
+					goto eval_fail;
+				}
 
-				if (res == NULL)
-					SEXP_list_add(filters_u, id);
-				else
-					SEXP_list_add(filters_a, res);
+				ste = pcache_sexp_get(OSCAP_GSYM(pcache), id);
 
-				SEXP_free(id);
-				SEXP_free(res);
+				if (ste == NULL) {
+					SEXP_list_add(filters_req, id);
+					r0 = SEXP_list_new(act, id, NULL);
+					SEXP_list_add(filters_u, r0);
+				} else {
+					r0 = SEXP_list_new(act, ste, NULL);
+					SEXP_list_add(filters_a, r0);
+					SEXP_free(ste);
+				}
 
+				SEXP_vfree(id, act, r0, NULL);
 			}
 			break;
 		default:
@@ -650,30 +642,31 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 	member = NULL;
 
 	/* request filters */
-	result = probe_ste_fetch(filters_u);
+	result = probe_ste_fetch(filters_req);
 
 	if (result == NULL) {
 		snprintf(msg, sizeof (msg), "probe_set_eval: Can't get unavailable filters:\n");
 #if !defined(NDEBUG)
 		_D(msg);
-		SEXP_list_foreach(result, filters_u) {
+		SEXP_list_foreach(result, filters_req) {
 			SEXP_fprintfa(stdout, result);
 			printf("\n");
 		}
 #endif
+		SEXP_free(filters_req);
 		goto eval_fail;
 	}
+	SEXP_vfree(filters_req, result, NULL);
 
-	{
-		SEXP_t *filters_j;
+	SEXP_list_foreach(member, filters_u) {
+		SEXP_t *id, *act, *ste;
 
-		filters_j = SEXP_list_join(filters_a, result);
-
-		SEXP_free(filters_a);
-		SEXP_free(result);
-                SEXP_free(filters_u);
-
-		filters_a = filters_j;
+		act = SEXP_list_first(member);
+		id = SEXP_list_nth(member, 2);
+		ste = pcache_sexp_get(OSCAP_GSYM(pcache), id);
+		r0 = SEXP_list_new(act, ste, NULL);
+		SEXP_list_add(filters_a, r0);
+		SEXP_vfree(act, id, ste, r0, NULL);
 	}
 
 	_A((s_subset_i > 0 && o_subset_i == 0) || (s_subset_i == 0 && o_subset_i > 0));

@@ -437,6 +437,15 @@ struct oval_setobject;
  */
 struct oval_setobject_iterator;
 /**
+ * @struct oval_filter
+ * OVAL filter
+ */
+struct oval_filter;
+/**
+ * @struct oval_filter_iterator
+ */
+struct oval_filter_iterator;
+/**
  * @struct oval_component
  * OVAL variable component
  * Oval_component instances specify evaluation constraints on local variables (see @ref oval_variable_get_type).
@@ -2679,6 +2688,79 @@ bool oval_entity_is_valid(struct oval_entity *entity);
 /** @} */
 
 /**
+ * @memberof oval_filter
+ */
+struct oval_filter *oval_filter_new(struct oval_definition_model *);
+/**
+ * @memberof oval_filter
+ */
+void oval_filter_free(struct oval_filter *);
+/**
+ * @memberof oval_filter
+ */
+struct oval_filter *oval_filter_clone(struct oval_definition_model *, struct oval_filter *);
+
+/**
+ * @name Setters
+ * @{
+ */
+/**
+ * @memberof oval_filter
+ */
+void oval_filter_set_state(struct oval_filter *, struct oval_state *);
+/**
+ * @memberof oval_filter
+ */
+void oval_filter_set_filter_action(struct oval_filter *, oval_filter_action_t );
+/** @} */
+
+/**
+ * @name Getters
+ * @{
+ */
+/**
+ * @memberof oval_filter
+ */
+bool oval_filter_is_locked(struct oval_filter *);
+/**
+ * @memberof oval_filter
+ */
+struct oval_state *oval_filter_get_state(struct oval_filter *);
+/**
+ * @memberof oval_filter
+ */
+oval_filter_action_t oval_filter_get_filter_action(struct oval_filter *);
+/** @} */
+
+/**
+ * @name Iterators
+ * @{
+ */
+/**
+ * @memberof oval_filter
+ */
+bool oval_filter_iterator_has_more(struct oval_filter_iterator *);
+/**
+ * @memberof oval_filter
+ */
+struct oval_filter *oval_filter_iterator_next(struct oval_filter_iterator *);
+/**
+ * @memberof oval_filter
+ */
+void oval_filter_iterator_free(struct oval_filter_iterator *);
+/** @} */
+
+/**
+ * @name Evaluators
+ * @{
+ */
+/**
+ * @memberof oval_filter
+ */
+bool oval_filter_is_valid(struct oval_filter *);
+/** @} */
+
+/**
  * @memberof oval_setobject
  */
 struct oval_setobject *oval_setobject_new(struct oval_definition_model *);
@@ -2714,7 +2796,7 @@ void oval_setobject_add_object(struct oval_setobject *, struct oval_object *);	/
 /**
  * @memberof oval_setobject
  */
-void oval_setobject_add_filter(struct oval_setobject *, struct oval_state *);	//type==OVAL_SET_COLLECTIVE;
+void oval_setobject_add_filter(struct oval_setobject *, struct oval_filter *);	//type==OVAL_SET_COLLECTIVE;
 /** @} */
 
 /**
@@ -2754,7 +2836,7 @@ struct oval_object_iterator *oval_setobject_get_objects(struct oval_setobject *)
  * It should be freed after use by the calling application.
  * @memberof oval_setobject
  */
-struct oval_state_iterator *oval_setobject_get_filters(struct oval_setobject *);	//type==OVAL_SET_COLLECTIVE;
+struct oval_filter_iterator *oval_setobject_get_filters(struct oval_setobject *);	//type==OVAL_SET_COLLECTIVE;
 /**
  * return <b>true</b> if the setobject instance is locked.
  * The state of a locked instance cannot be changed.

@@ -501,6 +501,13 @@ xmlNode *oval_object_content_to_dom(struct oval_object_content *content, xmlDoc 
 			struct oval_setobject *set = oval_object_content_get_setobject(content);
 			content_node = oval_set_to_dom(set, doc, parent);
 		} break;
+	case OVAL_OBJECTCONTENT_FILTER:{
+			struct oval_filter *filter;
+
+			filter = oval_object_content_get_filter(content);
+			content_node = oval_filter_to_dom(filter, doc, parent);
+		}
+		break;
 	default:
 		content_node = NULL;
 	}

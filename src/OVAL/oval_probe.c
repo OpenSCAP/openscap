@@ -222,7 +222,7 @@ static void _set_collect_var_refs(struct oval_setobject *set, struct oval_string
 {
 	struct oval_setobject_iterator *subset_itr;
 	struct oval_object_iterator *obj_itr;
-	struct oval_state_iterator *ste_itr;
+	struct oval_filter_iterator *fil_itr;
 
 	switch (oval_setobject_get_type(set)) {
 	case OVAL_SET_AGGREGATE:
@@ -244,14 +244,16 @@ static void _set_collect_var_refs(struct oval_setobject *set, struct oval_string
 			_obj_collect_var_refs(obj, vm);
 		}
 		oval_object_iterator_free(obj_itr);
-		ste_itr = oval_setobject_get_filters(set);
-		while (oval_state_iterator_has_more(ste_itr)) {
+		fil_itr = oval_setobject_get_filters(set);
+		while (oval_filter_iterator_has_more(fil_itr)) {
+			struct oval_filter *fil;
 			struct oval_state *ste;
 
-			ste = oval_state_iterator_next(ste_itr);
+			fil = oval_filter_iterator_next(fil_itr);
+			ste = oval_filter_get_state(fil);
 			_ste_collect_var_refs(ste, vm);
 		}
-		oval_state_iterator_free(ste_itr);
+		oval_filter_iterator_free(fil_itr);
 		break;
 	default:
 		break;

@@ -213,6 +213,25 @@ static SEXP_t *oval_varref_to_sexp(struct oval_entity *entity, struct oval_sysch
 	return varref;
 }
 
+static SEXP_t *oval_filter_to_sexp(struct oval_filter *filter)
+{
+	SEXP_t *elm, *attr, *r0, *r1;
+	oval_filter_action_t act;
+	struct oval_state *ste;
+	char *ste_id;
+
+	act = oval_filter_get_filter_action(filter);
+	ste = oval_filter_get_state(filter);
+	ste_id = oval_state_get_id(ste);
+	attr = probe_attr_creat("action", r0 = SEXP_number_newu(act), NULL);
+	elm = probe_ent_creat1("filter",
+			       attr,
+			       r1 = SEXP_string_newf("%s", ste_id));
+	SEXP_vfree(attr, r0, r1, NULL);
+
+	return (elm);
+}
+
 static SEXP_t *oval_set_to_sexp(struct oval_setobject *set)
 {
 	SEXP_t *elm, *elm_name;
@@ -248,14 +267,11 @@ static SEXP_t *oval_set_to_sexp(struct oval_setobject *set)
 		break;
 	case OVAL_SET_COLLECTIVE:{
 			struct oval_object_iterator *oit;
-			struct oval_state_iterator *sit;
+			struct oval_filter_iterator *fit;
 			struct oval_object *obj;
-			struct oval_state *ste;
 			SEXP_t *subelm;
 
 			oit = oval_setobject_get_objects(set);
-			sit = oval_setobject_get_filters(set);
-
 			while (oval_object_iterator_has_more(oit)) {
 				obj = oval_object_iterator_next(oit);
 
@@ -268,47 +284,23 @@ static SEXP_t *oval_set_to_sexp(struct oval_setobject *set)
 
 				SEXP_free(subelm);
 			}
-
 			oval_object_iterator_free(oit);
 
-			while (oval_state_iterator_has_more(sit)) {
-				ste = oval_state_iterator_next(sit);
+			fit = oval_setobject_get_filters(set);
+			while (oval_filter_iterator_has_more(fit)) {
+				struct oval_filter *fil;
 
-				subelm = SEXP_list_new(r0 = SEXP_string_new("filter", 6),
-						       r1 = SEXP_string_newf("%s", oval_state_get_id(ste)), NULL);
-				SEXP_free(r0);
-				SEXP_free(r1);
-
+				fil = oval_filter_iterator_next(fit);
+				subelm = oval_filter_to_sexp(fil);
 				SEXP_list_add(elm, subelm);
-
 				SEXP_free(subelm);
 			}
-
-			oval_state_iterator_free(sit);
+			oval_filter_iterator_free(fit);
 		}
 		break;
 	default:
 		abort();
 	}
-
-	return (elm);
-}
-
-static SEXP_t *oval_filter_to_sexp(struct oval_filter *filter)
-{
-	SEXP_t *elm, *attr, *r0, *r1;
-	oval_filter_action_t act;
-	struct oval_state *ste;
-	char *ste_id;
-
-	act = oval_filter_get_filter_action(filter);
-	ste = oval_filter_get_state(filter);
-	ste_id = oval_state_get_id(ste);
-	attr = probe_attr_creat("action", r0 = SEXP_number_newu(act), NULL);
-	elm = probe_ent_creat1("filter",
-			       attr,
-			       r1 = SEXP_string_newf("%s", ste_id));
-	SEXP_vfree(attr, r0, r1, NULL);
 
 	return (elm);
 }

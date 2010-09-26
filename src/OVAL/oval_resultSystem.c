@@ -704,10 +704,14 @@ static void _oval_result_system_scan_set_for_references
 			}
 		}
 	oval_object_iterator_free(objects);
-	struct oval_state_iterator *states = oval_setobject_get_filters(set);
-	if (states)
-		while (oval_state_iterator_has_more(states)) {
-			struct oval_state *state = oval_state_iterator_next(states);
+	struct oval_filter_iterator *filters = oval_setobject_get_filters(set);
+	if (filters)
+		while (oval_filter_iterator_has_more(filters)) {
+			struct oval_filter *filter;
+			struct oval_state *state;
+
+			filter = oval_filter_iterator_next(filters);
+			state = oval_filter_get_state(filter);
 			char *sttid = oval_state_get_id(state);
 			void *value = oval_string_map_get_value(sttmap, sttid);
 			if (value == NULL) {
@@ -716,7 +720,7 @@ static void _oval_result_system_scan_set_for_references
 									      varmap, sysmap);
 			}
 		}
-	oval_state_iterator_free(states);
+	oval_filter_iterator_free(filters);
 	struct oval_setobject_iterator *subsets = oval_setobject_get_subsets(set);
 	if (subsets)
 		while (oval_setobject_iterator_has_more(subsets)) {

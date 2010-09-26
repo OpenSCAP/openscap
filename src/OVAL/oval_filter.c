@@ -65,8 +65,18 @@ void oval_filter_free(struct oval_filter *filter)
 struct oval_filter *oval_filter_clone(struct oval_definition_model *new_model,
 				      struct oval_filter *old_filter)
 {
-	// todo
-	return NULL;
+	struct oval_filter *new_filter;
+	struct oval_state *ste;
+	oval_filter_action_t fa;
+
+	new_filter = oval_filter_new(new_model);
+	ste = oval_filter_get_state(old_filter);
+	ste = oval_state_clone(new_model, ste);
+	oval_filter_set_state(new_filter, ste);
+	fa = oval_filter_get_filter_action(old_filter);
+	oval_filter_set_filter_action(new_filter, fa);
+
+	return new_filter;
 }
 
 bool oval_filter_iterator_has_more(struct oval_filter_iterator *oc_filter)
@@ -130,15 +140,48 @@ void oval_filter_set_filter_action(struct oval_filter *filter, oval_filter_actio
 	}
 }
 
+static void _oval_filter_consume_ste_ref(char *steref, void *user)
+{
+	struct oval_filter *filter;
+	struct oval_state *ste;
+
+	filter = (struct oval_filter *) user;
+	ste = oval_state_get_new(filter->model, steref);
+	oval_filter_set_state(filter, ste);
+}
+
 int oval_filter_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context,
 			  oval_filter_consumer consumer, void *user)
 {
-	// todo
-	return 1;
+	struct oval_filter *filter;
+	oval_filter_action_t fa;
+	int return_code;
+
+	filter = oval_filter_new(context->definition_model);
+	fa = oval_filter_action_parse(reader, "action", OVAL_FILTER_ACTION_EXCLUDE);
+	oval_filter_set_filter_action(filter, fa);
+	return_code = oval_parser_text_value(reader, context, &_oval_filter_consume_ste_ref, filter);
+
+	(*consumer) (filter, user);
+
+	return return_code;
 }
 
 xmlNode *oval_filter_to_dom(struct oval_filter *filter, xmlDoc *doc, xmlNode *parent)
 {
-	// todo
-	return NULL;
+	struct oval_state *ste;
+	char *ste_id;
+	oval_filter_action_t fact;
+	xmlNs *ns_definitions;
+	xmlNode *filter_node;
+
+	ste = oval_filter_get_state(filter);
+	ste_id = oval_state_get_id(ste);
+	fact = oval_filter_get_filter_action(filter);
+	ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
+	filter_node = xmlNewTextChild(parent, ns_definitions, BAD_CAST "filter", BAD_CAST ste_id);
+	if (fact != OVAL_FILTER_ACTION_EXCLUDE)
+		xmlNewProp(filter_node, BAD_CAST "action", BAD_CAST oval_filter_action_get_text(fact));
+
+	return filter_node;
 }

@@ -712,7 +712,7 @@ void oval_definition_model_optimize_by_filter_propagation(struct oval_definition
 		struct oval_object_content_iterator *cont_itr;
 		struct oval_object_content *cont;
 		struct oval_setobject *set;
-		struct oval_state_iterator *filter_itr;
+		struct oval_filter_iterator *filter_itr;
 
 		obj = oval_object_iterator_next(obj_itr);
 		obj_id = oval_object_get_id(obj);
@@ -739,11 +739,11 @@ void oval_definition_model_optimize_by_filter_propagation(struct oval_definition
 		}
 
 		filter_itr = oval_setobject_get_filters(set);
-		if (!oval_state_iterator_has_more(filter_itr)) {
-			oval_state_iterator_free(filter_itr);
+		if (!oval_filter_iterator_has_more(filter_itr)) {
+			oval_filter_iterator_free(filter_itr);
 			continue;
 		}
-		oval_state_iterator_free(filter_itr);
+		oval_filter_iterator_free(filter_itr);
 
 		oval_set_propagate_filters(model, set, obj_id);
 	}

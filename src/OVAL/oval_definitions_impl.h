@@ -105,20 +105,6 @@ int oval_variable_binding_parse_tag
 const char *oval_variable_type_get_text(oval_variable_type_t);
 const char *oval_filter_action_get_text(oval_filter_action_t);
 
-struct oval_filter;
-struct oval_filter *oval_filter_new(struct oval_definition_model *);
-void oval_filter_free(struct oval_filter *);
-struct oval_filter *oval_filter_clone(struct oval_definition_model *, struct oval_filter *);
-struct oval_filter_iterator;
-bool oval_filter_iterator_has_more(struct oval_filter_iterator *);
-struct oval_filter *oval_filter_iterator_next(struct oval_filter_iterator *);
-void oval_filter_iterator_free(struct oval_filter_iterator *);
-struct oval_state *oval_filter_get_state(struct oval_filter *);
-oval_filter_action_t oval_filter_get_filter_action(struct oval_filter *);
-bool oval_filter_is_locked(struct oval_filter *);
-bool oval_filter_is_valid(struct oval_filter *);
-void oval_filter_set_state(struct oval_filter *, struct oval_state *);
-void oval_filter_set_filter_action(struct oval_filter *, oval_filter_action_t );
 typedef void (*oval_filter_consumer) (struct oval_filter *, void *);
 int oval_filter_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oval_filter_consumer, void *);
 xmlNode *oval_filter_to_dom(struct oval_filter *, xmlDoc *, xmlNode *);
