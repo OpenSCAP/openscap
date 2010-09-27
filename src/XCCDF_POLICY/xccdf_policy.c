@@ -210,7 +210,12 @@ static bool xccdf_policy_filter_selected(void *item, void *policy)
         struct xccdf_benchmark * benchmark 
             = xccdf_policy_model_get_benchmark(xccdf_policy_get_model((struct xccdf_policy *) policy));
 
-        if ((xccdf_item_get_type(xccdf_benchmark_get_item(benchmark, xccdf_select_get_item((struct xccdf_select *) item))) == XCCDF_RULE) 
+        struct xccdf_item * titem = xccdf_benchmark_get_item(benchmark, xccdf_select_get_item((struct xccdf_select *) item));
+        if (titem == NULL) {
+            oscap_dlprintf(DBG_E, "Item \"%s\" does not exist. Remove it from Profile !\n", xccdf_select_get_item((struct xccdf_select *) item));
+            return false;
+        }
+        if ((xccdf_item_get_type(titem) == XCCDF_RULE) 
             && (xccdf_select_get_selected((struct xccdf_select *) item)))
             return true;
         else 
