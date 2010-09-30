@@ -71,7 +71,7 @@ common_oval_sources = \
 
 # -I options go to CPPFLAGS, not CFLAGS
 # lets build one common for both normal and probe sources (does it mind?)
-AM_CPPFLAGS = $(libxml_cflags) $(pthread_cflags) -I$(srcdir)/public -I$(top_srcdir)/src/common/public -I$(top_srcdir)/src
+AM_CPPFLAGS = $(libxml_cflags) $(pthread_cflags) -I$(srcdir)/public -I$(top_srcdir)/src/common/public -I$(top_srcdir)/src -I$(top_srcdir)/src/OVAL/probes/SEAP/generic
 if WANT_PROBES
 AM_CPPFLAGS += -I$(top_srcdir)/src -I$(top_srcdir)/src/common -I$(srcdir)/probes -I$(srcdir)/probes/public -I$(srcdir)/probes/SEAP/public -DSEAP_MSGID_BITS=32 -DSEAP_THREAD_SAFE
 endif
@@ -120,7 +120,9 @@ nodist_liboval_testing_la_SOURCES = oval_testing_ext_probe.c
 
 SUBDIRS = probes/SEAP
 liboval_la_LIBADD  += probes/SEAP/libseap.la
-
+else
+SUBDIRS = probes/SEAP/generic/rbt
+liboval_la_LIBADD  += probes/SEAP/generic/rbt/librbt.la
 endif
 
 CLEANFILES = $(nodist_liboval_testing_la_SOURCES)

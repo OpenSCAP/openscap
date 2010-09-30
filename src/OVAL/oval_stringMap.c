@@ -34,6 +34,7 @@
 #include "../common/util.h"
 #include "../common/public/debug.h"
 
+#if defined(OVAL_STRINGMAP_OLD)
 struct _oval_string_map_entry_s;
 
 typedef struct _oval_string_map_entry {
@@ -184,39 +185,111 @@ void oval_string_map_free_string(struct oval_string_map *map)
 {
 	oval_string_map_free(map, oscap_free);
 }
+#else
+# include <rbt/rbt.h>
+# include <assume.h>
 
-//TEST FREEFUNC
-/*static void oval_string_map_main_freefunc(void *item)
+struct oval_string_map *oval_string_map_new(void)
 {
-	oscap_dprintf("FREEFUNC: item = %s\n", (const char *) item);
-}*/
+	return (struct oval_string_map *)(rbt_str_new());
+}
 
-/**
- * This method is included as a test stub.
- */
-/*int oval_string_map_main(int argc, char **argv)
+void oval_string_map_put(struct oval_string_map *map, const char *key, void *val)
 {
+	assume_d(map != NULL, /* void */);
+	assume_d(key != NULL, /* void */);
 
-	oscap_dprintf("TEST::START\n");
-	char *keys[] = { "key1", "key3", "key0", "key2", "key2", 0 };
-	char *entries[] =
-	    { "hello", "tom", "now is the time", "for all good men", "for me",
-      0 };
+	rbt_str_add((rbt_t *)map, strdup(key), val);
+}
 
-	struct oval_string_map *map = oval_string_map_new();
-	oscap_dprintf("TEST::START::has new map\n");
-	int idx;
-	for (idx = 0; keys[idx] != NULL; idx++) {
-		char *key = keys[idx];
-		oscap_dprintf("TEST::adding key %s -> %s\n", key, entries[idx]);
-		oval_string_map_put(map, key, (void *)entries[idx]);
-	}
-	for (idx = 0; keys[idx] != NULL; idx++) {
-		char *key = keys[idx];
-		oscap_dprintf("TEST::getting key %s -> %s\n", key,
-		       (const char *) oval_string_map_get_value(map, key));
-	}
+void oval_string_map_put_string(struct oval_string_map *map, const char *key, const char *val)
+{
+	char *str = strdup(val);
 
-	oval_string_map_free(map, &oval_string_map_main_freefunc);
-	return 0;
-}*/
+	assume_d(map != NULL, /* void */);
+	assume_d(key != NULL, /* void */);
+
+	if (rbt_str_add((rbt_t *)map, strdup(key), str) == 0)
+		return;
+	else
+		free(str);
+	return;
+}
+
+void *oval_string_map_get_value(struct oval_string_map *map, const char *key)
+{
+	void *val = NULL;
+
+	assume_d(map != NULL, NULL);
+	assume_d(key != NULL, NULL);
+
+	if (rbt_str_get((rbt_t *)map, key, &val) != 0)
+		return (NULL);
+	else
+		return (val);
+}
+
+static void __oval_string_map_node_free(struct rbt_str_node *n, oscap_destruct_func destroy)
+{
+	if (destroy != NULL)
+		destroy(n->data);
+	oscap_free(n->key);
+}
+
+void oval_string_map_free(struct oval_string_map *map, oscap_destruct_func destroy)
+{
+	assume_d(map != NULL, /* void */);
+	rbt_str_free_cb2((rbt_t *)map,
+			 (void(*)(struct rbt_str_node *, void *))__oval_string_map_node_free,
+			 (void *)destroy);
+}
+
+void oval_string_map_free_string(struct oval_string_map *map)
+{
+	assume_d(map != NULL, /* void */);
+	oval_string_map_free(map, oscap_free);
+}
+
+static int __oval_iterator_addkey(struct rbt_str_node *n, void *u)
+{
+	struct oval_iterator *it = (struct oval_iterator *)u;
+
+	oval_collection_iterator_add(it, (void *)n->key);
+
+	return (0);
+}
+
+static int __oval_iterator_addval(struct rbt_str_node *n, void *u)
+{
+	struct oval_iterator *it = (struct oval_iterator *)u;
+
+	oval_collection_iterator_add(it, n->data);
+
+	return (0);
+}
+
+struct oval_iterator *oval_string_map_keys(struct oval_string_map *map)
+{
+	struct oval_iterator *it;
+
+	assume_d(map != NULL, NULL);
+
+	it = oval_collection_iterator_new();
+	rbt_str_walk_inorder2((rbt_t *)map, __oval_iterator_addkey, it, 0);
+
+	return (it);
+}
+
+struct oval_iterator *oval_string_map_values(struct oval_string_map *map)
+{
+	struct oval_iterator *it;
+
+	assume_d(map != NULL, NULL);
+
+	it = oval_collection_iterator_new();
+	rbt_str_walk_inorder2((rbt_t *)map, __oval_iterator_addval, it, 0);
+
+	return (it);
+}
+
+#endif /* OVAL_STRINGMAP_LINEAR */
