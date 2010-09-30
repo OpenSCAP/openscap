@@ -600,6 +600,7 @@ void probe_cobj_set_flag(SEXP_t *cobj, oval_syschar_collection_flag_t flag)
 	old_sflag = SEXP_list_replace(cobj, 1, sflag);
 	of = SEXP_number_getu(old_sflag);
 	SEXP_free(old_sflag);
+	SEXP_free(sflag);
 	dI("old flag: %d, new flag: %d.\n", of, flag);
 }
 

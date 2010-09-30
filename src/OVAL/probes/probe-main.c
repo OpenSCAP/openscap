@@ -669,6 +669,8 @@ static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
 		SEXP_vfree(act, id, ste, r0, NULL);
 	}
 
+	SEXP_free(filters_u);
+
 	_A((s_subset_i > 0 && o_subset_i == 0) || (s_subset_i == 0 && o_subset_i > 0));
 
 	if (o_subset_i > 0) {
