@@ -69,6 +69,11 @@ void rbt_str_free_cb (rbt_t *rbt, void (*callback)(struct rbt_str_node *))
         rbt_free(rbt, (void(*)(void *))callback);
 }
 
+void rbt_str_free_cb2 (rbt_t *rbt, void (*callback)(struct rbt_str_node *, void *user), void *user)
+{
+	rbt_free2(rbt, (void(*)(void *, void *))callback, user);
+}
+
 int rbt_str_add(rbt_t *rbt, char *key, void *data)
 {
         struct rbt_node fake;
@@ -403,6 +408,11 @@ int rbt_str_walk_preorder(rbt_t *rbt, int (*callback)(struct rbt_str_node *), rb
 int rbt_str_walk_inorder(rbt_t *rbt, int (*callback)(struct rbt_str_node *), rbt_walk_t flags)
 {
         return rbt_walk_inorder(rbt, (int(*)(void *))callback, flags);
+}
+
+int rbt_str_walk_inorder2(rbt_t *rbt, int (*callback)(struct rbt_str_node *, void *), void *user, rbt_walk_t flags)
+{
+        return rbt_walk_inorder2(rbt, (int(*)(void *, void *))callback, user, flags);
 }
 
 int rbt_str_walk_postorder(rbt_t *rbt, int (*callback)(struct rbt_str_node *), rbt_walk_t flags)
