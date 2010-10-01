@@ -49,7 +49,7 @@ if version_info >= (2,6,0):
     OSCAP = _import_helper()
     del _import_helper
 else:
-    import OSCAP
+    import _openscap_py as OSCAP
 
 del version_info
 
@@ -126,7 +126,7 @@ class OSCAP_Object(object):
 
     @staticmethod
     def new(retobj):
-        if type(retobj).__name__ == 'SwigPyObject':
+        if type(retobj).__name__ in ('SwigPyObject', 'PySwigObject'):
             # Extract the name of structure from "<num>_p_<name>"
             structure = retobj.__str__()[retobj.__str__().find("_p_")+3:]
             return OSCAP_Object(structure, retobj)
@@ -149,14 +149,14 @@ class OSCAP_Object(object):
                 else: newargs += (arg,)
 
             try: retobj = func()
-            except TypeError as err:
+            except TypeError, err:
                 try: retobj = func(*newargs)
-                except TypeError as err:
+                except TypeError, err:
                     if self.instance:
                         try: retobj = func(self.instance)
-                        except TypeError as err:
+                        except TypeError, err:
                             try: retobj = func(self.instance, *newargs)
-                            except TypeError as err:
+                            except TypeError, err:
                                 raise TypeError("Wrong number of arguments in function %s" % (func.__name__,))
                     else: raise TypeError("%s: No instance or wrong number of parameters" % (func.__name__))
 
