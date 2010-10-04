@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
-BIN=$1
+if [ -n "$1" ]; then
+    BIN=$1
+else
+    BIN=./test_interface
+fi
 
 NAME=( `${BIN} | awk '{print $1}' | tr '\n' ' '` )
 HOST=( `${BIN} | awk '{print $2}' | tr '\n' ' '` )
