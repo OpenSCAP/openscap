@@ -128,8 +128,10 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *probe_out)
 			continue;
 
 		sname = SEXP_string_newf("%s", ifa->ifa_name);
-		if (probe_entobj_cmp(name_ent, sname) != OVAL_RESULT_TRUE)
+		if (probe_entobj_cmp(name_ent, sname) != OVAL_RESULT_TRUE) {
+			SEXP_free(sname);
 			continue;
+		}
 		SEXP_free(sname);
 
 		mac = get_mac(ifa);
@@ -248,6 +250,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 	}
 
 	get_ifs(name_ent, probe_out);
+	SEXP_free(name_ent);
 
 	return 0;
 }
