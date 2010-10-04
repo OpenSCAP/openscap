@@ -865,8 +865,6 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 				struct oval_value_iterator *val_itr;
 				oval_syschar_collection_flag_t flag;
 
-				ores_clear(&var_ores);
-
 				if (0 != oval_syschar_model_compute_variable(syschar_model, state_entity_var)) {
 					oval_sysent_iterator_free(item_entities_itr);
 					goto fail;
@@ -876,31 +874,39 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 				switch (flag) {
 				case SYSCHAR_FLAG_COMPLETE:
 				case SYSCHAR_FLAG_INCOMPLETE:
+					ores_clear(&var_ores);
+
+					val_itr = oval_variable_get_values(state_entity_var);
+					while (oval_value_iterator_has_more(val_itr)) {
+						struct oval_value *var_val;
+						oval_result_t var_val_res;
+
+						var_val = oval_value_iterator_next(val_itr);
+						state_entity_val_text = oval_value_get_text(var_val);
+						state_entity_val_datatype = oval_value_get_datatype(var_val);
+
+						var_val_res = evaluate(oval_sysent_get_value(item_entity),
+								       state_entity_val_text,
+								       oval_sysent_get_datatype(item_entity),
+								       state_entity_val_datatype,
+								       state_entity_operation);
+						ores_add_res(&var_ores, var_val_res);
+					}
+					oval_value_iterator_free(val_itr);
+
+					ent_val_res = ores_get_result_bychk(&var_ores, var_check);
+					break;
+				case SYSCHAR_FLAG_ERROR:
+				case SYSCHAR_FLAG_DOES_NOT_EXIST:
+				case SYSCHAR_FLAG_NOT_COLLECTED:
+				case SYSCHAR_FLAG_NOT_APPLICABLE:
+					ent_val_res = OVAL_RESULT_ERROR;
 					break;
 				default:
 					oval_sysent_iterator_free(item_entities_itr);
 					goto fail;
 				}
 
-				val_itr = oval_variable_get_values(state_entity_var);
-				while (oval_value_iterator_has_more(val_itr)) {
-					struct oval_value *var_val;
-					oval_result_t var_val_res;
-
-					var_val = oval_value_iterator_next(val_itr);
-					state_entity_val_text = oval_value_get_text(var_val);
-					state_entity_val_datatype = oval_value_get_datatype(var_val);
-
-					var_val_res = evaluate(oval_sysent_get_value(item_entity),
-							       state_entity_val_text,
-							       oval_sysent_get_datatype(item_entity),
-							       state_entity_val_datatype,
-							       state_entity_operation);
-					ores_add_res(&var_ores, var_val_res);
-				}
-				oval_value_iterator_free(val_itr);
-
-				ent_val_res = ores_get_result_bychk(&var_ores, var_check);
 			} else {
 				ent_val_res = evaluate(oval_sysent_get_value(item_entity),
 						       state_entity_val_text,
