@@ -483,8 +483,6 @@ static oval_result_t probe_ent_cmp(SEXP_t * ent, SEXP_t * val2)
 	val_cnt = probe_ent_getvals(ent, &vals);
 
 	if (probe_ent_attrexists(ent, "var_ref")) {
-		if (val_cnt == 0)
-			return OVAL_RESULT_NOT_EVALUATED;
 		is_var = 1;
 	} else {
 		if (val_cnt != 1)
@@ -571,6 +569,12 @@ oval_result_t probe_entste_cmp(SEXP_t * ent_ste, SEXP_t * ent_itm)
 	oval_syschar_status_t item_status;
 	oval_result_t ores;
 	SEXP_t *val2;
+	int valcnt;
+
+	valcnt = probe_ent_getvals(ent_ste, &val2);
+	SEXP_free(val2);
+	if (valcnt == 0)
+		return OVAL_RESULT_ERROR;
 
 	item_status = probe_ent_getstatus(ent_itm);
 	switch (item_status) {
@@ -599,6 +603,13 @@ oval_result_t probe_entste_cmp(SEXP_t * ent_ste, SEXP_t * ent_itm)
 oval_result_t probe_entobj_cmp(SEXP_t * ent_obj, SEXP_t * val)
 {
 	oval_result_t ores;
+	SEXP_t *r0 = NULL;
+	int valcnt;
+
+	valcnt = probe_ent_getvals(ent_obj, &r0);
+	SEXP_free(r0);
+	if (valcnt == 0)
+		return OVAL_RESULT_FALSE;
 
 	ores = probe_ent_cmp(ent_obj, val);
 	if (ores == OVAL_RESULT_NOT_EVALUATED)
