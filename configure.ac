@@ -478,12 +478,12 @@ AC_ARG_ENABLE([bindings],
      esac],[bindings=yes])
 
 AC_ARG_ENABLE([regex-posix],
-     [AC_HELP_STRING([--enable-regex-posix], [compile with POSIX instead of PCRE regex (default=yes)])],
+     [AC_HELP_STRING([--enable-regex-posix], [compile with POSIX instead of PCRE regex (default=no)])],
      [case "${enableval}" in
        yes) regex_posix=yes ;;
        no)  regex_posix=no  ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-regex-posix]) ;;
-     esac],[regex_posix=yes])
+     esac],[regex_posix=no])
 
 AC_ARG_ENABLE([debug],
      [AC_HELP_STRING([--enable-debug], [enable debugging flags (default=no)])],
