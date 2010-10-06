@@ -297,6 +297,7 @@ struct cve_model *cve_model_new()
 	if (ret == NULL)
 		return NULL;
 
+	ret->nvd_xml_version = NULL;
 	ret->entries = oscap_list_new();
 
 	return ret;
