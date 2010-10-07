@@ -75,6 +75,8 @@ EXTRA_DIST =	dist/fedora/openscap.spec \
 		dist/fedora/scap-fedora14-xccdf.xml \
 		dist/bash_completion.d/oscap \
 		docs/Doxyfile \
+		docs/title.doc \
+		docs/modules \
 		docs/examples/oval_probes.py \
 		docs/examples/package-test.xml \
 		schemas/oval/5.5/independent-system-characteristics-schema.xsd \
