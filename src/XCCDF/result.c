@@ -482,14 +482,14 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 		xmlNode *identity_node = xmlNewTextChild(result_node, ns_xccdf, BAD_CAST "identity", BAD_CAST xccdf_identity_get_name(identity));
 		
 		if (xccdf_identity_get_authenticated(identity))
-			xmlNewProp(identity_node, BAD_CAST "authenticated", BAD_CAST "True");
+			xmlNewProp(identity_node, BAD_CAST "authenticated", BAD_CAST "true");
 		else
-			xmlNewProp(identity_node, BAD_CAST "authenticated", BAD_CAST "False");
+			xmlNewProp(identity_node, BAD_CAST "authenticated", BAD_CAST "false");
 
 		if (xccdf_identity_get_privileged(identity))
-			xmlNewProp(identity_node, BAD_CAST "privileged", BAD_CAST "True");
+			xmlNewProp(identity_node, BAD_CAST "privileged", BAD_CAST "true");
 		else
-			xmlNewProp(identity_node, BAD_CAST "privileged", BAD_CAST "False");
+			xmlNewProp(identity_node, BAD_CAST "privileged", BAD_CAST "false");
 	}
 	xccdf_identity_iterator_free(identities);
 
@@ -519,6 +519,8 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 		xmlNewTextChild(result_node, ns_xccdf, BAD_CAST "target-address", BAD_CAST target_address);
 	}
 	oscap_string_iterator_free(target_addresses);
+
+    // platform
 
 	struct xccdf_target_fact_iterator *target_facts = xccdf_result_get_target_facts(result);
         if (xccdf_target_fact_iterator_has_more(target_facts)) {

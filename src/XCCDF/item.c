@@ -325,13 +325,13 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 		xmlNewProp(item_node, BAD_CAST "cluster-id", BAD_CAST cluster_id);
 
 	if (xccdf_item_get_hidden(item))
-		xmlNewProp(item_node, BAD_CAST "hidden", BAD_CAST "True");
+		xmlNewProp(item_node, BAD_CAST "hidden", BAD_CAST "true");
 
 	if (xccdf_item_get_prohibit_changes(item))
-		xmlNewProp(item_node, BAD_CAST "prohibitChanges", BAD_CAST "True");
+		xmlNewProp(item_node, BAD_CAST "prohibitChanges", BAD_CAST "true");
 
 	if (xccdf_item_get_abstract(item))
-		xmlNewProp(item_node, BAD_CAST "abstract", BAD_CAST "True");
+		xmlNewProp(item_node, BAD_CAST "abstract", BAD_CAST "true");
 
 	/* Handle generic item child nodes */
 	xccdf_texts_to_dom(xccdf_item_get_title(item), item_node, "title");
