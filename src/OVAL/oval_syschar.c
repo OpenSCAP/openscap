@@ -100,6 +100,21 @@ void oval_syschar_add_message(struct oval_syschar *syschar, struct oval_message 
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
+void oval_syschar_add_new_message(struct oval_syschar *syschar, char *text, oval_message_level_t level)
+{
+	struct oval_message *msg;
+
+	if (syschar && oval_syschar_is_locked(syschar)) {
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+		return;
+	}
+
+	msg = oval_message_new();
+	oval_message_set_text(msg, text);
+	oval_message_set_level(msg, level);
+	oval_collection_add(syschar->messages, msg);
+}
+
 struct oval_object *oval_syschar_get_object(struct oval_syschar *syschar)
 {
 	__attribute__nonnull__(syschar);

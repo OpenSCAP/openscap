@@ -469,6 +469,10 @@ void oval_syschar_add_sysitem(struct oval_syschar *, struct oval_sysitem *);
  * @memberof oval_syschar
  */
 void oval_syschar_add_message(struct oval_syschar *syschar, struct oval_message *message);
+/**
+ * @memberof oval_syschar
+ */
+void oval_syschar_add_new_message(struct oval_syschar *syschar, char *text, oval_message_level_t level);
 /** @} */
 
 /**
