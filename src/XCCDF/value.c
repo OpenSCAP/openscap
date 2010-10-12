@@ -182,15 +182,15 @@ void xccdf_value_to_dom(struct xccdf_value *value, xmlNode *value_node, xmlDoc *
 	struct oscap_list *match_nodes       = oscap_list_new();
 
 	OSCAP_FOR(xccdf_value_instance, inst, xccdf_value_get_instances(value)) {
-        char buff[16];
+        char buff[16]; buff[15] = '\0';
 		xccdf_unit_node(value_nodes, inst->type, inst->value, inst->flags.value_given, ns_xccdf, "value", inst->selector);
 		xccdf_unit_node(defval_nodes, inst->type, inst->defval, inst->flags.defval_given, ns_xccdf, "default", inst->selector);
-        sprintf(buff, "%f", inst->lower_bound);
+        snprintf(buff, 15, "%f", inst->lower_bound);
 		xccdf_unit_node(lower_bound_nodes, inst->type, buff,
-			inst->type == XCCDF_TYPE_NUMBER && inst->lower_bound != NAN, ns_xccdf, "lower_bound", inst->selector);
-        sprintf(buff, "%f", inst->upper_bound);
+			inst->type == XCCDF_TYPE_NUMBER && inst->lower_bound != NAN && buff[0] != 'n', ns_xccdf, "lower-bound", inst->selector);
+        snprintf(buff, 15, "%f", inst->upper_bound);
 		xccdf_unit_node(upper_bound_nodes, inst->type, buff,
-			inst->type == XCCDF_TYPE_NUMBER && inst->upper_bound != NAN, ns_xccdf, "upper_bound", inst->selector);
+			inst->type == XCCDF_TYPE_NUMBER && inst->upper_bound != NAN && buff[0] != 'n', ns_xccdf, "upper-bound", inst->selector);
 		xccdf_unit_node(match_nodes, inst->type, inst->match,
 			inst->type == XCCDF_TYPE_STRING && inst->match != NULL, ns_xccdf, "match", inst->selector);
         if (inst->choices->first) {

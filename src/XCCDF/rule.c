@@ -954,15 +954,6 @@ void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *
 	}
 	oscap_string_iterator_free(conflicts);
 
-	struct xccdf_item_iterator *items = xccdf_group_get_content(group);
-	while (xccdf_item_iterator_has_more(items)) {
-		struct xccdf_item *item = xccdf_item_iterator_next(items);
-		if (XGROUP(xccdf_item_get_parent(item)) == group) {
-			xccdf_item_to_dom(item, doc, group_node);
-		}
-	}
-	xccdf_item_iterator_free(items);
-
         struct xccdf_value_iterator *values = xccdf_group_get_values(group);
 	while (xccdf_value_iterator_has_more(values)) {
 		struct xccdf_value *value = xccdf_value_iterator_next(values);
@@ -971,6 +962,15 @@ void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *
 		}
 	}
 	xccdf_value_iterator_free(values);
+
+	struct xccdf_item_iterator *items = xccdf_group_get_content(group);
+	while (xccdf_item_iterator_has_more(items)) {
+		struct xccdf_item *item = xccdf_item_iterator_next(items);
+		if (XGROUP(xccdf_item_get_parent(item)) == group) {
+			xccdf_item_to_dom(item, doc, group_node);
+		}
+	}
+	xccdf_item_iterator_free(items);
 
 }
 

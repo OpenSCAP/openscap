@@ -243,6 +243,10 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 	}
 	oscap_string_iterator_free(platforms);
 
+	const char *version = xccdf_benchmark_get_version(benchmark);
+	if (version)
+		xmlNewTextChild(root_node, ns_xccdf, BAD_CAST "version", BAD_CAST version);
+
 	const char *metadata = xccdf_benchmark_get_metadata(benchmark);
 	if (metadata) {
 		xmlNode *metadata_node = xmlNewTextChild(root_node, ns_xccdf, BAD_CAST "metadata", NULL);

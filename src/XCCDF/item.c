@@ -333,20 +333,20 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 	if (xccdf_item_get_abstract(item))
 		xmlNewProp(item_node, BAD_CAST "abstract", BAD_CAST "true");
 
-	/* Handle generic item child nodes */
-	xccdf_texts_to_dom(xccdf_item_get_title(item), item_node, "title");
-	xccdf_texts_to_dom(xccdf_item_get_description(item), item_node, "description");
-
-	const char *version= xccdf_item_get_version(item);
-	if (version)
-		xmlNewTextChild(item_node, ns_xccdf, BAD_CAST "version", BAD_CAST version);
-
 	struct xccdf_status_iterator *statuses = xccdf_item_get_statuses(item);
 	while (xccdf_status_iterator_has_more(statuses)) {
 		struct xccdf_status *status = xccdf_status_iterator_next(statuses);
 		xccdf_status_to_dom(status, doc, item_node);
 	}
 	xccdf_status_iterator_free(statuses);
+
+	/* Handle generic item child nodes */
+	xccdf_texts_to_dom(xccdf_item_get_title(item), item_node, "title");
+	xccdf_texts_to_dom(xccdf_item_get_description(item), item_node, "description");
+
+	const char *version = xccdf_item_get_version(item);
+	if (version && xccdf_item_get_type(item) != XCCDF_BENCHMARK)
+		xmlNewTextChild(item_node, ns_xccdf, BAD_CAST "version", BAD_CAST version);
 
 	xccdf_texts_to_dom(xccdf_item_get_question(item), item_node, "question");
 
@@ -355,7 +355,7 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 		struct xccdf_reference *ref = xccdf_reference_iterator_next(references);
 		xccdf_reference_to_dom(ref, doc, item_node);
 	}
-        xccdf_reference_iterator_free(references);
+    xccdf_reference_iterator_free(references);
 
 	/* Handle type specific attributes and children */
 	switch (xccdf_item_get_type(item)) {
@@ -398,6 +398,7 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 xmlNode *xccdf_reference_to_dom(struct xccdf_reference *ref, xmlDoc *doc, xmlNode *parent)
 {
 	xmlNode *reference_node = oscap_text_to_dom(xccdf_reference_get_text(ref), parent, "reference");
+    xmlUnsetNsProp(reference_node, xmlSearchNsByHref(doc, reference_node, XML_XML_NAMESPACE), BAD_CAST "lang");
 	xmlNewProp(reference_node, BAD_CAST "href", BAD_CAST xccdf_reference_get_href(ref));
 
         /* TODO: Dublin Core Elements /XML spec p. 69/ */
@@ -440,7 +441,8 @@ xmlNode *xccdf_fixtext_to_dom(struct xccdf_fixtext *fixtext, xmlDoc *doc, xmlNod
 		xmlNewProp(fixtext_node, BAD_CAST "reboot", BAD_CAST "True");
 
 	const char *fixref = xccdf_fixtext_get_fixref(fixtext);
-	xmlNewProp(fixtext_node, BAD_CAST "fixref", BAD_CAST fixref);
+    if (fixref)
+	    xmlNewProp(fixtext_node, BAD_CAST "fixref", BAD_CAST fixref);
 
 	xccdf_level_t complexity = xccdf_fixtext_get_complexity(fixtext);
         if (complexity != 0)
