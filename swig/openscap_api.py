@@ -274,9 +274,7 @@ class OSCAP_Object(object):
 
     def agent_eval_system(self, sess, cb, usr):
         if self.object != "oval": raise TypeError("Wrong call of oval_agent_eval_system function on %s" % (self.object,))
-        dict.__setattr__(self, "__output_cb", cb)
-        dict.__setattr__(self, "__output_usr", usr)
-        return OSCAP.oval_agent_eval_system_py(sess.instance, self.__output_callback, self)
+        return OSCAP.oval_agent_eval_system_py(sess.instance, self.__output_callback, (cb, usr))
 
     def query_sysinfo(self):
         if self.object != "oval_probe_session_t": raise TypeError("Wrong call of oval_probe_session_query_sysinfo function on %s" % (self.object,))
