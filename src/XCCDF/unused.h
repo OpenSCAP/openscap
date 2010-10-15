@@ -80,7 +80,7 @@ float xccdf_value_get_weight(const struct xccdf_value *value);
 struct oscap_text_iterator *xccdf_result_get_question(const struct xccdf_result *item);
 struct oscap_text_iterator *xccdf_result_get_rationale(const struct xccdf_result *item);
 struct oscap_text_iterator *xccdf_result_get_description(const struct xccdf_result *item);
-struct xccdf_reference_iterator *xccdf_result_get_references(const struct xccdf_result *item);
+struct oscap_reference_iterator *xccdf_result_get_references(const struct xccdf_result *item);
 struct xccdf_warning_iterator *xccdf_result_get_warnings(const struct xccdf_result *item);
 const char *xccdf_result_get_cluster_id(const struct xccdf_result *item);
 const char *xccdf_result_get_version_update(const struct xccdf_result *item);
@@ -129,7 +129,7 @@ bool xccdf_result_add_description(struct xccdf_result *item, struct oscap_text *
 bool xccdf_result_add_platform(struct xccdf_result *item, const char *newval);
 bool xccdf_result_add_question(struct xccdf_result *item, struct oscap_text *newval);
 bool xccdf_result_add_rationale(struct xccdf_result *item, struct oscap_text *newval);
-bool xccdf_result_add_reference(struct xccdf_result *item, struct xccdf_reference *newval);
+bool xccdf_result_add_reference(struct xccdf_result *item, struct oscap_reference *newval);
 bool xccdf_result_add_status(struct xccdf_result *item, struct xccdf_status *newval);
 bool xccdf_result_add_warning(struct xccdf_result *item, struct xccdf_warning *newval);
 

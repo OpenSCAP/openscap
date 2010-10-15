@@ -113,8 +113,6 @@ struct oscap_text *oscap_text_new_parse(struct oscap_text_traits traits, xmlText
 		text->text = oscap_get_xml(reader);
     else text->text = oscap_element_string_copy(reader);
 
-    // TODO substitution support
-    
     return text;
 }
 

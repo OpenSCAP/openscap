@@ -35,6 +35,7 @@
 #include <wchar.h>
 
 #include "text.h"
+#include "reference.h"
 #include "reporter.h"
 
 

@@ -158,23 +158,12 @@ void xccdf_item_base_clone(struct xccdf_item_base *new_base, const struct xccdf_
 
 	new_base->warnings = oscap_list_clone(old_base->warnings, (oscap_clone_func) xccdf_warning_clone);
 	new_base->statuses = oscap_list_clone(old_base->statuses, (oscap_clone_func) xccdf_status_clone);
-	new_base->references = oscap_list_clone(old_base->references, (oscap_clone_func) xccdf_reference_clone);
+	new_base->references = oscap_list_clone(old_base->references, (oscap_clone_func) oscap_reference_clone);
 	new_base->platforms = oscap_list_clone(old_base->platforms, (oscap_clone_func) oscap_strdup);
 
 	/* Handling flags */
 	new_base->flags = old_base->flags;
 	new_base->defined_flags = old_base->defined_flags;
-}
-
-
-
-/* Performs a deep copy of xccdf_reference and returns a pointer to that copy */
-struct xccdf_reference *xccdf_reference_clone(const struct xccdf_reference *old_reference)
-{
-	struct xccdf_reference *new_reference = oscap_calloc(1, sizeof(struct xccdf_reference));
-	new_reference->href = oscap_strdup(old_reference->href);
-	new_reference->text = oscap_text_clone(old_reference->text);
-	return new_reference;
 }
 
 /* Performs a deep copy of xccdf_status and returns a pointer to that copy */
@@ -207,7 +196,7 @@ void xccdf_item_release(struct xccdf_item *item)
 		oscap_list_free(item->item.rationale, (oscap_destruct_func) oscap_text_free);
 		oscap_list_free(item->item.question, (oscap_destruct_func) oscap_text_free);
 		oscap_list_free(item->item.warnings, (oscap_destruct_func) xccdf_warning_free);
-		oscap_list_free(item->item.references, (oscap_destruct_func) xccdf_reference_free);
+		oscap_list_free(item->item.references, (oscap_destruct_func) oscap_reference_free);
 		if (item->type != XCCDF_BENCHMARK) xccdf_benchmark_unregister_item(item);
 		oscap_free(item->item.id);
 		oscap_free(item->item.cluster_id);
@@ -350,12 +339,12 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 
 	xccdf_texts_to_dom(xccdf_item_get_question(item), item_node, "question");
 
-	struct xccdf_reference_iterator *references = xccdf_item_get_references(item);
-	while (xccdf_reference_iterator_has_more(references)) {
-		struct xccdf_reference *ref = xccdf_reference_iterator_next(references);
-		xccdf_reference_to_dom(ref, doc, item_node);
+	struct oscap_reference_iterator *references = xccdf_item_get_references(item);
+	while (oscap_reference_iterator_has_more(references)) {
+		struct oscap_reference *ref = oscap_reference_iterator_next(references);
+		oscap_reference_to_dom(ref, item_node, doc, "reference");
 	}
-    xccdf_reference_iterator_free(references);
+    oscap_reference_iterator_free(references);
 
 	/* Handle type specific attributes and children */
 	switch (xccdf_item_get_type(item)) {
@@ -393,17 +382,6 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 	}
 
 	return item_node;
-}
-
-xmlNode *xccdf_reference_to_dom(struct xccdf_reference *ref, xmlDoc *doc, xmlNode *parent)
-{
-	xmlNode *reference_node = oscap_text_to_dom(xccdf_reference_get_text(ref), parent, "reference");
-    xmlUnsetNsProp(reference_node, xmlSearchNsByHref(doc, reference_node, XML_XML_NAMESPACE), BAD_CAST "lang");
-	xmlNewProp(reference_node, BAD_CAST "href", BAD_CAST xccdf_reference_get_href(ref));
-
-        /* TODO: Dublin Core Elements /XML spec p. 69/ */
-
-	return reference_node;
 }
 
 xmlNode *xccdf_profile_note_to_dom(struct xccdf_profile_note *note, xmlDoc *doc, xmlNode *parent)
@@ -625,7 +603,7 @@ bool xccdf_item_process_element(struct xccdf_item * item, xmlTextReaderPtr reade
         oscap_list_add(item->item.warnings, xccdf_warning_new_parse(reader));
 		return true;
 	case XCCDFE_REFERENCE:
-        oscap_list_add(item->item.references, xccdf_reference_new_parse(reader));
+        oscap_list_add(item->item.references, oscap_reference_new_parse(reader));
 		return true;
 	case XCCDFE_STATUS:{
         const char *date = xccdf_attribute_get(reader, XCCDFA_DATE);
@@ -715,13 +693,12 @@ XCCDF_FLAG_GETTER(abstract)
 XCCDF_FLAG_GETTER(interactive)
 XCCDF_ITEM_SIGETTER(platforms)
 XCCDF_ITEM_ADDER_STRING(platform, platforms)
-XCCDF_ITEM_IGETTER(reference, references)
 XCCDF_ITEM_IGETTER(warning, warnings)
 XCCDF_ITEM_IGETTER(status, statuses)
-XCCDF_ITEM_ADDER(struct xccdf_reference *, reference, references)
+XCCDF_ITEM_ADDER(struct oscap_reference *, reference, references)
 XCCDF_ITEM_ADDER(struct xccdf_warning *, warning, warnings)
 XCCDF_ITEM_ADDER(struct xccdf_status *, status, statuses)
-XCCDF_ITERATOR_GEN_S(item) XCCDF_ITERATOR_GEN_S(status) XCCDF_ITERATOR_GEN_S(reference)
+XCCDF_ITERATOR_GEN_S(item) XCCDF_ITERATOR_GEN_S(status)
 OSCAP_ITERATOR_GEN(xccdf_warning)
 OSCAP_ITERATOR_REMOVE_F(xccdf_warning)
 
@@ -737,6 +714,8 @@ XCCDF_ITEM_SETTER_STRING(cluster_id)
 XCCDF_SETTER_ID(item) XCCDF_SETTER_ID(benchmark) XCCDF_SETTER_ID(profile)
 XCCDF_SETTER_ID(rule) XCCDF_SETTER_ID(group) XCCDF_SETTER_ID(value) XCCDF_SETTER_ID(result)
 #undef XCCDF_SETTER_ID
+
+struct oscap_reference_iterator *xccdf_item_get_references(const struct xccdf_item *item) { return oscap_iterator_new(item->item.references); }
 
 struct xccdf_item_iterator *xccdf_item_get_content(const struct xccdf_item *item)
 {
@@ -897,35 +876,6 @@ void xccdf_warning_free(struct xccdf_warning * w)
 
 OSCAP_ACCESSOR_SIMPLE(xccdf_warning_category_t, xccdf_warning, category)
 OSCAP_ACCESSOR_TEXT(xccdf_warning, text)
-
-struct xccdf_reference *xccdf_reference_new(void)
-{
-    struct xccdf_reference *ref = oscap_calloc(1, sizeof(struct xccdf_reference));
-    return ref;
-}
-
-struct xccdf_reference *xccdf_reference_new_parse(xmlTextReaderPtr reader)
-{
-    struct xccdf_reference *ref = xccdf_reference_new();
-    //if (xccdf_attribute_has(reader, XCCDFA_OVERRIDE))
-    //        ref->override = oscap_string_to_enum(OSCAP_BOOL_MAP, xccdf_attribute_get(reader, XCCDFA_OVERRIDE));
-    ref->href = xccdf_attribute_copy(reader, XCCDFA_HREF);
-	ref->text = oscap_text_new_parse(OSCAP_TEXT_TRAITS_HTML, reader);
-    //ref->content = oscap_element_string_copy(reader);
-    // TODO Dublin Core
-    return ref;
-}
-
-void xccdf_reference_free(struct xccdf_reference *ref)
-{
-    if (ref != NULL) {
-        //oscap_free(ref->lang);
-        oscap_free(ref->href);
-		oscap_text_free(ref->text);
-        //oscap_free(ref->content);
-        oscap_free(ref);
-    }
-}
 
 //clones the specific types of items
 void xccdf_profile_item_clone(struct xccdf_profile_item *clone, const struct xccdf_profile_item * item)
@@ -1136,9 +1086,6 @@ void xccdf_reparent_item(struct xccdf_item * item, struct xccdf_item * parent)
 		xccdf_benchmark_register_item(xccdf_item_get_benchmark(item), item);
 	}
 }
-
-OSCAP_ACCESSOR_STRING(xccdf_reference, href)
-OSCAP_ACCESSOR_TEXT(xccdf_reference, text)
 
 const struct oscap_text_traits XCCDF_TEXT_PLAIN    = { .can_override = true };
 const struct oscap_text_traits XCCDF_TEXT_HTML     = { .html = true, .can_override = true };

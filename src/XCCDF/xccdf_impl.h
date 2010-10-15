@@ -43,7 +43,6 @@ OSCAP_HIDDEN_START;
 xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc,
 				xmlNode *parent, void *user_args);
 xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent);
-xmlNode *xccdf_reference_to_dom(struct xccdf_reference *reference, xmlDoc *doc, xmlNode *parent);
 xmlNode *xccdf_profile_note_to_dom(struct xccdf_profile_note *note, xmlDoc *doc, xmlNode *parent);
 xmlNode *xccdf_fixtext_to_dom(struct xccdf_fixtext *fixtext, xmlDoc *doc, xmlNode *parent);
 xmlNode *xccdf_fix_to_dom(struct xccdf_fix *fix, xmlDoc *doc, xmlNode *parent);

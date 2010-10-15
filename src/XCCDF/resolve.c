@@ -95,10 +95,6 @@ static void xccdf_resolve_warning(void *w1, void *w2) {
 	if (xccdf_warning_get_category(w1) == 0)
 		xccdf_warning_set_category(w1, xccdf_warning_get_category(w2));
 }
-static void xccdf_resolve_reference(void *r1, void *r2) {
-	if (xccdf_reference_get_href(r1) == NULL)
-		xccdf_reference_set_href(r1, xccdf_reference_get_href(r2));
-}
 
 #define XCCDF_RESOLVE_FLAG(ITEM,PARENT,FLAGNAME) do { \
 	if (!ITEM->item.defined_flags.FLAGNAME) ITEM->item.flags.FLAGNAME = PARENT->item.flags.FLAGNAME; \
@@ -138,7 +134,7 @@ static void xccdf_resolve_item(struct xccdf_item *item)
 	xccdf_resolve_textlist(item->item.question,    parent->item.question,    NULL);
 	xccdf_resolve_textlist(item->item.rationale,   parent->item.rationale,   NULL);
 	xccdf_resolve_textlist(item->item.warnings,    parent->item.warnings,    xccdf_resolve_warning);
-	xccdf_resolve_textlist(item->item.references,  parent->item.references,  xccdf_resolve_reference);
+	xccdf_resolve_textlist(item->item.references,  parent->item.references,  NULL);
 
 	// resolve platforms
 	OSCAP_FOR_STR(platform, xccdf_item_get_platforms(parent))
