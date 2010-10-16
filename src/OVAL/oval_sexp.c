@@ -29,6 +29,7 @@
  * Authors:
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  *      "Lukas Kuklinek" <lkuklinek@redhat.com>
+ *      "Tomas Heinrich" <theinric@redhat.com>
  */
 #include <inttypes.h>
 #include <stdlib.h>
@@ -155,7 +156,7 @@ static SEXP_t *oval_entity_to_sexp(struct oval_entity *ent)
 	return (elm);
 }
 
-static SEXP_t *oval_varref_to_sexp(struct oval_entity *entity, struct oval_syschar_model *syschar_model, void *sess)
+static int oval_varref_to_sexp(void *sess, struct oval_entity *entity, struct oval_syschar *syschar, SEXP_t **out_sexp)
 {
 	unsigned int val_cnt = 0;
 	SEXP_t *val_lst, *val_sexp, *varref, *id_sexp, *val_cnt_sexp;
@@ -164,35 +165,56 @@ static SEXP_t *oval_varref_to_sexp(struct oval_entity *entity, struct oval_sysch
 	struct oval_value_iterator *vit;
 	struct oval_value *val;
 	oval_syschar_collection_flag_t flag;
+	char msg[100];
+	int ret = 0;
 
-	val_lst = SEXP_list_new(NULL);
 	dt = oval_entity_get_datatype(entity);
 
 	var = oval_entity_get_variable(entity);
 	if (oval_probe_query_variable(sess, var) != 0) {
-		SEXP_free(val_lst);
-		return NULL;
+		dE("Can't convert variable reference to SEXP.\n");
+		return -1;
 	}
 
 	flag = oval_variable_get_collection_flag(var);
 	switch (flag) {
 	case SYSCHAR_FLAG_COMPLETE:
 	case SYSCHAR_FLAG_INCOMPLETE:
+		vit = oval_variable_get_values(var);
+		if (oval_value_iterator_has_more(vit))
+			break;
+		/* fall through */
+	case SYSCHAR_FLAG_DOES_NOT_EXIST:
+		snprintf(msg, sizeof(msg), "Referenced variable has no values (%s).\n",
+			 oval_variable_get_id(var));
+		ret = 1;
 		break;
 	default:
-		SEXP_free(val_lst);
-		return NULL;
+		snprintf(msg, sizeof(msg), "There was a problem processing referenced variable (%s).\n",
+			 oval_variable_get_id(var));
+		ret = 1;
 	}
 
-	vit = oval_variable_get_values(var);
+	if (ret) {
+		dW(msg);
+		oval_syschar_add_new_message(syschar, msg, OVAL_MESSAGE_LEVEL_WARNING);
+		oval_syschar_set_flag(syschar, SYSCHAR_FLAG_DOES_NOT_EXIST);
+		return ret;
+	}
+
+	val_lst = SEXP_list_new(NULL);
+
 	while (oval_value_iterator_has_more(vit)) {
 		val = oval_value_iterator_next(vit);
 
 		val_sexp = oval_value_to_sexp(val, dt);
 		if (val_sexp == NULL) {
+			oval_syschar_add_new_message(syschar, "Failed to convert variable value.\n",
+						     OVAL_MESSAGE_LEVEL_ERROR);
+			oval_syschar_set_flag(syschar, SYSCHAR_FLAG_ERROR);
 			SEXP_free(val_lst);
 			oval_value_iterator_free(vit);
-			return NULL;
+			return -1;
 		}
 
 		SEXP_list_add(val_lst, val_sexp);
@@ -210,7 +232,8 @@ static SEXP_t *oval_varref_to_sexp(struct oval_entity *entity, struct oval_sysch
 	SEXP_free(val_cnt_sexp);
 	SEXP_free(val_lst);
 
-	return varref;
+	*out_sexp = varref;
+	return 0;
 }
 
 static SEXP_t *oval_filter_to_sexp(struct oval_filter *filter)
@@ -336,16 +359,20 @@ static SEXP_t *oval_behaviors_to_sexp(struct oval_behavior_iterator *bit)
 	return (r0);
 }
 
-SEXP_t *oval_object2sexp(const char *typestr, struct oval_object *object, struct oval_syschar_model *syschar_model, void *sess)
+int oval_object2sexp(void *sess, const char *typestr, struct oval_syschar *syschar, SEXP_t **out_sexp)
 {
 	unsigned int ent_cnt, varref_cnt;
+	int ret = -1;
 	SEXP_t *obj_sexp, *obj_name, *elm, *varrefs, *ent_lst, *lst, *stmp;
 	SEXP_t *r0, *r1, *r2;
 
+	struct oval_object *object;
 	struct oval_object_content_iterator *cit;
 	struct oval_behavior_iterator *bit;
 	struct oval_object_content *content;
 	struct oval_entity *entity;
+
+	object = oval_syschar_get_object(syschar);
 
 	/*
 	 * Object name & attributes (id)
@@ -393,9 +420,9 @@ SEXP_t *oval_object2sexp(const char *typestr, struct oval_object *object, struct
 			}
 
 			if (oval_entity_get_varref_type(entity) == OVAL_ENTITY_VARREF_ATTRIBUTE) {
-				stmp = oval_varref_to_sexp(entity, syschar_model, sess);
+				ret = oval_varref_to_sexp(sess, entity, syschar, &stmp);
 
-				if (stmp == NULL) {
+				if (ret != 0) {
 					SEXP_free(elm);
 					elm = NULL;
 					break;
@@ -433,7 +460,7 @@ SEXP_t *oval_object2sexp(const char *typestr, struct oval_object *object, struct
 				SEXP_free(varrefs);
 			oval_object_content_iterator_free(cit);
 
-			return (NULL);
+			return (ret);
 		}
 
 		SEXP_list_add(lst, elm);
@@ -469,10 +496,12 @@ SEXP_t *oval_object2sexp(const char *typestr, struct oval_object *object, struct
 	}
 	oval_behavior_iterator_free(bit);
 
-	return (obj_sexp);
+	*out_sexp = obj_sexp;
+
+	return (0);
 }
 
-SEXP_t *oval_state2sexp(struct oval_state *state, void *sess)
+int oval_state2sexp(void *sess, struct oval_state *state, SEXP_t **out_sexp)
 {
 	SEXP_t *ste, *ste_name, *ste_ent;
 	SEXP_t *r0, *r1, *r2, *r3, *r4;
@@ -485,7 +514,7 @@ SEXP_t *oval_state2sexp(struct oval_state *state, void *sess)
 
 	if (subtype_name == NULL) {
 		_D("FAIL: unknown subtype: %d\n", oval_state_get_subtype(state));
-		return (NULL);
+		return (-1);
 	}
 
 	buflen = snprintf(buffer, sizeof buffer, "%s_state", subtype_name);
@@ -510,9 +539,7 @@ SEXP_t *oval_state2sexp(struct oval_state *state, void *sess)
 		ent = oval_state_content_get_entity(content);
 		ste_ent = oval_entity_to_sexp(ent);
 		if (ste_ent == NULL) {
-			SEXP_free(ste);
-			ste = NULL;
-			break;
+			goto fail;
 		}
 
 		ochk = oval_state_content_get_var_check(content);
@@ -539,39 +566,34 @@ SEXP_t *oval_state2sexp(struct oval_state *state, void *sess)
 				goto fail;
 			}
 
-			flag = oval_variable_get_collection_flag(var);
-			switch (flag) {
-			case SYSCHAR_FLAG_COMPLETE:
-			case SYSCHAR_FLAG_INCOMPLETE:
-				break;
-			default:
-				goto fail;
-			}
-
 			dt = oval_entity_get_datatype(ent);
 			val_lst = SEXP_list_new(NULL);
 
-			val_itr = oval_variable_get_values(var);
-			while (oval_value_iterator_has_more(val_itr)) {
-				struct oval_value *val;
-				SEXP_t *vs;
+			flag = oval_variable_get_collection_flag(var);
+			if (flag == SYSCHAR_FLAG_COMPLETE
+			    || flag == SYSCHAR_FLAG_INCOMPLETE) {
+				val_itr = oval_variable_get_values(var);
+				while (oval_value_iterator_has_more(val_itr)) {
+					struct oval_value *val;
+					SEXP_t *vs;
 
-				val = oval_value_iterator_next(val_itr);
-				vs = oval_value_to_sexp(val, dt);
-				if (vs == NULL) {
-					oscap_dlprintf(DBG_E, "Failed to convert OVAL value to SEXP: "
-						       "datatype: %s, text: %s.\n",
-						       oval_datatype_get_text(dt),
-						       oval_value_get_text(val));
-					oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Failed to convert OVAL value to SEXP");
-					oval_value_iterator_free(val_itr);
-					SEXP_free(val_lst);
-					goto fail;
+					val = oval_value_iterator_next(val_itr);
+					vs = oval_value_to_sexp(val, dt);
+					if (vs == NULL) {
+						oscap_dlprintf(DBG_E, "Failed to convert OVAL value to SEXP: "
+							       "datatype: %s, text: %s.\n",
+							       oval_datatype_get_text(dt),
+							       oval_value_get_text(val));
+						oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Failed to convert OVAL value to SEXP");
+						oval_value_iterator_free(val_itr);
+						SEXP_free(val_lst);
+						goto fail;
+					}
+					SEXP_list_add(val_lst, vs);
+					SEXP_free(vs);
 				}
-				SEXP_list_add(val_lst, vs);
-				SEXP_free(vs);
+				oval_value_iterator_free(val_itr);
 			}
-			oval_value_iterator_free(val_itr);
 
 			SEXP_list_add(ste_ent, val_lst);
 			SEXP_free(val_lst);
@@ -582,12 +604,13 @@ SEXP_t *oval_state2sexp(struct oval_state *state, void *sess)
 	}
 	oval_state_content_iterator_free(contents);
 
-	return (ste);
+	*out_sexp = ste;
+	return (0);
 
  fail:
 	oval_state_content_iterator_free(contents);
-	SEXP_vfree(ste_ent, ste, NULL);
-	return NULL;
+	SEXP_vfree(ste, ste_ent, NULL);
+	return (-1);
 }
 
 static struct oval_message *oval_sexp2msg(const SEXP_t *msg)
@@ -752,17 +775,16 @@ static struct oval_sysitem *oval_sysitem_from_sexp(struct oval_syschar_model *mo
 	return sysitem;
 }
 
-struct oval_syschar *oval_sexp2sysch(const SEXP_t *cobj, struct oval_syschar_model *model, struct oval_object *object)
+int oval_sexp2sysch(const SEXP_t *cobj, struct oval_syschar *syschar)
 {
-	struct oval_syschar *sysch;
 	oval_syschar_collection_flag_t flag;
 	SEXP_t *messages, *msg, *items, *item;
+	struct oval_syschar_model *model;
 
 	_A(cobj != NULL);
 
-	sysch = oval_syschar_new(model, object);
 	flag = probe_cobj_get_flag(cobj);
-	oval_syschar_set_flag(sysch, flag);
+	oval_syschar_set_flag(syschar, flag);
 
 	messages = probe_cobj_get_msgs(cobj);
 	SEXP_list_foreach(msg, messages) {
@@ -770,19 +792,20 @@ struct oval_syschar *oval_sexp2sysch(const SEXP_t *cobj, struct oval_syschar_mod
 
 		omsg = oval_sexp2msg(msg);
 		if (omsg != NULL)
-			oval_syschar_add_message(sysch, omsg);
+			oval_syschar_add_message(syschar, omsg);
 	}
 	SEXP_free(messages);
 
+	model = oval_syschar_get_model(syschar);
 	items = probe_cobj_get_items(cobj);
 	SEXP_list_foreach(item, items) {
 		struct oval_sysitem *sysitem;
 
 		sysitem = oval_sysitem_from_sexp(model, item);
 		if (sysitem != NULL)
-			oval_syschar_add_sysitem(sysch, sysitem);
+			oval_syschar_add_sysitem(syschar, sysitem);
 	}
 	SEXP_free(items);
 
-	return sysch;
+	return 0;
 }

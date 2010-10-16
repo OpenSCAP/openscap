@@ -1344,7 +1344,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 		return flag;
 
 	if (argu->mode == OVAL_MODE_QUERY) {
-		if ((syschar = oval_probe_query_object(argu->u.sess, object, 0)) == NULL)
+		if (oval_probe_query_object(argu->u.sess, object, 0, &syschar) != 0)
 			return flag;
 	} else {
 		char *obj_id;

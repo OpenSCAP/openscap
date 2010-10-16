@@ -22,6 +22,7 @@
 #include <errno.h>
 #include <string.h>
 #include "common/assume.h"
+#include "common/debug_priv.h"
 #include "oval_sexp.h"
 #include "oval_probe_impl.h"
 #include "oval_definitions_impl.h"
@@ -93,20 +94,22 @@ static struct oval_variable *oval_probe_variable_objgetvar(struct oval_object *o
         return(var);
 }
 
-static struct oval_syschar *oval_probe_envvar_eval(struct oval_object *obj, struct oval_syschar_model *model)
+static int oval_probe_envvar_eval(struct oval_syschar *syschar)
 {
-        struct oval_syschar *sys;
-        struct oval_value   *val;
+	struct oval_object *obj;
+	struct oval_value *val;
         char *var_name, *var_value;
 	SEXP_t *r0, *r1, *r2, *cobj;
+	int ret;
 
+	obj = oval_syschar_get_object(syschar);
         val = oval_object_getentval(obj, "name");
 
         if (val == NULL)
-                return(NULL);
+		return(-1);
 
         if (oval_value_get_datatype(val) != OVAL_DATATYPE_STRING)
-                return(NULL);
+		return(-1);
 
         var_name  = oval_value_get_text(val);
         var_value = getenv(var_name);
@@ -122,29 +125,27 @@ static struct oval_syschar *oval_probe_envvar_eval(struct oval_object *obj, stru
 	}
 
 	probe_cobj_compute_flag(cobj);
-	sys  = oval_sexp2sysch(cobj, model, obj);
+	ret = oval_sexp2sysch(cobj, syschar);
 	SEXP_vfree(cobj, NULL);
 
-        return(sys);
+	return(ret);
 }
 
 int oval_probe_envvar_handler(oval_subtype_t type, void *ptr, int act, ...)
 {
         int ret = 0;
         va_list ap;
-        struct oval_syschar_model *model = (struct oval_syschar_model *)ptr;
 
         va_start(ap, act);
 
         switch(act) {
         case PROBE_HANDLER_ACT_EVAL:
         {
-                struct oval_object   *obj = va_arg(ap, struct oval_object *);
-                struct oval_syschar **sys = va_arg(ap, struct oval_syschar **);
+		struct oval_syschar *sys;
 
-                va_arg(ap, int);
-                *sys = oval_probe_envvar_eval(obj, model);
-                ret  = (*sys == NULL ? -1 : 0);
+		sys = va_arg(ap, struct oval_syschar *);
+		va_arg(ap, int);
+		ret = oval_probe_envvar_eval(sys);
                 break;
         }
         case PROBE_HANDLER_ACT_INIT:
@@ -162,24 +163,26 @@ int oval_probe_envvar_handler(oval_subtype_t type, void *ptr, int act, ...)
         return(ret);
 }
 
-static struct oval_syschar *oval_probe_variable_eval(struct oval_object *obj, oval_probe_session_t *sess)
+static int oval_probe_variable_eval(oval_probe_session_t *sess, struct oval_syschar *syschar)
 {
         struct oval_value    *val;
-        struct oval_syschar  *sys;
         struct oval_value_iterator *vit;
         struct oval_variable *var;
-        struct oval_syschar_model    *sys_model;
+	struct oval_object *obj;
 	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_ERROR;
+	int ret = 0;
 
+	obj = oval_syschar_get_object(syschar);
 	var = oval_probe_variable_objgetvar(obj);
-        sys_model = oval_probe_session_getmodel(sess);
-
 	if (var == NULL) {
-		goto fail;
+		oval_syschar_set_flag(syschar, SYSCHAR_FLAG_ERROR);
+		return(-1);
 	}
 
-        if (oval_probe_query_variable(sess, var) != 0)
-		goto fail;
+	if (oval_probe_query_variable(sess, var) != 0) {
+		oval_syschar_set_flag(syschar, SYSCHAR_FLAG_ERROR);
+		return(-1);
+	}
 
 	flag = oval_variable_get_collection_flag(var);
 	switch (flag) {
@@ -187,14 +190,24 @@ static struct oval_syschar *oval_probe_variable_eval(struct oval_object *obj, ov
 	case SYSCHAR_FLAG_INCOMPLETE:
 		break;
 	default:
-		goto fail;
+	{
+		char msg[100];
+
+		snprintf(msg, sizeof(msg), "There was a problem processing referenced variable (%s).\n",
+			 oval_variable_get_id(var));
+		dW(msg);
+		oval_syschar_add_new_message(syschar, msg, OVAL_MESSAGE_LEVEL_WARNING);
+		oval_syschar_set_flag(syschar, SYSCHAR_FLAG_DOES_NOT_EXIST);
+		return(1);
+	}
 	}
 
         vit = oval_variable_get_values(var);
 
 	if (vit == NULL) {
 		flag = SYSCHAR_FLAG_ERROR;
-		goto fail;
+		oval_syschar_set_flag(syschar, SYSCHAR_FLAG_ERROR);
+		return(1);
 	} else {
                 SEXP_t *r0, *item, *cobj, *vrent, *val_sexp;
 		char *var_ref;
@@ -231,16 +244,11 @@ static struct oval_syschar *oval_probe_variable_eval(struct oval_object *obj, ov
 
                 oval_value_iterator_free(vit);
 		probe_cobj_compute_flag(cobj);
-                sys  = oval_sexp2sysch(cobj, sys_model, obj);
+		ret = oval_sexp2sysch(cobj, syschar);
                 SEXP_vfree(cobj, vrent, NULL);
         }
 
-        return(sys);
- fail:
-	sys = oval_syschar_new(sys_model, obj);
-	oval_syschar_set_flag(sys, flag);
-
-	return(sys);
+	return(ret);
 }
 
 int oval_probe_var_handler(oval_subtype_t type, void *ptr, int act, ...)
@@ -254,12 +262,11 @@ int oval_probe_var_handler(oval_subtype_t type, void *ptr, int act, ...)
         switch(act) {
         case PROBE_HANDLER_ACT_EVAL:
         {
-                struct oval_object   *obj = va_arg(ap, struct oval_object *);
-                struct oval_syschar **sys = va_arg(ap, struct oval_syschar **);
+		struct oval_syschar *sys;
 
+		sys = va_arg(ap, struct oval_syschar *);
                 va_arg(ap, int);
-                *sys = oval_probe_variable_eval(obj, sess);
-                ret  = (*sys == NULL ? -1 : 0);
+		ret = oval_probe_variable_eval(sess, sys);
                 break;
         }
         case PROBE_HANDLER_ACT_INIT:

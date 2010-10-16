@@ -318,52 +318,55 @@ static void _syschar_add_bindings(struct oval_syschar *sc, struct oval_string_ma
 	oval_collection_iterator_free(var_itr);
 }
 
-struct oval_syschar *oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *object, int flags)
+int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *object, int flags, struct oval_syschar **out_syschar)
 {
 	char *oid;
-        struct oval_syschar *o_sys;
+	struct oval_syschar *sysc;
         oval_subtype_t type;
         oval_ph_t *ph;
 	struct oval_string_map *vm;
 	struct oval_syschar_model *model;
+	int ret;
 
 	oid = oval_object_get_id(object);
 	model = psess->sys_model;
-	o_sys = oval_syschar_model_get_syschar(model, oid);
 
-	if (o_sys != NULL)
-		return(o_sys);
+	sysc = oval_syschar_model_get_syschar(model, oid);
+	if (sysc != NULL) {
+		if (out_syschar)
+			*out_syschar = sysc;
+		return 0;
+	}
 
+	sysc = oval_syschar_new(model, object);
         type = oval_object_get_subtype(object);
         ph   = oval_probe_handler_get(psess->ph, type);
 
         if (ph == NULL) {
-                dW("OVAL object not supported.\n");
+                char *msg = "OVAL object not supported.\n";
 
-		o_sys = oval_syschar_new(model, object);
-		oval_syschar_set_flag(o_sys, SYSCHAR_FLAG_NOT_COLLECTED);
-		return(o_sys);
+		dW(msg);
+		oval_syschar_add_new_message(sysc, msg, OVAL_MESSAGE_LEVEL_WARNING);
+		oval_syschar_set_flag(sysc, SYSCHAR_FLAG_NOT_COLLECTED);
+
+		return 1;
         }
 
-        o_sys = NULL;
-
-        if (ph->func(type, ph->uptr, PROBE_HANDLER_ACT_EVAL, object, &o_sys, flags) != 0) {
-		if (oscap_err())
-			return(NULL);
-
-		o_sys = oval_syschar_new(model, object);
-		oval_syschar_set_flag(o_sys, SYSCHAR_FLAG_ERROR);
-		return(o_sys);
-        }
+	if ((ret = ph->func(type, ph->uptr, PROBE_HANDLER_ACT_EVAL, sysc, flags)) != 0) {
+		return ret;
+	}
 
 	if (!(flags & OVAL_PDFLAG_NOREPLY)) {
 		vm = oval_string_map_new();
 		_obj_collect_var_refs(object, vm);
-		_syschar_add_bindings(o_sys, vm);
+		_syschar_add_bindings(sysc, vm);
 		oval_string_map_free(vm, NULL);
 	}
 
-        return(o_sys);
+	if (out_syschar)
+		*out_syschar = sysc;
+
+	return 0;
 }
 
 struct oval_sysinfo *oval_probe_query_sysinfo(oval_probe_session_t *sess)
@@ -401,7 +404,7 @@ int oval_probe_query_objects(oval_probe_session_t *sess)
 		struct oval_object_iterator *objects = oval_definition_model_get_objects(definition_model);
 		while (oval_object_iterator_has_more(objects)) {
 			struct oval_object *object = oval_object_iterator_next(objects);
-			if (oval_probe_query_object(sess, object, 0) == NULL) {
+			if (oval_probe_query_object(sess, object, 0, NULL) != 0) {
 				oval_object_iterator_free(objects);
 				return -1;
 			}
@@ -454,7 +457,7 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
 		if (object == NULL)
 			return 0;
 		/* probe object */
-		if (oval_probe_query_object(sess, object, 0) == NULL)
+		if (oval_probe_query_object(sess, object, 0, NULL) != 0)
 			return -1;
 		/* probe objects referenced like this: test->state->variable->object */
 		state = oval_test_get_state(test);

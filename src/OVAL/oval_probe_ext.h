@@ -68,7 +68,7 @@ typedef struct oval_pext oval_pext_t;
 oval_pext_t *oval_pext_new(void);
 void oval_pext_free(oval_pext_t *pext);
 int oval_probe_ext_init(oval_pext_t *pext);
-int oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *, struct oval_object *object, struct oval_syschar **syschar, int flags);
+int oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext, struct oval_syschar *syschar, int flags);
 int oval_probe_ext_reset(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext);
 
 int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...);

@@ -58,7 +58,7 @@ struct oval_sysinfo *oval_probe_query_sysinfo(oval_probe_session_t *sess) __attr
  * @param sess probe session
  * @param object the object to evaluate
  */
-struct oval_syschar *oval_probe_query_object(oval_probe_session_t *sess, struct oval_object *object, int flags) __attribute__ ((nonnull(1, 2)));
+int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *object, int flags, struct oval_syschar **out_syschar) __attribute__ ((nonnull(1, 2)));
 
 /**
  * Probe all objects and update system characteristic model in the session
