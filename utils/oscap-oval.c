@@ -137,7 +137,7 @@ int VERBOSE;
 struct oval_usr {
 	int result_false;
 	int result_true;
-	int result_invalid;
+	int result_error;
 	int result_unknown;
 	int result_neval;
 	int result_napp;
@@ -161,6 +161,9 @@ static int app_oval_callback(const struct oscap_reporter_message *msg, void *arg
 		break;
 	case OVAL_RESULT_FALSE:
 		((struct oval_usr *)arg)->result_false++;
+		break;
+	case OVAL_RESULT_ERROR:
+		((struct oval_usr *)arg)->result_error++;
 		break;
 	case OVAL_RESULT_UNKNOWN:
 		((struct oval_usr *)arg)->result_unknown++;
@@ -258,12 +261,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 
 	/* Init usr structure */
 	usr = malloc(sizeof(struct oval_usr));
-	usr->result_false = 0;
-	usr->result_true = 0;
-	usr->result_invalid = 0;
-	usr->result_unknown = 0;
-	usr->result_neval = 0;
-	usr->result_napp = 0;
+	memset(usr, 0, sizeof(struct oval_usr));
 
 	/* Evaluation */
 	ret = oval_agent_eval_system(sess, app_oval_callback, usr);
@@ -279,6 +277,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 		fprintf(stdout, "====== RESULTS ======\n");
 		fprintf(stdout, "TRUE:          \r\t\t %d\n", usr->result_true);
 		fprintf(stdout, "FALSE:         \r\t\t %d\n", usr->result_false);
+		fprintf(stdout, "ERROR:         \r\t\t %d\n", usr->result_error);
 		fprintf(stdout, "UNKNOWN:       \r\t\t %d\n", usr->result_unknown);
 		fprintf(stdout, "NOT EVALUATED: \r\t\t %d\n", usr->result_neval);
 		fprintf(stdout, "NOT APPLICABLE:\r\t\t %d\n", usr->result_napp);
