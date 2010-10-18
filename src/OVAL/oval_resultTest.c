@@ -30,6 +30,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #include <string.h>
 #include <regex.h>
 #include <ctype.h>
@@ -385,6 +386,27 @@ static oval_result_t strregcomp(char *pattern, char *test_str)
 	return result;
 }
 
+static int cmp_float(float a, float b)
+{
+	float relative_err;
+	int r;
+
+	if (a == b)
+		return 0;
+
+	if (fabs(a) > fabs(b)) {
+		r = 1;
+		relative_err = fabs((a - b) / a);
+	} else {
+		r = -1;
+		relative_err = fabs((a - b) / b);
+	}
+	if (relative_err <= 0.000000001)
+		return 0;
+
+	return r;
+}
+
 // finally, we have gotten to the point of comparing system data with a state
 static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t sys_data_type,
 			      oval_datatype_t state_data_type, oval_operation_t operation)
@@ -424,6 +446,28 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else {
 			oscap_dlprintf(DBG_E, "Invalid type of operation in integer evaluation: %d.\n", operation);
 			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in integer evaluation");
+			return OVAL_RESULT_ERROR;
+		}
+	} else if (state_data_type == OVAL_DATATYPE_FLOAT) {
+		float state_val, sys_val;
+
+		state_val = atof(state_data);
+		sys_val = atof(sys_data);
+		if (operation == OVAL_OPERATION_EQUALS) {
+			return ((cmp_float(sys_val, state_val) == 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+		} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
+			return ((cmp_float(sys_val, state_val) != 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+		} else if (operation == OVAL_OPERATION_GREATER_THAN) {
+			return ((cmp_float(sys_val, state_val) == 1) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+		} else if (operation == OVAL_OPERATION_GREATER_THAN_OR_EQUAL) {
+			return ((cmp_float(sys_val, state_val) >= 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+		} else if (operation == OVAL_OPERATION_LESS_THAN) {
+			return ((cmp_float(sys_val, state_val) == -1) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+		} else if (operation == OVAL_OPERATION_LESS_THAN_OR_EQUAL) {
+			return ((cmp_float(sys_val, state_val) <= 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+		} else {
+			oscap_dlprintf(DBG_E, "Invalid type of operation in float evaluation: %s.\n", oval_operation_get_text(operation));
+			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in float evaluation");
 			return OVAL_RESULT_ERROR;
 		}
 	} else if (state_data_type == OVAL_DATATYPE_BOOLEAN) {
@@ -535,6 +579,10 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else if (operation == OVAL_OPERATION_LESS_THAN_OR_EQUAL) {
 			return (OVAL_RESULT_TRUE);
 		}		// we have already filtered out the invalid ones
+	} else if (state_data_type == OVAL_DATATYPE_FILESET_REVISION
+		   || state_data_type == OVAL_DATATYPE_IOS_VERSION) {
+		dW("Unsupported data type: %s.\n", oval_datatype_get_text(state_data_type));
+		return OVAL_RESULT_NOT_EVALUATED;
 	}
 
         oscap_dlprintf(DBG_E, "Ivalid OVAL data type: %d.\n", state_data_type);
