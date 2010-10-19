@@ -443,6 +443,10 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 			return ((syschar_val < state_val) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
 		} else if (operation == OVAL_OPERATION_LESS_THAN_OR_EQUAL) {
 			return ((syschar_val <= state_val) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+		} else if (operation == OVAL_OPERATION_BITWISE_AND) {
+			return (((syschar_val & state_val) == state_val) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+		} else if (operation == OVAL_OPERATION_BITWISE_OR) {
+			return (((syschar_val | state_val) == state_val) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
 		} else {
 			oscap_dlprintf(DBG_E, "Invalid type of operation in integer evaluation: %d.\n", operation);
 			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in integer evaluation");
