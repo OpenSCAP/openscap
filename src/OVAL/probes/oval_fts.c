@@ -235,22 +235,26 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	SEXP_free(r0);
 
 	/* recurse */
-	ENT_GET_AREF(behaviors, r0, "recurse", true);
-	SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
+	ENT_GET_AREF(behaviors, r0, "recurse", false);
 
-	if (strcmp(cstr_buff, "symlinks and directories") == 0)
+	if (r0 != NULL) {
+		SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
+
+		if (strcmp(cstr_buff, "symlinks and directories") == 0)
+			recurse = OVAL_RECURSE_SYMLINKS_AND_DIRS;
+		else if (strcmp(cstr_buff, "files and directories") == 0)
+			recurse = OVAL_RECURSE_FILES_AND_DIRS;
+		else if (strcmp(cstr_buff, "symlinks") == 0)
+			recurse = OVAL_RECURSE_SYMLINKS;
+		else if (strcmp(cstr_buff, "directories") == 0)
+			recurse = OVAL_RECURSE_DIRS;
+		else {
+			dE("Invalid recurse: %s\n", cstr_buff);
+			SEXP_free(r0);
+			return (NULL);
+		}
+	} else
 		recurse = OVAL_RECURSE_SYMLINKS_AND_DIRS;
-	else if (strcmp(cstr_buff, "files and directories") == 0)
-		recurse = OVAL_RECURSE_FILES_AND_DIRS;
-	else if (strcmp(cstr_buff, "symlinks") == 0)
-		recurse = OVAL_RECURSE_SYMLINKS;
-	else if (strcmp(cstr_buff, "directories") == 0)
-		recurse = OVAL_RECURSE_DIRS;
-	else {
-		dE("Invalid recurse: %s\n", cstr_buff);
-		SEXP_free(r0);
-		return (NULL);
-	}
 
 	dI("\n"
 	   "bh.recurse: %s\n"
@@ -258,21 +262,25 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	SEXP_free(r0);
 
 	/* recurse_file_system */
-	ENT_GET_AREF(behaviors, r0, "recurse_file_system", true);
-	SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
+	ENT_GET_AREF(behaviors, r0, "recurse_file_system", false);
 
-	if (strcmp(cstr_buff, "local") == 0)
-		filesystem = OVAL_RECURSE_FS_LOCAL;
-	else if (strcmp(cstr_buff, "all") == 0)
+	if (r0 != NULL) {
+		SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
+
+		if (strcmp(cstr_buff, "local") == 0)
+			filesystem = OVAL_RECURSE_FS_LOCAL;
+		else if (strcmp(cstr_buff, "all") == 0)
+			filesystem = OVAL_RECURSE_FS_ALL;
+		else if (strcmp(cstr_buff, "defined") == 0) {
+			filesystem   = OVAL_RECURSE_FS_DEFINED;
+			fts_options |= FTS_XDEV;
+		} else {
+			dE("Invalid recurse filesystem: %s\n", cstr_buff);
+			SEXP_free(r0);
+			return (NULL);
+		}
+	} else
 		filesystem = OVAL_RECURSE_FS_ALL;
-	else if (strcmp(cstr_buff, "defined") == 0) {
-		filesystem   = OVAL_RECURSE_FS_DEFINED;
-		fts_options |= FTS_XDEV;
-	} else {
-		dE("Invalid recurse filesystem: %s\n", cstr_buff);
-		SEXP_free(r0);
-		return (NULL);
-	}
 
 	dI("\n"
 	   "bh.filesystem: %s\n",
@@ -385,6 +393,8 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 
 					if (probe_entobj_cmp(ofts->ofts_filename, sexp_filename) == OVAL_RESULT_TRUE)
 						ofts_ent = OVAL_FTSENT_new(ofts, fts_ent);
+
+					SEXP_free(sexp_filename);
 				}
 			} else
 				ofts_ent = OVAL_FTSENT_new(ofts, fts_ent);
