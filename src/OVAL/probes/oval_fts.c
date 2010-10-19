@@ -41,6 +41,8 @@ static OVAL_FTS *OVAL_FTS_new(char **fts_paths, uint16_t fts_paths_count, int ft
 	ofts->direction  = -1;
 	ofts->filesystem = -1;
 
+	ofts->ofts_nilfilename = false;
+
 	return (ofts);
 }
 
@@ -65,16 +67,27 @@ static OVAL_FTSENT *OVAL_FTSENT_new(OVAL_FTS *ofts, FTSENT *fts_ent)
 	ofts_ent->filepath     = strdup(fts_ent->fts_path);
 	ofts_ent->filepath_len = fts_ent->fts_pathlen;
 
-	ofts_ent->file     = ofts_ent->filepath + fts_ent->fts_pathlen;
-	ofts_ent->file_len = fts_ent->fts_namelen;
+	if (!ofts->ofts_nilfilename) {
+		ofts_ent->file     = ofts_ent->filepath + (fts_ent->fts_pathlen - fts_ent->fts_namelen);
+		ofts_ent->file_len = fts_ent->fts_namelen;
 
-	ofts_ent->path_len = fts_ent->fts_pathlen - fts_ent->fts_namelen;
-	ofts_ent->path     = oscap_alloc(sizeof(char) * (ofts_ent->path_len + 1));
+		assume_d((fts_ent->fts_pathlen - fts_ent->fts_namelen > 0), NULL);
 
-	strncpy(ofts_ent->path, ofts_ent->filepath, ofts_ent->path_len);
-	ofts_ent->path[ofts_ent->path_len] = '\0';
+		ofts_ent->path_len = fts_ent->fts_pathlen - fts_ent->fts_namelen;
+		ofts_ent->path     = oscap_alloc(sizeof(char) * (ofts_ent->path_len + 1));
 
-	dI("New OVAL_FTSENT:\n"
+		strncpy(ofts_ent->path, ofts_ent->filepath, ofts_ent->path_len);
+		ofts_ent->path[ofts_ent->path_len - 1] = '\0';
+	} else {
+		ofts_ent->path_len = fts_ent->fts_pathlen;
+		ofts_ent->path     = strdup(fts_ent->fts_path);
+
+		ofts_ent->file     = "";
+		ofts_ent->file_len = 0;
+	}
+
+	dI("\n"
+	   "New OVAL_FTSENT:\n"
 	   "\tfilepath: %s\n"
 	   "\t    file: %s\n"
 	   "\t    path: %s\n", ofts_ent->filepath, ofts_ent->file, ofts_ent->path);
@@ -148,6 +161,8 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		} else
 			path_op = OVAL_OPERATION_EQUALS;
 
+		dI("path_op: %u\n", path_op);
+
 #define ENT_GET_STRVAL(ent, dst, dstlen, novalue_exp)			\
 		do {							\
 			SEXP_t *___r;					\
@@ -169,6 +184,10 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 
 		ENT_GET_STRVAL(path,     cstr_path, sizeof cstr_path - 1, return NULL);
 		ENT_GET_STRVAL(filename, cstr_file, sizeof cstr_file - 1, nilfilename = true);
+
+		dI("\n"
+		   "    path: %s\n",
+		   "filename: %s\n", cstr_path, cstr_file);
 	} else {
 		assume_d(filepath != NULL, NULL);
 		dE("filepath entity is not currently supported.\n");
@@ -178,7 +197,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	assume_d(behaviors != NULL, NULL);
 
 	/* max_depth */
-	ENT_GET_AREF(r0, behaviors, "max_depth", true);
+	ENT_GET_AREF(behaviors, r0, "max_depth", true);
 	SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
 
 	max_depth = strtol(cstr_buff, NULL, 10);
@@ -189,10 +208,13 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		return (NULL);
 	}
 
+	dI("\n"
+	   "bh.max_depth: %s\n"
+	   "=> max_depth: %d\n", cstr_buff, max_depth);
 	SEXP_free(r0);
 
 	/* recurse_direction */
-	ENT_GET_AREF(r0, behaviors, "recurse_direction", true);
+	ENT_GET_AREF(behaviors, r0, "recurse_direction", true);
 	SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
 
 	if (strcmp(cstr_buff, "none") == 0)
@@ -207,10 +229,13 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		return (NULL);
 	}
 
+	dI("\n"
+	   "bh.direction: %s\n"
+	   "=> direction: %d\n", cstr_buff, direction);
 	SEXP_free(r0);
 
 	/* recurse */
-	ENT_GET_AREF(r0, behaviors, "recurse", true);
+	ENT_GET_AREF(behaviors, r0, "recurse", true);
 	SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
 
 	if (strcmp(cstr_buff, "symlinks and directories") == 0)
@@ -227,10 +252,13 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		return (NULL);
 	}
 
+	dI("\n"
+	   "bh.recurse: %s\n"
+	   "=> recurse: %d\n", cstr_buff, recurse);
 	SEXP_free(r0);
 
 	/* recurse_file_system */
-	ENT_GET_AREF(r0, behaviors, "recurse_file_system", true);
+	ENT_GET_AREF(behaviors, r0, "recurse_file_system", true);
 	SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
 
 	if (strcmp(cstr_buff, "local") == 0)
@@ -246,6 +274,9 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		return (NULL);
 	}
 
+	dI("\n"
+	   "bh.filesystem: %s\n",
+	   "=> filesystem: %d\n", cstr_buff, filesystem);
 	SEXP_free(r0);
 
 	if (path_op == OVAL_OPERATION_PATTERN_MATCH) {
@@ -288,9 +319,9 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		ofts->ofts_st_path_index = 0;
 	}
 
-	ofts->ofts_path      = path; /* path entity */
-	ofts->ofts_filename  = filename; /* filename entity */
-	ofts->ofts_behaviors = behaviors; /* behaviors entity */
+	ofts->ofts_path      = SEXP_ref(path); /* path entity */
+	ofts->ofts_filename  = SEXP_ref(filename); /* filename entity */
+	ofts->ofts_behaviors = SEXP_ref(behaviors); /* behaviors entity */
 
 	ofts->max_depth  = max_depth;
 	ofts->direction  = direction;
@@ -307,6 +338,8 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 	SEXP_t *sexp_filename;
 	OVAL_FTSENT *ofts_ent = NULL;
 
+	dI("ofts=%p\n", ofts);
+
 	if (ofts != NULL) {
 		register FTSENT *fts_ent;
 
@@ -315,6 +348,16 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 
 			if (fts_ent == NULL)
 				return (NULL);
+
+			switch (fts_ent->fts_info) {
+			case FTS_DP:
+				continue;
+			case FTS_DC:
+				dW("Filesystem tree cycle detected at %s\n", fts_ent->fts_path);
+				continue;
+			}
+
+			dI("fts_ent: p=%s, n=%s\n", fts_ent->fts_path, fts_ent->fts_name);
 
 			/*
 			 * path match?
@@ -330,21 +373,29 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 					continue; /* next cycle */
 			}
 
-			if (!ofts->ofts_nilfilename) {
-				/*
-				 * filename match?
-				 * XXX: This is not efficient! Implement probe_entobj_cmp_cstr().
-				 */
-				sexp_filename = SEXP_string_newf("%s", fts_ent->fts_name);
+			dI("path match\n");
 
-				if (probe_entobj_cmp(ofts->ofts_filename, sexp_filename) == OVAL_RESULT_TRUE)
-					ofts_ent = OVAL_FTSENT_new(ofts, fts_ent);
+			if (!ofts->ofts_nilfilename) {
+				if (fts_ent->fts_info != FTS_D) {
+					/*
+					 * filename match?
+					 * XXX: This is not efficient! Implement probe_entobj_cmp_cstr().
+					 */
+					sexp_filename = SEXP_string_newf("%s", fts_ent->fts_name);
+
+					if (probe_entobj_cmp(ofts->ofts_filename, sexp_filename) == OVAL_RESULT_TRUE)
+						ofts_ent = OVAL_FTSENT_new(ofts, fts_ent);
+				}
 			} else
 				ofts_ent = OVAL_FTSENT_new(ofts, fts_ent);
 
 			switch (ofts->direction) {
 			case OVAL_RECURSE_DIRECTION_NONE:
-				fts_set(ofts->ofts_fts, fts_ent, FTS_SKIP);
+				if (fts_ent->fts_level != 0) {
+					fts_set(ofts->ofts_fts, fts_ent, FTS_SKIP);
+					dI("FTS_SKIP: %s\n", fts_ent->fts_path);
+				} else
+					dI("Not skipping FTS_ROOT: %s\n", fts_ent->fts_path);
 				break;
 			case OVAL_RECURSE_DIRECTION_DOWN:
 				if (fts_ent->fts_level < ofts->max_depth || ofts->max_depth == -1) {
@@ -391,16 +442,22 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 					}
 
 					fts_set(ofts->ofts_fts, fts_ent, FTS_FOLLOW);
+					dI("FTS_FOLLOW: %s\n", fts_ent->fts_path);
 				} else {
 				__skip_file:
 					fts_set(ofts->ofts_fts, fts_ent, FTS_SKIP);
+					dI("FTS_SKIP: %s\n", fts_ent->fts_path);
 				}
 			__case_end:
 				break;
 			case OVAL_RECURSE_DIRECTION_UP: /* is this really useful? */
 				fts_set(ofts->ofts_fts, fts_ent, FTS_SKIP);
+				dI("FTS_SKIP: %s\n", fts_ent->fts_path);
 				break;
 			} /* switch(recurse_direction */
+
+			if (ofts_ent != NULL)
+				break;
 		} /* for(;;) */
 	} /* ofts != NULL */
 

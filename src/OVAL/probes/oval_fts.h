@@ -3,6 +3,7 @@
 
 #include <sexp.h>
 #include <fts.h>
+#include <pcre.h>
 
 typedef struct {
 	FTS    *ofts_fts;
