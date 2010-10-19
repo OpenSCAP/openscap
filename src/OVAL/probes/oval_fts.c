@@ -315,15 +315,6 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	   "=> filesystem: %d\n", cstr_buff, filesystem);
 	SEXP_free(r0);
 
-	if (filesystem == OVAL_RECURSE_FS_LOCAL) {
-		ofts->localdevs = fsdev_init(NULL, 0);
-
-		if (ofts->localdevs == NULL) {
-			dE("fsdev_init failed\n");
-			return (NULL);
-		}
-	}
-
 	if (path_op == OVAL_OPERATION_PATTERN_MATCH) {
 		pcre  *regex;
 
@@ -362,6 +353,15 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		ofts->ofts_st_path = paths; /* NULL-terminated array of starting paths */
 		ofts->ofts_st_path_count = 1;
 		ofts->ofts_st_path_index = 0;
+	}
+
+	if (filesystem == OVAL_RECURSE_FS_LOCAL) {
+		ofts->localdevs = fsdev_init(NULL, 0);
+
+		if (ofts->localdevs == NULL) {
+			dE("fsdev_init failed\n");
+			return (NULL);
+		}
 	}
 
 	ofts->ofts_path      = SEXP_ref(path); /* path entity */
@@ -480,7 +480,7 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 							 */
 							if (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
 									     fts_ent->fts_statp != NULL ?
-									     fts_ent->fts_statp->st_dev : NULL))
+									     &fts_ent->fts_statp->st_dev : NULL))
 							{
 								dI("not on local fs: %s\n", fts_ent->fts_path);
 								goto __skip_file;
