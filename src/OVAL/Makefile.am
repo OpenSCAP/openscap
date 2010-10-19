@@ -98,6 +98,8 @@ common_oval_sources += probes/probe-api.c 	\
 		       probes/_probe-api.h	\
 		       probes/fsdev.c		\
 		       probes/findfile.c 	\
+		       probes/oval_fts.c	\
+		       probes/oval_fts.h	\
 		       probes/public/probe-api.h\
 		       probes/public/fsdev.h	\
 		       probes/public/findfile.h \
