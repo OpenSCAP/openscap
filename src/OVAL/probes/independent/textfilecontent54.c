@@ -70,7 +70,7 @@
 #include <seap.h>
 #include <probe-api.h>
 #include <probe-entcmp.h>
-#include <findfile.h>
+#include <oval_fts.h>
 #include <alloc.h>
 #include "common/assume.h"
 
@@ -332,6 +332,9 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 	int fcnt;
 	struct pfdata pfd;
 
+	OVAL_FTS    *ofts;
+	OVAL_FTSENT *ofts_ent;
+
         (void)arg;
 
 	if (probe_in == NULL || probe_out == NULL) {
@@ -393,7 +396,17 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 	pfd.instance_ent = inst_ent;
 	pfd.cobj         = probe_out;
 
-	fcnt = find_files(path_ent, file_ent, bh_ent, process_file, (void *) &pfd);
+	fcnt = 0;
+
+	if ((ofts = oval_fts_open(path_ent, file_ent, NULL, bh_ent)) != NULL) {
+		for (; (ofts_ent = oval_fts_read(ofts)) != NULL; ++fcnt) {
+			process_file(ofts_ent->path, ofts_ent->file, &pfd);
+			oval_ftsent_free(ofts_ent);
+		}
+
+		oval_fts_close(ofts);
+	}
+
 	if (fcnt < 0)
 		probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
 

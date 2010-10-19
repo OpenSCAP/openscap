@@ -38,7 +38,6 @@
 #include <errno.h>
 #include <limits.h>
 #include "oval_fts.h"
-#include "findfile.h"
 #include "SEAP/generic/rbt/rbt.h"
 
 #ifndef _A
@@ -466,18 +465,16 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex)
 	cbargs.filters = probe_prepare_filters(probe_in);
 	cbargs.error = 0;
 
-	ofts = oval_fts_open(path, filename, NULL, behaviors);
+	filecnt = 0;
 
-	for (filecnt = 0; (ofts_ent = oval_fts_read(ofts)) != NULL; ++filecnt) {
-		file_cb(ofts_ent->path, ofts_ent->file, &cbargs);
-		oval_ftsent_free(ofts_ent);
+	if ((ofts = oval_fts_open(path, filename, NULL, behaviors)) != NULL) {
+		for (; (ofts_ent = oval_fts_read(ofts)) != NULL; ++filecnt) {
+			file_cb(ofts_ent->path, ofts_ent->file, &cbargs);
+			oval_ftsent_free(ofts_ent);
+		}
+
+		oval_fts_close(ofts);
 	}
-
-	oval_fts_close(ofts);
-
-	/* ======================== OLD ======================= */
-        // filecnt = find_files (path, filename, behaviors, &file_cb, &cbargs);
-	/* ======================================================== */
 
 	err = 0;
 

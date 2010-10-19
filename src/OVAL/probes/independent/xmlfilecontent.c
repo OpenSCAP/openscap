@@ -59,7 +59,7 @@
 
 #include <seap.h>
 #include <probe-api.h>
-#include <findfile.h>
+#include <oval_fts.h>
 
 #define FILE_SEPARATOR '/'
 
@@ -197,6 +197,9 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 	SEXP_t *path_ent, *filename_ent, *xpath_ent, *behaviors_ent;
         SEXP_t *r0, *r1, *r2;
 
+	OVAL_FTS    *ofts;
+	OVAL_FTSENT *ofts_ent;
+
         (void)arg;
 
 	if (probe_in == NULL || probe_out == NULL) {
@@ -251,8 +254,17 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 	pfd.filename_ent = filename_ent;
 	pfd.cobj = probe_out;
 
-	fcnt = find_files(path_ent, filename_ent, behaviors_ent,
-			  process_file, (void *) &pfd);
+	fcnt = 0;
+
+	if ((ofts = oval_fts_open(path_ent, filename_ent, NULL, behaviors_ent)) != NULL) {
+		for (; (ofts_ent = oval_fts_read(ofts)) != NULL; ++fcnt) {
+			process_file(ofts_ent->path, ofts_ent->file, &pfd);
+			oval_ftsent_free(ofts_ent);
+		}
+
+		oval_fts_close(ofts);
+	}
+
 	if (fcnt < 0) {
 		char s[50];
 		SEXP_t *msg;

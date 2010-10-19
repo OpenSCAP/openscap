@@ -41,7 +41,7 @@
 #include <pthread.h>
 #include <errno.h>
 #include <crapi/crapi.h>
-#include "findfile.h"
+#include "oval_fts.h"
 
 #define FILE_SEPARATOR '/'
 
@@ -218,6 +218,9 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex)
         SEXP_t *r0, *r1, *r2;
         int     filecnt;
 
+	OVAL_FTS    *ofts;
+	OVAL_FTSENT *ofts_ent;
+
 	if (probe_in == NULL || probe_out == NULL) {
 		return (PROBE_EINVAL);
 	}
@@ -281,7 +284,16 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex)
 		return (PROBE_EFATAL);
         }
 
-        filecnt = find_files (path, filename, behaviors, &filehash_cb, (void *) probe_out);
+	filecnt = 0;
+
+	if ((ofts = oval_fts_open(path, filename, NULL, behaviors)) != NULL) {
+		for (; (ofts_ent = oval_fts_read(ofts)) != NULL; ++filecnt) {
+			filehash_cb(ofts_ent->path, ofts_ent->file, probe_out);
+			oval_ftsent_free(ofts_ent);
+		}
+
+		oval_fts_close(ofts);
+	}
 
         if (filecnt < 0) {
 		char s[50];
