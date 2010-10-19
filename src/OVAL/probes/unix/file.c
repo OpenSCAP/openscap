@@ -37,6 +37,7 @@
 #include <pthread.h>
 #include <errno.h>
 #include <limits.h>
+#include "oval_fts.h"
 #include "findfile.h"
 #include "SEAP/generic/rbt/rbt.h"
 
@@ -378,6 +379,8 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex)
         SEXP_t *r0, *r1, *r2, *r3, *r4;
         int     filecnt, err;
         struct cbargs cbargs;
+	OVAL_FTS    *ofts;
+	OVAL_FTSENT *ofts_ent;
 
 	if (probe_in == NULL || probe_out == NULL) {
 		return (PROBE_EINVAL);
@@ -463,7 +466,17 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex)
 	cbargs.filters = probe_prepare_filters(probe_in);
 	cbargs.error = 0;
 
-        filecnt = find_files (path, filename, behaviors, &file_cb, &cbargs);
+	ofts = oval_fts_open(path, filename, NULL, behaviors);
+
+	while ((ofts_ent = oval_fts_read(ofts)) != NULL)
+		file_cb(ofts_ent->path, ofts_ent->file, &cbargs);
+
+	oval_fts_close(ofts);
+
+	/* ======================== OLD ======================= */
+        // filecnt = find_files (path, filename, behaviors, &file_cb, &cbargs);
+	/* ======================================================== */
+
 	err = 0;
 
         if (filecnt < 0) {
