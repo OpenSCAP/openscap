@@ -121,11 +121,16 @@ struct oscap_reference *oscap_reference_new_parse(xmlTextReaderPtr reader)
     int depth = oscap_element_depth(reader);
 
     xmlNode* ref_node = xmlTextReaderExpand(reader);
-    if (xmlFirstElementChild(ref_node)) ref->is_dublincore = true;
+
+    for (xmlNode* cur = ref_node->children; cur != NULL; cur = cur->next)
+		if (cur->type == XML_ELEMENT_NODE) { ref->is_dublincore = true; break; }
 
     if (ref->is_dublincore) {
-        for (xmlNode* cur = xmlFirstElementChild(ref_node); cur != NULL; cur = xmlNextElementSibling(cur)) {
-            if (cur->ns == NULL || !oscap_streq((const char* ) cur->ns->href, (const char *) NS_DUBLINCORE)) continue;
+        for (xmlNode* cur = ref_node->children; cur != NULL; cur = cur->next) {
+            if (cur->type == XML_ELEMENT_NODE
+				|| cur->ns == NULL
+				|| !oscap_streq((const char* ) cur->ns->href, (const char *) NS_DUBLINCORE))
+					continue;
             DC_DOM_SCAN(title);
             DC_DOM_SCAN(creator);
             DC_DOM_SCAN(subject);
