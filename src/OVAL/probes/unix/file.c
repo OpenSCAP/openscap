@@ -468,8 +468,10 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex)
 
 	ofts = oval_fts_open(path, filename, NULL, behaviors);
 
-	while ((ofts_ent = oval_fts_read(ofts)) != NULL)
+	for (filecnt = 0; (ofts_ent = oval_fts_read(ofts)) != NULL; ++filecnt) {
 		file_cb(ofts_ent->path, ofts_ent->file, &cbargs);
+		oval_ftsent_free(ofts_ent);
+	}
 
 	oval_fts_close(ofts);
 
