@@ -4,6 +4,7 @@
 #include <sexp.h>
 #include <fts.h>
 #include <pcre.h>
+#include "fsdev.h"
 
 typedef struct {
 	FTS    *ofts_fts;
@@ -25,6 +26,8 @@ typedef struct {
 	int direction;
 	int recurse;
 	int filesystem;
+
+	fsdev_t *localdevs;
 } OVAL_FTS;
 
 #define OVAL_RECURSE_DIRECTION_NONE 0 /* default */

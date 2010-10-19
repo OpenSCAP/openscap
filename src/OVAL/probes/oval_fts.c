@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <assume.h>
 #include <pcre.h>
+#include "fsdev.h"
 #include "_probe-api.h"
 #include "probe-entcmp.h"
 #include "alloc.h"
@@ -40,6 +41,7 @@ static OVAL_FTS *OVAL_FTS_new(char **fts_paths, uint16_t fts_paths_count, int ft
 	ofts->max_depth  = -1;
 	ofts->direction  = -1;
 	ofts->filesystem = -1;
+	ofts->localdevs  = NULL;
 
 	ofts->ofts_nilfilename = false;
 
@@ -105,9 +107,14 @@ static void OVAL_FTSENT_free(OVAL_FTSENT *ofts_ent)
 	return;
 }
 
-static bool OVAL_FTS_localp(OVAL_FTS *ofts, const char *path)
+static bool OVAL_FTS_localp(OVAL_FTS *ofts, const char *path, void *id)
 {
-	return (true);
+	if (id != NULL)
+		return (fsdev_search(ofts->localdevs, id) == 1 ? true : false);
+	else if (path != NULL)
+		return (fsdev_path(ofts->localdevs, path) == 1 ? true : false);
+	else
+		return (false);
 }
 
 OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t *behaviors)
@@ -287,6 +294,15 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	   "=> filesystem: %d\n", cstr_buff, filesystem);
 	SEXP_free(r0);
 
+	if (filesystem == OVAL_RECURSE_FS_LOCAL) {
+		ofts->localdevs = fsdev_init(NULL, 0);
+
+		if (ofts->localdevs == NULL) {
+			dE("fsdev_init failed\n");
+			return (NULL);
+		}
+	}
+
 	if (path_op == OVAL_OPERATION_PATTERN_MATCH) {
 		pcre  *regex;
 
@@ -441,8 +457,13 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 							 * the symlink/directory destination is a
 							 * local one.
 							 */
-							if (!OVAL_FTS_localp(ofts, fts_ent->fts_path))
+							if (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
+									     fts_ent->fts_statp != NULL ?
+									     fts_ent->fts_statp->st_dev : NULL))
+							{
+								dI("not on local fs: %s\n", fts_ent->fts_path);
 								goto __skip_file;
+							}
 							break;
 						case FTS_SLNONE:
 						default:
