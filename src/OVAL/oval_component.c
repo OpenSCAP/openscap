@@ -2143,16 +2143,17 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC_rec(st
 	val_itr = (struct oval_value_iterator *) oval_collection_iterator(val_col_lst->val_col);
 	while (oval_value_iterator_has_more(val_itr)) {
 		struct oval_value *ov;
+		oval_datatype_t dt;
 		double new_val;
 
 		ov = oval_value_iterator_next(val_itr);
-		datatype = oval_value_get_datatype(ov);
-		if (datatype == OVAL_DATATYPE_INTEGER) {
+		dt = oval_value_get_datatype(ov);
+		if (dt == OVAL_DATATYPE_INTEGER) {
 			new_val = (double) oval_value_get_integer(ov);
-		} else if (datatype == OVAL_DATATYPE_FLOAT) {
+		} else if (dt == OVAL_DATATYPE_FLOAT) {
 			new_val = (double) oval_value_get_float(ov);
 		} else {
-			oscap_dlprintf(DBG_E, "Unexpected value type: %s.\n", oval_datatype_get_text(datatype));
+			oscap_dlprintf(DBG_E, "Unexpected value type: %s.\n", oval_datatype_get_text(dt));
 			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Unexpected value type");
 			oval_value_iterator_free(val_itr);
 			return SYSCHAR_FLAG_ERROR;
@@ -2169,7 +2170,9 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC_rec(st
 			return SYSCHAR_FLAG_ERROR;
 		}
 
-		_oval_component_evaluate_ARITHMETIC_rec(val_col_lst->next, new_val, datatype, op, res_val_col);
+		if (datatype == OVAL_DATATYPE_FLOAT)
+			dt = OVAL_DATATYPE_FLOAT;
+		_oval_component_evaluate_ARITHMETIC_rec(val_col_lst->next, new_val, dt, op, res_val_col);
 	}
 	oval_value_iterator_free(val_itr);
 

@@ -411,6 +411,8 @@ static int cmp_float(float a, float b)
 static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t sys_data_type,
 			      oval_datatype_t state_data_type, oval_operation_t operation)
 {
+	// todo: cast values to a common type
+
 	if (state_data_type == OVAL_DATATYPE_STRING) {
 		if (operation == OVAL_OPERATION_EQUALS) {
 			return ((oscap_strcmp(state_data, sys_data)) ? OVAL_RESULT_FALSE : OVAL_RESULT_TRUE);
