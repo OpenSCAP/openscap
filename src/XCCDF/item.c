@@ -716,6 +716,11 @@ XCCDF_SETTER_ID(rule) XCCDF_SETTER_ID(group) XCCDF_SETTER_ID(value) XCCDF_SETTER
 #undef XCCDF_SETTER_ID
 
 struct oscap_reference_iterator *xccdf_item_get_references(const struct xccdf_item *item) { return oscap_iterator_new(item->item.references); }
+struct oscap_reference_iterator *xccdf_benchmark_get_references(const struct xccdf_benchmark *item) { return oscap_iterator_new(XITEM(item)->item.references); }
+struct oscap_reference_iterator *xccdf_value_get_references(const struct xccdf_value *item) { return oscap_iterator_new(XITEM(item)->item.references); }
+struct oscap_reference_iterator *xccdf_group_get_references(const struct xccdf_group *item) { return oscap_iterator_new(XITEM(item)->item.references); }
+struct oscap_reference_iterator *xccdf_rule_get_references(const struct xccdf_rule *item) { return oscap_iterator_new(XITEM(item)->item.references); }
+struct oscap_reference_iterator *xccdf_profile_get_references(const struct xccdf_profile *item) { return oscap_iterator_new(XITEM(item)->item.references); }
 
 struct xccdf_item_iterator *xccdf_item_get_content(const struct xccdf_item *item)
 {

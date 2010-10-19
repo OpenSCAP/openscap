@@ -542,6 +542,7 @@ class OSCAP_Object(object):
         if path == None: 
             return None
 
+        OSCAP.oscap_init()
         dirname = os.path.dirname(path)
         f_XCCDF = path
 
@@ -613,6 +614,7 @@ class OSCAP_Object(object):
     
     def destroy(self, dir):
 
+        OSCAP.oscap_cleanup()
         for model in dir["def_models"]+dir["sessions"]+[dir["policy_model"]]:
             model.free()
 
