@@ -58,6 +58,7 @@ static OVAL_FTS *OVAL_FTS_new(char **fts_paths, uint16_t fts_paths_count, int ft
 
 	ofts->ofts_path_regex       = NULL;
 	ofts->ofts_path_regex_extra = NULL;
+	ofts->ofts_path_regex_Opartial = false;
 
 	ofts->max_depth  = -1;
 	ofts->direction  = -1;
@@ -210,11 +211,11 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 			}						\
 		} while (0)
 
-		ENT_GET_STRVAL(path,     cstr_path, sizeof cstr_path - 1, return NULL);
-		ENT_GET_STRVAL(filename, cstr_file, sizeof cstr_file - 1, nilfilename = true);
+		ENT_GET_STRVAL(path,     cstr_path, sizeof cstr_path, return NULL);
+		ENT_GET_STRVAL(filename, cstr_file, sizeof cstr_file, nilfilename = true);
 
 		dI("\n"
-		   "    path: %s\n",
+		   "    path: %s\n"
 		   "filename: %s\n", cstr_path, cstr_file);
 	} else {
 		assume_d(filepath != NULL, NULL);
@@ -324,7 +325,8 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 			dE("pcre_compile(%s) failed\n", cstr_path);
 			return (NULL);
 		} else {
-			char **paths = oscap_alloc(sizeof(char *) * 2);
+			int firstbyte = -1;
+			char  **paths = oscap_alloc(sizeof(char *) * 2);
 
 			/* analyze */
 			/* guess starting points */
@@ -340,7 +342,13 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 			ofts->ofts_st_path_index = 0;
 
 			ofts->ofts_path_regex = regex;
-			ofts->ofts_path_regex_extra = NULL;
+			ofts->ofts_path_regex_extra = pcre_study(regex, 0, NULL);
+
+			pcre_fullinfo(regex, ofts->ofts_path_regex_extra,
+				      PCRE_INFO_FIRSTBYTE, &firstbyte);
+
+			if (firstbyte == '/')
+				ofts->ofts_path_regex_Opartial = true;
 		}
 	} else {
 		char **paths = oscap_alloc(sizeof(char *) * 2);
@@ -412,10 +420,23 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 
 				ret = pcre_exec(ofts->ofts_path_regex, ofts->ofts_path_regex_extra,
 						fts_ent->fts_path, fts_ent->fts_pathlen - fts_ent->fts_namelen,
-						0, 0, svec, 1);
+						0, PCRE_PARTIAL, svec, 1);
 
-				if (ret < 1)
-					continue; /* next cycle */
+				if (ret < 0) {
+					switch (ret)
+					{
+					case PCRE_ERROR_NOMATCH:
+						if (ofts->ofts_path_regex_Opartial) {
+							dI("No path match and partial optimization is enabled -> skipping file\n");
+							goto __skip_file;
+						}
+					case PCRE_ERROR_PARTIAL:
+						continue;
+					default:
+						dE("pcre error: %d\n", ret);
+						return (NULL);
+					}
+				}
 			}
 
 			dI("path match\n");

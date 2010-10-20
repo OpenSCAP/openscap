@@ -37,6 +37,7 @@ typedef struct {
 
 	pcre       *ofts_path_regex;
 	pcre_extra *ofts_path_regex_extra;
+	bool        ofts_path_regex_Opartial; /**< do "partial match" optimization? */
 
 	SEXP_t *ofts_filename;
 	SEXP_t *ofts_behaviors;
