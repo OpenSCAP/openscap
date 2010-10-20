@@ -1748,9 +1748,9 @@ void xccdf_policy_export_results(struct xccdf_policy *policy, char *scoring_mode
 
 void xccdf_policy_model_free(struct xccdf_policy_model * model) {
 
-        xccdf_benchmark_free(model->benchmark);
 	oscap_list_free(model->policies, (oscap_destruct_func) xccdf_policy_free);
 	oscap_list_free(model->callbacks, (oscap_destruct_func) oscap_free);
+        xccdf_benchmark_free(model->benchmark);
         oscap_free(model);
 }
 
