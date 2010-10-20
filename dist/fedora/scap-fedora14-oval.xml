@@ -6671,13 +6671,13 @@
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:20087" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>bashrc</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[[:space:]]*umask[[:space:]]+([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*umask[[:space:]]+([[:alnum:]]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:20088" version="1">
                   <ind-def:path>/etc</ind-def:path>
                   <ind-def:filename>csh.cshrc</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[[:space:]]*umask[[:space:]]+([^#]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*umask[[:space:]]+([[:alnum:]]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <unix-def:file_object id="oval:org.fedoraproject.f14:obj:20092" version="1" comment="/boot/grub/grub.conf">
@@ -6765,13 +6765,13 @@
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:20106" version="1">
                   <ind-def:path>/etc/selinux</ind-def:path>
                   <ind-def:filename>config</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[[:space:]]*SELINUX[[:space:]]*=[[:space:]]*([^#^\ ]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*SELINUX[[:space:]]*=[[:space:]]*([[:alnum:]]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:20107" version="1">
                   <ind-def:path>/etc/selinux</ind-def:path>
                   <ind-def:filename>config</ind-def:filename>
-                  <ind-def:pattern operation="pattern match">^[[:space:]]*SELINUXTYPE[[:space:]]*=[[:space:]]*([^#^\ ]*)</ind-def:pattern>
+                  <ind-def:pattern operation="pattern match">^[[:space:]]*SELINUXTYPE[[:space:]]*=[[:space:]]*([[:alnum:]]*)</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <unix-def:runlevel_object id="oval:org.fedoraproject.f14:obj:20109" version="1">
