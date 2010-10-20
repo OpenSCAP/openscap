@@ -273,9 +273,11 @@ int oval_agent_resolve_variables(struct oval_agent_session * session, struct xcc
                 if (oval_variable_model_has_variable(var_model, name))
 			oscap_dlprintf(DBG_E, "External variable %s in conflict! Probably content failure.\n", name);
                 /* Add variable to variable model */
-                if (!oval_value_iterator_has_more(oval_variable_get_values(variable)))
+                value_it = oval_variable_get_values(variable);
+                if (!oval_value_iterator_has_more(value_it))
                     oval_variable_model_add(var_model, name, "Unknown", o_type, value); // TODO comment
                 else oscap_dlprintf(DBG_W, "External variable %s in conflict but with same value.\n", name);
+                oval_value_iterator_free(value_it);
         } else {
                 oscap_dlprintf(DBG_W, "Variable %s does not exist, skipping.\n", name);
         }
