@@ -1,3 +1,12 @@
+openscap-0.6.4                                                  20-10-2010
+- perl regular expression is on by default
+- OVAL float type support
+- fix non-compliant handling of empty variables in OVAL
+- directory traversal algorithm made-over, avoid loops
+- add RHEL5 spec file and related fixes
+- XSL transformation improvements + Dublin Core support
+- fixing XCCDF export functionality
+
 openscap-0.6.3                                                  14-09-2010
 - support filters inside objects
 - optimizing memory consumption

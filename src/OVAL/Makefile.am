@@ -121,9 +121,6 @@ nodist_liboval_testing_la_SOURCES = oval_testing_ext_probe.c
 
 SUBDIRS = probes/SEAP
 liboval_la_LIBADD  += probes/SEAP/libseap.la
-else
-SUBDIRS = probes/SEAP/generic/rbt
-liboval_la_LIBADD  += probes/SEAP/generic/rbt/librbt.la
 endif
 
 CLEANFILES = $(nodist_liboval_testing_la_SOURCES)
