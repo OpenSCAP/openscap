@@ -317,9 +317,9 @@ static SEXP_t *oval_probe_cmd_ste_fetch(SEXP_t *sexp, void *arg)
 	return (ste_list);
 }
 
-static SEXP_t *oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj, int noreply)
+static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj, int noreply, SEXP_t **out_sexp)
 {
-	int retry;
+	int retry, ret;
 
 	SEAP_msg_t *s_imsg, *s_omsg;
 	SEXP_t *s_oobj;
@@ -356,7 +356,7 @@ static SEXP_t *oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_i
                                         else
                                                 oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBECONN, errbuf);
 
-					return (NULL);
+					return (-1);
 				}
 			}
 		}
@@ -373,13 +373,14 @@ static SEXP_t *oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_i
                                 SEAP_msg_free(s_omsg);
                                 oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBEUNKNOWN, NULL);
 
-				return (NULL);
+				return (-1);
 			}
 		}
 
 		oscap_dlprintf(DBG_I, "Sending message.\n");
 
-		if (SEAP_sendmsg(ctx, pd->sd, s_omsg) != 0) {
+		ret = SEAP_sendmsg(ctx, pd->sd, s_omsg);
+		if (ret != 0) {
                         protect_errno {
                                 oscap_dlprintf(DBG_W, "Can't send message: %u, %s.\n", errno, strerror(errno));
                         }
@@ -397,7 +398,7 @@ static SEXP_t *oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_i
                                 else
                                         oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBECLOSE, errbuf);
 
-				return (NULL);
+				return (-1);
 			}
 
 			pd->sd = -1;
@@ -418,7 +419,7 @@ static SEXP_t *oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_i
                                 else
                                         oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBESEND, errbuf);
 
-				return (NULL);
+				return (ret);
 			}
 		}
 
@@ -427,7 +428,8 @@ static SEXP_t *oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_i
  recv_retry:
 		s_imsg = NULL;
 
-		if (SEAP_recvmsg(ctx, pd->sd, &s_imsg) != 0) {
+		ret = SEAP_recvmsg(ctx, pd->sd, &s_imsg);
+		if (ret != 0) {
                         protect_errno {
                                 oscap_dlprintf(DBG_W, "Can't receive message: %u, %s.\n", errno, strerror(errno));
                         }
@@ -461,7 +463,7 @@ static SEXP_t *oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_i
                                 else
                                         oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBECLOSE, errbuf);
 
-				return (NULL);
+				return (-1);
 			}
 
 			pd->sd = -1;
@@ -483,7 +485,7 @@ static SEXP_t *oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_i
                                 else
                                         oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBERECV, errbuf);
 
-				return (NULL);
+				return (ret);
 			}
 		}
 
@@ -496,7 +498,8 @@ static SEXP_t *oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_i
 	SEAP_msg_free(s_imsg);
 	SEAP_msg_free(s_omsg);
 
-	return (s_oobj);
+	*out_sexp = s_oobj;
+	return (0);
 }
 
 static int oval_pdsc_typecmp(oval_subtype_t *a, oval_pdsc_t *b)
@@ -510,11 +513,12 @@ static oval_pdsc_t *oval_pdsc_lookup(oval_pdsc_t pdsc[], int count, oval_subtype
                            (int (*)(void *, void *))oval_pdsc_typecmp);
 }
 
-static struct oval_sysinfo *oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, struct oval_syschar_model *model)
+static int oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, struct oval_syschar_model *model, struct oval_sysinfo **out_sysinf)
 {
 	struct oval_sysinfo *sysinf;
 	struct oval_sysint *ife;
 	SEXP_t *s_obj, *s_sinf, *ent, *r0, *r1;
+	int ret;
 
 	/*
 	 * Prepare a dummy object. We can't simply send an empty object
@@ -534,18 +538,18 @@ static struct oval_sysinfo *oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, 
                 SEXP_free (r0);
         }
 
-        r0 = oval_probe_comm(ctx, pd, s_obj, 0);
+        ret = oval_probe_comm(ctx, pd, s_obj, 0, &r0);
         SEXP_free(s_obj);
 
-	if (r0 == NULL)
-		return (NULL);
+	if (ret != 0)
+		return (ret);
 
 	r1 = probe_cobj_get_items(r0);
 	s_sinf = SEXP_list_first(r1);
 	SEXP_vfree(r0, r1, NULL);
 
 	if (s_sinf == NULL)
-		return (NULL);
+		return (-1);
 
 	sysinf = oval_sysinfo_new(model);
 
@@ -576,7 +580,7 @@ static struct oval_sysinfo *oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, 
 
 	if (s_sinf == NULL) {
 		oval_sysinfo_free(sysinf);
-		return (NULL);
+		return (-1);
 	}
 
 	SYSINF_EXT(s_sinf, os_name, sysinf, fail_gen);
@@ -628,7 +632,8 @@ static struct oval_sysinfo *oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, 
 
 	SEXP_free(s_sinf);
 
-	return (sysinf);
+	*out_sysinf = sysinf;
+	return (0);
  fail_int:
 	SEXP_free(ent);
 	oval_sysint_free(ife);
@@ -636,7 +641,7 @@ static struct oval_sysinfo *oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, 
 	SEXP_free(s_sinf);
 	oval_sysinfo_free(sysinf);
 
-	return (NULL);
+	return (-1);
 }
 
 int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
@@ -667,8 +672,7 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
                 }
 
                 assume_r(pd != NULL, -1);
-                *inf = oval_probe_sys_eval(pext->pdtbl->ctx, pd, *(pext->model));
-                ret  = (*inf == NULL ? -1 : 0);
+		ret = oval_probe_sys_eval(pext->pdtbl->ctx, pd, *(pext->model), inf);
                 break;
         }
         case PROBE_HANDLER_ACT_OPEN:
@@ -846,46 +850,28 @@ int oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext, struc
 	if (ret != 0)
 		return (1);
 
-        s_sys = oval_probe_comm(ctx, pd, s_obj, flags & OVAL_PDFLAG_NOREPLY);
+	ret = oval_probe_comm(ctx, pd, s_obj, flags & OVAL_PDFLAG_NOREPLY, &s_sys);
 	SEXP_free(s_obj);
 
-        if (s_sys == NULL) {
-                if (flags & OVAL_PDFLAG_NOREPLY) {
-                        /*
-                         * NULL is ok here because the no-reply flag is set and we don't expect
-                         * any data to be returned.
-                         */
-                        return(0);
-                } else {
-                        if (!oscap_err()) {
-                                /*
-                                 * oval_probe_comm didn't set an error so we have to do it here.
-                                 */
-                                oscap_dlprintf(DBG_E, "oval_probe_comm() failed but didn't set an error!\n");
-                                oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EPROBENODATA, "No data received");
-                        }
+	if (ret != 0)
+		return (ret);
 
-                        return(-1);
-                }
-        } else {
-                if (flags & OVAL_PDFLAG_NOREPLY) {
+	if (flags & OVAL_PDFLAG_NOREPLY) {
+		if (s_sys != NULL) {
                         /*
                          * The no-reply flag is set and oval_probe_comm returned some
                          * data. This is considered a non-fatal error.
                          */
                         oscap_dlprintf(DBG_W, "Obtrusive data from probe!\n");
-
                         SEXP_free(s_sys);
-
-			return (0);
-                }
-        }
+		}
+		return (0);
+	}
 
         /*
 	 * Convert the received S-exp to OVAL system characteristic.
 	 */
 	ret = oval_sexp2sysch(s_sys, syschar);
-
 	SEXP_free(s_sys);
 
 	return (ret);

@@ -403,10 +403,12 @@ int oval_probe_query_objects(oval_probe_session_t *sess)
 	if (definition_model) {
 		struct oval_object_iterator *objects = oval_definition_model_get_objects(definition_model);
 		while (oval_object_iterator_has_more(objects)) {
+			int ret;
 			struct oval_object *object = oval_object_iterator_next(objects);
-			if (oval_probe_query_object(sess, object, 0, NULL) != 0) {
+			ret = oval_probe_query_object(sess, object, 0, NULL);
+			if (ret != 0) {
 				oval_object_iterator_free(objects);
-				return -1;
+				return ret;
 			}
 		}
 		oval_object_iterator_free(objects);
@@ -457,8 +459,9 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
 		if (object == NULL)
 			return 0;
 		/* probe object */
-		if (oval_probe_query_object(sess, object, 0, NULL) != 0)
-			return -1;
+		ret = oval_probe_query_object(sess, object, 0, NULL);
+		if (ret != 0)
+			return ret;
 		/* probe objects referenced like this: test->state->variable->object */
 		state = oval_test_get_state(test);
 		if (state != NULL) {
@@ -507,7 +510,7 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
                                 ret = oval_probe_query_criteria(sess, node);
                                 if (ret != 0) {
                                         oval_criteria_node_iterator_free(cnode_it);
-                                        return -1;
+                                        return ret;
                                 }
                         }
                         oval_criteria_node_iterator_free(cnode_it);
