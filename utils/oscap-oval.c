@@ -196,8 +196,8 @@ int app_collect_oval(const struct oscap_action *action)
 	struct oval_probe_session *pb_sess = oval_probe_session_new(sys_model);
 
 	/* query sysinfo */
-	sysinfo = oval_probe_query_sysinfo(pb_sess);
-	if (sysinfo == NULL) {
+	ret = oval_probe_query_sysinfo(pb_sess, &sysinfo);
+	if (ret != 0) {
 		oval_probe_session_destroy(pb_sess);
 		oval_syschar_model_free(sys_model);
 		oval_definition_model_free(def_model);

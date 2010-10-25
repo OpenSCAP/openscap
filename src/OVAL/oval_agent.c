@@ -83,6 +83,7 @@ oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *mode
 
 	oval_agent_session_t *ag_sess;
 	struct oval_sysinfo *sysinfo;
+	int ret;
 
         /* Optimalization */
         oval_definition_model_optimize_by_filter_propagation(model);
@@ -94,8 +95,8 @@ oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *mode
 	ag_sess->psess     = oval_probe_session_new(ag_sess->sys_model);
 
 	/* probe sysinfo */
-	sysinfo = oval_probe_query_sysinfo(ag_sess->psess);
-	if (sysinfo == NULL) {
+	ret = oval_probe_query_sysinfo(ag_sess->psess, &sysinfo);
+	if (ret != 0) {
 		oval_probe_session_destroy(ag_sess->psess);
 		oval_syschar_model_free(ag_sess->sys_model);
 		oscap_free(ag_sess);

@@ -50,8 +50,9 @@
 /**
  * Evaluate system info probe
  * @param sess probe session
+ * @param out_sysinfo address of a pointer to hold the result
  */
-struct oval_sysinfo *oval_probe_query_sysinfo(oval_probe_session_t *sess) __attribute__ ((nonnull(1)));
+int oval_probe_query_sysinfo(oval_probe_session_t *sess, struct oval_sysinfo **out_sysinfo) __attribute__ ((nonnull(1, 2)));
 
 /**
  * Evaluate an object

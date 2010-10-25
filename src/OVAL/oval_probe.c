@@ -369,25 +369,27 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
 	return 0;
 }
 
-struct oval_sysinfo *oval_probe_query_sysinfo(oval_probe_session_t *sess)
+int oval_probe_query_sysinfo(oval_probe_session_t *sess, struct oval_sysinfo **out_sysinfo)
 {
 	struct oval_sysinfo *sysinf;
         oval_ph_t *ph;
+	int ret;
 
         ph = oval_probe_handler_get(sess->ph, OVAL_SUBTYPE_SYSINFO);
 
         if (ph == NULL) {
                 oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBENOTSUPP, "OVAL object not supported");
-                return(NULL);
+		return(-1);
         }
 
         sysinf = NULL;
 
-        if (ph->func(OVAL_SUBTYPE_SYSINFO, ph->uptr, PROBE_HANDLER_ACT_EVAL, NULL, &sysinf, 0) != 0) {
-                return(NULL);
-        }
+	ret = ph->func(OVAL_SUBTYPE_SYSINFO, ph->uptr, PROBE_HANDLER_ACT_EVAL, NULL, &sysinf, 0);
+	if (ret != 0)
+		return(ret);
 
-        return(sysinf);
+	*out_sysinfo = sysinf;
+	return(0);
 }
 
 static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_criteria_node *cnode);

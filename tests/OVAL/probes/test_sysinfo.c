@@ -6,6 +6,8 @@
 
 int main (void)
 {
+  struct oval_sysinfo *info;
+  int ret;
 
   /*
    *  Create empty models
@@ -25,7 +27,7 @@ int main (void)
   /*
    *  Call the sysinfo probe.
    */
-  struct oval_sysinfo *info = oval_probe_query_sysinfo(sess);
+  ret = oval_probe_query_sysinfo(sess, &info);
   assume(info != NULL);
 
   if (info != NULL) {

@@ -15,6 +15,8 @@
 #include <error.h>
 
 int main(int argc, char **argv) {
+  struct oval_sysinfo *sysinfo = NULL;
+  int ret;
 
   /* definition model populate */
   struct oval_definition_model *def_model=NULL;
@@ -31,8 +33,8 @@ int main(int argc, char **argv) {
   oval_probe_session_t *sess = oval_probe_session_new(sys_model);
 
   /* probe sysinfo */
-  struct oval_sysinfo *sysinfo = oval_probe_query_sysinfo(sess);
-  assume(sysinfo != NULL);
+  ret = oval_probe_query_sysinfo(sess, &sysinfo);
+  assume(ret == 0 && sysinfo != NULL);
   oval_syschar_model_set_sysinfo(sys_model, sysinfo);
   oval_sysinfo_free(sysinfo);
 
