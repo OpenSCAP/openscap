@@ -252,10 +252,10 @@ int app_evaluate_oval(const struct oscap_action *action)
 	}
 
 	sess = oval_agent_new_session(def_model, basename(action->f_oval));
-
-	/* Import OVAL definition file */
-	if (oscap_err()) {
-		fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+	if (sess == NULL) {
+		if (oscap_err())
+			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+		fprintf(stderr, "Failed to create new agent session.\n");
 		return OSCAP_ERROR;
 	}
 
@@ -329,6 +329,8 @@ int app_evaluate_oval(const struct oscap_action *action)
 
 int app_evaluate_oval_id(const struct oscap_action *action) {
 	oval_result_t ret;
+	struct oval_definition_model *def_model;
+	oval_agent_session_t *sess;
 
 	/* validate */
 	if (!oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS, NULL, 
@@ -340,12 +342,17 @@ int app_evaluate_oval_id(const struct oscap_action *action) {
 		return OSCAP_ERROR;
 	}
 
-	struct oval_definition_model *def_model = oval_definition_model_import(action->f_oval);
-	oval_agent_session_t *sess = oval_agent_new_session(def_model, basename(action->f_oval));
+	def_model = oval_definition_model_import(action->f_oval);
+	if (def_model == NULL) {
+		fprintf(stderr, "Failed to import the definition model (%s).\n", action->f_oval);
+		return OSCAP_ERROR;
+	}
 
-	/* Import OVAL definition file */
-	if (oscap_err()) {
-		fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+	sess = oval_agent_new_session(def_model, basename(action->f_oval));
+	if (sess == NULL) {
+		if (oscap_err())
+			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+		fprintf(stderr, "Failed to create new agent session.\n");
 		return OSCAP_ERROR;
 	}
 

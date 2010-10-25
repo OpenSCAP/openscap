@@ -332,8 +332,10 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		}
 
                 struct oval_agent_session *tmp_sess = oval_agent_new_session(tmp_def_model, basename(oval_files[i]));
-		if(tmp_sess==NULL && oscap_err()) {
-			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+		if (tmp_sess == NULL) {
+			if (oscap_err())
+				fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+			fprintf(stderr, "Failed to create new agent session.\n");
 			return OSCAP_ERROR;
 		}
 	        xccdf_policy_model_register_engine_oval(policy_model, tmp_sess);
