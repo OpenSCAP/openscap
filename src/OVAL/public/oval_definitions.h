@@ -560,6 +560,24 @@ struct oval_component_iterator;
 struct oval_string_iterator;
 
 /**
+ * @struct oval_generator
+ */
+struct oval_generator;
+
+struct oval_generator *oval_generator_new(void);
+void oval_generator_free(struct oval_generator *generator);
+struct oval_generator *oval_genrator_clone(struct oval_generator *old_generator);
+char *oval_generator_get_product_name(struct oval_generator *generator);
+char *oval_generator_get_product_version(struct oval_generator *generator);
+char *oval_generator_get_schema_version(struct oval_generator *generator);
+char *oval_generator_get_timestamp(struct oval_generator *generator);
+bool oval_generator_is_valid(struct oval_generator *generator);
+void oval_generator_set_product_name(struct oval_generator *generator, char *product_name);
+void oval_generator_set_product_version(struct oval_generator *generator, char *product_version);
+void oval_generator_set_schema_version(struct oval_generator *generator, char *schema_version);
+void oval_generator_set_timestamp(struct oval_generator *generator, char *timestamp);
+
+/**
  * Create an empty oval_definition_model.
  * @memberof oval_definition_model
  */
@@ -604,6 +622,7 @@ void oval_definition_model_free(struct oval_definition_model *model);
  * @name Setters
  * @{
  */
+void oval_definition_model_set_generator(struct oval_definition_model *model, struct oval_generator *generator);
 /**
  * Bind an oval_variable_model to the specified oval_definition_model.
  * @return zero on success or non zero value if an error occurred
@@ -625,6 +644,7 @@ void oval_definition_model_lock(struct oval_definition_model *definition_model);
  * @name Getters
  * @{
  */
+struct oval_generator *oval_definition_model_get_generator(struct oval_definition_model *model);
 /**
  * Returns the appended @ref oval_definition having the specified id.
  * IF the specified id does not resolve to an appended Oval_definition the method shall return NULL.

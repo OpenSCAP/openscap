@@ -73,6 +73,7 @@ int oval_variable_model_export (struct oval_variable_model *, const char *file);
  * @name Setters
  * @{
  */
+void oval_variable_model_set_generator(struct oval_variable_model *model, struct oval_generator *generator);
 /**
  * Lock the variable_model instance.
  * The state of a locked instance cannot be changed.
@@ -94,6 +95,7 @@ void oval_variable_model_add(struct oval_variable_model *model, char *varid, con
  * @name Getters
  * @{
  */
+struct oval_generator *oval_variable_model_get_generator(struct oval_variable_model *model);
 /**
  * Get all external variables managed by a specified oval_variable_model.
  * @param variable_model the specified oval_variable_model.

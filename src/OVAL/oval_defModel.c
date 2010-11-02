@@ -43,6 +43,7 @@
 #include "common/reporter_priv.h"
 
 typedef struct oval_definition_model {
+	struct oval_generator *generator;
 	struct oval_string_map *definition_map;
 	struct oval_string_map *test_map;
 	struct oval_string_map *object_map;
@@ -98,6 +99,7 @@ struct oval_definition_model *oval_definition_model_new()
 	if (newmodel == NULL)
 		return NULL;
 
+	newmodel->generator = oval_generator_new();
 	newmodel->definition_map = oval_string_map_new();
 	newmodel->object_map = oval_string_map_new();
 	newmodel->state_map = oval_string_map_new();
@@ -257,6 +259,17 @@ void oval_definition_model_free(struct oval_definition_model *model)
         model->schema = NULL;
 
 	oscap_free(model);
+}
+
+struct oval_generator *oval_definition_model_get_generator(struct oval_definition_model *model)
+{
+	return model->generator;
+}
+
+void oval_definition_model_set_generator(struct oval_definition_model *model, struct oval_generator *generator)
+{
+	oval_generator_free(model->generator);
+	model->generator = generator;
 }
 
 const char * oval_definition_model_get_schema(struct oval_definition_model * model)
@@ -571,8 +584,7 @@ xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model,
 
 	/* Report generator */
 	if (!parent) {
-		xmlNode *tag_generator = xmlNewTextChild(root_node, ns_defntns, BAD_CAST "generator", NULL);
-		_generator_to_dom(doc, tag_generator);
+		oval_generator_to_dom(definition_model->generator, doc, root_node);
 	}
 
 	/* Report definitions */
@@ -663,22 +675,6 @@ int oval_definition_model_export(struct oval_definition_model *model, const char
 	xmlFreeDoc(doc);
 
 	return retcode;
-}
-
-int _generator_to_dom(xmlDocPtr doc, xmlNode * tag_generator)
-{
-	xmlNs *ns_common = xmlSearchNsByHref(doc, tag_generator, OVAL_COMMON_NAMESPACE);
-	xmlNewTextChild(tag_generator, ns_common, BAD_CAST "product_name", BAD_CAST "OPEN SCAP");
-	xmlNewTextChild(tag_generator, ns_common, BAD_CAST "schema_version", BAD_CAST "5.5");
-	time_t epoch_time[] = { 0 };
-	time(epoch_time);
-	struct tm *lt = localtime(epoch_time);
-	char timestamp[] = "yyyy-mm-ddThh:mm:ss";
-	snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
-		 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
-	xmlNewTextChild(tag_generator, ns_common, BAD_CAST "timestamp", BAD_CAST timestamp);
-
-	return 1;
 }
 
 static void _fp_set_recurse(struct oval_definition_model *model, struct oval_setobject *set, char *set_id)

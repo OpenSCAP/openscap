@@ -62,8 +62,10 @@ static int _ovalsys_parser_process_node(xmlTextReaderPtr reader, struct oval_par
 				char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 				int is_ovalsys = strcmp((const char *)NAMESPACE_OVALSYS, namespace) == 0;
 				if (is_ovalsys && (strcmp(tagname, "generator") == 0)) {
-					//SKIP GENERATOR CODE
-					return_code = oval_parser_skip_tag(reader, context);
+					struct oval_generator *gen;
+
+					gen = oval_syschar_model_get_generator(context->syschar_model);
+					return_code = oval_generator_parse_tag(reader, context, gen);
 				} else if (is_ovalsys && (strcmp(tagname, "system_info") == 0)) {
 					return_code = oval_sysinfo_parse_tag(reader, context);
 				} else if (is_ovalsys && (strcmp(tagname, "collected_objects") == 0)) {

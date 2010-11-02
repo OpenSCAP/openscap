@@ -44,6 +44,7 @@
 
 
 typedef struct oval_syschar_model {
+	struct oval_generator *generator;
 	struct oval_sysinfo *sysinfo;
 	struct oval_definition_model *definition_model;
 	struct oval_string_map *syschar_map;
@@ -63,6 +64,7 @@ struct oval_syschar_model *oval_syschar_model_new(struct oval_definition_model *
 	if (newmodel == NULL)
 		return NULL;
 
+	newmodel->generator = oval_generator_new();
 	newmodel->sysinfo = NULL;
 	newmodel->definition_model = definition_model;
 	newmodel->syschar_map = oval_string_map_new();
@@ -221,13 +223,23 @@ void oval_syschar_model_reset(struct oval_syschar_model *model)
         model->variable_binding_map = oval_string_map_new();
 }
 
+struct oval_generator *oval_syschar_model_get_generator(struct oval_syschar_model *model)
+{
+	return model->generator;
+}
+
+void oval_syschar_model_set_generator(struct oval_syschar_model *model, struct oval_generator *generator)
+{
+	oval_generator_free(model->generator);
+	model->generator = generator;
+}
+
 struct oval_definition_model *oval_syschar_model_get_definition_model(struct oval_syschar_model *model)
 {
 	__attribute__nonnull__(model);
 
 	return model->definition_model;
 }
-
 
 struct oval_syschar_iterator *oval_syschar_model_get_syschars(struct oval_syschar_model *model)
 {
@@ -392,8 +404,7 @@ xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model, xm
 
         /* Report generator */
         if (!parent) {
-		xmlNode *tag_generator = xmlNewTextChild(root_node, ns_syschar, BAD_CAST "generator", NULL);
-                _generator_to_dom(doc, tag_generator);
+		oval_generator_to_dom(syschar_model->generator, doc, root_node);
         }
 
         /* Report sysinfo */

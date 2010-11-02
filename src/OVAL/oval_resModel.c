@@ -44,6 +44,7 @@
 #include "common/reporter_priv.h"
 
 struct oval_results_model {
+	struct oval_generator *generator;
 	struct oval_definition_model *definition_model;
 	struct oval_collection *systems;
 	bool is_locked;
@@ -57,6 +58,7 @@ struct oval_results_model *oval_results_model_new(struct oval_definition_model *
 	if (model == NULL)
 		return NULL;
 
+	model->generator = oval_generator_new();
 	model->systems = oval_collection_new();
 	model->definition_model = definition_model;
 	model->is_locked = false;
@@ -148,6 +150,17 @@ void oval_results_model_free(struct oval_results_model *model)
 	oscap_free(model);
 }
 
+struct oval_generator *oval_results_model_get_generator(struct oval_results_model *model)
+{
+	return model->generator;
+}
+
+void oval_results_model_set_generator(struct oval_results_model *model, struct oval_generator *generator)
+{
+	oval_generator_free(model->generator);
+	model->generator = generator;
+}
+
 struct oval_definition_model *oval_results_model_get_definition_model(struct oval_results_model *model) {
 	__attribute__nonnull__(model);
 
@@ -232,10 +245,8 @@ static xmlNode *oval_results_to_dom(struct oval_results_model *results_model,
 	xmlSetNs(root_node, ns_xsi);
 	xmlSetNs(root_node, ns_results);
 
-	xmlNode *tag_generator = xmlNewTextChild(root_node, ns_results, BAD_CAST "generator", NULL);
-
 	/* Report generator & directices */
-	_generator_to_dom(doc, tag_generator);
+	oval_generator_to_dom(results_model->generator, doc, root_node);
 	oval_result_directives_to_dom(directives, doc, root_node);
 
 	/* Report definitions */

@@ -147,8 +147,14 @@ int ovaldef_parse_node(xmlTextReaderPtr reader, struct oval_parser_context *cont
 					    ? oval_parser_skip_tag(reader, context)
 					    : _oval_parser_process_tags(reader, context, &oval_variable_parse_tag);
 				} else if (is_oval && strcmp(tagname, tagname_generator) == 0) {
-					/*GENERATOR SKIPPED */
-					return_code = oval_parser_skip_tag(reader, context);
+					if (STUB_OVAL_PARSER) {
+						return_code = oval_parser_skip_tag(reader, context);
+					} else {
+						struct oval_generator *gen;
+
+						gen = oval_definition_model_get_generator(oval_parser_context_model(context));
+						return_code = oval_generator_parse_tag(reader, context, gen);
+					}
 				} else {
 					oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown xml element");
 					oscap_dlprintf(DBG_W, "oval_parser: unprocessed tag: <%s:%s>.\n", namespace,

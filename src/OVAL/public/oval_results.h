@@ -195,6 +195,7 @@ int oval_results_model_export(struct oval_results_model *, struct oval_result_di
  * @name Setters
  * @{
  */
+void oval_results_model_set_generator(struct oval_results_model *model, struct oval_generator *generator);
 /**
  * Lock the result_model instance.
  * The state of a locked instance cannot be changed.
@@ -208,6 +209,7 @@ void oval_results_model_lock(struct oval_results_model *result_model);
  * @name Getters
  * @{
  */
+struct oval_generator *oval_results_model_get_generator(struct oval_results_model *model);
 /**
  * Return bound definition model from an oval_results_model.
  * @param model the specified oval_results_model.

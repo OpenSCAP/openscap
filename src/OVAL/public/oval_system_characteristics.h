@@ -224,6 +224,7 @@ void oval_syschar_model_free(struct oval_syschar_model *model);
  * @name Setters
  * @{
  */
+void oval_syschar_model_set_generator(struct oval_syschar_model *model, struct oval_generator *generator);
 /**
  * Bind a variable model to the definitions bound to the syschar model.
  * @return zero on success or non zero value if an error occurred
@@ -251,6 +252,7 @@ void oval_syschar_model_lock(struct oval_syschar_model *syschar_model);
  * @name Getters
  * @{
  */
+struct oval_generator *oval_syschar_model_get_generator(struct oval_syschar_model *model);
 /**
  * Return related oval_definition_model from an oval_syschar_model.
  * @param model the specified oval_syschar_model.

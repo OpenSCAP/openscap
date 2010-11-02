@@ -155,6 +155,9 @@ int oval_message_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oscap
 void oval_message_to_print(struct oval_message *message, char *indent, int index);
 void oval_message_to_dom(struct oval_message *, xmlDoc *, xmlNode *);
 
+int oval_generator_parse_tag(xmlTextReader *, struct oval_parser_context *, struct oval_generator *);
+xmlNode *oval_generator_to_dom(struct oval_generator *, xmlDocPtr, xmlNode *);
+
 void oval_definition_model_add_definition(struct oval_definition_model *, struct oval_definition *);
 void oval_definition_model_add_test(struct oval_definition_model *, struct oval_test *);
 void oval_definition_model_add_object(struct oval_definition_model *, struct oval_object *);

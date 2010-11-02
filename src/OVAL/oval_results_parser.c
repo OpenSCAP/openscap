@@ -68,9 +68,10 @@ static int _ovalres_parser_process_node
 				int is_ovaldef =
 				    (is_ovalres) ? false : (strcmp((const char *)NAMESPACE_OVALDEF, namespace) == 0);
 				if (is_ovalres && (strcmp(tagname, "generator") == 0)) {
-					/*SKIP GENERATOR CODE */
-					oscap_dlprintf(DBG_W, "Skipping <generator>.\n");
-					return_code = oval_parser_skip_tag(reader, context);
+					struct oval_generator *gen;
+
+					gen = oval_results_model_get_generator(context->results_model);
+					return_code = oval_generator_parse_tag(reader, context, gen);
 				} else if (is_ovalres && (strcmp(tagname, "directives") == 0)) {
 					assert(context != NULL);
 					*directives = oval_result_directives_new(context->results_model);

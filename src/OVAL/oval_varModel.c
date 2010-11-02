@@ -46,6 +46,7 @@ typedef struct _oval_variable_model_frame {
 } _oval_variable_model_frame_t;
 
 typedef struct oval_variable_model {
+	struct oval_generator *generator;
 	struct oval_string_map *varmap;
 	bool is_locked;
 } oval_variable_model_t;
@@ -61,7 +62,6 @@ static int _oval_variable_model_parse_variable(xmlTextReader * reader, struct ov
 static int _oval_variable_model_parse_variables(xmlTextReader * reader, struct oval_parser_context *context,
 						struct oval_variable_model *model);
 static int _oval_variable_model_parse(struct oval_variable_model *model, xmlTextReader * reader, void *user_param);
-static int _oval_generator_parse_tag(xmlTextReader * reader, struct oval_parser_context *context, char *label);
 
 static _oval_variable_model_frame_t *_oval_variable_model_frame_new(char *id, const char *comm, oval_datatype_t datatype)
 {
@@ -138,6 +138,7 @@ struct oval_variable_model *oval_variable_model_new()
 	oval_variable_model_t *model = (oval_variable_model_t *) oscap_alloc(sizeof(oval_variable_model_t));
 	if (model == NULL)
 		return NULL;
+	model->generator = oval_generator_new();
 	model->varmap = oval_string_map_new();
 	model->is_locked = false;
 	return model;
@@ -169,6 +170,17 @@ void oval_variable_model_free(struct oval_variable_model *model)
 	}
 }
 
+struct oval_generator *oval_variable_model_get_generator(struct oval_variable_model *model)
+{
+	return model->generator;
+}
+
+void oval_variable_model_set_generator(struct oval_variable_model *model, struct oval_generator *generator)
+{
+	oval_generator_free(model->generator);
+	model->generator = generator;
+}
+
 void oval_variable_model_add(struct oval_variable_model *model, char *varid, const char *comm,
 			     oval_datatype_t datatype, char *value)
 {
@@ -183,42 +195,6 @@ void oval_variable_model_add(struct oval_variable_model *model, char *varid, con
 }
 
 #define NAMESPACE_VARIABLES "http://oval.mitre.org/XMLSchema/oval-variables-5"
-#define NAMESPACE_COMMON    "http://oval.mitre.org/XMLSchema/oval-common-5"
-static int _oval_generator_parse_tag(xmlTextReader * reader, struct oval_parser_context *context, char *label)
-{
-	char *tagname = (char *)xmlTextReaderLocalName(reader);
-	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
-	int return_code;
-	bool is_common_ns = strcmp(NAMESPACE_COMMON, namespace) == 0;
-	if (is_common_ns && strcmp("product_name", tagname) == 0) {
-		return_code = xmlTextReaderRead(reader);
-		char *value = (char *)xmlTextReaderValue(reader);
-		oscap_dlprintf(DBG_I, "%s: product name: %s.\n", label, value);
-		oscap_free(value);
-	} else if (is_common_ns && strcmp("product_version", tagname) == 0) {
-		return_code = xmlTextReaderRead(reader);
-		char *value = (char *)xmlTextReaderValue(reader);
-		oscap_dlprintf(DBG_I, "%s: product version: %s.\n", label, value);
-		oscap_free(value);
-	} else if (is_common_ns && strcmp("schema_version", tagname) == 0) {
-		return_code = xmlTextReaderRead(reader);
-		char *value = (char *)xmlTextReaderValue(reader);
-		oscap_dlprintf(DBG_I, "%s: schema version: %s.\n", label, value);
-		oscap_free(value);
-	} else if (is_common_ns && strcmp("timestamp", tagname) == 0) {
-		return_code = xmlTextReaderRead(reader);
-		char *value = (char *)xmlTextReaderValue(reader);
-		oscap_dlprintf(DBG_I, "%s: time stamp: %s.\n", label, value);
-		oscap_free(value);
-	} else {
-		oscap_dlprintf(DBG_W, "Unprocessed tag: <%s:%s>.\n", namespace, tagname);
-		oval_parser_skip_tag(reader, context);
-		return_code = 0;
-	}
-	oscap_free(tagname);
-	oscap_free(namespace);
-	return return_code;
-}
 
 static int _oval_variable_model_parse_variable_values
     (xmlTextReader * reader, struct oval_parser_context *context, _oval_variable_model_frame_t * frame) {
@@ -294,8 +270,10 @@ static int _oval_variable_model_parse_tag
 	int return_code;
 	bool is_variable_ns = strcmp(NAMESPACE_VARIABLES, namespace) == 0;
 	if (is_variable_ns && strcmp("generator", tagname) == 0) {
-		return_code =
-		    oval_parser_parse_tag(reader, context, (oval_xml_tag_parser) _oval_generator_parse_tag, "oval_variables");
+		struct oval_generator *gen;
+
+		gen = oval_variable_model_get_generator(context->variable_model);
+		return_code = oval_generator_parse_tag(reader, context, gen);
 	} else if (is_variable_ns && strcmp("variables", tagname) == 0) {
 		return_code =
 		    oval_parser_parse_tag(reader, context, (oval_xml_tag_parser) _oval_variable_model_parse_variables, model);
@@ -313,6 +291,7 @@ static int _oval_variable_model_parse(struct oval_variable_model *model, xmlText
 {
 	int return_code = 0;
 	struct oval_parser_context context;
+	context.variable_model = model;
 	context.reader = reader;
 	context.user_data = user_param;
 	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
@@ -375,9 +354,7 @@ static xmlNode *oval_variable_model_to_dom(struct oval_variable_model * variable
 	xmlSetNs(root_node, ns_common);
 	xmlSetNs(root_node, ns_variables);
 
-	xmlNode *tag_generator = xmlNewTextChild(root_node, ns_variables, BAD_CAST "generator", NULL);
-
-	_generator_to_dom(doc, tag_generator);
+	oval_generator_to_dom(variable_model->generator, doc, root_node);
 
 	xmlNode *variables = xmlNewTextChild(root_node, ns_variables, BAD_CAST "variables", NULL);
 
