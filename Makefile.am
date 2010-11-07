@@ -18,6 +18,9 @@ dist_pkgdata_DATA = dist/fedora/scap-fedora12-oval.xml \
                     dist/fedora/scap-fedora14-xccdf.xml \
                     dist/fedora/oscap-scan.cron
 
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = libopenscap.pc
+
 bashcompdir = $(sysconfdir)/bash_completion.d
 bashcomp_DATA = dist/bash_completion.d/oscap
 

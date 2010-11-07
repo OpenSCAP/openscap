@@ -632,7 +632,8 @@ AC_CONFIG_FILES([Makefile
                  src/common/Makefile
                  tests/Makefile
                  utils/Makefile
-                 xsl/Makefile])
+                 xsl/Makefile
+		 libopenscap.pc])
 
 AC_OUTPUT
 
