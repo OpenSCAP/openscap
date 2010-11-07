@@ -311,7 +311,7 @@ int __SEAP_recvmsg_process_cmd (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
                         int ret;
 
                         ret = __SEAP_cmdexec_reply (ctx, sd, cmd);
-                        
+
                         if (cmd->args != NULL)
                                 SEXP_free(cmd->args);
                 }
@@ -341,8 +341,10 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
          */
         for (;;) {
                 if (SEAP_packet_recv (ctx, sd, &packet) != 0) {
-                        _D("FAIL: ctx=%p, sd=%d, errno=%u, %s.\n",
-                           ctx, sd, errno, strerror (errno));
+			protect_errno {
+				_D("FAIL: ctx=%p, sd=%d, errno=%u, %s.\n",
+				   ctx, sd, errno, strerror (errno));
+			}
                         return (-1);
                 }
 

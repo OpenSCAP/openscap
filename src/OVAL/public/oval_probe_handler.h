@@ -49,6 +49,7 @@ typedef int (oval_probe_handler_t)(oval_subtype_t, void *, int, ...);
 #define PROBE_HANDLER_ACT_EVAL  3
 #define PROBE_HANDLER_ACT_RESET 4
 #define PROBE_HANDLER_ACT_CLOSE 5
+#define PROBE_HANDLER_ACT_ABORT 6
 
 #define PROBE_HANDLER_IGNORE NULL
 

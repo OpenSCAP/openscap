@@ -320,6 +320,7 @@ static SEXP_t *oval_probe_cmd_ste_fetch(SEXP_t *sexp, void *arg)
 static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj, int noreply, SEXP_t **out_sexp)
 {
 	int retry, ret;
+	bool aborted = false;
 
 	SEAP_msg_t *s_imsg, *s_omsg;
 	SEXP_t *s_oobj;
@@ -435,6 +436,9 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
                         }
 
 			switch (errno) {
+			case ECONNABORTED:
+				aborted = true;
+				break;
 			case ECANCELED:
 				{
 					SEAP_err_t *err = NULL;
@@ -468,24 +472,32 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 
 			pd->sd = -1;
 
-			if (++retry <= OVAL_PROBE_MAXRETRY) {
-				oscap_dlprintf(DBG_I, "Recv: retry %u/%u.\n", retry, OVAL_PROBE_MAXRETRY);
-				continue;
+			if (!aborted) {
+				if (++retry <= OVAL_PROBE_MAXRETRY) {
+					oscap_dlprintf(DBG_I, "Recv: retry %u/%u.\n", retry, OVAL_PROBE_MAXRETRY);
+					continue;
+				} else {
+					char errbuf[__ERRBUF_SIZE];
+
+					protect_errno {
+						oscap_dlprintf(DBG_E, "Recv: retry limit (%u) reached.\n", OVAL_PROBE_MAXRETRY);
+						SEAP_msg_free(s_imsg);
+						SEAP_msg_free(s_omsg);
+					}
+
+					if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
+						oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBERECV, "Unable to receive a message from probe");
+					else
+						oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBERECV, errbuf);
+
+					return (ret);
+				}
 			} else {
-                                char errbuf[__ERRBUF_SIZE];
+				oscap_dlprintf(DBG_I, "Connection was aborted.\n");
+				SEAP_msg_free(s_imsg);
+				SEAP_msg_free(s_omsg);
 
-                                protect_errno {
-                                        oscap_dlprintf(DBG_E, "Recv: retry limit (%u) reached.\n", OVAL_PROBE_MAXRETRY);
-                                        SEAP_msg_free(s_imsg);
-                                        SEAP_msg_free(s_omsg);
-                                }
-
-                                if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
-                                        oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBERECV, "Unable to receive a message from probe");
-                                else
-                                        oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBERECV, errbuf);
-
-				return (ret);
+				return (-2);
 			}
 		}
 
@@ -768,12 +780,13 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                 ret = oval_probe_ext_init(pext);
                 break;
         case PROBE_HANDLER_ACT_RESET:
+	case PROBE_HANDLER_ACT_ABORT:
         {
                 size_t i;
 
                 if (type == OVAL_SUBTYPE_ALL) {
                         /*
-                         * Iterate trhu probe descriptor table and execute the reset operation
+                         * Iterate thru probe descriptor table and execute the reset operation
                          * for each probe descriptor.
                          */
                         for (i = 0; i < pext->pdtbl->count; ++i) {
@@ -797,7 +810,10 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                         if (pd == NULL)
                                 return(0);
 
-                        return oval_probe_ext_reset(pext->pdtbl->ctx, pd, pext);
+			if (act == PROBE_HANDLER_ACT_RESET)
+				return oval_probe_ext_reset(pext->pdtbl->ctx, pd, pext);
+			else
+				return oval_probe_ext_abort(pext->pdtbl->ctx, pd, pext);
                 }
                 break;
         }
@@ -884,4 +900,43 @@ int oval_probe_ext_reset(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
         res = SEAP_cmd_exec(ctx, pd->sd, SEAP_EXEC_RECV, PROBECMD_RESET, NULL, SEAP_CMDTYPE_SYNC, NULL, NULL);
 
         return (0);
+}
+
+#include <signal.h>
+#include "SEAP/_seap-types.h"
+#include "SEAP/seap-descriptor.h"
+#include "SEAP/_seap-scheme.h"
+#include "SEAP/sch_pipe.h"
+
+int oval_probe_ext_abort(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
+{
+	SEAP_desc_t *dsc;
+	/*
+	 * Send SIGUSR1 to the probe
+	 */
+
+	assume_d(ctx  != NULL, -1);
+	assume_d(pd   != NULL, -1);
+	assume_d(pext != NULL, -1);
+
+	dI("Sending abort to sd=%d\n", pd->sd);
+
+	dsc = SEAP_desc_get(ctx->sd_table, pd->sd);
+
+	if (dsc == NULL)
+		return (-1);
+
+	switch (dsc->scheme) {
+	case SCH_PIPE:
+	{
+		sch_pipedata_t *pipeinfo = (sch_pipedata_t *)dsc->scheme_data;
+
+		dI("Sending SIGUSR1 to pid=%u\n", pipeinfo->pid);
+		kill(pipeinfo->pid, SIGUSR1);
+	}
+	default:
+		return (-1);
+	}
+
+	return (0);
 }

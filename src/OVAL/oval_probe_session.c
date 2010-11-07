@@ -165,6 +165,16 @@ int oval_probe_session_reset(oval_probe_session_t *sess, struct oval_syschar_mod
         return(0);
 }
 
+int oval_probe_session_abort(oval_probe_session_t *sess)
+{
+#if defined(ENABLE_PROBES)
+	oval_ph_t *ph = oval_probe_handler_get(sess->ph, OVAL_SUBTYPE_ALL);
+        return ph->func(OVAL_SUBTYPE_ALL, ph->uptr, PROBE_HANDLER_ACT_ABORT);
+#else
+	return (-1);
+#endif
+}
+
 int oval_probe_session_sethandler(oval_probe_session_t *sess, oval_subtype_t type, oval_probe_handler_t handler, void *ptr)
 {
         return(-1);

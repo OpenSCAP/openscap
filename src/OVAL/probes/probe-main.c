@@ -46,6 +46,7 @@
 
 #define PROBE_SIGEXIT_CLEAN   1
 #define PROBE_SIGEXIT_UNCLEAN 2
+#define PROBE_SIGEXIT_ABORT   3
 
 static int probe_opthandler_varref(int, va_list);
 static int probe_opthandler_rcache(int, va_list);
@@ -755,6 +756,9 @@ static void probe_sigexit(int signum)
         case SIGABRT:
                 OSCAP_GSYM(sigexit) = PROBE_SIGEXIT_UNCLEAN;
                 break;
+	case SIGUSR1:
+		OSCAP_GSYM(sigexit) = PROBE_SIGEXIT_ABORT;
+		break;
         }
 }
 
@@ -795,7 +799,7 @@ int main(void)
 	SEXP_t *oid;
 
 	pthread_attr_t thread_attr;
-	pthread_t thread;
+	pthread_t      thread;
 
         struct sigaction sigact;
 
@@ -816,7 +820,8 @@ int main(void)
             sigaction(SIGPIPE, &sigact, NULL) != 0 ||
             sigaction(SIGQUIT, &sigact, NULL) != 0 ||
             sigaction(SIGSEGV, &sigact, NULL) != 0 ||
-            sigaction(SIGABRT, &sigact, NULL) != 0)
+            sigaction(SIGABRT, &sigact, NULL) != 0 ||
+	    sigaction(SIGUSR1, &sigact, NULL) != 0)
         {
                 _D("Can't setup signal handlers: errno=%u, %s.\n", errno, strerror(errno));
                 exit(errno);
@@ -874,6 +879,9 @@ int main(void)
                         case PROBE_SIGEXIT_CLEAN:
                                 ret = 0;
                                 break;
+			case PROBE_SIGEXIT_ABORT:
+				ret = ECONNABORTED;
+				break;
                         case PROBE_SIGEXIT_UNCLEAN:
                                 /* Try to save cached data & restart? */
                                 _exit(ret);
@@ -950,6 +958,11 @@ int main(void)
                                         SEAP_msg_free(seap_request);
                                         ret = 0;
                                         break;
+				case PROBE_SIGEXIT_ABORT:
+                                        SEAP_msg_free(seap_reply);
+                                        SEAP_msg_free(seap_request);
+					ret = ECONNABORTED;
+					break;
                                 case PROBE_SIGEXIT_UNCLEAN:
                                         /* Try to save cache & restart? */
                                         _exit(ret);
@@ -965,6 +978,18 @@ int main(void)
 		}
 
 		SEAP_msg_free(seap_request);
+	}
+
+	switch(OSCAP_GSYM(sigexit)) {
+	case PROBE_SIGEXIT_CLEAN:
+		ret = 0;
+		break;
+	case PROBE_SIGEXIT_ABORT:
+		ret = ECONNABORTED;
+		break;
+	case PROBE_SIGEXIT_UNCLEAN:
+		/* Try to save cached data & restart? */
+		_exit(ret);
 	}
 
 	return (ret);

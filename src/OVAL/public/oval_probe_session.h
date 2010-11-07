@@ -65,6 +65,11 @@ int oval_probe_session_close(oval_probe_session_t *sess);
 int oval_probe_session_reset(oval_probe_session_t *sess, struct oval_syschar_model *sysch);
 
 /**
+ * Abort the session.
+ */
+int oval_probe_session_abort(oval_probe_session_t *sess);
+
+/**
  * Set a new handler for an object of the specified type.
  * @param sess pointer to the probe session structure
  * @param type object type

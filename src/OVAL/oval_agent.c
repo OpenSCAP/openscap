@@ -119,8 +119,15 @@ oval_result_t oval_agent_eval_definition(oval_agent_session_t * ag_sess, const c
 
 	/* probe */
 	ret = oval_probe_query_definition(ag_sess->psess, id);
-	if (ret!=0)
+
+	switch (ret) {
+	case 0:
+		break;
+	case -2:
+		return OVAL_RESULT_NOT_EVALUATED;
+	default:
 		return OVAL_RESULT_UNKNOWN;
+	}
 
 	/* take the first system */
 	rsystem_it = oval_results_model_get_systems(ag_sess->res_model);
@@ -140,17 +147,16 @@ int oval_agent_reset_session(oval_agent_session_t * ag_sess) {
 	oval_results_model_free(ag_sess->res_model);
 	ag_sess->res_model = oval_results_model_new(ag_sess->def_model, ag_sess->sys_models);
 
-	/* Clean up probe cache */	
+	/* Clean up probe cache */
 	ret = oval_probe_session_reset(ag_sess->psess, ag_sess->sys_model);
 	return ret;
 }
-
 
 int oval_agent_eval_system(oval_agent_session_t * ag_sess, oscap_reporter cb, void *arg) {
 	struct oval_definition *oval_def;
 	struct oval_definition_iterator *oval_def_it;
 	char   *id;
-	int ret;
+	int ret = 0;
 	oval_result_t result;
 
 	oval_def_it = oval_definition_model_get_definitions(ag_sess->def_model);
@@ -172,12 +178,17 @@ int oval_agent_eval_system(oval_agent_session_t * ag_sess, oscap_reporter cb, vo
                     ret = oscap_reporter_report(cb, msg, arg);
                     if ( ret!=0 ) {
 	                    oval_definition_iterator_free(oval_def_it);
-                            return 0;
+                            return ret;
                     }
                 }
+
+		if (result == OVAL_RESULT_NOT_EVALUATED) {
+			ret = 1;
+			break;
+		}
 	}
 	oval_definition_iterator_free(oval_def_it);
-	return 0;
+	return ret;
 }
 
 struct oval_results_model * oval_agent_get_results_model(oval_agent_session_t * ag_sess) {
