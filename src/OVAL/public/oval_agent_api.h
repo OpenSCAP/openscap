@@ -75,6 +75,11 @@ oval_result_t oval_agent_eval_definition(oval_agent_session_t * ag_sess, const c
 int oval_agent_reset_session(oval_agent_session_t * ag_sess);
 
 /**
+ * Abort a running probe session
+ */
+int oval_agent_abort_session(oval_agent_session_t *ag_sess);
+
+/**
  * Probe and evaluate all definitions from the content, call the callback functions upon single evaluation
  */
 int oval_agent_eval_system(oval_agent_session_t * ag_sess, oscap_reporter cb, void *arg);

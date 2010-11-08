@@ -152,6 +152,14 @@ int oval_agent_reset_session(oval_agent_session_t * ag_sess) {
 	return ret;
 }
 
+int oval_agent_abort_session(oval_agent_session_t *ag_sess)
+{
+	assume_d(ag_sess != NULL, -1);
+	assume_d(ag_sess->psess != NULL, -1);
+
+	return oval_probe_session_abort(ag_sess->psess);
+}
+
 int oval_agent_eval_system(oval_agent_session_t * ag_sess, oscap_reporter cb, void *arg) {
 	struct oval_definition *oval_def;
 	struct oval_definition_iterator *oval_def_it;
