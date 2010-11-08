@@ -876,8 +876,17 @@ int oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext, struc
 	ret = oval_probe_comm(ctx, pd, s_obj, flags & OVAL_PDFLAG_NOREPLY, &s_sys);
 	SEXP_free(s_obj);
 
-	if (ret != 0)
+	if (ret != 0) {
+		switch (errno) {
+		case ECONNABORTED:
+			dI("Closing sd=%d (pd=%p) after abort\n", pd->sd, pd);
+
+			SEAP_close(ctx, pd->sd);
+			pd->sd = -1;
+			errno  = ECONNABORTED;
+		}
 		return (ret);
+	}
 
 	if (flags & OVAL_PDFLAG_NOREPLY) {
 		if (s_sys != NULL) {
@@ -940,6 +949,7 @@ int oval_probe_ext_abort(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
 
 		dI("Sending SIGUSR1 to pid=%u\n", pipeinfo->pid);
 		kill(pipeinfo->pid, SIGUSR1);
+		break;
 	}
 	default:
 		return (-1);

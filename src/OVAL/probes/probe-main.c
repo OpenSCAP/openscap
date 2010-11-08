@@ -881,6 +881,7 @@ int main(void)
                                 break;
 			case PROBE_SIGEXIT_ABORT:
 				ret = ECONNABORTED;
+				exit(ECONNABORTED); /* hack */
 				break;
                         case PROBE_SIGEXIT_UNCLEAN:
                                 /* Try to save cached data & restart? */
