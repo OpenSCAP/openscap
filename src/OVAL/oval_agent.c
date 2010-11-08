@@ -29,6 +29,7 @@
 
 #include <string.h>
 #include <time.h>
+#include <assume.h>
 #include "config.h"
 #include "oval_definitions_impl.h"
 #include "oval_agent_api_impl.h"
