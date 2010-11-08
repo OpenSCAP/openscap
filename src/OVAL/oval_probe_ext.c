@@ -799,9 +799,12 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
 					return(0);
 
 				if (act == PROBE_HANDLER_ACT_RESET)
-					return oval_probe_ext_reset(pext->pdtbl->ctx, pd, pext);
+					ret = oval_probe_ext_reset(pext->pdtbl->ctx, pd, pext);
 				else
-					return oval_probe_ext_abort(pext->pdtbl->ctx, pd, pext);
+					ret = oval_probe_ext_abort(pext->pdtbl->ctx, pd, pext);
+
+				if (ret != 0)
+					return (ret);
                         }
 
                         return(0);
