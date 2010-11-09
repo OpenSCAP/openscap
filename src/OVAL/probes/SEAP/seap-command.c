@@ -356,7 +356,6 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                                 protect_errno {
                                         _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
                                         SEAP_cmdtbl_del(dsc->cmd_w_table, rec);
-                                        SEAP_cmdrec_free(rec);
                                         SEAP_packet_free (packet);
                                 }
                                 return (NULL);
