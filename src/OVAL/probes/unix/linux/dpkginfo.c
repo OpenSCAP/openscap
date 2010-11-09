@@ -123,7 +123,8 @@ int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg)
 
         if (dpkginfo_reply == NULL) {
                 switch (errflag) {
-                        case 0: /* Not found */
+		case 0: /* Not found */
+		{
                                 _D("Package \"%s\" not found.\n", request_st);
 				/*
                                 item_sexp = probe_item_creat ("dpkginfo_item", NULL,
@@ -139,7 +140,9 @@ int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg)
                                 SEXP_free (r0);
 				*/
                                 break;
-                        case -1: /* Error */
+		}
+		case -1: /* Error */
+		{
 				char *s = "dpkginfo_get_by_name() failed.\n";
 				SEXP_t *msg;
 
@@ -151,6 +154,7 @@ int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg)
 				probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
 
                                 break;
+		}
                 }
         } else { /* Ok */
                 SEXP_t *r1, *r2, *r3, *r4, *r5;
