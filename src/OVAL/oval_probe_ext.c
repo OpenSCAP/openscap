@@ -770,8 +770,25 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                 }
 
 		ret = oval_probe_ext_eval(pext->pdtbl->ctx, pd, pext, sys, flags);
+
 		if (ret >= 0)
 			ret = 0;
+
+		if (ret < 0 && errno == ECONNABORTED) {
+			if (!pext->do_init) {
+				oval_pdtbl_free(pext->pdtbl);
+			}
+
+			pext->do_init  = true;
+			pext->pdtbl    = NULL;
+			pext->pdsc     = NULL;
+			pext->pdsc_cnt = 0;
+
+			oval_probe_ext_init(pext);
+
+			errno = ECONNABORTED;
+		}
+
 		return ret;
         }
         case PROBE_HANDLER_ACT_OPEN:
