@@ -133,6 +133,7 @@ fi
 %doc docs/{html,latex,examples}/
 %{_includedir}/*
 %{_libdir}/*.so
+%{_libdir}/pkgconfig/*.pc
 
 %files utils
 %defattr(-,root,root,-)
