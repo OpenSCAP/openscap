@@ -68,7 +68,9 @@ nobase_pkgdata_DATA =	schemas/oval/5.5/independent-system-characteristics-schema
 			schemas/xccdf/1.1.4/XMLSchema.dtd \
 			schemas/xccdf/1.1.4/datatypes.dtd
 
-EXTRA_DIST =	dist/fedora/openscap.spec \
+EXTRA_DIST =	dist/rhel5/openscap.spec \
+		dist/rhel5/openscap-0.6.3-noValidate.patch \
+		dist/fedora/openscap.spec \
 		dist/fedora/oscap-scan.sys \
 		dist/fedora/oscap-scan.init \
 		dist/fedora/oscap-scan.cron \
