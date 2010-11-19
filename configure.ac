@@ -29,6 +29,25 @@ AC_PROG_LIBTOOL
 # swig
 AC_PROG_SWIG([])
 
+# libtool versioning 
+# See http://sources.redhat.com/autobook/autobook/autobook_91.html#SEC91 for details
+
+## increment if the interface has additions, changes, removals.
+LT_CURRENT=0
+
+## increment any time the source changes; set to if you increment CURRENT
+LT_REVISION=1
+
+## increment if any interfaces have been added; set to 0
+## if any interfaces have been changed or removed. removal has
+## precedence over adding, so set to 0 if both happened.
+LT_AGE=0
+
+AC_SUBST(LT_CURRENT)
+AC_SUBST(LT_REVISION)
+AC_SUBST(LT_AGE)
+
+
 # Compiler flags
 CFLAGS="$CFLAGS -pipe -std=c99 -W -Wall -Wnonnull -Wshadow -Wformat -Wundef -Wno-unused-parameter -Wmissing-prototypes -Wno-unknown-pragmas -D_GNU_SOURCE -DOSCAP_THREAD_SAFE"
 
