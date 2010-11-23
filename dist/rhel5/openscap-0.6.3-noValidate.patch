@@ -1,6 +1,6 @@
-diff -up openscap-0.6.3/utils/oscap-xccdf.c.noValidate openscap-0.6.3/utils/oscap-xccdf.c
---- openscap-0.6.3/utils/oscap-xccdf.c.noValidate	2010-10-07 16:33:42.000000000 -0400
-+++ openscap-0.6.3/utils/oscap-xccdf.c	2010-10-07 16:34:17.000000000 -0400
+diff -up openscap-0.6.4/utils/oscap-xccdf.c.validate openscap-0.6.4/utils/oscap-xccdf.c
+--- openscap-0.6.4/utils/oscap-xccdf.c.validate	2010-11-23 13:23:51.000000000 +0100
++++ openscap-0.6.4/utils/oscap-xccdf.c	2010-11-23 15:19:39.000000000 +0100
 @@ -233,14 +233,14 @@ int app_evaluate_xccdf(const struct osca
          void **sessions = NULL;
  	
@@ -18,19 +18,19 @@ diff -up openscap-0.6.3/utils/oscap-xccdf.c.noValidate openscap-0.6.3/utils/osca
  
  
  	/* Load XCCDF model and XCCDF Policy model */
-@@ -311,6 +311,7 @@ int app_evaluate_xccdf(const struct osca
-         if (oval_files != NULL) {
+@@ -312,6 +312,7 @@ int app_evaluate_xccdf(const struct osca
  	    int i;
  	    /* Validate documents */
-+/*
              for (i=0; oval_files[i]; i++) {
++/*
  		if (!oscap_validate_document(oval_files[i], OSCAP_DOCUMENT_OVAL_DEFINITIONS, NULL, 
  					     (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-@@ -321,6 +322,7 @@ int app_evaluate_xccdf(const struct osca
+ 			if (oscap_err()) {
+@@ -320,6 +321,7 @@ int app_evaluate_xccdf(const struct osca
+ 			}
  			return OSCAP_ERROR;
  		}
- 	    }
 +*/
+ 	    }
  	    /* create sessions */
              def_models = malloc((i+1) * sizeof(struct oval_definition_model *));
-             sessions = malloc((i+1) * sizeof(struct oval_agent_session *));

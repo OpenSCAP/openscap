@@ -66,7 +66,7 @@ The %{name}-utils package contains various utilities based on %{name} library.
 
 %prep
 %setup -q
-%patch1 -p1
+%patch1 -p1 -b .validate
 
 %build
 mkdir -p m4
