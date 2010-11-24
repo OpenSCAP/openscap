@@ -136,5 +136,5 @@ ChangeLog:
 
 CONFIG_CLEAN_FILES = config/*
 clean-generic:
-	rm -rf autom4te*.cache
+	rm -rf autom4te*.cache libopenscap.pc
 
