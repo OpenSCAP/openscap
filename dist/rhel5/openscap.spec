@@ -64,6 +64,14 @@ BuildRequires:   curl-devel
 %description    utils
 The %{name}-utils package contains various utilities based on %{name} library.
 
+%package        content
+Summary:        SCAP content
+Group:          Applications/System
+Requires:       %{name} = %{version}-%{release}
+
+%description    content
+SCAP content for RHEL and Fedora delivered by Open-SCAP project.
+
 %prep
 %setup -q
 %patch1 -p1 -b .validate
@@ -143,15 +151,18 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/oscap-scan
 %{_initrddir}/oscap-scan
 %{_datadir}/openscap/oscap-scan.cron
+%{_mandir}/man8/*
+%{_bindir}/*
+%{_sysconfdir}/bash_completion.d
+
+%files content
+%defattr(-,root,root,-)
 %{_datadir}/openscap/scap-oval.xml
 %{_datadir}/openscap/scap-fedora12-oval.xml
 %{_datadir}/openscap/scap-fedora13-oval.xml
 %{_datadir}/openscap/scap-fedora14-oval.xml
 %{_datadir}/openscap/scap-xccdf.xml
 %{_datadir}/openscap/scap-fedora14-xccdf.xml
-%{_mandir}/man8/*
-%{_bindir}/*
-%{_sysconfdir}/bash_completion.d
 
 %changelog
 * Tue Sep 14 2010 Peter Vrabec <pvrabec@redhat.com> 0.6.3-1
