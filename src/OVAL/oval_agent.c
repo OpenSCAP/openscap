@@ -139,8 +139,6 @@ oval_result_t oval_agent_eval_definition(oval_agent_session_t * ag_sess, const c
 }
 
 int oval_agent_reset_session(oval_agent_session_t * ag_sess) {
-	int ret;
-
 	/* Reset syschar model */
 	oval_syschar_model_reset(ag_sess->sys_model);
 
@@ -148,9 +146,10 @@ int oval_agent_reset_session(oval_agent_session_t * ag_sess) {
 	oval_results_model_free(ag_sess->res_model);
 	ag_sess->res_model = oval_results_model_new(ag_sess->def_model, ag_sess->sys_models);
 
-	/* Clean up probe cache */
-	ret = oval_probe_session_reset(ag_sess->psess, ag_sess->sys_model);
-	return ret;
+	oval_probe_session_destroy(ag_sess->psess);
+	ag_sess->psess = oval_probe_session_new(ag_sess->sys_model);
+
+	return 0;
 }
 
 int oval_agent_abort_session(oval_agent_session_t *ag_sess)
