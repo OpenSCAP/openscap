@@ -214,6 +214,23 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 	return cpe;
 }
 
+struct cpe_name * cpe_name_clone(struct cpe_name * old_name)
+{
+        struct cpe_name * new_name = oscap_alloc(sizeof(struct cpe_name));
+        if (new_name == NULL) 
+            return NULL;
+
+	new_name->part = old_name->part;
+	new_name->vendor = oscap_strdup(old_name->vendor);
+	new_name->product = oscap_strdup(old_name->product);
+	new_name->version = oscap_strdup(old_name->version);
+	new_name->update = oscap_strdup(old_name->update);
+	new_name->edition = oscap_strdup(old_name->edition);
+	new_name->language = oscap_strdup(old_name->language);
+
+        return new_name;
+}
+
 
 static bool cpe_urldecode(char *str)
 {

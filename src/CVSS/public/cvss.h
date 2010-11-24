@@ -210,6 +210,13 @@ bool cvss_entry_set_generated(struct cvss_entry *entry, const char *new_generate
 struct cvss_entry * cvss_entry_new(void);
 
 /**
+ * Clone CVSS entry
+ * @param old_entry CVSS entry
+ * @memberof cvss_entry
+ */
+struct cvss_entry * cvss_entry_clone(struct cvss_entry * old_entry);
+
+/**
  * Free CVSS entry
  * @param entry CVSS entry
  * @memberof cvss_entry

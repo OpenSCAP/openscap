@@ -274,7 +274,12 @@ struct cpe_testexpr *cpe_testexpr_new(void);
  */
 struct cpe_platform *cpe_platform_new(void);
 
-
+/**
+ * Clone CPE test expression
+ * @param old_expr CPE test expression
+ * @memberof cpe_testexpr
+ */
+struct cpe_testexpr * cpe_testexpr_clone(struct cpe_testexpr * old_expr);
 
 /**
  * Free function of CPE test expression

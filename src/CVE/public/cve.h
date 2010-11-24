@@ -528,6 +528,55 @@ struct cve_reference *cve_reference_new(void);
 struct cve_model *cve_model_new(void);
 
 /**
+ * Clone CVE entry
+ * @param old_entry CVE entry
+ * @memberof cve_entry
+ */
+struct cve_entry * cve_entry_clone(struct cve_entry * old_entry);
+
+/**
+ * Clone CVE configuration
+ * @param old_conf CVE configuration
+ * @memberof cve_configuration
+ */
+struct cve_configuration * cve_configuration_clone(struct cve_configuration * old_conf);
+
+/**
+ * Clone CWE entry
+ * @param old_entry CWE entry
+ * @memberof cwe_entry
+ */
+struct cwe_entry * cwe_entry_clone(struct cwe_entry * old_entry);
+
+/**
+ * Clone CVE product
+ * @param old_product CVE product
+ * @memberof cve_product
+ */
+struct cve_product * cve_product_clone(struct cve_product * old_product);
+
+/**
+ * Clone CVE summary
+ * @param old_sum CVE summary
+ * @memberof cve_summary
+ */
+struct cve_summary * cve_summary_clone(struct cve_summary * old_sum);
+
+/**
+ * Clone CVE reference
+ * @param old_ref CVE reference
+ * @memberof cve_reference
+ */
+struct cve_reference * cve_reference_clone(struct cve_reference * old_ref);
+
+/**
+ * Clone CVE model
+ * @param old_model CVE model
+ * @memberof cve_model
+ */
+struct cve_model * cve_model_clone(struct cve_model * old_model);
+
+/**
  * Free CVE model
  * @param cve_model CVE model
  * @memberof cve_model

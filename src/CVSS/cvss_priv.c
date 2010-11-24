@@ -210,6 +210,25 @@ struct cvss_entry * cvss_entry_new() {
         return ret;
 }
 
+struct cvss_entry * cvss_entry_clone(struct cvss_entry * old_entry)
+{
+        struct cvss_entry * new_entry = cvss_entry_new();
+        if ( new_entry == NULL ) 
+            return NULL;
+
+        new_entry->score = oscap_strdup(old_entry->score);
+        new_entry->AV = oscap_strdup(old_entry->AV);
+        new_entry->AC = oscap_strdup(old_entry->AC);
+        new_entry->authentication = oscap_strdup(old_entry->authentication);
+        new_entry->imp_confidentiality = oscap_strdup(old_entry->imp_confidentiality);
+        new_entry->imp_integrity = oscap_strdup(old_entry->imp_integrity);
+        new_entry->imp_availability = oscap_strdup(old_entry->imp_availability);
+        new_entry->source = oscap_strdup(old_entry->source);
+        new_entry->generated = oscap_strdup(old_entry->generated);
+
+        return new_entry;
+}
+
 /* End of CVE structures' contructors
  * */
 /***************************************************************************/

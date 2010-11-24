@@ -220,6 +220,26 @@ struct cve_entry *cve_entry_new()
 	return ret;
 }
 
+struct cve_entry * cve_entry_clone(struct cve_entry * old_entry)
+{
+    struct cve_entry * new_entry = cve_entry_new();
+    new_entry->id = oscap_strdup(old_entry->id);
+    new_entry->cve_id = oscap_strdup(old_entry->cve_id);
+    new_entry->published = oscap_strdup(old_entry->published);
+    new_entry->modified = oscap_strdup(old_entry->modified);
+    new_entry->cwe = oscap_strdup(old_entry->cwe);
+    new_entry->sec_protection = oscap_strdup(old_entry->sec_protection);
+
+    new_entry->cvss = cvss_entry_clone(old_entry->cvss);
+
+    new_entry->products = oscap_list_clone(old_entry->products, (oscap_clone_func) cve_product_clone);
+    new_entry->references = oscap_list_clone(old_entry->references, (oscap_clone_func) cve_reference_clone);
+    new_entry->summaries = oscap_list_clone(old_entry->summaries, (oscap_clone_func) cve_summary_clone);
+    new_entry->configurations = oscap_list_clone(old_entry->configurations, (oscap_clone_func) cve_configuration_clone);
+
+    return new_entry;
+}
+
 struct cve_configuration *cve_configuration_new()
 {
 
@@ -233,6 +253,14 @@ struct cve_configuration *cve_configuration_new()
 	ret->expr = cpe_testexpr_new();
 
 	return ret;
+}
+
+struct cve_configuration * cve_configuration_clone(struct cve_configuration * old_conf)
+{
+    struct cve_configuration * new_conf = cve_configuration_new();
+    new_conf->id = oscap_strdup(old_conf->id);
+    new_conf->expr = cpe_testexpr_clone(old_conf->expr);
+    return new_conf;
 }
 
 struct cwe_entry *cwe_entry_new()
@@ -249,6 +277,13 @@ struct cwe_entry *cwe_entry_new()
 	return ret;
 }
 
+struct cwe_entry * cwe_entry_clone(struct cwe_entry * old_entry)
+{
+    struct cwe_entry * new_entry = cwe_entry_new();
+    new_entry->value = oscap_strdup(old_entry->value);
+    return new_entry;
+}
+
 struct cve_product *cve_product_new()
 {
 
@@ -261,6 +296,13 @@ struct cve_product *cve_product_new()
 	ret->value = NULL;
 
 	return ret;
+}
+
+struct cve_product * cve_product_clone(struct cve_product * old_product)
+{
+    struct cve_product * product = cve_product_new();
+    product->value = oscap_strdup(old_product->value);
+    return product;
 }
 
 struct cve_summary *cve_summary_new()
@@ -277,6 +319,13 @@ struct cve_summary *cve_summary_new()
 	return ret;
 }
 
+struct cve_summary * cve_summary_clone(struct cve_summary * old_sum)
+{
+    struct cve_summary * sum = cve_summary_new();
+    sum->summary = oscap_strdup(old_sum->summary);
+    return sum;
+}
+
 struct cve_reference *cve_reference_new()
 {
 
@@ -286,6 +335,17 @@ struct cve_reference *cve_reference_new()
 		return NULL;
 
 	return ret;
+}
+
+struct cve_reference * cve_reference_clone(struct cve_reference * old_ref)
+{
+    struct cve_reference * ref = cve_reference_new();
+    ref->value = oscap_strdup(old_ref->value);
+    ref->href = oscap_strdup(old_ref->href);
+    ref->type = oscap_strdup(old_ref->type);
+    ref->source = oscap_strdup(old_ref->source);
+    ref->lang = oscap_strdup(old_ref->lang);
+    return ref;
 }
 
 struct cve_model *cve_model_new()
@@ -301,6 +361,13 @@ struct cve_model *cve_model_new()
 	ret->entries = oscap_list_new();
 
 	return ret;
+}
+
+struct cve_model * cve_model_clone(struct cve_model * old_model)
+{
+    struct cve_model * new_model = cve_model_new();
+    new_model->entries = oscap_list_clone(old_model->entries, (oscap_clone_func) cve_entry_clone);
+    return new_model;
 }
 
 /* End of CVE structures' contructors

@@ -181,6 +181,15 @@ struct cpe_testexpr *cpe_testexpr_new()
 	return ret;
 }
 
+struct cpe_testexpr * cpe_testexpr_clone(struct cpe_testexpr * old_expr)
+{
+        struct cpe_testexpr * new_expr = cpe_testexpr_new();
+        new_expr->oper = old_expr->oper;
+        new_expr->meta.cpe = cpe_name_clone(old_expr->meta.cpe);
+        new_expr->meta.expr = oscap_list_clone(old_expr->meta.expr, (oscap_clone_func) cpe_testexpr_clone);
+        return new_expr;
+}
+
 struct cpe_lang_model *cpe_lang_model_new()
 {
 

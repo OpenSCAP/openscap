@@ -69,6 +69,13 @@ struct cpe_name;
 struct cpe_name *cpe_name_new(const char *cpe);
 
 /**
+ * Clone CPE Name
+ * @param old_name CPE name
+ * @memberof cpe_name
+ */
+struct cpe_name * cpe_name_clone(struct cpe_name * old_name);
+
+/**
  * Destructor. Frees any used resources and safely destroys @a cpe.
  * @memberof cpe_name
  * @param cpe CPE to be deleted
