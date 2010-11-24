@@ -547,7 +547,10 @@ class OSCAP_Object(object):
         f_XCCDF = path
 
         benchmark = self.benchmark_import(f_XCCDF)
-        assert benchmark.instance != None, "Benchmark loading failed: %s" % (f_XCCDF,)
+        if benchmark.instance == None:
+            if OSCAP.oscap_err(): desc = OSCAP.oscap_err_desc()
+            else: desc = "Unknown error, please report this bug (http://bugzilla.redhat.com/)"
+            raise ImportError("Benchmark \"%s\" loading failed: %s" % (f_XCCDF, desc))
         policy_model = self.policy_model(benchmark)
         files = policy_model.get_files()
         def_models = []
@@ -558,10 +561,16 @@ class OSCAP_Object(object):
             else: f_OVAL = os.path.join(dirname, file)
             if os.path.exists(f_OVAL): 
                 def_model = oval.definition_model_import(f_OVAL)
-                assert def_model.instance != None, "Cannot import definition model %s" % (f_OVAL,)
+                if def_model.instance == None:
+                    if OSCAP.oscap_err(): desc = OSCAP.oscap_err_desc()
+                    else: desc = "Unknown error, please report this bug (http://bugzilla.redhat.com/)"
+                    raise ImportError("Cannot import definition model for \"%s\": %s" % (f_OVAL, desc))
                 def_models.append(def_model)
                 sess = oval.agent_new_session(def_model, file)
-                assert sess != None and sess.instance != None, "Cannot create agent session for %s" % (f_OVAL,)
+                if sess == None or sess.instance == None:
+                    if OSCAP.oscap_err(): desc = OSCAP.oscap_err_desc()
+                    else: desc = "Unknown error, please report this bug (http://bugzilla.redhat.com/)"
+                    raise ImportError("Cannot create agent session for \"%s\": %s" % (f_OVAL, desc))
                 sessions.append(sess)
                 policy_model.register_engine_oval(sess)
             else: print "WARNING: Skipping %s file which is referenced from XCCDF content" % (f_OVAL,)
