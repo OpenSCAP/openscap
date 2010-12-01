@@ -1,3 +1,10 @@
+openscap-0.6.5							01-12-2010
+- propagate probe communication errors upwards
+- functions for handling OVAL "generator"
+- implement oval_probe_session_abort
+- RHEL5 related fixes
+- libtool versioning
+
 openscap-0.6.4                                                  20-10-2010
 - perl regular expression is on by default
 - OVAL float type support
