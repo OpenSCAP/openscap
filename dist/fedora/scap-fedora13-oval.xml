@@ -2266,10 +2266,10 @@
             <object object_ref="oval:org.fedoraproject.f13:obj:480"/>
             <state state_ref="oval:org.fedoraproject.f13:ste:151"/>
         </file_test>
-        <textfilecontent54_test check="all" check_existence="none_exist" comment="Set password for all accounts" id="oval:org.fedoraproject.f13:tst:517" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+        <textfilecontent54_test check="all" check_existence="none_exist" comment="Set password for all accounts" id="oval:org.fedoraproject.f13:tst:517" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
             <object object_ref="oval:org.fedoraproject.f13:obj:483"/>
         </textfilecontent54_test>
-        <textfilecontent54_test check="all" check_existence="none_exist" comment="Set password for all accounts" id="oval:org.fedoraproject.f13:tst:518" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+        <textfilecontent54_test check="all" check_existence="none_exist" comment="Set password for all accounts" id="oval:org.fedoraproject.f13:tst:518" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
             <object object_ref="oval:org.fedoraproject.f13:obj:484"/>
         </textfilecontent54_test>
         <textfilecontent54_test check="all" check_existence="any_exist" comment="The nodev option should be enabled or disabled as appropriate for all non-root partitions." id="oval:org.fedoraproject.f13:tst:10" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
@@ -2370,14 +2370,6 @@
             <behaviors/>
             <path>/etc</path>
             <filename>issue</filename>
-        </file_object>
-        <file_object comment="/etc/grub.conf" id="oval:org.fedoraproject.f13:obj:90" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <path>/etc</path>
-            <filename>grub.conf</filename>
-        </file_object>
-        <file_object comment="/etc/grub.conf" id="oval:org.fedoraproject.f13:obj:90" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <path>/etc</path>
-            <filename>grub.conf</filename>
         </file_object>
         <file_object comment="/etc/grub.conf" id="oval:org.fedoraproject.f13:obj:90" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <path>/etc</path>
@@ -2686,10 +2678,6 @@
             <service_name>ldap</service_name>
             <runlevel>4</runlevel>
         </runlevel_object>
-        <file_object comment="/etc/passwd" id="oval:org.fedoraproject.f13:obj:44" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <path>/etc</path>
-            <filename>passwd</filename>
-        </file_object>
         <runlevel_object id="oval:org.fedoraproject.f13:obj:363" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <service_name>sendmail</service_name>
             <runlevel>2</runlevel>
@@ -2712,10 +2700,6 @@
             <pattern operation="pattern match">option[[:space:]]+ntp-servers</pattern>
             <instance datatype="int" operation="greater than or equal">1</instance>
         </textfilecontent54_object>
-        <file_object comment="/etc/passwd" id="oval:org.fedoraproject.f13:obj:44" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <path>/etc</path>
-            <filename>passwd</filename>
-        </file_object>
         <textfilecontent54_object id="oval:org.fedoraproject.f13:obj:354" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
             <path>/etc</path>
             <filename>dhcpd.conf</filename>
@@ -2801,14 +2785,6 @@
             <path>/etc</path>
             <filename>gshadow</filename>
         </file_object>
-        <file_object comment="/etc/gshadow" id="oval:org.fedoraproject.f13:obj:43" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <path>/etc</path>
-            <filename>gshadow</filename>
-        </file_object>
-        <file_object comment="/etc/group" id="oval:org.fedoraproject.f13:obj:42" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <path>/etc</path>
-            <filename>group</filename>
-        </file_object>
         <file_object comment="/etc/crontab" id="oval:org.fedoraproject.f13:obj:296" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <path>/etc</path>
             <filename>crontab</filename>
@@ -2826,18 +2802,6 @@
             <behaviors recurse="symlinks and directories" recurse_direction="down"/>
             <path>/etc/cron.d</path>
             <filename operation="pattern match">.*</filename>
-        </file_object>
-        <file_object comment="/etc/group" id="oval:org.fedoraproject.f13:obj:42" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <path>/etc</path>
-            <filename>group</filename>
-        </file_object>
-        <file_object comment="/etc/anacrontab" id="oval:org.fedoraproject.f13:obj:297" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <path>/etc</path>
-            <filename>anacrontab</filename>
-        </file_object>
-        <file_object comment="/etc/crontab" id="oval:org.fedoraproject.f13:obj:296" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <path>/etc</path>
-            <filename>crontab</filename>
         </file_object>
         <rpminfo_object id="oval:org.fedoraproject.f13:obj:292" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
             <name>anacron</name>
@@ -2890,10 +2854,6 @@
             <service_name>cpuspeed</service_name>
             <runlevel>5</runlevel>
         </runlevel_object>
-        <file_object comment="/etc/shadow" id="oval:org.fedoraproject.f13:obj:41" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <path>/etc</path>
-            <filename>shadow</filename>
-        </file_object>
         <runlevel_object id="oval:org.fedoraproject.f13:obj:276" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <service_name>acpid</service_name>
             <runlevel>2</runlevel>
@@ -3225,24 +3185,6 @@
         <runlevel_state id="oval:org.fedoraproject.f13:ste:58" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">false</start>
         </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:58" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:58" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:58" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:57" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:57" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:57" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:57" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">false</start>
         </runlevel_state>
@@ -3263,10 +3205,12 @@
         <file_state id="oval:org.fedoraproject.f13:ste:51" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <user_id>0</user_id>
         </file_state>
-        <textfilecontent54_state id="oval:org.fedoraproject.f13:ste:3" version="1" xmlns="http://oval.mitre.org/xmlschema/oval-definitions-5#independent">
-            <subexpression operation="pattern match">.*nodev.*</subexpression>
+        
+        <textfilecontent54_state id="oval:org.fedoraproject.f13:ste:3" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+            <subexpression datatype="string"  operation="pattern match">.*,nodev.*</subexpression>
         </textfilecontent54_state>
-        <file_state id="oval:org.fedoraproject.f13:ste:151" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+        
+	<file_state id="oval:org.fedoraproject.f13:ste:151" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <uread datatype="boolean">true</uread>
             <uexec datatype="boolean">false</uexec>
             <gread datatype="boolean">false</gread>
@@ -3279,34 +3223,7 @@
         <runlevel_state id="oval:org.fedoraproject.f13:ste:149" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">false</start>
         </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:149" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:149" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:149" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:148" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:148" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:148" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:148" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:147" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:147" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:147" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">false</start>
         </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:147" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
@@ -3315,34 +3232,7 @@
         <runlevel_state id="oval:org.fedoraproject.f13:ste:146" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">false</start>
         </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:146" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:146" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:146" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:140" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:140" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:140" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:140" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:139" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:139" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:139" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">false</start>
         </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:139" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
@@ -3351,34 +3241,7 @@
         <runlevel_state id="oval:org.fedoraproject.f13:ste:135" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">false</start>
         </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:135" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:135" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:135" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:131" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:131" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:131" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:131" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:130" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:130" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:130" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">false</start>
         </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:130" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
@@ -3387,15 +3250,6 @@
         <file_state id="oval:org.fedoraproject.f13:ste:20" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <group_id>0</group_id>
         </file_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:129" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:129" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:129" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:129" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">false</start>
         </runlevel_state>
@@ -3413,27 +3267,9 @@
         <runlevel_state id="oval:org.fedoraproject.f13:ste:122" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">false</start>
         </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:122" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:122" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:122" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
         <file_state id="oval:org.fedoraproject.f13:ste:18" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <user_id>0</user_id>
         </file_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:121" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:121" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:121" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:121" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">true</start>
         </runlevel_state>
@@ -3452,24 +3288,6 @@
             <user_id>0</user_id>
         </file_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:119" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:119" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:119" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:119" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:118" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:118" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:118" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">false</start>
         </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:118" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
@@ -3508,34 +3326,7 @@
         <runlevel_state id="oval:org.fedoraproject.f13:ste:93" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">false</start>
         </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:93" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:93" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:93" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:92" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:92" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:92" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:92" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:91" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:91" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:91" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">true</start>
         </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:91" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
@@ -3547,34 +3338,7 @@
         <runlevel_state id="oval:org.fedoraproject.f13:ste:90" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">true</start>
         </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:90" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:90" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:90" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:88" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:88" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:88" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:88" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:84" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:84" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:84" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">false</start>
         </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:84" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
@@ -3583,34 +3347,7 @@
         <runlevel_state id="oval:org.fedoraproject.f13:ste:83" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">false</start>
         </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:83" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:83" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:83" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:77" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:77" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:77" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:77" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:76" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:76" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:76" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">false</start>
         </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:76" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
@@ -3619,34 +3356,7 @@
         <runlevel_state id="oval:org.fedoraproject.f13:ste:75" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">false</start>
         </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:75" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:75" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:75" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:7" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:7" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:7" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:7" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:71" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:71" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:71" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">false</start>
         </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:71" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
@@ -3655,34 +3365,7 @@
         <runlevel_state id="oval:org.fedoraproject.f13:ste:70" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">false</start>
         </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:70" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:70" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:70" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:69" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:69" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:69" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:69" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:68" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:68" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:68" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">false</start>
         </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:68" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
@@ -3691,34 +3374,7 @@
         <runlevel_state id="oval:org.fedoraproject.f13:ste:67" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">false</start>
         </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:67" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:67" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:67" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:66" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:66" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:66" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:66" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:65" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:65" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">false</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:65" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">false</start>
         </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:65" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
@@ -3727,46 +3383,10 @@
         <runlevel_state id="oval:org.fedoraproject.f13:ste:63" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">true</start>
         </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:63" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:63" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:63" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:62" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:62" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:62" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:62" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">true</start>
         </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:61" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:61" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:61" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:61" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:60" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:60" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-            <start datatype="boolean">true</start>
-        </runlevel_state>
-        <runlevel_state id="oval:org.fedoraproject.f13:ste:60" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
             <start datatype="boolean">true</start>
         </runlevel_state>
         <runlevel_state id="oval:org.fedoraproject.f13:ste:60" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
