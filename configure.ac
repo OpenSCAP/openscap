@@ -403,8 +403,9 @@ if test "x${probes}" = xyes; then
 	esac
 
 	AC_CACHE_CHECK([for atomic builtins], [ac_cv_atomic_builtins],
-	[AC_LINK_IFELSE([AC_LANG_PROGRAM([int foovar=0;],
-	                                [return __sync_fetch_and_add(&foovar, 1);])],
+	[AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <stdint.h>
+					  uint16_t foovar=0; uint16_t old=1; uint16_t new=2;],
+	                                [__sync_bool_compare_and_swap(&foovar,old,new); return __sync_fetch_and_add(&foovar, 1);])],
 	                [ac_cv_atomic_builtins=yes],
 	                [ac_cv_atomic_builtins=no])])
 	if test $ac_cv_atomic_builtins = yes; then
