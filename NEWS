@@ -1,3 +1,6 @@
+openscap-0.6.6							09-12-2010
+- better atomic functions support check
+
 openscap-0.6.5							01-12-2010
 - propagate probe communication errors upwards
 - functions for handling OVAL "generator"
