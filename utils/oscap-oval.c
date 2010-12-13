@@ -242,6 +242,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
 			return OSCAP_FAIL;
 		}
+		fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
 		return OSCAP_ERROR;
 	}
 
@@ -339,6 +340,7 @@ int app_evaluate_oval_id(const struct oscap_action *action) {
 			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
 			return OSCAP_FAIL;
 		}
+		fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
 		return OSCAP_ERROR;
 	}
 

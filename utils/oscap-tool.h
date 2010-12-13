@@ -44,6 +44,9 @@
 #include <xccdf.h>
 #endif
 
+#define INVALID_DOCUMENT_MSG "oscap was unable to validate the XML document you provided.\n"\
+			     "Please ensure that the XML document is valid and well-formed, and try again."
+
 struct oscap_action;
 struct oscap_module;
 
