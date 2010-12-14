@@ -402,6 +402,16 @@ struct xccdf_ident *xccdf_ident_new_fill(const char *id, const char *sys)
 	return ident;
 }
 
+void xccdf_ident_set_id(struct xccdf_ident * ident, const char *id)
+{
+        ident->id = oscap_strdup(id);
+}
+
+void xccdf_ident_set_system(struct xccdf_ident * ident, const char *sys)
+{
+        ident->system = oscap_strdup(sys);
+}
+
 struct xccdf_ident *xccdf_ident_parse(xmlTextReaderPtr reader)
 {
 	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_IDENT);
@@ -672,13 +682,13 @@ void xccdf_check_export_free(struct xccdf_check_export *item)
 
 const struct oscap_string_map XCCDF_STRATEGY_MAP[] = {
 	{XCCDF_STRATEGY_CONFIGURE, "configure"},
-	{XCCDF_STRATEGY_COMBINATION, "combination"},
 	{XCCDF_STRATEGY_DISABLE, "disable"},
 	{XCCDF_STRATEGY_ENABLE, "enable"},
 	{XCCDF_STRATEGY_PATCH, "patch"},
 	{XCCDF_STRATEGY_POLICY, "policy"},
 	{XCCDF_STRATEGY_RESTRICT, "restrict"},
 	{XCCDF_STRATEGY_UPDATE, "update"},
+	{XCCDF_STRATEGY_COMBINATION, "combination"},
 	{XCCDF_STRATEGY_UNKNOWN, NULL}
 };
 
@@ -743,6 +753,10 @@ struct xccdf_fixtext *xccdf_fixtext_parse(xmlTextReaderPtr reader)
 	struct xccdf_fixtext *fix = xccdf_fixtext_new();
 	fix->fixref = xccdf_attribute_copy(reader, XCCDFA_FIXREF);
 	fix->text = oscap_text_new_parse(XCCDF_TEXT_HTMLSUB, reader);
+	fix->reboot     = xccdf_attribute_get_bool(reader, XCCDFA_REBOOT);
+	fix->strategy   = oscap_string_to_enum(XCCDF_STRATEGY_MAP, xccdf_attribute_get(reader, XCCDFA_STRATEGY));
+	fix->disruption = oscap_string_to_enum(XCCDF_LEVEL_MAP, xccdf_attribute_get(reader, XCCDFA_DISRUPTION));
+	fix->complexity = oscap_string_to_enum(XCCDF_LEVEL_MAP, xccdf_attribute_get(reader, XCCDFA_COMPLEXITY));
 	return fix;
 }
 
@@ -1026,7 +1040,8 @@ OSCAP_ACCESSOR_SIMPLE(xccdf_level_t, xccdf_fixtext, disruption)
 OSCAP_ACCESSOR_SIMPLE(xccdf_level_t, xccdf_fixtext, complexity)
 OSCAP_ACCESSOR_SIMPLE(bool, xccdf_fixtext, reboot)
 OSCAP_ACCESSOR_TEXT(xccdf_fixtext, text)
-OSCAP_ACCESSOR_STRING(xccdf_fixtext, fixref) XCCDF_ITERATOR_GEN_S(fixtext)
+OSCAP_ACCESSOR_STRING(xccdf_fixtext, fixref)
+XCCDF_ITERATOR_GEN_S(fixtext)
 
 OSCAP_ACCESSOR_SIMPLE(xccdf_strategy_t, xccdf_fix, strategy)
 OSCAP_ACCESSOR_SIMPLE(xccdf_level_t, xccdf_fix, disruption)

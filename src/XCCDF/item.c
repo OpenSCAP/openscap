@@ -424,11 +424,11 @@ xmlNode *xccdf_fixtext_to_dom(struct xccdf_fixtext *fixtext, xmlDoc *doc, xmlNod
 
 	xccdf_level_t complexity = xccdf_fixtext_get_complexity(fixtext);
         if (complexity != 0)
-	        xmlNewProp(fixtext_node, BAD_CAST "complexity", BAD_CAST XCCDF_LEVEL_MAP[complexity].string);
+	        xmlNewProp(fixtext_node, BAD_CAST "complexity", BAD_CAST XCCDF_LEVEL_MAP[complexity-1].string);
 
 	xccdf_level_t disruption = xccdf_fixtext_get_disruption(fixtext);
         if (disruption != 0)
-	        xmlNewProp(fixtext_node, BAD_CAST "disruption", BAD_CAST XCCDF_LEVEL_MAP[disruption].string);
+	        xmlNewProp(fixtext_node, BAD_CAST "disruption", BAD_CAST XCCDF_LEVEL_MAP[disruption-1].string);
 
 	xccdf_strategy_t strategy = xccdf_fixtext_get_strategy(fixtext);
         if (strategy != 0)
@@ -446,6 +446,9 @@ xmlNode *xccdf_fix_to_dom(struct xccdf_fix *fix, xmlDoc *doc, xmlNode *parent)
 
 	const char *sys = xccdf_fix_get_system(fix);
 	if (sys != NULL) xmlNewProp(fix_node, BAD_CAST "system", BAD_CAST sys);
+
+	const char *platform = xccdf_fix_get_platform(fix);
+	if (platform != NULL) xmlNewProp(fix_node, BAD_CAST "platform", BAD_CAST platform);
 
 	if (xccdf_fix_get_reboot(fix))
 		xmlNewProp(fix_node, BAD_CAST "reboot", BAD_CAST "True");
@@ -469,6 +472,10 @@ xmlNode *xccdf_fix_to_dom(struct xccdf_fix *fix, xmlDoc *doc, xmlNode *parent)
 	//const char *instance = xccdf_fix_get_instance(fix);
 	//xmlNewTextChild(fix_node, ns_xccdf, BAD_CAST "instance", BAD_CAST instance);
 	
+        oscap_free(id);
+        oscap_free(sys);
+        oscap_free(platform);
+
 	return fix_node;
 }
 

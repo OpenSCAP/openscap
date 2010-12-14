@@ -152,7 +152,7 @@ typedef enum {
 
 /// Fix strategy type
 typedef enum {
-	XCCDF_STRATEGY_UNKNOWN,	        ///< Strategy not defined
+	XCCDF_STRATEGY_UNKNOWN = 0,	///< Strategy not defined
 	XCCDF_STRATEGY_CONFIGURE,	///< Adjust target config or settings
 	XCCDF_STRATEGY_DISABLE,	        ///< Turn off or deinstall something
 	XCCDF_STRATEGY_ENABLE,	        ///< Turn on or install something
@@ -2685,6 +2685,11 @@ bool xccdf_instance_set_context(struct xccdf_instance *obj, const char *newval);
 bool xccdf_instance_set_parent_context(struct xccdf_instance *obj, const char *newval);
 /// @memberof xccdf_instance
 bool xccdf_instance_set_content(struct xccdf_instance *obj, const char *newval);
+
+// @memberof xccdf_ident
+void xccdf_ident_set_id(struct xccdf_ident * ident, const char *id);
+// @memberof xccdf_ident
+void xccdf_ident_set_system(struct xccdf_ident * ident, const char *sys);
 
 /// @memberof xccdf_benchmark
 bool xccdf_benchmark_add_result(struct xccdf_benchmark *bench, struct xccdf_result *result);
