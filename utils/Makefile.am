@@ -29,6 +29,11 @@ oscap_SOURCES	+= oscap-cvss.c
 oscap_CPPFLAGS	+= -I$(top_srcdir)/src/CVSS/public
 endif
 
+if WANT_CPE
+oscap_CPPFLAGS  += -DENABLE_CPE
+oscap_SOURCES   += oscap-cpe.c
+oscap_CPPFLAGS  += -I$(top_srcdir)/src/CPE/public
+endif
 
 endif
 

@@ -1,0 +1,154 @@
+/*
+ * Copyright 2010 Red Hat Inc., Durham, North Carolina.
+ * All Rights Reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software 
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Authors:
+ *      Peter Vrabec  <pvrabec@redhat.com>
+ */
+
+
+/* Standard header files */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <getopt.h>
+
+/* CPE */
+#include <cpeuri.h>
+#include <cpedict.h>
+
+#include "oscap-tool.h"
+
+static struct oscap_module* CPE_SUBMODULES[];
+bool getopt_cpe(int argc, char **argv, struct oscap_action *action);
+int app_cpe_check(const struct oscap_action *action);
+int app_cpe_match(const struct oscap_action *action);
+
+struct oscap_module OSCAP_CPE_MODULE = {
+    .name = "cpe",
+    .parent = &OSCAP_ROOT_MODULE,
+    .summary = "Common Platform Enumeration",
+    .submodules = CPE_SUBMODULES
+};
+
+static struct oscap_module CPE_MATCH_MODULE = {
+    .name = "match",
+    .parent = &OSCAP_CPE_MODULE,
+    .summary = "Match CPE name against provided dictionary",
+    .usage = "name dictionary.xml",
+    .help = NULL,
+    .opt_parser = getopt_cpe,
+    .func = app_cpe_match
+};
+
+static struct oscap_module CPE_CHECK_MODULE = {
+    .name = "check",
+    .parent = &OSCAP_CPE_MODULE,
+    .summary = "Check if CPE name is valid",
+    .usage = "name",
+    .help = NULL,
+    .opt_parser = getopt_cpe,
+    .func = app_cpe_check
+};
+
+static struct oscap_module* CPE_SUBMODULES[] = {
+    &CPE_MATCH_MODULE,
+    &CPE_CHECK_MODULE,
+    NULL
+};
+
+bool getopt_cpe(int argc, char **argv, struct oscap_action *action) {
+
+	if( (action->module == &CPE_MATCH_MODULE) ) {
+		if(  argc != 5 ) {
+			oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
+			return false;
+		}
+		action->cpe_action = malloc(sizeof(struct cpe_action));
+		action->cpe_action->name=argv[3];
+		action->cpe_action->dict=argv[4];
+	}
+
+	if( (action->module == &CPE_CHECK_MODULE)) {
+		if( argc != 4 ) {
+			oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
+			return false;
+		}
+		action->cpe_action = malloc(sizeof(struct cpe_action));
+		action->cpe_action->name=argv[3];
+	}
+
+
+	return true;
+}
+
+int app_cpe_check(const struct oscap_action *action) {
+	int ret;
+
+	if (!cpe_name_check(action->cpe_action->name)) {
+		fprintf(stdout,"'%s' is NOT Valid CPE name.\n", action->cpe_action->name);	
+		ret = OSCAP_FAIL;
+	}
+	else {
+		fprintf(stdout,"'%s' is Valid CPE name.\n", action->cpe_action->name);
+		ret = OSCAP_OK;
+	}
+	free(action->cpe_action);
+	return ret;
+}
+
+int app_cpe_match(const struct oscap_action *action) {
+
+	int ret;
+	struct cpe_name *candidate_cpe = NULL;
+        struct cpe_dict_model *dict = NULL;
+
+
+        /* is CPE well formated? */
+        if( ! cpe_name_check(action->cpe_action->name) ) {
+                fprintf(stdout, "%s is not in valid CPE format.\n", action->cpe_action->name);
+		ret = OSCAP_ERROR;
+                goto clean;
+        }
+        candidate_cpe = cpe_name_new(action->cpe_action->name);
+
+        /* load dictionary */
+        if( (dict = cpe_dict_model_import (action->cpe_action->dict)) == NULL ) {
+                fprintf(stdout, "can't load CPE dictionary from: %s.\n", action->cpe_action->dict);
+		ret = OSCAP_ERROR;
+                goto clean;
+        }
+
+	/* matching */
+        if( cpe_name_match_dict(candidate_cpe, dict) ) {
+        	fprintf(stdout, "The exact CPE match is found.\n");
+		ret = OSCAP_OK;
+	}
+        else {
+                fprintf(stdout, "No match found.\n");
+		ret = OSCAP_FAIL;
+	}
+
+        /* clean up */
+clean:
+        cpe_name_free(candidate_cpe);
+        cpe_dict_model_free(dict);
+	free(action->cpe_action);
+	return ret;
+}
+
+

@@ -29,6 +29,9 @@ Open Vulnerability and Assessment Language.
 \fBxccdf\fR
 The eXtensible Configuration Checklist Description Format.
 .TP
+\fBcpe\fR
+Common Platform Enumeration.
+.TP
 \fBcvss\fR
 Common Vulnerability Scoring System
 
@@ -179,6 +182,17 @@ With this option the script generating engine will pick rules that failed for gi
 \fB\-\-template \fIID|FILE\fR\fR
 Template to be used to generate the script. If it contains a dot '.' it is interpreted as a location of a file with the template definition. Otherwise it identifies a template from standard set which currently includes: \fIbash\fR (default if no --template switch present). Brief explanation of the process of writing your own templates is in the XSL file \fIxsl/fix.xsl\fR in the openscap data directory. You can also take a look at the default template \fIxsl/fixtpl-bash.xml\fR.
 .RE
+
+.SH CPE OPERATIONS
+.TP
+.B \fBcheck\fR name
+.RS
+Check whether name is in correct CPE format.
+.RE
+.PP
+.B \fBmatch\fR name dictionary.xml
+.RS
+Find an exact match of CPE name in the dictionary.
 
 .SH CVSS OPERATIONS
 .TP

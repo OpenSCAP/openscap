@@ -13,12 +13,13 @@ function _oscap {
 
 	# commands for individual modules
     local -A cmds=()
-    cmds[oscap]="oval xccdf cvss"
+    cmds[oscap]="oval xccdf cpe cvss"
     cmds[oscap:oval]="collect eval eval-id validate-xml generate"
     cmds[oscap:oval:generate]="report"
     cmds[oscap:cvss]="base temporal environmental"
     cmds[oscap:xccdf]="eval validate-xml resolve generate"
     cmds[oscap:xccdf:generate]="report guide"
+    cmds[oscap:cpe]="check match"
 
     # command options
     local -A opts=()

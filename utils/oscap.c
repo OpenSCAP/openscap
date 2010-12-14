@@ -43,6 +43,9 @@ struct oscap_module* OSCAP_ROOT_SUBMODULES[] = {
 #ifdef ENABLE_CVSS
     &OSCAP_CVSS_MODULE,
 #endif
+#ifdef ENABLE_CPE
+    &OSCAP_CPE_MODULE,
+#endif
     &OSCAP_VERSION_MODULE,
     NULL
 };
@@ -107,6 +110,9 @@ static int print_versions(const struct oscap_action *action)
 #endif
 #ifdef ENABLE_XCCDF
 	fprintf(stdout, "XCCDF Version: \r\t\t%s\n", xccdf_benchmark_supported());
+#endif
+#ifdef ENABLE_CPE
+	fprintf(stdout, "CPE Version: \r\t\t%s\n", cpe_dict_model_supported());
 #endif
 #ifdef ENABLE_CVSS
 	fprintf(stdout, "CVSS Version: \r\t\t%s\n", cvss_model_supported());

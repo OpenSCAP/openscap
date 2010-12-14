@@ -43,6 +43,10 @@
 #ifdef ENABLE_XCCDF
 #include <xccdf.h>
 #endif
+#ifdef ENABLE_CPE
+#include <cpedict.h>
+#include <cpeuri.h>
+#endif
 
 #define INVALID_DOCUMENT_MSG "oscap was unable to validate the XML document you provided.\n"\
 			     "Please ensure that the XML document is valid and well-formed, and try again."
@@ -101,6 +105,13 @@ struct cvss_metrics {
 };
 #endif
 
+#ifdef ENABLE_CPE
+struct cpe_action {
+	char * name;
+	char * dict;
+};
+#endif
+
 struct oscap_action {
         int doctype;
         struct oscap_module *module;
@@ -122,6 +133,9 @@ struct oscap_action {
 #ifdef ENABLE_CVSS
         struct cvss_metrics *cvss_metrics;
 #endif
+#ifdef ENABLE_CPE
+	struct cpe_action * cpe_action;
+#endif
 	bool force;
 	bool oval_results;
 };
@@ -142,5 +156,8 @@ extern struct oscap_module OSCAP_CVSS_MODULE;
 #endif
 #ifdef ENABLE_OVAL
 extern struct oscap_module OSCAP_OVAL_MODULE;
+#endif
+#ifdef ENABLE_CPE
+extern struct oscap_module OSCAP_CPE_MODULE;
 #endif
 
