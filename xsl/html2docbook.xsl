@@ -22,16 +22,22 @@
       <xsl:otherwise><xsl:copy-of select='$in/node()'/></xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
+  <xsl:variable name='start.r'>
+    <xsl:if test='count($delims)!=0'><xsl:copy-of select='$delims[1]/preceding-sibling::node()'/></xsl:if>
+  </xsl:variable>
   <xsl:variable name='rest' select='exsl:node-set($rest.r)'/>
+  <xsl:variable name='start' select='exsl:node-set($start.r)'/>
 
+  <!--<xsl:if test='normalize-space(string($start))'><para><xsl:apply-templates mode='h2db' select='$start'/></para></xsl:if>-->
   <xsl:apply-templates mode='h2db.para' select='$delims'/>
-  <xsl:if test='normalize-space($rest)'><para><xsl:apply-templates mode='h2db' select='$rest'/></para></xsl:if>
+  <xsl:if test='normalize-space(string($rest))'><para><xsl:apply-templates mode='h2db' select='$rest'/></para></xsl:if>
 </xsl:template>
 
 <xsl:template mode='h2db.para' match='html:*'>
-  <xsl:variable name='prev.delim' select='(preceding-sibling::html:br|preceding-sibling::html:p|preceding-sibling::html:ul|preceding-sibling::html:ol)[1]'/>
-  <xsl:variable name='chunk' select='preceding-sibling::node()[not($prev.delim) or generate-id((preceding-sibling::html:br|preceding-sibling::html:p|preceding-sibling::html:ul|preceding-sibling::html:ol)[1]) = generate-id($prev.delim)]'/>
-  <xsl:if test='normalize-space($chunk)'><para><xsl:apply-templates mode='h2db' select='$chunk'/></para></xsl:if>
+  <xsl:variable name='prev.delim' select='(preceding-sibling::html:br|preceding-sibling::html:p|preceding-sibling::html:ul|preceding-sibling::html:ol)[last()]'/>
+  <xsl:variable name='chunk' select='preceding-sibling::node()[
+           generate-id((preceding-sibling::html:br|preceding-sibling::html:p|preceding-sibling::html:ul|preceding-sibling::html:ol)[last()]) = generate-id($prev.delim)]'/>
+  <xsl:if test='normalize-space(concat(string($chunk//text()), string($chunk))) != "" or count(*) != 0'><para><xsl:apply-templates mode='h2db' select='$chunk'/></para></xsl:if>
   <xsl:apply-templates select='.' mode='h2db'/>
 </xsl:template>
 
