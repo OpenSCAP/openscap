@@ -577,26 +577,29 @@ class OSCAP_Object(object):
         files.free()
         return {"def_models":def_models, "sessions":sessions, "policy_model":policy_model, "xccdf_path":f_XCCDF}
 
-    def policy_export(self, result=None, dir=None, title=None, file=None, prefix=None):
+    def policy_export(self, result=None, sdir=None, title=None, filename=None, prefix=None):
         """Export all files for given policy.
         """
 
         if self.object != "xccdf_policy": raise TypeError("Wrong call of \"export\" function. Should be xccdf_policy (have %s)" %(self.object,))
 
-        result.benchmark_uri = dir["xccdf_path"]
+        result.benchmark_uri = sdir["xccdf_path"]
         o_title = common.text()
         o_title.text = title
         result.title = o_title
 
-        oval.agent_export_sysinfo_to_xccdf_result(dir["sessions"][0], result)
-        files = [file]
+        if len(sdir["sessions"]) == 0:
+            raise IOError("Export failed: Corrupted session list or no OVAL file loaded")
+
+        oval.agent_export_sysinfo_to_xccdf_result(sdir["sessions"][0], result)
+        files = [filename]
 
         for model in self.model.benchmark.models:
             result.score = self.score(result, model.system)
 
         self.model.benchmark.result = result.clone()
 
-        OSCAP.xccdf_benchmark_export(self.model.benchmark.instance, file)
+        OSCAP.xccdf_benchmark_export(self.model.benchmark.instance, filename)
 
         for i, sess in enumerate(dir["sessions"]):
             rmodel = oval.agent_get_results_model(sess)
@@ -621,10 +624,10 @@ class OSCAP_Object(object):
 
         return files
     
-    def destroy(self, dir):
+    def destroy(self, sdir):
 
         OSCAP.oscap_cleanup()
-        for model in dir["def_models"]+dir["sessions"]+[dir["policy_model"]]:
+        for model in sdir["def_models"]+sdir["sessions"]+[sdir["policy_model"]]:
             model.free()
 
 
