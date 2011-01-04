@@ -71,7 +71,7 @@ void oval_generator_free(struct oval_generator *generator)
 	oscap_free(generator);
 }
 
-struct oval_generator *oval_genrator_clone(struct oval_generator *old_generator)
+struct oval_generator *oval_generator_clone(struct oval_generator *old_generator)
 {
 	struct oval_generator *new_gen;
 

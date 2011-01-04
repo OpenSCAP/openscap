@@ -566,7 +566,7 @@ struct oval_generator;
 
 struct oval_generator *oval_generator_new(void);
 void oval_generator_free(struct oval_generator *generator);
-struct oval_generator *oval_genrator_clone(struct oval_generator *old_generator);
+struct oval_generator *oval_generator_clone(struct oval_generator *old_generator);
 char *oval_generator_get_product_name(struct oval_generator *generator);
 char *oval_generator_get_product_version(struct oval_generator *generator);
 char *oval_generator_get_schema_version(struct oval_generator *generator);
