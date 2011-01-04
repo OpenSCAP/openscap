@@ -536,8 +536,8 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
                         xccdf_value_type_t value = xccdf_target_fact_get_type(target_fact);
                         xmlNewProp(fact_node, BAD_CAST "type", BAD_CAST XCCDF_FACT_TYPE_MAP[value - 1].string);
                 }
-                xccdf_target_fact_iterator_free(target_facts);
         }
+        xccdf_target_fact_iterator_free(target_facts);
 
 	struct xccdf_rule_result_iterator *rule_results = xccdf_result_get_rule_results(result);
 	while (xccdf_rule_result_iterator_has_more(rule_results)) {

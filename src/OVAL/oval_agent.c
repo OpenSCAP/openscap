@@ -200,10 +200,14 @@ int oval_agent_eval_system(oval_agent_session_t * ag_sess, oscap_reporter cb, vo
 }
 
 struct oval_results_model * oval_agent_get_results_model(oval_agent_session_t * ag_sess) {
+	__attribute__nonnull__(ag_sess);
+
 	return ag_sess->res_model;
 }
 
 const char * oval_agent_get_filename(oval_agent_session_t * ag_sess) {
+	__attribute__nonnull__(ag_sess);
+
 	return ag_sess->filename;
 }
 
@@ -372,6 +376,8 @@ void oval_agent_export_sysinfo_to_xccdf_result(struct oval_agent_session * sess,
 	struct oval_result_system *re_system = NULL;
 	struct oval_result_system_iterator *re_system_it = NULL;
 	struct oval_sysinfo *sysinfo = NULL;
+
+	__attribute__nonnull__(sess);
 
         /* Get all models we will need */
 	res_model = oval_agent_get_results_model(sess);

@@ -231,6 +231,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	struct xccdf_policy_model *policy_model = NULL;
         void **def_models = NULL;
         void **sessions = NULL;
+	char ** oval_files = NULL;
+	int idx = 0;
 	
 	/* Validate documents */
         if (!oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, NULL, 
@@ -275,12 +277,13 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	xccdf_policy_model_register_output_callback(policy_model, callback, (void*) action);
 
 	/* NO OVAL files? get ones from policy model */
-	char ** oval_files = NULL;
 	if (action->urls_oval == NULL) {
 		struct stat sb;
-		int idx=0;
-		int files_cnt = 3;
-		oval_files = malloc(files_cnt * sizeof(char *));
+		char * tmp_path;
+		
+		idx = 0;
+		oval_files = malloc(sizeof(char *));
+		oval_files[idx] = NULL;
 
 		char * pathcopy =  strdup(action->f_xccdf);
 		char * path = dirname(pathcopy);
@@ -288,32 +291,30 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		struct oscap_stringlist * files = xccdf_policy_model_get_files(policy_model);
 		struct oscap_string_iterator *files_it = oscap_stringlist_get_strings(files);
 		while (oscap_string_iterator_has_more(files_it)) {
-			if ( idx + 1 == files_cnt) {
-				files_cnt = files_cnt * 2;
-				oval_files = realloc(oval_files, files_cnt * sizeof(char *));
+			tmp_path = malloc(PATH_MAX * sizeof(char));
+			sprintf(tmp_path, "%s/%s", path, oscap_string_iterator_next(files_it));
+
+			if (stat(tmp_path, &sb)) {
+				fprintf(stderr, "WARNING: Skipping %s file which is referenced from XCCDF content\n", tmp_path);
+				free(tmp_path);
 			}
-			oval_files[idx] = malloc(PATH_MAX * sizeof(char));
-			sprintf(oval_files[idx], "%s/%s", path, oscap_string_iterator_next(files_it));
-			if (stat(oval_files[idx], &sb)) {
-				fprintf(stderr, "WARNING: Skipping %s file which is referenced from XCCDF content\n", oval_files[idx]);
-				free(oval_files[idx]);
+			else { 
+				oval_files[idx] = tmp_path;
+				idx++;
+				oval_files = realloc(oval_files, (idx + 1) * sizeof(char *));
+				oval_files[idx] = NULL;
 			}
-			else idx++; 
 		}
 		oscap_string_iterator_free(files_it);
 		oscap_stringlist_free(files);
 		free(pathcopy);
-		oval_files[idx] = NULL;
 	} else
 		oval_files = action->urls_oval;
 
 	
-	/* register oval sessions */
-        if (oval_files != NULL) {
-	    int i;
-	    /* Validate documents */
-            for (i=0; oval_files[i]; i++) {
-		if (!oscap_validate_document(oval_files[i], OSCAP_DOCUMENT_OVAL_DEFINITIONS, NULL, 
+	/* Validate OVAL files */
+        for (idx=0; oval_files[idx]; idx++) {
+		if (!oscap_validate_document(oval_files[idx], OSCAP_DOCUMENT_OVAL_DEFINITIONS, NULL, 
 					     (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 			if (oscap_err()) {
 				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
@@ -322,18 +323,18 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
 			return OSCAP_ERROR;
 		}
-	    }
-	    /* create sessions */
-            def_models = malloc((i+1) * sizeof(struct oval_definition_model *));
-            sessions = malloc((i+1) * sizeof(struct oval_agent_session *));
-            for (i=0; oval_files[i]; i++) {
-                struct oval_definition_model *tmp_def_model = oval_definition_model_import(oval_files[i]);
+	}
+
+	/* Create OVAL sessions */
+        def_models = malloc((idx+1) * sizeof(struct oval_definition_model *));
+        sessions = malloc((idx+1) * sizeof(struct oval_agent_session *));
+        for (idx=0; oval_files[idx]; idx++) {
+	        struct oval_definition_model *tmp_def_model = oval_definition_model_import(oval_files[idx]);
 		if(tmp_def_model==NULL && oscap_err()) {
 			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
 			return OSCAP_ERROR;
 		}
-
-                struct oval_agent_session *tmp_sess = oval_agent_new_session(tmp_def_model, basename(oval_files[i]));
+                struct oval_agent_session *tmp_sess = oval_agent_new_session(tmp_def_model, basename(oval_files[idx]));
 		if (tmp_sess == NULL) {
 			if (oscap_err())
 				fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
@@ -341,12 +342,11 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			return OSCAP_ERROR;
 		}
 	        xccdf_policy_model_register_engine_oval(policy_model, tmp_sess);
-                def_models[i] = tmp_def_model;
-                sessions[i] = tmp_sess;
-            }
-	    def_models[i] = NULL;
-	    sessions[i] = NULL;
-        } 
+                def_models[idx] = tmp_def_model;
+                sessions[idx] = tmp_sess;
+	}
+	def_models[idx] = NULL;
+	sessions[idx] = NULL;
 	
 	
 	/* Perform evaluation */
@@ -363,7 +363,10 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		if (id != NULL)
 			xccdf_result_set_profile(ritem, id);
 	}
-	oval_agent_export_sysinfo_to_xccdf_result(sessions[0], ritem);
+
+	/* Use sysinfo from the first oval session, if exist */
+	if( sessions[0] )
+		oval_agent_export_sysinfo_to_xccdf_result(sessions[0], ritem);
 
 	struct xccdf_model_iterator *model_it = xccdf_benchmark_get_models(benchmark);
 	while (xccdf_model_iterator_has_more(model_it)) {
