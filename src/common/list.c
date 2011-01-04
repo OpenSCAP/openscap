@@ -322,6 +322,7 @@ OSCAP_ITERATOR_GEN_T(const char *, oscap_string)
 OSCAP_ITERATOR_REMOVE_T(const char *, oscap_string, free)
 OSCAP_ITERATOR_GEN(oscap_stringlist)
 OSCAP_ITERATOR_REMOVE(oscap_stringlist, oscap_stringlist_free)
+OSCAP_ITERATOR_RESET(oscap_string)
 
 
 #define OSCAP_DEFAULT_HSIZE 256

@@ -51,6 +51,7 @@ OSCAP_GENERIC_GETTER(bool, oscap_text, can_substitute, traits.can_substitute)
 OSCAP_GENERIC_GETTER(bool, oscap_text, can_override, traits.can_override)
 OSCAP_GENERIC_GETTER(bool, oscap_text, overrides, traits.overrides)
 OSCAP_ITERATOR_GEN_T(struct oscap_text *, oscap_text)
+OSCAP_ITERATOR_RESET(oscap_text)
 OSCAP_ITERATOR_REMOVE_T(struct oscap_text *, oscap_text, oscap_text_free)
 
 

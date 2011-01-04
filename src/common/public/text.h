@@ -190,6 +190,8 @@ bool oscap_text_iterator_has_more(struct oscap_text_iterator *it);
 void oscap_text_iterator_free(struct oscap_text_iterator *it);
 /// @memberof oscap_text_iterator
 void oscap_text_iterator_remove(struct oscap_text_iterator *it);
+/// @memberof oscap_text_iterator
+void oscap_text_iterator_reset(struct oscap_text_iterator *it);
 
 /**
  * @struct oscap_string_iterator
@@ -207,6 +209,8 @@ bool oscap_string_iterator_has_more(struct oscap_string_iterator *it);
 void oscap_string_iterator_free(struct oscap_string_iterator *it);
 /// @memberof oscap_string_iterator
 void oscap_string_iterator_remove(struct oscap_string_iterator *it);
+/// @memberof oscap_string_iterator
+void oscap_string_iterator_reset(struct oscap_string_iterator *it);
 
 /**
  * @struct oscap_stringlist_iterator
