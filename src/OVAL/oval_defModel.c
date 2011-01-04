@@ -258,6 +258,8 @@ void oval_definition_model_free(struct oval_definition_model *model)
 	model->variable_map = NULL;
         model->schema = NULL;
 
+	oval_generator_free(model->generator);
+
 	oscap_free(model);
 }
 

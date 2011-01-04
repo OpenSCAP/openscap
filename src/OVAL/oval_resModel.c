@@ -147,6 +147,9 @@ void oval_results_model_free(struct oval_results_model *model)
 	model->definition_model = NULL;
 	model->systems = NULL;
         model->schema = NULL;
+
+	oval_generator_free(model->generator);
+
 	oscap_free(model);
 }
 

@@ -207,6 +207,9 @@ void oval_syschar_model_free(struct oval_syschar_model *model)
 	model->sysitem_map = NULL;
 	model->variable_binding_map = NULL;
         model->schema = NULL;
+
+	oval_generator_free(model->generator);
+
 	oscap_free(model);
 }
 

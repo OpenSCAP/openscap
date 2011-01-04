@@ -166,6 +166,7 @@ void oval_variable_model_free(struct oval_variable_model *model)
 	if (model) {
 		oval_string_map_free(model->varmap, (oscap_destruct_func) _oval_variable_model_frame_free);
 		model->varmap = NULL;
+		oval_generator_free(model->generator);
 		oscap_free(model);
 	}
 }
