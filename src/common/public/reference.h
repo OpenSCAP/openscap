@@ -38,6 +38,8 @@ bool oscap_reference_iterator_has_more(struct oscap_reference_iterator *it);
 struct oscap_reference *oscap_reference_iterator_next(struct oscap_reference_iterator *it);
 /// @memberof oscap_reference_iterator
 void oscap_reference_iterator_free(struct oscap_reference_iterator *it);
+/// @memberof oscap_reference_iterator
+void oscap_reference_iterator_reset(struct oscap_reference_iterator *it);
 
 /// @memberof oscap_reference
 struct oscap_reference *oscap_reference_new(void);

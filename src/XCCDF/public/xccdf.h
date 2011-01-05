@@ -2940,6 +2940,31 @@ void xccdf_target_fact_iterator_remove(struct xccdf_target_fact_iterator *it);
 void xccdf_value_instance_iterator_remove(struct xccdf_value_instance_iterator *it);
 
 
+// reset iterators
+/// @memberof xccdf_plain_text_iterator
+void xccdf_plain_text_iterator_reset(struct xccdf_plain_text_iterator *it);
+/// @memberof xccdf_warning_iterator
+void xccdf_warning_iterator_reset(struct xccdf_warning_iterator *it);
+/// @memberof xccdf_value_instance_iterator
+void xccdf_value_instance_iterator_reset(struct xccdf_value_instance_iterator *it);
+/// @memberof xccdf_result_iterator
+void xccdf_result_iterator_reset(struct xccdf_result_iterator *it);
+/// @memberof xccdf_override_iterator
+void xccdf_override_iterator_reset(struct xccdf_override_iterator *it);
+/// @memberof xccdf_message_iterator
+void xccdf_message_iterator_reset(struct xccdf_message_iterator *it);
+/// @memberof xccdf_instance_iterator
+void xccdf_instance_iterator_reset(struct xccdf_instance_iterator *it);
+/// @memberof xccdf_rule_result_iterator
+void xccdf_rule_result_iterator_reset(struct xccdf_rule_result_iterator *it);
+/// @memberof xccdf_identity_iterator
+void xccdf_identity_iterator_reset(struct xccdf_identity_iterator *it);
+/// @memberof xccdf_score_iterator
+void xccdf_score_iterator_reset(struct xccdf_score_iterator *it);
+/// @memberof xccdf_target_fact_iterator
+void xccdf_target_fact_iterator_reset(struct xccdf_target_fact_iterator *it);
+
+
 /************************************************************
  ** @} End of XCCDF group */
 

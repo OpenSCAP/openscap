@@ -136,6 +136,8 @@ struct cce_reference *cce_reference_iterator_next(struct cce_reference_iterator 
 bool cce_reference_iterator_has_more(struct cce_reference_iterator *it);
 /// @memberof cce_reference_iterator
 void cce_reference_iterator_free(struct cce_reference_iterator *it);
+/// @memberof cce_reference_iterator
+void cce_reference_iterator_reset(struct cce_reference_iterator *it);
 
 /**
  * @struct cce_entry_iterator
@@ -149,6 +151,8 @@ struct cce_entry *cce_entry_iterator_next(struct cce_entry_iterator *it);
 bool cce_entry_iterator_has_more(struct cce_entry_iterator *it);
 /// @memberof cce_entry_iterator
 void cce_entry_iterator_free(struct cce_entry_iterator *it);
+/// @memberof cce_entry_iterator
+void cce_entry_iterator_reset(struct cce_entry_iterator *it);
 
 /************************************************************/
 /** @} End of Iterators group */

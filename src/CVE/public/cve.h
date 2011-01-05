@@ -629,18 +629,28 @@ void cve_configuration_free(struct cve_configuration *conf);
 
 /// @memberof cve_entry_iterator
 void cve_entry_iterator_remove(struct cve_entry_iterator *it);
+/// @memberof cve_entry_iterator
+void cve_entry_iterator_reset(struct cve_entry_iterator *it);
 
 /// @memberof cve_product_iterator
 void cve_product_iterator_remove(struct cve_product_iterator *it);
+/// @memberof cve_product_iterator
+void cve_product_iterator_reset(struct cve_product_iterator *it);
 
 /// @memberof cve_reference_iterator
 void cve_reference_iterator_remove(struct cve_reference_iterator *it);
+/// @memberof cve_reference_iterator
+void cve_reference_iterator_reset(struct cve_reference_iterator *it);
 
 /// @memberof cve_summary_iterator
 void cve_summary_iterator_remove(struct cve_summary_iterator *it);
+/// @memberof cve_summary_iterator
+void cve_summary_iterator_reset(struct cve_summary_iterator *it);
 
 /// @memberof cve_configuration_iterator
 void cve_configuration_iterator_remove(struct cve_configuration_iterator *it);
+/// @memberof cve_configuration_iterator
+void cve_configuration_iterator_reset(struct cve_configuration_iterator *it);
 
 /**
  * Export CVE model to XML file

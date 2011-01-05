@@ -255,6 +255,8 @@ bool cpe_testexpr_set_name(struct cpe_testexpr *expr, struct cpe_name *name);
 
 /// @memberof cpe_platform_iterator
 void cpe_platform_iterator_remove(struct cpe_platform_iterator *it, struct cpe_lang_model *parent);
+/// @memberof cpe_testexpr_iterator
+void cpe_platform_iterator_reset(struct cpe_platform_iterator *it);
 
 /**
  * Constructor of CPE Language model
@@ -286,6 +288,12 @@ struct cpe_testexpr * cpe_testexpr_clone(struct cpe_testexpr * old_expr);
  * @memberof cpe_testexpr
  */
 void cpe_testexpr_free(struct cpe_testexpr *expr);
+
+/**
+ * Reset function of CPE test expression
+ * @memberof cpe_testexpr
+ */
+void cpe_testexpr_iterator_reset(struct cpe_testexpr_iterator *it);
 
 /**
  * Free function of CPE test expression

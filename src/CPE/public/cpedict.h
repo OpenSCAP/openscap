@@ -509,33 +509,6 @@ bool cpe_edition_add_language(struct cpe_edition *edition, struct cpe_language *
 /************************************************************/
 /** @} End of Setters group */
 
-/// @memberof cpe_item
-void cpe_item_iterator_remove(struct cpe_item_iterator *it);
-
-/// @memberof cpe_reference_iterator
-void cpe_reference_iterator_remove(struct cpe_reference_iterator *it);
-
-/// @memberof cpe_check_iterator
-void cpe_check_iterator_remove(struct cpe_check_iterator *it);
-
-/// @memberof cpe_vendor_iterator
-void cpe_vendor_iterator_remove(struct cpe_vendor_iterator *it);
-
-/// @memberof cpe_product_iterator
-void cpe_product_iterator_remove(struct cpe_product_iterator *it);
-
-/// @memberof cpe_version_iterator
-void cpe_version_iterator_remove(struct cpe_version_iterator *it);
-
-/// @memberof cpe_update_iterator
-void cpe_update_iterator_remove(struct cpe_update_iterator *it);
-
-/// @memberof cpe_edition_iterator
-void cpe_edition_iterator_remove(struct cpe_edition_iterator *it);
-
-/// @memberof cpe_language_iterator
-void cpe_language_iterator_remove(struct cpe_language_iterator *it);
-
 /************************************************************/
 /**
  * @name Iterators
@@ -570,6 +543,11 @@ bool cpe_item_iterator_has_more(struct cpe_item_iterator *it);
  */
 void cpe_item_iterator_free(struct cpe_item_iterator *it);
 
+/// @memberof cpe_item
+void cpe_item_iterator_remove(struct cpe_item_iterator *it);
+/// @memberof cpe_item_iterator
+void cpe_item_iterator_reset(struct cpe_item_iterator *it);
+
 /**
  * @struct cpe_reference_iterator
  * Iterator over CPE dictionary references.
@@ -597,6 +575,11 @@ bool cpe_reference_iterator_has_more(struct cpe_reference_iterator *it);
  * @memberof cpe_reference_iterator
  */
 void cpe_reference_iterator_free(struct cpe_reference_iterator *it);
+
+/// @memberof cpe_reference_iterator
+void cpe_reference_iterator_remove(struct cpe_reference_iterator *it);
+/// @memberof cpe_reference_iterator
+void cpe_reference_iterator_reset(struct cpe_reference_iterator *it);
 
 /**
  * @struct cpe_check_iterator
@@ -626,6 +609,11 @@ bool cpe_check_iterator_has_more(struct cpe_check_iterator *it);
  */
 void cpe_check_iterator_free(struct cpe_check_iterator *it);
 
+/// @memberof cpe_check_iterator
+void cpe_check_iterator_remove(struct cpe_check_iterator *it);
+/// @memberof cpe_check_iterator
+void cpe_check_iterator_reset(struct cpe_check_iterator *it);
+
 /**
  * @struct cpe_vendor_iterator
  * Iterator over CPE dictionary item vendors.
@@ -653,6 +641,11 @@ bool cpe_vendor_iterator_has_more(struct cpe_vendor_iterator *it);
  * @memberof cpe_vendor_iterator
  */
 void cpe_vendor_iterator_free(struct cpe_vendor_iterator *it);
+
+/// @memberof cpe_vendor_iterator
+void cpe_vendor_iterator_remove(struct cpe_vendor_iterator *it);
+/// @memberof cpe_vendor_iterator
+void cpe_vendor_iterator_reset(struct cpe_vendor_iterator *it);
 
 /**
  * @struct cpe_product_iterator
@@ -682,6 +675,11 @@ bool cpe_product_iterator_has_more(struct cpe_product_iterator *it);
  */
 void cpe_product_iterator_free(struct cpe_product_iterator *it);
 
+/// @memberof cpe_product_iterator
+void cpe_product_iterator_remove(struct cpe_product_iterator *it);
+/// @memberof cpe_product_iterator
+void cpe_product_iterator_reset(struct cpe_product_iterator *it);
+
 /**
  * @struct cpe_version_iterator
  * Iterator over CPE dictionary item versions.
@@ -709,6 +707,11 @@ bool cpe_version_iterator_has_more(struct cpe_version_iterator *it);
  * @memberof cpe_version_iterator
  */
 void cpe_version_iterator_free(struct cpe_version_iterator *it);
+
+/// @memberof cpe_version_iterator
+void cpe_version_iterator_remove(struct cpe_version_iterator *it);
+/// @memberof cpe_version_iterator
+void cpe_version_iterator_reset(struct cpe_version_iterator *it);
 
 /**
  * @struct cpe_update_iterator
@@ -738,6 +741,11 @@ bool cpe_update_iterator_has_more(struct cpe_update_iterator *it);
  */
 void cpe_update_iterator_free(struct cpe_update_iterator *it);
 
+/// @memberof cpe_update_iterator
+void cpe_update_iterator_remove(struct cpe_update_iterator *it);
+/// @memberof cpe_update_iterator
+void cpe_update_iterator_reset(struct cpe_update_iterator *it);
+
 /**
  * @struct cpe_edition_iterator
  * Iterator over CPE dictionary item editions.
@@ -766,6 +774,11 @@ bool cpe_edition_iterator_has_more(struct cpe_edition_iterator *it);
  */
 void cpe_edition_iterator_free(struct cpe_edition_iterator *it);
 
+/// @memberof cpe_edition_iterator
+void cpe_edition_iterator_remove(struct cpe_edition_iterator *it);
+/// @memberof cpe_edition_iterator
+void cpe_edition_iterator_reset(struct cpe_edition_iterator *it);
+
 /**
  * @struct cpe_language_iterator
  * Iterator over CPE dictionary item languages.
@@ -793,6 +806,11 @@ bool cpe_language_iterator_has_more(struct cpe_language_iterator *it);
  * @memberof cpe_language_iterator
  */
 void cpe_language_iterator_free(struct cpe_language_iterator *it);
+
+/// @memberof cpe_language_iterator
+void cpe_language_iterator_remove(struct cpe_language_iterator *it);
+/// @memberof cpe_language_iterator
+void cpe_language_iterator_reset(struct cpe_language_iterator *it);
 
 /************************************************************/
 /** @} End of Iterators group */

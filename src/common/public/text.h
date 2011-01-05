@@ -226,7 +226,8 @@ bool oscap_stringlist_iterator_has_more(struct oscap_stringlist_iterator *it);
 void oscap_stringlist_iterator_free(struct oscap_stringlist_iterator *it);
 /// @memberof oscap_stringlist_iterator
 void oscap_stringlist_iterator_remove(struct oscap_stringlist_iterator *it);
-
+/// @memberof oscap_stringlist_iterator
+void oscap_stringlist_iterator_reset(struct oscap_stringlist_iterator *it);
 
 /************************************************************/
 /** @} End of Iterators group */
