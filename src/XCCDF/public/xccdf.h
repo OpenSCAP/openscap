@@ -139,6 +139,7 @@ typedef enum {
 
 /// Category of xccdf_warning.
 typedef enum {
+        XCCDF_WARNING_NOT_SPECIFIED,
 	XCCDF_WARNING_GENERAL = 1,	///< General-purpose warning
 	XCCDF_WARNING_FUNCTIONALITY,	///< Warning about possible impacts to functionality
 	XCCDF_WARNING_PERFORMANCE,	///< Warning about changes to target system performance

@@ -108,31 +108,6 @@ void xccdf_policy_free(struct xccdf_policy *);
 void xccdf_value_binding_free(struct xccdf_value_binding *);
 
 /**
- * Import/Export function
- * Not yet implemented
- * @memberof xccdf_policy
- */
-void xccdf_policy_export_variables(struct xccdf_policy *, char *export_namespace, const char *file);
-/**
- * Import/Export function
- * Not yet implemented 
- * @memberof xccdf_policy
- */
-void xccdf_policy_export_controls (struct xccdf_policy *, char *export_namespace, const char *file);
-/**
- * Import/Export function
- * Not yet implemented
- * @memberof xccdf_policy
- */
-void xccdf_policy_import_results(struct xccdf_policy *, char *import_namespace, const char *file);
-/**
- * Import/Export function
- * Not yet implemented
- * @memberof xccdf_policy
- */
-void xccdf_policy_export_results(struct xccdf_policy *, char *scoring_model_namespace, const char *file);
-
-/**
  * Function to register callback for checking system
  * @param model XCCDF Policy Model
  * @param sys String representing given checking system

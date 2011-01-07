@@ -59,6 +59,18 @@ static const struct oscap_string_map XCCDF_STATUS_MAP[] = {
 	{XCCDF_STATUS_NOT_SPECIFIED, NULL}
 };
 
+static const struct oscap_string_map XCCDF_WARNING_MAP[] = {
+        {XCCDF_WARNING_GENERAL, "general"},
+        {XCCDF_WARNING_FUNCTIONALITY, "functionality"},
+        {XCCDF_WARNING_PERFORMANCE, "performance"},
+        {XCCDF_WARNING_HARDWARE, "hardware"},
+        {XCCDF_WARNING_LEGAL, "legal"},
+        {XCCDF_WARNING_REGULATORY, "regulatory"},
+        {XCCDF_WARNING_MANAGEMENT, "management"},
+        {XCCDF_WARNING_AUDIT, "audit"},
+        {XCCDF_WARNING_DEPENDENCY, "dependency"},
+	{XCCDF_WARNING_NOT_SPECIFIED, NULL}
+};
 
 struct xccdf_item *xccdf_item_new(xccdf_type_t type, struct xccdf_item *parent)
 {
@@ -329,6 +341,13 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 	}
 	xccdf_status_iterator_free(statuses);
 
+	struct xccdf_warning_iterator *warnings = xccdf_item_get_warnings(item);
+	while (xccdf_warning_iterator_has_more(warnings)) {
+		struct xccdf_warning *warning = xccdf_warning_iterator_next(warnings);
+		xccdf_warning_to_dom(warning, doc, item_node);
+	}
+	xccdf_warning_iterator_free(warnings);
+
 	/* Handle generic item child nodes */
 	xccdf_texts_to_dom(xccdf_item_get_title(item), item_node, "title");
 	xccdf_texts_to_dom(xccdf_item_get_description(item), item_node, "description");
@@ -390,6 +409,22 @@ xmlNode *xccdf_profile_note_to_dom(struct xccdf_profile_note *note, xmlDoc *doc,
 	xmlNewProp(note_node, BAD_CAST "tag", BAD_CAST xccdf_profile_note_get_reftag(note));
 
 	return note_node;
+}
+
+xmlNode *xccdf_warning_to_dom(struct xccdf_warning *warning, xmlDoc *doc, xmlNode *parent)
+{
+    /*xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);*/
+
+	xmlNode *warning_node = NULL;
+        /*struct oscap_text *text = xccdf_warning_get_text(warning);*/
+	xccdf_warning_category_t category = xccdf_warning_get_category(warning);
+
+        /*warning_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "warning", text);*/
+	warning_node = oscap_text_to_dom(xccdf_warning_get_text(warning), parent, "warning");
+	if (category != XCCDF_WARNING_NOT_SPECIFIED)
+	    xmlNewProp(warning_node, BAD_CAST "category", BAD_CAST XCCDF_WARNING_MAP[category - 1].string);
+
+	return warning_node;
 }
 
 xmlNode *xccdf_status_to_dom(struct xccdf_status *status, xmlDoc *doc, xmlNode *parent)
@@ -834,19 +869,6 @@ struct xccdf_model *xccdf_model_new_xml(xmlTextReaderPtr reader)
 }
 
 OSCAP_ACCESSOR_STRING(xccdf_model, system)
-
-static const struct oscap_string_map XCCDF_WARNING_MAP[] = {
-	{ XCCDF_WARNING_GENERAL, "general" },
-	{ XCCDF_WARNING_FUNCTIONALITY, "functionality" },
-	{ XCCDF_WARNING_PERFORMANCE, "performance" },
-	{ XCCDF_WARNING_HARDWARE, "hardware" },
-	{ XCCDF_WARNING_LEGAL, "legal" },
-	{ XCCDF_WARNING_REGULATORY, "regulatory" },
-	{ XCCDF_WARNING_MANAGEMENT, "management" },
-	{ XCCDF_WARNING_AUDIT, "audit" },
-	{ XCCDF_WARNING_DEPENDENCY, "dependency" },
-	{ XCCDF_WARNING_GENERAL, NULL }
-};
 
 void xccdf_model_free(struct xccdf_model *model)
 {

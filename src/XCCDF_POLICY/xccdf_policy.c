@@ -1729,21 +1729,6 @@ struct oscap_stringlist * xccdf_policy_model_get_files(struct xccdf_policy_model
     return xccdf_item_get_files((struct xccdf_item *) xccdf_policy_model_get_benchmark(policy_model));
 }
 
-
-
-void xccdf_policy_export_variables(struct xccdf_policy *policy, char *export_namespace, const char *file) {
-}
-
-void xccdf_policy_export_controls (struct xccdf_policy *policy, char *export_namespace, const char *file) {
-}
-
-void xccdf_policy_import_results(struct xccdf_policy *policy, char *import_namespace, const char *file) {
-}
-
-void xccdf_policy_export_results(struct xccdf_policy *policy, char *scoring_model_namespace, const char *file) {
-}
-
-
 void xccdf_policy_model_free(struct xccdf_policy_model * model) {
 
 	oscap_list_free(model->policies, (oscap_destruct_func) xccdf_policy_free);
