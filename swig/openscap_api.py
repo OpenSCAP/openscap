@@ -601,7 +601,7 @@ class OSCAP_Object(object):
 
         OSCAP.xccdf_benchmark_export(self.model.benchmark.instance, filename)
 
-        for i, sess in enumerate(dir["sessions"]):
+        for i, sess in enumerate(sdir["sessions"]):
             rmodel = oval.agent_get_results_model(sess)
             rd = oval.result_directives(rmodel)
             rd.set_reported(OSCAP.OVAL_RESULT_TRUE |

@@ -433,6 +433,3 @@ OSCAP_ACCESSOR_SIMPLE(xccdf_operator_t, xccdf_refine_value, oper)
 OSCAP_IGETINS(oscap_text, xccdf_refine_value, remarks, remark)
 OSCAP_ACCESSOR_STRING(xccdf_setvalue, item)
 OSCAP_ACCESSOR_STRING(xccdf_setvalue, value)
-
-OSCAP_ITERATOR_RESET(xccdf_setvalue)
-OSCAP_ITERATOR_RESET(xccdf_refine_value)

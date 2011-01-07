@@ -972,6 +972,11 @@ bool xccdf_item_iterator_has_more(struct xccdf_item_iterator *it);
  * @memberof xccdf_item_iterator
  */
 void xccdf_item_iterator_free(struct xccdf_item_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_item_iterator
+ */
+void xccdf_item_iterator_reset(struct xccdf_item_iterator *it);
 
 
 /**
@@ -989,6 +994,11 @@ bool xccdf_notice_iterator_has_more(struct xccdf_notice_iterator *it);
  * @memberof xccdf_notice_iterator
  */
 void xccdf_notice_iterator_free(struct xccdf_notice_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_notice_iterator
+ */
+void xccdf_notice_iterator_reset(struct xccdf_notice_iterator *it);
 
 
 /**
@@ -1006,6 +1016,11 @@ bool xccdf_status_iterator_has_more(struct xccdf_status_iterator *it);
  * @memberof xccdf_status_iterator
  */
 void xccdf_status_iterator_free(struct xccdf_status_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_status_iterator
+ */
+void xccdf_status_iterator_reset(struct xccdf_status_iterator *it);
 
 
 /**
@@ -1023,6 +1038,11 @@ bool xccdf_model_iterator_has_more(struct xccdf_model_iterator *it);
  * @memberof xccdf_model_iterator
  */
 void xccdf_model_iterator_free(struct xccdf_model_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_model_iterator
+ */
+void xccdf_model_iterator_reset(struct xccdf_model_iterator *it);
 
 
 /**
@@ -1040,6 +1060,11 @@ bool xccdf_result_iterator_has_more(struct xccdf_result_iterator *it);
  * @memberof xccdf_result_iterator
  */
 void xccdf_result_iterator_free(struct xccdf_result_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_result_iterator
+ */
+void xccdf_result_iterator_reset(struct xccdf_result_iterator *it);
 
 
 /**
@@ -1057,6 +1082,11 @@ bool xccdf_profile_iterator_has_more(struct xccdf_profile_iterator *it);
  * @memberof xccdf_profile_iterator
  */
 void xccdf_profile_iterator_free(struct xccdf_profile_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_profile_iterator
+ */
+void xccdf_profile_iterator_reset(struct xccdf_profile_iterator *it);
 
 
 /**
@@ -1074,6 +1104,11 @@ bool xccdf_select_iterator_has_more(struct xccdf_select_iterator *it);
  * @memberof xccdf_select_iterator
  */
 void xccdf_select_iterator_free(struct xccdf_select_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_select_iterator
+ */
+void xccdf_select_iterator_reset(struct xccdf_select_iterator *it);
 
 
 /**
@@ -1135,6 +1170,11 @@ bool xccdf_refine_rule_iterator_has_more(struct xccdf_refine_rule_iterator *it);
  * @memberof xccdf_refine_rule_iterator
  */
 void xccdf_refine_rule_iterator_free(struct xccdf_refine_rule_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_refine_rule_iterator
+ */
+void xccdf_refine_rule_iterator_reset(struct xccdf_refine_rule_iterator *it);
 
 
 /**
@@ -1152,6 +1192,11 @@ bool xccdf_ident_iterator_has_more(struct xccdf_ident_iterator *it);
  * @memberof xccdf_ident_iterator
  */
 void xccdf_ident_iterator_free(struct xccdf_ident_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_ident_iterator
+ */
+void xccdf_ident_iterator_reset(struct xccdf_ident_iterator *it);
 
 
 /**
@@ -1169,6 +1214,11 @@ bool xccdf_check_iterator_has_more(struct xccdf_check_iterator *it);
  * @memberof xccdf_check_iterator
  */
 void xccdf_check_iterator_free(struct xccdf_check_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_check_iterator
+ */
+void xccdf_check_iterator_reset(struct xccdf_check_iterator *it);
 
 
 /**
@@ -1186,6 +1236,11 @@ bool xccdf_check_content_ref_iterator_has_more(struct xccdf_check_content_ref_it
  * @memberof xccdf_check_content_ref_iterator
  */
 void xccdf_check_content_ref_iterator_free(struct xccdf_check_content_ref_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_check_content_ref_iterator
+ */
+void xccdf_check_content_ref_iterator_reset(struct xccdf_check_content_ref_iterator *it);
 
 
 /**
@@ -1199,10 +1254,10 @@ struct xccdf_profile_note *xccdf_profile_note_iterator_next(struct xccdf_profile
  */
 bool xccdf_profile_note_iterator_has_more(struct xccdf_profile_note_iterator *it);
 /**
- * Free the iterator structure (it makes no changes to the list structure)
+ * Reset the iterator structure (it makes no changes to the list structure)
  * @memberof xccdf_profile_note_iterator
  */
-void xccdf_profile_note_iterator_free(struct xccdf_profile_note_iterator *it);
+void xccdf_profile_note_iterator_reset(struct xccdf_profile_note_iterator *it);
 
 
 /**
@@ -1220,6 +1275,11 @@ bool xccdf_check_import_iterator_has_more(struct xccdf_check_import_iterator *it
  * @memberof xccdf_check_import_iterator
  */
 void xccdf_check_import_iterator_free(struct xccdf_check_import_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_check_import_iterator
+ */
+void xccdf_check_import_iterator_reset(struct xccdf_check_import_iterator *it);
 
 
 /**
@@ -1237,6 +1297,11 @@ bool xccdf_check_export_iterator_has_more(struct xccdf_check_export_iterator *it
  * @memberof xccdf_check_export_iterator
  */
 void xccdf_check_export_iterator_free(struct xccdf_check_export_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_check_export_iterator
+ */
+void xccdf_check_export_iterator_reset(struct xccdf_check_export_iterator *it);
 
 
 /**
@@ -1254,6 +1319,11 @@ bool xccdf_fix_iterator_has_more(struct xccdf_fix_iterator *it);
  * @memberof xccdf_fix_iterator
  */
 void xccdf_fix_iterator_free(struct xccdf_fix_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_fix_iterator
+ */
+void xccdf_fix_iterator_reset(struct xccdf_fix_iterator *it);
 
 
 /**
@@ -1271,6 +1341,11 @@ bool xccdf_fixtext_iterator_has_more(struct xccdf_fixtext_iterator *it);
  * @memberof xccdf_fixtext_iterator
  */
 void xccdf_fixtext_iterator_free(struct xccdf_fixtext_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_fixtext_iterator
+ */
+void xccdf_fixtext_iterator_reset(struct xccdf_fixtext_iterator *it);
 
 
 /**
@@ -1305,6 +1380,11 @@ bool xccdf_instance_iterator_has_more(struct xccdf_instance_iterator *it);
  * @memberof xccdf_instance_iterator
  */
 void xccdf_instance_iterator_free(struct xccdf_instance_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_instance_iterator
+ */
+void xccdf_instance_iterator_reset(struct xccdf_instance_iterator *it);
 
 
 /**
@@ -1322,6 +1402,11 @@ bool xccdf_message_iterator_has_more(struct xccdf_message_iterator *it);
  * @memberof xccdf_message_iterator
  */
 void xccdf_message_iterator_free(struct xccdf_message_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_message_iterator
+ */
+void xccdf_message_iterator_reset(struct xccdf_message_iterator *it);
 
 
 /**
@@ -1339,6 +1424,11 @@ bool xccdf_override_iterator_has_more(struct xccdf_override_iterator *it);
  * @memberof xccdf_override_iterator
  */
 void xccdf_override_iterator_free(struct xccdf_override_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_override_iterator
+ */
+void xccdf_override_iterator_reset(struct xccdf_override_iterator *it);
 
 
 /**
@@ -1356,6 +1446,11 @@ bool xccdf_identity_iterator_has_more(struct xccdf_identity_iterator *it);
  * @memberof xccdf_identity_iterator
  */
 void xccdf_identity_iterator_free(struct xccdf_identity_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_identity_iterator
+ */
+void xccdf_identity_iterator_reset(struct xccdf_identity_iterator *it);
 
 
 /**
@@ -1373,6 +1468,11 @@ bool xccdf_rule_result_iterator_has_more(struct xccdf_rule_result_iterator *it);
  * @memberof xccdf_rule_result_iterator
  */
 void xccdf_rule_result_iterator_free(struct xccdf_rule_result_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_rule_result_iterator
+ */
+void xccdf_rule_result_iterator_reset(struct xccdf_rule_result_iterator *it);
 
 
 /**
@@ -1390,6 +1490,11 @@ bool xccdf_value_instance_iterator_has_more(struct xccdf_value_instance_iterator
  * @memberof xccdf_value_instance_iterator
  */
 void xccdf_value_instance_iterator_free(struct xccdf_value_instance_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_value_instance_iterator
+ */
+void xccdf_value_instance_iterator_reset(struct xccdf_value_instance_iterator *it);
 
 
 /**
@@ -1407,6 +1512,11 @@ bool xccdf_score_iterator_has_more(struct xccdf_score_iterator *it);
  * @memberof xccdf_score_iterator
  */
 void xccdf_score_iterator_free(struct xccdf_score_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_score_iterator
+ */
+void xccdf_score_iterator_reset(struct xccdf_score_iterator *it);
 
 
 /**
@@ -1424,6 +1534,11 @@ bool xccdf_target_fact_iterator_has_more(struct xccdf_target_fact_iterator *it);
  * @memberof xccdf_target_fact_iterator
  */
 void xccdf_target_fact_iterator_free(struct xccdf_target_fact_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_target_fact_iterator
+ */
+void xccdf_target_fact_iterator_reset(struct xccdf_target_fact_iterator *it);
 
 
 /**
@@ -1441,6 +1556,11 @@ bool xccdf_plain_text_iterator_has_more(struct xccdf_plain_text_iterator *it);
  * @memberof xccdf_plain_text_iterator
  */
 void xccdf_plain_text_iterator_free(struct xccdf_plain_text_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_plain_text_iterator
+ */
+void xccdf_plain_text_iterator_reset(struct xccdf_plain_text_iterator *it);
 
 
 /**
@@ -1458,6 +1578,11 @@ bool xccdf_value_iterator_has_more(struct xccdf_value_iterator *it);
  * @memberof xccdf_value_iterator
  */
 void xccdf_value_iterator_free(struct xccdf_value_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_value_iterator
+ */
+void xccdf_value_iterator_reset(struct xccdf_value_iterator *it);
 
 /************************************************************
  ** @} End of Iterators group */

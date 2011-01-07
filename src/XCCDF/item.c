@@ -413,13 +413,9 @@ xmlNode *xccdf_profile_note_to_dom(struct xccdf_profile_note *note, xmlDoc *doc,
 
 xmlNode *xccdf_warning_to_dom(struct xccdf_warning *warning, xmlDoc *doc, xmlNode *parent)
 {
-    /*xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);*/
-
 	xmlNode *warning_node = NULL;
-        /*struct oscap_text *text = xccdf_warning_get_text(warning);*/
 	xccdf_warning_category_t category = xccdf_warning_get_category(warning);
 
-        /*warning_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "warning", text);*/
 	warning_node = oscap_text_to_dom(xccdf_warning_get_text(warning), parent, "warning");
 	if (category != XCCDF_WARNING_NOT_SPECIFIED)
 	    xmlNewProp(warning_node, BAD_CAST "category", BAD_CAST XCCDF_WARNING_MAP[category - 1].string);
