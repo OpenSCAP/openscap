@@ -1,6 +1,6 @@
-diff -up openscap-0.6.6/utils/oscap-oval.c.noValidate openscap-0.6.6/utils/oscap-oval.c
---- openscap-0.6.6/utils/oscap-oval.c.noValidate	2010-12-13 11:28:56.644256057 +0100
-+++ openscap-0.6.6/utils/oscap-oval.c	2010-12-16 11:06:26.139842760 +0100
+diff -up openscap-0.6.6/utils/oscap-oval.c.novalidate openscap-0.6.6/utils/oscap-oval.c
+--- openscap-0.6.6/utils/oscap-oval.c.novalidate	2010-12-13 11:28:56.644256057 +0100
++++ openscap-0.6.6/utils/oscap-oval.c	2011-01-07 11:26:48.625693180 +0100
 @@ -236,6 +236,7 @@ int app_evaluate_oval(const struct oscap
  	oval_agent_session_t *sess;
  
@@ -35,18 +35,18 @@ diff -up openscap-0.6.6/utils/oscap-oval.c.noValidate openscap-0.6.6/utils/oscap
  	def_model = oval_definition_model_import(action->f_oval);
  	if (def_model == NULL) {
  		fprintf(stderr, "Failed to import the definition model (%s).\n", action->f_oval);
-diff -up openscap-0.6.6/utils/oscap-xccdf.c.noValidate openscap-0.6.6/utils/oscap-xccdf.c
---- openscap-0.6.6/utils/oscap-xccdf.c.noValidate	2010-12-13 11:30:27.630092841 +0100
-+++ openscap-0.6.6/utils/oscap-xccdf.c	2010-12-16 11:07:41.294549966 +0100
-@@ -233,6 +233,7 @@ int app_evaluate_xccdf(const struct osca
-         void **sessions = NULL;
+diff -up openscap-0.6.6/utils/oscap-xccdf.c.novalidate openscap-0.6.6/utils/oscap-xccdf.c
+--- openscap-0.6.6/utils/oscap-xccdf.c.novalidate	2011-01-04 13:51:03.199692578 +0100
++++ openscap-0.6.6/utils/oscap-xccdf.c	2011-01-07 11:28:45.584810128 +0100
+@@ -235,6 +235,7 @@ int app_evaluate_xccdf(const struct osca
+ 	int idx = 0;
  	
  	/* Validate documents */
 +/*
          if (!oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, NULL, 
  				     (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
                  if (oscap_err()) {
-@@ -242,7 +243,7 @@ int app_evaluate_xccdf(const struct osca
+@@ -244,7 +245,7 @@ int app_evaluate_xccdf(const struct osca
  		fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
                  return OSCAP_ERROR;
          }
@@ -55,19 +55,19 @@ diff -up openscap-0.6.6/utils/oscap-xccdf.c.noValidate openscap-0.6.6/utils/osca
  
  	/* Load XCCDF model and XCCDF Policy model */
  	benchmark = xccdf_benchmark_import(action->f_xccdf);
-@@ -313,6 +314,7 @@ int app_evaluate_xccdf(const struct osca
- 	    int i;
- 	    /* Validate documents */
-             for (i=0; oval_files[i]; i++) {
+@@ -314,6 +315,7 @@ int app_evaluate_xccdf(const struct osca
+ 	
+ 	/* Validate OVAL files */
+         for (idx=0; oval_files[idx]; idx++) {
 +/*
- 		if (!oscap_validate_document(oval_files[i], OSCAP_DOCUMENT_OVAL_DEFINITIONS, NULL, 
+ 		if (!oscap_validate_document(oval_files[idx], OSCAP_DOCUMENT_OVAL_DEFINITIONS, NULL, 
  					     (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
  			if (oscap_err()) {
-@@ -322,6 +324,7 @@ int app_evaluate_xccdf(const struct osca
+@@ -323,6 +325,7 @@ int app_evaluate_xccdf(const struct osca
  			fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
  			return OSCAP_ERROR;
  		}
 +*/
- 	    }
- 	    /* create sessions */
-             def_models = malloc((i+1) * sizeof(struct oval_definition_model *));
+ 	}
+ 
+ 	/* Create OVAL sessions */
