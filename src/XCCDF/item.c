@@ -341,20 +341,20 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 	}
 	xccdf_status_iterator_free(statuses);
 
+	const char *version = xccdf_item_get_version(item);
+	if (version && xccdf_item_get_type(item) != XCCDF_BENCHMARK)
+		xmlNewTextChild(item_node, ns_xccdf, BAD_CAST "version", BAD_CAST version);
+
+	/* Handle generic item child nodes */
+	xccdf_texts_to_dom(xccdf_item_get_title(item), item_node, "title");
+	xccdf_texts_to_dom(xccdf_item_get_description(item), item_node, "description");
+
 	struct xccdf_warning_iterator *warnings = xccdf_item_get_warnings(item);
 	while (xccdf_warning_iterator_has_more(warnings)) {
 		struct xccdf_warning *warning = xccdf_warning_iterator_next(warnings);
 		xccdf_warning_to_dom(warning, doc, item_node);
 	}
 	xccdf_warning_iterator_free(warnings);
-
-	/* Handle generic item child nodes */
-	xccdf_texts_to_dom(xccdf_item_get_title(item), item_node, "title");
-	xccdf_texts_to_dom(xccdf_item_get_description(item), item_node, "description");
-
-	const char *version = xccdf_item_get_version(item);
-	if (version && xccdf_item_get_type(item) != XCCDF_BENCHMARK)
-		xmlNewTextChild(item_node, ns_xccdf, BAD_CAST "version", BAD_CAST version);
 
 	xccdf_texts_to_dom(xccdf_item_get_question(item), item_node, "question");
 
