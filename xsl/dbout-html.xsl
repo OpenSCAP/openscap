@@ -433,6 +433,7 @@ Authors:
     table th, thead tr { background-color:black; color:white; }
     table td { border-right: 1px black solid; }
     table td.result, table td.link { text-align:center; }
+    table td.num { text-align:right; }
     div#content p { text-align:justify; }
     div.result-detail { border: 1px solid black; margin: 2em 0; padding: 0 1em; }
     div#content h2 { border-bottom:2px dashed; margin-top:2em; margin-bottom:1.5em; text-align:center; }
@@ -449,6 +450,7 @@ Authors:
     .hidden { display:none; }
     td.score-bar { text-align:center; }
     td.score-bar span.media { width:100%; min-width:7em; height:.8em; display:block; margin:0; padding:0; }
+    .oval-results { font-size:.8em; overflow:auto; }
   </style>
   <style type='text/css' media='screen'>
     div#content, div#header, div#footer { margin-left:5%; margin-right:25%; }

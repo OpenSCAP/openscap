@@ -32,10 +32,12 @@ Authors:
 	xmlns="http://docbook.org/ns/docbook"
     xmlns:s="http://open-scap.org/"
     exclude-result-prefixes="xsl cdf db s exsl"
+    xmlns:ovalres="http://oval.mitre.org/XMLSchema/oval-results-5"
     >
 
 <!--<xsl:include href="xccdf-common.xsl" />-->
 <xsl:import href="security-guide.xsl" />
+<xsl:import href="oval-report.xsl" />
 
 <xsl:output method="xml" encoding="UTF-8" indent="yes"/>
 
@@ -55,6 +57,9 @@ Authors:
 <xsl:param name="with-target-facts"/>
 <xsl:param name="show"/>
 <xsl:param name='profile' select='/cdf:Benchmark/cdf:TestResult[@id=$result-id][1]/cdf:profile/@idref'/>
+
+<!-- OVAL results parametres -->
+<xsl:param name='oval-template' select='"../%.result.xml"'/>
 
 <xsl:variable name='result' select='$root/cdf:TestResult[@id=$result-id][1]'/>
 
@@ -258,6 +263,7 @@ Authors:
     <!-- messages (n) -->
     <xsl:apply-templates select='$rule/cdf:fixtext[1]'/>
     <xsl:apply-templates select='($rule/cdf:fix|cdf:fix)[last()]'/>
+    <xsl:apply-templates select='.' mode='engine-results'/>
     <xsl:call-template name='references'/>
   </section>
 </xsl:template>
@@ -387,4 +393,38 @@ Authors:
 <!-- TOC adjustment (switch off) -->
 <xsl:template mode='dbout.html.toc' match='db:chapter'/>
 
+
+<!-- checking engine results related templates (currently just oval) -->
+<xsl:template match='cdf:rule-result' mode='engine-results'>
+  <xsl:if test='contains(",fixed,fail,", concat(",", normalize-space(cdf:result), ","))'>
+    <xsl:apply-templates mode='engine-results' select='key("items", @idref)'/>
+  </xsl:if>
+</xsl:template>
+
+<xsl:template match='cdf:Rule' mode='engine-results'>
+    <xsl:apply-templates mode='engine-results' select='cdf:check'/>
+</xsl:template>
+
+<xsl:template match='cdf:check[starts-with(@system, "http://oval.mitre.org/XMLSchema/oval")]' mode='engine-results'>
+  <xsl:apply-templates mode='engine-results' select='cdf:check-content-ref[1]'/>
+</xsl:template>
+
+<xsl:template match='cdf:check-content-ref' mode='engine-results'>
+
+  <xsl:variable name='filename'>
+    <xsl:choose>
+      <xsl:when test='contains($oval-template, "%")'><xsl:value-of select='concat(substring-before($oval-template, "%"), @href, substring-after($oval-template, "%"))'/></xsl:when>
+      <xsl:otherwise><xsl:value-of select='$oval-template'/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+
+  <xsl:if test='$oval-template'>
+    <xsl:apply-templates select='document($filename)/ovalres:oval_results' mode='brief'>
+      <xsl:with-param name='definition-id' select='@name'/>
+    </xsl:apply-templates>
+  </xsl:if>
+
+</xsl:template>
+
+<xsl:template match='node()' mode='engine-results'/>
 </xsl:stylesheet>

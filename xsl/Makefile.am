@@ -4,6 +4,7 @@ xsldir = $(pkgdatadir)/xsl
 xsl_DATA =   security-guide.xsl \
              xccdf-report.xsl \
              oval-results-report.xsl \
+			 oval-report.xsl \
              oscap-share.xsl \
              dc2docbook.xsl \
              html2docbook.xsl \
@@ -18,6 +19,7 @@ xsl_DATA =   security-guide.xsl \
 EXTRA_DIST = security-guide.xsl \
              xccdf-report.xsl \
              oval-results-report.xsl \
+			 oval-report.xsl \
              dc2docbook.xsl \
              html2docbook.xsl \
 			 dbout-html.xsl \
