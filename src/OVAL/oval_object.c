@@ -396,8 +396,6 @@ static int _oval_object_parse_tag(xmlTextReaderPtr reader, struct oval_parser_co
 	return return_code;
 }
 
-#define  STUB_OVAL_OBJECT 0
-
 int oval_object_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context)
 {
 	struct oval_definition_model *model = oval_parser_context_model(context);
@@ -420,10 +418,7 @@ int oval_object_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *c
 	oval_object_set_version(object, atoi(version));
 	oscap_free(version);
 
-	int return_code = (STUB_OVAL_OBJECT)
-	    ? oval_parser_skip_tag(reader, context)
-	    : oval_parser_parse_tag(reader, context, &_oval_object_parse_tag,
-				    object);
+	int return_code = oval_parser_parse_tag(reader, context, &_oval_object_parse_tag, object);
 	return return_code;
 }
 
