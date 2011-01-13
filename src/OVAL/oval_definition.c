@@ -55,6 +55,7 @@ typedef struct oval_definition {
 	struct oval_collection *affected;
 	struct oval_collection *reference;
 	struct oval_collection *notes;
+	xmlNode *metadata;
 	struct oval_criteria_node *criteria;
 } oval_definition_t;
 
@@ -139,6 +140,13 @@ struct oval_string_iterator *oval_definition_get_notes(struct oval_definition *d
 	    oval_collection_iterator(definition->notes);
 }
 
+xmlNode *oval_definition_get_metadata(struct oval_definition *definition)
+{
+	__attribute__nonnull__(definition);
+
+	return definition->metadata;
+}
+
 struct oval_criteria_node *oval_definition_get_criteria(struct oval_definition
 							*definition)
 {
@@ -150,6 +158,7 @@ struct oval_criteria_node *oval_definition_get_criteria(struct oval_definition
 struct oval_definition *oval_definition_new(struct oval_definition_model *model, const char *id)
 {
 	struct oval_definition *definition;
+	xmlNode *root;
 
 	if (model && oval_definition_model_is_locked(model)) {
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
@@ -169,6 +178,8 @@ struct oval_definition *oval_definition_new(struct oval_definition_model *model,
 	definition->affected = oval_collection_new();
 	definition->reference = oval_collection_new();
 	definition->notes = oval_collection_new();
+	root = xmlDocGetRootElement(oval_definition_model_get_metadata_doc(model));
+	definition->metadata = xmlNewChild(root, NULL, BAD_CAST "metadata", NULL);
 	definition->criteria = NULL;
 	definition->model = model;
 
@@ -211,6 +222,8 @@ struct oval_definition *oval_definition_clone
 
 	struct oval_definition *new_definition = oval_definition_model_get_definition(new_model, old_definition->id);
 	if (new_definition == NULL) {
+		xmlNode *root, *metadata;
+
 		new_definition = oval_definition_new(new_model, old_definition->id);
 		oval_definition_set_version(new_definition, old_definition->version);
 		oval_definition_set_class(new_definition, old_definition->class);
@@ -237,6 +250,10 @@ struct oval_definition *oval_definition_clone
 		}
 		oval_string_iterator_free(notes);
 
+		metadata = xmlDocCopyNode(old_definition->metadata, oval_definition_model_get_metadata_doc(new_model), 1);
+		root = xmlDocGetRootElement(oval_definition_model_get_metadata_doc(new_model));
+		xmlAddChild(root, metadata);
+
 		oval_definition_set_criteria(new_definition,
 					     oval_criteria_node_clone(new_model, old_definition->criteria));
 	}
@@ -258,6 +275,8 @@ void oval_definition_free(struct oval_definition *definition)
 	oval_collection_free_items(definition->affected, (oscap_destruct_func) oval_affected_free);
 	oval_collection_free_items(definition->reference, (oscap_destruct_func) oval_reference_free);
 	oval_collection_free_items(definition->notes, (oscap_destruct_func) oscap_free);
+	xmlUnlinkNode(definition->metadata);
+	xmlFreeNode(definition->metadata);
 
 	definition->affected = NULL;
 	definition->criteria = NULL;
@@ -265,6 +284,7 @@ void oval_definition_free(struct oval_definition *definition)
 	definition->id = NULL;
 	definition->reference = NULL;
 	definition->notes = NULL;
+	definition->metadata = NULL;
 	definition->title = NULL;
 	oscap_free(definition);
 }
@@ -457,11 +477,20 @@ static int _oval_definition_parse_metadata(xmlTextReaderPtr reader, struct oval_
 	} else if (strcmp(tagname, "reference") == 0) {
 		return_code = oval_reference_parse_tag(reader, context, &oval_reference_consume, definition);
 	} else {
-		int depth = xmlTextReaderDepth(reader);
-		if (depth == -1)
-			oscap_setxmlerr(xmlGetLastError());
-		oscap_dlprintf(DBG_I, "Skipping tag: %s, depth: %d, line: %d.\n",
-			      tagname, depth, xmlTextReaderGetParserLineNumber(reader));
+		char *str;
+		xmlDoc *doc;
+		xmlNode *node;
+
+		str = (char *) xmlTextReaderReadOuterXml(reader);
+		doc = xmlReadDoc(BAD_CAST str, NULL, NULL, 0);
+		xmlFree(str);
+
+		node = xmlDocGetRootElement(doc);
+		// todo: reattach instead of copying?
+		node = xmlDocCopyNode(node, oval_definition_model_get_metadata_doc(definition->model), 1);
+		xmlAddChild(definition->metadata, node);
+		xmlFreeDoc(doc);
+
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 	oscap_free(tagname);
@@ -560,6 +589,7 @@ void oval_definition_to_print(struct oval_definition *definition, char *indent, 
 
 xmlNode *oval_definition_to_dom(struct oval_definition *definition, xmlDoc * doc, xmlNode * parent)
 {
+	xmlNode *nodelst;
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
 	xmlNode *definition_node = xmlNewTextChild(parent, ns_definitions, BAD_CAST "definition", NULL);
 
@@ -630,6 +660,9 @@ xmlNode *oval_definition_to_dom(struct oval_definition *definition, xmlDoc * doc
 		}
 	}
 	oval_string_iterator_free(notes);
+
+	nodelst = xmlDocCopyNodeList(doc, definition->metadata->children);
+	xmlAddChildList(metadata_node, nodelst);
 
 	struct oval_criteria_node *criteria = oval_definition_get_criteria(definition);
 	if (criteria)
