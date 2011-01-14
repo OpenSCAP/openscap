@@ -4,7 +4,8 @@ PYLIBVER ?= python$(PYTHON_VERSION)
 
 AM_CPPFLAGS = -I${top_srcdir}/src/common/public \
 	        $(PYTHON_INCLUDES) -I$(PERL_INCLUDES) \
-              -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE=1 -iquote -I/usr/include -include "sys/types.h"
+              -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE=1 -iquote -I/usr/include -include "sys/types.h" \
+		@libxml_cflags@
 
 perl_vendorlib_DATA = openscap.pm
 perl_vendorarch_LTLIBRARIES = _openscap_pm.la
