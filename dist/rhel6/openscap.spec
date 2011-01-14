@@ -9,8 +9,12 @@ Group:          System Environment/Libraries
 License:        LGPLv2+
 URL:            http://www.open-scap.org/
 Source0:        http://www.open-scap.org/download/%{name}-%{version}.tar.gz
+# This works around some perl issue in RHEL6
+Patch1:         openscap-0.6.0-perl.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires:  swig libxml2-devel libxslt-devel
+# Remove next line when perl is fixed
+BuildRequires:  autoconf, automake, libtool
+BuildRequires:  swig libxml2-devel libxslt-devel m4 perl-XML-Parser
 BuildRequires:  rpm-devel
 BuildRequires:  libgcrypt-devel
 BuildRequires:  pcre-devel
@@ -59,7 +63,7 @@ Group:          Applications/System
 Requires:       %{name} = %{version}-%{release}
 Requires(post):  chkconfig
 Requires(preun): chkconfig initscripts
-BuildRequires:   libcurl-devel
+BuildRequires:   curl-devel
 
 %description    utils
 The %{name}-utils package contains various utilities based on %{name} library.
@@ -74,8 +78,12 @@ SCAP content for RHEL and Fedora delivered by Open-SCAP project.
 
 %prep
 %setup -q
+# Remove next line when perl is fixed
+%patch1 -p1
 
 %build
+# Remove next line when perl is fixed
+autoreconf -i -s
 %configure
 make %{?_smp_mflags}
 # Remove shebang from bash-completion script
@@ -162,28 +170,28 @@ fi
 %{_datadir}/openscap/scap-xccdf.xml
 %{_datadir}/openscap/scap-fedora14-xccdf.xml
 
-
 %changelog
-* Wed Oct 20 2010 Peter Vrabec <pvrabec@redhat.com> 0.6.4-1
-- upgrade
-
-* Tue Sep 14 2010 Peter Vrabec <pvrabec@redhat.com> 0.6.3-1
-- upgrade
-
-* Fri Aug 27 2010 Peter Vrabec <pvrabec@redhat.com> 0.6.2-1
+* Tue Jan 11 2011 Peter Vrabec <pvrabec@redhat.com> 0.6.6-1
 - upgrade
 
 * Wed Jul 14 2010 Peter Vrabec <pvrabec@redhat.com> 0.6.0-1
-- upgrade
+- rebase to upstream release
+  Resolves: #565658, #599370
+
+* Wed Jun 30 2010 Peter Vrabec <pvrabec@redhat.com> 0.5.12-1
+- Resolves: #565658 rebase to upstream release
 
 * Wed May 26 2010 Peter Vrabec <pvrabec@redhat.com> 0.5.11-1
-- upgrade
+- Resolves: #565658 rebase to upstream release
 
 * Fri May 07 2010 Peter Vrabec <pvrabec@redhat.com> 0.5.10-1
-- upgrade
+- Resolves: #565658 rebase to upstream release
 
 * Fri Apr 16 2010 Peter Vrabec <pvrabec@redhat.com> 0.5.9-1
-- upgrade
+- Resolves: #565658 rebase to upstream release
+
+* Wed Mar 24 2010 Peter Vrabec <pvrabec@redhat.com> 0.5.8-1
+- Resolves: #565658 rebase to upstream release
 
 * Fri Feb 26 2010 Peter Vrabec <pvrabec@redhat.com> 0.5.7-1
 - upgrade

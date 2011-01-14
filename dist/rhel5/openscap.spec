@@ -28,6 +28,7 @@ for the expression of Computer Network Defense related information.
 Summary:        Development files for %{name}
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
+Requires:       libxml2-devel
 
 %description    devel
 The %{name}-devel package contains libraries and header files for
