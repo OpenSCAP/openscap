@@ -1,3 +1,7 @@
+openscap-0.6.7							14-01-2011
+- new CPE dict. match functionality in oscap
+- bugxifes
+
 openscap-0.6.6							09-12-2010
 - better atomic functions support check
 
