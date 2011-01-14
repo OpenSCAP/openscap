@@ -34,6 +34,7 @@ Authors:
     xmlns:ovalres="http://oval.mitre.org/XMLSchema/oval-results-5"
     xmlns:ovalsys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"
     xmlns:ovalunixsc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix"
+	xmlns:ovalindsc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent"
     exclude-result-prefixes="xsl cdf db s exsl"
     >
 
@@ -41,30 +42,45 @@ Authors:
 <xsl:key name='oval-test'       match='ovalres:test'          use='@test_id'       />
 <xsl:key name='oval-items'      match='ovalsys:system_data/*' use='@id'            />
 
+<xsl:key name='oval-testdef' match='*[starts-with(namespace-uri(), "http://oval.mitre.org/XMLSchema/oval-definitions") and contains(local-name(), "_test")]' use='@id' />
+
 <xsl:template mode='brief' match='ovalres:oval_results'>
   <xsl:param name='definition-id' />
   <xsl:apply-templates select='key("oval-definition", $definition-id)' mode='brief'/>
 </xsl:template>
 
 <xsl:template mode='brief' match='ovalres:definition'>
-  <!-- take first toplevel test -->
-  <xsl:apply-templates select='key("oval-test", ovalres:criteria//ovalres:criterion[1]/@test_ref)' mode='brief'/>
+  <!-- take toplevel tests -->
+  <xsl:for-each select='ovalres:criteria//ovalres:criterion'>
+    <xsl:apply-templates select='key("oval-test", @test_ref)' mode='brief'>
+      <xsl:with-param name='title' select='key("oval-testdef", @test_ref)/@comment'/>
+    </xsl:apply-templates>
+  </xsl:for-each>
 </xsl:template>
 
 <!-- OVAL items dump -->
 <xsl:template mode='brief' match='ovalres:test'>
-  <xsl:if test='ovalres:tested_item'>
+  <xsl:param name='title'/>
+  <xsl:variable name='items' select='ovalres:tested_item[@result="true"]'/>
+  <xsl:message>title: <xsl:value-of select='$title'/></xsl:message>
+
+  <xsl:if test='$items'>
     <table role='oval-results'>
-      <title>Items from <xsl:value-of select='@test_id'/></title>
+      <title>
+	    <xsl:choose>
+		  <xsl:when test='$title'><xsl:value-of select='$title'/></xsl:when>
+	      <xsl:otherwise>OVAL test <xsl:value-of select='@test_id'/></xsl:otherwise>
+		</xsl:choose>
+	  </title>
 
       <!-- table head (possibly item-type-specific) -->
       <thead>
-        <xsl:apply-templates mode='item-head' select='key("oval-items", ovalres:tested_item[1]/@item_id)'/>
+        <xsl:apply-templates mode='item-head' select='key("oval-items", $items[1]/@item_id)'/>
       </thead>
 
       <!-- table body (possibly item-type-specific) -->
       <tbody>
-        <xsl:for-each select='ovalres:tested_item'>
+        <xsl:for-each select='$items'>
           <xsl:for-each select='key("oval-items", @item_id)'>
             <xsl:apply-templates select='.' mode='item-body'/>
           </xsl:for-each>
@@ -93,12 +109,13 @@ Authors:
 </xsl:template>
 
 <xsl:template mode='item-head' match='ovalunixsc:file_item'>
-  <row><entry>Path</entry><entry>type</entry><entry>UID</entry><entry>GID</entry><entry>size</entry><entry>permissions</entry></row>
+  <row><entry>path</entry><entry>type</entry><entry>UID</entry><entry>GID</entry><entry>size</entry><entry>permissions</entry></row>
 </xsl:template>
 
 <xsl:template mode='item-body' match='ovalunixsc:file_item'>
+  <xsl:variable name='path' select='concat(ovalunixsc:path, "/", ovalunixsc:filename)'/>
   <row>
-    <entry><xsl:value-of select='ovalunixsc:path'/>/<xsl:value-of select='ovalunixsc:filename'/></entry>
+    <entry><xsl:value-of select='$path'/></entry>
     <entry><xsl:value-of select='ovalunixsc:type'/></entry>
     <entry role='num'><xsl:value-of select='ovalunixsc:user_id'/></entry>
     <entry role='num'><xsl:value-of select='ovalunixsc:group_id'/></entry>
@@ -134,6 +151,15 @@ Authors:
       <xsl:when test='string(.)="true"'><xsl:value-of select='translate(substring(local-name(),2,1), "e", "x")'/></xsl:when>
       <xsl:otherwise>-</xsl:otherwise>
     </xsl:choose>
+</xsl:template>
+
+<xsl:template mode='item-head' match='ovalindsc:textfilecontent_item'>
+  <row><entry>path</entry><entry>content</entry></row>
+</xsl:template>
+
+<xsl:template mode='item-body' match='ovalindsc:textfilecontent_item'>
+  <xsl:variable name='path' select='concat(ovalindsc:path, "/", ovalindsc:filename)'/>
+  <row><entry><xsl:value-of select='$path'/></entry><entry><xsl:value-of select='ovalindsc:text'/></entry></row>
 </xsl:template>
 
 </xsl:stylesheet>
