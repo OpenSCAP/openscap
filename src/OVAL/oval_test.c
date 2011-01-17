@@ -46,8 +46,9 @@ typedef struct oval_test {
 	int version;
 	oval_existence_t existence;
 	oval_check_t check;
+	oval_operator_t state_operator;
 	struct oval_object *object;
-	struct oval_state *state;
+	struct oval_collection *states;
 } oval_test_t;
 
 bool oval_test_iterator_has_more(struct oval_test_iterator *oc_test)
@@ -130,6 +131,13 @@ oval_check_t oval_test_get_check(struct oval_test * test)
 	return test->check;
 }
 
+oval_operator_t oval_test_get_state_operator(struct oval_test *test)
+{
+	__attribute__nonnull__(test);
+
+	return test->state_operator;
+}
+
 struct oval_object *oval_test_get_object(struct oval_test *test)
 {
 	__attribute__nonnull__(test);
@@ -137,11 +145,11 @@ struct oval_object *oval_test_get_object(struct oval_test *test)
 	return test->object;
 }
 
-struct oval_state *oval_test_get_state(struct oval_test *test)
+struct oval_state_iterator *oval_test_get_states(struct oval_test *test)
 {
 	__attribute__nonnull__(test);
 
-	return test->state;
+	return (struct oval_state_iterator *) oval_collection_iterator(test->states);
 }
 
 struct oval_test *oval_test_new(struct oval_definition_model *model, const char *id)
@@ -161,11 +169,12 @@ struct oval_test *oval_test_new(struct oval_definition_model *model, const char 
 	test->version = 0;
 	test->check = OVAL_CHECK_UNKNOWN;
 	test->existence = OVAL_EXISTENCE_UNKNOWN;
+	test->state_operator = OVAL_OPERATOR_AND;
 	test->subtype = OVAL_SUBTYPE_UNKNOWN;
 	test->comment = NULL;
 	test->id = oscap_strdup(id);
 	test->object = NULL;
-	test->state = NULL;
+	test->states = oval_collection_new();
 	test->notes = oval_collection_new();
 	test->model = model;
 
@@ -178,7 +187,8 @@ bool oval_test_is_valid(struct oval_test * test)
 {
         oval_subtype_t subtype;
 	struct oval_object *object;
-	struct oval_state *state;
+	struct oval_state_iterator *ste_itr;
+	bool ret = true;
 
 	if (test == NULL) {
                 oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
@@ -201,6 +211,10 @@ bool oval_test_is_valid(struct oval_test * test)
                 oscap_dlprintf(DBG_W, "Argument is not valid: existence == OVAL_EXISTENCE_UNKNOWN.\n");
                 return false;
         }
+        if (oval_test_get_state_operator(test) == OVAL_OPERATOR_UNKNOWN) {
+                oscap_dlprintf(DBG_W, "Argument is not valid: state_operator == OVAL_OPERATOR_UNKNOWN.\n");
+                return false;
+        }
 
 	object = oval_test_get_object(test);
         if (oval_object_get_subtype(object) != subtype) {
@@ -211,18 +225,25 @@ bool oval_test_is_valid(struct oval_test * test)
         if (oval_object_is_valid(object) != true)
 		return false;
 
-	state = oval_test_get_state(test);
-	if (state != NULL) {
+	ste_itr = oval_test_get_states(test);
+	while (oval_state_iterator_has_more(ste_itr)) {
+		struct oval_state *state;
+
+		state = oval_state_iterator_next(ste_itr);
                 if (oval_state_get_subtype(state) != subtype) {
                         oscap_dlprintf(DBG_W, "Argument is not valid: subtypes of the test (%d) and the state (%d) differ.\n",
                                       subtype, oval_state_get_subtype(state));
-                        return false;
+			ret = false;
+			break;
                 }
-                if (oval_state_is_valid(state) != true)
-                        return false;
+		if (oval_state_is_valid(state) != true) {
+			ret = false;
+			break;
+		}
         }
+	oval_state_iterator_free(ste_itr);
 
-	return true;
+	return ret;
 }
 
 bool oval_test_is_locked(struct oval_test * test)
@@ -235,6 +256,7 @@ bool oval_test_is_locked(struct oval_test * test)
 struct oval_test *oval_test_clone(struct oval_definition_model *new_model, struct oval_test *old_test) {
 	__attribute__nonnull__(old_test);
 
+	struct oval_state_iterator *ste_itr;
 	struct oval_test *new_test = oval_definition_model_get_test(new_model, old_test->id);
 	if (new_test == NULL) {
 		new_test = oval_test_new(new_model, old_test->id);
@@ -242,6 +264,7 @@ struct oval_test *oval_test_clone(struct oval_definition_model *new_model, struc
 		oval_test_set_version(new_test, old_test->version);
 		oval_test_set_check(new_test, old_test->check);
 		oval_test_set_existence(new_test, old_test->existence);
+		oval_test_set_state_operator(new_test, old_test->state_operator);
 		oval_test_set_subtype(new_test, old_test->subtype);
 		oval_test_set_comment(new_test, old_test->comment);
 
@@ -249,10 +272,16 @@ struct oval_test *oval_test_clone(struct oval_definition_model *new_model, struc
 			struct oval_object *object = oval_object_clone(new_model, old_test->object);
 			oval_test_set_object(new_test, object);
 		}
-		if (old_test->state) {
-			struct oval_state *state = oval_state_clone(new_model, old_test->state);
-			oval_test_set_state(new_test, state);
+
+		ste_itr = oval_test_get_states(old_test);
+		while (oval_state_iterator_has_more(ste_itr)) {
+			struct oval_state *ste;
+
+			ste = oval_state_iterator_next(ste_itr);
+			ste = oval_state_clone(new_model, ste);
+			oval_test_add_state(new_test, ste);
 		}
+		oval_state_iterator_free(ste_itr);
 
 		struct oval_string_iterator *notes = oval_test_get_notes(old_test);
 		while (oval_string_iterator_has_more(notes)) {
@@ -273,12 +302,13 @@ void oval_test_free(struct oval_test *test)
 	if (test->id != NULL)
 		oscap_free(test->id);
 	oval_collection_free_items(test->notes, &oscap_free);
+	oval_collection_free(test->states);
 
 	test->comment = NULL;
 	test->id = NULL;
 	test->notes = NULL;
 	test->object = NULL;
-	test->state = NULL;
+	test->states = NULL;
 
 	oscap_free(test);
 }
@@ -325,6 +355,14 @@ void oval_test_set_existence(struct oval_test *test, oval_existence_t existence)
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
+void oval_test_set_state_operator(struct oval_test *test, oval_operator_t state_operator)
+{
+	if (test && !oval_test_is_locked(test)) {
+		test->state_operator = state_operator;
+	} else
+		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+}
+
 void oval_test_set_check(struct oval_test *test, oval_check_t check)
 {
 	if (test && !oval_test_is_locked(test)) {
@@ -341,10 +379,10 @@ void oval_test_set_object(struct oval_test *test, struct oval_object *object)
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
-void oval_test_set_state(struct oval_test *test, struct oval_state *state)
+void oval_test_add_state(struct oval_test *test, struct oval_state *state)
 {
 	if (test && !oval_test_is_locked(test)) {
-		test->state = state;
+		oval_collection_add(test->states, state);
 	} else
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
@@ -390,7 +428,7 @@ static int _oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_cont
 		if (state_ref != NULL) {
 			struct oval_definition_model *model = oval_parser_context_model(context);
 			struct oval_state *state = oval_state_get_new(model, state_ref);
-			oval_test_set_state(test, state);
+			oval_test_add_state(test, state);
 			oscap_free(state_ref);
 			state_ref = NULL;
 		}
@@ -418,6 +456,8 @@ int oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *con
 	oval_existence_t existence = oval_existence_parse(reader, "check_existence",
 							  OVAL_AT_LEAST_ONE_EXISTS);
 	oval_test_set_existence(test, existence);
+	oval_operator_t ste_operator = oval_operator_parse(reader, "state_operator", OVAL_OPERATOR_AND);
+	oval_test_set_state_operator(test, ste_operator);
 	oval_check_t check = oval_check_parse(reader, "check", OVAL_CHECK_UNKNOWN);
 	oval_test_set_check(test, check);
 	char *comm = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
@@ -438,6 +478,7 @@ int oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *con
 
 void oval_test_to_print(struct oval_test *test, char *indent, int idx)
 {
+	/*
 	char nxtindent[100];
 
 	if (strlen(indent) > 80)
@@ -471,6 +512,7 @@ void oval_test_to_print(struct oval_test *test, char *indent, int idx)
 		oscap_dprintf("%sSTATE      = <<NONE>>\n", nxtindent);
 	else
 		oval_state_to_print(state, nxtindent, 0);
+	*/
 }
 
 xmlNode *oval_test_to_dom(struct oval_test *test, xmlDoc * doc, xmlNode * parent)
@@ -478,6 +520,7 @@ xmlNode *oval_test_to_dom(struct oval_test *test, xmlDoc * doc, xmlNode * parent
 	oval_subtype_t subtype = oval_test_get_subtype(test);
 	xmlNode *test_node = NULL;
 	if (subtype != 0) {
+		struct oval_state_iterator *ste_itr;
 		const char *subtype_text = oval_subtype_get_text(subtype);
 		char test_name[strlen(subtype_text) + 6];
 		*test_name = '\0';
@@ -508,6 +551,10 @@ xmlNode *oval_test_to_dom(struct oval_test *test, xmlDoc * doc, xmlNode * parent
 		oval_check_t check = oval_test_get_check(test);
 		xmlNewProp(test_node, BAD_CAST "check", BAD_CAST oval_check_get_text(check));
 
+		oval_operator_t ste_operator = oval_test_get_state_operator(test);
+		if (ste_operator != OVAL_OPERATOR_AND)
+			xmlNewProp(test_node, BAD_CAST "state_operator", BAD_CAST oval_operator_get_text(ste_operator));
+
 		char *comm = oval_test_get_comment(test);
 		xmlNewProp(test_node, BAD_CAST "comment", BAD_CAST comm);
 
@@ -532,11 +579,15 @@ xmlNode *oval_test_to_dom(struct oval_test *test, xmlDoc * doc, xmlNode * parent
 			xmlNewProp(object_node, BAD_CAST "object_ref", BAD_CAST oval_object_get_id(object));
 		}
 
-		struct oval_state *state = oval_test_get_state(test);
-		if (state) {
+		ste_itr = oval_test_get_states(test);
+		while (oval_state_iterator_has_more(ste_itr)) {
+			struct oval_state *state;
+
+			state = oval_state_iterator_next(ste_itr);
 			xmlNode *state_node = xmlNewTextChild(test_node, ns_family, BAD_CAST "state", NULL);
 			xmlNewProp(state_node, BAD_CAST "state_ref", BAD_CAST oval_state_get_id(state));
 		}
+		oval_state_iterator_free(ste_itr);
 	} else {
 		oscap_dlprintf(DBG_E, "Detected test without subtype, id: %s.\n", oval_test_get_id(test));
 	}

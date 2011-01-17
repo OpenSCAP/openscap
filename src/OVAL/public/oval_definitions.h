@@ -1066,6 +1066,11 @@ void oval_test_set_deprecated(struct oval_test *, bool deprecated);
  */
 void oval_test_set_version(struct oval_test *, int version);
 /**
+ * Sets attribute @ref oval_test->state_operator.
+ * @memberof oval_test
+ */
+void oval_test_set_state_operator(struct oval_test *, oval_operator_t);
+/**
  * Sets attribute @ref oval_test->existence.
  * If Oval_test->existence == @ref OVAL_CHECK_UNKNOWN and parameter existence <> @ref OVAL_CHECK_UNKNOWN,
  * this method shall overwrite Oval_test->existence with the parameter value.
@@ -1094,14 +1099,11 @@ void oval_test_set_check(struct oval_test *, oval_check_t);
  */
 void oval_test_set_object(struct oval_test *, struct oval_object *);
 /**
- * Sets attribute @ref oval_test->state.
- * If Oval_test->state == NULL and parameter state <> NULL,
- * this method shall overwrite Oval_test->state with the parameter state.
- * Otherwise, the method shall leave the Oval_test state unchanged.
+ * Add the specified state to the state list of the specified test.
  * @param state - (<> NULL) the required state
  * @memberof oval_test
  */
-void oval_test_set_state(struct oval_test *, struct oval_state *state);
+void oval_test_add_state(struct oval_test *, struct oval_state *);
 /** @} */
 
 /**
@@ -1148,6 +1150,11 @@ bool oval_test_get_deprecated(struct oval_test *);
  */
 int oval_test_get_version(struct oval_test *);
 /**
+ * Returns attribute @ref oval_test->state_operator.
+ * @memberof oval_test
+ */
+oval_operator_t oval_test_get_state_operator(struct oval_test *);
+/**
  * Returns attribute @ref oval_test->existence.
  * @memberof oval_test
  */
@@ -1164,11 +1171,12 @@ oval_check_t oval_test_get_check(struct oval_test *);
  */
 struct oval_object *oval_test_get_object(struct oval_test *);
 /**
- * Returns attribute @ref oval_test->state.
- * @return A pointer to the state attribute of the specified @ref oval_test.
+ * Returns attribute @ref oval_test->states.
+ * @return A new iterator for the states attribute of the specified @ref oval_test.
+ * It should be freed after use by the calling application.
  * @memberof oval_test
  */
-struct oval_state *oval_test_get_state(struct oval_test *);
+struct oval_state_iterator *oval_test_get_states(struct oval_test *);
 /**
  * return <b>true</b> if the test instance is locked.
  * The state of a locked instance cannot be changed.

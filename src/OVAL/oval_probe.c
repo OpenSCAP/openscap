@@ -452,7 +452,7 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
 		/* There should be a test .. */
 		struct oval_test *test;
 		struct oval_object *object;
-		struct oval_state *state;
+		struct oval_state_iterator *ste_itr;
 
 		test = oval_criteria_node_get_test(cnode);
 		if (test == NULL)
@@ -465,8 +465,9 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
 		if (ret != 0)
 			return ret;
 		/* probe objects referenced like this: test->state->variable->object */
-		state = oval_test_get_state(test);
-		if (state != NULL) {
+		ste_itr = oval_test_get_states(test);
+		while (oval_state_iterator_has_more(ste_itr)) {
+			struct oval_state *state = oval_state_iterator_next(ste_itr);
 			struct oval_state_content_iterator *contents = oval_state_get_contents(state);
 			while (oval_state_content_iterator_has_more(contents)) {
 				struct oval_state_content *content = oval_state_content_iterator_next(contents);
@@ -478,6 +479,7 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
 					ret = oval_probe_query_variable(sess, var);
 					if (ret != 0) {
 						oval_state_content_iterator_free(contents);
+						oval_state_iterator_free(ste_itr);
 						return ret;
 					}
 
@@ -488,12 +490,15 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
 						break;
 					default:
 						oval_state_content_iterator_free(contents);
+						oval_state_iterator_free(ste_itr);
 						return 0;
 					}
 				}
 			}
 			oval_state_content_iterator_free(contents);
 		}
+		oval_state_iterator_free(ste_itr);
+
 		return 0;
 
 		}

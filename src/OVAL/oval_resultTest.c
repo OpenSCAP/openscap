@@ -1004,36 +1004,50 @@ static void _oval_test_item_consumer(struct oval_result_item *item, void **args)
 	}
 }
 
-static oval_result_t eval_check_state(struct oval_state *state, oval_check_t check, void **args)
+static oval_result_t eval_check_state(struct oval_test *test, void **args)
 {
 	struct oval_syschar_model *syschar_model;
 	struct oval_result_item_iterator *ritems_itr;
-	struct oresults ores;
+	struct oresults item_ores;
 	oval_result_t result;
+	oval_check_t ste_check;
+	oval_operator_t ste_opr;
 
+	ste_check = oval_test_get_check(test);
+	ste_opr = oval_test_get_state_operator(test);
 	syschar_model = oval_result_system_get_syschar_model(SYSTEM);
-	ores_clear(&ores);
+	ores_clear(&item_ores);
 
 	ritems_itr = oval_result_test_get_items(TEST);
 	while (oval_result_item_iterator_has_more(ritems_itr)) {
 		struct oval_result_item *ritem;
 		struct oval_sysitem *item;
+		struct oresults ste_ores;
+		struct oval_state_iterator *ste_itr;
 		oval_result_t item_res;
 
 		ritem = oval_result_item_iterator_next(ritems_itr);
 		item = oval_result_item_get_sysitem(ritem);
+		ores_clear(&ste_ores);
 
-		item_res = eval_item(syschar_model, item, state);
-		oval_result_item_set_result(ritem, item_res);
+		ste_itr = oval_test_get_states(test);
+		while (oval_state_iterator_has_more(ste_itr)) {
+			struct oval_state *ste;
+			oval_result_t ste_res;
 
-		if (ores_add_res(&ores, item_res)) {
-			oval_result_item_iterator_free(ritems_itr);
-			return OVAL_RESULT_ERROR;
+			ste = oval_state_iterator_next(ste_itr);
+			ste_res = eval_item(syschar_model, item, ste);
+			ores_add_res(&ste_ores, ste_res);
 		}
+		oval_state_iterator_free(ste_itr);
+
+		item_res = ores_get_result_byopr(&ste_ores, ste_opr);
+		ores_add_res(&item_ores, item_res);
+		oval_result_item_set_result(ritem, item_res);
 	}
 	oval_result_item_iterator_free(ritems_itr);
 
-	result = ores_get_result_bychk(&ores, check);
+	result = ores_get_result_bychk(&item_ores, ste_check);
 
 	return result;
 }
@@ -1103,15 +1117,15 @@ static oval_result_t eval_check_existence(oval_existence_t check_existence, int 
 }
 
 static oval_result_t
-_oval_result_test_evaluate_items(struct oval_syschar *syschar_object,
-				 struct oval_state *state,
-				 oval_check_t test_check,
-				 oval_existence_t test_check_existence,
-				 void **args)
+_oval_result_test_evaluate_items(struct oval_test *test, struct oval_syschar *syschar_object, void **args)
 {
 	struct oval_sysitem_iterator *collected_items_itr;
 	oval_result_t result;
 	int exists_cnt, error_cnt;
+	bool hasstate;
+	oval_check_t test_check;
+	oval_existence_t test_check_existence;
+	struct oval_state_iterator *ste_itr;
 
 	exists_cnt = error_cnt = 0;
 	collected_items_itr = oval_syschar_get_sysitem(syschar_object);
@@ -1142,10 +1156,16 @@ _oval_result_test_evaluate_items(struct oval_syschar *syschar_object,
 	}
 	oval_sysitem_iterator_free(collected_items_itr);
 
+	test_check = oval_test_get_check(test);
+	test_check_existence = oval_test_get_existence(test);
+	ste_itr = oval_test_get_states(test);
+	hasstate = oval_state_iterator_has_more(ste_itr);
+	oval_state_iterator_free(ste_itr);
+
 	switch (oval_syschar_get_flag(syschar_object)) {
 	case SYSCHAR_FLAG_ERROR:
 		if (test_check_existence == OVAL_ANY_EXIST
-		    && state == NULL) {
+		    && !hasstate) {
 			result = OVAL_RESULT_TRUE;
 		} else {
 			result = OVAL_RESULT_ERROR;
@@ -1153,7 +1173,7 @@ _oval_result_test_evaluate_items(struct oval_syschar *syschar_object,
 		break;
 	case SYSCHAR_FLAG_NOT_COLLECTED:
 		if (test_check_existence == OVAL_ANY_EXIST
-		    && state == NULL) {
+		    && !hasstate) {
 			result = OVAL_RESULT_TRUE;
 		} else {
 			result = OVAL_RESULT_UNKNOWN;
@@ -1161,7 +1181,7 @@ _oval_result_test_evaluate_items(struct oval_syschar *syschar_object,
 		break;
 	case SYSCHAR_FLAG_NOT_APPLICABLE:
 		if (test_check_existence == OVAL_ANY_EXIST
-		    && state == NULL) {
+		    && !hasstate) {
 			result = OVAL_RESULT_TRUE;
 		} else {
 			result = OVAL_RESULT_NOT_APPLICABLE;
@@ -1178,8 +1198,8 @@ _oval_result_test_evaluate_items(struct oval_syschar *syschar_object,
 	case SYSCHAR_FLAG_COMPLETE:
 		result = eval_check_existence(test_check_existence, exists_cnt, error_cnt);
 		if (result == OVAL_RESULT_TRUE
-		    && state != NULL) {
-			result = eval_check_state(state, test_check, args);
+		    && hasstate) {
+			result = eval_check_state(test, args);
 		}
 		break;
 	case SYSCHAR_FLAG_INCOMPLETE:
@@ -1199,8 +1219,8 @@ _oval_result_test_evaluate_items(struct oval_syschar *syschar_object,
 		}
 
 		if (result == OVAL_RESULT_TRUE
-		    && state != NULL) {
-			result = eval_check_state(state, test_check, args);
+		    && hasstate) {
+			result = eval_check_state(test, args);
 			if (result == OVAL_RESULT_TRUE) {
 				if (test_check != OVAL_CHECK_AT_LEAST_ONE) {
 					result = OVAL_RESULT_UNKNOWN;
@@ -1233,9 +1253,6 @@ static oval_result_t _oval_result_test_result(struct oval_result_test *rtest, vo
 
 	// let's go looking for the stuff to test
 	struct oval_test *test2check = oval_result_test_get_test(rtest);
-	oval_check_t test_check = oval_test_get_check(test2check);
-	oval_existence_t test_check_existence = oval_test_get_existence(test2check);
-
 	struct oval_object * tmp_obj = oval_test_get_object(test2check);
 	if (tmp_obj == NULL) {
 		oscap_dlprintf(DBG_E, "Object is null.\n");
@@ -1254,9 +1271,7 @@ static oval_result_t _oval_result_test_result(struct oval_result_test *rtest, vo
 		return OVAL_RESULT_ERROR;
 	}
 
-	struct oval_state *tmp_state = oval_test_get_state(test2check);
-	// FINALLY, we have all the pieces, now figure out the result
-	oval_result_t result = _oval_result_test_evaluate_items(syschar_object, tmp_state, test_check, test_check_existence, args);
+	oval_result_t result = _oval_result_test_evaluate_items(test2check, syschar_object, args);
 
 	return result;
 }

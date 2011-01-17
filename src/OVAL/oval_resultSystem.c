@@ -516,6 +516,7 @@ xmlNode *oval_result_system_to_dom
 	if (oval_result_test_iterator_has_more(result_tests)) {
 		xmlNode *tests_node = xmlNewTextChild(system_node, ns_results, BAD_CAST "tests", NULL);
 		while (oval_result_test_iterator_has_more(result_tests)) {
+			struct oval_state_iterator *ste_itr;
 			struct oval_result_test *result_test = oval_result_test_iterator_next(result_tests);
 			/* report the test */
 			oval_result_test_to_dom(result_test, doc, tests_node);
@@ -540,8 +541,9 @@ xmlNode *oval_result_system_to_dom
 				}
 			}
 			/* look for objects in test->state->... */
-			struct oval_state *state = oval_test_get_state(oval_test);
-			if (state) {
+			ste_itr = oval_test_get_states(oval_test);
+			while (oval_state_iterator_has_more(ste_itr)) {
+				struct oval_state *state = oval_state_iterator_next(ste_itr);
 				char *sttid = oval_state_get_id(state);
 				void *value = oval_string_map_get_value(sttmap, sttid);
 				if (value == NULL) {
@@ -550,6 +552,7 @@ xmlNode *oval_result_system_to_dom
 										      varmap, sysmap);
 				}
 			}
+			oval_state_iterator_free(ste_itr);
 		}
 	}
 	oval_result_test_iterator_free(result_tests);
