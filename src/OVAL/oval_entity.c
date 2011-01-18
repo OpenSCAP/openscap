@@ -316,7 +316,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	int return_code;
 	oval_datatype_t datatype = oval_datatype_parse(reader, "datatype", OVAL_DATATYPE_STRING);
 	oval_operation_t operation = oval_operation_parse(reader, "operation", OVAL_OPERATION_EQUALS);
-	int mask = oval_parser_boolean_attribute(reader, "mask", 1);
+	int mask = oval_parser_boolean_attribute(reader, "mask", 0);
 	oval_entity_type_t type = OVAL_ENTITY_TYPE_UNKNOWN;
 	//The value of the type field vs. the complexity of extracting type is arguable
 	char *varref = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "var_ref");
