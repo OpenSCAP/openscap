@@ -28,11 +28,16 @@
  *      "Peter Vrabec" <pvrabec@redhat.com>
  */
 
+#include <config.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
+#if defined USE_REGEX_PCRE
+#include <pcre.h>
+#elif defined USE_REGEX_POSIX
 #include <regex.h>
+#endif
 #include <ctype.h>
 #include "oval_results_impl.h"
 #include "oval_collection_impl.h"
@@ -364,25 +369,54 @@ static int istrcmp(char *st1, char *st2)
 
 static oval_result_t strregcomp(char *pattern, char *test_str)
 {
-	regex_t re;
-	int status;
-	oval_result_t result;
+	int ret;
+	oval_result_t result = OVAL_RESULT_ERROR;
+#if defined USE_REGEX_PCRE
+	pcre *re;
+	const char *err;
+	int errofs;
 
-	if ( (status = regcomp(&re, pattern, REG_EXTENDED)) != 0 ) {
-		oscap_dlprintf(DBG_E, "Unable to compile regex pattern: %d.\n", status);
+	re = pcre_compile(pattern, PCRE_UTF8, &err, &errofs, NULL);
+	if (re == NULL) {
+		oscap_dlprintf(DBG_E, "Unable to compile regex pattern, "
+			       "pcre_compile() returned error (offset: %d): '%s'.\n", errofs, err);
+		return OVAL_RESULT_ERROR;
+	}
+
+	ret = pcre_exec(re, NULL, test_str, strlen(test_str), 0, 0, NULL, 0);
+	if (ret > 0 ) {
+		result = OVAL_RESULT_TRUE;
+	} else if (ret == -1) {
+		result = OVAL_RESULT_FALSE;
+	} else {
+		oscap_dlprintf(DBG_E, "Unable to match regex pattern, "
+			       "pcre_exec() returned error: %d.\n", ret);
 		result = OVAL_RESULT_ERROR;
 	}
 
-	if ( (status = regexec(&re, test_str, 0, NULL, 0)) == 0) {	// got a match
+	pcre_free(re);
+#elif defined USE_REGEX_POSIX
+	regex_t re;
+
+	ret = regcomp(&re, pattern, REG_EXTENDED);
+	if (ret != 0) {
+		oscap_dlprintf(DBG_E, "Unable to compile regex pattern, "
+			       "regcomp() returned error: %d.\n", ret);
+		return OVAL_RESULT_ERROR;
+	}
+
+	ret = regexec(&re, test_str, 0, NULL, 0);
+	if (ret == 0) {
 		result = OVAL_RESULT_TRUE;
-	} else if (status == REG_NOMATCH) {	// no match, no errror
+	} else if (ret == REG_NOMATCH) {
 		result = OVAL_RESULT_FALSE;
 	} else {
-		oscap_dlprintf(DBG_E, "Unable to match regex pattern: %d.\n", status);
+		oscap_dlprintf(DBG_E, "Unable to match regex pattern: %d.\n", ret);
 		result = OVAL_RESULT_ERROR;
 	}
 
 	regfree(&re);
+#endif
 	return result;
 }
 
