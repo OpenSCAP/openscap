@@ -384,7 +384,7 @@ static oval_result_t strregcomp(char *pattern, char *test_str)
 	}
 
 	ret = pcre_exec(re, NULL, test_str, strlen(test_str), 0, 0, NULL, 0);
-	if (ret > 0 ) {
+	if (ret > -1 ) {
 		result = OVAL_RESULT_TRUE;
 	} else if (ret == -1) {
 		result = OVAL_RESULT_FALSE;
