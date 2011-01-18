@@ -93,7 +93,6 @@ static SEXP_t *strfiletype (mode_t mode)
 }
 
 struct cbargs {
-        SEXP_t *filename_ent;
         SEXP_t *cobj;
 	SEXP_t *filters;
 	int     error;
@@ -164,7 +163,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
                 _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
                 return (-1);
         } else {
-                SEXP_t *r0, *r1, *r3, *r4;
+                SEXP_t *r0, *r2, *r1, *r3, *r4;
                 SEXP_t *r5, *r6, *r7, *r8;
 
 		r3 = ID_cache_get(st.st_uid);
@@ -177,6 +176,9 @@ static int file_cb (const char *p, const char *f, void *ptr)
 
                                         "filename", NULL,
                                         r1 = (f != NULL ? SEXP_string_newf ("%s", f) : NULL),
+
+					"filepath", NULL,
+					r2 =  (f != NULL ? SEXP_string_newf ("%s/%s", p, f) : NULL),
 
                                         "type", NULL,
                                         strfiletype (st.st_mode),
@@ -273,10 +275,12 @@ static int file_cb (const char *p, const char *f, void *ptr)
 
                                         "oexec", NULL,
                                         (st.st_mode & S_IXOTH ? gr_true : gr_false),
-
                                         NULL);
 
-		SEXP_vfree(r0, r1, r3, r4, r5, r6, r7, r8, NULL);
+
+		SEXP_free(r1);
+		SEXP_free(r2);
+		SEXP_vfree(r0, r3, r4, r5, r6, r7, r8, NULL);
 
 		if (!probe_item_filtered(item, filters)) {
 			if (probe_cobj_add_item(cobj, item) != 0) {
@@ -374,7 +378,7 @@ void probe_fini (void *arg)
 
 int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex)
 {
-        SEXP_t *path, *filename, *behaviors;
+        SEXP_t *path, *filename, *behaviors, *filepath;
         SEXP_t *r0, *r1, *r2, *r3, *r4;
         int     filecnt, err;
         struct cbargs cbargs;
@@ -394,14 +398,23 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex)
         path      = probe_obj_getent (probe_in, "path",      1);
         filename  = probe_obj_getent (probe_in, "filename",  1);
         behaviors = probe_obj_getent (probe_in, "behaviors", 1);
+        filepath =  probe_obj_getent (probe_in, "filepath", 1);
 
-        if (path == NULL || filename == NULL) {
+	/* we want either path+filename or filepath */
+        if ( (path == NULL || filename == NULL) && filepath==NULL ) {
                 SEXP_free (behaviors);
                 SEXP_free (path);
                 SEXP_free (filename);
+                SEXP_free (filepath);
 
                 return PROBE_ENOELM;
         }
+
+	/* behaviours are not important if filepath is used */
+	if(filepath != NULL && behaviors != NULL) {
+		SEXP_free (behaviors);
+		behaviors = NULL;
+	}
 
         if (behaviors == NULL) {
                 SEXP_t *bh_list;
@@ -461,18 +474,16 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex)
         }
 
         cbargs.cobj = probe_out;
-        cbargs.filename_ent = filename;
 	cbargs.filters = probe_prepare_filters(probe_in);
 	cbargs.error = 0;
 
 	filecnt = 0;
 
-	if ((ofts = oval_fts_open(path, filename, NULL, behaviors)) != NULL) {
+	if ((ofts = oval_fts_open(path, filename, filepath, behaviors)) != NULL) {
 		for (; (ofts_ent = oval_fts_read(ofts)) != NULL; ++filecnt) {
 			file_cb(ofts_ent->path, ofts_ent->file, &cbargs);
 			oval_ftsent_free(ofts_ent);
 		}
-
 		oval_fts_close(ofts);
 	}
 
@@ -491,7 +502,11 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex)
 		err = cbargs.error;
         }
 
-	SEXP_vfree(behaviors, path, filename, cbargs.filters, NULL);
+	SEXP_free(path);
+	SEXP_free(filename);
+	SEXP_free(filepath);
+	SEXP_free(behaviors);
+	SEXP_free(cbargs.filters);
 
         switch (pthread_mutex_unlock (&__file_probe_mutex)) {
         case 0:

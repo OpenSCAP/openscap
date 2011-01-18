@@ -103,7 +103,7 @@ static int process_file(const char *path, const char *filename, void *arg)
 	xmlChar *value;
 	SEXP_t *item;
 
-        SEXP_t *r0, *r1, *r2;
+        SEXP_t *r0, *r1, *r2, *r3;
 
 	if (filename == NULL)
 		goto cleanup;
@@ -151,10 +151,11 @@ static int process_file(const char *path, const char *filename, void *arg)
                                 /* entities */
                                 "path",     NULL, r0 = SEXP_string_new(path, strlen (path)),
                                 "filename", NULL, r1 = SEXP_string_new(filename, strlen (filename)),
-                                "xpath",    NULL, r2 = SEXP_string_new(pfd->xpath, strlen (pfd->xpath)),
+				"filepath", NULL, r2 = SEXP_string_newf("%s/%s", path, filename),
+                                "xpath",    NULL, r3 = SEXP_string_new(pfd->xpath, strlen (pfd->xpath)),
                                 NULL);
 
-        SEXP_vfree (r0, r1, r2, NULL);
+        SEXP_vfree (r0, r1, r2, r3, NULL);
 
 	node_cnt = nodes->nodeNr;
 	if (node_cnt == 0) {
@@ -194,7 +195,7 @@ static int process_file(const char *path, const char *filename, void *arg)
 
 int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 {
-	SEXP_t *path_ent, *filename_ent, *xpath_ent, *behaviors_ent;
+	SEXP_t *path_ent, *filename_ent, *xpath_ent, *behaviors_ent, *filepath_ent;
         SEXP_t *r0, *r1, *r2;
 
 	OVAL_FTS    *ofts;
@@ -206,19 +207,31 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 		return(PROBE_EINVAL);
 	}
 
-        if ((path_ent = probe_obj_getent(probe_in, "path", 1)) == NULL)
-		return(PROBE_ENOELM);
-        if ((filename_ent = probe_obj_getent(probe_in, "filename", 1)) == NULL) {
-                SEXP_free(path_ent);
-		return(PROBE_ENOELM);
+        path_ent = probe_obj_getent(probe_in, "path", 1);
+	filename_ent = probe_obj_getent(probe_in, "filename", 1);
+	xpath_ent = probe_obj_getent(probe_in, "xpath", 1);
+	filepath_ent = probe_obj_getent(probe_in, "filepath", 1);
+	behaviors_ent = probe_obj_getent(probe_in, "behaviors", 1);
+
+        /* we want (path+filename or filepath) + xpath */
+        if ( ((path_ent == NULL || filename_ent == NULL) && filepath_ent==NULL ) || 
+             xpath_ent==NULL) {
+                SEXP_free (path_ent);
+                SEXP_free (filename_ent);
+                SEXP_free (filepath_ent);
+                SEXP_free (xpath_ent);
+		SEXP_free (behaviors_ent);
+
+                return PROBE_ENOELM;
         }
-        if ((xpath_ent = probe_obj_getent(probe_in, "xpath", 1)) == NULL) {
-                SEXP_vfree(path_ent, filename_ent, NULL);
-		return(PROBE_ENOELM);
+
+        /* behaviours are not important if filepath is used */
+        if(filepath_ent != NULL && behaviors_ent != NULL) {
+                SEXP_free (behaviors_ent);
+                behaviors_ent = NULL;
         }
 
 	/* canonicalize behaviors */
-	behaviors_ent = probe_obj_getent(probe_in, "behaviors", 1);
         if (behaviors_ent == NULL) {
 		SEXP_t *behaviors_new;
 
@@ -256,7 +269,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 
 	fcnt = 0;
 
-	if ((ofts = oval_fts_open(path_ent, filename_ent, NULL, behaviors_ent)) != NULL) {
+	if ((ofts = oval_fts_open(path_ent, filename_ent, filepath_ent, behaviors_ent)) != NULL) {
 		for (; (ofts_ent = oval_fts_read(ofts)) != NULL; ++fcnt) {
 			process_file(ofts_ent->path, ofts_ent->file, &pfd);
 			oval_ftsent_free(ofts_ent);
@@ -280,6 +293,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
         SEXP_free (filename_ent);
         SEXP_free (xpath_ent);
         SEXP_free (behaviors_ent);
+        SEXP_free (filepath_ent);
 
 	return 0;
 }

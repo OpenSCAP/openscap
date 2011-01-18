@@ -177,7 +177,7 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
 {
 	int i;
 	SEXP_t *item;
-        SEXP_t *r0, *r1, *r2, *r3, *r4;
+        SEXP_t *r0, *r1, *r2, *r3, *r4, *r5;
 
 	item = probe_item_creat ("textfilecontent_item", NULL,
                                  /* entities */
@@ -185,14 +185,17 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
                                  r0 = SEXP_string_newf("%s", path),
                                  "filename", NULL,
                                  r1 = SEXP_string_newf("%s", filename),
+                                 "filepath", NULL,
+                                 r2 =  (filename != NULL ? SEXP_string_newf ("%s/%s", path, filename) : NULL),
                                  "pattern", NULL,
-                                 r2 = SEXP_string_newf("%s", pattern),
+                                 r3 = SEXP_string_newf("%s", pattern),
                                  "instance", NULL,
-                                 r3 = SEXP_number_newi_32(instance),
+                                 r4 = SEXP_number_newi_32(instance),
                                  "text", NULL,
-                                 r4 = SEXP_string_newf("%s", substrs[0]),
+                                 r5 = SEXP_string_newf("%s", substrs[0]),
                                  NULL);
-        SEXP_vfree (r0, r1, r2, r3, r4, NULL);
+	SEXP_free(r2);
+        SEXP_vfree (r0, r1, r3, r4, r5, NULL);
 
 	for (i = 1; i < substr_cnt; ++i) {
                 probe_item_ent_add (item, "subexpression", NULL, r0 = SEXP_string_new (substrs[i], strlen (substrs[i])));
@@ -326,7 +329,7 @@ static int process_file(const char *path, const char *file, void *arg)
 
 int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 {
-	SEXP_t *path_ent, *file_ent, *inst_ent, *bh_ent, *patt_ent;
+	SEXP_t *path_ent, *file_ent, *inst_ent, *bh_ent, *patt_ent, *filepath_ent;
         SEXP_t *r0, *r1;
 	char *pattern;
 	int fcnt;
@@ -341,35 +344,42 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 		return(PROBE_EINVAL);
 	}
 
-        if ((path_ent = probe_obj_getent(probe_in, "path",     1)) == NULL)
-		return(PROBE_ENOELM);
-        if ((file_ent = probe_obj_getent(probe_in, "filename", 1)) == NULL) {
-                SEXP_free(path_ent);
-		return(PROBE_ENOELM);
-        }
-        if ((inst_ent = probe_obj_getent(probe_in, "instance", 1)) == NULL) {
-                SEXP_free(path_ent);
-                SEXP_free(file_ent);
-		return(PROBE_ENOELM);
-        }
-        if ((patt_ent = probe_obj_getent(probe_in, "pattern",  1)) == NULL) {
-                SEXP_free(path_ent);
-                SEXP_free(file_ent);
-                SEXP_free(inst_ent);
-		return(PROBE_ENOELM);
-        } else {
-                SEXP_t *ent_val;
+        path_ent = probe_obj_getent(probe_in, "path",     1);
+        file_ent = probe_obj_getent(probe_in, "filename", 1);
+        inst_ent = probe_obj_getent(probe_in, "instance", 1);
+        patt_ent = probe_obj_getent(probe_in, "pattern",  1);
+        filepath_ent = probe_obj_getent(probe_in, "filepath",  1);
+	bh_ent = probe_obj_getent(probe_in, "behaviors", 1);
+	
+        /* we want (path+filename or filepath) + instance + pattern*/
+        if ( ((path_ent == NULL || file_ent == NULL) && filepath_ent==NULL) || 
+             inst_ent==NULL || 
+             patt_ent==NULL) {
+                SEXP_free (path_ent);
+                SEXP_free (file_ent);
+                SEXP_free (inst_ent);
+                SEXP_free (patt_ent);
+                SEXP_free (filepath_ent);
+		SEXP_free (bh_ent);
 
-                ent_val = probe_ent_getval(patt_ent);
-                pattern = SEXP_string_cstr(ent_val);
-                assume_d(pattern != NULL, -1);
-                SEXP_free(patt_ent);
-                SEXP_free(ent_val);
+                return PROBE_ENOELM;
+        }
+
+	/* get pattern from SEXP */
+        SEXP_t *ent_val;
+        ent_val = probe_ent_getval(patt_ent);
+        pattern = SEXP_string_cstr(ent_val);
+        assume_d(pattern != NULL, -1);
+        SEXP_free(patt_ent);
+        SEXP_free(ent_val);
+
+        /* behaviours are not important if filepath is used */
+        if(filepath_ent != NULL && bh_ent != NULL) {
+                SEXP_free (bh_ent);
+                bh_ent = NULL;
         }
 
 	/* canonicalize behaviors */
-	bh_ent = probe_obj_getent(probe_in, "behaviors", 1);
-
 	if (bh_ent == NULL) {
 		SEXP_t *bh_new, *bh_attr;
 
@@ -398,7 +408,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 
 	fcnt = 0;
 
-	if ((ofts = oval_fts_open(path_ent, file_ent, NULL, bh_ent)) != NULL) {
+	if ((ofts = oval_fts_open(path_ent, file_ent, filepath_ent, bh_ent)) != NULL) {
 		for (; (ofts_ent = oval_fts_read(ofts)) != NULL; ++fcnt) {
 			process_file(ofts_ent->path, ofts_ent->file, &pfd);
 			oval_ftsent_free(ofts_ent);
@@ -414,6 +424,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
         SEXP_free(path_ent);
         SEXP_free(inst_ent);
         SEXP_free(bh_ent);
+        SEXP_free(filepath_ent);
         oscap_free(pattern);
 
 	return 0;

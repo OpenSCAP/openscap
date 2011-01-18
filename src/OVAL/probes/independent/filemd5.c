@@ -69,7 +69,7 @@ static int mem2hex (uint8_t *mem, size_t mlen, char *str, size_t slen)
 
 static int filehash_cb (const char *p, const char *f, void *ptr)
 {
-        SEXP_t *itm, *r0, *r1, *r2;
+        SEXP_t *itm, *r0, *r1, *r2, *r3;
         SEXP_t *cobj = (SEXP_t *) ptr;
 
         char   pbuf[PATH_MAX+1];
@@ -156,10 +156,13 @@ static int filehash_cb (const char *p, const char *f, void *ptr)
                                         r0 = SEXP_string_newf (p, plen),
                                         "filename", NULL,
                                         r1 = SEXP_string_newf (f, flen),
+					"filepath", NULL,
+                                        r2 =  (f != NULL ? SEXP_string_newf ("%s/%s", p, f) : NULL),
                                         "md5", NULL,
-                                        r2 = SEXP_string_newf (md5_str, sizeof md5_str - 1),
+                                        r3 = SEXP_string_newf (md5_str, sizeof md5_str - 1),
                                         NULL);
-                SEXP_vfree (r0, r1, r2, NULL);
+		SEXP_free(r2);
+                SEXP_vfree (r0, r1, r3, NULL);
         }
 
 	probe_cobj_add_item(cobj, itm);
@@ -205,7 +208,7 @@ void probe_fini (void *arg)
 
 int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex)
 {
-        SEXP_t *path, *filename, *behaviors;
+        SEXP_t *path, *filename, *behaviors, *filepath;
         SEXP_t *r0, *r1, *r2;
         int     filecnt;
 
@@ -225,13 +228,22 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex)
         path      = probe_obj_getent (probe_in, "path",      1);
         filename  = probe_obj_getent (probe_in, "filename",  1);
         behaviors = probe_obj_getent (probe_in, "behaviors", 1);
+        filepath = probe_obj_getent (probe_in, "filepath", 1);
 
-        if (path == NULL || filename == NULL) {
+        /* we want either path+filename or filepath */
+        if ( (path == NULL || filename == NULL) && filepath==NULL ) {
                 SEXP_free (behaviors);
                 SEXP_free (path);
                 SEXP_free (filename);
+                SEXP_free (filepath);
 
 		return (PROBE_ENOELM);
+        }
+
+        /* behaviours are not important if filepath is used */
+        if(filepath != NULL && behaviors != NULL) {
+                SEXP_free (behaviors);
+                behaviors = NULL;
         }
 
         if (behaviors == NULL) {
@@ -277,7 +289,7 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex)
 
 	filecnt = 0;
 
-	if ((ofts = oval_fts_open(path, filename, NULL, behaviors)) != NULL) {
+	if ((ofts = oval_fts_open(path, filename, filepath, behaviors)) != NULL) {
 		for (; (ofts_ent = oval_fts_read(ofts)) != NULL; ++filecnt) {
 			filehash_cb(ofts_ent->path, ofts_ent->file, probe_out);
 			oval_ftsent_free(ofts_ent);
@@ -300,6 +312,7 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex)
         SEXP_free (behaviors);
         SEXP_free (path);
         SEXP_free (filename);
+        SEXP_free (filepath);
 
         switch (pthread_mutex_unlock (&__filemd5_probe_mutex)) {
         case 0:

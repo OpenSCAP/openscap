@@ -28,6 +28,7 @@
 #include <errno.h>
 #include <assume.h>
 #include <pcre.h>
+#include <libgen.h>
 #include "fsdev.h"
 #include "_probe-api.h"
 #include "probe-entcmp.h"
@@ -145,6 +146,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 
 	char cstr_path[PATH_MAX+1];
 	char cstr_file[PATH_MAX+1];
+	char cstr_filepath[PATH_MAX+1];
 	char cstr_buff[32];
 
 	SEXP_t *r0;
@@ -168,66 +170,101 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		}							\
 	} while(0)
 
-	/* path & filename / filepath */
-	if (filepath == NULL) {
-		assume_d(path     != NULL, NULL);
-		assume_d(filename != NULL, NULL);
+#define ENT_GET_STRVAL(ent, dst, dstlen, zerolen_exp)			\
+	do {							\
+		SEXP_t *___r;					\
+								\
+		if ((___r = probe_ent_getval(ent)) == NULL) {	\
+			dW("entity has no value!\n");		\
+			return (NULL);				\
+		} else {					\
+			if (!SEXP_stringp(___r)) {		\
+				dE("invalid type\n");		\
+				SEXP_free(___r);		\
+				return (NULL);			\
+			}					\
+			if (SEXP_string_length(___r) == 0) {	\
+				SEXP_free(___r);		\
+				zerolen_exp;			\
+			} else {				\
+				SEXP_string_cstr_r(___r, dst, dstlen); \
+				SEXP_free(___r);		\
+			}					\
+		}						\
+	} while (0)
 
-		ENT_GET_AREF(path, r0, "operation", false);
+	/* filepath */
+	if (filepath != NULL) {
+		assume_d(filepath != NULL, NULL);
+		assume_d(path     == NULL, NULL);
+		assume_d(filename == NULL, NULL);
+		char *dirc, *basec, *bname, *dname;
+		SEXP_t *r1, *list;
 
-		if (r0 != NULL) {
+		/* split filepath into file and name */
+		ENT_GET_STRVAL(filepath,     cstr_filepath, sizeof cstr_filepath, return NULL);
+		dirc = strdup(cstr_filepath);
+		basec = strdup(cstr_filepath);
+		dname = dirname(dirc);
+		bname = basename(basec);
+	
+		/* create the mess */
+                list = probe_ent_creat ("path", NULL , r0 = SEXP_string_new(dname, strlen(dname)),
+                			"filename", NULL, r1 = SEXP_string_new(bname, strlen(bname)), 
+					NULL);
+		path = SEXP_list_nth(list, 1);
+		filename = SEXP_list_nth(list, 2);
+
+		/* partial clean */
+		SEXP_free(list);
+		SEXP_free(r0);
+		SEXP_free(r1);
+		free(dirc);
+		free(basec);
+	
+		/* we only support EQUALS operation yet */	
+		ENT_GET_AREF(filepath, r0, "operation", false);
+	        if (r0 != NULL) {
 			path_op = SEXP_number_getu(r0);
 			SEXP_free(r0);
-
-			switch (path_op) {
-			case OVAL_OPERATION_EQUALS:
-			case OVAL_OPERATION_PATTERN_MATCH:
-				/* XXX: add more operations */
-				break;
-			default:
-				dE("Invalid operation: %u\n", path_op);
-			}
-		} else
-			path_op = OVAL_OPERATION_EQUALS;
-
-		dI("path_op: %u\n", path_op);
-
-#define ENT_GET_STRVAL(ent, dst, dstlen, zerolen_exp)			\
-		do {							\
-			SEXP_t *___r;					\
-									\
-			if ((___r = probe_ent_getval(ent)) == NULL) {	\
-				dW("entity has no value!\n");		\
-				return (NULL);				\
-			} else {					\
-				if (!SEXP_stringp(___r)) {		\
-					dE("invalid type\n");		\
-					SEXP_free(___r);		\
-					return (NULL);			\
-				}					\
-				if (SEXP_string_length(___r) == 0) {	\
-					SEXP_free(___r);		\
-					zerolen_exp;			\
-				} else {				\
-					SEXP_string_cstr_r(___r, dst, dstlen); \
-					SEXP_free(___r);		\
-				}					\
-			}						\
-		} while (0)
-
-		ENT_GET_STRVAL(path,     cstr_path, sizeof cstr_path, return NULL);
-		ENT_GET_STRVAL(filename, cstr_file, sizeof cstr_file, nilfilename = true);
-
-		dI("\n"
-		   "    path: %s\n"
-		   "filename: %s\n", cstr_path, cstr_file);
-	} else {
-		assume_d(filepath != NULL, NULL);
-		dE("filepath entity is not currently supported.\n");
-		return (NULL);
+			if( path_op!=OVAL_OPERATION_EQUALS )
+				dW("only EQUALS operation supported with filepath");
+		}
 	}
 
+	/* path & filename */
+	assume_d(path     != NULL, NULL);
+	assume_d(filename != NULL, NULL);
+
+	ENT_GET_AREF(path, r0, "operation", false);
+	if (r0 != NULL) {
+		path_op = SEXP_number_getu(r0);
+		SEXP_free(r0);
+
+		switch (path_op) {
+		case OVAL_OPERATION_EQUALS:
+		case OVAL_OPERATION_PATTERN_MATCH:
+			/* XXX: add more operations */
+			break;
+		default:
+			dE("Invalid operation: %u\n", path_op);
+		}
+	} else
+		path_op = OVAL_OPERATION_EQUALS;
+
+	dI("path_op: %u\n", path_op);
+
+
+	ENT_GET_STRVAL(path,     cstr_path, sizeof cstr_path, return NULL);
+	ENT_GET_STRVAL(filename, cstr_file, sizeof cstr_file, nilfilename = true);
+
+	dI("\n"
+	   "    path: %s\n"
+	   "filename: %s\n", cstr_path, cstr_file);
+
+
 	assume_d(behaviors != NULL, NULL);
+
 
 	/* max_depth */
 	ENT_GET_AREF(behaviors, r0, "max_depth", true);
@@ -386,6 +423,12 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	ofts->filesystem = filesystem;
 
 	ofts->ofts_nilfilename = nilfilename;
+
+	/* clean up the mess */
+	if(filepath!=NULL) {
+		SEXP_free(path);
+		SEXP_free(filename);
+	}
 
 	return (ofts);
 }
