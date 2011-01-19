@@ -30,6 +30,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <sys/time.h>
+#include <time.h>
 #include "common/util.h"
 #include "common/debug_priv.h"
 #include "oval_agent_api_impl.h"
