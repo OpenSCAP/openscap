@@ -326,15 +326,22 @@ void oval_sysent_to_print(struct oval_sysent *sysent, char *indent, int idx)
 void oval_sysent_to_dom(struct oval_sysent *sysent, xmlDoc * doc, xmlNode * parent)
 {
 	xmlNsPtr *ns_parent = xmlGetNsList(doc, parent);
-	xmlNode *sysent_tag =
-	    xmlNewTextChild(parent, ns_parent[0], BAD_CAST oval_sysent_get_name(sysent),
-			BAD_CAST oval_sysent_get_value(sysent));
+	xmlNodePtr root_node = xmlDocGetRootElement(doc);
 
-	if(ns_parent)
-		xmlFree(ns_parent);
+	xmlNode *sysent_tag = NULL;
 
-	bool mask_value = oval_sysent_get_mask(sysent);
-	if (mask_value) {
+	char *tagname = oval_sysent_get_name(sysent);
+	char *content = oval_sysent_get_value(sysent);
+	bool mask = oval_sysent_get_mask(sysent);
+
+	/* omit the value in oval_results if mask=true */
+	if(mask && !xmlStrcmp(root_node->name, (const xmlChar *) "oval_results")) {
+		xmlNewTextChild(parent, ns_parent[0], BAD_CAST tagname, BAD_CAST "");
+	} else {
+		xmlNewTextChild(parent, ns_parent[0], BAD_CAST tagname, BAD_CAST content);
+	}
+
+	if (mask) {
 		xmlNewProp(sysent_tag, BAD_CAST "mask", BAD_CAST "true");
 	}
 
@@ -347,4 +354,8 @@ void oval_sysent_to_dom(struct oval_sysent *sysent, xmlDoc * doc, xmlNode * pare
 	if (status_index != SYSCHAR_STATUS_EXISTS) {
 		xmlNewProp(sysent_tag, BAD_CAST "status", BAD_CAST oval_syschar_status_get_text(status_index));
 	}
+
+	if(ns_parent)
+		xmlFree(ns_parent);
 }
+

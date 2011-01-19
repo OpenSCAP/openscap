@@ -586,10 +586,11 @@ xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model,
 {
 
 	xmlNodePtr root_node = NULL;
+	xmlNodePtr tmp_node = NULL;
 
-	if (parent) {
+	if (parent) { /* result file */
 		root_node = xmlNewTextChild(parent, NULL, BAD_CAST "oval_definitions", NULL);
-	} else {
+	} else {      /* definitions file, we are the root */
 		root_node = xmlNewNode(NULL, BAD_CAST "oval_definitions");
 		xmlDocSetRootElement(doc, root_node);
 	}
@@ -603,10 +604,10 @@ xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model,
 	xmlSetNs(root_node, ns_xsi);
 	xmlSetNs(root_node, ns_defntns);
 
-	/* Report generator */
-	if (!parent) {
+	/* Report generator if this a definitions file*/
+	tmp_node = xmlDocGetRootElement(doc);
+	if (tmp_node && !xmlStrcmp(tmp_node->name, (const xmlChar *) "oval_definitions") )
 		oval_generator_to_dom(definition_model->generator, doc, root_node);
-	}
 
 	/* Report definitions */
 	struct oval_definition_iterator *definitions = oval_definition_model_get_definitions(definition_model);

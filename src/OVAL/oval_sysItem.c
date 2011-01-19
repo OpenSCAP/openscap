@@ -388,29 +388,27 @@ void oval_sysitem_to_dom(struct oval_sysitem *sysitem, xmlDoc * doc, xmlNode * t
 			xmlNs *ns_family = xmlNewNs(tag_sysitem, BAD_CAST family_namespace, NULL);
 			xmlSetNs(tag_sysitem, ns_family);
 
-			{	//attributes
-				xmlNewProp(tag_sysitem, BAD_CAST "id", BAD_CAST oval_sysitem_get_id(sysitem));
-				oval_syschar_status_t status_index = oval_sysitem_get_status(sysitem);
-				const char *status = oval_syschar_status_get_text(status_index);
-				xmlNewProp(tag_sysitem, BAD_CAST "status", BAD_CAST status);
+			/* attributes */
+			xmlNewProp(tag_sysitem, BAD_CAST "id", BAD_CAST oval_sysitem_get_id(sysitem));
+			oval_syschar_status_t status_index = oval_sysitem_get_status(sysitem);
+			const char *status = oval_syschar_status_get_text(status_index);
+			xmlNewProp(tag_sysitem, BAD_CAST "status", BAD_CAST status);
+			
+			/* messages */
+			struct oval_message_iterator *messages = oval_sysitem_get_messages(sysitem);
+			while (oval_message_iterator_has_more(messages)) {
+				struct oval_message *message = oval_message_iterator_next(messages);
+				oval_message_to_dom(message, doc, tag_sysitem);
 			}
-			{	//messages
-				struct oval_message_iterator *messages = oval_sysitem_get_messages(sysitem);
-				while (oval_message_iterator_has_more(messages)) {
-					struct oval_message *message = oval_message_iterator_next(messages);
-					oval_message_to_dom(message, doc, tag_sysitem);
-				}
-				oval_message_iterator_free(messages);
-			}
+			oval_message_iterator_free(messages);
 
-			{	//items
-				struct oval_sysent_iterator *items = oval_sysitem_get_items(sysitem);
-				while (oval_sysent_iterator_has_more(items)) {
-					struct oval_sysent *item = oval_sysent_iterator_next(items);
-					oval_sysent_to_dom(item, doc, tag_sysitem);
-				}
-				oval_sysent_iterator_free(items);
+			/* sysents */
+			struct oval_sysent_iterator *items = oval_sysitem_get_items(sysitem);
+			while (oval_sysent_iterator_has_more(items)) {
+				struct oval_sysent *item = oval_sysent_iterator_next(items);
+				oval_sysent_to_dom(item, doc, tag_sysitem);
 			}
+			oval_sysent_iterator_free(items);
 		} else {
 			oscap_dprintf
 			    ("WARNING: Skipping XML generation of oval_sysitem with subtype OVAL_SUBTYPE_UNKNOWN"

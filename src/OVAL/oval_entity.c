@@ -406,35 +406,47 @@ void oval_entity_to_print(struct oval_entity *entity, char *indent, int idx)
 }
 
 xmlNode *oval_entity_to_dom(struct oval_entity *entity, xmlDoc * doc, xmlNode * parent) {
-	char *tagname = oval_entity_get_name(entity);
-	xmlNsPtr *ns_family = xmlGetNsList(doc, parent);
+	
+	xmlNsPtr *ns_parent = xmlGetNsList(doc, parent);
+	xmlNodePtr root_node = xmlDocGetRootElement(doc);
+
+	xmlNode *entity_node = NULL;
+	char *content = NULL;
 
 	struct oval_variable *variable = oval_entity_get_variable(entity);
 	oval_entity_varref_type_t vtype = oval_entity_get_varref_type(entity);
 	struct oval_value *value = oval_entity_get_value(entity);
 
-	char *content = NULL;
 	if (variable && vtype == OVAL_ENTITY_VARREF_ELEMENT) {
 		content = oval_variable_get_id(variable);
 	} else if (value) {
 		content = oval_value_get_text(value);
 	}
 
-	xmlNode *entity_node = xmlNewTextChild(parent, ns_family[0], BAD_CAST tagname, BAD_CAST content);
+	char *tagname = oval_entity_get_name(entity);
+	bool mask = oval_entity_get_mask(entity);
 
-	if(ns_family)
-		xmlFree(ns_family);
+	/* omit the value and operation used for testing in oval_results if mask=true */
+	if(mask && !xmlStrcmp(root_node->name, (const xmlChar *) "oval_results")){
+		entity_node = xmlNewTextChild(parent, ns_parent[0], BAD_CAST tagname, BAD_CAST "");
+	}
+	else {
+		entity_node = xmlNewTextChild(parent, ns_parent[0], BAD_CAST tagname, BAD_CAST content);
+		oval_operation_t operation = oval_entity_get_operation(entity);
+		if (operation != OVAL_OPERATION_EQUALS)
+			xmlNewProp(entity_node, BAD_CAST "operation", BAD_CAST oval_operation_get_text(operation));
+	}
 
 	oval_datatype_t datatype = oval_entity_get_datatype(entity);
 	if (datatype != OVAL_DATATYPE_STRING)
 		xmlNewProp(entity_node, BAD_CAST "datatype", BAD_CAST oval_datatype_get_text(datatype));
-	oval_operation_t operation = oval_entity_get_operation(entity);
-	if (operation != OVAL_OPERATION_EQUALS)
-		xmlNewProp(entity_node, BAD_CAST "operation", BAD_CAST oval_operation_get_text(operation));
-	bool mask = oval_entity_get_mask(entity);
 	if (mask)
 		xmlNewProp(entity_node, BAD_CAST "mask", BAD_CAST "true");
 	if (vtype == OVAL_ENTITY_VARREF_ATTRIBUTE)
 		xmlNewProp(entity_node, BAD_CAST "var_ref", BAD_CAST oval_variable_get_id(variable));
+
+	if(ns_parent)
+		xmlFree(ns_parent);
+
 	return entity_node;
 }
