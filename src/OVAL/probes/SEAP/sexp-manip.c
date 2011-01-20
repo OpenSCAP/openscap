@@ -1977,7 +1977,7 @@ int SEXP_datatype_set_nth (SEXP_t *list, uint32_t n, const char *name)
         if (v_dsc.type != SEXP_VALTYPE_LIST)
                 return (-1);
 
-        s_nth = SEXP_rawval_lblk_nth (list->s_valp, n);
+        s_nth = SEXP_rawval_lblk_nth ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr, n);
 
         if (s_nth == NULL)
                 return (-1);
