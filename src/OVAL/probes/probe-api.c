@@ -997,44 +997,73 @@ bool probe_ent_attrexists(const SEXP_t * ent, const char *name)
 	return probe_obj_attrexists(ent, name);
 }
 
+static char *__probe_o2p_datatype(oval_datatype_t type)
+{
+	switch (type) {
+	case OVAL_DATATYPE_BINARY:
+		return "binary";
+	case OVAL_DATATYPE_BOOLEAN:
+		return "bool";
+	case OVAL_DATATYPE_EVR_STRING:
+		return "evr_str";
+	case OVAL_DATATYPE_FILESET_REVISION:
+		return "fset_rev";
+	case OVAL_DATATYPE_IOS_VERSION:
+		return "ios_ver";
+	case OVAL_DATATYPE_VERSION:
+		return "version";
+	case OVAL_DATATYPE_INTEGER:
+	case OVAL_DATATYPE_STRING:
+	case OVAL_DATATYPE_FLOAT:
+	default:
+		return NULL;
+	}
+}
+
+int probe_itement_setdatatype(SEXP_t *item, const char *ent_name, oval_datatype_t type)
+{
+	SEXP_t *ent_ref;
+	SEXP_t *name_ref;
+	char   *strtype;
+	int n;
+
+	strtype = __probe_o2p_datatype(type);
+
+	/*
+	 * (foo_item (e1 v1) (e2 v2) ... (en vn))
+	 *            1   2   1   2       1   2
+	 *     1        2       3          n-1
+	 */
+	n = 2;
+
+	while ((ent_ref = SEXP_listref_nth(item, n)) != NULL) {
+		name_ref = SEXP_list_first(ent_ref);
+
+		if (SEXP_strcmp(name_ref, ent_name) == 0 && strtype != NULL)
+			SEXP_datatype_set_nth(ent_ref, 2, strtype);
+
+		SEXP_vfree(ent_ref, name_ref, NULL);
+		++n;
+	}
+
+	return (0);
+}
+
 int probe_ent_setdatatype(SEXP_t * ent, oval_datatype_t type)
 {
 	SEXP_t *val;
+	char   *strtype;
 
 	_A(ent != NULL);
 	_LOGCALL_;
 
+	strtype = __probe_o2p_datatype(type);
 	val = probe_ent_getval(ent);
 
 	if (val == NULL)
 		return (-1);
 
-	switch (type) {
-	case OVAL_DATATYPE_BINARY:
-		return SEXP_datatype_set(val, "binary");
-	case OVAL_DATATYPE_BOOLEAN:
-		return SEXP_datatype_set(val, "bool");
-	case OVAL_DATATYPE_EVR_STRING:
-		return SEXP_datatype_set(val, "evr_str");
-	case OVAL_DATATYPE_FILESET_REVISION:
-		return SEXP_datatype_set(val, "fset_rev");
-	case OVAL_DATATYPE_FLOAT:
-		/* TODO */
-		return (-1);
-	case OVAL_DATATYPE_IOS_VERSION:
-		return SEXP_datatype_set(val, "ios_ver");
-	case OVAL_DATATYPE_VERSION:
-		return SEXP_datatype_set(val, "version");
-	case OVAL_DATATYPE_INTEGER:
-		/* TODO */
-		return (-1);
-	case OVAL_DATATYPE_STRING:
-		return (SEXP_stringp(val) ? 0 : -1);
-	default:
-		return (-1);
-	}
-
-	return (0);
+	return SEXP_datatype_set(val, strtype);
 }
 
 oval_datatype_t probe_ent_getdatatype(const SEXP_t * ent)
