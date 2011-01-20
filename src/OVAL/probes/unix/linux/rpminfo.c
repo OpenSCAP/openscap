@@ -384,10 +384,7 @@ int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg)
 					r6 = SEXP_string_newf ("%s", reply_st[i].signature_keyid),
 					NULL);
 
-				probe_itement_setdatatype(item_sexp, "evr", OVAL_DATATYPE_EVR_STRING);
-
-				SEXP_fprintfa(stderr, item_sexp);
-
+				/* only for >= 5.8: probe_itement_setdatatype(item_sexp, "evr", OVAL_DATATYPE_EVR_STRING); */
                                 probe_cobj_add_item(probe_out, item_sexp);
 				SEXP_vfree(item_sexp, r0, r1, r2, r3, r4, r5, r6, NULL);
 
