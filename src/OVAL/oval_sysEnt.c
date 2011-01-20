@@ -336,9 +336,9 @@ void oval_sysent_to_dom(struct oval_sysent *sysent, xmlDoc * doc, xmlNode * pare
 
 	/* omit the value in oval_results if mask=true */
 	if(mask && !xmlStrcmp(root_node->name, (const xmlChar *) "oval_results")) {
-		xmlNewTextChild(parent, ns_parent[0], BAD_CAST tagname, BAD_CAST "");
+		sysent_tag = xmlNewTextChild(parent, ns_parent[0], BAD_CAST tagname, BAD_CAST "");
 	} else {
-		xmlNewTextChild(parent, ns_parent[0], BAD_CAST tagname, BAD_CAST content);
+		sysent_tag = xmlNewTextChild(parent, ns_parent[0], BAD_CAST tagname, BAD_CAST content);
 	}
 
 	if (mask) {
