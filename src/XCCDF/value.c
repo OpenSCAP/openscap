@@ -20,13 +20,18 @@
  *      Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <math.h>
+#include <string.h>
+
 #include "item.h"
 #include "elements.h"
 #include "helpers.h"
 #include "xccdf_impl.h"
-#include "../common/elements.h"
-#include <math.h>
-#include <string.h>
+#include "common/elements.h"
 
 static struct xccdf_value_instance *xccdf_value_instance_new(xccdf_value_type_t type);
 

@@ -27,14 +27,19 @@
  *      Maros Barabas <mbarabas@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
 #include <string.h>
 
-#include "cvss_priv.h"
 #include "public/cvss.h"
-#include "../common/list.h"
-#include "../common/_error.h"
+#include "cvss_priv.h"
+
+#include "common/list.h"
+#include "common/_error.h"
 
 /***************************************************************************/
 /* Variable definitions

@@ -20,9 +20,14 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stddef.h>
 #include <unistd.h>
 #include <stdint.h>
+
 #include "bfind.h"
 
 void *bfind (void *ptr, size_t nmemb, size_t size, void *key, int cmpfn (void *, void *))

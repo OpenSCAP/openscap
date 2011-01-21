@@ -20,13 +20,18 @@
  *       Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
-#include "reporter_priv.h"
-#include "list.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 #include <string.h>
-#include "public/error.h"
 #include <errno.h>
 #include <limits.h>
+
+#include "public/error.h"
+#include "reporter_priv.h"
+#include "list.h"
 
 union oscap_reporter_userdata {
 	int   num;

@@ -19,9 +19,13 @@
  * Authors:
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include <sys/types.h>
-#include "../public/sm_alloc.h"
+
+#include "public/sm_alloc.h"
 #include "xbase64.h"
 
 #if defined(WANT_XBASE64)

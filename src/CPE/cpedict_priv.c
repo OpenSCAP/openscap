@@ -27,22 +27,25 @@
  *      Maros Barabas <mbarabas@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <libxml/xmlreader.h>
 #include <stdlib.h>
-
-#include "cpedict_priv.h"
-#include "cpedict.h"
-#include "cpeuri.h"
-
 // for functions isspace
 #include <ctype.h>
 // for functins memset, strcpy
 #include <string.h>
 
-#include "../common/list.h"
-#include "../common/elements.h"
-#include "../common/text_priv.h"
-#include "../_error.h"
+#include "public/cpedict.h"
+#include "public/cpeuri.h"
+#include "cpedict_priv.h"
+
+#include "common/list.h"
+#include "common/elements.h"
+#include "common/text_priv.h"
+#include "common/_error.h"
 
 /***************************************************************************/
 /* Variable definitions

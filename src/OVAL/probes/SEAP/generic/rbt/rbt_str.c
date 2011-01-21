@@ -19,9 +19,15 @@
  * Authors:
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <string.h>
 #include <errno.h>
 #include <assume.h>
+
 #include "sm_alloc.h"
 #include "rbt_common.h"
 #include "rbt_str.h"

@@ -22,12 +22,18 @@
  *      Josh Adams <jadams@tresys.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <assert.h>
+#include <string.h>
+
 #include "item.h"
 #include "elements.h"
 #include "helpers.h"
 #include "xccdf_impl.h"
-#include <assert.h>
-#include <string.h>
+
 
 bool xccdf_content_parse(xmlTextReaderPtr reader, struct xccdf_item *parent)
 {

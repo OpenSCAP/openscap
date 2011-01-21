@@ -28,12 +28,10 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
-#include "config.h"
 #pragma once
 #ifndef OVAL_PROBE_IMPL_H
 #define OVAL_PROBE_IMPL_H
 
-#include <config.h>
 #ifdef ENABLE_PROBES
 
 #include <seap-types.h>

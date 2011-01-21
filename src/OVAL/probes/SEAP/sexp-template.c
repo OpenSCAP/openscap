@@ -19,7 +19,13 @@
  * Authors:
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdarg.h>
+
 #include "_sexp-types.h"
 #include "_sexp-manip.h"
 #include "_sexp-parser.h"

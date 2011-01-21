@@ -20,13 +20,18 @@
  *      Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
-#include "elements.h"
-#include "../common/elements.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <string.h>
 #include <strings.h>
 #include <time.h>
 #include <ctype.h>
 #include <math.h>
+
+#include "elements.h"
+#include "common/elements.h"
 
 struct xccdf_element_spec {
 	xccdf_element_t id;	///< element ID

@@ -28,6 +28,10 @@
  *      Riley C. Porter <Riley.Porter@g2-inc.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "cce_priv.h"
 
 void process_description(xmlTextReaderPtr reader, struct cce_entry *cce)

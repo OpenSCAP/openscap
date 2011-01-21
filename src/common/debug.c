@@ -21,6 +21,10 @@
  *       Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #ifndef NDEBUG
 # include <stdio.h>
 # include <stdarg.h>
@@ -30,6 +34,7 @@
 # include <sys/file.h>
 # include <unistd.h>
 # include <time.h>
+
 # include "public/debug.h"
 # include "debug_priv.h"
 

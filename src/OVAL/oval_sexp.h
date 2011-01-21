@@ -35,7 +35,6 @@
 #define OVAL_SEXP_H
 
 #include <seap.h>
-#include <config.h>
 #include "../common/util.h"
 #include "oval_definitions_impl.h"
 

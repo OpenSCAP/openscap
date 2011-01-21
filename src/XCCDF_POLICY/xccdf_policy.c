@@ -23,19 +23,23 @@
  *              Maros Barabas <mbarabas@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <math.h> /* For NAN <- TODO */
 #include <time.h> /* For timestamps in rule results and TestResult */
 
 #include "public/xccdf_policy.h"
-#include "../XCCDF/public/xccdf.h"
+#include "XCCDF/public/xccdf.h"
 
-#include "../common/list.h"
-#include "../_error.h"
-#include "../common/public/text.h"
-#include "../common/debug_priv.h"
-#include "../common/reporter_priv.h"
+#include "common/list.h"
+#include "common/_error.h"
+#include "common/public/text.h"
+#include "common/debug_priv.h"
+#include "common/reporter_priv.h"
 
 /**
  * Typedef of callback structure with system identificator, callback function and usr data (optional) 

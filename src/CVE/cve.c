@@ -31,11 +31,15 @@
  *      Brian Kolbay   <Brian.Kolbay@g2-inc.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "public/cve.h"
 #include "cve_priv.h"
 
-#include "../common/util.h"
-#include "../common/list.h"
+#include "common/util.h"
+#include "common/list.h"
 
 #define CVE_SUPPORTED "2.0"
 

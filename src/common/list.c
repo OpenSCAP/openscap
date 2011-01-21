@@ -20,12 +20,16 @@
  *      Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
-#include "list.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
+
+#include "list.h"
 
 struct oscap_list *oscap_list_new(void)
 {

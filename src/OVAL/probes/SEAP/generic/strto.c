@@ -20,9 +20,14 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
+
 #include "strto.h"
 
 int64_t strto_int64 (const char *str, size_t len, char **endptr, int base)

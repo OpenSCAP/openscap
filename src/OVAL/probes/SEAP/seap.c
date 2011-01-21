@@ -20,20 +20,24 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <pthread.h>
 #include <errno.h>
-#include <config.h>
+
+#include "public/seap.h"
 #include "public/sm_alloc.h"
 #include "generic/common.h"
 #include "_sexp-types.h"
 #include "_sexp-parser.h"
 #include "_seap-types.h"
 #include "_seap-scheme.h"
-#include "public/seap.h"
 #include "_seap-message.h"
 #include "_seap-command.h"
 #include "_seap-error.h"

@@ -20,10 +20,14 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <config.h>
+
 #include "common/assume.h"
 #include "_sexp-atomic.h"
 

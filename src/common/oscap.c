@@ -20,14 +20,11 @@
  *      Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <libxml/parser.h>
-#include "public/oscap.h"
-#include "_error.h"
-#include "util.h"
-#include "list.h"
-#include "elements.h"
-#include "reporter_priv.h"
-#include "config.h"
 #include <libxml/xmlschemas.h>
 #include <libxslt/xslt.h>
 #include <libxslt/xsltInternals.h>
@@ -35,11 +32,15 @@
 #include <libxslt/xsltutils.h>
 #include <libexslt/exslt.h>
 #include <string.h>
-
-#include <config.h>
-#if HAVE_UNISTD_H
 #include <unistd.h>
-#endif
+
+#include "public/oscap.h"
+#include "_error.h"
+#include "util.h"
+#include "list.h"
+#include "elements.h"
+#include "reporter_priv.h"
+
 
 void oscap_init(void)
 {

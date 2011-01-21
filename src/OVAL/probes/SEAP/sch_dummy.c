@@ -20,11 +20,15 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdint.h>
 #include <stddef.h>
 #include <unistd.h>
 #include <errno.h>
-#include <config.h>
+
 #include "_sexp-types.h"
 #include "_seap-types.h"
 #include "_seap-scheme.h"

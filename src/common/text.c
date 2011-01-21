@@ -28,13 +28,16 @@
  *      Author: david.niemoller
  */
 
-#include "util.h"
-#include "list.h"
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
+
 #include <string.h>
 #include <stdio.h>
 
 #include "text_priv.h"
+#include "util.h"
+#include "list.h"
 
 const char * const OSCAP_LANG_ENGLISH    = "en";
 const char * const OSCAP_LANG_ENGLISH_US = "en_US";

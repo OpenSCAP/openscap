@@ -24,13 +24,16 @@
  *      Maros Barabas <mbarabas@redhat.com>
  */
 
-#include "elements.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include <string.h>
 
+#include "public/oscap.h"
 #include "util.h"
 #include "list.h"
-#include "public/oscap.h"
+#include "elements.h"
 
 
 const struct oscap_string_map OSCAP_BOOL_MAP[] = {

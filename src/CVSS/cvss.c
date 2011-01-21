@@ -29,13 +29,15 @@
  *      Brandon Dixon  <Brandon.Dixon@g2-inc.com>
  */
 
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include <stdlib.h>
 #include <math.h>
 
-#include "cvss_priv.h"
 #include "public/cvss.h"
+#include "cvss_priv.h"
 
 #define CVSS_SUPPORTED "2.0"
 

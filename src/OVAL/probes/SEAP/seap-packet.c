@@ -20,9 +20,14 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+
 #include "generic/common.h"
 #include "public/sexp-manip.h"
 #include "_sexp-parser.h"

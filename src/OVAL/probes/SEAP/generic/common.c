@@ -20,11 +20,16 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <assert.h>
-#include "../public/sm_alloc.h"
+
+#include "public/sm_alloc.h"
 #include "common.h"
 
 #ifndef _A

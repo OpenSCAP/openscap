@@ -20,11 +20,16 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
 #include <pthread.h>
-#include "../public/sm_alloc.h"
+
+#include "public/sm_alloc.h"
 #include "generic/pqueue.h"
 
 #define PQUEUE_SHED_LIMIT 32

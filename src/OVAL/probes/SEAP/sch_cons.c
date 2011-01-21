@@ -20,6 +20,10 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -27,7 +31,7 @@
 #include <sys/uio.h>
 #include <unistd.h>
 #include <errno.h>
-#include <config.h>
+
 #include "generic/common.h"
 #include "public/sm_alloc.h"
 #include "_seap-types.h"

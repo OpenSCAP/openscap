@@ -20,13 +20,17 @@
  *      Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <math.h>
+#include <text.h>
 
 #include "item.h"
 #include "helpers.h"
 #include "xccdf_impl.h"
 #include "common/_error.h"
-#include <math.h>
-#include <text.h>
 
 
 // constants

@@ -23,6 +23,10 @@
 
 // topological sort
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "tsort.h"
 
 struct oscap_tsort_context {

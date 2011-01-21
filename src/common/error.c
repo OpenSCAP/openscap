@@ -21,8 +21,13 @@
  *       Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <pthread.h>
 #include <string.h>
+
 #include "public/alloc.h"
 #include "_error.h"
 #include "debug_priv.h"

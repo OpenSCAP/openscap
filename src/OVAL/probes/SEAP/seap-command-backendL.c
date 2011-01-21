@@ -20,6 +20,10 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "seap-command.h"
 #include "seap-command-backendL.h"
 

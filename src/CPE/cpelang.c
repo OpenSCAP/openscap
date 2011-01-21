@@ -28,14 +28,17 @@
  *      Maros Barabas <mbarabas@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <libxml/tree.h>
 #include <string.h>
 
-#include "cpelang_priv.h"
 #include "public/cpelang.h"
-
-#include "../common/util.h"
-#include "../common/list.h"
+#include "cpelang_priv.h"
+#include "common/util.h"
+#include "common/list.h"
 
 #define CPE_LANG_SUPPORTED "2.2"
 

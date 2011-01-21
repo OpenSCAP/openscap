@@ -25,6 +25,9 @@
  * Dublin Core references handling
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include "reference_priv.h"
 #include "list.h"

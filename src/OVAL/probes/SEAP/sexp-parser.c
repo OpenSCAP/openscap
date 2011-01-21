@@ -19,11 +19,17 @@
  * Authors:
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
-#include <config.h>
+
 #include "common/assume.h"
 #include "generic/common.h"
 #include "public/sm_alloc.h"

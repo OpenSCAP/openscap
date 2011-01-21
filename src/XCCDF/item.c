@@ -22,13 +22,18 @@
  * 	Josh Adams <jadams@tresys.com>
  */
 
-#include "item.h"
-#include "helpers.h"
-#include "xccdf_impl.h"
-#include "../common/util.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <string.h>
 #include <time.h>
 #include <math.h>
+
+#include "item.h"
+#include "helpers.h"
+#include "xccdf_impl.h"
+#include "common/util.h"
 
 const struct oscap_string_map XCCDF_OPERATOR_MAP[] = {
 	{XCCDF_OPERATOR_EQUALS, "equals"},

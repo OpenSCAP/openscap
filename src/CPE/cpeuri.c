@@ -30,13 +30,17 @@
 
 #define _BSD_SOURCE
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <string.h>
 #include <stdio.h>
 #include <pcre.h>
 #include <ctype.h>
 
 #include "cpeuri.h"
-#include "../common/util.h"
+#include "common/util.h"
 
 #define CPE_URI_SUPPORTED "2.2"
 

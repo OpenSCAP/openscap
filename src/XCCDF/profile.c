@@ -20,6 +20,10 @@
  *      Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "item.h"
 #include "helpers.h"
 #include "xccdf_impl.h"

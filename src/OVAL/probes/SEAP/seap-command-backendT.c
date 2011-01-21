@@ -20,8 +20,13 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stddef.h>
 #include <errno.h>
+
 #include "common/assume.h"
 #include "public/sm_alloc.h"
 #include "_seap-command.h"

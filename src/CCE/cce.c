@@ -28,9 +28,14 @@
  *      Riley C. Porter <Riley.Porter@g2-inc.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "public/cce.h"
 #include "cce_priv.h"
-#include "oscap.h"
+
+#include "common/public/oscap.h"
 
 #define CCE_SUPPORTED "5"
 

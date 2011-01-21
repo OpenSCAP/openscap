@@ -20,11 +20,15 @@
  *      Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <math.h>
 
 #include "item.h"
 #include "helpers.h"
-#include "../common/tsort.h"
-#include <math.h>
+#include "common/tsort.h"
 
 typedef void (*xccdf_textresolve_func)(void *child, void *parent);
 

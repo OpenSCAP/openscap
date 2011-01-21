@@ -20,7 +20,12 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <pthread.h>
+
 #include "public/sm_alloc.h"
 #include "generic/bitmap.h"
 #include "_sexp-parser.h"

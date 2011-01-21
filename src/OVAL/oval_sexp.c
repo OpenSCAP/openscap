@@ -31,6 +31,11 @@
  *      "Lukas Kuklinek" <lkuklinek@redhat.com>
  *      "Tomas Heinrich" <theinric@redhat.com>
  */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>

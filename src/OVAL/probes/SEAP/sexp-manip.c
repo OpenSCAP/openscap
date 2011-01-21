@@ -28,16 +28,21 @@
  *      Daniel Kopecek <dkopecek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <errno.h>
+
 #include "common/assume.h"
+#include "public/sm_alloc.h"
 #include "_sexp-types.h"
 #include "_sexp-value.h"
 #include "_sexp-manip.h"
 #include "_sexp-rawptr.h"
-#include "public/sm_alloc.h"
 
 static void SEXP_free_lmemb (SEXP_t *s_exp);
 

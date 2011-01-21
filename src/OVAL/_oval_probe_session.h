@@ -30,7 +30,6 @@
 #ifndef _OVAL_PROBE_SESSION
 #define _OVAL_PROBE_SESSION
 
-#include <config.h>
 #include "public/oval_probe_session.h"
 #include "_oval_probe_handler.h"
 #if defined(ENABLE_PROBES)

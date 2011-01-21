@@ -20,6 +20,10 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,8 +32,8 @@
 #include <sys/uio.h>
 #include <unistd.h>
 #include <errno.h>
-#include <config.h>
 #include <assert.h>
+
 #include "generic/common.h"
 #include "public/strbuf.h"
 #include "public/sm_alloc.h"

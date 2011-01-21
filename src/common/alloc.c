@@ -21,9 +21,14 @@
  *       Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdlib.h>
-#include "_error.h"
+
 #include "public/alloc.h"
+#include "_error.h"
 #include "assume.h"
 
 static void __oscap_err_check(void *m);

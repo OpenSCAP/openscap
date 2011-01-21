@@ -19,6 +19,11 @@
  * Authors:
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
@@ -28,8 +33,9 @@
 #include <limits.h>
 #include <sys/uio.h>
 #include <unistd.h>
-#include "strbuf.h"
+
 #include "common/debug_priv.h"
+#include "strbuf.h"
 
 strbuf_t *strbuf_new  (size_t max)
 {

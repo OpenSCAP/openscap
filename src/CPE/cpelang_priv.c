@@ -27,19 +27,23 @@
  *      Maros Barabas <mbarabas@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
 #include <libxml/tree.h>
 #include <string.h>
 
-#include "cpelang_priv.h"
 #include "public/cpelang.h"
+#include "cpelang_priv.h"
 
-#include "../common/util.h"
-#include "../common/list.h"
-#include "../common/text_priv.h"
-#include "../common/elements.h"
-#include "../_error.h"
+#include "common/util.h"
+#include "common/list.h"
+#include "common/text_priv.h"
+#include "common/elements.h"
+#include "common/_error.h"
 
 /***************************************************************************/
 /* Variable definitions

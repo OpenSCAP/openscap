@@ -28,11 +28,15 @@
  *      Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "public/cpedict.h"
 #include "cpedict_priv.h"
 
-#include "../common/list.h"
-#include "../common/util.h"
+#include "common/list.h"
+#include "common/util.h"
 
 #define CPE_DICT_SUPPORTED "2.2"
 

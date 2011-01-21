@@ -21,13 +21,18 @@
  *      Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
-#include "util.h"
-#include "_error.h"
-#include "oscap.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <string.h>
 #include <ctype.h>
 #include <limits.h>
 #include <stdarg.h>
+
+#include "util.h"
+#include "_error.h"
+#include "oscap.h"
 
 
 int oscap_string_to_enum(const struct oscap_string_map *map, const char *str)
