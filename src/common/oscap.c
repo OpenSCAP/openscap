@@ -233,7 +233,7 @@ bool oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *out
     char *args[argc+1]; memset(args, 0, sizeof(char*) * (argc + 1));
 
     if (xsltpath == NULL) {
-        oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "XSLT file to by used by the transformation was not found.");
+        oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "XSLT file to be used by the transformation was not found.");
         goto cleanup;
     }
 
