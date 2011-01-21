@@ -112,7 +112,7 @@ Write HTML report into file. You also have to specify --result-file for this fea
 .RE
 .TP
 \fB\-\-oval-results\fR
-Generate OVAL Result file for each OVAL session used for evaluation.
+Generate OVAL Result file for each OVAL session used for evaluation. File with name '\fIoriginal-oval-definitions-filename\fR.result.xml' will be generated for each referenced OVAL file.
 .RE
 .RE
 .TP
@@ -167,6 +167,9 @@ ID of the XCCDF TestResult from which the report will be generated.
 .TP
 \fB\-\-show \fIwhat\fR
 Specify what result types shall be displayed in the result report. The default is to show everything except for rules with results notselected and notapplicable. The \fIwhat\fR part is a comma-separated list of result types to display in addition to the default. If result type is prefixed by a dash '-', it will be excluded from the results. If \fIwhat\fR is prefixed by an equality sign '=', a following list specifies exactly what rule types to include in the report. Result types are: pass, fixed, notchecked, notapplicable, notselected, informational, unknown, error, fail.
+.TP
+\fB\-\-oval-template \fItemplate-string\fR
+To use the ability to include additional information from OVAL in xccdf result file, a template which will be used to obtain OVAL result file names has to be specified. The template can be either a filename or a string containing wildcard character (percent sign '%'). Wildcard will be replaced by the original OVAL definition file name as referenced from the XCCDF file. This way it is possible to obtain OVAL information even from XCCDF documents referencing several OVAL files. To use this option with results from an XCCDF evaluation, specify \fI%.result.xml\fR as a OVAL file name template.
 .RE
 .TP
 .B \fBfix\fR  [\fIoptions\fR] xccdf-file
