@@ -42,7 +42,7 @@ static int app_evaluate_xccdf(const struct oscap_action *action);
 static int app_xccdf_resolve(const struct oscap_action *action);
 static bool getopt_xccdf(int argc, char **argv, struct oscap_action *action);
 static bool getopt_generate(int argc, char **argv, struct oscap_action *action);
-static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show);
+static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show, const char *oval_template);
 static int app_xccdf_xslt(const struct oscap_action *action);
 
 static struct oscap_module* XCCDF_SUBMODULES[];
@@ -376,13 +376,6 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 	xccdf_model_iterator_free(model_it);
 
-	/* Export results */
-	if (action->f_results != NULL) {
-	        xccdf_benchmark_add_result(benchmark, xccdf_result_clone(ritem));
-       		xccdf_benchmark_export(benchmark, action->f_results);
-        	if (action->f_report != NULL)
-        		xccdf_gen_report(action->f_results, xccdf_result_get_id(ritem), action->f_report, "");
-        }
 	/* Export OVAL results */
 	if (action->oval_results == true) {
         	for (int i=0; sessions[i]; i++) {
@@ -412,6 +405,13 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			oval_result_directives_free(res_direct);
 			free(name);
 		}
+	}
+	/* Export results */
+	if (action->f_results != NULL) {
+		xccdf_benchmark_add_result(benchmark, xccdf_result_clone(ritem));
+		xccdf_benchmark_export(benchmark, action->f_results);
+		if (action->f_report != NULL)
+			xccdf_gen_report(action->f_results, xccdf_result_get_id(ritem), action->f_report, "", "%.result.xml");
 	}
 
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
@@ -476,10 +476,10 @@ int app_xccdf_resolve(const struct oscap_action *action)
 	return ret;
 }
 
-static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show)
+static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show, const char *oval_template)
 {
-    const char *params[] = { "result-id", id, "show", show, "verbosity", "", NULL };
-    return app_xslt(infile, "xccdf-results-report.xsl", outfile, params);
+    const char *params[] = { "result-id", id, "show", show, "verbosity", "", "oval-template", oval_template, NULL };
+    return app_xslt(infile, "xccdf-report.xsl", outfile, params);
 }
 
 int app_xccdf_xslt(const struct oscap_action *action)
@@ -491,6 +491,7 @@ int app_xccdf_xslt(const struct oscap_action *action)
         "profile",           action->profile,
         "template",          action->tmpl,
         "format",            action->format,
+        "oval-template",     action->oval_template,
         "verbosity",         action->verbosity >= 0 ? "1" : "",
         "hide-profile-info", action->hide_profile_info ? "yes" : NULL,
         NULL };
@@ -536,6 +537,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"show", 1, 0, 6},
 		{"template", 1, 0, 7},
 		{"format", 1, 0, 8},
+		{"oval-template", 1, 0, 9},
 		{"hide-profile-info", 0, &action->hide_profile_info, 1},
 		{0, 0, 0, 0}
 	};
@@ -545,14 +547,15 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		switch (c) {
 		case 'o': case 0: action->f_results = optarg; break;
 		case 3: case 1: action->profile = optarg; break;
-        case 'i': action->id = optarg; break;
+		case 'i': action->id = optarg; break;
 		case 2: action->file_version = optarg; break;
-     		case 4: action->f_report = optarg; break;
+		case 4: action->f_report = optarg; break;
 		case 'f': action->force = true; break;
 		case 5: action->oval_results = true; break;
 		case 6: action->show = optarg; break;
 		case 7: action->tmpl = optarg; break;
 		case 8: action->format = optarg; break;
+		case 9: action->oval_template = optarg; break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
 	}
