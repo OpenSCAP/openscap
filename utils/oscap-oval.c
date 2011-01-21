@@ -236,7 +236,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 	oval_agent_session_t *sess;
 
 	/* validate */
-	if (!oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS, NULL, 
+	if (!oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS, action->file_version,
 	    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 		if (oscap_err()) {
 			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
