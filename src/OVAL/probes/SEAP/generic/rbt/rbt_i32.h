@@ -38,7 +38,7 @@ rbt_t *rbt_i32_new (void);
 void rbt_i32_free (rbt_t *rbt);
 void rbt_i32_free_cb (rbt_t *rbt, void (*callback)(rbt_i32_node_t *));
 
-int rbt_i32_add(rbt_t *rbt, int32_t key, void *data);
+int rbt_i32_add(rbt_t *rbt, int32_t key, void *data, void **coll);
 void *rbt_i32_rep(rbt_t *rbt, int32_t key, void *data);
 int rbt_i32_del(rbt_t *rbt, int32_t key, void **n);
 int rbt_i32_get(rbt_t *rbt, int32_t key, void **data);

@@ -79,7 +79,7 @@ int SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate,
 
                 pthread_mutexattr_destroy (&mutex_attr);
 
-                if (rbt_i32_add(sd_table->tree, (int32_t)sd, (void *)sd_dsc) != 0) {
+                if (rbt_i32_add(sd_table->tree, (int32_t)sd, (void *)sd_dsc, NULL) != 0) {
                         SEAP_desc_free(sd_dsc);
                         return (-1);
                 }

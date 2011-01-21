@@ -62,7 +62,20 @@ void rbt_i32_free_cb (rbt_t *rbt, void (*callback)(rbt_i32_node_t *))
         rbt_free(rbt, (void(*)(void *))callback);
 }
 
-int rbt_i32_add(rbt_t *rbt, int32_t key, void *data)
+/*
+ * Add new entry to the tree. If `coll' is not NULL and there is
+ * already an entry with the same key (i.e. a collision), then
+ * place the old data pointer at `*coll' and update it to the
+ * new data pointer. Otherwise, if `coll' is NULL and there is a
+ * collision, then an error is returned and no modification of
+ * the tree is made.
+ *
+ * @param rbt pointer to the tree
+ * @param key key
+ * @param data data pointer
+ * @param coll where to store the data pointer from an colliding entry
+ */
+int rbt_i32_add(rbt_t *rbt, int32_t key, void *data, void **coll)
 {
         struct rbt_node fake;
         register struct rbt_node *h[4];
@@ -163,6 +176,15 @@ int rbt_i32_add(rbt_t *rbt, int32_t key, void *data)
                         rbt_hpush4(h, rbt_node_ptr(h[0])->_chld[RBT_NODE_SR]);
                         dvec = (dvec << 1) | RBT_NODE_SR;
                 } else {
+			int r;
+
+			if (coll != NULL) {
+				*coll = rbt_i32_node_data(h[0]);
+				rbt_i32_node_data(h[0]) = data;
+				r = 0;
+			} else
+				r = 1;
+
                         /*
                          * Update root node and color it black
                          */
@@ -170,7 +192,7 @@ int rbt_i32_add(rbt_t *rbt, int32_t key, void *data)
                         rbt_node_setcolor(rbt->root, RBT_NODE_CB);
 
                         rbt_wunlock(rbt);
-                        return (1);
+                        return (r);
                 }
         }
 

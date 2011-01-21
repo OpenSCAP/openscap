@@ -111,7 +111,7 @@ static SEXP_t *ID_cache_get(int32_t id)
 	s_id = SEXP_string_newf("%u", (uint32_t)(id));
 
 	if (g_ID_cache_max == 0 || rbt_i32_size(g_ID_cache) < g_ID_cache_max) {
-		if (rbt_i32_add(g_ID_cache, id, (void *)s_id) == 0)
+		if (rbt_i32_add(g_ID_cache, id, (void *)s_id, NULL) == 0)
 			return SEXP_ref(s_id); /* insert succeeded */
 
 		if (rbt_i32_get(g_ID_cache, id, (void *)&s_id2) == 0) {

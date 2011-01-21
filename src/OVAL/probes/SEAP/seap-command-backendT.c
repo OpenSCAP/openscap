@@ -41,7 +41,7 @@ static Ttable_t *Ttable_new (size_t capacity)
 
 static int Ttable_add (Ttable_t *t, SEAP_cmdrec_t *r)
 {
-        return rbt_i32_add(t, (int32_t) r->code, (void *)r);
+        return rbt_i32_add(t, (int32_t) r->code, (void *)r, NULL);
 }
 
 static SEAP_cmdrec_t *Ttable_get (Ttable_t *t, SEAP_cmdcode_t c)
