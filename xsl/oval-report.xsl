@@ -62,7 +62,6 @@ Authors:
 <xsl:template mode='brief' match='ovalres:test'>
   <xsl:param name='title'/>
   <xsl:variable name='items' select='ovalres:tested_item[@result="true"]'/>
-  <xsl:message>title: <xsl:value-of select='$title'/></xsl:message>
 
   <xsl:if test='$items'>
     <table role='oval-results'>
@@ -120,6 +119,7 @@ Authors:
     <entry role='num'><xsl:value-of select='ovalunixsc:user_id'/></entry>
     <entry role='num'><xsl:value-of select='ovalunixsc:group_id'/></entry>
     <entry role='num'><xsl:value-of select='ovalunixsc:size'/></entry>
+    <!-- permissions output -->
     <entry role='num'>
       <code>
       <xsl:apply-templates mode='permission' select='ovalunixsc:uread'/>

@@ -59,7 +59,15 @@ Authors:
 <xsl:param name='profile' select='/cdf:Benchmark/cdf:TestResult[@id=$result-id][1]/cdf:profile/@idref'/>
 
 <!-- OVAL results parametres -->
-<xsl:param name='oval-template' select='"../%.result.xml"'/>
+<xsl:param name='oval-template'/>
+
+<xsl:variable name='oval-tmpl'>
+  <xsl:choose>
+    <xsl:when test='not($oval-template)' />
+    <xsl:when test='substring($oval-template, 1, 1) = "/"'><xsl:value-of select='$oval-template'/></xsl:when>
+    <xsl:otherwise><xsl:value-of select='concat($pwd, "/", $oval-template)'/></xsl:otherwise>
+  </xsl:choose>
+</xsl:variable>
 
 <xsl:variable name='result' select='$root/cdf:TestResult[@id=$result-id][1]'/>
 
@@ -413,12 +421,12 @@ Authors:
 
   <xsl:variable name='filename'>
     <xsl:choose>
-      <xsl:when test='contains($oval-template, "%")'><xsl:value-of select='concat(substring-before($oval-template, "%"), @href, substring-after($oval-template, "%"))'/></xsl:when>
-      <xsl:otherwise><xsl:value-of select='$oval-template'/></xsl:otherwise>
+      <xsl:when test='contains($oval-tmpl, "%")'><xsl:value-of select='concat(substring-before($oval-tmpl, "%"), @href, substring-after($oval-tmpl, "%"))'/></xsl:when>
+      <xsl:otherwise><xsl:value-of select='$oval-tmpl'/></xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
 
-  <xsl:if test='$oval-template'>
+  <xsl:if test='$oval-tmpl'>
     <xsl:apply-templates select='document($filename)/ovalres:oval_results' mode='brief'>
       <xsl:with-param name='definition-id' select='@name'/>
     </xsl:apply-templates>
