@@ -52,7 +52,10 @@
  *     flag           oval-sc:EntityItemStringType    0 unbounded
  */
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
+
 #include <stdio.h>
 
 #include <probe-api.h>

@@ -19,8 +19,12 @@
  * Authors:
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
-#include "crapi.h"
+
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
+
+#include "crapi.h"
 
 #if defined(HAVE_NSS3)
 #include <nss.h>

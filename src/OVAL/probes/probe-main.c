@@ -27,15 +27,19 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
 #include <signal.h>
 #include <errno.h>
-#include <config.h>
 #include <alloc.h>
 #include <assume.h>
 #include <bfind.h>
+
 #include "_probe-api.h"
 #include "probe-entcmp.h"
 #include "encache.h"

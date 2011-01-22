@@ -44,15 +44,19 @@
  * flag
  */
 
-#include "config.h"
-#include "seap.h"
-#include "probe-api.h"
-#include "probe-entcmp.h"
-#include "alloc.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
+
+#include "seap.h"
+#include "probe-api.h"
+#include "probe-entcmp.h"
+#include "alloc.h"
 
 #ifndef HAVE_SHADOW_H
 int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg)

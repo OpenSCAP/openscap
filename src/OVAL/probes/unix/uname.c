@@ -41,15 +41,19 @@
  * processor_type
  */
 
-#include "config.h"
-#include "seap.h"
-#include "probe-api.h"
-#include "alloc.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #ifdef HAVE_STDIO_EXT_H
 # include <stdio_ext.h>
 #endif
 #include <string.h>
 #include <sys/utsname.h>
+
+#include "seap.h"
+#include "probe-api.h"
+#include "alloc.h"
 
 int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg)
 {

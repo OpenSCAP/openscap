@@ -44,11 +44,10 @@
  * user_id
  */
 
-#include "config.h"
-#include "seap.h"
-#include "probe-api.h"
-#include "probe-entcmp.h"
-#include "alloc.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -61,6 +60,11 @@
 #include <fcntl.h>
 #include <sched.h>
 #include <time.h>
+
+#include "seap.h"
+#include "probe-api.h"
+#include "probe-entcmp.h"
+#include "alloc.h"
 
 #if defined(__linux)
 /* Convenience structure for the results being reported */

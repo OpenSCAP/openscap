@@ -26,9 +26,14 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <sexp.h>
+
 #include "encache.h"
 #include "alloc.h"
 #include "common/bfind.h"

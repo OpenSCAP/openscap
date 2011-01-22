@@ -19,6 +19,11 @@
  * Authors:
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdint.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -26,7 +31,6 @@
 #include <assume.h>
 #include <errno.h>
 #include <unistd.h>
-#include <config.h>
 #include <alloc.h>
 #include "crapi.h"
 #include "md5.h"

@@ -27,7 +27,10 @@
  *      Tomas Heinrich <theinric@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
+
 #include <sexp-types.h>
 #include <sexp-manip.h>
 #include <assert.h>

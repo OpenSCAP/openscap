@@ -45,11 +45,10 @@
  * user_id
  */
 
-#include "config.h"
-#include "seap.h"
-#include "probe-api.h"
-#include "probe-entcmp.h"
-#include "alloc.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -60,6 +59,11 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <regex.h>
+
+#include "seap.h"
+#include "probe-api.h"
+#include "probe-entcmp.h"
+#include "alloc.h"
 
 /* This structure contains the information OVAL is asking or requesting */
 struct server_info {

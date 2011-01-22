@@ -50,9 +50,12 @@
  *    any [0..*]
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <seap.h>
 #include <probe-api.h>
-#include <config.h>
 
 #include <sys/utsname.h>
 #include <unistd.h>

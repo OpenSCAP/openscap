@@ -27,9 +27,14 @@
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <string.h>
 #include <libxml/xmlreader.h>
-#include<stddef.h>
+#include <stddef.h>
+
 #include "public/oval_agent_api.h"
 #include "oval_parser_impl.h"
 #include "oval_definitions_impl.h"

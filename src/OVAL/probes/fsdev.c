@@ -28,6 +28,10 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 #include <stddef.h>
 #include <string.h>

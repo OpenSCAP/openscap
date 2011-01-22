@@ -42,16 +42,20 @@
  * login_shell  
  */
 
-#include "config.h"
-#include "seap.h"
-#include "probe-api.h"
-#include "probe-entcmp.h"
-#include "alloc.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
 #include <pwd.h>
+
+#include "seap.h"
+#include "probe-api.h"
+#include "probe-entcmp.h"
+#include "alloc.h"
 
 /* Convenience structure for the results being reported */
 struct result_info {

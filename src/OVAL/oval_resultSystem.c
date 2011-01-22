@@ -28,9 +28,14 @@
  *      "Peter Vrabec" <pvrabec@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
 #include "oval_definitions.h"
 #include "oval_agent_api.h"
 #include "oval_results_impl.h"

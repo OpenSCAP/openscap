@@ -19,8 +19,14 @@
  * Authors:
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <errno.h>
 #include <string.h>
+
 #include "common/assume.h"
 #include "common/debug_priv.h"
 #include "oval_sexp.h"

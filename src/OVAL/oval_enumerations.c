@@ -27,7 +27,12 @@
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <string.h>
+
 #include "oval_definitions_impl.h"
 #include "oval_string_map_impl.h"
 #include "oval_system_characteristics_impl.h"

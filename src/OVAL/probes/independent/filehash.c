@@ -30,6 +30,10 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <seap.h>
 #include <probe-api.h>
 #include <stdlib.h>
@@ -41,6 +45,7 @@
 #include <pthread.h>
 #include <errno.h>
 #include <crapi/crapi.h>
+
 #include "oval_fts.h"
 
 #define FILE_SEPARATOR '/'

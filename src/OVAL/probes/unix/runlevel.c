@@ -44,6 +44,10 @@
  *                bool   kill)
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #define _BSD_SOURCE
 #include <stdio.h>
 #include <stdbool.h>

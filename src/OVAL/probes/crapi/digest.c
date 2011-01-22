@@ -19,12 +19,18 @@
  * Authors:
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <unistd.h>
 #include <assume.h>
 #include <errno.h>
+
 #include "crapi.h"
 #include "digest.h"
 #include "md5.h"

@@ -19,6 +19,11 @@
  * Authors:
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,7 +33,6 @@
 # include <pthread.h>
 #endif
 
-#include "config.h"
 #include "oval_probe.h"
 #include "oval_system_characteristics.h"
 #include "common/_error.h"

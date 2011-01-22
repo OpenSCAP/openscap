@@ -27,9 +27,14 @@
  * Authors:
  *      "Tomas Heinrich" <theinric@redhat.com>
  */
+
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
+
 #include <string.h>
 #include <stdlib.h>
+
 #include "common/debug_priv.h"
 #include "oval_definitions_impl.h"
 

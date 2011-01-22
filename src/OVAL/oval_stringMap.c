@@ -27,12 +27,17 @@
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+
 #include "oval_string_map_impl.h"
-#include "../common/util.h"
-#include "../common/public/debug.h"
+#include "common/util.h"
+#include "common/public/debug.h"
 
 #if defined(OVAL_STRINGMAP_OLD)
 struct _oval_string_map_entry_s;

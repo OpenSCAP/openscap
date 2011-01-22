@@ -28,11 +28,15 @@
  *      "Peter Vrabec" <pvabec@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
-#include "config.h"
+
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_string_map_impl.h"

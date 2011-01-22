@@ -28,11 +28,16 @@
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
 #include <common/util.h>
+
 #include "oval_results_impl.h"
 #include "oval_collection_impl.h"
 #include "common/util.h"

@@ -44,7 +44,10 @@
  *    [0..1] string family
  */
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
+
 #include <seap.h>
 #include <string.h>
 #include <probe-api.h>

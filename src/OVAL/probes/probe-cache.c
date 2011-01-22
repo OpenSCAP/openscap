@@ -26,10 +26,15 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <seap.h>
 #include <string.h>
 #include <assume.h>
 #include <alloc.h>
+
 #include "SEAP/generic/rbt/rbt.h"
 #include "probe-cache.h"
 

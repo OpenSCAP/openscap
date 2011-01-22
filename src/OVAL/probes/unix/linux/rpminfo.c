@@ -44,6 +44,10 @@
  *                string signature_keyid)
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -65,7 +69,6 @@
 #include "probe-entcmp.h"
 #include <alloc.h>
 #include <common/assume.h>
-#include <config.h>
 
 #ifdef HAVE_LIBRPM44
 #include <rpm/header.h>

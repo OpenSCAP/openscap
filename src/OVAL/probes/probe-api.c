@@ -29,9 +29,14 @@
  *      Tomas Heinrich <theinric@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdarg.h>
 #include <string.h>
 #include <errno.h>
+
 #include "debug_priv.h"
 #include "_probe-api.h"
 #include "assume.h"

@@ -27,7 +27,11 @@
  * Authors:
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
+
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
+
 #include "common/public/alloc.h"
 #include "common/bfind.h"
 #include "common/assume.h"

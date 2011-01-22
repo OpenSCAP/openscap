@@ -26,14 +26,20 @@
  * Authors:
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
  */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <string.h>
+#include <time.h>
+
 #include "oval_definitions_impl.h"
 #include "oval_agent_api_impl.h"
 #include "oval_parser_impl.h"
 #include "oval_string_map_impl.h"
 #include "oval_system_characteristics_impl.h"
 #include "oval_results_impl.h"
-#include <string.h>
-#include <time.h>
 #include "common/util.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
