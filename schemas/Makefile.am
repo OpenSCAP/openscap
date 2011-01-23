@@ -1,5 +1,41 @@
 
 nobase_pkgdata_DATA = \
+		oval/5.6/sharepoint-system-characteristics-schema.xsd \
+		oval/5.6/sharepoint-definitions-schema.xsd \
+		oval/5.6/independent-system-characteristics-schema.xsd \
+		oval/5.6/windows-definitions-schema.xsd \
+		oval/5.6/windows-system-characteristics-schema.xsd \
+		oval/5.6/aix-definitions-schema.xsd \
+		oval/5.6/linux-definitions-schema.xsd \
+		oval/5.6/apache-system-characteristics-schema.xsd \
+		oval/5.6/hpux-system-characteristics-schema.xsd \
+		oval/5.6/pixos-system-characteristics-schema.xsd \
+		oval/5.6/oval-definitions-schema.xsd \
+		oval/5.6/catos-system-characteristics-schema.xsd \
+		oval/5.6/oval-common-schema.xsd \
+		oval/5.6/unix-definitions-schema.xsd \
+		oval/5.6/ios-definitions-schema.xsd \
+		oval/5.6/esx-system-characteristics-schema.xsd \
+		oval/5.6/linux-system-characteristics-schema.xsd \
+		oval/5.6/independent-definitions-schema.xsd \
+		oval/5.6/freebsd-definitions-schema.xsd \
+		oval/5.6/solaris-definitions-schema.xsd \
+		oval/5.6/macos-system-characteristics-schema.xsd \
+		oval/5.6/hpux-definitions-schema.xsd \
+		oval/5.6/unix-system-characteristics-schema.xsd \
+		oval/5.6/ios-system-characteristics-schema.xsd \
+		oval/5.6/oval-results-schema.xsd \
+		oval/5.6/catos-definitions-schema.xsd \
+		oval/5.6/pixos-definitions-schema.xsd \
+		oval/5.6/aix-system-characteristics-schema.xsd \
+		oval/5.6/macos-definitions-schema.xsd \
+		oval/5.6/oval-system-characteristics-schema.xsd \
+		oval/5.6/solaris-system-characteristics-schema.xsd \
+		oval/5.6/freebsd-system-characteristics-schema.xsd \
+		oval/5.6/xmldsig-core-schema.xsd \
+		oval/5.6/oval-variables-schema.xsd \
+		oval/5.6/esx-definitions-schema.xsd \
+		oval/5.6/apache-definitions-schema.xsd \
 		oval/5.5/independent-system-characteristics-schema.xsd \
 		oval/5.5/windows-definitions-schema.xsd \
 		oval/5.5/windows-system-characteristics-schema.xsd \
@@ -46,6 +82,42 @@ nobase_pkgdata_DATA = \
 
 
 EXTRA_DIST = \
+		oval/5.6/sharepoint-system-characteristics-schema.xsd \
+		oval/5.6/sharepoint-definitions-schema.xsd \
+		oval/5.6/independent-system-characteristics-schema.xsd \
+		oval/5.6/windows-definitions-schema.xsd \
+		oval/5.6/windows-system-characteristics-schema.xsd \
+		oval/5.6/aix-definitions-schema.xsd \
+		oval/5.6/linux-definitions-schema.xsd \
+		oval/5.6/apache-system-characteristics-schema.xsd \
+		oval/5.6/hpux-system-characteristics-schema.xsd \
+		oval/5.6/pixos-system-characteristics-schema.xsd \
+		oval/5.6/oval-definitions-schema.xsd \
+		oval/5.6/catos-system-characteristics-schema.xsd \
+		oval/5.6/oval-common-schema.xsd \
+		oval/5.6/unix-definitions-schema.xsd \
+		oval/5.6/ios-definitions-schema.xsd \
+		oval/5.6/esx-system-characteristics-schema.xsd \
+		oval/5.6/linux-system-characteristics-schema.xsd \
+		oval/5.6/independent-definitions-schema.xsd \
+		oval/5.6/freebsd-definitions-schema.xsd \
+		oval/5.6/solaris-definitions-schema.xsd \
+		oval/5.6/macos-system-characteristics-schema.xsd \
+		oval/5.6/hpux-definitions-schema.xsd \
+		oval/5.6/unix-system-characteristics-schema.xsd \
+		oval/5.6/ios-system-characteristics-schema.xsd \
+		oval/5.6/oval-results-schema.xsd \
+		oval/5.6/catos-definitions-schema.xsd \
+		oval/5.6/pixos-definitions-schema.xsd \
+		oval/5.6/aix-system-characteristics-schema.xsd \
+		oval/5.6/macos-definitions-schema.xsd \
+		oval/5.6/oval-system-characteristics-schema.xsd \
+		oval/5.6/solaris-system-characteristics-schema.xsd \
+		oval/5.6/freebsd-system-characteristics-schema.xsd \
+		oval/5.6/xmldsig-core-schema.xsd \
+		oval/5.6/oval-variables-schema.xsd \
+		oval/5.6/esx-definitions-schema.xsd \
+		oval/5.6/apache-definitions-schema.xsd \
 		oval/5.5/independent-system-characteristics-schema.xsd \
 		oval/5.5/windows-definitions-schema.xsd \
 		oval/5.5/windows-system-characteristics-schema.xsd \
