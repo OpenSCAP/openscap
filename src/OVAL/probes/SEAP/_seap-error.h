@@ -30,14 +30,14 @@
 #include "../../../common/util.h"
 
 OSCAP_HIDDEN_START;
-
+/*
 struct SEAP_err {
         SEAP_msgid_t id;
         uint32_t     code;
         uint8_t      type;
         SEXP_t      *data;
 };
-
+*/
 OSCAP_HIDDEN_END;
 
 #endif /* _SEAP_ERROR_H */

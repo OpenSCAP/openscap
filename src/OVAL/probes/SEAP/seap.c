@@ -30,7 +30,7 @@
 #include <ctype.h>
 #include <pthread.h>
 #include <errno.h>
-
+#include "common/assume.h"
 #include "public/seap.h"
 #include "public/sm_alloc.h"
 #include "generic/common.h"
@@ -326,7 +326,33 @@ int __SEAP_recvmsg_process_cmd (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
 
 static int __SEAP_recvmsg_process_err (SEAP_CTX_t *ctx, int sd, SEAP_err_t *err)
 {
-        _LOGCALL_;
+	SEAP_desc_t *sd_desc;
+	SEAP_err_t  *cloned_err, *prev_err;
+
+	sd_desc = SEAP_desc_get(ctx->sd_table, sd);
+
+	if (sd_desc == NULL) {
+		errno = EBADF;
+		return (-1);
+	}
+
+	cloned_err = SEAP_error_clone(err);
+	prev_err   = NULL;
+
+	/* XXX: handle 64bit message ids */
+	if (rbt_i32_add(sd_desc->err_queue,
+			(uint32_t)(err->id), cloned_err, (void **)&prev_err) != 0)
+	{
+		SEAP_error_free(cloned_err);
+		errno = EINVAL;
+		return (-1);
+	}
+
+	if (prev_err != NULL) {
+		/* XXX: log this */
+		SEAP_error_free(prev_err);
+	}
+
         return (0);
 }
 
@@ -535,11 +561,41 @@ int SEAP_recverr (SEAP_CTX_t *ctx, int sd, SEAP_err_t **err)
         return (-1);
 }
 
+/**
+ * Receive the last error that happened on `sd' and was caused by a message
+ * with ID `id'.
+ * If an error is in the queue, it's saved at `*err' and zero is returned.
+ * The caller takes care of freeing the memory used by the returned SEAP_err_t
+ * structure. If there is not an error, 1 is returned. In case of an internal
+ * error, -1 is returned an errno is set.
+ */
 int SEAP_recverr_byid (SEAP_CTX_t *ctx, int sd, SEAP_err_t **err, SEAP_msgid_t id)
 {
-        _LOGCALL_;
-        errno = EOPNOTSUPP;
-        return (-1);
+	SEAP_desc_t *sd_desc;
+	void *data;
+
+	if (err == NULL) {
+		errno = EINVAL;
+		return (-1);
+	}
+
+	sd_desc = SEAP_desc_get(ctx->sd_table, sd);
+
+	if (sd_desc == NULL) {
+		errno = EBADF;
+		return (-1);
+	}
+
+	data = NULL;
+
+	if (rbt_i32_del(sd_desc->err_queue, (uint32_t)id, &data) != 0)
+		return (1);
+	else {
+		assume_d(data != NULL, -1);
+		*err = (SEAP_err_t *)data;
+	}
+
+        return (0);
 }
 
 SEXP_t *SEAP_read (SEAP_CTX_t *ctx, int sd)

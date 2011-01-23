@@ -20,31 +20,38 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
-#pragma once
-#ifndef SEAP_ERROR_H
-#define SEAP_ERROR_H
+#include "public/sexp.h"
+#include "public/sm_alloc.h"
+#include "_seap-error.h"
 
-#include <stdint.h>
+SEAP_err_t *SEAP_error_new(void)
+{
+	SEAP_err_t *e = sm_talloc(SEAP_err_t);
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+	e->id   = 0;
+	e->code = 0;
+	e->type = 0;
+	e->data = NULL;
 
-struct SEAP_err {
-        SEAP_msgid_t id;
-        uint32_t     code;
-        uint8_t      type;
-        SEXP_t      *data;
-};
-
-typedef struct SEAP_err SEAP_err_t;
-
-SEAP_err_t *SEAP_error_new(void);
-SEAP_err_t *SEAP_error_clone(SEAP_err_t *e);
-void SEAP_error_free(SEAP_err_t *e);
-
-#ifdef __cplusplus
+	return (e);
 }
-#endif
 
-#endif /* SEAP_ERROR_H */
+SEAP_err_t *SEAP_error_clone(SEAP_err_t *e)
+{
+	SEAP_err_t *n = SEAP_error_new();
+
+	n->id   = e->id;
+	n->code = e->code;
+	n->type = e->type;
+	n->data = e->data ? SEXP_ref(e->data) : NULL;
+
+	return (n);
+}
+
+void SEAP_error_free(SEAP_err_t *e)
+{
+	if (e->data == NULL)
+		SEXP_free(e->data);
+	sm_free(e);
+	return;
+}
