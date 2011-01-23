@@ -430,7 +430,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 
 		oscap_dlprintf(DBG_I, "Waiting for reply.\n");
 
- recv_retry:
+		/* recv_retry: */
 		s_imsg = NULL;
 
 		ret = SEAP_recvmsg(ctx, pd->sd, &s_imsg);
@@ -447,12 +447,85 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 				{
 					SEAP_err_t *err = NULL;
 
-					if (SEAP_recverr_byid(ctx, pd->sd, &err, SEAP_msg_id(s_omsg)) != 0)
-						goto recv_retry;
+					switch(SEAP_recverr_byid(ctx, pd->sd, &err,
+								 SEAP_msg_id(s_omsg)))
+					{
+					case  0:
+						break;
+					case  1: /* no error found */
+						dE("Internal error: An error was signaled on sd=%d but the error queue is empty.\n");
+						oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EPROBE,
+							     "SEAP_recverr_byid: internal error: empty error queue.");
+						SEAP_msg_free(s_omsg);
+						return (-1);
+					case -1: /* internal error */
+						dE("Internal error: SEAP_recverr_byid returned -1\n");
+						oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EPROBE,
+							     "SEAP_recverr_byid: internal error.");
+						SEAP_msg_free(s_omsg);
+						return (-1);
+					}
 
 					/*
 					 * decide what to do based on the error code/type
 					 */
+					switch (err->type) {
+					case SEAP_ETYPE_USER:
+					{
+						char errmsg[512] = "", *codemsg;
+
+						/*
+						 * Errors of type USER should all be from the probe "namespace" (i.e. only codes
+						 * defined at public/probe-api.h.
+						 */
+						switch (err->code) {
+						case PROBE_EINVAL: codemsg = "Invalid type, value or format";
+							break;
+						case PROBE_ENOELM: codemsg = "Missing element";
+							break;
+						case PROBE_ENOVAL: codemsg = "Missing value";
+							break;
+						case PROBE_ENOATTR: codemsg = "Missing attribute";
+							break;
+						case PROBE_EINIT: codemsg = "Initialization failed";
+							break;
+						case PROBE_ENOMEM: codemsg = "Insufficient memory";
+							break;
+						case PROBE_EOPNOTSUPP: codemsg = "Operation not supported";
+							break;
+						case PROBE_ERANGE: codemsg = "Value out of range";
+							break;
+						case PROBE_EDOM: codemsg = "Value out of domain";
+							break;
+						case PROBE_EFAULT: codemsg = "Memory fault or NULL value";
+							break;
+						case PROBE_EACCESS: codemsg = "Operation not permitted";
+							break;
+						case PROBE_ESETEVAL: codemsg = "Set evaluation failed";
+							break;
+						case PROBE_ENOENT: codemsg = "Missing entity";
+							break;
+						case PROBE_EFATAL: codemsg = "Unrecoverable error";
+							break;
+						case PROBE_EUNKNOWN:
+						default:
+							codemsg = "Unknown error";
+						}
+
+						snprintf(errmsg, sizeof errmsg, "probe at sd=%d reported an error: %s", pd->sd, codemsg);
+						dE("Received an error from probe at sd=%d: %u, \"%s\"\n", pd->sd, err->code, errmsg);
+						oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EPROBE, errmsg);
+						break;
+					}
+					case SEAP_ETYPE_INT:
+						oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EPROBE, "Internal error");
+						break;
+					}
+
+					SEAP_error_free(err);
+					SEAP_msg_free(s_omsg);
+
+					return (-1);
 				}
 				break;
 			}

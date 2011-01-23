@@ -425,7 +425,7 @@ void probe_free(SEXP_t * obj);
 #define PROBE_ERANGE     8	/**< Out of range */
 #define PROBE_EDOM       9	/**< Out of domain */
 #define PROBE_EFAULT    10	/**< Memory fault/NULL value */
-#define PROBE_EACCES    11	/**< Operation not perimitted */
+#define PROBE_EACCESS   11	/**< Operation not permitted */
 #define PROBE_ESETEVAL  12	/**< Set evaluation failed */
 #define PROBE_ENOENT    13      /**< Missing entity */
 #define PROBE_EFATAL   254	/**< Unrecoverable error */

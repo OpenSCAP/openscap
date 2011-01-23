@@ -326,7 +326,7 @@ int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg)
 
 	if (read_process(ent, probe_out)) {
 		SEXP_free(ent);
-		return PROBE_EACCES;
+		return PROBE_EACCESS;
 	}
 
 	SEXP_free(ent);

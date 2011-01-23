@@ -77,6 +77,7 @@ typedef uint16_t oscap_errcode_t;
  * @{
  */
 #define OVAL_EOVALINT        1
+#define OVAL_EPROBE          253
 #define OVAL_EPROBEINVAL     254
 #define OVAL_EPROBECONTEXT   255
 #define OVAL_EPROBEINIT      256
