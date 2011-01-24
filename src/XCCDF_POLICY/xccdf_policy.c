@@ -169,39 +169,39 @@ typedef struct xccdf_flat_score {
  * Get callback from callback structure when system is selected 
  * Parameter policy handle callback structure and sysname the name of system specified in XCCDF file
  */
-static callback * xccdf_policy_get_callback(struct xccdf_policy * policy, const char * sysname) {
+/*static callback * xccdf_policy_get_callback(struct xccdf_policy * policy, const char * sysname) {*/
 
-        struct oscap_list * cbs = policy->model->callbacks;
+/*struct oscap_list * cbs = policy->model->callbacks;*/
 
-        struct oscap_iterator * callback_it = oscap_iterator_new(cbs);
-        while (oscap_iterator_has_more(callback_it)) {
-            callback * cb = oscap_iterator_next(callback_it);
+/*struct oscap_iterator * callback_it = oscap_iterator_new(cbs);*/
+/*while (oscap_iterator_has_more(callback_it)) {*/
+/*callback * cb = oscap_iterator_next(callback_it);*/
 
             /* If system string of callback is NULL and sysname 
              * is NULL we can't call strcmp, because it will raise 
              * SIGSEG so we want to avoid such behavior
              */
-            if ((cb->system == NULL) && (sysname == NULL)) {
-                oscap_iterator_free(callback_it);
-                return cb;
-            } else if ((cb->system == NULL) || (sysname == NULL)) continue;
+/*if ((cb->system == NULL) && (sysname == NULL)) {*/
+/*oscap_iterator_free(callback_it);*/
+/*return cb;*/
+/*} else if ((cb->system == NULL) || (sysname == NULL)) continue;*/
 
             /* If both structures have system strings, compare 
              * them to equality
              */
-            else if (!strcmp(cb->system, sysname)) {
-                oscap_iterator_free(callback_it);
-                return cb;
-            }
+/*else if (!strcmp(cb->system, sysname)) {*/
+/*oscap_iterator_free(callback_it);*/
+/*return cb;*/
+/*}*/
 
-        }
-        oscap_iterator_free(callback_it);
+/*}*/
+/*oscap_iterator_free(callback_it);*/
         
         /* There are no callbacks
          */
-        return NULL;
+/*return NULL;*/
         
-}
+/*}*/
 
 /**
  * Filter function returning true if the item is selected, false otherwise
@@ -241,34 +241,34 @@ static bool xccdf_policy_filter_select(void *item, void *selectid)
  * false otherwise.
  * This function is only called from iterator constructor
  */
-static bool xccdf_policy_filter_callback(void *cb, void *sysname)
-{
+/*static bool xccdf_policy_filter_callback(void *cb, void *sysname)*/
+/*{*/
         /* If system string of callback is NULL and sysname 
          * is NULL we can't call strcmp, because it will raise 
          * SIGSEG so we want to avoid such behavior
          */
-        if ((((callback *)cb)->system == NULL) && ( (const char *) sysname == NULL))
-            return true;
-        else if ((((callback *)cb)->system == NULL) || ((const char *) sysname == NULL))
-            return false;
+/*if ((((callback *)cb)->system == NULL) && ( (const char *) sysname == NULL))*/
+/*return true;*/
+/*else if ((((callback *)cb)->system == NULL) || ((const char *) sysname == NULL))*/
+/*return false;*/
 
         /* If both structures have system strings, compare 
          * them to equality
          */
-        else if (!strcmp(((callback *)cb)->system, (const char *) sysname)) {
-            return true;
-        } else return false;
-}
+/*else if (!strcmp(((callback *)cb)->system, (const char *) sysname)) {*/
+/*return true;*/
+/*} else return false;*/
+/*}*/
 
 /**
  * Get callbacks that match sysname. Call this function to get iterator over list of callbacks
  * that have the same system name
  */
-static struct oscap_iterator * xccdf_policy_get_callbacks_by_sysname(struct xccdf_policy * policy, const char * sysname) {
+/*static struct oscap_iterator * xccdf_policy_get_callbacks_by_sysname(struct xccdf_policy * policy, const char * sysname) {
 
     return oscap_iterator_new_filter( policy->model->callbacks, (oscap_filter_func) xccdf_policy_filter_callback,
             (void *) sysname);
-}
+}*/
 
 /**
  * Return true if given policy has the select, false otherwise.
