@@ -1,5 +1,9 @@
 
-nobase_pkgdata_DATA = \
+oval55dir = $(pkgdatadir)/schemas/oval/5.5/
+oval56dir = $(pkgdatadir)/schemas/oval/5.6/
+xccdf114dir = $(pkgdatadir)/schemas/xccdf/1.1.4/
+
+oval55_DATA = \
 		oval/5.6/sharepoint-system-characteristics-schema.xsd \
 		oval/5.6/sharepoint-definitions-schema.xsd \
 		oval/5.6/independent-system-characteristics-schema.xsd \
@@ -35,7 +39,9 @@ nobase_pkgdata_DATA = \
 		oval/5.6/xmldsig-core-schema.xsd \
 		oval/5.6/oval-variables-schema.xsd \
 		oval/5.6/esx-definitions-schema.xsd \
-		oval/5.6/apache-definitions-schema.xsd \
+		oval/5.6/apache-definitions-schema.xsd
+
+oval56_DATA = \
 		oval/5.5/independent-system-characteristics-schema.xsd \
 		oval/5.5/windows-definitions-schema.xsd \
 		oval/5.5/windows-system-characteristics-schema.xsd \
@@ -69,7 +75,9 @@ nobase_pkgdata_DATA = \
 		oval/5.5/xmldsig-core-schema.xsd \
 		oval/5.5/oval-variables-schema.xsd \
 		oval/5.5/esx-definitions-schema.xsd \
-		oval/5.5/apache-definitions-schema.xsd \
+		oval/5.5/apache-definitions-schema.xsd
+
+xccdf114_DATA = \
 		xccdf/1.1.4/xccdfp-1.1.xsd \
 		xccdf/1.1.4/cpe-1.0.xsd \
 		xccdf/1.1.4/cpe-language_2.0.xsd \
