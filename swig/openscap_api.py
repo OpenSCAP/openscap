@@ -555,6 +555,7 @@ class OSCAP_Object(object):
         files = policy_model.get_files()
         def_models = []
         sessions = []
+        names={}
         for file in files.strings:
             if file in paths:
                 f_OVAL = paths[file]
@@ -572,10 +573,11 @@ class OSCAP_Object(object):
                     else: desc = "Unknown error, please report this bug (http://bugzilla.redhat.com/)"
                     raise ImportError("Cannot create agent session for \"%s\": %s" % (f_OVAL, desc))
                 sessions.append(sess)
+                names[file] = [sess, def_model]
                 policy_model.register_engine_oval(sess)
             else: print "WARNING: Skipping %s file which is referenced from XCCDF content" % (f_OVAL,)
         files.free()
-        return {"def_models":def_models, "sessions":sessions, "policy_model":policy_model, "xccdf_path":f_XCCDF}
+        return {"def_models":def_models, "sessions":sessions, "policy_model":policy_model, "xccdf_path":f_XCCDF, "names":names}
 
     def policy_export(self, result=None, sdir=None, title=None, filename=None, prefix=None):
         """Export all files for given policy.
@@ -601,7 +603,8 @@ class OSCAP_Object(object):
 
         OSCAP.xccdf_benchmark_export(self.model.benchmark.instance, filename)
 
-        for i, sess in enumerate(sdir["sessions"]):
+        for file in sdir["names"].keys():
+            sess = sdir["names"][file][0]
             rmodel = oval.agent_get_results_model(sess)
             rd = oval.result_directives(rmodel)
             rd.set_reported(OSCAP.OVAL_RESULT_TRUE |
@@ -617,7 +620,7 @@ class OSCAP_Object(object):
                             OSCAP.OVAL_RESULT_NOT_APPLICABLE |
                             OSCAP.OVAL_RESULT_ERROR,
                             OSCAP.OVAL_DIRECTIVE_CONTENT_FULL )
-            pfile = prefix+`i`+".xml"
+            pfile = file+".result.xml"
             OSCAP.oval_results_model_export(rmodel.instance, rd.instance, pfile)
             files.append(pfile)
             rd.free()
