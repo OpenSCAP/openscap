@@ -1254,6 +1254,11 @@ struct xccdf_profile_note *xccdf_profile_note_iterator_next(struct xccdf_profile
  */
 bool xccdf_profile_note_iterator_has_more(struct xccdf_profile_note_iterator *it);
 /**
+ * Free the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_profile_note_iterator
+ */
+void xccdf_profile_note_iterator_free(struct xccdf_profile_note_iterator *it);
+/**
  * Reset the iterator structure (it makes no changes to the list structure)
  * @memberof xccdf_profile_note_iterator
  */
