@@ -50,8 +50,24 @@ Authors:
 </xsl:template>
 
 <xsl:template mode='brief' match='ovalres:definition'>
-  <!-- take toplevel tests -->
-  <xsl:for-each select='ovalres:criteria//ovalres:criterion'>
+  <!--
+    Take just critera satisfying all of the following conditions:
+       1) do not nest more than one level deep
+       2) are not negated
+       3) Its children are logically combined using AND or OR operator
+       4) evaluated to "false"
+    From the criteria select criterions that:
+       1) are not negated
+       2) evaluated to "false"
+  -->
+  <xsl:for-each select='ovalres:criteria[
+                            (not(@negate) or @negate="false" or @negate="0") and
+                            (not(@operator) or @operator="AND" or @operator="OR") and
+                            (@result="false")
+                        ]/ovalres:criterion[
+                            (not(@negate) or @negate="false" or @negate="0") and
+                            (@result="false")
+                        ]'>
     <xsl:apply-templates select='key("oval-test", @test_ref)' mode='brief'>
       <xsl:with-param name='title' select='key("oval-testdef", @test_ref)/@comment'/>
     </xsl:apply-templates>
@@ -64,6 +80,7 @@ Authors:
   <xsl:variable name='items' select='ovalres:tested_item[@result="true"]'/>
 
   <xsl:if test='$items'>
+
     <table role='oval-results'>
       <title>
 	    <xsl:choose>
@@ -86,14 +103,19 @@ Authors:
         </xsl:for-each>
       </tbody>
     </table>
+
   </xsl:if>
 </xsl:template>
+
+<!-- unmatched node visualisation (i.e. not displayed) -->
 
 <xsl:template mode='item-head' match='node()' priority='-5'/>
 <xsl:template mode='item-body' match='node()' priority='-5'/>
 
+<!-- generic item visualisation -->
+
 <xsl:template mode='item-head' match='*'>
-  <row><xsl:for-each select='*'><entry><xsl:value-of select='local-name()'/></entry></xsl:for-each></row>
+  <row><xsl:for-each select='*'><entry><xsl:value-of select='translate(local-name(), "_", " ")'/></entry></xsl:for-each></row>
 </xsl:template>
 
 <xsl:template mode='item-body' match='*'>
@@ -106,6 +128,8 @@ Authors:
     </xsl:for-each>
   </row>
 </xsl:template>
+
+<!-- UNIX file item visualisation -->
 
 <xsl:template mode='item-head' match='ovalunixsc:file_item'>
   <row><entry>path</entry><entry>type</entry><entry>UID</entry><entry>GID</entry><entry>size</entry><entry>permissions</entry></row>
@@ -152,6 +176,8 @@ Authors:
       <xsl:otherwise>-</xsl:otherwise>
     </xsl:choose>
 </xsl:template>
+
+<!-- textfilecontent visualisation -->
 
 <xsl:template mode='item-head' match='ovalindsc:textfilecontent_item'>
   <row><entry>path</entry><entry>content</entry></row>
