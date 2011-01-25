@@ -307,6 +307,12 @@ char *SEXP_string_subcstr (const SEXP_t *s_exp, size_t beg, size_t len);
  */
 int SEXP_string_cmp (const SEXP_t *str_a, const SEXP_t *str_b);
 
+/**
+ * Try to cast the supplied sexp string to a boolean.
+ * @param s_ext the string to be cast
+ */
+bool SEXP_string_getb (const SEXP_t *s_exp);
+
 /*
  * list
  */

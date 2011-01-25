@@ -1034,6 +1034,34 @@ int SEXP_string_cmp (const SEXP_t *str_a, const SEXP_t *str_b)
         return (c);
 }
 
+bool SEXP_string_getb (const SEXP_t *s_exp)
+{
+        SEXP_val_t v_dsc;
+        size_t     len;
+
+        _LOGCALL_;
+
+        if (s_exp == NULL) {
+                errno = EFAULT;
+                return (false);
+        }
+
+        SEXP_VALIDATE(s_exp);
+
+        SEXP_val_dsc (&v_dsc, s_exp->s_valp);
+
+        if (v_dsc.type != SEXP_VALTYPE_STRING) {
+                errno = EINVAL;
+                return (false);
+        }
+
+        len = v_dsc.hdr->size / sizeof (char);
+	if (!strncmp("1", v_dsc.mem, len) || !strncmp("true", v_dsc.mem, len))
+		return (true);
+
+        return (false);
+}
+
 /*
  * Lists
  */
