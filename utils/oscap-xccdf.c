@@ -411,7 +411,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		xccdf_benchmark_add_result(benchmark, xccdf_result_clone(ritem));
 		xccdf_benchmark_export(benchmark, action->f_results);
 		if (action->f_report != NULL)
-			xccdf_gen_report(action->f_results, xccdf_result_get_id(ritem), action->f_report, "", "%.result.xml");
+			xccdf_gen_report(action->f_results, xccdf_result_get_id(ritem), action->f_report, "", (action->oval_results ? "%.result.xml" : ""));
 	}
 
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
