@@ -35,7 +35,7 @@
  * textfilecontent54 probe:
  *
  *  textfilecontent54_object
- *    textfilecontentbehaviors behaviors
+ *    textfilecontent54behaviors behaviors
  *    string path
  *    string filename
  *    string pattern
@@ -59,11 +59,13 @@
 #endif
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
+#include <unistd.h>
 #if defined USE_REGEX_PCRE
 #include <pcre.h>
 #elif defined USE_REGEX_POSIX
@@ -80,29 +82,31 @@
 #define FILE_SEPARATOR '/'
 
 #if defined USE_REGEX_PCRE
-static int get_substrings(char *str, pcre *re, int want_substrs, char ***substrings) {
+static int get_substrings(char *str, int *ofs, pcre *re, int want_substrs, char ***substrings) {
 	int i, ret, rc;
 	int ovector[60], ovector_len = sizeof (ovector) / sizeof (ovector[0]);
+	char **substrs;
 
 	// todo: max match count check
 
 	for (i = 0; i < ovector_len; ++i)
 		ovector[i] = -1;
 
-	rc = pcre_exec(re, NULL, str, strlen(str), 0, 0,
-		       ovector, ovector_len);
+	rc = pcre_exec(re, NULL, str, strlen(str), *ofs, 0, ovector, ovector_len);
 
 	if (rc < -1) {
 		return -1;
 	} else if (rc == -1) {
 		/* no match */
 		return 0;
-	} else if(!want_substrs) {
+	}
+
+	*ofs = (*ofs == ovector[1]) ? ovector[1] + 1 : ovector[1];
+
+	if (!want_substrs) {
 		/* just report successful match */
 		return 1;
 	}
-
-	char **substrs;
 
 	ret = 0;
 	if (rc == 0) {
@@ -133,21 +137,24 @@ static int get_substrings(char *str, pcre *re, int want_substrs, char ***substri
 	return ret;
 }
 #elif defined USE_REGEX_POSIX
-static int get_substrings(char *str, regex_t *re, int want_substrs, char ***substrings) {
+static int get_substrings(char *str, int *ofs, regex_t *re, int want_substrs, char ***substrings) {
 	int i, ret, rc;
 	regmatch_t pmatch[40];
 	int pmatch_len = sizeof (pmatch) / sizeof (pmatch[0]);
+	char **substrs;
 
-	rc = regexec(re, str, pmatch_len, pmatch, 0);
+	rc = regexec(re, str + *ofs, pmatch_len, pmatch, 0);
 	if (rc == REG_NOMATCH) {
 		/* no match */
 		return 0;
-	} else if (!want_substrs) {
+	}
+
+	*ofs += (0 == pmatch[0].rm_eo) ? 1 : pmatch[0].rm_eo;
+
+	if (!want_substrs) {
 		/* just report successful match */
 		return 1;
 	}
-
-	char **substrs;
 
 	ret = 0;
 	substrs = oscap_alloc(pmatch_len * sizeof (char *));
@@ -165,10 +172,6 @@ static int get_substrings(char *str, regex_t *re, int want_substrs, char ***subs
 		++ret;
 	}
 
-	/*
-	  if (ret < pmatch_len)
-	  substrs = realloc(substrs, ret * sizeof (char *));
-	*/
 	*substrings = substrs;
 
 	return ret;
@@ -210,6 +213,7 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
 
 struct pfdata {
 	char *pattern;
+	int re_opts;
 	SEXP_t *filename_ent;
 	SEXP_t *instance_ent;
 	SEXP_t *cobj;
@@ -218,11 +222,9 @@ struct pfdata {
 static int process_file(const char *path, const char *file, void *arg)
 {
 	struct pfdata *pfd = (struct pfdata *) arg;
-	int ret = 0, path_len, file_len;
-	char *whole_path = NULL;
-	FILE *fp = NULL;
-	int  cur_inst = 0;
-	char line[4096];
+	int ret = 0, path_len, file_len, cur_inst = 0, fd = -1, substr_cnt,
+		buf_size = 0, buf_used = 0, ofs = 0, buf_inc = 4096;
+	char *whole_path = NULL, *buf = NULL;
 	SEXP_t *next_inst = NULL;
 
 // todo: move to probe_main()?
@@ -231,7 +233,7 @@ static int process_file(const char *path, const char *file, void *arg)
 	pcre *re = NULL;
 	const char *error;
 
-	re = pcre_compile(pfd->pattern, PCRE_UTF8, &error, &erroffset, NULL);
+	re = pcre_compile(pfd->pattern, pfd->re_opts, &error, &erroffset, NULL);
 	if (re == NULL) {
 		char s[1024];
 		SEXP_t *msg;
@@ -245,7 +247,7 @@ static int process_file(const char *path, const char *file, void *arg)
 	regex_t _re, *re = &_re;
 
 	int err;
-	if ( (err=regcomp(re, pfd->pattern, REG_EXTENDED | REG_NEWLINE)) != 0) {
+	if ( (err=regcomp(re, pfd->pattern, pfd->re_opts)) != 0) {
 		char s[1024];
 		SEXP_t *msg;
 		snprintf(s, sizeof (s), "regcomp() '%s' returned %d", pfd->pattern, err);
@@ -271,21 +273,46 @@ static int process_file(const char *path, const char *file, void *arg)
 
 	memcpy(whole_path + path_len, file, file_len + 1);
 
-	fp = fopen(whole_path, "rb");
-	if (fp == NULL) {
+	fd = open(whole_path, O_RDONLY);
+	if (fd == -1) {
 		char s[1024];
 		SEXP_t *msg;
-		snprintf(s, sizeof (s), "fopen() '%s' %s", whole_path, strerror(errno));
+
+		snprintf(s, sizeof (s), "open(): '%s' %s", whole_path, strerror(errno));
 		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, s);
 		probe_cobj_add_msg(pfd->cobj, msg);
 		SEXP_free(msg);
-		ret = -2;
+
+		ret = -1;
 		goto cleanup;
 	}
 
-	while (fgets(line, sizeof(line), fp) != NULL) {
+	do {
+		buf_size += buf_inc;
+		buf = oscap_realloc(buf, buf_size);
+		ret = read(fd, buf + buf_used, buf_inc);
+		if (ret == -1) {
+			char s[1024];
+			SEXP_t *msg;
+
+			snprintf(s, sizeof (s), "read(): %s", strerror(errno));
+			msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, s);
+			probe_cobj_add_msg(pfd->cobj, msg);
+			SEXP_free(msg);
+
+			ret = -2;
+			goto cleanup;
+		}
+		buf_used += ret;
+	} while (ret == buf_inc);
+
+	if (buf_used == buf_size)
+		buf = realloc(buf, ++buf_size);
+	buf[buf_used++] = '\0';
+
+	do {
 		char **substrs;
-		int substr_cnt, want_instance;
+		int want_instance;
 
 		next_inst = SEXP_number_newi_32(cur_inst + 1);
 
@@ -294,33 +321,34 @@ static int process_file(const char *path, const char *file, void *arg)
 		else
 			want_instance = 0;
 
-                SEXP_free(next_inst);
-		substr_cnt = get_substrings(line, re, want_instance, &substrs);
+		SEXP_free(next_inst);
+		substr_cnt = get_substrings(buf, &ofs, re, want_instance, &substrs);
 
 		if (substr_cnt > 0) {
 			++cur_inst;
 
 			if (want_instance) {
 				int k;
-                                SEXP_t *item;
+				SEXP_t *item;
 
-                                item = create_item(path, file, pfd->pattern,
-                                                   cur_inst, substrs, substr_cnt);
+				item = create_item(path, file, pfd->pattern,
+						   cur_inst, substrs, substr_cnt);
 				probe_cobj_add_item(pfd->cobj, item);
-                                SEXP_free(item);
+				SEXP_free(item);
 
 				for (k = 0; k < substr_cnt; ++k)
-					free(substrs[k]);
-				free(substrs);
+					oscap_free(substrs[k]);
+				oscap_free(substrs);
 			}
 		}
-	}
+	} while (substr_cnt > 0);
 
  cleanup:
-	if (fp != NULL)
-		fclose(fp);
+	if (fd != -1)
+		close(fd);
+	oscap_free(buf);
 	if (whole_path != NULL)
-		free(whole_path);
+		oscap_free(whole_path);
 #if defined USE_REGEX_PCRE
 	if (re != NULL)
 		pcre_free(re);
@@ -333,9 +361,10 @@ static int process_file(const char *path, const char *file, void *arg)
 int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 {
 	SEXP_t *path_ent, *file_ent, *inst_ent, *bh_ent, *patt_ent, *filepath_ent;
-        SEXP_t *r0, *r1;
+        SEXP_t *r0;
 	char *pattern;
 	int fcnt;
+	bool val;
 	struct pfdata pfd;
 
 	OVAL_FTS    *ofts;
@@ -385,14 +414,18 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 	/* canonicalize behaviors */
 	if (bh_ent == NULL) {
 		SEXP_t *bh_new, *bh_attr;
+		SEXP_t *r1, *r2, *r3, *r4;
 
                 bh_attr = probe_attr_creat("max_depth",         r0 = SEXP_string_newf ("1"),
                                            "recurse_direction", r1 = SEXP_string_newf ("none"),
+					   "ignore_case",       r2 = SEXP_string_newf ("0"),
+					   "multiline",         r3 = SEXP_string_newf ("1"),
+					   "singleline",        r4 = SEXP_string_newf ("0"),
                                            NULL);
 		bh_new  = probe_ent_creat("behaviors", bh_attr, NULL /* val */, NULL /* end */);
 		bh_ent  = SEXP_list_first(bh_new);
 
-                SEXP_vfree(bh_new, bh_attr, r0, r1, NULL);
+                SEXP_vfree(bh_new, bh_attr, r0, r1, r2, r3, r4, NULL);
 	} else {
 		if (!probe_ent_attrexists (bh_ent, "max_depth")) {
 			probe_ent_attr_add (bh_ent,"max_depth", r0 = SEXP_string_newf ("1"));
@@ -402,12 +435,57 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 			probe_ent_attr_add (bh_ent,"recurse_direction", r0 = SEXP_string_newf ("none"));
                         SEXP_free (r0);
                 }
+		if (!probe_ent_attrexists (bh_ent, "ignore_case")) {
+			probe_ent_attr_add (bh_ent, "ignore_case", r0 = SEXP_string_newf ("0"));
+			SEXP_free (r0);
+		}
+		if (!probe_ent_attrexists (bh_ent, "multiline")) {
+			probe_ent_attr_add (bh_ent, "multiline", r0 = SEXP_string_newf ("1"));
+			SEXP_free (r0);
+		}
+		if (!probe_ent_attrexists (bh_ent, "singleline")) {
+			probe_ent_attr_add (bh_ent, "singleline", r0 = SEXP_string_newf ("0"));
+			SEXP_free (r0);
+		}
 	}
 
 	pfd.pattern      = pattern;
 	pfd.filename_ent = file_ent;
 	pfd.instance_ent = inst_ent;
 	pfd.cobj         = probe_out;
+#if defined USE_REGEX_PCRE
+	pfd.re_opts = PCRE_UTF8;
+	r0 = probe_ent_getattrval(bh_ent, "ignore_case");
+	if (r0) {
+		val = SEXP_string_getb(r0);
+		SEXP_free(r0);
+		if (val)
+			pfd.re_opts |= PCRE_CASELESS;
+	}
+	r0 = probe_ent_getattrval(bh_ent, "multiline");
+	if (r0) {
+		val = SEXP_string_getb(r0);
+		SEXP_free(r0);
+		if (val)
+			pfd.re_opts |= PCRE_MULTILINE;
+	}
+	r0 = probe_ent_getattrval(bh_ent, "singleline");
+	if (r0) {
+		val = SEXP_string_getb(r0);
+		SEXP_free(r0);
+		if (val)
+			pfd.re_opts |= PCRE_DOTALL;
+	}
+#elif defined USE_REGEX_POSIX
+	pfd.re_opts = REG_EXTENDED | REG_NEWLINE;
+	r0 = probe_ent_getattrval(bh_ent, "ignore_case");
+	if (r0) {
+		val = SEXP_string_getb(r0);
+		SEXP_free(r0);
+		if (val)
+			pfd.re_opts |= REG_ICASE;
+	}
+#endif
 
 	fcnt = 0;
 
@@ -432,4 +510,3 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 
 	return 0;
 }
-
