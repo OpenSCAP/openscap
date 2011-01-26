@@ -54,7 +54,6 @@ typedef struct {
         void          *scheme_data; /* Protocol/Scheme related data */
 
         SEXP_t *msg_queue;
-        //SEXP_t *err_queue;
 	rbt_t  *err_queue;
         SEXP_t *cmd_queue;
 

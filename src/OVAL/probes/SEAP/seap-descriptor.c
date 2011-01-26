@@ -149,7 +149,7 @@ SEAP_desc_t *SEAP_desc_get (SEAP_desctable_t *sd_table, int sd)
 {
         SEAP_desc_t *dsc = NULL;
 
-        if (sd < 0) {
+        if (sd < 0 || sd_table->tree == NULL) {
                 errno = EBADF;
                 return (NULL);
         }
