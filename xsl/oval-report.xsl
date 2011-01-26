@@ -35,7 +35,7 @@ Authors:
     xmlns:ovalsys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"
     xmlns:ovalunixsc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix"
 	xmlns:ovalindsc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent"
-    exclude-result-prefixes="xsl cdf db s exsl"
+    exclude-result-prefixes="xsl cdf db s exsl ovalres ovalsys ovalunixsc ovalindsc"
     >
 
 <xsl:key name='oval-definition' match='ovalres:definition'    use='@definition_id' />
