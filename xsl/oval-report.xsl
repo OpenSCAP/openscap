@@ -50,38 +50,45 @@ Authors:
 </xsl:template>
 
 <xsl:template mode='brief' match='ovalres:definition'>
+  <xsl:param name='neg' select='@class="patch" or @class="vulnerability"'/>
+
   <!--
     Take just critera satisfying all of the following conditions:
        1) do not nest more than one level deep
-       2) are not negated
-       3) Its children are logically combined using AND or OR operator
-       4) evaluated to "false"
+       2) Its children are logically combined using AND or OR operator
+       3) evaluated to "false"
     From the criteria select criterions that:
-       1) are not negated
-       2) evaluated to "false"
+       1) evaluated to "false"
   -->
-  <xsl:for-each select='ovalres:criteria[
-                            (not(@negate) or @negate="false" or @negate="0") and
-                            (not(@operator) or @operator="AND" or @operator="OR") and
-                            (@result="false")
-                        ]/ovalres:criterion[
-                            (not(@negate) or @negate="false" or @negate="0") and
-                            (@result="false")
-                        ]'>
+  <xsl:for-each select='ovalres:criteria[(not(@operator) or @operator="AND" or @operator="OR") and (@result="false")]/ovalres:criterion[@result="false"]'>
+    <!-- detect number of negations in criteria tree -->
+    <xsl:variable name='neg-test' select='count((ancestor-or-self::ovalres:criterion|ancestor-or-self::ovalres:criteria)[@negate="TRUE" or @negate="true" or @negate="1"])'/>
+
     <xsl:apply-templates select='key("oval-test", @test_ref)' mode='brief'>
+      <!-- suggested test title (will be replaced by test ID if empty) -->
       <xsl:with-param name='title' select='key("oval-testdef", @test_ref)/@comment'/>
+      <!-- negate results iif overall number of negations is odd -->
+      <xsl:with-param name='neg' select='(($neg-test + number($neg)) mod 2) = 1'/>
     </xsl:apply-templates>
   </xsl:for-each>
+
 </xsl:template>
 
 <!-- OVAL items dump -->
 <xsl:template mode='brief' match='ovalres:test'>
   <xsl:param name='title'/>
+  <xsl:param name='neg' select='false()'/>
 
   <!-- existence status of items to be displayed -->
-  <xsl:variable name='disp.status'>:<xsl:apply-templates select='@check_existence' mode='display-mapping'/>:</xsl:variable>
+  <xsl:variable name='disp.status'>:<xsl:apply-templates select='@check_existence' mode='display-mapping'>
+    <xsl:with-param name='neg' select='$neg' />
+  </xsl:apply-templates>:</xsl:variable>
+
   <!-- result status of items to be displayed -->
-  <xsl:variable name='disp.result'>:<xsl:apply-templates select='@check' mode='display-mapping'/>:</xsl:variable>
+  <xsl:variable name='disp.result'>:<xsl:apply-templates select='@check' mode='display-mapping'>
+    <xsl:with-param name='neg' select='$neg' />
+  </xsl:apply-templates>:</xsl:variable>
+
   <!-- items to be displayed -->
   <xsl:variable name='items' select='ovalres:tested_item[
                                          contains($disp.result, concat(":", @result, ":")) or
