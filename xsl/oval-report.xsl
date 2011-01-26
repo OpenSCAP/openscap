@@ -77,8 +77,18 @@ Authors:
 <!-- OVAL items dump -->
 <xsl:template mode='brief' match='ovalres:test'>
   <xsl:param name='title'/>
-  <xsl:variable name='items' select='ovalres:tested_item[@result="true"]'/>
 
+  <!-- existence status of items to be displayed -->
+  <xsl:variable name='disp.status'>:<xsl:apply-templates select='@check_existence' mode='display-mapping'/>:</xsl:variable>
+  <!-- result status of items to be displayed -->
+  <xsl:variable name='disp.result'>:<xsl:apply-templates select='@check' mode='display-mapping'/>:</xsl:variable>
+  <!-- items to be displayed -->
+  <xsl:variable name='items' select='ovalres:tested_item[
+                                         contains($disp.result, concat(":", @result, ":")) or
+                                         contains($disp.status, concat(":", key("oval-items", @item_id)/@status, ":"))
+                                     ]'/>
+  
+  <!-- if there are items to display, go ahead -->
   <xsl:if test='$items'>
 
     <table role='oval-results'>
@@ -105,6 +115,52 @@ Authors:
     </table>
 
   </xsl:if>
+</xsl:template>
+
+<!--
+  Define a mapping from @check or @check_existence attribute values
+  to type of items to be displayed, i.e. to their existence or complience status.
+  This is used to filter out items that do not cause the failure of a test.
+  It also performs possible negation.
+-->
+<xsl:template mode='display-mapping' match='@*'>
+  <!-- negation param -->
+  <xsl:param name='neg' select='false()'/>
+
+  <!-- simplified check representation -->
+  <xsl:variable name='c1' select='substring-before(translate(concat(., "_"), " ALNYTNOE", "_alnytnoe"), "_")'/>
+
+  <!-- negation -->
+  <xsl:variable name='c'>
+    <xsl:choose>
+      <xsl:when test='not($neg)' ><xsl:value-of select='$c1'/></xsl:when> <!-- not negated -->
+      <xsl:when test='$c1="all"' >none</xsl:when>
+      <xsl:when test='$c1="none"'>at</xsl:when>   <!-- at = at least one -->
+      <xsl:when test='$c1="any"' >any</xsl:when>
+      <xsl:when test='$c1="at"'  >none</xsl:when>
+      <xsl:when test='$c1="only"'>only</xsl:when> <!-- only = only one exists -->
+      <xsl:otherwise><xsl:message>WARNING: unknown value of @<xsl:value-of select='name()'/></xsl:message></xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+
+  <!-- which item types to display (by existence or complience status) -->
+  <xsl:variable name='disp'>
+    <!-- dispaly error items every time -->
+    <xsl:text>error</xsl:text>
+    <xsl:if test='not($c="any")'>
+      <xsl:text>:not collected:not evaluated:not applicable</xsl:text>
+      <xsl:choose>
+        <xsl:when test='$c="only"'>:true:false::exists:does not exist</xsl:when>
+        <xsl:when test='$c="at" or $c="all"'>:false:does not exist</xsl:when>
+        <xsl:when test='$c="none"'>:true::exists</xsl:when>
+        <xsl:otherwise><xsl:message>WARNING: unknown value of @<xsl:value-of select='name()'/></xsl:message></xsl:otherwise>
+      </xsl:choose>
+    </xsl:if>
+  </xsl:variable>
+
+  <!-- write the result out -->
+  <xsl:value-of select='$disp'/>
+
 </xsl:template>
 
 <!-- unmatched node visualisation (i.e. not displayed) -->
