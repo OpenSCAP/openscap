@@ -49,28 +49,39 @@ Authors:
   <xsl:apply-templates select='key("oval-definition", $definition-id)' mode='brief'/>
 </xsl:template>
 
-<xsl:template mode='brief' match='ovalres:definition'>
-  <xsl:param name='neg' select='@class="patch" or @class="vulnerability"'/>
+<xsl:template mode='brief' match='ovalres:definition|ovalres:criteria|ovalres:criterion|ovalres:extend_definition'>
+  <!-- expression "higher" in syntax tree is negated -->
+  <xsl:param name='neg' select='false()'/>
+  <!-- this expression is negated -->
+  <xsl:variable name='neg1' select='@negate="TRUE" or @negate="true" or @negate="1"'/>
+  <!-- negation inference form the above -->
+  <xsl:variable name='cur-neg' select='($neg and not($neg1)) or (not($neg) and $neg1)'/>
 
-  <!--
-    Take just critera satisfying all of the following conditions:
-       1) do not nest more than one level deep
-       2) Its children are logically combined using AND or OR operator
-       3) evaluated to "false"
-    From the criteria select criterions that:
-       1) evaluated to "false"
-  -->
-  <xsl:for-each select='ovalres:criteria[(not(@operator) or @operator="AND" or @operator="OR") and (@result="false")]/ovalres:criterion[@result="false"]'>
-    <!-- detect number of negations in criteria tree -->
-    <xsl:variable name='neg-test' select='count((ancestor-or-self::ovalres:criterion|ancestor-or-self::ovalres:criteria)[@negate="TRUE" or @negate="true" or @negate="1"])'/>
+  <!-- which result types to display -->
+  <xsl:variable name='disp'>
+    <xsl:text>:unknown:error:not evaluated:not applicable:</xsl:text>
+    <xsl:if test='not($neg)'>false:</xsl:if>
+    <xsl:if test='$neg'     >true:</xsl:if>
+    <xsl:if test='@operator="XOR" or @operator="ONE"'>false:true:</xsl:if>
+  </xsl:variable>
 
+  <!-- is this relevant? -->
+  <xsl:if test='contains($disp, concat(":", @result, ":"))'>
+
+    <!-- if this atom references a test, display it -->
     <xsl:apply-templates select='key("oval-test", @test_ref)' mode='brief'>
       <!-- suggested test title (will be replaced by test ID if empty) -->
       <xsl:with-param name='title' select='key("oval-testdef", @test_ref)/@comment'/>
       <!-- negate results iif overall number of negations is odd -->
-      <xsl:with-param name='neg' select='(($neg-test + number($neg)) mod 2) = 1'/>
+      <xsl:with-param name='neg' select='$cur-neg'/>
     </xsl:apply-templates>
-  </xsl:for-each>
+
+    <!-- descend deeper into the logic formula -->
+    <xsl:apply-templates mode='brief'>
+      <xsl:with-param name='neg' select='$cur-neg'/>
+    </xsl:apply-templates>
+
+  </xsl:if>
 
 </xsl:template>
 
