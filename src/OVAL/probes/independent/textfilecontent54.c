@@ -32,26 +32,34 @@
 
 
 /*
- * textfilecontent54 probe:
+ * textfilecontent54 probe
  *
- *  textfilecontent54_object
- *    textfilecontent54behaviors behaviors
- *    string path
- *    string filename
- *    string pattern
- *    int instance
+ *   reference:
+ *     http://oval.mitre.org/language/version5.6/ovaldefinition/documentation/independent-definitions-schema.html#textfilecontent54_object
+ *     http://oval.mitre.org/language/version5.6/ovalsc/documentation/independent-system-characteristics-schema.html#textfilecontent_item
  *
- *  textfilecontent_item
- *    attrs
- *      id
- *      status_enum status
- *    string path
- *    string filename
- *    string pattern
- *    int instance
- *    string line (depr)
- *    string text
- *    [0..*] anytype subexpression
+ *   object:
+ *     behaviors ind-def:Textfilecontent54Behaviors 0 1
+ *       max_depth         xsd:integer       (optional -- default='1')
+ *       recurse_direction xsd:string (enum) (optional -- default='none')
+ *       ignore_case       xsd:boolean       (optional -- default='false')
+ *       multiline         xsd:boolean       (optional -- default='true')
+ *       singleline        xsd:boolean       (optional -- default='false')
+ *     filepath  oval-def:EntityObjectStringType    1 1
+ *     path      oval-def:EntityObjectStringType    1 1
+ *     filename  oval-def:EntityObjectStringType    1 1
+ *     pattern   oval-def:EntityObjectStringType    1 1
+ *     instance  oval-def:EntityObjectIntType       1 1
+ *
+ *   item:
+ *     filepath      oval-sc:EntityItemStringType 0 1
+ *     path          oval-sc:EntityItemStringType 0 1
+ *     filename      oval-sc:EntityItemStringType 0 1
+ *     pattern       oval-sc:EntityItemStringType 0 1
+ *     instance      oval-sc:EntityItemIntType    0 1
+ *     line          oval-sc:EntityItemStringType 0 1
+ *     text          oval-sc:EntityItemStringType 0 1
+ *     subexpression oval-sc:EntityItemAnyType    0 unbounded
  */
 
 #ifdef HAVE_CONFIG_H
@@ -128,10 +136,7 @@ static int get_substrings(char *str, int *ofs, pcre *re, int want_substrs, char 
 		substrs[ret] = buf;
 		++ret;
 	}
-	/*
-	  if (ret < rc)
-	  substrs = realloc(substrs, ret * sizeof (char *));
-	*/
+
 	*substrings = substrs;
 
 	return ret;
@@ -183,7 +188,7 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
 {
 	int i;
 	SEXP_t *item;
-        SEXP_t *r0, *r1, *r2, *r3, *r4, *r5;
+	SEXP_t *r0, *r1, *r2, *r3, *r4, *r5, *r6;
 
 	item = probe_item_creat ("textfilecontent_item", NULL,
                                  /* entities */
@@ -197,11 +202,13 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
                                  r3 = SEXP_string_newf("%s", pattern),
                                  "instance", NULL,
                                  r4 = SEXP_number_newi_32(instance),
+				 "line", NULL,
+				 r6 = SEXP_string_newf("%s", pattern),
                                  "text", NULL,
                                  r5 = SEXP_string_newf("%s", substrs[0]),
                                  NULL);
 	SEXP_free(r2);
-        SEXP_vfree (r0, r1, r3, r4, r5, NULL);
+	SEXP_vfree (r0, r1, r3, r4, r5, r6, NULL);
 
 	for (i = 1; i < substr_cnt; ++i) {
                 probe_item_ent_add (item, "subexpression", NULL, r0 = SEXP_string_new (substrs[i], strlen (substrs[i])));
