@@ -951,6 +951,10 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 			if (strcmp(item_entity_name, state_entity_name))
 				continue;
 
+			/* copy mask attribute from state to item */
+			if (oval_entity_get_mask(state_entity))
+				oval_sysent_set_mask(item_entity,1);
+
 			if (state_entity_var != NULL) {
 				struct oresults var_ores;
 				struct oval_value_iterator *val_itr;
