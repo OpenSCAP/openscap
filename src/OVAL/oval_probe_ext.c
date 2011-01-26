@@ -403,6 +403,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
                                 else
                                         oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBECLOSE, errbuf);
 
+				pd->sd = -1;
 				return (-1);
 			}
 
@@ -544,6 +545,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
                                 else
                                         oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBECLOSE, errbuf);
 
+				pd->sd = -1;
 				return (-1);
 			}
 
