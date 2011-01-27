@@ -186,7 +186,7 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
                                  "filename", NULL,
                                  r1 = SEXP_string_newf("%s", filename),
                                  "filepath", NULL,
-                                 r2 =  (filename != NULL ? SEXP_string_newf ("%s/%s", path, filename) : NULL),
+				 r2 = SEXP_string_newf ("%s/%s", path, filename),
                                  "pattern", NULL,
                                  r3 = SEXP_string_newf("%s", ""),
                                  "instance", NULL,

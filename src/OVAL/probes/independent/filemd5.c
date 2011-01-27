@@ -162,7 +162,7 @@ static int filehash_cb (const char *p, const char *f, void *ptr)
                                         "filename", NULL,
                                         r1 = SEXP_string_newf (f, flen),
 					"filepath", NULL,
-                                        r2 =  (f != NULL ? SEXP_string_newf ("%s/%s", p, f) : NULL),
+					r2 = SEXP_string_newf ("%s/%s", p, f),
                                         "md5", NULL,
                                         r3 = SEXP_string_newf (md5_str, sizeof md5_str - 1),
                                         NULL);
