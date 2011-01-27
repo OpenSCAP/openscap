@@ -148,6 +148,69 @@ static void ID_cache_free(void)
 	g_ID_cache_max = 0;
 }
 
+static SEXP_t *get_atime(struct stat *st)
+{
+	return SEXP_string_newf (
+#if defined(OS_FREEBSD)
+# if (__STDC_VERSION__ >= 199901L)
+		"%jd", (intmax_t) st->st_atimespec.tv_sec
+# else
+		"%lld", (unsigned long long) st->st_atimespec.tv_sec
+# endif
+#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+		"%u", (unsigned int)st->st_atim.tv_sec
+#endif
+		);
+}
+
+static SEXP_t *get_ctime(struct stat *st)
+{
+	return SEXP_string_newf (
+#if defined(OS_FREEBSD)
+# if (__STDC_VERSION__ >= 199901L)
+		"%jd", (intmax_t) st->st_ctimespec.tv_sec
+# else
+		"%lld", (unsigned long long) st->st_ctimespec.tv_sec
+# endif
+#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+		"%u", (unsigned int)st->st_ctim.tv_sec
+#endif
+		);
+}
+
+static SEXP_t *get_mtime(struct stat *st)
+{
+	return SEXP_string_newf (
+#if defined(OS_FREEBSD)
+# if (__STDC_VERSION__ >= 199901L)
+		"%jd", (intmax_t) st->st_mtimespec.tv_sec
+# else
+		"%lld", (unsigned long long) st->st_mtimespec.tv_sec
+# endif
+#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+		"%u", (unsigned int)st->st_mtim.tv_sec
+#endif
+		);
+}
+
+static SEXP_t *get_size(struct stat *st)
+{
+#if defined(_FILE_OFFSET_BITS)
+# if   _FILE_OFFSET_BITS == 64
+	return SEXP_number_newu_64 (st->st_size);
+# elif _FILE_OFFSET_BITS == 32
+	return SEXP_number_newu_32 (st->st_size);
+# else
+#  error "Invalid _FILE_OFFSET_BITS value"
+	return NULL;
+# endif
+#elif defined(LARGE_FILE_SOURCE)
+	return SEXP_number_newu_64 (st->st_size);
+#else
+	return SEXP_number_newu_32 (st->st_size);
+#endif
+}
+
 static int file_cb (const char *p, const char *f, void *ptr)
 {
         char path_buffer[PATH_MAX];
@@ -172,117 +235,87 @@ static int file_cb (const char *p, const char *f, void *ptr)
                 SEXP_t *r0, *r2, *r1, *r3, *r4;
                 SEXP_t *r5, *r6, *r7, *r8;
 
+		r1 = r2 = NULL;
 		r3 = ID_cache_get(st.st_uid);
 		r4 = st.st_gid != st.st_uid ? ID_cache_get(st.st_gid) : SEXP_ref(r3);
 
-                item = probe_item_creat ("file_item", NULL,
-                                        /* entities */
-                                        "path", NULL,
-                                        r0 = SEXP_string_newf ("%s", p),
+		if (f == NULL) {
+			item = probe_item_creat(
+#define PIC_ARGS1							\
+				"file_item", NULL,			\
+				/* entities */				\
+				"path", NULL,				\
+				r0 = SEXP_string_newf ("%s", p),	\
+									\
+				"filename", NULL,			\
+				r1 = (f == NULL) ? NULL : SEXP_string_newf ("%s", f)
 
-                                        "filename", NULL,
-                                        r1 = (f != NULL ? SEXP_string_newf ("%s", f) : NULL),
+				PIC_ARGS1,
 
-					"filepath", NULL,
-					r2 =  (f != NULL ? SEXP_string_newf ("%s/%s", p, f) : NULL),
+#define PIC_ARGS2							\
+				"type", NULL,				\
+				strfiletype (st.st_mode),		\
+									\
+				"group_id", NULL, r4,			\
+				"user_id",  NULL, r3,			\
+									\
+				"a_time", NULL,				\
+				r5 = get_atime(&st),			\
+									\
+				"c_time", NULL,				\
+				r6 = get_ctime(&st),			\
+									\
+				"m_time", NULL,				\
+				r7 = get_mtime(&st),			\
+									\
+				"size", NULL,				\
+				r8 = get_size(&st),			\
+									\
+				"suid", NULL,				\
+				(st.st_mode & S_ISUID ? gr_true : gr_false), \
+									\
+				"sgid", NULL,				\
+				(st.st_mode & S_ISGID ? gr_true : gr_false), \
+									\
+				"sticky", NULL,				\
+				(st.st_mode & S_ISVTX ? gr_true : gr_false), \
+									\
+				"uread", NULL,				\
+				(st.st_mode & S_IRUSR ? gr_true : gr_false), \
+									\
+				"uwrite", NULL,				\
+				(st.st_mode & S_IWUSR ? gr_true : gr_false), \
+									\
+				"uexec", NULL,				\
+				(st.st_mode & S_IXUSR ? gr_true : gr_false), \
+									\
+				"gread", NULL,				\
+				(st.st_mode & S_IRGRP ? gr_true : gr_false), \
+									\
+				"gwrite", NULL,				\
+				(st.st_mode & S_IWGRP ? gr_true : gr_false), \
+									\
+				"gexec", NULL,				\
+				(st.st_mode & S_IXGRP ? gr_true : gr_false), \
+									\
+				"oread", NULL,				\
+				(st.st_mode & S_IROTH ? gr_true : gr_false), \
+									\
+				"owrite", NULL,				\
+				(st.st_mode & S_IWOTH ? gr_true : gr_false), \
+									\
+				"oexec", NULL,				\
+				(st.st_mode & S_IXOTH ? gr_true : gr_false), \
+				NULL
 
-                                        "type", NULL,
-                                        strfiletype (st.st_mode),
-
-					"group_id", NULL, r4,
-					"user_id",  NULL, r3,
-
-                                        "a_time", NULL,
-                                        r5 = SEXP_string_newf (
-#if defined(OS_FREEBSD)
-# if (__STDC_VERSION__ >= 199901L)
-						               "%jd", (intmax_t) st.st_atimespec.tv_sec
-# else
-							       "%lld", (unsigned long long) st.st_atimespec.tv_sec
-# endif
-#elif defined(OS_LINUX) || defined(OS_SOLARIS)
-                                                               "%u", (unsigned int)st.st_atim.tv_sec
-#endif
-                                                ),
-
-                                        "c_time", NULL,
-                                        r6 = SEXP_string_newf (
-#if defined(OS_FREEBSD)
-# if (__STDC_VERSION__ >= 199901L)
-						               "%jd", (intmax_t) st.st_ctimespec.tv_sec
-# else
-							       "%lld", (unsigned long long) st.st_ctimespec.tv_sec
-# endif
-#elif defined(OS_LINUX) || defined(OS_SOLARIS)
-                                                               "%u", (unsigned int)st.st_ctim.tv_sec
-#endif
-                                                ),
-
-                                        "m_time", NULL,
-                                        r7 = SEXP_string_newf (
-#if defined(OS_FREEBSD)
-# if (__STDC_VERSION__ >= 199901L)
-						               "%jd", (intmax_t) st.st_mtimespec.tv_sec
-# else
-							       "%lld", (unsigned long long) st.st_mtimespec.tv_sec
-# endif
-#elif defined(OS_LINUX) || defined(OS_SOLARIS)
-                                                               "%u", (unsigned int)st.st_mtim.tv_sec
-#endif
-                                                ),
-
-                                        "size", NULL,
-#if defined(_FILE_OFFSET_BITS)
-# if   _FILE_OFFSET_BITS == 64
-                                        r8 = SEXP_number_newu_64 (st.st_size),
-# elif _FILE_OFFSET_BITS == 32
-                                        r8 = SEXP_number_newu_32 (st.st_size),
-# else
-#  error "Invalid _FILE_OFFSET_BITS value"
-                                        r8 = NULL,
-# endif
-#elif defined(LARGE_FILE_SOURCE)
-                                        r8 = SEXP_number_newu_64 (st.st_size),
-#else
-                                        r8 = SEXP_number_newu_32 (st.st_size),
-#endif
-                                        "suid", NULL,
-                                        (st.st_mode & S_ISUID ? gr_true : gr_false),
-
-                                        "sgid", NULL,
-                                        (st.st_mode & S_ISGID ? gr_true : gr_false),
-
-                                        "sticky", NULL,
-                                        (st.st_mode & S_ISVTX ? gr_true : gr_false),
-
-                                        "uread", NULL,
-                                        (st.st_mode & S_IRUSR ? gr_true : gr_false),
-
-                                        "uwrite", NULL,
-                                        (st.st_mode & S_IWUSR ? gr_true : gr_false),
-
-                                        "uexec", NULL,
-                                        (st.st_mode & S_IXUSR ? gr_true : gr_false),
-
-                                        "gread", NULL,
-                                        (st.st_mode & S_IRGRP ? gr_true : gr_false),
-
-                                        "gwrite", NULL,
-                                        (st.st_mode & S_IWGRP ? gr_true : gr_false),
-
-                                        "gexec", NULL,
-                                        (st.st_mode & S_IXGRP ? gr_true : gr_false),
-
-                                        "oread", NULL,
-                                        (st.st_mode & S_IROTH ? gr_true : gr_false),
-
-                                        "owrite", NULL,
-                                        (st.st_mode & S_IWOTH ? gr_true : gr_false),
-
-                                        "oexec", NULL,
-                                        (st.st_mode & S_IXOTH ? gr_true : gr_false),
-                                        NULL);
-
+				PIC_ARGS2);
+		} else {
+			item = probe_item_creat(
+				PIC_ARGS1,
+				"filepath", NULL,
+				r2 = SEXP_string_newf ("%s/%s", p, f),
+				PIC_ARGS2);
+		}
 
 		SEXP_free(r1);
 		SEXP_free(r2);
