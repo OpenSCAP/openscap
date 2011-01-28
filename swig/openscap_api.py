@@ -382,7 +382,7 @@ class OSCAP_Object(object):
 
         # Get regexp match from type of value
         if not len(item["match"]):
-            item["match"] = ["", "^[\\b]+$", "^.*$", "^[01]$"][value.type]
+            item["match"] = ["", "^[\\d]+$", "^.*$", "^[01]$"][value.type]
 
         if self.profile != None:
             for r_value in self.profile.refine_values:
