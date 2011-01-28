@@ -359,7 +359,7 @@ void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, 
 	struct xccdf_refine_rule_iterator *refine_rules = xccdf_profile_get_refine_rules(profile);
 	while (xccdf_refine_rule_iterator_has_more(refine_rules)) {
 		struct xccdf_refine_rule *refine_rule = xccdf_refine_rule_iterator_next(refine_rules);
-		xmlNode *refrule_node = xmlNewTextChild(profile_node, ns_xccdf, BAD_CAST "refine-value", NULL);
+		xmlNode *refrule_node = xmlNewTextChild(profile_node, ns_xccdf, BAD_CAST "refine-rule", NULL);
 
 		const char *idref = xccdf_refine_rule_get_item(refine_rule);
 		if (idref)

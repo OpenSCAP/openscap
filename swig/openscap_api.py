@@ -482,6 +482,46 @@ class OSCAP_Object(object):
                 s_value.value = item["value"]
                 self.profile.add_setvalue(s_value)
 
+    def set_refine_rule(self, id, weight=None, severity=None, role=None):
+        """xccdf_policy.set_refine_rules(refines) -- Set weight, severity and role of the rule in selected Profile.
+        Function will set all refine-rules to the selected XCCDF Policy's profile.
+
+        Example:
+          xccdf_policy.set_refine_rule("rul-2.1", severity=oscap.XCCDF_SEVERITY_HIGH)
+        """
+
+        if self.object != "xccdf_policy": raise TypeError("Wrong call of \"set_refine_rule\" function. Should be xccdf_policy (have %s)" %(self.object,))
+        if id == None: raise AttributeError("Missing ID of rule in xccdf_policy.set_refine_rule function")
+
+        rule = self.model.benchmark.item(id).to_rule()
+        if rule == None: raise Exception("Rule \"%s\" not found in benchmark" % (id,))
+
+        if not weight and not severity and not role: return
+
+        refine = xccdf.refine_rule()
+        refine.item = id
+        for r_rule in self.profile.refine_rules[:]:
+            if r_rule.item == id:
+                refine.weight = r_rule.weight
+                refine.severity = r_rule.severity
+                refine.role = r_rule.role
+                self.profile.refine_rules.remove(r_rule)
+
+        # Set new weight of the rule
+        if weight != None:
+            refine.weight = weight
+
+        # Set new severity of the rule
+        if severity != None:
+            refine.severity = severity
+
+        # Set new role of the rule
+        if role != None:
+            refine.role = role
+        
+        self.profile.add_refine_rule(refine)
+        
+
     def get_all_rules(self):
         """xccdf_policy.get_all_rules() -- Get all rules/selectors and titles from benchmark
         """
