@@ -245,7 +245,9 @@ struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_ite
 				struct xccdf_refine_rule *rr = xccdf_refine_rule_new();
 				rr->item = oscap_strdup(id);
 				rr->selector = xccdf_attribute_copy(reader, XCCDFA_SELECTOR);
-				rr->weight = xccdf_attribute_get_float(reader, XCCDFA_WEIGHT);
+				if (xccdf_attribute_has(reader, XCCDFA_WEIGHT))
+				    rr->weight = xccdf_attribute_get_float(reader, XCCDFA_WEIGHT);
+                                else rr->weight = -1.0;
 				if (xccdf_attribute_has(reader, XCCDFA_ROLE))
 					rr->role =
 					    oscap_string_to_enum(XCCDF_ROLE_MAP,
@@ -375,7 +377,7 @@ void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, 
 
 		xccdf_level_t severity = xccdf_refine_rule_get_severity(refine_rule);
 		if (severity != 0)
-			xmlNewProp(refrule_node, BAD_CAST "severity", BAD_CAST XCCDF_LEVEL_MAP[severity].string);
+			xmlNewProp(refrule_node, BAD_CAST "severity", BAD_CAST XCCDF_LEVEL_MAP[severity - 1].string);
 
 		float weight = xccdf_refine_rule_get_weight(refine_rule);
 		char *weight_str = oscap_sprintf("%f", weight);

@@ -1674,6 +1674,8 @@ struct xccdf_item * xccdf_policy_tailor_item(struct xccdf_policy * policy, struc
                 xccdf_rule_set_role((struct xccdf_rule *) new_item, xccdf_refine_rule_get_role(r_rule));
             if (xccdf_refine_rule_get_severity(r_rule) != NAN)
                 xccdf_rule_set_severity((struct xccdf_rule *) new_item, xccdf_refine_rule_get_severity(r_rule));
+            if (xccdf_refine_rule_get_weight(r_rule) != -1.0)
+                xccdf_rule_set_weight((struct xccdf_rule *) new_item, xccdf_refine_rule_get_weight(r_rule));
             break;
         }
         case XCCDF_GROUP: {
