@@ -1,3 +1,15 @@
+openscap-0.6.8							31-01-2011
+- support more than one state inside OVAL tests
+- initial implementation of filepath element
+- add 'mask' attribute support
+- support PCRE in object-state comparison
+- support unstructured 'metadata' elements in OVAL definitions
+- interface probe support 'type' entity
+- support for new 'behaviors' attributes
+- add OVAL schemas version 5.6
+- improved XCCDF reporting (include OVAL result items)
+- bugfixes and clean ups
+
 openscap-0.6.7							14-01-2011
 - new CPE dict. match functionality in oscap
 - bugxifes
