@@ -617,7 +617,7 @@ static struct oscap_list * xccdf_policy_check_get_value_bindings(struct xccdf_po
 
             /* Apply related setvalue from policy profile */
             s_value = xccdf_policy_get_setvalue(policy, xccdf_value_get_id(value));
-            if (s_value != NULL) binding->setvalue = (char *) xccdf_setvalue_get_value(s_value);
+            if (s_value != NULL) binding->setvalue = oscap_strdup((char *) xccdf_setvalue_get_value(s_value));
 
             /* Apply related refine value from policy profile */
             const char * selector = NULL;
