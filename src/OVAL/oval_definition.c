@@ -43,7 +43,6 @@
 #include "common/debug_priv.h"
 #include "common/_error.h"
 
-#define OVAL_SUPPORTED "5.5"
 
 /***************************************************************************/
 /* Variable definitions

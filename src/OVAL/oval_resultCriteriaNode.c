@@ -635,8 +635,14 @@ static xmlNode *_oval_result_EXTENDDEF_to_dom(struct oval_result_criteria_node *
 
 	struct oval_result_definition *rslt_definition = oval_result_criteria_node_get_extends(node);
 	struct oval_definition *oval_definition = oval_result_definition_get_definition(rslt_definition);
+
 	char *definition_ref = oval_definition_get_id(oval_definition);
 	xmlNewProp(node_root, BAD_CAST "definition_ref", BAD_CAST definition_ref);
+
+        int version = oval_definition_get_version(oval_definition);
+        char version_att[10] = "";
+        snprintf(version_att, sizeof(version_att), "%d", version);
+        xmlNewProp(node_root, BAD_CAST "version", BAD_CAST version_att);
 
         int instance = ((struct oval_result_criteria_node_EXTENDDEF *) node)->variable_instance;
         if (instance != 1) {

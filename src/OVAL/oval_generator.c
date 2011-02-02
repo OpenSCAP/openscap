@@ -56,7 +56,7 @@ struct oval_generator *oval_generator_new(void)
 	gen = oscap_alloc(sizeof(struct oval_generator));
 	gen->product_name = oscap_strdup("OpenSCAP");
 	gen->product_version = NULL;
-	gen->schema_version = oscap_strdup(OVAL_DEFAULT_VERSION);
+	gen->schema_version = oscap_strdup(OVAL_SUPPORTED);
 
 	time(&et);
 	lt = localtime(&et);
@@ -147,13 +147,13 @@ xmlNode *oval_generator_to_dom(struct oval_generator *generator, xmlDocPtr doc, 
 	gen_node = xmlNewTextChild(parent, NULL, BAD_CAST "generator", NULL);
 	ns_common = xmlSearchNsByHref(doc, parent, OVAL_COMMON_NAMESPACE);
 	if (generator->product_name)
-		xmlNewTextChild(parent, ns_common, BAD_CAST "product_name", BAD_CAST generator->product_name);
+		xmlNewTextChild(gen_node, ns_common, BAD_CAST "product_name", BAD_CAST generator->product_name);
 	if (generator->product_version)
-		xmlNewTextChild(parent, ns_common, BAD_CAST "product_version", BAD_CAST generator->product_version);
+		xmlNewTextChild(gen_node, ns_common, BAD_CAST "product_version", BAD_CAST generator->product_version);
 	if (generator->schema_version)
-		xmlNewTextChild(parent, ns_common, BAD_CAST "schema_version", BAD_CAST generator->schema_version);
+		xmlNewTextChild(gen_node, ns_common, BAD_CAST "schema_version", BAD_CAST generator->schema_version);
 	if (generator->timestamp)
-		xmlNewTextChild(parent, ns_common, BAD_CAST "timestamp", BAD_CAST generator->timestamp);
+		xmlNewTextChild(gen_node, ns_common, BAD_CAST "timestamp", BAD_CAST generator->timestamp);
 
 	return gen_node;
 }

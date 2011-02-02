@@ -392,7 +392,6 @@ xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model, xm
 {
 
 	xmlNodePtr root_node = NULL;
-	xmlNodePtr tmp_node = NULL;
 
 	if (parent) { /* result file */
 		root_node = xmlNewTextChild(parent, NULL, BAD_CAST "oval_system_characteristics", NULL);
@@ -410,10 +409,8 @@ xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model, xm
 	xmlSetNs(root_node, ns_xsi);
 	xmlSetNs(root_node, ns_syschar);
 
-        /* Report generator if this a system characteristics file*/
-        tmp_node = xmlDocGetRootElement(doc);
-        if (tmp_node && !xmlStrcmp(tmp_node->name, (const xmlChar *) "oval_system_characteristics") )
-		oval_generator_to_dom(syschar_model->generator, doc, root_node);
+        /* Always report the generator */
+	oval_generator_to_dom(syschar_model->generator, doc, root_node);
 
         /* Report sysinfo */
 	oval_sysinfo_to_dom(oval_syschar_model_get_sysinfo(syschar_model), doc, root_node);

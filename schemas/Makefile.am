@@ -3,7 +3,7 @@ oval55dir = $(pkgdatadir)/schemas/oval/5.5/
 oval56dir = $(pkgdatadir)/schemas/oval/5.6/
 xccdf114dir = $(pkgdatadir)/schemas/xccdf/1.1.4/
 
-oval55_DATA = \
+oval56_DATA = \
 		oval/5.6/sharepoint-system-characteristics-schema.xsd \
 		oval/5.6/sharepoint-definitions-schema.xsd \
 		oval/5.6/independent-system-characteristics-schema.xsd \
@@ -41,7 +41,7 @@ oval55_DATA = \
 		oval/5.6/esx-definitions-schema.xsd \
 		oval/5.6/apache-definitions-schema.xsd
 
-oval56_DATA = \
+oval55_DATA = \
 		oval/5.5/independent-system-characteristics-schema.xsd \
 		oval/5.5/windows-definitions-schema.xsd \
 		oval/5.5/windows-system-characteristics-schema.xsd \

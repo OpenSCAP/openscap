@@ -191,9 +191,9 @@ struct oscap_schema_table_entry {
 
 // TODO do not hardcode versions... (duplicities)
 struct oscap_schema_table_entry OSCAP_SCHEMAS_TABLE[] = {
-	{ OSCAP_DOCUMENT_OVAL_DEFINITIONS, "oval",  "5.5",   "oval-definitions-schema.xsd"            },
-	{ OSCAP_DOCUMENT_OVAL_RESULTS,     "oval",  "5.5",   "oval-results-schema.xsd"                },
-	{ OSCAP_DOCUMENT_OVAL_SYSCHAR,     "oval",  "5.5",   "oval-system-characteristics-schema.xsd" },
+	{ OSCAP_DOCUMENT_OVAL_DEFINITIONS, "oval",  "5.6",   "oval-definitions-schema.xsd"            },
+	{ OSCAP_DOCUMENT_OVAL_RESULTS,     "oval",  "5.6",   "oval-results-schema.xsd"                },
+	{ OSCAP_DOCUMENT_OVAL_SYSCHAR,     "oval",  "5.6",   "oval-system-characteristics-schema.xsd" },
 	{ OSCAP_DOCUMENT_XCCDF,            "xccdf", "1.1.4", "xccdf-schema.xsd"                       },
 	{ 0, NULL, NULL, NULL }
 };

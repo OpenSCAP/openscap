@@ -1296,9 +1296,12 @@ xmlNode *oval_component_to_dom(struct oval_component *component, xmlDoc * doc, x
 			char *pattern = oval_component_get_regex_pattern(component);
 			xmlNewProp(component_node, BAD_CAST "pattern", BAD_CAST pattern);
 		} break;
+	case OVAL_FUNCTION_SPLIT:{
+			char * delimiter = oval_component_get_split_delimiter(component);
+			xmlNewProp(component_node, BAD_CAST "delimiter", BAD_CAST delimiter);
+		} break;
 	case OVAL_FUNCTION_CONCAT:
 	case OVAL_FUNCTION_ESCAPE_REGEX:
-	case OVAL_FUNCTION_SPLIT:
 		break;
 	default:
 		break;

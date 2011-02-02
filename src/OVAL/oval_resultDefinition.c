@@ -348,15 +348,13 @@ xmlNode *oval_result_definition_to_dom
 	xmlNewProp(definition_node, BAD_CAST "result", BAD_CAST result_att);
 
 	int version = oval_definition_get_version(oval_definition);
-	char version_att[10];
-	*version_att = '\0';
+	char version_att[10] = "";
 	snprintf(version_att, sizeof(version_att), "%d", version);
 	xmlNewProp(definition_node, BAD_CAST "version", BAD_CAST version_att);
 
 	int instance = oval_result_definition_get_instance(definition);
 	if (instance != 1) {
-		char instance_att[10];
-		*instance_att = '\0';
+		char instance_att[10] = "";
 		snprintf(instance_att, sizeof(instance_att), "%d", instance);
 		xmlNewProp(definition_node, BAD_CAST "variable_instance", BAD_CAST instance_att);
 	}
