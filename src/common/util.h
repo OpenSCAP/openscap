@@ -332,7 +332,7 @@ char *oscap_strdup(const char *str);
  * @param endptr see man strtol
  * @param base see man strtol
  */
-long int oscap_strtol(const char *str, char **endptr, int base);
+float oscap_strtol(const char *str, char **endptr, int base);
 
 /**
  * Use strsep on string

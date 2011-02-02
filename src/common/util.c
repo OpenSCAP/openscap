@@ -70,7 +70,7 @@ char *oscap_strdup(const char *str)
 	return m;
 }
 
-long int oscap_strtol(const char *str, char **endptr, int base){
+float oscap_strtol(const char *str, char **endptr, int base){
     if (str == NULL) {
         return NAN;
     } else

@@ -2617,7 +2617,7 @@ bool xccdf_value_set_multiple(struct xccdf_value *item, bool newval);
 /// @memberof xccdf_value
 bool xccdf_value_set_prohibit_changes(struct xccdf_value *item, bool newval);
 /// @memberof xccdf_value
-bool xccdf_value_set_oper(struct xccdf_item * item, xccdf_operator_t oper);
+bool xccdf_value_set_oper(struct xccdf_value * item, xccdf_operator_t oper);
 
 /// @memberof xccdf_status
 bool xccdf_status_set_date(struct xccdf_status *obj, time_t newval);

@@ -1721,7 +1721,7 @@ struct xccdf_item * xccdf_policy_tailor_item(struct xccdf_policy * policy, struc
 
             int oper = xccdf_policy_get_refine_value_oper(policy, item);
             if (oper == -1) break;
-            xccdf_value_set_oper(item, (xccdf_operator_t) oper);
+            xccdf_value_set_oper((struct xccdf_value *) item, (xccdf_operator_t) oper);
             break;
         }
         default:

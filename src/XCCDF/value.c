@@ -236,11 +236,11 @@ void xccdf_value_free(struct xccdf_item *val)
     }
 }
 
-bool xccdf_value_set_oper(struct xccdf_item * value, xccdf_operator_t oper)
+bool xccdf_value_set_oper(struct xccdf_value * value, xccdf_operator_t oper)
 {
         __attribute__nonnull__(value);
 
-        value->sub.value.oper = oper;
+        xccdf_value_to_item(value)->sub.value.oper = oper;
         return true;
 
 }
@@ -345,16 +345,16 @@ struct xccdf_value_instance *xccdf_value_new_instance(struct xccdf_value *val)
 #define XCCDF_VALUE_INSTANCE_VALUE_ACCESSOR_STR(WHAT) \
 	const char *xccdf_value_instance_get_##WHAT##_string(const struct xccdf_value_instance *inst) { return inst->WHAT; } \
 	bool xccdf_value_instance_set_##WHAT##_string(struct xccdf_value_instance *inst, const char *newval) { \
-		oscap_free(inst->WHAT); inst->WHAT = oscap_strdup(newval); return true; }
+		oscap_free(inst->WHAT); inst->WHAT = oscap_strdup(newval); inst->flags.WHAT##_given = true; return true; }
 #define XCCDF_VALUE_INSTANCE_VALUE_ACCESSOR_NUM(WHAT) \
 	xccdf_numeric xccdf_value_instance_get_##WHAT##_number(const struct xccdf_value_instance *inst) { return oscap_strtol(inst->WHAT, NULL, 10); } \
 	bool xccdf_value_instance_set_##WHAT##_number(struct xccdf_value_instance *inst, xccdf_numeric newval) { \
-		oscap_free(inst->WHAT); inst->WHAT = oscap_sprintf("%f", newval); return true; }
+		oscap_free(inst->WHAT); inst->WHAT = oscap_sprintf("%f", newval); inst->flags.WHAT##_given = true; return true; }
 #define XCCDF_VALUE_INSTANCE_VALUE_ACCESSOR_BOOL(WHAT) \
 	bool xccdf_value_instance_get_##WHAT##_boolean(const struct xccdf_value_instance *inst) \
         { return oscap_string_to_enum(OSCAP_BOOL_MAP, inst->WHAT); } \
 	bool xccdf_value_instance_set_##WHAT##_boolean(struct xccdf_value_instance *inst, bool newval) \
-		{ oscap_free(inst->WHAT); inst->WHAT = oscap_strdup(oscap_enum_to_string(OSCAP_BOOL_MAP, newval)); return true; }
+		{ oscap_free(inst->WHAT); inst->WHAT = oscap_strdup(oscap_enum_to_string(OSCAP_BOOL_MAP, newval)); inst->flags.WHAT##_given = true; return true; }
 
 OSCAP_ACCESSOR_STRING(xccdf_value_instance, selector)
 OSCAP_GETTER(xccdf_value_type_t, xccdf_value_instance, type)

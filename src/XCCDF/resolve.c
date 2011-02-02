@@ -296,7 +296,7 @@ static void xccdf_resolve_value(struct xccdf_item *child, struct xccdf_item *par
 	if (xccdf_value_get_interface_hint(XVALUE(child)) == 0)
 		child->sub.value.interface_hint = xccdf_value_get_interface_hint(XVALUE(parent));
 	if (xccdf_value_get_oper(XVALUE(child)) == 0)
-		xccdf_value_set_oper(child, xccdf_value_get_oper(XVALUE(parent)));
+		xccdf_value_set_oper(xccdf_item_to_value(child), xccdf_value_get_oper(XVALUE(parent)));
 	
 	struct xccdf_value_instance *inst_child;
 	OSCAP_FOR(xccdf_value_instance, inst_parent, xccdf_value_get_instances(XVALUE(parent))) {
