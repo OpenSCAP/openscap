@@ -29,6 +29,7 @@
 #include <ctype.h>
 #include <limits.h>
 #include <stdarg.h>
+#include <math.h>
 
 #include "util.h"
 #include "_error.h"
@@ -67,6 +68,13 @@ char *oscap_strdup(const char *str)
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, "Memory allocation failed.");
 
 	return m;
+}
+
+long int oscap_strtol(const char *str, char **endptr, int base){
+    if (str == NULL) {
+        return NAN;
+    } else
+        return strtol(str, endptr, base);
 }
 
 char *oscap_strsep(char **str, const char *delim)

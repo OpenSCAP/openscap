@@ -327,6 +327,14 @@ const char *oscap_enum_to_string(const struct oscap_string_map *map, int val);
 char *oscap_strdup(const char *str);
 
 /**
+ * Use strtol on string, if string is NULL, return NaN
+ * @param str String we want to duplicate
+ * @param endptr see man strtol
+ * @param base see man strtol
+ */
+long int oscap_strtol(const char *str, char **endptr, int base);
+
+/**
  * Use strsep on string
  * We can't use strsep from string.h because of compatibility issues
  * @param str String we want to split
