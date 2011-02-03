@@ -215,7 +215,7 @@ static int oval_probe_variable_eval(oval_probe_session_t *sess, struct oval_sysc
 		oval_syschar_set_flag(syschar, SYSCHAR_FLAG_ERROR);
 		return(1);
 	} else {
-                SEXP_t *r0, *item, *cobj, *vrent, *val_sexp;
+                SEXP_t *r0, *item, *cobj, *vrent, *val_sexp, *valent;
 		char *var_ref;
 
                 cobj = probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, NULL, NULL);
@@ -237,15 +237,18 @@ static int oval_probe_variable_eval(oval_probe_session_t *sess, struct oval_sysc
 			val_sexp = oval_value_to_sexp(val, dtype);
 			assume_d(val_sexp != NULL, -1);
 
+	                valent = probe_ent_creat1("value", NULL, val_sexp);
+
 			item = probe_item_creat("variable_item", NULL,
-						"value", NULL, val_sexp,
 						NULL);
-			/* Add shared entity */
+			/* Add shared var_ref entity */
 			SEXP_list_add(item, vrent);
+			/* Add value entity */
+			SEXP_list_add(item, valent);
 
 			/* Add item to the item list */
 			probe_cobj_add_item(cobj, item);
-			SEXP_vfree(item, val_sexp, NULL);
+			SEXP_vfree(item, valent, val_sexp, NULL);
                 }
 
                 oval_value_iterator_free(vit);
