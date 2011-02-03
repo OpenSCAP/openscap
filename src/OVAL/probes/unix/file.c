@@ -241,18 +241,18 @@ static int file_cb (const char *p, const char *f, void *ptr)
 
 		if (f == NULL) {
 			item = probe_item_creat(
-#define PIC_ARGS1							\
-				"file_item", NULL,			\
+#define PIC_ARGS1		"file_item", NULL
+
+				PIC_ARGS1,
+
+#define PIC_ARGS2							\
 				/* entities */				\
 				"path", NULL,				\
 				r0 = SEXP_string_newf ("%s", p),	\
 									\
 				"filename", NULL,			\
-				r1 = (f == NULL) ? NULL : SEXP_string_newf ("%s", f)
-
-				PIC_ARGS1,
-
-#define PIC_ARGS2							\
+				r1 = (f == NULL) ? NULL : SEXP_string_newf ("%s", f), \
+									\
 				"type", NULL,				\
 				strfiletype (st.st_mode),		\
 									\
