@@ -153,9 +153,9 @@ static int process_file(const char *path, const char *filename, void *arg)
 
         item = probe_item_creat("xmlfilecontent_item", NULL,
                                 /* entities */
+				"filepath", NULL, r2 = SEXP_string_newf("%s/%s", path, filename),
                                 "path",     NULL, r0 = SEXP_string_new(path, strlen (path)),
                                 "filename", NULL, r1 = SEXP_string_new(filename, strlen (filename)),
-				"filepath", NULL, r2 = SEXP_string_newf("%s/%s", path, filename),
                                 "xpath",    NULL, r3 = SEXP_string_new(pfd->xpath, strlen (pfd->xpath)),
                                 NULL);
 

@@ -164,12 +164,12 @@ static int filehash_cb (const char *p, const char *f, void *ptr)
                  */
                 itm = probe_item_creat ("filehash_item", NULL,
                                         /* entities */
+					"filepath", NULL,
+					r2 = SEXP_string_newf ("%s/%s", p, f),
                                         "path", NULL,
                                         r0 = SEXP_string_newf (p, plen),
                                         "filename", NULL,
                                         r1 = SEXP_string_newf (f, flen),
-					"filepath", NULL,
-					r2 = SEXP_string_newf ("%s/%s", p, f),
                                         "md5", NULL,
                                         r3 = SEXP_string_newf (md5_str, sizeof md5_str - 1),
                                         "sha1", NULL,

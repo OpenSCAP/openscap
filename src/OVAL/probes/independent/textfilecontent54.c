@@ -192,12 +192,12 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
 
 	item = probe_item_creat ("textfilecontent_item", NULL,
                                  /* entities */
+                                 "filepath", NULL,
+				 r2 = SEXP_string_newf ("%s/%s", path, filename),
                                  "path", NULL,
                                  r0 = SEXP_string_newf("%s", path),
                                  "filename", NULL,
                                  r1 = SEXP_string_newf("%s", filename),
-                                 "filepath", NULL,
-				 r2 = SEXP_string_newf ("%s/%s", path, filename),
                                  "pattern", NULL,
                                  r3 = SEXP_string_newf("%s", pattern),
                                  "instance", NULL,
