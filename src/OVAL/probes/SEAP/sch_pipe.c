@@ -274,6 +274,7 @@ int sch_pipe_openfd2 (SEAP_desc_t *desc, int ifd, int ofd, uint32_t flags)
 ssize_t sch_pipe_recv (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
 {
         sch_pipedata_t *data;
+	ssize_t         ret;
 
         assume_d (desc != NULL, -1, errno = EFAULT;);
         assume_d (buf  != NULL, -1, errno = EFAULT;);
@@ -282,9 +283,12 @@ ssize_t sch_pipe_recv (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
 
         assume_r (data != NULL, -1, errno = EBADF;);
 
-        if (check_child (data->pid, 0) == 0)
-                return read (data->pfd, buf, len);
-        else
+        if (check_child (data->pid, 0) == 0) {
+                if ((ret = read (data->pfd, buf, len)) == 0)
+			return check_child(data->pid, 0);
+		else
+			return (ret);
+        } else
                 return (-1);
 }
 

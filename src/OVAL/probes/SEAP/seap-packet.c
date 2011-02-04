@@ -715,7 +715,7 @@ eloop_exit:
                                 errno = ENETRESET;
                                 return (-1);
                         } else {
-                                errno = ECONNRESET;
+                                errno = ECONNABORTED;
                                 return (-1);
                         }
                 }
