@@ -285,9 +285,10 @@ ssize_t sch_pipe_recv (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
 
         if (check_child (data->pid, 0) == 0) {
                 if ((ret = read (data->pfd, buf, len)) == 0)
-			return check_child(data->pid, 0);
-		else
-			return (ret);
+			if (check_child(data->pid, 0))
+				return (-1);
+
+		return (ret);
         } else
                 return (-1);
 }
