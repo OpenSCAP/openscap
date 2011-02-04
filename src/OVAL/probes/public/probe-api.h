@@ -428,6 +428,7 @@ void probe_free(SEXP_t * obj);
 #define PROBE_EACCESS   11	/**< Operation not permitted */
 #define PROBE_ESETEVAL  12	/**< Set evaluation failed */
 #define PROBE_ENOENT    13      /**< Missing entity */
+#define PROBE_ENOOBJ    14      /**< Missing object */
 #define PROBE_EFATAL   254	/**< Unrecoverable error */
 #define PROBE_EUNKNOWN 255	/**< Unknown/Unexpected error */
 

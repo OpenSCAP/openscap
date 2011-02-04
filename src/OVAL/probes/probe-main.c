@@ -40,9 +40,11 @@
 #include <assume.h>
 #include <bfind.h>
 
+#include "common/debug_priv.h"
 #include "_probe-api.h"
 #include "probe-entcmp.h"
 #include "encache.h"
+#include "probe-thread.h"
 
 #ifndef _A
 #define _A(x) assert(x)
@@ -77,7 +79,7 @@ bool   OSCAP_GSYM(varref_handling) = true;
 char **OSCAP_GSYM(no_varref_ents) = NULL;
 size_t OSCAP_GSYM(no_varref_ents_cnt) = 0;
 
-void *probe_worker(void *arg);
+SEXP_t *probe_worker(SEAP_msg_t *, int *);
 
 #define MAX_EVAL_DEPTH 8 /**< maximum recursion depth for set evaluation */
 
@@ -794,68 +796,33 @@ static SEXP_t *probe_reset(SEXP_t *arg0, void *arg1)
  */
 int main(void)
 {
-	int ret = EXIT_SUCCESS;
 	SEAP_msg_t *seap_request, *seap_reply;
+	SEXP_t *probe_in, *probe_out, *oid;
+	int probe_ret, ret;
 
-	SEXP_t *probe_in, *probe_out = NULL;
-	int probe_ret;
+	probe_threadmgr_t *threadmgr = probe_threadmgr_new(0, 0, NULL);
 
-	SEXP_t *oid;
-
-	pthread_attr_t thread_attr;
-	pthread_t      thread;
-
-        struct sigaction sigact;
-
-        /* Setup signal handler */
-        sigemptyset(&sigact.sa_mask);
-        sigaddset(&sigact.sa_mask, SIGTERM);
-        sigaddset(&sigact.sa_mask, SIGINT);
-        sigaddset(&sigact.sa_mask, SIGPIPE);
-        sigaddset(&sigact.sa_mask, SIGQUIT);
-        sigaddset(&sigact.sa_mask, SIGSEGV);
-        sigaddset(&sigact.sa_mask, SIGABRT);
-
-        sigact.sa_handler = &probe_sigexit;
-        sigact.sa_flags   = 0;
-
-        if (sigaction(SIGTERM, &sigact, NULL) != 0 ||
-            sigaction(SIGINT,  &sigact, NULL) != 0 ||
-            sigaction(SIGPIPE, &sigact, NULL) != 0 ||
-            sigaction(SIGQUIT, &sigact, NULL) != 0 ||
-            sigaction(SIGSEGV, &sigact, NULL) != 0 ||
-            sigaction(SIGABRT, &sigact, NULL) != 0 ||
-	    sigaction(SIGUSR1, &sigact, NULL) != 0)
-        {
-                _D("Can't setup signal handlers: errno=%u, %s.\n", errno, strerror(errno));
-                exit(errno);
-        }
+	probe_out = NULL;
+	ret       = EXIT_SUCCESS;
 
 	/* Initialize SEAP */
 	OSCAP_GSYM(ctx) = SEAP_CTX_new();
-	OSCAP_GSYM(sd) = SEAP_openfd2(OSCAP_GSYM(ctx), STDIN_FILENO, STDOUT_FILENO, 0);
+
+	/* Open a communication channel to the library on stdin & stdout */
+	OSCAP_GSYM(sd)  = SEAP_openfd2(OSCAP_GSYM(ctx), STDIN_FILENO, STDOUT_FILENO, 0);
 
 	if (OSCAP_GSYM(sd) < 0) {
 		_D("Can't create SEAP descriptor: errno=%u, %s.\n", errno, strerror(errno));
 		exit(errno);
 	}
 
-	/* Create cache */
+	/* Create result cache */
 	OSCAP_GSYM(pcache) = pcache_new();
+
 	if (OSCAP_GSYM(pcache) == NULL) {
 		_D("Can't create cache: %u, %s.\n", errno, strerror(errno));
 		exit(errno);
 	}
-
-	if (pthread_attr_init(&thread_attr) != 0) {
-		_D("Can't initialize thread attributes: %u, %s.\n", errno, strerror(errno));
-		exit(errno);
-	}
-
-        if (pthread_attr_setdetachstate (&thread_attr, PTHREAD_CREATE_DETACHED) != 0) {
-                _D("Can't set detach state: %u, %s.\n", errno, strerror (errno));
-                exit (errno);
-        }
 
 	OSCAP_GSYM(probe_arg) = probe_init();
 
@@ -917,9 +884,10 @@ int main(void)
 			if (probe_out == NULL) {
 				/* cache miss */
 
-				if (pthread_create(&thread, &thread_attr, &probe_worker, (void *)seap_request) != 0) {
-					_D("Can't start new probe worker: %u, %s.\n", errno, strerror(errno));
-
+				if (probe_thread_create(threadmgr,
+							SEAP_msg_id(seap_request), &probe_worker, seap_request) != 0)
+				{
+					dE("Cannot start a new probe worker: %u, %s\n", errno, strerror(errno));
 					/* send error */
 					continue;
 				}
@@ -1143,36 +1111,42 @@ static int probe_varref_iterate_ctx(struct probe_varref_ctx *ctx)
 
 /**
  * Worker thread function. This functions handles the evalution of objects and sets.
- * @param arg SEAP message with the request which contains the object to be evaluated
+ * @param msg_in SEAP message with the request which contains the object to be evaluated
+ * @param ret pointer to the return code storage
  */
-void *probe_worker(void *arg)
+SEXP_t *probe_worker(SEAP_msg_t *msg_in, int *ret)
 {
-	int probe_ret = 0;
-	SEXP_t *probe_in, *set, *probe_out = NULL, *oid;
-	SEXP_t *varrefs;
+	SEXP_t *probe_in, *probe_out, *set;
 
-	SEAP_msg_t *seap_reply, *seap_request;
+	if (msg_in == NULL) {
+		*ret = PROBE_EINVAL;
+		return (NULL);
+	}
 
-	_LOGCALL_;
+	probe_in  = SEAP_msg_get(msg_in);
+	probe_out = NULL;
 
-	seap_request = (SEAP_msg_t *) arg;
-	probe_in = SEAP_msg_get(seap_request);
+	if (probe_in == NULL) {
+		*ret = PROBE_ENOOBJ;
+		return (NULL);
+	}
 
 	set = probe_obj_getent(probe_in, "set", 1);
 
 	if (set != NULL) {
-		/* complex object */
+		/* set object */
 		probe_out = probe_set_eval(set, 0);
 		SEXP_free(set);
 		// todo: in case of an internal error set probe_ret accordingly
 	} else {
+		SEXP_t *varrefs;
+
 		/* simple object */
 		varrefs = probe_obj_getent(probe_in, "varrefs", 1);
 
 		if (varrefs == NULL || !OSCAP_GSYM(varref_handling)) {
-			_D("probe_main1\n");
 			probe_out = probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, NULL, NULL);
-			probe_ret = probe_main(probe_in, probe_out, OSCAP_GSYM(probe_arg));
+			*ret = probe_main(probe_in, probe_out, OSCAP_GSYM(probe_arg));
 			probe_cobj_compute_flag(probe_out);
 		} else {
 			/*
@@ -1181,7 +1155,7 @@ void *probe_worker(void *arg)
 			 */
 			struct probe_varref_ctx *ctx;
 
-			_D("probe_main2\n");
+			dI("handling varrefs in object\n");
 
 			probe_varref_create_ctx(probe_in, varrefs, &ctx);
 			SEXP_free(varrefs);
@@ -1190,66 +1164,22 @@ void *probe_worker(void *arg)
 				SEXP_t *cobj, *r0;
 
 				cobj = probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, NULL, NULL);
-				probe_ret = probe_main(ctx->pi2, cobj, OSCAP_GSYM(probe_arg));
+				*ret = probe_main(ctx->pi2, cobj, OSCAP_GSYM(probe_arg));
 				probe_cobj_compute_flag(cobj);
 				r0 = probe_out;
 				probe_out = probe_set_combine(r0, cobj, OVAL_SET_OPERATION_UNION);
 				SEXP_vfree(cobj, r0, NULL);
-			} while (probe_ret == 0
+			} while (*ret == 0
 				 && probe_varref_iterate_ctx(ctx));
 
 			probe_varref_destroy_ctx(ctx);
 		}
 	}
 
-	_D("probe_out = %p, probe_ret = %d\n", (void *)probe_out, probe_ret);
-
+	SEXP_free(probe_in);
 	SEXP_VALIDATE(probe_out);
 
-	oid = probe_obj_getattrval(probe_in, "id");
-	_A(oid != NULL);
-	SEXP_free(probe_in);
-	if (pcache_sexp_add(OSCAP_GSYM(pcache), oid, probe_out) != 0) {
-		/* TODO */
-		abort();
-	}
-
-	SEXP_free(oid);
-
-	if (probe_ret != 0) {
-		if (SEAP_replyerr(OSCAP_GSYM(ctx), OSCAP_GSYM(sd), seap_request, probe_ret) == -1) {
-			int ret = errno;
-
-			_D("An error ocured while sending error status. errno=%u, %s.\n", errno, strerror(errno));
-
-			SEAP_msg_free(seap_request);
-			SEXP_free(probe_out);
-
-			/* FIXME */
-			exit(ret);
-		}
-	} else {
-		seap_reply = SEAP_msg_new();
-		SEAP_msg_set(seap_reply, probe_out);
-
-		if (SEAP_reply(OSCAP_GSYM(ctx), OSCAP_GSYM(sd), seap_reply, seap_request) == -1) {
-			int ret = errno;
-
-			_D("An error ocured while sending SEAP message. errno=%u, %s.\n", errno, strerror(errno));
-
-			SEAP_msg_free(seap_reply);
-			SEAP_msg_free(seap_request);
-                        SEXP_free(probe_out);
-
-			exit(ret);
-		}
-
-		SEAP_msg_free(seap_reply);
-                SEXP_free(probe_out);
-	}
-
-	SEAP_msg_free(seap_request);
-	return (NULL);
+	return (probe_out);
 }
 
 static int probe_optkcmp(int *a, probe_option_t *b)

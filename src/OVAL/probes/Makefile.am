@@ -10,7 +10,9 @@ noinst_LTLIBRARIES= libprobe.la
 libprobe_la_SOURCES= \
 	probe-fini.c \
 	probe-init.c \
-	probe-main.c
+	probe-main.c \
+	probe-thread.c \
+	probe-thread.h
 
 libprobe_la_LDFLAGS = $(top_builddir)/src/libopenscap.la
 
