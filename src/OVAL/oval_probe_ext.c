@@ -1044,7 +1044,10 @@ int oval_probe_ext_abort(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
 		sch_pipedata_t *pipeinfo = (sch_pipedata_t *)dsc->scheme_data;
 
 		dI("Sending SIGUSR1 to pid=%u\n", pipeinfo->pid);
-		kill(pipeinfo->pid, SIGUSR1);
+
+		if (kill(pipeinfo->pid, SIGUSR1) != 0)
+			dW("kill(SIGUSR1, %u): %u, %s\n", errno, strerror(errno));
+
 		break;
 	}
 	default:

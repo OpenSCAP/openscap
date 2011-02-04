@@ -13,7 +13,6 @@
 #include <stdbool.h>
 #include "seap.h"
 #include "SEAP/generic/rbt/rbt.h"
-#include "probe-result.h"
 
 typedef struct {
 	SEAP_msgid_t sid; /**< SEAP message handled by this thread */

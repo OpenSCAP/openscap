@@ -56,7 +56,7 @@ OSCAP_HIDDEN_START;
 # define OVAL_PROBE_DIR    "/usr/libexec/openscap"
 #endif
 
-#define OVAL_PROBE_MAXRETRY 3
+#define OVAL_PROBE_MAXRETRY 0
 
 OSCAP_HIDDEN_END;
 
