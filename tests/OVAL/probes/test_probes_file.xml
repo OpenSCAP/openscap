@@ -1416,25 +1416,25 @@
 
     <!-- OBJECT WITH ONE INSTANCE (ITEM) -->
     <file_object version="1" id="oval:1:obj:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-      <path>/etc/</path>
+      <path>/etc</path>
       <filename>passwd</filename>
     </file_object>
 
     <!-- OBJECT WITH TWO INSTANCES (ITEMS) -->
     <file_object version="1" id="oval:1:obj:2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-      <path>/etc/</path>
+      <path>/etc</path>
       <filename operation="pattern match">^(passwd|group)$</filename>
     </file_object>
 
     <!-- OBJECT WITH NONE INSTANCE (ITEM) -->
     <file_object version="1" id="oval:1:obj:3" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-      <path>/etc/</path>
+      <path>/etc</path>
       <filename>non-existing-file</filename>
     </file_object>
 
     <!-- OBJECT WITH NONE INSTANCE (ITEM) -->
     <file_object version="1" id="oval:1:obj:4" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-      <path>/non-existing-path/</path>
+      <path>/non-existing-path</path>
       <filename>non-existing-file</filename>
     </file_object>
 

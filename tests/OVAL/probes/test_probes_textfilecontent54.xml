@@ -250,7 +250,7 @@
     <!-- SIMPLE OBJECTS -->
 
     <textfilecontent54_object version="1" id="object:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <path>/tmp/</path>
+      <path>/tmp</path>
       <filename>test_probes_textfilecontent54.tmp_file</filename> 
       <pattern operation="pattern match">(\s)*valid_key(\s)*=(\s)*valid_value(\s)*</pattern>
       <instance operation="greater than or equal" datatype="int">0</instance>
