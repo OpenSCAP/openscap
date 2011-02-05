@@ -30,19 +30,16 @@
 typedef struct {
 	FTS    *ofts_fts;
 
-	SEXP_t  *ofts_path;
 	char   **ofts_st_path;       /**< starting paths - NULL terminated */
 	uint16_t ofts_st_path_count; /**< number of starting paths */
 	uint16_t ofts_st_path_index; /**< current starting path */
 
 	pcre       *ofts_path_regex;
 	pcre_extra *ofts_path_regex_extra;
-	bool        ofts_path_regex_Opartial; /**< do "partial match" optimization? */
 
-	SEXP_t *ofts_filename;
-	SEXP_t *ofts_behaviors;
-
-	bool ofts_nilfilename;
+	SEXP_t *ofts_spath;
+	SEXP_t *ofts_sfilename;
+	SEXP_t *ofts_sfilepath;
 
 	int max_depth;
 	int direction;
@@ -76,8 +73,6 @@ typedef struct {
 
 	char  *path;     /* path - separate memory */
 	size_t path_len;
-
-	bool  nilfile;
 } OVAL_FTSENT;
 
 /*

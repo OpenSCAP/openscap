@@ -59,20 +59,17 @@ static OVAL_FTS *OVAL_FTS_new(char **fts_paths, uint16_t fts_paths_count, int ft
 	ofts->ofts_st_path_count = fts_paths_count;
 	ofts->ofts_st_path_index = 0;
 
-	ofts->ofts_path      = NULL;
-	ofts->ofts_filename  = NULL;
-	ofts->ofts_behaviors = NULL;
+	ofts->ofts_spath = NULL;
+	ofts->ofts_sfilename = NULL;
+	ofts->ofts_sfilepath = NULL;
 
 	ofts->ofts_path_regex       = NULL;
 	ofts->ofts_path_regex_extra = NULL;
-	ofts->ofts_path_regex_Opartial = false;
 
 	ofts->max_depth  = -1;
 	ofts->direction  = -1;
 	ofts->filesystem = -1;
 	ofts->localdevs  = NULL;
-
-	ofts->ofts_nilfilename = false;
 
 	return (ofts);
 }
@@ -95,35 +92,35 @@ static OVAL_FTSENT *OVAL_FTSENT_new(OVAL_FTS *ofts, FTSENT *fts_ent)
 
 	ofts_ent = oscap_talloc(OVAL_FTSENT);
 
-	ofts_ent->filepath     = strdup(fts_ent->fts_path);
-	ofts_ent->filepath_len = fts_ent->fts_pathlen;
-
-	if (!ofts->ofts_nilfilename) {
-		ofts_ent->file     = ofts_ent->filepath + (fts_ent->fts_pathlen - fts_ent->fts_namelen);
-		ofts_ent->file_len = fts_ent->fts_namelen;
-
-		assume_d((fts_ent->fts_pathlen - fts_ent->fts_namelen > 0), NULL);
+	if (ofts->ofts_sfilename) {
+		ofts_ent->filepath_len = fts_ent->fts_pathlen;
+		ofts_ent->filepath = strdup(fts_ent->fts_path);
 
 		ofts_ent->path_len = fts_ent->fts_pathlen - fts_ent->fts_namelen;
-		ofts_ent->path     = oscap_alloc(sizeof(char) * (ofts_ent->path_len + 1));
+		if (ofts_ent->path_len > 1)
+			ofts_ent->path_len--; /* strip last slash */
+		ofts_ent->path = oscap_alloc(ofts_ent->path_len + 1);
+		strncpy(ofts_ent->path, fts_ent->fts_path, ofts_ent->path_len);
+		ofts_ent->path[ofts_ent->path_len] = '\0';
 
-		strncpy(ofts_ent->path, ofts_ent->filepath, ofts_ent->path_len);
-		ofts_ent->path[ofts_ent->path_len - 1] = '\0';
+		ofts_ent->file_len = fts_ent->fts_namelen;
+		ofts_ent->file = strdup(fts_ent->fts_name);
 	} else {
-		ofts_ent->path_len = fts_ent->fts_pathlen;
-		ofts_ent->path     = strdup(fts_ent->fts_path);
+		ofts_ent->filepath_len = -1;
+		ofts_ent->filepath = NULL;
 
-		ofts_ent->file     = "";
+		ofts_ent->path_len = fts_ent->fts_pathlen;
+		ofts_ent->path = strdup(fts_ent->fts_path);
+
 		ofts_ent->file_len = 0;
+		ofts_ent->file = "";
 	}
 
 	dI("\n"
 	   "New OVAL_FTSENT:\n"
-	   "\tfilepath: %s\n"
-	   "\t    file: %s\n"
-	   "\t    path: %s\n", ofts_ent->filepath, ofts_ent->file, ofts_ent->path);
-
-	ofts_ent->nilfile = ofts->ofts_nilfilename;
+	   "\tfilepath: '%s'.\n"
+	   "\t    file: '%s'.\n"
+	   "\t    path: '%s'.\n", ofts_ent->filepath, ofts_ent->file, ofts_ent->path);
 
 	return (ofts_ent);
 }
@@ -152,8 +149,8 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 
 	char cstr_path[PATH_MAX+1];
 	char cstr_file[PATH_MAX+1];
-	char cstr_filepath[PATH_MAX+1];
 	char cstr_buff[32];
+	char **paths;
 
 	SEXP_t *r0;
 
@@ -199,241 +196,184 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		}						\
 	} while (0)
 
-	/* filepath */
-	if (filepath != NULL) {
-		assume_d(filepath != NULL, NULL);
-		assume_d(path     == NULL, NULL);
-		assume_d(filename == NULL, NULL);
-		char *dirc, *basec, *bname, *dname;
-		SEXP_t *r1, *list;
+	assume_d((path == NULL && filename == NULL && filepath != NULL)
+		 || (path != NULL && filepath == NULL), NULL);
+	assume_d(behaviors != NULL, NULL);
 
-		/* split filepath into file and name */
-		ENT_GET_STRVAL(filepath,     cstr_filepath, sizeof cstr_filepath, return NULL);
-		dirc = strdup(cstr_filepath);
-		basec = strdup(cstr_filepath);
-		dname = dirname(dirc);
-		bname = basename(basec);
-	
-		/* create the mess */
-                list = probe_ent_creat ("path", NULL , r0 = SEXP_string_new(dname, strlen(dname)),
-                			"filename", NULL, r1 = SEXP_string_new(bname, strlen(bname)), 
-					NULL);
-		path = SEXP_list_nth(list, 1);
-		filename = SEXP_list_nth(list, 2);
-
-		/* partial clean */
-		SEXP_free(list);
-		SEXP_free(r0);
-		SEXP_free(r1);
-		free(dirc);
-		free(basec);
-	
-		/* we only support EQUALS operation yet */	
+	if (path)
+		ENT_GET_AREF(path, r0, "operation", false);
+	else
 		ENT_GET_AREF(filepath, r0, "operation", false);
-	        if (r0 != NULL) {
-			path_op = SEXP_number_getu(r0);
-			SEXP_free(r0);
-			if( path_op!=OVAL_OPERATION_EQUALS )
-				dW("only EQUALS operation supported with filepath");
-		}
-	}
 
-	/* path & filename */
-	assume_d(path     != NULL, NULL);
-	assume_d(filename != NULL, NULL);
-
-	ENT_GET_AREF(path, r0, "operation", false);
 	if (r0 != NULL) {
 		path_op = SEXP_number_getu(r0);
 		SEXP_free(r0);
-
-		switch (path_op) {
-		case OVAL_OPERATION_EQUALS:
-		case OVAL_OPERATION_PATTERN_MATCH:
-			/* XXX: add more operations */
-			break;
-		default:
-			dE("Invalid operation: %u\n", path_op);
-		}
-	} else
+	} else {
 		path_op = OVAL_OPERATION_EQUALS;
+	}
 
 	dI("path_op: %u\n", path_op);
 
+	if (path) { /* filepath == NULL */
+		ENT_GET_STRVAL(path, cstr_path, sizeof cstr_path, return NULL);
+		ENT_GET_STRVAL(filename, cstr_file, sizeof cstr_file, nilfilename = true);
 
-	ENT_GET_STRVAL(path,     cstr_path, sizeof cstr_path, return NULL);
-	ENT_GET_STRVAL(filename, cstr_file, sizeof cstr_file, nilfilename = true);
+		dI("\n"
+		   "    path: %s\n"
+		   "filename: %s\n", cstr_path, cstr_file);
 
-	dI("\n"
-	   "    path: %s\n"
-	   "filename: %s\n", cstr_path, cstr_file);
-
-
-	assume_d(behaviors != NULL, NULL);
-
-
-	/* max_depth */
-	ENT_GET_AREF(behaviors, r0, "max_depth", true);
-	SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
-
-	max_depth = strtol(cstr_buff, NULL, 10);
-
-	if (errno == EINVAL || errno == ERANGE) {
-		dE("Invalid value of the `%s' attribute: %s\n", "recurse_direction", cstr_buff);
-		SEXP_free(r0);
-		return (NULL);
-	}
-
-	dI("\n"
-	   "bh.max_depth: %s\n"
-	   "=> max_depth: %d\n", cstr_buff, max_depth);
-	SEXP_free(r0);
-
-	/* recurse_direction */
-	ENT_GET_AREF(behaviors, r0, "recurse_direction", true);
-	SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
-
-	if (strcmp(cstr_buff, "none") == 0)
-		direction = OVAL_RECURSE_DIRECTION_NONE;
-	else if (strcmp(cstr_buff, "down") == 0)
-		direction = OVAL_RECURSE_DIRECTION_DOWN;
-	else if (strcmp(cstr_buff, "up") == 0)
-		direction = OVAL_RECURSE_DIRECTION_UP;
-	else {
-		dE("Invalid direction: %s\n", cstr_buff);
-		SEXP_free(r0);
-		return (NULL);
-	}
-
-	dI("\n"
-	   "bh.direction: %s\n"
-	   "=> direction: %d\n", cstr_buff, direction);
-	SEXP_free(r0);
-
-	/* recurse */
-	ENT_GET_AREF(behaviors, r0, "recurse", false);
-
-	if (r0 != NULL) {
+		/* max_depth */
+		ENT_GET_AREF(behaviors, r0, "max_depth", true);
 		SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
-
-		if (strcmp(cstr_buff, "symlinks and directories") == 0)
-			recurse = OVAL_RECURSE_SYMLINKS_AND_DIRS;
-		else if (strcmp(cstr_buff, "files and directories") == 0)
-			recurse = OVAL_RECURSE_FILES_AND_DIRS;
-		else if (strcmp(cstr_buff, "symlinks") == 0)
-			recurse = OVAL_RECURSE_SYMLINKS;
-		else if (strcmp(cstr_buff, "directories") == 0)
-			recurse = OVAL_RECURSE_DIRS;
-		else {
-			dE("Invalid recurse: %s\n", cstr_buff);
+		max_depth = strtol(cstr_buff, NULL, 10);
+		if (errno == EINVAL || errno == ERANGE) {
+			dE("Invalid value of the `%s' attribute: %s\n", "recurse_direction", cstr_buff);
 			SEXP_free(r0);
 			return (NULL);
 		}
-	} else
-		recurse = OVAL_RECURSE_SYMLINKS_AND_DIRS;
 
-	dI("\n"
-	   "bh.recurse: %s\n"
-	   "=> recurse: %d\n", cstr_buff, recurse);
-	SEXP_free(r0);
+		dI("\n"
+		   "bh.max_depth: %s\n"
+		   "=> max_depth: %d\n", cstr_buff, max_depth);
+		SEXP_free(r0);
 
-	/* recurse_file_system */
-	ENT_GET_AREF(behaviors, r0, "recurse_file_system", false);
-
-	if (r0 != NULL) {
+		/* recurse_direction */
+		ENT_GET_AREF(behaviors, r0, "recurse_direction", true);
 		SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
-
-		if (strcmp(cstr_buff, "local") == 0)
-			filesystem = OVAL_RECURSE_FS_LOCAL;
-		else if (strcmp(cstr_buff, "all") == 0)
-			filesystem = OVAL_RECURSE_FS_ALL;
-		else if (strcmp(cstr_buff, "defined") == 0) {
-			filesystem   = OVAL_RECURSE_FS_DEFINED;
-			fts_options |= FTS_XDEV;
+		/* todo: use oscap_string_to_enum() */
+		if (strcmp(cstr_buff, "none") == 0) {
+			direction = OVAL_RECURSE_DIRECTION_NONE;
+		} else if (strcmp(cstr_buff, "down") == 0) {
+			direction = OVAL_RECURSE_DIRECTION_DOWN;
+		} else if (strcmp(cstr_buff, "up") == 0) {
+			direction = OVAL_RECURSE_DIRECTION_UP;
 		} else {
-			dE("Invalid recurse filesystem: %s\n", cstr_buff);
+			dE("Invalid direction: %s\n", cstr_buff);
 			SEXP_free(r0);
 			return (NULL);
 		}
-	} else
-		filesystem = OVAL_RECURSE_FS_ALL;
 
-	dI("\n"
-	   "bh.filesystem: %s\n",
-	   "=> filesystem: %d\n", cstr_buff, filesystem);
-	SEXP_free(r0);
+		dI("\n"
+		   "bh.direction: %s\n"
+		   "=> direction: %d\n", cstr_buff, direction);
+		SEXP_free(r0);
 
+		/* recurse */
+		ENT_GET_AREF(behaviors, r0, "recurse", false);
+		if (r0 != NULL) {
+			SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
+			/* todo: use oscap_string_to_enum() */
+			if (strcmp(cstr_buff, "symlinks and directories") == 0) {
+				recurse = OVAL_RECURSE_SYMLINKS_AND_DIRS;
+			} else if (strcmp(cstr_buff, "files and directories") == 0) {
+				recurse = OVAL_RECURSE_FILES_AND_DIRS;
+			} else if (strcmp(cstr_buff, "symlinks") == 0) {
+				recurse = OVAL_RECURSE_SYMLINKS;
+			} else if (strcmp(cstr_buff, "directories") == 0) {
+				recurse = OVAL_RECURSE_DIRS;
+			} else {
+				dE("Invalid recurse: %s\n", cstr_buff);
+				SEXP_free(r0);
+				return (NULL);
+			}
+		} else {
+			recurse = OVAL_RECURSE_SYMLINKS_AND_DIRS;
+		}
+
+		dI("\n"
+		   "bh.recurse: %s\n"
+		   "=> recurse: %d\n", cstr_buff, recurse);
+		SEXP_free(r0);
+
+		/* recurse_file_system */
+		ENT_GET_AREF(behaviors, r0, "recurse_file_system", false);
+
+		if (r0 != NULL) {
+			SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
+			/* todo: use oscap_string_to_enum() */
+			if (strcmp(cstr_buff, "local") == 0) {
+				filesystem = OVAL_RECURSE_FS_LOCAL;
+			} else if (strcmp(cstr_buff, "all") == 0) {
+				filesystem = OVAL_RECURSE_FS_ALL;
+			} else if (strcmp(cstr_buff, "defined") == 0) {
+				filesystem = OVAL_RECURSE_FS_DEFINED;
+				fts_options |= FTS_XDEV;
+			} else {
+				dE("Invalid recurse filesystem: %s\n", cstr_buff);
+				SEXP_free(r0);
+				return (NULL);
+			}
+		} else {
+			filesystem = OVAL_RECURSE_FS_ALL;
+		}
+
+		dI("\n"
+		   "bh.filesystem: %s\n",
+		   "=> filesystem: %d\n", cstr_buff, filesystem);
+		SEXP_free(r0);
+	} else { /* filepath != NULL */
+		ENT_GET_STRVAL(filepath, cstr_path, sizeof cstr_path, return NULL);
+	}
+
+	paths = oscap_alloc(sizeof(char *) * 2);
+	if (path_op == OVAL_OPERATION_EQUALS)
+		paths[0] = strdup(cstr_path);
+	else
+		paths[0] = strdup("/");
+	paths[1] = NULL;
+
+	ofts = OVAL_FTS_new(paths, 1, fts_options);
+
+	ofts->ofts_st_path = paths; /* NULL-terminated array of starting paths */
+	ofts->ofts_st_path_count = 1;
+	ofts->ofts_st_path_index = 0;
+
+	/* todo: would this also be useful for other operations? */
 	if (path_op == OVAL_OPERATION_PATTERN_MATCH) {
 		pcre  *regex;
 
 		regex = pcre_compile(cstr_path, 0, NULL, NULL, NULL);
-
 		if (regex == NULL) {
 			dE("pcre_compile(%s) failed\n", cstr_path);
 			return (NULL);
 		} else {
 			int firstbyte = -1;
-			char  **paths = oscap_alloc(sizeof(char *) * 2);
-
-			/* analyze */
-			/* guess starting points */
-			/* fts open */
-
-			paths[0] = strdup("/");
-			paths[1] = NULL;
-
-			ofts = OVAL_FTS_new (paths, 1, fts_options);
-
-			ofts->ofts_st_path = paths; /* NULL-terminated array of starting paths */
-			ofts->ofts_st_path_count = 1;
-			ofts->ofts_st_path_index = 0;
+			const char *errptr;
 
 			ofts->ofts_path_regex = regex;
-			ofts->ofts_path_regex_extra = pcre_study(regex, 0, NULL);
+			ofts->ofts_path_regex_extra = pcre_study(regex, 0, &errptr);
 
 			pcre_fullinfo(regex, ofts->ofts_path_regex_extra,
 				      PCRE_INFO_FIRSTBYTE, &firstbyte);
 
-			if (firstbyte == '/')
-				ofts->ofts_path_regex_Opartial = true;
-		}
-	} else {
-		char **paths = oscap_alloc(sizeof(char *) * 2);
-
-		paths[0] = strdup(cstr_path);
-		paths[1] = NULL;
-
-		ofts = OVAL_FTS_new (paths, 1, fts_options);
-
-		ofts->ofts_st_path = paths; /* NULL-terminated array of starting paths */
-		ofts->ofts_st_path_count = 1;
-		ofts->ofts_st_path_index = 0;
-	}
-
-	if (filesystem == OVAL_RECURSE_FS_LOCAL) {
-		ofts->localdevs = fsdev_init(NULL, 0);
-
-		if (ofts->localdevs == NULL) {
-			dE("fsdev_init failed\n");
-			return (NULL);
+			if (firstbyte != '/') {
+				pcre_free(ofts->ofts_path_regex);
+				pcre_free(ofts->ofts_path_regex_extra);
+				ofts->ofts_path_regex = NULL;
+				ofts->ofts_path_regex_extra = NULL;
+			}
 		}
 	}
 
-	ofts->ofts_path      = SEXP_ref(path); /* path entity */
-	ofts->ofts_filename  = SEXP_ref(filename); /* filename entity */
-	ofts->ofts_behaviors = SEXP_ref(behaviors); /* behaviors entity */
+	if (path) { /* filepath == NULL */
+		if (filesystem == OVAL_RECURSE_FS_LOCAL) {
+			ofts->localdevs = fsdev_init(NULL, 0);
+			if (ofts->localdevs == NULL) {
+				dE("fsdev_init() failed.\n");
+				return (NULL);
+			}
+		}
 
-	ofts->max_depth  = max_depth;
-	ofts->direction  = direction;
-	ofts->recurse    = recurse;
-	ofts->filesystem = filesystem;
+		ofts->ofts_spath = SEXP_ref(path); /* path entity */
+		if (!nilfilename)
+			ofts->ofts_sfilename = SEXP_ref(filename); /* filename entity */
 
-	ofts->ofts_nilfilename = nilfilename;
-
-	/* clean up the mess */
-	if(filepath!=NULL) {
-		SEXP_free(path);
-		SEXP_free(filename);
+		ofts->max_depth = max_depth;
+		ofts->direction = direction;
+		ofts->recurse = recurse;
+		ofts->filesystem = filesystem;
+	} else { /* filepath != NULL */
+		ofts->ofts_sfilepath = SEXP_ref(filepath);
 	}
 
 	return (ofts);
@@ -441,7 +381,6 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 
 OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 {
-	SEXP_t *sexp_filename;
 	OVAL_FTSENT *ofts_ent = NULL;
 
 	dI("ofts=%p\n", ofts);
@@ -463,26 +402,20 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 				continue;
 			}
 
-			dI("fts_ent: p=%s, n=%s\n", fts_ent->fts_path, fts_ent->fts_name);
+			dI("fts_ent->fts_path: '%s'.\n", fts_ent->fts_path);
 
-			/*
-			 * path match?
-			 */
+			/* partial match optimization for OVAL_OPERATION_PATTERN_MATCH */
 			if (ofts->ofts_path_regex != NULL) {
 				int ret, svec[3];
 
 				ret = pcre_exec(ofts->ofts_path_regex, ofts->ofts_path_regex_extra,
 						fts_ent->fts_path, fts_ent->fts_pathlen - fts_ent->fts_namelen,
 						0, PCRE_PARTIAL, svec, 1);
-
 				if (ret < 0) {
-					switch (ret)
-					{
+					switch (ret) {
 					case PCRE_ERROR_NOMATCH:
-						if (ofts->ofts_path_regex_Opartial) {
-							dI("No path match and partial optimization is enabled -> skipping file\n");
-							goto __skip_file;
-						}
+						dI("No path match and partial optimization is enabled -> skipping file.\n");
+						goto __skip_file;
 					case PCRE_ERROR_PARTIAL:
 						continue;
 					default:
@@ -492,23 +425,41 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 				}
 			}
 
-			dI("path match\n");
-
-			if (!ofts->ofts_nilfilename) {
+			if (ofts->ofts_sfilepath) { /* match filepath */
 				if (fts_ent->fts_info != FTS_D) {
-					/*
-					 * filename match?
-					 * XXX: This is not efficient! Implement probe_entobj_cmp_cstr().
-					 */
-					sexp_filename = SEXP_string_newf("%s", fts_ent->fts_name);
+					SEXP_t *stmp;
 
-					if (probe_entobj_cmp(ofts->ofts_filename, sexp_filename) == OVAL_RESULT_TRUE)
+					stmp = SEXP_string_newf("%s", fts_ent->fts_path);
+					if (probe_entobj_cmp(ofts->ofts_sfilepath, stmp) == OVAL_RESULT_TRUE)
 						ofts_ent = OVAL_FTSENT_new(ofts, fts_ent);
-
-					SEXP_free(sexp_filename);
+					SEXP_free(stmp);
 				}
-			} else
-				ofts_ent = OVAL_FTSENT_new(ofts, fts_ent);
+			} else { /* match path+filename */
+				if ((ofts->ofts_sfilename && fts_ent->fts_info != FTS_D)
+				    || (!ofts->ofts_sfilename && fts_ent->fts_info == FTS_D)) {
+					bool match = true;
+					SEXP_t *stmp;
+					int pathlen;
+
+					pathlen = fts_ent->fts_pathlen - fts_ent->fts_namelen;
+					if (pathlen > 1)
+						pathlen--; /* strip last slash */
+					stmp = SEXP_string_newf("%.*s", pathlen , fts_ent->fts_path);
+					if (probe_entobj_cmp(ofts->ofts_spath, stmp) != OVAL_RESULT_TRUE)
+						match = false;
+					SEXP_free(stmp);
+
+					if (match && ofts->ofts_sfilename) {
+						stmp = SEXP_string_newf("%s", fts_ent->fts_name);
+						if (probe_entobj_cmp(ofts->ofts_sfilename, stmp) != OVAL_RESULT_TRUE)
+							match = false;
+						SEXP_free(stmp);
+					}
+
+					if (match)
+						ofts_ent = OVAL_FTSENT_new(ofts, fts_ent);
+				}
+			}
 
 			switch (ofts->direction) {
 			case OVAL_RECURSE_DIRECTION_NONE:
@@ -607,12 +558,19 @@ int oval_fts_close(OVAL_FTS *ofts)
 
 	ofts->ofts_st_path = NULL;
 
-	if (ofts->ofts_filename != NULL)
-		SEXP_free(ofts->ofts_filename);
-	if (ofts->ofts_behaviors != NULL)
-		SEXP_free(ofts->ofts_behaviors);
-	if (ofts->ofts_path != NULL)
-		SEXP_free(ofts->ofts_path);
+	if (ofts->ofts_path_regex)
+		pcre_free(ofts->ofts_path_regex);
+	if (ofts->ofts_path_regex_extra)
+		pcre_free(ofts->ofts_path_regex_extra);
+
+	if (ofts->ofts_spath != NULL)
+		SEXP_free(ofts->ofts_spath);
+	if (ofts->ofts_sfilename != NULL)
+		SEXP_free(ofts->ofts_sfilename);
+	if (ofts->ofts_sfilepath != NULL)
+		SEXP_free(ofts->ofts_sfilepath);
+
+	fsdev_free(ofts->localdevs);
 
 	OVAL_FTS_free(ofts);
 
