@@ -44,7 +44,6 @@ bool xccdf_group_get_interactive(const struct xccdf_group *group);
 bool xccdf_group_set_resolved(struct xccdf_group *item, bool newval);
 bool xccdf_group_set_interactive(struct xccdf_group *item, bool newval);
 bool xccdf_group_set_multiple(struct xccdf_group *item, bool newval);
-bool xccdf_value_set_interactive(struct xccdf_value *item, bool newval);
 bool xccdf_rule_set_resolved(struct xccdf_rule *item, bool newval);
 bool xccdf_rule_get_resolved(const struct xccdf_rule *rule);
 bool xccdf_rule_get_interactive(const struct xccdf_rule *rule);
@@ -132,5 +131,8 @@ bool xccdf_result_add_rationale(struct xccdf_result *item, struct oscap_text *ne
 bool xccdf_result_add_reference(struct xccdf_result *item, struct oscap_reference *newval);
 bool xccdf_result_add_status(struct xccdf_result *item, struct xccdf_status *newval);
 bool xccdf_result_add_warning(struct xccdf_result *item, struct xccdf_warning *newval);
+bool xccdf_rule_set_interactive(struct xccdf_rule *item, bool newval);
+bool xccdf_item_get_interactive(const struct xccdf_item *item);
+bool xccdf_item_set_interactive(struct xccdf_item *item, bool newval);
 
 OSCAP_HIDDEN_END;
