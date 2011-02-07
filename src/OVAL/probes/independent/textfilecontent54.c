@@ -348,7 +348,7 @@ static int process_file(const char *path, const char *file, void *arg)
 				oscap_free(substrs);
 			}
 		}
-	} while (substr_cnt > 0);
+	} while (substr_cnt > 0 && ofs < buf_used);
 
  cleanup:
 	if (fd != -1)
