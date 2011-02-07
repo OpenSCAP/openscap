@@ -113,7 +113,7 @@ static OVAL_FTSENT *OVAL_FTSENT_new(OVAL_FTS *ofts, FTSENT *fts_ent)
 		ofts_ent->path = strdup(fts_ent->fts_path);
 
 		ofts_ent->file_len = 0;
-		ofts_ent->file = "";
+		ofts_ent->file = strdup("");
 	}
 
 	dI("\n"
@@ -129,6 +129,7 @@ static void OVAL_FTSENT_free(OVAL_FTSENT *ofts_ent)
 {
 	oscap_free(ofts_ent->filepath);
 	oscap_free(ofts_ent->path);
+	oscap_free(ofts_ent->file);
 	oscap_free(ofts_ent);
 	return;
 }
