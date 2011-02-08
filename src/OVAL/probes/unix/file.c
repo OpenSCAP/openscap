@@ -222,11 +222,12 @@ static int file_cb (const char *p, const char *f, void *ptr)
         cobj = args->cobj;
 	filters = args->filters;
 
-        if (f == NULL)
-		return (0);
-
-        snprintf (path_buffer, sizeof path_buffer, "%s/%s", p, f);
-        st_path = path_buffer;
+	if (f == NULL) {
+		st_path = p;
+	} else {
+		snprintf (path_buffer, sizeof path_buffer, "%s/%s", p, f);
+		st_path = path_buffer;
+	}
 
         if (lstat (st_path, &st) == -1) {
                 _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
@@ -251,7 +252,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
 				r0 = SEXP_string_newf ("%s", p),	\
 									\
 				"filename", NULL,			\
-				r1 = (f == NULL) ? NULL : SEXP_string_newf ("%s", f), \
+				r1 = (f == NULL) ? SEXP_string_newf("") : SEXP_string_newf ("%s", f), \
 									\
 				"type", NULL,				\
 				strfiletype (st.st_mode),		\
