@@ -112,8 +112,8 @@ static OVAL_FTSENT *OVAL_FTSENT_new(OVAL_FTS *ofts, FTSENT *fts_ent)
 		ofts_ent->path_len = fts_ent->fts_pathlen;
 		ofts_ent->path = strdup(fts_ent->fts_path);
 
-		ofts_ent->file_len = 0;
-		ofts_ent->file = strdup("");
+		ofts_ent->file_len = -1;
+		ofts_ent->file = NULL;
 	}
 
 	dI("\n"
@@ -220,8 +220,9 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		ENT_GET_STRVAL(filename, cstr_file, sizeof cstr_file, nilfilename = true);
 
 		dI("\n"
-		   "    path: %s\n"
-		   "filename: %s\n", cstr_path, cstr_file);
+		   "        path: '%s'.\n"
+		   "    filename: '%s'.\n"
+		   "nil filename: %d.\n", cstr_path, cstr_file, nilfilename);
 
 		/* max_depth */
 		ENT_GET_AREF(behaviors, r0, "max_depth", true);
@@ -442,10 +443,14 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 					SEXP_t *stmp;
 					int pathlen;
 
-					pathlen = fts_ent->fts_pathlen - fts_ent->fts_namelen;
-					if (pathlen > 1)
-						pathlen--; /* strip last slash */
-					stmp = SEXP_string_newf("%.*s", pathlen , fts_ent->fts_path);
+					if (!ofts->ofts_sfilename) { /* the target is a directory */
+						stmp = SEXP_string_newf("%s", fts_ent->fts_path);
+					} else {
+						pathlen = fts_ent->fts_pathlen - fts_ent->fts_namelen;
+						if (pathlen > 1)
+							pathlen--; /* strip last slash */
+						stmp = SEXP_string_newf("%.*s", pathlen , fts_ent->fts_path);
+					}
 					if (probe_entobj_cmp(ofts->ofts_spath, stmp) != OVAL_RESULT_TRUE)
 						match = false;
 					SEXP_free(stmp);
