@@ -1138,6 +1138,7 @@ SEXP_t *probe_worker(SEAP_msg_t *msg_in, int *ret)
 		probe_out = probe_set_eval(set, 0);
 		SEXP_free(set);
 		// todo: in case of an internal error set probe_ret accordingly
+		*ret = 0;
 	} else {
 		SEXP_t *varrefs;
 
