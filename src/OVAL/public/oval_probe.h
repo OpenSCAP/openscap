@@ -44,8 +44,9 @@
 #define OVAL_PDFLAG_NORECONN 0x0002	/**< don't try to reconnect on fatal errors */
 #define OVAL_PDGLAG_RUNALL   0x0004	/**< execute all probes when executing the first */
 #define OVAL_PDFLAG_RUNNOW   0x0008	/**< execute all probes immediately */
+#define OVAL_PDFLAG_SLAVE    0x0010
 
-#define OVAL_PDFLAG_MASK (0x0001|0x0002|0x0004|0x0008)
+#define OVAL_PDFLAG_MASK (0x0001|0x0002|0x0004|0x0008|0x0010)
 
 /**
  * Evaluate system info probe

@@ -250,7 +250,7 @@ static SEXP_t *oval_probe_cmd_obj_eval(SEXP_t *sexp, void *arg)
 	}
 
 	oscap_clearerr();
-	r = oval_probe_query_object(pext->sess_ptr, obj, OVAL_PDFLAG_NOREPLY, &res);
+	r = oval_probe_query_object(pext->sess_ptr, obj, OVAL_PDFLAG_NOREPLY|OVAL_PDFLAG_SLAVE, &res);
 	if (r < 0)
 		ret_code = SEXP_number_newu((unsigned int) SYSCHAR_FLAG_COMPLETE);
 	else
@@ -321,7 +321,7 @@ static SEXP_t *oval_probe_cmd_ste_fetch(SEXP_t *sexp, void *arg)
 	return (ste_list);
 }
 
-static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj, int noreply, SEXP_t **out_sexp)
+static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj, int flags, SEXP_t **out_sexp)
 {
 	int retry, ret;
 	bool aborted = false;
@@ -369,7 +369,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 		s_omsg = SEAP_msg_new();
 		SEAP_msg_set(s_omsg, (SEXP_t *) s_iobj);
 
-		if (noreply) {
+		if (flags & OVAL_PDFLAG_NOREPLY) {
 			if (SEAP_msgattr_set(s_omsg, "no-reply", NULL) != 0) {
                                 protect_errno {
                                         oscap_dlprintf(DBG_E, "Can't set no-reply attribute.\n");
@@ -389,6 +389,18 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
                         protect_errno {
                                 oscap_dlprintf(DBG_W, "Can't send message: %u, %s.\n", errno, strerror(errno));
                         }
+
+			if (flags & OVAL_PDFLAG_SLAVE) {
+                                char errbuf[__ERRBUF_SIZE];
+
+                                if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
+                                        oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBESEND, "Unable to send a message to probe");
+                                else
+					oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBESEND, errbuf);
+
+				SEAP_msg_free(s_omsg);
+				return (-1);
+			}
 
 			if (SEAP_close(ctx, pd->sd) != 0) {
                                 char errbuf[__ERRBUF_SIZE];
@@ -529,6 +541,20 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 					return (-1);
 				}
 				break;
+			}
+
+			if (flags & OVAL_PDFLAG_SLAVE) {
+				char errbuf[__ERRBUF_SIZE];
+
+                                if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
+                                        oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBESEND, "Unable to receive a message to probe");
+                                else
+					oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBESEND, errbuf);
+
+				SEAP_msg_free(s_imsg);
+				SEAP_msg_free(s_omsg);
+
+				return (-1);
 			}
 
 			if (SEAP_close(ctx, pd->sd) != 0) {
@@ -969,7 +995,7 @@ int oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext, struc
 	if (ret != 0)
 		return (1);
 
-	ret = oval_probe_comm(ctx, pd, s_obj, flags & OVAL_PDFLAG_NOREPLY, &s_sys);
+	ret = oval_probe_comm(ctx, pd, s_obj, flags, &s_sys);
 	SEXP_free(s_obj);
 
 	if (ret != 0) {
