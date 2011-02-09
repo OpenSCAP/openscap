@@ -221,7 +221,6 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
 struct pfdata {
 	char *pattern;
 	int re_opts;
-	SEXP_t *filename_ent;
 	SEXP_t *instance_ent;
 	SEXP_t *cobj;
 };
@@ -486,7 +485,6 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 	}
 
 	pfd.pattern      = pattern;
-	pfd.filename_ent = file_ent;
 	pfd.instance_ent = inst_ent;
 	pfd.cobj         = probe_out;
 #if defined USE_REGEX_PCRE
