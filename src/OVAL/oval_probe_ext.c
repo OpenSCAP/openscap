@@ -880,18 +880,20 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
 			ret = 0;
 
 		if (ret < 0 && errno == ECONNABORTED) {
-			if (!pext->do_init) {
-				oval_pdtbl_free(pext->pdtbl);
+			if (!(flags & OVAL_PDFLAG_SLAVE)) {
+				if (!pext->do_init) {
+					oval_pdtbl_free(pext->pdtbl);
+				}
+
+				pext->do_init  = true;
+				pext->pdtbl    = NULL;
+				pext->pdsc     = NULL;
+				pext->pdsc_cnt = 0;
+
+				oval_probe_ext_init(pext);
+
+				errno = ECONNABORTED;
 			}
-
-			pext->do_init  = true;
-			pext->pdtbl    = NULL;
-			pext->pdsc     = NULL;
-			pext->pdsc_cnt = 0;
-
-			oval_probe_ext_init(pext);
-
-			errno = ECONNABORTED;
 		}
 
 		return ret;
