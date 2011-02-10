@@ -17,7 +17,7 @@ extern pcache_t    *OSCAP_GSYM(pcache);
 
 static void *probe_signal_thread(void *arg)
 {
-	probe_threadmgr_t *mgr = (probe_threadmgr_t *)arg;
+	/* probe_threadmgr_t *mgr = (probe_threadmgr_t *)arg; */
 
 	siginfo_t siinf;
 	sigset_t  siset;

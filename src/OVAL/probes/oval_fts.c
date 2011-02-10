@@ -170,10 +170,10 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	SEXP_t *r0;
 
 	int fts_options = FTS_PHYSICAL;
-	int max_depth;
-	int direction;
-	int recurse;
-	int filesystem;
+	int max_depth   = -1;
+	int direction   = -1;
+	int recurse     = -1;
+	int filesystem  = -1;
 
 	uint32_t path_op;
 	bool nilfilename = false;
