@@ -1,3 +1,8 @@
+openscap-0.7.0							10-02-2011
+- OVAL 5.6 is supported
+- async stop of evaluation by signal
+- bugfixes
+
 openscap-0.6.8							31-01-2011
 - support more than one state inside OVAL tests
 - initial implementation of filepath element
