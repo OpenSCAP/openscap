@@ -365,7 +365,16 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 			pcre_fullinfo(regex, ofts->ofts_path_regex_extra,
 				      PCRE_INFO_FIRSTBYTE, &firstbyte);
 
-			if (firstbyte != '/') {
+			dI("pcre_fullinfo(): firstbyte: %d '%c'.\n", firstbyte, firstbyte);
+
+			/*
+			 * If firstbyte == '/', the path is an absolute path.
+			 * If firstbyte == -2, the pattern starts with a '^'.
+			 * In both cases, the traversal through every path
+			 * continues only as long as the path partialy matches
+			 * the pattern.
+			 */
+			if (firstbyte != '/' && firstbyte != -2) {
 				pcre_free(ofts->ofts_path_regex);
 				pcre_free(ofts->ofts_path_regex_extra);
 				ofts->ofts_path_regex = NULL;
