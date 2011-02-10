@@ -65,6 +65,7 @@ static OVAL_FTS *OVAL_FTS_new(char **fts_paths, uint16_t fts_paths_count, int ft
 
 	ofts->ofts_path_regex       = NULL;
 	ofts->ofts_path_regex_extra = NULL;
+	ofts->ofts_path_op = 0;
 
 	ofts->max_depth  = -1;
 	ofts->direction  = -1;
@@ -86,6 +87,21 @@ static void OVAL_FTS_free(OVAL_FTS *ofts)
 	return;
 }
 
+static int pathlen_from_ftse(int fts_pathlen, int fts_namelen)
+{
+	int pathlen;
+
+	if (fts_pathlen > fts_namelen) {
+		pathlen = fts_pathlen - fts_namelen;
+		if (pathlen > 1)
+			pathlen--; /* strip last slash */
+	} else {
+		pathlen = fts_pathlen;
+	}
+
+	return pathlen;
+}
+
 static OVAL_FTSENT *OVAL_FTSENT_new(OVAL_FTS *ofts, FTSENT *fts_ent)
 {
 	OVAL_FTSENT *ofts_ent;
@@ -96,9 +112,7 @@ static OVAL_FTSENT *OVAL_FTSENT_new(OVAL_FTS *ofts, FTSENT *fts_ent)
 		ofts_ent->filepath_len = fts_ent->fts_pathlen;
 		ofts_ent->filepath = strdup(fts_ent->fts_path);
 
-		ofts_ent->path_len = fts_ent->fts_pathlen - fts_ent->fts_namelen;
-		if (ofts_ent->path_len > 1)
-			ofts_ent->path_len--; /* strip last slash */
+		ofts_ent->path_len = pathlen_from_ftse(fts_ent->fts_pathlen, fts_ent->fts_namelen);
 		ofts_ent->path = oscap_alloc(ofts_ent->path_len + 1);
 		strncpy(ofts_ent->path, fts_ent->fts_path, ofts_ent->path_len);
 		ofts_ent->path[ofts_ent->path_len] = '\0';
@@ -213,7 +227,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		path_op = OVAL_OPERATION_EQUALS;
 	}
 
-	dI("path_op: %u\n", path_op);
+	dI("path_op: %u, '%s'.\n", path_op, oval_operation_get_text(path_op));
 
 	if (path) { /* filepath == NULL */
 		ENT_GET_STRVAL(path, cstr_path, sizeof cstr_path, return NULL);
@@ -222,7 +236,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		dI("\n"
 		   "        path: '%s'.\n"
 		   "    filename: '%s'.\n"
-		   "nil filename: %d.\n", cstr_path, cstr_file, nilfilename);
+		   "nil filename: %d.\n", cstr_path, nilfilename ? "" : cstr_file, nilfilename);
 
 		/* max_depth */
 		ENT_GET_AREF(behaviors, r0, "max_depth", true);
@@ -329,18 +343,21 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	ofts->ofts_st_path = paths; /* NULL-terminated array of starting paths */
 	ofts->ofts_st_path_count = 1;
 	ofts->ofts_st_path_index = 0;
+	ofts->ofts_path_op = path_op;
 
 	/* todo: would this also be useful for other operations? */
 	if (path_op == OVAL_OPERATION_PATTERN_MATCH) {
-		pcre  *regex;
+		pcre *regex;
+		int errofs = 0;
+		const char *errptr = NULL;
 
-		regex = pcre_compile(cstr_path, 0, NULL, NULL, NULL);
+		regex = pcre_compile(cstr_path, 0, &errptr, &errofs, NULL);
 		if (regex == NULL) {
-			dE("pcre_compile(%s) failed\n", cstr_path);
+			dE("pcre_compile() failed: pattern: '%s', err offset: %d, err msg: '%s'.\n",
+			   cstr_path, errofs, errptr);
 			return (NULL);
 		} else {
 			int firstbyte = -1;
-			const char *errptr;
 
 			ofts->ofts_path_regex = regex;
 			ofts->ofts_path_regex_extra = pcre_study(regex, 0, &errptr);
@@ -353,6 +370,8 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 				pcre_free(ofts->ofts_path_regex_extra);
 				ofts->ofts_path_regex = NULL;
 				ofts->ofts_path_regex_extra = NULL;
+			} else {
+				dI("Partial-match optimization enabled.\n");
 			}
 		}
 	}
@@ -404,24 +423,36 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 				continue;
 			}
 
-			dI("fts_ent->fts_path: '%s'.\n", fts_ent->fts_path);
+			dI("fts_ent:\n"
+			   "fts_path: '%s'.\n"
+			   "fts_pathlen: %d.\n"
+			   "fts_name: '%s'.\n"
+			   "fts_namelen: '%d'.\n"
+			   "fts_info: %u.\n", fts_ent->fts_path, fts_ent->fts_pathlen,
+			   fts_ent->fts_name, fts_ent->fts_namelen, fts_ent->fts_info);
 
 			/* partial match optimization for OVAL_OPERATION_PATTERN_MATCH */
-			if (ofts->ofts_path_regex != NULL) {
-				int ret, svec[3];
+			if (ofts->ofts_path_regex != NULL
+			    && (fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)) {
+				int ret, svec[3], pathlen;
+
+				if (!ofts->ofts_sfilename) /* sfilepath || (spath && !sfilename) */
+					pathlen = fts_ent->fts_pathlen;
+				else /* spath && sfilename */
+					pathlen = pathlen_from_ftse(fts_ent->fts_pathlen, fts_ent->fts_namelen);
 
 				ret = pcre_exec(ofts->ofts_path_regex, ofts->ofts_path_regex_extra,
-						fts_ent->fts_path, fts_ent->fts_pathlen - fts_ent->fts_namelen,
+						fts_ent->fts_path, pathlen,
 						0, PCRE_PARTIAL, svec, 1);
 				if (ret < 0) {
 					switch (ret) {
 					case PCRE_ERROR_NOMATCH:
-						dI("No path match and partial optimization is enabled -> skipping file.\n");
+						dI("No path match and partial-match optimization is enabled -> skipping file.\n");
 						goto __skip_file;
 					case PCRE_ERROR_PARTIAL:
 						continue;
 					default:
-						dE("pcre error: %d\n", ret);
+						dE("pcre_exec() error: %d.\n", ret);
 						return (NULL);
 					}
 				}
@@ -446,9 +477,7 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 					if (!ofts->ofts_sfilename) { /* the target is a directory */
 						stmp = SEXP_string_newf("%s", fts_ent->fts_path);
 					} else {
-						pathlen = fts_ent->fts_pathlen - fts_ent->fts_namelen;
-						if (pathlen > 1)
-							pathlen--; /* strip last slash */
+						pathlen = pathlen_from_ftse(fts_ent->fts_pathlen, fts_ent->fts_namelen);
 						stmp = SEXP_string_newf("%.*s", pathlen , fts_ent->fts_path);
 					}
 					if (probe_entobj_cmp(ofts->ofts_spath, stmp) != OVAL_RESULT_TRUE)
@@ -469,9 +498,12 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 
 			switch (ofts->direction) {
 			case OVAL_RECURSE_DIRECTION_NONE:
-				if (fts_ent->fts_level != 0) {
-					fts_set(ofts->ofts_fts, fts_ent, FTS_SKIP);
-					dI("FTS_SKIP: %s\n", fts_ent->fts_path);
+				if (fts_ent->fts_level > 0) {
+					if (ofts->ofts_path_op == OVAL_OPERATION_EQUALS
+					    && (fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)) {
+						fts_set(ofts->ofts_fts, fts_ent, FTS_SKIP);
+						dI("FTS_SKIP: reason: recurse_direction=\"none\", path: '%s'.\n", fts_ent->fts_path);
+					}
 				} else
 					dI("Not skipping FTS_ROOT: %s\n", fts_ent->fts_path);
 				break;
@@ -527,15 +559,16 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 					fts_set(ofts->ofts_fts, fts_ent, FTS_FOLLOW);
 					dI("FTS_FOLLOW: %s\n", fts_ent->fts_path);
 				} else {
+					dI("FTS_SKIP: reason: max depth reached: %d, path: '%s'.\n",
+					   ofts->max_depth, fts_ent->fts_path);
 				__skip_file:
 					fts_set(ofts->ofts_fts, fts_ent, FTS_SKIP);
-					dI("FTS_SKIP: %s\n", fts_ent->fts_path);
 				}
 			__case_end:
 				break;
 			case OVAL_RECURSE_DIRECTION_UP: /* is this really useful? */
 				fts_set(ofts->ofts_fts, fts_ent, FTS_SKIP);
-				dI("FTS_SKIP: %s\n", fts_ent->fts_path);
+				dI("FTS_SKIP: reason: recurse_direction==\"up\", path: '%s'.\n", fts_ent->fts_path);
 				break;
 			} /* switch(recurse_direction */
 

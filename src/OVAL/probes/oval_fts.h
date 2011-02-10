@@ -36,6 +36,7 @@ typedef struct {
 
 	pcre       *ofts_path_regex;
 	pcre_extra *ofts_path_regex_extra;
+	uint32_t ofts_path_op;
 
 	SEXP_t *ofts_spath;
 	SEXP_t *ofts_sfilename;
