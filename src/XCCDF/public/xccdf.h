@@ -3000,6 +3000,19 @@ bool xccdf_item_add_warning(struct xccdf_item *item, struct xccdf_warning *newva
 /// @memberof xccdf_refine_rule
 bool xccdf_refine_rule_add_remark(struct xccdf_refine_rule *obj, struct oscap_text *item);
 
+/// @memberof xccdf_rule
+bool xccdf_rule_add_requires(struct xccdf_rule *rule, struct oscap_stringlist *requires);
+/// @memberof xccdf_group
+bool xccdf_group_add_requires(struct xccdf_group *group, struct oscap_stringlist *requires);
+/// @memberof xccdf_item
+bool xccdf_item_add_requires(struct xccdf_item *item, struct oscap_stringlist *requires);
+/// @memberof xccdf_rule
+bool xccdf_rule_add_conflicts(struct xccdf_rule *rule, const char *conflicts);
+/// @memberof xccdf_group
+bool xccdf_group_add_conflicts(struct xccdf_group *group, const char *conflicts);
+/// @memberof xccdf_item
+bool xccdf_item_add_conflicts(struct xccdf_item *item, const char *conflicts);
+
 /************************************************************
  ** @} End of Setters group */
 

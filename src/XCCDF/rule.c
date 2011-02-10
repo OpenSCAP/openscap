@@ -818,6 +818,43 @@ struct oscap_stringlist_iterator *xccdf_group_get_requires(const struct xccdf_gr
 	return oscap_iterator_new(XITEM(group)->sub.group.requires);
 }
 
+bool xccdf_rule_add_requires(struct xccdf_rule* rule, struct oscap_stringlist* requires)
+{
+    oscap_list_add(XITEM(rule)->sub.rule.requires, requires);
+    return true;
+}
+bool xccdf_group_add_requires(struct xccdf_group* group, struct oscap_stringlist* requires)
+{
+    oscap_list_add(XITEM(group)->sub.group.requires, requires);
+    return true;
+}
+bool xccdf_item_add_requires(struct xccdf_item* item, struct oscap_stringlist* requires)
+{
+	if (item == NULL) return NULL;
+	if (item->type == XCCDF_RULE)  return xccdf_rule_add_requires ( XRULE(item), requires);
+	if (item->type == XCCDF_GROUP) return xccdf_group_add_requires(XGROUP(item), requires);
+    return false;
+}
+
+bool xccdf_rule_add_conflicts(struct xccdf_rule* rule, const char* conflicts)
+{
+    oscap_stringlist_add_string((struct oscap_stringlist*)(XITEM(rule)->sub.rule.conflicts), conflicts);
+    return true;
+}
+bool xccdf_group_add_conflicts(struct xccdf_group* group, const char* conflicts)
+{
+    oscap_stringlist_add_string((struct oscap_stringlist*)(XITEM(group)->sub.group.conflicts), conflicts);
+    return true;
+}
+bool xccdf_item_add_conflicts(struct xccdf_item* item, const char* conflicts)
+{
+	if (item == NULL) return NULL;
+	if (item->type == XCCDF_RULE)  return xccdf_rule_add_conflicts ( XRULE(item), conflicts);
+	if (item->type == XCCDF_GROUP) return xccdf_group_add_conflicts(XGROUP(item), conflicts);
+    return false;
+}
+
+
 void xccdf_rule_to_dom(struct xccdf_rule *rule, xmlNode *rule_node, xmlDoc *doc, xmlNode *parent)
 {
 	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
