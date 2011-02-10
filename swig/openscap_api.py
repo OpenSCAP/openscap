@@ -168,16 +168,6 @@ class OSCAP_Object(object):
                 list.generate( OSCAP_Object.new(retobj) )
                 list.object = self.object
                 return list
-            """
-            TODO
-            elif retobj.__str__().find("stringlist") != -1:
-                list = OSCAP_List()
-                list.list = OSCAP_Object.new(retobj)
-                list.free = list.list.free
-                list.extend(list.list.strings)
-                list.object = self.object
-                return list
-            """
             return OSCAP_Object.new(retobj)
         
         return __getter_wrapper

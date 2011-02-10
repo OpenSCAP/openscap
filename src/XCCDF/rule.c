@@ -898,7 +898,8 @@ void xccdf_rule_to_dom(struct xccdf_rule *rule, xmlNode *rule_node, xmlDoc *doc,
 	struct oscap_string_iterator *platforms = xccdf_rule_get_platforms(rule);
 	while (oscap_string_iterator_has_more(platforms)) {
 		const char *platform = oscap_string_iterator_next(platforms);
-		xmlNewTextChild(rule_node, ns_xccdf, BAD_CAST "platform", BAD_CAST platform);
+		xmlNode * child = xmlNewTextChild(rule_node, ns_xccdf, BAD_CAST "platform", BAD_CAST NULL);
+                xmlNewProp(child, BAD_CAST "idref", BAD_CAST platform);
 	}
 	oscap_string_iterator_free(platforms);
 
@@ -908,7 +909,8 @@ void xccdf_rule_to_dom(struct xccdf_rule *rule, xmlNode *rule_node, xmlDoc *doc,
 		struct oscap_string_iterator *strings = oscap_stringlist_get_strings(list);
 		while (oscap_string_iterator_has_more(strings)) {
 			const char *requires = oscap_string_iterator_next(strings);
-			xmlNewTextChild(rule_node, ns_xccdf, BAD_CAST "requires", BAD_CAST requires);
+			xmlNode * child = xmlNewTextChild(rule_node, ns_xccdf, BAD_CAST "requires", BAD_CAST NULL);
+                        xmlNewProp(child, BAD_CAST "idref", BAD_CAST requires);
 		}
 		oscap_string_iterator_free(strings);
 	}
@@ -917,7 +919,8 @@ void xccdf_rule_to_dom(struct xccdf_rule *rule, xmlNode *rule_node, xmlDoc *doc,
 	struct oscap_string_iterator *conflicts = xccdf_rule_get_conflicts(rule);
 	while (oscap_string_iterator_has_more(conflicts)) {
 		const char *conflict = oscap_string_iterator_next(conflicts);
-		xmlNewTextChild(rule_node, ns_xccdf, BAD_CAST "conflicts", BAD_CAST conflict);
+		xmlNode * child = xmlNewTextChild(rule_node, ns_xccdf, BAD_CAST "conflicts", BAD_CAST NULL);
+                xmlNewProp(child, BAD_CAST "idref", BAD_CAST conflict);
 	}
 	oscap_string_iterator_free(conflicts);
 
@@ -988,7 +991,8 @@ void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *
 	struct oscap_string_iterator *platforms = xccdf_group_get_platforms(group);
 	while (oscap_string_iterator_has_more(platforms)) {
 		const char *platform = oscap_string_iterator_next(platforms);
-		xmlNewTextChild(group_node, ns_xccdf, BAD_CAST "platform", BAD_CAST platform);
+		xmlNode * child = xmlNewTextChild(group_node, ns_xccdf, BAD_CAST "platform", BAD_CAST NULL);
+                xmlNewProp(child, BAD_CAST "idref", BAD_CAST platform);
 	}
 	oscap_string_iterator_free(platforms);
 
@@ -998,7 +1002,8 @@ void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *
 		struct oscap_string_iterator *strings = oscap_stringlist_get_strings(list);
 		while (oscap_string_iterator_has_more(strings)) {
 			const char *requires = oscap_string_iterator_next(strings);
-			xmlNewTextChild(group_node, ns_xccdf, BAD_CAST "requires", BAD_CAST requires);
+			xmlNode * child = xmlNewTextChild(group_node, ns_xccdf, BAD_CAST "requires", BAD_CAST NULL);
+                        xmlNewProp(child, BAD_CAST "idref", BAD_CAST requires);
 		}
 		oscap_string_iterator_free(strings);
 	}
@@ -1007,7 +1012,8 @@ void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *
 	struct oscap_string_iterator *conflicts = xccdf_group_get_conflicts(group);
 	while (oscap_string_iterator_has_more(conflicts)) {
 		const char *conflict = oscap_string_iterator_next(conflicts);
-		xmlNewTextChild(group_node, ns_xccdf, BAD_CAST "conflicts", BAD_CAST conflict);
+		xmlNode * child = xmlNewTextChild(group_node, ns_xccdf, BAD_CAST "conflicts", BAD_CAST NULL);
+                xmlNewProp(child, BAD_CAST "idref", BAD_CAST conflict);
 	}
 	oscap_string_iterator_free(conflicts);
 
