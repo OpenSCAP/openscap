@@ -335,16 +335,27 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
 	oid = oval_object_get_id(object);
 	model = psess->sys_model;
 
+	dI("Querying object id: \"%s\", flags: %u.\n", oid, flags);
+
 	sysc = oval_syschar_model_get_syschar(model, oid);
 	if (sysc != NULL) {
-		if (out_syschar)
-			*out_syschar = sysc;
-		return 0;
+		oval_syschar_collection_flag_t sc_flg;
+
+		sc_flg = oval_syschar_get_flag(sysc);
+
+		dI("Syschar already exists, flag: %u, '%s'.\n", sc_flg, oval_syschar_collection_flag_get_text(sc_flg));
+
+		if (sc_flg != SYSCHAR_FLAG_UNKNOWN || (flags & OVAL_PDFLAG_NOREPLY)) {
+			if (out_syschar)
+				*out_syschar = sysc;
+			return 0;
+		}
+	} else {
+		sysc = oval_syschar_new(model, object);
 	}
 
-	sysc = oval_syschar_new(model, object);
-        type = oval_object_get_subtype(object);
-        ph   = oval_probe_handler_get(psess->ph, type);
+	type = oval_object_get_subtype(object);
+	ph = oval_probe_handler_get(psess->ph, type);
 
         if (ph == NULL) {
                 char *msg = "OVAL object not supported.\n";
