@@ -436,8 +436,8 @@ xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model, xm
 		while (oval_syschar_iterator_has_more(syschars)) {
 			struct oval_syschar *syschar = oval_syschar_iterator_next(syschars);
 			struct oval_object *object = oval_syschar_get_object(syschar);
-			if (oval_object_get_base_obj(object))
-				/* Skip internal objects */
+			if (oval_syschar_get_flag(syschar) == SYSCHAR_FLAG_UNKNOWN /* Skip unneeded syschars */
+			    || oval_object_get_base_obj(object)) /* Skip internal objects */
 				continue;
 			oval_syschar_to_dom(syschar, doc, tag_objects);
 			struct oval_sysitem_iterator *sysitems = oval_syschar_get_sysitem(syschar);
