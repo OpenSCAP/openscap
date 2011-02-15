@@ -262,7 +262,6 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
                 }
 	}
 
-	int fcnt;
 	struct pfdata pfd;
 
 	pfd.xpath = SEXP_string_cstr(r0 = probe_ent_getval(xpath_ent));
@@ -271,26 +270,13 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 	pfd.filename_ent = filename_ent;
 	pfd.cobj = probe_out;
 
-	fcnt = 0;
-
 	if ((ofts = oval_fts_open(path_ent, filename_ent, filepath_ent, behaviors_ent)) != NULL) {
-		for (; (ofts_ent = oval_fts_read(ofts)) != NULL; ++fcnt) {
+		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
 			process_file(ofts_ent->path, ofts_ent->file, &pfd);
 			oval_ftsent_free(ofts_ent);
 		}
 
 		oval_fts_close(ofts);
-	}
-
-	if (fcnt < 0) {
-		char s[50];
-		SEXP_t *msg;
-
-		snprintf(s, sizeof (s), "find_files returned error: %d", fcnt);
-		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, s);
-		probe_cobj_add_msg(probe_out, msg);
-		SEXP_free(msg);
-		probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
 	}
 
         SEXP_free (path_ent);

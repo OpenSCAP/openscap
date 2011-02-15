@@ -370,7 +370,6 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
         SEXP_t *r0;
 	char *pattern;
 	char *i_val, *m_val, *s_val;
-	int fcnt;
 	bool val;
 	struct pfdata pfd;
 
@@ -521,19 +520,14 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 	}
 #endif
 
-	fcnt = 0;
-
 	if ((ofts = oval_fts_open(path_ent, file_ent, filepath_ent, bh_ent)) != NULL) {
-		for (; (ofts_ent = oval_fts_read(ofts)) != NULL; ++fcnt) {
+		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
 			process_file(ofts_ent->path, ofts_ent->file, &pfd);
 			oval_ftsent_free(ofts_ent);
 		}
 
 		oval_fts_close(ofts);
 	}
-
-	if (fcnt < 0)
-		probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
 
         SEXP_free(file_ent);
         SEXP_free(path_ent);

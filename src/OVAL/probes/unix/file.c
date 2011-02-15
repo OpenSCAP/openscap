@@ -420,7 +420,7 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex)
 {
         SEXP_t *path, *filename, *behaviors, *filepath;
         SEXP_t *r0, *r1, *r2, *r3, *r4;
-        int     filecnt, err;
+	int err;
         struct cbargs cbargs;
 	OVAL_FTS    *ofts;
 	OVAL_FTSENT *ofts_ent;
@@ -517,10 +517,8 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex)
 	cbargs.filters = probe_prepare_filters(probe_in);
 	cbargs.error = 0;
 
-	filecnt = 0;
-
 	if ((ofts = oval_fts_open(path, filename, filepath, behaviors)) != NULL) {
-		for (; (ofts_ent = oval_fts_read(ofts)) != NULL; ++filecnt) {
+		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
 			file_cb(ofts_ent->path, ofts_ent->file, &cbargs);
 			oval_ftsent_free(ofts_ent);
 		}
@@ -528,19 +526,6 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex)
 	}
 
 	err = 0;
-
-        if (filecnt < 0) {
-		char s[50];
-		SEXP_t *msg;
-
-		snprintf(s, sizeof (s), "find_files returned error: %d", filecnt);
-		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, s);
-		probe_cobj_add_msg(probe_out, msg);
-		SEXP_free(msg);
-		probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
-
-		err = cbargs.error;
-        }
 
 	SEXP_free(path);
 	SEXP_free(filename);
