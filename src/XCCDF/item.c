@@ -346,9 +346,20 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 	}
 	xccdf_status_iterator_free(statuses);
 
+    time_t vt = xccdf_item_get_version_time(item);
 	const char *version = xccdf_item_get_version(item);
-	if (version && xccdf_item_get_type(item) != XCCDF_BENCHMARK)
-		xmlNewTextChild(item_node, ns_xccdf, BAD_CAST "version", BAD_CAST version);
+	if (xccdf_item_get_type(item) != XCCDF_BENCHMARK && (version || vt || xccdf_item_get_version_update(item))) {
+		xmlNode* version_node = xmlNewTextChild(item_node, ns_xccdf, BAD_CAST "version", BAD_CAST version);
+        if (xccdf_item_get_version_update(item))
+		    xmlNewProp(version_node, BAD_CAST "update", BAD_CAST xccdf_item_get_version_update(item));
+        if (vt) {
+            struct tm *lt = localtime(&vt);
+            char timestamp[] = "yyyy-mm-ddThh:mm:ss";
+            snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
+                 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
+            xmlNewProp(version_node, BAD_CAST "time", BAD_CAST timestamp);
+        }
+    }
 
 	/* Handle generic item child nodes */
 	xccdf_texts_to_dom(xccdf_item_get_title(item), item_node, "title");
@@ -659,17 +670,25 @@ bool xccdf_item_process_element(struct xccdf_item * item, xmlTextReaderPtr reade
         }
         break;
     }
-	case XCCDFE_VERSION:
-		item->item.version_time = oscap_get_datetime(xccdf_attribute_get(reader, XCCDFA_TIME));
-		item->item.version_update = xccdf_attribute_copy(reader, XCCDFA_UPDATE);
-		item->item.version = oscap_element_string_copy(reader);
-		break;
+	case XCCDFE_VERSION: {
+        xmlNode *ver = xmlTextReaderExpand(reader);
+        char *vt = (char*) xmlGetProp(ver, BAD_CAST "time");
+        if (vt) item->item.version_time = oscap_get_datetime(vt);
+        oscap_free(vt);
+        item->item.version_update = (char*) xmlGetProp(ver, BAD_CAST "update");
+        item->item.version = (char *) xmlNodeGetContent(ver);
+        if (oscap_streq(item->item.version, "")) {
+            oscap_free(item->item.version);
+            item->item.version = NULL;
+        }
+		return true;
+    }
 	case XCCDFE_RATIONALE:
         oscap_list_add(item->item.rationale, oscap_text_new_parse(XCCDF_TEXT_HTMLSUB, reader));
 		return true;
         case XCCDFE_PLATFORM:
         oscap_list_add(item->item.platforms, xccdf_attribute_copy(reader, XCCDFA_IDREF));
-                break;
+                return true;
 	case XCCDFE_QUESTION:
         oscap_list_add(item->item.question, oscap_text_new_parse(XCCDF_TEXT_PLAIN, reader));
 		return true;
