@@ -367,12 +367,9 @@ int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg)
 	}
 
 	if (get_runlevel(&request_st, &reply_st) == -1) {
-		char *s = "get_runlevel failed.\n";
 		SEXP_t *msg;
 
-                _D(s);
-
-		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, s);
+		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, "get_runlevel failed.\n");
 		probe_cobj_add_msg(probe_out, msg);
 		SEXP_free(msg);
 		probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);

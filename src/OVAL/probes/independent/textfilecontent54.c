@@ -241,10 +241,10 @@ static int process_file(const char *path, const char *file, void *arg)
 
 	re = pcre_compile(pfd->pattern, pfd->re_opts, &error, &erroffset, NULL);
 	if (re == NULL) {
-		char s[1024];
 		SEXP_t *msg;
-		snprintf(s, sizeof (s), "pcre_compile() '%s' %s", pfd->pattern, error);
-		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, s);
+
+		msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+				       "pcre_compile() '%s' %s.\n", pfd->pattern, error);
 		probe_cobj_add_msg(pfd->cobj, msg);
 		SEXP_free(msg);
 		return -1;
@@ -254,10 +254,10 @@ static int process_file(const char *path, const char *file, void *arg)
 
 	int err;
 	if ( (err=regcomp(re, pfd->pattern, pfd->re_opts)) != 0) {
-		char s[1024];
 		SEXP_t *msg;
-		snprintf(s, sizeof (s), "regcomp() '%s' returned %d", pfd->pattern, err);
-		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, s);
+
+		msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+				       "regcomp() '%s' returned %d.\n", pfd->pattern, err);
 		probe_cobj_add_msg(pfd->cobj, msg);
 		SEXP_free(msg);
 		return -1;
@@ -281,11 +281,10 @@ static int process_file(const char *path, const char *file, void *arg)
 
 	fd = open(whole_path, O_RDONLY);
 	if (fd == -1) {
-		char s[1024];
 		SEXP_t *msg;
 
-		snprintf(s, sizeof (s), "open(): '%s' %s", whole_path, strerror(errno));
-		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, s);
+		msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+				       "open(): '%s' %s.\n", whole_path, strerror(errno));
 		probe_cobj_add_msg(pfd->cobj, msg);
 		SEXP_free(msg);
 
@@ -298,11 +297,10 @@ static int process_file(const char *path, const char *file, void *arg)
 		buf = oscap_realloc(buf, buf_size);
 		ret = read(fd, buf + buf_used, buf_inc);
 		if (ret == -1) {
-			char s[1024];
 			SEXP_t *msg;
 
-			snprintf(s, sizeof (s), "read(): %s", strerror(errno));
-			msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, s);
+			msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+					       "read(): %s.\n", strerror(errno));
 			probe_cobj_add_msg(pfd->cobj, msg);
 			SEXP_free(msg);
 

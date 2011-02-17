@@ -147,12 +147,10 @@ int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg)
 		}
 		case -1: /* Error */
 		{
-				char *s = "dpkginfo_get_by_name() failed.\n";
 				SEXP_t *msg;
 
-				_D(s);
-
-				msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, s);
+				msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR,
+						      "dpkginfo_get_by_name() failed.\n");
 				probe_cobj_add_msg(probe_out, msg);
 				SEXP_free(msg);
 				probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
