@@ -7,7 +7,7 @@
  * @author "Tomas Heinrich" <theinric@redhat.com>
  */
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009-2011 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -844,6 +844,30 @@ SEXP_t *probe_msg_creat(oval_message_level_t level, char *message)
 
 	lvl = SEXP_number_newu(level);
 	str = SEXP_string_newf("%s", message);
+	msg = SEXP_list_new(lvl, str, NULL);
+	SEXP_vfree(lvl, str, NULL);
+
+	return msg;
+}
+
+SEXP_t *probe_msg_creatf(oval_message_level_t level, const char *fmt, ...)
+{
+	va_list alist;
+	int len;
+	char *cstr;
+	SEXP_t *lvl, *str, *msg;
+
+	_LOGCALL_;
+
+	va_start(alist, fmt);
+	len = vasprintf(&cstr, fmt, alist);
+	va_end(alist);
+	if (len < 0)
+		return NULL;
+
+	str = SEXP_string_new(cstr, len);
+	oscap_free(cstr);
+	lvl = SEXP_number_newu(level);
 	msg = SEXP_list_new(lvl, str, NULL);
 	SEXP_vfree(lvl, str, NULL);
 

@@ -290,7 +290,20 @@ oval_syschar_collection_flag_t probe_cobj_compute_flag(SEXP_t *cobj);
  * messages
  */
 
+/**
+ * Create a new message that can be added to a collected object.
+ * @param level the level associated with the new message
+ * @param message the text of the new message
+ */
 SEXP_t *probe_msg_creat(oval_message_level_t level, char *message);
+
+/**
+ * Create a new message that can be added to a collected object.
+ * @param level the level associated with the new message
+ * @param fmt printf-like format string that produces the text of the new message
+ * @param ... arguments for the format
+ */
+SEXP_t *probe_msg_creatf(oval_message_level_t level, const char *fmt, ...) __attribute__((format(printf, 2, 3), nonnull(2)));
 
 /*
  * entities
