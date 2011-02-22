@@ -167,7 +167,7 @@ static int get_ifs(SEXP_t *item)
 }
 #endif
 
-int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
+int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 {
 	SEXP_t *item;
         SEXP_t *r0, *r1, *r2, *r3;
@@ -175,6 +175,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
         struct utsname sname;
 
         (void)arg;
+        (void)filters;
 
 	if (probe_in == NULL || probe_out == NULL) {
 		return PROBE_EINVAL;

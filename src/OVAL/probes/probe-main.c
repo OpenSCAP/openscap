@@ -465,7 +465,7 @@ static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
  * @param depth maximum recursion depth
  * @return the result of the evaluation or NULL on failure
  */
-static SEXP_t *probe_set_eval(SEXP_t * set, size_t depth)
+static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 {
 	SEXP_t *filters_u, *filters_a, *filters_req;
 

@@ -60,7 +60,7 @@ OSCAP_HIDDEN_START;
 
 OSCAP_HIDDEN_END;
 
-extern encache_t *OSCAP_GSYM(encache);
+extern probe_ncache_t *OSCAP_GSYM(encache);
 
 #endif /* ENABLE_PROBES */
 

@@ -1,0 +1,29 @@
+noinst_LTLIBRARIES= libprobe.la
+
+libprobe_la_CFLAGS=	@pthread_cflags@				\
+			@libxml_cflags@					\
+			@pcre_cflags@					\
+			-I$(top_srcdir)/src				\
+			-I$(top_srcdir)/src/common/public		\
+			-I$(top_srcdir)/src/OVAL/public			\
+			-I$(top_srcdir)/src/OVAL/probes/public		\
+			-I$(top_srcdir)/src/OVAL/probes/SEAP/public	\
+			-DTHREAD_SAFE					\
+			-DSEAP_THREAD_SAFE
+
+libprobe_la_SOURCES=	fini.c			\
+			init.c			\
+			main.c			\
+			input_handler.c		\
+			input_handler.h		\
+			worker.c		\
+			worker.h		\
+			signal_handler.c	\
+			signal_handler.h	\
+			probe.c			\
+			probe.h			\
+			entcmp.c		\
+			entcmp.h
+
+libprobe_la_LDFLAGS=	$(top_builddir)/src/libopenscap.la	\
+			@pthread_ldflags@

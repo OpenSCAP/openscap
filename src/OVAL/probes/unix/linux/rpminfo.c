@@ -271,13 +271,15 @@ void probe_fini (void *ptr)
         return;
 }
 
-int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg)
+int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 {
         SEXP_t *val, *item_sexp, *r0, *r1, *ent;
 	int rpmret, i;
 
         struct rpminfo_req request_st;
         struct rpminfo_rep *reply_st;
+
+        (void)filters;
 
 	if (object == NULL || probe_out == NULL) {
 		return (PROBE_EINVAL);

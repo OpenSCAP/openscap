@@ -362,7 +362,7 @@ static int process_file(const char *path, const char *file, void *arg)
 	return ret;
 }
 
-int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
+int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 {
 	SEXP_t *path_ent, *file_ent, *inst_ent, *bh_ent, *patt_ent, *filepath_ent;
         SEXP_t *r0;

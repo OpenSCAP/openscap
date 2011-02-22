@@ -114,7 +114,7 @@ static int __n2s_tbl_cmp(const char *name, oval_subtypedsc_t *dsc)
  * of memory used by this cache is done at exit using a hook
  * registered with atexit().
  */
-encache_t *OSCAP_GSYM(encache) = NULL;
+probe_ncache_t  *OSCAP_GSYM(encache) = NULL;
 struct id_desc_t OSCAP_GSYM(id_desc);
 #endif
 

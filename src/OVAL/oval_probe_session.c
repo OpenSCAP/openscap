@@ -61,7 +61,7 @@ static volatile int __encache_once = 0;
  */
 static void encache_libfree(void)
 {
-        encache_free(OSCAP_GSYM(encache));
+        probe_ncache_free(OSCAP_GSYM(encache));
 }
 
 /**
@@ -70,7 +70,7 @@ static void encache_libfree(void)
 static void encache_libinit(void)
 {
         if (OSCAP_GSYM(encache) == NULL) {
-                OSCAP_GSYM(encache) = encache_new();
+                OSCAP_GSYM(encache) = probe_ncache_new();
                 atexit(encache_libfree);
         }
 }

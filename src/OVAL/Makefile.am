@@ -104,12 +104,12 @@ common_oval_sources += probes/probe-api.c 	\
 		       probes/public/probe-api.h\
 		       probes/public/fsdev.h	\
 		       probes/public/findfile.h \
-		       probes/encache.c		\
-		       probes/encache.h		\
-		       probes/probe-entcmp.c	\
-		       probes/probe-entcmp.h	\
-		       probes/probe-cache.c	\
-		       probes/probe-cache.h	\
+		       probes/probe/ncache.c	\
+		       probes/probe/ncache.h	\
+		       probes/probe/rcache.c	\
+		       probes/probe/rcache.h	\
+		       probes/probe/entcmp.c	\
+		       probes/probe/entcmp.h	\
 		       oval_sexp.c 		\
 		       oval_sexp.h 		\
 		       oval_probe_ext.h		\

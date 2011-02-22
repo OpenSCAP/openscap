@@ -1422,7 +1422,7 @@ void probe_fini(void *arg)
 		xiconf_free(arg);
 }
 
-int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg)
+int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 {
 	SEXP_t *eval;
 	char    srv_name[256];
@@ -1431,6 +1431,8 @@ int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg)
 
 	xiconf_strans_t  *xres;
 	xiconf_t         *xcfg = (xiconf_t *)arg;
+
+        (void)filters;
 
 	if (object == NULL || probe_out == NULL) {
 		err = PROBE_EINVAL;

@@ -295,7 +295,7 @@ static int process_file(const char *path, const char *filename, void *arg)
 	return ret;
 }
 
-int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
+int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 {
 	SEXP_t *path_ent, *filename_ent, *line_ent, *behaviors_ent, *filepath_ent;
         SEXP_t *r0, *r1;
@@ -305,6 +305,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
 	OVAL_FTSENT *ofts_ent;
 
         (void)arg;
+        (void)filters;
 
 	if (probe_in == NULL || probe_out == NULL) {
 		return(PROBE_EINVAL);

@@ -342,10 +342,12 @@ static int get_runlevel (struct runlevel_req *req, struct runlevel_rep **rep)
 # error "Sorry, your OS isn't supported."
 #endif
 
-int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg)
+int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 {
         struct runlevel_req request_st;
         struct runlevel_rep *reply_st = NULL;
+
+        (void)filters;
 
 	if (object == NULL || probe_out == NULL) {
 		return (PROBE_EINVAL);

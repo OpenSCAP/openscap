@@ -52,11 +52,12 @@
 #include <string.h>
 #include <probe-api.h>
 
-int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
+int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 {
 	SEXP_t *item, *v_fm;
 
         (void)arg;
+        (void)filters;
 
 	const char *family =
 #if defined(_WIN32)

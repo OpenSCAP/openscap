@@ -43,6 +43,10 @@
 #include "memusage.h"
 #include "sysinfo.h"
 
+extern probe_rcache_t  *OSCAP_GSYM(pcache);
+extern probe_ncache_t  *OSCAP_GSYM(encache);
+extern struct id_desc_t OSCAP_GSYM(id_desc);
+
 /*
  * items
  */
@@ -62,7 +66,7 @@ SEXP_t *probe_item_creat(const char *name, SEXP_t * attrs, ...)
 		attrs = va_arg(ap, SEXP_t *);
 		val = va_arg(ap, SEXP_t *);
 
-                ns  = encache_ref (OSCAP_GSYM(encache), name);
+                ns  = probe_ncache_ref (OSCAP_GSYM(encache), name);
 		ent = SEXP_list_new(NULL);
 
 		if (attrs != NULL) {
@@ -283,7 +287,7 @@ SEXP_t *probe_obj_creat(const char *name, SEXP_t * attrs, ...)
 		attrs = va_arg(ap, SEXP_t *);
 		val = va_arg(ap, SEXP_t *);
 
-                ns  = encache_ref (OSCAP_GSYM(encache), name);
+                ns  = probe_ncache_ref (OSCAP_GSYM(encache), name);
 		ent = SEXP_list_new(NULL);
 
 		if (attrs != NULL) {
@@ -318,7 +322,7 @@ SEXP_t *probe_obj_new(const char *name, SEXP_t * attrs)
 	_LOGCALL_;
 
 	obj = SEXP_list_new(NULL);
-	ns  = encache_ref (OSCAP_GSYM(encache), name);
+	ns  = probe_ncache_ref (OSCAP_GSYM(encache), name);
 
 	if (attrs != NULL) {
 		SEXP_t *nl, *nj;
@@ -910,7 +914,7 @@ SEXP_t *probe_ent_creat1(const char *name, SEXP_t * attrs, SEXP_t * val)
 	_LOGCALL_;
 
 	ent = SEXP_list_new(NULL);
-	ns  = encache_ref (OSCAP_GSYM(encache), name);
+	ns  = probe_ncache_ref (OSCAP_GSYM(encache), name);
 
 	if (attrs != NULL) {
 		SEXP_t *nl, *nj;

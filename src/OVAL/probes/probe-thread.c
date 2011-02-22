@@ -15,6 +15,23 @@ extern SEAP_CTX_t  *OSCAP_GSYM(ctx);
 extern int          OSCAP_GSYM(sd);
 extern pcache_t    *OSCAP_GSYM(pcache);
 
+typedef struct {
+	probe_thread_t **thr;
+	size_t           cnt;
+} __thr_collection;
+
+static int __abort_cb(void *n, void *u)
+{
+	__thr_collection    *coll = (__thr_collection *)u;
+	struct rbt_i32_node *node = (struct rbt_i32_node *)n;
+	probe_thread_t      *thr  = (probe_thread_t *)(node->data);
+
+	coll->thr = oscap_realloc(coll->thr, sizeof(SEAP_msg_t *) * ++coll->cnt);
+	coll->thr[coll->cnt - 1] = thr;
+
+	return (0);
+}
+
 static void *probe_signal_thread(void *arg)
 {
 	/* probe_threadmgr_t *mgr = (probe_threadmgr_t *)arg; */
@@ -42,10 +59,28 @@ static void *probe_signal_thread(void *arg)
 #endif
 
 		switch(siinf.si_signo) {
-		case SIGUSR1: /* probe abort */
+		case SIGUSR1:/* probe abort */
+		{
+			__thr_collection coll;
+
+			coll.thr = NULL;
+			coll.cnt = 0;
+
+			/* collect IDs and cancel threads */
+			rbt_walk_inorder2(mgr->threads, __abort_cb, &coll, 0);
+
+			/* reply to all messages with an error */
+			for (; coll.cnt > 0; --coll.cnt) {
+				SEAP_replyerr(OSCAP_GSYM(ctx), OSCAP_GSYM(sd), coll.thr[coll.cnt - 1]->msg, PROBE_ECONNABORTED);
+				SEAP_msg_free(coll.thr[coll.cnt - 1]->msg);
+			}
+
+			oscap_free(coll.thr);
+
 			/* TODO: clean exit */
 			exit(ECONNABORTED);
 			break;
+		}
 		case SIGINT:
 		case SIGTERM:
 		case SIGQUIT:

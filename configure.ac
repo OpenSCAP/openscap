@@ -640,6 +640,7 @@ AC_CONFIG_FILES([Makefile
                  swig/Makefile
                  src/OVAL/Makefile
                  src/OVAL/probes/Makefile
+                 src/OVAL/probes/probe/Makefile
                  src/OVAL/probes/crapi/Makefile
                  src/OVAL/probes/SEAP/Makefile
                  src/OVAL/probes/SEAP/generic/rbt/Makefile

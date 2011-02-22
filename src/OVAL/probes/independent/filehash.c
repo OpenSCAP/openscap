@@ -220,13 +220,15 @@ void probe_fini (void *arg)
         return;
 }
 
-int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex)
+int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters)
 {
         SEXP_t *path, *filename, *behaviors, *filepath;
         SEXP_t *r0, *r1, *r2;
 
 	OVAL_FTS    *ofts;
 	OVAL_FTSENT *ofts_ent;
+
+        (void)filters;
 
 	if (probe_in == NULL || probe_out == NULL) {
 		return (PROBE_EINVAL);

@@ -270,9 +270,11 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *probe_out)
 }
 #endif
 
-int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
+int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 {
 	SEXP_t *name_ent;
+
+        (void)filters;
 
 	if (probe_in == NULL || probe_out == NULL) {
 		return (PROBE_EINVAL);

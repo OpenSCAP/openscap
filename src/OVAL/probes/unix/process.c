@@ -311,9 +311,11 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *probe_out)
 	return err;
 }
 
-int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg)
+int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 {
 	SEXP_t *ent;
+
+        (void)filters;
 
 	if (object == NULL || probe_out == NULL) {
 		return (PROBE_EINVAL);

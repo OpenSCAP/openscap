@@ -442,6 +442,7 @@ void probe_free(SEXP_t * obj);
 #define PROBE_ESETEVAL  12	/**< Set evaluation failed */
 #define PROBE_ENOENT    13      /**< Missing entity */
 #define PROBE_ENOOBJ    14      /**< Missing object */
+#define PROBE_ECONNABORTED 15   /**< Evaluation aborted */
 #define PROBE_EFATAL   254	/**< Unrecoverable error */
 #define PROBE_EUNKNOWN 255	/**< Unknown/Unexpected error */
 
@@ -457,14 +458,13 @@ void probe_free(SEXP_t * obj);
 
 void *probe_init(void) __attribute__ ((unused));
 void probe_fini(void *) __attribute__ ((unused));
-int probe_main(SEXP_t *, SEXP_t *, void *) __attribute__ ((nonnull(1, 2)));
+int probe_main(SEXP_t *, SEXP_t *, void *, SEXP_t *) __attribute__ ((nonnull(1, 2)));
 
 #define PROBE_VARREF_HANDLING 0
 #define PROBE_RESULT_CACHING  1
 
 int probe_setoption(int option, ...);
 
-SEXP_t *probe_prepare_filters(SEXP_t *obj);
 bool probe_item_filtered(SEXP_t *item, SEXP_t *filters);
 
 int probe_result_additem(SEXP_t *result, SEXP_t *item);

@@ -416,7 +416,7 @@ void probe_fini (void *arg)
         return;
 }
 
-int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex)
+int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters)
 {
         SEXP_t *path, *filename, *behaviors, *filepath;
         SEXP_t *r0, *r1, *r2, *r3, *r4;
@@ -513,9 +513,9 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex)
                 return PROBE_EFATAL;
         }
 
-        cbargs.cobj = probe_out;
-	cbargs.filters = probe_prepare_filters(probe_in);
-	cbargs.error = 0;
+        cbargs.cobj    = probe_out;
+	cbargs.filters = filters;
+	cbargs.error   = 0;
 
 	if ((ofts = oval_fts_open(path, filename, filepath, behaviors)) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {

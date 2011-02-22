@@ -84,12 +84,14 @@ void probe_fini (void *ptr)
         return;
 }
 
-int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg)
+int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 {
         SEXP_t *val, *item_sexp, *r0;
         char *request_st = NULL;
         struct dpkginfo_reply_t *dpkginfo_reply = NULL;
         int errflag;
+
+        (void)filters;
 
 	if (object == NULL || probe_out == NULL) {
 		return (PROBE_EINVAL);

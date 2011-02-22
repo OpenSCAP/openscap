@@ -522,10 +522,12 @@ static int read_raw(const char *proc, const char *type, llist *l,
 	return 0;
 }
 
-int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg)
+int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 {
 	int err;
 	llist ll;
+
+        (void)filters;
 
 	if (object == NULL || probe_out == NULL) {
 		return (PROBE_EINVAL);

@@ -55,11 +55,13 @@
 #include "probe-api.h"
 #include "alloc.h"
 
-int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg)
+int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 {
 	const char *processor;
 	struct utsname buf;
 	SEXP_t *r0, *r1, *r2, *r3, *r4, *r5, *item_sexp;
+
+        (void)filters;
 
 	if (object == NULL || probe_out == NULL) {
 		return (PROBE_EINVAL);
