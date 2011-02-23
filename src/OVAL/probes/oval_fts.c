@@ -37,7 +37,7 @@
 
 #include "fsdev.h"
 #include "_probe-api.h"
-#include "probe-entcmp.h"
+#include "probe/entcmp.h"
 #include "alloc.h"
 #include "debug_priv.h"
 #include "oval_fts.h"

@@ -62,7 +62,7 @@
 
 #include "seap.h"
 #include "probe-api.h"
-#include "probe-entcmp.h"
+#include "probe/entcmp.h"
 #include "alloc.h"
 
 /* This structure contains the information OVAL is asking or requesting */

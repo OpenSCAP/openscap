@@ -55,7 +55,7 @@
 
 #include "seap.h"
 #include "probe-api.h"
-#include "probe-entcmp.h"
+#include "probe/entcmp.h"
 #include "alloc.h"
 
 #ifndef HAVE_SHADOW_H
