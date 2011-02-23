@@ -96,7 +96,7 @@ void *probe_signal_handler(void *arg)
 
 			/* reply to all messages with an error */
 			for (; coll.cnt > 0; --coll.cnt) {
-				SEAP_replyerr(probe->SEAP_ctx, probe->sd, coll.thr[coll.cnt - 1]->msg, PROBE_ECONNABORTED);
+				/* SEAP_replyerr(probe->SEAP_ctx, probe->sd, coll.thr[coll.cnt - 1]->msg, PROBE_ECONNABORTED); */
 				SEAP_msg_free(coll.thr[coll.cnt - 1]->msg);
                                 oscap_free(coll.thr[coll.cnt - 1]);
 			}
