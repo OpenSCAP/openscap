@@ -66,7 +66,7 @@
 /* SEAP */
 #include <seap.h>
 #include <probe-api.h>
-#include "probe-entcmp.h"
+#include "probe/entcmp.h"
 #include <alloc.h>
 #include <common/assume.h>
 
