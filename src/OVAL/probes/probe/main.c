@@ -144,6 +144,7 @@ int main(int argc, char *argv[])
 	probe.flags = 0;
 	probe.pid   = getpid();
 	probe.name  = basename(argv[0]);
+        probe.probe_exitcode = 0;
 
 	/*
 	 * Initialize SEAP stuff
@@ -220,8 +221,13 @@ int main(int argc, char *argv[])
 	probe_ncache_free(probe.ncache);
 	probe_rcache_free(probe.rcache);
 
-	SEAP_close(probe.SEAP_ctx, probe.sd);
-	SEAP_CTX_free(probe.SEAP_ctx);
+        rbt_i32_free(probe.workers);
 
-	return (0);
+        if (probe.sd != -1)
+                SEAP_close(probe.SEAP_ctx, probe.sd);
+
+	SEAP_CTX_free(probe.SEAP_ctx);
+        oscap_free(probe.option);
+
+	return (probe.probe_exitcode);
 }

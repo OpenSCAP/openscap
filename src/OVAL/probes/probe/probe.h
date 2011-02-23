@@ -57,6 +57,7 @@ typedef struct {
 	pid_t       pid;
 
         void       *probe_arg;
+        int         probe_exitcode;
 
 	SEAP_CTX_t *SEAP_ctx; /**< SEAP context */
 	int         sd;       /**< SEAP descriptor */

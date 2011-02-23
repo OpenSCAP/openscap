@@ -41,6 +41,8 @@ static int __abort_cb(void *n, void *u)
 	struct rbt_i32_node *node = (struct rbt_i32_node *)n;
 	probe_worker_t      *thr  = (probe_worker_t *)(node->data);
 
+        pthread_cancel(thr->tid);
+
 	coll->thr = oscap_realloc(coll->thr, sizeof(SEAP_msg_t *) * ++coll->cnt);
 	coll->thr[coll->cnt - 1] = thr;
 
@@ -54,9 +56,11 @@ void *probe_signal_handler(void *arg)
 	sigset_t  siset;
 
 	sigemptyset(&siset);
+	sigaddset(&siset, SIGHUP);
 	sigaddset(&siset, SIGUSR1);
-        sigaddset(&siset, SIGINT);
-        sigaddset(&siset, SIGTERM);
+	sigaddset(&siset, SIGUSR2);
+	sigaddset(&siset, SIGINT);
+	sigaddset(&siset, SIGTERM);
 	sigaddset(&siset, SIGQUIT);
 
 	dI("Signal handler ready\n");
@@ -75,11 +79,17 @@ void *probe_signal_handler(void *arg)
 
 		switch(siinf.si_signo) {
 		case SIGUSR1:/* probe abort */
+                        probe->probe_exitcode = ECONNABORTED;
+                case SIGINT:
+                case SIGTERM:
+                case SIGQUIT:
 		{
 			__thr_collection coll;
 
 			coll.thr = NULL;
 			coll.cnt = 0;
+
+                        pthread_cancel(probe->th_input);
 
 			/* collect IDs and cancel threads */
 			rbt_walk_inorder2(probe->workers, __abort_cb, &coll, 0);
@@ -88,26 +98,18 @@ void *probe_signal_handler(void *arg)
 			for (; coll.cnt > 0; --coll.cnt) {
 				SEAP_replyerr(probe->SEAP_ctx, probe->sd, coll.thr[coll.cnt - 1]->msg, PROBE_ECONNABORTED);
 				SEAP_msg_free(coll.thr[coll.cnt - 1]->msg);
+                                oscap_free(coll.thr[coll.cnt - 1]);
 			}
 
 			oscap_free(coll.thr);
-
-			/* TODO: clean exit */
-			exit(ECONNABORTED);
-			break;
+			goto exitloop;
 		}
-		case SIGINT:
-		case SIGTERM:
-		case SIGQUIT:
-			/* TODO: clean exit */
-			exit(0);
-			break;
                 case SIGUSR2:
                 case SIGHUP:
                         /* ignore */
                         break;
                 }
 	}
-
+exitloop:
 	return (NULL);
 }

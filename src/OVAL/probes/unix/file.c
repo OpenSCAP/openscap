@@ -531,7 +531,6 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filter
 	SEXP_free(filename);
 	SEXP_free(filepath);
 	SEXP_free(behaviors);
-	SEXP_free(cbargs.filters);
 
         switch (pthread_mutex_unlock (&__file_probe_mutex)) {
         case 0:

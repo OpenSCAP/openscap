@@ -56,9 +56,13 @@ void *probe_worker_runfn(void *arg)
 		 * XXX: this is a possible deadlock; we can't send anything from
 		 * here because the signal handler replied to the message
 		 */
-
-		/* TODO: free the result & exit */
 		arg = NULL;
+
+                SEAP_msg_free(pair->pth->msg);
+                SEXP_free(probe_res);
+                oscap_free(pair);
+
+                return (NULL);
 	} else {
 		dI("probe thread deleted\n");
 
@@ -108,6 +112,8 @@ void *probe_worker_runfn(void *arg)
                 SEXP_free(probe_res);
 	}
 
+        SEAP_msg_free(pair->pth->msg);
+        oscap_free(pair->pth);
 	oscap_free(pair);
 
 	return (NULL);
@@ -1029,6 +1035,8 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 
 			probe_varref_destroy_ctx(ctx);
 		}
+
+                SEXP_free(filters);
 	}
 
 	SEXP_free(probe_in);
