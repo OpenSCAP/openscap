@@ -20,7 +20,6 @@ libprobe_la_SOURCES=	fini.c			\
 			worker.h		\
 			signal_handler.c	\
 			signal_handler.h	\
-			probe.c			\
 			probe.h			\
 			entcmp.c		\
 			entcmp.h
