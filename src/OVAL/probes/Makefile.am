@@ -6,15 +6,6 @@ pkglibexec_PROGRAMS=
 CFLAGS += @pthread_cflags@ -I$(top_srcdir)/src -I$(top_srcdir)/src/common -I$(top_srcdir)/src/common/public -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/OVAL/public -I$(top_srcdir)/src/OVAL/probes/public -I$(top_srcdir)/src/OVAL/probes/SEAP/public @pcre_cflags@ -DTHREAD_SAFE -DSEAP_THREAD_SAFE @libxml_cflags@
 LDFLAGS += @pthread_ldflags@
 
-#noinst_LTLIBRARIES= libprobe.la
-#libprobe_la_SOURCES= \
-#	probe-fini.c \
-#	probe-init.c \
-#	probe-main.c \
-#	probe-thread.c \
-#	probe-thread.h
-#libprobe_la_LDFLAGS = $(top_builddir)/src/libopenscap.la
-
 LDADD= probe/libprobe.la @pcre_libs@
 
 if WANT_PROBES

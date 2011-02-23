@@ -102,6 +102,7 @@ common_oval_sources += probes/probe-api.c 	\
 		       probes/oval_fts.c	\
 		       probes/oval_fts.h	\
 		       probes/public/probe-api.h\
+		       probes/public/probe-common.h\
 		       probes/public/fsdev.h	\
 		       probes/public/findfile.h \
 		       probes/probe/ncache.c	\
