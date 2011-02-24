@@ -394,7 +394,7 @@ struct xccdf_notice *xccdf_notice_new(void)
 {
     struct xccdf_notice *notice = oscap_calloc(1, sizeof(struct xccdf_notice));
     notice->text = oscap_text_new_full(XCCDF_TEXT_NOTICE, NULL, NULL);
-    return NULL;
+    return notice;
 }
 
 struct xccdf_notice *xccdf_notice_clone(const struct xccdf_notice * notice)
@@ -595,4 +595,3 @@ void xccdf_plain_text_free(struct xccdf_plain_text *plain)
 
 OSCAP_ACCESSOR_STRING(xccdf_plain_text, id)
 OSCAP_ACCESSOR_STRING(xccdf_plain_text, text)
-
