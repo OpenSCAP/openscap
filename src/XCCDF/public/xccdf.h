@@ -3103,6 +3103,37 @@ void xccdf_score_iterator_reset(struct xccdf_score_iterator *it);
 void xccdf_target_fact_iterator_reset(struct xccdf_target_fact_iterator *it);
 
 
+// textual substitution interface
+
+/// Type of textual substitution
+typedef enum xccdf_subst_type {
+    XCCDF_SUBST_NONE,
+    XCCDF_SUBST_SUB,       ///< substitute cdf:sub element
+    XCCDF_SUBST_LINK,      ///< substitute a hyperlink
+    XCCDF_SUBST_INSTANCE   ///< substitute cdf:instance element
+} xccdf_subst_type_t;
+
+/**
+ * Textual substitution callback.
+ * This function is supposed to return textual representation of the substitution with given ID.
+ * @param type Type of the substitution
+ * @param id   ID of the object to be substituted
+ * @param arg  arbitrary user-defined argument
+ * @return     newly allocated substitution string (will be free'd)
+ */
+typedef char*(*xccdf_substitution_func)(xccdf_subst_type_t type, const char *id, void *arg);
+
+
+/**
+ * Perform a textual substitution.
+ * Calls @a cb on each substitution (e.g. a cdf:sub element) of @a text and returns a string with substitutions done.
+ * @param text source text
+ * @param cb substitution callback
+ * @param arg arbitrary argument to be passed to he callback
+ * @return substituted string (it is up to the caller to free it)
+ */
+char* oscap_text_xccdf_substitute(const struct oscap_text *text, xccdf_substitution_func cb, void *arg);
+
 /************************************************************
  ** @} End of XCCDF group */
 
