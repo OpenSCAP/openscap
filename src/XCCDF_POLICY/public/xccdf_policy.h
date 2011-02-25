@@ -480,6 +480,13 @@ void xccdf_value_binding_iterator_reset(struct xccdf_value_binding_iterator *it)
  */
 struct xccdf_score * xccdf_policy_get_score(struct xccdf_policy * policy, struct xccdf_result * test_result, const char * system);
 
+/**
+ * Perform textual substitution of cdf:sub elements with respect to given XCCDF policy.
+ * @param text text to be substituted
+ * @param policy policy to be used
+ */
+char* xccdf_policy_substitute(const struct oscap_text *text, struct xccdf_policy *policy);
+
 /************************************************************/
 /** @} End of Iterators group */
 
