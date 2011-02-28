@@ -1063,12 +1063,31 @@ static oval_result_t eval_check_state(struct oval_test *test, void **args)
 	while (oval_result_item_iterator_has_more(ritems_itr)) {
 		struct oval_result_item *ritem;
 		struct oval_sysitem *item;
+		oval_syschar_status_t item_status;
 		struct oresults ste_ores;
 		struct oval_state_iterator *ste_itr;
 		oval_result_t item_res;
 
 		ritem = oval_result_item_iterator_next(ritems_itr);
 		item = oval_result_item_get_sysitem(ritem);
+
+		item_status = oval_sysitem_get_status(item);
+		switch (item_status) {
+		case SYSCHAR_STATUS_ERROR:
+		case SYSCHAR_STATUS_NOT_COLLECTED:
+			item_res = OVAL_RESULT_ERROR;
+			ores_add_res(&item_ores, item_res);
+			oval_result_item_set_result(ritem, item_res);
+			continue;
+		case SYSCHAR_STATUS_DOES_NOT_EXIST:
+			item_res = OVAL_RESULT_FALSE;
+			ores_add_res(&item_ores, item_res);
+			oval_result_item_set_result(ritem, item_res);
+			continue;
+		default:
+			break;
+		}
+
 		ores_clear(&ste_ores);
 
 		ste_itr = oval_test_get_states(test);
