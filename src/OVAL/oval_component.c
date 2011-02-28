@@ -1675,7 +1675,9 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_SUBSTRING(oval_ar
 
                                 strncpy(substr, text + beg, len);
                                 substr[len] = '\0';
-                        }
+			} else {
+				flag = SYSCHAR_FLAG_ERROR;
+			}
 
 			value = oval_value_new(OVAL_DATATYPE_STRING, substr);
 			oval_collection_add(value_collection, value);
