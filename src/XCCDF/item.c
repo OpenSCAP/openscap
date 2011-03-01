@@ -1158,12 +1158,12 @@ const struct oscap_text_traits XCCDF_TEXT_PROFNOTE = { .html = true, .can_substi
 
 
 // text substitution
-char* oscap_text_xccdf_substitute(const struct oscap_text *text, xccdf_substitution_func cb, void *arg)
+char* oscap_text_xccdf_substitute(const char *text, xccdf_substitution_func cb, void *arg)
 {
     if (text == NULL)
         return NULL;
     if (cb == NULL)
-        return oscap_strdup(text->text);
+        return oscap_strdup(text);
 
     char *result                = NULL;
     char *result_tmp            = NULL;
@@ -1175,7 +1175,7 @@ char* oscap_text_xccdf_substitute(const struct oscap_text *text, xccdf_substitut
     const char *xpath = "//cdf:sub";
     size_t size;
 
-    input = oscap_sprintf("<x xmlns='http://www.w3.org/1999/xhtml'>%s</x>", text->text);
+    input = oscap_sprintf("<x xmlns='http://www.w3.org/1999/xhtml'>%s</x>", text);
 
     doc = xmlParseMemory(input, strlen(input));
     if (doc == NULL) goto cleanup;

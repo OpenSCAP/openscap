@@ -1811,7 +1811,7 @@ static char* xccdf_subst_callback(xccdf_subst_type_t type, const char *id, void 
     return NULL;
 }
 
-char* xccdf_policy_substitute(const struct oscap_text *text, struct xccdf_policy *policy) {
+char* xccdf_policy_substitute(const char *text, struct xccdf_policy *policy) {
     return oscap_text_xccdf_substitute(text, xccdf_subst_callback, policy);
 }
 

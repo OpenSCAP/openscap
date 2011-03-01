@@ -485,7 +485,7 @@ struct xccdf_score * xccdf_policy_get_score(struct xccdf_policy * policy, struct
  * @param text text to be substituted
  * @param policy policy to be used
  */
-char* xccdf_policy_substitute(const struct oscap_text *text, struct xccdf_policy *policy);
+char* xccdf_policy_substitute(const char *text, struct xccdf_policy *policy);
 
 /************************************************************/
 /** @} End of Iterators group */

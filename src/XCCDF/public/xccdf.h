@@ -3132,7 +3132,7 @@ typedef char*(*xccdf_substitution_func)(xccdf_subst_type_t type, const char *id,
  * @param arg arbitrary argument to be passed to he callback
  * @return substituted string (it is up to the caller to free it)
  */
-char* oscap_text_xccdf_substitute(const struct oscap_text *text, xccdf_substitution_func cb, void *arg);
+char* oscap_text_xccdf_substitute(const char *text, xccdf_substitution_func cb, void *arg);
 
 /************************************************************
  ** @} End of XCCDF group */
