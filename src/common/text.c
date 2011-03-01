@@ -58,6 +58,12 @@ OSCAP_ITERATOR_GEN_T(struct oscap_text *, oscap_text)
 OSCAP_ITERATOR_REMOVE_T(struct oscap_text *, oscap_text, oscap_text_free)
 
 
+bool oscap_text_set_overrides(struct oscap_text *text, bool overrides)
+{
+	text->traits.overrides = overrides;
+	return text->traits.can_override;
+}
+
 void oscap_text_free(struct oscap_text *text)
 {
     if (text != NULL) {
