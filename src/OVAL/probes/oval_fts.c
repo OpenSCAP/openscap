@@ -108,10 +108,7 @@ static OVAL_FTSENT *OVAL_FTSENT_new(OVAL_FTS *ofts, FTSENT *fts_ent)
 
 	ofts_ent = oscap_talloc(OVAL_FTSENT);
 
-	if (ofts->ofts_sfilename) {
-		ofts_ent->filepath_len = fts_ent->fts_pathlen;
-		ofts_ent->filepath = strdup(fts_ent->fts_path);
-
+	if (ofts->ofts_sfilename || ofts->ofts_sfilepath) {
 		ofts_ent->path_len = pathlen_from_ftse(fts_ent->fts_pathlen, fts_ent->fts_namelen);
 		ofts_ent->path = oscap_alloc(ofts_ent->path_len + 1);
 		strncpy(ofts_ent->path, fts_ent->fts_path, ofts_ent->path_len);
@@ -120,9 +117,6 @@ static OVAL_FTSENT *OVAL_FTSENT_new(OVAL_FTS *ofts, FTSENT *fts_ent)
 		ofts_ent->file_len = fts_ent->fts_namelen;
 		ofts_ent->file = strdup(fts_ent->fts_name);
 	} else {
-		ofts_ent->filepath_len = -1;
-		ofts_ent->filepath = NULL;
-
 		ofts_ent->path_len = fts_ent->fts_pathlen;
 		ofts_ent->path = strdup(fts_ent->fts_path);
 
@@ -132,16 +126,14 @@ static OVAL_FTSENT *OVAL_FTSENT_new(OVAL_FTS *ofts, FTSENT *fts_ent)
 
 	dI("\n"
 	   "New OVAL_FTSENT:\n"
-	   "\tfilepath: '%s'.\n"
 	   "\t    file: '%s'.\n"
-	   "\t    path: '%s'.\n", ofts_ent->filepath, ofts_ent->file, ofts_ent->path);
+	   "\t    path: '%s'.\n", ofts_ent->file, ofts_ent->path);
 
 	return (ofts_ent);
 }
 
 static void OVAL_FTSENT_free(OVAL_FTSENT *ofts_ent)
 {
-	oscap_free(ofts_ent->filepath);
 	oscap_free(ofts_ent->path);
 	oscap_free(ofts_ent->file);
 	oscap_free(ofts_ent);

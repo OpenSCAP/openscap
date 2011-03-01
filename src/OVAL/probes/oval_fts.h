@@ -66,13 +66,9 @@ typedef struct {
 #define OVAL_RECURSE_FS_ALL     2 /* default */
 
 typedef struct {
-	char  *filepath; /* path + file */
-	size_t filepath_len;
-
-	char  *file;     /* file - shares memory with filepath! */
+	char *file;
 	size_t file_len;
-
-	char  *path;     /* path - separate memory */
+	char *path;
 	size_t path_len;
 } OVAL_FTSENT;
 
