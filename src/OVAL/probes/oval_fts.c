@@ -161,7 +161,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 
 	SEXP_t *r0;
 
-	int fts_options = FTS_PHYSICAL;
+	int fts_options = FTS_PHYSICAL | FTS_COMFOLLOW;
 	int max_depth   = -1;
 	int direction   = -1;
 	int recurse     = -1;
@@ -410,6 +410,7 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 	if (ofts != NULL) {
 		register FTSENT *fts_ent;
 
+		/* todo: the following code won't work in case of a path with pattern match and recursion */
 		for (;;) {
 			fts_ent = fts_read(ofts->ofts_fts);
 
@@ -432,7 +433,7 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 			   "fts_info: %u.\n", fts_ent->fts_path, fts_ent->fts_pathlen,
 			   fts_ent->fts_name, fts_ent->fts_namelen, fts_ent->fts_info);
 
-			/* partial match optimization for OVAL_OPERATION_PATTERN_MATCH */
+			/* partial match optimization for OVAL_OPERATION_PATTERN_MATCH operation on path and filepath */
 			if (ofts->ofts_path_regex != NULL
 			    && (fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)) {
 				int ret, svec[3], pathlen;
@@ -451,6 +452,8 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 						dI("No path match and partial-match optimization is enabled -> skipping file.\n");
 						goto __skip_file;
 					case PCRE_ERROR_PARTIAL:
+						if (fts_ent->fts_info == FTS_SL)
+							fts_set(ofts->ofts_fts, fts_ent, FTS_FOLLOW);
 						continue;
 					default:
 						dE("pcre_exec() error: %d.\n", ret);
