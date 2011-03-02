@@ -213,6 +213,11 @@ int oval_parser_text_value(xmlTextReaderPtr reader,
 {
 	int depth = xmlTextReaderDepth(reader);
 	int return_code;
+	bool has_value = false;
+
+	if (xmlTextReaderIsEmptyElement(reader))
+		return 1;
+
 	while (((return_code = xmlTextReaderRead(reader)) == 1)
 	       && xmlTextReaderDepth(reader) > depth) {
 		int nodetype = xmlTextReaderNodeType(reader);
@@ -220,8 +225,13 @@ int oval_parser_text_value(xmlTextReaderPtr reader,
 			char *value = (char *)xmlTextReaderValue(reader);
 			(*consumer) (value, user);
 			oscap_free(value);
+			has_value = true;
 		}
 	}
+
+	if (!has_value)
+		(*consumer) ("", user);
+
 	return return_code;
 }
 
