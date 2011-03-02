@@ -171,10 +171,10 @@
     <refine-value idref="var-3.4.2.system.crontab.directories.group" selector="root"/>
     <refine-value idref="var-3.4.2.system.crontab.directories.user" selector="root"/>
   </Profile>
-  <Group id="group-1" hidden="false">
+  <Group id="gr-intro" hidden="false">
     <title xml:lang="en-US">Introduction</title>
     <description xml:lang="en-US"> The purpose of this guide is to provide security
-			configuration recommendations for the Red Hat Enterprise Linux (RHEL) 5 operating
+			configuration recommendations for the Red Hat Enterprise Linux (RHEL) 6 operating
 			system. The guidance provided here should is applicable to desktop systems. Recommended
 			settings for the basic operating system are provided, as well as for many commonly-used
 			services that the system can host in a network environment.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -184,24 +184,25 @@
 			instructions within this guide are complex. All directions should be followed completely
 			and with understanding of their effects in order to avoid serious adverse effects on the
 			system and its security. </description>
-    <Group id="group-1.1" hidden="false">
-      <title xml:lang="en-US">General Principles</title>
-      <description xml:lang="en-US"> The following general principles motivate much of the
+  </Group>
+  <Group id="gr-principles" hidden="false">
+    <title xml:lang="en-US">General Principles</title>
+    <description xml:lang="en-US"> The following general principles motivate much of the
 				advice in this guide and should also influence any configuration decisions that are
 				not explicitly covered.</description>
-      <Group id="group-1.1.1" hidden="false" weight="10.000000">
-        <title xml:lang="en-US">Encrypt Transmitted Data Whenever Possible</title>
-        <description xml:lang="en-US"> Data transmitted over a network, whether wired or
+    <Group id="gr-principles-1" hidden="false" weight="10.000000">
+      <title xml:lang="en-US">Encrypt Transmitted Data Whenever Possible</title>
+      <description xml:lang="en-US"> Data transmitted over a network, whether wired or
 					wireless, is susceptible to passive monitoring. Whenever practical solutions for
 					encrypting such data exist, they should be applied. Even if data is expected to
 					be transmitted only over a local network, it should still be encrypted.
 					Encrypting authentication data, such as passwords, is particularly important.
-					Networks of RHEL5 machines can and should be configured so that no unencrypted
+					Networks of RHEL6 machines can and should be configured so that no unencrypted
 					authentication data is ever transmitted between machines.</description>
-      </Group>
-      <Group id="group-1.1.2" hidden="false">
-        <title xml:lang="en-US">Minimize Software to Minimize Vulnerability</title>
-        <description xml:lang="en-US"> The simplest way to avoid vulnerabilities in software
+    </Group>
+    <Group id="gr-principles-2" hidden="false">
+      <title xml:lang="en-US">Minimize Software to Minimize Vulnerability</title>
+      <description xml:lang="en-US"> The simplest way to avoid vulnerabilities in software
 					is to avoid installing that software. On RHEL, the RPM Package Manager
 					(originally Red Hat Package Manager, abbreviated RPM) allows for careful
 					management of the set of software packages installed on a system. Installed
@@ -214,27 +215,27 @@
 					number of software packages installed on a system can almost always be
 					significantly pruned to include only the software for which there is an
 					environmental or operational need.</description>
-      </Group>
-      <Group id="group-1.1.3" hidden="false">
-        <title xml:lang="en-US">Run Different Network Services on Separate Systems</title>
-        <description xml:lang="en-US"> Whenever possible, a server should be dedicated to
+    </Group>
+    <Group id="gr-principles-3" hidden="false">
+      <title xml:lang="en-US">Run Different Network Services on Separate Systems</title>
+      <description xml:lang="en-US"> Whenever possible, a server should be dedicated to
 					serving exactly one network service. This limits the number of other services
 					that can be compromised in the event that an attacker is able to successfully
 					exploit a software flaw in one network service.</description>
-      </Group>
-      <Group id="group-1.1.4" hidden="false">
-        <title xml:lang="en-US">Configure Security Tools to Improve System Robustness</title>
-        <description xml:lang="en-US"> Several tools exist which can be effectively used to
+    </Group>
+    <Group id="gr-principles-4" hidden="false">
+      <title xml:lang="en-US">Configure Security Tools to Improve System Robustness</title>
+      <description xml:lang="en-US"> Several tools exist which can be effectively used to
 					improve a system's resistance to and detection of unknown attacks. These tools
 					can improve robustness against attack at the cost of relatively little
 					configuration effort. In particular, this guide recommends and discusses the use
 					of Iptables for host-based firewalling, SELinux for protection against
 					vulnerable services, and a logging and auditing infrastructure for detection of
 					problems.</description>
-      </Group>
-      <Group id="group-1.1.5" hidden="false">
-        <title xml:lang="en-US">Least Privilege</title>
-        <description xml:lang="en-US"> Grant the least privilege necessary for user accounts
+    </Group>
+    <Group id="gr-principles-5" hidden="false">
+      <title xml:lang="en-US">Least Privilege</title>
+      <description xml:lang="en-US"> Grant the least privilege necessary for user accounts
 					and software to perform tasks. For example, do not allow users except those that
 					need administrator access to use sudo. Another example is to limit logins on
 					server systems to only those administrators who need to log into them in order
@@ -242,17 +243,16 @@
 					least privilege: SELinux policy can conﬁne software to perform only actions on
 					the system that are speciﬁcally allowed. This can be far more restrictive than
 					the actions permissible by the traditional Unix permissions model.</description>
-      </Group>
     </Group>
   </Group>
-  <Group id="group-2" hidden="false">
+  <Group id="gr-configuration" hidden="false">
     <title xml:lang="en-US">System-wide Configuration</title>
-    <Group id="group-2.1" hidden="false">
+    <Group id="gr-software" hidden="false">
       <title xml:lang="en-US">Installing and Maintaining Software</title>
       <description xml:lang="en-US"> The following sections contain information on
 				security-relevant choices during the initial operating system installation process
 				and the setup of software updates.</description>
-      <Group id="group-2.1.1" hidden="false">
+      <Group id="gr-installation" hidden="false">
         <title xml:lang="en-US">Initial Installation Recommendations</title>
         <description xml:lang="en-US"> The recommendations here apply to a clean
 					installation of the system, where any previous installations are wiped out. The
@@ -261,7 +261,7 @@
 					configuration choices presented here can also be applied after the system is
 					installed. The choices can also be automatically applied via Kickstart
 					ﬁles.</description>
-        <Group id="group-2.1.1.1" hidden="false">
+        <Group id="gr-installation-1" hidden="false">
           <title xml:lang="en-US">Disk Partitioning</title>
           <description xml:lang="en-US"> Some system directories should be placed on their
 						own partitions (or logical volumes). This allows for better separation and
@@ -285,7 +285,7 @@
 						create separate logical volumes for the directories listed above. The
 						Logical Volume Manager (LVM) makes this possible. See the LVM HOWTO at
 						http://tldp.org/HOWTO/LVM-HOWTO/ for more detailed information on LVM. </description>
-          <Group id="group-2.1.1.1.1" hidden="false">
+          <Group id="gr-installation-1.1" hidden="false">
             <title xml:lang="en-US">Create Separate Partition or Logical Volume for	/tmp</title>
             <description xml:lang="en-US"> The /tmp directory is a world-writable
 							directory used for temporary ﬁle storage. Ensure that it has its own
@@ -307,7 +307,7 @@
               </check>
             </Rule>
           </Group>
-          <Group id="group-2.1.1.1.2" hidden="false">
+          <Group id="gr-installation-1.2" hidden="false">
             <title xml:lang="en-US">Create Separate Partition or Logical Volume for	/var</title>
             <description xml:lang="en-US"> The /var directory is used by daemons and
 							other system services to store frequently-changing data. It is not
@@ -331,7 +331,7 @@
               </check>
             </Rule>
           </Group>
-          <Group id="group-2.1.1.1.3" hidden="false">
+          <Group id="gr-installation-1.3" hidden="false">
             <title xml:lang="en-US">Create Separate Partition or Logical Volume for	/var/log</title>
             <description xml:lang="en-US"> System logs are stored in the /var/log
 							directory. Ensure that it has its own partition or logical volume.
@@ -349,14 +349,12 @@
               </check>
             </Rule>
           </Group>
-          <Group id="group-2.1.1.1.4" hidden="false">
+          <Group id="gr-installation-1.4" hidden="false">
             <title xml:lang="en-US">Create Separate Partition or Logical Volume for	/var/log/audit</title>
             <description xml:lang="en-US"> Audit logs are stored in the /var/log/audit
 							directory. Ensure that it has its own partition or logical volume. Make
 							absolutely certain that it is large enough to store all audit logs that
-							will be created by the auditing daemon.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> See 2.6.2.2 for discussion on deciding on an appropriate
-							size for the volume.</description>
+							will be created by the auditing daemon.</description>
             <Rule id="rule-2.1.1.1.4.a" selected="false" weight="10.000000">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Ensure that /var/log/audit has its own partition or logical volume</title>
@@ -371,7 +369,7 @@
               </check>
             </Rule>
           </Group>
-          <Group id="group-2.1.1.1.5" hidden="false">
+          <Group id="gr-installation-1.5" hidden="false">
             <title xml:lang="en-US">Create Separate Partition or Logical Volume for	/home if Using Local Home Directories</title>
             <description xml:lang="en-US"> If user home directories will be stored
 							locally, create a separate partition for /home. If /home will be mounted
@@ -393,53 +391,70 @@
             </Rule>
           </Group>
         </Group>
-        <Group id="group-2.1.1.2" hidden="false">
+        <Group id="gr-installation-2" hidden="false">
           <title xml:lang="en-US">Boot Loader Configuration</title>
           <description xml:lang="en-US"> Check the box to "Use a boot loader password" and
 						create a password. Once this password is set, anyone who wishes to change
-						the boot loader configuration will need to enter it. More information is
-						available in Section 2.3.5.2.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Assigning a boot loader password prevents a local user with
-						physical access from altering the boot loader configuration at system
-						startup. </description>
+						the boot loader configuration will need to enter it. Assigning a boot loader password 
+						prevents a local user with physical access from altering the boot loader configuration 
+						at system startup. </description>
         </Group>
-        <Group id="group-2.1.1.6" hidden="false">
+        <Group id="gr-installation-3" hidden="false">
           <title xml:lang="en-US">First-boot Configuration</title>
           <description xml:lang="en-US"> The system presents more configuration options
 						during the first boot after installation. For the screens listed, implement
 						the security-related recommendations:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:ul xmlns:xhtml="http://www.w3.org/1999/xhtml">
-							<xhtml:li/> Firewall - Leave set to 'Enabled.' Only check the 'Trusted
+							<xhtml:li> Firewall - Leave set to 'Enabled.' Only check the 'Trusted
 							Services' that this system needs to serve. Uncheck the default selection
-							of SSH if the system does not need to serve SSH. <xhtml:li/> SELinux -
-							Leave SELinux set to 'Enforcing' mode. <xhtml:li/> Kdump - Leave Kdump
+							of SSH if the system does not need to serve SSH.</xhtml:li> <xhtml:li> SELinux -
+							Leave SELinux set to 'Enforcing' mode.</xhtml:li> <xhtml:li> Kdump - Leave Kdump
 							off unless the feature is required, such as for kernel development and
-							testing. <xhtml:li/> Set Up Software Updates - If the system is
+							testing.</xhtml:li> <xhtml:li> Set Up Software Updates - If the system is
 							connected to the Internet now, click 'Yes, I'd like to register now.'
 							This will require a connection to either the Red Hat Network servers or
-							their proxies or satellites. This can also be configured later as
-							described in Section 2.1.2.1. <xhtml:li/> Create User - If the system
+							their proxies or satellites.</xhtml:li> <xhtml:li> Create User - If the system
 							will require a local user account, it can be created here. Even if the
-							system will be using a network-wide authentication system as described
-							in Section 2.3.6, do not click on the 'Use Network Login...' button.
-							Manually applying configuration later is preferable. </xhtml:ul>
+							system will be using a network-wide authentication system, 
+							do not click on the 'Use Network Login...' button.
+							Manually applying configuration later is preferable.</xhtml:li> </xhtml:ul>
 					</description>
         </Group>
       </Group>
-      <Group id="group-2.1.2" hidden="false">
+      <Group id="gr-updating" hidden="false">
         <title xml:lang="en-US">Updating Software</title>
         <description xml:lang="en-US"> The yum command line tool is used to install and
 					update software packages. Yum replaces the up2date utility used in previous
-					system releases. The system also provides two graphical package managers, pirut
-					and pup. The pirut tool is a graphical front-end for yum that allows users to
-					install and update packages while pup is a simple update tool for packages that
-					are already installed. In the <xhtml:b xmlns:xhtml="http://www.w3.org/1999/xhtml">Applications</xhtml:b> menu, pirut is
-					labeled <xhtml:b xmlns:xhtml="http://www.w3.org/1999/xhtml">Add/Remove Software</xhtml:b> and pup is labeled
-						<xhtml:b xmlns:xhtml="http://www.w3.org/1999/xhtml">Software Updater</xhtml:b>.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+					system releases. The system also provides PackageKit, which is  a graphical package manager.
+					It consists of several graphical interfaces that can be opened from the GNOME panel menu, 
+					or from the Notification Area when PackageKit alerts you that updates are available. 
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> It is recommended that these tools be used to keep systems up to
 					date with the latest security patches. </description>
-        <Group id="group-2.1.2.1" hidden="false">
+        <Group id="gr-updating-1" hidden="false">
+          <title xml:lang="en-US">Ensure Red Hat GPG Key is Installed</title>
+          <description xml:lang="en-US"> To ensure that the system can
+							cryptographically verify update packages (and also connect to the Red
+							Hat Network to receive them if desired) run the following command to
+							ensure that the system has the Red Hat GPG properly installed:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">$ rpm -q --queryformat "%{SUMMARY}\n"
+								gpg-pubkey</xhtml:code>
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The command should return the string:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> gpg(Red Hat, Inc. (release key
+							&lt;security@redhat.com&gt;)</description>
+          <Rule id="rule-2.1.2.1.1.a" selected="false" weight="10.000000">
+            <status date="2010-07-01">draft</status>
+            <title xml:lang="en-US">Red Hat GPG Key is Installed</title>
+            <description xml:lang="en-US">The GPG key should be installed.</description>
+            <ident system="http://cce.mitre.org">CCE-14440-2</ident>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+              <check-content-ref name="oval:rhel:def:200065" href="scap-rhel6-oval.xml"/>
+            </check>
+          </Rule>
+        </Group>
+        <Group id="gr-updating-2" hidden="false">
           <title xml:lang="en-US">Configure Connection to the RHN RPM Repositories</title>
           <description xml:lang="en-US">
 						<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml" class="block"> The first step in configuring a system for updates
@@ -462,31 +477,8 @@
 						have to be downloaded from the RHN web site manually. The command line tool
 						yum and the graphical front-ends pirut and pup can be configured to handle
 						this situation. </description>
-          <Group id="group-2.1.2.1.1" hidden="false">
-            <title xml:lang="en-US">Ensure Red Hat GPG Key is Installed</title>
-            <description xml:lang="en-US"> To ensure that the system can
-							cryptographically verify update packages (and also connect to the Red
-							Hat Network to receive them if desired) run the following command to
-							ensure that the system has the Red Hat GPG properly installed:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">$ rpm -q --queryformat "%{SUMMARY}\n"
-								gpg-pubkey</xhtml:code>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The command should return the string:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> gpg(Red Hat, Inc. (release key
-							&lt;security@redhat.com&gt;)</description>
-            <Rule id="rule-2.1.2.1.1.a" selected="false" weight="10.000000">
-              <status date="2010-07-01">draft</status>
-              <title xml:lang="en-US">Red Hat GPG Key is Installed</title>
-              <description xml:lang="en-US">The GPG key should be installed.</description>
-              <ident system="http://cce.mitre.org">CCE-14440-2</ident>
-              <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:200065" href="scap-rhel6-oval.xml"/>
-              </check>
-            </Rule>
-          </Group>
         </Group>
-        <Group id="group-2.1.2.2" hidden="false">
+        <Group id="gr-updating-3" hidden="false">
           <title xml:lang="en-US">Disable the rhnsd Daemon</title>
           <description xml:lang="en-US"> The rhnsd daemon polls the Red Hat Network web
 						site for scheduled actions. Unless it is actually necessary to schedule
@@ -511,12 +503,12 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.1.2.3" hidden="false">
+        <Group id="gr-updating-4" hidden="false">
           <title xml:lang="en-US">Obtain Software Package Updates with yum</title>
           <description xml:lang="en-US"> The yum update utility can be run by hand from
 						the command line, called through one of the provided front-end tools, or
 						configured to run automatically at specified intervals.</description>
-          <Group id="group-2.1.2.3.1" hidden="false">
+          <Group id="gr-updating-4.1" hidden="false">
             <title xml:lang="en-US">Manually Update Packages Where Appropriate</title>
             <description xml:lang="en-US"> The following command prints a list of
 							packages that need to be updated:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -536,34 +528,21 @@
               </check>
             </Rule>
           </Group>
-          <Group id="group-2.1.2.3.2" hidden="false">
+          <Group id="gr-updating-4.2" hidden="false">
             <title xml:lang="en-US">Configure Automatic Update Retrieval and Installation with Cron</title>
-            <description xml:lang="en-US"> The yum-updatesd service is not mature enough
-							for an enterprise environment, and the service may introduce unnecessary
-							overhead. When possible, replace this service with a cron job that calls
-							yum directly.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Create the file yum.cron, make it executable, and place it
+            <description xml:lang="en-US"> Create the file yum.cron, make it executable, and place it
 							in /etc/cron.daily:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">#!/bin/sh<xhtml:br/>
-								<xhtml:br/> /usr/bin/yum -R 120 -e 0 -d 0 -y update yum <xhtml:br/>
-								/usr/bin/yum -R 10 -e 0 -d 0 -y update<xhtml:br/>
-							</xhtml:code>
+<xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+#!/bin/sh
+/usr/bin/yum -R 120 -e 0 -d 0 -y update yum 
+/usr/bin/yum -R 10 -e 0 -d 0 -y update </xhtml:pre>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> This particular script instructs yum to update any packages
 							it finds. Placing the script in /etc/cron.daily ensures its daily
 							execution. To only apply updates once a week, place the script in
 							/etc/cron.weekly instead. </description>
-            <Rule id="rule-2.1.2.3.2.a" selected="false" weight="10.000000" severity="low">
-              <status date="2010-07-01">accepted</status>
-              <title xml:lang="en-US">yum-updatesd service should be disabled</title>
-              <description xml:lang="en-US">The yum-updatesd service should be disabled</description>
-              <ident system="http://cce.mitre.org">CCE-4218-4</ident>
-              <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20008" href="scap-rhel6-oval.xml"/>
-              </check>
-            </Rule>
           </Group>
-          <Group id="group-2.1.2.3.3" hidden="false">
+          <Group id="gr-updating-4.3" hidden="false">
             <title xml:lang="en-US">Ensure Package Signature Checking is Globally Activated</title>
             <description xml:lang="en-US"> The gpgcheck option should be used to ensure
 							that checking of an RPM package’s signature always occurs prior to its installation.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -587,7 +566,7 @@
               </check>
             </Rule>
           </Group>
-          <Group id="group-2.1.2.3.4" hidden="false">
+          <Group id="gr-updating-4.4" hidden="false">
             <title xml:lang="en-US">Ensure Package Signature Checking is Not Disabled For Any Repos</title>
             <description xml:lang="en-US"> To ensure that signature checking is not
 							disabled for any repos, ensure that the following line DOES NOT appear
@@ -607,7 +586,7 @@
               </check>
             </Rule>
           </Group>
-          <Group id="group-2.1.2.3.5" hidden="false">
+          <Group id="gr-updating-4.5" hidden="false">
             <title xml:lang="en-US">Ensure Repodata Signature Checking is Globally Activated</title>
             <description xml:lang="en-US"> The repo_gpgcheck option should be used to
 							ensure that checking of a signature on repodata is performed prior to
@@ -618,7 +597,7 @@
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> repo_gpgcheck=1 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						</description>
           </Group>
-          <Group id="group-2.1.2.3.6" hidden="false">
+          <Group id="gr-updating-4.6" hidden="false">
             <title xml:lang="en-US">Ensure Repodata Signature Checking is Not Disabled For Any Repos</title>
             <description xml:lang="en-US"> To ensure that signature checking is not
 							disabled for any repos, ensure that the following line DOES NOT appear
