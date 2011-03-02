@@ -461,22 +461,23 @@
 							is to register with the Red Hat Network (RHN). For most systems, this is
 							done during the initial installation. Successfully registered systems
 							will appear on the RHN web site. If the system is not listed, run the
-							Red Hat Network Registration tool, which can be found in the
-								<xhtml:b>Applications</xhtml:b> menu under <xhtml:b>System
-								Tools</xhtml:b> or on the command line:<xhtml:br/>
-							<xhtml:br/>
-							<xhtml:code># rhn register</xhtml:code>
-							<xhtml:br/>
-							<xhtml:br/> Follow the prompts on the screen. If successful, the system
+							Red Hat Subscription Manager tool, which can be found in the
+							<xhtml:b>System =&gt; Administration</xhtml:b> menu in the top management bar.
+							or on the command line: </xhtml:p>
+							
+							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># subscription-manager register --username admin-example --password secret
+							</xhtml:code>
+							
+							<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> Follow the prompts on the screen. If successful, the system
 							will appear on the RHN web site and be subscribed to one or more
 							software update channels. Additionally, a new daemon, rhnsd, will be
-							enabled.<xhtml:br/>
-						</xhtml:p>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> If the system will not have access to the Internet, it will not
+							enabled.</xhtml:p>
+
+						<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml" class="block"> If the system will not have access to the Internet, it will not
 						be able to directly subscribe to the RHN update repository. Updates will
 						have to be downloaded from the RHN web site manually. The command line tool
 						yum and the graphical front-ends pirut and pup can be configured to handle
-						this situation. </description>
+						this situation. </xhtml:p> </description>
         </Group>
         <Group id="gr-updating-3" hidden="false">
           <title xml:lang="en-US">Disable the rhnsd Daemon</title>
@@ -610,116 +611,15 @@
           </Group>
         </Group>
       </Group>
-      <Group id="group-2.1.3" hidden="false">
+      <Group id="gr-integrity" hidden="false">
         <title xml:lang="en-US">Software Integrity Checking</title>
-        <description xml:lang="en-US"> The AIDE (Advanced Intrusion Detection Environment)
-					software is included with the system to provide software integrity checking. It
-					is designed to be a replacement for the well-known Tripwire integrity checker.
-					Integrity checking cannot <xhtml:em xmlns:xhtml="http://www.w3.org/1999/xhtml">prevent</xhtml:em> intrusions into your
-					system, but can detect that they have occurred.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Any integrity checking software should be configured before the
-					system is deployed and able to provides services to users. Ideally, the
-					integrity checking database would be built before the system is connected to any
-					network, though this may prove impractical due to registration and software
-					updates. </description>
-        <Group id="group-2.1.3.1" hidden="false">
-          <title xml:lang="en-US">Configure AIDE</title>
-          <description xml:lang="en-US"> Requirements for software integrity checking
-						should be defined by policy, and this is highly dependent on the environment
-						in which the system will be used. As such, a general strategy for
-						implementing integrity checking is provided, but precise recommendations
-						(such as to check a particular file) cannot be. Documentation for AIDE,
-						including the quick-start on which this advice is based, is available in
-						/usr/share/doc/aide-0.12.</description>
-          <Group id="group-2.1.3.1.1" hidden="false">
-            <title xml:lang="en-US">Install AIDE</title>
-            <description xml:lang="en-US">AIDE is not installed by
-							default.</description>
-            <Rule id="rule-2.1.3.1.1.a" selected="false" weight="10.000000" severity="medium">
-              <status date="2010-07-01">accepted</status>
-              <title xml:lang="en-US">Install AIDE</title>
-              <description xml:lang="en-US">The AIDE package should be installed</description>
-              <ident system="http://cce.mitre.org">CCE-4209-3</ident>
-              <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20014" href="scap-rhel6-oval.xml"/>
-              </check>
-            </Rule>
-          </Group>
-          <Group id="group-2.1.3.1.2" hidden="false">
-            <title xml:lang="en-US">Customize Configuration File</title>
-            <description xml:lang="en-US"> Customize /etc/aide.conf to meet your
-							requirements. The default configuration is acceptable for many
-							environments. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The man page aide.conf(5) provides detailed
-							information about the configuration file format. </description>
-          </Group>
-          <Group id="group-2.1.3.1.3" hidden="false">
-            <title xml:lang="en-US">Build, Store, and Test Database</title>
-            <description xml:lang="en-US"> Generate a new database:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># /usr/sbin/aide --init<xhtml:br/>
-							</xhtml:code>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> By default, the database will be written to the file
-							/var/lib/aide/aide.db.new.gz. The database, as well as the configuration
-							file /etc/aide.conf and the binary /usr/sbin/aide (or hashes of these
-							files) should be copied and stored in a secure location. Storing these
-							copies or hashes on read-only media may provide further confidence that
-							they will not be altered.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Install the newly-generated database:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># cp /var/lib/aide/aide.db.new.gz
-								/var/lib/aide/aide.db.gz<xhtml:br/>
-							</xhtml:code>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Run a manual check: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># /usr/sbin/aide --check<xhtml:br/>
-							</xhtml:code>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> If this check produces any unexpected output, investigate.
-						</description>
-          </Group>
-          <Group id="group-2.1.3.1.4" hidden="false">
-            <title xml:lang="en-US">Implement Periodic Execution of Integrity Checking</title>
-            <description xml:lang="en-US"> By default, AIDE does not install itself for
-							periodic execution.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Implement checking with whatever frequency is required by
-							your security policy. A once-daily check may be suitable for many
-							environments. For example, to implement a daily execution of AIDE at
-							4:05am, add the following line to /etc/crontab:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 05 4 * * * root /usr/sbin/aide --check<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> AIDE output may be an indication of an attack against your
-							system, or it may be the result of something innocuous such as an
-							administrator's configuration change or a software update. The steps in
-							Section 2.1.3.1.3 should be repeated when configuration changes or
-							software updates necessitate. This will certainly be necessary after
-							applying guidance later in this guide. </description>
-          </Group>
-          <Group id="group-2.1.3.1.5" hidden="false">
-            <title xml:lang="en-US">Manually Verify Integrity of AIDE</title>
-            <description xml:lang="en-US"> Because integrity checking is a means of
-							intrusion detection and not intrusion prevention, it cannot be
-							guaranteed that the AIDE binaries, configuration files, or database have
-							not been tampered with. An attacker could disable or alter these files
-							after a successful intrusion. Because of this, manual and frequent
-							checks on these files is recommended. The safely stored copies (or
-							hashes) of the database, binary, and configuration file were created
-							earlier for this purpose.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Manually verify the integrity of the AIDE binaries,
-							configuration file, and database. Possibilities for doing so include: <xhtml:ol xmlns:xhtml="http://www.w3.org/1999/xhtml">
-								<xhtml:li>Use sha1sum or md5sum to generate checksums on the files
-									and then visually compare them to those generated from the
-									safely stored versions. This does not, of course, preclude the
-									possibility that such output could also be faked.</xhtml:li>
-								<xhtml:li>Mount the stored versions on read-only media and run
-									/bin/diff to verify that there are no differences between the
-									files.</xhtml:li>
-								<xhtml:li>Copying the files to another system and performing the
-									hash or file comparisons there may impart additional confidence
-									that the manual verification process is not being interfered
-									with.</xhtml:li>
-							</xhtml:ol>
-						</description>
-          </Group>
-        </Group>
-        <Group id="group-2.1.3.2" hidden="false">
+        <description xml:lang="en-US"> 	Integrity checking cannot prevent intrusions into your
+					system, but can detect that they have occurred. Any integrity checking software 
+					should be configured before the	system is deployed and able to provides services 
+					to users. Ideally, the integrity checking database would be built before the system 
+					is connected to any network, though this may prove impractical due to registration 
+					and software updates. </description>
+        <Group id="gr-integrity-1" hidden="false">
           <title xml:lang="en-US">Verify Package Integrity Using RPM</title>
           <description xml:lang="en-US"> The RPM package management system includes the
 						ability to verify the integrity of installed packages by comparing the
@@ -756,44 +656,43 @@
         </Group>
       </Group>
     </Group>
-    <Group id="group-2.2" hidden="false">
+    <Group id="gr-permissions" hidden="false">
       <title xml:lang="en-US">File Permissions and Masks</title>
-      <description xml:lang="en-US"> Traditional Unix security relies heavily on file and
+      <description xml:lang="en-US"> <xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> Traditional Unix security relies heavily on file and
 				directory permissions to prevent unauthorized users from reading or modifying files
 				to which they should not have access. Adhere to the principle of least privilege —
 				configure each file, directory, and filesystem to allow only the access needed in
-				order for that file to serve its purpose.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-				<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> However, Linux systems contain a large number of files, so it is often
+				order for that file to serve its purpose. </xhtml:p>
+				<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> However, Linux systems contain a large number of files, so it is often
 				prohibitively time-consuming to ensure that every file on a machine has exactly the
 				permissions needed. This section introduces several permission restrictions which
 				are almost always appropriate for system security, and which are easy to test and
-				correct. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-				<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Note: Several of the commands in this section search filesystems for
+				correct. </xhtml:p> 
+				<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> Note: Several of the commands in this section search filesystems for
 				files or directories with certain characteristics, and are intended to be run on
-				every local ext2 or ext3 partition on a given machine. When the variable
-					<xhtml:em xmlns:xhtml="http://www.w3.org/1999/xhtml">PART</xhtml:em> appears in one of the commands below, it means that
+				every local ext2, ext3 or ext4 partition on a given machine. When the variable 
+				<xhtml:em xmlns:xhtml="http://www.w3.org/1999/xhtml">PART</xhtml:em> appears in one of the commands below, it means that
 				the command is intended to be run repeatedly, with the name of each local partition
-				substituted for <xhtml:em xmlns:xhtml="http://www.w3.org/1999/xhtml">PART</xhtml:em> in turn.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-				<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The following command prints a list of ext2 and ext3 partitions on a
-				given machine:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-				<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-				<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">$ mount -t ext2,ext3 | awk '{print $3}'<xhtml:br/>
-				</xhtml:code>
-				<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> If your site uses a local filesystem type other than ext2 or ext3, you
-				will need to modify this command. </description>
-      <Group id="group-2.2.1" hidden="false">
+				substituted for <xhtml:em xmlns:xhtml="http://www.w3.org/1999/xhtml">PART</xhtml:em> in turn. </xhtml:p>
+
+				<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> The following command prints a list of ext2, ext3 and ext4 partitions on a
+				given machine: </xhtml:p>
+				<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">$ mount -t ext2,ext3,ext4 | awk '{print $3}'</xhtml:code>
+				<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> If your site uses a local filesystem type other than those, you
+				will need to modify this command. </xhtml:p> </description>
+      <Group id="gr-mount" hidden="false">
         <title xml:lang="en-US">Restrict Partition Mount Options</title>
         <description xml:lang="en-US"> System partitions can be mounted with certain options
 					which limit what files on those partitions can do. These options are set in the
 					file /etc/fstab, and can be used to make certain types of malicious behavior
 					more difficult.</description>
-        <Group id="group-2.2.1.1" hidden="false" weight="10.000000">
+        <Group id="gr-local" hidden="false" weight="10.000000">
           <title xml:lang="en-US">Add nodev Option to Non-Root Local Partitions</title>
           <description xml:lang="en-US"> Edit the ﬁle /etc/fstab. The important columns
 						for purposes of this section are column 2 (mount point), column 3 (ﬁlesystem
 						type), and column 4 (mount options). For any line which satisﬁes all of the
 						conditions: <xhtml:ul xmlns:xhtml="http://www.w3.org/1999/xhtml">
-							<xhtml:li>The ﬁlesystem type is ext2 or ext3</xhtml:li>
+							<xhtml:li>The ﬁlesystem type is ext2 or ext3 or ext4</xhtml:li>
 							<xhtml:li>The mount point is not /</xhtml:li>
 						</xhtml:ul> add the text “,nodev” to the list of mount options in column 4. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The nodev option prevents users from mounting unauthorized
