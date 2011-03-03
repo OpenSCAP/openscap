@@ -1313,6 +1313,75 @@ void probe_free(SEXP_t * obj)
 	SEXP_free(obj);
 }
 
+void probe_filebehaviors_canonicalize(SEXP_t **behaviors)
+{
+	SEXP_t *bhs, *r0;
+
+	_A(behaviors != NULL);
+
+	bhs = *behaviors;
+
+	if (!bhs) {
+		r0 = SEXP_list_new(NULL);
+		bhs = *behaviors = probe_ent_creat1("behaviors", r0, NULL);
+		SEXP_free(r0);
+	}
+
+	if (!probe_ent_attrexists(bhs, "max_depth")) {
+		r0 = SEXP_string_newf("-1");
+		probe_ent_attr_add(bhs, "max_depth", r0);
+		SEXP_free(r0);
+	}
+	if (!probe_ent_attrexists(bhs, "recurse")) {
+		r0 = SEXP_string_newf("symlinks and directories");
+		probe_ent_attr_add(bhs, "recurse", r0);
+		SEXP_free(r0);
+	}
+	if (!probe_ent_attrexists(bhs, "recurse_direction")) {
+		r0 = SEXP_string_newf("none");
+		probe_ent_attr_add(bhs, "recurse_direction", r0);
+		SEXP_free(r0);
+	}
+	if (!probe_ent_attrexists(bhs, "recurse_file_system")) {
+		r0 = SEXP_string_newf("all");
+		probe_ent_attr_add(bhs, "recurse_file_system", r0);
+		SEXP_free(r0);
+	}
+}
+
+void probe_tfc54behaviors_canonicalize(SEXP_t **behaviors)
+{
+	SEXP_t *bhs, *r0;
+
+	_A(behaviors != NULL);
+
+	bhs = *behaviors;
+
+	if (!bhs) {
+		r0 = SEXP_list_new(NULL);
+		bhs = *behaviors = probe_ent_creat1("behaviors", r0, NULL);
+		SEXP_free(r0);
+	}
+
+	probe_filebehaviors_canonicalize(&bhs);
+
+	if (!probe_ent_attrexists(bhs, "ignore_case")) {
+		r0 = SEXP_string_newf("0");
+		probe_ent_attr_add(bhs, "ignore_case", r0);
+		SEXP_free(r0);
+	}
+	if (!probe_ent_attrexists(bhs, "multiline")) {
+		r0 = SEXP_string_newf("1");
+		probe_ent_attr_add(bhs, "multiline", r0);
+		SEXP_free(r0);
+	}
+	if (!probe_ent_attrexists(bhs, "singleline")) {
+		r0 = SEXP_string_newf("0");
+		probe_ent_attr_add(bhs, "singleline", r0);
+		SEXP_free(r0);
+	}
+}
+
 /**
  * Return a copy of the supplied item with optimized memory representation
  */

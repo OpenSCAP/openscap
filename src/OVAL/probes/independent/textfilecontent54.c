@@ -412,74 +412,23 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 	i_val = s_val = "0";
 	m_val = "1";
 
-	/* reset some 'behaviors' attributes if 'filepath' entity is used */
+	/* reset filebehavior attributes if 'filepath' entity is used */
 	if (filepath_ent != NULL && bh_ent != NULL) {
-		r0 = probe_ent_getattrval(bh_ent, "ignore_case");
-		if (r0) {
-			if (SEXP_string_getb(r0))
-				i_val = "1";
-			else
-				i_val = "0";
-			SEXP_free(r0);
-		}
-		r0 = probe_ent_getattrval(bh_ent, "multiline");
-		if (r0) {
-			if (SEXP_string_getb(r0))
-				m_val = "1";
-			else
-				m_val = "0";
-			SEXP_free(r0);
-		}
-		r0 = probe_ent_getattrval(bh_ent, "singleline");
-		if (r0) {
-			if (SEXP_string_getb(r0))
-				s_val = "1";
-			else
-				s_val = "0";
-			SEXP_free(r0);
-		}
+		SEXP_t *r1, *r2, *r3;
 
-                SEXP_free (bh_ent);
-                bh_ent = NULL;
-        }
-
-	/* canonicalize behaviors */
-	if (bh_ent == NULL) {
-		SEXP_t *bh_new, *bh_attr;
-		SEXP_t *r1, *r2, *r3, *r4;
-
-                bh_attr = probe_attr_creat("max_depth",         r0 = SEXP_string_newf ("1"),
-                                           "recurse_direction", r1 = SEXP_string_newf ("none"),
-					   "ignore_case",       r2 = SEXP_string_newf (i_val),
-					   "multiline",         r3 = SEXP_string_newf (m_val),
-					   "singleline",        r4 = SEXP_string_newf (s_val),
-                                           NULL);
-		bh_new  = probe_ent_creat("behaviors", bh_attr, NULL /* val */, NULL /* end */);
-		bh_ent  = SEXP_list_first(bh_new);
-
-                SEXP_vfree(bh_new, bh_attr, r0, r1, r2, r3, r4, NULL);
-	} else {
-		if (!probe_ent_attrexists (bh_ent, "max_depth")) {
-			probe_ent_attr_add (bh_ent,"max_depth", r0 = SEXP_string_newf ("1"));
-                        SEXP_free (r0);
-                }
-		if (!probe_ent_attrexists (bh_ent, "recurse_direction")) {
-			probe_ent_attr_add (bh_ent,"recurse_direction", r0 = SEXP_string_newf ("none"));
-                        SEXP_free (r0);
-                }
-		if (!probe_ent_attrexists (bh_ent, "ignore_case")) {
-			probe_ent_attr_add (bh_ent, "ignore_case", r0 = SEXP_string_newf (i_val));
-			SEXP_free (r0);
-		}
-		if (!probe_ent_attrexists (bh_ent, "multiline")) {
-			probe_ent_attr_add (bh_ent, "multiline", r0 = SEXP_string_newf (m_val));
-			SEXP_free (r0);
-		}
-		if (!probe_ent_attrexists (bh_ent, "singleline")) {
-			probe_ent_attr_add (bh_ent, "singleline", r0 = SEXP_string_newf (s_val));
-			SEXP_free (r0);
-		}
+		r1 = probe_ent_getattrval(bh_ent, "ignore_case");
+		r2 = probe_ent_getattrval(bh_ent, "multiline");
+		r3 = probe_ent_getattrval(bh_ent, "singleline");
+		r0 = probe_attr_creat("ignore_case", r1,
+				      "multiline", r2,
+				      "singleline", r3,
+				      NULL);
+		SEXP_free(bh_ent);
+		bh_ent = probe_ent_creat1("behaviors", r0, NULL);
+		SEXP_vfree(r0, r1, r2, r3, NULL);
 	}
+
+	probe_tfc54behaviors_canonicalize(&bh_ent);
 
 	pfd.pattern      = pattern;
 	pfd.instance_ent = inst_ent;

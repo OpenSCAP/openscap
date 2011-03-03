@@ -428,6 +428,22 @@ size_t probe_ent_getname_r(const SEXP_t * ent, char *buffer, size_t buflen);
  */
 void probe_free(SEXP_t * obj);
 
+/**
+ * Set all of the missing attributes of the 'behaviors' entity
+ * to default values. If the referenced pointer contains NULL,
+ * a new entity is created and stored in the referenced pointer.
+ * @param behaviors address of the pointer to the 'behaviors' entity, must not be NULL
+ */
+void probe_filebehaviors_canonicalize(SEXP_t **behaviors);
+
+/**
+ * Set all of the missing attributes of the 'behaviors' entity
+ * to default values. If the referenced pointer contains NULL,
+ * a new entity is created and stored in the referenced pointer.
+ * @param behaviors address of the pointer to the 'behaviors' entity, must not be NULL
+ */
+void probe_tfc54behaviors_canonicalize(SEXP_t **behaviors);
+
 #define PROBE_EINVAL     1	/**< Invalid type/value/format */
 #define PROBE_ENOELM     2	/**< Missing element OBSOLETE: use ENOENT */
 #define PROBE_ENOVAL     3	/**< Missing value */

@@ -200,7 +200,7 @@ static int process_file(const char *path, const char *filename, void *arg)
 int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 {
 	SEXP_t *path_ent, *filename_ent, *xpath_ent, *behaviors_ent, *filepath_ent;
-        SEXP_t *r0, *r1, *r2;
+	SEXP_t *r0;
 
 	OVAL_FTS    *ofts;
 	OVAL_FTSENT *ofts_ent;
@@ -236,32 +236,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
                 behaviors_ent = NULL;
         }
 
-	/* canonicalize behaviors */
-        if (behaviors_ent == NULL) {
-		SEXP_t *behaviors_new;
-
-		behaviors_new = probe_ent_creat("behaviors",
-                                                r0 = probe_attr_creat("max_depth", r1 = SEXP_string_newf ("1"),
-                                                                      "recurse_direction", r2 = SEXP_string_newf ("none"),
-                                                                      NULL),
-                                                NULL /* val */,
-                                                NULL /* end */);
-
-                SEXP_vfree (r0, r1, r2, NULL);
-
-		behaviors_ent = SEXP_list_first(behaviors_new);
-                SEXP_free (behaviors_new);
-	} else {
-		if (!probe_ent_attrexists (behaviors_ent, "max_depth")) {
-			probe_ent_attr_add (behaviors_ent,"max_depth", r0 = SEXP_string_newf ("1"));
-                        SEXP_free (r0);
-                }
-
-		if (!probe_ent_attrexists (behaviors_ent, "recurse_direction")) {
-			probe_ent_attr_add (behaviors_ent,"recurse_direction", r0 = SEXP_string_newf ("none"));
-                        SEXP_free (r0);
-                }
-	}
+	probe_filebehaviors_canonicalize(&behaviors_ent);
 
 	struct pfdata pfd;
 

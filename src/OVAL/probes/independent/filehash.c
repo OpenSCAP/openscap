@@ -223,7 +223,6 @@ void probe_fini (void *arg)
 int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters)
 {
         SEXP_t *path, *filename, *behaviors, *filepath;
-        SEXP_t *r0, *r1, *r2;
 
 	OVAL_FTS    *ofts;
 	OVAL_FTSENT *ofts_ent;
@@ -261,37 +260,7 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filter
                 behaviors = NULL;
         }
 
-        if (behaviors == NULL) {
-                SEXP_t *bh_list;
-
-                bh_list = probe_ent_creat ("behaviors",
-                                           r0 = probe_attr_creat ("max_depth",
-                                                                  r1 = SEXP_string_newf ("1"),
-                                                                  "recurse_direction",
-                                                                  r2 = SEXP_string_newf ("none"),
-                                                                  NULL),
-                                           NULL /* val */,
-                                           NULL /* end */);
-
-                behaviors = SEXP_list_first (bh_list);
-
-                SEXP_vfree (bh_list,
-                            r0, r1, r2, NULL);
-        } else {
-                if (!probe_ent_attrexists (behaviors, "max_depth")) {
-                        probe_ent_attr_add (behaviors,
-                                            "max_depth", r0 = SEXP_string_newf ("-1"));
-                        SEXP_free (r0);
-                }
-
-                if (!probe_ent_attrexists (behaviors, "recurse_direction")) {
-                        probe_ent_attr_add (behaviors,
-                                            "recurse_direction", r0 = SEXP_string_newf ("none"));
-                        SEXP_free (r0);
-                }
-        }
-
-        _A(behaviors != NULL);
+	probe_filebehaviors_canonicalize(&behaviors);
 
         switch (pthread_mutex_lock (&__filehash_probe_mutex)) {
         case 0:
