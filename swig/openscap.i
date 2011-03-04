@@ -374,6 +374,51 @@ int output_callback_wrapper(const struct oscap_reporter_message *msg, void *arg)
     return dres;
 }
 
+char * sub_callback_wrapper(xccdf_subst_type_t type, const char *id, void *arg)
+{
+    PyGILState_STATE state;
+    PyObject *arglist;
+    PyObject *func, *usrdata;
+    struct internal_usr *data;
+    PyObject *result;
+    char *dres = NULL;
+
+    state = PyGILState_Ensure();
+    data = (struct internal_usr *) arg;
+    func = data->func;
+    usrdata = data->usr;
+
+    arglist = Py_BuildValue("isO", type, id, usrdata);
+    if (!PyCallable_Check(func)) {
+      PyGILState_Release(state);
+      return 1;
+    }
+    result = PyEval_CallObject(func, arglist);
+    if (result == NULL) {
+        if (PyErr_Occurred() != NULL)
+            PyErr_PrintEx(0);
+        PyErr_Print();
+        Py_DECREF(arglist);
+        Py_XDECREF(result);
+        PyGILState_Release(state);
+        return NULL;
+    }
+    Py_DECREF(arglist);
+    dres = PyString_AsString(result);
+    if (dres == NULL) {
+        if (PyErr_Occurred() != NULL)
+            PyErr_PrintEx(0);
+        PyErr_Print();
+        Py_DECREF(arglist);
+        Py_XDECREF(result);
+        PyGILState_Release(state);
+        return NULL;
+    }
+    Py_XDECREF(result);
+    PyGILState_Release(state);
+    return strdup(dres);
+}
+
 %}
 
 %inline %{
@@ -446,6 +491,20 @@ bool oscap_validate_document_py(const char *xmlfile, oscap_document_type_t docty
     new_usrdata->usr = usr;
   
     return oscap_validate_document(xmlfile, doctype, version, output_callback_wrapper, (void *)new_usrdata);
+}
+
+char * oscap_text_xccdf_substitute_py(const char *text, PyObject *func, PyObject *usr) {
+    struct internal_usr *new_usrdata;
+    PyEval_InitThreads();
+    Py_INCREF(func);
+    Py_INCREF(usr);
+    new_usrdata = oscap_alloc(sizeof(struct internal_usr));
+    if (new_usrdata == NULL) return false;
+
+    new_usrdata->func = func;
+    new_usrdata->usr = usr;
+  
+    return oscap_text_xccdf_substitute(text, sub_callback_wrapper, (void *)new_usrdata);
 }
 
 %}

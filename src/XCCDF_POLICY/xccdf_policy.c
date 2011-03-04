@@ -1703,14 +1703,14 @@ struct xccdf_item * xccdf_policy_tailor_item(struct xccdf_policy * policy, struc
             struct xccdf_value_instance_iterator * instance_it = xccdf_value_get_instances((struct xccdf_value *) new_item);
             while (xccdf_value_instance_iterator_has_more(instance_it)) {
                 instance = xccdf_value_instance_iterator_next(instance_it);
-                if (!strcmp(xccdf_value_instance_get_value(instance), value))
+                if (!oscap_strcmp(xccdf_value_instance_get_value(instance), value))
                     selector = xccdf_value_instance_get_selector(instance);
             }
             xccdf_value_instance_iterator_free(instance_it);
             instance_it = xccdf_value_get_instances((struct xccdf_value *) new_item);
             while (xccdf_value_instance_iterator_has_more(instance_it)) {
                 instance = xccdf_value_instance_iterator_next(instance_it);
-                if (strcmp(xccdf_value_instance_get_selector(instance), selector))
+                if (oscap_strcmp(xccdf_value_instance_get_selector(instance), selector))
                     xccdf_value_instance_iterator_remove(instance_it);
             }
             xccdf_value_instance_iterator_free(instance_it);
