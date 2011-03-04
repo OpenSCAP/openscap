@@ -4675,7 +4675,7 @@
         <Group id="group-2.5.4.4" hidden="false">
           <title xml:lang="en-US">Monitor Syslog for Relevant Connections and Failures</title>
           <description xml:lang="en-US"> Ensure that the following line exists in
-						/etc/syslog.conf. (This is the default, so it is likely to be correct if the
+						/etc/rsyslog.conf. (This is the default, so it is likely to be correct if the
 						configuration has not been modified): <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> authpriv.* /var/log/secure <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Configure logwatch or other log monitoring tools to periodically
@@ -5393,23 +5393,19 @@
 				administrators can remove or compress reports of events known to be uninteresting in
 				favor of alert monitoring for events known to be interesting. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 				<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> This section discusses how to configure logging, log monitoring, and
-				auditing, using tools included with RHEL5. It is recommended that syslog be used for
+				auditing, using tools included with RHEL6. It is recommended that rsyslog be used for
 				logging, with logwatch providing summarization, and that auditd be used for
 				auditing, with aureport providing summarization.</description>
       <Group id="group-2.6.1" hidden="false">
-        <title xml:lang="en-US">Configure Syslog</title>
-        <description xml:lang="en-US"> Syslog has been the default Unix logging mechanism
-					for many years. It has a number of downsides, including inconsistent log format,
-					lack of authentication for received messages, and lack of authentication,
-					encryption, or reliable transport for messages sent over a network. However, due
-					to its long history, syslog is an accepted standard which is supported by almost
-					all Unix applications. This section discusses how to configure syslog for best
-					effect, and how to use tools provided with the system to maintain and monitor
-					your logs.</description>
+        <title xml:lang="en-US">Configure Rsyslog</title>
+        <description xml:lang="en-US"> Rsyslog is an enhanced, multi-threaded syslog daemon.
+		This section discusses how to configure rsyslog for best
+		effect, and how to use tools provided with the system to maintain and monitor
+		your logs.</description>
         <Rule id="rule-2.6.1.a" selected="false" weight="10.000000" severity="medium">
           <status date="2010-07-01">accepted</status>
-          <title xml:lang="en-US">Syslog service is enabled</title>
-          <description xml:lang="en-US">The syslog service should be enabled.</description>
+          <title xml:lang="en-US">Rsyslog service is enabled</title>
+          <description xml:lang="en-US">The rsyslog service should be enabled.</description>
           <ident system="http://cce.mitre.org">CCE-3679-8</ident>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <check-content-ref name="oval:rhel:def:20148" href="scap-rhel6-oval.xml"/>
@@ -5418,28 +5414,7 @@
         <Group id="group-2.6.1.1" hidden="false">
           <title xml:lang="en-US">Ensure All Important Messages are Captured</title>
           <description xml:lang="en-US">
-						<xhtml:span xmlns:xhtml="http://www.w3.org/1999/xhtml">Edit the file /etc/syslog.conf. Add or correct whichever of the
-							following lines are appropriate for your environment: <xhtml:br/>
-							<xhtml:br/> auth,info.* /var/log/messages<xhtml:br/> kern.*
-							/var/log/kern.log <xhtml:br/> daemon.* /var/log/daemon.log <xhtml:br/>
-							syslog.* /var/log/syslog<xhtml:br/>
-							lpr,news,uucp,local0,local1,local2,local3,local4,local5,local6.*
-							/var/log/unused.log<xhtml:br/>
-						</xhtml:span>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> When a message is sent to syslog for logging, it is sent with a
-						facility name (such as mail, auth, or local2), and a priority (such as
-						debug, notice, or emerg). Each line of syslog's configuration file is a
-						directive which specifies a set of facility/priority pairs, and then gives a
-						filename or host to which log messages of matching types should be sent. In
-						order for a message to match a type, the facility must match, and the
-						priority must be the priority named in the rule or any higher priority. (See
-						syslog.conf(5) for an ordered list of priorities.) <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Older versions of syslog mandated a very restrictive format for
-						the syslog.conf file. However, the version of syslog shipped with RHEL5
-						allows any sort of whitespace (spaces or tabs, not just tabs) to separate
-						the selection criteria from the message disposition, and allows the use of
-						facility.* as a wildcard matching a given facility at any priority. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The default RHEL5 syslog configuration stores the facilities
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The default RHEL6 rsyslog configuration stores the facilities
 						authpriv, cron, and mail in named logs. This guide describes the
 						implementation of the following configuration, but any configuration which
 						stores the important facilities and is usable by the administrators will suffice:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -5468,32 +5443,30 @@
         <Group id="group-2.6.1.2" hidden="false">
           <title xml:lang="en-US">Confirm Existence and Permissions of System Log	Files</title>
           <description xml:lang="en-US"> For each log file LOGFILE referenced in
-						/etc/syslog.conf, run the commands: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						/etc/rsyslog.conf, run the commands: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># touch LOGFILE<xhtml:br/> # chown root:root LOGFILE <xhtml:br/>
 							# chmod 0600 LOGFILE <xhtml:br/>
 						</xhtml:code>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Syslog will refuse to log to a file which does not exist. All
-						messages intended for that file will be silently discarded, so it is
-						important to verify that all log files exist. Some logs may contain
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Some logs may contain
 						sensitive information, so it is better to restrict permissions so that only
 						administrative users can read or write logfiles.</description>
           <Value id="var-2.6.1.2.a" operator="equals" type="string">
             <title xml:lang="en-US">User who owns log files</title>
             <description xml:lang="en-US">Specify user owner of all logfiles specified
-							in /etc/syslog.conf.</description>
+							in /etc/rsyslog.conf.</description>
             <value selector="root">root</value>
           </Value>
           <Value id="var-2.6.1.2.b" operator="equals" type="string">
             <title xml:lang="en-US">group who owns log files</title>
             <description xml:lang="en-US">Specify group owner of all logfiles specified
-							in /etc/syslog.conf.</description>
+							in /etc/rsyslog.conf.</description>
             <value selector="root">root</value>
           </Value>
           <Value id="var-2.6.1.2.c" operator="equals" type="string">
             <title xml:lang="en-US">File permissions on logfiles</title>
-            <description xml:lang="en">Specify file permissions of all logfiles specified in /etc/syslog.conf.</description>
-            <question xml:lang="en">Specify permissions of all logfiles specified in /etc/syslog.conf</question>
+            <description xml:lang="en">Specify file permissions of all logfiles specified in /etc/rsyslog.conf.</description>
+            <question xml:lang="en">Specify permissions of all logfiles specified in /etc/rsyslog.conf</question>
             <value>110000000</value>
             <value selector="400">100000000</value>
             <value selector="600">110000000</value>
@@ -5534,25 +5507,13 @@
         </Group>
         <Group id="group-2.6.1.3" hidden="false">
           <title xml:lang="en-US">Syslog logs should be sent to a remote loghost</title>
-          <description xml:lang="en-US"> Edit /etc/syslog.conf. Add or correct the line: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> *.* @loghost.example.com <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> where loghost.example.com is the name of your central log server.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+          <description xml:lang="en-US">
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> If system logs are to be useful in detecting malicious
 						activities, it is necessary to send logs to a remote server. An intruder who
 						has compromised the root account on a machine may delete the log entries
 						which indicate that the system was attacked before they are seen by an
 						administrator. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> However, it is recommended that logs be stored on the local host
-						in addition to being sent to the loghost, because syslog uses the UDP
-						protocol to send messages over a network. UDP does not guarantee reliable
-						delivery, and moderately busy sites will lose log messages occasionally,
-						especially in periods of high traffic which may be the result of an attack.
-						In addition, remote syslog messages are not authenticated in any way, so it
-						is easy for an attacker to introduce spurious messages to the central log
-						server. Also, some problems cause loss of network connectivity, which will
-						prevent the sending of messages to the central server. For all of these
-						reasons, it is better to store log messages both centrally and on each host,
-						so that they can be correlated if necessary.</description>
+          </description>
           <Rule id="rule-2.6.1.3.a" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Send Logs to a Remote Loghost</title>
@@ -5564,27 +5525,18 @@
           </Rule>
         </Group>
         <Group id="group-2.6.1.4" hidden="false">
-          <title xml:lang="en-US">Enable syslogd to Accept Remote Messages on Loghosts Only</title>
-          <description xml:lang="en-US"> Is this machine the central log server for your
-						organization? If so, edit the file /etc/sysconfig/syslog. Add or correct the
-						following line:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> SYSLOGD_OPTIONS="-m 0 -r -s example.com " <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> where example.com is the name of your domain.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> If the machine is not a log server, edit /etc/sysconfig/syslog,
-						and instead add or correct the line: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> SYSLOGD_OPTIONS="-m 0" <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> By default, RHEL5's syslog does not listen over the network for
-						log messages. The -r flag enables syslogd to listen over a network, and
-						should be used only if necessary. The -s example.com flag strips the domain
-						name example.com from each sending machine's hostname before logging
-						messages from that host, to reduce the amount of redundant information
-						placed in log files. See the syslogd(8) man page for further
-						information.</description>
+          <title xml:lang="en-US">Rsyslog shouldn't be run in a compatibility mode</title>
+          <description xml:lang="en-US">Rsyslog can be run in a compatibility mode which simulates the behavior of its older versions.
+		The version to be compatible with is specified with a command line option. It is advisable to run the daemon in a mode
+		that matches its current version. Using an older mode may alter your configuration in an unexpected way.
+		The mode can be configured by changing the value of the SYSLOGD_OPTIONS variable in /etc/sysconfig/rsyslog.
+		</description>
           <Rule id="rule-2.6.1.4.a" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">Disable syslogd from Accepting Remote Messages except on Loghosts</title>
-            <description xml:lang="en-US">Syslogd should reject remote messages</description>
-            <ident system="http://cce.mitre.org">CCE-3382-9</ident>
+            <title xml:lang="en-US">Rsyslog shouldn't be run in a compatibility mode</title>
+            <description xml:lang="en-US">An appropriate compatibility mode, that matches the daemons current version should be specified
+		using the SYSLOGD_OPTION variable in /etc/sysconfig/rsyslog.
+		</description>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref name="oval:rhel:def:20153" href="scap-rhel6-oval.xml"/>
             </check>
@@ -5597,7 +5549,7 @@
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> /var/log/messages /var/log/secure /var/log/maillog
 						/var/log/spooler \ /var/log/boot.log /var/log/cron { <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Edit this line so that it contains a one-space-separated listing
-						of each log file referenced in /etc/syslog.conf. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> All logs in use
+						of each log file referenced in /etc/rsyslog.conf. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> All logs in use
 						on a system must be rotated regularly, or the log files will consume disk
 						space over time, eventually interfering with system operation. The file
 						/etc/logrotate.d/syslog is the configuration file used by the logrotate
