@@ -42,6 +42,7 @@ Authors:
 
 <xsl:param name='clean-profile-notes' select='1'/>
 <xsl:param name='hide-profile-info'/>
+<xsl:param name='hide-rules' select='$profile=""'/>
 
 <xsl:output method="xml" encoding="UTF-8" indent="yes"/>
 
@@ -70,18 +71,20 @@ Authors:
 </xsl:template>
 
 <xsl:template match='cdf:Group|cdf:Rule'>
-  <xsl:variable name='elname'>
-    <xsl:choose><xsl:when test='count(ancestor::cdf:Group)=0'>chapter</xsl:when><xsl:otherwise>section</xsl:otherwise></xsl:choose>
-  </xsl:variable>
-  <xsl:element name="{string($elname)}">
-    <xsl:attribute name='id'>item-<xsl:value-of select='@id'/></xsl:attribute>
-    <xsl:attribute name='role'><xsl:value-of select='concat("xccdf-", translate(local-name(), "GR", "gr"))'/></xsl:attribute>
-    <xsl:call-template name='info'/>
-    <xsl:call-template name='common-info'/>
-    <xsl:call-template name='references'/>
-    <xsl:apply-templates select='cdf:Rule'/>
-    <xsl:apply-templates select='cdf:Group'/>
-  </xsl:element>
+  <xsl:if test='self::cdf:Group or not($hide-rules)'>
+    <xsl:variable name='elname'>
+      <xsl:choose><xsl:when test='count(ancestor::cdf:Group)=0'>chapter</xsl:when><xsl:otherwise>section</xsl:otherwise></xsl:choose>
+    </xsl:variable>
+    <xsl:element name="{string($elname)}">
+      <xsl:attribute name='id'>item-<xsl:value-of select='@id'/></xsl:attribute>
+      <xsl:attribute name='role'><xsl:value-of select='concat("xccdf-", translate(local-name(), "GR", "gr"))'/></xsl:attribute>
+      <xsl:call-template name='info'/>
+      <xsl:call-template name='common-info'/>
+      <xsl:call-template name='references'/>
+      <xsl:apply-templates select='cdf:Rule'/>
+      <xsl:apply-templates select='cdf:Group'/>
+    </xsl:element>
+  </xsl:if>
 </xsl:template>
 
 <xsl:template name='common-info'>
