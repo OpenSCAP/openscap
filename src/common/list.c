@@ -342,6 +342,9 @@ static inline unsigned int oscap_htable_hash(const char *str, size_t htable_size
 struct oscap_htable *oscap_htable_new1(oscap_compare_func cmp, size_t hsize)
 {
 	struct oscap_htable *t;
+    
+    assert(hsize > 0);
+
 	t = oscap_alloc(sizeof(struct oscap_htable));
 	if (t == NULL)
 		return NULL;

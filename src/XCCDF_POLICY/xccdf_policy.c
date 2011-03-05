@@ -1287,7 +1287,10 @@ struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct
          * hash table
          */
         sel_it = xccdf_policy_get_selects(policy);
+        const int HTABLE_MIN_SIZE = 256;
         int s_count = oscap_iterator_get_itemcount((struct oscap_iterator *) sel_it);
+        if (s_count < HTABLE_MIN_SIZE)
+            s_count = HTABLE_MIN_SIZE;
         policy->ht_selects = oscap_htable_new1((oscap_compare_func) strcmp, s_count);
         if (policy->ht_selects == NULL) {
 	    oscap_dlprintf(DBG_E, "Can't make hash table for policy selects\n");
