@@ -550,7 +550,9 @@ bool xccdf_benchmark_rename_item(struct xccdf_item *item, const char *newid)
 	if (bench != NULL) {
 		if (newid != NULL && xccdf_benchmark_get_item(XBENCHMARK(bench), newid) != NULL)
 			return false; // ID already assigned
-		xccdf_benchmark_unregister_item(item);
+
+		if (xccdf_item_get_id(item) != NULL)
+			xccdf_benchmark_unregister_item(item);
 
 		if (newid != NULL)
 			oscap_htable_add(bench->sub.benchmark.dict, newid, item);
