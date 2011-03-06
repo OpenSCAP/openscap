@@ -1263,7 +1263,8 @@ struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct
         policy->model = model;
 
         /* Create selects from benchmark model */
-        sel_it = xccdf_profile_get_selects(profile);
+        if (profile != NULL)
+            sel_it = xccdf_profile_get_selects(profile);
         /* Iterate through selects in profile */
         while (xccdf_select_iterator_has_more(sel_it)) {
 

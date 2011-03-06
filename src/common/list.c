@@ -204,7 +204,7 @@ static inline void oscap_iterator_find_nearest(struct oscap_iterator *it)
 
 	do {
 		it->cur = (it->cur ? it->cur->next : it->list->first);
-	} while (!it->filter(it->cur->data, it->user_data) && oscap_iterator_has_more(it));
+	} while (it->cur && !it->filter(it->cur->data, it->user_data) && oscap_iterator_has_more(it));
 }
 
 void *oscap_iterator_new(struct oscap_list *list)
