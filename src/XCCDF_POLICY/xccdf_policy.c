@@ -1339,13 +1339,14 @@ struct xccdf_select * xccdf_policy_get_select_by_id(struct xccdf_policy * policy
         __attribute__nonnull__(policy);
         
         struct xccdf_select_iterator    * sel_it;
-        struct xccdf_select             * sel;
+        struct xccdf_select             * sel = NULL;
 
         if (policy->ht_selects != NULL) {
             /* We have hash table -> faster
              */
-            return oscap_htable_get(policy->ht_selects, item_id);
-        } else {
+            sel = oscap_htable_get(policy->ht_selects, item_id);
+        }
+        if (sel == NULL) {
             /* We don't have hash table :( -> do it old way
              */
             sel_it = xccdf_policy_get_selects(policy);
@@ -1357,7 +1358,7 @@ struct xccdf_select * xccdf_policy_get_select_by_id(struct xccdf_policy * policy
                     }
             }
             xccdf_select_iterator_free(sel_it);
-        }
+        } else return sel;
 
         return NULL;
 }
