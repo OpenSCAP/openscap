@@ -538,7 +538,7 @@ xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * sysname, con
             oscap_iterator_free(cb_it);
             return XCCDF_RESULT_NOT_CHECKED;
         }
-        if (strcmp(cb->system, sysname))
+        if (oscap_strcmp(cb->system, sysname))
             continue;
 
         struct xccdf_value_binding_iterator * binding_it = (struct xccdf_value_binding_iterator *) oscap_iterator_new(bindings);
@@ -564,7 +564,7 @@ static int xccdf_policy_report_cb(struct xccdf_policy * policy, const char * sys
         /* Check if the callback match sysname, 
          * continue otherwise
          */
-        if (strcmp(cb->system, sysname))
+        if (oscap_strcmp(cb->system, sysname))
             continue;
 
         /* Report by oscap_reporter_message
