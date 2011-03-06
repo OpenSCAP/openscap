@@ -66,7 +66,7 @@
 #include "probe/entcmp.h"
 #include "alloc.h"
 
-#if defined(__linux)
+#if defined(__linux__)
 /* Convenience structure for the results being reported */
 struct result_info {
         const char *command;

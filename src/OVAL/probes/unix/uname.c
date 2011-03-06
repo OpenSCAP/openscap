@@ -70,7 +70,7 @@ int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 	// Collect the info
 	uname(&buf);
 	processor = buf.machine;
-#ifdef __linux
+#ifdef __linux__
 	if (strcmp(processor, "i686") == 0) {
 		// See if we have an athlon processor
 		FILE *f = fopen("/proc/cpu", "rt");
