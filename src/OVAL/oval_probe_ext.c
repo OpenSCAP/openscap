@@ -695,11 +695,6 @@ static int oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, struct oval_sysch
                 SEXP_free (val);                                        \
         } while (0)
 
-	if (s_sinf == NULL) {
-		oval_sysinfo_free(sysinf);
-		return (-1);
-	}
-
 	SYSINF_EXT(s_sinf, os_name, sysinf, fail_gen);
 	SYSINF_EXT(s_sinf, os_version, sysinf, fail_gen);
 	SYSINF_EXT(s_sinf, os_architecture, sysinf, fail_gen);

@@ -445,8 +445,6 @@ int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 			return_code = oval_filter_parse_tag(reader, context, &oval_consume_filter, content_filter);
 		};
 		break;
-	case OVAL_OBJECTCONTENT_UNKNOWN:
-		break;
 	}
 	(*consumer) (content, user);
 	if (return_code != 1) {
