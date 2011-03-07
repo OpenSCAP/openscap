@@ -64,7 +64,7 @@ char *oscap_strdup(const char *str)
 
 	m = strdup(str);
 
-	if ((m == NULL) && (strlen(m) > 0))
+	if (m == NULL)
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, "Memory allocation failed.");
 
 	return m;
