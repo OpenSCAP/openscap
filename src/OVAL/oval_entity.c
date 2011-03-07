@@ -422,7 +422,7 @@ xmlNode *oval_entity_to_dom(struct oval_entity *entity, xmlDoc * doc, xmlNode * 
 	oval_entity_varref_type_t vtype = oval_entity_get_varref_type(entity);
 	struct oval_value *value = oval_entity_get_value(entity);
 
-	if (variable && vtype == OVAL_ENTITY_VARREF_ELEMENT) {
+	if (vtype == OVAL_ENTITY_VARREF_ELEMENT) {
 		content = oval_variable_get_id(variable);
 	} else if (value) {
 		content = oval_value_get_text(value);

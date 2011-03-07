@@ -192,8 +192,9 @@ struct oval_object_content
 			content = (oval_object_content_t *) filter;
 		}
 		break;
-	case OVAL_OBJECTCONTENT_UNKNOWN:
-		break;
+	default:
+		dE("Unsupported object content type: %d.\n", type);
+		return NULL;
 	}
 	content->model = model;
 	content->fieldName = NULL;

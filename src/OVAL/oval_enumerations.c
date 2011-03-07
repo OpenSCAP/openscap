@@ -571,7 +571,7 @@ oval_subtype_t oval_subtype_parse(xmlTextReaderPtr reader)
 		map = OVAL_SUBTYPE_WINDOWS_MAP;
 		break;
 	default:
-		map = NULL;
+		goto cleanup;
 	}
 
 	subtype = oscap_string_to_enum(map, tagname);

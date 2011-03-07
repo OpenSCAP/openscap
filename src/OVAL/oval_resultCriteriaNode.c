@@ -79,6 +79,7 @@ struct oval_result_criteria_node *oval_result_criteria_node_new
     (struct oval_result_system *sys, oval_criteria_node_type_t type, int negate, ...) {
 	oval_result_criteria_node_t *node = NULL;
 	va_list ap;
+
 	va_start(ap, negate);
 	switch (type) {
 	case OVAL_NODETYPE_CRITERIA:{
@@ -119,7 +120,9 @@ struct oval_result_criteria_node *oval_result_criteria_node_new
 			extenddef->variable_instance = va_arg(ap, int);
 		} break;
 	default:
-		break;
+		va_end(ap);
+		dE("Unsupported criteria node type: %d.\n", type);
+		return NULL;
 	}
 	node->sys = sys;
 	node->negate = negate;
@@ -546,13 +549,17 @@ int oval_result_criteria_node_parse
 		struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
 		struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
 		struct oval_test *oval_test = oval_definition_model_get_test(definition_model, (char *)test_ref);
-		struct oval_result_test *rslt_test = (oval_test)
-		    ? get_oval_result_test_new(sys, oval_test) : NULL;
-		int test_vsn = oval_test_get_version(oval_test);
-		if (test_vsn != version) {
-			oscap_dlprintf(DBG_W, "Unmatched test versions: "
-				       "version: %d, criteria version: %d.\n", test_vsn, version);
+		struct oval_result_test *rslt_test = NULL;
+
+		if (oval_test != NULL) {
+			int tst_ver;
+
+			get_oval_result_test_new(sys, oval_test);
+			tst_ver = oval_test_get_version(oval_test);
+			if (tst_ver != version)
+				dW("Unmatched versions: test: %d, criteria: %d.\n", tst_ver, version);
 		}
+
 		node = oval_result_criteria_node_new
 		    (sys, OVAL_NODETYPE_CRITERION, negate, rslt_test, variable_instance);
 		return_code = 1;

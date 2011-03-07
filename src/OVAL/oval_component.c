@@ -771,8 +771,7 @@ struct oval_component *oval_component_clone(struct oval_definition_model *new_mo
 		break;
 	case OVAL_FUNCTION_SUBSTRING:{
 			int length = oval_component_get_substring_length(old_component);
-			if (length > 0)
-				oval_component_set_substring_length(new_component, length);
+			oval_component_set_substring_length(new_component, length);
 			int start = oval_component_get_substring_start(old_component);
 			oval_component_set_substring_start(new_component, start);
 		} break;
@@ -1643,11 +1642,10 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_SUBSTRING(oval_ar
 {
 	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_UNKNOWN;
 	struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
-	int start = oval_component_get_substring_start(component) - 1;
-	size_t len = (size_t)oval_component_get_substring_length(component);
-        size_t beg;
+        ssize_t beg = oval_component_get_substring_start(component);
+	ssize_t len = oval_component_get_substring_length(component);
 
-	beg = (start < 0) ? 0 : (size_t)start;
+	beg = (beg < 1) ? 0 : beg - 1;
 
 	if (oval_component_iterator_has_more(subcomps)) {	/*Only first component is considered */
 		struct oval_component *subcomp = oval_component_iterator_next(subcomps);
@@ -1658,29 +1656,21 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_SUBSTRING(oval_ar
 
 		while (oval_value_iterator_has_more(values)) {
 			char *text = oval_value_get_text(oval_value_iterator_next(values));
-			char substr[len + 1];
-                        size_t txtlen, sublen;
+			size_t txtlen, sublen;
 
-                        substr[0] = '\0';
-                        txtlen    = strlen(text);
-
+			txtlen = strlen(text);
+			sublen = (len < 0 || len > txtlen) ? txtlen : len;
                         if (beg < txtlen) {
-                                /* Check if we are still inside the string
-                                 * beg: position of start of next substring (from 0! last position is txtlen-1)
-                                 * len: length of susbstring
-                                 * txtlen: length of whole string */
-                                sublen = (beg + len) > txtlen ? 0 : txtlen - (beg + len) + 1;
-                                if (sublen < len)
-                                        len = sublen;
+				char substr[sublen + 1];
 
-                                strncpy(substr, text + beg, len);
-                                substr[len] = '\0';
+				strncpy(substr, text + beg, sublen);
+				substr[sublen] = '\0';
+
+				value = oval_value_new(OVAL_DATATYPE_STRING, substr);
+				oval_collection_add(value_collection, value);
 			} else {
 				flag = SYSCHAR_FLAG_ERROR;
 			}
-
-			value = oval_value_new(OVAL_DATATYPE_STRING, substr);
-			oval_collection_add(value_collection, value);
 		}
 		oval_value_iterator_free(values);
 		oval_collection_free_items(subcoll, (oscap_destruct_func) oval_value_free);
