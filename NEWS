@@ -1,3 +1,8 @@
+openscap-0.7.1							08-03-2011
+- improve library selfcheck mechanism
+- substitution support in XCCDF
+- mostly bug-fixes and cleanups
+
 openscap-0.7.0							10-02-2011
 - OVAL 5.6 is supported
 - async stop of evaluation by signal
