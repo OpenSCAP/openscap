@@ -139,6 +139,7 @@ void *probe_input_handler(void *arg)
                         /* the `id' was not found in the input object */
                         dE("No `id' attribute\n");
                         probe_ret = PROBE_ENOATTR;
+			probe_out = NULL;
                 }
 
 		if (probe_out == NULL || probe_ret != 0) {
