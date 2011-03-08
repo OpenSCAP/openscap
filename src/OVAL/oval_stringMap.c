@@ -37,7 +37,7 @@
 
 #include "oval_string_map_impl.h"
 #include "common/util.h"
-#include "common/public/debug.h"
+#include "common/debug_priv.h"
 
 #if defined(OVAL_STRINGMAP_OLD)
 struct _oval_string_map_entry_s;
@@ -204,7 +204,8 @@ void oval_string_map_put(struct oval_string_map *map, const char *key, void *val
 	assume_d(map != NULL, /* void */);
 	assume_d(key != NULL, /* void */);
 
-	rbt_str_add((rbt_t *)map, strdup(key), val);
+	if (rbt_str_add((rbt_t *)map, strdup(key), val) != 0)
+		dW("rbt_str_add: non-zero return code\n");
 }
 
 void oval_string_map_put_string(struct oval_string_map *map, const char *key, const char *val)

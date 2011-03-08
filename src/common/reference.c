@@ -31,6 +31,7 @@
 
 #include "reference_priv.h"
 #include "list.h"
+#include "debug_priv.h"
 
 #define NS_DUBLINCORE BAD_CAST "http://purl.org/dc/elements/1.1/"
 
@@ -156,7 +157,8 @@ struct oscap_reference *oscap_reference_new_parse(xmlTextReaderPtr reader)
         ref->title = (char*) xmlNodeGetContent(ref_node);
     }
 
-    oscap_to_start_element(reader, depth);
+    if (!oscap_to_start_element(reader, depth))
+	    dW("oscap_to_start_element returned `false'\n");
 
     return ref;
 }
