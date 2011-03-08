@@ -194,7 +194,7 @@ typedef enum {
 	OVAL_VARIABLE_LOCAL
 } oval_variable_type_t;
 
-#define OVAL_FUNCTION 10
+#define OVAL_FUNCTION 4
 /// Component types
 typedef enum {
 	OVAL_COMPONENT_UNKNOWN = 0,
