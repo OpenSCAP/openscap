@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # This file is a wrapper for python API for openscap
 # library
 #
