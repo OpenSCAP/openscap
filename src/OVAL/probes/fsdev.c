@@ -265,7 +265,8 @@ fsdev_t *fsdev_strinit(const char *fs_names)
 		}
 	}
 
-	qsort(fs_arr, fs_cnt, sizeof(char *), fsname_cmp);
+	if (fs_arr != NULL && fs_cnt > 0)
+		qsort(fs_arr, fs_cnt, sizeof(char *), fsname_cmp);
 
 	lfs = fsdev_init((const char **)fs_arr, fs_cnt);
 	e = errno;

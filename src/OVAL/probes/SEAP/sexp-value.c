@@ -370,6 +370,9 @@ uintptr_t SEXP_rawval_lblk_replace (uintptr_t lblkp, uint32_t n, const SEXP_t *n
                         SEXP_rawval_lblk_decref ((uintptr_t)lblk);
                         memb = SEXP_rawval_lblk_nth (lb_ptr, n);
 
+			if (memb == NULL)
+				abort();
+
                         goto replace;
                 }
         }
@@ -378,7 +381,6 @@ uintptr_t SEXP_rawval_lblk_replace (uintptr_t lblkp, uint32_t n, const SEXP_t *n
 
         memb = lblk->memb + (n - 1);
 replace:
-
         _A(lb_head != 0);
         _A(memb != NULL);
 

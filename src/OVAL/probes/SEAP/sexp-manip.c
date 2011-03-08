@@ -1731,7 +1731,7 @@ SEXP_t *SEXP_unref (SEXP_t *s_exp_o)
                         s_exp_o->__magic1 = SEXP_MAGIC1_INV;
 #endif
                         sm_free (s_exp_o);
-                        s_exp_o = NULL;
+			return (NULL);
                 }
 
 		s_exp_o->s_type = SEXP_rawptr_safemergeT(SEXP_datatypePtr_t, s_exp_o->s_type,
