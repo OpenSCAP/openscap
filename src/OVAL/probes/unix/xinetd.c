@@ -1332,7 +1332,7 @@ int op_assign_disabled(void *var, char *val)
 		if (*tok == '\0')
 			continue;
 
-		rbt_str_get(xiconf->stree, tok, (void *)srv);
+		rbt_str_get(xiconf->stree, tok, (void *)&srv);
 
 		if (srv == NULL) {
 			srv = xiconf_service_new();
@@ -1373,7 +1373,7 @@ int op_assign_enabled(void *var, char *val)
 		if (*tok == '\0')
 			continue;
 
-		rbt_str_get(xiconf->stree, tok, (void *)srv);
+		rbt_str_get(xiconf->stree, tok, (void *)&srv);
 
 		if (srv == NULL) {
 			srv = xiconf_service_new();
@@ -1461,7 +1461,6 @@ int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 	eval = probe_obj_getentval(object, "protocol", 1);
 
 	if (eval == NULL) {
-		oscap_free(srv_name);
 		err = PROBE_ENOVAL;
 		goto fail;
 	}
