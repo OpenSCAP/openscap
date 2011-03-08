@@ -167,7 +167,7 @@ static int filehash_cb (const char *p, const char *f, void *ptr)
                                         r3 = SEXP_string_newf (md5_str, sizeof md5_str - 1),
                                         NULL);
 		SEXP_free(r2);
-                SEXP_vfree (r0, r1, r3, NULL);
+                SEXP_vfree (r3, r0, r1, NULL);
         }
 
 	probe_cobj_add_item(cobj, itm);
@@ -257,6 +257,11 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filter
                 break;
         default:
                 _D("Can't lock mutex(%p): %u, %s.\n", &__filemd5_probe_mutex, errno, strerror (errno));
+
+		SEXP_free (behaviors);
+		SEXP_free (path);
+		SEXP_free (filename);
+		SEXP_free (filepath);
 
 		return (PROBE_EFATAL);
         }

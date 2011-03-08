@@ -176,7 +176,7 @@ static int filehash_cb (const char *p, const char *f, void *ptr)
                                         r4 = SEXP_string_newf (sha1_str, sizeof sha1_str - 1),
                                         NULL);
 		SEXP_free (r2);
-                SEXP_vfree (r0, r1, r3, r4, NULL);
+                SEXP_vfree (r3, r4, r0, r1, NULL);
         }
 
 	probe_cobj_add_item(res, itm);
@@ -267,6 +267,11 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filter
                 break;
         default:
                 _D("Can't lock mutex(%p): %u, %s.\n", &__filehash_probe_mutex, errno, strerror (errno));
+
+		SEXP_free (behaviors);
+		SEXP_free (path);
+		SEXP_free (filename);
+		SEXP_free (filepath);
 
 		return (PROBE_EFATAL);
         }
