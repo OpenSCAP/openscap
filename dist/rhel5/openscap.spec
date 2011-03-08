@@ -9,7 +9,6 @@ Group:          System Environment/Libraries
 License:        LGPLv2+
 URL:            http://www.open-scap.org/
 Source0:        http://www.open-scap.org/download/%{name}-%{version}.tar.gz
-Patch1:		openscap-0.6.3-noValidate.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  swig libxml2-devel libxslt-devel m4 perl-XML-Parser
 BuildRequires:  rpm-devel
@@ -75,7 +74,6 @@ SCAP content for RHEL and Fedora delivered by Open-SCAP project.
 
 %prep
 %setup -q
-%patch1 -p1 -b .validate
 
 %build
 mkdir -p m4
