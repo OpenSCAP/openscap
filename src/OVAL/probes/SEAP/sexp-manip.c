@@ -55,7 +55,7 @@ SEXP_t *SEXP_number_new (SEXP_numtype_t t, const void *n)
         _LOGCALL_;
 
         if (t <= SEXP_NUM_UINT16) {
-                if (t <= SEXP_NUM_INT8) {
+                if (t <= SEXP_NUM_UINT8) {
                         switch (t) {
                         case SEXP_NUM_BOOL:  return SEXP_number_newb   (*(bool    *)(n));
                         case SEXP_NUM_INT8:  return SEXP_number_newi_8 (*(int8_t  *)(n));

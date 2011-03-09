@@ -751,6 +751,7 @@ eloop_exit:
                                         _D("FAIL: recv failed (timeout): dsc=%p, time=%hu, errno=%u, %s.\n",
                                            dsc, ctx->recv_timeout, errno, strerror (errno));
                                 }
+                                /* FALLTHROUGH */
                         default:
                                 protect_errno {
                                         _D("FAIL: recv failed: dsc=%p, errno=%u, %s.\n",
@@ -876,6 +877,7 @@ sexp_buf_recv:
                         }
                         break;
                 }
+                /* FALLTHROUGH */
         default:
         invalid:
                 _D("Invalid SEAP packet received: %s.\n", "invalid packet type symbol");

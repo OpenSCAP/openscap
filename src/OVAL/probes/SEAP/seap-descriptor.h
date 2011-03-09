@@ -99,6 +99,7 @@ static inline int SEAP_desc_trylock (pthread_mutex_t *m)
                 return (0);
         case EINVAL:
                 errno = EINVAL;
+                /* FALLTHROUGH */
         default:
                 return (-1);
         }

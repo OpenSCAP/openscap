@@ -1241,6 +1241,7 @@ SKIP_LOOP:
 
                         return (s_list);
                 }
+                /* FALLTHROUGH */
         case SEXP_PRET_EUNFIN:
                 /*
                  * The last S-expression parsed was considered incomplete and we

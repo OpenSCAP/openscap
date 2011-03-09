@@ -866,7 +866,13 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
 
                                 return (-1);
 			}
+
 			pd = oval_pdtbl_get(pext->pdtbl, oval_object_get_subtype(obj));
+
+                        if (pd == NULL) {
+                                oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "internal error");
+                                return (-1);
+                        }
                 }
 
 		ret = oval_probe_ext_eval(pext->pdtbl->ctx, pd, pext, sys, flags);
