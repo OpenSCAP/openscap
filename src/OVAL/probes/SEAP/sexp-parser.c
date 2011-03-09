@@ -1702,11 +1702,15 @@ found:
                 } else
                         b_encfree = false;
 
+                b_dec    = NULL;
                 b_declen = base64_decode (b_enc, dsc->p_explen - 2, &b_dec);
 
                 if (b_declen == 0) {
                         if (b_encfree)
                                 sm_free (b_enc);
+
+                        if (b_dec != NULL)
+                                sm_free (b_dec);
 
                         return (SEXP_PRET_EINVAL);
                 }
@@ -1761,11 +1765,15 @@ __PARSE_RT SEXP_parse_kl_string_b64 (__PARSE_PT(dsc))
         } else
                 b_encfree = false;
 
+        b_dec    = NULL;
         b_declen = base64_decode (b_enc, dsc->p_explen, &b_dec);
 
         if (b_declen == 0) {
                 if (b_encfree)
                         sm_free (b_enc);
+
+                if (b_dec != NULL)
+                        sm_free (b_dec);
 
                 return (SEXP_PRET_EINVAL);
         }

@@ -187,8 +187,10 @@ static int get_proc_status(struct proc_status *pst)
 		while (fgets(linebuf, sizeof linebuf - 1, fp) != NULL) {
 			strval = strchr(linebuf, ':');
 
-			if (strval == NULL)
+			if (strval == NULL) {
+                                fclose (fp);
 				return (-1);
+                        }
 
 			*strval++ = '\0';
 
@@ -201,8 +203,10 @@ static int get_proc_status(struct proc_status *pst)
 			if (sp == NULL)
 				continue;
 
-			if (sp->storval(pst, strval) != 0)
+			if (sp->storval(pst, strval) != 0) {
+                                fclose (fp);
 				return (-1);
+                        }
 		}
 
 		fclose(fp);

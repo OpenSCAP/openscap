@@ -366,6 +366,7 @@ ssize_t strbuf_write (strbuf_t *buf, int fd)
 
 		if (wsize < 0) {
 			dE("writev(%d, %p, %d) failed: %u, %s.\n", fd, iov, ioc, errno, strerror (errno));
+                        free(iov);
 			return (-1);
 		}
 
