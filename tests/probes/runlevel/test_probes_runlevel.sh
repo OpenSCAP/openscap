@@ -31,6 +31,8 @@ function test_probes_runlevel_A {
     local DEFFILE="test_probes_runlevel_A.xml"
     local RESFILE="results_A.xml"
    
+    [ -f $RESFILE ] && rm -f $RESFILE
+
     eval "which chkconfig > /dev/null 2>&1"    
     if [ ! $? -eq 0 ]; then	
 	echo -e "No chkconfig found in path!\n" 

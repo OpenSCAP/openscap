@@ -32,6 +32,8 @@ function test_probes_environmentvariable {
 	return 255; # Test is not applicable.
     fi
 
+    [ -f $RESFILE ] && rm -f $RESFILE
+
     bash ${srcdir}/test_probes_environmentvariable.xml.sh > $DEFFILE
     LINES=$?
 

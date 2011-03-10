@@ -31,6 +31,8 @@ function test_probes_rpminfo {
     local DEFFILE="test_probes_rpminfo.xml"
     local RESFILE="results.xml"
 
+    [ -f $RESFILE ] && rm -f $RESFILE
+
     eval "which rpm > /dev/null 2>&1"    
     if [ ! $? -eq 0 ]; then	
 	echo -e "No rpm found in $PATH!\n" 

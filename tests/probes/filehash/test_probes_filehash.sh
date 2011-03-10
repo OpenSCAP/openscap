@@ -31,6 +31,8 @@ function test_probes_filehash {
     local DEFFILE="test_probes_filehash.xml"
     local RESFILE="results.xml"
 
+    [ -f $RESFILE ] && rm -f $RESFILE
+
     eval "which md5sum  > /dev/null 2>&1"    
     if [ ! $? -eq 0 ]; then		
 	echo -e "No md5sum found in $PATH!\n" 

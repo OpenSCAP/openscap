@@ -18,21 +18,18 @@
 
 function test_probes_file {
 
-    export OVAL_PROBE_DIR=`pwd`/../../../src/OVAL/probes/
-    export LD_LIBRARY_PATH=`pwd`/../../../src/.libs
-    export OSCAP_SCHEMA_PATH=$srcdir/../../../schemas
-
     if [ ! -x ${OVAL_PROBE_DIR}/probe_file ]; then		
-	echo -e "Probe file does not exist!\n" 
-	return 255; # Test is not applicable.
+    	echo -e "Probe file does not exist!\n" 
+    	return 255; # Test is not applicable.
     fi
 
     local ret_val=0;
     local DEFFILE="$srcdir/test_probes_file.xml"
     local RESFILE="results.xml"
 
-    ../../../utils/.libs/oscap oval eval --result-file $RESFILE $DEFFILE
+    [ -f $RESFILE ] && rm -f $RESFILE
 
+    ../../../utils/.libs/oscap oval eval --result-file $RESFILE $DEFFILE
     if [ -f $RESFILE ]; then
 
 	COUNT=13; ID=1

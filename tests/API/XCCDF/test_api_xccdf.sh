@@ -47,7 +47,7 @@ function text_api_xccdf_import {
 
 test_init "test_api_xccdf.log"
 
-test_run "text_api_xccdf_import" text_api_xccdf_import
+#test_run "text_api_xccdf_import" text_api_xccdf_import
 test_run "text_api_xccdf_export" test_api_xccdf_export
 
 test_exit

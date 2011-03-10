@@ -31,6 +31,8 @@ function test_probes_process {
     local DEFFILE="test_probes_process.xml"
     local RESFILE="results.xml"
    
+    [ -f $RESFILE ] && rm -f $RESFILE
+
     bash ${srcdir}/test_probes_process.xml.sh > $DEFFILE
     COUNT=$?
     ../../../utils/.libs/oscap oval eval --result-file $RESFILE $DEFFILE

@@ -31,6 +31,8 @@ function test_probes_uname {
     local DEFFILE="test_probes_uname.xml"
     local RESFILE="results.xml"
 
+    [ -f $RESFILE ] && rm -f $RESFILE
+
     eval "which uname > /dev/null 2>&1"    
     if [ ! $? -eq 0 ]; then		
 	echo -e "No uname found in $PATH!\n"

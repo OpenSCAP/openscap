@@ -31,6 +31,8 @@ function test_probes_shadow {
     local DEFFILE="test_probes_shadow.xml"
     local RESFILE="results.xml"
 
+    [ -f $RESFILE ] && rm -f $RESFILE
+
     eval "cat /etc/shadow > /dev/null 2>&1"    
     if [ ! $? -eq 0 ]; then	
 	echo -e "Can't read /etc/shadow!\n" 

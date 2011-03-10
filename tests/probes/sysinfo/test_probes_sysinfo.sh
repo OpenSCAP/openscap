@@ -32,7 +32,7 @@ function test_probes_sysinfo {
 
     ./test_probes_sysinfo >> "$LOGFILE"
 
-    if [ $? -eq 0 ]; then 
+    if [ $? -eq 0 ] && [ -f $RESFILE ]; then
 	
 	OS_NAME="`uname -s`"
 	if ! grep -q "os_name: $OS_NAME" "$LOGFILE"; then

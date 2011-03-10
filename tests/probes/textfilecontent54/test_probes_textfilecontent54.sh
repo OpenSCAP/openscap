@@ -31,6 +31,8 @@ function test_probes_textfilecontent54 {
     local DEFFILE="${srcdir}/test_probes_textfilecontent54.xml"
     local RESFILE="results.xml"
     
+    [ -f $RESFILE ] && rm -f $RESFILE
+
     local FILE_A="/tmp/test_probes_textfilecontent54.tmp_file"
     local FILE_B="/tmp/test_probes_textfilecontent54.tmp_file_empty"
     local FILE_C="/tmp/test_probes_textfilecontent54.tmp_file_non_existing"

@@ -31,6 +31,8 @@ function test_probes_family {
     local DEFFILE="${srcdir}/test_probes_family.xml"
     local RESFILE="results.xml"
 
+    [ -f $RESFILE ] && rm -f $RESFILE
+
     ../../../utils/.libs/oscap oval eval --result-file $RESFILE $DEFFILE
 
     if [ -f $RESFILE ]; then

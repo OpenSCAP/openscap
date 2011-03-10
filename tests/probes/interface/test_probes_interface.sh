@@ -31,6 +31,8 @@ function test_probes_interface {
     local DEFFILE="test_probes_interface.xml"
     local RESFILE="results.xml"
 
+    [ -f $RESFILE ] && rm -f $RESFILE
+
     if [ ! -x test_probes_interface ]; then		
 	echo -e "Testing binary not found!\n" 
 	return 255; # Test is not applicable.
