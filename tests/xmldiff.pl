@@ -1,3 +1,5 @@
+#!/usr/bin/perl -w
+#
 # This is a modification of XML-SemanticDiff
 # ------------------------------------------
 # 

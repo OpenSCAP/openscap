@@ -652,6 +652,35 @@ AC_CONFIG_FILES([Makefile
                  src/XCCDF_POLICY/Makefile
                  src/common/Makefile
                  tests/Makefile
+                 tests/API/Makefile
+                 tests/API/CCE/Makefile
+                 tests/API/CVE/Makefile
+                 tests/API/CPE/Makefile
+                 tests/API/CPE/uri/Makefile
+                 tests/API/CPE/lang/Makefile
+                 tests/API/CPE/dict/Makefile
+                 tests/API/CVSS/Makefile
+                 tests/API/SEAP/Makefile
+                 tests/API/OVAL/Makefile
+                 tests/API/XCCDF/Makefile
+                 tests/API/crypt/Makefile
+                 tests/API/probes/Makefile
+                 tests/probes/Makefile
+                 tests/probes/file/Makefile
+                 tests/probes/uname/Makefile
+                 tests/probes/shadow/Makefile
+                 tests/probes/family/Makefile
+                 tests/probes/vgtest/Makefile
+                 tests/probes/process/Makefile
+                 tests/probes/sysinfo/Makefile
+                 tests/probes/rpminfo/Makefile
+                 tests/probes/filemd5/Makefile
+                 tests/probes/runlevel/Makefile
+                 tests/probes/filehash/Makefile
+                 tests/probes/password/Makefile
+                 tests/probes/interface/Makefile
+                 tests/probes/textfilecontent54/Makefile
+                 tests/probes/environmentvariable/Makefile
                  utils/Makefile
                  xsl/Makefile
                  schemas/Makefile

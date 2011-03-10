@@ -11,36 +11,51 @@
 # Normalized path.
 PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 
-# Reporting results.
-function report_result {    
+# Overall test result.
+result=0
 
-    printf "+ %-40s" ${1}; 
-    if [ $2 -eq 0 ]; then 
-	echo "[ PASS ]"; printf "*** %s PASSED ***\n\n" ${1} >&2
-	return 0;
-    elif [ $2 -eq 255 ]; then
-	echo "[ SKIP ]"; printf "*** %s SKIPPED ***\n\n" ${1} >&2
-	return 0;
-    else
-	echo "[ FAIL ]"; printf "*** %s FAILED ***\n\n" ${1} >&2
-	return 1;
-    fi
+# Logging file (stderr is redirected here).
+log=test.log
+
+# Set-up testing environment.
+function test_init {
+    [ $# -eq 1 ] && log=$1
+    exec 2>$log
+    echo ""
+    echo "--------------------------------------------------"
 }
 
-# Compare content of two XML files.
-function xml_cmp {
-    local ret_val=0
-
-    /usr/bin/perl -w ${srcdir}/xmldiff.pl $1 $2 
+# Execute test and report its results.
+function test_run {    
+    printf "+ %-40s" $1; 
+    echo -e "TEST: $1\n" >&2; 
+    shift
+    ( exec 1>&2 ; eval "$@" )
     ret_val=$?
-
-    return $ret_val
+    result=$[$result + $ret_val]
+    if [ $ret_val -eq 0 ]; then 
+	echo "[ PASS ]"; 
+	echo -e "RESULT: PASSED\n" >&2
+	return 0;
+    elif [ $ret_val -eq 1 ]; then
+	echo "[ FAIL ]"; 
+	echo -e "RESULT: FAILED\n" >&2
+	return 1;
+    elif [ $ret_val -eq 255 ]; then
+	echo "[ SKIP ]"; 
+	echo -e "RESULT: SKIPPED\n" >&2
+	return 0; 
+    else
+	echo "[ WARN ]"; 
+	echo -e "RESULT: WARNING (unknown exist status $ret_val)\n" >&2
+	return 1;
+    fi    
 }
 
-function execute_test {
-	"test_$1"
-	ret_val=$? 
-	report_result "test_$1" $ret_val
-	result=$[$result+$ret_val]
+# Clean-up testing environment.
+function test_exit {
+    echo "--------------------------------------------------"
+    echo -e "See `pwd | sed 's|.*/\(tests/.*\)|\1|'`/${log}.\n"
+    [ $result -eq 1 ] && exit 1
+    exit 0	
 }
-
