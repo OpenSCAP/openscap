@@ -215,12 +215,14 @@ fsdev_t *fsdev_init(const char **fs, size_t fs_cnt)
 	fsdev_t *lfs;
 
 	lfs = malloc(sizeof(fsdev_t));
-	lfs = __fsdev_init(lfs, fs, fs_cnt);
 
 	if (lfs == NULL)
 		return (NULL);
 
-	qsort(lfs->ids, lfs->cnt, sizeof(dev_t), fsdev_cmp);
+	(void)__fsdev_init(lfs, fs, fs_cnt);
+
+        if (lfs->ids != NULL && lfs->cnt > 1)
+                qsort(lfs->ids, lfs->cnt, sizeof(dev_t), fsdev_cmp);
 
 	return (lfs);
 }
