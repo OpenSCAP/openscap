@@ -38,6 +38,8 @@
 #include "oval_system_characteristics_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
+
+#include "common/assume.h"
 #include "common/util.h"
 #include "common/debug_priv.h"
 
@@ -109,7 +111,9 @@ void oval_syschar_add_new_message(struct oval_syschar *syschar, char *text, oval
 {
 	struct oval_message *msg;
 
-	if (syschar && oval_syschar_is_locked(syschar)) {
+        assume_r(syschar != NULL, /* void */);
+
+	if (oval_syschar_is_locked(syschar)) {
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 		return;
 	}
