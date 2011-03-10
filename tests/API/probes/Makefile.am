@@ -21,27 +21,28 @@ EXTRA_DIST = $(top_srcdir)/tests/test_common.sh \
 DISTCLEANFILES = *.log *.out*
 CLEANFILES = *.log *.out*
 
-#TESTS = test_api_probes.sh
-#check_PROGRAMS = test_api_probes test_api_probes_smoke test_api_probes_xinetd
+TESTS_ENVIRONMENT= LD_PRELOAD=$(top_builddir)/src/.libs/libopenscap_testing.so LD_LIBRAR_PATH=$(top_builddir)/src/.libs $(SHELL) -x
+TESTS = test_api_probes.sh
+check_PROGRAMS = test_api_probes test_api_probes_smoke test_api_probes_xinetd
 
-# test_api_probes_SOURCES = test_api_probes.c
-# test_api_probes_CFLAGS = -I$(top_srcdir)/src/OVAL @libxml_cflags@
+test_api_probes_SOURCES = test_api_probes.c
+test_api_probes_CFLAGS = -I$(top_srcdir)/src/OVAL @libxml_cflags@
 
-# test_api_probes_smoke_SOURCES = test_api_probes_smoke.c
+test_api_probes_smoke_SOURCES = test_api_probes_smoke.c
 
-# test_api_probes_xinetd_SOURCES = test_api_probes_xinetd.c
-# test_xinetd_parser_CFLAGS= -I$(top_srcdir) -I$(top_srcdir)/src/common -I$(top_srcdir)/src/common/public
+test_api_probes_xinetd_SOURCES = test_api_probes_xinetd.c
+test_api_probes_xinetd_CFLAGS= -I$(top_srcdir) -I$(top_srcdir)/src/common -I$(top_srcdir)/src/common/public
 
-# EXTRA_DIST += test_api_probes.sh \
-#               test_api_probes_smoke \
-# 	      test_api_probes \
-# 	      test_api_probes_xinetd \
-#               scap-rhel5-oval.xml \
-#               xinetd_A.conf \
-#               xinetd_B.conf \
-#               xinetd_C.conf \
-#               xinetd_D.conf \
-#               xinetd_E.conf \
-#               xinetd_F.conf 
+EXTRA_DIST += test_api_probes.sh \
+              test_api_probes_smoke \
+	      test_api_probes \
+	      test_api_probes_xinetd \
+              scap-rhel5-oval.xml \
+              xinetd_A.conf \
+              xinetd_B.conf \
+              xinetd_C.conf \
+              xinetd_D.conf \
+              xinetd_E.conf \
+              xinetd_F.conf
 
 endif
