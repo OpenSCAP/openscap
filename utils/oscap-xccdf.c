@@ -248,8 +248,9 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	/* Load XCCDF model and XCCDF Policy model */
 	benchmark = xccdf_benchmark_import(action->f_xccdf);
-        if(benchmark==NULL && oscap_err()) {
-                fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+	if (benchmark == NULL) {
+		if (oscap_err())
+			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
                 return OSCAP_ERROR;
         }
 
@@ -330,8 +331,9 @@ int app_evaluate_xccdf(const struct oscap_action *action)
         sessions = malloc((idx+1) * sizeof(struct oval_agent_session *));
         for (idx=0; oval_files[idx]; idx++) {
 	        struct oval_definition_model *tmp_def_model = oval_definition_model_import(oval_files[idx]);
-		if(tmp_def_model==NULL && oscap_err()) {
-			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+		if (tmp_def_model == NULL) {
+			if (oscap_err())
+				fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
 			return OSCAP_ERROR;
 		}
                 struct oval_agent_session *tmp_sess = oval_agent_new_session(tmp_def_model, basename(oval_files[idx]));
@@ -453,8 +455,9 @@ int app_xccdf_resolve(const struct oscap_action *action)
 	}
 
 	struct xccdf_benchmark *bench = xccdf_benchmark_import(action->f_xccdf);
-        if(bench==NULL && oscap_err()) {
-	        fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+	if (bench == NULL) {
+		if (oscap_err())
+			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
 	        return OSCAP_ERROR;
 	}
 
