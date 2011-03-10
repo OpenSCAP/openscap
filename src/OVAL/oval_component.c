@@ -1659,8 +1659,8 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_SUBSTRING(oval_ar
 			size_t txtlen, sublen;
 
 			txtlen = strlen(text);
-			sublen = (len < 0 || len > txtlen) ? txtlen : len;
-                        if (beg < txtlen) {
+			sublen = (len < 0 || (size_t) len > txtlen) ? txtlen : (size_t) len;
+			if ((size_t) beg < txtlen) {
 				char substr[sublen + 1];
 
 				strncpy(substr, text + beg, sublen);
