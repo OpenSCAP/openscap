@@ -430,6 +430,8 @@ oval_result_t probe_ent_cmp_string(SEXP_t * val1, SEXP_t * val2, oval_operation_
 
 			re = pcre_compile(s1, PCRE_UTF8, &error, &erroffset, NULL);
 			if (re == NULL) {
+                                oscap_free(s1);
+                                oscap_free(s2);
 				return OVAL_RESULT_ERROR;
 			}
 
@@ -447,6 +449,9 @@ oval_result_t probe_ent_cmp_string(SEXP_t * val1, SEXP_t * val2, oval_operation_
 			regex_t re;
 
 			if (regcomp(&re, s1, REG_EXTENDED) != 0) {
+                                oscap_free(s1);
+                                oscap_free(s2);
+
 				return OVAL_RESULT_ERROR;
 			}
 
@@ -487,8 +492,11 @@ static oval_result_t probe_ent_cmp(SEXP_t * ent, SEXP_t * val2)
 	if (probe_ent_attrexists(ent, "var_ref")) {
 		is_var = 1;
 	} else {
-		if (val_cnt != 1)
+		if (val_cnt != 1) {
+                        SEXP_free(vals);
 			return OVAL_RESULT_ERROR;
+                }
+
 		is_var = 0;
 	}
 
@@ -505,6 +513,11 @@ static oval_result_t probe_ent_cmp(SEXP_t * ent, SEXP_t * val2)
 		if (SEXP_typeof(val1) != SEXP_typeof(val2)) {
 			_D("Types of values to compare don't match: val1: %d, val2: %d\n",
 			   SEXP_typeof(val1), SEXP_typeof(val2));
+
+                        SEXP_free(vals);
+                        SEXP_free(val1);
+                        SEXP_free(res_lst);
+
 			return OVAL_RESULT_ERROR;
 		}
 

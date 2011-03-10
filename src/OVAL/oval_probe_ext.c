@@ -245,6 +245,7 @@ static SEXP_t *oval_probe_cmd_obj_eval(SEXP_t *sexp, void *arg)
 	if (obj == NULL) {
 		oscap_dlprintf(DBG_E, "Can't find obj: id=%s.\n", id_str);
 		oscap_free(id_str);
+                SEXP_free(ret);
 
 		return (NULL);
 	}
@@ -297,6 +298,7 @@ static SEXP_t *oval_probe_cmd_ste_fetch(SEXP_t *sexp, void *arg)
 				oscap_dlprintf(DBG_E, "Can't find ste: id: %s.\n", id_str);
 				SEXP_list_free(ste_list);
 				oscap_free(id_str);
+                                SEXP_free(id);
 
 				return (NULL);
 			}
@@ -307,6 +309,7 @@ static SEXP_t *oval_probe_cmd_ste_fetch(SEXP_t *sexp, void *arg)
 					       id_str);
 				SEXP_list_free(ste_list);
 				oscap_free(id_str);
+                                SEXP_free(id);
 
 				return (NULL);
 			}

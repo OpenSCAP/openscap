@@ -163,11 +163,17 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
                                                    (void *)attr_val, SEXP_strtype (attr_val));
 
                                                 sm_free (seap_msg->attrs);
+                                                SEXP_free(attr_val);
+                                                SEXP_free(attr_name);
+
                                                 return (SEAP_EINVAL);
                                         case EFAULT:
                                                 _D("id: not found\n");
 
                                                 sm_free (seap_msg->attrs);
+                                                SEXP_free(attr_val);
+                                                SEXP_free(attr_name);
+
                                                 return (SEAP_EINVAL);
                                         }
                                 }
@@ -191,6 +197,7 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
                                         }
 
                                         sm_free (seap_msg->attrs);
+                                        SEXP_free(attr_name);
 
                                         return (SEAP_EINVAL);
                                 }
@@ -358,6 +365,7 @@ static int SEAP_packet_sexp2cmd (SEXP_t *sexp_cmd, SEAP_cmd_t *seap_cmd)
                         free (attr_name);
                         ++i; ++i;
                 } else {
+                        SEXP_free(item);
                         break;
                 }
 
@@ -527,6 +535,7 @@ static int SEAP_packet_sexp2err (SEXP_t *sexp_err, SEAP_err_t *seap_err)
                         return (-1);
                 }
 
+                SEXP_free(member);
                 ++n;
         }
 loop_exit:

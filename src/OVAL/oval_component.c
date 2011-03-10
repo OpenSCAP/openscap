@@ -2058,7 +2058,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 		while (oval_value_iterator_has_more(values)) {
 			struct oval_value *value = oval_value_iterator_next(values);
 			char *text = oval_value_get_text(value);
-			char *nval;
+			char *nval = NULL;
 #if defined USE_REGEX_PCRE
 			int i, ovector[60], ovector_len = sizeof (ovector) / sizeof (ovector[0]);
 

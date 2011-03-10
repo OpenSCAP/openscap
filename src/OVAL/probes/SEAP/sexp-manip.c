@@ -1263,7 +1263,7 @@ SEXP_t *SEXP_list_rest  (const SEXP_t *list)
                 }
 
                 if (SEXP_VALP_LBLK(SEXP_LCASTP(v_dsc_r.mem)->b_addr) != NULL)
-                        SEXP_rawval_lblk_incref ((uintptr_t) SEXP_LCASTP(v_dsc_r.mem)->b_addr);
+                        SEXP_LCASTP(v_dsc_r.mem)->b_addr = (void *)SEXP_rawval_lblk_incref ((uintptr_t) SEXP_LCASTP(v_dsc_r.mem)->b_addr);
         }
 
         rest = SEXP_new ();
