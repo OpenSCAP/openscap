@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nvd nvd_xml_version="" xmlns="http://scap.nist.gov/schema/feed/vulnerability/2.0">
+<entry id="CVE-01"/>
+<entry id="CVE-02"/>
+<entry id="CVE-03"/>
+</nvd>

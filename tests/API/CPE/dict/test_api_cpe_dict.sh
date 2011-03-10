@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+
+# Copyright 2009 Red Hat Inc., Durham, North Carolina.
+# All Rights Reserved.
+#
+# OpenScap CPE Dict Module Test Suite.
+#
+# Authors:
+#      Ondrej Moris <omoris@redhat.com>
+
+. $srcdir/../../../test_common.sh
+
+# Test cases.
+
+function test_api_cpe_dict_smoke {
+    ./test_api_cpe_dict --smoke-test
+    return $?
+}
+
+function test_api_cpe_dict_remove_cpe {
+    ! ./test_api_cpe_dict --remove $srcdir/dict.xml "UTF-8" "cpe:/a:addsoft" | \
+	grep -s "addsoft"
+    return $?
+}
+
+function test_api_cpe_dict_import_damaged_xml {
+    ! ./test_api_cpe_dict --list-cpe-names $srcdir/dict-damaged.xml "UTF-8"
+    return $?
+}
+
+function test_api_cpe_dict_match_non_existing_cpe {
+    ! ./test_api_cpe_dict --match $srcdir/dict.xml \
+	"UTF-8" "cpe:/a:3com:3c16115-usNOT_IN_THE_DICTIONARY"
+    return $?
+}
+
+function test_api_cpe_dict_match_existing_cpe {
+    CPE_URIS=(`grep "cpe:" $srcdir/dict.xml | \
+               sed 's/^.*cpe:/cpe:/g' | sed 's/".*$//g' | tr '\n' ' '`)    
+    for URI in ${CPE_URIS[@]}; do
+	./test_api_cpe_dict --match $srcdir/dict.xml "UTF-8" "$URI"
+	[ ! $? -eq 0 ] && return 1
+    done
+    return 0 
+}
+
+function test_api_cpe_dict_export_xml {
+    ./test_api_cpe_dict --export $srcdir/dict.xml "UTF-8" \
+	dict.xml.out "UTF-8" && \
+	$srcdir/../../../xmldiff.pl $srcdir/dict.xml dict.xml.out
+    return $?
+}
+
+function test_api_cpe_dict_import_cp1250_xml {
+    ./test_api_cpe_dict --list-cpe-names $srcdir/dict-cp1250-dos.xml "CP-1250"
+    return $?
+}
+
+function test_api_cpe_dict_import_utf8_xml {
+    ./test_api_cpe_dict --list-cpe-names $srcdir/dict.xml "UTF8"
+    return $?
+}
+
+# Testing.
+
+test_init "test_api_cpe_dict.log"
+
+test_run "test_api_cpe_dict_smoke" test_api_cpe_dict_smoke    
+test_run "test_api_cpe_dict_remove_cpe" test_api_cpe_dict_remove_cpe
+test_run "test_api_cpe_dict_import_damaged_xml" \
+    test_api_cpe_dict_import_damaged_xml
+test_run "test_api_cpe_dict_match_non_existing_cpe" \
+    test_api_cpe_dict_match_non_existing_cpe   
+test_run "test_api_cpe_dict_match_existing_cpe" \
+    test_api_cpe_dict_match_existing_cpe
+test_run "test_api_cpe_dict_export_xml"  test_api_cpe_dict_export_xml
+#test_run "test_api_cpe_dict_import_cp1250_xml" \
+#    test_api_cpe_dict_import_cp1250_xml   
+test_run "test_api_cpe_dict_import_utf8_xml" test_api_cpe_dict_import_utf8_xml
+
+test_exit
