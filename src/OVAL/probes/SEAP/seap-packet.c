@@ -365,7 +365,6 @@ static int SEAP_packet_sexp2cmd (SEXP_t *sexp_cmd, SEAP_cmd_t *seap_cmd)
                         free (attr_name);
                         ++i; ++i;
                 } else {
-                        SEXP_free(item);
                         break;
                 }
 
@@ -373,6 +372,9 @@ static int SEAP_packet_sexp2cmd (SEXP_t *sexp_cmd, SEAP_cmd_t *seap_cmd)
         }
 
         if (item == NULL || mattrs < 1) {
+                if (item != NULL)
+                        SEXP_free(item);
+
                 errno = EINVAL;
                 return (-1);
         }
