@@ -79,7 +79,7 @@
 # define __terminate(retval) abort()
 # define __emitmsg(...) __atomic_emitmsg (__VA_ARGS__)
 #else
-# define __terminate(retval) return(retval)
+# define __terminate(retval) return retval
 # ifdef ASSUME_VERBOSE
 #  define __emitmsg(...) __atomic_emitmsg (__VA_ARGS__)
 # else
