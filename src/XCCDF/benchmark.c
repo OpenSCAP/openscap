@@ -253,10 +253,7 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 		xmlNewTextChild(root_node, ns_xccdf, BAD_CAST "version", BAD_CAST version);
 
 	const char *metadata = xccdf_benchmark_get_metadata(benchmark);
-	if (metadata) {
-		xmlNode *metadata_node = xmlNewTextChild(root_node, ns_xccdf, BAD_CAST "metadata", NULL);
-		xmlNewTextChild(metadata_node, ns_xccdf, NULL, BAD_CAST metadata);
-	}
+	if (metadata) oscap_xmlstr_to_dom(root_node, "metadata", metadata);
 
 	OSCAP_FOR(xccdf_model, model, xccdf_benchmark_get_models(benchmark)) {
 		xmlNode *model_node = xmlNewTextChild(root_node, ns_xccdf, BAD_CAST "model", NULL);
