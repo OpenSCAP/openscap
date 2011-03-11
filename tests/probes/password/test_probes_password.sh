@@ -18,10 +18,6 @@
 
 function test_probes_password {
 
-    export OVAL_PROBE_DIR=`pwd`/../../../src/OVAL/probes/
-    export LD_LIBRARY_PATH=`pwd`/../../../src/.libs
-    export OSCAP_SCHEMA_PATH=$srcdir/../../../schemas
-
     if [ ! -x ${OVAL_PROBE_DIR}/probe_password ]; then		
 	echo -e "Probe password does not exist!\n" 
 	return 255; # Test is not applicable.

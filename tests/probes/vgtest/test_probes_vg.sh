@@ -49,9 +49,6 @@ function test_probes_vg {
 	echo "Copying $xml"
     done
 
-    export OVAL_PROBE_DIR=`pwd`/../../../src/OVAL/probes/
-    export LD_LIBRARY_PATH=`pwd`/../../../src/.libs
-    export OSCAP_SCHEMA_PATH=$srcdir/../../../schemas
     export SEAP_DEBUGLOG_DISABLE=1
     export SEXP_VALIDATE_DISABLE=1
 
