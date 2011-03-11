@@ -28,6 +28,7 @@ Summary:        Development files for %{name}
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       libxml2-devel
+Requires:       pkgconfig
 
 %description    devel
 The %{name}-devel package contains libraries and header files for
@@ -47,6 +48,7 @@ libraries can be used by python.
 Summary:        Perl bindings for %{name}
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
+Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 BuildRequires:  perl
 
 %description    perl
@@ -86,7 +88,7 @@ sed -i '/^#!.*bin/,+1 d' dist/bash_completion.d/oscap
 %install
 rm -rf $RPM_BUILD_ROOT
 
-make install DESTDIR=$RPM_BUILD_ROOT
+make install INSTALL='install -p' DESTDIR=$RPM_BUILD_ROOT
 
 install -d -m 755 $RPM_BUILD_ROOT%{_initrddir}
 install -d -m 755 $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
@@ -94,11 +96,11 @@ install -p -m 755 dist/fedora/oscap-scan.init $RPM_BUILD_ROOT%{_initrddir}/oscap
 install -p -m 644 dist/fedora/oscap-scan.sys  $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/oscap-scan
 
 # create symlinks to default content
-ln -s  %{_datadir}/openscap/scap-fedora14-oval.xml %{buildroot}/%{_datadir}/openscap/scap-oval.xml
-ln -s  %{_datadir}/openscap/scap-fedora14-xccdf.xml %{buildroot}/%{_datadir}/openscap/scap-xccdf.xml
+ln -s  %{_datadir}/openscap/scap-fedora14-oval.xml $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-oval.xml
+ln -s  %{_datadir}/openscap/scap-fedora14-xccdf.xml $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-xccdf.xml
 
 # bash-completion script
-mkdir -p %{buildroot}%{_sysconfdir}/bash_completion.d
+mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/bash_completion.d
 install -pm 644 dist/bash_completion.d/oscap $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d/oscap
 
 find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
@@ -126,6 +128,9 @@ fi
 %doc AUTHORS COPYING ChangeLog NEWS README
 %{_libdir}/*.so.*
 %{_libexecdir}/*
+%dir %{_datadir}/openscap
+%dir %{_datadir}/openscap/schemas
+%dir %{_datadir}/openscap/xsl
 %{_datadir}/openscap/schemas/*
 %{_datadir}/openscap/xsl/*
 
@@ -140,7 +145,7 @@ fi
 
 %files devel
 %defattr(-,root,root,-)
-%doc docs/{html,latex,examples}/
+%doc docs/{html,examples}/
 %{_includedir}/*
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/*.pc
@@ -149,7 +154,7 @@ fi
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/sysconfig/oscap-scan
 %{_initrddir}/oscap-scan
-%{_datadir}/openscap/oscap-scan.cron
+%doc %{_datadir}/openscap/oscap-scan.cron
 %{_mandir}/man8/*
 %{_bindir}/*
 %{_sysconfdir}/bash_completion.d

@@ -63,14 +63,26 @@ start() {
 	echo
 }
 
-stop() {
-	/bin/true
-}
 
 # See how we were called.
 case "$1" in
     start)
 	start
+	;;
+    restart)
+	start
+	;;
+    stop)
+	RETVAL=0;
+	;;
+    condrestart)
+	RETVAL=0;
+	;;
+    try-restart)
+	RETVAL=0;
+	;;
+    reload)
+	RETVAL=0;
 	;;
     *)
 	echo $"Usage: $0 {start}"

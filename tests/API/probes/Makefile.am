@@ -21,7 +21,7 @@ EXTRA_DIST = $(top_srcdir)/tests/test_common.sh \
 DISTCLEANFILES = *.log *.out*
 CLEANFILES = *.log *.out*
 
-TESTS_ENVIRONMENT= LD_PRELOAD=$(top_builddir)/src/.libs/libopenscap_testing.so LD_LIBRAR_PATH=$(top_builddir)/src/.libs $(SHELL) -x
+TESTS_ENVIRONMENT= LD_PRELOAD=$(top_builddir)/src/.libs/libopenscap_testing.so LD_LIBRARY_PATH=$(top_builddir)/src/.libs $(SHELL) -x
 TESTS = test_api_probes.sh
 check_PROGRAMS = test_api_probes test_api_probes_smoke test_api_probes_xinetd
 
@@ -34,9 +34,9 @@ test_api_probes_xinetd_SOURCES = test_api_probes_xinetd.c
 test_api_probes_xinetd_CFLAGS= -I$(top_srcdir) -I$(top_srcdir)/src/common -I$(top_srcdir)/src/common/public
 
 EXTRA_DIST += test_api_probes.sh \
-              test_api_probes_smoke \
-	      test_api_probes \
-	      test_api_probes_xinetd \
+              test_api_probes_smoke.c \
+	      test_api_probes.c \
+	      test_api_probes_xinetd.c \
               scap-rhel5-oval.xml \
               xinetd_A.conf \
               xinetd_B.conf \
