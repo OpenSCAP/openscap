@@ -131,11 +131,13 @@ struct xccdf_item *xccdf_value_parse(xmlTextReaderPtr reader, struct xccdf_item 
 		case XCCDFE_CHOICES:
 			val->flags.must_match = xccdf_attribute_get_bool(reader, XCCDFA_MUSTMATCH);
 			val->flags.must_match_given = true;
+                        xmlTextReaderRead(reader); /* Move to the next node (subnode of <choices>)*/
 			while (oscap_to_start_element(reader, depth + 1)) {
 				if (xccdf_element_get(reader) == XCCDFE_CHOICE)
 					oscap_list_add(val->choices, oscap_element_string_copy(reader));
 				xmlTextReaderRead(reader);
 			}
+                        break;
 		default:
 			xccdf_item_process_element(value, reader);
 		}
@@ -200,7 +202,7 @@ void xccdf_value_to_dom(struct xccdf_value *value, xmlNode *value_node, xmlDoc *
 			inst->type == XCCDF_TYPE_STRING && inst->match != NULL, ns_xccdf, "match", inst->selector);
         if (inst->choices->first) {
             xmlNode *choices = xmlNewNode(ns_xccdf, BAD_CAST "choices");
-            if (inst->flags.must_match_given)
+            if ((inst->flags.must_match_given) && (inst->flags.must_match))
                 xmlNewProp(choices, BAD_CAST "mustMatch", BAD_CAST oscap_enum_to_string(OSCAP_BOOL_MAP, inst->flags.must_match));
             if ((inst->selector)&&(strlen(inst->selector) > 0)) xmlNewProp(choices, BAD_CAST "selector", BAD_CAST inst->selector);
             OSCAP_FOR_STR(ch, xccdf_value_instance_get_choices(inst))
