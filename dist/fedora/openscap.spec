@@ -28,6 +28,7 @@ Summary:        Development files for %{name}
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       libxml2-devel
+Requires:       pkgconfig
 
 %description    devel
 The %{name}-devel package contains libraries and header files for
@@ -47,6 +48,7 @@ libraries can be used by python.
 Summary:        Perl bindings for %{name}
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
+Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 BuildRequires:  perl-devel
 
 %description    perl
@@ -85,7 +87,7 @@ sed -i '/^#!.*bin/,+1 d' dist/bash_completion.d/oscap
 %install
 rm -rf $RPM_BUILD_ROOT
 
-make install DESTDIR=$RPM_BUILD_ROOT
+make install INSTALL='install -p' DESTDIR=$RPM_BUILD_ROOT
 
 install -d -m 755 $RPM_BUILD_ROOT%{_initrddir}
 install -d -m 755 $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
@@ -93,11 +95,11 @@ install -p -m 755 dist/fedora/oscap-scan.init $RPM_BUILD_ROOT%{_initrddir}/oscap
 install -p -m 644 dist/fedora/oscap-scan.sys  $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/oscap-scan
 
 # create symlinks to default content
-ln -s  %{_datadir}/openscap/scap-fedora14-oval.xml %{buildroot}/%{_datadir}/openscap/scap-oval.xml
-ln -s  %{_datadir}/openscap/scap-fedora14-xccdf.xml %{buildroot}/%{_datadir}/openscap/scap-xccdf.xml
+ln -s  %{_datadir}/openscap/scap-fedora14-oval.xml $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-oval.xml
+ln -s  %{_datadir}/openscap/scap-fedora14-xccdf.xml $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-xccdf.xml
 
 # bash-completion script
-mkdir -p %{buildroot}%{_sysconfdir}/bash_completion.d
+mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/bash_completion.d
 install -pm 644 dist/bash_completion.d/oscap $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d/oscap
 
 find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
@@ -125,6 +127,9 @@ fi
 %doc AUTHORS COPYING ChangeLog NEWS README
 %{_libdir}/*.so.*
 %{_libexecdir}/*
+%dir %{_datadir}/openscap
+%dir %{_datadir}/openscap/schemas
+%dir %{_datadir}/openscap/xsl
 %{_datadir}/openscap/schemas/*
 %{_datadir}/openscap/xsl/*
 
@@ -139,7 +144,7 @@ fi
 
 %files devel
 %defattr(-,root,root,-)
-%doc docs/{html,latex,examples}/
+%doc docs/{html,examples}/
 %{_includedir}/*
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/*.pc
@@ -147,8 +152,8 @@ fi
 %files utils
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/sysconfig/oscap-scan
+%doc docs/oscap-scan.cron
 %{_initrddir}/oscap-scan
-%{_datadir}/openscap/oscap-scan.cron
 %{_mandir}/man8/*
 %{_bindir}/*
 %{_sysconfdir}/bash_completion.d
@@ -166,71 +171,4 @@ fi
 %changelog
 * Tue Mar 08 2011 Peter Vrabec <pvrabec@redhat.com> 0.7.1-1
 - upgrade
-
-* Thu Feb 10 2011 Peter Vrabec <pvrabec@redhat.com> 0.7.0-1
-- upgrade
-
-* Mon Jan 31 2011 Peter Vrabec <pvrabec@redhat.com> 0.6.8-1
-- upgrade
-
-* Fri Jan 14 2011 Peter Vrabec <pvrabec@redhat.com> 0.6.7-1
-- upgrade
-
-* Wed Oct 20 2010 Peter Vrabec <pvrabec@redhat.com> 0.6.4-1
-- upgrade
-
-* Tue Sep 14 2010 Peter Vrabec <pvrabec@redhat.com> 0.6.3-1
-- upgrade
-
-* Fri Aug 27 2010 Peter Vrabec <pvrabec@redhat.com> 0.6.2-1
-- upgrade
-
-* Wed Jul 14 2010 Peter Vrabec <pvrabec@redhat.com> 0.6.0-1
-- upgrade
-
-* Wed May 26 2010 Peter Vrabec <pvrabec@redhat.com> 0.5.11-1
-- upgrade
-
-* Fri May 07 2010 Peter Vrabec <pvrabec@redhat.com> 0.5.10-1
-- upgrade
-
-* Fri Apr 16 2010 Peter Vrabec <pvrabec@redhat.com> 0.5.9-1
-- upgrade
-
-* Fri Feb 26 2010 Peter Vrabec <pvrabec@redhat.com> 0.5.7-1
-- upgrade
-- new utils package
-
-* Mon Jan 04 2010 Peter Vrabec <pvrabec@redhat.com> 0.5.6-1
-- upgrade
-
-* Tue Sep 29 2009 Peter Vrabec <pvrabec@redhat.com> 0.5.3-1
-- upgrade
-
-* Wed Aug 19 2009 Peter Vrabec <pvrabec@redhat.com> 0.5.2-1
-- upgrade
-
-* Mon Aug 03 2009 Peter Vrabec <pvrabec@redhat.com> 0.5.1-2
-- add rpm-devel requirement
-
-* Mon Aug 03 2009 Peter Vrabec <pvrabec@redhat.com> 0.5.1-1
-- upgrade
-
-* Thu Apr 30 2009 Peter Vrabec <pvrabec@redhat.com> 0.3.3-1
-- upgrade
-
-* Thu Apr 23 2009 Peter Vrabec <pvrabec@redhat.com> 0.3.2-1
-- upgrade
-
-* Sun Mar 29 2009 Peter Vrabec <pvrabec@redhat.com> 0.1.4-1
-- upgrade
-
-* Fri Mar 27 2009 Peter Vrabec <pvrabec@redhat.com> 0.1.3-2
-- spec file fixes (#491892)
-
-* Tue Mar 24 2009 Peter Vrabec <pvrabec@redhat.com> 0.1.3-1
-- upgrade
-
-* Thu Jan 15 2009 Tomas Heinrich <theinric@redhat.com> 0.1.1-1
-- Initial rpm
 
