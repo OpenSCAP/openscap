@@ -153,8 +153,8 @@ fi
 %files utils
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/sysconfig/oscap-scan
+%doc docs/oscap-scan.cron
 %{_initrddir}/oscap-scan
-%doc %{_datadir}/openscap/oscap-scan.cron
 %{_mandir}/man8/*
 %{_bindir}/*
 %{_sysconfdir}/bash_completion.d

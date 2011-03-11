@@ -15,8 +15,7 @@ SUBDIRS += utils tests xsl schemas
 dist_pkgdata_DATA = dist/fedora/scap-fedora12-oval.xml \
                     dist/fedora/scap-fedora13-oval.xml \
                     dist/fedora/scap-fedora14-oval.xml \
-                    dist/fedora/scap-fedora14-xccdf.xml \
-                    dist/fedora/oscap-scan.cron
+                    dist/fedora/scap-fedora14-xccdf.xml
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libopenscap.pc
@@ -30,7 +29,6 @@ EXTRA_DIST =	dist/rhel5/openscap.spec \
 		dist/fedora/openscap.spec \
 		dist/fedora/oscap-scan.sys \
 		dist/fedora/oscap-scan.init \
-		dist/fedora/oscap-scan.cron \
 		dist/fedora/scap-fedora12-oval.xml \
 		dist/fedora/scap-fedora13-oval.xml \
 		dist/fedora/scap-fedora14-oval.xml \
@@ -40,7 +38,8 @@ EXTRA_DIST =	dist/rhel5/openscap.spec \
 		docs/title.doc \
 		docs/modules \
 		docs/examples/oval_probes.py \
-		docs/examples/package-test.xml
+		docs/examples/package-test.xml \
+                docs/oscap-scan.cron
 
 dist-hook: ChangeLog
 	cd $(distdir)/docs && doxygen Doxyfile
