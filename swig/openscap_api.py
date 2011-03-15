@@ -68,7 +68,7 @@ class OSCAP_List(list):
             self.iterator.reset()
             while self.iterator.has_more():
                 litem = self.iterator.next()
-                if litem.instance == item.instance:
+                if (type(item) == str and type(litem) == str and litem == item) or ("instance" in item.__dict__ and litem.instance == item.instance):
                     self.iterator.remove()
                     list.remove(self, item)
         except NameError:
