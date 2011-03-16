@@ -680,291 +680,13 @@
 				<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">$ mount -t ext2,ext3,ext4 | awk '{print $3}'</xhtml:code>
 				<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> If your site uses a local filesystem type other than those, you
 				will need to modify this command. </xhtml:p> </description>
-      <Group id="gr-mount" hidden="false">
-        <title xml:lang="en-US">Restrict Partition Mount Options</title>
-        <description xml:lang="en-US"> System partitions can be mounted with certain options
-					which limit what files on those partitions can do. These options are set in the
-					file /etc/fstab, and can be used to make certain types of malicious behavior
-					more difficult.</description>
-        <Group id="gr-local" hidden="false" weight="10.000000">
-          <title xml:lang="en-US">Add nodev Option to Non-Root Local Partitions</title>
-          <description xml:lang="en-US"> Edit the ﬁle /etc/fstab. The important columns
-						for purposes of this section are column 2 (mount point), column 3 (ﬁlesystem
-						type), and column 4 (mount options). For any line which satisﬁes all of the
-						conditions: <xhtml:ul xmlns:xhtml="http://www.w3.org/1999/xhtml">
-							<xhtml:li>The ﬁlesystem type is ext2 or ext3 or ext4</xhtml:li>
-							<xhtml:li>The mount point is not /</xhtml:li>
-						</xhtml:ul> add the text “,nodev” to the list of mount options in column 4. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The nodev option prevents users from mounting unauthorized
-						devices on any partition which is known not to contain any authorized
-						devices. The root partition typically contains the /dev partition, which is
-						the primary location for authorized devices, so this option should not be
-						set on /. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> However, if system programs are being run in chroot jails, this
-						advice may need to be modified further, since it is often necessary to
-						create device files inside the chroot directory for use by the restricted
-						program. </description>
-          <Rule id="rule-2.2.1.1.a" selected="false" weight="10.000000" role="full" severity="unknown">
-            <status date="2010-07-01">draft</status>
-            <title xml:lang="en-US">Add nodev Option to Non-Root Local Partitions</title>
-            <description xml:lang="en-US">The nodev option should be disabled as appropriate for all
-							non-root partitions.</description>
-            <ident system="http://cce.mitre.org">CCE-4249-9</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20016" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-        </Group>
-        <Group id="group-2.2.1.2" hidden="false">
-          <title xml:lang="en-US">Add nodev, nosuid, and noexec Options to Removable Media Partitions</title>
-          <description xml:lang="en-US"> Users should not be allowed to introduce
-						arbitrary devices or setuid programs to a system. These options are used to
-						prevent that. In addition, while users are usually allowed to add executable
-						programs to a system, the noexec option prevents code from being executed
-						directly from the media itself, and may therefore provide a line of defense
-						against certain types of worms or malicious code.</description>
-          <Rule id="rule-2.2.1.2.a" selected="false" weight="10.000000">
-            <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">Add nodev Option to Removable Media Partitions</title>
-            <description xml:lang="en-US">The nodev option should be disabled for all removable
-							media.</description>
-            <ident system="http://cce.mitre.org">CCE-3522-0</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20017" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.2.1.2.b" selected="false" weight="10.000000">
-            <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">Add noexec Option to Removable Media Partitions</title>
-            <description xml:lang="en-US">The noexec option should be disabled for all removable
-							media.</description>
-            <ident system="http://cce.mitre.org">CCE-4275-4</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20018" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.2.1.2.c" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">Add nosuid Option to Removable Media Partitions</title>
-            <description xml:lang="en-US">The nosuid option should be disabled for all removable
-							media.</description>
-            <ident system="http://cce.mitre.org">CCE-4042-8</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20019" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-        </Group>
-      </Group>
-      <Group id="group-2.2.2" hidden="false">
-        <title xml:lang="en-US">Restrict Dynamic Mounting and Unmounting of Filesystems</title>
-        <description xml:lang="en-US"> Linux includes a number of facilities for the
-					automated addition and removal of filesystems on a running system. These
-					facilities may increase convenience, but they all bring some risk, whether
-					direct risk from allowing unprivileged users to introduce arbitrary filesystems
-					to a machine, or risk that software flaws in the automated mount facility itself
-					will allow an attacker to compromise the system. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Use caution when enabling any such facility, and find out whether
-					better configuration management or user education might solve the same problem
-					with less risk. </description>
-        <Group id="group-2.2.2.1" hidden="false">
-          <title xml:lang="en-US">Restrict Console Device Access</title>
-          <description xml:lang="en-US"> The default system configuration grants the
-						console user enhanced privileges normally reserved for the root user,
-						including temporary ownership of most system devices. If not necessary,
-						these privileges should be removed and restricted to root only.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Restrict device ownership to root only. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Edit
-						/etc/security/console.perms.d/50-default.perms and locate the section
-						prefaced by the following comment: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># permission definitions<xhtml:br/>
-						</xhtml:code>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Prepend a # symbol to comment out each line in that section
-						which starts with &lt;console&gt; or &lt;xconsole&gt;. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Edit /etc/security/console.perms and make the following changes: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">&lt;console&gt;=tty[0-9][0-9]* vc/[0-9][0-9]* :0\.[0-9] :0
-							<xhtml:br/> &lt;xconsole&gt;=:0\.[0-9] :0</xhtml:code>
-					</description>
-        </Group>
-        <Group id="group-2.2.2.2" hidden="false">
-          <title xml:lang="en-US">Disable USB Device Support</title>
-          <description xml:lang="en-US">USB flash or hard drives allow an attacker with
-						physical access to a system to quickly copy an enormous amount of data from
-						it.</description>
-          <Group id="group-2.2.2.2.1" hidden="false">
-            <title xml:lang="en-US">Disable Modprobe Loading of USB Storage	Driver</title>
-            <description xml:lang="en-US"> If USB storage devices should not be used,
-							the modprobe program used for automatic kernel module loading should be
-							configured to not load the USB storage driver upon demand. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> This will prevent the modprobe program from loading the
-							usb-storage module, but will not prevent an administrator (or another
-							program) from using the insmod program to load the module manually.
-						</description>
-          </Group>
-          <Group id="group-2.2.2.2.2" hidden="false">
-            <title xml:lang="en-US">Remove USB Storage Driver</title>
-            <description xml:lang="en-US"> If your system never requires the use of USB
-							storage devices, then the supporting driver can be removed. Though more
-							effective (as USB storage certainly cannot be used if the driver is not
-							available at all), this is less elegant than the method described in
-							Section 2.2.2.2.1. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Note that this guidance will not prevent USB storage devices
-							from being mounted if a custom kernel (i.e., not the one supplied with
-							the system) with built-in USB support is used. </description>
-          </Group>
-          <Group id="group-2.2.2.2.3" hidden="false">
-            <title xml:lang="en-US">Disable Kernel Support for USB via Bootloader Configuration</title>
-            <description xml:lang="en-US"> Another means of disabling USB storage is to
-							disable all USB support provided by the operating system. This can be
-							accomplished by adding the 'nousb' argument to the kernel's boot loader
-							configuration. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> NOTE - Disabling all kernel support for USB will cause
-							problems for systems with USB-based keyboards, mice, or printers. This
-							guidance is inappropriate for systems which require USB connectivity.
-						</description>
-          </Group>
-          <Group id="group-2.2.2.2.4" hidden="false">
-            <title xml:lang="en-US">Disable Booting from USB Devices</title>
-            <description xml:lang="en-US"> An attacker with physical access could try to
-							boot the system from a USB flash drive and then access any data on the
-							system's hard drive, circumventing the normal operating system's access
-							controls. To prevent this, configure the BIOS to disallow booting from
-							USB drives. Also configure the BIOS or firmware password as described in
-							Section 2.3.5.1 to prevent unauthorized configuration
-							changes.</description>
-          </Group>
-        </Group>
-        <Group id="group-2.2.2.3" hidden="false">
-          <title xml:lang="en-US">Disable the Automounter if Possible</title>
-          <description xml:lang="en-US"> If the autofs service is not needed to
-						dynamically mount NFS filesystems or removable media, disable the service. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The autofs daemon mounts and unmounts filesystems, such as user
-						home directories shared via NFS, on demand. In addition, autofs can be used
-						to handle removable media, and the default configuration provides the cdrom
-						device as /misc/cd. However, this method of providing access to removable
-						media is not common, so autofs can almost always be disabled if NFS is not
-						in use. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Even if NFS is required, it is almost always possible to
-						configure filesystem mounts statically by editing /etc/fstab rather than
-						relying on the automounter. </description>
-        </Group>
-        <Group id="group-2.2.2.4" hidden="false">
-          <title xml:lang="en-US">Disable GNOME Automounting if Possible</title>
-          <description xml:lang="en-US"> The system's default desktop environment, GNOME,
-						runs the program gnome-volume-manager to mount devices and removable media
-						(such as DVDs, CDs and USB flash drives) whenever they are inserted into the
-						system. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The system's capabilities for automatic mounting should be
-						configured to match whatever is defined by security policy. Disabling USB
-						storage as described in Section 2.2.2.2.1 will prevent the use of USB
-						storage devices, but this step can also be taken as an additional layer of
-						prevention and to prevent automatic mounting of CDs and DVDs if required. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Particularly for kiosk-style systems, where users should have
-						extremely limited access to the system, more detailed information can be
-						found in Red Hat Desktop: Deployment Guide. The gconf-editor program,
-						available in an RPM of the same name, can be used to explore other settings
-						available in the GNOME environment. </description>
-        </Group>
-        <Group id="group-2.2.2.5" hidden="false">
-          <title xml:lang="en-US">Disable Mounting of Uncommon Filesystem Types</title>
-          <description xml:lang="en-US"> Using the install command inside
-						/etc/modprobe.conf instructs the kernel module loading system to run the
-						command speciﬁed (here, /bin/true) instead of inserting the module in the
-						kernel as normal. This eﬀectively prevents usage of these uncommon
-						ﬁlesystems.</description>
-          <Rule id="rule-2.2.2.5.a" selected="false" weight="10.000000">
-            <status date="2010-07-01">draft</status>
-            <title xml:lang="en-US">Disable Mounting of cramfs</title>
-            <description xml:lang="en-US"> Using the install command inside /etc/modprobe.conf instructs
-							the kernel module loading system to run the command speciﬁed (here,
-							/bin/true) instead of inserting the module in the kernel as normal. This
-							effectively prevents usage of these uncommon ﬁlesystems.</description>
-            <ident system="http://cce.mitre.org">CCE-14089-7</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20027" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.2.2.5.b" selected="false" weight="10.000000">
-            <status date="2010-07-01">draft</status>
-            <title xml:lang="en-US">Disable Mounting of freevxfs</title>
-            <description xml:lang="en-US"> Using the install command inside /etc/modprobe.conf instructs
-							the kernel module loading system to run the command speciﬁed (here,
-							/bin/true) instead of inserting the module in the kernel as normal. This
-							effectively prevents usage of these uncommon ﬁlesystems.</description>
-            <ident system="http://cce.mitre.org">CCE-14457-6</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20028" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.2.2.5.c" selected="false" weight="10.000000">
-            <status date="2010-07-01">draft</status>
-            <title xml:lang="en-US">Disable Mounting of jffs2</title>
-            <description xml:lang="en-US"> Using the install command inside /etc/modprobe.conf instructs
-							the kernel module loading system to run the command speciﬁed (here,
-							/bin/true) instead of inserting the module in the kernel as normal. This
-							effectively prevents usage of these uncommon ﬁlesystems.</description>
-            <ident system="http://cce.mitre.org">CCE-14853-6</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20029" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.2.2.5.d" selected="false" weight="10.000000">
-            <status date="2010-07-01">draft</status>
-            <title xml:lang="en-US">Disable Mounting of hfs</title>
-            <description xml:lang="en-US"> Using the install command inside /etc/modprobe.conf instructs
-							the kernel module loading system to run the command speciﬁed (here,
-							/bin/true) instead of inserting the module in the kernel as normal. This
-							effectively prevents usage of these uncommon ﬁlesystems.</description>
-            <ident system="http://cce.mitre.org">CCE-15087-0</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20030" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.2.2.5.e" selected="false" weight="10.000000">
-            <status date="2010-07-01">draft</status>
-            <title xml:lang="en-US">Disable Mounting of hfsplus</title>
-            <description xml:lang="en-US"> Using the install command inside /etc/modprobe.conf instructs
-							the kernel module loading system to run the command speciﬁed (here,
-							/bin/true) instead of inserting the module in the kernel as normal. This
-							effectively prevents usage of these uncommon ﬁlesystems.</description>
-            <ident system="http://cce.mitre.org">CCE-14093-9</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20031" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.2.2.5.f" selected="false" weight="10.000000">
-            <status date="2010-07-01">draft</status>
-            <title xml:lang="en-US">Disable Mounting of squashfs</title>
-            <description xml:lang="en-US"> Using the install command inside /etc/modprobe.conf instructs
-							the kernel module loading system to run the command speciﬁed (here,
-							/bin/true) instead of inserting the module in the kernel as normal. This
-							effectively prevents usage of these uncommon ﬁlesystems.</description>
-            <ident system="http://cce.mitre.org">CCE-14118-4</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20032" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.2.2.5.g" selected="false" weight="10.000000">
-            <status date="2010-07-01">draft</status>
-            <title xml:lang="en-US">Disable Mounting of udf</title>
-            <description xml:lang="en-US"> Using the install command inside /etc/modprobe.conf instructs
-							the kernel module loading system to run the command speciﬁed (here,
-							/bin/true) instead of inserting the module in the kernel as normal. This
-							effectively prevents usage of these uncommon ﬁlesystems.</description>
-            <ident system="http://cce.mitre.org">CCE-14871-8</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20033" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-        </Group>
-      </Group>
-      <Group id="group-2.2.3" hidden="false">
+      <Group id="gr-verify-files" hidden="false">
         <title xml:lang="en-US">Verify Permissions on Important Files and Directories</title>
         <description xml:lang="en-US"> Permissions for many files on a system should be set
 					to conform to system policy. This section discusses important permission
 					restrictions gshadow which should be checked on a regular basis to ensure that
 					no harmful discrepancies have arisen.</description>
-        <Group id="group-2.2.3.1" hidden="false">
+        <Group id="gr-verify-shadow" hidden="false">
           <title xml:lang="en-US">Verify Permissions on passwd, shadow, group and gshadow	Files</title>
           <description xml:lang="en-US"> These are the default permissions for these
 						files. Many utilities need read access to the passwd file in order to
@@ -1083,7 +805,7 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.2.3.2" hidden="false">
+        <Group id="gr-verify-sticky" hidden="false">
           <title xml:lang="en-US">Verify that All World-Writable Directories Have Sticky Bits Set</title>
           <description xml:lang="en-US"> When the so-called 'sticky bit' is set on a
 						directory, only the owner of a given file may remove that file from the
@@ -1105,7 +827,7 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.2.3.3" hidden="false">
+        <Group id="gr-verify-fwritable" hidden="false">
           <title xml:lang="en-US">Find Unauthorized World-Writable Files</title>
           <description xml:lang="en-US"> Data in world-writable files can be modified by
 						any user on the system. In almost all circumstances, files can be configured
@@ -1127,299 +849,534 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.2.3.4" hidden="false">
+        <Group id="gr-verify-suid" hidden="false">
           <title xml:lang="en-US">Find Unauthorized SUID/SGID System Executables</title>
-          <description xml:lang="en-US"> The following command discovers and prints any
+          <description xml:lang="en-US"> <xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> The following command discovers and prints any
 						setuid or setgid files on local partitions. Run it once for each local
-						partition : <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> for PART in `mount -t ext2,ext3 | awk '{print $3}'`; do find
-						$PART -xdev \( -perm -4000 -o -perm -2000 \) -type f -print; done
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> If the file does not require a setuid or setgid bit as discussed
-						below, then these bits can be removed with the command: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> chmod -s file <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The following table contains all setuid and setgid files which
+						partition: </xhtml:p>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"> find PART -xdev \( -perm -4000 -o -perm -2000 \) -type f -print; done </xhtml:code>
+						<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> If the file does not require a setuid or setgid bit, then these bits can be removed with the command: </xhtml:p>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"> chmod -s file </xhtml:code>
+						<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> The following table contains all setuid and setgid files which
 						are expected to be on a stock system. The setuid or setgid bit on these
 						files may be disabled to reduce system risk if only an administrator
-						requires their functionality. The table indicates those files which may not
-						be needed. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Note: Several of these files are used for applications which are
-						unlikely to be relevant to most production environments, such as ISDN
-						networking, SSH hostbased authentication, or modification of network
-						interfaces by unprivileged users. It is extremely likely that your site can
-						disable a subset of these files with no loss of functionality. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Any files found by the above command which are not in the table
-						should be examined. If the files are not authorized, they should have
-						permissions removed, and further investigation may be warranted. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						requires their functionality. </xhtml:p>
+
 						<xhtml:table xmlns:xhtml="http://www.w3.org/1999/xhtml">
 							<xhtml:tr>
 								<xhtml:td>File</xhtml:td>
-								<xhtml:td>Set-ID</xhtml:td>
-								<xhtml:td>Subsystem/Ref</xhtml:td>
-								<xhtml:td>Disable?</xhtml:td>
+								<xhtml:td>Set-UID</xhtml:td>
+								<xhtml:td>Set-GID</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/bin/cgexec</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/bin/fusermount</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/bin/mount</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>filesystems</xhtml:td>
-								<xhtml:td>no</xhtml:td>
-							</xhtml:tr>
-							<xhtml:tr>
-								<xhtml:td>/bin/ping</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>net (3.3.9)</xhtml:td>
-								<xhtml:td>no</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/bin/ping6</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>net (3.3.9),IPv6 (2.5.3)</xhtml:td>
-								<xhtml:td>unless IPv6 is used</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/bin/ping</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/bin/su</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>filesystems</xhtml:td>
-								<xhtml:td>no</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/bin/umount</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>filesystems</xhtml:td>
-								<xhtml:td>no</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
-								<xhtml:td>/bin/mount.nfs</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>NFS (3.13)</xhtml:td>
-								<xhtml:td>unless NFS is used</xhtml:td>
+								<xhtml:td>/lib64/dbus-1/dbus-daemon-launch-helper</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
-								<xhtml:td>/bin/mount.nfs4</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>NFS (3.13)</xhtml:td>
-								<xhtml:td>unless NFSv4 is used</xhtml:td>
+								<xhtml:td>/lib/dbus-1/dbus-daemon-launch-helper</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
-								<xhtml:td>/sbin/netreport</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>net (3.3.9)</xhtml:td>
-								<xhtml:td>unless users must modify interfaces </xhtml:td>
-							</xhtml:tr>
-							<xhtml:tr>
-								<xhtml:td>/sbin/pam_timestamp_check</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>PAM auth (2.3.3)</xhtml:td>
-								<xhtml:td>no</xhtml:td>
-							</xhtml:tr>
-							<xhtml:tr>
-								<xhtml:td>/sbin/umount.nfs</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>NFS (3.13)</xhtml:td>
-								<xhtml:td>unless NFS is used</xhtml:td>
+								<xhtml:td>/sbin/mount.ecryptfs_private</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/sbin/mount.nfs4</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>NFS (3.13)</xhtml:td>
-								<xhtml:td>unless NFSv4 is used</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/sbin/mount.nfs</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/sbin/netreport</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/sbin/pam_timestamp_check</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/sbin/umount.nfs4</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/sbin/umount.nfs</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/sbin/unix_chkpwd</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>PAM auth (2.3.3)</xhtml:td>
-								<xhtml:td>no</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/at</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>cron/at (3.4)</xhtml:td>
-								<xhtml:td>no</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/chage</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>passwd expiry (2.3.1.7)</xhtml:td>
-								<xhtml:td>unless users must view expiry info</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/chfn</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>user info</xhtml:td>
-								<xhtml:td>unless users must change finger info</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/chsh</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>user info</xhtml:td>
-								<xhtml:td>unless users must change shells</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/crontab</xhtml:td>
-								<xhtml:td>uid/gid root</xhtml:td>
-								<xhtml:td>cron/at (3.4)</xhtml:td>
-								<xhtml:td>unless users use cron</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/bin/glines</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>games</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/bin/gnibbles</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>games</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/bin/gnobots2</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>games</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/bin/gnome-falling-blocks</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>games</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/bin/gnomine</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>games</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/bin/gnotravex</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>games</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/bin/gnotski</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>games</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/bin/gnuchess</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>games</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/gpasswd</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>group auth</xhtml:td>
-								<xhtml:td>no</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/bin/gtali</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>games</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/bin/iagno</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>games</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/bin/kgrantpty</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/bin/kpac_dhcp_helper</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/bin/ksu</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/locate</xhtml:td>
-								<xhtml:td>gid slocate</xhtml:td>
-								<xhtml:td>locate</xhtml:td>
-								<xhtml:td>no</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>slocate</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/lockfile</xhtml:td>
-								<xhtml:td>gid mail</xhtml:td>
-								<xhtml:td>procmail</xhtml:td>
-								<xhtml:td>unless procmail is used</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>mail</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/bin/mahjongg</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>games</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/newgrp</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>group auth</xhtml:td>
-								<xhtml:td>no</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/bin/newrole</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/passwd</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>passwd auth</xhtml:td>
-								<xhtml:td>no</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/bin/pkexec</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/rcp</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>rsh (3.2.3)</xhtml:td>
-								<xhtml:td>yes (rsh is obsolete)</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/rlogin</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>rsh (3.2.3)</xhtml:td>
-								<xhtml:td>yes (rsh is obsolete)</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/rsh</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>rsh (3.2.3)</xhtml:td>
-								<xhtml:td>yes (rsh is obsolete)</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/bin/same-gnome</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>games</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/bin/screen</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>screen</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/bin/sperl5.10.1</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/ssh-agent</xhtml:td>
-								<xhtml:td>gid nobody</xhtml:td>
-								<xhtml:td>SSH (3.5)</xhtml:td>
-								<xhtml:td>no</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>nobody</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
-								<xhtml:td>/usr/bin/sudo</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>sudo (2.3.1.3)</xhtml:td>
-								<xhtml:td>no</xhtml:td>
+								<xhtml:td>/usr/bin/staprun</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/sudoedit</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>sudo (2.3.1.3)</xhtml:td>
-								<xhtml:td>no</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/bin/sudo</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/wall</xhtml:td>
-								<xhtml:td>gid tty</xhtml:td>
-								<xhtml:td>console messaging</xhtml:td>
-								<xhtml:td>unless console messaging is used</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>tty</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/write</xhtml:td>
-								<xhtml:td>gid tty</xhtml:td>
-								<xhtml:td>console messaging</xhtml:td>
-								<xhtml:td>unless console messaging is used</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>tty</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/Xorg</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>X11 (3.6)</xhtml:td>
-								<xhtml:td>unless X11 is used</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
-								<xhtml:td>/usr/kerberos/bin/ksu</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>Kerberos auth (2.3.6)</xhtml:td>
-								<xhtml:td>unless Kerberos is used</xhtml:td>
+								<xhtml:td>/usr/lib64/amanda/calcsize</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib64/amanda/dumper</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib64/amanda/killpgrp</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib64/amanda/planner</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib64/amanda/rundump</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib64/amanda/runtar</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib64/mgetty+sendfax/faxq-helper</xhtml:td>
+								<xhtml:td>fax</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib64/nspluginwrapper/plugin-config</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib64/vte/gnome-pty-helper</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>utmp</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib/amanda/calcsize</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib/amanda/dumper</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib/amanda/killpgrp</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib/amanda/planner</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib/amanda/rundump</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib/amanda/runtar</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/libexec/kde4/kdesud</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/libexec/mc/cons.saver</xhtml:td>
+								<xhtml:td>vcsa</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/libexec/openssh/ssh-keysign</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>SSH (3.5)</xhtml:td>
-								<xhtml:td>unless sshd uses hostbased auth</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/libexec/polkit-1/polkit-agent-helper-1</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/libexec/pt_chown</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/libexec/pulse/proximity-helper</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/libexec/utempter/utempter</xhtml:td>
-								<xhtml:td>gid utmp</xhtml:td>
-								<xhtml:td>terminal support</xhtml:td>
-								<xhtml:td>no</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>utmp</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
-								<xhtml:td>/usr/lib/squid/pam_auth</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>squid (3.19)</xhtml:td>
-								<xhtml:td>unless squid is used</xhtml:td>
+								<xhtml:td>/usr/lib/mailman/cgi-bin/admindb</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>mailman</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
-								<xhtml:td>/usr/lib/squid/ncsa_auth</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>squid (3.19)</xhtml:td>
-								<xhtml:td>unless squid is used</xhtml:td>
+								<xhtml:td>/usr/lib/mailman/cgi-bin/admin</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>mailman</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib/mailman/cgi-bin/confirm</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>mailman</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib/mailman/cgi-bin/create</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>mailman</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib/mailman/cgi-bin/edithtml</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>mailman</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib/mailman/cgi-bin/listinfo</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>mailman</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib/mailman/cgi-bin/options</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>mailman</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib/mailman/cgi-bin/private</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>mailman</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib/mailman/cgi-bin/rmlist</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>mailman</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib/mailman/cgi-bin/roster</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>mailman</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib/mailman/cgi-bin/subscribe</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>mailman</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib/mailman/mail/mailman</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>mailman</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib/mgetty+sendfax/faxq-helper</xhtml:td>
+								<xhtml:td>fax</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/lib/nspluginwrapper/plugin-config</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/lib/vte/gnome-pty-helper</xhtml:td>
-								<xhtml:td>gid utmp</xhtml:td>
-								<xhtml:td>X11, Gnome (3.6)</xhtml:td>
-								<xhtml:td>unless X11 is used</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>utmp</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
-								<xhtml:td>/usr/sbin/ccreds_validate</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>PAM auth (2.3.3)</xhtml:td>
-								<xhtml:td>unless PAM auth caching is used</xhtml:td>
+								<xhtml:td>/usr/sbin/amcheck</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/sbin/lockdev</xhtml:td>
-								<xhtml:td>gid lock</xhtml:td>
-								<xhtml:td>filesystems</xhtml:td>
-								<xhtml:td>no</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>lock</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/sbin/postdrop</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>postdrop</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/sbin/postqueue</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>postdrop</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/sbin/sendmail.sendmail</xhtml:td>
-								<xhtml:td>gid smmsp</xhtml:td>
-								<xhtml:td>sendmail client (3.11.2)</xhtml:td>
-								<xhtml:td>no</xhtml:td>
+								<xhtml:td>-</xhtml:td>
+								<xhtml:td>smmsp</xhtml:td>
+							</xhtml:tr>
+							<xhtml:tr>
+								<xhtml:td>/usr/sbin/seunshare</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/sbin/suexec</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>apache (3.16)</xhtml:td>
-								<xhtml:td>unless apache is used</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/sbin/userhelper</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>PAM auth (2.3.3.4)</xhtml:td>
-								<xhtml:td>restrict (see section)</xhtml:td>
-							</xhtml:tr>
-							<xhtml:tr>
-								<xhtml:td>/usr/sbin/userisdnctl</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>ISDN</xhtml:td>
-								<xhtml:td>unless ISDN is used</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/sbin/usernetctl</xhtml:td>
-								<xhtml:td>uid root</xhtml:td>
-								<xhtml:td>user network control</xhtml:td>
-								<xhtml:td>unless users must modify interfaces</xhtml:td>
+								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 						</xhtml:table>
 					</description>
@@ -1442,12 +1399,14 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.2.3.5" hidden="false">
+        <Group id="gr-verify-unowned" hidden="false">
           <title xml:lang="en-US">Find and Repair Unowned Files</title>
-          <description xml:lang="en-US"> The following command will discover and print any
+          <description xml:lang="en-US"> <xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> The following command will discover and print any
 						files on local partitions which do not belong to a valid user and a valid
-						group. Run it once for each local partition PART: <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># find PART
-							-xdev \( -nouser -o -nogroup \) -print </xhtml:code>If this command
+						group. Run it once for each local partition PART: </xhtml:p>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># find PART
+							-xdev \( -nouser -o -nogroup \) -print </xhtml:code>
+						<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> If this command
 						prints any results, investigate each reported file and either assign it to
 						an appropriate user and group or remove it. Unowned files are not directly
 						exploitable, but they are generally a sign that something is wrong with some
@@ -1456,7 +1415,7 @@
 						belonging to a deleted account. The files should be repaired so that they
 						will not cause problems when accounts are created in the future, and the
 						problem which led to unowned files should be discovered and
-						addressed.</description>
+						addressed.</xhtml:p> </description>
           <Rule id="rule-2.2.3.5.a" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Files unowned by any user</title>
@@ -1476,7 +1435,7 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.2.3.6" hidden="false">
+        <Group id="gr-verify-dwritable" hidden="false">
           <title xml:lang="en-US">Verify that All World-Writable Directories Have Proper Ownership</title>
           <description xml:lang="en-US"> Locate any directories in local partitions which
 						are world-writable and ensure that they are owned by root or another system
