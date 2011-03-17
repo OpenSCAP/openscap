@@ -197,7 +197,7 @@
 					encrypting such data exist, they should be applied. Even if data is expected to
 					be transmitted only over a local network, it should still be encrypted.
 					Encrypting authentication data, such as passwords, is particularly important.
-					Networks of RHEL6 machines can and should be configured so that no unencrypted
+					Networks of RHEL machines can and should be configured so that no unencrypted
 					authentication data is ever transmitted between machines.</description>
     </Group>
     <Group id="gr-principles-2" hidden="false">
@@ -1464,23 +1464,24 @@
           </Rule>
         </Group>
       </Group>
-      <Group id="group-2.2.4" hidden="false">
+      <Group id="gr-restrict" hidden="false">
         <title xml:lang="en-US">Restrict Programs from Dangerous Execution Patterns</title>
         <description xml:lang="en-US"> The recommendations in this section provide broad
 					protection against information disclosure or other misbehavior. These
 					protections are applied at the system initialization or kernel level, and defend
 					against certain types of badly-configured or compromised programs.</description>
-        <Group id="group-2.2.4.1" hidden="false">
+        <Group id="gr-restrict-umask" hidden="false">
           <title xml:lang="en-US">Set Daemon umask</title>
-          <description xml:lang="en-US"> The settings file /etc/sysconfig/init contains
-						settings which apply to all processes started at boot time. The system umask
+          <description xml:lang="en-US"> <xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> The file /etc/rc.d/init.d/functions
+						which is used by most or all shell scripts in the /etc/init.d directory, set an umask. 
+						The system umask
 						must be set to at least 022, or daemon processes may create world-writable
 						files. The more restrictive setting 027 protects files, including temporary
 						files and log files, from unauthorized reading by unprivileged users on the
-						system. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> If a particular daemon needs a less restrictive umask, consider
+						system. </xhtml:p>
+						<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> If a particular daemon needs a less restrictive umask, consider
 						editing the startup script or sysconfig file of that daemon to make a
-						specific exception. </description>
+						specific exception.</xhtml:p> </description>
           <Value id="var-2.2.4.1.a" operator="equals" type="string">
             <title xml:lang="en-US">daemon umask</title>
             <description xml:lang="en-US">Enter umask for daemons</description>
@@ -1499,38 +1500,24 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.2.4.2" hidden="false">
+        <Group id="gr-restrict-dumps" hidden="false">
           <title xml:lang="en-US">Disable Core Dumps</title>
-          <description xml:lang="en-US"> A core dump file is the memory image of an
+          <description xml:lang="en-US"> <xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> A core dump file is the memory image of an
 						executable program when it was terminated by the operating system due to
 						errant behavior. In most cases, only software developers would legitimately
 						need to access these files. The core dump files may also contain sensitive
-						information, or unnecessarily occupy large amounts of disk space. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> By default, the system sets a soft limit to stop the creation of
-						core dump files for all users. This is accomplished in /etc/profile with the
-						line: ulimit -S -c 0 &gt; /dev/null 2$gt;&amp;1 However, compliance with
+						information, or unnecessarily occupy large amounts of disk space. </xhtml:p>
+					<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> By default, the system sets a soft limit to stop the creation of
+						core dump files for all users. However, compliance with
 						this limit is voluntary; it is a default intended only to protect users from
 						the annoyance of generating unwanted core files. Users can increase the
-						allowed core file size up to the hard limit, which is unlimited by default. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Once a hard limit is set in /etc/security/limits.conf, the user
-						cannot increase that limit within his own session. If access to core dumps
+						allowed core file size up to the hard limit, which is unlimited by default.
+						Once a hard limit is set in /etc/security/limits.conf, </xhtml:p>
+				        <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"> *               hard    core            0 </xhtml:code> 
+					<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml">
+						the user cannot increase that limit within his own session. If access to core dumps
 						is required, consider restricting them to only certain users or groups. See
-						the limits.conf man page for more information. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The core dumps of setuid programs are further protected. The
-						sysctl variable fs.suid_dumpable controls whether the kernel allows core
-						dumps from these programs at all. The default value of 0 is recommended. </description>
-          <Group id="group-2.2.4.2.1" hidden="false">
-            <title xml:lang="en-US">Ensure SUID Core Dumps are Disabled</title>
-            <description xml:lang="en-US"> The sysctl variable fs.suid_dumpable should
-							be checked to ensure that it has not been enabled at any time during
-							system operation. To check this, issue the command:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># sysctl fs.suid_dumpable<xhtml:br/>
-							</xhtml:code>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The output should indicate that the setting is 0. (Use of
-							the -n option causes output to consist of only the value, which may make
-							automated checking easier.) </description>
-          </Group>
+						the limits.conf man page for more information. </xhtml:p>  </description>
           <Rule id="rule-2.2.4.2.a" selected="false" weight="10.000000" severity="low">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Disable Core Dumps for all users</title>
@@ -1540,6 +1527,18 @@
               <check-content-ref name="oval:rhel:def:20055" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
+        </Group> 
+
+         <Group id="gr-restrict-SUID_Dumps" hidden="false">
+            <title xml:lang="en-US">Ensure SUID Core Dumps are Disabled</title>
+            <description xml:lang="en-US"> <xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> The sysctl variable fs.suid_dumpable 
+            					controls whether the kernel allows core dumps from these programs at all. It
+						should be checked to ensure that it has not been enabled at any time during
+						system operation. To check this, issue the command: </xhtml:p>
+					    <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># sysctl fs.suid_dumpable </xhtml:code>
+					    <xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> The output should indicate that the setting is 0. (Use of
+						the -n option causes output to consist of only the value, which may make
+						automated checking easier.) </xhtml:p> </description>
           <Rule id="rule-2.2.4.2.b" selected="false" weight="10.000000" severity="low">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Disable Core Dumps for SUID programs</title>
@@ -1549,39 +1548,26 @@
               <check-content-ref name="oval:rhel:def:20056" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-        </Group>
-        <Group id="group-2.2.4.3" hidden="false">
+         </Group>
+        <Group id="gr-restrict-execshield" hidden="false">
           <title xml:lang="en-US">Enable ExecShield</title>
-          <description xml:lang="en-US"> ExecShield comprises a number of kernel features
+          <description xml:lang="en-US"> <xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> ExecShield comprises a number of kernel features
 						to provide protection against buffer overflows. These features include
 						random placement of the stack and other memory regions, prevention of
 						execution in memory that should only hold data, and special handling of text
 						buffers. This protection is enabled by default, but the sysctl variables
 						kernel.exec-shield and kernel.randomize va space should be checked to ensure
-						that it has not been disabled. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> ExecShield uses the segmentation feature on all x86 systems to
-						prevent execution in memory higher than a certain address. It writes an
-						address as a limit in the code segment descriptor, to control where code can
-						be executed, on a per-process basis. When the kernel places a process's
-						memory regions such as the stack and heap higher than this address, the
-						hardware prevents execution there. However, this cannot always be done for
-						all memory regions in which execution should not occur, so follow guidance
-						in Section 2.2.4.4 to further protect the system. </description>
-          <Group id="group-2.2.4.3.1" hidden="false">
-            <title xml:lang="en-US">Ensure ExecShield is Enabled</title>
-            <description xml:lang="en-US"> Exec-shield protection is enabled by default,
-							but the sysctl variables kernel.exec-shield and
-							kernel.randomize_va_space should be checked to ensure that it has not
-							been disabled at any time during system operation. To check that
+						that it has not been disabled. </xhtml:p>
+					<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml">	To check that
 							ExecShield (including random placement of virtual memory regions) is
-							currently running, issue the following commands:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># sysctl kernel.exec-shield<xhtml:br/> # sysctl
-								kernel.randomize_va_space<xhtml:br/>
-							</xhtml:code>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The output of both commands should be indicate that the
+							currently running, issue the following commands: </xhtml:p>
+
+					<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># sysctl kernel.exec-shield </xhtml:code>
+					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+					<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># sysctl kernel.randomize_va_space </xhtml:code>
+					<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> The output of both commands should indicate that the
 							setting is 1. (Use of the -n option causes output to consist of only the
-							value, which may make automated checking easier.) </description>
+							value, which may make automated checking easier.) </xhtml:p> </description>
             <Value id="var-2.2.4.3.a" operator="equals" type="string">
               <title xml:lang="en-US">kernel.exec-shield</title>
               <description xml:lang="en-US"/>
@@ -1596,7 +1582,6 @@
               <value selector="enabled">1</value>
               <value selector="disabled">0</value>
             </Value>
-          </Group>
           <Rule id="rule-2.2.4.3.1.a" selected="false" weight="10.000000">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">ExecShield is enabled</title>
@@ -1640,70 +1625,16 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.2.4.4" hidden="false">
-          <title xml:lang="en-US">Enable Execute Disable (XD) or No Execute (NX) Support on x86 Systems</title>
-          <description xml:lang="en-US"> Recent processors in the x86 family support the
-						ability to prevent code execution on a per memory page basis. Generically
-						and on AMD processors, this ability is called No Execute (NX), while on
-						Intel processors it is called Execute Disable (XD). This ability can help
-						prevent exploitation of buffer overflow vulnerabilities and should be
-						activated whenever possible. Extra steps must be taken to ensure that this
-						protection is enabled, particularly on 32-bit x86 systems. Other processors,
-						such as Itanium and POWER, have included such support since inception and
-						the standard kernel for those platforms supports the feature.</description>
-          <Group id="group-2.2.4.4.1" hidden="false">
-            <title xml:lang="en-US">Check for Processor Support on x86 Systems</title>
-            <description xml:lang="en-US"> Check to see if the processor supports the
-							PAE and NX features: <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">$ cat /proc/cpuinfo</xhtml:code> If
-							supported, the flags field will contain pae and nx.</description>
-          </Group>
-          <Group id="group-2.2.4.4.2" hidden="false">
-            <title xml:lang="en-US">Install New Kernel on Supported x86 Systems</title>
-            <description xml:lang="en-US"> Systems that are using the 64-bit x86 kernel
-							package do not need to install the kernel-PAE package because the 64-bit
-							x86 kernel already includes this support. However, if the system is
-							running 32-bit kernel package supports PAE and NX features as determined
-							in the previous section, the kernel-PAE package should be installed to
-							enable XD or NX support:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># yum install kernel-PAE</xhtml:code>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The installation process should also have conﬁgured the
-							bootloader to load the new kernel at boot. Verify this at reboot and
-							modify /etc/grub.conf if necessary.</description>
-            <warning xml:lang="en-US" override="false" category="hardware">The kernel-PAE package should
-							not be installed on older systems that do not support the XD or NX bit,
-							as this may prevent them from booting.</warning>
-            <Rule id="rule-2.2.4.4.2.a" selected="false" weight="10.000000">
-              <status date="2010-07-01">accepted</status>
-              <title xml:lang="en-US">Install New Kernel on Supported x86 Systems</title>
-              <description xml:lang="en-US">Kernel support for the XD/NX processor feature should be
-								enabled</description>
-              <ident system="http://cce.mitre.org">CCE-4172-3</ident>
-              <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20059" href="scap-rhel6-oval.xml"/>
-              </check>
-            </Rule>
-          </Group>
-          <Group id="group-2.2.4.4.3" hidden="false">
-            <title xml:lang="en-US">Enable NX or XD Support in the BIOS</title>
-            <description xml:lang="en-US"> Computers with the ability to prevent this
-							type of code execution frequently put an option in the BIOS that will
-							allow users to turn the feature on or off at will. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> See Section 2.3.5.1 for information on protecting this and
-							other BIOS settings.</description>
-          </Group>
-        </Group>
       </Group>
     </Group>
-    <Group id="group-2.3" hidden="false">
+    <Group id="gr-accounts" hidden="false">
       <title xml:lang="en-US">Account and Access Control</title>
       <description xml:lang="en-US"> In traditional Unix security, if an attacker gains shell
 				access to a certain login account, he can perform any action or access any file to
 				which that account has access. Therefore, making it more difficult for unauthorized
 				people to gain shell access to accounts, particularly to privileged accounts, is a
 				necessary part of securing a system. This section introduces mechanisms for
-				restricting access to accounts under RHEL5.</description>
+				restricting access to accounts..</description>
       <Group id="group-2.3.1" hidden="false">
         <title xml:lang="en-US">Protect Accounts by Restricting Password-Based Login</title>
         <description xml:lang="en-US"> Conventionally, Unix shell accounts are accessed by
@@ -1742,8 +1673,7 @@
 						default installation). The default securetty file also contains /dev/vc/*.
 						These are likely to be deprecated in most environments, but may be retained
 						for compatibility. Root should also be prohibited from connecting via
-						network protocols. See Section 3.5 for instructions on preventing root from
-						logging in via SSH.</description>
+						network protocols. </description>
           <Rule id="rule-2.3.1.1.c" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Root logins to virtual console are not permited</title>
@@ -1765,7 +1695,7 @@
           </Rule>
         </Group>
         <Group id="group-2.3.1.2" hidden="false">
-          <title xml:lang="en-US">The wheel group should exist</title>
+          <title xml:lang="en-US">Configure su to Restrict the Root Access</title>
           <description xml:lang="en-US">
 						<xhtml:ol xmlns:xhtml="http://www.w3.org/1999/xhtml">
 							<xhtml:li>Ensure that the group wheel exists, and that the usernames of
@@ -1864,7 +1794,7 @@
 						user of the system, but which exist to perform some administrative function.
 						Make it more difficult for an attacker to use these accounts by locking
 						their passwords and by setting their shells to some non-valid shell. The
-						RHEL5 default non-valid shell is /sbin/nologin, but any command which will
+						default non-valid shell is /sbin/nologin, but any command which will
 						exit with a failure status and disallow execution of any further commands,
 						such as /bin/false or /dev/null, will work.</description>
           <warning xml:lang="en-US" override="false" category="functionality">Do not perform the steps in
@@ -1881,20 +1811,16 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.3.1.5" hidden="false">
-          <title xml:lang="en-US">Verify Proper Storage and Existence of Password	Hashes</title>
-          <Group id="group-2.3.1.5.1" hidden="false">
+
+        <Group id="group-2.3.1.5.1" hidden="false">
             <title xml:lang="en-US">Verify that No Accounts Have Empty Password Fields</title>
-            <description xml:lang="en-US"> Run the command: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># awk -F: '($2 == "") {print}' /etc/shadow <xhtml:br/>
-							</xhtml:code>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> If this produces any output, fix the problem by locking each
-							account (see Section 2.3.1.4 above) or by setting a password. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> If an account has an empty password, anybody may log in and
-							run commands with the privileges of that account. Accounts with empty
-							passwords should never be used in operational
-							environments.</description>
+            <description xml:lang="en-US"> <xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> If an account has an empty password, 
+            					anybody may log in and run commands with the privileges of that account. Accounts 
+            					with empty passwords should never be used in operational environments. </xhtml:p>
+					    <xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> Run the command: </xhtml:p>
+					    <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># awk -F: '($2 == "") {print}' /etc/shadow </xhtml:code>
+					    <xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> If this produces any output, fix the problem by locking each
+						account or by setting a password. </xhtml:p> </description>
             <Rule id="rule-2.3.1.5.1.a" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">accepted</status>
               <title xml:lang="en-US">No Accounts Have Empty Password Fields</title>
@@ -1905,17 +1831,17 @@
                 <check-content-ref name="oval:rhel:def:20069" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
-          </Group>
-          <Group id="group-2.3.1.5.2" hidden="false">
+        </Group>
+
+        <Group id="group-2.3.1.5.2" hidden="false">
             <title xml:lang="en-US">Verify that All Account Password Hashes are Shadowed</title>
-            <description xml:lang="en-US"> To ensure that no password hashes are stored
-							in /etc/passwd, the following command should have no output:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># awk -F: '($2 != "x") {print}' /etc/passwd<xhtml:br/>
-							</xhtml:code>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The hashes for all user account passwords should be stored
-							in the ﬁle /etc/shadow and never in /etc/passwd, which is readable by
-							all users. </description>
+            <description xml:lang="en-US"> <xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> The hashes for all user account 
+            					passwords should be stored in the ﬁle /etc/shadow and never in /etc/passwd, which 
+            					is readable by all users. </xhtml:p>
+					    <xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> To ensure that no password hashes are stored
+							in /etc/passwd, the following command should have no output: </xhtml:p>
+					    <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># awk -F: '($2 != "x") {print}' /etc/passwd </xhtml:code>
+						</description>
             <Rule id="rule-2.3.1.5.2.a" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">All Account Password Hashes are Shadowed</title>
@@ -1925,24 +1851,24 @@
                 <check-content-ref name="oval:rhel:def:200695" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
-          </Group>
         </Group>
+
         <Group id="group-2.3.1.6" hidden="false">
           <title xml:lang="en-US">Verify that No Non-Root Accounts Have UID 0</title>
-          <description xml:lang="en-US"> This command will print all password file entries
-						for accounts with UID 0: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># awk -F: '($3 == "0") {print}' /etc/passwd <xhtml:br/>
-						</xhtml:code>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> This should print only one line, for the user root. If any other
-						lines appear, ensure that these additional UID-0 accounts are authorized,
-						and that there is a good reason for them to exist. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> In general, the best practice solution for auditing use of the
+          <description xml:lang="en-US"> <xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> In general, the best practice solution for auditing use of the
 						root account is to restrict the set of cases in which root must be accessed
 						anonymously by requiring use of su or sudo in almost all cases. Some sites
 						choose to have more than one account with UID 0 in order to differentiate
 						between administrators, but this practice may have unexpected side effects,
-						and is therefore not recommended.</description>
+						and is therefore not recommended. </xhtml:p>
+
+
+					<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> This command will print all password file entries
+						for accounts with UID 0: </xhtml:p>
+					<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># awk -F: '($3 == "0") {print}' /etc/passwd </xhtml:code>
+					<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> This should print only one line, for the user root. If any other
+						lines appear, ensure that these additional UID-0 accounts are authorized,
+						and that there is a good reason for them to exist. </xhtml:p> </description>
           <Rule id="rule-2.3.1.6.a" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">No Non-Root Accounts Have UID 0</title>
@@ -1953,6 +1879,7 @@
             </check>
           </Rule>
         </Group>
+
         <Group id="group-2.3.1.7" hidden="false">
           <title xml:lang="en-US">Set Password Expiration Parameters</title>
           <description xml:lang="en-US"> Edit the file /etc/login.defs to specify password
