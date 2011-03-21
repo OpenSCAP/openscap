@@ -82,9 +82,10 @@ static char *app_curl_download(char *url)
 
 static void oscap_action_init(struct oscap_action *action)
 {
-	assert(action != NULL);
+    assert(action != NULL);
     memset(action, 0, sizeof(*action));
-    action->verbosity = 1;
+    action->verbosity = true;
+    action->validate = 1;
 }
 
 static void oscap_action_release(struct oscap_action *action)

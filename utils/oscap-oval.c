@@ -69,8 +69,9 @@ static struct oscap_module OVAL_EVAL = {
     .usage = "[options] --result-file results.xml oval-definitions.xml",
     .help =
         "Options:\n"
-        "   --result-file <file>\r\t\t\t\t - Write OVAL Results into file."
-        "   --report-file <file>\r\t\t\t\t - Write results HTML report into file.",
+        "   --result-file <file>\r\t\t\t\t - Write OVAL Results into file.\n"
+        "   --report-file <file>\r\t\t\t\t - Write results HTML report into file.\n",
+        "   --skip-valid\r\t\t\t\t - Skip validation.\n",
     .opt_parser = getopt_oval,
     .func = app_evaluate_oval
 };
@@ -236,16 +237,17 @@ int app_evaluate_oval(const struct oscap_action *action)
 	oval_agent_session_t *sess;
 
 	/* validate */
-	if (!oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS, action->file_version,
-	    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-		if (oscap_err()) {
-			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-			return OSCAP_FAIL;
+	if ( action->validate ) {
+		if (!oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS, NULL,
+		    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+			if (oscap_err()) {
+				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+				return OSCAP_FAIL;
+			}
+			fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
+			return OSCAP_ERROR;
 		}
-		fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
-		return OSCAP_ERROR;
 	}
-
 	def_model = oval_definition_model_import(action->f_oval);
 	if (def_model == NULL) {
 		fprintf(stderr, "Failed to import the definition model (%s).\n", action->f_oval);
@@ -421,22 +423,23 @@ enum oval_opt {
 
 bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 {
-    VERBOSE = action->verbosity;
+	VERBOSE = action->verbosity;
 
 	action->doctype = OSCAP_DOCUMENT_OVAL_DEFINITIONS;
 
 	/* Command-options */
 	struct option long_options[] = {
         // options
-		{ "result-file",  1, 0, OVAL_OPT_RESULT_FILE  },
-		{ "report-file",  1, 0, OVAL_OPT_REPORT_FILE  },
-		{ "id",           1, 0, OVAL_OPT_ID           },
-		{ "file-version", 1, 0, OVAL_OPT_FILE_VERSION },
-		{ "output",       1, 0, OVAL_OPT_OUTPUT       },
+		{ "result-file",  required_argument, NULL, OVAL_OPT_RESULT_FILE  },
+		{ "report-file",  required_argument, NULL, OVAL_OPT_REPORT_FILE  },
+		{ "id",           required_argument, NULL, OVAL_OPT_ID           },
+		{ "version",      required_argument, NULL, OVAL_OPT_FILE_VERSION },
+		{ "output",       required_argument, NULL, OVAL_OPT_OUTPUT       },
         // flags
-		{ "definitions",  0, &action->doctype, OSCAP_DOCUMENT_OVAL_DEFINITIONS },
-		{ "syschar",      0, &action->doctype, OSCAP_DOCUMENT_OVAL_SYSCHAR     },
-		{ "results",      0, &action->doctype, OSCAP_DOCUMENT_OVAL_RESULTS     },
+		{ "definitions",  no_argument, &action->doctype, OSCAP_DOCUMENT_OVAL_DEFINITIONS },
+		{ "syschar",      no_argument, &action->doctype, OSCAP_DOCUMENT_OVAL_SYSCHAR     },
+		{ "results",      no_argument, &action->doctype, OSCAP_DOCUMENT_OVAL_RESULTS     },
+		{ "skip-valid",   no_argument, &action->validate, 0 },
         // end
 		{ 0, 0, 0, 0 }
 	};
@@ -449,7 +452,7 @@ bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 		case OVAL_OPT_OUTPUT: action->f_results = optarg; break;
 		case OVAL_OPT_ID: action->id = optarg; break;
 		case OVAL_OPT_FILE_VERSION: action->file_version = optarg; break;
-        case 0: break;
+        	case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
 	}

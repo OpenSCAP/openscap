@@ -52,6 +52,9 @@ Write OVAL Results into file.
 .TP
 \fB\-\-report-file FILE\fR
 Write HTML results report into file.
+.TP
+\fB\-\-skip-valid\fR
+Do not validate input files before evaluation.
 .RE
 .RE
 
@@ -112,7 +115,13 @@ Write HTML report into file. You also have to specify --result-file for this fea
 .RE
 .TP
 \fB\-\-oval-results\fR
+.RS
 Generate OVAL Result file for each OVAL session used for evaluation. File with name '\fIoriginal-oval-definitions-filename\fR.result.xml' will be generated for each referenced OVAL file. This option (with conjunction with the \fB\-\-report-file\fR option) also enables inclusion of additional OVAL information in the XCCDF report.
+.RE
+.TP
+\fB\-\-skip-valid\fR
+.RS
+Do not validate input files before evaluation.
 .RE
 .RE
 .TP

@@ -88,6 +88,7 @@ static struct oscap_module XCCDF_EVAL = {
         "   --oval-results\r\t\t\t\t - Save OVAL results as well.\n"
         "   --result-file <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
         "   --report-file <file>\r\t\t\t\t - Write HTML report into file.\n"
+        "   --skip-valid \r\t\t\t\t - Skip validation.\n"
                                  "\t\t\t\t   (--result-file must be also specified for this to work)\n",
     .opt_parser = getopt_xccdf,
     .func = app_evaluate_xccdf
@@ -235,16 +236,17 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	int idx = 0;
 	
 	/* Validate documents */
-        if (!oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, NULL, 
-				     (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-                if (oscap_err()) {
-                        fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-                        return OSCAP_FAIL;
-                }
-		fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
-                return OSCAP_ERROR;
-        }
-
+	if( action->validate ) {
+        	if (!oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, NULL, 
+					     (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+        	        if (oscap_err()) {
+        	                fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+        	                return OSCAP_FAIL;
+        	        }
+			fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
+        	        return OSCAP_ERROR;
+        	}
+	}
 
 	/* Load XCCDF model and XCCDF Policy model */
 	benchmark = xccdf_benchmark_import(action->f_xccdf);
@@ -314,15 +316,17 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	
 	/* Validate OVAL files */
-        for (idx=0; oval_files[idx]; idx++) {
-		if (!oscap_validate_document(oval_files[idx], OSCAP_DOCUMENT_OVAL_DEFINITIONS, NULL, 
-					     (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-			if (oscap_err()) {
-				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-				return OSCAP_FAIL;
+	if (action->validate) {
+        	for (idx=0; oval_files[idx]; idx++) {
+			if (!oscap_validate_document(oval_files[idx], OSCAP_DOCUMENT_OVAL_DEFINITIONS, NULL,
+						     (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+				if (oscap_err()) {
+					fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+					return OSCAP_FAIL;
+				}
+				fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
+				return OSCAP_ERROR;
 			}
-			fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
-			return OSCAP_ERROR;
 		}
 	}
 
@@ -520,45 +524,61 @@ bool getopt_generate(int argc, char **argv, struct oscap_action *action)
     return true;
 }
 
+enum oval_opt {
+    XCCDF_OPT_RESULT_FILE = 1,
+    XCCDF_OPT_PROFILE,
+    XCCDF_OPT_REPORT_FILE,
+    XCCDF_OPT_SHOW,
+    XCCDF_OPT_TEMPLATE,
+    XCCDF_OPT_FORMAT,
+    XCCDF_OPT_OVAL_TEMPLATE,
+    XCCDF_OPT_FILE_VERSION,
+    XCCDF_OPT_OUTPUT = 'o',
+    XCCDF_OPT_RESULT_ID = 'i'
+};
+
 bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 {
-    assert(action != NULL);
+	assert(action != NULL);
 
 	action->doctype = OSCAP_DOCUMENT_XCCDF;
 
 	/* Command-options */
 	const struct option long_options[] = {
-		{"force", 0, 0, 'f'},
-		{"output", 1, 0, 'o'},
-		{"result-id", 1, 0, 'i'},
-		{"result-file", 1, 0, 0},
-		{"xccdf-profile", 1, 0, 1},
-		{"file-version", 1, 0, 2},
-		{"profile", 1, 0, 3},
-		{"report-file", 1, 0, 4},
-		{"oval-results", 0, 0, 5},
-		{"show", 1, 0, 6},
-		{"template", 1, 0, 7},
-		{"format", 1, 0, 8},
-		{"oval-template", 1, 0, 9},
-		{"hide-profile-info", 0, &action->hide_profile_info, 1},
+	// options
+		{"output",		required_argument, NULL, XCCDF_OPT_OUTPUT},
+		{"result-file", 	required_argument, NULL, XCCDF_OPT_RESULT_FILE},
+		{"profile", 		required_argument, NULL, XCCDF_OPT_PROFILE},
+		{"result-id",		required_argument, NULL, XCCDF_OPT_RESULT_ID},
+		{"report-file", 	required_argument, NULL, XCCDF_OPT_REPORT_FILE},
+		{"show", 		required_argument, NULL, XCCDF_OPT_SHOW},
+		{"template", 		required_argument, NULL, XCCDF_OPT_TEMPLATE},
+		{"format", 		required_argument, NULL, XCCDF_OPT_FORMAT},
+		{"oval-template", 	required_argument, NULL, XCCDF_OPT_OVAL_TEMPLATE},
+		{"version",		required_argument, NULL, XCCDF_OPT_FILE_VERSION},
+	// flags
+		{"force",		no_argument, &action->force, 1},
+		{"oval-results",	no_argument, &action->oval_results, 1},
+		{"skip-valid",		no_argument, &action->validate, 0},
+		{"hide-profile-info",	no_argument, &action->hide_profile_info, 1},
+	// end
 		{0, 0, 0, 0}
 	};
 
 	int c;
-	while ((c = getopt_long(argc, argv, "o:i:f", long_options, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "", long_options, NULL)) != -1) {
 		switch (c) {
-		case 'o': case 0: action->f_results = optarg; break;
-		case 3: case 1: action->profile = optarg; break;
-		case 'i': action->id = optarg; break;
-		case 2: action->file_version = optarg; break;
-		case 4: action->f_report = optarg; break;
-		case 'f': action->force = true; break;
-		case 5: action->oval_results = true; break;
-		case 6: action->show = optarg; break;
-		case 7: action->tmpl = optarg; break;
-		case 8: action->format = optarg; break;
-		case 9: action->oval_template = optarg; break;
+		case XCCDF_OPT_OUTPUT: 
+		case XCCDF_OPT_RESULT_FILE:	action->f_results = optarg;	break;
+		case XCCDF_OPT_PROFILE:		action->profile = optarg;	break;
+		case XCCDF_OPT_RESULT_ID:	action->id = optarg;		break;
+		case XCCDF_OPT_REPORT_FILE:	action->f_report = optarg; 	break;
+		case XCCDF_OPT_SHOW:		action->show = optarg;		break;
+		case XCCDF_OPT_TEMPLATE:	action->tmpl = optarg;		break;
+		case XCCDF_OPT_FORMAT:		action->format = optarg;	break;
+		case XCCDF_OPT_OVAL_TEMPLATE:	action->oval_template = optarg; break;
+		case XCCDF_OPT_FILE_VERSION:	action->file_version = optarg;	break;
+		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
 	}

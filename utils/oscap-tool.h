@@ -113,7 +113,6 @@ struct cpe_action {
 #endif
 
 struct oscap_action {
-        int doctype;
         struct oscap_module *module;
         char *f_xccdf;
         char *f_oval;
@@ -137,8 +136,10 @@ struct oscap_action {
 #ifdef ENABLE_CPE
 	struct cpe_action * cpe_action;
 #endif
-	bool force;
-	bool oval_results;
+        int doctype;
+	int force;
+	int validate;
+	int oval_results;
 };
 
 int app_validate_xml(const struct oscap_action *action);
