@@ -6681,15 +6681,15 @@
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <unix-def:file_object id="oval:org.fedoraproject.f14:obj:20092" version="1" comment="/boot/grub/grub.conf">
-                  <unix-def:path>/boot/grub/</unix-def:path>
+                  <unix-def:path>/boot/grub</unix-def:path>
                   <unix-def:filename>grub.conf</unix-def:filename>
             </unix-def:file_object>
             <unix-def:file_object id="oval:org.fedoraproject.f14:obj:20094" version="1" comment="/boot/grub/grub.conf">
-                  <unix-def:path>/boot/grub/</unix-def:path>
+                  <unix-def:path>/boot/grub</unix-def:path>
                   <unix-def:filename>grub.conf</unix-def:filename>
             </unix-def:file_object>
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:20095" version="1">
-                  <ind-def:path>/boot/grub/</ind-def:path>
+                  <ind-def:path>/boot/grub</ind-def:path>
                   <ind-def:filename>grub.conf</ind-def:filename>
                   <ind-def:pattern operation="pattern match">password[[:space:]]+--md5[[:space:]]+.*</ind-def:pattern>
                   <ind-def:instance datatype="int">1</ind-def:instance>
@@ -7829,7 +7829,7 @@
                   <unix-def:filename xsi:nil="true"/>
             </unix-def:file_object>
             <unix-def:file_object id="oval:org.fedoraproject.f14:obj:20232" version="1" comment="/var/spool/cron">
-                  <unix-def:path>/etc/</unix-def:path>
+                  <unix-def:path>/etc</unix-def:path>
                   <unix-def:filename>cron.deny</unix-def:filename>
             </unix-def:file_object>
             <unix-def:file_object id="oval:org.fedoraproject.f14:obj:20233" version="1" comment="/etc/at.deny">
