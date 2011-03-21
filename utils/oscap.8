@@ -47,6 +47,9 @@ Probe the system and gather system characteristics for objects in OVAL Definitio
 Probe the system and evaluate all definitions from OVAL Definition file. Print result of each definition to standard output. oscap returns 0 if all definitions pass. If there is an error during evaluation, the return code is 1. If there is at least one failed result definition, oscap-scan finishes with return code 2.
 .PP
 .TP
+\fB\-\-id DEFINITION-ID\fR
+Probe the system and evaluate ONLY specified definition from OVAL Definition file.
+.TP
 \fB\-\-result-file FILE\fR
 Write OVAL Results into file.
 .TP
@@ -56,12 +59,6 @@ Write HTML results report into file.
 \fB\-\-skip-valid\fR
 Do not validate input files before evaluation.
 .RE
-.RE
-
-.TP
-.B eval-id\fR [--result-file FILE] --id definition-id oval-definitions-file
-.RS
-Probe the system and evaluate specified definition from OVAL Definition file. Print results of evaluation to standard output.
 .RE
 
 .TP

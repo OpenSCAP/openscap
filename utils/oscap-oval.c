@@ -33,7 +33,6 @@
 
 static int app_collect_oval(const struct oscap_action *action);
 static int app_evaluate_oval(const struct oscap_action *action);
-static int app_evaluate_oval_id(const struct oscap_action *action);
 static int app_oval_xslt(const struct oscap_action *action);
 static bool getopt_oval(int argc, char **argv, struct oscap_action *action);
 
@@ -65,28 +64,16 @@ static struct oscap_module OVAL_VALIDATE = {
 static struct oscap_module OVAL_EVAL = {
     .name = "eval",
     .parent = &OSCAP_OVAL_MODULE,
-    .summary = "Probe the system and evaluate all definitions from OVAL Definition file",
-    .usage = "[options] --result-file results.xml oval-definitions.xml",
+    .summary = "Probe the system and evaluate definitions from OVAL Definition file",
+    .usage = "[options] oval-definitions.xml",
     .help =
         "Options:\n"
+	"   --id <definition-id>\r\t\t\t\t - ID of the definition we want to evaluate.\n"
         "   --result-file <file>\r\t\t\t\t - Write OVAL Results into file.\n"
         "   --report-file <file>\r\t\t\t\t - Write results HTML report into file.\n",
         "   --skip-valid\r\t\t\t\t - Skip validation.\n",
     .opt_parser = getopt_oval,
     .func = app_evaluate_oval
-};
-
-static struct oscap_module OVAL_EVAL_ID = {
-    .name = "eval-id",
-    .parent = &OSCAP_OVAL_MODULE,
-    .summary = "Probe the system and evaluate specified definition from OVAL Definition file",
-    .usage = "--id definition-id --result-file results.xml oval-definitions.xml",
-    .help =
-        "Options:\n"
-        "   --id <definition-id>\r\t\t\t\t - ID of the definition we want to evaluate"
-        "   --result-file <file>\r\t\t\t\t - Write OVAL Results into file.",
-    .opt_parser = getopt_oval,
-    .func = app_evaluate_oval_id
 };
 
 static struct oscap_module OVAL_COLLECT = {
@@ -126,7 +113,6 @@ static struct oscap_module* OVAL_GEN_SUBMODULES[] = {
 static struct oscap_module* OVAL_SUBMODULES[] = {
     &OVAL_COLLECT,
     &OVAL_EVAL,
-    &OVAL_EVAL_ID,
     &OVAL_VALIDATE,
     &OVAL_GENERATE,
     NULL
@@ -153,7 +139,7 @@ static int app_oval_callback(const struct oscap_reporter_message *msg, void *arg
 {
 
 	if (VERBOSE >= 0)
-		printf("Evalutated definition %s: %s\n",
+		printf("Definition %s: %s\n",
 		       oscap_reporter_message_get_user1str(msg),
 		       oval_result_get_text(oscap_reporter_message_get_user2num(msg)));
 	switch ((oval_result_t) oscap_reporter_message_get_user2num(msg)) {
@@ -267,17 +253,25 @@ int app_evaluate_oval(const struct oscap_action *action)
 	memset(usr, 0, sizeof(struct oval_usr));
 
 	/* Evaluation */
-	ret = oval_agent_eval_system(sess, app_oval_callback, usr);
+	if (action->id) {
+		ret = oval_agent_eval_definition(sess, action->id);
+		if (VERBOSE >= 0)
+			printf("Definition %s: %s\n", action->id, oval_result_get_text(ret));
+	} else
+		ret = oval_agent_eval_system(sess, app_oval_callback, usr);
 
-	if (VERBOSE >= 0)
-		printf("Evaluation: All done.\n");
+	if (VERBOSE >= 0) {
+		printf("Evaluation done.\n");
+	}
 
 	if (ret == -1 && (oscap_err())) {
 		fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
 		return OSCAP_ERROR;
 	}
-	if (VERBOSE >= 0) {
-		fprintf(stdout, "====== RESULTS ======\n");
+
+	/* print report */
+	if (VERBOSE >= 0 && !action->id) {
+		fprintf(stdout, "===== REPORT =====\n");
 		fprintf(stdout, "TRUE:          \r\t\t %d\n", usr->result_true);
 		fprintf(stdout, "FALSE:         \r\t\t %d\n", usr->result_false);
 		fprintf(stdout, "ERROR:         \r\t\t %d\n", usr->result_error);
@@ -318,7 +312,15 @@ int app_evaluate_oval(const struct oscap_action *action)
 	oval_agent_destroy_session(sess);
 	oval_definition_model_free(def_model);
 
-	if (usr != NULL) {
+	/* return code */
+	if (action->id) {
+		if ((ret !=  OVAL_RESULT_FALSE) && (ret != OVAL_RESULT_UNKNOWN)) {
+			return OSCAP_OK;
+		} else {
+			return OSCAP_FAIL;
+		}
+	}
+	else {
 		if ((usr->result_false == 0) && (usr->result_unknown == 0)) {
 			free(usr);
 			return OSCAP_OK;
@@ -326,83 +328,6 @@ int app_evaluate_oval(const struct oscap_action *action)
 			free(usr);
 			return OSCAP_FAIL;
 		}
-	} else
-		return ret;
-}
-
-int app_evaluate_oval_id(const struct oscap_action *action) {
-	oval_result_t ret;
-	struct oval_definition_model *def_model;
-	oval_agent_session_t *sess;
-
-	/* validate */
-	if (!oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS, NULL, 
-	    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-		if (oscap_err()) {
-			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-			return OSCAP_FAIL;
-		}
-		fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
-		return OSCAP_ERROR;
-	}
-
-	def_model = oval_definition_model_import(action->f_oval);
-	if (def_model == NULL) {
-		fprintf(stderr, "Failed to import the definition model (%s).\n", action->f_oval);
-		return OSCAP_ERROR;
-	}
-
-	sess = oval_agent_new_session(def_model, basename(action->f_oval));
-	if (sess == NULL) {
-		if (oscap_err())
-			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
-		fprintf(stderr, "Failed to create new agent session.\n");
-		return OSCAP_ERROR;
-	}
-
-	/* evaluate */
-	ret = oval_agent_eval_definition(sess, action->id);
-
-	/* check err */
-	if (oscap_err())  {
-		fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
-		return OSCAP_ERROR;
-	}
-
-	/* print result */
-        if (VERBOSE >= 0) {
-		printf("Evalutated definition %s: %s\n", action->id, oval_result_get_text(ret));
-                printf("Evaluation: All done.\n");
-	}
-
-	/* export results to file */
-	if (action->f_results != NULL) {
-		/* get result model */
-		struct oval_results_model *res_model = oval_agent_get_results_model(sess);
-
-		/* set up directives */
-		struct oval_result_directives *res_direct = oval_result_directives_new(res_model);
-		oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE | OVAL_RESULT_FALSE |
-						    OVAL_RESULT_UNKNOWN | OVAL_RESULT_NOT_EVALUATED |
-						    OVAL_RESULT_ERROR | OVAL_RESULT_NOT_APPLICABLE, true);
-
-		oval_result_directives_set_content(res_direct, OVAL_RESULT_FALSE, OVAL_DIRECTIVE_CONTENT_FULL);
-		oval_result_directives_set_content(res_direct, OVAL_RESULT_TRUE, OVAL_DIRECTIVE_CONTENT_FULL);		
-
-		// export result model to XML 
-		oval_results_model_export(res_model, res_direct, action->f_results);
-		oval_result_directives_free(res_direct);
-	}
-
-	/* clean up*/
-	oval_agent_destroy_session(sess);
-	oval_definition_model_free(def_model);
-
-	/* return code */
-	if ((ret !=  OVAL_RESULT_FALSE) && (ret != OVAL_RESULT_UNKNOWN)) {
-			return OSCAP_OK; /* pass */
-	} else {
-			return OSCAP_FAIL; /* fail */
 	}
 }
 
