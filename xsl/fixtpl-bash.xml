@@ -21,8 +21,7 @@ Authors:
      Lukas Kuklinek <lkuklinek@redhat.com>
 -->
 
-<!-- FIXME: proper system attribute -->
-<fixtemplate xmlns='http://open-scap.org/xml/fixtemplate#' system=''>
+<fixtemplate xmlns='http://open-scap.org/xml/fixtemplate#' system='urn:xccdf:fix:commands urn:xccdf:fix:script:sh'>
 
 
 <!-- single line comment begining -->
