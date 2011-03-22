@@ -70,7 +70,7 @@ static struct oscap_module OVAL_EVAL = {
         "Options:\n"
 	"   --id <definition-id>\r\t\t\t\t - ID of the definition we want to evaluate.\n"
         "   --result-file <file>\r\t\t\t\t - Write OVAL Results into file.\n"
-        "   --report-file <file>\r\t\t\t\t - Write results HTML report into file.\n",
+        "   --report-file <file>\r\t\t\t\t - Write results HTML report into file.\n"
         "   --skip-valid\r\t\t\t\t - Skip validation.\n",
     .opt_parser = getopt_oval,
     .func = app_evaluate_oval
