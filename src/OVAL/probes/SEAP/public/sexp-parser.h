@@ -54,6 +54,8 @@ SEXP_pstate_t *SEXP_pstate_init (SEXP_pstate_t *);
 
 SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SEXP_pstate_t **pstate);
 
+bool SEXP_pstate_errorp(SEXP_pstate_t *pstate);
+
 #ifdef __cplusplus
 }
 #endif

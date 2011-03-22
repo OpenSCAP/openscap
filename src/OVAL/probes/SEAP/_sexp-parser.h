@@ -77,6 +77,7 @@ struct SEXP_pstate {
          * Value cache
          */
         uintptr_t v_bool[2]; /* true, false pre-allocated values */
+	uint8_t   p_error;
 };
 
 struct SEXP_pext_dsc {

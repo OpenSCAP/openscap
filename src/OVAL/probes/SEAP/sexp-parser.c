@@ -69,6 +69,7 @@ SEXP_pstate_t *SEXP_pstate_new (void)
 
         pstate->v_bool[0] = 0;
         pstate->v_bool[1] = 0;
+	pstate->p_error   = SEXP_PRET_EUNDEF;
 
         return (pstate);
 }
@@ -1266,14 +1267,17 @@ SKIP_LOOP:
                 state->p_numclass = e_dsc.p_numclass;
                 state->p_numbase  = e_dsc.p_numbase;
                 state->p_numstage = e_dsc.p_numstage;
+		state->p_error    = SEXP_PRET_EUNFIN;
 
                 return (NULL);
         case SEXP_PRET_EINVAL:
+		state->p_error = SEXP_PRET_EINVAL;
                 /*
                  * The parser encoutered an invalid sequence of octets
                  */
                 return (NULL);
         case SEXP_PRET_EUNDEF:
+		state->p_error = SEXP_PRET_EUNDEF;
                 /*
                  * Undefined error (i.e. we don't know how to handle the error
                  * that caused the undefined state or we do not expect that such
@@ -1941,4 +1945,18 @@ __PARSE_RT SEXP_parse_bool (__PARSE_PT(dsc), bool val)
         dsc->p_explen = 1;
 
         return (SEXP_PRET_SUCCESS);
+}
+
+bool SEXP_pstate_errorp(SEXP_pstate_t *pstate)
+{
+	if (pstate == NULL)
+		return (true);
+
+	switch (pstate->p_error) {
+	case SEXP_PRET_SUCCESS:
+	case SEXP_PRET_EUNFIN:
+		return (false);
+	default:
+		return (true);
+	}
 }
