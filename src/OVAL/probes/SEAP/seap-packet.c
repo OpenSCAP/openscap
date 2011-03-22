@@ -753,7 +753,19 @@ eloop_exit:
                                 _D("eloop_restart\n");
                                 goto eloop_start;
                         }
-                }
+                } else {
+			if (pstate == NULL || SEXP_pstate_errorp(pstate)) {
+				_D("FAIL: S-exp parsing error, buffer:\n%*.s\n",
+				   data_length, data_buffer);
+
+				SEXP_psetup_free(psetup);
+				SEXP_pstate_free(pstate);
+
+				errno = EILSEQ;
+
+				return (-1);
+			}
+		}
 
                 if (SCH_SELECT(dsc->scheme, dsc, SEAP_IO_EVREAD, ctx->recv_timeout, 0) != 0) {
                         switch (errno) {
