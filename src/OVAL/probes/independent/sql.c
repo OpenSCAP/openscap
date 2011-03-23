@@ -242,8 +242,8 @@ __fail:
 	return (-1);
 }
 
-static SEXP_t *dbSQL_eval(const char *engine, const char *version,
-			  const char *conn, const char *sql, SEXP_t *probe_out)
+static int dbSQL_eval(const char *engine, const char *version,
+                      const char *conn, const char *sql, SEXP_t *probe_out)
 {
 	int err = -1;
 	dbURIInfo_t uriInfo = { .host = NULL,
@@ -350,7 +350,7 @@ __exit:
 	return (err);
 }
 
-int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg)
+int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 {
 	char       *engine, *version, *conn, *sqlexp;
 	int err;
