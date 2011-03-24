@@ -1,2 +1,42 @@
-Initial commit
+
+
+COMPILATION
+-----------
+
+Get fresh sources from repository:
+  * $git clone git://git.fedorahosted.org/git/openscap.git (git)
+  - requirements: autoconf automake libtool
+  * $autogen.sh
+
+You are OK with tarball from official release
+  - requirements: swig, libxml2-devel, rpm-devel, libgcrypt-devel, pcre-devel,
+                  python-devel, perl-devel, libcurl-devel, libxslt-devel, libtools
+  * $configure
+  * $make
+  * $make check
+  * $make install
+
+
+
+USE CASES
+---------
+
+SCAP Content Validation
+  * $oscap xccdf validate-xml FILE
+  * $oscap oval validate-xml FILE
+
+Scanning
+  * #oscap xccdf eval --profile Desktop --result-file XCCDF-RESULT-FILE XCCDF-FILE
+  * #scap oval eval --result-file OVAL-RESULT-FILE OVAL-FILE
+  * #scap oval eval --id DEFINITION-ID OVAL-FILE
+
+Document generation
+  - without XCCDF rules
+  * $oscap xccdf generate guide XCCDF-FILE > XCCDF-GUIDE-FILE
+
+  - with XCCDF rules rules
+  * $oscap xccdf generate guide --profile PROFILE XCCDF-FILE > XCCDF-GUIDE-FILE
+
+  - generate report from scanning
+  * $oscap xccdf generate report XCCDF-RESULT-FILE > XCCDF-REPORT-FILE
 
