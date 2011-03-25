@@ -5692,12 +5692,12 @@
 						Add rules to it to meet the auditing re- quirements for your organization.
 						Each line in /etc/audit/audit.rules represents a series of arguments that
 						can be passed to auditctl and can be individually tested as such. See
-						documentation in /usr/share/doc/ audit-version and in the related man pages
+						documentation in /usr/share/doc/audit-<xhtml:i xmlns:xhtml="http://www.w3.org/1999/xhtml">version</xhtml:i> and in the related man pages
 						for more details.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Recommended audit rules are provided in
-						/usr/share/doc/audit-version /stig.rules. In order to activate those rules:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						/usr/share/doc/audit-<xhtml:i xmlns:xhtml="http://www.w3.org/1999/xhtml">version</xhtml:i>/stig.rules. In order to activate those rules:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># cp /usr/share/doc/audit-version /stig.rules
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># cp /usr/share/doc/audit-<xhtml:i xmlns:xhtml="http://www.w3.org/1999/xhtml">version</xhtml:i>/stig.rules
 							/etc/audit/audit.rules<xhtml:br/>
 						</xhtml:code>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> and then edit /etc/audit/audit.rules and comment out the lines
@@ -5822,11 +5822,11 @@
 							/etc/audit/audit.rules, setting ARCH to either b32 or b64 as appropriate
 							for your system:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -a always,exit -F arch=ARCH -S chmod -S fchmod -S fchmodat
-							-F auid&gt;=500 \<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -F auid!=4294967295 -k perm_mod<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -a
+							-F auid&gt;=500 -F auid!=4294967295 -k perm_mod<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -a
 							always,exit -F arch=ARCH -S chown -S fchown -S fchownat -S lchown -F
-							auid&gt;=500 \<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -F auid!=4294967295 -k perm_mod<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -a
+							auid&gt;=500 -F auid!=4294967295 -k perm_mod<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -a
 							always,exit -F arch=ARCH -S setxattr -S lsetxattr -S fsetxattr -S
-							removexattr -S \<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> lremovexattr -S fremovexattr -F auid&gt;=500 -F
+							removexattr -S lremovexattr -S fremovexattr -F auid&gt;=500 -F
 							auid!=4294967295 -k perm_mod </description>
             <Rule id="rule-2.6.2.4.7.a" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
@@ -5846,9 +5846,9 @@
 							/etc/audit/audit.rules, setting ARCH to either b32 or b64 as appropriate
 							for your system:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -a always,exit -F arch=ARCH -S creat -S open -S openat -S
-							truncate -S ftruncate \<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -F exit=-EACCES -F auid&gt;=500 -F
+							truncate -S ftruncate -F exit=-EACCES -F auid&gt;=500 -F
 							auid!=4294967295 -k access<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -a always,exit -F arch=ARCH -S
-							creat -S open -S openat -S truncate -S ftruncate \<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -F
+							creat -S open -S openat -S truncate -S ftruncate -F
 							exit=-EPERM -F auid&gt;=500 -F auid!=4294967295 -k access </description>
             <Rule id="rule-2.6.2.4.8.a" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
@@ -5864,10 +5864,12 @@
           <Group id="group-2.6.2.4.9" hidden="false">
             <title xml:lang="en-US">Ensure auditd Collects Information on the Use of Privileged Commands</title>
             <description xml:lang="en-US"> At a minimum the audit system should collect
-							the execution of privileged commands for all users and root. Add the
-							following to /etc/audit/audit.rules:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							the execution of privileged commands for all users and root. Find all set-uid programs by running
+							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">find /bin -type f -perm -04000 2>/dev/null</xhtml:code>
+							and for each such program, add a rule similar to the
+							following to /etc/audit/audit.rules, replacing /bin/ping by path to the program in question:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -a always,exit -F path=/bin/ping -F perm=x -F auid&gt;=500 -F
-							auid!=4294967295 \<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -k privileged </description>
+							auid!=4294967295 -k privileged </description>
             <Rule id="rule-2.6.2.4.9.a" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Ensure auditd Collects Information on the Use of Privileged Commands</title>
@@ -5905,7 +5907,7 @@
 							/etc/audit/audit.rules, setting ARCH to either b32 or b64 as appropriate
 							for your system:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -a always,exit -F arch=ARCH -S unlink -S unlinkat -S rename
-							-S renameat -F auid&gt;=500 \<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -F auid!=4294967295 -k delete </description>
+							-S renameat -F auid&gt;=500 -F auid!=4294967295 -k delete </description>
             <Rule id="rule-2.6.2.4.11.a" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Ensure auditd Collects Files Deletion Events by User (successful	and unsuccessful)</title>
@@ -5920,7 +5922,11 @@
           <Group id="group-2.6.2.4.12" hidden="false">
             <title xml:lang="en-US">Ensure auditd Collects System Administrator Actions</title>
             <description xml:lang="en-US"> At a minimum the audit system should collect
-							administrator actions for all users and root. Add the following to /etc/audit/audit.rules:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							administrator actions for all users and root.  Append the following line to /etc/pam.d/system-auth:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							session   required pam_tty_audit.so disable=* enable=root
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> and the following line to /etc/pam.d/sudo and /etc/pam.d/sudo-i:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							session required pam_tty_audit.so open_only enable=root
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>Also add the following to /etc/audit/audit.rules:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -w /etc/sudoers -p wa -k actions</description>
             <Rule id="rule-2.6.2.4.12.a" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
