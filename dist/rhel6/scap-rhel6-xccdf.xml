@@ -240,8 +240,8 @@
 					need administrator access to use sudo. Another example is to limit logins on
 					server systems to only those administrators who need to log into them in order
 					to perform administration tasks. Using SELinux also follows the principle of
-					least privilege: SELinux policy can conﬁne software to perform only actions on
-					the system that are speciﬁcally allowed. This can be far more restrictive than
+					least privilege: SELinux policy can confine software to perform only actions on
+					the system that are specifically allowed. This can be far more restrictive than
 					the actions permissible by the traditional Unix permissions model.</description>
     </Group>
   </Group>
@@ -260,7 +260,7 @@
 					only installation choices with security implications are covered. Many of the
 					configuration choices presented here can also be applied after the system is
 					installed. The choices can also be automatically applied via Kickstart
-					ﬁles.</description>
+					files.</description>
         <Group id="gr-installation-1" hidden="false">
           <title xml:lang="en-US">Disk Partitioning</title>
           <description xml:lang="en-US"> Some system directories should be placed on their
@@ -288,10 +288,10 @@
           <Group id="gr-installation-1.1" hidden="false">
             <title xml:lang="en-US">Create Separate Partition or Logical Volume for	/tmp</title>
             <description xml:lang="en-US"> The /tmp directory is a world-writable
-							directory used for temporary ﬁle storage. Ensure that it has its own
+							directory used for temporary file storage. Ensure that it has its own
 							partition or logical volume.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Because software may need to use /tmp to temporarily store
-							large ﬁles, ensure that it is of adequate size. For a modern,
+							large files, ensure that it is of adequate size. For a modern,
 							general-purpose system, 10GB should be adequate. Smaller or larger sizes
 							could be used, depending on the availability of space on the drive and
 							the system’s operating requirements </description>
@@ -299,7 +299,7 @@
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Ensure that /tmp has its own partition or logical volume</title>
               <description xml:lang="en-US">The /tmp directory is a world-writable
-								directory used for temporary ﬁle storage. Ensure that it has its own
+								directory used for temporary file storage. Ensure that it has its own
 								partition or logical volume.</description>
               <ident system="http://cce.mitre.org">CCE-14161-4</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -315,7 +315,7 @@
 							installed by other software packages. Ensure that /var has its own
 							partition or logical volume.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Because the yum package manager and other software uses /var
-							to temporarily store large ﬁles, ensure that it is of adequate size. For
+							to temporarily store large files, ensure that it is of adequate size. For
 							a modern, general-purpose system, 10GB should be adequate. </description>
             <Rule id="rule-2.1.1.1.2.a" selected="false" weight="10.000000" severity="low">
               <status date="2010-07-01">draft</status>
@@ -375,7 +375,7 @@
 							locally, create a separate partition for /home. If /home will be mounted
 							from another system such as an NFS server, then creating a separate
 							partition is not necessary at this time, and the mountpoint can instead
-							be conﬁgured later.</description>
+							be configured later.</description>
             <Rule id="rule-2.1.1.1.5.a" selected="false" weight="10.000000" severity="low">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Ensure that /home has its own partition or logical volume</title>
@@ -383,7 +383,7 @@
 								locally, create a separate partition for /home. If /home will be
 								mounted from another system such as an NFS server, then creating a
 								separate partition is not necessary at this time, and the mountpoint
-								can instead be conﬁgured later.</description>
+								can instead be configured later.</description>
               <ident system="http://cce.mitre.org">CCE-14559-9</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref name="oval:rhel:def:20006" href="scap-rhel6-oval.xml"/>
@@ -571,7 +571,7 @@
             <title xml:lang="en-US">Ensure Package Signature Checking is Not Disabled For Any Repos</title>
             <description xml:lang="en-US"> To ensure that signature checking is not
 							disabled for any repos, ensure that the following line DOES NOT appear
-							in any repo conﬁguration ﬁles in /etc/yum.repos.d or elsewhere:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							in any repo configuration files in /etc/yum.repos.d or elsewhere:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> gpgcheck=0 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						</description>
             <Rule id="rule-2.1.2.3.4.a" selected="false" weight="10.000000">
@@ -579,7 +579,7 @@
               <title xml:lang="en-US">Package Signature Checking is Not Disabled For Any Repos</title>
               <description xml:lang="en-US"> To ensure that signature checking is not disabled for any
 								repos, ensure that the following line DOES NOT appear in any repo
-								conﬁguration ﬁles in /etc/yum.repos.d or elsewhere:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+								configuration files in /etc/yum.repos.d or elsewhere:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 								<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>gpgcheck=0</description>
               <ident system="http://cce.mitre.org">CCE-14813-0</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -602,7 +602,7 @@
             <title xml:lang="en-US">Ensure Repodata Signature Checking is Not Disabled For Any Repos</title>
             <description xml:lang="en-US"> To ensure that signature checking is not
 							disabled for any repos, ensure that the following line DOES NOT appear
-							in any repo conﬁguration ﬁles in /etc/yum.repos.d or elsewhere:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							in any repo configuration files in /etc/yum.repos.d or elsewhere:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> gpgcheck=0<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Note: Red Hat’s repositories support signatures on repodata,
 							but some public repositories do not. If a repository does not support
@@ -623,22 +623,22 @@
           <title xml:lang="en-US">Verify Package Integrity Using RPM</title>
           <description xml:lang="en-US"> The RPM package management system includes the
 						ability to verify the integrity of installed packages by comparing the
-						installed ﬁles with information about the ﬁles taken from the package
+						installed files with information about the files taken from the package
 						metadata stored in the RPM database. Although an attacker could corrupt the
 						RPM database (analogous to attacking the AIDE database as described above),
-						this check can still reveal modiﬁcation of important ﬁles.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> To determine which ﬁles on the system diﬀer from what is
+						this check can still reveal modification of important files.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> To determine which files on the system differ from what is
 						expected by the RPM database:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># rpm -qVa<xhtml:br/>
 						</xhtml:code>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> A “c” in the second column indicates that a ﬁle is a
-						conﬁguration ﬁle (and may be expected to change). In order to exclude
-						conﬁguration ﬁles from this list, run: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> A “c” in the second column indicates that a file is a
+						configuration file (and may be expected to change). In order to exclude
+						configuration files from this list, run: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># rpm -qVa | awk '$2!="c" {print $0}'<xhtml:br/>
 						</xhtml:code>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The man page rpm(8) describes the format of the output. Any ﬁles
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The man page rpm(8) describes the format of the output. Any files
 						that do not match the expected output demand further investigation if the
 						system is being seriously examined. This check could also be run as a cron
 						job. </description>
@@ -646,7 +646,7 @@
             <status date="2010-07-01">draft</status>
             <title xml:lang="en-US">Package Integrity is correct according to package management system</title>
             <description xml:lang="en-US">Verify the integrity of installed packages by comparing the
-							installed ﬁles with information about the ﬁles taken from the package
+							installed files with information about the files taken from the package
 							metadata stored in the RPM database.</description>
             <ident system="http://cce.mitre.org">CCE-14931-0</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -1450,7 +1450,7 @@
 						owner is not root or another system account.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Allowing a user account to own a world-writeable directory is
 						undesirable because it allows the owner of that directory to remove or
-						replace any ﬁles that may be placed in the directory by other
+						replace any files that may be placed in the directory by other
 						users.</description>
           <Rule id="rule-2.2.3.6.a" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">draft</status>
@@ -1836,7 +1836,7 @@
         <Group id="group-2.3.1.5.2" hidden="false">
             <title xml:lang="en-US">Verify that All Account Password Hashes are Shadowed</title>
             <description xml:lang="en-US"> <xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> The hashes for all user account 
-            					passwords should be stored in the ﬁle /etc/shadow and never in /etc/passwd, which 
+            					passwords should be stored in the file /etc/shadow and never in /etc/passwd, which 
             					is readable by all users. </xhtml:p>
 					    <xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> To ensure that no password hashes are stored
 							in /etc/passwd, the following command should have no output: </xhtml:p>
@@ -2148,9 +2148,9 @@
 						information on the capabilities and configuration of each. </description>
           <Group id="group-2.3.3.1.1" hidden="false">
             <title xml:lang="en-US">Set Password Quality Requirements, if using pam_cracklib</title>
-            <description xml:lang="en-US"> The pam_cracklib PAM module can be conﬁgured
+            <description xml:lang="en-US"> The pam_cracklib PAM module can be configured
 							to meet recommendations for DoD systems as stated in [12].<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> To conﬁgure pam_cracklib to require at least one uppercase
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> To configure pam_cracklib to require at least one uppercase
 							character, lowercase character, digit, and other (special) character,
 							locate the following line in /etc/pam.d/system-auth:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> password requisite pam_cracklib.so try_first_pass retry=3<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -2297,17 +2297,17 @@
           <Group id="group-2.3.3.1.2" hidden="false">
             <title xml:lang="en-US">Set Password Quality Requirements, if using pam_passwdqc</title>
             <description xml:lang="en-US"> If password strength stronger than that
-							guaranteed by pam_cracklib is required, conﬁgure PAM to use pam_passwdqc.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							guaranteed by pam_cracklib is required, configure PAM to use pam_passwdqc.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> To activate pam_passwdqc, locate the following line in /etc/pam.d/system-auth:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> password requisite pam_cracklib.so try_first_pass retry=3<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> and then replace it with the line:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> password requisite pam_passwdqc.so min=disabled,disabled,16,12,8<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> If necessary, modify the arguments
 							(min=disabled,disabled,16,12,8) to ensure compliance with your
-							organization’s security policy. Conﬁguration options are described in
+							organization’s security policy. Configuration options are described in
 							the man page pam_passwdqc(8) and also in
 							/usr/share/doc/pam_passwdqc-version. The minimum lengths provided here
-							supercede that speciﬁed by the argument PASS MIN LEN as described in
+							supercede that specified by the argument PASS MIN LEN as described in
 							Section 2.3.1.7.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The options given in the example above set a minimum length
 							for each of the password “classes” that pam_passwdqc recognizes. Setting
@@ -2426,7 +2426,7 @@
           <description xml:lang="en-US"> The default algorithm for storing password hashes
 						in /etc/shadow is MD5. In release 5.2 (and for those systems fully updated
 						since its release), the algorithms SHA-256 and SHA-512 are available.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> In order to conﬁgure the system to use the SHA-512 algorithm,
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> In order to configure the system to use the SHA-512 algorithm,
 						issue the command: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># /usr/sbin/authconfig --passalgo=sha512 --update<xhtml:br/>
@@ -2437,7 +2437,7 @@
 						http://www.redhat.com/docs/en-US/Red_Hat_
 						Enterprise_Linux/5.2/html/Release_Notes/singles/relnotesU2-x86.html document
 						this change. As noted there, only kickstart-installed systems can be
-						conﬁgured to begin operation with this algorithm. Other systems will need to
+						configured to begin operation with this algorithm. Other systems will need to
 						have this command issued and then all accounts will need to perform a
 						password change in order to upgrade the stored hashes to the stronger
 						algorithm. </description>
@@ -2468,9 +2468,9 @@
 						This can be accomplished by using the remember option for the pam_unix PAM
 						module. In order to prevent a user from re-using any of his or her last 5
 						passwords, append remember=5 to the password line which uses the pam_unix
-						module in the ﬁle /etc/pam.d/system-auth, as shown:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						module in the file /etc/pam.d/system-auth, as shown:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> password sufficient pam_unix.so existing_options remember=5<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Old (and thus no longer valid) passwords are stored in the ﬁle
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Old (and thus no longer valid) passwords are stored in the file
 						/etc/security/opasswd. </description>
           <Value id="var-2.3.3.6.a" operator="equals" type="number">
             <title xml:lang="en-US">remember</title>
@@ -3286,12 +3286,12 @@
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">$ /usr/sbin/sestatus<xhtml:br/>
 						</xhtml:code>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> If the system is properly conﬁgured, the output should indicate:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> If the system is properly configured, the output should indicate:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:ul xmlns:xhtml="http://www.w3.org/1999/xhtml">
 							<xhtml:li>SELinux status: enabled</xhtml:li>
 							<xhtml:li>Current mode: enforcing</xhtml:li>
-							<xhtml:li>Mode from conﬁg ﬁle: enforcing</xhtml:li>
-							<xhtml:li>Policy from conﬁg ﬁle: targeted</xhtml:li>
+							<xhtml:li>Mode from config file: enforcing</xhtml:li>
+							<xhtml:li>Policy from config file: targeted</xhtml:li>
 						</xhtml:ul>
 					</description>
         </Group>
@@ -3419,18 +3419,18 @@
       </Group>
       <Group id="group-2.4.5" hidden="false">
         <title xml:lang="en-US">Check for Unconfined Daemons</title>
-        <description xml:lang="en-US"> Device ﬁles are used for communication with important
-					system resources. SELinux contexts should exist for these. If a device ﬁle is
-					not labeled, then misconﬁguration is likely.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> To check for unlabeled device ﬁles, run the following command:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+        <description xml:lang="en-US"> Device files are used for communication with important
+					system resources. SELinux contexts should exist for these. If a device file is
+					not labeled, then misconfiguration is likely.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> To check for unlabeled device files, run the following command:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># ls -Z | grep unlabeled_t<xhtml:br/>
 					</xhtml:code>
-					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> It should produce no output in a well-conﬁgured
+					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> It should produce no output in a well-configured
 					system.</description>
         <Rule id="rule-2.4.5.a" selected="false" weight="10.000000" severity="medium">
           <status date="2010-07-01">draft</status>
           <title xml:lang="en-US">Check for Unconfined Daemons</title>
-          <description xml:lang="en-US">Check for device ﬁle that is not labeled.</description>
+          <description xml:lang="en-US">Check for device file that is not labeled.</description>
           <ident system="http://cce.mitre.org">CCE-14991-4</ident>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <check-content-ref name="oval:rhel:def:201115" href="scap-rhel6-oval.xml"/>
@@ -5122,7 +5122,7 @@
 								<xhtml:li>Select the Authorities tab.</xhtml:li>
 								<xhtml:li>Click the Import button at the bottom of the
 									screen.</xhtml:li>
-								<xhtml:li>Navigate to the CA certiﬁcate and import it. Determine
+								<xhtml:li>Navigate to the CA certificate and import it. Determine
 									whether the CA should be used to identify web sites, e-mail
 									users, and software developers and trust it for each
 									accordingly.</xhtml:li>
@@ -5535,11 +5535,11 @@
 					service, in its default configuration, is strongly recommended for all sites,
 					regardless of whether they are running SELinux. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> DoD or federal networks often have substantial auditing requirements
-					and auditd can be conﬁgured to meet these requirements.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+					and auditd can be configured to meet these requirements.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Typical DoD requirements include:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:ul xmlns:xhtml="http://www.w3.org/1999/xhtml">
-						<xhtml:li>Ensure Auditing is Conﬁgured to Collect Certain System Events <xhtml:ul>
+						<xhtml:li>Ensure Auditing is Configured to Collect Certain System Events <xhtml:ul>
 								<xhtml:li>Information on the Use of Print Command (unsuccessful and
 									successful)</xhtml:li>
 								<xhtml:li>Startup and Shutdown Events (unsuccessful and
@@ -5559,13 +5559,13 @@
 									and in MLS systems, the objects security level.</xhtml:li>
 							</xhtml:ul>
 						</xhtml:li>
-						<xhtml:li>Ensure ﬁles are backed up no less than weekly onto a diﬀerent
+						<xhtml:li>Ensure files are backed up no less than weekly onto a different
 							system than the system being audited or backup media.</xhtml:li>
 						<xhtml:li>Ensure old logs are closed out and new audit logs are started
 							daily</xhtml:li>
-						<xhtml:li>Ensure the conﬁguration is immutable. With the -e 2 setting a
+						<xhtml:li>Ensure the configuration is immutable. With the -e 2 setting a
 							reboot will be required to change any audit rules.</xhtml:li>
-						<xhtml:li>Ensure that the audit data ﬁles have permissions of 640, or more
+						<xhtml:li>Ensure that the audit data files have permissions of 640, or more
 							restrictive.</xhtml:li>
 					</xhtml:ul>
 				</description>
@@ -5597,51 +5597,51 @@
           </Rule>
         </Group>
         <Group id="group-2.6.2.2" hidden="false">
-          <title xml:lang="en-US">Conﬁgure auditd Data Retention</title>
+          <title xml:lang="en-US">Configure auditd Data Retention</title>
           <description xml:lang="en-US">
 						<xhtml:ul xmlns:xhtml="http://www.w3.org/1999/xhtml">
 							<xhtml:li>Determine STOREMB , the amount of audit data (in megabytes)
-								which should be retained in each log ﬁle. Edit the ﬁle
+								which should be retained in each log file. Edit the file
 								/etc/audit/auditd.conf. Add or modify the following line:<xhtml:br/>
 								<xhtml:br/> max_log_file = STOREMB</xhtml:li>
-							<xhtml:li>Use a dedicated partition (or logical volume) for log ﬁles. It
+							<xhtml:li>Use a dedicated partition (or logical volume) for log files. It
 								is straightforward to create such a partition or logical volume
 								during system installation time. The partition should be larger than
 								the maximum space which auditd will ever use, which is the maximum
-								size of each log ﬁle (max log file) multiplied by the number of log
-								ﬁles (num logs). Ensure the partition is mounted on
+								size of each log file (max log file) multiplied by the number of log
+								files (num logs). Ensure the partition is mounted on
 								/var/log/audit.</xhtml:li>
 							<xhtml:li>If your site requires that the machine be disabled when
-								auditing cannot be performed, conﬁgure auditd to halt the system
+								auditing cannot be performed, configure auditd to halt the system
 								when disk space for auditing runs low. Edit /etc/audit/auditd.conf,
 								and add or correct the following lines:<xhtml:br/>
 								<xhtml:br/> space_left_action = email<xhtml:br/> action_mail_acct =
 								root<xhtml:br/> admin_space_left_action = halt<xhtml:br/>
 							</xhtml:li>
 						</xhtml:ul> The default action to take when the logs reach their maximum
-						size is to rotate the log ﬁles, discarding the oldest one. If it is more
+						size is to rotate the log files, discarding the oldest one. If it is more
 						important to retain all possible auditing information, even if that opens
-						the possibility of running out of space and taking the action deﬁned by
+						the possibility of running out of space and taking the action defined by
 						admin space left action, add or correct the line:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> max_log_file_action = keep_logs<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> By default, auditd retains 4 log ﬁles of size 5Mb apiece. For a
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> By default, auditd retains 4 log files of size 5Mb apiece. For a
 						busy system or a system which is thoroughly auditing system activity, this
-						is likely to be insuﬃcient.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The log ﬁle size needed will depend heavily on what types of
-						events are being audited. First conﬁgure auditing to log all the events of
+						is likely to be insufficient.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The log file size needed will depend heavily on what types of
+						events are being audited. First configure auditing to log all the events of
 						interest. Then monitor the log size manually for awhile to determine what
-						ﬁle size will allow you to keep the required data for the correct time period.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						file size will allow you to keep the required data for the correct time period.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Using a dedicated partition for /var/log/audit prevents the
-						auditd logs from disrupting system functionality if they ﬁll, and, more
-						importantly, prevents other activity in /var from ﬁlling the partition and
+						auditd logs from disrupting system functionality if they fill, and, more
+						importantly, prevents other activity in /var from filling the partition and
 						stopping the audit trail. (The audit logs are size-limited and therefore
-						unlikely to grow without bound unless conﬁgured to do so.) Some machines may
+						unlikely to grow without bound unless configured to do so.) Some machines may
 						have requirements that no actions occur which cannot be audited. If this is
-						the case, then auditd can be conﬁgured to halt the machine if it runs out of space.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Note: Since older logs are rotated, conﬁguring auditd this way
+						the case, then auditd can be configured to halt the machine if it runs out of space.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Note: Since older logs are rotated, configuring auditd this way
 						does not prevent older logs from being rotated away before they can be
 						viewed. </description>
-          <warning xml:lang="en-US">If your system is conﬁgured to halt when logging
+          <warning xml:lang="en-US">If your system is configured to halt when logging
 						cannot be performed, make sure this can never happen under normal
 						circumstances! Ensure that /var/ log/ audit is on its own partition, and
 						that this partition is larger than the maximum amount of data auditd will
@@ -5654,7 +5654,7 @@
 						kernel line in /etc/grub.conf, in the manner below:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> kernel /vmlinuz-version ro vga=ext root=/dev/VolGroup00/LogVol00
 						rhgb quiet audit=1<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Each process on the system carries an ”auditable” ﬂag which
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Each process on the system carries an ”auditable” flag which
 						indicates whether its activities can be audited. Although auditd takes care
 						of enabling this for all processes which launch after it does, adding the
 						kernel argument ensures that it is set for every process during boot. </description>
@@ -5673,22 +5673,22 @@
           </Rule>
         </Group>
         <Group id="group-2.6.2.4" hidden="false">
-          <title xml:lang="en-US">Conﬁgure auditd Rules for Comprehensive Auditing</title>
+          <title xml:lang="en-US">Configure auditd Rules for Comprehensive Auditing</title>
           <description xml:lang="en-US"> The auditd program can perform comprehensive
 						monitoring of system activity. This section describes rec- ommended
-						conﬁguration settings for comprehensive auditing, but a full description of
+						configuration settings for comprehensive auditing, but a full description of
 						the auditing system’s capabilities is beyond the scope of this guide. The
 						mailing list linux-audit@redhat.com may be a good source of further information.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The audit subsystem supports extensive collection of events, including:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:ul xmlns:xhtml="http://www.w3.org/1999/xhtml">
-							<xhtml:li>Tracing of arbitrary system calls (identiﬁed by name or
+							<xhtml:li>Tracing of arbitrary system calls (identified by name or
 								number) on entry or exit.</xhtml:li>
 							<xhtml:li>Filtering by PID, UID, call success, system call argument
 								(with some limitations), etc.</xhtml:li>
-							<xhtml:li>Monitoring of speciﬁc ﬁles for modiﬁcations to the ﬁle’s
+							<xhtml:li>Monitoring of specific files for modifications to the file’s
 								contents or metadata.</xhtml:li>
 						</xhtml:ul>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Auditing rules are controlled in the ﬁle /etc/audit/audit.rules.
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Auditing rules are controlled in the file /etc/audit/audit.rules.
 						Add rules to it to meet the auditing re- quirements for your organization.
 						Each line in /etc/audit/audit.rules represents a series of arguments that
 						can be passed to auditctl and can be individually tested as such. See
@@ -5816,9 +5816,9 @@
             </Rule>
           </Group>
           <Group id="group-2.6.2.4.7" hidden="false">
-            <title xml:lang="en-US">Ensure auditd Collects Discretionary Access Control Permission Modiﬁcation Events</title>
+            <title xml:lang="en-US">Ensure auditd Collects Discretionary Access Control Permission Modification Events</title>
             <description xml:lang="en-US"> At a minimum the audit system should collect
-							ﬁle permission changes for all users and root. Add the following to
+							file permission changes for all users and root. Add the following to
 							/etc/audit/audit.rules, setting ARCH to either b32 or b64 as appropriate
 							for your system:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -a always,exit -F arch=ARCH -S chmod -S fchmod -S fchmodat
@@ -5830,9 +5830,9 @@
 							auid!=4294967295 -k perm_mod </description>
             <Rule id="rule-2.6.2.4.7.a" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
-              <title xml:lang="en-US">Ensure auditd Collects Discretionary Access Control Permission Modiﬁcation Events</title>
+              <title xml:lang="en-US">Ensure auditd Collects Discretionary Access Control Permission Modification Events</title>
               <description xml:lang="en-US">Audit rules about the Discretionary Access Control
-								Permission Modiﬁcation Events</description>
+								Permission Modification Events</description>
               <ident system="http://cce.mitre.org">CCE-14058-2</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref name="oval:rhel:def:20163" href="scap-rhel6-oval.xml"/>
@@ -5842,7 +5842,7 @@
           <Group id="group-2.6.2.4.8" hidden="false">
             <title xml:lang="en-US">Ensure auditd Collects Unauthorized Access Attempts to Files (unsuccessful)</title>
             <description xml:lang="en-US"> At a minimum the audit system should collect
-							unauthorized ﬁle accesses for all users and root. Add the following to
+							unauthorized file accesses for all users and root. Add the following to
 							/etc/audit/audit.rules, setting ARCH to either b32 or b64 as appropriate
 							for your system:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -a always,exit -F arch=ARCH -S creat -S open -S openat -S
@@ -5903,7 +5903,7 @@
           <Group id="group-2.6.2.4.11" hidden="false">
             <title xml:lang="en-US">Ensure auditd Collects Files Deletion Events by User (successful and unsuccessful)</title>
             <description xml:lang="en-US"> At a minimum the audit system should collect
-							ﬁle deletion events for all users and root. Add the following to
+							file deletion events for all users and root. Add the following to
 							/etc/audit/audit.rules, setting ARCH to either b32 or b64 as appropriate
 							for your system:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -a always,exit -F arch=ARCH -S unlink -S unlinkat -S rename
@@ -5959,15 +5959,15 @@
             </Rule>
           </Group>
           <Group id="group-2.6.2.4.14" hidden="false">
-            <title xml:lang="en-US">Make the auditd Conﬁguration Immutable</title>
+            <title xml:lang="en-US">Make the auditd Configuration Immutable</title>
             <description xml:lang="en-US"> Add the following to /etc/audit/audit.rules
-							in order to make the conﬁguration immutable:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							in order to make the configuration immutable:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -e 2<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> With this setting, a reboot will be required to change any
 							audit rules. </description>
             <Rule id="rule-2.6.2.4.14.a" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
-              <title xml:lang="en-US">Make the auditd Conﬁguration Immutable</title>
+              <title xml:lang="en-US">Make the auditd Configuration Immutable</title>
               <description xml:lang="en-US">Force a reboot to change audit rules</description>
               <ident system="http://cce.mitre.org">CCE-14692-8</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -8284,9 +8284,9 @@
 					server.</description>
         <Group id="group-3.10.2.1" hidden="false">
           <title xml:lang="en-US">Configure an NTP Client</title>
-          <description xml:lang="en-US"> There are a number of options for conﬁguring
+          <description xml:lang="en-US"> There are a number of options for configuring
 						clients to work with the reference NTP server. It is possible to run ntpd as
-						a service (i.e., continuously) on each host, conﬁguring clients so that the
+						a service (i.e., continuously) on each host, configuring clients so that the
 						ntp protocol ignores all network access. This still introduces an additional
 						network listener on client machines, and is therefore not recommended.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> This guide instead recommends running ntpd periodically via
@@ -8294,11 +8294,11 @@
 						is being obsoleted in favor of ntpd.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Alternately, even if the server is running the reference NTP
 						implementation, it is possible for clients to access it using SNTP. See
-						Section 3.10.3.2 for information about conﬁguring SNTP
+						Section 3.10.3.2 for information about configuring SNTP
 						clients.</description>
           <Group id="group-3.10.2.1.1" hidden="false">
-            <title xml:lang="en-US">Set Up Client NTP Conﬁguration File</title>
-            <description xml:lang="en-US"> A valid conﬁguration ﬁle for the client
+            <title xml:lang="en-US">Set Up Client NTP Configuration File</title>
+            <description xml:lang="en-US"> A valid configuration file for the client
 							system’s ntpd must exist at /etc/ntp.conf. Ensure that /etc/ntp.conf
 							contains the following line, where ntp-server is the hostname or IP
 							address of the site NTP server:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -8311,19 +8311,19 @@
           </Group>
           <Group id="group-3.10.2.1.2" hidden="false">
             <title xml:lang="en-US">Run ntpdate using Cron</title>
-            <description xml:lang="en-US"> Create a ﬁle /etc/cron.d/ntpd containing the
+            <description xml:lang="en-US"> Create a file /etc/cron.d/ntpd containing the
 							following crontab:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 15 * * * * root /usr/sbin/ntpd -q -u ntp:ntp<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The -q option instructs ntpd to exit just after setting the
-							clock, and the -u option instructs it to run as the speciﬁed user.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Note: When setting the clock for the ﬁrst time, execute the
+							clock, and the -u option instructs it to run as the specified user.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Note: When setting the clock for the first time, execute the
 							above command with the -g option, as ntpd will refuse to set the clock
-							if it is signiﬁcantly diﬀerent from the source.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							if it is significantly different from the source.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> This crontab will execute ntpd to synchronize the time to
 							the NTP server at 15 minutes past every hour. (It is possible to choose
-							a diﬀerent minute, or to vary the minute between machines in order to
-							avoid heavy traﬃc to the NTP server.) Hourly synchronization should be
-							suﬃciently frequent that clock drift will not be
+							a different minute, or to vary the minute between machines in order to
+							avoid heavy traffic to the NTP server.) Hourly synchronization should be
+							sufficiently frequent that clock drift will not be
 							noticeable.</description>
           </Group>
         </Group>
@@ -8333,7 +8333,7 @@
 						server, probably either one provided by your ISP or a public time server, to
 						obtain accurate time data. The server then allows other machines on your
 						network to request the time data.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The NTP server conﬁguration ﬁle is located at
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The NTP server configuration file is located at
 						/etc/ntp.conf.</description>
           <Group id="group-3.10.2.2.1" hidden="false">
             <title xml:lang="en-US">Enable the NTP Daemon</title>
@@ -11735,21 +11735,21 @@
         <Group id="group-3.18.2.9" hidden="false">
           <title xml:lang="en-US">Require Server SMB Packet Signing</title>
           <description xml:lang="en-US"> To make the server use packet signing, add the
-						following to the [global] section of the Samba conﬁguration ﬁle:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						following to the [global] section of the Samba configuration file:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> server signing = mandatory<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The Samba server should only communicate with clients who can
 						support SMB packet signing. Packet signing can prevent man-in-the-middle
 						attacks which modify SMB packets in transit.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The Samba service is only required for sharing ﬁles and printers
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The Samba service is only required for sharing files and printers
 						with Microsoft Windows workstations, and even then, other options may exist.
-						Do not use the Samba service to share ﬁles between Unix or Linux machines.
+						Do not use the Samba service to share files between Unix or Linux machines.
 					</description>
         </Group>
         <Group id="group-3.18.2.10" hidden="false">
           <title xml:lang="en-US">Require Client SMB Packet Signing, if using smbclient</title>
           <description xml:lang="en-US"> To require samba clients running smbclient to use
 						packet signing, add the following to the [global] section of the Samba
-						conﬁguration ﬁle:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						configuration file:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> client signing = mandatory<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> A Samba client should only communicate with servers who can
 						support SMB packet signing. Packet signing can prevent man-in-the-middle
