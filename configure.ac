@@ -183,6 +183,19 @@ AC_CHECK_LIB(
   [`pkg-config libcares --libs`]
 )
 
+probe_independent_ldap57=no
+
+AC_CHECK_LIB(
+  [ldap],
+  [ldap_initialize],
+  [libopenldap_libs="-lldap -llber"
+   libopenldap_cflags=""
+   probe_independent_ldap57=yes
+  ],
+  [probe_independent_ldap57=no],
+  []
+)
+
 crapi_cflags=""
 crapi_libs=""
 
@@ -370,6 +383,9 @@ AC_SUBST(curl_libs)
 
 AC_SUBST(libcares_cflags)
 AC_SUBST(libcares_libs)
+
+AC_SUBST(libopenldap_cflags)
+AC_SUBST(libopenldap_libs)
 
 AC_SUBST(rpm_cflags)
 AC_SUBST(rpm_libs)
@@ -654,6 +670,7 @@ AM_CONDITIONAL([WANT_BINDINGS], test "$bindings" = yes)
 AM_CONDITIONAL([ENABLE_VALGRIND_TESTS], test "$vgcheck" = yes)
 AM_CONDITIONAL([HAVE_ODBX], test "$have_odbx" = yes)
 AM_CONDITIONAL([ENABLE_PROBE_DNSCACHE], test "$probe_unix_dnscache" = yes)
+AM_CONDITIONAL([ENABLE_PROBE_LDAP57], test "$probe_independent_ldap57" = yes)
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile
@@ -730,6 +747,7 @@ echo "  textfilecontent probe:       $probes_independent"
 echo "  textfilecontent54 probe:     $probes_independent"
 echo "  sql probe                    $sql_probe_enabled"
 echo "  xmlfilecontent probe:        $probes_independent"
+echo "  ldap57 probe:                $probe_independent_ldap57"
 echo ""
 
 echo "  === unix probes ==="

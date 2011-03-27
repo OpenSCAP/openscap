@@ -50,6 +50,7 @@ const oval_pdsc_t OSCAP_GSYM(default_pdsc)[] = {
 	/*  7006 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54", "probe_textfilecontent54"},
 	/*  7007 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT,    "textfilecontent",   "probe_textfilecontent"},
 	/*  7010 */ {OVAL_INDEPENDENT_XML_FILE_CONTENT,     "xmlfilecontent",    "probe_xmlfilecontent"},
+        /*  7011 */ {OVAL_INDEPENDENT_LDAP57,               "ldap57",            "probe_ldap57"},
 	/*  9001 */ {OVAL_LINUX_DPKG_INFO,                  "dpkginfo",          "probe_dpkginfo"},
 	/*  9002 */ {OVAL_LINUX_INET_LISTENING_SERVERS,     "inetlisteningservers", "probe_inetlisteningservers"},
 	/*  9003 */ {OVAL_LINUX_RPM_INFO,                   "rpminfo",           "probe_rpminfo"},
