@@ -167,6 +167,22 @@ AC_CHECK_LIB(
   [`curl-config --libs`]
 )
 
+#
+# libcares
+#
+probe_unix_dnscache=no
+
+AC_CHECK_LIB(
+  [cares],
+  [ares_library_init],
+  [libcares_cflags=`pkg-config libcares --cflags`
+   libcares_libs=`pkg-config libcares --libs`
+   probe_unix_dnscache=yes
+  ],
+  [probe_unix_dnscache=no],
+  [`pkg-config libcares --libs`]
+)
+
 crapi_cflags=""
 crapi_libs=""
 
@@ -351,6 +367,9 @@ AC_SUBST(pcre_libs)
 
 AC_SUBST(curl_cflags)
 AC_SUBST(curl_libs)
+
+AC_SUBST(libcares_cflags)
+AC_SUBST(libcares_libs)
 
 AC_SUBST(rpm_cflags)
 AC_SUBST(rpm_libs)
@@ -634,6 +653,7 @@ AM_CONDITIONAL([ENABLE_PROBE_DPKGINFO], test "$have_libapt_pkg" = yes)
 AM_CONDITIONAL([WANT_BINDINGS], test "$bindings" = yes)
 AM_CONDITIONAL([ENABLE_VALGRIND_TESTS], test "$vgcheck" = yes)
 AM_CONDITIONAL([HAVE_ODBX], test "$have_odbx" = yes)
+AM_CONDITIONAL([ENABLE_PROBE_DNSCACHE], test "$probe_unix_dnscache" = yes)
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile
@@ -681,6 +701,7 @@ AC_CONFIG_FILES([Makefile
                  tests/probes/interface/Makefile
                  tests/probes/textfilecontent54/Makefile
                  tests/probes/environmentvariable/Makefile
+                 tests/probes/dnscache/Makefile
                  utils/Makefile
                  xsl/Makefile
                  schemas/Makefile
@@ -712,6 +733,7 @@ echo "  xmlfilecontent probe:        $probes_independent"
 echo ""
 
 echo "  === unix probes ==="
+echo "  dnscache probe:              $probe_unix_dnscache"
 echo "  file probe:                  $probes_unix"
 echo "  interface probe:             $probes_unix"
 echo "  password probe:              $probes_unix"
