@@ -21,7 +21,7 @@ EXTRA_DIST = $(top_srcdir)/tests/test_common.sh \
 DISTCLEANFILES = *.log *.out*
 CLEANFILES = *.log *.out*
 
-TESTS_ENVIRONMENT= LD_PRELOAD=$(top_builddir)/src/.libs/libopenscap_testing.so LD_LIBRARY_PATH=$(top_builddir)/src/.libs $(SHELL) -x
+TESTS_ENVIRONMENT= LD_PRELOAD=$(top_builddir)/src/.libs/libopenscap_testing.so LD_LIBRARY_PATH=$(top_builddir)/src/.libs OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes $(SHELL) -x
 TESTS = test_api_probes.sh
 check_PROGRAMS = test_api_probes test_api_probes_smoke test_api_probes_xinetd
 

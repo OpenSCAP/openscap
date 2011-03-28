@@ -17,7 +17,7 @@
 # Test Cases.
 
 function test_api_probes_import {
-    ./test_api_probes --parse $srcdir/scap-rhel5-oval.xml
+    ./test_api_probes $srcdir/scap-rhel5-oval.xml
     return $?
 }
 
