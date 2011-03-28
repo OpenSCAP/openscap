@@ -45,6 +45,7 @@ typedef struct oval_sysent {
 	struct oval_syschar_model *model;
 	char *name;
 	char *value;
+	struct oval_collection *record_fields;
 	int mask;
 	oval_datatype_t datatype;
 	oval_syschar_status_t status;
@@ -58,6 +59,7 @@ struct oval_sysent *oval_sysent_new(struct oval_syschar_model *model)
 
 	sysent->name = NULL;
 	sysent->value = NULL;
+	sysent->record_fields = NULL;
 	sysent->status = SYSCHAR_STATUS_UNKNOWN;
 	sysent->datatype = OVAL_DATATYPE_UNKNOWN;
 	sysent->mask = 0;
@@ -117,6 +119,8 @@ void oval_sysent_free(struct oval_sysent *sysent)
 		oscap_free(sysent->name);
 	if (sysent->value != NULL)
 		oscap_free(sysent->value);
+	if (sysent->record_fields)
+		oval_collection_free_items(sysent->record_fields, (oscap_destruct_func) oval_record_field_free);
 
 	sysent->name = NULL;
 	sysent->value = NULL;
@@ -162,6 +166,15 @@ char *oval_sysent_get_value(struct oval_sysent *sysent)
 	return sysent->value;
 }
 
+struct oval_record_field_iterator *oval_sysent_get_record_fields(struct oval_sysent *sysent)
+{
+	if (!sysent->record_fields)
+		return (struct oval_record_field_iterator *)
+			oval_collection_iterator_new();
+	return (struct oval_record_field_iterator *)
+		oval_collection_iterator(sysent->record_fields);
+}
+
 oval_datatype_t oval_sysent_get_datatype(struct oval_sysent * sysent)
 {
 	__attribute__nonnull__(sysent);
@@ -181,7 +194,7 @@ void oval_sysent_set_name(struct oval_sysent *sysent, char *name)
 	if (sysent && !oval_sysent_is_locked(sysent)) {
 		if (sysent->name != NULL)
 			oscap_free(sysent->name);
-		sysent->name = oscap_strdup(name);
+		sysent->name = name;
 	} else
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
@@ -220,76 +233,65 @@ void oval_sysent_set_value(struct oval_sysent *sysent, char *value)
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
+void oval_sysent_add_record_field(struct oval_sysent *sysent, struct oval_record_field *rf)
+{
+	oval_collection_add(sysent->record_fields, rf);
+}
+
 static void oval_sysent_value_consumer_(char *value, void *sysent)
 {
 	oval_sysent_set_value(sysent, value);
 }
 
-int oval_sysent_parse_tag(xmlTextReaderPtr reader,
-			   struct oval_parser_context *context, oval_sysent_consumer consumer, void *client)
+static void _oval_sysent_record_field_consumer(struct oval_record_field *rf,
+					       struct oval_sysent *sysent)
 {
-	/*
-	   char*              name;
-	   int                mask;
-	   oval_datatype_enum datatype;
-	   oval_syschar_status_enum status;
-	   char*              value;
-	 */
+	oval_sysent_add_record_field(sysent, rf);
+}
+
+static int _oval_sysent_parse_record_field(xmlTextReaderPtr reader,
+					   struct oval_parser_context *context,
+					   void *user)
+{
+	return oval_record_field_parse_tag(reader, context, (oscap_consumer_func)
+					   &_oval_sysent_record_field_consumer,
+					   user, OVAL_RECORD_FIELD_ITEM);
+}
+
+int oval_sysent_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context,
+			  oval_sysent_consumer consumer, void *user)
+{
+	int ret, mask;
+	char *tagname;
+	struct oval_sysent *sysent;
+	oval_datatype_t datatype;
+	oval_syschar_status_t status;
 
 	__attribute__nonnull__(context);
 
-	int return_code = 1;
-	char *tagname = (char *)xmlTextReaderLocalName(reader);
-	if (strcmp("#text", tagname)) {
-		struct oval_sysent *sysent = oval_sysent_new(context->syschar_model);
-		{		/*sysent->name */
-			oval_sysent_set_name(sysent, tagname);
-		}
-		{		/*sysent->mask */
-			int mask = oval_parser_boolean_attribute(reader, "mask", 0);
-			oval_sysent_set_mask(sysent, mask);
-		}
-		{		/*sysent->datatype */
-			oval_datatype_t datatype = oval_datatype_parse(reader, "datatype", OVAL_DATATYPE_STRING);
-			oval_sysent_set_datatype(sysent, datatype);
-		}
-		{		/*sysent->status */
-			oval_syschar_status_t status =
-			    oval_syschar_status_parse(reader, "status", SYSCHAR_STATUS_EXISTS);
-			oval_sysent_set_status(sysent, status);
-		}
-		{		/*sysent->value */
-			return_code = oval_parser_text_value(reader, context, &oval_sysent_value_consumer_, sysent);
-		}
-		if (return_code != 1) {
-			oscap_dlprintf(DBG_W, "Return code is not 1: %d.\n", return_code);
-		} else {
-			/*
-			int numchars = 0;
-			char message[2000];
-			message[numchars] = '\0';
-			numchars = numchars + sprintf(message + numchars, "oval_sysent_parse_tag::");
-			numchars =
-			    numchars + sprintf(message + numchars, "\n    sysent->name     = %s",
-					       oval_sysent_get_name(sysent));
-			numchars =
-			    numchars + sprintf(message + numchars, "\n    sysent->mask     = %d",
-					       oval_sysent_get_mask(sysent));
-			numchars =
-			    numchars + sprintf(message + numchars, "\n    sysent->datatype = %d",
-					       oval_sysent_get_datatype(sysent));
-			numchars =
-			    numchars + sprintf(message + numchars, "\n    sysent->status   = %d",
-					       oval_sysent_get_status(sysent));
-			numchars =
-			    numchars + sprintf(message + numchars, "\n    sysent->value    = %s",
-					       oval_sysent_get_value(sysent));
-			oscap_dprintf("DEBUG: %s", message);	// TODO: Make this as string ^ */
-			(*consumer) (sysent, client);
-		}
+	tagname = (char *) xmlTextReaderLocalName(reader);
+	if (!strcmp("#text", tagname)) {
+		xmlFree(tagname);
+		return 1;
 	}
-	oscap_free(tagname);
-	return return_code;
+
+	sysent = oval_sysent_new(context->syschar_model);
+	oval_sysent_set_name(sysent, tagname);
+	mask = oval_parser_boolean_attribute(reader, "mask", 0);
+	oval_sysent_set_mask(sysent, mask);
+	datatype = oval_datatype_parse(reader, "datatype", OVAL_DATATYPE_STRING);
+	oval_sysent_set_datatype(sysent, datatype);
+	status = oval_syschar_status_parse(reader, "status", SYSCHAR_STATUS_EXISTS);
+	if (datatype == OVAL_DATATYPE_RECORD)
+		ret = oval_parser_parse_tag(reader, context,
+			&_oval_sysent_parse_record_field, sysent);
+	else
+		ret = oval_parser_text_value(reader, context, &oval_sysent_value_consumer_, sysent);
+
+	if (ret == 1)
+		(*consumer) (sysent, user);
+
+	return ret;
 }
 
 void oval_sysent_to_print(struct oval_sysent *sysent, char *indent, int idx)
@@ -330,11 +332,10 @@ void oval_sysent_to_print(struct oval_sysent *sysent, char *indent, int idx)
 
 void oval_sysent_to_dom(struct oval_sysent *sysent, xmlDoc * doc, xmlNode * parent)
 {
+	struct oval_record_field_iterator *rf_itr;
 	xmlNsPtr *ns_parent = xmlGetNsList(doc, parent);
 	xmlNodePtr root_node = xmlDocGetRootElement(doc);
-
 	xmlNode *sysent_tag = NULL;
-
 	char *tagname = oval_sysent_get_name(sysent);
 	char *content = oval_sysent_get_value(sysent);
 	bool mask = oval_sysent_get_mask(sysent);
@@ -360,7 +361,15 @@ void oval_sysent_to_dom(struct oval_sysent *sysent, xmlDoc * doc, xmlNode * pare
 		xmlNewProp(sysent_tag, BAD_CAST "status", BAD_CAST oval_syschar_status_get_text(status_index));
 	}
 
+	rf_itr = oval_sysent_get_record_fields(sysent);
+	while (oval_record_field_iterator_has_more(rf_itr)) {
+		struct oval_record_field *rf;
+
+		rf = oval_record_field_iterator_next(rf_itr);
+		oval_record_field_to_dom(rf, mask, doc, sysent_tag);
+	}
+	oval_record_field_iterator_free(rf_itr);
+
 	if(ns_parent)
 		xmlFree(ns_parent);
 }
-

@@ -723,7 +723,6 @@ static struct oval_sysent *oval_sysent_from_sexp(struct oval_syschar_model *mode
 	oval_sysent_set_datatype(item, datatype);
 
 	SEXP_free(sval);
-	oscap_free(key);
 	oscap_free(val);
 
 	return item;

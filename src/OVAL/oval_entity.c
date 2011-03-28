@@ -347,7 +347,12 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	} else if (varref == NULL) {
 		variable = NULL;
 		varref_type = OVAL_ENTITY_VARREF_NONE;
-		return_code = oval_value_parse_tag(reader, context, &oval_consume_value, &value);
+		if (datatype == OVAL_DATATYPE_RECORD) {
+			value = NULL;
+			return_code = 1;
+		} else {
+			return_code = oval_value_parse_tag(reader, context, &oval_consume_value, &value);
+		}
 	} else {
 		struct oval_definition_model *model = oval_parser_context_model(context);
 		variable = oval_variable_get_new(model, varref, OVAL_VARIABLE_UNKNOWN);

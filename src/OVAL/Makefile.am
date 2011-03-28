@@ -39,6 +39,7 @@ common_oval_sources = \
 	oval_parser.c \
 	oval_parser_impl.h \
 	oval_probe.c	\
+	oval_recordField.c \
 	oval_reference.c \
 	oval_resultCriteriaNode.c \
 	oval_resultDirectives.c \

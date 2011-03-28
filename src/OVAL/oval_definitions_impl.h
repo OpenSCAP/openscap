@@ -128,6 +128,10 @@ int oval_entity_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oscap_
 void oval_entity_to_print(struct oval_entity *, char *indent, int index);
 xmlNode *oval_entity_to_dom(struct oval_entity *, xmlDoc *, xmlNode *);
 
+int oval_record_field_parse_tag(xmlTextReaderPtr, struct oval_parser_context *,
+				oscap_consumer_func, void *, oval_record_field_type_t);
+xmlNode *oval_record_field_to_dom(struct oval_record_field *, bool, xmlDoc *, xmlNode *);
+
 typedef void (*oval_set_consumer) (struct oval_setobject *, void *);
 int oval_set_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oval_set_consumer, void *);
 void oval_set_to_print(struct oval_setobject *, char *indent, int index);

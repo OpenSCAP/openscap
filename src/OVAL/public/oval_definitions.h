@@ -160,7 +160,8 @@ typedef enum {
 	OVAL_DATATYPE_IOS_VERSION = 6,
 	OVAL_DATATYPE_VERSION = 7,
 	OVAL_DATATYPE_INTEGER = 8,
-	OVAL_DATATYPE_STRING = 9
+	OVAL_DATATYPE_STRING = 9,
+	OVAL_DATATYPE_RECORD = 10,
 } oval_datatype_t;
 
 /// Varref types
@@ -232,6 +233,11 @@ typedef enum {
 	OVAL_DATETIME_SECONDS_SINCE_EPOCH = 5
 } oval_datetime_format_t;
 
+typedef enum {
+	OVAL_RECORD_FIELD_UNKNOWN = 0,
+	OVAL_RECORD_FIELD_STATE = 1,
+	OVAL_RECORD_FIELD_ITEM = 2,
+} oval_record_field_type_t;
 
 /**
  * Get the family associated with a given subtype.
@@ -427,6 +433,14 @@ struct oval_entity;
  * @struct oval_entity_iterator
  */
 struct oval_entity_iterator;
+/**
+ * @struct oval_record_field
+ */
+struct oval_record_field;
+/**
+ * @struct oval_record_field_iterator
+ */
+struct oval_record_field_iterator;
 /**
  * @struct oval_setobject
  * OVAL set object
@@ -2443,6 +2457,10 @@ void oval_state_content_set_entity(struct oval_state_content *, struct oval_enti
 /**
  * @memberof oval_state_content
  */
+void oval_state_content_add_record_field(struct oval_state_content *, struct oval_record_field *);
+/**
+ * @memberof oval_state_content
+ */
 void oval_state_content_set_varcheck(struct oval_state_content *, oval_check_t);
 /**
  * @memberof oval_state_content
@@ -2460,6 +2478,10 @@ void oval_state_content_set_entcheck(struct oval_state_content *, oval_check_t);
  * @memberof oval_state_content
  */
 struct oval_entity *oval_state_content_get_entity(struct oval_state_content *);
+/**
+ * @memberof oval_state_content
+ */
+struct oval_record_field_iterator *oval_state_content_get_record_fields(struct oval_state_content *);
 /**
  * Get multipe variable values processing of a state content.
  * @memberof oval_state_content
@@ -2721,6 +2743,124 @@ void oval_entity_iterator_free(struct oval_entity_iterator *);
  * @memberof oval_entity
  */
 bool oval_entity_is_valid(struct oval_entity *entity);
+/** @} */
+
+/**
+ * @memberof oval_record_field
+ */
+struct oval_record_field *oval_record_field_new(oval_record_field_type_t);
+/**
+ * @memberof oval_record_field
+ */
+struct oval_record_field *oval_record_field_clone(struct oval_record_field *);
+/**
+ * @memberof oval_record_field
+ */
+void oval_record_field_free(struct oval_record_field *);
+
+/**
+ * @name Setters
+ * @{
+ */
+/**
+ * @memberof oval_record_field
+ */
+void oval_record_field_set_name(struct oval_record_field *, char *);
+/**
+ * @memberof oval_record_field
+ */
+void oval_record_field_set_value(struct oval_record_field *, char *);
+/**
+ * @memberof oval_record_field
+ */
+void oval_record_field_set_datatype(struct oval_record_field *, oval_datatype_t);
+/**
+ * @memberof oval_record_field
+ */
+void oval_record_field_set_mask(struct oval_record_field *, int);
+/**
+ * @memberof oval_record_field
+ */
+void oval_record_field_set_operation(struct oval_record_field *, oval_operation_t);
+/**
+ * @memberof oval_record_field
+ */
+void oval_record_field_set_variable(struct oval_record_field *, struct oval_variable *);
+/**
+ * @memberof oval_record_field
+ */
+void oval_record_field_set_var_check(struct oval_record_field *, oval_check_t);
+/**
+ * @memberof oval_record_field
+ */
+void oval_record_field_set_ent_check(struct oval_record_field *, oval_check_t);
+/** @} */
+
+/**
+ * @name Getters
+ * @{
+ */
+/**
+ * @memberof oval_record_field
+ */
+oval_record_field_type_t oval_record_field_get_type(struct oval_record_field *);
+/**
+ * @memberof oval_record_field
+ */
+char *oval_record_field_get_name(struct oval_record_field *);
+/**
+ * @memberof oval_record_field
+ */
+char *oval_record_field_get_value(struct oval_record_field *);
+/**
+ * @memberof oval_record_field
+ */
+oval_datatype_t oval_record_field_get_datatype(struct oval_record_field *);
+/**
+ * @memberof oval_record_field
+ */
+int oval_record_field_get_mask(struct oval_record_field *);
+/**
+ * @memberof oval_record_field
+ */
+oval_operation_t oval_record_field_get_operation(struct oval_record_field *);
+/**
+ * @memberof oval_record_field
+ */
+struct oval_variable *oval_record_field_get_variable(struct oval_record_field *);
+/**
+ * @memberof oval_record_field
+ */
+oval_check_t oval_record_field_get_var_check(struct oval_record_field *);
+/**
+ * @memberof oval_record_field
+ */
+oval_check_t oval_record_field_get_ent_check(struct oval_record_field *);
+/** @} */
+
+/**
+ * @name Iterators
+ * @{
+ */
+/**
+ * @memberof oval_record_field
+ */
+bool oval_record_field_iterator_has_more(struct oval_record_field_iterator *);
+/**
+ * @memberof oval_record_field
+ */
+struct oval_record_field *oval_record_field_iterator_next(struct oval_record_field_iterator *);
+/**
+ * @memberof oval_record_field
+ */
+void oval_record_field_iterator_free(struct oval_record_field_iterator *);
+/** @} */
+
+/**
+ * @name Evaluators
+ * @{
+ */
+bool oval_record_field_is_valid(struct oval_record_field *);
 /** @} */
 
 /**

@@ -244,6 +244,7 @@ static const struct oscap_string_map OVAL_DATATYPE_MAP[] = {
 	{OVAL_DATATYPE_VERSION, "version"},
 	{OVAL_DATATYPE_INTEGER, "int"},
 	{OVAL_DATATYPE_STRING, "string"},
+	{OVAL_DATATYPE_RECORD, "record"},
 	{OVAL_ENUMERATION_INVALID, NULL}
 };
 

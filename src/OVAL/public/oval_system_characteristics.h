@@ -788,6 +788,10 @@ void oval_sysent_set_value(struct oval_sysent *sysent, char *value);
 /**
  * @memberof oval_sysent
  */
+void oval_sysent_add_record_field(struct oval_sysent *, struct oval_record_field *);
+/**
+ * @memberof oval_sysent
+ */
 void oval_sysent_set_status(struct oval_sysent *sysent, oval_syschar_status_t status);
 /**
  * @memberof oval_sysent
@@ -814,6 +818,11 @@ char *oval_sysent_get_name(struct oval_sysent *);
  * @memberof oval_sysent
  */
 char *oval_sysent_get_value(struct oval_sysent *);
+
+/**
+ * @memberof oval_sysent
+ */
+struct oval_record_field_iterator *oval_sysent_get_record_fields(struct oval_sysent *);
 
 /**
  * Get system data item status.
@@ -869,9 +878,24 @@ void oval_sysent_iterator_free(struct oval_sysent_iterator *);
 bool oval_sysent_is_valid(struct oval_sysent *sysent);
 /** @} */
 
-
-
-
+/**
+ * @name Setters
+ * @{
+ */
+/**
+ * @memberof oval_record_field
+ */
+void oval_record_field_set_status(struct oval_record_field *, oval_syschar_status_t);
+/** @} */
+/**
+ * @name Getters
+ * @{
+ */
+/**
+ * @memberof oval_record_field
+ */
+oval_syschar_status_t oval_record_field_get_status(struct oval_record_field *);
+/** @} */
 
 /**
  * @memberof oval_message
