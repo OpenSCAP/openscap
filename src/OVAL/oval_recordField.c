@@ -156,7 +156,7 @@ struct oval_record_field *oval_record_field_clone(struct oval_record_field *old_
 		break;
 	}
 	default:
-		dE("Unsupported record field type: %d.\n", type);
+		dE("Unsupported record field type: %d.\n", old_rf->record_field_type);
 		return NULL;
 	}
 
