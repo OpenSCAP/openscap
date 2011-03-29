@@ -349,7 +349,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 			   cstr_path, errofs, errptr);
 			return (NULL);
 		} else {
-			int firstbyte = -1;
+			int firstbyte = -1, ret, svec[3];
 
 			ofts->ofts_path_regex = regex;
 			ofts->ofts_path_regex_extra = pcre_study(regex, 0, &errptr);
@@ -359,6 +359,9 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 
 			dI("pcre_fullinfo(): firstbyte: %d '%c'.\n", firstbyte, firstbyte);
 
+			ret = pcre_exec(ofts->ofts_path_regex, ofts->ofts_path_regex_extra,
+					"/f0o/bar/baz", 12, 0, PCRE_PARTIAL, svec, 1);
+
 			/*
 			 * If firstbyte == '/', the path is an absolute path.
 			 * If firstbyte == -2, the pattern starts with a '^'.
@@ -366,7 +369,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 			 * continues only as long as the path partialy matches
 			 * the pattern.
 			 */
-			if (firstbyte != '/' && firstbyte != -2) {
+			if ((firstbyte != '/' && firstbyte != -2) || ret == PCRE_ERROR_BADPARTIAL) {
 				pcre_free(ofts->ofts_path_regex);
 				pcre_free(ofts->ofts_path_regex_extra);
 				ofts->ofts_path_regex = NULL;
