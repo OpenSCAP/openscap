@@ -414,6 +414,13 @@ struct xccdf_item * xccdf_policy_tailor_item(struct xccdf_policy * policy, struc
  */
 struct oscap_stringlist * xccdf_policy_model_get_files(struct xccdf_policy_model * policy_model);
 
+/**
+ * Return names of files that are used in checks of particular rules. Every check needs this file to be
+ * evaluated properly. If this file will not be imported and bind to the XCCDF Policy system the result
+ * of rule after evaluation will be "Not checked"
+ */
+struct oscap_stringlist * xccdf_item_get_files(struct xccdf_item * item);
+
 /************************************************************/
 /** @} End of Evaluators group */
 

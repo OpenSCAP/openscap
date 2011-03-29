@@ -612,21 +612,21 @@ class OSCAP_Object(object):
         files.free()
         return {"def_models":def_models, "sessions":sessions, "policy_model":policy_model, "xccdf_path":f_XCCDF, "names":names}
 
-    def policy_export(self, result=None, sdir=None, title=None, filename=None, prefix=None):
+    def policy_export(self, result=None, title=None, filename=None, prefix=None, path=None, sessions=None):
         """Export all files for given policy.
         """
 
         if self.object != "xccdf_policy": raise TypeError("Wrong call of \"export\" function. Should be xccdf_policy (have %s)" %(self.object,))
 
-        result.benchmark_uri = sdir["xccdf_path"]
+        result.benchmark_uri = path or "benchmark.xml"
         o_title = common.text()
         o_title.text = title
         result.title = o_title
 
-        if len(sdir["sessions"]) == 0:
+        if len(sessions.keys()) == 0:
             raise IOError("Export failed: Corrupted session list or no OVAL file loaded")
 
-        oval.agent_export_sysinfo_to_xccdf_result(sdir["sessions"][0], result)
+        oval.agent_export_sysinfo_to_xccdf_result(sessions.values()[0], result)
         files = [filename]
 
         for model in self.model.benchmark.models:
@@ -636,8 +636,8 @@ class OSCAP_Object(object):
 
         OSCAP.xccdf_benchmark_export(self.model.benchmark.instance, filename)
 
-        for file in sdir["names"].keys():
-            sess = sdir["names"][file][0]
+        for path in sessions.keys():
+            sess = sessions[path]
             rmodel = oval.agent_get_results_model(sess)
             rd = oval.result_directives(rmodel)
             rd.set_reported(OSCAP.OVAL_RESULT_TRUE |
@@ -653,7 +653,7 @@ class OSCAP_Object(object):
                             OSCAP.OVAL_RESULT_NOT_APPLICABLE |
                             OSCAP.OVAL_RESULT_ERROR,
                             OSCAP.OVAL_DIRECTIVE_CONTENT_FULL )
-            pfile = file+".result.xml"
+            pfile = path+".result.xml"
             OSCAP.oval_results_model_export(rmodel.instance, rd.instance, pfile)
             files.append(pfile)
             rd.free()

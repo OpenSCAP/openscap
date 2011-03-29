@@ -1028,7 +1028,7 @@ static struct oscap_stringlist * xccdf_check_get_files(struct xccdf_check * chec
     return names;
 }
 
-static struct oscap_stringlist * xccdf_item_get_files(struct xccdf_item * item)
+struct oscap_stringlist * xccdf_item_get_files(struct xccdf_item * item)
 {
 
     struct xccdf_item_iterator  * child_it;
