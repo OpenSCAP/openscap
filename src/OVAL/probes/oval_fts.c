@@ -413,7 +413,11 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 	if (ofts != NULL) {
 		register FTSENT *fts_ent;
 
-		/* todo: the following code won't work in case of a path with pattern match and recursion */
+		/*
+		  todo: the following code won't work in case of a path with
+		  pattern match and recursion. split into a part that handles
+		  operator-induced-recursion and a part for oval-recursion
+		*/
 		for (;;) {
 			fts_ent = fts_read(ofts->ofts_fts);
 
@@ -452,11 +456,12 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 				if (ret < 0) {
 					switch (ret) {
 					case PCRE_ERROR_NOMATCH:
-						dI("No path match and partial-match optimization is enabled -> skipping file.\n");
+						dI("Partial-match optimization: PCRE_ERROR_NOMATCH -> skipping file.\n");
 						goto __skip_file;
 					case PCRE_ERROR_PARTIAL:
 						if (fts_ent->fts_info == FTS_SL)
 							fts_set(ofts->ofts_fts, fts_ent, FTS_FOLLOW);
+						dI("Partial-match optimization: PCRE_ERROR_PARTIAL -> continuing.\n");
 						continue;
 					default:
 						dE("pcre_exec() error: %d.\n", ret);
@@ -489,6 +494,8 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 					}
 					if (probe_entobj_cmp(ofts->ofts_spath, stmp) != OVAL_RESULT_TRUE)
 						match = false;
+					if (ofts->ofts_path_op == OVAL_OPERATION_EQUALS) // repulsive hack
+						match = true;
 					SEXP_free(stmp);
 
 					if (match && ofts->ofts_sfilename) {

@@ -42,6 +42,7 @@
 #include <regex.h>
 #endif
 
+#include "common/debug_priv.h"
 #include "entcmp.h"
 #include "../_probe-api.h"
 
@@ -623,10 +624,13 @@ oval_result_t probe_entobj_cmp(SEXP_t * ent_obj, SEXP_t * val)
 
 	valcnt = probe_ent_getvals(ent_obj, &r0);
 	SEXP_free(r0);
-	if (valcnt == 0)
+	if (valcnt == 0) {
+		dI("valcnt == 0.\n");
 		return OVAL_RESULT_FALSE;
+	}
 
 	ores = probe_ent_cmp(ent_obj, val);
+	dI("ores: %d, '%s'.\n", ores, oval_result_get_text(ores));
 	if (ores == OVAL_RESULT_NOT_EVALUATED)
 		return OVAL_RESULT_FALSE;
 	return ores;
