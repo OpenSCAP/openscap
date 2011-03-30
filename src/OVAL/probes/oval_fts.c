@@ -522,7 +522,7 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 					dI("Not skipping FTS_ROOT: %s\n", fts_ent->fts_path);
 				break;
 			case OVAL_RECURSE_DIRECTION_DOWN:
-				if (fts_ent->fts_level < ofts->max_depth || ofts->max_depth == -1) {
+				if (fts_ent->fts_level <= ofts->max_depth || ofts->max_depth == -1) {
 					/*
 					 * Check file type & filesystem recursion.
 					 *  `defined' is handled by fts (FTS_XDEV)
