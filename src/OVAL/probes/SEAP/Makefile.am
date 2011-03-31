@@ -50,6 +50,8 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    seap-debug.c		\
 		    seap-message.c		\
 		    _seap-message.h		\
+		    seap-packetq.c		\
+		    _seap-packetq.h		\
 		    seap-packet.c		\
 		    _seap-packet.h		\
 		    seap-error.c		\
