@@ -64,6 +64,7 @@
 #include <seap.h>
 #include <probe-api.h>
 #include <oval_fts.h>
+#include <common/debug_priv.h>
 
 #define FILE_SEPARATOR '/'
 
@@ -97,15 +98,12 @@ void probe_fini(void *arg)
 static int process_file(const char *path, const char *filename, void *arg)
 {
 	struct pfdata *pfd = (struct pfdata *) arg;
-	int i, ret = 0, path_len, filename_len, node_cnt;
+	int ret = 0, path_len, filename_len;
 	char *whole_path = NULL;
-	xmlDocPtr doc = NULL;
-	xmlXPathContextPtr xpath_ctx = NULL;
-	xmlXPathObjectPtr xpath_obj = NULL;
-	xmlNodeSetPtr nodes;
-	xmlNodePtr cur_node, *node_tab;
-	xmlChar *value;
-	SEXP_t *item;
+	xmlDoc *doc = NULL;
+	xmlXPathContext *xpath_ctx = NULL;
+	xmlXPathObject *xpath_obj = NULL;
+	SEXP_t *item = NULL;
 
         SEXP_t *r0, *r1, *r2, *r3;
 
@@ -145,12 +143,6 @@ static int process_file(const char *path, const char *filename, void *arg)
 		goto cleanup;
 	}
 
-	nodes = xpath_obj->nodesetval;
-	if (nodes == NULL) {
-		ret = -4;
-		goto cleanup;
-	}
-
         item = probe_item_creat("xmlfilecontent_item", NULL,
                                 /* entities */
 				"filepath", NULL, r2 = SEXP_string_newf("%s/%s", path, filename),
@@ -158,33 +150,92 @@ static int process_file(const char *path, const char *filename, void *arg)
                                 "filename", NULL, r1 = SEXP_string_new(filename, strlen (filename)),
                                 "xpath",    NULL, r3 = SEXP_string_new(pfd->xpath, strlen (pfd->xpath)),
                                 NULL);
-
         SEXP_vfree (r0, r1, r2, r3, NULL);
 
-	node_cnt = nodes->nodeNr;
-	if (node_cnt == 0) {
-		probe_item_setstatus(item, OVAL_STATUS_DOESNOTEXIST);
-		probe_item_ent_add(item, "value_of", NULL, NULL);
-                probe_itement_setstatus(item, "value_of", 1, OVAL_STATUS_DOESNOTEXIST);
-        } else {
-		node_tab = nodes->nodeTab;
-		for (i = 0; i < node_cnt; ++i) {
-			cur_node = nodes->nodeTab[i];
-			if (cur_node->type == XML_ATTRIBUTE_NODE ||
-			    cur_node->type == XML_TEXT_NODE)
-                        {
-				value = xmlNodeGetContent(cur_node);
-				probe_item_ent_add(item, "value_of", NULL, r0 = SEXP_string_new ((char *) value, strlen ((char *) value)));
-				xmlFree(value);
-                                SEXP_free (r0);
+	dI("xpath obj type: %d.\n", xpath_obj->type);
+	switch(xpath_obj->type) {
+	case XPATH_BOOLEAN:
+	{
+		SEXP_t *val;
+		int b;
+
+		b = xmlXPathCastToBoolean(xpath_obj);
+		val = SEXP_number_newb(b);
+		probe_item_ent_add(item, "value_of", NULL, val);
+		SEXP_free(val);
+		break;
+	}
+	case XPATH_NUMBER:
+	{
+		SEXP_t *val;
+		double d;
+
+		d = xmlXPathCastToNumber(xpath_obj);
+		val = SEXP_number_newf(d);
+		probe_item_ent_add(item, "value_of", NULL, val);
+		SEXP_free(val);
+		break;
+	}
+	case XPATH_STRING:
+	{
+		SEXP_t *val;
+		char *s;
+
+		s = (char *) xmlXPathCastToString(xpath_obj);
+		val = SEXP_string_newf("%s", s);
+		xmlFree(s);
+		probe_item_ent_add(item, "value_of", NULL, val);
+		SEXP_free(val);
+		break;
+	}
+	case XPATH_NODESET:
+	{
+		int node_cnt, i;
+		xmlNodeSet *nodes;
+		xmlNode *cur_node, **node_tab;
+
+		nodes = xpath_obj->nodesetval;
+		if (nodes == NULL) {
+			ret = -4;
+			goto cleanup;
+		}
+
+		node_cnt = nodes->nodeNr;
+		dI("node_cnt: %d.\n", node_cnt);
+		if (node_cnt == 0) {
+			probe_item_setstatus(item, OVAL_STATUS_DOESNOTEXIST);
+			probe_item_ent_add(item, "value_of", NULL, NULL);
+			probe_itement_setstatus(item, "value_of", 1, OVAL_STATUS_DOESNOTEXIST);
+		} else {
+			node_tab = nodes->nodeTab;
+			for (i = 0; i < node_cnt; ++i) {
+				cur_node = node_tab[i];
+				dI("node[%d] line: %d, name: '%s', type: %d.\n",
+				   i, cur_node->line, cur_node->name, cur_node->type);
+				if (cur_node->type == XML_ATTRIBUTE_NODE
+				    || cur_node->type == XML_TEXT_NODE) {
+					xmlChar *value;
+
+					value = xmlNodeGetContent(cur_node);
+					probe_item_ent_add(item, "value_of", NULL,
+							   r0 = SEXP_string_newf ("%s", (char *) value));
+					xmlFree(value);
+					SEXP_free (r0);
+				}
 			}
 		}
+		break;
+	}
+	default:
+		probe_item_setstatus(item, OVAL_STATUS_DOESNOTEXIST);
+		break;
 	}
 
 	probe_cobj_add_item(pfd->cobj, item);
-        SEXP_free (item);
 
  cleanup:
+	if (item != NULL)
+		SEXP_free(item);
 	if (xpath_obj != NULL)
 		xmlXPathFreeObject(xpath_obj);
 	if (xpath_ctx != NULL)
