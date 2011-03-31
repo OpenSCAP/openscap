@@ -31,6 +31,7 @@
 #include "generic/common.h"
 #include "public/sexp-manip.h"
 #include "_sexp-parser.h"
+#include "_seap-packetq.h"
 #include "_seap-packet.h"
 #include "_seap-scheme.h"
 #include "seap-descriptor.h"
@@ -612,6 +613,8 @@ int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet)
         char        psym_cstr_b[16+1];
         char       *psym_cstr;
 
+	SEAP_packet_t *_packet;
+
         _LOGCALL_;
 
         dsc = SEAP_desc_get (ctx->sd_table, sd);
@@ -621,22 +624,9 @@ int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet)
                 return (-1);
         }
 
-        /*
-         * Check packet queue
-         */
-        if (pqueue_notempty (dsc->pck_queue)) {
-                /* TODO */
-                abort ();
-        }
+	if (SEAP_packetq_get(&dsc->pck_queue, packet) != -1)
+		return (0);
 
-        if (dsc->sexpbuf != NULL) {
-                if (SEXP_list_length (dsc->sexpbuf) > 0)
-                        goto sexp_buf_recv;
-                else {
-                        SEXP_free(dsc->sexpbuf);
-                        dsc->sexpbuf = NULL;
-                }
-        }
         /*
          * Event loop
          * The read mutex is not locked during the wait for an event.
@@ -789,133 +779,139 @@ eloop_exit:
         }
 
         SEXP_psetup_free (psetup);
-        dsc->sexpbuf = sexp_buffer;
+	SEXP_VALIDATE(sexp_buffer);
+	(*packet) = NULL;
 
-sexp_buf_recv:
-        SEXP_VALIDATE(dsc->sexpbuf);
-        sexp_packet = SEXP_list_pop (dsc->sexpbuf);
+        while((sexp_packet = SEXP_list_pop (sexp_buffer)) != NULL) {
+		if (!SEXP_listp(sexp_packet)) {
+			_D("Invalid SEAP packet received: %s.\n", "not a list");
 
-        _A(sexp_packet != NULL);
+			SEXP_free (sexp_packet);
 
-        if (!SEXP_listp(sexp_packet)) {
-                _D("Invalid SEAP packet received: %s.\n", "not a list");
+			errno = EINVAL;
+			return (-1);
+		} else if (SEXP_list_length (sexp_packet) < 2) {
+			_D("Invalid SEAP packet received: %s.\n", "list length < 2");
 
-                SEXP_free (sexp_packet);
+			SEXP_free (sexp_packet);
 
-                errno = EINVAL;
-                return (-1);
-        } else if (SEXP_list_length (sexp_packet) < 2) {
-                _D("Invalid SEAP packet received: %s.\n", "list length < 2");
+			errno = EINVAL;
+			return (-1);
+		}
 
-                SEXP_free (sexp_packet);
+		psym_sexp = SEXP_list_first (sexp_packet);
 
-                errno = EINVAL;
-                return (-1);
-        }
+		if (!SEXP_stringp(psym_sexp)) {
+			_D("Invalid SEAP packet received: %s.\n", "first list item is not a string");
 
-        psym_sexp = SEXP_list_first (sexp_packet);
+			SEXP_free (psym_sexp);
+			SEXP_free (sexp_packet);
 
-        if (!SEXP_stringp(psym_sexp)) {
-                _D("Invalid SEAP packet received: %s.\n", "first list item is not a string");
+			errno = EINVAL;
+			return (-1);
+		} else if (SEXP_string_length (psym_sexp) != (strlen (SEAP_SYM_PREFIX) + 3)) {
+			_D("Invalid SEAP packet received: %s.\n", "invalid packet type symbol length");
 
-                SEXP_free (psym_sexp);
-                SEXP_free (sexp_packet);
+			SEXP_free (psym_sexp);
+			SEXP_free (sexp_packet);
 
-                errno = EINVAL;
-                return (-1);
-        } else if (SEXP_string_length (psym_sexp) != (strlen (SEAP_SYM_PREFIX) + 3)) {
-                _D("Invalid SEAP packet received: %s.\n", "invalid packet type symbol length");
+			errno = EINVAL;
+			return (-1);
+		} else if (SEXP_strncmp (psym_sexp, SEAP_SYM_PREFIX, strlen (SEAP_SYM_PREFIX)) != 0) {
+			_D("Invalid SEAP packet received: %s.\n", "invalid prefix");
 
-                SEXP_free (psym_sexp);
-                SEXP_free (sexp_packet);
+			SEXP_free (psym_sexp);
+			SEXP_free (sexp_packet);
 
-                errno = EINVAL;
-                return (-1);
-        } else if (SEXP_strncmp (psym_sexp, SEAP_SYM_PREFIX, strlen (SEAP_SYM_PREFIX)) != 0) {
-                _D("Invalid SEAP packet received: %s.\n", "invalid prefix");
+			errno = EINVAL;
+			return (-1);
+		}
 
-                SEXP_free (psym_sexp);
-                SEXP_free (sexp_packet);
+		SEXP_string_cstr_r (psym_sexp, psym_cstr_b, sizeof psym_cstr_b);
+		psym_cstr = psym_cstr_b + strlen (SEAP_SYM_PREFIX);
+		SEXP_free (psym_sexp);
 
-                errno = EINVAL;
-                return (-1);
-        }
+		switch (psym_cstr[0]) {
+		case 'm':
+			if (psym_cstr[1] == 's' &&
+			    psym_cstr[2] == 'g')
+			{
+				_packet = SEAP_packet_new ();
+				_packet->type = SEAP_PACKET_MSG;
 
-        SEXP_string_cstr_r (psym_sexp, psym_cstr_b, sizeof psym_cstr_b);
-        psym_cstr = psym_cstr_b + strlen (SEAP_SYM_PREFIX);
-        SEXP_free (psym_sexp);
+				if (SEAP_packet_sexp2msg (sexp_packet, &(_packet->data.msg)) != 0) {
+					/* error */
+					_D("Invalid SEAP packet received: %s.\n", "can't translate to msg struct");
 
-        switch (psym_cstr[0]) {
-        case 'm':
-                if (psym_cstr[1] == 's' &&
-                    psym_cstr[2] == 'g')
-                {
-                        (*packet) = SEAP_packet_new ();
-                        (*packet)->type = SEAP_PACKET_MSG;
+					SEXP_free (sexp_packet);
+					SEAP_packet_free(_packet);
 
-                        if (SEAP_packet_sexp2msg (sexp_packet, &((*packet)->data.msg)) != 0) {
-                                /* error */
-                                _D("Invalid SEAP packet received: %s.\n", "can't translate to msg struct");
+					errno = EINVAL;
+					return (-1);
+				}
+				break;
+			}
+			goto invalid;
+		case 'c':
+			if (psym_cstr[1] == 'm' &&
+			    psym_cstr[2] == 'd')
+			{
+				_packet = SEAP_packet_new ();
+				_packet->type = SEAP_PACKET_CMD;
 
-                                SEXP_free (sexp_packet);
+				if (SEAP_packet_sexp2cmd (sexp_packet, &(_packet->data.cmd)) != 0) {
+					/* error */
+					_D("Invalid SEAP packet received: %s.\n", "can't translate to cmd struct");
+					SEXP_free (sexp_packet);
+					SEAP_packet_free(_packet);
 
-                                errno = EINVAL;
-                                return (-1);
-                        }
-                        break;
-                }
-                goto invalid;
-        case 'c':
-                if (psym_cstr[1] == 'm' &&
-                    psym_cstr[2] == 'd')
-                {
-                        (*packet) = SEAP_packet_new ();
-                        (*packet)->type = SEAP_PACKET_CMD;
+					errno = EINVAL;
+					return (-1);
+				}
+				break;
+			}
+			goto invalid;
+		case 'e':
+			if (psym_cstr[1] == 'r' &&
+			    psym_cstr[2] == 'r')
+			{
+				_packet = SEAP_packet_new ();
+				_packet->type = SEAP_PACKET_ERR;
 
-                        if (SEAP_packet_sexp2cmd (sexp_packet, &((*packet)->data.cmd)) != 0) {
-                                /* error */
-                                _D("Invalid SEAP packet received: %s.\n", "can't translate to cmd struct");
-                                SEXP_free (sexp_packet);
+				if (SEAP_packet_sexp2err (sexp_packet, &(_packet->data.err)) != 0) {
+					/* error */
+					_D("Invalid SEAP packet received: %s.\n", "can't translate to err struct");
+					SEXP_free (sexp_packet);
+					SEAP_packet_free(_packet);
 
-                                errno = EINVAL;
-                                return (-1);
-                        }
-                        break;
-                }
-                goto invalid;
-        case 'e':
-                if (psym_cstr[1] == 'r' &&
-                    psym_cstr[2] == 'r')
-                {
-                        (*packet) = SEAP_packet_new ();
-                        (*packet)->type = SEAP_PACKET_ERR;
-
-                        if (SEAP_packet_sexp2err (sexp_packet, &((*packet)->data.err)) != 0) {
-                                /* error */
-                                _D("Invalid SEAP packet received: %s.\n", "can't translate to err struct");
-                                SEXP_free (sexp_packet);
-
-                                errno = EINVAL;
-                                return (-1);
-                        }
-                        break;
-                }
-                /* FALLTHROUGH */
-        default:
-        invalid:
-                _D("Invalid SEAP packet received: %s.\n", "invalid packet type symbol");
-                SEXP_free (sexp_packet);
-                errno = EINVAL;
-                return (-1);
-        }
+					errno = EINVAL;
+					return (-1);
+				}
+				break;
+			}
+			/* FALLTHROUGH */
+		default:
+		invalid:
+			_D("Invalid SEAP packet received: %s.\n", "invalid packet type symbol");
+			SEXP_free (sexp_packet);
+			errno = EINVAL;
+			return (-1);
+		}
 
 #if !defined(NDEBUG)
-        fprintf (stderr,   "--- pck in ---\n");
-        SEXP_fprintfa (stderr, sexp_packet);
-        fprintf (stderr, "\n--------------\n");
+		fprintf (stderr,   "--- pck in ---\n");
+		SEXP_fprintfa (stderr, sexp_packet);
+		fprintf (stderr, "\n--------------\n");
 #endif
+		SEXP_free(sexp_packet);
 
-        SEXP_free (sexp_packet);
+		if (*packet == NULL)
+			(*packet) = _packet;
+		else
+			SEAP_packetq_put(&dsc->pck_queue, _packet);
+
+		_packet = NULL;
+	}
 
         return (0);
 }
@@ -947,7 +943,7 @@ int SEAP_packet_recv_bytype (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet, ui
                         return (ret);
                 else if (pck->type == type)
                         break;
-                else if (pqueue_add (dsc->pck_queue, pck) != 0)
+                else if (SEAP_packetq_put (&dsc->pck_queue, pck) == -1) /* XXX: infinite loop */
                         return (-1);
         }
 

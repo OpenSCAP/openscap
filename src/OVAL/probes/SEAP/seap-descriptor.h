@@ -28,9 +28,9 @@
 #include <pthread.h>
 #include <stdint.h>
 #include "generic/bitmap.h"
-#include "generic/pqueue.h"
 #include "generic/rbt/rbt.h"
 #include "_sexp-types.h"
+#include "_seap-packetq.h"
 #include "_sexp-parser.h"
 #include "_sexp-output.h"
 #include "_seap-command.h"
@@ -47,7 +47,6 @@ OSCAP_HIDDEN_START;
  */
 typedef struct {
         SEAP_msgid_t   next_id;
-        SEXP_t        *sexpbuf; /* S-exp buffer */
         SEXP_ostate_t *ostate; /* Output state */
         SEXP_pstate_t *pstate; /* Parser state */
         SEAP_scheme_t  scheme; /* Protocol/Scheme used for this descriptor */
@@ -57,7 +56,7 @@ typedef struct {
 	rbt_t  *err_queue;
         SEXP_t *cmd_queue;
 
-        pqueue_t *pck_queue;
+        SEAP_packetq_t pck_queue;
 
         pthread_mutex_t w_lock;
         pthread_mutex_t r_lock;

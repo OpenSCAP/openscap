@@ -65,7 +65,6 @@ int SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate,
                 sd_dsc = sm_talloc(SEAP_desc_t);
 
                 sd_dsc->next_id = 0;
-                sd_dsc->sexpbuf = NULL;
                 /* sd_dsc->sexpcnt = 0; */
                 sd_dsc->pstate  = pstate;
                 sd_dsc->scheme  = scheme;
@@ -74,7 +73,8 @@ int SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate,
                 sd_dsc->next_cid = 0;
                 sd_dsc->cmd_c_table = SEAP_cmdtbl_new ();
                 sd_dsc->cmd_w_table = SEAP_cmdtbl_new ();
-                sd_dsc->pck_queue   = pqueue_new (1024); /* FIXME */
+
+		SEAP_packetq_init(&sd_dsc->pck_queue);
 
                 pthread_mutexattr_init (&mutex_attr);
                 pthread_mutexattr_settype (&mutex_attr, PTHREAD_MUTEX_RECURSIVE);
@@ -120,12 +120,9 @@ int SEAP_desc_del (SEAP_desctable_t *sd_table, int sd)
 
 void SEAP_desc_free(SEAP_desc_t *dsc)
 {
-        if (dsc->sexpbuf != NULL)
-                SEXP_free(dsc->sexpbuf);
-
         SEAP_cmdtbl_free(dsc->cmd_c_table);
         SEAP_cmdtbl_free(dsc->cmd_w_table);
-        pqueue_free(dsc->pck_queue);
+	SEAP_packetq_free(&dsc->pck_queue);
         pthread_mutex_destroy(&(dsc->r_lock));
         pthread_mutex_destroy(&(dsc->w_lock));
         sm_free(dsc);
