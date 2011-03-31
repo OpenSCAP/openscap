@@ -420,6 +420,8 @@ static const struct oscap_string_map OVAL_SUBTYPE_INDEPENDENT_MAP[] = {
 	{OVAL_INDEPENDENT_VARIABLE, "variable"},
 	{OVAL_INDEPENDENT_XML_FILE_CONTENT, "xmlfilecontent"},
 	{OVAL_INDEPENDENT_SYSCHAR_SUBTYPE, "system_info"},
+	{OVAL_INDEPENDENT_LDAP57, "ldap57"},
+	{OVAL_INDEPENDENT_LDAP, "ldap"},
 	{OVAL_SUBTYPE_UNKNOWN, NULL}
 };
 
@@ -474,6 +476,7 @@ static const struct oscap_string_map OVAL_SUBTYPE_UNIX_MAP[] = {
 	{OVAL_UNIX_SHADOW, "shadow"},
 	{OVAL_UNIX_UNAME, "uname"},
 	{OVAL_UNIX_XINETD, "xinetd"},
+	{OVAL_UNIX_DNSCACHE, "dnscache"},
 	{OVAL_SUBTYPE_UNKNOWN, NULL}
 };
 
