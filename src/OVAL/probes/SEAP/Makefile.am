@@ -13,8 +13,6 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    generic/strto.h		\
 		    generic/xbase64.c		\
 		    generic/xbase64.h		\
-		    generic/pqueue.c		\
-		    generic/pqueue.h		\
 		    generic/strbuf.c		\
 		    generic/spb.c		\
 		    generic/spb.h		\
