@@ -534,10 +534,11 @@
             <description xml:lang="en-US"> Create the file yum.cron, make it executable, and place it
 							in /etc/cron.daily:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-<xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
-#!/bin/sh
-/usr/bin/yum -R 120 -e 0 -d 0 -y update yum 
-/usr/bin/yum -R 10 -e 0 -d 0 -y update </xhtml:pre>
+							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">
+							#!/bin/sh <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							/usr/bin/yum -R 120 -e 0 -d 0 -y update yum <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							/usr/bin/yum -R 10 -e 0 -d 0 -y update  <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							</xhtml:code>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> This particular script instructs yum to update any packages
 							it finds. Placing the script in /etc/cron.daily ensures its daily
 							execution. To only apply updates once a week, place the script in
@@ -1635,7 +1636,7 @@
 				people to gain shell access to accounts, particularly to privileged accounts, is a
 				necessary part of securing a system. This section introduces mechanisms for
 				restricting access to accounts..</description>
-      <Group id="group-2.3.1" hidden="false">
+      <Group id="gr-accounts-login" hidden="false">
         <title xml:lang="en-US">Protect Accounts by Restricting Password-Based Login</title>
         <description xml:lang="en-US"> Conventionally, Unix shell accounts are accessed by
 					providing a username and password to a login program, which tests these values
@@ -1645,7 +1646,7 @@
 					insecure console. Therefore, mechanisms for accessing accounts by entering
 					usernames and passwords should be restricted to those which are operationally
 					necessary.</description>
-        <Group id="group-2.3.1.1" hidden="false">
+        <Group id="gr-accounts-login.1" hidden="false">
           <title xml:lang="en-US">Restrict Root Logins to System Console</title>
           <description xml:lang="en-US"> Edit the file /etc/securetty. Ensure that the
 						file contains only the following lines: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -1694,7 +1695,7 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.3.1.2" hidden="false">
+        <Group id="gr-accounts-login.2" hidden="false">
           <title xml:lang="en-US">Configure su to Restrict the Root Access</title>
           <description xml:lang="en-US">
 						<xhtml:ol xmlns:xhtml="http://www.w3.org/1999/xhtml">
@@ -1736,7 +1737,7 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.3.1.3" hidden="false">
+        <Group id="gr-accounts-login.3" hidden="false">
           <title xml:lang="en-US">Configure sudo to Improve Auditing of Root Access</title>
           <description xml:lang="en-US">
 						<xhtml:ol xmlns:xhtml="http://www.w3.org/1999/xhtml">
@@ -1774,7 +1775,7 @@
 						customize its behavior. See the sudoers(5) man page for
 						details.</description>
         </Group>
-        <Group id="group-2.3.1.4" hidden="false">
+        <Group id="gr-accounts-login.4" hidden="false">
           <title xml:lang="en-US">Block Shell and Login Access for Non-Root System Accounts</title>
           <description xml:lang="en-US"> Using /etc/passwd, obtain a listing of all users,
 						their UIDs, and their shells, for instance by running: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -1812,7 +1813,7 @@
           </Rule>
         </Group>
 
-        <Group id="group-2.3.1.5.1" hidden="false">
+        <Group id="gr-accounts-login.5" hidden="false">
             <title xml:lang="en-US">Verify that No Accounts Have Empty Password Fields</title>
             <description xml:lang="en-US"> <xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> If an account has an empty password, 
             					anybody may log in and run commands with the privileges of that account. Accounts 
@@ -1833,7 +1834,7 @@
             </Rule>
         </Group>
 
-        <Group id="group-2.3.1.5.2" hidden="false">
+        <Group id="gr-accounts-login.6" hidden="false">
             <title xml:lang="en-US">Verify that All Account Password Hashes are Shadowed</title>
             <description xml:lang="en-US"> <xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> The hashes for all user account 
             					passwords should be stored in the file /etc/shadow and never in /etc/passwd, which 
@@ -1853,7 +1854,7 @@
             </Rule>
         </Group>
 
-        <Group id="group-2.3.1.6" hidden="false">
+        <Group id="gr-accounts-login.7" hidden="false">
           <title xml:lang="en-US">Verify that No Non-Root Accounts Have UID 0</title>
           <description xml:lang="en-US"> <xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> In general, the best practice solution for auditing use of the
 						root account is to restrict the set of cases in which root must be accessed
@@ -1880,17 +1881,21 @@
           </Rule>
         </Group>
 
-        <Group id="group-2.3.1.7" hidden="false">
+        <Group id="gr-accounts-login.8" hidden="false">
           <title xml:lang="en-US">Set Password Expiration Parameters</title>
           <description xml:lang="en-US"> Edit the file /etc/login.defs to specify password
 						expiration settings for new accounts. Add or correct the following lines: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"> PASS_MAX_DAYS=180<xhtml:br/> PASS_MIN_DAYS=7 <xhtml:br/>
-							PASS_MIN_LEN=8 <xhtml:br/> PASS_WARN_AGE=7 <xhtml:br/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"> 
+						PASS_MAX_DAYS=180<xhtml:br/> 
+						PASS_MIN_DAYS=7 <xhtml:br/>
+						PASS_WARN_AGE=7 <xhtml:br/>
 						</xhtml:code>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> For each existing human user USER , modify the current
-						expiration settings to match these: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># chage -M 180 -m 7 -W 7 USER<xhtml:br/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						For each existing human user USER , modify the current expiration settings to match these: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">
+						# chage -M 180 -m 7 -W 7 USER<xhtml:br/>
 						</xhtml:code>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Users should be forced to change their passwords, in order to
 						decrease the utility of compromised passwords. However, the need to change
@@ -1904,24 +1909,7 @@
 						setting, train users to contact an administrator for an emergency password
 						change in case a new password becomes compromised. The PASS_WARN_AGE (-W)
 						setting gives users 7 days of warnings at login time that their passwords
-						are about to expire.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The PASS_MIN_LEN setting, which controls minimum password
-						length, should be set to whatever is required by your site or organization
-						security policy. The example value of 8 provided here may be inadequate for
-						many environments. See Section 2.3.3 for information on how to enforce more
-						sophisticated requirements on password length and quality </description>
-          <Value id="var-2.3.1.7.a" operator="equals" type="string">
-            <title xml:lang="en-US">minimum password length</title>
-            <description xml:lang="en-US">Minimum number of characters in
-							password</description>
-            <warning xml:lang="en-US">This will only check new passwords</warning>
-            <value>5</value>
-            <value selector="5">5</value>
-            <value selector="6">6</value>
-            <value selector="8">8</value>
-            <value selector="10">10</value>
-            <value selector="14">14</value>
-          </Value>
+						are about to expire.</description>
           <Value id="var-2.3.1.7.b" operator="equals" type="string">
             <title xml:lang="en-US">minimum password age</title>
             <description xml:lang="en-US">Enter minimum duration before allowing a
@@ -1956,18 +1944,7 @@
             <value selector="8_days">8</value>
             <value selector="14_days">14</value>
           </Value>
-          <Rule id="rule-2.3.1.7.a" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">Minimum password length</title>
-            <description xml:lang="en-US">The password minimum length should be set
-							appropriately</description>
-            <ident system="http://cce.mitre.org">CCE-4154-1</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20071" value-id="var-2.3.1.7.a"/>
-              <check-content-ref name="oval:rhel:def:20071" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.3.1.7.b" selected="false" weight="10.000000" severity="medium">
+                  <Rule id="rule-2.3.1.7.b" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Minimum password age</title>
             <description xml:lang="en-US">The minimum password age should be set
@@ -2001,104 +1978,10 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.3.1.8" hidden="false">
-          <title xml:lang="en-US">Remove Legacy + Entries from Password Files</title>
-          <description xml:lang="en-US"> The command: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># grep "^+:" /etc/passwd /etc/shadow /etc/group<xhtml:br/>
-						</xhtml:code>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> should produce no output. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The + symbol was used by systems to include data from NIS maps
-						into existing files. However, a certain configuration error in which a NIS
-						inclusion line appears in /etc/passwd, but NIS is not running, could lead to
-						anyone being able to access the system with the username + and no password.
-						Therefore, it is important to verify that no such line appears in any of the
-						relevant system files. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The correct way to tell the local system to consult network
-						databases such as LDAP or NIS for user information is to make appropriate
-						modifications to /etc/nsswitch.conf.</description>
-          <Rule id="rule-2.3.1.8.a" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">NIS Legacy Entries in /etc/shadow</title>
-            <description xml:lang="en-US">NIS file inclusions should be set appropriately in the
-							/etc/shadow file</description>
-            <ident system="http://cce.mitre.org">CCE-14071-5</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20075" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.3.1.8.b" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">NIC Legacy Entries from /etc/group</title>
-            <description xml:lang="en-US">NIS file inclusions should be set appropriately in the
-							/etc/group file</description>
-            <ident system="http://cce.mitre.org">CCE-14675-3</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20076" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.3.1.8.c" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">NIS Legacy Entries from /etc/passwd</title>
-            <description xml:lang="en-US">NIS file inclusions should be set appropriately in the
-							/etc/passwd file</description>
-            <ident system="http://cce.mitre.org">CCE-4114-5</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20077" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-        </Group>
       </Group>
-      <Group id="group-2.3.2" hidden="false">
-        <title xml:lang="en-US">Use Unix Groups to Enhance Security</title>
-        <description xml:lang="en-US"> The access control policies which can be enforced by
-					standard Unix permissions are limited, and configuring SELinux (Section 2.4) is
-					frequently a better choice. However, this guide recommends that security be
-					enhanced to the extent possible by enforcing the Unix group policies outlined in
-					this section.</description>
-        <Group id="group-2.3.2.1" hidden="false" weight="10.000000">
-          <title xml:lang="en-US">Create a Unique Default Group for Each User</title>
-          <description xml:lang="en-US"> When running useradd, do not use the -g flag or
-						otherwise override the default group. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The Red Hat default is that each new user account should have a
-						unique primary group whose name is the same as that of the account. This
-						default is recommended, in order to provide additional protection against
-						files which are created with group write permission enabled.</description>
-        </Group>
-        <Group id="group-2.3.2.2" hidden="false">
-          <title xml:lang="en-US">Create and Maintain a Group Containing All Human Users</title>
-          <description xml:lang="en-US"> Identify all user accounts on the system which
-						correspond to human users. Depending on your system configuration, this may
-						be all entries in /etc/passwd with UID values of at least 500. Once, you
-						have identified such a set of users, create a group named usergroup
-						(substitute some name appropriate to your environment) and populate it with
-						each human user: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># groupadd usergroup <xhtml:br/> # usermod -G usergroup human1
-							<xhtml:br/> # usermod -G usergroup human2 ... <xhtml:br/> # usermod -G
-							usergroup humanN <xhtml:br/>
-						</xhtml:code>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Then modify your procedure for creating new user accounts by
-						adding -G usergroup to the set of flags with which useradd is invoked, so
-						that new human users will be placed in the correct group by default. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Creating a group of human users does not, by itself, enhance
-						system security. However, as you work on securing your system, you will
-						often find commands which never need to be run by system accounts, or which
-						are only ever needed by users logged into the graphical console (which
-						should only ever be available to human users, even on workstations). Once a
-						group of users has been created, it is easy to restrict access to a given
-						command, for instance /path/to/graphical/command , to authorized users: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># chgrp usergroup /path/to/graphical/command <xhtml:br/> # chmod
-							750 /path/graphical/command <xhtml:br/>
-						</xhtml:code>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Without a group of human users, it is necessary to restrict
-						access by somehow preventing each system account from running the command,
-						which is an error-prone process even when it is possible at
-						all.</description>
-        </Group>
-      </Group>
-      <Group id="group-2.3.3" hidden="false">
+
+
+      <Group id="gr-accounts-pam" hidden="false">
         <title xml:lang="en-US">Protect Accounts by Configuring PAM</title>
         <description xml:lang="en-US"> PAM, or Pluggable Authentication Modules, is a system
 					which implements modular authentication for Linux programs. PAM is
@@ -2122,14 +2005,16 @@
 					file, which is included by many other PAM configuration files, defines 'default'
 					system authentication measures. Modifying this file is a good way to make
 					far-reaching authentication changes, for instance when implementing a
-					centralized authentication service. </description>
+					centralized authentication service. Another important file is password-auth. It contains just the same
+					things as system-auth except modules that make sense only for local
+					services are removed (used for sshd for example)</description>
         <warning xml:lang="en-US"> Be careful when making changes to PAM's configuration
 					files. The syntax for these files is complex, and modifications can have
-					unexpected consequences.1 The default configurations shipped with applications
+					unexpected consequences. The default configurations shipped with applications
 					should be sufficient for most users. </warning>
         <warning xml:lang="en-US"> Running authconfig or system-config-authentication will
 					re-write the PAM configuration files, destroying any manually made changes and
-					replacing them with a series of system defaults. 1One reference to the
+					replacing them with a series of system defaults. The reference to the
 					configuration file syntax can be found at
 					http://www.kernel.org/pub/linux/libs/pam/Linux-PAM-html/
 					sag-configuration-file.html. </warning>
@@ -2146,25 +2031,39 @@
 						the same name. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The man pages pam_cracklib(8) and pam_passwdqc(8) provide
 						information on the capabilities and configuration of each. </description>
+
           <Group id="group-2.3.3.1.1" hidden="false">
-            <title xml:lang="en-US">Set Password Quality Requirements, if using pam_cracklib</title>
-            <description xml:lang="en-US"> The pam_cracklib PAM module can be configured
-							to meet recommendations for DoD systems as stated in [12].<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> To configure pam_cracklib to require at least one uppercase
-							character, lowercase character, digit, and other (special) character,
-							locate the following line in /etc/pam.d/system-auth:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> password requisite pam_cracklib.so try_first_pass retry=3<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> and then alter it to read:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> password required pam_cracklib.so try_first_pass retry=3
-							minlen=14 dcredit=-1 / ucredit=-1 ocredit=-1 lcredit=0<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> If necessary, modify the arguments to ensure compliance with
-							your organization’s security policy. </description>
-            <warning xml:lang="en-US">Note that the password quality requirements are
-							not enforced for the root account for some reason. </warning>
+            <title xml:lang="en-US">Password Quality Requirements Set By pam_cracklib module</title>
+            <description xml:lang="en-US"> The default pam_cracklib PAM module provides
+                                                strength checking for passwords. It performs a number of checks, such as
+                                                making sure passwords are not similar to dictionary words, are of at least a
+                                                certain length, are not the previous password reversed, and are not simply a
+                                                change of case from the previous password. It can also require passwords to
+                                                be in certain character classes. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						For example to configure pam_cracklib to require at least one uppercase	character, 
+						lowercase character, digit, and other (special) character, locate the following line in 
+						/etc/pam.d/system-auth:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">
+						password requisite pam_cracklib.so try_first_pass retry=3 <xhtml:br/>
+						</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> and then alter it to read:
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 
+
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">
+						password required pam_cracklib.so try_first_pass retry=3 minlen=14 dcredit=-1 ucredit=-1 ocredit=-1 lcredit=0<xhtml:br/>
+						</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> If necessary, modify the arguments to ensure compliance with
+ 						your organization’s security policy. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						The man page pam_cracklib(8) provide information on the capabilities and configuration.
+						</description> 
+            <warning xml:lang="en-US">Note that the password quality requirements are not enforced for the root account for some reason. </warning>
             <Value id="var-2.3.3.1.1.retry" type="number">
               <title xml:lang="en-US">retry</title>
-              <description xml:lang="en-US">Number of retry attempts before erroring
-								out</description>
+              <description xml:lang="en-US">Number of retry attempts before erroring out</description>
               <value>3</value>
               <value selector="1">1</value>
               <value selector="2">2</value>
@@ -2172,8 +2071,7 @@
             </Value>
             <Value id="var-2.3.3.1.1.minlen" type="number">
               <title xml:lang="en-US">minlen</title>
-              <description xml:lang="en-US">Minimum number of characters in
-								password</description>
+              <description xml:lang="en-US">Minimum number of characters in password</description>
               <value>12</value>
               <value selector="6">6</value>
               <value selector="8">8</value>
@@ -2184,8 +2082,7 @@
             </Value>
             <Value id="var-2.3.3.1.1.dcredit" type="number">
               <title xml:lang="en-US">dcredit</title>
-              <description xml:lang="en-US">Mininum number of digits in
-								password</description>
+              <description xml:lang="en-US">Mininum number of digits in	password</description>
               <value>-2</value>
               <value selector="2">-2</value>
               <value selector="1">-1</value>
@@ -2193,8 +2090,7 @@
             </Value>
             <Value id="var-2.3.3.1.1.ocredit" type="number">
               <title xml:lang="en-US">ocredit</title>
-              <description xml:lang="en-US">Mininum number of other (special
-								characters) in password</description>
+              <description xml:lang="en-US">Mininum number of other (special characters) in password</description>
               <value>-2</value>
               <value selector="2">-2</value>
               <value selector="1">-1</value>
@@ -2202,8 +2098,7 @@
             </Value>
             <Value id="var-2.3.3.1.1.lcredit" type="number">
               <title xml:lang="en-US">lcredit</title>
-              <description xml:lang="en-US">Mininum number of lower case in
-								password</description>
+              <description xml:lang="en-US">Mininum number of lower case in password</description>
               <value>-2</value>
               <value selector="2">-2</value>
               <value selector="1">-1</value>
@@ -2936,20 +2831,24 @@
 							screen locking, a blank-screen screensaver, and 15-minute idle
 							activation time: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
-								<xhtml:code> # gconftool-2 --direct \ --config-source
-									xml:readwrite:/etc/gconf/gconf.xml.mandatory \ --type bool \
-									--set /apps/gnome-screensaver/idle_activation_enabled true #
-									gconftool-2 --direct \ --config-source
-									xml:readwrite:/etc/gconf/gconf.xml.mandatory \ --type bool \
-									--set /apps/gnome-screensaver/lock_enabled true # gconftool-2
-									--direct \ --config-source
-									xml:readwrite:/etc/gconf/gconf.xml.mandatory \ --type string \
-									--set /apps/gnome-screensaver/mode blank-only # gconftool-2
-									--direct \ --config-source
-									xml:readwrite:/etc/gconf/gconf.xml.mandatory \ --type int \
-									--set /apps/gnome-screensaver/idle_delay 15 </xhtml:code>
-							</xhtml:pre>
+							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"> 
+							# gconftool-2 --direct \ <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 
+							--config-source	xml:readwrite:/etc/gconf/gconf.xml.mandatory \<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 
+							--type bool \ <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 
+							--set /apps/gnome-screensaver/idle_activation_enabled true <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							#gconftool-2 --direct \ <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 
+							--config-source	xml:readwrite:/etc/gconf/gconf.xml.mandatory \ <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							--type bool \<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							--set /apps/gnome-screensaver/lock_enabled true <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							# gconftool-2 --direct \ <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 
+							--config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory \ <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							--type string \<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							--set /apps/gnome-screensaver/mode blank-only <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							# gconftool-2 --direct \ <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							--config-source	xml:readwrite:/etc/gconf/gconf.xml.mandatory \ <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 
+							--type int \ <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							--set /apps/gnome-screensaver/idle_delay 15 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							</xhtml:code>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The default setting of 15 minutes for idle activation is
 							reasonable for many office environments, but the setting should conform
 							to whatever policy is defined. The screensaver mode blank-only is
@@ -3140,11 +3039,13 @@
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The files for the default RHEL theme can be found in
 						/usr/share/gdm/themes/RHEL. Add the following sample block of XML to
 						/usr/share/gdm/themes/RHEL/RHEL.xml after the first two "pixmap" entries:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml"> &lt;item type="rect"&gt; &lt;pos anchor="n" x="50%" y="10"
-							width="box" height="box"/&gt; &lt;box&gt; &lt;item type="label"&gt;
-							&lt;normal font="Sans 14" color="#ffffff"/&gt; &lt;text&gt;Insert the
-							text of your warning banner here.&lt;/text&gt; &lt;/item&gt;
-							&lt;/box&gt; &lt;/item&gt; </xhtml:pre>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"> 
+						&lt;item type="rect"&gt; &lt;pos anchor="n" x="50%" y="10" <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						width="box" height="box"/&gt; &lt;box&gt; &lt;item type="label"&gt; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						&lt;normal font="Sans 14" color="#ffffff"/&gt; &lt;text&gt;Insert the <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						text of your warning banner here.&lt;/text&gt; &lt;/item&gt; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						&lt;/box&gt; &lt;/item&gt; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						</xhtml:code>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The full syntax that GDM theme files expect is documented
 						elsewhere, but the above XML will create a text box centered at the top of
 						the screen. The font, text color, and exact positioning can all be easily
