@@ -22,7 +22,7 @@ Authors:
 -->
 
 <!--
-  Minimalist stylesheet to cnovert docbook to HTML.
+  Minimalist stylesheet to convert docbook to HTML.
   TODO:
 -->
 
@@ -166,6 +166,8 @@ Authors:
 <xsl:template mode='dbout.html' match='db:phrase[@xlink:href]' name='dbout.html.link'>
   <a href='{@xlink:href}'><xsl:call-template name='dbout.html.inline'/></a>
 </xsl:template>
+
+<xsl:template mode='dbout.html' match='db:phrase[@role="br"]'><br/></xsl:template>
 
 <xsl:template mode='dbout.html' match='db:emphasis'>
   <em><xsl:call-template name='dbout.html.inline'/></em>

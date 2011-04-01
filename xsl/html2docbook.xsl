@@ -5,17 +5,17 @@
                 xmlns:fo="http://www.w3.org/1999/XSL/Format" 
                 xmlns:html="http://www.w3.org/1999/xhtml" 
                 xmlns:exsl="http://exslt.org/common"
-                exclude-result-prefixes="xsl fo html">
+                exclude-result-prefixes="xsl fo html exsl">
 
 <xsl:output method="xml" indent="yes"/>
 <xsl:param name="filename"></xsl:param> 
 <xsl:param name="prefix">db</xsl:param>
 <xsl:param name="graphics_location">./</xsl:param>
 
-<!-- <br> to <para> conversion, wrap plaintext to <para> -->
+<!-- wrap plaintext to <para> -->
 <xsl:template name='h2db.para'>
   <xsl:param name='in'/>
-  <xsl:variable name='delims' select='$in/html:br|$in/html:p|$in/html:ul|$in/html:ol'/>
+  <xsl:variable name='delims' select='$in/html:p|$in/html:ul|$in/html:ol'/>
   <xsl:variable name='rest.r'>
     <xsl:choose>
       <xsl:when test='count($delims)!=0'><xsl:copy-of select='$delims[last()]/following-sibling::node()'/></xsl:when>
@@ -28,15 +28,14 @@
   <xsl:variable name='rest' select='exsl:node-set($rest.r)'/>
   <xsl:variable name='start' select='exsl:node-set($start.r)'/>
 
-  <!--<xsl:if test='normalize-space(string($start))'><para><xsl:apply-templates mode='h2db' select='$start'/></para></xsl:if>-->
   <xsl:apply-templates mode='h2db.para' select='$delims'/>
   <xsl:if test='normalize-space(string($rest))'><para><xsl:apply-templates mode='h2db' select='$rest'/></para></xsl:if>
 </xsl:template>
 
 <xsl:template mode='h2db.para' match='html:*'>
-  <xsl:variable name='prev.delim' select='(preceding-sibling::html:br|preceding-sibling::html:p|preceding-sibling::html:ul|preceding-sibling::html:ol)[last()]'/>
+  <xsl:variable name='prev.delim' select='(preceding-sibling::html:p|preceding-sibling::html:ul|preceding-sibling::html:ol)[last()]'/>
   <xsl:variable name='chunk' select='preceding-sibling::node()[
-           generate-id((preceding-sibling::html:br|preceding-sibling::html:p|preceding-sibling::html:ul|preceding-sibling::html:ol)[last()]) = generate-id($prev.delim)]'/>
+           generate-id((preceding-sibling::html:p|preceding-sibling::html:ul|preceding-sibling::html:ol)[last()]) = generate-id($prev.delim)]'/>
   <xsl:if test='normalize-space(concat(string($chunk//text()), string($chunk))) != "" or count(*) != 0'><para><xsl:apply-templates mode='h2db' select='$chunk'/></para></xsl:if>
   <xsl:apply-templates select='.' mode='h2db'/>
 </xsl:template>
@@ -123,6 +122,7 @@
 </xsl:template>
 
 <!-- typography -->
+<xsl:template mode='h2db' match='html:br'><phrase role='br'/></xsl:template>
 <xsl:template mode='h2db' match='html:code[ancestor::html:pre]|html:span'><xsl:apply-templates mode='h2db'/></xsl:template>
 <xsl:template mode='h2db' match='html:code'><code><xsl:apply-templates mode='h2db'/></code></xsl:template>
 <xsl:template mode='h2db' match='html:sub'><subscript><xsl:apply-templates mode='h2db'/></subscript></xsl:template>
@@ -380,7 +380,6 @@
 <!-- Ignored elements -->
 <xsl:template mode='h2db' match="html:hr"/>
 <xsl:template mode='h2db' match="html:h1[1]|html:h2[1]|html:h3[1]" priority="1"/>
-<xsl:template mode='h2db' match="html:br"/>
 <xsl:template mode='h2db' match="html:p[normalize-space(.) = '' and count(*) = 0]"/>
 <xsl:template mode='h2db' match="text()">
  <xsl:choose>
