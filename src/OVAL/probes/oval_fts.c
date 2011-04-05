@@ -470,7 +470,9 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 				}
 			}
 
-			if (ofts->ofts_sfilepath) { /* match filepath */
+			if (fts_ent->fts_info == FTS_SL) {
+				dI("Only the target of a symlink gets reported; ignored.\n");
+			} else if (ofts->ofts_sfilepath) { /* match filepath */
 				if (fts_ent->fts_info != FTS_D) {
 					SEXP_t *stmp;
 
@@ -522,7 +524,9 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 					dI("Not skipping FTS_ROOT: %s\n", fts_ent->fts_path);
 				break;
 			case OVAL_RECURSE_DIRECTION_DOWN:
-				if (fts_ent->fts_level <= ofts->max_depth || ofts->max_depth == -1) {
+				if (fts_ent->fts_level == 0 && ofts->ofts_sfilename) {
+					dI("Not skipping FTS_ROOT: %s\n", fts_ent->fts_path);
+				} else if (fts_ent->fts_level <= ofts->max_depth || ofts->max_depth == -1) {
 					/*
 					 * Check file type & filesystem recursion.
 					 *  `defined' is handled by fts (FTS_XDEV)
@@ -537,6 +541,9 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 					case FTS_SL: /* symbolic link */
 						if (!(ofts->recurse & OVAL_RECURSE_SYMLINKS))
 							goto __skip_file;
+
+						fts_set(ofts->ofts_fts, fts_ent, FTS_FOLLOW);
+						dI("FTS_FOLLOW: %s\n", fts_ent->fts_path);
 						break;
 					default:
 						/*
@@ -569,9 +576,6 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 							break;
 						}
 					}
-
-					fts_set(ofts->ofts_fts, fts_ent, FTS_FOLLOW);
-					dI("FTS_FOLLOW: %s\n", fts_ent->fts_path);
 				} else {
 					dI("FTS_SKIP: reason: max depth reached: %d, path: '%s'.\n",
 					   ofts->max_depth, fts_ent->fts_path);
