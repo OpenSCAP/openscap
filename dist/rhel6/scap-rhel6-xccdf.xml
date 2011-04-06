@@ -24,7 +24,7 @@
     <title xml:lang="en-US">Introduction</title>
     <description xml:lang="en-US"> The purpose of this guide is to provide security
 			configuration recommendations for the Red Hat Enterprise Linux (RHEL) 6 operating
-			system. The guidance provided here should is applicable to desktop systems. Recommended
+			system. The guidance provided here is applicable to desktop systems. Recommended
 			settings for the basic operating system are provided, as well as for many commonly-used
 			services that the system can host in a network environment.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 			<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The guide is intended for system administrators. Readers are assumed to
@@ -53,7 +53,7 @@
       <title xml:lang="en-US">Minimize Software to Minimize Vulnerability</title>
       <description xml:lang="en-US"> The simplest way to avoid vulnerabilities in software
 					is to avoid installing that software. On RHEL, the RPM Package Manager
-					(originally Red Hat Package Manager, abbreviated RPM) allows for careful
+					(originally Red Hat Package Manager, abbreviated RPM) allows detailed
 					management of the set of software packages installed on a system. Installed
 					software contributes to system vulnerability in several ways. Packages that
 					include setuid programs may provide local attackers a potential path to
@@ -255,19 +255,23 @@
 						the security-related recommendations:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:ul xmlns:xhtml="http://www.w3.org/1999/xhtml">
-							<xhtml:li> Firewall - Leave set to 'Enabled.' Only check the 'Trusted
-							Services' that this system needs to serve. Uncheck the default selection
-							of SSH if the system does not need to serve SSH.</xhtml:li> <xhtml:li> SELinux -
-							Leave SELinux set to 'Enforcing' mode.</xhtml:li> <xhtml:li> Kdump - Leave Kdump
-							off unless the feature is required, such as for kernel development and
-							testing.</xhtml:li> <xhtml:li> Set Up Software Updates - If the system is
+							<xhtml:li> Set Up Software Updates - If the system is
 							connected to the Internet now, click 'Yes, I'd like to register now.'
 							This will require a connection to either the Red Hat Network servers or
-							their proxies or satellites.</xhtml:li> <xhtml:li> Create User - If the system
+							their proxies or satellites.</xhtml:li>
+							<xhtml:li> Create User - If the system
 							will require a local user account, it can be created here. Even if the
 							system will be using a network-wide authentication system, 
 							do not click on the 'Use Network Login...' button.
-							Manually applying configuration later is preferable.</xhtml:li> </xhtml:ul>
+							Manually applying configuration later is preferable.</xhtml:li>
+							<xhtml:li> Kdump - Leave Kdump
+							off unless the feature is required, such as for kernel development and
+							testing.</xhtml:li>
+							<xhtml:li> Firewall - Leave set to 'Enabled.' Only check the 'Trusted
+							Services' that this system needs to serve. Uncheck the default selection
+							of SSH if the system does not need to serve SSH.</xhtml:li>
+							<xhtml:li> SELinux - Leave SELinux set to 'Enforcing' mode.</xhtml:li>
+						</xhtml:ul>
 					</description>
         </Group>
       </Group>
@@ -281,22 +285,22 @@
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> It is recommended that these tools be used to keep systems up to
 					date with the latest security patches. </description>
         <Group id="gr-updating-1" hidden="false">
-          <title xml:lang="en-US">Ensure Red Hat GPG Key is Installed</title>
+          <title xml:lang="en-US">Ensure Red Hat GPG Keys are Installed</title>
           <description xml:lang="en-US"> To ensure that the system can
 							cryptographically verify update packages (and also connect to the Red
 							Hat Network to receive them if desired) run the following command to
-							ensure that the system has the Red Hat GPG properly installed:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							ensure that the system has the Red Hat GPG keys properly installed:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">$ rpm -q --queryformat "%{SUMMARY}\n"
 								gpg-pubkey</xhtml:code>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The command should return the string:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> gpg(Red Hat, Inc. (release key
-							&lt;security@redhat.com&gt;)</description>
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The command should return the strings:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">gpg(Red Hat, Inc. (release key 2) &lt;security@redhat.com&gt;)</xhtml:code>
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">gpg(Red Hat, Inc. (auxiliary key) &lt;security@redhat.com&gt;)</xhtml:code></description>
           <Rule id="rule-1005" selected="false" weight="10.000000">
             <status date="2010-07-01">draft</status>
-            <title xml:lang="en-US">Red Hat GPG Key is Installed</title>
-            <description xml:lang="en-US">The GPG key should be installed.</description>
+            <title xml:lang="en-US">Red Hat GPG Keys are Installed</title>
+            <description xml:lang="en-US">The GPG keys should be installed.</description>
             <ident system="http://cce.mitre.org">CCE-14440-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref name="oval:rhel:def:1005" href="scap-rhel6-oval.xml"/>
@@ -325,7 +329,7 @@
 						<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml" class="block"> If the system will not have access to the Internet, it will not
 						be able to directly subscribe to the RHN update repository. Updates will
 						have to be downloaded from the RHN web site manually. The command line tool
-						yum and the graphical front-ends pirut and pup can be configured to handle
+						yum and the graphical front-end PackageKit can be configured to handle
 						this situation. </xhtml:p> </description>
         </Group>
         <Group id="gr-updating-3" hidden="false">
@@ -453,7 +457,7 @@
             <description xml:lang="en-US"> To ensure that signature checking is not
 							disabled for any repos, ensure that the following line DOES NOT appear
 							in any repo configuration files in /etc/yum.repos.d or elsewhere:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> gpgcheck=0<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> repo_gpgcheck=0<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Note: Red Hat’s repositories support signatures on repodata,
 							but some public repositories do not. If a repository does not support
 							signature checking on repodata, then this risk must be weighed against
@@ -480,13 +484,13 @@
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> To determine which files on the system differ from what is
 						expected by the RPM database:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># rpm -qVa<xhtml:br/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># rpm -Va<xhtml:br/>
 						</xhtml:code>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> A “c” in the second column indicates that a file is a
 						configuration file (and may be expected to change). In order to exclude
 						configuration files from this list, run: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># rpm -qVa | awk '$2!="c" {print $0}'<xhtml:br/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># rpm -Va | awk '$2!="c" {print $0}'<xhtml:br/>
 						</xhtml:code>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The man page rpm(8) describes the format of the output. Any files
 						that do not match the expected output demand further investigation if the
@@ -534,12 +538,11 @@
         <title xml:lang="en-US">Verify Permissions on Important Files and Directories</title>
         <description xml:lang="en-US"> Permissions for many files on a system should be set
 					to conform to system policy. This section discusses important permission
-					restrictions gshadow which should be checked on a regular basis to ensure that
+					restrictions which should be checked on a regular basis to ensure that
 					no harmful discrepancies have arisen.</description>
         <Group id="gr-verify-shadow" hidden="false">
           <title xml:lang="en-US">Verify Permissions on passwd, shadow, group and gshadow	Files</title>
-          <description xml:lang="en-US"> These are the default permissions for these
-						files. Many utilities need read access to the passwd file in order to
+          <description xml:lang="en-US"> Many utilities need read access to the passwd file in order to
 						function properly, but read access to the shadow file allows malicious
 						attacks against system passwords, and should never be enabled.</description>
           <Rule id="rule-2.2.3.1.a" selected="false" weight="10.000000" severity="medium">
@@ -704,19 +707,20 @@
           <description xml:lang="en-US"> <xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> The following command discovers and prints any
 						setuid or setgid files on local partitions. Run it once for each local
 						partition: </xhtml:p>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"> find PART -xdev \( -perm -4000 -o -perm -2000 \) -type f -print; done </xhtml:code>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"> find PART -xdev \( -perm -4000 -o -perm -2000 \) -type f -print </xhtml:code>
 						<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> If the file does not require a setuid or setgid bit, then these bits can be removed with the command: </xhtml:p>
 						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"> chmod -s file </xhtml:code>
 						<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> The following table contains all setuid and setgid files which
-						are expected to be on a stock system. The setuid or setgid bit on these
+						are expected to be on a stock system. To reduce system risk, the packages containing these files may be removed
+						in some cases; alternatively, the setuid or setgid bit on these
 						files may be disabled to reduce system risk if only an administrator
 						requires their functionality. </xhtml:p>
 
 						<xhtml:table xmlns:xhtml="http://www.w3.org/1999/xhtml">
 							<xhtml:tr>
-								<xhtml:td>File</xhtml:td>
-								<xhtml:td>Set-UID</xhtml:td>
-								<xhtml:td>Set-GID</xhtml:td>
+								<xhtml:th>File</xhtml:th>
+								<xhtml:th>Set-UID</xhtml:th>
+								<xhtml:th>Set-GID</xhtml:th>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/bin/cgexec</xhtml:td>
@@ -1415,8 +1419,9 @@
 					<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># sysctl kernel.exec-shield </xhtml:code>
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># sysctl kernel.randomize_va_space </xhtml:code>
-					<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> The output of both commands should indicate that the
-							setting is 1. (Use of the -n option causes output to consist of only the
+					<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> The output should indicate that the
+							setting of kernel.exec-shield is 1 and the setting of kernel.randomize_va_space is 2.
+							(Use of the -n option causes output to consist of only the
 							value, which may make automated checking easier.) </xhtml:p> </description>
             <Value id="var-2.2.4.3.a" operator="equals" type="string">
               <title xml:lang="en-US">kernel.exec-shield</title>
@@ -1428,8 +1433,9 @@
             <Value id="var-2.2.4.3.b" operator="equals" type="string">
               <title xml:lang="en-US">kernel.randomize_va_space</title>
               <description xml:lang="en-US"/>
-              <value>1</value>
-              <value selector="enabled">1</value>
+              <value>2</value>
+              <value selector="enabled_with_heap">2</value>
+              <value selector="enabled_without_heap">1</value>
               <value selector="disabled">0</value>
             </Value>
           <Rule id="rule-2.2.4.3.1.a" selected="false" weight="10.000000">
@@ -1735,11 +1741,9 @@
           <description xml:lang="en-US"> Edit the file /etc/login.defs to specify password
 						expiration settings for new accounts. Add or correct the following lines: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"> 
-						PASS_MAX_DAYS=180<xhtml:br/> 
-						PASS_MIN_DAYS=7 <xhtml:br/>
-						PASS_WARN_AGE=7 <xhtml:br/>
-						</xhtml:code>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">PASS_MAX_DAYS=180</xhtml:code><xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">PASS_MIN_DAYS=7</xhtml:code><xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">PASS_WARN_AGE=7</xhtml:code><xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						For each existing human user USER , modify the current expiration settings to match these: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -1849,7 +1853,7 @@
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> PAM looks in the directory /etc/pam.d for application-specific
 					configuration information. For instance, if the program login attempts to
 					authenticate a user, then PAM's libraries follow the instructions in the file
-					/etc/ pam.d/login to determine what actions should be taken. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+					/etc/pam.d/login to determine what actions should be taken. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>One very important file in /etc/pam.d is /etc/pam.d/system-auth. This
 					file, which is included by many other PAM configuration files, defines 'default'
 					system authentication measures. Modifying this file is a good way to make
@@ -1865,9 +1869,8 @@
 					re-write the PAM configuration files, destroying any manually made changes and
 					replacing them with a series of system defaults. The reference to the
 					configuration file syntax can be found at
-					http://www.kernel.org/pub/linux/libs/pam/Linux-PAM-html/
-					sag-configuration-file.html. </warning>
-        <Group id="group-2.3.3.1" hidden="false">
+					http://www.kernel.org/pub/linux/libs/pam/Linux-PAM-html/sag-configuration-file.html. </warning>
+        <Group id="gr-accounts-pam.1" hidden="false">
           <title xml:lang="en-US">Set Password Quality Requirements</title>
           <description xml:lang="en-US"> The default pam_cracklib PAM module provides
 						strength checking for passwords. It performs a number of checks, such as
@@ -1881,7 +1884,7 @@
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The man pages pam_cracklib(8) and pam_passwdqc(8) provide
 						information on the capabilities and configuration of each. </description>
 
-          <Group id="group-2.3.3.1.1" hidden="false">
+          <Group id="gr-accounts-pam.1.1" hidden="false">
             <title xml:lang="en-US">Password Quality Requirements Set By pam_cracklib module</title>
             <description xml:lang="en-US"> The default pam_cracklib PAM module provides
                                                 strength checking for passwords. It performs a number of checks, such as
@@ -2008,8 +2011,8 @@
             </Rule>
             <Rule id="rule-2.3.3.1.1.e" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
-              <title xml:lang="en-US">The password strenght parameters should require a minimum number of special characters</title>
-              <description xml:lang="en-US">The password strenght parameters should require a minimum number of special characters</description>
+              <title xml:lang="en-US">The password strength parameters should require a minimum number of special characters</title>
+              <description xml:lang="en-US">The password strength parameters should require a minimum number of special characters</description>
               <ident system="http://cce.mitre.org">CCE-14122-6</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-export export-name="oval:rhel:var:200785" value-id="var-2.3.3.1.1.ocredit"/>
@@ -2019,7 +2022,7 @@
             <Rule id="rule-2.3.3.1.1.f" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Set Password lcredit Requirements</title>
-              <description xml:lang="en-US">The password strenght parameters should require a minimum number of lowercase characters</description>
+              <description xml:lang="en-US">The password strength parameters should require a minimum number of lowercase characters</description>
               <ident system="http://cce.mitre.org">CCE-14712-4</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-export export-name="oval:rhel:var:200786" value-id="var-2.3.3.1.1.lcredit"/>
@@ -2038,7 +2041,7 @@
               </check>
             </Rule>
           </Group>
-          <Group id="group-2.3.3.1.2" hidden="false">
+          <Group id="gr-accounts-pam.1.2" hidden="false">
             <title xml:lang="en-US">Set Password Quality Requirements, if using pam_passwdqc</title>
             <description xml:lang="en-US"> If password strength stronger than that
 							guaranteed by pam_cracklib is required, configure PAM to use pam_passwdqc.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -2051,20 +2054,20 @@
 							organization’s security policy. Configuration options are described in
 							the man page pam_passwdqc(8) and also in
 							/usr/share/doc/pam_passwdqc-version. The minimum lengths provided here
-							supercede that specified by the argument PASS MIN LEN as described in
-							Section 2.3.1.7.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							supercede that specified by the argument PASS_MIN_LEN in login.defs.
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The options given in the example above set a minimum length
 							for each of the password “classes” that pam_passwdqc recognizes. Setting
-							a particular minimum value to disabled will stop users from choosing a
+							a particular minimum value to <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">disabled</xhtml:code>
+							will stop users from choosing a
 							password that falls into that category alone. </description>
           </Group>
         </Group>
-        <Group id="group-2.3.3.2" hidden="false">
+        <Group id="gr-accounts-pam.2" hidden="false">
           <title xml:lang="en-US">Set Lockouts for Failed Password Attempts</title>
           <description xml:lang="en-US"> The pam_tally2 PAM module provides the capability
 						to lock out user accounts after a number of failed login attempts. Its
-						documentation is available in
-						/usr/share/doc/pam-version/txts/README.pam_tally2. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						documentation is available in the man page pam_tally2(8). <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> If locking out accounts after a number of incorrect login
 						attempts is required by your security policy, implement use of pam_tally2.so
 						for the relevant PAM-aware programs such as login, sshd, and vsftpd. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -2115,7 +2118,7 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.3.3.3" hidden="false">
+        <Group id="gr-accounts-pam.3" hidden="false">
           <title xml:lang="en-US">Use pam_deny.so to Quickly Deny Access to a Service</title>
           <description xml:lang="en-US"> In order to deny access to a service SVCNAME via
 						PAM, edit the file /etc/pam.d/SVCNAME . Prepend this line to the beginning
