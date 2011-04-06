@@ -42,6 +42,7 @@
 #include "assume.h"
 #include "memusage.h"
 #include "sysinfo.h"
+#include "oval_probe_impl.h"
 
 extern probe_rcache_t  *OSCAP_GSYM(pcache);
 extern probe_ncache_t  *OSCAP_GSYM(encache);
@@ -1431,4 +1432,102 @@ static int probe_cobj_memcheck(size_t item_cnt)
 	}
 
 	return (0);
+}
+
+SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attributes[],
+                          /* const char *value_name, oval_datatype_t value_type, void *value, */ ...)
+{
+        va_list ap;
+	SEXP_t *item, *name_sexp, *value_sexp, *entity;
+        const char *o2p_type, *value_name, *subtype_name;
+        char item_name[64];
+        oval_datatype_t value_type;
+        void *value;
+
+        subtype_name = oval_subtype2str(item_subtype);
+
+        if (subtype_name == NULL) {
+                dE("Invalid/Unknown subtype: %d\n", (int)item_subtype);
+                return (NULL);
+        }
+
+        if (strlen(subtype_name) + strlen("_item") < sizeof item_name) {
+                strcpy(item_name, subtype_name);
+                strcat(item_name, "_item");
+                item_name[sizeof item_name - 1] = '\0';
+        } else {
+                dE("item name too long: no buffer space available\n");
+                return (NULL);
+        }
+
+	va_start(ap, item_attributes);
+
+	item       = probe_item_new(item_name, NULL);
+	value_name = va_arg(ap, const char *);
+
+        while (value_name != NULL) {
+		value_type = va_arg(ap, oval_datatype_t);
+		value      = va_arg(ap, void *);
+                name_sexp  = probe_ncache_ref(OSCAP_GSYM(encache), value_name);
+
+                switch (value_type) {
+                case OVAL_DATATYPE_STRING:
+                        value_sexp = SEXP_string_new((const char *)value, strlen((const char *)value));
+                        break;
+                case OVAL_DATATYPE_BOOLEAN:
+                        value_sexp = SEXP_number_newb(*(bool *)value);
+                        break;
+                case OVAL_DATATYPE_INTEGER:
+                        value_sexp = SEXP_number_newi(*(int *)value);
+                        break;
+                case OVAL_DATATYPE_FLOAT:
+                        value_sexp = SEXP_number_newf(*(double *)value);
+                        break;
+                case OVAL_DATATYPE_EVR_STRING:
+                case OVAL_DATATYPE_FILESET_REVISION:
+                case OVAL_DATATYPE_IOS_VERSION:
+                case OVAL_DATATYPE_VERSION:
+                        value_sexp = SEXP_string_new((const char *)value, strlen((const char *)value));
+                        o2p_type   = __probe_o2p_datatype(value_type);
+
+                        if (SEXP_datatype_set(value_sexp, o2p_type) != 0) {
+                                dE("can't set datatype %s on %p\n", o2p_type, value_sexp);
+
+                                SEXP_free(item);
+                                SEXP_free(name_sexp);
+                                SEXP_free(value_sexp);
+
+                                return (NULL);
+                        }
+
+                        break;
+                        /* TODO */
+                case OVAL_DATATYPE_BINARY:
+                case OVAL_DATATYPE_RECORD:
+                case OVAL_DATATYPE_UNKNOWN:
+                        dE("Unknown or unsupported type: %d\n", (int)value_type);
+
+                        SEXP_free(item);
+                        SEXP_free(name_sexp);
+
+                        return (NULL);
+                }
+
+                assume_d(item       != NULL, NULL);
+                assume_d(entity     != NULL, NULL);
+                assume_d(name_sexp  != NULL, NULL);
+                assume_d(value_sexp != NULL, NULL);
+
+                entity = SEXP_list_new(name_sexp, value_sexp, NULL);
+
+                SEXP_list_add(item, entity);
+
+                SEXP_unref_r(entity);
+                SEXP_unref_r(name_sexp);
+                SEXP_unref_r(value_sexp);
+
+                value_name = va_arg(ap, const char *);
+        }
+
+        return (item);
 }

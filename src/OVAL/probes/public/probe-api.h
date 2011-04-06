@@ -485,4 +485,11 @@ bool probe_item_filtered(SEXP_t *item, SEXP_t *filters);
 
 int probe_result_additem(SEXP_t *result, SEXP_t *item);
 
+typedef struct {
+        oval_datatype_t type;
+        void           *value;
+} probe_elmatr_t;
+
+SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attributes[], ...);
+
 #endif				/* PROBE_API_H */
