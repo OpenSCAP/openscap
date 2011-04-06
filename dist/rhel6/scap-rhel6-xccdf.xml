@@ -307,10 +307,13 @@
 							Hat Network to receive them if desired) run the following command to
 							ensure that the system has the Red Hat GPG keys properly installed:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">$ rpm -q --queryformat "%{SUMMARY}\n"
-								gpg-pubkey</xhtml:code>
+							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">$ rpm -q gpg-pubkey</xhtml:code>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The command should return the strings:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">gpg-pubkey-fd431d51-4ae0493b</xhtml:code>
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">gpg-pubkey-2fa658e0-45700c69</xhtml:code>
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							corresponding to these keys:
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">gpg(Red Hat, Inc. (release key 2) &lt;security@redhat.com&gt;)</xhtml:code>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">gpg(Red Hat, Inc. (auxiliary key) &lt;security@redhat.com&gt;)</xhtml:code></description>
           <Rule id="rule-1005" selected="false" weight="10.000000">
