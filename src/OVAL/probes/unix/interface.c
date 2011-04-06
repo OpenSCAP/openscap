@@ -122,7 +122,6 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *probe_out)
 	int family, rc=1;
 	char host[NI_MAXHOST], broad[NI_MAXHOST], mask[NI_MAXHOST], *mac, *type;
 	SEXP_t *item;
-	SEXP_t *r0, *r1, *r2, *r3, *r4, *r5;
 
 	if (getifaddrs(&ifaddr) == -1) {
 		SEXP_t *msg;
@@ -216,23 +215,17 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *probe_out)
 		} else
 			*broad = '\0';
 
-		item = probe_item_creat("interface_item", NULL,
-				"name", NULL,
-                                r0 = SEXP_string_new (ifa->ifa_name, strlen (ifa->ifa_name)),
-				"type", NULL,
-				r5 = SEXP_string_new(type, strlen(type)),
-				"hardware_addr", NULL,
-                                r1 = SEXP_string_new (mac, strlen (mac)),
-				"inet_addr", NULL,
-                                r2 = SEXP_string_new (host, strlen (host)),
-				"broadcast_addr", NULL,
-                                r3 = SEXP_string_new (broad, strlen (broad)),
-				"netmask", NULL,
-                                r4 = SEXP_string_new (mask, strlen (mask)),
-				NULL);
+                item = probe_item_create(OVAL_UNIX_INTERFACE, NULL,
+                                         "name",           OVAL_DATATYPE_STRING, ifa->ifa_name,
+                                         "type",           OVAL_DATATYPE_STRING, type,
+                                         "hardware_addr",  OVAL_DATATYPE_STRING, mac,
+                                         "inet_addr",      OVAL_DATATYPE_STRING, host,
+                                         "broadcast_addr", OVAL_DATATYPE_STRING, broad,
+                                         "netmask",        OVAL_DATATYPE_STRING, mask,
+                                         NULL);
 
 		probe_cobj_add_item(probe_out, item);
-		SEXP_vfree(r0, r1, r2, r3, r4, r5, item, NULL);
+                SEXP_free(item);
 	}
 
 	rc = 0;
