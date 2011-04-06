@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+<oval_definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+ xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+ xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+ xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
+ xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux"
+ xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+	<generator>
+		<oval:product_name>vim</oval:product_name>
+		<oval:schema_version>5.6</oval:schema_version>
+		<oval:timestamp>2011-03-06T12:00:00-04:00</oval:timestamp>
+	</generator>
+
+
+	<definitions>
+	<definition class="compliance" id="oval:rhel:def:1000" version="1">
+		<metadata>
+			<title>Ensure that /tmp has its own partition or logical volume</title>
+			<reference ref_id="TBD" source="CCE"/>
+			<description>The /tmp directory is a world-writable directory used for temporary ﬁle storage. Verify that it has its own partition or logical volume.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10001" comment="Check in /etc/fstab for a /tmp mount point" />
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1001" version="1">
+		<metadata>
+			<title>Ensure that /var has its own partition or logical volume</title>
+			<reference ref_id="TBD" source="CCE"/>
+			<description>The /var directory is used by daemons and other system
+			             services to store frequently-changing data. It is not uncommon for the /var directory
+				     to contain world-writable directories, installed by other software packages.
+				     Ensure that /var has its own partition or logical volume.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10011" comment="Check in /etc/fstab for a /var mount point" />
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1002" version="1">
+		<metadata>
+			<title>Ensure that /var/log has its own partition or logical volum</title>
+			<reference ref_id="TBD" source="CCE"/>
+			<description>System logs are stored in the /var/log directory. Ensure that it has its own partition or logical volume.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10021" comment="Check in /etc/fstab for a /var/log mount point" />
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1003" version="1">
+		<metadata>
+			<title>Ensure that /var/log/audit has its own partition or logical volume</title>
+			<reference ref_id="TBD" source="CCE"/>
+			<description>Audit logs are stored in the /var/log/audit directory.
+				     Ensure that it has its own partition or logical volume.  Make absolutely certain
+				     that it is large enough to store all audit logs that will be created by the auditing
+				     daemon.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10031" comment="Check in /etc/fstab for a /var/log/audit mount point" />
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1004" version="1">
+		<metadata>
+			<title>Ensure that /home has its own partition or logical volume</title>
+			<reference ref_id="TBD" source="CCE"/>
+			<description>If user home directories will be stored locally, create a separate
+				     partition for /home. If /home will be mounted from another system such as an NFS server, then
+				     creating a separate partition is not necessary at this time, and the mountpoint can
+				     instead be conﬁgured later.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10041" comment="Check in /etc/fstab for a /home mount point" />
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1005" version="1">
+		<metadata>
+			<title>Ensure that GPG Key for Red Hat is installed</title>
+			<reference ref_id="TBD" source="CCE"/>
+			<description>The GPG key should be installed.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10051" comment="check gpg signature" />
+		</criteria>
+	</definition>
+	</definitions>
+
+
+	<tests>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10001" version="1" check="only one" comment="look for /tmp partition or logical volume in /etc/fstab" check_existence="at_least_one_exists">
+		<ind-def:object object_ref="oval:rhel:obj:100011" />
+		<ind-def:state state_ref="oval:rhel:ste:100011" />
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10011" version="1" check="only one" comment="look for /var partition or logical volume in /etc/fstab" check_existence="at_least_one_exists">
+		<ind-def:object object_ref="oval:rhel:obj:100011" />
+		<ind-def:state state_ref="oval:rhel:ste:100111" />
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10021" version="1" check="only one" comment="look for /var/log partition or logical volume in /etc/fstab" check_existence="at_least_one_exists">
+		<ind-def:object object_ref="oval:rhel:obj:100011" />
+		<ind-def:state state_ref="oval:rhel:ste:100211" />
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10031" version="1" check="only one" comment="look for /var/log/audit partition or logical volume in /etc/fstab" check_existence="at_least_one_exists">
+		<ind-def:object object_ref="oval:rhel:obj:100011" />
+		<ind-def:state state_ref="oval:rhel:ste:100311" />
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10041" version="1" check="only one" comment="look for /home partition or logical volume in /etc/fstab" check_existence="at_least_one_exists">
+		<ind-def:object object_ref="oval:rhel:obj:100011" />
+		<ind-def:state state_ref="oval:rhel:ste:100411" />
+	</ind-def:textfilecontent54_test>
+	<lin-def:rpminfo_test check_existence="any_exist" id="oval:rhel:tst:10051" version="1" check="at least one" comment="proper gpg-pubkey version is installed">
+		<lin-def:object object_ref="oval:rhel:obj:100511"/>
+		<lin-def:state state_ref="oval:rhel:ste:100511"/>
+	</lin-def:rpminfo_test>
+	</tests>
+
+
+	<objects>
+	<ind-def:textfilecontent54_object id="oval:rhel:obj:100011" version="1" comment="look for the partition mount point in /etc/fstab">
+		<ind-def:filepath>/etc/fstab</ind-def:filepath>
+		<ind-def:pattern operation="pattern match">^[\s]*[\S]+[\s]+([\S]+)[\s]+[\S]+[\s]+[\S]+[\s]+[\S]+[\s]+[\S]+</ind-def:pattern>
+		<ind-def:instance datatype="int" operation="greater than or equal">1</ind-def:instance>
+	</ind-def:textfilecontent54_object>
+	<lin-def:rpminfo_object id="oval:rhel:obj:100511" version="1">
+		<lin-def:name>gpg-pubkey</lin-def:name>
+	</lin-def:rpminfo_object>
+        </objects>
+
+
+	<states>
+	<ind-def:textfilecontent54_state id="oval:rhel:ste:100011" version="1" comment="/tmp mount point is defined">
+		<ind-def:subexpression datatype="string" operation="equals" entity_check="all">/tmp</ind-def:subexpression>
+	</ind-def:textfilecontent54_state>
+	<ind-def:textfilecontent54_state id="oval:rhel:ste:100111" version="1" comment="/var mount point is defined">
+		<ind-def:subexpression datatype="string" operation="equals" entity_check="all">/var</ind-def:subexpression>
+	</ind-def:textfilecontent54_state>
+	<ind-def:textfilecontent54_state id="oval:rhel:ste:100211" version="1" comment="/var/log mount point is defined">
+        	<ind-def:subexpression datatype="string" operation="equals" entity_check="all">/var/log</ind-def:subexpression>
+	</ind-def:textfilecontent54_state>
+	<ind-def:textfilecontent54_state id="oval:rhel:ste:100311" version="1" comment="/var/log/audit mount point is defined">
+		<ind-def:subexpression datatype="string" operation="equals" entity_check="all">/var/log/audit</ind-def:subexpression>
+	</ind-def:textfilecontent54_state>
+	<ind-def:textfilecontent54_state id="oval:rhel:ste:100411" version="1" comment="/home mount point is defined">
+		<ind-def:subexpression datatype="string" operation="equals" entity_check="all">/home</ind-def:subexpression>
+	</ind-def:textfilecontent54_state>
+	<lin-def:rpminfo_state id="oval:rhel:ste:100511" version="1">
+		<lin-def:release>45761324</lin-def:release>
+		<lin-def:version>37017186</lin-def:version>
+	</lin-def:rpminfo_state>
+	</states>
+
+</oval_definitions>
+

@@ -18,158 +18,7 @@
 			All enabled XCCDF rules should pass except for few "Unknown" results 
 			which are not possible to implement in current OVAL version.
 		</description>
-    <select idref="rule-2.1.2.1.1.a" selected="true"/>
-    <select idref="rule-2.1.2.3.3.a" selected="true"/>
-    <select idref="rule-2.1.2.3.4.a" selected="true"/>
-    <select idref="rule-2.1.3.2.a" selected="true"/>
-    <select idref="rule-2.2.3.1.a" selected="true"/>
-    <select idref="rule-2.2.3.1.b" selected="true"/>
-    <select idref="rule-2.2.3.1.c" selected="true"/>
-    <select idref="rule-2.2.3.1.d" selected="true"/>
-    <select idref="rule-2.2.3.1.e" selected="true"/>
-    <select idref="rule-2.2.3.1.f" selected="true"/>
-    <select idref="rule-2.2.3.1.g" selected="true"/>
-    <select idref="rule-2.2.3.1.h" selected="true"/>
-    <select idref="rule-2.2.3.1.i" selected="true"/>
-    <select idref="rule-2.2.3.1.j" selected="true"/>
-    <select idref="rule-2.2.3.1.k" selected="true"/>
-    <select idref="rule-2.2.3.1.l" selected="true"/>
-    <select idref="rule-2.2.3.2.a" selected="true"/>
-    <select idref="rule-2.2.3.3.a" selected="true"/>
-    <select idref="rule-2.2.3.4.a" selected="true"/>
-    <select idref="rule-2.2.3.4.b" selected="true"/>
-    <select idref="rule-2.2.3.5.a" selected="true"/>
-    <select idref="rule-2.2.3.5.b" selected="true"/>
-    <select idref="rule-2.2.3.6.a" selected="true"/>
-    <select idref="rule-2.2.4.1.a" selected="true"/>
-    <select idref="rule-2.2.4.3.2.a" selected="true"/>
-    <select idref="rule-2.2.4.3.2.b" selected="true"/>
-    <select idref="rule-2.3.1.1.d" selected="true"/>
-    <select idref="rule-2.3.1.2.a" selected="true"/>
-    <select idref="rule-2.3.1.4.a" selected="true"/>
-    <select idref="rule-2.3.1.5.1.a" selected="true"/>
-    <select idref="rule-2.3.1.5.2.a" selected="true"/>
-    <select idref="rule-2.3.1.6.a" selected="true"/>
-    <select idref="rule-2.3.1.8.a" selected="true"/>
-    <select idref="rule-2.3.1.8.b" selected="true"/>
-    <select idref="rule-2.3.1.8.c" selected="true"/>
-    <select idref="rule-2.3.3.1.1.a" selected="true"/>
-    <select idref="rule-2.3.3.5.a" selected="true"/>
-    <select idref="rule-2.3.4.1.1.a" selected="true"/>
-    <select idref="rule-2.3.4.1.2.a" selected="true"/>
-    <select idref="rule-2.3.4.2.a" selected="true"/>
-    <select idref="rule-2.3.4.4.a" selected="true"/>
-    <select idref="rule-2.3.4.4.b" selected="true"/>
-    <select idref="rule-2.3.4.4.c" selected="true"/>
-    <select idref="rule-2.3.5.2.a" selected="true"/>
-    <select idref="rule-2.3.5.2.b" selected="true"/>
-    <select idref="rule-2.3.5.2.c" selected="true"/>
-    <select idref="rule-2.4.2.a" selected="true"/>
-    <select idref="rule-2.4.2.c" selected="true"/>
-    <select idref="rule-2.4.2.d" selected="true"/>
-    <select idref="rule-2.5.1.1.2.a" selected="true"/>
-    <select idref="rule-2.5.1.2.2.a" selected="true"/>
-    <select idref="rule-2.5.1.2.2.b" selected="true"/>
-    <select idref="rule-2.5.1.2.2.c" selected="true"/>
-    <select idref="rule-2.5.1.2.2.d" selected="true"/>
-    <select idref="rule-2.5.1.2.2.e" selected="true"/>
-    <select idref="rule-2.5.1.2.2.f" selected="true"/>
-    <select idref="rule-2.5.1.2.2.g" selected="true"/>
-    <select idref="rule-2.5.1.2.2.h" selected="true"/>
-    <select idref="rule-2.5.1.2.2.i" selected="true"/>
-    <select idref="rule-2.5.1.2.2.j" selected="true"/>
-    <select idref="rule-2.5.1.2.2.k" selected="true"/>
-    <select idref="rule-2.5.1.2.2.l" selected="true"/>
-    <select idref="rule-2.5.5.1.a" selected="true"/>
-    <select idref="rule-2.5.5.1.b" selected="true"/>
-    <select idref="rule-2.6.1.a" selected="true"/>
-    <select idref="rule-2.6.1.2.a" selected="true"/>
-    <select idref="rule-2.6.1.2.b" selected="true"/>
-    <select idref="rule-2.6.1.2.c" selected="true"/>
-    <select idref="rule-2.6.1.4.a" selected="true"/>
-    <select idref="rule-2.6.2.1.a" selected="true"/>
-    <select idref="rule-3.2.1.c" selected="true"/>
-    <select idref="rule-3.2.2.a" selected="true"/>
-    <select idref="rule-3.2.2.b" selected="true"/>
-    <select idref="rule-3.2.3.1.b" selected="true"/>
-    <select idref="rule-3.2.3.1.c" selected="true"/>
-    <select idref="rule-3.2.3.1.d" selected="true"/>
-    <select idref="rule-3.2.4.b" selected="true"/>
-    <select idref="rule-3.2.5.b" selected="true"/>
-    <select idref="rule-3.3.5.a" selected="true"/>
-    <select idref="rule-3.3.12.a" selected="true"/>
-    <select idref="rule-3.3.12.b" selected="true"/>
-    <select idref="rule-3.4.a" selected="true"/>
-    <select idref="rule-3.4.2.1.a" selected="true"/>
-    <select idref="rule-3.4.2.1.b" selected="true"/>
-    <select idref="rule-3.4.2.1.c" selected="true"/>
-    <select idref="rule-3.4.2.2.a" selected="true"/>
-    <select idref="rule-3.4.2.2.b" selected="true"/>
-    <select idref="rule-3.4.2.2.c" selected="true"/>
-    <select idref="rule-3.4.2.3.a" selected="true"/>
-    <select idref="rule-3.4.2.3.b" selected="true"/>
-    <select idref="rule-3.4.2.3.c" selected="true"/>
-    <select idref="rule-3.4.2.3.d" selected="true"/>
-    <select idref="rule-3.4.2.3.e" selected="true"/>
-    <select idref="rule-3.4.2.3.f" selected="true"/>
-    <select idref="rule-3.4.2.3.g" selected="true"/>
-    <select idref="rule-3.4.2.3.h" selected="true"/>
-    <select idref="rule-3.4.2.3.i" selected="true"/>
-    <select idref="rule-3.4.2.3.j" selected="true"/>
-    <select idref="rule-3.4.2.3.k" selected="true"/>
-    <select idref="rule-3.4.2.3.l" selected="true"/>
-    <select idref="rule-3.4.2.3.m" selected="true"/>
-    <select idref="rule-3.4.2.3.n" selected="true"/>
-    <select idref="rule-3.4.2.3.o" selected="true"/>
-    <select idref="rule-3.13.3.1.a" selected="true"/>
-    <select idref="rule-3.13.3.1.b" selected="true"/>
-    <select idref="rule-3.15.1.a" selected="true"/>
-    <select idref="rule-3.15.1.b" selected="true"/>
-    <select idref="rule-3.16.1.a" selected="true"/>
-    <select idref="rule-3.16.1.b" selected="true"/>
-    <select idref="rule-3.17.1.a" selected="true"/>
-    <select idref="rule-3.17.1.b" selected="true"/>
-    <select idref="rule-3.19.1.a" selected="true"/>
-    <select idref="rule-3.19.1.b" selected="true"/>
-    <select idref="rule-3.20.1.a" selected="true"/>
-    <select idref="rule-3.20.1.b" selected="true"/>
-    <refine-value idref="var-2.2.3.1.i" selector="400"/>
-    <refine-value idref="var-2.2.3.1.j" selector="644"/>
-    <refine-value idref="var-2.2.3.1.k" selector="400"/>
-    <refine-value idref="var-2.2.3.1.l" selector="644"/>
-    <refine-value idref="var-2.2.4.1.a" selector="022"/>
-    <refine-value idref="var-2.3.3.1.1.retry" selector="3"/>
-    <refine-value idref="var-2.3.3.5.a" selector="MD5"/>
-    <refine-value idref="var-2.3.4.4" selector="022"/>
-    <refine-value idref="var-2.3.4.4.c" selector="077"/>
-    <refine-value idref="var-2.3.5.2.a" selector="root"/>
-    <refine-value idref="var-2.3.5.2.b" selector="root"/>
-    <refine-value idref="var-2.4.2.c" selector="enforcing"/>
-    <refine-value idref="var-2.4.2.d" selector="targeted"/>
-    <refine-value idref="var-2.5.1.1.a" selector="enabled"/>
-    <refine-value idref="var-2.5.1.2.a" selector="disabled"/>
-    <refine-value idref="var-2.5.1.2.b" selector="enabled"/>
-    <refine-value idref="var-2.5.1.2.c" selector="enabled"/>
-    <refine-value idref="var-2.5.1.2.d" selector="disabled"/>
-    <refine-value idref="var-2.5.1.2.e" selector="disabled"/>
-    <refine-value idref="var-2.5.1.2.f" selector="enabled"/>
-    <refine-value idref="var-2.5.1.2.g" selector="enabled"/>
-    <refine-value idref="var-2.5.1.2.h" selector="enabled"/>
-    <refine-value idref="var-2.5.1.2.i" selector="enabled"/>
-    <refine-value idref="var-2.5.1.2.j" selector="enabled"/>
-    <refine-value idref="var-2.5.1.2.k" selector="disabled"/>
-    <refine-value idref="var-2.5.1.2.l" selector="enabled"/>
-    <refine-value idref="var-2.2.4.3.a" selector="enabled"/>
-    <refine-value idref="var-2.2.4.3.b" selector="enabled"/>
-    <refine-value idref="var-2.6.1.2.a" selector="root"/>
-    <refine-value idref="var-2.6.1.2.b" selector="root"/>
-    <refine-value idref="var-2.6.1.2.c" selector="600"/>
-    <refine-value idref="var-3.4.2.system.crontab.primary.group" selector="root"/>
-    <refine-value idref="var-3.4.2.system.crontab.primary.user" selector="root"/>
-    <refine-value idref="var-3.4.2.system.anacrontab.group" selector="root"/>
-    <refine-value idref="var-3.4.2.system.anacrontab.user" selector="root"/>
-    <refine-value idref="var-3.4.2.system.crontab.directories.group" selector="root"/>
-    <refine-value idref="var-3.4.2.system.crontab.directories.user" selector="root"/>
+    <select idref="rule-1005" selected="true"/>
   </Profile>
   <Group id="gr-intro" hidden="false">
     <title xml:lang="en-US">Introduction</title>
@@ -286,7 +135,7 @@
 						Logical Volume Manager (LVM) makes this possible. See the LVM HOWTO at
 						http://tldp.org/HOWTO/LVM-HOWTO/ for more detailed information on LVM. </description>
           <Group id="gr-installation-1.1" hidden="false">
-            <title xml:lang="en-US">Create Separate Partition or Logical Volume for	/tmp</title>
+            <title xml:lang="en-US">Create Separate Partition or Logical Volume for /tmp</title>
             <description xml:lang="en-US"> The /tmp directory is a world-writable
 							directory used for temporary file storage. Ensure that it has its own
 							partition or logical volume.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -295,7 +144,7 @@
 							general-purpose system, 10GB should be adequate. Smaller or larger sizes
 							could be used, depending on the availability of space on the drive and
 							the system’s operating requirements </description>
-            <Rule id="rule-2.1.1.1.1.a" selected="false" weight="10.000000">
+            <Rule id="rule-1000" selected="false" weight="10.000000">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Ensure that /tmp has its own partition or logical volume</title>
               <description xml:lang="en-US">The /tmp directory is a world-writable
@@ -303,12 +152,12 @@
 								partition or logical volume.</description>
               <ident system="http://cce.mitre.org">CCE-14161-4</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20000" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1000" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
           <Group id="gr-installation-1.2" hidden="false">
-            <title xml:lang="en-US">Create Separate Partition or Logical Volume for	/var</title>
+            <title xml:lang="en-US">Create Separate Partition or Logical Volume for /var</title>
             <description xml:lang="en-US"> The /var directory is used by daemons and
 							other system services to store frequently-changing data. It is not
 							uncommon for the /var directory to contain world-writable directories,
@@ -317,7 +166,7 @@
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Because the yum package manager and other software uses /var
 							to temporarily store large files, ensure that it is of adequate size. For
 							a modern, general-purpose system, 10GB should be adequate. </description>
-            <Rule id="rule-2.1.1.1.2.a" selected="false" weight="10.000000" severity="low">
+            <Rule id="rule-1001" selected="false" weight="10.000000" severity="low">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Ensure that /var has its own partition or logical volume</title>
               <description xml:lang="en-US">The /var directory is used by daemons and
@@ -327,17 +176,17 @@
 								has its own partition or logical volume.</description>
               <ident system="http://cce.mitre.org">CCE-14777-7</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20002" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1001" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
           <Group id="gr-installation-1.3" hidden="false">
-            <title xml:lang="en-US">Create Separate Partition or Logical Volume for	/var/log</title>
+            <title xml:lang="en-US">Create Separate Partition or Logical Volume for /var/log</title>
             <description xml:lang="en-US"> System logs are stored in the /var/log
 							directory. Ensure that it has its own partition or logical volume.
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> See 2.6 for more information about logging and
 							auditing.</description>
-            <Rule id="rule-2.1.1.1.3.a" selected="false" weight="10.000000">
+            <Rule id="rule-1002" selected="false" weight="10.000000">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Ensure that /var/log has its own partition or logical volume</title>
               <description xml:lang="en-US"> System logs are stored in the /var/log
@@ -345,17 +194,17 @@
 								volume.</description>
               <ident system="http://cce.mitre.org">CCE-14011-1</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20004" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1002" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
           <Group id="gr-installation-1.4" hidden="false">
-            <title xml:lang="en-US">Create Separate Partition or Logical Volume for	/var/log/audit</title>
+            <title xml:lang="en-US">Create Separate Partition or Logical Volume for /var/log/audit</title>
             <description xml:lang="en-US"> Audit logs are stored in the /var/log/audit
 							directory. Ensure that it has its own partition or logical volume. Make
 							absolutely certain that it is large enough to store all audit logs that
 							will be created by the auditing daemon.</description>
-            <Rule id="rule-2.1.1.1.4.a" selected="false" weight="10.000000">
+            <Rule id="rule-1003" selected="false" weight="10.000000">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Ensure that /var/log/audit has its own partition or logical volume</title>
               <description xml:lang="en-US"> Audit logs are stored in the
@@ -365,7 +214,7 @@
 								daemon.</description>
               <ident system="http://cce.mitre.org">CCE-14171-3</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20005" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1003" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -376,7 +225,7 @@
 							from another system such as an NFS server, then creating a separate
 							partition is not necessary at this time, and the mountpoint can instead
 							be configured later.</description>
-            <Rule id="rule-2.1.1.1.5.a" selected="false" weight="10.000000" severity="low">
+            <Rule id="rule-1004" selected="false" weight="10.000000" severity="low">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Ensure that /home has its own partition or logical volume</title>
               <description xml:lang="en-US"> If user home directories will be stored
@@ -386,7 +235,7 @@
 								can instead be configured later.</description>
               <ident system="http://cce.mitre.org">CCE-14559-9</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20006" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1004" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -444,13 +293,13 @@
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The command should return the string:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> gpg(Red Hat, Inc. (release key
 							&lt;security@redhat.com&gt;)</description>
-          <Rule id="rule-2.1.2.1.1.a" selected="false" weight="10.000000">
+          <Rule id="rule-1005" selected="false" weight="10.000000">
             <status date="2010-07-01">draft</status>
             <title xml:lang="en-US">Red Hat GPG Key is Installed</title>
             <description xml:lang="en-US">The GPG key should be installed.</description>
             <ident system="http://cce.mitre.org">CCE-14440-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:200065" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1005" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
