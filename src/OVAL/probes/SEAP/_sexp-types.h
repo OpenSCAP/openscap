@@ -41,19 +41,6 @@ OSCAP_HIDDEN_START;
 # define SEXP_MAGIC1_INV 0x0000
 #endif
 
-struct SEXP {
-#if !defined(NDEBUG) || defined(VALIDATE_SEXP)
-        volatile uint16_t __magic0;
-#endif
-
-        SEXP_datatypePtr_t *s_type;
-        uintptr_t           s_valp;
-
-#if !defined(NDEBUG) || defined(VALIDATE_SEXP)
-        volatile uint16_t __magic1;
-#endif
-};
-
 OSCAP_HIDDEN_END;
 
 #endif /* _SEXP_TYPES_H */

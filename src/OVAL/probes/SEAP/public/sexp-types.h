@@ -69,8 +69,6 @@ typedef uint8_t SEXP_numtype_t;
 # define NUM_BIGNUM 0x0b /* Not implemented */
 #endif
 
-typedef struct SEXP SEXP_t;
-
 /* S-expression format */
 typedef uint8_t SEXP_format_t;
 
@@ -91,6 +89,21 @@ typedef uint8_t SEXP_format_t;
 #define SEXP_TYPE_LIST   3
 
 typedef uint8_t SEXP_type_t;
+
+struct SEXP {
+#if !defined(NDEBUG) || defined(VALIDATE_SEXP)
+        volatile uint16_t __magic0;
+#endif
+
+        void     *s_type;
+        uintptr_t s_valp;
+
+#if !defined(NDEBUG) || defined(VALIDATE_SEXP)
+        volatile uint16_t __magic1;
+#endif
+};
+
+typedef struct SEXP SEXP_t;
 
 #ifdef __cplusplus
 }
