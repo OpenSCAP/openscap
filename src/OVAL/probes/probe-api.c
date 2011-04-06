@@ -1391,7 +1391,7 @@ static SEXP_t *probe_item_optimize(const SEXP_t *item)
 	return SEXP_ref(item);
 }
 
-#define PROBE_RESULT_MEMCHECK_CTRESHOLD  65535  /* item count */
+#define PROBE_RESULT_MEMCHECK_CTRESHOLD  32768  /* item count */
 #define PROBE_RESULT_MEMCHECK_MINFREEMEM 128    /* MiB */
 #define PROBE_RESULT_MEMCHECK_MAXRATIO   0.80   /* max. memory usage ratio - used/total */
 
@@ -1403,7 +1403,7 @@ static int probe_cobj_memcheck(size_t item_cnt)
 	if (item_cnt > PROBE_RESULT_MEMCHECK_CTRESHOLD) {
 		struct memusage mu;
 		struct sysinfo  si;
-		float  c_ratio;
+		double c_ratio;
 
 		// todo: add an error message to the collected object?
 
@@ -1413,7 +1413,7 @@ static int probe_cobj_memcheck(size_t item_cnt)
 		if (sysinfo (&si) != 0)
 			return (-1);
 
-		c_ratio = (float)mu.mu_data/(float)((si.totalram * si.mem_unit) / 1024);
+		c_ratio = (double)mu.mu_data/(double)((si.totalram * si.mem_unit) / 1024);
 
 		if (c_ratio > PROBE_RESULT_MEMCHECK_MAXRATIO) {
 			dW("Memory usage ratio limit reached! limit=%f, current=%f\n",
@@ -1432,7 +1432,3 @@ static int probe_cobj_memcheck(size_t item_cnt)
 
 	return (0);
 }
-
-#undef PROBE_RESULT_MEMCHECK_CTRESHOLD
-#undef PROBE_RESULT_MEMCHECK_MINFREEMEM
-#undef PROBE_RESULT_MEMCHECK_MAXRATIO
