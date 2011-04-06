@@ -1439,6 +1439,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
 {
         va_list ap;
 	SEXP_t *item, *name_sexp, *value_sexp, *entity;
+        SEXP_t value_sexp_mem, entity_mem;
         const char *o2p_type, *value_name, *subtype_name;
         char item_name[64];
         oval_datatype_t value_type;
@@ -1472,22 +1473,22 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
 
                 switch (value_type) {
                 case OVAL_DATATYPE_STRING:
-                        value_sexp = SEXP_string_new((const char *)value, strlen((const char *)value));
+                        value_sexp = SEXP_string_new_r(&value_sexp_mem, (const char *)value, strlen((const char *)value));
                         break;
                 case OVAL_DATATYPE_BOOLEAN:
-                        value_sexp = SEXP_number_newb(*(bool *)value);
+                        value_sexp = SEXP_number_newb_r(&value_sexp_mem, *(bool *)value);
                         break;
                 case OVAL_DATATYPE_INTEGER:
-                        value_sexp = SEXP_number_newi(*(int *)value);
+                        value_sexp = SEXP_number_newi_r(&value_sexp_mem, *(int *)value);
                         break;
                 case OVAL_DATATYPE_FLOAT:
-                        value_sexp = SEXP_number_newf(*(double *)value);
+                        value_sexp = SEXP_number_newf_r(&value_sexp_mem, *(double *)value);
                         break;
                 case OVAL_DATATYPE_EVR_STRING:
                 case OVAL_DATATYPE_FILESET_REVISION:
                 case OVAL_DATATYPE_IOS_VERSION:
                 case OVAL_DATATYPE_VERSION:
-                        value_sexp = SEXP_string_new((const char *)value, strlen((const char *)value));
+                        value_sexp = SEXP_string_new_r(&value_sexp_mem, (const char *)value, strlen((const char *)value));
                         o2p_type   = __probe_o2p_datatype(value_type);
 
                         if (SEXP_datatype_set(value_sexp, o2p_type) != 0) {
@@ -1495,7 +1496,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
 
                                 SEXP_free(item);
                                 SEXP_free(name_sexp);
-                                SEXP_free(value_sexp);
+                                SEXP_free_r(value_sexp);
 
                                 return (NULL);
                         }
@@ -1518,13 +1519,13 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                 assume_d(name_sexp  != NULL, NULL);
                 assume_d(value_sexp != NULL, NULL);
 
-                entity = SEXP_list_new(name_sexp, value_sexp, NULL);
+                entity = SEXP_list_new_r(&entity_mem, name_sexp, value_sexp, NULL);
 
                 SEXP_list_add(item, entity);
 
-                SEXP_unref_r(entity);
-                SEXP_unref_r(name_sexp);
-                SEXP_unref_r(value_sexp);
+                SEXP_free_r(&entity_mem);
+                SEXP_free_r(&value_sexp_mem);
+                SEXP_free(name_sexp);
 
                 value_name = va_arg(ap, const char *);
         }
