@@ -2089,6 +2089,7 @@
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> In the same file, comment out or delete the lines: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> auth requisite pam_succeed_if.so uid &gt;= 500 quiet <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						auth required pam_deny.so <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						After changing /etc/pam.d/system-auth as described above, perform the same set of changes in /etc/pam.d/password-auth as well.
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> To enforce password lockout, add the following to the individual
 						programs' configuration files in /etc/pam.d. First, add to end of the auth
 						lines: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -2118,9 +2119,19 @@
             <value selector="5">5</value>
             <value selector="10">10</value>
           </Value>
-          <Rule id="rule-2.3.3.2.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-2.3.3.2.a.1" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">draft</status>
-            <title xml:lang="en-US">Set deny for Failed Password Attempts</title>
+            <title xml:lang="en-US">Set deny for Failed Password Attempts in /etc/pam.d/system-auth</title>
+            <description xml:lang="en-US">The deny policy should meet minimum requirements.</description>
+            <ident system="http://cce.mitre.org">CCE-3410-8</ident>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+              <check-export export-name="oval:rhel:var:200801" value-id="var-2.3.3.2.a.deny"/>
+              <check-content-ref name="oval:rhel:def:200801" href="scap-rhel6-oval.xml"/>
+            </check>
+          </Rule>
+          <Rule id="rule-2.3.3.2.a.2" selected="false" weight="10.000000" severity="medium">
+            <status date="2010-07-01">draft</status>
+            <title xml:lang="en-US">Set deny for Failed Password Attempts in /etc/pam.d/password-auth</title>
             <description xml:lang="en-US">The deny policy should meet minimum requirements.</description>
             <ident system="http://cce.mitre.org">CCE-3410-8</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -2144,46 +2155,10 @@
 						pam_deny.so module always returns failure regardless of its
 						input.</description>
         </Group>
-        <Group id="group-2.3.3.4" hidden="false">
-          <title xml:lang="en-US">Restrict Execution of userhelper to Console Users</title>
-          <description xml:lang="en-US"> If your environment has defined a group,
-						usergroup containing all the human users of your system, restrict execution
-						of the userhelper program to only that group: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># chgrp usergroup /usr/sbin/userhelper <xhtml:br/> # chmod 4710
-							/usr/sbin/userhelper <xhtml:br/>
-						</xhtml:code>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The userhelper program provides authentication for graphical
-						services which must run with root privileges, such as the system-config-
-						family of graphical configuration utilities. Only human users logged into
-						the system console are likely to ever have a legitimate need to run these
-						utilities. This step provides some protection against possible flaws in
-						userhelper's implementation, and against further privilege escalation when
-						system accounts are compromised. See Section 2.3.2.2 for more information on
-						creating a group of human users. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The userhelper program is configured by the files in
-						/etc/security/console.apps/. Each file specifies, for some program, what
-						user the program should run as, and what program should be executed after
-						successful authentication. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Note: The configuration in /etc/security/console.apps/ is
-						applied in combination with the PAM configuration of the service defined in
-						/etc/pam.d/. First, userhelper determines what user the service should run
-						as. (Typically, this will be root.) Next, userhelper uses the PAM API to
-						allow the user who ran the program to attempt to authenticate as the desired
-						user. The PAM API exchange is wrapped in a GUI if the application's
-						configuration requests one.</description>
-          <Value id="var-2.3.3.4.a" operator="equals" type="string">
-            <title xml:lang="en-US">Name of group containing human users</title>
-            <description xml:lang="en-US">Enter group to aggregate human
-							users</description>
-            <value selector="usergroup">usergroup</value>
-          </Value>
-        </Group>
-        <Group id="group-2.3.3.5" hidden="false">
-          <title xml:lang="en-US">Upgrade Password Hashing Algorithm to SHA-512</title>
+        <Group id="gr-accounts-pam.4" hidden="false">
+          <title xml:lang="en-US">Ensure the Password Hashing Algorithm is SHA-512</title>
           <description xml:lang="en-US"> The default algorithm for storing password hashes
-						in /etc/shadow is MD5. In release 5.2 (and for those systems fully updated
-						since its release), the algorithms SHA-256 and SHA-512 are available.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						in /etc/shadow is SHA-512, but a weaker algorithm could have been configured.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> In order to configure the system to use the SHA-512 algorithm,
 						issue the command: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -2191,14 +2166,7 @@
 						</xhtml:code>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> When users changes their passwords, hashes for the new passwords
 						will be generated using the SHA-512 algorithm.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The release notes available at
-						http://www.redhat.com/docs/en-US/Red_Hat_
-						Enterprise_Linux/5.2/html/Release_Notes/singles/relnotesU2-x86.html document
-						this change. As noted there, only kickstart-installed systems can be
-						configured to begin operation with this algorithm. Other systems will need to
-						have this command issued and then all accounts will need to perform a
-						password change in order to upgrade the stored hashes to the stronger
-						algorithm. </description>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> </description>
           <Value id="var-2.3.3.5.a" operator="equals" type="string">
             <title xml:lang="en-US">Password hashing algorithm</title>
             <description xml:lang="en-US">Enter /etc/shadow password hashing
@@ -2208,11 +2176,40 @@
             <value selector="SHA-256">sha256</value>
             <value selector="SHA-512">sha512</value>
           </Value>
-          <Rule id="rule-2.3.3.5.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-2.3.3.5.a.1" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">draft</status>
-            <title xml:lang="en-US">Password hashing algorithm</title>
-            <description xml:lang="en-US">The password hashing algorithm should be set to
-							MD5</description>
+            <title xml:lang="en-US">Password hashing algorithm in /etc/pam.d/system-auth</title>
+            <description xml:lang="en-US">The password hashing algorithm should be set to SHA-512</description>
+            <ident system="http://cce.mitre.org">CCE-14063-2</ident>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+              <check-export export-name="oval:rhel:var:20083" value-id="var-2.3.3.5.a"/>
+              <check-content-ref name="oval:rhel:def:20083" href="scap-rhel6-oval.xml"/>
+            </check>
+          </Rule>
+          <Rule id="rule-2.3.3.5.a.2" selected="false" weight="10.000000" severity="medium">
+            <status date="2010-07-01">draft</status>
+            <title xml:lang="en-US">Password hashing algorithm in /etc/pam.d/password-auth</title>
+            <description xml:lang="en-US">The password hashing algorithm should be set to SHA-512</description>
+            <ident system="http://cce.mitre.org">CCE-14063-2</ident>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+              <check-export export-name="oval:rhel:var:20083" value-id="var-2.3.3.5.a"/>
+              <check-content-ref name="oval:rhel:def:20083" href="scap-rhel6-oval.xml"/>
+            </check>
+          </Rule>
+          <Rule id="rule-2.3.3.5.a.3" selected="false" weight="10.000000" severity="medium">
+            <status date="2010-07-01">draft</status>
+            <title xml:lang="en-US">Password hashing algorithm in /etc/login.defs</title>
+            <description xml:lang="en-US">The password hashing algorithm should be set to SHA-512</description>
+            <ident system="http://cce.mitre.org">CCE-14063-2</ident>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+              <check-export export-name="oval:rhel:var:20083" value-id="var-2.3.3.5.a"/>
+              <check-content-ref name="oval:rhel:def:20083" href="scap-rhel6-oval.xml"/>
+            </check>
+          </Rule>
+          <Rule id="rule-2.3.3.5.a.4" selected="false" weight="10.000000" severity="medium">
+            <status date="2010-07-01">draft</status>
+            <title xml:lang="en-US">Password hashing algorithm in /etc/libuser.conf</title>
+            <description xml:lang="en-US">The password hashing algorithm should be set to SHA-512</description>
             <ident system="http://cce.mitre.org">CCE-14063-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-export export-name="oval:rhel:var:20083" value-id="var-2.3.3.5.a"/>
@@ -2220,14 +2217,18 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.3.3.6" hidden="false">
+        <Group id="gr-accounts-pam.5" hidden="false">
           <title xml:lang="en-US">Limit Password Reuse</title>
           <description xml:lang="en-US"> Do not allow users to reuse recent passwords.
 						This can be accomplished by using the remember option for the pam_unix PAM
 						module. In order to prevent a user from re-using any of his or her last 5
-						passwords, append remember=5 to the password line which uses the pam_unix
-						module in the file /etc/pam.d/system-auth, as shown:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> password sufficient pam_unix.so existing_options remember=5<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						passwords, locate the <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"> password requisite pam_cracklib.so ... </xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> or <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">password requisite pam_passwdqc.so ... </xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>line in /etc/pam.d/system-auth,
+						and add the following line immediately below:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"> password requisite pam_pwhistory.so use_authtok remember=5 </xhtml:code>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Old (and thus no longer valid) passwords are stored in the file
 						/etc/security/opasswd. </description>
           <Value id="var-2.3.3.6.a" operator="equals" type="number">
@@ -2240,9 +2241,20 @@
             <value selector="5">5</value>
             <value selector="10">10</value>
           </Value>
-          <Rule id="rule-2.3.3.6.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-2.3.3.6.a.1" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">draft</status>
-            <title xml:lang="en-US">Limit password reuse</title>
+            <title xml:lang="en-US">Limit password reuse in /etc/pam.d/system-auth</title>
+            <description xml:lang="en-US">The passwords to remember should be set to: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.3.3.6.a"/>
+						</description>
+            <ident system="http://cce.mitre.org">CCE-14939-3</ident>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+              <check-export export-name="oval:rhel:var:20084" value-id="var-2.3.3.6.a"/>
+              <check-content-ref name="oval:rhel:def:20084" href="scap-rhel6-oval.xml"/>
+            </check>
+          </Rule>
+          <Rule id="rule-2.3.3.6.a.2" selected="false" weight="10.000000" severity="medium">
+            <status date="2010-07-01">draft</status>
+            <title xml:lang="en-US">Limit password reuse in /etc/pam.d/password-auth</title>
             <description xml:lang="en-US">The passwords to remember should be set to: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.3.3.6.a"/>
 						</description>
             <ident system="http://cce.mitre.org">CCE-14939-3</ident>
@@ -2253,7 +2265,7 @@
           </Rule>
         </Group>
       </Group>
-      <Group id="group-2.3.4" hidden="false">
+      <Group id="gr-accounts-config" hidden="false">
         <title xml:lang="en-US">Secure Session Configuration Files for Login Accounts</title>
         <description xml:lang="en-US"> When a user logs into a Unix account, the system
 					configures the user's session by reading a number of files. Many of these files
@@ -2263,20 +2275,20 @@
 					access to the affected user's account. Therefore, it is important to test and
 					correct configuration file permissions for interactive accounts, particularly
 					those of privileged users such as root or system administrators.</description>
-        <Group id="group-2.3.4.1" hidden="false">
-          <title xml:lang="en-US">Ensure that No Dangerous Directories Exist in Roots Path'</title>
+        <Group id="gr-accounts-config.1" hidden="false">
+          <title xml:lang="en-US">Ensure that No Dangerous Directories Exist in Root's Path</title>
           <description xml:lang="en-US"> The active path of the root account can be
 						obtained by starting a new root shell and running: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># echo $PATH <xhtml:br/>
-						</xhtml:code> This will produce a colon-separated list of directories in the
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># echo $PATH </xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>This will produce a colon-separated list of directories in the
 						path. For each directory DIR in the path, ensure that DIR is not equal to a
 						single . character. Also ensure that there are no 'empty' elements in the
 						path, such as in these examples: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">PATH=:/bin <xhtml:br/> PATH=/bin: <xhtml:br/> PATH=/bin::/sbin
-							<xhtml:br/>
-						</xhtml:code>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">PATH=:/bin</xhtml:code><xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">PATH=/bin:</xhtml:code><xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">PATH=/bin::/sbin</xhtml:code><xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> These empty elements have the same effect as a single .
 						character. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> For each element in the path, run: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -2315,7 +2327,7 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.3.4.2" hidden="false">
+        <Group id="gr-accounts-config.2" hidden="false">
           <title xml:lang="en-US">Ensure that User Home Directories are not Group-Writable or World-Readable</title>
           <description xml:lang="en-US"> For each human user USER of the system, view the
 						permissions of the user's home directory: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -2325,9 +2337,10 @@
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Ensure that the directory is not group-writable and that it is
 						not world-readable. If necessary, repair the permissions:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># chmod g-w /home/USER <xhtml:br/> # chmod o-rwx /home/USER
-							<xhtml:br/>
-						</xhtml:code>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># chmod g-w /home/USER</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># chmod o-rwx /home/USER</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> User home directories contain many configuration files which
 						affect the behavior of a user's account. No user should ever have write
 						permission to another user's home directory. Group shared directories can be
@@ -2335,7 +2348,7 @@
 						needed. Typically, user home directories should not be world-readable. If a
 						subset of users need read access to one another's home directories, this can
 						be provided using groups.</description>
-          <warning xml:lang="en-US">Sections 2.3.4.2–2.3.4.5 recommend modifying user home
+          <warning xml:lang="en-US">This section recommends modifying user home
 						directories. Notify your user community, and solicit input if appropriate,
 						before making this type of change. </warning>
           <Rule id="rule-2.3.4.2.a" selected="false" weight="10.000000" severity="medium">
@@ -2349,24 +2362,27 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.3.4.3" hidden="false">
+        <Group id="gr-accounts-config.3" hidden="false">
           <title xml:lang="en-US">Ensure that User Dot-Files are not World-writable</title>
           <description xml:lang="en-US"> For each human user USER of the system, view the
 						permissions of all dot-files in the user's home directory: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># ls -ld /home/USER /.[A-Za-z0-9]* <xhtml:br/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># ls -ld /home/USER/.[A-Za-z0-9]* <xhtml:br/>
 						</xhtml:code>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Ensure that none of these files are group- or world-writable.
 						Correct each misconfigured file FILE by executing: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># chmod go-w /home/USER /FILE <xhtml:br/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># chmod go-w /home/USER/FILE <xhtml:br/>
 						</xhtml:code>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> A user who can modify another user's configuration files can
 						likely execute commands with the other user's privileges, including stealing
 						data, destroying files, or launching further attacks on the
 						system.</description>
+          <warning xml:lang="en-US">This section recommends modifying user home
+						directories. Notify your user community, and solicit input if appropriate,
+						before making this type of change. </warning>
         </Group>
-        <Group id="group-2.3.4.4" hidden="false">
+        <Group id="gr-accounts-config.4" hidden="false">
           <title xml:lang="en-US">Ensure that Users Have Sensible Umask Values</title>
           <description xml:lang="en-US">
 						<xhtml:ol xmlns:xhtml="http://www.w3.org/1999/xhtml">
@@ -2400,6 +2416,9 @@
 						such as the FTP user. However, setting a restrictive default protects the
 						files of users who have not taken steps to make their files more available,
 						and preventing files from being inadvertently shared.</description>
+          <warning xml:lang="en-US">This sections recommends modifying user home
+						directories. Notify your user community, and solicit input if appropriate,
+						before making this type of change. </warning>
           <Value id="var-2.3.4.4" operator="equals" type="string">
             <title xml:lang="en-US">Sensible umask</title>
             <description xml:lang="en-US">Enter default user umask</description>
@@ -2465,12 +2484,12 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.3.4.5" hidden="false">
+        <Group id="gr-accounts-config.5" hidden="false">
           <title xml:lang="en-US">Ensure that Users do not Have .netrc Files</title>
           <description xml:lang="en-US"> For each human user USER of the system, ensure
 						that the user has no .netrc file. The command: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># ls -l /home/USER /.netrc <xhtml:br/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># ls -l /home/USER/.netrc <xhtml:br/>
 						</xhtml:code>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> should return the error 'No such file or directory'. If any user
 						has such a file, approach that user to discuss removing this file. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -2478,16 +2497,19 @@
 						logins to other systems via FTP. When this file exists, it frequently
 						contains unencrypted passwords which may be used to attack other
 						systems.</description>
+          <warning xml:lang="en-US">This section recommends modifying user home
+						directories. Notify your user community, and solicit input if appropriate,
+						before making this type of change. </warning>
         </Group>
       </Group>
-      <Group id="group-2.3.5" hidden="false">
+      <Group id="gr-accounts-physical" hidden="false">
         <title xml:lang="en-US">Protect Physical Console Access</title>
         <description xml:lang="en-US"> It is impossible to fully protect a system from an
 					attacker with physical access, so securing the space in which the system is
 					located should be considered a necessary step. However, there are some steps
 					which, if taken, make it more difficult for an attacker to quickly or
 					undetectably modify a system from its console.</description>
-        <Group id="group-2.3.5.1" hidden="false">
+        <Group id="gr-accounts-physical.1" hidden="false">
           <title xml:lang="en-US">Set BIOS Password</title>
           <description xml:lang="en-US"> The BIOS (on x86 systems) is the first code to
 						execute during system startup and controls many important system parameters,
@@ -2504,13 +2526,13 @@
 						</xhtml:ol> The exact process will be system-specific and the system's
 						hardware manual may provide detailed instructions. This password should
 						prevent attackers with physical access from attempting to change important
-						parameters, such as those described in Sections 2.5.2.2.1 and 2.2.2.2.4.
+						parameters.
 						However, an attacker with physical access can usually clear the BIOS
 						password. The password should be written down and stored in a
 						physically-secure location, such as a safe, in the event that it is
 						forgotten and must be retrieved.</description>
         </Group>
-        <Group id="group-2.3.5.2" hidden="false">
+        <Group id="gr-accounts-physical.2" hidden="false">
           <title xml:lang="en-US">Boot Loader Password</title>
           <description xml:lang="en-US"> During the boot process, the boot loader is
 						responsible for starting the execution of the kernel and passing options to
@@ -2525,19 +2547,19 @@
 						<xhtml:ol xmlns:xhtml="http://www.w3.org/1999/xhtml">
 							<xhtml:li>Select a password and then generate a hash from it by running: <xhtml:br/>
 								<xhtml:br/>
-								<xhtml:code># grub-md5-crypt </xhtml:code>
+								<xhtml:code># grub-crypt --sha-512 </xhtml:code>
 							</xhtml:li>
 							<xhtml:li>Insert the following line into /etc/grub.conf immediately
-								after the header comments. (Use the output from grub-md5-crypt as
+								after the header comments. (Use the output from grub-crypt as
 								the value of password-hash ): <xhtml:br/>
 								<xhtml:br/>
-								<xhtml:code>password --md5 password-hash </xhtml:code>
+								<xhtml:code>password --encrypted password-hash </xhtml:code>
 							</xhtml:li>
 							<xhtml:li>Verify the permissions on /etc/grub.conf (which is a symlink
 								to ../boot/grub/grub.conf): <xhtml:br/>
 								<xhtml:br/>
-								<xhtml:code># chown root:root /etc/grub.conf <xhtml:br/> # chmod 600
-									/etc/grub.conf</xhtml:code>
+								<xhtml:code> # chown root:root /etc/grub.conf</xhtml:code><xhtml:br/>
+								<xhtml:code> # chmod 600 /etc/grub.conf</xhtml:code>
 							</xhtml:li>
 						</xhtml:ol> Boot loaders for other platforms should offer a similar password
 						protection feature.</description>
@@ -2587,7 +2609,7 @@
           <Rule id="rule-2.3.5.2.d" selected="false" weight="10.000000" severity="high">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Enable Boot Loader Password</title>
-            <description xml:lang="en-US">The grub boot loader should have password protection
+            <description xml:lang="en-US">The grub boot loader should have sha-512 password protection
 							enabled</description>
             <ident system="http://cce.mitre.org">CCE-3818-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -2595,29 +2617,29 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.3.5.3" hidden="false">
-          <title xml:lang="en-US">Do not Require Authentication for Single-User Mode</title>
+        <Group id="gr-accounts-physical.3" hidden="false">
+          <title xml:lang="en-US">Require Authentication for Single-User Mode</title>
           <description xml:lang="en-US"> Single-user mode is intended as a system recovery
 						method, providing a single user root access to the system by providing a
 						boot option at startup. By default, no authentication is performed if
 						single-user mode is selected. This provides a trivial mechanism of bypassing
 						security on the machine and gaining root access. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> To require entry of the root password even if the system is
-						started in single-user mode, add the following line to the /etc/inittab file:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> ~~:S:wait:/sbin/sulogin</description>
+						started in single-user mode, change the SINGLE value in /etc/sysconfig/init as follows:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+	                                        <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">SINGLE=/sbin/sulogin</xhtml:code></description>
           <Rule id="rule-2.3.5.3.a" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">Do not Require Authentication for Single-User Mode</title>
-            <description xml:lang="en-US">The requirement for a password to boot into single-user mode
-							should be disabled.</description>
+            <title xml:lang="en-US">Require Authentication for Single-User Mode</title>
+            <description xml:lang="en-US">A password should be required to boot into single-user mode.</description>
             <ident system="http://cce.mitre.org">CCE-4241-6</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref name="oval:rhel:def:20096" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.3.5.4" hidden="false">
-          <title xml:lang="en-US">Do not Disable Interactive Boot</title>
+        <Group id="gr-accounts-physical.4" hidden="false">
+          <title xml:lang="en-US">Disable Interactive Boot</title>
           <description xml:lang="en-US"> Edit the file /etc/sysconfig/init. Add or correct
 						the setting:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> PROMPT=no <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The PROMPT option allows the console user
@@ -2627,7 +2649,7 @@
 						system security.</description>
           <Rule id="rule-2.3.5.4.a" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">Do not Disable Interactive Boot</title>
+            <title xml:lang="en-US">Disable Interactive Boot</title>
             <description xml:lang="en-US">The ability for users to perform interactive startups should be
 							disabled.</description>
             <ident system="http://cce.mitre.org">CCE-4245-7</ident>
@@ -2636,14 +2658,13 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.3.5.5" hidden="false">
+        <Group id="gr-accounts-physical.5" hidden="false">
           <title xml:lang="en-US">Implement Inactivity Time-out for Login Shells</title>
           <description xml:lang="en-US"> If the system does not run X Windows, then the
 						login shells can be configured to automatically log users out after a period
 						of inactivity. The following instructions are not practical for systems
 						which run X Windows, as they will close terminal windows in the X
-						environment. For information on how to automatically lock those systems, see
-						Section 2.3.5.6. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						environment. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> To implement a 15-minute idle time-out for the default /bin/bash
 						shell, create a new file tmout.sh in the directory /etc/profile.d with the
 						following lines: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -2661,10 +2682,8 @@
 						foreground process. If, for example, a vi session is left idle, then
 						automatic logout would not occur. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> When logging in through a remote connection, as with SSH, it may
-						be more effective to set the timeout value directly through that service. To
-						learn how to set automatic timeout intervals for SSH, see Section
-						3.5.2.3.</description>
-          <Value id="var-2.3.5.5" operator="equals" type="string">
+						be more effective to set the timeout value directly through that service.</description>
+          <Value id="var-2.3.5.5" operator="equals" type="number">
             <title xml:lang="en-US">Inactivity timout</title>
             <description xml:lang="en-US">Choose allowed duration of inactive SSH
 							connections, shells, and X sessions</description>
@@ -2674,7 +2693,7 @@
             <value selector="15_minutes">15</value>
           </Value>
         </Group>
-        <Group id="group-2.3.5.6" hidden="false">
+        <Group id="gr-accounts-physical.6" hidden="false">
           <title xml:lang="en-US">Configure Screen Locking</title>
           <description xml:lang="en-US"> When a user must temporarily leave an account
 						logged-in, screen locking should be employed to prevent passersby from
@@ -2684,7 +2703,7 @@
 						screen when they plan to temporarily step away from a logged-in account.
 						Automatic screen locking is only meant as a safeguard for those cases where
 						a user forgot to lock the screen.</description>
-          <Group id="group-2.3.5.6.1" hidden="false">
+          <Group id="gr-accounts-physical.6.1" hidden="false">
             <title xml:lang="en-US">Configure GUI Screen Locking</title>
             <description xml:lang="en-US"> In the default GNOME desktop, the screen can
 							be locked by choosing Lock Screen from the System menu. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -2694,24 +2713,30 @@
 							screen locking, a blank-screen screensaver, and 15-minute idle
 							activation time: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"> 
-							# gconftool-2 --direct \ <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 
-							--config-source	xml:readwrite:/etc/gconf/gconf.xml.mandatory \<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 
-							--type bool \ <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 
-							--set /apps/gnome-screensaver/idle_activation_enabled true <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							#gconftool-2 --direct \ <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 
-							--config-source	xml:readwrite:/etc/gconf/gconf.xml.mandatory \ <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							--type bool \<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							--set /apps/gnome-screensaver/lock_enabled true <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							# gconftool-2 --direct \ <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 
-							--config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory \ <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							--type string \<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							--set /apps/gnome-screensaver/mode blank-only <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							# gconftool-2 --direct \ <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							--config-source	xml:readwrite:/etc/gconf/gconf.xml.mandatory \ <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 
-							--type int \ <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							--set /apps/gnome-screensaver/idle_delay 15 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							</xhtml:code>
+							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">
+							# gconftool-2 --direct
+							--config-source	xml:readwrite:/etc/gconf/gconf.xml.mandatory
+							--type bool
+							--set /apps/gnome-screensaver/idle_activation_enabled true
+							</xhtml:code><xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">
+							# gconftool-2 --direct
+							--config-source	xml:readwrite:/etc/gconf/gconf.xml.mandatory
+							--type bool
+							--set /apps/gnome-screensaver/lock_enabled true
+							</xhtml:code><xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">
+							# gconftool-2 --direct
+							--config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory
+							--type string
+							--set /apps/gnome-screensaver/mode blank-only
+							</xhtml:code><xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">
+							# gconftool-2 --direct
+							--config-source	xml:readwrite:/etc/gconf/gconf.xml.mandatory
+							--type int
+							--set /apps/gnome-screensaver/idle_delay 15
+							</xhtml:code><xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The default setting of 15 minutes for idle activation is
 							reasonable for many office environments, but the setting should conform
 							to whatever policy is defined. The screensaver mode blank-only is
@@ -2771,7 +2796,7 @@
               </check>
             </Rule>
           </Group>
-          <Group id="group-2.3.5.6.2" hidden="false">
+          <Group id="gr-accounts-physical.6.2" hidden="false">
             <title xml:lang="en-US">Configure Console Screen Locking</title>
             <description xml:lang="en-US"> A console screen locking mechanism is
 							provided in the vlock package, which is not installed by default. If the
@@ -2796,7 +2821,7 @@
             </Rule>
           </Group>
         </Group>
-        <Group id="group-2.3.5.7" hidden="false">
+        <Group id="gr-accounts-physical.7" hidden="false">
           <title xml:lang="en-US">Disable Unnecessary Ports</title>
           <description xml:lang="en-US"> Though unusual, some systems may be managed only
 						remotely and yet also exposed to risk from attackers with direct physical
@@ -2818,7 +2843,7 @@
 						attached to the system.</warning>
         </Group>
       </Group>
-      <Group id="group-2.3.6" hidden="false">
+      <Group id="gr-accounts-centralized" hidden="false">
         <title xml:lang="en-US">Use a Centralized Authentication Service</title>
         <description xml:lang="en-US"> A centralized authentication service is any method of
 					maintaining central control over account and authentication data and of keeping
@@ -2843,14 +2868,12 @@
 						<xhtml:li>Ensure that the root account has a local password, to allow
 							recovery in case of network outage or authentication server
 							failure.</xhtml:li>
-					</xhtml:ul> This guide recommends the use of LDAP. Secure configuration of
-					OpenLDAP for clients and servers is described in Section 3.12. Kerberos is also
+					</xhtml:ul> This guide recommends the use of LDAP. Kerberos is also
 					a good choice for a centralized authentication service, but a description of its
 					configuration is beyond the scope of this guide. The NIS service is not
-					recommended, and should be considered obsolete. (See Section
-					3.2.4.)</description>
+					recommended, and should be considered obsolete. </description>
       </Group>
-      <Group id="group-2.3.7" hidden="false">
+      <Group id="gr-accounts-banners" hidden="false">
         <title xml:lang="en-US">Warning Banners for System Accesses</title>
         <description xml:lang="en-US"> Each system should expose as little information about
 					itself as possible. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -2870,13 +2893,12 @@
 					organization</description>
           <value selector="any_text">.+</value>
         </Value>
-        <Group id="group-2.3.7.1" hidden="false">
+        <Group id="gr-accounts-banners.1" hidden="false">
           <title xml:lang="en-US">Modify the System Login Banner</title>
           <description xml:lang="en-US"> The contents of the file /etc/issue are displayed
 						on the screen just above the login prompt for users logging directly into a
 						terminal. Remote login programs such as SSH or FTP can be configured to
-						display /etc/issue as well. Instructions for configuring each server daemon
-						to show this file can be found in the relevant sections of Chapter 3. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						display /etc/issue as well.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> By default, the system will display the version of the OS, the
 						kernel version, and the host name. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Edit /etc/issue. Replace the default text with a message
@@ -2893,28 +2915,27 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.3.7.2" hidden="false">
+        <Group id="gr-accounts-banners.2" hidden="false">
           <title xml:lang="en-US">Implement a GUI Warning Banner</title>
           <description xml:lang="en-US"> In the default graphical environment, users
 						logging directly into the system are greeted with a login screen provided by
 						the GNOME display manager. The warning banner should be displayed in this
 						graphical environment for these users.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The files for the default RHEL theme can be found in
-						/usr/share/gdm/themes/RHEL. Add the following sample block of XML to
-						/usr/share/gdm/themes/RHEL/RHEL.xml after the first two "pixmap" entries:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"> 
-						&lt;item type="rect"&gt; &lt;pos anchor="n" x="50%" y="10" <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						width="box" height="box"/&gt; &lt;box&gt; &lt;item type="label"&gt; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						&lt;normal font="Sans 14" color="#ffffff"/&gt; &lt;text&gt;Insert the <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						text of your warning banner here.&lt;/text&gt; &lt;/item&gt; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						&lt;/box&gt; &lt;/item&gt; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						</xhtml:code>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The full syntax that GDM theme files expect is documented
-						elsewhere, but the above XML will create a text box centered at the top of
-						the screen. The font, text color, and exact positioning can all be easily
-						modified by editing the appropriate values. The latest current GDM theme
-						manual can be found at http://www.gnome.org/
-						projects/gdm/docs/thememanual.html. </description>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						Configure the banner using the following commands:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">
+						# gconftool-2 --direct
+						--config-source xml:readwrite:/etc/gconf/gconf.xml.defaults
+						--type bool
+						--set /apps/gdm/simple-greeter/banner_message_enable true
+						</xhtml:code><xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">
+						# gconftool-2 --direct
+						--config-source xml:readwrite:/etc/gconf/gconf.xml.defaults
+						--type string
+						--set /apps/gdm/simple-greeter/banner_message_text 'YOUR_TEXT'
+						</xhtml:code><xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+	  </description>
           <Rule id="rule-2.3.7.2.a" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Implement a GUI Warning Banner</title>
@@ -5747,6 +5768,7 @@
             </Rule>
           </Group>
           <Group id="group-2.6.2.4.12" hidden="false">
+	    <!-- FIXME: password-auth -->
             <title xml:lang="en-US">Ensure auditd Collects System Administrator Actions</title>
             <description xml:lang="en-US"> At a minimum the audit system should collect
 							administrator actions for all users and root.  Append the following line to /etc/pam.d/system-auth:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -9091,6 +9113,7 @@
           </Rule>
         </Group>
         <Group id="group-3.12.2.3" hidden="false">
+	  <!-- FIXME: password-auth -->
           <title xml:lang="en-US">Configure Authentication Services to Use OpenLDAP</title>
           <description xml:lang="en-US"> Edit the file /etc/ldap.conf, and add or correct
 						the following lines: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -9099,7 +9122,7 @@
 						following lines: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> passwd: files ldap <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> shadow: files ldap <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						group: files ldap <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Edit the file /etc/pam.d/system-auth-ac. Make the following
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Edit the file /etc/pam.d/system-auth. Make the following
 						changes, which will add references to LDAP in each of the four sections of
 						the file: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -9136,7 +9159,7 @@
 						since it introduces risk with little benefit. It is recommended that the
 						automounter not be used at all, so LDAP control of automounter maps is
 						unlikely to be appropriate. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The file /etc/pam.d/system-auth-ac is used by PAM to control
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The file /etc/pam.d/system-auth is used by PAM to control
 						access to most authenticated services. The syntax of the PAM configuration
 						file is somewhat cryptic. The lines recommended here have the combined
 						effect of using LDAP to find authentication data for users who cannot be
