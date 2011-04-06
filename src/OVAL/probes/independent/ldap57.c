@@ -227,8 +227,6 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
                         ber_free(berptr, 0);
                         entry = ldap_next_entry(ldp, entry);
                 }
-
-                ldap_destroy(ldp);
         }
 
         ldap_memfree(uri_list);

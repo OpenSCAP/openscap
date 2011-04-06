@@ -187,7 +187,7 @@ probe_independent_ldap57=no
 
 AC_CHECK_LIB(
   [ldap],
-  [ldap_destroy],
+  [ldap_initialize],
   [libopenldap_libs="-lldap -llber"
    libopenldap_cflags=""
    probe_independent_ldap57=yes
