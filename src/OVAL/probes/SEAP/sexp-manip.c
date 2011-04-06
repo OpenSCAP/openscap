@@ -1741,6 +1741,15 @@ SEXP_t *SEXP_unref (SEXP_t *s_exp_o)
         return (s_exp_o);
 }
 
+int SEXP_unref_r(SEXP_t *s_exp)
+{
+        if (SEXP_refs(s_exp) != 1)
+                return (-1);
+        else
+                SEXP_rawval_decref(s_exp->s_valp);
+        return (0);
+}
+
 SEXP_t *SEXP_softref (SEXP_t *s_exp_o)
 {
         SEXP_t *s_exp_r;
