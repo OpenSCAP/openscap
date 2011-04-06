@@ -83,6 +83,50 @@
 			<criterion test_ref="oval:rhel:tst:10051" comment="check gpg signature" />
 		</criteria>
 	</definition>
+	<definition class="compliance" id="oval:rhel:def:1006" version="1">
+        	<metadata>
+			<title>Disable the rhnsd Daemon</title>
+			<reference ref_id="CCE-3416-5" source="CCE"/>
+			<description>The rhnsd service should be disabled.</description>
+		</metadata>
+		<criteria>
+			<criterion comment="Check that rhnsd service is not running" test_ref="oval:rhel:tst:10061"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1007" version="1">
+		<metadata>
+			<title>Ensure gpgcheck is Globally Activated</title>
+			<reference ref_id="TBD" source="CCE"/>
+			<description>The gpgcheck option should be used to ensure that checking of an RPM package’s signature always occurs prior
+				     to its installation./</description>
+		</metadata>
+		<criteria>
+			<criterion comment="check value of gpgcheck in /etc/yum.conf" test_ref="oval:rhel:tst:10071" />
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1008" version="1">
+		<metadata>
+			<title>Ensure Package Signature Checking is Not Disabled For Any Repos</title>
+			<reference ref_id="TBD" source="CCE"/>
+			<description>To ensure that signature checking is not disabled for any repos, ensure that the following line DOES NOT
+				     appear in any repo conﬁguration ﬁles in /etc/yum.repos.d or elsewhere</description>
+		</metadata>
+		<criteria>
+			<criterion comment="check value of gpgcheck=0 in /etc/yum.repos.d/*" test_ref="oval:rhel:tst:10081" />
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1009" version="1">
+		<metadata>
+			<title>Verify Package Integrity Using RPM</title>
+			<reference ref_id="CCE-14931-0" source="CCE"/>
+			<description>Verify the integrity of installed packages by comparing the installed ﬁles with
+				     information about the ﬁles taken from the package metadata stored in the RPM
+				     database.</description>
+		</metadata>
+		<criteria>
+			<criterion comment="Unknown test stub" test_ref="oval:rhel:tst:1009"/>
+		</criteria>
+	</definition>
 	</definitions>
 
 
@@ -111,18 +155,46 @@
 		<lin-def:object object_ref="oval:rhel:obj:100511"/>
 		<lin-def:state state_ref="oval:rhel:ste:100511"/>
 	</lin-def:rpminfo_test>
+	<unix-def:runlevel_test check_existence="all_exist" id="oval:rhel:tst:10061" version="1" check="all" comment="Runlevel test rhnsd">
+		<unix-def:object object_ref="oval:rhel:obj:100611"/>
+		<unix-def:state state_ref="oval:rhel:ste:100611"/>
+	</unix-def:runlevel_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10071" version="1" check="all" comment="check value of gpgcheck in /etc/yum.conf" check_existence="at_least_one_exists">
+		<ind-def:object object_ref="oval:rhel:obj:100711" />
+		<ind-def:state state_ref="oval:rhel:ste:100711" />
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10081" version="1" check="all" comment="check value of gpgcheck=1 in all /etc/yum.repos.d/*">
+		<ind-def:object object_ref="oval:rhel:obj:100811" />
+		<ind-def:state state_ref="oval:rhel:ste:100711" />
+	</ind-def:textfilecontent54_test>
+	<ind-def:unknown_test id="oval:rhel:tst:1009" version="1" check="all" comment="Test implementation is unknown, unavailable, or impossible"/>
 	</tests>
 
 
 	<objects>
 	<ind-def:textfilecontent54_object id="oval:rhel:obj:100011" version="1" comment="look for the partition mount point in /etc/fstab">
 		<ind-def:filepath>/etc/fstab</ind-def:filepath>
-		<ind-def:pattern operation="pattern match">^[\s]*[\S]+[\s]+([\S]+)[\s]+[\S]+[\s]+[\S]+[\s]+[\S]+[\s]+[\S]+</ind-def:pattern>
+		<ind-def:pattern operation="pattern match">^[\s]*[\S]+[\s]+([\S]+)[\s]+[\S]+[\s]+[\S]+[\s]+[\S]+[\s]+[\S]+$</ind-def:pattern>
 		<ind-def:instance datatype="int" operation="greater than or equal">1</ind-def:instance>
 	</ind-def:textfilecontent54_object>
 	<lin-def:rpminfo_object id="oval:rhel:obj:100511" version="1">
 		<lin-def:name>gpg-pubkey</lin-def:name>
 	</lin-def:rpminfo_object>
+	<unix-def:runlevel_object id="oval:rhel:obj:100611" version="1">
+		<unix-def:service_name>rhnsd</unix-def:service_name>
+		<unix-def:runlevel var_check="at least one" var_ref="oval:rhel:var:100611"/>
+	</unix-def:runlevel_object>
+	<ind-def:textfilecontent54_object id="oval:rhel:obj:100711" version="1" comment="look for the value of gpgcheck in /etc/yum.conf">
+		<ind-def:filepath>/etc/yum.conf</ind-def:filepath>
+		<ind-def:pattern operation="pattern match">^[\s]*gpgcheck[\s]*=[\s]*([0-1])$</ind-def:pattern>
+		<ind-def:instance datatype="int" operation="greater than or equal">1</ind-def:instance>
+	</ind-def:textfilecontent54_object>
+	<ind-def:textfilecontent54_object id="oval:rhel:obj:100811" version="1" comment="look for the value of gpgcheck= in /etc/yum.repos.d">
+		<ind-def:path>/etc/yum.repos.d</ind-def:path>
+		<ind-def:filename operation="pattern match">.*</ind-def:filename>
+		<ind-def:pattern operation="pattern match">^[\s]*gpgcheck[\s]*=[\s]*([0-1])$</ind-def:pattern>
+		<ind-def:instance datatype="int" operation="greater than or equal">1</ind-def:instance>
+	</ind-def:textfilecontent54_object>
         </objects>
 
 
@@ -146,7 +218,25 @@
 		<lin-def:release>45761324</lin-def:release>
 		<lin-def:version>37017186</lin-def:version>
 	</lin-def:rpminfo_state>
+	<unix-def:runlevel_state id="oval:rhel:ste:100611" version="1" comment="daemon is not running or is stopping">
+		<unix-def:start datatype="boolean">false</unix-def:start>
+		<unix-def:kill datatype="boolean">true</unix-def:kill>
+	</unix-def:runlevel_state>
+	<ind-def:textfilecontent54_state id="oval:rhel:ste:100711" version="1" comment="Expected value of gpgcheck should be enabled">
+		<ind-def:subexpression datatype="int" operation="equals" entity_check="all">1</ind-def:subexpression>
+	</ind-def:textfilecontent54_state>
 	</states>
+
+	<variables>
+	<constant_variable id="oval:rhel:var:100611" datatype="string" version="1" comment="run levels">
+		<value>1</value>
+		<value>2</value>
+		<value>3</value>
+		<value>4</value>
+		<value>5</value>
+		<value>6</value>
+	</constant_variable>
+	</variables>
 
 </oval_definitions>
 

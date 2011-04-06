@@ -19,6 +19,8 @@
 			which are not possible to implement in current OVAL version.
 		</description>
     <select idref="rule-1005" selected="true"/>
+    <select idref="rule-1007" selected="true"/>
+    <select idref="rule-1008" selected="true"/>
   </Profile>
   <Group id="gr-intro" hidden="false">
     <title xml:lang="en-US">Introduction</title>
@@ -347,13 +349,13 @@
 						and install system updates. Once the system has been registered, either use
 						the provided yum-updatesd service or create a cron job to automatically
 						apply updates. </description>
-          <Rule id="rule-2.1.2.2.a" selected="false" weight="10.000000" severity="low">
+          <Rule id="rule-1006" selected="false" weight="10.000000" severity="low">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Disable the rhnsd Daemon</title>
             <description xml:lang="en-US">The rhnsd service should be disabled.</description>
             <ident system="http://cce.mitre.org">CCE-3416-5</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20007" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1006" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -373,14 +375,6 @@
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># yum update</xhtml:code>
 						</description>
-            <Rule id="security_patches_up_to_date" selected="false" weight="10.000000">
-              <status date="2010-07-01">draft</status>
-              <title xml:lang="en-US">Ensure software is up to date</title>
-              <description xml:lang="en-US">Check for package updates</description>
-              <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="" href="patches.xml"/>
-              </check>
-            </Rule>
           </Group>
           <Group id="gr-updating-4.2" hidden="false">
             <title xml:lang="en-US">Configure Automatic Update Retrieval and Installation with Cron</title>
@@ -406,7 +400,7 @@
 							[main] section:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> gpgcheck=1 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						</description>
-            <Rule id="rule-2.1.2.3.3.a" selected="false" weight="10.000000">
+            <Rule id="rule-1007" selected="false" weight="10.000000">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">gpgcheck is Globally Activated</title>
               <description xml:lang="en-US"> The gpgcheck option should be used to ensure that checking
@@ -417,7 +411,7 @@
 								<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> gpgcheck=1</description>
               <ident system="http://cce.mitre.org">CCE-14914-6</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20010" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1007" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -428,7 +422,7 @@
 							in any repo configuration files in /etc/yum.repos.d or elsewhere:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> gpgcheck=0 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						</description>
-            <Rule id="rule-2.1.2.3.4.a" selected="false" weight="10.000000">
+            <Rule id="rule-1008" selected="false" weight="10.000000">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Package Signature Checking is Not Disabled For Any Repos</title>
               <description xml:lang="en-US"> To ensure that signature checking is not disabled for any
@@ -437,7 +431,7 @@
 								<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>gpgcheck=0</description>
               <ident system="http://cce.mitre.org">CCE-14813-0</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20011" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1008" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -496,7 +490,7 @@
 						that do not match the expected output demand further investigation if the
 						system is being seriously examined. This check could also be run as a cron
 						job. </description>
-          <Rule id="rule-2.1.3.2.a" selected="false" weight="10.000000">
+          <Rule id="rule-1009" selected="false" weight="10.000000">
             <status date="2010-07-01">draft</status>
             <title xml:lang="en-US">Package Integrity is correct according to package management system</title>
             <description xml:lang="en-US">Verify the integrity of installed packages by comparing the
@@ -504,7 +498,7 @@
 							metadata stored in the RPM database.</description>
             <ident system="http://cce.mitre.org">CCE-14931-0</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:200155" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:tst:1009" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
