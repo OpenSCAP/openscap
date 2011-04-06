@@ -38,6 +38,7 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    sexp-datatype.c		\
 		    _sexp-datatype.h		\
 		    sexp-manip.c		\
+		    sexp-manip_r.c		\
 		    _sexp-manip.h		\
 		    sexp-output.c		\
 		    _sexp-output.h		\
@@ -64,6 +65,7 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    public/seap.h		\
 		    public/seap-scheme.h	\
 		    public/sexp-manip.h		\
+		    public/sexp-manip_r.h	\
 		    public/sexp-output.h	\
 		    public/sexp-parser.h	\
 		    public/sexp-types.h		\

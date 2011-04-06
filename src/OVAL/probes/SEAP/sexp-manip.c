@@ -43,6 +43,8 @@
 #include "_sexp-value.h"
 #include "_sexp-manip.h"
 #include "_sexp-rawptr.h"
+#include "public/sexp-manip.h"
+#include "public/sexp-manip_r.h"
 
 static void SEXP_free_lmemb (SEXP_t *s_exp);
 
@@ -88,26 +90,12 @@ SEXP_t *SEXP_number_new (SEXP_numtype_t t, const void *n)
 
 SEXP_t *SEXP_number_newb (bool n)
 {
-        SEXP_t    *s_exp;
-        SEXP_val_t v_dsc;
+        SEXP_t *sexp;
 
-        _LOGCALL_;
+        sexp = SEXP_new ();
+        sexp = SEXP_number_newb_r(sexp, n);
 
-        if (SEXP_val_new (&v_dsc, sizeof (SEXP_numtype_t) + sizeof (bool),
-                          SEXP_VALTYPE_NUMBER) != 0)
-        {
-                /* TODO: handle this */
-                return (NULL);
-        }
-
-        SEXP_NCASTP(b,v_dsc.mem)->t = SEXP_NUM_BOOL;
-        SEXP_NCASTP(b,v_dsc.mem)->n = n;
-
-        s_exp = SEXP_new ();
-        s_exp->s_type = NULL;
-        s_exp->s_valp = v_dsc.ptr;
-
-        return (s_exp);
+        return (sexp);
 }
 
 SEXP_t *SEXP_number_newi_8  (int8_t n)
@@ -275,26 +263,12 @@ uint16_t SEXP_number_getu_16 (const SEXP_t *s_exp)
 
 SEXP_t *SEXP_number_newi_32 (int32_t n)
 {
-        SEXP_t    *s_exp;
-        SEXP_val_t v_dsc;
+        SEXP_t *sexp;
 
-        _LOGCALL_;
+        sexp = SEXP_new ();
+        sexp = SEXP_number_newi_32_r(sexp, n);
 
-        if (SEXP_val_new (&v_dsc, sizeof (SEXP_numtype_t) + sizeof (int32_t),
-                          SEXP_VALTYPE_NUMBER) != 0)
-        {
-                /* TODO: handle this */
-                return (NULL);
-        }
-
-        SEXP_NCASTP(i32,v_dsc.mem)->t = SEXP_NUM_INT32;
-        SEXP_NCASTP(i32,v_dsc.mem)->n = n;
-
-        s_exp = SEXP_new ();
-        s_exp->s_type = NULL;
-        s_exp->s_valp = v_dsc.ptr;
-
-        return (s_exp);
+        return (sexp);
 }
 
 int32_t SEXP_number_geti_32 (const SEXP_t *s_exp)
@@ -588,26 +562,12 @@ bool SEXP_number_getb (const SEXP_t *s_exp)
 
 SEXP_t *SEXP_number_newf (double n)
 {
-        SEXP_t    *s_exp;
-        SEXP_val_t v_dsc;
+        SEXP_t *sexp;
 
-        _LOGCALL_;
+        sexp = SEXP_new();
+        sexp = SEXP_number_newf_r(sexp, n);
 
-        if (SEXP_val_new (&v_dsc, sizeof (SEXP_numtype_t) + sizeof (double),
-                          SEXP_VALTYPE_NUMBER) != 0)
-        {
-                /* TODO: handle this */
-                return (NULL);
-        }
-
-        SEXP_NCASTP(f,v_dsc.mem)->t = SEXP_NUM_DOUBLE;
-        SEXP_NCASTP(f,v_dsc.mem)->n = n;
-
-        s_exp = SEXP_new ();
-        s_exp->s_type = NULL;
-        s_exp->s_valp = v_dsc.ptr;
-
-        return (s_exp);
+        return (sexp);
 }
 
 double SEXP_number_getf (const SEXP_t *s_exp)
@@ -676,25 +636,12 @@ SEXP_numtype_t SEXP_number_type (const SEXP_t *s_exp)
 
 SEXP_t *SEXP_string_new  (const void *string, size_t length)
 {
-        SEXP_t    *s_exp;
-        SEXP_val_t v_dsc;
+        SEXP_t *sexp;
 
-        _LOGCALL_;
+        sexp = SEXP_new ();
+        sexp = SEXP_string_new_r(sexp, string, length);
 
-        if (SEXP_val_new (&v_dsc, sizeof (char) * length,
-                          SEXP_VALTYPE_STRING) != 0)
-        {
-                /* TODO: handle this */
-                return (NULL);
-        }
-
-        memcpy (v_dsc.mem, string, sizeof (char) * length);
-
-        s_exp = SEXP_new ();
-        s_exp->s_type = NULL;
-        s_exp->s_valp = v_dsc.ptr;
-
-        return (s_exp);
+        return (sexp);
 }
 
 SEXP_t *SEXP_string_newf (const char *format, ...)
@@ -1068,58 +1015,15 @@ bool SEXP_string_getb (const SEXP_t *s_exp)
 
 SEXP_t *SEXP_list_new (SEXP_t *memb, ...)
 {
-        va_list    alist;
-        SEXP_val_t v_dsc;
-        SEXP_t    *s_ptr[32];
-        size_t     s_cur;
-        uint8_t    b_exp;
-        SEXP_t    *s_exp;
+        SEXP_t *list;
+        va_list ap;
 
-        _LOGCALL_;
+        va_start(ap, memb);
+        list = SEXP_new ();
+        list = SEXP_list_new_rv(list, memb, ap);
+        va_end(ap);
 
-        va_start (alist, memb);
-
-        s_cur = 0;
-        s_ptr[s_cur] = memb;
-
-        while (s_ptr[s_cur] != NULL) {
-                _A(s_cur < (sizeof s_ptr / sizeof (SEXP_t *)));
-                SEXP_VALIDATE(s_ptr[s_cur]);
-
-                s_ptr[++s_cur] = va_arg (alist, SEXP_t *);
-        }
-
-        if (SEXP_val_new (&v_dsc, sizeof (void *) + sizeof (uint16_t),
-                          SEXP_VALTYPE_LIST) != 0)
-        {
-                /* TODO: handle this */
-                return (NULL);
-        }
-
-        if (s_cur > 0) {
-                for (b_exp = 0; (size_t)(1 << b_exp) < s_cur; ++b_exp);
-
-                SEXP_LCASTP(v_dsc.mem)->offset = 0;
-                SEXP_LCASTP(v_dsc.mem)->b_addr = (void *)SEXP_rawval_lblk_new (b_exp);
-
-                if (SEXP_rawval_lblk_fill ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr,
-                                           s_ptr, s_cur) != ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr))
-                {
-                        /* TODO: handle this */
-                        return (NULL);
-                }
-        } else {
-                SEXP_LCASTP(v_dsc.mem)->offset = 0;
-                SEXP_LCASTP(v_dsc.mem)->b_addr = NULL;
-        }
-
-        s_exp = SEXP_new ();
-        s_exp->s_type = NULL;
-        s_exp->s_valp = v_dsc.ptr;
-
-        SEXP_VALIDATE(s_exp);
-
-        return (s_exp);
+        return (list);
 }
 
 void SEXP_list_free (SEXP_t *s_exp)
@@ -1741,15 +1645,6 @@ SEXP_t *SEXP_unref (SEXP_t *s_exp_o)
         return (s_exp_o);
 }
 
-int SEXP_unref_r(SEXP_t *s_exp)
-{
-        if (SEXP_refs(s_exp) != 1)
-                return (-1);
-        else
-                SEXP_rawval_decref(s_exp->s_valp);
-        return (0);
-}
-
 SEXP_t *SEXP_softref (SEXP_t *s_exp_o)
 {
         SEXP_t *s_exp_r;
@@ -1876,58 +1771,23 @@ static void SEXP_free_lmemb (SEXP_t *s_exp)
 
 #if defined(NDEBUG)
 void SEXP_free (SEXP_t *s_exp)
-#else
-void __SEXP_free (SEXP_t *s_exp, const char *file, uint32_t line, const char *func)
-#endif
 {
-        _LOGCALL_;
-
-#if !defined(NDEBUG)
-        _D("s_exp=%p (%s:%u:%s)\n", s_exp, file, line, func);
-#endif
-
-        if (s_exp == NULL) {
-                _D("WARN: s_exp = NULL\n");
-                return;
+        if (s_exp != NULL) {
+                SEXP_free_r(s_exp);
+                sm_free(s_exp);
         }
-
-	if (!SEXP_softrefp(s_exp) && SEXP_typeof(s_exp) != SEXP_TYPE_EMPTY) {
-                SEXP_val_t v_dsc;
-
-                SEXP_VALIDATE(s_exp);
-                SEXP_val_dsc (&v_dsc, s_exp->s_valp);
-
-                if (SEXP_rawval_decref (s_exp->s_valp)) {
-                        switch (v_dsc.type) {
-                        case SEXP_VALTYPE_STRING:
-                                sm_free (v_dsc.hdr);
-                                break;
-                        case SEXP_VALTYPE_NUMBER:
-                                sm_free (v_dsc.hdr);
-                                break;
-                        case SEXP_VALTYPE_LIST:
-                                if (SEXP_LCASTP(v_dsc.mem)->b_addr != NULL)
-                                        SEXP_rawval_lblk_free ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr, SEXP_free_lmemb);
-
-                                sm_free (v_dsc.hdr);
-                                break;
-                        default:
-                                abort ();
-                        }
-                }
-        }
-
-#if !defined(NDEBUG) || defined(VALIDATE_SEXP)
-        s_exp->s_valp = 0;
-        s_exp->s_type = NULL;
-        s_exp->__magic0 = SEXP_MAGIC0_INV;
-        s_exp->__magic1 = SEXP_MAGIC1_INV;
-#endif
-
-        sm_free (s_exp);
-
         return;
 }
+#else
+void __SEXP_free (SEXP_t *s_exp, const char *file, uint32_t line, const char *func)
+{
+        if (s_exp != NULL) {
+                __SEXP_free_r(s_exp, file, line, func);
+                sm_free (s_exp);
+        }
+        return;
+}
+#endif
 
 #if defined(NDEBUG)
 void SEXP_vfree (SEXP_t *s_exp, ...)

@@ -492,7 +492,6 @@ SEXP_t *SEXP_new (void);
 SEXP_t *SEXP_ref (const SEXP_t *s_exp);
 
 SEXP_t *SEXP_unref (SEXP_t *s_exp_o);
-int SEXP_unref_r (SEXP_t *s_exp);
 
 /**
  * Create a new soft reference to a sexp object.
