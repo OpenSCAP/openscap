@@ -97,7 +97,7 @@ struct rpminfo_rep {
 };
 
 struct rpminfo_global {
-        rpmdb           rpmdb;
+        rpmts           rpmts;
         pthread_mutex_t mutex;
 };
 
@@ -176,7 +176,7 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
 
         switch (req->op) {
         case OVAL_OPERATION_EQUALS:
-                match = rpmdbInitIterator (g_rpm.rpmdb, RPMTAG_NAME, (const void *)req->name, 0);
+                match = rpmtsInitIterator (g_rpm.rpmts, RPMTAG_NAME, (const void *)req->name, 0);
 
                 if (match == NULL) {
                         ret = 0;
@@ -187,7 +187,7 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
 
                 break;
         case OVAL_OPERATION_PATTERN_MATCH:
-                match = rpmdbInitIterator (g_rpm.rpmdb, RPMDBI_PACKAGES, NULL, 0);
+                match = rpmtsInitIterator (g_rpm.rpmts, RPMDBI_PACKAGES, NULL, 0);
 
                 if (match == NULL) {
                         ret = 0;
@@ -248,8 +248,7 @@ void *probe_init (void)
                 return (NULL);
         }
 
-        /* XXX: check retval */
-        rpmdbOpen (NULL, &g_rpm.rpmdb, O_RDONLY, 0644);
+        g_rpm.rpmts = rpmtsCreate();
 
         pthread_mutex_init (&(g_rpm.mutex), NULL);
 
@@ -260,12 +259,11 @@ void probe_fini (void *ptr)
 {
         struct rpminfo_global *r = (struct rpminfo_global *)ptr;
 
-        rpmdbClose (r->rpmdb);
+        rpmtsFree(r->rpmts);
 	rpmFreeCrypto();
         rpmFreeRpmrc();
         rpmFreeMacros(NULL);
         rpmlogClose();
-        rpmFreeFilesystems();
         pthread_mutex_destroy (&(r->mutex));
 
         return;

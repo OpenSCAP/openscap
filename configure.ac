@@ -245,7 +245,7 @@ case "${host}" in
 #
 have_librpm=no
 AC_SEARCH_LIBS(
-  [rpmdbOpen],
+  [rpmtsCreate],
   [rpm],
   [AC_CHECK_LIB(
      [rpm],
