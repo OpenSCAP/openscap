@@ -2950,24 +2950,24 @@
         </Group>
       </Group>
     </Group>
-    <Group id="group-2.4" hidden="false">
+    <Group id="gr-selinux" hidden="false">
       <title xml:lang="en-US">SELinux</title>
       <description xml:lang="en-US"> SELinux is a feature of the Linux kernel which can be
 				used to guard against misconfigured or compromised programs. SELinux enforces the
 				idea that programs should be limited in what files they can access and what actions
 				they can take. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-				<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The default SELinux policy, as configured on RHEL6, has been
-				sufficiently developed and debugged that it should be usable on almost any Red Hat
-				machine with variety configurations and a small amount of system administrator
+				<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The default SELinux policy, as configured on RHEL6,
+				should be usable on almost any RHEL
+				machine with minimal configuration and a small amount of system administrator
 				training. This policy prevents system services — including most of the common
 				network-visible services such as mail servers, ftp servers, and DNS servers — from
 				accessing files which those services have no valid reason to access. This action
 				alone prevents a huge amount of possible damage from network attacks against
 				services, from trojaned software, and so forth. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 				<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> This guide recommends that SELinux be enabled using the default
-				(targeted) policy on every Red Hat system, unless that system has requirements which
+				(targeted) policy on every RHEL system, unless that system has requirements which
 				make a stronger policy appropriate.</description>
-      <Group id="group-2.4.1" hidden="false">
+      <Group id="gr-selinux-intro" hidden="false">
         <title xml:lang="en-US">How SELinux Works</title>
         <description xml:lang="en-US"> In the traditional Linux/Unix security model, known
 					as Discretionary Access Control (DAC), processes run under a user and group
@@ -3014,10 +3014,10 @@
 					further strengthening their systems by using one of the stricter policies
 					provided with RHEL6 or in writing their own policy.</description>
       </Group>
-      <Group id="group-2.4.2" hidden="false">
+      <Group id="gr-selinux-enable" hidden="false">
         <title xml:lang="en-US">Enable SELinux</title>
-        <description xml:lang="en-US"> The SELinux is enabled by default on RHEL6. The file /etc/selinux/config should contains
-					following lines for targeted policy: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+        <description xml:lang="en-US"> The SELinux is enabled by default on RHEL6. The file /etc/selinux/config should contain
+					the following lines for targeted policy: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">SELINUX=enforcing </xhtml:code> 
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -3031,7 +3031,7 @@
 					SELinux is causing a lot of problems or preventing the system from booting, it
 					is possible to boot into the warning-only mode SELINUX=permissive for debugging
 					purposes. Make certain to change the mode back to enforcing after debugging, set
-					the filesystems to be relabelled for consistency using the command touch
+					the filesystems to be relabeled for consistency using the command touch
 					/.autorelabel, and reboot. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> However, the RHEL6 default SELinux configuration should be
 					sufficiently reasonable that most systems will boot without serious problems.
@@ -3040,12 +3040,11 @@
 					support continues to improve. In other cases, SELinux may reveal unusual or
 					insecure program behavior by design. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The directive SELINUXTYPE=targeted configures SELinux to use the
-					default targeted policy. See Section 2.4.6 if a stricter policy is appropriate
-					for your site. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+					default targeted policy.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The SELinux boot mode specified in /etc/selinux/config can be
 					overridden by command-line arguments passed to the kernel. It is necessary to
 					check grub.conf to ensure that this has not been done and to protect the
-					bootloader as described in Section 2.3.5.2.</description>
+					bootloader against unauthorized configuration change.</description>
         <Value id="var-2.4.2.c" operator="equals" type="string">
           <title xml:lang="en-US">SELinux state</title>
           <description xml:lang="en-US"> enforcing - SELinux security policy is enforced.
@@ -3061,13 +3060,13 @@
           <description xml:lang="en-US"> Type of policy in use. Possible values
 						are:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> targeted - Only targeted network daemons are
 						protected.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> strict - Full SELinux protection.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> mls -
-						Multiple levels of security</description>
+						Multi-level security</description>
           <value>targeted</value>
           <value selector="targeted">targeted</value>
           <value selector="strict">strict</value>
           <value selector="mls">mls</value>
         </Value>
-        <Group id="group-2.4.2.1" hidden="false">
+        <Group id="gr-selinux-enable.1" hidden="false">
           <title xml:lang="en-US">Ensure SELinux is Properly Enabled</title>
           <description xml:lang="en-US"> Run the command:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -3113,7 +3112,7 @@
           </check>
         </Rule>
       </Group>
-      <Group id="group-2.4.3" hidden="false">
+      <Group id="gr-selinux-daemons" hidden="false">
         <title xml:lang="en-US">Disable Unnecessary SELinux Daemons</title>
         <description xml:lang="en-US"> Several daemons are installed by default as part of
 					the RHEL6 SELinux support mechanism. These daemons may improve the system's
@@ -3121,7 +3120,7 @@
 					unnecessary code running on the machine, increasing system risk. If these
 					daemons are available in your RHEL6 installation and are not needed on your system, 
 					they should be disabled.</description>
-        <Group id="group-2.4.3.1" hidden="false">
+        <Group id="gr-selinux-daemons.1" hidden="false">
           <title xml:lang="en-US">Remove SETroubleshoot if Possible</title>
           <description xml:lang="en-US"> Is there a mission-critical reason to allow users
 						to view SELinux denial information using the sealert GUI? If not, 
@@ -3145,7 +3144,7 @@
 						to monitor SELinux's behavior.</description>
 
         </Group>
-        <Group id="group-2.4.3.2" hidden="false">
+        <Group id="gr-selinux-daemons.2" hidden="false">
           <title xml:lang="en-US">Disable MCS Translation Service (mcstrans) if Possible</title>
           <description xml:lang="en-US"> Unless there is some overriding need for the
 						convenience of category label translation, disable the MCS translation
@@ -3169,7 +3168,7 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.4.3.3" hidden="false">
+        <Group id="gr-selinux-daemons.3" hidden="false">
           <title xml:lang="en-US">Restorecon Service (restorecond)</title>
           <description xml:lang="en-US"> The restorecond daemon monitors a list of files
 						which are frequently created or modified on running systems, and whose
@@ -3187,7 +3186,7 @@
 						of restorecond.</description>
         </Group>
       </Group>
-      <Group id="group-2.4.4" hidden="false">
+      <Group id="gr-selinux-unconfined" hidden="false">
         <title xml:lang="en-US">Check for Unconfined Daemons</title>
         <description xml:lang="en-US"> Daemons that SELinux policy does not know about will
 					inherit the context of the parent process. Because daemons are launched during
@@ -3203,7 +3202,7 @@
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> It should produce no output in a well-configured
 					system.</description>
       </Group>
-      <Group id="group-2.4.5" hidden="false">
+      <Group id="gr-selinux-unlabeled" hidden="false">
         <title xml:lang="en-US">Check for Unlabeled Device Files</title>
         <description xml:lang="en-US"> Device files are used for communication with important
 					system resources. SELinux contexts should exist for these. If a device file is
@@ -3223,7 +3222,7 @@
           </check>
         </Rule>
       </Group>
-      <Group id="group-2.4.6" hidden="false">
+      <Group id="gr-selinux-debugging" hidden="false">
         <title xml:lang="en-US">Debugging SELinux Policy Errors</title>
         <description xml:lang="en-US"> SELinux's default policies have improved
 					significantly over time, and most systems should have few problems using the
@@ -3364,7 +3363,7 @@
 					</xhtml:ul>
 				</description>
       </Group>
-      <Group id="group-2.4.7" hidden="false">
+      <Group id="gr-selinux-strengthening" hidden="false">
         <title xml:lang="en-US">Further Strengthening</title>
         <description xml:lang="en-US"> The recommendations up to this point have discussed
 					how to configure and maintain a system under the default configuration of the
@@ -3382,7 +3381,7 @@
 					and provides links to some outside resources about their use. Detailed
 					description of how to implement these steps is beyond the scope of this
 					guide.</description>
-        <Group id="group-2.4.7.1" hidden="false">
+        <Group id="gr-selinux-strengthening.1" hidden="false">
           <title xml:lang="en-US">Strengthen the Default SELinux Boolean Configuration</title>
           <description xml:lang="en-US"> SELinux booleans are used to enable or disable
 						segments of policy to comply with site policy. Booleans may apply to the
@@ -3417,7 +3416,7 @@
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The pages global tunables.html and global booleans.html may be
 						useful when examining booleans.</description>
         </Group>
-        <Group id="group-2.4.7.2" hidden="false">
+        <Group id="gr-selinux-strengthening.2" hidden="false">
           <title xml:lang="en-US">Use a Stronger Policy</title>
           <description xml:lang="en-US"> Using a stronger policy can greatly enhance
 						security, but will generally require customization to be compatible with the
@@ -3505,7 +3504,7 @@
 						
         </Group>
       </Group>
-      <Group id="group-2.4.8" hidden="false">
+      <Group id="gr-selinux-references" hidden="false">
         <title xml:lang="en-US">SELinux References</title>
         <description xml:lang="en-US">
 					<xhtml:ul xmlns:xhtml="http://www.w3.org/1999/xhtml">
