@@ -74,6 +74,7 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <limits.h>
 #if defined USE_REGEX_PCRE
 #include <pcre.h>
 #elif defined USE_REGEX_POSIX
@@ -86,6 +87,7 @@
 #include <oval_fts.h>
 #include <alloc.h>
 #include "common/assume.h"
+#include "common/debug_priv.h"
 
 #define FILE_SEPARATOR '/'
 
@@ -188,27 +190,25 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
 {
 	int i;
 	SEXP_t *item;
-	SEXP_t *r0, *r1, *r2, *r3, *r4, *r5, *r6;
+	SEXP_t *r0;
+        char filepath[PATH_MAX+1];
 
-	item = probe_item_creat ("textfilecontent_item", NULL,
-                                 /* entities */
-                                 "filepath", NULL,
-				 r2 = SEXP_string_newf ("%s/%s", path, filename),
-                                 "path", NULL,
-                                 r0 = SEXP_string_newf("%s", path),
-                                 "filename", NULL,
-                                 r1 = SEXP_string_newf("%s", filename),
-                                 "pattern", NULL,
-                                 r3 = SEXP_string_newf("%s", pattern),
-                                 "instance", NULL,
-                                 r4 = SEXP_number_newi_32(instance),
-				 "line", NULL,
-				 r6 = SEXP_string_newf("%s", pattern),
-                                 "text", NULL,
-                                 r5 = SEXP_string_newf("%s", substrs[0]),
+        if (strlen(path) + strlen(filename) + 1 > PATH_MAX) {
+                dE("path+filename too long\n");
+                return (NULL);
+        }
+
+        snprintf(filepath, PATH_MAX, "%s%c%s", path, FILE_SEPARATOR, filename);
+
+        item = probe_item_create(OVAL_INDEPENDENT_TEXT_FILE_CONTENT, NULL,
+                                 "filepath", OVAL_DATATYPE_STRING, filepath,
+                                 "path",     OVAL_DATATYPE_STRING, path,
+                                 "filename", OVAL_DATATYPE_STRING, filename,
+                                 "pattern",  OVAL_DATATYPE_STRING, pattern,
+                                 "instance", OVAL_DATATYPE_INTEGER, instance,
+                                 "line",     OVAL_DATATYPE_STRING, pattern,
+                                 "text",     OVAL_DATATYPE_STRING, substrs[0],
                                  NULL);
-	SEXP_free(r2);
-	SEXP_vfree (r0, r1, r3, r4, r5, r6, NULL);
 
 	for (i = 1; i < substr_cnt; ++i) {
                 probe_item_ent_add (item, "subexpression", NULL, r0 = SEXP_string_new (substrs[i], strlen (substrs[i])));

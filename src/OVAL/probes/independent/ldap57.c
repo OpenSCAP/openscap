@@ -206,16 +206,14 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
 
                         while (attr != NULL) {
                                 vals = ldap_get_values_len(ldp, entry, attribute);
-                                item = probe_item_creat("ldap57_item", NULL,
-                                                        "suffix",       NULL, se_suffix,
-                                                        "relative_dn",  NULL, se_relative_dn, /* FIXME: get correct name if pattern match is used */
-                                                        "attribute",    NULL, se_attribute, /* FIXME: ---||--- */
-                                                        /* TODO */
-                                                        "object_class", NULL, NULL,
-                                                        "ldaptype",     NULL, NULL,
-                                                        /* TODO: record+fields */
-                                                        "value",        NULL, NULL,
-                                                        NULL);
+                                item = probe_item_create(OVAL_INDEPENDENT_LDAP57, NULL,
+                                                         "suffix",       OVAL_DATATYPE_STRING, suffix,
+                                                         "relative_dn",  OVAL_DATATYPE_STRING, relative_dn, /* XXX: pattern match */
+                                                         "attribute",    OVAL_DATATYPE_STRING, attrs[1], /* XXX: pattern match */
+                                                         "object_class", OVAL_DATATYPE_STRING, "",
+                                                         "ldaptype",     OVAL_DATATYPE_STRING, "",
+                                                         "value",        OVAL_DATATYPE_RECORD, NULL,
+                                                         NULL);
 
                                 probe_cobj_add_item(probe_out, item);
                                 SEXP_free(item);

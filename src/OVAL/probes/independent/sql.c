@@ -303,17 +303,15 @@ static int dbSQL_eval(const char *engine, const char *version,
 
 			goto __exit;
 		} else {
-			SEXP_t *r0, *r1, *r2, *r3;
+                        SEXP_t *r0;
+
 			sql_dbr = NULL;
-
-			item = probe_item_creat("sql_item", NULL,
-						"engine",  NULL, r0 = SEXP_string_newf(engine,  strlen(engine)),
-						"version", NULL, r1 = SEXP_string_newf(version, strlen(version)),
-						"sql",     NULL, r3 = SEXP_string_newf(sql,     strlen(sql)),
-						"connection_string", NULL, r2 = SEXP_string_newf(conn, strlen(conn)),
-						NULL);
-
-			SEXP_vfree(r0, r1, r2, r3, NULL);
+                        item    = probe_item_create(OVAL_INDEPENDENT_SQL, NULL,
+                                                    "engine",            OVAL_DATATYPE_STRING, engine,
+                                                    "version",           OVAL_DATATYPE_STRING, version,
+                                                    "sql",               OVAL_DATATYPE_STRING, sql,
+                                                    "connection_string", OVAL_DATATYPE_STRING, conn,
+                                                    NULL);
 
 			while ((sql_err = odbx_result (sql_dbh, &sql_dbr, NULL, 0)) == ODBX_RES_ROWS) {
 				if (odbx_column_count(sql_dbr) != 1) {

@@ -54,7 +54,7 @@
 
 int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 {
-	SEXP_t *item, *v_fm;
+	SEXP_t *item;
 
         (void)arg;
         (void)filters;
@@ -76,14 +76,12 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 		return PROBE_EINVAL;
 	}
 
-        item  = probe_item_creat ("family_item", NULL,
-                                  /* entities */
-                                  "family", NULL, v_fm = SEXP_string_new (family, strlen (family)),
-                                  NULL);
-	probe_cobj_add_item(probe_out, item);
+        item = probe_item_create(OVAL_INDEPENDENT_FAMILY, NULL,
+                                 "family", OVAL_DATATYPE_STRING, family,
+                                 NULL);
 
+	probe_cobj_add_item(probe_out, item);
         SEXP_free (item);
-        SEXP_free (v_fm);
 
 	return (0);
 }

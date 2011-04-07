@@ -55,6 +55,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 #include <libxml/tree.h>
 #include <libxml/parser.h>
@@ -104,8 +105,8 @@ static int process_file(const char *path, const char *filename, void *arg)
 	xmlXPathContext *xpath_ctx = NULL;
 	xmlXPathObject *xpath_obj = NULL;
 	SEXP_t *item = NULL;
-
-        SEXP_t *r0, *r1, *r2, *r3;
+        SEXP_t *r0;
+        char filepath[PATH_MAX+1];
 
 	if (filename == NULL)
 		goto cleanup;
@@ -143,14 +144,14 @@ static int process_file(const char *path, const char *filename, void *arg)
 		goto cleanup;
 	}
 
-        item = probe_item_creat("xmlfilecontent_item", NULL,
-                                /* entities */
-				"filepath", NULL, r2 = SEXP_string_newf("%s/%s", path, filename),
-                                "path",     NULL, r0 = SEXP_string_new(path, strlen (path)),
-                                "filename", NULL, r1 = SEXP_string_new(filename, strlen (filename)),
-                                "xpath",    NULL, r3 = SEXP_string_new(pfd->xpath, strlen (pfd->xpath)),
-                                NULL);
-        SEXP_vfree (r0, r1, r2, r3, NULL);
+        snprintf(filepath, PATH_MAX, "%s%c%s", path, FILE_SEPARATOR, filename);
+
+        item = probe_item_create(OVAL_INDEPENDENT_XML_FILE_CONTENT, NULL,
+                                 "filepath", OVAL_DATATYPE_STRING, filepath,
+                                 "path",     OVAL_DATATYPE_STRING, path,
+                                 "filename", OVAL_DATATYPE_STRING, filename,
+                                 "xpath",    OVAL_DATATYPE_STRING, pfd->xpath,
+                                 NULL);
 
 	dI("xpath obj type: %d.\n", xpath_obj->type);
 	switch(xpath_obj->type) {

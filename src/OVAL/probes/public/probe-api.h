@@ -66,6 +66,7 @@
 #include <oval_definitions.h>
 #include <oval_system_characteristics.h>
 #include <oval_results.h>
+#include <oval_types.h>
 
 /*
  * items

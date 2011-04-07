@@ -170,7 +170,6 @@ static int get_ifs(SEXP_t *item)
 int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 {
 	SEXP_t *item;
-        SEXP_t *r0, *r1, *r2, *r3;
         char *os_name, *os_version, *architecture, *hname;
         struct utsname sname;
 
@@ -190,20 +189,19 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
         architecture = sname.machine;
 	hname = sname.nodename;
 
-        item  = probe_item_creat ("system_info_item", NULL,
-                                  /* entities */
-                                  "os_name", NULL, r0 = SEXP_string_newf("%s", os_name),
-                                  "os_version", NULL, r1 = SEXP_string_newf("%s", os_version),
-                                  "os_architecture", NULL, r2 = SEXP_string_newf("%s", architecture),
-                                  "primary_host_name", NULL, r3 = SEXP_string_newf("%s", hname),
-                                  NULL);
+        item = probe_item_create(OVAL_SUBTYPE_SYSINFO, NULL,
+                                 "os_name",           OVAL_DATATYPE_STRING, os_name,
+                                 "os_version",        OVAL_DATATYPE_STRING, os_version,
+                                 "os_architecture",   OVAL_DATATYPE_STRING, architecture,
+                                 "primary_host_name", OVAL_DATATYPE_STRING, hname,
+                                 NULL);
 
         if (get_ifs(item)) {
 		return PROBE_EUNKNOWN;
 	}
 
 	probe_cobj_add_item(probe_out, item);
-        SEXP_vfree (r0, r1, r2, r3, item, NULL);
+        SEXP_free(item);
 
 	return (0);
 }

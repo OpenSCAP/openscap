@@ -74,7 +74,7 @@ static int mem2hex (uint8_t *mem, size_t mlen, char *str, size_t slen)
 
 static int filehash_cb (const char *p, const char *f, void *ptr)
 {
-        SEXP_t *itm, *r0, *r1, *r2, *r3;
+        SEXP_t *itm, *r0, *r1;
         SEXP_t *cobj = (SEXP_t *) ptr;
 
         char   pbuf[PATH_MAX+1];
@@ -155,19 +155,12 @@ static int filehash_cb (const char *p, const char *f, void *ptr)
                 /*
                  * Create and add the item
                  */
-                itm = probe_item_creat ("filemd5_item", NULL,
-                                        /* entities */
-					"filepath", NULL,
-					r2 = SEXP_string_newf ("%s/%s", p, f),
-                                        "path", NULL,
-                                        r0 = SEXP_string_newf (p, plen),
-                                        "filename", NULL,
-                                        r1 = SEXP_string_newf (f, flen),
-                                        "md5", NULL,
-                                        r3 = SEXP_string_newf (md5_str, sizeof md5_str - 1),
+                itm = probe_item_create(OVAL_INDEPENDENT_FILE_MD5, NULL,
+                                        "filepath", OVAL_DATATYPE_STRING, pbuf,
+                                        "path",     OVAL_DATATYPE_STRING, p,
+                                        "filename", OVAL_DATATYPE_STRING, f,
+                                        "md5",      OVAL_DATATYPE_STRING, md5_str,
                                         NULL);
-		SEXP_free(r2);
-                SEXP_vfree (r3, r0, r1, NULL);
         }
 
 	probe_cobj_add_item(cobj, itm);
