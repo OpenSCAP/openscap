@@ -1448,6 +1448,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
         int    value_int;
         double value_flt;
         bool   value_bool;
+        bool   free_value = true;
 
         subtype_name = oval_subtype2str(item_subtype);
 
@@ -1472,11 +1473,14 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
 
         while (value_name != NULL) {
 		value_type = va_arg(ap, oval_datatype_t);
-                name_sexp  = probe_ncache_ref(OSCAP_GSYM(encache), value_name);
 
                 switch (value_type) {
                 case OVAL_DATATYPE_STRING:
                         value_str  = va_arg(ap, char *);
+
+                        if (value_str == NULL)
+                                goto skip;
+
                         value_sexp = SEXP_string_new_r(&value_sexp_mem, value_str, strlen(value_str));
                         break;
                 case OVAL_DATATYPE_BOOLEAN:
@@ -1493,6 +1497,11 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                         break;
                 case OVAL_DATATYPE_SEXP:
                         value_sexp = va_arg(ap, SEXP_t *);
+
+                        if (value_sexp == NULL)
+                                goto skip;
+                        else
+                                free_value = false;
                         break;
                 case OVAL_DATATYPE_EVR_STRING:
                 case OVAL_DATATYPE_FILESET_REVISION:
@@ -1525,19 +1534,22 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                         return (NULL);
                 }
 
+                name_sexp = probe_ncache_ref(OSCAP_GSYM(encache), value_name);
+                entity    = SEXP_list_new_r(&entity_mem, name_sexp, value_sexp, NULL);
+
                 assume_d(item       != NULL, NULL);
                 assume_d(entity     != NULL, NULL);
                 assume_d(name_sexp  != NULL, NULL);
                 assume_d(value_sexp != NULL, NULL);
 
-                entity = SEXP_list_new_r(&entity_mem, name_sexp, value_sexp, NULL);
-
                 SEXP_list_add(item, entity);
 
                 SEXP_free_r(&entity_mem);
-                SEXP_free_r(&value_sexp_mem);
                 SEXP_free(name_sexp);
 
+                if (free_value)
+                        SEXP_free_r(&value_sexp_mem);
+        skip:
                 value_name = va_arg(ap, const char *);
         }
 
