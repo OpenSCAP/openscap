@@ -318,6 +318,8 @@ int __SEAP_recvmsg_process_cmd (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
 
                         if (cmd->args != NULL)
                                 SEXP_free(cmd->args);
+
+                        return (ret);
                 }
         }
 

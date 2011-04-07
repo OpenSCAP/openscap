@@ -66,8 +66,8 @@ void process_node(xmlTextReaderPtr reader, struct cce *cce_list)
 		oscap_htable_add(cce_list->entry, cce->id, cce);
 
 		xmlTextReaderRead(reader);
-		const xmlChar *name = xmlTextReaderConstName(reader);
-		int type = xmlTextReaderNodeType(reader);
+		/* const xmlChar *name = xmlTextReaderConstName(reader); */
+		/* int type = xmlTextReaderNodeType(reader); */
 		while (xmlStrcmp(xmlTextReaderConstName(reader), (const xmlChar *)"item") != 0) {
 			if (!xmlStrcmp(xmlTextReaderConstName(reader), (const xmlChar *)"description")
 			    && xmlTextReaderNodeType(reader) == 1) {
@@ -84,8 +84,8 @@ void process_node(xmlTextReaderPtr reader, struct cce *cce_list)
 			}
 			xmlTextReaderRead(reader);
 
-			name = xmlTextReaderConstName(reader);
-			type = xmlTextReaderNodeType(reader);
+			/* name = xmlTextReaderConstName(reader); */
+			/* type = xmlTextReaderNodeType(reader); */
 		}
 	}
 }

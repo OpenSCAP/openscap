@@ -107,10 +107,11 @@ int SEAP_cmdtbl_backendT_apply (SEAP_cmdtbl_t *t, int (*func) (SEAP_cmdrec_t *r,
         /*
           size_t i, l;
           int ret;
-        */
+
         Ttable_t *St;
 
         St = (Ttable_t *)(t->table);
+        */
 
-        return (0);
+        return (-1);
 }

@@ -206,15 +206,15 @@ struct probe_varref_ctx_ent {
 
 static int probe_varref_create_ctx(const SEXP_t *probe_in, SEXP_t *varrefs, struct probe_varref_ctx **octx)
 {
-	unsigned int i, ent_cnt, val_cnt, varref_cnt;
+	unsigned int i, ent_cnt, val_cnt;
 	SEXP_t *ent_name, *ent, *varref, *val_lst;
 	SEXP_t *r0, *r1, *r2, *r3;
 	SEXP_t *vid, *vidx_name, *vidx_val;
 	struct probe_varref_ctx *ctx;
 
-	varref_cnt = SEXP_number_getu_32(r0 = SEXP_list_nth(varrefs, 2));
+	/* varref_cnt = SEXP_number_getu_32(r0 = SEXP_list_nth(varrefs, 2)); */
 	ent_cnt = SEXP_number_getu_32(r1 = SEXP_list_nth(varrefs, 3));
-	SEXP_vfree(r0, r1, NULL);
+	SEXP_free(r1);
 
 	ctx = oscap_talloc (struct probe_varref_ctx);
 	ctx->pi2 = SEXP_softref((SEXP_t *)probe_in);

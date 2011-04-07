@@ -794,7 +794,7 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
         }
         case PROBE_HANDLER_ACT_OPEN:
         {
-                char         probe_uri[PATH_MAX + 1];
+                char         probe_uri[PATH_MAX + 1], errmsg[__ERRBUF_SIZE];
                 size_t       probe_urilen;
                 char        *probe_dir;
                 oval_pdsc_t *probe_dsc;
@@ -804,17 +804,21 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
                 probe_urilen = snprintf(probe_uri, sizeof probe_uri,
                                         "%s://%s/%s", OVAL_PROBE_SCHEME, probe_dir, probe_dsc->file);
 
-                oscap_dlprintf(DBG_I, "URI: %s.\n", probe_uri);
-
-                if (oval_pdtbl_add(pext->pdtbl, type, -1, probe_uri) != 0) {
-                        char errmsg[__ERRBUF_SIZE];
-
-                        snprintf (errmsg, sizeof errmsg, "%s probe not supported", probe_dsc->name);
-                        oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBENOTSUPP, errmsg);
+                if (probe_urilen >= sizeof probe_uri) {
+                        snprintf (errmsg, sizeof errmsg, "probe URI too long");
+                        oscap_seterr (OSCAP_EFAMILY_GLIBC, ENAMETOOLONG, errmsg);
 
                         ret = -1;
-                }
+                } else {
+                        oscap_dlprintf(DBG_I, "URI: %s.\n", probe_uri);
 
+                        if (oval_pdtbl_add(pext->pdtbl, type, -1, probe_uri) != 0) {
+                                snprintf (errmsg, sizeof errmsg, "%s probe not supported", probe_dsc->name);
+                                oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBENOTSUPP, errmsg);
+
+                                ret = -1;
+                        }
+                }
                 break;
         }
         case PROBE_HANDLER_ACT_INIT:
@@ -851,7 +855,7 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                 pd = oval_pdtbl_get(pext->pdtbl, oval_object_get_subtype(obj));
 
                 if (pd == NULL) {
-                        char         probe_uri[PATH_MAX + 1];
+                        char         probe_uri[PATH_MAX + 1], errmsg[__ERRBUF_SIZE];
                         size_t       probe_urilen;
                         char        *probe_dir;
                         oval_pdsc_t *probe_dsc;
@@ -861,10 +865,16 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                         probe_urilen = snprintf(probe_uri, sizeof probe_uri,
                                                 "%s://%s/%s", OVAL_PROBE_SCHEME, probe_dir, probe_dsc->file);
 
+                        if (probe_urilen >= sizeof probe_uri) {
+                                snprintf (errmsg, sizeof errmsg, "probe URI too long");
+                                oscap_seterr (OSCAP_EFAMILY_GLIBC, ENAMETOOLONG, errmsg);
+
+                                return (-1);
+                        }
+
                         oscap_dlprintf(DBG_I, "URI: %s.\n", probe_uri);
 
                         if (oval_pdtbl_add(pext->pdtbl, oval_object_get_subtype(obj), -1, probe_uri) != 0) {
-                                char errmsg[__ERRBUF_SIZE];
 
                                 snprintf (errmsg, sizeof errmsg, "%s probe not supported", probe_dsc->name);
                                 oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBENOTSUPP, errmsg);

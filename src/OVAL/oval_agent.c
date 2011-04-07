@@ -375,7 +375,6 @@ bool xccdf_policy_model_register_engine_oval(struct xccdf_policy_model * model, 
 void oval_agent_export_sysinfo_to_xccdf_result(struct oval_agent_session * sess, struct xccdf_result * ritem)
 {
 	struct oval_syschar_model *sys_model = NULL;
-	struct oval_definition_model *def_model = NULL;
 	struct oval_results_model *res_model = NULL;
 	struct oval_result_system *re_system = NULL;
 	struct oval_result_system_iterator *re_system_it = NULL;
@@ -385,7 +384,7 @@ void oval_agent_export_sysinfo_to_xccdf_result(struct oval_agent_session * sess,
 
         /* Get all models we will need */
 	res_model = oval_agent_get_results_model(sess);
-	def_model = oval_results_model_get_definition_model(res_model);
+
         /* Get the very first system */
         re_system_it = oval_results_model_get_systems(res_model);
 	re_system = oval_result_system_iterator_next(re_system_it);

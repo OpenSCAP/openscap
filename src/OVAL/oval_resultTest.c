@@ -45,6 +45,7 @@
 #include "oval_results_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_string_map_impl.h"
+#include "public/oval_types.h"
 #include "common/util.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
@@ -561,13 +562,15 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		int state_idx = 0;
 		int sys_idx = 0;
 		int result = -1;
-		int is_equal = 1;
+		/* int is_equal = 1; */
 		for (state_idx = 0, sys_idx = 0; (((state_data[state_idx]) || (sys_data[sys_idx])) && (result == -1));) {	// keep going as long as there is data in either the state or sysitem
 			int tmp_state_int, tmp_sys_int;
 			tmp_state_int = atoi(&state_data[state_idx]);	// look at the current data field (if we're at the end, atoi should return 0)
 			tmp_sys_int = atoi(&sys_data[sys_idx]);
+                        /* o rly?
 			if (tmp_state_int != tmp_sys_int)
 				is_equal = 0;	// we might need this later (if we don't terminate early)
+                        */
 			if (operation == OVAL_OPERATION_EQUALS) {
 				if (tmp_state_int != tmp_sys_int)
 					return (OVAL_RESULT_FALSE);
@@ -1364,7 +1367,7 @@ oval_result_t oval_result_test_eval(struct oval_result_test *rtest)
 	__attribute__nonnull__(rtest);
 
 	if (rtest->result == OVAL_RESULT_NOT_EVALUATED) {
-		if ( oval_test_get_subtype( oval_result_test_get_test(rtest) ) != OVAL_INDEPENDENT_UNKNOWN ) {
+		if ((oval_independent_subtype_t)oval_test_get_subtype(oval_result_test_get_test(rtest)) != OVAL_INDEPENDENT_UNKNOWN ) {
 			struct oval_string_map *tmp_map = oval_string_map_new();
 			void *args[] = { rtest->system, rtest, tmp_map };
 			rtest->result = _oval_result_test_result(rtest, args);

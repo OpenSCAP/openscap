@@ -277,11 +277,16 @@ int oval_sysent_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *c
 
 	sysent = oval_sysent_new(context->syschar_model);
 	oval_sysent_set_name(sysent, tagname);
+
 	mask = oval_parser_boolean_attribute(reader, "mask", 0);
 	oval_sysent_set_mask(sysent, mask);
+
 	datatype = oval_datatype_parse(reader, "datatype", OVAL_DATATYPE_STRING);
 	oval_sysent_set_datatype(sysent, datatype);
+
 	status = oval_syschar_status_parse(reader, "status", SYSCHAR_STATUS_EXISTS);
+        oval_sysent_set_status(sysent, status);
+
 	if (datatype == OVAL_DATATYPE_RECORD)
 		ret = oval_parser_parse_tag(reader, context,
 			&_oval_sysent_parse_record_field, sysent);

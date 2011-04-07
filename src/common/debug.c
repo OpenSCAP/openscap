@@ -64,10 +64,8 @@ static void __oscap_debuglog_close(void)
 static const char *__oscap_path_rstrip(const char *path, int num)
 {
 	register size_t len;
-	register char  *res;
 
 	len = strlen(path);
-	res = (char *)path;
 
 	for (len = strlen(path); len > 0; --len) {
 		if (path[len - 1] == PATH_SEPARATOR)

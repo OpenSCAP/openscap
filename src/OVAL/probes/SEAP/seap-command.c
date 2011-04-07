@@ -366,7 +366,7 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                         }
 
                         if (flags & SEAP_EXEC_RECV) {
-                                struct timespec timeout;
+                                /* struct timespec timeout; */
                                 SEAP_packet_t  *packet_rcv;
                                 /*
                                  * We have to do own receiving of events. We'll queue
@@ -376,9 +376,10 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                                  */
 
                                 packet_rcv = NULL;
-                                timeout.tv_sec  = 0;
-                                timeout.tv_nsec = 0;
-
+                                /*
+                                  timeout.tv_sec  = 0;
+                                  timeout.tv_nsec = 0;
+                                */
                                 for (;;) {
                                         pthread_mutex_unlock(&h.mtx);
 

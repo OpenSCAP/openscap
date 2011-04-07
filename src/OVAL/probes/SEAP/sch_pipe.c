@@ -66,8 +66,8 @@ extern char **environ;
 
 static char *get_exec_path (const char *uri, uint32_t flags)
 {
-        char   *path;
-        size_t  plen, ulen;
+        char  *path;
+        size_t ulen;
 
         ulen = strlen (uri);
 
@@ -78,7 +78,6 @@ static char *get_exec_path (const char *uri, uint32_t flags)
         else {
                 uri  += 2;
                 ulen -= 2;
-                plen  = ulen;
         }
 
         path = sm_alloc (sizeof (char) * (PATH_MAX + 1));

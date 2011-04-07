@@ -475,6 +475,8 @@ void oval_set_to_print(struct oval_setobject *set, char *indent, int idx)
 				oval_object_to_print(object, nxtindent, i);
 			}
 			oval_object_iterator_free(objects);
+
+                        /* TODO?
 			struct oval_filter_iterator *filters = oval_setobject_get_filters(set);
 			for (i = 1; oval_filter_iterator_has_more(filters); i++) {
 				struct oval_filter *filter;
@@ -483,6 +485,7 @@ void oval_set_to_print(struct oval_setobject *set, char *indent, int idx)
 				//oval_filter_to_print(filter, nxtindent, i);
 			}
 			oval_filter_iterator_free(filters);
+                        */
 		} break;
 	case OVAL_SET_UNKNOWN:
 		break;

@@ -466,7 +466,6 @@ uintptr_t SEXP_rawval_lblk_copy (uintptr_t lblkp, uint16_t n_skip)
         uint16_t  off_n;  /* offset in the new block */
         uint16_t  off_o;  /* offset in the old block */
         uint8_t  cur_sz;  /* size of the new block */
-        uint8_t  old_sz;  /* size of the old block */
 
         lb_head = 0;
         off_n   = 0;
@@ -476,7 +475,6 @@ uintptr_t SEXP_rawval_lblk_copy (uintptr_t lblkp, uint16_t n_skip)
         if (lb_old == NULL)
                 return ((uintptr_t) NULL);
 
-        old_sz  = lb_old->nxsz & SEXP_LBLKS_MASK;
         cur_sz  = 0;
         lb_new  = (struct SEXP_val_lblk *)SEXP_rawval_lblk_new (cur_sz);
         lb_head = (uintptr_t)lb_new;
@@ -492,7 +490,6 @@ uintptr_t SEXP_rawval_lblk_copy (uintptr_t lblkp, uint16_t n_skip)
                                 break;
 
                         off_o  = 0;
-                        old_sz = lb_old->nxsz & SEXP_LBLKS_MASK;
                 }
 
                 /*

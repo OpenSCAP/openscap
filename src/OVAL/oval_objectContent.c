@@ -446,8 +446,13 @@ int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 			return_code = oval_filter_parse_tag(reader, context, &oval_consume_filter, content_filter);
 		};
 		break;
+        case OVAL_OBJECTCONTENT_UNKNOWN:
+                oscap_free(namespace);
+                return (-1);
 	}
+
 	(*consumer) (content, user);
+
 	if (return_code != 1) {
 		oscap_dlprintf(DBG_I, "Parsing of <%s> terminated by an error at line %d.\n",
 			       tagname, xmlTextReaderGetParserLineNumber(reader));

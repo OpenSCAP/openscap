@@ -35,6 +35,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "public/oval_types.h"
 #include "oval_definitions_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
@@ -201,7 +202,7 @@ bool oval_test_is_valid(struct oval_test * test)
         }
 
         subtype = oval_test_get_subtype(test);
-	if (subtype == OVAL_INDEPENDENT_UNKNOWN)
+	if ((oval_independent_subtype_t)subtype == OVAL_INDEPENDENT_UNKNOWN)
 		return true;
 
         if (subtype == OVAL_SUBTYPE_UNKNOWN) {
