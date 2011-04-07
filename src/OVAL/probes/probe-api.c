@@ -1443,7 +1443,11 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
         const char *o2p_type, *value_name, *subtype_name;
         char item_name[64];
         oval_datatype_t value_type;
-        void *value;
+
+        char  *value_str;
+        int    value_int;
+        double value_flt;
+        bool   value_bool;
 
         subtype_name = oval_subtype2str(item_subtype);
 
@@ -1468,27 +1472,31 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
 
         while (value_name != NULL) {
 		value_type = va_arg(ap, oval_datatype_t);
-		value      = va_arg(ap, void *);
                 name_sexp  = probe_ncache_ref(OSCAP_GSYM(encache), value_name);
 
                 switch (value_type) {
                 case OVAL_DATATYPE_STRING:
-                        value_sexp = SEXP_string_new_r(&value_sexp_mem, (const char *)value, strlen((const char *)value));
+                        value_str  = va_arg(ap, char *);
+                        value_sexp = SEXP_string_new_r(&value_sexp_mem, value_str, strlen(value_str));
                         break;
                 case OVAL_DATATYPE_BOOLEAN:
-                        value_sexp = SEXP_number_newb_r(&value_sexp_mem, *(bool *)value);
+                        value_bool = (bool)va_arg(ap, int);
+                        value_sexp = SEXP_number_newb_r(&value_sexp_mem, value_bool);
                         break;
                 case OVAL_DATATYPE_INTEGER:
-                        value_sexp = SEXP_number_newi_r(&value_sexp_mem, *(int *)value);
+                        value_int  = va_arg(ap, int);
+                        value_sexp = SEXP_number_newi_r(&value_sexp_mem, value_int);
                         break;
                 case OVAL_DATATYPE_FLOAT:
-                        value_sexp = SEXP_number_newf_r(&value_sexp_mem, *(double *)value);
+                        value_flt  = va_arg(ap, double);
+                        value_sexp = SEXP_number_newf_r(&value_sexp_mem, value_flt);
                         break;
                 case OVAL_DATATYPE_EVR_STRING:
                 case OVAL_DATATYPE_FILESET_REVISION:
                 case OVAL_DATATYPE_IOS_VERSION:
                 case OVAL_DATATYPE_VERSION:
-                        value_sexp = SEXP_string_new_r(&value_sexp_mem, (const char *)value, strlen((const char *)value));
+                        value_str  = va_arg(ap, char *);
+                        value_sexp = SEXP_string_new_r(&value_sexp_mem, value_str, strlen(value_str));
                         o2p_type   = __probe_o2p_datatype(value_type);
 
                         if (SEXP_datatype_set(value_sexp, o2p_type) != 0) {
