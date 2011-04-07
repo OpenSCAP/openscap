@@ -34,7 +34,7 @@ static void ares_query_cb(void *arg, int status, int timeouts, unsigned char *ab
         char ip4_strbuf[INET_ADDRSTRLEN];
         char ip6_strbuf[INET6_ADDRSTRLEN];
 
-        SEXP_t *item, *r0, *r1;
+        SEXP_t *item;
 
         nttl = 64;
 
@@ -42,14 +42,15 @@ static void ares_query_cb(void *arg, int status, int timeouts, unsigned char *ab
                 for (--nttl; nttl >= 0; --nttl)
                 {
                         inet_ntop(AF_INET, &ttls4[nttl].ipaddr, ip4_strbuf, INET_ADDRSTRLEN);
-                        item = probe_item_creat("dnscache_item", NULL,
-                                                "domain_name", NULL, res->se_domain_name,
-                                                "ttl",         NULL, r0 = SEXP_number_newi(ttls4[nttl].ttl),
-                                                "ip_address",  NULL, r1 = SEXP_string_new(ip4_strbuf, strlen(ip4_strbuf)),
-                                                NULL);
+
+                        item = probe_item_create(OVAL_UNIX_DNSCACHE, NULL,
+                                                 "domain_name", OVAL_DATATYPE_SEXP, res->se_domain_name,
+                                                 "ttl",         OVAL_DATATYPE_INTEGER, ttls4[nttl].ttl,
+                                                 "ip_address",  OVAL_DATATYPE_STRING, ip4_strbuf,
+                                                 NULL);
 
                         probe_cobj_add_item(res->probe_out, item);
-                        SEXP_vfree(r0, r1, item, NULL);
+                        SEXP_free(item);
                 }
         }
 
@@ -59,14 +60,15 @@ static void ares_query_cb(void *arg, int status, int timeouts, unsigned char *ab
                 for (--nttl; nttl >= 0; --nttl)
                 {
                         inet_ntop(AF_INET6, &ttls6[nttl].ip6addr, ip6_strbuf, INET6_ADDRSTRLEN);
-                        item = probe_item_creat("dnscache_item", NULL,
-                                                "domain_name", NULL, res->se_domain_name,
-                                                "ttl",         NULL, r0 = SEXP_number_newi(ttls6[nttl].ttl),
-                                                "ip_address",  NULL, r1 = SEXP_string_new(ip6_strbuf, strlen(ip6_strbuf)),
-                                                NULL);
+
+                        item = probe_item_create(OVAL_UNIX_DNSCACHE, NULL,
+                                                 "domain_name", OVAL_DATATYPE_SEXP, res->se_domain_name,
+                                                 "ttl",         OVAL_DATATYPE_INTEGER, ttls6[nttl].ttl,
+                                                 "ip_address",  OVAL_DATATYPE_STRING, ip6_strbuf,
+                                                 NULL);
 
                         probe_cobj_add_item(res->probe_out, item);
-                        SEXP_vfree(r0, r1, item, NULL);
+                        SEXP_free(item);
                 }
         }
 }

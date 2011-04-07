@@ -239,25 +239,18 @@ leave1:
 static int get_ifs(SEXP_t *name_ent, SEXP_t *probe_out)
 {
 	/* todo */
-
 	SEXP_t *item;
-	SEXP_t *r0, *r1, *r2, *r3, *r4;
 
-	item = probe_item_creat("interface_item", NULL,
-				"name", NULL,
-				r0 = SEXP_string_newf("dummy0"),
-				"hardware_addr", NULL,
-				r1 = SEXP_string_newf("aa:bb:cc:dd:ee:ff"),
-				"inet_addr", NULL,
-				r2 = SEXP_string_newf("1.2.3.4"),
-				"broadcast_addr", NULL,
-				r3 = SEXP_string_newf("1.2.3.255"),
-				"netmask", NULL,
-				r4 = SEXP_string_newf("255.255.255.0"),
-				NULL);
+        item = probe_item_create(OVAL_UNIX_INTERFACE, NULL,
+                                 "name",           OVAL_DATATYPE_STRING, "dummy0"
+                                 "hardware_addr",  OVAL_DATATYPE_STRING, "aa:bb:cc:dd:ee:ff",
+                                 "inet_addr",      OVAL_DATATYPE_STRING, "1.2.3.4",
+                                 "broadcast_addr", OVAL_DATATYPE_STRING, "1.2.3.254",
+                                 "netmask",        OVAL_DATATYPE_STRING, "255.255.255.0",
+                                 NULL);
 
 	probe_cobj_add_item(probe_out, item);
-	SEXP_vfree(r0, r1, r2, r3, r4, item, NULL);
+        SEXP_free(item);
 
 	return (0);
 }

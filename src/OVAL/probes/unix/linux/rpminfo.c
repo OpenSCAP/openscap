@@ -271,7 +271,7 @@ void probe_fini (void *ptr)
 
 int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 {
-        SEXP_t *val, *item_sexp, *r0, *r1, *ent;
+        SEXP_t *val, *item, *ent;
 	int rpmret, i;
 
         struct rpminfo_req request_st;
@@ -346,50 +346,42 @@ int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
         case -1: /* Error */
                 _D("get_rpminfo failed\n");
 
-                item_sexp = probe_item_creat ("rpminfo_item", NULL,
-                                              "name", NULL,
-                                              r0 = SEXP_string_newf(request_st.name),
-                                              NULL);
+                item = probe_item_create(OVAL_LINUX_RPM_INFO, NULL,
+                                         "name", OVAL_DATATYPE_STRING, request_st.name,
+                                         NULL);
 
-                probe_item_setstatus (item_sexp, OVAL_STATUS_ERROR);
+                probe_item_setstatus (item, OVAL_STATUS_ERROR);
 
-		probe_cobj_add_item(probe_out, item_sexp);
-                SEXP_free (item_sexp);
-                SEXP_free (r0);
-
+		probe_cobj_add_item(probe_out, item);
+                SEXP_free (item);
                 break;
         default: /* Ok */
                 _A(rpmret   >= 0);
                 _A(reply_st != NULL);
                 {
-			SEXP_t *r2, *r3, *r4, *r5, *r6;
+                        SEXP_t *name;
 
                         for (i = 0; i < rpmret; ++i) {
-				r0 = SEXP_string_newf("%s", reply_st[i].name);
-				if (probe_entobj_cmp(ent, r0) != OVAL_RESULT_TRUE) {
-					SEXP_free(r0);
+				name = SEXP_string_newf("%s", reply_st[i].name);
+
+				if (probe_entobj_cmp(ent, name) != OVAL_RESULT_TRUE) {
+					SEXP_free(name);
 					continue;
 				}
 
-                                item_sexp = probe_item_creat ("rpminfo_item", NULL,
-					"name", NULL, r0,
-					"arch", NULL,
-					r1 = SEXP_string_newf ("%s", reply_st[i].arch),
-					"epoch", NULL,
-					r2 = SEXP_string_newf ("%s", reply_st[i].epoch),
-					"release", NULL,
-					r3 = SEXP_string_newf ("%s", reply_st[i].release),
-					"version", NULL,
-					r4 = SEXP_string_newf ("%s", reply_st[i].version),
-					"evr", NULL,
-					r5 = SEXP_string_newf ("%s", reply_st[i].evr),
-					"signature_keyid", NULL,
-					r6 = SEXP_string_newf ("%s", reply_st[i].signature_keyid),
-					NULL);
+                                item = probe_item_create(OVAL_LINUX_RPM_INFO, NULL,
+                                                         "name",    OVAL_DATATYPE_SEXP, name,
+                                                         "arch",    OVAL_DATATYPE_STRING, reply_st[i].arch,
+                                                         "epoch",   OVAL_DATATYPE_STRING, reply_st[i].epoch,
+                                                         "release", OVAL_DATATYPE_STRING, reply_st[i].release,
+                                                         "version", OVAL_DATATYPE_STRING, reply_st[i].version,
+                                                         "evr",     OVAL_DATATYPE_STRING, reply_st[i].evr,
+                                                         "signature_keyid", OVAL_DATATYPE_STRING, reply_st[i].signature_keyid,
+                                                         NULL);
 
 				/* only for >= 5.8: probe_itement_setdatatype(item_sexp, "evr", OVAL_DATATYPE_EVR_STRING); */
-                                probe_cobj_add_item(probe_out, item_sexp);
-				SEXP_vfree(item_sexp, r0, r1, r2, r3, r4, r5, r6, NULL);
+                                probe_cobj_add_item(probe_out, item);
+				SEXP_vfree(item, name, NULL);
 
                                 __rpminfo_rep_free (&(reply_st[i]));
                         }

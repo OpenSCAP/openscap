@@ -93,23 +93,32 @@ struct result_info {
 
 static void report_finding(struct result_info *res, SEXP_t *probe_out)
 {
-	SEXP_t *r0, *r1, *r2, *r3, *r4, *r5, *r6, *r7, *r8, *item_sexp;
+        SEXP_t *item;
+        SEXP_t se_chl_mem, se_cha_mem, se_chr_mem;
+        SEXP_t se_exw_mem, se_exi_mem, se_exd_mem;
+        SEXP_t se_flg_mem;
 
-	item_sexp = probe_item_creat("shadow_item", NULL,
-		/* entities */
-		"username", NULL, r0 = SEXP_string_newf("%s", res->username),
-		"password", NULL, r1 = SEXP_string_newf("%s", res->password),
-		"chg_lst", NULL, r2 = SEXP_string_newf("%li", res->chg_lst),
-		"chg_allow", NULL, r3 = SEXP_string_newf("%li", res->chg_allow),
-		"chg_req", NULL, r4 = SEXP_string_newf("%li", res->chg_req),
-		"exp_warn", NULL, r5 = SEXP_string_newf("%li", res->exp_warn),
-		"exp_inact", NULL, r6 = SEXP_string_newf("%li",res->exp_inact),
-		"exp_date", NULL, r7 = SEXP_string_newf("%li", res->exp_date),
-		"flag", NULL, r8 = SEXP_string_newf("%lu", res->flag),
-		NULL);
-	SEXP_vfree(r0, r1, r2, r3, r4, r5, r6, r7, r8, NULL);
-	probe_cobj_add_item(probe_out, item_sexp);
-	SEXP_free(item_sexp);
+        item = probe_item_create(OVAL_UNIX_SHADOW, NULL,
+                                 "username",  OVAL_DATATYPE_STRING, res->username,
+                                 "password",  OVAL_DATATYPE_STRING, res->password,
+                                 "chg_lst",   OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_chl_mem, "%li", res->chg_lst),
+                                 "chg_allow", OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_cha_mem, "%li", res->chg_allow),
+                                 "chg_req",   OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_chr_mem, "%li", res->chg_req),
+                                 "exp_warn",  OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_exw_mem, "%li", res->exp_warn),
+                                 "exp_inact", OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_exi_mem, "%li", res->exp_inact),
+                                 "exp_date",  OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_exd_mem, "%li", res->exp_date),
+                                 "flag",      OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_flg_mem, "%lu", res->flag),
+                                 NULL);
+
+	probe_cobj_add_item(probe_out, item);
+	SEXP_free(item);
+        SEXP_free_r(&se_chl_mem);
+        SEXP_free_r(&se_cha_mem);
+        SEXP_free_r(&se_chr_mem);
+        SEXP_free_r(&se_exw_mem);
+        SEXP_free_r(&se_exi_mem);
+        SEXP_free_r(&se_exd_mem);
+        SEXP_free_r(&se_flg_mem);
 }
 
 static int read_shadow(SEXP_t *un_ent, SEXP_t *probe_out)

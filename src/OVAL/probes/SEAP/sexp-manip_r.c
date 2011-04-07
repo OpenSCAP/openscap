@@ -72,6 +72,58 @@ SEXP_t *SEXP_number_newi_32_r(SEXP_t *sexp_mem, int32_t n)
         return (sexp_mem);
 }
 
+SEXP_t *SEXP_number_newu_32_r(SEXP_t *sexp_mem, uint32_t n)
+{
+        SEXP_val_t v_dsc;
+
+        if (sexp_mem == NULL) {
+                errno = EFAULT;
+                return (NULL);
+        }
+
+        if (SEXP_val_new (&v_dsc, sizeof (SEXP_numtype_t) + sizeof (uint32_t),
+                          SEXP_VALTYPE_NUMBER) != 0)
+        {
+                /* TODO: handle this */
+                return (NULL);
+        }
+
+        SEXP_NCASTP(u32,v_dsc.mem)->t = SEXP_NUM_UINT32;
+        SEXP_NCASTP(u32,v_dsc.mem)->n = n;
+
+        SEXP_init(sexp_mem);
+        sexp_mem->s_type = NULL;
+        sexp_mem->s_valp = v_dsc.ptr;
+
+        return (sexp_mem);
+}
+
+SEXP_t *SEXP_number_newu_64_r(SEXP_t *sexp_mem, uint64_t n)
+{
+        SEXP_val_t v_dsc;
+
+        if (sexp_mem == NULL) {
+                errno = EFAULT;
+                return (NULL);
+        }
+
+        if (SEXP_val_new (&v_dsc, sizeof (SEXP_numtype_t) + sizeof (uint64_t),
+                          SEXP_VALTYPE_NUMBER) != 0)
+        {
+                /* TODO: handle this */
+                return (NULL);
+        }
+
+        SEXP_NCASTP(u64,v_dsc.mem)->t = SEXP_NUM_UINT64;
+        SEXP_NCASTP(u64,v_dsc.mem)->n = n;
+
+        SEXP_init(sexp_mem);
+        sexp_mem->s_type = NULL;
+        sexp_mem->s_valp = v_dsc.ptr;
+
+        return (sexp_mem);
+}
+
 SEXP_t *SEXP_number_newf_r(SEXP_t *sexp_mem, double n)
 {
         SEXP_val_t v_dsc;
@@ -91,7 +143,7 @@ SEXP_t *SEXP_number_newf_r(SEXP_t *sexp_mem, double n)
         SEXP_NCASTP(f,v_dsc.mem)->t = SEXP_NUM_DOUBLE;
         SEXP_NCASTP(f,v_dsc.mem)->n = n;
 
-        sexp_mem = SEXP_new ();
+        SEXP_init(sexp_mem);
         sexp_mem->s_type = NULL;
         sexp_mem->s_valp = v_dsc.ptr;
 
@@ -141,6 +193,53 @@ SEXP_t *SEXP_string_new_r  (SEXP_t *sexp_mem, const void *string, size_t length)
         }
 
         memcpy (v_dsc.mem, string, sizeof (char) * length);
+
+        SEXP_init(sexp_mem);
+        sexp_mem->s_type = NULL;
+        sexp_mem->s_valp = v_dsc.ptr;
+
+        return (sexp_mem);
+}
+
+SEXP_t *SEXP_string_newf_r(SEXP_t *sexp_mem, const char *format, ...)
+{
+        va_list ap;
+        SEXP_t *se;
+
+        va_start(ap, format);
+        se = SEXP_string_newf_rv(sexp_mem, format, ap);
+        va_end(ap);
+
+        return (se);
+}
+
+SEXP_t *SEXP_string_newf_rv(SEXP_t *sexp_mem, const char *format, va_list ap)
+{
+        SEXP_val_t v_dsc;
+        char      *v_string;
+        int        v_strlen;
+
+        if (sexp_mem == NULL) {
+                errno = EFAULT;
+                return (NULL);
+        }
+
+        v_strlen = vasprintf (&v_string, format, ap);
+
+        if (v_strlen < 0) {
+                /* TODO: handle this */
+                return (NULL);
+        }
+
+        if (SEXP_val_new (&v_dsc, sizeof (char) * v_strlen,
+                          SEXP_VALTYPE_STRING) != 0)
+        {
+                /* TODO: handle this */
+                return (NULL);
+        }
+
+        memcpy  (v_dsc.mem, v_string, sizeof (char) * v_strlen);
+        sm_free (v_string);
 
         SEXP_init(sexp_mem);
         sexp_mem->s_type = NULL;

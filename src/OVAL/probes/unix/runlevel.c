@@ -63,6 +63,7 @@
 #include <probe-api.h>
 #include <probe/entcmp.h>
 #include <alloc.h>
+#include "common/debug_priv.h"
 
 #ifndef _A
 #define _A(x) assert(x)
@@ -377,27 +378,21 @@ int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 		probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
 	} else {
 		struct runlevel_rep *next_rep;
-		SEXP_t *item_sexp;
+		SEXP_t *item;
 
 		while (reply_st != NULL) {
-			SEXP_t *r0, *r1, *r2, *r3;
-
-			_D("get_runlevel: [0]=\"%s\", [1]=\"%s\", [2]=\"%d\", [3]=\"%d\"\n",
+			dI("get_runlevel: [0]=\"%s\", [1]=\"%s\", [2]=\"%d\", [3]=\"%d\"\n",
 			   reply_st->service_name, reply_st->runlevel, reply_st->start, reply_st->kill);
 
-			item_sexp = probe_item_creat("runlevel_item", NULL,
-						     /* entities */
-						     "service_name", NULL,
-						     r0 = SEXP_string_newf("%s", reply_st->service_name),
-						     "runlevel", NULL,
-						     r1 = SEXP_string_newf("%s", reply_st->runlevel),
-						     "start", NULL,
-						     r2 = SEXP_number_newb(reply_st->start),
-						     "kill", NULL,
-						     r3 = SEXP_number_newb(reply_st->kill),
-						     NULL);
-			probe_cobj_add_item(probe_out, item_sexp);
-			SEXP_vfree(r0, r1, r2, r3, item_sexp, NULL);
+                        item = probe_item_create(OVAL_UNIX_RUNLEVEL, NULL,
+                                                 "service_name", OVAL_DATATYPE_STRING,  reply_st->service_name,
+                                                 "runlevel",     OVAL_DATATYPE_STRING,  reply_st->runlevel,
+                                                 "start",        OVAL_DATATYPE_BOOLEAN, reply_st->start,
+                                                 "kill",         OVAL_DATATYPE_BOOLEAN, reply_st->kill,
+                                                 NULL);
+
+			probe_cobj_add_item(probe_out, item);
+                        SEXP_free(item);
 
 			next_rep = reply_st->next;
 			oscap_free(reply_st->service_name);

@@ -59,7 +59,7 @@ int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 {
 	const char *processor;
 	struct utsname buf;
-	SEXP_t *r0, *r1, *r2, *r3, *r4, *r5, *item_sexp;
+        SEXP_t *item;
 
         (void)filters;
 
@@ -91,18 +91,18 @@ int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 		}
 	}
 #endif
-	item_sexp = probe_obj_creat("uname_item", NULL,
-		/* entities */
-		"machine_class", NULL, r0 = SEXP_string_newf("%s", buf.machine),
-		"node_name", NULL, r1 = SEXP_string_newf("%s", buf.nodename),
-		"os_name", NULL, r2 = SEXP_string_newf("%s", buf.sysname),
-		"os_release", NULL, r3 = SEXP_string_newf("%s", buf.release),
-		"os_version", NULL, r4 = SEXP_string_newf("%s", buf.version),
-		"processor_type", NULL, r5 = SEXP_string_newf("%s", processor),
-		NULL);
-	SEXP_vfree(r0, r1, r2, r3, r4, r5, NULL);
-	probe_cobj_add_item(probe_out, item_sexp);
-	SEXP_free(item_sexp);
+
+        item = probe_item_create(OVAL_UNIX_UNAME, NULL,
+                                 "machine_class",  OVAL_DATATYPE_STRING, buf.machine,
+                                 "node_name",      OVAL_DATATYPE_STRING, buf.nodename,
+                                 "os_name",        OVAL_DATATYPE_STRING, buf.sysname,
+                                 "os_release",     OVAL_DATATYPE_STRING, buf.release,
+                                 "os_version",     OVAL_DATATYPE_STRING, buf.version,
+                                 "processor_type", OVAL_DATATYPE_STRING, processor,
+                                 NULL);
+
+	probe_cobj_add_item(probe_out, item);
+	SEXP_free(item);
 
 	return 0;
 }

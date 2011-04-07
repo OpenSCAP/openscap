@@ -1487,34 +1487,27 @@ int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 
 	if (xres != NULL) {
 		SEXP_t *item;
-		SEXP_t *r[0xC+1];
-		register unsigned int i, l;
-
-#define SEXP_string_new1(str) SEXP_string_new((str), strlen(str))
+		register unsigned int l;
 
 		for (l = 0; l < xres->cnt; ++l) {
-			item = probe_item_creat("xinetd_item", NULL,
-						"protocol",         NULL, r[0x0]= SEXP_string_new1(xres->srv[l]->protocol),
-						"service_name",     NULL, r[0x1]= SEXP_string_new1(xres->srv[l]->name),
-						"flags",            NULL, r[0x2]= SEXP_string_new1(xres->srv[l]->flags),
-						"no_access",        NULL, r[0x3]= SEXP_string_new1(xres->srv[l]->no_access),
-						"only_from",        NULL, r[0x4]= SEXP_string_new1(xres->srv[l]->only_from),
-						"port",             NULL, r[0x5]= SEXP_number_newu(xres->srv[l]->port),
-						"server",           NULL, r[0x6]= SEXP_string_new1(xres->srv[l]->server),
-						"server_arguments", NULL, r[0x7]= SEXP_string_new1(xres->srv[l]->server_args),
-						"socket_type",      NULL, r[0x8]= SEXP_string_new1(xres->srv[l]->socket_type),
-						"type",             NULL, r[0x9]= SEXP_string_new1(xres->srv[l]->type),
-						"user",             NULL, r[0xA]= SEXP_string_new1(xres->srv[l]->user),
-						"wait",             NULL, r[0xB]= SEXP_number_newb(xres->srv[l]->wait),
-						"disabled",         NULL, r[0xC]= SEXP_number_newb(xres->srv[l]->disable),
+                        item = probe_item_create(OVAL_UNIX_XINETD, NULL,
+						"protocol",         OVAL_DATATYPE_STRING,  xres->srv[l]->protocol,
+						"service_name",     OVAL_DATATYPE_STRING,  xres->srv[l]->name,
+						"flags",            OVAL_DATATYPE_STRING,  xres->srv[l]->flags,
+						"no_access",        OVAL_DATATYPE_STRING,  xres->srv[l]->no_access,
+						"only_from",        OVAL_DATATYPE_STRING,  xres->srv[l]->only_from,
+						"port",             OVAL_DATATYPE_INTEGER, xres->srv[l]->port,
+						"server",           OVAL_DATATYPE_STRING,  xres->srv[l]->server,
+						"server_arguments", OVAL_DATATYPE_STRING,  xres->srv[l]->server_args,
+						"socket_type",      OVAL_DATATYPE_STRING,  xres->srv[l]->socket_type,
+						"type",             OVAL_DATATYPE_STRING,  xres->srv[l]->type,
+						"user",             OVAL_DATATYPE_STRING,  xres->srv[l]->user,
+						"wait",             OVAL_DATATYPE_BOOLEAN, xres->srv[l]->wait,
+						"disabled",         OVAL_DATATYPE_BOOLEAN, xres->srv[l]->disable,
 						NULL);
 
 			probe_cobj_add_item(probe_out, item);
 			SEXP_free(item);
-
-			/* TODO: get rid of useless S-exp refs */
-			for (i = 0; i < 0xC+1; ++i)
-				SEXP_free(r[i]);
 		}
 	}
 

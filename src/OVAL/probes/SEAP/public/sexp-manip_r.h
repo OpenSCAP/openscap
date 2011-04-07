@@ -38,9 +38,13 @@ SEXP_t *SEXP_init(SEXP_t *sexp_mem);
 SEXP_t *SEXP_number_newb_r(SEXP_t *sexp_mem, bool n);
 #define SEXP_number_newi_r SEXP_number_newi_32_r
 SEXP_t *SEXP_number_newi_32_r(SEXP_t *sexp_mem, int32_t n);
+SEXP_t *SEXP_number_newu_32_r(SEXP_t *sexp_mem, uint32_t n);
+SEXP_t *SEXP_number_newu_64_r(SEXP_t *sexp_mem, uint64_t n);
 SEXP_t *SEXP_number_newf_r(SEXP_t *sexp_mem, double n);
 
 SEXP_t *SEXP_string_new_r(SEXP_t *sexp_mem, const void *string, size_t length);
+SEXP_t *SEXP_string_newf_r(SEXP_t *sexp_mem, const char *format, ...);
+SEXP_t *SEXP_string_newf_rv(SEXP_t *sexp_mem, const char *format, va_list ap);
 
 SEXP_t *SEXP_list_new_rv(SEXP_t *sexp_mem, SEXP_t *memb, va_list alist);
 SEXP_t *SEXP_list_new_r(SEXP_t *sexp_mem, SEXP_t *memb, ...);

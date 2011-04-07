@@ -314,26 +314,12 @@ int32_t SEXP_number_geti_32 (const SEXP_t *s_exp)
 
 SEXP_t *SEXP_number_newu_32 (uint32_t n)
 {
-        SEXP_t    *s_exp;
-        SEXP_val_t v_dsc;
+        SEXP_t *sexp;
 
-        _LOGCALL_;
+        sexp = SEXP_new ();
+        sexp = SEXP_number_newu_32_r(sexp, n);
 
-        if (SEXP_val_new (&v_dsc, sizeof (SEXP_numtype_t) + sizeof (uint32_t),
-                          SEXP_VALTYPE_NUMBER) != 0)
-        {
-                /* TODO: handle this */
-                return (NULL);
-        }
-
-        SEXP_NCASTP(u32,v_dsc.mem)->t = SEXP_NUM_UINT32;
-        SEXP_NCASTP(u32,v_dsc.mem)->n = n;
-
-        s_exp = SEXP_new ();
-        s_exp->s_type = NULL;
-        s_exp->s_valp = v_dsc.ptr;
-
-        return (s_exp);
+        return (sexp);
 }
 
 uint32_t SEXP_number_getu_32 (const SEXP_t *s_exp)
@@ -448,26 +434,12 @@ int64_t SEXP_number_geti_64 (const SEXP_t *s_exp)
 
 SEXP_t *SEXP_number_newu_64 (uint64_t n)
 {
-        SEXP_t    *s_exp;
-        SEXP_val_t v_dsc;
+        SEXP_t *sexp;
 
-        _LOGCALL_;
+        sexp = SEXP_new();
+        sexp = SEXP_number_newu_64_r(sexp, n);
 
-        if (SEXP_val_new (&v_dsc, sizeof (SEXP_numtype_t) + sizeof (uint64_t),
-                          SEXP_VALTYPE_NUMBER) != 0)
-        {
-                /* TODO: handle this */
-                return (NULL);
-        }
-
-        SEXP_NCASTP(u64,v_dsc.mem)->t = SEXP_NUM_UINT64;
-        SEXP_NCASTP(u64,v_dsc.mem)->n = n;
-
-        s_exp = SEXP_new ();
-        s_exp->s_type = NULL;
-        s_exp->s_valp = v_dsc.ptr;
-
-        return (s_exp);
+        return (sexp);
 }
 
 uint64_t SEXP_number_getu_64 (const SEXP_t *s_exp)
@@ -646,42 +618,15 @@ SEXP_t *SEXP_string_new  (const void *string, size_t length)
 
 SEXP_t *SEXP_string_newf (const char *format, ...)
 {
-        va_list    alist;
-        SEXP_t    *s_exp;
-        SEXP_val_t v_dsc;
-        char      *v_string;
-        int        v_strlen;
+        va_list ap;
+        SEXP_t *sexp;
 
-        _A(format != NULL);
-        _LOGCALL_;
+        sexp = SEXP_new ();
+        va_start(ap, format);
+        sexp = SEXP_string_newf_rv(sexp, format, ap);
+        va_end(ap);
 
-        va_start (alist, format);
-        v_strlen = vasprintf (&v_string, format, alist);
-
-        _D("v_strlen = %d\n", v_strlen);
-
-        if (v_strlen < 0) {
-                /* TODO: handle this */
-                return (NULL);
-        }
-
-        va_end (alist);
-
-        if (SEXP_val_new (&v_dsc, sizeof (char) * v_strlen,
-                          SEXP_VALTYPE_STRING) != 0)
-        {
-                /* TODO: handle this */
-                return (NULL);
-        }
-
-        memcpy  (v_dsc.mem, v_string, sizeof (char) * v_strlen);
-        sm_free (v_string);
-
-        s_exp = SEXP_new ();
-        s_exp->s_type = NULL;
-        s_exp->s_valp = v_dsc.ptr;
-
-        return (s_exp);
+        return (sexp);
 }
 
 void SEXP_string_free (SEXP_t *s_exp)

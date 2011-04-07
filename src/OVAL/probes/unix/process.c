@@ -84,23 +84,28 @@ unsigned long ticks, boot;
 
 static void report_finding(struct result_info *res, SEXP_t *probe_out)
 {
-	SEXP_t *r0, *r1, *r2, *r3, *r4, *r5, *r6, *r7, *r8, *item_sexp;
+        SEXP_t *item;
+        SEXP_t se_pid_mem, se_ppid_mem, se_tty_mem, se_pri_mem, se_uid_mem;
 
-	item_sexp = probe_item_creat("process_item", NULL,
-		/* entities */
-		"command", NULL, r0 = SEXP_string_newf("%s", res->command),
-		"exec_time", NULL, r1 = SEXP_string_newf("%s", res->exec_time),
-		"pid", NULL, r2 = SEXP_string_newf("%u", res->pid),
-		"ppid", NULL, r3 = SEXP_string_newf("%u", res->ppid),
-		"priority", NULL, r4 = SEXP_string_newf("%ld", res->priority),
-		"scheduling_class", NULL, r5 = SEXP_string_newf("%s", res->scheduling_class),
-		"start_time", NULL, r6 = SEXP_string_newf("%s",res->start_time),
-		"tty", NULL, r7 = SEXP_string_newf("%d", res->tty),
-		"user_id", NULL, r8 = SEXP_string_newf("%u", res->user_id),
-		NULL);
-	SEXP_vfree(r0, r1, r2, r3, r4, r5, r6, r7, r8, NULL);
-	probe_cobj_add_item(probe_out, item_sexp);
-	SEXP_free(item_sexp);
+        item = probe_item_create(OVAL_UNIX_PROCESS, NULL,
+                                 "command",   OVAL_DATATYPE_STRING, res->command,
+                                 "exec_time", OVAL_DATATYPE_STRING, res->exec_time,
+                                 "pid",       OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_pid_mem, "%u", res->pid),
+                                 "ppid",      OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_ppid_mem, "%u", res->ppid),
+                                 "priority",  OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_pri_mem, "%ld", res->priority),
+                                 "scheduling_class", OVAL_DATATYPE_STRING, res->scheduling_class,
+                                 "start_time", OVAL_DATATYPE_STRING, res->start_time,
+                                 "tty",        OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_tty_mem, "%d", res->tty),
+                                 "user_id",    OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_uid_mem, "%u", res->user_id),
+                                 NULL);
+
+	probe_cobj_add_item(probe_out, item);
+	SEXP_free(item);
+        SEXP_free_r(&se_pid_mem);
+        SEXP_free_r(&se_ppid_mem);
+        SEXP_free_r(&se_tty_mem);
+        SEXP_free_r(&se_pri_mem);
+        SEXP_free_r(&se_uid_mem);
 }
 
 static void get_boot_time(void)
@@ -344,7 +349,7 @@ int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg)
 		return (PROBE_EINVAL);
 	}
 
-	item_sexp = probe_obj_creat ("process_item", NULL, NULL);
+	item_sexp = probe_item_creat ("process_item", NULL, NULL);
         probe_item_setstatus (item_sexp, OVAL_STATUS_NOTCOLLECTED);
 	probe_cobj_add_item(probe_out, item_sexp);
         SEXP_free (item_sexp);
