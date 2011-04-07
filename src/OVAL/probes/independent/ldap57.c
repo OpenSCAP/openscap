@@ -16,7 +16,6 @@ static pthread_mutex_t __ldap57_probe_mutex;
 void *probe_init(void)
 {
         if (pthread_mutex_init(&__ldap57_probe_mutex, NULL) != 0) {
-                ldap_destroy(ldp);
                 return (NULL);
         }
 
@@ -194,7 +193,6 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
                         probe_item_setstatus(item, OVAL_STATUS_ERROR);
                         probe_cobj_add_item(probe_out, item);
                         SEXP_free(item);
-                        ldap_destroy(ldp);
 
                         goto fail0;
                 }
