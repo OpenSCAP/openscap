@@ -1515,7 +1515,6 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                                 dE("can't set datatype %s on %p\n", o2p_type, value_sexp);
 
                                 SEXP_free(item);
-                                SEXP_free(name_sexp);
                                 SEXP_free_r(value_sexp);
 
                                 return (NULL);
@@ -1527,9 +1526,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                 case OVAL_DATATYPE_RECORD:
                 case OVAL_DATATYPE_UNKNOWN:
                         dE("Unknown or unsupported type: %d\n", (int)value_type);
-
                         SEXP_free(item);
-                        SEXP_free(name_sexp);
 
                         return (NULL);
                 }

@@ -80,6 +80,7 @@
 static SEXP_t *gr_true   = NULL, *gr_false  = NULL, *gr_t_reg  = NULL;
 static SEXP_t *gr_t_dir  = NULL, *gr_t_lnk  = NULL, *gr_t_blk  = NULL;
 static SEXP_t *gr_t_fifo = NULL, *gr_t_sock = NULL, *gr_t_char = NULL;
+static SEXP_t  gr_lastpath;
 
 static SEXP_t *se_filetype (mode_t mode)
 {
@@ -241,9 +242,17 @@ static int file_cb (const char *p, const char *f, void *ptr)
 		se_usr_id = ID_cache_get(st.st_uid);
 		se_grp_id = st.st_gid != st.st_uid ? ID_cache_get(st.st_gid) : SEXP_ref(se_usr_id);
 
+		if (!SEXP_emptyp(&gr_lastpath)) {
+			if (SEXP_strcmp(&gr_lastpath, p) != 0) {
+				SEXP_free_r(&gr_lastpath);
+				SEXP_string_new_r(&gr_lastpath, p, strlen(p));
+			}
+		} else
+			SEXP_string_new_r(&gr_lastpath, p, strlen(p));
+
                 item = probe_item_create(OVAL_UNIX_FILE, NULL,
                                          "filepath", OVAL_DATATYPE_STRING, f == NULL ? st_path : NULL,
-                                         "path",     OVAL_DATATYPE_STRING, p,
+                                         "path",     OVAL_DATATYPE_SEXP,  &gr_lastpath,
                                          "filename", OVAL_DATATYPE_STRING, f == NULL ? "" : f,
                                          "type",     OVAL_DATATYPE_SEXP, se_filetype(st.st_mode),
                                          "group_id", OVAL_DATATYPE_SEXP, se_grp_id,
@@ -321,6 +330,8 @@ void *probe_init (void)
         gr_t_sock = SEXP_string_new (STRLEN_PAIR(STR_SOCKET));
         gr_t_char = SEXP_string_new (STRLEN_PAIR(STR_CHARSPEC));
 
+	SEXP_init(&gr_lastpath);
+
 	/*
 	 * Initialize ID cache
 	 */
@@ -353,6 +364,9 @@ void probe_fini (void *arg)
                     gr_t_dir, gr_t_lnk, gr_t_blk,
                     gr_t_fifo, gr_t_sock, gr_t_char,
                     NULL);
+
+	if (!SEXP_emptyp(&gr_lastpath))
+		SEXP_free_r(&gr_lastpath);
 
 	/*
 	 * Free ID cache
