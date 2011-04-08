@@ -61,6 +61,7 @@ struct oval_entity {
 struct oval_consume_varref_context {
 	struct oval_definition_model *model;
 	struct oval_variable **variable;
+	struct oval_value **value;
 };
 
 /* End of variable definitions
@@ -303,6 +304,7 @@ static void oval_consume_varref(char *varref, void *user)
 
 	struct oval_consume_varref_context *ctx = user;
 	*(ctx->variable) = oval_variable_get_new((struct oval_definition_model *)ctx->model, varref, OVAL_VARIABLE_UNKNOWN);
+	*(ctx->value) = oval_value_new(OVAL_DATATYPE_STRING, varref);
 }
 
 static void oval_consume_value(struct oval_value *use_value, void *value)
@@ -333,7 +335,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 		if (varref == NULL) {
 			struct oval_definition_model *model = oval_parser_context_model(context);
 			varref_type = OVAL_ENTITY_VARREF_ELEMENT;
-			struct oval_consume_varref_context ctx = {.model = model,.variable = &variable };
+			struct oval_consume_varref_context ctx = {.model = model, .variable = &variable, .value = &value};
 			return_code = oval_parser_text_value(reader, context, &oval_consume_varref, &ctx);
 		} else {
 			struct oval_definition_model *model = oval_parser_context_model(context);
@@ -342,8 +344,8 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 			return_code = 1;
 			oscap_free(varref);
 			varref = NULL;
+			value = NULL;
 		}
-		value = NULL;
 	} else if (varref == NULL) {
 		variable = NULL;
 		varref_type = OVAL_ENTITY_VARREF_NONE;
