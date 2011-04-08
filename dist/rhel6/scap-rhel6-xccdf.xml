@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Benchmark xmlns="http://checklists.nist.gov/xccdf/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="RHEL-6" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.1 xccdf-1.1.4.xsd" resolved="0" xml:lang="en-US">
+  <!-- FIXME: grep for rhel5 when finished -->
   <status date="2010-12-10">draft</status>
-  <title xml:lang="en-US">Guidance for Securing Redhat Enterprise Linux 6</title>
+  <title xml:lang="en-US">Guidance for Securing Red Hat Enterprise Linux 6</title>
   <description xml:lang="en-US">This guide has been created to assist IT professionals in effectively securing
 		systems running Red Hat Enterprise Linux</description>
   <platform idref="cpe:/o:redhat:enterprise_linux:6"/>
@@ -3258,7 +3259,7 @@
 					a program gets a 'permission denied' error but the standard Unix permissions
 					appear to be correct, or a program fails mysteriously on a task which seems to
 					involve file access or network communication. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> As described in Section 2.4.1, SELinux augments each process with a
+					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> As described earlier, SELinux augments each process with a
 					context providing detailed type information about that process. The contexts
 					under which processes run may be referred to as subject contexts. Similarly,
 					each filesystem object is given a context. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -3533,7 +3534,7 @@
 				</description>
       </Group>
     </Group>
-    <Group id="group-2.5" hidden="false">
+    <Group id="gr-networking" hidden="false">
       <title xml:lang="en-US">Network Configuration and Firewalls</title>
       <description xml:lang="en-US"> Most machines must be connected to a network of some
 				sort, and this brings with it the substantial risk of network attack. This section
@@ -3545,22 +3546,23 @@
 				network traffic should be allowed or denied from certain IP addresses, hosts, and
 				networks. The rules can also specify which of the system's network services are
 				available to particular hosts or networks.</description>
-      <Group id="group-2.5.1" hidden="false">
+      <Group id="gr-networking-sysctl" hidden="false">
         <title xml:lang="en-US">Kernel Parameters which Affect Networking</title>
         <description xml:lang="en-US"> The sysctl utility is used to set a number of
 					parameters which affect the operation of the Linux kernel. Several of these
 					parameters are specific to networking, and the configuration options in this
 					section are recommended.</description>
-        <Group id="group-2.5.1.1" hidden="false">
+        <Group id="gr-networking-sysctl.1" hidden="false">
           <title xml:lang="en-US">Network Parameters for Hosts Only</title>
           <description xml:lang="en-US"> Is this system going to be used as a firewall or
 						gateway to pass IP traffic between different networks? <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> If not,
 						edit the file /etc/sysctl.conf and add or correct the following lines: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">net.ipv4.ip forward = 0 <xhtml:br/>
-							net.ipv4.conf.all.send_redirects = 0 <xhtml:br/>
-							net.ipv4.conf.default.send_redirects = 0 <xhtml:br/>
-						</xhtml:code>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">net.ipv4.ip forward = 0</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">net.ipv4.conf.all.send_redirects = 0</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">net.ipv4.conf.default.send_redirects = 0</xhtml:code>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> These settings disable hosts from performing network
 						functionality which is only appropriate for routers.</description>
           <Value id="var-2.5.1.1.a" operator="equals" type="string">
@@ -3612,7 +3614,7 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.5.1.2" hidden="false">
+        <Group id="gr-networking-sysctl.2" hidden="false">
           <title xml:lang="en-US">Network Parameters for Hosts and Routers</title>
           <description xml:lang="en-US"> Edit the file /etc/sysctl.conf and add or correct
 						the following lines: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -3623,9 +3625,10 @@
 						net.ipv4.conf.default.accept_source_route = 0 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						net.ipv4.conf.default.accept_redirects = 1<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						net.ipv4.conf.default.secure_redirects = 1 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						net.ipv4.conf.default.log_martians = 0<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						net.ipv4.icmp_echo_ignore_broadcasts = 1<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						net.ipv4.icmp_ignore_bogus_error_responses = 1 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						net.ipv4.tcp_syncookies = 1<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> net.ipv4.conf.all.rp_filter = 0
+						net.ipv4.tcp_syncookies = 1<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> net.ipv4.conf.all.rp_filter = 1
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> net.ipv4.conf.default.rp_filter = 1 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> These options improve Linux's ability to defend against certain
 						types of IPv4 protocol attacks. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -3645,7 +3648,7 @@
 						It should not be used on machines which are routers for very complicated
 						networks, but is helpful for end hosts and routers serving small networks. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> For more information on any of these, see the kernel source
-						documentation file /Documentation/networking/ip-sysctl.txt.2</description>
+						documentation file /Documentation/networking/ip-sysctl.txt.</description>
           <Value id="var-2.5.1.2.a" operator="equals" type="string">
             <title xml:lang="en-US">net.ipv4.conf.all.accept_source_route</title>
             <description xml:lang="en-US">Trackers could be using source-routed packets
@@ -3699,6 +3702,14 @@
             <description xml:lang="en-US">Log packets with impossible addresses to
                                                         kernel log?</description>
             <value>1</value>
+            <value selector="enabled">1</value>
+            <value selector="disabled">0</value>
+          </Value>
+          <Value id="var-2.5.1.2.g1" operator="equals" type="string">
+            <title xml:lang="en-US">net.ipv4.conf.default.log_martians</title>
+            <description xml:lang="en-US">Disable so you don't Log Spoofed Packets,
+                                                        Source Routed Packets, Redirect Packets </description>
+            <value>0</value>
             <value selector="enabled">1</value>
             <value selector="disabled">0</value>
           </Value>
@@ -3826,6 +3837,18 @@
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-export export-name="oval:rhel:var:20121" value-id="var-2.5.1.2.g"/>
               <check-content-ref name="oval:rhel:def:201210" href="scap-rhel6-oval.xml"/>
+            </check>
+          </Rule>
+          <Rule id="rule-2.5.1.2.1.g1" selected="false" weight="10.000000" severity="medium">
+            <status date="2010-07-01">accepted</status>
+            <title xml:lang="en-US">Logging of "martian" packets for all interfaces is configured</title>
+            <description xml:lang="en-US">Logging of "martian" packets (those with impossible addresses)
+							should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.g1"/> for all interfaces as
+							appropriate.</description>
+            <ident system="http://cce.mitre.org">???</ident>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+              <check-export export-name="oval:rhel:var:20118" value-id="var-2.5.1.2.g1"/>
+              <check-content-ref name="oval:rhel:def:201180" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-2.5.1.2.1.h" selected="false" weight="10.000000" severity="medium">
@@ -4027,13 +4050,12 @@
           </Rule>
         </Group>
       </Group>
-      <Group id="group-2.5.2" hidden="false">
+      <Group id="gr-networking-wifi" hidden="false">
         <title xml:lang="en-US">Wireless Networking</title>
-        <description xml:lang="en-US"> Wireless networking (sometimes referred to as 802.11
+        <description xml:lang="en-US"><xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml">Wireless networking (sometimes referred to as 802.11
 					or Wi-Fi) presents a serious security risk to sensitive or classified systems
 					and networks. Wireless networking hardware is much more likely to be included in
-					laptop or portable systems than desktops or servers. See Section 3.3.14 for
-					information on Bluetooth wireless support. Bluetooth serves a different purpose
+					laptop or portable systems than desktops or servers. Bluetooth serves a different purpose
 					and possesses a much shorter range, but it still presents serious security
 					risks. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Removal of hardware is the only way to absolutely ensure that the
@@ -4042,8 +4064,15 @@
 					sensitive spaces, every effort to disable the capability via software should be
 					made. In general, acquisition policy should include provisions to prevent the
 					purchase of equipment that will be used in sensitive spaces and includes
-					wireless capabilities.</description>
-        <Group id="group-2.5.2.1" hidden="false">
+					wireless capabilities.</xhtml:p>
+
+					<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml">
+					If it is impossible to remove the wireless
+					hardware from the device in question, disable as much of it as possible
+					through software. Note that software methods do not prevent malicious
+					software or careless system administrators from re-activating the devices with absolute certainty.
+					</xhtml:p></description>
+        <Group id="gr-networking-wifi.1" hidden="false">
           <title xml:lang="en-US">Remove Wireless Hardware if Possible</title>
           <description xml:lang="en-US"> Identifying the wireless hardware is the first
 						step in removing it. The system's hardware manual should contain information
@@ -4066,81 +4095,61 @@
 						devices on their respective buses, and this may indicate the presence of a
 						wireless device.</description>
         </Group>
-        <Group id="group-2.5.2.2" hidden="false">
-          <title xml:lang="en-US">Disable Wireless Through Software Configuration</title>
-          <description xml:lang="en-US"> If it is impossible to remove the wireless
-						hardware from the device in question, disable as much of it as possible
-						through software. The following methods can disable software support for
-						wireless networking, but note that these methods do not prevent malicious
-						software or careless users from re-activating the devices.</description>
-          <Group id="group-2.5.2.2.1" hidden="false">
-            <title xml:lang="en-US">Disable Wireless in BIOS</title>
-            <description xml:lang="en-US"> Some laptops that include built-in wireless
-							support offer the ability to disable the device through the BIOS. This
-							is system-specific; consult your hardware manual or explore the BIOS
-							setup during boot. 2A recent version of this file can be found online at
-							http://lxr.linux.no/source/Documentation/networking/ip-sysctl.txt.</description>
-          </Group>
-          <Group id="group-2.5.2.2.2" hidden="false">
-            <title xml:lang="en-US">Deactivate Wireless Interfaces</title>
-            <description xml:lang="en-US"> Deactivating the wireless interfaces should
-							prevent normal usage of the wireless capability. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> First, identify the interfaces available with the command: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># ifconfig -a <xhtml:br/>
-							</xhtml:code>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Additionally,the following command may also be used to
-							determine whether wireless support ('extensions') is included for a
-							particular interface, though this may not always be a clear indicator: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># iwconfig <xhtml:br/>
-							</xhtml:code>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> After identifying any wireless interfaces (which may have
-							names like wlan0, ath0, wifi0, or eth0), deactivate the interface with
-							the command: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># ifdown interface <xhtml:br/>
-							</xhtml:code>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> These changes will only last until the next reboot. To
-							disable the interface for future boots, remove the appropriate interface
-							file from /etc/sysconfig/network-scripts: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># rm
-								/etc/sysconfig/network-scripts/ifcfg-interface</xhtml:code>
-						</description>
-            <Rule id="rule-2.5.2.2.2.a" selected="false" weight="10.000000" severity="medium">
-              <status date="2010-07-01">accepted</status>
-              <title xml:lang="en-US">Deactivate Wireless Interfaces</title>
-              <description xml:lang="en-US">All wireless interfaces should be disabled.</description>
-              <ident system="http://cce.mitre.org">CCE-4276-2</ident>
-              <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20128" href="scap-rhel6-oval.xml"/>
-              </check>
-            </Rule>
-          </Group>
-          <Group id="group-2.5.2.2.3" hidden="false">
-            <title xml:lang="en-US">Disable Wireless Drivers</title>
-            <description xml:lang="en-US"> Removing the kernel drivers that provide
-							support for wireless Ethernet devices will prevent users from easily
-							activating the devices. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> To remove the wireless drivers from the system: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># rm -r
-								/lib/modules/kernelversion(s)/kernel/drivers/net/wireless
-								<xhtml:br/>
-							</xhtml:code>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> This command must also be repeated every time the kernel is
-							upgraded.</description>
-          </Group>
-        </Group>
+	<Group id="gr-networking-wifi.2" hidden="false">
+	  <title xml:lang="en-US">Disable Wireless in BIOS</title>
+	  <description xml:lang="en-US"> Some laptops that include built-in wireless
+						      support offer the ability to disable the device through the BIOS. This
+						      is system-specific; consult your hardware manual or explore the BIOS
+						      setup during boot.</description>
+	</Group>
+	<Group id="gr-networking-wifi.3" hidden="false">
+	  <title xml:lang="en-US">Deactivate Wireless Interfaces</title>
+	  <description xml:lang="en-US"> Deactivating the wireless interfaces should
+						      prevent normal usage of the wireless capability. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						      <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> First, identify the interfaces available with the command: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						      <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						      <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># ip link ls <xhtml:br/>
+						      </xhtml:code>
+						      <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Additionally,the following command may also be used to
+						      determine whether wireless support ('extensions') is included for a
+						      particular interface, though this may not always be a clear indicator: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						      <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						      <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># iwconfig <xhtml:br/>
+						      </xhtml:code>
+						      <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> After identifying any wireless interfaces (which may have
+						      names like wlan0, ath0, wifi0, or eth0), deactivate the interface with
+						      the command: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						      <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						      <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># ip link set interface down <xhtml:br/>
+						      </xhtml:code>
+						      <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> These changes will only last until the next reboot. To
+						      disable the interface for future boots, locate its configuration file /etc/sysconfig/network-scripts/ifcfg-interface and add or replace configuration directives to match the following:
+						      <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						      <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">ONBOOT=no</xhtml:code>
+						      <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						      <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">USERCTL=no</xhtml:code>
+						      <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						      <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">NM_CONTROLLED=no</xhtml:code>
+						      <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+					      </description>
+	  <Rule id="rule-2.5.2.2.2.a" selected="false" weight="10.000000" severity="medium">
+	    <status date="2010-07-01">accepted</status>
+	    <title xml:lang="en-US">Deactivate Wireless Interfaces</title>
+	    <description xml:lang="en-US">All wireless interfaces should be disabled.</description>
+	    <ident system="http://cce.mitre.org">CCE-4276-2</ident>
+	    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+	      <check-content-ref name="oval:rhel:def:20128" href="scap-rhel6-oval.xml"/>
+	    </check>
+	  </Rule>
+	</Group>
       </Group>
-      <Group id="group-2.5.3" hidden="false">
+      <Group id="gr-networking-ipv6" hidden="false">
         <title xml:lang="en-US">IPv6</title>
         <description xml:lang="en-US"> The system includes support for Internet Protocol
 					version 6. A major and often-mentioned improvement over IPv4 is its enormous
 					increase in the number of available addresses. Another important feature is its
 					support for automatic configuration of many network settings.</description>
-        <Group id="group-2.5.3.1" hidden="false">
+        <Group id="gr-networking-ipv6.1" hidden="false">
           <title xml:lang="en-US">Disable Support for IPv6 unless Needed</title>
           <description xml:lang="en-US"> Because the IPv6 networking code is relatively
 						new and complex, it is particularly important that it be disabled unless
@@ -4149,7 +4158,7 @@
 						IPv4 address is assigned. The only way to effectively prevent execution of
 						the IPv6 networking stack is to prevent the kernel from loading the IPv6
 						kernel module.</description>
-          <Group id="group-2.5.3.1.1" hidden="false">
+          <Group id="gr-networking-ipv6.1.1" hidden="false">
             <title xml:lang="en-US">Disable Automatic Loading of IPv6 Kernel Module</title>
             <description xml:lang="en-US"> To prevent the IPv6 kernel module (ipv6) from
 							being loaded, add the following line to /etc/modprobe.conf: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -4167,12 +4176,12 @@
               </check>
             </Rule>
           </Group>
-          <Group id="group-2.5.3.1.2" hidden="false">
+          <Group id="gr-networking-ipv6.1.2" hidden="false">
             <title xml:lang="en-US">Disable Interface Usage of IPv6</title>
             <description xml:lang="en-US"> To prevent configuration of IPv6 for all
-							interfaces, add or correct the following lines in
+							interfaces, add or correct the following line in
 							/etc/sysconfig/network: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> NETWORKING_IPV6=no <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> IPV6INIT=no<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> IPV6INIT=no<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> For each network interface IFACE , add or correct the
 							following lines in /etc/sysconfig/network-scripts/ifcfg-IFACE as an
 							additional prevention mechanism:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -4181,14 +4190,14 @@
 							interfaces requiring it should be enabled.</description>
           </Group>
         </Group>
-        <Group id="group-2.5.3.2" hidden="false">
+        <Group id="gr-networking-ipv6.2" hidden="false">
           <title xml:lang="en-US">Configure IPv6 Settings if Necessary</title>
           <description xml:lang="en-US"> A major feature of IPv6 is the extent to which
 						systems implementing it can automatically configure their networking devices
 						using information from the network. From a security perspective, manually
 						configuring important configuration information is always preferable to
 						accepting it from the network in an unauthenticated fashion.</description>
-          <Group id="group-2.5.3.2.1" hidden="false">
+          <Group id="gr-networking-ipv6.2.1" hidden="false">
             <title xml:lang="en-US">Disable Automatic Configuration</title>
             <description xml:lang="en-US"> Disable the system's acceptance of router
 							advertisements and redirects by adding or correcting the following line
@@ -4251,7 +4260,7 @@
               </check>
             </Rule>
           </Group>
-          <Group id="group-2.5.3.2.2" hidden="false">
+          <Group id="gr-networking-ipv6.2.2" hidden="false">
             <title xml:lang="en-US">Manually Assign Global IPv6 Address</title>
             <description xml:lang="en-US"> To manually assign an IP address for an
 							interface IFACE, edit the file /etc/sysconfig/network-scripts/
@@ -4263,7 +4272,7 @@
 							is an IPv6 address reserved for documentation purposes, as defined by
 							RFC3849.</description>
           </Group>
-          <Group id="group-2.5.3.2.3" hidden="false">
+          <Group id="gr-networking-ipv6.2.3" hidden="false">
             <title xml:lang="en-US">Use Privacy Extensions for Address if Necessary</title>
             <description xml:lang="en-US"> To introduce randomness into the automatic
 							generation of IPv6 addresses, add or correct the following line in
@@ -4275,7 +4284,7 @@
 							is important for a system's IP address to not trivially reveal its
 							hardware address, this setting should be applied.</description>
           </Group>
-          <Group id="group-2.5.3.2.4" hidden="false">
+          <Group id="gr-networking-ipv6.2.4" hidden="false">
             <title xml:lang="en-US">Manually Assign IPv6 Router Address</title>
             <description xml:lang="en-US"> Edit the file
 							/etc/sysconfig/network-scripts/ifcfg-IFACE , and add or correct the
@@ -4284,7 +4293,7 @@
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Router addresses should be manually set and not accepted via
 							any autoconfiguration or router advertisement.</description>
           </Group>
-          <Group id="group-2.5.3.2.5" hidden="false">
+          <Group id="gr-networking-ipv6.2.5" hidden="false">
             <title xml:lang="en-US">Limit Network-Transmitted Configuration</title>
             <description xml:lang="en-US"> Add the following lines to /etc/sysctl.conf
 							to limit the configuration information requested from other systems, and
@@ -4318,12 +4327,12 @@
           </Group>
         </Group>
       </Group>
-      <Group id="group-2.5.4" hidden="false">
+      <Group id="gr-networking-libwrap" hidden="false">
         <title xml:lang="en-US">TCP Wrapper</title>
         <description xml:lang="en-US"> TCP Wrapper is a library which provides simple access
 					control and standardized logging for supported applications which accept
 					connections over a network. Historically, TCP Wrapper was used to support inetd
-					services. Now that inetd is deprecated (see Section 3.2.1), TCP Wrapper supports
+					services. Now that inetd is deprecated, TCP Wrapper supports
 					only services which were built to make use of the libwrap library. To determine
 					whether a given executable daemon /path/to/daemon supports TCP Wrapper, check
 					the documentation, or run: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -4338,7 +4347,7 @@
 					and more resistant to flaws in the software being protected, but TCP Wrapper
 					provides support for logging, banners, and other application-level tricks which
 					iptables cannot provide.</description>
-        <Group id="group-2.5.4.1" hidden="false">
+        <Group id="gr-networking-libwrap.1" hidden="false">
           <title xml:lang="en-US">How TCP Wrapper Protects Services</title>
           <description xml:lang="en-US"> TCP Wrapper provides access control for the
 						system's network services using two configuration files. When a connection
@@ -4360,7 +4369,7 @@
 						connection is destined, and client is the partial or full hostname or IP
 						address of the client. It is valid for daemon and client to contain one
 						item, a comma-separated list of items, or a special keyword like ALL, which
-						matches any service or client. (See the hosts access(5) manpage for a list
+						matches any service or client. (See the hosts_access(5) manpage for a list
 						of other keywords.) <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Note: Partial hostnames start at the root domain and are
 						delimited by the . character. So the client machine host03.dev.example.com,
@@ -4368,7 +4377,7 @@
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> .example.com <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> .dev.example.com <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						10.7.2.</description>
         </Group>
-        <Group id="group-2.5.4.2" hidden="false">
+        <Group id="gr-networking-libwrap.2" hidden="false">
           <title xml:lang="en-US">Reject All Connections From Other Hosts if Appropriate</title>
           <description xml:lang="en-US"> Restrict all connections to non-public services
 						to localhost only. Suppose pubsrv1 and pubsrv2 are the names of daemons
@@ -4382,7 +4391,7 @@
 						the services which must be publicly accessible. (If no public services
 						exist, the first line in /etc/hosts.allow may be omitted.)</description>
         </Group>
-        <Group id="group-2.5.4.3" hidden="false">
+        <Group id="gr-networking-libwrap.3" hidden="false">
           <title xml:lang="en-US">Allow Connections Only From Hosts in This Domain if Appropriate</title>
           <description xml:lang="en-US"> For each daemon, domainsrv , which only needs to
 						be contacted from inside the local domain, example.com , configure TCP
@@ -4405,7 +4414,7 @@
 						/etc/hosts.deny which refers to those services by name, or which restricts
 						the special service ALL.</warning>
         </Group>
-        <Group id="group-2.5.4.4" hidden="false">
+        <Group id="gr-networking-libwrap.4" hidden="false">
           <title xml:lang="en-US">Monitor Syslog for Relevant Connections and Failures</title>
           <description xml:lang="en-US"> Ensure that the following line exists in
 						/etc/rsyslog.conf. (This is the default, so it is likely to be correct if the
@@ -4423,22 +4432,21 @@
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> If appropriate, it is possible to change the syslog facility and
 						level used by a given TCP Wrapper rule by adding the severity option to each
 						desired configuration line in /etc/hosts.deny: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> daemon : client : severity facility .level <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> daemon : client : severity facility.level <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> By default, successful connections are not logged by TCP
-						Wrapper. See Section 2.6 for more information about system
-						auditing.</description>
+						Wrapper.</description>
         </Group>
-        <Group id="group-2.5.4.5" hidden="false">
+        <Group id="gr-networking-libwrap.5" hidden="false">
           <title xml:lang="en-US">Further Resources</title>
           <description xml:lang="en-US"> For more information about TCP Wrapper, see the
-						tcpd(8) and hosts access(5) manpages and the documentation directory
-						/usr/share/doc/tcp wrappers-version. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						tcpd(8) and hosts_access(5) manpages and the documentation directory
+						/usr/share/doc/tcp_wrappers-version. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Some information may be available from the Tools section of the
-						author's website, http://www.porcupine.org, and from the RHEL4 Reference
-						Guide [6].</description>
+						author's website, http://www.porcupine.org, and from the RHEL6 Security
+						Guide.</description>
         </Group>
       </Group>
-      <Group id="group-2.5.5" hidden="false">
+      <Group id="gr-networking-iptables" hidden="false">
         <title xml:lang="en-US">Iptables and Ip6tables</title>
         <description xml:lang="en-US"> A host-based firewall called Netfilter is included as
 					part of the Linux kernel distributed with the system. It is activated by
@@ -4454,7 +4462,7 @@
 					complete information that may allow the construction of a sophisticated ruleset
 					tailored to your environment, please consult the references at the end of this
 					section.</description>
-        <Group id="group-2.5.5.1" hidden="false">
+        <Group id="gr-networking-iptables.1" hidden="false">
           <title xml:lang="en-US">Inspect and Activate Default Rules</title>
           <description xml:lang="en-US"> View the currently-enforced iptables rules by
 						running the command: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -4466,34 +4474,28 @@
 						appear), activate it and ensure that it starts at boot by issuing the
 						following commands (and analogously for ip6tables): <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># service iptables restart <xhtml:br/> # chkconfig iptables on
-							<xhtml:br/>
-						</xhtml:code>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># service iptables restart</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># chkconfig iptables on</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The default iptables rules are: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Chain INPUT (policy ACCEPT) <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> num target prot opt
-						source destination <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 1 RH-Firewall-1-INPUT all -- 0.0.0.0/0
-						0.0.0.0/0 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Chain FORWARD (policy ACCEPT) <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> num target prot opt
-						source destination <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 1 RH-Firewall-1-INPUT all -- 0.0.0.0/0
-						0.0.0.0/0 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Chain OUTPUT (policy ACCEPT) <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> num target prot opt
-						source destination <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Chain RH-Firewall-1-INPUT (2 references) <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> num target
-						prot opt source destination <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 1 ACCEPT all -- 0.0.0.0/0 0.0.0.0/0
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 2 ACCEPT icmp -- 0.0.0.0/0 0.0.0.0/0 icmp type 255 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 3
-						ACCEPT esp -- 0.0.0.0/0 0.0.0.0/0 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 4 ACCEPT ah -- 0.0.0.0/0
-						0.0.0.0/0 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 5 ACCEPT udp -- 0.0.0.0/0 224.0.0.251 udp dpt:5353
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 6 ACCEPT udp -- 0.0.0.0/0 0.0.0.0/0 udp dpt:631 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 7
-						ACCEPT tcp -- 0.0.0.0/0 0.0.0.0/0 tcp dpt:631 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 8 ACCEPT all --
-						0.0.0.0/0 0.0.0.0/0 state RELATED,ESTABLISHED <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 9 ACCEPT tcp --
-						0.0.0.0/0 0.0.0.0/0 state NEW tcp dpt:22 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 10 REJECT all --
-						0.0.0.0/0 0.0.0.0/0 reject-with icmp-host-prohibited <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The ip6tables default rules are similar, with its rules 2 and 10
-						reflecting protocol naming and addressing differences. Instead of rule 8,
-						however, ip6tables includes two rules that accept all incoming udp and tcp
-						packets with a particular destination port range. This is because the
-						current Netfilter implementation for IPv6 lacks reliable connection-tracking
-						functionality.</description>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/><xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">Chain INPUT (policy ACCEPT)</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/><xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">num  target     prot opt source               destination</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/><xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">1    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0           state RELATED,ESTABLISHED</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/><xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">2    ACCEPT     icmp --  0.0.0.0/0            0.0.0.0/0</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/><xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">3    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/><xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">4    ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0           state NEW tcp dpt:22</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/><xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">5    REJECT     all  --  0.0.0.0/0            0.0.0.0/0           reject-with icmp-host-prohibited</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/><xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">Chain FORWARD (policy ACCEPT)</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/><xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">num  target     prot opt source               destination</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/><xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">1    REJECT     all  --  0.0.0.0/0            0.0.0.0/0           reject-with icmp-host-prohibited</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/><xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">Chain OUTPUT (policy ACCEPT)</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/><xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">num  target     prot opt source               destination</xhtml:code>
+
+
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The ip6tables default
+						rules are similar, with its input rules 2 and 5 and forward rule 1
+						reflecting protocol naming and addressing differences.</description>
           <Rule id="rule-2.5.5.1.a" selected="false" weight="10.000000" severity="high">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">ip6tables service is enabled</title>
@@ -4513,15 +4515,15 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.5.5.2" hidden="false">
+        <Group id="gr-networking-iptables.2" hidden="false">
           <title xml:lang="en-US">Understand the Default Ruleset</title>
           <description xml:lang="en-US"> Understanding and creating firewall rules can be
-						a challenging activity, filled with corner cases and difficult-todebug
+						a challenging activity, filled with corner cases and difficult-to debug
 						problems. Because of this, administrators should develop a thorough
 						understanding of the default ruleset before carefully modifying it. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The default ruleset is divided into four sections, each of which
-						is called a chain: INPUT, FORWARD, OUTPUT, and RH-Firewall-1-INPUT. INPUT,
-						OUTPUT, and FORWARD are built-in chains. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The default ruleset is divided into three sections, each of which
+						is called a chain: INPUT, FORWARD and OUTPUT. Each of these chains
+						is built-in. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:ul xmlns:xhtml="http://www.w3.org/1999/xhtml">
 							<xhtml:li>The INPUT chain is activated on packets destined for (i.e.,
 								addressed to) the system. </xhtml:li>
@@ -4529,27 +4531,26 @@
 								from the system. </xhtml:li>
 							<xhtml:li>The FORWARD chain is activated for packets that the system
 								will process and send through another interface, if so configured. </xhtml:li>
-							<xhtml:li>The RH-Firewall-1-INPUT chain is a custom (or user-defined)
-								chain, which is used by the INPUT and FORWARD chains. </xhtml:li>
 						</xhtml:ul>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> A packet starts at the first rule in the appropriate chain and
 						proceeds until it matches a rule. If a match occurs, then control will jump
 						to the specified target. The default ruleset uses the built-in targets
-						ACCEPT and REJECT, and also the user-defined target/chain
-						RH-Firewall-1-INPUT. Jumping to the target ACCEPT means to allow the packet
+						ACCEPT and REJECT. Jumping to the target ACCEPT means to allow the packet
 						through, while REJECT means to drop the packet and send an error message to
-						the sending host. A related target called DROP means to drop the packet on
-						the floor without even sending an error message. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						the sending host. A related target called DROP means to drop the packet
+						without even sending an error message. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The default policy for all of the built-in chains (shown after
 						their names in the rule output above) is set to ACCEPT. This means that if
 						no rules in the chain match the packets, they are allowed through. Because
 						no rules at all are written for the OUTPUT chain, this means that iptables
-						does not stop any packets originating from the system. The INPUT and FORWARD
-						chains jump to the user-defined target RH-Firewall-1-INPUT for all packets. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> RH-Firewall-1-INPUT tries to match, in order, the following
+						does not stop any packets originating from the system.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>The INPUT chain tries to match, in order, the following
 						rules for both iptables and ip6tables: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:ul xmlns:xhtml="http://www.w3.org/1999/xhtml">
-							<xhtml:li>Rule 1 appears to accept all packets. However, this appears
+							<xhtml:li>Rule 1, allows inbound packets that are
+								part of a session initiated by the system.</xhtml:li>
+							<xhtml:li>Rule 2 explicitly allows all icmp packet types.</xhtml:li>
+							<xhtml:li>Rule 3 appears to accept all packets. However, this appears
 								true only because the rules are not presented in verbose mode.
 								Executing the command <xhtml:br/>
 								<xhtml:br/>
@@ -4559,23 +4560,9 @@
 								interface (see column in), while all other rules apply to all
 								interfaces. Thus, packets not coming from the loopback interface do
 								not match and proceed to the next rule. </xhtml:li>
-							<xhtml:li>Rule 2 explicitly allows all icmp packet types; iptables uses
-								the code 255 to mean all icmp types. </xhtml:li>
-							<xhtml:li>Rule 3 explicitly allows all esp packets; these are packets
-								which contain IPsec ESP headers.</xhtml:li>
-							<xhtml:li>Rule 4 explicitly allows all ah packets; these are packets
-								which contain an IPsec authentication header SPI. </xhtml:li>
-							<xhtml:li>Rule 5 allows inbound communication on udp port 5353 (mDNS),
-								which the avahi daemon uses. </xhtml:li>
-							<xhtml:li>Rules 6 and 7 allows inbound communication on both tcp and udp
-								port 631, which the cups daemon uses. </xhtml:li>
-							<xhtml:li>Rule 8, in the iptables rules, allows inbound packets that are
-								part of a session initiated by the system. In ip6tables, rules 8 and
-								9 allow any inbound packets with a destination port address between
-								32768 and 61000. </xhtml:li>
-							<xhtml:li>Rule 9 (10, for ip6tables) allows inbound connections in tcp
+							<xhtml:li>Rule 4 allows inbound connections in tcp
 								port 22, which is the SSH protocol. </xhtml:li>
-							<xhtml:li>Rule 10 (11, for ip6tables) rejects all other packets and
+							<xhtml:li>Rule 5 rejects all other packets and
 								sends an error message to the sender. Because this is the last rule
 								and matches any packet, it effectively prevents any packet from
 								reaching the chain's default ACCEPT target. Preventing the
@@ -4584,7 +4571,7 @@
 						</xhtml:ul>
 					</description>
         </Group>
-        <Group id="group-2.5.5.3" hidden="false">
+        <Group id="gr-networking-iptables.3" hidden="false">
           <title xml:lang="en-US">Strengthen the Default Ruleset</title>
           <description xml:lang="en-US"> The default rules can be strengthened. The system
 						scripts that activate the firewall rules expect them to be defined in the
@@ -4595,20 +4582,21 @@
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The following recommendations describe how to strengthen the
 						default ruleset configuration file. An alternative to editing this
 						configuration file is to create a shell script that makes calls to the
-						iptables program to load in rules, and then invokes service iptables save to
-						write those loaded rules to /etc/sysconfig/iptables. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						iptables program to load in rules, and then invokes
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">service iptables save</xhtml:code> to
+						write those loaded rules to /etc/sysconfig/iptables.  If the construction of the default ruleset meets
+						your requirements, system-config-firewall-tui may be used to customize it, to the extent the tool allows it.
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The following alterations can be made directly to
 						/etc/sysconfig/iptables and /etc/sysconfig/ip6tables. Instructions apply to
 						both unless otherwise noted. Language and address conventions for regular
 						iptables are used throughout this section; configuration for ip6tables will
 						be either analogous or explicitly covered.</description>
-          <warning xml:lang="en-US">The program system-config-securitylevel allows
-						additional services to penetrate the default firewall rules and
-						automatically adjusts /etc/ sysconfig/ iptables . This program is only
-						useful if the default ruleset meets your security requirements. Otherwise,
+          <warning xml:lang="en-US">The program system-config-firewall-tui automatically adjusts /etc/sysconfig/iptables . This program is only
+						useful if the construction of the default ruleset meets your security requirements. Otherwise,
 						this program should not be used to make changes to the firewall
 						configuration because it re-writes the saved configuration file. </warning>
-          <Group id="group-2.5.5.3.1" hidden="false">
+          <Group id="gr-networking-iptables.3.1" hidden="false">
             <title xml:lang="en-US">Change the Default Policies</title>
             <description xml:lang="en-US"> Change the default policy to DROP (from
 							ACCEPT) for the INPUT and FORWARD built-in chains: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -4628,46 +4616,39 @@
               </check>
             </Rule>
           </Group>
-          <Group id="group-2.5.5.3.2" hidden="false">
+          <Group id="gr-networking-iptables.3.2" hidden="false">
             <title xml:lang="en-US">Restrict ICMP Message Types</title>
             <description xml:lang="en-US"> In /etc/sysconfig/iptables, the accepted ICMP
 							messages types can be restricted. To accept only ICMP echo reply,
 							destination unreachable, and time exceeded messages, remove the line: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -A RH-Firewall-1-INPUT -p icmp --icmp-type any -j ACCEPT <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> and insert the lines: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -A RH-Firewall-1-INPUT -p
-							icmp --icmp-type echo-reply -j ACCEPT <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -A RH-Firewall-1-INPUT
-							-p icmp --icmp-type destination-unreachable -j ACCEPT <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -A
-							RH-Firewall-1-INPUT -p icmp --icmp-type time-exceeded -j ACCEPT <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -A INPUT -p icmp -j ACCEPT <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> and insert the lines:
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -A INPUT -p icmp --icmp-type echo-reply -j ACCEPT
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -A INPUT -p icmp --icmp-type destination-unreachable -j ACCEPT
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -A INPUT -p icmp --icmp-type time-exceeded -j ACCEPT
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> To allow the system to respond to pings, also insert the
 							following line: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -A RH-Firewall-1-INPUT -p icmp --icmp-type echo-request -j
-							ACCEPT <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Ping responses can also be limited to certain networks or
 							hosts by using the -s option in the previous rule. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Because IPv6 depends so heavily on ICMPv6, it is preferable
 							to deny the ICMPv6 packets you know you don't need (e.g. ping requests)
 							in /etc/sysconfig/ip6tables, while letting everything else through: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -A RH-Firewall-1-INPUT -p icmpv6 --icmpv6-type echo-request
-							-j DROP <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> If you are going to statically configure the
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -A INPUT -p icmpv6 --icmpv6-type echo-request -j DROP
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> If you are going to statically configure the
 							machine's address, it should ignore Router Advertisements which could
 							add another IPv6 address to the interface or alter important network
 							settings: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -A RH-Firewall-1-INPUT -p icmpv6 --icmpv6-type
-							router-advertisement -j DROP <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -A INPUT -p icmpv6 --icmpv6-type router-advertisement -j DROP
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Restricting other ICMPv6 message types in
 							/etc/sysconfig/ip6tables is not recommended because the operation of
 							IPv6 depends heavily on ICMPv6. Thus, more care must be taken when
 							blocking ICMPv6 types.</description>
           </Group>
-          <Group id="group-2.5.5.3.3" hidden="false">
-            <title xml:lang="en-US">Remove IPsec Rules</title>
-            <description xml:lang="en-US"> If the system will not process IPsec traffic,
-							then remove the following rules: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -A RH-Firewall-1-INPUT -p 50 -j ACCEPT <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -A
-							RH-Firewall-1-INPUT -p 51 -j ACCEPT<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						</description>
-          </Group>
-          <Group id="group-2.5.5.3.4" hidden="false">
+          <Group id="gr-networking-iptables.3.3" hidden="false">
             <title xml:lang="en-US">Log and Drop Packets with Suspicious Source Addresses</title>
             <description xml:lang="en-US"> Packets with non-routable source addresses
 							should be rejected, as they may indicate spoofing. Because the modified
@@ -4731,22 +4712,23 @@
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -A INPUT -s FEC0::/10 -j LOG --log-prefix "SITE-LOCAL
 							ADDRESS TRAFFIC: "</description>
           </Group>
-          <Group id="group-2.5.5.3.5" hidden="false">
+          <Group id="gr-networking-iptables.3.4" hidden="false">
             <title xml:lang="en-US">Log and Drop All Other Packets</title>
             <description xml:lang="en-US"> To log before dropping all packets that are
 							not explicitly accepted by previous rules, change the final lines from <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -A RH-Firewall-1-INPUT -j REJECT --reject-with
-							icmp-host-prohibited <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> COMMIT <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -A INPUT -j REJECT --reject-with icmp-host-prohibited
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> COMMIT <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> to <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -A RH-Firewall-1-INPUT -j LOG <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -A
-							RH-Firewall-1-INPUT -j DROP <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> COMMIT <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -A INPUT -j LOG
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -A INPUT -j DROP
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> COMMIT <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The rule to log all dropped packets must be used with care.
 							Chatty but otherwise non-malicious network protocols (e.g. NetBIOS) may
 							result in voluminous logs; insertion of earlier rules to explicitly drop
 							their packets without logging may be appropriate.</description>
           </Group>
         </Group>
-        <Group id="group-2.5.5.4" hidden="false">
+        <Group id="gr-networking-iptables.4" hidden="false">
           <title xml:lang="en-US">Further Strengthening</title>
           <description xml:lang="en-US"> Further strengthening, particularly as a result
 						of customization to a particular environment, is possible for the iptables
@@ -4775,7 +4757,7 @@
 						</xhtml:ul>
 					</description>
         </Group>
-        <Group id="group-2.5.5.5" hidden="false">
+        <Group id="gr-networking-iptables.5" hidden="false">
           <title xml:lang="en-US">Further Resources</title>
           <description xml:lang="en-US"> More complex, restrictive, and powerful rulesets
 						can be created, but this requires careful customization that relies on
@@ -4785,28 +4767,27 @@
 							<xhtml:li>The iptables(8) man page </xhtml:li>
 							<xhtml:li>The Netfilter Project's documentation at
 								http://www.netfilter.org</xhtml:li>
-							<xhtml:li>The Red Hat Enterprise Linux Reference Guide</xhtml:li>
+							<xhtml:li>The Red Hat Enterprise Linux 6 Security Guide</xhtml:li>
 						</xhtml:ul>
 					</description>
         </Group>
       </Group>
-      <Group id="group-2.5.6" hidden="false">
-        <title xml:lang="en-US">Secure Sockets Layer Support</title>
-        <description xml:lang="en-US"> The Secure Sockets Layer (SSL) protocol provides
+      <Group id="gr-networking-tls" hidden="false">
+        <title xml:lang="en-US">Transport Layer Security Support</title>
+        <description xml:lang="en-US"> The Transport Layer Security (TLS) protocol provides
 					encrypted and authenticated network communications, and many network services
-					include support for it. Using SSL is recommended, especially to avoid any
-					plaintext transmission of sensitive data, even over a local network. The SSL
-					implementation included with the system is called OpenSSL. Recent
-					implementations of SSL may also be referred to as Transport Layer Security
-					(TLS). <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> SSL uses public key cryptography to provide authentication and
+					include support for it. Using TLS is recommended, especially to avoid any
+					plaintext transmission of sensitive data, even over a local network. The three primary TLS
+					implementations included with the system are GnuTLS, NSS and OpenSSL. Older
+					versions of TLS were called Secure Sockets Layer (SSL).<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> TLS uses public key cryptography to provide authentication and
 					encryption. Public key cryptography involves two keys, one called the public key
 					and the other called the private key. These keys are mathematically related such
 					that data encrypted with one key can only be decrypted by the other, and vice
 					versa. As their names suggest, public keys can be distributed to anyone while a
 					private key must remain known only to its owner. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> SSL uses certificates, which are files that hold cryptographic data:
-					a public key, and a signature of that public key. In SSL authentication, a
+					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> TLS uses certificates, which are files that hold cryptographic data:
+					a public key, and a signature of that public key. In TLS authentication, a
 					server presents a client with its certificate as a means of demonstrating that
 					it is who it claims it is. If everything goes correctly, the client can verify
 					the server's certificate by determining that the signature inside the
@@ -4814,31 +4795,29 @@
 					trusts. This third party is called a Certificate Authority (CA). Each client
 					system should also have certificates from trusted CAs, and the client uses these
 					CA certificates to verify the authenticity of the server's certificate. After
-					authenticating a server using its certificate and a CA certificate, SSL provides
+					authenticating a server using its certificate and a CA certificate, TLS provides
 					encryption by using the server certificate to securely negotiate a shared secret
 					key. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> If your server must communicate using SSL with systems that might
-					not be able to securely accept a new CA certificate prior to any SSL
+					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> If your server must communicate using TLS with systems that might
+					not be able to securely accept a new CA certificate prior to any TLS
 					communication, then paying an established CA (whose certificates your clients
 					already have) to sign your server certificates is recommended. The steps for
 					doing this vary by vendor. Once the signed certificates have been obtained,
 					configuration of the services is the same whether they were purchased from a
 					vendor or signed by your own CA.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> For setting up an internal network and encrypting local traffic,
-					creating your own CA to sign SSL certificates can be appropriate. The major
+					creating your own CA to sign X.509 certificates can be appropriate. The major
 					steps in this process are: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:ol xmlns:xhtml="http://www.w3.org/1999/xhtml">
 						<xhtml:li>Create a CA to sign certificates </xhtml:li>
-						<xhtml:li>Create SSL certificates for servers using that CA</xhtml:li>
-						<xhtml:li>Enableclient support by distributing the CA's
+						<xhtml:li>Create X.509 certificates for servers using that CA</xhtml:li>
+						<xhtml:li>Enable client support by distributing the CA's
 							certificate</xhtml:li>
 					</xhtml:ol>
 				</description>
-        <Group id="group-2.5.6.1" hidden="false">
+        <Group id="gr-networking-tls.1" hidden="false">
           <title xml:lang="en-US">Create a CA to Sign Certificates</title>
-          <description xml:lang="en-US"> The following instructions apply to OpenSSL since
-						it is included with the system, but creating a CA is possible with any
-						standards-compliant SSL toolkit. The security of certificates depends on the
+          <description xml:lang="en-US"> The following instructions apply to OpenSSL. The security of certificates depends on the
 						security of the CA that signed them, so performing these steps on a secure
 						machine is critical. The system used as a CA should be physically secure and
 						not connected to any network. It should receive any certificate signing
@@ -4851,8 +4830,10 @@
 						the [req distinguished name] section. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> To create the CA: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># cd /etc/pki/tls/misc <xhtml:br/> # ./CA -newca <xhtml:br/>
-						</xhtml:code>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># cd /etc/pki/tls/misc</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># ./CA -newca</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:ul xmlns:xhtml="http://www.w3.org/1999/xhtml">
 							<xhtml:li>When prompted, press enter to create a new CA key with the
@@ -4895,12 +4876,11 @@
 						key, it means that it is vouching for the authenticity of that server. A
 						client can then use the CA's certificate (which contains its public key) to
 						verify the authenticity of the server certificate. To accomplish this, it is
-						necessary to distribute the CA certificate to any clients as covered in
-						Section 2.5.6.3.</description>
+						necessary to distribute the CA certificate to any clients.</description>
         </Group>
-        <Group id="group-2.5.6.2" hidden="false">
-          <title xml:lang="en-US">Create SSL Certificates for Servers</title>
-          <description xml:lang="en-US"> Creating an SSL certificate for a server involves
+        <Group id="gr-networking-tls.2" hidden="false">
+          <title xml:lang="en-US">Create X.509 Certificates for Servers</title>
+          <description xml:lang="en-US"> Creating an X.509 certificate for a server involves
 						the following steps: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:ol xmlns:xhtml="http://www.w3.org/1999/xhtml">
 							<xhtml:li>A public-private key pair for the server must be
@@ -4908,21 +4888,13 @@
 							<xhtml:li>A certificate signing request (CSR) must be created from the
 								key pair.</xhtml:li>
 							<xhtml:li>The CSR must be signed by a certificate authority (CA) to
-								create the server certificate. If a CA has been set up as described
-								in Section 2.5.6.1, it can sign the CSR.</xhtml:li>
+								create the server certificate.</xhtml:li>
 							<xhtml:li>The server certificate and keys must be installed on the
 								server. </xhtml:li>
 						</xhtml:ol>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Instructions on how to generate and sign SSL certificates are
-						provided for the following common services:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:ul xmlns:xhtml="http://www.w3.org/1999/xhtml">
-							<xhtml:li>Mail server, in Section 3.11.4.6.</xhtml:li>
-							<xhtml:li>Dovecot, in Section 3.17.2.2. </xhtml:li>
-							<xhtml:li>Apache, in Section 3.16.4.1.</xhtml:li>
-						</xhtml:ul>
 					</description>
         </Group>
-        <Group id="group-2.5.6.3" hidden="false">
+        <Group id="gr-networking-tls.3" hidden="false">
           <title xml:lang="en-US">Enable Client Support</title>
           <description xml:lang="en-US"> The system ships with certificates from
 						well-known commercial CAs. If your server certificates were signed by one of
@@ -4935,17 +4907,17 @@
 						ever having properly verified the server certificate. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> To avoid this warning, and properly authenticate the servers,
 						your CA certificate must be exported to every application on every client
-						system that will be connecting to an SSL-enabled server.</description>
-          <Group id="group-2.5.6.3.1" hidden="false">
+						system that will be connecting to an TLS-enabled server.</description>
+          <Group id="gr-networking-tls.3.1" hidden="false">
             <title xml:lang="en-US">Adding a Trusted CA for Firefox</title>
             <description xml:lang="en-US"> Firefox needs to have a certificate from the
 							CA that signed the web server's certificate, so that it can authenticate
 							the web server. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> To import a new CA certificate into Firefox 1.5:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> To import a new CA certificate into Firefox 3.6:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:ol xmlns:xhtml="http://www.w3.org/1999/xhtml">
 								<xhtml:li>Launch Firefox and choose Preferences from the Edit menu. </xhtml:li>
 								<xhtml:li>Click the Advanced button.</xhtml:li>
-								<xhtml:li>Select the Security pane.</xhtml:li>
+								<xhtml:li>Select the Encryption pane.</xhtml:li>
 								<xhtml:li>Click the View Certificates button.</xhtml:li>
 								<xhtml:li>Click the Authorities tab. </xhtml:li>
 								<xhtml:li>Click the Import button at the bottom of the
@@ -4954,14 +4926,14 @@
 							</xhtml:ol>
 						</description>
           </Group>
-          <Group id="group-2.5.6.3.2" hidden="false">
+          <Group id="gr-networking-tls.3.2" hidden="false">
             <title xml:lang="en-US">Adding a Trusted CA for Thunderbird</title>
             <description xml:lang="en-US"> Thunderbird needs to have a certificate from
 							the CA that signed the mail server's certificates, so that it can
 							authenticate the mail server(s).<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> To import a new CA certificate into Thunderbird 2: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> To import a new CA certificate into Thunderbird 3: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:ol xmlns:xhtml="http://www.w3.org/1999/xhtml">
-								<xhtml:li>Launch Thunderbird and choose Account Settings from the
+								<xhtml:li>Launch Thunderbird and choose Preferences from the
 									Edit menu.</xhtml:li>
 								<xhtml:li>Click the Advanced button.</xhtml:li>
 								<xhtml:li>Select the Certificates tab</xhtml:li>
@@ -4976,7 +4948,7 @@
 							</xhtml:ol>
 						</description>
           </Group>
-          <Group id="group-2.5.6.3.3" hidden="false">
+          <Group id="gr-networking-tls.3.3" hidden="false">
             <title xml:lang="en-US">Adding a Trusted CA for Evolution</title>
             <description xml:lang="en-US"> The Evolution e-mail client needs to have a
 							certificate from the CA that signed the mail server's certificates, so
@@ -4989,34 +4961,30 @@
 									left.</xhtml:li>
 								<xhtml:li>Select the Authorities tab.</xhtml:li>
 								<xhtml:li>Click the Import button.</xhtml:li>
-								<xhtml:li/>
-								<xhtml:li/>
 								<xhtml:li>Navigate to the CA certificate and import it.</xhtml:li>
 							</xhtml:ol>
 						</description>
           </Group>
         </Group>
-        <Group id="group-2.5.6.4" hidden="false">
+        <Group id="gr-networking-tls.4" hidden="false">
           <title xml:lang="en-US">Further Resources</title>
           <description xml:lang="en-US">
 						<xhtml:ul xmlns:xhtml="http://www.w3.org/1999/xhtml">
 							<xhtml:li>The OpenSSL Project home page at
 								http://www.openssl.org</xhtml:li>
 							<xhtml:li>The openssl(1) man page</xhtml:li>
-							<xhtml:li>Jeremy Mates's how-to:
-								http://sial.org/howto/openssl</xhtml:li>
 						</xhtml:ul>
 					</description>
         </Group>
       </Group>
-      <Group id="group-2.5.7" hidden="false">
+      <Group id="gr-networking.7" hidden="false">
         <title xml:lang="en-US">Uncommon Network Protocols</title>
         <description xml:lang="en-US"> The system includes support for several network
-					protocols which are not commonly used. Although security vul- nerabilities in
+					protocols which are not commonly used. Although security vulnerabilities in
 					kernel networking code are not frequently discovered, the consequences can be
 					dramatic. Ensuring uncommon network protocols are disabled reduces the system’s
 					risk to attacks targeted at its implementation of those protocols.</description>
-        <Group id="group-2.5.7.1" hidden="false">
+        <Group id="gr-networking.7.1" hidden="false">
           <title xml:lang="en-US">Disable Support for DCCP</title>
           <description xml:lang="en-US"> To prevent the DCCP kernel module from being
 						loaded, add the following line to /etc/modprobe.conf:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -5036,7 +5004,7 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.5.7.2" hidden="false">
+        <Group id="gr-networking.7.2" hidden="false">
           <title xml:lang="en-US">Disable Support for SCTP</title>
           <description xml:lang="en-US"> To prevent the SCTP kernel module from being
 						loaded, add the following line to /etc/modprobe.conf:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -5057,7 +5025,7 @@
             </check>
           </Rule>
         </Group>
-        <Group id="group-2.5.7.3" hidden="false">
+        <Group id="gr-networking.7.3" hidden="false">
           <title xml:lang="en-US">Disable Support for RDS</title>
           <description xml:lang="en-US"> To prevent the RDS kernel module from being
 						loaded, add the following line to /etc/modprobe.conf:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -5074,26 +5042,6 @@
             <ident system="http://cce.mitre.org">CCE-14027-7</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref name="oval:rhel:def:201478" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-        </Group>
-        <Group id="group-2.5.7.4" hidden="false">
-          <title xml:lang="en-US">Disable Support for TIPC</title>
-          <description xml:lang="en-US"> To prevent the TIPC kernel module from being
-						loaded, add the following line to /etc/modprobe.conf:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">install rds /bin/true<xhtml:br/>
-						</xhtml:code>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The Transparent Inter-Process Communication (TIPC) protocol is
-						designed to provide communications between nodes in a
-						cluster..</description>
-          <Rule id="rule-2.5.7.4.a" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">draft</status>
-            <title xml:lang="en-US">Disable Support for TIPC</title>
-            <description xml:lang="en-US">Support for TIPC should be disabled.</description>
-            <ident system="http://cce.mitre.org">CCE-14911-2</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:201479" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
