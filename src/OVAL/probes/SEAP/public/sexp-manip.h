@@ -485,6 +485,8 @@ void       SEXP_listit_free (SEXP_it_t *it);
  */
 SEXP_t *SEXP_new (void);
 
+bool SEXP_emptyp(SEXP_t *sexp);
+
 /**
  * Create a new reference to a sexp object.
  * @param s_exp the object of which to increment the reference count

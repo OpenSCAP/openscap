@@ -1527,6 +1527,14 @@ SEXP_t *SEXP_new (void)
         return (s_exp);
 }
 
+bool SEXP_emptyp(SEXP_t *sexp)
+{
+	if (sexp == NULL)
+		return (true);
+	else
+		return (sexp->s_valp == 0);
+}
+
 SEXP_t *SEXP_ref (const SEXP_t *s_exp_o)
 {
         SEXP_t *s_exp_r;
