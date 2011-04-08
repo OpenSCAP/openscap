@@ -2918,9 +2918,9 @@
 				used to guard against misconfigured or compromised programs. SELinux enforces the
 				idea that programs should be limited in what files they can access and what actions
 				they can take. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-				<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The default SELinux policy, as configured on RHEL5, has been
+				<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The default SELinux policy, as configured on RHEL6, has been
 				sufficiently developed and debugged that it should be usable on almost any Red Hat
-				machine with minimal configuration and a small amount of system administrator
+				machine with variety configurations and a small amount of system administrator
 				training. This policy prevents system services — including most of the common
 				network-visible services such as mail servers, ftp servers, and DNS servers — from
 				accessing files which those services have no valid reason to access. This action
@@ -2959,8 +2959,10 @@
 					permissions more restrictive and secure. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> SELinux requires a complex policy in order to allow all the actions
 					required of a system under normal operation. Three such policies have been
-					designed for use with RHEL5, and are included with the system. In increasing
-					order of power and complexity, they are: targeted, strict, and mls. The targeted
+					designed for use with RHEL6, and are included with the system. In increasing
+					order of power and complexity, they are: targeted, strict (which is newly not provided
+					as an individual package but is part of targeted policy package. The process
+					of making strict policy is described later) and mls. The targeted
 					SELinux policy consists mostly of Type Enforcement (TE) rules, and a small
 					number of Role-Based Access Control (RBAC) rules. It restricts the actions of
 					many types of programs, but leaves interactive users largely unaffected. The
@@ -2972,30 +2974,30 @@
 					configuration of the targeted policy and the administration of systems under
 					this policy. Some pointers will be provided for readers who are interested in
 					further strengthening their systems by using one of the stricter policies
-					provided with RHEL5 or in writing their own policy.</description>
+					provided with RHEL6 or in writing their own policy.</description>
       </Group>
       <Group id="group-2.4.2" hidden="false">
         <title xml:lang="en-US">Enable SELinux</title>
-        <description xml:lang="en-US"> Edit the file /etc/selinux/config. Add or correct the
-					following lines: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+        <description xml:lang="en-US"> The SELinux is enabled by default on RHEL6. The file /etc/selinux/config should contains
+					following lines for targeted policy: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-					<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">SELINUX=enforcing <xhtml:br/> SELINUXTYPE=targeted <xhtml:br/>
-					</xhtml:code>
+					<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">SELINUX=enforcing </xhtml:code> 
+					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+					<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">SELINUXTYPE=targeted </xhtml:code>
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Edit the file /etc/grub.conf. Ensure that the following arguments DO
 					NOT appear on any kernel command line in the file: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-					<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">selinux=0 <xhtml:br/> enforcing=0 <xhtml:br/>
-					</xhtml:code>
+					<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">selinux=0 </xhtml:code> or
+					<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">enforcing=0 </xhtml:code>
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The directive SELINUX=enforcing enables SELinux at boot time. If
 					SELinux is causing a lot of problems or preventing the system from booting, it
 					is possible to boot into the warning-only mode SELINUX=permissive for debugging
 					purposes. Make certain to change the mode back to enforcing after debugging, set
 					the filesystems to be relabelled for consistency using the command touch
 					/.autorelabel, and reboot. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> However, the RHEL5 default SELinux configuration should be
+					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> However, the RHEL6 default SELinux configuration should be
 					sufficiently reasonable that most systems will boot without serious problems.
-					Some applications that require deep or unusual system privileges, such as
-					virtual machine software, may not be compatible with SELinux in its default
+					Some applications that require deep or unusual system privileges, may not be compatible with SELinux in its default
 					configuration. However, this should be uncommon, and SELinux's application
 					support continues to improve. In other cases, SELinux may reveal unusual or
 					insecure program behavior by design. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -3076,35 +3078,34 @@
       <Group id="group-2.4.3" hidden="false">
         <title xml:lang="en-US">Disable Unnecessary SELinux Daemons</title>
         <description xml:lang="en-US"> Several daemons are installed by default as part of
-					the RHEL5 SELinux support mechanism. These daemons may improve the system's
+					the RHEL6 SELinux support mechanism. These daemons may improve the system's
 					ability to enforce SELinux policy in a useful fashion, but may also represent
 					unnecessary code running on the machine, increasing system risk. If these
-					daemons are not needed on your system, they should be disabled.</description>
+					daemons are available in your RHEL6 installation and are not needed on your system, 
+					they should be disabled.</description>
         <Group id="group-2.4.3.1" hidden="false">
-          <title xml:lang="en-US">Disable and Remove SETroubleshoot if Possible</title>
+          <title xml:lang="en-US">Remove SETroubleshoot if Possible</title>
           <description xml:lang="en-US"> Is there a mission-critical reason to allow users
-						to view SELinux denial information using the sealert GUI? If not, disable
-						the service and remove the RPM: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						to view SELinux denial information using the sealert GUI? If not, 
+						remove the setroubleshoot packages:
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># chkconfig setroubleshoot off <xhtml:br/> # yum erase
-							setroubleshoot <xhtml:br/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">$ yum remove setroubleshoot-\*<xhtml:br/>
 						</xhtml:code>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The setroubleshoot service is a facility for notifying the
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The setroubleshoot, 
+						which is newly D-Bus system service, is a facility for notifying the
 						desktop user of SELinux denials in a user-friendly fashion. SELinux errors
 						may provide important information about intrusion attempts in progress, or
 						may give information about SELinux configuration problems which are
 						preventing correct system operation. In order to maintain a secure and
-						usable SELinux installation, error logging and notification is necessary. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> However, setroubleshoot is a service which has complex
-						functionality, which runs a daemon and uses IPC to distribute information
-						which may be sensitive, or even to allow users to modify SELinux settings,
-						and which does not yet implement real authentication mechanisms. This guide
-						recommends disabling setroubleshoot and using the kernel audit functionality
-						to monitor SELinux's behavior. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> In addition, since setroubleshoot automatically runs client-side
-						code whenever a denial occurs, regardless of whether the setroubleshootd
-						daemon is running, it is recommended that the program be removed entirely
-						unless it is needed.</description>
+						usable SELinux installation, error logging and notification is necessary. 
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> However, 
+						setroubleshoot is a service which has complex
+						functionality, which runs a daemon and uses D-Bus to distribute information
+						which may be sensitive, or even to allow users to modify SELinux settings. 
+						This guide recommends removing setroubleshoot and using the kernel audit functionality
+						to monitor SELinux's behavior.</description>
+
         </Group>
         <Group id="group-2.4.3.2" hidden="false">
           <title xml:lang="en-US">Disable MCS Translation Service (mcstrans) if Possible</title>
@@ -3115,13 +3116,11 @@
 						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># chkconfig mcstrans off <xhtml:br/>
 						</xhtml:code>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The mcstransd daemon provides the category label translation
-						information defined in /etc/selinux/targeted/ setrans.conf to client
+						information defined in /etc/selinux/targeted/setrans.conf to client
 						processes which request this information.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Category labelling is unlikely to be used except in sites with
 						special requirements. Therefore, it should be disabled in order to reduce
-						the amount of potentially vulnerable code running on the system. See Section
-						2.4.6 for more information about systems which use category
-						labelling.</description>
+						the amount of potentially vulnerable code running on the system.</description>
           <Rule id="rule-2.4.3.2.a" selected="false" weight="10.000000" severity="low">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Disable MCS Translation Service (mcstrans) if Possible</title>
@@ -3137,9 +3136,10 @@
           <description xml:lang="en-US"> The restorecond daemon monitors a list of files
 						which are frequently created or modified on running systems, and whose
 						SELinux contexts are not set correctly. It looks for creation events related
-						to files listed in /etc/ selinux/restorecond.conf, and sets the contexts of
-						those files when they are discovered.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The restorecond program is fairly simple, so it brings low risk,
+						to files listed either in /etc/selinux/restorecond.conf or restorecond_user.conf , 
+						and sets the contexts ofthose files when they are discovered.
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The restorecond program is fairly 						 simple, so it brings low risk,
 						but, in its default configuration, does not add much value to a system. An
 						automated program such as restorecond may be used to monitor problematic
 						files for context problems, or system administrators may be trained to check
@@ -3153,19 +3153,20 @@
         <title xml:lang="en-US">Check for Unconfined Daemons</title>
         <description xml:lang="en-US"> Daemons that SELinux policy does not know about will
 					inherit the context of the parent process. Because daemons are launched during
-					startup and descend from the init process, they inherit the initrc t context.
+					startup and descend from the init process, they inherit the initrc_t context.
 					This is a problem because it may cause AVC denials, or it could allow privileges
 					that the daemon does not require. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> To check for unconfined daemons, run the following command: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-					<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># ps -eZ | egrep "initrc" | egrep -vw "tr|ps|egrep|bash|awk" | tr
-						':' ' ' | awk '{ print $NF }'<xhtml:br/>
+					<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">
+					# ps -eZ | egrep "initrc" | egrep -vw "tr|ps|egrep|bash|awk" | tr ':' ' ' | awk '{ print $NF }'
+					<xhtml:br/>
 					</xhtml:code>
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> It should produce no output in a well-configured
 					system.</description>
       </Group>
       <Group id="group-2.4.5" hidden="false">
-        <title xml:lang="en-US">Check for Unconfined Daemons</title>
+        <title xml:lang="en-US">Check for Unlabeled Device Files</title>
         <description xml:lang="en-US"> Device files are used for communication with important
 					system resources. SELinux contexts should exist for these. If a device file is
 					not labeled, then misconfiguration is likely.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -3255,9 +3256,10 @@
 							configuration change performed by an administrator. To repair the file,
 							use the command: <xhtml:br/>
 							<xhtml:br/>
-							<xhtml:code># restorecon -v FILE <xhtml:br/>
+							<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">
+							# restorecon -v FILE
 							</xhtml:code>
-							<xhtml:br/> This should produce output indicating that the file's
+							<xhtml:br/>This should produce output indicating that the file's
 							context has been changed. The /usr/bin/chcon program can be used to
 							manually change a file's context, but this is problematic because the
 							change will not persist if it does not agree with the policy-defined
@@ -3289,7 +3291,7 @@
 							denial messages, and generate syntactically correct Type Enforcement
 							rules which would be sufficient to prevent those denials. For example,
 							to generate and display rules which would allow all kernel denials seen
-							in the past five minutes, run: <xhtml:br/>
+							in the past fitfteen minutes, run: <xhtml:br/>
 							<xhtml:br/>
 							<xhtml:code># ausearch -m AVC -sv no -ts recent | audit2allow
 								<xhtml:br/>
@@ -3312,6 +3314,13 @@
 							<xhtml:br/>
 							<xhtml:code># semodule -i localmodule .pp <xhtml:br/>
 							</xhtml:code>
+							<xhtml:br/>In RHEL5, if you created a local policy, you needed to 
+							switch to permissive mode globally to better debugging sometimes. 
+							This is no longer needed in RHEL6. The permissive domains was 
+							implemented which means only a domain can become permissive. <xhtml:br/>
+							<xhtml:br/>
+							<xhtml:code>semanage -a permissive DOMAIN<xhtml:br/>
+							</xhtml:code>
 							<xhtml:br/> Section 45.2 of [9] covers this procedure in
 							detail.</xhtml:li>
 					</xhtml:ul>
@@ -3329,7 +3338,7 @@
 					security gains available from using SELinux. In particular, the SELinux policy
 					is also capable of constraining the actions of interactive users, of providing
 					compartmented access by sensitivity level (MLS) and/or category (MCS), and of
-					restricting certain types of system actions using booleans beyond the RHEL5
+					restricting certain types of system actions using booleans beyond the RHEL6
 					defaults. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> This section introduces other uses of SELinux which may be possible,
 					and provides links to some outside resources about their use. Detailed
@@ -3341,12 +3350,17 @@
 						segments of policy to comply with site policy. Booleans may apply to the
 						entire system or to an individual daemon. For instance, the boolean allow
 						execstack, if enabled, allows programs to make part of their stack memory
-						region executable. This would apply to all programs on the system. The
-						boolean ftp home dir allows ftpd processes to access user home directories,
+						region executable. The boolean ftp home dir allows ftpd processes to 
+						access user home directories,
 						and applies only to daemons which implement FTP. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The command <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">$ getsebool -a <xhtml:br/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">$ getsebool -a
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">$ semanage boolean -l <xhtml:br/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						</xhtml:code>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> lists the values of all SELinux booleans on the system. Section
 						2.4.5 discussed loosening boolean values in order to debug functionality
@@ -3354,10 +3368,11 @@
 						examine and strengthen the boolean settings, to disable functionality which
 						is not required by legitimate programs on your system, but which might be
 						symptomatic of an attack. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> See the manpages booleans(8), getsebool(8), and setsebool(8) for
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> See the manpages booleans(8), 
+						getsebool(8), setsebool(8) and semanage(8) for
 						general information about booleans. There are also manual pages for several
 						subsystems which discuss the use of SELinux with those systems. Examples
-						include ftpd selinux(8), httpd selinux(8), and nfs selinux(8). Another good
+						include ftpd selinux(8), httpd selinux(8), and nfs_selinux(8). Another good
 						reference is the html documentation distributed with the selinux-policy RPM.
 						This documentation is stored under <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> /usr/share/doc/selinux-policy-version/html/ <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -3371,37 +3386,85 @@
 						particular system's purpose, and this may be costly or time consuming. Under
 						the targeted policy, interactive processes are given the type unconfined t,
 						so interactive users are not constrained by SELinux even if they attempt to
-						take strange or malicious actions. The first alternative policy available
-						with RHEL5's SELinux distribution, called strict, extends the protections
-						offered by the default policy from daemons and system processes to all
-						processes. To use the strict policy, first ensure that the policy module is
-						installed: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						take strange or malicious actions.
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 
+						Previously, in RHEL5, we had strict policy 
+						which could be installed using selinux-policy-strict package. In RHEL6, we combine 
+						strict and targeted policy together. There exist two SELinux policy modules - 
+						unconfined.pp and unconfineduser.pp policy modules.  These two modules are optional,  
+						and removing it gives you the equivalent of strict policy.
+						Firstly, you can just remove unconfined.pp policy module. You will be closer to strict 
+						policy but this leaves only user domains unconfined, along with some domains
+						that do not make sense to confine (anaconda, firstboot, kernel,rpm) and also 
+						unconfined_t user will be exist.
+
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># yum install selinux-policy-strict <xhtml:br/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># semodule -d unconfined</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># seinfo -aunconfined_domain_type -x | tail -n +2 | wc -l</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+
+						Then you can disable all unconfined domains by disabling unconfineduser 
+						module which is equal strict policy. In this case, you need to setup all 
+						your users as confined users, before removing the unconfineduser module 
+						using semanage tool
+
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># semanage login -m -s staff_u root</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># semanage login -m -s staff_u __default__</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># semanage user -d unconfined_u</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># semanage user -m -R "staff_r system_r sysadm_r" staff_u</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># semodule -d unconfineduser</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						Note: One of the RHEL6 features are Confined Users. This means, 
+						unconfined.pp and unconfineduser.pp policy modules can be used  
+						and an user can be confined even so. All this magic lie in adding login 
+						mappings between linux users and SELinux confined users.
+						
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># semanage login -a -s user_u -r s0-s0:c0.c1023 USERNAME1</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># semanage login -a -s staff_u -r s0-s0:c0.c1023 USERNAME2</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>The mls policy type can be used to enforce sensitivity or category labelling, 
+						and requires site-specific configuration of these labels in order to be useful. 
+						To use this policy, install the appropriate policy module:
+						
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># yum install selinux-policy-mls</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						Then edit /etc/selinux/config and correct the line:
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>	
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">
+						SELINUXTYPE=mls</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>	
+						Configure the system to boot into run level 3 by default: 
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">
+						sed -i "s/^id:5:initdefault:/id:3:initdefault:/g" /etc/inittab
 						</xhtml:code>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Then edit /etc/selinux/config and correct the line:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">SELINUXTYPE=strict <xhtml:br/>
-						</xhtml:code>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The mls policy type can be used to enforce sensitivity or
-						category labelling, and requires site-specific configuration of these labels
-						in order to be useful. To use this policy, install the appropriate policy
-						module: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						Note: Switching between policies typically requires the entire disk to be 
+						relabelled, so that files get the appropriate SELinux contexts under 
+						the new policy. Add autorelabel flag
+
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># yum install selinux-policy-mls <xhtml:br/>
-						</xhtml:code>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Then edit /etc/selinux/config and correct the line: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">touch /.autorelabel; reboot</xhtml:code>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">SELINUXTYPE=mls</xhtml:code>
-					</description>
-          <warning xml:lang="en-US"> Note: Switching between policies typically requires
-						the entire disk to be relabelled, so that files get the appropriate SELinux
-						contexts under the new policy. Boot with the additional grub command-line
-						options <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						and boot with the additional grub command-line options
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">enforcing=0 single autorelabel </xhtml:code>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> to relabel the disk in single-user mode, then reboot
-						normally.</warning>
+						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">
+						enforcing=0</xhtml:code>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 
+						to relabel the disk, then reboot normally. 
+						</description>
+						
         </Group>
       </Group>
       <Group id="group-2.4.8" hidden="false">
