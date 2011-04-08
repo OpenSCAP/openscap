@@ -562,7 +562,7 @@ class OSCAP_Object(object):
         Function returns dictionary with keys:
             "policy_model"   - XCCDF Policy Model loaded from XCCDF file
             "def_models"     - list of OVAL Definitions models from OVAL files
-            "sessions"       - list of OVAL Agent sessions provided by OVAL Definitions models
+            "sessions"       - dictionary of OVAL Agent sessions provided by OVAL Definitions models
             
         All returned objects have to be freed by user. Use functions:
             retval["policy_model"].free()
@@ -587,7 +587,7 @@ class OSCAP_Object(object):
         policy_model = self.policy_model(benchmark)
         files = policy_model.get_files()
         def_models = []
-        sessions = []
+        sessions = {}
         names={}
         for file in files.strings:
             if file in paths:
@@ -605,7 +605,7 @@ class OSCAP_Object(object):
                     if OSCAP.oscap_err(): desc = OSCAP.oscap_err_desc()
                     else: desc = "Unknown error, please report this bug (http://bugzilla.redhat.com/)"
                     raise ImportError("Cannot create agent session for \"%s\": %s" % (f_OVAL, desc))
-                sessions.append(sess)
+                sessions[file] = sess
                 names[file] = [sess, def_model]
                 policy_model.register_engine_oval(sess)
             else: print "WARNING: Skipping %s file which is referenced from XCCDF content" % (f_OVAL,)
@@ -663,7 +663,7 @@ class OSCAP_Object(object):
     def destroy(self, sdir):
 
         OSCAP.oscap_cleanup()
-        for model in sdir["def_models"]+sdir["sessions"]+[sdir["policy_model"]]:
+        for model in sdir["def_models"]+sdir["sessions"].values()+[sdir["policy_model"]]:
             model.free()
 
 
