@@ -34,8 +34,10 @@
     <select idref="rule-1019" selected="true"/>
     <select idref="rule-1020" selected="true"/>
     <select idref="rule-1021" selected="true"/>
-<!--    <select idref="rule-1022" selected="true"/>
-        <select idref="rule-1023" selected="true"/> -->
+    <select idref="rule-1022" selected="true"/>
+    <select idref="rule-1023" selected="true"/> 
+    <select idref="rule-1024" selected="true"/> 
+    <select idref="rule-1025" selected="true"/> 
   </Profile>
   <Group id="gr-intro" hidden="false">
     <title xml:lang="en-US">Introduction</title>
@@ -736,8 +738,8 @@
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/bin/cgexec</xhtml:td>
-								<xhtml:td>root</xhtml:td>
 								<xhtml:td>-</xhtml:td>
+								<xhtml:td>cgred</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/bin/fusermount</xhtml:td>
@@ -785,14 +787,9 @@
 								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
-								<xhtml:td>/sbin/mount.nfs4</xhtml:td>
-								<xhtml:td>root</xhtml:td>
-								<xhtml:td>-</xhtml:td>
-							</xhtml:tr>
-							<xhtml:tr>
 								<xhtml:td>/sbin/mount.nfs</xhtml:td>
 								<xhtml:td>root</xhtml:td>
-								<xhtml:td>root</xhtml:td>
+								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/sbin/netreport</xhtml:td>
@@ -801,16 +798,6 @@
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/sbin/pam_timestamp_check</xhtml:td>
-								<xhtml:td>root</xhtml:td>
-								<xhtml:td>-</xhtml:td>
-							</xhtml:tr>
-							<xhtml:tr>
-								<xhtml:td>/sbin/umount.nfs4</xhtml:td>
-								<xhtml:td>root</xhtml:td>
-								<xhtml:td>-</xhtml:td>
-							</xhtml:tr>
-							<xhtml:tr>
-								<xhtml:td>/sbin/umount.nfs</xhtml:td>
 								<xhtml:td>root</xhtml:td>
 								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
@@ -841,28 +828,8 @@
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/crontab</xhtml:td>
-								<xhtml:td>-</xhtml:td>
 								<xhtml:td>root</xhtml:td>
-							</xhtml:tr>
-							<xhtml:tr>
-								<xhtml:td>/usr/bin/glines</xhtml:td>
 								<xhtml:td>-</xhtml:td>
-								<xhtml:td>games</xhtml:td>
-							</xhtml:tr>
-							<xhtml:tr>
-								<xhtml:td>/usr/bin/gnibbles</xhtml:td>
-								<xhtml:td>-</xhtml:td>
-								<xhtml:td>games</xhtml:td>
-							</xhtml:tr>
-							<xhtml:tr>
-								<xhtml:td>/usr/bin/gnobots2</xhtml:td>
-								<xhtml:td>-</xhtml:td>
-								<xhtml:td>games</xhtml:td>
-							</xhtml:tr>
-							<xhtml:tr>
-								<xhtml:td>/usr/bin/gnome-falling-blocks</xhtml:td>
-								<xhtml:td>-</xhtml:td>
-								<xhtml:td>games</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/gnomine</xhtml:td>
@@ -870,29 +837,9 @@
 								<xhtml:td>games</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
-								<xhtml:td>/usr/bin/gnotravex</xhtml:td>
-								<xhtml:td>-</xhtml:td>
-								<xhtml:td>games</xhtml:td>
-							</xhtml:tr>
-							<xhtml:tr>
-								<xhtml:td>/usr/bin/gnotski</xhtml:td>
-								<xhtml:td>-</xhtml:td>
-								<xhtml:td>games</xhtml:td>
-							</xhtml:tr>
-							<xhtml:tr>
-								<xhtml:td>/usr/bin/gnuchess</xhtml:td>
-								<xhtml:td>-</xhtml:td>
-								<xhtml:td>games</xhtml:td>
-							</xhtml:tr>
-							<xhtml:tr>
 								<xhtml:td>/usr/bin/gpasswd</xhtml:td>
 								<xhtml:td>root</xhtml:td>
 								<xhtml:td>-</xhtml:td>
-							</xhtml:tr>
-							<xhtml:tr>
-								<xhtml:td>/usr/bin/gtali</xhtml:td>
-								<xhtml:td>-</xhtml:td>
-								<xhtml:td>games</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/iagno</xhtml:td>
@@ -923,11 +870,6 @@
 								<xhtml:td>/usr/bin/lockfile</xhtml:td>
 								<xhtml:td>-</xhtml:td>
 								<xhtml:td>mail</xhtml:td>
-							</xhtml:tr>
-							<xhtml:tr>
-								<xhtml:td>/usr/bin/mahjongg</xhtml:td>
-								<xhtml:td>-</xhtml:td>
-								<xhtml:td>games</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/newgrp</xhtml:td>
@@ -1042,11 +984,6 @@
 							<xhtml:tr>
 								<xhtml:td>/usr/lib64/amanda/runtar</xhtml:td>
 								<xhtml:td>root</xhtml:td>
-								<xhtml:td>-</xhtml:td>
-							</xhtml:tr>
-							<xhtml:tr>
-								<xhtml:td>/usr/lib64/mgetty+sendfax/faxq-helper</xhtml:td>
-								<xhtml:td>fax</xhtml:td>
 								<xhtml:td>-</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
@@ -1185,11 +1122,6 @@
 								<xhtml:td>mailman</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
-								<xhtml:td>/usr/lib/mgetty+sendfax/faxq-helper</xhtml:td>
-								<xhtml:td>fax</xhtml:td>
-								<xhtml:td>-</xhtml:td>
-							</xhtml:tr>
-							<xhtml:tr>
 								<xhtml:td>/usr/lib/nspluginwrapper/plugin-config</xhtml:td>
 								<xhtml:td>root</xhtml:td>
 								<xhtml:td>-</xhtml:td>
@@ -1246,22 +1178,22 @@
 							</xhtml:tr>
 						</xhtml:table>
 					</description>
-          <Rule id="rule-2.2.3.4.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1024" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Unauthorized SGID System Executables</title>
             <description xml:lang="en-US">The sgid bit should not be set for all files.</description>
             <ident system="http://cce.mitre.org">CCE-14340-4</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20048" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1024" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.2.3.4.b" selected="false" weight="10.000000" severity="high">
+          <Rule id="rule-1025" selected="false" weight="10.000000" severity="high">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Unauthorized SUID System Executables</title>
             <description xml:lang="en-US">The suid bit should not be set for all files.</description>
             <ident system="http://cce.mitre.org">CCE-14340-4</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20049" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1025" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -1282,22 +1214,22 @@
 						will not cause problems when accounts are created in the future, and the
 						problem which led to unowned files should be discovered and
 						addressed.</xhtml:p> </description>
-          <Rule id="rule-2.2.3.5.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1026" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Files unowned by any user</title>
             <description xml:lang="en-US">All files should be owned by a user</description>
             <ident system="http://cce.mitre.org">CCE-4223-4</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20050" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1026" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.2.3.5.b" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1027" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Files unowned by any group</title>
             <description xml:lang="en-US">All files should be owned by a group</description>
             <ident system="http://cce.mitre.org">CCE-3573-3</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20051" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1027" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -1318,14 +1250,14 @@
 						undesirable because it allows the owner of that directory to remove or
 						replace any files that may be placed in the directory by other
 						users.</description>
-          <Rule id="rule-2.2.3.6.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1028" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">draft</status>
             <title xml:lang="en-US">World writable directories not owned by a system account</title>
             <description xml:lang="en-US">All world writable directories should be owned by a system
 							user</description>
             <ident system="http://cce.mitre.org">CCE-14794-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20052" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1028" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>

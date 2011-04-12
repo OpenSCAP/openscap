@@ -254,7 +254,7 @@
 			<description>The sticky bit should be set for all world-writable directories.</description>
 		</metadata>
 		<criteria>
-			<criterion comment="Check all directories and make sure they are either not world writable or if they are they have the sticky bit set" test_ref="oval:rhel:tst:10221" negate="true"/>
+			<criterion comment="Check all directories and make sure they are either not world writable or if they are they have the sticky bit set" test_ref="oval:rhel:tst:10221"/>
 		</criteria>
 	</definition>
 	<definition class="compliance" id="oval:rhel:def:1023" version="1">
@@ -264,7 +264,7 @@
 			<description>The world-write permission should be disabled for all files.</description>
 		</metadata>
 		<criteria>
-			<criterion comment="Check all files and make sure they are not world writable" test_ref="oval:rhel:tst:10231" negate="true"/>
+			<criterion comment="Check all files and make sure they are not world writable" test_ref="oval:rhel:tst:10231"/>
 		</criteria>
 	</definition>
 	<definition class="compliance" id="oval:rhel:def:1024" version="1">
@@ -285,6 +285,36 @@
 		</metadata>
 		<criteria>
 			<criterion comment="Check that there are no unexpected files with suid bit set" test_ref="oval:rhel:tst:10251"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1026" version="1">
+		<metadata>
+			<title>Find files unowned by a user</title>
+			<reference ref_id="CCE-4223-4" source="CCE"/>
+			<description>All files should be owned by a user</description>
+		</metadata>
+		<criteria>
+			<criterion comment="Check all files and make sure they are owned by a user" test_ref="oval:rhel:tst:10261"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1027" version="1">
+		<metadata>
+			<title>Find files unowned by a group</title>
+			<reference ref_id="CCE-3573-3" source="CCE"/>
+			<description>All files should be owned by a group</description>
+		</metadata>
+		<criteria>
+			<criterion comment="Check all files and make sure they are owned by a group" test_ref="oval:rhel:tst:10271"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1028" version="1">
+		<metadata>
+			<title>Find world writable directories not owned by a system account</title>
+			<reference ref_id="CCE-14794-2" source="CCE"/>
+			<description>All world writable directories should be owned by a system user</description>
+		</metadata>
+		<criteria>
+			<criterion comment="Check all directories are not world writable or owned by a user with uid less than 500" test_ref="oval:rhel:tst:10281"/>
 		</criteria>
 	</definition>
 	</definitions>
@@ -380,7 +410,7 @@
 		<unix-def:object object_ref="oval:rhel:obj:102211"/>
 		<unix-def:state state_ref="oval:rhel:ste:102211"/>
 	</unix-def:file_test>
-	<unix-def:file_test id="oval:rhel:tst:10231" version="1" check="all" comment="World writable files">
+	<unix-def:file_test id="oval:rhel:tst:10231" version="1" check_existence="none_exist" check="all" comment="World writable files">
 		<unix-def:object object_ref="oval:rhel:obj:102311"/>
 	</unix-def:file_test>
 	<unix-def:file_test id="oval:rhel:tst:10241" version="1" check_existence="none_exist" check="all" comment="executable files with sgid set">
@@ -388,6 +418,15 @@
 	</unix-def:file_test>
 	<unix-def:file_test id="oval:rhel:tst:10251" version="1" check_existence="none_exist" check="all" comment="executable files with suid set">
 		<unix-def:object object_ref="oval:rhel:obj:102511"/>
+	</unix-def:file_test>
+	<unix-def:file_test id="oval:rhel:tst:10261" version="1" check_existence="none_exist" check="all" comment="files with no user owner">
+		<unix-def:object object_ref="oval:rhel:obj:102611"/>
+	</unix-def:file_test>
+	<unix-def:file_test id="oval:rhel:tst:10271" version="1" check_existence="none_exist" check="all" comment="files with no group owner">
+		<unix-def:object object_ref="oval:rhel:obj:102711"/>
+	</unix-def:file_test>
+	<unix-def:file_test id="oval:rhel:tst:10281" version="1" check_existence="none_exist" check="all" comment="world writable directories have a uid greater than or equal to 500" >
+		<unix-def:object object_ref="oval:rhel:obj:102811"/>
 	</unix-def:file_test>
 	</tests>
 
@@ -467,6 +506,35 @@
 			<filter>oval:rhel:ste:1025112</filter>
 		</set>
 	</unix-def:file_object>
+
+	<unix-def:file_object id="oval:rhel:obj:102611" version="1" comment="all local files without a valid user assigned">
+		<set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+			<object_reference>oval:rhel:obj:1023111</object_reference>
+			<filter>oval:rhel:ste:1026111</filter>
+		</set>
+	</unix-def:file_object>
+	<ind-def:textfilecontent54_object id="oval:rhel:obj:10261111" version="1">
+		<ind-def:filepath>/etc/passwd</ind-def:filepath>
+		<ind-def:pattern operation="pattern match">^[^:]+:[^:]+:([\d]+):[\d]+:[^:]*:[^:]+:[^:]*$</ind-def:pattern>
+		<ind-def:instance operation="greater than or equal" datatype="int">1</ind-def:instance>
+	</ind-def:textfilecontent54_object>
+	<unix-def:file_object id="oval:rhel:obj:102711" version="1" comment="all local files without a valid group assigned">
+		<set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+			<object_reference>oval:rhel:obj:1023111</object_reference>
+			<filter>oval:rhel:ste:1027111</filter>
+		</set>
+	</unix-def:file_object>
+	<ind-def:textfilecontent54_object id="oval:rhel:obj:10271111" version="1">
+		<ind-def:filepath>/etc/group</ind-def:filepath>
+		<ind-def:pattern operation="pattern match">^[^:]+:[^:]*:([\d]+):[^:]*$</ind-def:pattern>
+		<ind-def:instance operation="greater than or equal" datatype="int">1</ind-def:instance>
+	</ind-def:textfilecontent54_object>
+	<unix-def:file_object id="oval:rhel:obj:102811" version="1" comment="world writable directories with uid not less than 500">
+		<set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+			<object_reference>oval:rhel:obj:1022111</object_reference>
+			<filter>oval:rhel:ste:1028111</filter>
+		</set>
+	</unix-def:file_object>
 	</objects>
 
 
@@ -540,13 +608,21 @@
 	<unix-def:file_state id="oval:rhel:ste:1024112" version="1" comment="sgid whitelist">
 		<unix-def:filepath var_check="at least one" var_ref="oval:rhel:var:1024112"/>
 	</unix-def:file_state>
-
 	<unix-def:file_state id="oval:rhel:ste:1025111" version="1" comment="u-s">
 		<unix-def:suid datatype="boolean">0</unix-def:suid>
 	</unix-def:file_state>
-
 	<unix-def:file_state id="oval:rhel:ste:1025112" version="1" comment="suid whitelist">
 		<unix-def:filepath var_check="at least one" var_ref="oval:rhel:var:1025112"/>
+	</unix-def:file_state>
+	<unix-def:file_state id="oval:rhel:ste:1026111" version="1" comment="Files with a valid user id assigned">
+		<unix-def:user_id var_check="at least one" var_ref="oval:rhel:var:1026111"/>
+	</unix-def:file_state>
+	<unix-def:file_state id="oval:rhel:ste:1027111" version="1" comment="Files with a valid group id assigned">
+		<unix-def:group_id var_check="at least one" var_ref="oval:rhel:var:1027111"/>
+	</unix-def:file_state>
+	<unix-def:file_state id="oval:rhel:ste:1028111" version="1" operator="OR">
+		<unix-def:group_id datatype="string" operation="pattern match">^([1-4][0-9]|[1-9])?[0-9]$</unix-def:group_id>
+		<unix-def:owrite datatype="boolean">0</unix-def:owrite>
 	</unix-def:file_state>
 	</states>
 
@@ -560,11 +636,103 @@
 		<value>6</value>
 	</constant_variable>
 	<constant_variable id="oval:rhel:var:1024112" version="1" datatype="string" comment="sgid whitelist">
-		<value>bla</value>
+		<value>/bin/cgexec</value>
+		<value>/sbin/netreport</value>
+		<value>/usr/bin/gnomine</value>
+		<value>/usr/bin/iagno</value>
+		<value>/usr/bin/locate</value>
+		<value>/usr/bin/lockfile</value>
+		<value>/usr/bin/same-gnome</value>
+		<value>/usr/bin/screen</value>
+		<value>/usr/bin/ssh-agent</value>
+		<value>/usr/bin/wall</value>
+		<value>/usr/bin/write</value>
+		<value>/usr/lib64/vte/gnome-pty-helper</value>
+		<value>/usr/libexec/kde4/kdesud</value>
+		<value>/usr/libexec/utempter/utempter</value>
+		<value>/usr/lib/mailman/cgi-bin/admindb</value>
+		<value>/usr/lib/mailman/cgi-bin/admin</value>
+		<value>/usr/lib/mailman/cgi-bin/confirm</value>
+		<value>/usr/lib/mailman/cgi-bin/create</value>
+		<value>/usr/lib/mailman/cgi-bin/edithtml</value>
+		<value>/usr/lib/mailman/cgi-bin/listinfo</value>
+		<value>/usr/lib/mailman/cgi-bin/options</value>
+		<value>/usr/lib/mailman/cgi-bin/private</value>
+		<value>/usr/lib/mailman/cgi-bin/rmlist</value>
+		<value>/usr/lib/mailman/cgi-bin/roster</value>
+		<value>/usr/lib/mailman/cgi-bin/subscribe</value>
+		<value>/usr/lib/mailman/mail/mailman root</value>
+		<value>/usr/lib/vte/gnome-pty-helper</value>
+		<value>/usr/sbin/lockdev</value>
+		<value>/usr/sbin/postdrop</value>
+		<value>/usr/sbin/postqueue</value>
+		<value>/usr/sbin/sendmail.sendmail</value>
 	</constant_variable>
 	<constant_variable id="oval:rhel:var:1025112" version="1" datatype="string" comment="suid whitelist">
-		<value>bla</value>
+		<value>/bin/fusermount</value>
+		<value>/bin/mount</value>
+		<value>/bin/ping6</value>
+		<value>/bin/ping</value>
+		<value>/bin/su</value>
+		<value>/bin/umount</value>
+		<value>/lib64/dbus-1/dbus-daemon-launch-helper</value>
+		<value>/lib/dbus-1/dbus-daemon-launch-helper</value>
+		<value>/sbin/mount.ecryptfs_private</value>
+		<value>/sbin/mount.nfs</value>
+		<value>/sbin/pam_timestamp_check</value>
+		<value>/sbin/unix_chkpwd</value>
+		<value>/usr/bin/at</value>
+		<value>/usr/bin/chage</value>
+		<value>/usr/bin/chfn</value>
+		<value>/usr/bin/chsh</value>
+		<value>/usr/bin/crontab</value>
+		<value>/usr/bin/gpasswd</value>
+		<value>/usr/bin/kgrantpty</value>
+		<value>/usr/bin/kpac_dhcp_helper</value>
+		<value>/usr/bin/ksu</value>
+		<value>/usr/bin/newgrp</value>
+		<value>/usr/bin/newrole</value>
+		<value>/usr/bin/passwd</value>
+		<value>/usr/bin/pkexec</value>
+		<value>/usr/bin/rcp</value>
+		<value>/usr/bin/rlogin</value>
+		<value>/usr/bin/rsh</value>
+		<value>/usr/bin/sperl5.10.1</value>
+		<value>/usr/bin/staprun</value>
+		<value>/usr/bin/sudoedit</value>
+		<value>/usr/bin/sudo</value>
+		<value>/usr/bin/Xorg</value>
+		<value>/usr/lib64/amanda/calcsize</value>
+		<value>/usr/lib64/amanda/dumper</value>
+		<value>/usr/lib64/amanda/killpgrp</value>
+		<value>/usr/lib64/amanda/planner</value>
+		<value>/usr/lib64/amanda/rundump</value>
+		<value>/usr/lib64/amanda/runtar</value>
+		<value>/usr/lib64/nspluginwrapper/plugin-config</value>
+		<value>/usr/lib/amanda/calcsize</value>
+		<value>/usr/lib/amanda/dumper</value>
+		<value>/usr/lib/amanda/killpgrp</value>
+		<value>/usr/lib/amanda/planner</value>
+		<value>/usr/lib/amanda/rundump</value>
+		<value>/usr/lib/amanda/runtar</value>
+		<value>/usr/libexec/mc/cons.saver</value>
+		<value>/usr/libexec/openssh/ssh-keysign</value>
+		<value>/usr/libexec/polkit-1/polkit-agent-helper-1</value>
+		<value>/usr/libexec/pt_chown</value>
+		<value>/usr/libexec/pulse/proximity-helper</value>
+		<value>/usr/lib/nspluginwrapper/plugin-config</value>
+		<value>/usr/sbin/amcheck</value>
+		<value>/usr/sbin/seunshare</value>
+		<value>/usr/sbin/suexec</value>
+		<value>/usr/sbin/userhelper</value>
+		<value>/usr/sbin/usernetctl</value>
 	</constant_variable>
+	<local_variable id="oval:rhel:var:1026111" version="1" datatype="string" comment="List of user ids">
+		<object_component item_field="subexpression" object_ref="oval:rhel:obj:10261111"/>
+	</local_variable>
+	<local_variable id="oval:rhel:var:1027111" version="1" datatype="string" comment="List of group ids">
+		<object_component item_field="subexpression" object_ref="oval:rhel:obj:10271111"/>
+	</local_variable>
 	</variables>
 
 </oval_definitions>
