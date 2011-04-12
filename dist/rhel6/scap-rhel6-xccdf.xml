@@ -38,6 +38,9 @@
     <select idref="rule-1023" selected="true"/> 
     <select idref="rule-1024" selected="true"/> 
     <select idref="rule-1025" selected="true"/> 
+    <select idref="rule-1026" selected="true"/> 
+    <select idref="rule-1027" selected="true"/> 
+    <select idref="rule-1028" selected="true"/> 
   </Profile>
   <Group id="gr-intro" hidden="false">
     <title xml:lang="en-US">Introduction</title>
