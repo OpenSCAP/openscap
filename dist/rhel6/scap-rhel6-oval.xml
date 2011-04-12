@@ -127,6 +127,126 @@
 			<criterion comment="Unknown test stub" test_ref="oval:rhel:tst:1009"/>
 		</criteria>
 	</definition>
+	<definition class="compliance" id="oval:rhel:def:1010" version="1">
+		<metadata>
+			<title>Verify user who owns 'shadow' file</title>
+			<reference ref_id="CCE-3918-0" source="CCE"/>
+			<description>The /etc/shadow file should be owned by the appropriate user.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10101" comment="Check file ownership of /etc/shadow"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1011" version="1">
+		<metadata>
+			<title>Verify group who owns 'shadow' file</title>
+			<reference ref_id="CCE-3988-3" source="CCE"/>
+			<description>The /etc/shadow file should be owned by the appropriate group.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10111" comment="Check file ownership of /etc/shadow"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1012" version="1">
+		<metadata>
+			<title>Verify user who owns 'group' file</title>
+			<reference ref_id="CCE-3276-3" source="CCE"/>
+			<description>The /etc/group file should be owned by the appropriate user.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10121"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1013" version="1">
+		<metadata>
+			<title>Verify group who owns 'group' file</title>
+			<reference ref_id="CCE-3883-6" source="CCE"/>
+			<description>The /etc/group file should be owned by the appropriate group.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10131"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1014" version="1">
+		<metadata>
+			<title>Verify user who owns 'gshadow' file</title>
+			<reference ref_id="CCE-4210-1" source="CCE"/>
+			<description>The /etc/gshadow file should be owned by the appropriate user.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10141"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1015" version="1">
+		<metadata>
+			<title>Verify group who owns 'gshadow' file</title>
+			<reference ref_id="CCE-4064-2" source="CCE"/>
+			<description>The /etc/gshadow file should be owned by the appropriate group.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10151"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1016" version="1">
+		<metadata>
+			<title>Verify user who owns 'passwd' file</title>
+			<reference ref_id="CCE-3958-6" source="CCE"/>
+			<description>The /etc/passwd file should be owned by the appropriate user.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10161"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1017" version="1">
+		<metadata>
+			<title>Verify group who owns 'passwd' file</title>
+			<reference ref_id="CCE-3495-9" source="CCE"/>
+			<description>The /etc/passwd file should be owned by the appropriate group.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10171"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1018" version="1">
+		<metadata>
+			<title>Verify permissions on 'shadow' file</title>
+			<reference ref_id="CCE-4130-1" source="CCE"/>
+			<description>File permissions for /etc/shadow should be set correctly.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10181"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1019" version="1">
+		<metadata>
+			<title>Verify permissions on 'group' file</title>
+			<reference ref_id="CCE-3967-7" source="CCE"/>
+			<description>File permissions for /etc/group should be set correctly.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10191"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1020" version="1">
+		<metadata>
+			<title>Verify permissions on 'gshadow' file</title>
+			<reference ref_id="CCE-3932-1" source="CCE"/>
+			<description>File permissions for /etc/gshadow should be set correctly.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10201"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1021" version="1">
+		<metadata>
+			<title>Verify permissions on 'passwd' file</title>
+			<reference ref_id="CCE-3566-7" source="CCE"/>
+			<description>File permissions for /etc/passwd should be set correctly.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10211"/>
+		</criteria>
+	</definition>
 	</definitions>
 
 
@@ -168,6 +288,54 @@
 		<ind-def:state state_ref="oval:rhel:ste:100711" />
 	</ind-def:textfilecontent54_test>
 	<ind-def:unknown_test id="oval:rhel:tst:1009" version="1" check="all" comment="Test implementation is unknown, unavailable, or impossible"/>
+	<unix-def:file_test check_existence="all_exist" id="oval:rhel:tst:10101" version="1" check="all" comment="Testing user ownership of /etc/shadow">
+		<unix-def:object object_ref="oval:rhel:obj:101011"/>
+		<unix-def:state state_ref="oval:rhel:ste:101011"/>
+	</unix-def:file_test>
+	<unix-def:file_test check_existence="all_exist" id="oval:rhel:tst:10111" version="1" check="all" comment="Testing group ownership of /etc/shadow">
+		<unix-def:object object_ref="oval:rhel:obj:101011"/>
+		<unix-def:state state_ref="oval:rhel:ste:101111"/>
+	</unix-def:file_test>
+	<unix-def:file_test check_existence="all_exist" id="oval:rhel:tst:10121" version="1" check="all" comment="Testing user ownership of /etc/group">
+		<unix-def:object object_ref="oval:rhel:obj:101211"/>
+		<unix-def:state state_ref="oval:rhel:ste:101011"/>
+	</unix-def:file_test>
+	<unix-def:file_test check_existence="all_exist" id="oval:rhel:tst:10131" version="1" check="all" comment="Testing group ownership of /etc/group">
+		<unix-def:object object_ref="oval:rhel:obj:101211"/>
+		<unix-def:state state_ref="oval:rhel:ste:101111"/>
+	</unix-def:file_test>
+	<unix-def:file_test check_existence="all_exist" id="oval:rhel:tst:10141" version="1" check="all" comment="Testing user ownership of /etc/gshadow">
+		<unix-def:object object_ref="oval:rhel:obj:101411"/>
+		<unix-def:state state_ref="oval:rhel:ste:101011"/>
+	</unix-def:file_test>
+	<unix-def:file_test check_existence="all_exist" id="oval:rhel:tst:10151" version="1" check="all" comment="Testing group ownership of /etc/gshadow">
+		<unix-def:object object_ref="oval:rhel:obj:101411"/>
+		<unix-def:state state_ref="oval:rhel:ste:101111"/>
+	</unix-def:file_test>
+	<unix-def:file_test check_existence="all_exist" id="oval:rhel:tst:10161" version="1" check="all" comment="Testing user ownership of /etc/passwd">
+		<unix-def:object object_ref="oval:rhel:obj:101611"/>
+		<unix-def:state state_ref="oval:rhel:ste:101011"/>
+	</unix-def:file_test>
+	<unix-def:file_test check_existence="all_exist" id="oval:rhel:tst:10171" version="1" check="all" comment="Testing group ownership of /etc/passwd">
+		<unix-def:object object_ref="oval:rhel:obj:101611"/>
+		<unix-def:state state_ref="oval:rhel:ste:101111"/>
+	</unix-def:file_test>
+	<unix-def:file_test check_existence="all_exist" id="oval:rhel:tst:10181" version="1" check="all" comment="Testing file permissions of /etc/shadow">
+		<unix-def:object object_ref="oval:rhel:obj:101011"/>
+		<unix-def:state state_ref="oval:rhel:ste:101811"/>
+	</unix-def:file_test>
+	<unix-def:file_test check_existence="all_exist" id="oval:rhel:tst:10191" version="1" check="all" comment="Testing file permissions of /etc/group">
+		<unix-def:object object_ref="oval:rhel:obj:101211"/>
+		<unix-def:state state_ref="oval:rhel:ste:101911"/>
+	</unix-def:file_test>
+	<unix-def:file_test check_existence="all_exist" id="oval:rhel:tst:10201" version="1" check="all" comment="Testing file permissions of /etc/gshadow">
+		<unix-def:object object_ref="oval:rhel:obj:101411"/>
+		<unix-def:state state_ref="oval:rhel:ste:101811"/>
+	</unix-def:file_test>
+	<unix-def:file_test check_existence="all_exist" id="oval:rhel:tst:10211" version="1" check="all" comment="Testing file permissions of /etc/passwd">
+		<unix-def:object object_ref="oval:rhel:obj:101611"/>
+		<unix-def:state state_ref="oval:rhel:ste:101911"/>
+	</unix-def:file_test>
 	</tests>
 
 
@@ -195,7 +363,19 @@
 		<ind-def:pattern operation="pattern match">^[\s]*gpgcheck[\s]*=[\s]*([0-1])$</ind-def:pattern>
 		<ind-def:instance datatype="int" operation="greater than or equal">1</ind-def:instance>
 	</ind-def:textfilecontent54_object>
-        </objects>
+	<unix-def:file_object id="oval:rhel:obj:101011" version="1" comment="/etc/shadow">
+		<unix-def:filepath>/etc/shadow</unix-def:filepath>
+	</unix-def:file_object>
+	<unix-def:file_object id="oval:rhel:obj:101211" version="1" comment="/etc/group">
+		<unix-def:filepath>/etc/group</unix-def:filepath>
+	</unix-def:file_object>
+       	<unix-def:file_object id="oval:rhel:obj:101411" version="1" comment="/etc/group">
+		<unix-def:filepath>/etc/gshadow</unix-def:filepath>
+	</unix-def:file_object>
+	<unix-def:file_object id="oval:rhel:obj:101611" version="1" comment="/etc/group">
+		<unix-def:filepath>/etc/passwd</unix-def:filepath>
+	</unix-def:file_object>
+	</objects>
 
 
 	<states>
@@ -225,6 +405,34 @@
 	<ind-def:textfilecontent54_state id="oval:rhel:ste:100711" version="1" comment="Expected value of gpgcheck should be enabled">
 		<ind-def:subexpression datatype="int" operation="equals" entity_check="all">1</ind-def:subexpression>
 	</ind-def:textfilecontent54_state>
+	<unix-def:file_state id="oval:rhel:ste:101011" version="1">
+		<unix-def:user_id datatype="int">0</unix-def:user_id>
+	</unix-def:file_state>
+	<unix-def:file_state id="oval:rhel:ste:101111" version="1">
+		<unix-def:group_id datatype="int">0</unix-def:group_id>
+	</unix-def:file_state>
+	<unix-def:file_state id="oval:rhel:ste:101811" version="1">
+		<unix-def:uread datatype="boolean">false</unix-def:uread>
+		<unix-def:uwrite datatype="boolean">false</unix-def:uwrite>
+		<unix-def:uexec datatype="boolean">false</unix-def:uexec>
+		<unix-def:gread datatype="boolean">false</unix-def:gread>
+		<unix-def:gwrite datatype="boolean">false</unix-def:gwrite>
+		<unix-def:gexec datatype="boolean">false</unix-def:gexec>
+		<unix-def:oread datatype="boolean">false</unix-def:oread>
+		<unix-def:owrite datatype="boolean">false</unix-def:owrite>
+		<unix-def:oexec datatype="boolean">false</unix-def:oexec>
+	</unix-def:file_state>
+	<unix-def:file_state id="oval:rhel:ste:101911" version="1">
+		<unix-def:uread datatype="boolean">true</unix-def:uread>
+		<unix-def:uwrite datatype="boolean">true</unix-def:uwrite>
+		<unix-def:uexec datatype="boolean">false</unix-def:uexec>
+		<unix-def:gread datatype="boolean">true</unix-def:gread>
+		<unix-def:gwrite datatype="boolean">false</unix-def:gwrite>
+		<unix-def:gexec datatype="boolean">false</unix-def:gexec>
+		<unix-def:oread datatype="boolean">true</unix-def:oread>
+		<unix-def:owrite datatype="boolean">false</unix-def:owrite>
+		<unix-def:oexec datatype="boolean">false</unix-def:oexec>
+	</unix-def:file_state>
 	</states>
 
 	<variables>

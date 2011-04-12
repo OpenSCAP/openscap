@@ -21,6 +21,18 @@
     <select idref="rule-1005" selected="true"/>
     <select idref="rule-1007" selected="true"/>
     <select idref="rule-1008" selected="true"/>
+    <select idref="rule-1010" selected="true"/>
+    <select idref="rule-1011" selected="true"/>
+    <select idref="rule-1012" selected="true"/>
+    <select idref="rule-1013" selected="true"/>
+    <select idref="rule-1014" selected="true"/>
+    <select idref="rule-1015" selected="true"/>
+    <select idref="rule-1016" selected="true"/>
+    <select idref="rule-1017" selected="true"/>
+    <select idref="rule-1018" selected="true"/>
+    <select idref="rule-1019" selected="true"/>
+    <select idref="rule-1020" selected="true"/>
+    <select idref="rule-1021" selected="true"/>
   </Profile>
   <Group id="gr-intro" hidden="false">
     <title xml:lang="en-US">Introduction</title>
@@ -535,120 +547,120 @@
 					restrictions which should be checked on a regular basis to ensure that
 					no harmful discrepancies have arisen.</description>
         <Group id="gr-verify-shadow" hidden="false">
-          <title xml:lang="en-US">Verify Permissions on passwd, shadow, group and gshadow	Files</title>
+          <title xml:lang="en-US">Verify Permissions on passwd, shadow, group and gshadow Files</title>
           <description xml:lang="en-US"> Many utilities need read access to the passwd file in order to
 						function properly, but read access to the shadow file allows malicious
 						attacks against system passwords, and should never be enabled.</description>
-          <Rule id="rule-2.2.3.1.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1010" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">User ownership of 'shadow' file</title>
             <description xml:lang="en-US">The /etc/shadow file should be owned by root.</description>
             <ident system="http://cce.mitre.org">CCE-3918-0</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20034" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1010" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.2.3.1.b" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1011" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Group ownership of 'shadow' file</title>
             <description xml:lang="en-US">The /etc/shadow file should be owned by root.</description>
             <ident system="http://cce.mitre.org">CCE-3988-3</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20035" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1011" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.2.3.1.c" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1012" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">User ownership of 'group' file</title>
             <description xml:lang="en-US">The /etc/group file should be owned by root.</description>
             <ident system="http://cce.mitre.org">CCE-3276-3</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20036" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1012" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.2.3.1.d" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1013" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Group ownership of 'group' file</title>
             <description xml:lang="en-US">The /etc/group file should be owned by root.</description>
             <ident system="http://cce.mitre.org">CCE-3883-6</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20037" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1013" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.2.3.1.e" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1014" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">User ownership of 'gshadow' file</title>
             <description xml:lang="en-US">The /etc/gshadow file should be owned by root.</description>
             <ident system="http://cce.mitre.org">CCE-4210-1</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20038" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1014" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.2.3.1.f" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1015" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Group ownership of 'gshadow' file</title>
             <description xml:lang="en-US">The /etc/gshadow file should be owned by root.</description>
             <ident system="http://cce.mitre.org">CCE-4064-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20039" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1015" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.2.3.1.g" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1016" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">User ownership of 'passwd' file</title>
             <description xml:lang="en-US">The /etc/passwd file should be owned by root.</description>
             <ident system="http://cce.mitre.org">CCE-3958-6</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20040" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1016" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.2.3.1.h" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1017" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Group ownership of 'passwd' file</title>
             <description xml:lang="en-US">The /etc/passwd file should be owned by root.</description>
             <ident system="http://cce.mitre.org">CCE-3495-9</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20041" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1017" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.2.3.1.i" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1018" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Permissions on 'shadow' file</title>
             <description xml:lang="en-US">File permissions for /etc/shadow should be set
 							correctly.</description>
             <ident system="http://cce.mitre.org">CCE-4130-1</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20042" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1018" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.2.3.1.j" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1019" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Permissions on 'group' file</title>
             <description xml:lang="en-US">File permissions for /etc/group should be set
 							correctly.</description>
             <ident system="http://cce.mitre.org">CCE-3967-7</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20043" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1019" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.2.3.1.k" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1020" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Permissions on 'gshadow' file</title>
             <description xml:lang="en-US">File permissions for /etc/gshadow should be set
 							correctly.</description>
             <ident system="http://cce.mitre.org">CCE-3932-1</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20044" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1020" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.2.3.1.l" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1021" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Permissions on 'passwd' file</title>
             <description xml:lang="en-US">File permissions for /etc/passwd should be set
 							correctly.</description>
             <ident system="http://cce.mitre.org">CCE-3566-7</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20045" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1021" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
