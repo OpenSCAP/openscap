@@ -247,6 +247,46 @@
 			<criterion test_ref="oval:rhel:tst:10211"/>
 		</criteria>
 	</definition>
+	<definition class="compliance" id="oval:rhel:def:1022" version="1">
+		<metadata>
+			<title>Verify that All World-Writable Directories Have Sticky Bits Set</title>
+			<reference ref_id="CCE-3399-3" source="CCE"/>
+			<description>The sticky bit should be set for all world-writable directories.</description>
+		</metadata>
+		<criteria>
+			<criterion comment="Check all directories and make sure they are either not world writable or if they are they have the sticky bit set" test_ref="oval:rhel:tst:10221" negate="true"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1023" version="1">
+		<metadata>
+			<title>Find Unauthorized World-Writable Files</title>
+			<reference ref_id="CCE-3795-2" source="CCE"/>
+			<description>The world-write permission should be disabled for all files.</description>
+		</metadata>
+		<criteria>
+			<criterion comment="Check all files and make sure they are not world writable" test_ref="oval:rhel:tst:10231" negate="true"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1024" version="1">
+		<metadata>
+			<title>Find Unauthorized SGID System Executables</title>
+			<reference ref_id="CCE-4178-0" source="CCE"/>
+			<description>The sgid bit should be not set for all executable files.</description>
+		</metadata>
+		<criteria>
+			<criterion comment="Check that there are no unexpected files with sgid bit set" test_ref="oval:rhel:tst:10241"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1025" version="1">
+		<metadata>
+			<title>Find Unauthorized SUID System Executables</title>
+			<reference ref_id="CCE-3324-1" source="CCE"/>
+			<description>The suid bit should be not set for all files.</description>
+		</metadata>
+		<criteria>
+			<criterion comment="Check that there are no unexpected files with suid bit set" test_ref="oval:rhel:tst:10251"/>
+		</criteria>
+	</definition>
 	</definitions>
 
 
@@ -336,6 +376,19 @@
 		<unix-def:object object_ref="oval:rhel:obj:101611"/>
 		<unix-def:state state_ref="oval:rhel:ste:101911"/>
 	</unix-def:file_test>
+	<unix-def:file_test check_existence="all_exist" id="oval:rhel:tst:10221" version="1" check="all" comment="Sticky bit on all world writable directories" >
+		<unix-def:object object_ref="oval:rhel:obj:102211"/>
+		<unix-def:state state_ref="oval:rhel:ste:102211"/>
+	</unix-def:file_test>
+	<unix-def:file_test id="oval:rhel:tst:10231" version="1" check="all" comment="World writable files">
+		<unix-def:object object_ref="oval:rhel:obj:102311"/>
+	</unix-def:file_test>
+	<unix-def:file_test id="oval:rhel:tst:10241" version="1" check_existence="none_exist" check="all" comment="executable files with sgid set">
+		<unix-def:object object_ref="oval:rhel:obj:102411"/>
+	</unix-def:file_test>
+	<unix-def:file_test id="oval:rhel:tst:10251" version="1" check_existence="none_exist" check="all" comment="executable files with suid set">
+		<unix-def:object object_ref="oval:rhel:obj:102511"/>
+	</unix-def:file_test>
 	</tests>
 
 
@@ -375,6 +428,45 @@
 	<unix-def:file_object id="oval:rhel:obj:101611" version="1" comment="/etc/group">
 		<unix-def:filepath>/etc/passwd</unix-def:filepath>
 	</unix-def:file_object>
+	<unix-def:file_object id="oval:rhel:obj:102211" version="1" comment="all local world writable directories">
+		<set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+			<object_reference>oval:rhel:obj:1022111</object_reference>
+			<filter>oval:rhel:ste:1022111</filter>
+		</set>
+	</unix-def:file_object>
+	<unix-def:file_object id="oval:rhel:obj:1022111" version="1" comment="all local directories">
+		<unix-def:behaviors recurse_direction="down" recurse_file_system="local" recurse="directories"/>
+		<unix-def:path>/</unix-def:path>
+		<unix-def:filename xsi:nil="true"/>
+	</unix-def:file_object>
+	<unix-def:file_object id="oval:rhel:obj:102311" version="1" comment="all local world writable files">
+		<set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+			<object_reference>oval:rhel:obj:1023111</object_reference>
+			<filter>oval:rhel:ste:1022111</filter>
+			<filter>oval:rhel:ste:1023111</filter>
+		</set>
+	</unix-def:file_object>
+	<unix-def:file_object id="oval:rhel:obj:1023111" version="1" comment="all local files">
+		<unix-def:behaviors recurse_direction="down" recurse_file_system="local" recurse="directories"/>
+		<unix-def:path>/</unix-def:path>
+		<unix-def:filename operation="pattern match">.*</unix-def:filename>
+	</unix-def:file_object>
+	<unix-def:file_object id="oval:rhel:obj:102411" version="1" comment="all local files with sgid bit set">
+                  <set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+                        <object_reference>oval:rhel:obj:1023111</object_reference>
+			<filter>oval:rhel:ste:1023111</filter>
+			<filter>oval:rhel:ste:1024111</filter>
+			<filter>oval:rhel:ste:1024112</filter>
+		</set>
+	</unix-def:file_object>
+	<unix-def:file_object id="oval:rhel:obj:102511" version="1" comment="all local files with suid bit set">
+		<set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+			<object_reference>oval:rhel:obj:1023111</object_reference>
+			<filter>oval:rhel:ste:1023111</filter>
+			<filter>oval:rhel:ste:1025111</filter>
+			<filter>oval:rhel:ste:1025112</filter>
+		</set>
+	</unix-def:file_object>
 	</objects>
 
 
@@ -405,13 +497,13 @@
 	<ind-def:textfilecontent54_state id="oval:rhel:ste:100711" version="1" comment="Expected value of gpgcheck should be enabled">
 		<ind-def:subexpression datatype="int" operation="equals" entity_check="all">1</ind-def:subexpression>
 	</ind-def:textfilecontent54_state>
-	<unix-def:file_state id="oval:rhel:ste:101011" version="1">
+	<unix-def:file_state id="oval:rhel:ste:101011" version="1" comment="UID=root">
 		<unix-def:user_id datatype="int">0</unix-def:user_id>
 	</unix-def:file_state>
-	<unix-def:file_state id="oval:rhel:ste:101111" version="1">
+	<unix-def:file_state id="oval:rhel:ste:101111" version="1" comment="GID=root">
 		<unix-def:group_id datatype="int">0</unix-def:group_id>
 	</unix-def:file_state>
-	<unix-def:file_state id="oval:rhel:ste:101811" version="1">
+	<unix-def:file_state id="oval:rhel:ste:101811" version="1" comment="0000">
 		<unix-def:uread datatype="boolean">false</unix-def:uread>
 		<unix-def:uwrite datatype="boolean">false</unix-def:uwrite>
 		<unix-def:uexec datatype="boolean">false</unix-def:uexec>
@@ -422,7 +514,7 @@
 		<unix-def:owrite datatype="boolean">false</unix-def:owrite>
 		<unix-def:oexec datatype="boolean">false</unix-def:oexec>
 	</unix-def:file_state>
-	<unix-def:file_state id="oval:rhel:ste:101911" version="1">
+	<unix-def:file_state id="oval:rhel:ste:101911" version="1" comment="0644">
 		<unix-def:uread datatype="boolean">true</unix-def:uread>
 		<unix-def:uwrite datatype="boolean">true</unix-def:uwrite>
 		<unix-def:uexec datatype="boolean">false</unix-def:uexec>
@@ -432,6 +524,29 @@
 		<unix-def:oread datatype="boolean">true</unix-def:oread>
 		<unix-def:owrite datatype="boolean">false</unix-def:owrite>
 		<unix-def:oexec datatype="boolean">false</unix-def:oexec>
+	</unix-def:file_state>
+	<unix-def:file_state id="oval:rhel:ste:102211" version="1" comment="u+s">
+		<unix-def:sticky datatype="boolean">1</unix-def:sticky>
+	</unix-def:file_state>
+	<unix-def:file_state id="oval:rhel:ste:1022111" version="1" comment="o-w">
+		<unix-def:owrite datatype="boolean">0</unix-def:owrite>
+	</unix-def:file_state>
+	<unix-def:file_state id="oval:rhel:ste:1023111" version="1" comment="not regular file">
+		<unix-def:type datatype="string" operation="not equal">regular</unix-def:type>
+	</unix-def:file_state>
+	<unix-def:file_state id="oval:rhel:ste:1024111" version="1" comment="g-s">
+		<unix-def:sgid datatype="boolean">0</unix-def:sgid>
+	</unix-def:file_state>
+	<unix-def:file_state id="oval:rhel:ste:1024112" version="1" comment="sgid whitelist">
+		<unix-def:filepath var_check="at least one" var_ref="oval:rhel:var:1024112"/>
+	</unix-def:file_state>
+
+	<unix-def:file_state id="oval:rhel:ste:1025111" version="1" comment="u-s">
+		<unix-def:suid datatype="boolean">0</unix-def:suid>
+	</unix-def:file_state>
+
+	<unix-def:file_state id="oval:rhel:ste:1025112" version="1" comment="suid whitelist">
+		<unix-def:filepath var_check="at least one" var_ref="oval:rhel:var:1025112"/>
 	</unix-def:file_state>
 	</states>
 
@@ -443,6 +558,12 @@
 		<value>4</value>
 		<value>5</value>
 		<value>6</value>
+	</constant_variable>
+	<constant_variable id="oval:rhel:var:1024112" version="1" datatype="string" comment="sgid whitelist">
+		<value>bla</value>
+	</constant_variable>
+	<constant_variable id="oval:rhel:var:1025112" version="1" datatype="string" comment="suid whitelist">
+		<value>bla</value>
 	</constant_variable>
 	</variables>
 

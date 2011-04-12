@@ -33,6 +33,8 @@
     <select idref="rule-1019" selected="true"/>
     <select idref="rule-1020" selected="true"/>
     <select idref="rule-1021" selected="true"/>
+<!--    <select idref="rule-1022" selected="true"/>
+        <select idref="rule-1023" selected="true"/> -->
   </Profile>
   <Group id="gr-intro" hidden="false">
     <title xml:lang="en-US">Introduction</title>
@@ -675,14 +677,14 @@
 						permission rather than to set the sticky bit. However, if a directory is
 						used by a particular application, consult that application's documentation
 						instead of blindly changing modes.</description>
-          <Rule id="rule-2.2.3.2.a" selected="false" weight="10.000000" severity="low">
+          <Rule id="rule-1022" selected="false" weight="10.000000" severity="low">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">All World-Writable Directories Have Sticky Bits Set</title>
             <description xml:lang="en-US">The sticky bit should be set for all world-writable
 							directories.</description>
             <ident system="http://cce.mitre.org">CCE-3399-3</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20046" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1022" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -697,14 +699,14 @@
 						for specific applications before making changes. Also, monitor for recurring
 						world-writable files, as these may be symptoms of a misconfigured
 						application or user account. </description>
-          <Rule id="rule-2.2.3.3.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1023" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Unauthorized World-Writable Files</title>
             <description xml:lang="en-US">The world-write permission should be disabled for all
 							files.</description>
             <ident system="http://cce.mitre.org">CCE-3795-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20047" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1023" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
