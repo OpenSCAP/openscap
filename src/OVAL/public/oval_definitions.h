@@ -251,6 +251,7 @@ const char *oval_check_get_text(oval_check_t);
 const char *oval_existence_get_text(oval_existence_t);
 const char *oval_affected_family_get_text(oval_affected_family_t);
 const char *oval_datatype_get_text(oval_datatype_t);
+oval_datatype_t oval_datatype_from_text(const char *);
 const char *oval_operation_get_text(oval_operation_t);
 const char *oval_set_operation_get_text(oval_setobject_operation_t);
 const char *oval_datetime_format_get_text(oval_datetime_format_t);

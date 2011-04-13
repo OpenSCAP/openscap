@@ -55,7 +55,11 @@ static int oval_enumeration_attr(xmlTextReaderPtr reader, char *attname, const s
 static const char *oval_enumeration_get_text(const struct oscap_string_map *map, int val)
 {
 	return oscap_enum_to_string(map, val);
+}
 
+static int oval_enumeration_from_text(const struct oscap_string_map *map, const char *text)
+{
+	return oscap_string_to_enum(map, text);
 }
 
 static const struct oscap_string_map OVAL_SYSCHAR_FLAG_MAP[] = {
@@ -245,6 +249,7 @@ static const struct oscap_string_map OVAL_DATATYPE_MAP[] = {
 	{OVAL_DATATYPE_INTEGER, "int"},
 	{OVAL_DATATYPE_STRING, "string"},
 	{OVAL_DATATYPE_RECORD, "record"},
+	{OVAL_DATATYPE_SEXP, "SEXP"},
 	{OVAL_ENUMERATION_INVALID, NULL}
 };
 
@@ -256,6 +261,11 @@ oval_datatype_t oval_datatype_parse(xmlTextReaderPtr reader, char *attname, oval
 const char *oval_datatype_get_text(oval_datatype_t datatype)
 {
 	return oval_enumeration_get_text(OVAL_DATATYPE_MAP, datatype);
+}
+
+oval_datatype_t oval_datatype_from_text(const char *text)
+{
+	return oval_enumeration_from_text(OVAL_DATATYPE_MAP, text);
 }
 
 static const struct oscap_string_map OVAL_EXISTENCE_MAP[] = {
