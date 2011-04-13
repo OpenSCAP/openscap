@@ -368,7 +368,6 @@ SEXP_t *probe_ent_getattrval(const SEXP_t * ent, const char *name);
  */
 bool probe_ent_attrexists(const SEXP_t * ent, const char *name);
 
-int probe_itement_setdatatype(SEXP_t *item, const char *ent_name, oval_datatype_t type);
 /**
  * Set the OVAL data type of an entity.
  * @param ent the queried entity

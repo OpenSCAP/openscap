@@ -946,12 +946,22 @@ SEXP_t *probe_ent_attr_add(SEXP_t * ent, const char *name, SEXP_t * val)
 
 int probe_ent_getvals(const SEXP_t * ent, SEXP_t ** res)
 {
+	SEXP_t *val_lst;
+	int len;
+
 	_LOGCALL_;
 	if (probe_ent_attrexists(ent, "var_ref"))
-		(*res) = SEXP_list_nth(ent, 2);
+		val_lst = SEXP_list_nth(ent, 2);
 	else
-		(*res) = SEXP_list_rest(ent);
-	return (SEXP_list_length(*res));
+		val_lst = SEXP_list_rest(ent);
+	len = SEXP_list_length(val_lst);
+
+	if (res != NULL)
+		(*res) = val_lst;
+	else
+		SEXP_free(val_lst);
+
+	return (len);
 }
 
 SEXP_t *probe_ent_getval(const SEXP_t * ent)
@@ -1033,144 +1043,69 @@ bool probe_ent_attrexists(const SEXP_t * ent, const char *name)
 	return probe_obj_attrexists(ent, name);
 }
 
-static char *__probe_o2p_datatype(oval_datatype_t type)
+int probe_ent_setdatatype(SEXP_t *ent, oval_datatype_t type)
 {
-	switch (type) {
-	case OVAL_DATATYPE_BINARY:
-		return "binary";
-	case OVAL_DATATYPE_BOOLEAN:
-		return "bool";
-	case OVAL_DATATYPE_EVR_STRING:
-		return "evr_str";
-	case OVAL_DATATYPE_FILESET_REVISION:
-		return "fset_rev";
-	case OVAL_DATATYPE_IOS_VERSION:
-		return "ios_ver";
-	case OVAL_DATATYPE_VERSION:
-		return "version";
-	case OVAL_DATATYPE_INTEGER:
-	case OVAL_DATATYPE_STRING:
-	case OVAL_DATATYPE_FLOAT:
-	default:
-		return NULL;
-	}
-}
-
-int probe_itement_setdatatype(SEXP_t *item, const char *ent_name, oval_datatype_t type)
-{
-	SEXP_t *ent_ref;
-	SEXP_t *name_ref;
-	char   *strtype;
-	int n;
-
-	strtype = __probe_o2p_datatype(type);
-
-	/*
-	 * (foo_item (e1 v1) (e2 v2) ... (en vn))
-	 *            1   2   1   2       1   2
-	 *     1        2       3          n-1
-	 */
-	n = 2;
-
-	while ((ent_ref = SEXP_listref_nth(item, n)) != NULL) {
-		name_ref = SEXP_list_first(ent_ref);
-
-		if (SEXP_strcmp(name_ref, ent_name) == 0 && strtype != NULL)
-			SEXP_datatype_set_nth(ent_ref, 2, strtype);
-
-		SEXP_vfree(ent_ref, name_ref, NULL);
-		++n;
-	}
-
-	return (0);
-}
-
-int probe_ent_setdatatype(SEXP_t * ent, oval_datatype_t type)
-{
-	SEXP_t *val;
-	char   *strtype;
+	const char *strtype;
 
 	_A(ent != NULL);
 	_LOGCALL_;
 
-	strtype = __probe_o2p_datatype(type);
-	val = probe_ent_getval(ent);
-
-	if (val == NULL)
-		return (-1);
-
-	return SEXP_datatype_set(val, strtype);
+	switch (type) {
+	case OVAL_DATATYPE_BOOLEAN:
+	case OVAL_DATATYPE_FLOAT:
+	case OVAL_DATATYPE_INTEGER:
+	case OVAL_DATATYPE_STRING:
+		/* these are stored directly in each SEXP */
+		return 0;
+	default:
+		/* set the SEXP to a user datatype */
+		strtype = oval_datatype_get_text(type);
+		return SEXP_datatype_set(ent, strtype);
+	}
 }
 
 oval_datatype_t probe_ent_getdatatype(const SEXP_t * ent)
 {
-	SEXP_t *val;
 	const char *str;
-	oval_datatype_t ret;
 
 	_A(ent != NULL);
 	_LOGCALL_;
 
-	val = probe_ent_getval(ent);
-	ret = OVAL_DATATYPE_UNKNOWN;
-
-	if (val == NULL)
-		return (OVAL_DATATYPE_UNKNOWN);
-
-	str = SEXP_datatype(val);
-
+	str = SEXP_datatype(ent);
 	if (str != NULL) {
-		switch (str[0]) {
-		case 'b':
-			if (strcmp(str + 1, "ool") == 0)
-				ret = OVAL_DATATYPE_BOOLEAN;
-			else if (strcmp(str + 1, "inary") == 0)
-				ret = OVAL_DATATYPE_BINARY;
-			break;
-		case 'e':
-			if (strcmp(str + 1, "vr_str") == 0)
-				ret = OVAL_DATATYPE_EVR_STRING;
-			break;
-		case 'f':
-			if (strcmp(str + 1, "set_rev") == 0)
-				ret = OVAL_DATATYPE_FILESET_REVISION;
-			break;
-		case 'i':
-			if (strcmp(str + 1, "os_ver") == 0)
-				ret = OVAL_DATATYPE_IOS_VERSION;
-			break;
-		case 'v':
-			if (strcmp(str + 1, "ersion") == 0)
-				ret = OVAL_DATATYPE_VERSION;
-			break;
-		}
+		/* user datatype */
+		return oval_datatype_from_text(str);
 	} else {
-		switch (SEXP_typeof(val)) {
-		case SEXP_TYPE_NUMBER:
+		/* SEXP datatype */
+		SEXP_t *val;
+		SEXP_type_t sdt;
+		SEXP_numtype_t sndt;
 
-			switch (SEXP_number_type(val)) {
-			case SEXP_NUM_FLOAT:
-				ret = OVAL_DATATYPE_FLOAT;
-				break;
-			case SEXP_NUM_BOOLEAN:
-				ret = OVAL_DATATYPE_BOOLEAN;
-				break;
-			case SEXP_NUM_NONE:
-				abort();
-			default:
-				ret = OVAL_DATATYPE_INTEGER;
-			}
+		val = probe_ent_getval(ent);
+		if (val == NULL)
+			return OVAL_DATATYPE_UNKNOWN;
 
-			break;
+		sdt = SEXP_typeof(val);
+		SEXP_free(val);
+
+		switch (sdt) {
 		case SEXP_TYPE_STRING:
-			ret = OVAL_DATATYPE_STRING;
-			break;
+			return OVAL_DATATYPE_STRING;
+		case SEXP_TYPE_NUMBER:
+			sndt = SEXP_number_type(val);
+			switch (sndt) {
+			case SEXP_NUM_BOOL:
+				return OVAL_DATATYPE_BOOLEAN;
+			case SEXP_NUM_FLOAT:
+				return OVAL_DATATYPE_FLOAT;
+			default: /* everything else is considered an integer */
+				return OVAL_DATATYPE_INTEGER;
+			}
+		default:
+			dE("Unexpected SEXP datatype: %d, '%s'.\n", sdt, SEXP_strtype(ent));
+			return OVAL_DATATYPE_UNKNOWN;
 		}
 	}
-
-	SEXP_free(val);
-
-	return (ret);
 }
 
 int probe_ent_setmask(SEXP_t * ent, bool mask)
@@ -1440,7 +1375,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
         va_list ap;
 	SEXP_t *item, *name_sexp, *value_sexp = NULL, *entity;
         SEXP_t value_sexp_mem, entity_mem;
-        const char *o2p_type, *value_name, *subtype_name;
+	const char *value_name, *subtype_name;
         char item_name[64];
         oval_datatype_t value_type;
 
@@ -1509,16 +1444,6 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                 case OVAL_DATATYPE_VERSION:
                         value_str  = va_arg(ap, char *);
                         value_sexp = SEXP_string_new_r(&value_sexp_mem, value_str, strlen(value_str));
-                        o2p_type   = __probe_o2p_datatype(value_type);
-
-                        if (SEXP_datatype_set(value_sexp, o2p_type) != 0) {
-                                dE("can't set datatype %s on %p\n", o2p_type, value_sexp);
-
-                                SEXP_free(item);
-                                SEXP_free_r(value_sexp);
-
-                                return (NULL);
-                        }
 
                         break;
                         /* TODO */
@@ -1533,6 +1458,16 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
 
                 name_sexp = probe_ncache_ref(OSCAP_GSYM(encache), value_name);
                 entity    = SEXP_list_new_r(&entity_mem, name_sexp, value_sexp, NULL);
+
+		if (probe_ent_setdatatype(entity, value_type) != 0) {
+			SEXP_free_r(&entity_mem);
+			SEXP_free(name_sexp);
+			SEXP_free(item);
+			if (free_value)
+				SEXP_free_r(value_sexp);
+
+			return (NULL);
+		}
 
                 assume_d(item       != NULL, NULL);
                 assume_d(entity     != NULL, NULL);
