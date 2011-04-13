@@ -16,11 +16,6 @@
 
 # Test Cases.
 
-function test_api_probes_import {
-    ./test_api_probes $srcdir/scap-rhel5-oval.xml
-    return $?
-}
-
 function test_api_probes_smoke {
     ./test_api_probes_smoke
     return $?
@@ -77,7 +72,6 @@ function test_api_probes_xinetd_parser {
 test_init "test_probes_api.log"
 
 test_run "test_api_probes_smoke" test_api_probes_smoke
-test_run "test_api_probes_import" test_api_probes_import
 test_run "test_api_probes_xinetd_parser" test_api_probes_xinetd_parser
 
 test_exit
