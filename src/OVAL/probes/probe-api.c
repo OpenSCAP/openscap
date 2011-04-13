@@ -1064,6 +1064,32 @@ int probe_ent_setdatatype(SEXP_t *ent, oval_datatype_t type)
 	}
 }
 
+static oval_datatype_t _sexp_val_getdatatype(const SEXP_t *val)
+{
+	SEXP_type_t sdt;
+	SEXP_numtype_t sndt;
+
+	sdt = SEXP_typeof(val);
+
+	switch (sdt) {
+	case SEXP_TYPE_STRING:
+		return OVAL_DATATYPE_STRING;
+	case SEXP_TYPE_NUMBER:
+		sndt = SEXP_number_type(val);
+		switch (sndt) {
+		case SEXP_NUM_BOOL:
+			return OVAL_DATATYPE_BOOLEAN;
+		case SEXP_NUM_FLOAT:
+			return OVAL_DATATYPE_FLOAT;
+		default: /* everything else is considered an integer */
+			return OVAL_DATATYPE_INTEGER;
+		}
+	default:
+		dE("Unexpected SEXP datatype: %d, '%s'.\n", sdt, SEXP_strtype(ent));
+		return OVAL_DATATYPE_UNKNOWN;
+	}
+}
+
 oval_datatype_t probe_ent_getdatatype(const SEXP_t * ent)
 {
 	const char *str;
@@ -1078,33 +1104,16 @@ oval_datatype_t probe_ent_getdatatype(const SEXP_t * ent)
 	} else {
 		/* SEXP datatype */
 		SEXP_t *val;
-		SEXP_type_t sdt;
-		SEXP_numtype_t sndt;
+		oval_datatype_t dt;
 
 		val = probe_ent_getval(ent);
 		if (val == NULL)
 			return OVAL_DATATYPE_UNKNOWN;
 
-		sdt = SEXP_typeof(val);
+		dt = _sexp_val_getdatatype(val);
 		SEXP_free(val);
 
-		switch (sdt) {
-		case SEXP_TYPE_STRING:
-			return OVAL_DATATYPE_STRING;
-		case SEXP_TYPE_NUMBER:
-			sndt = SEXP_number_type(val);
-			switch (sndt) {
-			case SEXP_NUM_BOOL:
-				return OVAL_DATATYPE_BOOLEAN;
-			case SEXP_NUM_FLOAT:
-				return OVAL_DATATYPE_FLOAT;
-			default: /* everything else is considered an integer */
-				return OVAL_DATATYPE_INTEGER;
-			}
-		default:
-			dE("Unexpected SEXP datatype: %d, '%s'.\n", sdt, SEXP_strtype(ent));
-			return OVAL_DATATYPE_UNKNOWN;
-		}
+		return dt;
 	}
 }
 
@@ -1437,6 +1446,8 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                                 goto skip;
                         else
                                 free_value = false;
+
+			value_type = _sexp_val_getdatatype(value_sexp);
                         break;
                 case OVAL_DATATYPE_EVR_STRING:
                 case OVAL_DATATYPE_FILESET_REVISION:
@@ -1450,7 +1461,8 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                 case OVAL_DATATYPE_BINARY:
                 case OVAL_DATATYPE_RECORD:
                 case OVAL_DATATYPE_UNKNOWN:
-                        dE("Unknown or unsupported type: %d\n", (int)value_type);
+			dE("Unknown or unsupported OVAL datatype: %d, '%s', name: '%s'.\n",
+			   value_type, oval_datatype_get_text(value_type), value_name);
                         SEXP_free(item);
 
                         return (NULL);

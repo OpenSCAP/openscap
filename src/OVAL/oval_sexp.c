@@ -9,7 +9,7 @@
  * @{
  */
 /*
- * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009-2011 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -58,6 +58,8 @@ SEXP_t *oval_value_to_sexp(struct oval_value *val, oval_datatype_t dtype)
 {
 	SEXP_t *val_sexp = NULL;
         char   *val_rptr = NULL;
+
+	/* todo: remove calls to SEXP_datatype_set() */
 
 	switch (dtype) {
 	case OVAL_DATATYPE_VERSION:
@@ -117,6 +119,7 @@ static SEXP_t *oval_entity_to_sexp(struct oval_entity *ent)
 {
 	SEXP_t *elm, *elm_name;
 	SEXP_t *r0, *r1, *r2;
+	oval_datatype_t datatype;
 
 	elm_name = SEXP_list_new(r0 = SEXP_string_newf("%s", oval_entity_get_name(ent)),
 				 /* operation */
@@ -128,9 +131,11 @@ static SEXP_t *oval_entity_to_sexp(struct oval_entity *ent)
 	SEXP_free(r2);
 
 	elm = SEXP_list_new(NULL);
+	datatype = oval_entity_get_datatype(ent);
+	probe_ent_setdatatype(elm, datatype);
 
-	/* var_ref */
 	if (oval_entity_get_varref_type(ent) == OVAL_ENTITY_VARREF_ATTRIBUTE) {
+		/* var_ref */
 		struct oval_variable *var;
 
 		var = oval_entity_get_variable(ent);
@@ -144,17 +149,19 @@ static SEXP_t *oval_entity_to_sexp(struct oval_entity *ent)
 		SEXP_list_add(elm, elm_name);
 		SEXP_free(elm_name);
 
-	} else {		/* value */
-		SEXP_t *val_sexp;
-
+	} else {
+		/* value */
 		SEXP_list_add(elm, elm_name);
 		SEXP_free(elm_name);
 
-		val_sexp = oval_value_to_sexp(oval_entity_get_value(ent), oval_entity_get_datatype(ent));
+		if (datatype != OVAL_DATATYPE_RECORD) {
+			SEXP_t *val_sexp;
 
-		if (val_sexp != NULL) {
-			SEXP_list_add(elm, val_sexp);
-			SEXP_free(val_sexp);
+			val_sexp = oval_value_to_sexp(oval_entity_get_value(ent), datatype);
+			if (val_sexp != NULL) {
+				SEXP_list_add(elm, val_sexp);
+				SEXP_free(val_sexp);
+			}
 		}
 	}
 
@@ -172,8 +179,6 @@ static int oval_varref_to_sexp(void *sess, struct oval_entity *entity, struct ov
 	oval_syschar_collection_flag_t flag;
 	char msg[100];
 	int ret = 0;
-
-	dt = oval_entity_get_datatype(entity);
 
 	var = oval_entity_get_variable(entity);
 	if (oval_probe_query_variable(sess, var) != 0) {
@@ -212,6 +217,7 @@ static int oval_varref_to_sexp(void *sess, struct oval_entity *entity, struct ov
 	while (oval_value_iterator_has_more(vit)) {
 		val = oval_value_iterator_next(vit);
 
+		dt = oval_entity_get_datatype(entity);
 		val_sexp = oval_value_to_sexp(val, dt);
 		if (val_sexp == NULL) {
 			oval_syschar_add_new_message(syschar, "Failed to convert variable value.\n",
@@ -506,6 +512,70 @@ int oval_object2sexp(void *sess, const char *typestr, struct oval_syschar *sysch
 	return (0);
 }
 
+static SEXP_t *oval_record_field_STATE_to_sexp(struct oval_record_field *rf)
+{
+	struct oval_entity *rf_ent;
+	struct oval_variable *var;
+	oval_check_t ochk;
+	oval_datatype_t dt;
+	SEXP_t *rf_sexp, *r0;
+
+	rf_ent = oval_entity_new(NULL);
+	oval_entity_set_name(rf_ent, oval_record_field_get_name(rf));
+	oval_entity_set_operation(rf_ent, oval_record_field_get_operation(rf));
+	dt = oval_record_field_get_datatype(rf);
+	oval_entity_set_datatype(rf_ent, dt);
+
+	var = oval_record_field_get_variable(rf);
+	if (var != NULL) {
+		oval_entity_set_varref_type(rf_ent, OVAL_ENTITY_VARREF_ATTRIBUTE);
+		oval_entity_set_variable(rf_ent, var);
+	} else {
+		struct oval_value *val;
+
+		val = oval_value_new(dt, oval_record_field_get_value(rf));
+		oval_entity_set_value(rf_ent, val);
+	}
+
+	rf_sexp = oval_entity_to_sexp(rf_ent);
+
+	ochk = oval_record_field_get_var_check(rf);
+	if (ochk != OVAL_CHECK_UNKNOWN) {
+		probe_ent_attr_add(rf_sexp, "var_check", r0 = SEXP_number_newu_32(ochk));
+		SEXP_free(r0);
+	}
+	ochk = oval_record_field_get_ent_check(rf);
+	if (ochk != OVAL_CHECK_UNKNOWN) {
+		probe_ent_attr_add(rf_sexp, "entity_check", r0 = SEXP_number_newu_32(ochk));
+		SEXP_free(r0);
+	}
+
+	return rf_sexp;
+}
+
+static struct oval_sysent *oval_sysent_from_sexp(struct oval_syschar_model *model, SEXP_t * sexp);
+
+static struct oval_record_field *oval_record_field_ITEM_from_sexp(SEXP_t *sexp)
+{
+	struct oval_sysent *sysent;
+	struct oval_record_field *rf;
+
+	sysent = oval_sysent_from_sexp(NULL, sexp);
+	if (sysent == NULL)
+		return NULL;
+
+	rf = oval_record_field_new(OVAL_RECORD_FIELD_ITEM);
+	oval_record_field_set_name(rf, oscap_strdup(oval_sysent_get_name(sysent)));
+	oval_record_field_set_value(rf, oscap_strdup(oval_sysent_get_value(sysent)));
+	oval_record_field_set_datatype(rf, oval_sysent_get_datatype(sysent));
+	oval_record_field_set_mask(rf, oval_sysent_get_mask(sysent));
+	oval_record_field_set_status(rf, oval_sysent_get_status(sysent));
+
+	oval_sysent_free(sysent);
+
+	return rf;
+}
+
 int oval_state2sexp(void *sess, struct oval_state *state, SEXP_t **out_sexp)
 {
 	SEXP_t *ste, *ste_name, *ste_ent;
@@ -540,12 +610,26 @@ int oval_state2sexp(void *sess, struct oval_state *state, SEXP_t **out_sexp)
 		oval_check_t ochk;
 		struct oval_entity *ent;
 		struct oval_state_content *content = oval_state_content_iterator_next(contents);
+		struct oval_record_field_iterator *rf_itr;
 
 		ent = oval_state_content_get_entity(content);
 		ste_ent = oval_entity_to_sexp(ent);
 		if (ste_ent == NULL) {
 			goto fail;
 		}
+
+		rf_itr = oval_state_content_get_record_fields(content);
+		while (oval_record_field_iterator_has_more(rf_itr)) {
+			struct oval_record_field *rf;
+			SEXP_t *rf_sexp;
+
+			rf = oval_record_field_iterator_next(rf_itr);
+			rf_sexp = oval_record_field_STATE_to_sexp(rf);
+
+			SEXP_list_add(ste_ent, rf_sexp);
+			SEXP_free(rf_sexp);
+		}
+		oval_record_field_iterator_free(rf_itr);
 
 		ochk = oval_state_content_get_var_check(content);
 		if (ochk != OVAL_CHECK_UNKNOWN) {
@@ -641,91 +725,91 @@ static struct oval_message *oval_sexp2msg(const SEXP_t *msg)
 
 static struct oval_sysent *oval_sysent_from_sexp(struct oval_syschar_model *model, SEXP_t * sexp)
 {
-	_A(sexp);
-	SEXP_t *sval;
 	char *key;
-	char *val;
+	oval_syschar_status_t status;
+	oval_datatype_t dt;
+	struct oval_sysent *ent;
 
 	key = probe_ent_getname(sexp);
-
 	if (!key)
 		return NULL;
 
-	sval = probe_ent_getval(sexp);
+	status = probe_ent_getstatus(sexp);
+	dt = probe_ent_getdatatype(sexp);
 
-	if (sval == NULL) {
-		oscap_free(key);
-		return NULL;
-	}
+	ent = oval_sysent_new(model);
+	oval_sysent_set_name(ent, key);
+	oval_sysent_set_status(ent, status);
+	oval_sysent_set_datatype(ent, dt);
+	oval_sysent_set_mask(ent, probe_ent_getmask(sexp));
 
-	switch (SEXP_typeof(sval)) {
-	case SEXP_TYPE_STRING:{
-			val = SEXP_string_cstr(sval);
-			break;
+	if (status != OVAL_STATUS_EXISTS)
+		return ent;
+
+	if (dt == OVAL_DATATYPE_RECORD) {
+		SEXP_t *srf, *srfs;
+
+		probe_ent_getvals(sexp, &srfs);
+		SEXP_list_foreach(srf, srfs) {
+			struct oval_record_field *rf;
+
+			rf = oval_record_field_ITEM_from_sexp(srf);
+			oval_sysent_add_record_field(ent, rf);
 		}
-	case SEXP_TYPE_NUMBER:{
-			size_t allocsize = 64;
-			val = oscap_alloc(allocsize * sizeof(char));
-			*val = '\0';
+		SEXP_free(srfs);
+	} else {
+		char val[64], *valp = val;
+		SEXP_t *sval;
+		SEXP_numtype_t sndt;
 
-			switch (SEXP_number_type(sval)) {
-			case SEXP_NUM_DOUBLE:
-				snprintf(val, allocsize, "%f", SEXP_number_getf(sval));
-				break;
+		sval = probe_ent_getval(sexp);
+		if (sval == NULL)
+			return ent;
+
+		switch (dt) {
+		case OVAL_DATATYPE_BOOLEAN:
+			snprintf(val, sizeof(val), "%s", SEXP_number_getb(sval) ? "true" : "false");
+			break;
+		case OVAL_DATATYPE_FLOAT:
+			snprintf(val, sizeof(val), "%f", SEXP_number_getf(sval));
+			break;
+		case OVAL_DATATYPE_INTEGER:
+			sndt = SEXP_number_type(sval);
+			switch (sndt) {
 			case SEXP_NUM_INT8:
 			case SEXP_NUM_INT16:
 			case SEXP_NUM_INT32:
 			case SEXP_NUM_INT64:
-				snprintf(val, allocsize, "%" PRId64, SEXP_number_geti_64(sval));
+				snprintf(val, sizeof(val), "%" PRId64, SEXP_number_geti_64(sval));
 				break;
 			case SEXP_NUM_UINT8:
 			case SEXP_NUM_UINT16:
 			case SEXP_NUM_UINT32:
 			case SEXP_NUM_UINT64:
-				snprintf(val, allocsize, "%" PRIu64, SEXP_number_getu_64(sval));
+				snprintf(val, sizeof(val), "%" PRIu64, SEXP_number_getu_64(sval));
 				break;
-                        case SEXP_NUM_BOOL:
-                                snprintf(val, allocsize, "%s", SEXP_number_getb (sval) ? "true" : "false");
-                                break;
-			case SEXP_NUM_NONE:
-                        default:
-				_A(false);
+			default:
+				dE("Unexpected SEXP number datatype: %d, name: '%s'.\n", sndt, key);
+				valp = '\0';
 				break;
 			}
-
-			val[allocsize - 1] = '\0';
-			val = oscap_realloc(val, strlen(val) + 1);
+			break;
+		case OVAL_DATATYPE_STRING:
+			valp = SEXP_string_cstr(sval);
+			break;
+		default:
+			dE("Unexpected OVAL datatype: %d, '%s', name: '%s'.\n",
+			   dt, oval_datatype_get_text(dt), key);
+			valp = '\0';
 			break;
 		}
-	default:{
-			_D("Unsupported type: %u", SEXP_typeof(sval));
-			SEXP_free(sval);
-			oscap_free(key);
-			return NULL;
-		}
+
+		oval_sysent_set_value(ent, valp);
+		if (valp != val)
+			oscap_free(valp);
 	}
 
-	int datatype = probe_ent_getdatatype(sexp);
-	if (datatype < 0)
-		datatype = 0;
-
-	int status = probe_ent_getstatus(sexp);
-
-	struct oval_sysent *item = oval_sysent_new(model);
-
-	oval_sysent_set_status(item, status);
-	oval_sysent_set_name(item, key);
-	oval_sysent_set_mask(item, probe_ent_getmask(sexp));
-
-	if (status == OVAL_STATUS_EXISTS)
-		oval_sysent_set_value(item, val);
-
-	oval_sysent_set_datatype(item, datatype);
-
-	SEXP_free(sval);
-	oscap_free(val);
-
-	return item;
+	return ent;
 }
 
 static struct oval_sysitem *oval_sysitem_from_sexp(struct oval_syschar_model *model, SEXP_t * sexp)
