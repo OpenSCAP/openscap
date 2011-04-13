@@ -1449,6 +1449,10 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
 
 			value_type = _sexp_val_getdatatype(value_sexp);
                         break;
+                case OVAL_DATATYPE_RECORD:
+			entity = va_arg(ap, SEXP_t *);
+			SEXP_list_add(item, entity);
+			goto skip;
                 case OVAL_DATATYPE_EVR_STRING:
                 case OVAL_DATATYPE_FILESET_REVISION:
                 case OVAL_DATATYPE_IOS_VERSION:
@@ -1459,7 +1463,6 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                         break;
                         /* TODO */
                 case OVAL_DATATYPE_BINARY:
-                case OVAL_DATATYPE_RECORD:
                 case OVAL_DATATYPE_UNKNOWN:
 			dE("Unknown or unsupported OVAL datatype: %d, '%s', name: '%s'.\n",
 			   value_type, oval_datatype_get_text(value_type), value_name);
