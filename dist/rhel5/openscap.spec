@@ -66,14 +66,6 @@ BuildRequires:   curl-devel
 %description    utils
 The %{name}-utils package contains various utilities based on %{name} library.
 
-%package        content
-Summary:        SCAP content
-Group:          Applications/System
-Requires:       %{name} = %{version}-%{release}
-
-%description    content
-SCAP content for RHEL and Fedora delivered by Open-SCAP project.
-
 %prep
 %setup -q
 
@@ -96,8 +88,15 @@ install -p -m 755 dist/fedora/oscap-scan.init $RPM_BUILD_ROOT%{_initrddir}/oscap
 install -p -m 644 dist/fedora/oscap-scan.sys  $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/oscap-scan
 
 # create symlinks to default content
-ln -s  %{_datadir}/openscap/scap-fedora14-oval.xml $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-oval.xml
-ln -s  %{_datadir}/openscap/scap-fedora14-xccdf.xml $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-xccdf.xml
+#ln -s  %{_datadir}/openscap/scap-fedora14-oval.xml $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-oval.xml
+#ln -s  %{_datadir}/openscap/scap-fedora14-xccdf.xml $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-xccdf.xml
+
+# remove content for another OS
+rm $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-fedora13-oval.xml
+rm $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-fedora14-oval.xml
+rm $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-fedora14-xccdf.xml
+rm $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-rhel6-oval.xml
+rm $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-rhel6-xccdf.xml
 
 # bash-completion script
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/bash_completion.d
@@ -158,15 +157,6 @@ fi
 %{_mandir}/man8/*
 %{_bindir}/*
 %{_sysconfdir}/bash_completion.d
-
-%files content
-%defattr(-,root,root,-)
-%{_datadir}/openscap/scap-oval.xml
-%{_datadir}/openscap/scap-fedora12-oval.xml
-%{_datadir}/openscap/scap-fedora13-oval.xml
-%{_datadir}/openscap/scap-fedora14-oval.xml
-%{_datadir}/openscap/scap-xccdf.xml
-%{_datadir}/openscap/scap-fedora14-xccdf.xml
 
 %changelog
 * Fri Apr 08 2011 Peter Vrabec <pvrabec@redhat.com> 0.7.2-1
