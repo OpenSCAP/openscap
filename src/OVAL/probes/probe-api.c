@@ -1495,6 +1495,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                         SEXP_free_r(&value_sexp_mem);
         skip:
                 value_name = va_arg(ap, const char *);
+		free_value = true;
         }
 
         return (item);
