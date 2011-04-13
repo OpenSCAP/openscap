@@ -251,7 +251,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
 			SEXP_string_new_r(&gr_lastpath, p, strlen(p));
 
                 item = probe_item_create(OVAL_UNIX_FILE, NULL,
-                                         "filepath", OVAL_DATATYPE_STRING, f == NULL ? st_path : NULL,
+                                         "filepath", OVAL_DATATYPE_STRING, f == NULL ? NULL : st_path,
                                          "path",     OVAL_DATATYPE_SEXP,  &gr_lastpath,
                                          "filename", OVAL_DATATYPE_STRING, f == NULL ? "" : f,
                                          "type",     OVAL_DATATYPE_SEXP, se_filetype(st.st_mode),
