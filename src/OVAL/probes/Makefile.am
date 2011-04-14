@@ -50,6 +50,11 @@ pkglibexec_PROGRAMS += probe_sql
 probe_sql_SOURCES= independent/sql.c
 probe_sql_CFLAGS= @libodbx_cflags@
 probe_sql_LDFLAGS= @libodbx_libs@
+
+pkglibexec_PROGRAMS += probe_sql57
+probe_sql57_SOURCES= independent/sql57.c
+probe_sql57_CFLAGS= @libodbx_cflags@
+probe_sql57_LDFLAGS= @libodbx_libs@
 endif
 
 if ENABLE_PROBE_LDAP57
