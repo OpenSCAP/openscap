@@ -23,6 +23,9 @@
 #include <string.h>
 #include <pthread.h>
 #include <signal.h>
+#if defined(__linux__)
+# include <sys/prctl.h>
+#endif
 #include <errno.h>
 #include <seap.h>
 #include "probe.h"
@@ -62,6 +65,12 @@ void *probe_signal_handler(void *arg)
 	sigaddset(&siset, SIGINT);
 	sigaddset(&siset, SIGTERM);
 	sigaddset(&siset, SIGQUIT);
+        sigaddset(&siset, SIGPIPE);
+
+#if defined(__linux__)
+        if (prctl(PR_SET_PDEATHSIG, SIGTERM) != 0)
+                dW("prctl(PR_SET_PDEATHSIG, SIGTERM) failed\n");
+#endif
 
 	dI("Signal handler ready\n");
 
@@ -83,6 +92,7 @@ void *probe_signal_handler(void *arg)
                 case SIGINT:
                 case SIGTERM:
                 case SIGQUIT:
+                case SIGPIPE:
 		{
 			__thr_collection coll;
 

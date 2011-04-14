@@ -137,6 +137,7 @@ int main(int argc, char *argv[])
 	sigaddset(&sigmask, SIGINT);
 	sigaddset(&sigmask, SIGTERM);
 	sigaddset(&sigmask, SIGQUIT);
+        sigaddset(&sigmask, SIGPIPE);
 
 	if (pthread_sigmask(SIG_BLOCK, &sigmask, NULL))
 		fail(errno, "pthread_sigmask", __LINE__ - 1);
