@@ -567,6 +567,7 @@ static oval_result_t probe_ent_cmp(SEXP_t * ent, SEXP_t * val2)
 			ochk = OVAL_CHECK_ALL;
 		} else {
 			ochk = SEXP_number_geti_32(stmp);
+			SEXP_free(stmp);
 		}
 
 		result = probe_ent_result_bychk(res_lst, ochk);
@@ -580,17 +581,112 @@ static oval_result_t probe_ent_cmp(SEXP_t * ent, SEXP_t * val2)
 	return result;
 }
 
+static oval_result_t _probe_entste_cmp_record(SEXP_t *ent_ste, SEXP_t *ent_itm)
+{
+	oval_result_t res;
+	oval_operation_t op;
+	oval_check_t ochk;
+	SEXP_t *stmp, *ste_res, *ste_record_fields, *ste_rf, *itm_record_fields;
+	int val_cnt;
+
+	stmp = probe_ent_getattrval(ent_ste, "operation");
+	if (stmp == NULL) {
+		op = OVAL_OPERATION_EQUALS;
+	} else {
+		op = SEXP_number_getu(stmp);
+		SEXP_free(stmp);
+		if (op != OVAL_OPERATION_EQUALS)
+			return OVAL_RESULT_ERROR;
+	}
+
+	val_cnt = probe_ent_getvals(ent_ste, &ste_record_fields);
+	if (val_cnt <= 0) {
+		SEXP_free(ste_record_fields);
+		return OVAL_RESULT_ERROR;
+	}
+	val_cnt = probe_ent_getvals(ent_itm, &itm_record_fields);
+	if (val_cnt <= 0) {
+		SEXP_free(ste_record_fields);
+		SEXP_free(itm_record_fields);
+		return OVAL_RESULT_ERROR;
+	}
+
+	ste_res = SEXP_list_new(NULL);
+
+	SEXP_list_foreach(ste_rf, ste_record_fields) {
+		SEXP_t *itm_rf, *itm_res;
+		const char *sname;
+		bool matched;
+
+		sname = probe_ent_getname(ste_rf);
+		itm_res = SEXP_list_new(NULL);
+		matched = false;
+
+		SEXP_list_foreach(itm_rf, itm_record_fields) {
+			const char *iname;
+
+			iname = probe_ent_getname(itm_rf);
+			if (strcmp(sname, iname)) {
+				oscap_free(iname);
+				continue;
+			}
+			oscap_free(iname);
+			matched = true;
+
+			res = probe_entste_cmp(ste_rf, itm_rf);
+			/* todo: _oval_result_to_sexp() */
+			stmp = SEXP_number_newu(res);
+			SEXP_list_add(itm_res, stmp);
+			SEXP_free(stmp);
+		}
+
+		oscap_free(sname);
+
+		if (!matched) {
+			stmp = SEXP_number_newu(OVAL_RESULT_ERROR);
+			SEXP_list_add(itm_res, stmp);
+			SEXP_free(stmp);
+		}
+
+		stmp = probe_ent_getattrval(ste_rf, "entity_check");
+		if (stmp == NULL) {
+			ochk = OVAL_CHECK_ALL;
+		} else {
+			ochk = SEXP_number_getu(stmp);
+			SEXP_free(stmp);
+		}
+
+		res = probe_ent_result_bychk(itm_res, ochk);
+		SEXP_free(itm_res);
+		stmp = SEXP_number_newu(res);
+		SEXP_list_add(ste_res, stmp);
+		SEXP_free(stmp);
+	}
+
+	SEXP_free(ste_record_fields);
+	SEXP_free(itm_record_fields);
+
+	stmp = probe_ent_getattrval(ent_ste, "entity_check");
+	if (stmp == NULL) {
+		ochk = OVAL_CHECK_ALL;
+	} else {
+		ochk = SEXP_number_getu(stmp);
+		SEXP_free(stmp);
+	}
+
+	res = probe_ent_result_bychk(ste_res, ochk);
+	SEXP_free(ste_res);
+
+	return res;
+}
+
 oval_result_t probe_entste_cmp(SEXP_t * ent_ste, SEXP_t * ent_itm)
 {
+	oval_datatype_t ste_dt;
 	oval_syschar_status_t item_status;
 	oval_result_t ores;
 	SEXP_t *val2;
 	int valcnt;
-
-	valcnt = probe_ent_getvals(ent_ste, &val2);
-	SEXP_free(val2);
-	if (valcnt == 0)
-		return OVAL_RESULT_ERROR;
 
 	item_status = probe_ent_getstatus(ent_itm);
 	switch (item_status) {
@@ -603,9 +699,17 @@ oval_result_t probe_entste_cmp(SEXP_t * ent_ste, SEXP_t * ent_itm)
 		break;
 	}
 
-	if (probe_ent_getdatatype(ent_ste) != probe_ent_getdatatype(ent_itm)) {
+	ste_dt = probe_ent_getdatatype(ent_ste);
+	if (ste_dt != probe_ent_getdatatype(ent_itm))
 		return OVAL_RESULT_ERROR;
-	}
+
+	if (ste_dt == OVAL_DATATYPE_RECORD)
+		/* records require special handling */
+		return _probe_entste_cmp_record(ent_ste, ent_itm);
+
+	valcnt = probe_ent_getvals(ent_ste, NULL);
+	if (valcnt == 0)
+		return OVAL_RESULT_ERROR;
 
 	val2 = probe_ent_getval(ent_itm);
 	ores = probe_ent_cmp(ent_ste, val2);
