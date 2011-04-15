@@ -317,6 +317,56 @@
 			<criterion comment="Check all directories are not world writable or owned by a user with uid less than 500" test_ref="oval:rhel:tst:10281"/>
 		</criteria>
 	</definition>
+        <definition class="compliance" id="oval:rhel:def:1029" version="1">
+		<metadata>
+                        <title>Set Daemon umask</title>
+                        <reference ref_id="CCE-4220-0" source="CCE"/>
+                        <description>The daemon umask should be set as appropriate</description>
+                </metadata>
+                <criteria>
+                        <criterion comment="Check /etc/init.d/functions sets umask as requried" test_ref="oval:rhel:tst:10291"/>
+                </criteria>
+        </definition>
+        <definition class="compliance" id="oval:rhel:def:1030" version="1">
+                <metadata>
+                        <title>Disable Core Dumps</title>
+                        <reference ref_id="CCE-4225-9" source="CCE"/>
+                        <description>Core dumps for all users should be disabled</description>
+                </metadata>
+                <criteria>
+                        <criterion comment="Are core dumps disabled" test_ref="oval:rhel:tst:10301"/>
+                </criteria>
+        </definition>
+        <definition class="compliance" id="oval:rhel:def:1031" version="1">
+                <metadata>
+                        <title>Disable Core Dumps for setuid programs</title>
+                        <reference ref_id="CCE-4247-3" source="CCE"/>
+                        <description>Core dumps for setuid programs should be disabled</description>
+                </metadata>
+                <criteria>
+                        <criterion comment="Are core dumps for setuid programs disabled?" test_ref="oval:rhel:tst:10311"/>
+                </criteria>
+        </definition>
+        <definition class="compliance" id="oval:rhel:def:1032" version="1">
+                <metadata>
+                        <title>Enable ExecShield</title>
+                        <reference ref_id="CCE-4168-1" source="CCE"/>
+                        <description>ExecShield should be enabled</description>
+                </metadata>
+                <criteria>
+                        <criterion comment="Is execshield enabled" test_ref="oval:rhel:tst:10321"/>
+                </criteria>
+        </definition>
+        <definition class="compliance" id="oval:rhel:def:1033" version="1">
+                <metadata>
+                        <title>Enable ExecShield randomized placement of virtual memory regions</title>
+                        <reference ref_id="CCE-4146-7" source="CCE"/>
+                        <description>ExecShield randomized placement of virtual memory regions should be enabled</description>
+                </metadata>
+                <criteria>
+                        <criterion comment="check ExecShield randomized placement of virtual memory regions" test_ref="oval:rhel:tst:10331"/>
+                </criteria>
+        </definition>
 	</definitions>
 
 
@@ -428,6 +478,29 @@
 	<unix-def:file_test id="oval:rhel:tst:10281" version="1" check_existence="none_exist" check="all" comment="world writable directories have a uid greater than or equal to 500" >
 		<unix-def:object object_ref="oval:rhel:obj:102811"/>
 	</unix-def:file_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10291" version="1" check="all"
+					comment="value of the umask[\s]+(.*) in /etc/rc.d/init.d/functions is as expected">
+                <ind-def:object object_ref="oval:rhel:obj:102911"/>
+                <ind-def:state state_ref="oval:rhel:ste:102911"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test id="oval:rhel:tst:10301" version="1" check="all" comment="/etc/security/limits.conf disables core dumps">
+                <ind-def:object object_ref="oval:rhel:obj:103011"/>
+                <ind-def:state state_ref="oval:rhel:ste:103011"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10311" version="1" check="all" comment="/proc/sys/fs/suid_dumpable is 0">
+                <ind-def:object object_ref="oval:rhel:obj:103111"/>
+                <ind-def:state state_ref="oval:rhel:ste:103111"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="any_exist" id="oval:rhel:tst:10321" version="1" check="all"
+					comment="Tests the value of the /proc/sys/kernel/exec-shield">
+                <ind-def:object object_ref="oval:rhel:obj:103211"/>
+                <ind-def:state state_ref="oval:rhel:ste:103211"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="any_exist" id="oval:rhel:tst:10331" version="1" check="all"
+					comment="Tests the value of the /proc/sys/kernel/randomize_va_space">
+                <ind-def:object object_ref="oval:rhel:obj:103311"/>
+                <ind-def:state state_ref="oval:rhel:ste:103311"/>
+        </ind-def:textfilecontent54_test>
 	</tests>
 
 
@@ -535,6 +608,31 @@
 			<filter>oval:rhel:ste:1028111</filter>
 		</set>
 	</unix-def:file_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:102911" version="1" comment="umask in /etc/rc.d/init.d/functions">
+                <ind-def:filepath>/etc/rc.d/init.d/functions</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*umask[[:space:]]+([[:digit:]]+)[[:space:]]*$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:103011" version="1" comment="core dumps configuration in limits.conf">
+                <ind-def:filepath>/etc/security/limits.conf</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*\*[[:space:]]+hard[[:space:]]+core[[:space:]]+([[:digit:]]+)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:103111" version="1" comment="core dumps possible for set-UID programs">
+                <ind-def:filepath>/proc/sys/fs/suid_dumpable</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:103211" version="1" comment="Exec Shield enabled">
+                <ind-def:filepath>/proc/sys/kernel/exec-shield</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:103311" version="1" comment="Adress space randomization setting">
+                <ind-def:filepath>/proc/sys/kernel/randomize_va_space</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
 	</objects>
 
 
@@ -624,6 +722,21 @@
 		<unix-def:group_id datatype="string" operation="pattern match">^([1-4][0-9]|[1-9])?[0-9]$</unix-def:group_id>
 		<unix-def:owrite datatype="boolean">0</unix-def:owrite>
 	</unix-def:file_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:102911" version="1" comment="Expected umask in /etc/rc.d/init.d/functions">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1029"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:103011" version="1" comment="Maximum core file size">
+                <ind-def:subexpression operation="equals">0</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:103111" version="1" comment="Dumpability of set-UID programs">
+                <ind-def:subexpression datatype="int" operation="equals">0</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:103211" version="1" comment="Exec Shield state">
+                <ind-def:subexpression datatype="int" operation="greater than or equal">1</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:103311" version="1" comment="Address space randomization setting">
+                <ind-def:subexpression var_check="all" operation="greater than or equal" var_ref="oval:rhel:var:1033"/>
+        </ind-def:textfilecontent54_state>
 	</states>
 
 	<variables>
@@ -733,6 +846,8 @@
 	<local_variable id="oval:rhel:var:1027111" version="1" datatype="string" comment="List of group ids">
 		<object_component item_field="subexpression" object_ref="oval:rhel:obj:10271111"/>
 	</local_variable>
+        <external_variable id="oval:rhel:var:1029" version="1" datatype="string" comment="umask for daemons"/>
+        <external_variable id="oval:rhel:var:1033" version="1" datatype="int" comment="kernel.randomize_va_space value"/>
 	</variables>
 
 </oval_definitions>

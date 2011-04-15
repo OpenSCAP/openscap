@@ -40,6 +40,15 @@
     <select idref="rule-1026" selected="true"/> 
     <select idref="rule-1027" selected="true"/> 
     <select idref="rule-1028" selected="true"/> 
+    <refine-value idref="var-1029" selector="022"/>
+    <select idref="rule-1029" selected="true"/>
+    <select idref="rule-1031" selected="true"/>
+    <select idref="rule-1032" selected="true"/>
+    <select idref="rule-1033" selected="true"/>
+  </Profile>
+  <Profile id="mitr">
+    <title xml:lang="en-US">mitr</title>
+    <description xml:lang="en-US">mitr</description>
   </Profile>
   <Group id="gr-intro" hidden="false">
     <title xml:lang="en-US">Introduction</title>
@@ -1282,21 +1291,21 @@
 						<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> If a particular daemon needs a less restrictive umask, consider
 						editing the startup script or sysconfig file of that daemon to make a
 						specific exception.</xhtml:p> </description>
-          <Value id="var-2.2.4.1.a" operator="equals" type="string">
+          <Value id="var-1029" operator="equals" type="string">
             <title xml:lang="en-US">daemon umask</title>
             <description xml:lang="en-US">Enter umask for daemons</description>
             <value>027</value>
             <value selector="022">022</value>
             <value selector="027">027</value>
           </Value>
-          <Rule id="rule-2.2.4.1.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1029" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Daemon umask setting</title>
             <description xml:lang="en-US">The daemon umask should be set as appropriate</description>
             <ident system="http://cce.mitre.org">CCE-4220-0</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20053" value-id="var-2.2.4.1.a"/>
-              <check-content-ref name="oval:rhel:def:20053" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1029" value-id="var-1029"/>
+              <check-content-ref name="oval:rhel:def:1029" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -1318,13 +1327,13 @@
 						the user cannot increase that limit within his own session. If access to core dumps
 						is required, consider restricting them to only certain users or groups. See
 						the limits.conf man page for more information. </xhtml:p>  </description>
-          <Rule id="rule-2.2.4.2.a" selected="false" weight="10.000000" severity="low">
+          <Rule id="rule-1030" selected="false" weight="10.000000" severity="low">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Disable Core Dumps for all users</title>
             <description xml:lang="en-US">Core dumps for all users should be disabled</description>
             <ident system="http://cce.mitre.org">CCE-4225-9</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20055" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1030" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group> 
@@ -1339,13 +1348,13 @@
 					    <xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> The output should indicate that the setting is 0. (Use of
 						the -n option causes output to consist of only the value, which may make
 						automated checking easier.) </xhtml:p> </description>
-          <Rule id="rule-2.2.4.2.b" selected="false" weight="10.000000" severity="low">
+          <Rule id="rule-1031" selected="false" weight="10.000000" severity="low">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Disable Core Dumps for SUID programs</title>
             <description xml:lang="en-US">Core dumps for setuid programs should be disabled</description>
             <ident system="http://cce.mitre.org">CCE-4247-3</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20056" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1031" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
          </Group>
@@ -1369,61 +1378,32 @@
 							setting of kernel.exec-shield is 1 and the setting of kernel.randomize_va_space is 2.
 							(Use of the -n option causes output to consist of only the
 							value, which may make automated checking easier.) </xhtml:p> </description>
-            <Value id="var-2.2.4.3.a" operator="equals" type="string">
-              <title xml:lang="en-US">kernel.exec-shield</title>
-              <description xml:lang="en-US"/>
-              <value>1</value>
-              <value selector="enabled">1</value>
-              <value selector="disabled">0</value>
-            </Value>
-            <Value id="var-2.2.4.3.b" operator="equals" type="string">
+            <Value id="var-1033" operator="equals" type="string">
               <title xml:lang="en-US">kernel.randomize_va_space</title>
-              <description xml:lang="en-US"/>
+              <description xml:lang="en-US">Enter whether virtual address space should be randomized</description>
               <value>2</value>
               <value selector="enabled_with_heap">2</value>
               <value selector="enabled_without_heap">1</value>
               <value selector="disabled">0</value>
             </Value>
-          <Rule id="rule-2.2.4.3.1.a" selected="false" weight="10.000000">
-            <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">ExecShield is enabled</title>
-            <description xml:lang="en-US">ExecShield should be enabled</description>
-            <ident system="http://cce.mitre.org">CCE-4168-1</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20057" value-id="var-2.2.4.3.a"/>
-              <check-content-ref name="oval:rhel:def:200570" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.2.4.3.1.b" selected="false" weight="10.000000">
-            <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">ExecShield randomized placement of virtual memory regions is enabled</title>
-            <description xml:lang="en-US">ExecShield randomized placement of virtual memory regions
-							should be enabled</description>
-            <ident system="http://cce.mitre.org">CCE-4146-7</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20058" value-id="var-2.2.4.3.b"/>
-              <check-content-ref name="oval:rhel:def:200580" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.2.4.3.2.a" selected="false" weight="10.000000">
+          <Rule id="rule-1032" selected="false" weight="10.000000">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">ExecShield is enabled (runtime)</title>
             <description xml:lang="en-US">ExecShield should be enabled</description>
             <ident system="http://cce.mitre.org">CCE-4168-1</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20057" value-id="var-2.2.4.3.a"/>
-              <check-content-ref name="oval:rhel:def:200571" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1032" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.2.4.3.2.b" selected="false" weight="10.000000">
+          <Rule id="rule-1033" selected="false" weight="10.000000">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">ExecShield randomized placement of virtual memory regions is enabled (runtime)</title>
             <description xml:lang="en-US">ExecShield randomized placement of virtual memory regions
 							should be enabled</description>
             <ident system="http://cce.mitre.org">CCE-4146-7</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20058" value-id="var-2.2.4.3.b"/>
-              <check-content-ref name="oval:rhel:def:200581" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1033" value-id="var-1033"/>
+              <check-content-ref name="oval:rhel:def:1033" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
