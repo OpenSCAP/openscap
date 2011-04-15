@@ -1085,7 +1085,7 @@ static oval_datatype_t _sexp_val_getdatatype(const SEXP_t *val)
 			return OVAL_DATATYPE_INTEGER;
 		}
 	default:
-		dE("Unexpected SEXP datatype: %d, '%s'.\n", sdt, SEXP_strtype(ent));
+		dE("Unexpected SEXP datatype: %d, '%s'.\n", sdt, SEXP_strtype(val));
 		return OVAL_DATATYPE_UNKNOWN;
 	}
 }
