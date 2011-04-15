@@ -367,6 +367,116 @@
                         <criterion comment="check ExecShield randomized placement of virtual memory regions" test_ref="oval:rhel:tst:10331"/>
                 </criteria>
         </definition>
+	<definition class="compliance" id="oval:rhel:def:1034" version="1">
+                <metadata>
+                        <title>Prevent Root Logins to Virtual Consoles</title>
+                        <reference ref_id="TBD" source="CCE"/>
+                        <description>Root logins through virtual console devices should be disabled</description>
+                </metadata>
+                <criteria>
+                        <criterion comment="Virtual consoles are not in /etc/securetty" test_ref="oval:rhel:tst:10341"/>
+                </criteria>
+        </definition>
+	<definition class="compliance" id="oval:rhel:def:1035" version="1">
+                <metadata>
+                        <title>Prevent Root Logins to Serial Consoles</title>
+                        <reference ref_id="TBD" source="CCE"/>
+                        <description>Root logins through serial port devices should be disabled</description>
+                </metadata>
+                <criteria>
+                        <criterion comment="Serial ports are not in /etc/securetty" test_ref="oval:rhel:tst:10351"/>
+                </criteria>
+        </definition>
+        <definition class="compliance" id="oval:rhel:def:1036" version="1">
+                <metadata>
+                        <title>Limit su Access to the wheel group</title>
+                        <reference source="CCE" ref_id="CCE-14088-9"/>
+                        <description>The wheel group should exist</description>
+                </metadata>
+                <criteria>
+                        <criterion comment="Does wheel group exist" test_ref="oval:rhel:tst:10361"/>
+                </criteria>
+        </definition>
+        <definition class="compliance" id="oval:rhel:def:1037" version="1">
+                <metadata>
+                        <title>Limit command Access to the Root Account</title>
+                        <reference source="CCE" ref_id="CCE-15047-4"/>
+                        <description>Command access to the root account should be restricted to the wheel group.</description>
+                </metadata>
+                <criteria>
+                        <criterion comment="su is restricted to the wheel group" test_ref="oval:rhel:tst:10371"/>
+                </criteria>
+        </definition>
+        <definition class="compliance" id="oval:rhel:def:1038" version="1">
+                <metadata>
+                        <title>Block Shell and Login Access for Non-Root System Accounts</title>
+                        <reference ref_id="CCE-3987-5" source="CCE"/>
+                        <description>Login access to non-root system accounts should be disabled</description>
+                </metadata>
+                <criteria>
+                        <criterion comment="check /etc/passwd for /sbin/nologin on non root system accounts" test_ref="oval:rhel:tst:10381"/>
+                </criteria>
+        </definition>
+        <definition class="compliance" id="oval:rhel:def:1039" version="1">
+                <metadata>
+                        <title>Verify that No Accounts Have Empty Password Fields</title>
+                        <reference ref_id="CCE-4238-2" source="CCE"/>
+                        <description>Login access to accounts without passwords should be disabled</description>
+                </metadata>
+                <criteria>
+                        <criterion comment="No account in /etc/shadow has an empty password field" test_ref="oval:rhel:tst:10391"/>
+                </criteria>
+        </definition>
+        <definition class="compliance" id="oval:rhel:def:1040" version="1">
+                <metadata>
+                        <title>Verify that All Account Password Hashes are Shadowed</title>
+                        <reference ref_id="CCE-14300-8" source="CCE"/>
+                        <description>Check that passwords are shadowed</description>
+                </metadata>
+                <criteria>
+                        <criterion comment="All accounds in /etc/passwd contain a shadow marker" test_ref="oval:rhel:tst:10401"/>
+                </criteria>
+        </definition>
+        <definition class="compliance" id="oval:rhel:def:1041" version="1">
+                <metadata>
+                        <title>Verify that No Non-Root Accounts Have UID 0</title>
+                        <reference ref_id="CCE-4009-7" source="CCE"/>
+                        <description>Anonymous root logins are disabled</description>
+                </metadata>
+                <criteria>
+                        <criterion comment="conditions are satisfied" test_ref="oval:rhel:tst:10411"/>
+                </criteria>
+        </definition>
+	<definition class="compliance" id="oval:rhel:def:1042" version="1">
+                <metadata>
+                        <title>Set Password Expiration Parameters</title>
+                        <reference ref_id="CCE-4180-6" source="CCE"/>
+                        <description>The "minimum password age" policy should meet minimum requirements. </description>
+                </metadata>
+                <criteria>
+                        <criterion test_ref="oval:rhel:tst:10421"/>
+                </criteria>
+        </definition>
+        <definition class="compliance" id="oval:rhel:def:1043" version="1">
+                <metadata>
+                        <title>Set Password Expiration Parameters</title>
+                        <reference ref_id="CCE-4092-3" source="CCE"/>
+                        <description>The "maximum password age" policy should meet minimum requirements. </description>
+                </metadata>
+                <criteria>
+                        <criterion test_ref="oval:rhel:tst:10431"/>
+                </criteria>
+        </definition>
+        <definition class="compliance" id="oval:rhel:def:1044" version="1">
+                <metadata>
+                        <title>Set Password Expiration Parameters</title>
+                        <reference ref_id="CCE-4097-2" source="CCE"/>
+                        <description>The password warn age should be set appropriately</description>
+                </metadata>
+                <criteria>
+                        <criterion test_ref="oval:rhel:tst:10441"/>
+                        </criteria>
+                </definition>
 	</definitions>
 
 
@@ -501,6 +611,54 @@
                 <ind-def:object object_ref="oval:rhel:obj:103311"/>
                 <ind-def:state state_ref="oval:rhel:ste:103311"/>
         </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:rhel:tst:10341" version="1" check="all"
+					comment="Tests that vc/[0-9]+ is not present in /etc/securetty">
+                <ind-def:object object_ref="oval:rhel:obj:103411"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:rhel:tst:10351" version="1" check="all"
+					comment="Tests that ttyS[0-9]+ is not present in /etc/securetty">
+                <ind-def:object object_ref="oval:rhel:obj:103511"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10361" version="1" check="all"
+					comment="Tests that wheel exists in /etc/group">
+                <ind-def:object object_ref="oval:rhel:obj:103611"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10371" version="1" check="all"
+					comment="Tests that 'auth required pam_wheel.so use_uid' is present in /etc/pam.d/su">
+                <ind-def:object object_ref="oval:rhel:obj:103711"/>
+        </ind-def:textfilecontent54_test>
+        <unix-def:password_test id="oval:rhel:tst:10381" version="1" check="none satisfy" comment="Tests the login shell for non root system accounts">
+                <unix-def:object object_ref="oval:rhel:obj:103811"/>
+                <unix-def:state state_ref="oval:rhel:ste:103811"/>
+        </unix-def:password_test>
+        <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:rhel:tst:10391" version="1" check="all"
+					comment="Tests that password fields in /etc/shadow are not empty">
+                  <ind-def:object object_ref="oval:rhel:obj:103911"/>
+        </ind-def:textfilecontent54_test>
+        <unix-def:password_test id="oval:rhel:tst:10401" version="1" check="all" comment="Check that passwords are shadowed">
+                <unix-def:object object_ref="oval:rhel:obj:104011"/>
+                <unix-def:state state_ref="oval:rhel:ste:104011"/>
+        </unix-def:password_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10411" version="1" check="all"
+					comment="Check if there is only root account with UID 0">
+                  <ind-def:object object_ref="oval:rhel:obj:103811"/>
+                  <ind-def:state state_ref="oval:rhel:ste:104111"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10421" version="1" check="all"
+					comment="Tests the value of PASS_MIN_DAYS in /etc/login.defs">
+                <ind-def:object object_ref="oval:rhel:obj:104211"/>
+                <ind-def:state state_ref="oval:rhel:ste:104211"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10431" version="1" check="all"
+					comment="Tests the value of PASS_MAX_DAYS in /etc/login.defs">
+                <ind-def:object object_ref="oval:rhel:obj:104311"/>
+                <ind-def:state state_ref="oval:rhel:ste:104311"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10441" version="1" check="all"
+					comment="Tests the value of PASS_WARN_AGE in /etc/login.defs">
+                <ind-def:object object_ref="oval:rhel:obj:104411"/>
+                <ind-def:state state_ref="oval:rhel:ste:104411"/>
+        </ind-def:textfilecontent54_test>
 	</tests>
 
 
@@ -633,6 +791,52 @@
                 <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
                 <ind-def:instance datatype="int">1</ind-def:instance>
         </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:103411" version="1" comment="vc/[0-9]+ in /etc/securetty">
+                <ind-def:filepath>/etc/securetty</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*vc\/[0-9]+[[:space:]]*(#.*)?$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:103511" version="1" comment="ttyS[0-9]+ in /etc/securetty">
+                <ind-def:filepath>/etc/securetty</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*ttyS[0-9]+[[:space:]]*(#.*)?$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:103611" version="1" comment="wheel line in /etc/group">
+                <ind-def:filepath>/etc/group</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^wheel:</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:103711" version="1" comment="PAM configuration to require group wheel to use su">
+                <ind-def:filepath>/etc/pam.d/su</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*auth[[:space:]]+required[[:space:]]+pam_wheel\.so[[:space:]]+use_uid[[:space:]]*(#.*)?$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <unix-def:password_object id="oval:rhel:obj:103811" version="1" comment="User accounts other than root">
+                <unix-def:username operation="not equal">root</unix-def:username>
+        </unix-def:password_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:103911" version="1" comment="/etc/shadow lines with empty password field">
+                <ind-def:filepath>/etc/shadow</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[^:]*::</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <unix-def:password_object id="oval:rhel:obj:104011" version="1" comment="All user accounts">
+                <unix-def:username operation="pattern match">.*</unix-def:username>
+        </unix-def:password_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:104211" version="1" comment="PASS_MIN_DAYS from /etc/login.defs">
+                <ind-def:filepath>/etc/login.defs</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^PASS_MIN_DAYS[[:space:]]*(.*)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:104311" version="1" comment="PASS_MAX_DAYS from /etc/login.defs">
+                <ind-def:filepath>/etc/login.defs</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^PASS_MAX_DAYS[[:space:]]*(.*)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:104411" version="1" comment="PASS_WARN_AGE from /etc/login.defs">
+                <ind-def:filepath>/etc/login.defs</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^PASS_WARN_AGE[[:space:]]*(.*)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
 	</objects>
 
 
@@ -736,6 +940,25 @@
         </ind-def:textfilecontent54_state>
         <ind-def:textfilecontent54_state id="oval:rhel:ste:103311" version="1" comment="Address space randomization setting">
                 <ind-def:subexpression var_check="all" operation="greater than or equal" var_ref="oval:rhel:var:1033"/>
+        </ind-def:textfilecontent54_state>
+        <unix-def:password_state id="oval:rhel:ste:103811" version="1" comment="System account with shell other than /sbin/nologin">
+                <unix-def:user_id operation="less than" datatype="int">500</unix-def:user_id>
+                <unix-def:login_shell operation="not equal">/sbin/nologin</unix-def:login_shell>
+        </unix-def:password_state>
+        <unix-def:password_state id="oval:rhel:ste:104011" version="1" comment="An account with shadow password marker">
+                <unix-def:password>x</unix-def:password>
+        </unix-def:password_state>
+        <unix-def:password_state id="oval:rhel:ste:104111" version="1" comment="An account with UID != 0">
+                <unix-def:user_id operation="not equal">0</unix-def:user_id>
+        </unix-def:password_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:104211" version="1" comment="Expected value of PASS_MIN_DAYS in /etc/login.defs">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1042"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:104311" version="1" comment="Expected value of PASS_MAX_DAYS in /etc/login.defs">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1043"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:104411" version="1" comment="Expected value of PASS_WARN_AGE in /etc/login.defs">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1044"/>
         </ind-def:textfilecontent54_state>
 	</states>
 
@@ -848,6 +1071,9 @@
 	</local_variable>
         <external_variable id="oval:rhel:var:1029" version="1" datatype="string" comment="umask for daemons"/>
         <external_variable id="oval:rhel:var:1033" version="1" datatype="int" comment="kernel.randomize_va_space value"/>
+        <external_variable id="oval:rhel:var:1042" version="1" datatype="int" comment="PASS_MIN_DAYS"/>
+        <external_variable id="oval:rhel:var:1043" version="1" datatype="int" comment="PASS_MAX_DAYS"/>
+        <external_variable id="oval:rhel:var:1044" version="1" datatype="int" comment="PASS_WARN_AGE"/>
 	</variables>
 
 </oval_definitions>

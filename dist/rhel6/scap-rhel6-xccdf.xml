@@ -45,6 +45,16 @@
     <select idref="rule-1031" selected="true"/>
     <select idref="rule-1032" selected="true"/>
     <select idref="rule-1033" selected="true"/>
+    <select idref="rule-1035" selected="true"/>
+    <select idref="rule-1036" selected="true"/>
+    <select idref="rule-1039" selected="true"/>
+    <select idref="rule-1040" selected="true"/>
+    <select idref="rule-1041" selected="true"/>
+    <refine-value idref="var-1042" selector="0_days"/>
+    <select idref="rule-1042" selected="true"/>
+    <refine-value idref="var-1043" selector="99999_days"/>
+    <select idref="rule-1043" selected="true"/>
+    <select idref="rule-1044" selected="true"/>
   </Profile>
   <Profile id="mitr">
     <title xml:lang="en-US">mitr</title>
@@ -1456,23 +1466,23 @@
 						These are likely to be deprecated in most environments, but may be retained
 						for compatibility. Root should also be prohibited from connecting via
 						network protocols. </description>
-          <Rule id="rule-2.3.1.1.c" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1034" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Root logins to virtual console are not permited</title>
-            <description xml:lang="en-US">Logins through the virtual console devices should be
+            <description xml:lang="en-US">Root logins through the virtual console devices should be
 							disabled</description>
             <ident system="http://cce.mitre.org">CCE-3485-0</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20063" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1034" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.3.1.1.d" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1035" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Root logins to serial ports are not permited</title>
-            <description xml:lang="en-US">Login prompts on serial ports should be disabled.</description>
+            <description xml:lang="en-US">Root logins on serial ports should be disabled.</description>
             <ident system="http://cce.mitre.org">CCE-4256-4</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20064" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1035" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -1498,23 +1508,23 @@
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> By convention, the group wheel contains all users who are
 						allowed to run privileged commands. The PAM module pam_wheel.so is used to
 						restrict root access to this set of users.</description>
-          <Rule id="rule-2.3.1.2.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1036" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">The 'wheel' group exist</title>
+            <title xml:lang="en-US">The 'wheel' group should exist</title>
             <description xml:lang="en-US">Ensure that the group wheel exists</description>
             <ident system="http://cce.mitre.org">CCE-14088-9</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20065" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1036" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.3.1.2.b" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1037" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Access to the root account via su is restricted to the wheel group</title>
             <description xml:lang="en-US">Command access to the root account should be restricted to the
 							wheel group.</description>
             <ident system="http://cce.mitre.org">CCE-15047-4</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20066" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1037" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -1582,14 +1592,14 @@
           <warning xml:lang="en-US" override="false" category="functionality">Do not perform the steps in
 						this section on the root account. Doing so might cause the system to become
 						inaccessible.</warning>
-          <Rule id="rule-2.3.1.4.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1038" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Login Access for Non-Root System Accounts is blocked</title>
             <description xml:lang="en-US">Login access to non-root system accounts should be
 							disabled</description>
             <ident system="http://cce.mitre.org">CCE-3987-5</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20068" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1038" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -1603,14 +1613,14 @@
 					    <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># awk -F: '($2 == "") {print}' /etc/shadow </xhtml:code>
 					    <xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> If this produces any output, fix the problem by locking each
 						account or by setting a password. </xhtml:p> </description>
-            <Rule id="rule-2.3.1.5.1.a" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1039" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">accepted</status>
               <title xml:lang="en-US">No Accounts Have Empty Password Fields</title>
               <description xml:lang="en-US">Login access to accounts without passwords should be
 								disabled</description>
               <ident system="http://cce.mitre.org">CCE-4238-2</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20069" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1039" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
         </Group>
@@ -1624,13 +1634,13 @@
 							in /etc/passwd, the following command should have no output: </xhtml:p>
 					    <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># awk -F: '($2 != "x") {print}' /etc/passwd </xhtml:code>
 						</description>
-            <Rule id="rule-2.3.1.5.2.a" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1040" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">All Account Password Hashes are Shadowed</title>
               <description xml:lang="en-US">Check that passwords are shadowed</description>
               <ident system="http://cce.mitre.org">CCE-14300-8</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:200695" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1040" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
         </Group>
@@ -1651,13 +1661,13 @@
 					<xhtml:p xmlns:xhtml="http://www.w3.org/1999/xhtml"> This should print only one line, for the user root. If any other
 						lines appear, ensure that these additional UID-0 accounts are authorized,
 						and that there is a good reason for them to exist. </xhtml:p> </description>
-          <Rule id="rule-2.3.1.6.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1041" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">No Non-Root Accounts Have UID 0</title>
             <description xml:lang="en-US">Anonymous root logins should be disabled</description>
             <ident system="http://cce.mitre.org">CCE-4009-7</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20070" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1041" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -1689,20 +1699,20 @@
 						change in case a new password becomes compromised. The PASS_WARN_AGE (-W)
 						setting gives users 7 days of warnings at login time that their passwords
 						are about to expire.</description>
-          <Value id="var-2.3.1.7.b" operator="equals" type="string">
-            <title xml:lang="en-US">minimum password age</title>
+          <Value id="var-1042" operator="equals" type="string">
+            <title xml:lang="en-US">Minimum password age</title>
             <description xml:lang="en-US">Enter minimum duration before allowing a
 							password change</description>
-            <value>0</value>
+            <value>7</value>
             <value selector="0_days">0</value>
             <value selector="1_day">1</value>
             <value selector="7_days">7</value>
           </Value>
-          <Value id="var-2.3.1.7.c" operator="equals" type="string">
-            <title xml:lang="en-US">maximum password age</title>
+          <Value id="var-1043" operator="equals" type="string">
+            <title xml:lang="en-US">Maximum password age</title>
             <description xml:lang="en-US">Enter age before which a password must be
 							changed</description>
-            <value>99999</value>
+            <value>180</value>
             <value selector="0_days">0</value>
             <value selector="30_days">30</value>
             <value selector="60_days">60</value>
@@ -1712,8 +1722,8 @@
             <value selector="180_days">180</value>
             <value selector="99999_days">99999</value>
           </Value>
-          <Value id="var-2.3.1.7.d" operator="equals" type="string">
-            <title xml:lang="en-US">password warn age</title>
+          <Value id="var-1044" operator="equals" type="string">
+            <title xml:lang="en-US">Password warn age</title>
             <description xml:lang="en-US"> The number of days warning given before a
 							password expires. A zero means warning is given only upon the day of
 							expiration, a negative value means no warning is given. If not
@@ -1723,37 +1733,37 @@
             <value selector="8_days">8</value>
             <value selector="14_days">14</value>
           </Value>
-                  <Rule id="rule-2.3.1.7.b" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1042" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Minimum password age</title>
             <description xml:lang="en-US">The minimum password age should be set
 							appropriately</description>
             <ident system="http://cce.mitre.org">CCE-4180-6</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20072" value-id="var-2.3.1.7.b"/>
-              <check-content-ref name="oval:rhel:def:20072" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1042" value-id="var-1042"/>
+              <check-content-ref name="oval:rhel:def:1042" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.3.1.7.c" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1043" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Maximum password age</title>
-            <description xml:lang="en-US">The maximum password age should be set to: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.3.1.7.c"/>
+            <description xml:lang="en-US">The maximum password age should be set to: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1043"/>
 						</description>
             <ident system="http://cce.mitre.org">CCE-4092-3</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20073" value-id="var-2.3.1.7.c"/>
-              <check-content-ref name="oval:rhel:def:20073" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1043" value-id="var-1043"/>
+              <check-content-ref name="oval:rhel:def:1043" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.3.1.7.d" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1044" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Password warn age</title>
-            <description xml:lang="en-US">The password warn age should be set to: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.3.1.7.d"/>
+            <description xml:lang="en-US">The password warn age should be set to: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1044"/>
 						</description>
             <ident system="http://cce.mitre.org">CCE-4097-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20074" value-id="var-2.3.1.7.d"/>
-              <check-content-ref name="oval:rhel:def:20074" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1044" value-id="var-1044"/>
+              <check-content-ref name="oval:rhel:def:1044" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
