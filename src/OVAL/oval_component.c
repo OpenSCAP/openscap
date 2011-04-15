@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009-2011 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -26,6 +26,7 @@
  * Authors:
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
  *      "Peter Vrabec" <pvabec@redhat.com>
+ *      "Tomas Heinrich" <theinric@redhat.com>
  */
 
 #ifdef HAVE_CONFIG_H
@@ -123,7 +124,8 @@ typedef struct oval_component_OBJECTREF {
 	struct oval_definition_model *model;
 	oval_component_type_t type;
 	struct oval_object *object;	/*type==OVAL_COMPONENT_OBJECTREF */
-	char *object_field;	/*type==OVAL_COMPONENT_OBJECTREF */
+	char *item_field;
+	char *record_field;
 } oval_component_OBJECTREF_t;
 
 typedef struct oval_component_VARREF {
@@ -279,7 +281,6 @@ void oval_component_set_type(struct oval_component *component, oval_component_ty
 
 struct oval_object *oval_component_get_object(struct oval_component *component)
 {
-	/* type == OVAL_COMPONENT_OBJECTREF */
 	struct oval_object *object = NULL;
 	if (oval_component_get_type(component) == OVAL_COMPONENT_OBJECTREF) {
 		object = ((struct oval_component_OBJECTREF *)component)->object;
@@ -288,7 +289,6 @@ struct oval_object *oval_component_get_object(struct oval_component *component)
 }
 
 void oval_component_set_object(struct oval_component *component, struct oval_object *object) {
-	/* type == OVAL_COMPONENT_OBJECTREF */
 	if (component && !oval_component_is_locked(component)) {
 		if (oval_component_get_type(component) == OVAL_COMPONENT_OBJECTREF) {
 			((struct oval_component_OBJECTREF *)component)->object = object;
@@ -297,23 +297,41 @@ void oval_component_set_object(struct oval_component *component, struct oval_obj
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
-char *oval_component_get_object_field(struct oval_component *component) {
-	/* type == OVAL_COMPONENT_OBJECTREF */
+char *oval_component_get_item_field(struct oval_component *component) {
 	char *field = NULL;
 	if (oval_component_get_type(component) == OVAL_COMPONENT_OBJECTREF) {
-		field = ((struct oval_component_OBJECTREF *)component)->object_field;
+		field = ((struct oval_component_OBJECTREF *)component)->item_field;
 	}
 	return field;
 }
 
-void oval_component_set_object_field(struct oval_component *component, char *field) {
+void oval_component_set_item_field(struct oval_component *component, char *field) {
 	if (component && !oval_component_is_locked(component)) {
-		/* type == OVAL_COMPONENT_OBJECTREF */
 		if (oval_component_get_type(component) == OVAL_COMPONENT_OBJECTREF) {
-			((struct oval_component_OBJECTREF *)component)->object_field = oscap_strdup(field);
+			((struct oval_component_OBJECTREF *)component)->item_field = oscap_strdup(field);
 		}
 	} else
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+}
+
+char *oval_component_get_record_field(struct oval_component *component) {
+	if (oval_component_get_type(component) != OVAL_COMPONENT_OBJECTREF)
+		return NULL;
+
+	return ((struct oval_component_OBJECTREF *) component)->record_field;
+}
+
+void oval_component_set_record_field(struct oval_component *component, char *field) {
+	if (oval_component_is_locked(component)) {
+		dW("Attempt to update locked content.\n");
+		return;
+	}
+	if (oval_component_get_type(component) != OVAL_COMPONENT_OBJECTREF) {
+		dW("Wrong component type: %d.\n", oval_component_get_type(component));
+		return;
+	}
+
+	((struct oval_component_OBJECTREF *) component)->record_field = oscap_strdup(field);
 }
 
 struct oval_variable *oval_component_get_variable(struct oval_component *component) {
@@ -589,7 +607,8 @@ struct oval_component *oval_component_new(struct oval_definition_model *model, o
 
 			component = (oval_component_t *) objectref;
 			objectref->object = NULL;
-			objectref->object_field = NULL;
+			objectref->item_field = NULL;
+			objectref->record_field = NULL;
 		}
 		break;
 	case OVAL_COMPONENT_VARREF:{
@@ -747,14 +766,18 @@ struct oval_component *oval_component_clone(struct oval_definition_model *new_mo
 		}
 		break;
 	case OVAL_COMPONENT_OBJECTREF:{
+			char *field;
 			struct oval_object *old_object = oval_component_get_object(old_component);
 			if (old_object) {
 				struct oval_object *new_object = oval_object_clone(new_model, old_object);
 				oval_component_set_object(new_component, new_object);
 			}
-			char *field = oval_component_get_object_field(old_component);
+			field = oval_component_get_item_field(old_component);
 			if (field)
-				oval_component_set_object_field(new_component, field);
+				oval_component_set_item_field(new_component, field);
+			field = oval_component_get_record_field(old_component);
+			if (field)
+				oval_component_set_record_field(new_component, field);
 		}
 		break;
 	case OVAL_FUNCTION_REGEX_CAPTURE:{
@@ -815,9 +838,12 @@ void oval_component_free(struct oval_component *component)
 		break;
 	case OVAL_COMPONENT_OBJECTREF:{
 			oval_component_OBJECTREF_t *objectref = (oval_component_OBJECTREF_t *) component;
-			if (objectref->object_field != NULL)
-				oscap_free(objectref->object_field);
-			objectref->object_field = NULL;
+			if (objectref->item_field != NULL)
+				oscap_free(objectref->item_field);
+			objectref->item_field = NULL;
+			if (objectref->record_field != NULL)
+				oscap_free(objectref->record_field);
+			objectref->record_field = NULL;
 		}
 		break;
 	case OVAL_FUNCTION_BEGIN:
@@ -899,16 +925,20 @@ static int _oval_component_parse_OBJECTREF_tag(xmlTextReaderPtr reader,
 	struct oval_definition_model *model = oval_parser_context_model(context);
 	char *objref = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "object_ref");
 	struct oval_object *object = oval_object_get_new(model, objref);
+	char *field;
+
 	oscap_free(objref);
 	objref = NULL;
 	oval_component_set_object(component, object);
 
-	char *objfld = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "item_field");
-	oval_component_set_object_field(component, objfld);
-	if (objfld != NULL) {
-		oscap_free(objfld);
-		objfld = NULL;
-	}
+	field = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "item_field");
+	oval_component_set_item_field(component, field);
+	if (field)
+		oscap_free(field);
+	field = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "record_field");
+	oval_component_set_record_field(component, field);
+	if (field)
+		oscap_free(field);
 
 	return 1;
 }
@@ -1118,93 +1148,6 @@ static void function_comp_to_print(struct oval_component *component, char *nxtin
 
 void oval_component_to_print(struct oval_component *component, char *indent, int idx)
 {
-	char nxtindent[100];
-
-	if (strlen(indent) > 80)
-		indent = "....";
-
-	if (idx == 0)
-		snprintf(nxtindent, sizeof(nxtindent), "%sCOMPONENT.", indent);
-	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sCOMPONENT[%d].", indent, idx);
-
-	oscap_dprintf("%sTYPE(%lx) = %d\n", nxtindent, (unsigned long)component, oval_component_get_type(component));
-	if (oval_component_get_type(component) > OVAL_COMPONENT_FUNCTION) {
-		/* oval_component_FUNCTION_t *function = (oval_component_FUNCTION_t *) component; */
-	}
-	switch (oval_component_get_type(component)) {
-	case OVAL_COMPONENT_LITERAL:{
-			struct oval_value *value = oval_component_get_literal_value(component);
-			if (value == NULL)
-				oscap_dprintf("%sVALUE <<NOT BOUND>>\n", nxtindent);
-			else
-				oval_value_to_print(value, nxtindent, 0);
-		}
-		break;
-	case OVAL_COMPONENT_OBJECTREF:{
-			oscap_dprintf("%sOBJECT_FIELD %s\n", nxtindent, oval_component_get_object_field(component));
-			struct oval_object *object = oval_component_get_object(component);
-			if (object == NULL)
-				oscap_dprintf("%sOBJECT <<NOT BOUND>>\n", nxtindent);
-			else
-				oval_object_to_print(object, nxtindent, 0);
-		}
-		break;
-	case OVAL_COMPONENT_VARREF:{
-			struct oval_variable *variable = oval_component_get_variable(component);
-			if (variable == NULL)
-				oscap_dprintf("%sVARIABLE <<NOT BOUND>>\n", nxtindent);
-			else
-				oval_variable_to_print(variable, nxtindent, 0);
-		}
-		break;
-	case OVAL_FUNCTION_ARITHMETIC:{
-			oscap_dprintf("%sARITHMETIC_OPERATION %d\n", nxtindent,
-				      oval_component_get_arithmetic_operation(component));
-			function_comp_to_print(component, nxtindent);
-		}
-		break;
-	case OVAL_FUNCTION_BEGIN:{
-			oscap_dprintf("%sBEGIN_CHARACTER %s\n", nxtindent, oval_component_get_prefix(component));
-			function_comp_to_print(component, nxtindent);
-		}
-		break;
-	case OVAL_FUNCTION_END:{
-			oscap_dprintf("%sEND_CHARACTER %s\n", nxtindent, oval_component_get_suffix(component));
-			function_comp_to_print(component, nxtindent);
-		}
-		break;
-	case OVAL_FUNCTION_SPLIT:{
-			oscap_dprintf("%sSPLIT_DELIMITER %s\n", nxtindent,
-				      oval_component_get_split_delimiter(component));
-			function_comp_to_print(component, nxtindent);
-		}
-		break;
-	case OVAL_FUNCTION_SUBSTRING:{
-			oscap_dprintf("%sSUBSTRING_START  %d\n", nxtindent,
-				      oval_component_get_substring_start(component));
-			oscap_dprintf("%sSUBSTRING_LENGTH %d\n", nxtindent,
-				      oval_component_get_substring_length(component));
-			function_comp_to_print(component, nxtindent);
-		}
-		break;
-	case OVAL_FUNCTION_TIMEDIF:{
-			oscap_dprintf("%sTIMEDIF_FORMAT_1  %d\n", nxtindent,
-				      oval_component_get_timedif_format_1(component));
-			oscap_dprintf("%sTIMEDIF_FORMAT_2  %d\n", nxtindent,
-				      oval_component_get_timedif_format_2(component));
-			function_comp_to_print(component, nxtindent);
-		}
-		break;
-	case OVAL_FUNCTION_REGEX_CAPTURE:
-	case OVAL_FUNCTION_ESCAPE_REGEX:
-	case OVAL_FUNCTION_CONCAT:{
-			function_comp_to_print(component, nxtindent);
-		}
-		break;
-	default:
-		break;
-	}
 }
 
 xmlNode *oval_component_to_dom(struct oval_component *component, xmlDoc * doc, xmlNode * parent)
@@ -1236,11 +1179,15 @@ xmlNode *oval_component_to_dom(struct oval_component *component, xmlDoc * doc, x
 		}
 		break;
 	case OVAL_COMPONENT_OBJECTREF:{
+			char *item_field, *record_field;
 			struct oval_object *object = oval_component_get_object(component);
 			char *object_ref = oval_object_get_id(object);
 			xmlNewProp(component_node, BAD_CAST "object_ref", BAD_CAST object_ref);
-			char *item_field = oval_component_get_object_field(component);
+			item_field = oval_component_get_item_field(component);
 			xmlNewProp(component_node, BAD_CAST "item_field", BAD_CAST item_field);
+			record_field = oval_component_get_record_field(component);
+			if (record_field)
+				xmlNewProp(component_node, BAD_CAST "record_field", BAD_CAST record_field);
 		} break;
 	case OVAL_COMPONENT_VARREF:{
 			struct oval_variable *variable = oval_component_get_variable(component);
@@ -1360,23 +1307,61 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 	}
 
 	if (syschar) {
+		char *ifield_name, *rfield_name;
+
 		flag = oval_syschar_get_flag(syschar);
-		char *field_name = objref->object_field;
+		ifield_name = objref->item_field;
+		rfield_name = objref->record_field;
 		struct oval_sysitem_iterator *sysitems = oval_syschar_get_sysitem(syschar);
 		while (oval_sysitem_iterator_has_more(sysitems)) {
 			struct oval_sysitem *sysitem = oval_sysitem_iterator_next(sysitems);
 			struct oval_sysent_iterator *items = oval_sysitem_get_items(sysitem);
 			while (oval_sysent_iterator_has_more(items)) {
+				oval_datatype_t dt;
 				struct oval_sysent *item = oval_sysent_iterator_next(items);
 				char *item_name = oval_sysent_get_name(item);
-				if (strcmp(field_name, item_name) == 0) {
-					char *text = oval_sysent_get_value(item);
-					oval_datatype_t datatype = oval_sysent_get_datatype(item);
-					struct oval_value *value = oval_value_new(datatype, text);
-					oval_collection_add(value_collection, value);
+
+				if (strcmp(ifield_name, item_name))
+					continue;
+
+				dt = oval_sysent_get_datatype(item);
+				if ((dt == OVAL_DATATYPE_RECORD && rfield_name == NULL)
+				    || (dt != OVAL_DATATYPE_RECORD && rfield_name != NULL))
+					/* todo: throw error */
+					continue;
+
+				if (dt == OVAL_DATATYPE_RECORD) {
+					struct oval_record_field_iterator *rf_itr;
+
+					rf_itr = oval_sysent_get_record_fields(item);
+					while (oval_record_field_iterator_has_more(rf_itr)) {
+						struct oval_record_field *rf;
+						char *txtval;
+						struct oval_value *val;
+
+						rf = oval_record_field_iterator_next(rf_itr);
+						item_name = oval_record_field_get_name(rf);
+						if (strcmp(rfield_name, item_name))
+							continue;
+
+						dt = oval_record_field_get_datatype(rf);
+						txtval = oval_record_field_get_value(rf);
+						val = oval_value_new(dt, txtval);
+						oval_collection_add(value_collection, val);
+					}
+					oval_record_field_iterator_free(rf_itr);
+					/* todo: throw error if none matched */
+				} else {
+					char *txtval;
+					struct oval_value *val;
+
+					txtval = oval_sysent_get_value(item);
+					val = oval_value_new(dt, txtval);
+					oval_collection_add(value_collection, val);
 				}
 			}
 			oval_sysent_iterator_free(items);
+			/* todo: throw error if none matched */
 		}
 		oval_sysitem_iterator_free(sysitems);
 	}

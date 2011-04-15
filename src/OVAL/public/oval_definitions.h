@@ -3132,12 +3132,15 @@ void oval_component_set_type(struct oval_component *component, oval_component_ty
  */
 void oval_component_set_object(struct oval_component *, struct oval_object *object);
 /**
- * set attribute @ref Oval_component_object->object_field.
- * IF component->type <> @ref OVAL_COMPONENT_OBJECTREF OR component->object_field <> NULL, this method does nothing.
- * OTHERWISE the method uses a copy of the field parameter to set component->object_field
+ * set attribute @ref Oval_component_object->item_field.
  * @memberof oval_component
  */
-void oval_component_set_object_field(struct oval_component *, char *field);
+void oval_component_set_item_field(struct oval_component *, char *);
+/**
+ * set attribute @ref Oval_component_object->record_field.
+ * @memberof oval_component
+ */
+void oval_component_set_record_field(struct oval_component *, char *);
 /**
  * set attribute @ref Oval_component_object->variable.
  * IF component->type <> @ref OVAL_COMPONENT_OBJECTREF OR component->variable <> NULL, this method does nothing.
@@ -3145,9 +3148,6 @@ void oval_component_set_object_field(struct oval_component *, char *field);
  */
 void oval_component_set_variable(struct oval_component *, struct oval_variable *variable);
 /**
- * set attribute @ref Oval_component_object->object_field.
- * IF component->type <> @ref OVAL_COMPONENT_OBJECTREF OR component->object_field <> NULL, this method does nothing.
- * OTHERWISE the method uses a copy of the field parameter to set component->object_field
  * @memberof oval_component
  */
 void oval_component_add_function_component(struct oval_component *, struct oval_component *);	//type==OVAL_COMPONENT_FUNCTION
@@ -3211,13 +3211,19 @@ oval_component_type_t oval_component_get_type(struct oval_component *);
  */
 struct oval_object *oval_component_get_object(struct oval_component *);	//type==OVAL_COMPONENT_OBJECTREF
 /**
- * Returns attribute @ref Oval_component_object->object_field.
- * IF component->type <> @ref OVAL_COMPONENT_OBJECTREF, this method shall return NULL.
- * @return A pointer to the object_field attribute of the specified @ref oval_component.
+ * Returns attribute @ref Oval_component_object->item_field.
+ * @return A pointer to the item_field attribute of the specified @ref oval_component.
  * @note applications should not free the char* returned by this method
  * @memberof oval_component
  */
-char *oval_component_get_object_field(struct oval_component *);
+char *oval_component_get_item_field(struct oval_component *);
+/**
+ * Returns attribute @ref Oval_component_object->record_field.
+ * @return A pointer to the record_field attribute of the specified @ref oval_component.
+ * @note applications should not free the char* returned by this method
+ * @memberof oval_component
+ */
+char *oval_component_get_record_field(struct oval_component *);
 /**
  * Returns attribute @ref Oval_component_variable->variable.
  * IF component->type <> @ref OVAL_COMPONENT_VARREF, this method shall return NULL.
