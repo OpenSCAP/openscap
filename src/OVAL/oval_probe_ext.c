@@ -28,6 +28,10 @@
 #include <string.h>
 #include <errno.h>
 #include <limits.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <stdlib.h>
 
 #include "common/_error.h"
 #include "common/public/alloc.h"
@@ -41,29 +45,28 @@
 
 #define __ERRBUF_SIZE 128
 
-/* KEEP THIS LIST SORTED! (by subtype) */
 const oval_pdsc_t OSCAP_GSYM(default_pdsc)[] = {
-        /*     2 */ {OVAL_SUBTYPE_SYSINFO,                  "system_info",       "probe_system_info"},
-	/*  7001 */ {OVAL_INDEPENDENT_FAMILY,               "family",            "probe_family"},
-        /*  7002 */ {OVAL_INDEPENDENT_FILE_MD5,             "filemd5",           "probe_filemd5"},
-        /*  7003 */ {OVAL_INDEPENDENT_FILE_HASH,            "filehash",          "probe_filehash"},
-        /*  7005 */ {OVAL_INDEPENDENT_SQL,                  "sql",               "probe_sql"},
-	/*  7006 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54", "probe_textfilecontent54"},
-	/*  7007 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT,    "textfilecontent",   "probe_textfilecontent"},
-	/*  7010 */ {OVAL_INDEPENDENT_XML_FILE_CONTENT,     "xmlfilecontent",    "probe_xmlfilecontent"},
-        /*  7013 */ {OVAL_INDEPENDENT_SQL57,                "sql57",             "probe_sql57"},
-        /*  7011 */ {OVAL_INDEPENDENT_LDAP57,               "ldap57",            "probe_ldap57"},
-	/*  9001 */ {OVAL_LINUX_DPKG_INFO,                  "dpkginfo",          "probe_dpkginfo"},
-	/*  9002 */ {OVAL_LINUX_INET_LISTENING_SERVERS,     "inetlisteningservers", "probe_inetlisteningservers"},
-	/*  9003 */ {OVAL_LINUX_RPM_INFO,                   "rpminfo",           "probe_rpminfo"},
-	/* 13001 */ {OVAL_UNIX_FILE,                        "file",              "probe_file"},
-	/* 13003 */ {OVAL_UNIX_INTERFACE,                   "interface",         "probe_interface"},
-	/* 13004 */ {OVAL_UNIX_PASSWORD,                    "password",          "probe_password"},
-	/* 13005 */ {OVAL_UNIX_PROCESS,                     "process",           "probe_process"},
-	/* 13006 */ {OVAL_UNIX_RUNLEVEL,                    "runlevel",          "probe_runlevel"},
-	/* 13008 */ {OVAL_UNIX_SHADOW,                      "shadow",            "probe_shadow"},
-	/* 13009 */ {OVAL_UNIX_UNAME,                       "uname",             "probe_uname"},
-        /* 13011 */ {OVAL_UNIX_DNSCACHE,                    "dnscache",          "probe_dnscache"}
+        {OVAL_SUBTYPE_SYSINFO,                  "system_info",       "probe_system_info"},
+	{OVAL_INDEPENDENT_FAMILY,               "family",            "probe_family"},
+        {OVAL_INDEPENDENT_FILE_MD5,             "filemd5",           "probe_filemd5"},
+        {OVAL_INDEPENDENT_FILE_HASH,            "filehash",          "probe_filehash"},
+        {OVAL_INDEPENDENT_SQL,                  "sql",               "probe_sql"},
+        {OVAL_INDEPENDENT_SQL57,                "sql57",             "probe_sql57"},
+	{OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54", "probe_textfilecontent54"},
+	{OVAL_INDEPENDENT_TEXT_FILE_CONTENT,    "textfilecontent",   "probe_textfilecontent"},
+	{OVAL_INDEPENDENT_XML_FILE_CONTENT,     "xmlfilecontent",    "probe_xmlfilecontent"},
+        {OVAL_INDEPENDENT_LDAP57,               "ldap57",            "probe_ldap57"},
+	{OVAL_LINUX_DPKG_INFO,                  "dpkginfo",          "probe_dpkginfo"},
+	{OVAL_LINUX_INET_LISTENING_SERVERS,     "inetlisteningservers", "probe_inetlisteningservers"},
+	{OVAL_LINUX_RPM_INFO,                   "rpminfo",           "probe_rpminfo"},
+	{OVAL_UNIX_FILE,                        "file",              "probe_file"},
+	{OVAL_UNIX_INTERFACE,                   "interface",         "probe_interface"},
+	{OVAL_UNIX_PASSWORD,                    "password",          "probe_password"},
+	{OVAL_UNIX_PROCESS,                     "process",           "probe_process"},
+	{OVAL_UNIX_RUNLEVEL,                    "runlevel",          "probe_runlevel"},
+	{OVAL_UNIX_SHADOW,                      "shadow",            "probe_shadow"},
+	{OVAL_UNIX_UNAME,                       "uname",             "probe_uname"},
+        {OVAL_UNIX_DNSCACHE,                    "dnscache",          "probe_dnscache"}
 };
 
 #define DEFAULT_PDSC_COUNT (sizeof OSCAP_GSYM(default_pdsc) / sizeof (oval_pdsc_t))
@@ -104,6 +107,9 @@ void oval_pext_free(oval_pext_t *pext)
 {
         if (!pext->do_init) {
                 /* free structs */
+		oscap_free(pext->pdsc);
+		pext->pdsc     = NULL;
+		pext->pdsc_cnt = 0;
                 oval_pdtbl_free(pext->pdtbl);
         }
 
@@ -631,6 +637,11 @@ static int oval_pdsc_typecmp(oval_subtype_t *a, oval_pdsc_t *b)
         return (*a - b->type);
 }
 
+static int oval_pdsc_cmp(oval_pdsc_t *a, oval_pdsc_t *b)
+{
+	return (a->type - b->type);
+}
+
 static oval_pdsc_t *oval_pdsc_lookup(oval_pdsc_t pdsc[], int count, oval_subtype_t type)
 {
 	return oscap_bfind(pdsc, count, sizeof(oval_pdsc_t), &type,
@@ -984,9 +995,52 @@ int oval_probe_ext_init(oval_pext_t *pext)
 
         pthread_mutex_lock(&pext->lock);
         if (pext->do_init) {
-                pext->pdsc     = (oval_pdsc_t *)OSCAP_GSYM(default_pdsc);
-                pext->pdsc_cnt = DEFAULT_PDSC_COUNT;
-                pext->pdtbl    = oval_pdtbl_new();
+		char curdir[PATH_MAX];
+		struct stat st;
+		register unsigned int i, r;
+
+		if (getcwd(curdir, PATH_MAX) == NULL) {
+			dE("getcwd() failed\n");
+			return (-1);
+		}
+
+		if (chdir(pext->probe_dir) != 0) {
+			dE("Can't chdir to \"%s\"\n", pext->probe_dir);
+			return (-1);
+		}
+
+		pext->pdsc = oscap_alloc(sizeof(oval_pdsc_t) * DEFAULT_PDSC_COUNT);
+
+		for (r = 0, i = 0; i < DEFAULT_PDSC_COUNT; ++i) {
+			if (stat((OSCAP_GSYM(default_pdsc)[i]).file, &st) != 0) {
+				dW("skipped: %s (stat failed, errno=%d)\n", OSCAP_GSYM(default_pdsc)[i].name, errno);
+				continue;
+			}
+
+			if (!S_ISREG(st.st_mode)) {
+				dW("skipped: %s (not a regular file)\n", OSCAP_GSYM(default_pdsc)[i].name);
+				continue;
+			}
+
+			memcpy(pext->pdsc + r, OSCAP_GSYM(default_pdsc) + i, sizeof(oval_pdsc_t));
+			++r;
+		}
+
+		if (r < DEFAULT_PDSC_COUNT)
+			pext->pdsc = oscap_realloc(pext->pdsc, sizeof(oval_pdsc_t) * r);
+
+		pext->pdsc_cnt = r;
+		qsort(pext->pdsc, pext->pdsc_cnt, sizeof(oval_pdsc_t),
+		      (int(*)(const void *, const void *))oval_pdsc_cmp);
+
+		if (chdir(curdir) != 0) {
+			dE("Can't chdir back to \"%s\"\n", curdir);
+			oscap_free(pext->pdsc);
+			pext->pdsc_cnt = 0;
+			return (-1);
+		}
+
+                pext->pdtbl = oval_pdtbl_new();
 
                 if (oval_probe_cmd_init(pext) != 0)
                         ret = -1;
