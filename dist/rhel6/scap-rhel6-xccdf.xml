@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Benchmark xmlns="http://checklists.nist.gov/xccdf/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="RHEL-6" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.1 xccdf-1.1.4.xsd" resolved="0" xml:lang="en-US">
-  <!-- FIXME: grep for rhel5 when finished -->
   <status date="2011-04-13">draft</status>
   <title xml:lang="en-US">Guidance for Securing Red Hat Enterprise Linux 6</title>
   <description xml:lang="en-US">This guide has been created to assist IT professionals in effectively securing
@@ -5653,10 +5652,9 @@
             </Rule>
           </Group>
           <Group id="gr-logs-audit.4.12" hidden="false">
-	    <!-- FIXME: password-auth -->
             <title xml:lang="en-US">Ensure auditd Collects System Administrator Actions</title>
             <description xml:lang="en-US"> At a minimum the audit system should collect
-							administrator actions for all users and root.  Append the following line to /etc/pam.d/system-auth:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							administrator actions for all users and root.  Append the following line to /etc/pam.d/system-auth and /etc/pam.d/password-auth:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							session   required pam_tty_audit.so disable=* enable=root
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> and the following line to /etc/pam.d/sudo and /etc/pam.d/sudo-i:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							session required pam_tty_audit.so open_only enable=root
