@@ -8,7 +8,6 @@ SUBDIRS = file \
 	  rpminfo \
 	  sysinfo \
           process \
-	  filemd5 \
 	  runlevel \
 	  filehash \
 	  password \
