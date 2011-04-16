@@ -1,0 +1,381 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ios-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#ios" xmlns:sch="http://purl.oclc.org/dsdl/schematron" targetNamespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#ios" elementFormDefault="qualified" version="5.7">
+     <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" schemaLocation="oval-system-characteristics-schema.xsd"/>
+     <xsd:annotation>
+          <xsd:documentation>The following is a description of the elements, types, and attributes that compose the IOS specific system characteristic items found in Open Vulnerability and Assessment Language (OVAL). Each item is an extension of the standard item element defined in the Core System Characteristic Schema. Through extension, each item inherits a set of elements and attributes that are shared amongst all OVAL Items. Each item is described in detail and should provide the information necessary to understand what each element and attribute represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between the different tests and their relationship to the Core System Characteristic Schema is not outlined here.</xsd:documentation>
+          <xsd:documentation>The OVAL Schema is maintained by The MITRE Corporation and developed by the public OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
+          <xsd:appinfo>
+               <schema>IOS System Characteristics</schema>
+               <version>5.7</version>
+               <date>5/3/2010 8:41:18 PM</date>
+                <terms_of_use>Copyright (c) 2002-2010, The MITRE Corporation. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at http://oval.mitre.org/oval/about/termsofuse.html. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+               <sch:ns prefix="oval-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"/>
+               <sch:ns prefix="ios-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#ios"/>
+              <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+          </xsd:appinfo>
+     </xsd:annotation>
+     <!-- =============================================================================== -->
+     <!-- ========================  IOS GLOBAL ITEM   =================================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="global_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>Sotres information about the existence of a particular line in the ios config file under the global context</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="global_command" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ios-sc_globalitemglobal_command">
+                                                  <sch:rule context="ios-sc:global_item/ios-sc:global_command">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the global_command entity of a global_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ========================  IOS INTERFACE ITEM  ================================= -->
+     <!-- =============================================================================== -->
+     <xsd:element name="interface_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation/>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ios-sc_interfaceitemname">
+                                                  <sch:rule context="ios-sc:interface_item/ios-sc:name">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the name entity of a global_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="ip_directed_broadcast_command" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ios-sc_interfaceitemip_directed_broadcast_command">
+                                                  <sch:rule context="ios-sc:interface_item/ios-sc:ip_directed_broadcast_command">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the ip_directed_broadcast_command entity of a global_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="no_ip_directed_broadcast_command" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ios-sc_interfaceitemno_ip_directed_broadcast_command">
+                                                  <sch:rule context="ios-sc:interface_item/ios-sc:no_ip_directed_broadcast_command">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the no_ip_directed_broadcast_command entity of a global_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="proxy_arp_command" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ios-sc_interfaceitemproxy_arp_command">
+                                                  <sch:rule context="ios-sc:interface_item/ios-sc:proxy_arp_command">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the proxy_arp_command entity of a global_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="shutdown_command" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ios-sc_interfaceitemshutdown_command">
+                                                  <sch:rule context="ios-sc:interface_item/ios-sc:shutdown_command">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the shutdown_command entity of a global_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ============================  IOS LINE ITEM  ================================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="line_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>Stores the properties of specific lines in the ios config file.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="show_subcommand" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The name of the SHOW sub-command.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ios-sc_lineitemshow_subcommand">
+                                                  <sch:rule context="ios-sc:line_item/ios-sc:show_subcommand">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the show_subcommand entity of a line_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="config_line" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The value returned from by the specified SHOW sub-command.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ios-sc_lineitemconfig_line">
+                                                  <sch:rule context="ios-sc:line_item/ios-sc:config_line">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the config_line entity of a line_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ==========================  IOS SNMP ITEM   =================================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="snmp_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>Stores results from collecting lines under the global context associated with snmp.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="access_list" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ios-sc_snmpitemaccess_list">
+                                                  <sch:rule context="ios-sc:snmp_item/ios-sc:access_list">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the access_list entity of a snmp_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="community_name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ios-sc_snmpitemcommunity_name">
+                                                  <sch:rule context="ios-sc:snmp_item/ios-sc:community_name">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the community_name entity of a snmp_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ==========================  IOS TCLSH ITEM   =================================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="tclsh_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>The tclsh item holds information about the availability of tcl on the IOS operating system. It extends the standard ItemType as defined in the oval-system-characteristics schema and one should refer to the ItemType description for more information.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="available" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This boolean entity describes whether TCLSH is available on the system. A value of true means that TCLSH is available. Per Cisco documentation, the accepted way to see if the device supports tcl functionality is to enter the tcl shell. If the attempt results in a tcl prompt then the device supports tclsh and has it enabled.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ios-sc_tclshitemavailable">
+                                                  <sch:rule context="ios-sc:tclsh_item/ios-sc:available">
+                                                       <sch:assert test="not(@datatype) or @datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the available entity of a tclsh_item should be 'boolean'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ========================  IOS VERSION ITEM  =================================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="version_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>The version_item holds information about the version of the IOS operating system. It extends the standard ItemType as defined in the oval-system-characteristics schema and one should refer to the ItemType description for more information.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="major_release" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                       <xsd:documentation>The major_release is a combination of train and rebuild information and is used by Cisco advisories to identify major releases.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <oval:deprecated_info>
+                                                  <oval:version>5.5</oval:version>
+                                                  <oval:reason>Additional IOS version components were added to the version_state in order to support a wider range of IOS version strings.  Also, the major_release entity was removed from the version_state element resulting in its deprecation.</oval:reason>
+                                                  <oval:comment>This entity has been deprecated and will be removed in version 6.0 of the language.</oval:comment>
+                                             </oval:deprecated_info>
+                                             <sch:pattern id="ios-sc_versionitemmajor_release">
+                                                  <sch:rule context="ios-sc:version_item/ios-sc:major_release">
+                                                        <sch:report test="true()">DEPRECATED ELEMENT: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                                                        <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the major_release entity of a version_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="train_number" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                       <xsd:documentation>The train number is the dotted version that starts a version string. For example the version string 12.2(3)T has a train number of 12.2.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <oval:deprecated_info>
+                                                  <oval:version>5.5</oval:version>
+                                                  <oval:reason>Additional IOS version components were added to the version_state in order to support a wider range of IOS version strings.   Also, the train_number entity was removed from the version_state element resulting in its deprecation.</oval:reason>
+                                                  <oval:comment>This entity has been deprecated and will be removed in version 6.0 of the language.</oval:comment>
+                                             </oval:deprecated_info>
+                                             <sch:pattern id="ios-sc_versionitemtrain_number">
+                                                  <sch:rule context="ios-sc:version_item/ios-sc:train_number">
+                                                        <sch:report test="true()">DEPRECATED ELEMENT: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                                                        <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the train_number entity of a version_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                             <xsd:element name="major_version" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                 <xsd:annotation>
+                                     <xsd:documentation>The major_version entity specifies the major version piece of the version string.  The value is an integer and in the example 12.4(9)T0a the major version is '12'.</xsd:documentation>
+                                     <xsd:appinfo>
+                                         <sch:pattern id="ios-sc_versionitemmajorversion">
+                                             <sch:rule context="ios-sc:version_item/ios-sc:major_version">
+                                                 <sch:assert test="@datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the major_version entity of a version_item should be 'int'</sch:assert>
+                                             </sch:rule>
+                                         </sch:pattern>
+                                     </xsd:appinfo>
+                                 </xsd:annotation>
+                             </xsd:element>
+                             <xsd:element name="minor_version" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                 <xsd:annotation>
+                                     <xsd:documentation>The minor_version entity specifies the minor version piece of the version string.  The value is an integer and in the example 12.4(9)T0a the minor version is '4'.</xsd:documentation>
+                                     <xsd:appinfo>
+                                         <sch:pattern id="ios-sc_versionitemminorversion">
+                                             <sch:rule context="ios-sc:version_item/ios-sc:minor_version">
+                                                 <sch:assert test="@datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the minor_version entity of a version_item should be 'int'</sch:assert>
+                                             </sch:rule>
+                                         </sch:pattern>
+                                     </xsd:appinfo>
+                                 </xsd:annotation>
+                             </xsd:element>
+                             <xsd:element name="release" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                 <xsd:annotation>
+                                     <xsd:documentation>The release entity specifies the release piece of the version string.  The value is an integer and in the example 12.4(9)T0a the release is '9'.</xsd:documentation>
+                                     <xsd:appinfo>
+                                         <sch:pattern id="ios-sc_versionitemrelease">
+                                             <sch:rule context="ios-sc:version_item/ios-sc:release">
+                                                 <sch:assert test="@datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the release entity of a version_item should be 'int'</sch:assert>
+                                             </sch:rule>
+                                         </sch:pattern>
+                                     </xsd:appinfo>
+                                 </xsd:annotation>
+                             </xsd:element>
+                             <xsd:element name="train_identifier" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The train identifier is the type of Train. For example the version string 12.2(3)T has a train identifier of T. Please see the EntityItemTrainIdentifierType for more information about the different train identifiers.</xsd:documentation>
+                                       <xsd:documentation>The train_identifier entity specifies the type of train represented in the version string.  The value is a string and in the example 12.4(9)T0a the train identifier is 'T'.  The following explaination from Wikipedia should help explain the different train identifiers. Cisco IOS releases are split into several "trains", each containing a different set of features. Trains more or less map onto distinct markets or groups of customers that Cisco is targeting.  The 'mainline' train is designed to be the most stable release the company can offer, and its feature set never expands during its lifetime. Updates are released only to address bugs in the product. The previous technology train becomes the source for the current mainline train--for example, the 12.1T train becomes the basis for the 12.2 mainline. Therefore, to determine the features available in a particular mainline release, look at the previous T train release.  The 'T' (Technology) train, gets new features and bug fixes throughout its life, and is therefore less stable than the mainline. (In releases prior to Cisco IOS Release 12.0, the P train served as the Technology train.)  The 'S' (Service Provider) train, runs only on the company's core router products and is heavily customized for Service Provider customers.  The 'E' (Enterprise) train, is customized for implementation in enterprise environments.  The 'B' (broadband) train, support internet based broadband features.  The 'XA', 'Xb' ... (special functionality) train, needs to be documented.  There are other trains from time to time, designed for specific needs -- for example, the 12.0AA train contained new code required for Cisco's AS5800 product.</xsd:documentation>
+                                       <xsd:appinfo>
+                                             <sch:pattern id="ios-sc_versionitemtrain_identifier">
+                                                  <sch:rule context="ios-sc:version_item/ios-sc:train_identifier">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the train_identifier entity of a version_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                             <xsd:element name="rebuild" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                 <xsd:annotation>
+                                     <xsd:documentation>The rebuild entity specifies the rebuild piece of the version string  The value is an integer and in the example 12.4(9)T0a the rebuild is '0'.  Often a rebuild is compiled to fix a single specific problem or vulnerability for a given IOS version. For example, 12.1(8)E14 is a Rebuild, the 14 denoting the 14th rebuild of 12.1(8)E. Rebuilds are produced to either quickly repair a defect, or to satisfy customers who do not want to upgrade to a later major revision because they may be running critical infrastructure on their devices, and hence prefer to minimise change and risk.</xsd:documentation>
+                                     <xsd:appinfo>
+                                         <sch:pattern id="ios-sc_versionitemrebuild">
+                                             <sch:rule context="ios-sc:version_item/ios-sc:rebuild">
+                                                 <sch:assert test="@datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the rebuild entity of a version_item should be 'int'</sch:assert>
+                                             </sch:rule>
+                                         </sch:pattern>
+                                     </xsd:appinfo>
+                                 </xsd:annotation>
+                             </xsd:element>
+                             <xsd:element name="subrebuild" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                 <xsd:annotation>
+                                     <xsd:documentation>The subrebuild entity specifies the subrebuild piece of the version string.  The value is a string and in the example 12.4(9)T0a the subrebuild is 'a'.</xsd:documentation>
+                                     <xsd:appinfo>
+                                         <sch:pattern id="ios-sc_versionitemsubrebuild">
+                                             <sch:rule context="ios-sc:version_item/ios-sc:subrebuild">
+                                                 <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the subrebuild entity of a version_item should be 'string'</sch:assert>
+                                             </sch:rule>
+                                         </sch:pattern>
+                                     </xsd:appinfo>
+                                 </xsd:annotation>
+                             </xsd:element>
+                             <xsd:element name="mainline_rebuild" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                 <xsd:annotation>
+                                     <xsd:documentation>The mainline_rebuild entity specifies the mainline rebuild piece of the version string.  The mainline rebuild is just a regular rebuild release against the mainline operating system release (e.g. the branch of development that would typically be called "the trunk" that isn't associated with a train). Since there is no train identifier to stick the rebuild release after, they stick a alphabetic character inside the parens holding the maintenance release number. For example, 12.4(5b) is the second rebuild of the 12.4(5) maintenance release.</xsd:documentation>
+                                     <xsd:appinfo>
+                                         <sch:pattern id="ios-sc_versionitemmainlinerebuild">
+                                             <sch:rule context="ios-sc:version_item/ios-sc:mainline_rebuild">
+                                                 <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the mainline_rebuild entity of a version_item should be 'string'</sch:assert>
+                                             </sch:rule>
+                                         </sch:pattern>
+                                     </xsd:appinfo>
+                                 </xsd:annotation>
+                             </xsd:element>
+                             <xsd:element name="version_string" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The version entity holds the raw string output of a 'show version' command.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ios-sc_versionitemversion_string">
+                                                  <sch:rule context="ios-sc:version_item/ios-sc:version_string">
+                                                       <sch:assert test="not(@datatype) or @datatype='ios_version'">item <sch:value-of select="../@id"/> - datatype attribute for the version_string entity of a version_item should be 'ios_version'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- =============================================================================== -->
+     <!-- =============================================================================== -->
+</xsd:schema>

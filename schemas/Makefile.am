@@ -1,8 +1,50 @@
 
 oval55dir = $(pkgdatadir)/schemas/oval/5.5/
 oval56dir = $(pkgdatadir)/schemas/oval/5.6/
+oval57dir = $(pkgdatadir)/schemas/oval/5.7/
 xccdf114dir = $(pkgdatadir)/schemas/xccdf/1.1.4/
 
+oval57_DATA = \
+		oval/5.7/aix-definitions-schema.xsd \
+		oval/5.7/aix-system-characteristics-schema.xsd \
+		oval/5.7/apache-definitions-schema.xsd \
+		oval/5.7/apache-system-characteristics-schema.xsd \
+		oval/5.7/catos-definitions-schema.xsd \
+		oval/5.7/catos-system-characteristics-schema.xsd \
+		oval/5.7/debian-definitions-schema.xsd \
+		oval/5.7/debian-system-characteristics-schema.xsd \
+		oval/5.7/esx-definitions-schema.xsd \
+		oval/5.7/esx-system-characteristics-schema.xsd \
+		oval/5.7/freebsd-definitions-schema.xsd \
+		oval/5.7/freebsd-system-characteristics-schema.xsd \
+		oval/5.7/hpux-definitions-schema.xsd \
+		oval/5.7/hpux-system-characteristics-schema.xsd \
+		oval/5.7/independent-definitions-schema.xsd \
+		oval/5.7/independent-system-characteristics-schema.xsd \
+		oval/5.7/ios-definitions-schema.xsd \
+		oval/5.7/ios-system-characteristics-schema.xsd \
+		oval/5.7/linux-definitions-schema.xsd \
+		oval/5.7/linux-system-characteristics-schema.xsd \
+		oval/5.7/macos-definitions-schema.xsd \
+		oval/5.7/macos-system-characteristics-schema.xsd \
+		oval/5.7/oval-common-schema.xsd \
+		oval/5.7/oval-definitions-schema.xsd \
+		oval/5.7/oval-results-schema.xsd \
+		oval/5.7/oval-system-characteristics-schema.xsd \
+		oval/5.7/oval-variables-schema.xsd \
+		oval/5.7/pixos-definitions-schema.xsd \
+		oval/5.7/pixos-system-characteristics-schema.xsd \
+		oval/5.7/redhat-definitions-schema.xsd \
+		oval/5.7/redhat-system-characteristics-schema.xsd \
+		oval/5.7/sharepoint-definitions-schema.xsd \
+		oval/5.7/sharepoint-system-characteristics-schema.xsd \
+		oval/5.7/solaris-definitions-schema.xsd \
+		oval/5.7/solaris-system-characteristics-schema.xsd \
+		oval/5.7/unix-definitions-schema.xsd \
+		oval/5.7/unix-system-characteristics-schema.xsd \
+		oval/5.7/windows-definitions-schema.xsd \
+		oval/5.7/windows-system-characteristics-schema.xsd \
+		oval/5.7/xmldsig-core-schema.xsd
 oval56_DATA = \
 		oval/5.6/sharepoint-system-characteristics-schema.xsd \
 		oval/5.6/sharepoint-definitions-schema.xsd \
@@ -90,6 +132,46 @@ xccdf114_DATA = \
 
 
 EXTRA_DIST = \
+		oval/5.7/aix-definitions-schema.xsd \
+		oval/5.7/aix-system-characteristics-schema.xsd \
+		oval/5.7/apache-definitions-schema.xsd \
+		oval/5.7/apache-system-characteristics-schema.xsd \
+		oval/5.7/catos-definitions-schema.xsd \
+		oval/5.7/catos-system-characteristics-schema.xsd \
+		oval/5.7/debian-definitions-schema.xsd \
+		oval/5.7/debian-system-characteristics-schema.xsd \
+		oval/5.7/esx-definitions-schema.xsd \
+		oval/5.7/esx-system-characteristics-schema.xsd \
+		oval/5.7/freebsd-definitions-schema.xsd \
+		oval/5.7/freebsd-system-characteristics-schema.xsd \
+		oval/5.7/hpux-definitions-schema.xsd \
+		oval/5.7/hpux-system-characteristics-schema.xsd \
+		oval/5.7/independent-definitions-schema.xsd \
+		oval/5.7/independent-system-characteristics-schema.xsd \
+		oval/5.7/ios-definitions-schema.xsd \
+		oval/5.7/ios-system-characteristics-schema.xsd \
+		oval/5.7/linux-definitions-schema.xsd \
+		oval/5.7/linux-system-characteristics-schema.xsd \
+		oval/5.7/macos-definitions-schema.xsd \
+		oval/5.7/macos-system-characteristics-schema.xsd \
+		oval/5.7/oval-common-schema.xsd \
+		oval/5.7/oval-definitions-schema.xsd \
+		oval/5.7/oval-results-schema.xsd \
+		oval/5.7/oval-system-characteristics-schema.xsd \
+		oval/5.7/oval-variables-schema.xsd \
+		oval/5.7/pixos-definitions-schema.xsd \
+		oval/5.7/pixos-system-characteristics-schema.xsd \
+		oval/5.7/redhat-definitions-schema.xsd \
+		oval/5.7/redhat-system-characteristics-schema.xsd \
+		oval/5.7/sharepoint-definitions-schema.xsd \
+		oval/5.7/sharepoint-system-characteristics-schema.xsd \
+		oval/5.7/solaris-definitions-schema.xsd \
+		oval/5.7/solaris-system-characteristics-schema.xsd \
+		oval/5.7/unix-definitions-schema.xsd \
+		oval/5.7/unix-system-characteristics-schema.xsd \
+		oval/5.7/windows-definitions-schema.xsd \
+		oval/5.7/windows-system-characteristics-schema.xsd \
+		oval/5.7/xmldsig-core-schema.xsd \
 		oval/5.6/sharepoint-system-characteristics-schema.xsd \
 		oval/5.6/sharepoint-definitions-schema.xsd \
 		oval/5.6/independent-system-characteristics-schema.xsd \
@@ -169,6 +251,4 @@ EXTRA_DIST = \
 		xccdf/1.1.4/xml.xsd \
 		xccdf/1.1.4/XMLSchema.dtd \
 		xccdf/1.1.4/datatypes.dtd
-
-
 

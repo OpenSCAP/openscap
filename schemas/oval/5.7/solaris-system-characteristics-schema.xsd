@@ -1,0 +1,394 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" xmlns:sol-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#solaris" xmlns:sch="http://purl.oclc.org/dsdl/schematron" targetNamespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#solaris" elementFormDefault="qualified" version="5.7">
+     <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" schemaLocation="oval-system-characteristics-schema.xsd"/>
+     <xsd:annotation>
+          <xsd:documentation>The following is a description of the elements, types, and attributes that compose the Solaris specific system characteristic items found in Open Vulnerability and Assessment Language (OVAL). Each item is an extension of the standard test element defined in the Core Definition Schema. Through extension, each test inherits a set of elements and attributes that are shared amongst all OVAL tests. Each test is described in detail and should provide the information necessary to understand what each element and attribute represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between the different tests and their relationship to the Core Definition Schema is not outlined here.</xsd:documentation>
+          <xsd:documentation>The OVAL Schema is maintained by The MITRE Corporation and developed by the public OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
+          <xsd:appinfo>
+               <schema>Solaris System Characteristics</schema>
+               <version>5.7</version>
+               <date>5/3/2010 8:41:21 PM</date>
+                <terms_of_use>Copyright (c) 2002-2010, The MITRE Corporation. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at http://oval.mitre.org/oval/about/termsofuse.html. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+               <sch:ns prefix="oval-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"/>
+               <sch:ns prefix="sol-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#solaris"/>
+              <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+          </xsd:appinfo>
+     </xsd:annotation>
+     <!-- =============================================================================== -->
+     <!-- ===============================  ISAINFO ITEM  ================================ -->
+     <!-- =============================================================================== -->
+     <xsd:element name="isainfo_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>Information about the instruction set architectures. This information can be retrieved by the isainfo command.</xsd:documentation>
+               <xsd:documentation>The isainfo_item was originally developed by Robert L. Hollis at ThreatGuard, Inc. Many thanks for their support of the OVAL project.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="bits" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the number of bits in the address space of the native instruction set (isainfo -b).</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sol-sc_isaitembits">
+                                                  <sch:rule context="sol-sc:isainfo_item/sol-sc:bits">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the bits entity of an isainfo_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="kernel_isa" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the name of the instruction set used by kernel components (isainfo -k).</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sol-sc_isaitemkernel_isa">
+                                                  <sch:rule context="sol-sc:isainfo_item/sol-sc:kernel_isa">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the kernel_isa entity of an isainfo_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="application_isa" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the name of the instruction set used by portable applications (isainfo -n).</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sol-sc_isaitemapplication_isa">
+                                                  <sch:rule context="sol-sc:isainfo_item/sol-sc:application_isa">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the application_isa entity of an isainfo_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ===============================  PACKAGE ITEM  ================================ -->
+     <!-- =============================================================================== -->
+     <xsd:element name="package_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>Output of /usr/bin/pkginfo. See pkginfo(1).</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="pkginst" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sol-sc_packageitempkginst">
+                                                  <sch:rule context="sol-sc:package_item/sol-sc:pkginst">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the pkginst entity of a package_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sol-sc_packageitemname">
+                                                  <sch:rule context="sol-sc:package_item/sol-sc:name">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the name entity of a package_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="category" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sol-sc_packageitemcategory">
+                                                  <sch:rule context="sol-sc:package_item/sol-sc:category">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the category entity of a package_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="version" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sol-sc_packageitemversion">
+                                                  <sch:rule context="sol-sc:package_item/sol-sc:version">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the version entity of a package_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="vendor" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sol-sc_packageitemvendor">
+                                                  <sch:rule context="sol-sc:package_item/sol-sc:vendor">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the vendor entity of a package_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="description" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sol-sc_packageitemdescription">
+                                                  <sch:rule context="sol-sc:package_item/sol-sc:description">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the description entity of a package_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- =============================  PATCH ITEM  ==================================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="patch_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>From /usr/bin/showrev -p. See showrev(1M).</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="base" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sol-sc_patchitembase">
+                                                  <sch:rule context="sol-sc:patch_item/sol-sc:base">
+                                                       <sch:assert test="@datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the base entity of a patch_item should be 'int'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="version" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sol-sc_patchitemversion">
+                                                  <sch:rule context="sol-sc:patch_item/sol-sc:version">
+                                                       <sch:assert test="@datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the version entity of a patch_item should be 'int'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- =================================  SMF ITEM  ================================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="smf_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>The smf_item is used to hold information related to service management facility controlled services</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="fmri" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The FMRI (Fault Managed Resource Identifier) entity holds the identifier associated with a service.  Services managed by SMF are assigned FMRI URIs prefixed with the scheme name "svc".  FMRIs used by SMF can be expressed in three ways: first as an absolute path including a location path such as "localhost"  (eg svc://localhost/system/system-log:default), second as a path relative to the local machine (eg svc:/system/system-log:default), and third as simply the service identifier with the string prefixes implied (eg system/system-log:default).  For OVAL, the absolute path version (first choice) should be used.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sol-sc_fmriitembase">
+                                                            <sch:rule context="sol-sc:smf_item/sol-sc:fmri">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the fmri entity of a smf_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="service_name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The service_name entity is usually an abbreviated form of the FMRI.  In the example svc://localhost/system/system-log:default, the name would be system-log.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sol-sc_srvnameitembase">
+                                                            <sch:rule context="sol-sc:smf_item/sol-sc:service_name">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the service_name entity of a smf_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="service_state" type="sol-sc:EntityItemSmfServiceStateType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The service_state entity describes the state that the service is in.  Each service instance is always in a well-defined state based on its dependencies, the results of the execution of its methods, and its potential receipt of events from the contracts filesystem.  The service_state values are UNINITIALIZED, OFFLINE, ONLINE, DEGRADED, MAINTENANCE, DISABLED, and LEGACY-RUN.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sol-sc_srvstateitembase">
+                                                            <sch:rule context="sol-sc:smf_item/sol-sc:service_state">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the service_state entity of a smf_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="protocol" type="sol-sc:EntityItemSmfProtocolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The protocol entity describes the protocol supported by the service.  Possible values are tcp, tcp6, tcp6only, udp, udp6, and udp6only</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sol-sc_protocolitembase">
+                                                            <sch:rule context="sol-sc:smf_item/sol-sc:protocol">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the protocol entity of a smf_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="server_executable" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The entity server_executable is a string representing the listening daemon on the server side.  An example being 'svcprop ftp' which might show 'inetd/start/exec astring /usr/sbin/in.ftpd\ -a'</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sol-sc_srvexeitembase">
+                                                            <sch:rule context="sol-sc:smf_item/sol-sc:server_executable">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the server_executable entity of a smf_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="server_arguements" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The server_arguments entity describes the parameters that are passed to the service.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sol-sc_srvargsitembase">
+                                                            <sch:rule context="sol-sc:smf_item/sol-sc:server_arguements">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the server_arguements entity of a smf_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="exec_as_user" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The exec_as_user entity is a string pulled from svcprop in the following format:  inetd_start/user astring root</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sol-sc_execasuseritembase">
+                                                            <sch:rule context="sol-sc:smf_item/sol-sc:exec_as_user">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the exec_as_user entity of a smf_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+     <!-- =============================================================================== -->
+     <!-- =============================================================================== -->
+      <xsd:complexType name="EntityItemSmfProtocolType">
+            <xsd:annotation>
+                  <xsd:documentation>The EntityItemSmfProtocolType defines the different values that are valid for the protocol entity of a smf_item.  The empty string is also allowed as a valid value to support empty emlements associated with error conditions.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:restriction base="oval-sc:EntityItemStringType">
+                        <xsd:enumeration value="tcp">
+                              <xsd:annotation>
+                                    <xsd:documentation></xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="tcp6">
+                              <xsd:annotation>
+                                    <xsd:documentation></xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="tcp6only">
+                              <xsd:annotation>
+                                    <xsd:documentation>Request that service listen only for and pass on true IPv6 requests (not IPv4 mapped ones).</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="udp">
+                              <xsd:annotation>
+                                    <xsd:documentation></xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="udp6">
+                              <xsd:annotation>
+                                    <xsd:documentation></xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="udp6only">
+                              <xsd:annotation>
+                                    <xsd:documentation>Request that service listen only for and pass on true IPv6 requests (not IPv4 mapped ones).</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="">
+                              <xsd:annotation>
+                                    <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                  </xsd:restriction>
+            </xsd:simpleContent>
+      </xsd:complexType>
+      <xsd:complexType name="EntityItemSmfServiceStateType">
+            <xsd:annotation>
+                  <xsd:documentation>The EntityItemSmfServiceStateType defines the different values that are valid for the service_state entity of a smf_item.  The empty string is also allowed as a valid value to support empty emlements associated with error conditions.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:restriction base="oval-sc:EntityItemStringType">
+                        <xsd:enumeration value="DEGRADED">
+                              <xsd:annotation>
+                                    <xsd:documentation>The instance is enabled and running or available to run. The instance, however, is functioning at a limited capacity in comparison to normal operation.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="DISABLED">
+                              <xsd:annotation>
+                                    <xsd:documentation>The instance is disabled.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="MAINTENANCE">
+                              <xsd:annotation>
+                                    <xsd:documentation>The instance is enabled, but not able to run.  Administrative action is required to restore the instance to offline and subsequent states.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="LEGACY-RUN">
+                              <xsd:annotation>
+                                    <xsd:documentation>This state represents a legacy instance that is not managed by the service management facility.  Instances in this state have been started at some point, but might or might not be running.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="OFFLINE">
+                              <xsd:annotation>
+                                    <xsd:documentation>The instance is enabled, but not yet running or available to run.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="ONLINE">
+                              <xsd:annotation>
+                                    <xsd:documentation>The instance is enabled and running or is available to run.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="UNINITIALIZED">
+                              <xsd:annotation>
+                                    <xsd:documentation>This is the initial state for all service instances.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="">
+                              <xsd:annotation>
+                                    <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                  </xsd:restriction>
+            </xsd:simpleContent>
+      </xsd:complexType>
+</xsd:schema>
