@@ -423,6 +423,7 @@ static const struct oscap_string_map OVAL_SUBTYPE_INDEPENDENT_MAP[] = {
 	{OVAL_INDEPENDENT_FILE_MD5, "filemd5"},
 	{OVAL_INDEPENDENT_FILE_HASH, "filehash"},
 	{OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE, "environmentvariable"},
+	{OVAL_INDEPENDENT_SQL57, "sql57"},
 	{OVAL_INDEPENDENT_SQL, "sql"},
 	{OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54"},
 	{OVAL_INDEPENDENT_TEXT_FILE_CONTENT, "textfilecontent"},
