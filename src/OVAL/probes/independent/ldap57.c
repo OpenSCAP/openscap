@@ -1,3 +1,31 @@
+/**
+ * @file   ldap57.c
+ * @brief  ldap57 probe
+ * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ *
+ */
+
+/*
+ * Copyright 2011 Red Hat Inc., Durham, North Carolina.
+ * All Rights Reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Authors:
+ *      "Daniel Kopecek" <dkopecek@redhat.com>
+ */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -32,8 +60,6 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
 {
         LDAP        *ldp;
         LDAPMessage *ldpres, *entry;
-        BerElement  *berptr = NULL;
-        struct berval **vals;
 
         SEXP_t *se_ldap_behaviors = NULL, *se_relative_dn = NULL;
         SEXP_t *se_suffix = NULL, *se_attribute = NULL;
@@ -174,6 +200,8 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
          * Query each URI
          */
         for (;;) {
+                char *entry_dn = NULL;
+
                 if ((uri = strtok_r(uri_list, " ,", &uri_save)) == NULL)
                         break;
 
@@ -197,32 +225,165 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
                         goto fail0;
                 }
 
-                entry = ldap_first_entry(ldp, ldpres);
+                entry    = ldap_first_entry(ldp, ldpres);
+                entry_dn = ldap_get_dn(ldp, entry);
 
                 while (entry != NULL) {
-                        attr = ldap_first_attribute(ldp, entry, &berptr);
+                        BerElement *berelm = NULL;
+
+                        attr = ldap_first_attribute(ldp, entry, &berelm);
+
+                        /* XXX: pattern match filter */
 
                         while (attr != NULL) {
-                                vals = ldap_get_values_len(ldp, entry, attribute);
+                                SEXP_t   *se_value = NULL;
+                                ber_tag_t bertag   = LBER_DEFAULT;
+                                ber_len_t berlen   = 0;
+                                Sockbuf  *berbuf   = NULL;
+                                uint32_t  field_n  = 0;
+                                SEXP_t    se_tmp_mem;
+
+                                berbuf = ber_sockbuf_alloc();
+
+                                /*
+                                 * Prepare the value (record) entity. Collect only
+                                 * primitive (i.e. simple) types.
+                                 */
+                                se_value = probe_ent_creat1("value", NULL, NULL);
+                                probe_ent_setdatatype(se_value, OVAL_DATATYPE_RECORD);
+
+                                /*
+                                 * XXX: does ber_get_next() return LBER_ERROR after the last value?
+                                 */
+                                while ((bertag = ber_get_next(berbuf, &berlen, berelm)) != LBER_ERROR) {
+                                        SEXP_t *field = NULL;
+                                        oval_datatype_t field_type = OVAL_DATATYPE_UNKNOWN;
+
+                                        switch(bertag & LBER_ENCODING_MASK) {
+                                        case LBER_PRIMITIVE:
+                                                dI("Found primitive value, bertag = %u\n", bertag);
+                                        case LBER_CONSTRUCTED:
+                                                dW("Don't know how to handle LBER_CONSTRUCTED values\n");
+                                        default:
+                                                dW("Skipping attribute value, bertag = %u\n", bertag);
+                                                continue;
+                                        }
+
+                                        assume_d(bertag & LBER_PRIMITIVE, NULL);
+
+                                        switch(bertag & LBER_BIG_TAG_MASK) {
+                                        case LBER_BOOLEAN:
+                                        {       /* LDAPTYPE_BOOLEAN */
+                                                ber_int_t val = -1;
+
+                                                if (ber_get_boolean(berelm, &val) == LBER_ERROR) {
+                                                        dW("ber_get_boolean: LBER_ERROR\n");
+                                                        /* XXX: set error status on field */
+                                                        continue;
+                                                }
+
+                                                assume_d(val != -1, NULL);
+                                                field = probe_ent_creat1("field", NULL, SEXP_number_newb_r(&se_tmp_mem, (bool)val));
+                                                field_type = OVAL_DATATYPE_BOOLEAN;
+                                                SEXP_free_r(&se_tmp_mem);
+                                        }       break;
+                                        case LBER_INTEGER:
+                                        {       /* LDAPTYPE_INTEGER */
+                                                ber_int_t val = -1;
+
+                                                if (ber_get_int(berelm, &val) == LBER_ERROR) {
+                                                        dW("ber_get_int: LBER_ERROR\n");
+                                                        /* XXX: set error status on field */
+                                                        continue;
+                                                }
+
+                                                field = probe_ent_creat1("field", NULL, SEXP_number_newi_r(&se_tmp_mem, (int)val));
+                                                field_type = OVAL_DATATYPE_INTEGER;
+                                                SEXP_free_r(&se_tmp_mem);
+                                        }       break;
+                                        case LBER_BITSTRING:
+                                                /* LDAPTYPE_BIT_STRING */
+                                                dW("LBER_BITSTRING: not implemented\n");
+                                                continue;
+                                        case LBER_OCTETSTRING:
+                                        {       /*
+                                                 * LDAPTYPE_PRINTABLE_STRING
+                                                 * LDAPTYPE_NUMERIC_STRING
+                                                 * LDAPTYPE_DN_STRING
+                                                 * LDAPTYPE_BINARY (?)
+                                                 */
+                                                char *val = NULL;
+
+                                                if (ber_get_stringa(berelm, &val) == LBER_ERROR) {
+                                                        dW("ber_get_stringa: LBER_ERROR\n");
+                                                        /* XXX: set error status on field */
+                                                        continue;
+                                                }
+
+                                                assume_d(val != NULL, NULL);
+                                                field = probe_ent_creat1("field", NULL, SEXP_string_new_r(&se_tmp_mem, val, strlen(val)));
+                                                field_type = OVAL_DATATYPE_STRING;
+                                                SEXP_free_r(&se_tmp_mem);
+                                                ber_memfree(val);
+                                        }       break;
+                                        case LBER_NULL:
+                                                /* XXX: no equivalent LDAPTYPE_? or empty */
+                                                dI("LBER_NULL: skipped\n");
+                                                continue;
+                                        case LBER_ENUMERATED:
+                                                /* XXX: no equivalent LDAPTYPE_? */
+                                                dW("Don't know how to handle LBER_ENUMERATED type\n");
+                                                continue;
+                                        default:
+                                                dW("Unknown attribute value type, bertag = %u\n", bertag);
+                                                continue;
+                                        }
+
+                                        if (field != NULL) {
+                                                assume_d(field_type != OVAL_DATATYPE_UNKNOWN, NULL);
+
+                                                probe_ent_setdatatype(field, field_type);
+                                                probe_ent_attr_add(field, "name", SEXP_string_newf_r(&se_tmp_mem, "%u", field_n));
+                                                SEXP_list_add(se_value, field);
+                                                SEXP_free_r(&se_tmp_mem);
+                                                SEXP_free(field);
+
+                                                ++field_n;
+                                        }
+                                }
+
+                                ber_sockbuf_free(berbuf);
+
+                                /*
+                                 * Create the item
+                                 */
                                 item = probe_item_create(OVAL_INDEPENDENT_LDAP57, NULL,
                                                          "suffix",       OVAL_DATATYPE_STRING, suffix,
                                                          "relative_dn",  OVAL_DATATYPE_STRING, relative_dn, /* XXX: pattern match */
-                                                         "attribute",    OVAL_DATATYPE_STRING, attrs[1], /* XXX: pattern match */
+                                                         "attribute",    OVAL_DATATYPE_STRING, attr,
                                                          "object_class", OVAL_DATATYPE_STRING, "",
                                                          "ldaptype",     OVAL_DATATYPE_STRING, "",
-                                                         "value",        OVAL_DATATYPE_RECORD, NULL,
                                                          NULL);
 
+                                SEXP_list_add(item, se_value);
                                 probe_cobj_add_item(probe_out, item);
                                 SEXP_free(item);
+                                SEXP_free(se_value);
 
-                                attr = ldap_next_attribute(ldp, entry, berptr);
-                                ldap_value_free_len(vals);
+                                attr = ldap_next_attribute(ldp, entry, berelm);
                         }
 
-                        ber_free(berptr, 0);
-                        entry = ldap_next_entry(ldp, entry);
+                        ber_free(berelm, 0);
+                        ldap_memfree(entry_dn);
+
+                        entry    = ldap_next_entry(ldp, entry);
+                        entry_dn = ldap_get_dn(ldp, entry);
                 }
+
+                /*
+                 * Close the LDAP connection and free resources
+                 */
+                ldap_unbind_ext_s(ldp, NULL, NULL);
         }
 
         ldap_memfree(uri_list);
