@@ -262,18 +262,24 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	 * report error and return -1 */
 	if (action->profile != NULL) {
 		policy = xccdf_policy_model_get_policy_by_id(policy_model, action->profile);
+
+		if(policy == NULL) {
+                        fprintf(stderr, "Profile \"%s\" was not found.\n", action->profile);
+                        return OSCAP_ERROR;
+                }
 	} else {
 		policy_it = xccdf_policy_model_get_policies(policy_model);
 		if (xccdf_policy_iterator_has_more(policy_it)) {
 			policy = xccdf_policy_iterator_next(policy_it);
 		}
 		xccdf_policy_iterator_free(policy_it);
+
+		if (policy == NULL) {
+			fprintf(stderr, "No Policy to evaluate. \n");
+			return OSCAP_ERROR;
+		}
 	}
 
-	if (policy == NULL) {
-		fprintf(stderr, "No Policy to evaluate. \n");
-		return OSCAP_ERROR;
-	}
 
 	/* Register callback */
 	xccdf_policy_model_register_start_callback(policy_model, scallback, (void*) action);
