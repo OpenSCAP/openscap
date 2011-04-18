@@ -240,7 +240,6 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
                                 ber_tag_t bertag   = LBER_DEFAULT;
                                 ber_len_t berlen   = 0;
                                 Sockbuf  *berbuf   = NULL;
-                                uint32_t  field_n  = 0;
                                 SEXP_t    se_tmp_mem;
 
                                 berbuf = ber_sockbuf_alloc();
@@ -343,12 +342,10 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
                                                 assume_d(field_type != OVAL_DATATYPE_UNKNOWN, NULL);
 
                                                 probe_ent_setdatatype(field, field_type);
-                                                probe_ent_attr_add(field, "name", SEXP_string_newf_r(&se_tmp_mem, "%u", field_n));
+                                                probe_ent_attr_add(field, "name", SEXP_string_new_r(&se_tmp_mem, attr, strlen(attr)));
                                                 SEXP_list_add(se_value, field);
                                                 SEXP_free_r(&se_tmp_mem);
                                                 SEXP_free(field);
-
-                                                ++field_n;
                                         }
                                 }
 
