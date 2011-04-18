@@ -1,6 +1,6 @@
 /**
- * @file   sql.c
- * @brief  sql probe
+ * @file   sql57.c
+ * @brief  sql57 probe
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  *
  */
@@ -311,13 +311,6 @@ static int dbSQL_eval(const char *engine, const char *version,
                                                     NULL);
 
 			while ((sql_err = odbx_result (sql_dbh, &sql_dbr, NULL, 0)) == ODBX_RES_ROWS) {
-				if (odbx_column_count(sql_dbr) != 1) {
-					dE("Don't how to handle result, column count != 1\n");
-					odbx_result_finish(sql_dbr);
-					SEXP_free(item);
-					goto __exit;
-				}
-
 				while (odbx_row_fetch(sql_dbr) == ODBX_ROW_NEXT) {
                                         SEXP_t se_tmp_mem, *field, *result;
                                         const char *col_val, *col_name;
