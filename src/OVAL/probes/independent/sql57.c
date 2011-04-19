@@ -91,11 +91,11 @@ dbEngineMap_t engine_map[] = {
 
 #define ENGINE_MAP_COUNT (sizeof engine_map / sizeof (dbEngineMap_t))
 
-static int engine_cmp (const dbEngineMap_t *a, const dbEngineMap_t *b)
+static int engine_cmp (const char *a, const dbEngineMap_t *b)
 {
 	assume_d(a != NULL, -1);
 	assume_d(b != NULL, -1);
-	return strcmp(a->o_engine, b->o_engine);
+	return strcmp(a, b->o_engine);
 }
 
 typedef struct {
@@ -184,7 +184,7 @@ static int dbURIInfo_parse(dbURIInfo_t *info, const char *conn)
 
 #define matchitem1(tok, first, rest, dst)			\
 	case first:						\
-		if (strcasecmp((rest), ++(tok)) == 0) {		\
+		if (strncasecmp((rest), ++(tok), strlen(rest)) == 0) {	\
 			tok += strlen(rest);			\
 			skipspace(tok);				\
 			if (*(tok) != '=') goto __fail;		\
@@ -211,6 +211,7 @@ static int dbURIInfo_parse(dbURIInfo_t *info, const char *conn)
 	tmp = NULL;
 
 	while ((tok = strsep (&copy, ";")) != NULL) {
+		dI("tok: '%s'.\n", tok);
 		switch (tolower(*tok)) {
 			matchitem1(tok, 's',
 				  "erver", info->host); break;
@@ -238,6 +239,7 @@ static int dbURIInfo_parse(dbURIInfo_t *info, const char *conn)
 	oscap_free(copy);
 	return (0);
 __fail:
+	dE("Parsing failed.\n");
 	oscap_free(copy);
 	return (-1);
 }
@@ -326,6 +328,7 @@ static int dbSQL_eval(const char *engine, const char *version,
                                                 col_type = OVAL_DATATYPE_UNKNOWN;
                                                 field    = NULL;
 
+						dI("Column type: %d.\n", odbx_column_type(sql_dbr, ci));
                                                 switch(odbx_column_type(sql_dbr, ci)) {
                                                 case ODBX_TYPE_BOOLEAN:
                                                         break;
@@ -337,7 +340,7 @@ static int dbSQL_eval(const char *engine, const char *version,
                                                         if (val == 0 && (end == col_val))
                                                                 dE("strtol(%s) failed\n", col_val);
 
-                                                        field    = probe_ent_creat1("field", NULL, SEXP_number_newi_r(&se_tmp_mem, val));
+							field    = probe_ent_creat1(col_name, NULL, SEXP_number_newi_r(&se_tmp_mem, val));
                                                         col_type = OVAL_DATATYPE_INTEGER;
                                                         SEXP_free_r(&se_tmp_mem);
 
@@ -351,7 +354,7 @@ static int dbSQL_eval(const char *engine, const char *version,
                                                         if (val == 0 && (end == col_val))
                                                                 dE("strtod(%s) failed\n", col_val);
 
-                                                        field    = probe_ent_creat1("field", NULL, SEXP_number_newf_r(&se_tmp_mem, val));
+							field    = probe_ent_creat1(col_name, NULL, SEXP_number_newf_r(&se_tmp_mem, val));
                                                         col_type = OVAL_DATATYPE_FLOAT;
                                                         SEXP_free_r(&se_tmp_mem);
 
@@ -359,20 +362,22 @@ static int dbSQL_eval(const char *engine, const char *version,
                                                 case ODBX_TYPE_CHAR:
                                                 case ODBX_TYPE_NCHAR:
                                                 case ODBX_TYPE_VARCHAR:
-                                                        field    = probe_ent_creat1("field", NULL, SEXP_string_new_r(&se_tmp_mem, col_val, strlen(col_val)));
+						case ODBX_TYPE_CLOB:
+                                                        field    = probe_ent_creat1(col_name, NULL, SEXP_string_new_r(&se_tmp_mem, col_val, strlen(col_val)));
                                                         col_type = OVAL_DATATYPE_STRING;
                                                         SEXP_free_r(&se_tmp_mem);
                                                         break;
                                                 case ODBX_TYPE_TIMESTAMP:
                                                         break;
+						default:
+							dW("Unsupported ODBX type: %d.\n", odbx_column_type(sql_dbr, ci));
+							break;
                                                 }
 
                                                 if (field != NULL) {
                                                         probe_ent_setdatatype(field, col_type);
-                                                        probe_ent_attr_add(field, "name", SEXP_string_new_r(&se_tmp_mem, col_name, strlen(col_name)));
 
                                                         SEXP_list_add(result, field);
-                                                        SEXP_free_r(&se_tmp_mem);
                                                         SEXP_free(field);
                                                 }
                                         }
@@ -409,7 +414,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 	do {								\
 		SEXP_t *__sval;						\
 									\
-		__sval = probe_obj_getentval (obj, #ent_name, 1);	\
+		__sval = probe_obj_getentval (obj, ent_name, 1);	\
 									\
 		if (__sval == NULL) {					\
 			dE("Missing entity or value: obj=%p, ent=%s\n", obj, #ent_name); \
