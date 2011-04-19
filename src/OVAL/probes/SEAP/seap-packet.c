@@ -913,6 +913,8 @@ eloop_exit:
 		_packet = NULL;
 	}
 
+        SEXP_free(sexp_buffer);
+
         return (0);
 }
 

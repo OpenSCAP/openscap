@@ -807,6 +807,7 @@ static struct oval_sysent *oval_sysent_from_sexp(struct oval_syschar_model *mode
 		oval_sysent_set_value(ent, valp);
 		if (valp != val)
 			oscap_free(valp);
+                SEXP_free(sval);
 	}
 
 	return ent;
