@@ -75,8 +75,8 @@ probe_runlevel_LDFLAGS=
 
 pkglibexec_PROGRAMS += probe_file
 probe_file_SOURCES= unix/file.c
-probe_file_CFLAGS=
-probe_file_LDFLAGS=
+probe_file_CFLAGS= @libacl_cflags@
+probe_file_LDFLAGS= @libacl_libs@
 
 pkglibexec_PROGRAMS += probe_password
 probe_password_SOURCES= unix/password.c

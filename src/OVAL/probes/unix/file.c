@@ -43,6 +43,11 @@
 #include <errno.h>
 #include <limits.h>
 
+#if defined(HAVE_LIBACL)
+# include <sys/types.h>
+# include <acl/libacl.h>
+#endif
+
 #include "oval_fts.h"
 #include "SEAP/generic/rbt/rbt.h"
 
@@ -273,6 +278,9 @@ static int file_cb (const char *p, const char *f, void *ptr)
                                          "oread",    OVAL_DATATYPE_SEXP, MODEP(&st, S_IROTH),
                                          "owrite",   OVAL_DATATYPE_SEXP, MODEP(&st, S_IWOTH),
                                          "oexec",    OVAL_DATATYPE_SEXP, MODEP(&st, S_IXOTH),
+#if defined(HAVE_LIBACL)
+                                         "has_extended_acl", OVAL_DATATYPE_SEXP, acl_extended_file(st_path) ? gr_true : gr_false,
+#endif
                                          NULL);
 
                 SEXP_free(se_grp_id);

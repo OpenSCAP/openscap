@@ -318,6 +318,18 @@ fi
 AC_SUBST(pthread_cflags)
 AC_SUBST(pthread_ldflags)
 
+#
+# libacl
+#
+AC_CHECK_LIB(
+  [acl],
+  [acl_extended_file],
+  [libacl_cflags=
+   libacl_libs=-lacl
+   AC_DEFINE([HAVE_LIBACL], [1], [libacl is available])
+  ]
+)
+
 # Checks for header files.
 
 AC_HEADER_STDC
@@ -392,6 +404,9 @@ AC_SUBST(rpm_libs)
 
 AC_SUBST(deb_cflags)
 AC_SUBST(deb_libs)
+
+AC_SUBST(libacl_cflags)
+AC_SUBST(libacl_libs)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
