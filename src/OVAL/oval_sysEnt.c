@@ -86,7 +86,10 @@ bool oval_sysent_is_locked(struct oval_sysent * sysent)
 {
 	__attribute__nonnull__(sysent);
 
-	return oval_syschar_model_is_locked(sysent->model);
+	if (sysent->model)
+		return oval_syschar_model_is_locked(sysent->model);
+	else
+		return false;
 }
 
 struct oval_sysent *oval_sysent_clone(struct oval_syschar_model *new_model, struct oval_sysent *old_item)
@@ -235,6 +238,8 @@ void oval_sysent_set_value(struct oval_sysent *sysent, char *value)
 
 void oval_sysent_add_record_field(struct oval_sysent *sysent, struct oval_record_field *rf)
 {
+	if (sysent->record_fields == NULL)
+		sysent->record_fields = oval_collection_new();
 	oval_collection_add(sysent->record_fields, rf);
 }
 
