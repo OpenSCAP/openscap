@@ -812,8 +812,17 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
                 char        *probe_dir;
                 oval_pdsc_t *probe_dsc;
 
-                probe_dir    = pext->probe_dir;
-                probe_dsc    = oval_pdsc_lookup(pext->pdsc, pext->pdsc_cnt, type);
+                probe_dir = pext->probe_dir;
+                probe_dsc = oval_pdsc_lookup(pext->pdsc, pext->pdsc_cnt, type);
+
+		if (probe_dsc == NULL) {
+			snprintf (errmsg, sizeof errmsg, "subtype %u not supported", type);
+			oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBENOTSUPP, errmsg);
+
+			ret = -1;
+			break;
+		}
+
                 probe_urilen = snprintf(probe_uri, sizeof probe_uri,
                                         "%s://%s/%s", OVAL_PROBE_SCHEME, probe_dir, probe_dsc->file);
 
@@ -873,8 +882,16 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                         char        *probe_dir;
                         oval_pdsc_t *probe_dsc;
 
-                        probe_dir    = pext->probe_dir;
-                        probe_dsc    = oval_pdsc_lookup(pext->pdsc, pext->pdsc_cnt, oval_object_get_subtype(obj));
+                        probe_dir = pext->probe_dir;
+                        probe_dsc = oval_pdsc_lookup(pext->pdsc, pext->pdsc_cnt, oval_object_get_subtype(obj));
+
+			if (probe_dsc == NULL) {
+				snprintf (errmsg, sizeof errmsg, "subtype %u not supported", oval_object_get_subtype(obj));
+				oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBENOTSUPP, errmsg);
+
+				return (-1);
+			}
+
                         probe_urilen = snprintf(probe_uri, sizeof probe_uri,
                                                 "%s://%s/%s", OVAL_PROBE_SCHEME, probe_dir, probe_dsc->file);
 
