@@ -55,6 +55,7 @@ BuildRequires:  perl-devel
 The %{name}-perl package contains the bindings so that %{name}
 libraries can be used by perl.
 
+
 %package        utils
 Summary:        Openscap utilities
 Group:          Applications/System
@@ -66,13 +67,28 @@ BuildRequires:   libcurl-devel
 %description    utils
 The %{name}-utils package contains various utilities based on %{name} library.
 
+
 %package        content
 Summary:        SCAP content
 Group:          Applications/System
 Requires:       %{name} = %{version}-%{release}
 
 %description    content
-SCAP content for RHEL and Fedora delivered by Open-SCAP project.
+SCAP content for Fedora delivered by Open-SCAP project.
+
+
+%package        extra-probes
+Summary:        SCAP probes
+Group:          Applications/System
+Requires:       %{name} = %{version}-%{release}
+BuildRequires:  openldap-devel
+BuildRequires:  c-ares-devel >= 1.7.0
+#BuildRequires:  opendbx - for sql
+
+%description    extra-probes
+The %{name}-extra-probes package contains additional probes that are not
+commonly used and require additional dependencies.
+
 
 %prep
 %setup -q
@@ -130,7 +146,22 @@ fi
 %defattr(-,root,root,-)
 %doc AUTHORS COPYING ChangeLog NEWS README
 %{_libdir}/*.so.*
-%{_libexecdir}/*
+%{_libexecdir}/openscap/probe_family
+%{_libexecdir}/openscap/probe_file
+%{_libexecdir}/openscap/probe_filehash
+%{_libexecdir}/openscap/probe_inetlisteningservers
+%{_libexecdir}/openscap/probe_interface
+%{_libexecdir}/openscap/probe_password
+%{_libexecdir}/openscap/probe_process
+%{_libexecdir}/openscap/probe_rpminfo
+%{_libexecdir}/openscap/probe_runlevel
+%{_libexecdir}/openscap/probe_shadow
+%{_libexecdir}/openscap/probe_system_info
+%{_libexecdir}/openscap/probe_textfilecontent
+%{_libexecdir}/openscap/probe_textfilecontent54
+%{_libexecdir}/openscap/probe_uname
+%{_libexecdir}/openscap/probe_xinetd
+%{_libexecdir}/openscap/probe_xmlfilecontent
 %dir %{_datadir}/openscap
 %dir %{_datadir}/openscap/schemas
 %dir %{_datadir}/openscap/xsl
@@ -170,6 +201,9 @@ fi
 %{_datadir}/openscap/scap-fedora14-oval.xml
 %{_datadir}/openscap/scap-fedora14-xccdf.xml
 
+%files extra-probes
+%{_libexecdir}/openscap/probe_ldap57
+%{_libexecdir}/openscap/probe_dnscache
 
 %changelog
 * Fri Apr 08 2011 Peter Vrabec <pvrabec@redhat.com> 0.7.2-1
