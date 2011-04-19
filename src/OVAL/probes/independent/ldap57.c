@@ -67,7 +67,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
         SEXP_t *item;
 
         char *relative_dn = NULL;
-        char *suffix = NULL, *attribute = NULL;
+        char *suffix = NULL, *xattribute = NULL;
         char *uri_list, *uri, *uri_save, *attr;
 
         int   scope;
@@ -121,7 +121,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
 	do {								\
 		SEXP_t *__sval;						\
 									\
-		__sval = probe_obj_getentval (obj, #ent_name, 1);	\
+		__sval = probe_obj_getentval (obj, ent_name, 1);	\
 									\
 		if (__sval != NULL) {					\
                         (dst) = SEXP_string_cstr (__sval);              \
@@ -137,7 +137,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
 
         get_string(suffix,      se_suffix,      probe_in, "suffix");
         get_string(relative_dn, se_relative_dn, probe_in, "relative_dn");
-        get_string(attribute,   se_attribute,   probe_in, "attribute");
+        get_string(xattribute,  se_attribute,   probe_in, "attribute");
 
         if ((sv_op = probe_ent_getattrval(se_relative_dn, "operation")) != NULL) {
                 if (SEXP_number_geti_32(sv_op) == OVAL_OPERATION_PATTERN_MATCH)
@@ -160,12 +160,12 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
          */
         attrs[0] = "objectClass";
 
-        if (attribute == NULL)
+        if (xattribute == NULL)
                 attrs[1] = strdup("1.1"); /* no attibutes */
         else if (a_pattern_match)
                 attrs[1] = strdup("*");   /* collect all, we'll filter them afterwards */
         else
-                attrs[1] = attribute;     /* no pattern match, use the string directly */
+                attrs[1] = xattribute;     /* no pattern match, use the string directly */
 
         attrs[2] = NULL;
 
@@ -193,6 +193,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
                 probe_cobj_add_item(probe_out, item);
                 SEXP_free(item);
 
+                dE("ldap_get_option failed\n");
                 goto fail0;
         }
 
@@ -222,6 +223,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
                         probe_cobj_add_item(probe_out, item);
                         SEXP_free(item);
 
+                        dE("ldap_search_ext_s failed\n");
                         goto fail0;
                 }
 
@@ -392,8 +394,6 @@ fail0:
 
         oscap_free(suffix);
         oscap_free(relative_dn);
-
-        oscap_free(attrs[0]);
         oscap_free(attrs[1]); /* attribute */
 
         return (0);
