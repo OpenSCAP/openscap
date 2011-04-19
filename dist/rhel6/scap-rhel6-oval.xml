@@ -477,6 +477,39 @@
                         <criterion test_ref="oval:rhel:tst:10441"/>
                         </criteria>
                 </definition>
+	<definition class="compliance" id="oval:rhel:def:1045" version="1">
+		<metadata>
+			<title>Set Password retry Requirements</title>
+			<reference ref_id="CCE-15054-0" source="CCE"/>
+			<description>The password retry should meet minimum requirements using pam_cracklib</description>
+		</metadata>
+	  <criteria operator="AND">
+		  <criterion comment="pam_cracklib retry is defined in /etc/pam.d/system-auth" test_ref="oval:rhel:tst:10451"/>
+		  <criterion comment="pam_cracklib retry is defined in /etc/pam.d/password-auth" test_ref="oval:rhel:tst:10452"/>
+	  </criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1046" version="1">
+		<metadata>
+			<title>Set Minimum Password Length Requirement</title>
+			<reference ref_id="CCE-4154-1" source="CCE"/>
+			<description>The password minimum length should be set appropriately</description>
+		</metadata>
+		<criteria operator="AND">
+			<criterion comment="pam_cracklib minlen is defined in /etc/pam.d/system-auth" test_ref="oval:rhel:tst:10461"/>
+			<criterion comment="pam_cracklib minlen is defined in /etc/pam.d/system-auth" test_ref="oval:rhel:tst:10462"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1047" version="1">
+		<metadata>
+			<title>Set Password dcredit Requirements</title>
+			<reference ref_id="CCE-14113-5" source="CCE"/>
+			<description>The password dcredit should meet minimum requirements using pam_cracklib</description>
+		</metadata>
+		<criteria operator="AND">
+			<criterion comment="pam_cracklib dcredit is defined in /etc/pam.d/system-auth" test_ref="oval:rhel:tst:10471"/>
+			<criterion comment="pam_cracklib dcredit is defined in /etc/pam.d/system-auth" test_ref="oval:rhel:tst:10472"/>
+		</criteria>
+	</definition>
 	</definitions>
 
 
@@ -659,6 +692,30 @@
                 <ind-def:object object_ref="oval:rhel:obj:104411"/>
                 <ind-def:state state_ref="oval:rhel:ste:104411"/>
         </ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10451" version="1" check="all" comment="pam_cracklib retry is defined in /etc/pam.d/system-auth">
+		<ind-def:object object_ref="oval:rhel:obj:104511"/>
+                <ind-def:state state_ref="oval:rhel:ste:104511"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10452" version="1" check="all" comment="pam_cracklib retry is defined in /etc/pam.d/password-auth">
+		<ind-def:object object_ref="oval:rhel:obj:104521"/>
+                <ind-def:state state_ref="oval:rhel:ste:104511"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10461" version="1" check="all" comment="pam_cracklib minlen is defined in /etc/pam.d/system-auth">
+		<ind-def:object object_ref="oval:rhel:obj:104611"/>
+                <ind-def:state state_ref="oval:rhel:ste:104611"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10462" version="1" check="all" comment="pam_cracklib minlen is defined in /etc/pam.d/password-auth">
+		<ind-def:object object_ref="oval:rhel:obj:104621"/>
+                <ind-def:state state_ref="oval:rhel:ste:104611"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10471" version="1" check="all" comment="pam_cracklib dcredit is defined in /etc/pam.d/system-auth">
+		<ind-def:object object_ref="oval:rhel:obj:104711"/>
+                <ind-def:state state_ref="oval:rhel:ste:104711"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10472" version="1" check="all" comment="pam_cracklib dcredit is defined in /etc/pam.d/password-auth">
+		<ind-def:object object_ref="oval:rhel:obj:104721"/>
+                <ind-def:state state_ref="oval:rhel:ste:104711"/>
+	</ind-def:textfilecontent54_test>
 	</tests>
 
 
@@ -837,6 +894,36 @@
                 <ind-def:pattern operation="pattern match">^PASS_WARN_AGE[[:space:]]*(.*)</ind-def:pattern>
                 <ind-def:instance datatype="int">1</ind-def:instance>
         </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:104511" version="1" comment="pam_cracklib retry in /etc/pam.d/system-auth">
+                <ind-def:filepath>/etc/pam.d/system-auth</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+(?:required|requisite)[[:space:]]+pam_cracklib\.so[[:space:]]+.*retry=([[:digit:]]+)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:104521" version="1" comment="pam_cracklib retry in /etc/pam.d/password-auth">
+                <ind-def:filepath>/etc/pam.d/password-auth</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+(?:required|requisite)[[:space:]]+pam_cracklib\.so[[:space:]]+.*retry=([[:digit:]]+)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:104611" version="1" comment="pam_cracklib minlen in /etc/pam.d/system-auth">
+                <ind-def:filepath>/etc/pam.d/system-auth</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+(?:required|requisite)[[:space:]]+pam_cracklib\.so[[:space:]]+.*minlen=([[:digit:]]+)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:104621" version="1" comment="pam_cracklib minlen in /etc/pam.d/password-auth">
+                <ind-def:filepath>/etc/pam.d/password-auth</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+(?:required|requisite)[[:space:]]+pam_cracklib\.so[[:space:]]+.*minlen=([[:digit:]]+)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:104711" version="1" comment="pam_cracklib dcredit in /etc/pam.d/system-auth">
+                <ind-def:filepath>/etc/pam.d/system-auth</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+(?:required|requisite)[[:space:]]+pam_cracklib\.so[[:space:]]+.*dcredit=(-?[[:digit:]]+)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:104721" version="1" comment="pam_cracklib dcredit in /etc/pam.d/password-auth">
+                <ind-def:filepath>/etc/pam.d/password-auth</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+(?:required|requisite)[[:space:]]+pam_cracklib\.so[[:space:]]+.*dcredit=(-?[[:digit:]]+)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
 	</objects>
 
 
@@ -960,6 +1047,15 @@
         <ind-def:textfilecontent54_state id="oval:rhel:ste:104411" version="1" comment="Expected value of PASS_WARN_AGE in /etc/login.defs">
                 <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1044"/>
         </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:104511" version="1" comment="Expected value of retry for pam_cracklib">
+                <ind-def:subexpression var_check="all" datatype="int" operation="equals" var_ref="oval:rhel:var:1045"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:104611" version="1" comment="Expected value of minlen for pam_cracklib">
+                <ind-def:subexpression var_check="all" datatype="int" operation="equals" var_ref="oval:rhel:var:1046"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:104711" version="1" comment="Expected value of dcredit for pam_cracklib">
+                <ind-def:subexpression var_check="all" datatype="int" operation="equals" var_ref="oval:rhel:var:1047"/>
+        </ind-def:textfilecontent54_state>
 	</states>
 
 	<variables>
@@ -1074,6 +1170,9 @@
         <external_variable id="oval:rhel:var:1042" version="1" datatype="int" comment="PASS_MIN_DAYS"/>
         <external_variable id="oval:rhel:var:1043" version="1" datatype="int" comment="PASS_MAX_DAYS"/>
         <external_variable id="oval:rhel:var:1044" version="1" datatype="int" comment="PASS_WARN_AGE"/>
+        <external_variable id="oval:rhel:var:1045" version="1" datatype="int" comment="pam_cracklib retry"/>
+        <external_variable id="oval:rhel:var:1046" version="1" datatype="int" comment="pam_cracklib minlen"/>
+        <external_variable id="oval:rhel:var:1047" version="1" datatype="int" comment="pam_cracklib dcredit"/>
 	</variables>
 
 </oval_definitions>

@@ -55,10 +55,12 @@
     <refine-value idref="var-1043" selector="99999_days"/>
     <select idref="rule-1043" selected="true"/>
     <select idref="rule-1044" selected="true"/>
+    <select idref="rule-1045" selected="true"/>
   </Profile>
   <Profile id="mitr">
     <title xml:lang="en-US">mitr</title>
     <description xml:lang="en-US">mitr</description>
+    <select idref="rule-1047" selected="true"/>
   </Profile>
   <Group id="gr-intro" hidden="false">
     <title xml:lang="en-US">Introduction</title>
@@ -1831,7 +1833,7 @@
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						For example to configure pam_cracklib to require at least one uppercase	character, 
 						lowercase character, digit, and other (special) character, locate the following line in 
-						/etc/pam.d/system-auth:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						/etc/pam.d/system-auth and /etc/pam.d/password-auth:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> 
 						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">
 						password requisite pam_cracklib.so try_first_pass retry=3 <xhtml:br/>
@@ -1849,7 +1851,7 @@
 						The man page pam_cracklib(8) provide information on the capabilities and configuration.
 						</description> 
             <warning xml:lang="en-US">Note that the password quality requirements are not enforced for the root account for some reason. </warning>
-            <Value id="var-2.3.3.1.1.retry" type="number">
+            <Value id="var-1045" type="number">
               <title xml:lang="en-US">retry</title>
               <description xml:lang="en-US">Number of retry attempts before erroring out</description>
               <value>3</value>
@@ -1857,7 +1859,7 @@
               <value selector="2">2</value>
               <value selector="3">3</value>
             </Value>
-            <Value id="var-2.3.3.1.1.minlen" type="number">
+            <Value id="var-1046" type="number">
               <title xml:lang="en-US">minlen</title>
               <description xml:lang="en-US">Minimum number of characters in password</description>
               <value>12</value>
@@ -1868,7 +1870,7 @@
               <value selector="14">14</value>
               <value selector="15">15</value>
             </Value>
-            <Value id="var-2.3.3.1.1.dcredit" type="number">
+            <Value id="var-1047" type="number">
               <title xml:lang="en-US">dcredit</title>
               <description xml:lang="en-US">Mininum number of digits in	password</description>
               <value>-2</value>
@@ -1912,26 +1914,36 @@
               <value selector="4">4</value>
               <value selector="5">5</value>
             </Value>
-            <Rule id="rule-2.3.3.1.1.a" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1045" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Password retry Requirements</title>
               <description xml:lang="en-US">The password retry should meet minimum
 								requirements</description>
               <ident system="http://cce.mitre.org">CCE-15054-0</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:200781" value-id="var-2.3.3.1.1.retry"/>
-                <check-content-ref name="oval:rhel:def:200781" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:rhel:var:1045" value-id="var-1045"/>
+                <check-content-ref name="oval:rhel:def:1045" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
-            <Rule id="rule-2.3.3.1.1.c" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1046" selected="false" weight="10.000000" severity="medium">
+              <status date="2010-07-01">draft</status>
+              <title xml:lang="en-US">Password retry Requirements</title>
+              <description xml:lang="en-US">The password minlen should meet minimum
+								requirements</description>
+              <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+                <check-export export-name="oval:rhel:var:1046" value-id="var-1046"/>
+                <check-content-ref name="oval:rhel:def:1046" href="scap-rhel6-oval.xml"/>
+              </check>
+            </Rule>
+            <Rule id="rule-1047" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">The password strength parameters should require a minimum number of digits</title>
               <description xml:lang="en-US">The password dcredit should meet minimum
 								requirements</description>
               <ident system="http://cce.mitre.org">CCE-14113-5</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:200783" value-id="var-2.3.3.1.1.dcredit"/>
-                <check-content-ref name="oval:rhel:def:200783" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:rhel:var:1047" value-id="var-1047"/>
+                <check-content-ref name="oval:rhel:def:1047" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
             <Rule id="rule-2.3.3.1.1.d" selected="false" weight="10.000000" severity="medium">
