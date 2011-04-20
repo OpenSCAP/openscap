@@ -565,17 +565,17 @@
 			<criterion comment="pam_passwdqc min is defined in /etc/pam.d/password-auth" test_ref="oval:rhel:tst:10522"/>
 		</criteria>
 	</definition>
-	<definition class="compliance" id="oval:rhel:def:1054" version="1">
+	<definition class="compliance" id="oval:rhel:def:1053" version="1">
 		<metadata>
 			<title>Set Password hashing algorithm</title>
 			<reference ref_id="CCE-14063-2" source="CCE"/>
 			<description>The password hashing algorithm should be set correctly.</description>
 		</metadata>
 		<criteria operator="AND">
-			<criterion test_ref="oval:rhel:tst:10541" comment="Password hashing algorithm is configured in /etc/pam.d/system-auth"/>
-			<criterion test_ref="oval:rhel:tst:10542" comment="Password hashing algorithm is configured in /etc/pam.d/password-auth"/>
-			<criterion test_ref="oval:rhel:tst:10543" comment="Password hashing algorithm is configured in /etc/login.defs"/>
-			<criterion test_ref="oval:rhel:tst:10544" comment="Password hashing algorithm is configured in /etc/libuser.conf"/>
+			<criterion test_ref="oval:rhel:tst:10531" comment="Password hashing algorithm is configured in /etc/pam.d/system-auth"/>
+			<criterion test_ref="oval:rhel:tst:10532" comment="Password hashing algorithm is configured in /etc/pam.d/password-auth"/>
+			<criterion test_ref="oval:rhel:tst:10533" comment="Password hashing algorithm is configured in /etc/login.defs"/>
+			<criterion test_ref="oval:rhel:tst:10534" comment="Password hashing algorithm is configured in /etc/libuser.conf"/>
 		</criteria>
 	</definition>
 	</definitions>
@@ -824,22 +824,22 @@
 		<ind-def:object object_ref="oval:rhel:obj:105221"/>
                 <ind-def:state state_ref="oval:rhel:ste:105211"/>
 	</ind-def:textfilecontent54_test>
-	<ind-def:textfilecontent54_test id="oval:rhel:tst:10541" version="1" check="all" comment="Password hashing algorithm is defined in /etc/pam.d/system-auth">
-		<ind-def:object object_ref="oval:rhel:obj:105411"/>
-                <ind-def:state state_ref="oval:rhel:ste:105411"/>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10531" version="1" check="all" comment="Password hashing algorithm is defined in /etc/pam.d/system-auth">
+		<ind-def:object object_ref="oval:rhel:obj:105311"/>
+                <ind-def:state state_ref="oval:rhel:ste:105311"/>
 	</ind-def:textfilecontent54_test>
-	<ind-def:textfilecontent54_test id="oval:rhel:tst:10542" version="1" check="all" comment="Password hashing algorithm is defined in /etc/pam.d/password-auth">
-		<ind-def:object object_ref="oval:rhel:obj:105421"/>
-                <ind-def:state state_ref="oval:rhel:ste:105411"/>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10532" version="1" check="all" comment="Password hashing algorithm is defined in /etc/pam.d/password-auth">
+		<ind-def:object object_ref="oval:rhel:obj:105321"/>
+                <ind-def:state state_ref="oval:rhel:ste:105311"/>
 	</ind-def:textfilecontent54_test>
-        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10543" version="1" check="all"
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10533" version="1" check="all"
 					comment="Check ENCRYPT_METHOD in /etc/login.defs">
-                <ind-def:object object_ref="oval:rhel:obj:105431"/>
-                <ind-def:state state_ref="oval:rhel:ste:105431"/>
+                <ind-def:object object_ref="oval:rhel:obj:105331"/>
+                <ind-def:state state_ref="oval:rhel:ste:105331"/>
         </ind-def:textfilecontent54_test>
-        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10544" version="1" check="all" comment="Check crypt_style in /etc/libuser.conf">
-                <ind-def:object object_ref="oval:rhel:obj:105441"/>
-                <ind-def:state state_ref="oval:rhel:ste:105431"/>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10534" version="1" check="all" comment="Check crypt_style in /etc/libuser.conf">
+                <ind-def:object object_ref="oval:rhel:obj:105341"/>
+                <ind-def:state state_ref="oval:rhel:ste:105331"/>
         </ind-def:textfilecontent54_test>
 	</tests>
 
@@ -1099,22 +1099,22 @@
                 <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+(?:required|requisite)[[:space:]]+pam_passwdqc\.so[[:space:]]+.*min=([^[:space:]]+)</ind-def:pattern>
                 <ind-def:instance datatype="int">1</ind-def:instance>
         </ind-def:textfilecontent54_object>
-        <ind-def:textfilecontent54_object id="oval:rhel:obj:105411" version="1" comment="Password hashing algorithm in /etc/pam.d/system-auth">
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:105311" version="1" comment="Password hashing algorithm in /etc/pam.d/system-auth">
                 <ind-def:filepath>/etc/pam.d/system-auth</ind-def:filepath>
                 <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+(?:required|requisite|sufficient)[[:space:]]+pam_unix\.so.*[[:space:]]+(md5|sha256|sha512)(?:[[:space:]].*)?$</ind-def:pattern>
                 <ind-def:instance datatype="int">1</ind-def:instance>
         </ind-def:textfilecontent54_object>
-        <ind-def:textfilecontent54_object id="oval:rhel:obj:105421" version="1" comment="Password hashing algorithm in /etc/pam.d/password-auth">
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:105321" version="1" comment="Password hashing algorithm in /etc/pam.d/password-auth">
                 <ind-def:filepath>/etc/pam.d/password-auth</ind-def:filepath>
                 <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+(?:required|requisite|sufficient)[[:space:]]+pam_unix\.so.*[[:space:]]+(md5|sha256|sha512)(?:[[:space:]].*)?$</ind-def:pattern>
                 <ind-def:instance datatype="int">1</ind-def:instance>
         </ind-def:textfilecontent54_object>
-        <ind-def:textfilecontent54_object id="oval:rhel:obj:105431" version="1" comment="Password hashing algorithm in /etc/login.defs">
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:105331" version="1" comment="Password hashing algorithm in /etc/login.defs">
                 <ind-def:filepath>/etc/login.defs</ind-def:filepath>
                 <ind-def:pattern operation="pattern match">^ENCRYPT_METHOD[[:space:]]+([^[:space:]]*)</ind-def:pattern>
                 <ind-def:instance datatype="int">1</ind-def:instance>
         </ind-def:textfilecontent54_object>
-        <ind-def:textfilecontent54_object id="oval:rhel:obj:105441" version="1" comment="Password hashing algorithm in /etc/libuser.conf">
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:105341" version="1" comment="Password hashing algorithm in /etc/libuser.conf">
                 <ind-def:filepath>/etc/libuser.conf</ind-def:filepath>
                 <ind-def:pattern operation="pattern match">^crypt_style[[:space:]]*\=[[:space:]]*(.*[^[:space:]])[[:space:]]*$</ind-def:pattern>
                 <ind-def:instance datatype="int">1</ind-def:instance>
@@ -1266,11 +1266,11 @@
         <ind-def:textfilecontent54_state id="oval:rhel:ste:105211" version="1" comment="Expected value of min for pam_passwdqc">
                 <ind-def:subexpression var_check="all" datatype="string" operation="equals" var_ref="oval:rhel:var:1052"/>
         </ind-def:textfilecontent54_state>
-        <ind-def:textfilecontent54_state id="oval:rhel:ste:105411" version="1" comment="Expected password hashing algorithm, case-sensitive">
-                <ind-def:subexpression var_check="all" datatype="string" operation="equals" var_ref="oval:rhel:var:1054"/>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:105311" version="1" comment="Expected password hashing algorithm, case-sensitive">
+                <ind-def:subexpression var_check="all" datatype="string" operation="equals" var_ref="oval:rhel:var:1053"/>
         </ind-def:textfilecontent54_state>
-        <ind-def:textfilecontent54_state id="oval:rhel:ste:105431" version="1" comment="Expected password hashing algorithm, case-insensitive">
-                <ind-def:subexpression var_check="all" operation="case insensitive equals" var_ref="oval:rhel:var:1054" />
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:105331" version="1" comment="Expected password hashing algorithm, case-insensitive">
+                <ind-def:subexpression var_check="all" operation="case insensitive equals" var_ref="oval:rhel:var:1053" />
         </ind-def:textfilecontent54_state>
 	</states>
 
@@ -1394,7 +1394,7 @@
         <external_variable id="oval:rhel:var:1050" version="1" datatype="int" comment="pam_cracklib lcredit"/>
         <external_variable id="oval:rhel:var:1051" version="1" datatype="int" comment="pam_cracklib difok"/>
         <external_variable id="oval:rhel:var:1052" version="1" datatype="string" comment="pam_passwdqc min"/>
-        <external_variable id="oval:rhel:var:1054" version="1" datatype="string" comment="Password hashing algorithm"/>
+        <external_variable id="oval:rhel:var:1053" version="1" datatype="string" comment="Password hashing algorithm"/>
 	</variables>
 
 </oval_definitions>

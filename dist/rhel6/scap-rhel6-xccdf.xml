@@ -60,7 +60,7 @@
   <Profile id="mitr">
     <title xml:lang="en-US">mitr</title>
     <description xml:lang="en-US">mitr</description>
-    <select idref="rule-1054" selected="true"/>
+    <select idref="rule-1053" selected="true"/>
   </Profile>
   <Group id="gr-intro" hidden="false">
     <title xml:lang="en-US">Introduction</title>
@@ -2062,36 +2062,7 @@
 						benefits of thwarting password guessing attacks. The pam_tally2 utility can
 						be run from a cron job on a hourly or daily basis to try and offset this
 						risk. </warning>
-          <Value id="var-2.3.3.2.a.deny" type="number">
-            <title xml:lang="en-US">deny</title>
-            <description xml:lang="en-US">Deny access if tally for this user exceeds
-							n.</description>
-            <value>3</value>
-            <value selector="1">1</value>
-            <value selector="3">3</value>
-            <value selector="5">5</value>
-            <value selector="10">10</value>
-          </Value>
-          <Rule id="rule-2.3.3.2.a.1" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">draft</status>
-            <title xml:lang="en-US">Set deny for Failed Password Attempts in /etc/pam.d/system-auth</title>
-            <description xml:lang="en-US">The deny policy should meet minimum requirements.</description>
-            <ident system="http://cce.mitre.org">CCE-3410-8</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:200801" value-id="var-2.3.3.2.a.deny"/>
-              <check-content-ref name="oval:rhel:def:200801" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.3.3.2.a.2" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">draft</status>
-            <title xml:lang="en-US">Set deny for Failed Password Attempts in /etc/pam.d/password-auth</title>
-            <description xml:lang="en-US">The deny policy should meet minimum requirements.</description>
-            <ident system="http://cce.mitre.org">CCE-3410-8</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:200801" value-id="var-2.3.3.2.a.deny"/>
-              <check-content-ref name="oval:rhel:def:200801" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
+	  <!-- Not tested, this needs to be tested in files specific for each service, and coordinated editing of several items is required. -->
         </Group>
         <Group id="gr-accounts-pam.3" hidden="false">
           <title xml:lang="en-US">Use pam_deny.so to Quickly Deny Access to a Service</title>
@@ -2120,7 +2091,7 @@
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> When users changes their passwords, hashes for the new passwords
 						will be generated using the SHA-512 algorithm.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> </description>
-          <Value id="var-1054" operator="equals" type="string">
+          <Value id="var-1053" operator="equals" type="string">
             <title xml:lang="en-US">Password hashing algorithm</title>
             <description xml:lang="en-US">Enter /etc/shadow password hashing
 							algorithm</description>
@@ -2129,15 +2100,15 @@
             <value selector="SHA-256">sha256</value>
             <value selector="SHA-512">sha512</value>
           </Value>
-          <Rule id="rule-1054" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1053" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">draft</status>
             <title xml:lang="en-US">Password hashing algorithm</title>
             <description xml:lang="en-US">The password hashing algorithm should be set to
-		    <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1054"/></description>
+		    <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1053"/></description>
             <ident system="http://cce.mitre.org">CCE-14063-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1054" value-id="var-1054"/>
-              <check-content-ref name="oval:rhel:def:1054" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1053" value-id="var-1053"/>
+              <check-content-ref name="oval:rhel:def:1053" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
