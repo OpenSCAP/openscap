@@ -14,6 +14,7 @@ BuildRequires:  swig libxml2-devel libxslt-devel
 BuildRequires:  rpm-devel
 BuildRequires:  libgcrypt-devel
 BuildRequires:  pcre-devel
+BuildRequires:  libacl-devel
 Requires(post):   /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 
