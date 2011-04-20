@@ -510,6 +510,50 @@
 			<criterion comment="pam_cracklib dcredit is defined in /etc/pam.d/system-auth" test_ref="oval:rhel:tst:10472"/>
 		</criteria>
 	</definition>
+	<definition class="compliance" id="oval:rhel:def:1048" version="1">
+		<metadata>
+			<title>Set Password ucredit Requirements</title>
+			<reference ref_id="CCE-14672-0" source="CCE"/>
+			<description>The password ucredit should meet minimum requirements using pam_cracklib</description>
+		</metadata>
+		<criteria operator="AND">
+			<criterion comment="pam_cracklib ucredit is defined in /etc/pam.d/system-auth" test_ref="oval:rhel:tst:10481"/>
+			<criterion comment="pam_cracklib ucredit is defined in /etc/pam.d/system-auth" test_ref="oval:rhel:tst:10482"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1049" version="1">
+		<metadata>
+			<title>Set Password ocredit Requirements</title>
+			<reference ref_id="CCE-14122-6" source="CCE"/>
+			<description>The password ocredit should meet minimum requirements using pam_cracklib</description>
+		</metadata>
+		<criteria operator="AND">
+			<criterion comment="pam_cracklib ocredit is defined in /etc/pam.d/system-auth" test_ref="oval:rhel:tst:10491"/>
+			<criterion comment="pam_cracklib ocredit is defined in /etc/pam.d/system-auth" test_ref="oval:rhel:tst:10492"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1050" version="1">
+		<metadata>
+			<title>Set Password lcredit Requirements</title>
+			<reference ref_id="CCE-14712-4" source="CCE"/>
+			<description>The password lcredit should meet minimum requirements using pam_cracklib</description>
+		</metadata>
+		<criteria operator="AND">
+			<criterion comment="pam_cracklib lcredit is defined in /etc/pam.d/system-auth" test_ref="oval:rhel:tst:10501"/>
+			<criterion comment="pam_cracklib lcredit is defined in /etc/pam.d/system-auth" test_ref="oval:rhel:tst:10502"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1051" version="1">
+		<metadata>
+			<title>Set Password difok Requirements</title>
+			<reference ref_id="CCE-14701-7" source="CCE"/>
+			<description>The password difok should meet minimum requirements using pam_cracklib</description>
+		</metadata>
+		<criteria operator="AND">
+			<criterion comment="pam_cracklib difok is defined in /etc/pam.d/system-auth" test_ref="oval:rhel:tst:10511"/>
+			<criterion comment="pam_cracklib difok is defined in /etc/pam.d/system-auth" test_ref="oval:rhel:tst:10512"/>
+		</criteria>
+		</definition>
 	</definitions>
 
 
@@ -715,6 +759,38 @@
 	<ind-def:textfilecontent54_test id="oval:rhel:tst:10472" version="1" check="all" comment="pam_cracklib dcredit is defined in /etc/pam.d/password-auth">
 		<ind-def:object object_ref="oval:rhel:obj:104721"/>
                 <ind-def:state state_ref="oval:rhel:ste:104711"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10481" version="1" check="all" comment="pam_cracklib ucredit is defined in /etc/pam.d/system-auth">
+		<ind-def:object object_ref="oval:rhel:obj:104811"/>
+                <ind-def:state state_ref="oval:rhel:ste:104811"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10482" version="1" check="all" comment="pam_cracklib ucredit is defined in /etc/pam.d/password-auth">
+		<ind-def:object object_ref="oval:rhel:obj:104821"/>
+                <ind-def:state state_ref="oval:rhel:ste:104811"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10491" version="1" check="all" comment="pam_cracklib ocredit is defined in /etc/pam.d/system-auth">
+		<ind-def:object object_ref="oval:rhel:obj:104911"/>
+                <ind-def:state state_ref="oval:rhel:ste:104911"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10492" version="1" check="all" comment="pam_cracklib ocredit is defined in /etc/pam.d/password-auth">
+		<ind-def:object object_ref="oval:rhel:obj:104921"/>
+                <ind-def:state state_ref="oval:rhel:ste:104911"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10501" version="1" check="all" comment="pam_cracklib lcredit is defined in /etc/pam.d/system-auth">
+		<ind-def:object object_ref="oval:rhel:obj:105011"/>
+                <ind-def:state state_ref="oval:rhel:ste:105011"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10502" version="1" check="all" comment="pam_cracklib lcredit is defined in /etc/pam.d/password-auth">
+		<ind-def:object object_ref="oval:rhel:obj:105021"/>
+                <ind-def:state state_ref="oval:rhel:ste:105011"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10511" version="1" check="all" comment="pam_cracklib difok is defined in /etc/pam.d/system-auth">
+		<ind-def:object object_ref="oval:rhel:obj:105111"/>
+                <ind-def:state state_ref="oval:rhel:ste:105111"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10512" version="1" check="all" comment="pam_cracklib difok is defined in /etc/pam.d/password-auth">
+		<ind-def:object object_ref="oval:rhel:obj:105121"/>
+                <ind-def:state state_ref="oval:rhel:ste:105111"/>
 	</ind-def:textfilecontent54_test>
 	</tests>
 
@@ -924,6 +1000,46 @@
                 <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+(?:required|requisite)[[:space:]]+pam_cracklib\.so[[:space:]]+.*dcredit=(-?[[:digit:]]+)</ind-def:pattern>
                 <ind-def:instance datatype="int">1</ind-def:instance>
         </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:104811" version="1" comment="pam_cracklib ucredit in /etc/pam.d/system-auth">
+                <ind-def:filepath>/etc/pam.d/system-auth</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+(?:required|requisite)[[:space:]]+pam_cracklib\.so[[:space:]]+.*ucredit=(-?[[:digit:]]+)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:104821" version="1" comment="pam_cracklib ucredit in /etc/pam.d/password-auth">
+                <ind-def:filepath>/etc/pam.d/password-auth</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+(?:required|requisite)[[:space:]]+pam_cracklib\.so[[:space:]]+.*ucredit=(-?[[:digit:]]+)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:104911" version="1" comment="pam_cracklib ocredit in /etc/pam.d/system-auth">
+                <ind-def:filepath>/etc/pam.d/system-auth</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+(?:required|requisite)[[:space:]]+pam_cracklib\.so[[:space:]]+.*ocredit=(-?[[:digit:]]+)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:104921" version="1" comment="pam_cracklib ocredit in /etc/pam.d/password-auth">
+                <ind-def:filepath>/etc/pam.d/password-auth</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+(?:required|requisite)[[:space:]]+pam_cracklib\.so[[:space:]]+.*ocredit=(-?[[:digit:]]+)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:105011" version="1" comment="pam_cracklib lcredit in /etc/pam.d/system-auth">
+                <ind-def:filepath>/etc/pam.d/system-auth</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+(?:required|requisite)[[:space:]]+pam_cracklib\.so[[:space:]]+.*lcredit=(-?[[:digit:]]+)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:105021" version="1" comment="pam_cracklib lcredit in /etc/pam.d/password-auth">
+                <ind-def:filepath>/etc/pam.d/password-auth</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+(?:required|requisite)[[:space:]]+pam_cracklib\.so[[:space:]]+.*lcredit=(-?[[:digit:]]+)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:105111" version="1" comment="pam_cracklib difok in /etc/pam.d/system-auth">
+                <ind-def:filepath>/etc/pam.d/system-auth</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+(?:required|requisite)[[:space:]]+pam_cracklib\.so[[:space:]]+.*difok=([[:digit:]]+)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:105121" version="1" comment="pam_cracklib difok in /etc/pam.d/password-auth">
+                <ind-def:filepath>/etc/pam.d/password-auth</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+(?:required|requisite)[[:space:]]+pam_cracklib\.so[[:space:]]+.*difok=([[:digit:]]+)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
 	</objects>
 
 
@@ -1056,6 +1172,18 @@
         <ind-def:textfilecontent54_state id="oval:rhel:ste:104711" version="1" comment="Expected value of dcredit for pam_cracklib">
                 <ind-def:subexpression var_check="all" datatype="int" operation="equals" var_ref="oval:rhel:var:1047"/>
         </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:104811" version="1" comment="Expected value of ucredit for pam_cracklib">
+                <ind-def:subexpression var_check="all" datatype="int" operation="equals" var_ref="oval:rhel:var:1048"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:104911" version="1" comment="Expected value of ocredit for pam_cracklib">
+                <ind-def:subexpression var_check="all" datatype="int" operation="equals" var_ref="oval:rhel:var:1049"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:105011" version="1" comment="Expected value of lcredit for pam_cracklib">
+                <ind-def:subexpression var_check="all" datatype="int" operation="equals" var_ref="oval:rhel:var:1050"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:105111" version="1" comment="Expected value of difok for pam_cracklib">
+                <ind-def:subexpression var_check="all" datatype="int" operation="equals" var_ref="oval:rhel:var:1051"/>
+        </ind-def:textfilecontent54_state>
 	</states>
 
 	<variables>
@@ -1173,6 +1301,10 @@
         <external_variable id="oval:rhel:var:1045" version="1" datatype="int" comment="pam_cracklib retry"/>
         <external_variable id="oval:rhel:var:1046" version="1" datatype="int" comment="pam_cracklib minlen"/>
         <external_variable id="oval:rhel:var:1047" version="1" datatype="int" comment="pam_cracklib dcredit"/>
+        <external_variable id="oval:rhel:var:1048" version="1" datatype="int" comment="pam_cracklib ucredit"/>
+        <external_variable id="oval:rhel:var:1049" version="1" datatype="int" comment="pam_cracklib ocredit"/>
+        <external_variable id="oval:rhel:var:1050" version="1" datatype="int" comment="pam_cracklib lcredit"/>
+        <external_variable id="oval:rhel:var:1051" version="1" datatype="int" comment="pam_cracklib difok"/>
 	</variables>
 
 </oval_definitions>

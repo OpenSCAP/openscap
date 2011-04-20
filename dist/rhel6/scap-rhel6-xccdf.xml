@@ -60,7 +60,7 @@
   <Profile id="mitr">
     <title xml:lang="en-US">mitr</title>
     <description xml:lang="en-US">mitr</description>
-    <select idref="rule-1047" selected="true"/>
+    <select idref="rule-1052" selected="true"/>
   </Profile>
   <Group id="gr-intro" hidden="false">
     <title xml:lang="en-US">Introduction</title>
@@ -1878,7 +1878,7 @@
               <value selector="1">-1</value>
               <value selector="0">0</value>
             </Value>
-            <Value id="var-2.3.3.1.1.ocredit" type="number">
+            <Value id="var-1049" type="number">
               <title xml:lang="en-US">ocredit</title>
               <description xml:lang="en-US">Mininum number of other (special characters) in password</description>
               <value>-2</value>
@@ -1886,7 +1886,7 @@
               <value selector="1">-1</value>
               <value selector="0">0</value>
             </Value>
-            <Value id="var-2.3.3.1.1.lcredit" type="number">
+            <Value id="var-1050" type="number">
               <title xml:lang="en-US">lcredit</title>
               <description xml:lang="en-US">Mininum number of lower case in password</description>
               <value>-2</value>
@@ -1894,7 +1894,7 @@
               <value selector="1">-1</value>
               <value selector="0">0</value>
             </Value>
-            <Value id="var-2.3.3.1.1.ucredit" type="number">
+            <Value id="var-1048" type="number">
               <title xml:lang="en-US">ucredit</title>
               <description xml:lang="en-US">Mininum number of upper case in
 								password</description>
@@ -1903,7 +1903,7 @@
               <value selector="1">-1</value>
               <value selector="0">0</value>
             </Value>
-            <Value id="var-2.3.3.1.1.difok" type="number">
+            <Value id="var-1051" type="number">
               <title xml:lang="en-US">difok</title>
               <description xml:lang="en-US">Mininum number of characters not present
 								in old password</description>
@@ -1946,46 +1946,46 @@
                 <check-content-ref name="oval:rhel:def:1047" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
-            <Rule id="rule-2.3.3.1.1.d" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1048" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">The password strength parameters should require a minimum number of uppercase characters</title>
               <description xml:lang="en-US">The password ucredit should meet minimum
 								requirements</description>
               <ident system="http://cce.mitre.org">CCE-14672-0</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:200784" value-id="var-2.3.3.1.1.ucredit"/>
-                <check-content-ref name="oval:rhel:def:200784" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:rhel:var:1048" value-id="var-1048"/>
+                <check-content-ref name="oval:rhel:def:1048" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
-            <Rule id="rule-2.3.3.1.1.e" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1049" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">The password strength parameters should require a minimum number of special characters</title>
               <description xml:lang="en-US">The password strength parameters should require a minimum number of special characters</description>
               <ident system="http://cce.mitre.org">CCE-14122-6</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:200785" value-id="var-2.3.3.1.1.ocredit"/>
-                <check-content-ref name="oval:rhel:def:200785" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:rhel:var:1049" value-id="var-1049"/>
+                <check-content-ref name="oval:rhel:def:1049" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
-            <Rule id="rule-2.3.3.1.1.f" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1050" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Set Password lcredit Requirements</title>
               <description xml:lang="en-US">The password strength parameters should require a minimum number of lowercase characters</description>
               <ident system="http://cce.mitre.org">CCE-14712-4</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:200786" value-id="var-2.3.3.1.1.lcredit"/>
-                <check-content-ref name="oval:rhel:def:200786" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:rhel:var:1050" value-id="var-1050"/>
+                <check-content-ref name="oval:rhel:def:1050" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
-            <Rule id="rule-2.3.3.1.1.g" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1051" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">The password strength parameters should require new passwords to difer from old ones by a minimum number of characters</title>
               <description xml:lang="en-US">The password difok should meet minimum
 								requirements</description>
               <ident system="http://cce.mitre.org">CCE-14701-7</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:200787" value-id="var-2.3.3.1.1.difok"/>
-                <check-content-ref name="oval:rhel:def:200787" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:rhel:var:1051" value-id="var-1051"/>
+                <check-content-ref name="oval:rhel:def:1051" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
