@@ -60,7 +60,7 @@
   <Profile id="mitr">
     <title xml:lang="en-US">mitr</title>
     <description xml:lang="en-US">mitr</description>
-    <select idref="rule-1052" selected="true"/>
+    <select idref="rule-1054" selected="true"/>
   </Profile>
   <Group id="gr-intro" hidden="false">
     <title xml:lang="en-US">Introduction</title>
@@ -2009,6 +2009,22 @@
 							a particular minimum value to <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">disabled</xhtml:code>
 							will stop users from choosing a
 							password that falls into that category alone. </description>
+	    <!-- The individual values do not have a generic meaning that is likely to make sense outside of pam_passwdqc, so this test only allows verifying
+		 a policy specifically designed for pam_passwdqc. -->
+            <Value id="var-1052" type="string">
+              <title xml:lang="en-US">pam_passwdqc min</title>
+              <description xml:lang="en-US">"min" parameter for pam_passwdqc</description>
+              <value>disabled,disabled,16,12,8</value>
+            </Value>
+            <Rule id="rule-1052" selected="false" weight="10.000000" severity="medium">
+              <status date="2010-07-01">draft</status>
+              <title xml:lang="en-US">The password strength parameters should be configured using pam_passwdqc</title>
+              <description xml:lang="en-US">pam_passwdqc "min" should be configured as described by the policy</description>
+              <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+                <check-export export-name="oval:rhel:var:1052" value-id="var-1052"/>
+                <check-content-ref name="oval:rhel:def:1052" href="scap-rhel6-oval.xml"/>
+              </check>
+            </Rule>
           </Group>
         </Group>
         <Group id="gr-accounts-pam.2" hidden="false">
@@ -2104,7 +2120,7 @@
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> When users changes their passwords, hashes for the new passwords
 						will be generated using the SHA-512 algorithm.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> </description>
-          <Value id="var-2.3.3.5.a" operator="equals" type="string">
+          <Value id="var-1054" operator="equals" type="string">
             <title xml:lang="en-US">Password hashing algorithm</title>
             <description xml:lang="en-US">Enter /etc/shadow password hashing
 							algorithm</description>
@@ -2113,44 +2129,15 @@
             <value selector="SHA-256">sha256</value>
             <value selector="SHA-512">sha512</value>
           </Value>
-          <Rule id="rule-2.3.3.5.a.1" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1054" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">draft</status>
-            <title xml:lang="en-US">Password hashing algorithm in /etc/pam.d/system-auth</title>
-            <description xml:lang="en-US">The password hashing algorithm should be set to SHA-512</description>
+            <title xml:lang="en-US">Password hashing algorithm</title>
+            <description xml:lang="en-US">The password hashing algorithm should be set to
+		    <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1054"/></description>
             <ident system="http://cce.mitre.org">CCE-14063-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20083" value-id="var-2.3.3.5.a"/>
-              <check-content-ref name="oval:rhel:def:20083" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.3.3.5.a.2" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">draft</status>
-            <title xml:lang="en-US">Password hashing algorithm in /etc/pam.d/password-auth</title>
-            <description xml:lang="en-US">The password hashing algorithm should be set to SHA-512</description>
-            <ident system="http://cce.mitre.org">CCE-14063-2</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20083" value-id="var-2.3.3.5.a"/>
-              <check-content-ref name="oval:rhel:def:20083" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.3.3.5.a.3" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">draft</status>
-            <title xml:lang="en-US">Password hashing algorithm in /etc/login.defs</title>
-            <description xml:lang="en-US">The password hashing algorithm should be set to SHA-512</description>
-            <ident system="http://cce.mitre.org">CCE-14063-2</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20083" value-id="var-2.3.3.5.a"/>
-              <check-content-ref name="oval:rhel:def:20083" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.3.3.5.a.4" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">draft</status>
-            <title xml:lang="en-US">Password hashing algorithm in /etc/libuser.conf</title>
-            <description xml:lang="en-US">The password hashing algorithm should be set to SHA-512</description>
-            <ident system="http://cce.mitre.org">CCE-14063-2</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20083" value-id="var-2.3.3.5.a"/>
-              <check-content-ref name="oval:rhel:def:20083" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1054" value-id="var-1054"/>
+              <check-content-ref name="oval:rhel:def:1054" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
