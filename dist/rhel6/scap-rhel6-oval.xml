@@ -578,6 +578,43 @@
 			<criterion test_ref="oval:rhel:tst:10534" comment="Password hashing algorithm is configured in /etc/libuser.conf"/>
 		</criteria>
 	</definition>
+	<definition class="compliance" id="oval:rhel:def:1054" version="1">
+		<metadata>
+			<title>Limit password reuse</title>
+			<reference ref_id="CCE-14939-3" source="CCE"/>
+			<description>The passwords to remember should be set correctly.</description>
+		</metadata>
+                <criteria operator="ONE">
+                        <criterion test_ref="oval:rhel:tst:10541" comment="Passwords to remember is configured to 0"/>
+                        <criteria operator="AND">
+				<criterion test_ref="oval:rhel:tst:10541" comment="Passwords to remember is configured to 0 (note this is negated)" negate="true"/>
+				<criterion comment="check pam_pwhistory in /etc/pam.d/system-auth has a remember option set appropriately"
+					   test_ref="oval:rhel:tst:10542"/>
+				<criterion comment="check pam_pwhistory in /etc/pam.d/password-auth has a remember option set appropriately"
+					   test_ref="oval:rhel:tst:10543"/>
+                        </criteria>
+                  </criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1055" version="1">
+		<metadata>
+			<title>Ensure that No Dangerous Directories Exist in Root's Path</title>
+			<reference ref_id="CCE-3301-9" source="CCE"/>
+			<description>The PATH variable should be set correctly for user root</description>
+		</metadata>
+		<criteria> <!-- Note that this actually tests our PATH, not necessarily root's PATH -->
+			<criterion comment="PATH in environment does not include the current directory" test_ref="oval:rhel:tst:10551"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1056" version="1">
+		<metadata>
+			<title>Write permissions are disabled for group and other in all directories in Root's Path</title>
+			<reference ref_id="CCE-14957-5" source="CCE"/>
+			<description>Check each directory in root's path and make use it does not grant write permission to group and other</description>
+		</metadata>
+                <criteria>
+                        <criterion comment="Check that write permission to group and other in root's path is denied" test_ref="oval:rhel:tst:10561"/>
+                </criteria>
+	</definition>
 	</definitions>
 
 
@@ -841,6 +878,29 @@
                 <ind-def:object object_ref="oval:rhel:obj:105341"/>
                 <ind-def:state state_ref="oval:rhel:ste:105331"/>
         </ind-def:textfilecontent54_test>
+        <ind-def:variable_test id="oval:rhel:tst:10541" version="1" check="all" comment="check remember parameter is configured to 0">
+                <ind-def:object object_ref="oval:rhel:obj:105411"/>
+                <ind-def:state state_ref="oval:rhel:ste:105411"/>
+        </ind-def:variable_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10542" version="1" check="all"
+					comment="check that pam_pwhistory.so remember is set appropriately in /etc/pam.d/system-auth">
+                <ind-def:object object_ref="oval:rhel:obj:105421"/>
+                <ind-def:state state_ref="oval:rhel:ste:105421"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10543" version="1" check="all"
+					comment="check that pam_pwhistory.so remember is set appropriately in /etc/pam.d/password-auth">
+                <ind-def:object object_ref="oval:rhel:obj:105431"/>
+                <ind-def:state state_ref="oval:rhel:ste:105421"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:environmentvariable_test check="none satisfy" version="1" id="oval:rhel:tst:10551"
+					  comment="PATH in environment does not include the current directory">
+                <ind-def:object object_ref="oval:rhel:obj:105511"/>
+                <ind-def:state state_ref="oval:rhel:ste:105511"/>
+        </ind-def:environmentvariable_test>
+        <unix-def:file_test id="oval:rhel:tst:10561" check_existence="none_exist" version="1" check="all"
+			    comment="Check that write permission to group and other in root's path is denied">
+                <unix-def:object object_ref="oval:rhel:obj:105611"/>
+        </unix-def:file_test>
 	</tests>
 
 
@@ -1119,6 +1179,32 @@
                 <ind-def:pattern operation="pattern match">^crypt_style[[:space:]]*\=[[:space:]]*(.*[^[:space:]])[[:space:]]*$</ind-def:pattern>
                 <ind-def:instance datatype="int">1</ind-def:instance>
         </ind-def:textfilecontent54_object>
+        <ind-def:variable_object id="oval:rhel:obj:105411" version="1" comment="Configured number of previous passwords to remember">
+                <ind-def:var_ref>oval:rhel:var:1054</ind-def:var_ref>
+        </ind-def:variable_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:105421" version="1" comment="Number of passwords to remember in /etc/pam.d/system-auth">
+                <ind-def:filepath>/etc/pam.d/system-auth</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^password[[:space:]]+requisite[[:space:]]+pam_pwhistory\.so[[:space:]]+.*remember=([[:digit:]]+)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:105431" version="1" comment="Number of passwords to remember in /etc/pam.d/password-auth">
+                <ind-def:filepath>/etc/pam.d/password-auth</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^password[[:space:]]+requisite[[:space:]]+pam_pwhistory\.so[[:space:]]+.*remember=([[:digit:]]+)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:environmentvariable_object id="oval:rhel:obj:105511" version="1" comment="PATH in environment">
+                <ind-def:name>PATH</ind-def:name>
+        </ind-def:environmentvariable_object>
+        <unix-def:file_object id="oval:rhel:obj:105611" version="1" comment="Entries in PATH that are writable by group or other">
+            	<set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            	  	<object_reference>oval:rhel:obj:1056111</object_reference>
+            	  	<filter>oval:rhel:ste:1056111</filter>
+            	  </set>
+        </unix-def:file_object>
+        <unix-def:file_object id="oval:rhel:obj:1056111" version="1" comment="Entries in PATH">
+                <unix-def:path var_check="at least one" var_ref="oval:rhel:var:10561111"/>
+                <unix-def:filename xsi:nil="true"/>
+        </unix-def:file_object>
 	</objects>
 
 
@@ -1272,6 +1358,19 @@
         <ind-def:textfilecontent54_state id="oval:rhel:ste:105331" version="1" comment="Expected password hashing algorithm, case-insensitive">
                 <ind-def:subexpression var_check="all" operation="case insensitive equals" var_ref="oval:rhel:var:1053" />
         </ind-def:textfilecontent54_state>
+        <ind-def:variable_state id="oval:rhel:ste:105411" version="1" comment="remember value 0">
+                <ind-def:value datatype="int">0</ind-def:value>
+        </ind-def:variable_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:105421" version="1" comment="Expected number of passwords to remember">
+                <ind-def:subexpression datatype="string" var_check="all" operation="equals" var_ref="oval:rhel:var:1054"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:environmentvariable_state id="oval:rhel:ste:105511" version="1" comment="PATH includes current directory">
+                <ind-def:value operation="pattern match">^:|^\.|.*::.*|.*:\.:.*|:$|:\.$</ind-def:value>
+        </ind-def:environmentvariable_state>
+        <unix-def:file_state id="oval:rhel:ste:1056111" version="1" comment="Files not writeable by group nor other">
+                <unix-def:gwrite datatype="boolean">0</unix-def:gwrite>
+                <unix-def:owrite datatype="boolean">0</unix-def:owrite>
+        </unix-def:file_state>
 	</states>
 
 	<variables>
@@ -1395,6 +1494,12 @@
         <external_variable id="oval:rhel:var:1051" version="1" datatype="int" comment="pam_cracklib difok"/>
         <external_variable id="oval:rhel:var:1052" version="1" datatype="string" comment="pam_passwdqc min"/>
         <external_variable id="oval:rhel:var:1053" version="1" datatype="string" comment="Password hashing algorithm"/>
+        <external_variable id="oval:rhel:var:1054" version="1" datatype="int" comment="Number of passwords to remember"/>
+        <local_variable id="oval:rhel:var:10561111" version="1" datatype="string" comment="Split the PATH on the : delimiter">
+                <split delimiter=":">
+                        <object_component item_field="value" object_ref="oval:rhel:obj:105511"/>
+                </split>
+        </local_variable>
 	</variables>
 
 </oval_definitions>

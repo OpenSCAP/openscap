@@ -56,11 +56,13 @@
     <select idref="rule-1043" selected="true"/>
     <select idref="rule-1044" selected="true"/>
     <select idref="rule-1045" selected="true"/>
+    <select idref="rule-1055" selected="true"/>
+    <select idref="rule-1056" selected="true"/>
   </Profile>
   <Profile id="mitr">
     <title xml:lang="en-US">mitr</title>
     <description xml:lang="en-US">mitr</description>
-    <select idref="rule-1053" selected="true"/>
+    <select idref="rule-1057" selected="true"/>
   </Profile>
   <Group id="gr-intro" hidden="false">
     <title xml:lang="en-US">Introduction</title>
@@ -2062,7 +2064,7 @@
 						benefits of thwarting password guessing attacks. The pam_tally2 utility can
 						be run from a cron job on a hourly or daily basis to try and offset this
 						risk. </warning>
-	  <!-- Not tested, this needs to be tested in files specific for each service, and coordinated editing of several items is required. -->
+	  <!-- Not tested, this needs to be tested in files specific for each service, and coordinated editing of several PAM configuration items is required. -->
         </Group>
         <Group id="gr-accounts-pam.3" hidden="false">
           <title xml:lang="en-US">Use pam_deny.so to Quickly Deny Access to a Service</title>
@@ -2126,7 +2128,7 @@
 						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"> password requisite pam_pwhistory.so use_authtok remember=5 </xhtml:code>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Old (and thus no longer valid) passwords are stored in the file
 						/etc/security/opasswd. </description>
-          <Value id="var-2.3.3.6.a" operator="equals" type="number">
+          <Value id="var-1054" operator="equals" type="number">
             <title xml:lang="en-US">remember</title>
             <description xml:lang="en-US"> The last n passwords for each user are saved
 							in /etc/security/opasswd in order to force password change history and
@@ -2136,26 +2138,15 @@
             <value selector="5">5</value>
             <value selector="10">10</value>
           </Value>
-          <Rule id="rule-2.3.3.6.a.1" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1054" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">draft</status>
-            <title xml:lang="en-US">Limit password reuse in /etc/pam.d/system-auth</title>
-            <description xml:lang="en-US">The passwords to remember should be set to: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.3.3.6.a"/>
+            <title xml:lang="en-US">Limit password reuse</title>
+            <description xml:lang="en-US">The passwords to remember should be set to: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1054"/>
 						</description>
             <ident system="http://cce.mitre.org">CCE-14939-3</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20084" value-id="var-2.3.3.6.a"/>
-              <check-content-ref name="oval:rhel:def:20084" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.3.3.6.a.2" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">draft</status>
-            <title xml:lang="en-US">Limit password reuse in /etc/pam.d/password-auth</title>
-            <description xml:lang="en-US">The passwords to remember should be set to: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.3.3.6.a"/>
-						</description>
-            <ident system="http://cce.mitre.org">CCE-14939-3</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20084" value-id="var-2.3.3.6.a"/>
-              <check-content-ref name="oval:rhel:def:20084" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1054" value-id="var-1054"/>
+              <check-content-ref name="oval:rhel:def:1054" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -2201,24 +2192,24 @@
 						unprivileged or semi-privileged (system) user. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> It is a good practice for administrators to always execute
 						privileged commands by typing the full path to the command.</description>
-          <Rule id="rule-2.3.4.1.1.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1055" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">No Dangerous Directories Exist in Root's PATH variable</title>
             <description xml:lang="en-US">The PATH variable should be set correctly for user
 							root</description>
             <ident system="http://cce.mitre.org">CCE-3301-9</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20085" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1055" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.3.4.1.2.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1056" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">The PATH variable for ROOT does not include any world-writable or group-writable directories</title>
+            <title xml:lang="en-US">The PATH variable for root does not include any world-writable or group-writable directories</title>
             <description xml:lang="en-US">Check each directory in root's path and make use it does not
 							grant write permission to group and other</description>
             <ident system="http://cce.mitre.org">CCE-14957-5</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:200855" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1056" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
