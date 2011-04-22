@@ -400,6 +400,9 @@ static void oval_consume_filter(struct oval_filter *filter, void *content_filter
 	((struct oval_object_content_FILTER *)content_filter)->filter = filter;
 }
 
+/* prevent gcc false warning */
+//#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch"
 int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 				  struct oval_parser_context *context,
 				  oval_object_content_consumer consumer, void *user)
@@ -446,9 +449,6 @@ int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 			return_code = oval_filter_parse_tag(reader, context, &oval_consume_filter, content_filter);
 		};
 		break;
-        case OVAL_OBJECTCONTENT_UNKNOWN:
-                oscap_free(namespace);
-                return (-1);
 	}
 
 	(*consumer) (content, user);
@@ -460,6 +460,7 @@ int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 	oscap_free(namespace);
 	return return_code;
 }
+//#pragma GCC diagnostic pop
 
 void oval_object_content_to_print(struct oval_object_content *content, char *indent, int idx)
 {

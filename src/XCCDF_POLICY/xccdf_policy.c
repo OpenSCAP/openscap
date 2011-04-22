@@ -1780,7 +1780,6 @@ static char* xccdf_subst_callback(xccdf_subst_type_t type, const char *id, void 
         return NULL;
 
     struct xccdf_policy *policy = arg;
-    if (policy == NULL) return NULL;
     struct xccdf_policy_model *model = xccdf_policy_get_model(policy);
     if (model == NULL) return NULL;
     struct xccdf_benchmark *bench = xccdf_policy_model_get_benchmark(model);

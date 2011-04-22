@@ -150,9 +150,6 @@ void *probe_input_handler(void *arg)
 
 				SEAP_msg_free(seap_request);
 
-                                if (probe_out != NULL)
-                                        SEXP_free(probe_out);
-
 				break;
 			}
 		} else {
