@@ -1701,8 +1701,11 @@ found:
                                 b_encfree = true;
                         }
 
-                        if (spb_pick (dsc->p_buffer, dsc->p_bufoff + 1, dsc->p_explen - 2, b_enc) != 0)
+			if (spb_pick (dsc->p_buffer, dsc->p_bufoff + 1, dsc->p_explen - 2, b_enc) != 0) {
+				if (b_encfree)
+					sm_free (b_enc);
                                 return (SEXP_PRET_EUNDEF);
+			}
                 } else
                         b_encfree = false;
 
@@ -1764,8 +1767,11 @@ __PARSE_RT SEXP_parse_kl_string_b64 (__PARSE_PT(dsc))
                         b_encfree = true;
                 }
 
-                if (spb_pick (dsc->p_buffer, dsc->p_bufoff + 1, dsc->p_explen, b_enc) != 0)
+		if (spb_pick (dsc->p_buffer, dsc->p_bufoff + 1, dsc->p_explen, b_enc) != 0) {
+			if (b_encfree)
+				sm_free (b_enc);
                         return (SEXP_PRET_EUNDEF);
+		}
         } else
                 b_encfree = false;
 

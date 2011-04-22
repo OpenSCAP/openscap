@@ -275,6 +275,7 @@ static SEXP_t *oval_probe_cmd_obj_eval(SEXP_t *sexp, void *arg)
 			       id_str, oscap_err_family(), oscap_err_code(), oscap_err_desc());
 		oscap_clearerr();
 		oscap_free(id_str);
+		SEXP_free(ret);
 
 		return (NULL);
 	}

@@ -146,6 +146,7 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
                                            "id", msg_n + 1, sexp_msg);
 
                                         sm_free (seap_msg->attrs);
+					SEXP_free(attr_name);
 
                                         return (SEAP_EUNEXP);
                                 }
