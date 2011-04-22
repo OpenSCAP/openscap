@@ -89,6 +89,7 @@ void *probe_signal_handler(void *arg)
 		switch(siinf.si_signo) {
 		case SIGUSR1:/* probe abort */
                         probe->probe_exitcode = ECONNABORTED;
+			/* FALLTHROUGH */
                 case SIGINT:
                 case SIGTERM:
                 case SIGQUIT:

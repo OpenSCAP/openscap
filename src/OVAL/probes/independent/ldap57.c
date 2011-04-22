@@ -132,7 +132,9 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
                         }                                               \
                                                                         \
                         (se_dst) = __sval;                              \
-                }                                                       \
+		} else {						\
+			return (PROBE_ENOATTR);				\
+		}							\
 	} while (0)
 
         get_string(suffix,      se_suffix,      probe_in, "suffix");
@@ -263,8 +265,10 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
                                         switch(bertag & LBER_ENCODING_MASK) {
                                         case LBER_PRIMITIVE:
                                                 dI("Found primitive value, bertag = %u\n", bertag);
+						break;
                                         case LBER_CONSTRUCTED:
                                                 dW("Don't know how to handle LBER_CONSTRUCTED values\n");
+						/* FALLTHROUGH */
                                         default:
                                                 dW("Skipping attribute value, bertag = %u\n", bertag);
                                                 continue;
