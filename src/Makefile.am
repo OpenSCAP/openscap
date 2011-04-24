@@ -3,11 +3,11 @@ lib_LTLIBRARIES = libopenscap.la
 check_LTLIBRARIES= libopenscap_testing.la
 
 libopenscap_la_SOURCES = 
-libopenscap_la_LIBADD =
+libopenscap_la_LIBADD = $(top_builddir)/lib/libgnu.la
 libopenscap_la_LDFLAGS = -no-undefined -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 libopenscap_testing_la_SOURCES = 
-libopenscap_testing_la_LIBADD = @pcre_libs@
+libopenscap_testing_la_LIBADD = @pcre_libs@ $(top_builddir)/lib/libgnu.la
 libopenscap_testing_la_LDFLAGS= -rpath /nowhere
 
 SUBDIRS += common
