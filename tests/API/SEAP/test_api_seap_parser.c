@@ -51,6 +51,8 @@ int main (int argc, char *argv[])
                         input = fgetln (stdin, &inlen);
 #elif defined(__linux__) || defined(__GLIBC__)
                         getline (&input, &inlen, stdin);
+#elif defined(__SVR4) && defined(__sun)
+                        rpl_getline (&input, &inlen, stdin);
 #else
 # error "FIXME"
 #endif
