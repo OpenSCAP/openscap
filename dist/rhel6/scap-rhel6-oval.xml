@@ -615,6 +615,519 @@
                         <criterion comment="Check that write permission to group and other in root's path is denied" test_ref="oval:rhel:tst:10561"/>
                 </criteria>
 	</definition>
+	<definition class="compliance" id="oval:rhel:def:1057" version="1">
+		<metadata>
+			<title>Ensure that User Home Directories are not Group-Writable or World-Readable</title>
+			<reference ref_id="CCE-4090-7" source="CCE"/>
+			<description>File permissions should be set correctly for the home directories for all user accounts.</description>
+		</metadata>
+		<!-- We ignore directories of system users (UID<500 except root), these are often world-readable -->
+                <criteria>
+                        <criterion comment="Home directories are neither group/world writable nor world-readable" test_ref="oval:rhel:tst:10571"/>
+                </criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1058" version="1">
+		<metadata>
+			<title>Ensure that User Dot-Files are not World-writable</title>
+			<reference ref_id="TBD" source="CCE"/>
+			<description>File permissions should be set correctly for dot files for all user accounts.</description>
+		</metadata>
+                <criteria>
+                        <criterion comment="Dot files not world-writable" test_ref="oval:rhel:tst:10581"/>
+                </criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1059" version="1">
+		<metadata>
+			<title>Ensure that Users Have Sensible Umask Values set for bash</title>
+			<description>The default umask for all users should be set correctly for the bash shell</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10591" comment="umask in /etc/bashrc is sensible"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1060" version="1">
+		<metadata>
+			<title>Ensure that Users Have Sensible Umask Values set for csh</title>
+			<reference ref_id="CCE-4227-5" source="CCE"/>
+			<description>The default umask for all users should be set correctly for the csh shell</description>
+		</metadata>
+                <criteria>
+                        <criterion test_ref="oval:rhel:tst:10601" comment="umask in /etc/csh.cshrc is sensible"/>
+                </criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1061" version="1">
+		<metadata>
+			<title>Ensure that Users Have Sensible Umask Values in /etc/login.defs</title>
+			<reference ref_id="CCE-14107-7" source="CCE"/>
+			<description>The default umask for all users should be set correctly</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10611" comment="UMASK in /etc/login.defs is sensible"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1062" version="1">
+		<metadata>
+			<title>Ensure that Users Have Sensible Umask Values set in /etc/profile</title>
+			<reference ref_id="TBD" source="CCE"/>
+			<description>The default umask for all users should be set correctly in /etc/profile</description>
+		</metadata>
+                <criteria>
+                        <criterion test_ref="oval:rhel:tst:10621" comment="umask in /etc/profile is sensible"/>
+                </criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1063" version="1">
+		<metadata>
+			<title>Ensure that Users Don't have .netrc files</title>
+			<reference ref_id="TBD" source="CCE"/>
+			<description>No user home directroy should contain a .netrc file</description>
+		</metadata>
+                <criteria>
+                        <criterion test_ref="oval:rhel:tst:10631" comment="No ~/.netrc files exist"/>
+                </criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1064" version="1">
+		<metadata>
+			<title>Set Boot Loader Configuration Owner</title>
+			<reference ref_id="CCE-4144-2" source="CCE"/>
+			<description>The /boot/grub/grub.conf file should be owned by the appropriate user.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10641" comment="Correct owner of /boot/grub/grub.conf"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1065" version="1">
+		<metadata>
+			<title>Set Boot Configuration Group</title>
+			<reference ref_id="CCE-4197-0" source="CCE"/>
+			<description>The /boot/grub/grub.conf file should be owned by the appropriate group.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10651" comment="Correct owner of /boot/grub/grub.conf"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1066" version="1">
+		<metadata>
+			<title>Set Boot Configuration Permissions</title>
+			<reference ref_id="CCE-3923-0" source="CCE"/>
+			<description>File permissions for /boot/grub/grub.conf should be set correctly.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10661" comment="Correct permissions of /boot/grub/grub.conf"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1067" version="1">
+		<metadata>
+			<title>Set Boot Loader Password</title>
+			<reference ref_id="CCE-3818-2" source="CCE"/>
+			<description>The grub boot loader should have password protection enabled</description>
+		</metadata>
+		<!-- Notes that sha-512 support is only added in RHEL6.1 -->
+		<criteria>
+			<criterion comment="Boot password is defined and encrypted using sha-512" test_ref="oval:rhel:tst:10671"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1068" version="1">
+		<metadata>
+			<title>Require Authentication for Single-User Mode</title>
+			<reference ref_id="CCE-4241-6" source="CCE"/>
+			<description>The requirement for a password to boot into single-user mode should be configured correctly.</description>
+		</metadata>
+		<criteria>
+			<criterion comment="Single-user mode requires a password" test_ref="oval:rhel:tst:10681"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1069" version="1">
+		<metadata>
+			<title>Disable Interactive Boot</title>
+			<reference ref_id="CCE-4245-7" source="CCE"/>
+			<description>The ability for users to perform interactive startups should be disabled.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10691" comment="Interactive boot is disabled"/>
+		</criteria>
+	</definition>
+        <definition class="compliance" id="oval:rhel:def:1070" version="1">
+                <metadata>
+                        <title>Implement Inactivity Time-out for Bourne Shells</title>
+                        <reference ref_id="CCE-3707-7" source="CCE"/>
+                        <description>The idle time-out value for the /bin/bash shell should meet the minimum requirements.</description>
+                </metadata>
+                <criteria>
+                        <criterion comment="/etc/profile.d/tmout.sh is set up" test_ref="oval:rhel:tst:10701"/>
+                </criteria>
+        </definition>
+        <definition class="compliance" id="oval:rhel:def:1071" version="1">
+                <metadata>
+                        <title>Implement Inactivity Time-out for C Shells</title>
+                        <reference ref_id="CCE-3707-7" source="CCE"/>
+                        <description>The idle time-out value for the /bin/tcsh shell should meet the minimum requirements.</description>
+                </metadata>
+                <criteria>
+                        <criterion comment="/etc/profile.d/autologout.csh is set up" test_ref="oval:rhel:tst:10711"/>
+                </criteria>
+        </definition>
+	<definition class="compliance" id="oval:rhel:def:1072" version="1">
+		<metadata>
+			<title>Configure GUI Screen Locking</title>
+			<reference ref_id="CCE-3315-9" source="CCE"/>
+			<description>The allowed period of inactivity for GNOME desktop lockout should be configured correctly.</description>
+		</metadata>
+		<criteria>
+			<criterion comment="check value of /desktop/gnome/session/idle_delay in GConf" test_ref="oval:rhel:tst:10721"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1073" version="1">
+		<metadata>
+			<title>Implement idle activation of screen saver</title>
+			<reference ref_id="CCE-14604-3" source="CCE"/>
+			<description>Idle activation of the screen saver should be enabled.</description>
+		</metadata>
+		<criteria>
+			<criterion comment="check value of /apps/gnome-screensaver/idle_activation_enabled in GConf" test_ref="oval:rhel:tst:10731"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1074" version="1">
+		<metadata>
+			<title>Lock the screensaver with a password</title>
+			<reference ref_id="CCE-14023-6" source="CCE"/>
+			<description>Screensaver should be locked with a password.</description>
+		</metadata>
+		<criteria>
+			<criterion comment="check value of /apps/gnome-screensaver/lock_enabled in GConf" test_ref="oval:rhel:tst:10741"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1075" version="1">
+		<metadata>
+			<title>Implement blank screen saver</title>
+			<reference ref_id="CCE-14735-5" source="CCE"/>
+			<description>The screen saver should be blank.</description>
+		</metadata>
+		<criteria>
+			<criterion comment="check value of /apps/gnome-screensaver/mode in GConf" test_ref="oval:rhel:tst:10751"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1076" version="1">
+		<metadata>
+			<title>Configure GUI Screen Locking</title>
+			<reference ref_id="CCE-3910-7" source="CCE"/>
+			<description>The vlock package should be installed</description>
+		</metadata>
+		<criteria>
+			<criterion comment="vlock is installed" test_ref="oval:rhel:tst:10761"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1077" version="1">
+		<metadata>
+			<title>Modify the System Login Banner</title>
+			<reference ref_id="CCE-4060-0" source="CCE"/>
+			<description>The system login banner text should be set correctly.</description>
+		</metadata>
+		<criteria>
+			<criterion comment="/etc/issue is set appropriately" test_ref="oval:rhel:tst:10771"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1078" version="1">
+		<metadata>
+			<title>Implement a GUI Warning Banner</title>
+			<reference ref_id="CCE-4188-9" source="CCE"/>
+			<description>The direct GNOME login warning banner should be set correctly.</description>
+		</metadata>
+                <criteria>
+			<criterion comment="Check value of /apps/gdm/simple-greeter/banner_message_enable in GConf" test_ref="oval:rhel:tst:10781"/>
+			<criterion comment="Check value of /apps/gdm/simple-greeter/banner_message_text in GConf" test_ref="oval:rhel:tst:10782"/>
+                </criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1079" version="1">
+		<metadata>
+			<title>Enable SELinux</title>
+			<reference ref_id="CCE-3977-6" source="CCE"/>
+			<description>SELinux should not be disabled in /boot/grub/grub.conf</description>
+		</metadata>
+		<criteria>
+			<criterion comment="Check /boot/grub/grub.conf does not contain selinux=0" test_ref="oval:rhel:tst:10791"/>
+			<criterion comment="Check /boot/grub/grub.conf does not contain enforcing=0" test_ref="oval:rhel:tst:10792"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1080" version="1">
+		<metadata>
+			<title>Enable SELinux state</title>
+			<reference ref_id="CCE-3999-0" source="CCE"/>
+			<description>The SELinux state should be set appropriately.</description>
+		</metadata>
+                <criteria>
+                        <criterion test_ref="oval:rhel:tst:10801" comment="Check SELINUX in /etc/selinux/config"/>
+                </criteria>
+        </definition>
+	<definition class="compliance" id="oval:rhel:def:1081" version="1">
+		<metadata>
+			<title>Set SELinux Polixy</title>
+			<reference ref_id="CCE-3624-4" source="CCE"/>
+			<description>The SELinux policy should be set appropriately.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10811" comment="Check SELINUXTYPE in /etc/selinux/config"/>
+		</criteria>
+	</definition>
+        <definition class="compliance" id="oval:rhel:def:1082" version="1">
+                <metadata>
+                        <title>Remove SETroubleshoot if Possible</title>
+                        <reference ref_id="CCE-4148-3" source="CCE"/>
+                        <description>The setroubleshoot package should be uninstalled.</description>
+                </metadata>
+                <criteria>
+                        <criterion comment="setroubleshoot-server is not installed" test_ref="oval:rhel:tst:10821"/>
+                </criteria>
+        </definition>
+	<definition class="compliance" id="oval:rhel:def:1083" version="1">
+		<metadata>
+			<title>Disable MCS Translation Service (mcstrans) if Possible</title>
+			<reference ref_id="CCE-3668-1" source="CCE"/>
+			<description>The mcstrans service should be disabled.</description>
+		</metadata>
+                <criteria>
+                        <criterion comment="mcstrans is disabled" test_ref="oval:rhel:tst:10831"/>
+                </criteria>
+        </definition>
+	<definition class="compliance" id="oval:rhel:def:1084" version="1">
+		<metadata>
+			<title>Network Parameters for Hosts Only</title>
+			<reference ref_id="CCE-4151-7" source="CCE"/>
+			<description>The default setting for sending ICMP redirects should be disabled for network interfaces.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10841" comment="Check /proc/sys/net/ipv4/conf/default/send_redirects"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1085" version="1">
+		<metadata>
+			<title>Network Parameters for Hosts Only</title>
+			<reference ref_id="CCE-4155-8" source="CCE"/>
+			<description>Sending ICMP redirects should be disabled for all interfaces.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10851" comment="Check /proc/sys/net/ipv4/conf/all/send_redirects"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1086" version="1">
+		<metadata>
+			<title>Network Parameters for Hosts Only</title>
+			<reference ref_id="CCE-3561-8" source="CCE"/>
+			<description>IP forwarding should be disabled.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10861" comment="Check /proc/sys/net/ipv4/ip_forward"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1087" version="1">
+		<metadata>
+			<title>Network Parameters for Hosts and Routers</title>
+			<reference ref_id="CCE-4236-6" source="CCE"/>
+			<description>Accepting source routed packets should be enabled or disabled for all interfaces as appropriate.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10871" comment="Check /proc/sys/net/ipv4/conf/all/accept_source_route"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1088" version="1">
+		<metadata>
+			<title>Network Parameters for Hosts and Routers</title>
+			<reference ref_id="CCE-4217-6" source="CCE"/>
+			<description>Accepting ICMP redirects should be enabled or disabled for all interfaces as appropriate.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10881" comment="Check /proc/sys/net/ipv4/conf/all/accept_redirects"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1089" version="1">
+		<metadata>
+			<title>Network Parameters for Hosts and Routers</title>
+			<reference ref_id="CCE-3472-8" source="CCE"/>
+			<description>Accepting "secure" ICMP redirects (those from gateways listed in the default gateways list) should be enabled or disabled for all interfaces as appropriate.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10891" comment="Check /proc/sys/net/ipv4/conf/all/secure_redirects"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1090" version="1">
+		<metadata>
+			<title>Network Parameters for Hosts and Routers</title>
+			<reference ref_id="CCE-4320-8" source="CCE"/>
+			<description>Logging of "martian" packets (those with impossible addresses) should be enabled or disabled for all interfaces as appropriate.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10901" comment="Check /proc/sys/net/ipv4/conf/all/log_martians"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1091" version="1">
+		<metadata>
+			<title>Network Parameters for Hosts and Routers</title>
+			<reference ref_id="CCE-4091-5" source="CCE"/>
+			<description>The default setting for accepting source routed packets should be enabled or disabled for network interfaces as appropriate.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10911" comment="Check /proc/sys/net/ipv4/conf/default/accept_source_route"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1092" version="1">
+		<metadata>
+			<title>Network Parameters for Hosts and Routers</title>
+			<reference ref_id="CCE-4186-3" source="CCE"/>
+			<description>The default setting for accepting ICMP redirects should be enabled or disabled for network interfaces as appropriate.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10921" comment="Check /proc/sys/net/ipv4/conf/default/accept_redirects"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1093" version="1">
+		<metadata>
+			<title>Network Parameters for Hosts and Routers</title>
+			<reference ref_id="CCE-3339-9" source="CCE"/>
+			<description>The default setting for accepting "secure" ICMP redirects (those from gateways listed in the default gateways list) should be enabled or disabled for network interfaces as appropriate.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10931" comment="Check /proc/sys/net/ipv4/conf/default/secure_redirects"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1094" version="1">
+		<metadata>
+			<title>Network Parameters for Hosts and Routers</title>
+			<reference ref_id="CCE-4320-8" source="CCE"/>
+			<description>Default logging of "martian" packets (those with impossible addresses) should be enabled or disabled for network interfaces as appropriate.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10941" comment="Check /proc/sys/net/ipv4/conf/default/log_martians"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1095" version="1">
+		<metadata>
+			<title>Network Parameters for Hosts and Routers</title>
+			<reference ref_id="CCE-3644-2" source="CCE"/>
+			<description>Ignoring ICMP echo requests (pings) sent to broadcast / multicast addresses should be enabled or disabled as appropriate.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10951" comment="Check /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1096" version="1">
+		<metadata>
+			<title>Network Parameters for Hosts and Routers</title>
+			<reference ref_id="CCE-4133-5" source="CCE"/>
+			<description>Ignoring bogus ICMP responses to broadcasts should be enabled or disabled as appropriate.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10961" comment="Check /proc/sys/net/ipv4/icmp_ignore_bogus_error_responses"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1097" version="1">
+		<metadata>
+			<title>Network Parameters for Hosts and Routers</title>
+			<reference ref_id="CCE-4265-5" source="CCE"/>
+			<description>Sending TCP syncookies should be enabled or disabled as appropriate.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10971" comment="Check /proc/sys/net/ipv4/tcp_syncookies"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1098" version="1">
+		<metadata>
+			<title>Network Parameters for Hosts and Routers</title>
+			<reference ref_id="CCE-4080-8" source="CCE"/>
+			<description>Performing source validation by reverse path should be enabled or disabled for all interfaces as appropriate.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10981" comment="Check /proc/sys/net/ipv4/conf/all/rp_filter"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1099" version="1">
+		<metadata>
+			<title>Network Parameters for Hosts and Routers</title>
+			<reference ref_id="CCE-3840-6" source="CCE"/>
+			<description>The default setting for performing source validation by reverse path should be enabled or disabled for network interfaces as appropriate.</description>
+		</metadata>
+		<criteria>
+			<criterion test_ref="oval:rhel:tst:10991" comment="Check /proc/sys/net/ipv4/conf/default/rp_filter"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1100" version="1">
+		<metadata>
+			<title>Deactivate Wireless Interfaces</title>
+			<reference ref_id="CCE-4276-2" source="CCE"/>
+			<description>All wireless interfaces should be disabled.</description>
+		</metadata>
+		<criteria> <!-- Note that this does not detect interfaces that are down -->
+			<criterion comment="No wireless interfaces are connected" test_ref="oval:rhel:tst:11001"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1101" version="1">
+		<metadata>
+			<title>Disable Automatic Loading of IPv6 Kernel Module</title>
+			<reference ref_id="CCE-3562-6" source="CCE"/>
+			<description>Automatic loading of the IPv6 kernel module should be disabled.</description>
+		</metadata>
+		<criteria>
+                        <criterion comment="Checks that /etc/modprobe.d/ipv6.conf prevents loading the ipv6 module" test_ref="oval:rhel:tst:11011"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1102" version="1">
+		<metadata>
+			<title>Disable Automatic Configuration</title>
+			<description>Automatic IPv6 configuration should be disabled by default.</description>
+		</metadata>
+		<criteria operator="OR" comment="Either IPv6 kernel module is not loaded or this feature should be disabled">
+			<extend_definition definition_ref="oval:rhel:def:1101" comment="Automatic loading of the IPv6 kernel module should be disabled"/>
+			<criterion comment="Check IPV6_AUTOCONF in /etc/sysconfig/network" test_ref="oval:rhel:tst:11021"/>
+		</criteria>
+	</definition>
+        <definition class="compliance" id="oval:rhel:def:1103" version="1">
+                <metadata>
+                        <title>Limit Network-Transmitted Configuration</title>
+                        <reference ref_id="CCE-4159-0" source="CCE"/>
+                        <description>The default number of IPv6 router solicitations for network interfaces to send should be set appropriately.</description>
+                </metadata>
+                <criteria>
+			<criterion test_ref="oval:rhel:tst:11031" comment="Check /proc/sys/net/ipv6/conf/default/router_solicitations"/>
+		</criteria>
+        </definition>
+        <definition class="compliance" id="oval:rhel:def:1104" version="1">
+                <metadata>
+                        <title>Limit Network-Transmitted Configuration</title>
+                        <reference ref_id="CCE-4221-8" source="CCE"/>
+                        <description>The default setting for accepting router preference via IPv6 router advertisement should be disabled for network interfaces.</description>
+                </metadata>
+                <criteria>
+			<criterion test_ref="oval:rhel:tst:11041" comment="Check /proc/sys/net/ipv6/conf/default/accept_ra_rtr_pref"/>
+		</criteria>
+        </definition>
+        <definition class="compliance" id="oval:rhel:def:1105" version="1">
+                <metadata>
+                        <title>Limit Network-Transmitted Configuration</title>
+                        <reference ref_id="CCE-4058-4" source="CCE"/>
+                        <description>The default setting for accepting prefix information via IPv6 router advertisement should be enabled or disabled for network interfaces as appropriate.</description>
+                </metadata>
+                <criteria>
+			<criterion test_ref="oval:rhel:tst:11051" comment="Check /proc/sys/net/ipv6/conf/default/accept_ra_pinfo"/>
+		</criteria>
+        </definition>
+        <definition class="compliance" id="oval:rhel:def:1106" version="1">
+                <metadata>
+                        <title>Limit Network-Transmitted Configuration</title>
+                        <reference ref_id="CCE-4128-5" source="CCE"/>
+                        <description>The default setting for accepting a default router via IPv6 router advertisement should be enabled or disabled for network interfaces as appropriate.</description>
+                </metadata>
+                <criteria>
+			<criterion test_ref="oval:rhel:tst:11061" comment="Check /proc/sys/net/ipv6/conf/default/accept_ra_defrtr"/>
+		</criteria>
+        </definition>
+        <definition class="compliance" id="oval:rhel:def:1107" version="1">
+                <metadata>
+                        <title>Limit Network-Transmitted Configuration</title>
+                        <reference ref_id="CCE-4287-9" source="CCE"/>
+                        <description>The default setting for autoconfiguring network interfaces using prefix information in IPv6 router advertisements should be enabled or disabled as appropriate.</description>
+                </metadata>
+                <criteria>
+			<criterion test_ref="oval:rhel:tst:11071" comment="Check /proc/sys/net/ipv6/conf/default/autoconf"/>
+		</criteria>
+        </definition>
 	</definitions>
 
 
@@ -901,6 +1414,249 @@
 			    comment="Check that write permission to group and other in root's path is denied">
                 <unix-def:object object_ref="oval:rhel:obj:105611"/>
         </unix-def:file_test>
+        <unix-def:file_test id="oval:rhel:tst:10571" check_existence="none_exist" version="1" check="all"
+			    comment="Check that write permission to group/other and read permission to other on home directories of non-system users is denied">
+                <unix-def:object object_ref="oval:rhel:obj:105711"/>
+        </unix-def:file_test>
+        <unix-def:file_test id="oval:rhel:tst:10581" check_existence="none_exist" version="1" check="all"
+			    comment="Check that dot-files are not world-writable">
+                <unix-def:object object_ref="oval:rhel:obj:105811"/>
+	</unix-def:file_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10591" version="1" check="all"
+					comment="Tests the value of umask in /etc/bashrc">
+                <ind-def:object object_ref="oval:rhel:obj:105911"/>
+                <ind-def:state state_ref="oval:rhel:ste:105911"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10601" version="1" check="all"
+					comment="Tests the value the umask in /etc/csh.cshrc">
+                <ind-def:object object_ref="oval:rhel:obj:106011"/>
+                <ind-def:state state_ref="oval:rhel:ste:105911"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10611" version="1" check="all"
+					comment="Tests the value the UMASK in /etc/login.defs">
+                <ind-def:object object_ref="oval:rhel:obj:106111"/>
+                <ind-def:state state_ref="oval:rhel:ste:106111"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10621" version="1" check="all"
+					comment="Tests the value the umask in /etc/profile">
+                <ind-def:object object_ref="oval:rhel:obj:106211"/>
+                <ind-def:state state_ref="oval:rhel:ste:105911"/>
+        </ind-def:textfilecontent54_test>
+        <unix-def:file_test id="oval:rhel:tst:10631" check_existence="none_exist" version="1" check="all" comment="Check that no ~/.netrc files exist">
+                <unix-def:object object_ref="oval:rhel:obj:106311"/>
+	</unix-def:file_test>
+        <unix-def:file_test check_existence="all_exist" id="oval:rhel:tst:10641" version="1" check="all" comment="Test user owning /boot/grub/grub.conf">
+                <unix-def:object object_ref="oval:rhel:obj:106411"/>
+                <unix-def:state state_ref="oval:rhel:ste:106411"/>
+        </unix-def:file_test>
+        <unix-def:file_test check_existence="all_exist" id="oval:rhel:tst:10651" version="1" check="all" comment="Test group owning /boot/grub/grub.conf">
+                <unix-def:object object_ref="oval:rhel:obj:106411"/>
+                <unix-def:state state_ref="oval:rhel:ste:106511"/>
+        </unix-def:file_test>
+        <unix-def:file_test check_existence="all_exist" id="oval:rhel:tst:10661" version="1" check="all" comment="Testing file permissions of /boot/grub/grub.conf">
+                <unix-def:object object_ref="oval:rhel:obj:106411"/>
+                <unix-def:state state_ref="oval:rhel:ste:106611"/>
+        </unix-def:file_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10671" version="1" check="all"
+					comment="Tests that there is a SHA-512-encrypted password in /boot/grub/grub.conf">
+                <ind-def:object object_ref="oval:rhel:obj:106711"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10681" version="1" check="all"
+					comment="Tests the value of SINGLE in /etc/sysconfig/init">
+                <ind-def:object object_ref="oval:rhel:obj:106811"/>
+                <ind-def:state state_ref="oval:rhel:ste:106811"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10691" version="1" check="all"
+					comment="Tests the value of the PROMPT in /etc/sysconfig/init">
+                <ind-def:object object_ref="oval:rhel:obj:106911"/>
+                <ind-def:state state_ref="oval:rhel:ste:106911"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10701" version="1" check="all"
+					comment="Tests that /etc/profile.d/tmout.sh is set up">
+                <ind-def:object object_ref="oval:rhel:obj:107011"/>
+                <ind-def:state state_ref="oval:rhel:ste:107011"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10711" version="1" check="all"
+					comment="Tests that /etc/profile.d/autologout.csh is set up">
+                <ind-def:object object_ref="oval:rhel:obj:107111"/>
+                <ind-def:state state_ref="oval:rhel:ste:107111"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:xmlfilecontent_test id="oval:rhel:tst:10721" version="1" check="all" comment="Verify mandatory value of /desktop/gnome/session/idle_delay">
+                <ind-def:object object_ref="oval:rhel:obj:107211"/>
+                <ind-def:state state_ref="oval:rhel:ste:107211"/>
+        </ind-def:xmlfilecontent_test>
+        <ind-def:xmlfilecontent_test id="oval:rhel:tst:10731" version="1" check="all" comment="Verify mandatory value of /apps/gnome-screensaver/idle_activation_enabled">
+                <ind-def:object object_ref="oval:rhel:obj:107311"/>
+                <ind-def:state state_ref="oval:rhel:ste:107311"/>
+        </ind-def:xmlfilecontent_test>
+        <ind-def:xmlfilecontent_test id="oval:rhel:tst:10741" version="1" check="all" comment="Verify mandatory value of /apps/gnome-screensaver/lock_enabled">
+                <ind-def:object object_ref="oval:rhel:obj:107411"/>
+                <ind-def:state state_ref="oval:rhel:ste:107411"/>
+        </ind-def:xmlfilecontent_test>
+        <ind-def:xmlfilecontent_test id="oval:rhel:tst:10751" version="1" check="all" comment="Verify mandatory value of /apps/gnome-screensaver/mode">
+                <ind-def:object object_ref="oval:rhel:obj:107511"/>
+                <ind-def:state state_ref="oval:rhel:ste:107511"/>
+        </ind-def:xmlfilecontent_test>
+	<lin-def:rpminfo_test check_existence="all_exist" id="oval:rhel:tst:10761" version="1" check="all" comment="The vlock package should be installed">
+                <lin-def:object object_ref="oval:rhel:obj:107611"/>
+        </lin-def:rpminfo_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10771" version="1" check="all" comment="Tests contents of /etc/issue">
+                <ind-def:object object_ref="oval:rhel:obj:107711"/>
+                <ind-def:state state_ref="oval:rhel:ste:107711"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:xmlfilecontent_test id="oval:rhel:tst:10781" version="1" check="all"
+				     comment="Verify mandatory value of /apps/gdm/simple-greeter/banner_message_enable">
+                <ind-def:object object_ref="oval:rhel:obj:107811"/>
+                <ind-def:state state_ref="oval:rhel:ste:107811"/>
+	</ind-def:xmlfilecontent_test>
+        <ind-def:xmlfilecontent_test id="oval:rhel:tst:10782" version="1" check="all"
+				     comment="Verify mandatory value of /apps/gdm/simple-greeter/banner_message_text">
+                <ind-def:object object_ref="oval:rhel:obj:107821"/>
+                <ind-def:state state_ref="oval:rhel:ste:107821"/>
+	</ind-def:xmlfilecontent_test>
+	<ind-def:textfilecontent54_test check_existence="none_exist" id="oval:rhel:tst:10791" version="1" check="all"
+					comment="Tests that selinux=0 is not set in /boot/grub/grub.conf">
+		<ind-def:object object_ref="oval:rhel:obj:107911"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test check_existence="none_exist" id="oval:rhel:tst:10792" version="1" check="all"
+					comment="Tests that enforcing=0 is not set in /boot/grub/grub.conf">
+		<ind-def:object object_ref="oval:rhel:obj:107921"/>
+	</ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10801" version="1" check="all"
+					comment="Tests the value of the SELINUX in /etc/selinux/config">
+                <ind-def:object object_ref="oval:rhel:obj:108011"/>
+                <ind-def:state state_ref="oval:rhel:ste:108011"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10811" version="1" check="all"
+					comment="Tests the value of SELINUXTYPE in /etc/selinux/config">
+                <ind-def:object object_ref="oval:rhel:obj:108111"/>
+                <ind-def:state state_ref="oval:rhel:ste:108111"/>
+        </ind-def:textfilecontent54_test>
+        <lin-def:rpminfo_test check_existence="none_exist" id="oval:rhel:tst:10821" version="1" check="all" comment="setroubleshoot-server is not installed">
+                <lin-def:object object_ref="oval:rhel:obj:108211"/>
+        </lin-def:rpminfo_test>
+        <unix-def:runlevel_test check_existence="any_exist" id="oval:rhel:tst:10831" version="1" check="all" comment="mcstrans is disabled">
+                <unix-def:object object_ref="oval:rhel:obj:108311"/>
+                <unix-def:state state_ref="oval:rhel:ste:100611"/>
+        </unix-def:runlevel_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10841" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value of /proc/sys/net/ipv4/conf/default/send_redirects">
+	      <ind-def:object object_ref="oval:rhel:obj:108411"/>
+	      <ind-def:state state_ref="oval:rhel:ste:103111"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10851" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value of /proc/sys/net/ipv4/conf/all/send_redirects">
+	      <ind-def:object object_ref="oval:rhel:obj:108511"/>
+	      <ind-def:state state_ref="oval:rhel:ste:103111"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10861" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value of /proc/sys/net/ipv4/ip_forward">
+		<ind-def:object object_ref="oval:rhel:obj:108611"/>
+		<ind-def:state state_ref="oval:rhel:ste:103111"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10871" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value of /proc/sys/net/ipv4/conf/all/accept_source_route">
+		<ind-def:object object_ref="oval:rhel:obj:108711"/>
+		<ind-def:state state_ref="oval:rhel:ste:108711"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10881" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value of /proc/sys/net/ipv4/conf/all/accept_redirects">
+		<ind-def:object object_ref="oval:rhel:obj:108811"/>
+		<ind-def:state state_ref="oval:rhel:ste:108811"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10891" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value of /proc/sys/net/ipv4/conf/all/secure_redirects">
+		<ind-def:object object_ref="oval:rhel:obj:108911"/>
+		<ind-def:state state_ref="oval:rhel:ste:108911"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10901" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value of /proc/sys/net/ipv4/conf/all/log_martians">
+		<ind-def:object object_ref="oval:rhel:obj:109011"/>
+		<ind-def:state state_ref="oval:rhel:ste:109011"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10911" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value of /proc/sys/net/ipv4/conf/default/accept_source_route">
+		<ind-def:object object_ref="oval:rhel:obj:109111"/>
+		<ind-def:state state_ref="oval:rhel:ste:108711"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10921" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value of /proc/sys/net/ipv4/conf/default/accept_redirects">
+		<ind-def:object object_ref="oval:rhel:obj:109211"/>
+		<ind-def:state state_ref="oval:rhel:ste:108811"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10931" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value of /proc/sys/net/ipv4/conf/default/secure_redirects">
+		<ind-def:object object_ref="oval:rhel:obj:109311"/>
+		<ind-def:state state_ref="oval:rhel:ste:108911"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10941" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value of /proc/sys/net/ipv4/conf/default/log_martians">
+		<ind-def:object object_ref="oval:rhel:obj:109411"/>
+		<ind-def:state state_ref="oval:rhel:ste:109011"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10951" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value of /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts">
+		<ind-def:object object_ref="oval:rhel:obj:109511"/>
+		<ind-def:state state_ref="oval:rhel:ste:109511"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10961" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value of /proc/sys/net/ipv4/icmp_ignore_bogus_error_responses">
+		<ind-def:object object_ref="oval:rhel:obj:109611"/>
+		<ind-def:state state_ref="oval:rhel:ste:109611"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10971" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value of /proc/sys/net/ipv4/tcp_syncookies">
+		<ind-def:object object_ref="oval:rhel:obj:109711"/>
+		<ind-def:state state_ref="oval:rhel:ste:109711"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10981" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value of /proc/sys/net/ipv4/conf/all/rp_filter">
+		<ind-def:object object_ref="oval:rhel:obj:109811"/>
+		<ind-def:state state_ref="oval:rhel:ste:109811"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:10991" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value of /proc/sys/net/ipv4/conf/default/rp_filter">
+		<ind-def:object object_ref="oval:rhel:obj:109911"/>
+		<ind-def:state state_ref="oval:rhel:ste:109811"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test check_existence="none_exist" id="oval:rhel:tst:11001" version="1" check="all"
+					comment="Check no interfaces are defined in /proc/net/wireless">
+		<ind-def:object object_ref="oval:rhel:obj:110011"/>
+	</ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:11011" version="1" check="all"
+					comment="Tests that /etc/modprobe.d/ipv6.conf prevents loading the ipv6 module">
+                <ind-def:object object_ref="oval:rhel:obj:110111"/>
+        </ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:11021" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value IPV6_AUTOCONF in /etc/sysconfig/network">
+		<ind-def:object object_ref="oval:rhel:obj:110211"/>
+		<ind-def:state state_ref="oval:rhel:ste:110211"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:11031" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value of /proc/sys/net/ipv6/conf/default/router_solicitations">
+		<ind-def:object object_ref="oval:rhel:obj:110311"/>
+		<ind-def:state state_ref="oval:rhel:ste:110311"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:11041" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value of /proc/sys/net/ipv6/conf/default/accept_ra_rtr_pref">
+		<ind-def:object object_ref="oval:rhel:obj:110411"/>
+		<ind-def:state state_ref="oval:rhel:ste:110411"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:11051" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value of /proc/sys/net/ipv6/conf/default/accept_ra_pinfo">
+		<ind-def:object object_ref="oval:rhel:obj:110511"/>
+		<ind-def:state state_ref="oval:rhel:ste:110511"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:11061" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value of /proc/sys/net/ipv6/conf/default/accept_ra_defrtr">
+		<ind-def:object object_ref="oval:rhel:obj:110611"/>
+		<ind-def:state state_ref="oval:rhel:ste:110611"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:11071" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value of /proc/sys/net/ipv6/conf/default/autoconf">
+		<ind-def:object object_ref="oval:rhel:obj:110711"/>
+		<ind-def:state state_ref="oval:rhel:ste:110711"/>
+	</ind-def:textfilecontent54_test>
 	</tests>
 
 
@@ -915,7 +1671,7 @@
 	</lin-def:rpminfo_object>
 	<unix-def:runlevel_object id="oval:rhel:obj:100611" version="1">
 		<unix-def:service_name>rhnsd</unix-def:service_name>
-		<unix-def:runlevel var_check="at least one" var_ref="oval:rhel:var:100611"/>
+                <unix-def:runlevel operation="pattern match">.*</unix-def:runlevel>
 	</unix-def:runlevel_object>
 	<ind-def:textfilecontent54_object id="oval:rhel:obj:100711" version="1" comment="look for the value of gpgcheck in /etc/yum.conf">
 		<ind-def:filepath>/etc/yum.conf</ind-def:filepath>
@@ -1205,6 +1961,267 @@
                 <unix-def:path var_check="at least one" var_ref="oval:rhel:var:10561111"/>
                 <unix-def:filename xsi:nil="true"/>
         </unix-def:file_object>
+        <unix-def:file_object id="oval:rhel:obj:105711" version="1"
+			      comment="Home directories of non-system users that are writable by group or other, or readable by other">
+            	<set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            	  	<object_reference>oval:rhel:obj:1057111</object_reference>
+            	  	<filter>oval:rhel:ste:1057111</filter>
+            	</set>
+        </unix-def:file_object>
+        <unix-def:file_object id="oval:rhel:obj:1057111" version="1" comment="Home directories of non-system users">
+		<unix-def:behaviors recurse_direction="none" max_depth="0"/>
+                <unix-def:path var_check="at least one" var_ref="oval:rhel:var:10571111"/>
+                <unix-def:filename xsi:nil="true"/>
+        </unix-def:file_object>
+        <unix-def:password_object id="oval:rhel:obj:105711111" version="1" comment="User accounts of non-system users">
+            	<set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            		<object_reference>oval:rhel:obj:104011</object_reference>
+            		<filter>oval:rhel:ste:1057111111</filter>
+		</set>
+        </unix-def:password_object>
+        <unix-def:file_object id="oval:rhel:obj:105811" version="1" comment="World-writable dot-files">
+            	<set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            	  	<object_reference>oval:rhel:obj:1058111</object_reference>
+            	  	<filter>oval:rhel:ste:1022111</filter>
+            	</set>
+        </unix-def:file_object>
+        <unix-def:file_object id="oval:rhel:obj:1058111" version="1" comment="Dot-files">
+                <unix-def:path var_check="at least one" var_ref="oval:rhel:var:10581111"/>
+		<unix-def:filename operation="pattern match">^\..*</unix-def:filename>
+        </unix-def:file_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:105911" version="1" comment="User umask in /etc/bashrc">
+                <ind-def:filepath>/etc/bashrc</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*umask[[:space:]]+([[:alnum:]]*)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance> <!-- The file contains first the user umask, then the root umask -->
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:106011" version="1" comment="User umask in /etc/csh.cshrc">
+                <ind-def:filepath>/etc/csh.cshrc</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*umask[[:space:]]+([[:alnum:]]*)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance> <!-- The file contains first the user umask, then the root umask -->
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:106111" version="1" comment="User umask in /etc/login.defs">
+                <ind-def:filepath>/etc/login.defs</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*UMASK[[:space:]]+([[:alnum:]]*)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:106211" version="1" comment="User umask in /etc/profile">
+                <ind-def:filepath>/etc/profile</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*umask[[:space:]]+([[:alnum:]]*)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <unix-def:file_object id="oval:rhel:obj:106311" version="1" comment="~/.netrc files in all home directories">
+                <unix-def:path var_check="at least one" var_ref="oval:rhel:var:10581111"/>
+		<unix-def:filename operation="pattern match">^\.netrc$</unix-def:filename>
+        </unix-def:file_object>
+        <unix-def:file_object id="oval:rhel:obj:106411" version="1" comment="/boot/grub/grub.conf">
+                <unix-def:filepath>/boot/grub/grub.conf</unix-def:filepath>
+        </unix-def:file_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:106711" version="1" comment="password line in /boot/grub/grub.conf using SHA-512">
+                <ind-def:filepath>/boot/grub/grub.conf</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*password[[:space:]]+--encrypted[[:space:]]+\$6\$.*$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:106811" version="1" comment="value of SINGLE in /etc/sysconfig/init">
+                <ind-def:filepath>/etc/sysconfig/init</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*SINGLE=([^#[:space:]]*)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:106911" version="1" comment="Value of PROMPT in /etc/sysconfig/init">
+                <ind-def:filepath>/etc/sysconfig/init</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*PROMPT=([^#[:space:]]*)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:107011" version="1" comment="Value of TMOUT in /etc/profile.d/tmout.sh">
+                <ind-def:filepath>/etc/profile.d/tmout.sh</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[\s]*TMOUT=([^#[:space:]]*)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:107111" version="1" comment="Value of autologout in /etc/profile.d/autologout.csh">
+                <ind-def:filepath>/etc/profile.d/autologout.csh</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[\s]*set[\s]+-r[\s]+autologout=([^#[:space:]]*)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:xmlfilecontent_object id="oval:rhel:obj:107211" version="1" comment="Mandatory value of /desktop/gnome/session/idle_delay">
+                <ind-def:filepath>/etc/gconf/gconf.xml.mandatory/desktop/gnome/session/%gconf.xml</ind-def:filepath>
+                <ind-def:xpath>/gconf/entry[@name='idle_delay']/@value</ind-def:xpath>
+        </ind-def:xmlfilecontent_object>
+        <ind-def:xmlfilecontent_object id="oval:rhel:obj:107311" version="1" comment="Mandatory value of /apps/gnome-screensaver/idle_activation_enabled">
+                <ind-def:filepath>/etc/gconf/gconf.xml.mandatory/apps/gnome-screensaver/%gconf.xml</ind-def:filepath>
+                <ind-def:xpath>/gconf/entry[@name='idle_activation_enabled']/@value</ind-def:xpath>
+        </ind-def:xmlfilecontent_object>
+        <ind-def:xmlfilecontent_object id="oval:rhel:obj:107411" version="1" comment="Mandatory value of /apps/gnome-screensaver/lock_enabled">
+                <ind-def:filepath>/etc/gconf/gconf.xml.mandatory/apps/gnome-screensaver/%gconf.xml</ind-def:filepath>
+                <ind-def:xpath>/gconf/entry[@name='lock_enabled']/@value</ind-def:xpath>
+        </ind-def:xmlfilecontent_object>
+        <ind-def:xmlfilecontent_object id="oval:rhel:obj:107511" version="1" comment="Mandatory value of /apps/gnome-screensaver/mode">
+                <ind-def:filepath>/etc/gconf/gconf.xml.mandatory/apps/gnome-screensaver/%gconf.xml</ind-def:filepath>
+                <ind-def:xpath>/gconf/entry[@name='mode']/stringvalue/text()</ind-def:xpath>
+        </ind-def:xmlfilecontent_object>
+        <lin-def:rpminfo_object id="oval:rhel:obj:107611" version="1" comment="RPM package vlock">
+                <lin-def:name>vlock</lin-def:name>
+        </lin-def:rpminfo_object>
+	<!-- Ignore the last newline, if any to allow simpler <value> notation, and easier reusing of the value for GConf -->
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:107711" version="1" comment="Contents of /etc/issue">
+		<ind-def:behaviors multiline="false" singleline="true"/>
+                <ind-def:filepath>/etc/issue</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">(.*[^\n])\n?</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:xmlfilecontent_object id="oval:rhel:obj:107811" version="1" comment="Mandatory value of /apps/gdm/simple-greeter/banner_message_enable">
+                <ind-def:filepath>/etc/gconf/gconf.xml.mandatory/apps/gdm/simple-greeter/%gconf.xml</ind-def:filepath>
+                <ind-def:xpath>/gconf/entry[@name='banner_message_enable']/@value</ind-def:xpath>
+        </ind-def:xmlfilecontent_object>
+        <ind-def:xmlfilecontent_object id="oval:rhel:obj:107821" version="1" comment="Mandatory value of /apps/gdm/simple-greeter/banner_message_text">
+                <ind-def:filepath>/etc/gconf/gconf.xml.mandatory/apps/gdm/simple-greeter/%gconf.xml</ind-def:filepath>
+                <ind-def:xpath>/gconf/entry[@name='banner_message_text']/stringvalue/text()</ind-def:xpath>
+        </ind-def:xmlfilecontent_object>
+	<ind-def:textfilecontent54_object id="oval:rhel:obj:107911" version="1" comment="selinux=0 in /boot/grub/grub.conf">
+		<ind-def:filepath>/etc/grub.conf</ind-def:filepath>
+		<ind-def:pattern operation="pattern match">^\s*kernel\s+.*\sselinux=0(\s.*)?$</ind-def:pattern>
+		<ind-def:instance datatype="int">1</ind-def:instance>
+	</ind-def:textfilecontent54_object>
+	<ind-def:textfilecontent54_object id="oval:rhel:obj:107921" version="1" comment="enforcing=0 in /boot/grub/grub.conf">
+		<ind-def:filepath>/etc/grub.conf</ind-def:filepath>
+		<ind-def:pattern operation="pattern match">^\s*kernel\s+.*\senforcing=0(\s.*)?$</ind-def:pattern>
+		<ind-def:instance datatype="int">1</ind-def:instance>
+	</ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:108011" version="1" comment="SELINUX from /etc/selinux/config">
+                <ind-def:filepath>/etc/selinux/config</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*SELINUX=([[:alnum:]]*)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:108111" version="1" comment="SELINUXTYPE from /etc/selinux/config">
+                <ind-def:filepath>/etc/selinux/config</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*SELINUXTYPE=([[:alnum:]]*)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <lin-def:rpminfo_object id="oval:rhel:obj:108211" version="1" comment="setroubleshoot-server RPM">
+                <lin-def:name>setroubleshoot-server</lin-def:name>
+        </lin-def:rpminfo_object>
+        <unix-def:runlevel_object id="oval:rhel:obj:108311" version="1" comment="Runlevel state of mcstrans">
+                <unix-def:service_name>mcstrans</unix-def:service_name>
+                <unix-def:runlevel operation="pattern match">.*</unix-def:runlevel>
+        </unix-def:runlevel_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:108411" version="1" comment="Value of /proc/sys/net/ipv4/conf/default/send_redirects">
+                <ind-def:filepath>/proc/sys/net/ipv4/conf/default/send_redirects</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:108511" version="1" comment="Value of /proc/sys/net/ipv4/conf/all/send_redirects">
+                <ind-def:filepath>/proc/sys/net/ipv4/conf/all/send_redirects</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:108611" version="1" comment="Value of /proc/sys/net/ipv4/ip_forward">
+                <ind-def:filepath>/proc/sys/net/ipv4/ip_forward</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:108711" version="1" comment="Value of /proc/sys/net/ipv4/conf/all/accept_source_route">
+                <ind-def:filepath>/proc/sys/net/ipv4/conf/all/accept_source_route</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:108811" version="1" comment="Value of /proc/sys/net/ipv4/conf/all/accept_redirects">
+                <ind-def:filepath>/proc/sys/net/ipv4/conf/all/accept_redirects</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:108911" version="1" comment="Value of /proc/sys/net/ipv4/conf/all/secure_redirects">
+                <ind-def:filepath>/proc/sys/net/ipv4/conf/all/secure_redirects</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:109011" version="1" comment="Value of /proc/sys/net/ipv4/conf/all/log_martians">
+                <ind-def:filepath>/proc/sys/net/ipv4/conf/all/log_martians</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:109111" version="1" comment="Value of /proc/sys/net/ipv4/conf/default/accept_source_route">
+                <ind-def:filepath>/proc/sys/net/ipv4/conf/default/accept_source_route</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:109211" version="1" comment="Value of /proc/sys/net/ipv4/conf/default/accept_redirects">
+                <ind-def:filepath>/proc/sys/net/ipv4/conf/default/accept_redirects</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:109311" version="1" comment="Value of /proc/sys/net/ipv4/conf/default/secure_redirects">
+                <ind-def:filepath>/proc/sys/net/ipv4/conf/default/secure_redirects</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:109411" version="1" comment="Value of /proc/sys/net/ipv4/conf/default/log_martians">
+                <ind-def:filepath>/proc/sys/net/ipv4/conf/default/log_martians</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:109511" version="1" comment="Value of /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts">
+                <ind-def:filepath>/proc/sys/net/ipv4/icmp_echo_ignore_broadcasts</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:109611" version="1" comment="Value of /proc/sys/net/ipv4/icmp_ignore_bogus_error_responses">
+                <ind-def:filepath>/proc/sys/net/ipv4/icmp_ignore_bogus_error_responses</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:109711" version="1" comment="Value of /proc/sys/net/ipv4/tcp_syncookies">
+                <ind-def:filepath>/proc/sys/net/ipv4/tcp_syncookies</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:109811" version="1" comment="Value of /proc/sys/net/ipv4/conf/all/rp_filter">
+                <ind-def:filepath>/proc/sys/net/ipv4/conf/all/rp_filter</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:109911" version="1" comment="Value of /proc/sys/net/ipv4/conf/default/rp_filter">
+                <ind-def:filepath>/proc/sys/net/ipv4/conf/default/rp_filter</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+	<ind-def:textfilecontent54_object id="oval:rhel:obj:110011" version="1" comment="A line in /proc/net/wireless describing an interface">
+		<ind-def:filepath>/proc/net/wireless</ind-def:filepath>
+		<ind-def:pattern operation="pattern match">^[\s]*([\S\d]+):</ind-def:pattern>
+		<ind-def:instance operation="greater than or equal" datatype="int">1</ind-def:instance>
+	</ind-def:textfilecontent54_object>
+	<ind-def:textfilecontent54_object id="oval:rhel:obj:110111" version="1" comment="An 'install ipv6 /bin/true' line in /etc/modprobe.d/ipv6.conf">
+		<ind-def:filepath>/etc/modprobe.d/ipv6.conf</ind-def:filepath>
+		<ind-def:pattern operation="pattern match">^[[:space:]]*install[[:space:]]+ipv6[[:space:]]+/bin/true[[:space:]]*$</ind-def:pattern>
+		<ind-def:instance datatype="int">1</ind-def:instance>
+	</ind-def:textfilecontent54_object>
+	<ind-def:textfilecontent54_object id="oval:rhel:obj:110211" version="1" comment="IPV6_AUTOCONF in /etc/sysconfig/network">
+		<ind-def:filepath>/etc/sysconfig/network</ind-def:filepath>
+		<ind-def:pattern operation="pattern match">^[[:space:]]*IPV6_AUTOCONF=([^#[:space:]]*)</ind-def:pattern>
+		<ind-def:instance datatype="int">1</ind-def:instance>
+	</ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:110311" version="1" comment="Value of /proc/sys/net/ipv6/conf/default/router_solicitations">
+                <ind-def:filepath>/proc/sys/net/ipv6/conf/default/router_solicitations</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:110411" version="1" comment="Value of /proc/sys/net/ipv6/conf/default/accept_ra_rtr_pref">
+                <ind-def:filepath>/proc/sys/net/ipv6/conf/default/accept_ra_rtr_pref</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:110511" version="1" comment="Value of /proc/sys/net/ipv6/conf/default/accept_ra_pinfo">
+                <ind-def:filepath>/proc/sys/net/ipv6/conf/default/accept_ra_pinfo</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:110611" version="1" comment="Value of /proc/sys/net/ipv6/conf/default/accept_ra_defrtr">
+                <ind-def:filepath>/proc/sys/net/ipv6/conf/default/accept_ra_defrtr</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:110711" version="1" comment="Value of /proc/sys/net/ipv6/conf/default/autoconf">
+                <ind-def:filepath>/proc/sys/net/ipv6/conf/default/autoconf</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
 	</objects>
 
 
@@ -1300,7 +2317,7 @@
         <ind-def:textfilecontent54_state id="oval:rhel:ste:103011" version="1" comment="Maximum core file size">
                 <ind-def:subexpression operation="equals">0</ind-def:subexpression>
         </ind-def:textfilecontent54_state>
-        <ind-def:textfilecontent54_state id="oval:rhel:ste:103111" version="1" comment="Dumpability of set-UID programs">
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:103111" version="1" comment="Common value '0' for /proc/sys/*">
                 <ind-def:subexpression datatype="int" operation="equals">0</ind-def:subexpression>
         </ind-def:textfilecontent54_state>
         <ind-def:textfilecontent54_state id="oval:rhel:ste:103211" version="1" comment="Exec Shield state">
@@ -1367,21 +2384,126 @@
         <ind-def:environmentvariable_state id="oval:rhel:ste:105511" version="1" comment="PATH includes current directory">
                 <ind-def:value operation="pattern match">^:|^\.|.*::.*|.*:\.:.*|:$|:\.$</ind-def:value>
         </ind-def:environmentvariable_state>
-        <unix-def:file_state id="oval:rhel:ste:1056111" version="1" comment="Files not writeable by group nor other">
+        <unix-def:file_state id="oval:rhel:ste:1056111" version="1" comment="g-w,o-w">
                 <unix-def:gwrite datatype="boolean">0</unix-def:gwrite>
                 <unix-def:owrite datatype="boolean">0</unix-def:owrite>
         </unix-def:file_state>
+        <unix-def:file_state id="oval:rhel:ste:1057111" version="1" comment="g-w,o-rw">
+                <unix-def:gwrite datatype="boolean">0</unix-def:gwrite>
+                <unix-def:oread datatype="boolean">0</unix-def:oread>
+                <unix-def:owrite datatype="boolean">0</unix-def:owrite>
+        </unix-def:file_state>
+        <unix-def:password_state id="oval:rhel:ste:1057111111" version="1" comment="System users">
+                <unix-def:username operation="not equal">root</unix-def:username>
+                <unix-def:user_id datatype="string" operation="pattern match">^([1-4][0-9]|[1-9])?[0-9]$</unix-def:user_id>
+        </unix-def:password_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:105911" version="1" comment="Default umask for users">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1059"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:106111" version="1" comment="Default umask for users in /etc/login.defs">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1061"/>
+        </ind-def:textfilecontent54_state>
+        <unix-def:file_state id="oval:rhel:ste:106411" version="1" comment="/boot/grub/grub.conf owner is correct">
+                <unix-def:user_id var_check="all" datatype="int" operation="equals" var_ref="oval:rhel:var:1064"/>
+	</unix-def:file_state>
+        <unix-def:file_state id="oval:rhel:ste:106511" version="1">
+                <unix-def:group_id var_check="all" datatype="int" operation="equals" var_ref="oval:rhel:var:1065"/>
+        </unix-def:file_state>
+	<unix-def:file_state id="oval:rhel:ste:106611" version="1" comment="0600">
+		<unix-def:uread datatype="boolean">true</unix-def:uread>
+		<unix-def:uwrite datatype="boolean">true</unix-def:uwrite>
+		<unix-def:uexec datatype="boolean">false</unix-def:uexec>
+		<unix-def:gread datatype="boolean">false</unix-def:gread>
+		<unix-def:gwrite datatype="boolean">false</unix-def:gwrite>
+		<unix-def:gexec datatype="boolean">false</unix-def:gexec>
+		<unix-def:oread datatype="boolean">false</unix-def:oread>
+		<unix-def:owrite datatype="boolean">false</unix-def:owrite>
+		<unix-def:oexec datatype="boolean">false</unix-def:oexec>
+	</unix-def:file_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:106811" version="1" comment="/sbin/sulogin single-user shell">
+                <ind-def:subexpression datatype="string">/sbin/sulogin</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:106911" version="1" comment="Expected value of PROMPT in /etc/sysconfig/init">
+                <ind-def:subexpression>no</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:107011" version="1" comment="Expected value of TMOUT in /etc/profile.d/tmout.sh">
+                <ind-def:subexpression var_check="all" datatype="int" operation="equals" var_ref="oval:rhel:var:1070111"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:107111" version="1" comment="Expected value of autologout in /etc/profile.d/autologout.csh">
+                <ind-def:subexpression datatype="int" var_check="all" operation="equals" var_ref="oval:rhel:var:1070"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:xmlfilecontent_state id="oval:rhel:ste:107211" version="1" comment="Expected value of /desktop/gnome/session/idle_delay">
+                <ind-def:value_of datatype="int" var_check="all" var_ref="oval:rhel:var:1070" />
+        </ind-def:xmlfilecontent_state>
+        <ind-def:xmlfilecontent_state id="oval:rhel:ste:107311" version="1" comment="Expected value of /apps/gnome-screensaver/idle_activation_enabled">
+                <ind-def:value_of>true</ind-def:value_of>
+        </ind-def:xmlfilecontent_state>
+        <ind-def:xmlfilecontent_state id="oval:rhel:ste:107411" version="1" comment="Expected value of /apps/gnome-screensaver/lock_enabled">
+                <ind-def:value_of>true</ind-def:value_of>
+        </ind-def:xmlfilecontent_state>
+        <ind-def:xmlfilecontent_state id="oval:rhel:ste:107511" version="1" comment="Expected value of /apps/gnome-screensaver/mode">
+                <ind-def:value_of>blank-only</ind-def:value_of>
+        </ind-def:xmlfilecontent_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:107711" version="1" comment="Expected contents of /etc/issue">
+                <ind-def:subexpression var_check="all" var_ref="oval:rhel:var:1077"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:xmlfilecontent_state id="oval:rhel:ste:107811" version="1" comment="Expected value of /apps/gdm/simple-greeter/banner_message_enable">
+                <ind-def:value_of>true</ind-def:value_of>
+	</ind-def:xmlfilecontent_state>
+        <ind-def:xmlfilecontent_state id="oval:rhel:ste:107821" version="1" comment="Expected value of /apps/gdm/simple-greeter/banner_message_text">
+                <ind-def:value_of var_check="all" var_ref="oval:rhel:var:1077"/>
+	</ind-def:xmlfilecontent_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:108011" version="1" comment="Expected value of SELINUX in /etc/selinux/config">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1080"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:108111" version="1" comment="Expected value of SELINUXTYPE in /etc/selinux/config">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1081"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:108711" version="1" comment="Expected value of net.ipv4.conf.*.accept_source_route">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1087"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:108811" version="1" comment="Expected value of net.ipv4.conf.*.accept_redirects">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1088"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:108911" version="1" comment="Expected value of net.ipv4.conf.*.secure_redirects">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1089"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:109011" version="1" comment="Expected value of net.ipv4.conf.*.log_martians">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1090"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:109511" version="1" comment="Expected value of net.ipv4.icmp_echo_ignore_broadcasts">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1095"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:109611" version="1" comment="Expected value of net.ipv4.icmp_ignore_bogus_error_responses">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1096"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:109711" version="1" comment="Expected value of net.ipv4.tcp_syncookies">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1097"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:109811" version="1" comment="Expected value of net.ipv4.conf.*.rp_filter">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1098"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:110211" version="1" comment="Expected value of IPV6_AUTOCONF in /etc/sysconfig/network">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1102"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:110311" version="1" comment="Expected value of net.ipv6.conf.default.router_solicitations">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1103"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:110411" version="1" comment="Expected value of net.ipv6.conf.default.accept_ra_rtr_pref">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1104"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:110511" version="1" comment="Expected value of net.ipv6.conf.default.accept_ra_pinfo">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1105"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:110611" version="1" comment="Expected value of net.ipv6.conf.default.accept_ra_defrtr">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1106"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:110711" version="1" comment="Expected value of net.ipv6.conf.default.autoconf">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1107"/>
+        </ind-def:textfilecontent54_state>
 	</states>
 
 	<variables>
-	<constant_variable id="oval:rhel:var:100611" datatype="string" version="1" comment="run levels">
-		<value>1</value>
-		<value>2</value>
-		<value>3</value>
-		<value>4</value>
-		<value>5</value>
-		<value>6</value>
-	</constant_variable>
 	<constant_variable id="oval:rhel:var:1024112" version="1" datatype="string" comment="sgid whitelist">
 		<value>/bin/cgexec</value>
 		<value>/sbin/netreport</value>
@@ -1500,6 +2622,40 @@
                         <object_component item_field="value" object_ref="oval:rhel:obj:105511"/>
                 </split>
         </local_variable>
+        <local_variable id="oval:rhel:var:10571111" version="1" datatype="string" comment="Home directories of non-system users">
+                <object_component item_field="home_dir" object_ref="oval:rhel:obj:105711111"/>
+        </local_variable>
+        <local_variable id="oval:rhel:var:10581111" version="1" datatype="string" comment="All home directories">
+                <object_component item_field="home_dir" object_ref="oval:rhel:obj:104011"/>
+        </local_variable>
+        <external_variable id="oval:rhel:var:1059" version="1" datatype="int" comment="Default umask for users"/>
+        <external_variable id="oval:rhel:var:1061" version="1" datatype="int" comment="Default umask for users in /etc/login.defs"/>
+        <external_variable id="oval:rhel:var:1064" version="1" datatype="int" comment="User owning /boot/grub/grub.conf"/>
+        <external_variable id="oval:rhel:var:1065" version="1" datatype="int" comment="Group owning /boot/grub/grub.conf"/>
+        <external_variable id="oval:rhel:var:1070" version="1" datatype="int" comment="Interactive environment inactivity timeout in minutes"/>
+        <local_variable id="oval:rhel:var:1070111" version="1" datatype="int" comment="Interactive environment inactivity timeout in seconds">
+		<arithmetic arithmetic_operation="multiply">
+			<variable_component var_ref="oval:rhel:var:1070"/>
+			<literal_component datatype="int">60</literal_component>
+		</arithmetic>
+        </local_variable>
+        <external_variable id="oval:rhel:var:1077" version="1" datatype="string" comment="Login banner"/>
+        <external_variable id="oval:rhel:var:1080" version="1" datatype="string" comment="SELinux state"/>
+        <external_variable id="oval:rhel:var:1081" version="1" datatype="string" comment="SELinux policy"/>
+        <external_variable id="oval:rhel:var:1087" version="1" datatype="string" comment="Expected value of net.ipv4.conf.*.accept_source_route"/>
+        <external_variable id="oval:rhel:var:1088" version="1" datatype="string" comment="Expected value of net.ipv4.conf.*.accept_redirects"/>
+        <external_variable id="oval:rhel:var:1089" version="1" datatype="string" comment="Expected value of net.ipv4.conf.*.secure_redirects"/>
+        <external_variable id="oval:rhel:var:1090" version="1" datatype="string" comment="Expected value of net.ipv4.conf.*.log_martians"/>
+        <external_variable id="oval:rhel:var:1095" version="1" datatype="string" comment="Expected value of net.ipv4.icmp_echo_ignore_broadcasts"/>
+        <external_variable id="oval:rhel:var:1096" version="1" datatype="string" comment="Expected value of net.ipv4.icmp_ignore_bogus_error_responses"/>
+        <external_variable id="oval:rhel:var:1097" version="1" datatype="string" comment="Expected value of net.ipv4.tcp_syncookies"/>
+        <external_variable id="oval:rhel:var:1098" version="1" datatype="string" comment="Expected value of net.ipv4.conf.*.rp_filter"/>
+        <external_variable id="oval:rhel:var:1102" version="1" datatype="string" comment="Expected value of IPV6_AUTOCONF in /etc/sysconfig/network"/>
+        <external_variable id="oval:rhel:var:1103" version="1" datatype="string" comment="Expected value of net.ipv6.conf.default.router_solicitations"/>
+        <external_variable id="oval:rhel:var:1104" version="1" datatype="string" comment="Expected value of net.ipv6.conf.default.accept_ra_rtr_pref"/>
+        <external_variable id="oval:rhel:var:1105" version="1" datatype="string" comment="Expected value of net.ipv6.conf.default.accept_ra_pinfo"/>
+        <external_variable id="oval:rhel:var:1106" version="1" datatype="string" comment="Expected value of net.ipv6.conf.default.accept_ra_defrtr"/>
+        <external_variable id="oval:rhel:var:1107" version="1" datatype="string" comment="Expected value of net.ipv6.conf.default.autoconf"/>
 	</variables>
 
 </oval_definitions>

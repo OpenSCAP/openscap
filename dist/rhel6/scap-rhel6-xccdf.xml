@@ -58,11 +58,48 @@
     <select idref="rule-1045" selected="true"/>
     <select idref="rule-1055" selected="true"/>
     <select idref="rule-1056" selected="true"/>
+    <refine-value idref="var-1059" selector="002"/>
+    <select idref="rule-1059" selected="true"/>
+    <select idref="rule-1060" selected="true"/>
+    <select idref="rule-1061" selected="true"/>
+    <select idref="rule-1063" selected="true"/>
+    <select idref="rule-1064" selected="true"/>
+    <select idref="rule-1065" selected="true"/>
+    <select idref="rule-1066" selected="true"/>
+    <select idref="rule-1079" selected="true"/>
+    <select idref="rule-1080" selected="true"/>
+    <select idref="rule-1081" selected="true"/>
+    <select idref="rule-1083" selected="true"/>
+    <select idref="rule-1086" selected="true"/>
+    <select idref="rule-1087" selected="true"/>
+    <refine-value idref="var-1088" selector="enabled"/>
+    <select idref="rule-1088" selected="true"/>
+    <refine-value idref="var-1089" selector="enabled"/>
+    <select idref="rule-1089" selected="true"/>
+    <select idref="rule-1090" selected="true"/>
+    <select idref="rule-1091" selected="true"/>
+    <select idref="rule-1092" selected="true"/>
+    <select idref="rule-1093" selected="true"/>
+    <select idref="rule-1094" selected="true"/>
+    <select idref="rule-1095" selected="true"/>
+    <select idref="rule-1096" selected="true"/>
+    <select idref="rule-1097" selected="true"/>
+    <select idref="rule-1099" selected="true"/>
+    <refine-value idref="var-1103" selector="3"/>
+    <select idref="rule-1103" selected="true"/>
+    <refine-value idref="var-1104" selector="yes"/>
+    <select idref="rule-1104" selected="true"/>
+    <refine-value idref="var-1105" selector="yes"/>
+    <select idref="rule-1105" selected="true"/>
+    <refine-value idref="var-1106" selector="yes"/>
+    <select idref="rule-1106" selected="true"/>
+    <refine-value idref="var-1107" selector="yes"/>
+    <select idref="rule-1107" selected="true"/>
   </Profile>
   <Profile id="mitr">
     <title xml:lang="en-US">mitr</title>
     <description xml:lang="en-US">mitr</description>
-    <select idref="rule-1057" selected="true"/>
+    <select idref="rule-1108" selected="true"/>
   </Profile>
   <Group id="gr-intro" hidden="false">
     <title xml:lang="en-US">Introduction</title>
@@ -2237,14 +2274,14 @@
           <warning xml:lang="en-US">This section recommends modifying user home
 						directories. Notify your user community, and solicit input if appropriate,
 						before making this type of change. </warning>
-          <Rule id="rule-2.3.4.2.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1057" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">User Home Directories are not Group-Writable or World-Readable</title>
             <description xml:lang="en-US">File permissions should be set correctly for the home
 							directories for all user accounts.</description>
             <ident system="http://cce.mitre.org">CCE-4090-7</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20086" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1057" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -2267,6 +2304,15 @@
           <warning xml:lang="en-US">This section recommends modifying user home
 						directories. Notify your user community, and solicit input if appropriate,
 						before making this type of change. </warning>
+          <Rule id="rule-1058" selected="false" weight="10.000000" severity="medium">
+            <status date="2010-07-01">accepted</status>
+            <title xml:lang="en-US">User Home Directories are not Group-Writable or World-Readable</title>
+            <description xml:lang="en-US">File permissions should be set correctly for the home
+							directories for all user accounts.</description>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+              <check-content-ref name="oval:rhel:def:1058" href="scap-rhel6-oval.xml"/>
+            </check>
+          </Rule>
         </Group>
         <Group id="gr-accounts-config.4" hidden="false">
           <title xml:lang="en-US">Ensure that Users Have Sensible Umask Values</title>
@@ -2305,16 +2351,17 @@
           <warning xml:lang="en-US">This sections recommends modifying user home
 						directories. Notify your user community, and solicit input if appropriate,
 						before making this type of change. </warning>
-          <Value id="var-2.3.4.4" operator="equals" type="string">
-            <title xml:lang="en-US">Sensible umask</title>
+          <Value id="var-1059" operator="equals" type="string">
+            <title xml:lang="en-US">Default user umask</title>
             <description xml:lang="en-US">Enter default user umask</description>
             <value>022</value>
+            <value selector="002">002</value>
             <value selector="007">007</value>
             <value selector="022">022</value>
             <value selector="027">027</value>
             <value selector="077">077</value>
           </Value>
-          <Value id="var-2.3.4.4.c" operator="equals" type="string">
+          <Value id="var-1061" operator="equals" type="string">
             <title xml:lang="en-US">umask for shadow-utils</title>
             <description xml:lang="en-US">Enter default user umask</description>
             <value>077</value>
@@ -2323,50 +2370,50 @@
             <value selector="027">027</value>
             <value selector="077">077</value>
           </Value>
-          <Rule id="rule-2.3.4.4.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1059" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">The default umask for all users is set correctly in /etc/bashrc</title>
             <description xml:lang="en-US">The default umask for all users for the bash shell should be
-							set to: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.3.4.4"/>
+							set to: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1059"/>
 						</description>
             <ident system="http://cce.mitre.org">CCE-3844-8</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20087" value-id="var-2.3.4.4"/>
-              <check-content-ref name="oval:rhel:def:20087" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1059" value-id="var-1059"/>
+              <check-content-ref name="oval:rhel:def:1059" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.3.4.4.b" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1060" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">The default umask for all users is set correctly in /etc/csh.cshrc</title>
             <description xml:lang="en-US">The default umask for all users for the csh shell should be set
-							to: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.3.4.4"/>
+							to: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1059"/>
 						</description>
             <ident system="http://cce.mitre.org">CCE-4227-5</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20087" value-id="var-2.3.4.4"/>
-              <check-content-ref name="oval:rhel:def:20088" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1059" value-id="var-1059"/>
+              <check-content-ref name="oval:rhel:def:1060" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.3.4.4.c" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1061" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">The default umask for all users is set correctly in /etc/login.defs</title>
-            <description xml:lang="en-US">The default umask for all users should be set to: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.3.4.4"/>
+            <description xml:lang="en-US">The default umask for all users should be set to: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1061"/>
 						</description>
             <ident system="http://cce.mitre.org">CCE-14107-7</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:200871" value-id="var-2.3.4.4.c"/>
-              <check-content-ref name="oval:rhel:def:20089" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1061" value-id="var-1061"/>
+              <check-content-ref name="oval:rhel:def:1061" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.3.4.4.d" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1062" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">The default umask for all users is set correctly in /etc/profile</title>
-            <description xml:lang="en-US">The default umask for all users should be set to: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.3.4.4"/>
+            <description xml:lang="en-US">The default umask for all users should be set to: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1059"/>
 						</description>
             <ident system="http://cce.mitre.org">CCE-14847-8</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20087" value-id="var-2.3.4.4"/>
-              <check-content-ref name="oval:rhel:def:20090" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1059" value-id="var-1059"/>
+              <check-content-ref name="oval:rhel:def:1062" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -2386,6 +2433,14 @@
           <warning xml:lang="en-US">This section recommends modifying user home
 						directories. Notify your user community, and solicit input if appropriate,
 						before making this type of change. </warning>
+          <Rule id="rule-1063" selected="false" weight="10.000000" severity="medium">
+            <status date="2010-07-01">draft</status>
+            <title xml:lang="en-US">No ~/.netrc files exist</title>
+            <description xml:lang="en-US">No user's home directory should contain a .netrc file</description>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+              <check-content-ref name="oval:rhel:def:1063" href="scap-rhel6-oval.xml"/>
+            </check>
+          </Rule>
         </Group>
       </Group>
       <Group id="gr-accounts-physical" hidden="false">
@@ -2449,57 +2504,59 @@
 							</xhtml:li>
 						</xhtml:ol> Boot loaders for other platforms should offer a similar password
 						protection feature.</description>
-          <Value id="var-2.3.5.2.a" operator="equals" type="string">
-            <title xml:lang="en-US">User that owns /etc/grub.conf</title>
+          <Value id="var-1064" operator="equals" type="string">
+            <title xml:lang="en-US">User that owns /boot/grub/grub.conf</title>
             <description xml:lang="en-US">Choose user that should own
-							/etc/grub.conf</description>
+							/boot/grub/grub.conf</description>
+	    <value>0</value>
             <value selector="root">0</value>
           </Value>
-          <Value id="var-2.3.5.2.b" operator="equals" type="string">
-            <title xml:lang="en-US">Group that owns /etc/grub.conf</title>
+          <Value id="var-1065" operator="equals" type="string">
+            <title xml:lang="en-US">Group that owns /boot/grub/grub.conf</title>
             <description xml:lang="en-US">Choose group that should own
-							/etc/grub.conf</description>
+							/boot/grub/grub.conf</description>
+	    <value>0</value>
             <value selector="root">0</value>
           </Value>
-          <Rule id="rule-2.3.5.2.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1064" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Boot Loader user owner</title>
             <description xml:lang="en-US">Boot Loader configuration file should be owned by root.</description>
             <ident system="http://cce.mitre.org">CCE-4144-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20092" value-id="var-2.3.5.2.a"/>
-              <check-content-ref name="oval:rhel:def:20092" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1064" value-id="var-1064"/>
+              <check-content-ref name="oval:rhel:def:1064" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.3.5.2.b" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1065" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Boot Loader group owner</title>
             <description xml:lang="en-US">Boot Loader configuration file should be owned by group
 							root.</description>
             <ident system="http://cce.mitre.org">CCE-4197-0</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20093" value-id="var-2.3.5.2.b"/>
-              <check-content-ref name="oval:rhel:def:20093" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1065" value-id="var-1065"/>
+              <check-content-ref name="oval:rhel:def:1065" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.3.5.2.c" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1066" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Permissions on boot loader</title>
             <description xml:lang="en-US">Boot Loader configuration file permissions should be set
 							correctly.</description>
             <ident system="http://cce.mitre.org">CCE-3923-0</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20094" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1066" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.3.5.2.d" selected="false" weight="10.000000" severity="high">
+          <Rule id="rule-1067" selected="false" weight="10.000000" severity="high">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Enable Boot Loader Password</title>
             <description xml:lang="en-US">The grub boot loader should have sha-512 password protection
 							enabled</description>
             <ident system="http://cce.mitre.org">CCE-3818-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20095" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1067" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -2514,13 +2571,13 @@
 						started in single-user mode, change the SINGLE value in /etc/sysconfig/init as follows:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 	                                        <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">SINGLE=/sbin/sulogin</xhtml:code></description>
-          <Rule id="rule-2.3.5.3.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1068" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Require Authentication for Single-User Mode</title>
             <description xml:lang="en-US">A password should be required to boot into single-user mode.</description>
             <ident system="http://cce.mitre.org">CCE-4241-6</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20096" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1068" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -2533,14 +2590,14 @@
 						the set of services which are started on boot. Using interactive boot, the
 						console user could disable auditing, firewalls, or other services, weakening
 						system security.</description>
-          <Rule id="rule-2.3.5.4.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1069" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Disable Interactive Boot</title>
             <description xml:lang="en-US">The ability for users to perform interactive startups should be
 							disabled.</description>
             <ident system="http://cce.mitre.org">CCE-4245-7</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20097" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1069" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -2558,7 +2615,7 @@
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> To implement a 15-minute idle time-out for the tcsh shell,
 						create a new file autologout.csh in the directory /etc/profile.d with the
 						following line: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> set -r autologout 15 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> set -r autologout=15 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Similar actions should be taken for any other login shells used. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The example time-out here of 15 minutes should be adjusted to
 						whatever your security policy requires. The readonly line for bash and the
@@ -2569,8 +2626,8 @@
 						automatic logout would not occur. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> When logging in through a remote connection, as with SSH, it may
 						be more effective to set the timeout value directly through that service.</description>
-          <Value id="var-2.3.5.5" operator="equals" type="number">
-            <title xml:lang="en-US">Inactivity timout</title>
+          <Value id="var-1070" operator="equals" type="number">
+            <title xml:lang="en-US">Inactivity timeout</title>
             <description xml:lang="en-US">Choose allowed duration of inactive SSH
 							connections, shells, and X sessions</description>
             <value>15</value>
@@ -2578,6 +2635,24 @@
             <value selector="10_minutes">10</value>
             <value selector="15_minutes">15</value>
           </Value>
+          <Rule id="rule-1070" selected="false" weight="10.000000" severity="medium">
+            <status date="2010-07-01">accepted</status>
+            <title xml:lang="en-US">Enforce an inactivy timeout for Bourne shells</title>
+            <description xml:lang="en-US">Bourne shells should be closed after <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1059"/> minutes of inactivity.</description>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+              <check-export export-name="oval:rhel:var:1070" value-id="var-1070"/>
+              <check-content-ref name="oval:rhel:def:1070" href="scap-rhel6-oval.xml"/>
+            </check>
+          </Rule>
+          <Rule id="rule-1071" selected="false" weight="10.000000" severity="medium">
+            <status date="2010-07-01">accepted</status>
+            <title xml:lang="en-US">Enforce an inactivy timeout for C shells</title>
+            <description xml:lang="en-US">C shells should be closed after <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1059"/> minutes of inactivity.</description>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+              <check-export export-name="oval:rhel:var:1070" value-id="var-1070"/>
+              <check-content-ref name="oval:rhel:def:1071" href="scap-rhel6-oval.xml"/>
+            </check>
+          </Rule>
         </Group>
         <Group id="gr-accounts-physical.6" hidden="false">
           <title xml:lang="en-US">Configure Screen Locking</title>
@@ -2621,7 +2696,7 @@
 							# gconftool-2 --direct
 							--config-source	xml:readwrite:/etc/gconf/gconf.xml.mandatory
 							--type int
-							--set /apps/gnome-screensaver/idle_delay 15
+							--set /desktop/gnome/session/idle_delay 15
 							</xhtml:code><xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The default setting of 15 minutes for idle activation is
 							reasonable for many office environments, but the setting should conform
@@ -2641,44 +2716,43 @@
 							enforcing preferences in the GNOME environment using the GConf
 							configuration system, see http://www.gnome.org/projects/gconf and the
 							man page gconftool-2(1).</description>
-            <Rule id="rule-2.3.5.6.1.a" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1072" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">accepted</status>
-              <title xml:lang="en-US">Implement Inactivity Time-out for Login Shells</title>
-              <description xml:lang="en-US">The idle time-out value for period of inactivity gnome
+              <title xml:lang="en-US">Implement Inactivity Time-out for GNOME</title>
+              <description xml:lang="en-US">The idle time-out value for GNOME
 								desktop lockout should be 15 minutes</description>
               <ident system="http://cce.mitre.org">CCE-3315-9</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:20098" value-id="var-2.3.5.5"/>
-                <check-content-ref name="oval:rhel:def:20100" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:rhel:var:1070" value-id="var-1070"/>
+                <check-content-ref name="oval:rhel:def:1072" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
-            <Rule id="rule-2.3.5.6.1.b" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1073" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">accepted</status>
-              <title xml:lang="en-US">The gnome desktop screensaver should be enabled or disabled as appropriate as a mandatory setting for all users.</title>
+              <title xml:lang="en-US">The gnome desktop screensaver should be enabled.</title>
               <description xml:lang="en-US">Idle activation of the screen saver should be
 								enabled</description>
               <ident system="http://cce.mitre.org">CCE-14604-3</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:201005" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1073" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
-            <Rule id="rule-2.3.5.6.1.c" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1074" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">accepted</status>
-              <title xml:lang="en-US">Implement idle activation of screen lock</title>
-              <description xml:lang="en-US">Idle activation of the screen lock should be
-								enabled</description>
+              <title xml:lang="en-US">Lock the screensaver with a password</title>
+              <description xml:lang="en-US">The screensaver should ask for a password</description>
               <ident system="http://cce.mitre.org">CCE-14023-6</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:201006" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1074" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
-            <Rule id="rule-2.3.5.6.1.d" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1075" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">accepted</status>
               <title xml:lang="en-US">Implement blank screen saver</title>
               <description xml:lang="en-US">The screen saver should be blank</description>
               <ident system="http://cce.mitre.org">CCE-14735-5</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:201007" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1075" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -2696,13 +2770,13 @@
 							</xhtml:code>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The -a option can be used to prevent switching to other
 							virtual consoles.</description>
-            <Rule id="rule-2.3.5.6.2.a" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1076" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">accepted</status>
               <title xml:lang="en-US">Configure console screen locking</title>
               <description xml:lang="en-US">The vlock package should be installed</description>
               <ident system="http://cce.mitre.org">CCE-3910-7</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20101" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1076" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -2773,11 +2847,11 @@
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Many organizations implement security policies that require a system
 					banner provide notice of the system's ownership, provide warning to unauthorized
 					users, and remind authorized users of their consent to monitoring.</description>
-        <Value id="var-2.3.7" operator="equals" type="string">
+        <Value id="var-1077" operator="equals" type="string">
           <title xml:lang="en-US">login banner verbiage</title>
           <description xml:lang="en-US">Enter an appropriate login banner for your
 					organization</description>
-          <value selector="any_text">.+</value>
+	  <value/>
         </Value>
         <Group id="gr-accounts-banners.1" hidden="false">
           <title xml:lang="en-US">Modify the System Login Banner</title>
@@ -2789,15 +2863,15 @@
 						kernel version, and the host name. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Edit /etc/issue. Replace the default text with a message
 						compliant with the local site policy or a legal disclaimer.</description>
-          <Rule id="rule-2.3.7.1.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1077" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Modify the System Login Banner</title>
-            <description xml:lang="en-US">The system login banner text should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.3.7"/>
+            <description xml:lang="en-US">The system login banner text should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1077"/>
 						</description>
             <ident system="http://cce.mitre.org">CCE-4060-0</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20102" value-id="var-2.3.7"/>
-              <check-content-ref name="oval:rhel:def:20102" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1077" value-id="var-1077"/>
+              <check-content-ref name="oval:rhel:def:1077" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -2811,26 +2885,26 @@
 						Configure the banner using the following commands:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">
 						# gconftool-2 --direct
-						--config-source xml:readwrite:/etc/gconf/gconf.xml.defaults
+						--config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory
 						--type bool
 						--set /apps/gdm/simple-greeter/banner_message_enable true
 						</xhtml:code><xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">
 						# gconftool-2 --direct
-						--config-source xml:readwrite:/etc/gconf/gconf.xml.defaults
+						--config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory
 						--type string
 						--set /apps/gdm/simple-greeter/banner_message_text 'YOUR_TEXT'
 						</xhtml:code><xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 	  </description>
-          <Rule id="rule-2.3.7.2.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1078" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Implement a GUI Warning Banner</title>
             <description xml:lang="en-US">The direct gnome login warning banner text should be set
 							appropriately</description>
             <ident system="http://cce.mitre.org">CCE-4188-9</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20102" value-id="var-2.3.7"/>
-              <check-content-ref name="oval:rhel:def:20103" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1077" value-id="var-1077"/>
+              <check-content-ref name="oval:rhel:def:1078" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -2931,7 +3005,7 @@
 					overridden by command-line arguments passed to the kernel. It is necessary to
 					check grub.conf to ensure that this has not been done and to protect the
 					bootloader against unauthorized configuration change.</description>
-        <Value id="var-2.4.2.c" operator="equals" type="string">
+        <Value id="var-1080" operator="equals" type="string">
           <title xml:lang="en-US">SELinux state</title>
           <description xml:lang="en-US"> enforcing - SELinux security policy is enforced.
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> permissive - SELinux prints warnings instead of
@@ -2941,7 +3015,7 @@
           <value selector="permissive">permissive</value>
           <value selector="disabled">disabled</value>
         </Value>
-        <Value id="var-2.4.2.d" operator="equals" type="string">
+        <Value id="var-1081" operator="equals" type="string">
           <title xml:lang="en-US">SELinux policy</title>
           <description xml:lang="en-US"> Type of policy in use. Possible values
 						are:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> targeted - Only targeted network daemons are
@@ -2967,34 +3041,34 @@
 						</xhtml:ul>
 					</description>
         </Group>
-        <Rule id="rule-2.4.2.a" selected="false" weight="10.000000" severity="medium">
+        <Rule id="rule-1079" selected="false" weight="10.000000" severity="medium">
           <status date="2010-07-01">accepted</status>
           <title xml:lang="en-US">SELinux should NOT be disabled in /etc/grub.conf.</title>
           <description xml:lang="en-US">SELinux should NOT be disabled in /etc/grub.conf. Check that
 						selinux=0 is not found</description>
           <ident system="http://cce.mitre.org">CCE-3977-6</ident>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-            <check-content-ref name="oval:rhel:def:20105" href="scap-rhel6-oval.xml"/>
+            <check-content-ref name="oval:rhel:def:1079" href="scap-rhel6-oval.xml"/>
           </check>
         </Rule>
-        <Rule id="rule-2.4.2.c" selected="false" weight="10.000000" severity="medium">
+        <Rule id="rule-1080" selected="false" weight="10.000000" severity="medium">
           <status date="2010-07-01">draft</status>
           <title xml:lang="en-US">Proper SELinux state</title>
           <description xml:lang="en-US">The SELinux state should be set appropriately</description>
           <ident system="http://cce.mitre.org">CCE-3999-0</ident>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-            <check-export export-name="oval:rhel:var:20106" value-id="var-2.4.2.c"/>
-            <check-content-ref name="oval:rhel:def:201060" href="scap-rhel6-oval.xml"/>
+            <check-export export-name="oval:rhel:var:1080" value-id="var-1080"/>
+            <check-content-ref name="oval:rhel:def:1080" href="scap-rhel6-oval.xml"/>
           </check>
         </Rule>
-        <Rule id="rule-2.4.2.d" selected="false" weight="10.000000" severity="medium">
+        <Rule id="rule-1081" selected="false" weight="10.000000" severity="medium">
           <status date="2010-07-01">accepted</status>
           <title xml:lang="en-US">Proper SELinux policy</title>
           <description xml:lang="en-US">The SELinux policy should be set appropriately.</description>
           <ident system="http://cce.mitre.org">CCE-3624-4</ident>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-            <check-export export-name="oval:rhel:var:20107" value-id="var-2.4.2.d"/>
-            <check-content-ref name="oval:rhel:def:20107" href="scap-rhel6-oval.xml"/>
+            <check-export export-name="oval:rhel:var:1081" value-id="var-1081"/>
+            <check-content-ref name="oval:rhel:def:1081" href="scap-rhel6-oval.xml"/>
           </check>
         </Rule>
       </Group>
@@ -3029,6 +3103,14 @@
 						This guide recommends removing setroubleshoot and using the kernel audit functionality
 						to monitor SELinux's behavior.</description>
 
+          <Rule id="rule-1082" selected="false" weight="10.000000" severity="low">
+            <status date="2010-07-01">accepted</status>
+            <title xml:lang="en-US">Remove SETroubleshoot</title>
+            <description xml:lang="en-US">The setroubleshoot-server package should not be installed.</description>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+              <check-content-ref name="oval:rhel:def:1082" href="scap-rhel6-oval.xml"/>
+            </check>
+          </Rule>
         </Group>
         <Group id="gr-selinux-daemons.2" hidden="false">
           <title xml:lang="en-US">Disable MCS Translation Service (mcstrans) if Possible</title>
@@ -3044,13 +3126,13 @@
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Category labelling is unlikely to be used except in sites with
 						special requirements. Therefore, it should be disabled in order to reduce
 						the amount of potentially vulnerable code running on the system.</description>
-          <Rule id="rule-2.4.3.2.a" selected="false" weight="10.000000" severity="low">
+          <Rule id="rule-1083" selected="false" weight="10.000000" severity="low">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Disable MCS Translation Service (mcstrans) if Possible</title>
             <description xml:lang="en-US">The mcstrans service should be disabled.</description>
             <ident system="http://cce.mitre.org">CCE-3668-1</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20110" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1083" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -3094,19 +3176,10 @@
 					system resources. SELinux contexts should exist for these. If a device file is
 					not labeled, then misconfiguration is likely.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> To check for unlabeled device files, run the following command:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-					<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># ls -Z | grep unlabeled_t<xhtml:br/>
+					<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml"># ls -Z /dev | grep unlabeled_t<xhtml:br/>
 					</xhtml:code>
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> It should produce no output in a well-configured
 					system.</description>
-        <Rule id="rule-2.4.5.a" selected="false" weight="10.000000" severity="medium">
-          <status date="2010-07-01">draft</status>
-          <title xml:lang="en-US">Check for Unconfined Daemons</title>
-          <description xml:lang="en-US">Check for device file that is not labeled.</description>
-          <ident system="http://cce.mitre.org">CCE-14991-4</ident>
-          <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-            <check-content-ref name="oval:rhel:def:201115" href="scap-rhel6-oval.xml"/>
-          </check>
-        </Rule>
       </Group>
       <Group id="gr-selinux-debugging" hidden="false">
         <title xml:lang="en-US">Debugging SELinux Policy Errors</title>
@@ -3450,52 +3523,33 @@
 						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">net.ipv4.conf.default.send_redirects = 0</xhtml:code>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> These settings disable hosts from performing network
 						functionality which is only appropriate for routers.</description>
-          <Value id="var-2.5.1.1.a" operator="equals" type="string">
-            <title xml:lang="en-US">net.ipv4.ip forward</title>
-            <description xml:lang="en-US"/>
-            <value>0</value>
-            <value selector="enabled">1</value>
-            <value selector="disabled">0</value>
-          </Value>
-          <Rule id="rule-2.5.1.1.1.a" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">Default setting for sending ICMP redirects is configured to be disabled</title>
-            <description xml:lang="en-US">The default setting for sending ICMP redirects should be
-							disabled for network interfaces.</description>
-            <ident system="http://cce.mitre.org">CCE-4151-7</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20112" value-id="var-2.5.1.1.a"/>
-              <check-content-ref name="oval:rhel:def:201120" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.5.1.1.2.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1084" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Default setting for sending ICMP redirects is configured to be disabled (runtime)</title>
             <description xml:lang="en-US">The default setting for sending ICMP redirects should be
 							disabled for network interfaces.</description>
             <ident system="http://cce.mitre.org">CCE-4151-7</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20112" value-id="var-2.5.1.1.a"/>
-              <check-content-ref name="oval:rhel:def:201121" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1084" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.5.1.1.b" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1085" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Sending ICMP redirects for all interfaces is configured to be disabled</title>
             <description xml:lang="en-US">Sending ICMP redirects should be disabled for all
 							interfaces.</description>
             <ident system="http://cce.mitre.org">CCE-4155-8</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20113" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1085" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.5.1.1.c" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1086" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">IP forwarding is configured to be disabled</title>
             <description xml:lang="en-US">IP forwarding should be disabled.</description>
             <ident system="http://cce.mitre.org">CCE-3561-8</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20114" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1086" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -3504,12 +3558,12 @@
           <description xml:lang="en-US"> Edit the file /etc/sysctl.conf and add or correct
 						the following lines: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> net.ipv4.conf.all.accept_source_route = 0 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						net.ipv4.conf.all.accept_redirects = 1<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						net.ipv4.conf.all.secure_redirects = 1 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						net.ipv4.conf.all.accept_redirects = 0<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						net.ipv4.conf.all.secure_redirects = 0 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						net.ipv4.conf.all.log_martians = 0<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						net.ipv4.conf.default.accept_source_route = 0 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						net.ipv4.conf.default.accept_redirects = 1<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-						net.ipv4.conf.default.secure_redirects = 1 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						net.ipv4.conf.default.accept_redirects = 0<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						net.ipv4.conf.default.secure_redirects = 0 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						net.ipv4.conf.default.log_martians = 0<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						net.ipv4.icmp_echo_ignore_broadcasts = 1<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						net.ipv4.icmp_ignore_bogus_error_responses = 1 <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -3534,71 +3588,35 @@
 						networks, but is helpful for end hosts and routers serving small networks. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> For more information on any of these, see the kernel source
 						documentation file /Documentation/networking/ip-sysctl.txt.</description>
-          <Value id="var-2.5.1.2.a" operator="equals" type="string">
-            <title xml:lang="en-US">net.ipv4.conf.all.accept_source_route</title>
-            <description xml:lang="en-US">Trackers could be using source-routed packets
-                                                        to generate traffic that seems to be intra-net, but actually was created
-                                                        outside and has been redirected.</description>
+          <Value id="var-1087" operator="equals" type="string">
+            <title xml:lang="en-US">net.ipv4.conf.*.accept_source_route</title>
+            <description xml:lang="en-US">Accept source routing?</description>
             <value>0</value>
             <value selector="enabled">1</value>
             <value selector="disabled">0</value>
           </Value>
-          <Value id="var-2.5.1.2.b" operator="equals" type="string">
-            <title xml:lang="en-US">net.ipv4.conf.all.accept_redirects</title>
-            <description xml:lang="en-US">Disable ICMP Redirect
-                                                        Acceptance?</description>
+          <Value id="var-1088" operator="equals" type="string">
+            <title xml:lang="en-US">net.ipv4.conf.*.accept_redirects</title>
+            <description xml:lang="en-US">Accept ICMP Redirects?</description>
             <value>0</value>
             <value selector="enabled">1</value>
             <value selector="disabled">0</value>
           </Value>
-          <Value id="var-2.5.1.2.c" operator="equals" type="string">
-            <title xml:lang="en-US">net.ipv4.conf.all.secure_redirects</title>
-            <description xml:lang="en-US">Enable to prevent hijacking of routing path by
-                                                        only allowing redirects from gateways known in routing table. </description>
-            <value>1</value>
-            <value selector="enabled">1</value>
-            <value selector="disabled">0</value>
-          </Value>
-          <Value id="var-2.5.1.2.d" operator="equals" type="string">
-            <title xml:lang="en-US">net.ipv4.conf.all.log_martians</title>
-            <description xml:lang="en-US">Disable so you don't Log Spoofed Packets,
-                                                        Source Routed Packets, Redirect Packets </description>
+          <Value id="var-1089" operator="equals" type="string">
+            <title xml:lang="en-US">net.ipv4.conf.*.secure_redirects</title>
+            <description xml:lang="en-US">Accept redirects from gateways known in routing table?</description>
             <value>0</value>
             <value selector="enabled">1</value>
             <value selector="disabled">0</value>
           </Value>
-          <Value id="var-2.5.1.2.e" operator="equals" type="string">
-            <title xml:lang="en-US">net.ipv4.conf.default.accept_source_route</title>
-            <description xml:lang="en-US">Disable IP source routing?</description>
+          <Value id="var-1090" operator="equals" type="string">
+            <title xml:lang="en-US">net.ipv4.conf.*.log_martians</title>
+            <description xml:lang="en-US">Log Spoofed Packets, Source Routed Packets, Redirect Packets?</description>
             <value>0</value>
             <value selector="enabled">1</value>
             <value selector="disabled">0</value>
           </Value>
-          <Value id="var-2.5.1.2.f" operator="equals" type="string">
-            <title xml:lang="en-US">net.ipv4.conf.default.accept_redirects</title>
-            <description xml:lang="en-US">Disable ICMP Redirect
-                                                        Acceptance?</description>
-            <value>0</value>
-            <value selector="enabled">1</value>
-            <value selector="disabled">0</value>
-          </Value>
-          <Value id="var-2.5.1.2.g" operator="equals" type="string">
-            <title xml:lang="en-US">net.ipv4.conf.default.secure_redirects</title>
-            <description xml:lang="en-US">Log packets with impossible addresses to
-                                                        kernel log?</description>
-            <value>1</value>
-            <value selector="enabled">1</value>
-            <value selector="disabled">0</value>
-          </Value>
-          <Value id="var-2.5.1.2.g1" operator="equals" type="string">
-            <title xml:lang="en-US">net.ipv4.conf.default.log_martians</title>
-            <description xml:lang="en-US">Disable so you don't Log Spoofed Packets,
-                                                        Source Routed Packets, Redirect Packets </description>
-            <value>0</value>
-            <value selector="enabled">1</value>
-            <value selector="disabled">0</value>
-          </Value>
-          <Value id="var-2.5.1.2.h" operator="equals" type="string">
+          <Value id="var-1095" operator="equals" type="string">
             <title xml:lang="en-US">net.ipv4.icmp_echo_ignore_broadcast</title>
             <description xml:lang="en-US">Ignore all ICMP ECHO and TIMESTAMP requests
                                                         sent to it via broadcast/multicast</description>
@@ -3606,7 +3624,7 @@
             <value selector="enabled">1</value>
             <value selector="disabled">0</value>
           </Value>
-          <Value id="var-2.5.1.2.i" operator="equals" type="string">
+          <Value id="var-1096" operator="equals" type="string">
             <title xml:lang="en-US">net.ipv4.icmp_ignore_bogus_error_messages</title>
             <description xml:lang="en-US">Enable to prevent certain types of
                                                         attacks</description>
@@ -3614,7 +3632,7 @@
             <value selector="enabled">1</value>
             <value selector="disabled">0</value>
           </Value>
-          <Value id="var-2.5.1.2.j" operator="equals" type="string">
+          <Value id="var-1097" operator="equals" type="string">
             <title xml:lang="en-US">net.ipv4.tcp_syncookie</title>
             <description xml:lang="en-US">Enable to turn on TCP SYN Cookie
                                                         Protection</description>
@@ -3622,8 +3640,8 @@
             <value selector="enabled">1</value>
             <value selector="disabled">0</value>
           </Value>
-          <Value id="var-2.5.1.2.k" operator="equals" type="string">
-            <title xml:lang="en-US">net.ipv4.conf.all.rp_filter</title>
+          <Value id="var-1098" operator="equals" type="string">
+            <title xml:lang="en-US">net.ipv4.conf.*.rp_filter</title>
             <description xml:lang="en-US">Enable to enforce sanity checking, also called
                                                         ingress filtering or egress filtering. The point is to drop a packet if
                                                         the source and destination IP addresses in the IP header do not make
@@ -3633,304 +3651,155 @@
             <value selector="enabled">1</value>
             <value selector="disabled">0</value>
           </Value>
-          <Value id="var-2.5.1.2.l" operator="equals" type="string">
-            <title xml:lang="en-US">net.ipv4.conf.default.rp_filter</title>
-            <description xml:lang="en-US">Enables source route
-                                                        verification</description>
-            <value>1</value>
-            <value selector="enabled">1</value>
-            <value selector="disabled">0</value>
-          </Value>
-          <Rule id="rule-2.5.1.2.1.a" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">Accepting source routed packets for all interfaces is configured</title>
-            <description xml:lang="en-US">Accepting source routed packets should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.a"/> for all interfaces as
-							appropriate.</description>
-            <ident system="http://cce.mitre.org">CCE-4236-6</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20115" value-id="var-2.5.1.2.a"/>
-              <check-content-ref name="oval:rhel:def:201150" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.5.1.2.1.b" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">Accepting ICMP redirects for all interfaces is configured</title>
-            <description xml:lang="en-US">Accepting ICMP redirects should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.b"/> for all interfaces as
-							appropriate.</description>
-            <ident system="http://cce.mitre.org">CCE-4217-6</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20116" value-id="var-2.5.1.2.b"/>
-              <check-content-ref name="oval:rhel:def:201160" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.5.1.2.1.c" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">Accepting "secure" ICMP redirects for all interfaces is configured</title>
-            <description xml:lang="en-US">Accepting "secure" ICMP redirects (those from gateways listed
-							in the default gateways list) should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.c"/> for all interfaces as
-							appropriate.</description>
-            <ident system="http://cce.mitre.org">CCE-3472-8</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20117" value-id="var-2.5.1.2.c"/>
-              <check-content-ref name="oval:rhel:def:201170" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.5.1.2.1.d" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">Logging of "martian" packets for all interfaces is configured</title>
-            <description xml:lang="en-US">Logging of "martian" packets (those with impossible addresses)
-							should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.d"/> for all interfaces as
-							appropriate.</description>
-            <ident system="http://cce.mitre.org">CCE-4320-8</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20118" value-id="var-2.5.1.2.d"/>
-              <check-content-ref name="oval:rhel:def:201180" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.5.1.2.1.e" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">Default accepting of source routed packets is configured</title>
-            <description xml:lang="en-US">The default setting for accepting source routed packets should
-							be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.e"/> for all interfaces as
-							appropriate.</description>
-            <ident system="http://cce.mitre.org">CCE-4091-5</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20119" value-id="var-2.5.1.2.e"/>
-              <check-content-ref name="oval:rhel:def:201190" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.5.1.2.1.f" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">Default accepting ICMP redirects is configured</title>
-            <description xml:lang="en-US">The default setting for accepting ICMP redirects should be:
-								<sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.f"/> for all interfaces as
-							appropriate.</description>
-            <ident system="http://cce.mitre.org">CCE-4186-3</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20120" value-id="var-2.5.1.2.f"/>
-              <check-content-ref name="oval:rhel:def:201200" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.5.1.2.1.g" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">Default accepting of "secure" ICMP redirects is configured</title>
-            <description xml:lang="en-US">The default setting for accepting "secure" ICMP redirects
-							(those from gateways listed in the default gateways list) should be:
-								<sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.g"/> for all interfaces as
-							appropriate.</description>
-            <ident system="http://cce.mitre.org">CCE-3339-9</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20121" value-id="var-2.5.1.2.g"/>
-              <check-content-ref name="oval:rhel:def:201210" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.5.1.2.1.g1" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">Logging of "martian" packets for all interfaces is configured</title>
-            <description xml:lang="en-US">Logging of "martian" packets (those with impossible addresses)
-							should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.g1"/> for all interfaces as
-							appropriate.</description>
-            <ident system="http://cce.mitre.org">???</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20118" value-id="var-2.5.1.2.g1"/>
-              <check-content-ref name="oval:rhel:def:201180" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.5.1.2.1.h" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">Ignoring ICMP echo requests is configured</title>
-            <description xml:lang="en-US">Ignoring ICMP echo requests (pings) sent to broadcast /
-							multicast addresses should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.h"/>
-							for all interfaces as appropriate.</description>
-            <ident system="http://cce.mitre.org">CCE-3644-2</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20122" value-id="var-2.5.1.2.h"/>
-              <check-content-ref name="oval:rhel:def:201220" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.5.1.2.1.i" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">Ignoring bogus ICMP responses is configured</title>
-            <description xml:lang="en-US">Ignoring bogus ICMP responses to broadcasts should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.i"/> for all interfaces as
-							appropriate.</description>
-            <ident system="http://cce.mitre.org">CCE-4133-5</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20123" value-id="var-2.5.1.2.i"/>
-              <check-content-ref name="oval:rhel:def:201230" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.5.1.2.1.j" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">Sending TCP syncookies is configured</title>
-            <description xml:lang="en-US">Sending TCP syncookies should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.j"/> for all interfaces as
-							appropriate.</description>
-            <ident system="http://cce.mitre.org">CCE-4265-5</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20124" value-id="var-2.5.1.2.j"/>
-              <check-content-ref name="oval:rhel:def:201240" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.5.1.2.1.k" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">Performing source validation by reverse path is configured</title>
-            <description xml:lang="en-US">Performing source validation by reverse path should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.k"/> for all interfaces as
-							appropriate.</description>
-            <ident system="http://cce.mitre.org">CCE-4080-8</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20125" value-id="var-2.5.1.2.k"/>
-              <check-content-ref name="oval:rhel:def:201250" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.5.1.2.1.l" selected="false" weight="10.000000" severity="medium">
-            <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">The default setting for performing source validation by reverse path is configured</title>
-            <description xml:lang="en-US">The default setting for performing source validation by reverse
-							path should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.l"/> for all
-							interfaces as appropriate.</description>
-            <ident system="http://cce.mitre.org">CCE-3840-6</ident>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20126" value-id="var-2.5.1.2.l"/>
-              <check-content-ref name="oval:rhel:def:201260" href="scap-rhel6-oval.xml"/>
-            </check>
-          </Rule>
-          <Rule id="rule-2.5.1.2.2.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1087" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Accepting source routed packets for all interfaces is configured (runtime)</title>
-            <description xml:lang="en-US">Accepting source routed packets should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.a"/> for all interfaces as
+            <description xml:lang="en-US">Accepting source routed packets should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1087"/> for all interfaces as
 							appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-4236-6</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20115" value-id="var-2.5.1.2.a"/>
-              <check-content-ref name="oval:rhel:def:201151" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1087" value-id="var-1087"/>
+              <check-content-ref name="oval:rhel:def:1087" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.5.1.2.2.b" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1088" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Accepting ICMP redirects for all interfaces is configured (runtime)</title>
-            <description xml:lang="en-US">Accepting ICMP redirects should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.b"/> for all interfaces as
+            <description xml:lang="en-US">Accepting ICMP redirects should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1088"/> for all interfaces as
 							appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-4217-6</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20116" value-id="var-2.5.1.2.b"/>
-              <check-content-ref name="oval:rhel:def:201161" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1088" value-id="var-1088"/>
+              <check-content-ref name="oval:rhel:def:1088" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.5.1.2.2.c" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1089" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Accepting "secure" ICMP redirects for all interfaces is configured (runtime)</title>
             <description xml:lang="en-US">Accepting "secure" ICMP redirects (those from gateways listed
-							in the default gateways list) should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.c"/> for all interfaces as
+							in the default gateways list) should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1089"/> for all interfaces as
 							appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-3472-8</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20117" value-id="var-2.5.1.2.c"/>
-              <check-content-ref name="oval:rhel:def:201171" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1089" value-id="var-1089"/>
+              <check-content-ref name="oval:rhel:def:1089" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.5.1.2.2.d" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1090" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">Logging of "martian" packets for all interfaces is configured</title>
+            <title xml:lang="en-US">Logging of "martian" packets for all interfaces is configured (runtime)</title>
             <description xml:lang="en-US">Logging of "martian" packets (those with impossible addresses)
-							should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.d"/> for all interfaces as
+							should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1090"/> for all interfaces as
 							appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-4320-8</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20118" value-id="var-2.5.1.2.d"/>
-              <check-content-ref name="oval:rhel:def:201181" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1090" value-id="var-1090"/>
+              <check-content-ref name="oval:rhel:def:1090" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.5.1.2.2.e" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1091" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Default accepting of source routed packets is configured (runtime)</title>
             <description xml:lang="en-US">The default setting for accepting source routed packets should
-							be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.e"/> for all interfaces as
+							be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1087"/> for all interfaces as
 							appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-4091-5</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20119" value-id="var-2.5.1.2.e"/>
-              <check-content-ref name="oval:rhel:def:201191" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1087" value-id="var-1087"/>
+              <check-content-ref name="oval:rhel:def:1091" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.5.1.2.2.f" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1092" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Default accepting ICMP redirects is configured (runtime)</title>
             <description xml:lang="en-US">The default setting for accepting ICMP redirects should be:
-								<sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.f"/> for all interfaces as
+								<sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1088"/> for all interfaces as
 							appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-4186-3</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20120" value-id="var-2.5.1.2.f"/>
-              <check-content-ref name="oval:rhel:def:201201" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1088" value-id="var-1088"/>
+              <check-content-ref name="oval:rhel:def:1092" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.5.1.2.2.g" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1093" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Default accepting of "secure" ICMP redirects is configured (runtime)</title>
             <description xml:lang="en-US">The default setting for accepting "secure" ICMP redirects
 							(those from gateways listed in the default gateways list) should be:
-								<sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.g"/> for all interfaces as
+								<sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1089"/> for all interfaces as
 							appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-3339-9</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20121" value-id="var-2.5.1.2.g"/>
-              <check-content-ref name="oval:rhel:def:201211" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1089" value-id="var-1089"/>
+              <check-content-ref name="oval:rhel:def:1093" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.5.1.2.2.h" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1094" selected="false" weight="10.000000" severity="medium">
+            <status date="2010-07-01">accepted</status>
+            <title xml:lang="en-US">Default logging of "martian" packets for all interfaces is configured (runtime)</title>
+            <description xml:lang="en-US">Logging of "martian" packets (those with impossible addresses)
+							should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1090"/> for all interfaces as
+							appropriate.</description>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+              <check-export export-name="oval:rhel:var:1090" value-id="var-1090"/>
+              <check-content-ref name="oval:rhel:def:1094" href="scap-rhel6-oval.xml"/>
+            </check>
+          </Rule>
+          <Rule id="rule-1095" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Ignoring ICMP echo requests is configured (runtime)</title>
             <description xml:lang="en-US">Ignoring ICMP echo requests (pings) sent to broadcast /
-							multicast addresses should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.h"/>
+							multicast addresses should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1095"/>
 							for all interfaces as appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-3644-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20122" value-id="var-2.5.1.2.h"/>
-              <check-content-ref name="oval:rhel:def:201221" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1095" value-id="var-1095"/>
+              <check-content-ref name="oval:rhel:def:1095" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.5.1.2.2.i" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1096" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Ignoring bogus ICMP responses is configured (runtime)</title>
-            <description xml:lang="en-US">Ignoring bogus ICMP responses to broadcasts should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.i"/> for all interfaces as
+            <description xml:lang="en-US">Ignoring bogus ICMP responses to broadcasts should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1096"/> for all interfaces as
 							appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-4133-5</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20123" value-id="var-2.5.1.2.i"/>
-              <check-content-ref name="oval:rhel:def:201231" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1096" value-id="var-1096"/>
+              <check-content-ref name="oval:rhel:def:1096" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.5.1.2.2.j" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1097" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Sending TCP syncookies is configured (runtime)</title>
-            <description xml:lang="en-US">Sending TCP syncookies should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.j"/> for all interfaces as
+            <description xml:lang="en-US">Sending TCP syncookies should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1097"/> for all interfaces as
 							appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-4265-5</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20124" value-id="var-2.5.1.2.j"/>
-              <check-content-ref name="oval:rhel:def:201241" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1097" value-id="var-1097"/>
+              <check-content-ref name="oval:rhel:def:1097" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.5.1.2.2.k" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1098" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Performing source validation by reverse path is configured (runtime)</title>
-            <description xml:lang="en-US">Performing source validation by reverse path should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.k"/> for all interfaces as
+            <description xml:lang="en-US">Performing source validation by reverse path should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1098"/> for all interfaces as
 							appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-4080-8</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20125" value-id="var-2.5.1.2.k"/>
-              <check-content-ref name="oval:rhel:def:201251" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1098" value-id="var-1098"/>
+              <check-content-ref name="oval:rhel:def:1098" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.5.1.2.2.l" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1099" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">The default setting for performing source validation by reverse path is configured (runtime)</title>
             <description xml:lang="en-US">The default setting for performing source validation by reverse
-							path should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.1.2.l"/> for all
+							path should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1098"/> for all
 							interfaces as appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-3840-6</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20126" value-id="var-2.5.1.2.l"/>
-              <check-content-ref name="oval:rhel:def:201261" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1098" value-id="var-1098"/>
+              <check-content-ref name="oval:rhel:def:1099" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -4017,13 +3886,13 @@
 						      <xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">NM_CONTROLLED=no</xhtml:code>
 						      <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					      </description>
-	  <Rule id="rule-2.5.2.2.2.a" selected="false" weight="10.000000" severity="medium">
+	  <Rule id="rule-1100" selected="false" weight="10.000000" severity="medium">
 	    <status date="2010-07-01">accepted</status>
 	    <title xml:lang="en-US">Deactivate Wireless Interfaces</title>
 	    <description xml:lang="en-US">All wireless interfaces should be disabled.</description>
 	    <ident system="http://cce.mitre.org">CCE-4276-2</ident>
 	    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-	      <check-content-ref name="oval:rhel:def:20128" href="scap-rhel6-oval.xml"/>
+	      <check-content-ref name="oval:rhel:def:1100" href="scap-rhel6-oval.xml"/>
 	    </check>
 	  </Rule>
 	</Group>
@@ -4046,18 +3915,18 @@
           <Group id="gr-networking-ipv6.1.1" hidden="false">
             <title xml:lang="en-US">Disable Automatic Loading of IPv6 Kernel Module</title>
             <description xml:lang="en-US"> To prevent the IPv6 kernel module (ipv6) from
-							being loaded, add the following line to /etc/modprobe.conf: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							being loaded, create /etc/modprobe.d/ipv6.conf with the following content: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> install ipv6 /bin/true <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> When the kernel requests the ipv6 module, this line will
 							direct the system to run the program /bin/true instead.</description>
-            <Rule id="rule-2.5.3.1.1.a" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1101" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">accepted</status>
               <title xml:lang="en-US">Disable Automatic Loading of IPv6 Kernel Module</title>
               <description xml:lang="en-US">Automatic loading of the IPv6 kernel module should be
 								disabled.</description>
               <ident system="http://cce.mitre.org">CCE-3562-6</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20130" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1101" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -4089,59 +3958,20 @@
 							in /etc/sysconfig/network (note that this does not disable sending
 							router solicitations): <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> IPV6_AUTOCONF=no</description>
-            <Value id="var-2.5.3.2.1.a" operator="equals" type="string">
+            <Value id="var-1102" operator="equals" type="string">
               <title xml:lang="en-US">IPV6_AUTOCONF</title>
-              <description xml:lang="en-US">Toggle global IPv6 autoconfiguration
-								(only, if global forwarding is disabled)</description>
-              <value>disabled</value>
-              <value selector="enabled">enabled</value>
-              <value selector="disabled">disabled</value>
-            </Value>
-            <Value id="var-2.5.3.2.1.b" operator="equals" type="string">
-              <title xml:lang="en-US">net.ipv6.conf.default.accept_ra</title>
-              <description xml:lang="en-US">accept default router
-								advertisements</description>
+              <description xml:lang="en-US">Default setting for IPv6 autoconfiguration</description>
               <value>no</value>
               <value selector="enabled">yes</value>
               <value selector="disabled">no</value>
             </Value>
-            <Value id="var-2.5.3.2.1.c" operator="equals" type="string">
-              <title xml:lang="en-US">net.ipv6.conf.default.accept_redirects</title>
-              <description xml:lang="en-US">Toggle ICMP Redirect
-								Acceptance</description>
-              <value>disabled</value>
-              <value selector="enabled">enabled</value>
-              <value selector="disabled">disabled</value>
-            </Value>
-            <Value id="var-2.5.3.2.1.d" operator="equals" type="string">
-              <title xml:lang="en-US">net.ipv6.conf.all.accept_redirects</title>
-              <description xml:lang="en-US">Toggle ICMP Redirect
-								Acceptance</description>
-              <value>disabled</value>
-              <value selector="enabled">enabled</value>
-              <value selector="disabled">disabled</value>
-            </Value>
-            <Rule id="rule-2.5.3.2.1.b" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1102" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">accepted</status>
-              <title xml:lang="en-US">Disable accepting IPv6 router advertisements (net.ipv6.conf.default.accept_ra)</title>
-              <description xml:lang="en-US">The default setting for accepting IPv6 router
-								advertisements should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.3.2.b"/> for
-								all interfaces.</description>
-              <ident system="http://cce.mitre.org">CCE-4269-7</ident>
+              <title xml:lang="en-US">Configure IPv6 autoconfiguration</title>
+              <description xml:lang="en-US">The default setting for IPv6 autoconfiguration should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1102"/>.</description>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:20135" value-id="var-2.5.3.2.1.b"/>
-                <check-content-ref name="oval:rhel:def:20135" href="scap-rhel6-oval.xml"/>
-              </check>
-            </Rule>
-            <Rule id="rule-2.5.3.2.1.c" selected="false" weight="10.000000" severity="medium">
-              <status date="2010-07-01">accepted</status>
-              <title xml:lang="en-US">Disable accepting redirects from IPv6 routers (net.ipv6.conf.default.accept_redirects)</title>
-              <description xml:lang="en-US">Accepting redirects from IPv6 routers should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-2.5.3.2.c"/> for all
-								interfaces.</description>
-              <ident system="http://cce.mitre.org">CCE-4313-3</ident>
-              <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:20136" value-id="var-2.5.3.2.1.c"/>
-                <check-content-ref name="oval:rhel:def:20136" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:rhel:var:1102" value-id="var-1102"/>
+                <check-content-ref name="oval:rhel:def:1102" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -4209,6 +4039,88 @@
 							IPv6 addresses can be assigned to each interface. The default is 16, but
 							it should be set to exactly the number of statically configured global
 							addresses required.</description>
+	    <Value id="var-1103" operator="equals" type="number">
+              <title xml:lang="en-US">net.ipv6.conf.default.router_solicitations</title>
+              <description xml:lang="en-US">Number of router solicitations to send</description>
+              <value>0</value>
+              <value selector="0">0</value>
+              <value selector="3">3</value>
+            </Value>
+	    <Value id="var-1104" operator="equals" type="number">
+              <title xml:lang="en-US">net.ipv6.conf.default.accept_ra_rtr_pref</title>
+              <description xml:lang="en-US">Whether to accept router preference from router advertisements</description>
+              <value>0</value>
+              <value selector="no">0</value>
+              <value selector="yes">1</value>
+            </Value>
+	    <Value id="var-1105" operator="equals" type="number">
+              <title xml:lang="en-US">net.ipv6.conf.default.accept_ra_pinfo</title>
+              <description xml:lang="en-US">Whether to accept prefix information from router advertisements</description>
+              <value>0</value>
+              <value selector="no">0</value>
+              <value selector="yes">1</value>
+            </Value>
+	    <Value id="var-1106" operator="equals" type="number">
+              <title xml:lang="en-US">net.ipv6.conf.default.accept_ra_defrtr</title>
+              <description xml:lang="en-US">Whether to accept default router information from router advertisements</description>
+              <value>0</value>
+              <value selector="no">0</value>
+              <value selector="yes">1</value>
+            </Value>
+	    <Value id="var-1107" operator="equals" type="number">
+              <title xml:lang="en-US">net.ipv6.conf.default.autoconf</title>
+              <description xml:lang="en-US">Whether to autoconfigure addresses from router advertisements</description>
+              <value>0</value>
+              <value selector="no">0</value>
+              <value selector="yes">1</value>
+            </Value>
+            <Rule id="rule-1103" selected="false" weight="10.000000" severity="medium">
+              <status date="2010-07-01">accepted</status>
+              <title xml:lang="en-US">Configure number of sent router solicitations</title>
+              <description xml:lang="en-US">The default number of sent router solicitations should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1103"/> for
+								all interfaces.</description>
+              <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+                <check-export export-name="oval:rhel:var:1103" value-id="var-1103"/>
+                <check-content-ref name="oval:rhel:def:1103" href="scap-rhel6-oval.xml"/>
+              </check>
+            </Rule>
+            <Rule id="rule-1104" selected="false" weight="10.000000" severity="medium">
+              <status date="2010-07-01">accepted</status>
+              <title xml:lang="en-US">Configure whether to accept router preference</title>
+              <description xml:lang="en-US">Router preference should be accepted by default: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1104"/></description>
+              <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+                <check-export export-name="oval:rhel:var:1104" value-id="var-1104"/>
+                <check-content-ref name="oval:rhel:def:1104" href="scap-rhel6-oval.xml"/>
+              </check>
+            </Rule>
+            <Rule id="rule-1105" selected="false" weight="10.000000" severity="medium">
+              <status date="2010-07-01">accepted</status>
+              <title xml:lang="en-US">Configure whether to accept path information</title>
+              <description xml:lang="en-US">Path information should be accepted by default: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1105"/></description>
+              <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+                <check-export export-name="oval:rhel:var:1105" value-id="var-1105"/>
+                <check-content-ref name="oval:rhel:def:1105" href="scap-rhel6-oval.xml"/>
+              </check>
+            </Rule>
+            <Rule id="rule-1106" selected="false" weight="10.000000" severity="medium">
+              <status date="2010-07-01">accepted</status>
+              <title xml:lang="en-US">Configure whether to accept default router information</title>
+              <description xml:lang="en-US">Default router information should be accepted by default: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1106"/></description>
+              <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+                <check-export export-name="oval:rhel:var:1106" value-id="var-1106"/>
+                <check-content-ref name="oval:rhel:def:1106" href="scap-rhel6-oval.xml"/>
+              </check>
+            </Rule>
+            <Rule id="rule-1107" selected="false" weight="10.000000" severity="medium">
+              <status date="2010-07-01">accepted</status>
+              <title xml:lang="en-US">Configure whether to autoconfigure addresses</title>
+              <description xml:lang="en-US">Addresses should be autoconfigured by default: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1107"/></description>
+              <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+                <check-export export-name="oval:rhel:var:1107" value-id="var-1107"/>
+                <check-content-ref name="oval:rhel:def:1107" href="scap-rhel6-oval.xml"/>
+              </check>
+            </Rule>
+	    <!-- FIXME: continue adding rules, with dad_transmits  -->
           </Group>
         </Group>
       </Group>
