@@ -514,14 +514,21 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 
 			switch (ofts->direction) {
 			case OVAL_RECURSE_DIRECTION_NONE:
+				if (ofts->ofts_path_op != OVAL_OPERATION_EQUALS)
+					break;
+				if (!ofts->ofts_sfilename && !ofts->ofts_sfilepath) {
+					dI("FTS_SKIP: recurse_direction: 'none', path: '%s' "
+					   "and the object's target is a directory.\n", fts_ent->fts_path);
+					fts_set(ofts->ofts_fts, fts_ent, FTS_SKIP);
+					break;
+				}
 				if (fts_ent->fts_level > 0) {
-					if (ofts->ofts_path_op == OVAL_OPERATION_EQUALS
-					    && (fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)) {
-						fts_set(ofts->ofts_fts, fts_ent, FTS_SKIP);
-						dI("FTS_SKIP: reason: recurse_direction=\"none\", path: '%s'.\n", fts_ent->fts_path);
-					}
-				} else
-					dI("Not skipping FTS_ROOT: %s\n", fts_ent->fts_path);
+					dI("FTS_SKIP: recurse_direction: 'none', path: '%s' "
+					   "and fts_level: %d.\n", fts_ent->fts_path, fts_ent->fts_level);
+					fts_set(ofts->ofts_fts, fts_ent, FTS_SKIP);
+				} else {
+					dI("The object's target is not a directory, not skipping FTS_ROOT: '%s'.\n", fts_ent->fts_path);
+				}
 				break;
 			case OVAL_RECURSE_DIRECTION_DOWN:
 				if (fts_ent->fts_level == 0 && ofts->ofts_sfilename) {
