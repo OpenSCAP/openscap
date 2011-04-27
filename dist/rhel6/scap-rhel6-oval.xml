@@ -1192,12 +1192,166 @@
 	<definition class="compliance" id="oval:rhel:def:1114" version="1">
 		<metadata>
 			<title>Change the default policy to DROP (from ACCEPT) for the FORWARD built-in chain</title>
-			<reference ref_id="CCE-14264-6" source="CCE"/>
+			<reference ref_id="TBD" source="CCE"/>
 			<description>Change the default policy to DROP (from ACCEPT) for the FORWARD built-in chain.</description>
 		</metadata>
 		<criteria>
 			<criterion comment=":FORWARD DROP for iptables" test_ref="oval:rhel:tst:11141"/>
 			<criterion comment=":FORWARD DROP for ip6tables" test_ref="oval:rhel:tst:11142"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1115" version="1">
+		<!-- You'll probably want to customize this for your system... -->
+		<metadata>
+			<title>Restrict ICMP message types</title>
+			<reference ref_id="TBD" source="CCE"/>
+			<description>Accept only some ICMP messages in the INPUT built-in chain.</description>
+		</metadata>
+		<criteria>
+			<criterion comment="iptables INPUT does not accept all ICMP packets" test_ref="oval:rhel:tst:11151"/>
+			<criterion comment="iptables INPUT accepts echo-reply" test_ref="oval:rhel:tst:11152"/>
+			<criterion comment="iptables INPUT accepts destination-unreachable" test_ref="oval:rhel:tst:11153"/>
+			<criterion comment="iptables INPUT accepts time-exceeded" test_ref="oval:rhel:tst:11154"/>
+			<criterion comment="iptables INPUT accepts echo-request" test_ref="oval:rhel:tst:11155"/>
+			<!-- Note that this does not test that the lines are before the generic '-A INPUT -p ipv6-icmp -j ACCEPT' -->
+			<criterion comment="ip6tables INPUT drops echo-request" test_ref="oval:rhel:tst:11156"/>
+			<criterion comment="ip6tables INPUT drops router-advertisement" test_ref="oval:rhel:tst:11157"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1116" version="1">
+		<metadata>
+			<title>Log and Drop All Other Packets</title>
+			<reference ref_id="TBD" source="CCE"/>
+			<description>Log and drop packets that were not explicitly drop in the INPUT built-in chain.</description>
+		</metadata>
+		<!-- Note that this does not test relative ordering of lines -->
+		<criteria>
+			<criterion comment="-A INPUT -j LOG for iptables" test_ref="oval:rhel:tst:11161"/>
+			<criterion comment="-A INPUT -j LOG for ip6tables" test_ref="oval:rhel:tst:11162"/>
+			<criterion comment="-A INPUT -j DROP for iptables" test_ref="oval:rhel:tst:11163"/>
+			<criterion comment="-A INPUT -j DROP for ip6tables" test_ref="oval:rhel:tst:11164"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1117" version="2">
+		<metadata>
+			<title>Disable Support for DCCP</title>
+			<reference ref_id="CCE-14268-7" source="CCE"/>
+			<description>Support for DCCP should be disabled.</description>
+		</metadata>
+		<criteria>
+			<criterion comment="Check that /etc/modprobe.d/dccp.conf prevents loading the dccp module" test_ref="oval:rhel:tst:11171"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1118" version="2">
+		<metadata>
+			<title>Disable Support for SCTP</title>
+			<reference ref_id="CCE-14132-5" source="CCE"/>
+			<description>Support for SCTP should be disabled.</description>
+		</metadata>
+		<criteria>
+			<criterion comment="Check that /etc/modprobe.d/sctp.conf prevents loading the sctp module" test_ref="oval:rhel:tst:11181"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1119" version="2">
+		<metadata>
+			<title>Disable Support for RDS</title>
+			<reference ref_id="CCE-14027-7" source="CCE"/>
+			<description>Support for RDS should be disabled.</description>
+		</metadata>
+		<criteria>
+			<criterion comment="Check that /etc/modprobe.d/rds.conf prevents loading the rds module" test_ref="oval:rhel:tst:11191"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1120" version="1">
+		<metadata>
+			<title>Configure Rsyslog</title>
+			<reference ref_id="TBD" source="CCE"/>
+			<description>The rsyslog service should be enabled.</description>
+		</metadata>
+                <criteria>
+                        <criterion comment="rsyslog is enabled in runlevels 3 and 5" test_ref="oval:rhel:tst:11201"/>
+                </criteria>
+	</definition>
+        <definition class="compliance" id="oval:rhel:def:1121" version="1">
+                <metadata>
+                        <title>Confirm Existence and Permissions of System Log Files </title>
+                        <reference ref_id="CCE-4366-1" source="CCE"/>
+                        <description>All rsyslog log files should be owned by the appropriate user.</description>
+                </metadata>
+                <criteria>
+                        <criterion comment="check user ownership of rsyslog log files" test_ref="oval:rhel:tst:11211"/>
+                </criteria>
+        </definition>
+        <definition class="compliance" id="oval:rhel:def:1122" version="1">
+                <metadata>
+                        <title>Confirm Existence and Permissions of System Log Files </title>
+			<reference ref_id="CCE-18240-2" source="CCE"/>
+                        <description>All rsyslog log files should be owned by the appropriate group.</description>
+                </metadata>
+                <criteria>
+                        <criterion comment="check group ownership of rsyslog log files" test_ref="oval:rhel:tst:11221"/>
+                </criteria>
+        </definition>
+	<definition class="compliance" id="oval:rhel:def:1123" version="1">
+		<metadata>
+			<title>Confirm Existence and Permissions of System Log Files </title>
+			<reference ref_id="CCE-18095-0" source="CCE"/>
+			<description>File permissions for all syslog log files should be set correctly.</description>
+		</metadata>
+		<criteria>
+			<criterion comment="check permissions of all rsyslog log files" test_ref="oval:rhel:tst:11231"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1124" version="1">
+		<metadata>
+			<title>Send Logs to a Remote Loghost </title>
+			<reference ref_id="CCE-17248-6" source="CCE"/>
+			<description>Syslog logs should be sent to a remote loghost</description>
+		</metadata>
+		<criteria>
+			<criterion comment="/etc/rsyslog.conf sends all records to a remote host" test_ref="oval:rhel:tst:11241"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1125" version="1">
+		<metadata>
+			<title>Rsyslog shouldn't be run in a compatibility mode</title>
+			<reference ref_id="CCE-17248-6" source="CCE"/>
+			<description>An appropriate compatibility mode, that matches the daemons current version should be specified
+				using the SYSLOGD_OPTION variable in /etc/sysconfig/rsyslog.
+			</description>
+		</metadata>
+		<criteria>
+			<criterion comment="SYSLOGD_OPTIONS in /etc/sysconfig/rsyslog specify level 4" test_ref="oval:rhel:tst:11251"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1126" version="1">
+		<metadata>
+			<title>Ensure All Logs are Rotated by logrotate</title>
+			<reference ref_id="CCE-4182-2" source="CCE"/>
+			<description>The logrotate (syslog rotater) service should be enabled.</description>
+		</metadata>
+		<criteria>
+			<criterion comment="Find each file in /etc/rsyslog.conf in /etc/logrotate.d/syslog" test_ref="oval:rhel:tst:11261"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1127" version="1">
+		<metadata>
+			<title>Enable the auditd Service</title>
+			<reference ref_id="CCE-4292-9" source="CCE"/>
+			<description>The auditd service should be enabled.</description>
+		</metadata>
+                <criteria>
+                        <criterion comment="auditd is enabled in runlevels 3 and 5" test_ref="oval:rhel:tst:11271"/>
+                </criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1128" version="1">
+		<metadata>
+			<title>Enable Auditing for Processes Which Start Prior to the Audit Daemon</title>
+			<reference ref_id="CCE-15026-8" source="CCE"/>
+			<description>Look for argument audit=1 in the kernel line in /boot/grub/grub.conf</description>
+		</metadata>
+		<criteria>
+			<criterion comment="check for audit=1 in /boot/grub/grub.conf" test_ref="oval:rhel:tst:11281"/>
 		</criteria>
 	</definition>
 	</definitions>
@@ -1753,21 +1907,133 @@
                 <unix-def:object object_ref="oval:rhel:obj:111211"/>
 		<unix-def:state state_ref="oval:rhel:ste:111111"/>
         </unix-def:runlevel_test>
-        <ind-def:textfilecontent54_test id="oval:rhel:tst:11131" check_existence="at_least_one_exists" version="1" check="all"
+        <ind-def:textfilecontent54_test id="oval:rhel:tst:11131" check_existence="at_least_one_exists" version="1" check="at least one"
 					comment="Check /etc/sysconfig/iptables for :INPUT DROP">
                 <ind-def:object object_ref="oval:rhel:obj:111311" />
+		<ind-def:state state_ref="oval:rhel:ste:111311"/>
         </ind-def:textfilecontent54_test>
-        <ind-def:textfilecontent54_test id="oval:rhel:tst:11132" check_existence="at_least_one_exists" version="1" check="all"
+        <ind-def:textfilecontent54_test id="oval:rhel:tst:11132" check_existence="at_least_one_exists" version="1" check="at least one"
 					comment="Check /etc/sysconfig/ip6tables for :INPUT DROP">
                 <ind-def:object object_ref="oval:rhel:obj:111321" />
+		<ind-def:state state_ref="oval:rhel:ste:111311"/>
         </ind-def:textfilecontent54_test>
-        <ind-def:textfilecontent54_test id="oval:rhel:tst:11141" check_existence="at_least_one_exists" version="1" check="all"
+        <ind-def:textfilecontent54_test id="oval:rhel:tst:11141" check_existence="at_least_one_exists" version="1" check="at least one"
 					comment="Check /etc/sysconfig/iptables for :FORWARD DROP">
-                <ind-def:object object_ref="oval:rhel:obj:111411" />
+                <ind-def:object object_ref="oval:rhel:obj:111311" />
+		<ind-def:state state_ref="oval:rhel:ste:111411"/>
         </ind-def:textfilecontent54_test>
-        <ind-def:textfilecontent54_test id="oval:rhel:tst:11142" check_existence="at_least_one_exists" version="1" check="all"
+        <ind-def:textfilecontent54_test id="oval:rhel:tst:11142" check_existence="at_least_one_exists" version="1" check="at least one"
 					comment="Check /etc/sysconfig/ip6tables for :FORWARD DROP">
-                <ind-def:object object_ref="oval:rhel:obj:111421" />
+                <ind-def:object object_ref="oval:rhel:obj:111321" />
+		<ind-def:state state_ref="oval:rhel:ste:111411"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test id="oval:rhel:tst:11151" check_existence="at_least_one_exists" version="1" check="none satisfy"
+					comment="Check /etc/sysconfig/iptables does not contain '-A INPUT -p icmp -j ACCEPT'">
+                <ind-def:object object_ref="oval:rhel:obj:111311" />
+		<ind-def:state state_ref="oval:rhel:ste:111511"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test id="oval:rhel:tst:11152" check_existence="at_least_one_exists" version="1" check="at least one"
+					comment="Check /etc/sysconfig/iptables for '-A INPUT -p icmp --icmp-type echo-reply -j ACCEPT'">
+                <ind-def:object object_ref="oval:rhel:obj:111311" />
+		<ind-def:state state_ref="oval:rhel:ste:111521"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test id="oval:rhel:tst:11153" check_existence="at_least_one_exists" version="1" check="at least one"
+					comment="Check /etc/sysconfig/iptables for '-A INPUT -p icmp --icmp-type destination-unreachable -j ACCEPT'">
+                <ind-def:object object_ref="oval:rhel:obj:111311" />
+		<ind-def:state state_ref="oval:rhel:ste:111531"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test id="oval:rhel:tst:11154" check_existence="at_least_one_exists" version="1" check="at least one"
+					comment="Check /etc/sysconfig/iptables for '-A INPUT -p icmp --icmp-type time-exceeded -j ACCEPT'">
+                <ind-def:object object_ref="oval:rhel:obj:111311" />
+		<ind-def:state state_ref="oval:rhel:ste:111541"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test id="oval:rhel:tst:11155" check_existence="at_least_one_exists" version="1" check="at least one"
+					comment="Check /etc/sysconfig/iptables for '-A INPUT -p icmp --icmp-type echo-request -j ACCEPT'">
+                <ind-def:object object_ref="oval:rhel:obj:111311" />
+		<ind-def:state state_ref="oval:rhel:ste:111551"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test id="oval:rhel:tst:11156" check_existence="at_least_one_exists" version="1" check="at least one"
+					comment="Check /etc/sysconfig/ip6tables for '-A INPUT -p icmpv6 --icmpv6-type echo-request -j DROP'">
+                <ind-def:object object_ref="oval:rhel:obj:111321" />
+		<ind-def:state state_ref="oval:rhel:ste:111561"/>
+	</ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test id="oval:rhel:tst:11157" check_existence="at_least_one_exists" version="1" check="at least one"
+					comment="Check /etc/sysconfig/ip6tables for '-A INPUT -p icmpv6 --icmpv6-type router-advertisement -j DROP'">
+                <ind-def:object object_ref="oval:rhel:obj:111321" />
+		<ind-def:state state_ref="oval:rhel:ste:111571"/>
+	</ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test id="oval:rhel:tst:11161" check_existence="at_least_one_exists" version="1" check="at least one"
+					comment="Check /etc/sysconfig/iptables for '-A INPUT -j LOG'">
+                <ind-def:object object_ref="oval:rhel:obj:111311" />
+		<ind-def:state state_ref="oval:rhel:ste:111611"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test id="oval:rhel:tst:11162" check_existence="at_least_one_exists" version="1" check="at least one"
+					comment="Check /etc/sysconfig/ip6tables for '-A INPUT -j LOG'">
+                <ind-def:object object_ref="oval:rhel:obj:111321" />
+		<ind-def:state state_ref="oval:rhel:ste:111611"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test id="oval:rhel:tst:11163" check_existence="at_least_one_exists" version="1" check="at least one"
+					comment="Check /etc/sysconfig/iptables for '-A INPUT -j DROP'">
+                <ind-def:object object_ref="oval:rhel:obj:111311" />
+		<ind-def:state state_ref="oval:rhel:ste:111631"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test id="oval:rhel:tst:11164" check_existence="at_least_one_exists" version="1" check="at least one"
+					comment="Check /etc/sysconfig/ip6tables for '-A INPUT -j DROP'">
+                <ind-def:object object_ref="oval:rhel:obj:111321" />
+		<ind-def:state state_ref="oval:rhel:ste:111631"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:11171" version="1" check="all"
+					comment="Tests that /etc/modprobe.d/dccp.conf prevents loading the dccp module">
+                <ind-def:object object_ref="oval:rhel:obj:111711"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:11181" version="1" check="all"
+					comment="Tests that /etc/modprobe.d/sctp.conf prevents loading the sctp module">
+                <ind-def:object object_ref="oval:rhel:obj:111811"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:11191" version="1" check="all"
+					comment="Tests that /etc/modprobe.d/rds.conf prevents loading the rds module">
+                <ind-def:object object_ref="oval:rhel:obj:111911"/>
+        </ind-def:textfilecontent54_test>
+        <unix-def:runlevel_test check_existence="at_least_one_exists" id="oval:rhel:tst:11201" version="1" check="all"
+				comment="Check whether the rsyslog service is enabled in runlevels 3 and 5">
+                <unix-def:object object_ref="oval:rhel:obj:112011"/>
+		<unix-def:state state_ref="oval:rhel:ste:111111"/>
+        </unix-def:runlevel_test>
+        <unix-def:file_test check_existence="any_exist" id="oval:rhel:tst:11211" version="1" check="all"
+			    comment="The owner of rsyslog log files must be set appropriately">
+                <unix-def:object object_ref="oval:rhel:obj:112111"/>
+                <unix-def:state state_ref="oval:rhel:ste:112111"/>
+        </unix-def:file_test>
+        <unix-def:file_test check_existence="any_exist" id="oval:rhel:tst:11221" version="1" check="all"
+			    comment="The group owner of rsyslog log files must be set appropriately">
+                <unix-def:object object_ref="oval:rhel:obj:112111"/>
+                <unix-def:state state_ref="oval:rhel:ste:112211"/>
+        </unix-def:file_test>
+        <unix-def:file_test check_existence="all_exist" id="oval:rhel:tst:11231" version="1" check="all" comment="rsyslog log files have correct permissions">
+                <unix-def:object object_ref="oval:rhel:obj:112111"/>
+                <unix-def:state state_ref="oval:rhel:ste:106611"/>
+        </unix-def:file_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11241" version="1" check="all"
+					comment="/etc/rsyslog.conf sends all records to a remote host">
+                  <ind-def:object object_ref="oval:rhel:obj:112411"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11251" version="1" check="all"
+					comment="/etc/sysconfig/rsyslog defines -c 4 in SYSLOGD_OPTIONS">
+                  <ind-def:object object_ref="oval:rhel:obj:112511"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11261" version="1" check="all"
+					comment="/etc/logrotate.d/syslog rotates every rsyslog log file">
+                <ind-def:object object_ref="oval:rhel:obj:112611"/>
+                <ind-def:state state_ref="oval:rhel:ste:112611"/>
+        </ind-def:textfilecontent54_test>
+        <unix-def:runlevel_test check_existence="at_least_one_exists" id="oval:rhel:tst:11271" version="1" check="all"
+				comment="Check whether the auditd service is enabled in runlevels 3 and 5">
+                <unix-def:object object_ref="oval:rhel:obj:112711"/>
+		<unix-def:state state_ref="oval:rhel:ste:111111"/>
+        </unix-def:runlevel_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11281" version="1" check="all"
+					comment="check for audit=1 in /boot/grub//grub.conf">
+                <ind-def:object object_ref="oval:rhel:obj:112811"/>
         </ind-def:textfilecontent54_test>
 	</tests>
 
@@ -2357,15 +2623,15 @@
                 <unix-def:service_name>iptables</unix-def:service_name>
                 <unix-def:runlevel operation="pattern match">^[35]$</unix-def:runlevel>
         </unix-def:runlevel_object>
-        <ind-def:textfilecontent54_object id="oval:rhel:obj:111311" version="1" comment=":INPUT DROP in /etc/sysconfig/iptables">
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:111311" version="1" comment="Any line in /etc/sysconfig/iptables">
                 <ind-def:filepath>/etc/sysconfig/iptables</ind-def:filepath>
-                <ind-def:pattern operation="pattern match">^[[:space:]]*:INPUT[[:space:]]+DROP[[:space:]]</ind-def:pattern>
-                <ind-def:instance datatype="int">1</ind-def:instance>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*(.*[^[:space:]])[[:space:]]*$</ind-def:pattern>
+		<ind-def:instance datatype="int" operation="greater than or equal">1</ind-def:instance>
         </ind-def:textfilecontent54_object>
-        <ind-def:textfilecontent54_object id="oval:rhel:obj:111321" version="1" comment=":INPUT DROP in /etc/sysconfig/ip6tables">
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:111321" version="1" comment="Any line in /etc/sysconfig/ip6tables">
                 <ind-def:filepath>/etc/sysconfig/ip6tables</ind-def:filepath>
-                <ind-def:pattern operation="pattern match">^[[:space:]]*:INPUT[[:space:]]+DROP[[:space:]]</ind-def:pattern>
-                <ind-def:instance datatype="int">1</ind-def:instance>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*(.*[^[:space:]])[[:space:]]*$</ind-def:pattern>
+		<ind-def:instance datatype="int" operation="greater than or equal">1</ind-def:instance>
         </ind-def:textfilecontent54_object>
         <ind-def:textfilecontent54_object id="oval:rhel:obj:111411" version="1" comment=":FORWARD DROP in /etc/sysconfig/iptables">
                 <ind-def:filepath>/etc/sysconfig/iptables</ind-def:filepath>
@@ -2375,6 +2641,57 @@
         <ind-def:textfilecontent54_object id="oval:rhel:obj:111421" version="1" comment=":FORWARD DROP in /etc/sysconfig/ip6tables">
                 <ind-def:filepath>/etc/sysconfig/ip6tables</ind-def:filepath>
                 <ind-def:pattern operation="pattern match">^[[:space:]]*:FORWARD[[:space:]]+DROP[[:space:]]</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+	<ind-def:textfilecontent54_object id="oval:rhel:obj:111711" version="1" comment="An 'install dccp /bin/true' line in /etc/modprobe.d/dccp.conf">
+		<ind-def:filepath>/etc/modprobe.d/dccp.conf</ind-def:filepath>
+		<ind-def:pattern operation="pattern match">^[[:space:]]*install[[:space:]]+dccp[[:space:]]+/bin/true[[:space:]]*$</ind-def:pattern>
+		<ind-def:instance datatype="int">1</ind-def:instance>
+	</ind-def:textfilecontent54_object>
+	<ind-def:textfilecontent54_object id="oval:rhel:obj:111811" version="1" comment="An 'install sctp /bin/true' line in /etc/modprobe.d/sctp.conf">
+		<ind-def:filepath>/etc/modprobe.d/sctp.conf</ind-def:filepath>
+		<ind-def:pattern operation="pattern match">^[[:space:]]*install[[:space:]]+sctp[[:space:]]+/bin/true[[:space:]]*$</ind-def:pattern>
+		<ind-def:instance datatype="int">1</ind-def:instance>
+	</ind-def:textfilecontent54_object>
+	<ind-def:textfilecontent54_object id="oval:rhel:obj:111911" version="1" comment="An 'install rds /bin/true' line in /etc/modprobe.d/rds.conf">
+		<ind-def:filepath>/etc/modprobe.d/rds.conf</ind-def:filepath>
+		<ind-def:pattern operation="pattern match">^[[:space:]]*install[[:space:]]+rds[[:space:]]+/bin/true[[:space:]]*$</ind-def:pattern>
+		<ind-def:instance datatype="int">1</ind-def:instance>
+	</ind-def:textfilecontent54_object>
+        <unix-def:runlevel_object id="oval:rhel:obj:112011" version="1" comment="Runlevel state of rsyslog for runlevels 3,5">
+                <unix-def:service_name>rsyslog</unix-def:service_name>
+                <unix-def:runlevel operation="pattern match">^[35]$</unix-def:runlevel>
+        </unix-def:runlevel_object>
+        <unix-def:file_object id="oval:rhel:obj:112111" version="1" comment="rsyslog log files">
+		<unix-def:filepath var_ref="oval:rhel:var:1121111" var_check="at least one"/>
+        </unix-def:file_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:11211111" version="1" comment="rsyslog log file paths">
+                <ind-def:filepath>/etc/rsyslog.conf</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*[^#$][^[:space:]]*[[:space:]]+-?(/[^;[:space:]]+)</ind-def:pattern>
+		<ind-def:instance datatype="int" operation="greater than or equal">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:112411" version="1" comment="/etc/rsyslog.conf line sending all records to a remote host">
+                <ind-def:filepath>/etc/rsyslog.conf</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*\*\.\*[[:space:]]+(@|:omrelp)</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:112511" version="1" comment="/etc/sysconfig/rsyslog defines -c 4 in SYSLOGD_OPTIONS">
+                <ind-def:filepath>/etc/sysconfig/rsyslog</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*SYSLOGD_OPTIONS=.*-c[[:space:]]*4</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:112611" version="1" comment="The /etc/logrotate.d/syslog line that defines which files to look for">
+                <ind-def:filepath>/etc/logrotate.d/syslog</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)[[:space:]]*{</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <unix-def:runlevel_object id="oval:rhel:obj:112711" version="1" comment="Runlevel state of auditd for runlevels 3,5">
+                <unix-def:service_name>auditd</unix-def:service_name>
+                <unix-def:runlevel operation="pattern match">^[35]$</unix-def:runlevel>
+        </unix-def:runlevel_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:112811" version="1">
+                <ind-def:filepath>/etc/grub.conf</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*kernel.+[[:space:]]audit=1</ind-def:pattern>
                 <ind-def:instance datatype="int">1</ind-def:instance>
         </ind-def:textfilecontent54_object>
 	</objects>
@@ -2666,6 +2983,49 @@
 		<unix-def:start operation="equals">true</unix-def:start>
 		<unix-def:kill datatype="boolean">false</unix-def:kill>
 	</unix-def:runlevel_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:111311" version="1" comment=":INPUT DROP ...">
+                <ind-def:subexpression operation="pattern match">^:INPUT[[:space:]]+DROP[[:space:]]</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:111411" version="1" comment=":FORWARD DROP ...">
+                <ind-def:subexpression operation="pattern match">^:FORWARD[[:space:]]+DROP[[:space:]]</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:111511" version="1" comment="-A INPUT -p icmp -j ACCEPT">
+                <ind-def:subexpression>-A INPUT -p icmp -j ACCEPT</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:111521" version="1" comment="-A INPUT -p icmp --icmp-type echo-reply -j ACCEPT">
+                <ind-def:subexpression>-A INPUT -p icmp --icmp-type echo-reply -j ACCEPT</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:111531" version="1" comment="-A INPUT -p icmp --icmp-type destination-unreachable -j ACCEPT">
+                <ind-def:subexpression>-A INPUT -p icmp --icmp-type destination-unreachable -j ACCEPT</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:111541" version="1" comment="-A INPUT -p icmp --icmp-type time-exceeded -j ACCEPT">
+                <ind-def:subexpression>-A INPUT -p icmp --icmp-type time-exceeded -j ACCEPT</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:111551" version="1" comment="-A INPUT -p icmp --icmp-type echo-request -j ACCEPT">
+                <ind-def:subexpression>-A INPUT -p icmp --icmp-type echo-request -j ACCEPT</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:111561" version="1" comment="-A INPUT -p icmpv6 --icmpv6-type echo-request -j DROP">
+                <ind-def:subexpression>-A INPUT -p icmpv6 --icmpv6-type echo-request -j DROP</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:111571" version="1" comment="-A INPUT -p icmpv6 --icmpv6-type router-advertisement -j DROP">
+                <ind-def:subexpression>-A INPUT -p icmpv6 --icmpv6-type router-advertisement -j DROP</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:111611" version="1" comment="-A INPUT -j LOG">
+                <ind-def:subexpression>-A INPUT -j LOG</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:111631" version="1" comment="-A INPUT -j DROP">
+                <ind-def:subexpression>-A INPUT -j DROP</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <unix-def:file_state id="oval:rhel:ste:112111" version="1" comment="Log files owned by the appropriate user">
+                <unix-def:user_id var_ref="oval:rhel:var:1121"/>
+        </unix-def:file_state>
+        <unix-def:file_state id="oval:rhel:ste:112211" version="1" comment="Log files owned by the appropriate group">
+                <unix-def:group_id var_ref="oval:rhel:var:1122"/>
+        </unix-def:file_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:112611" version="1" comment="Expected content of the file list in /etc/logrotate.d/syslog">
+		<!-- "pattern match" is used to (imprecisely) match each file name as a substring -->
+                <ind-def:subexpression var_check="all" operation="pattern match" var_ref="oval:rhel:var:1121111"/>
+        </ind-def:textfilecontent54_state>
 	</states>
 
 	<variables>
@@ -2823,6 +3183,11 @@
         <external_variable id="oval:rhel:var:1107" version="1" datatype="string" comment="Expected value of net.ipv6.conf.default.autoconf"/>
         <external_variable id="oval:rhel:var:1108" version="1" datatype="string" comment="Expected value of net.ipv6.conf.default.dad_transmits"/>
         <external_variable id="oval:rhel:var:1109" version="1" datatype="string" comment="Expected value of net.ipv6.conf.default.max_addresses"/>
+        <external_variable id="oval:rhel:var:1121" version="1" datatype="int" comment="User owning rsyslog log files"/>
+        <local_variable id="oval:rhel:var:1121111" version="1" datatype="string" comment="rsyslog log files">
+                <object_component item_field="subexpression" object_ref="oval:rhel:obj:11211111"/>
+        </local_variable>
+        <external_variable id="oval:rhel:var:1122" version="1" datatype="int" comment="Group owning rsyslog log files"/>
 	</variables>
 
 </oval_definitions>

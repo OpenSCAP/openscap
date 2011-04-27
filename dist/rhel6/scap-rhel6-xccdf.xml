@@ -101,11 +101,17 @@
     <select idref="rule-1109" selected="true"/>
     <select idref="rule-1111" selected="true"/>
     <select idref="rule-1112" selected="true"/>
+    <select idref="rule-1120" selected="true"/>
+    <select idref="rule-1121" selected="true"/>
+    <select idref="rule-1122" selected="true"/>
+    <select idref="rule-1125" selected="true"/>
+    <select idref="rule-1126" selected="true"/>
+    <select idref="rule-1127" selected="true"/>
   </Profile>
   <Profile id="mitr">
     <title xml:lang="en-US">mitr</title>
     <description xml:lang="en-US">mitr</description>
-    <select idref="rule-1114" selected="true"/>
+    <select idref="rule-1129" selected="true"/>
   </Profile>
   <Group id="gr-intro" hidden="false">
     <title xml:lang="en-US">Introduction</title>
@@ -4497,6 +4503,14 @@
 							/etc/sysconfig/ip6tables is not recommended because the operation of
 							IPv6 depends heavily on ICMPv6. Thus, more care must be taken when
 							blocking ICMPv6 types.</description>
+            <Rule id="rule-1115" selected="false" weight="10.000000" severity="high">
+              <status date="2010-07-01">accepted</status>
+              <title xml:lang="en-US">Restrict ICMP message types</title>
+              <description xml:lang="en-US">Accept only some ICMP messages in the INPUT built-in chain.</description>
+              <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+                <check-content-ref name="oval:rhel:def:1115" href="scap-rhel6-oval.xml"/>
+              </check>
+            </Rule>
           </Group>
           <Group id="gr-networking-iptables.3.3" hidden="false">
             <title xml:lang="en-US">Log and Drop Packets with Suspicious Source Addresses</title>
@@ -4576,6 +4590,14 @@
 							Chatty but otherwise non-malicious network protocols (e.g. NetBIOS) may
 							result in voluminous logs; insertion of earlier rules to explicitly drop
 							their packets without logging may be appropriate.</description>
+            <Rule id="rule-1116" selected="false" weight="10.000000" severity="high">
+              <status date="2010-07-01">accepted</status>
+              <title xml:lang="en-US">Log and Drop All Other Packets</title>
+              <description xml:lang="en-US">Log and drop packets that were not explicitly drop in the INPUT built-in chain.</description>
+              <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+                <check-content-ref name="oval:rhel:def:1116" href="scap-rhel6-oval.xml"/>
+              </check>
+            </Rule>
           </Group>
         </Group>
         <Group id="gr-networking-iptables.4" hidden="false">
@@ -4603,7 +4625,7 @@
 								connections on port 22 within a minute to prevent dictionary login
 								attacks). <xhtml:br/>
 								<xhtml:br/> A more precise option for DoS protection is using TCP
-								SYN cookies. (See Section 2.5.1.2 for more information.)</xhtml:li>
+								SYN cookies.</xhtml:li>
 						</xhtml:ul>
 					</description>
         </Group>
@@ -4837,27 +4859,27 @@
         <Group id="gr-networking.7.1" hidden="false">
           <title xml:lang="en-US">Disable Support for DCCP</title>
           <description xml:lang="en-US"> To prevent the DCCP kernel module from being
-						loaded, add the following line to /etc/modprobe.conf:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						loaded, create /etc/modprobe.d/dccp.conf with the following content:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">install dccp /bin/true<xhtml:br/>
 						</xhtml:code>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The Datagram Congestion Control Protocol (DCCP) is a relatively
 						new transport layer protocol, designed to support streaming media and
 						telephony.</description>
-          <Rule id="rule-2.5.7.1.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1117" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">draft</status>
             <title xml:lang="en-US">Disable Support for DCCP</title>
             <description xml:lang="en-US">Support for DCCP should be disabled.</description>
             <ident system="http://cce.mitre.org">CCE-14268-7</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:201476" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1117" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
         <Group id="gr-networking.7.2" hidden="false">
           <title xml:lang="en-US">Disable Support for SCTP</title>
           <description xml:lang="en-US"> To prevent the SCTP kernel module from being
-						loaded, add the following line to /etc/modprobe.conf:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						loaded, create /etc/modprobe.d/sctp.conf with the following content:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">install sctp /bin/true<xhtml:br/>
 						</xhtml:code>
@@ -4865,33 +4887,33 @@
 						layer protocol, designed to support the idea of message-oriented
 						communication, with several streams of messages within one
 						connection.</description>
-          <Rule id="rule-2.5.7.2.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1118" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">draft</status>
             <title xml:lang="en-US">Disable Support for SCTP</title>
             <description xml:lang="en-US">Support for SCTP should be disabled.</description>
             <ident system="http://cce.mitre.org">CCE-14132-5</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:201477" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1118" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
         <Group id="gr-networking.7.3" hidden="false">
           <title xml:lang="en-US">Disable Support for RDS</title>
           <description xml:lang="en-US"> To prevent the RDS kernel module from being
-						loaded, add the following line to /etc/modprobe.conf:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						loaded, create /etc/modprobe.d/rds.conf with the following content:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">install rds /bin/true<xhtml:br/>
 						</xhtml:code>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The Reliable Datagram Sockets (RDS) protocol is a transport
 						layer protocol designed to provide reliable high-bandwidth, low-latency
 						communications between nodes in a cluster.</description>
-          <Rule id="rule-2.5.7.3.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1119" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">draft</status>
             <title xml:lang="en-US">Disable Support for RDS</title>
             <description xml:lang="en-US">Support for RDS should be disabled.</description>
             <ident system="http://cce.mitre.org">CCE-14027-7</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:201478" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1119" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -4933,13 +4955,13 @@
 		This section discusses how to configure rsyslog for best
 		effect, and how to use tools provided with the system to maintain and monitor
 		your logs.</description>
-        <Rule id="rule-2.6.1.a" selected="false" weight="10.000000" severity="medium">
+        <Rule id="rule-1120" selected="false" weight="10.000000" severity="medium">
           <status date="2010-07-01">accepted</status>
           <title xml:lang="en-US">Rsyslog service is enabled</title>
           <description xml:lang="en-US">The rsyslog service should be enabled.</description>
           <ident system="http://cce.mitre.org">CCE-3679-8</ident>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-            <check-content-ref name="oval:rhel:def:20148" href="scap-rhel6-oval.xml"/>
+            <check-content-ref name="oval:rhel:def:1120" href="scap-rhel6-oval.xml"/>
           </check>
         </Rule>
         <Group id="gr-logs-syslog.1" hidden="false">
@@ -4985,57 +5007,48 @@
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Some logs may contain
 						sensitive information, so it is better to restrict permissions so that only
 						administrative users can read or write logfiles.</description>
-          <Value id="var-2.6.1.2.a" operator="equals" type="string">
-            <title xml:lang="en-US">User who owns log files</title>
+          <Value id="var-1121" operator="equals" type="string">
+            <title xml:lang="en-US">User that owns log files</title>
             <description xml:lang="en-US">Specify user owner of all logfiles specified
 							in /etc/rsyslog.conf.</description>
-            <value selector="root">root</value>
+            <value>0</value>
+            <value selector="root">0</value>
           </Value>
-          <Value id="var-2.6.1.2.b" operator="equals" type="string">
-            <title xml:lang="en-US">group who owns log files</title>
+          <Value id="var-1122" operator="equals" type="string">
+            <title xml:lang="en-US">Group that owns log files</title>
             <description xml:lang="en-US">Specify group owner of all logfiles specified
 							in /etc/rsyslog.conf.</description>
-            <value selector="root">root</value>
+            <value>0</value>
+            <value selector="root">0</value>
           </Value>
-          <Value id="var-2.6.1.2.c" operator="equals" type="string">
-            <title xml:lang="en-US">File permissions on logfiles</title>
-            <description xml:lang="en">Specify file permissions of all logfiles specified in /etc/rsyslog.conf.</description>
-            <question xml:lang="en">Specify permissions of all logfiles specified in /etc/rsyslog.conf</question>
-            <value>110000000</value>
-            <value selector="400">100000000</value>
-            <value selector="600">110000000</value>
-            <value selector="700">111000000</value>
-          </Value>
-          <Rule id="rule-2.6.1.2.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1121" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">User ownership of System Log Files</title>
-            <description xml:lang="en-US">All syslog log files should be owned by root.</description>
+            <description xml:lang="en-US">All syslog log files should be owned by user <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1121"/>.</description>
             <ident system="http://cce.mitre.org">CCE-4366-1</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20149" value-id="var-2.6.1.2.a"/>
-              <check-content-ref name="oval:rhel:def:20149" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1121" value-id="var-1121"/>
+              <check-content-ref name="oval:rhel:def:1121" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.6.1.2.b" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1122" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Group ownership of System Log Files</title>
-            <description xml:lang="en-US">All syslog log files should be group owned by
-							root.</description>
+            <description xml:lang="en-US">All syslog log files should be group owned group <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1122"/>.</description>
             <ident system="http://cce.mitre.org">CCE-3701-0</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20150" value-id="var-2.6.1.2.b"/>
-              <check-content-ref name="oval:rhel:def:20150" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:rhel:var:1122" value-id="var-1122"/>
+              <check-content-ref name="oval:rhel:def:1122" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.6.1.2.c" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1123" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Permissions on System Log Files</title>
             <description xml:lang="en-US">File permissions for all syslog log files should be set
 							correctly.</description>
             <ident system="http://cce.mitre.org">CCE-4233-3</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:20151" value-id="var-2.6.1.2.c"/>
-              <check-content-ref name="oval:rhel:def:20151" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1123" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -5048,13 +5061,13 @@
 						which indicate that the system was attacked before they are seen by an
 						administrator. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
           </description>
-          <Rule id="rule-2.6.1.3.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1124" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Send Logs to a Remote Loghost</title>
             <description xml:lang="en-US">Syslog logs should be sent to a remote loghost</description>
             <ident system="http://cce.mitre.org">CCE-4260-6</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20152" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1124" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -5065,14 +5078,14 @@
 		that matches its current version. Using an older mode may alter your configuration in an unexpected way.
 		The mode can be configured by changing the value of the SYSLOGD_OPTIONS variable in /etc/sysconfig/rsyslog.
 		</description>
-          <Rule id="rule-2.6.1.4.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1125" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Rsyslog shouldn't be run in a compatibility mode</title>
             <description xml:lang="en-US">An appropriate compatibility mode, that matches the daemons current version should be specified
 		using the SYSLOGD_OPTION variable in /etc/sysconfig/rsyslog.
 		</description>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20153" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1125" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -5094,14 +5107,14 @@
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Note that logrotate is run nightly by the cron job
 						/etc/cron.daily/logrotate. If particularly active logs need to be rotated
 						more often than once a day, some other mechanism must be used.</description>
-          <Rule id="rule-2.6.1.5.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1126" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">All Logs are Rotated by logrotate</title>
             <description xml:lang="en-US">The logrotate (syslog rotater) service should be
 							enabled.</description>
             <ident system="http://cce.mitre.org">CCE-4182-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20154" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1126" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -5233,13 +5246,13 @@
 						risk of audit data filling its partition and impacting other services.
 						However, it is possible to lose audit data if the system is
 						busy.</description>
-          <Rule id="rule-2.6.2.1.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1127" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">Auditd service is enabled</title>
             <description xml:lang="en-US">The auditd service should be enabled.</description>
             <ident system="http://cce.mitre.org">CCE-4292-9</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20156" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1127" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -5305,17 +5318,15 @@
 						indicates whether its activities can be audited. Although auditd takes care
 						of enabling this for all processes which launch after it does, adding the
 						kernel argument ensures that it is set for every process during boot. </description>
-          <Rule id="rule-2.6.2.3.a" selected="false" weight="10.000000" severity="medium">
+          <Rule id="rule-1128" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">draft</status>
             <title xml:lang="en-US">Enable Auditing for Processes Which Start Prior to the Audit Daemon</title>
             <description xml:lang="en-US"> To ensure that all processes can be audited, even those which
 							start prior to the audit daemon, add the argument audit=1 to the kernel
-							line in /etc/grub.conf, in the manner below:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>kernel /vmlinuz-version ro vga=ext
-							root=/dev/VolGroup00/LogVol00 rhgb quiet audit=1</description>
+							line in /etc/grub.conf</description>
             <ident system="http://cce.mitre.org">CCE-15026-8</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20157" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1128" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
