@@ -95,11 +95,17 @@
     <select idref="rule-1106" selected="true"/>
     <refine-value idref="var-1107" selector="yes"/>
     <select idref="rule-1107" selected="true"/>
+    <refine-value idref="var-1108" selector="1"/>
+    <select idref="rule-1108" selected="true"/>
+    <refine-value idref="var-1109" selector="16"/>
+    <select idref="rule-1109" selected="true"/>
+    <select idref="rule-1111" selected="true"/>
+    <select idref="rule-1112" selected="true"/>
   </Profile>
   <Profile id="mitr">
     <title xml:lang="en-US">mitr</title>
     <description xml:lang="en-US">mitr</description>
-    <select idref="rule-1108" selected="true"/>
+    <select idref="rule-1114" selected="true"/>
   </Profile>
   <Group id="gr-intro" hidden="false">
     <title xml:lang="en-US">Introduction</title>
@@ -4074,6 +4080,20 @@
               <value selector="no">0</value>
               <value selector="yes">1</value>
             </Value>
+	    <Value id="var-1108" operator="equals" type="number">
+              <title xml:lang="en-US">net.ipv6.conf.default.dad_transmits</title>
+              <description xml:lang="en-US">Number of duplicate address detection probes to send</description>
+              <value>0</value>
+              <value selector="0">0</value>
+              <value selector="1">1</value>
+            </Value>
+	    <Value id="var-1109" operator="equals" type="number">
+              <title xml:lang="en-US">net.ipv6.conf.default.max_addresses</title>
+              <description xml:lang="en-US">Maximum number of autoconfigured addresses</description>
+              <value>1</value>
+              <value selector="1">1</value>
+              <value selector="16">16</value>
+            </Value>
             <Rule id="rule-1103" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">accepted</status>
               <title xml:lang="en-US">Configure number of sent router solicitations</title>
@@ -4120,7 +4140,24 @@
                 <check-content-ref name="oval:rhel:def:1107" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
-	    <!-- FIXME: continue adding rules, with dad_transmits  -->
+            <Rule id="rule-1108" selected="false" weight="10.000000" severity="medium">
+              <status date="2010-07-01">accepted</status>
+              <title xml:lang="en-US">Configure number of duplicate address detection probes</title>
+              <description xml:lang="en-US">Number of duplicate address detection probes should be by default: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1108"/></description>
+              <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+                <check-export export-name="oval:rhel:var:1108" value-id="var-1108"/>
+                <check-content-ref name="oval:rhel:def:1108" href="scap-rhel6-oval.xml"/>
+              </check>
+            </Rule>
+            <Rule id="rule-1109" selected="false" weight="10.000000" severity="medium">
+              <status date="2010-07-01">accepted</status>
+              <title xml:lang="en-US">Configure maximum number of autoconfigured addresses</title>
+              <description xml:lang="en-US">Maximum number of autoconfigured addresses be by default: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1109"/></description>
+              <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+                <check-export export-name="oval:rhel:var:1109" value-id="var-1109"/>
+                <check-content-ref name="oval:rhel:def:1109" href="scap-rhel6-oval.xml"/>
+              </check>
+            </Rule>
           </Group>
         </Group>
       </Group>
@@ -4187,6 +4224,14 @@
 						from any host other than localhost, but allow connections from anywhere to
 						the services which must be publicly accessible. (If no public services
 						exist, the first line in /etc/hosts.allow may be omitted.)</description>
+            <Rule id="rule-1110" selected="false" weight="10.000000" severity="medium">
+              <status date="2010-07-01">draft</status>
+              <title xml:lang="en-US">Reject Connections in TCP Wrapper by Default</title>
+              <description xml:lang="en-US">TCP wrapper should be configured to reject connections that were not explicitly allowed</description>
+              <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+                <check-content-ref name="oval:rhel:def:1110" href="scap-rhel6-oval.xml"/>
+              </check>
+            </Rule>
         </Group>
         <Group id="gr-networking-libwrap.3" hidden="false">
           <title xml:lang="en-US">Allow Connections Only From Hosts in This Domain if Appropriate</title>
@@ -4293,22 +4338,22 @@
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> The ip6tables default
 						rules are similar, with its input rules 2 and 5 and forward rule 1
 						reflecting protocol naming and addressing differences.</description>
-          <Rule id="rule-2.5.5.1.a" selected="false" weight="10.000000" severity="high">
+          <Rule id="rule-1111" selected="false" weight="10.000000" severity="high">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">ip6tables service is enabled</title>
             <description xml:lang="en-US">The ip6tables service should be enabled.</description>
             <ident system="http://cce.mitre.org">CCE-4167-3</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20146" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1111" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
-          <Rule id="rule-2.5.5.1.b" selected="false" weight="10.000000" severity="high">
+          <Rule id="rule-1112" selected="false" weight="10.000000" severity="high">
             <status date="2010-07-01">accepted</status>
             <title xml:lang="en-US">iptables service is enabled</title>
             <description xml:lang="en-US">The iptables service should be enabled.</description>
             <ident system="http://cce.mitre.org">CCE-4189-7</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:20147" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:rhel:def:1112" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -4402,14 +4447,22 @@
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Changing the default policy in this way implements proper
 							design for a firewall, i.e. any packets which are not explicitly
 							permitted should not be accepted.</description>
-            <Rule id="rule-2.5.5.3.1.a" selected="false" weight="10.000000" severity="high">
+            <Rule id="rule-1113" selected="false" weight="10.000000" severity="high">
               <status date="2010-07-01">accepted</status>
-              <title xml:lang="en-US">The default policy for iptables INPUT table should be set appropriately</title>
+              <title xml:lang="en-US">The default policy for ip*tables INPUT table should be set appropriately</title>
               <description xml:lang="en-US">Change the default policy to DROP (from ACCEPT) for the
 								INPUT built-in chain.</description>
-              <ident system="http://cce.mitre.org">CCE-14264-6</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:201474" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1113" href="scap-rhel6-oval.xml"/>
+              </check>
+            </Rule>
+            <Rule id="rule-1114" selected="false" weight="10.000000" severity="high">
+              <status date="2010-07-01">accepted</status>
+              <title xml:lang="en-US">The default policy for ip*tables FORWARD table should be set appropriately</title>
+              <description xml:lang="en-US">Change the default policy to DROP (from ACCEPT) for the
+								FORWARD built-in chain.</description>
+              <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+                <check-content-ref name="oval:rhel:def:1114" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>

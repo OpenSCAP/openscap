@@ -1128,6 +1128,78 @@
 			<criterion test_ref="oval:rhel:tst:11071" comment="Check /proc/sys/net/ipv6/conf/default/autoconf"/>
 		</criteria>
         </definition>
+        <definition class="compliance" id="oval:rhel:def:1108" version="1">
+                <metadata>
+                        <title>Limit Network-Transmitted Configuration</title>
+                        <reference ref_id="CCE-4287-9" source="CCE"/>
+                        <description>The default number of IPv6 duplicate address detection solicitations for network interfaces to send per configured address should be set appropriately.</description>
+                </metadata>
+                <criteria>
+			<criterion test_ref="oval:rhel:tst:11081" comment="Check /proc/sys/net/ipv6/conf/default/dad_transmits"/>
+		</criteria>
+        </definition>
+        <definition class="compliance" id="oval:rhel:def:1109" version="1">
+                <metadata>
+                        <title>Limit Network-Transmitted Configuration</title>
+                        <reference ref_id="CCE-4287-9" source="CCE"/>
+                        <description>The default number of global unicast IPv6 addresses allowed per network interface should be set appropriately.</description>
+                </metadata>
+                <criteria>
+			<criterion test_ref="oval:rhel:tst:11091" comment="Check /proc/sys/net/ipv6/conf/default/max_addresses"/>
+		</criteria>
+        </definition>
+        <definition class="compliance" id="oval:rhel:def:1110" version="1">
+                <metadata>
+			<title>Reject Connections in TCP Wrapper by Default</title>
+                        <reference ref_id="TBD" source="CCE"/>
+			<description>TCP wrapper should be configured to reject connections that were not explicitly allowed</description>
+                </metadata>
+                <criteria>
+			<criterion test_ref="oval:rhel:tst:11101" comment="/etc/hosts.deny contains ALL:ALL"/>
+		</criteria>
+        </definition>
+	<definition class="compliance" id="oval:rhel:def:1111" version="1">
+		<metadata>
+			<title>Verify ip6tables is enabled</title>
+			<reference ref_id="CCE-4167-3" source="CCE"/>
+			<description>The ip6tables service should be enabled.</description>
+		</metadata>
+                <criteria>
+                        <criterion comment="ip6tables is enabled in runlevels 3 and 5" test_ref="oval:rhel:tst:11111"/>
+                </criteria>
+        </definition>
+	<definition class="compliance" id="oval:rhel:def:1112" version="1">
+		<metadata>
+			<title>Inspect and Activate Default Rules </title>
+			<reference ref_id="CCE-4189-7" source="CCE"/>
+			<description>The iptables service should be enabled.</description>
+		</metadata>
+                <criteria>
+                        <criterion comment="iptables is enabled in runlevels 3 and 5" test_ref="oval:rhel:tst:11121"/>
+                </criteria>
+        </definition>
+	<definition class="compliance" id="oval:rhel:def:1113" version="1">
+		<metadata>
+			<title>Change the default policy to DROP (from ACCEPT) for the INPUT built-in chain</title>
+			<reference ref_id="CCE-14264-6" source="CCE"/>
+			<description>Change the default policy to DROP (from ACCEPT) for the INPUT built-in chain.</description>
+		</metadata>
+		<criteria>
+			<criterion comment=":INPUT DROP for iptables" test_ref="oval:rhel:tst:11131"/>
+			<criterion comment=":INPUT DROP for ip6tables" test_ref="oval:rhel:tst:11132"/>
+		</criteria>
+	</definition>
+	<definition class="compliance" id="oval:rhel:def:1114" version="1">
+		<metadata>
+			<title>Change the default policy to DROP (from ACCEPT) for the FORWARD built-in chain</title>
+			<reference ref_id="CCE-14264-6" source="CCE"/>
+			<description>Change the default policy to DROP (from ACCEPT) for the FORWARD built-in chain.</description>
+		</metadata>
+		<criteria>
+			<criterion comment=":FORWARD DROP for iptables" test_ref="oval:rhel:tst:11141"/>
+			<criterion comment=":FORWARD DROP for ip6tables" test_ref="oval:rhel:tst:11142"/>
+		</criteria>
+	</definition>
 	</definitions>
 
 
@@ -1657,6 +1729,46 @@
 		<ind-def:object object_ref="oval:rhel:obj:110711"/>
 		<ind-def:state state_ref="oval:rhel:ste:110711"/>
 	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:11081" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value of /proc/sys/net/ipv6/conf/default/dad_transmits">
+		<ind-def:object object_ref="oval:rhel:obj:110811"/>
+		<ind-def:state state_ref="oval:rhel:ste:110811"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:11091" version="1" check_existence="all_exist" check="all"
+					comment="Tests the value of /proc/sys/net/ipv6/conf/default/max_addresses">
+		<ind-def:object object_ref="oval:rhel:obj:110911"/>
+		<ind-def:state state_ref="oval:rhel:ste:110911"/>
+	</ind-def:textfilecontent54_test>
+	<ind-def:textfilecontent54_test id="oval:rhel:tst:11101" version="1" check_existence="at_least_one_exists" check="all"
+					comment="Checks for ALL:ALL in /etc/hosts.deny">
+		<ind-def:object object_ref="oval:rhel:obj:11011"/>
+	</ind-def:textfilecontent54_test>
+        <unix-def:runlevel_test check_existence="at_least_one_exists" id="oval:rhel:tst:11111" version="1" check="all"
+				comment="Check whether the ip6tables service is enabled in runlevels 3 and 5">
+                <unix-def:object object_ref="oval:rhel:obj:111111"/>
+		<unix-def:state state_ref="oval:rhel:ste:111111"/>
+        </unix-def:runlevel_test>
+        <unix-def:runlevel_test check_existence="at_least_one_exists" id="oval:rhel:tst:11121" version="1" check="all"
+				comment="Check whether the iptables service is enabled in runlevels 3 and 5">
+                <unix-def:object object_ref="oval:rhel:obj:111211"/>
+		<unix-def:state state_ref="oval:rhel:ste:111111"/>
+        </unix-def:runlevel_test>
+        <ind-def:textfilecontent54_test id="oval:rhel:tst:11131" check_existence="at_least_one_exists" version="1" check="all"
+					comment="Check /etc/sysconfig/iptables for :INPUT DROP">
+                <ind-def:object object_ref="oval:rhel:obj:111311" />
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test id="oval:rhel:tst:11132" check_existence="at_least_one_exists" version="1" check="all"
+					comment="Check /etc/sysconfig/ip6tables for :INPUT DROP">
+                <ind-def:object object_ref="oval:rhel:obj:111321" />
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test id="oval:rhel:tst:11141" check_existence="at_least_one_exists" version="1" check="all"
+					comment="Check /etc/sysconfig/iptables for :FORWARD DROP">
+                <ind-def:object object_ref="oval:rhel:obj:111411" />
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test id="oval:rhel:tst:11142" check_existence="at_least_one_exists" version="1" check="all"
+					comment="Check /etc/sysconfig/ip6tables for :FORWARD DROP">
+                <ind-def:object object_ref="oval:rhel:obj:111421" />
+        </ind-def:textfilecontent54_test>
 	</tests>
 
 
@@ -2222,6 +2334,49 @@
                 <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
                 <ind-def:instance datatype="int">1</ind-def:instance>
         </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:110811" version="1" comment="Value of /proc/sys/net/ipv6/conf/default/dad_transmits">
+                <ind-def:filepath>/proc/sys/net/ipv6/conf/default/dad_transmits</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:110911" version="1" comment="Value of /proc/sys/net/ipv6/conf/default/max_addresses">
+                <ind-def:filepath>/proc/sys/net/ipv6/conf/default/max_addresses</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^(.*)$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:11011" version="1" comment="ALL:ALL in /etc/hosts.deny">
+                <ind-def:filepath>/etc/hosts.deny</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*ALL[[:space:]]*:[[:space:]]*ALL[[:space:]]*$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <unix-def:runlevel_object id="oval:rhel:obj:111111" version="1" comment="Runlevel state of ip6tables for runlevels 3,5">
+                <unix-def:service_name>ip6tables</unix-def:service_name>
+                <unix-def:runlevel operation="pattern match">^[35]$</unix-def:runlevel>
+        </unix-def:runlevel_object>
+        <unix-def:runlevel_object id="oval:rhel:obj:111211" version="1" comment="Runlevel state of iptables for runlevels 3,5">
+                <unix-def:service_name>iptables</unix-def:service_name>
+                <unix-def:runlevel operation="pattern match">^[35]$</unix-def:runlevel>
+        </unix-def:runlevel_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:111311" version="1" comment=":INPUT DROP in /etc/sysconfig/iptables">
+                <ind-def:filepath>/etc/sysconfig/iptables</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*:INPUT[[:space:]]+DROP[[:space:]]</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:111321" version="1" comment=":INPUT DROP in /etc/sysconfig/ip6tables">
+                <ind-def:filepath>/etc/sysconfig/ip6tables</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*:INPUT[[:space:]]+DROP[[:space:]]</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:111411" version="1" comment=":FORWARD DROP in /etc/sysconfig/iptables">
+                <ind-def:filepath>/etc/sysconfig/iptables</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*:FORWARD[[:space:]]+DROP[[:space:]]</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:111421" version="1" comment=":FORWARD DROP in /etc/sysconfig/ip6tables">
+                <ind-def:filepath>/etc/sysconfig/ip6tables</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*:FORWARD[[:space:]]+DROP[[:space:]]</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
 	</objects>
 
 
@@ -2501,6 +2656,16 @@
         <ind-def:textfilecontent54_state id="oval:rhel:ste:110711" version="1" comment="Expected value of net.ipv6.conf.default.autoconf">
                 <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1107"/>
         </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:110811" version="1" comment="Expected value of net.ipv6.conf.default.dad_transmits">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1108"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:110911" version="1" comment="Expected value of net.ipv6.conf.default.max_addresses">
+                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1109"/>
+        </ind-def:textfilecontent54_state>
+	<unix-def:runlevel_state id="oval:rhel:ste:111111" version="1" comment="Service is enabled">
+		<unix-def:start operation="equals">true</unix-def:start>
+		<unix-def:kill datatype="boolean">false</unix-def:kill>
+	</unix-def:runlevel_state>
 	</states>
 
 	<variables>
@@ -2656,6 +2821,8 @@
         <external_variable id="oval:rhel:var:1105" version="1" datatype="string" comment="Expected value of net.ipv6.conf.default.accept_ra_pinfo"/>
         <external_variable id="oval:rhel:var:1106" version="1" datatype="string" comment="Expected value of net.ipv6.conf.default.accept_ra_defrtr"/>
         <external_variable id="oval:rhel:var:1107" version="1" datatype="string" comment="Expected value of net.ipv6.conf.default.autoconf"/>
+        <external_variable id="oval:rhel:var:1108" version="1" datatype="string" comment="Expected value of net.ipv6.conf.default.dad_transmits"/>
+        <external_variable id="oval:rhel:var:1109" version="1" datatype="string" comment="Expected value of net.ipv6.conf.default.max_addresses"/>
 	</variables>
 
 </oval_definitions>
