@@ -111,7 +111,6 @@
   <Profile id="mitr">
     <title xml:lang="en-US">mitr</title>
     <description xml:lang="en-US">mitr</description>
-    <select idref="rule-1129" selected="true"/>
   </Profile>
   <Group id="gr-intro" hidden="false">
     <title xml:lang="en-US">Introduction</title>
@@ -5375,13 +5374,13 @@
 							stime -k time-change<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -a always,exit -F arch=ARCH -S
 							clock_settime -k time-change<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -w /etc/localtime -p wa -k
 							time-change </description>
-            <Rule id="rule-2.6.2.4.1.a" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1129" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Records Events that Modify Date and Time Information</title>
               <description xml:lang="en-US">Audit rules about time</description>
               <ident system="http://cce.mitre.org">CCE-14051-7</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:201575" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1129" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5393,13 +5392,13 @@
 							wa -k identity<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -w /etc/gshadow -p wa -k identity<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							-w /etc/shadow -p wa -k identity<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -w /etc/security/opasswd -p
 							wa -k identity </description>
-            <Rule id="rule-2.6.2.4.2.a" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1130" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Record Events that Modify User/Group Information</title>
               <description xml:lang="en-US">Audit rules about User/Group Information</description>
               <ident system="http://cce.mitre.org">CCE-14829-6</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20158" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1130" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5413,14 +5412,14 @@
 							system-locale<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -w /etc/hosts -p wa -k system-locale<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							-w /etc/sysconfig/network -p wa -k system-locale<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						</description>
-            <Rule id="rule-2.6.2.4.3.a" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1131" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Record Events that Modify the System’s Network Environment</title>
               <description xml:lang="en-US">Audit rules about the System’s Network
 								Environment</description>
               <ident system="http://cce.mitre.org">CCE-14816-3</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20159" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1131" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5428,14 +5427,14 @@
             <title xml:lang="en-US">Record Events that Modify the System’s Mandatory Access Controls</title>
             <description xml:lang="en-US"> Add the following to /etc/audit/audit.rules:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -w /etc/selinux/ -p wa -k MAC-policy </description>
-            <Rule id="rule-2.6.2.4.4.a" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1132" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Record Events that Modify the System’s Mandatory Access Controls</title>
               <description xml:lang="en-US">Audit rules about the System’s Mandatory Access
 								Controls</description>
               <ident system="http://cce.mitre.org">CCE-14821-3</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20160" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1132" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5446,13 +5445,13 @@
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -w /var/log/tallylog -p wa -k logins
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -w /var/log/faillock/ -p wa -k logins
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -w /var/log/lastlog -p wa -k logins </description>
-            <Rule id="rule-2.6.2.4.5.a" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1133" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Auditd Collects Logon and Logout Events</title>
               <description xml:lang="en-US">Audit rules about the Logon and Logout Events</description>
               <ident system="http://cce.mitre.org">CCE-14904-7</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20161" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1133" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5463,14 +5462,14 @@
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -w /var/run/utmp -p wa -k session<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -w
 							/var/log/btmp -p wa -k session<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -w /var/log/wtmp -p wa -k
 							session </description>
-            <Rule id="rule-2.6.2.4.6.a" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1134" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Ensure auditd Collects Process and Session Initiation Information</title>
               <description xml:lang="en-US">Audit rules about the Process and Session Initiation
 								Information</description>
               <ident system="http://cce.mitre.org">CCE-14679-5</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20162" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1134" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5487,14 +5486,14 @@
 							always,exit -F arch=ARCH -S setxattr -S lsetxattr -S fsetxattr -S
 							removexattr -S lremovexattr -S fremovexattr -F auid&gt;=500 -F
 							auid!=4294967295 -k perm_mod </description>
-            <Rule id="rule-2.6.2.4.7.a" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1135" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Ensure auditd Collects Discretionary Access Control Permission Modification Events</title>
               <description xml:lang="en-US">Audit rules about the Discretionary Access Control
 								Permission Modification Events</description>
               <ident system="http://cce.mitre.org">CCE-14058-2</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20163" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1135" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5509,14 +5508,14 @@
 							auid!=4294967295 -k access<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -a always,exit -F arch=ARCH -S
 							creat -S open -S openat -S truncate -S ftruncate -F
 							exit=-EPERM -F auid&gt;=500 -F auid!=4294967295 -k access </description>
-            <Rule id="rule-2.6.2.4.8.a" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1136" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Ensure auditd Collects Unauthorized Access Attempts to Files (unsuccessful)</title>
               <description xml:lang="en-US">Audit rules about the Unauthorized Access Attempts to Files
 								(unsuccessful)</description>
               <ident system="http://cce.mitre.org">CCE-14917-9</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20164" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1136" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5529,14 +5528,14 @@
 							following to /etc/audit/audit.rules, replacing /bin/ping by path to the program in question:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -a always,exit -F path=/bin/ping -F perm=x -F auid&gt;=500 -F
 							auid!=4294967295 -k privileged </description>
-            <Rule id="rule-2.6.2.4.9.a" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1137" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Ensure auditd Collects Information on the Use of Privileged Commands</title>
               <description xml:lang="en-US">Audit rules about the Information on the Use of Privileged
 								Commands</description>
               <ident system="http://cce.mitre.org">CCE-14296-8</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20165" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1137" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5548,14 +5547,14 @@
 							for your system:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -a always,exit -F arch=ARCH -S mount -F auid&gt;=500 -F
 							auid!=4294967295 -k export </description>
-            <Rule id="rule-2.6.2.4.10.a" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1138" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Ensure auditd Collects Information on Exporting to Media	(successful)</title>
               <description xml:lang="en-US">Audit rules about the Information on Exporting to Media
 								(successful)</description>
               <ident system="http://cce.mitre.org">CCE-14569-8</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20166" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1138" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5567,14 +5566,14 @@
 							for your system:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -a always,exit -F arch=ARCH -S unlink -S unlinkat -S rename
 							-S renameat -F auid&gt;=500 -F auid!=4294967295 -k delete </description>
-            <Rule id="rule-2.6.2.4.11.a" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1139" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Ensure auditd Collects Files Deletion Events by User (successful	and unsuccessful)</title>
               <description xml:lang="en-US">Audit rules about the Files Deletion Events by User
 								(successful and unsuccessful)</description>
               <ident system="http://cce.mitre.org">CCE-14820-5</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20167" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1139" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5587,14 +5586,14 @@
 							session required pam_tty_audit.so open_only enable=root
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>Also add the following to /etc/audit/audit.rules:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -w /etc/sudoers -p wa -k actions</description>
-            <Rule id="rule-2.6.2.4.12.a" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1140" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Ensure auditd Collects System Administrator Actions</title>
               <description xml:lang="en-US">Audit rules about the System Administrator
 								Actions</description>
               <ident system="http://cce.mitre.org">CCE-14824-7</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20168" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1140" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5604,16 +5603,16 @@
 							in order to capture kernel module loading and unloading events:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -w /sbin/insmod -p x -k modules<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -w /sbin/rmmod -p
 							x -k modules<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -w /sbin/modprobe -p x -k modules<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -a
-							always,exit -S init_module -S delete_module -k modules<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+							always,exit -F arch=ARCH -S init_module -S delete_module -k modules<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						</description>
-            <Rule id="rule-2.6.2.4.13.a" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1141" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Ensure auditd Collects Information on Kernel Module Loading and Unloading</title>
               <description xml:lang="en-US">Audit rules about the Information on Kernel Module Loading
 								and Unloading</description>
               <ident system="http://cce.mitre.org">CCE-14688-6</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:201685" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1141" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5624,13 +5623,13 @@
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> -e 2<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 							<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> With this setting, a reboot will be required to change any
 							audit rules. </description>
-            <Rule id="rule-2.6.2.4.14.a" selected="false" weight="10.000000" severity="medium">
+            <Rule id="rule-1142" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
               <title xml:lang="en-US">Make the auditd Configuration Immutable</title>
               <description xml:lang="en-US">Force a reboot to change audit rules</description>
               <ident system="http://cce.mitre.org">CCE-14692-8</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:20169" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:rhel:def:1142" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>

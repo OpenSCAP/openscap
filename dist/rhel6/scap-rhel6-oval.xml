@@ -483,10 +483,10 @@
 			<reference ref_id="CCE-15054-0" source="CCE"/>
 			<description>The password retry should meet minimum requirements using pam_cracklib</description>
 		</metadata>
-	  <criteria operator="AND">
-		  <criterion comment="pam_cracklib retry is defined in /etc/pam.d/system-auth" test_ref="oval:rhel:tst:10451"/>
-		  <criterion comment="pam_cracklib retry is defined in /etc/pam.d/password-auth" test_ref="oval:rhel:tst:10452"/>
-	  </criteria>
+		<criteria operator="AND">
+			<criterion comment="pam_cracklib retry is defined in /etc/pam.d/system-auth" test_ref="oval:rhel:tst:10451"/>
+			<criterion comment="pam_cracklib retry is defined in /etc/pam.d/password-auth" test_ref="oval:rhel:tst:10452"/>
+		</criteria>
 	</definition>
 	<definition class="compliance" id="oval:rhel:def:1046" version="1">
 		<metadata>
@@ -1354,6 +1354,235 @@
 			<criterion comment="check for audit=1 in /boot/grub/grub.conf" test_ref="oval:rhel:tst:11281"/>
 		</criteria>
 	</definition>
+	<definition class="compliance" id="oval:rhel:def:1129" version="1">
+		<metadata>
+			<title>Records Events that Modify Date and Time Information</title>
+			<reference ref_id="CCE-14051-7" source="CCE"/>
+			<description>Audit rules about time are enabled</description>
+		</metadata>
+		<criteria>
+			<criteria operator="OR" comment="check for 32-bit rules">
+				<criterion comment="check that 32-bit arch is irrelevant for this architecture" test_ref="oval:rhel:tst:11291"/>
+				<criteria>
+					<criterion comment="/etc/audit/audit.rules contains -a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change" test_ref="oval:rhel:tst:11293"/>
+					<criterion comment="/etc/audit/audit.rules contains -a always,exit -F arch=b32 -S clock_settime -k time-change" test_ref="oval:rhel:tst:11294"/>
+				</criteria>
+			</criteria>
+			<criteria operator="OR" comment="check for 64-bit rules">
+				<criterion comment="check that 64-bit arch is irrelevant for this architecture" test_ref="oval:rhel:tst:11292"/>
+				<criteria>
+					<criterion comment="/etc/audit/audit.rules contains -a always,exit -F arch=b64 -S adjtimex -S settimeofday -S stime -k time-change" test_ref="oval:rhel:tst:11295"/>
+					<criterion comment="/etc/audit/audit.rules contains -a always,exit -F arch=b64 -S clock_settime -k time-change" test_ref="oval:rhel:tst:11296"/>
+				</criteria>
+			</criteria>
+			<criterion comment="/etc/audit/audit.rules contains -w /etc/localtime -p wa -k time-change" test_ref="oval:rhel:tst:11297"/>
+		</criteria>
+        </definition>
+	<definition class="compliance" id="oval:rhel:def:1130" version="1">
+		<metadata>
+			<title>Record Events that Modify User/Group Information</title>
+			<reference ref_id="CCE-14829-6" source="CCE"/>
+			<description>Audit rules about User/Group Information are enabled</description>
+		</metadata>
+                <criteria>
+                        <criterion comment="/etc/audit/audit.rules contains -w /etc/group -p wa -k identity" test_ref="oval:rhel:tst:11301"/>
+                        <criterion comment="/etc/audit/audit.rules contains -w /etc/passwd -p wa -k identity" test_ref="oval:rhel:tst:11302"/>
+                        <criterion comment="/etc/audit/audit.rules contains -w /etc/gshadow -p wa -k identity" test_ref="oval:rhel:tst:11303"/>
+                        <criterion comment="/etc/audit/audit.rules contains -w /etc/shadow -p wa -k identity" test_ref="oval:rhel:tst:11304"/>
+                        <criterion comment="/etc/audit/audit.rules contains -w /etc/security/opasswd -p wa -k identity" test_ref="oval:rhel:tst:11305"/>
+                </criteria>
+        </definition>
+	<definition class="compliance" id="oval:rhel:def:1131" version="1">
+		<metadata>
+			<title>Record Events that Modify the System’s Network Environment</title>
+			<reference ref_id="CCE-14816-3" source="CCE"/>
+			<description>Audit rules about the System’s Network Environment are enabled</description>
+		</metadata>
+                <criteria>
+			<criteria operator="OR" comment="check for 32-bit rules">
+				<criterion comment="check that 32-bit arch is irrelevant for this architecture" test_ref="oval:rhel:tst:11291"/>
+				<criterion comment="/etc/audit/audit.rules contains -a exit,always -F arch=b32 -S sethostname -S setdomainname -k system-locale" test_ref="oval:rhel:tst:11311"/>
+			</criteria>
+			<criteria operator="OR" comment="check for 64-bit rules">
+				<criterion comment="check that 64-bit arch is irrelevant for this architecture" test_ref="oval:rhel:tst:11292"/>
+				<criterion comment="/etc/audit/audit.rules contains -a exit,always -F arch=b64 -S sethostname -S setdomainname -k system-locale" test_ref="oval:rhel:tst:11312"/>
+			</criteria>
+                        <criterion comment="/etc/audit/audit.rules contains -w /etc/issue -p wa -k system-locale" test_ref="oval:rhel:tst:11313"/>
+                        <criterion comment="/etc/audit/audit.rules contains -w /etc/issue.net -p wa -k system-locale" test_ref="oval:rhel:tst:11314"/>
+                        <criterion comment="/etc/audit/audit.rules contains -w /etc/hosts -p wa -k system-locale" test_ref="oval:rhel:tst:11315"/>
+                        <criterion comment="/etc/audit/audit.rules contains -w /etc/sysconfig/network -p wa -k system-locale" test_ref="oval:rhel:tst:11316"/>
+                </criteria>
+        </definition>
+	<definition class="compliance" id="oval:rhel:def:1132" version="1">
+		<metadata>
+			<title>Record Events that Modify the System’s Mandatory Access Controls</title>
+			<reference ref_id="CCE-14821-3" source="CCE"/>
+			<description>Audit rules about the System’s Mandatory Access Controls are enabled</description>
+		</metadata>
+                <criteria>
+                        <criterion comment="/etc/audit/audit.rules contains -w /etc/selinux/ -p wa -k MAC-policy" test_ref="oval:rhel:tst:11321"/>
+                </criteria>
+        </definition>
+	<definition class="compliance" id="oval:rhel:def:1133" version="1">
+		<metadata>
+			<title>Ensure auditd Collects Logon and Logout Events</title>
+			<reference ref_id="CCE-14904-7" source="CCE"/>
+			<description>Audit rules about the Logon and Logout Events are enabled</description>
+		</metadata>
+                <criteria>
+                        <criterion comment="/etc/audit/audit.rules contains -w /var/log/tallylog -p wa -k logins" test_ref="oval:rhel:tst:11331"/>
+                        <criterion comment="/etc/audit/audit.rules contains -w /var/log/faillock/ -p wa -k logins" test_ref="oval:rhel:tst:11332"/>
+                        <criterion comment="/etc/audit/audit.rules contains -w /var/log/lastlog -p wa -k logins" test_ref="oval:rhel:tst:11333"/>
+                </criteria>
+        </definition>
+	<definition class="compliance" id="oval:rhel:def:1134" version="1">
+		<metadata>
+			<title>Ensure auditd Collects Process and Session Initiation Information</title>
+			<reference ref_id="CCE-14679-5" source="CCE"/>
+			<description>Audit rules about the Process and Session Initiation Information are enabled</description>
+		</metadata>
+                <criteria>
+                        <criterion comment="/etc/audit/audit.rules contains -w /var/run/utmp -p wa -k session" test_ref="oval:rhel:tst:11341"/>
+                        <criterion comment="/etc/audit/audit.rules contains -w /var/log/btmp -p wa -k session" test_ref="oval:rhel:tst:11342"/>
+                        <criterion comment="/etc/audit/audit.rules contains -w /var/log/wtmp -p wa -k session" test_ref="oval:rhel:tst:11343"/>
+                </criteria>
+        </definition>
+	<definition class="compliance" id="oval:rhel:def:1135" version="1">
+		<metadata>
+			<title>Ensure auditd Collects Discretionary Access Control Permission Modification Events</title>
+			<reference ref_id="CCE-14058-2" source="CCE"/>
+			<description>Audit rules about the Discretionary Access Control Permission Modiﬁcation Events are enabled</description>
+		</metadata>
+                <criteria>
+			<criteria operator="OR" comment="check for 32-bit rules">
+				<criterion comment="check that 32-bit arch is irrelevant for this architecture" test_ref="oval:rhel:tst:11291"/>
+				<criteria>
+					<criterion comment="/etc/audit/audit.rules contains -a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid&gt;=500 -F auid!=4294967295 -k perm_mod" test_ref="oval:rhel:tst:11351"/>
+					<criterion comment="/etc/audit/audit.rules contains -a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F auid&gt;=500 -F auid!=4294967295 -k perm_mod" test_ref="oval:rhel:tst:11352"/>
+					<criterion comment="/etc/audit/audit.rules contains -a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid&gt;=500 -F auid!=4294967295 -k perm_mod" test_ref="oval:rhel:tst:11353"/>
+				</criteria>
+                        </criteria>
+			<criteria operator="OR" comment="check for 64-bit rules">
+				<criterion comment="check that 64-bit arch is irrelevant for this architecture" test_ref="oval:rhel:tst:11292"/>
+				<criteria>
+					<criterion comment="/etc/audit/audit.rules contains -a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -F auid&gt;=500 -F auid!=4294967295 -k perm_mod" test_ref="oval:rhel:tst:11354"/>
+					<criterion comment="/etc/audit/audit.rules contains -a always,exit -F arch=b64 -S chown -S fchown -S fchownat -S lchown -F auid&gt;=500 -F auid!=4294967295 -k perm_mod" test_ref="oval:rhel:tst:11355"/>
+					<criterion comment="/etc/audit/audit.rules contains -a always,exit -F arch=b64 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid&gt;=500 -F auid!=4294967295 -k perm_mod" test_ref="oval:rhel:tst:11356"/>
+				</criteria>
+                        </criteria>
+                </criteria>
+        </definition>
+	<definition class="compliance" id="oval:rhel:def:1136" version="1">
+		<metadata>
+			<title>Ensure auditd Collects Unauthorized Access Attempts to Files (unsuccessful)</title>
+			<reference ref_id="CCE-14917-9" source="CCE"/>
+			<description>Audit rules about the Unauthorized Access Attempts to Files (unsuccessful) are enabled</description>
+		</metadata>
+                <criteria>
+			<criteria operator="OR" comment="check for 32-bit rules">
+				<criterion comment="check that 32-bit arch is irrelevant for this architecture" test_ref="oval:rhel:tst:11291"/>
+				<criteria>
+					<criterion comment="/etc/audit/audit.rules contains -a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid&gt;=500 -F auid!=4294967295 -k access" test_ref="oval:rhel:tst:11361"/>
+					<criterion comment="/etc/audit/audit.rules contains -a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid&gt;=500 -F auid!=4294967295 -k access" test_ref="oval:rhel:tst:11362"/>
+				</criteria>
+                        </criteria>
+			<criteria operator="OR" comment="check for 64-bit rules">
+				<criterion comment="check that 64-bit arch is irrelevant for this architecture" test_ref="oval:rhel:tst:11292"/>
+				<criteria>
+					<criterion comment="/etc/audit/audit.rules contains -a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid&gt;=500 -F auid!=4294967295 -k access" test_ref="oval:rhel:tst:11363"/>
+					<criterion comment="/etc/audit/audit.rules contains -a always,exit -F arch=B64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid&gt;=500 -F auid!=4294967295 -k access" test_ref="oval:rhel:tst:11364"/>
+				</criteria>
+                        </criteria>
+                </criteria>
+        </definition>
+	<definition class="compliance" id="oval:rhel:def:1137" version="1">
+		<metadata>
+			<title>Ensure auditd Collects Information on the Use of Privileged Commands</title>
+			<reference ref_id="CCE-14296-8" source="CCE"/>
+			<description>Audit rules about the Information on the Use of Privileged Commands are enabled</description>
+		</metadata>
+                <criteria>
+                        <criterion comment="/etc/audit/audit.rules contains '-a always,exit -F path=PROGRAM -F perm=x -F auid&gt;=500 -F auid!=4294967295 -k privileged' for each set-uid PROGRAM" test_ref="oval:rhel:tst:11371"/>
+                </criteria>
+        </definition>
+	<definition class="compliance" id="oval:rhel:def:1138" version="1">
+		<metadata>
+			<title>Ensure auditd Collects Information on Exporting to Media (successful)</title>
+			<reference ref_id="CCE-14569-8" source="CCE"/>
+			<description>Audit rules about the Information on Exporting to Media (successful) are enabled</description>
+		</metadata>
+                <criteria>
+			<criteria operator="OR" comment="check for 32-bit rules">
+				<criterion comment="check that 32-bit arch is irrelevant for this architecture" test_ref="oval:rhel:tst:11291"/>
+				<criterion comment="/etc/audit/audit.rules contains -a always,exit -F arch=b32 -S mount -F auid&gt;=500 -F auid!=4294967295 -k export" test_ref="oval:rhel:tst:11381"/>
+                        </criteria>
+			<criteria operator="OR" comment="check for 64-bit rules">
+				<criterion comment="check that 64-bit arch is irrelevant for this architecture" test_ref="oval:rhel:tst:11292"/>
+				<criterion comment="/etc/audit/audit.rules contains -a always,exit -F arch=b64 -S mount -F auid&gt;=500 -F auid!=4294967295 -k export" test_ref="oval:rhel:tst:11382"/>
+                        </criteria>
+                </criteria>
+        </definition>
+	<definition class="compliance" id="oval:rhel:def:1139" version="1">
+		<metadata>
+			<title>Ensure auditd Collects Files Deletion Events by User (successful and unsuccessful)</title>
+			<reference ref_id="CCE-14820-5" source="CCE"/>
+			<description>Audit rules about the Files Deletion Events by User (successful and unsuccessful) are enabled</description>
+		</metadata>
+                <criteria>
+			<criteria operator="OR" comment="check for 32-bit rules">
+				<criterion comment="check that 32-bit arch is irrelevant for this architecture" test_ref="oval:rhel:tst:11291"/>
+				<criterion comment="/etc/audit/audit.rules contains -a always,exit -F arch=b32 -S unlink -S unlinkat -S rename -S renameat -F auid&gt;=500 -F auid!=4294967295 -k delete" test_ref="oval:rhel:tst:11391"/>
+                        </criteria>
+			<criteria operator="OR" comment="check for 64-bit rules">
+				<criterion comment="check that 64-bit arch is irrelevant for this architecture" test_ref="oval:rhel:tst:11292"/>
+				<criterion comment="/etc/audit/audit.rules contains -a always,exit -F arch=b64 -S unlink -S unlinkat -S rename -S renameat -F auid&gt;=500 -F auid!=4294967295 -k delete" test_ref="oval:rhel:tst:11392"/>
+                        </criteria>
+                </criteria>
+        </definition>
+	<definition class="compliance" id="oval:rhel:def:1140" version="1">
+		<metadata>
+			<title>Ensure auditd Collects System Administrator Actions</title>
+			<reference ref_id="CCE-14824-7" source="CCE"/>
+			<description>Audit rules about the System Administrator Actions are enabled</description>
+		</metadata>
+                <criteria>
+			<criterion comment="pam_tty_audit is set up in /etc/pam.d/system-auth" test_ref="oval:rhel:tst:11401"/>
+			<criterion comment="pam_tty_audit is set up in /etc/pam.d/password-auth" test_ref="oval:rhel:tst:11402"/>
+			<criterion comment="pam_tty_audit is set up in /etc/pam.d/sudo" test_ref="oval:rhel:tst:11403"/>
+			<criterion comment="pam_tty_audit is set up in /etc/pam.d/sudo-i" test_ref="oval:rhel:tst:11404"/>
+                        <criterion comment="/etc/audit/audit.rules contains -w /etc/sudoers -p wa -k actions" test_ref="oval:rhel:tst:11405"/>
+                </criteria>
+        </definition>
+	<definition class="compliance" id="oval:rhel:def:1141" version="1">
+		<metadata>
+			<title>Ensure auditd Collects Information on Kernel Module Loading and Unloading</title>
+			<reference ref_id="CCE-14688-6" source="CCE"/>
+			<description>Audit rules about the Information on Kernel Module Loading and Unloading.</description>
+		</metadata>
+                <criteria>
+			<criterion comment="/etc/audit/audit.rules contains -w /sbin/insmod -p x -k modules" test_ref="oval:rhel:tst:11411"/>
+                        <criterion comment="/etc/audit/audit.rules contains -w /sbin/rmmod -p x -k modules" test_ref="oval:rhel:tst:11412"/>
+                        <criterion comment="/etc/audit/audit.rules contains -w /sbin/modprobe -p x -k modules" test_ref="oval:rhel:tst:11413"/>
+			<criteria operator="OR" comment="check for 32-bit rules">
+				<criterion comment="check that 32-bit arch is irrelevant for this architecture" test_ref="oval:rhel:tst:11291"/>
+				<criterion comment="/etc/audit/audit.rules contains -a always,exit -F arch=b32 -S init_module -S delete_module -k modules" test_ref="oval:rhel:tst:11414"/>
+                        </criteria>
+			<criteria operator="OR" comment="check for 64-bit rules">
+				<criterion comment="check that 64-bit arch is irrelevant for this architecture" test_ref="oval:rhel:tst:11292"/>
+				<criterion comment="/etc/audit/audit.rules contains -a always,exit -F arch=b64 -S init_module -S delete_module -k modules" test_ref="oval:rhel:tst:11415"/>
+                        </criteria>
+                </criteria>
+        </definition>
+	<definition class="compliance" id="oval:rhel:def:1142" version="1">
+		<metadata>
+			<title>Make the auditd Conﬁguration Immutable</title>
+			<reference ref_id="CCE-14692-8" source="CCE"/>
+			<description>Force a reboot to change audit rules is enabled</description>
+		</metadata>
+                <criteria>
+			<criterion comment="/etc/audit/audit.rules contains -e 2" test_ref="oval:rhel:tst:11421"/>
+                </criteria>
+	</definition>
 	</definitions>
 
 
@@ -2032,8 +2261,256 @@
 		<unix-def:state state_ref="oval:rhel:ste:111111"/>
         </unix-def:runlevel_test>
         <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11281" version="1" check="all"
-					comment="check for audit=1 in /boot/grub//grub.conf">
+					comment="check for audit=1 in /boot/grub/grub.conf">
                 <ind-def:object object_ref="oval:rhel:obj:112811"/>
+        </ind-def:textfilecontent54_test>
+        <unix-def:uname_test id="oval:rhel:tst:11291" version="1" check="none satisfy" comment="check that this architecture does not run a 32-bit kernel">
+                <unix-def:object object_ref="oval:rhel:obj:112911"/>
+                <unix-def:state state_ref="oval:rhel:ste:112911"/>
+        </unix-def:uname_test>
+        <unix-def:uname_test id="oval:rhel:tst:11292" version="1" check="none satisfy" comment="check that this architecture does not run a 64-bit kernel">
+                <unix-def:object object_ref="oval:rhel:obj:112911"/>
+                <unix-def:state state_ref="oval:rhel:ste:112921"/>
+        </unix-def:uname_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11293" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:112931"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11294" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -a always,exit -F arch=b32 -S clock_settime -k time-change">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:112941"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11295" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -a always,exit -F arch=b64 -S adjtimex -S settimeofday -S stime -k time-change">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:112951"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11296" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -a always,exit -F arch=b64 -S clock_settime -k time-change">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:112961"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11297" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -w /etc/localtime -p wa -k time-change">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:112971"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11301" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -w /etc/group -p wa -k identity">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113011"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11302" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -w /etc/passwd -p wa -k identity">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113021"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11303" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -w /etc/gshadow -p wa -k identity">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113031"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11304" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -w /etc/shadow -p wa -k identity">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113041"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11305" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -w /etc/security/opasswd -p wa -k identity">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113051"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11311" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -a exit,always -F arch=b32 -S sethostname -S setdomainname -k system-locale">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113111"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11312" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -a exit,always -F arch=b64 -S sethostname -S setdomainname -k system-locale">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113121"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11313" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -w /etc/issue -p wa -k system-locale">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113131"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11314" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -w /etc/issue.net -p wa -k system-locale">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113141"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11315" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -w /etc/hosts -p wa -k system-locale">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113151"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11316" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -w /etc/sysconfig/network -p wa -k system-locale">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113161"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11321" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -w /etc/selinux/ -p wa -k MAC-policy">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113211"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11331" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -w /var/log/tallylog -p wa -k logins">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113311"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11332" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -w /var/log/faillock/ -p wa -k logins">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113321"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11333" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -w /var/log/lastlog -p wa -k logins">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113331"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11341" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -w /var/run/utmp -p wa -k session">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113411"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11342" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -w /var/log/btmp -p wa -k session">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113421"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11343" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -w /var/log/wtmp -p wa -k session">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113431"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11351" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid&gt;=500 -F auid!=4294967295 -k perm_mod">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113511"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11352" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F auid&gt;=500 -F auid!=4294967295 -k perm_mod&gt;=500 -F auid!=4294967295 -k perm_mod">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113521"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11353" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid&gt;=500 -F auid!=4294967295 -k perm_mod">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113531"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11354" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -F auid&gt;=500 -F auid!=4294967295 -k perm_mod">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113541"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11355" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -a always,exit -F arch=b64 -S chown -S fchown -S fchownat -S lchown -F auid&gt;=500 -F auid!=4294967295 -k perm_mod">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113551"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11356" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -a always,exit -F arch=b64 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid&gt;=500 -F auid!=4294967295 -k perm_mod">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113561"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11361" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid&gt;=500 -F auid!=4294967295 -k access">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113611"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11362" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid&gt;=500 -F auid!=4294967295 -k access">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113621"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11363" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid&gt;=500 -F auid!=4294967295 -k access">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113631"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11364" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -a always,exit -F arch=B64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid&gt;=500 -F auid!=4294967295 -k access">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113641"/>
+        </ind-def:textfilecontent54_test>
+        <unix-def:file_test check_existence="none_exist" id="oval:rhel:tst:11371" version="1" check="all"
+			    comment="No setuid PROGRAMs exist for which /etc/audit/audit.rules does not contain '-a always,exit -F path=PROGRAM -F perm=x -F auid&gt;=500 -F auid!=4294967295 -k privileged'">
+                <unix-def:object object_ref="oval:rhel:obj:113711"/>
+        </unix-def:file_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11381" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -a always,exit -F arch=b32 -S mount -F auid&gt;=500 -F auid!=4294967295 -k export">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113811"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11382" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -a always,exit -F arch=b64 -S mount -F auid&gt;=500 -F auid!=4294967295 -k export">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113821"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11391" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -a always,exit -F arch=b32 -S unlink -S unlinkat -S rename -S renameat -F auid&gt;=500 -F auid!=4294967295 -k delete">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113911"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11392" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -a always,exit -F arch=b64 -S unlink -S unlinkat -S rename -S renameat -F auid&gt;=500 -F auid!=4294967295 -k delete">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:113921"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:11401" version="1" check="all"
+					comment="check that pam_tty_audit is set up in /etc/pam.d/system-auth">
+                <ind-def:object object_ref="oval:rhel:obj:114011"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:11402" version="1" check="all"
+					comment="check that pam_tty_audit is set up in /etc/pam.d/password-auth">
+                <ind-def:object object_ref="oval:rhel:obj:114021"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:11403" version="1" check="all"
+					comment="check that pam_tty_audit is set up in /etc/pam.d/sudo-i">
+                <ind-def:object object_ref="oval:rhel:obj:114031"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:11404" version="1" check="all"
+					comment="check that pam_tty_audit is set up in /etc/pam.d/sudo-i">
+                <ind-def:object object_ref="oval:rhel:obj:114041"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11405" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -w /etc/sudoers -p wa -k actions">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:114051"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11411" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -w /sbin/insmod -p x -k modules">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:114111"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11412" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -w /sbin/rmmod -p x -k modules">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:114121"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11413" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -w /sbin/modprobe -p x -k modules">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:114131"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11414" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -a always,exit -F arch=b32 -S init_module -S delete_module -k modules">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:114141"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11415" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -a always,exit -F arch=b64 -S init_module -S delete_module -k modules">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:114151"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11421" version="1" check="at least one"
+					comment="/etc/audit/audit.rules contains -e 2">
+                <ind-def:object object_ref="oval:rhel:obj:112931"/>
+                <ind-def:state state_ref="oval:rhel:ste:114211"/>
         </ind-def:textfilecontent54_test>
 	</tests>
 
@@ -2689,9 +3166,48 @@
                 <unix-def:service_name>auditd</unix-def:service_name>
                 <unix-def:runlevel operation="pattern match">^[35]$</unix-def:runlevel>
         </unix-def:runlevel_object>
-        <ind-def:textfilecontent54_object id="oval:rhel:obj:112811" version="1">
-                <ind-def:filepath>/etc/grub.conf</ind-def:filepath>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:112811" version="1" comment="audit=1 in /boot/grub/grub.conf">
+                <ind-def:filepath>/boot/grub/grub.conf</ind-def:filepath>
                 <ind-def:pattern operation="pattern match">^[[:space:]]*kernel.+[[:space:]]audit=1</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <unix-def:uname_object id="oval:rhel:obj:112911" version="1" comment="System architecture"/>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:112931" version="1" comment="Non-comment lines in /etc/audit/audit.rules">
+                <ind-def:filepath>/etc/audit/audit.rules</ind-def:filepath>
+		<ind-def:pattern operation="pattern match">^[[:space:]]*([^#[:space:]].*[^[:space:]])[[:space:]]*$</ind-def:pattern>
+		<ind-def:instance datatype="int" operation="greater than or equal">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+	<unix-def:file_object id="oval:rhel:obj:113711" version="1" comment="setuid PROGRAMs for which /etc/audit/audit.rules does not contain '-a always,exit -F path=PROGRAM -F perm=x -F auid&gt;=500 -F auid!=4294967295 -k privileged'">
+		<set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+			<object_reference>oval:rhel:obj:1023111</object_reference>
+			<filter>oval:rhel:ste:1023111</filter>
+			<filter>oval:rhel:ste:1025111</filter>
+			<filter>oval:rhel:ste:1137111</filter>
+		</set>
+	</unix-def:file_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:113711111" version="1" comment="'-a always,exit -F path=PROGRAM -F perm=x -F auid&gt;=500 -F auid!=4294967295 -k privileged' in /etc/audit/audit.rules">
+                <ind-def:filepath>/etc/audit/audit.rules</ind-def:filepath>
+		<ind-def:pattern operation="pattern match">^[[:space:]]*-a always,exit -F path=([^[:space:]]*) -F perm=x -F auid&gt;=500 -F auid!=4294967295 -k privileged[[:space:]]*$</ind-def:pattern>
+		<ind-def:instance datatype="int" operation="greater than or equal">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:114011" version="1" comment="pam_tty_audit configuration in /etc/pam.d/system-auth">
+                <ind-def:filepath>/etc/pam.d/system-auth</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^session[[:space:]]+required[[:space:]]+pam_tty_audit\.so[[:space:]]+disable=\*[[:space:]]+enable=root[[:space:]]*$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:114021" version="1" comment="pam_tty_audit configuration in /etc/pam.d/password-auth">
+                <ind-def:filepath>/etc/pam.d/password-auth</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^session[[:space:]]+required[[:space:]]+pam_tty_audit\.so[[:space:]]+disable=\*[[:space:]]+enable=root[[:space:]]*$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:114031" version="1" comment="pam_tty_audit configuration in /etc/pam.d/sudo">
+                <ind-def:filepath>/etc/pam.d/sudo</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^session[[:space:]]+required[[:space:]]+pam_tty_audit\.so[[:space:]]+open_only[[:space:]]+enable=root[[:space:]]*$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:114041" version="1" comment="pam_tty_audit configuration in /etc/pam.d/sudo-i">
+                <ind-def:filepath>/etc/pam.d/sudo-i</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^session[[:space:]]+required[[:space:]]+pam_tty_audit\.so[[:space:]]+open_only[[:space:]]+enable=root[[:space:]]*$</ind-def:pattern>
                 <ind-def:instance datatype="int">1</ind-def:instance>
         </ind-def:textfilecontent54_object>
 	</objects>
@@ -3026,6 +3542,148 @@
 		<!-- "pattern match" is used to (imprecisely) match each file name as a substring -->
                 <ind-def:subexpression var_check="all" operation="pattern match" var_ref="oval:rhel:var:1121111"/>
         </ind-def:textfilecontent54_state>
+        <unix-def:uname_state id="oval:rhel:ste:112911" version="1" comment="32-bit (kernel) architectures">
+		<unix-def:processor_type operation="pattern match">^(i[3456]86|powerpc|s390)$</unix-def:processor_type>
+        </unix-def:uname_state>
+        <unix-def:uname_state id="oval:rhel:ste:112921" version="1" comment="64-bit (kernel) architectures">
+		<unix-def:processor_type operation="pattern match">^(x86_64|ia64|ppc64|s390x)$</unix-def:processor_type>
+        </unix-def:uname_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:112931" version="1" comment="-a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change">
+                <ind-def:subexpression>-a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:112941" version="1" comment="-a always,exit -F arch=b32 -S clock_settime -k time-change">
+                <ind-def:subexpression>-a always,exit -F arch=b32 -S clock_settime -k time-change</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:112951" version="1" comment="-a always,exit -F arch=b64 -S adjtimex -S settimeofday -S stime -k time-change">
+                <ind-def:subexpression>-a always,exit -F arch=b64 -S adjtimex -S settimeofday -S stime -k time-change</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:112961" version="1" comment="-a always,exit -F arch=b64 -S clock_settime -k time-change">
+                <ind-def:subexpression>-a always,exit -F arch=b64 -S clock_settime -k time-change</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:112971" version="1" comment="-w /etc/localtime -p wa -k time-change">
+                <ind-def:subexpression>-w /etc/localtime -p wa -k time-change</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113011" version="1" comment="-w /etc/group -p wa -k identity">
+                <ind-def:subexpression>-w /etc/group -p wa -k identity</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113021" version="1" comment="-w /etc/passwd -p wa -k identity">
+                <ind-def:subexpression>-w /etc/passwd -p wa -k identity</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113031" version="1" comment="-w /etc/gshadow -p wa -k identity">
+                <ind-def:subexpression>-w /etc/gshadow -p wa -k identity</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113041" version="1" comment="-w /etc/shadow -p wa -k identity">
+                <ind-def:subexpression>-w /etc/shadow -p wa -k identity</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113051" version="1" comment="-w /etc/security/opasswd -p wa -k identity">
+                <ind-def:subexpression>-w /etc/security/opasswd -p wa -k identity</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113111" version="1" comment="-a exit,always -F arch=b32 -S sethostname -S setdomainname -k system-locale">
+                <ind-def:subexpression>-a exit,always -F arch=b32 -S sethostname -S setdomainname -k system-locale</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113121" version="1" comment="-a exit,always -F arch=b64 -S sethostname -S setdomainname -k system-locale">
+                <ind-def:subexpression>-a exit,always -F arch=b64 -S sethostname -S setdomainname -k system-locale</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113131" version="1" comment="-w /etc/issue -p wa -k system-locale">
+                <ind-def:subexpression>-w /etc/issue -p wa -k system-locale</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113141" version="1" comment="-w /etc/issue.net -p wa -k system-locale">
+                <ind-def:subexpression>-w /etc/issue.net -p wa -k system-locale</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113151" version="1" comment="-w /etc/hosts -p wa -k system-locale">
+                <ind-def:subexpression>-w /etc/hosts -p wa -k system-locale</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113161" version="1" comment="-w /etc/sysconfig/network -p wa -k system-locale">
+                <ind-def:subexpression>-w /etc/sysconfig/network -p wa -k system-locale</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113211" version="1" comment="-w /etc/selinux/ -p wa -k MAC-policy">
+                <ind-def:subexpression>-w /etc/selinux/ -p wa -k MAC-policy</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113311" version="1" comment="-w /var/log/tallylog -p wa -k logins">
+                <ind-def:subexpression>-w /var/log/tallylog -p wa -k logins</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113321" version="1" comment="-w /var/log/faillock/ -p wa -k logins">
+                <ind-def:subexpression>-w /var/log/faillock/ -p wa -k logins</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113331" version="1" comment="-w /var/log/lastlog -p wa -k logins">
+                <ind-def:subexpression>-w /var/log/lastlog -p wa -k logins</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113411" version="1" comment="-w /var/run/utmp -p wa -k session">
+                <ind-def:subexpression>-w /var/run/utmp -p wa -k session</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113421" version="1" comment="-w /var/log/btmp -p wa -k session">
+                <ind-def:subexpression>-w /var/log/btmp -p wa -k session</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113431" version="1" comment="-w /var/log/wtmp -p wa -k session">
+                <ind-def:subexpression>-w /var/log/wtmp -p wa -k session</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113511" version="1" comment="-a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid&gt;=500 -F auid!=4294967295 -k perm_mod">
+                <ind-def:subexpression>-a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid&gt;=500 -F auid!=4294967295 -k perm_mod</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113521" version="1" comment="-a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F auid=500 -F auid!=4294967295 -k perm_mod">
+                <ind-def:subexpression>-a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F auid&gt;=500 -F auid!=4294967295 -k perm_mod</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113531" version="1" comment="-a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid&gt;=500 -F auid!=4294967295 -k perm_mod">
+		<ind-def:subexpression>-a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid&gt;=500 -F auid!=4294967295 -k perm_mod</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113541" version="1" comment="-a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -F auid&gt;=500 -F auid!=4294967295 -k perm_mod">
+		<ind-def:subexpression>-a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -F auid&gt;=500 -F auid!=4294967295 -k perm_mod</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113551" version="1" comment="-a always,exit -F arch=b64 -S chown -S fchown -S fchownat -S lchown -F auid&gt;=500 -F auid!=4294967295 -k perm_mod">
+		<ind-def:subexpression>-a always,exit -F arch=b64 -S chown -S fchown -S fchownat -S lchown -F auid&gt;=500 -F auid!=4294967295 -k perm_mod</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113561" version="1" comment="-a always,exit -F arch=b64 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid&gt;=500 -F auid!=4294967295 -k perm_mod">
+		<ind-def:subexpression>-a always,exit -F arch=b64 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid&gt;=500 -F auid!=4294967295 -k perm_mod</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113611" version="1" comment="-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid&gt;=500 -F auid!=4294967295 -k access">
+		<ind-def:subexpression>-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid&gt;=500 -F auid!=4294967295 -k access</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113621" version="1" comment="-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid&gt;=500 -F auid!=4294967295 -k access">
+		<ind-def:subexpression>-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid&gt;=500 -F auid!=4294967295 -k access</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113631" version="1" comment="-a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid&gt;=500 -F auid!=4294967295 -k access">
+		<ind-def:subexpression>-a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid&gt;=500 -F auid!=4294967295 -k access</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113641" version="1" comment="-a always,exit -F arch=B64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid&gt;=500 -F auid!=4294967295 -k access">
+		<ind-def:subexpression>-a always,exit -F arch=B64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid&gt;=500 -F auid!=4294967295 -k access</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+	<unix-def:file_state id="oval:rhel:ste:1137111" version="1"
+			     comment="setuid PROGRAMs for which /etc/audit/audit.rules contains '-a always,exit -F path=PROGRAM -F perm=x -F auid&gt;=500 -F auid!=4294967295 -k privileged'">
+		<unix-def:filepath var_check="at least one" var_ref="oval:rhel:var:11371111"/>
+	</unix-def:file_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113811" version="1" comment="-a always,exit -F arch=b32 -S mount -F auid&gt;=500 -F auid!=4294967295 -k export">
+		<ind-def:subexpression>-a always,exit -F arch=b32 -S mount -F auid&gt;=500 -F auid!=4294967295 -k export</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113821" version="1" comment="-a always,exit -F arch=b64 -S mount -F auid&gt;=500 -F auid!=4294967295 -k export">
+		<ind-def:subexpression>-a always,exit -F arch=b64 -S mount -F auid&gt;=500 -F auid!=4294967295 -k export</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113911" version="1" comment="-a always,exit -F arch=b32 -S unlink -S unlinkat -S rename -S renameat -F auid&gt;=500 -F auid!=4294967295 -k delete">
+		<ind-def:subexpression>-a always,exit -F arch=b32 -S unlink -S unlinkat -S rename -S renameat -F auid&gt;=500 -F auid!=4294967295 -k delete</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:113921" version="1" comment="-a always,exit -F arch=b64 -S unlink -S unlinkat -S rename -S renameat -F auid&gt;=500 -F auid!=4294967295 -k delete">
+		<ind-def:subexpression>-a always,exit -F arch=b64 -S unlink -S unlinkat -S rename -S renameat -F auid&gt;=500 -F auid!=4294967295 -k delete</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:114051" version="1" comment="-w /etc/sudoers -p wa -k actions">
+		<ind-def:subexpression>-w /etc/sudoers -p wa -k actions</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:114111" version="1" comment="-w /sbin/insmod -p x -k modules">
+		<ind-def:subexpression>-w /sbin/insmod -p x -k modules</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:114121" version="1" comment="-w /sbin/rmmod -p x -k modules">
+		<ind-def:subexpression>-w /sbin/rmmod -p x -k modules</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:114131" version="1" comment="-w /sbin/modprobe -p x -k modules">
+		<ind-def:subexpression>-w /sbin/modprobe -p x -k modules</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:114141" version="1" comment="-a always,exit -F arch=b32 -S init_module -S delete_module -k modules">
+		<ind-def:subexpression>-a always,exit -F arch=b32 -S init_module -S delete_module -k modules</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:114151" version="1" comment="-a always,exit -F arch=b64 -S init_module -S delete_module -k modules">
+		<ind-def:subexpression>-a always,exit -F arch=b64 -S init_module -S delete_module -k modules</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:rhel:ste:114211" version="1" comment="-e 2">
+		<ind-def:subexpression>-e 2</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
 	</states>
 
 	<variables>
@@ -3188,6 +3846,9 @@
                 <object_component item_field="subexpression" object_ref="oval:rhel:obj:11211111"/>
         </local_variable>
         <external_variable id="oval:rhel:var:1122" version="1" datatype="int" comment="Group owning rsyslog log files"/>
+        <local_variable id="oval:rhel:var:11371111" version="1" datatype="string" comment="PROGRAMs for which /etc/audit/audit.rules contains '-a always,exit -F path=PROGRAM -F perm=x -F auid&gt;=500 -F auid!=4294967295 -k privileged'">
+                <object_component item_field="subexpression" object_ref="oval:rhel:obj:113711111"/>
+        </local_variable>
 	</variables>
 
 </oval_definitions>
