@@ -18,7 +18,7 @@
 		<metadata>
 			<title>Ensure that /tmp has its own partition or logical volume</title>
 			<reference ref_id="TBD" source="CCE"/>
-			<description>The /tmp directory is a world-writable directory used for temporary ﬁle storage. Verify that it has its own partition or logical volume.</description>
+			<description>The /tmp directory is a world-writable directory used for temporary file storage. Verify that it has its own partition or logical volume.</description>
 		</metadata>
 		<criteria>
 			<criterion test_ref="oval:rhel:tst:10001" comment="Check in /etc/fstab for a /tmp mount point" />
@@ -67,7 +67,7 @@
 			<description>If user home directories will be stored locally, create a separate
 				     partition for /home. If /home will be mounted from another system such as an NFS server, then
 				     creating a separate partition is not necessary at this time, and the mountpoint can
-				     instead be conﬁgured later.</description>
+				     instead be configured later.</description>
 		</metadata>
 		<criteria>
 			<criterion test_ref="oval:rhel:tst:10041" comment="Check in /etc/fstab for a /home mount point" />
@@ -109,7 +109,7 @@
 			<title>Ensure Package Signature Checking is Not Disabled For Any Repos</title>
 			<reference ref_id="TBD" source="CCE"/>
 			<description>To ensure that signature checking is not disabled for any repos, ensure that the following line DOES NOT
-				     appear in any repo conﬁguration ﬁles in /etc/yum.repos.d or elsewhere</description>
+				     appear in any repo configuration files in /etc/yum.repos.d or elsewhere</description>
 		</metadata>
 		<criteria>
 			<criterion comment="check value of gpgcheck=0 in /etc/yum.repos.d/*" test_ref="oval:rhel:tst:10081" />
@@ -119,8 +119,8 @@
 		<metadata>
 			<title>Verify Package Integrity Using RPM</title>
 			<reference ref_id="CCE-14931-0" source="CCE"/>
-			<description>Verify the integrity of installed packages by comparing the installed ﬁles with
-				     information about the ﬁles taken from the package metadata stored in the RPM
+			<description>Verify the integrity of installed packages by comparing the installed files with
+				     information about the files taken from the package metadata stored in the RPM
 				     database.</description>
 		</metadata>
 		<criteria>
@@ -1451,7 +1451,7 @@
 		<metadata>
 			<title>Ensure auditd Collects Discretionary Access Control Permission Modification Events</title>
 			<reference ref_id="CCE-14058-2" source="CCE"/>
-			<description>Audit rules about the Discretionary Access Control Permission Modiﬁcation Events are enabled</description>
+			<description>Audit rules about the Discretionary Access Control Permission Modification Events are enabled</description>
 		</metadata>
                 <criteria>
 			<criteria operator="OR" comment="check for 32-bit rules">
@@ -1575,7 +1575,7 @@
         </definition>
 	<definition class="compliance" id="oval:rhel:def:1142" version="1">
 		<metadata>
-			<title>Make the auditd Conﬁguration Immutable</title>
+			<title>Make the auditd Configuration Immutable</title>
 			<reference ref_id="CCE-14692-8" source="CCE"/>
 			<description>Force a reboot to change audit rules is enabled</description>
 		</metadata>
