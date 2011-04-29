@@ -63,11 +63,18 @@ bool oscap_to_start_element(xmlTextReaderPtr reader, int depth)
 
 char *oscap_element_string_copy(xmlTextReaderPtr reader)
 {
-	if (xmlTextReaderNodeType(reader) == 1 || xmlTextReaderNodeType(reader) == 2)
+	int t;
+
+	if (xmlTextReaderIsEmptyElement(reader))
+		return NULL;
+
+	t = xmlTextReaderNodeType(reader);
+	if (t == XML_ELEMENT_NODE || t == XML_ATTRIBUTE_NODE)
 		xmlTextReaderRead(reader);
 	if (xmlTextReaderHasValue(reader))
 		return (char *)xmlTextReaderValue(reader);
-	return NULL;
+	else
+		return (char *) calloc(1,1);
 }
 
 const char *oscap_element_string_get(xmlTextReaderPtr reader)
