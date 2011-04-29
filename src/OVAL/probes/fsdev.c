@@ -44,6 +44,10 @@
 #if defined(__linux__)
 # include <mntent.h>
 # include <unistd.h>
+#elif defined(__SVR4) && defined(__sun)
+# include <sys/mnttab.h>
+# include <sys/mntent.h>
+# include <sys/unistd.h>
 #elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
 # include <sys/param.h>
 # include <sys/ucred.h>
@@ -205,6 +209,75 @@ static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 		lfs->ids = realloc(lfs->ids, sizeof(dev_t) * i);
 		lfs->cnt = i;
 	}
+
+	return (lfs);
+}
+#elif defined(__SVR4) && defined(__sun)
+
+#define DEVID_ARRAY_SIZE 16
+#define DEVID_ARRAY_ADD  8
+
+static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
+{
+	int e;
+	FILE *fp;
+	size_t i;
+
+	struct mnttab *ment;
+	struct stat st;
+
+	fp = fopen(MNTTAB, "r");
+	if (fp == NULL) {
+		e = errno;
+		free(lfs);
+		errno = e;
+		return (NULL);
+	}
+
+	lfs->ids = malloc(sizeof(dev_t) * DEVID_ARRAY_SIZE);
+
+	if (lfs->ids == NULL) {
+		e = errno;
+		free(lfs);
+		errno = e;
+		return (NULL);
+	}
+
+	lfs->cnt = DEVID_ARRAY_SIZE;
+	i = 0;
+
+	if (fs == NULL) {
+		while ((getmntent(fp, ment)) != 0) {
+                        /* TODO: Is this check reliable? */
+                        if (stat (ment->mnt_special, &st) == 0 && (st.st_mode & S_IFCHR)) {
+
+				if (i >= lfs->cnt) {
+					lfs->cnt += DEVID_ARRAY_ADD;
+					lfs->ids = realloc(lfs->ids, sizeof(dev_t) * lfs->cnt);
+				}
+
+				memcpy(&(lfs->ids[i++]), &st.st_dev, sizeof(dev_t));
+			}
+		}
+	} else {
+		while ((getmntent(fp, ment)) != 0) {
+
+			if (match_fs(ment->mnt_fstype, fs, fs_cnt)) {
+
+				if (i >= lfs->cnt) {
+					lfs->cnt += DEVID_ARRAY_ADD;
+					lfs->ids = realloc(lfs->ids, sizeof(dev_t) * lfs->cnt);
+				}
+
+				memcpy(&(lfs->ids[i++]), &st.st_dev, sizeof(dev_t));
+			}
+		}
+	}
+
+	fclose(fp);
+
+	lfs->ids = realloc(lfs->ids, sizeof(dev_t) * i);
+	lfs->cnt = (lfs->ids == NULL ? 0 : i);
 
 	return (lfs);
 }
