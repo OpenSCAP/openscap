@@ -56,6 +56,11 @@ CFLAGS_DEBUGGING="-fno-inline-functions -O0 -g3"
 CFLAGS_NODEBUG="-DNDEBUG"
 
 #
+# posix_memalign
+#
+AC_CHECK_FUNCS([posix_memalign memalign])
+
+#
 # xml2-config
 #
 AC_CHECK_PROG(

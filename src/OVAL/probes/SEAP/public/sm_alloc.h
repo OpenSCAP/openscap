@@ -25,12 +25,20 @@
 #define SM_ALLOC_H
 
 #include <seap-debug.h>
+#include "config.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #define __ATTRIB __attribute__ ((unused)) static
+
+#if !defined(HAVE_POSIX_MEMALIGN)
+# if defined (HAVE_MEMALIGN)
+extern int posix_memalign (void ** __memptr, size_t __alignment, size_t __size);
+
+# endif /* HAVE_MEMALIGN */
+#endif /* HAVE_POSIX_MEMALIGN */
 
 #if defined(NDEBUG)
 void *sm_alloc (size_t s);
