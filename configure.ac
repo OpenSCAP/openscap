@@ -47,9 +47,14 @@ AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)
 
+AC_DEFUN([canonical_wrap], [AC_REQUIRE([AC_CANONICAL_HOST])])
+canonical_wrap
 
 # Compiler flags
-CFLAGS="$CFLAGS -pipe -std=c99 -W -Wall -Wnonnull -Wshadow -Wformat -Wundef -Wno-unused-parameter -Wmissing-prototypes -Wno-unknown-pragmas -D_GNU_SOURCE -DOSCAP_THREAD_SAFE"
+CFLAGS="$CFLAGS -pipe -std=c99 -W -Wall -Wnonnull -Wshadow -Wformat -Wundef -Wno-unused-parameter -Wmissing-prototypes -Wno-unknown-pragmas -D_GNU_SOURCE -DOSCAP_THREAD_SAFE -D_POSIX_C_SOURCE=200112L"
+
+AS_CASE([$host],
+[*solaris*], [CFLAGS="$CFLAGS -D__EXTENSIONS__"])
 
 CFLAGS_OPTIMIZED="-O2 -finline-functions"
 CFLAGS_DEBUGGING="-fno-inline-functions -O0 -g3"
@@ -423,8 +428,6 @@ AC_FUNC_REALLOC
 AC_CHECK_FUNCS([memset strcasecmp strdup])
 
 
-AC_DEFUN([canonical_wrap], [AC_REQUIRE([AC_CANONICAL_HOST])])
-canonical_wrap
 
 
 AC_ARG_ENABLE([oval],
