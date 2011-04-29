@@ -3,7 +3,7 @@
 
 #if defined(__linux__)
 # include <sys/sysinfo.h>
-#elif defined(__FreeBSD__)
+#elif defined(__FreeBSD__) || defined(__SVR4)
 /*
  * sysinfo structure as defined in sys/sysinfo.h on Linux
  */

@@ -26,7 +26,7 @@
 
 #include "sysinfo.h"
 
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) || defined(__SVR4)
 int sysinfo(struct sysinfo *info)
 {
 	return (-1);
