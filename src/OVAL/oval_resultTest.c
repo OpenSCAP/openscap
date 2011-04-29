@@ -981,6 +981,11 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 
 						var_val = oval_value_iterator_next(val_itr);
 						state_entity_val_text = oval_value_get_text(var_val);
+						if (state_entity_val_text == NULL) {
+							dE("Found NULL variable value text.\n");
+							ores_add_res(&var_ores, OVAL_RESULT_ERROR);
+							break;
+						}
 						state_entity_val_datatype = oval_value_get_datatype(var_val);
 
 						var_val_res = evaluate(oval_sysent_get_value(item_entity),
