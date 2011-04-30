@@ -375,6 +375,7 @@
                 </metadata>
                 <criteria>
                         <criterion comment="Virtual consoles are not in /etc/securetty" test_ref="oval:rhel:tst:10341"/>
+                        <criterion comment="The user running the evaluation can read /etc/securetty" test_ref="oval:rhel:tst:10342"/>
                 </criteria>
         </definition>
 	<definition class="compliance" id="oval:rhel:def:1035" version="1">
@@ -385,6 +386,7 @@
                 </metadata>
                 <criteria>
                         <criterion comment="Serial ports are not in /etc/securetty" test_ref="oval:rhel:tst:10351"/>
+                        <criterion comment="The user running the evaluation can read /etc/securetty" test_ref="oval:rhel:tst:10342"/>
                 </criteria>
         </definition>
         <definition class="compliance" id="oval:rhel:def:1036" version="1">
@@ -425,6 +427,7 @@
                 </metadata>
                 <criteria>
                         <criterion comment="No account in /etc/shadow has an empty password field" test_ref="oval:rhel:tst:10391"/>
+                        <criterion comment="The user running the evaluation can read /etc/shadow" test_ref="oval:rhel:tst:10392"/>
                 </criteria>
         </definition>
         <definition class="compliance" id="oval:rhel:def:1040" version="1">
@@ -846,6 +849,7 @@
 		<criteria>
 			<criterion comment="Check /boot/grub/grub.conf does not contain selinux=0" test_ref="oval:rhel:tst:10791"/>
 			<criterion comment="Check /boot/grub/grub.conf does not contain enforcing=0" test_ref="oval:rhel:tst:10792"/>
+                        <criterion comment="The user running the evaluation can read /boot/grub/grub.conf" test_ref="oval:rhel:tst:10793"/>
 		</criteria>
 	</definition>
 	<definition class="compliance" id="oval:rhel:def:1080" version="1">
@@ -1056,6 +1060,7 @@
 		</metadata>
 		<criteria> <!-- Note that this does not detect interfaces that are down -->
 			<criterion comment="No wireless interfaces are connected" test_ref="oval:rhel:tst:11001"/>
+                        <criterion comment="The user running the evaluation can read /proc/net/wireless" test_ref="oval:rhel:tst:11002"/>
 		</criteria>
 	</definition>
 	<definition class="compliance" id="oval:rhel:def:1101" version="1">
@@ -1721,6 +1726,10 @@
 					comment="Tests that vc/[0-9]+ is not present in /etc/securetty">
                 <ind-def:object object_ref="oval:rhel:obj:103411"/>
         </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:10342" version="1" check="all"
+					comment="Tests that the user running the evaluation can read /etc/securetty">
+                <ind-def:object object_ref="oval:rhel:obj:103421"/>
+        </ind-def:textfilecontent54_test>
         <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:rhel:tst:10351" version="1" check="all"
 					comment="Tests that ttyS[0-9]+ is not present in /etc/securetty">
                 <ind-def:object object_ref="oval:rhel:obj:103511"/>
@@ -1740,6 +1749,10 @@
         <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:rhel:tst:10391" version="1" check="all"
 					comment="Tests that password fields in /etc/shadow are not empty">
                   <ind-def:object object_ref="oval:rhel:obj:103911"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:10392" version="1" check="all"
+					comment="Tests that the user running the evaluation can read /etc/shadow">
+                <ind-def:object object_ref="oval:rhel:obj:103921"/>
         </ind-def:textfilecontent54_test>
         <unix-def:password_test id="oval:rhel:tst:10401" version="1" check="all" comment="Check that passwords are shadowed">
                 <unix-def:object object_ref="oval:rhel:obj:104011"/>
@@ -1977,6 +1990,10 @@
 					comment="Tests that enforcing=0 is not set in /boot/grub/grub.conf">
 		<ind-def:object object_ref="oval:rhel:obj:107921"/>
 	</ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:10793" version="1" check="all"
+					comment="Tests that the user running the evaluation can read /boot/grub/grub.conf">
+                <ind-def:object object_ref="oval:rhel:obj:107931"/>
+        </ind-def:textfilecontent54_test>
         <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10801" version="1" check="all"
 					comment="Tests the value of the SELINUX in /etc/selinux/config">
                 <ind-def:object object_ref="oval:rhel:obj:108011"/>
@@ -2078,6 +2095,10 @@
 					comment="Check no interfaces are defined in /proc/net/wireless">
 		<ind-def:object object_ref="oval:rhel:obj:110011"/>
 	</ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:rhel:tst:11002" version="1" check="all"
+					comment="Tests that the user running the evaluation can read /proc/net/wireless">
+                <ind-def:object object_ref="oval:rhel:obj:110021"/>
+        </ind-def:textfilecontent54_test>
         <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:11011" version="1" check="all"
 					comment="Tests that /etc/modprobe.d/ipv6.conf prevents loading the ipv6 module">
                 <ind-def:object object_ref="oval:rhel:obj:110111"/>
@@ -2649,6 +2670,11 @@
                 <ind-def:pattern operation="pattern match">^[[:space:]]*vc\/[0-9]+[[:space:]]*(#.*)?$</ind-def:pattern>
                 <ind-def:instance datatype="int">1</ind-def:instance>
         </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:103421" version="1" comment="Any line in /etc/securetty">
+                <ind-def:filepath>/etc/securetty</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^.+$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
         <ind-def:textfilecontent54_object id="oval:rhel:obj:103511" version="1" comment="ttyS[0-9]+ in /etc/securetty">
                 <ind-def:filepath>/etc/securetty</ind-def:filepath>
                 <ind-def:pattern operation="pattern match">^[[:space:]]*ttyS[0-9]+[[:space:]]*(#.*)?$</ind-def:pattern>
@@ -2670,6 +2696,11 @@
         <ind-def:textfilecontent54_object id="oval:rhel:obj:103911" version="1" comment="/etc/shadow lines with empty password field">
                 <ind-def:filepath>/etc/shadow</ind-def:filepath>
                 <ind-def:pattern operation="pattern match">^[^:]*::</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:103921" version="1" comment="Any line in /etc/shadow">
+                <ind-def:filepath>/etc/shadow</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^.+$</ind-def:pattern>
                 <ind-def:instance datatype="int">1</ind-def:instance>
         </ind-def:textfilecontent54_object>
         <unix-def:password_object id="oval:rhel:obj:104011" version="1" comment="All user accounts">
@@ -2931,15 +2962,20 @@
                 <ind-def:xpath>/gconf/entry[@name='banner_message_text']/stringvalue/text()</ind-def:xpath>
         </ind-def:xmlfilecontent_object>
 	<ind-def:textfilecontent54_object id="oval:rhel:obj:107911" version="1" comment="selinux=0 in /boot/grub/grub.conf">
-		<ind-def:filepath>/etc/grub.conf</ind-def:filepath>
+		<ind-def:filepath>/boot/grub/grub.conf</ind-def:filepath>
 		<ind-def:pattern operation="pattern match">^\s*kernel\s+.*\sselinux=0(\s.*)?$</ind-def:pattern>
 		<ind-def:instance datatype="int">1</ind-def:instance>
 	</ind-def:textfilecontent54_object>
 	<ind-def:textfilecontent54_object id="oval:rhel:obj:107921" version="1" comment="enforcing=0 in /boot/grub/grub.conf">
-		<ind-def:filepath>/etc/grub.conf</ind-def:filepath>
+		<ind-def:filepath>/boot/grub/grub.conf</ind-def:filepath>
 		<ind-def:pattern operation="pattern match">^\s*kernel\s+.*\senforcing=0(\s.*)?$</ind-def:pattern>
 		<ind-def:instance datatype="int">1</ind-def:instance>
 	</ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:107931" version="1" comment="Any line in /boot/grub/grub.conf">
+                <ind-def:filepath>/boot/grub/grub.conf</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^.+$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
         <ind-def:textfilecontent54_object id="oval:rhel:obj:108011" version="1" comment="SELINUX from /etc/selinux/config">
                 <ind-def:filepath>/etc/selinux/config</ind-def:filepath>
                 <ind-def:pattern operation="pattern match">^[[:space:]]*SELINUX=([[:alnum:]]*)</ind-def:pattern>
@@ -3042,6 +3078,11 @@
 		<ind-def:pattern operation="pattern match">^[\s]*([\S\d]+):</ind-def:pattern>
 		<ind-def:instance operation="greater than or equal" datatype="int">1</ind-def:instance>
 	</ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:rhel:obj:110021" version="1" comment="Any line in /proc/net/wireless">
+                <ind-def:filepath>/proc/net/wireless</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^.+$</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
 	<ind-def:textfilecontent54_object id="oval:rhel:obj:110111" version="1" comment="An 'install ipv6 /bin/true' line in /etc/modprobe.d/ipv6.conf">
 		<ind-def:filepath>/etc/modprobe.d/ipv6.conf</ind-def:filepath>
 		<ind-def:pattern operation="pattern match">^[[:space:]]*install[[:space:]]+ipv6[[:space:]]+/bin/true[[:space:]]*$</ind-def:pattern>
@@ -3229,9 +3270,9 @@
 	<ind-def:textfilecontent54_state id="oval:rhel:ste:100411" version="1" comment="/home mount point is defined">
 		<ind-def:subexpression datatype="string" operation="equals" entity_check="all">/home</ind-def:subexpression>
 	</ind-def:textfilecontent54_state>
-	<lin-def:rpminfo_state id="oval:rhel:ste:100511" version="1">
-		<lin-def:release>45761324</lin-def:release>
-		<lin-def:version>37017186</lin-def:version>
+	<lin-def:rpminfo_state id="oval:rhel:ste:100511" version="1" comment="gpg(Red Hat, Inc. (release key 2) &lt;security@redhat.com&gt;)">
+		<lin-def:release>4ae0493b</lin-def:release>
+		<lin-def:version>fd431d51</lin-def:version>
 	</lin-def:rpminfo_state>
 	<unix-def:runlevel_state id="oval:rhel:ste:100611" version="1" comment="daemon is not running or is stopping">
 		<unix-def:start datatype="boolean">false</unix-def:start>
@@ -3690,6 +3731,7 @@
 	<constant_variable id="oval:rhel:var:1024112" version="1" datatype="string" comment="sgid whitelist">
 		<value>/bin/cgexec</value>
 		<value>/sbin/netreport</value>
+		<value>/usr/bin/crontab</value>
 		<value>/usr/bin/gnomine</value>
 		<value>/usr/bin/iagno</value>
 		<value>/usr/bin/locate</value>
@@ -3713,7 +3755,7 @@
 		<value>/usr/lib/mailman/cgi-bin/rmlist</value>
 		<value>/usr/lib/mailman/cgi-bin/roster</value>
 		<value>/usr/lib/mailman/cgi-bin/subscribe</value>
-		<value>/usr/lib/mailman/mail/mailman root</value>
+		<value>/usr/lib/mailman/mail/mailman</value>
 		<value>/usr/lib/vte/gnome-pty-helper</value>
 		<value>/usr/sbin/lockdev</value>
 		<value>/usr/sbin/postdrop</value>

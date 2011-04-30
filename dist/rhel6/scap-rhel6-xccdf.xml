@@ -15,8 +15,7 @@
 			fresh installation of RHEL 6 system. It should be executed for every 
 			RHEL 6 update. Additional security hardening of the system should be 
 			done prior to deploying it in a production environment.
-			All enabled XCCDF rules should pass except for few "Unknown" results 
-			which are not possible to implement in current OVAL version.
+			All enabled XCCDF rules should pass.
 		</description>
     <select idref="rule-1005" selected="true"/>
     <select idref="rule-1007" selected="true"/>
@@ -70,14 +69,12 @@
     <select idref="rule-1080" selected="true"/>
     <select idref="rule-1081" selected="true"/>
     <select idref="rule-1083" selected="true"/>
-    <select idref="rule-1086" selected="true"/>
     <select idref="rule-1087" selected="true"/>
-    <refine-value idref="var-1088" selector="enabled"/>
-    <select idref="rule-1088" selected="true"/>
     <refine-value idref="var-1089" selector="enabled"/>
     <select idref="rule-1089" selected="true"/>
     <select idref="rule-1090" selected="true"/>
     <select idref="rule-1091" selected="true"/>
+    <refine-value idref="var-1088" selector="enabled"/>
     <select idref="rule-1092" selected="true"/>
     <select idref="rule-1093" selected="true"/>
     <select idref="rule-1094" selected="true"/>
@@ -107,10 +104,6 @@
     <select idref="rule-1125" selected="true"/>
     <select idref="rule-1126" selected="true"/>
     <select idref="rule-1127" selected="true"/>
-  </Profile>
-  <Profile id="mitr">
-    <title xml:lang="en-US">mitr</title>
-    <description xml:lang="en-US">mitr</description>
   </Profile>
   <Group id="gr-intro" hidden="false">
     <title xml:lang="en-US">Introduction</title>
@@ -902,7 +895,7 @@
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/crontab</xhtml:td>
 								<xhtml:td>root</xhtml:td>
-								<xhtml:td>-</xhtml:td>
+								<xhtml:td>root</xhtml:td>
 							</xhtml:tr>
 							<xhtml:tr>
 								<xhtml:td>/usr/bin/gnomine</xhtml:td>
@@ -2501,17 +2494,17 @@
 								<xhtml:br/>
 								<xhtml:code># grub-crypt --sha-512 </xhtml:code>
 							</xhtml:li>
-							<xhtml:li>Insert the following line into /etc/grub.conf immediately
+							<xhtml:li>Insert the following line into /boot/grub/grub.conf immediately
 								after the header comments. (Use the output from grub-crypt as
 								the value of password-hash ): <xhtml:br/>
 								<xhtml:br/>
 								<xhtml:code>password --encrypted password-hash </xhtml:code>
 							</xhtml:li>
-							<xhtml:li>Verify the permissions on /etc/grub.conf (which is a symlink
+							<xhtml:li>Verify the permissions on /boot/grub/grub.conf (which is a symlink
 								to ../boot/grub/grub.conf): <xhtml:br/>
 								<xhtml:br/>
-								<xhtml:code> # chown root:root /etc/grub.conf</xhtml:code><xhtml:br/>
-								<xhtml:code> # chmod 600 /etc/grub.conf</xhtml:code>
+								<xhtml:code> # chown root:root /boot/grub/grub.conf</xhtml:code><xhtml:br/>
+								<xhtml:code> # chmod 600 /boot/grub/grub.conf</xhtml:code>
 							</xhtml:li>
 						</xhtml:ol> Boot loaders for other platforms should offer a similar password
 						protection feature.</description>
@@ -2993,7 +2986,7 @@
 					<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">SELINUX=enforcing </xhtml:code> 
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">SELINUXTYPE=targeted </xhtml:code>
-					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Edit the file /etc/grub.conf. Ensure that the following arguments DO
+					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Edit the file /boot/grub/grub.conf. Ensure that the following arguments DO
 					NOT appear on any kernel command line in the file: <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 					<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">selinux=0 </xhtml:code> or
@@ -3054,8 +3047,8 @@
         </Group>
         <Rule id="rule-1079" selected="false" weight="10.000000" severity="medium">
           <status date="2010-07-01">accepted</status>
-          <title xml:lang="en-US">SELinux should NOT be disabled in /etc/grub.conf.</title>
-          <description xml:lang="en-US">SELinux should NOT be disabled in /etc/grub.conf. Check that
+          <title xml:lang="en-US">SELinux should NOT be disabled in /boot/grub/grub.conf.</title>
+          <description xml:lang="en-US">SELinux should NOT be disabled in /boot/grub/grub.conf. Check that
 						selinux=0 is not found</description>
           <ident system="http://cce.mitre.org">CCE-3977-6</ident>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -5310,7 +5303,7 @@
           <title xml:lang="en-US">Enable Auditing for Processes Which Start Prior to the Audit Daemon</title>
           <description xml:lang="en-US"> To ensure that all processes can be audited, even
 						those which start prior to the audit daemon, add the argument audit=1 to the
-						kernel line in /etc/grub.conf, in the manner below:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						kernel line in /boot/grub/grub.conf, in the manner below:<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> kernel /vmlinuz-version ro vga=ext root=/dev/VolGroup00/LogVol00
 						rhgb quiet audit=1<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
 						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Each process on the system carries an ”auditable” flag which
@@ -5322,7 +5315,7 @@
             <title xml:lang="en-US">Enable Auditing for Processes Which Start Prior to the Audit Daemon</title>
             <description xml:lang="en-US"> To ensure that all processes can be audited, even those which
 							start prior to the audit daemon, add the argument audit=1 to the kernel
-							line in /etc/grub.conf</description>
+							line in /boot/grub/grub.conf</description>
             <ident system="http://cce.mitre.org">CCE-15026-8</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref name="oval:rhel:def:1128" href="scap-rhel6-oval.xml"/>
