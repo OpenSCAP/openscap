@@ -420,6 +420,7 @@ void oval_entity_to_print(struct oval_entity *entity, char *indent, int idx)
 xmlNode *oval_entity_to_dom(struct oval_entity *entity, xmlDoc * doc, xmlNode * parent) {
 	
 	xmlNsPtr *ns_parent = xmlGetNsList(doc, parent);
+	xmlNs *ent_ns;
 	xmlNodePtr root_node = xmlDocGetRootElement(doc);
 
 	xmlNode *entity_node = NULL;
@@ -438,12 +439,14 @@ xmlNode *oval_entity_to_dom(struct oval_entity *entity, xmlDoc * doc, xmlNode * 
 	char *tagname = oval_entity_get_name(entity);
 	bool mask = oval_entity_get_mask(entity);
 
+	ent_ns = ns_parent ? ns_parent[0] : NULL;
+
 	/* omit the value and operation used for testing in oval_results if mask=true */
 	if(mask && !xmlStrcmp(root_node->name, (const xmlChar *) "oval_results")){
-		entity_node = xmlNewTextChild(parent, ns_parent[0], BAD_CAST tagname, BAD_CAST "");
+		entity_node = xmlNewTextChild(parent, ent_ns, BAD_CAST tagname, BAD_CAST "");
 	}
 	else {
-		entity_node = xmlNewTextChild(parent, ns_parent[0], BAD_CAST tagname, BAD_CAST content);
+		entity_node = xmlNewTextChild(parent, ent_ns, BAD_CAST tagname, BAD_CAST content);
 		oval_operation_t operation = oval_entity_get_operation(entity);
 		if (operation != OVAL_OPERATION_EQUALS)
 			xmlNewProp(entity_node, BAD_CAST "operation", BAD_CAST oval_operation_get_text(operation));

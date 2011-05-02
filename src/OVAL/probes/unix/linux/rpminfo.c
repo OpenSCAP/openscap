@@ -322,6 +322,7 @@ int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
         }
 
         if (request_st.name == NULL) {
+		SEXP_free (ent);
                 switch (errno) {
                 case EINVAL:
                         _D("%s: invalid value type\n", "name");

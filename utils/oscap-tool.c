@@ -55,12 +55,15 @@ static char *app_curl_download(char *url)
 	CURLcode res;
 	/* Initialize CURL for download remote file */
 	curl = curl_easy_init();
-	if (!curl)
+	if (!curl) {
+		free(outfile);
 		return NULL;
+	}
 
 	fp = fopen(outfile, "wb");
     if (!fp) {
         curl_easy_cleanup(curl);
+	free(outfile);
         return NULL;
     }
 
@@ -69,6 +72,7 @@ static char *app_curl_download(char *url)
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
 	res = curl_easy_perform(curl);
 	if (res != 0) {
+		free(outfile);
 		curl_easy_cleanup(curl);
 		fclose(fp);
 		return NULL;

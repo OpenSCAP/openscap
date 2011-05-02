@@ -436,6 +436,11 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filter
         default:
                 _D("Can't lock mutex(%p): %u, %s.\n", &__file_probe_mutex, errno, strerror (errno));
 
+		SEXP_free(path);
+		SEXP_free(filename);
+		SEXP_free(filepath);
+		SEXP_free(behaviors);
+
                 return PROBE_EFATAL;
         }
 

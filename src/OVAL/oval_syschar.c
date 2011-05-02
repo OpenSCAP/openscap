@@ -242,6 +242,8 @@ bool oval_syschar_is_locked(struct oval_syschar * syschar)
 {
 	__attribute__nonnull__(syschar);
 
+	if (!syschar->model)
+		return false;
 	return oval_syschar_model_is_locked(syschar->model);
 }
 

@@ -688,7 +688,7 @@ static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
                                                       "Supplied item has an invalid status: %d.\n", item_status);
 				r1 = SEXP_list_new(r0, NULL);
 				cobj = probe_cobj_new(SYSCHAR_FLAG_ERROR, r1, NULL);
-				SEXP_vfree(items, result_items, r0, r1, NULL);
+				SEXP_vfree(items, item, result_items, r0, r1, NULL);
 				return cobj;
 			}
 		default:
@@ -868,6 +868,7 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 				if (act == NULL) {
 					msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
                                                                "probe_set_eval: set=%p: Missing filter action.\n", set);
+					SEXP_free(id);
 					goto eval_fail;
 				}
 
@@ -903,7 +904,6 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 	if (result == NULL) {
                 msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR,
                                       "probe_set_eval: Can't get unavailable filters.\n");
-		SEXP_free(filters_req);
 		goto eval_fail;
 	}
 	SEXP_vfree(filters_req, result, NULL);
@@ -938,9 +938,9 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 			SEXP_free(o_subset[s_subset_i]);
 		}
 
-		SEXP_free(filters_a);
 	}
 
+	SEXP_free(filters_a);
 	result = probe_set_combine(s_subset[0], s_subset[1], op_num);
 
 	_A(result != NULL);
@@ -960,6 +960,7 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 
 	SEXP_free(filters_u);
 	SEXP_free(filters_a);
+	SEXP_free(filters_req);
 	SEXP_free(result);
 
         r1 = SEXP_list_new(msg, NULL);
@@ -1002,8 +1003,9 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 		SEXP_t *varrefs, *filters;
 
 		/* simple object */
-		varrefs = probe_obj_getent(probe_in, "varrefs", 1);
-                filters = probe_prepare_filters(probe, probe_in);
+		filters = probe_prepare_filters(probe, probe_in);
+		if (OSCAP_GSYM(varref_handling))
+			varrefs = probe_obj_getent(probe_in, "varrefs", 1);
 
 		if (varrefs == NULL || !OSCAP_GSYM(varref_handling)) {
 			probe_out = probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, NULL, NULL);
