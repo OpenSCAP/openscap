@@ -69,7 +69,8 @@ oval_subtypedsc_t __s2n_tbl[] = {
 	/* 13005 */ {OVAL_UNIX_PROCESS,                     "process"             },
 	/* 13006 */ {OVAL_UNIX_RUNLEVEL,                    "runlevel"            },
 	/* 13008 */ {OVAL_UNIX_SHADOW,                      "shadow"              },
-	/* 13009 */ {OVAL_UNIX_UNAME,                       "uname"               }
+	/* 13009 */ {OVAL_UNIX_UNAME,                       "uname"               },
+        /* 13012 */ {OVAL_UNIX_SYSCTL,                      "sysctl"              }
 };
 
 #define __s2n_tbl_count (sizeof __s2n_tbl / sizeof(oval_subtypedsc_t))
@@ -96,6 +97,7 @@ oval_subtypedsc_t __n2s_tbl[] = {
 	/* 13008 */ {OVAL_UNIX_SHADOW,                      "shadow"              },
 	/*  7005 */ {OVAL_INDEPENDENT_SQL,                  "sql"                 },
 	/*  7013 */ {OVAL_INDEPENDENT_SQL57,                "sql57"               },
+        /* 13012 */ {OVAL_UNIX_SYSCTL,                      "sysctl"              },
         /*     2 */ {OVAL_SUBTYPE_SYSINFO,                  "system_info"         },
 	/*  7007 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT,    "textfilecontent"     },
 	/*  7006 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54"   },

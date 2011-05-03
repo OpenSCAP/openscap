@@ -104,6 +104,9 @@ probe_interface_SOURCES= unix/interface.c
 pkglibexec_PROGRAMS += probe_xinetd
 probe_xinetd_SOURCES= unix/xinetd.c
 
+pkglibexec_PROGRAMS += probe_sysctl
+probe_sysctl_SOURCES= unix/sysctl.c
+
 if WANT_PROBES_LINUX
 pkglibexec_PROGRAMS += probe_inetlisteningservers
 probe_inetlisteningservers_SOURCES= unix/linux/inetlisteningservers.c

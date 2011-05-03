@@ -488,6 +488,7 @@ static const struct oscap_string_map OVAL_SUBTYPE_UNIX_MAP[] = {
 	{OVAL_UNIX_UNAME, "uname"},
 	{OVAL_UNIX_XINETD, "xinetd"},
 	{OVAL_UNIX_DNSCACHE, "dnscache"},
+        {OVAL_UNIX_SYSCTL, "sysctl"},
 	{OVAL_SUBTYPE_UNKNOWN, NULL}
 };
 

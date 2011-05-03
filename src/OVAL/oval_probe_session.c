@@ -134,6 +134,7 @@ oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
         oval_probe_handler_set(sess->ph, OVAL_UNIX_SHADOW,     oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_UNIX_UNAME,      oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_UNIX_DNSCACHE,   oval_probe_ext_handler, sess->pext);
+        oval_probe_handler_set(sess->ph, OVAL_UNIX_SYSCTL,     oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_SUBTYPE_ALL,     oval_probe_ext_handler, sess->pext); /* special case for reset */
 
         oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE,  oval_probe_envvar_handler, sess->sys_model);
