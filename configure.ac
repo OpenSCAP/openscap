@@ -61,6 +61,11 @@ CFLAGS_DEBUGGING="-fno-inline-functions -O0 -g3"
 CFLAGS_NODEBUG="-DNDEBUG"
 
 #
+# sigwaitinfo
+#
+AC_CHECK_FUNC(sigwaitinfo, [sigwaitinfo_libs=""], [sigwaitinfo_libs="-lrt"])
+
+#
 # posix_memalign
 #
 AC_CHECK_FUNCS([posix_memalign memalign])
@@ -390,6 +395,8 @@ vendorarch="$( $PERL -e 'use Config; print $Config{vendorarch}' | sed "s|$($PERL
 AC_SUBST([PERL_INCLUDES], ["$PERL_INCLUDES"])
 AC_SUBST([perl_vendorlibdir], ['${prefix}'$vendorlib])
 AC_SUBST([perl_vendorarchdir], ['${prefix}'$vendorarch])
+
+AC_SUBST(sigwaitinfo_libs)
 
 AC_SUBST(libxml_cflags)
 AC_SUBST(libxml_libs)
