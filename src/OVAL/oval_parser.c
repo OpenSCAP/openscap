@@ -306,7 +306,7 @@ void oval_text_consumer(char *text, void *user)
 		platform = oscap_strdup(text);
 	else {
 		int size = strlen(platform) + strlen(text) + 1;
-		char *newtext = (char *)oscap_alloc(size * sizeof(char *));
+		char *newtext = (char *) oscap_alloc(size * sizeof(char));
 		*newtext = 0;
 		strcat(newtext, platform);
 		strcat(newtext, text);
