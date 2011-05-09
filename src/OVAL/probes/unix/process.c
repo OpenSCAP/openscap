@@ -137,14 +137,12 @@ static void get_boot_time(void)
 static unsigned get_effective_id(int pid)
 {
 	char buf[100];
-	unsigned euid;
+	unsigned euid = 0;
 	FILE *sf;
 
 	snprintf(buf, sizeof(buf), "/proc/%d/status", pid);
 	sf = fopen(buf, "rt");
-	if (sf == NULL)
-		euid = 0;
-	else {
+	if (sf) {
 		int line = 0;
 		__fsetlocking(sf, FSETLOCKING_BYCALLER);
 		while (fgets(buf, sizeof(buf), sf)) {

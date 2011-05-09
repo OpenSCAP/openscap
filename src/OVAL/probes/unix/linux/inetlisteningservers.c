@@ -188,7 +188,7 @@ static int collect_process_info(llist *l)
 		int pid, ppid;
 		char buf[100];
 		char *tmp, cmd[16], state, *text = NULL;
-		int fd, len, euid;
+		int fd, len, euid = 0;
 
 		// Skip non-process dir entries
 		if(*ent->d_name<'0' || *ent->d_name>'9')
@@ -224,9 +224,7 @@ static int collect_process_info(llist *l)
 		// Get the effective uid
 		snprintf(buf, 32, "/proc/%d/status", pid);
 		sf = fopen(buf, "rt");
-		if (sf == NULL)
-			euid = 0;
-		else {
+		if (sf) {
 			int line = 0;
 			__fsetlocking(sf, FSETLOCKING_BYCALLER);
 			while (fgets(buf, sizeof(buf), sf)) {
