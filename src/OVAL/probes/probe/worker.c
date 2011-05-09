@@ -244,6 +244,7 @@ static int probe_varref_create_ctx(const SEXP_t *probe_in, SEXP_t *varrefs, stru
 		SEXP_sublist_foreach(varref, varrefs, 4, SEXP_LIST_END) {
 			r0 = SEXP_list_first(varref);
 			if (!SEXP_string_cmp(vid, r0)) {
+				SEXP_free(r0);
 				break;
 			}
 			SEXP_free(r0);
@@ -251,10 +252,10 @@ static int probe_varref_create_ctx(const SEXP_t *probe_in, SEXP_t *varrefs, stru
 
 		if (varref == NULL) {
 			dE("Unexpected error: variable id \"%s\" not found in varrefs.", SEXP_string_cstr(vid));
-			abort();
+			SEXP_vfree(vid, ent_name, vidx_name, vidx_val, NULL);
+			return -1;
 		}
 
-		SEXP_free(r0);
 		SEXP_free(vid);
 
 		r0 = SEXP_list_nth(varref, 2);
@@ -1020,7 +1021,12 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 
 			dI("handling varrefs in object\n");
 
-			probe_varref_create_ctx(probe_in, varrefs, &ctx);
+			if (probe_varref_create_ctx(probe_in, varrefs, &ctx) != 0) {
+				SEXP_vfree(varrefs, filters, probe_in, NULL);
+				*ret = PROBE_EUNKNOWN;
+				return (NULL);
+			}
+
 			SEXP_free(varrefs);
 
 			do {

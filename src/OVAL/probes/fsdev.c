@@ -292,7 +292,8 @@ fsdev_t *fsdev_init(const char **fs, size_t fs_cnt)
 	if (lfs == NULL)
 		return (NULL);
 
-	(void)__fsdev_init(lfs, fs, fs_cnt);
+	if (__fsdev_init(lfs, fs, fs_cnt) == NULL)
+		return (NULL);
 
         if (lfs->ids != NULL && lfs->cnt > 1)
                 qsort(lfs->ids, lfs->cnt, sizeof(dev_t), fsdev_cmp);
