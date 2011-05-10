@@ -163,6 +163,7 @@ fi
 %{_libexecdir}/openscap/probe_uname
 %{_libexecdir}/openscap/probe_xinetd
 %{_libexecdir}/openscap/probe_xmlfilecontent
+%{_libexecdir}/openscap/probe_sysctl
 %dir %{_datadir}/openscap
 %dir %{_datadir}/openscap/schemas
 %dir %{_datadir}/openscap/xsl
