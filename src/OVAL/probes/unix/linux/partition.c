@@ -38,6 +38,7 @@
 #include <probe-api.h>
 #include <mntent.h>
 #include <pcre.h>
+#include "common/debug_priv.h"
 
 #define MTAB_PATH "/etc/mtab"
 #define MTAB_LINE_MAX 4096
@@ -75,6 +76,8 @@ static int collect_item(SEXP_t *probe_out, struct mntent *mnt_ent)
                 mnt_opts[mnt_ocnt] = NULL;
         } while ((tok = strtok_r(NULL, ",", &save)) != NULL);
 
+        dI("mnt_ocnt = %d, mnt_opts[mnt_ocnt]=%p\n", mnt_ocnt, mnt_opts[mnt_ocnt]);
+
         /*
          * Create the item
          */
@@ -99,17 +102,17 @@ static int collect_item(SEXP_t *probe_out, struct mntent *mnt_ent)
 int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *probe_arg, SEXP_t *filters)
 {
         int probe_ret = 0;
-        SEXP_t *mnt_entval, *mnt_opval;
+        SEXP_t *mnt_entity, *mnt_opval, *mnt_entval;
         char    mnt_path[PATH_MAX];
         oval_operation_t mnt_op;
         FILE *mnt_fp;
 
-        mnt_entval = probe_obj_getent(probe_in, "mount_point", 1);
+        mnt_entity = probe_obj_getent(probe_in, "mount_point", 1);
 
-        if (mnt_entval == NULL)
+        if (mnt_entity == NULL)
                 return (PROBE_ENOENT);
 
-        mnt_opval = probe_ent_getattrval(mnt_entval, "operation");
+        mnt_opval = probe_ent_getattrval(mnt_entity, "operation");
 
         if (mnt_opval != NULL) {
                 mnt_op = (oval_operation_t)SEXP_number_geti(mnt_opval);
@@ -117,13 +120,17 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *probe_arg, SEXP_t *fil
         } else
                 mnt_op = OVAL_OPERATION_EQUALS;
 
-        if (!SEXP_stringp(mnt_opval)) {
+        mnt_entval = probe_ent_getval(mnt_entity);
+
+        if (!SEXP_stringp(mnt_entval)) {
                 SEXP_free(mnt_entval);
+                SEXP_free(mnt_entity);
                 return (PROBE_EINVAL);
         }
 
         SEXP_string_cstr_r(mnt_entval, mnt_path, sizeof mnt_path);
         SEXP_free(mnt_entval);
+        SEXP_free(mnt_entity);
 
         mnt_fp = fopen(MTAB_PATH, "r");
 
