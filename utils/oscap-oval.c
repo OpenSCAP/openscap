@@ -35,6 +35,7 @@ static int app_collect_oval(const struct oscap_action *action);
 static int app_evaluate_oval(const struct oscap_action *action);
 static int app_oval_xslt(const struct oscap_action *action);
 static bool getopt_oval(int argc, char **argv, struct oscap_action *action);
+static int app_analyse_oval(const struct oscap_action *action);
 
 static struct oscap_module* OVAL_SUBMODULES[];
 static struct oscap_module* OVAL_GEN_SUBMODULES[];
@@ -79,10 +80,22 @@ static struct oscap_module OVAL_EVAL = {
 static struct oscap_module OVAL_COLLECT = {
     .name = "collect",
     .parent = &OSCAP_OVAL_MODULE,
-    .summary = "Probe the system and gather system characteristics for objects in OVAL Definition file",
+    .summary = "Probe the system and create system characteristics",
     .usage = "oval-definitions.xml",
     .opt_parser = getopt_oval,
     .func = app_collect_oval
+};
+
+static struct oscap_module OVAL_ANALYSE = {
+    .name = "analyse",
+    .parent = &OSCAP_OVAL_MODULE,
+    .summary = "Evaluate provided system characteristics file",
+    .usage = "[options] oval-definitions.xml system-characteristics.xml" ,
+    .help =
+	"Options:\n"
+	"   --result-file <file>\r\t\t\t\t - Write OVAL Results into file.\n",
+    .opt_parser = getopt_oval,
+    .func = app_analyse_oval
 };
 
 static struct oscap_module OVAL_GENERATE = {
@@ -113,6 +126,7 @@ static struct oscap_module* OVAL_GEN_SUBMODULES[] = {
 static struct oscap_module* OVAL_SUBMODULES[] = {
     &OVAL_COLLECT,
     &OVAL_EVAL,
+    &OVAL_ANALYSE,
     &OVAL_VALIDATE,
     &OVAL_GENERATE,
     NULL
@@ -331,6 +345,57 @@ int app_evaluate_oval(const struct oscap_action *action)
 	}
 }
 
+static int app_analyse_oval(const struct oscap_action *action) {
+	struct oval_definition_model *def_model;
+	struct oval_syschar_model *sys_model;
+	struct oval_results_model *res_model;
+	struct oval_syschar_model *sys_models[2];
+
+	def_model = oval_definition_model_import(action->f_oval);
+        if (def_model == NULL) {
+                fprintf(stderr, "Failed to import the definition model (%s).\n", action->f_oval);
+                return OSCAP_ERROR;
+        }
+
+	sys_model = oval_syschar_model_new(def_model);
+        if (oval_syschar_model_import(sys_model, action->f_syschar) ==  -1 ) {
+                fprintf(stderr, "Failed to import the system characteristics model (%s).\n", action->f_syschar);
+		if(oscap_err())
+			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+		oval_definition_model_free(def_model);
+                return OSCAP_ERROR;
+        }
+
+	sys_models[0] = sys_model;
+	sys_models[1] = NULL;
+	res_model = oval_results_model_new(def_model, sys_models);
+	oval_results_model_eval(res_model);
+
+	/* export results to file */
+	if (action->f_results != NULL) {
+		/* set up directives */
+		struct oval_result_directives *res_direct = oval_result_directives_new(res_model);
+		oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE | OVAL_RESULT_FALSE |
+						    OVAL_RESULT_UNKNOWN | OVAL_RESULT_NOT_EVALUATED |
+						    OVAL_RESULT_ERROR | OVAL_RESULT_NOT_APPLICABLE, true);
+
+		oval_result_directives_set_content(res_direct,
+						   OVAL_RESULT_TRUE |
+						   OVAL_RESULT_FALSE |
+						   OVAL_RESULT_UNKNOWN |
+						   OVAL_RESULT_NOT_EVALUATED |
+						   OVAL_RESULT_NOT_APPLICABLE |
+						   OVAL_RESULT_ERROR,
+						   OVAL_DIRECTIVE_CONTENT_FULL);
+
+		
+		/* export result model to XML */
+		oval_results_model_export(res_model, res_direct, action->f_results);
+		oval_result_directives_free(res_direct);
+	}
+	return OSCAP_OK;
+}
+
 static int app_oval_xslt(const struct oscap_action *action)
 {
     assert(action->module->user);
@@ -382,12 +447,17 @@ bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 		}
 	}
 
-	/* We should have OVAL file here */
-	if (optind >= argc) {
-		/* TODO */
-        	return oscap_module_usage(action->module, stderr, "Bad number of parameters. OVAL file needs to be specified!");
-	}
+	/* We should have Definitions file here */
+	if (optind >= argc)
+        	return oscap_module_usage(action->module, stderr, "Definitions file needs to be specified!");
 	action->url_oval = argv[optind];
+
+	/* We should have System Characteristics file here */
+	if (action->module == &OVAL_ANALYSE) {
+		if ((optind+1) > argc)
+			return oscap_module_usage(action->module, stderr, "System characteristics file needs to be specified!");
+		action->url_syschar = argv[optind + 1];
+	}
 
 	return true;
 }

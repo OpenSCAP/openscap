@@ -1335,8 +1335,8 @@ static oval_result_t _oval_result_test_result(struct oval_result_test *rtest, vo
 	// OK, we have our object ID, now use that to find selected items in the syschar_model
 	struct oval_syschar * syschar_object = oval_syschar_model_get_syschar(syschar_model, definition_object_id_string);
 	if (syschar_object == NULL) {
-		oscap_dlprintf(DBG_E, "System characteristics object is null.\n");
-		return OVAL_RESULT_ERROR;
+		oscap_dlprintf(DBG_W, "System characteristics object is null.\n");
+		return OVAL_RESULT_UNKNOWN;
 	}
 
 	oval_result_t result = _oval_result_test_evaluate_items(test2check, syschar_object, args);
@@ -1356,12 +1356,15 @@ static void _oval_result_test_initialize_bindings(struct oval_result_test *rslt_
 		struct oval_result_system *sys = oval_result_test_get_system(rslt_test);
 		struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
 		struct oval_syschar *syschar = oval_syschar_model_get_syschar(syschar_model, object_id);
-		struct oval_variable_binding_iterator *bindings = oval_syschar_get_variable_bindings(syschar);
-		while (oval_variable_binding_iterator_has_more(bindings)) {
-			struct oval_variable_binding *binding = oval_variable_binding_iterator_next(bindings);
-			oval_result_test_add_binding(rslt_test, binding);
+		/* no syschar if system characteristics was a subset of definitions */
+		if(syschar) {
+			struct oval_variable_binding_iterator *bindings = oval_syschar_get_variable_bindings(syschar);
+			while (oval_variable_binding_iterator_has_more(bindings)) {
+				struct oval_variable_binding *binding = oval_variable_binding_iterator_next(bindings);
+				oval_result_test_add_binding(rslt_test, binding);
+			}
+			oval_variable_binding_iterator_free(bindings);
 		}
-		oval_variable_binding_iterator_free(bindings);
 	}
 	rslt_test->bindings_initialized = true;
 	rslt_test->bindings_clearable = false;	//bindings are shared from syschar model.

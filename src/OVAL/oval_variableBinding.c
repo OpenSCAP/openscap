@@ -158,9 +158,6 @@ static void _oval_variable_binding_value_consumer(char *value, void *user)
 
 	value = oscap_strdup(value);
 	oval_variable_binding_add_value(binding, value);
-	oscap_dlprintf(DBG_I, "New variable binding: variable: %s, value: %s.\n",
-		       oval_variable_get_id(oval_variable_binding_get_variable(binding)),
-		       value);
 }
 
 int oval_variable_binding_parse_tag(xmlTextReaderPtr reader,

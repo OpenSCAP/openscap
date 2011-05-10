@@ -37,12 +37,12 @@ Common Vulnerability Scoring System
 
 .SH OVAL OPERATIONS
 .TP
-.B collect\fR oval-definitions-file
+.B collect\fR definitions-file
 .RS
 Probe the system and gather system characteristics for objects in OVAL Definition file. Print output (OVAL System Characteristic) to standart output.
 .RE
 .PP
-.B eval\fR [\fIoptions\fR] oval-definitions-file
+.B eval\fR [\fIoptions\fR] definitions-file
 .RS
 Probe the system and evaluate all definitions from OVAL Definition file. Print result of each definition to standard output. oscap returns 0 if all definitions pass. If there is an error during evaluation, the return code is 1. If there is at least one failed result definition, oscap-scan finishes with return code 2.
 .PP
@@ -62,7 +62,16 @@ Do not validate input files before evaluation.
 .RE
 
 .TP
-.B validate-xml\fR [\fIoptions\fR] oval-file
+.B analyse\fR [\fIoptions\fR] definitions-file syschar-file
+.RS
+In this mode, the oscap tool does not perform data collection on the local system, but relies upon the input file, which may have been generated on another system.
+.TP
+\fB\-\-result-file FILE\fR
+Write OVAL Results into file.
+.RE
+
+.TP
+.B validate-xml\fR [\fIoptions\fR] definitions-file
 .RS
 Validate given OVAL file against a XML schema. Every found error is printed to the standard output. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the OVAL document is not valid.
 .TP

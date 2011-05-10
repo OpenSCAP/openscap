@@ -114,13 +114,18 @@ struct cpe_action {
 
 struct oscap_action {
         struct oscap_module *module;
+	/* files */
         char *f_xccdf;
         char *f_oval;
+	char *f_syschar;
         char *f_results;
         char *f_report;
+	/* URIs */
         char *url_xccdf;
         char *url_oval;
+	char *url_syschar;
         char **urls_oval;
+	/* others */
         char *profile;
         char *file_version;
         char *show;

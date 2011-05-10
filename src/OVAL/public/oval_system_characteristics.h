@@ -198,7 +198,7 @@ struct oval_syschar_model *oval_syschar_model_new(struct oval_definition_model *
  * If imported content specifies a model entity that is already registered within the model its content is overwritten.
  * @param model the merge target model
  * @param file filename
- * @return -1 if an error occurred
+ * @return zero on success or non zero value if an error occurred
  * @memberof oval_syschar_model
  */
 int oval_syschar_model_import(struct oval_syschar_model *model, const char *file);

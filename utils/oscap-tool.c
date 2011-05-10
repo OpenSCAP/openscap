@@ -118,7 +118,10 @@ static bool oscap_fetch(struct oscap_module *module, char **dest, char *src)
 static bool oscap_action_postprocess(struct oscap_action *action)
 {
     return oscap_fetch(action->module, &action->f_oval,  action->url_oval)
-        && oscap_fetch(action->module, &action->f_xccdf, action->url_xccdf);
+	&&
+	   oscap_fetch(action->module, &action->f_xccdf, action->url_xccdf)
+	&&
+	   oscap_fetch(action->module, &action->f_syschar, action->url_syschar);
 }
 
 static size_t paramlist_size(const char **p) { size_t s = 0; if (!p) return s; while (p[s]) s += 2; return s; }

@@ -342,7 +342,7 @@ int oval_syschar_model_import(struct oval_syschar_model *model, const char *file
 	ret = ovalsys_parser_parse(model, reader, NULL);
 	xmlFreeTextReader(reader);
 
-	return ret;
+	return ret == -1 ? -1 : 0;
 }
 
 
