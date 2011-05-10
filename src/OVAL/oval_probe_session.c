@@ -126,6 +126,7 @@ oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
         oval_probe_handler_set(sess->ph, OVAL_LINUX_INET_LISTENING_SERVERS,  oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_LINUX_DPKG_INFO, oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_LINUX_RPM_INFO,  oval_probe_ext_handler, sess->pext);
+        oval_probe_handler_set(sess->ph, OVAL_LINUX_PARTITION, oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_UNIX_FILE,       oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_UNIX_INTERFACE,  oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_UNIX_PASSWORD,   oval_probe_ext_handler, sess->pext);

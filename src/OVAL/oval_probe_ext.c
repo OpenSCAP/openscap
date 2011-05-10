@@ -63,6 +63,7 @@ const oval_pdsc_t OSCAP_GSYM(default_pdsc)[] = {
 	{OVAL_LINUX_DPKG_INFO,                  "dpkginfo",          "probe_dpkginfo"},
 	{OVAL_LINUX_INET_LISTENING_SERVERS,     "inetlisteningservers", "probe_inetlisteningservers"},
 	{OVAL_LINUX_RPM_INFO,                   "rpminfo",           "probe_rpminfo"},
+        {OVAL_LINUX_PARTITION,                  "partition",         "probe_partition"},
 	{OVAL_UNIX_FILE,                        "file",              "probe_file"},
 	{OVAL_UNIX_INTERFACE,                   "interface",         "probe_interface"},
 	{OVAL_UNIX_PASSWORD,                    "password",          "probe_password"},
