@@ -157,7 +157,7 @@ struct oval_sysitem_iterator;
 struct oval_sysent;
 /**
  * @struct oval_sysent_iterator
- * @see: oval_sysitem_get_items
+ * @see: oval_sysitem_get_sysents
  */
 struct oval_sysent_iterator;
 
@@ -684,7 +684,7 @@ void oval_sysitem_add_message(struct oval_sysitem *, struct oval_message *);
 /**
  * @memberof oval_sysitem
  */
-void oval_sysitem_add_item(struct oval_sysitem *, struct oval_sysent *);
+void oval_sysitem_add_sysent(struct oval_sysitem *, struct oval_sysent *);
 /** @} */
 
 /**
@@ -705,7 +705,7 @@ oval_syschar_status_t oval_sysitem_get_status(struct oval_sysitem *);
  * Get system data individual items.
  * @memberof oval_sysitem
  */
-struct oval_sysent_iterator *oval_sysitem_get_items(struct oval_sysitem *);
+struct oval_sysent_iterator *oval_sysitem_get_sysents(struct oval_sysitem *);
 /**
  * Get system data message.
  * @memberof oval_sysitem

@@ -47,7 +47,7 @@ typedef struct oval_sysitem {
 	oval_subtype_t subtype;
 	char *id;
 	struct oval_collection *messages;
-	struct oval_collection *items;
+	struct oval_collection *sysents;
 	oval_syschar_status_t status;
 } oval_sysitem_t;
 
@@ -68,7 +68,7 @@ struct oval_sysitem *oval_sysitem_new(struct oval_syschar_model *model, const ch
 	sysitem->subtype = OVAL_SUBTYPE_UNKNOWN;
 	sysitem->status = SYSCHAR_STATUS_UNKNOWN;
 	sysitem->messages = oval_collection_new();
-	sysitem->items = oval_collection_new();
+	sysitem->sysents = oval_collection_new();
 	sysitem->model = model;
 
 	oval_syschar_model_add_sysitem(model, sysitem);
@@ -92,7 +92,7 @@ bool oval_sysitem_is_valid(struct oval_sysitem *sysitem)
         }
 
 	/* validate sysents */
-	sysents_itr = oval_sysitem_get_items(sysitem);
+	sysents_itr = oval_sysitem_get_sysents(sysitem);
 	while (oval_sysent_iterator_has_more(sysents_itr)) {
 		struct oval_sysent *sysent;
 
@@ -131,11 +131,11 @@ struct oval_sysitem *oval_sysitem_clone(struct oval_syschar_model *new_model, st
 	oval_sysitem_set_status(new_item, oval_sysitem_get_status(old_item));
 	oval_sysitem_set_subtype(new_item, oval_sysitem_get_subtype(old_item));
 
-	struct oval_sysent_iterator *old_sysent_itr = oval_sysitem_get_items(old_item);
+	struct oval_sysent_iterator *old_sysent_itr = oval_sysitem_get_sysents(old_item);
 	while (oval_sysent_iterator_has_more(old_sysent_itr)) {
 		struct oval_sysent *old_sysent = oval_sysent_iterator_next(old_sysent_itr);
 		struct oval_sysent *new_sysent = oval_sysent_clone(new_model, old_sysent);
-		oval_sysitem_add_item(new_item, new_sysent);
+		oval_sysitem_add_sysent(new_item, new_sysent);
 	}
 	oval_sysent_iterator_free(old_sysent_itr);
 
@@ -148,11 +148,11 @@ void oval_sysitem_free(struct oval_sysitem *sysitem)
 		return;
 
 	oval_collection_free_items(sysitem->messages, (oscap_destruct_func) oval_message_free);
-	oval_collection_free_items(sysitem->items, (oscap_destruct_func) oval_sysent_free);
+	oval_collection_free_items(sysitem->sysents, (oscap_destruct_func) oval_sysent_free);
 	oscap_free(sysitem->id);
 
 	sysitem->id = NULL;
-	sysitem->items = NULL;
+	sysitem->sysents = NULL;
 	sysitem->messages = NULL;
 	oscap_free(sysitem);
 }
@@ -209,15 +209,15 @@ void oval_sysitem_add_message(struct oval_sysitem *item, struct oval_message *me
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
-struct oval_sysent_iterator *oval_sysitem_get_items(struct oval_sysitem *data)
+struct oval_sysent_iterator *oval_sysitem_get_sysents(struct oval_sysitem *sysitem)
 {
-	return (struct oval_sysent_iterator *)oval_collection_iterator(data->items);
+	return (struct oval_sysent_iterator *)oval_collection_iterator(sysitem->sysents);
 }
 
-void oval_sysitem_add_item(struct oval_sysitem *data, struct oval_sysent *item)
+void oval_sysitem_add_sysent(struct oval_sysitem *sysitem, struct oval_sysent *sysent)
 {
-	if (data && !oval_sysitem_is_locked(data)) {
-		oval_collection_add(data->items, item);
+	if (!oval_sysitem_is_locked(sysitem)) {
+		oval_collection_add(sysitem->sysents, sysent);
 	} else
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
@@ -242,9 +242,9 @@ static void _oval_sysitem_parse_subtag_message_consumer(struct oval_message *mes
 	oval_sysitem_add_message(sysitem, message);
 }
 
-static void _oval_sysitem_parse_subtag_item_consumer(struct oval_sysent *sysent, void *sysitem)
+static void _oval_sysitem_parse_subtag_sysent_consumer(struct oval_sysent *sysent, void *sysitem)
 {
-	oval_sysitem_add_item(sysitem, sysent);
+	oval_sysitem_add_sysent(sysitem, sysent);
 }
 
 static int _oval_sysitem_parse_subtag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *client)
@@ -259,7 +259,7 @@ static int _oval_sysitem_parse_subtag(xmlTextReaderPtr reader, struct oval_parse
 	} else {
 		/*typedef *(oval_sysent_consumer)(struct oval_sysent *, void* client); */
 		return_code =
-		    oval_sysent_parse_tag(reader, context, _oval_sysitem_parse_subtag_item_consumer, sysitem);
+		    oval_sysent_parse_tag(reader, context, _oval_sysitem_parse_subtag_sysent_consumer, sysitem);
 	}
 	oscap_free(tagname);
 	oscap_free(namespace);
@@ -364,13 +364,13 @@ void oval_sysitem_to_print(struct oval_sysitem *sysitem, char *indent, int idx)
 	}
 	*/
 	{			//items
-		struct oval_sysent_iterator *items = oval_sysitem_get_items(sysitem);
+		struct oval_sysent_iterator *sysent_itr = oval_sysitem_get_sysents(sysitem);
 		int i;
-		for (i = 1; oval_sysent_iterator_has_more(items); i++) {
-			struct oval_sysent *item = oval_sysent_iterator_next(items);
-			oval_sysent_to_print(item, nxtindent, i);
+		for (i = 1; oval_sysent_iterator_has_more(sysent_itr); i++) {
+			struct oval_sysent *sysent = oval_sysent_iterator_next(sysent_itr);
+			oval_sysent_to_print(sysent, nxtindent, i);
 		}
-		oval_sysent_iterator_free(items);
+		oval_sysent_iterator_free(sysent_itr);
 	}
 }
 
@@ -408,12 +408,12 @@ void oval_sysitem_to_dom(struct oval_sysitem *sysitem, xmlDoc * doc, xmlNode * t
 			oval_message_iterator_free(messages);
 
 			/* sysents */
-			struct oval_sysent_iterator *items = oval_sysitem_get_items(sysitem);
-			while (oval_sysent_iterator_has_more(items)) {
-				struct oval_sysent *item = oval_sysent_iterator_next(items);
-				oval_sysent_to_dom(item, doc, tag_sysitem);
+			struct oval_sysent_iterator *sysent_itr = oval_sysitem_get_sysents(sysitem);
+			while (oval_sysent_iterator_has_more(sysent_itr)) {
+				struct oval_sysent *sysent = oval_sysent_iterator_next(sysent_itr);
+				oval_sysent_to_dom(sysent, doc, tag_sysitem);
 			}
-			oval_sysent_iterator_free(items);
+			oval_sysent_iterator_free(sysent_itr);
 		} else {
 			oscap_dprintf
 			    ("WARNING: Skipping XML generation of oval_sysitem with subtype OVAL_SUBTYPE_UNKNOWN"

@@ -935,7 +935,7 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 
 		ores_clear(&ent_ores);
 
-		item_entities_itr = oval_sysitem_get_items(cur_sysitem);
+		item_entities_itr = oval_sysitem_get_sysents(cur_sysitem);
 		while (oval_sysent_iterator_has_more(item_entities_itr)) {
 			struct oval_sysent *item_entity;
 			oval_result_t ent_val_res;

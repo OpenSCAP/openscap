@@ -1315,16 +1315,16 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 		struct oval_sysitem_iterator *sysitems = oval_syschar_get_sysitem(syschar);
 		while (oval_sysitem_iterator_has_more(sysitems)) {
 			struct oval_sysitem *sysitem = oval_sysitem_iterator_next(sysitems);
-			struct oval_sysent_iterator *items = oval_sysitem_get_items(sysitem);
-			while (oval_sysent_iterator_has_more(items)) {
+			struct oval_sysent_iterator *sysent_itr = oval_sysitem_get_sysents(sysitem);
+			while (oval_sysent_iterator_has_more(sysent_itr)) {
 				oval_datatype_t dt;
-				struct oval_sysent *item = oval_sysent_iterator_next(items);
-				char *item_name = oval_sysent_get_name(item);
+				struct oval_sysent *sysent = oval_sysent_iterator_next(sysent_itr);
+				char *sysent_name = oval_sysent_get_name(sysent);
 
-				if (strcmp(ifield_name, item_name))
+				if (strcmp(ifield_name, sysent_name))
 					continue;
 
-				dt = oval_sysent_get_datatype(item);
+				dt = oval_sysent_get_datatype(sysent);
 				if ((dt == OVAL_DATATYPE_RECORD && rfield_name == NULL)
 				    || (dt != OVAL_DATATYPE_RECORD && rfield_name != NULL))
 					/* todo: throw error */
@@ -1333,15 +1333,15 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 				if (dt == OVAL_DATATYPE_RECORD) {
 					struct oval_record_field_iterator *rf_itr;
 
-					rf_itr = oval_sysent_get_record_fields(item);
+					rf_itr = oval_sysent_get_record_fields(sysent);
 					while (oval_record_field_iterator_has_more(rf_itr)) {
 						struct oval_record_field *rf;
 						char *txtval;
 						struct oval_value *val;
 
 						rf = oval_record_field_iterator_next(rf_itr);
-						item_name = oval_record_field_get_name(rf);
-						if (strcmp(rfield_name, item_name))
+						txtval = oval_record_field_get_name(rf);
+						if (strcmp(rfield_name, txtval))
 							continue;
 
 						dt = oval_record_field_get_datatype(rf);
@@ -1355,12 +1355,12 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 					char *txtval;
 					struct oval_value *val;
 
-					txtval = oval_sysent_get_value(item);
+					txtval = oval_sysent_get_value(sysent);
 					val = oval_value_new(dt, txtval);
 					oval_collection_add(value_collection, val);
 				}
 			}
-			oval_sysent_iterator_free(items);
+			oval_sysent_iterator_free(sysent_itr);
 			/* todo: throw error if none matched */
 		}
 		oval_sysitem_iterator_free(sysitems);
