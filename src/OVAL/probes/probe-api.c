@@ -1388,11 +1388,12 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
         char item_name[64];
         oval_datatype_t value_type;
 
-        char  *value_str;
+        char  *value_str, **value_stra;
         int    value_int;
         double value_flt;
         bool   value_bool;
         bool   free_value = true;
+        int    value_i, multiply;
 
         subtype_name = oval_subtype2str(item_subtype);
 
@@ -1416,6 +1417,8 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
 	value_name = va_arg(ap, const char *);
 
         while (value_name != NULL) {
+                value_i    = 0;
+                multiply   = 1;
 		value_type = va_arg(ap, oval_datatype_t);
 
                 switch (value_type) {
@@ -1426,6 +1429,24 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                                 goto skip;
 
                         value_sexp = SEXP_string_new_r(&value_sexp_mem, value_str, strlen(value_str));
+                        break;
+                case OVAL_DATATYPE_STRING_M:
+                        value_type = OVAL_DATATYPE_STRING;
+                        value_stra = va_arg(ap, char **);
+                        multiply   = 0;
+
+                        if (value_stra == NULL)
+                                goto skip;
+
+                        while (value_stra[multiply] != NULL)
+                                ++multiply;
+
+                        value_sexp = oscap_alloc(sizeof(SEXP_t) * multiply);
+
+                        for (value_i = 0; value_i < multiply; ++value_i)
+                                SEXP_string_new_r(value_sexp + value_i, value_stra[value_i], strlen(value_stra[value_i]));
+
+                        value_i = 0;
                         break;
                 case OVAL_DATATYPE_BOOLEAN:
                         value_bool = (bool)va_arg(ap, int);
@@ -1472,30 +1493,43 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                 }
 
                 name_sexp = probe_ncache_ref(OSCAP_GSYM(encache), value_name);
-                entity    = SEXP_list_new_r(&entity_mem, name_sexp, value_sexp, NULL);
 
-		if (probe_ent_setdatatype(entity, value_type) != 0) {
-			SEXP_free_r(&entity_mem);
-			SEXP_free(name_sexp);
-			SEXP_free(item);
-			if (free_value)
-				SEXP_free_r(value_sexp);
+                dI("multiply=%d\n", multiply);
 
-			return (NULL);
-		}
+                while(value_i < multiply) {
+                        entity = SEXP_list_new_r(&entity_mem, name_sexp, value_sexp + value_i, NULL);
 
-                assume_d(item       != NULL, NULL);
-                assume_d(entity     != NULL, NULL);
-                assume_d(name_sexp  != NULL, NULL);
-                assume_d(value_sexp != NULL, NULL);
+                        if (probe_ent_setdatatype(entity, value_type) != 0) {
+                                SEXP_free_r(&entity_mem);
+                                SEXP_free(name_sexp);
+                                SEXP_free(item);
 
-                SEXP_list_add(item, entity);
+                                if (free_value) {
+                                        while(value_i < multiply)
+                                                SEXP_free_r(value_sexp + value_i++);
+                                        if (multiply > 1)
+                                                oscap_free(value_sexp);
+                                }
 
-                SEXP_free_r(&entity_mem);
+                                return (NULL);
+                        }
+
+                        assume_d(item       != NULL, NULL);
+                        assume_d(entity     != NULL, NULL);
+                        assume_d(name_sexp  != NULL, NULL);
+
+                        SEXP_list_add(item, entity);
+                        SEXP_free_r(&entity_mem);
+
+                        if (free_value)
+                                SEXP_free_r(value_sexp + value_i);
+                        ++value_i;
+                }
+
                 SEXP_free(name_sexp);
 
-                if (free_value)
-                        SEXP_free_r(&value_sexp_mem);
+                if (multiply > 1)
+                        oscap_free(value_sexp);
         skip:
                 value_name = va_arg(ap, const char *);
 		free_value = true;

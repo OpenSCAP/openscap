@@ -162,7 +162,8 @@ typedef enum {
 	OVAL_DATATYPE_INTEGER = 8,
 	OVAL_DATATYPE_STRING = 9,
 	OVAL_DATATYPE_RECORD = 10,
-        OVAL_DATATYPE_SEXP = 11
+        OVAL_DATATYPE_SEXP = 11,
+        OVAL_DATATYPE_STRING_M = 12
 } oval_datatype_t;
 
 /// Varref types
