@@ -61,12 +61,10 @@ endif
 endif
 
 if WANT_PROBES_UNIX
-if ENABLE_PROBE_DNSCACHE
 pkglibexec_PROGRAMS += probe_dnscache
 probe_dnscache_SOURCES= unix/dnscache.c
-probe_dnscache_CFLAGS=  @libcares_cflags@
-probe_dnscache_LDFLAGS= @libcares_libs@
-endif
+probe_dnscache_CFLAGS=
+probe_dnscache_LDFLAGS=
 
 pkglibexec_PROGRAMS += probe_runlevel
 probe_runlevel_SOURCES= unix/runlevel.c

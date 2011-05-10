@@ -83,7 +83,6 @@ Summary:        SCAP probes
 Group:          Applications/System
 Requires:       %{name} = %{version}-%{release}
 BuildRequires:  openldap-devel
-BuildRequires:  c-ares-devel >= 1.7.0
 #BuildRequires:  opendbx - for sql
 
 %description    extra-probes

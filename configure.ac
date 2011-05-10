@@ -182,22 +182,6 @@ AC_CHECK_LIB(
   [`curl-config --libs`]
 )
 
-#
-# libcares
-#
-probe_unix_dnscache=no
-
-AC_CHECK_LIB(
-  [cares],
-  [ares_library_init],
-  [libcares_cflags=`pkg-config libcares --cflags`
-   libcares_libs=`pkg-config libcares --libs`
-   probe_unix_dnscache=yes
-  ],
-  [probe_unix_dnscache=no],
-  [`pkg-config libcares --libs`]
-)
-
 probe_independent_ldap57=no
 
 AC_CHECK_LIB(
@@ -409,9 +393,6 @@ AC_SUBST(pcre_libs)
 
 AC_SUBST(curl_cflags)
 AC_SUBST(curl_libs)
-
-AC_SUBST(libcares_cflags)
-AC_SUBST(libcares_libs)
 
 AC_SUBST(libopenldap_cflags)
 AC_SUBST(libopenldap_libs)
@@ -699,7 +680,6 @@ AM_CONDITIONAL([ENABLE_PROBE_DPKGINFO], test "$have_libapt_pkg" = yes)
 AM_CONDITIONAL([WANT_BINDINGS], test "$bindings" = yes)
 AM_CONDITIONAL([ENABLE_VALGRIND_TESTS], test "$vgcheck" = yes)
 AM_CONDITIONAL([HAVE_ODBX], test "$have_odbx" = yes)
-AM_CONDITIONAL([ENABLE_PROBE_DNSCACHE], test "$probe_unix_dnscache" = yes)
 AM_CONDITIONAL([ENABLE_PROBE_LDAP57], test "$probe_independent_ldap57" = yes)
 
 AC_CONFIG_FILES([Makefile
@@ -779,7 +759,7 @@ echo "  ldap57 probe:                $probe_independent_ldap57"
 echo ""
 
 echo "  === unix probes ==="
-echo "  dnscache probe:              $probe_unix_dnscache"
+echo "  dnscache probe:              $probes_unix"
 echo "  file probe:                  $probes_unix"
 echo "  interface probe:             $probes_unix"
 echo "  password probe:              $probes_unix"
