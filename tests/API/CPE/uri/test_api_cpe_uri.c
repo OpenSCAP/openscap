@@ -193,10 +193,10 @@ void cpe_print(struct cpe_name *name)
 
   // Print out all contained information.
   printf(" %d\n", cpe_name_get_part(name));
-  printf(" %s\n", cpe_name_get_vendor(name));
-  printf(" %s\n", cpe_name_get_product(name));
-  printf(" %s\n", cpe_name_get_version(name));
-  printf(" %s\n", cpe_name_get_update(name));
-  printf(" %s\n", cpe_name_get_edition(name));
-  printf(" %s\n", cpe_name_get_language(name));
+  printf(" %s\n", cpe_name_get_vendor(name) ? cpe_name_get_vendor(name) : "");
+  printf(" %s\n", cpe_name_get_product(name) ? cpe_name_get_product(name) : "");
+  printf(" %s\n", cpe_name_get_version(name) ? cpe_name_get_version(name) : "");
+  printf(" %s\n", cpe_name_get_update(name) ? cpe_name_get_update(name) : "");
+  printf(" %s\n", cpe_name_get_edition(name) ? cpe_name_get_edition(name) : "");
+  printf(" %s\n", cpe_name_get_language(name) ? cpe_name_get_language(name) : "");
 }
