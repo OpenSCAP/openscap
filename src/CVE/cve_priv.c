@@ -33,6 +33,8 @@
 #include <config.h>
 #endif
 
+#include <string.h>
+
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
 
@@ -360,6 +362,7 @@ struct cve_model *cve_model_new()
 	ret = oscap_alloc(sizeof(struct cve_model));
 	if (ret == NULL)
 		return NULL;
+	memset(ret, 0, sizeof(struct cve_model));
 
 	ret->nvd_xml_version = NULL;
 	ret->entries = oscap_list_new();
