@@ -459,6 +459,7 @@ void probe_tfc54behaviors_canonicalize(SEXP_t **behaviors);
 #define PROBE_ENOENT    13      /**< Missing entity */
 #define PROBE_ENOOBJ    14      /**< Missing object */
 #define PROBE_ECONNABORTED 15   /**< Evaluation aborted */
+#define PROBE_ESYSTEM  253      /**< System call failure */
 #define PROBE_EFATAL   254	/**< Unrecoverable error */
 #define PROBE_EUNKNOWN 255	/**< Unknown/Unexpected error */
 

@@ -27,9 +27,20 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
+#if defined(PROC_CHECK) && defined(__linux__)
+#define _XOPEN_SOURCE /* for fdopen */
+#include <sys/vfs.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <linux/magic.h>
+#include <fcntl.h>
+#include <stdio.h>
+#endif
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
@@ -38,10 +49,16 @@
 #include <probe-api.h>
 #include <mntent.h>
 #include <pcre.h>
+
 #include "common/debug_priv.h"
 
-#define MTAB_PATH "/etc/mtab"
-#define MTAB_LINE_MAX 4096
+#ifndef MTAB_PATH
+# define MTAB_PATH "/proc/mounts"
+#endif
+
+#ifndef MTAB_LINE_MAX
+# define MTAB_LINE_MAX 4096
+#endif
 
 static int collect_item(SEXP_t *probe_out, struct mntent *mnt_ent)
 {
@@ -106,6 +123,37 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *probe_arg, SEXP_t *fil
         char    mnt_path[PATH_MAX];
         oval_operation_t mnt_op;
         FILE *mnt_fp;
+#if defined(PROC_CHECK) && defined(__linux__)
+        int   mnt_fd;
+        struct statfs stfs;
+
+        mnt_fd = open(MTAB_PATH, O_RDONLY);
+
+        if (mnt_fd < 0)
+                return (PROBE_ESYSTEM);
+
+        if (fstatfs(mnt_fd, &stfs) != 0) {
+                close(mnt_fd);
+                return (PROBE_ESYSTEM);
+        }
+
+        if (stfs.f_type != PROC_SUPER_MAGIC) {
+                close(mnt_fd);
+                return (PROBE_EFATAL);
+        }
+
+        mnt_fp = fdopen(mnt_fd, "r");
+
+        if (mnt_fp == NULL) {
+                close(mnt_fd);
+                return (PROBE_ESYSTEM);
+        }
+#else
+        mnt_fp = fopen(MTAB_PATH, "r");
+
+        if (mnt_fp == NULL)
+                return (PROBE_ESYSTEM);
+#endif
 
         mnt_entity = probe_obj_getent(probe_in, "mount_point", 1);
 
@@ -131,8 +179,6 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *probe_arg, SEXP_t *fil
         SEXP_string_cstr_r(mnt_entval, mnt_path, sizeof mnt_path);
         SEXP_free(mnt_entval);
         SEXP_free(mnt_entity);
-
-        mnt_fp = fopen(MTAB_PATH, "r");
 
         if (mnt_fp != NULL) {
                 char buffer[MTAB_LINE_MAX];
