@@ -5384,12 +5384,12 @@
                   <unix-def:object object_ref="oval:org.fedoraproject.f14:obj:201491"/>
                   <unix-def:state state_ref="oval:org.fedoraproject.f14:ste:20151"/>
             </unix-def:file_test>
-            <unix-def:file_test check_existence="at_least_one_exists" id="oval:org.fedoraproject.f14:tst:201491" version="1" check="all" comment="Check if user exists">
+            <unix-def:password_test check_existence="at_least_one_exists" id="oval:org.fedoraproject.f14:tst:201491" version="1" check="all" comment="Check if user exists">
                   <unix-def:object object_ref="oval:org.fedoraproject.f14:obj:2014911"/>
-            </unix-def:file_test>
-            <unix-def:file_test check_existence="at_least_one_exists" id="oval:org.fedoraproject.f14:tst:201501" version="1" check="all" comment="Check if group exists">
-                  <unix-def:object object_ref="oval:org.fedoraproject.f14:obj:201501"/>
-            </unix-def:file_test>
+            </unix-def:password_test>
+            <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:org.fedoraproject.f14:tst:201501" version="1" check="all" comment="Check if group exists">
+                  <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:201501"/>
+            </ind-def:textfilecontent54_test>
             <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:org.fedoraproject.f14:tst:20152" version="1" check="all" comment="Tests the value of the \*\.\*[\s]+@ setting in the /etc/rsyslog.conf file">
                   <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:20152"/>
             </ind-def:textfilecontent54_test>
@@ -5555,29 +5555,29 @@
                   <unix-def:object object_ref="oval:org.fedoraproject.f14:obj:20171"/>
                   <unix-def:state state_ref="oval:org.fedoraproject.f14:ste:20171"/>
             </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:201745" version="1" check="all" comment="Xinetd runlevel test">
-                  <unix-def:object object_ref="oval:org.fedoraproject.f14:obj:201745"/>
-                  <unix-def:state state_ref="oval:org.fedoraproject.f14:ste:201745"/>
-            </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:201774" version="1" check="all" comment="Xinetd runlevel test">
-                  <unix-def:object object_ref="oval:org.fedoraproject.f14:obj:201774"/>
-                  <unix-def:state state_ref="oval:org.fedoraproject.f14:ste:201745"/>
-            </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:201775" version="1" check="all" comment="Xinetd runlevel test">
-                  <unix-def:object object_ref="oval:org.fedoraproject.f14:obj:201775"/>
-                  <unix-def:state state_ref="oval:org.fedoraproject.f14:ste:201745"/>
-            </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:201776" version="1" check="all" comment="Xinetd runlevel test">
-                  <unix-def:object object_ref="oval:org.fedoraproject.f14:obj:201776"/>
-                  <unix-def:state state_ref="oval:org.fedoraproject.f14:ste:201745"/>
-            </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="none_exist" id="oval:org.fedoraproject.f14:tst:20178" version="1" check="all" comment="Xinetd services test">
-                  <unix-def:object object_ref="oval:org.fedoraproject.f14:obj:20178"/>
-            </unix-def:runlevel_test>
-            <unix-def:runlevel_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:201825" version="1" check="all" comment="Xinetd runlevel test">
-                  <unix-def:object object_ref="oval:org.fedoraproject.f14:obj:201825"/>
-                  <unix-def:state state_ref="oval:org.fedoraproject.f14:ste:201745"/>
-            </unix-def:runlevel_test>
+            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:201745" version="1" check="all" comment="Xinetd runlevel test">
+                  <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:201745"/>
+                  <ind-def:state state_ref="oval:org.fedoraproject.f14:ste:201745"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:201774" version="1" check="all" comment="Xinetd runlevel test">
+                  <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:201774"/>
+                  <ind-def:state state_ref="oval:org.fedoraproject.f14:ste:201745"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:201775" version="1" check="all" comment="Xinetd runlevel test">
+                  <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:201775"/>
+                  <ind-def:state state_ref="oval:org.fedoraproject.f14:ste:201745"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:201776" version="1" check="all" comment="Xinetd runlevel test">
+                  <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:201776"/>
+                  <ind-def:state state_ref="oval:org.fedoraproject.f14:ste:201745"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:org.fedoraproject.f14:tst:20178" version="1" check="all" comment="Xinetd services test">
+                  <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:20178"/>
+            </ind-def:textfilecontent54_test>
+            <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:org.fedoraproject.f14:tst:201825" version="1" check="all" comment="Xinetd runlevel test">
+                  <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:201825"/>
+                  <ind-def:state state_ref="oval:org.fedoraproject.f14:ste:201745"/>
+            </ind-def:textfilecontent54_test>
             <lin-def:rpminfo_test check_existence="none_exist" id="oval:org.fedoraproject.f14:tst:20179" version="1" check="all" comment="The inetd package should be installed or not as appropriate">
                   <lin-def:object object_ref="oval:org.fedoraproject.f14:obj:20179"/>
             </lin-def:rpminfo_test>
@@ -5645,9 +5645,9 @@
                   <unix-def:object object_ref="oval:org.fedoraproject.f14:obj:20191"/>
                   <unix-def:state state_ref="oval:org.fedoraproject.f14:ste:20171"/>
             </unix-def:runlevel_test>
-            <ind-def:textfilecontent54_test check_existence="none_exist" id="oval:org.fedoraproject.f14:tst:20192" version="1" check="all" comment="check for ifcfg-interface in /etc/sysconfig/network-scripts">
-                  <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:20192"/>
-            </ind-def:textfilecontent54_test>
+            <unix-def:file_test check_existence="none_exist" id="oval:org.fedoraproject.f14:tst:20192" version="1" check="all" comment="check for ifcfg-interface in /etc/sysconfig/network-scripts">
+                  <unix-def:object object_ref="oval:org.fedoraproject.f14:obj:20192"/>
+            </unix-def:file_test>
             <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:org.fedoraproject.f14:tst:20193" version="1" check="all" comment="check NOZEROCONF=yes in /etc/sysconfig/network">
                   <ind-def:object object_ref="oval:org.fedoraproject.f14:obj:20193"/>
             </ind-def:textfilecontent54_test>
