@@ -29,6 +29,7 @@ test_api_probes_smoke_SOURCES = test_api_probes_smoke.c
 
 test_api_probes_xinetd_SOURCES = test_api_probes_xinetd.c
 test_api_probes_xinetd_CFLAGS= -I$(top_srcdir) -I$(top_srcdir)/src/common -I$(top_srcdir)/src/common/public
+test_api_probes_xinetd_LDADD = $(LDADD) $(top_srcdir)/src/common/liboscapcommon.la
 
 EXTRA_DIST += test_api_probes.sh \
 	      test_api_probes_smoke.c \

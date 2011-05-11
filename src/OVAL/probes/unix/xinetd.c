@@ -50,6 +50,7 @@
 #include <alloc.h>
 #include <bfind.h>
 #include <common/debug_priv.h>
+#include <common/util.h>
 #include "../SEAP/generic/rbt/rbt.h"
 
 #define dI(...) oscap_dlprintf(DBG_I, __VA_ARGS__)
@@ -1226,7 +1227,7 @@ int op_assign_strl(void *var, char *val)
 
 	str = val;
 
-	while ((tok = strsep (&str, " ")) != NULL) {
+	while ((tok = oscap_strsep (&str, " ")) != NULL) {
 		while (isspace(*tok))
 			++tok;
 		if (*tok == '\0')
@@ -1254,7 +1255,7 @@ int op_insert_strl(void *var, char *val)
 
 	str = val;
 
-	while ((tok = strsep (&str, " ")) != NULL) {
+	while ((tok = oscap_strsep (&str, " ")) != NULL) {
 		while (isspace(*tok))
 			++tok;
 		if (*tok == '\0')
@@ -1286,7 +1287,7 @@ int op_remove_strl(void *var, char *val)
 
 	str = val;
 
-	while ((tok = strsep (&str, " ")) != NULL) {
+	while ((tok = oscap_strsep (&str, " ")) != NULL) {
 		while (isspace(*tok))
 			++tok;
 		if (*tok == '\0')
@@ -1326,7 +1327,7 @@ int op_assign_disabled(void *var, char *val)
 	str    = val;
 	srv    = NULL;
 
-	while ((tok = strsep (&str, " ")) != NULL) {
+	while ((tok = oscap_strsep (&str, " ")) != NULL) {
 		while (isspace(*tok))
 			++tok;
 		if (*tok == '\0')
@@ -1367,7 +1368,7 @@ int op_assign_enabled(void *var, char *val)
 	str    = val;
 	srv    = NULL;
 
-	while ((tok = strsep (&str, " ")) != NULL) {
+	while ((tok = oscap_strsep (&str, " ")) != NULL) {
 		while (isspace(*tok))
 			++tok;
 		if (*tok == '\0')
