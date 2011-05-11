@@ -64,7 +64,11 @@
 # define MTAB_LINE_MAX 4096
 #endif
 
+#if defined(HAVE_BLKID_GET_TAG_VALUE)
+static int collect_item(SEXP_t *probe_out, struct mntent *mnt_ent, blkid_cache blkcache)
+#else
 static int collect_item(SEXP_t *probe_out, struct mntent *mnt_ent)
+#endif
 {
         SEXP_t *item;
         char   *uuid = NULL, *tok, *save = NULL, **mnt_opts;
@@ -81,7 +85,7 @@ static int collect_item(SEXP_t *probe_out, struct mntent *mnt_ent)
          * Get UUID
          */
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
-        uuid = blkid_get_tag_value(NULL, "UUID", mnt_ent->mnt_fsname);
+        uuid = blkid_get_tag_value(blkcache, "UUID", mnt_ent->mnt_fsname);
 #endif
         /*
          * Create a NULL-terminated array from the mount options
@@ -192,7 +196,14 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *probe_arg, SEXP_t *fil
                 pcre *re = NULL;
                 const char *estr = NULL;
                 int eoff = -1;
+#if defined(HAVE_BLKID_GET_TAG_VALUE)
+                blkid_cache blkcache;
 
+                if (blkid_get_cache(&blkcache, NULL) != 0) {
+                        endmntent(mnt_fp);
+                        return (PROBE_EUNKNOWN);
+                }
+#endif
                 if (mnt_op == OVAL_OPERATION_PATTERN_MATCH) {
                         re = pcre_compile(mnt_path, PCRE_UTF8, &estr, &eoff, NULL);
 
@@ -207,7 +218,11 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *probe_arg, SEXP_t *fil
                 {
                         if (mnt_op == OVAL_OPERATION_EQUALS) {
                                 if (strcmp(mnt_entp->mnt_dir, mnt_path) == 0) {
+#if defined(HAVE_BLKID_GET_TAG_VALUE)
+                                        collect_item(probe_out, mnt_entp, blkcache);
+#else
                                         collect_item(probe_out, mnt_entp);
+#endif
                                         break;
                                 }
                         } else if (mnt_op == OVAL_OPERATION_PATTERN_MATCH) {
@@ -216,9 +231,13 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *probe_arg, SEXP_t *fil
                                 rc = pcre_exec(re, NULL, mnt_entp->mnt_dir,
                                                strlen(mnt_entp->mnt_dir), 0, 0, NULL, 0);
 
-                                if (rc == 0)
+                                if (rc == 0) {
+#if defined(HAVE_BLKID_GET_TAG_VALUE)
+                                        collect_item(probe_out, mnt_entp, blkcache);
+#else
                                         collect_item(probe_out, mnt_entp);
-
+#endif
+                                }
                                 /* XXX: check for pcre_exec error */
                         }
                 }
