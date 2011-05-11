@@ -788,6 +788,7 @@ echo "  === linux probes ==="
 echo "  dpkginfo probe:              $have_libapt_pkg"
 echo "  inetlisteningservers probe:  $probes_linux"
 echo "  rpminfo probe:               $have_librpm"
+echo "  partition probe:             $probes_linux"
 echo ""
 
 echo "  === configuration ==="
