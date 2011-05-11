@@ -1005,8 +1005,11 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 
 		/* simple object */
 		filters = probe_prepare_filters(probe, probe_in);
+
 		if (OSCAP_GSYM(varref_handling))
 			varrefs = probe_obj_getent(probe_in, "varrefs", 1);
+                else
+                        varrefs = NULL;
 
 		if (varrefs == NULL || !OSCAP_GSYM(varref_handling)) {
 			probe_out = probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, NULL, NULL);
