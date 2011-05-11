@@ -31,25 +31,25 @@ function test_probes_sysinfo {
     if [ $? -eq 0 ] && [ -f $RESFILE ]; then
 	
 	OS_NAME="`uname -s`"
-	if ! grep -q "os_name: $OS_NAME" "$LOGFILE"; then
+	if ! grep "os_name: $OS_NAME" "$LOGFILE" > /dev/null; then
 	    echo "os_name should be `uname -s`" 
 	    ret_val=$[$ret_val + 1]
 	fi
 	
 	OS_VERSION="`uname -v`"
-	if ! grep -q "os_version: ${OS_VERSION}" "$LOGFILE"; then 
+	if ! grep "os_version: ${OS_VERSION}" "$LOGFILE" > /dev/null; then 
 	    echo "os_version should be ${OS_VERSION}" 
 	    ret_val=$[$ret_val + 1]
 	fi
 
 	OS_ARCHITECTURE="`uname -m`"
-	if ! grep -q "os_architecture: ${OS_ARCHITECTURE}" "$LOGFILE"; then 
+	if ! grep "os_architecture: ${OS_ARCHITECTURE}" "$LOGFILE" > /dev/null; then 
 	    echo "os_architecture should be ${OS_ARCHITECTURE}" 
 	    ret_val=$[$ret_val + 1]
 	fi
 
 	PRIMARY_HOST_NAME="`uname -n`"
-	if ! grep -q "primary_host_name: ${PRIMARY_HOST_NAME}" "$LOGFILE"; then 
+	if ! grep "primary_host_name: ${PRIMARY_HOST_NAME}" "$LOGFILE" > /dev/null; then 
 	    echo "primary_host_name should be ${PRIMARY_HOST_NAME}" 
 	    ret_val=$[$ret_val + 1]
 	fi

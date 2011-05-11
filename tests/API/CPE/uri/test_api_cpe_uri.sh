@@ -79,21 +79,21 @@ function test_api_cpe_uri_match {
 		CPE=(`cat parsing.out | sed 's/(null)//g' | \
 		    sed 's/^\s*//g' | tr '\n' ' '`)
 		./test_api_cpe_uri --matching $URI " " >matching.out
-		if [ ! $? -eq 0 ] || ! grep -q "Mismatch" matching.out; then
+		if [ ! $? -eq 0 ] || ! grep "Mismatch" matching.out > /dev/null; then
 		    echo "Cannot match URI \"$URI\"!"
 		    ret_val=1;		
 		fi
-		if [ ! $? -eq 0 ] || ! grep -q "Mismatch" matching.out; then
+		if [ ! $? -eq 0 ] || ! grep "Mismatch" matching.out > /dev/null; then
 		./test_api_cpe_uri --matching $URI "cpe:/:::::::" > matching.out
 		    echo "Cannot match URI \"$URI\"!"
 		    ret_val=1;		
 		fi
-		if [ ! $? -eq 0 ] || ! grep -q "Mismatch" matching.out; then
+		if [ ! $? -eq 0 ] || ! grep "Mismatch" matching.out > /dev/null; then
 		./test_api_cpe_uri --matching $URI "cpe:/:foo" > matching.out
 		    echo "Cannot match URI \"$URI\"!"
 		    ret_val=1;		
 		fi
-		if [ ! $? -eq 0 ] || ! grep -q "Mismatch" matching.out; then
+		if [ ! $? -eq 0 ] || ! grep "Mismatch" matching.out > /dev/null; then
 		./test_api_cpe_uri --matching $URI "cpe:/foo" > matching.out
 		    echo "Cannot match URI \"$URI\"!"
 		    ret_val=1;		
@@ -102,17 +102,17 @@ function test_api_cpe_uri_match {
 		OTHER_URIS=(`echo ${CPE_URIS[@]} | tr ' ' '\n' | grep -v $URI | \
 		    tr '\n' ' '`)
 
-		if [ ! $? -eq 0 ] || ! grep -q "Mismatch" matching.out; then
+		if [ ! $? -eq 0 ] || ! grep "Mismatch" matching.out > /dev/null; then
 		./test_api_cpe_uri --matching $URI ${OTHER_URIS[@]} > matching.out
 		    echo "Cannot match URI \"$URI\"!"
 		    ret_val=1;		
 		fi
-		if [ ! $? -eq 0 ] || ! grep -q "Mismatch" matching.out; then
+		if [ ! $? -eq 0 ] || ! grep "Mismatch" matching.out > /dev/null; then
 		./test_api_cpe_uri --matching $URI $URI > matching.out
 		    echo "Cannot match URI \"$URI\"!"
 		    ret_val=1;		
 		fi
-		if [ ! $? -eq 0 ] || ! grep -q "Mismatch" matching.out; then
+		if [ ! $? -eq 0 ] || ! grep "Mismatch" matching.out > /dev/null; then
 		./test_api_cpe_uri --matching $URI ${CPE_URIS[@]} > matching.out
 		    echo "Cannot match URI \"$URI\"!"
 		    ret_val=1;		
