@@ -108,8 +108,8 @@ probe_sysctl_SOURCES= unix/sysctl.c
 if WANT_PROBES_LINUX
 pkglibexec_PROGRAMS += probe_partition
 probe_partition_SOURCES= unix/linux/partition.c
-probe_partition_CFLAGS= -DPROC_CHECK @pcre_cflags@
-probe_partition_LDFLAGS= @pcre_libs@
+probe_partition_CFLAGS= -DPROC_CHECK @pcre_cflags@ @libblkid_cflags@
+probe_partition_LDFLAGS= @pcre_libs@ @libblkid_libs@
 
 pkglibexec_PROGRAMS += probe_inetlisteningservers
 probe_inetlisteningservers_SOURCES= unix/linux/inetlisteningservers.c

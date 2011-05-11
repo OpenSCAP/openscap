@@ -41,6 +41,10 @@
 #include <config.h>
 #endif
 
+#if defined(HAVE_BLKID_GET_TAG_VALUE)
+#include <blkid/blkid.h>
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
@@ -63,7 +67,7 @@
 static int collect_item(SEXP_t *probe_out, struct mntent *mnt_ent)
 {
         SEXP_t *item;
-        char   *uuid, *tok, *save = NULL, **mnt_opts;
+        char   *uuid = NULL, *tok, *save = NULL, **mnt_opts;
         uint8_t mnt_ocnt;
         struct statvfs stvfs;
 
@@ -76,8 +80,9 @@ static int collect_item(SEXP_t *probe_out, struct mntent *mnt_ent)
         /*
          * Get UUID
          */
-        uuid = "";
-
+#if defined(HAVE_BLKID_GET_TAG_VALUE)
+        uuid = blkid_get_tag_value(NULL, "UUID", mnt_ent->mnt_fsname);
+#endif
         /*
          * Create a NULL-terminated array from the mount options
          */

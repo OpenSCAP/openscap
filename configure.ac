@@ -329,6 +329,18 @@ AC_CHECK_LIB(
   ]
 )
 
+#
+# libblkid
+#
+AC_CHECK_LIB(
+  [blkid],
+  [blkid_get_tag_value],
+  [libblkid_cflags=
+   libblkid_libs=-lblkid
+   AC_DEFINE([HAVE_BLKID_GET_TAG_VALUE], [1], [blkid_get_tag_value is available])
+  ]
+)
+
 # Checks for header files.
 
 AC_HEADER_STDC
@@ -405,6 +417,9 @@ AC_SUBST(deb_libs)
 
 AC_SUBST(libacl_cflags)
 AC_SUBST(libacl_libs)
+
+AC_SUBST(libblkid_cflags)
+AC_SUBST(libblkid_libs)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
