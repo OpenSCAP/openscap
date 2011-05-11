@@ -26,7 +26,7 @@ function test_crapi_digest {
     dd if=/dev/urandom of="${TEMPDIR}/b" count=123 bs=1  || return 2
     dd if=/dev/urandom of="${TEMPDIR}/c" count=1   bs=8k || return 2
     dd if=/dev/urandom of="${TEMPDIR}/d" count=321 bs=1  || return 2
-    dd if=/dev/urandom of="${TEMPDIR}/e" count=1   bs=1M || return 2
+    dd if=/dev/urandom of="${TEMPDIR}/e" count=1   bs=1024k || return 2
     dd if=/dev/urandom of="${TEMPDIR}/f" count=312 bs=1  || return 2
     
     for file in a b c d e f; do
@@ -57,7 +57,7 @@ function test_crapi_mdigest {
     dd if=/dev/urandom of="${TEMPDIR}/b" count=123 bs=1  || return 2
     dd if=/dev/urandom of="${TEMPDIR}/c" count=1   bs=8k || return 2
     dd if=/dev/urandom of="${TEMPDIR}/d" count=321 bs=1  || return 2
-    dd if=/dev/urandom of="${TEMPDIR}/e" count=1   bs=1M || return 2
+    dd if=/dev/urandom of="${TEMPDIR}/e" count=1   bs=1024k || return 2
     dd if=/dev/urandom of="${TEMPDIR}/f" count=312 bs=1  || return 2
     
     for file in a b c d e f; do
