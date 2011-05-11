@@ -43,8 +43,8 @@ function test_api_cpe_uri_create {
 	./test_api_cpe_uri --parsing  $URI parsing.out > parsing.out.1
 	if [ $? -eq 0 ]; then
 	    if [ "`cat  parsing.out`X" == "${URI}X" ]; then
-		sed -i 's/^\s*//g' parsing.out.1
-		sed -i 's/(null)//g' parsing.out.1
+		sed 's/^\s*//g' parsing.out.1 > parsing.out.sed-tmp ; mv parsing.out.sed-tmp parsing.out.1
+		sed 's/(null)//g' parsing.out.1 > parsing.out.sed-tmp ; mv parsing.out.sed-tmp parsing.out.1
 		CPE=(`cat parsing.out.1 | tr '\n' ' '`)
 		./test_api_cpe_uri --creation  \
 		    "${CPE[0]}" \
