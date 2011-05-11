@@ -65,6 +65,10 @@ CFLAGS_NODEBUG="-DNDEBUG -Wno-unused-function -Wno-unused-but-set-variable"
 #
 AC_CHECK_FUNC(sigwaitinfo, [sigwaitinfo_libs=""], [sigwaitinfo_libs="-lrt"])
 
+# vasprintf
+#
+AC_CHECK_FUNCS([vasprintf])
+
 #
 # posix_memalign
 #
