@@ -83,6 +83,7 @@ Summary:        SCAP probes
 Group:          Applications/System
 Requires:       %{name} = %{version}-%{release}
 BuildRequires:  openldap-devel
+BuildRequires:  libblkid-devel
 #BuildRequires:  opendbx - for sql
 
 %description    extra-probes
@@ -205,6 +206,7 @@ fi
 %files extra-probes
 %{_libexecdir}/openscap/probe_ldap57
 %{_libexecdir}/openscap/probe_dnscache
+%{_libexecdir}/openscap/probe_partition
 
 %changelog
 * Fri Apr 08 2011 Peter Vrabec <pvrabec@redhat.com> 0.7.2-1
