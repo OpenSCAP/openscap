@@ -38,7 +38,7 @@ function test_api_cpe_lang_import_key {
     echo $KEY_789 >> get-all.out
 
     for K in "$KEY_123" "$KEY_456" "$KEY_789"; do
-	N=`echo $K | awk -F ':' '{print $1}'`
+	N=`echo $K | awk -F':' '{print $1}'`
 	./test_api_cpe_lang --get-key $srcdir/lang.xml "UTF-8" $N > get-key.out
 	if [ $? -eq 0 ]; then
 	    if [ "`cat get-key.out`X" != "${K}X" ]; then
