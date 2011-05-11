@@ -1,1 +1,5 @@
-SUBDIRS = API probes
+if WANT_PROBES
+PROBE_SUBDIRS = probes
+endif
+SUBDIRS = API $(PROBE_SUBDIRS)
+

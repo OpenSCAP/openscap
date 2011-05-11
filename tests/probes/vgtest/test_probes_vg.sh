@@ -17,11 +17,6 @@
 
 function test_probes_vg {
     
-    if ! which valgrind; then
-	echo "No valgrind installed, skipping" 
-	return 255
-    fi
-
     VGTEST_TMPDIR="/tmp/vgtest"
 
     if [[ ! -d "$VGTEST_TMPDIR" ]]; then

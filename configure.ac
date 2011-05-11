@@ -124,6 +124,17 @@ if test "x${HAVE_CURL_CONFIG}" != "xyes"; then
 fi
 
 #
+# env
+#
+AC_CHECK_PROG(
+  [HAVE_ENV],
+  [env],
+  [yes],,,
+)
+
+AM_CONDITIONAL(ENV_PRESENT, [test x"${HAVE_ENV}" = xyes])
+
+#
 # Valgrind
 #
 AC_CHECK_PROG(
@@ -131,6 +142,8 @@ AC_CHECK_PROG(
   [valgrind],
   [yes],,,
 )
+
+AM_CONDITIONAL(VALGRIND_PRESENT, [test x"${HAVE_VALGRIND}" = xyes])
 
 # Checks for libraries.
 

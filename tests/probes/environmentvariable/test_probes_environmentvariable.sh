@@ -22,12 +22,6 @@ function test_probes_environmentvariable {
     local DEFFILE="test_probes_environmentvariable.xml"
     local RESFILE="results.xml"
 
-    eval "which env  > /dev/null 2>&1"    
-    if [ ! $? -eq 0 ]; then		
-	echo -e "No env found in $PATH!\n" 
-	return 255; # Test is not applicable.
-    fi
-
     [ -f $RESFILE ] && rm -f $RESFILE
 
     bash ${srcdir}/test_probes_environmentvariable.xml.sh > $DEFFILE
