@@ -58,7 +58,7 @@ AS_CASE([$host],
 
 CFLAGS_OPTIMIZED="-O2 -finline-functions"
 CFLAGS_DEBUGGING="-fno-inline-functions -O0 -g3"
-CFLAGS_NODEBUG="-DNDEBUG"
+CFLAGS_NODEBUG="-DNDEBUG -Wno-unused-function -Wno-unused-but-set-variable -Wno-unused-but-set-variable"
 
 #
 # sigwaitinfo
