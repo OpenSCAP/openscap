@@ -657,7 +657,7 @@ if test "$debug" = "yes"; then
    CFLAGS="$CFLAGS $CFLAGS_DEBUGGING"
 else
    CFLAGS="$CFLAGS $CFLAGS_NODEBUG"
-   AC_SUBST([NODEBUG], [$CFLAGS_NODEBUG]) #for swig alloc.h
+   AC_SUBST([NODEBUG], [-DNDEBUG]) #for swig alloc.h
 fi
 
 AC_ARG_ENABLE([util-oscap],

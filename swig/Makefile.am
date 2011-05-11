@@ -7,6 +7,8 @@ AM_CPPFLAGS = -I${top_srcdir}/src/common/public \
               -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE=1 -I/usr/include -include "sys/types.h" \
 		@libxml_cflags@
 
+CFLAGS+= -Wno-missing-prototypes
+
 perl_vendorlib_DATA = openscap.pm
 perl_vendorarch_LTLIBRARIES = _openscap_pm.la
 _openscap_pm_la_LDFLAGS = -module -avoid-version
