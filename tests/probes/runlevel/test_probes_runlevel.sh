@@ -36,7 +36,7 @@ function test_probes_runlevel_A {
     fi
 
     bash ${srcdir}/test_probes_runlevel_A.xml.sh > $DEFFILE
-    ../../../utils/.libs/oscap oval eval --result-file $RESFILE $DEFFILE
+    ../../../utils/.libs/oscap oval eval --results $RESFILE $DEFFILE
         
     if [ -f $RESFILE ]; then
 
@@ -105,7 +105,7 @@ function test_probes_runlevel_B {
     local SERVICE_B=`chkconfig --list | grep "3:off" | head -1 | awk '{print $1}'`
 
     bash ${srcdir}/test_probes_runlevel_B.xml.sh $SERVICE_A $SERVICE_B > $DEFFILE
-    ../../../utils/.libs/oscap oval eval --result-file $RESFILE $DEFFILE
+    ../../../utils/.libs/oscap oval eval --results $RESFILE $DEFFILE
         
     if [ -f $RESFILE ]; then
 

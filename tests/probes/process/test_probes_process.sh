@@ -31,7 +31,7 @@ function test_probes_process {
 
     bash ${srcdir}/test_probes_process.xml.sh > $DEFFILE
     COUNT=$?
-    ../../../utils/.libs/oscap oval eval --result-file $RESFILE $DEFFILE
+    ../../../utils/.libs/oscap oval eval --results $RESFILE $DEFFILE
     
     if [ -f $RESFILE ]; then
 

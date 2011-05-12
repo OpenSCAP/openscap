@@ -29,7 +29,7 @@ function test_probes_family {
 
     [ -f $RESFILE ] && rm -f $RESFILE
 
-    ../../../utils/.libs/oscap oval eval --result-file $RESFILE $DEFFILE
+    ../../../utils/.libs/oscap oval eval --results $RESFILE $DEFFILE
 
     if [ -f $RESFILE ]; then
 

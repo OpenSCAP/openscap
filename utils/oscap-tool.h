@@ -120,11 +120,12 @@ struct oscap_action {
 	char *f_syschar;
         char *f_results;
         char *f_report;
+	char *f_variables;
 	/* URIs */
         char *url_xccdf;
         char *url_oval;
 	char *url_syschar;
-        char **urls_oval;
+        char **urls_oval; /* not used as URIs Fix! */
 	/* others */
         char *profile;
         char *file_version;

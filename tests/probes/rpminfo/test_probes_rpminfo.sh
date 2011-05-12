@@ -39,7 +39,7 @@ function test_probes_rpminfo {
     local RPM_B_NAME=`rpm --qf "%{NAME}\n" -qa | sort -u | sed -n '2p'`
     
     bash ${srcdir}/test_probes_rpminfo.xml.sh $RPM_A_NAME $RPM_B_NAME > $DEFFILE
-    ../../../utils/.libs/oscap oval eval --result-file $RESFILE $DEFFILE
+    ../../../utils/.libs/oscap oval eval --results $RESFILE $DEFFILE
         
     if [ -f $RESFILE ]; then
 

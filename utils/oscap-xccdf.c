@@ -86,10 +86,10 @@ static struct oscap_module XCCDF_EVAL = {
         "Options:\n"
         "   --profile <name>\r\t\t\t\t - The name of Profile to be evaluated.\n"
         "   --oval-results\r\t\t\t\t - Save OVAL results as well.\n"
-        "   --result-file <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
-        "   --report-file <file>\r\t\t\t\t - Write HTML report into file.\n"
+        "   --results <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
+        "   --report <file>\r\t\t\t\t - Write HTML report into file.\n"
         "   --skip-valid \r\t\t\t\t - Skip validation.\n"
-                                 "\t\t\t\t   (--result-file must be also specified for this to work)\n",
+                                 "\t\t\t\t   (--results must be also specified for this to work)\n",
     .opt_parser = getopt_xccdf,
     .func = app_evaluate_xccdf
 };
@@ -553,10 +553,10 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 	const struct option long_options[] = {
 	// options
 		{"output",		required_argument, NULL, XCCDF_OPT_OUTPUT},
-		{"result-file", 	required_argument, NULL, XCCDF_OPT_RESULT_FILE},
+		{"results", 		required_argument, NULL, XCCDF_OPT_RESULT_FILE},
 		{"profile", 		required_argument, NULL, XCCDF_OPT_PROFILE},
 		{"result-id",		required_argument, NULL, XCCDF_OPT_RESULT_ID},
-		{"report-file", 	required_argument, NULL, XCCDF_OPT_REPORT_FILE},
+		{"report", 		required_argument, NULL, XCCDF_OPT_REPORT_FILE},
 		{"show", 		required_argument, NULL, XCCDF_OPT_SHOW},
 		{"template", 		required_argument, NULL, XCCDF_OPT_TEMPLATE},
 		{"format", 		required_argument, NULL, XCCDF_OPT_FORMAT},
@@ -596,7 +596,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 			return oscap_module_usage(action->module, stderr, "XCCDF file need to be specified!");
 		}
                 if (action->f_report && !action->f_results)
-                    return oscap_module_usage(action->module, stderr, "Please specify --result-file if you want to generate a HTML report.");
+                    return oscap_module_usage(action->module, stderr, "Please specify --result if you want to generate a HTML report.");
 
                 action->url_xccdf = argv[optind];
                 if (argc > (optind+1)) {

@@ -36,7 +36,7 @@ function test_probes_shadow {
     fi
    
     bash ${srcdir}/test_probes_shadow.xml.sh > $DEFFILE
-    ../../../utils/.libs/oscap oval eval --result-file $RESFILE $DEFFILE
+    ../../../utils/.libs/oscap oval eval --results $RESFILE $DEFFILE
         
     if [ -f $RESFILE ]; then
 

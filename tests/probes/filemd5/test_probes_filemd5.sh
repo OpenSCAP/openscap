@@ -36,7 +36,7 @@ function test_probes_filemd5 {
     fi
     
     bash ${srcdir}/test_probes_filemd5.xml.sh > $DEFFILE
-    ../../../utils/.libs/oscap oval eval --result-file $RESFILE $DEFFILE    
+    ../../../utils/.libs/oscap oval eval --results $RESFILE $DEFFILE
     
     if [ -f $RESFILE ]; then
 

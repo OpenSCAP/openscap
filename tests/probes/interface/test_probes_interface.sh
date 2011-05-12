@@ -38,7 +38,7 @@ function test_probes_interface {
 	> $DEFFILE
     LINES=$?
 
-    ../../../utils/.libs/oscap oval eval --result-file $RESFILE $DEFFILE
+    ../../../utils/.libs/oscap oval eval --results $RESFILE $DEFFILE
     
     if [ -f $RESFILE ]; then
 

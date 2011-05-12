@@ -39,7 +39,7 @@ function test_probes_textfilecontent54 {
     echo "valid_key = valid_value" > "$FILE_A"
     echo "valid_key = valid_value" >> "$FILE_A"
 
-    ../../../utils/.libs/oscap oval eval --result-file $RESFILE $DEFFILE
+    ../../../utils/.libs/oscap oval eval --results $RESFILE $DEFFILE
     
     if [ -f $RESFILE ]; then
 

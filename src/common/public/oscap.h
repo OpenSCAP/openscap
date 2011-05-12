@@ -164,6 +164,7 @@ const char *oscap_get_version(void);
 /// SCAP document type identifiers
 typedef enum oscap_document_type {
 	OSCAP_DOCUMENT_OVAL_DEFINITIONS = 1,  ///< OVAL Definitions file
+	OSCAP_DOCUMENT_OVAL_VARIABLES,        ///< OVAL Variables
 	OSCAP_DOCUMENT_OVAL_SYSCHAR,          ///< OVAL system characteristics file
 	OSCAP_DOCUMENT_OVAL_RESULTS,          ///< OVAL results file
 	OSCAP_DOCUMENT_XCCDF,                 ///< XCCDF benchmark file

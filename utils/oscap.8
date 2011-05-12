@@ -37,11 +37,15 @@ Common Vulnerability Scoring System
 
 .SH OVAL OPERATIONS
 .TP
-.B collect\fR definitions-file
+.B collect\fR [\fIoptions\fR] definitions-file
 .RS
-Probe the system and gather system characteristics for objects in OVAL Definition file. Print output (OVAL System Characteristic) to standart output.
-.RE
+Probe the system and gather system characteristics for objects in OVAL Definition file. The output (OVAL System Characteristic) is printed to standard output.
 .PP
+.TP
+\fB\-\-variables FILE\fR
+Provide external variables expected by OVAL Definitions.
+.RE
+.TP
 .B eval\fR [\fIoptions\fR] definitions-file
 .RS
 Probe the system and evaluate all definitions from OVAL Definition file. Print result of each definition to standard output. oscap returns 0 if all definitions pass. If there is an error during evaluation, the return code is 1. If there is at least one failed result definition, oscap-scan finishes with return code 2.
@@ -50,11 +54,14 @@ Probe the system and evaluate all definitions from OVAL Definition file. Print r
 \fB\-\-id DEFINITION-ID\fR
 Probe the system and evaluate ONLY specified definition from OVAL Definition file.
 .TP
-\fB\-\-result-file FILE\fR
+\fB\-\-variables FILE\fR
+Provide external variables expected by OVAL Definitions.
+.TP
+\fB\-\-results FILE\fR
 Write OVAL Results into file.
 .TP
-\fB\-\-report-file FILE\fR
-Write HTML results report into file.
+\fB\-\-report FILE\fR
+Create human readable (HTML) report from OVAL Results.
 .TP
 \fB\-\-skip-valid\fR
 Do not validate input files before evaluation.
@@ -64,10 +71,10 @@ Do not validate input files before evaluation.
 .TP
 .B analyse\fR [\fIoptions\fR] definitions-file syschar-file
 .RS
-In this mode, the oscap tool does not perform data collection on the local system, but relies upon the input file, which may have been generated on another system.
+In this mode, the oscap tool does not perform data collection on the local system, but relies upon the input file, which may have been generated on another system. The output (OVAL Results) is printed to standard output.
 .TP
-\fB\-\-result-file FILE\fR
-Write OVAL Results into file.
+\fB\-\-variables FILE\fR
+Provide external variables expected by OVAL Definitions.
 .RE
 
 .TP
@@ -78,8 +85,8 @@ Validate given OVAL file against a XML schema. Every found error is printed to t
 \fB\-\-version VER\fR
 Specify version of the specification the document shall conform to.
 .TP
-\fB\-\-definitions\fR, \fB\-\-syschar\fR, \fB\-\-results\fR
-Specify whether the validated document is an OVAL definitions file, OVAL system characteristics file, or OVAL results file. Default: definitions.
+\fB\-\-definitions\fR, \fB\-\-variables\fR, \fB\-\-syschar\fR, \fB\-\-results\fR
+Specify whether the validated document is an OVAL definitions file, external OVAL Variables, OVAL system characteristics file, or OVAL results file. Default: definitions.
 .RE
 .TP
 .B \fBgenerate\fR <submodule> [submodule-specific-options]
@@ -110,19 +117,19 @@ You may specify all required OVAL Definition files as last parameters. If you do
 Select profile from XCCDF document, otherwise the first profile is used.
 .RE
 .TP
-\fB\-\-result-file FILE\fR
+\fB\-\-results FILE\fR
 .RS
 Write XCCDF results into file.
 .RE
 .TP
-\fB\-\-report-file FILE\fR
+\fB\-\-report FILE\fR
 .RS
-Write HTML report into file. You also have to specify --result-file for this feature to work.
+Write HTML report into file. You also have to specify --result for this feature to work.
 .RE
 .TP
 \fB\-\-oval-results\fR
 .RS
-Generate OVAL Result file for each OVAL session used for evaluation. File with name '\fIoriginal-oval-definitions-filename\fR.result.xml' will be generated for each referenced OVAL file. This option (with conjunction with the \fB\-\-report-file\fR option) also enables inclusion of additional OVAL information in the XCCDF report.
+Generate OVAL Result file for each OVAL session used for evaluation. File with name '\fIoriginal-oval-definitions-filename\fR.result.xml' will be generated for each referenced OVAL file. This option (with conjunction with the \fB\-\-report\fR option) also enables inclusion of additional OVAL information in the XCCDF report.
 .RE
 .TP
 \fB\-\-skip-valid\fR
