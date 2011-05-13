@@ -101,7 +101,7 @@ probe_interface_SOURCES= unix/interface.c
 
 pkglibexec_PROGRAMS += probe_xinetd
 probe_xinetd_SOURCES = unix/xinetd.c
-probe_xinetd_LDADD = $(LDADD) $(top_srcdir)/src/common/liboscapcommon.la
+probe_xinetd_LDADD = $(LDADD) $(top_builddir)/src/common/liboscapcommon.la
 
 pkglibexec_PROGRAMS += probe_sysctl
 probe_sysctl_SOURCES= unix/sysctl.c
