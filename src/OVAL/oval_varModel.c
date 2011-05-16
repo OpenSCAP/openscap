@@ -81,6 +81,21 @@ static _oval_variable_model_frame_t *_oval_variable_model_frame_new(char *id, co
 	return frame;
 }
 
+bool oval_variable_model_iterator_has_more(struct oval_variable_model_iterator *itr)
+{
+	return oval_collection_iterator_has_more((struct oval_iterator *) itr);
+}
+
+struct oval_variable_model *oval_variable_model_iterator_next(struct oval_variable_model_iterator *itr)
+{
+	return (struct oval_variable_model *) oval_collection_iterator_next((struct oval_iterator *) itr);
+}
+
+void oval_variable_model_iterator_free(struct oval_variable_model_iterator *itr)
+{
+	oval_collection_iterator_free((struct oval_iterator *) itr);
+}
+
 bool oval_variable_model_is_valid(struct oval_variable_model *variable_model)
 {
         bool is_valid = true;
@@ -456,4 +471,12 @@ struct oval_string_iterator *oval_variable_model_get_values(struct oval_variable
 	__attribute__nonnull__(model);
 	_oval_variable_model_frame_t *frame = oval_string_map_get_value(model->varmap, varid);
 	return (frame) ? (struct oval_string_iterator *)oval_collection_iterator(frame->values) : NULL;
+}
+
+struct oval_collection *oval_variable_model_get_values_ref(struct oval_variable_model *model, char *varid)
+{
+	_oval_variable_model_frame_t *frame;
+
+	frame = oval_string_map_get_value(model->varmap, varid);
+	return (frame) ? frame->values : NULL;
 }

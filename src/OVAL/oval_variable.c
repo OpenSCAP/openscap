@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009-2011 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -44,29 +44,45 @@
 #include "common/_error.h"
 
 typedef struct oval_variable {
-	struct oval_definition_model *model;
-	char *id;
-	char *comment;
-	int version;
-	int deprecated;
-	oval_variable_type_t type;
-	oval_datatype_t datatype;
-	oval_syschar_collection_flag_t flag;
-	struct oval_collection *values;
-} oval_variable_t, oval_variable_CONEXT_t;
+#define VAR_BASE				\
+	struct oval_definition_model *model;	\
+	oval_variable_type_t type;		\
+	oval_syschar_collection_flag_t flag;	\
+	char *id;				\
+	int version;				\
+	oval_datatype_t datatype;		\
+	char *comment;				\
+	int deprecated
 
-typedef struct oval_variable_LOCAL {
-	struct oval_definition_model *model;
-	char *id;
-	char *comment;
-	int version;
-	int deprecated;
-	oval_variable_type_t type;
-	oval_datatype_t datatype;
-	oval_syschar_collection_flag_t flag;
+	VAR_BASE;
+} oval_variable_t;
+
+typedef struct {
+	VAR_BASE;
 	struct oval_collection *values;
-	struct oval_component *component;	//type==OVAL_VARIABLE_LOCAL
-} oval_variable_LOCAL_t, oval_variable_UNKNOWN_t;
+} oval_variable_CONSTANT_t;
+
+typedef struct {
+	VAR_BASE;
+	/* todo: possible value */
+	/* todo: possible restriction */
+	struct oval_collection *values_ref;
+} oval_variable_EXTERNAL_t;
+
+typedef struct {
+	VAR_BASE;
+	struct oval_component *component;
+	struct oval_collection *values;
+} oval_variable_LOCAL_t;
+
+typedef struct {
+	union {
+		oval_variable_t v1;
+		oval_variable_CONSTANT_t v2;
+		oval_variable_EXTERNAL_t v3;
+		oval_variable_LOCAL_t v4;
+	} unused;
+} oval_variable_UNKNOWN_t;
 
 bool oval_variable_iterator_has_more(struct oval_variable_iterator
 				     *oc_variable)
@@ -134,10 +150,36 @@ oval_datatype_t oval_variable_get_datatype(struct oval_variable * variable)
 
 struct oval_value_iterator *oval_variable_get_values(struct oval_variable *variable)
 {
+	struct oval_collection *values;
+
 	__attribute__nonnull__(variable);
 
-	struct oval_collection *value_collection = variable->values;
-	return (value_collection) ? (struct oval_value_iterator *)oval_collection_iterator(variable->values) : NULL;
+	switch (variable->type) {
+	case OVAL_VARIABLE_EXTERNAL: {
+		oval_variable_EXTERNAL_t *var = (oval_variable_EXTERNAL_t *) variable;
+
+		values = var->values_ref;
+		break;
+	}
+	case OVAL_VARIABLE_CONSTANT: {
+		oval_variable_CONSTANT_t *var = (oval_variable_CONSTANT_t *) variable;
+
+		values = var->values;
+		break;
+	}
+	case OVAL_VARIABLE_LOCAL: {
+		oval_variable_LOCAL_t *var = (oval_variable_LOCAL_t *) variable;
+
+		values = var->values;
+		break;
+	}
+	default:
+		values = NULL;
+		break;
+	}
+
+	return (values) ? (struct oval_value_iterator *) oval_collection_iterator(values) : 
+		(struct oval_value_iterator *) oval_collection_iterator_new();
 }
 
 oval_syschar_collection_flag_t oval_variable_get_collection_flag(struct oval_variable *variable) {
@@ -148,26 +190,29 @@ oval_syschar_collection_flag_t oval_variable_get_collection_flag(struct oval_var
 
 int oval_syschar_model_compute_variable(struct oval_syschar_model *sysmod, struct oval_variable *variable)
 {
-	oval_syschar_collection_flag_t flag;
+	oval_variable_LOCAL_t *var;
+	struct oval_component *component;
 	struct oval_value_iterator *val_itr;
 
 	__attribute__nonnull__(variable);
 
-	if (oval_variable_get_collection_flag(variable) != SYSCHAR_FLAG_UNKNOWN)
-                return 0;
+	if (variable->type != OVAL_VARIABLE_LOCAL)
+		return 0;
 
-        variable->values = oval_collection_new();
-        struct oval_component *component = oval_variable_get_component(variable);
+	var = (oval_variable_LOCAL_t *) variable;
+	if (var->flag != SYSCHAR_FLAG_UNKNOWN)
+		return 0;
+
+	var->values = oval_collection_new();
+	component = var->component;
         if (component) {
-                variable->flag = oval_component_compute(sysmod, component, variable->values);
-        } else {
-		oscap_dlprintf(DBG_W, "NULL component bound to a variable, id: %s, type: %s.\n",
-			       oval_variable_type_get_text(variable->type), oval_variable_get_id(variable));
-                return -1;
+		var->flag = oval_component_compute(sysmod, component, var->values);
+	} else {
+		oscap_dlprintf(DBG_W, "NULL component bound to a variable, id: %s.\n", var->id);
+		return -1;
         }
 
-	flag = oval_variable_get_collection_flag(variable);
-	switch (flag) {
+	switch (var->flag) {
 	case SYSCHAR_FLAG_COMPLETE:
 	case SYSCHAR_FLAG_INCOMPLETE:
 		break;
@@ -177,7 +222,7 @@ int oval_syschar_model_compute_variable(struct oval_syschar_model *sysmod, struc
 
 	val_itr = oval_variable_get_values(variable);
 	if (!oval_value_iterator_has_more(val_itr))
-		variable->flag = SYSCHAR_FLAG_ERROR;
+		var->flag = SYSCHAR_FLAG_ERROR;
 	oval_value_iterator_free(val_itr);
 
         return 0;
@@ -185,27 +230,29 @@ int oval_syschar_model_compute_variable(struct oval_syschar_model *sysmod, struc
 
 int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *variable)
 {
-	oval_datatype_t var_dt;
-	oval_syschar_collection_flag_t flag;
+	oval_variable_LOCAL_t *var;
+	struct oval_component *component;
 	struct oval_value_iterator *val_itr;
 
 	__attribute__nonnull__(variable);
 
-	if (variable->flag != SYSCHAR_FLAG_UNKNOWN)
+	if (variable->type != OVAL_VARIABLE_LOCAL)
 		return 0;
 
-        variable->values = oval_collection_new();
-        struct oval_component *component = oval_variable_get_component(variable);
+	var = (oval_variable_LOCAL_t *) variable;
+	if (var->flag != SYSCHAR_FLAG_UNKNOWN)
+		return 0;
+
+	var->values = oval_collection_new();
+	component = var->component;
         if (component) {
-		variable->flag = oval_component_query(sess, component, variable->values);
+		var->flag = oval_component_query(sess, component, var->values);
 	} else {
-		oscap_dlprintf(DBG_W, "NULL component bound to a variable, id: %s, type: %s.\n",
-			       oval_variable_type_get_text(variable->type), oval_variable_get_id(variable));
+		oscap_dlprintf(DBG_W, "NULL component bound to a variable, id: %s.\n", var->id);
 		return -1;
         }
 
-	flag = oval_variable_get_collection_flag(variable);
-	switch (flag) {
+	switch (var->flag) {
 	case SYSCHAR_FLAG_COMPLETE:
 	case SYSCHAR_FLAG_INCOMPLETE:
 		break;
@@ -215,19 +262,18 @@ int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *
 
 	val_itr = oval_variable_get_values(variable);
 	if (!oval_value_iterator_has_more(val_itr)) {
-		variable->flag = SYSCHAR_FLAG_ERROR;
+		oval_value_iterator_free(val_itr);
+		var->flag = SYSCHAR_FLAG_ERROR;
 		return 0;
 	}
-
-	var_dt = oval_variable_get_datatype(variable);
 
 	while (oval_value_iterator_has_more(val_itr)) {
 		struct oval_value *val;
 
 		val = oval_value_iterator_next(val_itr);
-		if (oval_value_cast(val, var_dt) != 0) {
+		if (oval_value_cast(val, var->datatype) != 0) {
 			oval_value_iterator_free(val_itr);
-			variable->flag = SYSCHAR_FLAG_ERROR;
+			var->flag = SYSCHAR_FLAG_ERROR;
 			return 0;
 		}
 	}
@@ -263,34 +309,40 @@ struct oval_variable *oval_variable_new(struct oval_definition_model *model, con
 
 	switch (type) {
 	case OVAL_VARIABLE_CONSTANT:{
-			variable = (oval_variable_t *) oscap_alloc(sizeof(oval_variable_CONEXT_t));
+			oval_variable_CONSTANT_t *cvar;
+
+			variable = (oval_variable_t *) oscap_alloc(sizeof(oval_variable_CONSTANT_t));
 			if (variable == NULL)
 				return NULL;
 
-			oval_variable_CONEXT_t *conext = (oval_variable_CONEXT_t *) variable;
-			conext->values = oval_collection_new();
-			conext->flag = SYSCHAR_FLAG_NOT_COLLECTED;
+			cvar = (oval_variable_CONSTANT_t *) variable;
+			cvar->values = NULL;
+			cvar->flag = SYSCHAR_FLAG_NOT_COLLECTED;
 		}
 		break;
 	case OVAL_VARIABLE_EXTERNAL:{
-			variable = (oval_variable_t *) oscap_alloc(sizeof(oval_variable_CONEXT_t));
+			oval_variable_EXTERNAL_t *evar;
+
+			variable = (oval_variable_t *) oscap_alloc(sizeof(oval_variable_EXTERNAL_t));
 			if (variable == NULL)
 				return NULL;
 
-			oval_variable_CONEXT_t *conext = (oval_variable_CONEXT_t *) variable;
-			conext->values = oval_collection_new();
-			conext->flag = SYSCHAR_FLAG_NOT_COLLECTED;
+			evar = (oval_variable_EXTERNAL_t *) variable;
+			evar->values_ref = NULL;
+			evar->flag = SYSCHAR_FLAG_NOT_COLLECTED;
 		}
 		break;
 	case OVAL_VARIABLE_LOCAL:{
+			oval_variable_LOCAL_t *lvar;
+
 			variable = (oval_variable_t *) oscap_alloc(sizeof(oval_variable_LOCAL_t));
 			if (variable == NULL)
 				return NULL;
 
-			oval_variable_LOCAL_t *local = (oval_variable_LOCAL_t *) variable;
-			local->component = NULL;
-			local->values = NULL;
-			local->flag = SYSCHAR_FLAG_UNKNOWN;
+			lvar = (oval_variable_LOCAL_t *) variable;
+			lvar->component = NULL;
+			lvar->values = NULL;
+			lvar->flag = SYSCHAR_FLAG_UNKNOWN;
 		}
 		break;
 	case OVAL_VARIABLE_UNKNOWN:{
@@ -298,10 +350,7 @@ struct oval_variable *oval_variable_new(struct oval_definition_model *model, con
 			if (variable == NULL)
 				return NULL;
 
-			oval_variable_UNKNOWN_t *unknwn = (oval_variable_UNKNOWN_t *) variable;
-			unknwn->component = NULL;
-			unknwn->values = NULL;
-			unknwn->flag = SYSCHAR_FLAG_UNKNOWN;
+			memset(variable, 0, sizeof(oval_variable_UNKNOWN_t));
 		};
 		break;
 	default:
@@ -379,22 +428,55 @@ struct oval_variable *oval_variable_clone(struct oval_definition_model *new_mode
 		oval_variable_set_datatype(new_variable, old_variable->datatype);
 		new_variable->flag = old_variable->flag;
 
-		if (old_variable->values) {
-			struct oval_value_iterator *old_values =
-			    (struct oval_value_iterator *)oval_collection_iterator(old_variable->values);
-			if (new_variable->values == NULL)
-				new_variable->values = oval_collection_new();
-			while (oval_value_iterator_has_more(old_values)) {
-				struct oval_value *value = oval_value_iterator_next(old_values);
-				/* char *text = oval_value_get_text(value); <-- unused */
-				oval_collection_add(new_variable->values, value);
-			}
-			oval_value_iterator_free(old_values);
-		}
+		switch (old_variable->type) {
+		case OVAL_VARIABLE_CONSTANT: {
+			oval_variable_CONSTANT_t *cvar;
+			struct oval_value_iterator *old_val_itr;
 
-		if (new_variable->type == OVAL_VARIABLE_LOCAL) {
-			struct oval_component *component = oval_variable_get_component(old_variable);
-			oval_variable_set_component(new_variable, oval_component_clone(new_model, component));
+			cvar = (oval_variable_CONSTANT_t *) new_variable;
+			old_val_itr = oval_variable_get_values(old_variable);
+			while (oval_value_iterator_has_more(old_val_itr)) {
+				struct oval_value *val;
+
+				val = oval_value_iterator_next(old_val_itr);
+				val = oval_value_clone(val);
+				oval_collection_add(cvar->values, val);
+			}
+			oval_value_iterator_free(old_val_itr);
+
+			break;
+		}
+		case OVAL_VARIABLE_EXTERNAL: {
+			oval_variable_EXTERNAL_t *evar, *old_evar;
+
+			evar = (oval_variable_EXTERNAL_t *) new_variable;
+			old_evar = (oval_variable_EXTERNAL_t *) old_variable;
+			evar->values_ref = old_evar->values_ref;
+
+			break;
+		}
+		case OVAL_VARIABLE_LOCAL: {
+			oval_variable_LOCAL_t *lvar, *old_lvar;
+			struct oval_value_iterator *old_val_itr;
+
+			lvar = (oval_variable_LOCAL_t *) new_variable;
+			old_val_itr = oval_variable_get_values(old_variable);
+			while (oval_value_iterator_has_more(old_val_itr)) {
+				struct oval_value *val;
+
+				val = oval_value_iterator_next(old_val_itr);
+				val = oval_value_clone(val);
+				oval_collection_add(lvar->values, val);
+			}
+			oval_value_iterator_free(old_val_itr);
+
+			old_lvar = (oval_variable_LOCAL_t *) old_variable;
+			lvar->component = oval_component_clone(new_model, old_lvar->component);
+
+			break;
+		}
+		default:
+			break;
 		}
 	}
 	return new_variable;
@@ -407,19 +489,41 @@ void oval_variable_free(struct oval_variable *variable)
 			oscap_free(variable->id);
 		if (variable->comment)
 			oscap_free(variable->comment);
-		oval_variable_CONEXT_t *conext = (oval_variable_CONEXT_t *) variable;
-		if (conext->values) {
-			oval_collection_free_items(conext->values, (oscap_destruct_func) oval_value_free);
-			conext->values = NULL;
+		variable->id = variable->comment = NULL;
+
+		switch (variable->type) {
+		case OVAL_VARIABLE_CONSTANT: {
+			oval_variable_CONSTANT_t *cvar;
+
+			cvar = (oval_variable_CONSTANT_t *) variable;
+			if (cvar->values)
+				oval_collection_free_items(cvar->values, (oscap_destruct_func) oval_value_free);
+			cvar->values = NULL;
+
+			break;
 		}
-		if (variable->type == OVAL_VARIABLE_LOCAL) {
-			oval_variable_LOCAL_t *local = (oval_variable_LOCAL_t *) variable;
-			if (local->component)
-				oval_component_free(local->component);
-			local->component = NULL;
+		case OVAL_VARIABLE_EXTERNAL: {
+			oval_variable_EXTERNAL_t *evar;
+
+			evar = (oval_variable_EXTERNAL_t *) variable;
+			evar->values_ref = NULL;
+
+			break;
 		}
-		variable->comment = NULL;
-		variable->id = NULL;
+		case OVAL_VARIABLE_LOCAL: {
+			oval_variable_LOCAL_t *lvar;
+
+			lvar = (oval_variable_LOCAL_t *) variable;
+			if (lvar->values)
+				oval_collection_free_items(lvar->values, (oscap_destruct_func) oval_value_free);
+			lvar->values = NULL;
+			oval_component_free(lvar->component);
+
+			break;
+		}
+		default:
+			break;
+		}
 
 		oscap_free(variable);
 	}
@@ -435,30 +539,49 @@ void oval_variable_set_datatype(struct oval_variable *variable, oval_datatype_t 
 
 void oval_variable_set_type(struct oval_variable *variable, oval_variable_type_t type)
 {
-	if (variable && !oval_variable_is_locked(variable)) {
-		if (variable->type == OVAL_VARIABLE_UNKNOWN) {
-			variable->type = type;
-			switch (type) {
-			case OVAL_VARIABLE_CONSTANT:
-			case OVAL_VARIABLE_EXTERNAL:
-				{
-					oval_variable_CONEXT_t *conext = (oval_variable_CONEXT_t *) variable;
-					conext->values = oval_collection_new();
-					conext->flag = SYSCHAR_FLAG_NOT_COLLECTED;
-				}
-				break;
-			case OVAL_VARIABLE_LOCAL:
-			case OVAL_VARIABLE_UNKNOWN:
-				variable->flag = SYSCHAR_FLAG_UNKNOWN;
-				break;
-			}
-		} else if (variable->type != type) {
-			/* TODO: Should we set and propagate error here ? */
-			oscap_dlprintf(DBG_E, "Attempt to reset valid variable type, oldtype: %s, newtype: %s.\n",
-				       oval_variable_type_get_text(variable->type), oval_variable_type_get_text(type));
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	if (oval_variable_is_locked(variable)) {
+		oscap_dlprintf(DBG_W, "Attempt to update locked variable: %s.\n", variable->id);
+		return;
+	}
+
+	if (variable->type != OVAL_VARIABLE_UNKNOWN) {
+		oscap_dlprintf(DBG_E, "Attempt to reset valid variable type, oldtype: %s, newtype: %s.\n",
+			       oval_variable_type_get_text(variable->type), oval_variable_type_get_text(type));
+		return;
+	}
+
+	switch (variable->type) {
+	case OVAL_VARIABLE_CONSTANT: {
+		oval_variable_CONSTANT_t *cvar;
+
+		cvar = (oval_variable_CONSTANT_t *) variable;
+		cvar->values = NULL;
+		cvar->flag = SYSCHAR_FLAG_NOT_COLLECTED;
+
+		break;
+	}
+	case OVAL_VARIABLE_EXTERNAL: {
+		oval_variable_EXTERNAL_t *evar;
+
+		evar = (oval_variable_EXTERNAL_t *) variable;
+		evar->values_ref = NULL;
+		evar->flag = SYSCHAR_FLAG_NOT_COLLECTED;
+
+		break;
+	}
+	case OVAL_VARIABLE_LOCAL: {
+		oval_variable_LOCAL_t *lvar;
+
+		lvar = (oval_variable_LOCAL_t *) variable;
+		lvar->component = NULL;
+		lvar->values = NULL;
+		lvar->flag = SYSCHAR_FLAG_UNKNOWN;
+
+		break;
+	}
+	default:
+		break;
+	}
 }
 
 void oval_variable_set_comment(struct oval_variable *variable, char *comm)
@@ -490,20 +613,23 @@ void oval_variable_set_version(struct oval_variable *variable, int version)
 
 void oval_variable_add_value(struct oval_variable *variable, struct oval_value *value)
 {
-	if (variable && !oval_variable_is_locked(variable)) {
-		if (variable->type == OVAL_VARIABLE_CONSTANT || variable->type == OVAL_VARIABLE_EXTERNAL) {
-			/* char *text = oval_value_get_text(value); <-- unused */
-			oval_collection_add(variable->values, value);
-			variable->flag = SYSCHAR_FLAG_COMPLETE;
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	oval_variable_CONSTANT_t *cvar;
+
+	if (oval_variable_is_locked(variable)) {
+		oscap_dlprintf(DBG_W, "Attempt to update locked variable: %s.\n", variable->id);
+		return;
+	}
+
+	if (variable->type != OVAL_VARIABLE_CONSTANT)
+		return;
+
+	cvar = (oval_variable_CONSTANT_t *) variable;
+	oval_collection_add(cvar->values, value);
+	cvar->flag = SYSCHAR_FLAG_COMPLETE;
 }
 
 void oval_variable_clear_values(struct oval_variable *variable)
 {
-	oval_variable_CONEXT_t *conext_var;
-
 	if (oval_variable_is_locked(variable)) {
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 		return;
@@ -513,10 +639,43 @@ void oval_variable_clear_values(struct oval_variable *variable)
 		return;
         }
 
-	conext_var = (oval_variable_CONEXT_t *) variable;
-	oval_collection_free_items(conext_var->values, (oscap_destruct_func) oval_value_free);
-	conext_var->values = oval_collection_new();
-	variable->flag = SYSCHAR_FLAG_NOT_COLLECTED;
+	switch (variable->type) {
+	case OVAL_VARIABLE_CONSTANT: {
+		oval_variable_CONSTANT_t *cvar;
+
+		cvar = (oval_variable_CONSTANT_t *) variable;
+		oval_collection_free_items(cvar->values, (oscap_destruct_func) oval_value_free);
+		cvar->values = NULL;
+		cvar->flag = SYSCHAR_FLAG_NOT_COLLECTED;
+
+		break;
+	}
+	case OVAL_VARIABLE_EXTERNAL: {
+		oval_variable_EXTERNAL_t *evar;
+
+		evar = (oval_variable_EXTERNAL_t *) variable;
+		evar->values_ref = NULL;
+		evar->flag = SYSCHAR_FLAG_NOT_COLLECTED;
+
+		break;
+	}
+	default:
+		break;
+	}
+}
+
+void oval_variable_bind_ext_var(struct oval_variable *var, struct oval_variable_model *varmod, char *extvar_id)
+{
+	oval_variable_EXTERNAL_t *evar;
+
+	if (var->type != OVAL_VARIABLE_EXTERNAL) {
+		dW("Attemp to bind a non-external variable, id: %s, type: %s.\n", var->id, oval_variable_type_get_text(var->type));
+		return;
+	}
+
+	evar = (oval_variable_EXTERNAL_t *) var;
+	evar->values_ref = oval_variable_model_get_values_ref(varmod, extvar_id);
+	/* todo: store a reference to the variable model inside evar? */
 }
 
 void oval_variable_set_component(struct oval_variable *variable, struct oval_component *component)

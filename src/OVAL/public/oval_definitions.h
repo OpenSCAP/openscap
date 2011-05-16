@@ -753,6 +753,12 @@ bool oval_definition_model_is_locked(struct oval_definition_model *definition_mo
  * @memberof oval_definition_model
  */
 const char * oval_definition_model_supported(void);
+/**
+ * Return the list of variable models bound to the specified oval_definition_model.
+ * @return iterator over oval_variable_model collection
+ * @memberof oval_definition_model
+ */
+struct oval_variable_model_iterator *oval_definition_model_get_variable_models(struct oval_definition_model *);
 /** @} */
 
 /**

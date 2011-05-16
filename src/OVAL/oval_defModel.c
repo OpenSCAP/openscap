@@ -53,6 +53,7 @@ typedef struct oval_definition_model {
 	struct oval_string_map *object_map;
 	struct oval_string_map *state_map;
 	struct oval_string_map *variable_map;
+	struct oval_collection *bound_variable_models;
 	xmlDoc *metadata_doc;
 	bool is_locked;
         char *schema;
@@ -112,6 +113,7 @@ struct oval_definition_model *oval_definition_model_new()
 	newmodel->state_map = oval_string_map_new();
 	newmodel->test_map = oval_string_map_new();
 	newmodel->variable_map = oval_string_map_new();
+	newmodel->bound_variable_models = NULL;
 	newmodel->is_locked = false;
         newmodel->schema = strdup(OVAL_DEF_SCHEMA_LOCATION);
 
@@ -262,6 +264,9 @@ void oval_definition_model_free(struct oval_definition_model *model)
 	oval_string_map_free(model->state_map, (oscap_destruct_func) oval_state_free);
 	oval_string_map_free(model->test_map, (oscap_destruct_func) oval_test_free);
 	oval_string_map_free(model->variable_map, (oscap_destruct_func) oval_variable_free);
+	if (model->bound_variable_models)
+		oval_collection_free_items(model->bound_variable_models,
+					   (oscap_destruct_func) oval_variable_model_free);
 
 	xmlFreeDoc(model->metadata_doc);
 
@@ -424,47 +429,38 @@ struct oval_variable *oval_definition_model_get_variable(struct oval_definition_
 int oval_definition_model_bind_variable_model(struct oval_definition_model *defmodel,
 					       struct oval_variable_model *varmodel)
 {
-	//Bind values to all external variables specified in the variable model.
-	struct oval_variable_iterator *variables = oval_definition_model_get_variables(defmodel);
-	while (oval_variable_iterator_has_more(variables)) {
-		struct oval_variable *variable = oval_variable_iterator_next(variables);
-		if (oval_variable_get_type(variable) == OVAL_VARIABLE_EXTERNAL) {
-			char *varid = oval_variable_get_id(variable);
-			oval_datatype_t var_datatype;
+	struct oval_string_iterator *evar_id_itr;
 
-			if (!oval_variable_model_has_variable(varmodel, varid))
-				continue;
+	if (!defmodel->bound_variable_models)
+		defmodel->bound_variable_models = oval_collection_new();
 
-			var_datatype = oval_variable_model_get_datatype(varmodel, varid);
-			if (var_datatype != OVAL_DATATYPE_UNKNOWN) {	//values are bound in the variable model
-				oval_datatype_t def_datatype = oval_variable_get_datatype(variable);
-				if (def_datatype == var_datatype) {
-					struct oval_string_iterator *values =
-					    oval_variable_model_get_values(varmodel, varid);
-					while (oval_string_iterator_has_more(values)) {
-						char *text = oval_string_iterator_next(values);
-						struct oval_value *value = oval_value_new(var_datatype, text);
-						oval_variable_add_value(variable, value);
-					}
-					oval_string_iterator_free(values);
-				} else {
-					oval_variable_iterator_free(variables);
-					oscap_dlprintf(DBG_E, "Unmatched variable datatypes: id: %s, "
-						       "definition model datatype: %s, "
-						       "variable model datatype: %s.\n",
-						       varid, oval_datatype_get_text(def_datatype),
-						       oval_datatype_get_text(var_datatype));
-					return -1;
-				}
-			} else {
-				oval_variable_iterator_free(variables);
-				oscap_dlprintf(DBG_E, "Unknown variable datatype: id: %s.\n", varid);
-				return -1;
-			}
-		}
+	oval_collection_add(defmodel->bound_variable_models, varmodel);
+
+	/* todo: keep reference count for each variable model if it can be bound to multiple definition models */
+
+	evar_id_itr = oval_variable_model_get_variable_ids(varmodel);
+	while (oval_string_iterator_has_more(evar_id_itr)) {
+		char *evar_id;
+		struct oval_variable *var;
+
+		evar_id = oval_string_iterator_next(evar_id_itr);
+		var = oval_definition_model_get_variable(defmodel, evar_id);
+		if (!var)
+			continue;
+
+		oval_variable_bind_ext_var(var, varmodel, evar_id);
 	}
-	oval_variable_iterator_free(variables);
+	oval_string_iterator_free(evar_id_itr);
+
 	return 0;
+}
+
+struct oval_variable_model_iterator *oval_definition_model_get_variable_models(struct oval_definition_model *model)
+{
+	if (model->bound_variable_models)
+		return (struct oval_variable_model_iterator *) oval_collection_iterator(model->bound_variable_models);
+	else
+		return (struct oval_variable_model_iterator *) oval_collection_iterator_new();
 }
 
 void oval_definition_model_clear_external_variables(struct oval_definition_model *model)

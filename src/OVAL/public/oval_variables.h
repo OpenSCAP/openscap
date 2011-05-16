@@ -142,6 +142,31 @@ struct oval_string_iterator *oval_variable_model_get_values (struct oval_variabl
 bool oval_variable_model_is_locked(struct oval_variable_model *variable_model);
 /** @} */
 
+/**
+ * @name Iterators
+ * @{
+ */
+/**
+ * @struct oval_variable_model_iterator
+ * @see oval_definition_model_get_bound_variable_models
+ */
+struct oval_variable_model_iterator;
+/**
+ * Returns <b>true</b> if iterator not exhausted.
+ * @memberof oval_variable_model_iterator
+ */
+bool oval_variable_model_iterator_has_more(struct oval_variable_model_iterator *);
+/**
+ * Returns next instance of @ref oval_variable_model.
+ * @memberof oval_variable_model_iterator
+ */
+struct oval_variable_model *oval_variable_model_iterator_next(struct oval_variable_model_iterator *);
+/**
+ * Free iterator.
+ * @memberof oval_variable_model_iterator
+ */
+void oval_variable_model_iterator_free(struct oval_variable_model_iterator *);
+/** @} */
 
 /**
  * @name Evaluators
@@ -153,8 +178,6 @@ bool oval_variable_model_is_locked(struct oval_variable_model *variable_model);
  */ 
 bool oval_variable_model_is_valid(struct oval_variable_model *variable_model);
 /** @} */
-
-
 
 /**
  * @}END OVALVAR

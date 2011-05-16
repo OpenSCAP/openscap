@@ -250,6 +250,7 @@ int oval_agent_resolve_variables(struct oval_agent_session * session, struct xcc
     bool conflict = false;
     int retval = 0;
     struct oval_value_iterator * value_it;
+    static struct oval_variable_model *cur_var_model = NULL;
 
     if (!xccdf_value_binding_iterator_has_more(it))
         return 0;
@@ -282,11 +283,13 @@ int oval_agent_resolve_variables(struct oval_agent_session * session, struct xcc
     xccdf_value_binding_iterator_reset(it);
     if (conflict) {
         /* We have a conflict, clear session and external variables */
-        oval_definition_model_clear_external_variables(def_model);
+	cur_var_model = oval_variable_model_new();
         oval_agent_reset_session(session);
     }
 
-    struct oval_variable_model *var_model = oval_variable_model_new();
+    if (!cur_var_model)
+	    cur_var_model = oval_variable_model_new();
+
     /* Iterate through variable bindings and add variables into the variable model */
     while (xccdf_value_binding_iterator_has_more(it)) {
 
@@ -298,12 +301,12 @@ int oval_agent_resolve_variables(struct oval_agent_session * session, struct xcc
         if (variable != NULL) {
                 oval_datatype_t o_type = oval_variable_get_datatype(variable);
                 /* TODO: check of variable type ? */
-                if (oval_variable_model_has_variable(var_model, name))
+                if (oval_variable_model_has_variable(cur_var_model, name))
 			oscap_dlprintf(DBG_E, "External variable %s in conflict! Probably content failure.\n", name);
                 /* Add variable to variable model */
                 value_it = oval_variable_get_values(variable);
                 if (!oval_value_iterator_has_more(value_it))
-                    oval_variable_model_add(var_model, name, "Unknown", o_type, value); // TODO comment
+                    oval_variable_model_add(cur_var_model, name, "Unknown", o_type, value); // TODO comment
                 else oscap_dlprintf(DBG_W, "External variable %s in conflict but with same value.\n", name);
                 oval_value_iterator_free(value_it);
         } else {
@@ -311,8 +314,7 @@ int oval_agent_resolve_variables(struct oval_agent_session * session, struct xcc
         }
     }
     /* Finalize - bind variable model to definition model */
-    retval = oval_definition_model_bind_variable_model(def_model, var_model);
-    oval_variable_model_free(var_model);
+    retval = oval_definition_model_bind_variable_model(def_model, cur_var_model);
     return retval;
 }
 
