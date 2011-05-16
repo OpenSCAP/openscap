@@ -12,7 +12,7 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 		-I$(top_srcdir)/src \
 		@libxml_cflags@
 
-LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_libs@
+LDADD = $(top_builddir)/src/libopenscap_testing.la $(top_builddir)/lib/libgnu.a @pcre_libs@
 
 EXTRA_DIST = $(top_srcdir)/tests/test_common.sh  \
 	     $(top_srcdir)/tests/assume.h	

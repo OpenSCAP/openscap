@@ -33,14 +33,19 @@ AC_DEFUN([gl_EARLY],
   # Code from module extensions:
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
   # Code from module float:
+  # Code from module getdelim:
+  # Code from module getline:
   # Code from module include_next:
   # Code from module memchr:
   # Code from module multiarch:
+  # Code from module realloc-posix:
   # Code from module size_max:
   # Code from module stddef:
   # Code from module stdint:
   # Code from module stdio:
+  # Code from module stdlib:
   # Code from module string:
+  # Code from module unistd:
   # Code from module vasnprintf:
   # Code from module vasprintf:
   # Code from module verify:
@@ -68,14 +73,22 @@ AC_DEFUN([gl_INIT],
 gl_FUNC_ALLOCA
 gl_HEADER_ERRNO_H
 gl_FLOAT_H
+gl_FUNC_GETDELIM
+gl_STDIO_MODULE_INDICATOR([getdelim])
+gl_FUNC_GETLINE
+gl_STDIO_MODULE_INDICATOR([getline])
 gl_FUNC_MEMCHR
 gl_STRING_MODULE_INDICATOR([memchr])
 gl_MULTIARCH
+gl_FUNC_REALLOC_POSIX
+gl_STDLIB_MODULE_INDICATOR([realloc-posix])
 gl_SIZE_MAX
 gl_STDDEF_H
 gl_STDINT_H
 gl_STDIO_H
+gl_STDLIB_H
 gl_HEADER_STRING_H
+gl_UNISTD_H
 gl_FUNC_VASNPRINTF
 gl_FUNC_VASPRINTF
 gl_STDIO_MODULE_INDICATOR([vasprintf])
@@ -234,17 +247,22 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/errno.in.h
   lib/float+.h
   lib/float.in.h
+  lib/getdelim.c
+  lib/getline.c
   lib/memchr.c
   lib/memchr.valgrind
   lib/printf-args.c
   lib/printf-args.h
   lib/printf-parse.c
   lib/printf-parse.h
+  lib/realloc.c
   lib/size_max.h
   lib/stddef.in.h
   lib/stdint.in.h
   lib/stdio.in.h
+  lib/stdlib.in.h
   lib/string.in.h
+  lib/unistd.in.h
   lib/vasnprintf.c
   lib/vasnprintf.h
   lib/vasprintf.c
@@ -256,22 +274,28 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/errno_h.m4
   m4/extensions.m4
   m4/float_h.m4
+  m4/getdelim.m4
+  m4/getline.m4
   m4/gnulib-common.m4
   m4/include_next.m4
   m4/intmax_t.m4
   m4/inttypes_h.m4
   m4/longlong.m4
+  m4/malloc.m4
   m4/memchr.m4
   m4/mmap-anon.m4
   m4/multiarch.m4
   m4/onceonly.m4
   m4/printf.m4
+  m4/realloc.m4
   m4/size_max.m4
   m4/stddef_h.m4
   m4/stdint.m4
   m4/stdint_h.m4
   m4/stdio_h.m4
+  m4/stdlib_h.m4
   m4/string_h.m4
+  m4/unistd_h.m4
   m4/vasnprintf.m4
   m4/vasprintf.m4
   m4/warn-on-use.m4
