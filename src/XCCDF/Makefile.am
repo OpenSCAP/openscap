@@ -16,8 +16,9 @@ libxccdf_la_SOURCES = \
 	xccdf_impl.h
 	
 
-libxccdf_la_CFLAGS  = @libxml_cflags@ -I$(top_srcdir)/src -I$(top_srcdir)/src/XCCDF/public -I$(top_srcdir)/src/common/public
+libxccdf_la_CPPFLAGS  = @libxml_cflags@ -I$(top_srcdir)/src -I$(top_srcdir)/src/XCCDF/public -I$(top_srcdir)/src/common/public -I$(top_srcdir)/lib
 libxccdf_la_LDFLAGS = @libxml_libs@
+libxccdf_la_LIBADD = $(top_builddir)/lib/libgnu.a
 
 pkginclude_HEADERS  = public/xccdf.h
 

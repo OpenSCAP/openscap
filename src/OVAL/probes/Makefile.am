@@ -3,10 +3,10 @@ SUBDIRS= probe crapi
 pkglibexecdir= $(libexecdir)/openscap
 pkglibexec_PROGRAMS=
 
-CFLAGS += @pthread_cflags@ -I$(top_srcdir)/src -I$(top_srcdir)/src/common -I$(top_srcdir)/src/common/public -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/OVAL/public -I$(top_srcdir)/src/OVAL/probes/public -I$(top_srcdir)/src/OVAL/probes/SEAP/public @pcre_cflags@ -DTHREAD_SAFE -DSEAP_THREAD_SAFE @libxml_cflags@
+CFLAGS += @pthread_cflags@ -I$(top_srcdir)/src -I$(top_srcdir)/src/common -I$(top_srcdir)/src/common/public -I$(top_srcdir)/src/OVAL -I$(top_srcdir)/src/OVAL/public -I$(top_srcdir)/src/OVAL/probes/public -I$(top_srcdir)/src/OVAL/probes/SEAP/public -I$(top_srcdir)/lib @pcre_cflags@ -DTHREAD_SAFE -DSEAP_THREAD_SAFE @libxml_cflags@
 LDFLAGS += @pthread_ldflags@
 
-LDADD= probe/libprobe.la @pcre_libs@ @sigwaitinfo_libs@
+LDADD= probe/libprobe.la $(top_builddir)/lib/libgnu.a @pcre_libs@ @sigwaitinfo_libs@
 
 if WANT_PROBES
 pkglibexec_PROGRAMS += probe_system_info
