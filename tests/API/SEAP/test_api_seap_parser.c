@@ -27,57 +27,6 @@ static int print_sexp (SEXP_t *s_exp)
         return (0);
 }
 
-#if defined(__SVR4) && defined(__sun)
-
-#define _GETLINE_BUFLEN 255
-
-ssize_t mygetline(char **lineptr, size_t *n, FILE *stream) {
-	int c;
-	size_t alloced = 0;
-	char *linebuf;
-
-	if (*lineptr == NULL) {
-		linebuf = malloc(sizeof(char) * (_GETLINE_BUFLEN + 1));
-		alloced = _GETLINE_BUFLEN + 1;
-	} else {
-		linebuf = *lineptr;
-		alloced = *n;
-	}
-	ssize_t linelen = 0;
-
-	do {
-		c = fgetc(stream);
-		if (c == EOF) {
-			break;
-		}
-		if (linelen >= alloced) {
-			linebuf = realloc(linebuf, sizeof(char) * (alloced + _GETLINE_BUFLEN + 1));
-			alloced += (_GETLINE_BUFLEN + 1);
-		}
-		*(linebuf + linelen) = (unsigned char)c;
-		linelen++;
-	} while (c != '\n');
-
-	/* empty line means EOF or some other error */
-	if (linelen == 0) {
-		if (linebuf != NULL && *lineptr == NULL) {
-			free(linebuf);
-			linebuf = NULL;
-		}
-		linelen = -1;
-		*n = alloced;
-	} else {
-		if (linebuf != NULL) {
-			linebuf[linelen] = '\0';
-		}
-		*n = alloced;
-		*lineptr = linebuf;
-	}
-
-	return linelen;
-}
-#endif
-
 int main (int argc, char *argv[])
 {
         char  *input;
@@ -102,8 +51,6 @@ int main (int argc, char *argv[])
                         input = fgetln (stdin, &inlen);
 #elif defined(__linux__) || defined(__GLIBC__)
                         getline (&input, &inlen, stdin);
-#elif defined(__SVR4) && defined(__sun)
-                        mygetline (&input, &inlen, stdin);
 #else
 # error "FIXME"
 #endif
