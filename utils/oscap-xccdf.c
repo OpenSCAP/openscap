@@ -426,6 +426,35 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			xccdf_gen_report(action->f_results, xccdf_result_get_id(ritem), action->f_report, "", (action->oval_results ? "%.result.xml" : ""));
 	}
 
+	/* Export variables */
+	if (action->export_variables) {
+		int i;
+
+		for (i = 0; sessions[i]; ++i) {
+			int j;
+			char *sname;
+			struct oval_results_model *resmod;
+			struct oval_definition_model *defmod;
+			struct oval_variable_model_iterator *varmod_itr;
+
+			sname = (char *) oval_agent_get_filename(sessions[i]);
+			resmod = oval_agent_get_results_model(sessions[i]);
+			defmod = oval_results_model_get_definition_model(resmod);
+
+			j = 0;
+			varmod_itr = oval_definition_model_get_variable_models(defmod);
+			while (oval_variable_model_iterator_has_more(varmod_itr)) {
+				char fname[strlen(sname) + 32];
+				struct oval_variable_model *varmod;
+
+				varmod = oval_variable_model_iterator_next(varmod_itr);
+				snprintf(fname, sizeof(fname), "%s-%d.variables-%d.xml", sname, i, j++);
+				oval_variable_model_export(varmod, fname);
+			}
+			oval_variable_model_iterator_free(varmod_itr);
+		}
+	}
+
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
 	int retval = OSCAP_OK;
 	struct xccdf_rule_result_iterator *res_it = xccdf_result_get_rule_results(ritem);
@@ -567,6 +596,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"oval-results",	no_argument, &action->oval_results, 1},
 		{"skip-valid",		no_argument, &action->validate, 0},
 		{"hide-profile-info",	no_argument, &action->hide_profile_info, 1},
+		{"export-variables",	no_argument, &action->export_variables, 1},
 	// end
 		{0, 0, 0, 0}
 	};
