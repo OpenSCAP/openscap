@@ -19,6 +19,8 @@ AM_PATH_PYTHON
 
 # Checks for programs.
 AC_PROG_CC
+gl_EARLY
+gl_INIT
 AM_PROG_CC_C_O
 AC_PROG_CXX
 AC_PROG_INSTALL
@@ -711,6 +713,7 @@ AM_CONDITIONAL([HAVE_ODBX], test "$have_odbx" = yes)
 AM_CONDITIONAL([ENABLE_PROBE_LDAP57], test "$probe_independent_ldap57" = yes)
 
 AC_CONFIG_FILES([Makefile
+                 lib/Makefile
                  src/Makefile
                  swig/Makefile
                  src/OVAL/Makefile

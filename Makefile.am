@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = src
+SUBDIRS = lib src
 
 if WANT_PROBES
 SUBDIRS += src/OVAL/probes
@@ -25,7 +25,8 @@ bashcompdir = $(sysconfdir)/bash_completion.d
 bashcomp_DATA = dist/bash_completion.d/oscap
 
 
-EXTRA_DIST =	dist/rhel5/openscap.spec \
+EXTRA_DIST =	m4/gnulib-cache.m4 \
+		dist/rhel5/openscap.spec \
 		dist/rhel5/openscap-0.6.3-noValidate.patch \
 		dist/fedora/openscap.spec \
 		dist/fedora/oscap-scan.sys \
