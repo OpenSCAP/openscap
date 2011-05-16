@@ -105,7 +105,7 @@ static bool xccdf_item_parse_deps(xmlTextReaderPtr reader, struct xccdf_item *it
 			struct oscap_list *reqs = oscap_list_new();
 			char *ids = xccdf_attribute_copy(reader, XCCDFA_IDREF), *idsstr = ids, *id;
 
-			while ((id = oscap_strsep(&ids, " ")) != NULL) {
+			while ((id = strsep(&ids, " ")) != NULL) {
 				if (strcmp(id, "") == 0) continue;
 				oscap_list_add(reqs, oscap_strdup(id));
 			}

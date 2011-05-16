@@ -335,14 +335,6 @@ char *oscap_strdup(const char *str);
 float oscap_strtol(const char *str, char **endptr, int base);
 
 /**
- * Use strsep on string
- * We can't use strsep from string.h because of compatibility issues
- * @param str String we want to split
- * @param delim Delimiter of string parts
- */
-char *oscap_strsep(char **str, const char *delim);
-
-/**
  * Split a string.
  * Split string using given delimiter.
  * Produces NULL-terminated array of strings.

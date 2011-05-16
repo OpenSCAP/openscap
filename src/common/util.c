@@ -77,18 +77,6 @@ float oscap_strtol(const char *str, char **endptr, int base){
         return strtol(str, endptr, base);
 }
 
-char *oscap_strsep(char **str, const char *delim)
-{
-	if (str == NULL || *str == NULL)
-		return NULL;
-	char *ret = *str;
-	*str = strstr(*str, delim);
-	if (*str) {
-		**str = '\0';
-		(*str)++;
-	}
-	return ret;
-}
 
 static const size_t CPE_SPLIT_INIT_ALLOC = 8;
 
@@ -114,7 +102,7 @@ char **oscap_split(char *str, const char *delim)
 				return NULL;
 			}
 		}
-		fields[i++] = oscap_strsep(stringp, delim);
+		fields[i++] = strsep(stringp, delim);
 	}
 	fields[i] = NULL;
 
