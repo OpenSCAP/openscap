@@ -86,6 +86,7 @@ static struct oscap_module XCCDF_EVAL = {
         "Options:\n"
         "   --profile <name>\r\t\t\t\t - The name of Profile to be evaluated.\n"
         "   --oval-results\r\t\t\t\t - Save OVAL results as well.\n"
+        "   --export-variables\r\t\t\t\t - Export OVAL external variables provided by XCCDF.\n"
         "   --results <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
         "   --report <file>\r\t\t\t\t - Write HTML report into file.\n"
         "   --skip-valid \r\t\t\t\t - Skip validation.\n"
