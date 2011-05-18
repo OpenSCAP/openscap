@@ -203,9 +203,10 @@ int oval_syschar_model_compute_variable(struct oval_syschar_model *sysmod, struc
 	if (var->flag != SYSCHAR_FLAG_UNKNOWN)
 		return 0;
 
-	var->values = oval_collection_new();
 	component = var->component;
         if (component) {
+		if (!var->values)
+			var->values = oval_collection_new();
 		var->flag = oval_component_compute(sysmod, component, var->values);
 	} else {
 		oscap_dlprintf(DBG_W, "NULL component bound to a variable, id: %s.\n", var->id);
@@ -243,9 +244,10 @@ int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *
 	if (var->flag != SYSCHAR_FLAG_UNKNOWN)
 		return 0;
 
-	var->values = oval_collection_new();
 	component = var->component;
         if (component) {
+		if (!var->values)
+			var->values = oval_collection_new();
 		var->flag = oval_component_query(sess, component, var->values);
 	} else {
 		oscap_dlprintf(DBG_W, "NULL component bound to a variable, id: %s.\n", var->id);
@@ -435,6 +437,8 @@ struct oval_variable *oval_variable_clone(struct oval_definition_model *new_mode
 
 			cvar = (oval_variable_CONSTANT_t *) new_variable;
 			old_val_itr = oval_variable_get_values(old_variable);
+			if (oval_value_iterator_has_more(old_val_itr))
+				cvar->values = oval_collection_new();
 			while (oval_value_iterator_has_more(old_val_itr)) {
 				struct oval_value *val;
 
@@ -461,6 +465,8 @@ struct oval_variable *oval_variable_clone(struct oval_definition_model *new_mode
 
 			lvar = (oval_variable_LOCAL_t *) new_variable;
 			old_val_itr = oval_variable_get_values(old_variable);
+			if (oval_value_iterator_has_more(old_val_itr))
+				lvar->values = oval_collection_new();
 			while (oval_value_iterator_has_more(old_val_itr)) {
 				struct oval_value *val;
 
@@ -537,7 +543,7 @@ void oval_variable_set_datatype(struct oval_variable *variable, oval_datatype_t 
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
-void oval_variable_set_type(struct oval_variable *variable, oval_variable_type_t type)
+void oval_variable_set_type(struct oval_variable *variable, oval_variable_type_t new_type)
 {
 	if (oval_variable_is_locked(variable)) {
 		oscap_dlprintf(DBG_W, "Attempt to update locked variable: %s.\n", variable->id);
@@ -546,11 +552,13 @@ void oval_variable_set_type(struct oval_variable *variable, oval_variable_type_t
 
 	if (variable->type != OVAL_VARIABLE_UNKNOWN) {
 		oscap_dlprintf(DBG_E, "Attempt to reset valid variable type, oldtype: %s, newtype: %s.\n",
-			       oval_variable_type_get_text(variable->type), oval_variable_type_get_text(type));
+			       oval_variable_type_get_text(variable->type), oval_variable_type_get_text(new_type));
 		return;
 	}
 
-	switch (variable->type) {
+	variable->type = new_type;
+
+	switch (new_type) {
 	case OVAL_VARIABLE_CONSTANT: {
 		oval_variable_CONSTANT_t *cvar;
 
@@ -624,6 +632,8 @@ void oval_variable_add_value(struct oval_variable *variable, struct oval_value *
 		return;
 
 	cvar = (oval_variable_CONSTANT_t *) variable;
+	if (!cvar->values)
+		cvar->values = oval_collection_new();
 	oval_collection_add(cvar->values, value);
 	cvar->flag = SYSCHAR_FLAG_COMPLETE;
 }
@@ -644,8 +654,10 @@ void oval_variable_clear_values(struct oval_variable *variable)
 		oval_variable_CONSTANT_t *cvar;
 
 		cvar = (oval_variable_CONSTANT_t *) variable;
-		oval_collection_free_items(cvar->values, (oscap_destruct_func) oval_value_free);
-		cvar->values = NULL;
+		if (cvar->values) {
+			oval_collection_free_items(cvar->values, (oscap_destruct_func) oval_value_free);
+			cvar->values = NULL;
+		}
 		cvar->flag = SYSCHAR_FLAG_NOT_COLLECTED;
 
 		break;
