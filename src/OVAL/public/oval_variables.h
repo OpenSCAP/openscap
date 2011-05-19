@@ -133,7 +133,7 @@ const char *oval_variable_model_get_comment (struct oval_variable_model *, char 
  * @param varid the identifier of the required oval_variable.
  * @memberof oval_variable_model
  */ 
-struct oval_string_iterator *oval_variable_model_get_values (struct oval_variable_model *, char *);
+struct oval_value_iterator *oval_variable_model_get_values(struct oval_variable_model *, char *);
 /**
  * Return <b>true</b> if the variable_model instance is locked.
  * The state of a locked instance cannot be changed.

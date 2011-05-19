@@ -686,6 +686,7 @@ void oval_variable_bind_ext_var(struct oval_variable *var, struct oval_variable_
 	}
 
 	evar = (oval_variable_EXTERNAL_t *) var;
+	evar->flag = SYSCHAR_FLAG_COMPLETE;
 	evar->values_ref = oval_variable_model_get_values_ref(varmod, extvar_id);
 	/* todo: store a reference to the variable model inside evar? */
 }

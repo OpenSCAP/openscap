@@ -145,7 +145,7 @@ static void _oval_variable_model_frame_free(_oval_variable_model_frame_t * frame
 			oscap_free(frame->id);
 		if (frame->comment)
 			oscap_free(frame->comment);
-		oval_collection_free_items(frame->values, oscap_free);
+		oval_collection_free_items(frame->values, (oscap_destruct_func) oval_value_free);
 		frame->id = NULL;
 		frame->comment = NULL;
 		frame->values = NULL;
@@ -172,12 +172,17 @@ struct oval_variable_model *oval_variable_model_clone(struct oval_variable_model
 	while (oval_string_iterator_has_more(old_varids)) {
 		char *varid = oval_string_iterator_next(old_varids);
 		oval_datatype_t datatype = oval_variable_model_get_datatype(old_model, varid);
-		struct oval_string_iterator *values = oval_variable_model_get_values(old_model, varid);
+		struct oval_value_iterator *values = oval_variable_model_get_values(old_model, varid);
 		const char *comm = oval_variable_model_get_comment(old_model, varid);
-		while (oval_string_iterator_has_more(values)) {
-			char *value = oval_string_iterator_next(values);
-			oval_variable_model_add(new_model, varid, comm, datatype, value);
-		} oval_string_iterator_free(values);
+		while (oval_value_iterator_has_more(values)) {
+			struct oval_value *ov;
+			char *text;
+
+			ov = oval_value_iterator_next(values);
+			text = oval_value_get_text(ov);
+			oval_variable_model_add(new_model, varid, comm, datatype, text);
+		}
+		oval_value_iterator_free(values);
 	} oval_string_iterator_free(old_varids);
 	return new_model;
 }
@@ -206,14 +211,16 @@ void oval_variable_model_set_generator(struct oval_variable_model *model, struct
 void oval_variable_model_add(struct oval_variable_model *model, char *varid, const char *comm,
 			     oval_datatype_t datatype, char *value)
 {
+	struct oval_value *ov;
+
 	struct _oval_variable_model_frame *frame =
 	    (struct _oval_variable_model_frame *)oval_string_map_get_value(model->varmap, varid);
 	if (frame == NULL) {
 		frame = _oval_variable_model_frame_new(varid, comm, datatype);
 		oval_string_map_put(model->varmap, varid, frame);
 	}
-	value = oscap_strdup(value);
-	oval_collection_add(frame->values, value);
+	ov = oval_value_new(datatype, value);
+	oval_collection_add(frame->values, ov);
 }
 
 #define NAMESPACE_VARIABLES "http://oval.mitre.org/XMLSchema/oval-variables-5"
@@ -225,9 +232,12 @@ static int _oval_variable_model_parse_variable_values
 	int return_code;
 	bool is_variable_ns = strcmp(NAMESPACE_VARIABLES, namespace) == 0;
 	if (is_variable_ns && strcmp("value", tagname) == 0) {
+		struct oval_value *ov;
+
 		return_code = xmlTextReaderRead(reader);
 		char *value = (char *)xmlTextReaderValue(reader);
-		oval_collection_add(frame->values, strdup(value));
+		ov = oval_value_new(frame->datatype, value);
+		oval_collection_add(frame->values, ov);
 		oscap_free(value);
 	} else {
 		oscap_dlprintf(DBG_W, "Unprocessed tag: <%s:%s>.\n", namespace, tagname);
@@ -392,12 +402,16 @@ static xmlNode *oval_variable_model_to_dom(struct oval_variable_model * variable
                 xmlNewProp(variable, BAD_CAST "datatype", BAD_CAST oval_datatype_get_text(datatype));
                 xmlNewProp(variable, BAD_CAST "comment", BAD_CAST comm);
 
-		struct oval_string_iterator *values = oval_variable_model_get_values(variable_model, varid);
-		while (oval_string_iterator_has_more(values)) {
-			char *value = oval_string_iterator_next(values);
-                        xmlNewTextChild(variable, ns_variables, BAD_CAST "value", BAD_CAST value);
+		struct oval_value_iterator *value_itr = oval_variable_model_get_values(variable_model, varid);
+		while (oval_value_iterator_has_more(value_itr)) {
+			struct oval_value *value;
+			char *text;
+
+			value = oval_value_iterator_next(value_itr);
+			text = oval_value_get_text(value);
+			xmlNewTextChild(variable, ns_variables, BAD_CAST "value", BAD_CAST text);
 		}
-                oval_string_iterator_free(values);
+                oval_value_iterator_free(value_itr);
 	}
         oval_string_iterator_free(varids);
 
@@ -466,11 +480,11 @@ const char *oval_variable_model_get_comment(struct oval_variable_model *model, c
 	return (frame) ? frame->comment : NULL;
 }
 
-struct oval_string_iterator *oval_variable_model_get_values(struct oval_variable_model *model, char *varid)
+struct oval_value_iterator *oval_variable_model_get_values(struct oval_variable_model *model, char *varid)
 {
 	__attribute__nonnull__(model);
 	_oval_variable_model_frame_t *frame = oval_string_map_get_value(model->varmap, varid);
-	return (frame) ? (struct oval_string_iterator *)oval_collection_iterator(frame->values) : NULL;
+	return (frame) ? (struct oval_value_iterator *) oval_collection_iterator(frame->values) : NULL;
 }
 
 struct oval_collection *oval_variable_model_get_values_ref(struct oval_variable_model *model, char *varid)
