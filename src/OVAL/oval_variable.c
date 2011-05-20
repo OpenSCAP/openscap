@@ -676,19 +676,24 @@ void oval_variable_clear_values(struct oval_variable *variable)
 	}
 }
 
-void oval_variable_bind_ext_var(struct oval_variable *var, struct oval_variable_model *varmod, char *extvar_id)
+int oval_variable_bind_ext_var(struct oval_variable *var, struct oval_variable_model *varmod, char *extvar_id)
 {
 	oval_variable_EXTERNAL_t *evar;
 
 	if (var->type != OVAL_VARIABLE_EXTERNAL) {
 		dW("Attemp to bind a non-external variable, id: %s, type: %s.\n", var->id, oval_variable_type_get_text(var->type));
-		return;
+		return 2;
 	}
 
 	evar = (oval_variable_EXTERNAL_t *) var;
-	evar->flag = SYSCHAR_FLAG_COMPLETE;
 	evar->values_ref = oval_variable_model_get_values_ref(varmod, extvar_id);
+	if (!evar->values_ref)
+		return 1;
+
+	evar->flag = SYSCHAR_FLAG_COMPLETE;
 	/* todo: store a reference to the variable model inside evar? */
+
+	return 0;
 }
 
 void oval_variable_set_component(struct oval_variable *variable, struct oval_component *component)
