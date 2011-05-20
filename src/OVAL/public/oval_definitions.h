@@ -631,7 +631,7 @@ struct oval_definition_model *oval_definition_model_clone(struct oval_definition
  */
 int oval_definition_model_export(struct oval_definition_model *, const char *file);
 /**
- * Free OVAL object model.
+ * Free OVAL object model and all binded variable models.
  * @memberof oval_definition_model
  */
 void oval_definition_model_free(struct oval_definition_model *model);

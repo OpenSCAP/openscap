@@ -260,7 +260,6 @@ cleanup:
 	if (pb_sess) oval_probe_session_destroy(pb_sess);
 	if (sys_model) oval_syschar_model_free(sys_model);
 	if (def_model) oval_definition_model_free(def_model);
-	if (var_model) oval_variable_model_free(var_model);
 
 	return ret;
 }
@@ -421,7 +420,6 @@ cleanup:
 	if (usr) free(usr);
 	if (sess) oval_agent_destroy_session(sess);
 	if (def_model) oval_definition_model_free(def_model);
-	if (var_model) oval_variable_model_free(var_model);
 
 	return ret;
 }
@@ -500,7 +498,6 @@ cleanup:
 	if(res_model) oval_results_model_free(res_model);
 	if(sys_model) oval_syschar_model_free(sys_model);
 	if(def_model) oval_definition_model_free(def_model);
-	if(var_model) oval_variable_model_free(var_model);
 
 	return ret;
 }
