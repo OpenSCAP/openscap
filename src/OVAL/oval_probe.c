@@ -416,30 +416,6 @@ int oval_probe_query_sysinfo(oval_probe_session_t *sess, struct oval_sysinfo **o
 
 static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_criteria_node *cnode);
 
-int oval_probe_query_objects(oval_probe_session_t *sess)
-{
-	struct oval_syschar_model * syschar_model;
-	struct oval_definition_model *definition_model;
-
-	syschar_model = sess->sys_model;
-	definition_model = oval_syschar_model_get_definition_model(syschar_model);
-
-	if (definition_model) {
-		struct oval_object_iterator *objects = oval_definition_model_get_objects(definition_model);
-		while (oval_object_iterator_has_more(objects)) {
-			int ret;
-			struct oval_object *object = oval_object_iterator_next(objects);
-			ret = oval_probe_query_object(sess, object, 0, NULL);
-			if (ret != 0) {
-				oval_object_iterator_free(objects);
-				return ret;
-			}
-		}
-		oval_object_iterator_free(objects);
-	}
-	return 0;
-}
-
 int oval_probe_query_definition(oval_probe_session_t *sess, const char *id) {
 
 	struct oval_syschar_model * syschar_model;

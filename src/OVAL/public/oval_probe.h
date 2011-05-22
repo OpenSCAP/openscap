@@ -63,13 +63,6 @@ int oval_probe_query_sysinfo(oval_probe_session_t *sess, struct oval_sysinfo **o
 int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *object, int flags, struct oval_syschar **out_syschar) __attribute__ ((nonnull(1, 2)));
 
 /**
- * Probe all objects and update system characteristic model in the session
- * @param sess probe session
- * @return 0 on success
- */
-int oval_probe_query_objects(oval_probe_session_t *sess) __attribute__ ((nonnull(1)));
-
-/**
  * Probe objects required for the evalatuation of the specified definition and update the system characteristics model associated with the session
  * @param sess probe session
  * @param id definition id
