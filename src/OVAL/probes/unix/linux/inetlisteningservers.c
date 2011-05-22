@@ -562,7 +562,7 @@ int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 	if (collect_process_info(&ll) || perm_warn) {
 		SEXP_t *msg;
 
-		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, "Permission error.\n");
+		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, "Permission error.");
 		probe_cobj_add_msg(probe_out, msg);
 		SEXP_free(msg);
 		probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);

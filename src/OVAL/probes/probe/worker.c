@@ -631,7 +631,7 @@ static SEXP_t *probe_set_combine(SEXP_t *cobj1, SEXP_t *cobj2, oval_setobject_op
 			SEXP_t *r0, *r1;
 
                         r0 = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-                                              "Unexpected set operation: %d.\n", op);
+                                              "Unexpected set operation: %d.", op);
 			r1 = SEXP_list_new(r0, NULL);
 			res_cobj = probe_cobj_new(SYSCHAR_FLAG_ERROR, r1, NULL);
 			SEXP_vfree(item_lst1, item_lst2, res_items, r0, r1, NULL);
@@ -686,7 +686,7 @@ static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
 				SEXP_t *r0, *r1;
 
                                 r0 = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-                                                      "Supplied item has an invalid status: %d.\n", item_status);
+                                                      "Supplied item has an invalid status: %d.", item_status);
 				r1 = SEXP_list_new(r0, NULL);
 				cobj = probe_cobj_new(SYSCHAR_FLAG_ERROR, r1, NULL);
 				SEXP_vfree(items, item, result_items, r0, r1, NULL);
@@ -743,7 +743,7 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 	_LOGCALL_;
 
 	if (depth > MAX_EVAL_DEPTH) {
-		char *fmt = "probe_set_eval: Too many levels: max=%zu.\n";
+		char *fmt = "probe_set_eval: Too many levels: max=%zu.";
 #ifndef NDEBUG
                 _D(fmt, (size_t) MAX_EVAL_DEPTH);
 		abort();
@@ -786,7 +786,7 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 
 	probe_set_foreach(member, set) {
 		if (probe_ent_getname_r(member, member_name, sizeof member_name) == 0) {
-                        msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "probe_set_eval: Invalid set element: ptr=%p, type=%s.\n", member, SEXP_strtype(member));
+                        msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "probe_set_eval: Invalid set element: ptr=%p, type=%s.", member, SEXP_strtype(member));
 			goto eval_fail;
 		}
 
@@ -797,7 +797,7 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 
 					if (s_subset[s_subset_i] == NULL) {
                                                 msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-                                                                       "probe_set_eval: Recursive set evaluation failed: m=%p, d=%zu.\n",
+                                                                       "probe_set_eval: Recursive set evaluation failed: m=%p, d=%zu.",
                                                                        member, depth + 1);
 						goto eval_fail;
 					}
@@ -805,7 +805,7 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 					++s_subset_i;
 				} else {
                                         msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-                                                               "probe_set_eval: More than 2 \"set\".\n");
+                                                               "probe_set_eval: More than 2 \"set\".");
 					goto eval_fail;
 				}
 			}
@@ -818,7 +818,7 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 
 				if (id == NULL) {
                                         msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-                                                              "probe_set_eval: set=%p: Missing obj_ref value.\n",
+                                                              "probe_set_eval: set=%p: Missing obj_ref value.",
                                                               set);
 					goto eval_fail;
 				}
@@ -833,7 +833,7 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 						char *tmp = SEXP_string_cstr(id);
 
                                                 msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-                                                                       "probe_set_eval: obj=%s: Evaluation failed.\n",
+                                                                       "probe_set_eval: obj=%s: Evaluation failed.",
                                                                        tmp);
 						oscap_free(tmp);
 						SEXP_free(id);
@@ -848,7 +848,7 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 					++o_subset_i;
 				} else {
                                         msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-                                                               "probe_set_eval: More than 2 obj_refs.\n");
+                                                               "probe_set_eval: More than 2 obj_refs.");
 					SEXP_free(res);
 					goto eval_fail;
 				}
@@ -861,14 +861,14 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 				id = probe_ent_getval(member);
 				if (id == NULL) {
 					msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-                                                               "probe_set_eval: set=%p: Missing filter value.\n", set);
+                                                               "probe_set_eval: set=%p: Missing filter value.", set);
 					goto eval_fail;
 				}
 
 				act = probe_ent_getattrval(member, "action");
 				if (act == NULL) {
 					msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-                                                               "probe_set_eval: set=%p: Missing filter action.\n", set);
+                                                               "probe_set_eval: set=%p: Missing filter action.", set);
 					SEXP_free(id);
 					goto eval_fail;
 				}
@@ -890,7 +890,7 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 			break;
 		default:
 			msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-                                               "probe_set_eval: Unexpected set element: %s.\n", member_name);
+                                               "probe_set_eval: Unexpected set element: %s.", member_name);
 			goto eval_fail;
 		}
 #undef CASE
@@ -904,7 +904,7 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 
 	if (result == NULL) {
                 msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR,
-                                      "probe_set_eval: Can't get unavailable filters.\n");
+                                      "probe_set_eval: Can't get unavailable filters.");
 		goto eval_fail;
 	}
 	SEXP_vfree(filters_req, result, NULL);
@@ -931,7 +931,7 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 #ifndef NDEBUG
 			if (s_subset[s_subset_i] == NULL) {
                                 msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-                                                       "probe_set_eval: apply_filters returned NULL: set=%p, filters=%p.\n",
+                                                       "probe_set_eval: apply_filters returned NULL: set=%p, filters=%p.",
                                                        o_subset[s_subset_i], filters_a);
 				goto eval_fail;
 			}

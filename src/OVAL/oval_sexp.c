@@ -195,13 +195,11 @@ static int oval_varref_to_sexp(void *sess, struct oval_entity *entity, struct ov
 			break;
 		/* fall through */
 	case SYSCHAR_FLAG_DOES_NOT_EXIST:
-		snprintf(msg, sizeof(msg), "Referenced variable has no values (%s).\n",
-			 oval_variable_get_id(var));
+		snprintf(msg, sizeof(msg), "Referenced variable has no values (%s).", oval_variable_get_id(var));
 		ret = 1;
 		break;
 	default:
-		snprintf(msg, sizeof(msg), "There was a problem processing referenced variable (%s).\n",
-			 oval_variable_get_id(var));
+		snprintf(msg, sizeof(msg), "There was a problem processing referenced variable (%s).", oval_variable_get_id(var));
 		ret = 1;
 	}
 
@@ -220,8 +218,7 @@ static int oval_varref_to_sexp(void *sess, struct oval_entity *entity, struct ov
 		dt = oval_entity_get_datatype(entity);
 		val_sexp = oval_value_to_sexp(val, dt);
 		if (val_sexp == NULL) {
-			oval_syschar_add_new_message(syschar, "Failed to convert variable value.\n",
-						     OVAL_MESSAGE_LEVEL_ERROR);
+			oval_syschar_add_new_message(syschar, "Failed to convert variable value.", OVAL_MESSAGE_LEVEL_ERROR);
 			oval_syschar_set_flag(syschar, SYSCHAR_FLAG_ERROR);
 			SEXP_free(val_lst);
 			oval_value_iterator_free(vit);

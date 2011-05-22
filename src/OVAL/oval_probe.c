@@ -366,7 +366,7 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
 	ph = oval_probe_handler_get(psess->ph, type);
 
         if (ph == NULL) {
-                char *msg = "OVAL object not supported.\n";
+                char *msg = "OVAL object not supported.";
 
 		dW(msg);
 		oval_syschar_add_new_message(sysc, msg, OVAL_MESSAGE_LEVEL_WARNING);

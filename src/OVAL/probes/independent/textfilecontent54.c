@@ -243,10 +243,10 @@ static int process_file(const char *path, const char *file, void *arg)
 	if (re == NULL) {
 		SEXP_t *msg;
 
-		msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-				       "pcre_compile() '%s' %s.\n", pfd->pattern, error);
+		msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "pcre_compile() '%s' %s.", pfd->pattern, error);
 		probe_cobj_add_msg(pfd->cobj, msg);
 		SEXP_free(msg);
+		probe_cobj_set_flag(pfd->cobj, SYSCHAR_FLAG_ERROR);
 		return -1;
 	}
 #elif defined USE_REGEX_POSIX
@@ -256,10 +256,10 @@ static int process_file(const char *path, const char *file, void *arg)
 	if ( (err=regcomp(re, pfd->pattern, pfd->re_opts)) != 0) {
 		SEXP_t *msg;
 
-		msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-				       "regcomp() '%s' returned %d.\n", pfd->pattern, err);
+		msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "regcomp() '%s' returned %d.", pfd->pattern, err);
 		probe_cobj_add_msg(pfd->cobj, msg);
 		SEXP_free(msg);
+		probe_cobj_set_flag(pfd->cobj, SYSCHAR_FLAG_ERROR);
 		return -1;
 	}
 #endif
@@ -283,10 +283,10 @@ static int process_file(const char *path, const char *file, void *arg)
 	if (fd == -1) {
 		SEXP_t *msg;
 
-		msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-				       "open(): '%s' %s.\n", whole_path, strerror(errno));
+		msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "open(): '%s' %s.", whole_path, strerror(errno));
 		probe_cobj_add_msg(pfd->cobj, msg);
 		SEXP_free(msg);
+		probe_cobj_set_flag(pfd->cobj, SYSCHAR_FLAG_ERROR);
 
 		ret = -1;
 		goto cleanup;
@@ -299,10 +299,10 @@ static int process_file(const char *path, const char *file, void *arg)
 		if (ret == -1) {
 			SEXP_t *msg;
 
-			msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-					       "read(): %s.\n", strerror(errno));
+			msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "read(): %s.", strerror(errno));
 			probe_cobj_add_msg(pfd->cobj, msg);
 			SEXP_free(msg);
+			probe_cobj_set_flag(pfd->cobj, SYSCHAR_FLAG_ERROR);
 
 			ret = -2;
 			goto cleanup;

@@ -247,7 +247,6 @@ int app_collect_oval(const struct oscap_action *action)
 		if(oscap_err())
 			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
 		ret = OSCAP_ERROR;
-		goto cleanup;
 	}
 
 	/* output */
