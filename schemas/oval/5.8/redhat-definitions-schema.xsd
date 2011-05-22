@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:red-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#redhat" xmlns:sch="http://purl.oclc.org/dsdl/schematron" targetNamespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#redhat" elementFormDefault="qualified" version="5.8">
+	<xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5" schemaLocation="oval-definitions-schema.xsd"/>
+	<xsd:annotation>
+		<xsd:documentation>The following is a description of the elements, types, and attributes that compose the Red Hat specific tests found in Open Vulnerability and Assessment Language (OVAL).  Each test is an extension of the standard test element defined in the Core Definition Schema.  Through extension, each test inherits a set of elements and attributes that are shared amongst all OVAL tests.  Each test is described in detail and should provide the information necessary to understand what each element and attribute represents.  This document is intended for developers and assumes some familiarity with XML.  A high level description of the interaction between the different tests and their relationship to the Core Definition Schema is not outlined here.</xsd:documentation>
+		<xsd:documentation>The OVAL Schema is maintained by The MITRE Corporation and developed by the public OVAL Community.  For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
+		<xsd:appinfo>
+			<schema>Red Hat Definition</schema>
+			<version>5.8</version>
+			<date>9/15/2010 1:55:34 PM</date>
+		      <terms_of_use>Copyright (c) 2002-2008, The MITRE Corporation. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at http://oval.mitre.org/oval/about/termsofuse.html. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+		      <sch:title>schematron validation of the Red Hat portion of an OVAL Definitions file</sch:title>
+			<sch:ns prefix="oval-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5"/>
+			<sch:ns prefix="red-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5#redhat"/>
+			<sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+		</xsd:appinfo>
+	</xsd:annotation>
+	<!-- =============================================================================== -->
+	<!-- =============================================================================== -->
+	<!-- =============================================================================== -->
+</xsd:schema>
