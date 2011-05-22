@@ -39,11 +39,17 @@ Common Vulnerability Scoring System
 .TP
 .B collect\fR [\fIoptions\fR] definitions-file
 .RS
-Probe the system and gather system characteristics for objects in OVAL Definition file. The output (OVAL System Characteristic) is printed to standard output.
+Probe the system and gather system characteristics for all objects in OVAL Definition file.
 .PP
+.TP
+\fB\-\-id OBJECT-ID\fR
+Collect system characteristics ONLY for specified OVAL Object.
 .TP
 \fB\-\-variables FILE\fR
 Provide external variables expected by OVAL Definitions.
+.TP
+\fB\-\-syschar FILE\fR
+Write OVAL System Characteristic into file
 .RE
 .TP
 .B eval\fR [\fIoptions\fR] definitions-file
@@ -52,7 +58,7 @@ Probe the system and evaluate all definitions from OVAL Definition file. Print r
 .PP
 .TP
 \fB\-\-id DEFINITION-ID\fR
-Probe the system and evaluate ONLY specified definition from OVAL Definition file.
+Evaluate ONLY specified OVAL Definition.
 .TP
 \fB\-\-variables FILE\fR
 Provide external variables expected by OVAL Definitions.

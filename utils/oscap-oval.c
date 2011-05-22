@@ -241,16 +241,51 @@ int app_collect_oval(const struct oscap_action *action)
 	oval_syschar_model_set_sysinfo(sys_model, sysinfo);
 
 	/* query objects */
-	ret = oval_probe_query_objects(pb_sess);
-	if (ret != 0) {
-		fprintf(stderr, "Failed to query objects\n");
-		if(oscap_err())
-			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-		ret = OSCAP_ERROR;
+	struct oval_object *object;
+	struct oval_syschar *syschar;
+	oval_syschar_collection_flag_t sc_flg;
+	struct oval_message_iterator *messages;
+	if (action->id) {
+		object = oval_definition_model_get_object(def_model, action->id);
+		if (VERBOSE >= 0) fprintf(stderr, "Collected: \"%s\" : ", oval_object_get_id(object));
+		oval_probe_query_object(pb_sess, object, 0, &syschar);
+		sc_flg = oval_syschar_get_flag(syschar);
+		if (VERBOSE >= 0) {
+			fprintf(stderr, "%s\n", oval_syschar_collection_flag_get_text(sc_flg));
+			if (sc_flg == SYSCHAR_FLAG_ERROR) {
+				messages = oval_syschar_get_messages(syschar);
+				while (oval_message_iterator_has_more(messages)) {
+					struct oval_message *message = oval_message_iterator_next(messages);
+					fprintf(stderr, "\t%s\n", oval_message_get_text(message));
+				}
+				oval_message_iterator_free(messages);
+			}
+		}
+	}
+	else {
+	        struct oval_object_iterator *objects = oval_definition_model_get_objects(def_model);
+		while (oval_object_iterator_has_more(objects)) {
+			object = oval_object_iterator_next(objects);
+			if (VERBOSE >= 0) fprintf(stderr, "Collected: \"%s\" : ", oval_object_get_id(object));
+			oval_probe_query_object(pb_sess, object, 0, &syschar);
+			sc_flg = oval_syschar_get_flag(syschar);
+			if (VERBOSE >= 0) {
+				fprintf(stderr, "%s\n", oval_syschar_collection_flag_get_text(sc_flg));
+				if (sc_flg == SYSCHAR_FLAG_ERROR) {
+					messages = oval_syschar_get_messages(syschar);
+					while (oval_message_iterator_has_more(messages)) {
+						struct oval_message *message = oval_message_iterator_next(messages);
+						fprintf(stderr, "\t%s\n", oval_message_get_text(message));
+					}
+					oval_message_iterator_free(messages);
+				}
+			}
+		}
+		oval_object_iterator_free(objects);
 	}
 
 	/* output */
-	oval_syschar_model_export(sys_model, "/dev/stdout");
+	oval_syschar_model_export(sys_model, action->f_syschar);
 
 	ret = OSCAP_OK;
 
@@ -514,6 +549,7 @@ enum oval_opt {
     OVAL_OPT_FILE_VERSION,
     OVAL_OPT_ID,
     OVAL_OPT_VARIABLES,
+    OVAL_OPT_SYSCHAR,
     OVAL_OPT_OUTPUT = 'o'
 };
 
@@ -531,6 +567,7 @@ bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 		{ "id",        	required_argument, NULL, OVAL_OPT_ID           },
 		{ "output",    	required_argument, NULL, OVAL_OPT_OUTPUT       },
 		{ "variables",	required_argument, NULL, OVAL_OPT_VARIABLES    },
+		{ "syschar",	required_argument, NULL, OVAL_OPT_SYSCHAR      },
         // flags
 		{ "skip-valid",	no_argument, &action->validate, 0 },
         // end
@@ -546,6 +583,7 @@ bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 		case OVAL_OPT_ID: action->id = optarg; break;
 		case OVAL_OPT_FILE_VERSION: action->file_version = optarg; break;
 		case OVAL_OPT_VARIABLES: action->f_variables = optarg; break;
+		case OVAL_OPT_SYSCHAR: action->f_syschar = optarg; break;
         	case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}

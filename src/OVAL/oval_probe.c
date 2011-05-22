@@ -360,6 +360,8 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
 		}
 	} else {
 		sysc = oval_syschar_new(model, object);
+		if (out_syschar)
+			*out_syschar = sysc;
 	}
 
 	type = oval_object_get_subtype(object);
@@ -385,9 +387,6 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
 		_syschar_add_bindings(sysc, vm);
 		oval_string_map_free(vm, NULL);
 	}
-
-	if (out_syschar)
-		*out_syschar = sysc;
 
 	return 0;
 }
