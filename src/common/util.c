@@ -169,3 +169,13 @@ char *oscap_sprintf(const char *fmt, ...)
     return ret;
 }
 
+char *oscap_rtrim(char *str, char ch)
+{
+	if (str == NULL) return NULL;
+	for (char *pos = str + strlen(str) - 1; pos >= str; --pos) {
+		if (*pos == ch) *pos = '\0';
+		else break;
+	}
+	return str;
+}
+

@@ -357,6 +357,8 @@ char *oscap_vsprintf(const char *fmt, va_list ap);
 char *oscap_sprintf(const char *fmt, ...);
 /// In a list of key-value pairs (odd indicies are keys, even values), find a value for given key
 const char *oscap_strlist_find_value(char ** const kvalues, const char *key);
+/// Right trim @a ch characters (modifies its first argument!)
+char *oscap_rtrim(char *str, char ch);
 
 // check pointer equality
 bool oscap_ptr_cmp(void *node1, void *node2);

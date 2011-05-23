@@ -104,6 +104,9 @@ char *oscap_find_file(const char *filename, int mode, const char *pathvar, const
 
 	while (*paths) {
 		if (oscap_streq(*paths, "")) continue;
+		oscap_rtrim(*paths, '/');  // strip slases at the end of the path
+		if (oscap_streq(*paths, "")) **paths = '/';
+
 		char *curpath = oscap_sprintf("%s%s%s", *paths, OSCAP_OS_PATH_DELIM, filename);
 		if (oscap_file_exists(curpath, mode)) {
 			ret = curpath;
