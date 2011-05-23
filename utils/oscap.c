@@ -129,7 +129,7 @@ int app_validate_xml(const struct oscap_action *action)
 		return OSCAP_ERROR;
 
 	if (!oscap_validate_document
-	    (xml_file, action->doctype, action->file_version, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+	    (xml_file, action->doctype, NULL, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 		if (oscap_err()) {
 			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
 			return OSCAP_FAIL;

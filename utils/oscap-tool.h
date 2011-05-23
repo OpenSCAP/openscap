@@ -128,7 +128,6 @@ struct oscap_action {
         char **urls_oval; /* not used as URIs Fix! */
 	/* others */
         char *profile;
-        char *file_version;
         char *show;
         char *format;
         const char *tmpl;

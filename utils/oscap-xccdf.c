@@ -591,7 +591,6 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"template", 		required_argument, NULL, XCCDF_OPT_TEMPLATE},
 		{"format", 		required_argument, NULL, XCCDF_OPT_FORMAT},
 		{"oval-template", 	required_argument, NULL, XCCDF_OPT_OVAL_TEMPLATE},
-		{"version",		required_argument, NULL, XCCDF_OPT_FILE_VERSION},
 	// flags
 		{"force",		no_argument, &action->force, 1},
 		{"oval-results",	no_argument, &action->oval_results, 1},
@@ -614,7 +613,6 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		case XCCDF_OPT_TEMPLATE:	action->tmpl = optarg;		break;
 		case XCCDF_OPT_FORMAT:		action->format = optarg;	break;
 		case XCCDF_OPT_OVAL_TEMPLATE:	action->oval_template = optarg; break;
-		case XCCDF_OPT_FILE_VERSION:	action->file_version = optarg;	break;
 		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}

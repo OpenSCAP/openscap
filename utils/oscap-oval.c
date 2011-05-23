@@ -546,7 +546,6 @@ static int app_oval_xslt(const struct oscap_action *action)
 enum oval_opt {
     OVAL_OPT_RESULT_FILE = 1,
     OVAL_OPT_REPORT_FILE,
-    OVAL_OPT_FILE_VERSION,
     OVAL_OPT_ID,
     OVAL_OPT_VARIABLES,
     OVAL_OPT_SYSCHAR,
@@ -581,7 +580,6 @@ bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 		case OVAL_OPT_REPORT_FILE: action->f_report  = optarg; break;
 		case OVAL_OPT_OUTPUT: action->f_results = optarg; break;
 		case OVAL_OPT_ID: action->id = optarg; break;
-		case OVAL_OPT_FILE_VERSION: action->file_version = optarg; break;
 		case OVAL_OPT_VARIABLES: action->f_variables = optarg; break;
 		case OVAL_OPT_SYSCHAR: action->f_syschar = optarg; break;
         	case 0: break;
@@ -612,8 +610,6 @@ bool getopt_oval_validate(int argc, char **argv, struct oscap_action *action)
 
 	/* Command-options */
 	struct option long_options[] = {
-        // options
-		{ "version",   	required_argument, NULL, OVAL_OPT_FILE_VERSION },
         // flags
 		{ "definitions",	no_argument, &action->doctype, OSCAP_DOCUMENT_OVAL_DEFINITIONS },
 		{ "variables",		no_argument, &action->doctype, OSCAP_DOCUMENT_OVAL_VARIABLES   },
@@ -626,7 +622,6 @@ bool getopt_oval_validate(int argc, char **argv, struct oscap_action *action)
 	int c;
 	while ((c = getopt_long(argc, argv, "", long_options, NULL)) != -1) {
 		switch (c) {
-		case OVAL_OPT_FILE_VERSION: action->file_version = optarg; break;
 		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}

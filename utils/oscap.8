@@ -88,9 +88,6 @@ Provide external variables expected by OVAL Definitions.
 .RS
 Validate given OVAL file against a XML schema. Every found error is printed to the standard output. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the OVAL document is not valid.
 .TP
-\fB\-\-version VER\fR
-Specify version of the specification the document shall conform to.
-.TP
 \fB\-\-definitions\fR, \fB\-\-variables\fR, \fB\-\-syschar\fR, \fB\-\-results\fR
 Specify whether the validated document is an OVAL definitions file, external OVAL Variables, OVAL system characteristics file, or OVAL results file. Default: definitions.
 .RE
@@ -160,9 +157,6 @@ Force resolving XCCDF document even if it is already marked as resolved.
 .B validate-xml\fR [\fIoptions\fR] xccdf-file
 .RS
 Validate given XCCDF file against a XML schema. Every found error is printed to the standard output. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the XCCDF document is not valid.
-.TP
-\fB\-\-version VER\fR
-Specify version of the specification the document shall conform to.
 .RE
 .TP
 .B \fBgenerate\fR [\fIoptions\fR] <submodule> [submodule-specific-options]

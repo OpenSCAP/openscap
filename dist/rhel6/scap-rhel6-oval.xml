@@ -3331,13 +3331,13 @@
 		<unix-def:filepath var_check="at least one" var_ref="oval:rhel:var:1025112"/>
 	</unix-def:file_state>
 	<unix-def:file_state id="oval:rhel:ste:1026111" version="1" comment="Files with a valid user id assigned">
-		<unix-def:user_id var_check="at least one" var_ref="oval:rhel:var:1026111"/>
+		<unix-def:user_id datatype="int" var_check="at least one" var_ref="oval:rhel:var:1026111"/>
 	</unix-def:file_state>
 	<unix-def:file_state id="oval:rhel:ste:1027111" version="1" comment="Files with a valid group id assigned">
-		<unix-def:group_id var_check="at least one" var_ref="oval:rhel:var:1027111"/>
+		<unix-def:group_id datatype="int" var_check="at least one" var_ref="oval:rhel:var:1027111"/>
 	</unix-def:file_state>
 	<unix-def:file_state id="oval:rhel:ste:1028111" version="1" operator="OR">
-		<unix-def:group_id datatype="string" operation="pattern match">^([1-4][0-9]|[1-9])?[0-9]$</unix-def:group_id>
+		<unix-def:group_id datatype="int" operation="less than">500</unix-def:group_id>
 		<unix-def:owrite datatype="boolean">0</unix-def:owrite>
 	</unix-def:file_state>
         <ind-def:textfilecontent54_state id="oval:rhel:ste:102911" version="1" comment="Expected umask in /etc/rc.d/init.d/functions">
@@ -3363,7 +3363,7 @@
                 <unix-def:password>x</unix-def:password>
         </unix-def:password_state>
         <unix-def:password_state id="oval:rhel:ste:104111" version="1" comment="An account with UID != 0">
-                <unix-def:user_id operation="not equal">0</unix-def:user_id>
+                <unix-def:user_id datatype="int" operation="not equal">0</unix-def:user_id>
         </unix-def:password_state>
         <ind-def:textfilecontent54_state id="oval:rhel:ste:104211" version="1" comment="Expected value of PASS_MIN_DAYS in /etc/login.defs">
                 <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1042"/>
@@ -3424,7 +3424,7 @@
         </unix-def:file_state>
         <unix-def:password_state id="oval:rhel:ste:1057111111" version="1" comment="System users">
                 <unix-def:username operation="not equal">root</unix-def:username>
-                <unix-def:user_id datatype="string" operation="pattern match">^([1-4][0-9]|[1-9])?[0-9]$</unix-def:user_id>
+                <unix-def:user_id datatype="int" operation="less than">500</unix-def:user_id>
         </unix-def:password_state>
         <ind-def:textfilecontent54_state id="oval:rhel:ste:105911" version="1" comment="Default umask for users">
                 <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1059"/>
@@ -3537,7 +3537,7 @@
                 <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1109"/>
         </ind-def:textfilecontent54_state>
 	<unix-def:runlevel_state id="oval:rhel:ste:111111" version="1" comment="Service is enabled">
-		<unix-def:start operation="equals">true</unix-def:start>
+		<unix-def:start datatype="boolean" operation="equals">true</unix-def:start>
 		<unix-def:kill datatype="boolean">false</unix-def:kill>
 	</unix-def:runlevel_state>
         <ind-def:textfilecontent54_state id="oval:rhel:ste:111311" version="1" comment=":INPUT DROP ...">
@@ -3574,10 +3574,10 @@
                 <ind-def:subexpression>-A INPUT -j DROP</ind-def:subexpression>
         </ind-def:textfilecontent54_state>
         <unix-def:file_state id="oval:rhel:ste:112111" version="1" comment="Log files owned by the appropriate user">
-                <unix-def:user_id var_ref="oval:rhel:var:1121"/>
+                <unix-def:user_id datatype="int" var_ref="oval:rhel:var:1121"/>
         </unix-def:file_state>
         <unix-def:file_state id="oval:rhel:ste:112211" version="1" comment="Log files owned by the appropriate group">
-                <unix-def:group_id var_ref="oval:rhel:var:1122"/>
+                <unix-def:group_id datatype="int" var_ref="oval:rhel:var:1122"/>
         </unix-def:file_state>
         <ind-def:textfilecontent54_state id="oval:rhel:ste:112611" version="1" comment="Expected content of the file list in /etc/logrotate.d/syslog">
 		<!-- "pattern match" is used to (imprecisely) match each file name as a substring -->
