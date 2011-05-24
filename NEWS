@@ -1,3 +1,12 @@
+openscap-0.7.3							24-05-2011
+- start migration to OVAL 5.8
+- new probes and schemas from OVAL 5.8
+- RHEL6 SCAP content is in good shape
+- SOLARIS integration(make and make check work)
+- use gnulib (better portability)
+- add "analyse" mode to oscap tool
+- fixes
+
 openscap-0.7.2							13-04-2011
 - OVAL 5.7 is supported
 - "--skip-valid" option in oscap tool

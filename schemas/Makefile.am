@@ -98,7 +98,7 @@ EXTRA_DIST = \
 		oval/5.8/unix-system-characteristics-schema.xsd \
 		oval/5.8/windows-definitions-schema.xsd \
 		oval/5.8/windows-system-characteristics-schema.xsd \
-		oval/5.8/xmldsig-core-schema.xsd
+		oval/5.8/xmldsig-core-schema.xsd \
 		xccdf/1.1.4/xccdfp-1.1.xsd \
 		xccdf/1.1.4/cpe-1.0.xsd \
 		xccdf/1.1.4/cpe-language_2.0.xsd \
