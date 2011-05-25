@@ -2576,7 +2576,7 @@ float oval_value_get_float(struct oval_value *);	//datatype==OVAL_DATATYPE_FLOAT
  * Get OVAL value as an integer.
  * @memberof oval_value
  */
-long oval_value_get_integer(struct oval_value *);	//datatype==OVAL_DATATYPE_INTEGER
+long long oval_value_get_integer(struct oval_value *);	//datatype==OVAL_DATATYPE_INTEGER
 /**
  * return <b>true</b> if the value instance is locked.
  * The state of a locked instance cannot be changed.

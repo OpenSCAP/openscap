@@ -92,7 +92,7 @@ SEXP_t *oval_value_to_sexp(struct oval_value *val, oval_datatype_t dtype)
 		val_sexp = SEXP_number_newf(oval_value_get_float(val));
 		break;
 	case OVAL_DATATYPE_INTEGER:
-		val_sexp = SEXP_number_newi_32(oval_value_get_integer(val));
+		val_sexp = SEXP_number_newi_64(oval_value_get_integer(val));
 		break;
 	case OVAL_DATATYPE_BOOLEAN:
 		val_sexp = SEXP_number_newb(oval_value_get_boolean(val));

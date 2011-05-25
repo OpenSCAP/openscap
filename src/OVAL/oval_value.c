@@ -107,12 +107,12 @@ float oval_value_get_float(struct oval_value *value)
 	return strtof((const char *)value->text, &endptr);
 }
 
-long oval_value_get_integer(struct oval_value *value)
+long long oval_value_get_integer(struct oval_value *value)
 {
 	__attribute__nonnull__(value);
 
 	char *endptr;
-	return strtol((const char *)value->text, &endptr, 10);
+	return strtoll((const char *)value->text, &endptr, 10);
 }
 
 struct oval_value *oval_value_new(oval_datatype_t datatype, char *text_value)
