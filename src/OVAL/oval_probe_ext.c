@@ -1018,6 +1018,7 @@ int oval_probe_ext_init(oval_pext_t *pext)
         int ret = 0;
 
         pthread_mutex_lock(&pext->lock);
+
         if (pext->do_init) {
 		char curdir[PATH_MAX];
 		struct stat st;
@@ -1025,12 +1026,14 @@ int oval_probe_ext_init(oval_pext_t *pext)
 
 		if (getcwd(curdir, PATH_MAX) == NULL) {
 			dE("getcwd() failed\n");
-			return (-1);
+                        ret = -1;
+                        goto _ret;
 		}
 
 		if (chdir(pext->probe_dir) != 0) {
 			dE("Can't chdir to \"%s\"\n", pext->probe_dir);
-			return (-1);
+                        ret = -1;
+                        goto _ret;
 		}
 
 		pext->pdsc = oscap_alloc(sizeof(oval_pdsc_t) * DEFAULT_PDSC_COUNT);
@@ -1061,7 +1064,8 @@ int oval_probe_ext_init(oval_pext_t *pext)
 			dE("Can't chdir back to \"%s\"\n", curdir);
 			oscap_free(pext->pdsc);
 			pext->pdsc_cnt = 0;
-			return (-1);
+                        ret = -1;
+                        goto _ret;
 		}
 
                 pext->pdtbl = oval_pdtbl_new();
@@ -1071,6 +1075,7 @@ int oval_probe_ext_init(oval_pext_t *pext)
                 else
                         pext->do_init = false;
         }
+_ret:
         pthread_mutex_unlock(&pext->lock);
 
         return(ret);
