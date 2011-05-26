@@ -60,13 +60,18 @@ void __seap_debuglog (const char *srcfile, const char *srcfn, size_t srcln, cons
    * are used for the first three arguments.
    */
 # define _D(...) __seap_debuglog (__FILE__, __PRETTY_FUNCTION__, __LINE__, __VA_ARGS__)
-# define _LOGCALL_ _D("called\n");
+
+# if defined(SEAP_VERBOSE_DEBUG)
+#  define _LOGCALL_ _D("called\n")
+# else
+#  define _LOGCALL_ while(0)
+# endif
 #endif /* NDEBUG */
 #endif /* _D */
   /**
    * Hardcoded output filename.
    */
-#define SEAP_DEBUG_FILE "seap_debug.log"
+#define SEAP_DEBUG_FILE "probe_debug.log"
   /**
    * Name of the environment variable that can be used to change the
    * default output filename.

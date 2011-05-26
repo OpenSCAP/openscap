@@ -735,12 +735,9 @@ int SEXP_strncmp (const SEXP_t *s_exp, const char *str, size_t n)
                 if (str[i] == '\0')
                         return (((unsigned char *)v_dsc.mem)[i] - '\0');
 
-                _D("%c ?= %c\n",  ((unsigned char *)v_dsc.mem)[i], ((unsigned char *)str)[i]);
-
                 c = ((unsigned char *)v_dsc.mem)[i] - ((unsigned char *)str)[i];
 
                 if (c != 0 || (i + 1) >= n) {
-                        _D("=> %d\n", c);
                         return (c);
                 }
         }
@@ -1751,7 +1748,7 @@ void __SEXP_vfree (const char *file, uint32_t line, const char *func, SEXP_t *s_
 {
         va_list ap;
 
-#if !defined(NDEBUG)
+#if !defined(NDEBUG) && defined(SEAP_VERBOSE_DEBUG)
         _D("s_exp=%p (%s:%u:%s)\n", s_exp, file, line, func);
 #endif
 

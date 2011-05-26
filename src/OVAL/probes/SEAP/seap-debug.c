@@ -64,7 +64,9 @@ void __seap_debuglog (const char *file, const char *fn, size_t line, const char 
         __LOCK_FP;
 
         if (__debuglog_fp == NULL) {
-                char  *logfile;
+#define SEAP_PATHBUF_SIZE 1024
+
+                char  *logfile, pathbuf[SEAP_PATHBUF_SIZE];
                 char  *st;
                 time_t ut;
 
@@ -73,7 +75,14 @@ void __seap_debuglog (const char *file, const char *fn, size_t line, const char 
                 if (logfile == NULL)
                         logfile = SEAP_DEBUG_FILE;
 
-                __debuglog_fp = fopen (logfile, "a");
+		if (snprintf(pathbuf, SEAP_PATHBUF_SIZE, "%s.%u",
+			     logfile, (unsigned int)getpid()) >= SEAP_PATHBUF_SIZE)
+		{
+                        __UNLOCK_FP;
+			return;
+		}
+
+                __debuglog_fp = fopen (pathbuf, "w");
 
                 if (__debuglog_fp == NULL) {
                         __UNLOCK_FP;

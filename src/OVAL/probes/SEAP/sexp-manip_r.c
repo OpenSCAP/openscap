@@ -325,7 +325,7 @@ void SEXP_free_r (SEXP_t *s_exp)
 void __SEXP_free_r (SEXP_t *s_exp, const char *file, uint32_t line, const char *func)
 #endif
 {
-#if !defined(NDEBUG)
+#if !defined(NDEBUG) && defined(SEAP_VERBOSE_DEBUG)
         _D("s_exp=%p (%s:%u:%s)\n", s_exp, file, line, func);
 #endif
         if (s_exp == NULL)

@@ -132,7 +132,9 @@ void *__sm_alloc_dbg (size_t s, const char *func, size_t line)
                 exit (ENOMEM);
         }
 #endif
+#if defined(SEAP_VERBOSE_DEBUG)
         _D("%s:%u, ptr=%p, size=%zu\n", func, line, m, s);
+#endif
         return (m);
 }
 
@@ -151,8 +153,10 @@ void *__sm_calloc_dbg (size_t n, size_t s, const char *f, size_t l)
                 exit (ENOMEM);
         }
 #endif
+#if defined(SEAP_VERBOSE_DEBUG)
         _D("ptr=%p, nmemb=%zu, size=%zu, total=%zu\n",
            m, n, s, n * s);
+#endif
         return (m);
 }
 
@@ -166,7 +170,9 @@ void *__sm_realloc_dbg (void *p, size_t s, const char *f, size_t l)
                 exit (ENOMEM);
         }
 #endif
+#if defined(SEAP_VERBOSE_DEBUG)
         _D("%s:%u, old=%p, new=%p, size=%zu\n", f, l, p, m, s);
+#endif
         return (m);
 }
 
@@ -181,7 +187,9 @@ void *__sm_reallocf_dbg (void *p, size_t s, const char *f, size_t l)
                 exit (ENOMEM);
 #endif
         } else {
+#if defined(SEAP_VERBOSE_DEBUG)
                 _D("old=%p, new=%p, size=%zu\n", p, m, s);
+#endif
         }
         return (m);
 }
@@ -208,8 +216,9 @@ void __sm_free_dbg (void *p, const char *f, size_t l)
 #if defined(SEAP_MALLOC_STRICT)
         _A(p != NULL);
 #endif
+#if defined(SEAP_VERBOSE_DEBUG)
         _D("ptr=%p\n", p);
-
+#endif
         if (p != NULL)
                 free (p);
         return;

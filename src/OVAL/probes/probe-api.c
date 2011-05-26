@@ -366,7 +366,7 @@ SEXP_t *probe_obj_getent(const SEXP_t * obj, const char *name, uint32_t n)
 		}
 
 		if (SEXP_stringp(ent_name)) {
-#if !defined(NDEBUG)
+#if !defined(NDEBUG) && defined(SEAP_VERBOSE_DEBUG)
 			char buf[128];
 			SEXP_string_cstr_r(ent_name, buf, sizeof buf);
 			_D("1=\"%s\", 2=\"%s\", n=%u\n", buf, name, n);
@@ -425,8 +425,6 @@ SEXP_t *probe_obj_getattrval(const SEXP_t * obj, const char *name)
 
 	obj_name = SEXP_list_first(obj);
 	name_len = snprintf(name_buf, sizeof name_buf, ":%s", name);
-
-	_D("an=%s\n", name_buf);
 
 	_A(name_len < sizeof name_buf);
 
