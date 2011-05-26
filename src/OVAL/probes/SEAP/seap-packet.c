@@ -35,7 +35,7 @@
 #include "_seap-packet.h"
 #include "_seap-scheme.h"
 #include "seap-descriptor.h"
-
+#include "public/seap-debug.h"
 #include "public/seap-message.h"
 #include "public/seap-command.h"
 #include "public/seap-error.h"
@@ -270,11 +270,9 @@ static SEXP_t *SEAP_packet_msg2sexp (SEAP_msg_t *msg)
                 SEXP_free(r0);
         }
 
-#if !defined(NDEBUG)
-        fprintf (stderr,   "--- pck out ---\n");
-        SEXP_fprintfa (stderr, sexp);
-        fprintf (stderr, "\n---------------\n");
-#endif
+	_I("MSG -> SEXP\n");
+	_S(sexp);
+	_I("packet size: %zu\n", SEXP_sizeof(sexp));
 
         return (sexp);
 }
@@ -454,6 +452,10 @@ static SEXP_t *SEAP_packet_cmd2sexp (SEAP_cmd_t *cmd)
         if (cmd->args != NULL)
                 SEXP_list_add (sexp, cmd->args);
 
+	_I("CMD -> SEXP\n");
+	_S(sexp);
+	_I("packet size: %zu\n", SEXP_sizeof(sexp));
+
         SEXP_VALIDATE(sexp);
         return (sexp);
 }
@@ -571,6 +573,10 @@ static SEXP_t *SEAP_packet_err2sexp (SEAP_err_t *err)
 
         if (err->data != NULL)
                 SEXP_list_add (sexp, err->data);
+
+	_I("ERR -> SEXP\n");
+	_S(sexp);
+	_I("packet size: %zu\n", SEXP_sizeof(sexp));
 
         return (sexp);
 }
@@ -899,11 +905,11 @@ eloop_exit:
 			return (-1);
 		}
 
-#if !defined(NDEBUG)
-		fprintf (stderr,   "--- pck in ---\n");
-		SEXP_fprintfa (stderr, sexp_packet);
-		fprintf (stderr, "\n--------------\n");
-#endif
+
+		_I("Received packet\n");
+		_S(sexp_packet);
+		_I("packet size: %zu\n", SEXP_sizeof(sexp_packet));
+
 		SEXP_free(sexp_packet);
 
 		if (*packet == NULL)

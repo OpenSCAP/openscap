@@ -33,6 +33,7 @@
 # include <sys/file.h>
 # include <unistd.h>
 # include <time.h>
+# include "public/sexp-output.h"
 # include "public/seap-debug.h"
 
 #  if defined(SEAP_THREAD_SAFE)
@@ -112,6 +113,72 @@ void __seap_debuglog (const char *prefix, const char *file, const char *fn, size
         va_start (ap, fmt);
         vfprintf (__debuglog_fp, fmt, ap);
         va_end (ap);
+
+        if (flock (fileno (__debuglog_fp), LOCK_UN | LOCK_NB) == -1) {
+                /* __UNLOCK_FP; */
+                abort ();
+        }
+
+        __UNLOCK_FP;
+        return;
+}
+
+void __seap_debuglog_sexp (const char *file, const char *fn, size_t line, SEXP_t *sexp)
+{
+        if (getenv ("SEAP_DEBUGLOG_DISABLE") != NULL)
+                return;
+
+        __LOCK_FP;
+
+        if (__debuglog_fp == NULL) {
+#define SEAP_PATHBUF_SIZE 1024
+
+                char  *logfile, pathbuf[SEAP_PATHBUF_SIZE];
+                char  *st;
+                time_t ut;
+
+                logfile = getenv (SEAP_DEBUG_FILE_ENV);
+
+                if (logfile == NULL)
+                        logfile = SEAP_DEBUG_FILE;
+
+		if (snprintf(pathbuf, SEAP_PATHBUF_SIZE, "%s.%u",
+			     logfile, (unsigned int)getpid()) >= SEAP_PATHBUF_SIZE)
+		{
+                        __UNLOCK_FP;
+			return;
+		}
+
+                __debuglog_fp = fopen (pathbuf, "w");
+
+                if (__debuglog_fp == NULL) {
+                        __UNLOCK_FP;
+                        return;
+                }
+
+                setbuf (__debuglog_fp, NULL);
+
+                ut = time (NULL);
+                st = ctime (&ut);
+
+                fprintf (__debuglog_fp, "=============== LOG: %.24s ===============\n", st);
+                atexit(&__seap_debuglog_close);
+        }
+
+        if (flock (fileno (__debuglog_fp), LOCK_EX | LOCK_NB) == -1) {
+                __UNLOCK_FP;
+                return;
+        }
+
+#if defined(SEAP_THREAD_SAFE)
+        /* XXX: non-portable usage of pthread_t */
+        fprintf (__debuglog_fp, "(%u:%llx) [%s:%zu:%s]\n--- SEXP --- \n", (unsigned int)getpid (), (unsigned long long)pthread_self(), file, line, fn);
+#else
+        fprintf (__debuglog_fp, "(%u) [%s:%zu:%s]\n--- SEXP ---\n ", (unsigned int)getpid (), file, line, fn);
+#endif
+
+        SEXP_fprintfa(__debuglog_fp, sexp);
+	fprintf(__debuglog_fp, "\n-----------\n");
 
         if (flock (fileno (__debuglog_fp), LOCK_UN | LOCK_NB) == -1) {
                 /* __UNLOCK_FP; */

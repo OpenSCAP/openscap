@@ -25,7 +25,6 @@
 #define SEXP_TYPES_H
 
 #include <stdint.h>
-#include <seap-debug.h>
 
 #ifdef __cplusplus
 extern "C" {

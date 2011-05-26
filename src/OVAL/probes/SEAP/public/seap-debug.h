@@ -33,6 +33,7 @@
 extern "C" {
 #endif
 
+#include "sexp-types.h"
 #include <assert.h>
 #ifndef _A
 #define _A(x) assert(x)
@@ -44,6 +45,7 @@ extern "C" {
 # define _W(...) while(0)
 # define _I(...) while(0)
 # define _F(...) while(0)
+# define _S(sexp) while(0)
 # define _LOGCALL_ while(0)
 #else
 # include <stddef.h>
@@ -58,6 +60,8 @@ extern "C" {
    * @param fmt     printf-like format string
    */
 void __seap_debuglog (const char *prefix, const char *srcfile, const char *srcfn, size_t srcln, const char *fmt, ...);
+
+void __seap_debuglog_sexp (const char *file, const char *fn, size_t line, SEXP_t *sexp);
   /**
    * Convenience macro for calling __seap_debuglog. Only the fmt & it's arguments
    * need to be specified. The __FILE__, __PRETTY_FUNCTION__ and __LINE__ macros
@@ -67,6 +71,7 @@ void __seap_debuglog (const char *prefix, const char *srcfile, const char *srcfn
 # define _W(...) __seap_debuglog("WARN: ",  __FILE__, __PRETTY_FUNCTION__, __LINE__, __VA_ARGS__)
 # define _I(...) __seap_debuglog("INFO: ",  __FILE__, __PRETTY_FUNCTION__, __LINE__, __VA_ARGS__)
 # define _F(...) __seap_debuglog("FAIL: ",  __FILE__, __PRETTY_FUNCTION__, __LINE__, __VA_ARGS__)
+# define _S(sexp) __seap_debuglog_sexp(__FILE__, __PRETTY_FUNCTION__, __LINE__, sexp)
 
 # if defined(SEAP_VERBOSE_DEBUG)
 #  define _LOGCALL_ _D("called\n")
