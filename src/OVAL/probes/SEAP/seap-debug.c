@@ -54,7 +54,7 @@ static void __seap_debuglog_close(void)
         fclose(__debuglog_fp);
 }
 
-void __seap_debuglog (const char *file, const char *fn, size_t line, const char *fmt, ...)
+void __seap_debuglog (const char *prefix, const char *file, const char *fn, size_t line, const char *fmt, ...)
 {
         va_list ap;
 
@@ -105,9 +105,9 @@ void __seap_debuglog (const char *file, const char *fn, size_t line, const char 
 
 #if defined(SEAP_THREAD_SAFE)
         /* XXX: non-portable usage of pthread_t */
-        fprintf (__debuglog_fp, "(%u:%llx) [%s: %zu: %s] ", (unsigned int)getpid (), (unsigned long long)pthread_self(), file, line, fn);
+        fprintf (__debuglog_fp, "(%u:%llx) [%s:%zu:%s] %s", (unsigned int)getpid (), (unsigned long long)pthread_self(), file, line, fn, prefix ? prefix : "");
 #else
-        fprintf (__debuglog_fp, "(%u) [%s: %zu: %s] ", (unsigned int)getpid (), file, line, fn);
+        fprintf (__debuglog_fp, "(%u) [%s:%zu:%s] %s", (unsigned int)getpid (), file, line, fn, prefix ? prefix : "");
 #endif
         va_start (ap, fmt);
         vfprintf (__debuglog_fp, fmt, ap);
