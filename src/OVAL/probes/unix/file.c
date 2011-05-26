@@ -156,45 +156,45 @@ static void ID_cache_free(void)
 
 static SEXP_t *get_atime(struct stat *st, SEXP_t *sexp)
 {
-	return SEXP_string_newf_r (sexp,
+	return SEXP_number_newu_64_r (sexp,
 #if defined(OS_FREEBSD)
 # if (__STDC_VERSION__ >= 199901L)
-		"%jd", (intmax_t) st->st_atimespec.tv_sec
+		(uint64_t) st->st_atimespec.tv_sec
 # else
-		"%lld", (unsigned long long) st->st_atimespec.tv_sec
+		(uint64_t) st->st_atimespec.tv_sec
 # endif
 #elif defined(OS_LINUX) || defined(OS_SOLARIS)
-		"%u", (unsigned int)st->st_atim.tv_sec
+		(uint64_t) st->st_atim.tv_sec
 #endif
 		);
 }
 
 static SEXP_t *get_ctime(struct stat *st, SEXP_t *sexp)
 {
-	return SEXP_string_newf_r (sexp,
+	return SEXP_number_newu_64_r (sexp,
 #if defined(OS_FREEBSD)
 # if (__STDC_VERSION__ >= 199901L)
-		"%jd", (intmax_t) st->st_ctimespec.tv_sec
+		(uint64_t) st->st_ctimespec.tv_sec
 # else
-		"%lld", (unsigned long long) st->st_ctimespec.tv_sec
+		(uint64_t) st->st_ctimespec.tv_sec
 # endif
 #elif defined(OS_LINUX) || defined(OS_SOLARIS)
-		"%u", (unsigned int)st->st_ctim.tv_sec
+		(uint64_t) st->st_ctim.tv_sec
 #endif
 		);
 }
 
 static SEXP_t *get_mtime(struct stat *st, SEXP_t *sexp)
 {
-	return SEXP_string_newf_r (sexp,
+	return SEXP_number_newu_64_r (sexp,
 #if defined(OS_FREEBSD)
 # if (__STDC_VERSION__ >= 199901L)
-		"%jd", (intmax_t) st->st_mtimespec.tv_sec
+		(uint64_t) st->st_mtimespec.tv_sec
 # else
-		"%lld", (unsigned long long) st->st_mtimespec.tv_sec
+		(uint64_t) st->st_mtimespec.tv_sec
 # endif
 #elif defined(OS_LINUX) || defined(OS_SOLARIS)
-		"%u", (unsigned int)st->st_mtim.tv_sec
+		(uint64_t) st->st_mtim.tv_sec
 #endif
 		);
 }
