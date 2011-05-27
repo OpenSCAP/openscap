@@ -1492,8 +1492,6 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
 
                 name_sexp = probe_ncache_ref(OSCAP_GSYM(encache), value_name);
 
-                dI("multiply=%d\n", multiply);
-
                 while(value_i < multiply) {
                         entity = SEXP_list_new_r(&entity_mem, name_sexp, value_sexp + value_i, NULL);
 
