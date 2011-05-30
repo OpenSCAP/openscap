@@ -523,10 +523,6 @@ xmlNode *xccdf_fix_to_dom(struct xccdf_fix *fix, xmlDoc *doc, xmlNode *parent)
 	// This is in the XCCDF Spec, but not implemented in OpenSCAP
 	//const char *instance = xccdf_fix_get_instance(fix);
 	//xmlNewTextChild(fix_node, ns_xccdf, BAD_CAST "instance", BAD_CAST instance);
-	
-        oscap_free(id);
-        oscap_free(sys);
-        oscap_free(platform);
 
 	return fix_node;
 }
