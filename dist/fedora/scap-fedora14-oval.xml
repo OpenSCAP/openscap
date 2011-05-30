@@ -8576,10 +8576,10 @@
                   <ind-def:subexpression datatype="string" entity_check="all" >udf</ind-def:subexpression>
             </ind-def:textfilecontent54_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20034" version="1">
-                  <unix-def:user_id>0</unix-def:user_id>
+                  <unix-def:user_id datatype="int">0</unix-def:user_id>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20035" version="1">
-                  <unix-def:group_id>0</unix-def:group_id>
+                  <unix-def:group_id datatype="int">0</unix-def:group_id>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20042" version="1">
                   <unix-def:uread var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:1"/>
@@ -8593,10 +8593,10 @@
                   <unix-def:oexec var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:9"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20036" version="1">
-                  <unix-def:user_id>0</unix-def:user_id>
+                  <unix-def:user_id datatype="int">0</unix-def:user_id>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20037" version="1">
-                  <unix-def:group_id>0</unix-def:group_id>
+                  <unix-def:group_id datatype="int">0</unix-def:group_id>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20043" version="1">
                   <unix-def:uread var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:10"/>
@@ -8610,10 +8610,10 @@
                   <unix-def:oexec var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:18"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20038" version="1">
-                  <unix-def:user_id>0</unix-def:user_id>
+                  <unix-def:user_id datatype="int">0</unix-def:user_id>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20039" version="1">
-                  <unix-def:group_id>0</unix-def:group_id>
+                  <unix-def:group_id datatype="int">0</unix-def:group_id>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20044" version="1">
                   <unix-def:uread var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:19"/>
@@ -8627,10 +8627,10 @@
                   <unix-def:oexec var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:27"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20040" version="1">
-                  <unix-def:user_id>0</unix-def:user_id>
+                  <unix-def:user_id datatype="int">0</unix-def:user_id>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20041" version="1">
-                  <unix-def:group_id>0</unix-def:group_id>
+                  <unix-def:group_id datatype="int">0</unix-def:group_id>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20045" version="1">
                   <unix-def:uread var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:28"/>
@@ -8756,13 +8756,13 @@
             </unix-def:file_state>
 
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20050" version="1" comment="Files with a valid user id assigned">
-                  <unix-def:user_id var_check="at least one" var_ref="oval:org.fedoraproject.f14:var:20050"/>
+                  <unix-def:user_id datatype="int" var_check="at least one" var_ref="oval:org.fedoraproject.f14:var:20050"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20051" version="1" comment="Files with a valid group id assigned">
-                  <unix-def:group_id var_check="at least one" var_ref="oval:org.fedoraproject.f14:var:20051"/>
+                  <unix-def:group_id datatype="int" var_check="at least one" var_ref="oval:org.fedoraproject.f14:var:20051"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20052" version="1" operator="OR">
-                  <unix-def:group_id datatype="string" operation="pattern match">^([1-4][0-9]|[1-9])?[0-9]$</unix-def:group_id>
+                  <unix-def:group_id datatype="int" operation="less than">500</unix-def:group_id>
                   <unix-def:owrite datatype="boolean">0</unix-def:owrite>
             </unix-def:file_state>
             <ind-def:textfilecontent54_state id="oval:org.fedoraproject.f14:ste:20053" version="1">
@@ -8833,7 +8833,7 @@
                   <ind-def:subexpression datatype="int" var_check="all" var_ref="oval:org.fedoraproject.f14:var:200803"/>
             </ind-def:textfilecontent54_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20081" version="1">
-                  <unix-def:group_id var_ref="oval:org.fedoraproject.f14:var:200812"/>
+                  <unix-def:group_id datatype="int" var_ref="oval:org.fedoraproject.f14:var:200812"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20082" version="1">
                   <unix-def:suid var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:200820"/>
@@ -8890,7 +8890,7 @@
                   <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:org.fedoraproject.f14:var:20087"/>
             </ind-def:textfilecontent54_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20092" version="1">
-                  <unix-def:user_id>0</unix-def:user_id>
+                  <unix-def:user_id datatype="int">0</unix-def:user_id>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20094" version="1">
                   <unix-def:uread var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:37"/>
@@ -8904,7 +8904,7 @@
                   <unix-def:oexec var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:45"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20093" version="1">
-                  <unix-def:group_id>0</unix-def:group_id>
+                  <unix-def:group_id datatype="int">0</unix-def:group_id>
             </unix-def:file_state>
             <ind-def:textfilecontent54_state id="oval:org.fedoraproject.f14:ste:20097" version="1">
                   <ind-def:subexpression>no</ind-def:subexpression>
@@ -9045,20 +9045,20 @@
 
 	    <unix-def:runlevel_state id="oval:org.fedoraproject.f14:ste:20146" version="1" comment="Starts at runlevel 3 or 5 (with network)">
 	      <unix-def:runlevel operation="pattern match">^[35]$</unix-def:runlevel>
-	      <unix-def:start    operation="equals">true</unix-def:start>
+	      <unix-def:start datatype="boolean"   operation="equals">true</unix-def:start>
 	    </unix-def:runlevel_state>
 
 	    <unix-def:runlevel_state id="oval:org.fedoraproject.f14:ste:20148" version="1" comment="Starts at runlevel 2, 3, 4 or 5">
 	      <unix-def:runlevel operation="pattern match">^[2345]$</unix-def:runlevel>
-	      <unix-def:start    operation="equals">true</unix-def:start>
+	      <unix-def:start  datatype="boolean"  operation="equals">true</unix-def:start>
 	    </unix-def:runlevel_state>
 
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20149" version="1">
-                  <unix-def:user_id var_ref="oval:org.fedoraproject.f14:var:201491"/>
+                  <unix-def:user_id datatype="int" var_ref="oval:org.fedoraproject.f14:var:201491"/>
             </unix-def:file_state>
 
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20150" version="1">
-                  <unix-def:group_id var_ref="oval:org.fedoraproject.f14:var:201502"/>
+                  <unix-def:group_id datatype="int" var_ref="oval:org.fedoraproject.f14:var:201502"/>
             </unix-def:file_state>
 
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20151" version="1">
@@ -9083,7 +9083,7 @@
 			<unix-def:processor_type operation="pattern match">^x86_64$|^ia64$|</unix-def:processor_type>
             </unix-def:uname_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20217" version="1">
-                  <unix-def:group_id var_ref="oval:org.fedoraproject.f14:var:202142"/>
+                  <unix-def:group_id datatype="int" var_ref="oval:org.fedoraproject.f14:var:202142"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20225" version="1">
                   <unix-def:uread var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:46"/>
@@ -9097,13 +9097,13 @@
                   <unix-def:oexec var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:54"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20216" version="1">
-                  <unix-def:group_id var_ref="oval:org.fedoraproject.f14:var:202142"/>
+                  <unix-def:group_id datatype="int" var_ref="oval:org.fedoraproject.f14:var:202142"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20209" version="1">
-                  <unix-def:user_id var_ref="oval:org.fedoraproject.f14:var:202091"/>
+                  <unix-def:user_id datatype="int" var_ref="oval:org.fedoraproject.f14:var:202091"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20212" version="1">
-                  <unix-def:user_id var_ref="oval:org.fedoraproject.f14:var:202121"/>
+                  <unix-def:user_id datatype="int" var_ref="oval:org.fedoraproject.f14:var:202121"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20210" version="1">
                   <unix-def:uread var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:55"/>
@@ -9117,22 +9117,22 @@
                   <unix-def:oexec var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:63"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20214" version="1">
-                  <unix-def:group_id var_ref="oval:org.fedoraproject.f14:var:202142"/>
+                  <unix-def:group_id datatype="int" var_ref="oval:org.fedoraproject.f14:var:202142"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20222" version="1">
-                  <unix-def:user_id var_ref="oval:org.fedoraproject.f14:var:202191"/>
+                  <unix-def:user_id datatype="int" var_ref="oval:org.fedoraproject.f14:var:202191"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20218" version="1">
-                  <unix-def:group_id var_ref="oval:org.fedoraproject.f14:var:202142"/>
+                  <unix-def:group_id datatype="int" var_ref="oval:org.fedoraproject.f14:var:202142"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20223" version="1">
-                  <unix-def:user_id var_ref="oval:org.fedoraproject.f14:var:202191"/>
+                  <unix-def:user_id datatype="int" var_ref="oval:org.fedoraproject.f14:var:202191"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20221" version="1">
-                  <unix-def:user_id var_ref="oval:org.fedoraproject.f14:var:202191"/>
+                  <unix-def:user_id datatype="int" var_ref="oval:org.fedoraproject.f14:var:202191"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20211" version="1">
-                  <unix-def:group_id var_ref="oval:org.fedoraproject.f14:var:202112"/>
+                  <unix-def:group_id datatype="int" var_ref="oval:org.fedoraproject.f14:var:202112"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20224" version="1">
                   <unix-def:uread var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:64"/>
@@ -9146,13 +9146,13 @@
                   <unix-def:oexec var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:72"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20219" version="1">
-                  <unix-def:user_id var_ref="oval:org.fedoraproject.f14:var:202191"/>
+                  <unix-def:user_id datatype="int" var_ref="oval:org.fedoraproject.f14:var:202191"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20208" version="1">
-                  <unix-def:group_id var_check="all" var_ref="oval:org.fedoraproject.f14:var:202082"/>
+                  <unix-def:group_id datatype="int" var_check="all" var_ref="oval:org.fedoraproject.f14:var:202082"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20220" version="1">
-                  <unix-def:user_id var_ref="oval:org.fedoraproject.f14:var:202191"/>
+                  <unix-def:user_id datatype="int" var_ref="oval:org.fedoraproject.f14:var:202191"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20213" version="1">
                   <unix-def:uread var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:73"/>
@@ -9188,7 +9188,7 @@
                   <unix-def:oexec var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:99"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20215" version="1">
-                  <unix-def:group_id var_ref="oval:org.fedoraproject.f14:var:202142"/>
+                  <unix-def:group_id datatype="int" var_ref="oval:org.fedoraproject.f14:var:202142"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20228" version="1">
                   <unix-def:uread var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:100"/>
@@ -9202,10 +9202,10 @@
                   <unix-def:oexec var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:108"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20229" version="1">
-                  <unix-def:group_id var_ref="oval:org.fedoraproject.f14:var:202292"/>
+                  <unix-def:group_id datatype="int" var_ref="oval:org.fedoraproject.f14:var:202292"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20230" version="1">
-                  <unix-def:group_id var_ref="oval:org.fedoraproject.f14:var:202302"/>
+                  <unix-def:group_id datatype="int" var_ref="oval:org.fedoraproject.f14:var:202302"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20231" version="1">
                   <unix-def:uread var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:160"/>
@@ -9261,13 +9261,13 @@
                   <ind-def:subexpression operation="equals">off</ind-def:subexpression>
             </ind-def:textfilecontent54_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20290" version="1">
-                  <unix-def:group_id>root</unix-def:group_id>
+                  <unix-def:group_id datatype="int">0</unix-def:group_id>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20291" version="1">
-                  <unix-def:user_id>root</unix-def:user_id>
+                  <unix-def:user_id datatype="int">0</unix-def:user_id>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20313" version="1">
-                  <unix-def:group_id>root</unix-def:group_id>
+                  <unix-def:group_id datatype="int">0</unix-def:group_id>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20315" version="1">
                   <unix-def:uread var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:109"/>
@@ -9281,7 +9281,7 @@
                   <unix-def:oexec var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:117"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20314" version="1">
-                  <unix-def:user_id>root</unix-def:user_id>
+                  <unix-def:user_id datatype="int">0</unix-def:user_id>
             </unix-def:file_state>
             <ind-def:textfilecontent54_state id="oval:org.fedoraproject.f14:ste:20324" version="1">
                   <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:org.fedoraproject.f14:var:20324"/>
@@ -9323,7 +9323,7 @@
                   <unix-def:oexec var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:144"/>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20329" version="1">
-                  <unix-def:group_id>root</unix-def:group_id>
+                  <unix-def:group_id datatype="int">0</unix-def:group_id>
             </unix-def:file_state>
             <unix-def:file_state id="oval:org.fedoraproject.f14:ste:20330" version="1">
                   <unix-def:uread var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:145"/>

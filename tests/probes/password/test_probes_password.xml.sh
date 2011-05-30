@@ -105,8 +105,8 @@ while [ $I -le $LINES_COUNT ]; do
     <password_state version="1" id="oval:1:ste:${I}" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <username>`getField 'username' $I`</username>
       <password>`getField 'password' $I`</password>
-      <user_id>`getField 'user_id' $I`</user_id>
-      <group_id>`getField 'group_id' $I`</group_id>
+      <user_id datatype="int">`getField 'user_id' $I`</user_id>
+      <group_id datatype="int">`getField 'group_id' $I`</group_id>
       <gcos>`getField 'gcos' $I`</gcos>
       <home_dir>`getField 'home_dir' $I`</home_dir>
       <login_shell>`getField 'login_shell' $I`</login_shell>

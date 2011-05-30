@@ -1,0 +1,4 @@
+#use the right paths and "testing" library
+OVAL_PROBE_DIR=../src/OVAL/probes LD_PRELOAD=../src/.libs/libopenscap_testing.so LD_LIBRARY_PATH=../src/.libs OSCAP_SCHEMA_PATH=../schemas .libs/oscap ... 
+
+

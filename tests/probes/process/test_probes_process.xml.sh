@@ -90,11 +90,11 @@ while [ $I -le "${#PROCS[@]}" ]; do
     cat <<EOF
     <process_state version="1" id="oval:1:ste:${I}" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <command>`getField 'comm' ${PROCS[$I]}`</command>
-      <pid>`getField 'pid' ${PROCS[$I]}`</pid>
-      <ppid>`getField 'ppid' ${PROCS[$I]}`</ppid>
+      <pid datatype="int">`getField 'pid' ${PROCS[$I]}`</pid>
+      <ppid datatype="int">`getField 'ppid' ${PROCS[$I]}`</ppid>
       <scheduling_class>`getField 'cls' ${PROCS[$I]}`</scheduling_class>
       <start_time>`getField 'start_time' ${PROCS[$I]}`</start_time>
-      <user_id>`getField 'uid' ${PROCS[$I]}`</user_id>
+      <user_id datatype="int">`getField 'uid' ${PROCS[$I]}`</user_id>
     </process_state>
 EOF
     I=$[$I+1]

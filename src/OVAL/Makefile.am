@@ -8,7 +8,7 @@
 # lib_ right now, but will get a better prefix according to where it shoud go to
 noinst_LTLIBRARIES = liboval.la
 # this is not built during "make all" nor "make install," only during "make check"
-check_LTLIBRARIES = liboval_testing.la
+noinst_LTLIBRARIES += liboval_testing.la
 
 # the common sources are not going to be built twice because we do not use
 # per-target flag variables (liboval_la_*FLAGS etc.)

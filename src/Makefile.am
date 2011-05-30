@@ -1,6 +1,6 @@
 SUBDIRS =
 lib_LTLIBRARIES = libopenscap.la
-check_LTLIBRARIES= libopenscap_testing.la
+noinst_LTLIBRARIES = libopenscap_testing.la
 
 libopenscap_la_SOURCES = 
 libopenscap_la_LIBADD = $(top_builddir)/lib/libgnu.la
