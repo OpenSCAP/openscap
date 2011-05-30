@@ -61,8 +61,8 @@
 struct result_info {
         const char *username;
         const char *password;
-        unsigned int user_id;
-        unsigned int group_id;
+        uid_t user_id;
+        gid_t group_id;
         const char *gcos;
         const char *home_dir;
         const char *login_shell;
@@ -71,19 +71,12 @@ struct result_info {
 static void report_finding(struct result_info *res, SEXP_t *probe_out)
 {
         SEXP_t *item;
-        char uidstr[16], gidstr[16];
-
-        snprintf(uidstr, sizeof uidstr, "%u", res->user_id);
-        snprintf(gidstr, sizeof gidstr, "%u", res->group_id);
-
-        uidstr[sizeof uidstr - 1] = '\0';
-        gidstr[sizeof gidstr - 1] = '\0';
 
         item = probe_item_create(OVAL_UNIX_PASSWORD, NULL,
                                  "username",    OVAL_DATATYPE_STRING, res->username,
                                  "password",    OVAL_DATATYPE_STRING, res->password,
-                                 "user_id",     OVAL_DATATYPE_STRING, uidstr,
-                                 "group_id",    OVAL_DATATYPE_STRING, gidstr,
+                                 "user_id",     OVAL_DATATYPE_INTEGER, res->user_id,
+                                 "group_id",    OVAL_DATATYPE_INTEGER, res->group_id,
                                  "gcos",        OVAL_DATATYPE_STRING, res->gcos,
                                  "home_dir",    OVAL_DATATYPE_STRING, res->home_dir,
                                  "login_shell", OVAL_DATATYPE_STRING, res->login_shell,
