@@ -57,7 +57,7 @@ const struct oscap_string_map XCCDF_LEVEL_MAP[] = {
 	{XCCDF_LOW, "low"},
 	{XCCDF_MEDIUM, "medium"},
 	{XCCDF_HIGH, "high"},
-	{0, NULL}
+	{XCCDF_UNKNOWN, NULL}
 };
 
 static const struct oscap_string_map XCCDF_STATUS_MAP[] = {

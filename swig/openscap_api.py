@@ -26,7 +26,8 @@
 __author__ =  'Maros Barabas'
 __version__=  '1.0'
 
-DEBUG = 0
+import logging                  # Logger for debug/info/error messages
+logger = logging.getLogger("openscap")
 
 from sys import version_info
 if version_info >= (2,6,0):
@@ -114,9 +115,17 @@ class OSCAP_List(list):
                         % (self.iterator.object[:self.iterator.object.find("_iterator")],)
 
 
-# Abstract class of OSCAP Object
 class OSCAP_Object(object):
-    """OSCAP_Object"""
+    """
+    Abstract class that represents all structures, functions and averything from
+    openscap library. Each structure from library is mapped inside OSCAP Object
+    with "object" and "instance" parameters.
+
+    "object" is variable of this class that keeps string representation of
+    type of the structure
+    "instance" is a variable of this class that keeps the pointer to the real
+    C structure.
+    """
 
     def __init__(self, object, instance=None):
         """ Called when the instance is created """
@@ -132,15 +141,28 @@ class OSCAP_Object(object):
         else: return retobj
 
     def __eq__(self, other):
+        """ Two OSCAP Objects are compared by their string representations
+        which reflect type and instance.
+        """
         return str.__eq__(self.__repr__(), other.__repr__())
 
     def __repr__(self):
         return "<Oscap Object of type '%s' with instance '%s'>" % (self.object, self.instance)
 
     def __func_wrapper(self, func, value=None):
+        """ This is only a wrapper for getter_wrapper - another wrapper for
+        openscap library functions.
+        """
 
         def __getter_wrapper(*args, **kwargs):
-
+            """ This function is a wrapper for function objects of openscap library.
+            Each function is called with variable number of parameters cause we don't
+            know how many parameters each function takes. This is based on try-except
+            methot that we try to call the function and if it fell down we try another
+            number of parameters.
+            This is based on knowledge that C language will always
+            cause error when the function is called with wrong number of parameters.
+            """
             newargs = ()
             for arg in args:
                 if isinstance(arg, OSCAP_Object):
@@ -185,16 +207,21 @@ class OSCAP_Object(object):
         func = OSCAP.__dict__.get(name)
         if func != None: return func
 
+        """ Looking for function object_subject() """
         obj = OSCAP.__dict__.get(self.object+"_"+name)
         if obj != None: 
             if callable(obj):
                 return self.__func_wrapper(obj)
 
+        """ Looking for function object_get_subject() """
         obj = OSCAP.__dict__.get(self.object+"_get_"+name)
         if obj != None:
             try: return self.__func_wrapper(obj)()
             except: return self.__func_wrapper(obj)
 
+        """ There is not function with the name 'name' let return the OSCAP_Object
+        This should return None, why is this here ? TODO
+        """
         return OSCAP_Object(self.object+"_"+name)
 
     def __call__(self, *args, **kwargs):
@@ -219,6 +246,7 @@ class OSCAP_Object(object):
             obj = OSCAP.__dict__.get(self.object+"_add_"+name) 
         if obj == None: 
             return None
+
         if isinstance(value, OSCAP_Object):
                     value = value.instance
         return obj(self.instance, value)
@@ -778,6 +806,15 @@ class CCE_Class(OSCAP_Object):
         return "<Oscap Object of type 'CCE Class' at %s>" % (hex(id(self)),)
 
 # ------------------------------------------------------------------------------------------------------------
+
+""" This part is very IMPORTANT! Implement your application functions
+to use openscap library this way:
+    policy_titles = openscap.xccdf.policy.titles (this will reflect xccdf_policy_get_titles() func)
+Below are particular objects for parts of openscap library module system. The only change is in using
+oscap module wich is conflicting with oscap namespace. This module is renamed to common. All functions
+using OSCAP functions should look like:
+    openscap.common.debug.seterr(err) (this will reflect oscap_debug_seterr() func)
+"""
 
 xccdf = XCCDF_Class()
 oval  = OVAL_Class()
