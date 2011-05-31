@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd                               http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2009-01-12T10:41:00-05:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:811" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the oval-def:set construct is properly supported</title>
+        <description>This definition is intended to evalutate to true if the interpreter properly supports the oval-def:set construct and all of its valid operations.</description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="Test that the set construct is supported with the COMPLEMENT operation." test_ref="oval:org.mitre.oval.test:tst:278"/>
+        <criterion comment="Test that the set object is supported with the set_operator equal to 'INTERSECTION'." test_ref="oval:org.mitre.oval.test:tst:69"/>
+        <criterion comment="Test that the set construct is supported with the UNION operation." test_ref="oval:org.mitre.oval.test:tst:195"/>
+        <criterion comment="Test that the set object is supported with the filter element." test_ref="oval:org.mitre.oval.test:tst:151"/>
+        <criterion comment="Test that the set object is supported with one level of set elements." test_ref="oval:org.mitre.oval.test:tst:377"/>
+        <criterion comment="Test that the set object is supported with two levels of set elements." test_ref="oval:org.mitre.oval.test:tst:213"/>
+        <criterion comment="Test that the set object is supported with three levels of set elements." test_ref="oval:org.mitre.oval.test:tst:874"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <file_test id="oval:org.mitre.oval.test:tst:278" version="1" comment="Test that the set construct is supported with the COMPLEMENT operation." check_existence="only_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:408"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:245"/>
+    </file_test>
+    <file_test id="oval:org.mitre.oval.test:tst:69" version="1" comment="Test that the set object is supported with the set_operator equal to 'INTERSECTION'." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:609"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:248"/>
+    </file_test>
+    <file_test id="oval:org.mitre.oval.test:tst:195" version="1" comment="Test that the set construct is supported with the UNION operation." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:661"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:128"/>
+    </file_test>
+    <file_test id="oval:org.mitre.oval.test:tst:151" version="1" comment="Test that the set object is supported with the filter element." check_existence="only_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:567"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:245"/>
+    </file_test>
+    <file_test id="oval:org.mitre.oval.test:tst:377" version="1" comment="Test that the set object is supported with one level of set elements." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:831"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:128"/>
+    </file_test>
+    <file_test id="oval:org.mitre.oval.test:tst:213" version="1" comment="Test that the set object is supported with two levels of set elements." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:379"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:128"/>
+    </file_test>
+    <file_test id="oval:org.mitre.oval.test:tst:874" version="1" comment="Test that the set object is supported with three levels of set elements." check_existence="none_exist" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:747"/>
+    </file_test>
+  </tests>
+  <objects>
+    <file_object id="oval:org.mitre.oval.test:obj:362" version="1" comment="This object represents a file_object with a path equal to '/tmp/ValidationSupportFiles/TextFiles'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <path>/tmp/ValidationSupportFiles/TextFiles</path>
+      <filename xsi:nil="true"/>
+    </file_object>
+    <file_object id="oval:org.mitre.oval.test:obj:71" version="1" comment="This object represents a file_object with a path that matches the regular expression '/tmp/ValidationSupportFiles/TextFiles/.+'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <path operation="pattern match">^/tmp/ValidationSupportFiles/TextFiles/.+</path>
+      <filename xsi:nil="true"/>
+    </file_object>
+    <file_object id="oval:org.mitre.oval.test:obj:142" version="1" comment="This object represents a file_object with a path that matches the regular expression '/tmp/ValidationSupportFiles/TextFiles($|/.*)'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <path operation="pattern match">^/tmp/ValidationSupportFiles/TextFiles($|/.*)</path>
+      <filename xsi:nil="true"/>
+    </file_object>
+    <file_object id="oval:org.mitre.oval.test:obj:408" version="1" comment="This object represents a file_object that is the set ( {a,b,c} COMPLEMENT {b,c} ) which equals set {a}." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <set set_operator="COMPLEMENT" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <object_reference>oval:org.mitre.oval.test:obj:142</object_reference>
+        <object_reference>oval:org.mitre.oval.test:obj:71</object_reference>
+      </set>
+    </file_object>
+    <file_object id="oval:org.mitre.oval.test:obj:609" version="1" comment="This object represents a file_object that is the set ( {a,b,c} INTERSECTION {b,c} ) which equals set {b,c}." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <set set_operator="INTERSECTION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <object_reference>oval:org.mitre.oval.test:obj:142</object_reference>
+        <object_reference>oval:org.mitre.oval.test:obj:71</object_reference>
+      </set>
+    </file_object>
+    <file_object id="oval:org.mitre.oval.test:obj:661" version="1" comment="This object represents a file_object that is the set ( {a} UNION {b,c} ) which equals set {a,b,c}." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <object_reference>oval:org.mitre.oval.test:obj:362</object_reference>
+        <object_reference>oval:org.mitre.oval.test:obj:71</object_reference>
+      </set>
+    </file_object>
+    <file_object id="oval:org.mitre.oval.test:obj:567" version="1" comment="This object represents a file_object that is the set {a,b,c} filtered by b and c which equals set {a}." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <set xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <object_reference>oval:org.mitre.oval.test:obj:142</object_reference>
+        <filter>oval:org.mitre.oval.test:ste:248</filter>
+      </set>
+    </file_object>
+    <file_object id="oval:org.mitre.oval.test:obj:831" version="1" comment="This object represents a file_object that is the set ( ( {a,b,c} COMPLEMENT {b,c} ) INTERSECTION ( {a} UNION {b,c} ) ) which equals set {a}." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <set set_operator="INTERSECTION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <set set_operator="COMPLEMENT">
+          <object_reference>oval:org.mitre.oval.test:obj:142</object_reference>
+          <object_reference>oval:org.mitre.oval.test:obj:71</object_reference>
+        </set>
+        <set set_operator="UNION">
+          <object_reference>oval:org.mitre.oval.test:obj:362</object_reference>
+          <object_reference>oval:org.mitre.oval.test:obj:71</object_reference>
+        </set>
+      </set>
+    </file_object>
+    <file_object id="oval:org.mitre.oval.test:obj:379" version="1" comment="This object represents a file_object that is the set ( ( ( {a} UNION {} ) COMPLEMENT ( {a,b,c} INTERSECTION {b,c} ) ) INTERSECTION ( ( {a,b,c} COMPLEMENT {b,c} ) UNION ( {a} UNION {a,b,c} ) ) ) which equals set {a}." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <set set_operator="INTERSECTION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <set set_operator="COMPLEMENT">
+          <set set_operator="UNION">
+            <object_reference>oval:org.mitre.oval.test:obj:362</object_reference>
+          </set>
+          <set set_operator="INTERSECTION">
+            <object_reference>oval:org.mitre.oval.test:obj:142</object_reference>
+            <object_reference>oval:org.mitre.oval.test:obj:71</object_reference>
+          </set>
+        </set>
+        <set set_operator="UNION">
+          <set set_operator="COMPLEMENT">
+            <object_reference>oval:org.mitre.oval.test:obj:142</object_reference>
+            <object_reference>oval:org.mitre.oval.test:obj:71</object_reference>
+          </set>
+          <set set_operator="UNION">
+            <object_reference>oval:org.mitre.oval.test:obj:362</object_reference>
+            <object_reference>oval:org.mitre.oval.test:obj:142</object_reference>
+          </set>
+        </set>
+      </set>
+    </file_object>
+    <file_object id="oval:org.mitre.oval.test:obj:747" version="1" comment="This object represents a file_object that is the set ( ( ( {a} UNION {} ) COMPLEMENT ( ( {a,b,c} COMPLEMENT {b,c} ) UNION ( ( {1} UNION {1,2,3} ) filtered by {b,c} ) ) ) INTERSECTION {} ) which equals {}." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <set set_operator="INTERSECTION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <set set_operator="COMPLEMENT">
+          <set set_operator="UNION">
+            <object_reference>oval:org.mitre.oval.test:obj:362</object_reference>
+          </set>
+          <set set_operator="UNION">
+            <set set_operator="COMPLEMENT">
+              <object_reference>oval:org.mitre.oval.test:obj:142</object_reference>
+              <object_reference>oval:org.mitre.oval.test:obj:71</object_reference>
+            </set>
+            <set set_operator="UNION">
+              <object_reference>oval:org.mitre.oval.test:obj:362</object_reference>
+              <object_reference>oval:org.mitre.oval.test:obj:142</object_reference>
+              <filter>oval:org.mitre.oval.test:ste:248</filter>
+            </set>
+          </set>
+        </set>
+      </set>
+    </file_object>
+  </objects>
+  <states>
+    <file_state id="oval:org.mitre.oval.test:ste:245" version="1" comment="This file_state represents a file_object with a path equal to '/tmp/ValidationSupportFiles/TextFiles'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <path>/tmp/ValidationSupportFiles/TextFiles</path>
+    </file_state>
+    <file_state id="oval:org.mitre.oval.test:ste:248" version="1" comment="This file_state represents a file_object with a path that equals '/tmp/ValidationSupportFiles/TextFiles/TextFileContentTest' or '/tmp/ValidationSupportFiles/TextFiles/TextFileContentTest/SubTextFileContentTest'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <path var_ref="oval:org.mitre.oval.test:var:821" var_check="only one"/>
+    </file_state>
+    <file_state id="oval:org.mitre.oval.test:ste:128" version="1" comment="This file_state represents a file_object with a path that equals '/tmp/ValidationSupportFiles/TextFiles', '/tmp/ValidationSupportFiles/TextFiles/TextFileContentTest', or '/tmp/ValidationSupportFiles/TextFiles/TextFileContentTest/SubTextFileContentTest'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <path var_ref="oval:org.mitre.oval.test:var:137" var_check="only one"/>
+    </file_state>
+  </states>
+  <variables>
+    <constant_variable id="oval:org.mitre.oval.test:var:821" version="1" comment="This constant_variable represents the string values '/tmp/ValidationSupportFiles/TextFiles/TextFileContentTest' and '/tmp/ValidationSupportFiles/TextFiles/TextFileContentTest/SubTextFileContentTest'." datatype="string">
+      <value>/tmp/ValidationSupportFiles/TextFiles/TextFileContentTest</value>
+      <value>/tmp/ValidationSupportFiles/TextFiles/TextFileContentTest/SubTextFileContentTest</value>
+    </constant_variable>
+    <constant_variable id="oval:org.mitre.oval.test:var:137" version="1" comment="This constant_variable represents the string values '/tmp/ValidationSupportFiles/TextFiles', '/tmp/ValidationSupportFiles/TextFiles/TextFileContentTest', and '/tmp/ValidationSupportFiles/TextFiles/TextFileContentTest/SubTextFileContentTest'." datatype="string">
+      <value>/tmp/ValidationSupportFiles/TextFiles</value>
+      <value>/tmp/ValidationSupportFiles/TextFiles/TextFileContentTest</value>
+      <value>/tmp/ValidationSupportFiles/TextFiles/TextFileContentTest/SubTextFileContentTest</value>
+    </constant_variable>
+  </variables>
+</oval_definitions>

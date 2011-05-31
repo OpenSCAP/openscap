@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd    http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2009-05-21T11:46:00-04:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:367" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the oval-def:literal_component construct is properly supported</title>
+        <description>This definition is intended to evalutate to true if the interpreter properly supports the oval-def:literal_component construct.</description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="Test that the literal_component construct is supported with the binary datatype." test_ref="oval:org.mitre.oval.test:tst:238"/>
+        <criterion comment="Test that the literal_component construct is supported with the boolean datatype." test_ref="oval:org.mitre.oval.test:tst:223"/>
+        <criterion comment="Test that the literal_component construct is supported with the evr_string datatype." test_ref="oval:org.mitre.oval.test:tst:388"/>
+        <criterion comment="Test that the literal_component construct is supported with the float datatype." test_ref="oval:org.mitre.oval.test:tst:127"/>
+        <criterion comment="Test that the literal_component construct is supported with the int datatype." test_ref="oval:org.mitre.oval.test:tst:52"/>
+        <criterion comment="Test that the literal_component construct is supported with the string datatype." test_ref="oval:org.mitre.oval.test:tst:80"/>
+        <criterion comment="Test that the literal_component construct is supported with the version datatype." test_ref="oval:org.mitre.oval.test:tst:728"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <variable_test id="oval:org.mitre.oval.test:tst:238" version="1" comment="Test that the literal_component construct is supported with the binary datatype." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:346"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:916"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:223" version="1" comment="Test that the literal_component construct is supported with the boolean datatype." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:817"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:575"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:388" version="1" comment="Test that the literal_component construct is supported with the evr_string datatype." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:464"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:968"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:127" version="1" comment="Test that the literal_component construct is supported with the float datatype." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:504"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:866"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:52" version="1" comment="Test that the literal_component construct is supported with the int datatype." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:726"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:213"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:80" version="1" comment="Test that the literal_component construct is supported with the string datatype." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:869"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:84"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:728" version="1" comment="Test that the literal_component construct is supported with the version datatype." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:975"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:37"/>
+    </variable_test>
+  </tests>
+  <objects>
+    <variable_object id="oval:org.mitre.oval.test:obj:346" version="1" comment="This variable_object represents a binary value equal to '10101010'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:118</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:817" version="1" comment="This variable_object represents a boolean value equal to 'true'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:368</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:464" version="1" comment="This variable_object represents a evr_version value equal to ':3.5ssa-0.20030801.48'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:657</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:504" version="1" comment="This variable_object represents a float value equal to '-12432.559e-3'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:879</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:726" version="1" comment="This variable_object represents a int value equal to '4712394792173'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:203</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:869" version="1" comment="This variable_object represents a string value equal to '123-Validation^Test^String-123'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:909</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:975" version="1" comment="This variable_object represents a version value equal to '9!23%424-65+35,890A314P12'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:912</var_ref>
+    </variable_object>
+  </objects>
+  <states>
+    <variable_state id="oval:org.mitre.oval.test:ste:916" version="1" comment="This state represents a variable_object where the binary value is equal to '10101010'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="binary">10101010</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:575" version="1" comment="This state represents a variable_object where the boolean value is equal to 'true'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="boolean">true</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:968" version="1" comment="This state represents a variable_object where the evr_string value is equal to ':3.5ssa-0.20030801.48'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="evr_string">:3.5ssa-0.20030801.48</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:866" version="1" comment="This state represents a variable_object where the float value is equal to '-12432.559e-3'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float">-12432.559e-3</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:213" version="1" comment="This state represents a variable_object where the int value is equal to '4712394792173'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="int">4712394792173</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:84" version="1" comment="This state represents a variable_object where the string value is equal to '123-Validation^Test^String-123'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>123-Validation^Test^String-123</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:37" version="1" comment="This state represents a variable_object where the value is equal to '9!23%424-65+35,890A314P12'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="version">9!23%424-65+35,890A314P12</value>
+    </variable_state>
+  </states>
+  <variables>
+    <local_variable id="oval:org.mitre.oval.test:var:118" version="1" comment="This variable represents the binary value '10101010'." datatype="binary">
+      <literal_component datatype="binary">10101010</literal_component>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:368" version="1" comment="This variable represents the boolean value 'true'." datatype="boolean">
+      <literal_component datatype="boolean">true</literal_component>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:657" version="1" comment="This variable represents the evr_string value ':3.5ssa-0.20030801.48'." datatype="evr_string">
+      <literal_component datatype="evr_string">:3.5ssa-0.20030801.48</literal_component>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:879" version="1" comment="This variable represents the float value '-12432.559e-3'." datatype="float">
+      <literal_component datatype="float">-12432.559e-3</literal_component>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:203" version="1" comment="This variable represents the int value '4712394792173'." datatype="int">
+      <literal_component datatype="int">4712394792173</literal_component>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:909" version="1" comment="This variable represents the string value '123-Validation^Test^String-123'." datatype="string">
+      <literal_component datatype="string">123-Validation^Test^String-123</literal_component>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:912" version="1" comment="This variable represents the version value '9!23%424-65+35,890A314P12'." datatype="version">
+      <literal_component datatype="version">9!23%424-65+35,890A314P12</literal_component>
+    </local_variable>
+  </variables>
+</oval_definitions>

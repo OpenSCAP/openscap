@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd      http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2009-01-12T10:41:00-05:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:779" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the win-def:filehash_test is properly supported</title>
+        <description>This definition is intended to evalutate to true if the interpreter properly supports the win-def:filehash_test.</description>
+      </metadata>
+      <notes>
+        <note>It is important to note that the values used in this test definition are specific to a particular machine, and may not necessarily apply to your system. As a result, in order to have the definition return a result of 'true', you must either change these values to the ones found on your particular system, or you must configure your system to use these values.</note>
+      </notes>
+      <criteria operator="AND">
+        <criterion comment="Test that the filehash_object is supported with the path entity equal to some value and the filename entity equal to some value." test_ref="oval:org.mitre.oval.test:tst:904"/>
+        <criterion comment="Test that the filehash_object is supported with the path entity matching some regular expression and the filename equal to some value." test_ref="oval:org.mitre.oval.test:tst:200"/>
+        <criterion comment="Test that the filehash_object is supported with the path entity equal to some value and the filename matching some regular expression." test_ref="oval:org.mitre.oval.test:tst:190"/>
+        <criterion comment="Test that the filehash_object is supported with the path entity equal to some value and the filename entity not equal to some value." test_ref="oval:org.mitre.oval.test:tst:329"/>
+        <criterion comment="Test that the max_depth behavior is supported for a limited depth of recursion." test_ref="oval:org.mitre.oval.test:tst:867"/>
+        <criterion comment="Test that the max_depth behavior is supported for an unlimited depth of recursion." test_ref="oval:org.mitre.oval.test:tst:102"/>
+        <criterion comment="Test that the recurse_direction behavior is supported." test_ref="oval:org.mitre.oval.test:tst:508"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <filehash_test id="oval:org.mitre.oval.test:tst:904" version="1" comment="Test that the filehash_object is supported with the path entity equal to some value and the filename entity equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:131"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:654"/>
+    </filehash_test>
+    <filehash_test id="oval:org.mitre.oval.test:tst:200" version="1" comment="Test that the filehash_object is supported with the path entity matching some regular expression and the filename equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:813"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:520"/>
+    </filehash_test>
+    <filehash_test id="oval:org.mitre.oval.test:tst:190" version="1" comment="Test that the filehash_object is supported with the path entity equal to some value and the filename matching some regular expression." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:281"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:922"/>
+    </filehash_test>
+    <filehash_test id="oval:org.mitre.oval.test:tst:329" version="1" comment="Test that the filehash_object is supported with the path entity equal to some value and the filename entity not equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:97"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:689"/>
+    </filehash_test>
+    <filehash_test id="oval:org.mitre.oval.test:tst:867" version="1" comment="Test that the max_depth behavior is supported for a limited depth of recursion." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:13"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:654"/>
+    </filehash_test>
+    <filehash_test id="oval:org.mitre.oval.test:tst:102" version="1" comment="Test that the max_depth behavior is supported for an unlimited depth of recursion." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:444"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:951"/>
+    </filehash_test>
+    <filehash_test id="oval:org.mitre.oval.test:tst:508" version="1" comment="Test that the recurse_direction behavior is supported." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:562"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:373"/>
+    </filehash_test>
+  </tests>
+  <objects>
+    <filehash_object id="oval:org.mitre.oval.test:obj:131" version="1" comment="This object represents a filehash_item with a path equal to '/bin' and a filename equal to 'ls'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/bin</path>
+      <filename>ls</filename>
+    </filehash_object>
+    <filehash_object id="oval:org.mitre.oval.test:obj:813" version="1" comment="This object represents a filehash_item with a path that matches the regular expression '^b.n$' and a filename equal to 'ls'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path operation="pattern match">^/b.n$</path>
+      <filename>ls</filename>
+    </filehash_object>
+    <filehash_object id="oval:org.mitre.oval.test:obj:281" version="1" comment="This object represents a filehash_item with a path equal to '/bin' and a filename that matches the regular expression '^l'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/bin</path>
+      <filename operation="pattern match">^l</filename>
+    </filehash_object>
+    <filehash_object id="oval:org.mitre.oval.test:obj:97" version="1" comment="This object represents a filehash_item with path equal to '/bin', and a filename that is not equal to 'ls'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/bin</path>
+      <filename operation="not equal">ls</filename>
+    </filehash_object>
+    <filehash_object id="oval:org.mitre.oval.test:obj:13" version="1" comment="This object represents a filehash_item with path starting at 'C:\Program Files', recursing down 1 level, and filename equals 'iexplore.exe'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <behaviors max_depth="1" recurse_direction="down"/>
+      <path>/bin</path>
+      <filename>ls</filename>
+    </filehash_object>
+    <filehash_object id="oval:org.mitre.oval.test:obj:444" version="1" comment="This object represents a filehash_item with path starting at '/etc', recursing down infinitely, and filename equals 'rc'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <behaviors max_depth="-1" recurse_direction="down"/>
+      <path>/etc</path>
+      <filename>rc</filename>
+    </filehash_object>
+    <filehash_object id="oval:org.mitre.oval.test:obj:562" version="1" comment="This object represents a filehash_item with path starting at '/etc/rc.d', recursing up 1 level, and filename equals 'profile'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <behaviors max_depth="1" recurse_direction="up"/>
+      <path>/etc/rc.d</path>
+      <filename>profile</filename>
+    </filehash_object>
+  </objects>
+  <states>
+    <filehash_state id="oval:org.mitre.oval.test:ste:654" version="1" comment="This filehash_state represents a filehash_item which has a path equal to '/bin', a filename equal to 'ls', a md5 hash that matches the regular expression '.*', and a sha1 hash that matches the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/bin</path>
+      <filename>ls</filename>
+      <md5 operation="pattern match">.*</md5>
+      <sha1 operation="pattern match">.*</sha1>
+    </filehash_state>
+    <filehash_state id="oval:org.mitre.oval.test:ste:520" version="1" comment="This filehash_state represents a filehash_item which has a path that matches the regular expression '^b.n$', a filename that equals 'ls', a md5 hash that matches the regular expression '.*', and a sha1 hash that matches the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path operation="pattern match">^/b.n$</path>
+      <filename>ls</filename>
+      <md5 operation="pattern match">.*</md5>
+      <sha1 operation="pattern match">.*</sha1>
+    </filehash_state>
+    <filehash_state id="oval:org.mitre.oval.test:ste:922" version="1" comment="This filehash_state represents a filehash_item which has a path equal to '/bin', a filename that matches the regular expression '^l', a md5 hash that matches the regular expression '.*', and a sha1 hash that matches the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/bin</path>
+      <filename operation="pattern match">^l</filename>
+      <md5 operation="pattern match">.*</md5>
+      <sha1 operation="pattern match">.*</sha1>
+    </filehash_state>
+    <filehash_state id="oval:org.mitre.oval.test:ste:689" version="1" comment="This filehash_state represents a filehash_item which has a path of '/bin', a filename that is not equal to 'ls', a md5 hash that matches the regular expression '.*', and a sha1 hash that matches the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/bin</path>
+      <filename operation="not equal">ls</filename>
+      <md5 operation="pattern match">.*</md5>
+      <sha1 operation="pattern match">.*</sha1>
+    </filehash_state>
+    <filehash_state id="oval:org.mitre.oval.test:ste:951" version="1" comment="This filehash_state represents a filehash_item which has a path that equals '/etc/rc.d', a filename that equals 'rc', a md5 hash that matches the regular expression '.*', and a sha1 hash that matches the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/etc/rc.d</path>
+      <filename>rc</filename>
+      <md5 operation="pattern match">.*</md5>
+      <sha1 operation="pattern match">.*</sha1>
+    </filehash_state>
+    <filehash_state id="oval:org.mitre.oval.test:ste:373" version="1" comment="This filehash_state represents a filehash_item which has a path that equals '/etc/', a filename that equals 'profile', a md5 hash that matches the regular expression '.*', and a sha1 hash that matches the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path operation="pattern match">/etc</path>
+      <filename>profile</filename>
+      <md5 operation="pattern match">.*</md5>
+      <sha1 operation="pattern match">.*</sha1>
+    </filehash_state>
+  </states>
+</oval_definitions>

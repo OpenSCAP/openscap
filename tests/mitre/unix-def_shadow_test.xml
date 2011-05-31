@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd      http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd     http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2009-08-07T17:25:07-05:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:334" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if unix-def:shadow_test is properly supported</title>
+        <description>This definition is intended to evaluate to true if the interpreter properly supports unix-def:shadow_test.</description>
+      </metadata>
+      <notes>
+        <note>The OVAL Interpreter will probably need to be run as root to successfully evaluate this definition.</note>
+        <note>It is important to note that the values used in this test definition are specific to a particular machine, and may not necessarily apply to your system. As a result, in order to have the definition return a result of 'true', you must either change these values to the ones found on your particular system, or you must configure your system to use these values.</note>
+      </notes>
+      <criteria operator="AND">
+        <criterion comment="This test checks if spwd::sp_min for user 'root' is 0." test_ref="oval:org.mitre.oval.test:tst:763"/>
+        <criterion comment="This test checks if there is a non-root account with spwd::sp_warn = 7." test_ref="oval:org.mitre.oval.test:tst:922"/>
+        <criterion comment="This test checks if there is an account which does not start with 'r' with spwd::sp_warn = 7." test_ref="oval:org.mitre.oval.test:tst:241"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <shadow_test id="oval:org.mitre.oval.test:tst:763" version="1" comment="This test checks if spwd::sp_min for user 'root' is 0." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:66"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:851"/>
+    </shadow_test>
+    <shadow_test id="oval:org.mitre.oval.test:tst:922" version="1" comment="This test checks if there is a non-root account with spwd::sp_warn = 7." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:9"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:105"/>
+    </shadow_test>
+    <shadow_test id="oval:org.mitre.oval.test:tst:241" version="1" comment="This test checks if there is an account which does not start with 'r' with spwd::sp_warn = 7." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:36"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:105"/>
+    </shadow_test>
+  </tests>
+  <objects>
+    <shadow_object id="oval:org.mitre.oval.test:obj:66" version="1" comment="The root account." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <username>root</username>
+    </shadow_object>
+    <shadow_object id="oval:org.mitre.oval.test:obj:9" version="1" comment="The non-root accounts." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <username operation="not equal">root</username>
+    </shadow_object>
+    <shadow_object id="oval:org.mitre.oval.test:obj:36" version="1" comment="The accounts which do not start with r." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <username operation="pattern match">^[^r]</username>
+    </shadow_object>
+  </objects>
+  <states>
+    <shadow_state id="oval:org.mitre.oval.test:ste:851" version="1" comment="The state of spwd::sp_min equaling 0." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <chg_allow>0</chg_allow>
+    </shadow_state>
+    <shadow_state id="oval:org.mitre.oval.test:ste:105" version="1" comment="The state of spwd::sp_warn equaling 7." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <exp_warn>7</exp_warn>
+    </shadow_state>
+  </states>
+</oval_definitions>

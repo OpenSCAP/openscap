@@ -392,17 +392,6 @@ int app_evaluate_oval(const struct oscap_action *action)
 		goto cleanup;
 	}
 
-	/* print report */
-	if (VERBOSE >= 0 && !action->id) {
-		fprintf(stdout, "===== REPORT =====\n");
-		fprintf(stdout, "TRUE:          \r\t\t %d\n", usr->result_true);
-		fprintf(stdout, "FALSE:         \r\t\t %d\n", usr->result_false);
-		fprintf(stdout, "ERROR:         \r\t\t %d\n", usr->result_error);
-		fprintf(stdout, "UNKNOWN:       \r\t\t %d\n", usr->result_unknown);
-		fprintf(stdout, "NOT EVALUATED: \r\t\t %d\n", usr->result_neval);
-		fprintf(stdout, "NOT APPLICABLE:\r\t\t %d\n", usr->result_napp);
-	}
-
 	/* export results to file */
 	if (action->f_results != NULL) {
 		/* get result model */

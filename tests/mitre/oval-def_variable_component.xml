@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd    http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2009-05-21T11:46:00-04:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:118" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the oval-def:variable_component construct is properly supported</title>
+        <description>This definition is intended to evalutate to true if the interpreter properly supports the oval-def:variable_component construct.</description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="Test that the variable_object is supported with the var_ref attribute referencing an OVAL Variable that contains a single value." test_ref="oval:org.mitre.oval.test:tst:311"/>
+        <criterion comment="Test that the variable_object is supported with the var_ref attribute referencing an OVAL Variable that contains multiple values." test_ref="oval:org.mitre.oval.test:tst:180"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <variable_test id="oval:org.mitre.oval.test:tst:311" version="1" comment="Test that the variable_object is supported with the var_ref attribute referencing an OVAL Variable that contains a single value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:480"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:967"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:180" version="1" comment="Test that the variable_object is supported with the var_ref attribute referencing an OVAL Variable that contains multiple values." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:293"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:157"/>
+    </variable_test>
+  </tests>
+  <objects>
+    <variable_object id="oval:org.mitre.oval.test:obj:480" version="1" comment="This variable_object represents a string value equal to 'Validation Test String'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:817</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:293" version="1" comment="This variable_object represents the string values 'Validation Test String1', 'Validation Test String2', and 'Validation Test String3'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:866</var_ref>
+    </variable_object>
+  </objects>
+  <states>
+    <variable_state id="oval:org.mitre.oval.test:ste:967" version="1" comment="This state represents a variable_object where the string value is equal to 'Validation Test String'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>Validation Test String</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:157" version="1" comment="This state represents a variable_object where the string value matches the regular expression 'Validation Test String[0-9]'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value operation="pattern match">Validation Test String[0-9]</value>
+    </variable_state>
+  </states>
+  <variables>
+    <constant_variable id="oval:org.mitre.oval.test:var:721" version="1" comment="This variable represents the string value 'Validation Test String'." datatype="string">
+      <value>Validation Test String</value>
+    </constant_variable>
+    <constant_variable id="oval:org.mitre.oval.test:var:852" version="1" comment="This variable represents the string values 'Validation Test String1', 'Validation Test String2', and 'Validation Test String3'." datatype="string">
+      <value>Validation Test String1</value>
+      <value>Validation Test String2</value>
+      <value>Validation Test String3</value>
+    </constant_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:817" version="1" comment="This variable represents the string value 'Validation Test String' but uses the variable_component construct to obtain the value." datatype="string">
+      <variable_component var_ref="oval:org.mitre.oval.test:var:721"/>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:866" version="1" comment="This variable represents the string values 'Validation Test String1', 'Validation Test String2', and 'Validation Test String3' but uses the variable_component construct to obtain the values." datatype="string">
+      <variable_component var_ref="oval:org.mitre.oval.test:var:852"/>
+    </local_variable>
+  </variables>
+</oval_definitions>

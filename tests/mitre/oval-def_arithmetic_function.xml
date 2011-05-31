@@ -1,0 +1,229 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd    http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#windows windows-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:win-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2009-05-21T11:46:00-04:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:895" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if arithmetic operations are properly supported</title>
+        <description>This definition is intended to evaluate to true if the interpreter properly supports all of the valid arithmetic operations.</description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="Test that the arithmetic function is supported with the add operation and two integer values." test_ref="oval:org.mitre.oval.test:tst:644"/>
+        <criterion comment="Test that the arithmetic function is supported with the add operation, an integer value, and a float value." test_ref="oval:org.mitre.oval.test:tst:17"/>
+        <criterion comment="Test that the arithmetic function is supported with the add operation, a float value, and an integer value." test_ref="oval:org.mitre.oval.test:tst:774"/>
+        <criterion comment="Test that the arithmetic function is supported with the add operation and two float values." test_ref="oval:org.mitre.oval.test:tst:211"/>
+        <criterion comment="Test that the arithmetic function is supported with the multiply operation and two integer values." test_ref="oval:org.mitre.oval.test:tst:51"/>
+        <criterion comment="Test that the arithmetic function is supported with the multiply operation, an integer value, and a float value." test_ref="oval:org.mitre.oval.test:tst:178"/>
+        <criterion comment="Test that the arithmetic function is supported with the multiply operation, a float value, and an integer value." test_ref="oval:org.mitre.oval.test:tst:970"/>
+        <criterion comment="Test that the arithmetic function is supported with the multiply operation and two float values." test_ref="oval:org.mitre.oval.test:tst:74"/>
+        <criterion comment="Test that the arithmetic function is supported with the addition operation and multiple-value variables." test_ref="oval:org.mitre.oval.test:tst:674"/>
+        <criterion comment="Test that the arithmetic function is supported with the multiply operation and multiple-value variables." test_ref="oval:org.mitre.oval.test:tst:229"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <variable_test id="oval:org.mitre.oval.test:tst:644" version="1" comment="Test that the arithmetic function is supported with the add operation and two integer values." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:865"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:926"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:17" version="1" comment="Test that the arithmetic function is supported with the add operation, an integer value, and a float value." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:350"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:809"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:774" version="1" comment="Test that the arithmetic function is supported with the add operation, a float value, and an integer value." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:717"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:240"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:211" version="1" comment="Test that the arithmetic function is supported with the add operation and two float values." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:308"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:735"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:51" version="1" comment="Test that the arithmetic function is supported with the multiply operation and two integer values." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:810"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:22"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:178" version="1" comment="Test that the arithmetic function is supported with the multiply operation, an integer value, and a float value." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:133"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:127"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:970" version="1" comment="Test that the arithmetic function is supported with the multiply operation, a float value, and an integer value." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:436"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:129"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:74" version="1" comment="Test that the arithmetic function is supported with the multiply operation and two float values." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:878"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:480"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:674" version="1" comment="Test that the arithmetic function is supported with the addition operation and multiple-value variables." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:932"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:652"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:229" version="1" comment="Test that the arithmetic function is supported with the multiply operation and multiple-value variables." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:635"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:609"/>
+    </variable_test>
+  </tests>
+  <objects>
+    <variable_object id="oval:org.mitre.oval.test:obj:865" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:247</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:350" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:24</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:717" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:572</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:308" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:693</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:810" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:184</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:133" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:201</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:436" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:278</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:878" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:129</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:932" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:589</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:635" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:898</var_ref>
+    </variable_object>
+  </objects>
+  <states>
+    <variable_state id="oval:org.mitre.oval.test:ste:926" version="1" comment="The int 2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="int">2</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:809" version="1" comment="The float 2.1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float">2.1</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:240" version="1" comment="The float 2.1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float">2.1</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:735" version="1" comment="the float 2.2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float">2.2</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:22" version="1" comment="the int 1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="int">1</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:127" version="1" comment="the float 1.1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float">1.1</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:129" version="1" comment="the float 1.1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float">1.1</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:480" version="1" comment="the float 1.21" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float">1.21</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:652" version="1" comment="the result of multiple-value addition" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="int" var_ref="oval:org.mitre.oval.test:var:820" var_check="at least one"/>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:609" version="1" comment="the result of multiple-value multiplication" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="int" var_ref="oval:org.mitre.oval.test:var:627" var_check="at least one"/>
+    </variable_state>
+  </states>
+  <variables>
+    <local_variable id="oval:org.mitre.oval.test:var:247" version="1" comment="Adding the integer 1 and the integer 1" datatype="int">
+      <arithmetic arithmetic_operation="add">
+        <literal_component datatype="int">1</literal_component>
+        <literal_component datatype="int">1</literal_component>
+      </arithmetic>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:24" version="1" comment="Adding the integer 1 and the float 1.1" datatype="float">
+      <arithmetic arithmetic_operation="add">
+        <literal_component datatype="int">1</literal_component>
+        <literal_component datatype="float">1.1</literal_component>
+      </arithmetic>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:572" version="1" comment="Adding the float 1.1 and the integer 1" datatype="float">
+      <arithmetic arithmetic_operation="add">
+        <literal_component datatype="float">1.1</literal_component>
+        <literal_component datatype="int">1</literal_component>
+      </arithmetic>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:693" version="1" comment="Adding the float 1.1 and the float 1.1" datatype="float">
+      <arithmetic arithmetic_operation="add">
+        <literal_component datatype="float">1.1</literal_component>
+        <literal_component datatype="float">1.1</literal_component>
+      </arithmetic>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:184" version="1" comment="Multiplying the integer 1 and the integer 1" datatype="int">
+      <arithmetic arithmetic_operation="multiply">
+        <literal_component datatype="int">1</literal_component>
+        <literal_component datatype="int">1</literal_component>
+      </arithmetic>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:201" version="1" comment="Multiplying the integer 1 and the float 1.1" datatype="float">
+      <arithmetic arithmetic_operation="multiply">
+        <literal_component datatype="int">1</literal_component>
+        <literal_component datatype="float">1.1</literal_component>
+      </arithmetic>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:278" version="1" comment="Multiplying the float 1.1 and the integer 1" datatype="float">
+      <arithmetic arithmetic_operation="multiply">
+        <literal_component datatype="float">1.1</literal_component>
+        <literal_component datatype="int">1</literal_component>
+      </arithmetic>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:129" version="1" comment="Multiplying the float 1.1 and the float 1.1" datatype="float">
+      <arithmetic arithmetic_operation="multiply">
+        <literal_component datatype="float">1.1</literal_component>
+        <literal_component datatype="float">1.1</literal_component>
+      </arithmetic>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:589" version="1" comment="Adding the multiple-value variables" datatype="float">
+      <arithmetic arithmetic_operation="add">
+        <variable_component var_ref="oval:org.mitre.oval.test:var:66"/>
+        <variable_component var_ref="oval:org.mitre.oval.test:var:485"/>
+        <variable_component var_ref="oval:org.mitre.oval.test:var:962"/>
+      </arithmetic>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:898" version="1" comment="Multiplying the multiple-value variables" datatype="float">
+      <arithmetic arithmetic_operation="multiply">
+        <variable_component var_ref="oval:org.mitre.oval.test:var:66"/>
+        <variable_component var_ref="oval:org.mitre.oval.test:var:485"/>
+        <variable_component var_ref="oval:org.mitre.oval.test:var:962"/>
+      </arithmetic>
+    </local_variable>
+    <constant_variable id="oval:org.mitre.oval.test:var:66" version="1" comment="a multi-valued variable" datatype="int">
+      <value>1</value>
+      <value>2</value>
+    </constant_variable>
+    <constant_variable id="oval:org.mitre.oval.test:var:485" version="1" comment="a multi-valued variable" datatype="int">
+      <value>3</value>
+      <value>4</value>
+    </constant_variable>
+    <constant_variable id="oval:org.mitre.oval.test:var:962" version="1" comment="a multi-valued variable" datatype="int">
+      <value>5</value>
+      <value>6</value>
+    </constant_variable>
+    <constant_variable id="oval:org.mitre.oval.test:var:820" version="1" comment="result of adding variables 11, 12, 13" datatype="int">
+      <value>9</value>
+      <value>10</value>
+      <value>10</value>
+      <value>11</value>
+      <value>10</value>
+      <value>11</value>
+      <value>11</value>
+      <value>12</value>
+    </constant_variable>
+    <constant_variable id="oval:org.mitre.oval.test:var:627" version="1" comment="result of multiplying variables 11, 12, 13" datatype="int">
+      <value>15</value>
+      <value>18</value>
+      <value>20</value>
+      <value>24</value>
+      <value>30</value>
+      <value>36</value>
+      <value>40</value>
+      <value>48</value>
+    </constant_variable>
+  </variables>
+</oval_definitions>

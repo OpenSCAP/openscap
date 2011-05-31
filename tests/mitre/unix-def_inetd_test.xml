@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd      http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2009-08-07T17:25:07-05:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:260" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the unix-def:inetd_test is properly supported</title>
+        <description>This definition is intended to evaluate to true if the interpreter properly supports unix-def:inetd_test.</description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="Test that the inetd_object is supported with the protocol entity equal to some value and the service_name entity equal to some value." test_ref="oval:org.mitre.oval.test:tst:53"/>
+        <criterion comment="Test that the inetd_object is supported with the protocol entity not equal to some value and the service_name entity not equal to some value." test_ref="oval:org.mitre.oval.test:tst:381"/>
+        <criterion comment="Test that the inetd_object is supported with the protocol entity matching some regular expression and the service_name entity matching some regular expression." test_ref="oval:org.mitre.oval.test:tst:701"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <inetd_test id="oval:org.mitre.oval.test:tst:53" version="1" comment="Test that the inetd_object is supported with the protocol entity equal to some value and the service_name entity equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:987"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:672"/>
+    </inetd_test>
+    <inetd_test id="oval:org.mitre.oval.test:tst:381" version="1" comment="Test that the inetd_object is supported with the protocol entity not equal to some value and the service_name entity not equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:720"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:300"/>
+    </inetd_test>
+    <inetd_test id="oval:org.mitre.oval.test:tst:701" version="1" comment="Test that the inetd_object is supported with the protocol entity matching some regular expression and the service_name entity matching some regular expression." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:863"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:771"/>
+    </inetd_test>
+  </tests>
+  <objects>
+    <inetd_object id="oval:org.mitre.oval.test:obj:987" version="1" comment="This inetd_object represents an inetd_item where the protocol equals 'tcp' and the service_name equals 'telnet'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <protocol>tcp</protocol>
+      <service_name>telnet</service_name>
+    </inetd_object>
+    <inetd_object id="oval:org.mitre.oval.test:obj:720" version="1" comment="This inetd_object represents an inetd_item where the protocol is not equal to 'tcp' and the service_name is not equal to 'telnet'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <protocol operation="not equal">tcp</protocol>
+      <service_name operation="not equal">telnet</service_name>
+    </inetd_object>
+    <inetd_object id="oval:org.mitre.oval.test:obj:863" version="1" comment="This inetd_object represents an inetd_item where the protocol matches the regular expression '^t.p$' and the service_name matches the regular expression '^te.n.t$'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <protocol operation="pattern match">^t.p$</protocol>
+      <service_name operation="pattern match">^te.n.t$</service_name>
+    </inetd_object>
+  </objects>
+  <states>
+    <inetd_state id="oval:org.mitre.oval.test:ste:672" version="1" comment="This inetd_state represents an inetd_item which has a protocol equal to 'tcp' and a service_name equal to 'telnet'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <protocol>tcp</protocol>
+      <service_name>telnet</service_name>
+    </inetd_state>
+    <inetd_state id="oval:org.mitre.oval.test:ste:300" version="1" comment="This inetd_state represents an inetd_item which has a protocol not equal to 'tcp' and a service_name not equal to 'telnet'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <protocol operation="not equal">tcp</protocol>
+      <service_name operation="not equal">telnet</service_name>
+    </inetd_state>
+    <inetd_state id="oval:org.mitre.oval.test:ste:771" version="1" comment="This inetd_state represents an inetd_item which has a protocol that matches the regular expression '^t.p$' and a service_name that matches the regular expression '^te.n.t$'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <protocol operation="pattern match">^t.p$</protocol>
+      <service_name operation="pattern match">^te.n.t$</service_name>
+    </inetd_state>
+  </states>
+</oval_definitions>

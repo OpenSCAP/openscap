@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd    http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2009-05-21T11:46:00-04:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:834" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the oval:ExistenceEnumeration simple type is properly supported</title>
+        <description>This definition is intended to evalutate to true if the interpreter properly supports the oval:ExistenceEnumeration simple type.</description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion negate="true" comment="Test that the ExistenceEnumeration value 'all_exist' is supported where no object defined by the description exists on the system." test_ref="oval:org.mitre.oval.test:tst:990"/>
+        <criterion comment="Test that the ExistenceEnumeration value 'all_exist' is supported where every object defined by the description exists on the system." test_ref="oval:org.mitre.oval.test:tst:778"/>
+        <criterion comment="Test that the ExistenceEnumeration value 'any_exist' is supported where no object defined by the description exists on the system." test_ref="oval:org.mitre.oval.test:tst:409"/>
+        <criterion comment="Test that the ExistenceEnumeration value 'any_exist' is supported where every object defined by the description exists on the system." test_ref="oval:org.mitre.oval.test:tst:257"/>
+        <criterion negate="true" comment="Test that the ExistenceEnumeration value 'at_least_one_exists' is supported where no object defined by the description exists on the system." test_ref="oval:org.mitre.oval.test:tst:226"/>
+        <criterion comment="Test that the ExistenceEnumeration value 'at_least_one_exists' is supported where one object defined by the description exists on the system." test_ref="oval:org.mitre.oval.test:tst:16"/>
+        <criterion comment="Test that the ExistenceEnumeration value 'at_least_one_exists' is supported where every object defined by the description exists on the system." test_ref="oval:org.mitre.oval.test:tst:861"/>
+        <criterion comment="Test that the ExistenceEnumeration value 'none_exist' is supported where no object defined by the description exists on the system." test_ref="oval:org.mitre.oval.test:tst:665"/>
+        <criterion negate="true" comment="Test that the ExistenceEnumeration value 'none_exist' is supported where every object defined by the description exists on the system." test_ref="oval:org.mitre.oval.test:tst:959"/>
+        <criterion negate="true" comment="Test that the ExistenceEnumeration value 'at_least_one_exists' is supported where no object defined by the description exists on the system." test_ref="oval:org.mitre.oval.test:tst:239"/>
+        <criterion comment="Test that the ExistenceEnumeration value 'at_least_one_exists' is supported where one object defined by the description exists on the system." test_ref="oval:org.mitre.oval.test:tst:958"/>
+        <criterion negate="true" comment="Test that the ExistenceEnumeration value 'at_least_one_exists' is supported where every object defined by the description exists on the system." test_ref="oval:org.mitre.oval.test:tst:109"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <variable_test id="oval:org.mitre.oval.test:tst:990" version="1" comment="Test that the ExistenceEnumeration value 'all_exist' is supported where no object defined by the description exists on the system." check_existence="all_exist" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:877"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:778" version="1" comment="Test that the ExistenceEnumeration value 'all_exist' is supported where every object defined by the description exists on the system." check_existence="all_exist" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:505"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:409" version="1" comment="Test that the ExistenceEnumeration value 'any_exist' is supported where no object defined by the description exists on the system." check_existence="any_exist" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:877"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:257" version="1" comment="Test that the ExistenceEnumeration value 'any_exist' is supported where every object defined by the description exists on the system." check_existence="any_exist" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:505"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:226" version="1" comment="Test that the ExistenceEnumeration value 'at_least_one_exists' is supported where no object defined by the description exists on the system." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:877"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:16" version="1" comment="Test that the ExistenceEnumeration value 'at_least_one_exists' is supported where one object defined by the description exists on the system." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:404"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:861" version="1" comment="Test that the ExistenceEnumeration value 'at_least_one_exists' is supported where every object defined by the description exists on the system." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:505"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:665" version="1" comment="Test that the ExistenceEnumeration value 'none_exist' is supported where no object defined by the description exists on the system." check_existence="none_exist" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:877"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:959" version="1" comment="Test that the ExistenceEnumeration value 'none_exist' is supported where every object defined by the description exists on the system." check_existence="none_exist" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:505"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:239" version="1" comment="Test that the ExistenceEnumeration value 'at_least_one_exists' is supported where no object defined by the description exists on the system." check_existence="only_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:877"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:958" version="1" comment="Test that the ExistenceEnumeration value 'at_least_one_exists' is supported where one object defined by the description exists on the system." check_existence="only_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:404"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:109" version="1" comment="Test that the ExistenceEnumeration value 'at_least_one_exists' is supported where every object defined by the description exists on the system." check_existence="only_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:505"/>
+    </variable_test>
+  </tests>
+  <objects>
+    <variable_object id="oval:org.mitre.oval.test:obj:790" version="1" comment="This variable_object references the integer value '0'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:376</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:315" version="1" comment="This variable_object references the integer values '1', '2', and '3'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:257</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:877" version="1" comment="This variable_object represents a object that does not exist on the system." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <set set_operator="INTERSECTION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <object_reference>oval:org.mitre.oval.test:obj:790</object_reference>
+        <object_reference>oval:org.mitre.oval.test:obj:315</object_reference>
+      </set>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:404" version="1" comment="This variable_object represents a object that exists on the system." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:376</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:505" version="1" comment="This variable_object represents multiple objects that exist on a system." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <object_reference>oval:org.mitre.oval.test:obj:790</object_reference>
+        <object_reference>oval:org.mitre.oval.test:obj:315</object_reference>
+      </set>
+    </variable_object>
+  </objects>
+  <variables>
+    <constant_variable id="oval:org.mitre.oval.test:var:376" version="1" comment="This constant_variable represents the integer value '0'." datatype="int">
+      <value>0</value>
+    </constant_variable>
+    <constant_variable id="oval:org.mitre.oval.test:var:257" version="1" comment="This constant_variable represents the integer values '1', '2', and '3'." datatype="int">
+      <value>1</value>
+      <value>2</value>
+      <value>3</value>
+    </constant_variable>
+  </variables>
+</oval_definitions>

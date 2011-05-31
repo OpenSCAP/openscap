@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd      http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2009-01-12T10:41:00-05:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:707" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the binary datatype is properly supported</title>
+        <description>This definition is intended to evalutate to true if the interpreter properly supports the binary datatype and all of its valid operations.</description>
+      </metadata>
+      <criteria operator="AND">
+        <criteria operator="AND" comment="True if the equals operation is supported.">
+          <criterion comment="Test that the equals operation is supported with two equal binary values." test_ref="oval:org.mitre.oval.test:tst:306"/>
+          <criterion negate="true" comment="Test that the equals operation is supported with two unequal binary values." test_ref="oval:org.mitre.oval.test:tst:531"/>
+        </criteria>
+        <criteria operator="AND" comment="True if the not equal operation is supported.">
+          <criterion negate="true" comment="Test that the not equal operation is supported with two equal binary values." test_ref="oval:org.mitre.oval.test:tst:924"/>
+          <criterion comment="Test that the not equal operation is supported with two unequal binary values." test_ref="oval:org.mitre.oval.test:tst:791"/>
+        </criteria>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <variable_test id="oval:org.mitre.oval.test:tst:306" version="1" comment="Test that the equals operation is supported with two equal binary values." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:532"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:334"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:531" version="1" comment="Test that the equals operation is supported with two unequal binary values." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:8"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:758"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:924" version="1" comment="Test that the not equal operation is supported with two equal binary values." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:532"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:446"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:791" version="1" comment="Test that the not equal operation is supported with two unequal binary values." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:8"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:143"/>
+    </variable_test>
+  </tests>
+  <objects>
+    <variable_object id="oval:org.mitre.oval.test:obj:532" version="1" comment="This variable_object represents the binary value '9F'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:541</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:8" version="1" comment="This variable_object represents the binary value '3A'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:649</var_ref>
+    </variable_object>
+  </objects>
+  <states>
+    <variable_state id="oval:org.mitre.oval.test:ste:334" version="1" comment="This variable_state represents a binary value that is equal to '9F'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="binary">9F</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:758" version="1" comment="This variable_state represents a binary value that is equal to '9F'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="binary">9F</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:446" version="1" comment="This variable_state represents a binary value that is not equal to '9F'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="binary" operation="not equal">9F</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:143" version="1" comment="This variable_state represents a binary value that is not equal to '9F'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="binary" operation="not equal">9F</value>
+    </variable_state>
+  </states>
+  <variables>
+    <constant_variable id="oval:org.mitre.oval.test:var:541" version="1" comment="This variable represents the binary value '9F'." datatype="binary">
+      <value>9F</value>
+    </constant_variable>
+    <constant_variable id="oval:org.mitre.oval.test:var:649" version="1" comment="This variable represents the binary value '3A'." datatype="binary">
+      <value>3A</value>
+    </constant_variable>
+  </variables>
+</oval_definitions>

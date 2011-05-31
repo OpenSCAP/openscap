@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2010-07-07T15:18:16-05:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:307" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the unix-def:process58_test is properly supported</title>
+        <description>This definition is intended to evalutate to true if the interpreter properly supports the unix-def:process58_test.</description>
+      </metadata>
+      <notes>
+        <note>It is important to note that the values used in this test definition are specific to a particular machine, and may not necessarily apply to your system. As a result, in order to have the definition return a result of 'true', you must either change these values to the ones found on your particular system, or you must configure your system to use these values.</note>
+      </notes>
+      <criteria operator="AND">
+        <criterion comment="Test that the process58_object is supported with the name entity equal to some value." test_ref="oval:org.mitre.oval.test:tst:440"/>
+        <criterion comment="Test that the process58_object is supported with the name entity not equal to some value." test_ref="oval:org.mitre.oval.test:tst:869"/>
+        <criterion comment="Test that the process58_object is supported with the name entity matching some regular expression." test_ref="oval:org.mitre.oval.test:tst:565"/>
+        <criterion comment="Test that the process58_object is supported with the pid entity." test_ref="oval:org.mitre.oval.test:tst:792"/>
+        <criterion comment="Test that the process58_object is supported with the pid entity and an integer less than operation." test_ref="oval:org.mitre.oval.test:tst:406"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <process58_test id="oval:org.mitre.oval.test:tst:440" version="1" comment="Test that the process58_object is supported with the name entity equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:67"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:77"/>
+    </process58_test>
+    <process58_test id="oval:org.mitre.oval.test:tst:869" version="1" comment="Test that the process58_object is supported with the name entity not equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:419"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:455"/>
+    </process58_test>
+    <process58_test id="oval:org.mitre.oval.test:tst:565" version="1" comment="Test that the process58_object is supported with the name entity matching some regular expression." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:868"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:874"/>
+    </process58_test>
+    <process58_test id="oval:org.mitre.oval.test:tst:792" version="1" comment="Test that the process58_object is supported with the pid entity." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:580"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:390"/>
+    </process58_test>
+    <process58_test id="oval:org.mitre.oval.test:tst:406" version="1" comment="Test that the process58_object is supported with the pid entity and an integer less than operation." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:540"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:30"/>
+    </process58_test>
+  </tests>
+  <objects>
+    <process58_object id="oval:org.mitre.oval.test:obj:67" version="1" comment="Retrieve an process58_item with a name equal to 'hald'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <command_line>hald</command_line>
+      <pid datatype="int" operation="greater than">0</pid>
+    </process58_object>
+    <process58_object id="oval:org.mitre.oval.test:obj:419" version="1" comment="Retrieve process58_items with names that are not equal to 'hald'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <command_line operation="not equal">hald</command_line>
+      <pid datatype="int" operation="greater than">0</pid>
+    </process58_object>
+    <process58_object id="oval:org.mitre.oval.test:obj:868" version="1" comment="Retrieve process58_items with names that match the regular expression '^ha.d$'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <command_line operation="pattern match">^ha.d$</command_line>
+      <pid datatype="int" operation="greater than">0</pid>
+    </process58_object>
+    <process58_object id="oval:org.mitre.oval.test:obj:580" version="1" comment="Retrieve process58_items with pid = 1." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <command_line operation="pattern match"/>
+      <pid datatype="int">1</pid>
+    </process58_object>
+    <process58_object id="oval:org.mitre.oval.test:obj:540" version="1" comment="Retrieve process58_items with pid less than 10." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <command_line operation="pattern match"/>
+      <pid datatype="int" operation="less than">10</pid>
+    </process58_object>
+  </objects>
+  <states>
+    <process58_state id="oval:org.mitre.oval.test:ste:77" version="1" comment="This state represents an process58_item that has a name equal to 'hald'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <command_line>hald</command_line>
+    </process58_state>
+    <process58_state id="oval:org.mitre.oval.test:ste:455" version="1" comment="This state represents process58_items that have a name not equal to 'hald'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <command_line operation="not equal">hald</command_line>
+    </process58_state>
+    <process58_state id="oval:org.mitre.oval.test:ste:874" version="1" comment="This state represents process58_items that have a name that matches the regular expression '^ha.d$'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <command_line operation="pattern match">^ha.d$</command_line>
+    </process58_state>
+    <process58_state id="oval:org.mitre.oval.test:ste:390" version="1" comment="process58_items whose command starts with the word 'init'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <command_line operation="pattern match">^init\b</command_line>
+    </process58_state>
+    <process58_state id="oval:org.mitre.oval.test:ste:30" version="1" comment="process58_items with pid less than 10." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <pid datatype="int" operation="less than">10</pid>
+    </process58_state>
+  </states>
+</oval_definitions>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd      http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:linux-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2011-04-01T18:07:26-04:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:449" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the linux-def:family_test is properly supported</title>
+        <description>This definition is intended to evalutate to true if the interpreter properly supports the linux-def:rpmverify_test and all of its valid operations.</description>
+      </metadata>
+      <notes>
+        <note>It is important to note that the values used in this test definition are specific to a particular machine, and may not necessarily apply to your system. As a result, in order to have the definition return a result of 'true', you must either change these values to the ones found on your particular system, or you must configure your system to use these values.</note>
+      </notes>
+      <criteria operator="AND">
+        <criterion comment="Test verifying all files in a package." test_ref="oval:org.mitre.oval.test:tst:1531"/>
+        <criterion comment="Test skipping a verification using a behavior." test_ref="oval:org.mitre.oval.test:tst:1370"/>
+        <criterion comment="Test looking up a package by filepath." test_ref="oval:org.mitre.oval.test:tst:2059"/>
+        <criterion comment="Test doing pattern match on name and filepath." test_ref="oval:org.mitre.oval.test:tst:1952"/>
+        <criterion comment="Test that the noghostfiles behavior filters out ghost files." test_ref="oval:org.mitre.oval.test:tst:1626"/>
+        <criterion comment="Test that the noconfigfiles behavior filters out config files." test_ref="oval:org.mitre.oval.test:tst:1942"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <rpmverify_test id="oval:org.mitre.oval.test:tst:1531" version="1" comment="Test verifying all files in a package." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:org.mitre.oval.test:obj:1453"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:1608"/>
+    </rpmverify_test>
+    <rpmverify_test id="oval:org.mitre.oval.test:tst:1370" version="1" comment="Test skipping a verification using a behavior." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:org.mitre.oval.test:obj:1484"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:1364"/>
+    </rpmverify_test>
+    <rpmverify_test id="oval:org.mitre.oval.test:tst:2059" version="1" comment="Test looking up a package by filepath." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:org.mitre.oval.test:obj:1386"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:1362"/>
+    </rpmverify_test>
+    <rpmverify_test id="oval:org.mitre.oval.test:tst:1952" version="1" comment="Test doing pattern match on name and filepath." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:org.mitre.oval.test:obj:1394"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:719"/>
+    </rpmverify_test>
+    <rpmverify_test id="oval:org.mitre.oval.test:tst:1626" version="1" comment="Test that the noghostfiles behavior filters out ghost files." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:org.mitre.oval.test:obj:1492"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:1096"/>
+    </rpmverify_test>
+    <rpmverify_test id="oval:org.mitre.oval.test:tst:1942" version="1" comment="Test that the noconfigfiles behavior filters out config files." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:org.mitre.oval.test:obj:1292"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:1597"/>
+    </rpmverify_test>
+  </tests>
+  <objects>
+    <rpmverify_object id="oval:org.mitre.oval.test:obj:1453" version="1" comment="Verify all files in the pam package." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <behaviors nodeps="true" nofiles="false" nodigest="true" noscripts="true" nosignature="true"/>
+      <name>pam</name>
+      <filepath operation="pattern match"/>
+    </rpmverify_object>
+    <rpmverify_object id="oval:org.mitre.oval.test:obj:1484" version="1" comment="Verify files in the bash package, but skip md5" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <behaviors nodeps="true" nofiles="false" nodigest="true" noscripts="true" nosignature="true" nomd5="true"/>
+      <name>bash</name>
+      <filepath operation="pattern match"/>
+    </rpmverify_object>
+    <rpmverify_object id="oval:org.mitre.oval.test:obj:1386" version="1" comment="Try looking up a package by filepath." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <behaviors nodeps="true" nofiles="false" nodigest="true" noscripts="true" nosignature="true"/>
+      <name operation="pattern match"/>
+      <filepath>/bin/ls</filepath>
+    </rpmverify_object>
+    <rpmverify_object id="oval:org.mitre.oval.test:obj:1394" version="1" comment="Verify all package-owned files under /etc/X11." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <behaviors nodeps="true" nofiles="false" nodigest="true" noscripts="true" nosignature="true"/>
+      <name operation="pattern match"/>
+      <filepath operation="pattern match">^/etc/X11</filepath>
+    </rpmverify_object>
+    <rpmverify_object id="oval:org.mitre.oval.test:obj:1492" version="1" comment="Verify non-ghost files in the pam package." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <behaviors nodeps="true" nofiles="false" nodigest="true" noscripts="true" nosignature="true" noghostfiles="true"/>
+      <name>pam</name>
+      <filepath operation="pattern match"/>
+    </rpmverify_object>
+    <rpmverify_object id="oval:org.mitre.oval.test:obj:1292" version="1" comment="Verify non-config files in the pam package." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <behaviors nodeps="true" nofiles="false" nodigest="true" noscripts="true" nosignature="true" noconfigfiles="true"/>
+      <name>pam</name>
+      <filepath operation="pattern match"/>
+    </rpmverify_object>
+  </objects>
+  <states>
+    <rpmverify_state id="oval:org.mitre.oval.test:ste:1608" version="1" comment="accepts files from the pam package" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <name>pam</name>
+    </rpmverify_state>
+    <rpmverify_state id="oval:org.mitre.oval.test:ste:1364" version="1" comment="accepts any files from the bash package where the md5 verification hasn't been performed" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <name>bash</name>
+      <md5_differs>not performed</md5_differs>
+    </rpmverify_state>
+    <rpmverify_state id="oval:org.mitre.oval.test:ste:1362" version="1" comment="accepts /bin/ls" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <name operation="pattern match"/>
+      <filepath>/bin/ls</filepath>
+    </rpmverify_state>
+    <rpmverify_state id="oval:org.mitre.oval.test:ste:719" version="1" comment="accepts any file under /etc/X11 owned by any package" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <name operation="pattern match"/>
+      <filepath operation="pattern match">^/etc/X11</filepath>
+    </rpmverify_state>
+    <rpmverify_state id="oval:org.mitre.oval.test:ste:1096" version="1" comment="accepts any non-ghost files from the pam package" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <name>pam</name>
+      <filepath operation="pattern match"/>
+      <ghost_file datatype="boolean">false</ghost_file>
+    </rpmverify_state>
+    <rpmverify_state id="oval:org.mitre.oval.test:ste:1597" version="1" comment="accepts any non-config files from the pam package" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <name>pam</name>
+      <filepath operation="pattern match"/>
+      <configuration_file datatype="boolean">false</configuration_file>
+    </rpmverify_state>
+  </states>
+</oval_definitions>

@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd      http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2009-01-12T10:41:00-05:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:275" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the float datatype is properly supported</title>
+        <description>This definition is intended to evalutate to true if the interpreter properly supports the float datatype and all of its valid operations.</description>
+      </metadata>
+      <criteria operator="AND">
+        <criteria operator="AND" comment="True if the equals operation is supported.">
+          <criterion comment="Test that the equals operation is supported with an equal float value." test_ref="oval:org.mitre.oval.test:tst:319"/>
+          <criterion negate="true" comment="Test that the equals operation is supported with a unequal float value." test_ref="oval:org.mitre.oval.test:tst:322"/>
+        </criteria>
+        <criteria operator="AND" comment="True if the not equal operation is supported.">
+          <criterion negate="true" comment="Test that the not equal operation is supported with an equal float value." test_ref="oval:org.mitre.oval.test:tst:145"/>
+          <criterion comment="Test that the not equal operation is supported with a unequal float value." test_ref="oval:org.mitre.oval.test:tst:707"/>
+        </criteria>
+        <criteria operator="AND" comment="True if the greater than operation is supported.">
+          <criterion comment="Test that the greater than operation is supported with a greater than float value." test_ref="oval:org.mitre.oval.test:tst:264"/>
+          <criterion negate="true" comment="Test that the greater than operation is supported with an equal float value." test_ref="oval:org.mitre.oval.test:tst:668"/>
+          <criterion negate="true" comment="Test that the greater than operation is supported with a less than float value." test_ref="oval:org.mitre.oval.test:tst:408"/>
+        </criteria>
+        <criteria operator="AND" comment="True if the greater than or equal operation is supported is supported.">
+          <criterion comment="Test that the greater than or equal operation is supported with a greater than float value." test_ref="oval:org.mitre.oval.test:tst:352"/>
+          <criterion comment="Test that the greater than or equal operation is supported with an equal float value." test_ref="oval:org.mitre.oval.test:tst:289"/>
+          <criterion negate="true" comment="Test that the greater than or equal operation is supported with a less than float value." test_ref="oval:org.mitre.oval.test:tst:615"/>
+        </criteria>
+        <criteria operator="AND" comment="True if the less than operation is supported is supported.">
+          <criterion comment="Test that the less than operation is supported with a less than float value." test_ref="oval:org.mitre.oval.test:tst:50"/>
+          <criterion negate="true" comment="Test that the less than operation is supported with an equal float value." test_ref="oval:org.mitre.oval.test:tst:841"/>
+          <criterion negate="true" comment="Test that the less than operation is supported with a greater than float value." test_ref="oval:org.mitre.oval.test:tst:62"/>
+        </criteria>
+        <criteria operator="AND" comment="True if the less than or equal operation is supported is supported.">
+          <criterion comment="Test that the less than or equal operation is supported with a less than float value." test_ref="oval:org.mitre.oval.test:tst:128"/>
+          <criterion comment="Test that the less than or equal operation is supported with an equal float value." test_ref="oval:org.mitre.oval.test:tst:730"/>
+          <criterion negate="true" comment="Test that the less than or equal operation is supported with a greater than float value." test_ref="oval:org.mitre.oval.test:tst:811"/>
+        </criteria>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <variable_test id="oval:org.mitre.oval.test:tst:319" version="1" comment="Test that the equals operation is supported with an equal float value." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:871"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:624"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:322" version="1" comment="Test that the equals operation is supported with a unequal float value." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:242"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:594"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:145" version="1" comment="Test that the not equal operation is supported with an equal float value." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:871"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:591"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:707" version="1" comment="Test that the not equal operation is supported with a unequal float value." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:242"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:895"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:264" version="1" comment="Test that the greater than operation is supported with a greater than float value." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:242"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:612"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:668" version="1" comment="Test that the greater than operation is supported with an equal float value." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:871"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:844"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:408" version="1" comment="Test that the greater than operation is supported with a less than float value." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:519"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:14"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:352" version="1" comment="Test that the greater than or equal operation is supported with a greater than float value." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:242"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:293"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:289" version="1" comment="Test that the greater than or equal operation is supported with an equal float value." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:871"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:805"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:615" version="1" comment="Test that the greater than or equal operation is supported with a less than float value." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:519"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:917"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:50" version="1" comment="Test that the less than operation is supported with a less than float value." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:519"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:345"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:841" version="1" comment="Test that the less than operation is supported with an equal float value." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:871"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:726"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:62" version="1" comment="Test that the less than operation is supported with a greater than float value." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:242"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:645"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:128" version="1" comment="Test that the less than or equal operation is supported with a less than float value." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:519"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:540"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:730" version="1" comment="Test that the less than or equal operation is supported with an equal float value." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:871"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:324"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:811" version="1" comment="Test that the less than or equal operation is supported with a greater than float value." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:242"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:82"/>
+    </variable_test>
+  </tests>
+  <objects>
+    <variable_object id="oval:org.mitre.oval.test:obj:871" version="1" comment="This variable_object references the float value '1.234'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:567</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:242" version="1" comment="This variable_object references the float value '1.234e2'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:850</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:519" version="1" comment="This variable_object references the float value '1.05254'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:876</var_ref>
+    </variable_object>
+  </objects>
+  <states>
+    <variable_state id="oval:org.mitre.oval.test:ste:624" version="1" comment="This variable_state represents the float value '1.234'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float">1.234</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:594" version="1" comment="This variable_state represents the float value '1.234'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float">1.234</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:591" version="1" comment="This variable_state represents the float value '1.234'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float" operation="not equal">1.234</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:895" version="1" comment="This variable_state represents the float value '1.234'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float" operation="not equal">1.234</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:612" version="1" comment="This variable_state represents the float value '1.234'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float" operation="greater than">1.234</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:844" version="1" comment="This variable_state represents the float value '1.234'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float" operation="greater than">1.234</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:14" version="1" comment="This variable_state represents the float value '1.234'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float" operation="greater than">1.234</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:293" version="1" comment="This variable_state represents the float value '1.234'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float" operation="greater than or equal">1.234</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:805" version="1" comment="This variable_state represents the float value '1.234'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float" operation="greater than or equal">1.234</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:917" version="1" comment="This variable_state represents the float value '1.234'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float" operation="greater than or equal">1.234</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:345" version="1" comment="This variable_state represents the float value '1.234'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float" operation="less than">1.234</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:726" version="1" comment="This variable_state represents the float value '1.234'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float" operation="less than">1.234</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:645" version="1" comment="This variable_state represents the float value '1.234'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float" operation="less than">1.234</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:540" version="1" comment="This variable_state represents the float value '1.234'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float" operation="less than or equal">1.234</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:324" version="1" comment="This variable_state represents the float value '1.234'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float" operation="less than or equal">1.234</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:82" version="1" comment="This variable_state represents the float value '1.234'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float" operation="less than or equal">1.234</value>
+    </variable_state>
+  </states>
+  <variables>
+    <constant_variable id="oval:org.mitre.oval.test:var:567" version="1" comment="This constant_variable represents the float value '1.234'." datatype="float">
+      <value>1.234</value>
+    </constant_variable>
+    <constant_variable id="oval:org.mitre.oval.test:var:850" version="1" comment="This constant_variable represents the float value '1.234e2'." datatype="float">
+      <value>1.234e2</value>
+    </constant_variable>
+    <constant_variable id="oval:org.mitre.oval.test:var:876" version="1" comment="This constant_variable represents the float value '1.05254'." datatype="float">
+      <value>1.05254</value>
+    </constant_variable>
+  </variables>
+</oval_definitions>

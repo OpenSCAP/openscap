@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd    http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2009-05-21T11:46:00-04:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:670" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the oval-def:object_component construct is properly supported</title>
+        <description>This definition is intended to evalutate to true if the interpreter properly supports the oval-def:object_component construct.</description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="Test that the object_component is supported with a object_ref attritbute that specifies an object which references a single item and an item_field attribute that specifies a field in an item that occurs only once." test_ref="oval:org.mitre.oval.test:tst:373"/>
+        <criterion comment="Test that the object_component is supported with a object_ref attritbute that specifies an object which references multiple items and an item_field attribute that specifies a field in an item that that occurs only once." test_ref="oval:org.mitre.oval.test:tst:63"/>
+        <criterion comment="Test that the object_component is supported with a object_ref attritbute that specifies an object which references a single item and an item_field attribute that specifies a field in an item that that occurs multiple times." test_ref="oval:org.mitre.oval.test:tst:65"/>
+        <criterion comment="Test that the object_component is supported with a object_ref attritbute that specifies an object which references multiple items and an item_field attribute that specifies a field in an item that that occurs multiple times." test_ref="oval:org.mitre.oval.test:tst:295"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <variable_test id="oval:org.mitre.oval.test:tst:373" version="1" comment="Test that the object_component is supported with a object_ref attritbute that specifies an object which references a single item and an item_field attribute that specifies a field in an item that occurs only once." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:226"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:152"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:63" version="1" comment="Test that the object_component is supported with a object_ref attritbute that specifies an object which references multiple items and an item_field attribute that specifies a field in an item that that occurs only once." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:644"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:152"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:65" version="1" comment="Test that the object_component is supported with a object_ref attritbute that specifies an object which references a single item and an item_field attribute that specifies a field in an item that that occurs multiple times." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:833"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:1"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:295" version="1" comment="Test that the object_component is supported with a object_ref attritbute that specifies an object which references multiple items and an item_field attribute that specifies a field in an item that that occurs multiple times." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:802"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:1"/>
+    </variable_test>
+  </tests>
+  <objects>
+    <variable_object id="oval:org.mitre.oval.test:obj:297" version="1" comment="This variable_object references the string value equal to 'Validation Test StringA'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:653</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:593" version="1" comment="This variable_object references the string values 'Validation Test String1A', 'Validation Test String2A', and 'Validation Test String3A'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:57</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:602" version="1" comment="This variable_object references the string value 'Validation Test StringB'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:941</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:165" version="1" comment="This variable_object references the string values 'Validation Test String1B', 'Validation Test String2B', and 'Validation Test String3B'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:150</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:518" version="1" comment="This variable_object represents the union of object 'oval:org.mitre.oval.test:obj:297' and 'oval:org.mitre.oval.test:obj:602'.  This creates an object that contains multiple items each of which contains a single 'value' entity." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <object_reference>oval:org.mitre.oval.test:obj:297</object_reference>
+        <object_reference>oval:org.mitre.oval.test:obj:602</object_reference>
+      </set>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:384" version="1" comment="This variable_object represents the union of object 'oval:org.mitre.oval.test:obj:593' and 'oval:org.mitre.oval.test:obj:165'.  This creates an object that contains multiple items each of which contains a multiple 'value' entities." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <set set_operator="UNION" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <object_reference>oval:org.mitre.oval.test:obj:593</object_reference>
+        <object_reference>oval:org.mitre.oval.test:obj:165</object_reference>
+      </set>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:226" version="1" comment="This variable_object references a local_variable which retrieves the 'value' item_field of the variable_object 'oval:org.mitre.oval.test:var:785' using the object_component construct." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:785</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:644" version="1" comment="This variable_object references a local_variable which retrieves the 'value' item_field of the variable_object 'oval:org.mitre.oval.test:var:286' using the object_component construct." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:286</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:833" version="1" comment="This variable_object references a local_variable which retrieves the 'value' item_field of the variable_object 'oval:org.mitre.oval.test:var:570' using the object_component construct." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:570</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:802" version="1" comment="This variable_object references a local_variable which retrieves the 'value' item_field of the variable_object 'oval:org.mitre.oval.test:var:298' using the object_component construct." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:298</var_ref>
+    </variable_object>
+  </objects>
+  <states>
+    <variable_state id="oval:org.mitre.oval.test:ste:152" version="1" comment="This state represents a variable_object where the string value matches the regular expression 'Validation Test String[A-Z]'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value operation="pattern match">Validation Test String[A-Z]</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:1" version="1" comment="This state represents a variable_object where the string value matches the regular expression 'Validation Test String[0-9][A-Z]'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value operation="pattern match">Validation Test String[0-9][A-Z]</value>
+    </variable_state>
+  </states>
+  <variables>
+    <constant_variable id="oval:org.mitre.oval.test:var:653" version="1" comment="This variable represents the string value 'Validation Test StringA'." datatype="string">
+      <value>Validation Test StringA</value>
+    </constant_variable>
+    <constant_variable id="oval:org.mitre.oval.test:var:57" version="1" comment="This variable represents the string values 'Validation Test String1A', 'Validation Test String2A', and 'Validation Test String3A'." datatype="string">
+      <value>Validation Test String1A</value>
+      <value>Validation Test String2A</value>
+      <value>Validation Test String3A</value>
+    </constant_variable>
+    <constant_variable id="oval:org.mitre.oval.test:var:941" version="1" comment="This variable represents the string value 'Validation Test StringB'." datatype="string">
+      <value>Validation Test StringB</value>
+    </constant_variable>
+    <constant_variable id="oval:org.mitre.oval.test:var:150" version="1" comment="This variable represents the string values 'Validation Test String1B', 'Validation Test String2B', and 'Validation Test String3B'." datatype="string">
+      <value>Validation Test String1B</value>
+      <value>Validation Test String2B</value>
+      <value>Validation Test String3B</value>
+    </constant_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:785" version="1" comment="This local_variable contains an object_component that retrieves the 'value' item_field of a variable_object. This variable_object contains a single item that contains a single 'value' entity." datatype="string">
+      <object_component object_ref="oval:org.mitre.oval.test:obj:297" item_field="value"/>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:286" version="1" comment="This local_variable contains an object_component that retrieves the 'value' item_field of a variable_object. This variable_object contains multiple items that contains a single 'value' entity." datatype="string">
+      <object_component object_ref="oval:org.mitre.oval.test:obj:518" item_field="value"/>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:570" version="1" comment="This local_variable contains an object_component that retrieves the 'value' item_field of a variable_object. This variable_object contains a single item that contains multiple 'value' entities." datatype="string">
+      <object_component object_ref="oval:org.mitre.oval.test:obj:593" item_field="value"/>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:298" version="1" comment="This local_variable contains an object_component that retrieves the 'value' item_field of a variable_object. This variable_object contains multiple items that contains multiple 'value' entities." datatype="string">
+      <object_component object_ref="oval:org.mitre.oval.test:obj:384" item_field="value"/>
+    </local_variable>
+  </variables>
+</oval_definitions>

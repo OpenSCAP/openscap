@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent                         independent-definitions-schema.xsd                       http://oval.mitre.org/XMLSchema/oval-definitions-5                         oval-definitions-schema.xsd                       http://oval.mitre.org/XMLSchema/oval-common-5                         oval-common-schema.xsd" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2009-06-11T10:22:26-04:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:781" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the oval-def:regex_capture test is properly supported</title>
+        <description>This definition is intended to evaluate to true if the interpreter properly supports the oval-def:regex_capture function.</description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="This test takes the result of applying the regex_capture pattern '(i..)+' to the string 'mississippi', and compares it to the string 'ipp'." test_ref="oval:org.mitre.oval.test:tst:265"/>
+        <criterion comment="This test takes the result of applying the regex_capture pattern 'abc(.*)xyz' to the string 'abchello
+xyz', and compares it to a blank string (no match)." test_ref="oval:org.mitre.oval.test:tst:511"/>
+        <criterion comment="This test takes the result of applying the regex_capture pattern 'abc.*xyz' to the string 'abchelloxyz', and compares it to a blank string (no match)." test_ref="oval:org.mitre.oval.test:tst:108"/>
+        <criterion comment="This test takes the result of applying a the regex_capture pattern '(i(..))+' to a complex variable, and compares it to a multi-valued string." test_ref="oval:org.mitre.oval.test:tst:242"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <variable_test id="oval:org.mitre.oval.test:tst:265" version="1" comment="This test takes the result of applying the regex_capture pattern '(i..)+' to the string 'mississippi', and compares it to the string 'ipp'." check_existence="all_exist" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:320"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:3"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:511" version="1" comment="This test takes the result of applying the regex_capture pattern 'abc(.*)xyz' to the string 'abchello
+xyz', and compares it to a blank string (no match)." check_existence="all_exist" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:420"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:546"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:108" version="1" comment="This test takes the result of applying the regex_capture pattern 'abc.*xyz' to the string 'abchelloxyz', and compares it to a blank string (no match)." check_existence="all_exist" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:28"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:167"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:242" version="1" comment="This test takes the result of applying a the regex_capture pattern '(i(..))+' to a complex variable, and compares it to a multi-valued string." check_existence="all_exist" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:264"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:104"/>
+    </variable_test>
+  </tests>
+  <objects>
+    <variable_object id="oval:org.mitre.oval.test:obj:320" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:637</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:420" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:956</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:28" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:1001</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:264" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:890</var_ref>
+    </variable_object>
+  </objects>
+  <states>
+    <variable_state id="oval:org.mitre.oval.test:ste:3" version="1" comment="This state represents a string with the value 'ipp'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>ipp</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:546" version="1" comment="This state represents an empty string." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value/>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:167" version="1" comment="This state represents an empty string." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value/>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:104" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value var_ref="oval:org.mitre.oval.test:var:375" var_check="only one"/>
+    </variable_state>
+  </states>
+  <variables>
+    <local_variable id="oval:org.mitre.oval.test:var:637" version="1" comment="A regex_capture object with pattern '(i..)+' applied to string 'mississippi'." datatype="string">
+      <regex_capture pattern="(i..)+">
+        <literal_component datatype="string">mississippi</literal_component>
+      </regex_capture>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:956" version="1" comment="A regex_capture object with pattern 'abc(.*)xyz' applied to string 'abchello
+xyz'." datatype="string">
+      <regex_capture pattern="abc(.*)xyz">
+        <literal_component datatype="string">abchello
+xyz</literal_component>
+      </regex_capture>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:1001" version="1" comment="A regex_capture object with pattern 'abc.*xyz' applied to string 'abchelloxyz'." datatype="string">
+      <regex_capture pattern="abc.*xyz">
+        <literal_component datatype="string">abchelloxyz</literal_component>
+      </regex_capture>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:890" version="1" comment="A regex_capture object with pattern '(i(..))+' applied to a multi-valued variable." datatype="string">
+      <regex_capture pattern="(i(..))+">
+        <variable_component var_ref="oval:org.mitre.oval.test:var:146"/>
+      </regex_capture>
+    </local_variable>
+    <constant_variable id="oval:org.mitre.oval.test:var:146" version="1" comment="A multi-valued variable." datatype="string">
+      <value>mississippi</value>
+      <value>ippississim</value>
+      <value>xxiyyizz</value>
+    </constant_variable>
+    <constant_variable id="oval:org.mitre.oval.test:var:375" version="1" comment="A multi-valued variable." datatype="string">
+      <value>ipp</value>
+      <value>iss</value>
+      <value>izz</value>
+    </constant_variable>
+  </variables>
+</oval_definitions>

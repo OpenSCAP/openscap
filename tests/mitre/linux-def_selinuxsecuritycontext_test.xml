@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd      http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:linux-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2011-04-09T14:48:11-04:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:693" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the linux-def:selinuxsecuritycontext_test is properly supported</title>
+        <description>This definition is intended to evalutate to true if the interpreter properly supports the linux-def:selinuxsecuritycontext_test and all of its valid operations.</description>
+      </metadata>
+      <notes>
+        <note>It is important to note that the values used in this test definition are specific to a particular machine, and may not necessarily apply to your system. As a result, in order to have the definition return a result of 'true', you must either change these values to the ones found on your particular system, or you must configure your system to use these values.</note>
+      </notes>
+      <criteria operator="AND">
+        <criterion comment="Test getting context of current process." test_ref="oval:org.mitre.oval.test:tst:1706"/>
+        <criterion comment="Test getting context of a particular pid." test_ref="oval:org.mitre.oval.test:tst:1381"/>
+        <criterion comment="Test getting context of a set of pids." test_ref="oval:org.mitre.oval.test:tst:1762"/>
+        <criterion comment="Test getting context of a file (filepath)." test_ref="oval:org.mitre.oval.test:tst:1411"/>
+        <criterion comment="Test getting context of a file (path+filename)." test_ref="oval:org.mitre.oval.test:tst:1256"/>
+        <criterion comment="Test getting context of a set of files." test_ref="oval:org.mitre.oval.test:tst:1925"/>
+        <criterion comment="Test getting context of a directory." test_ref="oval:org.mitre.oval.test:tst:1747"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <selinuxsecuritycontext_test id="oval:org.mitre.oval.test:tst:1706" version="1" comment="Test getting context of current process." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <oval-def:notes xmlns:oval1="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <note xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">There is no state, because nothing can really be said about
+            the resulting item.  You can't know beforehand what the process ID will be.</note>
+      </oval-def:notes>
+      <object object_ref="oval:org.mitre.oval.test:obj:1427"/>
+    </selinuxsecuritycontext_test>
+    <selinuxsecuritycontext_test id="oval:org.mitre.oval.test:tst:1381" version="1" comment="Test getting context of a particular pid." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:org.mitre.oval.test:obj:491"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:1468"/>
+    </selinuxsecuritycontext_test>
+    <selinuxsecuritycontext_test id="oval:org.mitre.oval.test:tst:1762" version="1" comment="Test getting context of a set of pids." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:org.mitre.oval.test:obj:1376"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:1573"/>
+    </selinuxsecuritycontext_test>
+    <selinuxsecuritycontext_test id="oval:org.mitre.oval.test:tst:1411" version="1" comment="Test getting context of a file (filepath)." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:org.mitre.oval.test:obj:1474"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:1181"/>
+    </selinuxsecuritycontext_test>
+    <selinuxsecuritycontext_test id="oval:org.mitre.oval.test:tst:1256" version="1" comment="Test getting context of a file (path+filename)." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:org.mitre.oval.test:obj:1258"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:1324"/>
+    </selinuxsecuritycontext_test>
+    <selinuxsecuritycontext_test id="oval:org.mitre.oval.test:tst:1925" version="1" comment="Test getting context of a set of files." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:org.mitre.oval.test:obj:1385"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:1342"/>
+    </selinuxsecuritycontext_test>
+    <selinuxsecuritycontext_test id="oval:org.mitre.oval.test:tst:1747" version="1" comment="Test getting context of a directory." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <oval-def:notes xmlns:oval1="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <note xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">There is no state, because it is not possible
+            to verify whether a directory was collected (the 'filename' state entity
+            is not nillable).</note>
+      </oval-def:notes>
+      <object object_ref="oval:org.mitre.oval.test:obj:1468"/>
+    </selinuxsecuritycontext_test>
+  </tests>
+  <objects>
+    <selinuxsecuritycontext_object id="oval:org.mitre.oval.test:obj:1427" version="1" comment="Get context of the current process' pid." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <pid datatype="int" xsi:nil="true"/>
+    </selinuxsecuritycontext_object>
+    <selinuxsecuritycontext_object id="oval:org.mitre.oval.test:obj:491" version="1" comment="Get context of a particular pid." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <pid datatype="int">1</pid>
+    </selinuxsecuritycontext_object>
+    <selinuxsecuritycontext_object id="oval:org.mitre.oval.test:obj:1376" version="1" comment="Get context of a set of pids." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <pid datatype="int" operation="greater than">3000</pid>
+    </selinuxsecuritycontext_object>
+    <selinuxsecuritycontext_object id="oval:org.mitre.oval.test:obj:1474" version="1" comment="Get context of a particular file (filepath)." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <filepath>/etc/passwd</filepath>
+    </selinuxsecuritycontext_object>
+    <selinuxsecuritycontext_object id="oval:org.mitre.oval.test:obj:1258" version="1" comment="Get context of a particular file (path+filename)." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <path>/etc/</path>
+      <filename>mtab</filename>
+    </selinuxsecuritycontext_object>
+    <selinuxsecuritycontext_object id="oval:org.mitre.oval.test:obj:1385" version="1" comment="Get context of a set of files." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <path>/etc/profile.d/</path>
+      <filename operation="pattern match">.*</filename>
+    </selinuxsecuritycontext_object>
+    <selinuxsecuritycontext_object id="oval:org.mitre.oval.test:obj:1468" version="1" comment="Get context of the directory /dev." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <path>/dev</path>
+      <filename xsi:nil="true"/>
+    </selinuxsecuritycontext_object>
+  </objects>
+  <states>
+    <selinuxsecuritycontext_state id="oval:org.mitre.oval.test:ste:1468" version="1" comment="accepts the context of pid 1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <pid datatype="int">1</pid>
+    </selinuxsecuritycontext_state>
+    <selinuxsecuritycontext_state id="oval:org.mitre.oval.test:ste:1573" version="1" comment="accepts the contexts of pids > 3000" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <pid datatype="int" operation="greater than">3000</pid>
+    </selinuxsecuritycontext_state>
+    <selinuxsecuritycontext_state id="oval:org.mitre.oval.test:ste:1181" version="1" comment="accepts the context of /etc/passwd" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <filepath>/etc/passwd</filepath>
+    </selinuxsecuritycontext_state>
+    <selinuxsecuritycontext_state id="oval:org.mitre.oval.test:ste:1324" version="1" comment="accepts the context of /etc/mtab" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <filepath>/etc/mtab</filepath>
+    </selinuxsecuritycontext_state>
+    <selinuxsecuritycontext_state id="oval:org.mitre.oval.test:ste:1342" version="1" comment="accepts the context of files in /etc/profile.d" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <path>/etc/profile.d/</path>
+    </selinuxsecuritycontext_state>
+  </states>
+</oval_definitions>

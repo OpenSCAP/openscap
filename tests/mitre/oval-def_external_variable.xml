@@ -1,0 +1,310 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd    http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2009-05-21T11:46:00-04:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:562" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the oval-def:external_variable construct is properly supported</title>
+        <description>This definition is intended to evalutate to true if the interpreter properly supports the oval-def:external_variable construct.</description>
+      </metadata>
+      <criteria operator="AND">
+        <criteria>
+          <criterion comment="Test that the external_variable construct is supported for a single binary value." test_ref="oval:org.mitre.oval.test:tst:487"/>
+          <criterion comment="Test that the external_variable construct is supported for multiple binary values." test_ref="oval:org.mitre.oval.test:tst:943"/>
+        </criteria>
+        <criteria>
+          <criterion comment="Test that the external_variable construct is supported for a single boolean value." test_ref="oval:org.mitre.oval.test:tst:64"/>
+          <criterion comment="Test that the external_variable construct is supported for multiple boolean values." test_ref="oval:org.mitre.oval.test:tst:38"/>
+        </criteria>
+        <criteria>
+          <criterion comment="Test that the external_variable construct is supported for a single evr_string value." test_ref="oval:org.mitre.oval.test:tst:350"/>
+          <criterion comment="Test that the external_variable construct is supported for multiple evr_string values." test_ref="oval:org.mitre.oval.test:tst:170"/>
+        </criteria>
+        <criteria>
+          <criterion comment="Test that the external_variable construct is supported for a single integer value." test_ref="oval:org.mitre.oval.test:tst:936"/>
+          <criterion comment="Test that the external_variable construct is supported for multiple float values." test_ref="oval:org.mitre.oval.test:tst:851"/>
+        </criteria>
+        <criteria>
+          <criterion comment="Test that the external_variable construct is supported for a single integer value." test_ref="oval:org.mitre.oval.test:tst:126"/>
+          <criterion comment="Test that the external_variable construct is supported for multiple integer values." test_ref="oval:org.mitre.oval.test:tst:608"/>
+        </criteria>
+        <criteria>
+          <criterion comment="Test that the external_variable construct is supported for a single string value." test_ref="oval:org.mitre.oval.test:tst:983"/>
+          <criterion comment="Test that the external_variable construct is supported for multiple string values." test_ref="oval:org.mitre.oval.test:tst:154"/>
+        </criteria>
+        <criteria>
+          <criterion comment="Test that the external_variable construct is supported for a single version value." test_ref="oval:org.mitre.oval.test:tst:34"/>
+          <criterion comment="Test that the external_variable construct is supported for multiple version values." test_ref="oval:org.mitre.oval.test:tst:71"/>
+        </criteria>
+        <criterion comment="Test that the external_variable construct is supported for a single possible_restriction." test_ref="oval:org.mitre.oval.test:tst:509"/>
+        <criterion comment="Test that the external_variable construct is supported for multiple possible_restrictions." test_ref="oval:org.mitre.oval.test:tst:439"/>
+        <criterion comment="Test that the external_variable construct is supported for a single possible_value." test_ref="oval:org.mitre.oval.test:tst:132"/>
+        <criterion comment="Test that the external_variable construct is supported for multiple possible_values." test_ref="oval:org.mitre.oval.test:tst:275"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <variable_test id="oval:org.mitre.oval.test:tst:487" version="1" comment="Test that the external_variable construct is supported for a single binary value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:876"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:996"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:943" version="1" comment="Test that the external_variable construct is supported for multiple binary values." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:263"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:705"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:64" version="1" comment="Test that the external_variable construct is supported for a single boolean value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:222"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:788"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:38" version="1" comment="Test that the external_variable construct is supported for multiple boolean values." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:966"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:395"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:350" version="1" comment="Test that the external_variable construct is supported for a single evr_string value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:336"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:676"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:170" version="1" comment="Test that the external_variable construct is supported for multiple evr_string values." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:569"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:702"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:936" version="1" comment="Test that the external_variable construct is supported for a single integer value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:215"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:983"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:851" version="1" comment="Test that the external_variable construct is supported for multiple float values." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:647"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:872"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:126" version="1" comment="Test that the external_variable construct is supported for a single integer value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:536"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:121"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:608" version="1" comment="Test that the external_variable construct is supported for multiple integer values." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:40"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:615"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:983" version="1" comment="Test that the external_variable construct is supported for a single string value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:684"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:291"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:154" version="1" comment="Test that the external_variable construct is supported for multiple string values." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:962"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:86"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:34" version="1" comment="Test that the external_variable construct is supported for a single version value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:88"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:299"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:71" version="1" comment="Test that the external_variable construct is supported for multiple version values." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:915"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:723"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:509" version="1" comment="Test that the external_variable construct is supported for a single possible_restriction." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:361"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:857"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:439" version="1" comment="Test that the external_variable construct is supported for multiple possible_restrictions." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:645"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:857"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:132" version="1" comment="Test that the external_variable construct is supported for a single possible_value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:548"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:927"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:275" version="1" comment="Test that the external_variable construct is supported for multiple possible_values." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:441"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:138"/>
+    </variable_test>
+  </tests>
+  <objects>
+    <variable_object id="oval:org.mitre.oval.test:obj:876" version="1" comment="This variable_object references an external_variable that contains the binary value '0000'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:566</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:263" version="1" comment="This variable_object references an external_variable that contains the binary values '0000','0010', '0100', and '1000'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:505</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:222" version="1" comment="This variable_object references an external_variable that contains the boolean value 'true'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:453</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:966" version="1" comment="This variable_object references an external_variable that contains the boolean values 'true', 'false', '0', and '1'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:983</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:336" version="1" comment="This variable_object references an external_variable that contains the evr_string value '1.2.3.4-5.6'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:89</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:569" version="1" comment="This variable_object references an external_variable that contains the evr_string values '1.2.3.4-5.6', '1.2.3.4-5.7', '1.2.3.4-5.8', and '1.2.3.4-5.9'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:51</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:215" version="1" comment="This variable_object references an external_variable that contains the float value '1.23456'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:592</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:647" version="1" comment="This variable_object references an external_variable that contains the float value '1.23456','-3.542E2', '100e-4', and '-.4323e-3'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:964</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:536" version="1" comment="This variable_object references an external_variable that contains the integer value '0'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:621</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:40" version="1" comment="This variable_object references an external_variable that contains the integer value '0','-35422', '1004', and '-43233'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:199</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:684" version="1" comment="This variable_object references an external_variable that contains the string value 'test_string_1'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:183</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:962" version="1" comment="This variable_object references an external_variable that contains the string values 'test_string1', 'test_string_2', 'test_string_3', and 'test_string_4'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:86</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:88" version="1" comment="This variable_object references an external_variable that contains the version value '1.2.3.4'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:110</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:915" version="1" comment="This variable_object references an external_variable that contains the version values '1.2.3.4', '1a2s3d4', '1.2.3-04', and '1.2+3.4'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:215</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:361" version="1" comment="This variable_object references an external_variable that restricts the variable's values such that they must match the regular expression '^[0-9]{3}-[0-9]{3}-[0-9]{4}$'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:629</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:645" version="1" comment="This variable_object references an external_variable that restricts the variable's values such that they must match the regular expression '^[0-9]{3}-[0-9]{3}-[0-9]{4}$' or '^1-[0-9]{3}-[0-9]{3}-[0-9]{4}$'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:327</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:548" version="1" comment="This variable_object references an external_variable that restricts the variable's value to '0'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:642</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:441" version="1" comment="This variable_object references an external_variable that restricts the variable's value to '0' or '1'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:863</var_ref>
+    </variable_object>
+  </objects>
+  <states>
+    <variable_state id="oval:org.mitre.oval.test:ste:996" version="1" comment="This variable_state represents a variable_object where the binary value is equal to '0000'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="binary">0000</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:705" version="1" comment="This variable_state represents a variable_object where the binary value is equal to '0000', '0010', '0100', or '1000'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="binary" var_ref="oval:org.mitre.oval.test:var:914" var_check="at least one"/>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:788" version="1" comment="This variable_state represents a variable_object where the boolean value is equal to 'true'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="boolean">true</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:395" version="1" comment="This variable_state represents a variable_object where the boolean value is equal to 'true', 'false', '0', or '1'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="boolean" var_ref="oval:org.mitre.oval.test:var:749" var_check="at least one"/>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:676" version="1" comment="This variable_state represents a variable_object where the evr_string value is equal to '1:2.3.4-5.6'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="evr_string">1:2.3.4-5.6</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:702" version="1" comment="This variable_state represents a variable_object where the evr_string value is equal to '1:2.3.4-5.6', '1:2.3.4-5.7', '1:2.3.4-5.8', or '1:2.3.4-5.9'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="evr_string" var_ref="oval:org.mitre.oval.test:var:148" var_check="at least one"/>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:983" version="1" comment="This variable_state represents a variable_object where the float value is equal to '1.23456'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float">1.23456</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:872" version="1" comment="This variable_state represents a variable_object where the float value is equal to '1.23456', '-3.542E2', '100e-4', or '-.4323e-3'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="float" var_ref="oval:org.mitre.oval.test:var:431" var_check="at least one"/>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:121" version="1" comment="This variable_state represents a variable_object where the integer value is equal to '0'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="int">0</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:615" version="1" comment="This variable_state represents a variable_object where the integer value is equal to '0', '-35422', '1004', or '-43233'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="int" var_ref="oval:org.mitre.oval.test:var:197" var_check="at least one"/>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:291" version="1" comment="This variable_state represents a variable_object where the string value is equal to 'test_string_1'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>test_string_1</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:86" version="1" comment="This variable_state represents a variable_object where the string value is equal to 'test_string_1', 'test_string_2', 'test_string_3', or 'test_string_4'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value var_ref="oval:org.mitre.oval.test:var:695" var_check="at least one"/>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:299" version="1" comment="This variable_state represents a variable_object where the version value is equal to '1.2.3.4'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>1.2.3.4</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:723" version="1" comment="This variable_state represents a variable_object where the version value is equal to '1.2.3.4', '1a2s3d4', '1.2.3-04', or '1.2+3.4'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="version" var_ref="oval:org.mitre.oval.test:var:383" var_check="at least one"/>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:857" version="1" comment="This variable_state represents a variable_object where the string value matches the regular expression '^(1-)?[0-9]{3}-[0-9]{3}-[0-9]{4}$'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value operation="pattern match">^(1-)?[0-9]{3}-[0-9]{3}-[0-9]{4}$</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:927" version="1" comment="This variable_state represents a variable_object where the integer value is equal to '0'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="int">0</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:138" version="1" comment="This variable_state represents a variable_object where the integer value is equal to '1'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="int">1</value>
+    </variable_state>
+  </states>
+  <variables>
+    <external_variable id="oval:org.mitre.oval.test:var:566" version="1" comment="This external_variable references the binary value '0000' from external-variables.xml." datatype="binary"/>
+    <external_variable id="oval:org.mitre.oval.test:var:505" version="1" comment="This external_variable references the binary values '0000', '0010', '0100', and '1000' from external-variables.xml." datatype="binary"/>
+    <constant_variable id="oval:org.mitre.oval.test:var:914" version="1" comment="This constant_variable represents the binary values '0000', 0010', '0100', and '1000'." datatype="binary">
+      <value>0000</value>
+      <value>0010</value>
+      <value>0100</value>
+      <value>1000</value>
+    </constant_variable>
+    <external_variable id="oval:org.mitre.oval.test:var:453" version="1" comment="This external_variable references the boolean value 'true' from external-variables.xml." datatype="boolean"/>
+    <external_variable id="oval:org.mitre.oval.test:var:983" version="1" comment="This external_variable references the boolean values 'true', 'false', '0', and '1' from external-variables.xml." datatype="boolean"/>
+    <constant_variable id="oval:org.mitre.oval.test:var:749" version="1" comment="This constant_variable represents the boolean values 'true', 'false', '0', and '1'." datatype="boolean">
+      <value>true</value>
+      <value>false</value>
+      <value>0</value>
+      <value>1</value>
+    </constant_variable>
+    <external_variable id="oval:org.mitre.oval.test:var:89" version="1" comment="This external_variable references the evr_string value '1:2.3.4-5.6' from external-variables.xml" datatype="evr_string"/>
+    <external_variable id="oval:org.mitre.oval.test:var:51" version="1" comment="This external_variable references the evr_string values '1:2.3.4-5.6', '1:2.3.4-5.7', '1:2.3.4-5.9', and '1:2.3.4-5.9' from external-variables.xml." datatype="evr_string"/>
+    <constant_variable id="oval:org.mitre.oval.test:var:148" version="1" comment="This constant_variable represents the evr_string values '1:2.3.4-5.6', '1:2.3.4-5.7', '1:2.3.4-5.9', and '1:2.3.4-5.9'." datatype="evr_string">
+      <value>1:2.3.4-5.6</value>
+      <value>1:2.3.4-5.7</value>
+      <value>1:2.3.4-5.8</value>
+      <value>1:2.3.4-5.9</value>
+    </constant_variable>
+    <external_variable id="oval:org.mitre.oval.test:var:592" version="1" comment="This external_variable references the float value '1.23456' from external-variables.xml" datatype="float"/>
+    <external_variable id="oval:org.mitre.oval.test:var:964" version="1" comment="This external_variable references the float values '1.23456', '-3.542E2', '100e-4', and '-.4323e-3' from external-variables.xml." datatype="float"/>
+    <constant_variable id="oval:org.mitre.oval.test:var:431" version="1" comment="This constant_variable represents the float values '1.23456', '-3.542E2', '100e-4', and '-.4323e-3'." datatype="float">
+      <value>1.23456</value>
+      <value>-3.542E2</value>
+      <value>100e-4</value>
+      <value>-.4323e-3</value>
+    </constant_variable>
+    <external_variable id="oval:org.mitre.oval.test:var:621" version="1" comment="This external_variable references the int value '0' from external-variables.xml" datatype="int"/>
+    <external_variable id="oval:org.mitre.oval.test:var:199" version="1" comment="This external_variable references the int values '0', '-35422', '1004', and '-43233' from external-variables.xml." datatype="int"/>
+    <constant_variable id="oval:org.mitre.oval.test:var:197" version="1" comment="This constant_variable represents the int values '0', '-35422', '1004', and '-43233'." datatype="int">
+      <value>0</value>
+      <value>-35422</value>
+      <value>1004</value>
+      <value>-43233</value>
+    </constant_variable>
+    <external_variable id="oval:org.mitre.oval.test:var:183" version="1" comment="This external_variable references the string value 'test_string_1' from external-variables.xml" datatype="string"/>
+    <external_variable id="oval:org.mitre.oval.test:var:86" version="1" comment="This external_variable references the string values 'test_string_1', 'test_string_2', 'test_string_3', and 'test_string_4' from external-variables.xml." datatype="string"/>
+    <constant_variable id="oval:org.mitre.oval.test:var:695" version="1" comment="This constant_variable represents the string values 'test_string_1', 'test_string_2', 'test_string_3', and 'test_string_4'." datatype="string">
+      <value>test_string_1</value>
+      <value>test_string_2</value>
+      <value>test_string_3</value>
+      <value>test_string_4</value>
+    </constant_variable>
+    <external_variable id="oval:org.mitre.oval.test:var:110" version="1" comment="This external_variable references the version value '1.2.3.4' from external-variables.xml" datatype="version"/>
+    <external_variable id="oval:org.mitre.oval.test:var:215" version="1" comment="This external_variable references the version values '1.2.3.4', '1a2s3d4', '1.2.3-04', and '1.2+3.4' from external-variables.xml." datatype="version"/>
+    <constant_variable id="oval:org.mitre.oval.test:var:383" version="1" comment="This constant_variable represents the version values '1.2.3.4', '1a2s3d4', '1.2.3-04', and '1.2+3.4'." datatype="version">
+      <value>1.2.3.4</value>
+      <value>1a2s3d4</value>
+      <value>1.2.3-04</value>
+      <value>1.2+3.4</value>
+    </constant_variable>
+    <external_variable id="oval:org.mitre.oval.test:var:629" version="1" comment="This external_variable references the string value '123-456-7890' from external-variables.xml and restricts the value such that it must match the regular expression '^[0-9]{3}-[0-9]{3}-[0-9]{4}$'." datatype="string">
+      <possible_restriction hint="a">
+        <restriction operation="pattern match">^[0-9]{3}-[0-9]{3}-[0-9]{4}$</restriction>
+      </possible_restriction>
+    </external_variable>
+    <external_variable id="oval:org.mitre.oval.test:var:327" version="1" comment="This external_variable references the string value '1-123-456-7890' from external-variables.xml and restricts the value such that it must match the regular expression '^[0-9]{3}-[0-9]{3}-[0-9]{4}$' or '^1-[0-9]{3}-[0-9]{3}-[0-9]{4}$'." datatype="string">
+      <possible_restriction hint="This restricts the variable value(s) to the 10 digit telephone number format xxx-xxx-xxxx">
+        <restriction operation="pattern match">^[0-9]{3}-[0-9]{3}-[0-9]{4}$</restriction>
+      </possible_restriction>
+      <possible_restriction hint="This restricts the variable value(s) to the 1 plus 10 digit telephone number format x-xxx-xxx-xxxx">
+        <restriction operation="pattern match">^1-[0-9]{3}-[0-9]{3}-[0-9]{4}$</restriction>
+      </possible_restriction>
+    </external_variable>
+    <external_variable id="oval:org.mitre.oval.test:var:642" version="1" comment="This external_variable references the integer value '0' from external-variables.xml and restricts the value such that it must be equal to '0'." datatype="int">
+      <possible_value hint="This restricts the variable value(s) to '0'.">0</possible_value>
+    </external_variable>
+    <external_variable id="oval:org.mitre.oval.test:var:863" version="1" comment="This external_variable references the integer value '1' from external-variables.xml and restricts the value such that it must be equal to '0' or '1'." datatype="int">
+      <possible_value hint="This restricts the variable value(s) to '0'.">0</possible_value>
+      <possible_value hint="This restricts the variable value(s) to '1'.">1</possible_value>
+    </external_variable>
+  </variables>
+</oval_definitions>

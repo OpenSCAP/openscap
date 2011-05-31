@@ -28,16 +28,16 @@ function test_init {
 # Execute test and report its results.
 function test_run {    
     printf "+ %-40s" $1; 
-    echo -e "TEST: $1\n" >&2; 
+    echo -e "TEST: $1" >&2; 
     shift
     ( exec 1>&2 ; eval "$@" )
     ret_val=$?
-    result=$[$result + $ret_val]
     if [ $ret_val -eq 0 ]; then 
 	echo "[ PASS ]"; 
 	echo -e "RESULT: PASSED\n" >&2
 	return 0;
     elif [ $ret_val -eq 1 ]; then
+        result=$[$result + $ret_val]
 	echo "[ FAIL ]"; 
 	echo -e "RESULT: FAILED\n" >&2
 	return 1;
@@ -46,6 +46,7 @@ function test_run {
 	echo -e "RESULT: SKIPPED\n" >&2
 	return 0; 
     else
+        result=$[$result + $ret_val]
 	echo "[ WARN ]"; 
 	echo -e "RESULT: WARNING (unknown exist status $ret_val)\n" >&2
 	return 1;
@@ -56,6 +57,6 @@ function test_run {
 function test_exit {
     echo "--------------------------------------------------"
     echo -e "See `pwd | sed 's|.*/\(tests/.*\)|\1|'`/${log}.\n"
-    [ $result -eq 1 ] && exit 1
-    exit 0	
+    [ $result -eq 0 ] && exit 0
+    exit 1
 }

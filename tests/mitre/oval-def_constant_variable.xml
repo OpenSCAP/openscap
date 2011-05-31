@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd    http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2009-05-21T11:46:00-04:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:92" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the oval-def:constant_variable construct is properly supported</title>
+        <description>This definition is intended to evalutate to true if the interpreter properly supports the oval-def:constant_variable construct.</description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="Test that the constant_variable construct is supported with a single value." test_ref="oval:org.mitre.oval.test:tst:695"/>
+        <criterion comment="Test that the constant_variable construct is supported with multiple values." test_ref="oval:org.mitre.oval.test:tst:324"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <variable_test id="oval:org.mitre.oval.test:tst:695" version="1" comment="Test that the constant_variable construct is supported with a single value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:338"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:993"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:324" version="1" comment="Test that the constant_variable construct is supported with multiple values." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:179"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:673"/>
+    </variable_test>
+  </tests>
+  <objects>
+    <variable_object id="oval:org.mitre.oval.test:obj:338" version="1" comment="This variable_object contains the int value '9'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:641</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:179" version="1" comment="This variable_object contains the int values '15',18','20','24','30','36','40', and '48'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:831</var_ref>
+    </variable_object>
+  </objects>
+  <states>
+    <variable_state id="oval:org.mitre.oval.test:ste:993" version="1" comment="This state represents a variable_object where the value is equal to '9'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="int">9</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:673" version="1" comment="This state represents a variable_object where all of the values are greater than '7'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="int" operation="greater than">7</value>
+    </variable_state>
+  </states>
+  <variables>
+    <constant_variable id="oval:org.mitre.oval.test:var:641" version="1" comment="A constant_variable with a single value." datatype="int">
+      <value>9</value>
+    </constant_variable>
+    <constant_variable id="oval:org.mitre.oval.test:var:831" version="1" comment="A constant_variable with multiple values" datatype="int">
+      <value>15</value>
+      <value>18</value>
+      <value>20</value>
+      <value>24</value>
+      <value>30</value>
+      <value>36</value>
+      <value>40</value>
+      <value>48</value>
+    </constant_variable>
+  </variables>
+</oval_definitions>

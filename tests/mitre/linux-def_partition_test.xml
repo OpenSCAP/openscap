@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:linux-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+  <generator>
+    <oval:schema_version>5.8</oval:schema_version>
+    <oval:timestamp>2009-01-12T10:41:00-05:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:445" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the linux-def:partition_test is properly supported</title>
+        <description>This definition is intended to evalutate to true if the interpreter properly supports the linux-def:partition_test.</description>
+      </metadata>
+      <notes>
+        <note>It is important to note that the values used in this test definition are specific to a particular machine, and may not necessarily apply to your system. As a result, in order to have the definition return a result of 'true', you must either change these values to the ones found on your particular system, or you must configure your system to use these values.</note>
+      </notes>
+      <criteria operator="AND">
+        <criterion comment="Test that the partition_object is supported with the name entity equal to some value." test_ref="oval:org.mitre.oval.test:tst:1854"/>
+        <criterion comment="Test that the partition_object is supported with the name entity not equal to some value." test_ref="oval:org.mitre.oval.test:tst:1401"/>
+        <criterion comment="Test that the partition_object is supported with the name entity matching some regular expression." test_ref="oval:org.mitre.oval.test:tst:1060"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <partition_test id="oval:org.mitre.oval.test:tst:1854" version="1" comment="Test that the partition_object is supported with the name entity equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:org.mitre.oval.test:obj:1062"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:1386"/>
+    </partition_test>
+    <partition_test id="oval:org.mitre.oval.test:tst:1401" version="1" comment="Test that the partition_object is supported with the name entity not equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:org.mitre.oval.test:obj:1245"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:1643"/>
+    </partition_test>
+    <partition_test id="oval:org.mitre.oval.test:tst:1060" version="1" comment="Test that the partition_object is supported with the name entity matching some regular expression." check_existence="at_least_one_exists" check="only one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:org.mitre.oval.test:obj:1014"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:1386"/>
+    </partition_test>
+  </tests>
+  <objects>
+    <partition_object id="oval:org.mitre.oval.test:obj:1062" version="1" comment="Retrieve an partition_item with a name equal to '/'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <mount_point>/</mount_point>
+    </partition_object>
+    <partition_object id="oval:org.mitre.oval.test:obj:1245" version="1" comment="Retrieve partition_items with names that are not equal to '/'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <mount_point operation="not equal">/</mount_point>
+    </partition_object>
+    <partition_object id="oval:org.mitre.oval.test:obj:1014" version="1" comment="Retrieve partition_items with names that match the regular expression '^/'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <mount_point operation="pattern match">^/</mount_point>
+    </partition_object>
+  </objects>
+  <states>
+    <partition_state id="oval:org.mitre.oval.test:ste:1386" version="1" comment="This state represents a partition_item that has a mount_point equal to '/', a device entity that matches the regular expression '.*', mount_options entities that match the regular expression '.*', and total_space, space_used, and space_left entities greater than or equal to '0'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <mount_point>/</mount_point>
+      <device operation="pattern match">.*</device>
+      <mount_options operation="pattern match" entity_check="all">.*</mount_options>
+      <total_space datatype="int" operation="greater than or equal">0</total_space>
+      <space_used datatype="int" operation="greater than or equal">0</space_used>
+      <space_left datatype="int" operation="greater than or equal">0</space_left>
+    </partition_state>
+    <partition_state id="oval:org.mitre.oval.test:ste:1643" version="1" comment="This state represents partition_items that have a mount_point not equal to '/', a device entity that matches the regular expression '.*', mount_options entities that match the regular expression '.*', and total_space, space_used, and space_left entities greater than or equal to '0'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <mount_point operation="not equal">/</mount_point>
+      <device operation="pattern match">.*</device>
+      <mount_options operation="pattern match" entity_check="all">.*</mount_options>
+      <total_space datatype="int" operation="greater than or equal">0</total_space>
+      <space_used datatype="int" operation="greater than or equal">0</space_used>
+      <space_left datatype="int" operation="greater than or equal">0</space_left>
+    </partition_state>
+  </states>
+</oval_definitions>

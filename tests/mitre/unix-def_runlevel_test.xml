@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2009-01-12T10:41:00-05:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:626" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the unix-def:runlevel_test is properly supported</title>
+        <description>This definition is intended to evalutate to true if the interpreter properly supports the unix-def:runlevel_test.</description>
+      </metadata>
+      <notes>
+        <note>It is important to note that the values used in this test definition are specific to a particular machine, and may not necessarily apply to your system. As a result, in order to have the definition return a result of 'true', you must either change these values to the ones found on your particular system, or you must configure your system to use these values.</note>
+      </notes>
+      <criteria operator="AND">
+        <criterion comment="Test that the runlevel_object is supported with the service_name entity equal to some value and a runlevel entity equal to some value." test_ref="oval:org.mitre.oval.test:tst:303"/>
+        <criterion comment="Test that the runlevel_object is supported with the service_name entity not equal to some value and a runlevel entity equal to some value." test_ref="oval:org.mitre.oval.test:tst:235"/>
+        <criterion comment="Test that the runlevel_object is supported with the service_name entity matching some regular expression and a runlevel entity equal to some value." test_ref="oval:org.mitre.oval.test:tst:981"/>
+        <criterion comment="Test that the runlevel_object is supported with the service_name entity equal to some value and a runlevel entity not equal to some value." test_ref="oval:org.mitre.oval.test:tst:831"/>
+        <criterion comment="Test that the runlevel_object is supported with the service_name entity equal to some value and a runlevel entity that matches some regular expression." test_ref="oval:org.mitre.oval.test:tst:693"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <runlevel_test id="oval:org.mitre.oval.test:tst:303" version="1" comment="Test that the runlevel_object is supported with the service_name entity equal to some value and a runlevel entity equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:486"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:724"/>
+    </runlevel_test>
+    <runlevel_test id="oval:org.mitre.oval.test:tst:235" version="1" comment="Test that the runlevel_object is supported with the service_name entity not equal to some value and a runlevel entity equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:570"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:797"/>
+    </runlevel_test>
+    <runlevel_test id="oval:org.mitre.oval.test:tst:981" version="1" comment="Test that the runlevel_object is supported with the service_name entity matching some regular expression and a runlevel entity equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:92"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:481"/>
+    </runlevel_test>
+    <runlevel_test id="oval:org.mitre.oval.test:tst:831" version="1" comment="Test that the runlevel_object is supported with the service_name entity equal to some value and a runlevel entity not equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:888"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:865"/>
+    </runlevel_test>
+    <runlevel_test id="oval:org.mitre.oval.test:tst:693" version="1" comment="Test that the runlevel_object is supported with the service_name entity equal to some value and a runlevel entity that matches some regular expression." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:952"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:501"/>
+    </runlevel_test>
+  </tests>
+  <objects>
+    <runlevel_object id="oval:org.mitre.oval.test:obj:486" version="1" comment="Retrieve a runlevel_item with a service_name equal to 'sshd' and a runlevel equal to '3'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <service_name>sshd</service_name>
+      <runlevel>3</runlevel>
+    </runlevel_object>
+    <runlevel_object id="oval:org.mitre.oval.test:obj:570" version="1" comment="Retrieve runlevel_items with service_names that are not equal to 'sshd' and a runlevel equal to '3'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <service_name operation="not equal">sshd</service_name>
+      <runlevel>3</runlevel>
+    </runlevel_object>
+    <runlevel_object id="oval:org.mitre.oval.test:obj:92" version="1" comment="Retrieve runlevel_items with service_names that match the regular expression '^ss.d$' and a runlevel that equals '3'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <service_name operation="pattern match">^ss.d$</service_name>
+      <runlevel>3</runlevel>
+    </runlevel_object>
+    <runlevel_object id="oval:org.mitre.oval.test:obj:888" version="1" comment="Retrieve runlevel_items with service_name equal to 'sshd' and a runlevel not equal to '0'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <service_name>sshd</service_name>
+      <runlevel operation="not equal">0</runlevel>
+    </runlevel_object>
+    <runlevel_object id="oval:org.mitre.oval.test:obj:952" version="1" comment="Retrieve runlevel_items with a service_name equal to 'sshd' and a runlevel that matches the regular expression '^[0-6sS]$'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <service_name>sshd</service_name>
+      <runlevel operation="pattern match">^[0-6sS]$</runlevel>
+    </runlevel_object>
+  </objects>
+  <states>
+    <runlevel_state id="oval:org.mitre.oval.test:ste:724" version="1" comment="This state represents an runlevel_item that has a service_name equal to 'sshd' and a runlevel equal to '3'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <service_name>sshd</service_name>
+      <runlevel>3</runlevel>
+    </runlevel_state>
+    <runlevel_state id="oval:org.mitre.oval.test:ste:797" version="1" comment="This state represents runlevel_items that have a service_name not equal to 'sshd' and a runlevel equal to '3'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <service_name operation="not equal">sshd</service_name>
+      <runlevel>3</runlevel>
+    </runlevel_state>
+    <runlevel_state id="oval:org.mitre.oval.test:ste:481" version="1" comment="This state represents runlevel_items that have a service_name that matches the regular expression '^ss.d$' and a runlevel equal to '3'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <service_name operation="pattern match">^ss.d$</service_name>
+      <runlevel>3</runlevel>
+    </runlevel_state>
+    <runlevel_state id="oval:org.mitre.oval.test:ste:865" version="1" comment="This state represents runlevel_items that have a service_name not equal to 'sshd' and a runlevel not equal to '0'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <service_name>sshd</service_name>
+      <runlevel operation="not equal">0</runlevel>
+    </runlevel_state>
+    <runlevel_state id="oval:org.mitre.oval.test:ste:501" version="1" comment="This state represents runlevel_items that have a service_name that matches the regular expression 'sshd' and a runlevel that matches the regular expression '^[0-6sS]$'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <service_name>sshd</service_name>
+      <runlevel operation="pattern match">^[0-6sS]$</runlevel>
+    </runlevel_state>
+  </states>
+</oval_definitions>

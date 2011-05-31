@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd     http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2009-01-12T10:41:00-05:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:180" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the ind-def:ldap_test probe is properly supported</title>
+        <description>This definition is intended to evalutate to true if the interpreter properly supports the ind-def:ldap_test probe.</description>
+      </metadata>
+      <notes>
+        <note>It is important to note that the values used in this test definition are specific to a particular machine, and may not necessarily apply to your system. As a result, in order to have the definition return a result of 'true', you must either change these values to the ones found on your particular system, or you must configure your system to use these values.</note>
+        <note>Information regarding the ldap directory can be found by navigating to Start->Run... and type 'ldp' on Windows systems or by using the ldapsearch tool on UNIX systems.</note>
+      </notes>
+      <criteria operator="AND">
+        <criterion comment="Test that an ldap_object with only a suffix is supported." test_ref="oval:org.mitre.oval.test:tst:313"/>
+        <criterion comment="Test that an ldap_object with a suffix and a relative_dn is supported." test_ref="oval:org.mitre.oval.test:tst:1012"/>
+        <criterion comment="Test that an ldap_object with a suffix and a relative_dn and attribute is supported." test_ref="oval:org.mitre.oval.test:tst:976"/>
+        <criterion comment="Test that an ldap_object with a suffix and a relative_dn where a pattern match is used and attribute is supported." test_ref="oval:org.mitre.oval.test:tst:445"/>
+        <criterion comment="Test that an ldap_object with a suffix and a relative_dn and attribute pattern match is used is supported." test_ref="oval:org.mitre.oval.test:tst:230"/>
+        <criterion comment="Test that an ldap_object with scope behavior is supported." test_ref="oval:org.mitre.oval.test:tst:799"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <ldap_test id="oval:org.mitre.oval.test:tst:313" version="1" comment="Test that an ldap_object with only a suffix is supported." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:545"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:85"/>
+    </ldap_test>
+    <ldap_test id="oval:org.mitre.oval.test:tst:1012" version="1" comment="Test that an ldap_object with a suffix and a relative_dn is supported." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:843"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:230"/>
+    </ldap_test>
+    <ldap_test id="oval:org.mitre.oval.test:tst:976" version="1" comment="Test that an ldap_object with a suffix and a relative_dn and attribute is supported." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:633"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:558"/>
+    </ldap_test>
+    <ldap_test id="oval:org.mitre.oval.test:tst:445" version="1" comment="Test that an ldap_object with a suffix and a relative_dn where a pattern match is used and attribute is supported." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:388"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:955"/>
+    </ldap_test>
+    <ldap_test id="oval:org.mitre.oval.test:tst:230" version="1" comment="Test that an ldap_object with a suffix and a relative_dn and attribute pattern match is used is supported." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:659"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:320"/>
+    </ldap_test>
+    <ldap_test id="oval:org.mitre.oval.test:tst:799" version="1" comment="Test that an ldap_object with scope behavior is supported." check_existence="at_least_one_exists" check="only one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:945"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:889"/>
+    </ldap_test>
+  </tests>
+  <objects>
+    <ldap_object id="oval:org.mitre.oval.test:obj:545" version="1" comment="Retrieve the ldap_item with the suffix equal to 'dc=example,dc=org'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <suffix>dc=example,dc=org</suffix>
+      <relative_dn xsi:nil="true"/>
+      <attribute xsi:nil="true"/>
+    </ldap_object>
+    <ldap_object id="oval:org.mitre.oval.test:obj:843" version="1" comment="Retrieve the ldap_item with the suffix equal to 'dc=example,dc=org' and the relative_dn equal to 'ou=itim'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <suffix>dc=example,dc=org</suffix>
+      <relative_dn>ou=itim</relative_dn>
+      <attribute xsi:nil="true"/>
+    </ldap_object>
+    <ldap_object id="oval:org.mitre.oval.test:obj:633" version="1" comment="Retrieve the ldap_item with the suffix equal to 'dc=example,dc=org', the relative distinguished name equal to 'ou=itim', and the attribute equal to 'ou'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <suffix>dc=example,dc=org</suffix>
+      <relative_dn>ou=itim</relative_dn>
+      <attribute>ou</attribute>
+    </ldap_object>
+    <ldap_object id="oval:org.mitre.oval.test:obj:388" version="1" comment="Retrieve the ldap_items with the suffix equal to 'dc=example,dc=org', the relative distinguished name matches the regular expression '^o.=i.i.$', and the attribute equals 'ou'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <suffix>dc=example,dc=org</suffix>
+      <relative_dn operation="pattern match">^o.=i.i.$</relative_dn>
+      <attribute>ou</attribute>
+    </ldap_object>
+    <ldap_object id="oval:org.mitre.oval.test:obj:659" version="1" comment="Retrieve the ldap_items with the suffix 'dc=example,dc=org', the relative distinguished name 'ou=itim', and an attribaute that matches the regular expression '^o[a-z]{1}$'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <suffix>dc=example,dc=org</suffix>
+      <relative_dn>ou=itim</relative_dn>
+      <attribute operation="pattern match">^o[a-z]{1}$</attribute>
+    </ldap_object>
+    <ldap_object id="oval:org.mitre.oval.test:obj:945" version="1" comment="Retrieve the ldap_item starting with the suffix 'dc=example,dc=org', the relative distinguished name 'ou=itim', searching one level down, and an attribaute that equals 'ou'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <behaviors scope="ONE"/>
+      <suffix>dc=example,dc=org</suffix>
+      <relative_dn>ou=itim</relative_dn>
+      <attribute>ou</attribute>
+    </ldap_object>
+  </objects>
+  <states>
+    <ldap_state id="oval:org.mitre.oval.test:ste:85" version="1" comment="This state represents an ldap_item that has a suffix of 'dc=example,dc=org'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <suffix>dc=example,dc=org</suffix>
+    </ldap_state>
+    <ldap_state id="oval:org.mitre.oval.test:ste:230" version="1" comment="This state represents an ldap_item object that has a suffix of 'dc=example,dc=org' and a relative_dn of 'ou=itim'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <suffix>dc=example,dc=org</suffix>
+      <relative_dn>ou=itim</relative_dn>
+    </ldap_state>
+    <ldap_state id="oval:org.mitre.oval.test:ste:558" version="1" comment="This state represents an ldap_item object that has a suffix of 'dc=example,dc=org', a relative distinguished name of 'ou=itim', an attribute 'ou', an object class of 'top;organizationalUnit;', an ldaptype of 'LDAPTYPE_DN_STRING', and a value of 'itim'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <suffix>dc=example,dc=org</suffix>
+      <relative_dn>ou=itim</relative_dn>
+      <attribute>ou</attribute>
+      <object_class>top;organizationalUnit;</object_class>
+      <ldaptype>LDAPTYPE_DN_STRING</ldaptype>
+      <value>itim</value>
+    </ldap_state>
+    <ldap_state id="oval:org.mitre.oval.test:ste:955" version="1" comment="This state represents an ldap_item object that has a suffix of 'dc=example,dc=org', a relative distinguished name that matches the regular expression '.*', an attribute of 'ou', an object class of 'top;organizationalUnit;', an ldaptype of 'LDAPTYPE_DN_STRING', and a value that matches the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <suffix>dc=example,dc=org</suffix>
+      <relative_dn operation="pattern match">.*</relative_dn>
+      <attribute>ou</attribute>
+      <object_class>top;organizationalUnit;</object_class>
+      <ldaptype>LDAPTYPE_DN_STRING</ldaptype>
+      <value operation="pattern match">.*</value>
+    </ldap_state>
+    <ldap_state id="oval:org.mitre.oval.test:ste:320" version="1" comment="This state represents an ldap_item object that has a suffix of 'dc=example,dc=org', a relative distinguished name of 'ou=itim', an attribute that matches the regular expression '^o[a-z]{1}$', an object class that equals 'top;organizationalUnit;', an ldaptype of 'LDAPTYPE_DN_STRING', and a value of 'itim'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <suffix>dc=example,dc=org</suffix>
+      <relative_dn>ou=itim</relative_dn>
+      <attribute operation="pattern match">^o[a-z]{1}$</attribute>
+      <object_class>top;organizationalUnit;</object_class>
+      <ldaptype>LDAPTYPE_DN_STRING</ldaptype>
+      <value>itim</value>
+    </ldap_state>
+    <ldap_state id="oval:org.mitre.oval.test:ste:889" version="1" comment="This state represents an ldap_item object that has a suffix of 'dc=example,dc=org', a relative distinguished name of 'ou=constraints,ou=itim', an attribute that equals 'ou', an object class of 'top;organizationalUnit;', an ldaptype of 'LDAPTYPE_DN_STRING', and a value of 'constraints'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <suffix>dc=example,dc=org</suffix>
+      <relative_dn>ou=constraints,ou=itim</relative_dn>
+      <attribute>ou</attribute>
+      <object_class>top;organizationalUnit;</object_class>
+      <ldaptype>LDAPTYPE_DN_STRING</ldaptype>
+      <value>constraints</value>
+    </ldap_state>
+  </states>
+</oval_definitions>

@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2009-01-12T10:41:00-05:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:932" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the unix-def:uname_test is properly supported</title>
+        <description>This definition is intended to evalutate to true if the interpreter properly supports the unix-def:uname_test.</description>
+      </metadata>
+      <notes>
+        <note>It is important to note that the values used in this test definition are specific to a particular machine, and may not necessarily apply to your system. As a result, in order to have the definition return a result of 'true', you must either change these values to the ones found on your particular system, or you must configure your system to use these values.</note>
+      </notes>
+      <criteria operator="AND">
+        <criterion comment="Test that the uname_object is supported." test_ref="oval:org.mitre.oval.test:tst:49"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <uname_test id="oval:org.mitre.oval.test:tst:49" version="1" comment="Test that the uname_object is supported." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:org.mitre.oval.test:obj:561"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:145"/>
+    </uname_test>
+  </tests>
+  <objects>
+    <uname_object id="oval:org.mitre.oval.test:obj:561" version="1" comment="Retrieve the only uname_item on the system." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix"/>
+  </objects>
+  <states>
+    <uname_state id="oval:org.mitre.oval.test:ste:145" version="1" comment="This state represents a uname_item that has a machine_class, node_name, os_name, os_release, os_version, and processor_type that match the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <machine_class operation="pattern match">.*</machine_class>
+      <node_name operation="pattern match">.*</node_name>
+      <os_name operation="pattern match">.*</os_name>
+      <os_release operation="pattern match">.*</os_release>
+      <os_version operation="pattern match">.*</os_version>
+      <processor_type operation="pattern match">.*</processor_type>
+    </uname_state>
+  </states>
+</oval_definitions>

@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd      http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2009-01-12T10:41:00-05:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:538" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the ind-def:variable_test is properly supported</title>
+        <description>This definition is intended to evalutate to true if the interpreter properly supports the ind-def:variable_test and all of its valid operations.</description>
+      </metadata>
+      <notes>
+        <note>It is important to note that the values used in this test definition are specific to a particular machine, and may not necessarily apply to your system. As a result, in order to have the definition return a result of 'true', you must either change these values to the ones found on your particular system, or you must configure your system to use these values.</note>
+      </notes>
+      <criteria operator="AND">
+        <criterion comment="Test that the variable_object is supported." test_ref="oval:org.mitre.oval.test:tst:247"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <variable_test id="oval:org.mitre.oval.test:tst:247" version="1" comment="Test that the variable_object is supported." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:953"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:75"/>
+    </variable_test>
+  </tests>
+  <objects>
+    <variable_object id="oval:org.mitre.oval.test:obj:953" version="1" comment="Variable object that references the string values 'a', 'b', and 'c'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:244</var_ref>
+    </variable_object>
+  </objects>
+  <states>
+    <variable_state id="oval:org.mitre.oval.test:ste:75" version="1" comment="This variable_state represents the variable_object where the var_ref equals 'oval:org.mitre.oval.test:var:244' and where only one of the values is 'a'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref operation="pattern match">oval:org.mitre.oval.test:var:244</var_ref>
+      <value entity_check="only one">a</value>
+    </variable_state>
+  </states>
+  <variables>
+    <constant_variable id="oval:org.mitre.oval.test:var:244" version="1" comment="This variable represents the string values 'a', 'b', and 'c'." datatype="string">
+      <value>a</value>
+      <value>b</value>
+      <value>c</value>
+    </constant_variable>
+    <constant_variable id="oval:org.mitre.oval.test:var:395" version="1" comment="This variable represents the string values 'a', 'b', and 'c'." datatype="string">
+      <value>a</value>
+      <value>b</value>
+      <value>c</value>
+    </constant_variable>
+  </variables>
+</oval_definitions>

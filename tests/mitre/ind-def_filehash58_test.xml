@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd      http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2010-08-26T14:07:45-05:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:566" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the ind-def:filehash58_test is properly supported</title>
+        <description>This definition is intended to evalutate to true if the interpreter properly supports the ind-def:filehash58_test.</description>
+      </metadata>
+      <notes>
+        <note>It is important to note that the values used in this test definition are specific to a particular machine, and may not necessarily apply to your system. As a result, in order to have the definition return a result of 'true', you must either change these values to the ones found on your particular system, or you must configure your system to use these values.</note>
+      </notes>
+      <criteria operator="AND">
+        <criterion comment="Test specifying multiple values for hash_type." test_ref="oval:org.mitre.oval.test:tst:305"/>
+        <criterion comment="Test specifying multiple values for hash_type with a 'none satisfy' var_check." test_ref="oval:org.mitre.oval.test:tst:544"/>
+        <criterion comment="Test computing the remaining four types of hashes." test_ref="oval:org.mitre.oval.test:tst:354"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <filehash58_test id="oval:org.mitre.oval.test:tst:305" version="1" comment="Test specifying multiple values for hash_type." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:313"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:531"/>
+    </filehash58_test>
+    <filehash58_test id="oval:org.mitre.oval.test:tst:544" version="1" comment="Test specifying multiple values for hash_type with a 'none satisfy' var_check." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:105"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:774"/>
+    </filehash58_test>
+    <filehash58_test id="oval:org.mitre.oval.test:tst:354" version="1" comment="Test computing the remaining four types of hashes." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:421"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:257"/>
+    </filehash58_test>
+  </tests>
+  <objects>
+    <filehash58_object id="oval:org.mitre.oval.test:obj:313" version="1" comment="MD5 and SHA-1 hashes of /bin/ls" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/bin/</path>
+      <filename>ls</filename>
+      <hash_type var_ref="oval:org.mitre.oval.test:var:429" var_check="at least one"/>
+    </filehash58_object>
+    <filehash58_object id="oval:org.mitre.oval.test:obj:105" version="1" comment="MD5 and SHA-1 hashes of /bin/ls" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/bin/</path>
+      <filename>ls</filename>
+      <hash_type var_ref="oval:org.mitre.oval.test:var:761" var_check="none satisfy"/>
+    </filehash58_object>
+    <filehash58_object id="oval:org.mitre.oval.test:obj:421" version="1" comment="SHA-224, SHA-256, SHA-384, and SHA-512 hashes of /bin/ls" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/bin/</path>
+      <filename>ls</filename>
+      <hash_type var_ref="oval:org.mitre.oval.test:var:761" var_check="at least one"/>
+    </filehash58_object>
+  </objects>
+  <states>
+    <filehash58_state id="oval:org.mitre.oval.test:ste:531" version="1" comment="matches any MD5 and SHA-1 hashes of /bin/ls" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/bin/</path>
+      <filename>ls</filename>
+      <hash_type var_ref="oval:org.mitre.oval.test:var:761" var_check="none satisfy"/>
+    </filehash58_state>
+    <filehash58_state id="oval:org.mitre.oval.test:ste:774" version="1" comment="matches any MD5 and SHA-1 hashes of /bin/ls" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/bin/</path>
+      <filename>ls</filename>
+      <hash_type var_ref="oval:org.mitre.oval.test:var:429" var_check="at least one"/>
+    </filehash58_state>
+    <filehash58_state id="oval:org.mitre.oval.test:ste:257" version="1" comment="matches any SHA-224, SHA-256, SHA-384, or SHA-512 hashes of /bin/ls" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/bin/</path>
+      <filename>ls</filename>
+      <hash_type var_ref="oval:org.mitre.oval.test:var:761" var_check="at least one"/>
+    </filehash58_state>
+  </states>
+  <variables>
+    <constant_variable id="oval:org.mitre.oval.test:var:429" version="1" comment="several hash algorithms in one variable" datatype="string">
+      <value>MD5</value>
+      <value>SHA-1</value>
+    </constant_variable>
+    <constant_variable id="oval:org.mitre.oval.test:var:761" version="1" comment="the complement of oval:org.mitre.oval.test:var:429" datatype="string">
+      <value>SHA-224</value>
+      <value>SHA-256</value>
+      <value>SHA-384</value>
+      <value>SHA-512</value>
+    </constant_variable>
+  </variables>
+</oval_definitions>

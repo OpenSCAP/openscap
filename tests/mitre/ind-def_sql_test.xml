@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd      http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2009-01-12T10:41:00-05:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:502" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the ind-def:sql_test is properly supported</title>
+        <description>This definition is intended to evalutate to true if the interpreter properly supports the ind-def:sql_test.</description>
+      </metadata>
+      <notes>
+        <note>It is important to note that the values used in this test definition are not real and will need to be modified to match the information specific to tha database being queried.</note>
+      </notes>
+      <criteria operator="AND">
+        <criterion comment="Test that the sql_object is supported with the engine, version, connection_string, and sql entities equal to some value." test_ref="oval:org.mitre.oval.test:tst:118"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <sql_test id="oval:org.mitre.oval.test:tst:118" version="1" comment="Test that the sql_object is supported with the engine, version, connection_string, and sql entities equal to some value." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:132"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:131"/>
+    </sql_test>
+  </tests>
+  <objects>
+    <sql_object id="oval:org.mitre.oval.test:obj:132" version="1" comment="This sql_object collects the sql_item(s) where the engine entity equals 'postgre', the version entity equals '9.0', the connection_string equals 'DRIVER={PostgreSQL};DATABASE=database;SERVER=server;UID=username;PWD=password;', and the sql entity equals 'SELECT column FROM table'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <engine>postgre</engine>
+      <version>9.0</version>
+      <connection_string>DRIVER={PostgreSQL};DATABASE=database;SERVER=server;UID=username;PWD=password;</connection_string>
+      <sql>SELECT column FROM table</sql>
+    </sql_object>
+  </objects>
+  <states>
+    <sql_state id="oval:org.mitre.oval.test:ste:131" version="1" comment="This sql_state represents a sql_item that has a engine that equals 'postgre' and a result that matches the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <engine>postgre</engine>
+      <result operation="pattern match">.*</result>
+    </sql_state>
+  </states>
+</oval_definitions>

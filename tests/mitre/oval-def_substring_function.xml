@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd    http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#windows windows-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:win-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2009-05-21T11:46:00-04:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:455" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the substring function is properly supported</title>
+        <description>This definition is intended to evaluate to true if the interpreter properly supports the substring function.</description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="Test that the substring function is supported with a single component that contains a single string value that specifies values for the substring_start and substring_length attributes such that the values are within range of the string's length." test_ref="oval:org.mitre.oval.test:tst:47"/>
+        <criterion comment="Test that the substring function is supported with a single component that contains multiple string values that specify values for the substring_start and substring_length attributes such that the values are within range of the string's length." test_ref="oval:org.mitre.oval.test:tst:174"/>
+        <criterion comment="Test that the substring function is supported with a single component that contains a single string value that specifies a value for the substring_start attribute that is less than 1 and a value for the substring_length attribute such that the value is within range of the string's length." test_ref="oval:org.mitre.oval.test:tst:606"/>
+        <criterion comment="Test that the substring function is supported with a single component that contains a single string value that specifies a value for the substring_start attribute that is within the string's length and a value for the substring_length attribute such that the value is greater than the string's length." test_ref="oval:org.mitre.oval.test:tst:314"/>
+        <criterion comment="Test that the substring function is supported with a single component that contains a single string value that specifies a value for the substring_start attribute that is within the string's length and a value for the substring_length attribute such that the value is less than 0." test_ref="oval:org.mitre.oval.test:tst:982"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <variable_test id="oval:org.mitre.oval.test:tst:47" version="1" comment="Test that the substring function is supported with a single component that contains a single string value that specifies values for the substring_start and substring_length attributes such that the values are within range of the string's length." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:721"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:690"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:174" version="1" comment="Test that the substring function is supported with a single component that contains multiple string values that specify values for the substring_start and substring_length attributes such that the values are within range of the string's length." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:270"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:72"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:606" version="1" comment="Test that the substring function is supported with a single component that contains a single string value that specifies a value for the substring_start attribute that is less than 1 and a value for the substring_length attribute such that the value is within range of the string's length." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:673"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:11"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:314" version="1" comment="Test that the substring function is supported with a single component that contains a single string value that specifies a value for the substring_start attribute that is within the string's length and a value for the substring_length attribute such that the value is greater than the string's length." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:440"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:80"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:982" version="1" comment="Test that the substring function is supported with a single component that contains a single string value that specifies a value for the substring_start attribute that is within the string's length and a value for the substring_length attribute such that the value is less than 0." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:113"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:353"/>
+    </variable_test>
+  </tests>
+  <objects>
+    <variable_object id="oval:org.mitre.oval.test:obj:721" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:982</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:270" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:136</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:673" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:330</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:440" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:887</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:113" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:79</var_ref>
+    </variable_object>
+  </objects>
+  <states>
+    <variable_state id="oval:org.mitre.oval.test:ste:690" version="1" comment="The string 'cd'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>cd</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:72" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value var_ref="oval:org.mitre.oval.test:var:684" var_check="only one"/>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:11" version="1" comment="The string 'ab'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>ab</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:80" version="1" comment="The string 'cdefg'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>cdefg</value>
+    </variable_state>
+    <variable_state id="oval:org.mitre.oval.test:ste:353" version="1" comment="The string 'cdefg'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>cdefg</value>
+    </variable_state>
+  </states>
+  <variables>
+    <local_variable id="oval:org.mitre.oval.test:var:982" version="1" comment="Applying the substring function to the string 'abcdefg' with substring_start value 3 and substring_length value 2." datatype="string">
+      <substring substring_start="3" substring_length="2">
+        <literal_component datatype="string">abcdefg</literal_component>
+      </substring>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:136" version="1" comment="Applying the substring function to a multi-value string with substring_start value 3 and substring_length value 2." datatype="string">
+      <substring substring_start="3" substring_length="2">
+        <variable_component var_ref="oval:org.mitre.oval.test:var:389"/>
+      </substring>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:330" version="1" comment="Applying the substring function to the string 'abcdefg' with substring_start value -1 and substring_length value 2." datatype="string">
+      <substring substring_start="-1" substring_length="2">
+        <literal_component datatype="string">abcdefg</literal_component>
+      </substring>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:887" version="1" comment="Applying the substring function to the string 'abcdefg' with substring_start value 1 and substring_length value 10." datatype="string">
+      <substring substring_start="3" substring_length="10">
+        <literal_component datatype="string">abcdefg</literal_component>
+      </substring>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:79" version="1" comment="Applying the substring function to the string 'abcdefg' with substring_start value 1 and substring_length value -1." datatype="string">
+      <substring substring_start="3" substring_length="-1">
+        <literal_component datatype="string">abcdefg</literal_component>
+      </substring>
+    </local_variable>
+    <constant_variable id="oval:org.mitre.oval.test:var:389" version="1" comment="multi" datatype="string">
+      <value>abcdefg</value>
+      <value>hijklmn</value>
+      <value>opqrstu</value>
+    </constant_variable>
+    <constant_variable id="oval:org.mitre.oval.test:var:684" version="1" comment="multi" datatype="string">
+      <value>cd</value>
+      <value>jk</value>
+      <value>qr</value>
+    </constant_variable>
+  </variables>
+</oval_definitions>

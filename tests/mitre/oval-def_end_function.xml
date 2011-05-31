@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd    http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#windows windows-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:win-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows">
+  <generator>
+    <oval:schema_version>5.9</oval:schema_version>
+    <oval:timestamp>2009-05-21T11:46:00-04:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:org.mitre.oval.test:def:427" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the end function is properly supported</title>
+        <description>This definition is intended to evaluate to true if the interpreter properly supports the end function.</description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="Test that the end function is supported with a character value for the character attribute and a single string component that does not end with the character value specified in the character attribute." test_ref="oval:org.mitre.oval.test:tst:138"/>
+        <criterion comment="Test that the end function is supported with a character value for the character attribute and a single string component that ends with the character value specified in the character attribute." test_ref="oval:org.mitre.oval.test:tst:625"/>
+        <criterion comment="Test that the end function is supported with a string value for the character attribute and a single string component that does not end with the string value specified in the character attribute." test_ref="oval:org.mitre.oval.test:tst:814"/>
+        <criterion comment="Test that the end function is supported with a string value for the character attribute and a single string component that ends with the string value specified in the character attribute." test_ref="oval:org.mitre.oval.test:tst:786"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <variable_test id="oval:org.mitre.oval.test:tst:138" version="1" comment="Test that the end function is supported with a character value for the character attribute and a single string component that does not end with the character value specified in the character attribute." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:967"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:260"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:625" version="1" comment="Test that the end function is supported with a character value for the character attribute and a single string component that ends with the character value specified in the character attribute." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:182"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:260"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:814" version="1" comment="Test that the end function is supported with a string value for the character attribute and a single string component that does not end with the string value specified in the character attribute." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:748"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:260"/>
+    </variable_test>
+    <variable_test id="oval:org.mitre.oval.test:tst:786" version="1" comment="Test that the end function is supported with a string value for the character attribute and a single string component that ends with the string value specified in the character attribute." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:191"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:260"/>
+    </variable_test>
+  </tests>
+  <objects>
+    <variable_object id="oval:org.mitre.oval.test:obj:967" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:944</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:182" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:619</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:748" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:600</var_ref>
+    </variable_object>
+    <variable_object id="oval:org.mitre.oval.test:obj:191" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:org.mitre.oval.test:var:556</var_ref>
+    </variable_object>
+  </objects>
+  <states>
+    <variable_state id="oval:org.mitre.oval.test:ste:260" version="1" comment="The string 'apple'" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>apple</value>
+    </variable_state>
+  </states>
+  <variables>
+    <local_variable id="oval:org.mitre.oval.test:var:944" version="1" comment="Applying the end function with a character argument 'e' to the string 'appl'." datatype="string">
+      <end character="e">
+        <literal_component datatype="string">appl</literal_component>
+      </end>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:619" version="1" comment="Applying the end function with a character argument 'e' to the string 'apple'." datatype="string">
+      <end character="e">
+        <literal_component datatype="string">apple</literal_component>
+      </end>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:600" version="1" comment="Applying the end function with a string argument 'pple' to the string 'a'." datatype="string">
+      <end character="pple">
+        <literal_component datatype="string">a</literal_component>
+      </end>
+    </local_variable>
+    <local_variable id="oval:org.mitre.oval.test:var:556" version="1" comment="Applying the end function with a string argument 'pple' to the string 'apple'." datatype="string">
+      <end character="pple">
+        <literal_component datatype="string">apple</literal_component>
+      </end>
+    </local_variable>
+  </variables>
+</oval_definitions>
