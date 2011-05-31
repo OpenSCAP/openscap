@@ -792,6 +792,7 @@ static struct oval_sysent *oval_sysent_from_sexp(struct oval_syschar_model *mode
 			}
 			break;
 		case OVAL_DATATYPE_STRING:
+                case OVAL_DATATYPE_EVR_STRING:
 			valp = SEXP_string_cstr(sval);
 			break;
 		default:
