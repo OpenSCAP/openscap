@@ -376,7 +376,7 @@ int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
                                                          "epoch",   OVAL_DATATYPE_STRING, reply_st[i].epoch,
                                                          "release", OVAL_DATATYPE_STRING, reply_st[i].release,
                                                          "version", OVAL_DATATYPE_STRING, reply_st[i].version,
-                                                         "evr",     OVAL_DATATYPE_STRING, reply_st[i].evr,
+                                                         "evr",     OVAL_DATATYPE_EVR_STRING, reply_st[i].evr,
                                                          "signature_keyid", OVAL_DATATYPE_STRING, reply_st[i].signature_keyid,
                                                          NULL);
 
