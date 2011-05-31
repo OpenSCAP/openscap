@@ -878,68 +878,56 @@ cat <<EOF
 
     <filehash_test version="1" id="oval:1:tst:97" check_existence="none_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:1"/>
     </filehash_test>
 
     <filehash_test version="1" id="oval:1:tst:98" check_existence="none_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:2"/>
     </filehash_test>
 
     <filehash_test version="1" id="oval:1:tst:99" check_existence="none_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:3"/>
     </filehash_test>
 
     <!-- check_existence="none_exist" check="at least one" -->
 
     <filehash_test version="1" id="oval:1:tst:100" check_existence="none_exist" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:1"/>
     </filehash_test>
 
     <filehash_test version="1" id="oval:1:tst:101" check_existence="none_exist" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:2"/>
     </filehash_test>
 
     <filehash_test version="1" id="oval:1:tst:102" check_existence="none_exist" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:3"/>
     </filehash_test>
 
     <!-- check_existence="none_exist" check="none satisfy" -->
 
     <filehash_test version="1" id="oval:1:tst:103" check_existence="none_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:1"/>
     </filehash_test>
 
     <filehash_test version="1" id="oval:1:tst:104" check_existence="none_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:2"/>
     </filehash_test>
 
     <filehash_test version="1" id="oval:1:tst:105" check_existence="none_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:3"/>
     </filehash_test>
 
     <!-- check_existence="none_exist" check="only one" -->
 
     <filehash_test version="1" id="oval:1:tst:106" check_existence="none_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:1"/>
     </filehash_test>
 
     <filehash_test version="1" id="oval:1:tst:107" check_existence="none_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:2"/>
     </filehash_test>
 
     <filehash_test version="1" id="oval:1:tst:108" check_existence="none_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:3"/>
     </filehash_test>
 
     <!-- check_existence="only_one_exists" check="all" -->

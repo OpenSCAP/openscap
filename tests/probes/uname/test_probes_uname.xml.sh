@@ -708,68 +708,56 @@ cat <<EOF
 
     <uname_test version="1" id="oval:1:tst:73" check_existence="none_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:1"/>
     </uname_test>
 
     <uname_test version="1" id="oval:1:tst:74" check_existence="none_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:2"/>
     </uname_test>
 
     <uname_test version="1" id="oval:1:tst:75" check_existence="none_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:3"/>
     </uname_test>
 
     <!-- check_existence="none_exist" check="at least one" -->
 
     <uname_test version="1" id="oval:1:tst:76" check_existence="none_exist" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:1"/>
     </uname_test>
 
     <uname_test version="1" id="oval:1:tst:77" check_existence="none_exist" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:2"/>
     </uname_test>
 
     <uname_test version="1" id="oval:1:tst:78" check_existence="none_exist" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:3"/>
     </uname_test>
 
     <!-- check_existence="none_exist" check="none satisfy" -->
 
     <uname_test version="1" id="oval:1:tst:79" check_existence="none_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:1"/>
     </uname_test>
 
     <uname_test version="1" id="oval:1:tst:80" check_existence="none_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:2"/>
     </uname_test>
 
     <uname_test version="1" id="oval:1:tst:81" check_existence="none_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:3"/>
     </uname_test>
 
     <!-- check_existence="none_exist" check="only one" -->
 
     <uname_test version="1" id="oval:1:tst:82" check_existence="none_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:1"/>
     </uname_test>
 
     <uname_test version="1" id="oval:1:tst:83" check_existence="none_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:2"/>
     </uname_test>
 
     <uname_test version="1" id="oval:1:tst:84" check_existence="none_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:3"/>
     </uname_test>
 
     <!-- check_existence="only_one_exists" check="all" -->

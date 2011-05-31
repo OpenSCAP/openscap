@@ -399,42 +399,34 @@ cat <<EOF
 
     <runlevel_test check_existence="none_exist" comment="false" version="1" id="oval:1:tst:33" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:2"/>
     </runlevel_test>
 
     <runlevel_test check_existence="none_exist" comment="false" version="1" id="oval:1:tst:34" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:1"/>
     </runlevel_test>
 
     <runlevel_test check_existence="none_exist" comment="false" version="1" id="oval:1:tst:35" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:1:obj:2"/>
-      <state state_ref="oval:1:ste:2"/>
     </runlevel_test>
 
     <runlevel_test check_existence="none_exist" comment="false" version="1" id="oval:1:tst:36" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:1:obj:2"/>
-      <state state_ref="oval:1:ste:1"/>
     </runlevel_test>
 
     <runlevel_test check_existence="none_exist" comment="true" version="1" id="oval:1:tst:37" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:1:obj:3"/>
-      <state state_ref="oval:1:ste:2"/>
     </runlevel_test>
 
     <runlevel_test check_existence="none_exist" comment="true" version="1" id="oval:1:tst:38" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:1:obj:3"/>
-      <state state_ref="oval:1:ste:1"/>
     </runlevel_test>
 
     <runlevel_test check_existence="none_exist" comment="true" version="1" id="oval:1:tst:39" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:1:obj:4"/>
-      <state state_ref="oval:1:ste:2"/>
     </runlevel_test>
 
     <runlevel_test check_existence="none_exist" comment="true" version="1" id="oval:1:tst:40" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:1:obj:4"/>
-      <state state_ref="oval:1:ste:1"/>
     </runlevel_test>
 
   </tests>

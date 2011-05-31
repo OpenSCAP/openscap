@@ -1176,148 +1176,120 @@ cat <<EOF
 
     <rpminfo_test version="1" id="oval:1:tst:153" check_existence="none_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:154" check_existence="none_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:155" check_existence="none_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
-      <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:156" check_existence="none_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
-      <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:157" check_existence="none_exist" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
-      <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:195" check_existence="none_exist" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
-      <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:196" check_existence="none_exist" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
-      <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check_existence="none_exist" check="at least one" -->
 
     <rpminfo_test version="1" id="oval:1:tst:158" check_existence="none_exist" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:159" check_existence="none_exist" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:160" check_existence="none_exist" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
-      <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:161" check_existence="none_exist" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
-      <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:162" check_existence="none_exist" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
-      <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:197" check_existence="none_exist" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
-      <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:198" check_existence="none_exist" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
-      <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check_existence="none_exist" check="none satisfy" -->
 
     <rpminfo_test version="1" id="oval:1:tst:163" check_existence="none_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:164" check_existence="none_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:165" check_existence="none_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
-      <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:166" check_existence="none_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
-      <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:167" check_existence="none_exist" check="none satisfy" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
-      <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:199" check_existence="none_exist" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
-      <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:200" check_existence="none_exist" check="none satisfy" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
-      <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check_existence="none_exist" check="only one" -->
 
     <rpminfo_test version="1" id="oval:1:tst:168" check_existence="none_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:169" check_existence="none_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:170" check_existence="none_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
-      <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:171" check_existence="none_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
-      <state state_ref="oval:1:ste:2"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:172" check_existence="none_exist" check="only one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:2"/>
-      <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:193" check_existence="none_exist" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
-      <state state_ref="oval:1:ste:1"/>
     </rpminfo_test>
 
     <rpminfo_test version="1" id="oval:1:tst:194" check_existence="none_exist" check="only one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:1:obj:3"/>
-      <state state_ref="oval:1:ste:3"/>
     </rpminfo_test>
 
     <!-- check_existence="only_one_exists" check="all" -->

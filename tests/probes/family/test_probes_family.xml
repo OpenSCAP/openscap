@@ -199,22 +199,18 @@
 
     <family_test check_existence="none_exist" check="all" comment="false" id="oval:1:tst:15" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:1"/>
     </family_test>
 
     <family_test check_existence="none_exist" check="at least one" comment="false" id="oval:1:tst:16" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:1"/>
     </family_test>
 
     <family_test check_existence="none_exist" check="none satisfy" comment="false" id="oval:1:tst:17" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:1"/>
     </family_test>
 
     <family_test check_existence="none_exist" check="only one" comment="false" id="oval:1:tst:18" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:1"/>
     </family_test>
 
     <family_test check_existence="only_one_exists" check="all" comment="true" id="oval:1:tst:19" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
@@ -299,22 +295,18 @@
 
     <family_test check_existence="none_exist" check="all" comment="false" id="oval:1:tst:35" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:2"/>
     </family_test>
 
     <family_test check_existence="none_exist" check="at least one" comment="false" id="oval:1:tst:36" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:2"/>
     </family_test>
 
     <family_test check_existence="none_exist" check="none satisfy" comment="false" id="oval:1:tst:37" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:2"/>
     </family_test>
 
     <family_test check_existence="none_exist" check="only one" comment="false" id="oval:1:tst:38" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:1:obj:1"/>
-      <state state_ref="oval:1:ste:2"/>
     </family_test>
 
     <family_test check_existence="only_one_exists" check="all" comment="false" id="oval:1:tst:39" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">

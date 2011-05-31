@@ -7527,31 +7527,31 @@
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:201745" version="1">
                   <ind-def:path>/etc/xinetd.d</ind-def:path>
                   <ind-def:filename>telnet</ind-def:filename>
-                  <ind-def:pattern operation="pattern match" var_ref="oval:org.fedoraproject.f14:var:2017"/>
+                  <ind-def:pattern var_check="all" operation="pattern match" var_ref="oval:org.fedoraproject.f14:var:2017"/>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:201774" version="1">
                   <ind-def:path>/etc/xinetd.d</ind-def:path>
                   <ind-def:filename>rcp</ind-def:filename>
-                  <ind-def:pattern operation="pattern match" var_ref="oval:org.fedoraproject.f14:var:2017"/>
+                  <ind-def:pattern var_check="all" operation="pattern match" var_ref="oval:org.fedoraproject.f14:var:2017"/>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:201775" version="1">
                   <ind-def:path>/etc/xinetd.d</ind-def:path>
                   <ind-def:filename>rsh</ind-def:filename>
-                  <ind-def:pattern operation="pattern match" var_ref="oval:org.fedoraproject.f14:var:2017"/>
+                  <ind-def:pattern var_check="all" operation="pattern match" var_ref="oval:org.fedoraproject.f14:var:2017"/>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:201776" version="1">
                   <ind-def:path>/etc/xinetd.d</ind-def:path>
                   <ind-def:filename>rlogin</ind-def:filename>
-                  <ind-def:pattern operation="pattern match" var_ref="oval:org.fedoraproject.f14:var:2017"/>
+                  <ind-def:pattern var_check="all" operation="pattern match" var_ref="oval:org.fedoraproject.f14:var:2017"/>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:201825" version="1">
                   <ind-def:path>/etc/xinetd.d</ind-def:path>
                   <ind-def:filename>tftp</ind-def:filename>
-                  <ind-def:pattern operation="pattern match" var_ref="oval:org.fedoraproject.f14:var:2017"/>
+                  <ind-def:pattern var_check="all" operation="pattern match" var_ref="oval:org.fedoraproject.f14:var:2017"/>
                   <ind-def:instance datatype="int">1</ind-def:instance>
             </ind-def:textfilecontent54_object>
             <ind-def:textfilecontent54_object id="oval:org.fedoraproject.f14:obj:20178" version="1">
@@ -8766,7 +8766,7 @@
                   <unix-def:owrite datatype="boolean">0</unix-def:owrite>
             </unix-def:file_state>
             <ind-def:textfilecontent54_state id="oval:org.fedoraproject.f14:ste:20053" version="1">
-                  <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:org.fedoraproject.f14:var:20053"/>
+                  <ind-def:subexpression datatype="int" var_check="all" operation="equals" var_ref="oval:org.fedoraproject.f14:var:20053"/>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:org.fedoraproject.f14:ste:20055" version="1">
                   <ind-def:subexpression operation="equals">0</ind-def:subexpression>
@@ -8788,7 +8788,7 @@
                   <unix-def:password>x</unix-def:password>
             </unix-def:password_state>
             <ind-def:textfilecontent54_state id="oval:org.fedoraproject.f14:ste:20071" version="1">
-                  <ind-def:subexpression var_check="all" operation="greater than or equal" var_ref="oval:org.fedoraproject.f14:var:20071"/>
+                  <ind-def:subexpression datatype="int" var_check="all" operation="greater than or equal" var_ref="oval:org.fedoraproject.f14:var:20071"/>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:org.fedoraproject.f14:ste:20072" version="1">
                   <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:org.fedoraproject.f14:var:20072"/>
@@ -9219,7 +9219,7 @@
                   <unix-def:oexec var_check="all" datatype="boolean" var_ref="oval:org.fedoraproject.f14:var:168"/>
             </unix-def:file_state>
             <ind-def:textfilecontent54_state id="oval:org.fedoraproject.f14:ste:86" version="1">
-                  <ind-def:subexpression var_check="all" operation="pattern match" var_ref="oval:org.fedoraproject.f14:var:20239"/>
+                  <ind-def:subexpression datatype="int" var_check="all" operation="pattern match" var_ref="oval:org.fedoraproject.f14:var:20239"/>
             </ind-def:textfilecontent54_state>
             <ind-def:textfilecontent54_state id="oval:org.fedoraproject.f14:ste:87" version="1">
                   <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:org.fedoraproject.f14:var:20246"/>
@@ -9766,10 +9766,10 @@
                         <variable_component var_ref="oval:org.fedoraproject.f14:var:20045"/>
                   </substring>
             </local_variable>
-            <local_variable id="oval:org.fedoraproject.f14:var:20050" version="1" datatype="string" comment="List of user ids">
+            <local_variable id="oval:org.fedoraproject.f14:var:20050" version="1" datatype="int" comment="List of user ids">
                         <object_component item_field="subexpression" object_ref="oval:org.fedoraproject.f14:obj:200501"/>
             </local_variable>
-            <local_variable id="oval:org.fedoraproject.f14:var:20051" version="1" datatype="string" comment="List of group ids">
+            <local_variable id="oval:org.fedoraproject.f14:var:20051" version="1" datatype="int" comment="List of group ids">
                         <object_component item_field="subexpression" object_ref="oval:org.fedoraproject.f14:obj:200511"/>
             </local_variable>
             <local_variable id="oval:org.fedoraproject.f14:var:200820" version="1" datatype="boolean" comment="Bit for a permission type">
@@ -10511,10 +10511,10 @@
                         <literal_component>:[^:]*:([[:digit:]]+)</literal_component>
                   </concat>
             </local_variable>
-            <local_variable comment="Object to Variable" version="1" id="oval:org.fedoraproject.f14:var:202082" datatype="string">
+            <local_variable comment="Object to Variable" version="1" id="oval:org.fedoraproject.f14:var:202082" datatype="int">
                         <object_component object_ref="oval:org.fedoraproject.f14:obj:202081" item_field="subexpression"/>
             </local_variable>
-            <local_variable comment="Object to Variable" version="1" id="oval:org.fedoraproject.f14:var:202091" datatype="string">
+            <local_variable comment="Object to Variable" version="1" id="oval:org.fedoraproject.f14:var:202091" datatype="int">
                         <object_component object_ref="oval:org.fedoraproject.f14:obj:202091" item_field="user_id"/>
             </local_variable>
             <local_variable comment="Regular expression for /etc/group: Get the group ID of given group name" version="1" id="oval:org.fedoraproject.f14:var:202111" datatype="string">
@@ -10524,10 +10524,10 @@
                         <literal_component>:[^:]*:([[:digit:]]+)</literal_component>
                   </concat>
             </local_variable>
-            <local_variable comment="Object to Variable" version="1" id="oval:org.fedoraproject.f14:var:202112" datatype="string">
+            <local_variable comment="Object to Variable" version="1" id="oval:org.fedoraproject.f14:var:202112" datatype="int">
                         <object_component object_ref="oval:org.fedoraproject.f14:obj:202111" item_field="subexpression"/>
             </local_variable>
-            <local_variable comment="Object to Variable" version="1" id="oval:org.fedoraproject.f14:var:202121" datatype="string">
+            <local_variable comment="Object to Variable" version="1" id="oval:org.fedoraproject.f14:var:202121" datatype="int">
                         <object_component object_ref="oval:org.fedoraproject.f14:obj:202121" item_field="user_id"/>
             </local_variable>
 
@@ -10538,10 +10538,10 @@
                         <literal_component>:[^:]*:([[:digit:]]+)</literal_component>
                   </concat>
             </local_variable>
-            <local_variable comment="Object to Variable" version="1" id="oval:org.fedoraproject.f14:var:202142" datatype="string">
+            <local_variable comment="Object to Variable" version="1" id="oval:org.fedoraproject.f14:var:202142" datatype="int">
                         <object_component object_ref="oval:org.fedoraproject.f14:obj:202141" item_field="subexpression"/>
             </local_variable>
-            <local_variable comment="Object to Variable" version="1" id="oval:org.fedoraproject.f14:var:202191" datatype="string">
+            <local_variable comment="Object to Variable" version="1" id="oval:org.fedoraproject.f14:var:202191" datatype="int">
                         <object_component object_ref="oval:org.fedoraproject.f14:obj:202191" item_field="user_id"/>
             </local_variable>
             <local_variable comment="Regular expression for /etc/group: Get the group ID of given group name" version="1" id="oval:org.fedoraproject.f14:var:202291" datatype="string">
@@ -10551,7 +10551,7 @@
                         <literal_component>:[^:]*:([[:digit:]]+)</literal_component>
                   </concat>
             </local_variable>
-            <local_variable comment="Object to Variable" version="1" id="oval:org.fedoraproject.f14:var:202292" datatype="string">
+            <local_variable comment="Object to Variable" version="1" id="oval:org.fedoraproject.f14:var:202292" datatype="int">
                         <object_component object_ref="oval:org.fedoraproject.f14:obj:202291" item_field="subexpression"/>
             </local_variable>
             <local_variable comment="Regular expression for /etc/group: Get the group ID of given group name" version="1" id="oval:org.fedoraproject.f14:var:202301" datatype="string">
@@ -10561,7 +10561,7 @@
                         <literal_component>:[^:]*:([[:digit:]]+)</literal_component>
                   </concat>
             </local_variable>
-            <local_variable comment="Object to Variable" version="1" id="oval:org.fedoraproject.f14:var:202302" datatype="string">
+            <local_variable comment="Object to Variable" version="1" id="oval:org.fedoraproject.f14:var:202302" datatype="int">
                         <object_component object_ref="oval:org.fedoraproject.f14:obj:202301" item_field="subexpression"/>
             </local_variable>
             <local_variable comment="Regular expression for /etc/group: Get the group ID of given group name" version="1" id="oval:org.fedoraproject.f14:var:200811" datatype="string">
@@ -10571,10 +10571,10 @@
                         <literal_component>:[^:]*:([[:digit:]]+)</literal_component>
                   </concat>
             </local_variable>
-            <local_variable comment="Object to Variable" version="1" id="oval:org.fedoraproject.f14:var:200812" datatype="string">
+            <local_variable comment="Object to Variable" version="1" id="oval:org.fedoraproject.f14:var:200812" datatype="int">
                         <object_component object_ref="oval:org.fedoraproject.f14:obj:200811" item_field="subexpression"/>
             </local_variable>
-            <local_variable comment="Object to Variable" version="1" id="oval:org.fedoraproject.f14:var:201491" datatype="string">
+            <local_variable comment="Object to Variable" version="1" id="oval:org.fedoraproject.f14:var:201491" datatype="int">
                         <object_component object_ref="oval:org.fedoraproject.f14:obj:2014911" item_field="user_id"/>
             </local_variable>
             <local_variable comment="Regular expression for /etc/group: Get the group ID of given group name" version="1" id="oval:org.fedoraproject.f14:var:201501" datatype="string">
@@ -10584,7 +10584,7 @@
                         <literal_component>:[^:]*:([[:digit:]]+)</literal_component>
                   </concat>
             </local_variable>
-            <local_variable comment="Object to Variable" version="1" id="oval:org.fedoraproject.f14:var:201502" datatype="string">
+            <local_variable comment="Object to Variable" version="1" id="oval:org.fedoraproject.f14:var:201502" datatype="int">
                         <object_component object_ref="oval:org.fedoraproject.f14:obj:201501" item_field="subexpression"/>
             </local_variable>
       </variables>

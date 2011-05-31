@@ -1758,11 +1758,11 @@
                 <unix-def:object object_ref="oval:rhel:obj:104011"/>
                 <unix-def:state state_ref="oval:rhel:ste:104011"/>
         </unix-def:password_test>
-        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10411" version="1" check="all"
+        <unix-def:password_test check_existence="all_exist" id="oval:rhel:tst:10411" version="1" check="all"
 					comment="Check if there is only root account with UID 0">
-                  <ind-def:object object_ref="oval:rhel:obj:103811"/>
-                  <ind-def:state state_ref="oval:rhel:ste:104111"/>
-        </ind-def:textfilecontent54_test>
+                  <unix-def:object object_ref="oval:rhel:obj:103811"/>
+                  <unix-def:state state_ref="oval:rhel:ste:104111"/>
+        </unix-def:password_test>
         <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:rhel:tst:10421" version="1" check="all"
 					comment="Tests the value of PASS_MIN_DAYS in /etc/login.defs">
                 <ind-def:object object_ref="oval:rhel:obj:104211"/>
@@ -3353,7 +3353,7 @@
                 <ind-def:subexpression datatype="int" operation="greater than or equal">1</ind-def:subexpression>
         </ind-def:textfilecontent54_state>
         <ind-def:textfilecontent54_state id="oval:rhel:ste:103311" version="1" comment="Address space randomization setting">
-                <ind-def:subexpression var_check="all" operation="greater than or equal" var_ref="oval:rhel:var:1033"/>
+                <ind-def:subexpression datatype="int" var_check="all" operation="greater than or equal" var_ref="oval:rhel:var:1033"/>
         </ind-def:textfilecontent54_state>
         <unix-def:password_state id="oval:rhel:ste:103811" version="1" comment="System account with shell other than /sbin/nologin">
                 <unix-def:user_id operation="less than" datatype="int">500</unix-def:user_id>
@@ -3366,13 +3366,13 @@
                 <unix-def:user_id datatype="int" operation="not equal">0</unix-def:user_id>
         </unix-def:password_state>
         <ind-def:textfilecontent54_state id="oval:rhel:ste:104211" version="1" comment="Expected value of PASS_MIN_DAYS in /etc/login.defs">
-                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1042"/>
+                <ind-def:subexpression datatype="int" var_check="all" operation="equals" var_ref="oval:rhel:var:1042"/>
         </ind-def:textfilecontent54_state>
         <ind-def:textfilecontent54_state id="oval:rhel:ste:104311" version="1" comment="Expected value of PASS_MAX_DAYS in /etc/login.defs">
-                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1043"/>
+                <ind-def:subexpression datatype="int" var_check="all" operation="equals" var_ref="oval:rhel:var:1043"/>
         </ind-def:textfilecontent54_state>
         <ind-def:textfilecontent54_state id="oval:rhel:ste:104411" version="1" comment="Expected value of PASS_WARN_AGE in /etc/login.defs">
-                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1044"/>
+                <ind-def:subexpression datatype="int" var_check="all" operation="equals" var_ref="oval:rhel:var:1044"/>
         </ind-def:textfilecontent54_state>
         <ind-def:textfilecontent54_state id="oval:rhel:ste:104511" version="1" comment="Expected value of retry for pam_cracklib">
                 <ind-def:subexpression var_check="all" datatype="int" operation="equals" var_ref="oval:rhel:var:1045"/>
@@ -3408,7 +3408,7 @@
                 <ind-def:value datatype="int">0</ind-def:value>
         </ind-def:variable_state>
         <ind-def:textfilecontent54_state id="oval:rhel:ste:105421" version="1" comment="Expected number of passwords to remember">
-                <ind-def:subexpression datatype="string" var_check="all" operation="equals" var_ref="oval:rhel:var:1054"/>
+                <ind-def:subexpression datatype="int" var_check="all" operation="equals" var_ref="oval:rhel:var:1054"/>
         </ind-def:textfilecontent54_state>
         <ind-def:environmentvariable_state id="oval:rhel:ste:105511" version="1" comment="PATH includes current directory">
                 <ind-def:value operation="pattern match">^:|^\.|.*::.*|.*:\.:.*|:$|:\.$</ind-def:value>
@@ -3427,10 +3427,10 @@
                 <unix-def:user_id datatype="int" operation="less than">500</unix-def:user_id>
         </unix-def:password_state>
         <ind-def:textfilecontent54_state id="oval:rhel:ste:105911" version="1" comment="Default umask for users">
-                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1059"/>
+                <ind-def:subexpression datatype="int" var_check="all" operation="equals" var_ref="oval:rhel:var:1059"/>
         </ind-def:textfilecontent54_state>
         <ind-def:textfilecontent54_state id="oval:rhel:ste:106111" version="1" comment="Default umask for users in /etc/login.defs">
-                <ind-def:subexpression var_check="all" operation="equals" var_ref="oval:rhel:var:1061"/>
+                <ind-def:subexpression datatype="int" var_check="all" operation="equals" var_ref="oval:rhel:var:1061"/>
         </ind-def:textfilecontent54_state>
         <unix-def:file_state id="oval:rhel:ste:106411" version="1" comment="/boot/grub/grub.conf owner is correct">
                 <unix-def:user_id var_check="all" datatype="int" operation="equals" var_ref="oval:rhel:var:1064"/>
@@ -3574,10 +3574,10 @@
                 <ind-def:subexpression>-A INPUT -j DROP</ind-def:subexpression>
         </ind-def:textfilecontent54_state>
         <unix-def:file_state id="oval:rhel:ste:112111" version="1" comment="Log files owned by the appropriate user">
-                <unix-def:user_id datatype="int" var_ref="oval:rhel:var:1121"/>
+                <unix-def:user_id datatype="int" var_check="all" var_ref="oval:rhel:var:1121"/>
         </unix-def:file_state>
         <unix-def:file_state id="oval:rhel:ste:112211" version="1" comment="Log files owned by the appropriate group">
-                <unix-def:group_id datatype="int" var_ref="oval:rhel:var:1122"/>
+                <unix-def:group_id datatype="int" var_check="all" var_ref="oval:rhel:var:1122"/>
         </unix-def:file_state>
         <ind-def:textfilecontent54_state id="oval:rhel:ste:112611" version="1" comment="Expected content of the file list in /etc/logrotate.d/syslog">
 		<!-- "pattern match" is used to (imprecisely) match each file name as a substring -->
@@ -3821,10 +3821,10 @@
 		<value>/usr/sbin/userhelper</value>
 		<value>/usr/sbin/usernetctl</value>
 	</constant_variable>
-	<local_variable id="oval:rhel:var:1026111" version="1" datatype="string" comment="List of user ids">
+	<local_variable id="oval:rhel:var:1026111" version="1" datatype="int" comment="List of user ids">
 		<object_component item_field="subexpression" object_ref="oval:rhel:obj:10261111"/>
 	</local_variable>
-	<local_variable id="oval:rhel:var:1027111" version="1" datatype="string" comment="List of group ids">
+	<local_variable id="oval:rhel:var:1027111" version="1" datatype="int" comment="List of group ids">
 		<object_component item_field="subexpression" object_ref="oval:rhel:obj:10271111"/>
 	</local_variable>
         <external_variable id="oval:rhel:var:1029" version="1" datatype="string" comment="umask for daemons"/>
