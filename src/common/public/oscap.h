@@ -130,6 +130,17 @@
 
 /** @} */
 
+/// OS-specific filesystem path delimiter
+extern const char *OSCAP_OS_PATH_DELIM;
+
+
+#ifndef OSCAP_DEFAULT_SCHEMA_PATH
+#define OSCAP_DEFAULT_SCHEMA_PATH "/usr/local/share/openscap/schemas"
+#endif
+#ifndef OSCAP_DEFAULT_XSLT_PATH
+#define OSCAP_DEFAULT_XSLT_PATH "/usr/local/share/openscap/xsl"
+#endif
+
 
 /**
  * Initialize OpenSCAP library.
@@ -206,6 +217,21 @@ bool oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype,
  * @return Success or failure.
  */
 bool oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params);
+
+/**
+ * Apply XSLT stylesheet to a XML file.
+ *
+ * This function lets user specify environment variable with
+ * a XSL stylesheet search path(s) and a fallback path if the variable is not defined.
+ * Except for this it is completely identical to oscap_apply_xslt().
+ *
+ * @param xmlfile File to be transformed.
+ * @param xsltfile XSLT filename
+ * @param outfile Result file shall be written here (NULL for stdout).
+ * @param params list of key-value pairs to pass to the stylesheet.
+ * @return Success or failure.
+ */
+bool oscap_apply_xslt_var(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params, const char *pathvar, const char *defpath);
 
 /************************************************************/
 /** @} validation group end */

@@ -41,7 +41,6 @@
 #include "elements.h"
 #include "reporter_priv.h"
 
-
 void oscap_init(void)
 {
     xmlInitParser();
@@ -65,13 +64,6 @@ const char *OSCAP_OS_PATH_DELIM  = "/";
 #endif
 
 const char *OSCAP_PATH_SEPARATOR = ":";
-
-#ifndef OSCAP_DEFAULT_SCHEMA_PATH
-#define OSCAP_DEFAULT_SCHEMA_PATH "/usr/local/share/openscap/schemas"
-#endif
-#ifndef OSCAP_DEFAULT_XSLT_PATH
-#define OSCAP_DEFAULT_XSLT_PATH "/usr/local/share/openscap/xsl"
-#endif
 
 bool oscap_file_exists(const char *path, int mode)
 {
@@ -227,10 +219,10 @@ bool oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype,
 	return ret;
 }
 
-bool oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params)
+bool oscap_apply_xslt_var(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params, const char *pathvar, const char *defpath)
 {
     bool ret = false;
-    char *xsltpath = oscap_find_file(xsltfile, R_OK, "OSCAP_XSLT_PATH", OSCAP_DEFAULT_XSLT_PATH);
+    char *xsltpath = oscap_find_file(xsltfile, R_OK, pathvar, defpath);
     xsltStylesheetPtr cur = NULL;
     xmlDocPtr doc = NULL, res = NULL;
     FILE *f = NULL;
@@ -288,5 +280,10 @@ cleanup:
     if (doc) xmlFreeDoc(doc);
     oscap_free(xsltpath);
     return ret;
+}
+
+bool oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params)
+{
+	return oscap_apply_xslt_var(xmlfile, xsltfile, outfile, params, "OSCAP_XSLT_PATH", OSCAP_DEFAULT_XSLT_PATH);
 }
 
