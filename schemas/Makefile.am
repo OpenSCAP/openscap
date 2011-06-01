@@ -3,6 +3,11 @@ oval58dir = $(pkgdatadir)/schemas/oval/5.8/
 xccdf114dir = $(pkgdatadir)/schemas/xccdf/1.1.4/
 
 oval58_DATA = \
+		oval/5.8/oval-definitions-schematron.xsl \
+		oval/5.8/oval-directives-schematron.xsl \
+		oval/5.8/oval-results-schematron.xsl \
+		oval/5.8/oval-system-characteristics-schematron.xsl \
+		oval/5.8/oval-variables-schematron.xsl \
 		oval/5.8/aix-definitions-schema.xsd \
 		oval/5.8/aix-system-characteristics-schema.xsd \
 		oval/5.8/apache-definitions-schema.xsd \
@@ -58,6 +63,11 @@ xccdf114_DATA = \
 
 
 EXTRA_DIST = \
+		oval/5.8/oval-definitions-schematron.xsl \
+		oval/5.8/oval-directives-schematron.xsl \
+		oval/5.8/oval-results-schematron.xsl \
+		oval/5.8/oval-system-characteristics-schematron.xsl \
+		oval/5.8/oval-variables-schematron.xsl \
 		oval/5.8/aix-definitions-schema.xsd \
 		oval/5.8/aix-system-characteristics-schema.xsd \
 		oval/5.8/apache-definitions-schema.xsd \

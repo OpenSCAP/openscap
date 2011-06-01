@@ -1,0 +1,24 @@
+
+Prerequisities
+
+1. xsltproc tool
+  $ yum install libxslt
+
+2. ISO schematron XSLT v1 files
+  $ wget http://www.schematron.com/tmp/iso-schematron-xslt1.zip
+  $ unzip iso-schematron-xslt1.zip
+
+
+Creating a validation XSL file
+
+1. download a .sch file, e.g. for oval definitions:
+  $ wget http://oval.mitre.org/language/version${OVAL_VERSION}/ovaldefinition/schematron/oval-definitions-schematron.sch
+
+2. use xsltproc to generate target .xsl, which will be used to validate documents
+  $ xsltproc iso_schematron_skeleton_for_xslt1.xsl oval-definitions-schematron.sch >oval/${OVAL_VERSION}/oval-definitions-schematron.xsl
+
+
+Validating an document without oscap tool
+
+  $ xsltproc oval/${OVAL_VERSION}/oval-definitions-schematron.xsl  path/to/your/file.xml
+
