@@ -10,13 +10,13 @@
 
 function test_mitre {
 
-    if [ ! -x /tmp/ValidationSupportFiles ]; then
+    if [ ! -d /tmp/ValidationSupportFiles ]; then
         eval "which unzip > /dev/null 2>&1"    
         if [ ! $? -eq 0 ]; then	
             echo -e "No unzip found in $PATH!\n" 
 	    return 255; # Test is not applicable.
         fi
-        /usr/bin/unzip -f ValidationSupportFiles.zip -d /tmp
+        /usr/bin/unzip -u ValidationSupportFiles.zip -d /tmp
     fi
 
     local ret_val=0;
