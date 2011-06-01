@@ -1,5 +1,5 @@
 if WANT_PROBES
-PROBE_SUBDIRS = probes
+PROBE_SUBDIRS = probes mitre
 endif
 SUBDIRS = API $(PROBE_SUBDIRS)
 
