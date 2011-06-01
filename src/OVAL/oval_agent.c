@@ -146,6 +146,7 @@ oval_result_t oval_agent_eval_definition(oval_agent_session_t * ag_sess, const c
 
 int oval_agent_reset_session(oval_agent_session_t * ag_sess) {
 	ag_sess->cur_var_model = NULL;
+	oval_definition_model_clear_external_variables(ag_sess->def_model);
 
 	/* Reset syschar model */
 	oval_syschar_model_reset(ag_sess->sys_model);
