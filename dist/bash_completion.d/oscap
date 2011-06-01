@@ -3,7 +3,7 @@
 # returns number of params
 function _oscap_noarg {
     case "$1" in
-      --definitions|--syschar|--results|-f|--force|-q|--quiet|--oval-results) return 0 ;;
+      --definitions|--syschar|--results|--schematron|-f|--force|-q|--quiet|--oval-results) return 0 ;;
       --version|--help|-V|-h) return 256 ;; # stop cmdline processing
       *) return 1 ;;
     esac
@@ -24,13 +24,13 @@ function _oscap {
     # command options
     local -A opts=()
 	opts[oscap]="--version --quiet --help -V -q -h"
-    opts[oscap:oval:validate-xml]="--version --definitions --variables --syschar --results "
+    opts[oscap:oval:validate-xml]="--version --definitions --variables --syschar --results --schematron"
     opts[oscap:oval:eval]="--id --variables --results --report --skip-valid"
     opts[oscap:oval:analyse]="--variables"
     opts[oscap:oval:collect]="--variables"
     opts[oscap:oval:generate:report]="-o --output"
     opts[oscap:xccdf:eval]="--skip-valid --profile --results --report --oval-results --export-variables"
-    opts[oscap:xccdf:validate-xml]="--file-version"
+    opts[oscap:xccdf:validate-xml]=""
     opts[oscap:xccdf:resolve]="-o --output -f --force"
     opts[oscap:xccdf:generate]="--profile --format"
     opts[oscap:xccdf:generate:report]="-o --output -i --result-id --show --profile --format --oval-template"

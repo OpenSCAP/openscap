@@ -127,16 +127,49 @@ int app_validate_xml(const struct oscap_action *action)
 		xml_file = action->f_xccdf;
 	if (!xml_file)
 		return OSCAP_ERROR;
+	
+	bool ret = OSCAP_OK;
 
-	if (!oscap_validate_document
-	    (xml_file, action->doctype, NULL, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+	if (!oscap_validate_document(xml_file, action->doctype, NULL, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 		if (oscap_err()) {
 			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-			return OSCAP_FAIL;
+			ret = OSCAP_FAIL;
 		}
-		fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
-		return OSCAP_ERROR;
+		else {
+			fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
+			return OSCAP_ERROR;
+		}
 	}
+
+	// schematron-based validation forced
+	if (action->force) {
+		const char *version = oval_definition_model_supported(), *std = "oval", *filename = NULL;
+
+		switch (action->doctype) {
+			case OSCAP_DOCUMENT_OVAL_DEFINITIONS: filename = "oval-definitions-schematron.xsl";            break;
+			case OSCAP_DOCUMENT_OVAL_SYSCHAR:     filename = "oval-system-characteristics-schematron.xsl"; break;
+			case OSCAP_DOCUMENT_OVAL_RESULTS:     filename = "oval-results-schematron.xsl";                break;
+			case OSCAP_DOCUMENT_OVAL_VARIABLES:   filename = "oval-variables-schematron.xsl";              break;
+		}
+
+		if (filename) {
+			size_t buffsize = 1024;
+			char xslfile[buffsize];
+			snprintf(xslfile, buffsize, "%s%s%s%s%s", std, OSCAP_OS_PATH_DELIM, version, OSCAP_OS_PATH_DELIM, filename);
+			xslfile[buffsize - 1] = '\0';
+
+			const char *params[] = { NULL };
+			if (!oscap_apply_xslt_var(xml_file, xslfile, NULL, params, "OSCAP_SCHEMA_PATH", OSCAP_DEFAULT_SCHEMA_PATH)) {
+				fprintf(stderr, "%s\n", "Error during schematron validation.");
+				ret = OSCAP_ERROR;
+			}
+		}
+		else {
+			fprintf(stderr, "%s\n", "Could not find schematron validation file for this document type.");
+			ret = OSCAP_ERROR;
+		}
+	}
+
 	return OSCAP_OK;
 }
 

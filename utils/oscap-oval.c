@@ -59,7 +59,7 @@ static struct oscap_module OVAL_VALIDATE = {
         "   --variables\r\t\t\t\t - Validate external OVAL Variables\n"
         "   --syschar\r\t\t\t\t - Validate OVAL System Characteristics\n"
         "   --results\r\t\t\t\t - Validate OVAL Results\n"
-        "   --file-version <version>\r\t\t\t\t - Use schema for given version of OVAL",
+        "   --schematron\r\t\t\t\t - Use schematron-based validation in addition to XML Schema\n",
     .opt_parser = getopt_oval_validate,
     .func = app_validate_xml
 };
@@ -604,6 +604,8 @@ bool getopt_oval_validate(int argc, char **argv, struct oscap_action *action)
 		{ "variables",		no_argument, &action->doctype, OSCAP_DOCUMENT_OVAL_VARIABLES   },
 		{ "syschar",		no_argument, &action->doctype, OSCAP_DOCUMENT_OVAL_SYSCHAR     },
 		{ "results",		no_argument, &action->doctype, OSCAP_DOCUMENT_OVAL_RESULTS     },
+		// force schematron validation
+		{ "schematron",		no_argument, &action->force, 1 },
         // end
 		{ 0, 0, 0, 0 }
 	};
