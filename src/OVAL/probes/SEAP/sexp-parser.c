@@ -1220,6 +1220,10 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 e_dsc.p_bufoff += e_dsc.p_explen;
                 e_dsc.p_explen  = 0;
 
+                e_dsc.p_numclass = SEXP_NUMCLASS_INV;
+                e_dsc.p_numbase  = 0;
+                e_dsc.p_numstage = 255;
+
                 continue;
         } /* for (;;) */
 
