@@ -194,7 +194,7 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
                                  "path",     OVAL_DATATYPE_STRING, path,
                                  "filename", OVAL_DATATYPE_STRING, filename,
                                  "pattern",  OVAL_DATATYPE_STRING, "",
-                                 "instance", OVAL_DATATYPE_INTEGER, instance,
+                                 "instance", OVAL_DATATYPE_INTEGER, (int64_t)instance,
                                  "line",     OVAL_DATATYPE_STRING, pattern,
                                  "text",     OVAL_DATATYPE_STRING, substrs[0],
                                  NULL);

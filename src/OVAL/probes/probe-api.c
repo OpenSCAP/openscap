@@ -1386,12 +1386,12 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
         char item_name[64];
         oval_datatype_t value_type;
 
-        char  *value_str, **value_stra;
-        int    value_int;
-        double value_flt;
-        bool   value_bool;
-        bool   free_value = true;
-        int    value_i, multiply;
+        char   *value_str, **value_stra;
+        int64_t value_int;
+        double  value_flt;
+        bool    value_bool;
+        bool    free_value = true;
+        int     value_i, multiply;
 
         subtype_name = oval_subtype2str(item_subtype);
 
@@ -1451,8 +1451,8 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                         value_sexp = SEXP_number_newb_r(&value_sexp_mem, value_bool);
                         break;
                 case OVAL_DATATYPE_INTEGER:
-                        value_int  = va_arg(ap, int);
-                        value_sexp = SEXP_number_newi_r(&value_sexp_mem, value_int);
+                        value_int  = va_arg(ap, int64_t);
+                        value_sexp = SEXP_number_newi_64_r(&value_sexp_mem, value_int);
                         break;
                 case OVAL_DATATYPE_FLOAT:
                         value_flt  = va_arg(ap, double);

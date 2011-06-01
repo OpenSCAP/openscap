@@ -113,9 +113,9 @@ static int collect_item(SEXP_t *probe_out, struct mntent *mnt_ent)
                                  "uuid",          OVAL_DATATYPE_STRING,   uuid,
                                  "fs_type",       OVAL_DATATYPE_STRING,   mnt_ent->mnt_type,
                                  "mount_options", OVAL_DATATYPE_STRING_M, mnt_opts,
-                                 "total_space",   OVAL_DATATYPE_INTEGER, (int)stvfs.f_blocks,
-                                 "space_used",    OVAL_DATATYPE_INTEGER, (int)(stvfs.f_blocks - stvfs.f_bfree),
-                                 "space_left",    OVAL_DATATYPE_INTEGER, (int)stvfs.f_bfree,
+                                 "total_space",   OVAL_DATATYPE_INTEGER, (int64_t)stvfs.f_blocks,
+                                 "space_used",    OVAL_DATATYPE_INTEGER, (int64_t)(stvfs.f_blocks - stvfs.f_bfree),
+                                 "space_left",    OVAL_DATATYPE_INTEGER, (int64_t)stvfs.f_bfree,
                                  NULL);
 
         probe_cobj_add_item(probe_out, item);

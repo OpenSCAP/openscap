@@ -1496,7 +1496,7 @@ int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 						"flags",            OVAL_DATATYPE_STRING,  xres->srv[l]->flags,
 						"no_access",        OVAL_DATATYPE_STRING,  xres->srv[l]->no_access,
 						"only_from",        OVAL_DATATYPE_STRING,  xres->srv[l]->only_from,
-						"port",             OVAL_DATATYPE_INTEGER, xres->srv[l]->port,
+                                                "port",             OVAL_DATATYPE_INTEGER, (int64_t)xres->srv[l]->port,
 						"server",           OVAL_DATATYPE_STRING,  xres->srv[l]->server,
 						"server_arguments", OVAL_DATATYPE_STRING,  xres->srv[l]->server_args,
 						"socket_type",      OVAL_DATATYPE_STRING,  xres->srv[l]->socket_type,

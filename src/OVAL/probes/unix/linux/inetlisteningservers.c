@@ -350,7 +350,7 @@ static void report_finding(struct result_info *res, llist *l, SEXP_t *probe_out)
                                                                                                    "%u", res->rport),
                                  "foreign_full_address", OVAL_DATATYPE_SEXP,    SEXP_string_newf_r(&se_ffull_mem,
                                                                                                    "%s:%u", res->raddr, res->rport),
-                                 "pid",                  OVAL_DATATYPE_INTEGER, n->pid,
+                                 "pid",                  OVAL_DATATYPE_INTEGER, (int64_t)n->pid,
                                  "user_id",              OVAL_DATATYPE_SEXP,    SEXP_string_newf_r(&se_uid_mem,
                                                                                                    "%u", n->uid),
                                  NULL);

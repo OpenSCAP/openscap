@@ -124,6 +124,32 @@ SEXP_t *SEXP_number_newu_64_r(SEXP_t *sexp_mem, uint64_t n)
         return (sexp_mem);
 }
 
+SEXP_t *SEXP_number_newi_64_r(SEXP_t *sexp_mem, int64_t n)
+{
+        SEXP_val_t v_dsc;
+
+        if (sexp_mem == NULL) {
+                errno = EFAULT;
+                return (NULL);
+        }
+
+        if (SEXP_val_new (&v_dsc, sizeof (SEXP_numtype_t) + sizeof (int64_t),
+                          SEXP_VALTYPE_NUMBER) != 0)
+        {
+                /* TODO: handle this */
+                return (NULL);
+        }
+
+        SEXP_NCASTP(i64,v_dsc.mem)->t = SEXP_NUM_INT64;
+        SEXP_NCASTP(i64,v_dsc.mem)->n = n;
+
+        SEXP_init(sexp_mem);
+        sexp_mem->s_type = NULL;
+        sexp_mem->s_valp = v_dsc.ptr;
+
+        return (sexp_mem);
+}
+
 SEXP_t *SEXP_number_newf_r(SEXP_t *sexp_mem, double n)
 {
         SEXP_val_t v_dsc;
