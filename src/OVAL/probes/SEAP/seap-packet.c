@@ -752,8 +752,8 @@ eloop_exit:
                         }
                 } else {
 			if (pstate == NULL || SEXP_pstate_errorp(pstate)) {
-				_D("FAIL: S-exp parsing error, buffer:\n%*.s\n",
-				   data_length, data_buffer);
+				_D("FAIL: S-exp parsing error, buffer: length: %ld, content:\n%*.s\n",
+				   data_length, data_length, data_buffer);
 
 				SEXP_psetup_free(psetup);
 				SEXP_pstate_free(pstate);
