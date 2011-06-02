@@ -46,7 +46,6 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    _sexp-parser.h		\
 		    _sexp-types.h		\
 		    sm_alloc.c			\
-		    seap-debug.c		\
 		    seap-message.c		\
 		    _seap-message.h		\
 		    seap-packetq.c		\

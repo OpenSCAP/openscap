@@ -24,71 +24,26 @@
  * Authors:
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
-
-#pragma once
 #ifndef SEAP_DEBUG_H
 #define SEAP_DEBUG_H
+
+#include <assert.h>
+#include "common/debug_priv.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "sexp-types.h"
-#include <assert.h>
 #ifndef _A
 #define _A(x) assert(x)
 #endif
 
-#ifndef _D
-#if defined(NDEBUG)
-# define _D(...) while(0)
-# define _W(...) while(0)
-# define _I(...) while(0)
-# define _F(...) while(0)
-# define _S(sexp) while(0)
-# define _LOGCALL_ while(0)
-#else
-# include <stddef.h>
-# include <stdarg.h>
-  /**
-   * printf-like function for writing debug messages into the output
-   * file (see SEAP_DEBUG_FILE and SEAP_DEBUG_FILE_ENV).
-   * @param prefix  debug message prefix
-   * @param srcfile name of the source file
-   * @param srcfn   name of the function
-   * @param srcln   line
-   * @param fmt     printf-like format string
-   */
-void __seap_debuglog (const char *prefix, const char *srcfile, const char *srcfn, size_t srcln, const char *fmt, ...);
-
-void __seap_debuglog_sexp (const char *file, const char *fn, size_t line, SEXP_t *sexp);
-  /**
-   * Convenience macro for calling __seap_debuglog. Only the fmt & it's arguments
-   * need to be specified. The __FILE__, __PRETTY_FUNCTION__ and __LINE__ macros
-   * are used for the first three arguments.
-   */
-# define _D(...) __seap_debuglog("DEBUG: ", __FILE__, __PRETTY_FUNCTION__, __LINE__, __VA_ARGS__)
-# define _W(...) __seap_debuglog("WARN: ",  __FILE__, __PRETTY_FUNCTION__, __LINE__, __VA_ARGS__)
-# define _I(...) __seap_debuglog("INFO: ",  __FILE__, __PRETTY_FUNCTION__, __LINE__, __VA_ARGS__)
-# define _F(...) __seap_debuglog("FAIL: ",  __FILE__, __PRETTY_FUNCTION__, __LINE__, __VA_ARGS__)
-# define _S(sexp) __seap_debuglog_sexp(__FILE__, __PRETTY_FUNCTION__, __LINE__, sexp)
-
-# if defined(SEAP_VERBOSE_DEBUG)
-#  define _LOGCALL_ _D("called\n")
-# else
-#  define _LOGCALL_ while(0)
-# endif
-#endif /* NDEBUG */
-#endif /* _D */
-  /**
-   * Hardcoded output filename.
-   */
-#define SEAP_DEBUG_FILE "probe_debug.log"
-  /**
-   * Name of the environment variable that can be used to change the
-   * default output filename.
-   */
-#define SEAP_DEBUG_FILE_ENV "SEAP_DEBUG_FILE"
+#define _D(...) dI(__VA_ARGS__)
+#define _W(...) dW(__VA_ARGS__)
+#define _I(...) dI(__VA_ARGS__)
+#define _F(...) dE(__VA_ARGS__)
+#define _S(sexp) dO(OSCAP_DEBUGOBJ_SEXP, sexp)
+#define _LOGCALL_ while(0)
 
 #ifdef __cplusplus
 }

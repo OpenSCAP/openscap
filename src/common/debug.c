@@ -35,10 +35,15 @@
 # include <unistd.h>
 # include <time.h>
 
+# include <sexp.h>
+# include <sexp-output.h>
+
 # include "public/debug.h"
 # include "debug_priv.h"
 
-#define PATH_SEPARATOR '/'
+#ifndef PATH_SEPARATOR
+# define PATH_SEPARATOR '/'
+#endif
 
 #  if defined(OSCAP_THREAD_SAFE)
 #   include <pthread.h>
@@ -98,7 +103,7 @@ static void __oscap_vdlprintf(int level, const char *file, const char *fn, size_
 		return;
 	}
 	if (__debuglog_fp == NULL) {
-		char *logfile;
+		char *logfile, pathbuf[4096];
 		char *st;
 		time_t ut;
 
@@ -107,7 +112,14 @@ static void __oscap_vdlprintf(int level, const char *file, const char *fn, size_
 		if (logfile == NULL)
 			logfile = OSCAP_DEBUG_FILE;
 
-		__debuglog_fp = fopen(logfile, "a");
+		if (snprintf(pathbuf, sizeof pathbuf, "%s.%u",
+			     logfile, (unsigned int)getpid()) >= sizeof pathbuf)
+		{
+                        __UNLOCK_FP;
+			return;
+		}
+
+                __debuglog_fp = fopen (pathbuf, "w");
 
 		if (__debuglog_fp == NULL) {
 			__UNLOCK_FP;
@@ -191,6 +203,71 @@ void __oscap_dlprintf(int level, const char *file, const char *fn, size_t line, 
 	va_start(ap, fmt);
 	__oscap_vdlprintf(level, file, fn, line, fmt, ap);
 	va_end(ap);
+}
+
+void __oscap_debuglog_object (const char *file, const char *fn, size_t line, int objtype, void *obj)
+{
+        __LOCK_FP;
+
+        if (__debuglog_fp == NULL) {
+                char  *logfile, pathbuf[4096];
+                char  *st;
+                time_t ut;
+
+                logfile = getenv (OSCAP_DEBUG_FILE_ENV);
+
+                if (logfile == NULL)
+                        logfile = OSCAP_DEBUG_FILE;
+
+		if (snprintf(pathbuf, sizeof pathbuf, "%s.%u",
+			     logfile, (unsigned int)getpid()) >= sizeof pathbuf)
+		{
+                        __UNLOCK_FP;
+			return;
+		}
+
+                __debuglog_fp = fopen (pathbuf, "w");
+
+                if (__debuglog_fp == NULL) {
+                        __UNLOCK_FP;
+                        return;
+                }
+
+                setbuf (__debuglog_fp, NULL);
+
+                ut = time (NULL);
+                st = ctime (&ut);
+
+                fprintf (__debuglog_fp, "=============== LOG: %.24s ===============\n", st);
+                atexit(&__oscap_debuglog_close);
+        }
+
+        if (flock (fileno (__debuglog_fp), LOCK_EX | LOCK_NB) == -1) {
+                __UNLOCK_FP;
+                return;
+        }
+
+#if defined(SEAP_THREAD_SAFE)
+        /* XXX: non-portable usage of pthread_t */
+        fprintf (__debuglog_fp, "(%u:%llx) [%s:%zu:%s]\n------ \n", (unsigned int)getpid (), (unsigned long long)pthread_self(), file, line, fn);
+#else
+        fprintf (__debuglog_fp, "(%u) [%s:%zu:%s]\n------\n ", (unsigned int)getpid (), file, line, fn);
+#endif
+
+        switch (objtype) {
+        case OSCAP_DEBUGOBJ_SEXP:
+                SEXP_fprintfa(__debuglog_fp, (SEXP_t *)obj);
+        }
+
+        fprintf(__debuglog_fp, "\n-----------\n");
+
+        if (flock (fileno (__debuglog_fp), LOCK_UN | LOCK_NB) == -1) {
+                /* __UNLOCK_FP; */
+                abort ();
+        }
+
+        __UNLOCK_FP;
+        return;
 }
 
 #endif

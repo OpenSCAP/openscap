@@ -32,10 +32,13 @@
 #include "util.h"
 #include "public/debug.h"
 
+#define OSCAP_DEBUGOBJ_SEXP 1
+
 #if defined(NDEBUG)
 # define oscap_dprintf(...) while(0)
 # define oscap_dlprintf(...) while(0)
 # define debug(l) if (0)
+# define dO(type, obj) while(0)
 #else
 # include <stdlib.h>
 # include <stddef.h>
@@ -101,6 +104,11 @@ void __oscap_dlprintf(int level, const char *file, const char *fn, size_t line, 
  * are used for the first three arguments.
  */
 # define oscap_dlprintf(l, ...) __dlprintf_wrapper (l, __VA_ARGS__)
+
+void __oscap_debuglog_object (const char *file, const char *fn, size_t line, int objtype, void *obj);
+
+# define dO(type, obj) __oscap_debuglog_object(__FILE__, __PRETTY_FUNCTION__, __LINE__, type, obj)
+
 #endif                          /* NDEBUG */
 
 #define dI(...) oscap_dlprintf(DBG_I, __VA_ARGS__)
