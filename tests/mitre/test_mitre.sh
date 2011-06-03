@@ -20,7 +20,7 @@ function test_mitre {
     fi
 
     local ret_val=0;
-    local DEFFILE=$1
+    local DEFFILE=${srcdir}/$1
     local RESFILE="$DEFFILE".results
 
     [ -f $RESFILE ] && rm -f $RESFILE
