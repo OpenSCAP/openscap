@@ -20,6 +20,8 @@
  *      Daniel Kopecek <dkopecek@redhat.com>
  */
 
+#include "config.h"
+
 #include <string.h>
 #include <errno.h>
 #include "common/assume.h"

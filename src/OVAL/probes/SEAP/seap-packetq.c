@@ -1,3 +1,6 @@
+
+#include "config.h"
+
 #include <stdbool.h>
 #include <pthread.h>
 #include <errno.h>

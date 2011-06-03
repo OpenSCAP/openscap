@@ -4,7 +4,7 @@
 #      Peter Vrabec, <pvrabec@redhat.com>
 
 
-. ../test_common.sh
+. ${srcdir}/../test_common.sh
 
 # Test Cases.
 
