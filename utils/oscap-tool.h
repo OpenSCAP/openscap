@@ -117,15 +117,11 @@ struct oscap_action {
 	/* files */
         char *f_xccdf;
         char *f_oval;
+        char **f_ovals;
 	char *f_syschar;
         char *f_results;
         char *f_report;
 	char *f_variables;
-	/* URIs */
-        char *url_xccdf;
-        char *url_oval;
-	char *url_syschar;
-        char **urls_oval; /* not used as URIs Fix! */
 	/* others */
         char *profile;
         char *show;

@@ -287,7 +287,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	xccdf_policy_model_register_output_callback(policy_model, callback, (void*) action);
 
 	/* NO OVAL files? get ones from policy model */
-	if (action->urls_oval == NULL) {
+	if (action->f_ovals == NULL) {
 		struct stat sb;
 		char * tmp_path;
 		
@@ -319,7 +319,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		oscap_stringlist_free(files);
 		free(pathcopy);
 	} else
-		oval_files = action->urls_oval;
+		oval_files = action->f_ovals;
 
 	
 	/* Validate OVAL files */
@@ -367,7 +367,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
         if (ritem == NULL) return OSCAP_ERROR;
 
 	/* Write results into XCCDF Test Result model */
-	xccdf_result_set_benchmark_uri(ritem, action->url_xccdf);
+	xccdf_result_set_benchmark_uri(ritem, action->f_xccdf);
 	struct oscap_text *title = oscap_text_new();
 	oscap_text_set_text(title, "OSCAP Scan Result");
 	xccdf_result_add_title(ritem, title);
@@ -473,7 +473,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
         }
 	free(def_models);
         free(sessions);
-	if (oval_files != action->urls_oval) {
+	if (oval_files != action->f_ovals) {
 		for(int i=0; oval_files[i]; i++) {
 			free(oval_files[i]);
 		}
@@ -627,22 +627,22 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
                 if (action->f_report && !action->f_results)
                     return oscap_module_usage(action->module, stderr, "Please specify --result if you want to generate a HTML report.");
 
-                action->url_xccdf = argv[optind];
+                action->f_xccdf = argv[optind];
                 if (argc > (optind+1)) {
-                    action->urls_oval = malloc((argc-(optind+1)+1) * sizeof(char *));
+                    action->f_ovals = malloc((argc-(optind+1)+1) * sizeof(char *));
                     int i = 1;
                     while (argc > (optind+i)) {
-                        action->urls_oval[i-1] = argv[optind + i];
+                        action->f_ovals[i-1] = argv[optind + i];
                         i++;
                     }
-                    action->urls_oval[i-1] = NULL;
+                    action->f_ovals[i-1] = NULL;
                 } else {
-                    action->urls_oval = NULL;
+                    action->f_ovals = NULL;
                 }
 	} else {
 		if (optind >= argc)
 			return oscap_module_usage(action->module, stderr, "XCCDF file needs to be specified!");
-		action->url_xccdf = argv[optind];
+		action->f_xccdf = argv[optind];
 	}
 
 	return true;

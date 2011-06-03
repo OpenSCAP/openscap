@@ -579,13 +579,13 @@ bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 	/* We should have Definitions file here */
 	if (optind >= argc)
         	return oscap_module_usage(action->module, stderr, "Definitions file needs to be specified!");
-	action->url_oval = argv[optind];
+	action->f_oval = argv[optind];
 
 	/* We should have System Characteristics file here */
 	if (action->module == &OVAL_ANALYSE) {
 		if ((optind+1) > argc)
 			return oscap_module_usage(action->module, stderr, "System characteristics file needs to be specified!");
-		action->url_syschar = argv[optind + 1];
+		action->f_syschar = argv[optind + 1];
 	}
 
 	return true;
@@ -621,7 +621,7 @@ bool getopt_oval_validate(int argc, char **argv, struct oscap_action *action)
 	/* We should have Definitions file here */
 	if (optind >= argc)
 		return oscap_module_usage(action->module, stderr, "Definitions file needs to be specified!");
-	action->url_oval = argv[optind];
+	action->f_oval = argv[optind];
 
 	return true;
 }

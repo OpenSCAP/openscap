@@ -66,7 +66,6 @@ Group:          Applications/System
 Requires:       %{name} = %{version}-%{release}
 Requires(post):  chkconfig
 Requires(preun): chkconfig initscripts
-BuildRequires:   curl-devel
 
 %description    utils
 The %{name}-utils package contains various utilities based on %{name} library.

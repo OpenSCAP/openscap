@@ -30,60 +30,6 @@
 #include <stdarg.h>
 #include <errno.h>
 
-/* Header files for curl */
-#include <curl/curl.h>
-#include <curl/types.h>
-#include <curl/easy.h>
-
-/**
- * @param url URL or PATH to file
- * @return path to local file
- */
-static char *app_curl_download(char *url)
-{
-
-	struct stat buf;
-	/* Is the file local ? */
-	if (lstat(url, &buf) == 0)
-		return strdup(url);
-
-	/* Remote file will be stored in this xml */
-	char *outfile = strdup("definition_file.xml");
-
-	CURL *curl;
-	FILE *fp;
-	CURLcode res;
-	/* Initialize CURL for download remote file */
-	curl = curl_easy_init();
-	if (!curl) {
-		free(outfile);
-		return NULL;
-	}
-
-	fp = fopen(outfile, "wb");
-    if (!fp) {
-        curl_easy_cleanup(curl);
-	free(outfile);
-        return NULL;
-    }
-
-	/* Set options for download file to *fp* from *url* */
-	curl_easy_setopt(curl, CURLOPT_URL, url);
-	curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-	res = curl_easy_perform(curl);
-	if (res != 0) {
-		free(outfile);
-		curl_easy_cleanup(curl);
-		fclose(fp);
-		return NULL;
-	}
-
-	curl_easy_cleanup(curl);
-	fclose(fp);
-
-	return outfile;
-}
-
 static void oscap_action_init(struct oscap_action *action)
 {
     assert(action != NULL);
@@ -95,33 +41,16 @@ static void oscap_action_init(struct oscap_action *action)
 static void oscap_action_release(struct oscap_action *action)
 {
 	assert(action != NULL);
-	free(action->f_xccdf);
-	free(action->f_oval);
-	free(action->urls_oval);
+	free(action->f_ovals);
 #ifdef ENABLE_CVSS
 	free(action->cvss_metrics);
 #endif
 }
 
-static bool oscap_fetch(struct oscap_module *module, char **dest, char *src)
-{
-    assert(module != NULL);
-    assert(dest != NULL);
-
-    if (src == NULL) return true;
-
-    *dest = app_curl_download(src);
-    if (*dest == NULL) oscap_module_usage(module, stderr, "Could not retrive '%s'", src);
-    return *dest != NULL;
-}
 
 static bool oscap_action_postprocess(struct oscap_action *action)
 {
-    return oscap_fetch(action->module, &action->f_oval,  action->url_oval)
-	&&
-	   oscap_fetch(action->module, &action->f_xccdf, action->url_xccdf)
-	&&
-	   oscap_fetch(action->module, &action->f_syschar, action->url_syschar);
+    return true;
 }
 
 static size_t paramlist_size(const char **p) { size_t s = 0; if (!p) return s; while (p[s]) s += 2; return s; }
