@@ -42,15 +42,15 @@
 #include "reporter_priv.h"
 
 #ifndef OSCAP_DEFAULT_SCHEMA_PATH
-const char * const OSCAP_SCHEMA_PATH = OSCAP_DEFAULT_SCHEMA_PATH;
-#else
 const char * const OSCAP_SCHEMA_PATH = "/usr/local/share/openscap/schemas";
+#else
+const char * const OSCAP_SCHEMA_PATH = OSCAP_DEFAULT_SCHEMA_PATH;
 #endif
 
 #ifndef OSCAP_DEFAULT_XSLT_PATH
-const char * const OSCAP_XSLT_PATH = OSCAP_DEFAULT_XSLT_PATH;
-#else
 const char * const OSCAP_XSLT_PATH = "/usr/local/share/openscap/xsl";
+#else
+const char * const OSCAP_XSLT_PATH = OSCAP_DEFAULT_XSLT_PATH;
 #endif
 
 void oscap_init(void)
