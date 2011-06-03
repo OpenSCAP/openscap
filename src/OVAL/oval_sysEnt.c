@@ -304,41 +304,6 @@ int oval_sysent_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *c
 	return ret;
 }
 
-void oval_sysent_to_print(struct oval_sysent *sysent, char *indent, int idx)
-{
-	char nxtindent[100];
-
-	if (strlen(indent) > 80)
-		indent = "....";
-
-	if (idx == 0)
-		snprintf(nxtindent, sizeof(nxtindent), "%sSYSITEM.", indent);
-	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sSYSITEM[%d].", indent, idx);
-
-	/*
-	   char*              name;
-	   char*              value;
-	   int                mask;
-	   oval_datatype_enum datatype;
-	   oval_syschar_status_enum status;
-	 */
-	{			/*id */
-		oscap_dprintf("%sNAME          = %s\n", nxtindent, oval_sysent_get_name(sysent));
-	}
-	{			/*id */
-		oscap_dprintf("%sVALUE         = %s\n", nxtindent, oval_sysent_get_value(sysent));
-	}
-	{			/*mask */
-		oscap_dprintf("%sMASK          = %d\n", nxtindent, oval_sysent_get_mask(sysent));
-	}
-	{			/*datatype */
-		oscap_dprintf("%sDATATYPE      = %d\n", nxtindent, oval_sysent_get_datatype(sysent));
-	}
-	{			/*status */
-		oscap_dprintf("%sSTATUS        = %d\n", nxtindent, oval_sysent_get_status(sysent));
-	}
-}
 
 void oval_sysent_to_dom(struct oval_sysent *sysent, xmlDoc * doc, xmlNode * parent)
 {

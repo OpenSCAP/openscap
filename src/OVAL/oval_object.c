@@ -427,43 +427,6 @@ int oval_object_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *c
 	return return_code;
 }
 
-void oval_object_to_print(struct oval_object *object, char *indent, int idx)
-{
-	char nxtindent[100];
-
-	if (strlen(indent) > 80)
-		indent = "....";
-
-	if (idx == 0)
-		snprintf(nxtindent, sizeof(nxtindent), "%sOBJECT.", indent);
-	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sOBJECT[%d].", indent, idx);
-
-	oscap_dprintf("%sID         = %s\n", nxtindent, oval_object_get_id(object));
-	oscap_dprintf("%sFAMILY     = %d\n", nxtindent, oval_object_get_family(object));
-	oscap_dprintf("%sSUBTYPE    = %d\n", nxtindent, oval_object_get_subtype(object));
-	oscap_dprintf("%sVERSION    = %d\n", nxtindent, oval_object_get_version(object));
-	oscap_dprintf("%sCOMMENT    = %s\n", nxtindent, oval_object_get_comment(object));
-	oscap_dprintf("%sDEPRECATED = %d\n", nxtindent, oval_object_get_deprecated(object));
-	struct oval_string_iterator *notes = oval_object_get_notes(object);
-	for (idx = 1; oval_string_iterator_has_more(notes); idx++) {
-		oscap_dprintf("%sNOTE[%d]    = %s\n", nxtindent, idx, oval_string_iterator_next(notes));
-	}
-	oval_string_iterator_free(notes);
-	struct oval_behavior_iterator *behaviors = oval_object_get_behaviors(object);
-	for (idx = 1; oval_behavior_iterator_has_more(behaviors); idx++) {
-		struct oval_behavior *behavior = oval_behavior_iterator_next(behaviors);
-		oval_behavior_to_print(behavior, nxtindent, idx);
-	}
-	oval_behavior_iterator_free(behaviors);
-	struct oval_object_content_iterator *contents = oval_object_get_object_contents(object);
-	for (idx = 1; oval_object_content_iterator_has_more(contents); idx++) {
-		struct oval_object_content *content = oval_object_content_iterator_next(contents);
-		oval_object_content_to_print(content, nxtindent, idx);
-	}
-	oval_object_content_iterator_free(contents);
-}
-
 xmlNode *oval_object_to_dom(struct oval_object *object, xmlDoc * doc, xmlNode * parent) {
 	oval_subtype_t subtype = oval_object_get_subtype(object);
 	const char *subtype_text = oval_subtype_get_text(subtype);

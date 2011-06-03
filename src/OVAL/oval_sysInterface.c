@@ -237,35 +237,6 @@ int oval_sysint_parse_tag(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-void oval_sysint_to_print(struct oval_sysint *sysint, char *indent, int idx)
-{
-	char nxtindent[100];
-
-	if (strlen(indent) > 80)
-		indent = "....";
-
-	if (idx == 0)
-		snprintf(nxtindent, sizeof(nxtindent), "%sINTERFACE.", indent);
-	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sINTERFACE[%d].", indent, idx);
-	/*
-	   char *name;
-	   char *ipAddress;
-	   char *macAddress;
-	 */
-	{			//name
-		oscap_dprintf("%sNAME           = %s\n", nxtindent, oval_sysint_get_name(sysint));
-	}
-	char *ipadd = oval_sysint_get_ip_address(sysint);
-	if (ipadd != NULL) {	//ipaddress
-		oscap_dprintf("%sIP_ADDRESS      = %s\n", nxtindent, ipadd);
-	}
-	char *macadd = oval_sysint_get_mac_address(sysint);
-	if (macadd != NULL) {	//mac address
-		oscap_dprintf("%sMAC_ADDRESS     = %s\n", nxtindent, macadd);
-	}
-}
-
 void oval_sysint_to_dom(struct oval_sysint *sysint, xmlDoc * doc, xmlNode * tag_parent)
 {
 	if (sysint) {

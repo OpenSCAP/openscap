@@ -187,15 +187,6 @@ static void __oscap_vdlprintf(int level, const char *file, const char *fn, size_
 	return;
 }
 
-void __oscap_dprintf(const char *file, const char *fn, size_t line, const char *fmt, ...)
-{
-	va_list ap;
-
-	va_start(ap, fmt);
-	__oscap_vdlprintf(0, file, fn, line, fmt, ap);
-	va_end(ap);
-}
-
 void __oscap_dlprintf(int level, const char *file, const char *fn, size_t line, const char *fmt, ...)
 {
 	va_list ap;

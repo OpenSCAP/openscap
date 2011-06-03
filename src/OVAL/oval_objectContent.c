@@ -462,40 +462,6 @@ int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 }
 //#pragma GCC diagnostic pop
 
-void oval_object_content_to_print(struct oval_object_content *content, char *indent, int idx)
-{
-	char nxtindent[100];
-
-	if (strlen(indent) > 80)
-		indent = "....";
-
-	if (idx == 0)
-		snprintf(nxtindent, sizeof(nxtindent), "%sCONTENT.", indent);
-	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sCONTENT[%d].", indent, idx);
-
-	oscap_dprintf("%sFIELD     = %s\n", nxtindent, oval_object_content_get_field_name(content));
-	oscap_dprintf("%sTYPE      = %d\n", nxtindent, oval_object_content_get_type(content));
-	switch (oval_object_content_get_type(content)) {
-	case OVAL_OBJECTCONTENT_ENTITY:{
-			oscap_dprintf("%sVAR_CHECK = %d\n", nxtindent, oval_object_content_get_varCheck(content));
-			struct oval_entity *entity = oval_object_content_get_entity(content);
-			if (entity == NULL)
-				oscap_dprintf("%sENTITY    <<NOT SET>>\n", nxtindent);
-			else
-				oval_entity_to_print(entity, nxtindent, 0);
-		}
-		break;
-	case OVAL_OBJECTCONTENT_SET:{
-			struct oval_setobject *set = oval_object_content_get_setobject(content);
-			oval_set_to_print(set, nxtindent, 0);
-		} break;
-	case OVAL_OBJECTCONTENT_FILTER:
-	case OVAL_OBJECTCONTENT_UNKNOWN:
-		break;
-	}
-}
-
 xmlNode *oval_object_content_to_dom(struct oval_object_content *content, xmlDoc * doc, xmlNode * parent) {
 	xmlNode *content_node;
 	switch (oval_object_content_get_type(content)) {

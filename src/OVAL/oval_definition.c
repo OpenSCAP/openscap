@@ -559,41 +559,6 @@ int oval_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parser_contex
 	return return_code;
 }
 
-void oval_definition_to_print(struct oval_definition *definition, char *indent, int idx)
-{
-	__attribute__nonnull__(definition);
-
-	char nxtindent[100];
-
-	if (strlen(indent) > 80)
-		indent = "....";
-
-	if (idx == 0)
-		snprintf(nxtindent, sizeof(nxtindent), "%sDEFINITION.", indent);
-	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sDEFINITION[%d].", indent, idx);
-
-	oscap_dprintf("%sID          = %s\n", nxtindent, definition->id);
-	oscap_dprintf("%sVERSION     = %d\n", nxtindent, definition->version);
-	oscap_dprintf("%sCLASS       = %d\n", nxtindent, definition->class);
-	oscap_dprintf("%sDEPRECATED  = %d\n", nxtindent, definition->deprecated);
-	oscap_dprintf("%sTITLE       = %s\n", nxtindent, definition->title);
-	oscap_dprintf("%sDESCRIPTION = %s\n", nxtindent, definition->description);
-	struct oval_iterator *affecteds = oval_collection_iterator(definition->affected);
-	for (idx = 1; oval_collection_iterator_has_more(affecteds); idx++) {
-		void *affected = oval_collection_iterator_next(affecteds);
-		oval_affected_to_print(affected, nxtindent, idx);
-	}
-	oval_collection_iterator_free(affecteds);
-	struct oval_iterator *references = oval_collection_iterator(definition->reference);
-	for (idx = 1; oval_collection_iterator_has_more(references); idx++) {
-		void *ref = oval_collection_iterator_next(references);
-		oval_reference_to_print(ref, nxtindent, idx);
-	}
-	oval_collection_iterator_free(references);
-	if (definition->criteria != NULL)
-		oval_criteria_node_to_print(definition->criteria, nxtindent, 0);
-}
 
 xmlNode *oval_definition_to_dom(struct oval_definition *definition, xmlDoc * doc, xmlNode * parent)
 {

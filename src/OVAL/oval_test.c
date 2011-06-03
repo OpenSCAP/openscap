@@ -482,44 +482,6 @@ int oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *con
 	return oval_parser_parse_tag(reader, context, &_oval_test_parse_tag, test);
 }
 
-void oval_test_to_print(struct oval_test *test, char *indent, int idx)
-{
-	/*
-	char nxtindent[100];
-
-	if (strlen(indent) > 80)
-		indent = "....";
-
-	if (idx == 0)
-		snprintf(nxtindent, sizeof(nxtindent), "%sTEST.", indent);
-	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sTEST[%d].", indent, idx);
-
-	oscap_dprintf("%sID         = %s\n", nxtindent, oval_test_get_id(test));
-	oscap_dprintf("%sFAMILY     = %d\n", nxtindent, oval_test_get_family(test));
-	oscap_dprintf("%sSUBTYPE    = %d\n", nxtindent, oval_test_get_subtype(test));
-	oscap_dprintf("%sVERSION    = %d\n", nxtindent, oval_test_get_version(test));
-	oscap_dprintf("%sCOMMENT    = %s\n", nxtindent, oval_test_get_comment(test));
-	oscap_dprintf("%sDEPRECATED = %d\n", nxtindent, oval_test_get_deprecated(test));
-	oscap_dprintf("%sEXISTENCE  = %d\n", nxtindent, oval_test_get_existence(test));
-	oscap_dprintf("%sCHECK      = %d\n", nxtindent, oval_test_get_check(test));
-	struct oval_string_iterator *notes = oval_test_get_notes(test);
-	for (idx = 1; oval_string_iterator_has_more(notes); idx++) {
-		oscap_dprintf("%sNOTE[%d]    = %s\n", nxtindent, idx, oval_string_iterator_next(notes));
-	}
-	oval_string_iterator_free(notes);
-	struct oval_object *object = oval_test_get_object(test);
-	if (object == NULL)
-		oscap_dprintf("%sOBJECT     = <<NONE>>\n", nxtindent);
-	else
-		oval_object_to_print(object, nxtindent, 0);
-	struct oval_state *state = oval_test_get_state(test);
-	if (state == NULL)
-		oscap_dprintf("%sSTATE      = <<NONE>>\n", nxtindent);
-	else
-		oval_state_to_print(state, nxtindent, 0);
-	*/
-}
 
 xmlNode *oval_test_to_dom(struct oval_test *test, xmlDoc * doc, xmlNode * parent)
 {

@@ -3,7 +3,7 @@
  * @brief oscap debug helpers private header
  */
 /*
- * Copyright 2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2011 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors:
- *       Lukas Kuklinek <lkuklinek@redhat.com>
+ *       Daniel Kopecek <dkopecek@redhat.com>
  *       Peter Vrabec <pvrabec@redhat.com>
  */ 
 
@@ -35,7 +35,6 @@
 #define OSCAP_DEBUGOBJ_SEXP 1
 
 #if defined(NDEBUG)
-# define oscap_dprintf(...) while(0)
 # define oscap_dlprintf(...) while(0)
 # define debug(l) if (0)
 # define dO(type, obj) while(0)
@@ -52,25 +51,8 @@ enum {
 
 # define __dlprintf_wrapper(l, ...) __oscap_dlprintf (l, __FILE__, __PRETTY_FUNCTION__, __LINE__, __VA_ARGS__)
 
-/**
- * printf-like function for writing debug messages into the output
- * file (see SEAP_DEBUG_FILE and SEAP_DEBUG_FILE_ENV).
- * @param file name of the source file
- * @param fn   name of the function
- * @param line current line
- * @param fmt  printf-like format string
- * @param ...  __oscap_dlprintf parameters
- */
-void __oscap_dprintf(const char *file, const char *fn, size_t line, const char *fmt, ...);
-
-/**
- * Convenience macro for calling __oscap_dprintf. Only the fmt & it's arguments
- * need to be specified. The __FILE__, __PRETTY_FUNCTION__ and __LINE__ macros
- * are used for the first three arguments.
- */
-# define oscap_dprintf(...) __dlprintf_wrapper (0, __VA_ARGS__)
-
 extern int __debuglog_level;
+
 /**
  * Using this macro you can create a "debug block" with a verbosity level `l'.
  * Example:

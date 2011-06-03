@@ -188,10 +188,6 @@ void oval_collection_iterator_free(struct oval_iterator *iterator)
 		if ((--iterator_count) < 0) {
 			oscap_dlprintf(DBG_W, "iterator_count: %d.\n", iterator_count);
 			if (iterator != _debugStack[iterator_count]) {
-				/*
-				oscap_dprintf("WHOOPS: stack mismatch at %d %p:%p", iterator_count,
-					      iterator, _debugStack[iterator_count]);
-				*/
 				debug = false;
 			}
 		}
@@ -257,39 +253,4 @@ void oval_string_iterator_free(struct oval_string_iterator *iterator)
 	oval_collection_iterator_free((struct oval_iterator *)iterator);
 }
 
-//TEST FREEFUNC
-/*static void oval_collection_main_freefunc(void *item)
-{
-        // please test it with --enable-debug and see oscap_debug.log
-        // you can still use oscap_dprintf for all debug messages 
-	oscap_dprintf("FREEFUNC: item = %s\n", (char *) item);
-}*/
 
-/**
- * This procedure is included as a test stub.
- */
-/*int oval_collection_main(int argc, char **argv)
-{
-
-	char *array[] =
-	    { "hello\0", "tom\0", "now is the time\0", "for all good men\0",
-	0 };
-	struct oval_collection *collection = oval_collection_new();
-	char **arrayin;
-	for (arrayin = array; *arrayin != NULL; arrayin++) {
-		char *string = *arrayin;
-		oval_collection_add(collection, (void *)string);
-	}
-
-	int i;
-	for (i = 0; i < 2; i++) {
-		struct oval_iterator *iterator =
-		    oval_collection_iterator(collection);
-		while (oval_collection_iterator_has_more(iterator))
-			printf("[%d] string = %s\n", i,
-			       (char *) oval_collection_iterator_next(iterator));
-	}
-
-	oval_collection_free_items(collection, &oval_collection_main_freefunc);
-	return 0;
-}*/

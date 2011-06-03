@@ -815,54 +815,6 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context 
 	return return_code;
 }
 
-void oval_variable_to_print(struct oval_variable *variable, char *indent, int idx)
-{
-	char nxtindent[100];
-
-	if (strlen(indent) > 80)
-		indent = "....";
-
-	if (idx == 0)
-		snprintf(nxtindent, sizeof(nxtindent), "%sVARIABLE.", indent);
-	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sVARIABLE[%d].", indent, idx);
-
-	oscap_dprintf("%sID         = %s\n", nxtindent, oval_variable_get_id(variable));
-	oscap_dprintf("%sVERSION    = %d\n", nxtindent, oval_variable_get_version(variable));
-	oscap_dprintf("%sCOMMENT    = %s\n", nxtindent, oval_variable_get_comment(variable));
-	oscap_dprintf("%sDEPRECATED = %d\n", nxtindent, oval_variable_get_deprecated(variable));
-	oscap_dprintf("%sTYPE       = %d\n", nxtindent, oval_variable_get_type(variable));
-	oscap_dprintf("%sDATATYPE   = %d\n", nxtindent, oval_variable_get_datatype(variable));
-	switch (oval_variable_get_type(variable)) {
-	case OVAL_VARIABLE_CONSTANT:{
-			struct oval_value_iterator *values = oval_variable_get_values(variable);
-			if (oval_value_iterator_has_more(values)) {
-				int i;
-				for (i = 0; oval_value_iterator_has_more(values); i++) {
-					struct oval_value *value = oval_value_iterator_next(values);
-					oval_value_to_print(value, nxtindent, i);
-				}
-			} else
-				oscap_dprintf("%sVALUES     = <<NO CONSTANTS BOUND>>\n", nxtindent);
-		}
-		break;
-	case OVAL_VARIABLE_EXTERNAL:{
-			oscap_dprintf("%sEXTERNAL   <<TODO>>\n", nxtindent);
-		}
-		break;
-	case OVAL_VARIABLE_LOCAL:{
-			struct oval_component *component = oval_variable_get_component(variable);
-			if (component == NULL)
-				oscap_dprintf("%sCOMPONENT  = <<NO COMPONENT BOUND>>\n", nxtindent);
-			else
-				oval_component_to_print(component, nxtindent, 0);
-		}
-		break;
-	case OVAL_VARIABLE_UNKNOWN:
-		break;
-	}
-}
-
 static xmlNode *_oval_VARIABLE_CONSTANT_to_dom(struct oval_variable *variable, xmlDoc * doc, xmlNode * parent) {
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
 	xmlNode *variable_node = xmlNewTextChild(parent, ns_definitions, BAD_CAST "constant_variable", NULL);

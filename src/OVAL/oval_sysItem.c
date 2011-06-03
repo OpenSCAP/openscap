@@ -283,32 +283,6 @@ int oval_sysitem_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 		oval_syschar_status_t status_enum = oval_syschar_status_parse(reader, "status", SYSCHAR_STATUS_EXISTS);
 		oval_sysitem_set_status(sysitem, status_enum);
 		return_code = oval_parser_parse_tag(reader, context, &_oval_sysitem_parse_subtag, sysitem);
-		/* TODO: -> oscap_dprintf */
-		/*
-		int numchars = 0;
-		char message[2000];
-		message[numchars] = '\0';
-		numchars = numchars + sprintf(message + numchars, "oval_sysitem_parse_tag::");
-		numchars =
-		    numchars + sprintf(message + numchars, "\n    sysitem->id            = %s",
-				       oval_sysitem_get_id(sysitem));
-		numchars =
-		    numchars + sprintf(message + numchars, "\n    sysitem->status        = %d",
-				       oval_sysitem_get_status(sysitem));
-		oval_message_level_t level = oval_sysitem_get_message_level(sysitem);
-		if (level > OVAL_MESSAGE_LEVEL_NONE) {
-			numchars = numchars + sprintf(message + numchars, "\n    sysitem->message_level = %d", level);
-			numchars =
-			    numchars + sprintf(message + numchars, "\n    sysitem->message       = %s",
-					       oval_sysitem_get_message(sysitem));
-		}
-		struct oval_sysent_iterator *items = oval_sysitem_get_items(sysitem);
-		int numItems;
-		for (numItems = 0; oval_sysent_iterator_has_more(items); numItems++)
-			oval_sysent_iterator_next(items);
-		oval_sysent_iterator_free(items);
-		numchars = numchars + sprintf(message + numchars, "\n    sysitem->items.length  = %d", numItems);
-		oscap_dprintf(message);	// TODO: make this code in one string ^ */
 	} else {
 		char *tagnm = (char *)xmlTextReaderLocalName(reader);
 		char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
@@ -325,54 +299,6 @@ int oval_sysitem_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 	return return_code;
 }
 
-void oval_sysitem_to_print(struct oval_sysitem *sysitem, char *indent, int idx)
-{
-	char nxtindent[100];
-
-	if (strlen(indent) > 80)
-		indent = "....";
-
-	if (idx == 0)
-		snprintf(nxtindent, sizeof(nxtindent), "%sSYSDATA.", indent);
-	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sSYSDATA[%d].", indent, idx);
-
-	/*
-	   char* id;
-	   oval_subtype_enum subtype;
-	   oval_syschar_status_enum status;
-	   oval_message_level_enum message_level;
-	   char* message;
-	   struct oval_collection *items;
-	 */
-	{			//id
-		oscap_dprintf("%sID            = %s\n", nxtindent, oval_sysitem_get_id(sysitem));
-	}
-	{			//subtype
-		oscap_dprintf("%sSUBTYPE       = %d\n", nxtindent, oval_sysitem_get_subtype(sysitem));
-	}
-	{			//status
-		oscap_dprintf("%sSTATUS        = %d\n", nxtindent, oval_sysitem_get_status(sysitem));
-	}
-	/*
-	oval_message_level_t level = oval_sysitem_get_message_level(sysitem);
-	{			//level
-		oscap_dprintf("%sMESSAGE_LEVEL = %d\n", nxtindent, level);
-	}
-	if (level != OVAL_MESSAGE_LEVEL_NONE) {	//message
-		oscap_dprintf("%sMESSAGE       = %s\n", nxtindent, oval_sysitem_get_message(sysitem));
-	}
-	*/
-	{			//items
-		struct oval_sysent_iterator *sysent_itr = oval_sysitem_get_sysents(sysitem);
-		int i;
-		for (i = 1; oval_sysent_iterator_has_more(sysent_itr); i++) {
-			struct oval_sysent *sysent = oval_sysent_iterator_next(sysent_itr);
-			oval_sysent_to_print(sysent, nxtindent, i);
-		}
-		oval_sysent_iterator_free(sysent_itr);
-	}
-}
 
 void oval_sysitem_to_dom(struct oval_sysitem *sysitem, xmlDoc * doc, xmlNode * tag_parent)
 {
@@ -414,10 +340,6 @@ void oval_sysitem_to_dom(struct oval_sysitem *sysitem, xmlDoc * doc, xmlNode * t
 				oval_sysent_to_dom(sysent, doc, tag_sysitem);
 			}
 			oval_sysent_iterator_free(sysent_itr);
-		} else {
-			oscap_dprintf
-			    ("WARNING: Skipping XML generation of oval_sysitem with subtype OVAL_SUBTYPE_UNKNOWN"
-			     "%s(%d)", __FILE__, __LINE__);
 		}
 	}
 }

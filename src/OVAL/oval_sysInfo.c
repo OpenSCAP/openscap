@@ -312,49 +312,6 @@ int oval_sysinfo_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 	return return_code;
 }
 
-void oval_sysinfo_to_print(struct oval_sysinfo *sysinfo, char *indent, int idx)
-{
-
-	char nxtindent[100];
-
-	if (strlen(indent) > 80)
-		indent = "....";
-
-	if (idx == 0)
-		snprintf(nxtindent, sizeof(nxtindent), "%sSYSINFO.", indent);
-	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sSYSINFO[%d].", indent, idx);
-
-	/*
-	   char *osName;
-	   char *osVersion;
-	   char *osArchitecture;
-	   char *primaryHostName;
-	   struct oval_collection *interfaces;
-	 */
-	{			//osName
-		oscap_dprintf("%sOS_NAME           = %s\n", nxtindent, oval_sysinfo_get_os_name(sysinfo));
-	}
-	{			//osVersion
-		oscap_dprintf("%sOS_VERSION        = %s\n", nxtindent, oval_sysinfo_get_os_version(sysinfo));
-	}
-	{			//osArchitecture
-		oscap_dprintf("%sOS_ARCHITECTURE   = %s	\n", nxtindent, oval_sysinfo_get_os_architecture(sysinfo));
-	}
-	{			//host name
-		oscap_dprintf("%sPRIMARY_HOST_NAME = %s\n", nxtindent, oval_sysinfo_get_primary_host_name(sysinfo));
-	}
-	{			//interfaces
-		struct oval_sysint_iterator *intrfcs = oval_sysinfo_get_interfaces(sysinfo);
-		int i;
-		for (i = 1; oval_sysint_iterator_has_more(intrfcs); i++) {
-			struct oval_sysint *intrfc = oval_sysint_iterator_next(intrfcs);
-			oval_sysint_to_print(intrfc, nxtindent, i);
-		}
-		oval_sysint_iterator_free(intrfcs);
-	}
-}
-
 void oval_sysinfo_to_dom(struct oval_sysinfo *sysinfo, xmlDoc * doc, xmlNode * tag_parent)
 {
 	if (sysinfo) {

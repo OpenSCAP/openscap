@@ -166,12 +166,6 @@ bool oval_entity_is_valid(struct oval_entity * entity)
                 oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
                 return false;
         }
-        /* todo: currently the entity type is not parsed
-        if (oval_entity_get_type(entity) == OVAL_ENTITY_TYPE_UNKNOWN) {
-                oscap_dprintf("WARNING: argument is not valid: type == OVAL_ENTITY_TYPE_UNKNOWN.\n");
-                return false;
-        }
-        */
         if (oval_entity_get_datatype(entity) == OVAL_DATATYPE_UNKNOWN) {
                 oscap_dlprintf(DBG_W, "Argument is not valid: datatype == OVAL_DATATYPE_UNKNOWN.\n");
                 return false;
@@ -381,41 +375,6 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-void oval_entity_to_print(struct oval_entity *entity, char *indent, int idx)
-{
-	char nxtindent[100];
-
-	if (strlen(indent) > 80)
-		indent = "....";
-
-	if (idx == 0)
-		snprintf(nxtindent, sizeof(nxtindent), "%sENTITY.", indent);
-	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sENTITY[%d].", indent, idx);
-
-	oscap_dprintf("%sNAME        = %s\n", nxtindent, oval_entity_get_name(entity));
-	oscap_dprintf("%sTYPE        = %d\n", nxtindent, oval_entity_get_type(entity));
-	if (oval_entity_get_type(entity) > 10) {
-		oscap_dprintf("%s<<WARNING::TYPE OUT OF RANGE>>", nxtindent);
-	} else {
-		oscap_dprintf("%sDATATYPE    = %d\n", nxtindent, oval_entity_get_datatype(entity));
-		oscap_dprintf("%sOPERATION   = %d\n", nxtindent, oval_entity_get_operation(entity));
-		oscap_dprintf("%sMASK        = %d\n", nxtindent, oval_entity_get_mask(entity));
-		oscap_dprintf("%sVARREF_TYPE = %d\n", nxtindent, oval_entity_get_varref_type(entity));
-
-		struct oval_variable *variable = oval_entity_get_variable(entity);
-		if (variable == NULL)
-			oscap_dprintf("%sVARIABLE    = <<NOT SET>>\n", nxtindent);
-		else
-			oval_variable_to_print(variable, nxtindent, 0);
-
-		struct oval_value *value = oval_entity_get_value(entity);
-		if (value == NULL)
-			oscap_dprintf("%sVALUE       = <<NOT SET>>\n", nxtindent);
-		else
-			oval_value_to_print(value, nxtindent, 0);
-	}
-}
 
 xmlNode *oval_entity_to_dom(struct oval_entity *entity, xmlDoc * doc, xmlNode * parent) {
 	

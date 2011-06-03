@@ -442,56 +442,6 @@ int oval_set_parse_tag(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-void oval_set_to_print(struct oval_setobject *set, char *indent, int idx)
-{
-	char nxtindent[100];
-
-	if (strlen(indent) > 80)
-		indent = "....";
-
-	if (idx == 0)
-		snprintf(nxtindent, sizeof(nxtindent), "%sSET.", indent);
-	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sSET[%d].", indent, idx);
-
-	oscap_dprintf("%sOPERATOR    = %d\n", nxtindent, oval_setobject_get_operation(set));
-	oscap_dprintf("%sTYPE        = %d\n", nxtindent, oval_setobject_get_type(set));
-
-	switch (oval_setobject_get_type(set)) {
-	case OVAL_SET_AGGREGATE:{
-			struct oval_setobject_iterator *subsets = oval_setobject_get_subsets(set);
-			int i;
-			for (i = 1; oval_setobject_iterator_has_more(subsets); i++) {
-				struct oval_setobject *subset = oval_setobject_iterator_next(subsets);
-				oval_set_to_print(subset, nxtindent, i);
-			}
-			oval_setobject_iterator_free(subsets);
-		} break;
-	case OVAL_SET_COLLECTIVE:{
-			struct oval_object_iterator *objects = oval_setobject_get_objects(set);
-			int i;
-			for (i = 1; oval_object_iterator_has_more(objects); i++) {
-				struct oval_object *object = oval_object_iterator_next(objects);
-				oval_object_to_print(object, nxtindent, i);
-			}
-			oval_object_iterator_free(objects);
-
-                        /* TODO?
-			struct oval_filter_iterator *filters = oval_setobject_get_filters(set);
-			for (i = 1; oval_filter_iterator_has_more(filters); i++) {
-				struct oval_filter *filter;
-
-				filter = oval_filter_iterator_next(filters);
-				//oval_filter_to_print(filter, nxtindent, i);
-			}
-			oval_filter_iterator_free(filters);
-                        */
-		} break;
-	case OVAL_SET_UNKNOWN:
-		break;
-	}
-}
-
 xmlNode *oval_set_to_dom(struct oval_setobject *set, xmlDoc * doc, xmlNode * parent) {
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
 	xmlNode *set_node = xmlNewTextChild(parent, ns_definitions, BAD_CAST "set", NULL);

@@ -203,19 +203,3 @@ int oval_reference_parse_tag(xmlTextReaderPtr reader,
 	return 1;
 }
 
-void oval_reference_to_print(struct oval_reference *ref, char *indent, int idx)
-{
-	char nxtindent[100];
-
-	if (strlen(indent) > 80)
-		indent = "....";
-
-	if (idx == 0)
-		snprintf(nxtindent, sizeof(nxtindent), "%sREFERENCE.", indent);
-	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sREFERENCE[%d].", indent, idx);
-
-	oscap_dprintf("%sSOURCE = %s\n", nxtindent, ref->source);
-	oscap_dprintf("%sID     = %s\n", nxtindent, ref->id);
-	oscap_dprintf("%sURL    = %s\n", nxtindent, ref->url);
-}

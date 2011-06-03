@@ -170,26 +170,6 @@ int oval_message_parse_tag(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-void oval_message_to_print(struct oval_message *message, char *indent, int idx)
-{
-	char nxtindent[100];
-
-	if (strlen(indent) > 80)
-		indent = "....";
-
-	if (idx == 0)
-		snprintf(nxtindent, sizeof(nxtindent), "%sMESSAGE.", indent);
-	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sMESSAGE[%d].", indent, idx);
-
-	/*
-	   char*                   text;
-	   oval_message_level_enum level;
-	 */
-	oscap_dprintf("%sLEVEL = %d\n", nxtindent, oval_message_get_level(message));
-	oscap_dprintf("%sTEXT  = %s\n", nxtindent, oval_message_get_text(message));
-}
-
 void oval_message_to_dom(struct oval_message *message, xmlDoc * doc, xmlNode * tag_parent)
 {
 

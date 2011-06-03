@@ -1131,25 +1131,6 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-static void function_comp_to_print(struct oval_component *component, char *nxtindent)
-{
-
-	int i;
-	struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
-	if (oval_component_iterator_has_more(subcomps)) {
-		for (i = 1; oval_component_iterator_has_more(subcomps); i++) {
-			struct oval_component *subcomp = oval_component_iterator_next(subcomps);
-			oval_component_to_print(subcomp, nxtindent, i);
-		}
-	} else
-		oscap_dprintf("%s FUNCTION_COMPONENTS <<NONE BOUND>>\n", nxtindent);
-	oval_component_iterator_free(subcomps);
-}
-
-void oval_component_to_print(struct oval_component *component, char *indent, int idx)
-{
-}
-
 xmlNode *oval_component_to_dom(struct oval_component *component, xmlDoc * doc, xmlNode * parent)
 {
 	oval_component_type_t type = oval_component_get_type(component);

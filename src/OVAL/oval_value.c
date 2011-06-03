@@ -211,21 +211,6 @@ int oval_value_parse_tag(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-void oval_value_to_print(struct oval_value *value, char *indent, int idx)
-{
-	char nxtindent[100];
-
-	if (strlen(indent) > 80)
-		indent = "....";
-
-	if (idx == 0)
-		snprintf(nxtindent, sizeof(nxtindent), "%sVALUE.", indent);
-	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sVALUE[%d].", indent, idx);
-
-	oscap_dprintf("%sDATATYPE = %d\n", nxtindent, oval_value_get_datatype(value));
-	oscap_dprintf("%sTEXT     = %s\n", nxtindent, oval_value_get_text(value));
-}
 
 xmlNode *oval_value_to_dom(struct oval_value *value, xmlDoc * doc, xmlNode * parent) {
 	return NULL;		//TODO: implement oval_value_to_dom
