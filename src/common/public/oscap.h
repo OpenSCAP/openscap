@@ -131,15 +131,13 @@
 /** @} */
 
 /// OS-specific filesystem path delimiter
-extern const char *OSCAP_OS_PATH_DELIM;
+extern const char * const OSCAP_OS_PATH_DELIM;
 
+/// Default XML Schema path (if not overridden by the environment variable)
+extern const char * const OSCAP_SCHEMA_PATH;
 
-#ifndef OSCAP_DEFAULT_SCHEMA_PATH
-#define OSCAP_DEFAULT_SCHEMA_PATH "/usr/local/share/openscap/schemas"
-#endif
-#ifndef OSCAP_DEFAULT_XSLT_PATH
-#define OSCAP_DEFAULT_XSLT_PATH "/usr/local/share/openscap/xsl"
-#endif
+/// Default XSLT path (if not overridden by the environment variable)
+extern const char * const OSCAP_XSLT_PATH;
 
 
 /**

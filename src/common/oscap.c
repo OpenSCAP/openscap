@@ -41,6 +41,18 @@
 #include "elements.h"
 #include "reporter_priv.h"
 
+#ifndef OSCAP_DEFAULT_SCHEMA_PATH
+const char * const OSCAP_SCHEMA_PATH = OSCAP_DEFAULT_SCHEMA_PATH;
+#else
+const char * const OSCAP_SCHEMA_PATH = "/usr/local/share/openscap/schemas";
+#endif
+
+#ifndef OSCAP_DEFAULT_XSLT_PATH
+const char * const OSCAP_XSLT_PATH = OSCAP_DEFAULT_XSLT_PATH;
+#else
+const char * const OSCAP_XSLT_PATH = "/usr/local/share/openscap/xsl";
+#endif
+
 void oscap_init(void)
 {
     xmlInitParser();
@@ -58,9 +70,9 @@ void oscap_cleanup(void)
 const char *oscap_get_version(void) { return VERSION; }
 
 #ifdef WIN32
-const char *OSCAP_OS_PATH_DELIM  = "\\";
+const char * const OSCAP_OS_PATH_DELIM  = "\\";
 #else
-const char *OSCAP_OS_PATH_DELIM  = "/";
+const char * const OSCAP_OS_PATH_DELIM  = "/";
 #endif
 
 const char *OSCAP_PATH_SEPARATOR = ":";
@@ -115,7 +127,7 @@ char *oscap_find_file(const char *filename, int mode, const char *pathvar, const
 
 static char *oscap_get_schema_path(const char *filename)
 {
-	return oscap_find_file(filename, R_OK, "OSCAP_SCHEMA_PATH", OSCAP_DEFAULT_SCHEMA_PATH);
+	return oscap_find_file(filename, R_OK, "OSCAP_SCHEMA_PATH", OSCAP_SCHEMA_PATH);
 }
 
 static void oscap_xml_validity_handler(void *user, xmlErrorPtr error)
@@ -284,6 +296,6 @@ cleanup:
 
 bool oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params)
 {
-	return oscap_apply_xslt_var(xmlfile, xsltfile, outfile, params, "OSCAP_XSLT_PATH", OSCAP_DEFAULT_XSLT_PATH);
+	return oscap_apply_xslt_var(xmlfile, xsltfile, outfile, params, "OSCAP_XSLT_PATH", OSCAP_XSLT_PATH);
 }
 

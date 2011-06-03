@@ -159,7 +159,7 @@ int app_validate_xml(const struct oscap_action *action)
 			xslfile[buffsize - 1] = '\0';
 
 			const char *params[] = { NULL };
-			if (!oscap_apply_xslt_var(xml_file, xslfile, NULL, params, "OSCAP_SCHEMA_PATH", OSCAP_DEFAULT_SCHEMA_PATH)) {
+			if (!oscap_apply_xslt_var(xml_file, xslfile, NULL, params, "OSCAP_SCHEMA_PATH", OSCAP_SCHEMA_PATH)) {
 				fprintf(stderr, "%s\n", "Error during schematron validation.");
 				ret = OSCAP_ERROR;
 			}
