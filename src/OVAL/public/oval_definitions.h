@@ -257,6 +257,7 @@ const char *oval_operation_get_text(oval_operation_t);
 const char *oval_set_operation_get_text(oval_setobject_operation_t);
 const char *oval_datetime_format_get_text(oval_datetime_format_t);
 const char *oval_arithmetic_operation_get_text(oval_arithmetic_operation_t);
+const char *oval_filter_action_get_text(oval_filter_action_t);
 
 
 /**

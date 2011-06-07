@@ -523,7 +523,7 @@ bool probe_item_filtered(SEXP_t *item, SEXP_t *filters)
 		SEXP_vfree(ste, ste_res, r0, NULL);
 
 		if ((ores == OVAL_RESULT_TRUE && ofact == OVAL_FILTER_ACTION_EXCLUDE)
-		    || (ores = OVAL_RESULT_FALSE && ofact == OVAL_FILTER_ACTION_INCLUDE)) {
+		    || (ores == OVAL_RESULT_FALSE && ofact == OVAL_FILTER_ACTION_INCLUDE)) {
 			filtered = true;
 			SEXP_free(filter);
 			break;

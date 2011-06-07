@@ -103,7 +103,6 @@ int oval_variable_binding_parse_tag
     (xmlTextReaderPtr, struct oval_parser_context *, oval_variable_binding_consumer, void *);
 
 const char *oval_variable_type_get_text(oval_variable_type_t);
-const char *oval_filter_action_get_text(oval_filter_action_t);
 
 typedef void (*oval_filter_consumer) (struct oval_filter *, void *);
 int oval_filter_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oval_filter_consumer, void *);

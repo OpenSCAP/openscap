@@ -223,6 +223,7 @@ struct pfdata {
 	int re_opts;
 	SEXP_t *instance_ent;
 	SEXP_t *cobj;
+	SEXP_t *filters;
 };
 
 static int process_file(const char *path, const char *file, void *arg)
@@ -337,7 +338,9 @@ static int process_file(const char *path, const char *file, void *arg)
 
 				item = create_item(path, file, pfd->pattern,
 						   cur_inst, substrs, substr_cnt);
-				probe_cobj_add_item(pfd->cobj, item);
+				if (!probe_item_filtered(item, pfd->filters)) {
+					probe_cobj_add_item(pfd->cobj, item);
+				}
 				SEXP_free(item);
 
 				for (k = 0; k < substr_cnt; ++k)
@@ -435,6 +438,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 	pfd.pattern      = pattern;
 	pfd.instance_ent = inst_ent;
 	pfd.cobj         = probe_out;
+	pfd.filters      = filters;
 #if defined USE_REGEX_PCRE
 	pfd.re_opts = PCRE_UTF8;
 	r0 = probe_ent_getattrval(bh_ent, "ignore_case");
