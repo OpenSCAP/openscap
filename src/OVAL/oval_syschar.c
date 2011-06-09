@@ -340,6 +340,7 @@ static int _oval_syschar_parse_subtag(xmlTextReaderPtr reader, struct oval_parse
 	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 	int return_code = 0;
+
 	if (strcmp("message", tagname) == 0) {
 		return_code = oval_message_parse_tag
 		    (reader, context, (oscap_consumer_func) _oval_syschar_parse_subtag_consume_message, syschar);
@@ -351,48 +352,52 @@ static int _oval_syschar_parse_subtag(xmlTextReaderPtr reader, struct oval_parse
 		char *itemid = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "item_ref");
 		struct oval_sysitem *sysitem = oval_sysitem_get_new(context->syschar_model, itemid);
 		oscap_free(itemid);
-		itemid = NULL;
 		oval_syschar_add_sysitem(syschar, sysitem);
-		return_code = 1;
 	}
+
+	if (return_code != 0) {
+                dW("Parsing of <%s> terminated by an error at line %d.\n", tagname, xmlTextReaderGetParserLineNumber(reader));
+        }
+
 	oscap_free(tagname);
 	oscap_free(namespace);
-	if (return_code != 1) {
-		oscap_dlprintf(DBG_W, "Return code is not 1: %d.\n", return_code);
-	}
+
 	return return_code;
 }
 
-int oval_syschar_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context)
+int oval_syschar_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *usr)
 {
 	__attribute__nonnull__(context);
 
 	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
-	int is_ovalsys = strcmp(namespace, NAMESPACE_OVALSYS) == 0;
-	int return_code;
+	int return_code = 0;
+
+	int is_ovalsys = strcmp((const char *)OVAL_SYSCHAR_NAMESPACE, namespace) == 0;
 	if (is_ovalsys && (strcmp(tagname, "object") == 0)) {
 		char *object_id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 		struct oval_object *object = oval_object_get_new(context->definition_model, object_id);
 		oscap_free(object_id);
-		object_id = NULL;
+
 		oval_syschar_t *syschar = oval_syschar_get_new(context->syschar_model, object);
 		char *flag = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "flag");
-		oval_syschar_collection_flag_t flag_enum
-		    = oval_syschar_flag_parse(reader, "flag", SYSCHAR_FLAG_UNKNOWN);
-		if (flag != NULL)
-			oscap_free(flag);
+		oval_syschar_collection_flag_t flag_enum = oval_syschar_flag_parse(reader, "flag", SYSCHAR_FLAG_UNKNOWN);
+		oscap_free(flag);
 		oval_syschar_set_flag(syschar, flag_enum);
+
 		return_code = oval_parser_parse_tag(reader, context, &_oval_syschar_parse_subtag, syschar);
 	} else {
-		oscap_dlprintf(DBG_W, "Expected <object>, got <%s:%s>.\n", namespace, tagname);
-		return_code = oval_parser_skip_tag(reader, context);
+                dW("Skipping tag: %s\n", tagname);
+                oval_parser_skip_tag(reader, context);
 	}
+
+        if (return_code != 0) {
+                dW("Parsing of <%s> terminated by an error at line %d.\n", tagname, xmlTextReaderGetParserLineNumber(reader));
+        }
+
 	oscap_free(tagname);
 	oscap_free(namespace);
-	if (return_code != 1) {
-		oscap_dlprintf(DBG_W, "Return code is not 1: %d.\n", return_code);
-	}
+
 	return return_code;
 }
 

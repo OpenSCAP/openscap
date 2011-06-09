@@ -158,39 +158,35 @@ xmlNode *oval_generator_to_dom(struct oval_generator *generator, xmlDocPtr doc, 
 	return gen_node;
 }
 
-static int _oval_generator_parse_tag(xmlTextReader *reader, struct oval_parser_context *context, void *user)
+int oval_generator_parse_tag(xmlTextReader *reader, struct oval_parser_context *context, void *user)
 {
 	char *tagname, *namespace, *val = NULL;
 	struct oval_generator *gen = user;
-	int ret;
+	int ret=0;
 
 	tagname = (char *) xmlTextReaderLocalName(reader);
 	namespace = (char *) xmlTextReaderNamespaceUri(reader);
 
 	if (!strcmp("product_name", tagname)) {
-		ret = xmlTextReaderRead(reader);
+		xmlTextReaderRead(reader);
 		val = (char *) xmlTextReaderValue(reader);
-		dI("product_name: %s.\n", val);
 		oval_generator_set_product_name(gen, val);
 	} else if (!strcmp("product_version", tagname)) {
-		ret = xmlTextReaderRead(reader);
+		xmlTextReaderRead(reader);
 		val = (char *) xmlTextReaderValue(reader);
-		dI("product_version: %s.\n", val);
 		oval_generator_set_product_version(gen, val);
 	} else if (!strcmp("schema_version", tagname)) {
-		ret = xmlTextReaderRead(reader);
+		xmlTextReaderRead(reader);
 		val = (char *) xmlTextReaderValue(reader);
-		dI("schema_version: %s.\n", val);
 		oval_generator_set_schema_version(gen, val);
 	} else if (!strcmp("timestamp", tagname)) {
-		ret = xmlTextReaderRead(reader);
+		xmlTextReaderRead(reader);
 		val = (char *) xmlTextReaderValue(reader);
-		dI("timestamp: %s.\n", val);
 		oval_generator_set_timestamp(gen, val);
 	} else {
 		dW("Unprocessed tag: <%s:%s>.\n", namespace, tagname);
 		oval_parser_skip_tag(reader, context);
-		ret = 0;
+		ret = 1;
 	}
 
 	oscap_free(tagname);
@@ -200,7 +196,3 @@ static int _oval_generator_parse_tag(xmlTextReader *reader, struct oval_parser_c
 	return ret;
 }
 
-int oval_generator_parse_tag(xmlTextReader *reader, struct oval_parser_context *context, struct oval_generator *generator)
-{
-	return oval_parser_parse_tag(reader, context, &_oval_generator_parse_tag, generator);
-}

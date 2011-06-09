@@ -343,7 +343,7 @@ int oval_record_field_parse_tag(xmlTextReaderPtr reader, struct oval_parser_cont
 				oscap_consumer_func consumer, void *user,
 				oval_record_field_type_t record_field_type)
 {
-	int ret = 1, mask;
+	int ret = 0, mask;
 	char *name;
 	oval_datatype_t datatype;
 	struct oval_record_field *rf;
@@ -387,7 +387,6 @@ int oval_record_field_parse_tag(xmlTextReaderPtr reader, struct oval_parser_cont
 			var = oval_variable_get_new(model, var_ref, OVAL_VARIABLE_UNKNOWN);
 			oval_record_field_set_variable(rf, var);
 			xmlFree(var_ref);
-			ret = 1;
 		}
 		break;
 	}

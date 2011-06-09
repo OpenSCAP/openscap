@@ -329,26 +329,19 @@ static int _oval_state_parse_tag(xmlTextReaderPtr reader, struct oval_parser_con
 	struct oval_state *state = (struct oval_state *)user;
 	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
-	int return_code = 1;
+	int return_code = 0;
 	if ((strcmp(tagname, "notes") == 0)) {
 		return_code = oval_parser_parse_tag(reader, context, &_oval_state_parse_notes, state);
 	} else {
-		return_code =
-		    oval_state_content_parse_tag
+		return_code = oval_state_content_parse_tag
 		    (reader, context, (oscap_consumer_func) _oval_state_content_consumer, state);
-	}
-	if (return_code != 1) {
-		int line = xmlTextReaderGetParserLineNumber(reader);
-		printf
-		    ("NOTICE: oval_state_parse_tag::parse of %s terminated on error at <%s> line %d\n",
-		     state->id, tagname, line);
 	}
 	free(tagname);
 	free(namespace);
 	return return_code;
 }
 
-int oval_state_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context)
+int oval_state_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *usr)
 {
 	struct oval_definition_model *model = oval_parser_context_model(context);
 	char *id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
@@ -370,35 +363,8 @@ int oval_state_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *co
 	oval_operator_t operator = oval_operator_parse(reader, "operator", OVAL_OPERATOR_AND);
 	oval_state_set_operator(state, operator);
 
-	int return_code = oval_parser_parse_tag(reader, context, &_oval_state_parse_tag,
-						state);
+	int return_code = oval_parser_parse_tag(reader, context, &_oval_state_parse_tag, state);
 	return return_code;
-}
-
-void oval_state_to_print(struct oval_state *state, char *indent, int idx)
-{
-	char nxtindent[100];
-
-	if (strlen(indent) > 80)
-		indent = "....";
-
-	if (idx == 0)
-		snprintf(nxtindent, sizeof(nxtindent), "%sSTATE.", indent);
-	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sSTATE[%d].", indent, idx);
-
-	printf("%sID         = %s\n", nxtindent, oval_state_get_id(state));
-	printf("%sFAMILY     = %d\n", nxtindent, oval_state_get_family(state));
-	printf("%sSUBTYPE    = %d\n", nxtindent, oval_state_get_subtype(state));
-	printf("%sVERSION    = %d\n", nxtindent, oval_state_get_version(state));
-	printf("%sCOMMENT    = %s\n", nxtindent, oval_state_get_comment(state));
-	printf("%sDEPRECATED = %d\n", nxtindent, oval_state_get_deprecated(state));
-	printf("%sOPERATOR   = %d\n", nxtindent, oval_state_get_operator(state));
-	struct oval_string_iterator *notes = oval_state_get_notes(state);
-	for (idx = 1; oval_string_iterator_has_more(notes); idx++) {
-		printf("%sNOTE[%d]    = %s\n", nxtindent, idx, oval_string_iterator_next(notes));
-	}
-	oval_string_iterator_free(notes);
 }
 
 xmlNode *oval_state_to_dom(struct oval_state *state, xmlDoc * doc, xmlNode * parent)

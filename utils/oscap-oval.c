@@ -199,17 +199,21 @@ int app_collect_oval(const struct oscap_action *action)
 
 	/* import definitions */
 	def_model = oval_definition_model_import(action->f_oval);
-        if (def_model == NULL) {
-                fprintf(stderr, "Failed to import the OVAL Definitions from (%s).\n", action->f_oval);
-                ret = OSCAP_ERROR;
+	if (def_model == NULL) {
+		fprintf(stderr, "Failed to import the OVAL Definitions from (%s).\n", action->f_oval);
+		if(oscap_err())
+			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+		ret = OSCAP_ERROR;
 		goto cleanup;
-        }
+	}
 
 	/* bind external variables */
 	if(action->f_variables) {
 		var_model = oval_variable_model_import(action->f_variables);
 		if (var_model == NULL) {
 			fprintf(stderr, "Failed to import the OVAL Variables from (%s).\n", action->f_oval);
+			if(oscap_err())
+				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
 			ret = OSCAP_ERROR;
 			goto cleanup;
 		}
@@ -338,7 +342,9 @@ int app_evaluate_oval(const struct oscap_action *action)
 	/* import OVAL Definitions */
 	def_model = oval_definition_model_import(action->f_oval);
 	if (def_model == NULL) {
-		fprintf(stderr, "Failed to import the definition model (%s).\n", action->f_oval);
+		fprintf(stderr, "Failed to import the OVAL Definitions from (%s).\n", action->f_oval);
+		if(oscap_err())
+			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
 		ret = OSCAP_ERROR;
 		goto cleanup;
 	}
@@ -348,6 +354,8 @@ int app_evaluate_oval(const struct oscap_action *action)
 		var_model = oval_variable_model_import(action->f_variables);
 		if (var_model == NULL) {
 			fprintf(stderr, "Failed to import the OVAL Variables from (%s).\n", action->f_oval);
+			if(oscap_err())
+				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
 			ret = OSCAP_ERROR;
 			goto cleanup;
 		}
@@ -485,7 +493,7 @@ static int app_analyse_oval(const struct oscap_action *action) {
 	/* load system characteristics */
 	sys_model = oval_syschar_model_new(def_model);
         if (oval_syschar_model_import(sys_model, action->f_syschar) ==  -1 ) {
-                fprintf(stderr, "Failed to import the system characteristics model (%s).\n", action->f_syschar);
+                fprintf(stderr, "Failed to import the System Characteristics from (%s).\n", action->f_syschar);
 		if(oscap_err())
 			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
 		ret = OSCAP_ERROR;

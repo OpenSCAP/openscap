@@ -416,8 +416,7 @@ static int _oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_cont
 {
 	struct oval_test *test = (struct oval_test *)user;
 	char *tagname = (char *)xmlTextReaderLocalName(reader);
-	//xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
-	int return_code = 1;
+	int return_code = 0;
 	if ((strcmp(tagname, "notes") == 0)) {
 		return_code = oval_parser_parse_tag(reader, context, &_oval_test_parse_notes, test);
 	} else if ((strcmp(tagname, "object") == 0)) {
@@ -439,8 +438,7 @@ static int _oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_cont
 			state_ref = NULL;
 		}
 	} else {
-		oscap_dlprintf(DBG_W, "Skipping tag <%s>, depth: %d, line: %d.\n",
-			      tagname, xmlTextReaderDepth(reader), xmlTextReaderGetParserLineNumber(reader));
+		oscap_dlprintf(DBG_W, "Skipping tag <%s>.\n", tagname);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 
@@ -449,116 +447,134 @@ static int _oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_cont
 
 }
 
-int oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context)
+int oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *usr)
 {
+	int ret = 0;
+	char *comm = NULL;
+	char *version = NULL;
 	struct oval_definition_model *model = oval_parser_context_model(context);
-	char *id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 
+	char *id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_test *test = oval_test_get_new(model, id);
-	oscap_free(id);
-	id = test->id;
+
 	oval_subtype_t subtype = oval_subtype_parse(reader);
+        if ( subtype == OVAL_SUBTYPE_UNKNOWN) {
+                oscap_dlprintf(DBG_E,  "Unknown test %s.\n", id);
+		ret = -1;
+		goto cleanup;
+        }
 	oval_test_set_subtype(test, subtype);
-	oval_existence_t existence = oval_existence_parse(reader, "check_existence",
-							  OVAL_AT_LEAST_ONE_EXISTS);
+
+	oval_existence_t existence = oval_existence_parse(reader, "check_existence", OVAL_AT_LEAST_ONE_EXISTS);
 	oval_test_set_existence(test, existence);
+
 	oval_operator_t ste_operator = oval_operator_parse(reader, "state_operator", OVAL_OPERATOR_AND);
 	oval_test_set_state_operator(test, ste_operator);
+
 	oval_check_t check = oval_check_parse(reader, "check", OVAL_CHECK_UNKNOWN);
 	oval_test_set_check(test, check);
-	char *comm = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
+
+	comm = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
 	if (comm != NULL) {
 		oval_test_set_comment(test, comm);
-		oscap_free(comm);
-		comm = NULL;
 	}
+
 	int deprecated = oval_parser_boolean_attribute(reader, "deprecated", 0);
 	oval_test_set_deprecated(test, deprecated);
-	char *version = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "version");
-	oval_test_set_version(test, atoi(version));
-	oscap_free(version);
-	version = NULL;
 
-	return oval_parser_parse_tag(reader, context, &_oval_test_parse_tag, test);
+	version = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "version");
+	oval_test_set_version(test, atoi(version));
+
+
+	ret = oval_parser_parse_tag(reader, context, &_oval_test_parse_tag, test);
+
+cleanup:
+	oscap_free(version);
+	oscap_free(comm);
+	oscap_free(id);
+	return ret;
 }
 
 
 xmlNode *oval_test_to_dom(struct oval_test *test, xmlDoc * doc, xmlNode * parent)
 {
+	xmlNode * test_node=NULL;
+
+	/* skip unknown test */
 	oval_subtype_t subtype = oval_test_get_subtype(test);
-	xmlNode *test_node = NULL;
-	if (subtype != 0) {
-		struct oval_state_iterator *ste_itr;
-		const char *subtype_text = oval_subtype_get_text(subtype);
-		char test_name[strlen(subtype_text) + 6];
-		*test_name = '\0';
-		strcat(strcat(test_name, subtype_text), "_test");
-		test_node = xmlNewTextChild(parent, NULL, BAD_CAST test_name, NULL);
-
-		oval_family_t family = oval_test_get_family(test);
-		const char *family_text = oval_family_get_text(family);
-		char family_uri[strlen((const char *)OVAL_DEFINITIONS_NAMESPACE) + strlen(family_text) + 2];
-		*family_uri = '\0';
-		strcat(strcat(strcat(family_uri, (const char *)OVAL_DEFINITIONS_NAMESPACE), "#"), family_text);
-		xmlNs *ns_family = xmlNewNs(test_node, BAD_CAST family_uri, NULL);
-
-		xmlSetNs(test_node, ns_family);
-
-		char *id = oval_test_get_id(test);
-		xmlNewProp(test_node, BAD_CAST "id", BAD_CAST id);
-
-		char version[10];
-		*version = '\0';
-		snprintf(version, sizeof(version), "%d", oval_test_get_version(test));
-		xmlNewProp(test_node, BAD_CAST "version", BAD_CAST version);
-
-		oval_existence_t existence = oval_test_get_existence(test);
-		if (existence != OVAL_AT_LEAST_ONE_EXISTS)
-			xmlNewProp(test_node, BAD_CAST "check_existence", BAD_CAST oval_existence_get_text(existence));
-
-		oval_check_t check = oval_test_get_check(test);
-		xmlNewProp(test_node, BAD_CAST "check", BAD_CAST oval_check_get_text(check));
-
-		oval_operator_t ste_operator = oval_test_get_state_operator(test);
-		if (ste_operator != OVAL_OPERATOR_AND)
-			xmlNewProp(test_node, BAD_CAST "state_operator", BAD_CAST oval_operator_get_text(ste_operator));
-
-		char *comm = oval_test_get_comment(test);
-		xmlNewProp(test_node, BAD_CAST "comment", BAD_CAST comm);
-
-		bool deprecated = oval_test_get_deprecated(test);
-		if (deprecated)
-			xmlNewProp(test_node, BAD_CAST "deprecated", BAD_CAST "true");
-
-		struct oval_string_iterator *notes = oval_test_get_notes(test);
-		if (oval_string_iterator_has_more(notes)) {
-			xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
-			xmlNode *notes_node = xmlNewTextChild(test_node, ns_definitions, BAD_CAST "notes", NULL);
-			while (oval_string_iterator_has_more(notes)) {
-				char *note = oval_string_iterator_next(notes);
-				xmlNewTextChild(notes_node, ns_definitions, BAD_CAST "note", BAD_CAST note);
-			}
-		}
-		oval_string_iterator_free(notes);
-
-		struct oval_object *object = oval_test_get_object(test);
-		if (object) {
-			xmlNode *object_node = xmlNewTextChild(test_node, ns_family, BAD_CAST "object", NULL);
-			xmlNewProp(object_node, BAD_CAST "object_ref", BAD_CAST oval_object_get_id(object));
-		}
-
-		ste_itr = oval_test_get_states(test);
-		while (oval_state_iterator_has_more(ste_itr)) {
-			struct oval_state *state;
-
-			state = oval_state_iterator_next(ste_itr);
-			xmlNode *state_node = xmlNewTextChild(test_node, ns_family, BAD_CAST "state", NULL);
-			xmlNewProp(state_node, BAD_CAST "state_ref", BAD_CAST oval_state_get_id(state));
-		}
-		oval_state_iterator_free(ste_itr);
-	} else {
-		oscap_dlprintf(DBG_E, "Detected test without subtype, id: %s.\n", oval_test_get_id(test));
+	if ( subtype == OVAL_SUBTYPE_UNKNOWN ) {
+		oscap_dlprintf(DBG_E, "Unknown Test %s.\n", oval_test_get_id(test));
+		return test_node;
 	}
+
+	struct oval_state_iterator *ste_itr;
+	const char *subtype_text = oval_subtype_get_text(subtype);
+	char test_name[strlen(subtype_text) + 6];
+	*test_name = '\0';
+	strcat(strcat(test_name, subtype_text), "_test");
+	test_node = xmlNewTextChild(parent, NULL, BAD_CAST test_name, NULL);
+
+	oval_family_t family = oval_test_get_family(test);
+	const char *family_text = oval_family_get_text(family);
+	char family_uri[strlen((const char *)OVAL_DEFINITIONS_NAMESPACE) + strlen(family_text) + 2];
+	*family_uri = '\0';
+	strcat(strcat(strcat(family_uri, (const char *)OVAL_DEFINITIONS_NAMESPACE), "#"), family_text);
+	xmlNs *ns_family = xmlNewNs(test_node, BAD_CAST family_uri, NULL);
+
+	xmlSetNs(test_node, ns_family);
+
+	char *id = oval_test_get_id(test);
+	xmlNewProp(test_node, BAD_CAST "id", BAD_CAST id);
+
+	char version[10];
+	*version = '\0';
+	snprintf(version, sizeof(version), "%d", oval_test_get_version(test));
+	xmlNewProp(test_node, BAD_CAST "version", BAD_CAST version);
+
+	oval_existence_t existence = oval_test_get_existence(test);
+	if (existence != OVAL_AT_LEAST_ONE_EXISTS)
+		xmlNewProp(test_node, BAD_CAST "check_existence", BAD_CAST oval_existence_get_text(existence));
+
+	oval_check_t check = oval_test_get_check(test);
+	xmlNewProp(test_node, BAD_CAST "check", BAD_CAST oval_check_get_text(check));
+
+	oval_operator_t ste_operator = oval_test_get_state_operator(test);
+	if (ste_operator != OVAL_OPERATOR_AND)
+		xmlNewProp(test_node, BAD_CAST "state_operator", BAD_CAST oval_operator_get_text(ste_operator));
+
+	char *comm = oval_test_get_comment(test);
+	xmlNewProp(test_node, BAD_CAST "comment", BAD_CAST comm);
+
+	bool deprecated = oval_test_get_deprecated(test);
+	if (deprecated)
+		xmlNewProp(test_node, BAD_CAST "deprecated", BAD_CAST "true");
+
+	struct oval_string_iterator *notes = oval_test_get_notes(test);
+	if (oval_string_iterator_has_more(notes)) {
+		xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
+		xmlNode *notes_node = xmlNewTextChild(test_node, ns_definitions, BAD_CAST "notes", NULL);
+		while (oval_string_iterator_has_more(notes)) {
+			char *note = oval_string_iterator_next(notes);
+			xmlNewTextChild(notes_node, ns_definitions, BAD_CAST "note", BAD_CAST note);
+		}
+	}
+	oval_string_iterator_free(notes);
+
+	struct oval_object *object = oval_test_get_object(test);
+	if (object) {
+		xmlNode *object_node = xmlNewTextChild(test_node, ns_family, BAD_CAST "object", NULL);
+		xmlNewProp(object_node, BAD_CAST "object_ref", BAD_CAST oval_object_get_id(object));
+	}
+
+	ste_itr = oval_test_get_states(test);
+	while (oval_state_iterator_has_more(ste_itr)) {
+		struct oval_state *state;
+
+		state = oval_state_iterator_next(ste_itr);
+		xmlNode *state_node = xmlNewTextChild(test_node, ns_family, BAD_CAST "state", NULL);
+		xmlNewProp(state_node, BAD_CAST "state_ref", BAD_CAST oval_state_get_id(state));
+	}
+	oval_state_iterator_free(ste_itr);
 
 	return test_node;
 }

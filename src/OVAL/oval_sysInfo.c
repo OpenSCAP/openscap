@@ -261,29 +261,27 @@ static int _oval_sysinfo_parse_tag(xmlTextReaderPtr reader, struct oval_parser_c
 	struct oval_sysinfo *sysinfo = (struct oval_sysinfo *)user;
 	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
-	int is_ovalsys = strcmp(namespace, NAMESPACE_OVALSYS) == 0;
-	int return_code;
+	int return_code = 0;
+
+	int is_ovalsys = strcmp((const char *)OVAL_SYSCHAR_NAMESPACE, namespace) == 0;
 	if (is_ovalsys && (strcmp(tagname, "os_name") == 0)) {
-		return_code =
-		    oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_os_name, sysinfo);
+		return_code = oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_os_name, sysinfo);
 	} else if (is_ovalsys && (strcmp(tagname, "os_version") == 0)) {
-		return_code =
-		    oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_os_version, sysinfo);
+		return_code = oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_os_version, sysinfo);
 	} else if (is_ovalsys && (strcmp(tagname, "architecture") == 0)) {
-		return_code =
-		    oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_os_architecture, sysinfo);
+		return_code = oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_os_architecture, sysinfo);
 	} else if (is_ovalsys && (strcmp(tagname, "primary_host_name") == 0)) {
-		return_code =
-		    oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_primary_host_name,
-					   sysinfo);
+		return_code = oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_primary_host_name, sysinfo);
 	} else if (is_ovalsys && (strcmp(tagname, "interfaces") == 0)) {
 		return_code = oval_parser_parse_tag(reader, context, &_oval_sysinfo_parse_tag_parse_tag, sysinfo);
 	} else {
-		oscap_dlprintf(DBG_W, "Skipping tag: <%s:%s>.\n", namespace, tagname);
-		return_code = oval_parser_skip_tag(reader, context);
+		dW("Skipping tag: <%s:%s>.\n", namespace, tagname);
+		oval_parser_skip_tag(reader, context);
 	}
+
 	oscap_free(tagname);
 	oscap_free(namespace);
+
 	return return_code;
 }
 
@@ -294,21 +292,26 @@ int oval_sysinfo_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 	oval_sysinfo_t *sysinfo = oval_sysinfo_new(context->syschar_model);
 	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
-	int is_ovalsys = strcmp(namespace, NAMESPACE_OVALSYS) == 0;
-	int return_code;
+	int return_code=0;
+
+	int is_ovalsys = strcmp((const char *)OVAL_SYSCHAR_NAMESPACE, namespace) == 0;
 	if (is_ovalsys) {
 		return_code = oval_parser_parse_tag(reader, context, &_oval_sysinfo_parse_tag, sysinfo);
 	} else {
-		oscap_dlprintf(DBG_W, "Expected <system_info>, got <%s:%s>", namespace, tagname);
-		return_code = oval_parser_skip_tag(reader, context);
+		dW("Expected <system_info>, got <%s:%s>", namespace, tagname);
+		oval_parser_skip_tag(reader, context);
 	}
+
+	if (return_code != 0) {
+		dW("Parsing of <%s> terminated by an error at line %d.\n", tagname, xmlTextReaderGetParserLineNumber(reader));
+	}
+
+	oval_syschar_model_set_sysinfo(context->syschar_model, sysinfo);
+
+	oval_sysinfo_free(sysinfo);
 	oscap_free(tagname);
 	oscap_free(namespace);
-	if (return_code != 1) {
-		oscap_dlprintf(DBG_W, "Return code is not 1: %d.\n", return_code);
-	}
-	oval_syschar_model_set_sysinfo(context->syschar_model, sysinfo);
-	oval_sysinfo_free(sysinfo);
+
 	return return_code;
 }
 

@@ -940,7 +940,7 @@ static int _oval_component_parse_OBJECTREF_tag(xmlTextReaderPtr reader,
 	if (field)
 		oscap_free(field);
 
-	return 1;
+	return 0;
 }
 
 static int _oval_component_parse_VARREF_tag(xmlTextReaderPtr reader,
@@ -956,7 +956,7 @@ static int _oval_component_parse_VARREF_tag(xmlTextReaderPtr reader,
 	}
 	oval_component_set_variable(component, variable);
 
-	return 1;
+	return 0;
 }
 
 static void oval_subcomp_consume(struct oval_component *subcomp, void *func)
@@ -1123,9 +1123,9 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 	}
 	if (component != NULL)
 		(*consumer) (component, user);
-	if (return_code != 1) {
-		oscap_dlprintf(DBG_I, "Parsing of <%s> terminated by an error at line %d.\n", tagname,
-                            xmlTextReaderGetParserLineNumber(reader));
+
+	if (return_code != 0 ) {
+		dW("Parsing of <%s> terminated by an error at line %d.\n", tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
 	oscap_free(tagname);
 	return return_code;

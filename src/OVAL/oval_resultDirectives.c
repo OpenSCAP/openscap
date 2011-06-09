@@ -156,54 +156,46 @@ static const struct oscap_string_map OVAL_DIRECTIVE_MAP[] = {
 	{OVAL_ENUMERATION_INVALID, NULL}
 };
 
-static int _oval_result_directives_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *client) {
-	struct oval_result_directives *directives = (struct oval_result_directives *)client;
-	int retcode = 1;
+int oval_result_directives_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *usr) {
+	struct oval_result_directives *directives = (struct oval_result_directives *)usr;
+	int retcode = 0;
 
 	xmlChar *name = xmlTextReaderLocalName(reader);
 	oval_result_t type = oscap_string_to_enum(OVAL_DIRECTIVE_MAP, (const char *)name);
 
 	if ( (int) type != OVAL_ENUMERATION_INVALID) {
-		{		/*reported */
-			xmlChar *boolstr = xmlTextReaderGetAttribute(reader, BAD_CAST "reported");
-			bool reported = strcmp((const char *)boolstr, "1") == 0
-			    || strcmp((const char *)boolstr, "true") == 0;
-			oscap_free(boolstr);
-			oval_result_directives_set_reported(directives, type, reported);
-		}
-		{		/*content */
-			xmlChar *contentstr = xmlTextReaderGetAttribute(reader, BAD_CAST "content");
-			oval_result_directive_content_t content = OVAL_DIRECTIVE_CONTENT_UNKNOWN;
-			if (contentstr) {
-				if (strcmp("thin", (const char *)contentstr) == 0)
-					content = OVAL_DIRECTIVE_CONTENT_THIN;
-				else if (strcmp("full", (const char *)contentstr) == 0)
-					content = OVAL_DIRECTIVE_CONTENT_FULL;
+		/*reported */
+		xmlChar *boolstr = xmlTextReaderGetAttribute(reader, BAD_CAST "reported");
+		bool reported = (strcmp((const char *)boolstr, "1") == 0) || (strcmp((const char *)boolstr, "true") == 0);
+		oscap_free(boolstr);
+		oval_result_directives_set_reported(directives, type, reported);
 
-				if (content != OVAL_DIRECTIVE_CONTENT_UNKNOWN) {
-					oval_result_directives_set_content(directives, type, content);
-				} else {
-					oscap_dlprintf(DBG_W, "Cannot resolve @content: \"%s\".\n", contentstr);
-					retcode = 0;
-				}
-				oscap_free(contentstr);
-			} else {
+		/*content */
+		xmlChar *contentstr = xmlTextReaderGetAttribute(reader, BAD_CAST "content");
+		oval_result_directive_content_t content = OVAL_DIRECTIVE_CONTENT_UNKNOWN;
+		if (contentstr) {
+			if (strcmp("thin", (const char *)contentstr) == 0)
+				content = OVAL_DIRECTIVE_CONTENT_THIN;
+			else if (strcmp("full", (const char *)contentstr) == 0)
 				content = OVAL_DIRECTIVE_CONTENT_FULL;
+
+			if (content != OVAL_DIRECTIVE_CONTENT_UNKNOWN) {
+				oval_result_directives_set_content(directives, type, content);
+			} else {
+				oscap_dlprintf(DBG_W, "Cannot resolve @content: \"%s\".\n", contentstr);
+				retcode = 1;
 			}
+			oscap_free(contentstr);
+		} else {
+			content = OVAL_DIRECTIVE_CONTENT_FULL;
 		}
 	} else {
 		oscap_dlprintf(DBG_W, "Cannot resolve <%s>.\n", name);
-		retcode = 0;
+		retcode = 1;
 	}
 	oscap_free(name);
 	return retcode;
 }
-
-int oval_result_directives_parse_tag
-    (xmlTextReaderPtr reader, struct oval_parser_context *context, struct oval_result_directives *directives) {
-	return oval_parser_parse_tag(reader, context, &_oval_result_directives_parse_tag, directives);
-}
-
 
 int oval_result_directives_to_dom(struct oval_result_directives *directives, xmlDoc * doc, xmlNode * parent) {
 	int retcode = 1;

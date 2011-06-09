@@ -194,7 +194,7 @@ struct oval_result_directives *oval_results_model_import(struct oval_results_mod
 {
 	__attribute__nonnull__(model);
 
-	struct oval_result_directives *directives;
+	struct oval_result_directives *directives = NULL;
 	xmlTextReader *reader = xmlNewTextReaderFilename(file);
 	if (reader == NULL) {
                 if(errno)
@@ -203,8 +203,33 @@ struct oval_result_directives *oval_results_model_import(struct oval_results_mod
                 return NULL;
 	}
 
+	/* setup context */
+	struct oval_parser_context context;
+	context.reader = reader;
+	context.results_model = model;
+	context.definition_model = oval_results_model_get_definition_model(model);
+	context.user_data = NULL;
+	oscap_setxmlerr(xmlGetLastError());
+	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
+	/* jump into oval_definitions */
 	xmlTextReaderRead(reader);
-	directives = ovalres_parser_parse(model, reader, NULL);
+	/* make sure these are results */
+	char *tagname = (char *)xmlTextReaderLocalName(reader);
+	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
+	int is_ovalres = strcmp((const char *)OVAL_RESULTS_NAMESPACE, namespace) == 0;
+	/* star parsing */
+	if (is_ovalres && (strcmp(tagname, "oval_results") == 0)) {
+		if (oval_results_model_parse(reader, &context, &directives) == -1 ) {
+			oval_result_directives_free(directives);
+			directives = NULL;
+		}
+	} else {
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Missing \"oval_results\" element");
+                dE("Unprocessed tag: <%s:%s>.\n", namespace, tagname);
+	}
+
+        oscap_free(tagname);
+        oscap_free(namespace);
 	xmlFreeTextReader(reader);
 
 	return directives;

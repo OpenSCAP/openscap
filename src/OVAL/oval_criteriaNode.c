@@ -430,8 +430,7 @@ void oval_criteria_node_set_definition(struct oval_criteria_node *node, struct o
 
 static void _oval_criteria_subnode_consume(struct oval_criteria_node *subnode, void *criteria)
 {
-	oval_criteria_node_add_subnode((struct oval_criteria_node *)
-				       criteria, subnode);
+	oval_criteria_node_add_subnode((struct oval_criteria_node *) criteria, subnode);
 }
 
 static int _oval_criteria_subnode_consumer(xmlTextReaderPtr reader, struct oval_parser_context *context, void *user)
@@ -442,8 +441,7 @@ static int _oval_criteria_subnode_consumer(xmlTextReaderPtr reader, struct oval_
 }
 
 //typedef void (*oval_criteria_consumer)(struct oval_criteria_node *node, void*);
-int oval_criteria_parse_tag(xmlTextReaderPtr reader,
-			    struct oval_parser_context *context, oval_criteria_consumer consumer, void *user)
+int oval_criteria_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, oval_criteria_consumer consumer, void *user)
 {
 	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
@@ -467,19 +465,17 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader,
 			comm = NULL;
 		}
 		oval_criteria_node_set_negate(node, oval_parser_boolean_attribute(reader, "negate", 0));
-		return_code = 1;
+		return_code = 0;
 		switch (oval_criteria_node_get_type(node)) {
 		case OVAL_NODETYPE_CRITERIA:{
 				struct oval_criteria_node_CRITERIA *criteria =
 				    (struct oval_criteria_node_CRITERIA *)node;
 				oval_operator_t operator = oval_operator_parse(reader, "operator", OVAL_OPERATOR_AND);
 				oval_criteria_node_set_operator((struct oval_criteria_node *)criteria, operator);
-				return_code =
-				    oval_parser_parse_tag(reader, context, &_oval_criteria_subnode_consumer, criteria);
+				return_code = oval_parser_parse_tag(reader, context, &_oval_criteria_subnode_consumer, criteria);
 			} break;
 		case OVAL_NODETYPE_CRITERION:{
-				char *test_ref = (char *)xmlTextReaderGetAttribute(reader,
-										   BAD_CAST "test_ref");
+				char *test_ref = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "test_ref");
 				struct oval_definition_model *model = oval_parser_context_model(context);
 				struct oval_test *test = oval_test_get_new(model, test_ref);
 				oscap_free(test_ref);
@@ -487,8 +483,7 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader,
 				oval_criteria_node_set_test(node, test);
 			} break;
 		case OVAL_NODETYPE_EXTENDDEF:{
-				char *definition_ref = (char *)xmlTextReaderGetAttribute(reader,
-											 BAD_CAST "definition_ref");
+				char *definition_ref = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "definition_ref");
 				struct oval_definition_model *model = oval_parser_context_model(context);
 				struct oval_definition *definition = oval_definition_get_new(model, definition_ref);
 				oval_criteria_node_set_definition(node, definition);
@@ -501,7 +496,7 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader,
 		//oval_parser_parse_tag(reader, context,&_oval_criteria_parse_tag,node);
 		(*consumer) (node, user);
 	} else {
-		return_code = 0;
+		return_code = 1;
 		oscap_dlprintf(DBG_W, "Invalid node type: OVAL_NODETYPE_UNKNOWN.\n");
 		oval_parser_skip_tag(reader, context);
 	}

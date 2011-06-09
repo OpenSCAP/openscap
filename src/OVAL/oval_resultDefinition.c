@@ -256,37 +256,34 @@ void oval_result_definition_add_message(struct oval_result_definition *definitio
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
-static void _oval_result_definition_consume_criteria
-    (struct oval_result_criteria_node *node, struct oval_result_definition *definition) {
+static void _oval_result_definition_consume_criteria(struct oval_result_criteria_node *node, struct oval_result_definition *definition) {
 	oval_result_definition_set_criteria(definition, node);
 }
 
-static void _oval_result_definition_consume_message
-    (struct oval_message *message, struct oval_result_definition *definition) {
+static void _oval_result_definition_consume_message(struct oval_message *message, struct oval_result_definition *definition) {
 	oval_result_definition_add_message(definition, message);
 }
 
-static int _oval_result_definition_parse
-    (xmlTextReaderPtr reader, struct oval_parser_context *context, struct oval_result_definition *definition) {
-	int return_code = 1;
+static int oval_result_definition_parse(xmlTextReaderPtr reader, struct oval_parser_context *context, void *usr) {
+	int return_code = 0;
 	xmlChar *localName = xmlTextReaderLocalName(reader);
-
+	struct oval_result_system  *sys = oval_result_definition_get_system((struct oval_result_definition *) usr);
+	
 	if (strcmp((const char *)localName, "criteria") == 0) {
 		return_code = oval_result_criteria_node_parse
-		    (reader, context, oval_result_definition_get_system(definition),
-		     (oscap_consumer_func) _oval_result_definition_consume_criteria, definition);
+		    (reader, context, sys, (oscap_consumer_func) _oval_result_definition_consume_criteria, usr);
 	} else if (strcmp((const char *)localName, "message") == 0) {
 		return_code = oval_message_parse_tag
-		    (reader, context, (oscap_consumer_func) _oval_result_definition_consume_message, definition);
+		    (reader, context, (oscap_consumer_func) _oval_result_definition_consume_message, usr);
 	}
-
+	oscap_free(localName);
 	return return_code;
 }
 
-int oval_result_definition_parse
-    (xmlTextReaderPtr reader, struct oval_parser_context *context,
-     struct oval_result_system *sys, oscap_consumer_func consumer, void *client) {
-	int return_code = 1;
+int oval_result_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *usr) {
+
+	struct oval_result_system *sys = (struct oval_result_system *) usr;
+	int return_code = 0;
 
 	xmlChar *definition_id = xmlTextReaderGetAttribute(reader, BAD_CAST "definition_id");
 	xmlChar *definition_version = xmlTextReaderGetAttribute(reader, BAD_CAST "version");
@@ -302,9 +299,7 @@ int oval_result_definition_parse
 
 	int defvsn = oval_definition_get_version(definition->definition);
 	if (defvsn && resvsn != defvsn) {
-		oscap_dlprintf(DBG_W, "Definition versions don't match: "
-			       "definition id: %s, "
-			       "ovaldef vsn: %d, resdef vsn: %d.\n", definition_id, defvsn, resvsn);
+		dW("Definition versions don't match: definition id: %s, ovaldef vsn: %d, resdef vsn: %d.\n", definition_id, defvsn, resvsn);
 	}
 	oval_definition_set_version(definition->definition, resvsn);
 	oval_result_definition_set_instance(definition, instance);
@@ -313,23 +308,17 @@ int oval_result_definition_parse
 	if ((int)result != OVAL_ENUMERATION_INVALID) {
 		oval_result_definition_set_result(definition, result);
 	} else {
-		oscap_dlprintf(DBG_W, "Can't resolve result attribute, "
-			       "definition id: %s.\n", definition_id);
+		dW("Can't resolve result attribute, definition id: %s.\n", definition_id);
 		oval_result_definition_set_result(definition, OVAL_RESULT_UNKNOWN);
 	}
 
-	//Process tag contents
-	oscap_dlprintf(DBG_I, "Processing <definition> contents: "
-		       "id: %s, vsn: %d, "
-		       "result: %d.\n", definition_id, defvsn, result);
-
-	return_code = oval_parser_parse_tag
-	    (reader, context, (oval_xml_tag_parser) _oval_result_definition_parse, definition);
+	return_code = oval_parser_parse_tag(reader, context, oval_result_definition_parse, definition);
 
 	oscap_free(definition_id);
 	oscap_free(definition_version);
 
-	(*consumer) (definition, client);
+	oval_result_system_add_definition(sys, definition);
+
 	return return_code;
 }
 

@@ -211,10 +211,6 @@ int oval_state_content_parse_tag(xmlTextReaderPtr reader,
 	struct oval_state_content *content = oval_state_content_new(context->definition_model);
 	int retcode = oval_entity_parse_tag
 	    (reader, context, (oscap_consumer_func) _oval_state_content_entity_consumer, content);
-	if (retcode != 1) {
-		oval_state_content_free(content);
-		return retcode;
-	}
 
 	oval_check_t var_check = oval_check_parse(reader, "var_check", OVAL_CHECK_ALL);
 	oval_check_t ent_check = oval_check_parse(reader, "entity_check", OVAL_CHECK_ALL);

@@ -236,31 +236,18 @@ static int _oval_affected_parse_tag(xmlTextReaderPtr reader, struct oval_parser_
 			oscap_free(product);
 		}
 	} else {
-		int depth = xmlTextReaderDepth(reader);
-
-		if (depth == -1)
-			oscap_setxmlerr(xmlGetLastError());
-
-		oscap_dlprintf(DBG_I, "Skipping tag: %s, depth: %d, line: %d.\n", tagname, depth,
-                              xmlTextReaderGetParserLineNumber(reader));
+		oscap_dlprintf(DBG_I, "Skipping tag: %s\n", tagname);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 	oscap_free(tagname);
 	return return_code;
 }
 
-int oval_affected_parse_tag(xmlTextReaderPtr reader,
-			    struct oval_parser_context *context, oval_affected_consumer consumer, void *user)
+int oval_affected_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, oval_affected_consumer consumer, void *user)
 {
 	__attribute__nonnull__(context);
 
 	struct oval_affected *affected = oval_affected_new(context->definition_model);
-	if (affected == NULL)
-		return -1;
-
-	//xmlChar *tagname = xmlTextReaderName(reader);
-	//xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
-	//
 	char *family = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "family");
 	oval_affected_set_family(affected, _odafamily(family));
 	oscap_free(family);
@@ -268,32 +255,3 @@ int oval_affected_parse_tag(xmlTextReaderPtr reader,
 	return oval_parser_parse_tag(reader, context, &_oval_affected_parse_tag, affected);
 }
 
-void oval_affected_to_print(struct oval_affected *affected, char *indent, int idx)
-{
-	__attribute__nonnull__(affected);
-
-	char nxtindent[100];
-
-	if (strlen(indent) > 80)
-		indent = "....";
-
-	if (idx == 0)
-		snprintf(nxtindent, sizeof(nxtindent), "%sAFFECTED.", indent);
-	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sAFFECTED[%d].", indent, idx);
-
-	printf("%sFAMILY = %d\n", nxtindent, affected->family);
-	struct oval_iterator *platforms = oval_collection_iterator(affected->platforms);
-	for (idx = 1; oval_collection_iterator_has_more(platforms); idx++) {
-		void *platform = oval_collection_iterator_next(platforms);
-		printf("%sPLATFORM[%d] = %s\n", nxtindent, idx, (char *)platform);
-	}
-	oval_collection_iterator_free(platforms);
-
-	struct oval_iterator *products = oval_collection_iterator(affected->products);
-	for (idx = 1; oval_collection_iterator_has_more(products); idx++) {
-		void *product = oval_collection_iterator_next(products);
-		printf("%sPRODUCT[%d] = %s\n", nxtindent, idx, (char *)product);
-	}
-	oval_collection_iterator_free(products);
-}

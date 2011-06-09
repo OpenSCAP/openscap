@@ -148,25 +148,18 @@ static void oval_message_parse_tag_consumer(char *text, void *message)
 	oval_message_set_text(message, text);
 }
 
-int oval_message_parse_tag(xmlTextReaderPtr reader,
-			   struct oval_parser_context *context, oscap_consumer_func consumer, void *client)
+int oval_message_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, oscap_consumer_func consumer, void *client)
 {
-	int return_code = 1;
+	int return_code = 0;
 	struct oval_message *message = oval_message_new();
-	{			/*message->lever */
-		oval_message_set_level(message, oval_message_level_parse(reader, "level", OVAL_MESSAGE_LEVEL_INFO));
-	}
-	{			/*message->text */
-		return_code = oval_parser_text_value(reader, context, &oval_message_parse_tag_consumer, message);
-	}
-	if (return_code != 1) {
-		oscap_dlprintf(DBG_W, "Return code is not 1: %d.\n", return_code);
-	} else {
-		oscap_dlprintf(DBG_I, "message->level: %d, message->text: %s.\n",
-			       oval_message_get_level(message), oval_message_get_text(message));
+	/* message->level */
+	oval_message_set_level(message, oval_message_level_parse(reader, "level", OVAL_MESSAGE_LEVEL_INFO));
+	/* message->text */
+	return_code = oval_parser_text_value(reader, context, &oval_message_parse_tag_consumer, message);
 
+        if (return_code == 0)
 		(*consumer) (message, client);
-	}
+
 	return return_code;
 }
 

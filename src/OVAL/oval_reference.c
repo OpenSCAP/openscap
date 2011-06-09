@@ -175,8 +175,7 @@ void oval_reference_set_url(struct oval_reference *ref, char *url)
 }
 
 /*typedef void (*oval_reference_consumer)(struct oval_reference*, void*);*/
-int oval_reference_parse_tag(xmlTextReaderPtr reader,
-			     struct oval_parser_context *context, oval_reference_consumer consumer, void *user)
+int oval_reference_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, oval_reference_consumer consumer, void *user)
 {
 	__attribute__nonnull__(context);
 
@@ -200,6 +199,6 @@ int oval_reference_parse_tag(xmlTextReaderPtr reader,
 		source = NULL;
 	}
 	(*consumer) (ref, user);
-	return 1;
+	return 0;
 }
 

@@ -476,8 +476,7 @@ static int _oval_definition_parse_metadata(xmlTextReaderPtr reader, struct oval_
 	if ((strcmp(tagname, "title") == 0)) {
 		return_code = oval_parser_text_value(reader, context, &_oval_definition_title_consumer, definition);
 	} else if (strcmp(tagname, "description") == 0) {
-		return_code =
-		    oval_parser_text_value(reader, context, &_oval_definition_description_consumer, definition);
+		return_code = oval_parser_text_value(reader, context, &_oval_definition_description_consumer, definition);
 	} else if (strcmp(tagname, "affected") == 0) {
 		return_code = oval_affected_parse_tag(reader, context, &_oval_definition_affected_consumer, definition);
 	} else if (strcmp(tagname, "oval_repository") == 0) {	/* NOOP */
@@ -523,18 +522,14 @@ static int _oval_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parse
 	} else if ((strcmp(tagname, "criteria") == 0)) {
 		return_code = oval_criteria_parse_tag(reader, context, &_oval_definition_criteria_consumer, definition);
 	} else {
-		int depth = xmlTextReaderDepth(reader);
-		if (depth == -1)
-			oscap_setxmlerr(xmlGetLastError());
-		oscap_dlprintf(DBG_I, "Skipping tag: %s, depth: %d, line: %d.\n", tagname, depth,
-                              xmlTextReaderGetParserLineNumber(reader));
+		oscap_dlprintf(DBG_I, "Skipping tag: %s.\n", tagname);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 	oscap_free(tagname);
 	return return_code;
 }
 
-int oval_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context)
+int oval_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *usr)
 {
 	struct oval_definition_model *model = oval_parser_context_model(context);
 	char *id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
@@ -554,8 +549,7 @@ int oval_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parser_contex
 
 	int deprecated = oval_parser_boolean_attribute(reader, "deprecated", 0);
 	oval_definition_set_deprecated(definition, deprecated);
-	int return_code = oval_parser_parse_tag(reader, context, &_oval_definition_parse_tag,
-						definition);
+	int return_code = oval_parser_parse_tag(reader, context, &_oval_definition_parse_tag, definition);
 	return return_code;
 }
 

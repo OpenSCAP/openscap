@@ -382,58 +382,79 @@ static int _oval_object_parse_tag(xmlTextReaderPtr reader, struct oval_parser_co
 	struct oval_object *object = (struct oval_object *)user;
 	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
-	int return_code = 1;
+	int return_code = 0;
 	if ((strcmp(tagname, "notes") == 0)) {
 		return_code = oval_parser_parse_tag(reader, context, &_oval_object_parse_notes, object);
 	} else if (strcmp(tagname, "behaviors") == 0) {
-		return_code =
-		    oval_behavior_parse_tag(reader, context,
-					    oval_object_get_family(object), &oval_behavior_consume, object);
+		return_code = oval_behavior_parse_tag(reader, context, oval_object_get_family(object), &oval_behavior_consume, object);
 	} else {
 		return_code = oval_object_content_parse_tag(reader, context, &oval_content_consume, object);
 	}
-	if (return_code != 1) {
-		oscap_dlprintf(DBG_I, "Parsing of <%s> terminated by an error at line %d.\n",
-			       tagname, xmlTextReaderGetParserLineNumber(reader));
+
+	if (return_code != 0) {
+		dW("Parsing of <%s> terminated by an error at line %d.\n", tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
+
 	oscap_free(tagname);
 	oscap_free(namespace);
 	return return_code;
 }
 
-int oval_object_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context)
+/* -1 = error; 0 = OK; 1 = warning */
+int oval_object_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *usr)
 {
+	int ret;
+	char *comm = NULL;
+	char *version = NULL;
 	struct oval_definition_model *model = oval_parser_context_model(context);
+
 	char *id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-	oscap_dlprintf(DBG_I, "Object id: %s.\n", id);
 	struct oval_object *object = oval_object_get_new(model, id);
-	oscap_free(id);
-	id = NULL;
+
 	oval_subtype_t subtype = oval_subtype_parse(reader);
+	if ( subtype == OVAL_SUBTYPE_UNKNOWN) {
+		oscap_dlprintf(DBG_E,  "Unknown object %s.\n", id);
+		ret = -1;
+		goto cleanup;
+	}
 	oval_object_set_subtype(object, subtype);
-	char *comm = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
+
+	comm = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
 	if (comm != NULL) {
 		oval_object_set_comment(object, comm);
-		oscap_free(comm);
-		comm = NULL;
 	}
+
 	int deprecated = oval_parser_boolean_attribute(reader, "deprecated", 0);
 	oval_object_set_deprecated(object, deprecated);
-	char *version = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "version");
-	oval_object_set_version(object, atoi(version));
-	oscap_free(version);
 
-	int return_code = oval_parser_parse_tag(reader, context, &_oval_object_parse_tag, object);
-	return return_code;
+	version = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "version");
+	oval_object_set_version(object, atoi(version));
+
+	ret = oval_parser_parse_tag(reader, context, &_oval_object_parse_tag, object);
+
+cleanup:
+	oscap_free(id);
+	oscap_free(comm);
+	oscap_free(version);
+	return ret;
 }
 
-xmlNode *oval_object_to_dom(struct oval_object *object, xmlDoc * doc, xmlNode * parent) {
+xmlNode *oval_object_to_dom(struct oval_object *object, xmlDoc * doc, xmlNode * parent)
+{
+	xmlNode *object_node = NULL;
+
+	/* skip unknown object */
 	oval_subtype_t subtype = oval_object_get_subtype(object);
+        if ( subtype == OVAL_SUBTYPE_UNKNOWN ) {
+                oscap_dlprintf(DBG_E, "Unknown Object %s.\n", oval_object_get_id(object));
+                return object_node;
+        }
+
 	const char *subtype_text = oval_subtype_get_text(subtype);
 	char object_name[strlen(subtype_text) + 8];
 	*object_name = '\0';
 	strcat(strcat(object_name, subtype_text), "_object");
-	xmlNode *object_node = xmlNewTextChild(parent, NULL, BAD_CAST object_name, NULL);
+	object_node = xmlNewTextChild(parent, NULL, BAD_CAST object_name, NULL);
 
 	oval_family_t family = oval_object_get_family(object);
 	const char *family_text = oval_family_get_text(family);

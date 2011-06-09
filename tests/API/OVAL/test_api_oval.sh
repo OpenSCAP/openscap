@@ -29,7 +29,7 @@ function test_api_oval_syschar {
 }
 
 function test_api_oval_results {
-    ./test_api_results $srcdir/scap-rhel5-oval.xml $srcdir/results.xml
+    ./test_api_results $srcdir/results.xml
     return $?
 }
 

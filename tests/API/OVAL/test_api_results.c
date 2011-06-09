@@ -32,31 +32,33 @@ static int _test_error(void)
 
 int main(int argc, char **argv)
 {
-	printf("START\n");
-	if(argc>1){
-		struct oval_definition_model *model;
+	struct oval_result_directives *directives = NULL;
+	struct oval_results_model *results_model = NULL;
+	struct oval_definition_model *model = NULL;
 
-		printf("LOAD OVAL DEFINITIONS\n");
-		if ( (model=oval_definition_model_import(argv[1])) == NULL)
+	if(argc>1){
+		if ( (model=oval_definition_model_new()) == NULL)
                         _test_error();
-		printf("OVAL DEFINITIONS LOADED\n");
-		if(argc>2){
-			printf("LOAD OVAL RESULTS\n");
-			struct oval_results_model *results_model = oval_results_model_new(model,NULL);
-			if (oval_results_model_import(results_model, argv[2]) == NULL)
-                                _test_error();
-			printf("OVAL RESULTS LOADED\n");
-			if (argc>3) {
-				printf("WRITE OVAL RESULTS\n");
-				struct oval_result_directives *directives = oval_result_directives_new(results_model);
-				oval_results_model_export(results_model, directives, argv[3]);
-				oval_result_directives_free(directives);
-				printf("OVAL RESULTS WRITTEN\n");
-			}
-			oval_results_model_free(results_model);
+		printf("LOAD OVAL RESULTS\n");
+		results_model = oval_results_model_new(model,NULL);
+		if (oval_results_model_import(results_model, argv[1]) == NULL)
+			_test_error();
+		printf("OVAL RESULTS LOADED\n");
+		if (argc>2) {
+			printf("WRITE OVAL RESULTS\n");
+			directives = oval_result_directives_new(results_model);
+			oval_results_model_export(results_model, directives, argv[2]);
+			printf("OVAL RESULTS WRITTEN\n");
 		}
+	} else printf("USAGE: %s <results.xml>\n", argv[0]);
+
+
+	if(directives)
+		oval_result_directives_free(directives);
+	if(results_model)
+		oval_results_model_free(results_model);
+	if(model)
 		oval_definition_model_free(model);
-	}else printf("USAGE: %s <oval_definitions.xml> [results.xml>]\n", argv[0]);
 	oscap_cleanup();
 }
 

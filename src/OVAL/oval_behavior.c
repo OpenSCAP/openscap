@@ -167,20 +167,6 @@ int oval_behavior_parse_tag(xmlTextReaderPtr reader,
 			(*consumer) (behavior, user);
 		}
 	}
-	return 1;
+	return 0;
 }
 
-void oval_behavior_to_print(struct oval_behavior *behavior, char *indent, int idx)
-{
-	char nxtindent[100];
-
-	if (strlen(indent) > 80)
-		indent = "....";
-
-	if (idx == 0)
-		snprintf(nxtindent, sizeof(nxtindent), "%sBEHAVIOR.", indent);
-	else
-		snprintf(nxtindent, sizeof(nxtindent), "%sBEHAVIOR[%d].", indent, idx);
-
-	printf("%s%s = [%s]\n", nxtindent, oval_behavior_get_key(behavior), oval_behavior_get_value(behavior));
-}

@@ -49,10 +49,10 @@ int oval_sysinfo_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 
 void oval_sysitem_to_print(struct oval_sysitem *, char *, int);
 void oval_sysitem_to_dom(struct oval_sysitem *, xmlDoc *, xmlNode *);
-int oval_sysitem_parse_tag(xmlTextReaderPtr, struct oval_parser_context *);
+int oval_sysitem_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, void *usr);
 
 void oval_syschar_to_dom(struct oval_syschar *, xmlDoc *, xmlNode *);
-int oval_syschar_parse_tag(xmlTextReaderPtr, struct oval_parser_context *context);
+int oval_syschar_parse_tag(xmlTextReaderPtr, struct oval_parser_context *context, void *);
 oval_syschar_collection_flag_t oval_syschar_flag_parse(xmlTextReaderPtr, char *, oval_syschar_collection_flag_t);
 oval_syschar_status_t oval_syschar_status_parse(xmlTextReaderPtr, char *, oval_syschar_status_t);
 

@@ -166,24 +166,20 @@ int oval_variable_binding_parse_tag(xmlTextReaderPtr reader,
 {
 	__attribute__nonnull__(context);
 
-	int return_code = 1;
+	int return_code = 0;
 	struct oval_variable_binding *binding = oval_variable_binding_new(NULL, NULL);
-	{			//variable
-		char *variableId = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "variable_id");
-		struct oval_variable *variable =
-		    oval_variable_get_new(context->definition_model, variableId, OVAL_VARIABLE_UNKNOWN);
-		oval_variable_binding_set_variable(binding, variable);
-		oscap_free(variableId);
-		variableId = NULL;
-	}
-	{			//bound value
-		return_code = oval_parser_text_value(reader, context, &_oval_variable_binding_value_consumer, binding);
-	}
-	if (return_code != 1) {
-		oscap_dlprintf(DBG_W, "Return code is not 1: %d.\n", return_code);
-	} else {
+	/* variable */
+	char *variableId = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "variable_id");
+	struct oval_variable *variable = oval_variable_get_new(context->definition_model, variableId, OVAL_VARIABLE_UNKNOWN);
+	oval_variable_binding_set_variable(binding, variable);
+	oscap_free(variableId);
+
+	/* bound value */
+	return_code = oval_parser_text_value(reader, context, &_oval_variable_binding_value_consumer, binding);
+
+	if (return_code == 0)
 		(*consumer) (binding, client);
-	}
+
 	return return_code;
 }
 

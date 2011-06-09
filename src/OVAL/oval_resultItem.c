@@ -198,9 +198,6 @@ int oval_result_item_parse_tag
 	oval_result_t result = oval_result_parse(reader, "result", 0);
 	oval_result_item_set_result(item, result);
 
-	oscap_dlprintf(DBG_I, "item_id: %s, result: %d.\n",
-		       oval_sysitem_get_id(oval_result_item_get_sysitem(item)), oval_result_item_get_result(item));
-
 	return_code = oval_parser_parse_tag
 	    (reader, context, (oval_xml_tag_parser) _oval_result_item_message_parse, item);
 

@@ -314,7 +314,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	__attribute__nonnull__(context);
 
 	struct oval_entity *entity = oval_entity_new(context->definition_model);
-	int return_code;
+	int return_code = 0;
 	oval_datatype_t datatype = oval_datatype_parse(reader, "datatype", OVAL_DATATYPE_STRING);
 	oval_operation_t operation = oval_operation_parse(reader, "operation", OVAL_OPERATION_EQUALS);
 	int mask = oval_parser_boolean_attribute(reader, "mask", 0);
@@ -335,7 +335,6 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 			struct oval_definition_model *model = oval_parser_context_model(context);
 			variable = oval_definition_model_get_variable(model, varref);
 			varref_type = OVAL_ENTITY_VARREF_ATTRIBUTE;
-			return_code = 1;
 			oscap_free(varref);
 			varref = NULL;
 			value = NULL;
@@ -345,7 +344,6 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 		varref_type = OVAL_ENTITY_VARREF_NONE;
 		if (datatype == OVAL_DATATYPE_RECORD) {
 			value = NULL;
-			return_code = 1;
 		} else {
 			return_code = oval_value_parse_tag(reader, context, &oval_consume_value, &value);
 		}
@@ -354,7 +352,6 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 		variable = oval_variable_get_new(model, varref, OVAL_VARIABLE_UNKNOWN);
 		varref_type = OVAL_ENTITY_VARREF_ATTRIBUTE;
 		value = NULL;
-		return_code = 1;
 		oscap_free(varref);
 		varref = NULL;
 	}
@@ -367,10 +364,11 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	oval_entity_set_variable(entity, variable);
 	oval_entity_set_value(entity, value);
 	(*consumer) (entity, user);
-	if (return_code != 1) {
-		oscap_dlprintf(DBG_I, "Parsing of <%s> terminated by an error at line %d.\n", name,
-			       xmlTextReaderGetParserLineNumber(reader));
+
+	if (return_code != 0) {
+		dW("Parsing of <%s> terminated by an error at line %d.\n", name, xmlTextReaderGetParserLineNumber(reader));
 	}
+
 	oscap_free(name);
 	return return_code;
 }

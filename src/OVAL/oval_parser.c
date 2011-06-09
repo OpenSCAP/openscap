@@ -41,6 +41,7 @@
 #include "common/util.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
+#include "common/elements.h"
 
 struct oval_definition_model *oval_parser_context_model(struct oval_parser_context
 							*context)
@@ -50,176 +51,117 @@ struct oval_definition_model *oval_parser_context_model(struct oval_parser_conte
 	return context->definition_model;
 }
 
-void libxml_error_handler(void *user, const char *message,
-			  xmlParserSeverities severity, xmlTextReaderLocatorPtr locator)
+void libxml_error_handler(void *user, const char *message, xmlParserSeverities severity, xmlTextReaderLocatorPtr locator)
 {
-	/*struct oval_parser_context *context = (struct oval_parser_context*)user;
-	   xVmlTextReader *reader = context->reader;
-	   char msgfield[strlen(message) + 1];
-	   *msgfield = 0;
-	   strcat(msgfield, message);
-	   struct oval_xml_error xml_error;
-	   xml_error.message     = msgfield;
-	   xml_error.severity    = severity;
-	   xml_error.system_id   = (char*) xmlTextReaderLocatorBaseURI(locator);
-	   xml_error.line_number = xmlTextReaderGetParserLineNumber(reader); */
 	oscap_setxmlerr(xmlGetLastError());
-
-	/*if(xml_error.system_id!=NULL)
-	   oscap_free(xml_error.system_id); */
 }
-
-typedef int (*_oval_parser_process_tag_func) (xmlTextReaderPtr reader, struct oval_parser_context * context);
-
-static int _oval_parser_process_tags(xmlTextReaderPtr reader,
-				     struct oval_parser_context *context, _oval_parser_process_tag_func tag_func)
-{
-
-	const int depth = xmlTextReaderDepth(reader);
-	int return_code;
-	char *tagname = (char *)xmlTextReaderLocalName(reader);
-	while ((return_code = xmlTextReaderRead(reader)) == 1) {
-		//char *subname = (char*) xmlTextReaderLocalName(reader);
-		switch (xmlTextReaderNodeType(reader)) {
-		case XML_READER_TYPE_ELEMENT:{
-				return_code = (*tag_func) (reader, context);
-			}
-			break;
-		case XML_READER_TYPE_END_ELEMENT:{
-				if (depth == xmlTextReaderDepth(reader)) {
-					oscap_free(tagname);
-					return return_code;
-				}
-			}
-			break;
-		}
-		if (return_code != 1) {
-			oscap_dlprintf(DBG_I, "Parsing of <%s> terminated by an error.\n", tagname);
-		}
-		if (return_code != 1)
-			break;
-	}
-	oscap_free(tagname);
-	return return_code;
-}
-
-#define DEBUG_OVAL_PARSER 0
-#define  STUB_OVAL_PARSER 0
 
 /**
- * return 1 on success, -1,0 on failure
+ * -1 error; 0 OK; 1 warning
  */
-int ovaldef_parse_node(xmlTextReaderPtr reader, struct oval_parser_context *context)
+int oval_parser_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, oval_xml_tag_parser tag_parser, void *user)
 {
-	const char *oval_namespace = "http://oval.mitre.org/XMLSchema/oval-definitions-5";
+	int ret=0;
+	int depth = xmlTextReaderDepth(reader);
+
+	xmlTextReaderRead(reader);
+	while ( (ret!=-1) &&  (xmlTextReaderDepth(reader) > depth) ) {
+		if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+			ret = (*tag_parser) (reader, context, user);
+		}
+                if (xmlTextReaderRead(reader) != 1) {
+			ret = -1;
+                        break;
+		}
+	}
+	return ret;
+}
+
+/*
+ * -1 error; 0 OK; 1 warning
+ */
+int oval_definition_model_parse(xmlTextReaderPtr reader, struct oval_parser_context *context)
+{
 	const char *tagname_generator = "generator";
 	const char *tagname_definitions = "definitions";
 	const char *tagname_tests = "tests";
 	const char *tagname_objects = "objects";
 	const char *tagname_states = "states";
 	const char *tagname_variables = "variables";
-	int depth = xmlTextReaderDepth(reader);	/*tree_depth */
-	oscap_dlprintf(DBG_I, "oval_parser: START PARSE (depth: %d).\n", depth);
-	oscap_dlprintf(DBG_I, "oval_parser: ENCLOSING TAG <%s:%s>.\n",
-		      xmlTextReaderConstNamespaceUri(reader), xmlTextReaderConstLocalName(reader));
-	int return_code = xmlTextReaderRead(reader);
-	while (return_code == 1) {
+
+	int depth = xmlTextReaderDepth(reader);
+	int ret = 0;
+
+	xmlTextReaderRead(reader);
+	while ((xmlTextReaderDepth(reader) > depth) && (ret != -1 )) {
 		if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-			if (xmlTextReaderDepth(reader) > depth) {
-				char *tagname = (char *)xmlTextReaderLocalName(reader);
-				char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
-				oscap_dlprintf(DBG_I, "oval_parser: PROCESSING TAG <%s:%s>, depth: %d.\n",
-					      namespace, tagname, xmlTextReaderDepth(reader));
-				int is_oval = strcmp(namespace, oval_namespace) == 0;
-				if (is_oval && (strcmp(tagname, tagname_definitions) == 0)) {
-					return_code = (STUB_OVAL_PARSER)
-					    ? oval_parser_skip_tag(reader, context)
-					    : _oval_parser_process_tags(reader, context, &oval_definition_parse_tag);
-				} else if (is_oval && strcmp(tagname, tagname_tests) == 0) {
-					return_code = (STUB_OVAL_PARSER)
-					    ? oval_parser_skip_tag(reader, context)
-					    : _oval_parser_process_tags(reader, context, &oval_test_parse_tag);
-				} else if (is_oval && strcmp(tagname, tagname_objects) == 0) {
-					return_code = (STUB_OVAL_PARSER)
-					    ? oval_parser_skip_tag(reader, context)
-					    : _oval_parser_process_tags(reader, context, &oval_object_parse_tag);
-				} else if (is_oval && strcmp(tagname, tagname_states) == 0) {
-					return_code = (STUB_OVAL_PARSER)
-					    ? oval_parser_skip_tag(reader, context)
-					    : _oval_parser_process_tags(reader, context, &oval_state_parse_tag);
-				} else if (is_oval && strcmp(tagname, tagname_variables) == 0) {
-					return_code = (STUB_OVAL_PARSER)
-					    ? oval_parser_skip_tag(reader, context)
-					    : _oval_parser_process_tags(reader, context, &oval_variable_parse_tag);
-				} else if (is_oval && strcmp(tagname, tagname_generator) == 0) {
-					if (STUB_OVAL_PARSER) {
-						return_code = oval_parser_skip_tag(reader, context);
-					} else {
-						struct oval_generator *gen;
+			char *tagname = (char *)xmlTextReaderLocalName(reader);
+			char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 
-						gen = oval_definition_model_get_generator(oval_parser_context_model(context));
-						return_code = oval_generator_parse_tag(reader, context, gen);
-					}
-				} else {
-					oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown xml element");
-					oscap_dlprintf(DBG_W, "oval_parser: unprocessed tag: <%s:%s>.\n", namespace,
-						      tagname);
-					return_code = oval_parser_skip_tag(reader, context);
-				}
-				oscap_free(tagname);
-				oscap_free(namespace);
-			} else
-				return_code = xmlTextReaderRead(reader);
-			if ((return_code == 1)
-			    && (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT)) {
-				return_code = xmlTextReaderRead(reader);
+			int is_oval = strcmp((const char *)OVAL_DEFINITIONS_NAMESPACE, namespace) == 0;
+			if (is_oval && (strcmp(tagname, tagname_definitions) == 0)) {
+				ret = oval_parser_parse_tag(reader, context, &oval_definition_parse_tag, NULL);
+			} else if (is_oval && strcmp(tagname, tagname_tests) == 0) {
+				ret = oval_parser_parse_tag(reader, context, &oval_test_parse_tag, NULL);
+			} else if (is_oval && strcmp(tagname, tagname_objects) == 0) {
+				ret =  oval_parser_parse_tag(reader, context, &oval_object_parse_tag, NULL);
+			} else if (is_oval && strcmp(tagname, tagname_states) == 0) {
+				ret =  oval_parser_parse_tag(reader, context, &oval_state_parse_tag, NULL);
+			} else if (is_oval && strcmp(tagname, tagname_variables) == 0) {
+				ret =  oval_parser_parse_tag(reader, context, &oval_variable_parse_tag, NULL);
+			} else if (is_oval && strcmp(tagname, tagname_generator) == 0) {
+				struct oval_generator *gen;
+				gen = oval_definition_model_get_generator(oval_parser_context_model(context));
+				ret = oval_parser_parse_tag(reader, context, &oval_generator_parse_tag, gen);
+			} else {
+				dW("Unprocessed tag: <%s:%s>.\n", namespace, tagname);
+				oval_parser_skip_tag(reader, context);
 			}
-		} else if (xmlTextReaderDepth(reader) > depth) {
-			return_code = xmlTextReaderRead(reader);
-		} else
-			break;
+
+			oscap_free(tagname);
+			oscap_free(namespace);
+
+			oscap_to_start_element(reader, depth+1);
+		} else {
+			if (xmlTextReaderRead(reader) != 1) {
+				ret = -1;
+				break;
+			}
+		}
 	}
-	return return_code;
+
+	return ret;
 }
 
-int ovaldef_parser_parse(struct oval_definition_model *model, xmlTextReader * reader, void *user_arg) {
-	int retcode = 0;
-	if (reader) {
-		struct oval_parser_context context;
-		context.reader = reader;
-		context.definition_model = model;
-		context.user_data = user_arg;
-		xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
-		retcode = ovaldef_parse_node(reader, &context);
-	} else {
-		oscap_setxmlerr(xmlGetLastError());
-		oscap_dlprintf(DBG_E, "xmlTextReader is NULL.\n");
-		return -1;
-	}
-	return retcode;
-}
-
+/* -1 error; 0 OK */
 int oval_parser_skip_tag(xmlTextReaderPtr reader, struct oval_parser_context *context)
 {
+	int ret = 0;
 	int depth = xmlTextReaderDepth(reader);
-	int return_code;
-	while (((return_code = xmlTextReaderRead(reader)) == 1)
-	       && xmlTextReaderDepth(reader) > depth) ;
-	return return_code;
+
+	xmlTextReaderRead(reader);
+	while ( xmlTextReaderDepth(reader) > depth )  {
+		if (xmlTextReaderRead(reader) != 1) {
+			ret = -1;
+                        break;
+		}
+	}
+
+	return ret;
 }
 
-int oval_parser_text_value(xmlTextReaderPtr reader,
-			   struct oval_parser_context *context, oval_xml_value_consumer consumer, void *user)
+int oval_parser_text_value(xmlTextReaderPtr reader, struct oval_parser_context *context, oval_xml_value_consumer consumer, void *user)
 {
 	int depth = xmlTextReaderDepth(reader);
-	int return_code;
 	bool has_value = false;
+	int ret = 0;
 
-	if (xmlTextReaderIsEmptyElement(reader))
-		return 1;
+	if (xmlTextReaderIsEmptyElement(reader)) {
+		return ret;
+	}
 
-	while (((return_code = xmlTextReaderRead(reader)) == 1)
-	       && xmlTextReaderDepth(reader) > depth) {
+	xmlTextReaderRead(reader);
+	while (xmlTextReaderDepth(reader) > depth) {
 		int nodetype = xmlTextReaderNodeType(reader);
 		if (nodetype == XML_READER_TYPE_CDATA || nodetype == XML_READER_TYPE_TEXT) {
 			char *value = (char *)xmlTextReaderValue(reader);
@@ -227,48 +169,18 @@ int oval_parser_text_value(xmlTextReaderPtr reader,
 			oscap_free(value);
 			has_value = true;
 		}
+		if (xmlTextReaderRead(reader) != 1) {
+			ret = -1;
+			break;
+		}
 	}
 
 	if (!has_value)
 		(*consumer) ("", user);
 
-	return return_code;
+	return ret;
 }
 
-/**
- * return 1 on success, -1,0 on failure
- */
-/*typedef int (*oval_xml_tag_parser)    (xmlTextReaderPtr, struct oval_parser_context*, void*);*/
-int oval_parser_parse_tag(xmlTextReaderPtr reader,
-			  struct oval_parser_context *context, oval_xml_tag_parser tag_parser, void *user)
-{
-	int depth = xmlTextReaderDepth(reader);
-
-	int return_code = xmlTextReaderRead(reader);
-	while ((return_code == 1) && (xmlTextReaderDepth(reader) > depth)) {
-		int linno = xmlTextReaderGetParserLineNumber(reader);
-		int colno = xmlTextReaderGetParserColumnNumber(reader);
-		if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-			return_code = (*tag_parser) (reader, context, user);
-			if (return_code == 1) {
-				if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
-					return_code = xmlTextReaderRead(reader);
-				} else {
-					int newlinno = xmlTextReaderGetParserLineNumber(reader);
-					int newcolno = xmlTextReaderGetParserColumnNumber(reader);
-					if (newlinno == linno && newcolno == colno)
-						return_code = xmlTextReaderRead(reader);
-				}
-			}
-		} else if (xmlTextReaderDepth(reader) > depth) {
-			return_code = xmlTextReaderRead(reader);
-		} else
-			break;
-	}
-	if (return_code < 0)
-		oscap_setxmlerr(xmlGetLastError());
-	return return_code;
-}
 
 int oval_parser_boolean_attribute(xmlTextReaderPtr reader, char *attname, int defval)
 {

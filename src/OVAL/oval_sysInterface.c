@@ -196,8 +196,9 @@ static int _oval_sysint_parse_tag(xmlTextReaderPtr reader, struct oval_parser_co
 	struct oval_sysint *sysint = (struct oval_sysint *)user;
 	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
-	int is_ovalsys = strcmp(namespace, NAMESPACE_OVALSYS) == 0;
-	int return_code;
+	int return_code = 0;
+
+	int is_ovalsys = strcmp((const char *)OVAL_SYSCHAR_NAMESPACE, namespace) == 0;
 	if (is_ovalsys && (strcmp(tagname, "interface_name") == 0)) {
 		return_code = oval_parser_text_value(reader, context, &oval_consume_interface_name, sysint);
 	} else if (is_ovalsys && (strcmp(tagname, "ip_address") == 0)) {
@@ -205,35 +206,39 @@ static int _oval_sysint_parse_tag(xmlTextReaderPtr reader, struct oval_parser_co
 	} else if (is_ovalsys && (strcmp(tagname, "mac_address") == 0)) {
 		return_code = oval_parser_text_value(reader, context, &oval_consume_mac_address, sysint);
 	} else {
-		oscap_dlprintf(DBG_W, "Skipping tag: <%s:%s>.\n", namespace, tagname);
-		return_code = oval_parser_skip_tag(reader, context);
+		dW("Skipping tag: <%s:%s>.\n", namespace, tagname);
+		oval_parser_skip_tag(reader, context);
 	}
+
 	oscap_free(tagname);
 	oscap_free(namespace);
+
 	return return_code;
 }
 
 int oval_sysint_parse_tag(xmlTextReaderPtr reader,
 			  struct oval_parser_context *context, oval_sysint_consumer consumer, void *user)
 {
-
 	__attribute__nonnull__(context);
 
 	struct oval_sysint *sysint = oval_sysint_new(context->syschar_model);
 	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
-	int is_ovalsys = strcmp(namespace, NAMESPACE_OVALSYS) == 0;
-	int return_code;
+	int return_code = 0;
+
+	int is_ovalsys = strcmp((const char *)OVAL_SYSCHAR_NAMESPACE, namespace) == 0;
 	if (is_ovalsys && (strcmp(tagname, "interface") == 0)) {
 		return_code = oval_parser_parse_tag(reader, context, &_oval_sysint_parse_tag, sysint);
 	} else {
-		oscap_dlprintf(DBG_W, "Expected <interface>, skipping <%s:%s>.\n",
-			      namespace, tagname);
-		return_code = oval_parser_skip_tag(reader, context);
+		dW("Skipping tag: <%s:%s>.\n", namespace, tagname);
+		oval_parser_skip_tag(reader, context);
 	}
+
+	(*consumer) (sysint, user);
+
 	oscap_free(tagname);
 	oscap_free(namespace);
-	(*consumer) (sysint, user);
+
 	return return_code;
 }
 

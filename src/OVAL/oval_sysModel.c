@@ -79,7 +79,8 @@ struct oval_syschar_model *oval_syschar_model_new(struct oval_definition_model *
 
 	/* check possible allocation problems */
 	if ((newmodel->syschar_map == NULL) ||
-	    (newmodel->sysitem_map == NULL) || (newmodel->variable_binding_map == NULL)) {
+	    (newmodel->sysitem_map == NULL) ||
+	    (newmodel->variable_binding_map == NULL)) {
 		oval_syschar_model_free(newmodel);
 		return NULL;
 	}
@@ -324,6 +325,7 @@ void oval_syschar_model_add_sysitem(struct oval_syschar_model *model, struct ova
 }
 
 
+/* -1 error; 0 OK; 1 warning */
 int oval_syschar_model_import(struct oval_syschar_model *model, const char *file)
 {
 	__attribute__nonnull__(model);
@@ -338,11 +340,33 @@ int oval_syschar_model_import(struct oval_syschar_model *model, const char *file
                 return -1;
 	}
 
+	/* setup context */
+        struct oval_parser_context context;
+        context.reader = reader;
+        context.definition_model = oval_syschar_model_get_definition_model(model);
+        context.syschar_model = model;
+        context.user_data = NULL;
+	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
+	/* jump into oval_definitions */
 	xmlTextReaderRead(reader);
-	ret = ovalsys_parser_parse(model, reader, NULL);
+	/* make sure this is syschar */
+	char *tagname = (char *)xmlTextReaderLocalName(reader);
+	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
+	int is_ovalsys = strcmp((const char *)OVAL_SYSCHAR_NAMESPACE, namespace) == 0;
+	/* start parsing */
+	if (is_ovalsys && (strcmp(tagname, "oval_system_characteristics") == 0)) {
+		ret = oval_syschar_model_parse(reader, &context);
+	} else {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Missing \"oval_system_characteristics\" element");
+		dE("Unprocessed tag: <%s:%s>.\n", namespace, tagname);
+		ret = -1;
+	}
+
+	oscap_free(tagname);
+	oscap_free(namespace);
 	xmlFreeTextReader(reader);
 
-	return ret == -1 ? -1 : 0;
+	return ret;
 }
 
 

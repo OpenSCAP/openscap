@@ -46,35 +46,24 @@ struct oval_parser_context {
 	void *user_data;
 };
 
-struct oval_definition_model *oval_parser_context_model(struct oval_parser_context
-							*context);
+struct oval_definition_model *oval_parser_context_model(struct oval_parser_context *context);
 
-int ovaldef_parser_parse(struct oval_definition_model *, xmlTextReader *, void *);
-int ovaldef_parse_node(xmlTextReaderPtr, struct oval_parser_context *);
+int oval_definition_model_parse(xmlTextReaderPtr, struct oval_parser_context *);
+int oval_syschar_model_parse(xmlTextReaderPtr, struct oval_parser_context *);
+int oval_results_model_parse(xmlTextReaderPtr , struct oval_parser_context *, struct oval_result_directives **);
 
-int ovalsys_parser_parse(struct oval_syschar_model *, xmlTextReader *, void *);
-
-struct oval_result_directives *ovalres_parser_parse(struct oval_results_model *, xmlTextReader *, void *);
-
-
-void libxml_error_handler(void *user, const char *message,
-			  xmlParserSeverities severity, xmlTextReaderLocatorPtr locator);
+void libxml_error_handler(void *, const char *, xmlParserSeverities severity, xmlTextReaderLocatorPtr locator);
 
 int oval_parser_boolean(const char *, int);
-
 int oval_parser_boolean_attribute(xmlTextReaderPtr reader, char *attname, int defval);
-
 int oval_parser_int_attribute(xmlTextReaderPtr reader, char *attname, int defval);
 
 int oval_parser_skip_tag(xmlTextReaderPtr reader, struct oval_parser_context *context);
 
 typedef void (*oval_xml_value_consumer) (char *, void *);
-
-int oval_parser_text_value(xmlTextReaderPtr reader,
-			   struct oval_parser_context *context, oval_xml_value_consumer, void *);
+int oval_parser_text_value(xmlTextReaderPtr, struct oval_parser_context *, oval_xml_value_consumer, void *);
 
 typedef int (*oval_xml_tag_parser) (xmlTextReaderPtr, struct oval_parser_context *, void *);
-
 int oval_parser_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oval_xml_tag_parser, void *);
 
 void oval_text_consumer(char *text, void *user);

@@ -1473,7 +1473,7 @@ static void _oval_test_message_consumer(struct oval_message *message, struct ova
 }
 
 static int _oval_result_test_binding_parse(xmlTextReaderPtr reader, struct oval_parser_context *context, void **args) {
-	int return_code = 1;
+	int return_code = 0;
 
 	xmlChar *variable_id = xmlTextReaderGetAttribute(reader, BAD_CAST "variable_id");
 
@@ -1495,22 +1495,18 @@ static int _oval_result_test_binding_parse(xmlTextReaderPtr reader, struct oval_
 }
 
 static int _oval_result_test_parse(xmlTextReaderPtr reader, struct oval_parser_context *context, void **args) {
-	int return_code = 1;
+	int return_code = 0;
 	xmlChar *localName = xmlTextReaderLocalName(reader);
 
-	oscap_dlprintf(DBG_I, "Parsing <%s>.\n", localName);
-
 	if (strcmp((const char *)localName, "message") == 0) {
-		return_code = oval_message_parse_tag
-		    (reader, context, (oscap_consumer_func) _oval_test_message_consumer, TEST);
+		return_code = oval_message_parse_tag(reader, context, (oscap_consumer_func) _oval_test_message_consumer, TEST);
 	} else if (strcmp((const char *)localName, "tested_item") == 0) {
-		return_code = oval_result_item_parse_tag
-		    (reader, context, SYSTEM, (oscap_consumer_func) _oval_test_item_consumer, args);
+		return_code = oval_result_item_parse_tag(reader, context, SYSTEM, (oscap_consumer_func) _oval_test_item_consumer, args);
 	} else if (strcmp((const char *)localName, "tested_variable") == 0) {
 		return_code = _oval_result_test_binding_parse(reader, context, args);
 	} else {
-		oscap_dlprintf(DBG_W, "Unhandled tag: <%s>.\n", localName);
-		return_code = oval_parser_skip_tag(reader, context);
+		dW( "Unhandled tag: <%s>.\n", localName);
+		oval_parser_skip_tag(reader, context);
 	}
 
 	oscap_free(localName);
@@ -1518,10 +1514,10 @@ static int _oval_result_test_parse(xmlTextReaderPtr reader, struct oval_parser_c
 	return return_code;
 }
 
-int oval_result_test_parse_tag
-    (xmlTextReaderPtr reader, struct oval_parser_context *context,
-     struct oval_result_system *sys, oscap_consumer_func consumer, void *client) {
-	int return_code = 1;
+int oval_result_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *usr) {
+
+	struct oval_result_system *sys = (struct oval_result_system *) usr;
+	int return_code = 0;
 
 	xmlChar *test_id = xmlTextReaderGetAttribute(reader, BAD_CAST "test_id");
 	struct oval_result_test *test = oval_result_test_new(sys, (char *)test_id);
@@ -1565,7 +1561,8 @@ int oval_result_test_parse_tag
 	test->bindings_initialized = true;
 	test->bindings_clearable = true;
 
-	(*consumer) (test, client);
+	oval_result_system_add_test(sys, test);
+
 	oscap_free(test_id);
 	return return_code;
 }

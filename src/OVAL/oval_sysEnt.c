@@ -277,7 +277,7 @@ int oval_sysent_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *c
 	tagname = (char *) xmlTextReaderLocalName(reader);
 	if (!strcmp("#text", tagname)) {
 		xmlFree(tagname);
-		return 1;
+		return 0;
 	}
 
 	sysent = oval_sysent_new(context->syschar_model);
@@ -293,12 +293,11 @@ int oval_sysent_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *c
         oval_sysent_set_status(sysent, status);
 
 	if (datatype == OVAL_DATATYPE_RECORD)
-		ret = oval_parser_parse_tag(reader, context,
-			&_oval_sysent_parse_record_field, sysent);
+		ret = oval_parser_parse_tag(reader, context, &_oval_sysent_parse_record_field, sysent);
 	else
 		ret = oval_parser_text_value(reader, context, &oval_sysent_value_consumer_, sysent);
 
-	if (ret == 1)
+	if (ret == 0)
 		(*consumer) (sysent, user);
 
 	return ret;

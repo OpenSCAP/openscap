@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2011 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -24,6 +24,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors:
+ *      "Peter Vrabec" <pvrabec@redhat.com
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
  */
 
@@ -36,100 +37,54 @@
 #include <stddef.h>
 
 #include "public/oval_agent_api.h"
+#include "oval_agent_api_impl.h"
 #include "oval_parser_impl.h"
 #include "oval_definitions_impl.h"
 #include "oval_system_characteristics_impl.h"
 #include "common/util.h"
+#include "common/elements.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
 
-const char NAMESPACE_OVALSYS[] = "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5";
-
-static int _ovalsys_parser_process_node_consume_collected_objects(xmlTextReaderPtr reader,
-								  struct oval_parser_context *context, void *null)
+int oval_syschar_model_parse(xmlTextReaderPtr reader, struct oval_parser_context *context)
 {
-	return oval_syschar_parse_tag(reader, context);
-}
+	int depth = xmlTextReaderDepth(reader);
+	int ret = 0;
 
-static int _ovalsys_parser_process_node_consume_system_data(xmlTextReaderPtr reader,
-							    struct oval_parser_context *context, void *null)
-{
-	return oval_sysitem_parse_tag(reader, context);
-}
-
-static int _ovalsys_parser_process_node(xmlTextReaderPtr reader, struct oval_parser_context *context)
-{
-	int return_code = xmlTextReaderRead(reader);
-	while (return_code == 1) {
+	xmlTextReaderRead(reader);
+	while ((xmlTextReaderDepth(reader) > depth) && (ret != -1 )) {
 		if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-			if (xmlTextReaderDepth(reader) > 0) {
-				char *tagname = (char *)xmlTextReaderLocalName(reader);
-				char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
-				int is_ovalsys = strcmp((const char *)NAMESPACE_OVALSYS, namespace) == 0;
-				if (is_ovalsys && (strcmp(tagname, "generator") == 0)) {
-					struct oval_generator *gen;
+			char *tagname = (char *)xmlTextReaderLocalName(reader);
+			char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 
-					gen = oval_syschar_model_get_generator(context->syschar_model);
-					return_code = oval_generator_parse_tag(reader, context, gen);
-				} else if (is_ovalsys && (strcmp(tagname, "system_info") == 0)) {
-					return_code = oval_sysinfo_parse_tag(reader, context);
-				} else if (is_ovalsys && (strcmp(tagname, "collected_objects") == 0)) {
-					return_code =
-					    oval_parser_parse_tag(reader, context,
-								  &_ovalsys_parser_process_node_consume_collected_objects,
-								  NULL);
-				} else if (is_ovalsys && (strcmp(tagname, "system_data") == 0)) {
-					return_code =
-					    oval_parser_parse_tag(reader, context,
-								  &_ovalsys_parser_process_node_consume_system_data,
-								  NULL);
-				} else {
-					oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown element");
-					oscap_dlprintf(DBG_W, "Unprocessed tag: <%s:%s>.\n",
-						       namespace, tagname);
-					return_code = oval_parser_skip_tag(reader, context);
-				}
-				oscap_free(tagname);
-				oscap_free(namespace);
-			} else
-				return_code = xmlTextReaderRead(reader);
-			if ((return_code == 1)
-			    && (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT)) {
-				return_code = xmlTextReaderRead(reader);
+			int is_ovalsys = strcmp((const char*)OVAL_SYSCHAR_NAMESPACE, namespace) == 0;
+			if (is_ovalsys && (strcmp(tagname, "generator") == 0)) {
+				struct oval_generator *gen;
+				gen = oval_syschar_model_get_generator(context->syschar_model);
+				ret = oval_parser_parse_tag(reader, context, &oval_generator_parse_tag, gen);
+			} else if (is_ovalsys && (strcmp(tagname, "system_info") == 0)) {
+				ret = oval_sysinfo_parse_tag(reader, context);
+			} else if (is_ovalsys && (strcmp(tagname, "collected_objects") == 0)) {
+				ret = oval_parser_parse_tag(reader, context, &oval_syschar_parse_tag, NULL);
+			} else if (is_ovalsys && (strcmp(tagname, "system_data") == 0)) {
+				ret = oval_parser_parse_tag(reader, context, &oval_sysitem_parse_tag, NULL);
+			} else {
+				dW("Unprocessed tag: <%s:%s>.\n", namespace, tagname);
+				oval_parser_skip_tag(reader, context);
 			}
-		} else if (xmlTextReaderDepth(reader) > 0) {
-			return_code = xmlTextReaderRead(reader);
-		} else
-			break;
+
+			oscap_free(tagname);
+			oscap_free(namespace);
+
+			oscap_to_start_element(reader, depth+1);
+		} else {
+			if (xmlTextReaderRead(reader) != 1) {
+				ret = -1;
+				break;
+			}
+		}
 	}
-	return return_code;
+
+	return ret;
 }
 
-/**
- * return -1 on error >=0 otherwise
- */
-int ovalsys_parser_parse(struct oval_syschar_model *model, xmlTextReader * reader, void *user_arg) {
-	struct oval_parser_context context;
-	context.reader = reader;
-	context.definition_model = oval_syschar_model_get_definition_model(model);
-	context.syschar_model = model;
-	//context.syschar_sysinfo = NULL;
-	context.user_data = user_arg;
-	int return_code = 1;
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
-	char *tagname = (char *)xmlTextReaderLocalName(reader);
-	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
-	int is_ovalsys = strcmp((char *)NAMESPACE_OVALSYS, namespace) == 0;
-	if (is_ovalsys && (strcmp(tagname, "oval_system_characteristics") == 0)) {
-		return_code = _ovalsys_parser_process_node(reader, &context);
-	} else {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM,
-			     "Missing expected oval_system_characteristics element");
-		oscap_dlprintf(DBG_E, "Unprocessed tag: <%s:%s>.\n", namespace, tagname);
-		oval_parser_skip_tag(reader, &context);
-		return_code = -1;
-	}
-	oscap_free(tagname);
-	oscap_free(namespace);
-	return return_code;
-}

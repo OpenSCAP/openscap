@@ -201,7 +201,7 @@ int oval_value_parse_tag(xmlTextReaderPtr reader,
 	char *text = NULL;
 	int isNil = oval_parser_boolean_attribute(reader, "xsi:nil", 0);
 	if (isNil) {
-		return_code = 1;
+		return_code = 0;
 	} else {
 		return_code = oval_parser_text_value(reader, context, &oval_value_parse_tag_consume_text, &text);
 	}

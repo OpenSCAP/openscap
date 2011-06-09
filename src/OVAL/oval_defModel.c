@@ -45,6 +45,7 @@
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "common/reporter_priv.h"
+#include "common/elements.h"
 
 typedef struct oval_definition_model {
 	struct oval_generator *generator;
@@ -361,8 +362,8 @@ struct oval_definition_model * oval_definition_model_import(const char *file)
 {
         struct oval_definition_model *model = oval_definition_model_new();
         int ret = oval_definition_model_merge(model,file);
-        if (ret != 1) {
-		oscap_dlprintf(DBG_E, "Failed to merge the definition model (%s).\n", file);
+        if (ret == -1 ) {
+		oscap_dlprintf(DBG_E, "Failed to merge the definition model from: %s.\n", file);
                 oval_definition_model_free(model);
                 model = NULL;
         }
@@ -384,8 +385,16 @@ int oval_definition_model_merge(struct oval_definition_model *model, const char 
 		return -1;
 	}
 
+	/* setup context */
+	struct oval_parser_context context;
+	context.reader = reader;
+	context.definition_model = model;
+	context.user_data = NULL;
+	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
+	/* jump into oval_definitions */
 	xmlTextReaderRead(reader);
-	ret = ovaldef_parser_parse(model, reader, NULL);
+	/* start parsing */
+	ret = oval_definition_model_parse(reader, &context);
 	xmlFreeTextReader(reader);
 
 	return ret;

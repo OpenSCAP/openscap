@@ -1,7 +1,7 @@
 EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
 
-DISTCLEANFILES = *.log results.xml
-CLEANFILES = *.log results.xml
+DISTCLEANFILES = results.xml oscap_debug.log.*
+CLEANFILES = results.xml oscap_debug.log.*
 
 TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
                   LD_PRELOAD=$(top_builddir)/src/.libs/libopenscap_testing.so \

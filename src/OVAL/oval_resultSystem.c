@@ -366,63 +366,59 @@ void oval_result_system_add_test(struct oval_result_system *sys, struct oval_res
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
-static void _oval_result_system_test_consume(struct oval_result_test *test, struct oval_result_system *sys) {
-	oval_result_system_add_test(sys, test);
-}
+static int oval_result_system_parse(xmlTextReaderPtr reader, struct oval_parser_context *context, void *usr) {
+	__attribute__nonnull__(usr);
 
-static int _oval_result_system_test_parse
-    (xmlTextReaderPtr reader, struct oval_parser_context *context, struct oval_result_system *sys) {
-	return oval_result_test_parse_tag
-	    (reader, context, sys, (oscap_consumer_func) _oval_result_system_test_consume, sys);
-
-}
-
-static void _oval_result_system_definition_consume
-    (struct oval_result_definition *definition, struct oval_result_system *sys) {
-	oval_result_system_add_definition(sys, definition);
-}
-
-static int _oval_result_system_definition_parse
-    (xmlTextReaderPtr reader, struct oval_parser_context *context, struct oval_result_system *sys) {
-	return oval_result_definition_parse
-	    (reader, context, sys, (oscap_consumer_func) _oval_result_system_definition_consume, sys);
-}
-
-static int _oval_result_system_parse
-    (xmlTextReaderPtr reader, struct oval_parser_context *context, struct oval_result_system *sys) {
-	__attribute__nonnull__(sys);
-
+	struct oval_result_system *sys = (struct oval_result_system *) usr;
 	xmlChar *localName = xmlTextReaderLocalName(reader);
-	oscap_dlprintf(DBG_I, "Parsing <%s>.\n", localName);
+
 	int return_code = 0;
 	if (strcmp((const char *)localName, "definitions") == 0) {
-		return_code = oval_parser_parse_tag
-		    (reader, context, (oval_xml_tag_parser) _oval_result_system_definition_parse, sys);
+                return_code = oval_parser_parse_tag(reader, context, oval_result_definition_parse_tag, sys);
 	} else if (strcmp((const char *)localName, "tests") == 0) {
-		return_code = oval_parser_parse_tag
-		    (reader, context, (oval_xml_tag_parser) _oval_result_system_test_parse, sys);
+		return_code = oval_parser_parse_tag(reader, context, oval_result_test_parse_tag, sys);
 	} else if (strcmp((const char *)localName, "oval_system_characteristics") == 0) {
-		return_code = ovalsys_parser_parse(sys->syschar_model, reader, context->user_data);
-		//return_code = oval_parser_skip_tag(reader, context);
+		return_code = oval_syschar_model_parse(reader, context);
 	} else {
-		return_code = 0;
-		oscap_dlprintf(DBG_W, "Unhandled tag: <%s>.\n", localName);
+                dW("Skipping tag: %s\n", localName);
+                oval_parser_skip_tag(reader, context);
 	}
+
+        if (return_code != 0) {
+                dW("Parsing of <%s> terminated by an error at line %d.\n", localName, xmlTextReaderGetParserLineNumber(reader));
+        }
+
 	oscap_free(localName);
 	return return_code;
 }
 
-int oval_result_system_parse
-    (xmlTextReaderPtr reader, struct oval_parser_context *context, struct oval_syschar_model *syschar_model,
-     oscap_consumer_func consumer, void *client) {
+int oval_result_system_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *usr) {
 	__attribute__nonnull__(context);
 
-	int return_code = 1;
-	struct oval_result_system *sys = oval_result_system_new(context->results_model, syschar_model);
+        char *tagname = (char *)xmlTextReaderLocalName(reader);
+        char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
+	int return_code = 0;
 
-	return_code = oval_parser_parse_tag(reader, context, (oval_xml_tag_parser) _oval_result_system_parse, sys);
+	int is_ovalres = strcmp((const char *)OVAL_RESULTS_NAMESPACE, namespace) == 0;
+	if (is_ovalres && (strcmp(tagname, "system") == 0)) {
+		/* create new empty syschar for this model */
+		struct oval_syschar_model *syschar_model = oval_syschar_model_new(context->definition_model);
+		context->syschar_model = syschar_model;
+		/* create new results system instance */
+		struct oval_result_system *sys = oval_result_system_new(context->results_model, syschar_model);
+		/* populate results system  */
+		return_code = oval_parser_parse_tag(reader, context, oval_result_system_parse, sys);
+        } else {
+                dW("Skipping tag: %s\n", tagname);
+                oval_parser_skip_tag(reader, context);
+        }
 
-	(*consumer) (sys, client);
+        if (return_code != 0) {
+                dW("Parsing of <%s> terminated by an error at line %d.\n", tagname, xmlTextReaderGetParserLineNumber(reader));
+        }
+
+        oscap_free(tagname);
+        oscap_free(namespace);
 
 	return return_code;
 }

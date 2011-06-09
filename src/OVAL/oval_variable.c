@@ -717,11 +717,9 @@ static int _oval_variable_parse_local_tag(xmlTextReaderPtr reader, struct oval_p
 	struct oval_variable *variable = (struct oval_variable *)user;
 	xmlChar *tagname = xmlTextReaderLocalName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
-	int return_code = oval_component_parse_tag(reader, context, &_oval_variable_parse_local_tag_component_consumer,
-						   variable);
-	if (return_code != 1) {
-		oscap_dlprintf(DBG_W, "Parsing of %s terminated by an error at <%s>, line %d.\n",
-			       variable->id, tagname, xmlTextReaderGetParserLineNumber(reader));
+	int return_code = oval_component_parse_tag(reader, context, &_oval_variable_parse_local_tag_component_consumer, variable);
+	if (return_code != 0) {
+		dW("Parsing of %s terminated by an error at <%s>, line %d.\n", variable->id, tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
 	oscap_free(tagname);
 	oscap_free(namespace);
@@ -737,16 +735,16 @@ static void _oval_variable_parse_value(char *text_value, struct oval_variable *v
 	oval_variable_add_value(variable, value);
 }
 
-static int _oval_variable_parse_constant_tag(xmlTextReaderPtr reader,
-					     struct oval_parser_context *context, struct oval_variable *variable)
+static int _oval_variable_parse_constant_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *user)
 {
 	xmlChar *tagname = xmlTextReaderLocalName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
-	int return_code = 1;
+	struct oval_variable *variable = (struct oval_variable *)user;
+	int return_code = 0;
 	if (strcmp("value", (char *)tagname) == 0 && strcmp(DEFINITION_NAMESPACE, (char *)namespace) == 0) {
 		oval_parser_text_value(reader, context, (oval_xml_value_consumer) _oval_variable_parse_value, variable);
 	} else {
-		oscap_dlprintf(DBG_W, "Invalid element <%s:%s> in constant variable %s on line %d.\n",
+		dW("Invalid element <%s:%s> in constant variable %s on line %d.\n",
 			       namespace, tagname, variable->id, xmlTextReaderGetParserLineNumber(reader));
 	}
 	oscap_free(tagname);
@@ -754,11 +752,17 @@ static int _oval_variable_parse_constant_tag(xmlTextReaderPtr reader,
 	return return_code;
 }
 
-int oval_variable_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context)
+int oval_variable_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *usr)
 {
 	struct oval_definition_model *model = oval_parser_context_model(context);
-	char *tagname = (char *)xmlTextReaderLocalName(reader);
+	char *tagname = NULL;
+	char *id = NULL;
+	char *comm = NULL;
+	char *version = NULL;
+	int return_code = 0;
 	oval_variable_type_t type;
+
+	tagname = (char *)xmlTextReaderLocalName(reader);
 	if (strcmp(tagname, "constant_variable") == 0)
 		type = OVAL_VARIABLE_CONSTANT;
 	else if (strcmp(tagname, "external_variable") == 0)
@@ -767,36 +771,28 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context 
 		type = OVAL_VARIABLE_LOCAL;
 	else {
 		type = OVAL_VARIABLE_UNKNOWN;
-		oscap_dlprintf(DBG_W, "Unhandled variable type: %s, line: %d.\n",
-			      tagname, xmlTextReaderGetParserLineNumber(reader));
+		dW("Unhandled variable type: %s, line: %d.\n", tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
-	char *id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
+	id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_variable *variable = oval_variable_get_new(model, id, type);
-	oscap_free(id);
-	id = variable->id;
 
-	char *comm = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
+	comm = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
 	if (comm != NULL) {
 		oval_variable_set_comment(variable, comm);
-		oscap_free(comm);
-		comm = NULL;
-
 	}
+
 	int deprecated = oval_parser_boolean_attribute(reader, "deprecated", 0);
 	oval_variable_set_deprecated(variable, deprecated);
-	char *version = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "version");
+
+	version = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "version");
 	oval_variable_set_version(variable, atoi(version));
-	oscap_free(version);
-	version = NULL;
 
 	oval_datatype_t datatype = oval_datatype_parse(reader, "datatype", OVAL_DATATYPE_UNKNOWN);
 	oval_variable_set_datatype(variable, datatype);
-	int return_code = 1;
+
 	switch (type) {
 	case OVAL_VARIABLE_CONSTANT:{
-			return_code =
-			    oval_parser_parse_tag(reader, context,
-						  (oval_xml_tag_parser) _oval_variable_parse_constant_tag, variable);
+			return_code = oval_parser_parse_tag(reader, context, _oval_variable_parse_constant_tag, variable);
 		}
 		break;
 	case OVAL_VARIABLE_LOCAL:{
@@ -811,7 +807,12 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context 
 	default:
 		return_code = 1;
 	}
+
 	oscap_free(tagname);
+	oscap_free(id);
+	oscap_free(comm);
+	oscap_free(version);
+
 	return return_code;
 }
 

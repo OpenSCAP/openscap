@@ -75,8 +75,8 @@ typedef struct oval_result_criteria_node_EXTENDDEF {
 	struct oval_result_definition *extends;
 } oval_result_criteria_node_EXTENDDEF_t;
 
-struct oval_result_criteria_node *oval_result_criteria_node_new
-    (struct oval_result_system *sys, oval_criteria_node_type_t type, int negate, ...) {
+struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_result_system *sys, oval_criteria_node_type_t type, int negate, ...) {
+
 	oval_result_criteria_node_t *node = NULL;
 	va_list ap;
 
@@ -334,14 +334,19 @@ void oval_result_criteria_node_iterator_free(struct
 				      oc_result_criteria_node);
 }
 
-oval_criteria_node_type_t oval_result_criteria_node_get_type(struct
-							     oval_result_criteria_node
-							     *node)
+oval_criteria_node_type_t oval_result_criteria_node_get_type(struct oval_result_criteria_node *node)
 {
 	__attribute__nonnull__(node);
 
 	oval_criteria_node_type_t type = ((struct oval_result_criteria_node *)node)->type;
 	return type;
+}
+
+static struct oval_result_system *oval_result_criteria_get_system(struct oval_result_criteria_node *node)
+{
+        __attribute__nonnull__(node);
+
+        return node->sys;
 }
 
 static oval_result_t _oval_result_negate(bool negate, oval_result_t result)
@@ -513,39 +518,32 @@ void oval_result_criteria_node_set_extends
 		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
 }
 
-static void _oval_result_criteria_consume_subnode
-    (struct oval_result_criteria_node *subnode, struct oval_result_criteria_node *node) {
+static void _oval_result_criteria_consume_subnode(struct oval_result_criteria_node *subnode, struct oval_result_criteria_node *node) {
 	oval_result_criteria_node_add_subnode(node, subnode);
 }
 
-static int _oval_result_criteria_parse(xmlTextReaderPtr reader, struct oval_parser_context *context, void **args) {
-	struct oval_result_system *sys = (struct oval_result_system *)args[0];
-	struct oval_result_criteria_node *node = (struct oval_result_criteria_node *)args[1];
-	return oval_result_criteria_node_parse
-	    (reader, context, sys, (oscap_consumer_func) _oval_result_criteria_consume_subnode, node);
+static int _oval_result_criteria_parse(xmlTextReaderPtr reader, struct oval_parser_context *context, void *usr) {
+	struct oval_result_system *sys = oval_result_criteria_get_system(usr);
+	return oval_result_criteria_node_parse(reader, context, sys, (oscap_consumer_func) _oval_result_criteria_consume_subnode, usr);
 }
 
-int oval_result_criteria_node_parse
-    (xmlTextReaderPtr reader, struct oval_parser_context *context,
-     struct oval_result_system *sys, oscap_consumer_func consumer, void *client) {
-	int return_code = 1;
+int oval_result_criteria_node_parse(xmlTextReaderPtr reader, struct oval_parser_context *context, struct oval_result_system *sys, oscap_consumer_func consumer, void *client) 
+{
+	int return_code = 0;
 	xmlChar *localName = xmlTextReaderLocalName(reader);
-
-	oscap_dlprintf(DBG_I, "Parsing <%s>.\n", localName);
 
 	struct oval_result_criteria_node *node = NULL;
 	if (strcmp((const char *)localName, "criteria") == 0) {
 		oval_operator_t operator = oval_operator_parse(reader, "operator", OVAL_OPERATOR_UNKNOWN);
 		int negate = oval_parser_boolean_attribute(reader, "negate", false);
 		node = oval_result_criteria_node_new(sys, OVAL_NODETYPE_CRITERIA, negate, operator);
-		void *args[] = { sys, node };
-		return_code = oval_parser_parse_tag
-		    (reader, context, (oval_xml_tag_parser) _oval_result_criteria_parse, args);
+		return_code = oval_parser_parse_tag(reader, context, _oval_result_criteria_parse, node);
 	} else if (strcmp((const char *)localName, "criterion") == 0) {
 		xmlChar *test_ref = xmlTextReaderGetAttribute(reader, BAD_CAST "test_ref");
 		int version = oval_parser_int_attribute(reader, "version", 0);
 		int variable_instance = oval_parser_int_attribute(reader, "variable_instance", 1);
 		int negate = oval_parser_boolean_attribute(reader, "negate", false);
+
 		struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
 		struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
 		struct oval_test *oval_test = oval_definition_model_get_test(definition_model, (char *)test_ref);
@@ -554,15 +552,13 @@ int oval_result_criteria_node_parse
 		if (oval_test != NULL) {
 			int tst_ver;
 
-			get_oval_result_test_new(sys, oval_test);
+			rslt_test = get_oval_result_test_new(sys, oval_test);
 			tst_ver = oval_test_get_version(oval_test);
 			if (tst_ver != version)
 				dW("Unmatched versions: test: %d, criteria: %d.\n", tst_ver, version);
 		}
 
-		node = oval_result_criteria_node_new
-		    (sys, OVAL_NODETYPE_CRITERION, negate, rslt_test, variable_instance);
-		return_code = 1;
+		node = oval_result_criteria_node_new(sys, OVAL_NODETYPE_CRITERION, negate, rslt_test, variable_instance);
 		oscap_free(test_ref);
 	} else if (strcmp((const char *)localName, "extend_definition") == 0) {
 		xmlChar *definition_ref = xmlTextReaderGetAttribute(reader, BAD_CAST "definition_ref");
@@ -570,26 +566,23 @@ int oval_result_criteria_node_parse
 		int negate = oval_parser_boolean_attribute(reader, "negate", false);
 		struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
 		struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
-		struct oval_definition *oval_definition
-		    = oval_definition_model_get_definition(definition_model, (char *)definition_ref);
-		struct oval_result_definition *rslt_definition = (oval_definition)
-		    ? oval_result_system_get_new_definition(sys, oval_definition) : NULL;
-		node = (rslt_definition)
-		    ? oval_result_criteria_node_new
-		    (sys, OVAL_NODETYPE_EXTENDDEF, negate, rslt_definition, variable_instance) : NULL;
-		return_code = 1;
+		struct oval_definition *oval_definition = oval_definition_model_get_definition(definition_model, (char *)definition_ref);
+		struct oval_result_definition *rslt_definition = (oval_definition) ? oval_result_system_get_new_definition(sys, oval_definition) : NULL;
+		node = (rslt_definition) ? oval_result_criteria_node_new(sys, OVAL_NODETYPE_EXTENDDEF, negate, rslt_definition, variable_instance) : NULL;
 		oscap_free(definition_ref);
 	} else {
-		oscap_dlprintf(DBG_E, "unhandled criteria node: <%s>.\n",
-			       (char *)localName);
+		dW("unhandled criteria node: <%s>.\n",(char *)localName);
 		oval_parser_skip_tag(reader, context);
-		return_code = 0;
+		return_code = 1;
 	}
-	if (return_code) {
+
+	if (return_code==0) {
 		oval_result_t result = oval_result_parse(reader, "result", 0);
 		oval_result_criteria_node_set_result(node, result);
 	}
+
 	(*consumer) (node, client);
+
 	oscap_free(localName);
 	return return_code;
 }
