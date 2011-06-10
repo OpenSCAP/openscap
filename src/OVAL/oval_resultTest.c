@@ -1518,9 +1518,14 @@ int oval_result_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_conte
 
 	struct oval_result_system *sys = (struct oval_result_system *) usr;
 	int return_code = 0;
-
+	struct oval_definition_model *dmod;
+	struct oval_test *dtst;
+	struct oval_result_test *test;
 	xmlChar *test_id = xmlTextReaderGetAttribute(reader, BAD_CAST "test_id");
-	struct oval_result_test *test = oval_result_test_new(sys, (char *)test_id);
+
+	dmod = oval_parser_context_model(context);
+	dtst = oval_test_get_new(dmod, (char *) test_id);
+	test = oval_result_system_get_new_test(sys, dtst);
 	if (test == NULL)
 		return -1;
 
@@ -1560,8 +1565,6 @@ int oval_result_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_conte
 	return_code = oval_parser_parse_tag(reader, context, (oval_xml_tag_parser) _oval_result_test_parse, args);
 	test->bindings_initialized = true;
 	test->bindings_clearable = true;
-
-	oval_result_system_add_test(sys, test);
 
 	oscap_free(test_id);
 	return return_code;

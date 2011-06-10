@@ -284,7 +284,9 @@ int oval_result_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parser
 
 	struct oval_result_system *sys = (struct oval_result_system *) usr;
 	int return_code = 0;
-
+	struct oval_definition_model *dmod;
+	struct oval_definition *ddef;
+	struct oval_result_definition *definition;
 	xmlChar *definition_id = xmlTextReaderGetAttribute(reader, BAD_CAST "definition_id");
 	xmlChar *definition_version = xmlTextReaderGetAttribute(reader, BAD_CAST "version");
 	int resvsn = atoi((char *)definition_version);
@@ -293,7 +295,9 @@ int oval_result_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parser
 
 	int instance = oval_parser_int_attribute(reader, "variable_instance", 1);
 
-	struct oval_result_definition *definition = oval_result_definition_new(sys, (char *)definition_id);
+	dmod = oval_parser_context_model(context);
+	ddef = oval_definition_get_new(dmod, (char *) definition_id);
+	definition = oval_result_system_get_new_definition(sys, ddef);
 	if (definition == NULL)
 		return -1;
 
@@ -316,8 +320,6 @@ int oval_result_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parser
 
 	oscap_free(definition_id);
 	oscap_free(definition_version);
-
-	oval_result_system_add_definition(sys, definition);
 
 	return return_code;
 }
