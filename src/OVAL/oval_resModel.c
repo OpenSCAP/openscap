@@ -147,8 +147,8 @@ void oval_results_model_free(struct oval_results_model *model)
         if (model->schema)
                 oscap_free(model->schema);
 	oval_collection_free_items(model->systems, (oscap_destruct_func) oval_result_system_free);
-	model->definition_model = NULL;
 	model->systems = NULL;
+	model->definition_model = NULL;
         model->schema = NULL;
 
 	oval_generator_free(model->generator);
