@@ -295,7 +295,7 @@ struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_n
 			} break;
 		case OVAL_NODETYPE_CRITERION:{
 				struct oval_test *oval_test = oval_criteria_node_get_test(oval_node);
-				struct oval_result_test *rslt_test = get_oval_result_test_new(sys, oval_test);
+				struct oval_result_test *rslt_test = oval_result_system_get_new_test(sys, oval_test);
 				rslt_node = oval_result_criteria_node_new(sys, type, negate, rslt_test, 1);
 			} break;
 		case OVAL_NODETYPE_EXTENDDEF:{
@@ -552,7 +552,7 @@ int oval_result_criteria_node_parse(xmlTextReaderPtr reader, struct oval_parser_
 		if (oval_test != NULL) {
 			int tst_ver;
 
-			rslt_test = get_oval_result_test_new(sys, oval_test);
+			rslt_test = oval_result_system_get_new_test(sys, oval_test);
 			tst_ver = oval_test_get_version(oval_test);
 			if (tst_ver != version)
 				dW("Unmatched versions: test: %d, criteria: %d.\n", tst_ver, version);

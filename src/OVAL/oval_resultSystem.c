@@ -252,7 +252,7 @@ static void _oval_result_system_initialize(struct oval_result_system *sys) {
 	struct oval_test_iterator *oval_tests = oval_definition_model_get_tests(definition_model);
 	while (oval_test_iterator_has_more(oval_tests)) {
 		struct oval_test *oval_test = oval_test_iterator_next(oval_tests);
-		get_oval_result_test_new(sys, oval_test);
+		oval_result_system_get_new_test(sys, oval_test);
 	}
 	oval_test_iterator_free(oval_tests);
 }
@@ -315,7 +315,7 @@ struct oval_result_definition *oval_result_system_get_new_definition
 	return rslt_definition;
 }
 
-struct oval_result_test *get_oval_result_test_new(struct oval_result_system *sys, struct oval_test *oval_test) {
+struct oval_result_test *oval_result_system_get_new_test(struct oval_result_system *sys, struct oval_test *oval_test) {
 	char *id = oval_test_get_id(oval_test);
 	struct oval_result_test *rslt_testtest = oval_result_system_get_test(sys, id);
 	if (rslt_testtest == NULL) {
