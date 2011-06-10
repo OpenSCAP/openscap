@@ -41,12 +41,11 @@ int main(int argc, char **argv)
                         _test_error();
 		printf("LOAD OVAL RESULTS\n");
 		results_model = oval_results_model_new(model,NULL);
-		if (oval_results_model_import(results_model, argv[1]) == NULL)
+		if ((directives = oval_results_model_import(results_model, argv[1])) == NULL)
 			_test_error();
 		printf("OVAL RESULTS LOADED\n");
 		if (argc>2) {
 			printf("WRITE OVAL RESULTS\n");
-			directives = oval_result_directives_new(results_model);
 			oval_results_model_export(results_model, directives, argv[2]);
 			printf("OVAL RESULTS WRITTEN\n");
 		}
