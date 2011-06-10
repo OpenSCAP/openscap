@@ -50,7 +50,6 @@ typedef struct oval_result_system {
 	struct oval_string_map *definitions;
 	struct oval_string_map *tests;
 	struct oval_syschar_model *syschar_model;
-	bool definitions_initialized;
 } oval_result_system_t;
 
 
@@ -114,7 +113,6 @@ struct oval_result_system *oval_result_system_new(struct oval_results_model *mod
 	sys->definitions = oval_string_map_new();
 	sys->tests = oval_string_map_new();
 	sys->syschar_model = syschar_model;
-	sys->definitions_initialized = false;
 	sys->model = model;
 
 	oval_results_model_add_system(model, sys);
@@ -236,33 +234,9 @@ void oval_result_system_iterator_free(struct oval_result_system_iterator *sys) {
 	oval_collection_iterator_free((struct oval_iterator *)sys);
 }
 
-static void _oval_result_system_initialize(struct oval_result_system *sys) {
-	__attribute__nonnull__(sys);
-
-	sys->definitions_initialized = true;
-	struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(sys->syschar_model);
-
-	struct oval_definition_iterator *oval_definitions = oval_definition_model_get_definitions(definition_model);
-	while (oval_definition_iterator_has_more(oval_definitions)) {
-		struct oval_definition *oval_definition = oval_definition_iterator_next(oval_definitions);
-		oval_result_system_get_new_definition(sys, oval_definition);
-	}
-	oval_definition_iterator_free(oval_definitions);
-
-	struct oval_test_iterator *oval_tests = oval_definition_model_get_tests(definition_model);
-	while (oval_test_iterator_has_more(oval_tests)) {
-		struct oval_test *oval_test = oval_test_iterator_next(oval_tests);
-		oval_result_system_get_new_test(sys, oval_test);
-	}
-	oval_test_iterator_free(oval_tests);
-}
-
 struct oval_result_definition_iterator *oval_result_system_get_definitions(struct oval_result_system *sys) {
 	__attribute__nonnull__(sys);
 
-	if (!sys->definitions_initialized) {
-		_oval_result_system_initialize(sys);
-	}
 	struct oval_result_definition_iterator *iterator = (struct oval_result_definition_iterator *)
 	    oval_string_map_values(sys->definitions);
 	return iterator;
@@ -271,9 +245,6 @@ struct oval_result_definition_iterator *oval_result_system_get_definitions(struc
 struct oval_result_test_iterator *oval_result_system_get_tests(struct oval_result_system *sys) {
 	__attribute__nonnull__(sys);
 
-	if (!sys->definitions_initialized) {
-		_oval_result_system_initialize(sys);
-	}
 	struct oval_result_test_iterator *iterator = (struct oval_result_test_iterator *)
 	    oval_string_map_values(sys->tests);
 	return iterator;
@@ -282,9 +253,6 @@ struct oval_result_test_iterator *oval_result_system_get_tests(struct oval_resul
 struct oval_result_definition *oval_result_system_get_definition(struct oval_result_system *sys, const char *id) {
 	__attribute__nonnull__(sys);
 
-	if (!sys->definitions_initialized) {
-		_oval_result_system_initialize(sys);
-	}
 	return (struct oval_result_definition *)
 	    oval_string_map_get_value(sys->definitions, id);
 
@@ -293,9 +261,6 @@ struct oval_result_definition *oval_result_system_get_definition(struct oval_res
 struct oval_result_test *oval_result_system_get_test(struct oval_result_system *sys, char *id) {
 	__attribute__nonnull__(sys);
 
-	if (!sys->definitions_initialized) {
-		_oval_result_system_initialize(sys);
-	}
 	return (struct oval_result_test *)
 	    oval_string_map_get_value(sys->tests, id);
 
