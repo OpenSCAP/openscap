@@ -452,6 +452,10 @@ static const struct oscap_string_map OVAL_SUBTYPE_LINUX_MAP[] = {
 	{OVAL_LINUX_RPM_INFO, "rpminfo"},
 	{OVAL_LINUX_SLACKWARE_PKG_INFO_TEST, "slackwarepkginfo"},
         {OVAL_LINUX_PARTITION, "partition"},
+        {OVAL_LINUX_IFLISTENERS, "iflisteners"},
+        {OVAL_LINUX_RPMVERIFY, "rpmverify"},
+        {OVAL_LINUX_SELINUXBOOLEAN, "selinuxboolean"},
+        {OVAL_LINUX_SELINUXSECURITYCONTEXT, "selinuxsecuritycontext"},
 	{OVAL_SUBTYPE_UNKNOWN, NULL}
 };
 
@@ -490,6 +494,10 @@ static const struct oscap_string_map OVAL_SUBTYPE_UNIX_MAP[] = {
 	{OVAL_UNIX_XINETD, "xinetd"},
 	{OVAL_UNIX_DNSCACHE, "dnscache"},
         {OVAL_UNIX_SYSCTL, "sysctl"},
+	{OVAL_UNIX_PROCESS58, "process58"},
+        {OVAL_UNIX_FILEEXTENDEDATTRIBUTE, "fileextendedattribute"},
+        {OVAL_UNIX_GCONF, "gconf"},
+        {OVAL_UNIX_ROUTINGTABLE, "routingtable"},
 	{OVAL_SUBTYPE_UNKNOWN, NULL}
 };
 
