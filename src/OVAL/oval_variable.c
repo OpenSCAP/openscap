@@ -684,7 +684,7 @@ static int _oval_variable_parse_constant_tag(xmlTextReaderPtr reader, struct ova
 
 int oval_variable_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *usr)
 {
-	struct oval_definition_model *model = oval_parser_context_model(context);
+	struct oval_definition_model *model = context->definition_model;
 	char *tagname = NULL;
 	char *id = NULL;
 	char *comm = NULL;

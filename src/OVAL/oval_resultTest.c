@@ -1472,7 +1472,7 @@ int oval_result_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_conte
 	struct oval_result_test *test;
 	xmlChar *test_id = xmlTextReaderGetAttribute(reader, BAD_CAST "test_id");
 
-	dmod = oval_parser_context_model(context);
+	dmod = context->definition_model;
 	dtst = oval_test_get_new(dmod, (char *) test_id);
 	test = oval_result_system_get_new_test(sys, dtst);
 	if (test == NULL)

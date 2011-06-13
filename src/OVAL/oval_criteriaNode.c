@@ -388,7 +388,7 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context 
 			} break;
 		case OVAL_NODETYPE_CRITERION:{
 				char *test_ref = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "test_ref");
-				struct oval_definition_model *model = oval_parser_context_model(context);
+				struct oval_definition_model *model = context->definition_model;
 				struct oval_test *test = oval_test_get_new(model, test_ref);
 				oscap_free(test_ref);
 				test_ref = NULL;
@@ -396,7 +396,7 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context 
 			} break;
 		case OVAL_NODETYPE_EXTENDDEF:{
 				char *definition_ref = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "definition_ref");
-				struct oval_definition_model *model = oval_parser_context_model(context);
+				struct oval_definition_model *model = context->definition_model;
 				struct oval_definition *definition = oval_definition_get_new(model, definition_ref);
 				oval_criteria_node_set_definition(node, definition);
 				oscap_free(definition_ref);

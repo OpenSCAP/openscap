@@ -377,7 +377,7 @@ int oval_record_field_parse_tag(xmlTextReaderPtr reader, struct oval_parser_cont
 			struct oval_definition_model *model;
 			struct oval_variable *var;
 
-			model = oval_parser_context_model(context);
+			model = context->definition_model;
 			var = oval_variable_get_new(model, var_ref, OVAL_VARIABLE_UNKNOWN);
 			oval_record_field_set_variable(rf, var);
 			xmlFree(var_ref);

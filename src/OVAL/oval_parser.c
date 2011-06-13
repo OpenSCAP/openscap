@@ -43,14 +43,6 @@
 #include "common/_error.h"
 #include "common/elements.h"
 
-struct oval_definition_model *oval_parser_context_model(struct oval_parser_context
-							*context)
-{
-	__attribute__nonnull__(context);
-
-	return context->definition_model;
-}
-
 void libxml_error_handler(void *user, const char *message, xmlParserSeverities severity, xmlTextReaderLocatorPtr locator)
 {
 	oscap_setxmlerr(xmlGetLastError());
@@ -111,7 +103,7 @@ int oval_definition_model_parse(xmlTextReaderPtr reader, struct oval_parser_cont
 				ret =  oval_parser_parse_tag(reader, context, &oval_variable_parse_tag, NULL);
 			} else if (is_oval && strcmp(tagname, tagname_generator) == 0) {
 				struct oval_generator *gen;
-				gen = oval_definition_model_get_generator(oval_parser_context_model(context));
+				gen = oval_definition_model_get_generator(context->definition_model);
 				ret = oval_parser_parse_tag(reader, context, &oval_generator_parse_tag, gen);
 			} else {
 				dW("Unprocessed tag: <%s:%s>.\n", namespace, tagname);
@@ -150,6 +142,7 @@ int oval_parser_skip_tag(xmlTextReaderPtr reader, struct oval_parser_context *co
 	return ret;
 }
 
+/* -1 error; 0 OK */
 int oval_parser_text_value(xmlTextReaderPtr reader, struct oval_parser_context *context, oval_xml_value_consumer consumer, void *user)
 {
 	int depth = xmlTextReaderDepth(reader);

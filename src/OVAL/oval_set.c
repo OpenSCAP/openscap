@@ -281,7 +281,7 @@ static void oval_consume_object_ref(char *objref, void *user)
 	__attribute__nonnull__(user);
 
 	struct oval_set_context *ctx = user;
-	struct oval_definition_model *model = oval_parser_context_model(ctx->context);
+	struct oval_definition_model *model = ctx->context->definition_model;
 	struct oval_object *object = oval_object_get_new(model, objref);
 	oval_setobject_add_object(ctx->set, object);
 }

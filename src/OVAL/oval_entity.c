@@ -286,12 +286,12 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	oval_entity_varref_type_t varref_type;
 	if (strcmp(name, "var_ref") == 0) {	//special case for <var_ref>
 		if (varref == NULL) {
-			struct oval_definition_model *model = oval_parser_context_model(context);
+			struct oval_definition_model *model = context->definition_model;
 			varref_type = OVAL_ENTITY_VARREF_ELEMENT;
 			struct oval_consume_varref_context ctx = {.model = model, .variable = &variable, .value = &value};
 			return_code = oval_parser_text_value(reader, context, &oval_consume_varref, &ctx);
 		} else {
-			struct oval_definition_model *model = oval_parser_context_model(context);
+			struct oval_definition_model *model = context->definition_model;
 			variable = oval_definition_model_get_variable(model, varref);
 			varref_type = OVAL_ENTITY_VARREF_ATTRIBUTE;
 			oscap_free(varref);
@@ -307,7 +307,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 			return_code = oval_value_parse_tag(reader, context, &oval_consume_value, &value);
 		}
 	} else {
-		struct oval_definition_model *model = oval_parser_context_model(context);
+		struct oval_definition_model *model = context->definition_model;
 		variable = oval_variable_get_new(model, varref, OVAL_VARIABLE_UNKNOWN);
 		varref_type = OVAL_ENTITY_VARREF_ATTRIBUTE;
 		value = NULL;

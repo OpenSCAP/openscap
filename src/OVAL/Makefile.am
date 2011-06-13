@@ -64,7 +64,7 @@ common_oval_sources = \
 	oval_value.c \
 	oval_variable.c \
 	oval_variableBinding.c \
-	ovalsys_parser.c \
+	oval_sys_parser.c \
 	oval_varModel.c \
 	oval_probe_session.c	\
 	_oval_probe_session.h	\

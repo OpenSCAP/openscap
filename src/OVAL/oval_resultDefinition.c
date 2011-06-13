@@ -256,7 +256,7 @@ int oval_result_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parser
 
 	int instance = oval_parser_int_attribute(reader, "variable_instance", 1);
 
-	dmod = oval_parser_context_model(context);
+	dmod = context->definition_model;
 	ddef = oval_definition_get_new(dmod, (char *) definition_id);
 	definition = oval_result_system_get_new_definition(sys, ddef);
 	if (definition == NULL)
