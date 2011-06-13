@@ -274,13 +274,6 @@ bool oval_criteria_node_is_valid(struct oval_criteria_node * criteria_node)
 	return true;
 }
 
-bool oval_criteria_node_is_locked(struct oval_criteria_node * criteria_node)
-{
-	__attribute__nonnull__(criteria_node);
-
-	return oval_definition_model_is_locked(criteria_node->model);
-}
-
 struct oval_criteria_node *oval_criteria_node_clone
     (struct oval_definition_model *new_model, struct oval_criteria_node *old_node) {
 	__attribute__nonnull__(old_node);
@@ -360,72 +353,57 @@ void oval_criteria_set_node_type(struct oval_criteria_node *node, oval_criteria_
 {
 	__attribute__nonnull__(node);
 
-	if (node && !oval_criteria_node_is_locked(node)) {
-		node->type = type;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	node->type = type;
 }
 
 void oval_criteria_node_set_negate(struct oval_criteria_node *node, bool negate)
 {
-	if (node && !oval_criteria_node_is_locked(node)) {
-		node->negate = negate;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(node);
+	node->negate = negate;
 }
 
 void oval_criteria_node_set_comment(struct oval_criteria_node *node, char *comm)
 {
-	if (node && !oval_criteria_node_is_locked(node)) {
-		if (node->comment != NULL)
-			oscap_free(node->comment);
-		node->comment = (comm == NULL) ? NULL : oscap_strdup(comm);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(node);
+	if (node->comment != NULL)
+		oscap_free(node->comment);
+	node->comment = (comm == NULL) ? NULL : oscap_strdup(comm);
 }
 
 void oval_criteria_node_set_operator(struct oval_criteria_node *node, oval_operator_t op)
 {
-	if (node && !oval_criteria_node_is_locked(node)) {
-		if (node->type == OVAL_NODETYPE_CRITERIA) {
-			struct oval_criteria_node_CRITERIA *criteria = (struct oval_criteria_node_CRITERIA *)node;
-			criteria->operator = op;
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(node);
+	if (node->type == OVAL_NODETYPE_CRITERIA) {
+		struct oval_criteria_node_CRITERIA *criteria = (struct oval_criteria_node_CRITERIA *)node;
+		criteria->operator = op;
+	}
 }
 
 void oval_criteria_node_add_subnode(struct oval_criteria_node *node, struct oval_criteria_node *subnode)
 {
-	if (node && !oval_criteria_node_is_locked(node)) {
-		if (node->type == OVAL_NODETYPE_CRITERIA) {
-			struct oval_criteria_node_CRITERIA *criteria = (struct oval_criteria_node_CRITERIA *)node;
-			oval_collection_add(criteria->subnodes, (void *)subnode);
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(node);
+	if (node->type == OVAL_NODETYPE_CRITERIA) {
+		struct oval_criteria_node_CRITERIA *criteria = (struct oval_criteria_node_CRITERIA *)node;
+		oval_collection_add(criteria->subnodes, (void *)subnode);
+	}
 }
 
 void oval_criteria_node_set_test(struct oval_criteria_node *node, struct oval_test *test)
 {
-	if (node && !oval_criteria_node_is_locked(node)) {
-		if (node->type == OVAL_NODETYPE_CRITERION) {
-			struct oval_criteria_node_CRITERION *criterion = (struct oval_criteria_node_CRITERION *)node;
-			criterion->test = test;
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(node);
+	if (node->type == OVAL_NODETYPE_CRITERION) {
+		struct oval_criteria_node_CRITERION *criterion = (struct oval_criteria_node_CRITERION *)node;
+		criterion->test = test;
+	}
 }
 
 void oval_criteria_node_set_definition(struct oval_criteria_node *node, struct oval_definition *definition)
 {
-	if (node && !oval_criteria_node_is_locked(node)) {
-		if (node->type == OVAL_NODETYPE_EXTENDDEF) {
-			struct oval_criteria_node_EXTENDDEF *extenddef = (struct oval_criteria_node_EXTENDDEF *)node;
-			extenddef->definition = definition;
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(node);
+	if (node->type == OVAL_NODETYPE_EXTENDDEF) {
+		struct oval_criteria_node_EXTENDDEF *extenddef = (struct oval_criteria_node_EXTENDDEF *)node;
+		extenddef->definition = definition;
+	}
 }
 
 static void _oval_criteria_subnode_consume(struct oval_criteria_node *subnode, void *criteria)

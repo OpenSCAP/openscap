@@ -131,13 +131,6 @@ bool oval_affected_is_valid(struct oval_affected * affected)
 	return true;		//TODO
 }
 
-bool oval_affected_is_locked(struct oval_affected * affected)
-{
-	__attribute__nonnull__(affected);
-
-	return oval_definition_model_is_locked(affected->model);
-}
-
 struct oval_affected *oval_affected_clone(struct oval_definition_model *new_model, struct oval_affected *old_affected)
 {
 	__attribute__nonnull__(old_affected);
@@ -178,30 +171,21 @@ void oval_affected_set_family(struct oval_affected *affected, oval_affected_fami
 {
 	__attribute__nonnull__(affected);
 
-	if (!oval_affected_is_locked(affected)) {
-		affected->family = family;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	affected->family = family;
 }
 
 void oval_affected_add_platform(struct oval_affected *affected, char *platform)
 {
 	__attribute__nonnull__(affected);
 
-	if (affected && !oval_affected_is_locked(affected)) {
-		oval_collection_add(affected->platforms, (void *)oscap_strdup(platform));
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	oval_collection_add(affected->platforms, (void *)oscap_strdup(platform));
 }
 
 void oval_affected_add_product(struct oval_affected *affected, char *product)
 {
 	__attribute__nonnull__(affected);
 
-	if (affected && !oval_affected_is_locked(affected)) {
-		oval_collection_add(affected->products, (void *)oscap_strdup(product));
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	oval_collection_add(affected->products, (void *)oscap_strdup(product));
 }
 
 static oval_affected_family_t _odafamily(char *family)

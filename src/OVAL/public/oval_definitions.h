@@ -741,12 +741,6 @@ struct oval_state_iterator *oval_definition_model_get_states(struct oval_definit
  * @memberof oval_definition_model
  */
 struct oval_variable_iterator *oval_definition_model_get_variables(struct oval_definition_model *model);
-/**
- * Return <b>true</b> if the definition_model instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_definition_model
- */
-bool oval_definition_model_is_locked(struct oval_definition_model *definition_model);
 
 /**
  * Get supported version of OVAL XML
@@ -972,13 +966,6 @@ xmlNode *oval_definition_get_metadata(struct oval_definition *);
  * @memberof oval_definition
  */
 struct oval_criteria_node *oval_definition_get_criteria(struct oval_definition *);
-/**
- * return <b>true</b> if the definition instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_definition
- */
-bool oval_definition_is_locked(struct oval_definition *definition);
-
 /** @} */
 
 /**
@@ -1201,12 +1188,6 @@ struct oval_object *oval_test_get_object(struct oval_test *);
  * @memberof oval_test
  */
 struct oval_state_iterator *oval_test_get_states(struct oval_test *);
-/**
- * return <b>true</b> if the test instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_test
- */
-bool oval_test_is_locked(struct oval_test *test);
 
 /** @} */
 
@@ -1412,12 +1393,6 @@ struct oval_object_content_iterator *oval_object_get_object_contents(struct oval
  * @memberof oval_object
  */
 struct oval_behavior_iterator *oval_object_get_behaviors(struct oval_object *);
-/**
- * return <b>true</b> if the object instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_object
- */
-bool oval_object_is_locked(struct oval_object *object);
 /** @} */
 
 /**
@@ -1607,12 +1582,6 @@ int oval_state_get_operator(struct oval_state *);
  * @memberof oval_state
  */
 struct oval_state_content_iterator *oval_state_get_contents(struct oval_state *);
-/**
- * return <b>true</b> if the state instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_state
- */
-bool oval_state_is_locked(struct oval_state *state);
 /** @} */
 
 /**
@@ -1807,12 +1776,6 @@ struct oval_component *oval_variable_get_component(struct oval_variable *);	//ty
  * @memberof oval_variable
  */
 const char *oval_component_type_get_text(oval_component_type_t type);
-/**
- * return <b>true</b> if the variable instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_variable
- */
-bool oval_variable_is_locked(struct oval_variable *variable);
 /** @} */
 
 /**
@@ -1922,12 +1885,6 @@ struct oval_string_iterator *oval_affected_get_platforms(struct oval_affected *)
  * @memberof oval_affected
  */
 struct oval_string_iterator *oval_affected_get_products(struct oval_affected *);
-/**
- * Return <b>true</b> if the instance of oval_affected is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_affected
- */
-bool oval_affected_is_locked(struct oval_affected *);
 /** @} */
 
 /**
@@ -2019,12 +1976,6 @@ char *oval_reference_get_id(struct oval_reference *);
  * @memberof oval_reference
  */
 char *oval_reference_get_url(struct oval_reference *);
-/**
- * return <b>true</b> if the reference instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_reference
- */
-bool oval_reference_is_locked(struct oval_reference *reference);
 /** @} */
 
 /**
@@ -2197,12 +2148,6 @@ struct oval_test *oval_criteria_node_get_test(struct oval_criteria_node *);
  * @memberof oval_criteria_node
  */
 struct oval_definition *oval_criteria_node_get_definition(struct oval_criteria_node *);
-/**
- * Return <b>true</b> if the instance of Oval_criteria_node is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_criteria_node
- */
-bool oval_criteria_node_is_locked(struct oval_criteria_node *);
 /** @} */
 
 /**
@@ -2322,12 +2267,6 @@ oval_check_t oval_object_content_get_varCheck(struct oval_object_content *);	//t
  * @memberof oval_object_content
  */
 struct oval_setobject *oval_object_content_get_setobject(struct oval_object_content *);	//type == OVAL_OBJECTCONTENT_SET
-/**
- * return <b>true</b> if the object_content instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_object_content
- */
-bool oval_object_content_is_locked(struct oval_object_content *object_content);
 /** @} */
 
 /**
@@ -2405,12 +2344,6 @@ char *oval_behavior_get_key(struct oval_behavior *);
  * @memberof oval_behavior
  */
 char *oval_behavior_get_value(struct oval_behavior *);
-/**
- * return <b>true</b> if the behavior instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_behavior
- */
-bool oval_behavior_is_locked(struct oval_behavior *behavior);
 /** @} */
 
 /**
@@ -2502,12 +2435,6 @@ oval_check_t oval_state_content_get_var_check(struct oval_state_content *);
  * @memberof oval_state_content
  */
 oval_check_t oval_state_content_get_ent_check(struct oval_state_content *);
-/**
- * Return <b>true</b> if the setobject instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_state_content
- */
-bool oval_state_content_is_locked(struct oval_state_content *);
 /** @} */
 
 /**
@@ -2578,12 +2505,6 @@ float oval_value_get_float(struct oval_value *);	//datatype==OVAL_DATATYPE_FLOAT
  * @memberof oval_value
  */
 long long oval_value_get_integer(struct oval_value *);	//datatype==OVAL_DATATYPE_INTEGER
-/**
- * return <b>true</b> if the value instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_value
- */
-bool oval_value_is_locked(struct oval_value *value);
 /** @} */
 
 /**
@@ -2718,12 +2639,6 @@ int oval_entity_get_mask(struct oval_entity *);
  * @memberof oval_entity
  */
 oval_entity_varref_type_t oval_entity_get_varref_type(struct oval_entity *);
-/**
- * return <b>true</b> if the entity instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_entity
- */
-bool oval_entity_is_locked(struct oval_entity *entity);
 /** @} */
 
 /**
@@ -2907,10 +2822,6 @@ void oval_filter_set_filter_action(struct oval_filter *, oval_filter_action_t );
 /**
  * @memberof oval_filter
  */
-bool oval_filter_is_locked(struct oval_filter *);
-/**
- * @memberof oval_filter
- */
 struct oval_state *oval_filter_get_state(struct oval_filter *);
 /**
  * @memberof oval_filter
@@ -3023,12 +2934,6 @@ struct oval_object_iterator *oval_setobject_get_objects(struct oval_setobject *)
  * @memberof oval_setobject
  */
 struct oval_filter_iterator *oval_setobject_get_filters(struct oval_setobject *);	//type==OVAL_SET_COLLECTIVE;
-/**
- * return <b>true</b> if the setobject instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_setobject
- */
-bool oval_setobject_is_locked(struct oval_setobject *setobject);
 /** @} */
 
 /**
@@ -3318,12 +3223,6 @@ char *oval_component_get_regex_pattern(struct oval_component *);	//type==OVAL_CO
  * @memberof oval_component
  */
 struct oval_value *oval_component_get_literal_value(struct oval_component *);	//type==OVAL_COMPONENT_LITERAL
-/**
- * return <b>true</b> if the component instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_component
- */
-bool oval_component_is_locked(struct oval_component *component);
 /** @} */
 
 /**

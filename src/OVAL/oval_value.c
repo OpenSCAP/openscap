@@ -126,16 +126,6 @@ struct oval_value *oval_value_new(oval_datatype_t datatype, char *text_value)
 	return value;
 }
 
-bool oval_value_is_valid(struct oval_value * value)
-{
-        oscap_dlprintf(DBG_W, "NOOP.\n");
-	return true;		//TODO
-}
-
-bool oval_value_is_locked(struct oval_value * value)
-{
-	return true;		//oval_value is intrinsically locked
-}
 
 struct oval_value *oval_value_clone(struct oval_value *old_value)
 {
@@ -171,19 +161,13 @@ int oval_value_cast(struct oval_value *value, oval_datatype_t new_dt)
 void oval_value_set_datatype(struct oval_value *value,
 			     oval_datatype_t datatype)
 {
-	if(value && !oval_value_is_locked(value)){
-		value->datatype = datatype;
-	} else 
-                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+	value->datatype = datatype;
 }
 void oval_value_set_text(struct oval_value *value, char *text)
 {
-	if(value && !oval_value_is_locked(value)){
-		if(value->text!=NULL)
-                        oscap_free(value->text);
-		value->text = oscap_strdup(text);
-	} else 
-                oscap_dprintf("WARNING: attempt to update locked content (%s:%d)", __FILE__, __LINE__);
+	if(value->text!=NULL)
+		oscap_free(value->text);
+	value->text = oscap_strdup(text);
 }
 */
 

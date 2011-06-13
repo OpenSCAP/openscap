@@ -54,7 +54,6 @@ typedef struct oval_syschar_model {
 	struct oval_string_map *syschar_map;
 	struct oval_string_map *sysitem_map;
 	struct oval_string_map *variable_binding_map;
-	bool is_locked;
         char *schema;
 } oval_syschar_model_t;
 
@@ -74,7 +73,6 @@ struct oval_syschar_model *oval_syschar_model_new(struct oval_definition_model *
 	newmodel->syschar_map = oval_string_map_new();
 	newmodel->sysitem_map = oval_string_map_new();
 	newmodel->variable_binding_map = oval_string_map_new();
-	newmodel->is_locked = false;
         newmodel->schema = oscap_strdup(OVAL_SYS_SCHEMA_LOCATION);
 
 	/* check possible allocation problems */
@@ -88,20 +86,6 @@ struct oval_syschar_model *oval_syschar_model_new(struct oval_definition_model *
 	return newmodel;
 }
 
-void oval_syschar_model_lock(struct oval_syschar_model *syschar_model)
-{
-	__attribute__nonnull__(syschar_model);
-
-	if (syschar_model && oval_syschar_model_is_valid(syschar_model))
-		syschar_model->is_locked = true;
-}
-
-bool oval_syschar_model_is_locked(struct oval_syschar_model *syschar_model)
-{
-	__attribute__nonnull__(syschar_model);
-
-	return syschar_model->is_locked;
-}
 
 bool oval_syschar_model_is_valid(struct oval_syschar_model * syschar_model)
 {
@@ -274,54 +258,44 @@ const char * oval_syschar_model_get_schema(struct oval_syschar_model * model)
 
 void oval_syschar_model_set_sysinfo(struct oval_syschar_model *model, struct oval_sysinfo *sysinfo)
 {
-	if (model && !oval_syschar_model_is_locked(model)) {
-		model->sysinfo = oval_sysinfo_clone(model, sysinfo);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(model);
+	model->sysinfo = oval_sysinfo_clone(model, sysinfo);
 }
 
 void oval_syschar_model_set_schema(struct oval_syschar_model *model, const char * schema)
 {
-	if (model && !oval_syschar_model_is_locked(model)) {
-		model->schema = oscap_strdup(schema);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(model);
+	model->schema = oscap_strdup(schema);
 }
 
 
 void oval_syschar_model_add_syschar(struct oval_syschar_model *model, struct oval_syschar *syschar)
 {
-	if (model && !oval_syschar_model_is_locked(model)) {
-		struct oval_object *object = oval_syschar_get_object(syschar);
-		if (object != NULL) {
-			char *id = oval_object_get_id(object);
-			oval_string_map_put(model->syschar_map, id, syschar);
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(model);
+	struct oval_object *object = oval_syschar_get_object(syschar);
+	if (object != NULL) {
+		char *id = oval_object_get_id(object);
+		oval_string_map_put(model->syschar_map, id, syschar);
+	}
 }
 
 void oval_syschar_model_add_variable_binding(struct oval_syschar_model *model, struct oval_variable_binding *binding)
 {
-	if (model && !oval_syschar_model_is_locked(model)) {
-		struct oval_variable *variable = oval_variable_binding_get_variable(binding);
-		char *varid = oval_variable_get_id(variable);
-		oval_string_map_put(model->variable_binding_map, varid, binding);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(model);
+	struct oval_variable *variable = oval_variable_binding_get_variable(binding);
+	char *varid = oval_variable_get_id(variable);
+	oval_string_map_put(model->variable_binding_map, varid, binding);
 }
 
 
 
 void oval_syschar_model_add_sysitem(struct oval_syschar_model *model, struct oval_sysitem *sysitem)
 {
-	if (model && !oval_syschar_model_is_locked(model)) {
-		char *id = oval_sysitem_get_id(sysitem);
-		if (id != NULL) {
-			oval_string_map_put(model->sysitem_map, id, sysitem);
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(model);
+	char *id = oval_sysitem_get_id(sysitem);
+	if (id != NULL) {
+		oval_string_map_put(model->sysitem_map, id, sysitem);
+	}
 }
 
 

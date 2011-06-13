@@ -114,12 +114,6 @@ oval_filter_action_t oval_filter_get_filter_action(struct oval_filter *filter)
 	return filter->action;
 }
 
-bool oval_filter_is_locked(struct oval_filter *filter)
-{
-	__attribute__nonnull__(filter);
-
-	return oval_definition_model_is_locked(filter->model);
-}
 
 bool oval_filter_is_valid(struct oval_filter *filter)
 {
@@ -129,20 +123,14 @@ bool oval_filter_is_valid(struct oval_filter *filter)
 
 void oval_filter_set_state(struct oval_filter *filter, struct oval_state *state)
 {
-	if (filter && !oval_filter_is_locked(filter)) {
-		filter->state = state;
-	} else {
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
-	}
+	__attribute__nonnull__(filter);
+	filter->state = state;
 }
 
 void oval_filter_set_filter_action(struct oval_filter *filter, oval_filter_action_t action)
 {
-	if (filter && !oval_filter_is_locked(filter)) {
-		filter->action = action;
-	} else {
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
-	}
+	__attribute__nonnull__(filter);
+	filter->action = action;
 }
 
 static void _oval_filter_consume_ste_ref(char *steref, void *user)

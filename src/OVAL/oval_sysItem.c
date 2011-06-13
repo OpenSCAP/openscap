@@ -53,12 +53,8 @@ typedef struct oval_sysitem {
 
 struct oval_sysitem *oval_sysitem_new(struct oval_syschar_model *model, const char *id)
 {
+	__attribute__nonnull__(model);
 	oval_sysitem_t *sysitem;
-
-        if (model && oval_syschar_model_is_locked(model)) {
-                oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
-                return NULL;
-        }
 
 	sysitem = (oval_sysitem_t *) oscap_alloc(sizeof(oval_sysitem_t));
 	if (sysitem == NULL)
@@ -107,13 +103,6 @@ bool oval_sysitem_is_valid(struct oval_sysitem *sysitem)
 		return false;
 
 	return true;
-}
-
-bool oval_sysitem_is_locked(struct oval_sysitem *sysitem)
-{
-	__attribute__nonnull__(sysitem);
-
-	return oval_syschar_model_is_locked(sysitem->model);
 }
 
 struct oval_sysitem *oval_sysitem_clone(struct oval_syschar_model *new_model, struct oval_sysitem *old_item)
@@ -185,41 +174,38 @@ oval_subtype_t oval_sysitem_get_subtype(struct oval_sysitem *sysitem)
 
 void oval_sysitem_set_subtype(struct oval_sysitem *sysitem, oval_subtype_t subtype)
 {
-	if (sysitem && !oval_sysitem_is_locked(sysitem)) {
-		sysitem->subtype = subtype;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(sysitem);
+	sysitem->subtype = subtype;
 }
 
 char *oval_sysitem_get_id(struct oval_sysitem *item)
 {
+	__attribute__nonnull__(item);
 	return item->id;
 }
 
 struct oval_message_iterator *oval_sysitem_get_messages(struct oval_sysitem *item)
 {
+	__attribute__nonnull__(item);
 	return (struct oval_message_iterator *)oval_collection_iterator(item->messages);
 }
 
 void oval_sysitem_add_message(struct oval_sysitem *item, struct oval_message *message)
 {
-	if (item && !oval_sysitem_is_locked(item)) {
-		oval_collection_add(item->messages, message);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(item);
+	oval_collection_add(item->messages, message);
 }
 
 struct oval_sysent_iterator *oval_sysitem_get_sysents(struct oval_sysitem *sysitem)
 {
+	__attribute__nonnull__(sysitem);
 	return (struct oval_sysent_iterator *)oval_collection_iterator(sysitem->sysents);
 }
 
 void oval_sysitem_add_sysent(struct oval_sysitem *sysitem, struct oval_sysent *sysent)
 {
-	if (!oval_sysitem_is_locked(sysitem)) {
-		oval_collection_add(sysitem->sysents, sysent);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(sysitem);
+	oval_collection_add(sysitem->sysents, sysent);
 }
 
 oval_syschar_status_t oval_sysitem_get_status(struct oval_sysitem *data)
@@ -231,10 +217,8 @@ oval_syschar_status_t oval_sysitem_get_status(struct oval_sysitem *data)
 
 void oval_sysitem_set_status(struct oval_sysitem *data, oval_syschar_status_t status)
 {
-	if (data && !oval_sysitem_is_locked(data)) {
-		data->status = status;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(data);
+	data->status = status;
 }
 
 static void _oval_sysitem_parse_subtag_message_consumer(struct oval_message *message, void *sysitem)

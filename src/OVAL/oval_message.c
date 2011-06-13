@@ -63,12 +63,6 @@ bool oval_message_is_valid(struct oval_message * message)
 	return true;		//TODO
 }
 
-bool oval_message_is_locked(struct oval_message * message)
-{
-        //oscap_dlprintf(DBG_W, "NOOP.\n");
-	return false;		//TODO
-}
-
 struct oval_message *oval_message_clone(struct oval_message *old_message)
 {
 	struct oval_message *new_message = oval_message_new();
@@ -127,20 +121,16 @@ oval_message_level_t oval_message_get_level(struct oval_message * message)
 
 void oval_message_set_text(struct oval_message *message, char *text)
 {
-	if (message && !oval_message_is_locked(message)) {
-		if (message->text != NULL)
-			oscap_free(message->text);
-		message->text = (text == NULL) ? NULL : oscap_strdup(text);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(message);
+	if (message->text != NULL)
+		oscap_free(message->text);
+	message->text = (text == NULL) ? NULL : oscap_strdup(text);
 }
 
 void oval_message_set_level(struct oval_message *message, oval_message_level_t level)
 {
-	if (message && !oval_message_is_locked(message)) {
-		message->level = level;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(message);
+	message->level = level;
 }
 
 static void oval_message_parse_tag_consumer(char *text, void *message)

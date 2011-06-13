@@ -82,15 +82,6 @@ bool oval_sysent_is_valid(struct oval_sysent * sysent)
 	return true;
 }
 
-bool oval_sysent_is_locked(struct oval_sysent * sysent)
-{
-	__attribute__nonnull__(sysent);
-
-	if (sysent->model)
-		return oval_syschar_model_is_locked(sysent->model);
-	else
-		return false;
-}
 
 struct oval_sysent *oval_sysent_clone(struct oval_syschar_model *new_model, struct oval_sysent *old_item)
 {
@@ -194,46 +185,36 @@ int oval_sysent_get_mask(struct oval_sysent *sysent)
 
 void oval_sysent_set_name(struct oval_sysent *sysent, char *name)
 {
-	if (sysent && !oval_sysent_is_locked(sysent)) {
-		if (sysent->name != NULL)
-			oscap_free(sysent->name);
-		sysent->name = name;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(sysent);
+	if (sysent->name != NULL)
+		oscap_free(sysent->name);
+	sysent->name = name;
 }
 
 void oval_sysent_set_status(struct oval_sysent *sysent, oval_syschar_status_t status)
 {
-	if (sysent && !oval_sysent_is_locked(sysent)) {
-		sysent->status = status;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(sysent);
+	sysent->status = status;
 }
 
 void oval_sysent_set_datatype(struct oval_sysent *sysent, oval_datatype_t datatype)
 {
-	if (sysent && !oval_sysent_is_locked(sysent)) {
-		sysent->datatype = datatype;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(sysent);
+	sysent->datatype = datatype;
 }
 
 void oval_sysent_set_mask(struct oval_sysent *sysent, int mask)
 {
-	if (sysent && !oval_sysent_is_locked(sysent)) {
-		sysent->mask = mask;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(sysent);
+	sysent->mask = mask;
 }
 
 void oval_sysent_set_value(struct oval_sysent *sysent, char *value)
 {
-	if (sysent && !oval_sysent_is_locked(sysent)) {
-		if (sysent->value != NULL)
-			oscap_free(sysent->value);
-		sysent->value = oscap_strdup(value);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(sysent);
+	if (sysent->value != NULL)
+		oscap_free(sysent->value);
+	sysent->value = oscap_strdup(value);
 }
 
 void oval_sysent_add_record_field(struct oval_sysent *sysent, struct oval_record_field *rf)

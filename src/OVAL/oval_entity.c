@@ -178,13 +178,6 @@ bool oval_entity_is_valid(struct oval_entity * entity)
 	return true;
 }
 
-bool oval_entity_is_locked(struct oval_entity * entity)
-{
-	__attribute__nonnull__(entity);
-
-	return oval_definition_model_is_locked(entity->model);
-}
-
 struct oval_entity *oval_entity_clone(struct oval_definition_model *new_model, struct oval_entity *old_entity) {
 	struct oval_entity *new_entity = oval_entity_new(new_model);
 	oval_datatype_t datatype = oval_entity_get_datatype(old_entity);
@@ -227,68 +220,52 @@ void oval_entity_free(struct oval_entity *entity)
 
 void oval_entity_set_type(struct oval_entity *entity, oval_entity_type_t type)
 {
-	if (entity && !oval_entity_is_locked(entity)) {
-		entity->type = type;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(entity);
+	entity->type = type;
 }
 
 void oval_entity_set_datatype(struct oval_entity *entity, oval_datatype_t datatype)
 {
-	if (entity && !oval_entity_is_locked(entity)) {
-		entity->datatype = datatype;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(entity);
+	entity->datatype = datatype;
 }
 
 void oval_entity_set_operation(struct oval_entity *entity, oval_operation_t operation)
 {
-	if (entity && !oval_entity_is_locked(entity)) {
-		entity->operation = operation;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(entity);
+	entity->operation = operation;
 }
 
 void oval_entity_set_mask(struct oval_entity *entity, int mask)
 {
-	if (entity && !oval_entity_is_locked(entity)) {
-		entity->mask = mask;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(entity);
+	entity->mask = mask;
 }
 
 void oval_entity_set_varref_type(struct oval_entity *entity, oval_entity_varref_type_t type)
 {
-	if (entity && !oval_entity_is_locked(entity)) {
-		entity->varref_type = type;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(entity);
+	entity->varref_type = type;
 }
 
 void oval_entity_set_variable(struct oval_entity *entity, struct oval_variable *variable)
 {
-	if (entity && !oval_entity_is_locked(entity)) {
-		entity->variable = variable;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(entity);
+	entity->variable = variable;
 }
 
 void oval_entity_set_value(struct oval_entity *entity, struct oval_value *value)
 {
-	if (entity && !oval_entity_is_locked(entity)) {
-		entity->value = value;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(entity);
+	entity->value = value;
 }
 
 void oval_entity_set_name(struct oval_entity *entity, char *name)
 {
-	if (entity && !oval_entity_is_locked(entity)) {
-		if (entity->name != NULL)
-			oscap_free(entity->name);
-		entity->name = (name == NULL) ? NULL : oscap_strdup(name);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(entity);
+	if (entity->name != NULL)
+		oscap_free(entity->name);
+	entity->name = (name == NULL) ? NULL : oscap_strdup(name);
 }
 
 static void oval_consume_varref(char *varref, void *user)

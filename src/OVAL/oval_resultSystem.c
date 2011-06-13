@@ -99,12 +99,8 @@ static bool _oval_result_system_resolve_syschar(struct oval_syschar *syschar, st
 struct oval_result_system *oval_result_system_new(struct oval_results_model *model,
 						  struct oval_syschar_model *syschar_model)
 {
+	__attribute__nonnull__(model);
 	oval_result_system_t *sys;
-
-        if (model && oval_results_model_is_locked(model)) {
-                oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
-                return NULL;
-        }
 
 	sys = (oval_result_system_t *) oscap_alloc(sizeof(oval_result_system_t));
 	if (sys == NULL)
@@ -168,13 +164,6 @@ bool oval_result_system_is_valid(struct oval_result_system * result_system)
 		return false;
 
 	return true;
-}
-
-bool oval_result_system_is_locked(struct oval_result_system * result_system)
-{
-	__attribute__nonnull__(result_system);
-
-	return oval_results_model_is_locked(result_system->model);
 }
 
 typedef void (*_oval_result_system_clone_func) (struct oval_result_system *, void *);
@@ -309,26 +298,24 @@ struct oval_sysinfo *oval_result_system_get_sysinfo(struct oval_result_system *s
 	    ? oval_syschar_model_get_sysinfo(syschar_model) : NULL;
 }
 
-void oval_result_system_add_definition(struct oval_result_system *sys, struct oval_result_definition *definition) {
-	if (sys && !oval_result_system_is_locked(sys)) {
-		if (definition) {
-			struct oval_definition *ovaldef = oval_result_definition_get_definition(definition);
-			char *id = oval_definition_get_id(ovaldef);
-			oval_string_map_put(sys->definitions, id, definition);
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+void oval_result_system_add_definition(struct oval_result_system *sys, struct oval_result_definition *definition) 
+{
+	__attribute__nonnull__(sys);
+	if (definition) {
+		struct oval_definition *ovaldef = oval_result_definition_get_definition(definition);
+		char *id = oval_definition_get_id(ovaldef);
+		oval_string_map_put(sys->definitions, id, definition);
+	}
 }
 
-void oval_result_system_add_test(struct oval_result_system *sys, struct oval_result_test *test) {
-	if (sys && !oval_result_system_is_locked(sys)) {
-		if (test) {
-			struct oval_test *ovaldef = oval_result_test_get_test(test);
-			char *id = oval_test_get_id(ovaldef);
-			oval_string_map_put(sys->tests, id, test);
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+void oval_result_system_add_test(struct oval_result_system *sys, struct oval_result_test *test) 
+{
+	__attribute__nonnull__(sys);
+	if (test) {
+		struct oval_test *ovaldef = oval_result_test_get_test(test);
+		char *id = oval_test_get_id(ovaldef);
+		oval_string_map_put(sys->tests, id, test);
+	}
 }
 
 static int oval_result_system_parse(xmlTextReaderPtr reader, struct oval_parser_context *context, void *usr) {

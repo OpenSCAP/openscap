@@ -223,10 +223,6 @@ struct oval_definition_model *oval_results_model_get_definition_model(struct ova
  * @memberof oval_results_model
  */
 struct oval_result_system_iterator *oval_results_model_get_systems(struct oval_results_model *);
-/**
- * @memberof oval_results_model
- */
-bool oval_results_model_is_locked(struct oval_results_model *result_model);
 /** @} */
 
 /**
@@ -312,10 +308,6 @@ struct oval_syschar_model *oval_result_system_get_syschar_model(struct oval_resu
  * @memberof oval_result_system
  */
 struct oval_sysinfo *oval_result_system_get_sysinfo(struct oval_result_system *);
-/**
- * @memberof oval_result_system
- */
-bool oval_result_system_is_locked(struct oval_result_system *result_system);
 /** @} */
 
 /**
@@ -443,10 +435,6 @@ struct oval_message_iterator *oval_result_definition_get_messages(struct oval_re
  * @memberof oval_result_definition
  */
 struct oval_result_criteria_node *oval_result_definition_get_criteria(struct oval_result_definition *);
-/**
- * @memberof oval_result_definition
- */
-bool oval_result_definition_is_locked(struct oval_result_definition *result_definition);
 /** @} */
 
 /**
@@ -564,11 +552,6 @@ struct oval_result_item_iterator *oval_result_test_get_items(struct oval_result_
  * @memberof oval_result_test
  */
 struct oval_variable_binding_iterator *oval_result_test_get_bindings(struct oval_result_test *);
-/**
- * Return <b>true</b> if the result_test instance is locked.
- * The state of a locked instance cannot be changed.
- */
-bool oval_result_test_is_locked(struct oval_result_test *result_test);
 /** @} */
 
 /**
@@ -654,10 +637,6 @@ oval_result_t oval_result_item_get_result(struct oval_result_item *);
  * @memberof oval_result_item
  */
 struct oval_message_iterator *oval_result_item_get_messages(struct oval_result_item *);
-/**
- * @memberof oval_result_item
- */
-bool oval_result_item_is_locked(struct oval_result_item *result_item);
 /** @} */
 
 /**
@@ -777,10 +756,6 @@ struct oval_result_test *oval_result_criteria_node_get_test(struct oval_result_c
  * @memberof oval_result_criteria_node
  */
 struct oval_result_definition *oval_result_criteria_node_get_extends(struct oval_result_criteria_node *);	//type==NODETYPE_EXTENDDEF
-/**
- * @memberof oval_result_criteria_node
- */
-bool oval_result_criteria_node_is_locked(struct oval_result_criteria_node *result_criteria_node);
 /** @} */
 
 /**
@@ -862,10 +837,6 @@ bool oval_result_directives_get_reported(struct oval_result_directives *, oval_r
  * @memberof oval_result_directives
  */
 oval_result_directive_content_t oval_result_directives_get_content(struct oval_result_directives *, oval_result_t);
-/**
- * @memberof oval_result_directives
- */
-bool oval_result_directives_is_locked(struct oval_result_directives *result_directives);
 /** @} */
 
 /**

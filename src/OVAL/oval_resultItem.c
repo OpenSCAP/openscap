@@ -80,13 +80,6 @@ bool oval_result_item_is_valid(struct oval_result_item * result_item)
 	return true;
 }
 
-bool oval_result_item_is_locked(struct oval_result_item * result_item)
-{
-	__attribute__nonnull__(result_item);
-
-	return oval_result_system_is_locked(result_item->sys);
-}
-
 struct oval_result_item *oval_result_item_clone
     (struct oval_result_system *new_system, struct oval_result_item *old_item) {
 	struct oval_sysitem *old_sysitem = oval_result_item_get_sysitem(old_item);
@@ -165,17 +158,14 @@ struct oval_message_iterator *oval_result_item_get_messages(struct oval_result_i
 
 void oval_result_item_set_result(struct oval_result_item *item, oval_result_t result)
 {
-	if (item && !oval_result_item_is_locked(item)) {
-		item->result = result;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(item);
+	item->result = result;
 }
 
-void oval_result_item_add_message(struct oval_result_item *item, struct oval_message *message) {
-	if (item && !oval_result_item_is_locked(item)) {
-		oval_collection_add(item->messages, message);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+void oval_result_item_add_message(struct oval_result_item *item, struct oval_message *message) 
+{
+	__attribute__nonnull__(item);
+	oval_collection_add(item->messages, message);
 }
 
 static void _oval_result_item_message_consumer(struct oval_message *message, struct oval_result_item *item) {

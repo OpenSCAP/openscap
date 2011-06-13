@@ -262,21 +262,16 @@ struct oval_value *oval_component_get_literal_value(struct oval_component *compo
 
 void oval_component_set_literal_value(struct oval_component *component, struct oval_value *value) {
 	/* type == OVAL_COMPONENT_LITERAL */
-	if (component && !oval_component_is_locked(component)) {
-		if (oval_component_get_type(component) == OVAL_COMPONENT_LITERAL) {
-			((struct oval_component_LITERAL *)component)->value = value;
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(component);
+	if (oval_component_get_type(component) == OVAL_COMPONENT_LITERAL) {
+		((struct oval_component_LITERAL *)component)->value = value;
+	}
 }
 
 void oval_component_set_type(struct oval_component *component, oval_component_type_t type)
 {
-
-	if (component && !oval_component_is_locked(component)) {
-		component->type = type;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(component);
+	component->type = type;
 }
 
 struct oval_object *oval_component_get_object(struct oval_component *component)
@@ -289,12 +284,10 @@ struct oval_object *oval_component_get_object(struct oval_component *component)
 }
 
 void oval_component_set_object(struct oval_component *component, struct oval_object *object) {
-	if (component && !oval_component_is_locked(component)) {
-		if (oval_component_get_type(component) == OVAL_COMPONENT_OBJECTREF) {
-			((struct oval_component_OBJECTREF *)component)->object = object;
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(component);
+	if (oval_component_get_type(component) == OVAL_COMPONENT_OBJECTREF) {
+		((struct oval_component_OBJECTREF *)component)->object = object;
+	}
 }
 
 char *oval_component_get_item_field(struct oval_component *component) {
@@ -306,12 +299,10 @@ char *oval_component_get_item_field(struct oval_component *component) {
 }
 
 void oval_component_set_item_field(struct oval_component *component, char *field) {
-	if (component && !oval_component_is_locked(component)) {
-		if (oval_component_get_type(component) == OVAL_COMPONENT_OBJECTREF) {
-			((struct oval_component_OBJECTREF *)component)->item_field = oscap_strdup(field);
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(component);
+	if (oval_component_get_type(component) == OVAL_COMPONENT_OBJECTREF) {
+		((struct oval_component_OBJECTREF *)component)->item_field = oscap_strdup(field);
+	}
 }
 
 char *oval_component_get_record_field(struct oval_component *component) {
@@ -322,10 +313,8 @@ char *oval_component_get_record_field(struct oval_component *component) {
 }
 
 void oval_component_set_record_field(struct oval_component *component, char *field) {
-	if (oval_component_is_locked(component)) {
-		dW("Attempt to update locked content.\n");
-		return;
-	}
+	__attribute__nonnull__(component);
+
 	if (oval_component_get_type(component) != OVAL_COMPONENT_OBJECTREF) {
 		dW("Wrong component type: %d.\n", oval_component_get_type(component));
 		return;
@@ -374,15 +363,15 @@ oval_arithmetic_operation_t oval_component_get_arithmetic_operation(struct oval_
 	return operation;
 }
 
-void oval_component_set_arithmetic_operation(struct oval_component *component, oval_arithmetic_operation_t operation) {
-	if (component && !oval_component_is_locked(component)) {
-		/* type == OVAL_COMPONENT_ARITHMETIC */
-		if (component->type == OVAL_FUNCTION_ARITHMETIC) {
-			oval_component_ARITHMETIC_t *arithmetic = (oval_component_ARITHMETIC_t *) component;
-			arithmetic->operation = operation;
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+void oval_component_set_arithmetic_operation(struct oval_component *component, oval_arithmetic_operation_t operation) 
+{
+	__attribute__nonnull__(component);
+	
+	/* type == OVAL_COMPONENT_ARITHMETIC */
+	if (component->type == OVAL_FUNCTION_ARITHMETIC) {
+		oval_component_ARITHMETIC_t *arithmetic = (oval_component_ARITHMETIC_t *) component;
+		arithmetic->operation = operation;
+	}
 }
 
 char *oval_component_get_prefix(struct oval_component *component)
@@ -399,15 +388,15 @@ char *oval_component_get_prefix(struct oval_component *component)
 	return character;
 }
 
-void oval_component_set_prefix(struct oval_component *component, char *character) {
-	if (component && !oval_component_is_locked(component)) {
-		/* type == OVAL_COMPONENT_BEGIN */
-		if (component->type == OVAL_FUNCTION_BEGIN) {
-			oval_component_BEGEND_t *begin = (oval_component_BEGEND_t *) component;
-			begin->character = oscap_strdup(character);
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+void oval_component_set_prefix(struct oval_component *component, char *character) 
+{
+	__attribute__nonnull__(component);
+
+	/* type == OVAL_COMPONENT_BEGIN */
+	if (component->type == OVAL_FUNCTION_BEGIN) {
+		oval_component_BEGEND_t *begin = (oval_component_BEGEND_t *) component;
+		begin->character = oscap_strdup(character);
+	}
 }
 
 char *oval_component_get_suffix(struct oval_component *component)
@@ -474,14 +463,13 @@ int oval_component_get_substring_start(struct oval_component *component)
 
 void oval_component_set_substring_start(struct oval_component *component, int start)
 {
-	if (component && !oval_component_is_locked(component)) {
-		/* type==OVAL_COMPONENT_SUBSTRING */
-		if (component->type == OVAL_FUNCTION_SUBSTRING) {
-			oval_component_SUBSTRING_t *substring = (oval_component_SUBSTRING_t *) component;
-			substring->start = start;
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(component);
+	
+	/* type==OVAL_COMPONENT_SUBSTRING */
+	if (component->type == OVAL_FUNCTION_SUBSTRING) {
+		oval_component_SUBSTRING_t *substring = (oval_component_SUBSTRING_t *) component;
+		substring->start = start;
+	}
 }
 
 int oval_component_get_substring_length(struct oval_component *component)
@@ -498,15 +486,15 @@ int oval_component_get_substring_length(struct oval_component *component)
 	return length;
 }
 
-void oval_component_set_substring_length(struct oval_component *component, int length) {
-	if (component && !oval_component_is_locked(component)) {
-		/* type == OVAL_COMPONENT_SUBSTRING */
-		if (component->type == OVAL_FUNCTION_SUBSTRING) {
-			oval_component_SUBSTRING_t *substring = (oval_component_SUBSTRING_t *) component;
-			substring->length = length;
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+void oval_component_set_substring_length(struct oval_component *component, int length) 
+{
+	__attribute__nonnull__(component);
+
+	/* type == OVAL_COMPONENT_SUBSTRING */
+	if (component->type == OVAL_FUNCTION_SUBSTRING) {
+		oval_component_SUBSTRING_t *substring = (oval_component_SUBSTRING_t *) component;
+		substring->length = length;
+	}
 }
 
 oval_datetime_format_t oval_component_get_timedif_format_1(struct oval_component
@@ -524,15 +512,14 @@ oval_datetime_format_t oval_component_get_timedif_format_1(struct oval_component
 	return format;
 }
 
-void oval_component_set_timedif_format_1(struct oval_component *component, oval_datetime_format_t format) {
-	if (component && !oval_component_is_locked(component)) {
-		/* type == OVAL_COMPONENT_TIMEDIF */
-		if (component->type == OVAL_FUNCTION_TIMEDIF) {
-			oval_component_TIMEDIF_t *timedif = (oval_component_TIMEDIF_t *) component;
-			timedif->format_1 = format;
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+void oval_component_set_timedif_format_1(struct oval_component *component, oval_datetime_format_t format) 
+{
+	__attribute__nonnull__(component);
+	/* type == OVAL_COMPONENT_TIMEDIF */
+	if (component->type == OVAL_FUNCTION_TIMEDIF) {
+		oval_component_TIMEDIF_t *timedif = (oval_component_TIMEDIF_t *) component;
+		timedif->format_1 = format;
+	}
 }
 
 oval_datetime_format_t oval_component_get_timedif_format_2(struct oval_component
@@ -550,15 +537,14 @@ oval_datetime_format_t oval_component_get_timedif_format_2(struct oval_component
 	return format;
 }
 
-void oval_component_set_timedif_format_2(struct oval_component *component, oval_datetime_format_t format) {
-	if (component && !oval_component_is_locked(component)) {
-		/* type == OVAL_COMPONENT_TIMEDIF */
-		if (component->type == OVAL_FUNCTION_TIMEDIF) {
-			oval_component_TIMEDIF_t *timedif = (oval_component_TIMEDIF_t *) component;
-			timedif->format_2 = format;
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+void oval_component_set_timedif_format_2(struct oval_component *component, oval_datetime_format_t format) 
+{
+	__attribute__nonnull__(component);
+	/* type == OVAL_COMPONENT_TIMEDIF */
+	if (component->type == OVAL_FUNCTION_TIMEDIF) {
+		oval_component_TIMEDIF_t *timedif = (oval_component_TIMEDIF_t *) component;
+		timedif->format_2 = format;
+	}
 }
 
 char *oval_component_get_regex_pattern(struct oval_component *component) {
@@ -573,15 +559,15 @@ char *oval_component_get_regex_pattern(struct oval_component *component) {
 	return pattern;
 }
 
-void oval_component_set_regex_pattern(struct oval_component *component, char *pattern) {
-	if (component && !oval_component_is_locked(component)) {
-		/* type == OVAL_COMPONENT_REGEX_CAPTURE */
-		if (component->type == OVAL_FUNCTION_REGEX_CAPTURE) {
-			oval_component_REGEX_CAPTURE_t *regex = (oval_component_REGEX_CAPTURE_t *) component;
-			regex->pattern = oscap_strdup(pattern);
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+void oval_component_set_regex_pattern(struct oval_component *component, char *pattern) 
+{
+	__attribute__nonnull__(component);
+
+	/* type == OVAL_COMPONENT_REGEX_CAPTURE */
+	if (component->type == OVAL_FUNCTION_REGEX_CAPTURE) {
+		oval_component_REGEX_CAPTURE_t *regex = (oval_component_REGEX_CAPTURE_t *) component;
+		regex->pattern = oscap_strdup(pattern);
+	}
 }
 
 struct oval_component *oval_component_new(struct oval_definition_model *model, oval_component_type_t type)
@@ -711,13 +697,6 @@ bool oval_component_is_valid(struct oval_component * component)
 {
         oscap_dlprintf(DBG_W, "NOOP.\n");
 	return true;		//TODO
-}
-
-bool oval_component_is_locked(struct oval_component * component)
-{
-	__attribute__nonnull__(component);
-
-	return oval_definition_model_is_locked(component->model);
 }
 
 static void _oval_component_clone_subcomponents
@@ -883,27 +862,26 @@ void oval_component_free(struct oval_component *component)
 	oscap_free(component);
 }
 
-void oval_component_add_function_component(struct oval_component *component, struct oval_component *func_component) {
-	if (component && !oval_component_is_locked(component)) {
-		if (component->type > OVAL_FUNCTION) {
-			oval_component_FUNCTION_t *function = (oval_component_FUNCTION_t *) component;
-			if (func_component)
-				oval_collection_add(function->function_components, func_component);
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+void oval_component_add_function_component(struct oval_component *component, struct oval_component *func_component) 
+{
+	__attribute__nonnull__(component);
+	
+	if (component->type > OVAL_FUNCTION) {
+		oval_component_FUNCTION_t *function = (oval_component_FUNCTION_t *) component;
+		if (func_component)
+			oval_collection_add(function->function_components, func_component);
+	}
 }
 
 void oval_component_set_variable(struct oval_component *component, struct oval_variable *variable)
 {
-	if (component && !oval_component_is_locked(component)) {
-		/* type == OVAL_COMPONENT_VARREF */
-		if (component->type == OVAL_COMPONENT_VARREF) {
-			oval_component_VARREF_t *varref = (oval_component_VARREF_t *) component;
-			varref->variable = variable;
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(component);
+
+	/* type == OVAL_COMPONENT_VARREF */
+	if (component->type == OVAL_COMPONENT_VARREF) {
+		oval_component_VARREF_t *varref = (oval_component_VARREF_t *) component;
+		varref->variable = variable;
+	}
 }
 
 static void oval_value_consume(struct oval_value *value, void *component)

@@ -73,12 +73,10 @@ char *oval_sysint_get_name(struct oval_sysint *sysint)
 
 void oval_sysint_set_name(struct oval_sysint *sysint, char *name)
 {
-	if (sysint && !oval_sysint_is_locked(sysint)) {
-		if (sysint->name != NULL)
-			oscap_free(sysint->name);
-		sysint->name = oscap_strdup(name);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(sysint);
+	if (sysint->name != NULL)
+		oscap_free(sysint->name);
+	sysint->name = oscap_strdup(name);
 }
 
 char *oval_sysint_get_ip_address(struct oval_sysint *sysint)
@@ -90,12 +88,10 @@ char *oval_sysint_get_ip_address(struct oval_sysint *sysint)
 
 void oval_sysint_set_ip_address(struct oval_sysint *sysint, char *ip_address)
 {
-	if (sysint && !oval_sysint_is_locked(sysint)) {
-		if (sysint->ipAddress != NULL)
-			oscap_free(sysint->ipAddress);
-		sysint->ipAddress = oscap_strdup(ip_address);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(sysint);
+	if (sysint->ipAddress != NULL)
+		oscap_free(sysint->ipAddress);
+	sysint->ipAddress = oscap_strdup(ip_address);
 }
 
 char *oval_sysint_get_mac_address(struct oval_sysint *sysint)
@@ -105,12 +101,10 @@ char *oval_sysint_get_mac_address(struct oval_sysint *sysint)
 
 void oval_sysint_set_mac_address(struct oval_sysint *sysint, char *mac_address)
 {
-	if (sysint && !oval_sysint_is_locked(sysint)) {
-		if (sysint->macAddress != NULL)
-			oscap_free(sysint->macAddress);
-		sysint->macAddress = oscap_strdup(mac_address);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(sysint);
+	if (sysint->macAddress != NULL)
+		oscap_free(sysint->macAddress);
+	sysint->macAddress = oscap_strdup(mac_address);
 }
 
 struct oval_sysint *oval_sysint_new(struct oval_syschar_model *model)
@@ -124,19 +118,6 @@ struct oval_sysint *oval_sysint_new(struct oval_syschar_model *model)
 	sysint->name = NULL;
 	sysint->model = model;
 	return sysint;
-}
-
-bool oval_sysint_is_valid(struct oval_sysint * sysint)
-{
-        oscap_dlprintf(DBG_W, "NOOP.\n");
-	return true;		//TODO
-}
-
-bool oval_sysint_is_locked(struct oval_sysint * sysint)
-{
-	__attribute__nonnull__(sysint);
-
-	return oval_syschar_model_is_locked(sysint->model);
 }
 
 struct oval_sysint *oval_sysint_clone(struct oval_syschar_model *new_model, struct oval_sysint *old_sysint)

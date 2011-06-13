@@ -250,12 +250,6 @@ bool oval_result_test_is_valid(struct oval_result_test * result_test)
 	return true;
 }
 
-bool oval_result_test_is_locked(struct oval_result_test * result_test)
-{
-	__attribute__nonnull__(result_test);
-
-	return oval_result_system_is_locked(result_test->system);
-}
 
 struct oval_result_test *oval_result_test_clone
     (struct oval_result_system *new_system, struct oval_result_test *old_test) {
@@ -1432,39 +1426,32 @@ struct oval_variable_binding_iterator *oval_result_test_get_bindings(struct oval
 
 void oval_result_test_set_result(struct oval_result_test *test, oval_result_t result)
 {
-	if (test && !oval_result_test_is_locked(test)) {
-		test->result = result;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(test);
+	test->result = result;
 }
 
 void oval_result_test_set_instance(struct oval_result_test *test, int instance)
 {
-	if (test && !oval_result_test_is_locked(test)) {
-		test->instance = instance;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(test);
+	test->instance = instance;
 }
 
-void oval_result_test_add_message(struct oval_result_test *test, struct oval_message *message) {
-	if (test && !oval_result_test_is_locked(test)) {
-		oval_collection_add(test->messages, message);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+void oval_result_test_add_message(struct oval_result_test *test, struct oval_message *message) 
+{
+	__attribute__nonnull__(test);
+	oval_collection_add(test->messages, message);
 }
 
-void oval_result_test_add_item(struct oval_result_test *test, struct oval_result_item *item) {
-	if (test && !oval_result_test_is_locked(test)) {
-		oval_collection_add(test->items, item);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+void oval_result_test_add_item(struct oval_result_test *test, struct oval_result_item *item) 
+{
+	__attribute__nonnull__(test);
+	oval_collection_add(test->items, item);
 }
 
-void oval_result_test_add_binding(struct oval_result_test *test, struct oval_variable_binding *binding) {
-	if (test && !oval_result_test_is_locked(test)) {
-		oval_collection_add(test->bindings, binding);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+void oval_result_test_add_binding(struct oval_result_test *test, struct oval_variable_binding *binding) 
+{
+	__attribute__nonnull__(test);
+	oval_collection_add(test->bindings, binding);
 }
 
 //void(*oscap_consumer_func)(void*, void*);

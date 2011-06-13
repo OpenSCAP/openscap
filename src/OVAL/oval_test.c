@@ -160,12 +160,8 @@ struct oval_state_iterator *oval_test_get_states(struct oval_test *test)
 
 struct oval_test *oval_test_new(struct oval_definition_model *model, const char *id)
 {
+	__attribute__nonnull__(model);
 	oval_test_t *test;
-
-	if (model && oval_definition_model_is_locked(model)) {
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
-		return NULL;
-	}
 
 	test = (oval_test_t *) oscap_alloc(sizeof(oval_test_t));
 	if (test == NULL)
@@ -252,13 +248,6 @@ bool oval_test_is_valid(struct oval_test * test)
 	return ret;
 }
 
-bool oval_test_is_locked(struct oval_test * test)
-{
-	__attribute__nonnull__(test);
-
-	return oval_definition_model_is_locked(test->model);
-}
-
 struct oval_test *oval_test_clone(struct oval_definition_model *new_model, struct oval_test *old_test) {
 	__attribute__nonnull__(old_test);
 
@@ -321,84 +310,64 @@ void oval_test_free(struct oval_test *test)
 
 void oval_test_set_deprecated(struct oval_test *test, bool deprecated)
 {
-	if (test && !oval_test_is_locked(test)) {
-		test->deprecated = deprecated;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(test);
+	test->deprecated = deprecated;
 }
 
 void oval_test_set_version(struct oval_test *test, int version)
 {
-	if (test && !oval_test_is_locked(test)) {
-		test->version = version;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(test);
+	test->version = version;
 }
 
 void oval_test_set_subtype(struct oval_test *test, oval_subtype_t subtype)
 {
-	if (test && !oval_test_is_locked(test)) {
-		test->subtype = subtype;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(test);
+	test->subtype = subtype;
 }
 
 void oval_test_set_comment(struct oval_test *test, char *comm)
 {
-	if (test && !oval_test_is_locked(test)) {
-		if (test->comment != NULL)
-			oscap_free(test->comment);
-		test->comment = oscap_strdup(comm);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(test);
+	if (test->comment != NULL)
+		oscap_free(test->comment);
+	test->comment = oscap_strdup(comm);
 }
 
 void oval_test_set_existence(struct oval_test *test, oval_existence_t existence)
 {
-	if (test && !oval_test_is_locked(test)) {
-		test->existence = existence;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(test);
+	test->existence = existence;
 }
 
 void oval_test_set_state_operator(struct oval_test *test, oval_operator_t state_operator)
 {
-	if (test && !oval_test_is_locked(test)) {
-		test->state_operator = state_operator;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(test);
+	test->state_operator = state_operator;
 }
 
 void oval_test_set_check(struct oval_test *test, oval_check_t check)
 {
-	if (test && !oval_test_is_locked(test)) {
-		test->check = check;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(test);
+	test->check = check;
 }
 
 void oval_test_set_object(struct oval_test *test, struct oval_object *object)
 {
-	if (test && !oval_test_is_locked(test)) {
-		test->object = object;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(test);
+	test->object = object;
 }
 
 void oval_test_add_state(struct oval_test *test, struct oval_state *state)
 {
-	if (test && !oval_test_is_locked(test)) {
-		oval_collection_add(test->states, state);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(test);
+	oval_collection_add(test->states, state);
 }
 
 void oval_test_add_note(struct oval_test *test, char *note)
 {
-	if (test && !oval_test_is_locked(test)) {
-		oval_collection_add(test->notes, (void *)oscap_strdup(note));
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(test);
+	oval_collection_add(test->notes, (void *)oscap_strdup(note));
 }
 
 static void _oval_test_parse_notes_consumer(char *text, void *test)

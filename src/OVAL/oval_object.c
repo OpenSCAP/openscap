@@ -149,12 +149,8 @@ struct oval_behavior_iterator *oval_object_get_behaviors(struct oval_object *obj
 
 struct oval_object *oval_object_new(struct oval_definition_model *model, const char *id)
 {
+	__attribute__nonnull__(model);
 	oval_object_t *object;
-
-	if (model && oval_definition_model_is_locked(model)) {
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
-		return NULL;
-	}
 
 	object = (oval_object_t *) oscap_alloc(sizeof(oval_object_t));
 	if (object == NULL)
@@ -225,13 +221,6 @@ bool oval_object_is_valid(struct oval_object * object)
 	return true;
 }
 
-bool oval_object_is_locked(struct oval_object * object)
-{
-	__attribute__nonnull__(object);
-
-	return oval_definition_model_is_locked(object->model);
-}
-
 struct oval_object *oval_object_clone2(struct oval_definition_model *new_model, struct oval_object *old_object, char *new_id)
 {
 	__attribute__nonnull__(old_object);
@@ -300,60 +289,46 @@ void oval_object_free(struct oval_object *object)
 
 void oval_object_set_subtype(struct oval_object *object, oval_subtype_t subtype)
 {
-	if (object && !oval_object_is_locked(object)) {
-		object->subtype = subtype;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(object);
+	object->subtype = subtype;
 }
 
 void oval_object_add_note(struct oval_object *object, char *note)
 {
-	if (object && !oval_object_is_locked(object)) {
-		oval_collection_add(object->notes, (void *)oscap_strdup(note));
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(object);
+	oval_collection_add(object->notes, (void *)oscap_strdup(note));
 }
 
 void oval_object_set_comment(struct oval_object *object, char *comm)
 {
-	if (object && !oval_object_is_locked(object)) {
-		if (object->comment != NULL)
-			oscap_free(object->comment);
-		object->comment = (comm == NULL) ? NULL : oscap_strdup(comm);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(object);
+	if (object->comment != NULL)
+		oscap_free(object->comment);
+	object->comment = (comm == NULL) ? NULL : oscap_strdup(comm);
 }
 
 void oval_object_set_deprecated(struct oval_object *object, bool deprecated)
 {
-	if (object && !oval_object_is_locked(object)) {
-		object->deprecated = deprecated;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(object);
+	object->deprecated = deprecated;
 }
 
 void oval_object_set_version(struct oval_object *object, int version)
 {
-	if (object && !oval_object_is_locked(object)) {
-		object->version = version;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(object);
+	object->version = version;
 }
 
 void oval_object_add_object_content(struct oval_object *object, struct oval_object_content *content)
 {
-	if (object && !oval_object_is_locked(object)) {
-		oval_collection_add(object->object_content, (void *)content);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(object);
+	oval_collection_add(object->object_content, (void *)content);
 }
 
 void oval_object_add_behavior(struct oval_object *object, struct oval_behavior *behavior)
 {
-	if (object && !oval_object_is_locked(object)) {
-		oval_collection_add(object->behaviors, (void *)behavior);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(object);
+	oval_collection_add(object->behaviors, (void *)behavior);
 }
 
 static void oval_note_consume(char *text, void *object)

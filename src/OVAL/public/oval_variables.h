@@ -134,12 +134,6 @@ const char *oval_variable_model_get_comment (struct oval_variable_model *, char 
  * @memberof oval_variable_model
  */ 
 struct oval_value_iterator *oval_variable_model_get_values(struct oval_variable_model *, char *);
-/**
- * Return <b>true</b> if the variable_model instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_variable_model
- */ 
-bool oval_variable_model_is_locked(struct oval_variable_model *variable_model);
 /** @} */
 
 /**

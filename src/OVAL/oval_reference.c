@@ -109,13 +109,6 @@ bool oval_reference_is_valid(struct oval_reference * ref)
 	return true;		//TODO
 }
 
-bool oval_reference_is_locked(struct oval_reference * ref)
-{
-	__attribute__nonnull__(ref);
-
-	return oval_definition_model_is_locked(ref->model);
-}
-
 struct oval_reference *oval_reference_clone
     (struct oval_definition_model *new_model, struct oval_reference *old_reference) {
 	struct oval_reference *new_reference = oval_reference_new(new_model);
@@ -146,32 +139,26 @@ void oval_reference_free(struct oval_reference *ref)
 
 void oval_reference_set_source(struct oval_reference *ref, char *source)
 {
-	if (ref && !oval_reference_is_locked(ref)) {
-		if (ref->source != NULL)
-			oscap_free(ref->source);
-		ref->source = (source == NULL) ? NULL : oscap_strdup(source);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(ref);
+	if (ref->source != NULL)
+		oscap_free(ref->source);
+	ref->source = (source == NULL) ? NULL : oscap_strdup(source);
 }
 
 void oval_reference_set_id(struct oval_reference *ref, char *id)
 {
-	if (ref && !oval_reference_is_locked(ref)) {
-		if (ref->id != NULL)
-			free(ref->id);
-		ref->id = (id == NULL) ? NULL : oscap_strdup(id);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(ref);
+	if (ref->id != NULL)
+		free(ref->id);
+	ref->id = (id == NULL) ? NULL : oscap_strdup(id);
 }
 
 void oval_reference_set_url(struct oval_reference *ref, char *url)
 {
-	if (ref && !oval_reference_is_locked(ref)) {
-		if (ref->url != NULL)
-			free(ref->url);
-		ref->url = (url == NULL) ? NULL : oscap_strdup(url);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(ref);
+	if (ref->url != NULL)
+		free(ref->url);
+	ref->url = (url == NULL) ? NULL : oscap_strdup(url);
 }
 
 /*typedef void (*oval_reference_consumer)(struct oval_reference*, void*);*/

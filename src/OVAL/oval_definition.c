@@ -163,15 +163,9 @@ struct oval_criteria_node *oval_definition_get_criteria(struct oval_definition
 
 struct oval_definition *oval_definition_new(struct oval_definition_model *model, const char *id)
 {
+	__attribute__nonnull__(model);
 	struct oval_definition *definition;
 	xmlNode *root;
-
-        assume_r(model != NULL, /* return */ NULL);
-
-	if (oval_definition_model_is_locked(model)) {
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
-		return NULL;
-	}
 
 	definition = (struct oval_definition *)oscap_talloc(oval_definition_t);
 
@@ -215,13 +209,6 @@ bool oval_definition_is_valid(struct oval_definition * definition)
 		return false;
 
 	return true;
-}
-
-bool oval_definition_is_locked(struct oval_definition * definition)
-{
-	__attribute__nonnull__(definition);
-
-	return oval_definition_model_is_locked(definition->model);
 }
 
 struct oval_definition *oval_definition_clone
@@ -323,77 +310,59 @@ void oval_definition_iterator_free(struct
 
 void oval_definition_set_version(struct oval_definition *definition, int version)
 {
-	if (definition && !oval_definition_is_locked(definition)) {
-		definition->version = version;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(definition);
+	definition->version = version;
 }
 
 void oval_definition_set_class(struct oval_definition *definition, oval_definition_class_t class)
 {
-	if (definition && !oval_definition_is_locked(definition)) {
-		definition->class = class;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(definition);
+	definition->class = class;
 }
 
 void oval_definition_set_deprecated(struct oval_definition *definition, bool deprecated)
 {
-	if (definition && !oval_definition_is_locked(definition)) {
-		definition->deprecated = deprecated;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(definition);
+	definition->deprecated = deprecated;
 }
 
 void oval_definition_set_title(struct oval_definition *definition, char *title)
 {
-	if (definition && !oval_definition_is_locked(definition)) {
-		if (definition->title != NULL)
-			oscap_free(definition->title);
-		definition->title = (title == NULL) ? NULL : oscap_strdup(title);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(definition);
+	if (definition->title != NULL)
+		oscap_free(definition->title);
+	definition->title = (title == NULL) ? NULL : oscap_strdup(title);
 }
 
 void oval_definition_set_description(struct oval_definition *definition, char *description)
 {
-	if (definition && !oval_definition_is_locked(definition)) {
-		if (definition->description)
-			oscap_free(definition->description);
-		definition->description = (description == NULL) ? NULL : oscap_strdup(description);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(definition);
+	if (definition->description)
+		oscap_free(definition->description);
+	definition->description = (description == NULL) ? NULL : oscap_strdup(description);
 }
 
 void oval_definition_set_criteria(struct oval_definition *definition, struct oval_criteria_node *criteria)
 {
-	if (definition && !oval_definition_is_locked(definition)) {
-		definition->criteria = criteria;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(definition);
+	definition->criteria = criteria;
 }
 
 void oval_definition_add_affected(struct oval_definition *definition, struct oval_affected *affected)
 {
-	if (definition && !oval_definition_is_locked(definition)) {
-		oval_collection_add(definition->affected, affected);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(definition);
+	oval_collection_add(definition->affected, affected);
 }
 
 void oval_definition_add_reference(struct oval_definition *definition, struct oval_reference *ref)
 {
-	if (definition && !oval_definition_is_locked(definition)) {
-		oval_collection_add(definition->reference, ref);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(definition);
+	oval_collection_add(definition->reference, ref);
 }
 
 void oval_definition_add_note(struct oval_definition *definition, char *note) {
-	if (definition && !oval_definition_is_locked(definition)) {
-		oval_collection_add(definition->notes, note);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(definition);
+	oval_collection_add(definition->notes, note);
 }
 
 static oval_definition_class_t _odaclass(char *class)

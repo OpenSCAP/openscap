@@ -304,11 +304,6 @@ struct oval_variable *oval_variable_new(struct oval_definition_model *model, con
 {
 	oval_variable_t *variable;
 
-        if (model && oval_definition_model_is_locked(model)) {
-                oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
-                return NULL;
-        }
-
 	switch (type) {
 	case OVAL_VARIABLE_CONSTANT:{
 			oval_variable_CONSTANT_t *cvar;
@@ -408,13 +403,6 @@ bool oval_variable_is_valid(struct oval_variable * variable)
         }
 
 	return true;
-}
-
-bool oval_variable_is_locked(struct oval_variable * variable)
-{
-	__attribute__nonnull__(variable);
-
-	return oval_definition_model_is_locked(variable->model);
 }
 
 struct oval_variable *oval_variable_clone(struct oval_definition_model *new_model, struct oval_variable *old_variable) {
@@ -537,19 +525,11 @@ void oval_variable_free(struct oval_variable *variable)
 
 void oval_variable_set_datatype(struct oval_variable *variable, oval_datatype_t datatype)
 {
-	if (variable && !oval_variable_is_locked(variable)) {
-		variable->datatype = datatype;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	variable->datatype = datatype;
 }
 
 void oval_variable_set_type(struct oval_variable *variable, oval_variable_type_t new_type)
 {
-	if (oval_variable_is_locked(variable)) {
-		oscap_dlprintf(DBG_W, "Attempt to update locked variable: %s.\n", variable->id);
-		return;
-	}
-
 	if (variable->type != OVAL_VARIABLE_UNKNOWN) {
 		oscap_dlprintf(DBG_E, "Attempt to reset valid variable type, oldtype: %s, newtype: %s.\n",
 			       oval_variable_type_get_text(variable->type), oval_variable_type_get_text(new_type));
@@ -594,39 +574,30 @@ void oval_variable_set_type(struct oval_variable *variable, oval_variable_type_t
 
 void oval_variable_set_comment(struct oval_variable *variable, char *comm)
 {
-	if (variable && !oval_variable_is_locked(variable)) {
-		if (variable->comment != NULL)
-			oscap_free(variable->comment);
-		variable->comment = oscap_strdup(comm);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(variable);
+
+	if (variable->comment != NULL)
+		oscap_free(variable->comment);
+	variable->comment = oscap_strdup(comm);
 
 }
 
 void oval_variable_set_deprecated(struct oval_variable *variable, bool deprecated)
 {
-	if (variable && !oval_variable_is_locked(variable)) {
-		variable->deprecated = deprecated;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(variable);
+	variable->deprecated = deprecated;
 }
 
 void oval_variable_set_version(struct oval_variable *variable, int version)
 {
-	if (variable && !oval_variable_is_locked(variable)) {
-		variable->version = version;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(variable);
+	variable->version = version;
 }
 
 void oval_variable_add_value(struct oval_variable *variable, struct oval_value *value)
 {
+	__attribute__nonnull__(variable);
 	oval_variable_CONSTANT_t *cvar;
-
-	if (oval_variable_is_locked(variable)) {
-		oscap_dlprintf(DBG_W, "Attempt to update locked variable: %s.\n", variable->id);
-		return;
-	}
 
 	if (variable->type != OVAL_VARIABLE_CONSTANT)
 		return;
@@ -640,10 +611,8 @@ void oval_variable_add_value(struct oval_variable *variable, struct oval_value *
 
 void oval_variable_clear_values(struct oval_variable *variable)
 {
-	if (oval_variable_is_locked(variable)) {
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
-		return;
-	}
+	__attribute__nonnull__(variable);
+
 	if (variable->type != OVAL_VARIABLE_CONSTANT && variable->type != OVAL_VARIABLE_EXTERNAL) {
 		oscap_dlprintf(DBG_W, "Wrong variable type for this operation: %d.\n", variable->type);
 		return;
@@ -698,13 +667,12 @@ int oval_variable_bind_ext_var(struct oval_variable *var, struct oval_variable_m
 
 void oval_variable_set_component(struct oval_variable *variable, struct oval_component *component)
 {
-	if (variable && !oval_variable_is_locked(variable)) {
-		if (variable->type == OVAL_VARIABLE_LOCAL) {
-			oval_variable_LOCAL_t *local = (oval_variable_LOCAL_t *) variable;
-			local->component = component;
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(variable);
+
+	if (variable->type == OVAL_VARIABLE_LOCAL) {
+		oval_variable_LOCAL_t *local = (oval_variable_LOCAL_t *) variable;
+		local->component = component;
+	}
 }
 
 static void _oval_variable_parse_local_tag_component_consumer(struct oval_component *component, void *variable)

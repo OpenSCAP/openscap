@@ -289,12 +289,6 @@ oval_syschar_collection_flag_t oval_variable_get_collection_flag(struct oval_var
  * @memberof oval_syschar_model
  */
 struct oval_sysitem *oval_syschar_model_get_sysitem(struct oval_syschar_model *, const char *);
-/**
- * Return <b>true</b> if the syschar_model instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_syschar_model
- */
-bool oval_syschar_model_is_locked(struct oval_syschar_model *syschar_model);
 /** @} */
 
 /**
@@ -391,12 +385,6 @@ char *oval_sysinfo_get_primary_host_name(struct oval_sysinfo *);
  * @memberof oval_sysinfo
  */
 struct oval_sysint_iterator *oval_sysinfo_get_interfaces(struct oval_sysinfo *);
-/**
- * Return <b>true</b> if the sysinfo instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_sysinfo
- */
-bool oval_sysinfo_is_locked(struct oval_sysinfo *sysinfo);
 /** @} */
 
 /**
@@ -510,12 +498,6 @@ struct oval_variable_binding_iterator *oval_syschar_get_variable_bindings(struct
  * @memberof oval_syschar
  */
 struct oval_sysitem_iterator *oval_syschar_get_sysitem(struct oval_syschar *);
-/**
- * Return <b>true</b> if the syschar instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_syschar
- */
-bool oval_syschar_is_locked(struct oval_syschar *syschar);
 /** @} */
 
 /**
@@ -609,12 +591,6 @@ char *oval_sysint_get_ip_address(struct oval_sysint *);
  * @memberof oval_sysint
  */
 char *oval_sysint_get_mac_address(struct oval_sysint *);
-/**
- * Return <b>true</b> if the sysint instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_sysint
- */
-bool oval_sysint_is_locked(struct oval_sysint *sysint);
 /** @} */
 
 /**
@@ -716,12 +692,6 @@ struct oval_message_iterator *oval_sysitem_get_messages(struct oval_sysitem *);
  * @memberof oval_sysitem
  */
 oval_subtype_t oval_sysitem_get_subtype(struct oval_sysitem *);
-/**
- * Return <b>true</b> if the sysitem instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_sysitem
- */
-bool oval_sysitem_is_locked(struct oval_sysitem *sysitem);
 /** @} */
 
 /**
@@ -841,12 +811,6 @@ oval_datatype_t oval_sysent_get_datatype(struct oval_sysent *);
  * @memberof oval_sysent
  */
 int oval_sysent_get_mask(struct oval_sysent *);
-/**
- * Return <b>true</b> if the sysent instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_sysent
- */
-bool oval_sysent_is_locked(struct oval_sysent *sysent);
 /** @} */
 
 /**
@@ -939,12 +903,6 @@ char *oval_message_get_text(struct oval_message *message);
  * @memberof oval_message
  */
 oval_message_level_t oval_message_get_level(struct oval_message *message);
-/**
- * return <b>true</b> if the message instance is locked.
- * The state of a locked instance cannot be changed.
- * @memberof oval_message
- */
-bool oval_message_is_locked(struct oval_message *message);
 /** @} */
 
 /**

@@ -142,12 +142,8 @@ int oval_state_get_operator(struct oval_state *state)
 
 struct oval_state *oval_state_new(struct oval_definition_model *model, const char *id)
 {
+	__attribute__nonnull__(model);
 	oval_state_t *state;
-
-	if (model && oval_definition_model_is_locked(model)) {
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
-		return NULL;
-	}
 
 	state = (oval_state_t *) oscap_alloc(sizeof(oval_state_t));
 	if (state == NULL)
@@ -195,13 +191,6 @@ bool oval_state_is_valid(struct oval_state * state)
 		return false;
 	*/
 	return true;
-}
-
-bool oval_state_is_locked(struct oval_state * state)
-{
-	__attribute__nonnull__(state);
-
-	return oval_definition_model_is_locked(state->model);
 }
 
 struct oval_state *oval_state_clone(struct oval_definition_model *new_model, struct oval_state *old_state) {
@@ -252,59 +241,46 @@ void oval_state_free(struct oval_state *state)
 
 void oval_state_set_subtype(struct oval_state *state, oval_subtype_t subtype)
 {
-	if (state && !oval_state_is_locked(state)) {
-		state->subtype = subtype;
-	} else
-		fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	__attribute__nonnull__(state);
+	state->subtype = subtype;
 }
 
 void oval_state_add_note(struct oval_state *state, char *notes)
 {
-	if (state && !oval_state_is_locked(state)) {
-		oval_collection_add(state->notes, (void *)strdup(notes));
-	} else
-		fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	__attribute__nonnull__(state);
+	oval_collection_add(state->notes, (void *)strdup(notes));
 }
 
 void oval_state_set_comment(struct oval_state *state, char *comm)
 {
-	if (state && !oval_state_is_locked(state)) {
-		if (state->comment != NULL)
-			free(state->comment);
-		state->comment = comm == NULL ? NULL : strdup(comm);
-	} else
-		fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	__attribute__nonnull__(state);
+	if (state->comment != NULL)
+		free(state->comment);
+	state->comment = comm == NULL ? NULL : strdup(comm);
 }
 
 void oval_state_set_deprecated(struct oval_state *state, bool deprecated)
 {
-	if (state && !oval_state_is_locked(state)) {
-		state->deprecated = deprecated;
-	} else
-		fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	__attribute__nonnull__(state);
+	state->deprecated = deprecated;
 }
 
 void oval_state_set_version(struct oval_state *state, int version)
 {
-	if (state && !oval_state_is_locked(state)) {
-		state->version = version;
-	} else
-		fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	__attribute__nonnull__(state);
+	state->version = version;
 }
 
 void oval_state_set_operator(struct oval_state *state, oval_operator_t operator)
 {
-	if (state && !oval_state_is_locked(state)) {
-		state->operator = operator;
-	} else
-		fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+	__attribute__nonnull__(state);
+	state->operator = operator;
 }
 
-void oval_state_add_content(struct oval_state *state, struct oval_state_content *content) {
-	if (state && !oval_state_is_locked(state)) {
-		oval_collection_add(state->contents, content);
-	} else
-		fprintf(stderr, "WARNING: attempt to update locked content\n %s(%d)\n", __FILE__, __LINE__);
+void oval_state_add_content(struct oval_state *state, struct oval_state_content *content) 
+{
+	__attribute__nonnull__(state);
+	oval_collection_add(state->contents, content);
 }
 
 static void _oval_note_consumer(char *text, void *state)

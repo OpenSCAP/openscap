@@ -56,7 +56,6 @@ typedef struct oval_definition_model {
 	struct oval_string_map *variable_map;
 	struct oval_collection *bound_variable_models;
 	xmlDoc *metadata_doc;
-	bool is_locked;
         char *schema;
 } oval_definition_model_t;
 
@@ -115,7 +114,6 @@ struct oval_definition_model *oval_definition_model_new()
 	newmodel->test_map = oval_string_map_new();
 	newmodel->variable_map = oval_string_map_new();
 	newmodel->bound_variable_models = NULL;
-	newmodel->is_locked = false;
         newmodel->schema = strdup(OVAL_DEF_SCHEMA_LOCATION);
 
 	root = xmlNewNode(NULL, BAD_CAST "root");
@@ -125,21 +123,6 @@ struct oval_definition_model *oval_definition_model_new()
 	xmlDocSetRootElement(newmodel->metadata_doc, root);
 
 	return newmodel;
-}
-
-void oval_definition_model_lock(struct oval_definition_model *definition_model)
-{
-	__attribute__nonnull__(definition_model);
-
-	if (definition_model && oval_definition_model_is_valid(definition_model))
-		definition_model->is_locked = true;
-}
-
-bool oval_definition_model_is_locked(struct oval_definition_model *definition_model)
-{
-	__attribute__nonnull__(definition_model);
-
-	return definition_model->is_locked;
 }
 
 bool oval_definition_model_is_valid(struct oval_definition_model * definition_model)
@@ -307,55 +290,43 @@ const char * oval_definition_model_get_schema(struct oval_definition_model * mod
 
 void oval_definition_model_add_definition(struct oval_definition_model *model, struct oval_definition *definition)
 {
-	if (model && !oval_definition_model_is_locked(model)) {
-		char *key = oval_definition_get_id(definition);
-		oval_string_map_put(model->definition_map, key, (void *)definition);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(model);
+	char *key = oval_definition_get_id(definition);
+	oval_string_map_put(model->definition_map, key, (void *)definition);
 }
 
 void oval_definition_model_set_schema(struct oval_definition_model *model, const char *version)
 {
-	if (model && !oval_definition_model_is_locked(model)) {
-                model->schema = oscap_strdup(version);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(model);
+	model->schema = oscap_strdup(version);
 }
 
 void oval_definition_model_add_test(struct oval_definition_model *model, struct oval_test *test)
 {
-	if (model && !oval_definition_model_is_locked(model)) {
-		char *key = oval_test_get_id(test);
-		oval_string_map_put(model->test_map, key, (void *)test);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(model);
+	char *key = oval_test_get_id(test);
+	oval_string_map_put(model->test_map, key, (void *)test);
 }
 
 void oval_definition_model_add_object(struct oval_definition_model *model, struct oval_object *object)
 {
-	if (model && !oval_definition_model_is_locked(model)) {
-		char *key = oval_object_get_id(object);
-		oval_string_map_put(model->object_map, key, (void *)object);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(model);
+	char *key = oval_object_get_id(object);
+	oval_string_map_put(model->object_map, key, (void *)object);
 }
 
 void oval_definition_model_add_state(struct oval_definition_model *model, struct oval_state *state)
 {
-	if (model && !oval_definition_model_is_locked(model)) {
-		char *key = oval_state_get_id(state);
-		oval_string_map_put(model->state_map, key, (void *)state);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(model);
+	char *key = oval_state_get_id(state);
+	oval_string_map_put(model->state_map, key, (void *)state);
 }
 
 void oval_definition_model_add_variable(struct oval_definition_model *model, struct oval_variable *variable)
 {
-	if (model && !oval_definition_model_is_locked(model)) {
-		char *key = oval_variable_get_id(variable);
-		oval_string_map_put(model->variable_map, key, (void *)variable);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(model);
+	char *key = oval_variable_get_id(variable);
+	oval_string_map_put(model->variable_map, key, (void *)variable);
 }
 
 struct oval_definition_model * oval_definition_model_import(const char *file)

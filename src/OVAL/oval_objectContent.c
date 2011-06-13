@@ -248,13 +248,6 @@ bool oval_object_content_is_valid(struct oval_object_content * object_content)
 	return true;
 }
 
-bool oval_object_content_is_locked(struct oval_object_content * object_content)
-{
-	__attribute__nonnull__(object_content);
-
-	return oval_definition_model_is_locked(object_content->model);
-}
-
 struct oval_object_content *oval_object_content_clone
     (struct oval_definition_model *new_model, struct oval_object_content *old_content) {
 	struct oval_object_content *new_content = oval_object_content_new(new_model, old_content->type);
@@ -318,64 +311,52 @@ void oval_object_content_free(struct oval_object_content *content)
 
 void oval_object_content_set_type(struct oval_object_content *content, oval_object_content_type_t type)
 {
-	if (content && !oval_object_content_is_locked(content)) {
-		content->type = type;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(content);
+	content->type = type;
 }
 
 void oval_object_content_set_field_name(struct oval_object_content *content, char *name)
 {
-	if (content && !oval_object_content_is_locked(content)) {
-		if (content->fieldName != NULL)
-			oscap_free(content->fieldName);
-		content->fieldName = (name == NULL) ? NULL : oscap_strdup(name);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(content);
+	if (content->fieldName != NULL)
+		oscap_free(content->fieldName);
+	content->fieldName = (name == NULL) ? NULL : oscap_strdup(name);
 }
 
 void oval_object_content_set_entity(struct oval_object_content *content, struct oval_entity *entity)
 {				/*type == OVAL_OBJECTCONTENT_ENTITY */
-	if (content && !oval_object_content_is_locked(content)) {
-		if (content->type == OVAL_OBJECTCONTENT_ENTITY) {
-			oval_object_content_ENTITY_t *content_ENTITY = (oval_object_content_ENTITY_t *) content;
-			content_ENTITY->entity = entity;
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(content);
+	if (content->type == OVAL_OBJECTCONTENT_ENTITY) {
+		oval_object_content_ENTITY_t *content_ENTITY = (oval_object_content_ENTITY_t *) content;
+		content_ENTITY->entity = entity;
+	}
 }
 
 void oval_object_content_set_varCheck(struct oval_object_content *content, oval_check_t check)
 {				/*type == OVAL_OBJECTCONTENT_ENTITY */
-	if (content && !oval_object_content_is_locked(content)) {
-		if (content->type == OVAL_OBJECTCONTENT_ENTITY) {
-			oval_object_content_ENTITY_t *content_ENTITY = (oval_object_content_ENTITY_t *) content;
-			content_ENTITY->varCheck = check;
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(content);
+	if (content->type == OVAL_OBJECTCONTENT_ENTITY) {
+		oval_object_content_ENTITY_t *content_ENTITY = (oval_object_content_ENTITY_t *) content;
+		content_ENTITY->varCheck = check;
+	}
 }
 
 void oval_object_content_set_setobject(struct oval_object_content *content, struct oval_setobject *set)
 {				/*type == OVAL_OBJECTCONTENT_SET */
-	if (content && !oval_object_content_is_locked(content)) {
-		if (content->type == OVAL_OBJECTCONTENT_SET) {
-			oval_object_content_SET_t *content_SET = (oval_object_content_SET_t *) content;
-			content_SET->set = set;
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(content);
+	if (content->type == OVAL_OBJECTCONTENT_SET) {
+		oval_object_content_SET_t *content_SET = (oval_object_content_SET_t *) content;
+		content_SET->set = set;
+	}
 }
 
 void oval_object_content_set_filter(struct oval_object_content *content, struct oval_filter *filter)
 {				/*type == OVAL_OBJECTCONTENT_FILTER */
-	if (content && !oval_object_content_is_locked(content)) {
-		if (content->type == OVAL_OBJECTCONTENT_FILTER) {
-			oval_object_content_FILTER_t *content_FILTER = (oval_object_content_FILTER_t *) content;
-			content_FILTER->filter = filter;
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(content);
+	if (content->type == OVAL_OBJECTCONTENT_FILTER) {
+		oval_object_content_FILTER_t *content_FILTER = (oval_object_content_FILTER_t *) content;
+		content_FILTER->filter = filter;
+	}
 }
 
 /*typedef void (*oval_object_content_consumer)(struct oval_object_content*,void*);*/

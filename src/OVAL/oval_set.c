@@ -215,13 +215,6 @@ bool oval_setobject_is_valid(struct oval_setobject * set_object)
 	return true;
 }
 
-bool oval_setobject_is_locked(struct oval_setobject * setobject)
-{
-	__attribute__nonnull__(setobject);
-
-	return oval_definition_model_is_locked(setobject->model);
-}
-
 struct oval_setobject *oval_setobject_clone
     (struct oval_definition_model *new_model, struct oval_setobject *old_setobject) {
 	struct oval_setobject *new_setobject = oval_setobject_new(new_model);
@@ -291,67 +284,58 @@ void oval_setobject_free(struct oval_setobject *set)
 
 void oval_setobject_set_type(struct oval_setobject *set, oval_setobject_type_t type)
 {
-	if (set && !oval_setobject_is_locked(set)) {
-		set->type = type;
-		switch (type) {
-		case OVAL_SET_AGGREGATE:{
-				oval_set_AGGREGATE_t *aggregate =
-				    (oval_set_AGGREGATE_t *) (set->extension =
-							      oscap_alloc(sizeof(oval_set_AGGREGATE_t)));
-				aggregate->subsets = oval_collection_new();
-			}
-			break;
-		case OVAL_SET_COLLECTIVE:{
-				oval_set_COLLECTIVE_t *collective =
-				    (oval_set_COLLECTIVE_t *) (set->extension =
-							       oscap_alloc(sizeof(oval_set_COLLECTIVE_t)));
-				collective->filters = oval_collection_new();
-				collective->objects = oval_collection_new();
-			}
-			break;
-		case OVAL_SET_UNKNOWN:
-			break;
+	__attribute__nonnull__(set);
+
+	set->type = type;
+	switch (type) {
+	case OVAL_SET_AGGREGATE:{
+			oval_set_AGGREGATE_t *aggregate =
+			    (oval_set_AGGREGATE_t *) (set->extension =
+						      oscap_alloc(sizeof(oval_set_AGGREGATE_t)));
+			aggregate->subsets = oval_collection_new();
 		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+		break;
+	case OVAL_SET_COLLECTIVE:{
+			oval_set_COLLECTIVE_t *collective =
+			    (oval_set_COLLECTIVE_t *) (set->extension =
+						       oscap_alloc(sizeof(oval_set_COLLECTIVE_t)));
+			collective->filters = oval_collection_new();
+			collective->objects = oval_collection_new();
+		}
+		break;
+	case OVAL_SET_UNKNOWN:
+		break;
+	}
 }
 
 void oval_setobject_set_operation(struct oval_setobject *set, oval_setobject_operation_t operation)
 {
-	if (set && !oval_setobject_is_locked(set)) {
-		set->operation = operation;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(set);
+	set->operation = operation;
 }
 
 void oval_setobject_add_subset(struct oval_setobject *set, struct oval_setobject *subset)
 {
-	if (set && !oval_setobject_is_locked(set)) {
-		oval_set_AGGREGATE_t *aggregate = (oval_set_AGGREGATE_t *) set->extension;
-		assert(aggregate != NULL);
-		oval_collection_add(aggregate->subsets, (void *)subset);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(set);
+	oval_set_AGGREGATE_t *aggregate = (oval_set_AGGREGATE_t *) set->extension;
+	assert(aggregate != NULL);
+	oval_collection_add(aggregate->subsets, (void *)subset);
 }
 
 void oval_setobject_add_object(struct oval_setobject *set, struct oval_object *object)
 {
-	if (set && !oval_setobject_is_locked(set)) {
-		oval_set_COLLECTIVE_t *collective = (oval_set_COLLECTIVE_t *) set->extension;
-		assert(collective != NULL);
-		oval_collection_add(collective->objects, (void *)object);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(set);
+	oval_set_COLLECTIVE_t *collective = (oval_set_COLLECTIVE_t *) set->extension;
+	assert(collective != NULL);
+	oval_collection_add(collective->objects, (void *)object);
 }
 
 void oval_setobject_add_filter(struct oval_setobject *set, struct oval_filter *filter)
 {
-	if (set && !oval_setobject_is_locked(set)) {
-		oval_set_COLLECTIVE_t *collective = (oval_set_COLLECTIVE_t *) set->extension;
-		assert(collective != NULL);
-		oval_collection_add(collective->filters, (void *)filter);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(set);
+	oval_set_COLLECTIVE_t *collective = (oval_set_COLLECTIVE_t *) set->extension;
+	assert(collective != NULL);
+	oval_collection_add(collective->filters, (void *)filter);
 }
 
 //typedef int (*oval_xml_tag_parser)(xmlTextReaderPtr, struct oval_parser_context*, void*);

@@ -120,13 +120,6 @@ bool oval_behavior_is_valid(struct oval_behavior * behavior)
 	return true;
 }
 
-bool oval_behavior_is_locked(struct oval_behavior * behavior)
-{
-	__attribute__nonnull__(behavior);
-
-	return oval_definition_model_is_locked(behavior->model);
-}
-
 void oval_behavior_free(struct oval_behavior *behavior)
 {
 	__attribute__nonnull__(behavior);
@@ -142,11 +135,10 @@ void oval_behavior_free(struct oval_behavior *behavior)
 
 void oval_behavior_set_keyval(struct oval_behavior *behavior, const char *key, const char *value)
 {
-	if (behavior && !oval_behavior_is_locked(behavior)) {
-		behavior->key = oscap_strdup(key);
-		behavior->value = oscap_strdup(value);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(behavior);
+
+	behavior->key = oscap_strdup(key);
+	behavior->value = oscap_strdup(value);
 }
 
 //typedef void (*oval_behavior_consumer)(struct oval_behavior_node *, void*);

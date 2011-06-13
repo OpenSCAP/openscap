@@ -54,7 +54,6 @@ typedef struct _oval_variable_model_frame {
 typedef struct oval_variable_model {
 	struct oval_generator *generator;
 	struct oval_string_map *varmap;
-	bool is_locked;
 } oval_variable_model_t;
 
 static _oval_variable_model_frame_t *_oval_variable_model_frame_new(char *id, const char *comm, oval_datatype_t datatype);
@@ -126,17 +125,6 @@ bool oval_variable_model_is_valid(struct oval_variable_model *variable_model)
         return is_valid;
 }
 
-bool oval_variable_model_is_locked(struct oval_variable_model * variable_model)
-{
-	__attribute__nonnull__(variable_model);
-	return variable_model->is_locked;
-}
-
-void oval_variable_model_lock(struct oval_variable_model *variable_model)
-{
-	__attribute__nonnull__(variable_model);
-	variable_model->is_locked = true;
-} 
 
 static void _oval_variable_model_frame_free(_oval_variable_model_frame_t * frame)
 {
@@ -161,7 +149,6 @@ struct oval_variable_model *oval_variable_model_new()
 		return NULL;
 	model->generator = oval_generator_new();
 	model->varmap = oval_string_map_new();
-	model->is_locked = false;
 	return model;
 }
 

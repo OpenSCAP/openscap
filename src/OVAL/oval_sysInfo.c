@@ -67,15 +67,8 @@ struct oval_sysinfo *oval_sysinfo_new(struct oval_syschar_model *model)
 
 bool oval_sysinfo_is_valid(struct oval_sysinfo * sysinfo)
 {
-        oscap_dlprintf(DBG_W, "NOOP.\n");
-	return true;		//TODO
-}
-
-bool oval_sysinfo_is_locked(struct oval_sysinfo * sysinfo)
-{
-	__attribute__nonnull__(sysinfo);
-
-	return oval_syschar_model_is_locked(sysinfo->model);
+	oscap_dlprintf(DBG_W, "NOOP.\n");
+	return true;            //TODO
 }
 
 struct oval_sysinfo *oval_sysinfo_clone(struct oval_syschar_model *new_model, struct oval_sysinfo *old_sysinfo)
@@ -156,12 +149,11 @@ char *oval_sysinfo_get_os_name(struct oval_sysinfo *sysinfo)
 
 void oval_sysinfo_set_os_name(struct oval_sysinfo *sysinfo, char *osName)
 {
-	if (sysinfo && !oval_sysinfo_is_locked(sysinfo)) {
-		if (sysinfo->osName != NULL)
-			oscap_free(sysinfo->osName);
-		sysinfo->osName = oscap_strdup(osName);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(sysinfo);
+
+	if (sysinfo->osName != NULL)
+		oscap_free(sysinfo->osName);
+	sysinfo->osName = oscap_strdup(osName);
 }
 
 char *oval_sysinfo_get_os_version(struct oval_sysinfo *sysinfo)
@@ -171,12 +163,10 @@ char *oval_sysinfo_get_os_version(struct oval_sysinfo *sysinfo)
 
 void oval_sysinfo_set_os_version(struct oval_sysinfo *sysinfo, char *osVersion)
 {
-	if (sysinfo && !oval_sysinfo_is_locked(sysinfo)) {
-		if (sysinfo->osVersion != NULL)
-			oscap_free(sysinfo->osVersion);
-		sysinfo->osVersion = oscap_strdup(osVersion);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(sysinfo);
+	if (sysinfo->osVersion != NULL)
+		oscap_free(sysinfo->osVersion);
+	sysinfo->osVersion = oscap_strdup(osVersion);
 }
 
 char *oval_sysinfo_get_os_architecture(struct oval_sysinfo *sysinfo)
@@ -186,27 +176,24 @@ char *oval_sysinfo_get_os_architecture(struct oval_sysinfo *sysinfo)
 
 void oval_sysinfo_set_os_architecture(struct oval_sysinfo *sysinfo, char *osArchitecture)
 {
-	if (sysinfo && !oval_sysinfo_is_locked(sysinfo)) {
-		if (sysinfo->osArchitecture != NULL)
-			oscap_free(sysinfo->osArchitecture);
-		sysinfo->osArchitecture = oscap_strdup(osArchitecture);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(sysinfo);
+	if (sysinfo->osArchitecture != NULL)
+		oscap_free(sysinfo->osArchitecture);
+	sysinfo->osArchitecture = oscap_strdup(osArchitecture);
 }
 
 char *oval_sysinfo_get_primary_host_name(struct oval_sysinfo *sysinfo)
 {
+	__attribute__nonnull__(sysinfo);
 	return sysinfo->primaryHostName;
 }
 
 void oval_sysinfo_set_primary_host_name(struct oval_sysinfo *sysinfo, char *primaryHostName)
 {
-	if (sysinfo && !oval_sysinfo_is_locked(sysinfo)) {
-		if (sysinfo->primaryHostName != NULL)
-			oscap_free(sysinfo->primaryHostName);
-		sysinfo->primaryHostName = oscap_strdup(primaryHostName);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(sysinfo);
+	if (sysinfo->primaryHostName != NULL)
+		oscap_free(sysinfo->primaryHostName);
+	sysinfo->primaryHostName = oscap_strdup(primaryHostName);
 }
 
 struct oval_sysint_iterator *oval_sysinfo_get_interfaces(struct oval_sysinfo
@@ -219,10 +206,8 @@ struct oval_sysint_iterator *oval_sysinfo_get_interfaces(struct oval_sysinfo
 
 void oval_sysinfo_add_interface(struct oval_sysinfo *sysinfo, struct oval_sysint *interface)
 {
-	if (sysinfo && !oval_sysinfo_is_locked(sysinfo)) {
-		oval_collection_add(sysinfo->interfaces, oval_sysint_clone(sysinfo->model, interface));
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(sysinfo);
+	oval_collection_add(sysinfo->interfaces, oval_sysint_clone(sysinfo->model, interface));
 }
 
 static void _oval_sysinfo_parse_tag_consume_os_name(char *text, void *sysinfo)

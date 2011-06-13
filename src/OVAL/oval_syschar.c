@@ -80,18 +80,14 @@ oval_syschar_collection_flag_t oval_syschar_get_flag(struct oval_syschar
 }
 
 void oval_syschar_set_flag(struct oval_syschar *syschar, oval_syschar_collection_flag_t flag) {
-	if (syschar && !oval_syschar_is_locked(syschar)) {
-		syschar->flag = flag;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(syschar);
+	syschar->flag = flag;
 }
 
 void oval_syschar_set_object(struct oval_syschar *syschar, struct oval_object *object)
 {
-	if (syschar && !oval_syschar_is_locked(syschar)) {
-		syschar->object = object;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(syschar);
+	syschar->object = object;
 }
 
 struct oval_message_iterator *oval_syschar_get_messages(struct oval_syschar *syschar)
@@ -101,22 +97,14 @@ struct oval_message_iterator *oval_syschar_get_messages(struct oval_syschar *sys
 
 void oval_syschar_add_message(struct oval_syschar *syschar, struct oval_message *message)
 {
-	if (syschar && !oval_syschar_is_locked(syschar)) {
-		oval_collection_add(syschar->messages, message);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(syschar);
+	oval_collection_add(syschar->messages, message);
 }
 
 void oval_syschar_add_new_message(struct oval_syschar *syschar, char *text, oval_message_level_t level)
 {
+	__attribute__nonnull__(syschar);
 	struct oval_message *msg;
-
-        assume_r(syschar != NULL, /* void */);
-
-	if (oval_syschar_is_locked(syschar)) {
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
-		return;
-	}
 
 	msg = oval_message_new();
 	oval_message_set_text(msg, text);
@@ -157,19 +145,12 @@ struct oval_sysitem_iterator *oval_syschar_get_sysitem(struct oval_syschar *sysc
 }
 
 void oval_syschar_add_sysitem(struct oval_syschar *syschar, struct oval_sysitem *sysitem) {
-	if (syschar && !oval_syschar_is_locked(syschar)) {
-		oval_collection_add(syschar->sysitem, sysitem);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(syschar);
+	oval_collection_add(syschar->sysitem, sysitem);
 }
 
 void oval_syschar_add_variable_binding(struct oval_syschar *syschar, struct oval_variable_binding *binding) {
 	__attribute__nonnull__(syschar);
-
-	if (oval_syschar_is_locked(syschar)) {
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
-		return;
-	}
 
 	oval_collection_add(syschar->variable_bindings, binding);
 	if (syschar->model != NULL)
@@ -178,12 +159,8 @@ void oval_syschar_add_variable_binding(struct oval_syschar *syschar, struct oval
 
 struct oval_syschar *oval_syschar_new(struct oval_syschar_model *model, struct oval_object *object)
 {
+	__attribute__nonnull__(model);
 	oval_syschar_t *syschar;
-
-        if (model && oval_syschar_model_is_locked(model)) {
-                oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
-                return NULL;
-        }
 
 	syschar = (oval_syschar_t *) oscap_alloc(sizeof(oval_syschar_t));
 	if (syschar == NULL)
@@ -236,15 +213,6 @@ bool oval_syschar_is_valid(struct oval_syschar * syschar)
 		return false;
 
 	return true;
-}
-
-bool oval_syschar_is_locked(struct oval_syschar * syschar)
-{
-	__attribute__nonnull__(syschar);
-
-	if (!syschar->model)
-		return false;
-	return oval_syschar_model_is_locked(syschar->model);
 }
 
 struct oval_syschar *oval_syschar_clone(struct oval_syschar_model *new_model, struct oval_syschar *old_syschar)

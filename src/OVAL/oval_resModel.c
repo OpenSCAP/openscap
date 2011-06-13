@@ -50,7 +50,6 @@ struct oval_results_model {
 	struct oval_generator *generator;
 	struct oval_definition_model *definition_model;
 	struct oval_collection *systems;
-	bool is_locked;
         char *schema;
 };
 
@@ -64,7 +63,6 @@ struct oval_results_model *oval_results_model_new(struct oval_definition_model *
 	model->generator = oval_generator_new();
 	model->systems = oval_collection_new();
 	model->definition_model = definition_model;
-	model->is_locked = false;
         model->schema = oscap_strdup(OVAL_RES_SCHEMA_LOCATION);
 	if (syschar_models) {
 		struct oval_syschar_model *syschar_model;
@@ -73,21 +71,6 @@ struct oval_results_model *oval_results_model_new(struct oval_definition_model *
 		}
 	}
 	return model;
-}
-
-void oval_results_model_lock(struct oval_results_model *results_model)
-{
-	__attribute__nonnull__(results_model);
-
-	if (results_model && oval_results_model_is_valid(results_model))
-		results_model->is_locked = true;
-}
-
-bool oval_results_model_is_locked(struct oval_results_model *results_model)
-{
-	__attribute__nonnull__(results_model);
-
-	return results_model->is_locked;
 }
 
 bool oval_results_model_is_valid(struct oval_results_model * results_model)
@@ -183,11 +166,9 @@ struct oval_result_system_iterator *oval_results_model_get_systems(struct oval_r
 
 void oval_results_model_add_system(struct oval_results_model *model, struct oval_result_system *sys)
 {
-	if (model && !oval_results_model_is_locked(model)) {
-		if (sys)
-			oval_collection_add(model->systems, sys);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(model);
+	if (sys)
+		oval_collection_add(model->systems, sys);
 }
 
 struct oval_result_directives *oval_results_model_import(struct oval_results_model *model, const char *file)

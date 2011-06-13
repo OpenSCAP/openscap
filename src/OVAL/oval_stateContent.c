@@ -119,19 +119,6 @@ struct oval_state_content *oval_state_content_new(struct oval_definition_model *
 	return content;
 }
 
-/* TODO: don't know if this should be in API -> commenting now
-bool oval_state_content_is_valid(struct oval_state_content *state_content)
-{
-	return true;//TODO
-}*/
-
-bool oval_state_content_is_locked(struct oval_state_content * state_content)
-{
-	__attribute__nonnull__(state_content);
-
-	return oval_definition_model_is_locked(state_content->model);
-}
-
 struct oval_state_content *oval_state_content_clone
     (struct oval_definition_model *new_model, struct oval_state_content *old_content) {
 	struct oval_state_content *new_content = oval_state_content_new(new_model);
@@ -157,12 +144,10 @@ void oval_state_content_free(struct oval_state_content *content)
 
 void oval_state_content_set_entity(struct oval_state_content *content, struct oval_entity *entity)
 {
-	if (content && !oval_state_content_is_locked(content)) {
-		if (content->entity)
-			oval_entity_free(content->entity);
-		content->entity = entity;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(content);
+	if (content->entity)
+		oval_entity_free(content->entity);
+	content->entity = entity;
 }
 
 void oval_state_content_add_record_field(struct oval_state_content *content, struct oval_record_field *rf)
@@ -172,18 +157,14 @@ void oval_state_content_add_record_field(struct oval_state_content *content, str
 
 void oval_state_content_set_varcheck(struct oval_state_content *content, oval_check_t check)
 {
-	if (content && !oval_state_content_is_locked(content)) {
-		content->var_check = check;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(content);
+	content->var_check = check;
 }
 
 void oval_state_content_set_entcheck(struct oval_state_content *content, oval_check_t check)
 {
-	if (content && !oval_state_content_is_locked(content)) {
-		content->ent_check = check;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(content);
+	content->ent_check = check;
 }
 
 static void _oval_state_content_entity_consumer(struct oval_entity *entity, struct oval_state_content *content) {

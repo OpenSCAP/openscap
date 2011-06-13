@@ -109,13 +109,6 @@ bool oval_result_definition_is_valid(struct oval_result_definition * result_defi
 	return true;
 }
 
-bool oval_result_definition_is_locked(struct oval_result_definition * result_definition)
-{
-	__attribute__nonnull__(result_definition);
-
-	return oval_result_system_is_locked(result_definition->system);
-}
-
 struct oval_result_definition *oval_result_definition_clone
     (struct oval_result_system *new_system, struct oval_result_definition *old_definition) {
 	struct oval_definition *ovaldef = oval_result_definition_get_definition(old_definition);
@@ -208,52 +201,48 @@ oval_result_t oval_result_definition_get_result(struct oval_result_definition * 
 	return definition->result;
 }
 
-struct oval_message_iterator *oval_result_definition_get_messages(struct oval_result_definition *definition) {
+struct oval_message_iterator *oval_result_definition_get_messages(struct oval_result_definition *definition) 
+{
 	__attribute__nonnull__(definition);
 
 	return (struct oval_message_iterator *)
 	    oval_collection_iterator(definition->messages);
 }
 
-struct oval_result_criteria_node *oval_result_definition_get_criteria(struct oval_result_definition *definition) {
+struct oval_result_criteria_node *oval_result_definition_get_criteria(struct oval_result_definition *definition) 
+{
 	__attribute__nonnull__(definition);
 
 	return definition->criteria;
 }
 
-void oval_result_definition_set_result(struct oval_result_definition *definition, oval_result_t result) {
-	if (definition && !oval_result_definition_is_locked(definition)) {
-		definition->result = result;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+void oval_result_definition_set_result(struct oval_result_definition *definition, oval_result_t result) 
+{
+	__attribute__nonnull__(definition);
+	definition->result = result;
 }
 
-void oval_result_definition_set_instance(struct oval_result_definition *definition, int instance) {
-	if (definition && !oval_result_definition_is_locked(definition)) {
-		definition->instance = instance;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+void oval_result_definition_set_instance(struct oval_result_definition *definition, int instance) 
+{
+	__attribute__nonnull__(definition);
+	definition->instance = instance;
 }
 
-void oval_result_definition_set_criteria
-    (struct oval_result_definition *definition, struct oval_result_criteria_node *criteria) {
-	if (definition && !oval_result_definition_is_locked(definition)) {
-		if (definition->criteria) {
-			if (oval_result_criteria_node_get_type(criteria) == OVAL_NODETYPE_CRITERIA) {
-				oval_result_criteria_node_free(definition->criteria);
-			}
+void oval_result_definition_set_criteria(struct oval_result_definition *definition, struct oval_result_criteria_node *criteria) 
+{
+	__attribute__nonnull__(definition);
+	if (definition->criteria) {
+		if (oval_result_criteria_node_get_type(criteria) == OVAL_NODETYPE_CRITERIA) {
+			oval_result_criteria_node_free(definition->criteria);
 		}
-		definition->criteria = criteria;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	}
+	definition->criteria = criteria;
 }
 
 void oval_result_definition_add_message(struct oval_result_definition *definition, struct oval_message *message) {
-	if (definition && !oval_result_definition_is_locked(definition)) {
-		if (message)
-			oval_collection_add(definition->messages, message);
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(definition);
+	if (message)
+		oval_collection_add(definition->messages, message);
 }
 
 static void _oval_result_definition_consume_criteria(struct oval_result_criteria_node *node, struct oval_result_definition *definition) {

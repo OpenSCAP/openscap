@@ -192,13 +192,6 @@ bool oval_result_criteria_node_is_valid(struct oval_result_criteria_node * resul
 	return true;
 }
 
-bool oval_result_criteria_node_is_locked(struct oval_result_criteria_node * result_criteria_node)
-{
-	__attribute__nonnull__(result_criteria_node);
-
-	return oval_result_system_is_locked(result_criteria_node->sys);
-}
-
 struct oval_result_criteria_node *oval_result_criteria_node_clone
     (struct oval_result_system *new_system, struct oval_result_criteria_node *old_node) {
 	oval_criteria_node_type_t type = oval_result_criteria_node_get_type(old_node);
@@ -460,62 +453,54 @@ struct oval_result_definition *oval_result_criteria_node_get_extends(struct oval
 	return extends;
 }
 
-void oval_result_criteria_node_set_result(struct oval_result_criteria_node *node, oval_result_t result) {
-	if (node && !oval_result_criteria_node_is_locked(node)) {
-		node->result = result;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+void oval_result_criteria_node_set_result(struct oval_result_criteria_node *node, oval_result_t result) 
+{
+	__attribute__nonnull__(node);
+	node->result = result;
 }
 
-void oval_result_criteria_node_set_negate(struct oval_result_criteria_node *node, bool negate) {
-	if (node && !oval_result_criteria_node_is_locked(node)) {
-		node->negate = negate;
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+void oval_result_criteria_node_set_negate(struct oval_result_criteria_node *node, bool negate) 
+{
+	__attribute__nonnull__(node);
+	node->negate = negate;
 }
 
-void oval_result_criteria_node_set_operator(struct oval_result_criteria_node *node, oval_operator_t operator) {
-	if (node && !oval_result_criteria_node_is_locked(node)) {
-		/*type==NODETYPE_CRITERIA */
-		if (oval_result_criteria_node_get_type(node) == OVAL_NODETYPE_CRITERIA) {
-			((struct oval_result_criteria_node_CRITERIA *)node)->operator = operator;
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+void oval_result_criteria_node_add_subnode(struct oval_result_criteria_node *node, struct oval_result_criteria_node *subnode) 
+{
+	__attribute__nonnull__(node);
+
+       /*type==NODETYPE_CRITERIA */
+	if (oval_result_criteria_node_get_type(node) == OVAL_NODETYPE_CRITERIA) {
+		struct oval_result_criteria_node_CRITERIA *criteria = ((struct oval_result_criteria_node_CRITERIA *)node);
+		oval_collection_add(criteria->subnodes, subnode);
+	}
 }
 
-void oval_result_criteria_node_add_subnode
-    (struct oval_result_criteria_node *node, struct oval_result_criteria_node *subnode) {
-	if (node && !oval_result_criteria_node_is_locked(node)) {
-		/*type==NODETYPE_CRITERIA */
-		if (oval_result_criteria_node_get_type(node) == OVAL_NODETYPE_CRITERIA) {
-			struct oval_result_criteria_node_CRITERIA *criteria
-			    = ((struct oval_result_criteria_node_CRITERIA *)node);
-			oval_collection_add(criteria->subnodes, subnode);
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+void oval_result_criteria_node_set_operator(struct oval_result_criteria_node *node, oval_operator_t operator) 
+{
+	__attribute__nonnull__(node);
+	/*type==NODETYPE_CRITERIA */
+	if (oval_result_criteria_node_get_type(node) == OVAL_NODETYPE_CRITERIA) {
+		((struct oval_result_criteria_node_CRITERIA *)node)->operator = operator;
+	}
 }
 
-void oval_result_criteria_node_set_test(struct oval_result_criteria_node *node, struct oval_result_test *test) {
-	if (node && !oval_result_criteria_node_is_locked(node)) {
-		/*type==NODETYPE_CRITERION */
-		if (oval_result_criteria_node_get_type(node) == OVAL_NODETYPE_CRITERION) {
-			((struct oval_result_criteria_node_CRITERION *)node)->test = test;
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+void oval_result_criteria_node_set_test(struct oval_result_criteria_node *node, struct oval_result_test *test) 
+{
+	__attribute__nonnull__(node);
+	/*type==NODETYPE_CRITERION */
+	if (oval_result_criteria_node_get_type(node) == OVAL_NODETYPE_CRITERION) {
+		((struct oval_result_criteria_node_CRITERION *)node)->test = test;
+	}
 }
 
-void oval_result_criteria_node_set_extends
-    (struct oval_result_criteria_node *node, struct oval_result_definition *extends) {
-	if (node && !oval_result_criteria_node_is_locked(node)) {
-		/*type==NODETYPE_EXTENDDEF */
-		if (oval_result_criteria_node_get_type(node) == OVAL_NODETYPE_EXTENDDEF) {
-			extends = ((struct oval_result_criteria_node_EXTENDDEF *)node)->extends = extends;
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+void oval_result_criteria_node_set_extends(struct oval_result_criteria_node *node, struct oval_result_definition *extends) 
+{
+	__attribute__nonnull__(node);
+	/*type==NODETYPE_EXTENDDEF */
+	if (oval_result_criteria_node_get_type(node) == OVAL_NODETYPE_EXTENDDEF) {
+		extends = ((struct oval_result_criteria_node_EXTENDDEF *)node)->extends = extends;
+	}
 }
 
 static void _oval_result_criteria_consume_subnode(struct oval_result_criteria_node *subnode, struct oval_result_criteria_node *node) {

@@ -78,13 +78,6 @@ bool oval_result_directives_is_valid(struct oval_result_directives * result_dire
 	return true;		//TODO
 }
 
-bool oval_result_directives_is_locked(struct oval_result_directives * result_directives)
-{
-	__attribute__nonnull__(result_directives);
-
-	return oval_results_model_is_locked(result_directives->model);
-}
-
 void oval_result_directives_free(struct oval_result_directives *directives)
 {
 	oscap_free(directives);
@@ -122,28 +115,25 @@ oval_result_directive_content_t oval_result_directives_get_content
 }
 
 void oval_result_directives_set_reported(struct oval_result_directives *directives, int flag, bool val) {
-	if (directives && !oval_result_directives_is_locked(directives)) {
-		int i=0;
-		while (flag>>i) {
-			if( flag & (1 << i) )
-				directives->directive[i].reported = val;
-			i = i + 1;
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+	__attribute__nonnull__(directives);
+
+	int i=0;
+	while (flag>>i) {
+		if( flag & (1 << i) )
+			directives->directive[i].reported = val;
+		i = i + 1;
+	}
 }
 
-void oval_result_directives_set_content
-    (struct oval_result_directives *directives, int flag, oval_result_directive_content_t content) {
-	if (directives && !oval_result_directives_is_locked(directives)) {
-		int i=0;
-		while (flag>>i) {
-			if( flag & (1 << i) )
-				directives->directive[i].content = content;
-			i = i + 1;
-		}
-	} else
-		oscap_dlprintf(DBG_W, "Attempt to update locked content.\n");
+void oval_result_directives_set_content(struct oval_result_directives *directives, int flag, oval_result_directive_content_t content) 
+{
+	__attribute__nonnull__(directives);
+	int i=0;
+	while (flag>>i) {
+		if( flag & (1 << i) )
+			directives->directive[i].content = content;
+		i = i + 1;
+	}
 }
 
 static const struct oscap_string_map OVAL_DIRECTIVE_MAP[] = {
