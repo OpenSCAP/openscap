@@ -1512,6 +1512,7 @@ int oval_result_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_conte
 	struct oval_string_map *itemmap = oval_string_map_new();
 	void *args[] = { sys, test, itemmap };
 	return_code = oval_parser_parse_tag(reader, context, (oval_xml_tag_parser) _oval_result_test_parse, args);
+	oval_string_map_free(itemmap, NULL);
 	test->bindings_initialized = true;
 	test->bindings_clearable = true;
 
