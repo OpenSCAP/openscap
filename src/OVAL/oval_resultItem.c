@@ -64,22 +64,6 @@ struct oval_result_item *oval_result_item_new(struct oval_result_system *sys, ch
 	return item;
 }
 
-bool oval_result_item_is_valid(struct oval_result_item * result_item)
-{
-	struct oval_sysitem *sysitem;
-
-	if (result_item == NULL) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
-		return false;
-        }
-
-	sysitem = oval_result_item_get_sysitem(result_item);
-	if (oval_sysitem_is_valid(sysitem) != true)
-		return false;
-
-	return true;
-}
-
 struct oval_result_item *oval_result_item_clone
     (struct oval_result_system *new_system, struct oval_result_item *old_item) {
 	struct oval_sysitem *old_sysitem = oval_result_item_get_sysitem(old_item);

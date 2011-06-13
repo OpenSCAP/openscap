@@ -235,15 +235,6 @@ struct oval_result_system_iterator *oval_results_model_get_systems(struct oval_r
  * @return 0 on sucess and -1 on fail. Use \ref ERRORS mechanism to examine the error.
  */
 int oval_results_model_eval(struct oval_results_model *);
-/**
- * Return <b>true</b> if the results_model instance is valid
- * An oval_results_model is valid if all the following are true
- * 	- The associated oval_definition_model is valid
- * 	- The systems attribute is not an empty iterator and
- * 	  each iterated oval_result_system is valid.
- * @memberof oval_results_model
- */
-bool oval_results_model_is_valid(struct oval_results_model *results_model);
 /** @} */
 
 
@@ -350,15 +341,6 @@ int oval_result_system_eval(struct oval_result_system *sys);
  * values for the evaluation of an OVAL Definitions is returned.
  */
 oval_result_t oval_result_system_eval_definition(struct oval_result_system *sys, const char *id);
-/**
- * Return <b>true</b> if the result_system instance is valid
- * An oval_result_system is valid if all the following are true
- * 	- The associated oval_syschar_model is valid
- * 	- All included result definitions are valid
- * 	- All included result tests are valid
- * @memberof oval_result_system
- */
-bool oval_result_system_is_valid(struct oval_result_system *result_system);
 /** @} */
 
 
@@ -459,15 +441,6 @@ void oval_result_definition_iterator_free(struct oval_result_definition_iterator
  * @name Evaluators
  * @{
  */
-/**
- * Return <b>true</b> if the result_definition instance is valid
- * An oval_result_definition is valid if all the following are true
- * 	- The system attribute is non-NULL
- * 	- The associated oval_definition is valid
- * 	- All included result criteria nodes are valid
- * @memberof oval_result_definition
- */
-bool oval_result_definition_is_valid(struct oval_result_definition *result_definition);
 /** @} */
 
 
@@ -576,15 +549,6 @@ void oval_result_test_iterator_free(struct oval_result_test_iterator *);
  * @name Evaluators
  * @{
  */
-/**
- * Return <b>true</b> if the result_test instance is valid
- * An oval_result_test is valid if all the following are true
- * 	- The associated oval_test is valid
- * 	- All included result items are valid
- * 	- All included variable bindings are valid
- * @memberof oval_result_test
- */
-bool oval_result_test_is_valid(struct oval_result_test *result_test);
 /** @} */
 
 
@@ -661,13 +625,6 @@ void oval_result_item_iterator_free(struct oval_result_item_iterator *);
  * @name Evaluators
  * @{
  */
-/**
- * Return <b>true</b> if the result_item instance is valid
- * An oval_result_item is valid if all the following are true
- * 	- The sysitem attribute is a valid oval_sysitem
- * @memberof oval_result_item
- */
-bool oval_result_item_is_valid(struct oval_result_item *result_item);
 /** @} */
 
 
@@ -780,19 +737,6 @@ void oval_result_criteria_node_iterator_free(struct oval_result_criteria_node_it
  * @name Evaluators
  * @{
  */
-/**
- * Returns <b>true</b> if @ref Oval_result_criteria_node is valid.
- * An Oval_result_criteria_node is valid if one of the following is true:
- * 	- The type attribute is @ref OVAL_NODETYPE_CRITERIA -- AND
- * 		- The subnode attribute is not an empty iterator -- AND
- * 		- Each iterated Oval_result_criteria_node is valid.
- * 	- The type attribute is @ref OVAL_NODETYPE_CRITERION -- AND
- * 		- The referenced result test is valid.
- * 	- The type attribute is @ref OVAL_NODETYPE_EXTENDDEF -- AND
- * 		- The referenced result definition is valid.
- * @memberof oval_result_criteria_node
- */
-bool oval_result_criteria_node_is_valid(struct oval_result_criteria_node *result_criteria_node);
 /** @} */
 
 
@@ -843,10 +787,6 @@ oval_result_directive_content_t oval_result_directives_get_content(struct oval_r
  * @name Evaluators
  * @{
  */
-/**
- * @memberof oval_result_directives
- */
-bool oval_result_directives_is_valid(struct oval_result_directives *result_directives);
 /** @} */
 
 

@@ -190,27 +190,6 @@ struct oval_definition *oval_definition_new(struct oval_definition_model *model,
 	return definition;
 }
 
-bool oval_definition_is_valid(struct oval_definition * definition)
-{
-	struct oval_criteria_node *criteria_node;
-
-	if (definition == NULL) {
-		oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
-		return false;
-	}
-
-	if (oval_definition_get_class(definition) == OVAL_CLASS_UNKNOWN) {
-		oscap_dlprintf(DBG_W, "Argument is not valid: class == OVAL_CLASS_UNKNOWN.\n");
-		return false;
-	}
-
-	criteria_node = oval_definition_get_criteria(definition);
-	if (oval_criteria_node_is_valid(criteria_node) != true)
-		return false;
-
-	return true;
-}
-
 struct oval_definition *oval_definition_clone
     (struct oval_definition_model *new_model, struct oval_definition *old_definition) {
 	__attribute__nonnull__(old_definition);

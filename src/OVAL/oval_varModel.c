@@ -95,37 +95,6 @@ void oval_variable_model_iterator_free(struct oval_variable_model_iterator *itr)
 	oval_collection_iterator_free((struct oval_iterator *) itr);
 }
 
-bool oval_variable_model_is_valid(struct oval_variable_model *variable_model)
-{
-        bool is_valid = true;
-	struct oval_string_iterator *varids_itr;
-
-	if (variable_model == NULL) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
-		return false;
-        }
-
-        varids_itr = oval_variable_model_get_variable_ids(variable_model);
-	while (oval_string_iterator_has_more(varids_itr)) {
-		char *varid = oval_string_iterator_next(varids_itr);
-
-                if (oval_variable_model_get_datatype(variable_model, varid) == OVAL_DATATYPE_UNKNOWN) {
-                        oscap_dlprintf(DBG_W, "Argument is not valid: variable (%s) datatype == OVAL_DATATYPE_UNKNOWN.\n", varid);
-                        is_valid = false;
-                        break;
-                }
-		if (oval_variable_model_get_comment(variable_model, varid) == NULL) {
-                        oscap_dlprintf(DBG_W, "Argument is not valid: variable (%s) comment == NULL.\n", varid);
-                        is_valid = false;
-                        break;
-                }
-	}
-        oval_string_iterator_free(varids_itr);
-
-        return is_valid;
-}
-
-
 static void _oval_variable_model_frame_free(_oval_variable_model_frame_t * frame)
 {
 	if (frame) {

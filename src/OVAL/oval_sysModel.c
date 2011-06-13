@@ -86,49 +86,6 @@ struct oval_syschar_model *oval_syschar_model_new(struct oval_definition_model *
 	return newmodel;
 }
 
-
-bool oval_syschar_model_is_valid(struct oval_syschar_model * syschar_model)
-{
-	bool is_valid = true;
-	struct oval_syschar_iterator *syschars_itr;
-	struct oval_sysinfo *sysinfo;
-	struct oval_definition_model *definition_model;
-
-	if (syschar_model == NULL) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
-		return false;
-        }
-
-	/* validate sysinfo */
-	sysinfo = oval_syschar_model_get_sysinfo(syschar_model);
-	if (oval_sysinfo_is_valid(sysinfo) != true)
-		return false;
-
-	/* validate definition_model */
-	definition_model = oval_syschar_model_get_definition_model(syschar_model);
-	if (oval_definition_model_is_valid(definition_model) != true)
-		return false;
-
-	/* validate syschars */
-	syschars_itr = oval_syschar_model_get_syschars(syschar_model);
-	while (oval_syschar_iterator_has_more(syschars_itr)) {
-		struct oval_syschar *syschar;
-		syschar = oval_syschar_iterator_next(syschars_itr);
-		if (oval_syschar_is_valid(syschar) != true) {
-			is_valid = false;
-			break;
-		}
-	}
-	oval_syschar_iterator_free(syschars_itr);
-	if (is_valid != true)
-		return false;
-
-	/* validate variable_bindings */
-	// ToDo
-
-	return true;
-}
-
 static void _oval_syschar_model_clone_variable_binding(struct oval_variable_binding *old_binding,
 						       struct oval_syschar_model *new_model)
 {

@@ -110,16 +110,6 @@ struct oval_behavior *oval_behavior_clone(struct oval_definition_model *new_mode
 	return new_behavior;
 }
 
-bool oval_behavior_is_valid(struct oval_behavior * behavior)
-{
-	if (behavior == NULL) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
-		return false;
-        }
-
-	return true;
-}
-
 void oval_behavior_free(struct oval_behavior *behavior)
 {
 	__attribute__nonnull__(behavior);

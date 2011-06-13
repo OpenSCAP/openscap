@@ -185,69 +185,6 @@ struct oval_test *oval_test_new(struct oval_definition_model *model, const char 
 	return test;
 }
 
-bool oval_test_is_valid(struct oval_test * test)
-{
-        oval_subtype_t subtype;
-	struct oval_object *object;
-	struct oval_state_iterator *ste_itr;
-	bool ret = true;
-
-	if (test == NULL) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
-		return false;
-        }
-
-        subtype = oval_test_get_subtype(test);
-	if ((oval_independent_subtype_t)subtype == OVAL_INDEPENDENT_UNKNOWN)
-		return true;
-
-        if (subtype == OVAL_SUBTYPE_UNKNOWN) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: subtype == OVAL_SUBTYPE_UNKNOWN.\n");
-                return false;
-        }
-        if (oval_test_get_check(test) == OVAL_CHECK_UNKNOWN) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: check == OVAL_CHECK_UNKNOWN.\n");
-                return false;
-        }
-        if (oval_test_get_existence(test) == OVAL_EXISTENCE_UNKNOWN) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: existence == OVAL_EXISTENCE_UNKNOWN.\n");
-                return false;
-        }
-        if (oval_test_get_state_operator(test) == OVAL_OPERATOR_UNKNOWN) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: state_operator == OVAL_OPERATOR_UNKNOWN.\n");
-                return false;
-        }
-
-	object = oval_test_get_object(test);
-        if (oval_object_get_subtype(object) != subtype) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: subtypes of the test (%d) and the object (%d) differ.\n",
-                              subtype, oval_object_get_subtype(object));
-		return false;
-        }
-        if (oval_object_is_valid(object) != true)
-		return false;
-
-	ste_itr = oval_test_get_states(test);
-	while (oval_state_iterator_has_more(ste_itr)) {
-		struct oval_state *state;
-
-		state = oval_state_iterator_next(ste_itr);
-                if (oval_state_get_subtype(state) != subtype) {
-                        oscap_dlprintf(DBG_W, "Argument is not valid: subtypes of the test (%d) and the state (%d) differ.\n",
-                                      subtype, oval_state_get_subtype(state));
-			ret = false;
-			break;
-                }
-		if (oval_state_is_valid(state) != true) {
-			ret = false;
-			break;
-		}
-        }
-	oval_state_iterator_free(ste_itr);
-
-	return ret;
-}
-
 struct oval_test *oval_test_clone(struct oval_definition_model *new_model, struct oval_test *old_test) {
 	__attribute__nonnull__(old_test);
 

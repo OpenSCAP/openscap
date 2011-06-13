@@ -160,24 +160,6 @@ struct oval_entity *oval_entity_new(struct oval_definition_model *model)
 	return entity;
 }
 
-bool oval_entity_is_valid(struct oval_entity * entity)
-{
-        if (entity == NULL) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
-                return false;
-        }
-        if (oval_entity_get_datatype(entity) == OVAL_DATATYPE_UNKNOWN) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: datatype == OVAL_DATATYPE_UNKNOWN.\n");
-                return false;
-        }
-        if (oval_entity_get_operation(entity) == OVAL_OPERATION_UNKNOWN) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: operation == OVAL_OPERATION_UNKNOWN.\n");
-                return false;
-        }
-
-	return true;
-}
-
 struct oval_entity *oval_entity_clone(struct oval_definition_model *new_model, struct oval_entity *old_entity) {
 	struct oval_entity *new_entity = oval_entity_new(new_model);
 	oval_datatype_t datatype = oval_entity_get_datatype(old_entity);

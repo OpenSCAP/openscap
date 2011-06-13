@@ -590,7 +590,6 @@ char *oval_generator_get_product_name(struct oval_generator *generator);
 char *oval_generator_get_product_version(struct oval_generator *generator);
 char *oval_generator_get_schema_version(struct oval_generator *generator);
 char *oval_generator_get_timestamp(struct oval_generator *generator);
-bool oval_generator_is_valid(struct oval_generator *generator);
 void oval_generator_set_product_name(struct oval_generator *generator, char *product_name);
 void oval_generator_set_product_version(struct oval_generator *generator, char *product_version);
 void oval_generator_set_schema_version(struct oval_generator *generator, char *schema_version);
@@ -760,17 +759,7 @@ struct oval_variable_model_iterator *oval_definition_model_get_variable_models(s
  * @name Evaluators
  * @{
  */
-/**
- * Return <b>true</b> if the definition_model instance is valid
- * An oval_definition_model is valid if all the following are true
- * 	- All included definitions are valid
- * 	- All included tests are valid
- * 	- All included objects are valid
- * 	- All included states are valid
- * 	- All included variables are valid
- * @memberof oval_definition_model
- */
-bool oval_definition_model_is_valid(struct oval_definition_model *definition_model);
+
 /** @} */
 
 /**
@@ -972,13 +961,6 @@ struct oval_criteria_node *oval_definition_get_criteria(struct oval_definition *
  * @name Evaluators
  * @{
  */
-/**
- * Returns <b>true</b> if the @ref oval_definition is valid.
- * An Oval_definition is valid if all the following are true
- *	- attribute criteria is bound to a valid instance of @ref Oval_criteria.
- * @memberof oval_definition
- */
-bool oval_definition_is_valid(struct oval_definition *definition);
 /** @} */
 
 /**
@@ -1195,16 +1177,6 @@ struct oval_state_iterator *oval_test_get_states(struct oval_test *);
  * @name Evaluators
  * @{
  */
-/**
- * Returns <b>true</b> if @ref oval_test is valid.
- * An Oval_test is valid if the test subtype is OVAL_INDEPENDENT_UNKNOWN
- * or if all of the following are true:
- * 	- The object attribute is valid
- * 	- If the state attribute is not NULL
- *		- the state attribute is valid
- * @memberof oval_test
- */
-bool oval_test_is_valid(struct oval_test *);
 /** @} */
 
 /**
@@ -1399,14 +1371,6 @@ struct oval_behavior_iterator *oval_object_get_behaviors(struct oval_object *);
  * @name Evaluators
  * @{
  */
-/**
- * Return <b>true</b> if the object instance is valid.
- * An Oval_object is valid if all of the following are true
- * 	- All included object contents are valid
- * 	- All included behaviors are valid
- * @memberof oval_object
- */
-bool oval_object_is_valid(struct oval_object *object);
 /** @} */
 
 /**
@@ -1609,13 +1573,6 @@ void oval_state_iterator_free(struct oval_state_iterator *);
  * @name Evaluators
  * @{
  */
-/**
- * Return <b>true</b> if the state instance is valid
- * An Oval_state is valid if all of the following are true
- * 	- All included state contents are valid
- * @memberof oval_state
- */
-bool oval_state_is_valid(struct oval_state *state);
 /** @} */
 
 /**
@@ -1803,21 +1760,6 @@ void oval_variable_iterator_free(struct oval_variable_iterator *);
  * @name Evaluators
  * @{
  */
-/**
- * Returns <b>true</b> if @ref oval_variable is valid.
- * An oval_variable is valid if all of the following are true:
- * 	- The value of the id attribute is matched by the regular expression <b>^oval:[\.A-Za-z0-9_\-]+:var:[1-9][0-9]*$</b>
- * 	- The value of the type attribute is not @ref OVAL_VARIABLE_UNKNOWN
- * 	- The value of the version attribute is a positive integer
- * 	- The value of the datatype attribute is not @ref OVAL_DATATYPE_UNKNOWN
- *	- If type == @ref OVAL_VARIABLE_CONSTANT
- *		- At least one Oval_value is appended to the values attribute.
- *	- If type == @ref OVAL_VARIABLE_LOCAL
- *		- The component attribute is not NULL.
- *		- The bound Oval_component is valid (@ref oval_component_is_valid).
- * @memberof oval_variable
- */
-bool oval_variable_is_valid(struct oval_variable *);
 /** @} */
 
 /**
@@ -1891,11 +1833,6 @@ struct oval_string_iterator *oval_affected_get_products(struct oval_affected *);
  * @name Evaluators
  * @{
  */
-/**
- * Returns <b>true</b>
- * @memberof oval_affected
- */
-bool oval_affected_is_valid(struct oval_affected *);
 /** @} */
 
 /**
@@ -2000,11 +1937,6 @@ void oval_reference_iterator_free(struct oval_reference_iterator *);
  * @name Evaluators
  * @{
  */
-/**
- * return <b>true</b> if the reference instance is valid
- * @memberof oval_reference
- */
-bool oval_reference_is_valid(struct oval_reference *reference);
 /** @} */
 
 /**
@@ -2176,19 +2108,6 @@ void oval_criteria_node_iterator_free(struct oval_criteria_node_iterator *);
  * @name Evaluators
  * @{
  */
-/**
- * Returns <b>true</b> if @ref Oval_criteria_node is valid.
- * An Oval_criteria_node is valid if one of the following is true:
- * 	- The type attribute is @ref OVAL_NODETYPE_CRITERIA (@ref Oval_criteria)-- AND
- * 		- The subnode attribute is not an empty iterator -- AND
- * 		- Each iterated Oval_criteria_node is valid.
- * 	- The type attribute is @ref OVAL_NODETYPE_CRITERION (@ref Oval_criterion) -- AND
- * 		- The referenced test is valid.
- * 	- The type attribute is @ref OVAL_NODETYPE_EXTENDDEF (@ref Oval_extends) -- AND
- * 		- The referenced definition is valid.
- * @memberof oval_criteria_node
- */
-bool oval_criteria_node_is_valid(struct oval_criteria_node *);
 /** @} */
 
 /**
@@ -2291,16 +2210,6 @@ void oval_object_content_iterator_free(struct oval_object_content_iterator *);
  * @name Evaluators
  * @{
  */
-/**
- * Return <b>true</b> if the object_content instance is valid
- * An Oval_object_content is valid if one of the following is true:
- * 	- The type attribute is @ref OVAL_OBJECTCONTENT_ENTITY -- AND
- * 		- The @ref oval_entity is valid.
- * 	- The type attribute is @ref OVAL_OBJECTCONTENT_SET -- AND
- * 		- The @ref oval_setobject is valid.
- * @memberof oval_object_content
- */
-bool oval_object_content_is_valid(struct oval_object_content *object_content);
 /** @} */
 
 /**
@@ -2368,11 +2277,6 @@ void oval_behavior_iterator_free(struct oval_behavior_iterator *);
  * @name Evaluators
  * @{
  */
-/**
- * @memberof oval_behavior
- * Return <b>true</b> if the behavior instance is valid
- */
-bool oval_behavior_is_valid(struct oval_behavior *behavior);
 /** @} */
 
 /**
@@ -2533,11 +2437,6 @@ void oval_value_iterator_free(struct oval_value_iterator *);
  * @name Evaluators
  * @{
  */
-/**
- * Return <b>true</b> if the value instance is valid
- * @memberof oval_value
- */
-bool oval_value_is_valid(struct oval_value *value);
 /** @} */
 
 /**
@@ -2663,11 +2562,6 @@ void oval_entity_iterator_free(struct oval_entity_iterator *);
  * @name Evaluators
  * @{
  */
-/**
- * Return <b>true</b> if the entity instance is valid
- * @memberof oval_entity
- */
-bool oval_entity_is_valid(struct oval_entity *entity);
 /** @} */
 
 /**
@@ -2785,7 +2679,6 @@ void oval_record_field_iterator_free(struct oval_record_field_iterator *);
  * @name Evaluators
  * @{
  */
-bool oval_record_field_is_valid(struct oval_record_field *);
 /** @} */
 
 /**
@@ -2851,10 +2744,6 @@ void oval_filter_iterator_free(struct oval_filter_iterator *);
  * @name Evaluators
  * @{
  */
-/**
- * @memberof oval_filter
- */
-bool oval_filter_is_valid(struct oval_filter *);
 /** @} */
 
 /**
@@ -2958,20 +2847,6 @@ void oval_setobject_iterator_free(struct oval_setobject_iterator *);
  * @name Evaluators
  * @{
  */
-/**
- * Return <b>true</b> if the setobject instance is valid
- * An Oval_setobject is valid if one of the following is true:
- * 	- The type attribute is @ref OVAL_SET_AGGREGATE -- AND
- * 		- The subsets attribute is not an empty iterator -- AND
- * 		- Each iterated oval_setobject is valid.
- * 	- The type attribute is @ref OVAL_SET_COLLECTIVE -- AND
- * 		- The objects attribute is not an empty iterator -- AND
- * 		- Each iterated oval_object is valid.
- * 		- The filters attribute is not an empty iterator -- AND
- * 		- Each iterated oval_state is valid.
- * @memberof oval_setobject
- */
-bool oval_setobject_is_valid(struct oval_setobject *setobject);
 /** @} */
 
 /**
@@ -3256,55 +3131,6 @@ int oval_component_iterator_remaining(struct oval_component_iterator *);
  * @name Evaluators
  * @{
  */
-/**
- * Returns <b>true</b> if the @ref Oval_component is valid.
- * An Oval_component is valid if one of the following is true:
- * 	- type == @ref OVAL_FUNCTION_CONCAT <b>AND</b>
- *		  components.length > 0 <b>AND</b>
- *		  all appended components are valid
- * 	- type == @ref OVAL_FUNCTION_ARITHMETIC <b>AND</b>
- * 		  arithmetic_operation <> @ref OVAL_ARITHMETIC_UNKNOWN <b>AND</b>
- *		  components.length at least 2 <b>AND</b>
- *		  all appended components are valid
- *	- type == @ref OVAL_FUNCTION_BEGIN <b>AND</b>
- *		  prefix <> NULL AMD
- *		  components.length == 1 <b>AND</b>
- *		  the appended component is valid
- *	- type == @ref OVAL_FUNCTION_END <b>AND</b>
- *		  suffix <> NULL
- *		  components.length == 1 <b>AND</b>
- *		  the appended component is valid
- *	- type == @ref OVAL_FUNCTION_SPLIT <b>AND</b>
- *		  delimiter <> NULL
- *		  components.length == 1 <b>AND</b>
- *		  the appended component is valid
- *	- type == @ref OVAL_FUNCTION_SUBSTRING <b>AND</b>
- *		  start > 0 <b>AND</b> length > 0
- *		  components.length == 1 <b>AND</b>
- *		  the appended component is valid
- *	- type == @ref OVAL_FUNCTION_TIMEDIF <b>AND</b>
- *		  timedif_format_1 <> OVAL_DATETIME_FORMAT_UNKNOWN <b>AND</b>
- *		  components.length > 0 <b>AND</b>
- *		  all appended components are valid <b>AND</b>
- *		  <b>IF</b> timedif_format_2 <> OVAL_DATETIME_FORMAT_UNKNOWN <b>THEN</b>
- *		  components.length is divisible by 2
- *	- type == @ref OVAL_FUNCTION_REGEX_CAPTURE <b>AND</b>
- *		  pattern <> NULL
- *		  components.length == 1 <b>AND</b>
- *		  the appended component is valid
- *	- type == @ref OVAL_FUNCTION_ESCAPE_REGEX <b>AND</b>
- *		  components.length == 1 <b>AND</b>
- *		  the appended component is valid
- *	- type == @ref OVAL_COMPONENT_LITERAL <b>AND</b>
- *		  literal <> NULL
- *	- type == @ref OVAL_COMPONENT_OBJECTREF
- *		  object <> NULL <b>AND</b> object is a valid Oval_object <b>AND</b>
- *		  object_field <> NULL
- *	- type == @ref OVAL_COMPONENT_VARREF
- *		  variable <> NULL <b>AND</b> variable is a valid Oval_variable
- * @memberof oval_component
- */
-bool oval_component_is_valid(struct oval_component *);
 /** @} */
 
 /**

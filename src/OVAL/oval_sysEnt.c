@@ -67,22 +67,6 @@ struct oval_sysent *oval_sysent_new(struct oval_syschar_model *model)
 	return sysent;
 }
 
-bool oval_sysent_is_valid(struct oval_sysent * sysent)
-{
-	if (sysent == NULL) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
-		return false;
-        }
-
-        if (oval_sysent_get_datatype(sysent) == OVAL_DATATYPE_UNKNOWN) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: datatype == OVAL_DATATYPE_UNKNOWN.\n");
-                return false;
-        }
-
-	return true;
-}
-
-
 struct oval_sysent *oval_sysent_clone(struct oval_syschar_model *new_model, struct oval_sysent *old_item)
 {
 	struct oval_sysent *new_item = oval_sysent_new(new_model);

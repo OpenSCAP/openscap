@@ -164,35 +164,6 @@ struct oval_state *oval_state_new(struct oval_definition_model *model, const cha
 	return state;
 }
 
-bool oval_state_is_valid(struct oval_state * state)
-{
-	/*
-	bool is_valid = true;
-	struct oval_state_content_iterator *contents_itr;
-	*/
-
-	if (state == NULL) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
-		return false;
-        }
-	/*
-	contents_itr = oval_state_get_contents(state);
-	while (oval_state_content_iterator_has_more(contents_itr)) {
-		struct oval_state_content *content;
-
-		content = oval_state_content_iterator_next(contents_itr);
-		if (oval_state_content_is_valid(content) != true) {
-			is_valid = false;
-			break;
-		}
-	}
-	oval_state_content_iterator_free(contents_itr);
-	if (is_valid != true)
-		return false;
-	*/
-	return true;
-}
-
 struct oval_state *oval_state_clone(struct oval_definition_model *new_model, struct oval_state *old_state) {
 	__attribute__nonnull__(old_state);
 

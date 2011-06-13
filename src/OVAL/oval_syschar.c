@@ -178,43 +178,6 @@ struct oval_syschar *oval_syschar_new(struct oval_syschar_model *model, struct o
 	return syschar;
 }
 
-bool oval_syschar_is_valid(struct oval_syschar * syschar)
-{
-	bool is_valid = true;
-	struct oval_object *object;
-	struct oval_sysitem_iterator *sysitems_itr;
-
-	if (syschar == NULL) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
-		return false;
-        }
-
-	/* validate object */
-	object = oval_syschar_get_object(syschar);
-	if (oval_object_is_valid(object) != true)
-		return false;
-
-	/* validate variable_bindings */
-	// todo
-
-	/* validate sysitems */
-	sysitems_itr = oval_syschar_get_sysitem(syschar);
-	while (oval_sysitem_iterator_has_more(sysitems_itr)) {
-		struct oval_sysitem *sysitem;
-
-		sysitem = oval_sysitem_iterator_next(sysitems_itr);
-		if (oval_sysitem_is_valid(sysitem) != true) {
-			is_valid = false;
-			break;
-		}
-	}
-	oval_sysitem_iterator_free(sysitems_itr);
-	if (is_valid != true)
-		return false;
-
-	return true;
-}
-
 struct oval_syschar *oval_syschar_clone(struct oval_syschar_model *new_model, struct oval_syschar *old_syschar)
 {
 	struct oval_definition_model *def_model = oval_syschar_model_get_definition_model(new_model);

@@ -295,16 +295,6 @@ struct oval_sysitem *oval_syschar_model_get_sysitem(struct oval_syschar_model *,
  * @name Evaluators
  * @{
  */
-/**
- * Return <b>true</b> if the syschar_model instance is valid
- * An oval_syschar_model is valid if all the following are true
- * 	- The sysinfo attribute is valid
- * 	- The associated oval_definition_model is valid
- * 	- All included syschars are valid
- * 	- All included variable_bindings are valid
- * @memberof oval_syschar_model
- */
-bool oval_syschar_model_is_valid(struct oval_syschar_model *syschar_model);
 /** @} */
 
 
@@ -409,11 +399,6 @@ void oval_sysinfo_iterator_free(struct oval_sysinfo_iterator *);
  * @name Evaluators
  * @{
  */
-/**
- * Return <b>true</b> if the sysinfo instance is valid
- * @memberof oval_sysinfo
- */
-bool oval_sysinfo_is_valid(struct oval_sysinfo *sysinfo);
 /** @} */
 
 
@@ -522,15 +507,6 @@ void oval_syschar_iterator_free(struct oval_syschar_iterator *);
  * @name Evaluators
  * @{
  */
-/**
- * Return <b>true</b> if the syschar instance is valid
- * An oval_syschar is valid if all the following are true
- * 	- The object attribute is valid
- * 	- All included variable_bindings are valid
- * 	- All included sysitem are valid
- * @memberof oval_syschar
- */
-bool oval_syschar_is_valid(struct oval_syschar *syschar);
 /** @} */
 
 
@@ -615,11 +591,6 @@ void oval_sysint_iterator_free(struct oval_sysint_iterator *);
  * @name Evaluators
  * @{
  */
-/**
- * Return <b>true</b> if the sysint instance is valid
- * @memberof oval_sysint
- */
-bool oval_sysint_is_valid(struct oval_sysint *sysint);
 /** @} */
 
 
@@ -716,13 +687,6 @@ void oval_sysitem_iterator_free(struct oval_sysitem_iterator *);
  * @name Evaluators
  * @{
  */
-/**
- * Return <b>true</b> if the sysitem instance is valid
- * An oval_sysitem is valid if all the following are true
- * 	- All included sysents are valid
- * @memberof oval_sysitem
- */
-bool oval_sysitem_is_valid(struct oval_sysitem *sysitem);
 /** @} */
 
 
@@ -835,11 +799,6 @@ void oval_sysent_iterator_free(struct oval_sysent_iterator *);
  * @name Evaluators
  * @{
  */
-/**
- * Return <b>true</b> if the sysent instance is valid
- * @memberof oval_sysent
- */
-bool oval_sysent_is_valid(struct oval_sysent *sysent);
 /** @} */
 
 /**
@@ -922,19 +881,6 @@ struct oval_message *oval_message_iterator_next(struct oval_message_iterator *oc
  */
 void oval_message_iterator_free(struct oval_message_iterator *oc_message);
 /** @} */
-
-/**
- * @name Evaluators
- * @{
- */
-/**
- * Return <b>true</b> if the message instance is valid
- * @memberof oval_message
- */
-bool oval_message_is_valid(struct oval_message *message);
-
-
-
 
 
 /**

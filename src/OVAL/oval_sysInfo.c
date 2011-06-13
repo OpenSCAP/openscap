@@ -65,12 +65,6 @@ struct oval_sysinfo *oval_sysinfo_new(struct oval_syschar_model *model)
 	return sysinfo;
 }
 
-bool oval_sysinfo_is_valid(struct oval_sysinfo * sysinfo)
-{
-	oscap_dlprintf(DBG_W, "NOOP.\n");
-	return true;            //TODO
-}
-
 struct oval_sysinfo *oval_sysinfo_clone(struct oval_syschar_model *new_model, struct oval_sysinfo *old_sysinfo)
 {
 	struct oval_sysinfo *new_sysinfo = oval_sysinfo_new(new_model);

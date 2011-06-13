@@ -57,12 +57,6 @@ struct oval_message *oval_message_new()
 	return message;
 }
 
-bool oval_message_is_valid(struct oval_message * message)
-{
-        oscap_dlprintf(DBG_W, "NOOP.\n");
-	return true;		//TODO
-}
-
 struct oval_message *oval_message_clone(struct oval_message *old_message)
 {
 	struct oval_message *new_message = oval_message_new();

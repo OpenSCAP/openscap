@@ -172,55 +172,6 @@ struct oval_object *oval_object_new(struct oval_definition_model *model, const c
 	return object;
 }
 
-bool oval_object_is_valid(struct oval_object * object)
-{
-	bool is_valid = true;
-	struct oval_object_content_iterator *contents_itr;
-	struct oval_behavior_iterator *behaviors_itr;
-
-	if (object == NULL) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
-		return false;
-        }
-
-        if (oval_object_get_subtype(object) == OVAL_SUBTYPE_UNKNOWN) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: subtype == OVAL_SUBTYPE_UNKNOWN.\n");
-                return false;
-        }
-
-	/* validate object contents */
-	contents_itr = oval_object_get_object_contents(object);
-	while (oval_object_content_iterator_has_more(contents_itr)) {
-		struct oval_object_content *content;
-
-		content = oval_object_content_iterator_next(contents_itr);
-		if (oval_object_content_is_valid(content) != true) {
-			is_valid = false;
-			break;
-		}
-	}
-	oval_object_content_iterator_free(contents_itr);
-	if (is_valid != true)
-		return false;
-
-	/* validate behaviors */
-	behaviors_itr = oval_object_get_behaviors(object);
-	while (oval_behavior_iterator_has_more(behaviors_itr)) {
-		struct oval_behavior *behavior;
-
-		behavior = oval_behavior_iterator_next(behaviors_itr);
-		if (oval_behavior_is_valid(behavior) != true) {
-			is_valid = false;
-			break;
-		}
-	}
-	oval_behavior_iterator_free(behaviors_itr);
-	if (is_valid != true)
-		return false;
-
-	return true;
-}
-
 struct oval_object *oval_object_clone2(struct oval_definition_model *new_model, struct oval_object *old_object, char *new_id)
 {
 	__attribute__nonnull__(old_object);

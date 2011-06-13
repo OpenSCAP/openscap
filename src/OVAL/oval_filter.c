@@ -114,13 +114,6 @@ oval_filter_action_t oval_filter_get_filter_action(struct oval_filter *filter)
 	return filter->action;
 }
 
-
-bool oval_filter_is_valid(struct oval_filter *filter)
-{
-	// todo
-	return true;
-}
-
 void oval_filter_set_state(struct oval_filter *filter, struct oval_state *state)
 {
 	__attribute__nonnull__(filter);

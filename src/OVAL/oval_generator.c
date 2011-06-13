@@ -109,12 +109,6 @@ char *oval_generator_get_timestamp(struct oval_generator *generator)
 	return generator->timestamp;
 }
 
-bool oval_generator_is_valid(struct oval_generator *generator)
-{
-	// todo
-	return true;
-}
-
 void oval_generator_set_product_name(struct oval_generator *generator, char *product_name)
 {
 	oscap_free(generator->product_name);

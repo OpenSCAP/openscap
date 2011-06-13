@@ -81,34 +81,6 @@ struct oval_result_definition *oval_result_definition_new(struct oval_result_sys
 	return definition;
 }
 
-bool oval_result_definition_is_valid(struct oval_result_definition * result_definition)
-{
-	struct oval_definition *definition;
-	struct oval_result_criteria_node *rslt_criteria_node;
-
-	if (result_definition == NULL) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
-		return false;
-        }
-
-	if (oval_result_definition_get_system(result_definition) == NULL) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: system == NULL.\n");
-		return false;
-        }
-
-	/* validate definition */
-	definition = oval_result_definition_get_definition(result_definition);
-	if (oval_definition_is_valid(definition) != true)
-		return false;
-
-	/* validate criteria */
-	rslt_criteria_node = oval_result_definition_get_criteria(result_definition);
-	if (oval_result_criteria_node_is_valid(rslt_criteria_node) != true)
-		return false;
-
-	return true;
-}
-
 struct oval_result_definition *oval_result_definition_clone
     (struct oval_result_system *new_system, struct oval_result_definition *old_definition) {
 	struct oval_definition *ovaldef = oval_result_definition_get_definition(old_definition);

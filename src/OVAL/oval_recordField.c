@@ -183,12 +183,6 @@ void oval_record_field_free(struct oval_record_field *rf)
 	oscap_free(rf);
 }
 
-bool oval_record_field_is_valid(struct oval_record_field *rf)
-{
-	// todo
-	return true;
-}
-
 void oval_record_field_set_name(struct oval_record_field *rf, char *name)
 {
 	rf->name = name;

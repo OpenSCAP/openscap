@@ -103,12 +103,6 @@ struct oval_reference *oval_reference_new(struct oval_definition_model *model)
 	return ref;
 }
 
-bool oval_reference_is_valid(struct oval_reference * ref)
-{
-        oscap_dlprintf(DBG_W, "NOOP.\n");
-	return true;		//TODO
-}
-
 struct oval_reference *oval_reference_clone
     (struct oval_definition_model *new_model, struct oval_reference *old_reference) {
 	struct oval_reference *new_reference = oval_reference_new(new_model);

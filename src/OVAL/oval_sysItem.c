@@ -72,39 +72,6 @@ struct oval_sysitem *oval_sysitem_new(struct oval_syschar_model *model, const ch
 	return sysitem;
 }
 
-bool oval_sysitem_is_valid(struct oval_sysitem *sysitem)
-{
-	bool is_valid = true;
-	struct oval_sysent_iterator *sysents_itr;
-
-	if (sysitem == NULL) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
-		return false;
-        }
-
-        if (oval_sysitem_get_subtype(sysitem) == OVAL_SUBTYPE_UNKNOWN) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: subtype == OVAL_SUBTYPE_UNKNOWN.\n");
-                return false;
-        }
-
-	/* validate sysents */
-	sysents_itr = oval_sysitem_get_sysents(sysitem);
-	while (oval_sysent_iterator_has_more(sysents_itr)) {
-		struct oval_sysent *sysent;
-
-		sysent = oval_sysent_iterator_next(sysents_itr);
-		if (oval_sysent_is_valid(sysent) != true) {
-			is_valid = false;
-			break;
-		}
-	}
-	oval_sysent_iterator_free(sysents_itr);
-	if (is_valid != true)
-		return false;
-
-	return true;
-}
-
 struct oval_sysitem *oval_sysitem_clone(struct oval_syschar_model *new_model, struct oval_sysitem *old_item)
 {
 	struct oval_sysitem *new_item = oval_sysitem_new(new_model, oval_sysitem_get_id(old_item));

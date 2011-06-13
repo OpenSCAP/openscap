@@ -73,11 +73,6 @@ struct oval_result_directives *oval_result_directives_new(struct oval_results_mo
 	return directives;
 }
 
-bool oval_result_directives_is_valid(struct oval_result_directives * result_directives)
-{
-	return true;		//TODO
-}
-
 void oval_result_directives_free(struct oval_result_directives *directives)
 {
 	oscap_free(directives);

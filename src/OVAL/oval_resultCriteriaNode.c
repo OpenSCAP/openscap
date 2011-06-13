@@ -132,66 +132,6 @@ struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_resu
 	return node;
 }
 
-bool oval_result_criteria_node_is_valid(struct oval_result_criteria_node * result_criteria_node)
-{
-	bool is_valid = true;
-	oval_criteria_node_type_t type;
-
-	if (result_criteria_node == NULL) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
-		return false;
-        }
-
-	type = oval_result_criteria_node_get_type(result_criteria_node);
-	switch (type) {
-	case OVAL_NODETYPE_CRITERIA:
-		{
-			struct oval_result_criteria_node_iterator *subnodes_itr;
-
-			/* validate subnodes */
-			subnodes_itr = oval_result_criteria_node_get_subnodes(result_criteria_node);
-			while (oval_result_criteria_node_iterator_has_more(subnodes_itr)) {
-				struct oval_result_criteria_node *subnode;
-
-				subnode = oval_result_criteria_node_iterator_next(subnodes_itr);
-				if (oval_result_criteria_node_is_valid(subnode) != true) {
-					is_valid = false;
-					break;
-				}
-			}
-			oval_result_criteria_node_iterator_free(subnodes_itr);
-			if (is_valid != true)
-				return false;
-		}
-		break;
-	case OVAL_NODETYPE_CRITERION:
-		{
-			struct oval_result_test *rslt_test;
-
-			/* validate test */
-			rslt_test = oval_result_criteria_node_get_test(result_criteria_node);
-			if (oval_result_test_is_valid(rslt_test) != true)
-				return false;
-		}
-		break;
-	case OVAL_NODETYPE_EXTENDDEF:
-		{
-			struct oval_result_definition *rslt_def;
-
-			/* validate definition */
-			rslt_def = oval_result_criteria_node_get_extends(result_criteria_node);
-			if (oval_result_definition_is_valid(rslt_def) != true)
-				return false;
-		}
-		break;
-	default:
-                oscap_dlprintf(DBG_W, "Argument is not valid: wrong node type: %d.\n", type);
-		return false;
-	}
-
-	return true;
-}
-
 struct oval_result_criteria_node *oval_result_criteria_node_clone
     (struct oval_result_system *new_system, struct oval_result_criteria_node *old_node) {
 	oval_criteria_node_type_t type = oval_result_criteria_node_get_type(old_node);

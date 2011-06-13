@@ -166,11 +166,6 @@ void oval_variable_model_iterator_free(struct oval_variable_model_iterator *);
  * @name Evaluators
  * @{
  */
-/**
- * Return <b>true</b> if the variable_model instance is valid
- * @memberof oval_variable_model
- */ 
-bool oval_variable_model_is_valid(struct oval_variable_model *variable_model);
 /** @} */
 
 /**

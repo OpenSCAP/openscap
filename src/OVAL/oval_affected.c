@@ -125,12 +125,6 @@ struct oval_affected *oval_affected_new(struct oval_definition_model *model)
 	return affected;
 }
 
-bool oval_affected_is_valid(struct oval_affected * affected)
-{
-        oscap_dlprintf(DBG_W, "NOOP.\n");
-	return true;		//TODO
-}
-
 struct oval_affected *oval_affected_clone(struct oval_definition_model *new_model, struct oval_affected *old_affected)
 {
 	__attribute__nonnull__(old_affected);

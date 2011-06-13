@@ -693,12 +693,6 @@ struct oval_component *oval_component_new(struct oval_definition_model *model, o
 	return component;
 }
 
-bool oval_component_is_valid(struct oval_component * component)
-{
-        oscap_dlprintf(DBG_W, "NOOP.\n");
-	return true;		//TODO
-}
-
 static void _oval_component_clone_subcomponents
     (struct oval_component *old_component, struct oval_component *new_component, struct oval_definition_model *model) {
 	struct oval_component_iterator *subcomps = oval_component_get_function_components(old_component);

@@ -213,44 +213,6 @@ struct oval_result_test *oval_result_test_new(struct oval_result_system *sys, ch
 	return test;
 }
 
-bool oval_result_test_is_valid(struct oval_result_test * result_test)
-{
-	bool is_valid = true;
-	struct oval_test *test;
-	struct oval_result_item_iterator *rslt_items_itr;
-
-	if (result_test == NULL) {
-                oscap_dlprintf(DBG_W, "Argument is not valid: NULL.\n");
-		return false;
-        }
-
-	/* validate test */
-	test = oval_result_test_get_test(result_test);
-	if (oval_test_is_valid(test) != true)
-		return NULL;
-
-	/* validate items */
-	rslt_items_itr = oval_result_test_get_items(result_test);
-	while (oval_result_item_iterator_has_more(rslt_items_itr)) {
-		struct oval_result_item *rslt_item;
-
-		rslt_item = oval_result_item_iterator_next(rslt_items_itr);
-		if (oval_result_item_is_valid(rslt_item) != true) {
-			is_valid = false;
-			break;
-		}
-	}
-	oval_result_item_iterator_free(rslt_items_itr);
-	if (is_valid != true)
-		return false;
-
-	/* validate bindings */
-	// todo
-
-	return true;
-}
-
-
 struct oval_result_test *oval_result_test_clone
     (struct oval_result_system *new_system, struct oval_result_test *old_test) {
 	__attribute__nonnull__(old_test);
