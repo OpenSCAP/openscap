@@ -649,13 +649,6 @@ void oval_definition_model_set_generator(struct oval_definition_model *model, st
 int oval_definition_model_bind_variable_model(struct oval_definition_model *, struct oval_variable_model *);
 
 void oval_definition_model_clear_external_variables(struct oval_definition_model *);
-/**
- * Lock the definition_model instance.
- * The state of a locked instance cannot be changed.
- * This operation has no effect if the model is already locked.
- * @memberof oval_definition_model
- */
-void oval_definition_model_lock(struct oval_definition_model *definition_model);
 /** @} */
 
 /**

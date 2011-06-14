@@ -75,13 +75,6 @@ int oval_variable_model_export (struct oval_variable_model *, const char *file);
  */
 void oval_variable_model_set_generator(struct oval_variable_model *model, struct oval_generator *generator);
 /**
- * Lock the variable_model instance.
- * The state of a locked instance cannot be changed.
- * This operation has no effect if the model is already locked.
- * @memberof oval_variable_model
- */ 
-void oval_variable_model_lock(struct oval_variable_model *variable_model);
-/**
  * Get the values bound to a specified external variable.
  * If the varid does not resolve to a managed external variable, this method returns NULL.
  * @param variable_model the specified oval_variable_model.

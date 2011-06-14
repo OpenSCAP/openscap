@@ -239,13 +239,6 @@ void oval_syschar_model_set_sysinfo(struct oval_syschar_model *model, struct ova
  * @memberof oval_syschar_model
  */
 void oval_syschar_model_add_variable_binding(struct oval_syschar_model *model, struct oval_variable_binding *binding);
-/**
- * Lock the syschar_model instance.
- * The state of a locked instance cannot be changed.
- * This operation has no effect if the model is already locked.
- * @memberof oval_syschar_model
- */
-void oval_syschar_model_lock(struct oval_syschar_model *syschar_model);
 /** @} */
 
 /**

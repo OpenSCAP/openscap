@@ -196,13 +196,6 @@ int oval_results_model_export(struct oval_results_model *, struct oval_result_di
  * @{
  */
 void oval_results_model_set_generator(struct oval_results_model *model, struct oval_generator *generator);
-/**
- * Lock the result_model instance.
- * The state of a locked instance cannot be changed.
- * This operation has no effect if the model is already locked.
- * @memberof oval_results_model
- */
-void oval_results_model_lock(struct oval_results_model *result_model);
 /** @} */
 
 /**
