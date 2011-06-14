@@ -640,7 +640,7 @@ class OSCAP_Object(object):
         files.free()
         return {"def_models":def_models, "sessions":sessions, "policy_model":policy_model, "xccdf_path":f_XCCDF, "names":names}
 
-    def policy_export(self, result=None, title=None, filename=None, prefix=None, path=None, sessions=None):
+    def policy_export(self, result=None, title=None, filename=None, prefix=None, path=None, sessions=None, variables=True):
         """Export all files for given policy.
         """
 
@@ -685,6 +685,11 @@ class OSCAP_Object(object):
             OSCAP.oval_results_model_export(rmodel.instance, rd.instance, pfile)
             files.append(pfile)
             rd.free()
+            dmodel = rmodel.definition_model
+            for i, vmodel in enumerate(dmodel.variable_models):
+                vfile = "%s.variables-%d.xml" % (path, i)
+                vmodel.export(vfile)
+                files.append(vfile)
 
         return files
     
