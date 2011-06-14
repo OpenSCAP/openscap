@@ -651,6 +651,7 @@ class OSCAP_Object(object):
         o_title.text = title
         result.title = o_title
 
+        dirname = os.path.dirname(filename)
         if len(sessions.keys()) == 0:
             raise IOError("Export failed: Corrupted session list or no OVAL file loaded")
 
@@ -682,14 +683,15 @@ class OSCAP_Object(object):
                             OSCAP.OVAL_RESULT_ERROR,
                             OSCAP.OVAL_DIRECTIVE_CONTENT_FULL )
             pfile = path+".result.xml"
-            OSCAP.oval_results_model_export(rmodel.instance, rd.instance, pfile)
+            OSCAP.oval_results_model_export(rmodel.instance, rd.instance, os.path.join(dirname, pfile))
             files.append(pfile)
             rd.free()
-            dmodel = rmodel.definition_model
-            for i, vmodel in enumerate(dmodel.variable_models):
-                vfile = "%s.variables-%d.xml" % (path, i)
-                vmodel.export(vfile)
-                files.append(vfile)
+            if variables:
+                dmodel = rmodel.definition_model
+                for i, vmodel in enumerate(dmodel.variable_models):
+                    vfile = "%s.variables-%d.xml" % (path, i)
+                    vmodel.export(os.path.join(dirname, vfile))
+                    files.append(vfile)
 
         return files
     
