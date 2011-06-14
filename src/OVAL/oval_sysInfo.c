@@ -227,6 +227,7 @@ static void _oval_sysinfo_parse_tag_consume_primary_host_name(char *text, void *
 static void _oval_sysinfo_parse_tag_consume_int(struct oval_sysint *sysint, void *sysinfo)
 {
 	oval_sysinfo_add_interface(sysinfo, sysint);
+	oval_sysint_free(sysint);
 }
 
 static int _oval_sysinfo_parse_tag_parse_tag(xmlTextReaderPtr reader,

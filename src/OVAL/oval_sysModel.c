@@ -127,6 +127,7 @@ struct oval_syschar_model *oval_syschar_model_clone(struct oval_syschar_model *o
 	struct oval_sysinfo *old_sysinfo = oval_syschar_model_get_sysinfo(old_model);
 	struct oval_sysinfo *new_sysinfo = oval_sysinfo_clone(new_model, old_sysinfo);
 	oval_syschar_model_set_sysinfo(new_model, new_sysinfo);
+	oval_sysinfo_free(new_sysinfo);
         new_model->schema = oscap_strdup(old_model->schema);
 
 	return new_model;
@@ -216,6 +217,8 @@ const char * oval_syschar_model_get_schema(struct oval_syschar_model * model)
 void oval_syschar_model_set_sysinfo(struct oval_syschar_model *model, struct oval_sysinfo *sysinfo)
 {
 	__attribute__nonnull__(model);
+	if (model->sysinfo)
+		oval_sysinfo_free(model->sysinfo);
 	model->sysinfo = oval_sysinfo_clone(model, sysinfo);
 }
 
