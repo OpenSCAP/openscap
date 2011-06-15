@@ -10,7 +10,7 @@ Get fresh sources from repository:
 
 You are OK with tarball from official release
   - requirements: swig, libxml2-devel, rpm-devel, libgcrypt-devel, pcre-devel,
-                  python-devel, perl-devel, libcurl-devel, libxslt-devel, libtools
+                  python-devel, perl-devel, libxslt-devel, libtools
   * $configure
   * $make
   * $make check

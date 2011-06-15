@@ -4,8 +4,8 @@ if WANT_UTIL_OSCAP
 bin_PROGRAMS	= oscap
 man_MANS	= oscap.8
 oscap_SOURCES	= oscap.c oscap-tool.h oscap-tool.c
-oscap_CPPFLAGS	= -I$(top_srcdir)/src/common/public @curl_cflags@ @libxml_cflags@
-oscap_LDADD	= $(top_builddir)/src/libopenscap.la @curl_libs@
+oscap_CPPFLAGS	= -I$(top_srcdir)/src/common/public @libxml_cflags@
+oscap_LDADD	= $(top_builddir)/src/libopenscap.la
 EXTRA_DIST	= $(man_MANS)
 
 

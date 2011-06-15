@@ -110,18 +110,6 @@ if test "x${HAVE_PCRE_CONFIG}" != "xyes"; then
 fi
 
 #
-# curl-config
-#
-AC_CHECK_PROG(
-  [HAVE_CURL_CONFIG],
-  [curl-config],
-  [yes],,,
-)
-if test "x${HAVE_CURL_CONFIG}" != "xyes"; then
-  AC_MSG_FAILURE([curl-config not found in PATH])
-fi
-
-#
 # env
 #
 AC_CHECK_PROG(
@@ -182,19 +170,6 @@ AC_CHECK_LIB(
   ],
   [AC_MSG_FAILURE([pcre library is missing])],
   [`pcre-config --libs`]
-)
-
-#
-# libcurl
-#
-AC_CHECK_LIB(
-  [curl],
-  [curl_easy_init],
-  [curl_cflags=`curl-config --cflags`
-   curl_libs=`curl-config --libs`
-  ],
-  [AC_MSG_FAILURE([curl library is missing])],
-  [`curl-config --libs`]
 )
 
 probe_independent_ldap57=no
@@ -417,9 +392,6 @@ AC_SUBST(libxslt_libs)
 
 AC_SUBST(pcre_cflags)
 AC_SUBST(pcre_libs)
-
-AC_SUBST(curl_cflags)
-AC_SUBST(curl_libs)
 
 AC_SUBST(libopenldap_cflags)
 AC_SUBST(libopenldap_libs)
