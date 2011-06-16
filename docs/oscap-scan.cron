@@ -5,7 +5,7 @@
 # sent to root mail. Please configure oscap-scan options before you use it!
 ##########
 
-#OPTIONS="oval eval --report-file /var/log/oscap-scan.html.log --result-file /var/log/oscap-scan.xml.log /usr/share/openscap/scap-fedora12-oval.xml"
+#OPTIONS="oval eval --report /var/log/oscap-scan.html.log --results /var/log/oscap-scan.xml.log /usr/share/openscap/scap-fedora14-oval.xml"
 PROG="/usr/bin/oscap"
 if [ x"$OPTIONS" == "x" ]
 then

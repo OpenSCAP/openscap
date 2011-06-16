@@ -92,7 +92,6 @@ install -p -m 644 dist/fedora/oscap-scan.sys  $RPM_BUILD_ROOT%{_sysconfdir}/sysc
 #ln -s  %{_datadir}/openscap/scap-fedora14-xccdf.xml $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-xccdf.xml
 
 # remove content for another OS
-rm $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-fedora13-oval.xml
 rm $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-fedora14-oval.xml
 rm $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-fedora14-xccdf.xml
 rm $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-rhel6-oval.xml

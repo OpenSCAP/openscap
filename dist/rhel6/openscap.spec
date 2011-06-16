@@ -107,7 +107,6 @@ ln -s  %{_datadir}/openscap/scap-rhel6-oval.xml $RPM_BUILD_ROOT/%{_datadir}/open
 ln -s  %{_datadir}/openscap/scap-rhel6-xccdf.xml $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-xccdf.xml
 
 # remove content for another OS
-rm $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-fedora13-oval.xml
 rm $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-fedora14-oval.xml
 rm $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-fedora14-xccdf.xml
 

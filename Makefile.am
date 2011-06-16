@@ -12,8 +12,7 @@ endif
 
 SUBDIRS += utils tests xsl schemas
 
-dist_pkgdata_DATA = dist/fedora/scap-fedora13-oval.xml \
-                    dist/fedora/scap-fedora14-oval.xml \
+dist_pkgdata_DATA = dist/fedora/scap-fedora14-oval.xml \
                     dist/fedora/scap-fedora14-xccdf.xml \
                     dist/rhel6/scap-rhel6-oval.xml \
                     dist/rhel6/scap-rhel6-xccdf.xml
@@ -31,7 +30,6 @@ EXTRA_DIST =	m4/gnulib-cache.m4 \
 		dist/fedora/openscap.spec \
 		dist/fedora/oscap-scan.sys \
 		dist/fedora/oscap-scan.init \
-		dist/fedora/scap-fedora13-oval.xml \
 		dist/fedora/scap-fedora14-oval.xml \
 		dist/fedora/scap-fedora14-xccdf.xml \
 		dist/rhel6/scap-rhel6-oval.xml \

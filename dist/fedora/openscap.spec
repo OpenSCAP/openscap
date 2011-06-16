@@ -198,7 +198,6 @@ fi
 %defattr(-,root,root,-)
 %{_datadir}/openscap/scap-oval.xml
 %{_datadir}/openscap/scap-xccdf.xml
-%{_datadir}/openscap/scap-fedora13-oval.xml
 %{_datadir}/openscap/scap-fedora14-oval.xml
 %{_datadir}/openscap/scap-fedora14-xccdf.xml
 
