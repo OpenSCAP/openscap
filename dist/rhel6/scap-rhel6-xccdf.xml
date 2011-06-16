@@ -237,7 +237,7 @@
 								partition or logical volume.</description>
               <ident system="http://cce.mitre.org">CCE-14161-4</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1000" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1000" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -261,7 +261,7 @@
 								has its own partition or logical volume.</description>
               <ident system="http://cce.mitre.org">CCE-14777-7</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1001" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1001" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -279,7 +279,7 @@
 								volume.</description>
               <ident system="http://cce.mitre.org">CCE-14011-1</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1002" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1002" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -299,7 +299,7 @@
 								daemon.</description>
               <ident system="http://cce.mitre.org">CCE-14171-3</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1003" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1003" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -320,7 +320,7 @@
 								can instead be configured later.</description>
               <ident system="http://cce.mitre.org">CCE-14559-9</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1004" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1004" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -391,7 +391,7 @@
             <description xml:lang="en-US">The GPG keys should be installed.</description>
             <ident system="http://cce.mitre.org">CCE-14440-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1005" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1005" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -441,7 +441,7 @@
             <description xml:lang="en-US">The rhnsd service should be disabled.</description>
             <ident system="http://cce.mitre.org">CCE-3416-5</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1006" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1006" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -497,7 +497,7 @@
 								<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> gpgcheck=1</description>
               <ident system="http://cce.mitre.org">CCE-14914-6</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1007" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1007" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -517,7 +517,7 @@
 								<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>gpgcheck=0</description>
               <ident system="http://cce.mitre.org">CCE-14813-0</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1008" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1008" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -584,7 +584,7 @@
 							metadata stored in the RPM database.</description>
             <ident system="http://cce.mitre.org">CCE-14931-0</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:tst:1009" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:tst:1009" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -631,7 +631,7 @@
             <description xml:lang="en-US">The /etc/shadow file should be owned by root.</description>
             <ident system="http://cce.mitre.org">CCE-3918-0</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1010" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1010" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1011" selected="false" weight="10.000000" severity="medium">
@@ -640,7 +640,7 @@
             <description xml:lang="en-US">The /etc/shadow file should be owned by root.</description>
             <ident system="http://cce.mitre.org">CCE-3988-3</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1011" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1011" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1012" selected="false" weight="10.000000" severity="medium">
@@ -649,7 +649,7 @@
             <description xml:lang="en-US">The /etc/group file should be owned by root.</description>
             <ident system="http://cce.mitre.org">CCE-3276-3</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1012" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1012" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1013" selected="false" weight="10.000000" severity="medium">
@@ -658,7 +658,7 @@
             <description xml:lang="en-US">The /etc/group file should be owned by root.</description>
             <ident system="http://cce.mitre.org">CCE-3883-6</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1013" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1013" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1014" selected="false" weight="10.000000" severity="medium">
@@ -667,7 +667,7 @@
             <description xml:lang="en-US">The /etc/gshadow file should be owned by root.</description>
             <ident system="http://cce.mitre.org">CCE-4210-1</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1014" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1014" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1015" selected="false" weight="10.000000" severity="medium">
@@ -676,7 +676,7 @@
             <description xml:lang="en-US">The /etc/gshadow file should be owned by root.</description>
             <ident system="http://cce.mitre.org">CCE-4064-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1015" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1015" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1016" selected="false" weight="10.000000" severity="medium">
@@ -685,7 +685,7 @@
             <description xml:lang="en-US">The /etc/passwd file should be owned by root.</description>
             <ident system="http://cce.mitre.org">CCE-3958-6</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1016" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1016" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1017" selected="false" weight="10.000000" severity="medium">
@@ -694,7 +694,7 @@
             <description xml:lang="en-US">The /etc/passwd file should be owned by root.</description>
             <ident system="http://cce.mitre.org">CCE-3495-9</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1017" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1017" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1018" selected="false" weight="10.000000" severity="medium">
@@ -704,7 +704,7 @@
 							correctly.</description>
             <ident system="http://cce.mitre.org">CCE-4130-1</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1018" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1018" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1019" selected="false" weight="10.000000" severity="medium">
@@ -714,7 +714,7 @@
 							correctly.</description>
             <ident system="http://cce.mitre.org">CCE-3967-7</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1019" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1019" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1020" selected="false" weight="10.000000" severity="medium">
@@ -724,7 +724,7 @@
 							correctly.</description>
             <ident system="http://cce.mitre.org">CCE-3932-1</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1020" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1020" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1021" selected="false" weight="10.000000" severity="medium">
@@ -734,7 +734,7 @@
 							correctly.</description>
             <ident system="http://cce.mitre.org">CCE-3566-7</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1021" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1021" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -756,7 +756,7 @@
 							directories.</description>
             <ident system="http://cce.mitre.org">CCE-3399-3</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1022" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1022" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -778,7 +778,7 @@
 							files.</description>
             <ident system="http://cce.mitre.org">CCE-3795-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1023" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1023" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -1250,7 +1250,7 @@
             <description xml:lang="en-US">The sgid bit should not be set for all files.</description>
             <ident system="http://cce.mitre.org">CCE-14340-4</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1024" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1024" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1025" selected="false" weight="10.000000" severity="high">
@@ -1259,7 +1259,7 @@
             <description xml:lang="en-US">The suid bit should not be set for all files.</description>
             <ident system="http://cce.mitre.org">CCE-14340-4</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1025" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1025" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -1286,7 +1286,7 @@
             <description xml:lang="en-US">All files should be owned by a user</description>
             <ident system="http://cce.mitre.org">CCE-4223-4</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1026" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1026" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1027" selected="false" weight="10.000000" severity="medium">
@@ -1295,7 +1295,7 @@
             <description xml:lang="en-US">All files should be owned by a group</description>
             <ident system="http://cce.mitre.org">CCE-3573-3</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1027" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1027" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -1323,7 +1323,7 @@
 							user</description>
             <ident system="http://cce.mitre.org">CCE-14794-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1028" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1028" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -1359,8 +1359,8 @@
             <description xml:lang="en-US">The daemon umask should be set as appropriate</description>
             <ident system="http://cce.mitre.org">CCE-4220-0</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1029" value-id="var-1029"/>
-              <check-content-ref name="oval:rhel:def:1029" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1029" value-id="var-1029"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1029" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -1388,7 +1388,7 @@
             <description xml:lang="en-US">Core dumps for all users should be disabled</description>
             <ident system="http://cce.mitre.org">CCE-4225-9</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1030" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1030" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group> 
@@ -1409,7 +1409,7 @@
             <description xml:lang="en-US">Core dumps for setuid programs should be disabled</description>
             <ident system="http://cce.mitre.org">CCE-4247-3</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1031" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1031" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
          </Group>
@@ -1447,7 +1447,7 @@
             <description xml:lang="en-US">ExecShield should be enabled</description>
             <ident system="http://cce.mitre.org">CCE-4168-1</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1032" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1032" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1033" selected="false" weight="10.000000">
@@ -1457,8 +1457,8 @@
 							should be enabled</description>
             <ident system="http://cce.mitre.org">CCE-4146-7</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1033" value-id="var-1033"/>
-              <check-content-ref name="oval:rhel:def:1033" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1033" value-id="var-1033"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1033" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -1518,7 +1518,7 @@
 							disabled</description>
             <ident system="http://cce.mitre.org">CCE-3485-0</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1034" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1034" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1035" selected="false" weight="10.000000" severity="medium">
@@ -1527,7 +1527,7 @@
             <description xml:lang="en-US">Root logins on serial ports should be disabled.</description>
             <ident system="http://cce.mitre.org">CCE-4256-4</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1035" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1035" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -1559,7 +1559,7 @@
             <description xml:lang="en-US">Ensure that the group wheel exists</description>
             <ident system="http://cce.mitre.org">CCE-14088-9</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1036" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1036" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1037" selected="false" weight="10.000000" severity="medium">
@@ -1569,7 +1569,7 @@
 							wheel group.</description>
             <ident system="http://cce.mitre.org">CCE-15047-4</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1037" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1037" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -1644,7 +1644,7 @@
 							disabled</description>
             <ident system="http://cce.mitre.org">CCE-3987-5</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1038" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1038" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -1665,7 +1665,7 @@
 								disabled</description>
               <ident system="http://cce.mitre.org">CCE-4238-2</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1039" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1039" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
         </Group>
@@ -1685,7 +1685,7 @@
               <description xml:lang="en-US">Check that passwords are shadowed</description>
               <ident system="http://cce.mitre.org">CCE-14300-8</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1040" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1040" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
         </Group>
@@ -1712,7 +1712,7 @@
             <description xml:lang="en-US">Anonymous root logins should be disabled</description>
             <ident system="http://cce.mitre.org">CCE-4009-7</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1041" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1041" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -1785,8 +1785,8 @@
 							appropriately</description>
             <ident system="http://cce.mitre.org">CCE-4180-6</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1042" value-id="var-1042"/>
-              <check-content-ref name="oval:rhel:def:1042" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1042" value-id="var-1042"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1042" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1043" selected="false" weight="10.000000" severity="medium">
@@ -1796,8 +1796,8 @@
 						</description>
             <ident system="http://cce.mitre.org">CCE-4092-3</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1043" value-id="var-1043"/>
-              <check-content-ref name="oval:rhel:def:1043" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1043" value-id="var-1043"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1043" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1044" selected="false" weight="10.000000" severity="medium">
@@ -1807,8 +1807,8 @@
 						</description>
             <ident system="http://cce.mitre.org">CCE-4097-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1044" value-id="var-1044"/>
-              <check-content-ref name="oval:rhel:def:1044" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1044" value-id="var-1044"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1044" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -1964,8 +1964,8 @@
 								requirements</description>
               <ident system="http://cce.mitre.org">CCE-15054-0</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:1045" value-id="var-1045"/>
-                <check-content-ref name="oval:rhel:def:1045" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:org.open-scap.rhel6:var:1045" value-id="var-1045"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1045" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
             <Rule id="rule-1046" selected="false" weight="10.000000" severity="medium">
@@ -1974,8 +1974,8 @@
               <description xml:lang="en-US">The password minlen should meet minimum
 								requirements</description>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:1046" value-id="var-1046"/>
-                <check-content-ref name="oval:rhel:def:1046" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:org.open-scap.rhel6:var:1046" value-id="var-1046"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1046" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
             <Rule id="rule-1047" selected="false" weight="10.000000" severity="medium">
@@ -1985,8 +1985,8 @@
 								requirements</description>
               <ident system="http://cce.mitre.org">CCE-14113-5</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:1047" value-id="var-1047"/>
-                <check-content-ref name="oval:rhel:def:1047" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:org.open-scap.rhel6:var:1047" value-id="var-1047"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1047" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
             <Rule id="rule-1048" selected="false" weight="10.000000" severity="medium">
@@ -1996,8 +1996,8 @@
 								requirements</description>
               <ident system="http://cce.mitre.org">CCE-14672-0</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:1048" value-id="var-1048"/>
-                <check-content-ref name="oval:rhel:def:1048" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:org.open-scap.rhel6:var:1048" value-id="var-1048"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1048" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
             <Rule id="rule-1049" selected="false" weight="10.000000" severity="medium">
@@ -2006,8 +2006,8 @@
               <description xml:lang="en-US">The password strength parameters should require a minimum number of special characters</description>
               <ident system="http://cce.mitre.org">CCE-14122-6</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:1049" value-id="var-1049"/>
-                <check-content-ref name="oval:rhel:def:1049" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:org.open-scap.rhel6:var:1049" value-id="var-1049"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1049" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
             <Rule id="rule-1050" selected="false" weight="10.000000" severity="medium">
@@ -2016,8 +2016,8 @@
               <description xml:lang="en-US">The password strength parameters should require a minimum number of lowercase characters</description>
               <ident system="http://cce.mitre.org">CCE-14712-4</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:1050" value-id="var-1050"/>
-                <check-content-ref name="oval:rhel:def:1050" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:org.open-scap.rhel6:var:1050" value-id="var-1050"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1050" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
             <Rule id="rule-1051" selected="false" weight="10.000000" severity="medium">
@@ -2027,8 +2027,8 @@
 								requirements</description>
               <ident system="http://cce.mitre.org">CCE-14701-7</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:1051" value-id="var-1051"/>
-                <check-content-ref name="oval:rhel:def:1051" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:org.open-scap.rhel6:var:1051" value-id="var-1051"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1051" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -2064,8 +2064,8 @@
               <title xml:lang="en-US">The password strength parameters should be configured using pam_passwdqc</title>
               <description xml:lang="en-US">pam_passwdqc "min" should be configured as described by the policy</description>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:1052" value-id="var-1052"/>
-                <check-content-ref name="oval:rhel:def:1052" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:org.open-scap.rhel6:var:1052" value-id="var-1052"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1052" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -2150,8 +2150,8 @@
 		    <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1053"/></description>
             <ident system="http://cce.mitre.org">CCE-14063-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1053" value-id="var-1053"/>
-              <check-content-ref name="oval:rhel:def:1053" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1053" value-id="var-1053"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1053" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -2186,8 +2186,8 @@
 						</description>
             <ident system="http://cce.mitre.org">CCE-14939-3</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1054" value-id="var-1054"/>
-              <check-content-ref name="oval:rhel:def:1054" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1054" value-id="var-1054"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1054" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -2240,7 +2240,7 @@
 							root</description>
             <ident system="http://cce.mitre.org">CCE-3301-9</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1055" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1055" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1056" selected="false" weight="10.000000" severity="medium">
@@ -2250,7 +2250,7 @@
 							grant write permission to group and other</description>
             <ident system="http://cce.mitre.org">CCE-14957-5</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1056" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1056" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -2285,7 +2285,7 @@
 							directories for all user accounts.</description>
             <ident system="http://cce.mitre.org">CCE-4090-7</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1057" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1057" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -2314,7 +2314,7 @@
             <description xml:lang="en-US">File permissions should be set correctly for the home
 							directories for all user accounts.</description>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1058" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1058" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -2382,8 +2382,8 @@
 						</description>
             <ident system="http://cce.mitre.org">CCE-3844-8</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1059" value-id="var-1059"/>
-              <check-content-ref name="oval:rhel:def:1059" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1059" value-id="var-1059"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1059" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1060" selected="false" weight="10.000000" severity="medium">
@@ -2394,8 +2394,8 @@
 						</description>
             <ident system="http://cce.mitre.org">CCE-4227-5</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1059" value-id="var-1059"/>
-              <check-content-ref name="oval:rhel:def:1060" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1059" value-id="var-1059"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1060" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1061" selected="false" weight="10.000000" severity="medium">
@@ -2405,8 +2405,8 @@
 						</description>
             <ident system="http://cce.mitre.org">CCE-14107-7</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1061" value-id="var-1061"/>
-              <check-content-ref name="oval:rhel:def:1061" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1061" value-id="var-1061"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1061" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1062" selected="false" weight="10.000000" severity="medium">
@@ -2416,8 +2416,8 @@
 						</description>
             <ident system="http://cce.mitre.org">CCE-14847-8</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1059" value-id="var-1059"/>
-              <check-content-ref name="oval:rhel:def:1062" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1059" value-id="var-1059"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1062" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -2442,7 +2442,7 @@
             <title xml:lang="en-US">No ~/.netrc files exist</title>
             <description xml:lang="en-US">No user's home directory should contain a .netrc file</description>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1063" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1063" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -2528,8 +2528,8 @@
             <description xml:lang="en-US">Boot Loader configuration file should be owned by root.</description>
             <ident system="http://cce.mitre.org">CCE-4144-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1064" value-id="var-1064"/>
-              <check-content-ref name="oval:rhel:def:1064" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1064" value-id="var-1064"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1064" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1065" selected="false" weight="10.000000" severity="medium">
@@ -2539,8 +2539,8 @@
 							root.</description>
             <ident system="http://cce.mitre.org">CCE-4197-0</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1065" value-id="var-1065"/>
-              <check-content-ref name="oval:rhel:def:1065" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1065" value-id="var-1065"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1065" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1066" selected="false" weight="10.000000" severity="medium">
@@ -2550,7 +2550,7 @@
 							correctly.</description>
             <ident system="http://cce.mitre.org">CCE-3923-0</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1066" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1066" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1067" selected="false" weight="10.000000" severity="high">
@@ -2560,7 +2560,7 @@
 							enabled</description>
             <ident system="http://cce.mitre.org">CCE-3818-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1067" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1067" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -2581,7 +2581,7 @@
             <description xml:lang="en-US">A password should be required to boot into single-user mode.</description>
             <ident system="http://cce.mitre.org">CCE-4241-6</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1068" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1068" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -2601,7 +2601,7 @@
 							disabled.</description>
             <ident system="http://cce.mitre.org">CCE-4245-7</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1069" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1069" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -2644,8 +2644,8 @@
             <title xml:lang="en-US">Enforce an inactivy timeout for Bourne shells</title>
             <description xml:lang="en-US">Bourne shells should be closed after <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1059"/> minutes of inactivity.</description>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1070" value-id="var-1070"/>
-              <check-content-ref name="oval:rhel:def:1070" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1070" value-id="var-1070"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1070" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1071" selected="false" weight="10.000000" severity="medium">
@@ -2653,8 +2653,8 @@
             <title xml:lang="en-US">Enforce an inactivy timeout for C shells</title>
             <description xml:lang="en-US">C shells should be closed after <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1059"/> minutes of inactivity.</description>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1070" value-id="var-1070"/>
-              <check-content-ref name="oval:rhel:def:1071" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1070" value-id="var-1070"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1071" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -2727,8 +2727,8 @@
 								desktop lockout should be 15 minutes</description>
               <ident system="http://cce.mitre.org">CCE-3315-9</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:1070" value-id="var-1070"/>
-                <check-content-ref name="oval:rhel:def:1072" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:org.open-scap.rhel6:var:1070" value-id="var-1070"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1072" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
             <Rule id="rule-1073" selected="false" weight="10.000000" severity="medium">
@@ -2738,7 +2738,7 @@
 								enabled</description>
               <ident system="http://cce.mitre.org">CCE-14604-3</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1073" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1073" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
             <Rule id="rule-1074" selected="false" weight="10.000000" severity="medium">
@@ -2747,7 +2747,7 @@
               <description xml:lang="en-US">The screensaver should ask for a password</description>
               <ident system="http://cce.mitre.org">CCE-14023-6</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1074" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1074" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
             <Rule id="rule-1075" selected="false" weight="10.000000" severity="medium">
@@ -2756,7 +2756,7 @@
               <description xml:lang="en-US">The screen saver should be blank</description>
               <ident system="http://cce.mitre.org">CCE-14735-5</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1075" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1075" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -2780,7 +2780,7 @@
               <description xml:lang="en-US">The vlock package should be installed</description>
               <ident system="http://cce.mitre.org">CCE-3910-7</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1076" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1076" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -2874,8 +2874,8 @@
 						</description>
             <ident system="http://cce.mitre.org">CCE-4060-0</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1077" value-id="var-1077"/>
-              <check-content-ref name="oval:rhel:def:1077" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1077" value-id="var-1077"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1077" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -2907,8 +2907,8 @@
 							appropriately</description>
             <ident system="http://cce.mitre.org">CCE-4188-9</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1077" value-id="var-1077"/>
-              <check-content-ref name="oval:rhel:def:1078" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1077" value-id="var-1077"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1078" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -3052,7 +3052,7 @@
 						selinux=0 is not found</description>
           <ident system="http://cce.mitre.org">CCE-3977-6</ident>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-            <check-content-ref name="oval:rhel:def:1079" href="scap-rhel6-oval.xml"/>
+            <check-content-ref name="oval:org.open-scap.rhel6:def:1079" href="scap-rhel6-oval.xml"/>
           </check>
         </Rule>
         <Rule id="rule-1080" selected="false" weight="10.000000" severity="medium">
@@ -3061,8 +3061,8 @@
           <description xml:lang="en-US">The SELinux state should be set appropriately</description>
           <ident system="http://cce.mitre.org">CCE-3999-0</ident>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-            <check-export export-name="oval:rhel:var:1080" value-id="var-1080"/>
-            <check-content-ref name="oval:rhel:def:1080" href="scap-rhel6-oval.xml"/>
+            <check-export export-name="oval:org.open-scap.rhel6:var:1080" value-id="var-1080"/>
+            <check-content-ref name="oval:org.open-scap.rhel6:def:1080" href="scap-rhel6-oval.xml"/>
           </check>
         </Rule>
         <Rule id="rule-1081" selected="false" weight="10.000000" severity="medium">
@@ -3071,8 +3071,8 @@
           <description xml:lang="en-US">The SELinux policy should be set appropriately.</description>
           <ident system="http://cce.mitre.org">CCE-3624-4</ident>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-            <check-export export-name="oval:rhel:var:1081" value-id="var-1081"/>
-            <check-content-ref name="oval:rhel:def:1081" href="scap-rhel6-oval.xml"/>
+            <check-export export-name="oval:org.open-scap.rhel6:var:1081" value-id="var-1081"/>
+            <check-content-ref name="oval:org.open-scap.rhel6:def:1081" href="scap-rhel6-oval.xml"/>
           </check>
         </Rule>
       </Group>
@@ -3112,7 +3112,7 @@
             <title xml:lang="en-US">Remove SETroubleshoot</title>
             <description xml:lang="en-US">The setroubleshoot-server package should not be installed.</description>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1082" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1082" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -3136,7 +3136,7 @@
             <description xml:lang="en-US">The mcstrans service should be disabled.</description>
             <ident system="http://cce.mitre.org">CCE-3668-1</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1083" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1083" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -3534,7 +3534,7 @@
 							disabled for network interfaces.</description>
             <ident system="http://cce.mitre.org">CCE-4151-7</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1084" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1084" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1085" selected="false" weight="10.000000" severity="medium">
@@ -3544,7 +3544,7 @@
 							interfaces.</description>
             <ident system="http://cce.mitre.org">CCE-4155-8</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1085" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1085" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1086" selected="false" weight="10.000000" severity="medium">
@@ -3553,7 +3553,7 @@
             <description xml:lang="en-US">IP forwarding should be disabled.</description>
             <ident system="http://cce.mitre.org">CCE-3561-8</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1086" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1086" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -3662,8 +3662,8 @@
 							appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-4236-6</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1087" value-id="var-1087"/>
-              <check-content-ref name="oval:rhel:def:1087" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1087" value-id="var-1087"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1087" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1088" selected="false" weight="10.000000" severity="medium">
@@ -3673,8 +3673,8 @@
 							appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-4217-6</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1088" value-id="var-1088"/>
-              <check-content-ref name="oval:rhel:def:1088" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1088" value-id="var-1088"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1088" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1089" selected="false" weight="10.000000" severity="medium">
@@ -3685,8 +3685,8 @@
 							appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-3472-8</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1089" value-id="var-1089"/>
-              <check-content-ref name="oval:rhel:def:1089" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1089" value-id="var-1089"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1089" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1090" selected="false" weight="10.000000" severity="medium">
@@ -3697,8 +3697,8 @@
 							appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-4320-8</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1090" value-id="var-1090"/>
-              <check-content-ref name="oval:rhel:def:1090" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1090" value-id="var-1090"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1090" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1091" selected="false" weight="10.000000" severity="medium">
@@ -3709,8 +3709,8 @@
 							appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-4091-5</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1087" value-id="var-1087"/>
-              <check-content-ref name="oval:rhel:def:1091" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1087" value-id="var-1087"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1091" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1092" selected="false" weight="10.000000" severity="medium">
@@ -3721,8 +3721,8 @@
 							appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-4186-3</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1088" value-id="var-1088"/>
-              <check-content-ref name="oval:rhel:def:1092" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1088" value-id="var-1088"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1092" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1093" selected="false" weight="10.000000" severity="medium">
@@ -3734,8 +3734,8 @@
 							appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-3339-9</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1089" value-id="var-1089"/>
-              <check-content-ref name="oval:rhel:def:1093" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1089" value-id="var-1089"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1093" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1094" selected="false" weight="10.000000" severity="medium">
@@ -3745,8 +3745,8 @@
 							should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1090"/> for all interfaces as
 							appropriate.</description>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1090" value-id="var-1090"/>
-              <check-content-ref name="oval:rhel:def:1094" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1090" value-id="var-1090"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1094" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1095" selected="false" weight="10.000000" severity="medium">
@@ -3757,8 +3757,8 @@
 							for all interfaces as appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-3644-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1095" value-id="var-1095"/>
-              <check-content-ref name="oval:rhel:def:1095" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1095" value-id="var-1095"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1095" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1096" selected="false" weight="10.000000" severity="medium">
@@ -3768,8 +3768,8 @@
 							appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-4133-5</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1096" value-id="var-1096"/>
-              <check-content-ref name="oval:rhel:def:1096" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1096" value-id="var-1096"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1096" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1097" selected="false" weight="10.000000" severity="medium">
@@ -3779,8 +3779,8 @@
 							appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-4265-5</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1097" value-id="var-1097"/>
-              <check-content-ref name="oval:rhel:def:1097" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1097" value-id="var-1097"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1097" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1098" selected="false" weight="10.000000" severity="medium">
@@ -3790,8 +3790,8 @@
 							appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-4080-8</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1098" value-id="var-1098"/>
-              <check-content-ref name="oval:rhel:def:1098" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1098" value-id="var-1098"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1098" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1099" selected="false" weight="10.000000" severity="medium">
@@ -3802,8 +3802,8 @@
 							interfaces as appropriate.</description>
             <ident system="http://cce.mitre.org">CCE-3840-6</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1098" value-id="var-1098"/>
-              <check-content-ref name="oval:rhel:def:1099" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1098" value-id="var-1098"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1099" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -3896,7 +3896,7 @@
 	    <description xml:lang="en-US">All wireless interfaces should be disabled.</description>
 	    <ident system="http://cce.mitre.org">CCE-4276-2</ident>
 	    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-	      <check-content-ref name="oval:rhel:def:1100" href="scap-rhel6-oval.xml"/>
+	      <check-content-ref name="oval:org.open-scap.rhel6:def:1100" href="scap-rhel6-oval.xml"/>
 	    </check>
 	  </Rule>
 	</Group>
@@ -3930,7 +3930,7 @@
 								disabled.</description>
               <ident system="http://cce.mitre.org">CCE-3562-6</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1101" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1101" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -3974,8 +3974,8 @@
               <title xml:lang="en-US">Configure IPv6 autoconfiguration</title>
               <description xml:lang="en-US">The default setting for IPv6 autoconfiguration should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1102"/>.</description>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:1102" value-id="var-1102"/>
-                <check-content-ref name="oval:rhel:def:1102" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:org.open-scap.rhel6:var:1102" value-id="var-1102"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1102" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -4098,8 +4098,8 @@
               <description xml:lang="en-US">The default number of sent router solicitations should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1103"/> for
 								all interfaces.</description>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:1103" value-id="var-1103"/>
-                <check-content-ref name="oval:rhel:def:1103" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:org.open-scap.rhel6:var:1103" value-id="var-1103"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1103" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
             <Rule id="rule-1104" selected="false" weight="10.000000" severity="medium">
@@ -4107,8 +4107,8 @@
               <title xml:lang="en-US">Configure whether to accept router preference</title>
               <description xml:lang="en-US">Router preference should be accepted by default: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1104"/></description>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:1104" value-id="var-1104"/>
-                <check-content-ref name="oval:rhel:def:1104" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:org.open-scap.rhel6:var:1104" value-id="var-1104"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1104" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
             <Rule id="rule-1105" selected="false" weight="10.000000" severity="medium">
@@ -4116,8 +4116,8 @@
               <title xml:lang="en-US">Configure whether to accept path information</title>
               <description xml:lang="en-US">Path information should be accepted by default: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1105"/></description>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:1105" value-id="var-1105"/>
-                <check-content-ref name="oval:rhel:def:1105" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:org.open-scap.rhel6:var:1105" value-id="var-1105"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1105" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
             <Rule id="rule-1106" selected="false" weight="10.000000" severity="medium">
@@ -4125,8 +4125,8 @@
               <title xml:lang="en-US">Configure whether to accept default router information</title>
               <description xml:lang="en-US">Default router information should be accepted by default: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1106"/></description>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:1106" value-id="var-1106"/>
-                <check-content-ref name="oval:rhel:def:1106" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:org.open-scap.rhel6:var:1106" value-id="var-1106"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1106" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
             <Rule id="rule-1107" selected="false" weight="10.000000" severity="medium">
@@ -4134,8 +4134,8 @@
               <title xml:lang="en-US">Configure whether to autoconfigure addresses</title>
               <description xml:lang="en-US">Addresses should be autoconfigured by default: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1107"/></description>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:1107" value-id="var-1107"/>
-                <check-content-ref name="oval:rhel:def:1107" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:org.open-scap.rhel6:var:1107" value-id="var-1107"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1107" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
             <Rule id="rule-1108" selected="false" weight="10.000000" severity="medium">
@@ -4143,8 +4143,8 @@
               <title xml:lang="en-US">Configure number of duplicate address detection probes</title>
               <description xml:lang="en-US">Number of duplicate address detection probes should be by default: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1108"/></description>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:1108" value-id="var-1108"/>
-                <check-content-ref name="oval:rhel:def:1108" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:org.open-scap.rhel6:var:1108" value-id="var-1108"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1108" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
             <Rule id="rule-1109" selected="false" weight="10.000000" severity="medium">
@@ -4152,8 +4152,8 @@
               <title xml:lang="en-US">Configure maximum number of autoconfigured addresses</title>
               <description xml:lang="en-US">Maximum number of autoconfigured addresses be by default: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1109"/></description>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-export export-name="oval:rhel:var:1109" value-id="var-1109"/>
-                <check-content-ref name="oval:rhel:def:1109" href="scap-rhel6-oval.xml"/>
+                <check-export export-name="oval:org.open-scap.rhel6:var:1109" value-id="var-1109"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1109" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -4227,7 +4227,7 @@
               <title xml:lang="en-US">Reject Connections in TCP Wrapper by Default</title>
               <description xml:lang="en-US">TCP wrapper should be configured to reject connections that were not explicitly allowed</description>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1110" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1110" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
         </Group>
@@ -4342,7 +4342,7 @@
             <description xml:lang="en-US">The ip6tables service should be enabled.</description>
             <ident system="http://cce.mitre.org">CCE-4167-3</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1111" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1111" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1112" selected="false" weight="10.000000" severity="high">
@@ -4351,7 +4351,7 @@
             <description xml:lang="en-US">The iptables service should be enabled.</description>
             <ident system="http://cce.mitre.org">CCE-4189-7</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1112" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1112" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -4451,7 +4451,7 @@
               <description xml:lang="en-US">Change the default policy to DROP (from ACCEPT) for the
 								INPUT built-in chain.</description>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1113" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1113" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
             <Rule id="rule-1114" selected="false" weight="10.000000" severity="high">
@@ -4460,7 +4460,7 @@
               <description xml:lang="en-US">Change the default policy to DROP (from ACCEPT) for the
 								FORWARD built-in chain.</description>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1114" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1114" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -4500,7 +4500,7 @@
               <title xml:lang="en-US">Restrict ICMP message types</title>
               <description xml:lang="en-US">Accept only some ICMP messages in the INPUT built-in chain.</description>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1115" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1115" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -4587,7 +4587,7 @@
               <title xml:lang="en-US">Log and Drop All Other Packets</title>
               <description xml:lang="en-US">Log and drop packets that were not explicitly drop in the INPUT built-in chain.</description>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1116" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1116" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -4864,7 +4864,7 @@
             <description xml:lang="en-US">Support for DCCP should be disabled.</description>
             <ident system="http://cce.mitre.org">CCE-14268-7</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1117" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1117" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -4885,7 +4885,7 @@
             <description xml:lang="en-US">Support for SCTP should be disabled.</description>
             <ident system="http://cce.mitre.org">CCE-14132-5</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1118" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1118" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -4905,7 +4905,7 @@
             <description xml:lang="en-US">Support for RDS should be disabled.</description>
             <ident system="http://cce.mitre.org">CCE-14027-7</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1119" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1119" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -4953,7 +4953,7 @@
           <description xml:lang="en-US">The rsyslog service should be enabled.</description>
           <ident system="http://cce.mitre.org">CCE-3679-8</ident>
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-            <check-content-ref name="oval:rhel:def:1120" href="scap-rhel6-oval.xml"/>
+            <check-content-ref name="oval:org.open-scap.rhel6:def:1120" href="scap-rhel6-oval.xml"/>
           </check>
         </Rule>
         <Group id="gr-logs-syslog.1" hidden="false">
@@ -5019,8 +5019,8 @@
             <description xml:lang="en-US">All syslog log files should be owned by user <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1121"/>.</description>
             <ident system="http://cce.mitre.org">CCE-4366-1</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1121" value-id="var-1121"/>
-              <check-content-ref name="oval:rhel:def:1121" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1121" value-id="var-1121"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1121" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1122" selected="false" weight="10.000000" severity="medium">
@@ -5029,8 +5029,8 @@
             <description xml:lang="en-US">All syslog log files should be group owned group <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1122"/>.</description>
             <ident system="http://cce.mitre.org">CCE-3701-0</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-export export-name="oval:rhel:var:1122" value-id="var-1122"/>
-              <check-content-ref name="oval:rhel:def:1122" href="scap-rhel6-oval.xml"/>
+              <check-export export-name="oval:org.open-scap.rhel6:var:1122" value-id="var-1122"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1122" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
           <Rule id="rule-1123" selected="false" weight="10.000000" severity="medium">
@@ -5040,7 +5040,7 @@
 							correctly.</description>
             <ident system="http://cce.mitre.org">CCE-4233-3</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1123" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1123" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -5059,7 +5059,7 @@
             <description xml:lang="en-US">Syslog logs should be sent to a remote loghost</description>
             <ident system="http://cce.mitre.org">CCE-4260-6</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1124" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1124" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -5077,7 +5077,7 @@
 		using the SYSLOGD_OPTION variable in /etc/sysconfig/rsyslog.
 		</description>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1125" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1125" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -5106,7 +5106,7 @@
 							enabled.</description>
             <ident system="http://cce.mitre.org">CCE-4182-2</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1126" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1126" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -5244,7 +5244,7 @@
             <description xml:lang="en-US">The auditd service should be enabled.</description>
             <ident system="http://cce.mitre.org">CCE-4292-9</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1127" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1127" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -5318,7 +5318,7 @@
 							line in /boot/grub/grub.conf</description>
             <ident system="http://cce.mitre.org">CCE-15026-8</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-              <check-content-ref name="oval:rhel:def:1128" href="scap-rhel6-oval.xml"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1128" href="scap-rhel6-oval.xml"/>
             </check>
           </Rule>
         </Group>
@@ -5373,7 +5373,7 @@
               <description xml:lang="en-US">Audit rules about time</description>
               <ident system="http://cce.mitre.org">CCE-14051-7</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1129" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1129" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5391,7 +5391,7 @@
               <description xml:lang="en-US">Audit rules about User/Group Information</description>
               <ident system="http://cce.mitre.org">CCE-14829-6</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1130" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1130" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5412,7 +5412,7 @@
 								Environment</description>
               <ident system="http://cce.mitre.org">CCE-14816-3</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1131" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1131" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5427,7 +5427,7 @@
 								Controls</description>
               <ident system="http://cce.mitre.org">CCE-14821-3</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1132" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1132" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5444,7 +5444,7 @@
               <description xml:lang="en-US">Audit rules about the Logon and Logout Events</description>
               <ident system="http://cce.mitre.org">CCE-14904-7</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1133" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1133" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5462,7 +5462,7 @@
 								Information</description>
               <ident system="http://cce.mitre.org">CCE-14679-5</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1134" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1134" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5486,7 +5486,7 @@
 								Permission Modification Events</description>
               <ident system="http://cce.mitre.org">CCE-14058-2</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1135" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1135" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5508,7 +5508,7 @@
 								(unsuccessful)</description>
               <ident system="http://cce.mitre.org">CCE-14917-9</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1136" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1136" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5528,7 +5528,7 @@
 								Commands</description>
               <ident system="http://cce.mitre.org">CCE-14296-8</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1137" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1137" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5547,7 +5547,7 @@
 								(successful)</description>
               <ident system="http://cce.mitre.org">CCE-14569-8</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1138" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1138" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5566,7 +5566,7 @@
 								(successful and unsuccessful)</description>
               <ident system="http://cce.mitre.org">CCE-14820-5</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1139" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1139" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5586,7 +5586,7 @@
 								Actions</description>
               <ident system="http://cce.mitre.org">CCE-14824-7</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1140" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1140" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5605,7 +5605,7 @@
 								and Unloading</description>
               <ident system="http://cce.mitre.org">CCE-14688-6</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1141" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1141" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
@@ -5622,7 +5622,7 @@
               <description xml:lang="en-US">Force a reboot to change audit rules</description>
               <ident system="http://cce.mitre.org">CCE-14692-8</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                <check-content-ref name="oval:rhel:def:1142" href="scap-rhel6-oval.xml"/>
+                <check-content-ref name="oval:org.open-scap.rhel6:def:1142" href="scap-rhel6-oval.xml"/>
               </check>
             </Rule>
           </Group>
