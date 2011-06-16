@@ -632,7 +632,8 @@ TD.text {font: 10pt/12pt "Arial"}
 
 			<!-- id -->
 			<xsl:variable name="idUrl" select="concat('http://oval.mitre.org/repository/data/getDef?id=', $definitionElm/@definition_id)"/>
-			<td class="text" align="center">				
+			<td class="text" align="center">
+				<!--
 				<a>
 					<xsl:attribute name="target">_blank</xsl:attribute>
 					<xsl:attribute name="href">
@@ -640,6 +641,8 @@ TD.text {font: 10pt/12pt "Arial"}
 					</xsl:attribute>
 					<xsl:value-of select="$definitionElm/@definition_id"/>
 				</a>
+				-->
+				<xsl:value-of select="$definitionElm/@definition_id"/>
 			</td>
 
 			<!-- result -->
@@ -658,11 +661,14 @@ TD.text {font: 10pt/12pt "Arial"}
 			<td class="text" align="center">
 				<xsl:for-each select="key('definition-index', @definition_id)">
 					<xsl:for-each select="oval-def:metadata/oval-def:reference">
+						<!--
 						<a>
 							<xsl:attribute name="target">_blank</xsl:attribute>
 							<xsl:attribute name="href"><xsl:value-of select="@ref_url"/></xsl:attribute>
 							<xsl:value-of select="@ref_id"/>
 						</a>
+						-->
+						<xsl:value-of select="@ref_id"/>
 					</xsl:for-each>&#160;
 				</xsl:for-each>&#160;
 			</td>
