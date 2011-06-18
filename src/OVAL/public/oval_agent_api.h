@@ -67,7 +67,12 @@ oval_agent_session_t * oval_agent_new_session(struct oval_definition_model * mod
 /**
  * Probe the system and evaluate specified definition
  */
-oval_result_t oval_agent_eval_definition(oval_agent_session_t * ag_sess, const char *id);
+int oval_agent_eval_definition(oval_agent_session_t *, const char *);
+
+/**
+ * Get the OVAL result of a definition from an agent session
+ */
+oval_result_t oval_agent_get_definition_result(oval_agent_session_t *, const char *);
 
 /**
  * Clean resuls that were generated in this agent session

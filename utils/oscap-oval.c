@@ -432,18 +432,12 @@ int app_evaluate_oval(const struct oscap_action *action)
 
 	/* "calculate" return code */
 	if (action->id) {
-		if ((ret !=  OVAL_RESULT_FALSE)) {
-			ret = OSCAP_OK;
-		} else {
-			ret = OSCAP_FAIL;
-		}
-	}
-	else {
-		if ((usr->result_false == 0)) {
-			ret =  OSCAP_OK;
-		} else {
-			ret = OSCAP_FAIL;
-		}
+		oval_result_t res;
+
+		res = oval_agent_get_definition_result(sess, action->id);
+		ret = (res == OVAL_RESULT_FALSE) ? OSCAP_FAIL : OSCAP_OK;
+	} else {
+		ret = (usr->result_false > 0) ? OSCAP_FAIL : OSCAP_OK;
 	}
 
 	/* clean up */
