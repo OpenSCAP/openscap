@@ -135,9 +135,9 @@ int oval_agent_eval_definition(oval_agent_session_t *ag_sess, const char *id)
 	rsystem = oval_result_system_iterator_next(rsystem_it);
         oval_result_system_iterator_free(rsystem_it);
 	/* eval */
-	oval_result_system_eval_definition(rsystem, id);
+	ret = oval_result_system_eval_definition(rsystem, id);
 
-	return 0;
+	return ret;
 }
 
 oval_result_t oval_agent_get_definition_result(oval_agent_session_t *ag_sess, const char *id)

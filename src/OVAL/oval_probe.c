@@ -426,8 +426,11 @@ int oval_probe_query_definition(oval_probe_session_t *sess, const char *id) {
 	syschar_model = sess->sys_model;
         definition_model = oval_syschar_model_get_definition_model(syschar_model);
 	definition = oval_definition_model_get_definition(definition_model, id);
-	if (definition == NULL)
+	if (definition == NULL) {
+		dE("No definition with ID: %s in definition model.", id);
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Unknown definition.");
 		return -1;
+	}
 
 	struct oval_criteria_node * cnode = oval_definition_get_criteria(definition);
 	if (cnode == NULL)

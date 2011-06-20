@@ -330,10 +330,9 @@ int oval_result_system_eval(struct oval_result_system *sys);
  * @memberof oval_result_system
  * @param sys is result_system from result_model
  * @param id of the definition from definition_model from result_model
- * @return OVAL_RESULT_ERROR if there was a problem in evaluation. Use \ref ERRORS mechanism to examine the error. Otherwise one of valid
- * values for the evaluation of an OVAL Definitions is returned.
+ * @return 0 on succeess, or non 0 if an error occurred. Use \ref ERRORS mechanism to examine the error.
  */
-oval_result_t oval_result_system_eval_definition(struct oval_result_system *sys, const char *id);
+int oval_result_system_eval_definition(struct oval_result_system *sys, const char *id);
 /** @} */
 
 

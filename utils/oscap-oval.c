@@ -372,7 +372,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 	sess = oval_agent_new_session(def_model, basename(action->f_oval));
 	if (sess == NULL) {
 		if (oscap_err())
-			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
 		fprintf(stderr, "Failed to create new agent session.\n");
 		ret = OSCAP_ERROR;
 		goto cleanup;
@@ -383,22 +383,18 @@ int app_evaluate_oval(const struct oscap_action *action)
 	memset(usr, 0, sizeof(struct oval_usr));
 
 	/* Evaluation */
-	if (action->id) {
+	if (action->id)
 		ret = oval_agent_eval_definition(sess, action->id);
-		if (VERBOSE >= 0)
-			printf("Definition %s: %s\n", action->id, oval_result_get_text(ret));
-	} else
+	else
 		ret = oval_agent_eval_system(sess, app_oval_callback, usr);
 
-	if (VERBOSE >= 0) {
-		printf("Evaluation done.\n");
-	}
-
-	if (ret == -1 && (oscap_err())) {
-		fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+	if (ret && (oscap_err())) {
+		fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
 		ret = OSCAP_ERROR;
 		goto cleanup;
-	}
+	} else
+		printf("Evaluation done.\n");
+
 
 	/* export results to file */
 	if (action->f_results != NULL) {
@@ -435,6 +431,8 @@ int app_evaluate_oval(const struct oscap_action *action)
 		oval_result_t res;
 
 		res = oval_agent_get_definition_result(sess, action->id);
+		if (VERBOSE >= 0)
+			printf("Definition %s: %s\n", action->id, oval_result_get_text(res));
 		ret = (res == OVAL_RESULT_FALSE) ? OSCAP_FAIL : OSCAP_OK;
 	} else {
 		ret = (usr->result_false > 0) ? OSCAP_FAIL : OSCAP_OK;

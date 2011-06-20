@@ -348,7 +348,7 @@ int oval_result_system_eval(struct oval_result_system *sys)
 	return 0;
 }
 
-oval_result_t oval_result_system_eval_definition(struct oval_result_system *sys, const char *id)
+int oval_result_system_eval_definition(struct oval_result_system *sys, const char *id)
 {
         struct oval_results_model *res_model;
         struct oval_definition_model *definition_model;
@@ -359,9 +359,9 @@ oval_result_t oval_result_system_eval_definition(struct oval_result_system *sys,
 	definition_model = oval_results_model_get_definition_model(res_model);
 	oval_definition = oval_definition_model_get_definition(definition_model, id);
 	if (oval_definition == NULL) {
-		oscap_dlprintf(DBG_E, "No definition with ID: %s in definition model.\n", id);
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "No definition with such an ID in definition model.");
-		return OVAL_RESULT_ERROR;
+		dE("No definition with ID: %s in definition model.", id);
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Unknown definition.");
+		return -1;
 	}
 
         rslt_definition = oval_result_system_get_definition(sys, id);
@@ -370,7 +370,9 @@ oval_result_t oval_result_system_eval_definition(struct oval_result_system *sys,
                 oval_result_system_add_definition(sys, rslt_definition);
         }
 
-	return oval_result_definition_eval(rslt_definition);
+	oval_result_definition_eval(rslt_definition);
+
+	return 0;
 }
 
 
