@@ -136,8 +136,9 @@ time_t oscap_get_datetime(const char *date)
 
 xmlNode *oscap_xmlstr_to_dom(xmlNode *parent, const char *elname, const char *content)
 {
-	char *str = oscap_sprintf("<x>%s</x>", content);
-	xmlDoc *doc = xmlReadMemory(str, strlen(str), NULL, NULL, XML_PARSE_RECOVER | XML_PARSE_NOERROR | XML_PARSE_NOWARNING | XML_PARSE_NONET);
+	char *str = oscap_sprintf("<x xmlns:xhtml='http://www.w3.org/1999/xhtml'>%s</x>", content);
+	xmlDoc *doc = xmlReadMemory(str, strlen(str), NULL, NULL,
+		XML_PARSE_RECOVER | XML_PARSE_NOERROR | XML_PARSE_NOWARNING | XML_PARSE_NONET | XML_PARSE_NSCLEAN);
 	xmlNode *text_node = xmlCopyNode(xmlDocGetRootElement(doc), 1);
 	xmlNodeSetName(text_node, BAD_CAST elname);
 	xmlAddChild(parent, text_node);
