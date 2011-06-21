@@ -35,6 +35,10 @@
 #include "public/oval_system_characteristics.h"
 #include "probes/public/probe-api.h"
 #include "oval_probe_int.h"
+#include "probes/probe/entcmp.h"
+
+
+extern char **environ;
 
 static struct oval_value *oval_object_getentval(struct oval_object *obj, const char *name)
 {
@@ -67,6 +71,39 @@ static struct oval_value *oval_object_getentval(struct oval_object *obj, const c
 
         return(val);
 }
+
+static oval_operation_t oval_object_getentop(struct oval_object *obj, const char *name)
+{
+        oval_operation_t    val;
+        struct oval_entity  *ent;
+        struct oval_object_content *con;
+        struct oval_object_content_iterator *cit;
+        char *ent_name;
+
+        cit = oval_object_get_object_contents(obj);
+        val = OVAL_OPERATOR_UNKNOWN;
+
+	while (oval_object_content_iterator_has_more(cit)) {
+                con = oval_object_content_iterator_next(cit);
+
+                if (oval_object_content_get_type(con) != OVAL_OBJECTCONTENT_ENTITY)
+                        continue;
+
+                ent = oval_object_content_get_entity(con);
+                ent_name = oval_entity_get_name(ent);
+
+                if (strcmp(ent_name, name) != 0)
+                        continue;
+
+		val = oval_entity_get_operation(ent);
+                break;
+        }
+
+        oval_object_content_iterator_free(cit);
+
+        return(val);
+}
+
 
 static struct oval_variable *oval_probe_variable_objgetvar(struct oval_object *obj)
 {
@@ -104,9 +141,10 @@ static int oval_probe_envvar_eval(struct oval_syschar *syschar)
 {
 	struct oval_object *obj;
 	struct oval_value *val;
-        char *var_name, *var_value;
-	SEXP_t *r0, *r1, *r2, *cobj;
-	int ret;
+	oval_operation_t op;
+        char *var_name, *env_value, **env;
+	SEXP_t *r0, *cobj, *var_name_sexp, *env_name_sexp, *env_value_sexp; 
+	int ret, env_name_size;
 
 	obj = oval_syschar_get_object(syschar);
         val = oval_object_getentval(obj, "name");
@@ -117,22 +155,41 @@ static int oval_probe_envvar_eval(struct oval_syschar *syschar)
         if (oval_value_get_datatype(val) != OVAL_DATATYPE_STRING)
 		return(-1);
 
+        op = oval_object_getentop(obj, "name");
+
+	if (op == OVAL_OPERATION_UNKNOWN) {
+		return(-1);
+	}
+
         var_name  = oval_value_get_text(val);
-        var_value = getenv(var_name);
+	var_name_sexp = SEXP_string_new(var_name,  strlen(var_name));
+
 	cobj = probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, NULL, NULL);
 
-	if (var_value != NULL) {
-		r0 = probe_item_creat("environmentvariable_item", NULL,
-				      "name",  NULL, r1 = SEXP_string_new(var_name,  strlen(var_name)),
-				      "value", NULL, r2 = SEXP_string_new(var_value, strlen(var_value)),
-				      NULL);
-		probe_cobj_add_item(cobj, r0);
-		SEXP_vfree (r0, r1, r2, NULL);
+	/* go through all environment variables and filter them with op and
+	   var_name */
+	for (env = environ; *env != 0; env++) {
+
+		env_name_size =  strchr(*env, '=') - *env;
+		env_name_sexp = SEXP_string_new(*env, env_name_size);
+
+		env_value = *env + env_name_size + 1;
+		env_value_sexp = SEXP_string_new(env_value, strlen(env_value));
+
+		if (probe_ent_cmp_string(var_name_sexp, env_name_sexp, op) == OVAL_RESULT_TRUE) {
+			r0 = probe_item_creat("environmentvariable_item", NULL,
+					      "name",  NULL, env_name_sexp,
+					      "value", NULL, env_value_sexp,
+					      NULL);
+			probe_cobj_add_item(cobj, r0);
+			SEXP_vfree (r0, NULL);
+		}
+		SEXP_vfree (env_name_sexp, env_value_sexp, NULL);
 	}
 
 	probe_cobj_compute_flag(cobj);
 	ret = oval_sexp2sysch(cobj, syschar);
-	SEXP_vfree(cobj, NULL);
+	SEXP_vfree(cobj, var_name_sexp, NULL);
 
 	return(ret);
 }
