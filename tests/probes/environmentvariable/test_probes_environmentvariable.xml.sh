@@ -21,6 +21,8 @@ while [ $I -lt ${#ENV_VAR[@]} ]; do
     I=$[$I+1]
 done
 
+C=$I
+
 cat <<EOF
 <?xml version="1.0"?>
 <oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
@@ -45,6 +47,12 @@ EOF
 I=0
 while [ $I -lt ${#ENV_VAR[@]} ]; do
     echo "<criterion test_ref=\"oval:1:tst:$[$I+1]\"/>"
+    echo "<criterion test_ref=\"oval:1:tst:$[$C+$I+1]\"/>"
+    I=$[$I+1]
+done
+I=0
+while [ $I -lt $(( ${#ENV_VAR[@]} - 1 )) ]; do
+    echo "<criterion test_ref=\"oval:1:tst:$[$C+$C+$I+1]\"/>"
     I=$[$I+1]
 done
 cat <<EOF
@@ -70,10 +78,25 @@ while [ $I -lt ${#ENV_VAR[@]} ]; do
       <state state_ref="oval:1:ste:$[$I+1]"/>
     </environmentvariable_test>
 
+    <environmentvariable_test version="1" id="oval:1:tst:$[$C+$I+1]" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:1:obj:$[$C+1]"/>
+      <state state_ref="oval:1:ste:$[$C+$I+1]"/>
+    </environmentvariable_test>
 EOF
     I=$[$I+1]
 done
-    
+
+I=0
+while [ $I -lt $(( ${#ENV_VAR[@]} - 1 )) ]; do
+    cat <<EOF
+<environmentvariable_test version="1" id="oval:1:tst:$[$C+$C+$I+1]" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:1:obj:$[$C+2]"/>
+      <state state_ref="oval:1:ste:$[$C+$C+$I+1]"/>
+    </environmentvariable_test>
+EOF
+    I=$[$I+1]
+done
+   
     cat <<EOF
 
   </tests>
@@ -93,6 +116,16 @@ EOF
     I=$[$I+1]
 done
     
+cat <<EOF
+    <environmentvariable_object version="1" id="oval:1:obj:$[$I+1]" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <name operation="pattern match">.*</name>
+    </environmentvariable_object>
+
+    <environmentvariable_object version="1" id="oval:1:obj:$[$I+2]" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <name operation="not equal">${ENV_VAR[$I-1]}</name>
+    </environmentvariable_object>
+
+EOF
     cat <<EOF
 
   </objects>
@@ -109,6 +142,22 @@ while [ $I -lt ${#ENV_VAR[@]} ]; do
     <value>${VAR_VAL[$I]}</value>
   </environmentvariable_state>
 
+  <environmentvariable_state version="1" id="oval:1:ste:$[$C+$I+1]" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+    <name>${ENV_VAR[$I]}</name>
+    <value>${VAR_VAL[$I]}</value>
+  </environmentvariable_state>
+
+EOF
+    I=$[$I+1]
+done
+
+I=0
+while [ $I -lt $(( ${#ENV_VAR[@]} - 1 )) ]; do
+    cat <<EOF
+  <environmentvariable_state version="1" id="oval:1:ste:$[$C+$C+$I+1]" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+    <name>${ENV_VAR[$I]}</name>
+    <value>${VAR_VAL[$I]}</value>
+  </environmentvariable_state>
 EOF
     I=$[$I+1]
 done
@@ -120,4 +169,4 @@ done
 </oval_definitions>
 EOF
 
-exit ${#ENV_VAR[@]}
+exit $(( 3 * ${#ENV_VAR[@]} - 1))

@@ -19,12 +19,12 @@
 function test_probes_environmentvariable {
 
     local ret_val=0;
-    local DEFFILE="test_probes_environmentvariable.xml"
-    local RESFILE="results.xml"
+    local DEFFILE="$1.xml"
+    local RESFILE="$1.results.xml"
 
     [ -f $RESFILE ] && rm -f $RESFILE
 
-    bash ${srcdir}/test_probes_environmentvariable.xml.sh > $DEFFILE
+    bash ${srcdir}/$1.xml.sh > $DEFFILE
     LINES=$?
 
     ../../../utils/.libs/oscap oval eval --results $RESFILE $DEFFILE
@@ -95,6 +95,7 @@ function test_probes_environmentvariable {
 
 test_init "test_probes_environmentvariable.log"
 
-test_run "test_probes_environmentvariable" test_probes_environmentvariable
+test_run "test_probes_environmentvariable" test_probes_environmentvariable test_probes_environmentvariable
+test_run "test_probes_environmentvariable" test_probes_environmentvariable test_probes_environmentvariable-fail
 
 test_exit
