@@ -114,12 +114,12 @@ while [ $I -le $LINES_COUNT ]; do
     <shadow_state version="1" id="oval:1:ste:${I}" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <username>`getField 'username' $I`</username>
       <password>`getField 'password' $I`</password>
-      <chg_lst>`getField 'chg_lst' $I`</chg_lst>
-      <chg_allow>`getField 'chg_allow' $I`</chg_allow>
-      <chg_req>`getField 'chg_req' $I`</chg_req>
-      <exp_warn>`getField 'exp_warn' $I`</exp_warn>
-      <exp_inact>`getField 'exp_inact' $I`</exp_inact>
-      <exp_date>`getField 'exp_date' $I`</exp_date>
+      <chg_lst datatype="int">`getField 'chg_lst' $I`</chg_lst>
+      <chg_allow datatype="int">`getField 'chg_allow' $I`</chg_allow>
+      <chg_req datatype="int">`getField 'chg_req' $I`</chg_req>
+      <exp_warn datatype="int">`getField 'exp_warn' $I`</exp_warn>
+      <exp_inact datatype="int">`getField 'exp_inact' $I`</exp_inact>
+      <exp_date datatype="int">`getField 'exp_date' $I`</exp_date>
     </shadow_state>
 EOF
     I=$[$I+1]
