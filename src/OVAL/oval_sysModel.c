@@ -53,7 +53,6 @@ typedef struct oval_syschar_model {
 	struct oval_definition_model *definition_model;
 	struct oval_string_map *syschar_map;
 	struct oval_string_map *sysitem_map;
-	struct oval_string_map *variable_binding_map;
         char *schema;
 } oval_syschar_model_t;
 
@@ -72,27 +71,15 @@ struct oval_syschar_model *oval_syschar_model_new(struct oval_definition_model *
 	newmodel->definition_model = definition_model;
 	newmodel->syschar_map = oval_string_map_new();
 	newmodel->sysitem_map = oval_string_map_new();
-	newmodel->variable_binding_map = oval_string_map_new();
         newmodel->schema = oscap_strdup(OVAL_SYS_SCHEMA_LOCATION);
 
 	/* check possible allocation problems */
-	if ((newmodel->syschar_map == NULL) ||
-	    (newmodel->sysitem_map == NULL) ||
-	    (newmodel->variable_binding_map == NULL)) {
+	if ((newmodel->syschar_map == NULL) || (newmodel->sysitem_map == NULL) ) {
 		oval_syschar_model_free(newmodel);
 		return NULL;
 	}
 
 	return newmodel;
-}
-
-static void _oval_syschar_model_clone_variable_binding(struct oval_variable_binding *old_binding,
-						       struct oval_syschar_model *new_model)
-{
-
-	struct oval_definition_model *new_defmodel = oval_syschar_model_get_definition_model(new_model);
-	struct oval_variable_binding *new_binding = oval_variable_binding_clone(old_binding, new_defmodel);
-	oval_syschar_model_add_variable_binding(new_model, new_binding);
 }
 
 typedef void (*_oval_clone_func) (void *, struct oval_syschar_model *);
@@ -121,8 +108,6 @@ struct oval_syschar_model *oval_syschar_model_clone(struct oval_syschar_model *o
 				  (_oval_clone_func) oval_syschar_clone);
 	_oval_syschar_model_clone(old_model->sysitem_map, new_model,
 				  (_oval_clone_func) oval_sysitem_clone);
-	_oval_syschar_model_clone(old_model->variable_binding_map, new_model,
-				  (_oval_clone_func) _oval_syschar_model_clone_variable_binding);
 
 	struct oval_sysinfo *old_sysinfo = oval_syschar_model_get_sysinfo(old_model);
 	struct oval_sysinfo *new_sysinfo = oval_sysinfo_clone(new_model, old_sysinfo);
@@ -143,8 +128,6 @@ void oval_syschar_model_free(struct oval_syschar_model *model)
 		oval_string_map_free(model->syschar_map, (oscap_destruct_func) oval_syschar_free);
 	if (model->sysitem_map)
 		oval_string_map_free(model->sysitem_map, (oscap_destruct_func) oval_sysitem_free);
-	if (model->variable_binding_map)
-		oval_string_map_free(model->variable_binding_map, (oscap_destruct_func) oval_variable_binding_free);
         if (model->schema)
                 oscap_free(model->schema);
 
@@ -152,7 +135,6 @@ void oval_syschar_model_free(struct oval_syschar_model *model)
 	model->definition_model = NULL;
 	model->syschar_map = NULL;
 	model->sysitem_map = NULL;
-	model->variable_binding_map = NULL;
         model->schema = NULL;
 
 	oval_generator_free(model->generator);
@@ -166,11 +148,8 @@ void oval_syschar_model_reset(struct oval_syschar_model *model)
                 oval_string_map_free(model->syschar_map, (oscap_destruct_func) oval_syschar_free);
         if (model->sysitem_map)
                 oval_string_map_free(model->sysitem_map, (oscap_destruct_func) oval_sysitem_free);
-        if (model->variable_binding_map)
-                oval_string_map_free(model->variable_binding_map, (oscap_destruct_func) oval_variable_binding_free);
         model->syschar_map = oval_string_map_new();
         model->sysitem_map = oval_string_map_new();
-        model->variable_binding_map = oval_string_map_new();
 }
 
 struct oval_generator *oval_syschar_model_get_generator(struct oval_syschar_model *model)
@@ -238,16 +217,6 @@ void oval_syschar_model_add_syschar(struct oval_syschar_model *model, struct ova
 		oval_string_map_put(model->syschar_map, id, syschar);
 	}
 }
-
-void oval_syschar_model_add_variable_binding(struct oval_syschar_model *model, struct oval_variable_binding *binding)
-{
-	__attribute__nonnull__(model);
-	struct oval_variable *variable = oval_variable_binding_get_variable(binding);
-	char *varid = oval_variable_get_id(variable);
-	oval_string_map_put(model->variable_binding_map, varid, binding);
-}
-
-
 
 void oval_syschar_model_add_sysitem(struct oval_syschar_model *model, struct oval_sysitem *sysitem)
 {

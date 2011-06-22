@@ -235,10 +235,6 @@ int oval_syschar_model_bind_variable_model(struct oval_syschar_model *, struct o
  * @memberof oval_syschar_model
  */
 void oval_syschar_model_set_sysinfo(struct oval_syschar_model *model, struct oval_sysinfo *sysinfo);
-/**
- * @memberof oval_syschar_model
- */
-void oval_syschar_model_add_variable_binding(struct oval_syschar_model *model, struct oval_variable_binding *binding);
 /** @} */
 
 /**

@@ -146,6 +146,7 @@ struct oval_sysitem_iterator *oval_syschar_get_sysitem(struct oval_syschar *sysc
 
 void oval_syschar_add_sysitem(struct oval_syschar *syschar, struct oval_sysitem *sysitem) {
 	__attribute__nonnull__(syschar);
+
 	oval_collection_add(syschar->sysitem, sysitem);
 }
 
@@ -153,8 +154,6 @@ void oval_syschar_add_variable_binding(struct oval_syschar *syschar, struct oval
 	__attribute__nonnull__(syschar);
 
 	oval_collection_add(syschar->variable_bindings, binding);
-	if (syschar->model != NULL)
-		oval_syschar_model_add_variable_binding(syschar->model, binding);
 }
 
 struct oval_syschar *oval_syschar_new(struct oval_syschar_model *model, struct oval_object *object)
@@ -228,8 +227,8 @@ void oval_syschar_free(struct oval_syschar *syschar)
 		return;
 
 	oval_collection_free_items(syschar->messages, (oscap_destruct_func) oval_message_free);
-	oval_collection_free_items(syschar->sysitem, NULL);	//sysitem items are shared
-	oval_collection_free_items(syschar->variable_bindings, NULL);	//variable bindings are shared
+	oval_collection_free_items(syschar->sysitem, NULL);	//sysitems are shared with syschar_model
+	oval_collection_free_items(syschar->variable_bindings, (oscap_destruct_func) oval_variable_binding_free);
 
 	syschar->messages = NULL;
 	syschar->object = NULL;

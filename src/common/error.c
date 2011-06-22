@@ -70,7 +70,7 @@ static struct oscap_err_t *oscap_err_new(oscap_errfamily_t family, oscap_errcode
 		break;
 	}
 
-	dE("(%s:%d:%s\(\)) %s", file, line, func, desc);
+	dE("\(%s:%d:%s\(\)\) %s", file, line, func, desc);
 
 	return (err);
 }
