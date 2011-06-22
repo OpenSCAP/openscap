@@ -11,4 +11,6 @@ TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
 TESTS = test_probes_environmentvariable.sh
 
 EXTRA_DIST += test_probes_environmentvariable.sh \
-	      test_probes_environmentvariable.xml.sh
+	      test_probes_environmentvariable.xml.sh \
+	      test_probes_environmentvariable-fail.xml.sh
+
