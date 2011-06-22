@@ -1263,39 +1263,33 @@ _oval_result_test_evaluate_items(struct oval_test *test, struct oval_syschar *sy
 	return result;
 }
 
-// this function will gather all the necessary ingredients and call 'evaluate_items' when it finds them
+/* this function will gather all the necessary ingredients and call 'evaluate_items' when it finds them */
 static oval_result_t _oval_result_test_result(struct oval_result_test *rtest, void **args)
 {
 	__attribute__nonnull__(rtest);
 
-	// first, let's see if we already did the test
+	/* is the test already evaluated? */
 	if (rtest->result != OVAL_RESULT_NOT_EVALUATED) {
-		oscap_dlprintf(DBG_I, "Found result from previous evaluation: %d, returning without further processing.\n",
-			       rtest->result);
+		dI("Found result from previous evaluation: %d, returning without further processing.\n", rtest->result);
 		return (rtest->result);
 	}
 
-	// let's go looking for the stuff to test
-	struct oval_test *test2check = oval_result_test_get_test(rtest);
-	struct oval_object * tmp_obj = oval_test_get_object(test2check);
-	if (tmp_obj == NULL) {
-		oscap_dlprintf(DBG_E, "Object is null.\n");
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Object is null");
-		return OVAL_RESULT_ERROR;
-
-	}
-	char * definition_object_id_string = oval_object_get_id(tmp_obj);
+	/* get syschar of rtest */
+	struct oval_test *test = oval_result_test_get_test(rtest);
+	struct oval_object * object = oval_test_get_object(test);
+	char * object_id = oval_object_get_id(object);
 
 	struct oval_result_system *sys = oval_result_test_get_system(rtest);
 	struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
-	// OK, we have our object ID, now use that to find selected items in the syschar_model
-	struct oval_syschar * syschar_object = oval_syschar_model_get_syschar(syschar_model, definition_object_id_string);
-	if (syschar_object == NULL) {
-		oscap_dlprintf(DBG_W, "System characteristics object is null.\n");
+
+	struct oval_syschar * syschar = oval_syschar_model_get_syschar(syschar_model, object_id);
+	if (syschar == NULL) {
+		dW("No syschar for object: %s\n", object_id);
 		return OVAL_RESULT_UNKNOWN;
 	}
 
-	oval_result_t result = _oval_result_test_evaluate_items(test2check, syschar_object, args);
+	/* evaluate items */
+	oval_result_t result = _oval_result_test_evaluate_items(test, syschar, args);
 
 	return result;
 }
