@@ -14,7 +14,8 @@ cat <<EOF
   <definitions>
 EOF
 
-for S in `chkconfig --list | awk '{print $1}'`; do
+SERVICES_LIST=`chkconfig --list | awk '{print $1}' | sort | uniq`
+for S in $SERVICES_LIST; do
     for L in `chkconfig $S --list | awk '{print $2 " " $3 " " $4 " " $5 " " $6 " " $7 " " $8}'`; do
 	LEVEL=`echo $L | awk -F : '{print $1}'`
 	STATE=`echo $L | awk -F : '{print $2}'`
@@ -53,7 +54,7 @@ cat<<EOF
 
 EOF
 
-for S in `chkconfig --list | awk '{print $1}'`; do
+for S in $SERVICES_LIST; do
     for L in `chkconfig $S --list | awk '{print $2 " " $3 " " $4 " " $5 " " $6 " " $7 " " $8}'`; do
 	LEVEL=`echo $L | awk -F : '{print $1}'`
 	STATE=`echo $L | awk -F : '{print $2}'`
@@ -88,7 +89,7 @@ cat <<EOF
   <objects>
 EOF
 
-for S in `chkconfig --list | awk '{print $1}'`; do
+for S in $SERVICES_LIST; do
     for L in `chkconfig $S --list | awk '{print $2 " " $3 " " $4 " " $5 " " $6 " " $7 " " $8}'`; do
 	LEVEL=`echo $L | awk -F : '{print $1}'`
 	STATE=`echo $L | awk -F : '{print $2}'`
