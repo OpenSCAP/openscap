@@ -60,7 +60,7 @@ AS_CASE([$host],
 
 CFLAGS_OPTIMIZED="-O2 -finline-functions"
 CFLAGS_DEBUGGING="-fno-inline-functions -O0 -g3"
-CFLAGS_NODEBUG="-DNDEBUG -Wno-unused-function -Wno-unused-but-set-variable"
+CFLAGS_NODEBUG="-DNDEBUG -Wno-unused-function"
 
 #
 # sigwaitinfo
@@ -342,6 +342,14 @@ AC_CHECK_HEADERS(
 AC_CHECK_HEADERS([endian.h sys/endian.h stdio_ext.h shadow.h],,,)
 
 #
+# linux/magic.h
+#
+AC_CHECK_HEADERS(
+  [linux/magic.h],[AC_DEFINE([HAVE_PROC_MAGIC], [1], [linux/magic.h is avaialble])],
+)
+
+
+#
 # xml
 #
 CPPFLAGS_SAVE="$CPPFLAGS"
@@ -459,7 +467,7 @@ if test "x${probes}" = xyes; then
 	if test $ac_cv_atomic_builtins = yes; then
 	  AC_DEFINE([HAVE_ATOMIC_BUILTINS], 1, [Define to 1 if the compiler supports atomic builtins.])
 	else
-	  AC_MSG_NOTICE([!!! Compiler doesn't support atomic builtins. Atomic operation will be emulated using mutex-based locking. !!!])
+	  AC_MSG_NOTICE([!!! Compiler does not support atomic builtins. Atomic operation will be emulated using mutex-based locking. !!!])
 	fi
 fi
 

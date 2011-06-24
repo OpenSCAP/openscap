@@ -27,19 +27,26 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #if defined(PROC_CHECK) && defined(__linux__)
 #define _XOPEN_SOURCE /* for fdopen */
 #include <sys/vfs.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <linux/magic.h>
 #include <fcntl.h>
 #include <stdio.h>
+
+#ifdef HAVE_PROC_MAGIC
+#include <linux/magic.h>
+#else /* RHEL5 work-around */
+#define PROC_SUPER_MAGIC 0x9fa0
 #endif
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
 #endif
+
 
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
 #include <blkid/blkid.h>
