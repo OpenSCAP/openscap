@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2011 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -17,19 +17,20 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors:
- *      "Daniel Kopecek" <dkopecek@redhat.com>
+ *      Daniel Kopecek <dkopecek@redhat.com>
  */
 
-#pragma once
-#ifndef SEXP_H
-#define SEXP_H
+#include <stdint.h>
+#include "sexp-types.h"
 
-#include <seap-debug.h>
-#include <sexp-types.h>
-#include <sexp-manip.h>
-#include <sexp-manip_r.h>
-#include <sexp-parser.h>
-#include <sexp-output.h>
-#include <sexp-ID.h>
+typedef uint64_t SEXP_ID_t;
 
-#endif /* SEXP_H */
+/**
+ * Compute an S-exp structure identifier
+ */
+SEXP_ID_t SEXP_ID_s(const SEXP_t *s);
+
+/**
+ * Compute an S-exp value identifier
+ */
+SEXP_ID_t SEXP_ID_v(const SEXP_t *s);

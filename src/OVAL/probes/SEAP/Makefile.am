@@ -75,7 +75,12 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    public/seap-error.h		\
 		    public/sexp-datatype.h 	\
 		    public/strbuf.h		\
-		    _sexp-rawptr.h
+		    _sexp-rawptr.h		\
+		    MurmurHash3.h		\
+		    MurmurHash3.c		\
+		    _sexp-ID.h			\
+		    public/sexp-ID.h		\
+		    sexp-ID.c
 
 libseap_la_CPPFLAGS= @pthread_cflags@ -DUSE_XMALLOC -DXMALLOC_EXIT -DWANT_BASE64 -I$(top_srcdir) -I$(top_srcdir)/src -I. -I$(top_srcdir)/src/OVAL/probes/SEAP/public -DSEAP_THREAD_SAFE -DSEAP_MSGID_BITS=32 -I$(top_srcdir)/lib
 libseap_la_LDFLAGS= @pthread_ldflags@
