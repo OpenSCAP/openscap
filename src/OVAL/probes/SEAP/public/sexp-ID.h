@@ -19,6 +19,8 @@
  * Authors:
  *      Daniel Kopecek <dkopecek@redhat.com>
  */
+#ifndef SEXP_ID_H
+#define SEXP_ID_H
 
 #include <stdint.h>
 #include "sexp-types.h"
@@ -34,3 +36,5 @@ SEXP_ID_t SEXP_ID_s(const SEXP_t *s);
  * Compute an S-exp value identifier
  */
 SEXP_ID_t SEXP_ID_v(const SEXP_t *s);
+
+#endif /* SEXP_ID_H */
