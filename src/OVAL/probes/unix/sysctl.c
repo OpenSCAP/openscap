@@ -173,7 +173,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *probe_arg, SEXP_t *fil
                         item = probe_item_creat("sysctl_item", NULL, NULL);
                         probe_item_setstatus(item, OVAL_STATUS_ERROR);
                 add_item:
-                        probe_cobj_add_item(probe_out, item);
+                        probe_cobj_add_item(probe_out, item, filters);
                         SEXP_free(item);
                 }
 

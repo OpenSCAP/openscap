@@ -192,7 +192,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
                 item = probe_item_creat("ldap57_item", NULL, NULL);
 
                 probe_item_setstatus(item, OVAL_STATUS_ERROR);
-                probe_cobj_add_item(probe_out, item);
+                probe_cobj_add_item(probe_out, item, filters);
                 SEXP_free(item);
 
                 dE("ldap_get_option failed\n");
@@ -222,7 +222,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
                         item = probe_item_creat("ldap57_item", NULL, NULL);
 
                         probe_item_setstatus(item, OVAL_STATUS_ERROR);
-                        probe_cobj_add_item(probe_out, item);
+                        probe_cobj_add_item(probe_out, item, filters);
                         SEXP_free(item);
 
                         dE("ldap_search_ext_s failed\n");
@@ -369,7 +369,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
                                                          NULL);
 
                                 SEXP_list_add(item, se_value);
-                                probe_cobj_add_item(probe_out, item);
+                                probe_cobj_add_item(probe_out, item, filters);
                                 SEXP_free(item);
                                 SEXP_free(se_value);
 

@@ -353,7 +353,7 @@ int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 
                 probe_item_setstatus (item, OVAL_STATUS_ERROR);
 
-		probe_cobj_add_item(probe_out, item);
+		probe_cobj_add_item(probe_out, item, filters);
                 SEXP_free (item);
                 break;
         default: /* Ok */
@@ -381,7 +381,7 @@ int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
                                                          NULL);
 
 				/* only for >= 5.8: probe_itement_setdatatype(item_sexp, "evr", OVAL_DATATYPE_EVR_STRING); */
-                                probe_cobj_add_item(probe_out, item);
+				probe_cobj_add_item(probe_out, item, filters);
 				SEXP_vfree(item, name, NULL);
 
                                 __rpminfo_rep_free (&(reply_st[i]));

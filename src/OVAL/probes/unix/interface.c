@@ -116,7 +116,7 @@ static void get_l2_info(const struct ifaddrs *ifa, char **mp, char **tp)
 		mac_buf[0] = 0;
 }
 
-static int get_ifs(SEXP_t *name_ent, SEXP_t *probe_out)
+static int get_ifs(SEXP_t *name_ent, SEXP_t *probe_out, const SEXP_t *filters)
 {
 	struct ifaddrs *ifaddr, *ifa;
 	int family, rc=1;
@@ -224,7 +224,7 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *probe_out)
                                          "netmask",        OVAL_DATATYPE_STRING, mask,
                                          NULL);
 
-		probe_cobj_add_item(probe_out, item);
+		probe_cobj_add_item(probe_out, item, filters);
                 SEXP_free(item);
 	}
 
@@ -236,7 +236,7 @@ leave1:
 	return rc;
 }
 #else
-static int get_ifs(SEXP_t *name_ent, SEXP_t *probe_out)
+static int get_ifs(SEXP_t *name_ent, SEXP_t *probe_out, const SEXP_t *filters)
 {
 	/* todo */
 	SEXP_t *item;
@@ -249,7 +249,7 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *probe_out)
                                  "netmask",        OVAL_DATATYPE_STRING, "255.255.255.0",
                                  NULL);
 
-	probe_cobj_add_item(probe_out, item);
+	probe_cobj_add_item(probe_out, item, filters);
         SEXP_free(item);
 
 	return (0);
@@ -271,7 +271,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 		return PROBE_ENOELM;
 	}
 
-	get_ifs(name_ent, probe_out);
+	get_ifs(name_ent, probe_out, filters);
 	SEXP_free(name_ent);
 
 	return 0;

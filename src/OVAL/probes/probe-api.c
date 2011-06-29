@@ -43,6 +43,7 @@
 #include "memusage.h"
 #include "sysinfo.h"
 #include "oval_probe_impl.h"
+#include "probe/entcmp.h"
 
 extern probe_rcache_t  *OSCAP_GSYM(pcache);
 extern probe_ncache_t  *OSCAP_GSYM(encache);
@@ -233,7 +234,7 @@ void probe_item_resetidctr(struct id_desc_t *id_desc)
 	id_desc->item_id_ctr = 1;
 }
 
-bool probe_item_filtered(SEXP_t *item, SEXP_t *filters)
+bool probe_item_filtered(const SEXP_t *item, const SEXP_t *filters)
 {
 	bool filtered = false;
 	SEXP_t *filter, *ste;
@@ -643,10 +644,13 @@ SEXP_t *probe_cobj_get_msgs(const SEXP_t *cobj)
 static SEXP_t *probe_item_optimize(const SEXP_t *item);
 static int probe_cobj_memcheck(size_t item_cnt);
 
-int probe_cobj_add_item(SEXP_t *cobj, const SEXP_t *item)
+int probe_cobj_add_item(SEXP_t *cobj, const SEXP_t *item, const SEXP_t *filters)
 {
 	SEXP_t *lst, *oitem;
 	size_t item_cnt;
+
+	if (filters && probe_item_filtered(item, filters))
+		return 1;
 
 	lst = SEXP_listref_nth(cobj, 3);
 	item_cnt = SEXP_list_length(lst);

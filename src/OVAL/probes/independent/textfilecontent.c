@@ -211,6 +211,7 @@ struct pfdata {
 	char *pattern;
 	SEXP_t *filename_ent;
 	SEXP_t *cobj;
+	SEXP_t *filters;
 };
 
 static int process_file(const char *path, const char *filename, void *arg)
@@ -272,7 +273,7 @@ static int process_file(const char *path, const char *filename, void *arg)
 			++cur_inst;
 			item = create_item(path, filename, pfd->pattern,
 					   cur_inst, substrs, substr_cnt);
-			probe_cobj_add_item(pfd->cobj, item);
+			probe_cobj_add_item(pfd->cobj, item, pfd->filters);
 			SEXP_free(item);
 			for (k = 0; k < substr_cnt; ++k)
 				free(substrs[k]);
@@ -346,6 +347,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 	pfd.pattern = pattern;
 	pfd.filename_ent = filename_ent;
 	pfd.cobj = probe_out;
+	pfd.filters = filters;
 
 	if ((ofts = oval_fts_open(path_ent, filename_ent, filepath_ent, behaviors_ent)) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {

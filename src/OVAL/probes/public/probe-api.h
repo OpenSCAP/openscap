@@ -278,7 +278,7 @@ size_t probe_obj_getname_r(const SEXP_t * obj, char *buffer, size_t buflen);
 SEXP_t *probe_cobj_new(oval_syschar_collection_flag_t flag, SEXP_t *msg_list, SEXP_t *item_list);
 int probe_cobj_add_msg(SEXP_t *cobj, const SEXP_t *msg);
 SEXP_t *probe_cobj_get_msgs(const SEXP_t *cobj);
-int probe_cobj_add_item(SEXP_t *cobj, const SEXP_t *item);
+int probe_cobj_add_item(SEXP_t *cobj, const SEXP_t *item, const SEXP_t *filters);
 SEXP_t *probe_cobj_get_items(const SEXP_t *cobj);
 void probe_cobj_set_flag(SEXP_t *cobj, oval_syschar_collection_flag_t flag);
 oval_syschar_collection_flag_t probe_cobj_get_flag(const SEXP_t *cobj);
@@ -482,7 +482,7 @@ int probe_main(SEXP_t *, SEXP_t *, void *, SEXP_t *) __attribute__ ((nonnull(1, 
 
 int probe_setoption(int option, ...);
 
-bool probe_item_filtered(SEXP_t *item, SEXP_t *filters);
+bool probe_item_filtered(const SEXP_t *item, const SEXP_t *filters);
 
 int probe_result_additem(SEXP_t *result, SEXP_t *item);
 

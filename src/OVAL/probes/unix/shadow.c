@@ -59,7 +59,7 @@
 #include "alloc.h"
 
 #ifndef HAVE_SHADOW_H
-int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg)
+int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 {
         SEXP_t *item_sexp;
 
@@ -69,7 +69,7 @@ int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg)
 
 	item_sexp = probe_item_creat ("shadow_item", NULL, NULL);
         probe_item_setstatus (item_sexp, OVAL_STATUS_NOTCOLLECTED);
-	probe_cobj_add_item(probe_out, item_sexp);
+	probe_cobj_add_item(probe_out, item_sexp, filters);
         SEXP_free (item_sexp);
 
         return 0;
@@ -91,7 +91,7 @@ struct result_info {
         unsigned long flag;
 };
 
-static void report_finding(struct result_info *res, SEXP_t *probe_out)
+static void report_finding(struct result_info *res, SEXP_t *probe_out, const SEXP_t *filters)
 {
         SEXP_t *item;
         SEXP_t se_chl_mem, se_cha_mem, se_chr_mem;
@@ -110,7 +110,7 @@ static void report_finding(struct result_info *res, SEXP_t *probe_out)
                                  "flag",      OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_flg_mem, "%lu", res->flag),
                                  NULL);
 
-	probe_cobj_add_item(probe_out, item);
+	probe_cobj_add_item(probe_out, item, filters);
 	SEXP_free(item);
         SEXP_free_r(&se_chl_mem);
         SEXP_free_r(&se_cha_mem);
@@ -121,7 +121,7 @@ static void report_finding(struct result_info *res, SEXP_t *probe_out)
         SEXP_free_r(&se_flg_mem);
 }
 
-static int read_shadow(SEXP_t *un_ent, SEXP_t *probe_out)
+static int read_shadow(SEXP_t *un_ent, SEXP_t *probe_out, const SEXP_t *filters)
 {
 	int err = 1;
 	struct spwd *pw;
@@ -145,7 +145,7 @@ static int read_shadow(SEXP_t *un_ent, SEXP_t *probe_out)
 			r.exp_date = pw->sp_expire;
 			r.flag = pw->sp_flag;
 
-			report_finding(&r, probe_out);
+			report_finding(&r, probe_out, filters);
 		}
 		SEXP_free(un);
 	}
@@ -169,7 +169,7 @@ int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 	}
 
 	// Now we check the file...
-	read_shadow(ent, probe_out);
+	read_shadow(ent, probe_out, filters);
 	SEXP_free(ent);
 
 	return 0;

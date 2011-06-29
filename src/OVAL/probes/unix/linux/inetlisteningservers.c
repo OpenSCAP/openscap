@@ -331,7 +331,7 @@ static int eval_data(const char *type, const char *local_address,
 	return 1;
 }
 
-static void report_finding(struct result_info *res, llist *l, SEXP_t *probe_out)
+static void report_finding(struct result_info *res, llist *l, SEXP_t *probe_out, const SEXP_t *filters)
 {
         SEXP_t *item;
         SEXP_t se_lport_mem, se_rport_mem, se_lfull_mem, se_ffull_mem, se_uid_mem;
@@ -355,7 +355,7 @@ static void report_finding(struct result_info *res, llist *l, SEXP_t *probe_out)
                                                                                                    "%u", n->uid),
                                  NULL);
 
-	probe_cobj_add_item(probe_out, item);
+	probe_cobj_add_item(probe_out, item, filters);
 	SEXP_free(item);
         SEXP_free_r(&se_lport_mem);
         SEXP_free_r(&se_rport_mem);
@@ -381,7 +381,7 @@ static void addr_convert(const char *src, char *dest, int size)
 
 
 static int read_tcp(const char *proc, const char *type, llist *l,
-		SEXP_t *probe_out)
+		    SEXP_t *probe_out, const SEXP_t *filters)
 {
 	int line = 0;
 	FILE *f;
@@ -422,7 +422,7 @@ static int read_tcp(const char *proc, const char *type, llist *l,
 				r.lport = local_port;
 				r.raddr = dest;
 				r.rport = rem_port;
-				report_finding(&r, l, probe_out);
+				report_finding(&r, l, probe_out, filters);
 			}
 		}
 	}
@@ -431,7 +431,7 @@ static int read_tcp(const char *proc, const char *type, llist *l,
 }
 
 static int read_udp(const char *proc, const char *type, llist *l,
-		SEXP_t *probe_out)
+		    SEXP_t *probe_out, const SEXP_t *filters)
 {
 	int line = 0;
 	FILE *f;
@@ -471,7 +471,7 @@ static int read_udp(const char *proc, const char *type, llist *l,
 				r.lport = local_port;
 				r.raddr = dest;
 				r.rport = rem_port;
-				report_finding(&r, l, probe_out);
+				report_finding(&r, l, probe_out, filters);
 			}
 		}
 	}
@@ -480,7 +480,7 @@ static int read_udp(const char *proc, const char *type, llist *l,
 }
 
 static int read_raw(const char *proc, const char *type, llist *l,
-		SEXP_t *probe_out)
+		    SEXP_t *probe_out, const SEXP_t *filters)
 {
 	int line = 0;
 	FILE *f;
@@ -520,7 +520,7 @@ static int read_raw(const char *proc, const char *type, llist *l,
 				r.lport = local_port;
 				r.raddr = dest;
 				r.rport = rem_port;
-				report_finding(&r, l, probe_out);
+				report_finding(&r, l, probe_out, filters);
 			}
 		}
 	}
@@ -572,17 +572,17 @@ int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 	}
 
 	// Now we check the tcp socket list...
-	read_tcp("/proc/net/tcp", "tcp", &ll, probe_out);
-	read_tcp("/proc/net/tcp6", "tcp", &ll, probe_out);
+	read_tcp("/proc/net/tcp", "tcp", &ll, probe_out, filters);
+	read_tcp("/proc/net/tcp6", "tcp", &ll, probe_out, filters);
 
 	// Next udp sockets...
-	read_udp("/proc/net/udp", "udp", &ll, probe_out);
-	read_udp("/proc/net/udp6", "udp", &ll, probe_out);
+	read_udp("/proc/net/udp", "udp", &ll, probe_out, filters);
+	read_udp("/proc/net/udp6", "udp", &ll, probe_out, filters);
 
 	// Next, raw sockets...not exactly part of standard yet. They
 	// can be used to send datagrams, so we will pretend they are udp
-	read_raw("/proc/net/raw", "udp", &ll, probe_out);
-	read_raw("/proc/net/raw6", "udp", &ll, probe_out);
+	read_raw("/proc/net/raw", "udp", &ll, probe_out, filters);
+	read_raw("/proc/net/raw6", "udp", &ll, probe_out, filters);
 
 	list_clear(&ll);
 

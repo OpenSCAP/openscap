@@ -191,7 +191,7 @@ int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 
                                         NULL);
 
-			probe_cobj_add_item(probe_out, item_sexp);
+			probe_cobj_add_item(probe_out, item_sexp, filters);
                         SEXP_free (item_sexp);
                         /* FIXME: this is... stupid */
                         SEXP_free (r0);

@@ -181,7 +181,7 @@ static int oval_probe_envvar_eval(struct oval_syschar *syschar)
 					      "name",  NULL, env_name_sexp,
 					      "value", NULL, env_value_sexp,
 					      NULL);
-			probe_cobj_add_item(cobj, r0);
+			probe_cobj_add_item(cobj, r0, NULL);
 			SEXP_vfree (r0, NULL);
 		}
 		SEXP_vfree (env_name_sexp, env_value_sexp, NULL);
@@ -303,7 +303,7 @@ static int oval_probe_variable_eval(oval_probe_session_t *sess, struct oval_sysc
 			SEXP_list_add(item, valent);
 
 			/* Add item to the item list */
-			probe_cobj_add_item(cobj, item);
+			probe_cobj_add_item(cobj, item, NULL);
 			SEXP_vfree(item, valent, val_sexp, NULL);
                 }
 

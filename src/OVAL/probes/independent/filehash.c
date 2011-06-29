@@ -72,7 +72,7 @@ static int mem2hex (uint8_t *mem, size_t mlen, char *str, size_t slen)
         return (0);
 }
 
-static int filehash_cb (const char *p, const char *f, void *ptr)
+static int filehash_cb (const char *p, const char *f, void *ptr, const SEXP_t *filters)
 {
         SEXP_t *itm, *r0, *r1;
         SEXP_t *res = (SEXP_t *) ptr;
@@ -171,7 +171,7 @@ static int filehash_cb (const char *p, const char *f, void *ptr)
                                         NULL);
         }
 
-	probe_cobj_add_item(res, itm);
+	probe_cobj_add_item(res, itm, filters);
         SEXP_free (itm);
 
         return (0);
@@ -270,7 +270,7 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filter
 
 	if ((ofts = oval_fts_open(path, filename, filepath, behaviors)) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
-			filehash_cb(ofts_ent->path, ofts_ent->file, probe_out);
+			filehash_cb(ofts_ent->path, ofts_ent->file, probe_out, filters);
 			oval_ftsent_free(ofts_ent);
 		}
 

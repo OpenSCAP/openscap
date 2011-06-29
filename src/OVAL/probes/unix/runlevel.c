@@ -391,7 +391,7 @@ int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
                                                  "kill",         OVAL_DATATYPE_BOOLEAN, reply_st->kill,
                                                  NULL);
 
-			probe_cobj_add_item(probe_out, item);
+			probe_cobj_add_item(probe_out, item, filters);
                         SEXP_free(item);
 
 			next_rep = reply_st->next;

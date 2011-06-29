@@ -290,14 +290,12 @@ static int file_cb (const char *p, const char *f, void *ptr)
                 SEXP_free_r(&se_mtime_mem);
                 SEXP_free_r(&se_size_mem);
 
-		if (!probe_item_filtered(item, filters)) {
-			if (probe_cobj_add_item(cobj, item) != 0) {
-				if (errno == ENOMEM)
-					args->error = PROBE_ENOMEM;
+		if (probe_cobj_add_item(cobj, item, filters) < 0) {
+			if (errno == ENOMEM)
+				args->error = PROBE_ENOMEM;
+			SEXP_free(item);
 
-				SEXP_free(item);
-				return (-1);
-			}
+			return (-1);
 		}
 		SEXP_free(item);
         }

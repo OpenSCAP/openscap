@@ -72,9 +72,9 @@
 #endif
 
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
-static int collect_item(SEXP_t *probe_out, struct mntent *mnt_ent, blkid_cache blkcache)
+static int collect_item(SEXP_t *probe_out, const SEXP_t *filters, struct mntent *mnt_ent, blkid_cache blkcache)
 #else
-static int collect_item(SEXP_t *probe_out, struct mntent *mnt_ent)
+static int collect_item(SEXP_t *probe_out, const SEXP_t *filters, struct mntent *mnt_ent)
 #endif
 {
         SEXP_t *item;
@@ -125,7 +125,7 @@ static int collect_item(SEXP_t *probe_out, struct mntent *mnt_ent)
                                  "space_left",    OVAL_DATATYPE_INTEGER, (int64_t)stvfs.f_bfree,
                                  NULL);
 
-        probe_cobj_add_item(probe_out, item);
+        probe_cobj_add_item(probe_out, item, filters);
         SEXP_free(item);
         oscap_free(mnt_opts);
 
@@ -226,9 +226,9 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *probe_arg, SEXP_t *fil
                         if (mnt_op == OVAL_OPERATION_EQUALS) {
                                 if (strcmp(mnt_entp->mnt_dir, mnt_path) == 0) {
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
-                                        collect_item(probe_out, mnt_entp, blkcache);
+                                        collect_item(probe_out, filters, mnt_entp, blkcache);
 #else
-                                        collect_item(probe_out, mnt_entp);
+                                        collect_item(probe_out, filters, mnt_entp);
 #endif
                                         break;
                                 }
@@ -240,9 +240,9 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *probe_arg, SEXP_t *fil
 
                                 if (rc == 0) {
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
-                                        collect_item(probe_out, mnt_entp, blkcache);
+                                        collect_item(probe_out, filters, mnt_entp, blkcache);
 #else
-                                        collect_item(probe_out, mnt_entp);
+                                        collect_item(probe_out, filters, mnt_entp);
 #endif
                                 }
                                 /* XXX: check for pcre_exec error */

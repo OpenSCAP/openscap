@@ -73,6 +73,7 @@ struct pfdata {
 	SEXP_t *filename_ent;
 	char *xpath;
 	SEXP_t *cobj;
+	SEXP_t *filters;
 };
 
 static void dummy_err_func(void * ctx, const char * msg, ...)
@@ -232,7 +233,7 @@ static int process_file(const char *path, const char *filename, void *arg)
 		break;
 	}
 
-	probe_cobj_add_item(pfd->cobj, item);
+	probe_cobj_add_item(pfd->cobj, item, pfd->filters);
 
  cleanup:
 	if (item != NULL)
@@ -297,6 +298,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 
 	pfd.filename_ent = filename_ent;
 	pfd.cobj = probe_out;
+	pfd.filters = filters;
 
 	if ((ofts = oval_fts_open(path_ent, filename_ent, filepath_ent, behaviors_ent)) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {

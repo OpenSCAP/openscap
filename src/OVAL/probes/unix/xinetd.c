@@ -1506,7 +1506,7 @@ int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 						"disabled",         OVAL_DATATYPE_BOOLEAN, xres->srv[l]->disable,
 						NULL);
 
-			probe_cobj_add_item(probe_out, item);
+			probe_cobj_add_item(probe_out, item, filters);
 			SEXP_free(item);
 		}
 	}

@@ -101,7 +101,7 @@ int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
                                  "processor_type", OVAL_DATATYPE_STRING, processor,
                                  NULL);
 
-	probe_cobj_add_item(probe_out, item);
+	probe_cobj_add_item(probe_out, item, filters);
 	SEXP_free(item);
 
 	return 0;

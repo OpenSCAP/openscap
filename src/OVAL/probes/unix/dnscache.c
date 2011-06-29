@@ -9,7 +9,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *unused, SEXP_t *filter
 
         item = probe_item_create(OVAL_UNIX_DNSCACHE, NULL, NULL);
         probe_item_setstatus(item, OVAL_STATUS_NOTCOLLECTED);
-        probe_cobj_add_item(probe_out, item);
+        probe_cobj_add_item(probe_out, item, filters);
         SEXP_free(item);
 
         return (0);

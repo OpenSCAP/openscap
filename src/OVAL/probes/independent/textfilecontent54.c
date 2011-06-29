@@ -338,9 +338,7 @@ static int process_file(const char *path, const char *file, void *arg)
 
 				item = create_item(path, file, pfd->pattern,
 						   cur_inst, substrs, substr_cnt);
-				if (!probe_item_filtered(item, pfd->filters)) {
-					probe_cobj_add_item(pfd->cobj, item);
-				}
+				probe_cobj_add_item(pfd->cobj, item, pfd->filters);
 				SEXP_free(item);
 
 				for (k = 0; k < substr_cnt; ++k)

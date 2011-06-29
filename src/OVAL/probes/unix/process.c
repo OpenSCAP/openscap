@@ -82,7 +82,7 @@ struct result_info {
 
 unsigned long ticks, boot;
 
-static void report_finding(struct result_info *res, SEXP_t *probe_out)
+static void report_finding(struct result_info *res, SEXP_t *probe_out, const SEXP_t *filters)
 {
         SEXP_t *item;
         SEXP_t se_pid_mem, se_ppid_mem, se_tty_mem, se_pri_mem, se_uid_mem;
@@ -99,7 +99,7 @@ static void report_finding(struct result_info *res, SEXP_t *probe_out)
                                  "user_id",    OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_uid_mem, "%u", res->user_id),
                                  NULL);
 
-	probe_cobj_add_item(probe_out, item);
+	probe_cobj_add_item(probe_out, item, filters);
 	SEXP_free(item);
         SEXP_free_r(&se_pid_mem);
         SEXP_free_r(&se_ppid_mem);
@@ -179,7 +179,7 @@ static char *convert_time(unsigned long long t, char *tbuf, int tb_size)
 	return tbuf;
 }
 
-static int read_process(SEXP_t *cmd_ent, SEXP_t *probe_out)
+static int read_process(SEXP_t *cmd_ent, SEXP_t *probe_out, const SEXP_t *filters)
 {
 	int err = 1;
 	DIR *d;
@@ -305,7 +305,7 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *probe_out)
 			r.start_time = sbuf;
 			r.tty = tty_nr;
 			r.user_id = get_effective_id(pid);
-			report_finding(&r, probe_out);
+			report_finding(&r, probe_out, filters);
 		}
 		SEXP_free(cmd_sexp);
 	}
@@ -329,7 +329,7 @@ int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 		return PROBE_ENOVAL;
 	}
 
-	if (read_process(ent, probe_out)) {
+	if (read_process(ent, probe_out, filters)) {
 		SEXP_free(ent);
 		return PROBE_EACCESS;
 	}
@@ -349,7 +349,7 @@ int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg)
 
 	item_sexp = probe_item_creat ("process_item", NULL, NULL);
         probe_item_setstatus (item_sexp, OVAL_STATUS_NOTCOLLECTED);
-	probe_cobj_add_item(probe_out, item_sexp);
+	probe_cobj_add_item(probe_out, item_sexp, filters);
         SEXP_free (item_sexp);
 
 	return 0;

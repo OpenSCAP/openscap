@@ -68,7 +68,7 @@ struct result_info {
         const char *login_shell;
 };
 
-static void report_finding(struct result_info *res, SEXP_t *probe_out)
+static void report_finding(struct result_info *res, SEXP_t *probe_out, const SEXP_t *filters)
 {
         SEXP_t *item;
 
@@ -82,11 +82,11 @@ static void report_finding(struct result_info *res, SEXP_t *probe_out)
                                  "login_shell", OVAL_DATATYPE_STRING, res->login_shell,
                                  NULL);
 
-        probe_cobj_add_item(probe_out, item);
+        probe_cobj_add_item(probe_out, item, filters);
         SEXP_free(item);
 }
 
-static int read_password(SEXP_t *un_ent, SEXP_t *probe_out)
+static int read_password(SEXP_t *un_ent, SEXP_t *probe_out, const SEXP_t *filters)
 {
         struct passwd *pw;
 
@@ -105,7 +105,7 @@ static int read_password(SEXP_t *un_ent, SEXP_t *probe_out)
                         r.home_dir = pw->pw_dir;
                         r.login_shell = pw->pw_shell;
 
-                        report_finding(&r, probe_out);
+                        report_finding(&r, probe_out, filters);
                 }
                 SEXP_free(un);
         }
@@ -129,7 +129,7 @@ int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
         }
 
         // Now we check the file...
-        read_password(ent, probe_out);
+        read_password(ent, probe_out, filters);
         SEXP_free(ent);
 
         return 0;

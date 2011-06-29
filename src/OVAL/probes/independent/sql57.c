@@ -245,7 +245,7 @@ __fail:
 }
 
 static int dbSQL_eval(const char *engine, const char *version,
-                      const char *conn, const char *sql, SEXP_t *probe_out)
+                      const char *conn, const char *sql, SEXP_t *probe_out, const SEXP_t *filters)
 {
 	int err = -1;
 	dbURIInfo_t uriInfo = { .host = NULL,
@@ -389,7 +389,7 @@ static int dbSQL_eval(const char *engine, const char *version,
 				odbx_result_finish(sql_dbr);
 			}
 
-			probe_cobj_add_item(probe_out, item);
+			probe_cobj_add_item(probe_out, item, filters);
 			SEXP_free(item);
 		}
 
@@ -450,7 +450,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 	/*
 	 * evaluate the SQL statement
 	 */
-	err = dbSQL_eval(engine, version, conn, sqlexp, probe_out);
+	err = dbSQL_eval(engine, version, conn, sqlexp, probe_out, filters);
 __exit:
 	if (sqlexp != NULL) {
 		__clearmem(sqlexp, strlen(sqlexp));

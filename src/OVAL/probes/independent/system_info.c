@@ -201,7 +201,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 		return PROBE_EUNKNOWN;
 	}
 
-	probe_cobj_add_item(probe_out, item);
+	probe_cobj_add_item(probe_out, item, filters);
         SEXP_free(item);
 
 	return (0);
