@@ -131,67 +131,6 @@ probe_worker_t *probe_worker_new(void)
 	return (pth);
 }
 
-#if 0
-/**
- * Create a new thread for handling a message with ID `sid'. This thread will be registered by
- * the thread manager. The handler is defined by the function `function' and `arg' is the user
- * pointer which will be passed to this function. The `arg_free' function is called only if the
- * thread is canceled before returing from the handler function.
- */
-int probe_worker_create(probe_t *probe, SEAP_msgid_t sid, SEXP_t * (*msg_handler)(SEAP_msg_t *, int *), SEAP_msg_t *msg)
-{
-	pthread_attr_t   pth_attr;
-	probe_pmpair_t  *pair;
-
-	if (mgr == NULL || msg_handler == NULL)
-		return (-1);
-
-	if (pthread_attr_init(&pth_attr) != 0)
-		return (-1);
-
-	if (pthread_attr_setdetachstate(&pth_attr, PTHREAD_CREATE_DETACHED) != 0) {
-		pthread_attr_destroy(&pth_attr);
-		return (-1);
-	}
-
-	pair = oscap_talloc(probe_pmpair_t);
-
-	pair->mgr      = mgr;
-	pair->pth      = probe_thread_new();
-	pair->pth->sid = sid;
-	pair->pth->msg = msg;
-	pair->pth->msg_handler = msg_handler;
-
-	if (rbt_i32_add(mgr->threads, sid, pair->pth, NULL) != 0) {
-		/*
-		 * Getting here means that there is already a
-		 * thread handling the message with the given
-		 * ID.
-		 */
-		pthread_attr_destroy(&pth_attr);
-		oscap_free(pair->pth);
-		oscap_free(pair);
-
-		return (-1);
-	}
-
-	if (pthread_create(&pair->pth->tid, &pth_attr, &probe_thread_runfn, pair) != 0) {
-		pthread_attr_destroy(&pth_attr);
-
-		if (rbt_i32_del(pair->mgr->threads, pair->pth->sid, NULL) != 0) {
-			/* ... do something ... */
-		}
-
-		oscap_free(pair);
-		return (-1);
-	}
-
-	pthread_attr_destroy(&pth_attr);
-
-	return (0);
-}
-#endif /* 0 */
-
 struct probe_varref_ctx {
 	SEXP_t *pi2;
 	unsigned int ent_cnt;
