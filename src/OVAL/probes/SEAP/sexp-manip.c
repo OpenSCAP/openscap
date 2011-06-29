@@ -1671,6 +1671,11 @@ bool SEXP_eq (const SEXP_t *a, const SEXP_t *b)
         return (a->s_valp == b->s_valp);
 }
 
+bool SEXP_deepcmp(const SEXP_t *a, const SEXP_t *b)
+{
+	return (SEXP_ID_v2(a) == SEXP_ID_v2(b));
+}
+
 /*
  * SEXP_free for list members. The difference between
  * this function and SEXP_free is that SEXP_free frees

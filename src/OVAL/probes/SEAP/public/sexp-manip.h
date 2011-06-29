@@ -515,6 +515,8 @@ uint32_t SEXP_refs (const SEXP_t *ref);
 
 bool SEXP_eq (const SEXP_t *a, const SEXP_t *b);
 
+bool SEXP_deepcmp(const SEXP_t *a, const SEXP_t *b);
+
 #if defined(NDEBUG)
 /**
  * Free a sexp object.
