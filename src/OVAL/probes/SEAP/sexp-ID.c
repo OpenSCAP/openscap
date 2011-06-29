@@ -64,21 +64,23 @@ SEXP_ID_t SEXP_ID_s(const SEXP_t *s)
         return (0);
 }
 
-static SEXP_ID_t SEXP_ID_hash(void *buf, size_t len, SEXP_ID_t seed)
+static SEXP_ID_t SEXP_ID_hash(void *buf, size_t len, SEXP_ID_t seed, int part)
 {
         uint64_t resbuf[2];
 
+	assume_d(part == 0 || part == 1, -1);
+
         MurmurHash3_x86_128(buf, (int)len, (uint32_t)((0x7C0FFEE7 ^ seed) ^ (seed >> 32)), resbuf);
 
-        return (resbuf[0]);
+        return (resbuf[part]);
 }
 
-static int SEXP_ID_v_callback(const SEXP_t *sexp, SEXP_ID_t *hash)
+static int SEXP_ID_v_callback(const SEXP_t *sexp, __IDres_pair *pair)
 {
         SEXP_val_t v_dsc;
 
         assume_d(sexp != NULL, -1);
-        assume_d(hash != NULL, -1);
+        assume_d(pair != NULL, -1);
 
         /*
          * Fill v_dsc with metainformation
@@ -88,20 +90,21 @@ static int SEXP_ID_v_callback(const SEXP_t *sexp, SEXP_ID_t *hash)
         switch (v_dsc.type) {
         case SEXP_VALTYPE_NUMBER:
         case SEXP_VALTYPE_STRING:
-                *hash = SEXP_ID_hash(v_dsc.mem, v_dsc.hdr->size, *hash);
+                pair->hash = SEXP_ID_hash(v_dsc.mem, v_dsc.hdr->size, pair->hash, pair->part);
                 break;
         case SEXP_VALTYPE_LIST:
         {
                 SEXP_rawval_lblk_cb ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr,
                                      (int (*)(SEXP_t *, void *)) SEXP_ID_v_callback,
-                                     (void *) hash,
+                                     (void *) pair,
                                      SEXP_LCASTP(v_dsc.mem)->offset + 1);
 
-                *hash = SEXP_ID_hash(hash, 1, *hash + SEXP_LCASTP(v_dsc.mem)->offset);
+                pair->hash = SEXP_ID_hash(&pair->hash, 1,
+					  pair->hash + SEXP_LCASTP(v_dsc.mem)->offset, pair->part);
                 break;
         }
         case SEXP_VALTYPE_EMPTY:
-                *hash = SEXP_ID_hash(hash, 1, *hash);
+                pair->hash = SEXP_ID_hash(&pair->hash, 1, pair->hash, pair->part);
                 break;
         default:
                 /* Unknown S-exp value type */
@@ -113,9 +116,24 @@ static int SEXP_ID_v_callback(const SEXP_t *sexp, SEXP_ID_t *hash)
 
 SEXP_ID_t SEXP_ID_v(const SEXP_t *s)
 {
-        SEXP_ID_t hash = 0xAD30917100C0FFEE;
+	__IDres_pair pair;
 
-        SEXP_ID_v_callback(s, &hash);
+        pair.hash = 0xAD30917100C0FFEE;
+	pair.part = 0;
 
-        return (hash);
+        SEXP_ID_v_callback(s, &pair);
+
+        return (pair.hash);
+}
+
+SEXP_ID_t SEXP_ID_v2(const SEXP_t *s)
+{
+	__IDres_pair pair;
+
+        pair.hash = 0xAD309171FFC0FFEE;
+	pair.part = 1;
+
+        SEXP_ID_v_callback(s, &pair);
+
+        return (pair.hash);
 }

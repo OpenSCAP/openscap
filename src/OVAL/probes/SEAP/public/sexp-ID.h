@@ -36,5 +36,6 @@ SEXP_ID_t SEXP_ID_s(const SEXP_t *s);
  * Compute an S-exp value identifier
  */
 SEXP_ID_t SEXP_ID_v(const SEXP_t *s);
+SEXP_ID_t SEXP_ID_v2(const SEXP_t *s);
 
 #endif /* SEXP_ID_H */
