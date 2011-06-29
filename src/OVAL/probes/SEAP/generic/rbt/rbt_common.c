@@ -455,3 +455,28 @@ int rbt_walk_postorder(rbt_t *rbt, int (*callback)(void *), rbt_walk_t flags)
 {
         return(-1);
 }
+
+#ifndef HAVE_POSIX_MEMALIGN
+# ifdef HAVE_MEMALIGN
+
+/* Implementing posix_memalign using memalign */
+int posix_memalign(void **memptr, size_t alignment, size_t size)
+{
+        if ((alignment % sizeof(void *)) != 0)
+        {
+                return EINVAL; 
+        }
+
+        *memptr = memalign(alignment, size);
+
+        /* The spec for posix_memalign requires that alignment be a power
+          of 2.   Memalign checks for that case, and returns NULL on failure. */
+        if (*memptr == NULL)
+        {
+                /* posix_memalign must return an appropriate error code */
+                return EINVAL;
+        }
+        return 0;
+}
+# endif /* HAVE_MEMALIGN */
+#endif /* HAVE_POSIX_MEMALIGN */

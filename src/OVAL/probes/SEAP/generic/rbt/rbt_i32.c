@@ -31,31 +31,6 @@
 #include "rbt_common.h"
 #include "rbt_i32.h"
 
-#ifndef HAVE_POSIX_MEMALIGN
-# ifdef HAVE_MEMALIGN
-
-/* Implementing posix_memalign using memalign */
-int posix_memalign(void **memptr, size_t alignment, size_t size)
-{
-        if ((alignment % sizeof(void *)) != 0)
-        {
-                return EINVAL; 
-        }
-
-        *memptr = memalign(alignment, size);
-
-        /* The spec for posix_memalign requires that alignment be a power
-          of 2.   Memalign checks for that case, and returns NULL on failure. */
-        if (*memptr == NULL)
-        {
-                /* posix_memalign must return an appropriate error code */
-                return EINVAL;
-        }
-        return 0;
-}
-# endif /* HAVE_MEMALIGN */
-#endif /* HAVE_POSIX_MEMALIGN */
-
 static struct rbt_node *rbt_i32_node_alloc(void)
 {
         struct rbt_node *n = NULL;

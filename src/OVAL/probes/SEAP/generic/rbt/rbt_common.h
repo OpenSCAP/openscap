@@ -22,12 +22,22 @@
 #ifndef RBT_COMMON_H
 #define RBT_COMMON_H
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdint.h>
 #include <stdbool.h>
 
 #if defined(RBT_IMPLICIT_LOCKING)
 # include <pthread.h>
 #endif
+
+#ifndef HAVE_POSIX_MEMALIGN
+# ifdef HAVE_MEMALIGN
+int posix_memalign(void **memptr, size_t alignment, size_t size);
+# endif /* HAVE_MEMALIGN */
+#endif /* HAVE_POSIX_MEMALIGN */
 
 typedef enum {
         RBT_GENKEY,
