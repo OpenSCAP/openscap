@@ -78,12 +78,12 @@ void rbt_i64_free_cb (rbt_t *rbt, void (*callback)(rbt_i64_node_t *))
  * @param data data pointer
  * @param coll where to store the data pointer from an colliding entry
  */
-int rbt_i64_add(rbt_t *rbt, int32_t key, void *data, void **coll)
+int rbt_i64_add(rbt_t *rbt, int64_t key, void *data, void **coll)
 {
         struct rbt_node fake;
         register struct rbt_node *h[4];
         register uint8_t dvec;
-        register int32_t n_key, u_key;
+        register int64_t n_key, u_key;
 
         u_key = key;
         rbt_wlock(rbt);
@@ -203,17 +203,17 @@ int rbt_i64_add(rbt_t *rbt, int32_t key, void *data, void **coll)
         return (0);
 }
 
-void *rbt_i64_rep(rbt_t *rbt, int32_t key, void *data)
+void *rbt_i64_rep(rbt_t *rbt, int64_t key, void *data)
 {
         return (NULL);
 }
 
-int rbt_i64_del(rbt_t *rbt, int32_t key, void **n)
+int rbt_i64_del(rbt_t *rbt, int64_t key, void **n)
 {
         struct rbt_node fake, *save;
         struct rbt_node *h[4];
         register uint8_t dvec;
-        register int32_t n_key, u_key;
+        register int64_t n_key, u_key;
 
         save  = NULL;
         u_key = key;
@@ -364,11 +364,11 @@ int rbt_i64_del(rbt_t *rbt, int32_t key, void **n)
         return (save == NULL ? 1 : 0);
 }
 
-int rbt_i64_get(rbt_t *rbt, int32_t key, void **data)
+int rbt_i64_get(rbt_t *rbt, int64_t key, void **data)
 {
         int r;
         register struct rbt_node *n;
-        register int32_t u_key, n_key;
+        register int64_t u_key, n_key;
 
         u_key = key;
         r = -1;

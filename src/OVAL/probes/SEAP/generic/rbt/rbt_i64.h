@@ -38,10 +38,10 @@ rbt_t *rbt_i64_new (void);
 void rbt_i64_free (rbt_t *rbt);
 void rbt_i64_free_cb (rbt_t *rbt, void (*callback)(rbt_i64_node_t *));
 
-int rbt_i64_add(rbt_t *rbt, int32_t key, void *data, void **coll);
-void *rbt_i64_rep(rbt_t *rbt, int32_t key, void *data);
-int rbt_i64_del(rbt_t *rbt, int32_t key, void **n);
-int rbt_i64_get(rbt_t *rbt, int32_t key, void **data);
+int rbt_i64_add(rbt_t *rbt, int64_t key, void *data, void **coll);
+void *rbt_i64_rep(rbt_t *rbt, int64_t key, void *data);
+int rbt_i64_del(rbt_t *rbt, int64_t key, void **n);
+int rbt_i64_get(rbt_t *rbt, int64_t key, void **data);
 
 int rbt_i64_walk_preorder(rbt_t *rbt, int (*callback)(rbt_i64_node_t *), rbt_walk_t flags);
 int rbt_i64_walk_inorder(rbt_t *rbt, int (*callback)(rbt_i64_node_t *), rbt_walk_t flags);
