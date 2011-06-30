@@ -815,13 +815,19 @@ static struct oval_sysitem *oval_sysitem_from_sexp(struct oval_syschar_model *mo
 {
 	_A(sexp);
 
-	static int id_counter = 1;	/* TODO better ID generator */
-
-	char *name;
+	char *name, *id;
+	SEXP_t *id_sexp;
 	struct oval_sysitem *sysitem = NULL;
 
-	name = probe_ent_getname(sexp);
+	id_sexp = probe_ent_getattrval(sexp, "id");
+	id = SEXP_string_cstr(id_sexp);
+	SEXP_free(id_sexp);
 
+	sysitem = oval_syschar_model_get_sysitem(model, id);
+	if (sysitem)
+		return sysitem;
+
+	name = probe_ent_getname(sexp);
 	if (name == NULL)
 		return NULL;
 	else {
@@ -837,17 +843,14 @@ static struct oval_sysitem *oval_sysitem_from_sexp(struct oval_syschar_model *mo
 
 	_D("Syschar entry type: %d '%s' => %s\n", type, name, (type ? "OK" : "FAILED to decode"));
 
-	char id[16];
 	SEXP_t *sub;
 	struct oval_sysent *sysent;
 
 	int status = probe_ent_getstatus(sexp);
 
-	sprintf(id, "%d", id_counter++);
-	sysitem = oval_sysitem_get_new(model, id);
+	sysitem = oval_sysitem_new(model, id);
 	oval_sysitem_set_status(sysitem, status);
 	oval_sysitem_set_subtype(sysitem, type);
-	//oval_sysitem_set_subtype_name(sysitem, name);
 
 	if (status == OVAL_STATUS_EXISTS) {
 		for (int i = 2; (sub = SEXP_list_nth(sexp, i)) != NULL; ++i) {
