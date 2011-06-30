@@ -82,7 +82,7 @@ struct result_info {
 
 unsigned long ticks, boot;
 
-static void report_finding(struct result_info *res, SEXP_t *probe_out, const SEXP_t *filters)
+static void report_finding(struct result_info *res, probe_ctx *ctx)
 {
         SEXP_t *item;
         SEXP_t se_pid_mem, se_ppid_mem, se_tty_mem, se_pri_mem, se_uid_mem;
@@ -99,8 +99,8 @@ static void report_finding(struct result_info *res, SEXP_t *probe_out, const SEX
                                  "user_id",    OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_uid_mem, "%u", res->user_id),
                                  NULL);
 
-	probe_cobj_add_item(probe_out, item, filters);
-	SEXP_free(item);
+        probe_item_collect(ctx, item);
+
         SEXP_free_r(&se_pid_mem);
         SEXP_free_r(&se_ppid_mem);
         SEXP_free_r(&se_tty_mem);
@@ -179,7 +179,7 @@ static char *convert_time(unsigned long long t, char *tbuf, int tb_size)
 	return tbuf;
 }
 
-static int read_process(SEXP_t *cmd_ent, SEXP_t *probe_out, const SEXP_t *filters)
+static int read_process(SEXP_t *cmd_ent, probe_ctx *ctx)
 {
 	int err = 1;
 	DIR *d;
@@ -305,7 +305,7 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *probe_out, const SEXP_t *filter
 			r.start_time = sbuf;
 			r.tty = tty_nr;
 			r.user_id = get_effective_id(pid);
-			report_finding(&r, probe_out, filters);
+			report_finding(&r, ctx);
 		}
 		SEXP_free(cmd_sexp);
 	}
@@ -314,22 +314,16 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *probe_out, const SEXP_t *filter
 	return err;
 }
 
-int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
+int probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *ent;
 
-        (void)filters;
-
-	if (object == NULL || probe_out == NULL) {
-		return (PROBE_EINVAL);
-	}
-
-	ent = probe_obj_getent(object, "command", 1);
+	ent = probe_obj_getent(probe_ctx_getobject(ctx), "command", 1);
 	if (ent == NULL) {
 		return PROBE_ENOVAL;
 	}
 
-	if (read_process(ent, probe_out, filters)) {
+	if (read_process(ent, ctx)) {
 		SEXP_free(ent);
 		return PROBE_EACCESS;
 	}
@@ -339,18 +333,13 @@ int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 	return 0;
 }
 #else
-int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg)
+int probe_main(probe_ctx *ctx, void *arg)
 {
         SEXP_t *item_sexp;
 
-	if (object == NULL || probe_out == NULL) {
-		return (PROBE_EINVAL);
-	}
-
 	item_sexp = probe_item_creat ("process_item", NULL, NULL);
         probe_item_setstatus (item_sexp, OVAL_STATUS_NOTCOLLECTED);
-	probe_cobj_add_item(probe_out, item_sexp, filters);
-        SEXP_free (item_sexp);
+        probe_item_collect(ctx, item_sexp);
 
 	return 0;
 }

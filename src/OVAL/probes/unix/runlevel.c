@@ -343,16 +343,13 @@ static int get_runlevel (struct runlevel_req *req, struct runlevel_rep **rep)
 # error "Sorry, your OS isn't supported."
 #endif
 
-int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
+int probe_main (probe_ctx *ctx, void *arg)
 {
+        SEXP_t *object;
         struct runlevel_req request_st;
         struct runlevel_rep *reply_st = NULL;
 
-        (void)filters;
-
-	if (object == NULL || probe_out == NULL) {
-		return (PROBE_EINVAL);
-	}
+        object = probe_ctx_getobject(ctx);
 
 	request_st.service_name_ent = probe_obj_getent(object, "service_name", 1);
 	if (request_st.service_name_ent == NULL) {
@@ -373,9 +370,9 @@ int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 		SEXP_t *msg;
 
 		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, "get_runlevel failed.");
-		probe_cobj_add_msg(probe_out, msg);
+		probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
 		SEXP_free(msg);
-		probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
+		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
 	} else {
 		struct runlevel_rep *next_rep;
 		SEXP_t *item;
@@ -391,8 +388,7 @@ int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
                                                  "kill",         OVAL_DATATYPE_BOOLEAN, reply_st->kill,
                                                  NULL);
 
-			probe_cobj_add_item(probe_out, item, filters);
-                        SEXP_free(item);
+                        probe_item_collect(ctx, item);
 
 			next_rep = reply_st->next;
 			oscap_free(reply_st->service_name);

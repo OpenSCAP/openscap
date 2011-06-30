@@ -105,8 +105,7 @@ static SEXP_t *se_filetype (mode_t mode)
 }
 
 struct cbargs {
-        SEXP_t *cobj;
-	SEXP_t *filters;
+        probe_ctx *ctx;
 	int     error;
 };
 
@@ -222,13 +221,10 @@ static SEXP_t *get_size(struct stat *st, SEXP_t *sexp)
 static int file_cb (const char *p, const char *f, void *ptr)
 {
         char path_buffer[PATH_MAX];
-        SEXP_t *cobj, *item, *filters;
+        SEXP_t *item;
         struct cbargs *args = (struct cbargs *) ptr;
         struct stat st;
         const char *st_path;
-
-        cobj = args->cobj;
-	filters = args->filters;
 
 	if (f == NULL) {
 		st_path = p;
@@ -290,14 +286,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
                 SEXP_free_r(&se_mtime_mem);
                 SEXP_free_r(&se_size_mem);
 
-		if (probe_cobj_add_item(cobj, item, filters) < 0) {
-			if (errno == ENOMEM)
-				args->error = PROBE_ENOMEM;
-			SEXP_free(item);
-
-			return (-1);
-		}
-		SEXP_free(item);
+                probe_item_collect(args->ctx, item); /* XXX: handle ENOMEM */
         }
 
         return (0);
@@ -387,23 +376,21 @@ void probe_fini (void *arg)
         return;
 }
 
-int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters)
+int probe_main (probe_ctx *ctx, void *mutex)
 {
-        SEXP_t *path, *filename, *behaviors, *filepath;
+        SEXP_t *path, *filename, *behaviors, *filepath, *probe_in;
 	int err;
         struct cbargs cbargs;
 	OVAL_FTS    *ofts;
 	OVAL_FTSENT *ofts_ent;
-
-	if (probe_in == NULL || probe_out == NULL) {
-		return (PROBE_EINVAL);
-	}
 
         if (mutex == NULL) {
                 return PROBE_EINIT;
 	}
 
         _A(mutex == &__file_probe_mutex);
+
+        probe_in  = probe_ctx_getobject(ctx);
 
         path      = probe_obj_getent (probe_in, "path",      1);
         filename  = probe_obj_getent (probe_in, "filename",  1);
@@ -442,8 +429,7 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filter
                 return PROBE_EFATAL;
         }
 
-        cbargs.cobj    = probe_out;
-	cbargs.filters = filters;
+        cbargs.ctx     = ctx;
 	cbargs.error   = 0;
 
 	if ((ofts = oval_fts_open(path, filename, filepath, behaviors)) != NULL) {

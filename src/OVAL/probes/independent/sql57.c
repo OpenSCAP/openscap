@@ -245,7 +245,7 @@ __fail:
 }
 
 static int dbSQL_eval(const char *engine, const char *version,
-                      const char *conn, const char *sql, SEXP_t *probe_out, const SEXP_t *filters)
+                      const char *conn, const char *sql, probe_ctx *ctx)
 {
 	int err = -1;
 	dbURIInfo_t uriInfo = { .host = NULL,
@@ -389,8 +389,7 @@ static int dbSQL_eval(const char *engine, const char *version,
 				odbx_result_finish(sql_dbr);
 			}
 
-			probe_cobj_add_item(probe_out, item, filters);
-			SEXP_free(item);
+                        probe_item_collect(ctx, item);
 		}
 
 		if (odbx_finish(sql_dbh) != ODBX_ERR_SUCCESS) {
@@ -405,10 +404,11 @@ __exit:
 	return (err);
 }
 
-int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
+int probe_main(probe_ctx *ctx, void *arg)
 {
-	char       *engine, *version, *conn, *sqlexp;
+	char *engine, *version, *conn, *sqlexp;
 	int err;
+        SEXP_t *probe_in;
 
 #define get_string(dst, obj, ent_name)					\
 	do {								\
@@ -433,14 +433,12 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 		SEXP_free(__sval);					\
 	} while (0)
 
-	if (probe_in == NULL || probe_out == NULL) {
-		return (PROBE_EINVAL);
-	}
-
 	engine  = NULL;
 	version = NULL;
 	conn    = NULL;
 	sqlexp  = NULL;
+
+        probe_in = probe_ctx_getobject(ctx);
 
 	get_string(engine,  probe_in, "engine");
 	get_string(version, probe_in, "version");
@@ -450,7 +448,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 	/*
 	 * evaluate the SQL statement
 	 */
-	err = dbSQL_eval(engine, version, conn, sqlexp, probe_out, filters);
+	err = dbSQL_eval(engine, version, conn, sqlexp, ctx);
 __exit:
 	if (sqlexp != NULL) {
 		__clearmem(sqlexp, strlen(sqlexp));

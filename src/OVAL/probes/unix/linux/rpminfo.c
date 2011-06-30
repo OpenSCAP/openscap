@@ -269,7 +269,7 @@ void probe_fini (void *ptr)
         return;
 }
 
-int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
+int probe_main (probe_ctx *ctx, void *arg)
 {
         SEXP_t *val, *item, *ent;
 	int rpmret, i;
@@ -277,13 +277,7 @@ int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
         struct rpminfo_req request_st;
         struct rpminfo_rep *reply_st;
 
-        (void)filters;
-
-	if (object == NULL || probe_out == NULL) {
-		return (PROBE_EINVAL);
-	}
-
-        ent = probe_obj_getent (object, "name", 1);
+        ent = probe_obj_getent (probe_ctx_getobject(ctx), "name", 1);
 
         if (ent == NULL) {
                 return (PROBE_ENOENT);
@@ -352,9 +346,7 @@ int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
                                          NULL);
 
                 probe_item_setstatus (item, OVAL_STATUS_ERROR);
-
-		probe_cobj_add_item(probe_out, item, filters);
-                SEXP_free (item);
+                probe_item_collect(ctx, item);
                 break;
         default: /* Ok */
                 _A(rpmret   >= 0);
@@ -380,10 +372,9 @@ int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
                                                          "signature_keyid", OVAL_DATATYPE_STRING, reply_st[i].signature_keyid,
                                                          NULL);
 
-				/* only for >= 5.8: probe_itement_setdatatype(item_sexp, "evr", OVAL_DATATYPE_EVR_STRING); */
-				probe_cobj_add_item(probe_out, item, filters);
-				SEXP_vfree(item, name, NULL);
+                                probe_item_collect(ctx, item);
 
+				SEXP_free(name);
                                 __rpminfo_rep_free (&(reply_st[i]));
                         }
 

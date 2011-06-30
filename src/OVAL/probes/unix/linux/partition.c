@@ -72,9 +72,9 @@
 #endif
 
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
-static int collect_item(SEXP_t *probe_out, const SEXP_t *filters, struct mntent *mnt_ent, blkid_cache blkcache)
+static int collect_item(probe_ctx *ctx, struct mntent *mnt_ent, blkid_cache blkcache)
 #else
-static int collect_item(SEXP_t *probe_out, const SEXP_t *filters, struct mntent *mnt_ent)
+static int collect_item(probe_ctx *ctx, struct mntent *mnt_ent)
 #endif
 {
         SEXP_t *item;
@@ -125,17 +125,16 @@ static int collect_item(SEXP_t *probe_out, const SEXP_t *filters, struct mntent 
                                  "space_left",    OVAL_DATATYPE_INTEGER, (int64_t)stvfs.f_bfree,
                                  NULL);
 
-        probe_cobj_add_item(probe_out, item, filters);
-        SEXP_free(item);
+        probe_item_collect(ctx, item);
         oscap_free(mnt_opts);
 
         return (0);
 }
 
-int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *probe_arg, SEXP_t *filters)
+int probe_main(probe_ctx *ctx, void *probe_arg)
 {
         int probe_ret = 0;
-        SEXP_t *mnt_entity, *mnt_opval, *mnt_entval;
+        SEXP_t *mnt_entity, *mnt_opval, *mnt_entval, *probe_in;
         char    mnt_path[PATH_MAX];
         oval_operation_t mnt_op;
         FILE *mnt_fp;
@@ -170,7 +169,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *probe_arg, SEXP_t *fil
         if (mnt_fp == NULL)
                 return (PROBE_ESYSTEM);
 #endif
-
+        probe_in   = probe_ctx_getobject(ctx);
         mnt_entity = probe_obj_getent(probe_in, "mount_point", 1);
 
         if (mnt_entity == NULL)
@@ -226,9 +225,9 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *probe_arg, SEXP_t *fil
                         if (mnt_op == OVAL_OPERATION_EQUALS) {
                                 if (strcmp(mnt_entp->mnt_dir, mnt_path) == 0) {
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
-                                        collect_item(probe_out, filters, mnt_entp, blkcache);
+                                        collect_item(ctx, mnt_entp, blkcache);
 #else
-                                        collect_item(probe_out, filters, mnt_entp);
+                                        collect_item(ctx, mnt_entp);
 #endif
                                         break;
                                 }
@@ -240,9 +239,9 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *probe_arg, SEXP_t *fil
 
                                 if (rc == 0) {
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
-                                        collect_item(probe_out, filters, mnt_entp, blkcache);
+                                        collect_item(ctx, mnt_entp, blkcache);
 #else
-                                        collect_item(probe_out, filters, mnt_entp);
+                                        collect_item(ctx, mnt_entp);
 #endif
                                 }
                                 /* XXX: check for pcre_exec error */

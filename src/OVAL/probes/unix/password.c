@@ -68,7 +68,7 @@ struct result_info {
         const char *login_shell;
 };
 
-static void report_finding(struct result_info *res, SEXP_t *probe_out, const SEXP_t *filters)
+static void report_finding(struct result_info *res, probe_ctx *ctx)
 {
         SEXP_t *item;
 
@@ -82,11 +82,10 @@ static void report_finding(struct result_info *res, SEXP_t *probe_out, const SEX
                                  "login_shell", OVAL_DATATYPE_STRING, res->login_shell,
                                  NULL);
 
-        probe_cobj_add_item(probe_out, item, filters);
-        SEXP_free(item);
+        probe_item_collect(ctx, item);
 }
 
-static int read_password(SEXP_t *un_ent, SEXP_t *probe_out, const SEXP_t *filters)
+static int read_password(SEXP_t *un_ent, probe_ctx *ctx)
 {
         struct passwd *pw;
 
@@ -105,7 +104,7 @@ static int read_password(SEXP_t *un_ent, SEXP_t *probe_out, const SEXP_t *filter
                         r.home_dir = pw->pw_dir;
                         r.login_shell = pw->pw_shell;
 
-                        report_finding(&r, probe_out, filters);
+                        report_finding(&r, ctx);
                 }
                 SEXP_free(un);
         }
@@ -113,23 +112,17 @@ static int read_password(SEXP_t *un_ent, SEXP_t *probe_out, const SEXP_t *filter
         return 0;
 }
 
-int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
+int probe_main(probe_ctx *ctx, void *arg)
 {
         SEXP_t *ent;
 
-        (void)filters;
-
-        if (object == NULL || probe_out == NULL) {
-                return (PROBE_EINVAL);
-        }
-
-        ent = probe_obj_getent(object, "username", 1);
+        ent = probe_obj_getent(probe_ctx_getobject(ctx), "username", 1);
         if (ent == NULL) {
                 return PROBE_ENOVAL;
         }
 
         // Now we check the file...
-        read_password(ent, probe_out, filters);
+        read_password(ent, ctx);
         SEXP_free(ent);
 
         return 0;

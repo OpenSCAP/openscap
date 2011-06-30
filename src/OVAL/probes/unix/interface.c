@@ -116,7 +116,7 @@ static void get_l2_info(const struct ifaddrs *ifa, char **mp, char **tp)
 		mac_buf[0] = 0;
 }
 
-static int get_ifs(SEXP_t *name_ent, SEXP_t *probe_out, const SEXP_t *filters)
+static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx)
 {
 	struct ifaddrs *ifaddr, *ifa;
 	int family, rc=1;
@@ -127,9 +127,9 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *probe_out, const SEXP_t *filters)
 		SEXP_t *msg;
 
 		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, "getifaddrs() failed.");
-		probe_cobj_add_msg(probe_out, msg);
+		probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
 		SEXP_free(msg);
-		probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
+		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
 
 		return rc;
 	}
@@ -139,9 +139,9 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *probe_out, const SEXP_t *filters)
 		SEXP_t *msg;
 
 		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, "socket() failed.");
-		probe_cobj_add_msg(probe_out, msg);
+		probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
 		SEXP_free(msg);
-		probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
+		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
 
 		goto leave1;
 	}
@@ -174,9 +174,9 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *probe_out, const SEXP_t *filters)
 			SEXP_t *msg;
 
 			msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, "getnameinfo() failed.");
-			probe_cobj_add_msg(probe_out, msg);
+			probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
 			SEXP_free(msg);
-			probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
+			probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
 			rc = 1;
 
 			goto leave2;
@@ -189,9 +189,9 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *probe_out, const SEXP_t *filters)
 			SEXP_t *msg;
 
 			msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, "getnameinfo() failed.");
-			probe_cobj_add_msg(probe_out, msg);
+			probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
 			SEXP_free(msg);
-			probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
+			probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
 			rc = 1;
 
 			goto leave2;
@@ -205,9 +205,9 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *probe_out, const SEXP_t *filters)
 				SEXP_t *msg;
 
 				msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, "getnameinfo() failed.");
-				probe_cobj_add_msg(probe_out, msg);
+				probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
 				SEXP_free(msg);
-				probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
+				probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
 				rc = 1;
 
 				goto leave2;
@@ -224,8 +224,7 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *probe_out, const SEXP_t *filters)
                                          "netmask",        OVAL_DATATYPE_STRING, mask,
                                          NULL);
 
-		probe_cobj_add_item(probe_out, item, filters);
-                SEXP_free(item);
+                probe_item_collect(ctx, item);
 	}
 
 	rc = 0;
@@ -236,7 +235,7 @@ leave1:
 	return rc;
 }
 #else
-static int get_ifs(SEXP_t *name_ent, SEXP_t *probe_out, const SEXP_t *filters)
+static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx)
 {
 	/* todo */
 	SEXP_t *item;
@@ -249,29 +248,24 @@ static int get_ifs(SEXP_t *name_ent, SEXP_t *probe_out, const SEXP_t *filters)
                                  "netmask",        OVAL_DATATYPE_STRING, "255.255.255.0",
                                  NULL);
 
-	probe_cobj_add_item(probe_out, item, filters);
-        SEXP_free(item);
+        probe_item_collect(ctx, item);
 
 	return (0);
 }
 #endif
 
-int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
+int probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *name_ent;
 
-        (void)filters;
+        (void)arg;
 
-	if (probe_in == NULL || probe_out == NULL) {
-		return (PROBE_EINVAL);
-	}
-
-	name_ent = probe_obj_getent(probe_in, "name", 1);
+	name_ent = probe_obj_getent(probe_ctx_getobject(ctx), "name", 1);
 	if (name_ent == NULL) {
 		return PROBE_ENOELM;
 	}
 
-	get_ifs(name_ent, probe_out, filters);
+	get_ifs(name_ent, ctx);
 	SEXP_free(name_ent);
 
 	return 0;

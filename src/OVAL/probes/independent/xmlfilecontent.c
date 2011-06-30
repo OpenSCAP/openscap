@@ -72,8 +72,7 @@
 struct pfdata {
 	SEXP_t *filename_ent;
 	char *xpath;
-	SEXP_t *cobj;
-	SEXP_t *filters;
+        probe_ctx *ctx;
 };
 
 static void dummy_err_func(void * ctx, const char * msg, ...)
@@ -233,8 +232,8 @@ static int process_file(const char *path, const char *filename, void *arg)
 		break;
 	}
 
-	probe_cobj_add_item(pfd->cobj, item, pfd->filters);
-
+        probe_item_collect(pfd->ctx, item);
+        item = NULL;
  cleanup:
 	if (item != NULL)
 		SEXP_free(item);
@@ -250,20 +249,17 @@ static int process_file(const char *path, const char *filename, void *arg)
 	return ret;
 }
 
-int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
+int probe_main(probe_ctx *ctx, void *arg)
 {
-	SEXP_t *path_ent, *filename_ent, *xpath_ent, *behaviors_ent, *filepath_ent;
+	SEXP_t *path_ent, *filename_ent, *xpath_ent, *behaviors_ent, *filepath_ent, *probe_in;
 	SEXP_t *r0;
 
 	OVAL_FTS    *ofts;
 	OVAL_FTSENT *ofts_ent;
 
         (void)arg;
-        (void)filters;
 
-	if (probe_in == NULL || probe_out == NULL) {
-		return(PROBE_EINVAL);
-	}
+        probe_in = probe_ctx_getobject(ctx);
 
         path_ent = probe_obj_getent(probe_in, "path", 1);
 	filename_ent = probe_obj_getent(probe_in, "filename", 1);
@@ -297,8 +293,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
         SEXP_free (r0);
 
 	pfd.filename_ent = filename_ent;
-	pfd.cobj = probe_out;
-	pfd.filters = filters;
+        pfd.ctx = ctx;
 
 	if ((ofts = oval_fts_open(path_ent, filename_ent, filepath_ent, behaviors_ent)) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {

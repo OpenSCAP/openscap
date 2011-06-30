@@ -167,18 +167,13 @@ static int get_ifs(SEXP_t *item)
 }
 #endif
 
-int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
+int probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *item;
         char *os_name, *os_version, *architecture, *hname;
         struct utsname sname;
 
         (void)arg;
-        (void)filters;
-
-	if (probe_in == NULL || probe_out == NULL) {
-		return PROBE_EINVAL;
-	}
 
         if (uname(&sname) == -1) {
 		return PROBE_EUNKNOWN;
@@ -201,8 +196,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 		return PROBE_EUNKNOWN;
 	}
 
-	probe_cobj_add_item(probe_out, item, filters);
-        SEXP_free(item);
+        probe_item_collect(ctx, item);
 
 	return (0);
 }

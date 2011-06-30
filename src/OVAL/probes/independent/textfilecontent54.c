@@ -222,8 +222,7 @@ struct pfdata {
 	char *pattern;
 	int re_opts;
 	SEXP_t *instance_ent;
-	SEXP_t *cobj;
-	SEXP_t *filters;
+        probe_ctx *ctx;
 };
 
 static int process_file(const char *path, const char *file, void *arg)
@@ -245,9 +244,9 @@ static int process_file(const char *path, const char *file, void *arg)
 		SEXP_t *msg;
 
 		msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "pcre_compile() '%s' %s.", pfd->pattern, error);
-		probe_cobj_add_msg(pfd->cobj, msg);
+		probe_cobj_add_msg(probe_ctx_getresult(pfd->ctx), msg);
 		SEXP_free(msg);
-		probe_cobj_set_flag(pfd->cobj, SYSCHAR_FLAG_ERROR);
+		probe_cobj_set_flag(probe_ctx_getresult(pfd->ctx), SYSCHAR_FLAG_ERROR);
 		return -1;
 	}
 #elif defined USE_REGEX_POSIX
@@ -258,9 +257,9 @@ static int process_file(const char *path, const char *file, void *arg)
 		SEXP_t *msg;
 
 		msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "regcomp() '%s' returned %d.", pfd->pattern, err);
-		probe_cobj_add_msg(pfd->cobj, msg);
+		probe_cobj_add_msg(probe_ctx_getresult(pfd->ctx), msg);
 		SEXP_free(msg);
-		probe_cobj_set_flag(pfd->cobj, SYSCHAR_FLAG_ERROR);
+		probe_cobj_set_flag(probe_ctx_getresult(pfd->ctx), SYSCHAR_FLAG_ERROR);
 		return -1;
 	}
 #endif
@@ -285,9 +284,9 @@ static int process_file(const char *path, const char *file, void *arg)
 		SEXP_t *msg;
 
 		msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "open(): '%s' %s.", whole_path, strerror(errno));
-		probe_cobj_add_msg(pfd->cobj, msg);
+		probe_cobj_add_msg(probe_ctx_getresult(pfd->ctx), msg);
 		SEXP_free(msg);
-		probe_cobj_set_flag(pfd->cobj, SYSCHAR_FLAG_ERROR);
+		probe_cobj_set_flag(probe_ctx_getresult(pfd->ctx), SYSCHAR_FLAG_ERROR);
 
 		ret = -1;
 		goto cleanup;
@@ -301,9 +300,9 @@ static int process_file(const char *path, const char *file, void *arg)
 			SEXP_t *msg;
 
 			msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "read(): %s.", strerror(errno));
-			probe_cobj_add_msg(pfd->cobj, msg);
+			probe_cobj_add_msg(probe_ctx_getresult(pfd->ctx), msg);
 			SEXP_free(msg);
-			probe_cobj_set_flag(pfd->cobj, SYSCHAR_FLAG_ERROR);
+			probe_cobj_set_flag(probe_ctx_getresult(pfd->ctx), SYSCHAR_FLAG_ERROR);
 
 			ret = -2;
 			goto cleanup;
@@ -338,8 +337,8 @@ static int process_file(const char *path, const char *file, void *arg)
 
 				item = create_item(path, file, pfd->pattern,
 						   cur_inst, substrs, substr_cnt);
-				probe_cobj_add_item(pfd->cobj, item, pfd->filters);
-				SEXP_free(item);
+
+                                probe_item_collect(pfd->ctx, item);
 
 				for (k = 0; k < substr_cnt; ++k)
 					oscap_free(substrs[k]);
@@ -363,9 +362,9 @@ static int process_file(const char *path, const char *file, void *arg)
 	return ret;
 }
 
-int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
+int probe_main(probe_ctx *ctx, void *arg)
 {
-	SEXP_t *path_ent, *file_ent, *inst_ent, *bh_ent, *patt_ent, *filepath_ent;
+	SEXP_t *path_ent, *file_ent, *inst_ent, *bh_ent, *patt_ent, *filepath_ent, *probe_in;
         SEXP_t *r0;
 	char *pattern;
 	/* char *i_val, *m_val, *s_val; */
@@ -377,9 +376,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 
         (void)arg;
 
-	if (probe_in == NULL || probe_out == NULL) {
-		return(PROBE_EINVAL);
-	}
+        probe_in = probe_ctx_getobject(ctx);
 
         path_ent = probe_obj_getent(probe_in, "path",     1);
         file_ent = probe_obj_getent(probe_in, "filename", 1);
@@ -435,8 +432,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 
 	pfd.pattern      = pattern;
 	pfd.instance_ent = inst_ent;
-	pfd.cobj         = probe_out;
-	pfd.filters      = filters;
+        pfd.ctx          = ctx;
 #if defined USE_REGEX_PCRE
 	pfd.re_opts = PCRE_UTF8;
 	r0 = probe_ent_getattrval(bh_ent, "ignore_case");

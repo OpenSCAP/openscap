@@ -31,6 +31,7 @@
 #include "probe.h"
 #include "ncache.h"
 #include "rcache.h"
+#include "icache.h"
 #include "worker.h"
 #include "signal_handler.h"
 #include "input_handler.h"
@@ -46,7 +47,9 @@ void  *OSCAP_GSYM(probe_arg)          = NULL;
 bool   OSCAP_GSYM(varref_handling)    = true;
 char **OSCAP_GSYM(no_varref_ents)     = NULL;
 size_t OSCAP_GSYM(no_varref_ents_cnt) = 0;
+#if 0
 struct id_desc_t OSCAP_GSYM(id_desc);
+#endif
 
 extern probe_ncache_t *OSCAP_GSYM(encache);
 
@@ -78,9 +81,9 @@ static SEXP_t *probe_reset(SEXP_t *arg0, void *arg1)
 
         probe->rcache = probe_rcache_new();
         probe->ncache = probe_ncache_new();
-
+#if 0
 	probe_item_resetidctr(&(OSCAP_GSYM(id_desc)));
-
+#endif
         return(NULL);
 }
 
@@ -164,6 +167,8 @@ int main(int argc, char *argv[])
 	 */
 	probe.rcache = probe_rcache_new();
 	probe.ncache = probe_ncache_new();
+        probe.icache = probe_icache_new();
+
         OSCAP_GSYM(encache) = probe.ncache;
 
 	/*
@@ -221,6 +226,7 @@ int main(int argc, char *argv[])
 
 	probe_ncache_free(probe.ncache);
 	probe_rcache_free(probe.rcache);
+        probe_icache_free(probe.icache);
 
         rbt_i32_free(probe.workers);
 

@@ -52,12 +52,11 @@
 #include <string.h>
 #include <probe-api.h>
 
-int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
+int probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *item;
 
         (void)arg;
-        (void)filters;
 
 	const char *family =
 #if defined(_WIN32)
@@ -72,16 +71,11 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *arg, SEXP_t *filters)
         "error";
 #endif
 
-	if (probe_in == NULL || probe_out == NULL) {
-		return PROBE_EINVAL;
-	}
-
         item = probe_item_create(OVAL_INDEPENDENT_FAMILY, NULL,
                                  "family", OVAL_DATATYPE_STRING, family,
                                  NULL);
 
-	probe_cobj_add_item(probe_out, item, filters);
-        SEXP_free (item);
+        probe_item_collect(ctx, item);
 
 	return (0);
 }

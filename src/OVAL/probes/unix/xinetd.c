@@ -1422,9 +1422,9 @@ void probe_fini(void *arg)
 		xiconf_free(arg);
 }
 
-int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
+int probe_main(probe_ctx *ctx, void *arg)
 {
-	SEXP_t *eval;
+	SEXP_t *eval, *object;
 	char    srv_name[256];
 	char    srv_prot[256];
 	int     err;
@@ -1432,17 +1432,12 @@ int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 	xiconf_strans_t  *xres;
 	xiconf_t         *xcfg = (xiconf_t *)arg;
 
-        (void)filters;
-
-	if (object == NULL || probe_out == NULL) {
-		err = PROBE_EINVAL;
-		goto fail;
-	}
-
 	if (arg == NULL) {
 		err = PROBE_EINIT;
 		goto fail;
 	}
+
+        object = probe_ctx_getobject(ctx);
 
 	eval = probe_obj_getentval(object, "service_name", 1);
 
@@ -1506,14 +1501,13 @@ int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
 						"disabled",         OVAL_DATATYPE_BOOLEAN, xres->srv[l]->disable,
 						NULL);
 
-			probe_cobj_add_item(probe_out, item, filters);
-			SEXP_free(item);
+                        probe_item_collect(ctx, item);
 		}
 	}
 
 	return (0);
  fail:
-	probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
+	probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
 	return err;
 }
 #endif

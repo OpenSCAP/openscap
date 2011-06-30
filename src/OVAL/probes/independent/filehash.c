@@ -72,11 +72,9 @@ static int mem2hex (uint8_t *mem, size_t mlen, char *str, size_t slen)
         return (0);
 }
 
-static int filehash_cb (const char *p, const char *f, void *ptr, const SEXP_t *filters)
+static int filehash_cb (const char *p, const char *f, probe_ctx *ctx)
 {
         SEXP_t *itm, *r0, *r1;
-        SEXP_t *res = (SEXP_t *) ptr;
-
         char   pbuf[PATH_MAX+1];
         size_t plen, flen;
 
@@ -171,8 +169,7 @@ static int filehash_cb (const char *p, const char *f, void *ptr, const SEXP_t *f
                                         NULL);
         }
 
-	probe_cobj_add_item(res, itm, filters);
-        SEXP_free (itm);
+        probe_item_collect(ctx, itm);
 
         return (0);
 }
@@ -212,24 +209,20 @@ void probe_fini (void *arg)
         return;
 }
 
-int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters)
+int probe_main (probe_ctx *ctx, void *mutex)
 {
-        SEXP_t *path, *filename, *behaviors, *filepath;
+        SEXP_t *path, *filename, *behaviors, *filepath, *probe_in;
 
 	OVAL_FTS    *ofts;
 	OVAL_FTSENT *ofts_ent;
-
-        (void)filters;
-
-	if (probe_in == NULL || probe_out == NULL) {
-		return (PROBE_EINVAL);
-	}
 
         if (mutex == NULL) {
 		return (PROBE_EINIT);
         }
 
         _A(mutex == &__filehash_probe_mutex);
+
+        probe_in  = probe_ctx_getobject(ctx);
 
         path      = probe_obj_getent (probe_in, "path",      1);
         filename  = probe_obj_getent (probe_in, "filename",  1);
@@ -270,7 +263,7 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filter
 
 	if ((ofts = oval_fts_open(path, filename, filepath, behaviors)) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
-			filehash_cb(ofts_ent->path, ofts_ent->file, probe_out, filters);
+			filehash_cb(ofts_ent->path, ofts_ent->file, ctx);
 			oval_ftsent_free(ofts_ent);
 		}
 

@@ -56,7 +56,7 @@ void probe_fini(void *arg)
 }
 #endif
 
-int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters)
+int probe_main(probe_ctx *ctx, void *mutex)
 {
         LDAP        *ldp;
         LDAPMessage *ldpres, *entry;
@@ -65,6 +65,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
         SEXP_t *se_suffix = NULL, *se_attribute = NULL;
         SEXP_t *sa_scope, *sv_op;
         SEXP_t *item;
+        SEXP_t *probe_in;
 
         char *relative_dn = NULL;
         char *suffix = NULL, *xattribute = NULL;
@@ -76,14 +77,11 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
 
         bool a_pattern_match = false, rdn_pattern_match = false;
 
-        (void)filters;
-
-        assume_d(probe_in  != NULL, PROBE_EFAULT);
-        assume_d(probe_out != NULL, PROBE_EFAULT);
         /* runtime */
 #if defined(PROBE_LDAP_MUTEX)
         assume_r(mutex != NULL, PROBE_EINIT);
 #endif
+        probe_in = probe_ctx_getobject(ctx);
         se_ldap_behaviors = probe_obj_getent(probe_in, "behaviors", 1);
 
         if (se_ldap_behaviors != NULL) {
@@ -192,8 +190,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
                 item = probe_item_creat("ldap57_item", NULL, NULL);
 
                 probe_item_setstatus(item, OVAL_STATUS_ERROR);
-                probe_cobj_add_item(probe_out, item, filters);
-                SEXP_free(item);
+                probe_item_collect(ctx, item);
 
                 dE("ldap_get_option failed\n");
                 goto fail0;
@@ -222,8 +219,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
                         item = probe_item_creat("ldap57_item", NULL, NULL);
 
                         probe_item_setstatus(item, OVAL_STATUS_ERROR);
-                        probe_cobj_add_item(probe_out, item, filters);
-                        SEXP_free(item);
+                        probe_item_collect(ctx, item);
 
                         dE("ldap_search_ext_s failed\n");
                         goto fail0;
@@ -369,9 +365,9 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filters
                                                          NULL);
 
                                 SEXP_list_add(item, se_value);
-                                probe_cobj_add_item(probe_out, item, filters);
-                                SEXP_free(item);
                                 SEXP_free(se_value);
+
+                                probe_item_collect(ctx, item);
 
                                 attr = ldap_next_attribute(ldp, entry, berelm);
                         }

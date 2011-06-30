@@ -42,15 +42,16 @@
 #define PROC_SYS_DIR "/proc/sys"
 #define PROC_SYS_MAXDEPTH 7
 
-int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *probe_arg, SEXP_t *filters)
+int probe_main(probe_ctx *ctx, void *probe_arg)
 {
         OVAL_FTS    *ofts;
         OVAL_FTSENT *ofts_ent;
 
-        SEXP_t *name_entity;
+        SEXP_t *name_entity, *probe_in;
         SEXP_t *r0, *r1, *r2;
         SEXP_t *ent_attrs, *bh_entity, *path_entity, *filename_entity;
 
+        probe_in    = probe_ctx_getobject(ctx);
         name_entity = probe_obj_getent(probe_in, "name", 1);
 
         if (name_entity == NULL) {
@@ -173,8 +174,7 @@ int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *probe_arg, SEXP_t *fil
                         item = probe_item_creat("sysctl_item", NULL, NULL);
                         probe_item_setstatus(item, OVAL_STATUS_ERROR);
                 add_item:
-                        probe_cobj_add_item(probe_out, item, filters);
-                        SEXP_free(item);
+                        probe_item_collect(ctx, item);
                 }
 
                 oval_ftsent_free(ofts_ent);

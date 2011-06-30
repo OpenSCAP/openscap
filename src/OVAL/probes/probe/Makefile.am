@@ -21,8 +21,11 @@ libprobe_la_SOURCES=	fini.c			\
 			signal_handler.c	\
 			signal_handler.h	\
 			probe.h			\
+			probe.c			\
 			entcmp.c		\
-			entcmp.h
+			entcmp.h		\
+			icache.c		\
+			icache.h
 
 libprobe_la_LDFLAGS=	$(top_builddir)/src/libopenscap.la	\
 			@pthread_ldflags@

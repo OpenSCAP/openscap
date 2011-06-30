@@ -866,10 +866,12 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 		// todo: in case of an internal error set probe_ret accordingly
 		*ret = 0;
 	} else {
-		SEXP_t *varrefs, *filters;
+                struct probe_ctx pctx;
+		SEXP_t *varrefs;
 
 		/* simple object */
-		filters = probe_prepare_filters(probe, probe_in);
+                pctx.icache  = probe->icache;
+		pctx.filters = probe_prepare_filters(probe, probe_in);
 
 		if (OSCAP_GSYM(varref_handling))
 			varrefs = probe_obj_getent(probe_in, "varrefs", 1);
@@ -877,8 +879,23 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
                         varrefs = NULL;
 
 		if (varrefs == NULL || !OSCAP_GSYM(varref_handling)) {
+                        /*
+                         * Prepare the collected object
+                         */
 			probe_out = probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, NULL, NULL);
-			*ret = probe_main(probe_in, probe_out, probe->probe_arg, filters);
+
+                        pctx.probe_in  = probe_in;
+                        pctx.probe_out = probe_out;
+                        /*
+                         * Run the main function of the probe implementation
+                         */
+			*ret = probe_main(&pctx, probe->probe_arg);
+
+                        /*
+                         * Synchronize
+                         */
+                        probe_icache_nop(probe->icache);
+
 			probe_cobj_compute_flag(probe_out);
 		} else {
 			/*
@@ -890,7 +907,7 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 			dI("handling varrefs in object\n");
 
 			if (probe_varref_create_ctx(probe_in, varrefs, &ctx) != 0) {
-				SEXP_vfree(varrefs, filters, probe_in, NULL);
+				SEXP_vfree(varrefs, pctx.filters, probe_in, NULL);
 				*ret = PROBE_EUNKNOWN;
 				return (NULL);
 			}
@@ -899,9 +916,23 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 
 			do {
 				SEXP_t *cobj, *r0;
-
+                                /*
+                                 * Prepare the collected object
+                                 */
 				cobj = probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, NULL, NULL);
-				*ret = probe_main(ctx->pi2, cobj, probe->probe_arg, filters);
+
+                                pctx.probe_in  = ctx->pi2;
+                                pctx.probe_out = cobj;
+                                /*
+                                 * Run the main function of the probe implementation
+                                 */
+				*ret = probe_main(&pctx, probe->probe_arg);
+
+                                /*
+                                 * Synchronize
+                                 */
+                                probe_icache_nop(probe->icache);
+
 				probe_cobj_compute_flag(cobj);
 				r0 = probe_out;
 				probe_out = probe_set_combine(r0, cobj, OVAL_SET_OPERATION_UNION);
@@ -912,7 +943,7 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 			probe_varref_destroy_ctx(ctx);
 		}
 
-                SEXP_free(filters);
+                SEXP_free(pctx.filters);
 	}
 
 	SEXP_free(probe_in);

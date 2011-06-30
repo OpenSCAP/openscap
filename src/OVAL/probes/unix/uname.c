@@ -55,17 +55,11 @@
 #include "probe-api.h"
 #include "alloc.h"
 
-int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
+int probe_main(probe_ctx *ctx, void *arg)
 {
 	const char *processor;
 	struct utsname buf;
         SEXP_t *item;
-
-        (void)filters;
-
-	if (object == NULL || probe_out == NULL) {
-		return (PROBE_EINVAL);
-	}
 
 	// Collect the info
 	uname(&buf);
@@ -101,8 +95,7 @@ int probe_main(SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
                                  "processor_type", OVAL_DATATYPE_STRING, processor,
                                  NULL);
 
-	probe_cobj_add_item(probe_out, item, filters);
-	SEXP_free(item);
+        probe_item_collect(ctx, item);
 
 	return 0;
 }
