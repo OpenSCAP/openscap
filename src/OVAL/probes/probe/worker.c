@@ -430,11 +430,11 @@ static SEXP_t *probe_set_combine(SEXP_t *cobj1, SEXP_t *cobj2, oval_setobject_op
 	switch (op) {
 	case OVAL_SET_OPERATION_INTERSECTION:
 		SEXP_list_foreach(item1, item_lst1) {
-			id1 = probe_obj_getentval(item1, "id", 1);
+			id1 = probe_obj_getattrval(item1, "id");
 			append = false;
 
 			SEXP_list_foreach(item2, item_lst2) {
-				id2 = probe_obj_getentval(item2, "id", 1);
+				id2 = probe_obj_getattrval(item2, "id");
 
 				if (!SEXP_string_cmp(id1, id2)) {
 					append = true;
@@ -466,11 +466,11 @@ static SEXP_t *probe_set_combine(SEXP_t *cobj1, SEXP_t *cobj2, oval_setobject_op
 		}
 	case OVAL_SET_OPERATION_COMPLEMENT:
 		SEXP_list_foreach(item1, item_lst1) {
-			id1 = probe_obj_getentval(item1, "id", 1);
+			id1 = probe_obj_getattrval(item1, "id");
 			append = true;
 
 			SEXP_list_foreach(item2, item_lst2) {
-				id2 = probe_obj_getentval(item2, "id", 1);
+				id2 = probe_obj_getattrval(item2, "id");
 
 				if (!SEXP_string_cmp(id1, id2)) {
 					append = false;
