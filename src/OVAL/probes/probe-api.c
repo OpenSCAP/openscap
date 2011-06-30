@@ -102,8 +102,13 @@ SEXP_t *probe_item_new(const char *name, SEXP_t * attrs)
 
 	_LOGCALL_;
 
-	sid = probe_item_newid(&(OSCAP_GSYM(id_desc)));
+        /*
+         * Allocate space for the ID which will be generated
+         * in the icache worker
+         */
+	sid  = SEXP_string_new("", 0);
 	attr = probe_attr_creat("id", sid, NULL);
+
 	if (attrs != NULL) {
 		attrs = SEXP_list_join(attr, attrs);
 		SEXP_free(attr);
@@ -212,6 +217,7 @@ int probe_itement_setstatus(SEXP_t *obj, const char *name, uint32_t n, oval_sysc
         return (0);
 }
 
+#if 0
 SEXP_t *probe_item_newid(struct id_desc_t * id_desc)
 {
 	int id_ctr;
@@ -228,6 +234,7 @@ SEXP_t *probe_item_newid(struct id_desc_t * id_desc)
 
 	return sid;
 }
+#endif
 
 void probe_item_resetidctr(struct id_desc_t *id_desc)
 {

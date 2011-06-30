@@ -475,7 +475,10 @@ void probe_tfc54behaviors_canonicalize(SEXP_t **behaviors);
 
 void *probe_init(void) __attribute__ ((unused));
 void probe_fini(void *) __attribute__ ((unused));
-int probe_main(SEXP_t *, SEXP_t *, void *, SEXP_t *) __attribute__ ((nonnull(1, 2)));
+
+typedef struct probe_ctx probe_ctx;
+
+int probe_main(probe_ctx *, void *) __attribute__ ((nonnull(1)));
 
 #define PROBE_VARREF_HANDLING 0
 #define PROBE_RESULT_CACHING  1
@@ -485,6 +488,30 @@ int probe_setoption(int option, ...);
 bool probe_item_filtered(const SEXP_t *item, const SEXP_t *filters);
 
 int probe_result_additem(SEXP_t *result, SEXP_t *item);
+
+/**
+ * Collect generated item (i.e. add it to the collected object)
+ * The function takes ownership of the item reference and takes
+ * care of freeing the item (i.e. don't call SEXP_free(item) after
+ * calling this function). The implementation of this function
+ * is placed in the `probe/icache.c' file.
+ */
+int probe_item_collect(probe_ctx *ctx, SEXP_t *item);
+
+/**
+ * Return reference to the input object. The reference counter
+ * is NOT incremented by this operation (i.e. don't call SEXP_free
+ * on the return value of this function). Implementation of this
+ * function is placed in the `' file.
+ */
+SEXP_t *probe_ctx_getobject(probe_ctx *ctx);
+
+/**
+ * Return reference to the output object (aka collected object).
+ * Reference counter is NOT incremented (see the description of
+ * probe_ctx_getobject above).
+ */
+SEXP_t *probe_ctx_getresult(probe_ctx *ctx);
 
 typedef struct {
         oval_datatype_t type;

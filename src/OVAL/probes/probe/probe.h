@@ -31,8 +31,10 @@
 #include <seap.h>
 #include "ncache.h"
 #include "rcache.h"
+#include "icache.h"
 #include "probe-common.h"
 
+#if 0
 /**
  * @struct id_desc_t
  * Holds information for item ids generation.
@@ -43,6 +45,7 @@ struct id_desc_t {
 #endif
 	int item_id_ctr;	///< id counter
 };
+#endif
 
 typedef struct {
 	int option;
@@ -71,9 +74,19 @@ typedef struct {
 
 	probe_rcache_t *rcache; /**< probe result cache */
 	probe_ncache_t *ncache; /**< probe name cache */
+        probe_icache_t *icache; /**< probe item cache */
 
 	probe_option_t *option; /**< probe option handlers */
 	size_t          optcnt; /**< number of defined options */
 } probe_t;
+
+struct probe_ctx {
+        SEXP_t         *probe_in;  /**< S-exp representation of the input object */
+        SEXP_t         *probe_out; /**< collected object */
+        SEXP_t         *filters;   /**< object filters (OVAL 5.8 and higher) */
+        probe_icache_t *icache;    /**< item cache */
+};
+
+
 
 #endif /* PROBE_H */
