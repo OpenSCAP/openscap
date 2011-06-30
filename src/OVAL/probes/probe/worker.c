@@ -806,6 +806,15 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 
 	}
 
+        _I("=== SET 1 ===\n");
+        _S(s_subset[0]);
+        _I("\n");
+
+        _I("=== SET 2 ===\n");
+        _S(s_subset[1]);
+        _I("\n");
+        _I("OP= %d\n", op_num);
+
 	SEXP_free(filters_a);
 	result = probe_set_combine(s_subset[0], s_subset[1], op_num);
 
@@ -813,6 +822,10 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 
 	SEXP_free(s_subset[0]);
 	SEXP_free(s_subset[1]);
+
+        _I("=== RESULT ===\n");
+        _S(result);
+        _I("\n");
 
 	return (result);
  eval_fail:
