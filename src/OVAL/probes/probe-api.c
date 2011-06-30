@@ -651,16 +651,14 @@ SEXP_t *probe_cobj_get_msgs(const SEXP_t *cobj)
 static SEXP_t *probe_item_optimize(const SEXP_t *item);
 static int probe_cobj_memcheck(size_t item_cnt);
 
-int probe_cobj_add_item(SEXP_t *cobj, const SEXP_t *item, const SEXP_t *filters)
+int probe_cobj_add_item(SEXP_t *cobj, const SEXP_t *item)
 {
 	SEXP_t *lst, *oitem;
 	size_t item_cnt;
 
-	if (filters && probe_item_filtered(item, filters))
-		return 1;
-
 	lst = SEXP_listref_nth(cobj, 3);
 	item_cnt = SEXP_list_length(lst);
+
 	if (probe_cobj_memcheck(item_cnt) != 0) {
 		SEXP_t *msg;
 

@@ -214,7 +214,10 @@ static void *probe_icache_worker(void *arg)
                                 }
                         }
 
-                        probe_cobj_add_item(pair->cobj, pair->p.item, NULL);
+                        if (probe_cobj_add_item(pair->cobj, pair->p.item) != 0) {
+                                dE("An error ocured while adding an item to the collected object\n");
+                                return (NULL);
+                        }
                 }
 
                 if (pthread_mutex_lock(&cache->queue_mutex) != 0) {
@@ -423,5 +426,6 @@ int probe_item_collect(struct probe_ctx *ctx, SEXP_t *item)
 
 void probe_icache_free(probe_icache_t *cache)
 {
+        
         return;
 }

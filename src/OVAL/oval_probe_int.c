@@ -182,7 +182,7 @@ static int oval_probe_variable_eval(oval_probe_session_t *sess, struct oval_sysc
 			SEXP_list_add(item, valent);
 
 			/* Add item to the item list */
-			probe_cobj_add_item(cobj, item, NULL);
+			probe_cobj_add_item(cobj, item);
 			SEXP_vfree(item, valent, val_sexp, NULL);
                 }
 
