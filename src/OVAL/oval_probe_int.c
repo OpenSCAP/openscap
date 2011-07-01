@@ -105,6 +105,19 @@ static struct oval_variable *oval_probe_variable_objgetvar(struct oval_object *o
         return(var);
 }
 
+/* temporary workaround to generate ids */
+static void _gen_item_id(SEXP_t *item)
+{
+	static uint32_t id = 0;
+	SEXP_t sid, *name_ref, *tmp;
+
+	SEXP_string_newf_r(&sid, "1%05u%u", getpid(), ++id);
+	name_ref = SEXP_listref_first(item);
+	tmp = SEXP_list_replace(name_ref, 3, &sid);
+	SEXP_vfree(name_ref, tmp, NULL);
+	SEXP_free_r(&sid);
+}
+
 static int oval_probe_variable_eval(oval_probe_session_t *sess, struct oval_syschar *syschar)
 {
         struct oval_value    *val;
@@ -176,6 +189,10 @@ static int oval_probe_variable_eval(oval_probe_session_t *sess, struct oval_sysc
 
 			item = probe_item_creat("variable_item", NULL,
 						NULL);
+
+			/* temporary workaround to generate ids */
+			_gen_item_id(item);
+
 			/* Add shared var_ref entity */
 			SEXP_list_add(item, vrent);
 			/* Add value entity */
