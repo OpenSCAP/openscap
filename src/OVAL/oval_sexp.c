@@ -193,6 +193,7 @@ static int oval_varref_to_sexp(void *sess, struct oval_entity *entity, struct ov
 		vit = oval_variable_get_values(var);
 		if (oval_value_iterator_has_more(vit))
 			break;
+		oval_value_iterator_free(vit);
 		/* fall through */
 	case SYSCHAR_FLAG_DOES_NOT_EXIST:
 		snprintf(msg, sizeof(msg), "Referenced variable has no values (%s).", oval_variable_get_id(var));
