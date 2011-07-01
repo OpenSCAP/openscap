@@ -159,7 +159,7 @@ int main(int argc, char *argv[])
 	if (probe.sd < 0)
 		fail(errno, "SEAP_openfd2", __LINE__ - 3);
 
-	if (SEAP_cmd_register(probe.SEAP_ctx, PROBE_CMD_RESET, 0, &probe_reset) != 0)
+	if (SEAP_cmd_register(probe.SEAP_ctx, PROBECMD_RESET, 0, &probe_reset) != 0)
 		fail(errno, "SEAP_cmd_register", __LINE__ - 1);
 
 	/*

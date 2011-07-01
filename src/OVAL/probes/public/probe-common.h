@@ -2,13 +2,6 @@
 #define PROBE_COMMON_H
 
 /**
- * SEAP command codes used by probes/library
- */
-#define PROBE_CMD_STE_FETCH 1 /**< State fetch command code */
-#define PROBE_CMD_OBJ_EVAL  2 /**< Object eval command code */
-#define PROBE_CMD_RESET     3 /**< Reset command code */
-
-/**
  * probe option IDs
  */
 #define PROBE_VARREF_HANDLING 0
