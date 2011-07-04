@@ -688,11 +688,18 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 					goto eval_fail;
 				}
 
+                                dI("Looking for object results: ID=%s\n", SEXP_string_cstr(id));
+
 				res = probe_rcache_sexp_get(probe->rcache, id);
 
 				if (res == NULL) {
+                                        dI("MISS -> requesting object evaluation\n");
 					/* cache miss */
 					res = probe_obj_eval(probe, id);
+
+                                        dI("Evaluation complete: res=%p\n", res);
+                                        _S(res);
+                                        dI("\n");
 
 					if (res == NULL) {
 						char *tmp = SEXP_string_cstr(id);
@@ -802,18 +809,33 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 			}
 #endif
 			SEXP_free(o_subset[s_subset_i]);
+                        o_subset[s_subset_i] = NULL;
 		}
-
 	}
 
-        _I("=== SET 1 ===\n");
-        _S(s_subset[0]);
-        _I("\n");
+#ifndef NDEBUG
+        {
+                unsigned int i;
 
-        _I("=== SET 2 ===\n");
-        _S(s_subset[1]);
-        _I("\n");
+                for (i = 0; i < s_subset_i; ++i) {
+                        if (s_subset[i] != NULL) {
+                                _I("=== s_subset[%d] ===\n", i);
+                                _S(s_subset[i]);
+                                _I("\n");
+                        }
+                }
+
+                for (i = 0; i < o_subset_i; ++i) {
+                        if (o_subset[i] != NULL) {
+                                _I("=== o_subset[%d] ===\n", i);
+                                _S(o_subset[i]);
+                                _I("\n");
+                        }
+                }
+        }
+
         _I("OP= %d\n", op_num);
+#endif
 
 	SEXP_free(filters_a);
 	result = probe_set_combine(s_subset[0], s_subset[1], op_num);

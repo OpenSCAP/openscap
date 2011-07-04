@@ -125,11 +125,12 @@ static OVAL_FTSENT *OVAL_FTSENT_new(OVAL_FTS *ofts, FTSENT *fts_ent)
 		ofts_ent->file = NULL;
 	}
 
+#if defined(OSCAP_VERBOSE_DEBUG)
 	_I("\n"
 	   "New OVAL_FTSENT:\n"
 	   "\t    file: '%s'.\n"
 	   "\t    path: '%s'.\n", ofts_ent->file, ofts_ent->path);
-
+#endif
 	return (ofts_ent);
 }
 
@@ -219,18 +220,18 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	} else {
 		path_op = OVAL_OPERATION_EQUALS;
 	}
-
+#if defined(OSCAP_VERBOSE_DEBUG)
 	_I("path_op: %u, '%s'.\n", path_op, oval_operation_get_text(path_op));
-
+#endif
 	if (path) { /* filepath == NULL */
 		ENT_GET_STRVAL(path, cstr_path, sizeof cstr_path, return NULL);
 		ENT_GET_STRVAL(filename, cstr_file, sizeof cstr_file, nilfilename = true);
-
+#if defined(OSCAP_VERBOSE_DEBUG)
 		_I("\n"
 		   "        path: '%s'.\n"
 		   "    filename: '%s'.\n"
 		   "nil filename: %d.\n", cstr_path, nilfilename ? "" : cstr_file, nilfilename);
-
+#endif
 		/* max_depth */
 		ENT_GET_AREF(behaviors, r0, "max_depth", true);
 		SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
@@ -240,8 +241,9 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 			SEXP_free(r0);
 			return (NULL);
 		}
-
+#if defined(OSCAP_VERBOSE_DEBUG)
 		_I("bh.max_depth: %s => max_depth: %d\n", cstr_buff, max_depth);
+#endif
 		SEXP_free(r0);
 
 		/* recurse_direction */
@@ -259,8 +261,9 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 			SEXP_free(r0);
 			return (NULL);
 		}
-
+#if defined(OSCAP_VERBOSE_DEBUG)
 		_I("bh.direction: %s => direction: %d\n", cstr_buff, direction);
+#endif
 		SEXP_free(r0);
 
 		/* recurse */
@@ -284,8 +287,9 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		} else {
 			recurse = OVAL_RECURSE_SYMLINKS_AND_DIRS;
 		}
-
+#if defined(OSCAP_VERBOSE_DEBUG)
 		_I("bh.recurse: %s => recurse: %d\n", cstr_buff, recurse);
+#endif
 		SEXP_free(r0);
 
 		/* recurse_file_system */
@@ -309,8 +313,9 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		} else {
 			filesystem = OVAL_RECURSE_FS_ALL;
 		}
-
+#if defined(OSCAP_VERBOSE_DEBUG)
 		_I("bh.filesystem: %s => filesystem: %d\n", cstr_buff, filesystem);
+#endif
 		SEXP_free(r0);
 	} else { /* filepath != NULL */
 		ENT_GET_STRVAL(filepath, cstr_path, sizeof cstr_path, return NULL);
@@ -400,9 +405,9 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 {
 	OVAL_FTSENT *ofts_ent = NULL;
-
+#if defined(OSCAP_VERBOSE_DEBUG)
 	_I("ofts=%p\n", ofts);
-
+#endif
 	if (ofts != NULL) {
 		register FTSENT *fts_ent;
 
@@ -424,12 +429,12 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 				_W("Filesystem tree cycle detected at %s\n", fts_ent->fts_path);
 				continue;
 			}
-
+#if defined(OSCAP_VERBOSE_DEBUG)
 			_I("fts_path: '%s' (l=%d)\n"
 			   "fts_name: '%s' (l=%d).\n"
 			   "fts_info: %u.\n", fts_ent->fts_path, fts_ent->fts_pathlen,
 			   fts_ent->fts_name, fts_ent->fts_namelen, fts_ent->fts_info);
-
+#endif
 			/* partial match optimization for OVAL_OPERATION_PATTERN_MATCH operation on path and filepath */
 			if (ofts->ofts_path_regex != NULL
 			    && (fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)) {
@@ -507,22 +512,30 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 				if (ofts->ofts_path_op != OVAL_OPERATION_EQUALS)
 					break;
 				if (!ofts->ofts_sfilename && !ofts->ofts_sfilepath) {
+#if defined(OSCAP_VERBOSE_DEBUG)
 					_I("FTS_SKIP: recurse_direction: 'none', path: '%s' "
 					   "and the object's target is a directory.\n", fts_ent->fts_path);
+#endif
 					fts_set(ofts->ofts_fts, fts_ent, FTS_SKIP);
 					break;
 				}
 				if (fts_ent->fts_level > 0) {
+#if defined(OSCAP_VERBOSE_DEBUG)
 					_I("FTS_SKIP: recurse_direction: 'none', path: '%s' "
 					   "and fts_level: %d.\n", fts_ent->fts_path, fts_ent->fts_level);
+#endif
 					fts_set(ofts->ofts_fts, fts_ent, FTS_SKIP);
 				} else {
+#if defined(OSCAP_VERBOSE_DEBUG)
 					_I("The object's target is not a directory, not skipping FTS_ROOT: '%s'.\n", fts_ent->fts_path);
+#endif
 				}
 				break;
 			case OVAL_RECURSE_DIRECTION_DOWN:
 				if (fts_ent->fts_level == 0 && ofts->ofts_sfilename) {
+#if defined(OSCAP_VERBOSE_DEBUG)
 					_I("Not skipping FTS_ROOT: %s\n", fts_ent->fts_path);
+#endif
 				} else if (fts_ent->fts_level <= ofts->max_depth || ofts->max_depth == -1) {
 					/*
 					 * Check file type & filesystem recursion.
@@ -540,7 +553,9 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 							goto __skip_file;
 
 						fts_set(ofts->ofts_fts, fts_ent, FTS_FOLLOW);
+#if defined(OSCAP_VERBOSE_DEBUG)
 						_I("FTS_FOLLOW: %s\n", fts_ent->fts_path);
+#endif
 						break;
 					default:
 						/*
@@ -563,7 +578,9 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 									     fts_ent->fts_statp != NULL ?
 									     &fts_ent->fts_statp->st_dev : NULL))
 							{
+#if defined(OSCAP_VERBOSE_DEBUG)
 								_I("not on local fs: %s\n", fts_ent->fts_path);
+#endif
 								goto __skip_file;
 							}
 							break;
@@ -574,8 +591,10 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 						}
 					}
 				} else {
+#if defined(OSCAP_VERBOSE_DEBUG)
 					_I("FTS_SKIP: reason: max depth reached: %d, path: '%s'.\n",
 					   ofts->max_depth, fts_ent->fts_path);
+#endif
 				__skip_file:
 					fts_set(ofts->ofts_fts, fts_ent, FTS_SKIP);
 				}
@@ -583,7 +602,9 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 				break;
 			case OVAL_RECURSE_DIRECTION_UP: /* is this really useful? */
 				fts_set(ofts->ofts_fts, fts_ent, FTS_SKIP);
+#if defined(OSCAP_VERBOSE_DEBUG)
 				_I("FTS_SKIP: reason: recurse_direction==\"up\", path: '%s'.\n", fts_ent->fts_path);
+#endif
 				break;
 			} /* switch(recurse_direction */
 
