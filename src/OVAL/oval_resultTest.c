@@ -1338,7 +1338,9 @@ oval_result_t oval_result_test_eval(struct oval_result_test *rtest)
 		else
 			rtest->result = OVAL_RESULT_UNKNOWN;
 	}
-
+#ifndef NDEBUG
+        fprintf(stderr, "\t%s => %s\n", oval_test_get_id(oval_result_test_get_test(rtest)), oval_result_get_text(rtest->result));
+#endif
 	return rtest->result;
 }
 
