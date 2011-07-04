@@ -110,7 +110,7 @@ test_run "oval-def_local_variable.xml" test_mitre oval-def_local_variable.xml
 test_run "oval-def_object_component.xml" test_mitre oval-def_object_component.xml
 test_run "oval-def_regex_capture_function.xml" test_mitre oval-def_regex_capture_function.xml
 # failed
-#test_run "oval-def_set.xml" test_mitre oval-def_set.xml
+test_run "oval-def_set.xml" test_mitre oval-def_set.xml
 
 # failed
 #test_run "oval-def_split_function.xml" test_mitre oval-def_split_function.xml
