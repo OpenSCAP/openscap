@@ -404,6 +404,11 @@ SEXP_t *SEXP_list_push (SEXP_t *list, const SEXP_t *s_exp);
 SEXP_t *SEXP_list_pop (SEXP_t *list);
 
 /**
+ * Sort a list using `compare' as the comparison function.
+ */
+SEXP_t *SEXP_list_sort(SEXP_t *list, int(*compare)(const SEXP_t *, const SEXP_t *));
+
+/**
  * Replace the n-th element of a list.
  * This function increments element's reference count.
  * @param list the modified sexp object
@@ -453,6 +458,12 @@ SEXP_t    *SEXP_listit_prev (SEXP_it_t *it);
 SEXP_t    *SEXP_listit_length (SEXP_it_t *it);
 SEXP_t    *SEXP_listit_seek (SEXP_it_t *it, uint32_t n);
 void       SEXP_listit_free (SEXP_it_t *it);
+
+typedef struct SEXP_list_it SEXP_list_it;
+
+SEXP_list_it *SEXP_list_it_new(SEXP_t *list);
+SEXP_t *SEXP_list_it_next(SEXP_list_it *it);
+void SEXP_list_it_free(SEXP_list_it *it);
 
 #if __STDC_VERSION__ >= 199901L
 # include <common/util.h>
@@ -514,6 +525,11 @@ bool SEXP_softrefp(const SEXP_t *s_exp);
 uint32_t SEXP_refs (const SEXP_t *ref);
 
 bool SEXP_eq (const SEXP_t *a, const SEXP_t *b);
+
+/**
+ * Compare reference pointers.
+ */
+int SEXP_refcmp(const SEXP_t *a, const SEXP_t *b);
 
 bool SEXP_deepcmp(const SEXP_t *a, const SEXP_t *b);
 

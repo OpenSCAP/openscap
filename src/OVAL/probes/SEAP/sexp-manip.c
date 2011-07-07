@@ -1406,6 +1406,185 @@ SEXP_t *SEXP_list_pop (SEXP_t *list)
         return (s_ref);
 }
 
+#define SEXP_LISTIT_ARRAY_INC  32
+#define SEXP_LISTIT_ARRAY_INIT 32
+
+typedef struct SEXP_list_it{
+        struct SEXP_val_lblk *block;
+        uint16_t index;
+        uint16_t count;
+};
+
+SEXP_list_it *SEXP_list_it_new(SEXP_t *list)
+{
+        SEXP_val_t v_dsc;
+        SEXP_list_it *it;
+
+        if (list == NULL) {
+                errno = EFAULT;
+                return (NULL);
+        }
+
+        SEXP_val_dsc(&v_dsc, list->s_valp);
+
+        if (v_dsc.type != SEXP_VALTYPE_LIST) {
+                errno = EINVAL;
+                return (NULL);
+        }
+
+        it = sm_talloc(SEXP_list_it);
+        it->block = SEXP_LCASTP(v_dsc.mem)->b_addr;
+        it->index = SEXP_LCASTP(v_dsc.mem)->offset;
+        it->count = it->block->real;
+
+        return (it);
+}
+
+SEXP_t *SEXP_list_it_next(SEXP_list_it *it)
+{
+        SEXP_t *item;
+
+        if (it->block == NULL)
+                return (NULL);
+
+        item = it->block->memb + it->index;
+
+        ++it->index;
+
+        if (it->index == it->count) {
+                it->block = SEXP_VALP_LBLK(it->block->nxsz);
+                it->index = 0;
+                it->count = it->block->real;
+        }
+
+        return (item);
+}
+
+void SEXP_list_it_free(SEXP_list_it *it)
+{
+        sm_free(it);
+}
+
+SEXP_t *SEXP_list_sort(SEXP_t *list, int(*compare)(const SEXP_t *, const SEXP_t *))
+{
+        SEXP_val_t v_dsc;
+        SEXP_list_it *list_it;
+        size_t list_it_count, list_it_alloc;
+        register size_t i, j;
+
+        if (list == NULL || compare == NULL) {
+                errno = EFAULT;
+                return (NULL);
+        }
+
+        SEXP_val_dsc(&v_dsc, list->s_valp);
+
+        if (v_dsc.type != SEXP_VALTYPE_LIST) {
+                errno = EINVAL;
+                return (NULL);
+        }
+
+        /*
+         * TODO: check reference counts and make copies of list
+         * blocks if needed
+         */
+
+        /*
+         * PASS #1: Sort each block and build the iterator array
+         */
+        list_it_count = 1;
+        list_it_alloc = SEXP_LISTIT_ARRAY_INIT;
+        list_it = sm_alloc(sizeof(SEXP_list_it) * list_it_alloc);
+
+        list_it[0].block = SEXP_LCASTP(v_dsc.mem)->b_addr;
+
+        _I("Sorting blocks & building iterator array\n");
+
+        while (list_it[list_it_count - 1].block != NULL) {
+                /* initialize the rest of the iterator */
+                list_it[list_it_count - 1].index = list_it_count == 1 ? SEXP_LCASTP(v_dsc.mem)->offset : 0;
+                list_it[list_it_count - 1].count = list_it[list_it_count - 1].block->real;
+
+                /* sort */
+                qsort(list_it[list_it_count - 1].block->memb,
+                      list_it[list_it_count - 1].count, sizeof(SEXP_t),
+                      (int(*)(const void *, const void *))compare);
+
+                /* reallocate the iterator array if needed */
+                if (list_it_count == list_it_alloc) {
+                        _I("Reallocating iterator array: %z -> %z\n",
+                           list_it_alloc, list_it_alloc + SEXP_LISTIT_ARRAY_INC);
+
+                        list_it_alloc += SEXP_LISTIT_ARRAY_INC;
+                        list_it = sm_realloc(list_it, sizeof(SEXP_list_it) * list_it_alloc);
+                }
+
+                /* skip to the next block */
+                list_it[list_it_count].block = SEXP_VALP_LBLK(list_it[list_it_count - 1].block->nxsz);
+                ++list_it_count;
+        }
+
+        --list_it_count;
+        _I("Iterator count = %zu\n", list_it_count);
+
+        if (list_it_count > 0) {
+                /*
+                 * PASS #2: Mergesort all blocks
+                 */
+                for (i = 0; i < list_it_count - 1; ++i) {
+#if 0 /* XXX: trying in-place variant first */
+                        /* reallocate the iterator array if needed */
+                        if (list_it_count == list_it_alloc) {
+                                _I("Reallocating iterator array: %z -> %z\n",
+                                   list_it_alloc, list_it_alloc + SEXP_LISTIT_ARRAY_INC);
+
+                                list_it_alloc += SEXP_LISTIT_ARRAY_INC;
+                                list_it = sm_realloc(list_it, sizeof(SEXP_list_it) * list_it_alloc);
+                        }
+                        /* create a new block for auxiliary space */
+                        list_it[list_it_count].block = SEXP_rawval_lblk_new(list_it[i].block->nxsz & SEXP_LBLKS_MASK);
+                        list_it[list_it_count].index = 0;
+                        list_it[list_it_count].count = list_it[i].count;
+                        ++list_it_count;
+#endif
+                        while(list_it[i].index < list_it[i].count) {
+                                SEXP_t *min_v, tmp_v, *first_v;
+                                size_t  min_i;
+
+                                /* search for minimal s_valp value */
+                                min_v = first_v = list_it[i].block->memb + list_it[i].index;
+
+                                for (j = i + 1; j < list_it_count; ++j) {
+                                        if (compare(list_it[j].block->memb + list_it[j].index, min_v) < 0) {
+                                                min_v = list_it[j].block->memb + list_it[j].index;
+                                                min_i = j;
+                                        }
+                                        /* TODO: handle `==' case here? */
+                                }
+
+                                if (min_v != first_v) {
+                                        tmp_v  = *min_v;
+                                        *min_v = list_it[i].block->memb[list_it[i].index];
+                                        list_it[i].block->memb[list_it[i].index] = tmp_v;
+
+                                        /* XXX: sort using binary search + block move */
+                                        qsort(list_it[min_i].block->memb,
+                                              list_it[min_i].count, sizeof(SEXP_t),
+                                              (int(*)(const void *, const void *))compare);
+                                }
+
+                                ++list_it[i].index;
+                        }
+                }
+        }
+        /*
+         * Cleanup
+         */
+        sm_free(list_it);
+
+        return (list);
+}
+
 void SEXP_lstack_init (SEXP_lstack_t *stack)
 {
         stack->p_list = SEXP_list_new (NULL);
@@ -1669,6 +1848,20 @@ bool SEXP_eq (const SEXP_t *a, const SEXP_t *b)
         if (a == NULL || b == NULL)
                 return (false);
         return (a->s_valp == b->s_valp);
+}
+#include <inttypes.h>
+int SEXP_refcmp(const SEXP_t *a, const SEXP_t *b)
+{
+        _S(a);
+        _S(b);
+        _I("%"PRIuPTR" ? %"PRIuPTR"\n",
+           a->s_valp, b->s_valp);
+
+        if (a->s_valp < b->s_valp)
+                return (-1);
+        if (a->s_valp > b->s_valp)
+                return (1);
+        return (0);
 }
 
 bool SEXP_deepcmp(const SEXP_t *a, const SEXP_t *b)
