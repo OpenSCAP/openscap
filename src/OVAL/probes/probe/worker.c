@@ -64,10 +64,18 @@ void *probe_worker_runfn(void *arg)
 
                 return (NULL);
 	} else {
+                SEXP_t *items;
+
 		dI("probe thread deleted\n");
 
 		obj = SEAP_msg_get(pair->pth->msg);
 		oid = probe_obj_getattrval(obj, "id");
+                items = probe_cobj_get_items(probe_res);
+
+                if (items != NULL) {
+                        SEXP_list_sort(items, SEXP_refcmp);
+                        SEXP_free(items);
+                }
 
 		if (probe_rcache_sexp_add(pair->probe->rcache, oid, probe_res) != 0) {
 			/* TODO */
@@ -405,119 +413,122 @@ static SEXP_t *probe_prepare_filters(probe_t *probe, SEXP_t *obj)
  * @param op operation
  * @return the result of the operation
  */
-static SEXP_t *probe_set_combine(SEXP_t *cobj1, SEXP_t *cobj2, oval_setobject_operation_t op)
+static SEXP_t *probe_set_combine(SEXP_t *cobj0, SEXP_t *cobj1, oval_setobject_operation_t op)
 {
-	bool append;
-	SEXP_t *res_items, *item1, *item2, *id1, *id2;
-	SEXP_t *res_cobj, *item_lst1, *item_lst2;
-	oval_syschar_collection_flag_t flag1, flag2, res_flag;
+        SEXP_t *set0, *set1, *res_cobj;
+        register int cmp;
+        register SEXP_t *item0, *item1, *res;
+        register SEXP_list_it *sit0, *sit1;
+	oval_syschar_collection_flag_t res_flag;
 
-	_LOGCALL_;
-
-	if (cobj1 == NULL)
-		return SEXP_ref(cobj2);
-	if (cobj2 == NULL)
+	if (cobj0 == NULL)
 		return SEXP_ref(cobj1);
+	if (cobj1 == NULL)
+		return SEXP_ref(cobj0);
 
-	item_lst1 = probe_cobj_get_items(cobj1);
-	item_lst2 = probe_cobj_get_items(cobj2);
-	flag1 = probe_cobj_get_flag(cobj1);
-	flag2 = probe_cobj_get_flag(cobj2);
+        set0 = probe_cobj_get_items(cobj0);
+        set1 = probe_cobj_get_items(cobj1);
 
-	res_flag = probe_cobj_combine_flags(flag1, flag2, op);
-	res_items = SEXP_list_new(NULL);
+        /* prepare storage for results */
+        res = SEXP_list_new(NULL);
+        res_flag = probe_cobj_combine_flags(probe_cobj_get_flag(cobj0),
+                                            probe_cobj_get_flag(cobj1), op);
 
-	switch (op) {
-	case OVAL_SET_OPERATION_INTERSECTION:
-		SEXP_list_foreach(item1, item_lst1) {
-			id1 = probe_obj_getattrval(item1, "id");
-			append = false;
+        /* prepare iterators & first items */
+        sit0  = SEXP_list_it_new(set0);
+        sit1  = SEXP_list_it_new(set1);
+        item0 = SEXP_list_it_next(sit0);
+        item1 = SEXP_list_it_next(sit1);
 
-			SEXP_list_foreach(item2, item_lst2) {
-				id2 = probe_obj_getattrval(item2, "id");
+        /* perform the set operation */
+        switch(op) {
+        case OVAL_SET_OPERATION_UNION:
+                while (item0 != NULL && item1 != NULL) {
+                        cmp = SEXP_refcmp(item0, item1);
 
-				if (!SEXP_string_cmp(id1, id2)) {
-					append = true;
+                        if (cmp < 0) {
+                                SEXP_list_add(res, item0);
+                                item0 = SEXP_list_it_next(sit0);
+                        } else if (cmp > 0) {
+                                SEXP_list_add(res, item1);
+                                item1 = SEXP_list_it_next(sit1);
+                        } else {
+                                SEXP_list_add(res, item0);
+                                item0 = SEXP_list_it_next(sit0);
+                                item1 = SEXP_list_it_next(sit1);
+                        }
+                }
 
-					SEXP_free(id2);
-					SEXP_free(item2);
+                if (item0 != NULL) {
+                        do {
+                                SEXP_list_add(res, item0);
+                        } while((item0 = SEXP_list_it_next(sit0)) != NULL);
+                } else if (item1 != NULL) {
+                        do {
+                                SEXP_list_add(res, item1);
+                        } while((item1 = SEXP_list_it_next(sit1)) != NULL);
+                }
 
-					break;
-				}
+                break;
+        case OVAL_SET_OPERATION_INTERSECTION:
+                while (item0 != NULL && item1 != NULL) {
+                        cmp = SEXP_refcmp(item0, item1);
 
-				SEXP_free(id2);
-			}
+                        if (cmp < 0)
+                                item0 = SEXP_list_it_next(sit0);
+                        else if (cmp > 0)
+                                item1 = SEXP_list_it_next(sit1);
+                        else {
+                                SEXP_list_add(res, item0);
+                                item0 = SEXP_list_it_next(sit0);
+                                item1 = SEXP_list_it_next(sit1);
+                        }
+                }
 
-			if (append) {
-				SEXP_list_add(res_items, item1);
-			}
+                break;
+        case OVAL_SET_OPERATION_COMPLEMENT:
+                while (item0 != NULL && item1 != NULL) {
+                        cmp = SEXP_refcmp(item0, item1);
 
-			SEXP_free(id1);
-		}
-		break;
-	case OVAL_SET_OPERATION_UNION:
-		{
-			SEXP_t *lj;
+                        if (cmp < 0) {
+                                SEXP_list_add(res, item0);
+                                item0 = SEXP_list_it_next(sit0);
+                        } else if (cmp > 0) {
+                                item1 = SEXP_list_it_next(sit1);
+                        } else {
+                                item0 = SEXP_list_it_next(sit0);
+                                item1 = SEXP_list_it_next(sit1);
+                        }
+                }
 
-			lj = SEXP_list_join(res_items, item_lst2);
-			SEXP_free(res_items);
-			res_items = lj;
-			/* fall through */
-		}
-	case OVAL_SET_OPERATION_COMPLEMENT:
-		SEXP_list_foreach(item1, item_lst1) {
-			id1 = probe_obj_getattrval(item1, "id");
-			append = true;
+                if (item0 != NULL) {
+                        do {
+                                SEXP_list_add(res, item0);
+                        } while((item0 = SEXP_list_it_next(sit0)) != NULL);
+                }
 
-			SEXP_list_foreach(item2, item_lst2) {
-				id2 = probe_obj_getattrval(item2, "id");
+                break;
+        default:
+                dE("Unknown set operation: %d\n", op);
+                abort();
+        }
 
-				if (!SEXP_string_cmp(id1, id2)) {
-					append = false;
-
-					SEXP_free(id2);
-					SEXP_free(item2);
-
-					break;
-				}
-
-				SEXP_free(id2);
-			}
-
-			if (append) {
-				SEXP_list_add(res_items, item1);
-			}
-
-			SEXP_free(id1);
-		}
-		break;
-	default:
-		{
-			SEXP_t *r0, *r1;
-
-                        r0 = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-                                              "Unexpected set operation: %d.", op);
-			r1 = SEXP_list_new(r0, NULL);
-			res_cobj = probe_cobj_new(SYSCHAR_FLAG_ERROR, r1, NULL);
-			SEXP_vfree(item_lst1, item_lst2, res_items, r0, r1, NULL);
-			return res_cobj;
-		}
-	}
+        SEXP_list_it_free(sit0);
+        SEXP_list_it_free(sit1);
 
 	/*
 	 * If the collected information is complete but all the items are
 	 * removed, the flag is set to SYSCHAR_FLAG_DOES_NOT_EXIST
 	 */
-	if (res_flag == SYSCHAR_FLAG_COMPLETE
-	    && SEXP_list_length(res_items) == 0)
+	if (res_flag == SYSCHAR_FLAG_COMPLETE && SEXP_list_length(res) == 0)
 		res_flag = SYSCHAR_FLAG_DOES_NOT_EXIST;
 
-	res_cobj = probe_cobj_new(res_flag, NULL, res_items);
-	SEXP_vfree(item_lst1, item_lst2, res_items, NULL);
+	res_cobj = probe_cobj_new(res_flag, NULL, res);
+	SEXP_vfree(set0, set1, res, NULL);
 
 	// todo: variables
 
-	return res_cobj;
+	return (res_cobj);
 }
 
 /**
