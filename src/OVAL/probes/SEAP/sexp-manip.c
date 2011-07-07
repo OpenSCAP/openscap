@@ -1435,7 +1435,7 @@ SEXP_list_it *SEXP_list_it_new(SEXP_t *list)
         it = sm_talloc(SEXP_list_it);
         it->block = SEXP_LCASTP(v_dsc.mem)->b_addr;
         it->index = SEXP_LCASTP(v_dsc.mem)->offset;
-        it->count = it->block->real;
+        it->count = it->block != NULL ? it->block->real : 0;
 
         return (it);
 }
@@ -1454,7 +1454,7 @@ SEXP_t *SEXP_list_it_next(SEXP_list_it *it)
         if (it->index == it->count) {
                 it->block = SEXP_VALP_LBLK(it->block->nxsz);
                 it->index = 0;
-                it->count = it->block->real;
+                it->count = it->block != NULL ? it->block->real : 0;
         }
 
         return (item);
