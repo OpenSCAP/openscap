@@ -1,5 +1,6 @@
 #include <sexp.h>
 #include <string.h>
+#include <inttypes.h>
 
 int main (void)
 {
@@ -323,6 +324,135 @@ int main (void)
 
 		SEXP_vfree (l1, l2, l3, NULL);
 	}
+
+        {
+                SEXP_t *l1, *r0, *r1, *r2, *r3;
+                SEXP_t *r4, *r5, *r6, *r7;
+                SEXP_t *r8, *r9, *r10, *r11;
+                SEXP_t *r12, *r13, *r14, *r15;
+
+                r0  = SEXP_string_newf ("a");
+                r1  = SEXP_string_newf ("b");
+                r2  = SEXP_string_newf ("c");
+                r3  = SEXP_string_newf ("d");
+                r4  = SEXP_string_newf ("e");
+                r5  = SEXP_string_newf ("f");
+                r6  = SEXP_string_newf ("g");
+                r7  = SEXP_string_newf ("h");
+                r8  = SEXP_string_newf ("i");
+                r9  = SEXP_string_newf ("j");
+                r10 = SEXP_string_newf ("k");
+                r11 = SEXP_string_newf ("l");
+                r12 = SEXP_string_newf ("m");
+                r13 = SEXP_string_newf ("n");
+                r14 = SEXP_string_newf ("o");
+                r15 = SEXP_string_newf ("p");
+
+                printf("a = %"PRIuPTR"\n"
+                       "b = %"PRIuPTR"\n"
+                       "c = %"PRIuPTR"\n"
+                       "d = %"PRIuPTR"\n"
+                       "e = %"PRIuPTR"\n"
+                       "f = %"PRIuPTR"\n"
+                       "g = %"PRIuPTR"\n"
+                       "h = %"PRIuPTR"\n"
+                       "i = %"PRIuPTR"\n"
+                       "j = %"PRIuPTR"\n"
+                       "k = %"PRIuPTR"\n"
+                       "l = %"PRIuPTR"\n"
+                       "m = %"PRIuPTR"\n"
+                       "n = %"PRIuPTR"\n"
+                       "o = %"PRIuPTR"\n"
+                       "p = %"PRIuPTR"\n",
+                       r0->s_valp, r1->s_valp, r2->s_valp, r3->s_valp,
+                       r4->s_valp, r5->s_valp, r6->s_valp, r7->s_valp,
+                       r8->s_valp, r9->s_valp, r10->s_valp, r11->s_valp,
+                       r12->s_valp, r13->s_valp, r14->s_valp, r15->s_valp);
+
+                /* 16 */
+                printf("//16\n");
+                l1 = SEXP_list_new(r3, NULL);
+
+                SEXP_list_add(l1, r4);
+                SEXP_list_add(l1, r6);
+                SEXP_list_add(l1, r5);
+                SEXP_list_add(l1, r2);
+                SEXP_list_add(l1, r11);
+                SEXP_list_add(l1, r10);
+                SEXP_list_add(l1, r15);
+                SEXP_list_add(l1, r8);
+                SEXP_list_add(l1, r1);
+                SEXP_list_add(l1, r0);
+                SEXP_list_add(l1, r12);
+                SEXP_list_add(l1, r7);
+                SEXP_list_add(l1, r9);
+                SEXP_list_add(l1, r13);
+                SEXP_list_add(l1, r14);
+
+                l1 = SEXP_list_sort(l1, SEXP_refcmp);
+
+                SEXP_fprintfa(stdout, l1);
+                fputc('\n', stdout);
+                SEXP_free(l1);
+
+                /* 4 */
+                printf("//4\n");
+                l1 = SEXP_list_new(r3, r1, r0, r2, NULL);
+                l1 = SEXP_list_sort(l1, SEXP_refcmp);
+
+                SEXP_fprintfa(stdout, l1);
+                fputc('\n', stdout);
+                SEXP_free(l1);
+
+                /* 3 */
+                printf("//3\n");
+                l1 = SEXP_list_new(r3, r1, r0, NULL);
+                l1 = SEXP_list_sort(l1, SEXP_refcmp);
+
+                SEXP_fprintfa(stdout, l1);
+                fputc('\n', stdout);
+                SEXP_free(l1);
+
+                /* 2 */
+                printf("//2\n");
+                l1 = SEXP_list_new(r3, r1, NULL);
+                l1 = SEXP_list_sort(l1, SEXP_refcmp);
+
+                SEXP_fprintfa(stdout, l1);
+                fputc('\n', stdout);
+                SEXP_free(l1);
+
+                /* 1 */
+                printf("//1\n");
+                l1 = SEXP_list_new(r3, NULL);
+                l1 = SEXP_list_sort(l1, SEXP_refcmp);
+
+                SEXP_fprintfa(stdout, l1);
+                fputc('\n', stdout);
+                SEXP_free(l1);
+
+                /* 0 */
+                printf("//0\n");
+                l1 = SEXP_list_new(NULL);
+                l1 = SEXP_list_sort(l1, SEXP_refcmp);
+
+                SEXP_fprintfa(stdout, l1);
+                fputc('\n', stdout);
+                SEXP_free(l1);
+
+                /* NULL */
+                printf("//NULL\n");
+                l1 = SEXP_list_sort(NULL, SEXP_refcmp);
+
+                if (l1 != NULL) {
+                        printf("!= NULL\n");
+                        SEXP_fprintfa(stdout, l1);
+                        fputc('\n', stdout);
+                        SEXP_free(l1);
+                }
+
+		SEXP_vfree (r0, r1, r3, NULL);
+        }
 
         return (0);
 }
