@@ -172,47 +172,14 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	uint32_t path_op;
 	bool nilfilename = false;
 
-#define ENT_GET_AREF(ent, dst, attr_name, mandatory)			\
-	do {								\
-		if (((dst) = probe_ent_getattrval(ent, attr_name)) == NULL) { \
-			if (mandatory) {				\
-				_F("Attribute `%s' is missing!\n", attr_name); \
-				return (NULL);				\
-			}						\
-		}							\
-	} while(0)
-
-#define ENT_GET_STRVAL(ent, dst, dstlen, zerolen_exp)			\
-	do {							\
-		SEXP_t *___r;					\
-								\
-		if ((___r = probe_ent_getval(ent)) == NULL) {	\
-			_W("entity has no value!\n");		\
-			return (NULL);				\
-		} else {					\
-			if (!SEXP_stringp(___r)) {		\
-				_F("invalid type\n");		\
-				SEXP_free(___r);		\
-				return (NULL);			\
-			}					\
-			if (SEXP_string_length(___r) == 0) {	\
-				SEXP_free(___r);		\
-				zerolen_exp;			\
-			} else {				\
-				SEXP_string_cstr_r(___r, dst, dstlen); \
-				SEXP_free(___r);		\
-			}					\
-		}						\
-	} while (0)
-
 	assume_d((path == NULL && filename == NULL && filepath != NULL)
 		 || (path != NULL && filepath == NULL), NULL);
 	assume_d(behaviors != NULL, NULL);
 
 	if (path)
-		ENT_GET_AREF(path, r0, "operation", false);
+		PROBE_ENT_AREF(path, r0, "operation", /**/);
 	else
-		ENT_GET_AREF(filepath, r0, "operation", false);
+		PROBE_ENT_AREF(filepath, r0, "operation", /**/);
 
 	if (r0 != NULL) {
 		path_op = SEXP_number_getu(r0);
@@ -224,8 +191,10 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	_I("path_op: %u, '%s'.\n", path_op, oval_operation_get_text(path_op));
 #endif
 	if (path) { /* filepath == NULL */
-		ENT_GET_STRVAL(path, cstr_path, sizeof cstr_path, return NULL);
-		ENT_GET_STRVAL(filename, cstr_file, sizeof cstr_file, nilfilename = true);
+		PROBE_ENT_STRVAL(path, cstr_path, sizeof cstr_path,
+				 return NULL;, return NULL;);
+		PROBE_ENT_STRVAL(filename, cstr_file, sizeof cstr_file,
+				 return NULL;, nilfilename = true;);
 #if defined(OSCAP_VERBOSE_DEBUG)
 		_I("\n"
 		   "        path: '%s'.\n"
@@ -233,7 +202,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		   "nil filename: %d.\n", cstr_path, nilfilename ? "" : cstr_file, nilfilename);
 #endif
 		/* max_depth */
-		ENT_GET_AREF(behaviors, r0, "max_depth", true);
+		PROBE_ENT_AREF(behaviors, r0, "max_depth", return NULL;);
 		SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
 		max_depth = strtol(cstr_buff, NULL, 10);
 		if (errno == EINVAL || errno == ERANGE) {
@@ -247,7 +216,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		SEXP_free(r0);
 
 		/* recurse_direction */
-		ENT_GET_AREF(behaviors, r0, "recurse_direction", true);
+		PROBE_ENT_AREF(behaviors, r0, "recurse_direction", return NULL;);
 		SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
 		/* todo: use oscap_string_to_enum() */
 		if (strcmp(cstr_buff, "none") == 0) {
@@ -267,7 +236,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		SEXP_free(r0);
 
 		/* recurse */
-		ENT_GET_AREF(behaviors, r0, "recurse", false);
+		PROBE_ENT_AREF(behaviors, r0, "recurse", /**/);
 		if (r0 != NULL) {
 			SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
 			/* todo: use oscap_string_to_enum() */
@@ -293,7 +262,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		SEXP_free(r0);
 
 		/* recurse_file_system */
-		ENT_GET_AREF(behaviors, r0, "recurse_file_system", false);
+		PROBE_ENT_AREF(behaviors, r0, "recurse_file_system", /**/);
 
 		if (r0 != NULL) {
 			SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
@@ -318,7 +287,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 #endif
 		SEXP_free(r0);
 	} else { /* filepath != NULL */
-		ENT_GET_STRVAL(filepath, cstr_path, sizeof cstr_path, return NULL);
+		PROBE_ENT_STRVAL(filepath, cstr_path, sizeof cstr_path, return NULL;, return NULL;);
 	}
 
 	paths = oscap_alloc(sizeof(char *) * 2);

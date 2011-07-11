@@ -520,4 +520,53 @@ typedef struct {
 
 SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attributes[], ...);
 
+#define PROBE_ENT_AREF(ent, dst, attr_name, invalid_exp)		\
+	do {								\
+		if (((dst) = probe_ent_getattrval(ent, attr_name)) == NULL) { \
+			_F("Attribute `%s' is missing!\n", attr_name);	\
+			invalid_exp					\
+		}               					\
+	} while(0)
+
+#define PROBE_ENT_STRVAL(ent, dst, dstlen, invalid_exp, zerolen_exp)	\
+	do {							\
+		SEXP_t *___r;					\
+								\
+		if ((___r = probe_ent_getval(ent)) == NULL) {	\
+			_W("Entity has no value!\n");		\
+			invalid_exp				\
+		} else {					\
+			if (!SEXP_stringp(___r)) {		\
+				_F("Invalid type\n");		\
+				SEXP_free(___r);		\
+				invalid_exp			\
+			}					\
+			if (SEXP_string_length(___r) == 0) {	\
+				SEXP_free(___r);		\
+				zerolen_exp			\
+			} else {				\
+				SEXP_string_cstr_r(___r, dst, dstlen); \
+				SEXP_free(___r);		\
+			}					\
+		}						\
+	} while (0)
+
+#define PROBE_ENT_I32VAL(ent, dst, dstlen, invalid_exp)		\
+	do {							\
+		SEXP_t *___r;					\
+								\
+		if ((___r = probe_ent_getval(ent)) == NULL) {	\
+			_W("Entity has no value!\n");		\
+			invalid_exp				\
+		} else {					\
+			if (!SEXP_numberp(___r)) {		\
+				_F("Invalid type\n");		\
+				SEXP_free(___r);		\
+				invalid_exp			\
+			}					\
+			dst = SEXP_number_geti_32(___r);	\
+			SEXP_free(___r);                	\
+		}						\
+	} while (0)
+
 #endif				/* PROBE_API_H */
