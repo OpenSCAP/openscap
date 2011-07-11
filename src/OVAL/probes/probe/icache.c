@@ -424,8 +424,30 @@ int probe_item_collect(struct probe_ctx *ctx, SEXP_t *item)
         return (0);
 }
 
+static void probe_icache_free_node(struct rbt_i64_node *n)
+{
+        probe_citem_t *ci = (struct probe_citem_t *)n->data;
+
+        while (ci->count > 0) {
+                SEXP_free(ci->item[ci->count - 1]);
+                --ci->count;
+        }
+
+        oscap_free(ci->item);
+        return;
+}
+
 void probe_icache_free(probe_icache_t *cache)
 {
-        
+        void *ret = NULL;
+
+        pthread_cancel(cache->thid);
+        pthread_join(cache->thid, &ret);
+        pthread_mutex_destroy(&cache->queue_mutex);
+        pthread_cond_destroy(&cache->queue_notempty);
+        pthread_cond_destroy(&cache->queue_notfull);
+
+        rbt_i64_free_cb(cache->tree, &probe_icache_free_node);
+        oscap_free(cache);
         return;
 }

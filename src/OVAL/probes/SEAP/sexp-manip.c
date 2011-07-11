@@ -39,6 +39,7 @@
 #include <errno.h>
 
 #include "common/assume.h"
+#include "common/bfind.h"
 #include "public/sm_alloc.h"
 #include "_sexp-types.h"
 #include "_sexp-value.h"
@@ -1409,7 +1410,7 @@ SEXP_t *SEXP_list_pop (SEXP_t *list)
 #define SEXP_LISTIT_ARRAY_INC  32
 #define SEXP_LISTIT_ARRAY_INIT 32
 
-typedef struct SEXP_list_it{
+struct SEXP_list_it{
         struct SEXP_val_lblk *block;
         uint16_t index;
         uint16_t count;
@@ -1559,18 +1560,32 @@ SEXP_t *SEXP_list_sort(SEXP_t *list, int(*compare)(const SEXP_t *, const SEXP_t 
                                                 min_v = list_it[j].block->memb + list_it[j].index;
                                                 min_i = j;
                                         }
-                                        /* TODO: handle `==' case here? */
                                 }
 
                                 if (min_v != first_v) {
-                                        tmp_v  = *min_v;
-                                        *min_v = list_it[i].block->memb[list_it[i].index];
-                                        list_it[i].block->memb[list_it[i].index] = tmp_v;
+                                        size_t dst_i = 0;
 
-                                        /* XXX: sort using binary search + block move */
-                                        qsort(list_it[min_i].block->memb,
-                                              list_it[min_i].count, sizeof(SEXP_t),
-                                              (int(*)(const void *, const void *))compare);
+                                        /* save the old value & move the minval to it's place */
+                                        tmp_v  = list_it[i].block->memb[list_it[i].index];
+                                        list_it[i].block->memb[list_it[i].index] = *min_v;
+
+					if (list_it[min_i].count > 1) {
+						/*
+						 * find a new place for the old values in the min.
+						 * value source block
+						 */
+						(void)oscap_bfind_i(list_it[min_i].block->memb + 1,
+								    list_it[min_i].count - 1, sizeof(SEXP_t), (void *)&tmp_v,
+								    (int(*)(void *, void *))compare, &dst_i);
+
+						_I("dst_i = %zu\n", dst_i);
+
+						/* make place for the old value in the min. value source block */
+						memmove(list_it[min_i].block->memb, list_it[min_i].block->memb + 1,
+							sizeof(SEXP_t) * dst_i);
+					}
+
+                                        list_it[min_i].block->memb[dst_i] = tmp_v;
                                 }
 
                                 ++list_it[i].index;
@@ -1852,11 +1867,12 @@ bool SEXP_eq (const SEXP_t *a, const SEXP_t *b)
 #include <inttypes.h>
 int SEXP_refcmp(const SEXP_t *a, const SEXP_t *b)
 {
+#if 0
         _S(a);
         _S(b);
         _I("%"PRIuPTR" ? %"PRIuPTR"\n",
            a->s_valp, b->s_valp);
-
+#endif
         if (a->s_valp < b->s_valp)
                 return (-1);
         if (a->s_valp > b->s_valp)

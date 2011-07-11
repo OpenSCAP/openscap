@@ -57,7 +57,7 @@ void *oscap_bfind(void *ptr, size_t nmemb, size_t size, void *key, int cmpfn(voi
 	return (NULL);
 }
 
-int32_t oscap_bfind_i(void *ptr, size_t nmemb, size_t size, void *key, int cmpfn(void *, void *))
+int32_t oscap_bfind_i(void *ptr, size_t nmemb, size_t size, void *key, int cmpfn(void *, void *), size_t *save)
 {
 	size_t w, s;
 	int cmp;
@@ -79,6 +79,9 @@ int32_t oscap_bfind_i(void *ptr, size_t nmemb, size_t size, void *key, int cmpfn
 			return ((int32_t) (s + w / 2));
 		}
 	}
+
+        if (save != NULL)
+                *save = s;
 
 	return INT32_C(-1);
 }

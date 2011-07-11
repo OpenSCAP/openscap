@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors:
- *       Lukas Kuklinek <lkuklinek@redhat.com>
+ *       Daniel Kopecek <dkopecek@redhat.com>
  */
 
 #pragma once
@@ -30,6 +30,6 @@
 #include <stdint.h>
 
 void *oscap_bfind(void *ptr, size_t nmemb, size_t size, void *key, int cmpfn(void *, void *));
-int32_t oscap_bfind_i(void *ptr, size_t nmemb, size_t size, void *key, int cmpfn(void *, void *));
+int32_t oscap_bfind_i(void *ptr, size_t nmemb, size_t size, void *key, int cmpfn(void *, void *), size_t *save);
 
 #endif				/* BFIND_H */
