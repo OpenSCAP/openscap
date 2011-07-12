@@ -1550,7 +1550,7 @@ SEXP_t *SEXP_list_sort(SEXP_t *list, int(*compare)(const SEXP_t *, const SEXP_t 
 #endif
                         while(list_it[i].index < list_it[i].count) {
                                 SEXP_t *min_v, tmp_v, *first_v;
-                                size_t  min_i;
+                                size_t  min_i = i;
 
                                 /* search for minimal s_valp value */
                                 min_v = first_v = list_it[i].block->memb + list_it[i].index;

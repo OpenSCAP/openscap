@@ -551,7 +551,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
 		}						\
 	} while (0)
 
-#define PROBE_ENT_I32VAL(ent, dst, dstlen, invalid_exp)		\
+#define PROBE_ENT_I32VAL(ent, dst, invalid_exp)                 \
 	do {							\
 		SEXP_t *___r;					\
 								\
