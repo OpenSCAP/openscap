@@ -17,6 +17,8 @@ function test_mitre {
 	    return 255; # Test is not applicable.
         fi
         /usr/bin/unzip -u ValidationSupportFiles.zip -d /tmp
+        # workaround file access time issue
+        find /tmp/ValidationSupportFiles
     fi
 
     local ret_val=0;
