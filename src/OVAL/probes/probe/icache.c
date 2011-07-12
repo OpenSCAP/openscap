@@ -426,7 +426,7 @@ int probe_item_collect(struct probe_ctx *ctx, SEXP_t *item)
 
 static void probe_icache_free_node(struct rbt_i64_node *n)
 {
-        probe_citem_t *ci = (struct probe_citem_t *)n->data;
+        probe_citem_t *ci = (probe_citem_t *)n->data;
 
         while (ci->count > 0) {
                 SEXP_free(ci->item[ci->count - 1]);
