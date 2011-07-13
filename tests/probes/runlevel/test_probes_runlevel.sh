@@ -45,17 +45,17 @@ function test_probes_runlevel_A {
 		    TEST_DEF=`grep "id=\"oval:${S}-${LEVEL}-${STATE}-${SUFFIX}:tst:1\"" $DEFFILE`
 		    TEST_RES=`grep "test_id=\"oval:${S}-${LEVEL}-${STATE}-${SUFFIX}:tst:1\"" $RESFILE`
 
-		    if (echo $TEST_RES | grep -q "result=\"true\""); then
+		    if (echo $TEST_RES | grep "result=\"true\"" >/dev/null); then
 			RES="TRUE"
-		    elif (echo $TEST_RES | grep -q "result=\"false\""); then
+		    elif (echo $TEST_RES | grep "result=\"false\"" >/dev/null); then
 			RES="FALSE"
 		    else
 			RES="ERROR"
 		    fi
 		    
-		    if (echo $TEST_DEF | grep -q "comment=\"true\""); then
+		    if (echo $TEST_DEF | grep "comment=\"true\"" >/dev/null); then
 			CMT="TRUE"
-		    elif (echo $TEST_DEF | grep -q "comment=\"false\""); then
+		    elif (echo $TEST_DEF | grep "comment=\"false\"" >/dev/null); then
 			CMT="FALSE"
 		    else
 			CMT="ERROR"
@@ -105,17 +105,17 @@ function test_probes_runlevel_B {
 	    DEF_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:def:${ID}\""`
 	    DEF_RES=`cat "$RESFILE" | grep "definition_id=\"oval:1:def:${ID}\""`
 
-	    if (echo $DEF_RES | grep -q "result=\"true\""); then
+	    if (echo $DEF_RES | grep "result=\"true\"" >/dev/null); then
 		RES="TRUE"
-	    elif (echo $DEF_RES | grep -q "result=\"false\""); then
+	    elif (echo $DEF_RES | grep "result=\"false\"" >/dev/null); then
 		RES="FALSE"
 	    else
 		RES="ERROR"
 	    fi
 
-	    if (echo $DEF_DEF | grep -q "comment=\"true\""); then
+	    if (echo $DEF_DEF | grep "comment=\"true\"" >/dev/null); then
 		CMT="TRUE"
-	    elif (echo $DEF_DEF | grep -q "comment=\"false\""); then
+	    elif (echo $DEF_DEF | grep "comment=\"false\"" >/dev/null); then
 		CMT="FALSE"
 	    else
 		CMT="ERROR"
@@ -135,17 +135,17 @@ function test_probes_runlevel_B {
 	    TEST_DEF=`cat "$DEFFILE" | grep "id=\"test:${ID}\""`
 	    TEST_RES=`cat "$RESFILE" | grep "test_id=\"test:${ID}\""`
 
-	    if (echo $TEST_RES | grep -q "result=\"true\""); then
+	    if (echo $TEST_RES | grep "result=\"true\"" >/dev/null); then
 		RES="TRUE"
-	    elif (echo $TEST_RES | grep -q "result=\"false\""); then
+	    elif (echo $TEST_RES | grep "result=\"false\"" >/dev/null); then
 		RES="FALSE"
 	    else
 		RES="ERROR"
 	    fi
 
-	    if (echo $TEST_DEF | grep -q "comment=\"true\""); then
+	    if (echo $TEST_DEF | grep "comment=\"true\"" >/dev/null); then
 		CMT="TRUE"
-	    elif (echo $TEST_DEF | grep -q "comment=\"false\""); then
+	    elif (echo $TEST_DEF | grep "comment=\"false\"" >/dev/null); then
 		CMT="FALSE"
 	    else
 		CMT="ERROR"

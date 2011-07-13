@@ -38,17 +38,17 @@ function test_probes_process {
 	DEF_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:def:1\""`
 	DEF_RES=`cat "$RESFILE" | grep "definition_id=\"oval:1:def:1\""`
 
-	if (echo $DEF_RES | grep -q "result=\"true\""); then
+	if (echo $DEF_RES | grep "result=\"true\"" >/dev/null); then
 	    RES="TRUE"
-	elif (echo $DEF_RES | grep -q "result=\"false\""); then
+	elif (echo $DEF_RES | grep "result=\"false\"" >/dev/null); then
 	    RES="FALSE"
 	else
 	    RES="ERROR"
 	fi
 	
-	if (echo $DEF_DEF | grep -q "comment=\"true\""); then
+	if (echo $DEF_DEF | grep "comment=\"true\"" >/dev/null); then
 	    CMT="TRUE"
-	elif (echo $DEF_DEF | grep -q "comment=\"false\""); then
+	elif (echo $DEF_DEF | grep "comment=\"false\"" >/dev/null); then
 	    CMT="FALSE"
 	else
 	    CMT="ERROR"
@@ -65,17 +65,17 @@ function test_probes_process {
 	    TST_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:tst:${ID}\""`
 	    TST_RES=`cat "$RESFILE" | grep "test_id=\"oval:1:tst:${ID}\""`
 
-	    if (echo $TST_RES | grep -q "result=\"true\""); then
+	    if (echo $TST_RES | grep "result=\"true\"" >/dev/null); then
 		RES="TRUE"
-	    elif (echo $TST_RES | grep -q "result=\"false\""); then
+	    elif (echo $TST_RES | grep "result=\"false\"" >/dev/null); then
 		RES="FALSE"
 	    else
 		RES="ERROR"
 	    fi
 
-	    if (echo $TST_DEF | grep -q "comment=\"true\""); then
+	    if (echo $TST_DEF | grep "comment=\"true\"" >/dev/null); then
 		CMT="TRUE"
-	    elif (echo $TST_DEF | grep -q "comment=\"false\""); then
+	    elif (echo $TST_DEF | grep "comment=\"false\"" >/dev/null); then
 		CMT="FALSE"
 	    else
 		CMT="ERROR"
