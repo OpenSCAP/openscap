@@ -14,6 +14,8 @@
 
 . ${srcdir}/../../test_common.sh
 
+. runlevel_helper.sh
+
 # Test Cases.
 
 function test_probes_runlevel_A {
@@ -29,25 +31,19 @@ function test_probes_runlevel_A {
    
     [ -f $RESFILE ] && rm -f $RESFILE
 
-    eval "which chkconfig > /dev/null 2>&1"    
-    if [ ! $? -eq 0 ]; then	
-	echo -e "No chkconfig found in path!\n" 
-	return 255; # Test is not applicable.
-    fi
-
     bash ${srcdir}/test_probes_runlevel_A.xml.sh > $DEFFILE
     ../../../utils/.libs/oscap oval eval --results $RESFILE $DEFFILE
         
     if [ -f $RESFILE ]; then
 
-	for S in `chkconfig --list | awk '{print $1}'`; do
-	    for L in `chkconfig $S --list | awk '{print $2 " " $3 " " $4 " " $5 " " $6 " " $7 " " $8}'`; do
+	for S in `get_services_list`; do
+	    for L in `get_service_runlevels ${S}`; do
 		LEVEL=`echo $L | awk -F : '{print $1}'`
 		STATE=`echo $L | awk -F : '{print $2}'`
 	    
-		for SUFFIX in "T F"; do
-		    TEST_DEF=`cat "$DEFFILE" | grep "id=\"test:${S}-${LEVEL}-${STATE}-${SUFFIX}"`
-		    TEST_RES=`cat "$RESFILE" | grep "test_id=\"test:${S}-${LEVEL}-${STATE}-${SUFFIX}\""`
+		for SUFFIX in T F; do
+		    TEST_DEF=`grep "id=\"oval:${S}-${LEVEL}-${STATE}-${SUFFIX}:tst:1\"" $DEFFILE`
+		    TEST_RES=`grep "test_id=\"oval:${S}-${LEVEL}-${STATE}-${SUFFIX}:tst:1\"" $RESFILE`
 
 		    if (echo $TEST_RES | grep -q "result=\"true\""); then
 			RES="TRUE"
@@ -66,7 +62,7 @@ function test_probes_runlevel_A {
 		    fi
 		    
 		    if [ ! $RES = $CMT ]; then
-			echo "Result of test:${S}-${LEVEL}-${STATE}-${SUFFIX} should be ${CMT}!" 
+			echo "Result of oval:${S}-${LEVEL}-${STATE}-${SUFFIX}:tst:1 should be ${CMT}!" 
 			ret_val=$[$ret_val + 1]
 		    fi
 		    
@@ -95,14 +91,8 @@ function test_probes_runlevel_B {
     local DEFFILE="test_probes_runlevel_B.xml"
     local RESFILE="results_B.xml"
     
-    eval "which chkconfig > /dev/null 2>&1"    
-    if [ ! $? -eq 0 ]; then	
-	echo -e "No chkconfig found in $PATH!\n" 
-	return 255; # Test is not applicable.
-    fi
-
-    local SERVICE_A=`chkconfig --list | grep "3:on" | head -1 | awk '{print $1}'`
-    local SERVICE_B=`chkconfig --list | grep "3:off" | head -1 | awk '{print $1}'`
+    local SERVICE_A=`get_services_matching 3 on | head -1`
+    local SERVICE_B=`get_services_matching 3 off | head -1`
 
     bash ${srcdir}/test_probes_runlevel_B.xml.sh $SERVICE_A $SERVICE_B > $DEFFILE
     ../../../utils/.libs/oscap oval eval --results $RESFILE $DEFFILE

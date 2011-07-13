@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+. runlevel_helper.sh
+
 cat <<EOF
 <?xml version="1.0"?>
 <oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
@@ -14,9 +16,11 @@ cat <<EOF
   <definitions>
 EOF
 
-SERVICES_LIST=`chkconfig --list | awk '{print $1}' | sort | uniq`
+SERVICES_LIST=`get_services_list`
+echo SERVICES_LIST=$SERVICES_LIST >&2
 for S in $SERVICES_LIST; do
-    for L in `chkconfig $S --list | awk '{print $2 " " $3 " " $4 " " $5 " " $6 " " $7 " " $8}'`; do
+    echo looking at service $S >&2
+    for L in `get_service_runlevels $S`; do
 	LEVEL=`echo $L | awk -F : '{print $1}'`
 	STATE=`echo $L | awk -F : '{print $2}'`
 	cat<<EOF	
@@ -55,7 +59,7 @@ cat<<EOF
 EOF
 
 for S in $SERVICES_LIST; do
-    for L in `chkconfig $S --list | awk '{print $2 " " $3 " " $4 " " $5 " " $6 " " $7 " " $8}'`; do
+    for L in `get_service_runlevels $S`; do
 	LEVEL=`echo $L | awk -F : '{print $1}'`
 	STATE=`echo $L | awk -F : '{print $2}'`
 	
@@ -90,7 +94,7 @@ cat <<EOF
 EOF
 
 for S in $SERVICES_LIST; do
-    for L in `chkconfig $S --list | awk '{print $2 " " $3 " " $4 " " $5 " " $6 " " $7 " " $8}'`; do
+    for L in `get_service_runlevels $S`; do
 	LEVEL=`echo $L | awk -F : '{print $1}'`
 	STATE=`echo $L | awk -F : '{print $2}'`
 	echo "     <runlevel_object version=\"1\" id=\"oval:${S}-${LEVEL}-${STATE}:obj:1\" xmlns=\"http://oval.mitre.org/XMLSchema/oval-definitions-5#unix\">"
