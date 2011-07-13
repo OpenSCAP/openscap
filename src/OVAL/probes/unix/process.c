@@ -66,7 +66,6 @@
 #include "probe/entcmp.h"
 #include "alloc.h"
 
-#if defined(__linux__)
 /* Convenience structure for the results being reported */
 struct result_info {
         const char *command;
@@ -79,8 +78,6 @@ struct result_info {
         int tty;
         unsigned user_id;
 };
-
-unsigned long ticks, boot;
 
 static void report_finding(struct result_info *res, probe_ctx *ctx)
 {
@@ -107,6 +104,10 @@ static void report_finding(struct result_info *res, probe_ctx *ctx)
         SEXP_free_r(&se_pri_mem);
         SEXP_free_r(&se_uid_mem);
 }
+
+#if defined(__linux__)
+
+unsigned long ticks, boot;
 
 static void get_boot_time(void)
 {
@@ -332,6 +333,151 @@ int probe_main(probe_ctx *ctx, void *arg)
 
 	return 0;
 }
+#elif defined (__SVR4) && defined (__sun)
+
+#include <procfs.h>
+#include <unistd.h>
+
+static char *convert_time(time_t t, char *tbuf, int tb_size)
+{
+	unsigned d,h,m,s;
+
+	s = t%60;
+	t /= 60;
+	m = t%60;
+	t /=60;
+	h = t%24;
+	t /= 24;
+	d = t;
+	if (d)
+		snprintf(tbuf, tb_size, "%u-%02u:%02u:%02u", d, h, m, s);
+	else
+		snprintf(tbuf, tb_size,	"%02u:%02u:%02u", h, m, s);
+	return tbuf;
+}
+
+static int read_process(SEXP_t *cmd_ent, probe_ctx *ctx)
+{
+	int err = 1;
+	DIR *d;
+	struct dirent *ent;
+
+	d = opendir("/proc");
+	if (d == NULL)
+		return err;
+
+	psinfo_t *psinfo;
+
+	// Scan the directories
+	while (( ent = readdir(d) )) {
+		int fd, len;
+		char buf[336];
+		int pid;
+		unsigned sched_policy;
+		SEXP_t *cmd_sexp;
+
+
+		// Skip non-process dir entries
+		if(*ent->d_name<'0' || *ent->d_name>'9')
+			continue;
+		errno = 0;
+		pid = strtol(ent->d_name, NULL, 10);
+		if (errno || pid == 2) // skip err & kthreads
+			continue;
+
+		// Parse up the stat file for the proc
+		snprintf(buf, 32, "/proc/%d/psinfo", pid);
+		fd = open(buf, O_RDONLY, 0);
+		if (fd < 0)
+			continue;
+		len = read(fd, buf, sizeof buf);
+		close(fd);
+		if (len < 336)
+			continue;
+
+		// The psinfo file contains a psinfo struct; this typecast gets us the struct directly
+		psinfo = (psinfo_t *) buf;
+
+
+		err = 0; // If we get this far, no permission problems
+		_D("Have command: %s\n", psinfo->pr_fname);
+		cmd_sexp = SEXP_string_newf("%s", psinfo->pr_fname);
+		if (probe_entobj_cmp(cmd_ent, cmd_sexp) == OVAL_RESULT_TRUE) {
+			struct result_info r;
+			char tbuf[32], sbuf[32];
+			int tday,tyear;
+			time_t s_time;
+			struct tm *proc, *now;
+			const char *fmt;
+			int fixfmt_year;
+
+			r.scheduling_class = malloc(PRCLSZ);
+			strncpy(r.scheduling_class, (psinfo->pr_lwp).pr_clname, sizeof(r.scheduling_class));
+
+			// Get the start time
+			s_time = time(NULL);
+			now = localtime(&s_time);
+			tyear = now->tm_year;
+			tday = now->tm_yday;
+
+			// Get current time
+			s_time = psinfo->pr_start.tv_sec;
+			proc = localtime(&s_time);
+
+			// Select format based on how long we've been running
+			fixfmt_year = 0;
+			fmt = "%H:%M";
+			if (tday != proc->tm_yday)
+				fmt = "%b%d";
+			if (tyear != proc->tm_year)
+				fmt = "%Y";
+				fixfmt_year = 1;
+			strftime(sbuf, sizeof(sbuf), fmt, proc);
+
+			/* Fixing format from MMMYY to MMM_YY */
+			if (fixfmt_year == 1) {
+				sbuf[6] = '\0';
+				sbuf[5] = sbuf[4];
+				sbuf[4] = sbuf[3];
+				sbuf[3] = '_';
+			}
+
+			r.command = psinfo->pr_fname;
+			r.exec_time = convert_time(psinfo->pr_time.tv_sec, tbuf, sizeof(tbuf));
+			r.pid = psinfo->pr_pid;
+			r.ppid = psinfo->pr_ppid;
+			r.priority = (psinfo->pr_lwp).pr_pri;
+			r.start_time = sbuf;
+			r.tty = psinfo->pr_ttydev;
+			r.user_id = psinfo->pr_euid;
+			report_finding(&r, ctx);
+		}
+		SEXP_free(cmd_sexp);
+	}
+        closedir(d);
+
+	return err;
+}
+
+int probe_main(probe_ctx *ctx, void *arg)
+{
+	SEXP_t *ent;
+
+	ent = probe_obj_getent(probe_ctx_getobject(ctx), "command", 1);
+	if (ent == NULL) {
+		return PROBE_ENOVAL;
+	}
+
+	if (read_process(ent, ctx)) {
+		SEXP_free(ent);
+		return PROBE_EACCESS;
+	}
+
+	SEXP_free(ent);
+
+	return 0;
+}
+
 #else
 int probe_main(probe_ctx *ctx, void *arg)
 {
