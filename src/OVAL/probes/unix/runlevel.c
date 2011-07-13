@@ -58,6 +58,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <limits.h>
 
 #include <seap.h>
 #include <probe-api.h>
@@ -84,11 +85,15 @@ struct runlevel_rep {
 
 static int get_runlevel (struct runlevel_req *req, struct runlevel_rep **rep);
 
-#if defined(__linux__) || defined(__GLIBC__)
-static int get_runlevel_redhat (struct runlevel_req *req, struct runlevel_rep **rep)
+#if defined(__linux__) || defined(__GLIBC__) || (defined(__SVR4) && defined(__sun))
+static int get_runlevel_sysv (struct runlevel_req *req, struct runlevel_rep **rep)
 {
 	const char runlevel_list[] = {'0', '1', '2', '3', '4', '5', '6'};
+#if defined(__linux__) || defined(__GLIBC__)
 	const char *init_path = "/etc/rc.d/init.d";
+#elif defined(__SVR4) && defined(__sun)
+	const char *init_path = "/etc/init.d";
+#endif
 	const char *rc_path = "/etc/rc%c.d";
         char pathbuf[PATH_MAX];
         DIR *init_dir, *rc_dir;
@@ -105,7 +110,7 @@ static int get_runlevel_redhat (struct runlevel_req *req, struct runlevel_rep **
                    init_path, errno, strerror (errno));
                 return (-1);
         }
-        if (fchdir(dirfd(init_dir)) != 0) {
+	if (chdir(init_path) != 0) {
                 _D("Can't fchdir to \"%s\": errno=%d, %s.\n",
                    init_path, errno, strerror (errno));
                 closedir(init_dir);
@@ -150,7 +155,7 @@ static int get_runlevel_redhat (struct runlevel_req *req, struct runlevel_rep **
 				   rc_path, errno, strerror (errno));
 				continue;
 			}
-			if (fchdir(dirfd(rc_dir)) != 0) {
+			if (chdir(pathbuf) != 0) {
 				_D("Can't fchdir to \"%s\": errno=%d, %s.\n",
 				   rc_path, errno, strerror (errno));
 				closedir(rc_dir);
@@ -282,6 +287,12 @@ static int is_suse (void)
                 stat ("/etc/novell-release", &st) == 0);
 }
 
+static int is_solaris (void)
+{
+        struct stat st;
+        return (stat ("/etc/release", &st)   == 0);
+}
+
 static int is_common (void)
 {
         return (1);
@@ -294,12 +305,13 @@ typedef struct {
 
 const distro_tbl_t distro_tbl[] = {
         { &is_debian,   &get_runlevel_debian   },
-        { &is_redhat,   &get_runlevel_redhat   },
+        { &is_redhat,   &get_runlevel_sysv     },
         { &is_slack,    &get_runlevel_slack    },
         { &is_gentoo,   &get_runlevel_gentoo   },
         { &is_arch,     &get_runlevel_arch     },
         { &is_mandriva, &get_runlevel_mandriva },
         { &is_suse,     &get_runlevel_suse     },
+        { &is_solaris,  &get_runlevel_sysv     },
         { &is_common,   &get_runlevel_common   }
 };
 
