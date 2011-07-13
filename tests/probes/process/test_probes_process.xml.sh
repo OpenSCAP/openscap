@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 
-TMP_P=(`ps -A -o pid -o ppid -o comm | awk '$1 != 2 && $2 != 2 {print $3}' | \
+TMP_P=(`LD_PRELOAD= ps -A -o pid -o ppid -o comm | awk '$1 != 2 && $2 != 2 {print $3}' | \
         sed -n '2,30p'`)
 
 COUNTER=1
 for I in "${TMP_P[@]}"; do
-    if [ `ps -A | grep $I | wc -l` -eq 1 ]; then
+    if [ `LD_PRELOAD= ps -A -o comm | grep $I | wc -l` -eq 1 ]; then
 	PROCS[$COUNTER]="$I"
 	COUNTER=$[$COUNTER+1];
     fi
 done
 
 function getField {
-    echo `ps -A -o comm -o ${1} | grep ${2} | awk '{ print $2 }'`
+    echo `LD_PRELOAD= ps -A -o comm -o ${1} | grep ${2} | awk '{ print $2 }'`
 }
 
 cat <<EOF
