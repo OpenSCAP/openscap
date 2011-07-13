@@ -186,7 +186,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
         return (0);
 }
 #else
-int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *probe_arg, SEXP_t *filters)
+int probe_main(probe_ctx *ctx, void *probe_arg)
 {
         return(PROBE_EOPNOTSUPP);
 }
