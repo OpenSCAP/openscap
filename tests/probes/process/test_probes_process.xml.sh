@@ -92,8 +92,8 @@ while [ $I -le "${#PROCS[@]}" ]; do
       <command>`getField 'comm' ${PROCS[$I]}`</command>
       <pid datatype="int">`getField 'pid' ${PROCS[$I]}`</pid>
       <ppid datatype="int">`getField 'ppid' ${PROCS[$I]}`</ppid>
-      <scheduling_class>`getField 'cls' ${PROCS[$I]}`</scheduling_class>
-      <start_time>`getField 'start_time' ${PROCS[$I]}`</start_time>
+      <scheduling_class>`getField 'class' ${PROCS[$I]}`</scheduling_class>
+      <start_time>`getField 'stime' ${PROCS[$I]}`</start_time>
       <user_id datatype="int">`getField 'uid' ${PROCS[$I]}`</user_id>
     </process_state>
 EOF
