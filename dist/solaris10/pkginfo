@@ -1,0 +1,6 @@
+PKG="RHopenscap"
+ARCH="i386"
+NAME="OpenSCAP Security Automation Library"
+DESC="OpenSCAP is an open source C library implementation of the SCAP security automation standards published by NIST."
+VERSION="0.7.3"
+CATEGORY="library"
