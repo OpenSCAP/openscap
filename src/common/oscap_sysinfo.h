@@ -23,7 +23,7 @@ struct sysinfo {
 	char _f[20-2*sizeof(long)-sizeof(int)];
 };
 
-int sysinfo(struct sysinfo *info);
+int oscap_sysinfo(struct sysinfo *info);
 #endif
 
 #endif /* SYSINFO_H */

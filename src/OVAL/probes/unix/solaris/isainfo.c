@@ -31,9 +31,92 @@
 */
 
 #include "probe-api.h"
+#include "alloc.h"
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdio_ext.h>
+#include <errno.h>
+#include <dirent.h>
+#include <fcntl.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <regex.h>
+#include <sys/systeminfo.h>
 
+/* man sysinfo (2) recommends using 257 for this size */
+#define MAX_STR_RESULT 257
+
+struct result_info {
+	unsigned int bits;
+	char kernel_isa[MAX_STR_RESULT];
+	char application_isa[MAX_STR_RESULT];
+};
+
+
+static void report_finding(struct result_info *res, SEXP_t *probe_out)
+{
+	SEXP_t *item;
+
+	item = probe_item_create(OVAL_SOLARIS_ISAINFO, NULL,
+		"bits", OVAL_DATATYPE_INTEGER, (int64_t)res->bits,
+		"kernel_isa", OVAL_DATATYPE_STRING, res->kernel_isa,
+		"application_isa", OVAL_DATATYPE_STRING, res->application_isa,
+		NULL);
+	probe_cobj_add_item(probe_out, item);
+
+	SEXP_free(item);
+
+}
+
+int read_sysinfo(SEXP_t *probe_out) {
+	dI("In read_sysinfo for isainfo probe");
+
+	int err = 1;
+	int ret = 0;
+	char tmp_buf[MAX_STR_RESULT];
+	struct result_info result;
+
+	/* sysinfo returns -1 on failure according to man sysinfo (2) */
+
+	ret = sysinfo(SI_ARCHITECTURE_64, tmp_buf, MAX_STR_RESULT);
+
+	if (ret != -1) {
+		result.bits = 64;
+	}
+	else {
+		result.bits = 32;
+	}
+
+	if (sysinfo(SI_ARCHITECTURE_K, result.kernel_isa, MAX_STR_RESULT) == -1) {
+		return err;
+	}
+
+	if (sysinfo(SI_ARCHITECTURE_NATIVE, result.application_isa, MAX_STR_RESULT) == -1) {
+		return err;
+	}
+
+	/* if we made it this far, there were no errors in the sysinfo calls */
+	err = 0;
+	report_finding(&result, probe_out);
+	return err;
+}
 
 int probe_main(probe_ctx *ctx, void *probe_arg)
 {
-        return(PROBE_EOPNOTSUPP);
+
+	(void)filters;
+
+	int err;
+
+	if (object == NULL || probe_out == NULL) {
+		return (PROBE_EINVAL);
+	}
+
+
+	if (read_sysinfo(probe_out)) {
+		return PROBE_EACCESS;
+	}
+
+	return 0;
 }

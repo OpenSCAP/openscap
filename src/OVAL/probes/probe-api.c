@@ -41,7 +41,7 @@
 #include "_probe-api.h"
 #include "assume.h"
 #include "memusage.h"
-#include "sysinfo.h"
+#include "oscap_sysinfo.h"
 #include "oval_probe_impl.h"
 #include "probe/entcmp.h"
 
@@ -1436,7 +1436,7 @@ static int probe_cobj_memcheck(size_t item_cnt)
 		if (memusage (&mu) != 0)
 			return (-1);
 
-		if (sysinfo (&si) != 0)
+		if (oscap_sysinfo (&si) != 0)
 			return (-1);
 
 		c_ratio = (double)mu.mu_data/(double)((si.totalram * si.mem_unit) / 1024);

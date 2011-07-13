@@ -24,10 +24,15 @@
 #include <config.h>
 #endif
 
-#include "sysinfo.h"
+#include "oscap_sysinfo.h"
 
-#if defined(__FreeBSD__) || defined(__SVR4)
-int sysinfo(struct sysinfo *info)
+#if defined(__linux__)
+int oscap_sysinfo(struct sysinfo *info)
+{
+	return sysinfo(info);
+}
+#elif defined(__FreeBSD__) || defined(__SVR4)
+int oscap_sysinfo(struct sysinfo *info)
 {
 	return (-1);
 }
