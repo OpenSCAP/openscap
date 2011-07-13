@@ -115,6 +115,30 @@ probe_xinetd_SOURCES = unix/xinetd.c
 pkglibexec_PROGRAMS += probe_sysctl
 probe_sysctl_SOURCES= unix/sysctl.c
 
+if WANT_PROBES_SOLARIS
+pkglibexec_PROGRAMS += probe_isainfo
+probe_isainfo_SOURCES= unix/solaris/isainfo.c
+probe_isainfo_CFLAGS=
+probe_isainfo_LDFLAGS=
+
+pkglibexec_PROGRAMS += probe_package
+probe_package_SOURCES= unix/solaris/package.c
+probe_package_CFLAGS=
+probe_package_LDFLAGS=
+
+pkglibexec_PROGRAMS += probe_patch
+probe_patch_SOURCES= unix/solaris/patch.c
+probe_patch_CFLAGS=
+probe_patch_LDFLAGS=
+
+pkglibexec_PROGRAMS += probe_smf
+probe_smf_SOURCES= unix/solaris/smf.c
+probe_smf_CFLAGS=
+probe_smf_LDFLAGS=
+endif
+
+
+
 if WANT_PROBES_LINUX
 pkglibexec_PROGRAMS += probe_partition
 probe_partition_SOURCES= unix/linux/partition.c
