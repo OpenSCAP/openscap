@@ -1,6 +1,8 @@
 #define XINETD_TEST
 #include <../../../../src/OVAL/probes/unix/xinetd.c>
 
+#define EMPTYSTR_IF_NULL(val) val ? val : ""
+
 int main (int argc, char *argv[])
 {
 	xiconf_t         *xcfg;
@@ -50,17 +52,17 @@ int main (int argc, char *argv[])
 				"         wait: %d\n"
 				" def_disabled: %d\n"
 				"  def_enabled: %d\n",
-				xres->srv[l]->id,
-				xres->srv[l]->type,
-				xres->srv[l]->flags,
-				xres->srv[l]->socket_type,
-				xres->srv[l]->name,
-				xres->srv[l]->protocol,
-				xres->srv[l]->user,
-				xres->srv[l]->server,
-				xres->srv[l]->server_args,
-				xres->srv[l]->only_from,
-				xres->srv[l]->no_access,
+				EMPTYSTR_IF_NULL(xres->srv[l]->id),
+				EMPTYSTR_IF_NULL(xres->srv[l]->type),
+				EMPTYSTR_IF_NULL(xres->srv[l]->flags),
+				EMPTYSTR_IF_NULL(xres->srv[l]->socket_type),
+				EMPTYSTR_IF_NULL(xres->srv[l]->name),
+				EMPTYSTR_IF_NULL(xres->srv[l]->protocol),
+				EMPTYSTR_IF_NULL(xres->srv[l]->user),
+				EMPTYSTR_IF_NULL(xres->srv[l]->server),
+				EMPTYSTR_IF_NULL(xres->srv[l]->server_args),
+				EMPTYSTR_IF_NULL(xres->srv[l]->only_from),
+				EMPTYSTR_IF_NULL(xres->srv[l]->no_access),
 				xres->srv[l]->port,
 				xres->srv[l]->disable,
 				xres->srv[l]->wait,
