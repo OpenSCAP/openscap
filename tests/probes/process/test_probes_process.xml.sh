@@ -5,14 +5,16 @@ TMP_P=(`LD_PRELOAD= ps -A -o pid -o ppid -o comm | awk '$1 != 2 && $2 != 2 {prin
 
 COUNTER=1
 for I in "${TMP_P[@]}"; do
-    if [ `LD_PRELOAD= ps -A -o comm | grep $I | wc -l` -eq 1 ]; then
+    J="`echo $I | sed 's/^-/\\\\-/'`"
+    if [ `LD_PRELOAD= ps -A -o comm| grep $J | wc -l` -eq 1 ]; then
 	PROCS[$COUNTER]="$I"
 	COUNTER=$[$COUNTER+1];
     fi
 done
 
 function getField {
-    echo `LD_PRELOAD= ps -A -o comm -o ${1} | grep ${2} | awk '{ print $2 }'`
+    COMM="`echo ${2} | sed 's/^-/\\\\-/'`"
+    echo `LD_PRELOAD= ps -A -o comm -o ${1} | grep ${COMM} | awk '{ print $2 }'`
 }
 
 cat <<EOF
