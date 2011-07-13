@@ -505,6 +505,20 @@ AC_ARG_ENABLE([probes-linux],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes-linux]) ;;
      esac],)
 
+probes_solaris=no
+case "${host}" in
+    *-*-solaris*)
+        probes_solaris=yes
+    ;;
+esac
+AC_ARG_ENABLE([probes-solaris],
+     [AC_HELP_STRING([--enable-probes-solaris], [enable compilation of probes for Solaris based systems (default=autodetect)])],
+     [case "${enableval}" in
+       yes) probes_solaris=yes ;;
+       no)  probes_solaris=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes-solaris]) ;;
+     esac],)
+
 AC_ARG_ENABLE([cvss],
      [AC_HELP_STRING([--enable-cvss], [include support for CVSS (default=yes)])],
      [case "${enableval}" in
@@ -788,6 +802,14 @@ echo "  dpkginfo probe:              $have_libapt_pkg"
 echo "  inetlisteningservers probe:  $probes_linux"
 echo "  rpminfo probe:               $have_librpm"
 echo "  partition probe:             $probes_linux"
+echo ""
+
+echo "  === solaris probes ==="
+echo "  isainfo probe:               $probes_solaris"
+echo "  package probe:               $probes_solaris"
+echo "  package54 probe:             $probes_solaris"
+echo "  patch probe:                 $probes_solaris"
+echo "  smf probe:                   $probes_solaris"
 echo ""
 
 echo "  === configuration ==="
