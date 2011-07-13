@@ -6,25 +6,25 @@ function getField {
     LINE=`sed -n "${I}p" /etc/passwd`
     case $1 in 
 	'username' )
-	    echo $LINE | awk -F ':' '{print $1}'
+	    echo $LINE | awk -F':' '{print $1}'
 	    ;;
 	'password' )
-	    echo $LINE | awk -F ':' '{print $2}'
+	    echo $LINE | awk -F':' '{print $2}'
 	    ;;
 	'user_id' )
-	    echo $LINE | awk -F ':' '{print $3}'
+	    echo $LINE | awk -F':' '{print $3}'
 	    ;;
 	'group_id' )
-	    echo $LINE | awk -F ':' '{print $4}'
+	    echo $LINE | awk -F':' '{print $4}'
 	    ;;
 	'gcos' )
-	    echo $LINE | awk -F ':' '{print $5}'
+	    echo $LINE | awk -F':' '{print $5}'
 	    ;;
 	'home_dir' )
-	    echo $LINE | awk -F ':' '{print $6}'
+	    echo $LINE | awk -F':' '{print $6}'
 	    ;;
 	'login_shell' )
-	    echo $LINE | awk -F ':' '{print $7}'
+	    echo $LINE | awk -F':' '{print $7}'
 	    ;;
     esac
 }

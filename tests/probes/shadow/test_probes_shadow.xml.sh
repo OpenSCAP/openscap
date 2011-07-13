@@ -6,33 +6,33 @@ function getField {
     LINE=`sed -n "${I}p" /etc/shadow`
     case $1 in 
 	'username' )
-	    echo $LINE | awk -F ':' '{print $1}'
+	    echo $LINE | awk -F':' '{print $1}'
 	    ;;
 	'password' )
-	    echo $LINE | awk -F ':' '{print $2}'
+	    echo $LINE | awk -F':' '{print $2}'
 	    ;;
 	'chg_lst' )
-	    local CHGLST=`echo $LINE | awk -F ':' '{print $3}'`
+	    local CHGLST=`echo $LINE | awk -F':' '{print $3}'`
 	    if [ "${CHGLST}X" = "X" ]; then echo "-1"; else echo "$CHGLST"; fi
 	    ;;
 	'chg_allow' )
-	    local CHGALLOW=`echo $LINE | awk -F ':' '{print $4}'`
+	    local CHGALLOW=`echo $LINE | awk -F':' '{print $4}'`
 	    if [ "${CHGALLOW}X" = "X" ]; then echo "-1"; else echo "$CHGALLOW"; fi
 	    ;;
 	'chg_req' )
-	    local CHGREQ=`echo $LINE | awk -F ':' '{print $5}'`
+	    local CHGREQ=`echo $LINE | awk -F':' '{print $5}'`
 	    if [ "${CHGREQ}X" = "X" ]; then echo "-1"; else echo "$CHGREQ"; fi
 	    ;;
 	'exp_warn' )
-	    local EXPWARN=`echo $LINE | awk -F ':' '{print $6}'`
+	    local EXPWARN=`echo $LINE | awk -F':' '{print $6}'`
 	    if [ "${EXPWARN}X" = "X" ]; then echo "-1"; else echo "$EXPWARN"; fi
 	    ;;
 	'exp_inact' )
-	    local EXPINACT=`echo $LINE | awk -F ':' '{print $7}'`
+	    local EXPINACT=`echo $LINE | awk -F':' '{print $7}'`
 	    if [ "${EXPINACT}X" = "X" ]; then echo "-1"; else echo "$EXPINACT"; fi
 	    ;;
 	'exp_date' )
-	    local EXPDATE=`echo $LINE | awk -F ':' '{print $8}'`
+	    local EXPDATE=`echo $LINE | awk -F':' '{print $8}'`
 	    if [ "${EXPDATE}X" = "X" ]; then echo "-1"; else echo "$EXPDATE"; fi
 	    ;;
     esac

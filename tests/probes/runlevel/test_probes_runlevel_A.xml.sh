@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+PATH=$PATH:.
+
 . runlevel_helper.sh
 
 cat <<EOF
@@ -21,8 +23,9 @@ echo SERVICES_LIST=$SERVICES_LIST >&2
 for S in $SERVICES_LIST; do
     echo looking at service $S >&2
     for L in `get_service_runlevels $S`; do
-	LEVEL=`echo $L | awk -F : '{print $1}'`
-	STATE=`echo $L | awk -F : '{print $2}'`
+	LEVEL=`echo $L | awk -F: '{print $1}'`
+	STATE=`echo $L | awk -F: '{print $2}'`
+
 	cat<<EOF	
       <definition class="compliance" version="1" id="oval:${S}-${LEVEL}-${STATE}-T:def:1" > <!-- comment="true" -->
       <metadata>
@@ -60,9 +63,8 @@ EOF
 
 for S in $SERVICES_LIST; do
     for L in `get_service_runlevels $S`; do
-	LEVEL=`echo $L | awk -F : '{print $1}'`
-	STATE=`echo $L | awk -F : '{print $2}'`
-	
+	LEVEL=`echo $L | awk -F: '{print $1}'`
+	STATE=`echo $L | awk -F: '{print $2}'`
 	echo "     <runlevel_test check_existence=\"all_exist\" comment=\"true\" version=\"1\" id=\"oval:${S}-${LEVEL}-${STATE}-T:tst:1\" check=\"all\" xmlns=\"http://oval.mitre.org/XMLSchema/oval-definitions-5#unix\">"
         echo "       <object object_ref=\"oval:${S}-${LEVEL}-${STATE}:obj:1\"/>"
 
@@ -95,8 +97,8 @@ EOF
 
 for S in $SERVICES_LIST; do
     for L in `get_service_runlevels $S`; do
-	LEVEL=`echo $L | awk -F : '{print $1}'`
-	STATE=`echo $L | awk -F : '{print $2}'`
+	LEVEL=`echo $L | awk -F: '{print $1}'`
+	STATE=`echo $L | awk -F: '{print $2}'`
 	echo "     <runlevel_object version=\"1\" id=\"oval:${S}-${LEVEL}-${STATE}:obj:1\" xmlns=\"http://oval.mitre.org/XMLSchema/oval-definitions-5#unix\">"
 	echo "       <service_name>${S}</service_name>"
 	echo "       <runlevel>${LEVEL}</runlevel>"

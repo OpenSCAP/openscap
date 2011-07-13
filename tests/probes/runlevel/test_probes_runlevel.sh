@@ -38,8 +38,8 @@ function test_probes_runlevel_A {
 
 	for S in `get_services_list`; do
 	    for L in `get_service_runlevels ${S}`; do
-		LEVEL=`echo $L | awk -F : '{print $1}'`
-		STATE=`echo $L | awk -F : '{print $2}'`
+		LEVEL=`echo $L | awk -F: '{print $1}'`
+		STATE=`echo $L | awk -F: '{print $2}'`
 	    
 		for SUFFIX in T F; do
 		    TEST_DEF=`grep "id=\"oval:${S}-${LEVEL}-${STATE}-${SUFFIX}:tst:1\"" $DEFFILE`
