@@ -709,7 +709,7 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 					res = probe_obj_eval(probe, id);
 
                                         dI("Evaluation complete: res=%p\n", res);
-                                        _S(res);
+                                        _SE(res);
                                         dI("\n");
 
 					if (res == NULL) {
@@ -831,7 +831,7 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
                 for (i = 0; i < s_subset_i; ++i) {
                         if (s_subset[i] != NULL) {
                                 _I("=== s_subset[%d] ===\n", i);
-                                _S(s_subset[i]);
+                                _SE(s_subset[i]);
                                 _I("\n");
                         }
                 }
@@ -839,7 +839,7 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
                 for (i = 0; i < o_subset_i; ++i) {
                         if (o_subset[i] != NULL) {
                                 _I("=== o_subset[%d] ===\n", i);
-                                _S(o_subset[i]);
+                                _SE(o_subset[i]);
                                 _I("\n");
                         }
                 }
@@ -857,7 +857,7 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 	SEXP_free(s_subset[1]);
 
         _I("=== RESULT ===\n");
-        _S(result);
+        _SE(result);
         _I("\n");
 
 	return (result);

@@ -271,7 +271,7 @@ static SEXP_t *SEAP_packet_msg2sexp (SEAP_msg_t *msg)
         }
 
 	_I("MSG -> SEXP\n");
-	_S(sexp);
+	_SE(sexp);
 	_I("packet size: %zu\n", SEXP_sizeof(sexp));
 
         return (sexp);
@@ -453,7 +453,7 @@ static SEXP_t *SEAP_packet_cmd2sexp (SEAP_cmd_t *cmd)
                 SEXP_list_add (sexp, cmd->args);
 
 	_I("CMD -> SEXP\n");
-	_S(sexp);
+	_SE(sexp);
 	_I("packet size: %zu\n", SEXP_sizeof(sexp));
 
         SEXP_VALIDATE(sexp);
@@ -575,7 +575,7 @@ static SEXP_t *SEAP_packet_err2sexp (SEAP_err_t *err)
                 SEXP_list_add (sexp, err->data);
 
 	_I("ERR -> SEXP\n");
-	_S(sexp);
+	_SE(sexp);
 	_I("packet size: %zu\n", SEXP_sizeof(sexp));
 
         return (sexp);
@@ -907,7 +907,7 @@ eloop_exit:
 
 
 		_I("Received packet\n");
-		_S(sexp_packet);
+		_SE(sexp_packet);
 		_I("packet size: %zu\n", SEXP_sizeof(sexp_packet));
 
 		SEXP_free(sexp_packet);

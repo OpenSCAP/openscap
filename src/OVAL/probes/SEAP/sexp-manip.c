@@ -1868,8 +1868,8 @@ bool SEXP_eq (const SEXP_t *a, const SEXP_t *b)
 int SEXP_refcmp(const SEXP_t *a, const SEXP_t *b)
 {
 #if 0
-        _S(a);
-        _S(b);
+        _SE(a);
+        _SE(b);
         _I("%"PRIuPTR" ? %"PRIuPTR"\n",
            a->s_valp, b->s_valp);
 #endif

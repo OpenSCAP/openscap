@@ -42,7 +42,7 @@ extern "C" {
 #define _W(...) dW(__VA_ARGS__)
 #define _I(...) dI(__VA_ARGS__)
 #define _F(...) dE(__VA_ARGS__)
-#define _S(sexp) dO(OSCAP_DEBUGOBJ_SEXP, sexp)
+#define _SE(sexp) dO(OSCAP_DEBUGOBJ_SEXP, sexp)
 #define _LOGCALL_ while(0)
 
 #ifdef __cplusplus
