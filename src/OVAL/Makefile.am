@@ -69,7 +69,9 @@ common_oval_sources = \
 	oval_probe_session.c	\
 	_oval_probe_session.h	\
 	oval_probe_handler.c	\
-	_oval_probe_handler.h
+	_oval_probe_handler.h \
+	fts_sun.c \
+	fts_sun.h 
 
 # -I options go to CPPFLAGS, not CFLAGS
 # lets build one common for both normal and probe sources (does it mind?)

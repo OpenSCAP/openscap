@@ -42,6 +42,11 @@
 #include "debug_priv.h"
 #include "oval_fts.h"
 #include "SEAP/public/seap-debug.h"
+#if defined(__SVR4) && defined(__sun)
+#include "fts_sun.h"
+#else
+#include <fts.h>
+#endif
 
 static OVAL_FTS *OVAL_FTS_new(char **fts_paths, uint16_t fts_paths_count, int fts_options)
 {

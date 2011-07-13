@@ -62,6 +62,12 @@ CFLAGS_OPTIMIZED="-O2 -finline-functions"
 CFLAGS_DEBUGGING="-fno-inline-functions -O0 -g3"
 CFLAGS_NODEBUG="-DNDEBUG -Wno-unused-function"
 
+
+#
+# fts_open
+#
+AC_CHECK_FUNCS([fts_open])
+
 #
 # sigwaitinfo
 #
