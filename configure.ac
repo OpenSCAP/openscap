@@ -738,6 +738,7 @@ AC_CONFIG_FILES([Makefile
                  tests/probes/interface/Makefile
                  tests/probes/textfilecontent54/Makefile
                  tests/probes/environmentvariable/Makefile
+                 tests/probes/environmentvariable58/Makefile
                  tests/probes/xinetd/Makefile
                  tests/mitre/Makefile
                  utils/Makefile

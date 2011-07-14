@@ -15,7 +15,7 @@ VALGRIND_SUBDIRS = vgtest
 endif
 
 if ENV_PRESENT
-ENV_SUBDIRS = environmentvariable 
+ENV_SUBDIRS = environmentvariable environmentvariable58
 endif
 
 SUBDIRS = $(INDEPENDENT_SUBDIRS) $(UNIX_SUBDIRS) $(LINUX_SUBDIRS) $(VALGRIND_SUBDIRS) $(ENV_SUBDIRS)
