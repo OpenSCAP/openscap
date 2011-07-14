@@ -60,6 +60,7 @@ oval_subtypedsc_t __s2n_tbl[] = {
         /*  7009 */ {OVAL_INDEPENDENT_VARIABLE,             "variable"            },
 	/*  7010 */ {OVAL_INDEPENDENT_XML_FILE_CONTENT,     "xmlfilecontent"      },
 	/*  7013 */ {OVAL_INDEPENDENT_SQL57,                "sql57"               },
+        /*  7014 */ {OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE58,"environmentvariable58" },
 	/*  9001 */ {OVAL_LINUX_DPKG_INFO,                  "dpkginfo"            },
 	/*  9002 */ {OVAL_LINUX_INET_LISTENING_SERVERS,     "inetlisteningservers"},
 	/*  9003 */ {OVAL_LINUX_RPM_INFO,                   "rpminfo"             },
@@ -85,6 +86,7 @@ static int __s2n_tbl_cmp(oval_subtype_t *type, oval_subtypedsc_t *dsc)
 oval_subtypedsc_t __n2s_tbl[] = {
 	/*  9001 */ {OVAL_LINUX_DPKG_INFO,                  "dpkginfo"            },
         /*  7004 */ {OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE, "environmentvariable" },
+        /*  7014 */ {OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE58,"environmentvariable58" },
 	/*  7001 */ {OVAL_INDEPENDENT_FAMILY,               "family"              },
 	/* 13001 */ {OVAL_UNIX_FILE,                        "file"                },
         /*  7003 */ {OVAL_INDEPENDENT_FILE_HASH,            "filehash"            },

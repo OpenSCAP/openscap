@@ -45,6 +45,11 @@ probe_environmentvariable_SOURCES= independent/environmentvariable.c
 probe_environmentvariable_CFLAGS=
 probe_environmentvariable_LDFLAGS=
 
+pkglibexec_PROGRAMS += probe_environmentvariable58
+probe_environmentvariable58_SOURCES= independent/environmentvariable58.c
+probe_environmentvariable58_CFLAGS=
+probe_environmentvariable58_LDFLAGS=
+
 if HAVE_ODBX
 pkglibexec_PROGRAMS += probe_sql
 probe_sql_SOURCES= independent/sql.c
