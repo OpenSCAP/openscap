@@ -22,8 +22,8 @@ struct sysinfo {
 	unsigned int mem_unit;
 	char _f[20-2*sizeof(long)-sizeof(int)];
 };
+#endif
 
 int oscap_sysinfo(struct sysinfo *info);
-#endif
 
 #endif /* SYSINFO_H */
