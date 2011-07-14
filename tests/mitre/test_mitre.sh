@@ -47,6 +47,7 @@ test_init "test_mitre.log"
 test_run "ind-def_unknown_test.xml" test_mitre ind-def_unknown_test.xml
 test_run "ind-def_variable_test.xml" test_mitre ind-def_variable_test.xml
 test_run "ind-def_environmentvariable_test.xml" test_mitre ind-def_environmentvariable_test.xml
+test_run "ind-def_environmentvariable58_test.xml" test_mitre ind-def_environmentvariable58_test.xml
 
 test_run "ind-def_family_test.xml" test_mitre ind-def_family_test.xml
 

@@ -13,6 +13,7 @@ TESTS = test_mitre.sh
 EXTRA_DIST +=	test_mitre.sh \
 		ValidationSupportFiles.zip \
 		ind-def_environmentvariable_test.xml \
+		ind-def_environmentvariable58_test.xml \
 		ind-def_family_test.xml \
 		ind-def_filehash58_test.xml \
 		ind-def_filehash_test.xml \
