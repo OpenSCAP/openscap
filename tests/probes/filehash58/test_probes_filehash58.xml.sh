@@ -9,8 +9,8 @@ cat <<EOF
       <generator>
             <oval:product_name>filehash58</oval:product_name>
             <oval:product_version>1.0</oval:product_version>
-            <oval:schema_version>5.4</oval:schema_version>
-            <oval:timestamp>2008-03-31T00:00:00-00:00</oval:timestamp>
+            <oval:schema_version>5.8</oval:schema_version>
+            <oval:timestamp>2011-07-14T00:00:00-00:00</oval:timestamp>
       </generator>
 
   <definitions>
@@ -1006,12 +1006,28 @@ cat <<EOF
     <filehash58_object version="1" id="oval:1:obj:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <path>/tmp</path>
       <filename>test_probes_filehash58.tmp</filename>
+      <hash_type>MD5</hash_type>
+      <!-- <hash_type var_ref="oval:1:var:1" var_check="at least one"/>-->
+    </filehash58_object>
+    <filehash58_object version="1" id="oval:1:obj:11" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp</path>
+      <filename>test_probes_filehash58.tmp</filename>
+      <hash_type>SHA-1</hash_type>
+      <!-- <hash_type var_ref="oval:1:var:1" var_check="at least one"/>-->
     </filehash58_object>
 
     <!-- NON-EXISTING OBJECT -->
     <filehash58_object version="1" id="oval:1:obj:2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <path>/tmp</path>
       <filename>test_probes_filehash58.invalid</filename>
+      <hash_type>MD5</hash_type>
+      <!--<hash_type var_ref="oval:1:var:1" var_check="at least one"/>-->
+    </filehash58_object>
+    <filehash58_object version="1" id="oval:1:obj:21" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp</path>
+      <filename>test_probes_filehash58.invalid</filename>
+      <hash_type>SHA-1</hash_type>
+      <!--<hash_type var_ref="oval:1:var:1" var_check="at least one"/>-->
     </filehash58_object>
 
   </objects>
@@ -1020,29 +1036,67 @@ cat <<EOF
 
     <!-- FULLY TRUE STATE -->
     <filehash58_state version="1" id="oval:1:ste:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+
+      <filepath>/tmp/test_probes_filehash58.tmp</filepath>
       <path>/tmp</path>
       <filename>test_probes_filehash58.tmp</filename>
+      <!--
       <md5>`md5sum /tmp/test_probes_filehash58.tmp | awk '{print $1}'`</md5>
       <sha1>`sha1sum /tmp/test_probes_filehash58.tmp | awk '{print $1}'`</sha1>
+      -->
+      <!--<hash_type var_ref="oval:1:var:1" var_check="at least one"/>-->
+      <hash_type>MD5</hash_type>
+      <!--<hash var_ref="oval:1:var:2" var_check="at least one"/>-->
+      <hash>`md5sum /tmp/test_probes_filehash58.tmp | awk '{print $1}'`</hash>
     </filehash58_state>
 
     <!-- FULLY FALSE STATE -->
     <filehash58_state version="1" id="oval:1:ste:2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <path>/tmp</path>
       <filename>test_probes_filehash58.tmp</filename>
+      <!--
       <md5>incorrect-md5</md5>
       <sha1>incorrect-sha1</sha1>
+      -->
+      <!--<hash_type var_ref="oval:1:var:1" var_check="at least one"/>-->
+      <hash_type>MD5</hash_type>
+      <!--<hash var_ref="oval:1:var:3" var_check="at least one"/>-->
+      <hash>incorrect-md5</hash>
     </filehash58_state>
 
     <!-- MIXED STATE -->
     <filehash58_state version="1" id="oval:1:ste:3" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <path>/tmp</path>
       <filename>test_probes_filehash58.tmp</filename>
+      <!--
       <md5>incorrect-md5</md5>
       <sha1>`sha1sum /tmp/test_probes_filehash58.tmp | awk '{print $1}'`</sha1>
+      -->
+      <hash_type var_ref="oval:1:var:1" var_check="at least one"/>
+      <hash var_ref="oval:1:var:4" var_check="at least one"/>
     </filehash58_state>
 
   </states>
+
+  <variables>
+    <constant_variable id="oval:1:var:1" version="1" comment="several hash algorithms in one variable" datatype="string">
+      <value>MD5</value>
+      <value>SHA-1</value>
+    </constant_variable>
+    <constant_variable id="oval:1:var:2" version="1" comment="several hash algorithms in one variable" datatype="string">
+      <value>`md5sum /tmp/test_probes_filehash58.tmp | awk '{print $1}'`</value>
+      <value>`sha1sum /tmp/test_probes_filehash58.tmp | awk '{print $1}'`</value>
+    </constant_variable>
+    <constant_variable id="oval:1:var:3" version="1" comment="several hash algorithms in one variable" datatype="string">
+      <value>incorrect-md5</value>
+      <value>incorrect-sha1</value>
+    </constant_variable>
+    <constant_variable id="oval:1:var:4" version="1" comment="several hash algorithms in one variable" datatype="string">
+      <value>incorrect-md5</value>
+      <value>`sha1sum /tmp/test_probes_filehash58.tmp | awk '{print $1}'`</value>
+    </constant_variable>
+  </variables>
+
 
 </oval_definitions>
 EOF
