@@ -60,6 +60,7 @@ const oval_pdsc_t OSCAP_GSYM(default_pdsc)[] = {
         {OVAL_INDEPENDENT_SQL57,                "sql57",             "probe_sql57"},
 	{OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54", "probe_textfilecontent54"},
 	{OVAL_INDEPENDENT_TEXT_FILE_CONTENT,    "textfilecontent",   "probe_textfilecontent"},
+	{OVAL_INDEPENDENT_VARIABLE,             "variable",          "probe_variable"},
 	{OVAL_INDEPENDENT_XML_FILE_CONTENT,     "xmlfilecontent",    "probe_xmlfilecontent"},
         {OVAL_INDEPENDENT_LDAP57,               "ldap57",            "probe_ldap57"},
 	{OVAL_LINUX_DPKG_INFO,                  "dpkginfo",          "probe_dpkginfo"},

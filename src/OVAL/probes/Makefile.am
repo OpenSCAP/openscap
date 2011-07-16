@@ -30,6 +30,11 @@ probe_textfilecontent54_SOURCES= independent/textfilecontent54.c
 probe_textfilecontent54_CFLAGS= @pcre_cflags@
 probe_textfilecontent54_LDFLAGS= @pcre_libs@
 
+pkglibexec_PROGRAMS += probe_variable
+probe_variable_SOURCES= independent/variable.c
+probe_variable_CFLAGS=
+probe_variable_LDFLAGS=
+
 pkglibexec_PROGRAMS += probe_xmlfilecontent
 probe_xmlfilecontent_SOURCES= independent/xmlfilecontent.c
 probe_xmlfilecontent_CFLAGS= @libxml_cflags@
