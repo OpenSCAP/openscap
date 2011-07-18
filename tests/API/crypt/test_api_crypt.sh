@@ -41,8 +41,7 @@ function test_crapi_digest {
         #echo "$file: ret $?, 5: $sum_md5, 1: $sum_sha1"
     done
 
-    rm -f "${TEMPDIR}/{a,b,c,d,e,f}"
-    rmdir "${TEMPDIR}"
+    rm -rf "$TEMPDIR"
 
     return 0
 }
@@ -72,8 +71,7 @@ function test_crapi_mdigest {
         #echo "$file: ret $?, 5: $sum_md5, 1: $sum_sha1"
     done
 
-    rm -f "${TEMPDIR}/{a,b,c,d,e,f}"
-    rmdir "${TEMPDIR}"
+    rm -rf "$TEMPDIR"
 
     return 0
 }

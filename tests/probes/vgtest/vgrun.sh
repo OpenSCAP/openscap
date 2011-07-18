@@ -131,6 +131,8 @@ for log in "$TMPDIR"/output.*; do
     fi
 done
 
+rm -rf "$TMPDIR"
+
 for ((i=0; i < ${#LOG[@]}; i++)); do
     num_le="$(egrep -ci "(lost in loss record|still reachable in loss record)" "${LOG[$i]}")"
     num_ir="$(grep -ci  "invalid read of size"                                 "${LOG[$i]}")"

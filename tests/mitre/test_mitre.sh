@@ -8,17 +8,19 @@
 
 # Test Cases.
 
+MITRE_FILES="/tmp/ValidationSupportFiles"
+
 function test_mitre {
 
-    if [ ! -d /tmp/ValidationSupportFiles ]; then
+    if [ ! -d "$MITRE_FILES" ]; then
         eval "which unzip > /dev/null 2>&1"    
         if [ ! $? -eq 0 ]; then	
             echo -e "No unzip found in $PATH!\n" 
 	    return 255; # Test is not applicable.
         fi
-        /usr/bin/unzip -u ValidationSupportFiles.zip -d /tmp
+        /usr/bin/unzip -u ${srcdir}/ValidationSupportFiles.zip -d /tmp
         # workaround file access time issue
-        find /tmp/ValidationSupportFiles
+        find "$MITRE_FILES"
     fi
 
     local ret_val=0;
@@ -39,6 +41,11 @@ function test_mitre {
 	return "$ret_val"
     fi
 }
+
+function cleanup {
+    rm -rf "$MITRE_FILES"
+}
+
 
 # Testing.
 test_init "test_mitre.log"
@@ -141,4 +148,4 @@ test_run "unix-def_runlevel_test.xml" test_mitre unix-def_runlevel_test.xml
 test_run "unix-def_uname_test.xml" test_mitre unix-def_uname_test.xml
 test_run "unix-def_xinetd_test.xml" test_mitre unix-def_xinetd_test.xml
 
-test_exit
+test_exit cleanup

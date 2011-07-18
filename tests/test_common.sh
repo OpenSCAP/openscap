@@ -57,6 +57,12 @@ function test_run {
 function test_exit {
     echo "--------------------------------------------------"
     echo -e "See `pwd | sed 's|.*/\(tests/.*\)|\1|'`/${log}.\n"
+
+    if [ $# -eq 1 ]
+    then
+        ( exec 1>&2 ; eval "$@" )
+    fi
+
     [ $result -eq 0 ] && exit 0
     exit 1
 }

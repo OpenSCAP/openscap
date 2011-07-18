@@ -15,10 +15,10 @@
 
 # Test Cases.
 
+VGTEST_TMPDIR="/tmp/vgtest"
+
 function test_probes_vg {
     
-    VGTEST_TMPDIR="/tmp/vgtest"
-
     if [[ ! -d "$VGTEST_TMPDIR" ]]; then
 	mkdir -p "$VGTEST_TMPDIR" || exit 1
     fi
@@ -58,10 +58,14 @@ function test_probes_vg {
     return 0
 }
 
+function cleanup {
+    rm -rf "$VGTEST_TMPDIR"
+}
+
 # Testing.
 
 test_init "test_probes_vg.log"
 
 test_run "test_probes_vg" test_probes_vg
 
-test_exit
+test_exit cleanup
