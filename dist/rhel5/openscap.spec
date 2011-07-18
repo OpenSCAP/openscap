@@ -14,6 +14,7 @@ BuildRequires:  swig libxml2-devel libxslt-devel m4 perl-XML-Parser
 BuildRequires:  rpm-devel
 BuildRequires:  libgcrypt-devel
 BuildRequires:  pcre-devel
+BuildRequires:  libselinux-devel
 BuildRequires:  libacl-devel
 Requires(post):   /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
@@ -125,7 +126,30 @@ fi
 %defattr(-,root,root,-)
 %doc AUTHORS COPYING ChangeLog NEWS README
 %{_libdir}/*.so.*
-%{_libexecdir}/*
+%{_libexecdir}/openscap/probe_dnscache
+%{_libexecdir}/openscap/probe_environmentvariable
+%{_libexecdir}/openscap/probe_environmentvariable58
+%{_libexecdir}/openscap/probe_family
+%{_libexecdir}/openscap/probe_file
+%{_libexecdir}/openscap/probe_filehash
+%{_libexecdir}/openscap/probe_filehash58
+%{_libexecdir}/openscap/probe_inetlisteningservers
+%{_libexecdir}/openscap/probe_interface
+%{_libexecdir}/openscap/probe_password
+%{_libexecdir}/openscap/probe_partition
+%{_libexecdir}/openscap/probe_process
+%{_libexecdir}/openscap/probe_rpminfo
+%{_libexecdir}/openscap/probe_runlevel
+%{_libexecdir}/openscap/probe_selinuxboolean
+%{_libexecdir}/openscap/probe_shadow
+%{_libexecdir}/openscap/probe_sysctl
+%{_libexecdir}/openscap/probe_system_info
+%{_libexecdir}/openscap/probe_textfilecontent
+%{_libexecdir}/openscap/probe_textfilecontent54
+%{_libexecdir}/openscap/probe_uname
+%{_libexecdir}/openscap/probe_variable
+%{_libexecdir}/openscap/probe_xinetd
+%{_libexecdir}/openscap/probe_xmlfilecontent
 %dir %{_datadir}/openscap
 %dir %{_datadir}/openscap/schemas
 %dir %{_datadir}/openscap/xsl

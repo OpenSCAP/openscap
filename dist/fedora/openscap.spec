@@ -10,11 +10,13 @@ License:        LGPLv2+
 URL:            http://www.open-scap.org/
 Source0:        http://www.open-scap.org/download/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires:  swig libxml2-devel libxslt-devel
+BuildRequires:  swig libxml2-devel libxslt-devel perl-XML-Parser
 BuildRequires:  rpm-devel
 BuildRequires:  libgcrypt-devel
 BuildRequires:  pcre-devel
 BuildRequires:  libacl-devel
+BuildRequires:  libselinux-devel
+BuildRequires:  libblkid-devel
 Requires(post):   /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 
@@ -82,7 +84,6 @@ Summary:        SCAP probes
 Group:          Applications/System
 Requires:       %{name} = %{version}-%{release}
 BuildRequires:  openldap-devel
-BuildRequires:  libblkid-devel
 #BuildRequires:  opendbx - for sql
 
 %description    extra-probes
@@ -146,23 +147,30 @@ fi
 %defattr(-,root,root,-)
 %doc AUTHORS COPYING ChangeLog NEWS README
 %{_libdir}/*.so.*
+%{_libexecdir}/openscap/probe_dnscache
+%{_libexecdir}/openscap/probe_environmentvariable
+%{_libexecdir}/openscap/probe_environmentvariable58
 %{_libexecdir}/openscap/probe_family
 %{_libexecdir}/openscap/probe_file
 %{_libexecdir}/openscap/probe_filehash
+%{_libexecdir}/openscap/probe_filehash58
 %{_libexecdir}/openscap/probe_inetlisteningservers
 %{_libexecdir}/openscap/probe_interface
+%{_libexecdir}/openscap/probe_partition
 %{_libexecdir}/openscap/probe_password
 %{_libexecdir}/openscap/probe_process
 %{_libexecdir}/openscap/probe_rpminfo
 %{_libexecdir}/openscap/probe_runlevel
+%{_libexecdir}/openscap/probe_selinuxboolean
 %{_libexecdir}/openscap/probe_shadow
+%{_libexecdir}/openscap/probe_sysctl
 %{_libexecdir}/openscap/probe_system_info
 %{_libexecdir}/openscap/probe_textfilecontent
 %{_libexecdir}/openscap/probe_textfilecontent54
 %{_libexecdir}/openscap/probe_uname
+%{_libexecdir}/openscap/probe_variable
 %{_libexecdir}/openscap/probe_xinetd
 %{_libexecdir}/openscap/probe_xmlfilecontent
-%{_libexecdir}/openscap/probe_sysctl
 %dir %{_datadir}/openscap
 %dir %{_datadir}/openscap/schemas
 %dir %{_datadir}/openscap/xsl
@@ -203,8 +211,6 @@ fi
 
 %files extra-probes
 %{_libexecdir}/openscap/probe_ldap57
-%{_libexecdir}/openscap/probe_dnscache
-%{_libexecdir}/openscap/probe_partition
 
 %changelog
 * Tue May 24 2011 Peter Vrabec <pvrabec@redhat.com> 0.7.3-1
