@@ -494,5 +494,6 @@ test_run "test_api_seap_spb"                  ./test_api_seap_spb
 test_run "test_api_seap_list"                 ./test_api_seap_list
 test_run "test_api_seap_number_expression"    ./test_api_seap_number
 test_run "test_api_seap_string_expression"    ./test_api_seap_string
+test_run "test_api_SEXP_deepcmp"              ./test_api_SEXP_deepcmp
 
 test_exit

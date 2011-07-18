@@ -1882,7 +1882,71 @@ int SEXP_refcmp(const SEXP_t *a, const SEXP_t *b)
 
 bool SEXP_deepcmp(const SEXP_t *a, const SEXP_t *b)
 {
-	return (SEXP_ID_v2(a) == SEXP_ID_v2(b));
+        SEXP_valtype_t type;
+
+        if (a == NULL || b == NULL)
+                return (a == b);
+        if ((type = SEXP_typeof(a)) != SEXP_typeof(b))
+                return (false);
+        if (!SEXP_listp(a)) {
+                /* compare simple objects */
+                switch(type) {
+                case SEXP_VALTYPE_STRING:
+                        return (SEXP_string_cmp(a, b) == 0);
+                case SEXP_VALTYPE_NUMBER: {
+                        SEXP_numtype_t ntype_a, ntype_b;
+
+                        ntype_a = SEXP_number_type(a);
+                        ntype_b = SEXP_number_type(b);
+
+                        if (ntype_a == SEXP_NUM_DOUBLE) {
+                                if (ntype_b != SEXP_NUM_DOUBLE)
+                                        return (false);
+                                else {
+                                        double na, nb;
+
+                                        na = SEXP_number_getf(a);
+                                        nb = SEXP_number_getf(b);
+
+                                        return (na == nb);
+                                }
+                        } else {
+                                uint64_t na, nb;
+
+                                na = SEXP_number_getu_64(a);
+                                nb = SEXP_number_getu_64(b);
+
+                                return (na == nb);
+                        }
+                        /* NOTREACHED */
+                }
+                default:
+#ifndef NDEBUG
+                        abort();
+#endif
+                        return (false);
+                }
+        } else {
+                /* compare lists */
+                register SEXP_list_it *it_a, *it_b;
+		register SEXP_t *ia, *ib;
+		register bool ret = false;
+
+                it_a = SEXP_list_it_new(a);
+                it_b = SEXP_list_it_new(b);
+
+                do {
+                        ret = SEXP_deepcmp(ia = SEXP_list_it_next(it_a),
+                                           ib = SEXP_list_it_next(it_b));
+                } while(ret && ib != NULL && ia != NULL);
+
+                SEXP_list_it_free(it_a);
+                SEXP_list_it_free(it_b);
+
+                return (ret);
+        }
+        /* NOTREACHED */
+        return (false);
 }
 
 /*
