@@ -1,5 +1,5 @@
 if WANT_PROBES_INDEPENDENT
-INDEPENDENT_SUBDIRS = family filehash textfilecontent54 sysinfo
+INDEPENDENT_SUBDIRS = family filehash filehash58 textfilecontent54 sysinfo
 endif
 
 if WANT_PROBES_UNIX
