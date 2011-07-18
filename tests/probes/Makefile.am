@@ -8,6 +8,11 @@ endif
 
 if WANT_PROBES_LINUX
 LINUX_SUBDIRS = rpminfo
+
+if ENABLE_PROBE_SELINUXBOOLEAN
+LINUX_SUBDIRS += selinuxboolean
+endif
+
 endif
 
 if VALGRIND_PRESENT
