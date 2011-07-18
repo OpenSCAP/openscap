@@ -337,6 +337,20 @@ AC_CHECK_LIB(
   ]
 )
 
+#
+# selinux
+#
+have_selinux=no
+AC_CHECK_LIB(
+  [selinux],
+  [is_selinux_enabled],
+  [selinux_cflags=`pkg-config libselinux --cflags`
+   selinux_libs=`pkg-config libselinux --libs`
+   have_selinux=yes
+   AC_DEFINE([ENABLE_PROBE_SELINUXBOOLEAN], [1], [Define if SELinux is available])
+  ]
+)
+
 # Checks for header files.
 
 AC_HEADER_STDC
@@ -421,6 +435,9 @@ AC_SUBST(libacl_libs)
 
 AC_SUBST(libblkid_cflags)
 AC_SUBST(libblkid_libs)
+
+AC_SUBST(selinux_cflags)
+AC_SUBST(selinux_libs)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
@@ -712,6 +729,7 @@ AM_CONDITIONAL([WANT_BINDINGS], test "$bindings" = yes)
 AM_CONDITIONAL([ENABLE_VALGRIND_TESTS], test "$vgcheck" = yes)
 AM_CONDITIONAL([HAVE_ODBX], test "$have_odbx" = yes)
 AM_CONDITIONAL([ENABLE_PROBE_LDAP57], test "$probe_independent_ldap57" = yes)
+AM_CONDITIONAL(ENABLE_PROBE_SELINUXBOOLEAN, [test "$have_selinux" = "yes"])
 
 AC_CONFIG_FILES([Makefile
                  lib/Makefile
@@ -811,6 +829,7 @@ echo "  dpkginfo probe:              $have_libapt_pkg"
 echo "  inetlisteningservers probe:  $probes_linux"
 echo "  rpminfo probe:               $have_librpm"
 echo "  partition probe:             $probes_linux"
+echo "  selinuxboolean probe:        $have_selinux"
 echo ""
 
 echo "  === solaris probes ==="
