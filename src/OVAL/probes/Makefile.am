@@ -45,6 +45,11 @@ probe_filehash_SOURCES= independent/filehash.c
 probe_filehash_CFLAGS=
 probe_filehash_LDFLAGS= crapi/libcrapi.la
 
+pkglibexec_PROGRAMS += probe_filehash58
+probe_filehash58_SOURCES= independent/filehash58.c
+probe_filehash58_CFLAGS=
+probe_filehash58_LDFLAGS= crapi/libcrapi.la ../../common/liboscapcommon.la
+
 pkglibexec_PROGRAMS += probe_environmentvariable
 probe_environmentvariable_SOURCES= independent/environmentvariable.c
 probe_environmentvariable_CFLAGS=

@@ -156,7 +156,7 @@ fi
 
 %files devel
 %defattr(-,root,root,-)
-%doc docs/{html,examples}/
+%doc docs/examples/
 %{_includedir}/*
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/*.pc

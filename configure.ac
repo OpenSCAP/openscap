@@ -755,6 +755,7 @@ AC_CONFIG_FILES([Makefile
                  tests/probes/rpminfo/Makefile
                  tests/probes/runlevel/Makefile
                  tests/probes/filehash/Makefile
+                 tests/probes/filehash58/Makefile
                  tests/probes/password/Makefile
                  tests/probes/interface/Makefile
                  tests/probes/textfilecontent54/Makefile
@@ -785,6 +786,7 @@ echo ""
 echo "  === independent probes ==="
 echo "  family probe:                $probes_independent"
 echo "  filehash probe:              $probes_independent"
+echo "  filehash58 probe:            $probes_independent"
 echo "  textfilecontent probe:       $probes_independent"
 echo "  textfilecontent54 probe:     $probes_independent"
 echo "  sql probe                    $sql_probe_enabled"

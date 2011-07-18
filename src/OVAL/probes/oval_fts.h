@@ -31,6 +31,40 @@
 #include <pcre.h>
 #include "fsdev.h"
 
+#define ENT_GET_AREF(ent, dst, attr_name, mandatory)			\
+	do {								\
+		if (((dst) = probe_ent_getattrval(ent, attr_name)) == NULL) { \
+			if (mandatory) {				\
+				_F("Attribute `%s' is missing!\n", attr_name); \
+				return (NULL);				\
+			}						\
+		}							\
+	} while(0)
+
+#define ENT_GET_STRVAL(ent, dst, dstlen, zerolen_exp)			\
+	do {							\
+		SEXP_t *___r;					\
+								\
+		if ((___r = probe_ent_getval(ent)) == NULL) {	\
+			_W("entity has no value!\n");		\
+			return (NULL);				\
+		} else {					\
+			if (!SEXP_stringp(___r)) {		\
+				_F("invalid type\n");		\
+				SEXP_free(___r);		\
+				return (NULL);			\
+			}					\
+			if (SEXP_string_length(___r) == 0) {	\
+				SEXP_free(___r);		\
+				zerolen_exp;			\
+			} else {				\
+				SEXP_string_cstr_r(___r, dst, dstlen); \
+				SEXP_free(___r);		\
+			}					\
+		}						\
+	} while (0)
+
+
 typedef struct {
 	FTS    *ofts_fts;
 

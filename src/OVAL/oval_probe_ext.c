@@ -58,6 +58,7 @@ const oval_pdsc_t OSCAP_GSYM(default_pdsc)[] = {
 	{OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE58,"environmentvariable58", "probe_environmentvariable58"},
         {OVAL_INDEPENDENT_SQL,                  "sql",               "probe_sql"},
         {OVAL_INDEPENDENT_SQL57,                "sql57",             "probe_sql57"},
+        {OVAL_INDEPENDENT_FILE_HASH58,            "filehash58",          "probe_filehash58"},
 	{OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54", "probe_textfilecontent54"},
 	{OVAL_INDEPENDENT_TEXT_FILE_CONTENT,    "textfilecontent",   "probe_textfilecontent"},
 	{OVAL_INDEPENDENT_VARIABLE,             "variable",          "probe_variable"},
