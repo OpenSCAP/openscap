@@ -9,6 +9,7 @@
 # Test Cases.
 
 MITRE_FILES="/tmp/ValidationSupportFiles"
+EXTVARFILE="${MITRE_FILES}/External Variables/external-variables.xml"
 
 function test_mitre {
 
@@ -28,7 +29,7 @@ function test_mitre {
     local RESFILE="$DEFFILE".results
 
     [ -f $RESFILE ] && rm -f $RESFILE
-    ../../utils/.libs/oscap oval eval --results $RESFILE $DEFFILE
+    ../../utils/.libs/oscap oval eval --results $RESFILE --variables "$EXTVARFILE" $DEFFILE
     ret_val=$?
     
     if [ $ret_val -eq 0 ]; then
@@ -113,6 +114,7 @@ test_run "oval-def_criterion.xml" test_mitre oval-def_criterion.xml
 test_run "oval-def_escape_regex_function.xml" test_mitre oval-def_escape_regex_function.xml
 # failed
 #test_run "oval-def_extend_definition.xml" test_mitre oval-def_extend_definition.xml
+# the variable ids in 'oval-def_external_variable.xml' and 'ValidationSupportFiles/External Variables/external-variables.xml' don't match
 test_run "oval-def_external_variable.xml" test_mitre oval-def_external_variable.xml
 test_run "oval-def_literal_component.xml" test_mitre oval-def_literal_component.xml
 test_run "oval-def_local_variable.xml" test_mitre oval-def_local_variable.xml
