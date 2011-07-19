@@ -840,6 +840,7 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 		oval_result_t ste_ent_res;
 		struct oval_sysent_iterator *item_entities_itr;
 		struct oresults ent_ores;
+		bool found_matching_item;
 
 		if ((content = oval_state_content_iterator_next(state_contents_itr)) == NULL) {
 			oscap_dlprintf(DBG_E, "Found NULL state content.\n");
@@ -890,6 +891,7 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 		}
 
 		ores_clear(&ent_ores);
+		found_matching_item = false;
 
 		item_entities_itr = oval_sysitem_get_sysents(cur_sysitem);
 		while (oval_sysent_iterator_has_more(item_entities_itr)) {
@@ -909,6 +911,8 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 			item_entity_name = oval_sysent_get_name(item_entity);
 			if (strcmp(item_entity_name, state_entity_name))
 				continue;
+
+			found_matching_item = true;
 
 			/* copy mask attribute from state to item */
 			if (oval_entity_get_mask(state_entity))
@@ -976,6 +980,10 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 			ores_add_res(&ent_ores, ent_val_res);
 		}
 		oval_sysent_iterator_free(item_entities_itr);
+
+		if (!found_matching_item)
+			dW("Entity name '%s' from state (id: '%s') not found in item (id: '%s').\n",
+			   state_entity_name, oval_state_get_id(state), oval_sysitem_get_id(cur_sysitem));
 
 		ste_ent_res = ores_get_result_bychk(&ent_ores, entity_check);
 		ores_add_res(&ste_ores, ste_ent_res);
