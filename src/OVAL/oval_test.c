@@ -371,14 +371,22 @@ int oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *con
         }
 	oval_test_set_subtype(test, subtype);
 
-	oval_existence_t existence = oval_existence_parse(reader, "check_existence", OVAL_AT_LEAST_ONE_EXISTS);
-	oval_test_set_existence(test, existence);
-
 	oval_operator_t ste_operator = oval_operator_parse(reader, "state_operator", OVAL_OPERATOR_AND);
 	oval_test_set_state_operator(test, ste_operator);
 
 	oval_check_t check = oval_check_parse(reader, "check", OVAL_CHECK_UNKNOWN);
-	oval_test_set_check(test, check);
+	if (check == OVAL_CHECK_NONE_EXIST) {
+		dW("The 'none exist' CheckEnumeration value has been deprecated. "
+		   "Converted to check='none satisfy' and check_existence='none exist'.\n");
+		oval_test_set_check(test, OVAL_CHECK_NONE_SATISFY);
+		oval_test_set_existence(test, OVAL_NONE_EXIST);
+	} else {
+		oval_existence_t existence;
+
+		oval_test_set_check(test, check);
+		existence = oval_existence_parse(reader, "check_existence", OVAL_AT_LEAST_ONE_EXISTS);
+		oval_test_set_existence(test, existence);
+	}
 
 	comm = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
 	if (comm != NULL) {
