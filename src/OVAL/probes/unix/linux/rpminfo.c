@@ -186,6 +186,20 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
                 ret = rpmdbGetIteratorCount (match);
 
                 break;
+	case OVAL_OPERATION_NOT_EQUAL:
+                match = rpmtsInitIterator (g_rpm.rpmts, RPMDBI_PACKAGES, NULL, 0);
+                if (match == NULL) {
+                        ret = 0;
+                        goto ret;
+                }
+
+                if (rpmdbSetIteratorRE (match, RPMTAG_NAME, RPMMIRE_GLOB, "*") != 0)
+                {
+                        ret = -1;
+                        goto ret;
+                }
+
+                break;
         case OVAL_OPERATION_PATTERN_MATCH:
                 match = rpmtsInitIterator (g_rpm.rpmts, RPMDBI_PACKAGES, NULL, 0);
 
@@ -303,6 +317,7 @@ int probe_main (probe_ctx *ctx, void *arg)
 
                 switch (request_st.op) {
                 case OVAL_OPERATION_EQUALS:
+		case OVAL_OPERATION_NOT_EQUAL:
                 case OVAL_OPERATION_PATTERN_MATCH:
                         break;
                 default:
