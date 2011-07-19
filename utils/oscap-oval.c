@@ -38,6 +38,8 @@ static bool getopt_oval(int argc, char **argv, struct oscap_action *action);
 static bool getopt_oval_validate(int argc, char **argv, struct oscap_action *action);
 static int app_analyse_oval(const struct oscap_action *action);
 
+static bool valid_inputs(const struct oscap_action *action);
+
 static struct oscap_module* OVAL_SUBMODULES[];
 static struct oscap_module* OVAL_GEN_SUBMODULES[];
 
@@ -197,6 +199,14 @@ int app_collect_oval(const struct oscap_action *action)
 	struct oval_probe_session	*pb_sess   = NULL;
 	int ret;
 
+	/* validate inputs */
+	if (action->validate) {
+		if (!valid_inputs(action)) {
+			ret = OSCAP_ERROR;
+			goto cleanup;
+		}
+	}
+
 	/* import definitions */
 	def_model = oval_definition_model_import(action->f_oval);
 	if (def_model == NULL) {
@@ -312,32 +322,11 @@ int app_evaluate_oval(const struct oscap_action *action)
 	oval_agent_session_t		*sess      = NULL;
 	int ret;
 
-	/* validate OVAL Definitions & Variables*/
-	if ( action->validate ) {
-		if (!oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS, NULL,
-		    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-			if (oscap_err()) {
-				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-			}
-			else {
-				fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
-			}
+	/* validate inputs */
+	if (action->validate) {
+		if (!valid_inputs(action)) {
 			ret = OSCAP_ERROR;
 			goto cleanup;
-		}
-
-		if (action->f_variables) {
-			if (!oscap_validate_document(action->f_variables, OSCAP_DOCUMENT_OVAL_VARIABLES, NULL,
-			    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-				if (oscap_err()) {
-					fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-				}
-				else {
-					fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
-				}
-				ret = OSCAP_ERROR;
-				goto cleanup;
-			}
 		}
 	}
 
@@ -469,6 +458,14 @@ static int app_analyse_oval(const struct oscap_action *action) {
 	struct oval_result_directives	*res_direct = NULL;
  	struct oval_syschar_model	*sys_models[2];
 	int ret;
+
+	/* validate inputs */
+	if (action->validate) {
+		if (!valid_inputs(action)) {
+			ret = OSCAP_ERROR;
+			goto cleanup;
+		}
+	}
 
 	/* load defnitions */
 	def_model = oval_definition_model_import(action->f_oval);
@@ -636,6 +633,48 @@ bool getopt_oval_validate(int argc, char **argv, struct oscap_action *action)
 	if (optind >= argc)
 		return oscap_module_usage(action->module, stderr, "Definitions file needs to be specified!");
 	action->f_oval = argv[optind];
+
+	return true;
+}
+
+static bool valid_inputs(const struct oscap_action *action) {
+	/* validate OVAL Definitions & Variables & Syschars */
+	if (!oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS, NULL,
+	    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+		if (oscap_err()) {
+			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+		}
+		else {
+			fprintf(stdout, "Invalid OVAL Definition content in %s\n", action->f_oval);
+		}
+		return false;
+	}
+
+	if (action->f_variables) {
+		if (!oscap_validate_document(action->f_variables, OSCAP_DOCUMENT_OVAL_VARIABLES, NULL,
+		    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+			if (oscap_err()) {
+				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+			}
+			else {
+				fprintf(stdout, "Invalid OVAL Variables content in %s\n", action->f_variables);
+			}
+		}
+		return false;
+	}
+
+	if (action->f_syschar) {
+		if (!oscap_validate_document(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, NULL,
+		    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+			if (oscap_err()) {
+				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+			}
+			else {
+				fprintf(stdout, "Invalid OVAL System Characteristics content in %s\n", action->f_syschar);
+			}
+		}
+		return false;
+	}
 
 	return true;
 }
