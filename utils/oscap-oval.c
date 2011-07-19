@@ -318,9 +318,10 @@ int app_evaluate_oval(const struct oscap_action *action)
 		    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 			if (oscap_err()) {
 				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-				return OSCAP_FAIL;
 			}
-			fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
+			else {
+				fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
+			}
 			ret = OSCAP_ERROR;
 			goto cleanup;
 		}
@@ -330,9 +331,10 @@ int app_evaluate_oval(const struct oscap_action *action)
 			    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 				if (oscap_err()) {
 					fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-					return OSCAP_FAIL;
 				}
-				fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
+				else {
+					fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
+				}
 				ret = OSCAP_ERROR;
 				goto cleanup;
 			}
@@ -420,6 +422,18 @@ int app_evaluate_oval(const struct oscap_action *action)
 		/* export result model to XML */
 		oval_results_model_export(res_model, res_direct, action->f_results);
 		oval_result_directives_free(res_direct);
+
+		/* validate OVAL Results */
+		if (!oscap_validate_document(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, NULL,
+		    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+			if (oscap_err()) {
+				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+			}
+			fprintf(stdout, "OVAL Results are NOT exported correctly.\n");
+			ret = OSCAP_ERROR;
+			goto cleanup;
+		}
+		fprintf(stdout, "OVAL Results are exported correctly.\n");
 
 		/* generate report */
 	        if (action->f_report != NULL)
