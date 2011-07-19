@@ -185,7 +185,7 @@ static int filehash58_cb (const char *p, const char *f, const char *h, probe_ctx
 					"filepath", OVAL_DATATYPE_STRING, pbuf,
 					"path",     OVAL_DATATYPE_STRING, p,
 					"filename", OVAL_DATATYPE_STRING, f,
-					"hast_type",OVAL_DATATYPE_STRING, h,
+					"hash_type",OVAL_DATATYPE_STRING, h,
 					"hash",     OVAL_DATATYPE_STRING, hash_str,
 					NULL);
 	}
