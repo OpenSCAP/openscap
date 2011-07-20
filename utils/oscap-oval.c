@@ -89,7 +89,10 @@ static struct oscap_module OVAL_COLLECT = {
     .usage = "[options] oval-definitions.xml",
     .help =
 	"Options:\n"
-	"   --variables <file>\r\t\t\t\t - Provide external variables expected by OVAL Definitions.\n",
+	"   --id <definition-id>\r\t\t\t\t - ID of the definition we want to evaluate.\n"
+	"   --variables <file>\r\t\t\t\t - Provide external variables expected by OVAL Definitions.\n"
+	"   --syschar <file>\r\t\t\t\t - Write OVAL system characteristics into file.\n"
+	"   --skip-valid\r\t\t\t\t - Skip validation.\n",
     .opt_parser = getopt_oval,
     .func = app_collect_oval
 };
@@ -101,7 +104,8 @@ static struct oscap_module OVAL_ANALYSE = {
     .usage = "[options] oval-definitions.xml system-characteristics.xml" ,
     .help =
 	"Options:\n"
-	"   --variables <file>\r\t\t\t\t - Provide external variables expected by OVAL Definitions.\n",
+	"   --variables <file>\r\t\t\t\t - Provide external variables expected by OVAL Definitions.\n"
+	"   --skip-valid\r\t\t\t\t - Skip validation.\n",
     .opt_parser = getopt_oval,
     .func = app_analyse_oval
 };
