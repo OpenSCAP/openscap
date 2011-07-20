@@ -213,6 +213,11 @@ bool oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype,
 		return false;
 	}
 
+	if (access(xmlfile, R_OK)) {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, strerror(errno));
+		return false;
+	}
+
 	struct oscap_schema_table_entry *entry = OSCAP_SCHEMAS_TABLE;
 	for (; entry->type != 0; ++entry) if (entry->type == doctype) break; // find entry
 

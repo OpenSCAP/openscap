@@ -301,6 +301,18 @@ int app_collect_oval(const struct oscap_action *action)
 	/* output */
 	oval_syschar_model_export(sys_model, action->f_syschar);
 
+	/* validate OVAL System Characteristics */
+	if (!oscap_validate_document(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, NULL,
+	    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+		if (oscap_err()) {
+			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+		}
+		fprintf(stdout, "OVAL System Characteristics are NOT exported correctly.\n");
+		ret = OSCAP_ERROR;
+		goto cleanup;
+	}
+	fprintf(stdout, "OVAL System Characteristics are exported correctly.\n");
+
 	ret = OSCAP_OK;
 
 cleanup:
@@ -644,9 +656,7 @@ static bool valid_inputs(const struct oscap_action *action) {
 		if (oscap_err()) {
 			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
 		}
-		else {
-			fprintf(stdout, "Invalid OVAL Definition content in %s\n", action->f_oval);
-		}
+		fprintf(stdout, "Invalid OVAL Definition content in %s\n", action->f_oval);
 		return false;
 	}
 
@@ -656,22 +666,18 @@ static bool valid_inputs(const struct oscap_action *action) {
 			if (oscap_err()) {
 				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
 			}
-			else {
-				fprintf(stdout, "Invalid OVAL Variables content in %s\n", action->f_variables);
-			}
+			fprintf(stdout, "Invalid OVAL Variables content in %s\n", action->f_variables);
 			return false;
 		}
 	}
 
-	if (action->f_syschar) {
+	if (action->module == &OVAL_ANALYSE && action->f_syschar) {
 		if (!oscap_validate_document(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, NULL,
 		    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 			if (oscap_err()) {
 				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
 			}
-			else {
-				fprintf(stdout, "Invalid OVAL System Characteristics content in %s\n", action->f_syschar);
-			}
+			fprintf(stdout, "Invalid OVAL System Characteristics content in %s\n", action->f_syschar);
 			return false;
 		}
 	}
