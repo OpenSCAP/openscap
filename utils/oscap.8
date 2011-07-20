@@ -78,9 +78,9 @@ Do not validate input/output files.
 .RE
 
 .TP
-.B analyse\fR [\fIoptions\fR] definitions-file syschar-file
+.B analyse\fR [\fIoptions\fR] --results FILE definitions-file syschar-file
 .RS
-In this mode, the oscap tool does not perform data collection on the local system, but relies upon the input file, which may have been generated on another system. The output (OVAL Results) is printed to standard output.
+In this mode, the oscap tool does not perform data collection on the local system, but relies upon the input file, which may have been generated on another system. The output (OVAL Results) is printed to file specified by \fB--results\fR parameter
 .TP
 \fB\-\-variables FILE\fR
 Provide external variables expected by OVAL Definitions.

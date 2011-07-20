@@ -89,10 +89,10 @@ static struct oscap_module OVAL_COLLECT = {
     .usage = "[options] oval-definitions.xml",
     .help =
 	"Options:\n"
-	"   --id <definition-id>\r\t\t\t\t - ID of the definition we want to evaluate.\n"
+	"   --id <object>\r\t\t\t\t - Collect system characteristics ONLY for specified OVAL Object.\n"
+        "   --syschar <file>\r\t\t\t\t - Write OVAL System Characteristic into file.\n"
 	"   --variables <file>\r\t\t\t\t - Provide external variables expected by OVAL Definitions.\n"
-	"   --syschar <file>\r\t\t\t\t - Write OVAL system characteristics into file.\n"
-	"   --skip-valid\r\t\t\t\t - Skip validation.\n",
+        "   --skip-valid\r\t\t\t\t - Skip validation.\n",
     .opt_parser = getopt_oval,
     .func = app_collect_oval
 };
@@ -101,11 +101,11 @@ static struct oscap_module OVAL_ANALYSE = {
     .name = "analyse",
     .parent = &OSCAP_OVAL_MODULE,
     .summary = "Evaluate provided system characteristics file",
-    .usage = "[options] oval-definitions.xml system-characteristics.xml" ,
+    .usage = "[options] --results FILE oval-definitions.xml system-characteristics.xml" ,
     .help =
 	"Options:\n"
 	"   --variables <file>\r\t\t\t\t - Provide external variables expected by OVAL Definitions.\n"
-	"   --skip-valid\r\t\t\t\t - Skip validation.\n",
+        "   --skip-valid\r\t\t\t\t - Skip validation.\n",
     .opt_parser = getopt_oval,
     .func = app_analyse_oval
 };
@@ -533,25 +533,44 @@ static int app_analyse_oval(const struct oscap_action *action) {
 	oval_results_model_eval(res_model);
 
 	/* export results */
-	res_direct = oval_result_directives_new(res_model);
-	oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE | OVAL_RESULT_FALSE |
-					    OVAL_RESULT_UNKNOWN | OVAL_RESULT_NOT_EVALUATED |
-					    OVAL_RESULT_ERROR | OVAL_RESULT_NOT_APPLICABLE, true);
-	oval_result_directives_set_content(res_direct,
-					   OVAL_RESULT_TRUE |
-					   OVAL_RESULT_FALSE |
-					   OVAL_RESULT_UNKNOWN |
-					   OVAL_RESULT_NOT_EVALUATED |
-					   OVAL_RESULT_NOT_APPLICABLE |
-					   OVAL_RESULT_ERROR,
-					   OVAL_DIRECTIVE_CONTENT_FULL);
-	oval_results_model_export(res_model, res_direct, "/dev/stdout");
+	if (action->f_results != NULL) {
+		/* set up directives */
+		res_direct = oval_result_directives_new(res_model);
+		oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE | OVAL_RESULT_FALSE |
+						    OVAL_RESULT_UNKNOWN | OVAL_RESULT_NOT_EVALUATED |
+						    OVAL_RESULT_ERROR | OVAL_RESULT_NOT_APPLICABLE, true);
+		oval_result_directives_set_content(res_direct,
+						   OVAL_RESULT_TRUE |
+						   OVAL_RESULT_FALSE |
+						   OVAL_RESULT_UNKNOWN |
+						   OVAL_RESULT_NOT_EVALUATED |
+						   OVAL_RESULT_NOT_APPLICABLE |
+						   OVAL_RESULT_ERROR,
+						   OVAL_DIRECTIVE_CONTENT_FULL);
+
+		/* export result model to XML */
+		oval_results_model_export(res_model, res_direct, action->f_results);
+		oval_result_directives_free(res_direct);
+
+		/* validate OVAL Results */
+		if (action->validate) {
+			if (!oscap_validate_document(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, NULL,
+			    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+				if (oscap_err()) {
+					fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+				}
+				fprintf(stdout, "OVAL Results are NOT exported correctly.\n");
+				ret = OSCAP_ERROR;
+				goto cleanup;
+			}
+			fprintf(stdout, "OVAL Results are exported correctly.\n");
+		}
+	}
 
 	ret = OSCAP_OK;
 
 	/* clean up */
 cleanup:
-	if(res_direct) oval_result_directives_free(res_direct);
 	if(res_model) oval_results_model_free(res_model);
 	if(sys_model) oval_syschar_model_free(sys_model);
 	if(def_model) oval_definition_model_free(def_model);
@@ -612,14 +631,18 @@ bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 
 	/* We should have Definitions file here */
 	if (optind >= argc)
-        	return oscap_module_usage(action->module, stderr, "Definitions file needs to be specified!");
+		return oscap_module_usage(action->module, stderr, "Definitions file is not specified!");
 	action->f_oval = argv[optind];
 
-	/* We should have System Characteristics file here */
 	if (action->module == &OVAL_ANALYSE) {
+		/* We should have System Characteristics file here */
 		if ((optind+1) > argc)
-			return oscap_module_usage(action->module, stderr, "System characteristics file needs to be specified!");
+			return oscap_module_usage(action->module, stderr, "System characteristics file is not specified");
 		action->f_syschar = argv[optind + 1];
+
+		if (action->f_results == NULL) {
+			return oscap_module_usage(action->module, stderr, "OVAL Results file is not specified(--results parameter)");
+		}
 	}
 
 	return true;
