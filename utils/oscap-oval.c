@@ -304,16 +304,18 @@ int app_collect_oval(const struct oscap_action *action)
 		oval_syschar_model_export(sys_model, action->f_syschar);
 
 		/* validate OVAL System Characteristics */
-		if (!oscap_validate_document(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, NULL,
-		    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-			if (oscap_err()) {
-				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+		if (action->validate) {
+			if (!oscap_validate_document(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, NULL,
+			    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+				if (oscap_err()) {
+					fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+				}
+				fprintf(stdout, "OVAL System Characteristics are NOT exported correctly.\n");
+				ret = OSCAP_ERROR;
+				goto cleanup;
 			}
-			fprintf(stdout, "OVAL System Characteristics are NOT exported correctly.\n");
-			ret = OSCAP_ERROR;
-			goto cleanup;
+			fprintf(stdout, "OVAL System Characteristics are exported correctly.\n");
 		}
-		fprintf(stdout, "OVAL System Characteristics are exported correctly.\n");
 	}
 
 	ret = OSCAP_OK;
@@ -428,16 +430,18 @@ int app_evaluate_oval(const struct oscap_action *action)
 		oval_result_directives_free(res_direct);
 
 		/* validate OVAL Results */
-		if (!oscap_validate_document(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, NULL,
-		    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-			if (oscap_err()) {
-				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+		if (action->validate) {
+			if (!oscap_validate_document(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, NULL,
+			    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+				if (oscap_err()) {
+					fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+				}
+				fprintf(stdout, "OVAL Results are NOT exported correctly.\n");
+				ret = OSCAP_ERROR;
+				goto cleanup;
 			}
-			fprintf(stdout, "OVAL Results are NOT exported correctly.\n");
-			ret = OSCAP_ERROR;
-			goto cleanup;
+			fprintf(stdout, "OVAL Results are exported correctly.\n");
 		}
-		fprintf(stdout, "OVAL Results are exported correctly.\n");
 
 		/* generate report */
 	        if (action->f_report != NULL)
