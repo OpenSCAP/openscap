@@ -659,8 +659,8 @@ static bool valid_inputs(const struct oscap_action *action) {
 			else {
 				fprintf(stdout, "Invalid OVAL Variables content in %s\n", action->f_variables);
 			}
+			return false;
 		}
-		return false;
 	}
 
 	if (action->f_syschar) {
@@ -672,8 +672,8 @@ static bool valid_inputs(const struct oscap_action *action) {
 			else {
 				fprintf(stdout, "Invalid OVAL System Characteristics content in %s\n", action->f_syschar);
 			}
+			return false;
 		}
-		return false;
 	}
 
 	return true;
