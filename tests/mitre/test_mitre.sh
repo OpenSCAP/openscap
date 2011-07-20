@@ -101,7 +101,8 @@ test_run "linux-def_rpminfo_test.xml" test_mitre linux-def_rpminfo_test.xml
 
 test_run "oval_binary_datatype.xml" test_mitre oval_binary_datatype.xml
 test_run "linux-def_rpmverify_test.xml" test_mitre linux-def_rpmverify_test.xml
-test_run "linux-def_selinuxboolean_test.xml" test_mitre linux-def_selinuxboolean_test.xml
+# failed - upstream bug: s/entity_check/var_check/ needed
+#test_run "linux-def_selinuxboolean_test.xml" test_mitre linux-def_selinuxboolean_test.xml
 test_run "linux-def_slackwarepkginfo_test.xml" test_mitre linux-def_slackwarepkginfo_test.xml
 test_run "oval_binary_datatype.xml" test_mitre oval_binary_datatype.xml
 test_run "oval_boolean_datatype.xml" test_mitre oval_boolean_datatype.xml
@@ -119,8 +120,8 @@ test_run "oval-def_criterion.xml" test_mitre oval-def_criterion.xml
 test_run "oval-def_escape_regex_function.xml" test_mitre oval-def_escape_regex_function.xml
 # failed
 #test_run "oval-def_extend_definition.xml" test_mitre oval-def_extend_definition.xml
-# the variable ids in 'oval-def_external_variable.xml' and 'ValidationSupportFiles/External Variables/external-variables.xml' don't match
-test_run "oval-def_external_variable.xml" test_mitre oval-def_external_variable.xml
+# failed - upstream bug: the variable ids in 'oval-def_external_variable.xml' and 'ValidationSupportFiles/External Variables/external-variables.xml' don't match
+#test_run "oval-def_external_variable.xml" test_mitre oval-def_external_variable.xml
 test_run "oval-def_literal_component.xml" test_mitre oval-def_literal_component.xml
 test_run "oval-def_local_variable.xml" test_mitre oval-def_local_variable.xml
 test_run "oval-def_object_component.xml" test_mitre oval-def_object_component.xml
