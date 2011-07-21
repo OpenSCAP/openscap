@@ -81,28 +81,23 @@ struct result_info {
 
 static void report_finding(struct result_info *res, probe_ctx *ctx)
 {
-        SEXP_t *item;
-        SEXP_t se_pid_mem, se_ppid_mem, se_tty_mem, se_pri_mem, se_uid_mem;
+        SEXP_t *item, se_tty_mem;
 
         item = probe_item_create(OVAL_UNIX_PROCESS, NULL,
                                  "command",   OVAL_DATATYPE_STRING, res->command,
                                  "exec_time", OVAL_DATATYPE_STRING, res->exec_time,
-                                 "pid",       OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_pid_mem, "%u", res->pid),
-                                 "ppid",      OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_ppid_mem, "%u", res->ppid),
-                                 "priority",  OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_pri_mem, "%ld", res->priority),
+                                 "pid",       OVAL_DATATYPE_INTEGER, (int64_t)res->pid,
+                                 "ppid",      OVAL_DATATYPE_INTEGER, (int64_t)res->ppid,
+                                 "priority",  OVAL_DATATYPE_INTEGER, (int64_t)res->priority,
                                  "scheduling_class", OVAL_DATATYPE_STRING, res->scheduling_class,
                                  "start_time", OVAL_DATATYPE_STRING, res->start_time,
                                  "tty",        OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_tty_mem, "%d", res->tty),
-                                 "user_id",    OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_uid_mem, "%u", res->user_id),
+                                 "user_id",    OVAL_DATATYPE_INTEGER, (int64_t)res->user_id,
                                  NULL);
 
         probe_item_collect(ctx, item);
 
-        SEXP_free_r(&se_pid_mem);
-        SEXP_free_r(&se_ppid_mem);
         SEXP_free_r(&se_tty_mem);
-        SEXP_free_r(&se_pri_mem);
-        SEXP_free_r(&se_uid_mem);
 }
 
 #if defined(__linux__)
