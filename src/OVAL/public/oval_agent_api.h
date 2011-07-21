@@ -66,13 +66,15 @@ oval_agent_session_t * oval_agent_new_session(struct oval_definition_model * mod
 
 /**
  * Probe the system and evaluate specified definition
+ * @return 0 on success; -1 error; 1 warning
  */
 int oval_agent_eval_definition(oval_agent_session_t *, const char *);
 
 /**
  * Get the OVAL result of a definition from an agent session
+ * @return 0 on success; -1 error
  */
-oval_result_t oval_agent_get_definition_result(oval_agent_session_t *, const char *);
+int oval_agent_get_definition_result(oval_agent_session_t *, const char *, oval_result_t *);
 
 /**
  * Clean resuls that were generated in this agent session
@@ -86,6 +88,7 @@ int oval_agent_abort_session(oval_agent_session_t *ag_sess);
 
 /**
  * Probe and evaluate all definitions from the content, call the callback functions upon single evaluation
+ * @return 0 on success; -1 error; 1 warning
  */
 int oval_agent_eval_system(oval_agent_session_t * ag_sess, oscap_reporter cb, void *arg);
 

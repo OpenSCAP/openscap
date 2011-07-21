@@ -127,7 +127,7 @@ int oval_agent_eval_definition(oval_agent_session_t *ag_sess, const char *id)
 
 	/* probe */
 	ret = oval_probe_query_definition(ag_sess->psess, id);
-	if (ret)
+	if (ret == -1)
 		return ret;
 
 	/* take the first system */
@@ -140,7 +140,7 @@ int oval_agent_eval_definition(oval_agent_session_t *ag_sess, const char *id)
 	return ret;
 }
 
-oval_result_t oval_agent_get_definition_result(oval_agent_session_t *ag_sess, const char *id)
+int oval_agent_get_definition_result(oval_agent_session_t *ag_sess, const char *id, oval_result_t * result)
 {
 	struct oval_results_model *rmodel;
 	struct oval_result_system_iterator *rsystem_it;
@@ -151,12 +151,23 @@ oval_result_t oval_agent_get_definition_result(oval_agent_session_t *ag_sess, co
 	rsystem_it = oval_results_model_get_systems(rmodel);
 	if (!oval_result_system_iterator_has_more(rsystem_it)) {
 		oval_result_system_iterator_free(rsystem_it);
-		return OVAL_RESULT_UNKNOWN;
+                dE("No results system in agent sessin.");
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Missing result system.");
+                return -1;
 	}
+
 	rsystem = oval_result_system_iterator_next(rsystem_it);
 	oval_result_system_iterator_free(rsystem_it);
 	rdef = oval_result_system_get_definition(rsystem, id);
-	return (rdef != NULL) ? oval_result_definition_get_result(rdef) : OVAL_RESULT_UNKNOWN;
+        if (rdef == NULL) {
+                dE("No definition with ID: %s in result model.", id);
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Unknown definition.");
+                return -1;
+        }
+
+	*result =  oval_result_definition_get_result(rdef);
+
+	return 0;
 }
 
 int oval_agent_reset_session(oval_agent_session_t * ag_sess) {
@@ -198,30 +209,37 @@ int oval_agent_eval_system(oval_agent_session_t * ag_sess, oscap_reporter cb, vo
 
 		/* probe and eval */
 		ret = oval_agent_eval_definition(ag_sess, id);
+		if (ret==-1) {
+			return -1;
+		}
 
 		/* callback */
                 if (cb != NULL) {
-                    struct oscap_reporter_message * msg = oscap_reporter_message_new_fmt(
-                            OSCAP_REPORTER_FAMILY_OVAL, /* FAMILY */
-                            0,                           /* CODE */
-			    "%s",
-			    oval_definition_get_description(oval_def));
-                    oscap_reporter_message_set_user1str(msg, id);
-		    result = (ret == 0) ? oval_agent_get_definition_result(ag_sess, id) : OVAL_RESULT_UNKNOWN;
-                    oscap_reporter_message_set_user2num(msg, result);
-                    oscap_reporter_message_set_user3str(msg, oval_definition_get_title(oval_def));
-                    ret = oscap_reporter_report(cb, msg, arg);
-                    if ( ret!=0 ) {
-	                    oval_definition_iterator_free(oval_def_it);
-                            return ret;
-                    }
-                }
+			struct oscap_reporter_message * msg = oscap_reporter_message_new_fmt(
+				OSCAP_REPORTER_FAMILY_OVAL, /* FAMILY */
+				0,                           /* CODE */
+				"%s",
+				oval_definition_get_description(oval_def));
+			oscap_reporter_message_set_user1str(msg, id);
+			ret = oval_agent_get_definition_result(ag_sess, id, &result);
+			if (ret==-1)
+				goto cleanup;
 
+			oscap_reporter_message_set_user2num(msg, result);
+			oscap_reporter_message_set_user3str(msg, oval_definition_get_title(oval_def));
+			ret = oscap_reporter_report(cb, msg, arg);
+			if (ret!=0)
+				goto cleanup;
+		}
+
+		/* probe evaluation terminated by signal */
 		if (ret == -2) {
 			ret = 1;
 			break;
 		}
 	}
+
+cleanup:
 	oval_definition_iterator_free(oval_def_it);
 	return ret;
 }
@@ -380,7 +398,7 @@ xccdf_test_result_type_t oval_agent_eval_rule(struct xccdf_policy *policy, const
                     return XCCDF_RESULT_NOT_CHECKED;
             /* Evaluate OVAL definition */
 	    oval_agent_eval_definition(sess, id);
-	    result = oval_agent_get_definition_result(sess, id);
+	    oval_agent_get_definition_result(sess, id, &result);
         } else {
             int res = 0;
             oval_agent_eval_system(sess, oval_agent_callback, (void *) &res);

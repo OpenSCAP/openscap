@@ -66,7 +66,7 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
  * Probe objects required for the evalatuation of the specified definition and update the system characteristics model associated with the session
  * @param sess probe session
  * @param id definition id
- * @return 0 on success
+ * @return 0 on success; -1 on error; 1 warning
  */
 int oval_probe_query_definition(oval_probe_session_t *sess, const char *id) __attribute__ ((nonnull(1, 2)));
 

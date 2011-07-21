@@ -396,11 +396,11 @@ int app_evaluate_oval(const struct oscap_action *action)
 
 	/* Evaluation */
 	if (action->id)
-		ret = oval_agent_eval_definition(sess, action->id);
+		oval_agent_eval_definition(sess, action->id);
 	else
-		ret = oval_agent_eval_system(sess, app_oval_callback, usr);
+		oval_agent_eval_system(sess, app_oval_callback, usr);
 
-	if (ret && (oscap_err())) {
+	if (oscap_err()) {
 		fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
 		ret = OSCAP_ERROR;
 		goto cleanup;
@@ -456,7 +456,14 @@ int app_evaluate_oval(const struct oscap_action *action)
 	if (action->id) {
 		oval_result_t res;
 
-		res = oval_agent_get_definition_result(sess, action->id);
+		if (oval_agent_get_definition_result(sess, action->id, &res)==-1) {
+			if (oscap_err()) {
+				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+			}
+			ret=OSCAP_ERROR;
+			goto cleanup;
+		}
+
 		if (VERBOSE >= 0)
 			printf("Definition %s: %s\n", action->id, oval_result_get_text(res));
 		ret = (res == OVAL_RESULT_FALSE) ? OSCAP_FAIL : OSCAP_OK;

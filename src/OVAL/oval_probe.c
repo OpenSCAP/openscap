@@ -450,7 +450,7 @@ int oval_probe_query_definition(oval_probe_session_t *sess, const char *id) {
 }
 
 /**
- * @returns 0 on success
+ * @returns 0 on success; -1 on error; 1 on warning
  */
 static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_criteria_node *cnode) {
 	int ret;
@@ -471,7 +471,7 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
 			return 0;
 		/* probe object */
 		ret = oval_probe_query_object(sess, object, 0, NULL);
-		if (ret != 0)
+		if (ret == -1)
 			return ret;
 		/* probe objects referenced like this: test->state->variable->object */
 		ste_itr = oval_test_get_states(test);
@@ -486,7 +486,7 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
 					struct oval_variable *var = oval_entity_get_variable(entity);
 
 					ret = oval_probe_query_variable(sess, var);
-					if (ret != 0) {
+					if (ret == -1) {
 						oval_state_content_iterator_free(contents);
 						oval_state_iterator_free(ste_itr);
 						return ret;
