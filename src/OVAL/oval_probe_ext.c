@@ -899,10 +899,10 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                         probe_dsc = oval_pdsc_lookup(pext->pdsc, pext->pdsc_cnt, oval_object_get_subtype(obj));
 
 			if (probe_dsc == NULL) {
-				snprintf (errmsg, sizeof errmsg, "subtype %u not supported", oval_object_get_subtype(obj));
-				oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBENOTSUPP, errmsg);
+				oval_syschar_add_new_message(sys, "OVAL object not supported", OVAL_MESSAGE_LEVEL_WARNING);
+				oval_syschar_set_flag(sys, SYSCHAR_FLAG_NOT_COLLECTED);
 
-				return (-1);
+				return (1);
 			}
 
                         probe_urilen = snprintf(probe_uri, sizeof probe_uri,
@@ -918,11 +918,10 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                         oscap_dlprintf(DBG_I, "URI: %s.\n", probe_uri);
 
                         if (oval_pdtbl_add(pext->pdtbl, oval_object_get_subtype(obj), -1, probe_uri) != 0) {
+				oval_syschar_add_new_message(sys, "OVAL object not supported", OVAL_MESSAGE_LEVEL_WARNING);
+				oval_syschar_set_flag(sys, SYSCHAR_FLAG_NOT_COLLECTED);
 
-                                snprintf (errmsg, sizeof errmsg, "%s probe not supported", probe_dsc->name);
-                                oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBENOTSUPP, errmsg);
-
-                                return (-1);
+                                return (1);
 			}
 
 			pd = oval_pdtbl_get(pext->pdtbl, oval_object_get_subtype(obj));
