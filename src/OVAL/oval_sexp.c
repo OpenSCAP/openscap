@@ -871,7 +871,10 @@ static struct oval_sysitem *oval_sysitem_from_sexp(struct oval_syschar_model *mo
 	int type = oval_str2subtype(name);
 
 	_D("Syschar entry type: %d '%s' => %s\n", type, name, (type ? "OK" : "FAILED to decode"));
-
+#ifndef NDEBUG
+	if (!type)
+		abort();
+#endif
 	SEXP_t *sub;
 	struct oval_sysent *sysent;
 
