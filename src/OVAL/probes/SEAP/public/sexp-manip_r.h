@@ -50,6 +50,8 @@ SEXP_t *SEXP_string_newf_rv(SEXP_t *sexp_mem, const char *format, va_list ap);
 SEXP_t *SEXP_list_new_rv(SEXP_t *sexp_mem, SEXP_t *memb, va_list alist);
 SEXP_t *SEXP_list_new_r(SEXP_t *sexp_mem, SEXP_t *memb, ...);
 
+SEXP_t *SEXP_list_rest_r (SEXP_t *rest, const SEXP_t *list);
+
 int SEXP_unref_r(SEXP_t *s_exp);
 
 #if defined(NDEBUG)

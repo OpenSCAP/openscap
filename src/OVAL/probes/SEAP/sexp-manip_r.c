@@ -338,6 +338,61 @@ SEXP_t *SEXP_list_new_r (SEXP_t *sexp_mem, SEXP_t *memb, ...)
         return (ret);
 }
 
+SEXP_t *SEXP_list_rest_r (SEXP_t *rest, const SEXP_t *list)
+{
+        SEXP_val_t v_dsc_o, v_dsc_r;
+        struct SEXP_val_lblk *lblk;
+
+	if (rest == NULL) {
+		errno = EINVAL;
+		return (NULL);
+	}
+
+        if (list == NULL) {
+                errno = EINVAL;
+                return (NULL);
+        }
+
+        SEXP_VALIDATE(list);
+
+        SEXP_val_dsc (&v_dsc_o, list->s_valp);
+
+        if (v_dsc_o.type != SEXP_VALTYPE_LIST) {
+                errno = EINVAL;
+                return (NULL);
+        }
+
+        if (SEXP_val_new (&v_dsc_r, sizeof (void *) + sizeof (uint16_t),
+                          SEXP_VALTYPE_LIST) != 0)
+        {
+                /* TODO: handle this */
+                return (NULL);
+        }
+
+        SEXP_LCASTP(v_dsc_r.mem)->offset = SEXP_LCASTP(v_dsc_o.mem)->offset + 1;
+        SEXP_LCASTP(v_dsc_r.mem)->b_addr = SEXP_LCASTP(v_dsc_o.mem)->b_addr;
+
+        lblk = SEXP_VALP_LBLK(SEXP_LCASTP(v_dsc_r.mem)->b_addr);
+
+        if (lblk != NULL) {
+                if (SEXP_LCASTP(v_dsc_r.mem)->offset == lblk->real) {
+                        SEXP_LCASTP(v_dsc_r.mem)->offset = 0;
+                        SEXP_LCASTP(v_dsc_r.mem)->b_addr = SEXP_VALP_LBLK(lblk->nxsz);
+                }
+
+                if (SEXP_VALP_LBLK(SEXP_LCASTP(v_dsc_r.mem)->b_addr) != NULL)
+                        SEXP_LCASTP(v_dsc_r.mem)->b_addr = (void *)SEXP_rawval_lblk_incref ((uintptr_t) SEXP_LCASTP(v_dsc_r.mem)->b_addr);
+        }
+
+        SEXP_init(rest);
+        rest->s_type = NULL;
+        rest->s_valp = SEXP_val_ptr (&v_dsc_r);
+
+        SEXP_VALIDATE(rest);
+
+        return (rest);
+}
+
 int SEXP_unref_r(SEXP_t *s_exp)
 {
         if (SEXP_refs(s_exp) != 1)
