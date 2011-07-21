@@ -88,9 +88,56 @@ struct result_info {
         unsigned long flag;
 };
 
+static SEXP_t *parse_enc_mth(const char *pwd)
+{
+	char *mth_str;
+
+	switch (*pwd) {
+	case '_':
+		return SEXP_string_newf("BSDi");
+	case '$':
+		pwd++;
+		switch (*pwd) {
+		case '1':
+			mth_str = "MD5";
+			pwd++;
+			break;
+		case '2':
+			mth_str = "Blowfish";
+			pwd++;
+			if (*pwd == 'a')
+				pwd++;
+			break;
+		case '5':
+			mth_str = "SHA-256";
+			pwd++;
+			break;
+		case '6':
+			mth_str = "SHA-512";
+			pwd++;
+			break;
+		default:
+			if (strncmp(pwd, "md5", 3))
+				goto fail;
+			mth_str = "Sun MD5";
+			pwd += 3;
+		}
+
+		if (*pwd != '$')
+			goto fail;
+
+		return SEXP_string_newf(mth_str);
+	default:
+		return SEXP_string_newf("DES");
+	}
+
+ fail:
+	return NULL;
+}
+
 static void report_finding(struct result_info *res, probe_ctx *ctx)
 {
-        SEXP_t *item;
+	SEXP_t *item, *enc_mth;
         SEXP_t se_chl_mem, se_cha_mem, se_chr_mem;
         SEXP_t se_exw_mem, se_exi_mem, se_exd_mem;
         SEXP_t se_flg_mem;
@@ -106,6 +153,11 @@ static void report_finding(struct result_info *res, probe_ctx *ctx)
                                  "exp_date",  OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_exd_mem, "%li", res->exp_date),
                                  "flag",      OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_flg_mem, "%lu", res->flag),
                                  NULL);
+	enc_mth = parse_enc_mth(res->password);
+	if (enc_mth) {
+		probe_item_ent_add(item, "encrypt_method", NULL, enc_mth);
+		SEXP_free(enc_mth);
+	}
 
         probe_item_collect(ctx, item);
 
