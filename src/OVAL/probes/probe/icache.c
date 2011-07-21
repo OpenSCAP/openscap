@@ -161,14 +161,23 @@ static void *probe_icache_worker(void *arg)
                          */
                         if (rbt_i64_get(cache->tree, (int64_t)item_ID, (void *)&cached) == 0) {
                                 register uint16_t i;
+				SEXP_t   rest1, rest2;
                                 /*
                                  * Maybe a cache HIT
                                  */
                                 dI("cache HIT #1\n");
 
                                 for (i = 0; i < cached->count; ++i) {
-                                        if (SEXP_deepcmp(pair->p.item, cached->item[i]))
+                                        if (SEXP_deepcmp(SEXP_list_rest_r(&rest1, pair->p.item),
+							 SEXP_list_rest_r(&rest2, cached->item[i])))
+					{
+						SEXP_free_r(&rest1);
+						SEXP_free_r(&rest2);
                                                 break;
+					}
+
+					SEXP_free_r(&rest1);
+					SEXP_free_r(&rest2);
                                 }
 
                                 if (i == cached->count) {
