@@ -71,6 +71,69 @@
 # define MTAB_LINE_MAX 4096
 #endif
 
+const char *__OVAL_fs_types[][2] = {
+	{ "adfs",       "ADFS_SUPER_MAGIC" },
+	{ "affs",       "AFFS_SUPER_MAGIC" },
+	{ "afs",        "AFS_SUPER_MAGIC" },
+	{ "autofs",     "AUTOFS_SUPER_MAGIC" },
+	{ "coda",       "CODA_SUPER_MAGIC" },
+	{ "cramfs",     "CRAMFS_MAGIC" },
+	{ "cramfs",     "CRAMFS_MAGIC_WEND" },
+	{ "debugfs",    "DEBUGFS_MAGIC" },
+	{ "sysfs",      "SYSFS_MAGIC" },
+	{ "securityfs", "SECURITYFS_MAGIC" },
+	{ "selinux",    "SELINUX_MAGIC" },
+	{ "ramfs",      "RAMFS_MAGIC" },
+	{ "tmpfs",      "TMPFS_MAGIC" },
+	{ "hugetlbfs",  "HUGETLBFS_MAGIC" },
+	{ "squashfs",   "SQUASHFS_MAGIC" },
+	{ "efs",        "EFS_SUPER_MAGIC" },
+	{ "ext2",       "EXT2_SUPER_MAGIC" },
+	{ "ext3",       "EXT3_SUPER_MAGIC" },
+	{ "xenfs",      "XENFS_SUPER_MAGIC" },
+	{ "ext4",       "EXT4_SUPER_MAGIC" },
+	{ "btrfs",      "BTRFS_SUPER_MAGIC" },
+	{ "hpfs",       "HPFS_SUPER_MAGIC" },
+	{ "iso9660",    "ISOFS_SUPER_MAGIC" },
+	{ "jffs2",      "JFFS2_SUPER_MAGIC" },
+	{ "anon",       "ANON_INODE_FS_MAGIC" },
+	{ "minix",      "MINIX_SUPER_MAGIC" },
+	{ "minix",      "MINIX_SUPER_MAGIC2" },
+	{ "minix2",     "MINIX2_SUPER_MAGIC" },
+	{ "minix2",     "MINIX2_SUPER_MAGIC2" },
+	{ "minix3",     "MINIX3_SUPER_MAGIC" },
+	{ "msdos",      "MSDOS_SUPER_MAGIC" },
+	{ "ncpfs",      "NCP_SUPER_MAGIC" },
+	{ "nfs",        "NFS_SUPER_MAGIC" },
+	{ "openprom",   "OPENPROM_SUPER_MAGIC" },
+	{ "proc",       "PROC_SUPER_MAGIC" },
+	{ "qnx4",       "QNX4_SUPER_MAGIC" },
+	{ "reiserfs",   "REISERFS_SUPER_MAGIC" },
+	{ "reiserfs",   "REISERFS_SUPER_MAGIC_STRING" },
+	{ "reiser2fs",  "REISER2FS_SUPER_MAGIC_STRING" },
+	{ "reiser2fs",  "REISER2FS_JR_SUPER_MAGIC_STRING" },
+	{ "smbfs",      "SMB_SUPER_MAGIC" },
+	{ "usbdevfs",   "USBDEVICE_SUPER_MAGIC" },
+	{ "usbfs",      "USBDEVICE_SUPER_MAGIC" },
+	{ "cgroup",     "CGROUP_SUPER_MAGIC" },
+	{ "futexfs",    "FUTEXFS_SUPER_MAGIC" },
+	{ "stack",      "STACK_END_MAGIC" },
+	{ "devpts",     "DEVPTS_SUPER_MAGIC" },
+	{ "sockfs",     "SOCKFS_MAGIC" }
+};
+
+static const char *correct_fstype(char *type)
+{
+	register size_t i;
+
+	for (i = 0; i < sizeof __OVAL_fs_types/(sizeof(char *) * 2); ++i) {
+		if (strcmp(__OVAL_fs_types[i][0], type) == 0)
+			return __OVAL_fs_types[i][1];
+	}
+
+	return (type);
+}
+
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
 static int collect_item(probe_ctx *ctx, struct mntent *mnt_ent, blkid_cache blkcache)
 #else
@@ -110,6 +173,12 @@ static int collect_item(probe_ctx *ctx, struct mntent *mnt_ent)
         } while ((tok = strtok_r(NULL, ",", &save)) != NULL);
 
         dI("mnt_ocnt = %d, mnt_opts[mnt_ocnt]=%p\n", mnt_ocnt, mnt_opts[mnt_ocnt]);
+
+	/*
+	 * "Correct" the type (this won't be (hopefully) needed in a later version
+	 * of OVAL)
+	 */
+	mnt_ent->mnt_type = (char *)correct_fstype(mnt_ent->mnt_type);
 
         /*
          * Create the item
@@ -222,6 +291,9 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
                 while ((mnt_entp = getmntent_r(mnt_fp, &mnt_ent,
                                                buffer, sizeof buffer)) != NULL)
                 {
+			if (strcmp(mnt_entp->mnt_type, "rootfs") == 0)
+			    continue;
+
                         if (mnt_op == OVAL_OPERATION_EQUALS) {
                                 if (strcmp(mnt_entp->mnt_dir, mnt_path) == 0) {
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
