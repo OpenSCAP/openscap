@@ -35,6 +35,7 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
 #include "public/cvss.h"
 #include "cvss_priv.h"
@@ -281,3 +282,245 @@ const char * cvss_model_supported(void)
 {
         return CVSS_SUPPORTED;
 }
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////  NEW API  //////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+static struct cvss_metrics **cvss_impact_metricsptr(struct cvss_impact* impact, enum cvss_category cat)
+{
+    assert(impact != NULL);
+
+    switch (cat) {
+        case CVSS_BASE:          return &impact->base_metrics;
+        case CVSS_TEMPORAL:      return &impact->temporal_metrics;
+        case CVSS_ENVIRONMENTAL: return &impact->environmental_metrics;
+        default: assert(false); return false;
+    }
+}
+
+struct cvss_impact *cvss_impact_new(void) { return oscap_calloc(1, sizeof(struct cvss_metrics)); }
+
+struct cvss_valtab_entry {
+    enum cvss_key key;
+    unsigned value;
+    const char *vector_str;
+    const char *human_str;
+    float weight;
+};
+
+static const struct cvss_valtab_entry CVSS_VALTAB[] = {
+
+    // Base metrics:
+
+    { CVSS_KEY_access_vector, CVSS_AV_NOT_SET,          "Not Set",          "AV:-",   NAN },
+    { CVSS_KEY_access_vector, CVSS_AV_LOCAL,            "Local",            "AV:L", 0.395 },
+    { CVSS_KEY_access_vector, CVSS_AV_ADJACENT_NETWORK, "Adjacent Network", "AV:A", 0.646 },
+    { CVSS_KEY_access_vector, CVSS_AV_NETWORK,          "Network",          "AV:N", 1.000 },
+
+    { CVSS_KEY_access_complexity, CVSS_AC_NOT_SET, "Not Set", "AC:-",   NAN },
+    { CVSS_KEY_access_complexity, CVSS_AC_HIGH,    "High",    "AC:H", 0.350 },
+    { CVSS_KEY_access_complexity, CVSS_AC_MEDIUM,  "Medium",  "AC:M", 0.610 },
+    { CVSS_KEY_access_complexity, CVSS_AC_LOW,     "Low",     "AC:L", 0.710 },
+
+    { CVSS_KEY_authentication, CVSS_AU_NOT_SET,  "Not Set",  "AU:-",   NAN },
+    { CVSS_KEY_authentication, CVSS_AU_MULTIPLE, "Multiple", "AU:M", 0.450 },
+    { CVSS_KEY_authentication, CVSS_AU_SINGLE,   "Single",   "AU:S", 0.560 },
+    { CVSS_KEY_authentication, CVSS_AU_NONE,     "None",     "AU:N", 0.704 },
+
+    { CVSS_KEY_confidentiality_impact, CVSS_IMP_NOT_SET,  "Not Set",  "C:-",   NAN },
+    { CVSS_KEY_confidentiality_impact, CVSS_IMP_NONE,     "None",     "C:N", 0.000 },
+    { CVSS_KEY_confidentiality_impact, CVSS_IMP_PARTIAL,  "Partial",  "C:P", 0.275 },
+    { CVSS_KEY_confidentiality_impact, CVSS_IMP_COMPLETE, "Complete", "C:C", 0.660 },
+
+    { CVSS_KEY_integrity_impact, CVSS_IMP_NOT_SET,  "Not Set",  "I:-",   NAN },
+    { CVSS_KEY_integrity_impact, CVSS_IMP_NONE,     "None",     "I:N", 0.000 },
+    { CVSS_KEY_integrity_impact, CVSS_IMP_PARTIAL,  "Partial",  "I:P", 0.275 },
+    { CVSS_KEY_integrity_impact, CVSS_IMP_COMPLETE, "Complete", "I:C", 0.660 },
+
+    { CVSS_KEY_availability_impact, CVSS_IMP_NOT_SET,  "Not Set",  "A:-",   NAN },
+    { CVSS_KEY_availability_impact, CVSS_IMP_NONE,     "None",     "A:N", 0.000 },
+    { CVSS_KEY_availability_impact, CVSS_IMP_PARTIAL,  "Partial",  "A:P", 0.275 },
+    { CVSS_KEY_availability_impact, CVSS_IMP_COMPLETE, "Complete", "A:C", 0.660 },
+
+    // Temporal metrics:
+
+    { CVSS_KEY_exploitability, CVSS_E_NOT_DEFINED,      "Not Defined",      "E:ND",  1.000 },
+    { CVSS_KEY_exploitability, CVSS_E_UNPROVEN,         "Unproven",         "E:U",   0.850 },
+    { CVSS_KEY_exploitability, CVSS_E_PROOF_OF_CONCEPT, "Proof-of-Concept", "E:POC", 0.900 },
+    { CVSS_KEY_exploitability, CVSS_E_FUNCTIONAL,       "Functional",       "E:F",   0.950 },
+    { CVSS_KEY_exploitability, CVSS_E_HIGH,             "High",             "E:H",   1.000 },
+
+    { CVSS_KEY_remediation_level, CVSS_RL_NOT_DEFINED,   "Not Defined",   "RL:ND", 1.000 },
+    { CVSS_KEY_remediation_level, CVSS_RL_OFFICIAL_FIX,  "Official Fix",  "RL:OF", 0.870 },
+    { CVSS_KEY_remediation_level, CVSS_RL_TEMPORARY_FIX, "Temporary Fix", "RL:TF", 0.900 },
+    { CVSS_KEY_remediation_level, CVSS_RL_WORKAROUND,    "Workaround",    "RL:W",  0.950 },
+    { CVSS_KEY_remediation_level, CVSS_RL_UNAVAILABLE,   "Unavailable",   "RL:U",  1.000 },
+
+    { CVSS_KEY_report_confidence, CVSS_RC_NOT_DEFINED,    "Not Defined",    "RC:ND", 1.000 },
+    { CVSS_KEY_report_confidence, CVSS_RC_UNCONFIRMED,    "Unconfirmed",    "RC:UC", 0.900 },
+    { CVSS_KEY_report_confidence, CVSS_RC_UNCORROBORATED, "Uncorroborated", "RC:UR", 0.950 },
+    { CVSS_KEY_report_confidence, CVSS_RC_CONFIRMED,      "Confirmed",      "RC:C",  1.000 },
+
+    // Environmental metrics:
+
+    { CVSS_KEY_collateral_damage_potential, CVSS_CDP_NOT_DEFINED, "Not Defined", "CDP:ND", 0.000 },
+    { CVSS_KEY_collateral_damage_potential, CVSS_CDP_NONE,        "None",        "CDP:N",  0.000 },
+    { CVSS_KEY_collateral_damage_potential, CVSS_CDP_LOW,         "Low",         "CDP:L",  0.100 },
+    { CVSS_KEY_collateral_damage_potential, CVSS_CDP_LOW_MEDIUM,  "Low-Medium",  "CDP:LM", 0.300 },
+    { CVSS_KEY_collateral_damage_potential, CVSS_CDP_MEDIUM_HIGH, "Medium-High", "CDP:MH", 0.400 },
+    { CVSS_KEY_collateral_damage_potential, CVSS_CDP_HIGH,        "High",        "CDP:H",  0.500 },
+
+    { CVSS_KEY_target_distribution, CVSS_TD_NOT_DEFINED, "Not Defined", "TD:ND", 1.000 },
+    { CVSS_KEY_target_distribution, CVSS_TD_NONE,        "None",        "TD:N",  0.000 },
+    { CVSS_KEY_target_distribution, CVSS_TD_LOW,         "Low",         "TD:L",  0.250 },
+    { CVSS_KEY_target_distribution, CVSS_TD_MEDIUM,      "Medium",      "TD:M",  0.750 },
+    { CVSS_KEY_target_distribution, CVSS_TD_HIGH,        "High",        "TD:H",  1.000 },
+
+    { CVSS_KEY_confidentiality_requirement, CVSS_REQ_NOT_DEFINED, "Not Defined", "TR:ND", 1.000 },
+    { CVSS_KEY_confidentiality_requirement, CVSS_REQ_LOW,         "Low",         "TR:L",  0.500 },
+    { CVSS_KEY_confidentiality_requirement, CVSS_REQ_MEDIUM,      "Medium",      "TR:M",  1.000 },
+    { CVSS_KEY_confidentiality_requirement, CVSS_REQ_HIGH,        "High",        "TR:H",  1.510 },
+
+    { CVSS_KEY_integrity_requirement, CVSS_REQ_NOT_DEFINED, "Not Defined", "IR:ND", 1.000 },
+    { CVSS_KEY_integrity_requirement, CVSS_REQ_LOW,         "Low",         "IR:L",  0.500 },
+    { CVSS_KEY_integrity_requirement, CVSS_REQ_MEDIUM,      "Medium",      "IR:M",  1.000 },
+    { CVSS_KEY_integrity_requirement, CVSS_REQ_HIGH,        "High",        "IR:H",  1.510 },
+
+    { CVSS_KEY_availability_requirement, CVSS_REQ_NOT_DEFINED, "Not Defined", "AR:ND", 1.000 },
+    { CVSS_KEY_availability_requirement, CVSS_REQ_LOW,         "Low",         "AR:L",  0.500 },
+    { CVSS_KEY_availability_requirement, CVSS_REQ_MEDIUM,      "Medium",      "AR:M",  1.000 },
+    { CVSS_KEY_availability_requirement, CVSS_REQ_HIGH,        "High",        "AR:H",  1.510 },
+
+    // End-of-list
+    { CVSS_KEY_NONE, 0, NULL, "Not Specified", NAN }
+};
+
+// valtab lookup: either by key&value or by vector string (pass key+val or vec_str but not both)
+static const struct cvss_valtab_entry *cvss_valtab(enum cvss_key key, unsigned val, const char *vec_str)
+{
+    const struct cvss_valtab_entry *entry;
+    for (entry = CVSS_VALTAB; entry->key != CVSS_KEY_NONE; ++entry)
+        if ((key == entry->key && val == entry->value) || oscap_streq(vec_str, entry->vector_str))
+            break;
+    return entry;
+}
+
+struct cvss_impact *cvss_impact_new_from_vector(const char *cvss_vector)
+{
+    struct cvss_impact *impact = cvss_impact_new();
+    char *vector_dup = oscap_strdup(cvss_vector);
+    char *vector_start = vector_dup;
+    char **components = NULL;
+    size_t i;
+    const struct cvss_valtab_entry *entry;
+    struct cvss_metrics **mptr;
+
+    if (cvss_vector == NULL) goto syntax_error;
+
+    // vector in parenthesis
+    if (vector_dup[0] == '(') {
+        char *vector_end = vector_dup + strlen(vector_dup) - 1;
+        if (*vector_end != ')') goto syntax_error;
+        ++vector_start;
+        *vector_end = '\0';
+    }
+
+    // split vector to components
+    components = oscap_split(vector_start, "/");
+    for (i = 0; components[i] != NULL; ++i) {
+        entry = cvss_valtab(0, 0, components[i]);
+        if (entry->key == CVSS_KEY_NONE) goto syntax_error;
+        mptr = cvss_impact_metricsptr(impact, CVSS_CATEGORY(entry->key));
+        if (*mptr == NULL) *mptr = cvss_metrics_new(CVSS_CATEGORY(entry->key));
+        (*mptr)->metrics.ANY[CVSS_KEY_IDX(entry->key)] = entry->value;
+    }
+
+cleanup:
+    oscap_free(vector_dup);
+    oscap_free(components);
+    return impact;
+
+syntax_error:
+    cvss_impact_free(impact);
+    impact = NULL;
+    goto cleanup;
+}
+
+void cvss_impact_free(struct cvss_impact* impact)
+{
+    if (impact) {
+        oscap_free(impact->base_metrics);
+        oscap_free(impact->temporal_metrics);
+        oscap_free(impact->environmental_metrics);
+        oscap_free(impact);
+    }
+}
+
+//struct cvss_impact *cvss_impact_new_from_xml(const char *filename)
+
+bool cvss_impact_set_metrics(struct cvss_impact* impact, struct cvss_metrics *metrics)
+{
+    assert(impact != NULL);
+    assert(metrics != NULL);
+
+    struct cvss_metrics **mptr = cvss_impact_metricsptr(impact, metrics->category);
+    if (*mptr == NULL) cvss_metrics_free(*mptr);
+    *mptr = metrics;
+    return true;
+}
+
+OSCAP_GETTER(struct cvss_metrics*, cvss_impact, base_metrics)
+OSCAP_GETTER(struct cvss_metrics*, cvss_impact, temporal_metrics)
+OSCAP_GETTER(struct cvss_metrics*, cvss_impact, environmental_metrics)
+
+
+struct cvss_metrics *cvss_metrics_new(enum cvss_category category)
+{
+    assert(category != CVSS_NONE);
+
+    struct cvss_metrics *metrics = oscap_calloc(1, sizeof(struct cvss_metrics));
+    metrics->category = category;
+    metrics->score = NAN;
+    return metrics;
+}
+
+void cvss_metrics_free(struct cvss_metrics* metrics)
+{
+    if (metrics) {
+        oscap_free(metrics->source);
+        oscap_free(metrics->upgraded_from_version);
+        oscap_free(metrics->generated_on_datetime);
+        oscap_free(metrics);
+    }
+}
+
+#define CVSS_METRIC_ACCESSORS_GEN(cat, key, type) \
+    enum cvss_##type cvss_metrics_get_##key(const struct cvss_metrics* metrics) \
+    { if (metrics->category != CVSS_##cat) return 0; return metrics->metrics.cat[CVSS_KEY_IDX(CVSS_KEY_##key)]; } \
+    bool cvss_metrics_set_##key(struct cvss_metrics* metrics, enum cvss_##type newval) \
+    { if (metrics->category != CVSS_##cat) return false; metrics->metrics.cat[CVSS_KEY_IDX(CVSS_KEY_##key)] = newval; return true; }
+#define CVSS_METRIC_ACCESSORS_CIA(cat, key) CVSS_METRIC_ACCESSORS_GEN(cat, confidentiality_##key, cia_##key) \
+    CVSS_METRIC_ACCESSORS_GEN(cat, integrity_##key, cia_##key) CVSS_METRIC_ACCESSORS_GEN(cat, availability_##key, cia_##key)
+#define CVSS_METRIC_ACCESSORS(cat, key) CVSS_METRIC_ACCESSORS_GEN(cat, key, key)
+
+CVSS_METRIC_ACCESSORS(BASE, access_vector)
+CVSS_METRIC_ACCESSORS(BASE, access_complexity)
+CVSS_METRIC_ACCESSORS(BASE, authentication)
+CVSS_METRIC_ACCESSORS_CIA(BASE, impact)
+CVSS_METRIC_ACCESSORS(TEMPORAL, exploitability)
+CVSS_METRIC_ACCESSORS(TEMPORAL, remediation_level)
+CVSS_METRIC_ACCESSORS(TEMPORAL, report_confidence)
+CVSS_METRIC_ACCESSORS(ENVIRONMENTAL, collateral_damage_potential)
+CVSS_METRIC_ACCESSORS(ENVIRONMENTAL, target_distribution)
+CVSS_METRIC_ACCESSORS_CIA(ENVIRONMENTAL, requirement)
+
+OSCAP_ACCESSOR_STRING(cvss_metrics, source)
+OSCAP_ACCESSOR_STRING(cvss_metrics, upgraded_from_version)
+OSCAP_ACCESSOR_STRING(cvss_metrics, generated_on_datetime)
+OSCAP_ACCESSOR_SIMPLE(float, cvss_metrics, score)
+OSCAP_GETTER(enum cvss_category, cvss_metrics, category)
+
+
+
