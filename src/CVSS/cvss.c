@@ -394,7 +394,7 @@ static const struct cvss_valtab_entry CVSS_VALTAB[] = {
     { CVSS_KEY_availability_requirement, CVSS_REQ_HIGH,        "High",        "AR:H",  1.510 },
 
     // End-of-list
-    { CVSS_KEY_NONE, 0, NULL, "Not Specified", NAN }
+    { CVSS_KEY_NONE, 0, NULL, "!", NAN }
 };
 
 // valtab lookup: either by key&value or by vector string (pass key+val or vec_str but not both)
@@ -448,6 +448,58 @@ syntax_error:
     goto cleanup;
 }
 
+static size_t cvss_metrics_component_num(const struct cvss_metrics* metrics)
+{
+    switch (metrics->category) {
+        case CVSS_BASE:          return CVSS_KEY_BASE_NUM;
+        case CVSS_TEMPORAL:      return CVSS_KEY_TEMPORAL_NUM;
+        case CVSS_ENVIRONMENTAL: return CVSS_KEY_ENVIRONMENTAL_NUM;
+        default: assert(false); return 0;
+    }
+}
+
+static char* cvss_metrics_to_vector(const struct cvss_metrics* metrics, char *out)
+{
+    if (metrics == NULL) return out;
+
+    for (size_t i = 0; i < cvss_metrics_component_num(metrics); ++i)
+        out += sprintf(out, "%s/", cvss_valtab(metrics->category | i, metrics->metrics.ANY[i], NULL)->vector_str);
+
+    return out;
+}
+
+char *cvss_impact_to_vector(const struct cvss_impact* impact)
+{
+    assert(impact != NULL);
+
+    // eight characters per component, 14 components
+    char *result = oscap_calloc(1, sizeof(char) * 8 * 14);
+    char *out = result;
+
+    out = cvss_metrics_to_vector(impact->base_metrics, out);
+    out = cvss_metrics_to_vector(impact->temporal_metrics, out);
+    out = cvss_metrics_to_vector(impact->environmental_metrics, out);
+
+    if (out > result) *--out = '\0';
+
+    return result;
+}
+
+static unsigned cvss_impact_val(const struct cvss_impact *impact, enum cvss_key key)
+{
+    assert(impact != NULL);
+    assert(key != CVSS_KEY_NONE);
+
+    const struct cvss_metrics *metric = *cvss_impact_metricsptr((/*const*/ struct cvss_impact *) impact, CVSS_CATEGORY(key));
+    if (metric == NULL) return 0;
+    return metric->metrics.ANY[CVSS_KEY_IDX(key)];
+}
+
+static inline const struct cvss_valtab_entry *cvss_impact_entry(const struct cvss_impact *impact, enum cvss_key key)
+{
+    return cvss_valtab(key, cvss_impact_val(impact, key), NULL);
+}
+
 void cvss_impact_free(struct cvss_impact* impact)
 {
     if (impact) {
@@ -466,7 +518,7 @@ bool cvss_impact_set_metrics(struct cvss_impact* impact, struct cvss_metrics *me
     assert(metrics != NULL);
 
     struct cvss_metrics **mptr = cvss_impact_metricsptr(impact, metrics->category);
-    if (*mptr == NULL) cvss_metrics_free(*mptr);
+    cvss_metrics_free(*mptr);
     *mptr = metrics;
     return true;
 }

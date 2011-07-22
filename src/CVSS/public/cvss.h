@@ -588,6 +588,8 @@ struct cvss_metrics *cvss_impact_get_environmental_metrics(const struct cvss_imp
 /// Set base, temporal, or environmental metrics (type is determined from the metrics itself)
 /// @memberof cvss_impact
 bool cvss_impact_set_metrics(struct cvss_impact* impact, struct cvss_metrics *metrics);
+/// @memberof cvss_impact
+char *cvss_impact_to_vector(const struct cvss_impact* impact);
 
 
 /// @memberof cvss_metrics
