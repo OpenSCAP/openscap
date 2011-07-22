@@ -86,7 +86,7 @@ static void probe_icache_item_setID(SEXP_t *item, SEXP_ID_t item_ID)
 static void *probe_icache_worker(void *arg)
 {
         probe_icache_t *cache = (probe_icache_t *)(arg);
-        probe_iqpair_t *pair;
+        probe_iqpair_t *pair, pair_mem;
         SEXP_ID_t       item_ID;
 
         assume_d(cache != NULL, NULL);
@@ -97,6 +97,8 @@ static void *probe_icache_worker(void *arg)
                 return (NULL);
         }
 
+	pair = &pair_mem;
+
         dI("icache worker ready\n");
 
         while(pthread_cond_wait(&cache->queue_notempty, &cache->queue_mutex) == 0) {
@@ -106,14 +108,19 @@ static void *probe_icache_worker(void *arg)
                 /*
                  * Extract an item from the queue and update queue beg, end & cnt
                  */
-                pair = cache->queue + cache->queue_beg;
-
+                pair_mem = cache->queue[cache->queue_beg];
+#ifndef NDEBUG
+		memset(cache->queue + cache->queue_beg, 0, sizeof(probe_iqpair_t));
+#endif
                 --cache->queue_cnt;
+		++cache->queue_beg;
 
-                if (cache->queue_end != cache->queue_beg) {
-                        if (++cache->queue_beg == cache->queue_max)
-                                cache->queue_beg = 0;
-                }
+		if (cache->queue_beg == cache->queue_max)
+			cache->queue_beg = 0;
+
+		assume_d(cache->queue_cnt == 0 ?
+			 cache->queue_end == cache->queue_beg :
+			 cache->queue_end != cache->queue_beg, NULL);
 
                 /*
                  * Release the mutex
@@ -294,20 +301,22 @@ static int __probe_icache_add_nolock(probe_icache_t *cache, SEXP_t *cobj, SEXP_t
 {
         assume_d((cond == NULL) ^ (item == NULL), -1);
 retry:
-        if (cache->queue_cnt <= cache->queue_max) {
+        if (cache->queue_cnt < cache->queue_max) {
                 cache->queue[cache->queue_end].cobj = cobj;
 
-                if (item != NULL)
+                if (item != NULL) {
+			assume_d(cobj != NULL, -1);
                         cache->queue[cache->queue_end].p.item = item;
-                else
+                } else {
+			assume_d(item == NULL && cobj == NULL, -1);
                         cache->queue[cache->queue_end].p.cond = cond;
+		}
 
                 ++cache->queue_cnt;
+		++cache->queue_end;
 
-                if (cache->queue_end + 1 == cache->queue_max)
+                if (cache->queue_end == cache->queue_max)
                         cache->queue_end = 0;
-                else
-                        ++cache->queue_end;
         } else {
                 /*
                  * The queue is full, we have to wait
