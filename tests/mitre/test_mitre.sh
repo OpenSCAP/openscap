@@ -92,9 +92,7 @@ test_run "ind-def_sql_test.xml" test_mitre ind-def_sql_test.xml "unknown"
 #  does not pass content validation
 #test_run "linux-def_inetlisteningservers_test.xml" test_mitre linux-def_inetlisteningservers_test.xml
 
-# failed
-#test_run "linux-def_partition_test.xml" test_mitre linux-def_partition_test.xml
-
+test_run "linux-def_partition_test.xml" test_mitre linux-def_partition_test.xml
 test_run "linux-def_rpminfo_test.xml" test_mitre linux-def_rpminfo_test.xml "true"
 
 test_run "oval_binary_datatype.xml" test_mitre oval_binary_datatype.xml "true"

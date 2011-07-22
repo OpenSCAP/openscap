@@ -82,7 +82,7 @@ const char *__OVAL_fs_types[][2] = {
 	{ "debugfs",    "DEBUGFS_MAGIC" },
 	{ "sysfs",      "SYSFS_MAGIC" },
 	{ "securityfs", "SECURITYFS_MAGIC" },
-	{ "selinux",    "SELINUX_MAGIC" },
+	{ "selinuxfs",  "SELINUX_MAGIC" },
 	{ "ramfs",      "RAMFS_MAGIC" },
 	{ "tmpfs",      "TMPFS_MAGIC" },
 	{ "hugetlbfs",  "HUGETLBFS_MAGIC" },
@@ -131,7 +131,7 @@ static const char *correct_fstype(char *type)
 			return __OVAL_fs_types[i][1];
 	}
 
-	return (type);
+	return "";
 }
 
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
