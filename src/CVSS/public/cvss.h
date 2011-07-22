@@ -569,6 +569,8 @@ struct cvss_impact;
  */
 struct cvss_metrics;
 
+/// Round @a x to one decimal place as described in CVSS standard
+float cvss_round(float x);
 
 /// @memberof cvss_impact
 struct cvss_impact *cvss_impact_new(void);
@@ -591,6 +593,121 @@ bool cvss_impact_set_metrics(struct cvss_impact* impact, struct cvss_metrics *me
 /// @memberof cvss_impact
 char *cvss_impact_to_vector(const struct cvss_impact* impact);
 
+/**
+ * @name Score calculators
+ * Functions to calculate CVSS score.
+ *
+ * Functions return special float value of NAN on failure.
+ *
+ * Particularly interesting are:
+ *   - cvss_impact_base_score()
+ *   - cvss_impact_temporal_score()
+ *   - cvss_impact_environmental_score()
+ * @{
+ */
+
+/**
+ * Calculate exploitability subscore of base score.
+ *
+ * Requires base metrics to be set.
+ * @see cvss_impact_base_score()
+ * @see cvss_impact_adjusted_base_score()
+ * @memberof cvss_impact
+ */
+float cvss_impact_base_exploitability_subscore(const struct cvss_impact* impact);
+
+/**
+ * Calculate impact subscore of base score.
+ *
+ * Requires base metrics to be set.
+ * @see cvss_impact_base_adjusted_impact_subscore()
+ * @see cvss_impact_base_score()
+ * @memberof cvss_impact
+ */
+float cvss_impact_base_impact_subscore(const struct cvss_impact* impact);
+
+/**
+ * Calculate base score.
+ *
+ * The base metric group captures the characteristics of a vulnerability that
+ * are constant with time and across user environments.
+ *
+ * Requires base metrics to be set.
+ * @see cvss_impact_base_exploitability_subscore()
+ * @see cvss_impact_base_impact_subscore()
+ * @see cvss_impact_base_adjusted_impact_subscore()
+ * @memberof cvss_impact
+ */
+float cvss_impact_base_score(const struct cvss_impact* impact);
+
+/**
+ * Calculate temporal multiplier.
+ *
+ * Multiply base score by this number and round to one decimal place to get
+ * temporal score. This function is intended to get the multiplier itself.
+ * To calculate temporal score, use cvss_impact_temporal_score() or
+ * cvss_impact_adjusted_temporal_score() instead.
+ *
+ * Requires temporal metrics to be set.
+ * @see cvss_impact_temporal_score()
+ * @see cvss_impact_adjusted_temporal_score()
+ * @memberof cvss_impact
+ */
+float cvss_impact_temporal_multiplier(const struct cvss_impact* impact);
+
+/**
+ * Calculate temporal score.
+ *
+ * Temporal metrics capture how the threat posed by a vulnerability may change over time.
+ *
+ * Requires base and temporal metrics to be set.
+ * @see cvss_impact_adjusted_temporal_score()
+ * @memberof cvss_impact
+ */
+float cvss_impact_temporal_score(const struct cvss_impact* impact);
+
+/**
+ * Calculate impact subscore of base score adjusted to particular environment.
+ *
+ * Requires base and environmental metrics to be set.
+ * @see cvss_impact_base_impact_subscore()
+ * @see cvss_impact_adjusted_base_score()
+ * @memberof cvss_impact
+ */
+float cvss_impact_base_adjusted_impact_subscore(const struct cvss_impact* impact);
+
+/**
+ * Calculate base score adjusted to particular environment.
+ *
+ * Requires base and environmental metrics to be set.
+ * @see cvss_impact_base_score()
+ * @memberof cvss_impact
+ */
+float cvss_impact_adjusted_base_score(const struct cvss_impact* impact);
+
+/**
+ * Calculate temporal score adjusted to particular environment.
+ *
+ * Requires base, temporal and environmental metrics to be set.
+ * @see cvss_impact_temporal_score()
+ * @memberof cvss_impact
+ */
+float cvss_impact_adjusted_temporal_score(const struct cvss_impact* impact);
+
+/**
+ * Calculate environmental score.
+ *
+ * Different environments can have an immense bearing on the risk that a vulnerability poses to
+ * an organization and its stakeholders. The CVSS environmental metric group captures the characteristics
+ * of a vulnerability that are associated with a user’s IT environment.
+ *
+ * Requires base, temporal and environmental metrics to be set.
+ * @see cvss_impact_adjusted_temporal_score()
+ * @memberof cvss_impact
+ */
+float cvss_impact_environmental_score(const struct cvss_impact* impact);
+
+/** @} */
 
 /// @memberof cvss_metrics
 struct cvss_metrics *cvss_metrics_new(enum cvss_category category);
@@ -614,10 +731,15 @@ bool cvss_metrics_set_upgraded_from_version(struct cvss_metrics* metrics, const 
 float cvss_metrics_get_score(const struct cvss_metrics* metrics);
 /// @memberof cvss_metrics
 bool cvss_metrics_set_score(struct cvss_metrics* metrics, float score);
+/**
+ * Validate CVSS metrics completeness
+ * @memberof cvss_metrics
+ */
+bool cvss_metrics_is_valid(const struct cvss_metrics* metrics);
 
 /**
  * @name Vector values
- * Sunctions to get or set individual CVSS vector values.
+ * Functions to get or set individual CVSS vector values.
  * Functions check for correct type of metrics (base/temporal/environmental).
  * Setters return false and getters undefined/default value when attempted
  * to query wrong type of metrics.

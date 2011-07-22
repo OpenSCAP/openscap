@@ -305,8 +305,8 @@ struct cvss_impact *cvss_impact_new(void) { return oscap_calloc(1, sizeof(struct
 struct cvss_valtab_entry {
     enum cvss_key key;
     unsigned value;
-    const char *vector_str;
     const char *human_str;
+    const char *vector_str;
     float weight;
 };
 
@@ -378,10 +378,10 @@ static const struct cvss_valtab_entry CVSS_VALTAB[] = {
     { CVSS_KEY_target_distribution, CVSS_TD_MEDIUM,      "Medium",      "TD:M",  0.750 },
     { CVSS_KEY_target_distribution, CVSS_TD_HIGH,        "High",        "TD:H",  1.000 },
 
-    { CVSS_KEY_confidentiality_requirement, CVSS_REQ_NOT_DEFINED, "Not Defined", "TR:ND", 1.000 },
-    { CVSS_KEY_confidentiality_requirement, CVSS_REQ_LOW,         "Low",         "TR:L",  0.500 },
-    { CVSS_KEY_confidentiality_requirement, CVSS_REQ_MEDIUM,      "Medium",      "TR:M",  1.000 },
-    { CVSS_KEY_confidentiality_requirement, CVSS_REQ_HIGH,        "High",        "TR:H",  1.510 },
+    { CVSS_KEY_confidentiality_requirement, CVSS_REQ_NOT_DEFINED, "Not Defined", "CR:ND", 1.000 },
+    { CVSS_KEY_confidentiality_requirement, CVSS_REQ_LOW,         "Low",         "CR:L",  0.500 },
+    { CVSS_KEY_confidentiality_requirement, CVSS_REQ_MEDIUM,      "Medium",      "CR:M",  1.000 },
+    { CVSS_KEY_confidentiality_requirement, CVSS_REQ_HIGH,        "High",        "CR:H",  1.510 },
 
     { CVSS_KEY_integrity_requirement, CVSS_REQ_NOT_DEFINED, "Not Defined", "IR:ND", 1.000 },
     { CVSS_KEY_integrity_requirement, CVSS_REQ_LOW,         "Low",         "IR:L",  0.500 },
@@ -427,6 +427,7 @@ struct cvss_impact *cvss_impact_new_from_vector(const char *cvss_vector)
         *vector_end = '\0';
     }
 
+    oscap_strtoupper(vector_start);
     // split vector to components
     components = oscap_split(vector_start, "/");
     for (i = 0; components[i] != NULL; ++i) {
@@ -456,6 +457,18 @@ static size_t cvss_metrics_component_num(const struct cvss_metrics* metrics)
         case CVSS_ENVIRONMENTAL: return CVSS_KEY_ENVIRONMENTAL_NUM;
         default: assert(false); return 0;
     }
+}
+
+bool cvss_metrics_is_valid(const struct cvss_metrics* metrics)
+{
+    if (metrics == NULL) return false;
+
+    if (metrics->category == CVSS_BASE)
+        for (size_t i = 0; i < CVSS_KEY_BASE_NUM; ++i)
+            if (metrics->metrics.BASE[i] == 0)
+                return false;
+
+    return true;
 }
 
 static char* cvss_metrics_to_vector(const struct cvss_metrics* metrics, char *out)
@@ -491,7 +504,7 @@ static unsigned cvss_impact_val(const struct cvss_impact *impact, enum cvss_key 
     assert(key != CVSS_KEY_NONE);
 
     const struct cvss_metrics *metric = *cvss_impact_metricsptr((/*const*/ struct cvss_impact *) impact, CVSS_CATEGORY(key));
-    if (metric == NULL) return 0;
+    if (metric == NULL) return -1;
     return metric->metrics.ANY[CVSS_KEY_IDX(key)];
 }
 
@@ -523,10 +536,93 @@ bool cvss_impact_set_metrics(struct cvss_impact* impact, struct cvss_metrics *me
     return true;
 }
 
+#define CVSS_W(key) (cvss_impact_entry(impact, CVSS_KEY_##key)->weight)
+
+// round x to multiples of 0.1
+float cvss_round(float x) { return (int) round(x * 10.0 + 0.00001) / 10.0; }
+
+typedef float(*cvss_score_func)(const struct cvss_impact*);
+
+float cvss_impact_base_exploitability_subscore(const struct cvss_impact* impact)
+{
+    assert(impact);
+    return 20 * CVSS_W(access_vector) * CVSS_W(access_complexity) * CVSS_W(authentication);
+}
+
+float cvss_impact_base_impact_subscore(const struct cvss_impact* impact)
+{
+    assert(impact);
+    return 10.41 * (1.0 - (1.0 - CVSS_W(confidentiality_impact)) * (1.0 - CVSS_W(integrity_impact)) * (1.0 - CVSS_W(availability_impact)));
+}
+
+static inline float cvss_impact_base_score_impl(const struct cvss_impact* impact, cvss_score_func impact_score_calculator)
+{
+    assert(impact);
+    if (!cvss_metrics_is_valid(impact->base_metrics)) return NAN;
+    float imp_s = impact_score_calculator(impact);
+    float exp_s = cvss_impact_base_exploitability_subscore(impact);
+    float f_imp = (imp_s == 0.0 ? 0.0 : 1.176);
+    return cvss_round((0.6 * imp_s + 0.4 * exp_s - 1.5) * f_imp);
+}
+
+float cvss_impact_base_score(const struct cvss_impact* impact)
+{
+    assert(impact);
+    return cvss_impact_base_score_impl(impact, cvss_impact_base_impact_subscore);
+}
+
+float cvss_impact_temporal_multiplier(const struct cvss_impact* impact)
+{
+    assert(impact);
+    if (!cvss_metrics_is_valid(impact->temporal_metrics)) return NAN;
+    return CVSS_W(exploitability) * CVSS_W(remediation_level) * CVSS_W(report_confidence);
+}
+
+float cvss_impact_temporal_score(const struct cvss_impact* impact)
+{
+    assert(impact);
+    if (!cvss_metrics_is_valid(impact->temporal_metrics)) return NAN;
+    return cvss_round(cvss_impact_base_score(impact) * cvss_impact_temporal_multiplier(impact));
+}
+
+float cvss_impact_base_adjusted_impact_subscore(const struct cvss_impact* impact)
+{
+    assert(impact);
+    if (!cvss_metrics_is_valid(impact->environmental_metrics) || !cvss_metrics_is_valid(impact->base_metrics))
+        return NAN;
+
+    float c = CVSS_W(confidentiality_impact) * CVSS_W(confidentiality_requirement);
+    float i = CVSS_W(integrity_impact)       * CVSS_W(integrity_requirement);
+    float a = CVSS_W(availability_impact)    * CVSS_W(availability_requirement);
+    float imp = 10.41 * (1.0 - (1.0 - c) * (1.0 - i) * (1.0 - a));
+    return imp <= 10.0 ? imp : 10.0;
+}
+
+float cvss_impact_adjusted_base_score(const struct cvss_impact* impact)
+{
+    assert(impact);
+    return cvss_impact_base_score_impl(impact, cvss_impact_base_adjusted_impact_subscore);
+}
+
+float cvss_impact_adjusted_temporal_score(const struct cvss_impact* impact)
+{
+    assert(impact);
+    return cvss_round(cvss_impact_adjusted_base_score(impact) * cvss_impact_temporal_multiplier(impact));
+}
+
+float cvss_impact_environmental_score(const struct cvss_impact* impact)
+{
+    assert(impact);
+    if (!cvss_metrics_is_valid(impact->environmental_metrics)) return NAN;
+    float temp_s = cvss_impact_adjusted_temporal_score(impact);
+    if (isnan(temp_s)) return NAN;
+    return cvss_round((temp_s + (10.0 - temp_s) * CVSS_W(collateral_damage_potential)) * CVSS_W(target_distribution));
+}
+
+
 OSCAP_GETTER(struct cvss_metrics*, cvss_impact, base_metrics)
 OSCAP_GETTER(struct cvss_metrics*, cvss_impact, temporal_metrics)
 OSCAP_GETTER(struct cvss_metrics*, cvss_impact, environmental_metrics)
-
 
 struct cvss_metrics *cvss_metrics_new(enum cvss_category category)
 {

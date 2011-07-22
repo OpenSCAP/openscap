@@ -115,19 +115,22 @@ enum cvss_key {
     CVSS_KEY_confidentiality_impact,
     CVSS_KEY_integrity_impact,
     CVSS_KEY_availability_impact,
-    CVSS_KEY_BASE_NUM,
+    CVSS_KEY_BASE_END_,
+    CVSS_KEY_BASE_NUM = CVSS_KEY_BASE_END_ - CVSS_BASE,
 
     CVSS_KEY_exploitability = CVSS_TEMPORAL,
     CVSS_KEY_remediation_level,
     CVSS_KEY_report_confidence,
-    CVSS_KEY_TEMPORAL_NUM,
+    CVSS_KEY_TEMPORAL_END_,
+    CVSS_KEY_TEMPORAL_NUM = CVSS_KEY_TEMPORAL_END_ - CVSS_TEMPORAL,
 
     CVSS_KEY_collateral_damage_potential = CVSS_ENVIRONMENTAL,
     CVSS_KEY_target_distribution,
     CVSS_KEY_confidentiality_requirement,
     CVSS_KEY_integrity_requirement,
     CVSS_KEY_availability_requirement,
-    CVSS_KEY_ENVIRONMENTAL_NUM,
+    CVSS_KEY_ENVIRONMENTAL_END_,
+    CVSS_KEY_ENVIRONMENTAL_NUM = CVSS_KEY_ENVIRONMENTAL_END_ - CVSS_ENVIRONMENTAL,
 };
 
 // extract category from key
