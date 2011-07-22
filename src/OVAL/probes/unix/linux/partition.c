@@ -303,6 +303,15 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
 #endif
                                         break;
                                 }
+			} else if (mnt_op == OVAL_OPERATION_NOT_EQUAL) {
+				if (strcmp(mnt_entp->mnt_dir, mnt_path) != 0) {
+#if defined(HAVE_BLKID_GET_TAG_VALUE)
+                                        collect_item(ctx, mnt_entp, blkcache);
+#else
+                                        collect_item(ctx, mnt_entp);
+#endif
+                                        break;
+                                }
                         } else if (mnt_op == OVAL_OPERATION_PATTERN_MATCH) {
                                 int rc;
 
