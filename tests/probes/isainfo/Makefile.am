@@ -9,4 +9,5 @@ TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
 
 TESTS = test_probes_isainfo.sh
 
-EXTRA_DIST += test_probes_isainfo.sh test_probes_isainfo.xml.sh
+EXTRA_DIST += test_probes_isainfo.sh test_probes_isainfo.xml
+

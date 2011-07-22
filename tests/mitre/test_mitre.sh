@@ -26,7 +26,7 @@ function test_mitre {
 
     local ret_val=0;
     local DEFFILE=${srcdir}/$1
-    local RESFILE="$DEFFILE".results
+    local RESFILE=$1.results
 
     [ -f $RESFILE ] && rm -f $RESFILE
     ../../utils/.libs/oscap oval eval --results "$RESFILE" --variables "$EXTVARFILE"  "$DEFFILE"

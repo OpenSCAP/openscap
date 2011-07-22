@@ -14,7 +14,7 @@
 
 . ${srcdir}/../../test_common.sh
 
-. runlevel_helper.sh
+. ${srcdir}/runlevel_helper.sh
 
 # Test Cases.
 

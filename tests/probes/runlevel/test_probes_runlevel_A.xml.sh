@@ -2,7 +2,7 @@
 
 PATH=$PATH:.
 
-. runlevel_helper.sh
+. ${srcdir}/runlevel_helper.sh
 
 cat <<EOF
 <?xml version="1.0"?>

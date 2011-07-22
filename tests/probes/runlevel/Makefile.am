@@ -11,5 +11,6 @@ TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
 TESTS = test_probes_runlevel.sh
 
 EXTRA_DIST += test_probes_runlevel.sh \
+              runlevel_helper.sh \
               test_probes_runlevel_A.xml.sh \
               test_probes_runlevel_B.xml.sh 
