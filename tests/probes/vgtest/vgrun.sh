@@ -4,7 +4,7 @@
 VG=$(which valgrind)
 VGOPT="--trace-children=yes --leak-check=full --show-reachable=yes --leak-resolution=high"
 VERBOSE=0
-DEFAULT_REGEX='^.*(oscap-scan|test_probes|probe_).*$'
+DEFAULT_REGEX='^.*(oscap-scan|test_probes|probe_|oscap).*$'
 
 #############################################################################################
 function imsg {
@@ -67,7 +67,7 @@ if [[ -z "$VG" ]]; then
 else
     VER="$($VG --version)"
     case "$VER" in
-        valgrind-3.[345].*)
+        valgrind-3.[3456].*)
             ;;
         *)
             wmsg "The version of Valgrind ($VG) you are using wasn't tested with this script. Don't trust the output of this script."
@@ -142,7 +142,7 @@ for ((i=0; i < ${#LOG[@]}; i++)); do
 
     sum=$(($num_le + $num_ir + $num_iw + $num_ij + $num_iv))
 
-    printf '[ %28s ] leaks=%3d, inv.r/w=%3d/%3d, inv.jumps=%3d, inv.vals=%3d .... E= %d\n' "${CMD[i]}" $num_le $num_ir $num_iw $num_ij $num_iv $sum
+    printf '[ %28s ] L=%3d, IR/W=%3d/%3d, IJ=%3d, UV=%3d .... E= %d\n' "${CMD[i]}" $num_le $num_ir $num_iw $num_ij $num_iv $sum
 
     if (( $sum == 0 )); then
         rm "${LOG[$i]}"

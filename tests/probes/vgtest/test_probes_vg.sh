@@ -25,7 +25,7 @@ function test_probes_vg {
     
     EXCEPTIONS="( rpminfo runlevel_B interface )"
 
-    for xmlgen in `find ${srcdir}/../ -name 'test_probes_*.xml.sh'`; do
+    for xmlgen in `find ${srcdir}/../ -name '*.xml.sh'`; do
 	skipme=0
 	for E in {${EXCEPTIONS[@]}; do
 	    echo $xmlgen | grep $E && skipme=1 && break
@@ -39,19 +39,19 @@ function test_probes_vg {
 	fi
     done
 
-    for xml in `find ${srcdir}/../ -name '*.xml'`; do
+    for xml in `find ${srcdir}/../../ -name '*.xml'`; do
 	cp "$xml" "$VGTEST_TMPDIR"
 	echo "Copying $xml"
     done
 
     export SEAP_DEBUGLOG_DISABLE=1
     export SEXP_VALIDATE_DISABLE=1
-
+        
     echo ""
     echo "---------------- Valgrind checks -----------------"
     for xml in "$VGTEST_TMPDIR"/*.xml; do
-	bash $srcdir/vgrun.sh ../../../utils/.libs/oscap oval eval $xml
-	[ $? -eq 0 ] || return 1
+	bash $srcdir/vgrun.sh "../../../utils/.libs/oscap oval eval --results $xml.res $xml"
+	[ $? -eq 0 ] || ret=1
     done
     echo "--------------------------------------------------"
 
