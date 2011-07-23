@@ -43,9 +43,14 @@ void *probe_input_handler(void *arg)
         pthread_attr_t pth_attr;
         probe_t       *probe = (probe_t *)arg;
 
-        int probe_ret, ret; /* XXX */
+        int probe_ret, ret, cstate; /* XXX */
         SEAP_msg_t *seap_request, *seap_reply;
         SEXP_t *probe_in, *probe_out, *oid;
+
+#define TH_CANCEL_ON  pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &cstate)
+#define TH_CANCEL_OFF pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &cstate)
+
+        TH_CANCEL_OFF;
 
         if (pthread_attr_init(&pth_attr))
                 return (NULL);
@@ -55,7 +60,11 @@ void *probe_input_handler(void *arg)
                 return (NULL);
         }
 
+        pthread_cleanup_push((void(*)(void *))pthread_attr_destroy, (void *)&pth_attr);
+
 	while(1) {
+                TH_CANCEL_ON;
+
 		if (SEAP_recvmsg(probe->SEAP_ctx, probe->sd, &seap_request) == -1) {
 			ret = errno;
 
@@ -66,6 +75,8 @@ void *probe_input_handler(void *arg)
                          */
 			break;
 		}
+
+                TH_CANCEL_OFF;
 
 		probe_in = SEAP_msg_get(seap_request);
 
@@ -178,6 +189,6 @@ void *probe_input_handler(void *arg)
 		SEAP_msg_free(seap_request);
 	} /* main loop */
 
-        pthread_attr_destroy(&pth_attr);
+        pthread_cleanup_pop(1);
         return (NULL);
 }

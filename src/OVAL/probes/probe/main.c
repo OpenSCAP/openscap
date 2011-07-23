@@ -204,10 +204,10 @@ int main(int argc, char *argv[])
         probe.probe_arg = probe_init();
 
 	pthread_attr_init(&th_attr);
-
+#if 0
 	if (pthread_attr_setdetachstate(&th_attr, PTHREAD_CREATE_DETACHED))
 		fail(errno, "pthread_attr_setdetachstate", __LINE__ - 1);
-
+#endif
 	if (pthread_create(&probe.th_input, &th_attr, &probe_input_handler, &probe))
 		fail(errno, "pthread_create(probe_input_handler)", __LINE__ - 1);
 
@@ -217,6 +217,12 @@ int main(int argc, char *argv[])
 	 * Wait until the signal handler exits
 	 */
 	if (pthread_join(probe.th_signal, NULL))
+		fail(errno, "pthread_join", __LINE__ - 1);
+
+	/*
+	 * Wait for the input_handler thread
+	 */
+	if (pthread_join(probe.th_input, NULL))
 		fail(errno, "pthread_join", __LINE__ - 1);
 
 	/*
