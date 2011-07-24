@@ -25,8 +25,9 @@
  *
  * Authors:
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
- *      "Peter Vrabec" <pvabec@redhat.com>
+ *      "Peter Vrabec" <pvrabec@redhat.com>
  *      "Tomas Heinrich" <theinric@redhat.com>
+ *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
 #ifdef HAVE_CONFIG_H
@@ -1616,58 +1617,6 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_SUBSTRING(oval_ar
 	return flag;
 }
 
-static int _substr2i(char **s, int len)
-{
-	char buf[len + 1];
-
-	memcpy(buf, *s, len);
-	buf[len] = '\0';
-	*s += len;
-
-	return atoi(buf);
-}
-
-static int _substr2mon(char **sp)
-{
-	int m = 0;
-	size_t len;
-	char *s = *sp;
-
-	len = strcspn(s, "0123456789,");
-	if (len == 0)
-		return -1;
-
-	*sp += len;
-
-	if (!strncasecmp(s, "jan", len) || !strncasecmp(s, "january", len)) {
-		m = 1;
-	} else if (!strncasecmp(s, "feb", len) || !strncasecmp(s, "february", len)) {
-		m = 2;
-	} else if (!strncasecmp(s, "mar", len) || !strncasecmp(s, "march", len)) {
-		m = 3;
-	} else if (!strncasecmp(s, "apr", len) || !strncasecmp(s, "april", len)) {
-		m = 4;
-	} else if (!strncasecmp(s, "may", len)) {
-		m = 5;
-	} else if (!strncasecmp(s, "jun", len) || !strncasecmp(s, "june", len)) {
-		m = 6;
-	} else if (!strncasecmp(s, "jul", len) || !strncasecmp(s, "july", len)) {
-		m = 7;
-	} else if (!strncasecmp(s, "aug", len) || !strncasecmp(s, "august", len)) {
-		m = 8;
-	} else if (!strncasecmp(s, "sep", len) || !strncasecmp(s, "september", len)) {
-		m = 9;
-	} else if (!strncasecmp(s, "oct", len) || !strncasecmp(s, "october", len)) {
-		m = 10;
-	} else if (!strncasecmp(s, "nov", len) || !strncasecmp(s, "november", len)) {
-		m = 11;
-	} else if (!strncasecmp(s, "dec", len) || !strncasecmp(s, "december", len)) {
-		m = 12;
-	}
-
-	return m;
-}
-
 static long unsigned int _comp_sec(int year, int month, int day, int hour, int minute, int second)
 {
 	time_t t;
@@ -1693,103 +1642,73 @@ static long unsigned int _comp_sec(int year, int month, int day, int hour, int m
 }
 
 /*
-year_month_day
-The year_month_day value specifies date-time strings that follow the formats:
-  'yyyymmdd', 'yyyymmddThhmmss', 'yyyy/mm/dd hh:mm:ss', 'yyyy/mm/dd', 'yyyy-mm-dd hh:mm:ss', or 'yyyy-mm-dd'
-*/
-static long unsigned int _parse_fmt_ymd(char *dt)
-{
-	int year, month, day, hour, minute, second;
-
-	year = _substr2i(&dt, 4);
-	if (*dt == '/' || *dt == '-')
-		dt++;
-	month = _substr2i(&dt, 2);
-	if (*dt == '/' || *dt == '-')
-		dt++;
-	day = _substr2i(&dt, 2);
-
-	if (*dt == '\0') {
-		hour = minute = second = 0;
-	} else if (*dt == 'T') {
-		dt++;
-		hour = _substr2i(&dt, 2);
-		minute = _substr2i(&dt, 2);
-		second = _substr2i(&dt, 2);
-	} else {
-		dt++;
-		hour = _substr2i(&dt, 2);
-		dt++;
-		minute = _substr2i(&dt, 2);
-		dt++;
-		second = _substr2i(&dt, 2);
-	}
-
-	return _comp_sec(year, month, day, hour, minute, second);
-}
+ * year_month_day
+ * The year_month_day value specifies date-time strings that follow the formats:
+ *
+ * strptime(3)
+ */
+static const char *_dtfmt_ymd[] = {
+        "%Y%m%d",        /* yyyymmdd */
+        "%Y/%m/%d",      /* yyyy/mm/dd */
+        "%Y-%m-%d",      /* yyyy-mm-dd */
+        "%Y%m%dT%H%M%S", /* yyyymmddThhmmss */
+        "%Y/%m/%d%n%T",  /* yyyy/mm/dd hh:mm:ss */
+        "%Y-%m-%d%n%T"   /* yyyy-mm-dd hh:mm:ss */
+};
 
 /*
-month_day_year
-The month_day_year value specifies date-time strings that follow the formats:
-  'mm/dd/yyyy hh:mm:ss', 'mm/dd/yyyy', 'mm-dd-yyyy hh:mm:ss', 'mm-dd-yyyy', 'NameOfMonth, dd yyyy hh:mm:ss' or
-  'NameOfMonth, dd yyyy','AbreviatedNameOfMonth, dd yyyy hh:mm:ss', or 'AbreviatedNameOfMonth, dd yyyy'
-*/
-static long unsigned int _parse_fmt_mdy(char *dt)
-{
-	int year, month, day, hour, minute, second;
-
-	if ((month = _substr2mon(&dt)) == -1) {
-		month = _substr2i(&dt, 2);
-		dt++;
-	} else {
-		dt += 2;
-	}
-
-	day = _substr2i(&dt, 2);
-	dt++;
-	year = _substr2i(&dt, 4);
-
-	if (*dt == '\0') {
-		hour = minute = second = 0;
-	} else {
-		dt++;
-		hour = _substr2i(&dt, 2);
-		dt++;
-		minute = _substr2i(&dt, 2);
-		dt++;
-		second = _substr2i(&dt, 2);
-	}
-
-	return _comp_sec(year, month, day, hour, minute, second);
-}
+ * month_day_year
+ * The month_day_year value specifies date-time strings that follow the formats:
+ *
+ * strptime(3)
+ */
+static const char *_dtfmt_mdy[] = {
+        "%m/%d/%Y",       /* mm/dd/yyyy */
+        "%m-%d-%Y",       /* mm-dd-yyyy */
+        "%b,%n%d%n%Y",    /* AbreviatedNameOfMonth, dd yyyy */
+        "%m/%d/%Y%n%T",   /* mm/dd/yyyy hh:mm:ss */
+        "%m-%d-%Y%n%T",   /* mm-dd-yyyy hh:mm:ss */
+        "%b,%n%d%n%Y%n%T" /* NameOfMonth, dd yyyy hh:mm:ss & AbreviatedNameOfMonth, dd yyyy hh:mm:ss */
+};
 
 /*
-day_month_year
-The day_month_year value specifies date-time strings that follow the formats:
-  'dd/mm/yyyy hh:mm:ss', 'dd/mm/yyyy', 'dd-mm-yyyy hh:mm:ss', or 'dd-mm-yyyy'
-*/
-static long unsigned int _parse_fmt_dmy(char *dt)
+ * day_month_year
+ * The day_month_year value specifies date-time strings that follow the formats:
+ *
+ * strptime(3)
+ */
+static const char *_dtfmt_dmy[] = {
+        "%d/%m/%Y",     /* dd/mm/yyyy */
+        "%d-%m-%Y",     /* dd-mm-yyyy */
+        "%d/%m/%Y%n%T", /* dd/mm/yyyy hh:mm:ss */
+        "%d-%m-%Y%n%T"  /* dd-mm-yyyy hh:mm:ss */
+};
+
+static long unsigned int _parse_datetime(char *datetime, const char *fmt[], size_t fmtcnt)
 {
-	int year, month, day, hour, minute, second;
+        struct tm t;
+        size_t    i;
+        char     *r;
 
-	day = _substr2i(&dt, 2);
-	dt++;
-	month = _substr2i(&dt, 2);
-	dt++;
-	year = _substr2i(&dt, 4);
+        dI("Parsing datetime string \"%s\"\n", datetime);
 
-	if (*dt == '\0') {
-		hour = minute = second = 0;
-	} else {
-		dt++;
-		hour = _substr2i(&dt, 2);
-		dt++;
-		minute = _substr2i(&dt, 2);
-		dt++;
-		second = _substr2i(&dt, 2);
-	}
+        for (i = 0; i < fmtcnt; ++i) {
+                dI("%s\n", fmt[i]);
+                memset(&t, 0, sizeof t);
+                r = strptime(datetime, fmt[i], &t);
 
-	return _comp_sec(year, month, day, hour, minute, second);
+                if (r != NULL) {
+                        if (*r == '\0') {
+                                dI("Success!\n");
+                                return _comp_sec(t.tm_year, t.tm_mon, t.tm_mday,
+                                                 t.tm_hour, t.tm_min, t.tm_sec);
+                        }
+                }
+        }
+
+        dE("Unable to interpret \"%s\" as a datetime string\n");
+
+        return (0);
 }
 
 static long unsigned int _parse_fmt_win(char *dt)
@@ -1820,13 +1739,13 @@ static long unsigned int _parse_fmt(struct oval_value *val, oval_datetime_format
 
 	switch (fmt) {
 	case OVAL_DATETIME_YEAR_MONTH_DAY:
-		v = _parse_fmt_ymd(sv);
+                v = _parse_datetime(sv, _dtfmt_ymd, sizeof _dtfmt_ymd/sizeof(char *));
 		break;
 	case OVAL_DATETIME_MONTH_DAY_YEAR:
-		v = _parse_fmt_mdy(sv);
+                v = _parse_datetime(sv, _dtfmt_mdy, sizeof _dtfmt_mdy/sizeof(char *));
 		break;
 	case OVAL_DATETIME_DAY_MONTH_YEAR:
-		v = _parse_fmt_dmy(sv);
+                v = _parse_datetime(sv, _dtfmt_dmy, sizeof _dtfmt_dmy/sizeof(char *));
 		break;
 	case OVAL_DATETIME_WIN_FILETIME:
 		v = _parse_fmt_win(sv);
