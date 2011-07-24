@@ -201,24 +201,30 @@ struct oval_string_map *oval_string_map_new(void)
 
 void oval_string_map_put(struct oval_string_map *map, const char *key, void *val)
 {
+        char *key_copy;
+
 	assume_d(map != NULL, /* void */);
 	assume_d(key != NULL, /* void */);
 
-	if (rbt_str_add((rbt_t *)map, strdup(key), val) != 0)
+	if (rbt_str_add((rbt_t *)map, key_copy = strdup(key), val) != 0) {
 		dW("rbt_str_add: non-zero return code\n");
+                oscap_free(key_copy);
+        }
 }
 
 void oval_string_map_put_string(struct oval_string_map *map, const char *key, const char *val)
 {
-	char *str = strdup(val);
+	char *str = strdup(val), *key_copy;
 
 	assume_d(map != NULL, /* void */);
 	assume_d(key != NULL, /* void */);
 
-	if (rbt_str_add((rbt_t *)map, strdup(key), str) == 0)
+	if (rbt_str_add((rbt_t *)map, key_copy = strdup(key), str) == 0)
 		return;
-	else
-		free(str);
+	else {
+		oscap_free(str);
+                oscap_free(key_copy);
+        }
 	return;
 }
 

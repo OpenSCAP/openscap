@@ -452,6 +452,7 @@ static void probe_icache_free_node(struct rbt_i64_node *n)
         }
 
         oscap_free(ci->item);
+        oscap_free(ci);
         return;
 }
 

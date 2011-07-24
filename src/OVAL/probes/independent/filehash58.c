@@ -304,6 +304,7 @@ int probe_main(probe_ctx *ctx, void *mutex)
 	SEXP_free (path);
 	SEXP_free (filename);
 	SEXP_free (filepath);
+        SEXP_free (hash_type);
 
 	switch (pthread_mutex_unlock (&__filehash58_probe_mutex)) {
 	case 0:

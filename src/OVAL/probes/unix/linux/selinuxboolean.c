@@ -85,6 +85,7 @@ static int get_selinuxboolean(SEXP_t *ut_ent, probe_ctx *ctx)
 
 	for (i = 0; i < len; i++)
 		free(booleans[i]);
+        free(booleans);
 
 	return 0;
 }

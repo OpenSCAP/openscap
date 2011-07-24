@@ -698,9 +698,13 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
                                                               set);
 					goto eval_fail;
 				}
-
-                                dI("Looking for object results: ID=%s\n", SEXP_string_cstr(id));
-
+#ifndef NDEBUG
+                                {
+                                        char *id_str = SEXP_string_cstr(id);
+                                        dI("Looking for object results: ID=%s\n", id_str);
+                                        oscap_free(id_str);
+                                }
+#endif
 				res = probe_rcache_sexp_get(probe->rcache, id);
 
 				if (res == NULL) {

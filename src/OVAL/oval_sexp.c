@@ -853,13 +853,18 @@ static struct oval_sysitem *oval_sysitem_from_sexp(struct oval_syschar_model *mo
 	SEXP_free(id_sexp);
 
 	sysitem = oval_syschar_model_get_sysitem(model, id);
-	if (sysitem)
+
+	if (sysitem) {
+                oscap_free(id);
 		return sysitem;
+        }
 
 	name = probe_ent_getname(sexp);
-	if (name == NULL)
+
+	if (name == NULL) {
+                oscap_free(id);
 		return NULL;
-	else {
+        } else {
 		char *endptr = strrchr(name, '_');
 
 		if (strcmp(endptr, "_item") != 0)
@@ -893,6 +898,7 @@ static struct oval_sysitem *oval_sysitem_from_sexp(struct oval_syschar_model *mo
 	}
 
  cleanup:
+        oscap_free(id);
 	oscap_free(name);
 	return sysitem;
 }

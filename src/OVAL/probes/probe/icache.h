@@ -27,7 +27,7 @@
 #include "../SEAP/generic/rbt/rbt.h"
 
 #ifndef PROBE_IQUEUE_CAPACITY
-#define PROBE_IQUEUE_CAPACITY 512
+#define PROBE_IQUEUE_CAPACITY 1024
 #endif
 
 typedef struct {
