@@ -145,12 +145,12 @@ static void report_finding(struct result_info *res, probe_ctx *ctx)
         item = probe_item_create(OVAL_UNIX_SHADOW, NULL,
                                  "username",  OVAL_DATATYPE_STRING, res->username,
                                  "password",  OVAL_DATATYPE_STRING, res->password,
-                                 "chg_lst",   OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_chl_mem, "%li", res->chg_lst),
-                                 "chg_allow", OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_cha_mem, "%li", res->chg_allow),
-                                 "chg_req",   OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_chr_mem, "%li", res->chg_req),
-                                 "exp_warn",  OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_exw_mem, "%li", res->exp_warn),
-                                 "exp_inact", OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_exi_mem, "%li", res->exp_inact),
-                                 "exp_date",  OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_exd_mem, "%li", res->exp_date),
+                                 "chg_lst",   OVAL_DATATYPE_SEXP, SEXP_number_newi_64_r(&se_chl_mem, res->chg_lst),
+                                 "chg_allow", OVAL_DATATYPE_SEXP, SEXP_number_newi_64_r(&se_cha_mem, res->chg_allow),
+                                 "chg_req",   OVAL_DATATYPE_SEXP, SEXP_number_newi_64_r(&se_chr_mem, res->chg_req),
+                                 "exp_warn",  OVAL_DATATYPE_SEXP, SEXP_number_newi_64_r(&se_exw_mem, res->exp_warn),
+                                 "exp_inact", OVAL_DATATYPE_SEXP, SEXP_number_newi_64_r(&se_exi_mem, res->exp_inact),
+                                 "exp_date",  OVAL_DATATYPE_SEXP, SEXP_number_newi_64_r(&se_exd_mem, res->exp_date),
                                  "flag",      OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_flg_mem, "%lu", res->flag),
                                  NULL);
 	enc_mth = parse_enc_mth(res->password);
