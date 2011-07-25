@@ -1,4 +1,13 @@
-openscap-0.7.3							24-05-2011
+openscap-0.7.4							25-07-2011
+- support set operations on Set Objects
+- add support for an unbounded filter element in all objects
+- fix various datatype changes in object items
+- SOLARIS integration(get existing probes working, dist files)
+- support new OVAL objects: environmentvariable58, filehash58, selinuxboolean
+- extend oscap tool(validate all imports and exports)
+- bug fixes (make check in test/mitre)
+
+openscap-0.7.3							24-06-2011
 - start migration to OVAL 5.8
 - new probes and schemas from OVAL 5.8
 - RHEL6 SCAP content is in good shape
