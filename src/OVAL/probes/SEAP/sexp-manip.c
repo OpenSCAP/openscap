@@ -424,9 +424,10 @@ int64_t SEXP_number_geti_64 (const SEXP_t *s_exp)
         case SEXP_NUM_INT16:
                 return ((int64_t)SEXP_NCASTP(u16,v_dsc.mem)->n);
         case SEXP_NUM_UINT8:
-        case SEXP_NUM_INT8:
         case SEXP_NUM_BOOL:
                 return ((int64_t)SEXP_NCASTP(u8,v_dsc.mem)->n);
+        case SEXP_NUM_INT8:
+                return ((int64_t)SEXP_NCASTP(i8,v_dsc.mem)->n);
         default:
                 abort ();
         }
