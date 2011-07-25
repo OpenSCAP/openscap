@@ -75,6 +75,7 @@ oval_subtypedsc_t __s2n_tbl[] = {
 	/* 13006 */ {OVAL_UNIX_RUNLEVEL,                    "runlevel"            },
 	/* 13008 */ {OVAL_UNIX_SHADOW,                      "shadow"              },
 	/* 13009 */ {OVAL_UNIX_UNAME,                       "uname"               },
+	/* 13010 */ {OVAL_UNIX_XINETD,                      "xinetd"              },
         /* 13012 */ {OVAL_UNIX_SYSCTL,                      "sysctl"              }
 };
 
@@ -113,6 +114,7 @@ oval_subtypedsc_t __n2s_tbl[] = {
 	/*  7006 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54"   },
 	/* 13009 */ {OVAL_UNIX_UNAME,                       "uname"               },
         /*  7009 */ {OVAL_INDEPENDENT_VARIABLE,             "variable"            },
+	/* 13010 */ {OVAL_UNIX_XINETD,                      "xinetd"              },
 	/*  7010 */ {OVAL_INDEPENDENT_XML_FILE_CONTENT,     "xmlfilecontent"      }
 };
 

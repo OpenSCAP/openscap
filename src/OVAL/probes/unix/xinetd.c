@@ -32,6 +32,7 @@
 #endif
 
 #include <probe-api.h>
+#include <probe/entcmp.h>
 #include <errno.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -50,6 +51,7 @@
 #include <alloc.h>
 #include <bfind.h>
 #include <common/debug_priv.h>
+#include <netdb.h>
 #include "../SEAP/generic/rbt/rbt.h"
 
 #define dI(...) oscap_dlprintf(DBG_I, __VA_ARGS__)
@@ -201,6 +203,7 @@ int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char
 int xiconf_parse_service(xiconf_file_t *file, xiconf_service_t *service);
 int xiconf_parse_defaults(xiconf_file_t *file, xiconf_service_t *defaults, rbt_t *stree);
 xiconf_strans_t *xiconf_getservice(xiconf_t *xiconf, char *name, char *prot);
+xiconf_strans_t *xiconf_dump(xiconf_t *xiconf);
 
 int op_assign_bool(void *var, char *val);
 int op_assign_u16(void *var, char *val);
@@ -832,10 +835,9 @@ int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char
 {
 	xiconf_service_t *snew, *scur;
 	char *buffer;
-	register size_t bufidx;
+	register size_t bufidx, keyidx;
 	char  *l_pbeg;
 	char  *l_pend;
-	char  *l_next;
 	size_t l_size;
 	char *key, *op, *opval;
 	void **opvar;
@@ -902,9 +904,6 @@ int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char
 
 		memcpy (buffer, l_pbeg, l_size);
 
-		buffer[l_size] = ' ';
-		l_next = strchr(buffer,  ' ');
-		*l_next = '\0';
 		buffer[l_size] = '\0';
 
 		/* skip whitespaces in the line buffer */
@@ -914,7 +913,9 @@ int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char
 		 * now there should be a attribute name, comment
 		 * or the end-of-line.
 		 */
-		key = buffer + bufidx;
+		key = strdup(buffer + bufidx);
+		for (keyidx = 0; ! isspace(key[keyidx]) && key[keyidx]; keyidx++);
+		key[keyidx] = '\0';
 
 		switch (*key) {
 		case  '#':
@@ -996,6 +997,7 @@ int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char
 			} else
 				goto fail;
 
+			while (*opval && isspace(*opval)) ++opval;
 			if (opfun == NULL)
 				break;
 			if (opfun(opvar, opval) != 0)
@@ -1003,12 +1005,18 @@ int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char
 		}
 
 		tmpbuf_free(buffer);
+		free(key);
 	}
 
 finish_section:
 	if (buffer != NULL) {
 		dW("Line buffer not freed; freeing now...\n");
 		tmpbuf_free(buffer);
+	}
+
+	if (key != NULL) {
+		dW("key not freed; freeing now...\n");
+		free(key);
 	}
 
 	switch (type) {
@@ -1019,7 +1027,6 @@ finish_section:
 	{
 		xiconf_strans_t *st;
 		char   st_key[XICFG_STRANS_MAXKEYLEN+1];
-		size_t st_ksz;
 
 		if (snew->id == NULL)
 			snew->id = snew->name;
@@ -1042,8 +1049,19 @@ finish_section:
 			scur = snew;
 
 			if (scur->protocol == NULL) {
-				dW("FIXME: protocol == NULL!\n");
-				scur->protocol = strdup("foo");
+
+				struct servent *service;
+
+				dI("protocol is empty, trying to guess from /etc/services for %s\n", scur->name);
+				if ((service = getservbyname(scur->name, NULL)) != NULL) {
+					scur->protocol = strdup(service->s_proto);
+					dI("service %s has default protocol=%s\n", scur->name, scur->protocol);
+					endservent();
+				}
+				if (scur->protocol == NULL) {
+					dW("FIXME: protocol == NULL!\n");
+					scur->protocol = strdup("foo");
+				}
 			}
 		} else {
 			dI("Merge(%p, %p)\n", scur, snew);
@@ -1061,7 +1079,6 @@ finish_section:
 		 * (in case it's not already there)
 		 */
 		st = NULL;
-		st_ksz = strlen(scur->name) + strlen(scur->protocol);
 		strcpy(st_key, scur->name);
 		strcat(st_key, scur->protocol);
 
@@ -1132,6 +1149,36 @@ xiconf_strans_t *xiconf_getservice(xiconf_t *xiconf, char *name, char *prot)
 
 	return (strans);
 }
+
+static int xiconf_dump_cb(struct rbt_str_node *node, void *user)
+{
+	xiconf_strans_t *res = (xiconf_strans_t *)user;
+
+	assume_d(res->cnt > 0, -1);
+
+	res->srv[res->cnt - 1] = (xiconf_service_t *)node->data;
+	--res->cnt;
+
+	return (0);
+}
+
+xiconf_strans_t *xiconf_dump(xiconf_t *xiconf)
+{
+	xiconf_strans_t *res;
+
+	assume_d(xiconf != NULL, NULL);
+
+	res = oscap_talloc(xiconf_strans_t);
+	res->cnt = rbt_str_size(xiconf->stree);
+	res->srv = oscap_alloc(sizeof(xiconf_service_t *) * res->cnt);
+
+	rbt_str_walk_inorder2(xiconf->stree, xiconf_dump_cb, (void *)res, 0);
+
+	res->cnt = rbt_str_size(xiconf->stree);
+
+	return (res);
+}
+
 
 int op_assign_bool(void *var, char *val)
 {
@@ -1424,7 +1471,7 @@ void probe_fini(void *arg)
 
 int probe_main(probe_ctx *ctx, void *arg)
 {
-	SEXP_t *eval, *object;
+	SEXP_t *service_name, *protocol, *eval, *object;
 	char    srv_name[256];
 	char    srv_prot[256];
 	int     err;
@@ -1439,28 +1486,37 @@ int probe_main(probe_ctx *ctx, void *arg)
 
         object = probe_ctx_getobject(ctx);
 
-	eval = probe_obj_getentval(object, "service_name", 1);
+	service_name = probe_obj_getent(object, "service_name", 1);
 
-	if (eval == NULL) {
+	if (service_name == NULL) {
 		err = PROBE_ENOVAL;
 		goto fail;
 	}
 
+	eval = probe_ent_getval(service_name);
+
 	if (SEXP_string_cstr_r (eval, srv_name, sizeof srv_name) == (size_t)-1) {
+		SEXP_free (service_name);
 		SEXP_free (eval);
 		err = PROBE_ERANGE;
 		goto fail;
 	}
 
 	SEXP_free (eval);
-	eval = probe_obj_getentval(object, "protocol", 1);
 
-	if (eval == NULL) {
+	protocol = probe_obj_getent(object, "protocol", 1);
+
+	if (protocol == NULL) {
+		SEXP_free (service_name);
 		err = PROBE_ENOVAL;
 		goto fail;
 	}
 
+	eval = probe_ent_getval(protocol);
+
 	if (SEXP_string_cstr_r (eval, srv_prot, sizeof srv_prot) == (size_t)-1) {
+		SEXP_free (service_name);
+		SEXP_free (protocol);
 		SEXP_free (eval);
 		err = PROBE_ERANGE;
 		goto fail;
@@ -1475,17 +1531,19 @@ int probe_main(probe_ctx *ctx, void *arg)
 		goto fail;
 	}
 
-	_D("Looking for service(s) that match: (%s && %s)\n", srv_name, srv_prot);
-	xres = xiconf_getservice(xcfg, srv_name, srv_prot);
-
-	/* TODO: distinguish between an error and "not found" result */
+	xres = xiconf_dump(xcfg);
 
 	if (xres != NULL) {
-		SEXP_t *item;
+		SEXP_t *item, *xres_service_name, *xres_protocol;
 		register unsigned int l;
 
 		for (l = 0; l < xres->cnt; ++l) {
-                        item = probe_item_create(OVAL_UNIX_XINETD, NULL,
+			xres_service_name = SEXP_string_new( xres->srv[l]->name, strlen( xres->srv[l]->name));
+			xres_protocol = SEXP_string_new( xres->srv[l]->protocol, strlen( xres->srv[l]->protocol));
+			if (probe_entobj_cmp(service_name, xres_service_name) == OVAL_RESULT_TRUE &&
+			    probe_entobj_cmp(protocol, xres_protocol) == OVAL_RESULT_TRUE
+			   ) {
+				item = probe_item_create(OVAL_UNIX_XINETD, NULL,
 						"protocol",         OVAL_DATATYPE_STRING,  xres->srv[l]->protocol,
 						"service_name",     OVAL_DATATYPE_STRING,  xres->srv[l]->name,
 						"flags",            OVAL_DATATYPE_STRING,  xres->srv[l]->flags,
@@ -1501,9 +1559,13 @@ int probe_main(probe_ctx *ctx, void *arg)
 						"disabled",         OVAL_DATATYPE_BOOLEAN, xres->srv[l]->disable,
 						NULL);
 
-                        probe_item_collect(ctx, item);
+				probe_item_collect(ctx, item);
+			}
+			SEXP_free(xres_service_name);
+			SEXP_free(xres_protocol);
 		}
 	}
+	SEXP_vfree(service_name, protocol, NULL);
 
 	return (0);
  fail:

@@ -78,7 +78,8 @@ const oval_pdsc_t OSCAP_GSYM(default_pdsc)[] = {
 	{OVAL_UNIX_SHADOW,                      "shadow",            "probe_shadow"},
 	{OVAL_UNIX_UNAME,                       "uname",             "probe_uname"},
         {OVAL_UNIX_DNSCACHE,                    "dnscache",          "probe_dnscache"},
-        {OVAL_UNIX_SYSCTL,                      "sysctl",            "probe_sysctl"}
+        {OVAL_UNIX_SYSCTL,                      "sysctl",            "probe_sysctl"},
+        {OVAL_UNIX_XINETD,                      "xinetd",            "probe_xinetd"}
 };
 
 #define DEFAULT_PDSC_COUNT (sizeof OSCAP_GSYM(default_pdsc) / sizeof (oval_pdsc_t))

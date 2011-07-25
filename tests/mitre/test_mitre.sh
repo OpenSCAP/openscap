@@ -156,6 +156,6 @@ test_run "unix-def_runlevel_test.xml" test_mitre unix-def_runlevel_test.xml "tru
 #test_run "unix-def_shadow_test.xml" test_mitre unix-def_shadow_test.xml
 test_run "unix-def_uname_test.xml" test_mitre unix-def_uname_test.xml "true"
 # unsupported object
-test_run "unix-def_xinetd_test.xml" test_mitre unix-def_xinetd_test.xml "unknown"
+test_run "unix-def_xinetd_test.xml" test_mitre unix-def_xinetd_test.xml "true"
 
 test_exit cleanup
