@@ -26,6 +26,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
+#include <assert.h>
+#include <math.h>
 
 /* CVSS */
 #include <cvss.h>
@@ -60,6 +62,7 @@ static bool getopt_cvss(int argc, char **argv, struct oscap_action *action);
 static int app_cvss_base(const struct oscap_action *action);
 static int app_cvss_temp(const struct oscap_action *action);
 static int app_cvss_env(const struct oscap_action *action);
+static int app_cvss_score(const struct oscap_action *action);
 
 static struct oscap_module* CVSS_SUBMODULES[];
 
@@ -100,10 +103,22 @@ static struct oscap_module CVSS_ENV_MODULE = {
     .func = app_cvss_env
 };
 
+static struct oscap_module CVSS_SCORE_MODULE = {
+    .name = "score",
+    .parent = &OSCAP_CVSS_MODULE,
+    .summary = "CVSS score from a CVSS vector",
+    .usage = "vector",
+    .help = "Calculates CVSS score\n"
+            "(base / temporal / environmental, depends on supplied metrics).",
+    .opt_parser = getopt_cvss,
+    .func = app_cvss_score
+};
+
 static struct oscap_module* CVSS_SUBMODULES[] = {
     &CVSS_BASE_MODULE,
     &CVSS_TEMP_MODULE,
     &CVSS_ENV_MODULE,
+    &CVSS_SCORE_MODULE,
     NULL
 };
 
@@ -146,6 +161,39 @@ int app_cvss_env(const struct oscap_action *action)
             &temp_env);
     fprintf(stdout, "Environmental score: %f\n", temp_env);
     return OSCAP_OK;
+}
+
+static inline bool print_score(const char *type, float score)
+{
+    if (score >= 0.0 && score <= 10.0) {
+        printf("%15s %4.1f\n", type, score);
+        return true;
+    }
+    else return false;
+}
+
+int app_cvss_score(const struct oscap_action *action)
+{
+    assert(action->cvss_vector);
+
+    bool ok = false;
+    struct cvss_impact *impact = cvss_impact_new_from_vector(action->cvss_vector);
+
+    if (impact == NULL) goto err;
+
+    ok |= print_score("base",          cvss_impact_base_score(impact));
+    ok |= print_score("temporal",      cvss_impact_temporal_score(impact));
+    ok |= print_score("environmental", cvss_impact_environmental_score(impact));
+
+    if (!ok) goto err;
+
+    cvss_impact_free(impact);
+    return OSCAP_OK;
+
+err:
+    cvss_impact_free(impact);
+    fprintf(stderr, "Invalid input CVSS vector\n");
+    return OSCAP_ERROR;
 }
 
 bool getopt_cvss(int argc, char **argv, struct oscap_action *action)
@@ -297,12 +345,17 @@ bool getopt_cvss(int argc, char **argv, struct oscap_action *action)
 		}
 	}
 
+    if (optind < argc) action->cvss_vector = argv[optind];
+
 	if ((action->module == &CVSS_ENV_MODULE || action->module == &CVSS_BASE_MODULE) &&
 	     ( !ave || !ace || !aue || !cie || !iie || !aie) )
         return oscap_module_usage(action->module, stderr, "Required metrics were not specified");
 
 	if ((action->module == &CVSS_TEMP_MODULE) && !base)
         return oscap_module_usage(action->module, stderr, "Base score was not specified");
+
+	if ((action->module == &CVSS_SCORE_MODULE) && action->cvss_vector == NULL)
+        return oscap_module_usage(action->module, stderr, "CVSS vector not supplied");
 
 	return true;
 }

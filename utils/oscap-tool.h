@@ -129,6 +129,7 @@ struct oscap_action {
         const char *tmpl;
         char *id;
         char *oval_template;
+        char *cvss_vector;
         int verbosity;
         int hide_profile_info;
 #ifdef ENABLE_CVSS
