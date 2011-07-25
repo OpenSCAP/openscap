@@ -76,6 +76,9 @@ int crapi_mdigest_fd (int fd, int num, ... /* crapi_alg_t alg, void *dst, size_t
         assume_r (num > 0, -1, errno = EINVAL;);
         assume_r (fd  > 0, -1, errno = EINVAL;);
 
+	for (i = 0; i < num; ++i)
+		ctbl[i].ctx = NULL;
+
         va_start (ap, num);
         
         for (i = 0; i < num; ++i) {
@@ -154,7 +157,8 @@ int crapi_mdigest_fd (int fd, int num, ... /* crapi_alg_t alg, void *dst, size_t
         return (0);
 fail:
         for (i = 0; i < num; ++i)
-                ctbl[i].free (ctbl[i].ctx);
+		if (ctbl[i].ctx != NULL)
+			ctbl[i].free (ctbl[i].ctx);
         
         return (-1);
 }
