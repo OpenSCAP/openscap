@@ -99,6 +99,14 @@ commonly used and require additional dependencies.
 %build
 # Remove next line when perl is fixed
 autoreconf -i -s
+%ifarch sparc64
+#sparc64 need big PIE
+export CFLAGS="$RPM_OPT_FLAGS -fPIE"
+export LDFLAGS="-pie -Wl,-z,relro -Wl,-z,now"
+%else
+export CFLAGS="$RPM_OPT_FLAGS -fpie"
+export LDFLAGS="-pie -Wl,-z,relro -Wl,-z,now"
+%endif
 %configure
 make %{?_smp_mflags}
 # Remove shebang from bash-completion script
