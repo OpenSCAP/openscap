@@ -158,7 +158,7 @@ static int filehash58_cb (const char *p, const char *f, const char *h, probe_ctx
 		SEXP_free (at);
 	} else {
 		uint8_t hash_dst[1025];
-		size_t  hash_dstlen;
+		size_t  hash_dstlen = sizeof hash_dst;
 		char    hash_str[2051];
 
 		crapi_alg_t hash_type;
@@ -169,7 +169,7 @@ static int filehash58_cb (const char *p, const char *f, const char *h, probe_ctx
 		/*
 		 * Compute hash value
 		 */
-		if (crapi_mdigest_fd (fd, 1, hash_type, &hash_dst, &hash_dstlen) != 0) {
+		if (crapi_mdigest_fd (fd, 1, hash_type, hash_dst, &hash_dstlen) != 0) {
 			close (fd);
 			return (-1);
 		}

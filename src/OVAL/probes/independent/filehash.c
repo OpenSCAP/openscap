@@ -145,8 +145,8 @@ static int filehash_cb (const char *p, const char *f, probe_ctx *ctx)
                  * Compute hash values
                  */
                 if (crapi_mdigest_fd (fd, 2,
-                                      CRAPI_DIGEST_MD5,  &md5_dst,  &md5_dstlen,
-                                      CRAPI_DIGEST_SHA1, &sha1_dst, &sha1_dstlen) != 0)
+                                      CRAPI_DIGEST_MD5,  md5_dst,  &md5_dstlen,
+                                      CRAPI_DIGEST_SHA1, sha1_dst, &sha1_dstlen) != 0)
                 {
                         close (fd);
                         return (-1);
