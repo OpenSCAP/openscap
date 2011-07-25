@@ -196,3 +196,8 @@ char *oscap_rtrim(char *str, char ch)
 	return str;
 }
 
+void oscap_strtoupper(char *str)
+{
+    if (!str) return;
+    for (; *str; ++str) *str = toupper(*str);
+}

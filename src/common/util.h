@@ -359,6 +359,8 @@ char *oscap_sprintf(const char *fmt, ...);
 const char *oscap_strlist_find_value(char ** const kvalues, const char *key);
 /// Right trim @a ch characters (modifies its first argument!)
 char *oscap_rtrim(char *str, char ch);
+/// Convert string to uppercase (modifies its first argument!)
+void oscap_strtoupper(char *str);
 
 // check pointer equality
 bool oscap_ptr_cmp(void *node1, void *node2);
