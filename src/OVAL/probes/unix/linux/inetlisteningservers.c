@@ -340,19 +340,16 @@ static void report_finding(struct result_info *res, llist *l, probe_ctx *ctx)
         item = probe_item_create(OVAL_LINUX_INET_LISTENING_SERVERS, NULL,
                                  "protocol",             OVAL_DATATYPE_STRING,  res->proto,
                                  "local_address",        OVAL_DATATYPE_STRING,  res->laddr,
-                                 "local_port",           OVAL_DATATYPE_SEXP,    SEXP_string_newf_r(&se_lport_mem,
-                                                                                                   "%u", res->lport),
+				 "local_port",           OVAL_DATATYPE_SEXP, SEXP_number_newu_64_r(&se_lport_mem, res->lport),
                                  "local_full_address",   OVAL_DATATYPE_SEXP,    SEXP_string_newf_r(&se_lfull_mem,
                                                                                                    "%s:%u", res->laddr, res->lport),
                                  "program_name",         OVAL_DATATYPE_STRING,  n->cmd,
                                  "foreign_address",      OVAL_DATATYPE_STRING,  res->raddr,
-                                 "foreign_port",         OVAL_DATATYPE_SEXP,    SEXP_string_newf_r(&se_rport_mem,
-                                                                                                   "%u", res->rport),
+				 "foreign_port",         OVAL_DATATYPE_SEXP, SEXP_number_newu_64_r(&se_rport_mem, res->rport),
                                  "foreign_full_address", OVAL_DATATYPE_SEXP,    SEXP_string_newf_r(&se_ffull_mem,
                                                                                                    "%s:%u", res->raddr, res->rport),
                                  "pid",                  OVAL_DATATYPE_INTEGER, (int64_t)n->pid,
-                                 "user_id",              OVAL_DATATYPE_SEXP,    SEXP_string_newf_r(&se_uid_mem,
-                                                                                                   "%u", n->uid),
+				 "user_id",              OVAL_DATATYPE_SEXP, SEXP_number_newu_64_r(&se_uid_mem, n->uid),
                                  NULL);
 
         probe_item_collect(ctx, item);
