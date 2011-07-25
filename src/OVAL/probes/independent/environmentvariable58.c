@@ -74,6 +74,7 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 	sprintf(env_file, "/proc/%d/environ", pid);
 
 	if ((fd = open(env_file, O_RDONLY)) == -1) {
+		dE("Can't open \"%s\": errno=%d, %s.\n", env_file, errno, strerror (errno));
 		return err;
 	}
 
@@ -84,8 +85,9 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 
 	buffer_size = BUFFER_SIZE;
 
-	if (read_size = read(fd, buffer, buffer_size - 1))
+	if ((read_size = read(fd, buffer, buffer_size - 1)) > 0) {
 		empty = 0;
+	}
 
 	buffer[buffer_size - 1] = 0;
 
