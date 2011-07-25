@@ -38,6 +38,7 @@
  * pid
  * ppid
  * priority
+ * ruid
  * scheduling_class
  * start_time
  * tty
@@ -73,10 +74,11 @@ struct result_info {
         unsigned pid;
         unsigned ppid;
         long priority;
+	int ruid;
         const char *scheduling_class;
         const char *start_time;
         int tty;
-        unsigned user_id;
+	int user_id;
 };
 
 static void report_finding(struct result_info *res, probe_ctx *ctx)
@@ -89,6 +91,7 @@ static void report_finding(struct result_info *res, probe_ctx *ctx)
                                  "pid",       OVAL_DATATYPE_INTEGER, (int64_t)res->pid,
                                  "ppid",      OVAL_DATATYPE_INTEGER, (int64_t)res->ppid,
                                  "priority",  OVAL_DATATYPE_INTEGER, (int64_t)res->priority,
+				 "ruid", OVAL_DATATYPE_INTEGER, (int64_t) res->ruid,
                                  "scheduling_class", OVAL_DATATYPE_STRING, res->scheduling_class,
                                  "start_time", OVAL_DATATYPE_STRING, res->start_time,
                                  "tty",        OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_tty_mem, "%d", res->tty),
@@ -130,11 +133,13 @@ static void get_boot_time(void)
 	fclose(sf);
 }
 
-static unsigned get_effective_id(int pid)
+static int get_uids(int pid, struct result_info *r)
 {
 	char buf[100];
-	unsigned euid = 0;
 	FILE *sf;
+
+	r->ruid = -1;
+	r->user_id = -1;
 
 	snprintf(buf, sizeof(buf), "/proc/%d/status", pid);
 	sf = fopen(buf, "rt");
@@ -147,14 +152,14 @@ static unsigned get_effective_id(int pid)
 				continue;
 			}
 			if (memcmp(buf, "Uid:", 4) == 0) {
-				int id;
-				sscanf(buf, "Uid: %d %u", &id, &euid);
+				sscanf(buf, "Uid: %d %d", &r->ruid, &r->user_id);
 				break;
 			}
 		}
 		fclose(sf);
 	}
-	return euid;
+
+	return 0;
 }
 
 static char *convert_time(unsigned long long t, char *tbuf, int tb_size)
@@ -300,7 +305,7 @@ static int read_process(SEXP_t *cmd_ent, probe_ctx *ctx)
 			r.priority = priority;
 			r.start_time = sbuf;
 			r.tty = tty_nr;
-			r.user_id = get_effective_id(pid);
+			get_uids(pid, &r);
 			report_finding(&r, ctx);
 		}
 		SEXP_free(cmd_sexp);
@@ -442,6 +447,7 @@ static int read_process(SEXP_t *cmd_ent, probe_ctx *ctx)
 			r.pid = psinfo->pr_pid;
 			r.ppid = psinfo->pr_ppid;
 			r.priority = (psinfo->pr_lwp).pr_pri;
+			r.ruid = psinfo->pr_uid;
 			r.start_time = sbuf;
 			r.tty = psinfo->pr_ttydev;
 			r.user_id = psinfo->pr_euid;
