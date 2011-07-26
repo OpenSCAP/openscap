@@ -30,16 +30,20 @@ function test_mitre {
 
     [ -f $RESFILE ] && rm -f $RESFILE
     ../../utils/.libs/oscap oval eval --results "$RESFILE" --variables "$EXTVARFILE"  "$DEFFILE"
+    # catch error from oscap tool
+    ret_val=$?
+    if [ $ret_val -eq 1 ]; then
+	return 1
+    fi
+
     LINES=`grep definition_id "$RESFILE"`
-    # check for an error
+    # catch error from grep
     ret_val=$?
     if [ $ret_val -eq 2 ]; then
 	return 1
     fi
 
-    # calc return code
-    # PASS if all Definitions result is true
-    # otherwise FAIL
+    # calculate return code
     echo "$LINES" | grep -q -v "result=\"$2\""
     ret_val=$?
     if [ $ret_val -eq 1 ]; then
@@ -152,8 +156,10 @@ test_run "unix-def_password_test.xml" test_mitre unix-def_password_test.xml "tru
 test_run "unix-def_process58_test.xml" test_mitre unix-def_process58_test.xml "unknown"
 test_run "unix-def_process_test.xml" test_mitre unix-def_process_test.xml "true"
 test_run "unix-def_runlevel_test.xml" test_mitre unix-def_runlevel_test.xml "true"
-# skipped
-#test_run "unix-def_shadow_test.xml" test_mitre unix-def_shadow_test.xml
+
+# content does not pass validation
+#test_run "unix-def_shadow_test.xml" test_mitre unix-def_shadow_test.xml "true"
+
 test_run "unix-def_uname_test.xml" test_mitre unix-def_uname_test.xml "true"
 # unsupported object
 test_run "unix-def_xinetd_test.xml" test_mitre unix-def_xinetd_test.xml "true"
