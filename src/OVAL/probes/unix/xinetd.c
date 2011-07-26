@@ -1480,8 +1480,8 @@ int probe_main(probe_ctx *ctx, void *arg)
 	xiconf_t         *xcfg = (xiconf_t *)arg;
 
 	if (arg == NULL) {
-		err = PROBE_EINIT;
-		goto fail;
+		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_NOT_APPLICABLE);
+		return (0);
 	}
 
         object = probe_ctx_getobject(ctx);
