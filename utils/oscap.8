@@ -235,6 +235,11 @@ Find an exact match of CPE name in the dictionary.
 
 .SH CVSS OPERATIONS
 .TP
+.B score\fR cvss_vector
+.RS
+Calculate score from a CVSS vector. Prints base score for base CVSS vector, base and temporal score for temporal CVSS vector, base and temporal and environmental score for environmental CVSS vector.
+.RE
+.PP
 .B base\fR \fImetrics\fR
 .RS
 Calculate base score from Access Vector (AV), Access Complexity (AC), Authentication(AU), Confidentiality Impact(CI),  Integrity Impact(II) and Availability Impact(AI) metric.

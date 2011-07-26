@@ -16,7 +16,7 @@ function _oscap {
     cmds[oscap]="oval xccdf cpe cvss"
     cmds[oscap:oval]="collect eval analyse validate-xml generate"
     cmds[oscap:oval:generate]="report"
-    cmds[oscap:cvss]="base temporal environmental"
+    cmds[oscap:cvss]="base temporal environmental score"
     cmds[oscap:xccdf]="eval validate-xml resolve generate"
     cmds[oscap:xccdf:generate]="report guide"
     cmds[oscap:cpe]="check match"
