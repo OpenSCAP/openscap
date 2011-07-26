@@ -85,25 +85,7 @@ enum oscap_exitcode {
     OSCAP_EXITCODES_END_ = 120  // any code returned shall not be higher than this
 };
 
-#ifdef ENABLE_CVSS
-struct cvss_metrics {
-        cvss_access_vector_t ave;
-        cvss_access_complexity_t ace;
-        cvss_authentication_t aue;
-        cvss_conf_impact_t cie;
-        cvss_integ_impact_t iie;
-        cvss_avail_impact_t aie;
-        cvss_exploitability_t exe;
-        cvss_remediation_level_t rle;
-        cvss_report_confidence_t rce;
-        cvss_collateral_damage_potential_t cde;
-        cvss_target_distribution_t tde;
-        cvss_conf_req_t cre;
-        cvss_integ_req_t ire;
-        cvss_avail_req_t are;
-        double base;
-};
-#endif
+struct cvss_impact;
 
 #ifdef ENABLE_CPE
 struct cpe_action {
@@ -132,9 +114,7 @@ struct oscap_action {
         char *cvss_vector;
         int verbosity;
         int hide_profile_info;
-#ifdef ENABLE_CVSS
-        struct cvss_metrics *cvss_metrics;
-#endif
+        struct cvss_impact *cvss_impact;
 #ifdef ENABLE_CPE
 	struct cpe_action * cpe_action;
 #endif

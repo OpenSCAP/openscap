@@ -124,42 +124,20 @@ static struct oscap_module* CVSS_SUBMODULES[] = {
 
 int app_cvss_base(const struct oscap_action *action)
 {
-    double base_score;
-    cvss_base_score(action->cvss_metrics->ave, 
-            action->cvss_metrics->ace, 
-            action->cvss_metrics->aue, 
-            action->cvss_metrics->cie, 
-            action->cvss_metrics->iie, 
-            action->cvss_metrics->aie, 
-            &base_score, NULL, NULL);
-    fprintf(stdout, "Base score: %f\n", base_score);
+    fprintf(stdout, "Base score: %.1f\n", cvss_impact_base_score(action->cvss_impact));
     return OSCAP_OK;
 }
 
 int app_cvss_temp(const struct oscap_action *action)
 {
-    double temp_score;
-    cvss_temp_score(action->cvss_metrics->exe, 
-            action->cvss_metrics->rle, 
-            action->cvss_metrics->rce, 
-            action->cvss_metrics->base, 
-            &temp_score);
-    fprintf(stdout, "Temporal score: %f\n", temp_score);
+    fprintf(stdout, "Temporal score: %.1f\n",
+        cvss_round(cvss_metrics_get_score(cvss_impact_get_base_metrics(action->cvss_impact)) * cvss_impact_temporal_multiplier(action->cvss_impact)));
     return OSCAP_OK;
 }
 
 int app_cvss_env(const struct oscap_action *action)
 {
-    double temp_env;
-    cvss_env_score(	action->cvss_metrics->cde, action->cvss_metrics->tde,
-            action->cvss_metrics->cre, action->cvss_metrics->ire,
-            action->cvss_metrics->are, action->cvss_metrics->ave,
-            action->cvss_metrics->ace, action->cvss_metrics->aue,
-            action->cvss_metrics->cie, action->cvss_metrics->iie,
-            action->cvss_metrics->aie, action->cvss_metrics->exe,
-            action->cvss_metrics->rle, action->cvss_metrics->rce,
-            &temp_env);
-    fprintf(stdout, "Environmental score: %f\n", temp_env);
+    fprintf(stdout, "Environmental score: %.1f\n", cvss_impact_environmental_score(action->cvss_impact));
     return OSCAP_OK;
 }
 
@@ -199,16 +177,6 @@ err:
 bool getopt_cvss(int argc, char **argv, struct oscap_action *action)
 {
 
-	action->cvss_metrics = malloc(sizeof(struct cvss_metrics));
-	action->cvss_metrics->exe = EX_NOT_DEFINED;
-	action->cvss_metrics->rle = RL_NOT_DEFINED;
-	action->cvss_metrics->rce = RC_NOT_DEFINED;
-	action->cvss_metrics->cde = CD_NOT_DEFINED;
-	action->cvss_metrics->tde = TD_NOT_DEFINED;
-	action->cvss_metrics->cre = CR_NOT_DEFINED;
-	action->cvss_metrics->ire = IR_NOT_DEFINED;
-	action->cvss_metrics->are = AR_NOT_DEFINED;
-
 	/* Command-options */
 	struct option long_options[] = {
 		{"AV", 1, 0, 0},
@@ -230,116 +198,100 @@ bool getopt_cvss(int argc, char **argv, struct oscap_action *action)
 	};
 
 	int c;
-	int ave=0, ace=0, aue=0, cie=0, iie=0, aie=0, base=0;
+
+    struct cvss_metrics *base_m, *temp_m, *env_m;
+    action->cvss_impact = cvss_impact_new();
+    cvss_impact_set_metrics(action->cvss_impact, (base_m = cvss_metrics_new(CVSS_BASE)));
+    cvss_impact_set_metrics(action->cvss_impact, (temp_m = cvss_metrics_new(CVSS_TEMPORAL)));
+    cvss_impact_set_metrics(action->cvss_impact, (env_m  = cvss_metrics_new(CVSS_ENVIRONMENTAL)));
 
 	while ((c = getopt_long(argc, argv, "", long_options, NULL)) != -1) {
 		switch (c) {
 		case 0:
-			ave++;
-			if (!strcmp(optarg, "local")) action->cvss_metrics->ave = AV_LOCAL;
-			else if (!strcmp(optarg, "adjacent-network")) action->cvss_metrics->ave = AV_ADJACENT_NETWORK;
-			else if (!strcmp(optarg, "network")) action->cvss_metrics->ave = AV_NETWORK;
+			if (!strcmp(optarg, "local"))                 cvss_metrics_set_access_vector(base_m, CVSS_AV_LOCAL);
+			else if (!strcmp(optarg, "adjacent-network")) cvss_metrics_set_access_vector(base_m, CVSS_AV_ADJACENT_NETWORK);
+			else if (!strcmp(optarg, "network"))          cvss_metrics_set_access_vector(base_m, CVSS_AV_NETWORK);
 			else return false;
 			break;
 		case 1:
-            ace++;
-			if (!strcmp(optarg, "low")) action->cvss_metrics->ace = AC_LOW;
-			else if (!strcmp(optarg, "medium")) action->cvss_metrics->ace = AC_MEDIUM;
-			else if (!strcmp(optarg, "high")) action->cvss_metrics->ace = AC_HIGH;
+			if (!strcmp(optarg, "low"))         cvss_metrics_set_access_complexity(base_m, CVSS_AC_LOW);
+			else if (!strcmp(optarg, "medium")) cvss_metrics_set_access_complexity(base_m, CVSS_AC_MEDIUM);
+			else if (!strcmp(optarg, "high"))   cvss_metrics_set_access_complexity(base_m, CVSS_AC_HIGH);
 			else return false;
 			break;
 		case 2:
-			aue++;
-			if (!strcmp(optarg, "none")) action->cvss_metrics->aue = AU_NONE;
-			else if (!strcmp(optarg, "single")) action->cvss_metrics->aue = AU_SINGLE_INSTANCE;
-			else if (!strcmp(optarg, "multiple")) action->cvss_metrics->aue = AU_MULTIPLE_INSTANCE;
+			if (!strcmp(optarg, "none"))          cvss_metrics_set_authentication(base_m, CVSS_AU_NONE);
+			else if (!strcmp(optarg, "single"))   cvss_metrics_set_authentication(base_m, CVSS_AU_SINGLE);
+			else if (!strcmp(optarg, "multiple")) cvss_metrics_set_authentication(base_m, CVSS_AU_MULTIPLE);
 			else return false;
 			break;
-		case 3:
-			cie++;
-			if (!strcmp(optarg, "none")) action->cvss_metrics->cie = CI_NONE;
-			else if (!strcmp(optarg, "partial")) action->cvss_metrics->cie = CI_PARTIAL;
-			else if (!strcmp(optarg, "complete")) action->cvss_metrics->cie = CI_COMPLETE;
+		case 3: case 4: case 5: {
+            bool(*func)(struct cvss_metrics*, enum cvss_cia_impact);
+            if (c == 3) func = cvss_metrics_set_confidentiality_impact;
+            if (c == 4) func = cvss_metrics_set_integrity_impact;
+            if (c == 5) func = cvss_metrics_set_availability_impact;
+
+			if (!strcmp(optarg, "none"))          func(base_m, CVSS_IMP_NONE);
+			else if (!strcmp(optarg, "partial"))  func(base_m, CVSS_IMP_PARTIAL);
+			else if (!strcmp(optarg, "complete")) func(base_m, CVSS_IMP_COMPLETE);
 			else return false;
 			break;
-		case 4:
-			iie++;
-			if (!strcmp(optarg, "none")) action->cvss_metrics->iie = II_NONE;
-			else if (!strcmp(optarg, "partial")) action->cvss_metrics->iie = II_PARTIAL;
-			else if (!strcmp(optarg, "complete")) action->cvss_metrics->iie = II_COMPLETE;
-			else return false;
-			break;
-		case 5:
-			aie++;
-			if (!strcmp(optarg, "none")) action->cvss_metrics->aie = II_NONE;
-			else if (!strcmp(optarg, "partial")) action->cvss_metrics->aie = II_PARTIAL;
-			else if (!strcmp(optarg, "complete")) action->cvss_metrics->aie = II_COMPLETE;
-			else return false;
-			break;
+        }
 		case 6:
-			if (!strcmp(optarg, "unproven")) action->cvss_metrics->exe = EX_UNPROVEN;
-			else if (!strcmp(optarg, "proof-of-concept")) action->cvss_metrics->exe = EX_PROOF_OF_CONCEPT;
-			else if (!strcmp(optarg, "functional")) action->cvss_metrics->exe = EX_FUNCTIONAL;
-			else if (!strcmp(optarg, "high")) action->cvss_metrics->exe = EX_HIGH;
-			else if (!strcmp(optarg, "not-defined")) action->cvss_metrics->exe = EX_NOT_DEFINED;
+			if (!strcmp(optarg, "unproven"))              cvss_metrics_set_exploitability(temp_m, CVSS_E_UNPROVEN);
+			else if (!strcmp(optarg, "proof-of-concept")) cvss_metrics_set_exploitability(temp_m, CVSS_E_PROOF_OF_CONCEPT);
+			else if (!strcmp(optarg, "functional"))       cvss_metrics_set_exploitability(temp_m, CVSS_E_FUNCTIONAL);
+			else if (!strcmp(optarg, "high"))             cvss_metrics_set_exploitability(temp_m, CVSS_E_HIGH);
+			else if (!strcmp(optarg, "not-defined"))      cvss_metrics_set_exploitability(temp_m, CVSS_E_NOT_DEFINED);
 			else return false;
 			break;
 		case 7:
-			if (!strcmp(optarg, "official-fix")) action->cvss_metrics->rle = RL_OFFICIAL_FIX;
-			else if (!strcmp(optarg, "temporary-fix")) action->cvss_metrics->rle = RL_TEMPORARY_FIX;
-			else if (!strcmp(optarg, "workaround")) action->cvss_metrics->rle = RL_WORKAROUND;
-			else if (!strcmp(optarg, "unavailable")) action->cvss_metrics->rle = RL_UNAVAILABLE;
-			else if (!strcmp(optarg, "not-defined")) action->cvss_metrics->rle = RL_NOT_DEFINED;
+			if (!strcmp(optarg, "official-fix"))       cvss_metrics_set_remediation_level(temp_m, CVSS_RL_OFFICIAL_FIX);
+			else if (!strcmp(optarg, "temporary-fix")) cvss_metrics_set_remediation_level(temp_m, CVSS_RL_TEMPORARY_FIX);
+			else if (!strcmp(optarg, "workaround"))    cvss_metrics_set_remediation_level(temp_m, CVSS_RL_WORKAROUND);
+			else if (!strcmp(optarg, "unavailable"))   cvss_metrics_set_remediation_level(temp_m, CVSS_RL_UNAVAILABLE);
+			else if (!strcmp(optarg, "not-defined"))   cvss_metrics_set_remediation_level(temp_m, CVSS_RL_NOT_DEFINED);
 			else return false;
 			break;
 		case 8:
-			if (!strcmp(optarg, "unconfirmed")) action->cvss_metrics->rce = RC_UNCONFIRMED;
-			else if (!strcmp(optarg, "uncorrporated")) action->cvss_metrics->rce = RC_UNCORROBORATED;
-			else if (!strcmp(optarg, "confirmed")) action->cvss_metrics->rce = RC_CONFIRMED;
-			else if (!strcmp(optarg, "not-defined")) action->cvss_metrics->rce = RC_NOT_DEFINED;
+			if (!strcmp(optarg, "unconfirmed"))        cvss_metrics_set_report_confidence(temp_m, CVSS_RC_UNCONFIRMED);
+			else if (!strcmp(optarg, "uncorrporated")) cvss_metrics_set_report_confidence(temp_m, CVSS_RC_UNCORROBORATED);
+			else if (!strcmp(optarg, "confirmed"))     cvss_metrics_set_report_confidence(temp_m, CVSS_RC_CONFIRMED);
+			else if (!strcmp(optarg, "not-defined"))   cvss_metrics_set_report_confidence(temp_m, CVSS_RC_NOT_DEFINED);
 			else return false;
 			break;
 		case 9:
-			if (!strcmp(optarg, "none")) action->cvss_metrics->cde = CD_NONE;
-			else if (!strcmp(optarg, "low")) action->cvss_metrics->cde = CD_LOW;
-			else if (!strcmp(optarg, "low-medium")) action->cvss_metrics->cde = CD_LOW_MEDIUM;
-			else if (!strcmp(optarg, "medium-high")) action->cvss_metrics->cde = CD_MEDIUM_HIGH;
-			else if (!strcmp(optarg, "high")) action->cvss_metrics->cde = CD_HIGH;
-			else if (!strcmp(optarg, "not-defined")) action->cvss_metrics->cde = CD_NOT_DEFINED;
+			if (!strcmp(optarg, "none"))             cvss_metrics_set_collateral_damage_potential(env_m, CVSS_CDP_NONE);
+			else if (!strcmp(optarg, "low"))         cvss_metrics_set_collateral_damage_potential(env_m, CVSS_CDP_LOW);
+			else if (!strcmp(optarg, "low-medium"))  cvss_metrics_set_collateral_damage_potential(env_m, CVSS_CDP_LOW_MEDIUM);
+			else if (!strcmp(optarg, "medium-high")) cvss_metrics_set_collateral_damage_potential(env_m, CVSS_CDP_MEDIUM_HIGH);
+			else if (!strcmp(optarg, "high"))        cvss_metrics_set_collateral_damage_potential(env_m, CVSS_CDP_HIGH);
+			else if (!strcmp(optarg, "not-defined")) cvss_metrics_set_collateral_damage_potential(env_m, CVSS_CDP_NOT_DEFINED);
 			else return false;
 			break;
 		case 10:
-			if (!strcmp(optarg, "none")) action->cvss_metrics->tde = TD_NONE;
-			else if (!strcmp(optarg, "low")) action->cvss_metrics->tde = TD_LOW;
-			else if (!strcmp(optarg, "medium")) action->cvss_metrics->tde = TD_MEDIUM;
-			else if (!strcmp(optarg, "high")) action->cvss_metrics->tde = TD_HIGH;
-			else if (!strcmp(optarg, "not-defined")) action->cvss_metrics->tde = TD_NOT_DEFINED;
+			if (!strcmp(optarg, "none"))             cvss_metrics_set_target_distribution(env_m, CVSS_TD_NONE);
+			else if (!strcmp(optarg, "low"))         cvss_metrics_set_target_distribution(env_m, CVSS_TD_LOW);
+			else if (!strcmp(optarg, "medium"))      cvss_metrics_set_target_distribution(env_m, CVSS_TD_MEDIUM);
+			else if (!strcmp(optarg, "high"))        cvss_metrics_set_target_distribution(env_m, CVSS_TD_HIGH);
+			else if (!strcmp(optarg, "not-defined")) cvss_metrics_set_target_distribution(env_m, CVSS_TD_NOT_DEFINED);
 			else return false;
 			break;
-		case 11:
-			if (!strcmp(optarg, "low")) action->cvss_metrics->cre = CR_LOW;
-			else if (!strcmp(optarg, "medium")) action->cvss_metrics->cre = CR_MEDIUM;
-			else if (!strcmp(optarg, "high")) action->cvss_metrics->cre = CR_HIGH;
-			else if (!strcmp(optarg, "not-defined")) action->cvss_metrics->cre = CR_NOT_DEFINED;
+		case 11: case 12: case 13: {
+            bool(*func)(struct cvss_metrics*, enum cvss_cia_requirement);
+            if (c == 11) func = cvss_metrics_set_confidentiality_requirement;
+            if (c == 12) func = cvss_metrics_set_integrity_requirement;
+            if (c == 13) func = cvss_metrics_set_availability_requirement;
+
+			if (!strcmp(optarg, "low"))              func(env_m, CVSS_REQ_LOW);
+			else if (!strcmp(optarg, "medium"))      func(env_m, CVSS_REQ_MEDIUM);
+			else if (!strcmp(optarg, "high"))        func(env_m, CVSS_REQ_HIGH);
+			else if (!strcmp(optarg, "not-defined")) func(env_m, CVSS_REQ_NOT_DEFINED);
 			else return false;
 			break;
-		case 12:
-			if (!strcmp(optarg, "low")) action->cvss_metrics->ire = IR_LOW;
-			else if (!strcmp(optarg, "medium")) action->cvss_metrics->ire = IR_MEDIUM;
-			else if (!strcmp(optarg, "high")) action->cvss_metrics->ire = IR_HIGH;
-			else if (!strcmp(optarg, "not-defined")) action->cvss_metrics->ire = IR_NOT_DEFINED;
-			else return false;
-			break;
-		case 13:
-			if (!strcmp(optarg, "low")) action->cvss_metrics->are = AR_LOW;
-			else if (!strcmp(optarg, "medium")) action->cvss_metrics->are = AR_MEDIUM;
-			else if (!strcmp(optarg, "high")) action->cvss_metrics->are = AR_HIGH;
-			else if (!strcmp(optarg, "not-defined")) action->cvss_metrics->are = AR_NOT_DEFINED;
-			else return false;
-			break;
+        }
 		case 14:
-			base++;
-			action->cvss_metrics->base = atof(optarg);
+			cvss_metrics_set_score(base_m, atof(optarg));
 			break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
@@ -347,11 +299,10 @@ bool getopt_cvss(int argc, char **argv, struct oscap_action *action)
 
     if (optind < argc) action->cvss_vector = argv[optind];
 
-	if ((action->module == &CVSS_ENV_MODULE || action->module == &CVSS_BASE_MODULE) &&
-	     ( !ave || !ace || !aue || !cie || !iie || !aie) )
+	if ((action->module == &CVSS_ENV_MODULE || action->module == &CVSS_BASE_MODULE) && !cvss_metrics_is_valid(base_m))
         return oscap_module_usage(action->module, stderr, "Required metrics were not specified");
 
-	if ((action->module == &CVSS_TEMP_MODULE) && !base)
+	if ((action->module == &CVSS_TEMP_MODULE) && isnan(cvss_metrics_get_score(base_m)))
         return oscap_module_usage(action->module, stderr, "Base score was not specified");
 
 	if ((action->module == &CVSS_SCORE_MODULE) && action->cvss_vector == NULL)

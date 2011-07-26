@@ -30,6 +30,10 @@
 #include <stdarg.h>
 #include <errno.h>
 
+#ifdef ENABLE_CVSS
+#include <cvss.h>
+#endif
+
 static void oscap_action_init(struct oscap_action *action)
 {
     assert(action != NULL);
@@ -43,7 +47,7 @@ static void oscap_action_release(struct oscap_action *action)
 	assert(action != NULL);
 	free(action->f_ovals);
 #ifdef ENABLE_CVSS
-	free(action->cvss_metrics);
+	cvss_impact_free(action->cvss_impact);
 #endif
 }
 
