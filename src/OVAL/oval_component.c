@@ -1966,6 +1966,9 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 		oval_collection_free_items(subcoll, (oscap_destruct_func) oval_value_free);
 	}
 	oval_component_iterator_free(subcomps);
+#if defined USE_REGEX_PCRE
+        pcre_free(re);
+#endif
 	return flag;
 }
 

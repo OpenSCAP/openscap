@@ -204,6 +204,7 @@ int xiconf_parse_service(xiconf_file_t *file, xiconf_service_t *service);
 int xiconf_parse_defaults(xiconf_file_t *file, xiconf_service_t *defaults, rbt_t *stree);
 xiconf_strans_t *xiconf_getservice(xiconf_t *xiconf, char *name, char *prot);
 xiconf_strans_t *xiconf_dump(xiconf_t *xiconf);
+void xiconf_strans_free(xiconf_strans_t *strans);
 
 int op_assign_bool(void *var, char *val);
 int op_assign_u16(void *var, char *val);
@@ -404,25 +405,52 @@ static xiconf_service_t *xiconf_service_new(void)
 	return (service);
 }
 
+static void xiconf_service_free(xiconf_service_t *service)
+{
+        if (service == NULL)
+                return;
+
+#define NONNULL_FREE(p) if (service->p != NULL) oscap_free(service->p)
+
+        if (service->id != service->name)
+                NONNULL_FREE(id);
+
+        NONNULL_FREE(name);
+        NONNULL_FREE(type);
+        NONNULL_FREE(flags);
+        NONNULL_FREE(socket_type);
+        NONNULL_FREE(protocol);
+        NONNULL_FREE(user);
+        NONNULL_FREE(server);
+        NONNULL_FREE(server_args);
+        NONNULL_FREE(only_from);
+        NONNULL_FREE(no_access);
+}
+
+static void xiconf_stree_free_cb(struct rbt_str_node *n)
+{
+        xiconf_service_free(n->data);
+}
+
+static void xiconf_ttree_free_cb(struct rbt_str_node *n)
+{
+        xiconf_strans_free(n->data);
+}
+
 void xiconf_free(xiconf_t *xiconf)
 {
 	register size_t i;
 
-	for (i = 0; i < xiconf->count; ++i) {
+	for (i = 0; i < xiconf->count; ++i)
 		oscap_free(xiconf->cfile[i]->cpath);
-		/* TODO: rbt_del(); */
-	}
 
 	oscap_free(xiconf->cfile);
-	/* TODO: rbt_free();   */
-	/* TODO: free defaults */
+
+        rbt_str_free_cb(xiconf->stree, xiconf_stree_free_cb);
+        rbt_str_free_cb(xiconf->ttree, xiconf_ttree_free_cb);
+
 	oscap_free(xiconf);
 
-	return;
-}
-
-static void xiconf_service_free(xiconf_service_t *service)
-{
 	return;
 }
 
@@ -1179,6 +1207,15 @@ xiconf_strans_t *xiconf_dump(xiconf_t *xiconf)
 	return (res);
 }
 
+void xiconf_strans_free(xiconf_strans_t *strans)
+{
+        if (strans == NULL)
+                return;
+
+        oscap_free(strans->srv);
+        oscap_free(strans);
+        return;
+}
 
 int op_assign_bool(void *var, char *val)
 {
