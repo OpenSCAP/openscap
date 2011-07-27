@@ -100,8 +100,7 @@ test_run "linux-def_partition_test.xml" test_mitre linux-def_partition_test.xml 
 test_run "linux-def_rpminfo_test.xml" test_mitre linux-def_rpminfo_test.xml "true"
 
 test_run "oval_binary_datatype.xml" test_mitre oval_binary_datatype.xml "true"
-# unsupported object
-test_run "linux-def_rpmverify_test.xml" test_mitre linux-def_rpmverify_test.xml "unknown"
+test_run "linux-def_rpmverify_test.xml" test_mitre linux-def_rpmverify_test.xml "true"
 
 # failed - upstream bug: s/entity_check/var_check/ needed
 #test_run "linux-def_selinuxboolean_test.xml" test_mitre linux-def_selinuxboolean_test.xml

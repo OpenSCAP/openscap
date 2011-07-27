@@ -53,32 +53,32 @@
     <rpmverify_object id="oval:org.mitre.oval.test:obj:1453" version="1" comment="Verify all files in the pam package." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <behaviors nodeps="true" nofiles="false" nodigest="true" noscripts="true" nosignature="true"/>
       <name>pam</name>
-      <filepath operation="pattern match"/>
+      <filepath operation="pattern match">.*</filepath>
     </rpmverify_object>
     <rpmverify_object id="oval:org.mitre.oval.test:obj:1484" version="1" comment="Verify files in the bash package, but skip md5" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <behaviors nodeps="true" nofiles="false" nodigest="true" noscripts="true" nosignature="true" nomd5="true"/>
       <name>bash</name>
-      <filepath operation="pattern match"/>
+      <filepath operation="pattern match">.*</filepath>
     </rpmverify_object>
     <rpmverify_object id="oval:org.mitre.oval.test:obj:1386" version="1" comment="Try looking up a package by filepath." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <behaviors nodeps="true" nofiles="false" nodigest="true" noscripts="true" nosignature="true"/>
-      <name operation="pattern match"/>
+      <name operation="pattern match">.*</name>
       <filepath>/bin/ls</filepath>
     </rpmverify_object>
     <rpmverify_object id="oval:org.mitre.oval.test:obj:1394" version="1" comment="Verify all package-owned files under /etc/X11." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <behaviors nodeps="true" nofiles="false" nodigest="true" noscripts="true" nosignature="true"/>
-      <name operation="pattern match"/>
+      <name operation="pattern match">.*</name>
       <filepath operation="pattern match">^/etc/X11</filepath>
     </rpmverify_object>
     <rpmverify_object id="oval:org.mitre.oval.test:obj:1492" version="1" comment="Verify non-ghost files in the pam package." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <behaviors nodeps="true" nofiles="false" nodigest="true" noscripts="true" nosignature="true" noghostfiles="true"/>
       <name>pam</name>
-      <filepath operation="pattern match"/>
+      <filepath operation="pattern match">.*</filepath>
     </rpmverify_object>
     <rpmverify_object id="oval:org.mitre.oval.test:obj:1292" version="1" comment="Verify non-config files in the pam package." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <behaviors nodeps="true" nofiles="false" nodigest="true" noscripts="true" nosignature="true" noconfigfiles="true"/>
       <name>pam</name>
-      <filepath operation="pattern match"/>
+      <filepath operation="pattern match">.*</filepath>
     </rpmverify_object>
   </objects>
   <states>
@@ -90,21 +90,21 @@
       <md5_differs>not performed</md5_differs>
     </rpmverify_state>
     <rpmverify_state id="oval:org.mitre.oval.test:ste:1362" version="1" comment="accepts /bin/ls" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-      <name operation="pattern match"/>
+      <name operation="pattern match">.*</name>
       <filepath>/bin/ls</filepath>
     </rpmverify_state>
     <rpmverify_state id="oval:org.mitre.oval.test:ste:719" version="1" comment="accepts any file under /etc/X11 owned by any package" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-      <name operation="pattern match"/>
+      <name operation="pattern match">.*</name>
       <filepath operation="pattern match">^/etc/X11</filepath>
     </rpmverify_state>
     <rpmverify_state id="oval:org.mitre.oval.test:ste:1096" version="1" comment="accepts any non-ghost files from the pam package" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <name>pam</name>
-      <filepath operation="pattern match"/>
+      <filepath operation="pattern match">.*</filepath>
       <ghost_file datatype="boolean">false</ghost_file>
     </rpmverify_state>
     <rpmverify_state id="oval:org.mitre.oval.test:ste:1597" version="1" comment="accepts any non-config files from the pam package" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <name>pam</name>
-      <filepath operation="pattern match"/>
+      <filepath operation="pattern match">.*</filepath>
       <configuration_file datatype="boolean">false</configuration_file>
     </rpmverify_state>
   </states>
