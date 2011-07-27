@@ -26,6 +26,7 @@
  *
  * Authors:
  *      Maros Barabas <mbarabas@redhat.com>
+ *      Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
 #ifndef CVSS_PRIV_H_
@@ -35,69 +36,8 @@
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
 
-#include "../common/list.h"
-#include "../common/util.h"
-#include "../common/elements.h"
-
-/** 
- * @cond INTERNAL
- */
-OSCAP_HIDDEN_START;
- /* @endcond */
-
-/**
- * @struct cvss_entry
- * Struct holding CVSS entry data
- */
-struct cvss_entry;
-
-/**
- * @name Parse functions
- * Functions for parsing structures from XML. Return value is new structure filled by content of XML file
- * represented by XML reader or import source structure. Structure needs to be freed by the caller.
- * @{
- * */
-
-/**
- * Parse CVSS entry
- * @param reader XML Text Reader representing XML model
- * @return new parsed CVSS entry
- */
-struct cvss_entry * cvss_entry_parse(xmlTextReaderPtr reader);
-
-/**
- * Export CVSS entry
- * @param entry CVSS entry
- * @param writer XML Text Writer representing XML model
- */
-void cvss_entry_export(const struct cvss_entry * entry, xmlTextWriterPtr writer);
-
-/**
- */
-int cvss_map_av_get(const char * string);
-/**
- */
-int cvss_map_ac_get(const char * string);
-/**
- */
-int cvss_map_auth_get(const char * string);
-/**
- */
-int cvss_map_imp_get(const char * string);
-
-/** 
- * @cond INTERNAL
- */
-OSCAP_HIDDEN_END;
- /* @endcond */
-
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////  NEW API  //////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////
-
 #include "public/cvss.h"
+#include "../common/util.h"
 
 OSCAP_HIDDEN_START;
 
