@@ -27,6 +27,7 @@ test_api_cvss_SOURCES = test_api_cvss.c
 test_api_cvss_CFLAGS  = -ffloat-store
 
 EXTRA_DIST += test_api_cvss.sh \
-              test_api_cvss.c
+              test_api_cvss.c \
+			  vectors.txt
 endif
 
