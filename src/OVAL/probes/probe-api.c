@@ -1616,3 +1616,32 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
 
         return (item);
 }
+
+oval_operation_t probe_ent_getoperation(SEXP_t *entity, oval_operation_t default_op)
+{
+        oval_operation_t ret;
+        SEXP_t *aval;
+
+        if (entity == NULL) {
+                dW("entity == NULL\n");
+                return (OVAL_OPERATION_UNKNOWN);
+        }
+
+        aval = probe_ent_getattrval(entity, "operation");
+
+        if (aval == NULL) {
+                dW("Attribute \"operation\" not found. Using default.\n");
+                return (default_op);
+        }
+
+        if (!SEXP_numberp(aval)) {
+                dW("Invalid type\n");
+                SEXP_free(aval);
+                return (OVAL_OPERATION_UNKNOWN);
+        }
+
+        ret = SEXP_number_geti_32(aval);
+        SEXP_free(aval);
+
+        return (ret);
+}

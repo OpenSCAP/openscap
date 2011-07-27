@@ -570,3 +570,5 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
 	} while (0)
 
 #endif				/* PROBE_API_H */
+
+oval_operation_t probe_ent_getoperation(SEXP_t *entity, oval_operation_t op);
