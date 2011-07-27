@@ -421,21 +421,20 @@ xmlNode *oval_test_to_dom(struct oval_test *test, xmlDoc * doc, xmlNode * parent
 		return test_node;
 	}
 
-	struct oval_state_iterator *ste_itr;
+	/* get test name */
 	const char *subtype_text = oval_subtype_get_text(subtype);
 	char test_name[strlen(subtype_text) + 6];
-	*test_name = '\0';
-	strcat(strcat(test_name, subtype_text), "_test");
-	test_node = xmlNewTextChild(parent, NULL, BAD_CAST test_name, NULL);
+	sprintf(test_name, "%s_test", subtype_text);
 
+	/* get family URI */
 	oval_family_t family = oval_test_get_family(test);
 	const char *family_text = oval_family_get_text(family);
 	char family_uri[strlen((const char *)OVAL_DEFINITIONS_NAMESPACE) + strlen(family_text) + 2];
-	*family_uri = '\0';
-	strcat(strcat(strcat(family_uri, (const char *)OVAL_DEFINITIONS_NAMESPACE), "#"), family_text);
-	xmlNs *ns_family = xmlNewNs(test_node, BAD_CAST family_uri, NULL);
+	sprintf(family_uri,"%s#%s", OVAL_DEFINITIONS_NAMESPACE, family_text);
 
-	xmlSetNs(test_node, ns_family);
+	/* search namespace & create child */
+	xmlNs *ns_family = xmlSearchNsByHref(doc, parent, family_uri);
+	test_node = xmlNewTextChild(parent, ns_family, BAD_CAST test_name, NULL);
 
 	char *id = oval_test_get_id(test);
 	xmlNewProp(test_node, BAD_CAST "id", BAD_CAST id);
@@ -480,7 +479,7 @@ xmlNode *oval_test_to_dom(struct oval_test *test, xmlDoc * doc, xmlNode * parent
 		xmlNewProp(object_node, BAD_CAST "object_ref", BAD_CAST oval_object_get_id(object));
 	}
 
-	ste_itr = oval_test_get_states(test);
+	struct oval_state_iterator *ste_itr = oval_test_get_states(test);
 	while (oval_state_iterator_has_more(ste_itr)) {
 		struct oval_state *state;
 

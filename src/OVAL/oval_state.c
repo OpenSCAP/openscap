@@ -316,21 +316,21 @@ int oval_state_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *co
 
 xmlNode *oval_state_to_dom(struct oval_state *state, xmlDoc * doc, xmlNode * parent)
 {
+	/* get state name */
 	oval_subtype_t subtype = oval_state_get_subtype(state);
 	const char *subtype_text = oval_subtype_get_text(subtype);
 	char state_name[strlen(subtype_text) + 7];
-	*state_name = '\0';
-	strcat(strcat(state_name, subtype_text), "_state");
-	xmlNode *state_node = xmlNewTextChild(parent, NULL, BAD_CAST state_name, NULL);
+	sprintf(state_name, "%s_state", subtype_text);
 
+	/* get family URI */
 	oval_family_t family = oval_state_get_family(state);
 	const char *family_text = oval_family_get_text(family);
 	char family_uri[strlen((const char *)OVAL_DEFINITIONS_NAMESPACE) + strlen(family_text) + 2];
-	*family_uri = '\0';
-	strcat(strcat(strcat(family_uri, (const char *)OVAL_DEFINITIONS_NAMESPACE), "#"), family_text);
-	xmlNs *ns_family = xmlNewNs(state_node, BAD_CAST family_uri, NULL);
+	sprintf(family_uri,"%s#%s", OVAL_DEFINITIONS_NAMESPACE, family_text);
 
-	xmlSetNs(state_node, ns_family);
+	/* search namespace & create child */ 
+	xmlNs *ns_family = xmlSearchNsByHref(doc, parent, family_uri);
+	xmlNode *state_node = xmlNewTextChild(parent, ns_family, BAD_CAST state_name, NULL);
 
 	char *id = oval_state_get_id(state);
 	xmlNewProp(state_node, BAD_CAST "id", BAD_CAST id);

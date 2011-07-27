@@ -335,7 +335,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 
 xmlNode *oval_entity_to_dom(struct oval_entity *entity, xmlDoc * doc, xmlNode * parent) {
 	
-	xmlNsPtr *ns_parent = xmlGetNsList(doc, parent);
+	xmlNsPtr *ns_parent = parent->ns;
 	xmlNs *ent_ns;
 	xmlNodePtr root_node = xmlDocGetRootElement(doc);
 
@@ -355,7 +355,7 @@ xmlNode *oval_entity_to_dom(struct oval_entity *entity, xmlDoc * doc, xmlNode * 
 	char *tagname = oval_entity_get_name(entity);
 	bool mask = oval_entity_get_mask(entity);
 
-	ent_ns = ns_parent ? ns_parent[0] : NULL;
+	ent_ns = ns_parent ? ns_parent : NULL;
 
 	/* omit the value and operation used for testing in oval_results if mask=true */
 	if(mask && !xmlStrcmp(root_node->name, (const xmlChar *) "oval_results")){
@@ -375,9 +375,6 @@ xmlNode *oval_entity_to_dom(struct oval_entity *entity, xmlDoc * doc, xmlNode * 
 		xmlNewProp(entity_node, BAD_CAST "mask", BAD_CAST "true");
 	if (vtype == OVAL_ENTITY_VARREF_ATTRIBUTE)
 		xmlNewProp(entity_node, BAD_CAST "var_ref", BAD_CAST oval_variable_get_id(variable));
-
-	if(ns_parent)
-		xmlFree(ns_parent);
 
 	return entity_node;
 }

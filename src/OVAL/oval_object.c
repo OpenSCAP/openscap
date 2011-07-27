@@ -376,20 +376,20 @@ xmlNode *oval_object_to_dom(struct oval_object *object, xmlDoc * doc, xmlNode * 
                 return object_node;
         }
 
+	/* get object name */
 	const char *subtype_text = oval_subtype_get_text(subtype);
 	char object_name[strlen(subtype_text) + 8];
-	*object_name = '\0';
-	strcat(strcat(object_name, subtype_text), "_object");
-	object_node = xmlNewTextChild(parent, NULL, BAD_CAST object_name, NULL);
+	sprintf(object_name, "%s_object", subtype_text);
 
+	/* get family URI */
 	oval_family_t family = oval_object_get_family(object);
 	const char *family_text = oval_family_get_text(family);
 	char family_uri[strlen((const char *)OVAL_DEFINITIONS_NAMESPACE) + strlen(family_text) + 2];
-	*family_uri = '\0';
-	strcat(strcat(strcat(family_uri, (const char *)OVAL_DEFINITIONS_NAMESPACE), "#"), family_text);
-	xmlNs *ns_family = xmlNewNs(object_node, BAD_CAST family_uri, NULL);
+	sprintf(family_uri,"%s#%s", OVAL_DEFINITIONS_NAMESPACE, family_text);
 
-	xmlSetNs(object_node, ns_family);
+	/* search namespace & create child */
+	xmlNs *ns_family = xmlSearchNsByHref(doc, parent, family_uri);
+	object_node = xmlNewTextChild(parent, ns_family, BAD_CAST object_name, NULL);
 
 	char *id = oval_object_get_id(object);
 	xmlNewProp(object_node, BAD_CAST "id", BAD_CAST id);

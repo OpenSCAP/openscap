@@ -46,6 +46,9 @@ OSCAP_HIDDEN_START;
 #define OVAL_DEFINITIONS_NAMESPACE BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5"
 #define OVAL_DIGSIG_NAMESPACE      BAD_CAST "http://www.w3.org/2000/09/xmldsig#"
 #define OVAL_VARIABLES_NAMESPACE   BAD_CAST "http://oval.mitre.org/XMLSchema/oval-variables-5"
+#define OVAL_UNIX_NAMESPACE        BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5#unix"
+#define OVAL_INDEPENDENT_NAMESPACE BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
+#define OVAL_LINUX_NAMESPACE       BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux"
 
 /*#define OVAL_DEF_SCHEMA_LOCATION_DEF_PX    "http://oval.mitre.org/XMLSchema/oval-definitions-5 http://oval.mitre.org/language/download/schema/version"
 #define OVAL_DEF_SCHEMA_LOCATION_DEF_SX    "/ovaldefinition/complete/oval-definitions-schema.xsd"
