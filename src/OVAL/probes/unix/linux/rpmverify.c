@@ -70,6 +70,7 @@ struct rpmverify_res {
         char *name;  /**< package name */
         const char *file;  /**< filepath */
         rpmVerifyAttrs vflags; /**< rpm verify flags */
+        rpmVerifyAttrs oflags; /**< rpm verify omit flags */
         rpmfileAttrs   fflags; /**< rpm file flags */
 #if 0
         char *arch;
@@ -152,6 +153,7 @@ static void pkgh2rep (Header h, struct rpmverify_rep *r)
 static int rpmverify_collect(probe_ctx *ctx,
                              const char *name, oval_operation_t name_op,
                              const char *file, oval_operation_t file_op,
+                             rpmVerifyAttrs omit,
                              void (*callback)(probe_ctx *, struct rpmverify_res *))
 {
 	rpmdbMatchIterator match;
@@ -239,9 +241,7 @@ static int rpmverify_collect(probe_ctx *ctx,
                 while (rpmfiNext(fi) != -1) {
                         res.file   = rpmfiFN(fi);
                         res.fflags = rpmfiFFlags(fi);
-
-                        if (rpmVerifyFile(g_rpm.rpmts, fi, &res.vflags, RPMVERIFY_NONE) != 0)
-                                res.vflags = RPMVERIFY_FAILURES;
+                        res.oflags = omit;
 
                         switch(file_op) {
                         case OVAL_OPERATION_EQUALS:
@@ -273,6 +273,9 @@ static int rpmverify_collect(probe_ctx *ctx,
                                 ret = -1;
                                 goto ret;
                         }
+
+                        if (rpmVerifyFile(g_rpm.rpmts, fi, &res.vflags, omit) != 0)
+                                res.vflags = RPMVERIFY_FAILURES;
 
                         callback(ctx, &res);
                 }
@@ -321,7 +324,7 @@ static void rpmverify_additem(probe_ctx *ctx, struct rpmverify_res *res)
 {
         SEXP_t *item;
 
-#define VF_RESULT(f) (res->vflags & RPMVERIFY_FAILURES ? "not performed" : (res->vflags & (f) ? "fail" : "pass"))
+#define VF_RESULT(f) (res->oflags & (f) ? "not performed" : (res->vflags & RPMVERIFY_FAILURES ? "not performed" : (res->vflags & (f) ? "fail" : "pass")))
 #define FF_RESULT(f) (res->fflags & (f) ? true : false)
 
         item = probe_item_create(OVAL_LINUX_RPMVERIFY, NULL,
@@ -346,14 +349,39 @@ static void rpmverify_additem(probe_ctx *ctx, struct rpmverify_res *res)
         probe_item_collect(ctx, item);
 }
 
+typedef struct {
+        const char    *a_name;
+        rpmVerifyAttrs a_flag;
+} rpmverify_bhmap_t;
+
+const rpmverify_bhmap_t rpmverify_bhmap[] = {
+        { "nodeps",        VERIFY_DEPS       },
+        { "nodigest",      VERIFY_DIGEST     },
+        { "nofiles",       VERIFY_FILES      },
+        { "noscripts",     VERIFY_SCRIPT     },
+        { "nosignature",   VERIFY_SIGNATURE  },
+        { "nolinkto",      VERIFY_LINKTO     },
+        { "nomd5 ",        VERIFY_MD5        },
+        { "nosize",        VERIFY_SIZE       },
+        { "nouser",        VERIFY_USER       },
+        { "nogroup",       VERIFY_GROUP      },
+        { "nomtime",       VERIFY_MTIME      },
+        { "nomode",        VERIFY_MODE       },
+        { "nordev",        VERIFY_RDEV       },
+        { "noconfigfiles", VERIFY_FOR_CONFIG },
+        { "noghostfiles",  0                 }
+};
+
 int probe_main (probe_ctx *ctx, void *arg)
 {
-        SEXP_t *probe_in, *name_ent, *file_ent;
+        SEXP_t *probe_in, *name_ent, *file_ent, *bh_ent;
         char   file[PATH_MAX];
         size_t file_len = sizeof file;
         char   name[64];
         size_t name_len = sizeof name;
         oval_operation_t name_op, file_op;
+        rpmVerifyAttrs omit = RPMVERIFY_NONE;
+        unsigned int i;
 
         /*
          * Get refs to object entities
@@ -389,11 +417,35 @@ int probe_main (probe_ctx *ctx, void *arg)
         /*
          * Extract entity values
          */
-        PROBE_ENT_STRVAL(name_ent, name, name_len, /* void */, /* void */);
-        PROBE_ENT_STRVAL(file_ent, file, file_len, /* void */, /* void */);
+        PROBE_ENT_STRVAL(name_ent, name, name_len, /* void */, strcpy(name, ""););
+        PROBE_ENT_STRVAL(file_ent, file, file_len, /* void */, strcpy(file, ""););
 
         SEXP_free(name_ent);
         SEXP_free(file_ent);
+
+        /*
+         * Parse behaviors
+         */
+        bh_ent = probe_obj_getent(probe_in, "behaviors", 1);
+
+        if (bh_ent != NULL) {
+                SEXP_t *aval;
+
+                for (i = 0; i < sizeof rpmverify_bhmap/sizeof(rpmverify_bhmap_t); ++i) {
+                        aval = probe_ent_getattrval(bh_ent, rpmverify_bhmap[i].a_name);
+
+                        if (aval != NULL) {
+                                if (SEXP_strcmp(aval, "true") == 0) {
+                                        dI("omit verify attr: %s\n", rpmverify_bhmap[i].a_name);
+                                        omit |= rpmverify_bhmap[i].a_flag;
+                                }
+
+                                SEXP_free(aval);
+                        }
+                }
+
+                SEXP_free(bh_ent);
+        }
 
         dI("Collecting rpmverify data, query: n=\"%s\" (%d), f=\"%s\" (%d)\n",
            name, name_op, file, file_op);
@@ -401,7 +453,7 @@ int probe_main (probe_ctx *ctx, void *arg)
         if (rpmverify_collect(ctx,
                               name, name_op,
                               file, file_op,
-                              rpmverify_additem) != 0)
+                              omit, rpmverify_additem) != 0)
         {
                 dE("An error ocured while collecting rpmverify data\n");
                 probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
