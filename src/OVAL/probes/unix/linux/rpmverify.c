@@ -82,6 +82,10 @@ struct rpmverify_res {
 #endif
 };
 
+#define RPMVERIFY_SKIP_CONFIG 0x1000000000000000
+#define RPMVERIFY_SKIP_GHOST  0x2000000000000000
+#define RPMVERIFY_RPMATTRMASK 0x00000000ffffffff
+
 struct rpmverify_global {
         rpmts           rpmts;
         pthread_mutex_t mutex;
@@ -153,10 +157,11 @@ static void pkgh2rep (Header h, struct rpmverify_rep *r)
 static int rpmverify_collect(probe_ctx *ctx,
                              const char *name, oval_operation_t name_op,
                              const char *file, oval_operation_t file_op,
-                             rpmVerifyAttrs omit,
+                             uint64_t flags,
                              void (*callback)(probe_ctx *, struct rpmverify_res *))
 {
 	rpmdbMatchIterator match;
+        rpmVerifyAttrs omit = (rpmVerifyAttrs)(flags & RPMVERIFY_RPMATTRMASK);
 	Header pkgh;
         pcre *re = NULL;
 	int  ret = -1;
@@ -243,6 +248,10 @@ static int rpmverify_collect(probe_ctx *ctx,
                         res.fflags = rpmfiFFlags(fi);
                         res.oflags = omit;
 
+                        if (((res.fflags & RPMFILE_CONFIG) && (flags & RPMVERIFY_SKIP_CONFIG)) ||
+                            ((res.fflags & RPMFILE_GHOST)  && (flags & RPMVERIFY_SKIP_GHOST)))
+                                continue;
+
                         switch(file_op) {
                         case OVAL_OPERATION_EQUALS:
                                 if (strcmp(res.file, file) != 0)
@@ -284,6 +293,7 @@ static int rpmverify_collect(probe_ctx *ctx,
         }
 
 	match = rpmdbFreeIterator (match);
+        ret   = 0;
 ret:
         if (re != NULL)
                 pcre_free(re);
@@ -350,26 +360,26 @@ static void rpmverify_additem(probe_ctx *ctx, struct rpmverify_res *res)
 }
 
 typedef struct {
-        const char    *a_name;
-        rpmVerifyAttrs a_flag;
+        const char *a_name;
+        uint64_t    a_flag;
 } rpmverify_bhmap_t;
 
 const rpmverify_bhmap_t rpmverify_bhmap[] = {
-        { "nodeps",        VERIFY_DEPS       },
-        { "nodigest",      VERIFY_DIGEST     },
-        { "nofiles",       VERIFY_FILES      },
-        { "noscripts",     VERIFY_SCRIPT     },
-        { "nosignature",   VERIFY_SIGNATURE  },
-        { "nolinkto",      VERIFY_LINKTO     },
-        { "nomd5 ",        VERIFY_MD5        },
-        { "nosize",        VERIFY_SIZE       },
-        { "nouser",        VERIFY_USER       },
-        { "nogroup",       VERIFY_GROUP      },
-        { "nomtime",       VERIFY_MTIME      },
-        { "nomode",        VERIFY_MODE       },
-        { "nordev",        VERIFY_RDEV       },
-        { "noconfigfiles", VERIFY_FOR_CONFIG },
-        { "noghostfiles",  0                 }
+        { "nodeps",        (uint64_t)VERIFY_DEPS      },
+        { "nodigest",      (uint64_t)VERIFY_DIGEST    },
+        { "nofiles",       (uint64_t)VERIFY_FILES     },
+        { "noscripts",     (uint64_t)VERIFY_SCRIPT    },
+        { "nosignature",   (uint64_t)VERIFY_SIGNATURE },
+        { "nolinkto",      (uint64_t)VERIFY_LINKTO    },
+        { "nomd5",         (uint64_t)VERIFY_MD5       },
+        { "nosize",        (uint64_t)VERIFY_SIZE      },
+        { "nouser",        (uint64_t)VERIFY_USER      },
+        { "nogroup",       (uint64_t)VERIFY_GROUP     },
+        { "nomtime",       (uint64_t)VERIFY_MTIME     },
+        { "nomode",        (uint64_t)VERIFY_MODE      },
+        { "nordev",        (uint64_t)VERIFY_RDEV      },
+        { "noconfigfiles", RPMVERIFY_SKIP_CONFIG      },
+        { "noghostfiles",  RPMVERIFY_SKIP_GHOST       }
 };
 
 int probe_main (probe_ctx *ctx, void *arg)
@@ -380,7 +390,7 @@ int probe_main (probe_ctx *ctx, void *arg)
         char   name[64];
         size_t name_len = sizeof name;
         oval_operation_t name_op, file_op;
-        rpmVerifyAttrs omit = RPMVERIFY_NONE;
+        uint64_t collect_flags = 0;
         unsigned int i;
 
         /*
@@ -437,7 +447,7 @@ int probe_main (probe_ctx *ctx, void *arg)
                         if (aval != NULL) {
                                 if (SEXP_strcmp(aval, "true") == 0) {
                                         dI("omit verify attr: %s\n", rpmverify_bhmap[i].a_name);
-                                        omit |= rpmverify_bhmap[i].a_flag;
+                                        collect_flags |= rpmverify_bhmap[i].a_flag;
                                 }
 
                                 SEXP_free(aval);
@@ -453,7 +463,8 @@ int probe_main (probe_ctx *ctx, void *arg)
         if (rpmverify_collect(ctx,
                               name, name_op,
                               file, file_op,
-                              omit, rpmverify_additem) != 0)
+                              collect_flags,
+                              rpmverify_additem) != 0)
         {
                 dE("An error ocured while collecting rpmverify data\n");
                 probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
