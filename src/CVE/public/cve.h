@@ -75,6 +75,9 @@ struct cwe_entry;
  */
 struct cve_reference;
 
+// fwd
+struct cvss_impact;
+
 /************************************************************/
 /**
  * @name Getters
@@ -215,7 +218,7 @@ const struct cpe_testexpr *cve_configuration_get_expr(const struct cve_configura
  * @param item CVE entry
  * @memberof cve_entry
  */
-const struct cvss_entry *cve_entry_get_cvss(const struct cve_entry *item);
+const struct cvss_impact *cve_entry_get_cvss(const struct cve_entry *item);
 
 /************************************************************/
 /** @} End of Getters group */

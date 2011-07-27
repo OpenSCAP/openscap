@@ -119,7 +119,7 @@ struct cve_entry {
 	struct oscap_list *products;	/* vulnerable SW list       */
 	char *published;	/* published datetime       */
 	char *modified;		/* last modified datetime   */
-	struct cvss_entry *cvss;	/* [cvss] score definition  */
+	struct cvss_impact *cvss;	/* [cvss] score definition  */
 	char *sec_protection;
 	char *cwe;		/* cwe (0-1)                */
 	struct oscap_list *summaries;	/* summaries                */
@@ -179,7 +179,7 @@ OSCAP_ACCESSOR_STRING(cve_entry, id)
 /* End of XML string variables definitions
  * */
 /***************************************************************************/
-const struct cvss_entry *cve_entry_get_cvss(const struct cve_entry *item)
+const struct cvss_impact *cve_entry_get_cvss(const struct cve_entry *item)
 {
 
 	if (item == NULL)
@@ -236,7 +236,7 @@ struct cve_entry * cve_entry_clone(struct cve_entry * old_entry)
     new_entry->cwe = oscap_strdup(old_entry->cwe);
     new_entry->sec_protection = oscap_strdup(old_entry->sec_protection);
 
-    new_entry->cvss = cvss_entry_clone(old_entry->cvss);
+    new_entry->cvss = cvss_impact_clone(old_entry->cvss);
 
     new_entry->products = oscap_list_clone(old_entry->products, (oscap_clone_func) cve_product_clone);
     new_entry->references = oscap_list_clone(old_entry->references, (oscap_clone_func) cve_reference_clone);
@@ -613,7 +613,7 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 		} else
 		    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVSS_STR) &&
 			xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-			ret->cvss = cvss_entry_parse(reader);
+            if (ret->cvss == NULL) ret->cvss = cvss_impact_new_from_xml(reader);
 		} else
 		    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_SECURITY_PROTECTION_STR) &&
 			xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
@@ -808,7 +808,7 @@ void cve_entry_export(const struct cve_entry *entry, xmlTextWriterPtr writer)
 		xmlTextWriterWriteElementNS(writer, NULL, TAG_LAST_MODIFIED_DATETIME_STR, CVE_NS, BAD_CAST entry->modified);
 
 	if ((entry->cvss) != NULL) {
-		cvss_entry_export(entry->cvss, writer);
+		cvss_impact_export(entry->cvss, writer);
 	}
 	if ((entry->sec_protection) != NULL)
 		xmlTextWriterWriteElementNS(writer, NULL, TAG_SECURITY_PROTECTION_STR, CVE_NS, BAD_CAST entry->sec_protection);
@@ -919,7 +919,7 @@ void cve_entry_free(struct cve_entry *entry)
 	xmlFree(entry->modified);
 	xmlFree(entry->sec_protection);
 	xmlFree(entry->cwe);
-	cvss_entry_free(entry->cvss);
+	cvss_impact_free(entry->cvss);
 	oscap_list_free(entry->products, (oscap_destruct_func) cve_product_free);
 	oscap_list_free(entry->references, (oscap_destruct_func) cve_reference_free);
 	oscap_list_free(entry->summaries, (oscap_destruct_func) cve_summary_free);

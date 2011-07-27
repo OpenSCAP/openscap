@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 {
     struct cve_model * model;
     struct cve_entry * entry;
-    struct cvss_entry * cvss;
+    const struct cvss_impact * cvss;
     // iterators
     struct cve_entry_iterator * entry_it;
 
@@ -73,13 +73,16 @@ int main(int argc, char **argv)
 
         entry_it = cve_model_get_entries(model);
         entry = cve_entry_iterator_next(entry_it);
-        cvss = (struct cvss_entry *) cve_entry_get_cvss(entry);
-        const char *base_score = cvss_entry_get_score(cvss);
+        cvss = cve_entry_get_cvss(entry);
 
-        double bs, is, es;
-        cvss_base_score_struct(cvss, &bs, &is, &es);
+        struct cvss_metrics *m = cvss_impact_get_base_metrics(cvss);
+        if (m == NULL) return 1;
+
+        float base_score = cvss_metrics_get_score(m);
+        float bs = cvss_impact_base_score(cvss);
+        printf("XML-stored score: %f, calculated score: %f\n", base_score, bs);
     
-        return (bs != atof(base_score));
+        return (bs != base_score);
     }
     
     else if (argc == 2 && !strcmp(argv[1], "--sanity-check")) {
