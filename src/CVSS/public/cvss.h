@@ -1,12 +1,3 @@
-/** 
- * @addtogroup CVSS
- * @{
- *
- * @file cvss.h
- *  \brief Interface to Common Vulnerability Scoring System Version 2
- *
- */
-
 /*
  * Copyright 2008-2009 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
@@ -29,7 +20,17 @@
  *      Tomas Heinrich <theinric@redhat.com>
  *      Peter Vrabec   <pvrabec@redhat.com>
  *      Brandon Dixon  <Brandon.Dixon@g2-inc.com>
+ *      Lukas Kuklinek <lkuklinek@redhat.com>
  */
+/**
+ * @addtogroup CVSS
+ * @{
+ *
+ * @file cvss.h
+ *  \brief Interface to Common Vulnerability Scoring System Version 2
+ *
+ */
+
 
 
 #ifndef _CVSSCALC_H_
@@ -450,6 +451,11 @@ const char * cvss_model_supported(void);
 ////////////////////////////////////////  NEW API  //////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+
+/// Get supported version of CVSS XML
+const char *cvss_model_supported(void);
+
 /// CVSS score category
 enum cvss_category {
     CVSS_NONE          = 0x0000,
@@ -576,6 +582,8 @@ float cvss_round(float x);
 struct cvss_impact *cvss_impact_new(void);
 /// @memberof cvss_impact
 struct cvss_impact *cvss_impact_new_from_vector(const char *cvss_vector);
+/// @memberof cvss_impact
+struct cvss_impact *cvss_impact_clone(const struct cvss_impact* impact);
 /// @memberof cvss_impact
 //struct cvss_impact *cvss_impact_new_from_xml(const char *filename);
 /// @memberof cvss_impact
@@ -712,6 +720,8 @@ float cvss_impact_environmental_score(const struct cvss_impact* impact);
 /// @memberof cvss_metrics
 struct cvss_metrics *cvss_metrics_new(enum cvss_category category);
 /// @memberof cvss_metrics
+struct cvss_metrics *cvss_metrics_clone(const struct cvss_metrics* metrics);
+/// @memberof cvss_metrics
 void cvss_metrics_free(struct cvss_metrics* metrics);
 /// @memberof cvss_metrics
 enum cvss_category cvss_metrics_get_category(const struct cvss_metrics* metrics);
@@ -805,24 +815,8 @@ bool cvss_metrics_set_integrity_requirement(struct cvss_metrics* metrics, enum c
 /// @memberof cvss_metrics
 bool cvss_metrics_set_availability_requirement(struct cvss_metrics* metrics, enum cvss_cia_requirement);
 
-/*
-access_vector access_vector
-access_complexity access_complexity
-authentication authentication
-confidentiality_impact cia_impact
-integrity_impact cia_impact
-availability_impact cia_impact
-exploitability exploitability
-remediation_level remediation_level
-report_confidence report_confidence
-collateral_damage_potential collateral_damage_potential
-target_distribution target_distribution
-confidentiality_requirement cia_requirement
-integrity_requirement cia_requirement
-availability_requirement cia_requirement
-*/
 
 /** @} */
 
 /*@}*/
-#endif /* _CVSSCALC_H_ */
+#endif // _CVSSCALC_H_

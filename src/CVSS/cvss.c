@@ -279,16 +279,12 @@ int cvss_env_score(cvss_collateral_damage_potential_t cde, cvss_target_distribut
 	return 0;
 }
 
-const char * cvss_model_supported(void)
-{
-        return CVSS_SUPPORTED;
-}
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////  NEW API  //////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
+const char *cvss_model_supported(void) { return CVSS_SUPPORTED; }
 
 #define NS_VULN_STR BAD_CAST "vuln"
 #define NS_CVSS_STR BAD_CAST "cvss"
@@ -512,6 +508,16 @@ struct cvss_impact *cvss_impact_new_from_xml(xmlTextReaderPtr reader)
         xmlTextReaderRead(reader);
     }
 
+    return ret;
+}
+
+struct cvss_impact *cvss_impact_clone(const struct cvss_impact *imp)
+{
+    if (imp == NULL) return NULL;
+    struct cvss_impact *ret = cvss_impact_new();
+    ret->base_metrics = cvss_metrics_clone(imp->base_metrics);
+    ret->temporal_metrics = cvss_metrics_clone(imp->temporal_metrics);
+    ret->environmental_metrics = cvss_metrics_clone(imp->environmental_metrics);
     return ret;
 }
 
@@ -745,6 +751,20 @@ struct cvss_metrics *cvss_metrics_new_from_xml(xmlTextReaderPtr reader)
         xmlTextReaderRead(reader);
     }
 
+    return ret;
+}
+
+struct cvss_metrics *cvss_metrics_clone(const struct cvss_metrics* met)
+{
+    if (met == NULL) return NULL;
+    struct cvss_metrics *ret = cvss_metrics_new(met->category);
+    if (ret == NULL) return NULL;
+    ret->score = met->score;
+    ret->source = oscap_strdup(met->source);
+    ret->upgraded_from_version = oscap_strdup(met->upgraded_from_version);
+    ret->generated_on_datetime = oscap_strdup(met->generated_on_datetime);
+    for (size_t i = 0; i < cvss_metrics_component_num(met); ++i)
+        ret->metrics.ANY[i] = met->metrics.ANY[i];
     return ret;
 }
 
