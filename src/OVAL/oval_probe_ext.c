@@ -48,7 +48,7 @@
 #if defined(__SVR4) && defined (__sun)
 #define __STRING(x)     #x
 #endif
-/* KEEP THIS LIST SORTED! (by subtype) */
+
 const oval_pdsc_t OSCAP_GSYM(default_pdsc)[] = {
         {OVAL_SUBTYPE_SYSINFO,                  "system_info",       "probe_system_info"},
 	{OVAL_INDEPENDENT_FAMILY,               "family",            "probe_family"},
@@ -67,6 +67,7 @@ const oval_pdsc_t OSCAP_GSYM(default_pdsc)[] = {
 	{OVAL_LINUX_DPKG_INFO,                  "dpkginfo",          "probe_dpkginfo"},
 	{OVAL_LINUX_INET_LISTENING_SERVERS,     "inetlisteningservers", "probe_inetlisteningservers"},
 	{OVAL_LINUX_RPM_INFO,                   "rpminfo",           "probe_rpminfo"},
+	{OVAL_LINUX_RPMVERIFY,                  "rpmverify",         "probe_rpmverify"},
         {OVAL_LINUX_PARTITION,                  "partition",         "probe_partition"},
 	{OVAL_LINUX_SELINUXBOOLEAN,             "selinuxboolean",    "probe_selinuxboolean"},
 	{OVAL_SOLARIS_ISAINFO,                  "isainfo",           "probe_isainfo"},

@@ -172,6 +172,11 @@ pkglibexec_PROGRAMS += probe_rpminfo
 probe_rpminfo_SOURCES= unix/linux/rpminfo.c
 probe_rpminfo_CFLAGS= @rpm_cflags@
 probe_rpminfo_LDFLAGS= @rpm_libs@
+
+pkglibexec_PROGRAMS += probe_rpmverify
+probe_rpmverify_SOURCES= unix/linux/rpmverify.c
+probe_rpmverify_CFLAGS= @rpm_cflags@
+probe_rpmverify_LDFLAGS= @rpm_libs@
 endif
 
 if ENABLE_PROBE_DPKGINFO
