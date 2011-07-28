@@ -335,8 +335,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 
 xmlNode *oval_entity_to_dom(struct oval_entity *entity, xmlDoc * doc, xmlNode * parent) {
 	
-	xmlNsPtr *ns_parent = parent->ns;
-	xmlNs *ent_ns;
+	xmlNsPtr ent_ns = parent->ns;
 	xmlNodePtr root_node = xmlDocGetRootElement(doc);
 
 	xmlNode *entity_node = NULL;
@@ -354,8 +353,6 @@ xmlNode *oval_entity_to_dom(struct oval_entity *entity, xmlDoc * doc, xmlNode * 
 
 	char *tagname = oval_entity_get_name(entity);
 	bool mask = oval_entity_get_mask(entity);
-
-	ent_ns = ns_parent ? ns_parent : NULL;
 
 	/* omit the value and operation used for testing in oval_results if mask=true */
 	if(mask && !xmlStrcmp(root_node->name, (const xmlChar *) "oval_results")){

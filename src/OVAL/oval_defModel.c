@@ -502,9 +502,9 @@ xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model,
 
 	xmlNs *ns_common = xmlNewNs(root_node, OVAL_COMMON_NAMESPACE, BAD_CAST "oval");
 	xmlNs *ns_xsi = xmlNewNs(root_node, OVAL_XMLNS_XSI, BAD_CAST "xsi");
-	xmlNs *ns_unix = xmlNewNs(root_node, OVAL_UNIX_NAMESPACE, BAD_CAST "unix-def");
-	xmlNs *ns_ind = xmlNewNs(root_node, OVAL_INDEPENDENT_NAMESPACE, BAD_CAST "ind-def");
-	xmlNs *ns_lin = xmlNewNs(root_node, OVAL_LINUX_NAMESPACE, BAD_CAST "lin-def");
+	xmlNs *ns_unix = xmlNewNs(root_node, OVAL_DEFINITIONS_UNIX_NS, BAD_CAST "unix-def");
+	xmlNs *ns_ind = xmlNewNs(root_node, OVAL_DEFINITIONS_IND_NS, BAD_CAST "ind-def");
+	xmlNs *ns_lin = xmlNewNs(root_node, OVAL_DEFINITIONS_LIN_NS, BAD_CAST "lin-def");
 	xmlNs *ns_defntns = xmlNewNs(root_node, OVAL_DEFINITIONS_NAMESPACE, NULL);
 
 	xmlSetNs(root_node, ns_common);

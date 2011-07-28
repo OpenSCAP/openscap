@@ -272,15 +272,13 @@ int oval_sysent_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *c
 void oval_sysent_to_dom(struct oval_sysent *sysent, xmlDoc * doc, xmlNode * parent)
 {
 	struct oval_record_field_iterator *rf_itr;
-	xmlNsPtr *ns_parent = xmlGetNsList(doc, parent);
-	xmlNs *ent_ns;
+	xmlNsPtr ent_ns = parent->ns;
 	xmlNodePtr root_node = xmlDocGetRootElement(doc);
 	xmlNode *sysent_tag = NULL;
+
 	char *tagname = oval_sysent_get_name(sysent);
 	char *content = oval_sysent_get_value(sysent);
 	bool mask = oval_sysent_get_mask(sysent);
-
-	ent_ns = ns_parent ? ns_parent[0] : NULL;
 
 	/* omit the value in oval_results if mask=true */
 	if(mask && !xmlStrcmp(root_node->name, (const xmlChar *) "oval_results")) {
@@ -311,7 +309,4 @@ void oval_sysent_to_dom(struct oval_sysent *sysent, xmlDoc * doc, xmlNode * pare
 		oval_record_field_to_dom(rf, mask, doc, sysent_tag);
 	}
 	oval_record_field_iterator_free(rf_itr);
-
-	if(ns_parent)
-		xmlFree(ns_parent);
 }

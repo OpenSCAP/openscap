@@ -329,7 +329,7 @@ xmlNode *oval_state_to_dom(struct oval_state *state, xmlDoc * doc, xmlNode * par
 	sprintf(family_uri,"%s#%s", OVAL_DEFINITIONS_NAMESPACE, family_text);
 
 	/* search namespace & create child */ 
-	xmlNs *ns_family = xmlSearchNsByHref(doc, parent, family_uri);
+	xmlNs *ns_family = xmlSearchNsByHref(doc, parent, BAD_CAST family_uri);
 	xmlNode *state_node = xmlNewTextChild(parent, ns_family, BAD_CAST state_name, NULL);
 
 	char *id = oval_state_get_id(state);

@@ -388,7 +388,7 @@ xmlNode *oval_object_to_dom(struct oval_object *object, xmlDoc * doc, xmlNode * 
 	sprintf(family_uri,"%s#%s", OVAL_DEFINITIONS_NAMESPACE, family_text);
 
 	/* search namespace & create child */
-	xmlNs *ns_family = xmlSearchNsByHref(doc, parent, family_uri);
+	xmlNs *ns_family = xmlSearchNsByHref(doc, parent, BAD_CAST family_uri);
 	object_node = xmlNewTextChild(parent, ns_family, BAD_CAST object_name, NULL);
 
 	char *id = oval_object_get_id(object);

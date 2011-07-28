@@ -41,26 +41,20 @@ OSCAP_HIDDEN_START;
 #define OVAL_SUPPORTED "5.8"
 
 #define OVAL_COMMON_NAMESPACE      BAD_CAST "http://oval.mitre.org/XMLSchema/oval-common-5"
-#define OVAL_SYSCHAR_NAMESPACE     BAD_CAST "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"
-#define OVAL_RESULTS_NAMESPACE     BAD_CAST "http://oval.mitre.org/XMLSchema/oval-results-5"
-#define OVAL_DEFINITIONS_NAMESPACE BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5"
 #define OVAL_DIGSIG_NAMESPACE      BAD_CAST "http://www.w3.org/2000/09/xmldsig#"
-#define OVAL_VARIABLES_NAMESPACE   BAD_CAST "http://oval.mitre.org/XMLSchema/oval-variables-5"
-#define OVAL_UNIX_NAMESPACE        BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5#unix"
-#define OVAL_INDEPENDENT_NAMESPACE BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
-#define OVAL_LINUX_NAMESPACE       BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux"
 
-/*#define OVAL_DEF_SCHEMA_LOCATION_DEF_PX    "http://oval.mitre.org/XMLSchema/oval-definitions-5 http://oval.mitre.org/language/download/schema/version"
-#define OVAL_DEF_SCHEMA_LOCATION_DEF_SX    "/ovaldefinition/complete/oval-definitions-schema.xsd"
-#define OVAL_DEF_SCHEMA_LOCATION_IND_PX    "http://oval.mitre.org/XMLSchema/oval-definitions-5#independent http://oval.mitre.org/language/download/schema/version"
-#define OVAL_DEF_SCHEMA_LOCATION_IND_SX    "/ovaldefinition/complete/independent-definitions-schema.xsd"
-#define OVAL_DEF_SCHEMA_LOCATION_UNX_PX    "http://oval.mitre.org/XMLSchema/oval-definitions-5#unix http://oval.mitre.org/language/download/schema/version"
-#define OVAL_DEF_SCHEMA_LOCATION_UNX_SX    "/ovaldefinition/complete/unix-definitions-schema.xsd"
-#define OVAL_DEF_SCHEMA_LOCATION_LNX_PX    "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux http://oval.mitre.org/language/download/schema/version"
-#define OVAL_DEF_SCHEMA_LOCATION_LNX_SX    "/ovaldefinition/complete/linux-definitions-schema.xsd"
-#define OVAL_DEF_SCHEMA_LOCATION_CMN_PX    "http://oval.mitre.org/XMLSchema/oval-common-5 http://oval.mitre.org/language/download/schema/version"
-#define OVAL_DEF_SCHEMA_LOCATION_CMN_SX    "/ovaldefinition/complete/oval-common-schema.xsd"
-*/
+#define OVAL_SYSCHAR_NAMESPACE     BAD_CAST "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"
+#define OVAL_SYSCHAR_UNIX_NS       BAD_CAST "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix"
+#define OVAL_SYSCHAR_IND_NS        BAD_CAST "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent"
+#define OVAL_SYSCHAR_LIN_NS        BAD_CAST "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux"
+
+#define OVAL_DEFINITIONS_NAMESPACE BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5"
+#define OVAL_DEFINITIONS_UNIX_NS   BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5#unix"
+#define OVAL_DEFINITIONS_IND_NS    BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
+#define OVAL_DEFINITIONS_LIN_NS    BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux"
+
+#define OVAL_RESULTS_NAMESPACE     BAD_CAST "http://oval.mitre.org/XMLSchema/oval-results-5"
+#define OVAL_VARIABLES_NAMESPACE   BAD_CAST "http://oval.mitre.org/XMLSchema/oval-variables-5"
 
 #define OVAL_DEF_SCHEMA_LOCATION "http://oval.mitre.org/XMLSchema/oval-definitions-5 http://oval.mitre.org/language/download/schema/version5.5/ovaldefinition/complete/oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent http://oval.mitre.org/language/download/schema/version5.5/ovaldefinition/complete/independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#unix http://oval.mitre.org/language/download/schema/version5.5/ovaldefinition/complete/unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux http://oval.mitre.org/language/download/schema/version5.5/ovaldefinition/complete/linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 http://oval.mitre.org/language/download/schema/version5.5/ovaldefinition/complete/linux-common-schema.xsd"
 

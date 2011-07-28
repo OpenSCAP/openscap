@@ -249,24 +249,24 @@ int oval_sysitem_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 }
 
 
-void oval_sysitem_to_dom(struct oval_sysitem *sysitem, xmlDoc * doc, xmlNode * tag_parent)
+void oval_sysitem_to_dom(struct oval_sysitem *sysitem, xmlDoc * doc, xmlNode * parent)
 {
 	if (sysitem) {
-		char syschar_namespace[] = "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5";
 		oval_subtype_t subtype = oval_sysitem_get_subtype(sysitem);
 		if (subtype) {
-			const char *family = oval_family_get_text(oval_subtype_get_family(subtype));
-			char family_namespace[sizeof(syschar_namespace) + strlen(family) + 2];
-			*family_namespace = '\0';
-			sprintf(family_namespace, "%s#%s", OVAL_SYSCHAR_NAMESPACE, family);
+			/* get item subtype */
 			const char *subtype_text = oval_subtype_get_text(subtype);
 			char tagname[strlen(subtype_text) + 6];
-			*tagname = '\0';
 			sprintf(tagname, "%s_item", subtype_text);
 
-			xmlNode *tag_sysitem = xmlNewTextChild(tag_parent, NULL, BAD_CAST tagname, NULL);
-			xmlNs *ns_family = xmlNewNs(tag_sysitem, BAD_CAST family_namespace, NULL);
-			xmlSetNs(tag_sysitem, ns_family);
+			 /* get family URI */
+			const char *family = oval_family_get_text(oval_subtype_get_family(subtype));
+			char family_uri[strlen((const char *)OVAL_SYSCHAR_NAMESPACE) + strlen(family) + 2];
+			sprintf(family_uri, "%s#%s", OVAL_SYSCHAR_NAMESPACE, family);
+
+			/* search namespace & create child */
+			xmlNs *ns_family = xmlSearchNsByHref(doc, parent, BAD_CAST family_uri);
+			xmlNode *tag_sysitem = xmlNewTextChild(parent, ns_family, BAD_CAST tagname, NULL);
 
 			/* attributes */
 			xmlNewProp(tag_sysitem, BAD_CAST "id", BAD_CAST oval_sysitem_get_id(sysitem));
