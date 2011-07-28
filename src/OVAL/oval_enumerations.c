@@ -206,6 +206,8 @@ static const struct oscap_string_map OVAL_OPERATION_MAP[] = {
 	{OVAL_OPERATION_BITWISE_AND, "bitwise and"},
 	{OVAL_OPERATION_BITWISE_OR, "bitwise or"},
 	{OVAL_OPERATION_PATTERN_MATCH, "pattern match"},
+	{OVAL_OPERATION_SUBSET_OF, "subset of"},
+	{OVAL_OPERATION_SUPERSET_OF, "superset of"},
 	{OVAL_ENUMERATION_INVALID, NULL}
 };
 
@@ -245,6 +247,8 @@ static const struct oscap_string_map OVAL_DATATYPE_MAP[] = {
 	{OVAL_DATATYPE_FILESET_REVISION, "fileset_revision"},
 	{OVAL_DATATYPE_FLOAT, "float"},
 	{OVAL_DATATYPE_IOS_VERSION, "ios_version"},
+	{OVAL_DATATYPE_IPV4ADDR, "ipv4_address"},
+	{OVAL_DATATYPE_IPV6ADDR, "ipv6_address"},
 	{OVAL_DATATYPE_VERSION, "version"},
 	{OVAL_DATATYPE_INTEGER, "int"},
 	{OVAL_DATATYPE_STRING, "string"},

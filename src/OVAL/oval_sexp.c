@@ -59,30 +59,13 @@ SEXP_t *oval_value_to_sexp(struct oval_value *val, oval_datatype_t dtype)
 	SEXP_t *val_sexp = NULL;
         char   *val_rptr = NULL;
 
-	/* todo: remove calls to SEXP_datatype_set() */
-
 	switch (dtype) {
+	case OVAL_DATATYPE_EVR_STRING:
+	case OVAL_DATATYPE_IPV4ADDR:
+	case OVAL_DATATYPE_IPV6ADDR:
+	case OVAL_DATATYPE_STRING:
 	case OVAL_DATATYPE_VERSION:
                 val_rptr = oval_value_get_text (val);
-
-                if (val_rptr != NULL) {
-                        val_sexp = SEXP_string_newf("%s", val_rptr);
-                        SEXP_datatype_set(val_sexp, "version");
-                }
-
-		break;
-        case OVAL_DATATYPE_EVR_STRING:
-                val_rptr = oval_value_get_text (val);
-
-                if (val_rptr != NULL) {
-                        val_sexp = SEXP_string_newf("%s", val_rptr);
-                        SEXP_datatype_set(val_sexp, "evr_str");
-                }
-
-		break;
-	case OVAL_DATATYPE_STRING:
-                val_rptr = oval_value_get_text (val);
-
                 if (val_rptr != NULL) {
                         val_sexp = SEXP_string_newf("%s", val_rptr);
                 }
@@ -820,8 +803,11 @@ static struct oval_sysent *oval_sysent_from_sexp(struct oval_syschar_model *mode
 				break;
 			}
 			break;
+		case OVAL_DATATYPE_EVR_STRING:
+		case OVAL_DATATYPE_IPV4ADDR:
+		case OVAL_DATATYPE_IPV6ADDR:
 		case OVAL_DATATYPE_STRING:
-                case OVAL_DATATYPE_EVR_STRING:
+		case OVAL_DATATYPE_VERSION:
 			valp = SEXP_string_cstr(sval);
 			break;
 		default:

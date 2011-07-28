@@ -1558,6 +1558,8 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                 case OVAL_DATATYPE_EVR_STRING:
                 case OVAL_DATATYPE_FILESET_REVISION:
                 case OVAL_DATATYPE_IOS_VERSION:
+		case OVAL_DATATYPE_IPV4ADDR:
+		case OVAL_DATATYPE_IPV6ADDR:
                 case OVAL_DATATYPE_VERSION:
                         value_str  = va_arg(ap, char *);
                         value_sexp = SEXP_string_new_r(&value_sexp_mem, value_str, strlen(value_str));
