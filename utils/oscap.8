@@ -240,51 +240,6 @@ Find an exact match of CPE name in the dictionary.
 Calculate score from a CVSS vector. Prints base score for base CVSS vector, base and temporal score for temporal CVSS vector, base and temporal and environmental score for environmental CVSS vector.
 .RE
 .PP
-.B base\fR \fImetrics\fR
-.RS
-Calculate base score from Access Vector (AV), Access Complexity (AC), Authentication(AU), Confidentiality Impact(CI),  Integrity Impact(II) and Availability Impact(AI) metric.
-.RE
-.PP
-.B temporal\fR --base <num> [\fImetrics\fR]
-.RS
-Calculate temporal score from base score, Exploitability(EX), Remediation Level(RL) and Report Confidence(RC) metric.
-.RE
-.PP
-.B environmental\fR \fImetrics\fR
-.RS
-Calculate environmental score from Collateral Damage Potential(CD), Target Distribution(TD), Confidentiality Requirement (CR),  Integrity Requirement(IR), Availability Requirement(AR),
-Access Vector (AV), Access Complexity (AC), Authentication(AU), Confidentiality Impact(CI),  Integrity Impact(II), Availability Impact(AI), Exploitability(EX), Remediation Level(RL) and Report Confidence(RC) metric.
-.RE
-.PP
-metrics:
-.TP
-\fB\-\-AV=\fR[local|adjacent-network|network] - Access Vector (required)
-.TP
-\fB\-\-AC=\fR[low|medium|high] - Access Complexity (required)
-.TP
-\fB\-\-AU=\fR[none|single|multiple] - Authentication (required)
-.TP
-\fB\-\-CI=\fR[none|partial|complete] - Confidentiality Impact (required)
-.TP
-\fB\-\-II=\fR[none|partial|complete] - Integrity Impact (required)
-.TP
-\fB\-\-AI=\fR[none|partial|complete] - Availability Impact (required)
-.TP
-\fB\-\-EX=\fR[unproven|proof-of-concept|functional|high|not-defined] - Exploitability
-.TP
-\fB\-\-RL=\fR[official-fix|temporary-fix|workaround|unavailable|not-defined] - Remediation Level
-.TP
-\fB\-\-RC=\fR[unconfirmed|uncorrporated|confirmed|not-defined] - Report Confidence
-.TP
-\fB\-\-CD=\fR[none|low|low-medium|medium-high|high|not-defined] - Collateral Damage Potential
-.TP
-\fB\-\-TD=\fR[none|low|medium|high|not-defined] - Target Distribution
-.TP
-\fB\-\-CR=\fR[low|medium|high|not-defined] - Confidentiality Requirement
-.TP
-\fB\-\-IR=\fR[low|medium|high|not-defined] - Integrity Requirement
-.TP
-\fB\-\-AR=\fR[low|medium|high|not-defined] - Availability Requirement
 
 
 .SH CONTENT
