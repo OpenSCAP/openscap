@@ -70,6 +70,7 @@ const oval_pdsc_t OSCAP_GSYM(default_pdsc)[] = {
 	{OVAL_LINUX_RPMVERIFY,                  "rpmverify",         "probe_rpmverify"},
         {OVAL_LINUX_PARTITION,                  "partition",         "probe_partition"},
 	{OVAL_LINUX_SELINUXBOOLEAN,             "selinuxboolean",    "probe_selinuxboolean"},
+	{OVAL_LINUX_SELINUXSECURITYCONTEXT,     "selinuxsecuritycontext", "probe_selinuxsecuritycontext"},
 	{OVAL_SOLARIS_ISAINFO,                  "isainfo",           "probe_isainfo"},
 	{OVAL_UNIX_FILE,                        "file",              "probe_file"},
 	{OVAL_UNIX_INTERFACE,                   "interface",         "probe_interface"},

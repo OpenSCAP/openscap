@@ -130,6 +130,7 @@ oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
         oval_probe_handler_set(sess->ph, OVAL_LINUX_RPMVERIFY, oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_LINUX_PARTITION, oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_LINUX_SELINUXBOOLEAN, oval_probe_ext_handler, sess->pext);
+        oval_probe_handler_set(sess->ph, OVAL_LINUX_SELINUXSECURITYCONTEXT, oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_SOLARIS_ISAINFO, oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_UNIX_FILE,       oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_UNIX_INTERFACE,  oval_probe_ext_handler, sess->pext);

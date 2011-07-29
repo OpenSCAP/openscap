@@ -1,0 +1,322 @@
+/**
+ * @file   selinuxsecuritycontext.c
+ * @brief  selinuxsecuritycontext probe
+ * @author "Petr Lautrbach" <plautrba@redhat.com>
+ *
+ * 2011/07/01 plautrba@redhat.com
+ *  This probe is able to process a selinuxsecuritycontext_object as defined in OVAL 5.9
+ *
+ */
+
+/*
+ * Copyright 2011 Red Hat Inc., Durham, North Carolina.
+ * All Rights Reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Authors:
+ *      "Petr Lautrbach" <plautrba@redhat.com>
+ */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <seap.h>
+#include <probe-api.h>
+#include <probe/entcmp.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <limits.h>
+#include <pthread.h>
+#include <dirent.h>
+#include <errno.h>
+
+#include <selinux/selinux.h>
+#include <selinux/context.h>
+
+#include "oval_fts.h"
+#include "util.h"
+
+#define FILE_SEPARATOR '/'
+
+static void split_level(const char *level, char **sensitivity, char **category) {
+	char *level_split;
+
+	level_split = strchr(level, ':');
+	if (level_split == NULL) {
+		*sensitivity = strdup(level);
+		*category = NULL;
+	}
+	else {
+		*sensitivity = strndup(level, level_split - level);
+		*category = strdup(level_split + 1);
+	}
+}
+
+/* parse range according to
+ * http://selinuxproject.org/page/NB_MLS#MLS_.2F_MCS_Range_Format
+*/
+static void split_range(const char *range, char **l_s, char **l_c, char **h_s, char **h_c) {
+	char *level;
+	const char *range_split;
+
+	range_split = strchr(range, '-');
+	if (range_split == NULL) {
+		/* there is only 1 level */
+		split_level(range, l_s, l_c);
+		*h_s = NULL;
+		*h_c = NULL;
+	}
+	else {
+		/* low level */
+		level = strndup(range, range_split - range);
+		split_level(level, l_s, l_c);
+		free(level);
+
+		/* high level */
+		level = strdup(range_split + 1);
+		split_level(level, h_s, h_c);
+		free(level);
+	}
+}
+
+static int selinuxsecuritycontext_process_cb (SEXP_t *pid_ent, probe_ctx *ctx) {
+
+	SEXP_t *pid_sexp, *item;
+	security_context_t pid_context;
+	context_t context;
+	int pid_number;
+	DIR *proc;
+	struct dirent *dir_entry;
+	const char *user, *role, *type, *range;
+	char *l_sensitivity, *l_category, *h_sensitivity, *h_category;
+
+	if ((proc = opendir("/proc")) == NULL) {
+		dE("Can't open /proc dir: %s\n", strerror(errno));
+
+		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
+		return errno;
+	}
+
+	while ((dir_entry = readdir(proc))) {
+		if (strspn(dir_entry->d_name, "0123456789") != strlen(dir_entry->d_name))
+			continue;
+
+		pid_number = atoi(dir_entry->d_name);
+		pid_sexp = SEXP_number_newi_32(pid_number);
+		if (probe_entobj_cmp(pid_ent, pid_sexp) == OVAL_RESULT_TRUE) {
+
+			if (getpidcon(pid_number, &pid_context) == -1) {
+				/* error getting pid selinux context */
+				dW("Can't get selinux context for process %d\n", pid_number);
+				SEXP_free(pid_sexp);
+				continue;
+			}
+
+			context = context_new(pid_context);
+
+			user = context_user_get(context);
+			role = context_role_get(context);
+			type = context_type_get(context);
+			range = context_range_get(context);
+
+			split_range(range, &l_sensitivity, &l_category, &h_sensitivity, &h_category);
+			item = probe_item_create(OVAL_LINUX_SELINUXSECURITYCONTEXT, NULL,
+				"pid",     OVAL_DATATYPE_INTEGER, pid_number,
+				"user",     OVAL_DATATYPE_STRING, user,
+				"role",     OVAL_DATATYPE_STRING, role,
+				"type",     OVAL_DATATYPE_STRING, type,
+				"low_sensitivity", OVAL_DATATYPE_STRING, l_sensitivity,
+				"low_category", OVAL_DATATYPE_STRING, l_category,
+				"high_sensitivity", OVAL_DATATYPE_STRING, h_sensitivity,
+				"high_category", OVAL_DATATYPE_STRING, h_category,
+
+				NULL);
+			probe_item_collect(ctx, item);
+
+			context_free(context);
+			freecon(pid_context);
+		}
+		SEXP_free(pid_sexp);
+	}
+	closedir(proc);
+
+	return 0;
+}
+
+
+static int selinuxsecuritycontext_file_cb (const char *p, const char *f, probe_ctx *ctx)
+{
+	SEXP_t *item;
+
+	char   pbuf[PATH_MAX+1];
+	size_t plen, flen;
+
+	security_context_t file_context;
+	int file_context_size;
+	context_t context;
+	const char *user, *role, *type, *range;
+	char *l_sensitivity, *l_category, *h_sensitivity, *h_category;
+	int err = 0;
+
+	/* directory */
+	if (f == NULL)
+		flen = 0;
+	else
+		flen = strlen (f);
+
+	/*
+	 * Prepare path
+	 */
+	plen = strlen (p);
+
+	if (plen + flen + 1 > PATH_MAX)
+		return (-1);
+
+	memcpy (pbuf, p, sizeof (char) * plen);
+
+	if (p[plen - 1] != FILE_SEPARATOR) {
+		pbuf[plen] = FILE_SEPARATOR;
+		++plen;
+	}
+
+	if (f != NULL)
+		memcpy (pbuf + plen, f, sizeof (char) * flen);
+
+	pbuf[plen+flen] = '\0';
+
+	file_context_size = getfilecon(pbuf, &file_context);
+	if (file_context_size == -1) {
+		SEXP_t *at, *r0, *r1;
+		dE("Can't get context for %s: %s\n", pbuf, strerror(errno));
+		strerror_r (errno, pbuf, PATH_MAX);
+		pbuf[PATH_MAX] = '\0';
+
+		at = probe_attr_creat ("status",  r0 = SEXP_number_newi_32 (OVAL_STATUS_ERROR),
+				       "message", r1 = SEXP_string_newf ("%s", pbuf),
+				       NULL);
+
+		SEXP_vfree (r0, r1, NULL);
+
+		item = probe_item_creat ("selinuxsecuritycontext_item", at, NULL);
+		SEXP_free(at);
+		err = errno;
+
+	}
+	else {
+		context = context_new(file_context);
+
+		user = context_user_get(context);
+		role = context_role_get(context);
+		type = context_type_get(context);
+		range = context_range_get(context);
+
+		split_range(range, &l_sensitivity, &l_category, &h_sensitivity, &h_category);
+
+		item = probe_item_create(OVAL_LINUX_SELINUXSECURITYCONTEXT, NULL,
+						"filepath", OVAL_DATATYPE_STRING, pbuf,
+						"path",     OVAL_DATATYPE_STRING, p,
+						"filename", OVAL_DATATYPE_STRING, f,
+						"user",     OVAL_DATATYPE_STRING, user,
+						"role",     OVAL_DATATYPE_STRING, role,
+						"type",     OVAL_DATATYPE_STRING, type,
+						"low_sensitivity", OVAL_DATATYPE_STRING, l_sensitivity,
+						"low_category", OVAL_DATATYPE_STRING, l_category,
+						"high_sensitivity", OVAL_DATATYPE_STRING, h_sensitivity,
+						"high_category", OVAL_DATATYPE_STRING, h_category,
+						"rawlow_sensitivity", OVAL_DATATYPE_STRING, l_sensitivity,
+						"rawlow_category", OVAL_DATATYPE_STRING, l_category,
+						"rawhigh_sensitivity", OVAL_DATATYPE_STRING, h_sensitivity,
+						"rawhigh_category", OVAL_DATATYPE_STRING, h_category,
+						NULL);
+		context_free(context);
+		freecon(file_context);
+	}
+	probe_item_collect(ctx, item);
+
+	return (err);
+}
+
+int probe_main(probe_ctx *ctx, void *arg)
+{
+	SEXP_t *probe_in;
+	SEXP_t *path, *filename, *filepath, *pid, *behaviors = NULL;
+	int process_pid;
+
+	OVAL_FTS    *ofts;
+	OVAL_FTSENT *ofts_ent;
+
+	if ( ! is_selinux_enabled()) {
+		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_NOT_APPLICABLE);
+		return 0;
+	}
+
+	probe_in  = probe_ctx_getobject(ctx);
+
+	path      = probe_obj_getent (probe_in, "path",      1);
+	filename  = probe_obj_getent (probe_in, "filename",  1);
+	filepath  = probe_obj_getent (probe_in, "filepath", 1);
+	pid       = probe_obj_getent (probe_in, "pid", 1);
+
+	if (((path == NULL || filename == NULL) && filepath==NULL ) && pid == NULL) {
+		SEXP_free (path);
+		SEXP_free (filename);
+		SEXP_free (filepath);
+		SEXP_free (pid);
+
+		return (PROBE_ENOELM);
+	}
+
+	if (filepath || (path && filename)) {
+		probe_filebehaviors_canonicalize(&behaviors);
+
+		if ((ofts = oval_fts_open(path, filename, filepath, behaviors)) != NULL) {
+			while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
+				selinuxsecuritycontext_file_cb(ofts_ent->path, ofts_ent->file, ctx);
+				oval_ftsent_free(ofts_ent);
+			}
+
+			oval_fts_close(ofts);
+		}
+		SEXP_free(behaviors);
+	}
+
+	if (pid != NULL) {
+		PROBE_ENT_I32VAL(pid, process_pid, return -1;);
+
+		if (process_pid == 0) {
+			SEXP_t *nref, *nval, *pid2;
+
+			nref = SEXP_list_first(probe_in);
+			nval = SEXP_number_newu_32(getpid());
+			pid2 = SEXP_list_new(nref, nval, NULL);
+			SEXP_vfree(pid, nref, nval, NULL);
+			pid = pid2;
+		}
+
+		selinuxsecuritycontext_process_cb(pid, ctx);
+	}
+
+	SEXP_free (path);
+	SEXP_free (filename);
+	SEXP_free (filepath);
+	SEXP_free (pid);
+
+	return 0;
+}

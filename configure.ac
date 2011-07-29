@@ -347,7 +347,7 @@ AC_CHECK_LIB(
   [selinux_cflags=`pkg-config libselinux --cflags`
    selinux_libs=`pkg-config libselinux --libs`
    have_selinux=yes
-   AC_DEFINE([ENABLE_PROBE_SELINUXBOOLEAN], [1], [Define if SELinux is available])
+   AC_DEFINE([ENABLE_PROBES_SELINUX], [1], [Define if SELinux is available])
   ]
 )
 
@@ -729,7 +729,7 @@ AM_CONDITIONAL([WANT_BINDINGS], test "$bindings" = yes)
 AM_CONDITIONAL([ENABLE_VALGRIND_TESTS], test "$vgcheck" = yes)
 AM_CONDITIONAL([HAVE_ODBX], test "$have_odbx" = yes)
 AM_CONDITIONAL([ENABLE_PROBE_LDAP57], test "$probe_independent_ldap57" = yes)
-AM_CONDITIONAL(ENABLE_PROBE_SELINUXBOOLEAN, [test "$have_selinux" = "yes"])
+AM_CONDITIONAL(ENABLE_PROBES_SELINUX, [test "$have_selinux" = "yes"])
 
 AC_CONFIG_FILES([Makefile
                  lib/Makefile
@@ -834,6 +834,7 @@ echo "  rpminfo probe:               $have_librpm"
 echo "  rpmverify probe:             $have_librpm"
 echo "  partition probe:             $probes_linux"
 echo "  selinuxboolean probe:        $have_selinux"
+echo "  selinuxsecuritycontext probe: $have_selinux"
 echo ""
 
 echo "  === solaris probes ==="

@@ -160,11 +160,16 @@ probe_inetlisteningservers_SOURCES= unix/linux/inetlisteningservers.c
 probe_inetlisteningservers_CFLAGS=
 probe_inetlisteningservers_LDFLAGS=
 
-if ENABLE_PROBE_SELINUXBOOLEAN
+if ENABLE_PROBES_SELINUX
 pkglibexec_PROGRAMS += probe_selinuxboolean
 probe_selinuxboolean_SOURCES= unix/linux/selinuxboolean.c
 probe_selinuxboolean_CFLAGS= @selinux_cflags@
 probe_selinuxboolean_LDFLAGS= @selinux_libs@
+
+pkglibexec_PROGRAMS += probe_selinuxsecuritycontext
+probe_selinuxsecuritycontext_SOURCES= unix/linux/selinuxsecuritycontext.c
+probe_selinuxsecuritycontext_CFLAGS= @selinux_cflags@
+probe_selinuxsecuritycontext_LDFLAGS= @selinux_libs@
 endif
 
 if ENABLE_PROBE_RPMINFO
