@@ -61,11 +61,15 @@ static int get_selinuxboolean(SEXP_t *ut_ent, probe_ctx *ctx)
 	SEXP_t *boolean, *item;
 	char **booleans;
 
-	if ( ! is_selinux_enabled())
-		return err;
+	if ( ! is_selinux_enabled()) {
+		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_NOT_APPLICABLE);
+		return 0;
+	}
 
-	if (security_get_boolean_names(&booleans, &len) == -1)
+	if (security_get_boolean_names(&booleans, &len) == -1) {
+		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
 		return err;
+	}
 
 	for (i = 0; i < len; i++) {
 		boolean = SEXP_string_new(booleans[i], strlen(booleans[i]));
