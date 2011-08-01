@@ -172,8 +172,10 @@ fi
 %{_libexecdir}/openscap/probe_password
 %{_libexecdir}/openscap/probe_process
 %{_libexecdir}/openscap/probe_rpminfo
+%{_libexecdir}/openscap/probe_rpmverify
 %{_libexecdir}/openscap/probe_runlevel
 %{_libexecdir}/openscap/probe_selinuxboolean
+%{_libexecdir}/openscap/probe_selinuxsecuritycontext
 %{_libexecdir}/openscap/probe_shadow
 %{_libexecdir}/openscap/probe_sysctl
 %{_libexecdir}/openscap/probe_system_info
