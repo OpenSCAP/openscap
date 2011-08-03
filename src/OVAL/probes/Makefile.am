@@ -160,6 +160,11 @@ probe_inetlisteningservers_SOURCES= unix/linux/inetlisteningservers.c
 probe_inetlisteningservers_CFLAGS=
 probe_inetlisteningservers_LDFLAGS=
 
+pkglibexec_PROGRAMS += probe_iflisteners
+probe_iflisteners_SOURCES= unix/linux/iflisteners.c
+probe_iflisteners_CFLAGS=
+probe_iflisteners_LDFLAGS= ../../common/liboscapcommon.la
+
 if ENABLE_PROBES_SELINUX
 pkglibexec_PROGRAMS += probe_selinuxboolean
 probe_selinuxboolean_SOURCES= unix/linux/selinuxboolean.c

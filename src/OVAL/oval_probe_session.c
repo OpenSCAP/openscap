@@ -125,6 +125,7 @@ oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
         oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_SQL,  oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_SQL57,  oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_LINUX_INET_LISTENING_SERVERS,  oval_probe_ext_handler, sess->pext);
+        oval_probe_handler_set(sess->ph, OVAL_LINUX_IFLISTENERS,  oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_LINUX_DPKG_INFO, oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_LINUX_RPM_INFO,  oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_LINUX_RPMVERIFY, oval_probe_ext_handler, sess->pext);

@@ -66,6 +66,7 @@ const oval_pdsc_t OSCAP_GSYM(default_pdsc)[] = {
         {OVAL_INDEPENDENT_LDAP57,               "ldap57",            "probe_ldap57"},
 	{OVAL_LINUX_DPKG_INFO,                  "dpkginfo",          "probe_dpkginfo"},
 	{OVAL_LINUX_INET_LISTENING_SERVERS,     "inetlisteningservers", "probe_inetlisteningservers"},
+	{OVAL_LINUX_IFLISTENERS,                "iflisteners",       "probe_iflisteners"},
 	{OVAL_LINUX_RPM_INFO,                   "rpminfo",           "probe_rpminfo"},
 	{OVAL_LINUX_RPMVERIFY,                  "rpmverify",         "probe_rpmverify"},
         {OVAL_LINUX_PARTITION,                  "partition",         "probe_partition"},
