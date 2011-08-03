@@ -37,6 +37,7 @@
 
 #include <stdbool.h>
 #include <time.h>
+#include <stdio.h>
 
 
 /// Get supported version of CVSS XML
@@ -171,9 +172,16 @@ struct cvss_impact *cvss_impact_new_from_vector(const char *cvss_vector);
 /// @memberof cvss_impact
 struct cvss_impact *cvss_impact_clone(const struct cvss_impact* impact);
 /// @memberof cvss_impact
-//struct cvss_impact *cvss_impact_new_from_xml(const char *filename);
+//struct cvss_impact *cvss_impact_new_parse(const char *filename);
 /// @memberof cvss_impact
 void cvss_impact_free(struct cvss_impact* impact);
+/**
+ * Write out a human-readable textual description of CVSS impact contents.
+ * @param impact Impact to describe
+ * @param f file handle to write the description to
+ * @memberof cvss_impact
+ */
+void cvss_impact_describe(const struct cvss_impact *impact, FILE *f);
 
 /// @memberof cvss_impact
 struct cvss_metrics *cvss_impact_get_base_metrics(const struct cvss_impact* impact);

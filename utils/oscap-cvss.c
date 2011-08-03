@@ -36,6 +36,7 @@
 
 static bool getopt_cvss(int argc, char **argv, struct oscap_action *action);
 static int app_cvss_score(const struct oscap_action *action);
+static int app_cvss_describe(const struct oscap_action *action);
 
 static struct oscap_module* CVSS_SUBMODULES[];
 
@@ -57,8 +58,19 @@ static struct oscap_module CVSS_SCORE_MODULE = {
     .func = app_cvss_score
 };
 
+static struct oscap_module CVSS_DESCRIBE_MODULE = {
+    .name = "describe",
+    .parent = &OSCAP_CVSS_MODULE,
+    .summary = "Describe a CVSS vector",
+    .usage = "vector",
+    .help = "Describes individual components of a CVSS vector\n",
+    .opt_parser = getopt_cvss,
+    .func = app_cvss_describe
+};
+
 static struct oscap_module* CVSS_SUBMODULES[] = {
     &CVSS_SCORE_MODULE,
+    &CVSS_DESCRIBE_MODULE,
     NULL
 };
 
@@ -93,6 +105,24 @@ err:
     cvss_impact_free(impact);
     fprintf(stderr, "Invalid input CVSS vector\n");
     return OSCAP_ERROR;
+}
+
+static int app_cvss_describe(const struct oscap_action *action)
+{
+    assert(action->cvss_vector);
+
+    bool ok = false;
+    struct cvss_impact *impact = cvss_impact_new_from_vector(action->cvss_vector);
+
+    if (impact) {
+        cvss_impact_describe(impact, stdout);
+        cvss_impact_free(impact);
+        return OSCAP_OK;
+    }
+    else {
+        fprintf(stderr, "Invalid input CVSS vector\n");
+        return OSCAP_ERROR;
+    }
 }
 
 bool getopt_cvss(int argc, char **argv, struct oscap_action *action)

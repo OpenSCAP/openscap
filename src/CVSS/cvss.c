@@ -90,7 +90,7 @@ static const struct cvss_keytab_entry CVSS_KEYTAB[] = {
     { CVSS_KEY_integrity_requirement,       "Integrity Requirement",       "integrity-requirement"       },
     { CVSS_KEY_availability_requirement,    "Availability Requirement",    "availability-requirement"    },
     // end of list
-    { CVSS_KEY_NONE, NULL, NULL }
+    { CVSS_KEY_NONE, "Invalid entry", NULL }
 };
 
 // lookup keytab entry by key or by xml element name
@@ -197,7 +197,7 @@ static const struct cvss_valtab_entry CVSS_VALTAB[] = {
     { CVSS_KEY_availability_requirement, CVSS_REQ_HIGH,        "High",        "AR:H",  "HIGH",        1.510 },
 
     // End-of-list
-    { CVSS_KEY_NONE, 0, NULL, "!", NULL, NAN }
+    { CVSS_KEY_NONE, 0, "Invalid value", "!", NULL, NAN }
 };
 
 // valtab lookup: either by key&value or by vector string or by key+XMLvalue (pass exactly one of key+val or vec_str or key+xmlval)
@@ -465,6 +465,52 @@ float cvss_impact_environmental_score(const struct cvss_impact* impact)
     return cvss_round((temp_s + (10.0 - temp_s) * CVSS_W(collateral_damage_potential)) * CVSS_W(target_distribution));
 }
 
+static void cvss_metrics_describe(const struct cvss_metrics *metrics, FILE *f)
+{
+    if (metrics == NULL) return;
+
+    for (size_t i = 0; i < cvss_metrics_component_num(metrics); ++i) {
+        const struct cvss_keytab_entry *key = cvss_keytab(metrics->category | i, NULL);
+        const struct cvss_valtab_entry *val = cvss_valtab(metrics->category | i, metrics->metrics.ANY[i], NULL, NULL);
+        fprintf(f, "%-30s %-20s [%-6s]\n", key->human_str, val->human_str, val->vector_str);
+    }
+}
+
+void cvss_impact_describe(const struct cvss_impact *impact, FILE *f)
+{
+    assert(f != NULL);
+    if (impact == NULL) return;
+
+    char *vec = cvss_impact_to_vector(impact);
+    if (vec) {
+        fprintf(f, "CVSS vector: %s\n\n", vec);
+        oscap_free(vec);
+    }
+
+    if (impact->base_metrics) {
+        fprintf(f, "------------------------ Base Metrics ----------------------\n");
+        cvss_metrics_describe(impact->base_metrics, f);
+        fprintf(f, "Exploitability subscore: %4.1f\n", cvss_impact_base_exploitability_subscore(impact));
+        fprintf(f, "Impact subscore: %4.1f\n", cvss_impact_base_impact_subscore(impact));
+        fprintf(f, "Base score: %4.1f\n\n", cvss_impact_base_score(impact));
+    }
+
+    if (impact->temporal_metrics) {
+        fprintf(f, "---------------------- Temporal Metrics --------------------\n");
+        cvss_metrics_describe(impact->temporal_metrics, f);
+        fprintf(f, "Temporal multiplier: %4.1f\n", cvss_impact_temporal_multiplier(impact));
+        fprintf(f, "Temporal score: %4.1f\n\n", cvss_impact_temporal_score(impact));
+    }
+
+    if (impact->environmental_metrics) {
+        fprintf(f, "------------------- Environmental Metrics ------------------\n");
+        cvss_metrics_describe(impact->environmental_metrics, f);
+        fprintf(f, "Adjusted impact base subscore: %4.1f\n", cvss_impact_base_adjusted_impact_subscore(impact));
+        fprintf(f, "Adjusted base score: %4.1f\n", cvss_impact_adjusted_base_score(impact));
+        fprintf(f, "Adjusted temporal score: %4.1f\n", cvss_impact_adjusted_temporal_score(impact));
+        fprintf(f, "Environmental score: %4.1f\n\n", cvss_impact_environmental_score(impact));
+    }
+}
 
 OSCAP_GETTER(struct cvss_metrics*, cvss_impact, base_metrics)
 OSCAP_GETTER(struct cvss_metrics*, cvss_impact, temporal_metrics)
