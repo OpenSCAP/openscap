@@ -7,7 +7,7 @@ UNIX_SUBDIRS = file uname shadow process password runlevel interface xinetd
 endif
 
 if WANT_PROBES_LINUX
-LINUX_SUBDIRS = rpminfo
+LINUX_SUBDIRS = rpminfo iflisteners
 
 if ENABLE_PROBES_SELINUX
 LINUX_SUBDIRS += selinuxboolean

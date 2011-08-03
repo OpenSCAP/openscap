@@ -782,6 +782,7 @@ AC_CONFIG_FILES([Makefile
                  tests/probes/xinetd/Makefile
                  tests/probes/selinuxboolean/Makefile
 		 tests/probes/isainfo/Makefile
+		 tests/probes/iflisteners/Makefile
                  tests/mitre/Makefile
                  utils/Makefile
                  xsl/Makefile
