@@ -235,14 +235,48 @@ Find an exact match of CPE name in the dictionary.
 
 .SH CVSS OPERATIONS
 .TP
-.B score\fR cvss_vector
+.B \fBscore\fR \fIcvss_vector\fR
 .RS
 Calculate score from a CVSS vector. Prints base score for base CVSS vector, base and temporal score for temporal CVSS vector, base and temporal and environmental score for environmental CVSS vector.
 .RE
 .TP
-.B \fBdescribe\fR cvss_vector
+.B \fBdescribe\fR \fIcvss_vector\fR
 .RS
 Describe individual components of a CVSS vector in a human-readable format and print partial scores.
+.RE
+.TP
+.B \fICVSS vector\fR consists of several slash-separated components specified as key-value pairs. Each key can be specified at most once. Valid CVSS vector has to contain at least base CVSS metrics, i.e. AV, AC, AU, C, I, and A. Following table summarizes the components and possible values (second column is metric category: B for base, T for temporal, E for environmental):
+.RS
+.P
+AV:[L|A|N]            B   Access vector: Local, Adjacent network, Network
+.P
+AC:[H|M|L]            B   Access complexity: High, Medium, Low
+.P
+AU:[M|S|N]            B   Required authentication: Multiple instances, Single instance, None
+.P
+C:[N|P|C]             B   Confidentiality impact: None, Partial, Complete
+.P
+I:[N|P|C]             B   Integrity impact: None, Partial, Complete
+.P
+A:[N|P|C]             B   Availability impact: None, Partial, Complete
+.P
+E:[ND|U|POC|F|H]      T   Exploitability: Not Defined, Unproven, Proof of Concept, Functional, High
+.P
+RL:[ND|OF|TF|W|U]     T   Remediation Level: Not Defined, Official Fix, Temporary Fix, Workaround, Unavailable
+.P
+RC:[ND|UC|UR|C]       T   Report Confidence: Not Defined, Unconfirmed, Uncorroborated, Confirmed
+.P
+CDP:[ND|N|L|LM|MH|H]  E   Collateral Damage Potential: Not Defined, None, Low, Low-Medium, Medium-High, High
+.P
+TD:[ND|N|L|M|H]       E   Target Distribution: Not Defined, None, Low, Medium, High
+.P
+CR:[ND|L|M|H]         E   Confidentiality requirement: Not Defined, Low, Medium, High
+.P
+IR:[ND|L|M|H]         E   Integrity requirement: Not Defined, Low, Medium, High
+.P
+AR:[ND|L|M|H]         E   Availability requirement: Not Defined, Low, Medium, High
+.RE
+.RE
 .PP
 
 
