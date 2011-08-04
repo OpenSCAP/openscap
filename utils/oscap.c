@@ -150,6 +150,7 @@ int app_validate_xml(const struct oscap_action *action)
 			case OSCAP_DOCUMENT_OVAL_SYSCHAR:     filename = "oval-system-characteristics-schematron.xsl"; break;
 			case OSCAP_DOCUMENT_OVAL_RESULTS:     filename = "oval-results-schematron.xsl";                break;
 			case OSCAP_DOCUMENT_OVAL_VARIABLES:   filename = "oval-variables-schematron.xsl";              break;
+			case OSCAP_DOCUMENT_OVAL_DIRECTIVES:  filename = "oval-directives-schematron.xsl";             break;
 		}
 
 		if (filename) {

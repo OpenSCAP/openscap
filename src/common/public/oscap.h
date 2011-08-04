@@ -176,6 +176,7 @@ typedef enum oscap_document_type {
 	OSCAP_DOCUMENT_OVAL_VARIABLES,        ///< OVAL Variables
 	OSCAP_DOCUMENT_OVAL_SYSCHAR,          ///< OVAL system characteristics file
 	OSCAP_DOCUMENT_OVAL_RESULTS,          ///< OVAL results file
+	OSCAP_DOCUMENT_OVAL_DIRECTIVES,       ///< OVAL directives file
 	OSCAP_DOCUMENT_XCCDF,                 ///< XCCDF benchmark file
 	OSCAP_DOCUMENT_CPE_LANGUAGE,          ///< CPE language file
 	OSCAP_DOCUMENT_CPE_DICTIONARY,        ///< CPE dictionary file

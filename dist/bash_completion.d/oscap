@@ -24,7 +24,7 @@ function _oscap {
     # command options
     local -A opts=()
 	opts[oscap]="--version --quiet --help -V -q -h"
-    opts[oscap:oval:validate-xml]="--version --definitions --variables --syschar --results --schematron"
+    opts[oscap:oval:validate-xml]="--version --definitions --variables --syschar --results --directives --schematron"
     opts[oscap:oval:eval]="--id --variables --results --report --skip-valid"
     opts[oscap:oval:analyse]="--variables"
     opts[oscap:oval:collect]="--variables"

@@ -202,6 +202,7 @@ struct oscap_schema_table_entry OSCAP_SCHEMAS_TABLE[] = {
 	{ OSCAP_DOCUMENT_OVAL_VARIABLES,   "oval",  "5.8",   "oval-variables-schema.xsd"              },
 	{ OSCAP_DOCUMENT_OVAL_RESULTS,     "oval",  "5.8",   "oval-results-schema.xsd"                },
 	{ OSCAP_DOCUMENT_OVAL_SYSCHAR,     "oval",  "5.8",   "oval-system-characteristics-schema.xsd" },
+	{ OSCAP_DOCUMENT_OVAL_DIRECTIVES,  "oval",  "5.8",   "oval-directives-schema.xsd"             },
 	{ OSCAP_DOCUMENT_XCCDF,            "xccdf", "1.1.4", "xccdf-schema.xsd"                       },
 	{ 0, NULL, NULL, NULL }
 };

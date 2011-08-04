@@ -598,6 +598,7 @@ enum oval_opt {
     OVAL_OPT_ID,
     OVAL_OPT_VARIABLES,
     OVAL_OPT_SYSCHAR,
+    OVAL_OPT_DIRECTIVES,
     OVAL_OPT_OUTPUT = 'o'
 };
 
@@ -616,6 +617,7 @@ bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 		{ "output",    	required_argument, NULL, OVAL_OPT_OUTPUT       },
 		{ "variables",	required_argument, NULL, OVAL_OPT_VARIABLES    },
 		{ "syschar",	required_argument, NULL, OVAL_OPT_SYSCHAR      },
+		{ "directives",	required_argument, NULL, OVAL_OPT_DIRECTIVES   },
         // flags
 		{ "skip-valid",	no_argument, &action->validate, 0 },
         // end
@@ -631,6 +633,7 @@ bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 		case OVAL_OPT_ID: action->id = optarg; break;
 		case OVAL_OPT_VARIABLES: action->f_variables = optarg; break;
 		case OVAL_OPT_SYSCHAR: action->f_syschar = optarg; break;
+		case OVAL_OPT_DIRECTIVES: action->f_directives = optarg; break;
         	case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
@@ -668,6 +671,7 @@ bool getopt_oval_validate(int argc, char **argv, struct oscap_action *action)
 		{ "variables",		no_argument, &action->doctype, OSCAP_DOCUMENT_OVAL_VARIABLES   },
 		{ "syschar",		no_argument, &action->doctype, OSCAP_DOCUMENT_OVAL_SYSCHAR     },
 		{ "results",		no_argument, &action->doctype, OSCAP_DOCUMENT_OVAL_RESULTS     },
+		{ "directives",		no_argument, &action->doctype, OSCAP_DOCUMENT_OVAL_DIRECTIVES  },
 		// force schematron validation
 		{ "schematron",		no_argument, &action->force, 1 },
         // end
