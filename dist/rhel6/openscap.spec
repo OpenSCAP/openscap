@@ -166,6 +166,7 @@ fi
 %{_libexecdir}/openscap/probe_file
 %{_libexecdir}/openscap/probe_filehash
 %{_libexecdir}/openscap/probe_filehash58
+%{_libexecdir}/openscap/probe_iflisteners
 %{_libexecdir}/openscap/probe_inetlisteningservers
 %{_libexecdir}/openscap/probe_interface
 %{_libexecdir}/openscap/probe_partition

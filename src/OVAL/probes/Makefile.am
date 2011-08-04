@@ -161,7 +161,7 @@ probe_inetlisteningservers_CFLAGS=
 probe_inetlisteningservers_LDFLAGS=
 
 pkglibexec_PROGRAMS += probe_iflisteners
-probe_iflisteners_SOURCES= unix/linux/iflisteners.c
+probe_iflisteners_SOURCES= unix/linux/iflisteners.c unix/linux/iflisteners-proto.h
 probe_iflisteners_CFLAGS=
 probe_iflisteners_LDFLAGS= ../../common/liboscapcommon.la
 
