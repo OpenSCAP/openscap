@@ -52,6 +52,7 @@ EOF
 done
 
 cat <<EOF
+          <criterion test_ref="oval:1:tst:$[I+2]"/>
         </criteria>
       </criteria>
     </definition>
@@ -81,6 +82,10 @@ EOF
 done
 
 cat <<EOF
+    <environmentvariable58_test version="1" id="oval:1:tst:$[I+2]" check="at least one" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:1:obj:3"/>
+      <state state_ref="oval:1:ste:$[I+2]"/>
+    </environmentvariable58_test>
   </tests>
 
   <objects>
@@ -93,6 +98,12 @@ cat <<EOF
     <environmentvariable58_object version="1" id="oval:1:obj:2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <pid datatype="int" xsi:nil="true" />
       <name operation="pattern match">_</name>
+    </environmentvariable58_object>
+
+    <environmentvariable58_object version="1" id="oval:1:obj:3" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <pid operation="greater than" datatype="int">1</pid>
+      <!-- <name operation="pattern match">.*</name> -->
+      <name>PATH</name>
     </environmentvariable58_object>
 
   </objects>
@@ -119,10 +130,16 @@ EOF
 done
 
 cat <<EOF
+  <environmentvariable58_state version="1" id="oval:1:ste:$[$I+2]" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+    <pid datatype="int">1</pid>
+    <!-- <name operation="pattern match">.*</name> -->
+    <name>PATH</name>
+    <value operation="pattern match">.*</value>
+  </environmentvariable58_state>
 
   </states>
 
 </oval_definitions>
 EOF
 
-exit $(( ${#ENV_VAR[@]} + 1 ))
+exit $(( ${#ENV_VAR[@]} + 2 ))
