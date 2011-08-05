@@ -53,7 +53,8 @@ void oval_phtbl_free(oval_phtbl_t *phtbl)
         register uint32_t i;
 
         for (i = 0; i < phtbl->sz; ++i) {
-                phtbl->ph[i]->func(phtbl->ph[i]->type, phtbl->ph[i]->uptr, PROBE_HANDLER_ACT_FREE);
+                if (phtbl->ph[i]->func)
+                        phtbl->ph[i]->func(phtbl->ph[i]->type, phtbl->ph[i]->uptr, PROBE_HANDLER_ACT_FREE);
                 oscap_free(phtbl->ph[i]);
         }
 

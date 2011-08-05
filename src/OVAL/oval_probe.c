@@ -420,6 +420,11 @@ int oval_probe_query_sysinfo(oval_probe_session_t *sess, struct oval_sysinfo **o
 		return(-1);
         }
 
+        if (ph->func == NULL) {
+                oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBENOTSUPP, "OVAL object not correctly defined");
+		return(-1);
+        }
+
         sysinf = NULL;
 
 	ret = ph->func(OVAL_SUBTYPE_SYSINFO, ph->uptr, PROBE_HANDLER_ACT_EVAL, NULL, &sysinf, 0);
