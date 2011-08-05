@@ -1,7 +1,7 @@
 /**
  * @file   dpkginfo.c
  * @brief  dpkginfo probe
- * @author "Pierre Chifflier" <chifflier@edenwall.com>
+ * @author "Pierre Chifflier" <chifflier@wzdftpd.net>
  */
 
 /*
@@ -23,7 +23,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors:
- *      "Pierre Chifflier <chifflier@edenwall.com>"
+ *      "Pierre Chifflier <chifflier@wzdftpd.net>"
  */
 
 
@@ -78,29 +78,30 @@ void probe_fini (void *ptr)
 {
         struct dpkginfo_global *d = (struct dpkginfo_global *)ptr;
 
-        pthread_mutex_destroy (&(d->mutex));
         dpkginfo_fini();
+        pthread_mutex_destroy (&(d->mutex));
 
         return;
 }
 
-int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
+int probe_main (probe_ctx *ctx, void *arg)
 {
-        SEXP_t *val, *item_sexp, *r0;
+        SEXP_t *val, *item, *ent;
         char *request_st = NULL;
         struct dpkginfo_reply_t *dpkginfo_reply = NULL;
         int errflag;
 
-        (void)filters;
+        ent = probe_obj_getent(probe_ctx_getobject(ctx), "name", 1);
 
-	if (object == NULL || probe_out == NULL) {
-		return (PROBE_EINVAL);
-	}
+        if (ent == NULL) {
+                return (PROBE_ENOENT);
+        }
 
-        val = probe_obj_getentval (object, "name", 1);
+        val = probe_ent_getval (ent);
 
         if (val == NULL) {
                 _D("%s: no value\n", "name");
+                SEXP_free (ent);
                 return (PROBE_ENOVAL);
         }
 
@@ -131,79 +132,43 @@ int probe_main (SEXP_t *object, SEXP_t *probe_out, void *arg, SEXP_t *filters)
                 switch (errflag) {
 		case 0: /* Not found */
 		{
-                                _D("Package \"%s\" not found.\n", request_st);
-				/*
-                                item_sexp = probe_item_creat ("dpkginfo_item", NULL,
-                                                "name", NULL,
-                                                r0 = SEXP_string_newf(request_st),
-                                                NULL);
-
-                                probe_item_setstatus (item_sexp, OVAL_STATUS_DOESNOTEXIST);
-                                probe_itement_setstatus (item_sexp, "name", 1, OVAL_STATUS_DOESNOTEXIST);
-
-				probe_cobj_add_item(probe_out, item_sexp);
-                                SEXP_free (item_sexp);
-                                SEXP_free (r0);
-				*/
-                                break;
+			_D("Package \"%s\" not found.\n", request_st);
+			break;
 		}
 		case -1: /* Error */
 		{
-				SEXP_t *msg;
-
-				msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR,
-						      "dpkginfo_get_by_name() failed.");
-				probe_cobj_add_msg(probe_out, msg);
-				SEXP_free(msg);
-				probe_cobj_set_flag(probe_out, SYSCHAR_FLAG_ERROR);
-
-                                break;
+			_D("dpkginfo_get_by_name failed.\n");
+			item = probe_item_create(OVAL_LINUX_DPKG_INFO, NULL,
+					"name", OVAL_DATATYPE_STRING, request_st,
+					NULL);
+			probe_item_setstatus (item, OVAL_STATUS_ERROR);
+			probe_item_collect(ctx, item);
+			break;
 		}
                 }
         } else { /* Ok */
-                SEXP_t *r1, *r2, *r3, *r4, *r5;
                 int i;
                 int num_items = 1; /* FIXME */
 
                 for (i = 0; i < num_items; ++i) {
-                        item_sexp = probe_item_creat ("dpkginfo_item", NULL,
-
-                                        "name", NULL,
-                                        r0 = SEXP_string_newf (dpkginfo_reply->name),
-
-                                        "arch", NULL,
-                                        r1 = SEXP_string_newf (dpkginfo_reply->arch),
-
-                                        "epoch", NULL,
-                                        r2 = SEXP_string_newf (dpkginfo_reply->epoch),
-
-                                        "release", NULL,
-                                        r3 = SEXP_string_newf (dpkginfo_reply->release),
-
-                                        "version", NULL,
-                                        r4 = SEXP_string_newf (dpkginfo_reply->version),
-
-                                        "evr", NULL,
-                                        r5 = SEXP_string_newf (dpkginfo_reply->evr),
-
-                                        NULL, NULL,
-                                        NULL,
-
+                        _D("%s: element found version %s\n", dpkginfo_reply->name, dpkginfo_reply->evr);
+                        item = probe_item_create (OVAL_LINUX_DPKG_INFO, NULL,
+                                        "name", OVAL_DATATYPE_STRING, dpkginfo_reply->name,
+                                        "arch", OVAL_DATATYPE_STRING, dpkginfo_reply->arch,
+                                        "epoch", OVAL_DATATYPE_STRING, dpkginfo_reply->epoch,
+                                        "release", OVAL_DATATYPE_STRING, dpkginfo_reply->release,
+                                        "version", OVAL_DATATYPE_STRING, dpkginfo_reply->version,
+                                        "evr", OVAL_DATATYPE_EVR_STRING, dpkginfo_reply->evr,
                                         NULL);
 
-			probe_cobj_add_item(probe_out, item_sexp, filters);
-                        SEXP_free (item_sexp);
-                        /* FIXME: this is... stupid */
-                        SEXP_free (r0);
-                        SEXP_free (r1);
-                        SEXP_free (r2);
-                        SEXP_free (r3);
-                        SEXP_free (r4);
-                        SEXP_free (r5);
+			probe_item_collect(ctx, item);
 
                         dpkginfo_free_reply(dpkginfo_reply);
                 }
         }
+
+        SEXP_vfree(ent, NULL);
+        oscap_free(request_st);
 
         return (0);
 }
