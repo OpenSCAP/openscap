@@ -414,7 +414,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 		struct oval_results_model *res_model = oval_agent_get_results_model(sess);
 
 		/* set up directives */
-		struct oval_result_directives *res_direct = oval_result_directives_new(res_model);
+		struct oval_result_directives *res_direct = oval_result_directives_new();
 		oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE | OVAL_RESULT_FALSE |
 						    OVAL_RESULT_UNKNOWN | OVAL_RESULT_NOT_EVALUATED |
 						    OVAL_RESULT_ERROR | OVAL_RESULT_NOT_APPLICABLE, true);
@@ -542,7 +542,7 @@ static int app_analyse_oval(const struct oscap_action *action) {
 	/* export results */
 	if (action->f_results != NULL) {
 		/* set up directives */
-		res_direct = oval_result_directives_new(res_model);
+		res_direct = oval_result_directives_new();
 		oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE | OVAL_RESULT_FALSE |
 						    OVAL_RESULT_UNKNOWN | OVAL_RESULT_NOT_EVALUATED |
 						    OVAL_RESULT_ERROR | OVAL_RESULT_NOT_APPLICABLE, true);

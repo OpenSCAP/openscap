@@ -36,9 +36,12 @@
 #include <stddef.h>
 
 #include "public/oval_agent_api.h"
+
 #include "oval_parser_impl.h"
 #include "oval_definitions_impl.h"
 #include "oval_results_impl.h"
+#include "oval_directives_impl.h"
+
 #include "common/util.h"
 #include "common/elements.h"
 #include "common/debug_priv.h"
@@ -61,7 +64,7 @@ int oval_results_model_parse(xmlTextReaderPtr reader, struct oval_parser_context
 				gen = oval_results_model_get_generator(context->results_model);
 				ret = oval_parser_parse_tag(reader, context, &oval_generator_parse_tag, gen);
 			} else if (is_ovalres && (strcmp(tagname, "directives") == 0)) {
-				*directives = oval_result_directives_new(context->results_model);
+				*directives = oval_result_directives_new();
 				ret = oval_parser_parse_tag(reader, context, &oval_result_directives_parse_tag, *directives);
 			} else if (is_ovaldef && (strcmp(tagname, "oval_definitions") == 0)) {
 				ret = oval_definition_model_parse(reader, context);

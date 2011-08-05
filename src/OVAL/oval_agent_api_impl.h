@@ -32,7 +32,7 @@
 
 #include "public/oval_agent_api.h"
 #include "oval_definitions_impl.h"
-#include "../common/util.h"
+#include "common/util.h"
 
 OSCAP_HIDDEN_START;
 

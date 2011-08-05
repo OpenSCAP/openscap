@@ -31,9 +31,11 @@
 #define OVAL_RESULTS_IMPL_H_
 
 #include "public/oval_results.h"
+
 #include "oval_definitions_impl.h"
 #include "oval_system_characteristics_impl.h"
-#include "../common/util.h"
+
+#include "common/util.h"
 
 OSCAP_HIDDEN_START;
 
@@ -52,8 +54,6 @@ struct oval_result_test *make_result_test_from_oval_test(struct oval_result_syst
 int oval_result_test_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, void *);
 xmlNode *oval_result_test_to_dom(struct oval_result_test *, xmlDocPtr, xmlNode *);
 
-int oval_result_directives_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, void *);
-int oval_result_directives_to_dom(struct oval_result_directives *, xmlDoc *, xmlNode *);
 
 int oval_result_item_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, struct oval_result_system *, oscap_consumer_func, void *);
 xmlNode *oval_result_item_to_dom(struct oval_result_item *, xmlDocPtr, xmlNode *);

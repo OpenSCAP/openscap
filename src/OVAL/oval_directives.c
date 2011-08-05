@@ -37,7 +37,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "oval_results_impl.h"
+#include "oval_directives_impl.h"
 #include "oval_collection_impl.h"
 
 #include "common/assume.h"
@@ -53,11 +53,10 @@ struct _oval_result_directive {
 };
 
 typedef struct oval_result_directives {
-	struct oval_results_model *model;
 	struct _oval_result_directive directive[NUMBER_OF_RESULTS];
 } oval_result_directives_t;
 
-struct oval_result_directives *oval_result_directives_new(struct oval_results_model *model)
+struct oval_result_directives *oval_result_directives_new(void)
 {
 	oval_result_directives_t *directives = (oval_result_directives_t *)
 	    oscap_alloc(sizeof(oval_result_directives_t));
@@ -69,7 +68,6 @@ struct oval_result_directives *oval_result_directives_new(struct oval_results_mo
 		directives->directive[i].reported = false;
 		directives->directive[i].content = OVAL_DIRECTIVE_CONTENT_UNKNOWN;
 	}
-	directives->model = model;
 	return directives;
 }
 

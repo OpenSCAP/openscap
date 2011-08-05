@@ -44,35 +44,11 @@
 
 #include "oval_types.h"
 #include "oval_system_characteristics.h"
+#include "oval_directives.h"
 #include <stdbool.h>
-
-/**
- * @typedef oval_result_t
- * Result values for the evaluation of an OVAL Definition or an OVAL Test
- */
-typedef enum {
-	OVAL_RESULT_TRUE = 1,    /**< Characteristics being evaluated match the information represented in the system characteristic. */
-	OVAL_RESULT_FALSE = 2,   /**< Characteristics being evaluated do not match the information represented in the system characteristic. */
-	OVAL_RESULT_UNKNOWN = 4, /**< Characteristics being evaluated can not be found in the system characteristic. */
-	OVAL_RESULT_ERROR = 8,  /**< Characteristics being evaluated exist in the system characteristic file but there was an error either collecting information or in performing anaylsis. */
-	OVAL_RESULT_NOT_EVALUATED = 16, /**< Choice was made not to evaluate the given definition or test. */
-	OVAL_RESULT_NOT_APPLICABLE = 32 /**< Definition or test being evaluated is not valid on the given platform. */
-} oval_result_t;
-
-/**
- * @typedef oval_result_directive_content_t
- * Values for the directives controlling the expected content of the results file
- */
-typedef enum {
-	OVAL_DIRECTIVE_CONTENT_UNKNOWN = 0, /**< Undefined value */
-	OVAL_DIRECTIVE_CONTENT_THIN = 1,    /**< Only the minimal amount of information will be provided. */
-	OVAL_DIRECTIVE_CONTENT_FULL = 2     /**< Very detailed information will be provided allowing in-depth reports to be generated from the results. */
-} oval_result_directive_content_t;
 
 
 const char *oval_result_get_text(oval_result_t);
-
-
 
 /**
  * @struct oval_results_model
@@ -130,28 +106,6 @@ struct oval_result_criteria_node;
  * @see oval_result_criteria_node_get_subnodes 
  */
 struct oval_result_criteria_node_iterator;
-
-/**
- * @struct oval_result_directives
- * This structure holds instance of OVAL Result Directives for particular oval_results_model.
- * OVAL Result Directives describes what information has been included in the results file, therefore  
- * it's necessarry to setup this structure before exporting oval_results_model. Usage example:
- *
- * @code
- * struct oval_result_directives * res_direct = oval_result_directives_new(res_model);
- * oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE | OVAL_RESULT_FALSE , true);
- * oval_result_directives_set_content(res_direct,OVAL_RESULT_FALSE | OVAL_RESULT_TRUE | OVAL_RESULT_ERROR , OVAL_DIRECTIVE_CONTENT_FULL);
- * .....
- * oval_result_directives_free(res_direct);
- * @endcode
- *
- * 
- */
-struct oval_result_directives;
-
-
-
-
 
 /**
  * Create new oval_results_model.
@@ -732,60 +686,6 @@ void oval_result_criteria_node_iterator_free(struct oval_result_criteria_node_it
 /** @} */
 
 
-
-
-/**
- * Create new OVAL Results Directives instance. Directives are setup NOT to report any type of result by default.
- * @memberof oval_result_directives
- */
-struct oval_result_directives *oval_result_directives_new(struct oval_results_model *);
-/**
- * @memberof oval_result_directives
- */
-void oval_result_directives_free(struct oval_result_directives *);
-
-
-/**
- * @name Setters
- * @{
- */
-/**
- * Set (or unset) result types that are intended to be reported. Functions does not override previous settings.
- * @memberof oval_result_directives
- */
-void oval_result_directives_set_reported(struct oval_result_directives *, int flag, bool val);
-/**
- * Configure the depth of infomation.
- * @memberof oval_result_directives
- */
-void oval_result_directives_set_content(struct oval_result_directives *, int flag, oval_result_directive_content_t);
-/** @} */
-
-/**
- * @name Getters
- * @{
- */
-/**
- * @memberof oval_result_directives
- */
-bool oval_result_directives_get_reported(struct oval_result_directives *, oval_result_t);
-/**
- * @memberof oval_result_directives
- */
-oval_result_directive_content_t oval_result_directives_get_content(struct oval_result_directives *, oval_result_t);
-/** @} */
-
-/**
- * @name Evaluators
- * @{
- */
-/** @} */
-
-
-
-
-
-
 /** @} */
 /**
  * @}END OVALRES
@@ -793,3 +693,4 @@ oval_result_directive_content_t oval_result_directives_get_content(struct oval_r
  */
 
 #endif				/* OVAL_RESULTS_H_ */
+

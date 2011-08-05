@@ -300,6 +300,27 @@ typedef enum {
  * @}
  */
 
+/**
+ * @addtogroup OVAL
+ * @{
+ * @addtogroup OVALRES
+ * Interface for Results model
+ * @{
+ *
+ * @typedef oval_result_t
+ * Result values for the evaluation of an OVAL Definition or an OVAL Test
+ */
+typedef enum {
+        OVAL_RESULT_TRUE = 1,    /**< Characteristics being evaluated match the information represented in the system characteristic. */
+        OVAL_RESULT_FALSE = 2,   /**< Characteristics being evaluated do not match the information represented in the system characteristic. */
+        OVAL_RESULT_UNKNOWN = 4, /**< Characteristics being evaluated can not be found in the system characteristic. */
+        OVAL_RESULT_ERROR = 8,  /**< Characteristics being evaluated exist in the system characteristic file but there was an error either collecting information or in performing anaylsis. */
+        OVAL_RESULT_NOT_EVALUATED = 16, /**< Choice was made not to evaluate the given definition or test. */
+        OVAL_RESULT_NOT_APPLICABLE = 32 /**< Definition or test being evaluated is not valid on the given platform. */
+} oval_result_t;
+/** @} */
+/** @} */
+
 
 /**
  * @addtogroup OVAL
@@ -314,8 +335,6 @@ typedef enum {
 struct oval_variable_model;
 /** @} */
 /** @} */
-
-
 
 
 #endif				/* OVAL_TYPES_H_ */

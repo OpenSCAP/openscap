@@ -42,13 +42,14 @@ common_oval_sources = \
 	oval_recordField.c \
 	oval_reference.c \
 	oval_resultCriteriaNode.c \
-	oval_resultDirectives.c \
 	oval_resultDefinition.c \
 	oval_resultItem.c \
 	oval_resultSystem.c \
 	oval_resultTest.c \
 	oval_results_impl.h \
 	oval_results_parser.c \
+	oval_directives.c \
+	oval_directives_impl.h \
 	oval_set.c \
 	oval_state.c \
 	oval_stateContent.c \
@@ -92,6 +93,7 @@ pkginclude_HEADERS  =	public/oval_agent_api.h \
 			public/oval_system_characteristics.h \
 			public/oval_results.h \
 			public/oval_variables.h \
+			public/oval_directives.h \
 			public/oval_types.h \
 			public/oval_probe.h \
 			public/oval_probe_session.h \

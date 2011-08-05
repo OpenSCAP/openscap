@@ -398,7 +398,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			sprintf(name, "%s.result.xml", oval_agent_get_filename(sessions[i]));
 
 			/* set up directives */
-			struct oval_result_directives *res_direct = oval_result_directives_new(res_model);
+			struct oval_result_directives *res_direct = oval_result_directives_new();
 			oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE | OVAL_RESULT_FALSE |
 							    OVAL_RESULT_UNKNOWN | OVAL_RESULT_NOT_EVALUATED |
 							    OVAL_RESULT_ERROR | OVAL_RESULT_NOT_APPLICABLE, true);
