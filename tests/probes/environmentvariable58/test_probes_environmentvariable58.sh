@@ -23,6 +23,10 @@ function test_probes_environmentvariable58 {
     local DEFFILE="$1.xml"
     local RESFILE="$1.results.xml"
 
+    if [ $(id -u) -ne 0 ]; then
+    	return 255
+    fi
+
     [ -f $RESFILE ] && rm -f $RESFILE
 
     bash ${srcdir}/$1.xml.sh > $DEFFILE
