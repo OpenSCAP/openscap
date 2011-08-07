@@ -13,7 +13,7 @@ function oval_fts {
 	ROOT="/tmp/ovalroot"
 
 	echo "Generating tree"
-	./gentree.sh "$ROOT"
+	./${srcdir}/gentree.sh "$ROOT"
 	
 	if [ $? -ne 0 ]; then
 		echo "gentree.sh failed"
