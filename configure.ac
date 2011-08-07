@@ -629,12 +629,12 @@ AC_ARG_WITH([crypto],
      [crypto=gcrypt])
 
 if test "x${libexecdir}" = xNONE; then
-	AC_DEFINE_UNQUOTED([OVAL_PROBE_DIR], ["/usr/local/libexec/openscap"], [Path to probes])
 	probe_dir="/usr/local/libexec/openscap"
 else
-	AC_DEFINE_UNQUOTED([OVAL_PROBE_DIR], ["${libexecdir}/openscap"], [Path to probes])
 	EXPAND_DIR(probe_dir,"${libexecdir}/openscap")
 fi
+
+AC_SUBST(probe_dir)
 
 if test "x${prefix}" = xNONE; then
 	AC_DEFINE_UNQUOTED([OSCAP_DEFAULT_SCHEMA_PATH], ["/usr/local/share/openscap/schemas"], [Path to xml schemas])

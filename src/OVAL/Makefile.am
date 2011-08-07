@@ -78,7 +78,7 @@ common_oval_sources = \
 # lets build one common for both normal and probe sources (does it mind?)
 AM_CPPFLAGS = $(libxml_cflags) $(pthread_cflags) $(pcre_cflags) -I$(srcdir)/public -I$(top_srcdir)/src/common/public -I$(top_srcdir)/src -I$(top_srcdir)/src/OVAL/probes/SEAP/generic
 if WANT_PROBES
-AM_CPPFLAGS += -I$(top_srcdir)/src -I$(top_srcdir)/src/common -I$(srcdir)/probes -I$(srcdir)/probes/public -I$(srcdir)/probes/SEAP/public -DSEAP_MSGID_BITS=32 -DSEAP_THREAD_SAFE
+AM_CPPFLAGS += -I$(top_srcdir)/src -I$(top_srcdir)/src/common -I$(srcdir)/probes -I$(srcdir)/probes/public -I$(srcdir)/probes/SEAP/public -DSEAP_MSGID_BITS=32 -DSEAP_THREAD_SAFE -DOVAL_PROBE_DIR='"$(probe_dir)"'
 endif
 if WANT_XCCDF
 AM_CPPFLAGS += -I$(top_srcdir)/src/XCCDF_POLICY/public -I$(top_srcdir)/src/XCCDF/public -DENABLE_XCCDF
