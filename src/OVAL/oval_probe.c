@@ -79,7 +79,8 @@ oval_subtypedsc_t __s2n_tbl[] = {
 	/* 13008 */ {OVAL_UNIX_SHADOW,                      "shadow"              },
 	/* 13009 */ {OVAL_UNIX_UNAME,                       "uname"               },
 	/* 13010 */ {OVAL_UNIX_XINETD,                      "xinetd"              },
-        /* 13012 */ {OVAL_UNIX_SYSCTL,                      "sysctl"              }
+        /* 13012 */ {OVAL_UNIX_SYSCTL,                      "sysctl"              },
+	/* 13014 */ {OVAL_UNIX_FILEEXTENDEDATTRIBUTE,       "fileextendedattribute" }
 };
 
 #define __s2n_tbl_count (sizeof __s2n_tbl / sizeof(oval_subtypedsc_t))
@@ -96,6 +97,7 @@ oval_subtypedsc_t __n2s_tbl[] = {
         /*  7014 */ {OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE58,"environmentvariable58" },
 	/*  7001 */ {OVAL_INDEPENDENT_FAMILY,               "family"              },
 	/* 13001 */ {OVAL_UNIX_FILE,                        "file"                },
+	/* 13014 */ {OVAL_UNIX_FILEEXTENDEDATTRIBUTE,       "fileextendedattribute" },
         /*  7003 */ {OVAL_INDEPENDENT_FILE_HASH,            "filehash"            },
         /*  7015 */ {OVAL_INDEPENDENT_FILE_HASH58,          "filehash58"          },
         /*  7002 */ {OVAL_INDEPENDENT_FILE_MD5,             "filemd5"             },
