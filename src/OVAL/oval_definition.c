@@ -84,8 +84,7 @@ int oval_definition_get_version(struct oval_definition *definition)
 	return ((struct oval_definition *)definition)->version;
 }
 
-oval_definition_class_t oval_definition_get_class(struct oval_definition
-						  *definition)
+oval_definition_class_t oval_definition_get_class(struct oval_definition *definition)
 {
 	__attribute__nonnull__(definition);
 

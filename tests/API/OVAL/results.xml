@@ -17,7 +17,7 @@
   <class_directives class="compliance">
     <definition_true reported="true" content="thin"/>
     <definition_false reported="true" content="full"/>
-    <definition_unknown reported="true" content="full"/>
+    <definition_unknown reported="unknown" content="full"/>
     <definition_error reported="true" content="full"/>
     <definition_not_evaluated reported="true" content="full"/>
     <definition_not_applicable reported="true" content="full"/>
@@ -9089,13 +9089,13 @@
         <unix-def:oexec datatype="boolean">false</unix-def:oexec>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:98" version="1">
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:97" version="1">
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:96" version="1">
-        <unix-def:group_id>0</unix-def:group_id>
+        <unix-def:group_id datatype="int">0</unix-def:group_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:95" version="1">
         <unix-def:uread datatype="boolean">true</unix-def:uread>
@@ -9109,7 +9109,7 @@
         <unix-def:oexec datatype="boolean">false</unix-def:oexec>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:94" version="1">
-        <unix-def:group_id>0</unix-def:group_id>
+        <unix-def:group_id datatype="int">0</unix-def:group_id>
       </unix-def:file_state>
       <unix-def:runlevel_state id="oval:gov.irs.rhel5:ste:93" version="1">
         <unix-def:start datatype="boolean">false</unix-def:start>
@@ -9244,7 +9244,7 @@
         <ind-def:value_of>true</ind-def:value_of>
       </ind-def:xmlfilecontent_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:53" version="1">
-        <unix-def:group_id>0</unix-def:group_id>
+        <unix-def:group_id datatype="int">0</unix-def:group_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:52" version="1">
         <unix-def:uread datatype="boolean">true</unix-def:uread>
@@ -9258,7 +9258,7 @@
         <unix-def:oexec datatype="boolean">false</unix-def:oexec>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:51" version="1">
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:50" version="1"/>
       <ind-def:textfilecontent54_state id="oval:gov.irs.rhel5:ste:5" version="1">
@@ -9279,7 +9279,7 @@
         <unix-def:oexec datatype="boolean">false</unix-def:oexec>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:48" version="1">
-        <unix-def:group_id var_ref="oval:gov.irs.rhel5:var:8"/>
+        <unix-def:group_id datatype="int" var_ref="oval:gov.irs.rhel5:var:8"/>
       </unix-def:file_state>
       <ind-def:textfilecontent54_state id="oval:gov.irs.rhel5:ste:47" version="1">
         <ind-def:pattern>[[:space:]]*root:</ind-def:pattern>
@@ -9287,37 +9287,37 @@
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:46" version="1">
         <unix-def:path>/usr/bin</unix-def:path>
         <unix-def:filename>sudoedit</unix-def:filename>
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:45" version="1">
         <unix-def:path>/usr/bin</unix-def:path>
         <unix-def:filename>sudo</unix-def:filename>
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:44" version="1">
         <unix-def:path>/usr/bin</unix-def:path>
         <unix-def:filename>passwd</unix-def:filename>
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:43" version="1">
         <unix-def:path>/usr/bin</unix-def:path>
         <unix-def:filename>newgrp</unix-def:filename>
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:42" version="1">
         <unix-def:path>/usr/bin</unix-def:path>
         <unix-def:filename>gpasswd</unix-def:filename>
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:41" version="1">
         <unix-def:path>/usr/bin</unix-def:path>
         <unix-def:filename>at</unix-def:filename>
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:40" version="1">
         <unix-def:path>/sbin</unix-def:path>
         <unix-def:filename>unix chkpwd</unix-def:filename>
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <ind-def:textfilecontent54_state id="oval:gov.irs.rhel5:ste:4" version="1">
         <ind-def:subexpression operation="pattern match">.*nodev.*</ind-def:subexpression>
@@ -9325,27 +9325,27 @@
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:39" version="1">
         <unix-def:path>/sbin</unix-def:path>
         <unix-def:filename>pam timestamp check</unix-def:filename>
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:38" version="1">
         <unix-def:path>/bin</unix-def:path>
         <unix-def:filename>umount</unix-def:filename>
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:37" version="1">
         <unix-def:path>/bin</unix-def:path>
         <unix-def:filename>su</unix-def:filename>
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:36" version="1">
         <unix-def:path>/bin</unix-def:path>
         <unix-def:filename>ping</unix-def:filename>
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:35" version="1">
         <unix-def:path>/bin</unix-def:path>
         <unix-def:filename>mount</unix-def:filename>
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:34" version="1">
         <unix-def:suid datatype="boolean">true</unix-def:suid>
@@ -9356,17 +9356,17 @@
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:32" version="1">
         <unix-def:path>/usr/sbin</unix-def:path>
         <unix-def:filename>sendmail.sendmail</unix-def:filename>
-        <unix-def:group_id var_ref="oval:gov.irs.rhel5:var:5"/>
+        <unix-def:group_id datatype="int" var_ref="oval:gov.irs.rhel5:var:5"/>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:31" version="1">
         <unix-def:path>/usr/sbin</unix-def:path>
         <unix-def:filename>lockdev</unix-def:filename>
-        <unix-def:group_id var_ref="oval:gov.irs.rhel5:var:4"/>
+        <unix-def:group_id datatype="int" var_ref="oval:gov.irs.rhel5:var:4"/>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:30" version="1">
         <unix-def:path>/usr/libexec/utempter</unix-def:path>
         <unix-def:filename>utempter</unix-def:filename>
-        <unix-def:group_id var_ref="oval:gov.irs.rhel5:var:3"/>
+        <unix-def:group_id datatype="int" var_ref="oval:gov.irs.rhel5:var:3"/>
       </unix-def:file_state>
       <ind-def:textfilecontent54_state id="oval:gov.irs.rhel5:ste:3" version="1">
         <ind-def:subexpression operation="pattern match">.*nodev.*</ind-def:subexpression>
@@ -9374,12 +9374,12 @@
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:29" version="1">
         <unix-def:path>/usr/bin</unix-def:path>
         <unix-def:filename>ssh-agent</unix-def:filename>
-        <unix-def:group_id var_ref="oval:gov.irs.rhel5:var:2"/>
+        <unix-def:group_id datatype="int" var_ref="oval:gov.irs.rhel5:var:2"/>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:28" version="1">
         <unix-def:path>/usr/bin</unix-def:path>
         <unix-def:filename>locate</unix-def:filename>
-        <unix-def:group_id var_ref="oval:gov.irs.rhel5:var:1"/>
+        <unix-def:group_id datatype="int" var_ref="oval:gov.irs.rhel5:var:1"/>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:27" version="1">
         <unix-def:sgid datatype="boolean">true</unix-def:sgid>
@@ -9405,7 +9405,7 @@
         <unix-def:oexec datatype="boolean">false</unix-def:oexec>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:20" version="1">
-        <unix-def:group_id>0</unix-def:group_id>
+        <unix-def:group_id datatype="int">0</unix-def:group_id>
       </unix-def:file_state>
       <unix-def:runlevel_state id="oval:gov.irs.rhel5:ste:2" version="1">
         <unix-def:start datatype="boolean">false</unix-def:start>
@@ -9422,7 +9422,7 @@
         <unix-def:oexec datatype="boolean">false</unix-def:oexec>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:18" version="1">
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:17" version="1">
         <unix-def:uread datatype="boolean">true</unix-def:uread>
@@ -9436,10 +9436,10 @@
         <unix-def:oexec datatype="boolean">false</unix-def:oexec>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:16" version="1">
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:15" version="1">
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <unix-def:runlevel_state id="oval:gov.irs.rhel5:ste:149" version="1">
         <unix-def:start datatype="boolean">false</unix-def:start>
@@ -9465,7 +9465,7 @@
         <unix-def:oexec datatype="boolean">false</unix-def:oexec>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:144" version="1">
-        <unix-def:group_id var_ref="oval:gov.irs.rhel5:var:10"/>
+        <unix-def:group_id datatype="int" var_ref="oval:gov.irs.rhel5:var:10"/>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:143" version="1">
         <unix-def:uread datatype="boolean">true</unix-def:uread>
@@ -9504,13 +9504,13 @@
         <unix-def:start datatype="boolean">false</unix-def:start>
       </unix-def:runlevel_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:14" version="1">
-        <unix-def:group_id>0</unix-def:group_id>
+        <unix-def:group_id datatype="int">0</unix-def:group_id>
       </unix-def:file_state>
       <unix-def:runlevel_state id="oval:gov.irs.rhel5:ste:139" version="1">
         <unix-def:start datatype="boolean">false</unix-def:start>
       </unix-def:runlevel_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:138" version="1">
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:137" version="1">
         <unix-def:uread datatype="boolean">true</unix-def:uread>
@@ -9524,7 +9524,7 @@
         <unix-def:oexec datatype="boolean">false</unix-def:oexec>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:136" version="1">
-        <unix-def:group_id>0</unix-def:group_id>
+        <unix-def:group_id datatype="int">0</unix-def:group_id>
       </unix-def:file_state>
       <unix-def:runlevel_state id="oval:gov.irs.rhel5:ste:135" version="1">
         <unix-def:start datatype="boolean">false</unix-def:start>
@@ -9571,10 +9571,10 @@
         <unix-def:start datatype="boolean">false</unix-def:start>
       </unix-def:runlevel_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:124" version="1">
-        <unix-def:user_id var_ref="oval:gov.irs.rhel5:var:9"/>
+        <unix-def:user_id datatype="int" var_ref="oval:gov.irs.rhel5:var:9"/>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:123" version="1">
-        <unix-def:group_id>0</unix-def:group_id>
+        <unix-def:group_id datatype="int">0</unix-def:group_id>
       </unix-def:file_state>
       <unix-def:runlevel_state id="oval:gov.irs.rhel5:ste:122" version="1">
         <unix-def:start datatype="boolean">false</unix-def:start>
@@ -9586,7 +9586,7 @@
         <unix-def:start datatype="boolean">false</unix-def:start>
       </unix-def:runlevel_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:12" version="1">
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <unix-def:runlevel_state id="oval:gov.irs.rhel5:ste:119" version="1">
         <unix-def:start datatype="boolean">false</unix-def:start>
@@ -9615,7 +9615,7 @@
         <unix-def:oexec datatype="boolean">false</unix-def:oexec>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:113" version="1">
-        <unix-def:group_id>0</unix-def:group_id>
+        <unix-def:group_id datatype="int">0</unix-def:group_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:112" version="1">
         <unix-def:uread datatype="boolean">true</unix-def:uread>
@@ -9651,16 +9651,16 @@
         <unix-def:oexec datatype="boolean">false</unix-def:oexec>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:11" version="1">
-        <unix-def:group_id>0</unix-def:group_id>
+        <unix-def:group_id datatype="int">0</unix-def:group_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:109" version="1">
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:108" version="1">
-        <unix-def:group_id>0</unix-def:group_id>
+        <unix-def:group_id datatype="int">0</unix-def:group_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:107" version="1">
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:106" version="1">
         <unix-def:uread datatype="boolean">true</unix-def:uread>
@@ -9674,19 +9674,19 @@
         <unix-def:oexec datatype="boolean">false</unix-def:oexec>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:105" version="1">
-        <unix-def:group_id>0</unix-def:group_id>
+        <unix-def:group_id datatype="int">0</unix-def:group_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:104" version="1">
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:103" version="1">
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:102" version="1">
-        <unix-def:group_id>0</unix-def:group_id>
+        <unix-def:group_id datatype="int">0</unix-def:group_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:101" version="1">
-        <unix-def:user_id>0</unix-def:user_id>
+        <unix-def:user_id datatype="int">0</unix-def:user_id>
       </unix-def:file_state>
       <ind-def:family_state id="oval:gov.irs.rhel5:ste:10001" version="1">
         <ind-def:family>unix</ind-def:family>
@@ -9695,10 +9695,10 @@
         <lin-def:version operation="pattern match">^5[^[:digit:]]</lin-def:version>
       </lin-def:rpminfo_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:100" version="1">
-        <unix-def:group_id>0</unix-def:group_id>
+        <unix-def:group_id datatype="int">0</unix-def:group_id>
       </unix-def:file_state>
       <unix-def:file_state id="oval:gov.irs.rhel5:ste:10" version="1">
-        <unix-def:group_id>0</unix-def:group_id>
+        <unix-def:group_id datatype="int">0</unix-def:group_id>
       </unix-def:file_state>
       <unix-def:runlevel_state id="oval:gov.irs.rhel5:ste:1" version="1">
         <unix-def:start datatype="boolean">false</unix-def:start>
@@ -9752,13 +9752,13 @@
             <extend_definition definition_ref="oval:gov.irs.rhel5:def:10000" version="1" result="false"/>
           </criteria>
         </definition>
-        <definition definition_id="oval:gov.irs.rhel5:def:98" result="false" version="1">
+        <definition definition_id="oval:gov.irs.rhel5:def:98" result="true" version="1">
           <criteria operator="AND" result="false">
             <criterion test_ref="oval:gov.irs.rhel5:tst:128" version="1" result="unknown"/>
             <extend_definition definition_ref="oval:gov.irs.rhel5:def:10000" version="1" result="false"/>
           </criteria>
         </definition>
-        <definition definition_id="oval:gov.irs.rhel5:def:97" result="false" version="1">
+        <definition definition_id="oval:gov.irs.rhel5:def:97" result="unknown" version="1">
           <criteria operator="AND" result="false">
             <criterion test_ref="oval:gov.irs.rhel5:tst:127" version="1" result="unknown"/>
             <extend_definition definition_ref="oval:gov.irs.rhel5:def:10000" version="1" result="false"/>
@@ -14353,194 +14353,194 @@
           <unix-sys:runlevel_item id="99" status="exists">
             <unix-sys:service_name>haldaemon</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="98" status="exists">
             <unix-sys:service_name>haldaemon</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="97" status="exists">
             <unix-sys:service_name>haldaemon</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="96" status="exists">
             <unix-sys:service_name>haldaemon</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="95" status="exists">
             <unix-sys:service_name>messagebus</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="94" status="exists">
             <unix-sys:service_name>messagebus</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="93" status="exists">
             <unix-sys:service_name>messagebus</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="92" status="exists">
             <unix-sys:service_name>messagebus</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="91" status="exists">
             <unix-sys:service_name>smartd</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="90" status="exists">
             <unix-sys:service_name>smartd</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="9" status="exists">
             <unix-sys:service_name>autofs</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="89" status="exists">
             <unix-sys:service_name>smartd</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="88" status="exists">
             <unix-sys:service_name>smartd</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="87" status="exists">
             <unix-sys:service_name>pcscd</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="86" status="exists">
             <unix-sys:service_name>pcscd</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="85" status="exists">
             <unix-sys:service_name>pcscd</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="84" status="exists">
             <unix-sys:service_name>pcscd</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="83" status="exists">
             <unix-sys:service_name>network</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="82" status="exists">
             <unix-sys:service_name>network</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="81" status="exists">
             <unix-sys:service_name>network</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="80" status="exists">
             <unix-sys:service_name>network</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="8" status="exists">
             <unix-sys:service_name>autofs</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="79" status="exists">
             <unix-sys:service_name>microcode_ctl</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="78" status="exists">
             <unix-sys:service_name>microcode_ctl</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="77" status="exists">
             <unix-sys:service_name>microcode_ctl</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="76" status="exists">
             <unix-sys:service_name>microcode_ctl</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="75" status="exists">
             <unix-sys:service_name>mdmonitor</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="74" status="exists">
             <unix-sys:service_name>mdmonitor</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="73" status="exists">
             <unix-sys:service_name>mdmonitor</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="72" status="exists">
             <unix-sys:service_name>mdmonitor</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="71" status="exists">
             <unix-sys:service_name>kudzu</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="70" status="exists">
             <unix-sys:service_name>kudzu</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <lin-sys:rpminfo_item id="7" status="does not exist">
             <lin-sys:name status="does not exist">aide</lin-sys:name>
@@ -14548,116 +14548,116 @@
           <unix-sys:runlevel_item id="69" status="exists">
             <unix-sys:service_name>kudzu</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="68" status="exists">
             <unix-sys:service_name>kudzu</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="67" status="exists">
             <unix-sys:service_name>isdn</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="66" status="exists">
             <unix-sys:service_name>isdn</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="65" status="exists">
             <unix-sys:service_name>isdn</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="64" status="exists">
             <unix-sys:service_name>isdn</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="63" status="exists">
             <unix-sys:service_name>irqbalance</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="62" status="exists">
             <unix-sys:service_name>irqbalance</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="61" status="exists">
             <unix-sys:service_name>irqbalance</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="60" status="exists">
             <unix-sys:service_name>irqbalance</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="6" status="exists">
             <unix-sys:service_name>yum-updatesd</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="59" status="exists">
             <unix-sys:service_name>gpm</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="58" status="exists">
             <unix-sys:service_name>gpm</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="57" status="exists">
             <unix-sys:service_name>gpm</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="56" status="exists">
             <unix-sys:service_name>gpm</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="55" status="exists">
             <unix-sys:service_name>firstboot</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="54" status="exists">
             <unix-sys:service_name>firstboot</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="53" status="exists">
             <unix-sys:service_name>firstboot</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="52" status="exists">
             <unix-sys:service_name>firstboot</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <lin-sys:rpminfo_item id="51" status="does not exist">
             <lin-sys:name status="does not exist">tftp-server</lin-sys:name>
@@ -14668,32 +14668,32 @@
           <unix-sys:runlevel_item id="5" status="exists">
             <unix-sys:service_name>yum-updatesd</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="49" status="exists">
             <unix-sys:service_name>ypbind</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="48" status="exists">
             <unix-sys:service_name>ypbind</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="47" status="exists">
             <unix-sys:service_name>ypbind</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="46" status="exists">
             <unix-sys:service_name>ypbind</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <lin-sys:rpminfo_item id="45" status="exists">
             <lin-sys:name>rsh</lin-sys:name>
@@ -14701,7 +14701,7 @@
             <lin-sys:epoch>(none)</lin-sys:epoch>
             <lin-sys:release>44.fc8</lin-sys:release>
             <lin-sys:version>0.17</lin-sys:version>
-            <lin-sys:evr>0:0.17-44.fc8</lin-sys:evr>
+            <lin-sys:evr datatype="evr_string">0:0.17-44.fc8</lin-sys:evr>
             <lin-sys:signature_keyid>b44269d04f2a6fd2</lin-sys:signature_keyid>
           </lin-sys:rpminfo_item>
           <lin-sys:rpminfo_item id="44" status="does not exist">
@@ -14716,110 +14716,110 @@
           <unix-sys:runlevel_item id="41" status="exists">
             <unix-sys:service_name>auditd</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="40" status="exists">
             <unix-sys:service_name>auditd</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="4" status="exists">
             <unix-sys:service_name>yum-updatesd</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="39" status="exists">
             <unix-sys:service_name>auditd</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="38" status="exists">
             <unix-sys:service_name>auditd</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="37" status="exists">
             <unix-sys:service_name>iptables</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="36" status="exists">
             <unix-sys:service_name>iptables</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="35" status="exists">
             <unix-sys:service_name>iptables</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="34" status="exists">
             <unix-sys:service_name>iptables</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="33" status="exists">
             <unix-sys:service_name>ip6tables</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="32" status="exists">
             <unix-sys:service_name>ip6tables</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="31" status="exists">
             <unix-sys:service_name>ip6tables</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="30" status="exists">
             <unix-sys:service_name>ip6tables</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="3" status="exists">
             <unix-sys:service_name>yum-updatesd</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="29" status="exists">
             <unix-sys:service_name>restorecond</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="28" status="exists">
             <unix-sys:service_name>restorecond</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="27" status="exists">
             <unix-sys:service_name>restorecond</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="26" status="exists">
             <unix-sys:service_name>restorecond</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <lin-sys:rpminfo_item id="25" status="exists">
             <lin-sys:name>setroubleshoot</lin-sys:name>
@@ -14827,32 +14827,32 @@
             <lin-sys:epoch>(none)</lin-sys:epoch>
             <lin-sys:release>2.fc8</lin-sys:release>
             <lin-sys:version>2.0.5</lin-sys:version>
-            <lin-sys:evr>0:2.0.5-2.fc8</lin-sys:evr>
+            <lin-sys:evr datatype="evr_string">0:2.0.5-2.fc8</lin-sys:evr>
             <lin-sys:signature_keyid>b44269d04f2a6fd2</lin-sys:signature_keyid>
           </lin-sys:rpminfo_item>
           <unix-sys:runlevel_item id="24" status="exists">
             <unix-sys:service_name>setroubleshoot</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="23" status="exists">
             <unix-sys:service_name>setroubleshoot</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="22" status="exists">
             <unix-sys:service_name>setroubleshoot</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="21" status="exists">
             <unix-sys:service_name>setroubleshoot</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <lin-sys:rpminfo_item id="20" status="does not exist">
             <lin-sys:name status="does not exist">vlock</lin-sys:name>
@@ -14864,12 +14864,12 @@
             <unix-sys:path>/etc</unix-sys:path>
             <unix-sys:filename>grub.conf</unix-sys:filename>
             <unix-sys:type>symbolic link</unix-sys:type>
-            <unix-sys:group_id>0</unix-sys:group_id>
-            <unix-sys:user_id>0</unix-sys:user_id>
-            <unix-sys:a_time>1234260372</unix-sys:a_time>
-            <unix-sys:c_time>1215432498</unix-sys:c_time>
-            <unix-sys:m_time>1215432498</unix-sys:m_time>
-            <unix-sys:size>22</unix-sys:size>
+            <unix-sys:group_id datatype="int">0</unix-sys:group_id>
+            <unix-sys:user_id datatype="int">0</unix-sys:user_id>
+            <unix-sys:a_time datatype="int">1234260372</unix-sys:a_time>
+            <unix-sys:c_time datatype="int">1215432498</unix-sys:c_time>
+            <unix-sys:m_time datatype="int">1215432498</unix-sys:m_time>
+            <unix-sys:size datatype="int">22</unix-sys:size>
             <unix-sys:suid datatype="boolean">0</unix-sys:suid>
             <unix-sys:sgid datatype="boolean">0</unix-sys:sgid>
             <unix-sys:sticky datatype="boolean">0</unix-sys:sticky>
@@ -14889,26 +14889,26 @@
           <unix-sys:runlevel_item id="187" status="exists">
             <unix-sys:service_name>snmpd</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="186" status="exists">
             <unix-sys:service_name>snmpd</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="185" status="exists">
             <unix-sys:service_name>snmpd</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="184" status="exists">
             <unix-sys:service_name>snmpd</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <lin-sys:rpminfo_item id="183" status="does not exist">
             <lin-sys:name status="does not exist">squid</lin-sys:name>
@@ -14920,12 +14920,12 @@
             <unix-sys:path>/var/log</unix-sys:path>
             <unix-sys:filename>httpd</unix-sys:filename>
             <unix-sys:type>directory</unix-sys:type>
-            <unix-sys:group_id>0</unix-sys:group_id>
-            <unix-sys:user_id>0</unix-sys:user_id>
-            <unix-sys:a_time>1234177988</unix-sys:a_time>
-            <unix-sys:c_time>1220866202</unix-sys:c_time>
-            <unix-sys:m_time>1220866202</unix-sys:m_time>
-            <unix-sys:size>4096</unix-sys:size>
+            <unix-sys:group_id datatype="int">0</unix-sys:group_id>
+            <unix-sys:user_id datatype="int">0</unix-sys:user_id>
+            <unix-sys:a_time datatype="int">1234177988</unix-sys:a_time>
+            <unix-sys:c_time datatype="int">1220866202</unix-sys:c_time>
+            <unix-sys:m_time datatype="int">1220866202</unix-sys:m_time>
+            <unix-sys:size datatype="int">4096</unix-sys:size>
             <unix-sys:suid datatype="boolean">0</unix-sys:suid>
             <unix-sys:sgid datatype="boolean">0</unix-sys:sgid>
             <unix-sys:sticky datatype="boolean">0</unix-sys:sticky>
@@ -14943,12 +14943,12 @@
             <unix-sys:path>/usr/sbin</unix-sys:path>
             <unix-sys:filename>httpd</unix-sys:filename>
             <unix-sys:type>regular</unix-sys:type>
-            <unix-sys:group_id>0</unix-sys:group_id>
-            <unix-sys:user_id>0</unix-sys:user_id>
-            <unix-sys:a_time>1233930732</unix-sys:a_time>
-            <unix-sys:c_time>1218182516</unix-sys:c_time>
-            <unix-sys:m_time>1216063727</unix-sys:m_time>
-            <unix-sys:size>332128</unix-sys:size>
+            <unix-sys:group_id datatype="int">0</unix-sys:group_id>
+            <unix-sys:user_id datatype="int">0</unix-sys:user_id>
+            <unix-sys:a_time datatype="int">1233930732</unix-sys:a_time>
+            <unix-sys:c_time datatype="int">1218182516</unix-sys:c_time>
+            <unix-sys:m_time datatype="int">1216063727</unix-sys:m_time>
+            <unix-sys:size datatype="int">332128</unix-sys:size>
             <unix-sys:suid datatype="boolean">0</unix-sys:suid>
             <unix-sys:sgid datatype="boolean">0</unix-sys:sgid>
             <unix-sys:sticky datatype="boolean">0</unix-sys:sticky>
@@ -14966,12 +14966,12 @@
             <unix-sys:path>/usr/sbin</unix-sys:path>
             <unix-sys:filename>userhelper</unix-sys:filename>
             <unix-sys:type>regular</unix-sys:type>
-            <unix-sys:group_id>0</unix-sys:group_id>
-            <unix-sys:user_id>0</unix-sys:user_id>
-            <unix-sys:a_time>1233930732</unix-sys:a_time>
-            <unix-sys:c_time>1218015186</unix-sys:c_time>
-            <unix-sys:m_time>1192535125</unix-sys:m_time>
-            <unix-sys:size>40736</unix-sys:size>
+            <unix-sys:group_id datatype="int">0</unix-sys:group_id>
+            <unix-sys:user_id datatype="int">0</unix-sys:user_id>
+            <unix-sys:a_time datatype="int">1233930732</unix-sys:a_time>
+            <unix-sys:c_time datatype="int">1218015186</unix-sys:c_time>
+            <unix-sys:m_time datatype="int">1192535125</unix-sys:m_time>
+            <unix-sys:size datatype="int">40736</unix-sys:size>
             <unix-sys:suid datatype="boolean">1</unix-sys:suid>
             <unix-sys:sgid datatype="boolean">0</unix-sys:sgid>
             <unix-sys:sticky datatype="boolean">0</unix-sys:sticky>
@@ -14989,12 +14989,12 @@
             <unix-sys:path>/etc/httpd</unix-sys:path>
             <unix-sys:filename>conf</unix-sys:filename>
             <unix-sys:type>directory</unix-sys:type>
-            <unix-sys:group_id>0</unix-sys:group_id>
-            <unix-sys:user_id>0</unix-sys:user_id>
-            <unix-sys:a_time>1227878873</unix-sys:a_time>
-            <unix-sys:c_time>1218182516</unix-sys:c_time>
-            <unix-sys:m_time>1218182516</unix-sys:m_time>
-            <unix-sys:size>4096</unix-sys:size>
+            <unix-sys:group_id datatype="int">0</unix-sys:group_id>
+            <unix-sys:user_id datatype="int">0</unix-sys:user_id>
+            <unix-sys:a_time datatype="int">1227878873</unix-sys:a_time>
+            <unix-sys:c_time datatype="int">1218182516</unix-sys:c_time>
+            <unix-sys:m_time datatype="int">1218182516</unix-sys:m_time>
+            <unix-sys:size datatype="int">4096</unix-sys:size>
             <unix-sys:suid datatype="boolean">0</unix-sys:suid>
             <unix-sys:sgid datatype="boolean">0</unix-sys:sgid>
             <unix-sys:sticky datatype="boolean">0</unix-sys:sticky>
@@ -15014,32 +15014,32 @@
             <lin-sys:epoch>(none)</lin-sys:epoch>
             <lin-sys:release>1.fc8</lin-sys:release>
             <lin-sys:version>2.2.9</lin-sys:version>
-            <lin-sys:evr>0:2.2.9-1.fc8</lin-sys:evr>
+            <lin-sys:evr datatype="evr_string">0:2.2.9-1.fc8</lin-sys:evr>
             <lin-sys:signature_keyid>b44269d04f2a6fd2</lin-sys:signature_keyid>
           </lin-sys:rpminfo_item>
           <unix-sys:runlevel_item id="177" status="exists">
             <unix-sys:service_name>httpd</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="176" status="exists">
             <unix-sys:service_name>httpd</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="175" status="exists">
             <unix-sys:service_name>httpd</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="174" status="exists">
             <unix-sys:service_name>httpd</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <lin-sys:rpminfo_item id="173" status="does not exist">
             <lin-sys:name status="does not exist">bind</lin-sys:name>
@@ -15047,20 +15047,20 @@
           <unix-sys:runlevel_item id="172" status="exists">
             <unix-sys:service_name>rpcsvcgssd</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="171" status="exists">
             <unix-sys:service_name>rpcsvcgssd</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="170" status="exists">
             <unix-sys:service_name>rpcsvcgssd</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <lin-sys:rpminfo_item id="17" status="does not exist">
             <lin-sys:name status="does not exist">kernel-PAE</lin-sys:name>
@@ -15068,72 +15068,72 @@
           <unix-sys:runlevel_item id="169" status="exists">
             <unix-sys:service_name>rpcsvcgssd</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="168" status="exists">
             <unix-sys:service_name>nfs</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="167" status="exists">
             <unix-sys:service_name>nfs</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="166" status="exists">
             <unix-sys:service_name>nfs</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="165" status="exists">
             <unix-sys:service_name>nfs</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="164" status="exists">
             <unix-sys:service_name>netfs</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="163" status="exists">
             <unix-sys:service_name>netfs</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="162" status="exists">
             <unix-sys:service_name>netfs</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="161" status="exists">
             <unix-sys:service_name>netfs</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="160" status="exists">
             <unix-sys:service_name>rpcidmapd</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:file_item id="16" status="exists">
             <unix-sys:path>/</unix-sys:path>
             <unix-sys:type>directory</unix-sys:type>
-            <unix-sys:group_id>0</unix-sys:group_id>
-            <unix-sys:user_id>0</unix-sys:user_id>
-            <unix-sys:a_time>1234255084</unix-sys:a_time>
-            <unix-sys:c_time>1234253780</unix-sys:c_time>
-            <unix-sys:m_time>1234253780</unix-sys:m_time>
-            <unix-sys:size>4096</unix-sys:size>
+            <unix-sys:group_id datatype="int">0</unix-sys:group_id>
+            <unix-sys:user_id datatype="int">0</unix-sys:user_id>
+            <unix-sys:a_time datatype="int">1234255084</unix-sys:a_time>
+            <unix-sys:c_time datatype="int">1234253780</unix-sys:c_time>
+            <unix-sys:m_time datatype="int">1234253780</unix-sys:m_time>
+            <unix-sys:size datatype="int">4096</unix-sys:size>
             <unix-sys:suid datatype="boolean">0</unix-sys:suid>
             <unix-sys:sgid datatype="boolean">0</unix-sys:sgid>
             <unix-sys:sticky datatype="boolean">0</unix-sys:sticky>
@@ -15150,73 +15150,73 @@
           <unix-sys:runlevel_item id="159" status="exists">
             <unix-sys:service_name>rpcidmapd</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="158" status="exists">
             <unix-sys:service_name>rpcidmapd</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="157" status="exists">
             <unix-sys:service_name>rpcidmapd</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="156" status="exists">
             <unix-sys:service_name>rpcgssd</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="155" status="exists">
             <unix-sys:service_name>rpcgssd</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="154" status="exists">
             <unix-sys:service_name>rpcgssd</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="153" status="exists">
             <unix-sys:service_name>rpcgssd</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="152" status="exists">
             <unix-sys:service_name>nfslock</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="151" status="exists">
             <unix-sys:service_name>nfslock</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="150" status="exists">
             <unix-sys:service_name>nfslock</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:file_item id="15" status="exists">
             <unix-sys:path>/etc</unix-sys:path>
             <unix-sys:filename>passwd</unix-sys:filename>
             <unix-sys:type>regular</unix-sys:type>
-            <unix-sys:group_id>0</unix-sys:group_id>
-            <unix-sys:user_id>0</unix-sys:user_id>
-            <unix-sys:a_time>1234257404</unix-sys:a_time>
-            <unix-sys:c_time>1233144352</unix-sys:c_time>
-            <unix-sys:m_time>1233144352</unix-sys:m_time>
-            <unix-sys:size>2233</unix-sys:size>
+            <unix-sys:group_id datatype="int">0</unix-sys:group_id>
+            <unix-sys:user_id datatype="int">0</unix-sys:user_id>
+            <unix-sys:a_time datatype="int">1234257404</unix-sys:a_time>
+            <unix-sys:c_time datatype="int">1233144352</unix-sys:c_time>
+            <unix-sys:m_time datatype="int">1233144352</unix-sys:m_time>
+            <unix-sys:size datatype="int">2233</unix-sys:size>
             <unix-sys:suid datatype="boolean">0</unix-sys:suid>
             <unix-sys:sgid datatype="boolean">0</unix-sys:sgid>
             <unix-sys:sticky datatype="boolean">0</unix-sys:sticky>
@@ -15233,56 +15233,56 @@
           <unix-sys:runlevel_item id="149" status="exists">
             <unix-sys:service_name>nfslock</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="148" status="exists">
             <unix-sys:service_name>ldap</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="147" status="exists">
             <unix-sys:service_name>ldap</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="146" status="exists">
             <unix-sys:service_name>ldap</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="145" status="exists">
             <unix-sys:service_name>ldap</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="144" status="exists">
             <unix-sys:service_name>ntpd</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="143" status="exists">
             <unix-sys:service_name>ntpd</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="142" status="exists">
             <unix-sys:service_name>ntpd</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="141" status="exists">
             <unix-sys:service_name>ntpd</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <lin-sys:rpminfo_item id="140" status="does not exist">
             <lin-sys:name status="does not exist">dhcp</lin-sys:name>
@@ -15291,12 +15291,12 @@
             <unix-sys:path>/etc</unix-sys:path>
             <unix-sys:filename>gshadow</unix-sys:filename>
             <unix-sys:type>regular</unix-sys:type>
-            <unix-sys:group_id>0</unix-sys:group_id>
-            <unix-sys:user_id>0</unix-sys:user_id>
-            <unix-sys:a_time>1233144352</unix-sys:a_time>
-            <unix-sys:c_time>1233144352</unix-sys:c_time>
-            <unix-sys:m_time>1233144352</unix-sys:m_time>
-            <unix-sys:size>829</unix-sys:size>
+            <unix-sys:group_id datatype="int">0</unix-sys:group_id>
+            <unix-sys:user_id datatype="int">0</unix-sys:user_id>
+            <unix-sys:a_time datatype="int">1233144352</unix-sys:a_time>
+            <unix-sys:c_time datatype="int">1233144352</unix-sys:c_time>
+            <unix-sys:m_time datatype="int">1233144352</unix-sys:m_time>
+            <unix-sys:size datatype="int">829</unix-sys:size>
             <unix-sys:suid datatype="boolean">0</unix-sys:suid>
             <unix-sys:sgid datatype="boolean">0</unix-sys:sgid>
             <unix-sys:sticky datatype="boolean">0</unix-sys:sticky>
@@ -15313,50 +15313,50 @@
           <unix-sys:runlevel_item id="139" status="exists">
             <unix-sys:service_name>cups</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="138" status="exists">
             <unix-sys:service_name>cups</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="137" status="exists">
             <unix-sys:service_name>cups</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="136" status="exists">
             <unix-sys:service_name>cups</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="135" status="exists">
             <unix-sys:service_name>avahi-daemon</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="134" status="exists">
             <unix-sys:service_name>avahi-daemon</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="133" status="exists">
             <unix-sys:service_name>avahi-daemon</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="132" status="exists">
             <unix-sys:service_name>avahi-daemon</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <lin-sys:rpminfo_item id="131" status="exists">
             <lin-sys:name>openssh-server</lin-sys:name>
@@ -15364,25 +15364,25 @@
             <lin-sys:epoch>(none)</lin-sys:epoch>
             <lin-sys:release>4.fc8</lin-sys:release>
             <lin-sys:version>4.7p1</lin-sys:version>
-            <lin-sys:evr>0:4.7p1-4.fc8</lin-sys:evr>
+            <lin-sys:evr datatype="evr_string">0:4.7p1-4.fc8</lin-sys:evr>
             <lin-sys:signature_keyid>b44269d04f2a6fd2</lin-sys:signature_keyid>
           </lin-sys:rpminfo_item>
           <unix-sys:runlevel_item id="130" status="exists">
             <unix-sys:service_name>sshd</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:file_item id="13" status="exists">
             <unix-sys:path>/etc</unix-sys:path>
             <unix-sys:filename>group</unix-sys:filename>
             <unix-sys:type>regular</unix-sys:type>
-            <unix-sys:group_id>0</unix-sys:group_id>
-            <unix-sys:user_id>0</unix-sys:user_id>
-            <unix-sys:a_time>1234257404</unix-sys:a_time>
-            <unix-sys:c_time>1233144352</unix-sys:c_time>
-            <unix-sys:m_time>1233144352</unix-sys:m_time>
-            <unix-sys:size>978</unix-sys:size>
+            <unix-sys:group_id datatype="int">0</unix-sys:group_id>
+            <unix-sys:user_id datatype="int">0</unix-sys:user_id>
+            <unix-sys:a_time datatype="int">1234257404</unix-sys:a_time>
+            <unix-sys:c_time datatype="int">1233144352</unix-sys:c_time>
+            <unix-sys:m_time datatype="int">1233144352</unix-sys:m_time>
+            <unix-sys:size datatype="int">978</unix-sys:size>
             <unix-sys:suid datatype="boolean">0</unix-sys:suid>
             <unix-sys:sgid datatype="boolean">0</unix-sys:sgid>
             <unix-sys:sticky datatype="boolean">0</unix-sys:sticky>
@@ -15399,31 +15399,31 @@
           <unix-sys:runlevel_item id="129" status="exists">
             <unix-sys:service_name>sshd</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="128" status="exists">
             <unix-sys:service_name>sshd</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="127" status="exists">
             <unix-sys:service_name>sshd</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:file_item id="126" status="exists">
             <unix-sys:path>/etc</unix-sys:path>
             <unix-sys:filename>cron.hourly</unix-sys:filename>
             <unix-sys:type>directory</unix-sys:type>
-            <unix-sys:group_id>0</unix-sys:group_id>
-            <unix-sys:user_id>0</unix-sys:user_id>
-            <unix-sys:a_time>1234260061</unix-sys:a_time>
-            <unix-sys:c_time>1215431974</unix-sys:c_time>
-            <unix-sys:m_time>1190709493</unix-sys:m_time>
-            <unix-sys:size>4096</unix-sys:size>
+            <unix-sys:group_id datatype="int">0</unix-sys:group_id>
+            <unix-sys:user_id datatype="int">0</unix-sys:user_id>
+            <unix-sys:a_time datatype="int">1234260061</unix-sys:a_time>
+            <unix-sys:c_time datatype="int">1215431974</unix-sys:c_time>
+            <unix-sys:m_time datatype="int">1190709493</unix-sys:m_time>
+            <unix-sys:size datatype="int">4096</unix-sys:size>
             <unix-sys:suid datatype="boolean">0</unix-sys:suid>
             <unix-sys:sgid datatype="boolean">0</unix-sys:sgid>
             <unix-sys:sticky datatype="boolean">0</unix-sys:sticky>
@@ -15441,12 +15441,12 @@
             <unix-sys:path>/etc</unix-sys:path>
             <unix-sys:filename>anacrontab</unix-sys:filename>
             <unix-sys:type>regular</unix-sys:type>
-            <unix-sys:group_id>0</unix-sys:group_id>
-            <unix-sys:user_id>0</unix-sys:user_id>
-            <unix-sys:a_time>1234260825</unix-sys:a_time>
-            <unix-sys:c_time>1226495765</unix-sys:c_time>
-            <unix-sys:m_time>1225374811</unix-sys:m_time>
-            <unix-sys:size>321</unix-sys:size>
+            <unix-sys:group_id datatype="int">0</unix-sys:group_id>
+            <unix-sys:user_id datatype="int">0</unix-sys:user_id>
+            <unix-sys:a_time datatype="int">1234260825</unix-sys:a_time>
+            <unix-sys:c_time datatype="int">1226495765</unix-sys:c_time>
+            <unix-sys:m_time datatype="int">1225374811</unix-sys:m_time>
+            <unix-sys:size datatype="int">321</unix-sys:size>
             <unix-sys:suid datatype="boolean">0</unix-sys:suid>
             <unix-sys:sgid datatype="boolean">0</unix-sys:sgid>
             <unix-sys:sticky datatype="boolean">0</unix-sys:sticky>
@@ -15464,12 +15464,12 @@
             <unix-sys:path>/etc</unix-sys:path>
             <unix-sys:filename>crontab</unix-sys:filename>
             <unix-sys:type>regular</unix-sys:type>
-            <unix-sys:group_id>0</unix-sys:group_id>
-            <unix-sys:user_id>0</unix-sys:user_id>
-            <unix-sys:a_time>1234170967</unix-sys:a_time>
-            <unix-sys:c_time>1215431974</unix-sys:c_time>
-            <unix-sys:m_time>1190709493</unix-sys:m_time>
-            <unix-sys:size>255</unix-sys:size>
+            <unix-sys:group_id datatype="int">0</unix-sys:group_id>
+            <unix-sys:user_id datatype="int">0</unix-sys:user_id>
+            <unix-sys:a_time datatype="int">1234170967</unix-sys:a_time>
+            <unix-sys:c_time datatype="int">1215431974</unix-sys:c_time>
+            <unix-sys:m_time datatype="int">1190709493</unix-sys:m_time>
+            <unix-sys:size datatype="int">255</unix-sys:size>
             <unix-sys:suid datatype="boolean">0</unix-sys:suid>
             <unix-sys:sgid datatype="boolean">0</unix-sys:sgid>
             <unix-sys:sticky datatype="boolean">0</unix-sys:sticky>
@@ -15487,12 +15487,12 @@
             <unix-sys:path>/etc</unix-sys:path>
             <unix-sys:filename>cron.weekly</unix-sys:filename>
             <unix-sys:type>directory</unix-sys:type>
-            <unix-sys:group_id>0</unix-sys:group_id>
-            <unix-sys:user_id>0</unix-sys:user_id>
-            <unix-sys:a_time>1233831466</unix-sys:a_time>
-            <unix-sys:c_time>1226495766</unix-sys:c_time>
-            <unix-sys:m_time>1226495766</unix-sys:m_time>
-            <unix-sys:size>4096</unix-sys:size>
+            <unix-sys:group_id datatype="int">0</unix-sys:group_id>
+            <unix-sys:user_id datatype="int">0</unix-sys:user_id>
+            <unix-sys:a_time datatype="int">1233831466</unix-sys:a_time>
+            <unix-sys:c_time datatype="int">1226495766</unix-sys:c_time>
+            <unix-sys:m_time datatype="int">1226495766</unix-sys:m_time>
+            <unix-sys:size datatype="int">4096</unix-sys:size>
             <unix-sys:suid datatype="boolean">0</unix-sys:suid>
             <unix-sys:sgid datatype="boolean">0</unix-sys:sgid>
             <unix-sys:sticky datatype="boolean">0</unix-sys:sticky>
@@ -15510,12 +15510,12 @@
             <unix-sys:path>/etc</unix-sys:path>
             <unix-sys:filename>cron.daily</unix-sys:filename>
             <unix-sys:type>directory</unix-sys:type>
-            <unix-sys:group_id>0</unix-sys:group_id>
-            <unix-sys:user_id>0</unix-sys:user_id>
-            <unix-sys:a_time>1234174870</unix-sys:a_time>
-            <unix-sys:c_time>1229344785</unix-sys:c_time>
-            <unix-sys:m_time>1229344785</unix-sys:m_time>
-            <unix-sys:size>4096</unix-sys:size>
+            <unix-sys:group_id datatype="int">0</unix-sys:group_id>
+            <unix-sys:user_id datatype="int">0</unix-sys:user_id>
+            <unix-sys:a_time datatype="int">1234174870</unix-sys:a_time>
+            <unix-sys:c_time datatype="int">1229344785</unix-sys:c_time>
+            <unix-sys:m_time datatype="int">1229344785</unix-sys:m_time>
+            <unix-sys:size datatype="int">4096</unix-sys:size>
             <unix-sys:suid datatype="boolean">0</unix-sys:suid>
             <unix-sys:sgid datatype="boolean">0</unix-sys:sgid>
             <unix-sys:sticky datatype="boolean">0</unix-sys:sticky>
@@ -15533,12 +15533,12 @@
             <unix-sys:path>/etc</unix-sys:path>
             <unix-sys:filename>cron.monthly</unix-sys:filename>
             <unix-sys:type>directory</unix-sys:type>
-            <unix-sys:group_id>0</unix-sys:group_id>
-            <unix-sys:user_id>0</unix-sys:user_id>
-            <unix-sys:a_time>1232633237</unix-sys:a_time>
-            <unix-sys:c_time>1226495766</unix-sys:c_time>
-            <unix-sys:m_time>1226495766</unix-sys:m_time>
-            <unix-sys:size>4096</unix-sys:size>
+            <unix-sys:group_id datatype="int">0</unix-sys:group_id>
+            <unix-sys:user_id datatype="int">0</unix-sys:user_id>
+            <unix-sys:a_time datatype="int">1232633237</unix-sys:a_time>
+            <unix-sys:c_time datatype="int">1226495766</unix-sys:c_time>
+            <unix-sys:m_time datatype="int">1226495766</unix-sys:m_time>
+            <unix-sys:size datatype="int">4096</unix-sys:size>
             <unix-sys:suid datatype="boolean">0</unix-sys:suid>
             <unix-sys:sgid datatype="boolean">0</unix-sys:sgid>
             <unix-sys:sticky datatype="boolean">0</unix-sys:sticky>
@@ -15558,19 +15558,19 @@
             <lin-sys:epoch>(none)</lin-sys:epoch>
             <lin-sys:release>58.fc8</lin-sys:release>
             <lin-sys:version>2.3</lin-sys:version>
-            <lin-sys:evr>0:2.3-58.fc8</lin-sys:evr>
+            <lin-sys:evr datatype="evr_string">0:2.3-58.fc8</lin-sys:evr>
             <lin-sys:signature_keyid>62aec3dc6df2196f</lin-sys:signature_keyid>
           </lin-sys:rpminfo_item>
           <unix-sys:file_item id="12" status="exists">
             <unix-sys:path>/etc</unix-sys:path>
             <unix-sys:filename>shadow</unix-sys:filename>
             <unix-sys:type>regular</unix-sys:type>
-            <unix-sys:group_id>0</unix-sys:group_id>
-            <unix-sys:user_id>0</unix-sys:user_id>
-            <unix-sys:a_time>1234259854</unix-sys:a_time>
-            <unix-sys:c_time>1233144352</unix-sys:c_time>
-            <unix-sys:m_time>1233144352</unix-sys:m_time>
-            <unix-sys:size>1317</unix-sys:size>
+            <unix-sys:group_id datatype="int">0</unix-sys:group_id>
+            <unix-sys:user_id datatype="int">0</unix-sys:user_id>
+            <unix-sys:a_time datatype="int">1234259854</unix-sys:a_time>
+            <unix-sys:c_time datatype="int">1233144352</unix-sys:c_time>
+            <unix-sys:m_time datatype="int">1233144352</unix-sys:m_time>
+            <unix-sys:size datatype="int">1317</unix-sys:size>
             <unix-sys:suid datatype="boolean">0</unix-sys:suid>
             <unix-sys:sgid datatype="boolean">0</unix-sys:sgid>
             <unix-sys:sticky datatype="boolean">0</unix-sys:sticky>
@@ -15587,134 +15587,134 @@
           <unix-sys:runlevel_item id="119" status="exists">
             <unix-sys:service_name>anacron</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="118" status="exists">
             <unix-sys:service_name>anacron</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="117" status="exists">
             <unix-sys:service_name>anacron</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="116" status="exists">
             <unix-sys:service_name>anacron</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="115" status="exists">
             <unix-sys:service_name>crond</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="114" status="exists">
             <unix-sys:service_name>crond</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="113" status="exists">
             <unix-sys:service_name>crond</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="112" status="exists">
             <unix-sys:service_name>crond</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="111" status="exists">
             <unix-sys:service_name>cpuspeed</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="110" status="exists">
             <unix-sys:service_name>cpuspeed</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="11" status="exists">
             <unix-sys:service_name>autofs</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="109" status="exists">
             <unix-sys:service_name>cpuspeed</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="108" status="exists">
             <unix-sys:service_name>cpuspeed</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="107" status="exists">
             <unix-sys:service_name>acpid</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="106" status="exists">
             <unix-sys:service_name>acpid</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="105" status="exists">
             <unix-sys:service_name>acpid</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="104" status="exists">
             <unix-sys:service_name>acpid</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="103" status="exists">
             <unix-sys:service_name>bluetooth</unix-sys:service_name>
             <unix-sys:runlevel>5</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="102" status="exists">
             <unix-sys:service_name>bluetooth</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="101" status="exists">
             <unix-sys:service_name>bluetooth</unix-sys:service_name>
             <unix-sys:runlevel>3</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="100" status="exists">
             <unix-sys:service_name>bluetooth</unix-sys:service_name>
             <unix-sys:runlevel>2</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <unix-sys:runlevel_item id="10" status="exists">
             <unix-sys:service_name>autofs</unix-sys:service_name>
             <unix-sys:runlevel>4</unix-sys:runlevel>
-            <unix-sys:start>true</unix-sys:start>
-            <unix-sys:kill>false</unix-sys:kill>
+            <unix-sys:start datatype="boolean">true</unix-sys:start>
+            <unix-sys:kill datatype="boolean">false</unix-sys:kill>
           </unix-sys:runlevel_item>
           <lin-sys:rpminfo_item id="1" status="does not exist">
             <lin-sys:name status="does not exist">redhat-release</lin-sys:name>

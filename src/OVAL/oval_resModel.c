@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009-2011 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -25,6 +25,7 @@
  *
  * Authors:
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
+ *      "Peter Vrabec" <pvrabec@redhat.com>
  */
 
 #ifdef HAVE_CONFIG_H
@@ -216,6 +217,7 @@ static xmlNode *oval_results_to_dom(struct oval_results_model *results_model,
 {
 	xmlNode *root_node;
 	struct oval_result_directives * dirs;
+	struct oval_directives_model * dirs_model;
 
 	if (parent) {
 		root_node = xmlNewTextChild(parent, NULL, BAD_CAST "oval_results", NULL);
@@ -237,24 +239,23 @@ static xmlNode *oval_results_to_dom(struct oval_results_model *results_model,
 	oval_generator_to_dom(results_model->generator, doc, root_node);
 
 	/* Report default directives and class directives from internal or external
-	 * directives model(if provided)
-	 */
-	if(directives_model)
-		oval_directives_model_to_dom(directives_model, doc, root_node);
-	else
-		oval_directives_model_to_dom(results_model->directives_model, doc, root_node);
+	 * directives model(if provided) */
+	dirs_model = (directives_model) ? directives_model : results_model->directives_model;
+	oval_directives_model_to_dom(dirs_model, doc, root_node);
+
+	dirs = oval_directives_model_get_defdirs(dirs_model);
 
 	/* Report definitions */
-	struct oval_definition_model *definition_model = oval_results_model_get_definition_model(results_model);
-	oval_definitions_to_dom(definition_model, doc, root_node);
+	if(oval_result_directives_get_included(dirs)) {
+		struct oval_definition_model *definition_model = oval_results_model_get_definition_model(results_model);
+		oval_definitions_to_dom(definition_model, doc, root_node);
+	}
 
 	xmlNode *results_node = xmlNewTextChild(root_node, ns_results, BAD_CAST "results", NULL);
 	struct oval_result_system_iterator *systems = oval_results_model_get_systems(results_model);
 	while (oval_result_system_iterator_has_more(systems)) {
 		struct oval_result_system *sys = oval_result_system_iterator_next(systems);
-		/* ToDo */
-		dirs = oval_directives_model_get_defdirs(results_model->directives_model);
-		oval_result_system_to_dom(sys, results_model, dirs, doc, results_node);
+		oval_result_system_to_dom(sys, results_model, dirs_model, doc, results_node);
 	}
 	oval_result_system_iterator_free(systems);
 

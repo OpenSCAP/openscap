@@ -40,7 +40,7 @@
 OSCAP_HIDDEN_START;
 
 int oval_result_system_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, void *);
-xmlNode *oval_result_system_to_dom(struct oval_result_system *, struct oval_results_model *, struct oval_result_directives *, xmlDocPtr, xmlNode *);
+xmlNode *oval_result_system_to_dom(struct oval_result_system *, struct oval_results_model *, struct oval_directives_model *, xmlDocPtr, xmlNode *);
 
 struct oval_result_test *oval_result_system_get_new_test(struct oval_result_system *, struct oval_test *);
 

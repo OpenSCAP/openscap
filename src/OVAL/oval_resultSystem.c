@@ -376,10 +376,15 @@ int oval_result_system_eval_definition(struct oval_result_system *sys, const cha
 }
 
 
-xmlNode *oval_result_system_to_dom
-    (struct oval_result_system * sys,
-     struct oval_results_model * results_model,
-     struct oval_result_directives * directives, xmlDocPtr doc, xmlNode * parent) {
+xmlNode *oval_result_system_to_dom(struct oval_result_system * sys,
+				   struct oval_results_model * results_model,
+				   struct oval_directives_model * directives_model, 
+				   xmlDocPtr doc, xmlNode * parent) {
+
+	struct oval_result_directives * directives;
+	struct oval_result_directives * class_dirs;
+	struct oval_result_directives * def_dirs = oval_directives_model_get_defdirs(directives_model);
+
 	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
 	xmlNode *system_node = xmlNewTextChild(parent, ns_results, BAD_CAST "system", NULL);
 
@@ -390,10 +395,14 @@ xmlNode *oval_result_system_to_dom
 	struct oval_definition_iterator *oval_definitions = oval_definition_model_get_definitions(definition_model);
 	while(oval_definition_iterator_has_more(oval_definitions)) {
 		struct oval_definition *oval_definition = oval_definition_iterator_next(oval_definitions);
-		struct oval_result_definition *rslt_definition
-		    = oval_result_system_get_new_definition(sys, oval_definition);
+
+		oval_definition_class_t def_class = oval_definition_get_class(oval_definition);
+		class_dirs = oval_directives_model_get_classdir(directives_model, def_class);
+		directives = class_dirs ? class_dirs : def_dirs;
+
+		struct oval_result_definition *rslt_definition = oval_result_system_get_new_definition(sys, oval_definition);
 		if (rslt_definition) {
-			oval_result_t result = oval_result_definition_get_result(rslt_definition);
+			oval_result_t result = oval_result_definition_get_result(rslt_definition);			
 			if (oval_result_directives_get_reported(directives, result)) {
 				oval_result_directive_content_t content
 				    = oval_result_directives_get_content(directives, result);

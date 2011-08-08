@@ -34,5 +34,6 @@ EXTRA_DIST += test_api_oval.sh \
 	      composed-oval.xml \
 	      system-characteristics.xml \
 	      results.xml \
-              directives.xml
+              directives.xml \
+              results-good.xml
 endif
