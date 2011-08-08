@@ -30,7 +30,7 @@ function test_api_oval_syschar {
 
 function test_api_oval_results {
     ./test_api_results $srcdir/results.xml exported-results.xml
-    cmp $srcdir/exported-results-good.xml exported-results.xml
+    cmp $srcdir/results-good.xml exported-results.xml
     return $?
 }
 
