@@ -29,14 +29,14 @@ function test_api_oval_syschar {
 }
 
 function test_api_oval_results {
-    ./test_api_results $srcdir/results.xml $srcdir/exported-results.xml
-    cmp $srcdir/results.xml $srcdir/exported-results.xml
+    ./test_api_results $srcdir/results.xml exported-results.xml
+    cmp $srcdir/results.xml exported-results.xml
     return $?
 }
 
 function test_api_oval_directives {
-    ./test_api_directives $srcdir/directives.xml $srcdir/exported-directives.xml
-    cmp $srcdir/directives.xml $srcdir/exported-directives.xml
+    ./test_api_directives $srcdir/directives.xml exported-directives.xml
+    cmp $srcdir/directives.xml exported-directives.xml
     return $?
 }
 

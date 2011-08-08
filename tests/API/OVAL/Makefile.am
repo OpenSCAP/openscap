@@ -17,8 +17,8 @@ LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_libs@
 
 EXTRA_DIST = $(top_srcdir)/tests/test_common.sh  
 
-DISTCLEANFILES = *.log *.out* oscap_debug.log*
-CLEANFILES = *.log *.out* oscap_debug.log*
+DISTCLEANFILES = *.log *.out* oscap_debug.log* exported*
+CLEANFILES = *.log *.out* oscap_debug.log* exported*
 
 TESTS = test_api_oval.sh 
 
@@ -33,5 +33,6 @@ EXTRA_DIST += test_api_oval.sh \
 	      scap-rhel5-oval.xml \
 	      composed-oval.xml \
 	      system-characteristics.xml \
-	      results.xml
+	      results.xml \
+              directives.xml
 endif
