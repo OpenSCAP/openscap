@@ -65,14 +65,6 @@ typedef struct oval_definition {
 	struct oval_criteria_node *criteria;
 } oval_definition_t;
 
-static const struct oscap_string_map OVAL_DEFINITION_CLASS_MAP[] = {
-	{OVAL_CLASS_COMPLIANCE, "compliance"},
-	{OVAL_CLASS_INVENTORY, "inventory"},
-	{OVAL_CLASS_MISCELLANEOUS, "miscellaneous"},
-	{OVAL_CLASS_PATCH, "patch"},
-	{OVAL_CLASS_VULNERABILITY, "vulnerability"},
-	{OVAL_CLASS_UNKNOWN, NULL}
-};
 
 /* End of variable definitions
  * */
@@ -344,16 +336,6 @@ void oval_definition_add_note(struct oval_definition *definition, char *note) {
 	oval_collection_add(definition->notes, note);
 }
 
-static oval_definition_class_t _odaclass(char *class)
-{
-	return oscap_string_to_enum(OVAL_DEFINITION_CLASS_MAP, class);
-}
-
-static const char *oval_definition_class_text(oval_definition_class_t class)
-{
-	return OVAL_DEFINITION_CLASS_MAP[class - 1].string;
-}
-
 static void _oval_definition_title_consumer(char *string, void *user)
 {
 	__attribute__nonnull__(user);
@@ -491,7 +473,7 @@ int oval_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parser_contex
 	version = NULL;
 
 	char *class = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "class");
-	oval_definition_set_class(definition, _odaclass(class));
+	oval_definition_set_class(definition, oval_definition_class_enum(class));
 	oscap_free(class);
 	class = NULL;
 

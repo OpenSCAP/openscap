@@ -33,6 +33,12 @@ function test_api_oval_results {
     return $?
 }
 
+function test_api_oval_directives {
+    ./test_api_directives $srcdir/directives.xml $srcdir/exported-directives.xml
+    cmp $srcdir/directives.xml $srcdir/exported-directives.xml
+    return $?
+}
+
 # Testing.
 
 test_init "test_api_oval.log"
@@ -40,5 +46,6 @@ test_init "test_api_oval.log"
 test_run "test_api_oval_definition" test_api_oval_definition
 test_run "test_api_oval_syschar" test_api_oval_syschar
 test_run "test_api_oval_results" test_api_oval_results
+test_run "test_api_oval_directives" test_api_oval_directives
 
 test_exit

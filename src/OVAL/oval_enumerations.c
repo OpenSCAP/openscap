@@ -696,3 +696,22 @@ const char *oval_result_get_text(oval_result_t result)
 }
 
 
+static const struct oscap_string_map OVAL_DEFINITION_CLASS_MAP[] = {
+        {OVAL_CLASS_COMPLIANCE, "compliance"},
+        {OVAL_CLASS_INVENTORY, "inventory"},
+        {OVAL_CLASS_MISCELLANEOUS, "miscellaneous"},
+        {OVAL_CLASS_PATCH, "patch"},
+        {OVAL_CLASS_VULNERABILITY, "vulnerability"},
+        {OVAL_CLASS_UNKNOWN, NULL}
+};
+
+oval_definition_class_t oval_definition_class_enum(char *class)
+{
+        return oscap_string_to_enum(OVAL_DEFINITION_CLASS_MAP, class);
+}
+
+const char *oval_definition_class_text(oval_definition_class_t class)
+{
+        return oscap_enum_to_string(OVAL_DEFINITION_CLASS_MAP, class);
+}
+

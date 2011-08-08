@@ -51,39 +51,56 @@ typedef enum {
 
 
 /**
- * @struct oval_result_directives
- * This structure holds instance of OVAL Result Directives for particular oval_results_model.
- * OVAL Result Directives describes what information has been included in the results file, therefore  
- * it's necessarry to setup this structure before exporting oval_results_model. Usage example:
- *
- * @code
- * struct oval_result_directives * res_direct = oval_result_directives_new();
- * oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE | OVAL_RESULT_FALSE , true);
- * oval_result_directives_set_content(res_direct,OVAL_RESULT_FALSE | OVAL_RESULT_TRUE | OVAL_RESULT_ERROR , OVAL_DIRECTIVE_CONTENT_FULL);
- * .....
- * oval_result_directives_free(res_direct);
- * @endcode
- *
- * 
+ * @struct oval_directives_model
+ * This structure holds instance of OVAL Directives.
  */
-struct oval_result_directives;
+struct oval_directives_model;
 
 /**
- * Create new OVAL Results Directives instance. Directives are setup NOT to report any type of result by default.
+ * @memberof oval_directives_model
+ */
+struct oval_directives_model *oval_directives_model_new(void);
+/**
+ * @memberof oval_directives_model
+ */
+void oval_directives_model_free(struct oval_directives_model *);
+/**
+ * @memberof oval_directives_model
+ */
+int oval_directives_model_import(struct oval_directives_model *, char *);
+/**
+ * @memberof oval_directives_model
+ */
+struct oval_generator *oval_directives_model_get_generator(struct oval_directives_model *);
+/**
+ * @memberof oval_directives_model
+ */
+struct oval_result_directives *oval_directives_model_get_defdirs(struct oval_directives_model *);
+/**
+ * @memberof oval_directives_model
+ */
+struct oval_result_directives *oval_directives_model_get_new_classdir(struct oval_directives_model *, oval_definition_class_t);
+/**
+ * @memberof oval_directives_model
+ */
+int oval_directives_model_export(struct oval_directives_model *, const char *);
+
+
+
+/**
+ * @struct oval_result_directives
+ * This structure holds instance of either OVAL Default Directives or OVAL Class directives.
+ */
+struct oval_result_directives;
+/**
+ * Create new OVAL Results Directives instance. Directives are setup to report FULL result by default.
  * @memberof oval_result_directives
  */
 struct oval_result_directives *oval_result_directives_new(void);
-
 /**
  * @memberof oval_result_directives
  */
 void oval_result_directives_free(struct oval_result_directives *);
-
-
-/**
- * @name Setters
- * @{
- */
 /**
  * Set (or unset) result types that are intended to be reported. Functions does not override previous settings.
  * @memberof oval_result_directives
@@ -94,12 +111,6 @@ void oval_result_directives_set_reported(struct oval_result_directives *, int fl
  * @memberof oval_result_directives
  */
 void oval_result_directives_set_content(struct oval_result_directives *, int flag, oval_result_directive_content_t);
-/** @} */
-
-/**
- * @name Getters
- * @{
- */
 /**
  * @memberof oval_result_directives
  */
@@ -108,14 +119,6 @@ bool oval_result_directives_get_reported(struct oval_result_directives *, oval_r
  * @memberof oval_result_directives
  */
 oval_result_directive_content_t oval_result_directives_get_content(struct oval_result_directives *, oval_result_t);
-/** @} */
-
-/**
- * @name Evaluators
- * @{
- */
-/** @} */
-
 
 #endif				/* OVAL_DIRECTIVES_H_ */
 

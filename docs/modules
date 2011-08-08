@@ -16,6 +16,7 @@
  *   @defgroup OVALDEF OVAL Definitions
  *   @defgroup OVALSYS OVAL System Characteristics
  *   @defgroup OVALRES OVAL Results
+ *   @defgroup OVALDIR OVAL Directives
  *   @defgroup OVALVAR OVAL External Variable Binding
  *   @defgroup PROBES System checking mechanism - probes
  *   @{

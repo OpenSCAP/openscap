@@ -60,6 +60,11 @@ oval_datetime_format_t oval_datetime_format_parse(xmlTextReaderPtr, char *, oval
 oval_message_level_t oval_message_level_parse(xmlTextReaderPtr, char *, oval_message_level_t);
 void oval_variable_set_type(struct oval_variable *variable, oval_variable_type_t type);
 
+
+oval_definition_class_t oval_definition_class_enum(char *);
+const char *oval_definition_class_text(oval_definition_class_t);
+
+
 typedef void (*oval_affected_consumer) (struct oval_affected *, void *);
 int oval_affected_parse_tag(xmlTextReaderPtr reader,
 			    struct oval_parser_context *context, oval_affected_consumer, void *);

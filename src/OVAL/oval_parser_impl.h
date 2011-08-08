@@ -32,7 +32,7 @@
 
 #include <libxml/xmlreader.h>
 #include "public/oval_agent_api.h"
-#include "../common/util.h"
+#include "common/util.h"
 
 OSCAP_HIDDEN_START;
 
@@ -41,6 +41,7 @@ struct oval_parser_context {
 	struct oval_syschar_model *syschar_model;
 	struct oval_results_model *results_model;
 	struct oval_variable_model *variable_model;
+	struct oval_directives_model *directives_model;
 	xmlTextReader *reader;
 	void *user_data;
 };

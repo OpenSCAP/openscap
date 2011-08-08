@@ -55,12 +55,15 @@ OSCAP_HIDDEN_START;
 
 #define OVAL_RESULTS_NAMESPACE     BAD_CAST "http://oval.mitre.org/XMLSchema/oval-results-5"
 #define OVAL_VARIABLES_NAMESPACE   BAD_CAST "http://oval.mitre.org/XMLSchema/oval-variables-5"
+#define OVAL_DIRECTIVES_NAMESPACE  BAD_CAST "http://oval.mitre.org/XMLSchema/oval-directives-5"
 
 #define OVAL_DEF_SCHEMA_LOCATION "http://oval.mitre.org/XMLSchema/oval-definitions-5 http://oval.mitre.org/language/download/schema/version5.5/ovaldefinition/complete/oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent http://oval.mitre.org/language/download/schema/version5.5/ovaldefinition/complete/independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#unix http://oval.mitre.org/language/download/schema/version5.5/ovaldefinition/complete/unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux http://oval.mitre.org/language/download/schema/version5.5/ovaldefinition/complete/linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 http://oval.mitre.org/language/download/schema/version5.5/ovaldefinition/complete/linux-common-schema.xsd"
 
 #define OVAL_SYS_SCHEMA_LOCATION "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5 http://oval.mitre.org/language/version5.5/ovalsc/complete/oval-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent http://oval.mitre.org/language/version5.5/ovalsc/complete/independent-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix http://oval.mitre.org/language/version5.5/ovalsc/complete/unix-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux http://oval.mitre.org/language/version5.5/ovalsc/complete/linux-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 http://oval.mitre.org/language/version5.5/ovalsc/complete/oval-common-schema.xsd"
 
 #define OVAL_RES_SCHEMA_LOCATION "http://oval.mitre.org/XMLSchema/oval-results-5 http://oval.mitre.org/language/version5.5/ovalresults/complete/oval-results-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 http://oval.mitre.org/language/version5.5/ovalresults/complete/oval-common-schema.xsd"
+
+#define OVAL_DIR_SCHEMA_LOCATION "http://oval.mitre.org/XMLSchema/oval-results-5 http://oval.mitre.org/language/version5.5/ovalresults/complete/oval-results-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 http://oval.mitre.org/XMLSchema/oval-directives-5"
 
 #define OVAL_XMLNS_XSI              BAD_CAST "http://www.w3.org/2001/XMLSchema-instance"
 

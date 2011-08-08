@@ -226,7 +226,8 @@ static xmlNode *oval_results_to_dom(struct oval_results_model *results_model,
 
 	/* Report generator & directices */
 	oval_generator_to_dom(results_model->generator, doc, root_node);
-	oval_result_directives_to_dom(directives, doc, root_node);
+        xmlNode *directives_node = xmlNewTextChild(root_node, ns_results, BAD_CAST "directives", NULL);
+	oval_result_directives_to_dom(directives, doc, directives_node);
 
 	/* Report definitions */
 	struct oval_definition_model *definition_model = oval_results_model_get_definition_model(results_model);

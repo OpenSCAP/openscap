@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_directives xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oval-res="http://oval.mitre.org/XMLSchema/oval-results-5" xmlns="http://oval.mitre.org/XMLSchema/oval-directives-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-results-5 http://oval.mitre.org/language/version5.5/ovalresults/complete/oval-results-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 http://oval.mitre.org/XMLSchema/oval-directives-5">
+  <generator>
+    <oval:product_name>OpenSCAP</oval:product_name>
+    <oval:schema_version>5.8</oval:schema_version>
+    <oval:timestamp>2011-08-04T09:51:32</oval:timestamp>
+  </generator>
+  <directives include_source_definitions="false">
+    <oval-res:definition_true reported="true" content="full"/>
+    <oval-res:definition_false reported="true" content="full"/>
+    <oval-res:definition_unknown reported="true" content="full"/>
+    <oval-res:definition_error reported="true" content="full"/>
+    <oval-res:definition_not_evaluated reported="true" content="full"/>
+    <oval-res:definition_not_applicable reported="true" content="full"/>
+  </directives>
+  <class_directives class="compliance">
+    <oval-res:definition_true reported="true" content="thin"/>
+    <oval-res:definition_false reported="true" content="full"/>
+    <oval-res:definition_unknown reported="true" content="full"/>
+    <oval-res:definition_error reported="true" content="full"/>
+    <oval-res:definition_not_evaluated reported="true" content="full"/>
+    <oval-res:definition_not_applicable reported="true" content="full"/>
+  </class_directives>
+  <class_directives class="inventory">
+    <oval-res:definition_true reported="true" content="thin"/>
+    <oval-res:definition_false reported="true" content="full"/>
+    <oval-res:definition_unknown reported="true" content="full"/>
+    <oval-res:definition_error reported="true" content="full"/>
+    <oval-res:definition_not_evaluated reported="true" content="full"/>
+    <oval-res:definition_not_applicable reported="true" content="full"/>
+  </class_directives>
+  <class_directives class="vulnerability">
+    <oval-res:definition_true reported="true" content="thin"/>
+    <oval-res:definition_false reported="true" content="full"/>
+    <oval-res:definition_unknown reported="true" content="full"/>
+    <oval-res:definition_error reported="true" content="full"/>
+    <oval-res:definition_not_evaluated reported="true" content="full"/>
+    <oval-res:definition_not_applicable reported="false" content="full"/>
+  </class_directives>
+</oval_directives>

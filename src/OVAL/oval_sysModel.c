@@ -250,7 +250,7 @@ int oval_syschar_model_import(struct oval_syschar_model *model, const char *file
         context.syschar_model = model;
         context.user_data = NULL;
 	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
-	/* jump into oval_definitions */
+	/* jump into oval_system_characteristics */
 	xmlTextReaderRead(reader);
 	/* make sure this is syschar */
 	char *tagname = (char *)xmlTextReaderLocalName(reader);

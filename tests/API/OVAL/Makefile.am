@@ -22,11 +22,12 @@ CLEANFILES = *.log *.out* oscap_debug.log*
 
 TESTS = test_api_oval.sh 
 
-check_PROGRAMS = test_api_oval test_api_syschar test_api_results
+check_PROGRAMS = test_api_oval test_api_syschar test_api_results test_api_directives
 
 test_api_oval_SOURCES = test_api_oval.c
 test_api_syschar_SOURCES = test_api_syschar.c
 test_api_results_SOURCES = test_api_results.c
+test_api_directives_SOURCES = test_api_directives.c
 
 EXTRA_DIST += test_api_oval.sh \
 	      scap-rhel5-oval.xml \

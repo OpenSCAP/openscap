@@ -95,15 +95,6 @@ typedef enum {
 	OVAL_OPERATION_SUPERSET_OF,
 } oval_operation_t;
 
-/// Definition classes
-typedef enum {
-	/**Not valid*/ OVAL_CLASS_UNKNOWN = 0,
-	/**Valid*/ OVAL_CLASS_COMPLIANCE = 1,
-	/**Valid*/ OVAL_CLASS_INVENTORY = 2,
-	/**Valid*/ OVAL_CLASS_MISCELLANEOUS = 3,
-	/**Valid*/ OVAL_CLASS_PATCH = 4,
-	/**Valid*/ OVAL_CLASS_VULNERABILITY = 5,
-} oval_definition_class_t;
 
 /// Existence check enumeration
 typedef enum {
