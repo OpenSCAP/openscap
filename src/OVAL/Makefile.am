@@ -47,7 +47,6 @@ common_oval_sources = \
 	oval_resultSystem.c \
 	oval_resultTest.c \
 	oval_results_impl.h \
-	oval_results_parser.c \
 	oval_directives.c \
 	oval_directives_impl.h \
 	oval_set.c \

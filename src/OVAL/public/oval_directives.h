@@ -79,6 +79,10 @@ struct oval_result_directives *oval_directives_model_get_defdirs(struct oval_dir
 /**
  * @memberof oval_directives_model
  */
+struct oval_result_directives *oval_directives_model_get_classdir(struct oval_directives_model *, oval_definition_class_t);
+/**
+ * @memberof oval_directives_model
+ */
 struct oval_result_directives *oval_directives_model_get_new_classdir(struct oval_directives_model *, oval_definition_class_t);
 /**
  * @memberof oval_directives_model
@@ -114,7 +118,15 @@ void oval_result_directives_set_content(struct oval_result_directives *, int fla
 /**
  * @memberof oval_result_directives
  */
+void oval_result_directives_set_included(struct oval_result_directives *, bool);
+/**
+ * @memberof oval_result_directives
+ */
 bool oval_result_directives_get_reported(struct oval_result_directives *, oval_result_t);
+/**
+ * @memberof oval_result_directives
+ */
+bool oval_result_directives_get_included(struct oval_result_directives *);
 /**
  * @memberof oval_result_directives
  */

@@ -124,7 +124,7 @@ struct oval_results_model *oval_results_model_new(struct oval_definition_model *
  * @return -1 if an error occurred
  * @memberof oval_results_model
  */
-struct oval_result_directives *oval_results_model_import(struct oval_results_model *model, const char *file);
+int oval_results_model_import(struct oval_results_model *model, const char *file);
 /**
  * Copy an oval_results_model.
  * @return A copy of the specified @ref oval_results_model.
@@ -140,10 +140,11 @@ void oval_results_model_free(struct oval_results_model *model);
 /**
  * Export oval results into file.
  * @param model the oval_results_model
+ * @param model the oval_directives_model
  * @param file filename
  * @memberof oval_results_model
  */
-int oval_results_model_export(struct oval_results_model *, struct oval_result_directives *, const char *file);
+int oval_results_model_export(struct oval_results_model *, struct oval_directives_model *, const char *file);
 
 /**
  * @name Setters

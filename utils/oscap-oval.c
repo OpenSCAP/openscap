@@ -413,25 +413,8 @@ int app_evaluate_oval(const struct oscap_action *action)
 		/* get result model */
 		struct oval_results_model *res_model = oval_agent_get_results_model(sess);
 
-		/* set up directives */
-		struct oval_result_directives *res_direct = oval_result_directives_new();
-		oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE | OVAL_RESULT_FALSE |
-						    OVAL_RESULT_UNKNOWN | OVAL_RESULT_NOT_EVALUATED |
-						    OVAL_RESULT_ERROR | OVAL_RESULT_NOT_APPLICABLE, true);
-
-		oval_result_directives_set_content(res_direct,
-						   OVAL_RESULT_TRUE |
-						   OVAL_RESULT_FALSE |
-						   OVAL_RESULT_UNKNOWN |
-						   OVAL_RESULT_NOT_EVALUATED |
-						   OVAL_RESULT_NOT_APPLICABLE |
-						   OVAL_RESULT_ERROR,
-						   OVAL_DIRECTIVE_CONTENT_FULL);
-
-		
 		/* export result model to XML */
-		oval_results_model_export(res_model, res_direct, action->f_results);
-		oval_result_directives_free(res_direct);
+		oval_results_model_export(res_model, NULL, action->f_results);
 
 		/* validate OVAL Results */
 		if (action->validate) {
@@ -485,7 +468,6 @@ static int app_analyse_oval(const struct oscap_action *action) {
 	struct oval_syschar_model	*sys_model = NULL;
 	struct oval_results_model	*res_model = NULL;
 	struct oval_variable_model	*var_model = NULL;
-	struct oval_result_directives	*res_direct = NULL;
  	struct oval_syschar_model	*sys_models[2];
 	int ret;
 
@@ -541,23 +523,8 @@ static int app_analyse_oval(const struct oscap_action *action) {
 
 	/* export results */
 	if (action->f_results != NULL) {
-		/* set up directives */
-		res_direct = oval_result_directives_new();
-		oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE | OVAL_RESULT_FALSE |
-						    OVAL_RESULT_UNKNOWN | OVAL_RESULT_NOT_EVALUATED |
-						    OVAL_RESULT_ERROR | OVAL_RESULT_NOT_APPLICABLE, true);
-		oval_result_directives_set_content(res_direct,
-						   OVAL_RESULT_TRUE |
-						   OVAL_RESULT_FALSE |
-						   OVAL_RESULT_UNKNOWN |
-						   OVAL_RESULT_NOT_EVALUATED |
-						   OVAL_RESULT_NOT_APPLICABLE |
-						   OVAL_RESULT_ERROR,
-						   OVAL_DIRECTIVE_CONTENT_FULL);
-
 		/* export result model to XML */
-		oval_results_model_export(res_model, res_direct, action->f_results);
-		oval_result_directives_free(res_direct);
+		oval_results_model_export(res_model, NULL, action->f_results);
 
 		/* validate OVAL Results */
 		if (action->validate) {

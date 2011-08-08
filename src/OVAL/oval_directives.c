@@ -68,8 +68,6 @@ struct oval_directives_model {
 
 
 static int oval_directives_model_parse(xmlTextReaderPtr, struct oval_parser_context *);
-static xmlNode *oval_directives_model_to_dom(struct oval_directives_model *, xmlDocPtr);
-
 
 struct oval_directives_model *oval_directives_model_new(void) {
 
@@ -108,6 +106,8 @@ void oval_directives_model_free(struct oval_directives_model *model) {
 int oval_directives_model_import(struct oval_directives_model * model, char *file) {
 
 	int ret=0;
+	char *tagname = NULL;
+	char *namespace = NULL;
 
 	/* open file */
         xmlTextReader *reader = xmlNewTextReaderFilename(file);
@@ -129,8 +129,8 @@ int oval_directives_model_import(struct oval_directives_model * model, char *fil
         xmlTextReaderRead(reader);
 
         /* make sure this is a right schema and tag */
-        char *tagname = (char *)xmlTextReaderLocalName(reader);
-        char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
+        tagname = (char *)xmlTextReaderLocalName(reader);
+        namespace = (char *)xmlTextReaderNamespaceUri(reader);
         int is_ovaldir = strcmp((const char *)OVAL_DIRECTIVES_NAMESPACE, namespace) == 0;
         /* start parsing */
         if (is_ovaldir && (strcmp(tagname, "oval_directives") == 0)) {
@@ -161,7 +161,7 @@ int oval_directives_model_export(struct oval_directives_model *model, const char
                 return -1;
         }
 
-        oval_directives_model_to_dom(model, doc);
+        oval_directives_model_to_dom(model, doc, NULL);
         xmlCode = xmlSaveFormatFileEnc(file, doc, "UTF-8", 1);
         if (xmlCode <= 0) {
                 oscap_setxmlerr(xmlGetLastError());
@@ -183,6 +183,16 @@ struct oval_generator *oval_directives_model_get_generator(struct oval_directive
 struct oval_result_directives *oval_directives_model_get_defdirs(struct oval_directives_model *model)
 {
         return model->def_directives;
+}
+
+struct oval_result_directives *oval_directives_model_get_classdir(struct oval_directives_model *model, oval_definition_class_t classdir)
+{
+	int classind = --classdir;
+
+	if (classind > NUMBER_OF_CLASSES)
+		return NULL;
+
+	return model->class_directives[classind];
 }
 
 struct oval_result_directives *oval_directives_model_get_new_classdir(struct oval_directives_model *model, oval_definition_class_t classdir)
@@ -260,6 +270,18 @@ oval_result_directive_content_t oval_result_directives_get_content
 	return directives->directive[i].content;
 }
 
+bool oval_result_directives_get_included(struct oval_result_directives *directives) {
+	__attribute__nonnull__(directives);
+
+	return directives->inc_definitions;
+}
+
+void oval_result_directives_set_included(struct oval_result_directives *directives, bool val) {
+	__attribute__nonnull__(directives);
+
+	directives->inc_definitions = val;
+}
+
 void oval_result_directives_set_reported(struct oval_result_directives *directives, int flag, bool val) {
 	__attribute__nonnull__(directives);
 
@@ -301,8 +323,10 @@ static int oval_directives_model_parse(xmlTextReaderPtr reader, struct oval_pars
 				ret = oval_parser_parse_tag(reader, context, &oval_generator_parse_tag, gen);
 			} else if (is_ovaldir && (strcmp(tagname, "directives") == 0)) {
 				struct oval_result_directives *def_dirs;
+				bool val;
                                 def_dirs = oval_directives_model_get_defdirs(context->directives_model);
-				def_dirs->inc_definitions=oval_parser_boolean_attribute(reader, "include_source_definitions", 1);
+				val=oval_parser_boolean_attribute(reader, "include_source_definitions", 1);
+				oval_result_directives_set_included(def_dirs, val);
                                 ret = oval_parser_parse_tag(reader, context, &oval_result_directives_parse_tag, def_dirs);
 			} else if (is_ovaldir && (strcmp(tagname, "class_directives") == 0)) {
 				struct oval_result_directives *class_dir;
@@ -383,43 +407,58 @@ int oval_result_directives_parse_tag(xmlTextReaderPtr reader, struct oval_parser
 	return retcode;
 }
 
-static xmlNode *oval_directives_model_to_dom(struct oval_directives_model *model, xmlDocPtr doc)
+xmlNode *oval_directives_model_to_dom(struct oval_directives_model *model, xmlDocPtr doc, xmlNode * parent)
 {
         xmlNode *root_node;
 	xmlNode *directives_node;
-	char *class_str;
+	const char *class_str;
+	struct oval_result_directives * dirs;
 
-	root_node = xmlNewNode(NULL, BAD_CAST "oval_directives");
-        xmlDocSetRootElement(doc, root_node);
 
-	/*schemalocation */
-        xmlNewProp(root_node, BAD_CAST "xsi:schemaLocation", BAD_CAST OVAL_DIR_SCHEMA_LOCATION);
 
-	/* NS */
-        xmlNs *ns_common = xmlNewNs(root_node, OVAL_COMMON_NAMESPACE, BAD_CAST "oval");
-        xmlNs *ns_xsi = xmlNewNs(root_node, OVAL_XMLNS_XSI, BAD_CAST "xsi");
-        xmlNs *ns_results = xmlNewNs(root_node, OVAL_RESULTS_NAMESPACE, BAD_CAST "oval-res");
-        xmlNs *ns_directives = xmlNewNs(root_node, OVAL_DIRECTIVES_NAMESPACE, NULL);
-        xmlSetNs(root_node, ns_common);
-        xmlSetNs(root_node, ns_xsi);
-        xmlSetNs(root_node, ns_results);
-        xmlSetNs(root_node, ns_directives);
+	if(parent == NULL) { /* standalone OVAL Directives Document */
+		root_node = xmlNewNode(NULL, BAD_CAST "oval_directives");
+		xmlDocSetRootElement(doc, root_node);
 
-        /* Report generator */
-        oval_generator_to_dom(model->generator, doc, root_node);
+		/*schemalocation */
+		xmlNewProp(root_node, BAD_CAST "xsi:schemaLocation", BAD_CAST OVAL_DIR_SCHEMA_LOCATION);
+
+		/* NS */
+		xmlNs *ns_common = xmlNewNs(root_node, OVAL_COMMON_NAMESPACE, BAD_CAST "oval");
+		xmlNs *ns_xsi = xmlNewNs(root_node, OVAL_XMLNS_XSI, BAD_CAST "xsi");
+		xmlNs *ns_results = xmlNewNs(root_node, OVAL_RESULTS_NAMESPACE, BAD_CAST "oval-res");
+		xmlNs *ns_directives = xmlNewNs(root_node, OVAL_DIRECTIVES_NAMESPACE, NULL);
+		xmlSetNs(root_node, ns_common);
+		xmlSetNs(root_node, ns_xsi);
+		xmlSetNs(root_node, ns_results);
+		xmlSetNs(root_node, ns_directives);
+
+		/* Report generator */
+		oval_generator_to_dom(model->generator, doc, root_node);
+	}
+	else { /* Directives are part of OVAL Results Document */
+		root_node = parent;
+	}
+
+
 	/* Report default directives */
-	directives_node = xmlNewTextChild(root_node, ns_directives, BAD_CAST "directives", NULL);
-	if(!model->def_directives->inc_definitions)
+	xmlNs *ns_search = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
+	directives_node = xmlNewTextChild(root_node, ns_search, BAD_CAST "directives", NULL);
+	dirs = oval_directives_model_get_defdirs(model);
+	if(!oval_result_directives_get_included(dirs))
 		xmlNewProp(directives_node, BAD_CAST "include_source_definitions", BAD_CAST "false");
-	oval_result_directives_to_dom(model->def_directives, doc, directives_node);
+	oval_result_directives_to_dom(dirs, doc, directives_node);
+
 	/* Report class directives */
-	for(int i=0; i<NUMBER_OF_CLASSES; i++)
-		if(model->class_directives[i]) {
-			directives_node = xmlNewTextChild(root_node, ns_directives, BAD_CAST "class_directives", NULL);
-			class_str = oval_definition_class_text(i+1);
+	for(int i=OVAL_CLASS_COMPLIANCE; i<=OVAL_CLASS_VULNERABILITY; i++) {
+		dirs = oval_directives_model_get_classdir(model, i);
+		if (dirs) {
+			directives_node = xmlNewTextChild(root_node, ns_search, BAD_CAST "class_directives", NULL);
+			class_str = oval_definition_class_text(i);
 			xmlNewProp(directives_node, BAD_CAST "class", BAD_CAST class_str);
-			oval_result_directives_to_dom(model->class_directives[i], doc, directives_node);
+			oval_result_directives_to_dom(dirs, doc, directives_node);
 		}
+	}
 
 	return root_node;
 }

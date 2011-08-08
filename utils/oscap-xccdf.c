@@ -397,25 +397,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			char * name =  malloc(PATH_MAX * sizeof(char));
 			sprintf(name, "%s.result.xml", oval_agent_get_filename(sessions[i]));
 
-			/* set up directives */
-			struct oval_result_directives *res_direct = oval_result_directives_new();
-			oval_result_directives_set_reported(res_direct, OVAL_RESULT_TRUE | OVAL_RESULT_FALSE |
-							    OVAL_RESULT_UNKNOWN | OVAL_RESULT_NOT_EVALUATED |
-							    OVAL_RESULT_ERROR | OVAL_RESULT_NOT_APPLICABLE, true);
-
-			oval_result_directives_set_content(res_direct,
-							   OVAL_RESULT_TRUE |
-							   OVAL_RESULT_FALSE |
-							   OVAL_RESULT_UNKNOWN |
-							   OVAL_RESULT_NOT_EVALUATED |
-							   OVAL_RESULT_NOT_APPLICABLE |
-							   OVAL_RESULT_ERROR,
-							   OVAL_DIRECTIVE_CONTENT_FULL);
-
-			
 			/* export result model to XML */
-			oval_results_model_export(res_model, res_direct, name);
-			oval_result_directives_free(res_direct);
+			oval_results_model_export(res_model, NULL, name);
 			free(name);
 		}
 	}

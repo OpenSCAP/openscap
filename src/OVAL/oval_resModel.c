@@ -42,16 +42,18 @@
 #include "oval_probe_impl.h"
 #include "oval_results_impl.h"
 #include "oval_directives_impl.h"
+
 #include "common/util.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "common/reporter_priv.h"
+#include "common/elements.h"
 
 struct oval_results_model {
 	struct oval_generator *generator;
+	struct oval_directives_model *directives_model;
 	struct oval_definition_model *definition_model;
 	struct oval_collection *systems;
-        char *schema;
 };
 
 struct oval_results_model *oval_results_model_new(struct oval_definition_model *definition_model,
@@ -64,13 +66,13 @@ struct oval_results_model *oval_results_model_new(struct oval_definition_model *
 	model->generator = oval_generator_new();
 	model->systems = oval_collection_new();
 	model->definition_model = definition_model;
-        model->schema = oscap_strdup(OVAL_RES_SCHEMA_LOCATION);
 	if (syschar_models) {
 		struct oval_syschar_model *syschar_model;
 		for (syschar_model = *syschar_models; syschar_model; syschar_model = *(++syschar_models)) {
 			oval_result_system_new(model, syschar_model);
 		}
 	}
+	model->directives_model = oval_directives_model_new();
 	return model;
 }
 
@@ -85,7 +87,7 @@ struct oval_results_model *oval_results_model_clone(struct oval_results_model *o
 		oval_result_system_clone(new_resmodel, old_system);
 	}
 	oval_result_system_iterator_free(old_systems);
-        new_resmodel->schema = strdup(old_resmodel->schema);
+	/* ToDo: Directives Model clone */
 
 	return new_resmodel;
 }
@@ -94,14 +96,15 @@ void oval_results_model_free(struct oval_results_model *model)
 {
 	__attribute__nonnull__(model);
 
-        if (model->schema)
-                oscap_free(model->schema);
 	oval_collection_free_items(model->systems, (oscap_destruct_func) oval_result_system_free);
 	model->systems = NULL;
 	model->definition_model = NULL;
-        model->schema = NULL;
 
 	oval_generator_free(model->generator);
+	model->generator=NULL;
+
+	oval_directives_model_free(model->directives_model);
+	model->directives_model=NULL;
 
 	oscap_free(model);
 }
@@ -138,17 +141,21 @@ void oval_results_model_add_system(struct oval_results_model *model, struct oval
 		oval_collection_add(model->systems, sys);
 }
 
-struct oval_result_directives *oval_results_model_import(struct oval_results_model *model, const char *file)
+int oval_results_model_import(struct oval_results_model *model, const char *file)
 {
 	__attribute__nonnull__(model);
 
-	struct oval_result_directives *directives = NULL;
+	int ret = 0;
+	char *tagname = NULL;
+	char *namespace = NULL;
+
 	xmlTextReader *reader = xmlNewTextReaderFilename(file);
 	if (reader == NULL) {
                 if(errno)
                         oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, strerror(errno));
                 oscap_dlprintf(DBG_E, "Unable to open file.\n");
-                return NULL;
+                ret = -1;
+		goto cleanup;
 	}
 
 	/* setup context */
@@ -159,28 +166,27 @@ struct oval_result_directives *oval_results_model_import(struct oval_results_mod
 	context.user_data = NULL;
 	oscap_setxmlerr(xmlGetLastError());
 	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
-	/* jump into oval_definitions */
+	/* jump into document */
 	xmlTextReaderRead(reader);
 	/* make sure these are results */
-	char *tagname = (char *)xmlTextReaderLocalName(reader);
-	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
+	tagname = (char *)xmlTextReaderLocalName(reader);
+	namespace = (char *)xmlTextReaderNamespaceUri(reader);
 	int is_ovalres = strcmp((const char *)OVAL_RESULTS_NAMESPACE, namespace) == 0;
 	/* star parsing */
 	if (is_ovalres && (strcmp(tagname, "oval_results") == 0)) {
-		if (oval_results_model_parse(reader, &context, &directives) == -1 ) {
-			oval_result_directives_free(directives);
-			directives = NULL;
-		}
+		ret = oval_results_model_parse(reader, &context);
 	} else {
                 oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Missing \"oval_results\" element");
                 dE("Unprocessed tag: <%s:%s>.\n", namespace, tagname);
+		ret = -1;
 	}
 
+cleanup:
         oscap_free(tagname);
         oscap_free(namespace);
 	xmlFreeTextReader(reader);
 
-	return directives;
+	return ret;
 }
 
 
@@ -205,16 +211,19 @@ int oval_results_model_eval(struct oval_results_model *res_model)
 }
 
 static xmlNode *oval_results_to_dom(struct oval_results_model *results_model,
-				    struct oval_result_directives *directives, xmlDocPtr doc, xmlNode * parent)
+				    struct oval_directives_model *directives_model, 
+				    xmlDocPtr doc, xmlNode * parent)
 {
 	xmlNode *root_node;
+	struct oval_result_directives * dirs;
+
 	if (parent) {
 		root_node = xmlNewTextChild(parent, NULL, BAD_CAST "oval_results", NULL);
 	} else {
 		root_node = xmlNewNode(NULL, BAD_CAST "oval_results");
 		xmlDocSetRootElement(doc, root_node);
 	}
-	xmlNewProp(root_node, BAD_CAST "xsi:schemaLocation", BAD_CAST results_model->schema);
+	xmlNewProp(root_node, BAD_CAST "xsi:schemaLocation", BAD_CAST OVAL_RES_SCHEMA_LOCATION);
 
 	xmlNs *ns_common = xmlNewNs(root_node, OVAL_COMMON_NAMESPACE, BAD_CAST "oval");
 	xmlNs *ns_xsi = xmlNewNs(root_node, OVAL_XMLNS_XSI, BAD_CAST "xsi");
@@ -224,10 +233,16 @@ static xmlNode *oval_results_to_dom(struct oval_results_model *results_model,
 	xmlSetNs(root_node, ns_xsi);
 	xmlSetNs(root_node, ns_results);
 
-	/* Report generator & directices */
+	/* Report generator */
 	oval_generator_to_dom(results_model->generator, doc, root_node);
-        xmlNode *directives_node = xmlNewTextChild(root_node, ns_results, BAD_CAST "directives", NULL);
-	oval_result_directives_to_dom(directives, doc, directives_node);
+
+	/* Report default directives and class directives from internal or external
+	 * directives model(if provided)
+	 */
+	if(directives_model)
+		oval_directives_model_to_dom(directives_model, doc, root_node);
+	else
+		oval_directives_model_to_dom(results_model->directives_model, doc, root_node);
 
 	/* Report definitions */
 	struct oval_definition_model *definition_model = oval_results_model_get_definition_model(results_model);
@@ -237,15 +252,18 @@ static xmlNode *oval_results_to_dom(struct oval_results_model *results_model,
 	struct oval_result_system_iterator *systems = oval_results_model_get_systems(results_model);
 	while (oval_result_system_iterator_has_more(systems)) {
 		struct oval_result_system *sys = oval_result_system_iterator_next(systems);
-		oval_result_system_to_dom(sys, results_model, directives, doc, results_node);
+		/* ToDo */
+		dirs = oval_directives_model_get_defdirs(results_model->directives_model);
+		oval_result_system_to_dom(sys, results_model, dirs, doc, results_node);
 	}
 	oval_result_system_iterator_free(systems);
 
 	return root_node;
 }
 
-int oval_results_model_export(struct oval_results_model *results_model,  struct oval_result_directives *directives,
-                              const char *file)
+int oval_results_model_export(struct oval_results_model *results_model,
+			      struct oval_directives_model *directives_model,
+			      const char *file)
 {
 	__attribute__nonnull__(results_model);
 
@@ -259,7 +277,7 @@ int oval_results_model_export(struct oval_results_model *results_model,  struct 
 		return -1;
 	}
 
-	oval_results_to_dom(results_model, directives, doc, NULL);
+	oval_results_to_dom(results_model, directives_model, doc, NULL);
 	xmlCode = xmlSaveFormatFileEnc(file, doc, "UTF-8", 1);
 	if (xmlCode <= 0) {
 		oscap_setxmlerr(xmlGetLastError());
@@ -270,4 +288,60 @@ int oval_results_model_export(struct oval_results_model *results_model,  struct 
 
 	return ((xmlCode >= 1) ? 1 : -1);
 }
+
+int oval_results_model_parse(xmlTextReaderPtr reader, struct oval_parser_context *context) {
+        int depth = xmlTextReaderDepth(reader);
+        int ret = 0;
+
+        xmlTextReaderRead(reader);
+        while ((xmlTextReaderDepth(reader) > depth) && (ret != -1 )) {
+                if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+                        char *tagname = (char *)xmlTextReaderLocalName(reader);
+                        char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
+
+                        int is_ovalres = strcmp((const char *)OVAL_RESULTS_NAMESPACE, namespace) == 0;
+                        int is_ovaldef = (is_ovalres) ? false : (strcmp((const char *)OVAL_DEFINITIONS_NAMESPACE, namespace) == 0);
+                        if (is_ovalres && (strcmp(tagname, "generator") == 0)) {
+                                struct oval_generator *gen;
+                                gen = oval_results_model_get_generator(context->results_model);
+                                ret = oval_parser_parse_tag(reader, context, &oval_generator_parse_tag, gen);
+                        } else if (is_ovalres && (strcmp(tagname, "directives") == 0)) {
+				struct oval_result_directives *def_dirs;
+				bool val;
+				def_dirs = oval_directives_model_get_defdirs(context->results_model->directives_model);
+				val = oval_parser_boolean_attribute(reader, "include_source_definitions", 1);
+				oval_result_directives_set_included(def_dirs, val);
+				ret = oval_parser_parse_tag(reader, context, &oval_result_directives_parse_tag, def_dirs);
+                        } else if (is_ovalres && (strcmp(tagname, "class_directives") == 0)) {
+                                struct oval_result_directives *class_dir;
+                                oval_definition_class_t class_type;
+                                char *class_str = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "class");
+                                class_type = oval_definition_class_enum(class_str);
+                                class_dir = oval_directives_model_get_new_classdir(context->results_model->directives_model, class_type);
+                                ret = oval_parser_parse_tag(reader, context, &oval_result_directives_parse_tag, class_dir);
+                                oscap_free(class_str);
+                        } else if (is_ovaldef && (strcmp(tagname, "oval_definitions") == 0)) {
+                                ret = oval_definition_model_parse(reader, context);
+                        } else if (is_ovalres && (strcmp(tagname, "results") == 0)) {
+                                ret = oval_parser_parse_tag(reader, context, &oval_result_system_parse_tag , NULL);
+                        } else {
+                                dW("Unprocessed tag: <%s:%s>.\n", namespace, tagname);
+                                oval_parser_skip_tag(reader, context);
+                        }
+
+                        oscap_free(tagname);
+                        oscap_free(namespace);
+
+                        oscap_to_start_element(reader, depth+1);
+                } else {
+                        if (xmlTextReaderRead(reader) != 1) {
+                                ret = -1;
+                                break;
+                        }
+                }
+        }
+
+        return ret;
+}
+
 

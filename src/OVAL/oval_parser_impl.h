@@ -48,7 +48,7 @@ struct oval_parser_context {
 
 int oval_definition_model_parse(xmlTextReaderPtr, struct oval_parser_context *);
 int oval_syschar_model_parse(xmlTextReaderPtr, struct oval_parser_context *);
-int oval_results_model_parse(xmlTextReaderPtr , struct oval_parser_context *, struct oval_result_directives **);
+int oval_results_model_parse(xmlTextReaderPtr , struct oval_parser_context *);
 
 void libxml_error_handler(void *, const char *, xmlParserSeverities severity, xmlTextReaderLocatorPtr locator);
 
