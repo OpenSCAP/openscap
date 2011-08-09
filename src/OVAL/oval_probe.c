@@ -80,7 +80,8 @@ oval_subtypedsc_t __s2n_tbl[] = {
 	/* 13009 */ {OVAL_UNIX_UNAME,                       "uname"               },
 	/* 13010 */ {OVAL_UNIX_XINETD,                      "xinetd"              },
         /* 13012 */ {OVAL_UNIX_SYSCTL,                      "sysctl"              },
-	/* 13014 */ {OVAL_UNIX_FILEEXTENDEDATTRIBUTE,       "fileextendedattribute" }
+	/* 13014 */ {OVAL_UNIX_FILEEXTENDEDATTRIBUTE,       "fileextendedattribute" },
+        /* 13015 */ {OVAL_UNIX_GCONF,                       "gconf"               }
 };
 
 #define __s2n_tbl_count (sizeof __s2n_tbl / sizeof(oval_subtypedsc_t))
@@ -101,6 +102,7 @@ oval_subtypedsc_t __n2s_tbl[] = {
         /*  7003 */ {OVAL_INDEPENDENT_FILE_HASH,            "filehash"            },
         /*  7015 */ {OVAL_INDEPENDENT_FILE_HASH58,          "filehash58"          },
         /*  7002 */ {OVAL_INDEPENDENT_FILE_MD5,             "filemd5"             },
+        /* 13015 */ {OVAL_UNIX_GCONF,                       "gconf"               },
 	/*  9006 */ {OVAL_LINUX_IFLISTENERS,                "iflisteners"         },
 	/*  9002 */ {OVAL_LINUX_INET_LISTENING_SERVERS,     "inetlisteningservers"},
 	/* 13003 */ {OVAL_UNIX_INTERFACE,                   "interface"           },

@@ -130,6 +130,13 @@ probe_xinetd_SOURCES = unix/xinetd.c
 pkglibexec_PROGRAMS += probe_sysctl
 probe_sysctl_SOURCES= unix/sysctl.c
 
+if ENABLE_PROBE_GCONF
+pkglibexec_PROGRAMS += probe_gconf
+probe_gconf_SOURCES= unix/gconf.c
+probe_gconf_CFLAGS= @gconf_cflags@
+probe_gconf_LDFLAGS= @gconf_libs@
+endif
+
 if WANT_PROBES_SOLARIS
 pkglibexec_PROGRAMS += probe_isainfo
 probe_isainfo_SOURCES= unix/solaris/isainfo.c

@@ -677,6 +677,22 @@ AC_SUBST(libodbx_cflags)
 AC_SUBST(libodbx_libs)
 fi
 
+#
+# GConf2
+#
+have_libgconf2=no
+
+AC_CHECK_LIB(
+  [gconf-2],
+  [gconf_engine_get_entry],
+  [gconf_cflags=`pkg-config gconf-2.0 --cflags`
+   gconf_libs=`pkg-config gconf-2.0 --libs`
+   have_libgconf2=yes
+  ]
+)
+AC_SUBST(gconf_cflags)
+AC_SUBST(gconf_libs)
+
 sql_probe_enabled=no
 
 if test "$probes_independent" = "yes"; then
@@ -725,6 +741,7 @@ AM_CONDITIONAL([WANT_UTIL_OSCAP], test "$util_oscap" = yes)
 AM_CONDITIONAL([ENABLE_PROBE_RPMINFO], test "$have_librpm" = yes)
 AM_CONDITIONAL([ENABLE_PROBE_RPMINFO44], test "$have_librpm44" = yes)
 AM_CONDITIONAL([ENABLE_PROBE_DPKGINFO], test "$have_libapt_pkg" = yes)
+AM_CONDITIONAL([ENABLE_PROBE_GCONF], test "$have_libgconf2" = yes)
 AM_CONDITIONAL([WANT_BINDINGS], test "$bindings" = yes)
 AM_CONDITIONAL([ENABLE_VALGRIND_TESTS], test "$vgcheck" = yes)
 AM_CONDITIONAL([HAVE_ODBX], test "$have_odbx" = yes)
@@ -828,6 +845,7 @@ echo "  runlevel probe:              $probes_unix"
 echo "  shadow probe:                $probes_unix"
 echo "  uname probe:                 $probes_unix"
 echo "  xinetd probe:                $probes_unix"
+echo "  gconf probe:                 $have_libgconf2"
 echo ""
 
 echo "  === linux probes ==="
