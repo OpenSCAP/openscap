@@ -202,7 +202,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
                 if ((ofts = oval_fts_open(NULL, NULL, gconf_src, behaviors)) != NULL) {
                         while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
                                 assume_r(ofts_ent->path_len
-                                         + ofts_ent->file_len + 2 <= PATH_MAX, abort());
+                                         + ofts_ent->file_len + 2 <= PATH_MAX, PROBE_EFATAL);
 
                                 strcpy(gconf_addr, ofts_ent->path);
                                 gconf_addr[ofts_ent->path_len] = '/';
