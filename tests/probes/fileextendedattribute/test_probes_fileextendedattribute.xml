@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+
+  <generator>
+    <oval:product_name>emacs</oval:product_name>
+    <oval:product_version>1.0</oval:product_version>
+    <oval:schema_version>5.8</oval:schema_version>
+    <oval:timestamp>2008-03-31T00:00:00-00:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition class="compliance" version="1" id="oval:1:def:1"> <!-- comment="true" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria>
+        <criteria operator="AND">
+          <criterion test_ref="oval:1:tst:1"/>
+          <criterion test_ref="oval:1:tst:2"/>
+          <criterion test_ref="oval:1:tst:3"/>
+        </criteria>
+      </criteria>
+    </definition>
+  </definitions>
+
+  <tests>
+    <fileextendedattribute_test version="1" id="oval:1:tst:1" check_existence="only_one_exists" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:1:obj:1"/>
+      <state state_ref="oval:1:ste:2"/>
+    </fileextendedattribute_test>
+
+    <fileextendedattribute_test version="1" id="oval:1:tst:2" check_existence="only_one_exists" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:1:obj:2"/>
+      <state state_ref="oval:1:ste:2"/>
+    </fileextendedattribute_test>
+
+    <fileextendedattribute_test version="1" id="oval:1:tst:3" check_existence="none_exist" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:1:obj:3"/>
+    </fileextendedattribute_test>
+  </tests>
+
+  <objects>
+    <fileextendedattribute_object version="1" id="oval:1:obj:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <path>/tmp</path>
+      <filename>xattr_with_val</filename>
+      <attribute_name>user.fooattr</attribute_name>
+    </fileextendedattribute_object>
+
+    <fileextendedattribute_object version="1" id="oval:1:obj:2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <path>/tmp</path>
+      <filename>xattr_without_val</filename>
+      <attribute_name>user.fooattr</attribute_name>
+    </fileextendedattribute_object>
+
+    <fileextendedattribute_object version="1" id="oval:1:obj:3" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <path>/tmp</path>
+      <filename>xattr_noattr</filename>
+      <attribute_name>user.fooattr</attribute_name>
+    </fileextendedattribute_object>
+  </objects>
+
+  <states>
+    <fileextendedattribute_state version="1" id="oval:1:ste:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <path>/tmp</path>
+      <filename>xattr_with_val</filename>
+      <attribute_name>user.fooattr</attribute_name>
+      <value>foo</value>
+    </fileextendedattribute_state>
+
+    <fileextendedattribute_state version="1" id="oval:1:ste:2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <path>/tmp</path>
+      <filename>xattr_without_val</filename>
+      <attribute_name>user.fooattr</attribute_name>
+      <value></value>
+    </fileextendedattribute_state>
+  </states>
+</oval_definitions>

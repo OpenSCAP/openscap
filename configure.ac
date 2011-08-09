@@ -764,6 +764,7 @@ AC_CONFIG_FILES([Makefile
                  tests/API/probes/Makefile
                  tests/probes/Makefile
                  tests/probes/file/Makefile
+                 tests/probes/fileextendedattribute/Makefile
                  tests/probes/uname/Makefile
                  tests/probes/shadow/Makefile
                  tests/probes/family/Makefile
@@ -819,6 +820,7 @@ echo ""
 echo "  === unix probes ==="
 echo "  dnscache probe:              $probes_unix"
 echo "  file probe:                  $probes_unix"
+echo "  fileextendedattribute probe: $probes_unix"
 echo "  interface probe:             $probes_unix"
 echo "  password probe:              $probes_unix"
 echo "  process probe:               $probes_unix"
