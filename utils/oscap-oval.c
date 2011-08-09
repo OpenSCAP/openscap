@@ -75,6 +75,7 @@ static struct oscap_module OVAL_EVAL = {
         "Options:\n"
 	"   --id <definition-id>\r\t\t\t\t - ID of the definition we want to evaluate.\n"
 	"   --variables <file>\r\t\t\t\t - Provide external variables expected by OVAL Definitions.\n"
+        "   --directives <file>\r\t\t\t\t - Use OVAL Directives content to specify desired results content.\n"
         "   --results <file>\r\t\t\t\t - Write OVAL Results into file.\n"
         "   --report <file>\r\t\t\t\t - Create human readable (HTML) report from OVAL Results.\n"
         "   --skip-valid\r\t\t\t\t - Skip validation.\n",
@@ -105,6 +106,7 @@ static struct oscap_module OVAL_ANALYSE = {
     .help =
 	"Options:\n"
 	"   --variables <file>\r\t\t\t\t - Provide external variables expected by OVAL Definitions.\n"
+        "   --directives <file>\r\t\t\t\t - Use OVAL Directives content to specify desired results content.\n"
         "   --skip-valid\r\t\t\t\t - Skip validation.\n",
     .opt_parser = getopt_oval,
     .func = app_analyse_oval
@@ -339,6 +341,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 
 	struct oval_definition_model	*def_model = NULL;
 	struct oval_variable_model	*var_model = NULL;
+	struct oval_directives_model	*dir_model = NULL;
 	struct oval_usr			*usr       = NULL;
 	oval_agent_session_t		*sess      = NULL;
 	int ret;
@@ -413,8 +416,14 @@ int app_evaluate_oval(const struct oscap_action *action)
 		/* get result model */
 		struct oval_results_model *res_model = oval_agent_get_results_model(sess);
 
+		/* import directives */
+		if (action->f_directives != NULL) {
+			dir_model = oval_directives_model_new();
+			oval_directives_model_import(dir_model, action->f_directives);
+		}
+
 		/* export result model to XML */
-		oval_results_model_export(res_model, NULL, action->f_results);
+		oval_results_model_export(res_model, dir_model, action->f_results);
 
 		/* validate OVAL Results */
 		if (action->validate) {
@@ -459,6 +468,7 @@ cleanup:
 	if (usr) free(usr);
 	if (sess) oval_agent_destroy_session(sess);
 	if (def_model) oval_definition_model_free(def_model);
+	if (dir_model) oval_directives_model_free(dir_model);
 
 	return ret;
 }
@@ -468,6 +478,7 @@ static int app_analyse_oval(const struct oscap_action *action) {
 	struct oval_syschar_model	*sys_model = NULL;
 	struct oval_results_model	*res_model = NULL;
 	struct oval_variable_model	*var_model = NULL;
+	struct oval_directives_model	*dir_model = NULL;
  	struct oval_syschar_model	*sys_models[2];
 	int ret;
 
@@ -523,8 +534,14 @@ static int app_analyse_oval(const struct oscap_action *action) {
 
 	/* export results */
 	if (action->f_results != NULL) {
+		/* import directives */
+		if (action->f_directives != NULL) {
+			dir_model = oval_directives_model_new();
+			oval_directives_model_import(dir_model, action->f_directives);
+		}
+
 		/* export result model to XML */
-		oval_results_model_export(res_model, NULL, action->f_results);
+		oval_results_model_export(res_model, dir_model, action->f_results);
 
 		/* validate OVAL Results */
 		if (action->validate) {
@@ -548,6 +565,7 @@ cleanup:
 	if(res_model) oval_results_model_free(res_model);
 	if(sys_model) oval_syschar_model_free(sys_model);
 	if(def_model) oval_definition_model_free(def_model);
+	if(dir_model) oval_directives_model_free(dir_model);
 
 	return ret;
 }
@@ -679,6 +697,17 @@ static bool valid_inputs(const struct oscap_action *action) {
 				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
 			}
 			fprintf(stdout, "Invalid OVAL Variables content in %s\n", action->f_variables);
+			return false;
+		}
+	}
+
+	if (action->f_directives) {
+		if (!oscap_validate_document(action->f_directives, OSCAP_DOCUMENT_OVAL_DIRECTIVES, NULL,
+		    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+			if (oscap_err()) {
+				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+			}
+			fprintf(stdout, "Invalid OVAL Directives content in %s\n", action->f_directives);
 			return false;
 		}
 	}
