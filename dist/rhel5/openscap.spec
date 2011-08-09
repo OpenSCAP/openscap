@@ -131,6 +131,7 @@ fi
 %{_libexecdir}/openscap/probe_environmentvariable58
 %{_libexecdir}/openscap/probe_family
 %{_libexecdir}/openscap/probe_file
+%{_libexecdir}/openscap/probe_fileextendedattribute
 %{_libexecdir}/openscap/probe_filehash
 %{_libexecdir}/openscap/probe_filehash58
 %{_libexecdir}/openscap/probe_iflisteners

@@ -3,7 +3,7 @@ INDEPENDENT_SUBDIRS = family filehash filehash58 textfilecontent54 sysinfo
 endif
 
 if WANT_PROBES_UNIX
-UNIX_SUBDIRS = file uname shadow process password runlevel interface xinetd
+UNIX_SUBDIRS = file uname shadow process password runlevel interface xinetd fileextendedattribute
 endif
 
 if WANT_PROBES_LINUX
