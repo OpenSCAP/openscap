@@ -120,14 +120,16 @@ for log in "$TMPDIR"/output.*; do
     	log_cmd0="$(echo "$log_cmd0" | tail -n 1 | sed -n 's|^==[0-9]*==[[:space:]]*\(.*\)$|\1|p')"
     fi
 
-    log_cmd1="$(basename "$(echo "$log_cmd0" | sed -n 's|^\([^[:space:]]*\).*$|\1|p')")"
+    if file "$log_cmd0" | grep -q 'ELF.*executable'; then
+	    log_cmd1="$(basename "$(echo "$log_cmd0" | sed -n 's|^\([^[:space:]]*\).*$|\1|p')")"
 
-    if echo "$log_cmd1" | egrep -q "$REGEX"; then
-        outfile="$PREFIX-$c.$log_cmd1$SUFFIX"
-        cpy "$log" "$outfile"
-        LOG[$c]="$outfile"
-        CMD[$c]="$log_cmd1"
-        c=$(($c + 1))
+	    if echo "$log_cmd1" | egrep -q "$REGEX"; then
+    	   	 outfile="$PREFIX-$c.$log_cmd1$SUFFIX"
+       		 cpy "$log" "$outfile"
+       	 	 LOG[$c]="$outfile"
+        	 CMD[$c]="$log_cmd1"
+        	 c=$(($c + 1))
+    	    fi
     fi
 done
 
