@@ -668,24 +668,9 @@ class OSCAP_Object(object):
         for path in sessions.keys():
             sess = sessions[path]
             rmodel = oval.agent_get_results_model(sess)
-            rd = oval.result_directives(rmodel)
-            rd.set_reported(OSCAP.OVAL_RESULT_TRUE |
-                            OSCAP.OVAL_RESULT_FALSE |
-                            OSCAP.OVAL_RESULT_UNKNOWN |
-                            OSCAP.OVAL_RESULT_NOT_EVALUATED |
-                            OSCAP.OVAL_RESULT_ERROR |
-                            OSCAP.OVAL_RESULT_NOT_APPLICABLE, True)
-            rd.set_content( OSCAP.OVAL_RESULT_TRUE |
-                            OSCAP.OVAL_RESULT_FALSE |
-                            OSCAP.OVAL_RESULT_UNKNOWN |
-                            OSCAP.OVAL_RESULT_NOT_EVALUATED |
-                            OSCAP.OVAL_RESULT_NOT_APPLICABLE |
-                            OSCAP.OVAL_RESULT_ERROR,
-                            OSCAP.OVAL_DIRECTIVE_CONTENT_FULL )
             pfile = path+".result.xml"
-            OSCAP.oval_results_model_export(rmodel.instance, rd.instance, os.path.join(dirname, pfile))
+            OSCAP.oval_results_model_export(rmodel.instance, None, os.path.join(dirname, pfile))
             files.append(pfile)
-            rd.free()
             if variables:
                 dmodel = rmodel.definition_model
                 for i, vmodel in enumerate(dmodel.variable_models):
