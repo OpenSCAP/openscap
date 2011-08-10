@@ -149,7 +149,7 @@ static void pkgh2rep (Header h, struct rpminfo_rep *r)
 
         r->evr = str;
 
-        str = headerFormat (h, "%{SIGGPG:pgpsig}", &rpmerr);
+        str = headerFormat (h, "%|SIGGPG?{%{SIGGPG:pgpsig}}:{%{SIGPGP:pgpsig}}|", &rpmerr);
         sid = strrchr (str, ' ');
         r->signature_keyid = (sid != NULL ? strdup (sid+1) : strdup ("0"));
         oscap_free (str);
