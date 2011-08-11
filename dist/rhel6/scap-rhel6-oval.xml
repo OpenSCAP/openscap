@@ -2285,11 +2285,11 @@
 					comment="check for audit=1 in /boot/grub/grub.conf">
                 <ind-def:object object_ref="oval:org.open-scap.rhel6:obj:112811"/>
         </ind-def:textfilecontent54_test>
-        <unix-def:uname_test id="oval:org.open-scap.rhel6:tst:11291" version="1" check="none satisfy" comment="check that this architecture does not run a 32-bit kernel">
+        <unix-def:uname_test id="oval:org.open-scap.rhel6:tst:11291" version="1" check="none satisfy" comment="check that this architecture does not run 32-bit applications">
                 <unix-def:object object_ref="oval:org.open-scap.rhel6:obj:112911"/>
                 <unix-def:state state_ref="oval:org.open-scap.rhel6:ste:112911"/>
         </unix-def:uname_test>
-        <unix-def:uname_test id="oval:org.open-scap.rhel6:tst:11292" version="1" check="none satisfy" comment="check that this architecture does not run a 64-bit kernel">
+        <unix-def:uname_test id="oval:org.open-scap.rhel6:tst:11292" version="1" check="none satisfy" comment="check that this architecture does not run 64-bit applications">
                 <unix-def:object object_ref="oval:org.open-scap.rhel6:obj:112911"/>
                 <unix-def:state state_ref="oval:org.open-scap.rhel6:ste:112921"/>
         </unix-def:uname_test>
@@ -3583,10 +3583,10 @@
 		<!-- "pattern match" is used to (imprecisely) match each file name as a substring -->
                 <ind-def:subexpression var_check="all" operation="pattern match" var_ref="oval:org.open-scap.rhel6:var:1121111"/>
         </ind-def:textfilecontent54_state>
-        <unix-def:uname_state id="oval:org.open-scap.rhel6:ste:112911" version="1" comment="32-bit (kernel) architectures">
-		<unix-def:processor_type operation="pattern match">^(i[3456]86|powerpc|s390)$</unix-def:processor_type>
+        <unix-def:uname_state id="oval:org.open-scap.rhel6:ste:112911" version="1" comment="architectures that run 32-bit userspace">
+		<unix-def:processor_type operation="pattern match">^.*$</unix-def:processor_type> <!-- So far, at least... -->
         </unix-def:uname_state>
-        <unix-def:uname_state id="oval:org.open-scap.rhel6:ste:112921" version="1" comment="64-bit (kernel) architectures">
+        <unix-def:uname_state id="oval:org.open-scap.rhel6:ste:112921" version="1" comment="architectures that run 64-bit userspace">
 		<unix-def:processor_type operation="pattern match">^(x86_64|ia64|ppc64|s390x)$</unix-def:processor_type>
         </unix-def:uname_state>
         <ind-def:textfilecontent54_state id="oval:org.open-scap.rhel6:ste:112931" version="1" comment="-a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change">
