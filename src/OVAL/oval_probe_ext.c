@@ -78,6 +78,7 @@ const oval_pdsc_t OSCAP_GSYM(default_pdsc)[] = {
 	{OVAL_UNIX_INTERFACE,                   "interface",         "probe_interface"},
 	{OVAL_UNIX_PASSWORD,                    "password",          "probe_password"},
 	{OVAL_UNIX_PROCESS,                     "process",           "probe_process"},
+	{OVAL_UNIX_PROCESS58,                   "process58",         "probe_process58"},
 	{OVAL_UNIX_RUNLEVEL,                    "runlevel",          "probe_runlevel"},
 	{OVAL_UNIX_SHADOW,                      "shadow",            "probe_shadow"},
 	{OVAL_UNIX_UNAME,                       "uname",             "probe_uname"},

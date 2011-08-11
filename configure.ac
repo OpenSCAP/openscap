@@ -348,6 +348,19 @@ AC_CHECK_LIB(
    selinux_libs=`pkg-config libselinux --libs`
    have_selinux=yes
    AC_DEFINE([ENABLE_PROBES_SELINUX], [1], [Define if SELinux is available])
+   AC_DEFINE([HAVE_SELINUX], [1], [Define if SELinux is available])
+  ]
+)
+
+#
+# libcap
+#
+AC_CHECK_LIB(
+  [cap],
+  [cap_init],
+  [libcap_cflags=
+   libcap_libs=-lcap
+   AC_DEFINE([HAVE_CAPABILITY], [1], [libcap is available])
   ]
 )
 
@@ -432,6 +445,9 @@ AC_SUBST(deb_libs)
 
 AC_SUBST(libacl_cflags)
 AC_SUBST(libacl_libs)
+
+AC_SUBST(libcap_cflags)
+AC_SUBST(libcap_libs)
 
 AC_SUBST(libblkid_cflags)
 AC_SUBST(libblkid_libs)

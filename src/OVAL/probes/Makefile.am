@@ -111,6 +111,11 @@ probe_process_SOURCES= unix/process.c
 probe_process_CFLAGS=
 probe_process_LDFLAGS=
 
+pkglibexec_PROGRAMS += probe_process58
+probe_process58_SOURCES= unix/process58.c unix/process58-capability.h
+probe_process58_CFLAGS= @selinux_cflags@ @libcap_cflags@
+probe_process58_LDFLAGS= @selinux_libs@ @libcap_libs@ ../../common/liboscapcommon.la
+
 pkglibexec_PROGRAMS += probe_shadow
 probe_shadow_SOURCES= unix/shadow.c
 probe_shadow_CFLAGS=

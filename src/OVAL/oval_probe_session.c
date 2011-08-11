@@ -138,6 +138,7 @@ oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
         oval_probe_handler_set(sess->ph, OVAL_UNIX_INTERFACE,  oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_UNIX_PASSWORD,   oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_UNIX_PROCESS,    oval_probe_ext_handler, sess->pext);
+        oval_probe_handler_set(sess->ph, OVAL_UNIX_PROCESS58,  oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_UNIX_RUNLEVEL,   oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_UNIX_SHADOW,     oval_probe_ext_handler, sess->pext);
         oval_probe_handler_set(sess->ph, OVAL_UNIX_UNAME,      oval_probe_ext_handler, sess->pext);

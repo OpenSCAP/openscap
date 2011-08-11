@@ -172,6 +172,7 @@ fi
 %{_libexecdir}/openscap/probe_partition
 %{_libexecdir}/openscap/probe_password
 %{_libexecdir}/openscap/probe_process
+%{_libexecdir}/openscap/probe_process58
 %{_libexecdir}/openscap/probe_rpminfo
 %{_libexecdir}/openscap/probe_rpmverify
 %{_libexecdir}/openscap/probe_runlevel
