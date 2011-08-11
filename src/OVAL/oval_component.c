@@ -1421,7 +1421,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_END(oval_argu_t *
 				char *key = oval_value_get_text(oval_value_iterator_next(values));
 				int len_key = strlen(key);
 				char concat[len_suffix + len_key + 1];
-				if ((len_suffix <= len_key) && strncmp(suffix, key + len_key - len_suffix, len_suffix)) {
+				if ((len_suffix > len_key) || strncmp(suffix, key + len_key - len_suffix, len_suffix)) {
 					snprintf(concat, sizeof(concat), "%s%s", key, suffix);
 				} else {
 					snprintf(concat, sizeof(concat), "%s", key);

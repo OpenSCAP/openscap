@@ -71,6 +71,7 @@ test_run "ind-def_family_test.xml" test_mitre ind-def_family_test.xml "true"
 
 # [E:oval_test.c:368:oval_test_parse_tag] Unknown test oval:org.mitre.oval.test:tst:305.
 # [E:oval_defModel.c:262:oval_definition_model_import] Failed to merge the definition model from: ../ind-def_filehash58_test.xml.
+# trailing '/' in paths
 #test_run "ind-def_filehash58_test.xml" test_mitre ind-def_filehash58_test.xml
 
 #  their bug in: oval:org.mitre.oval.test:tst:102
@@ -110,10 +111,7 @@ test_run "linux-def_rpmverify_test.xml" test_mitre linux-def_rpmverify_test.xml 
 
 test_run "oval_binary_datatype.xml" test_mitre oval_binary_datatype.xml "true"
 test_run "oval_boolean_datatype.xml" test_mitre oval_boolean_datatype.xml "true"
-
-# failed
-#test_run "oval_check_enumeration_entity.xml" test_mitre oval_check_enumeration_entity.xml
-
+test_run "oval_check_enumeration_entity.xml" test_mitre oval_check_enumeration_entity.xml "true"
 test_run "oval_check_enumeration_object_state.xml" test_mitre oval_check_enumeration_object_state.xml "true"
 test_run "oval-def_arithmetic_function.xml" test_mitre oval-def_arithmetic_function.xml "true"
 test_run "oval-def_begin_function.xml" test_mitre oval-def_begin_function.xml "true"
@@ -121,10 +119,7 @@ test_run "oval-def_concat_function.xml" test_mitre oval-def_concat_function.xml 
 test_run "oval-def_constant_variable.xml" test_mitre oval-def_constant_variable.xml "true"
 test_run "oval-def_criteria.xml" test_mitre oval-def_criteria.xml "true"
 test_run "oval-def_criterion.xml" test_mitre oval-def_criterion.xml "true"
-
-# failed
-#test_run "oval-def_end_function.xml" test_mitre oval-def_end_function.xml
-
+test_run "oval-def_end_function.xml" test_mitre oval-def_end_function.xml "true"
 test_run "oval-def_escape_regex_function.xml" test_mitre oval-def_escape_regex_function.xml "true"
 
 # failed
