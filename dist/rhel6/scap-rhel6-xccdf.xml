@@ -1970,7 +1970,7 @@
             </Rule>
             <Rule id="rule-1046" selected="false" weight="10.000000" severity="medium">
               <status date="2010-07-01">draft</status>
-              <title xml:lang="en-US">Password retry Requirements</title>
+              <title xml:lang="en-US">Password minlen Requirements</title>
               <description xml:lang="en-US">The password minlen should meet minimum
 								requirements</description>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
