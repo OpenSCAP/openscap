@@ -3337,7 +3337,7 @@
 		<unix-def:group_id datatype="int" var_check="at least one" var_ref="oval:org.open-scap.rhel6:var:1027111"/>
 	</unix-def:file_state>
 	<unix-def:file_state id="oval:org.open-scap.rhel6:ste:1028111" version="1" operator="OR">
-		<unix-def:group_id datatype="int" operation="less than">500</unix-def:group_id>
+		<unix-def:user_id datatype="int" operation="less than">500</unix-def:user_id>
 		<unix-def:owrite datatype="boolean">0</unix-def:owrite>
 	</unix-def:file_state>
         <ind-def:textfilecontent54_state id="oval:org.open-scap.rhel6:ste:102911" version="1" comment="Expected umask in /etc/rc.d/init.d/functions">
