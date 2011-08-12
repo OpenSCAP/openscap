@@ -1,3 +1,13 @@
+openscap-0.7.5							12-08-2011
+- Added an OVAL Directives schema to allow for a tool
+  to supply a set of directives to more easily specify
+  desired results content.
+- Enhanced OVAL Results directives to allow for more flexibility
+  in allowed results content
+- added new OVAL objects(all OVAL 5.8 objects are covered now)
+- update dpkgprobe
+- added cvss score calculator from vector
+
 openscap-0.7.4							25-07-2011
 - support set operations on Set Objects
 - add support for an unbounded filter element in all objects
