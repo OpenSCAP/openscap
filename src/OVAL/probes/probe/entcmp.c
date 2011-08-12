@@ -484,6 +484,9 @@ static oval_result_t probe_ent_cmp_ipv4addr(SEXP_t *val1, SEXP_t *val2, oval_ope
 	int nm1, nm2;
 	struct in_addr addr1, addr2;
 
+        memset(&addr1, 0, sizeof (struct in_addr));
+        memset(&addr2, 0, sizeof (struct in_addr));
+
 	s = SEXP_string_cstr(val1);
 	pfx = strchr(s, '/');
 	if (pfx) {
@@ -591,7 +594,7 @@ static oval_result_t probe_ent_cmp_ipv4addr(SEXP_t *val1, SEXP_t *val2, oval_ope
  cleanup:
 	oscap_free(s);
 
-	return OVAL_RESULT_ERROR;
+	return (result);
 }
 
 static void mask_v6_addrs(struct in6_addr *addr1, int p1len, struct in6_addr *addr2, int p2len)
