@@ -709,6 +709,23 @@ AC_CHECK_LIB(
 AC_SUBST(gconf_cflags)
 AC_SUBST(gconf_libs)
 
+#
+# libnl
+#
+have_libnl=no
+
+AC_CHECK_LIB(
+  [nl],
+  [rtnl_route_alloc_cache],
+  [libnl_cflags=`pkg-config libnl-1 --cflags`
+   libnl_libs=`pkg-config libnl-1 --libs`
+   have_libnl=yes
+   AC_DEFINE([HAVE_LIBNL], [1], ["Define to 1 if you have 'netlink' library."])
+  ]
+)
+AC_SUBST(libnl_cflags)
+AC_SUBST(libnl_libs)
+
 sql_probe_enabled=no
 
 if test "$probes_independent" = "yes"; then
@@ -862,6 +879,7 @@ echo "  shadow probe:                $probes_unix"
 echo "  uname probe:                 $probes_unix"
 echo "  xinetd probe:                $probes_unix"
 echo "  gconf probe:                 $have_libgconf2"
+echo "  routingtable probe:          $have_libnl"
 echo ""
 
 echo "  === linux probes ==="

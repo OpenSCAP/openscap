@@ -82,7 +82,8 @@ oval_subtypedsc_t __s2n_tbl[] = {
         /* 13012 */ {OVAL_UNIX_SYSCTL,                      "sysctl"              },
 	/* 13013 */ {OVAL_UNIX_PROCESS58,                   "process58"           },
 	/* 13014 */ {OVAL_UNIX_FILEEXTENDEDATTRIBUTE,       "fileextendedattribute" },
-        /* 13015 */ {OVAL_UNIX_GCONF,                       "gconf"               }
+        /* 13015 */ {OVAL_UNIX_GCONF,                       "gconf"               },
+        /* 13016 */ {OVAL_UNIX_ROUTINGTABLE,                "routingtable"        }
 };
 
 #define __s2n_tbl_count (sizeof __s2n_tbl / sizeof(oval_subtypedsc_t))
@@ -112,6 +113,7 @@ oval_subtypedsc_t __n2s_tbl[] = {
 	/* 13004 */ {OVAL_UNIX_PASSWORD,                    "password"            },
 	/* 13005 */ {OVAL_UNIX_PROCESS,                     "process"             },
 	/* 13013 */ {OVAL_UNIX_PROCESS58,                   "process58"           },
+        /* 13016 */ {OVAL_UNIX_ROUTINGTABLE,                "routingtable"        },
 	/*  9003 */ {OVAL_LINUX_RPM_INFO,                   "rpminfo"             },
 	/*  9007 */ {OVAL_LINUX_RPMVERIFY,                  "rpmverify"           },
 	/* 13006 */ {OVAL_UNIX_RUNLEVEL,                    "runlevel"            },

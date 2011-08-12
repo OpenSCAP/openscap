@@ -135,6 +135,11 @@ probe_xinetd_SOURCES = unix/xinetd.c
 pkglibexec_PROGRAMS += probe_sysctl
 probe_sysctl_SOURCES= unix/sysctl.c
 
+pkglibexec_PROGRAMS += probe_routingtable
+probe_routingtable_SOURCES= unix/routingtable.c
+probe_routingtable_CFLAGS= @libnl_cflags@
+probe_routingtable_LDFLAGS= @libnl_libs@
+
 if ENABLE_PROBE_GCONF
 pkglibexec_PROGRAMS += probe_gconf
 probe_gconf_SOURCES= unix/gconf.c
