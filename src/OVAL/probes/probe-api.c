@@ -395,6 +395,7 @@ SEXP_t *probe_obj_creat(const char *name, SEXP_t * attrs, ...)
 		name = va_arg(ap, const char *);
 	}
 
+	va_end(ap);
 	return (obj);
 }
 

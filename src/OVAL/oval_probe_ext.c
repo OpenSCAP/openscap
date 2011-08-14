@@ -815,8 +815,10 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
                 pd  = oval_pdtbl_get(pext->pdtbl, type);
 
                 if (pd == NULL) {
-                        if (oval_probe_sys_handler(type, ptr, PROBE_HANDLER_ACT_OPEN) != 0)
+                        if (oval_probe_sys_handler(type, ptr, PROBE_HANDLER_ACT_OPEN) != 0) {
+				va_end(ap);
                                 return(-1);
+			}
 
                         pd = oval_pdtbl_get(pext->pdtbl, type);
                 }
@@ -908,7 +910,7 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
 			if (probe_dsc == NULL) {
 				oval_syschar_add_new_message(sys, "OVAL object not supported", OVAL_MESSAGE_LEVEL_WARNING);
 				oval_syschar_set_flag(sys, SYSCHAR_FLAG_NOT_COLLECTED);
-
+				va_end(ap);
 				return (1);
 			}
 
@@ -918,7 +920,7 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                         if (probe_urilen >= sizeof probe_uri) {
                                 snprintf (errmsg, sizeof errmsg, "probe URI too long");
                                 oscap_seterr (OSCAP_EFAMILY_GLIBC, ENAMETOOLONG, errmsg);
-
+				va_end(ap);
                                 return (-1);
                         }
 
@@ -927,7 +929,7 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                         if (oval_pdtbl_add(pext->pdtbl, oval_object_get_subtype(obj), -1, probe_uri) != 0) {
 				oval_syschar_add_new_message(sys, "OVAL object not supported", OVAL_MESSAGE_LEVEL_WARNING);
 				oval_syschar_set_flag(sys, SYSCHAR_FLAG_NOT_COLLECTED);
-
+				va_end(ap);
                                 return (1);
 			}
 
@@ -935,6 +937,7 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
 
                         if (pd == NULL) {
                                 oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "internal error");
+				va_end(ap);
                                 return (-1);
                         }
                 }
@@ -961,6 +964,7 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
 			}
 		}
 
+		va_end(ap);
 		return ret;
         }
         case PROBE_HANDLER_ACT_OPEN:
@@ -992,10 +996,13 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
 				else
 					ret = oval_probe_ext_abort(pext->pdtbl->ctx, pd, pext);
 
-				if (ret != 0)
+				if (ret != 0) {
+					va_end(ap);
 					return (ret);
+				}
                         }
 
+			va_end(ap);
                         return(0);
                 } else {
                         /*
@@ -1003,7 +1010,8 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                          */
                         pd = oval_pdtbl_get(pext->pdtbl, type);
 
-                        if (pd == NULL)
+			va_end(ap);
+                        if (pd == NULL) 
                                 return(0);
 
 			if (act == PROBE_HANDLER_ACT_RESET)

@@ -73,7 +73,7 @@
  */
 
 /**
- * Build a new item according to the scpecified format.
+ * Build a new item according to the specified format.
  * @param fmt the desired format
  */
 SEXP_t *probe_item_build(const char *fmt, ...);
@@ -172,7 +172,7 @@ SEXP_t *probe_attr_creat(const char *name, const SEXP_t * val, ...);
  */
 
 /**
- * Build a new object according to the scpecified format.
+ * Build a new object according to the specified format.
  * @param fmt the desired format
  */
 SEXP_t *probe_obj_build(const char *fmt, ...);

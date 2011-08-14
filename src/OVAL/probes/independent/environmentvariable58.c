@@ -118,6 +118,9 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 
 		if ((read_size = read(fd, buffer, buffer_size - 1)) > 0) {
 			empty = 0;
+		} else {
+			close(fd);
+			return err;
 		}
 
 		buffer[buffer_size - 1] = 0;
