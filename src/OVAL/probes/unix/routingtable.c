@@ -42,7 +42,7 @@
 #include "alloc.h"
 #include "util.h"
 
-#if (HAVE_LIBNL)
+#if defined(HAVE_LIBNL)
 #include <netinet/in.h>
 #include <netlink/netlink.h>
 #include <netlink/genl/genl.h>
@@ -152,10 +152,11 @@ static void collect_item(struct nl_object *object, void *arg)
 int probe_main (probe_ctx *ctx, void *arg)
 {
         SEXP_t *probe_in, *dst_ent;
+#if defined(HAVE_LIBNL)
 	struct nl_handle *sk;
 	struct nl_cache  *routes, *links;
 	rt_cb_helper h;
-
+#endif /* HAVE_LIBNL */
         probe_in = probe_ctx_getobject(ctx);
         dst_ent  = probe_obj_getent(probe_in, "destination", 1);
 
