@@ -47,9 +47,11 @@
 #include <rpm/rpmts.h>
 #include <rpm/rpmmacro.h>
 #include <rpm/rpmlog.h>
+#include <rpm/rpmfi.h>
 
 #ifdef HAVE_LIBRPM44
 #include <rpm/header.h>
+#include <rpm/rpmcli.h>
 #define headerFormat(_h, _fmt, _emsg) headerSprintf((_h),( _fmt), rpmTagTable, rpmHeaderFormats, (_emsg))
 #define rpmFreeCrypto() while(0)
 #define rpmFreeFilesystems() while(0)
@@ -241,7 +243,8 @@ static int rpmverify_collect(probe_ctx *ctx,
                 /*
                  * Inspect package files
                  */
-                fi = rpmfiNew(g_rpm.rpmts, pkgh, RPMTAG_FILENAMES, 1);
+
+                fi = rpmfiNew(g_rpm.rpmts, pkgh, RPMTAG_BASENAMES, 1);
 
                 while (rpmfiNext(fi) != -1) {
                         res.file   = rpmfiFN(fi);
@@ -348,7 +351,9 @@ static void rpmverify_additem(probe_ctx *ctx, struct rpmverify_res *res)
                                  "ownership_differs",   OVAL_DATATYPE_STRING, VF_RESULT(RPMVERIFY_USER),
                                  "group_differs",       OVAL_DATATYPE_STRING, VF_RESULT(RPMVERIFY_GROUP),
                                  "mtime_differs",       OVAL_DATATYPE_STRING, VF_RESULT(RPMVERIFY_MTIME),
+#ifndef HAVE_LIBRPM44
                                  "capabilities_differ", OVAL_DATATYPE_STRING, VF_RESULT(RPMVERIFY_CAPS),
+#endif
                                  "configuration_file",  OVAL_DATATYPE_BOOLEAN, FF_RESULT(RPMFILE_CONFIG),
                                  "documentation_file",  OVAL_DATATYPE_BOOLEAN, FF_RESULT(RPMFILE_DOC),
                                  "ghost_file",          OVAL_DATATYPE_BOOLEAN, FF_RESULT(RPMFILE_GHOST),
