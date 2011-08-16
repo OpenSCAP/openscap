@@ -135,10 +135,12 @@ test_run "oval-def_regex_capture_function.xml" test_mitre oval-def_regex_capture
 test_run "oval-def_set.xml" test_mitre oval-def_set.xml "true"
 
 # failed
-#test_run "oval-def_split_function.xml" test_mitre oval-def_split_function.xml
+# comment="placeholder state since the proper test is not yet possible"
+#test_run "oval-def_split_function.xml" test_mitre oval-def_split_function.xml "true"
 
 # failed
-#test_run "oval-def_time_difference_function.xml" test_mitre oval-def_time_difference_function.xml
+# win_filetime format is currently unsupported, there are possibly some wrong values in the document
+#test_run "oval-def_time_difference_function.xml" test_mitre oval-def_time_difference_function.xml "true"
 
 test_run "oval-def_substring_function.xml" test_mitre oval-def_substring_function.xml "true"
 test_run "oval-def_variable_component.xml" test_mitre oval-def_variable_component.xml "true"
@@ -150,7 +152,8 @@ test_run "oval_string_datatype.xml" test_mitre oval_string_datatype.xml "true"
 test_run "oval_version_datatype.xml" test_mitre oval_version_datatype.xml "true"
 
 # failed
-#test_run "unix-def_file_test.xml" test_mitre unix-def_file_test.xml
+# symlink issue
+#test_run "unix-def_file_test.xml" test_mitre unix-def_file_test.xml "true"
 
 # unsupported object
 #test_run "unix-def_inetd_test.xml" test_mitre unix-def_inetd_test.xml "unknown"
