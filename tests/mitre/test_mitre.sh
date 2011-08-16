@@ -36,6 +36,20 @@ function test_mitre {
 	return 1
     fi
 
+    if [ -n "$3" ]; then
+        # only check the individual results specified in the arg list
+        shift 1
+        while [ -n "$1" -a -n "$2" ]; do
+            def_id="$1"
+            def_res="$2"
+            grep -q "definition_id=\"$def_id\".*result=\"$def_res\"" "$RESFILE" || return 1
+            shift 2
+        done
+        return 0
+    fi
+
+    # assume all definitions should have the same result
+
     LINES=`grep definition_id "$RESFILE"`
     # catch error from grep
     ret_val=$?
@@ -121,9 +135,9 @@ test_run "oval-def_criteria.xml" test_mitre oval-def_criteria.xml "true"
 test_run "oval-def_criterion.xml" test_mitre oval-def_criterion.xml "true"
 test_run "oval-def_end_function.xml" test_mitre oval-def_end_function.xml "true"
 test_run "oval-def_escape_regex_function.xml" test_mitre oval-def_escape_regex_function.xml "true"
-
-# failed
-#test_run "oval-def_extend_definition.xml" test_mitre oval-def_extend_definition.xml
+test_run "oval-def_extend_definition.xml" test_mitre oval-def_extend_definition.xml \
+    "oval:org.mitre.oval.test:def:117" "true" \
+    "oval:org.mitre.oval.test:def:97" "true"
 
 # failed - upstream bug: the variable ids in 'oval-def_external_variable.xml' and 'ValidationSupportFiles/External Variables/external-variables.xml' don't match
 #test_run "oval-def_external_variable.xml" test_mitre oval-def_external_variable.xml
