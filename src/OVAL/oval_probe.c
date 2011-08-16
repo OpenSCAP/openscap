@@ -133,7 +133,7 @@ static int __n2s_tbl_sortcmp(oval_subtypedsc_t *a, oval_subtypedsc_t *b)
         return strcmp(a->name, b->name);
 }
 
-static void psess_tblinit(void)
+void psess_tblinit(void)
 {
         register size_t i;
 

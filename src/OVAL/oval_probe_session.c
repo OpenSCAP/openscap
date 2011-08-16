@@ -75,7 +75,6 @@ static void encache_libinit(void)
         }
 }
 
-
 static void psess_libinit(void)
 {
         encache_libinit();

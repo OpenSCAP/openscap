@@ -69,6 +69,7 @@ typedef struct {
         const char    *name;
 } oval_subtypedsc_t;
 
+void psess_tblinit(void);
 const char *oval_subtype2str(oval_subtype_t subtype);
 oval_subtype_t oval_str2subtype(const char *str);
 
