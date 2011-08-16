@@ -66,7 +66,7 @@ extern probe_ncache_t *OSCAP_GSYM(encache);
 
 typedef struct {
         oval_subtype_t type;
-        char          *name;
+        const char    *name;
 } oval_subtypedsc_t;
 
 const char *oval_subtype2str(oval_subtype_t subtype);

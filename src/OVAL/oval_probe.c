@@ -46,93 +46,57 @@
 
 #include "_oval_probe_session.h"
 #include "_oval_probe_handler.h"
+#include "oval_probe_meta.h"
 
-/* Sorted by subtype (first column) */
-oval_subtypedsc_t __s2n_tbl[] = {
-        /*     2 */ {OVAL_SUBTYPE_SYSINFO,                  "system_info"         },
-	/*  7001 */ {OVAL_INDEPENDENT_FAMILY,               "family"              },
-        /*  7002 */ {OVAL_INDEPENDENT_FILE_MD5,             "filemd5"             },
-        /*  7003 */ {OVAL_INDEPENDENT_FILE_HASH,            "filehash"            },
-        /*  7004 */ {OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE, "environmentvariable" },
-	/*  7005 */ {OVAL_INDEPENDENT_SQL,                  "sql"                 },
-	/*  7006 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54"   },
-	/*  7007 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT,    "textfilecontent"     },
-        /*  7009 */ {OVAL_INDEPENDENT_VARIABLE,             "variable"            },
-	/*  7010 */ {OVAL_INDEPENDENT_XML_FILE_CONTENT,     "xmlfilecontent"      },
-	/*  7013 */ {OVAL_INDEPENDENT_SQL57,                "sql57"               },
-        /*  7014 */ {OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE58,"environmentvariable58" },
-        /*  7015 */ {OVAL_INDEPENDENT_FILE_HASH58,          "filehash58"          },
-	/*  9001 */ {OVAL_LINUX_DPKG_INFO,                  "dpkginfo"            },
-	/*  9002 */ {OVAL_LINUX_INET_LISTENING_SERVERS,     "inetlisteningservers"},
-	/*  9003 */ {OVAL_LINUX_RPM_INFO,                   "rpminfo"             },
-        /*  9005 */ {OVAL_LINUX_PARTITION,                  "partition",          },
-	/*  9006 */ {OVAL_LINUX_IFLISTENERS,                "iflisteners"         },
-	/*  9007 */ {OVAL_LINUX_RPMVERIFY,                  "rpmverify"           },
-	/*  9008 */ {OVAL_LINUX_SELINUXBOOLEAN,             "selinuxboolean"      },
-	/*  9009 */ {OVAL_LINUX_SELINUXSECURITYCONTEXT,     "selinuxsecuritycontext" },
-	/* 12001 */ {OVAL_SOLARIS_ISAINFO,                  "isainfo"             },
-	/* 13001 */ {OVAL_UNIX_FILE,                        "file"                },
-	/* 13003 */ {OVAL_UNIX_INTERFACE,                   "interface"           },
-	/* 13004 */ {OVAL_UNIX_PASSWORD,                    "password"            },
-	/* 13005 */ {OVAL_UNIX_PROCESS,                     "process"             },
-	/* 13006 */ {OVAL_UNIX_RUNLEVEL,                    "runlevel"            },
-	/* 13008 */ {OVAL_UNIX_SHADOW,                      "shadow"              },
-	/* 13009 */ {OVAL_UNIX_UNAME,                       "uname"               },
-	/* 13010 */ {OVAL_UNIX_XINETD,                      "xinetd"              },
-        /* 13012 */ {OVAL_UNIX_SYSCTL,                      "sysctl"              },
-	/* 13013 */ {OVAL_UNIX_PROCESS58,                   "process58"           },
-	/* 13014 */ {OVAL_UNIX_FILEEXTENDEDATTRIBUTE,       "fileextendedattribute" },
-        /* 13015 */ {OVAL_UNIX_GCONF,                       "gconf"               },
-        /* 13016 */ {OVAL_UNIX_ROUTINGTABLE,                "routingtable"        }
+oval_probe_meta_t __probe_meta[] = {
+        { OVAL_SUBTYPE_SYSINFO, "system_info", &oval_probe_sys_handler, OVAL_PROBEMETA_EXTERNAL, "probe_system_info" },
+        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_FAMILY, "family"),
+        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_FILE_MD5, "filemd5"),
+        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_FILE_HASH, "filehash"),
+        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE, "environmentvariable"),
+        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_SQL, "sql"),
+        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54"),
+        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_TEXT_FILE_CONTENT, "textfilecontent"),
+        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_VARIABLE, "variable"),
+        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_XML_FILE_CONTENT, "xmlfilecontent"),
+        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_SQL57, "sql57"),
+        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE58, "environmentvariable58"),
+        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_FILE_HASH58, "filehash58"),
+        OVAL_PROBE_EXTERNAL(OVAL_LINUX_DPKG_INFO, "dpkginfo"),
+        OVAL_PROBE_EXTERNAL(OVAL_LINUX_INET_LISTENING_SERVERS, "inetlisteningservers"),
+        OVAL_PROBE_EXTERNAL(OVAL_LINUX_RPM_INFO, "rpminfo"),
+        OVAL_PROBE_EXTERNAL(OVAL_LINUX_PARTITION, "partition"),
+        OVAL_PROBE_EXTERNAL(OVAL_LINUX_IFLISTENERS, "iflisteners"),
+        OVAL_PROBE_EXTERNAL(OVAL_LINUX_RPMVERIFY, "rpmverify"),
+        OVAL_PROBE_EXTERNAL(OVAL_LINUX_SELINUXBOOLEAN, "selinuxboolean"),
+        OVAL_PROBE_EXTERNAL(OVAL_LINUX_SELINUXSECURITYCONTEXT, "selinuxsecuritycontext"),
+        OVAL_PROBE_EXTERNAL(OVAL_SOLARIS_ISAINFO, "isainfo"),
+        OVAL_PROBE_EXTERNAL(OVAL_UNIX_FILE, "file"),
+        OVAL_PROBE_EXTERNAL(OVAL_UNIX_INTERFACE, "interface"),
+        OVAL_PROBE_EXTERNAL(OVAL_UNIX_PASSWORD, "password"),
+        OVAL_PROBE_EXTERNAL(OVAL_UNIX_PROCESS, "process"),
+        OVAL_PROBE_EXTERNAL(OVAL_UNIX_RUNLEVEL, "runlevel"),
+        OVAL_PROBE_EXTERNAL(OVAL_UNIX_SHADOW, "shadow"),
+        OVAL_PROBE_EXTERNAL(OVAL_UNIX_UNAME, "uname"),
+        OVAL_PROBE_EXTERNAL(OVAL_UNIX_XINETD, "xinetd"),
+        OVAL_PROBE_EXTERNAL(OVAL_UNIX_SYSCTL, "sysctl"),
+        OVAL_PROBE_EXTERNAL(OVAL_UNIX_PROCESS58, "process58"),
+        OVAL_PROBE_EXTERNAL(OVAL_UNIX_FILEEXTENDEDATTRIBUTE, "fileextendedattribute"),
+        OVAL_PROBE_EXTERNAL(OVAL_UNIX_GCONF, "gconf"),
+        OVAL_PROBE_EXTERNAL(OVAL_UNIX_ROUTINGTABLE, "routingtable")
 };
 
-#define __s2n_tbl_count (sizeof __s2n_tbl / sizeof(oval_subtypedsc_t))
+size_t __probe_meta_count = sizeof __probe_meta/sizeof __probe_meta[0];
+oval_subtypedsc_t __s2n_tbl[sizeof __probe_meta/sizeof __probe_meta[0]];
+oval_subtypedsc_t __n2s_tbl[sizeof __probe_meta/sizeof __probe_meta[0]];
+
+#define __s2n_tbl_count (__probe_meta_count)
+#define __n2s_tbl_count (__probe_meta_count)
 
 static int __s2n_tbl_cmp(oval_subtype_t *type, oval_subtypedsc_t *dsc)
 {
         return (*type - dsc->type);
 }
-
-/* Sorted by name (second column) */
-oval_subtypedsc_t __n2s_tbl[] = {
-	/*  9001 */ {OVAL_LINUX_DPKG_INFO,                  "dpkginfo"            },
-        /*  7004 */ {OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE, "environmentvariable" },
-        /*  7014 */ {OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE58,"environmentvariable58" },
-	/*  7001 */ {OVAL_INDEPENDENT_FAMILY,               "family"              },
-	/* 13001 */ {OVAL_UNIX_FILE,                        "file"                },
-	/* 13014 */ {OVAL_UNIX_FILEEXTENDEDATTRIBUTE,       "fileextendedattribute" },
-        /*  7003 */ {OVAL_INDEPENDENT_FILE_HASH,            "filehash"            },
-        /*  7015 */ {OVAL_INDEPENDENT_FILE_HASH58,          "filehash58"          },
-        /*  7002 */ {OVAL_INDEPENDENT_FILE_MD5,             "filemd5"             },
-        /* 13015 */ {OVAL_UNIX_GCONF,                       "gconf"               },
-	/*  9006 */ {OVAL_LINUX_IFLISTENERS,                "iflisteners"         },
-	/*  9002 */ {OVAL_LINUX_INET_LISTENING_SERVERS,     "inetlisteningservers"},
-	/* 13003 */ {OVAL_UNIX_INTERFACE,                   "interface"           },
-	/* 12001 */ {OVAL_SOLARIS_ISAINFO,                  "isainfo"             },
-        /*  9005 */ {OVAL_LINUX_PARTITION,                  "partition"           },
-	/* 13004 */ {OVAL_UNIX_PASSWORD,                    "password"            },
-	/* 13005 */ {OVAL_UNIX_PROCESS,                     "process"             },
-	/* 13013 */ {OVAL_UNIX_PROCESS58,                   "process58"           },
-        /* 13016 */ {OVAL_UNIX_ROUTINGTABLE,                "routingtable"        },
-	/*  9003 */ {OVAL_LINUX_RPM_INFO,                   "rpminfo"             },
-	/*  9007 */ {OVAL_LINUX_RPMVERIFY,                  "rpmverify"           },
-	/* 13006 */ {OVAL_UNIX_RUNLEVEL,                    "runlevel"            },
-	/*  9008 */ {OVAL_LINUX_SELINUXBOOLEAN,             "selinuxboolean"      },
-	/*  9009 */ {OVAL_LINUX_SELINUXSECURITYCONTEXT,     "selinuxsecuritycontext" },
-	/* 13008 */ {OVAL_UNIX_SHADOW,                      "shadow"              },
-	/*  7005 */ {OVAL_INDEPENDENT_SQL,                  "sql"                 },
-	/*  7013 */ {OVAL_INDEPENDENT_SQL57,                "sql57"               },
-        /* 13012 */ {OVAL_UNIX_SYSCTL,                      "sysctl"              },
-        /*     2 */ {OVAL_SUBTYPE_SYSINFO,                  "system_info"         },
-	/*  7007 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT,    "textfilecontent"     },
-	/*  7006 */ {OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54"   },
-	/* 13009 */ {OVAL_UNIX_UNAME,                       "uname"               },
-        /*  7009 */ {OVAL_INDEPENDENT_VARIABLE,             "variable"            },
-	/* 13010 */ {OVAL_UNIX_XINETD,                      "xinetd"              },
-	/*  7010 */ {OVAL_INDEPENDENT_XML_FILE_CONTENT,     "xmlfilecontent"      }
-};
-
-#define __n2s_tbl_count (sizeof __n2s_tbl / sizeof(oval_subtypedsc_t))
 
 static int __n2s_tbl_cmp(const char *name, oval_subtypedsc_t *dsc)
 {
@@ -150,11 +114,62 @@ probe_ncache_t  *OSCAP_GSYM(encache) = NULL;
 struct id_desc_t OSCAP_GSYM(id_desc);
 #endif
 
+#if defined(OSCAP_THREAD_SAFE)
+# include <pthread.h>
+static pthread_once_t __psess_init_once = PTHREAD_ONCE_INIT;
+#else
+static volatile int __psess_init_once = 0;
+#endif
+
 #define __ERRBUF_SIZE 128
+
+static int __s2n_tbl_sortcmp(oval_subtypedsc_t *a, oval_subtypedsc_t *b)
+{
+        return (a->type - b->type);
+}
+
+static int __n2s_tbl_sortcmp(oval_subtypedsc_t *a, oval_subtypedsc_t *b)
+{
+        return strcmp(a->name, b->name);
+}
+
+static void psess_tblinit(void)
+{
+        register size_t i;
+
+        for(i = 0; i < __probe_meta_count; ++i) {
+                __s2n_tbl[i].type = __probe_meta[i].otype;
+                __n2s_tbl[i].type = __probe_meta[i].otype;
+                __s2n_tbl[i].name = __probe_meta[i].stype;
+                __n2s_tbl[i].name = __probe_meta[i].stype;
+        }
+
+        qsort(__s2n_tbl, __probe_meta_count, sizeof (oval_subtypedsc_t),
+              (int(*)(const void *, const void *))__s2n_tbl_sortcmp);
+
+        qsort(__n2s_tbl, __probe_meta_count, sizeof (oval_subtypedsc_t),
+              (int(*)(const void *, const void *))__n2s_tbl_sortcmp);
+}
+
+static void __init_once(void)
+{
+#if defined(OSCAP_THREAD_SAFE)
+        if (pthread_once(&__psess_init_once, &psess_tblinit) != 0)
+                abort();
+#else
+        if (__psess_init_once == 0) {
+                psess_tblinit();
+                __psess_init_once = 1;
+        }
+#endif
+        return;
+}
 
 const char *oval_subtype2str(oval_subtype_t subtype)
 {
         oval_subtypedsc_t *d;
+
+        __init_once();
 
         d = oscap_bfind(__s2n_tbl, __s2n_tbl_count, sizeof(oval_subtypedsc_t), &subtype,
                         (int(*)(void *, void *))__s2n_tbl_cmp);
@@ -165,6 +180,8 @@ const char *oval_subtype2str(oval_subtype_t subtype)
 oval_subtype_t oval_str2subtype(const char *str)
 {
         oval_subtypedsc_t *d;
+
+        __init_once();
 
         d = oscap_bfind(__n2s_tbl, __n2s_tbl_count, sizeof(oval_subtypedsc_t), (void *)str,
                         (int(*)(void *, void *))__n2s_tbl_cmp);

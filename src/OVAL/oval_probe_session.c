@@ -46,12 +46,12 @@
 #if defined(ENABLE_PROBES)
 # include "oval_probe_ext.h"
 # include "oval_probe_int.h"
-
+# include "oval_probe_meta.h"
 #if defined(OSCAP_THREAD_SAFE)
 # include <pthread.h>
-static pthread_once_t __encache_once = PTHREAD_ONCE_INIT;
+static pthread_once_t __psess_init_once = PTHREAD_ONCE_INIT;
 #else
-static volatile int __encache_once = 0;
+static volatile int __psess_init_once = 0;
 #endif
 
 /**
@@ -75,6 +75,13 @@ static void encache_libinit(void)
         }
 }
 
+
+static void psess_libinit(void)
+{
+        encache_libinit();
+        psess_tblinit();
+}
+
 /**
  * Initialize the element name cache. This function can be called repeatedly
  * from various probe system entry points to ensure that the cache is initialized.
@@ -82,15 +89,15 @@ static void encache_libinit(void)
  * is used to ensure that the initialization is done just once. Otherwise a
  * volatile integer flag is used.
  */
-static void encache_once(void)
+static void __init_once(void)
 {
 #if defined(OSCAP_THREAD_SAFE)
-        if (pthread_once(&__encache_once, &encache_libinit) != 0)
+        if (pthread_once(&__psess_init_once, &psess_libinit) != 0)
                 abort();
 #else
-        if (__encache_once == 0) {
-                encache_libinit();
-                __encache_once = 1;
+        if (__psess_init_once == 0) {
+                psess_libinit();
+                __psess_init_once = 1;
         }
 #endif
         return;
@@ -100,58 +107,33 @@ static void encache_once(void)
 oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
 {
         oval_probe_session_t *sess;
-
+#if defined(ENABLE_PROBES)
+        void *handler_arg;
+        register size_t i;
+#endif
         sess = oscap_talloc(oval_probe_session_t);
         sess->ph = oval_phtbl_new();
         sess->sys_model = model;
         sess->flg = 0;
-
 #if defined(ENABLE_PROBES)
         sess->pext = oval_pext_new();
         sess->pext->model    = &sess->sys_model;
         sess->pext->sess_ptr = sess;
 
-        encache_once();
+        __init_once();
 
-        oval_probe_handler_set(sess->ph, OVAL_SUBTYPE_SYSINFO,       oval_probe_sys_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_FAMILY,    oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_FILE_MD5,  oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_FILE_HASH, oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_FILE_HASH58, oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_TEXT_FILE_CONTENT, oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_XML_FILE_CONTENT,  oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_LDAP57,  oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_SQL,  oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_SQL57,  oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_LINUX_INET_LISTENING_SERVERS,  oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_LINUX_IFLISTENERS,  oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_LINUX_DPKG_INFO, oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_LINUX_RPM_INFO,  oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_LINUX_RPMVERIFY, oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_LINUX_PARTITION, oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_LINUX_SELINUXBOOLEAN, oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_LINUX_SELINUXSECURITYCONTEXT, oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_SOLARIS_ISAINFO, oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_UNIX_FILE,       oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_UNIX_FILEEXTENDEDATTRIBUTE, oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_UNIX_INTERFACE,  oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_UNIX_PASSWORD,   oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_UNIX_PROCESS,    oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_UNIX_PROCESS58,  oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_UNIX_RUNLEVEL,   oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_UNIX_SHADOW,     oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_UNIX_UNAME,      oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_UNIX_DNSCACHE,   oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_UNIX_SYSCTL,     oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_UNIX_GCONF,      oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_UNIX_XINETD,     oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_UNIX_ROUTINGTABLE, oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_SUBTYPE_ALL,     oval_probe_ext_handler, sess->pext); /* special case for reset */
+        dI("__probe_meta_count = %zu\n", __probe_meta_count);
 
-        oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE,  oval_probe_ext_handler, sess->pext);
-        oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE58,  oval_probe_ext_handler, sess->pext);
-	oval_probe_handler_set(sess->ph, OVAL_INDEPENDENT_VARIABLE, oval_probe_ext_handler, sess->pext);
+        for (i = 0; i < __probe_meta_count; ++i) {
+                handler_arg = NULL;
+
+                if (__probe_meta[i].flags & OVAL_PROBEMETA_EXTERNAL)
+                        handler_arg = sess->pext;
+
+                oval_probe_handler_set(sess->ph, __probe_meta[i].otype, __probe_meta[i].handler, handler_arg);
+        }
+
+        oval_probe_handler_set(sess->ph, OVAL_SUBTYPE_ALL, oval_probe_ext_handler, sess->pext); /* special case for reset */
 #endif
         return(sess);
 }

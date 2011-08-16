@@ -42,53 +42,13 @@
 #include "probes/public/probe-api.h"
 #include "oval_probe_ext.h"
 #include "oval_sexp.h"
+#include "oval_probe_meta.h"
 
 #define __ERRBUF_SIZE 128
 
 #if defined(__SVR4) && defined (__sun)
 #define __STRING(x)     #x
 #endif
-
-const oval_pdsc_t OSCAP_GSYM(default_pdsc)[] = {
-        {OVAL_SUBTYPE_SYSINFO,                  "system_info",       "probe_system_info"},
-	{OVAL_INDEPENDENT_FAMILY,               "family",            "probe_family"},
-        {OVAL_INDEPENDENT_FILE_MD5,             "filemd5",           "probe_filemd5"},
-        {OVAL_INDEPENDENT_FILE_HASH,            "filehash",          "probe_filehash"},
-	{OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE, "environmentvariable", "probe_environmentvariable"},
-	{OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE58,"environmentvariable58", "probe_environmentvariable58"},
-        {OVAL_INDEPENDENT_SQL,                  "sql",               "probe_sql"},
-        {OVAL_INDEPENDENT_SQL57,                "sql57",             "probe_sql57"},
-        {OVAL_INDEPENDENT_FILE_HASH58,            "filehash58",          "probe_filehash58"},
-	{OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54", "probe_textfilecontent54"},
-	{OVAL_INDEPENDENT_TEXT_FILE_CONTENT,    "textfilecontent",   "probe_textfilecontent"},
-	{OVAL_INDEPENDENT_VARIABLE,             "variable",          "probe_variable"},
-	{OVAL_INDEPENDENT_XML_FILE_CONTENT,     "xmlfilecontent",    "probe_xmlfilecontent"},
-        {OVAL_INDEPENDENT_LDAP57,               "ldap57",            "probe_ldap57"},
-	{OVAL_LINUX_DPKG_INFO,                  "dpkginfo",          "probe_dpkginfo"},
-	{OVAL_LINUX_INET_LISTENING_SERVERS,     "inetlisteningservers", "probe_inetlisteningservers"},
-	{OVAL_LINUX_IFLISTENERS,                "iflisteners",       "probe_iflisteners"},
-	{OVAL_LINUX_RPM_INFO,                   "rpminfo",           "probe_rpminfo"},
-	{OVAL_LINUX_RPMVERIFY,                  "rpmverify",         "probe_rpmverify"},
-        {OVAL_LINUX_PARTITION,                  "partition",         "probe_partition"},
-	{OVAL_LINUX_SELINUXBOOLEAN,             "selinuxboolean",    "probe_selinuxboolean"},
-	{OVAL_LINUX_SELINUXSECURITYCONTEXT,     "selinuxsecuritycontext", "probe_selinuxsecuritycontext"},
-	{OVAL_SOLARIS_ISAINFO,                  "isainfo",           "probe_isainfo"},
-	{OVAL_UNIX_FILE,                        "file",              "probe_file"},
-	{OVAL_UNIX_FILEEXTENDEDATTRIBUTE,       "fileextendedattribute", "probe_fileextendedattribute"},
-	{OVAL_UNIX_INTERFACE,                   "interface",         "probe_interface"},
-	{OVAL_UNIX_PASSWORD,                    "password",          "probe_password"},
-	{OVAL_UNIX_PROCESS,                     "process",           "probe_process"},
-	{OVAL_UNIX_PROCESS58,                   "process58",         "probe_process58"},
-	{OVAL_UNIX_RUNLEVEL,                    "runlevel",          "probe_runlevel"},
-	{OVAL_UNIX_SHADOW,                      "shadow",            "probe_shadow"},
-	{OVAL_UNIX_UNAME,                       "uname",             "probe_uname"},
-        {OVAL_UNIX_DNSCACHE,                    "dnscache",          "probe_dnscache"},
-        {OVAL_UNIX_SYSCTL,                      "sysctl",            "probe_sysctl"},
-        {OVAL_UNIX_XINETD,                      "xinetd",            "probe_xinetd"},
-        {OVAL_UNIX_ROUTINGTABLE,                "routingtable",      "probe_routingtable"}
-};
-
-#define DEFAULT_PDSC_COUNT (sizeof OSCAP_GSYM(default_pdsc) / sizeof (oval_pdsc_t))
 
 static oval_pdtbl_t *oval_pdtbl_new(void);
 static void          oval_pdtbl_free(oval_pdtbl_t *table);
@@ -1056,24 +1016,34 @@ int oval_probe_ext_init(oval_pext_t *pext)
                         goto _ret;
 		}
 
-		pext->pdsc = oscap_alloc(sizeof(oval_pdsc_t) * DEFAULT_PDSC_COUNT);
+		pext->pdsc = oscap_alloc(sizeof(oval_pdsc_t) * __probe_meta_count);
 
-		for (r = 0, i = 0; i < DEFAULT_PDSC_COUNT; ++i) {
-			if (stat((OSCAP_GSYM(default_pdsc)[i]).file, &st) != 0) {
-				dW("skipped: %s (stat failed, errno=%d)\n", OSCAP_GSYM(default_pdsc)[i].name, errno);
+                dI("__probe_meta_count = %zu\n", __probe_meta_count);
+
+		for (r = 0, i = 0; i < __probe_meta_count; ++i) {
+                        if (!(__probe_meta[i].flags & OVAL_PROBEMETA_EXTERNAL)) {
+                                dI("skipped: %s (not an external probe)\n", __probe_meta[i].stype);
+                                continue;
+                        }
+
+			if (stat(__probe_meta[i].pname, &st) != 0) {
+				dW("skipped: %s (stat failed, errno=%d)\n", __probe_meta[i].stype, errno);
 				continue;
 			}
 
 			if (!S_ISREG(st.st_mode)) {
-				dW("skipped: %s (not a regular file)\n", OSCAP_GSYM(default_pdsc)[i].name);
+				dW("skipped: %s (not a regular file)\n", __probe_meta[i].stype);
 				continue;
 			}
 
-			memcpy(pext->pdsc + r, OSCAP_GSYM(default_pdsc) + i, sizeof(oval_pdsc_t));
+                        pext->pdsc[r].type = __probe_meta[i].otype;
+                        pext->pdsc[r].name = __probe_meta[i].stype;
+                        pext->pdsc[r].file = __probe_meta[i].pname;
+
 			++r;
 		}
 
-		if (r < DEFAULT_PDSC_COUNT)
+		if (r < __probe_meta_count)
 			pext->pdsc = oscap_realloc(pext->pdsc, sizeof(oval_pdsc_t) * r);
 
 		pext->pdsc_cnt = r;
