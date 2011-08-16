@@ -2641,8 +2641,8 @@
           </Value>
           <Rule id="rule-1070" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">Enforce an inactivy timeout for Bourne shells</title>
-            <description xml:lang="en-US">Bourne shells should be closed after <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1059"/> minutes of inactivity.</description>
+            <title xml:lang="en-US">Enforce an inactivity timeout for Bourne shells</title>
+            <description xml:lang="en-US">Bourne shells should be closed after <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1070"/> minutes of inactivity.</description>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-export export-name="oval:org.open-scap.rhel6:var:1070" value-id="var-1070"/>
               <check-content-ref name="oval:org.open-scap.rhel6:def:1070" href="scap-rhel6-oval.xml"/>
@@ -2650,8 +2650,8 @@
           </Rule>
           <Rule id="rule-1071" selected="false" weight="10.000000" severity="medium">
             <status date="2010-07-01">accepted</status>
-            <title xml:lang="en-US">Enforce an inactivy timeout for C shells</title>
-            <description xml:lang="en-US">C shells should be closed after <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1059"/> minutes of inactivity.</description>
+            <title xml:lang="en-US">Enforce an inactivity timeout for C shells</title>
+            <description xml:lang="en-US">C shells should be closed after <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1070"/> minutes of inactivity.</description>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-export export-name="oval:org.open-scap.rhel6:var:1070" value-id="var-1070"/>
               <check-content-ref name="oval:org.open-scap.rhel6:def:1071" href="scap-rhel6-oval.xml"/>
