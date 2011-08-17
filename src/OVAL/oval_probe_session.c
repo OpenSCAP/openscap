@@ -49,9 +49,9 @@
 # include "oval_probe_meta.h"
 #if defined(OSCAP_THREAD_SAFE)
 # include <pthread.h>
-static pthread_once_t __psess_init_once = PTHREAD_ONCE_INIT;
+static pthread_once_t __oval_probe_session_init_once = PTHREAD_ONCE_INIT;
 #else
-static volatile int __psess_init_once = 0;
+static volatile int __oval_probe_session_init_once = 0;
 #endif
 
 /**
@@ -59,26 +59,26 @@ static volatile int __psess_init_once = 0;
  * atexit(3) during initialization and ensures that the element
  * name cache is freed before exit.
  */
-static void encache_libfree(void)
+static void ncache_libfree(void)
 {
-        probe_ncache_free(OSCAP_GSYM(encache));
+        probe_ncache_free(OSCAP_GSYM(ncache));
 }
 
 /**
  * Initialize element name cache and register an exit hook.
  */
-static void encache_libinit(void)
+static void ncache_libinit(void)
 {
-        if (OSCAP_GSYM(encache) == NULL) {
-                OSCAP_GSYM(encache) = probe_ncache_new();
-                atexit(encache_libfree);
+        if (OSCAP_GSYM(ncache) == NULL) {
+                OSCAP_GSYM(ncache) = probe_ncache_new();
+                atexit(ncache_libfree);
         }
 }
 
-static void psess_libinit(void)
+static void oval_probe_session_libinit(void)
 {
-        encache_libinit();
-        psess_tblinit();
+        ncache_libinit();
+        oval_probe_tblinit();
 }
 
 /**
@@ -91,12 +91,13 @@ static void psess_libinit(void)
 static void __init_once(void)
 {
 #if defined(OSCAP_THREAD_SAFE)
-        if (pthread_once(&__psess_init_once, &psess_libinit) != 0)
+        if (pthread_once(&__oval_probe_session_init_once,
+			 &oval_probe_session_libinit) != 0)
                 abort();
 #else
-        if (__psess_init_once == 0) {
-                psess_libinit();
-                __psess_init_once = 1;
+        if (__oval_probe_session_init_once == 0) {
+                oval_probe_session_libinit();
+                __oval_probe_session_init_once = 1;
         }
 #endif
         return;
@@ -121,15 +122,17 @@ oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
 
         __init_once();
 
-        dI("__probe_meta_count = %zu\n", __probe_meta_count);
+        dI("__probe_meta_count = %zu\n", OSCAP_GSYM(__probe_meta_count));
 
-        for (i = 0; i < __probe_meta_count; ++i) {
+        for (i = 0; i < OSCAP_GSYM(__probe_meta_count); ++i) {
                 handler_arg = NULL;
 
-                if (__probe_meta[i].flags & OVAL_PROBEMETA_EXTERNAL)
+                if (OSCAP_GSYM(__probe_meta)[i].flags & OVAL_PROBEMETA_EXTERNAL)
                         handler_arg = sess->pext;
 
-                oval_probe_handler_set(sess->ph, __probe_meta[i].otype, __probe_meta[i].handler, handler_arg);
+                oval_probe_handler_set(sess->ph,
+				       OSCAP_GSYM(__probe_meta)[i].otype,
+				       OSCAP_GSYM(__probe_meta)[i].handler, handler_arg);
         }
 
         oval_probe_handler_set(sess->ph, OVAL_SUBTYPE_ALL, oval_probe_ext_handler, sess->pext); /* special case for reset */
@@ -139,6 +142,11 @@ oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
 
 void oval_probe_session_destroy(oval_probe_session_t *sess)
 {
+	if (sess == NULL) {
+		dE("Invalid session (NULL)\n");
+		return;
+	}
+
         oval_phtbl_free(sess->ph);
 #if defined(ENABLE_PROBES)
         oval_pext_free(sess->pext);
@@ -157,7 +165,10 @@ int oval_probe_session_reset(oval_probe_session_t *sess, struct oval_syschar_mod
 #if defined(ENABLE_PROBES)
         oval_ph_t *ph;
 
-        ph = oval_probe_handler_get(sess->ph, OVAL_SUBTYPE_ALL);
+        if ((ph = oval_probe_handler_get(sess->ph, OVAL_SUBTYPE_ALL)) == NULL) {
+		dE("No probe handler for OVAL_SUBTYPE_ALL\n");
+		return (-1);
+	}
 
         if (ph->func(OVAL_SUBTYPE_ALL, ph->uptr, PROBE_HANDLER_ACT_RESET) != 0) {
                 return(-1);
@@ -172,7 +183,13 @@ int oval_probe_session_reset(oval_probe_session_t *sess, struct oval_syschar_mod
 int oval_probe_session_abort(oval_probe_session_t *sess)
 {
 #if defined(ENABLE_PROBES)
-	oval_ph_t *ph = oval_probe_handler_get(sess->ph, OVAL_SUBTYPE_ALL);
+	oval_ph_t *ph;
+
+	if ((ph = oval_probe_handler_get(sess->ph, OVAL_SUBTYPE_ALL) ) == NULL) {
+		dE("No probe handler for OVAL_SUBTYPE_ALL\n");
+		return (-1);
+	}
+
         return ph->func(OVAL_SUBTYPE_ALL, ph->uptr, PROBE_HANDLER_ACT_ABORT);
 #else
 	return (-1);
@@ -181,10 +198,16 @@ int oval_probe_session_abort(oval_probe_session_t *sess)
 
 int oval_probe_session_sethandler(oval_probe_session_t *sess, oval_subtype_t type, oval_probe_handler_t handler, void *ptr)
 {
+	dE("Operation not supported\n");
         return(-1);
 }
 
 struct oval_syschar_model *oval_probe_session_getmodel(oval_probe_session_t *sess)
 {
-        return (sess->sys_model);
+	if (sess == NULL) {
+		dE("Invalid session (NULL)\n");
+		return (NULL);
+	}
+
+	return (sess->sys_model);
 }

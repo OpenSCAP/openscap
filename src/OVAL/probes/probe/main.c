@@ -51,7 +51,7 @@ size_t OSCAP_GSYM(no_varref_ents_cnt) = 0;
 struct id_desc_t OSCAP_GSYM(id_desc);
 #endif
 
-extern probe_ncache_t *OSCAP_GSYM(encache);
+extern probe_ncache_t *OSCAP_GSYM(ncache);
 
 #if 0
 static int probe_optekcmp(const char *a, char **b)
@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
 	probe.ncache = probe_ncache_new();
         probe.icache = probe_icache_new();
 
-        OSCAP_GSYM(encache) = probe.ncache;
+        OSCAP_GSYM(ncache) = probe.ncache;
 
 	/*
 	 * Initialize probe option handlers

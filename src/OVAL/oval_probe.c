@@ -48,7 +48,7 @@
 #include "_oval_probe_handler.h"
 #include "oval_probe_meta.h"
 
-oval_probe_meta_t __probe_meta[] = {
+oval_probe_meta_t OSCAP_GSYM(__probe_meta)[] = {
         { OVAL_SUBTYPE_SYSINFO, "system_info", &oval_probe_sys_handler, OVAL_PROBEMETA_EXTERNAL, "probe_system_info" },
         OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_FAMILY, "family"),
         OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_FILE_MD5, "filemd5"),
@@ -86,12 +86,14 @@ oval_probe_meta_t __probe_meta[] = {
         OVAL_PROBE_EXTERNAL(OVAL_UNIX_ROUTINGTABLE, "routingtable")
 };
 
-size_t __probe_meta_count = sizeof __probe_meta/sizeof __probe_meta[0];
-oval_subtypedsc_t __s2n_tbl[sizeof __probe_meta/sizeof __probe_meta[0]];
-oval_subtypedsc_t __n2s_tbl[sizeof __probe_meta/sizeof __probe_meta[0]];
+#define __PROBE_META_COUNT (sizeof OSCAP_GSYM(__probe_meta)/sizeof OSCAP_GSYM(__probe_meta)[0])
 
-#define __s2n_tbl_count (__probe_meta_count)
-#define __n2s_tbl_count (__probe_meta_count)
+size_t OSCAP_GSYM(__probe_meta_count) = __PROBE_META_COUNT;
+oval_subtypedsc_t OSCAP_GSYM(__s2n_tbl)[__PROBE_META_COUNT];
+oval_subtypedsc_t OSCAP_GSYM(__n2s_tbl)[__PROBE_META_COUNT];
+
+#define __s2n_tbl_count OSCAP_GSYM(__probe_meta_count)
+#define __n2s_tbl_count OSCAP_GSYM(__probe_meta_count)
 
 static int __s2n_tbl_cmp(oval_subtype_t *type, oval_subtypedsc_t *dsc)
 {
@@ -110,15 +112,15 @@ static int __n2s_tbl_cmp(const char *name, oval_subtypedsc_t *dsc)
  * of memory used by this cache is done at exit using a hook
  * registered with atexit().
  */
-probe_ncache_t  *OSCAP_GSYM(encache) = NULL;
+probe_ncache_t  *OSCAP_GSYM(ncache) = NULL;
 struct id_desc_t OSCAP_GSYM(id_desc);
 #endif
 
 #if defined(OSCAP_THREAD_SAFE)
 # include <pthread.h>
-static pthread_once_t __psess_init_once = PTHREAD_ONCE_INIT;
+static pthread_once_t __oval_probe_init_once = PTHREAD_ONCE_INIT;
 #else
-static volatile int __psess_init_once = 0;
+static volatile int __oval_probe_init_once = 0;
 #endif
 
 #define __ERRBUF_SIZE 128
@@ -133,33 +135,33 @@ static int __n2s_tbl_sortcmp(oval_subtypedsc_t *a, oval_subtypedsc_t *b)
         return strcmp(a->name, b->name);
 }
 
-void psess_tblinit(void)
+void oval_probe_tblinit(void)
 {
         register size_t i;
 
-        for(i = 0; i < __probe_meta_count; ++i) {
-                __s2n_tbl[i].type = __probe_meta[i].otype;
-                __n2s_tbl[i].type = __probe_meta[i].otype;
-                __s2n_tbl[i].name = __probe_meta[i].stype;
-                __n2s_tbl[i].name = __probe_meta[i].stype;
+        for(i = 0; i < OSCAP_GSYM(__probe_meta_count); ++i) {
+                OSCAP_GSYM(__s2n_tbl)[i].type = OSCAP_GSYM(__probe_meta)[i].otype;
+                OSCAP_GSYM(__n2s_tbl)[i].type = OSCAP_GSYM(__probe_meta)[i].otype;
+                OSCAP_GSYM(__s2n_tbl)[i].name = OSCAP_GSYM(__probe_meta)[i].stype;
+                OSCAP_GSYM(__n2s_tbl)[i].name = OSCAP_GSYM(__probe_meta)[i].stype;
         }
 
-        qsort(__s2n_tbl, __probe_meta_count, sizeof (oval_subtypedsc_t),
+        qsort(OSCAP_GSYM(__s2n_tbl), OSCAP_GSYM(__probe_meta_count), sizeof (oval_subtypedsc_t),
               (int(*)(const void *, const void *))__s2n_tbl_sortcmp);
 
-        qsort(__n2s_tbl, __probe_meta_count, sizeof (oval_subtypedsc_t),
+        qsort(OSCAP_GSYM(__n2s_tbl), OSCAP_GSYM(__probe_meta_count), sizeof (oval_subtypedsc_t),
               (int(*)(const void *, const void *))__n2s_tbl_sortcmp);
 }
 
 static void __init_once(void)
 {
 #if defined(OSCAP_THREAD_SAFE)
-        if (pthread_once(&__psess_init_once, &psess_tblinit) != 0)
+        if (pthread_once(&__oval_probe_init_once, &oval_probe_tblinit) != 0)
                 abort();
 #else
-        if (__psess_init_once == 0) {
-                psess_tblinit();
-                __psess_init_once = 1;
+        if (__oval_probe_init_once == 0) {
+                oval_probe_tblinit();
+                __oval_probe_init_once = 1;
         }
 #endif
         return;
@@ -171,7 +173,7 @@ const char *oval_subtype2str(oval_subtype_t subtype)
 
         __init_once();
 
-        d = oscap_bfind(__s2n_tbl, __s2n_tbl_count, sizeof(oval_subtypedsc_t), &subtype,
+        d = oscap_bfind(OSCAP_GSYM(__s2n_tbl), __s2n_tbl_count, sizeof(oval_subtypedsc_t), &subtype,
                         (int(*)(void *, void *))__s2n_tbl_cmp);
 
         return (d == NULL ? NULL : d->name);
@@ -183,7 +185,7 @@ oval_subtype_t oval_str2subtype(const char *str)
 
         __init_once();
 
-        d = oscap_bfind(__n2s_tbl, __n2s_tbl_count, sizeof(oval_subtypedsc_t), (void *)str,
+        d = oscap_bfind(OSCAP_GSYM(__n2s_tbl), __n2s_tbl_count, sizeof(oval_subtypedsc_t), (void *)str,
                         (int(*)(void *, void *))__n2s_tbl_cmp);
 
         return (d == NULL ? OVAL_SUBTYPE_UNKNOWN : d->type);

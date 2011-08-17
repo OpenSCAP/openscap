@@ -46,7 +46,7 @@
 #include "probe/entcmp.h"
 
 extern probe_rcache_t  *OSCAP_GSYM(pcache);
-extern probe_ncache_t  *OSCAP_GSYM(encache);
+extern probe_ncache_t  *OSCAP_GSYM(ncache);
 extern struct id_desc_t OSCAP_GSYM(id_desc);
 
 /*
@@ -68,7 +68,7 @@ SEXP_t *probe_item_creat(const char *name, SEXP_t * attrs, ...)
 		attrs = va_arg(ap, SEXP_t *);
 		val = va_arg(ap, SEXP_t *);
 
-                ns  = probe_ncache_ref (OSCAP_GSYM(encache), name);
+                ns  = probe_ncache_ref (OSCAP_GSYM(ncache), name);
 		ent = SEXP_list_new(NULL);
 
 		if (attrs != NULL) {
@@ -370,7 +370,7 @@ SEXP_t *probe_obj_creat(const char *name, SEXP_t * attrs, ...)
 		attrs = va_arg(ap, SEXP_t *);
 		val = va_arg(ap, SEXP_t *);
 
-                ns  = probe_ncache_ref (OSCAP_GSYM(encache), name);
+                ns  = probe_ncache_ref (OSCAP_GSYM(ncache), name);
 		ent = SEXP_list_new(NULL);
 
 		if (attrs != NULL) {
@@ -406,7 +406,7 @@ SEXP_t *probe_obj_new(const char *name, SEXP_t * attrs)
 	_LOGCALL_;
 
 	obj = SEXP_list_new(NULL);
-	ns  = probe_ncache_ref (OSCAP_GSYM(encache), name);
+	ns  = probe_ncache_ref (OSCAP_GSYM(ncache), name);
 
 	if (attrs != NULL) {
 		SEXP_t *nl, *nj;
@@ -997,7 +997,7 @@ SEXP_t *probe_ent_creat1(const char *name, SEXP_t * attrs, SEXP_t * val)
 	_LOGCALL_;
 
 	ent = SEXP_list_new(NULL);
-	ns  = probe_ncache_ref (OSCAP_GSYM(encache), name);
+	ns  = probe_ncache_ref (OSCAP_GSYM(ncache), name);
 
 	if (attrs != NULL) {
 		SEXP_t *nl, *nj;
@@ -1576,7 +1576,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                         return (NULL);
                 }
 
-                name_sexp = probe_ncache_ref(OSCAP_GSYM(encache), value_name);
+                name_sexp = probe_ncache_ref(OSCAP_GSYM(ncache), value_name);
 
                 while(value_i < multiply) {
                         entity = SEXP_list_new_r(&entity_mem, name_sexp, value_sexp + value_i, NULL);

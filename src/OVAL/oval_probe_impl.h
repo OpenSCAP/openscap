@@ -60,7 +60,7 @@ OSCAP_HIDDEN_START;
 
 OSCAP_HIDDEN_END;
 
-extern probe_ncache_t *OSCAP_GSYM(encache);
+extern probe_ncache_t *OSCAP_GSYM(ncache);
 
 #endif /* ENABLE_PROBES */
 
@@ -69,7 +69,7 @@ typedef struct {
         const char    *name;
 } oval_subtypedsc_t;
 
-void psess_tblinit(void);
+void oval_probe_tblinit(void);
 const char *oval_subtype2str(oval_subtype_t subtype);
 oval_subtype_t oval_str2subtype(const char *str);
 
