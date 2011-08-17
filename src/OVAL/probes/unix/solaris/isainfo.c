@@ -54,7 +54,7 @@ struct result_info {
 };
 
 
-static void report_finding(struct result_info *res, SEXP_t *probe_out)
+static void report_finding(struct result_info *res, probe_ctx *ctx)
 {
 	SEXP_t *item;
 
@@ -63,13 +63,10 @@ static void report_finding(struct result_info *res, SEXP_t *probe_out)
 		"kernel_isa", OVAL_DATATYPE_STRING, res->kernel_isa,
 		"application_isa", OVAL_DATATYPE_STRING, res->application_isa,
 		NULL);
-	probe_cobj_add_item(probe_out, item);
-
-	SEXP_free(item);
-
+	probe_item_collect(ctx, item);
 }
 
-int read_sysinfo(SEXP_t *probe_out) {
+int read_sysinfo(probe_ctx *ctx) {
 	dI("In read_sysinfo for isainfo probe");
 
 	int err = 1;
@@ -98,23 +95,13 @@ int read_sysinfo(SEXP_t *probe_out) {
 
 	/* if we made it this far, there were no errors in the sysinfo calls */
 	err = 0;
-	report_finding(&result, probe_out);
+	report_finding(&result, ctx);
 	return err;
 }
 
 int probe_main(probe_ctx *ctx, void *probe_arg)
 {
-
-	(void)filters;
-
-	int err;
-
-	if (object == NULL || probe_out == NULL) {
-		return (PROBE_EINVAL);
-	}
-
-
-	if (read_sysinfo(probe_out)) {
+	if (read_sysinfo(ctx)) {
 		return PROBE_EACCESS;
 	}
 
