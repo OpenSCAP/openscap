@@ -357,11 +357,21 @@ AC_CHECK_LIB(
 #
 AC_CHECK_LIB(
   [cap],
-  [cap_init],
+  [cap_get_pid],
   [libcap_cflags=
    libcap_libs=-lcap
-   AC_DEFINE([HAVE_CAPABILITY], [1], [libcap is available])
-  ]
+   AC_DEFINE([HAVE_LIBCAP], [1], [libcap is available])
+   AC_DEFINE([LIBCAP_VERSION], [2], [libcap-2 is available])
+  ],
+  [AC_CHECK_LIB(
+	[cap],
+	[capgetp],
+	[libcap_cflags=
+	 libcap_libs=-lcap
+	 AC_DEFINE([HAVE_LIBCAP], [1], [libcap is available])
+	 AC_DEFINE([LIBCAP_VERSION], [1], [libcap-1 is available])
+	]
+   )]
 )
 
 # Checks for header files.

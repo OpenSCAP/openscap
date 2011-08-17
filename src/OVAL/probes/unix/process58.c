@@ -71,10 +71,19 @@
 #include <selinux/selinux.h>
 #include <selinux/context.h>
 #endif
-#ifdef HAVE_CAPABILITY
+#ifdef HAVE_LIBCAP
 #include <ctype.h>
 #include <sys/types.h>
+
+#if LIBCAP_VERSION == 1
+#undef _POSIX_SOURCE
 #include <sys/capability.h>
+#define CAP_LAST_CAP CAP_AUDIT_CONTROL
+extern char const *_cap_names[];
+#else
+#include <sys/capability.h>
+#endif
+
 #include "util.h"
 #include "process58-capability.h"
 #endif
@@ -246,13 +255,25 @@ static char *get_selinux_label(int pid) {
 }
 
 static char **get_posix_capability(int pid) {
-#ifdef HAVE_CAPABILITY
+#ifdef HAVE_LIBCAP
 	cap_t pid_caps;
 	char *cap_name, **ret = NULL;
 	unsigned cap_value, ret_index = 0;
 	cap_flag_value_t cap_flag;
 
+#if LIBCAP_VERSION == 1
+	pid_caps = cap_init();
+	if (capgetp(pid, pid_caps) == -1) {
+		dW("Can't get capabilities for process %d\n", pid);
+		cap_free(pid_caps);
+		return NULL;
+	}
+#elif LIBCAP_VERSION == 2
 	pid_caps = cap_get_pid(pid);
+#else
+	dW("Can't detect libcap version\n");
+	return NULL;
+#endif
 
 	if (pid_caps == NULL) {
 		dW("Can't get capabilities for process %d\n", pid);
@@ -263,7 +284,11 @@ static char **get_posix_capability(int pid) {
 		if (cap_get_flag(pid_caps, cap_value, CAP_EFFECTIVE, &cap_flag) == -1)
 			continue;
 		if (cap_flag == CAP_SET) {
+#if LIBCAP_VERSION == 2
 			cap_name = cap_to_name(cap_value);
+#else
+			cap_name = strdup(_cap_names[cap_value]);
+#endif
 			if (cap_name != NULL) {
 				char *cap_name_p = cap_name;
 				while (*cap_name_p) {
