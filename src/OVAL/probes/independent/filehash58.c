@@ -59,7 +59,9 @@ static pthread_mutex_t __filehash58_probe_mutex;
 static const struct oscap_string_map CRAPI_ALG_MAP[] = {
 	{CRAPI_DIGEST_MD5, "MD5"},
 	{CRAPI_DIGEST_SHA1, "SHA-1"},
+	{CRAPI_DIGEST_SHA224, "SHA-224"},
 	{CRAPI_DIGEST_SHA256, "SHA-256"},
+	{CRAPI_DIGEST_SHA384, "SHA-384"},
 	{CRAPI_DIGEST_SHA512, "SHA-512"},
 	{CRAPI_DIGEST_RMD160, "RMD-160"},
 	{CRAPI_INVALID, NULL}
