@@ -25,12 +25,26 @@
 
 #include <stddef.h>
 
+void *crapi_sha224_init (void *dst, void *size);
+int   crapi_sha224_update (void *ctxp, void *bptr, size_t blen);
+int   crapi_sha224_fini (void *ctxp);
+void  crapi_sha224_free (void *ctxp);
+
+int crapi_sha224_fd (int fd, void *dst, size_t *size);
+
 void *crapi_sha256_init (void *dst, void *size);
 int   crapi_sha256_update (void *ctxp, void *bptr, size_t blen);
 int   crapi_sha256_fini (void *ctxp);
 void  crapi_sha256_free (void *ctxp);
 
 int crapi_sha256_fd (int fd, void *dst, size_t *size);
+
+void *crapi_sha384_init (void *dst, void *size);
+int   crapi_sha384_update (void *ctxp, void *bptr, size_t blen);
+int   crapi_sha384_fini (void *ctxp);
+void  crapi_sha384_free (void *ctxp);
+
+int crapi_sha384_fd (int fd, void *dst, size_t *size);
 
 void *crapi_sha512_init (void *dst, void *size);
 int   crapi_sha512_update (void *ctxp, void *bptr, size_t blen);

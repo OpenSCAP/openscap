@@ -42,20 +42,24 @@ int crapi_digest_fd (int fd, crapi_alg_t alg, void *dst, size_t *size)
 {
         assume_r(dst  != NULL, -1, errno = EFAULT;);
         assume_r(size != NULL, -1, errno = EFAULT;);
-        
+
         switch (alg) {
         case CRAPI_DIGEST_MD5:
                 return crapi_md5_fd (fd, dst, size);
         case CRAPI_DIGEST_SHA1:
                 return crapi_sha1_fd (fd, dst, size);
+        case CRAPI_DIGEST_SHA224:
+                return crapi_sha224_fd (fd, dst, size);
         case CRAPI_DIGEST_SHA256:
                 return crapi_sha256_fd (fd, dst, size);
+        case CRAPI_DIGEST_SHA384:
+                return crapi_sha384_fd (fd, dst, size);
         case CRAPI_DIGEST_SHA512:
                 return crapi_sha512_fd (fd, dst, size);
         case CRAPI_DIGEST_RMD160:
                 return crapi_rmd160_fd (fd, dst, size);
         }
-        
+
         errno = EINVAL;
         return (-1);
 }
@@ -76,11 +80,11 @@ int crapi_mdigest_fd (int fd, int num, ... /* crapi_alg_t alg, void *dst, size_t
         assume_r (num > 0, -1, errno = EINVAL;);
         assume_r (fd  > 0, -1, errno = EINVAL;);
 
-	for (i = 0; i < num; ++i)
-		ctbl[i].ctx = NULL;
+        for (i = 0; i < num; ++i)
+                ctbl[i].ctx = NULL;
 
         va_start (ap, num);
-        
+
         for (i = 0; i < num; ++i) {
                 alg  = va_arg (ap, crapi_alg_t);
                 dst  = va_arg (ap, void *);
@@ -99,11 +103,23 @@ int crapi_mdigest_fd (int fd, int num, ... /* crapi_alg_t alg, void *dst, size_t
                         ctbl[i].fini   = &crapi_sha1_fini;
                         ctbl[i].free   = &crapi_sha1_free;
                         break;
+                case CRAPI_DIGEST_SHA224:
+                        ctbl[i].init   = &crapi_sha224_init;
+                        ctbl[i].update = &crapi_sha224_update;
+                        ctbl[i].fini   = &crapi_sha224_fini;
+                        ctbl[i].free   = &crapi_sha224_free;
+                        break;
                 case CRAPI_DIGEST_SHA256:
                         ctbl[i].init   = &crapi_sha256_init;
                         ctbl[i].update = &crapi_sha256_update;
                         ctbl[i].fini   = &crapi_sha256_fini;
                         ctbl[i].free   = &crapi_sha256_free;
+                        break;
+                case CRAPI_DIGEST_SHA384:
+                        ctbl[i].init   = &crapi_sha384_init;
+                        ctbl[i].update = &crapi_sha384_update;
+                        ctbl[i].fini   = &crapi_sha384_fini;
+                        ctbl[i].free   = &crapi_sha384_free;
                         break;
                 case CRAPI_DIGEST_SHA512:
                         ctbl[i].init   = &crapi_sha512_init;
@@ -121,10 +137,10 @@ int crapi_mdigest_fd (int fd, int num, ... /* crapi_alg_t alg, void *dst, size_t
                         va_end (ap);
                         goto fail;
                 }
-                
+
                 ctbl[i].ctx = ctbl[i].init (dst, size);
         }
-        
+
         va_end (ap);
 
         while ((ret = read (fd, fd_buf, sizeof fd_buf)) == sizeof fd_buf) {
@@ -157,8 +173,8 @@ int crapi_mdigest_fd (int fd, int num, ... /* crapi_alg_t alg, void *dst, size_t
         return (0);
 fail:
         for (i = 0; i < num; ++i)
-		if (ctbl[i].ctx != NULL)
-			ctbl[i].free (ctbl[i].ctx);
-        
+                if (ctbl[i].ctx != NULL)
+                        ctbl[i].free (ctbl[i].ctx);
+
         return (-1);
 }
