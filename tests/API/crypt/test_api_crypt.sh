@@ -21,6 +21,7 @@ function test_crapi_digest {
     local TEMPDIR="$(mktemp -d -t -q tmp.XXXXXX)"
     local sum_md5="";
     local sum_sha1="";
+    local sum_sha256="";
 
     dd if=/dev/urandom of="${TEMPDIR}/a" count=1   bs=1k || return 2
     dd if=/dev/urandom of="${TEMPDIR}/b" count=123 bs=1  || return 2
@@ -32,13 +33,14 @@ function test_crapi_digest {
     for file in a b c d e f; do
         sum_md5=$((md5sum "${TEMPDIR}/${file}" || openssl md5 "${TEMPDIR}/${file}") | sed -n 's|^.*\([0-9a-f]\{32\}\).*$|\1|p')
         sum_sha1=$((sha1sum "${TEMPDIR}/${file}" || openssl sha1 "${TEMPDIR}/${file}") | sed -n 's|^.*\([0-9a-f]\{40\}\).*$|\1|p')
+        sum_sha256=$((sha256sum "${TEMPDIR}/${file}" || openssl sha256 "${TEMPDIR}/${file}") | sed -n 's|^.*\([0-9a-f]\{64\}\).*$|\1|p')
 
-        if [[ "$sum_md5" == "" || "$sum_sha1" == "" ]]; then
+        if [[ "$sum_md5" == "" || "$sum_sha1" == "" || "$sum_sha256" == "" ]]; then
             return 2
         fi
 
-        ./test_crapi_digest "${TEMPDIR}/${file}" "$sum_md5" "$sum_sha1" || return 1
-        #echo "$file: ret $?, 5: $sum_md5, 1: $sum_sha1"
+        ./test_crapi_digest "${TEMPDIR}/${file}" "$sum_md5" "$sum_sha1" "$sum_sha256" || return 1
+        #echo "$file: ret $?, 5: $sum_md5, 1: $sum_sha1, $sum_sha256"
     done
 
     rm -rf "$TEMPDIR"
@@ -51,6 +53,7 @@ function test_crapi_mdigest {
     local TEMPDIR="$(mktemp -d -t -q tmp.XXXXXX)"
     local sum_md5="";
     local sum_sha1="";
+    local sum_sha256="";
 
     dd if=/dev/urandom of="${TEMPDIR}/a" count=1   bs=1k || return 2
     dd if=/dev/urandom of="${TEMPDIR}/b" count=123 bs=1  || return 2
@@ -62,12 +65,13 @@ function test_crapi_mdigest {
     for file in a b c d e f; do
         sum_md5=$((md5sum "${TEMPDIR}/${file}" || openssl md5 "${TEMPDIR}/${file}") | sed -n 's|^.*\([0-9a-f]\{32\}\).*$|\1|p')
         sum_sha1=$((sha1sum "${TEMPDIR}/${file}" || openssl sha1 "${TEMPDIR}/${file}") | sed -n 's|^.*\([0-9a-f]\{40\}\).*$|\1|p')
+        sum_sha256=$((sha256sum "${TEMPDIR}/${file}" || openssl sha256 "${TEMPDIR}/${file}") | sed -n 's|^.*\([0-9a-f]\{64\}\).*$|\1|p')
 
-        if [[ "$sum_md5" == "" || "$sum_sha1" == "" ]]; then
+        if [[ "$sum_md5" == "" || "$sum_sha1" == "" || "$sum_sha256" == "" ]]; then
             return 2
         fi
 
-        ./test_crapi_mdigest "${TEMPDIR}/${file}" "$sum_md5" "$sum_sha1" || return 1
+        ./test_crapi_mdigest "${TEMPDIR}/${file}" "$sum_md5" "$sum_sha1" "$sum_sha256" || return 1
         #echo "$file: ret $?, 5: $sum_md5, 1: $sum_sha1"
     done
 
