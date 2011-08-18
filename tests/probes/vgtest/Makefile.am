@@ -10,4 +10,4 @@ TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
 
 TESTS = test_probes_vg.sh
 
-EXTRA_DIST += test_probes_vg.sh vgrun.sh
+EXTRA_DIST += test_probes_vg.sh vgrun.sh openscap.supp
