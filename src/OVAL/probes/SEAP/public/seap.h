@@ -64,11 +64,6 @@ int     SEAP_close (SEAP_CTX_t *ctx, int sd);
 int SEAP_openfd (SEAP_CTX_t *ctx, int fd, uint32_t flags);
 int SEAP_openfd2 (SEAP_CTX_t *ctx, int ifd, int ofd, uint32_t flags);
 
-#if 0
-# include <stdio.h>
-int SEAP_openfp (SEAP_CTX_t *ctx, FILE *fp, uint32_t flags);
-#endif /* 0 */
-
 SEAP_msg_t *SEAP_msg_new (void);
 void        SEAP_msg_free (SEAP_msg_t *msg);
 int         SEAP_msg_set (SEAP_msg_t *msg, SEXP_t *sexp);

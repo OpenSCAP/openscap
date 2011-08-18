@@ -63,11 +63,6 @@ typedef uint8_t SEXP_numtype_t;
 #define SEXP_NUM_LONGLONGUINT  SEXP_NUM_UINT64
 #define SEXP_NUM_FLOAT         SEXP_NUM_DOUBLE
 
-#if 0
-# define NUM_FRACT  0x0a /* Not implemented */
-# define NUM_BIGNUM 0x0b /* Not implemented */
-#endif
-
 /* S-expression format */
 typedef uint8_t SEXP_format_t;
 

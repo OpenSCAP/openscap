@@ -74,14 +74,6 @@ struct rpmverify_res {
         rpmVerifyAttrs vflags; /**< rpm verify flags */
         rpmVerifyAttrs oflags; /**< rpm verify omit flags */
         rpmfileAttrs   fflags; /**< rpm file flags */
-#if 0
-        char *arch;
-        char *epoch;
-        char *release;
-        char *version;
-        char *evr;
-        char *signature_keyid;
-#endif
 };
 
 #define RPMVERIFY_SKIP_CONFIG 0x1000000000000000
@@ -110,51 +102,6 @@ static struct rpmverify_global g_rpm;
                         abort();                                        \
                 }                                                       \
         } while(0)
-#if 0
-static void pkgh2rep (Header h, struct rpmverify_rep *r)
-{
-        errmsg_t rpmerr;
-        char *str, *sid;
-        size_t len;
-
-        assume_d (h != NULL, /* void */);
-        assume_d (r != NULL, /* void */);
-
-        r->name = headerFormat (h, "%{NAME}", &rpmerr);
-
-#if 0
-        r->arch = headerFormat (h, "%{ARCH}", &rpmerr);
-        str     = headerFormat (h, "%{EPOCH}", &rpmerr);
-
-        if (strcmp (str, "(none)") == 0) {
-                str    = oscap_realloc (str, sizeof (char) * 2);
-                str[0] = '0';
-                str[1] = '\0';
-        }
-
-        r->epoch   = str;
-        r->release = headerFormat (h, "%{RELEASE}", &rpmerr);
-        r->version = headerFormat (h, "%{VERSION}", &rpmerr);
-
-        len = (strlen (r->epoch)   +
-               strlen (r->release) +
-               strlen (r->version) + 2);
-
-        str = oscap_alloc (sizeof (char) * (len + 1));
-        snprintf (str, len + 1, "%s:%s-%s",
-                  r->epoch,
-                  r->version,
-                  r->release);
-
-        r->evr = str;
-
-        str = headerFormat (h, "%{SIGGPG:pgpsig}", &rpmerr);
-        sid = strrchr (str, ' ');
-        r->signature_keyid = (sid != NULL ? strdup (sid+1) : strdup ("0"));
-        oscap_free (str);
-#endif
-}
-#endif
 
 static int rpmverify_collect(probe_ctx *ctx,
                              const char *name, oval_operation_t name_op,

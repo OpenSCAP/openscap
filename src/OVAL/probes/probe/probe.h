@@ -34,19 +34,6 @@
 #include "icache.h"
 #include "probe-common.h"
 
-#if 0
-/**
- * @struct id_desc_t
- * Holds information for item ids generation.
- */
-struct id_desc_t {
-#ifndef HAVE_ATOMIC_FUNCTIONS
-	pthread_mutex_t item_id_ctr_lock;	///< id counter lock
-#endif
-	int item_id_ctr;	///< id counter
-};
-#endif
-
 typedef struct {
 	int option;
 	int (*handler)(int, va_list);

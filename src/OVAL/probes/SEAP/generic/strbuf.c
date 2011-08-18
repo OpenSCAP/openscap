@@ -186,45 +186,6 @@ int strbuf_add0f (strbuf_t *buf, char *str)
 int strbuf_trunc (strbuf_t *buf, size_t len)
 {
         return (0);
-        /* TBI */
-#if 0
-        if (buf->size < len) {
-                errno = ERANGE;
-                return (-1);
-        }
-
-        if (buf->blkoff >= len) {
-                buf->blkoff -= len;
-                buf->size   -= len;
-        } else {
-                struct strblk *cur, *par;
-                size_t esz;
-
-                cur = buf->beg;
-                par = NULL;
-                esz = buf->size - len;
-
-                while (esz > cur->size) {
-                        par  = cur;
-                        esz -= cur->size;
-                        cur  = cur->next;
-                }
-
-                buf->lbo    = par;
-                //buf->beg    = cur;
-                buf->blkoff = esz;
-                buf->size  -= len;
-                cur         = cur->next;
-
-                while (cur != NULL) {
-                        par = cur->next;
-                        free (cur);
-                        cur = par;
-                }
-        }
-
-        return (0);
-#endif
 }
 
 size_t strbuf_length (strbuf_t *buf)

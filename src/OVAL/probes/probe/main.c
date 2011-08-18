@@ -47,23 +47,8 @@ void  *OSCAP_GSYM(probe_arg)          = NULL;
 bool   OSCAP_GSYM(varref_handling)    = true;
 char **OSCAP_GSYM(no_varref_ents)     = NULL;
 size_t OSCAP_GSYM(no_varref_ents_cnt) = 0;
-#if 0
-struct id_desc_t OSCAP_GSYM(id_desc);
-#endif
 
 extern probe_ncache_t *OSCAP_GSYM(ncache);
-
-#if 0
-static int probe_optekcmp(const char *a, char **b)
-{
-	return strcmp(a, *b);
-}
-
-static int probe_optekcmp_sexp(const SEXP_t *a, char **b)
-{
-	return SEXP_strcmp(a, *b);
-}
-#endif /* 0 */
 
 static int probe_optecmp(char **a, char **b)
 {
@@ -81,9 +66,7 @@ static SEXP_t *probe_reset(SEXP_t *arg0, void *arg1)
 
         probe->rcache = probe_rcache_new();
         probe->ncache = probe_ncache_new();
-#if 0
-	probe_item_resetidctr(&(OSCAP_GSYM(id_desc)));
-#endif
+
         return(NULL);
 }
 
@@ -204,10 +187,7 @@ int main(int argc, char *argv[])
         probe.probe_arg = probe_init();
 
 	pthread_attr_init(&th_attr);
-#if 0
-	if (pthread_attr_setdetachstate(&th_attr, PTHREAD_CREATE_DETACHED))
-		fail(errno, "pthread_attr_setdetachstate", __LINE__ - 1);
-#endif
+
 	if (pthread_create(&probe.th_input, &th_attr, &probe_input_handler, &probe))
 		fail(errno, "pthread_create(probe_input_handler)", __LINE__ - 1);
 

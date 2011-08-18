@@ -50,20 +50,6 @@
 
 #include "MurmurHash3.h"
 
-SEXP_ID_t SEXP_ID_s(const SEXP_t *s)
-{
-#if 0
-        SEXP_val_t v_dsc;
-
-        if (s == NULL)
-                return (0);
-
-        if (!SEXP_listp(s))
-                return (0);
-#endif
-        return (0);
-}
-
 static SEXP_ID_t SEXP_ID_hash(void *buf, size_t len, SEXP_ID_t seed, int part)
 {
         uint64_t resbuf[2];

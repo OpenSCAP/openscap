@@ -217,25 +217,6 @@ int probe_itement_setstatus(SEXP_t *obj, const char *name, uint32_t n, oval_sysc
         return (0);
 }
 
-#if 0
-SEXP_t *probe_item_newid(struct id_desc_t * id_desc)
-{
-	int id_ctr;
-	SEXP_t *sid;
-
-#if defined(HAVE_ATOMIC_FUNCTIONS)
-	id_ctr = __sync_fetch_and_add(&(id_desc->item_id_ctr), 1);
-#else
-	pthread_mutex_lock(&(id_desc->item_id_ctr_lock));
-	id_ctr = id_desc->item_id_ctr++;
-	pthread_mutex_unlock(&(id_desc->item_id_ctr_lock));
-#endif
-	sid = SEXP_string_newf("%d", id_ctr);
-
-	return sid;
-}
-#endif
-
 void probe_item_resetidctr(struct id_desc_t *id_desc)
 {
 	id_desc->item_id_ctr = 1;
@@ -595,15 +576,6 @@ int probe_obj_setstatus(SEXP_t * obj, oval_syschar_status_t status)
 
 	return (-1);
 }
-
-#if 0
-static int probe_obj_setentstatus(SEXP_t * obj, const char *name, uint32_t n, oval_syschar_status_t status)
-{
-	_LOGCALL_;
-	/* TBI */
-	return (-1);
-}
-#endif
 
 char *probe_obj_getname(const SEXP_t * obj)
 {

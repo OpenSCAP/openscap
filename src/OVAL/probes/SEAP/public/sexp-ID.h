@@ -28,11 +28,6 @@
 typedef uint64_t SEXP_ID_t;
 
 /**
- * Compute an S-exp structure identifier
- */
-SEXP_ID_t SEXP_ID_s(const SEXP_t *s);
-
-/**
  * Compute an S-exp value identifier
  */
 SEXP_ID_t SEXP_ID_v(const SEXP_t *s);

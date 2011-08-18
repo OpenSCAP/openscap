@@ -1492,21 +1492,6 @@ SEXP_t *SEXP_list_sort(SEXP_t *list, int(*compare)(const SEXP_t *, const SEXP_t 
                  * PASS #2: Mergesort all blocks
                  */
                 for (i = 0; i < list_it_count - 1; ++i) {
-#if 0 /* XXX: trying in-place variant first */
-                        /* reallocate the iterator array if needed */
-                        if (list_it_count == list_it_alloc) {
-                                _I("Reallocating iterator array: %z -> %z\n",
-                                   list_it_alloc, list_it_alloc + SEXP_LISTIT_ARRAY_INC);
-
-                                list_it_alloc += SEXP_LISTIT_ARRAY_INC;
-                                list_it = sm_realloc(list_it, sizeof(SEXP_list_it) * list_it_alloc);
-                        }
-                        /* create a new block for auxiliary space */
-                        list_it[list_it_count].block = SEXP_rawval_lblk_new(list_it[i].block->nxsz & SEXP_LBLKS_MASK);
-                        list_it[list_it_count].index = 0;
-                        list_it[list_it_count].count = list_it[i].count;
-                        ++list_it_count;
-#endif
                         while(list_it[i].index < list_it[i].count) {
                                 SEXP_t *min_v, tmp_v, *first_v;
                                 size_t  min_i = i;
@@ -1826,12 +1811,6 @@ bool SEXP_eq (const SEXP_t *a, const SEXP_t *b)
 #include <inttypes.h>
 int SEXP_refcmp(const SEXP_t *a, const SEXP_t *b)
 {
-#if 0
-        _SE(a);
-        _SE(b);
-        _I("%"PRIuPTR" ? %"PRIuPTR"\n",
-           a->s_valp, b->s_valp);
-#endif
         if (a->s_valp < b->s_valp)
                 return (-1);
         if (a->s_valp > b->s_valp)
@@ -2169,57 +2148,6 @@ size_t SEXP_sizeof (const SEXP_t *s_exp)
 
         return (sz);
 }
-
-#if 0
-int SEXP_structprint (FILE *fp, const SEXP_t *s_exp)
-{
-        SEXP_val_t v_dsc;
-
-        SEXP_val_dsc (&v_dsc, s_exp->s_valp);
-
-        /*
-         *  print S-exp flags, type, value pointer
-         */
-
-        fprintf (fp,
-                 "=> s-exp@%p ... type: %s (%x)\n"
-                 "            ... flgs: %c%c%c (%x)\n"
-                 "            ...  ptr: %p\n",
-                 SEXP_strtype (s_exp),
-		 SEXP_softrefp(s_exp) ? 's' : '-',
-		 '-',
-		 '-',
-/*
-                 (s_exp->s_flgs & SEXP_FLAG_SREF  ? 's' : '-'),
-                 (s_exp->s_flgs & SEXP_FLAG_INVAL ? 'i' : '-'),
-                 (s_exp->s_flgs & SEXP_FLAG_UNFIN ? 'u' : '-'),
-*/
-                 (void *)s_exp->s_valp);
-
-        switch (v_dsc.type) {
-        case SEXP_VALTYPE_LIST:
-        {
-                struct SEXP_val_lblk *lblk;
-
-                /* print list blocks */
-
-                /* recursion */
-
-        }       break;
-        case SEXP_VALTYPE_NUMBER:
-
-
-                break;
-        case SEXP_VALTYPE_STRING:
-
-                break;
-        default:
-                abort ();
-        }
-
-        return (0);
-}
-#endif /* 0 */
 
 #if !defined(NDEBUG) || defined(VALIDATE_SEXP)
 typedef struct {

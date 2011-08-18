@@ -126,10 +126,7 @@ typedef struct {
 	bool unlisted;
 	bool rpc;
 
-	/*
-	 * Unused attributes; Maybe we will need them in some future version.
-	 */
-#if 0
+#if 0 /* Unused attributes; Maybe we will need them in some future version. */
 	bool groups;
 	bool mdns;
 	bool enabled;
