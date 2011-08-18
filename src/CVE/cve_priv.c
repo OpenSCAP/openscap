@@ -571,11 +571,13 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 		    xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 			/* here will come function to parse test-expr */
 			conf = cve_configuration_new();
-			conf->id = (char *)xmlTextReaderGetAttribute(reader, ATTR_CVE_ID_STR);
-			xmlTextReaderNextElement(reader);
-			conf->expr = cpe_testexpr_parse(reader);
-			if (conf)
-				oscap_list_add(ret->configurations, conf);
+
+                        if (conf) {
+                                conf->id = (char *)xmlTextReaderGetAttribute(reader, ATTR_CVE_ID_STR);
+                                xmlTextReaderNextElement(reader);
+                                conf->expr = cpe_testexpr_parse(reader);
+                                oscap_list_add(ret->configurations, conf);
+                        }
                         continue;
 		} else
 		    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABLE_SOFTWARE_LIST_STR) &&
@@ -586,15 +588,11 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 				if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_STR) &&
 				    xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 					product = cve_product_new();
-					product->value = (char *)xmlTextReaderReadString(reader);
-					/*if (!data) { 
-					   cve_entry_free(ret);
-					   return NULL;
-					   }
-					   product->value = cpe_name_new(data);
-					   oscap_free(data); */
-					if (product)
+
+                                        if (product) {
+                                                product->value = (char *)xmlTextReaderReadString(reader);
 						oscap_list_add(ret->products, product);
+                                        }
 				}
 				xmlTextReaderNextNode(reader);
 			}
@@ -650,9 +648,11 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 		    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_SUMMARY_STR) &&
 			xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 			summary = cve_summary_new();
-			summary->summary = (char *)xmlTextReaderReadString(reader);
-			if (summary)
+
+                        if (summary) {
+                                summary->summary = (char *)xmlTextReaderReadString(reader);
 				oscap_list_add(ret->summaries, summary);
+                        }
 		} else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in CVE entry");
 		}

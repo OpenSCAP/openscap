@@ -241,8 +241,10 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
         probe_in   = probe_ctx_getobject(ctx);
         mnt_entity = probe_obj_getent(probe_in, "mount_point", 1);
 
-        if (mnt_entity == NULL)
+        if (mnt_entity == NULL) {
+                fclose(mnt_fp);
                 return (PROBE_ENOENT);
+        }
 
         mnt_opval = probe_ent_getattrval(mnt_entity, "operation");
 

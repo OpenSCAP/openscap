@@ -239,6 +239,7 @@ static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 	if (lfs->ids == NULL) {
 		e = errno;
 		free(lfs);
+                fclose(fp);
 		errno = e;
 		return (NULL);
 	}

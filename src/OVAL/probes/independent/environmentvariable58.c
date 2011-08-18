@@ -120,6 +120,7 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 			empty = 0;
 		} else {
 			close(fd);
+                        closedir(d);
 			return err;
 		}
 
