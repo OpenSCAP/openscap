@@ -45,7 +45,6 @@
 #include "oval_probe_impl.h"
 #if defined(ENABLE_PROBES)
 # include "oval_probe_ext.h"
-# include "oval_probe_int.h"
 # include "oval_probe_meta.h"
 #if defined(OSCAP_THREAD_SAFE)
 # include <pthread.h>
