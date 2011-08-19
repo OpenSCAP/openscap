@@ -1447,6 +1447,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
         double  value_flt;
         bool    value_bool;
         bool    free_value = true;
+        bool    multiplied;
         int     value_i, multiply;
 
         subtype_name = oval_subtype2str(item_subtype);
@@ -1473,6 +1474,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
         while (value_name != NULL) {
                 value_i    = 0;
                 multiply   = 1;
+                multiplied = false;
 		value_type = va_arg(ap, oval_datatype_t);
 
                 switch (value_type) {
@@ -1487,6 +1489,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                 case OVAL_DATATYPE_STRING_M:
                         value_type = OVAL_DATATYPE_STRING;
                         value_stra = va_arg(ap, char **);
+                        multiplied = true;
                         multiply   = 0;
 
                         if (value_stra == NULL)
@@ -1561,7 +1564,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                                 if (free_value) {
                                         while(value_i < multiply)
                                                 SEXP_free_r(value_sexp + value_i++);
-                                        if (multiply > 1)
+                                        if (multiplied)
                                                 oscap_free(value_sexp);
                                 }
 
@@ -1582,7 +1585,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
 
                 SEXP_free(name_sexp);
 
-                if (multiply > 1)
+                if (multiplied)
                         oscap_free(value_sexp);
         skip:
                 value_name = va_arg(ap, const char *);
