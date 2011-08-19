@@ -128,7 +128,7 @@ static void report_finding(struct result_info *res, probe_ctx *ctx)
                                  "start_time",   OVAL_DATATYPE_STRING, res->start_time,
                                  "tty",          OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_tty_mem, "%d", res->tty),
                                  "user_id",      OVAL_DATATYPE_INTEGER, (int64_t)res->user_id,
-                                 "exec_shield",  OVAL_DATATYPE_BOOLEAN, (int64_t)res->user_id,
+                                 "exec_shield",  OVAL_DATATYPE_BOOLEAN, (int64_t)res->exec_shield,
                                  "loginuid",     OVAL_DATATYPE_INTEGER, (int64_t)res->user_id,
 				 "posix_capability", OVAL_DATATYPE_STRING_M, res->posix_capability,
 				 "selinux_domain_label", OVAL_DATATYPE_STRING, res->selinux_domain_label,
@@ -314,6 +314,41 @@ static char **get_posix_capability(int pid) {
 #endif
 }
 
+/* get exec shield status according to http://people.redhat.com/sgrubb/files/lsexec
+ * return value: -1 - not detected, 0 - disabled, 1 - enabled */
+static int get_exec_shield_status(int pid) {
+	char buf[501];
+	FILE *sf;
+	long unsigned low, high, inode;
+	long long unsigned offset;
+	int dev_min, dev_maj;
+	char perm[3], trim;
+	int ret = -1, read_items;
+
+	snprintf(buf, sizeof(buf), "/proc/%d/maps", pid);
+	sf = fopen(buf, "rt");
+	if (sf) {
+		while (fgets(buf, 500, sf)) {
+			read_items = sscanf(
+				buf, "%lx-%lx rw%s %llx %x:%x %lu %c\n",
+				&low, &high, perm, &offset, &dev_min,
+				&dev_maj, &inode, &trim
+			);
+			if (read_items == 7) {
+				if (perm[0] == 'x' && offset != 0) {
+					ret = 0;
+				}
+				else {
+					ret = 1;
+				}
+			}
+		}
+		fclose(sf);
+	}
+
+	return ret;
+}
+
 static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 {
 	int err = 1;
@@ -442,7 +477,7 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 			r.priority = priority;
 			r.start_time = sbuf;
 			r.tty = tty_nr;
-			r.exec_shield = 0;
+			r.exec_shield = (get_exec_shield_status(pid) > 0);
 
 			selinux_domain_label = get_selinux_label(pid);
 			r.selinux_domain_label = selinux_domain_label;
