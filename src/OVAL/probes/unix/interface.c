@@ -73,12 +73,13 @@
 
 static int fd=-1;
 
-static void get_l2_info(const struct ifaddrs *ifa, char **mp, char **tp)
+static void get_l2_info(const struct ifaddrs *ifa, char **mp, char **tp, char ***fp)
 {
 	struct ifreq ifr;
 	unsigned char mac[6];
-	static char mac_buf[20];
+	static char mac_buf[20], *flags_buf[17];
 
+	*fp = flags_buf;
 	*mp = mac_buf;
 	*tp = "";
 
@@ -114,13 +115,88 @@ static void get_l2_info(const struct ifaddrs *ifa, char **mp, char **tp)
 		}
 	} else
 		mac_buf[0] = 0;
+
+	memset(&ifr, 0, sizeof(struct ifreq));
+	strcpy(ifr.ifr_name, ifa->ifa_name);
+	if (ioctl(fd, SIOCGIFFLAGS, &ifr) >= 0) {
+		/* follow values from net/if.h */
+		int i = 0;
+		if (ifr.ifr_flags & IFF_UP) {
+			flags_buf[i] = "UP";
+			i++;
+		}
+		if (ifr.ifr_flags & IFF_BROADCAST) {
+			flags_buf[i] = "BROADCAST";
+			i++;
+		}
+		if (ifr.ifr_flags & IFF_DEBUG) {
+			flags_buf[i] = "DEBUG";
+			i++;
+		}
+		if (ifr.ifr_flags & IFF_LOOPBACK) {
+			flags_buf[i] = "LOOPBACK";
+			i++;
+		}
+		if (ifr.ifr_flags & IFF_POINTOPOINT) {
+			flags_buf[i] = "POINTOPOINT";
+			i++;
+		}
+		if (ifr.ifr_flags & IFF_NOTRAILERS) {
+			flags_buf[i] = "NOTRAILERS";
+			i++;
+		}
+		if (ifr.ifr_flags & IFF_RUNNING) {
+			flags_buf[i] = "RUNNING";
+			i++;
+		}
+		if (ifr.ifr_flags & IFF_NOARP) {
+			flags_buf[i] = "NOAPP";
+			i++;
+		}
+		if (ifr.ifr_flags & IFF_PROMISC) {
+			flags_buf[i] = "PROMISC";
+			i++;
+		}
+		if (ifr.ifr_flags & IFF_ALLMULTI) {
+			flags_buf[i] = "ALLMULTI";
+			i++;
+		}
+		if (ifr.ifr_flags & IFF_MASTER) {
+			flags_buf[i] = "MASTER";
+			i++;
+		}
+		if (ifr.ifr_flags & IFF_SLAVE) {
+			flags_buf[i] = "SLAVE";
+			i++;
+		}
+		if (ifr.ifr_flags & IFF_MULTICAST) {
+			flags_buf[i] = "MULTICAST";
+			i++;
+		}
+		if (ifr.ifr_flags & IFF_PORTSEL) {
+			flags_buf[i] = "PORTSEL";
+			i++;
+		}
+		if (ifr.ifr_flags & IFF_AUTOMEDIA) {
+			flags_buf[i] = "AUTOMEDIA";
+			i++;
+		}
+		if (ifr.ifr_flags & IFF_DYNAMIC) {
+			flags_buf[i] = "DYNAMIC";
+			i++;
+		}
+		flags_buf[i] = NULL;
+	} else {
+		flags_buf[0] = NULL;
+	}
+
 }
 
 static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx)
 {
 	struct ifaddrs *ifaddr, *ifa;
 	int family, rc=1;
-	char host[NI_MAXHOST], broad[NI_MAXHOST], mask[NI_MAXHOST], *mac, *type;
+	char host[NI_MAXHOST], broad[NI_MAXHOST], mask[NI_MAXHOST], *mac, *type, **flags;
 	SEXP_t *item;
 
 	if (getifaddrs(&ifaddr) == -1) {
@@ -165,7 +241,7 @@ static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx)
 		}
 		SEXP_free(sname);
 
-		get_l2_info(ifa, &mac, &type);
+		get_l2_info(ifa, &mac, &type, &flags);
 		rc = getnameinfo(ifa->ifa_addr, (family == AF_INET) ?
 			sizeof(struct sockaddr_in) :
 			sizeof(struct sockaddr_in6), host, NI_MAXHOST,
@@ -222,6 +298,7 @@ static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx)
                                          "inet_addr",      OVAL_DATATYPE_STRING, host,
                                          "broadcast_addr", OVAL_DATATYPE_STRING, broad,
                                          "netmask",        OVAL_DATATYPE_STRING, mask,
+                                         "flag",          OVAL_DATATYPE_STRING_M, flags,
                                          NULL);
 
                 probe_item_collect(ctx, item);
