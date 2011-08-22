@@ -57,34 +57,11 @@
 
 int probe_main(probe_ctx *ctx, void *arg)
 {
-	const char *processor;
 	struct utsname buf;
         SEXP_t *item;
 
 	// Collect the info
 	uname(&buf);
-	processor = buf.machine;
-#ifdef __linux__
-	if (strcmp(processor, "i686") == 0) {
-		// See if we have an athlon processor
-		FILE *f = fopen("/proc/cpu", "rt");
-		if (f) {
-			char tmp[128];
-#ifdef HAVE_STDIO_EXT_H
-                        __fsetlocking(f, FSETLOCKING_BYCALLER);
-#endif
-			while (fgets(tmp, sizeof(tmp), f)) {
-				if (strncmp(tmp, "vendor_id", 9) == 0) {
-					if (strstr(tmp, "AuthenticAMD")) {
-						processor = "athlon";
-						break;
-					}
-				}
-			}
-                        fclose(f);
-		}
-	}
-#endif
 
         item = probe_item_create(OVAL_UNIX_UNAME, NULL,
                                  "machine_class",  OVAL_DATATYPE_STRING, buf.machine,
@@ -92,7 +69,7 @@ int probe_main(probe_ctx *ctx, void *arg)
                                  "os_name",        OVAL_DATATYPE_STRING, buf.sysname,
                                  "os_release",     OVAL_DATATYPE_STRING, buf.release,
                                  "os_version",     OVAL_DATATYPE_STRING, buf.version,
-                                 "processor_type", OVAL_DATATYPE_STRING, processor,
+                                 "processor_type", OVAL_DATATYPE_STRING, buf.machine,
                                  NULL);
 
         probe_item_collect(ctx, item);
