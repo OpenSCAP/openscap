@@ -172,8 +172,8 @@ test_run "oval_version_datatype.xml" test_mitre oval_version_datatype.xml "true"
 # unsupported object
 #test_run "unix-def_inetd_test.xml" test_mitre unix-def_inetd_test.xml "unknown"
 
-# failed
-#test_run "unix-def_interface_test.xml" test_mitre unix-def_interface_test.xml
+# needs only two interfaces - lo, eth0 - without ipv6 addresses
+#test_run "unix-def_interface_test.xml" test_mitre unix-def_interface_test.xml "true"
 
 test_run "unix-def_password_test.xml" test_mitre unix-def_password_test.xml "true"
 test_run "unix-def_process58_test.xml" test_mitre unix-def_process58_test.xml "true"
