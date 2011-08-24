@@ -64,9 +64,17 @@
 		}						\
 	} while (0)
 
-
 typedef struct {
-	FTS    *ofts_fts;
+	/* oval_fts_read_match_path() state */
+	FTS *ofts_match_path_fts;
+	FTSENT *ofts_match_path_fts_ent;
+	/* oval_fts_read_recurse_path() state */
+	FTS *ofts_recurse_path_fts;
+	int ofts_recurse_path_fts_opts;
+	int ofts_recurse_path_curdepth;
+	char *ofts_recurse_path_pthcpy;
+	char *ofts_recurse_path_curpth;
+	dev_t ofts_recurse_path_devid;
 
 	char   **ofts_st_path;       /**< starting paths - NULL terminated */
 	uint16_t ofts_st_path_count; /**< number of starting paths */

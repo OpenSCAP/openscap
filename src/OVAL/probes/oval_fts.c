@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2010-2011 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -18,6 +18,7 @@
  *
  * Authors:
  *      "Daniel Kopecek" <dkopecek@redhat.com>
+ *      "Tomas Heinrich" <theinric@redhat.com>
  */
 
 #ifdef HAVE_CONFIG_H
@@ -48,46 +49,26 @@
 #include <fts.h>
 #endif
 
-static OVAL_FTS *OVAL_FTS_new(char **fts_paths, uint16_t fts_paths_count, int fts_options)
+static OVAL_FTS *OVAL_FTS_new()
 {
 	OVAL_FTS *ofts;
 
 	ofts = oscap_talloc(OVAL_FTS);
-	ofts->ofts_fts = fts_open((char * const *)fts_paths, fts_options, NULL);
-
-	if (ofts->ofts_fts == NULL) {
-		_F("fts_open(%p, %d, NULL) failed: errno=%d\n", fts_paths, fts_options, errno);
-		oscap_free(ofts);
-		return (NULL);
-	}
-
-	ofts->ofts_st_path       = fts_paths;
-	ofts->ofts_st_path_count = fts_paths_count;
-	ofts->ofts_st_path_index = 0;
-
-	ofts->ofts_spath = NULL;
-	ofts->ofts_sfilename = NULL;
-	ofts->ofts_sfilepath = NULL;
-
-	ofts->ofts_path_regex       = NULL;
-	ofts->ofts_path_regex_extra = NULL;
-	ofts->ofts_path_op = 0;
+	memset(ofts, 0, sizeof(*ofts));
 
 	ofts->max_depth  = -1;
 	ofts->direction  = -1;
 	ofts->filesystem = -1;
-	ofts->localdevs  = NULL;
 
 	return (ofts);
 }
 
 static void OVAL_FTS_free(OVAL_FTS *ofts)
 {
-	if (ofts->ofts_fts != NULL)
-		fts_close(ofts->ofts_fts);
-
-	if (ofts->ofts_st_path != NULL)
-		_W("ofts_st_path != NULL (%p)\n", ofts->ofts_st_path);
+	if (ofts->ofts_match_path_fts != NULL)
+		fts_close(ofts->ofts_match_path_fts);
+	if (ofts->ofts_recurse_path_fts != NULL)
+		fts_close(ofts->ofts_match_path_fts);
 
 	oscap_free(ofts);
 	return;
@@ -168,7 +149,8 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 
 	SEXP_t *r0;
 
-	int fts_options = FTS_PHYSICAL | FTS_COMFOLLOW;
+	int mtc_fts_options = FTS_PHYSICAL | FTS_COMFOLLOW;
+	int rec_fts_options = FTS_PHYSICAL | FTS_COMFOLLOW;
 	int max_depth   = -1;
 	int direction   = -1;
 	int recurse     = -1;
@@ -278,7 +260,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 				filesystem = OVAL_RECURSE_FS_ALL;
 			} else if (strcmp(cstr_buff, "defined") == 0) {
 				filesystem = OVAL_RECURSE_FS_DEFINED;
-				fts_options |= FTS_XDEV;
+				rec_fts_options |= FTS_XDEV;
 			} else {
 				_F("Invalid recurse filesystem: %s\n", cstr_buff);
 				SEXP_free(r0);
@@ -302,8 +284,16 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		paths[0] = strdup("/");
 	paths[1] = NULL;
 
-	ofts = OVAL_FTS_new(paths, 1, fts_options);
+	ofts = OVAL_FTS_new();
 
+	ofts->ofts_match_path_fts = fts_open((char * const *) paths, mtc_fts_options, NULL);
+	if (ofts->ofts_match_path_fts == NULL) {
+		dE("fts_open(%p, %d, NULL) failed: errno: %d.\n", paths, mtc_fts_options, errno);
+		OVAL_FTS_free(ofts);
+		return (NULL);
+	}
+
+	ofts->ofts_recurse_path_fts_opts = rec_fts_options;
 	ofts->ofts_st_path = paths; /* NULL-terminated array of starting paths */
 	ofts->ofts_st_path_count = 1;
 	ofts->ofts_st_path_index = 0;
@@ -376,218 +366,308 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	return (ofts);
 }
 
-OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
+/* find the first matching path or filepath */
+static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 {
-	OVAL_FTSENT *ofts_ent = NULL;
+	FTSENT *fts_ent = NULL;
+	SEXP_t *stmp;
+	oval_result_t ores;
+
+	/* iterate until a match is found or all elements have been traversed */
+	for (;;) {
+		fts_ent = fts_read(ofts->ofts_match_path_fts);
+		if (fts_ent == NULL)
+			return NULL;
+
+		switch (fts_ent->fts_info) {
+		case FTS_DP:
+			continue;
+		case FTS_DC:
+			dW("Filesystem tree cycle detected at '%s'.\n", fts_ent->fts_path);
+			continue;
+		}
+
 #if defined(OSCAP_VERBOSE_DEBUG)
-	_I("ofts=%p\n", ofts);
+		dI("fts_path: '%s' (l=%d).\n"
+		   "fts_name: '%s' (l=%d).\n"
+		   "fts_info: %u.\n", fts_ent->fts_path, fts_ent->fts_pathlen,
+		   fts_ent->fts_name, fts_ent->fts_namelen, fts_ent->fts_info);
 #endif
-	if (ofts != NULL) {
-		register FTSENT *fts_ent;
 
-		/*
-		  todo: the following code won't work in case of a path with
-		  pattern match and recursion. split into a part that handles
-		  operator-induced-recursion and a part for oval-recursion
-		*/
-		for (;;) {
-			fts_ent = fts_read(ofts->ofts_fts);
+		if (fts_ent->fts_info == FTS_SL) {
+			dI("Only the target of a symlink gets reported, skipping.\n");
+			fts_set(ofts->ofts_match_path_fts, fts_ent, FTS_FOLLOW);
+			continue;
+		}
 
-			if (fts_ent == NULL)
-				return (NULL);
+		/* partial match optimization for OVAL_OPERATION_PATTERN_MATCH operation on path and filepath */
+		if (ofts->ofts_path_regex != NULL && fts_ent->fts_info == FTS_D) {
+			int ret, svec[3];
+
+			ret = pcre_exec(ofts->ofts_path_regex, ofts->ofts_path_regex_extra,
+					fts_ent->fts_path, fts_ent->fts_pathlen, 0, PCRE_PARTIAL,
+					svec, sizeof(svec) / sizeof(svec[0]));
+			if (ret < 0) {
+				switch (ret) {
+				case PCRE_ERROR_NOMATCH:
+					dI("Partial match optimization: PCRE_ERROR_NOMATCH -> skipping.\n");
+					fts_set(ofts->ofts_match_path_fts, fts_ent, FTS_SKIP);
+					continue;
+				case PCRE_ERROR_PARTIAL:
+					dI("Partial match optimization: PCRE_ERROR_PARTIAL -> continuing.\n");
+					continue;
+				default:
+					dE("pcre_exec() error: %d.\n", ret);
+					return NULL;
+				}
+			}
+		}
+
+		if ((ofts->ofts_sfilepath && fts_ent->fts_info == FTS_D)
+		    || (!ofts->ofts_sfilepath && fts_ent->fts_info != FTS_D))
+			continue;
+
+		stmp = SEXP_string_newf("%s", fts_ent->fts_path);
+		if (ofts->ofts_sfilepath)
+			/* try to match filepath */
+			ores = probe_entobj_cmp(ofts->ofts_sfilepath, stmp);
+		else
+			/* try to match path */
+			ores = probe_entobj_cmp(ofts->ofts_spath, stmp);
+		SEXP_free(stmp);
+
+		if (ores == OVAL_RESULT_TRUE)
+			break;
+	} /* for (;;) */
+
+	return fts_ent;
+}
+
+/* find the first matching file or directory */
+static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
+{
+	FTSENT *out_fts_ent = NULL;
+	bool collect_dirs = (ofts->ofts_sfilename == NULL);
+
+	switch (ofts->direction) {
+
+	case OVAL_RECURSE_DIRECTION_DOWN:
+	case OVAL_RECURSE_DIRECTION_NONE:
+		if (ofts->direction == OVAL_RECURSE_DIRECTION_NONE
+		    && collect_dirs) {
+			/* the target is the directory itself */
+			out_fts_ent = ofts->ofts_match_path_fts_ent;
+			ofts->ofts_match_path_fts_ent = NULL;
+			break;
+		}
+
+		/* initialize separate fts for recursion */
+		if (ofts->ofts_recurse_path_fts == NULL) {
+			char * const paths[2] = { ofts->ofts_match_path_fts_ent->fts_path, NULL };
+
+			ofts->ofts_recurse_path_fts = fts_open(paths,
+				ofts->ofts_recurse_path_fts_opts, NULL);
+		}
+
+		/* iterate until a match is found or all elements have been traversed */
+		while (out_fts_ent == NULL) {
+			FTSENT *fts_ent;
+
+			fts_ent = fts_read(ofts->ofts_recurse_path_fts);
+			if (fts_ent == NULL) {
+				fts_close(ofts->ofts_recurse_path_fts);
+				ofts->ofts_recurse_path_fts = NULL;
+
+				return NULL;
+			}
 
 			switch (fts_ent->fts_info) {
 			case FTS_DP:
 				continue;
 			case FTS_DC:
-				_W("Filesystem tree cycle detected at %s\n", fts_ent->fts_path);
+				dW("Filesystem tree cycle detected at '%s'.\n", fts_ent->fts_path);
 				continue;
 			}
+
 #if defined(OSCAP_VERBOSE_DEBUG)
-			_I("fts_path: '%s' (l=%d)\n"
+			dI("fts_path: '%s' (l=%d).\n"
 			   "fts_name: '%s' (l=%d).\n"
 			   "fts_info: %u.\n", fts_ent->fts_path, fts_ent->fts_pathlen,
 			   fts_ent->fts_name, fts_ent->fts_namelen, fts_ent->fts_info);
 #endif
-			/* partial match optimization for OVAL_OPERATION_PATTERN_MATCH operation on path and filepath */
-			if (ofts->ofts_path_regex != NULL
-			    && (fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)) {
-				int ret, svec[3], pathlen;
 
-				if (!ofts->ofts_sfilename) /* sfilepath || (spath && !sfilename) */
-					pathlen = fts_ent->fts_pathlen;
-				else /* spath && sfilename */
-					pathlen = pathlen_from_ftse(fts_ent->fts_pathlen, fts_ent->fts_namelen);
-
-				ret = pcre_exec(ofts->ofts_path_regex, ofts->ofts_path_regex_extra,
-						fts_ent->fts_path, pathlen,
-						0, PCRE_PARTIAL, svec, 1);
-				if (ret < 0) {
-					switch (ret) {
-					case PCRE_ERROR_NOMATCH:
-						_I("Partial-match optimization: PCRE_ERROR_NOMATCH -> skipping file.\n");
-						goto __skip_file;
-					case PCRE_ERROR_PARTIAL:
-						if (fts_ent->fts_info == FTS_SL)
-							fts_set(ofts->ofts_fts, fts_ent, FTS_FOLLOW);
-						_I("Partial-match optimization: PCRE_ERROR_PARTIAL -> continuing.\n");
-						continue;
-					default:
-						_F("pcre_exec() error: %d.\n", ret);
-						return (NULL);
-					}
-				}
-			}
-
-			if (fts_ent->fts_info == FTS_SL) {
-				_I("Only the target of a symlink gets reported; ignored.\n");
-			} else if (ofts->ofts_sfilepath) { /* match filepath */
+			/* collect matching target */
+			if (collect_dirs) {
+				if (fts_ent->fts_info == FTS_D)
+					out_fts_ent = fts_ent;
+			} else {
 				if (fts_ent->fts_info != FTS_D) {
 					SEXP_t *stmp;
 
-					stmp = SEXP_string_newf("%s", fts_ent->fts_path);
-					if (probe_entobj_cmp(ofts->ofts_sfilepath, stmp) == OVAL_RESULT_TRUE)
-						ofts_ent = OVAL_FTSENT_new(ofts, fts_ent);
+					stmp = SEXP_string_newf("%s", fts_ent->fts_name);
+					if (probe_entobj_cmp(ofts->ofts_sfilename, stmp) == OVAL_RESULT_TRUE)
+						out_fts_ent = fts_ent;
 					SEXP_free(stmp);
-				}
-			} else { /* match path+filename */
-				if ((ofts->ofts_sfilename && fts_ent->fts_info != FTS_D)
-				    || (!ofts->ofts_sfilename && fts_ent->fts_info == FTS_D)) {
-					bool match = true;
-					SEXP_t *stmp;
-					int pathlen;
-
-					if (!ofts->ofts_sfilename) { /* the target is a directory */
-						stmp = SEXP_string_newf("%s", fts_ent->fts_path);
-					} else {
-						pathlen = pathlen_from_ftse(fts_ent->fts_pathlen, fts_ent->fts_namelen);
-						stmp = SEXP_string_newf("%.*s", pathlen , fts_ent->fts_path);
-					}
-					if (probe_entobj_cmp(ofts->ofts_spath, stmp) != OVAL_RESULT_TRUE)
-						match = false;
-					if (ofts->ofts_path_op == OVAL_OPERATION_EQUALS) // repulsive hack
-						match = true;
-					SEXP_free(stmp);
-
-					if (match && ofts->ofts_sfilename) {
-						stmp = SEXP_string_newf("%s", fts_ent->fts_name);
-						if (probe_entobj_cmp(ofts->ofts_sfilename, stmp) != OVAL_RESULT_TRUE)
-							match = false;
-						SEXP_free(stmp);
-					}
-
-					if (match)
-						ofts_ent = OVAL_FTSENT_new(ofts, fts_ent);
 				}
 			}
 
-			switch (ofts->direction) {
-			case OVAL_RECURSE_DIRECTION_NONE:
-				if (ofts->ofts_path_op != OVAL_OPERATION_EQUALS)
+			/* limit recursion depth */
+			if ((ofts->direction == OVAL_RECURSE_DIRECTION_NONE
+			     && fts_ent->fts_level > 0) /* don't skip fts root */
+			    || (ofts->max_depth != -1 && fts_ent->fts_level > ofts->max_depth)) {
+				fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
+				continue;
+			}
+
+			/* limit recursion only to selected file types */
+			switch (fts_ent->fts_info) {
+			case FTS_D:
+				if (!(ofts->recurse & OVAL_RECURSE_DIRS)) {
+					fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
+					continue;
+				}
+				break;
+			case FTS_SL:
+				if (!(ofts->recurse & OVAL_RECURSE_SYMLINKS)) {
+					fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
+					continue;
+				}
+				fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_FOLLOW);
+				break;
+			default:
+				continue;
+			}
+
+			/* don't recurse into non-local fs if configured so */
+			if (ofts->filesystem == OVAL_RECURSE_FS_LOCAL
+			    && (fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)
+			    && (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
+					(fts_ent->fts_statp != NULL) ?
+					&fts_ent->fts_statp->st_dev : NULL))) {
+				fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
+				continue;
+			}
+		}
+
+		break;
+	case OVAL_RECURSE_DIRECTION_UP:
+		if (ofts->ofts_recurse_path_pthcpy == NULL) {
+			ofts->ofts_recurse_path_pthcpy = \
+			ofts->ofts_recurse_path_curpth = strdup(ofts->ofts_match_path_fts_ent->fts_path);
+			ofts->ofts_recurse_path_curdepth = 0;
+		}
+
+		while (ofts->max_depth == -1 || ofts->ofts_recurse_path_curdepth <= ofts->max_depth) {
+			/* initialize separate fts for recursion */
+			if (ofts->ofts_recurse_path_fts == NULL) {
+				char * const paths[2] = { ofts->ofts_recurse_path_curpth, NULL };
+
+				ofts->ofts_recurse_path_fts = fts_open(paths,
+					ofts->ofts_recurse_path_fts_opts, NULL);
+			}
+
+			/* iterate until a match is found or all elements have been traversed */
+			while (out_fts_ent == NULL) {
+				FTSENT *fts_ent;
+
+				fts_ent = fts_read(ofts->ofts_recurse_path_fts);
+				if (fts_ent == NULL)
 					break;
-				if (!ofts->ofts_sfilename && !ofts->ofts_sfilepath) {
-#if defined(OSCAP_VERBOSE_DEBUG)
-					_I("FTS_SKIP: recurse_direction: 'none', path: '%s' "
-					   "and the object's target is a directory.\n", fts_ent->fts_path);
-#endif
-					fts_set(ofts->ofts_fts, fts_ent, FTS_SKIP);
+
+				if (ofts->ofts_recurse_path_curdepth == 0)
+					ofts->ofts_recurse_path_devid = fts_ent->fts_statp->st_dev;
+
+				if (ofts->filesystem == OVAL_RECURSE_FS_LOCAL
+				    && (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
+						(fts_ent->fts_statp != NULL) ?
+						&fts_ent->fts_statp->st_dev : NULL)))
 					break;
-				}
-				if (fts_ent->fts_level > 0) {
-#if defined(OSCAP_VERBOSE_DEBUG)
-					_I("FTS_SKIP: recurse_direction: 'none', path: '%s' "
-					   "and fts_level: %d.\n", fts_ent->fts_path, fts_ent->fts_level);
-#endif
-					fts_set(ofts->ofts_fts, fts_ent, FTS_SKIP);
-				} else {
-#if defined(OSCAP_VERBOSE_DEBUG)
-					_I("The object's target is not a directory, not skipping FTS_ROOT: '%s'.\n", fts_ent->fts_path);
-#endif
-				}
-				break;
-			case OVAL_RECURSE_DIRECTION_DOWN:
-				if (fts_ent->fts_level == 0 && ofts->ofts_sfilename) {
-#if defined(OSCAP_VERBOSE_DEBUG)
-					_I("Not skipping FTS_ROOT: %s\n", fts_ent->fts_path);
-#endif
-				} else if (fts_ent->fts_level <= ofts->max_depth || ofts->max_depth == -1) {
-					/*
-					 * Check file type & filesystem recursion.
-					 *  `defined' is handled by fts (FTS_XDEV)
-					 *  `all' => we don't care
-					 *  `local' => the only case we need to handle here
-					 */
-					switch(fts_ent->fts_info) {
-					case FTS_D: /* directory */
-						if (!(ofts->recurse & OVAL_RECURSE_DIRS))
-							goto __skip_file;
-						break;
-					case FTS_SL: /* symbolic link */
-						if (!(ofts->recurse & OVAL_RECURSE_SYMLINKS))
-							goto __skip_file;
+				if (ofts->filesystem == OVAL_RECURSE_FS_DEFINED
+				    && ofts->ofts_recurse_path_devid != fts_ent->fts_statp->st_dev)
+					break;
 
-						fts_set(ofts->ofts_fts, fts_ent, FTS_FOLLOW);
-#if defined(OSCAP_VERBOSE_DEBUG)
-						_I("FTS_FOLLOW: %s\n", fts_ent->fts_path);
-#endif
+				/* collect matching target */
+				if (collect_dirs) {
+					/* only fts root is collected */
+					if (fts_ent->fts_level == 0 && fts_ent->fts_info == FTS_D) {
+						out_fts_ent = fts_ent;
+						fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
 						break;
-					default:
-						/*
-						 * No need to check filesystem recursion for other
-						 * types of files.
-						 */
-						goto __case_end;
-					}
-
-					if (ofts->filesystem == OVAL_RECURSE_FS_LOCAL) {
-						switch (fts_ent->fts_info) {
-						case FTS_D:
-						case FTS_SL:
-							/*
-							 * Check whether the filesystem mounted at
-							 * the symlink/directory destination is a
-							 * local one.
-							 */
-							if (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
-									     fts_ent->fts_statp != NULL ?
-									     &fts_ent->fts_statp->st_dev : NULL))
-							{
-#if defined(OSCAP_VERBOSE_DEBUG)
-								_I("not on local fs: %s\n", fts_ent->fts_path);
-#endif
-								goto __skip_file;
-							}
-							break;
-						case FTS_SLNONE:
-						default:
-							/* It's a regular file or something we don't care about */
-							break;
-						}
 					}
 				} else {
-#if defined(OSCAP_VERBOSE_DEBUG)
-					_I("FTS_SKIP: reason: max depth reached: %d, path: '%s'.\n",
-					   ofts->max_depth, fts_ent->fts_path);
-#endif
-				__skip_file:
-					fts_set(ofts->ofts_fts, fts_ent, FTS_SKIP);
+					if (fts_ent->fts_info != FTS_D) {
+						SEXP_t *stmp;
+
+						stmp = SEXP_string_newf("%s", fts_ent->fts_name);
+						if (probe_entobj_cmp(ofts->ofts_sfilename, stmp) == OVAL_RESULT_TRUE)
+							out_fts_ent = fts_ent;
+						SEXP_free(stmp);
+					}
 				}
-			__case_end:
+
+				if (fts_ent->fts_info == FTS_SL)
+					fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_FOLLOW);
+				/* limit recursion only to fts root */
+				else if (fts_ent->fts_level > 0)
+					fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
+			}
+
+			if (out_fts_ent != NULL)
 				break;
-			case OVAL_RECURSE_DIRECTION_UP: /* is this really useful? */
-				fts_set(ofts->ofts_fts, fts_ent, FTS_SKIP);
+
+			fts_close(ofts->ofts_recurse_path_fts);
+			ofts->ofts_recurse_path_fts = NULL;
+
+			if (!strcmp(ofts->ofts_recurse_path_curpth, "/"))
+				break;
+
+			ofts->ofts_recurse_path_curpth = dirname(ofts->ofts_recurse_path_curpth);
+			ofts->ofts_recurse_path_curdepth++;
+		}
+
+		if (out_fts_ent == NULL) {
+			oscap_free(ofts->ofts_recurse_path_pthcpy);
+			ofts->ofts_recurse_path_pthcpy = NULL;
+		}
+
+		break;
+	}
+
+	return out_fts_ent;
+}
+
+OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
+{
+	FTSENT *fts_ent;
+
 #if defined(OSCAP_VERBOSE_DEBUG)
-				_I("FTS_SKIP: reason: recurse_direction==\"up\", path: '%s'.\n", fts_ent->fts_path);
+	dI("ofts: %p.\n", ofts);
 #endif
-				break;
-			} /* switch(recurse_direction */
 
-			if (ofts_ent != NULL)
-				break;
-		} /* for(;;) */
-	} /* ofts != NULL */
+	if (ofts == NULL)
+		return NULL;
 
-	return (ofts_ent);
+	for (;;) {
+		if (ofts->ofts_match_path_fts_ent == NULL) {
+			ofts->ofts_match_path_fts_ent = oval_fts_read_match_path(ofts);
+			if (ofts->ofts_match_path_fts_ent == NULL)
+				return NULL;
+		}
+
+		if (ofts->ofts_sfilepath) {
+			fts_ent = ofts->ofts_match_path_fts_ent;
+			ofts->ofts_match_path_fts_ent = NULL;
+			break;
+		} else {
+			fts_ent = oval_fts_read_recurse_path(ofts);
+			if (fts_ent != NULL)
+				break;
+
+			ofts->ofts_match_path_fts_ent = NULL;
+		}
+	}
+
+	return OVAL_FTSENT_new(ofts, fts_ent);
 }
 
 void oval_ftsent_free(OVAL_FTSENT *ofts_ent)
@@ -604,6 +684,9 @@ int oval_fts_close(OVAL_FTS *ofts)
 			oscap_free(ofts->ofts_st_path[i]);
 		oscap_free(ofts->ofts_st_path);
 	}
+
+	if (ofts->ofts_recurse_path_pthcpy != NULL)
+		oscap_free(ofts->ofts_recurse_path_pthcpy);
 
 	ofts->ofts_st_path = NULL;
 
