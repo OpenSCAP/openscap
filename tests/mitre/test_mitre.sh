@@ -97,12 +97,12 @@ test_run "ind-def_family_test.xml" test_mitre ind-def_family_test.xml "true"
 #unsupported object
 #test_run "ind-def_sql_test.xml" test_mitre ind-def_sql_test.xml "unknown"
 
-#  unsupported recursion up: oval:org.mitre.oval.test:obj:577
-#test_run "ind-def_textfilecontent54_test.xml" test_mitre ind-def_textfilecontent54_test.xml
-#  unsupported recursion up: oval:org.mitre.oval.test:obj:800
-#test_run "ind-def_textfilecontent_test.xml" test_mitre ind-def_textfilecontent_test.xml
-#  unsupported recursion up: oval:org.mitre.oval.test:obj:701
-#test_run "ind-def_xmlfilecontent_test.xml" test_mitre ind-def_xmlfilecontent_test.xml
+# failed - uptream bug: trailing '/' in a path
+#test_run "ind-def_textfilecontent54_test.xml" test_mitre ind-def_textfilecontent54_test.xml "true"
+# failed - uptream bug: trailing '/' in a path
+#test_run "ind-def_textfilecontent_test.xml" test_mitre ind-def_textfilecontent_test.xml "true"
+# failed - uptream bug: trailing '/' in a path
+#test_run "ind-def_xmlfilecontent_test.xml" test_mitre ind-def_xmlfilecontent_test.xml "true"
 
 # LINUX
 # unsupported on Fedora/RH
