@@ -475,7 +475,7 @@ void SEXP_list_it_free(SEXP_list_it *it);
  * @param list the list the loop iterates through
  */
 #define SEXP_list_foreach(var, list)                                    \
-        for (uint32_t OSCAP_CONCAT(i,__LINE__) = 1; ((var) = SEXP_list_nth (list, OSCAP_CONCAT(i,__LINE__))) != NULL; ++OSCAP_CONCAT(i,__LINE__), SEXP_free (var))
+        for (uint32_t OSCAP_CONCAT(i,__LINE__) = 1; ((var) = SEXP_list_nth (list, OSCAP_CONCAT(i,__LINE__))) != NULL; ++OSCAP_CONCAT(i,__LINE__), SEXP_free (var), (var) = NULL)
 
 /**
  * Iterate through a sublist, assigning each element to a variable.
@@ -485,7 +485,7 @@ void SEXP_list_it_free(SEXP_list_it *it);
  * @param end the index of the last element of the sublist
  */
 #define SEXP_sublist_foreach(var, list, beg, end)                       \
-        for (uint32_t OSCAP_CONCAT(i,__LINE__) = (beg); OSCAP_CONCAT(i,__LINE__) <= ((size_t)(end)) && ((var) = SEXP_list_nth (list, OSCAP_CONCAT(i,__LINE__))) != NULL; ++OSCAP_CONCAT(i,__LINE__), SEXP_free (var))
+        for (uint32_t OSCAP_CONCAT(i,__LINE__) = (beg); OSCAP_CONCAT(i,__LINE__) <= ((size_t)(end)) && ((var) = SEXP_list_nth (list, OSCAP_CONCAT(i,__LINE__))) != NULL; ++OSCAP_CONCAT(i,__LINE__), SEXP_free (var), (var) = NULL)
 
 #define SEXP_LIST_END (UINT32_MAX - 1)
 
