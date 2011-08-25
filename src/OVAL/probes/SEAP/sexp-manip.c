@@ -37,6 +37,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <errno.h>
+#include <math.h>
 
 #include "common/assume.h"
 #include "common/bfind.h"
@@ -547,10 +548,27 @@ SEXP_t *SEXP_number_newf (double n)
 
 double SEXP_number_getf (const SEXP_t *s_exp)
 {
+        SEXP_val_t v_dsc;
+        SEXP_numtype_t t;
+
         _LOGCALL_;
-        abort ();
+
+        if (s_exp == NULL) {
+                errno = EFAULT;
+                return (NAN);
+        }
+
         SEXP_VALIDATE(s_exp);
-        return (0);
+
+        SEXP_val_dsc (&v_dsc, s_exp->s_valp);
+        t = SEXP_rawval_number_type (&v_dsc);
+
+        if (t != SEXP_NUM_DOUBLE) {
+                errno = EDOM;
+                return (NAN);
+        }
+
+	return SEXP_NCASTP(f,v_dsc.mem)->n;
 }
 
 int SEXP_number_get (const SEXP_t *s_exp, void *dst, SEXP_numtype_t type)
