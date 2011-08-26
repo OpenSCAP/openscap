@@ -70,6 +70,7 @@
 #include <sys/ioctl.h>
 #include <string.h>
 #include <net/if.h>
+#include <arpa/inet.h>
 
 static int fd=-1;
 
@@ -118,14 +119,23 @@ static int get_ifs(SEXP_t *item)
                         continue;
 
                 mac = get_mac(ifa);
-                rc = getnameinfo(ifa->ifa_addr, (family == AF_INET) ?
-                        sizeof(struct sockaddr_in) :
-                        sizeof(struct sockaddr_in6), host, NI_MAXHOST,
-                        NULL, 0, NI_NUMERICHOST);
-                if (rc) {
-                        rc = 1;
-                        goto leave2;
-                }
+		if (family == AF_INET) {
+			rc = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
+				host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+			if (rc) {
+				rc = 1;
+				goto leave2;
+			}
+		}
+		else {
+			struct sockaddr_in6 *sin6p;
+			sin6p = (struct sockaddr_in6 *) ifa->ifa_addr;
+			if (! inet_ntop(family, (const void *)&sin6p->sin6_addr, host, NI_MAXHOST)) {
+				rc = 1;
+				goto leave2;
+			}
+		}
+
 
 	        attrs = probe_attr_creat("name",
                                  r0 = SEXP_string_newf("%s", ifa->ifa_name),
