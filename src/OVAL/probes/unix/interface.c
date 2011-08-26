@@ -70,6 +70,7 @@
 #include <string.h>
 #include <net/if.h>
 #include <net/if_arp.h>
+#include <arpa/inet.h>
 
 static int fd=-1;
 
@@ -199,6 +200,7 @@ static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx)
 	struct ifaddrs *ifaddr, *ifa;
 	int family, rc=1;
 	char host[NI_MAXHOST], broad[NI_MAXHOST], mask[NI_MAXHOST], *mac, *type, **flags;
+	oval_datatype_t address_type;
 	SEXP_t *item;
 
 	if (getifaddrs(&ifaddr) == -1) {
@@ -245,36 +247,81 @@ static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx)
 
 		get_l2_info(ifa, &mac, &type);
 		get_flags(ifa, &flags);
-		rc = getnameinfo(ifa->ifa_addr, (family == AF_INET) ?
-			sizeof(struct sockaddr_in) :
-			sizeof(struct sockaddr_in6), host, NI_MAXHOST,
-			NULL, 0, NI_NUMERICHOST);
-		if (rc) {
-			SEXP_t *msg;
 
-			msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, "getnameinfo() failed.");
-			probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
-			SEXP_free(msg);
-			probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
-			rc = 1;
+/* The inet_addr entity is the IP address of the specific interface.
+ * Note that the IP address can be IPv4 or IPv6. If the IP address is an IPv6 address,
+ * this entity should be expressed as an IPv6 address prefix using CIDR notation and
+ * the netmask entity should not be collected.
+ */
+		if (family == AF_INET) {
+			rc = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
+					host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+			if (rc) {
+				SEXP_t *msg;
 
-			goto leave2;
+				msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, "getnameinfo() failed.");
+				probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
+				SEXP_free(msg);
+				probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
+				rc = 1;
+
+				goto leave2;
+			}
+			address_type = OVAL_DATATYPE_IPV4ADDR;
+
+			rc = getnameinfo(ifa->ifa_netmask, sizeof(struct sockaddr_in),
+					mask, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+			if (rc) {
+				SEXP_t *msg;
+
+				msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, "getnameinfo() failed.");
+				probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
+				SEXP_free(msg);
+				probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
+				rc = 1;
+
+				goto leave2;
+			}
+
 		}
-		rc = getnameinfo(ifa->ifa_netmask, (family == AF_INET) ?
-			sizeof(struct sockaddr_in) :
-			sizeof(struct sockaddr_in6), mask, NI_MAXHOST,
-			NULL, 0, NI_NUMERICHOST);
-		if (rc) {
-			SEXP_t *msg;
+		else {
+			struct sockaddr_in6 *sin6p;
+			char host_tmp[NI_MAXHOST];
+			int bit, byte, prefix = 0;
+			u_int32_t tmp;
 
-			msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, "getnameinfo() failed.");
-			probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
-			SEXP_free(msg);
-			probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
-			rc = 1;
+			sin6p = (struct sockaddr_in6 *) ifa->ifa_addr;
 
-			goto leave2;
+			if (! inet_ntop(family, (const void *)&sin6p->sin6_addr, host, NI_MAXHOST)) {
+				SEXP_t *msg;
+
+				msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, "inet_ntop() failed.");
+				probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
+				SEXP_free(msg);
+				probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
+				rc = 1;
+
+				goto leave2;
+			}
+
+			address_type = OVAL_DATATYPE_IPV6ADDR;
+			*mask = '\0';
+
+			/* count prefix */
+			sin6p = (struct sockaddr_in6 *) ifa->ifa_netmask;
+
+			for (byte = 0; byte < 4 && sin6p->sin6_addr.s6_addr32[byte] == 0xffffffff; byte++) {
+			        prefix += 32;
+			}
+			if (byte < 4) {
+			        tmp = ntohl(sin6p->sin6_addr.s6_addr32[byte]);
+			        for (bit = 31; tmp & (1 << bit); bit--)
+			                prefix++;
+			}
+			snprintf(host_tmp, NI_MAXHOST, "%s/%d", host, prefix);
+			strncpy(host, host_tmp, NI_MAXHOST);
 		}
+
 		if (family == AF_INET && ifa->ifa_flags & IFF_BROADCAST) {
 			rc = getnameinfo(ifa->ifa_broadaddr, (family == AF_INET) ?
 					 sizeof(struct sockaddr_in) :
@@ -298,9 +345,9 @@ static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx)
                                          "name",           OVAL_DATATYPE_STRING, ifa->ifa_name,
                                          "type",           OVAL_DATATYPE_STRING, type,
                                          "hardware_addr",  OVAL_DATATYPE_STRING, mac,
-                                         "inet_addr",      OVAL_DATATYPE_STRING, host,
-                                         "broadcast_addr", OVAL_DATATYPE_STRING, broad,
-                                         "netmask",        OVAL_DATATYPE_STRING, mask,
+                                         "inet_addr",      address_type, host,
+                                         "broadcast_addr", address_type, broad,
+                                         "netmask",        address_type, mask,
                                          "flag",          OVAL_DATATYPE_STRING_M, flags,
                                          NULL);
 
