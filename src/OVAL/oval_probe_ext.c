@@ -945,11 +945,10 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                         for (i = 0; i < pext->pdtbl->count; ++i) {
                                 pd  = pext->pdtbl->memb[i];
 
-                                //fprintf(stderr, "Sending reset to %p(%s)...\n", pd, oval_subtype2str(pd->subtype));
-
-
-				if (pd == NULL)
+				if (pd == NULL) {
+					va_end(ap);
 					return(0);
+				}
 
 				if (act == PROBE_HANDLER_ACT_RESET)
 					ret = oval_probe_ext_reset(pext->pdtbl->ctx, pd, pext);

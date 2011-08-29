@@ -64,8 +64,10 @@ int SEAP_cmd_register (SEAP_CTX_t *ctx, SEAP_cmdcode_t code, uint32_t flags, SEA
                 sd  = va_arg (ap, int);
                 dsc = SEAP_desc_get (ctx->sd_table, sd);
 
-                if (dsc == NULL)
+                if (dsc == NULL) {
+			va_end(ap);
                         return (-1);
+		}
 
                 tbl = dsc->cmd_c_table;
         } else {
@@ -78,6 +80,8 @@ int SEAP_cmd_register (SEAP_CTX_t *ctx, SEAP_cmdcode_t code, uint32_t flags, SEA
                 arg = va_arg (ap, void *);
                 _A(arg != NULL);
         }
+
+	va_end(ap);
 
         rec = SEAP_cmdrec_new ();
         rec->code = code;

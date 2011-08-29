@@ -562,11 +562,12 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
 			if (!SEXP_numberp(___r)) {		\
 				_F("Invalid type\n");		\
 				SEXP_free(___r);		\
-				invalid_exp			\
-			}					\
-			dst = SEXP_number_geti_32(___r);	\
-			SEXP_free(___r);                	\
-		}						\
+				invalid_exp;			\
+			} else {				\
+				dst = SEXP_number_geti_32(___r);	\
+				SEXP_free(___r);                	\
+			}						\
+		}							\
 	} while (0)
 
 #endif				/* PROBE_API_H */

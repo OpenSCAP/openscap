@@ -86,8 +86,10 @@ struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_resu
 			/*(NODETYPE_CRITERIA, negate, operator); */
 			node = (oval_result_criteria_node_t *)
 			    oscap_alloc(sizeof(oval_result_criteria_node_CRITERIA_t));
-			if (node == NULL)
+			if (node == NULL) {
+				va_end(ap);
 				return NULL;
+			}
 
 			oval_result_criteria_node_CRITERIA_t *criteria = (oval_result_criteria_node_CRITERIA_t *) node;
 			criteria->operator =(oval_operator_t) va_arg(ap, int);
@@ -98,8 +100,10 @@ struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_resu
 			/*(NODETYPE_CRITERION, negate, test, variable_instance); */
 			node = (oval_result_criteria_node_t *)
 			    oscap_alloc(sizeof(oval_result_criteria_node_CRITERION_t));
-			if (node == NULL)
+			if (node == NULL) {
+				va_end(ap);
 				return NULL;
+			}
 
 			oval_result_criteria_node_CRITERION_t *criterion =
 			    (oval_result_criteria_node_CRITERION_t *) node;
@@ -111,8 +115,10 @@ struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_resu
 			/*(NODETYPE_EXTENDDEF, negate, definition, variable_instance); */
 			node = (oval_result_criteria_node_t *)
 			    oscap_alloc(sizeof(oval_result_criteria_node_EXTENDDEF_t));
-			if (node == NULL)
+			if (node == NULL) {
+				va_end(ap);
 				return NULL;
+			}
 
 			oval_result_criteria_node_EXTENDDEF_t *extenddef =
 			    (oval_result_criteria_node_EXTENDDEF_t *) node;

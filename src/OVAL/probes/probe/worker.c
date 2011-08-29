@@ -524,7 +524,10 @@ static SEXP_t *probe_set_combine(SEXP_t *cobj0, SEXP_t *cobj1, oval_setobject_op
 		res_flag = SYSCHAR_FLAG_DOES_NOT_EXIST;
 
 	res_cobj = probe_cobj_new(res_flag, NULL, res);
-	SEXP_vfree(set0, set1, res, NULL);
+
+	SEXP_free(set0);
+	SEXP_free(set1);
+	SEXP_free(res);
 
 	// todo: variables
 
@@ -614,7 +617,7 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 	SEXP_t *op_val;
 	int op_num;
 
-	SEXP_t *r0, *r1, *result, *msg = NULL;
+	SEXP_t *r0, *r1, *result, *Omsg = NULL;
 
 	_LOGCALL_;
 
@@ -662,126 +665,119 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 
 	probe_set_foreach(member, set) {
 		if (probe_ent_getname_r(member, member_name, sizeof member_name) == 0) {
-                        msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "probe_set_eval: Invalid set element: ptr=%p, type=%s.", member, SEXP_strtype(member));
+                        Omsg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+						"probe_set_eval: Invalid set element: ptr=%p, type=%s.", member, SEXP_strtype(member));
 			goto eval_fail;
 		}
 
-		switch (member_name[0]) {
-			CASE('s', "et") {
-				if (s_subset_i < 2) {
-					s_subset[s_subset_i] = probe_set_eval(probe, member, depth + 1);
+		if (strcmp("set", member_name) == 0) {
+			/*
+			 * Handle a (sub)set entity
+			 */
+			if (s_subset_i < 2) {
+				s_subset[s_subset_i] = probe_set_eval(probe, member, depth + 1);
 
-					if (s_subset[s_subset_i] == NULL) {
-                                                msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-                                                                       "probe_set_eval: Recursive set evaluation failed: m=%p, d=%zu.",
-                                                                       member, depth + 1);
-						goto eval_fail;
-					}
-
-					++s_subset_i;
-				} else {
-                                        msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-                                                               "probe_set_eval: More than 2 \"set\".");
+				if (s_subset[s_subset_i] == NULL) {
+					Omsg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+								"probe_set_eval: Recursive set evaluation failed: m=%p, d=%zu.",
+								member, depth + 1);
 					goto eval_fail;
 				}
+
+				++s_subset_i;
+			} else {
+				Omsg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+							"probe_set_eval: More than 2 \"set\".");
+				goto eval_fail;
 			}
-			break;
+		} else if (strcmp("obj_ref", member_name) == 0) {
+			/*
+			 * Handle an object reference
+			 */
+			SEXP_t *OID; /**< OVAL object ID */
+			SEXP_t *objres; /**< Result of the evaluation */
+			char    OID_cstr[128];
 
-			CASE('o', "bj_ref") {
-				SEXP_t *id, *res;
+			dI("Handling object_reference\n");
 
-				id = probe_ent_getval(member);
-
-				if (id == NULL) {
-                                        msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-                                                              "probe_set_eval: set=%p: Missing obj_ref value.",
-                                                              set);
-					goto eval_fail;
-				}
+			if ((OID = probe_ent_getval(member)) == NULL) {
+				Omsg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+							"%s: missing object_reference entity value!", __FUNCTION__);
+				goto eval_fail;
+			}
 #ifndef NDEBUG
-                                {
-                                        char *id_str = SEXP_string_cstr(id);
-                                        dI("Looking for object results: ID=%s\n", id_str);
-                                        oscap_free(id_str);
-                                }
+			SEXP_string_cstr_r(OID, OID_cstr, sizeof OID_cstr);
+			dI("Looking for the result in cache: OID=%s\n", OID_cstr);
 #endif
-				res = probe_rcache_sexp_get(probe->rcache, id);
+			if ((objres = probe_rcache_sexp_get(probe->rcache, OID)) == NULL) {
+				dI("MISS => requesting object evaluation from the library\n");
 
-				if (res == NULL) {
-                                        dI("MISS -> requesting object evaluation\n");
-					/* cache miss */
-					res = probe_obj_eval(probe, id);
+				objres = probe_obj_eval(probe, OID);
 
-                                        dI("Evaluation complete: res=%p\n", res);
-                                        _SE(res);
-                                        dI("\n");
-
-					if (res == NULL) {
-						char *tmp = SEXP_string_cstr(id);
-
-                                                msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-                                                                       "probe_set_eval: obj=%s: Evaluation failed.",
-                                                                       tmp);
-						oscap_free(tmp);
-						SEXP_free(id);
-						goto eval_fail;
-					}
-				}
-
-				SEXP_free(id);
-
-				if (o_subset_i < 2) {
-					o_subset[o_subset_i] = res;
-					++o_subset_i;
+				dI("EVAL: result=%p\n", objres);
+				if (objres != NULL) {
+					dO(OSCAP_DEBUGOBJ_SEXP, objres);
 				} else {
-                                        msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-                                                               "probe_set_eval: More than 2 obj_refs.");
-					SEXP_free(res);
+					SEXP_string_cstr_r(OID, OID_cstr, sizeof OID_cstr);
+					Omsg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+								"%s: evaluation failed: OID=%s", __FUNCTION__, OID_cstr);
+					SEXP_free(OID);
 					goto eval_fail;
 				}
 			}
-			break;
 
-			CASE('f', "ilter") {
-				SEXP_t *id, *act, *ste;
+			SEXP_free(OID);
 
-				id = probe_ent_getval(member);
-				if (id == NULL) {
-					msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-                                                               "probe_set_eval: set=%p: Missing filter value.", set);
-					goto eval_fail;
-				}
-
-				act = probe_ent_getattrval(member, "action");
-				if (act == NULL) {
-					msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-                                                               "probe_set_eval: set=%p: Missing filter action.", set);
-					SEXP_free(id);
-					goto eval_fail;
-				}
-
-				ste = probe_rcache_sexp_get(probe->rcache, id);
-
-				if (ste == NULL) {
-					SEXP_list_add(filters_req, id);
-					r0 = SEXP_list_new(act, id, NULL);
-					SEXP_list_add(filters_u, r0);
-				} else {
-					r0 = SEXP_list_new(act, ste, NULL);
-					SEXP_list_add(filters_a, r0);
-					SEXP_free(ste);
-				}
-
-				SEXP_vfree(id, act, r0, NULL);
+			if (o_subset_i < 2) {
+				o_subset[o_subset_i] = objres;
+				++o_subset_i;
+			} else {
+				Omsg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+							"%s: more than 2 obj_refs.", __FUNCTION__);
+				SEXP_free(objres);
+				goto eval_fail;
 			}
-			break;
-		default:
-			msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-                                               "probe_set_eval: Unexpected set element: %s.", member_name);
-			goto eval_fail;
+		} else if (strcmp("filter", member_name) == 0) {
+			/*
+			 * Retrieve cached filters (states), remember unavailable ones so that
+			 * we can fetch them all in one request.
+			 */
+			SEXP_t *SID, *action, *state;
+
+			if ((SID = probe_ent_getval(member)) == NULL) {
+				Omsg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+							"%s: missing filter entity value.", __FUNCTION__);
+				goto eval_fail;
+			}
+
+			if ((action = probe_ent_getattrval(member, "action")) == NULL) {
+				Omsg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+							"%s: missing filter action.", __FUNCTION__);
+				SEXP_free(SID);
+				goto eval_fail;
+			}
+
+			if ((state = probe_rcache_sexp_get(probe->rcache, SID)) == NULL) {
+				/* MISS - remember the ID */
+				SEXP_list_add(filters_req, SID);
+				r0 = SEXP_list_new(action, SID, NULL);
+				SEXP_list_add(filters_u, r0);
+			} else {
+				/* HIT */
+				r0 = SEXP_list_new(action, state, NULL);
+				SEXP_list_add(filters_a, r0);
+				SEXP_free(state);
+			}
+
+			SEXP_free(SID);
+			SEXP_free(action);
+			SEXP_free(r0);
+		} else {
+			/*
+			 * Unexpected entity
+			 */
+			abort();
 		}
-#undef CASE
-
 	}
 
 	member = NULL;
@@ -790,8 +786,8 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 	result = probe_ste_fetch(probe, filters_req);
 
 	if (result == NULL) {
-                msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR,
-                                      "probe_set_eval: Can't get unavailable filters.");
+                Omsg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+					"%s: Can't get unavailable filters.", __FUNCTION__);
 		goto eval_fail;
 	}
 	SEXP_vfree(filters_req, result, NULL);
@@ -817,9 +813,9 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 
 #ifndef NDEBUG
 			if (s_subset[s_subset_i] == NULL) {
-                                msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-                                                       "probe_set_eval: apply_filters returned NULL: set=%p, filters=%p.",
-                                                       o_subset[s_subset_i], filters_a);
+                                Omsg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+							"%s: apply_filters returned NULL: set=%p, filters=%p.",
+							__FUNCTION__, o_subset[s_subset_i], filters_a);
 				goto eval_fail;
 			}
 #endif
@@ -879,9 +875,9 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 	SEXP_free(filters_req);
 	SEXP_free(result);
 
-        r1 = SEXP_list_new(msg, NULL);
+        r1 = SEXP_list_new(Omsg, NULL);
 	result = probe_cobj_new(SYSCHAR_FLAG_ERROR, r1, NULL);
-	SEXP_vfree(msg, r1, NULL);
+	SEXP_vfree(Omsg, r1, NULL);
 	return result;
 }
 

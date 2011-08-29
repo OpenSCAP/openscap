@@ -93,6 +93,8 @@ SEXP_t *probe_item_creat(const char *name, SEXP_t * attrs, ...)
 		name = va_arg(ap, const char *);
 	}
 
+	va_end(ap);
+
 	return (itm);
 }
 
@@ -959,6 +961,8 @@ SEXP_t *probe_ent_creat(const char *name, SEXP_t * attrs, SEXP_t * val, ...)
 		val = va_arg(ap, SEXP_t *);
 	}
 
+	va_end(ap);
+
 	return (ent_list);
 }
 
@@ -1568,6 +1572,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                                                 oscap_free(value_sexp);
                                 }
 
+				va_end(ap);
                                 return (NULL);
                         }
 
@@ -1592,6 +1597,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
 		free_value = true;
         }
 
+	va_end(ap);
         return (item);
 }
 
