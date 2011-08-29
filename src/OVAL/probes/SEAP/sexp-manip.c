@@ -1975,21 +1975,18 @@ void __SEXP_free (SEXP_t *s_exp, const char *file, uint32_t line, const char *fu
 #endif
 
 #if defined(NDEBUG)
-void SEXP_vfree (SEXP_t *s_exp, ...)
+void __SEXP_vfree (int n, SEXP_t *s_exp, ...)
 #else
-void __SEXP_vfree (const char *file, uint32_t line, const char *func, SEXP_t *s_exp, ...)
+void __SEXP_vfree (const char *file, uint32_t line, const char *func, int n, SEXP_t *s_exp, ...)
 #endif
 {
         va_list ap;
 
-#if !defined(NDEBUG) && defined(SEAP_VERBOSE_DEBUG)
-        _D("s_exp=%p (%s:%u:%s)\n", s_exp, file, line, func);
-#endif
-
         va_start (ap, s_exp);
 
-        for (; s_exp != NULL; s_exp = va_arg (ap, SEXP_t *))
-                SEXP_free (s_exp);
+        for (; n > 1; --n, s_exp = va_arg (ap, SEXP_t *))
+		if (s_exp != NULL)
+			SEXP_free (s_exp);
 
         va_end (ap);
 }
