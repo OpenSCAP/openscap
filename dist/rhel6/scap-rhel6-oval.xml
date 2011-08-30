@@ -1136,7 +1136,7 @@
         <definition class="compliance" id="oval:org.open-scap.rhel6:def:1108" version="1">
                 <metadata>
                         <title>Limit Network-Transmitted Configuration</title>
-                        <reference ref_id="CCE-4287-9" source="CCE"/>
+                        <reference ref_id="CCE-3895-0" source="CCE"/>
                         <description>The default number of IPv6 duplicate address detection solicitations for network interfaces to send per configured address should be set appropriately.</description>
                 </metadata>
                 <criteria>
