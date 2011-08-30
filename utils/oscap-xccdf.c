@@ -235,40 +235,35 @@ int app_evaluate_xccdf(const struct oscap_action *action)
         void **sessions = NULL;
 	char ** oval_files = NULL;
 	int idx = 0;
+
+	int retval = OSCAP_ERROR;
 	
 	/* Validate documents */
 	if( action->validate ) {
-        	if (!oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, NULL, 
-					     (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-        	        if (oscap_err()) {
-        	                fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-        	                return OSCAP_FAIL;
-        	        }
-			fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
-        	        return OSCAP_ERROR;
+		if (!oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, NULL, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+			fprintf(stdout, "Invalid XCCDF content in %s\n", action->f_xccdf);
+			goto cleanup;
         	}
 	}
 
 	/* Load XCCDF model and XCCDF Policy model */
 	benchmark = xccdf_benchmark_import(action->f_xccdf);
 	if (benchmark == NULL) {
-		if (oscap_err())
-			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
-                return OSCAP_ERROR;
+		fprintf(stderr, "Failed to import the XCCDF content from (%s).\n", action->f_xccdf);
+		goto cleanup;
         }
 
+	/* Create policy model */
 	policy_model = xccdf_policy_model_new(benchmark);
 
-	/* Get the first policy, just for prototype - if there is no Policy 
-	 * report error and return -1 */
+	/* Select profile */
 	if (action->profile != NULL) {
 		policy = xccdf_policy_model_get_policy_by_id(policy_model, action->profile);
-
 		if(policy == NULL) {
                         fprintf(stderr, "Profile \"%s\" was not found.\n", action->profile);
-                        return OSCAP_ERROR;
+                        goto cleanup;
                 }
-	} else {
+	} else { /* Take first policy */
 		policy_it = xccdf_policy_model_get_policies(policy_model);
 		if (xccdf_policy_iterator_has_more(policy_it)) {
 			policy = xccdf_policy_iterator_next(policy_it);
@@ -277,16 +272,15 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 		if (policy == NULL) {
 			fprintf(stderr, "No Policy to evaluate. \n");
-			return OSCAP_ERROR;
+			goto cleanup;
 		}
 	}
-
 
 	/* Register callback */
 	xccdf_policy_model_register_start_callback(policy_model, scallback, (void*) action);
 	xccdf_policy_model_register_output_callback(policy_model, callback, (void*) action);
 
-	/* NO OVAL files? get ones from policy model */
+	/* Use OVAL files from policy model */
 	if (action->f_ovals == NULL) {
 		struct stat sb;
 		char * tmp_path;
@@ -325,14 +319,13 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	/* Validate OVAL files */
 	if (action->validate) {
         	for (idx=0; oval_files[idx]; idx++) {
-			if (!oscap_validate_document(oval_files[idx], OSCAP_DOCUMENT_OVAL_DEFINITIONS, NULL,
-						     (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-				if (oscap_err()) {
-					fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-					return OSCAP_FAIL;
-				}
-				fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
-				return OSCAP_ERROR;
+			if (!oscap_validate_document(oval_files[idx],
+						     OSCAP_DOCUMENT_OVAL_DEFINITIONS,
+						     NULL,
+						     (action->verbosity >= 0 ? oscap_reporter_fd : NULL),
+						     stdout)) {
+				fprintf(stdout, "Invalid OVAL Definition content in %s\n", oval_files[idx]);
+				goto cleanup;
 			}
 		}
 	}
@@ -343,16 +336,12 @@ int app_evaluate_xccdf(const struct oscap_action *action)
         for (idx=0; oval_files[idx]; idx++) {
 	        struct oval_definition_model *tmp_def_model = oval_definition_model_import(oval_files[idx]);
 		if (tmp_def_model == NULL) {
-			if (oscap_err())
-				fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
-			return OSCAP_ERROR;
+			goto cleanup;
 		}
                 struct oval_agent_session *tmp_sess = oval_agent_new_session(tmp_def_model, basename(oval_files[idx]));
 		if (tmp_sess == NULL) {
-			if (oscap_err())
-				fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
 			fprintf(stderr, "Failed to create new agent session.\n");
-			return OSCAP_ERROR;
+			goto cleanup;
 		}
 	        xccdf_policy_model_register_engine_oval(policy_model, tmp_sess);
                 def_models[idx] = tmp_def_model;
@@ -360,11 +349,12 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 	def_models[idx] = NULL;
 	sessions[idx] = NULL;
-	
-	
+
 	/* Perform evaluation */
 	struct xccdf_result *ritem = xccdf_policy_evaluate(policy);
-        if (ritem == NULL) return OSCAP_ERROR;
+        if (ritem == NULL) {
+		goto cleanup;
+	}
 
 	/* Write results into XCCDF Test Result model */
 	xccdf_result_set_benchmark_uri(ritem, action->f_xccdf);
@@ -440,7 +430,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
-	int retval = OSCAP_OK;
+	retval = OSCAP_OK;
 	struct xccdf_rule_result_iterator *res_it = xccdf_result_get_rule_results(ritem);
 	while (xccdf_rule_result_iterator_has_more(res_it)) {
 		struct xccdf_rule_result *res = xccdf_rule_result_iterator_next(res_it);
@@ -449,19 +439,30 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			retval = OSCAP_FAIL;
 	}
 	xccdf_rule_result_iterator_free(res_it);
-	/* Clear & End */
-        for (int i=0; def_models[i]; i++) {
-            oval_definition_model_free(def_models[i]);
-	    oval_agent_destroy_session(sessions[i]);
-        }
-	free(def_models);
-        free(sessions);
-	if (oval_files != action->f_ovals) {
+
+
+cleanup:
+	if (oscap_err())
+		fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+
+	/* Definition Models and Sessions */
+	if (def_models && sessions) {
+		for (int i=0; def_models[i]; i++) {
+		    oval_definition_model_free(def_models[i]);
+		    oval_agent_destroy_session(sessions[i]);
+		}
+		free(def_models);
+		free(sessions);
+	}
+
+	/* OVAL files imported from XCCDF */
+	if (oval_files && (oval_files != action->f_ovals)) {
 		for(int i=0; oval_files[i]; i++) {
 			free(oval_files[i]);
 		}
 		free(oval_files);
 	}
+
        	xccdf_policy_model_free(policy_model);
 	return retval;
 }

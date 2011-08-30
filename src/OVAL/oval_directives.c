@@ -187,25 +187,27 @@ struct oval_result_directives *oval_directives_model_get_defdirs(struct oval_dir
 
 struct oval_result_directives *oval_directives_model_get_classdir(struct oval_directives_model *model, oval_definition_class_t classdir)
 {
+	/* enum -> index */
 	int classind = --classdir;
 
-	if (classind > NUMBER_OF_CLASSES)
-		return NULL;
+	if (classind < NUMBER_OF_CLASSES)
+		return model->class_directives[classind];
 
-	return model->class_directives[classind];
+	return NULL;
 }
 
 struct oval_result_directives *oval_directives_model_get_new_classdir(struct oval_directives_model *model, oval_definition_class_t classdir)
 {
 	int classind = --classdir;
 
-	if (classind > NUMBER_OF_CLASSES)
-		return NULL;
+	if (classind < NUMBER_OF_CLASSES) {
+		if (model->class_directives[classind] == NULL)
+			model->class_directives[classind] = oval_result_directives_new();
 
-        if (model->class_directives[classind] == NULL)
-		model->class_directives[classind] = oval_result_directives_new();
+		return model->class_directives[classind];
+	}
 
-	return model->class_directives[classind];
+	return NULL;
 }
 
 
@@ -343,10 +345,8 @@ static int oval_directives_model_parse(xmlTextReaderPtr reader, struct oval_pars
 
 			oscap_free(tagname);
 			oscap_free(namespace);
-
-			oscap_to_start_element(reader, depth+1);
 		} else {
-			if (xmlTextReaderRead(reader) != 1) {
+			if (xmlTextReaderRead(reader) != XML_READER_TYPE_ELEMENT) {
 				ret = -1;
 				break;
 			}

@@ -9,7 +9,6 @@
 #
 # Authors:
 #      Peter Vrabec, <pvrabec@redhat.com>
-#      David Niemoller
 #      Ondrej Moris, <omoris@redhat.com>
 
 . ${srcdir}/../../test_common.sh

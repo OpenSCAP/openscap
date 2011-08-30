@@ -49,7 +49,7 @@ bool oscap_to_start_element(xmlTextReaderPtr reader, int depth)
 	while (xmlTextReaderDepth(reader) >= depth) {
 		switch (xmlTextReaderNodeType(reader)) {
 			//TODO: change int values to macros XML_ELEMENT_TYPE_*
-		case 1:
+		case XML_READER_TYPE_ELEMENT:
 			if (xmlTextReaderDepth(reader) == depth)
 				return true;
 		default:

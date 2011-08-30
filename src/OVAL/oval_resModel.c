@@ -332,8 +332,6 @@ int oval_results_model_parse(xmlTextReaderPtr reader, struct oval_parser_context
 
                         oscap_free(tagname);
                         oscap_free(namespace);
-
-                        oscap_to_start_element(reader, depth+1);
                 } else {
                         if (xmlTextReaderRead(reader) != 1) {
                                 ret = -1;
