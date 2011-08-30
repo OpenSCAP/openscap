@@ -1,11 +1,41 @@
 #!/usr/bin/env bash
 
-BIN=$1
+declare -a NAME
+declare -a HOST
+declare -a MASK
+declare -a BRDC
 
-NAME=( `${BIN} | awk '{print $1}' | tr '\n' ' '` )
-HOST=( `${BIN} | awk '{print $2}' | tr '\n' ' '` )
-MASK=( `${BIN} | awk '{print $3}' | tr '\n' ' '` )
-BRDC=( `${BIN} | awk '{print $4}' | tr '\n' ' '` )
+COUNT=0
+#for all devices
+for dev in `ip link show | sed '/^\s\+/d; s/^[^ ]\+ \([^ ]*\):.*/\1/'`; do
+	#find ipv4 addresses
+	for line in `ip -4 addr show dev $dev | awk '/\W+inet / {print "D_IPADDR="$2";D_BRDC="$4;}'`; do
+		eval $line
+		eval `ipcalc --netmask $D_IPADDR`
+		eval `ipcalc --broadcast $D_IPADDR`
+		if [ $dev == "lo" ]; then
+			BROADCAST=
+		fi
+		if [ "$D_BRDC" != "$BROADCAST" ]; then
+			D_BRDC=
+		fi
+		IPADDR=${D_IPADDR%%/*}
+		eval "NAME[$COUNT]=$dev"
+		eval "HOST[$COUNT]=$IPADDR"
+		eval "MASK[$COUNT]=$NETMASK"
+		eval "BRDC[$COUNT]=$BROADCAST"
+		COUNT=$((COUNT + 1))
+	done
+	#find ipv6 addresses
+	for line in `ip -6 addr show dev $dev | awk '/\W+inet6 / {print "IPADDR="$2;}'`; do
+		eval $line
+		eval "NAME[$COUNT]=$dev"
+		eval "HOST[$COUNT]=$IPADDR"
+		eval "MASK[$COUNT]="
+		eval "BRDC[$COUNT]="
+		COUNT=$((COUNT + 1))
+	done
+done
 
 cat <<EOF
 <?xml version="1.0"?>
@@ -93,7 +123,7 @@ while [ $I -lt ${#NAME[@]} ]; do
   <interface_state version="1" id="oval:1:ste:$[$I+1]" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
     <name>${NAME[$I]}</name>
     <inet_addr>${HOST[$I]}</inet_addr>
-    <broadcast_addr>`echo ${BRDC[$I]} | sed 's/X//'`</broadcast_addr>
+    <broadcast_addr>${BRDC[$I]}</broadcast_addr>
     <netmask>${MASK[$I]}</netmask>
   </interface_state>
 

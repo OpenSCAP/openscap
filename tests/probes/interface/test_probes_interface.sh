@@ -29,11 +29,6 @@ function test_probes_interface {
 
     [ -f $RESFILE ] && rm -f $RESFILE
 
-    if [ ! -x test_probes_interface ]; then		
-	echo -e "Testing binary not found!\n" 
-	return 255; # Test is not applicable.
-    fi
-
     bash ${srcdir}/test_probes_interface.xml.sh `pwd`/test_probes_interface \
 	> $DEFFILE
     LINES=$?
