@@ -422,6 +422,7 @@ static void xiconf_service_free(xiconf_service_t *service)
         NONNULL_FREE(server_args);
         NONNULL_FREE(only_from);
         NONNULL_FREE(no_access);
+	oscap_free(service);
 }
 
 static void xiconf_stree_free_cb(struct rbt_str_node *n)
@@ -432,20 +433,33 @@ static void xiconf_stree_free_cb(struct rbt_str_node *n)
 static void xiconf_ttree_free_cb(struct rbt_str_node *n)
 {
         xiconf_strans_free(n->data);
+	oscap_free(n->key);
 }
 
 void xiconf_free(xiconf_t *xiconf)
 {
 	register size_t i;
 
-	for (i = 0; i < xiconf->count; ++i)
-		oscap_free(xiconf->cfile[i]->cpath);
+	if (xiconf == NULL)
+		return;
+
+	for (i = 0; i < xiconf->count; ++i) {
+		if (xiconf->cfile[i]) {
+			if (xiconf->cfile[i]->cpath)
+				oscap_free(xiconf->cfile[i]->cpath);
+			if (xiconf->cfile[i]->inmem)
+				oscap_free(xiconf->cfile[i]->inmem);
+			oscap_free(xiconf->cfile[i]);
+		}
+	}
 
 	oscap_free(xiconf->cfile);
 
         rbt_str_free_cb(xiconf->stree, xiconf_stree_free_cb);
         rbt_str_free_cb(xiconf->ttree, xiconf_ttree_free_cb);
 
+	oscap_free(xiconf->defaults->name);
+	oscap_free(xiconf->defaults);
 	oscap_free(xiconf);
 
 	return;
@@ -939,6 +953,9 @@ int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char
 		 * or the end-of-line.
 		 */
 		key = strdup(buffer + bufidx);
+		if (key == NULL)
+			exit(ENOMEM);
+
 		for (keyidx = 0; ! isspace(key[keyidx]) && key[keyidx]; keyidx++);
 		key[keyidx] = '\0';
 
@@ -1151,6 +1168,16 @@ finish_section:
 	return (0);
 fail:
 	tmpbuf_free(buffer);
+	if (key)
+		dW("fail: key not freed; freeing now...\n");
+		free(key);
+	if (snew) {
+		if (snew->name)
+			dW("fail: snew->name not freed; freeing now...\n");
+			free(snew->name);
+		free(snew);
+	}
+
 	return (-1);
 }
 
@@ -1598,6 +1625,9 @@ int probe_main(probe_ctx *ctx, void *arg)
 			SEXP_free(xres_service_name);
 			SEXP_free(xres_protocol);
 		}
+		oscap_free(xres->srv);
+		oscap_free(xres);
+
 	}
 	SEXP_vfree(service_name, protocol, NULL);
 
