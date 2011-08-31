@@ -191,5 +191,7 @@ int probe_main (probe_ctx *ctx, void *arg)
 	nl_close(sk);
 #endif /* HAVE_LIBNL */
 
+	SEXP_free(dst_ent);
+
         return (0);
 }

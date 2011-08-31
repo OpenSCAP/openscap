@@ -182,6 +182,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
         }
 
         oval_fts_close(ofts);
+	SEXP_vfree(path_entity, filename_entity, bh_entity, name_entity);
 
         return (0);
 }

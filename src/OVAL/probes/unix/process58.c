@@ -373,7 +373,7 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 		unsigned long minflt, cminflt, majflt, cmajflt, uutime, ustime;
 		long cutime, cstime, priority, cnice, nthreads, itrealvalue;
 		unsigned long long start;
-		SEXP_t *cmd_sexp, *pid_sexp;
+		SEXP_t *cmd_sexp = NULL, *pid_sexp = NULL;
 
 		// Skip non-process58 dir entries
 		if(*ent->d_name<'0' || *ent->d_name>'9')
@@ -499,6 +499,7 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 			}
 		}
 		SEXP_free(cmd_sexp);
+		SEXP_free(pid_sexp);
 	}
         closedir(d);
 

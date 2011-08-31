@@ -259,6 +259,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
         if (!SEXP_stringp(mnt_entval)) {
                 SEXP_free(mnt_entval);
                 SEXP_free(mnt_entity);
+		fclose(mnt_fp);
                 return (PROBE_EINVAL);
         }
 

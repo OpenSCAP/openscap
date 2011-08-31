@@ -569,7 +569,7 @@ static SEXP_t *SEAP_packet_err2sexp (SEAP_err_t *err)
                               r5 = SEXP_number_newu (err->code),
                               NULL);
 
-        SEXP_vfree (r1, r2, r3, r4, r5, NULL);
+        SEXP_vfree (r0, r1, r2, r3, r4, r5);
 
         if (err->data != NULL)
                 SEXP_list_add (sexp, err->data);

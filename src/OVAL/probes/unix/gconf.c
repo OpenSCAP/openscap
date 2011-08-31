@@ -143,11 +143,13 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
         GConfEngine *gconf_engine = NULL;
 
         probe_in  = probe_ctx_getobject(ctx);
-        gconf_src = probe_obj_getent(probe_in, "source", 1);
-        gconf_key = probe_obj_getent(probe_in, "key", 1);
+        if ((gconf_src = probe_obj_getent(probe_in, "source", 1)) == NULL)
+		return (PROBE_ENOENT);
 
-        if (gconf_src == NULL || gconf_key == NULL)
-                return (PROBE_ENOENT);
+        if ((gconf_key = probe_obj_getent(probe_in, "key", 1)) == NULL) {
+		SEXP_free(gconf_src);
+		return (PROBE_ENOENT);
+	}
 
         key_opval = probe_ent_getattrval(gconf_key, "operation");
 

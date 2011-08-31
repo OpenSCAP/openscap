@@ -333,8 +333,10 @@ static int get_interface(const int ent_ifindex, struct interface_t *interface) {
 		fd = fopen(buf, "rt");
 		if (fd == NULL)
 			continue;
-		if (fscanf(fd, "%d\n", &ifindex) < 1)
+		if (fscanf(fd, "%d\n", &ifindex) < 1) {
+			fclose(fd);
 			continue;
+		}
 		fclose(fd);
 
 		if (ent_ifindex == ifindex) {
