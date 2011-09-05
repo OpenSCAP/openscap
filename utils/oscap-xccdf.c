@@ -330,25 +330,33 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		}
 	}
 
-	/* Create OVAL sessions */
-        def_models = malloc((idx+1) * sizeof(struct oval_definition_model *));
-        sessions = malloc((idx+1) * sizeof(struct oval_agent_session *));
+	/* Register checking engines */
         for (idx=0; oval_files[idx]; idx++) {
+		/* file -> def_model */
 	        struct oval_definition_model *tmp_def_model = oval_definition_model_import(oval_files[idx]);
 		if (tmp_def_model == NULL) {
+			fprintf(stderr, "Failed to create definition model from: %s.\n", oval_files[idx]);
 			goto cleanup;
 		}
+		/* remember def_models */
+		def_models = realloc(def_models, (idx + 2) * sizeof(struct oval_definition_model *));
+		def_models[idx] = tmp_def_model;
+		def_models[idx+1] = NULL;
+
+		/* def_model -> session */
                 struct oval_agent_session *tmp_sess = oval_agent_new_session(tmp_def_model, basename(oval_files[idx]));
 		if (tmp_sess == NULL) {
-			fprintf(stderr, "Failed to create new agent session.\n");
+			fprintf(stderr, "Failed to create new agent session for: %s.\n", oval_files[idx]);
 			goto cleanup;
 		}
+		/* remember sessions */
+		sessions = realloc(sessions, (idx + 2) * sizeof(struct oval_agent_session *));
+		sessions[idx] = tmp_sess;
+		sessions[idx+1] = NULL;
+
+		/* register session */
 	        xccdf_policy_model_register_engine_oval(policy_model, tmp_sess);
-                def_models[idx] = tmp_def_model;
-                sessions[idx] = tmp_sess;
 	}
-	def_models[idx] = NULL;
-	sessions[idx] = NULL;
 
 	/* Perform evaluation */
 	struct xccdf_result *ritem = xccdf_policy_evaluate(policy);
@@ -445,13 +453,17 @@ cleanup:
 	if (oscap_err())
 		fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
 
-	/* Definition Models and Sessions */
-	if (def_models && sessions) {
-		for (int i=0; def_models[i]; i++) {
-		    oval_definition_model_free(def_models[i]);
-		    oval_agent_destroy_session(sessions[i]);
-		}
+	/* Definition Models */
+	if (def_models) {
+		for (int i=0; def_models[i]; i++)
+			oval_definition_model_free(def_models[i]);
 		free(def_models);
+	}
+
+	/* Sessions */
+	if (sessions) {
+		for (int i=0; sessions[i]; i++)
+			oval_agent_destroy_session(sessions[i]);
 		free(sessions);
 	}
 
