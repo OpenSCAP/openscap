@@ -61,13 +61,14 @@ extern char **environ;
 
 static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 {
-	int err = 0, pid, empty = 1, fd;
+	int err = 0, pid, empty, fd;
 	size_t env_name_size;
 	SEXP_t *env_name, *env_value, *item, *pid_sexp;
 	DIR *d;
 	struct dirent *d_entry;
-	char *buffer = NULL, env_file[256];
-	unsigned int buffer_size = 0, read_size = 0;
+	char *buffer, env_file[256];
+	ssize_t read_size = 0;
+	size_t buffer_size = 0;
 
 	d = opendir("/proc");
 	if (d == NULL) {
@@ -76,6 +77,7 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 	}
 
 	if ((buffer = oscap_realloc(NULL, BUFFER_SIZE)) == NULL) {
+		dE("Can't allocate memory");
 		closedir(d);
 		return PROBE_EFAULT;
 	}
@@ -114,28 +116,30 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 			continue;
 		}
 
-		*buffer = '\0';
+		*buffer = 0;
+		empty = 1;
 
 		if ((read_size = read(fd, buffer, buffer_size - 1)) > 0) {
 			empty = 0;
-		} else {
-			close(fd);
-                        closedir(d);
-			return err;
 		}
 
 		buffer[buffer_size - 1] = 0;
 
 		while (! empty) {
 			/* we dont have whole var=val string */
-			while (strlen(buffer) >= read_size) {
-				int s;
-				if (read_size + 1 >= buffer_size) {
+			while (strlen(buffer) >= (size_t)read_size) {
+				ssize_t s;
+				if ((size_t)read_size + 1 >= buffer_size) {
 					buffer_size += BUFFER_SIZE;
 					buffer = oscap_realloc(buffer, buffer_size);
+					if (buffer == NULL) {
+						dE("Can't allocate memory");
+						exit(ENOMEM);
+					}
+
 				}
 				s = read(fd, buffer + read_size, buffer_size - read_size - 1);
-				if (s == 0) {
+				if (s <= 0) {
 					empty = 1;
 					break;
 				}
@@ -143,7 +147,7 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 				buffer[buffer_size - 1] = 0;
 			}
 
-			while (strlen(buffer) < read_size && read_size > 0) {
+			while (strlen(buffer) < (size_t)read_size && read_size > 0) {
 				char *buffer_split = strchr(buffer, '=');
 				if (buffer_split == NULL) {
 					/* strange but possible:
