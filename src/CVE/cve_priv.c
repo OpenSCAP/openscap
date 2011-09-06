@@ -624,14 +624,16 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 		    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REFERENCES_STR) &&
 			xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 			refer = cve_reference_new();
-			refer->type = (char *)xmlTextReaderGetAttribute(reader, ATTR_REFERENCE_TYPE_STR);
-			refer->lang = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "xml:lang");
-			xmlTextReaderNextNode(reader);
-			while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REFERENCES_STR) != 0) {
+
+			if (refer) {
+			    refer->type = (char *)xmlTextReaderGetAttribute(reader, ATTR_REFERENCE_TYPE_STR);
+			    refer->lang = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "xml:lang");
+			    xmlTextReaderNextNode(reader);
+			    while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REFERENCES_STR) != 0) {
 
 				if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_SOURCE_STR) &&
 				    xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-					refer->source = (char *)xmlTextReaderReadString(reader);
+				    refer->source = (char *)xmlTextReaderReadString(reader);
 				} else
 				    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REFERENCE_STR) &&
 					xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
@@ -639,11 +641,11 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 					    (char *)xmlTextReaderGetAttribute(reader, ATTR_REFERENCE_HREF_STR);
 					refer->value = (char *)xmlTextReaderReadString(reader);
 
-				}
+				    }
 				xmlTextReaderNextNode(reader);
+			    }
+			    oscap_list_add(ret->references, refer);
 			}
-			if (refer)
-				oscap_list_add(ret->references, refer);
 		} else
 		    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_SUMMARY_STR) &&
 			xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {

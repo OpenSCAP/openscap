@@ -906,28 +906,29 @@ struct cpe_vendor *cpe_vendor_parse(xmlTextReaderPtr reader)
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_STR) == 0) {
 			// initialization
 			product = cpe_product_new();
-			product->value = (char *)xmlTextReaderGetAttribute(reader, ATTR_VALUE_STR);
 
-			data = (char *)xmlTextReaderGetAttribute(reader, ATTR_PART_STR);
-			if (data) {
+			if (product) {
+			    product->value = (char *)xmlTextReaderGetAttribute(reader, ATTR_VALUE_STR);
+
+			    data = (char *)xmlTextReaderGetAttribute(reader, ATTR_PART_STR);
+			    if (data) {
 				if (strcasecmp((const char *)data, "h") == 0)
-					product->part = CPE_PART_HW;
+				    product->part = CPE_PART_HW;
 				else if (strcasecmp((const char *)data, "o") == 0)
-					product->part = CPE_PART_OS;
+				    product->part = CPE_PART_OS;
 				else if (strcasecmp((const char *)data, "a") == 0)
-					product->part = CPE_PART_APP;
+				    product->part = CPE_PART_APP;
 				else {
-					oscap_free(ret);
-					oscap_free(data);
-					return NULL;
+				    oscap_free(ret);
+				    oscap_free(data);
+				    return NULL;
 				}
-			} else {
+			    } else {
 				product->part = CPE_PART_NONE;
+			    }
+			    oscap_free(data);
+			    oscap_list_add(ret->products, product);
 			}
-			oscap_free(data);
-
-			if (product)
-				oscap_list_add(ret->products, product);
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VERSION_STR) == 0) {
 			// initialization
 			version = cpe_version_new();
