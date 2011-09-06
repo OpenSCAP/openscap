@@ -237,6 +237,7 @@ int probe_main(probe_ctx *ctx, void *mutex)
 	SEXP_t *probe_in;
 	SEXP_t *path, *filename, *behaviors, *filepath, *hash_type;
 	char hash_type_str[128];
+	int err = 0;
 
 	OVAL_FTS    *ofts;
 	OVAL_FTSENT *ofts_ent;
@@ -259,16 +260,13 @@ int probe_main(probe_ctx *ctx, void *mutex)
 	if ( ! hash_type ||
 		((path == NULL || filename == NULL) && filepath==NULL )
 	) {
-		SEXP_free (behaviors);
-		SEXP_free (path);
-		SEXP_free (filename);
-		SEXP_free (filepath);
-		SEXP_free (hash_type);
-
-		return (PROBE_ENOELM);
+		err = PROBE_ENOENT;
+		goto cleanup;
 	}
 
-	PROBE_ENT_STRVAL(hash_type, hash_type_str, sizeof hash_type_str, return (PROBE_ENOELM);, return (PROBE_ENOELM););
+	PROBE_ENT_STRVAL(hash_type, hash_type_str, sizeof hash_type_str, err = PROBE_ENOVAL;, err = PROBE_ENOVAL;);
+	if (err != 0)
+		goto cleanup;
 
 	/* behaviours are not important if filepath is used */
 	if(filepath != NULL && behaviors != NULL) {
@@ -284,13 +282,8 @@ int probe_main(probe_ctx *ctx, void *mutex)
 	default:
 		_D("Can't lock mutex(%p): %u, %s.\n", &__filehash58_probe_mutex, errno, strerror (errno));
 
-		SEXP_free (behaviors);
-		SEXP_free (path);
-		SEXP_free (filename);
-		SEXP_free (filepath);
-		SEXP_free (hash_type);
-
-		return (PROBE_EFATAL);
+		err = PROBE_EFATAL;
+		goto cleanup;
 	}
 
 	if ((ofts = oval_fts_open(path, filename, filepath, behaviors)) != NULL) {
@@ -302,6 +295,7 @@ int probe_main(probe_ctx *ctx, void *mutex)
 		oval_fts_close(ofts);
 	}
 
+cleanup:
 	SEXP_free (behaviors);
 	SEXP_free (path);
 	SEXP_free (filename);
@@ -314,8 +308,8 @@ int probe_main(probe_ctx *ctx, void *mutex)
 	default:
 		_D("Can't unlock mutex(%p): %u, %s.\n", &__filehash58_probe_mutex, errno, strerror (errno));
 
-		return (PROBE_EFATAL);
+		err = PROBE_EFATAL;
 	}
 
-	return 0;
+	return err;
 }
