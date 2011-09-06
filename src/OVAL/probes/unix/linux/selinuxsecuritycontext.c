@@ -257,7 +257,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *probe_in;
 	SEXP_t *path, *filename, *filepath, *pid, *behaviors = NULL;
-	int process_pid;
+	int process_pid, err = 0;
 
 	OVAL_FTS    *ofts;
 	OVAL_FTSENT *ofts_ent;
@@ -275,12 +275,8 @@ int probe_main(probe_ctx *ctx, void *arg)
 	pid       = probe_obj_getent (probe_in, "pid", 1);
 
 	if (((path == NULL || filename == NULL) && filepath==NULL ) && pid == NULL) {
-		SEXP_free (path);
-		SEXP_free (filename);
-		SEXP_free (filepath);
-		SEXP_free (pid);
-
-		return (PROBE_ENOELM);
+		err = PROBE_ENOENT;
+		goto cleanup;
 	}
 
 	if (filepath || (path && filename)) {
@@ -298,7 +294,9 @@ int probe_main(probe_ctx *ctx, void *arg)
 	}
 
 	if (pid != NULL) {
-		PROBE_ENT_I32VAL(pid, process_pid, return -1;);
+		PROBE_ENT_I32VAL(pid, process_pid, err = PROBE_ENOVAL;);
+		if (err != 0)
+			goto cleanup;
 
 		if (process_pid == 0) {
 			SEXP_t *nref, *nval, *pid2;
@@ -313,10 +311,11 @@ int probe_main(probe_ctx *ctx, void *arg)
 		selinuxsecuritycontext_process_cb(pid, ctx);
 	}
 
+cleanup:
 	SEXP_free (path);
 	SEXP_free (filename);
 	SEXP_free (filepath);
 	SEXP_free (pid);
 
-	return 0;
+	return err;
 }
