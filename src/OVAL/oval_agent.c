@@ -222,8 +222,10 @@ int oval_agent_eval_system(oval_agent_session_t * ag_sess, oscap_reporter cb, vo
 				oval_definition_get_description(oval_def));
 			oscap_reporter_message_set_user1str(msg, id);
 			ret = oval_agent_get_definition_result(ag_sess, id, &result);
-			if (ret==-1)
+			if (ret == -1) {
+				oscap_reporter_message_free(msg);
 				goto cleanup;
+			}
 
 			oscap_reporter_message_set_user2num(msg, result);
 			oscap_reporter_message_set_user3str(msg, oval_definition_get_title(oval_def));
