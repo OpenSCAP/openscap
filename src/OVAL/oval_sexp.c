@@ -128,13 +128,17 @@ static SEXP_t *oval_entity_to_sexp(struct oval_entity *ent)
 		SEXP_vfree(r0, r1, elm_name, NULL);
 	} else {
 		/* value */
+		struct oval_value *val;
+
 		SEXP_list_add(elm, elm_name);
 		SEXP_free(elm_name);
+		val = oval_entity_get_value(ent);
 
-		if (datatype != OVAL_DATATYPE_RECORD) {
+		if (datatype != OVAL_DATATYPE_RECORD
+		    && val != NULL) {
 			SEXP_t *val_sexp;
 
-			val_sexp = oval_value_to_sexp(oval_entity_get_value(ent), datatype);
+			val_sexp = oval_value_to_sexp(val, datatype);
 			if (val_sexp != NULL) {
 				SEXP_list_add(elm, val_sexp);
 				SEXP_free(val_sexp);

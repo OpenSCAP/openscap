@@ -304,7 +304,10 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 		if (datatype == OVAL_DATATYPE_RECORD) {
 			value = NULL;
 		} else {
-			return_code = oval_value_parse_tag(reader, context, &oval_consume_value, &value);
+			if (oval_parser_boolean_attribute(reader, "xsi:nil", 0))
+				value = NULL;
+			else
+				return_code = oval_value_parse_tag(reader, context, &oval_consume_value, &value);
 		}
 	} else {
 		struct oval_definition_model *model = context->definition_model;
@@ -331,7 +334,6 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	oscap_free(name);
 	return return_code;
 }
-
 
 xmlNode *oval_entity_to_dom(struct oval_entity *entity, xmlDoc * doc, xmlNode * parent) {
 	

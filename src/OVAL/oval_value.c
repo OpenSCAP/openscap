@@ -173,7 +173,6 @@ void oval_value_set_text(struct oval_value *value, char *text)
 
 static void oval_value_parse_tag_consume_text(char *string, void *text)
 {
-
 	*(char **)text = oscap_strdup(string);
 }
 
@@ -194,7 +193,6 @@ int oval_value_parse_tag(xmlTextReaderPtr reader,
 	(*consumer) (value, user);
 	return return_code;
 }
-
 
 xmlNode *oval_value_to_dom(struct oval_value *value, xmlDoc * doc, xmlNode * parent) {
 	return NULL;		//TODO: implement oval_value_to_dom

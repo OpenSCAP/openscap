@@ -180,8 +180,12 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	if (path) { /* filepath == NULL */
 		PROBE_ENT_STRVAL(path, cstr_path, sizeof cstr_path,
 				 return NULL;, return NULL;);
-		PROBE_ENT_STRVAL(filename, cstr_file, sizeof cstr_file,
-				 return NULL;, nilfilename = true;);
+		if (probe_ent_getvals(filename, NULL) == 0) {
+			nilfilename = true;
+		} else {
+			PROBE_ENT_STRVAL(filename, cstr_file, sizeof cstr_file,
+					 return NULL;, /* noop */;);
+		}
 #if defined(OSCAP_VERBOSE_DEBUG)
 		_I("\n"
 		   "        path: '%s'.\n"
