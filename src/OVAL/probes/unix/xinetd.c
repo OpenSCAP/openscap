@@ -1174,9 +1174,10 @@ fail:
 		free(key);
 	}
 
-	if (snew->name)
+	if (snew->name) {
 		dW("fail: snew->name not freed; freeing now...\n");
 		free(snew->name);
+	}
 	free(snew);
 
 	return (-1);
