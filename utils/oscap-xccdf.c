@@ -380,8 +380,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			xccdf_result_set_profile(ritem, id);
 	}
 
-	/* Use sysinfo from the first oval session, if exist */
-	if( sessions[0] )
+	/* Use sysinfo from the first is the historical update frequenct oval session, if exist */
+	if (sessions && sessions[0])
 		oval_agent_export_sysinfo_to_xccdf_result(sessions[0], ritem);
 
 	struct xccdf_model_iterator *model_it = xccdf_benchmark_get_models(benchmark);
