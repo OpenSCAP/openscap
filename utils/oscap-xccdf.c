@@ -330,6 +330,11 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		}
 	}
 
+	if (!oval_files[0]) {
+		fprintf(stderr, "No OVAL definition files present, aborting.\n", oval_files[idx]);
+		goto cleanup;
+	}
+
 	/* Register checking engines */
         for (idx=0; oval_files[idx]; idx++) {
 		/* file -> def_model */
