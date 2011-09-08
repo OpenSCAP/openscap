@@ -612,6 +612,7 @@ static struct oscap_list * xccdf_policy_check_get_value_bindings(struct xccdf_po
             if (value == NULL) {
                 oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EVALUE, "Value does not exist\n");
                 oscap_dlprintf(DBG_E, "Value \"%s\" does not exist in benchmark\n", xccdf_check_export_get_value(check));
+		oscap_list_free(list, oscap_free);
                 return NULL;
             }
 
@@ -635,6 +636,7 @@ static struct oscap_list * xccdf_policy_check_get_value_bindings(struct xccdf_po
             if (val == NULL) {
                 oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EVALUE, "Value instance does not exist\n");
                 oscap_dlprintf(DBG_E, "Attempt to get non-existent selector \"%s\" from variable \"%s\"\n", selector, xccdf_value_get_id(value));
+		oscap_list_free(list, oscap_free);
                 return NULL;
             }
             binding->value = oscap_strdup(xccdf_value_instance_get_value(val));
@@ -672,7 +674,10 @@ static int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccd
             while (xccdf_check_iterator_has_more(child_it)) {
                 child = xccdf_check_iterator_next(child_it);
                 ret2 = xccdf_policy_check_evaluate(policy, child, rule_id);
-                if (ret2 == -1) return -1;
+                if (ret2 == -1) {
+                    xccdf_check_iterator_free(child_it);
+                    return -1;
+		}
                 if (ret == 0) ret = ret2;
                 else {
                     ret = (int) _resolve_operation((xccdf_test_result_type_t) ret, (xccdf_test_result_type_t) ret2, xccdf_check_get_oper(check));
@@ -684,8 +689,10 @@ static int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccd
             content_it = xccdf_check_get_content_refs(check);
             system_name = xccdf_check_get_system(check);
             bindings = xccdf_policy_check_get_value_bindings(policy, xccdf_check_get_exports(check));
-            if (bindings == NULL)
+            if (bindings == NULL) {
+                xccdf_check_content_ref_iterator_free(content_it);
                 return XCCDF_RESULT_UNKNOWN;
+	    }
             while (xccdf_check_content_ref_iterator_has_more(content_it)) {
                 content = xccdf_check_content_ref_iterator_next(content_it);
                 content_name = xccdf_check_content_ref_get_name(content);
@@ -759,6 +766,7 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
                         /*****************************************/
                         if (ret == -1) {
                             oscap_free(description);
+                            xccdf_check_iterator_free(check_it);
                             return -1;
                         }
 
@@ -814,7 +822,10 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
                     while (xccdf_item_iterator_has_more(child_it)) {
                             child = xccdf_item_iterator_next(child_it);
                             ret = xccdf_policy_item_evaluate(policy, child, result);
-                            if (ret == -1) return -1;
+                            if (ret == -1) {
+                                xccdf_item_iterator_free(child_it);
+                                return -1;
+                            }
 
                             if (ret == false) /* we got item that can't be processed */
                                 break;
@@ -1375,21 +1386,23 @@ struct xccdf_select_iterator * xccdf_policy_get_selected_rules(struct xccdf_poli
  * Make the rule from benchmark selected in Policy
  */
 bool xccdf_policy_set_selected(struct xccdf_policy * policy, char * idref) {
-
+    bool ret;
     struct oscap_iterator *sel_it = 
         oscap_iterator_new_filter( policy->selects, (oscap_filter_func) xccdf_policy_filter_select, idref);
     if (oscap_iterator_get_itemcount(sel_it) > 0) {
         /* There is rule already, skip */
-        return 0;
+        ret = 0;
     }
     else {
         /* There is no such rule, add */
         struct xccdf_select * sel = NULL;
         //TODO: sel = xccdf_select_new <-- missing implementation
         oscap_list_add(policy->selects, sel);
-        return 1;
+        ret = 1;
 
     }
+    oscap_iterator_free(sel_it);
+    return ret;
 }
 
 /**
@@ -1455,6 +1468,7 @@ bool xccdf_policy_resolve(struct xccdf_policy * policy)
                 if (xccdf_refine_rule_get_weight(r_rule) == NAN) {
                         oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EREFGROUPATTR, 
                                 "'Weight' attribute not specified, only 'weight' attribute applies to groups items");
+                        xccdf_refine_rule_iterator_free(r_rule_it);
                         return false;            
                 }
                 else {
@@ -1536,7 +1550,11 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
 
         if (xccdf_item_get_type(item) == XCCDF_GROUP) continue;
         ret = xccdf_policy_item_evaluate(policy, item, result);
-        if (ret == -1) return NULL;
+        if (ret == -1) {
+            xccdf_select_iterator_free(sel_it);
+            xccdf_result_free(result);
+            return NULL;
+        }
         if (ret != 0) break;
     }
     xccdf_select_iterator_free(sel_it);
