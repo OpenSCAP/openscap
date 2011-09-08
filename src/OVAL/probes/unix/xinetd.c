@@ -1048,6 +1048,7 @@ int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char
 
 		tmpbuf_free(buffer);
 		free(key);
+		key = NULL;
 	}
 
 finish_section:
@@ -1168,15 +1169,15 @@ finish_section:
 	return (0);
 fail:
 	tmpbuf_free(buffer);
-	if (key)
+	if (key) {
 		dW("fail: key not freed; freeing now...\n");
 		free(key);
-	if (snew) {
-		if (snew->name)
-			dW("fail: snew->name not freed; freeing now...\n");
-			free(snew->name);
-		free(snew);
 	}
+
+	if (snew->name)
+		dW("fail: snew->name not freed; freeing now...\n");
+		free(snew->name);
+	free(snew);
 
 	return (-1);
 }
