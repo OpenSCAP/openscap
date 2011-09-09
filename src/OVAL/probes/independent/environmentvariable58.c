@@ -201,12 +201,15 @@ int probe_main(probe_ctx *ctx, void *arg)
 
 	pid_ent = probe_obj_getent(probe_in, "pid", 1);
 	if (pid_ent == NULL) {
+		SEXP_free(name_ent);
 		return PROBE_ENOENT;
 	}
 
 	PROBE_ENT_I32VAL(pid_ent, pid, pid = -1;);
 
 	if (pid == -1) {
+		SEXP_free(name_ent);
+		SEXP_free(pid_ent);
 		return PROBE_ERANGE;
 	}
 
