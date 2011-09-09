@@ -225,7 +225,7 @@ int oval_sysitem_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 	int return_code = 0;
 	if (subtype != OVAL_SUBTYPE_UNKNOWN) {
 		char *item_id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-		struct oval_sysitem *sysitem = oval_sysitem_get_new(context->syschar_model, item_id);
+		struct oval_sysitem *sysitem = oval_syschar_model_get_new_sysitem(context->syschar_model, item_id);
 		oscap_free(item_id);
 
 		oval_sysitem_set_subtype(sysitem, subtype);

@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009,2010,2011 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -25,6 +25,7 @@
  *
  * Authors:
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
+ *      "Peter Vrabec" <pvrabec@redhat.com>
  */
 
 #ifndef OVAL_SYSCHAR_IMPL
@@ -36,35 +37,44 @@
 
 OSCAP_HIDDEN_START;
 
-extern const char NAMESPACE_OVALSYS[];
-
+/* sysint */
 typedef void (*oval_sysint_consumer) (struct oval_sysint *, void *);
 int oval_sysint_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oval_sysint_consumer, void *);
-void oval_sysint_to_print(struct oval_sysint *, char *, int);
 void oval_sysint_to_dom(struct oval_sysint *, xmlDoc *, xmlNode *);
 
-void oval_sysinfo_to_print(struct oval_sysinfo *, char *, int);
+/* sysinfo */
 void oval_sysinfo_to_dom(struct oval_sysinfo *, xmlDoc *, xmlNode *);
 int oval_sysinfo_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *);
 
-void oval_sysitem_to_print(struct oval_sysitem *, char *, int);
+/* sysitem */
 void oval_sysitem_to_dom(struct oval_sysitem *, xmlDoc *, xmlNode *);
 int oval_sysitem_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, void *usr);
 
+/* syschar */
 void oval_syschar_to_dom(struct oval_syschar *, xmlDoc *, xmlNode *);
 int oval_syschar_parse_tag(xmlTextReaderPtr, struct oval_parser_context *context, void *);
 oval_syschar_collection_flag_t oval_syschar_flag_parse(xmlTextReaderPtr, char *, oval_syschar_collection_flag_t);
 oval_syschar_status_t oval_syschar_status_parse(xmlTextReaderPtr, char *, oval_syschar_status_t);
+struct oval_syschar_model *oval_syschar_get_model(struct oval_syschar *syschar);
 
+/* sysent */
 typedef void (*oval_sysent_consumer) (struct oval_sysent *, void *client);
 int oval_sysent_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oval_sysent_consumer, void *);
 void oval_sysent_to_dom(struct oval_sysent *sysent, xmlDoc * doc, xmlNode * tag_parent);
 void oval_sysent_to_print(struct oval_sysent *, char *, int);
 
-struct oval_syschar_model *oval_syschar_get_model(struct oval_syschar *syschar);
+/* syschar_model */
+typedef bool oval_syschar_resolver(struct oval_syschar *, void *);
+xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model *, xmlDocPtr, xmlNode *, oval_syschar_resolver, void *);
+void oval_syschar_model_reset(struct oval_syschar_model *model);
 
+struct oval_syschar *oval_syschar_model_get_new_syschar(struct oval_syschar_model *, struct oval_object *);
+struct oval_sysitem *oval_syschar_model_get_new_sysitem(struct oval_syschar_model *, const char *id);
 void oval_syschar_model_add_syschar(struct oval_syschar_model *model, struct oval_syschar *syschar);
 void oval_syschar_model_add_sysitem(struct oval_syschar_model *model, struct oval_sysitem *sysitem);
+
+void oval_syschar_model_set_schema(struct oval_syschar_model *model, const char * schema);
+const char * oval_syschar_model_get_schema(struct oval_syschar_model * model);
 
 OSCAP_HIDDEN_END;
 

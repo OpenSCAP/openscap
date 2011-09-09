@@ -54,7 +54,7 @@ struct oval_result_item *oval_result_item_new(struct oval_result_system *sys, ch
 		return NULL;
 
 	struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
-	struct oval_sysitem *sysitem = oval_sysitem_get_new(syschar_model, item_id);
+	struct oval_sysitem *sysitem = oval_syschar_model_get_new_sysitem(syschar_model, item_id);
 
 	item->sysitem = sysitem;
 	item->messages = oval_collection_new();

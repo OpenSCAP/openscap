@@ -897,7 +897,7 @@ static int _oval_component_parse_OBJECTREF_tag(xmlTextReaderPtr reader,
 
 	struct oval_definition_model *model = context->definition_model;
 	char *objref = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "object_ref");
-	struct oval_object *object = oval_object_get_new(model, objref);
+	struct oval_object *object = oval_definition_model_get_new_object(model, objref);
 	char *field;
 
 	oscap_free(objref);
@@ -922,7 +922,7 @@ static int _oval_component_parse_VARREF_tag(xmlTextReaderPtr reader,
 
 	struct oval_definition_model *model = context->definition_model;
 	char *varref = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "var_ref");
-	struct oval_variable *variable = oval_variable_get_new(model, varref, OVAL_VARIABLE_UNKNOWN);
+	struct oval_variable *variable = oval_definition_model_get_new_variable(model, varref, OVAL_VARIABLE_UNKNOWN);
 	if (varref != NULL) {
 		oscap_free(varref);
 		varref = NULL;

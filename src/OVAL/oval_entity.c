@@ -256,7 +256,7 @@ static void oval_consume_varref(char *varref, void *user)
 	__attribute__nonnull__(user);
 
 	struct oval_consume_varref_context *ctx = user;
-	*(ctx->variable) = oval_variable_get_new((struct oval_definition_model *)ctx->model, varref, OVAL_VARIABLE_UNKNOWN);
+	*(ctx->variable) = oval_definition_model_get_new_variable((struct oval_definition_model *)ctx->model, varref, OVAL_VARIABLE_UNKNOWN);
 	*(ctx->value) = oval_value_new(OVAL_DATATYPE_STRING, varref);
 }
 
@@ -311,7 +311,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 		}
 	} else {
 		struct oval_definition_model *model = context->definition_model;
-		variable = oval_variable_get_new(model, varref, OVAL_VARIABLE_UNKNOWN);
+		variable = oval_definition_model_get_new_variable(model, varref, OVAL_VARIABLE_UNKNOWN);
 		varref_type = OVAL_ENTITY_VARREF_ATTRIBUTE;
 		value = NULL;
 		oscap_free(varref);

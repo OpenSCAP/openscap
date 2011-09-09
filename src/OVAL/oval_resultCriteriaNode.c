@@ -477,7 +477,7 @@ int oval_result_criteria_node_parse(xmlTextReaderPtr reader, struct oval_parser_
 
 		struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
 		struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
-		struct oval_test *oval_test = oval_test_get_new(definition_model, (char *)test_ref);
+		struct oval_test *oval_test = oval_definition_model_get_new_test(definition_model, (char *)test_ref);
 		struct oval_result_test *rslt_test = oval_result_system_get_new_test(sys, oval_test);
 
 		node = oval_result_criteria_node_new(sys, OVAL_NODETYPE_CRITERION, negate, rslt_test, variable_instance);
@@ -488,7 +488,7 @@ int oval_result_criteria_node_parse(xmlTextReaderPtr reader, struct oval_parser_
 		int negate = oval_parser_boolean_attribute(reader, "negate", false);
 		struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
 		struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
-		struct oval_definition *oval_definition = oval_definition_get_new(definition_model, (char *)definition_ref);
+		struct oval_definition *oval_definition = oval_definition_model_get_new_definition(definition_model, (char *)definition_ref);
 		struct oval_result_definition *rslt_definition = oval_result_system_get_new_definition(sys, oval_definition);
 		node = oval_result_criteria_node_new(sys, OVAL_NODETYPE_EXTENDDEF, negate, rslt_definition, variable_instance);
 		oscap_free(definition_ref);

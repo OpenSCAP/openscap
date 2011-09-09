@@ -203,7 +203,7 @@ struct oval_result_test *oval_result_test_new(struct oval_result_system *sys, ch
 	struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
 	struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
 	test->system = sys;
-	test->test = oval_test_get_new(definition_model, tstid);
+	test->test = oval_definition_model_get_new_test(definition_model, tstid);
 	test->messages = oval_collection_new();
 	test->result = OVAL_RESULT_NOT_EVALUATED;
 	test->instance = 1;
@@ -1666,7 +1666,7 @@ static int _oval_result_test_binding_parse(xmlTextReaderPtr reader, struct oval_
 	struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(SYSTEM);
 	struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
 
-	struct oval_variable *variable = oval_variable_get_new
+	struct oval_variable *variable = oval_definition_model_get_new_variable
 	    (definition_model, (char *)variable_id, OVAL_VARIABLE_UNKNOWN);
 
 	xmlChar *value = xmlTextReaderValue(reader);
@@ -1710,7 +1710,7 @@ int oval_result_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_conte
 	xmlChar *test_id = xmlTextReaderGetAttribute(reader, BAD_CAST "test_id");
 
 	dmod = context->definition_model;
-	dtst = oval_test_get_new(dmod, (char *) test_id);
+	dtst = oval_definition_model_get_new_test(dmod, (char *) test_id);
 	test = oval_result_system_get_new_test(sys, dtst);
 	if (test == NULL)
 		return -1;

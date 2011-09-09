@@ -335,7 +335,7 @@ int oval_object_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *c
 	struct oval_definition_model *model = context->definition_model;
 
 	char *id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-	struct oval_object *object = oval_object_get_new(model, id);
+	struct oval_object *object = oval_definition_model_get_new_object(model, id);
 
 	oval_subtype_t subtype = oval_subtype_parse(reader);
 	if ( subtype == OVAL_SUBTYPE_UNKNOWN) {

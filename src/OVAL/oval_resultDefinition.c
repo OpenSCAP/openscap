@@ -73,7 +73,7 @@ struct oval_result_definition *oval_result_definition_new(struct oval_result_sys
 	definition->system = sys;
 	struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
 	struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
-	definition->definition = oval_definition_get_new(definition_model, definition_id);
+	definition->definition = oval_definition_model_get_new_definition(definition_model, definition_id);
 	definition->result = OVAL_RESULT_NOT_EVALUATED;
 	definition->criteria = NULL;
 	definition->messages = oval_collection_new();
@@ -257,7 +257,7 @@ int oval_result_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parser
 	int instance = oval_parser_int_attribute(reader, "variable_instance", 1);
 
 	dmod = context->definition_model;
-	ddef = oval_definition_get_new(dmod, (char *) definition_id);
+	ddef = oval_definition_model_get_new_definition(dmod, (char *) definition_id);
 	definition = oval_result_system_get_new_definition(sys, ddef);
 	if (definition == NULL)
 		return -1;

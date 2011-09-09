@@ -280,7 +280,7 @@ static int _oval_syschar_parse_subtag(xmlTextReaderPtr reader, struct oval_parse
 		    (reader, context, &_oval_syschar_parse_subtag_consume_variable_binding, &ctx);
 	} else if (strcmp("reference", tagname) == 0) {
 		char *itemid = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "item_ref");
-		struct oval_sysitem *sysitem = oval_sysitem_get_new(context->syschar_model, itemid);
+		struct oval_sysitem *sysitem = oval_syschar_model_get_new_sysitem(context->syschar_model, itemid);
 		oscap_free(itemid);
 		oval_syschar_add_sysitem(syschar, sysitem);
 	}
@@ -306,10 +306,10 @@ int oval_syschar_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 	int is_ovalsys = strcmp((const char *)OVAL_SYSCHAR_NAMESPACE, namespace) == 0;
 	if (is_ovalsys && (strcmp(tagname, "object") == 0)) {
 		char *object_id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-		struct oval_object *object = oval_object_get_new(context->definition_model, object_id);
+		struct oval_object *object = oval_definition_model_get_new_object(context->definition_model, object_id);
 		oscap_free(object_id);
 
-		oval_syschar_t *syschar = oval_syschar_get_new(context->syschar_model, object);
+		oval_syschar_t *syschar = oval_syschar_model_get_new_syschar(context->syschar_model, object);
 		char *flag = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "flag");
 		oval_syschar_collection_flag_t flag_enum = oval_syschar_flag_parse(reader, "flag", SYSCHAR_FLAG_UNKNOWN);
 		oscap_free(flag);

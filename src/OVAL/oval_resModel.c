@@ -248,7 +248,7 @@ static xmlNode *oval_results_to_dom(struct oval_results_model *results_model,
 	/* Report definitions */
 	if(oval_result_directives_get_included(dirs)) {
 		struct oval_definition_model *definition_model = oval_results_model_get_definition_model(results_model);
-		oval_definitions_to_dom(definition_model, doc, root_node);
+		oval_definition_model_to_dom(definition_model, doc, root_node);
 	}
 
 	xmlNode *results_node = xmlNewTextChild(root_node, ns_results, BAD_CAST "results", NULL);

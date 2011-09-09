@@ -435,7 +435,7 @@ struct oval_variable_iterator *oval_definition_model_get_variables(struct oval_d
 	return iterator;
 }
 
-struct oval_definition *oval_definition_get_new(struct oval_definition_model *model, const char *id)
+struct oval_definition *oval_definition_model_get_new_definition(struct oval_definition_model *model, const char *id)
 {
 	struct oval_definition *definition = oval_definition_model_get_definition(model, id);
 	if (definition == NULL) {
@@ -444,7 +444,7 @@ struct oval_definition *oval_definition_get_new(struct oval_definition_model *mo
 	return definition;
 }
 
-struct oval_variable *oval_variable_get_new(struct oval_definition_model *model, const char *id, oval_variable_type_t type)
+struct oval_variable *oval_definition_model_get_new_variable(struct oval_definition_model *model, const char *id, oval_variable_type_t type)
 {
 	struct oval_variable *variable = oval_definition_model_get_variable(model, id);
 	if (variable == NULL) {
@@ -455,7 +455,7 @@ struct oval_variable *oval_variable_get_new(struct oval_definition_model *model,
 	return variable;
 }
 
-struct oval_state *oval_state_get_new(struct oval_definition_model *model, const char *id)
+struct oval_state *oval_definition_model_get_new_state(struct oval_definition_model *model, const char *id)
 {
 	struct oval_state *state = oval_definition_model_get_state(model, id);
 	if (state == NULL) {
@@ -464,7 +464,7 @@ struct oval_state *oval_state_get_new(struct oval_definition_model *model, const
 	return state;
 }
 
-struct oval_object *oval_object_get_new(struct oval_definition_model *model, const char *id)
+struct oval_object *oval_definition_model_get_new_object(struct oval_definition_model *model, const char *id)
 {
 	struct oval_object *object = oval_definition_model_get_object(model, id);
 	if (object == NULL) {
@@ -473,7 +473,7 @@ struct oval_object *oval_object_get_new(struct oval_definition_model *model, con
 	return object;
 }
 
-struct oval_test *oval_test_get_new(struct oval_definition_model *model, const char *id)
+struct oval_test *oval_definition_model_get_new_test(struct oval_definition_model *model, const char *id)
 {
 	struct oval_test *test = oval_definition_model_get_test(model, id);
 	if (test == NULL) {
@@ -487,7 +487,7 @@ xmlDoc *oval_definition_model_get_metadata_doc(struct oval_definition_model *mod
 	return model->metadata_doc;
 }
 
-xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model, xmlDocPtr doc, xmlNode * parent)
+xmlNode *oval_definition_model_to_dom(struct oval_definition_model *definition_model, xmlDocPtr doc, xmlNode * parent)
 {
 
 	xmlNodePtr root_node = NULL;
@@ -596,7 +596,7 @@ int oval_definition_model_export(struct oval_definition_model *model, const char
 		return -1;
 	}
 
-	oval_definitions_to_dom(model, doc, NULL);
+	oval_definition_model_to_dom(model, doc, NULL);
 	retcode = xmlSaveFormatFileEnc(file, doc, "UTF-8", 1);
 
 	if (retcode < 1)

@@ -132,7 +132,7 @@ static void _oval_filter_consume_ste_ref(char *steref, void *user)
 	struct oval_state *ste;
 
 	filter = (struct oval_filter *) user;
-	ste = oval_state_get_new(filter->model, steref);
+	ste = oval_definition_model_get_new_state(filter->model, steref);
 	oval_filter_set_state(filter, ste);
 }
 

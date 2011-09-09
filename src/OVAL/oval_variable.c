@@ -704,7 +704,7 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context 
 		dW("Unhandled variable type: %s, line: %d.\n", tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
 	id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-	struct oval_variable *variable = oval_variable_get_new(model, id, type);
+	struct oval_variable *variable = oval_definition_model_get_new_variable(model, id, type);
 
 	comm = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
 	if (comm != NULL) {

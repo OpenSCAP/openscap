@@ -170,7 +170,7 @@ int oval_variable_binding_parse_tag(xmlTextReaderPtr reader,
 	struct oval_variable_binding *binding = oval_variable_binding_new(NULL, NULL);
 	/* variable */
 	char *variableId = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "variable_id");
-	struct oval_variable *variable = oval_variable_get_new(context->definition_model, variableId, OVAL_VARIABLE_UNKNOWN);
+	struct oval_variable *variable = oval_definition_model_get_new_variable(context->definition_model, variableId, OVAL_VARIABLE_UNKNOWN);
 	oval_variable_binding_set_variable(binding, variable);
 	oscap_free(variableId);
 

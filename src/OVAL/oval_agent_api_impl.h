@@ -30,8 +30,6 @@
 #ifndef OVAL_AGENT_API_IMPL_H_
 #define OVAL_AGENT_API_IMPL_H_
 
-#include "public/oval_agent_api.h"
-#include "oval_definitions_impl.h"
 #include "common/util.h"
 
 OSCAP_HIDDEN_START;
@@ -68,33 +66,6 @@ OSCAP_HIDDEN_START;
 #define OVAL_DIR_SCHEMA_LOCATION "http://oval.mitre.org/XMLSchema/oval-results-5 http://oval.mitre.org/language/version5.5/ovalresults/complete/oval-results-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 http://oval.mitre.org/XMLSchema/oval-directives-5"
 
 #define OVAL_VAR_SCHEMA_LOCATION "http://oval.mitre.org/XMLSchema/oval-variables-5 oval-variables-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd"
-
-
-const char * oval_definition_model_get_schema(struct oval_definition_model * model);
-void oval_definition_model_set_schema(struct oval_definition_model *model, const char *version);
-
-void oval_syschar_model_set_schema(struct oval_syschar_model *model, const char * schema);
-const char * oval_syschar_model_get_schema(struct oval_syschar_model * model);
-
-struct oval_definition *oval_definition_get_new(struct oval_definition_model *, const char *);
-
-typedef bool oval_definitions_resolver(struct oval_definition *, void *);
-
-xmlNode *oval_definitions_to_dom(struct oval_definition_model *definition_model, xmlDocPtr doc, xmlNode * parent);
-
-struct oval_test *oval_test_get_new(struct oval_definition_model *, const char *);
-struct oval_object *oval_object_get_new(struct oval_definition_model *, const char *);
-struct oval_state *oval_state_get_new(struct oval_definition_model *, const char *);
-struct oval_variable *oval_variable_get_new(struct oval_definition_model *, const char *, oval_variable_type_t type);
-
-struct oval_syschar *oval_syschar_get_new(struct oval_syschar_model *, struct oval_object *);
-struct oval_syschar_item *oval_syschar_item_get_new(struct oval_syschar_model *, const char *);
-struct oval_sysitem *oval_sysitem_get_new(struct oval_syschar_model *model, const char *id);
-
-typedef bool oval_syschar_resolver(struct oval_syschar *, void *);
-
-xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model *, xmlDocPtr, xmlNode *, oval_syschar_resolver, void *);
-void oval_syschar_model_reset(struct oval_syschar_model *model);
 
 OSCAP_HIDDEN_END;
 

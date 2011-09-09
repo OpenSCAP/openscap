@@ -329,7 +329,7 @@ static int _oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_cont
 		char *object_ref = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "object_ref");
 		if (object_ref != NULL) {
 			struct oval_definition_model *model = context->definition_model;
-			struct oval_object *object = oval_object_get_new(model, object_ref);
+			struct oval_object *object = oval_definition_model_get_new_object(model, object_ref);
 			oscap_free(object_ref);
 			object_ref = NULL;
 			oval_test_set_object(test, object);
@@ -338,7 +338,7 @@ static int _oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_cont
 		char *state_ref = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "state_ref");
 		if (state_ref != NULL) {
 			struct oval_definition_model *model = context->definition_model;
-			struct oval_state *state = oval_state_get_new(model, state_ref);
+			struct oval_state *state = oval_definition_model_get_new_state(model, state_ref);
 			oval_test_add_state(test, state);
 			oscap_free(state_ref);
 			state_ref = NULL;
@@ -361,7 +361,7 @@ int oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *con
 	struct oval_definition_model *model = context->definition_model;
 
 	char *id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-	struct oval_test *test = oval_test_get_new(model, id);
+	struct oval_test *test = oval_definition_model_get_new_test(model, id);
 
 	oval_subtype_t subtype = oval_subtype_parse(reader);
         if ( subtype == OVAL_SUBTYPE_UNKNOWN) {

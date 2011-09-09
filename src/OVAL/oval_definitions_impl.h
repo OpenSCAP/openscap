@@ -66,14 +66,13 @@ const char *oval_definition_class_text(oval_definition_class_t);
 
 
 typedef void (*oval_affected_consumer) (struct oval_affected *, void *);
-int oval_affected_parse_tag(xmlTextReaderPtr reader,
-			    struct oval_parser_context *context, oval_affected_consumer, void *);
+int oval_affected_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, oval_affected_consumer, void *);
 
 int oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *);
 xmlNode *oval_test_to_dom(struct oval_test *, xmlDoc *, xmlNode *);
 
-xmlNode *oval_criteria_node_to_dom(struct oval_criteria_node *, xmlDoc *, xmlNode *);
 typedef void (*oval_criteria_consumer) (struct oval_criteria_node *, void *);
+xmlNode *oval_criteria_node_to_dom(struct oval_criteria_node *, xmlDoc *, xmlNode *);
 int oval_criteria_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oval_criteria_consumer, void *);
 
 typedef void (*oval_reference_consumer) (struct oval_reference *, void *);
@@ -94,10 +93,9 @@ xmlNode *oval_state_to_dom(struct oval_state *, xmlDoc *, xmlNode *);
 int oval_variable_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *);
 xmlNode *oval_variable_to_dom(struct oval_variable *, xmlDoc *, xmlNode *);
 
-void oval_variable_binding_to_dom(struct oval_variable_binding *, xmlDoc *, xmlNode *);
 typedef void (*oval_variable_binding_consumer) (struct oval_variable_binding *, void *);
-int oval_variable_binding_parse_tag
-    (xmlTextReaderPtr, struct oval_parser_context *, oval_variable_binding_consumer, void *);
+void oval_variable_binding_to_dom(struct oval_variable_binding *, xmlDoc *, xmlNode *);
+int oval_variable_binding_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oval_variable_binding_consumer, void *);
 
 const char *oval_variable_type_get_text(oval_variable_type_t);
 
@@ -139,27 +137,42 @@ oval_syschar_collection_flag_t oval_component_compute(struct oval_syschar_model 
 						      struct oval_collection *value_collection);
 oval_syschar_collection_flag_t oval_component_query(oval_probe_session_t *sess, struct oval_component *component,
 						    struct oval_collection *value_collection);
+
 int oval_probe_session_query_object(oval_probe_session_t *sess, struct oval_object *object);
+
 typedef void (*oval_component_consumer) (struct oval_component *, void *);
 int oval_component_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oval_component_consumer, void *);
 xmlNode *oval_component_to_dom(struct oval_component *, xmlDoc *, xmlNode *);
 
+/* message */
 typedef void (*oval_message_consumer) (struct oval_message *, void *);
 int oval_message_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oscap_consumer_func, void *);
 void oval_message_to_dom(struct oval_message *, xmlDoc *, xmlNode *);
 
+/* generator */
 int oval_generator_parse_tag(xmlTextReader *, struct oval_parser_context *, void *user);
 xmlNode *oval_generator_to_dom(struct oval_generator *, xmlDocPtr, xmlNode *);
 
+/* definition_model */
 xmlDoc *oval_definition_model_get_metadata_doc(struct oval_definition_model *);
+xmlNode *oval_definition_model_to_dom(struct oval_definition_model *definition_model, xmlDocPtr doc, xmlNode * parent);
+void oval_definition_model_optimize_by_filter_propagation(struct oval_definition_model *);
+
+struct oval_definition *oval_definition_model_get_new_definition(struct oval_definition_model *, const char *);
+struct oval_test       *oval_definition_model_get_new_test(struct oval_definition_model *, const char *);
+struct oval_object     *oval_definition_model_get_new_object(struct oval_definition_model *, const char *);
+struct oval_state      *oval_definition_model_get_new_state(struct oval_definition_model *, const char *);
+struct oval_variable   *oval_definition_model_get_new_variable(struct oval_definition_model *, const char *, oval_variable_type_t type);
 void oval_definition_model_add_definition(struct oval_definition_model *, struct oval_definition *);
 void oval_definition_model_add_test(struct oval_definition_model *, struct oval_test *);
 void oval_definition_model_add_object(struct oval_definition_model *, struct oval_object *);
 void oval_definition_model_add_state(struct oval_definition_model *, struct oval_state *);
 void oval_definition_model_add_variable(struct oval_definition_model *, struct oval_variable *);
 
-void oval_definition_model_optimize_by_filter_propagation(struct oval_definition_model *);
+const char * oval_definition_model_get_schema(struct oval_definition_model * model);
+void oval_definition_model_set_schema(struct oval_definition_model *model, const char *version);
 
+/* variable model */
 struct oval_collection *oval_variable_model_get_values_ref(struct oval_variable_model *, char *);
 int oval_variable_bind_ext_var(struct oval_variable *, struct oval_variable_model *, char *);
 

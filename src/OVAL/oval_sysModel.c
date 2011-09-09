@@ -295,7 +295,7 @@ struct oval_sysitem *oval_syschar_model_get_sysitem(struct oval_syschar_model *m
 }
 
 
-struct oval_syschar *oval_syschar_get_new(struct oval_syschar_model *model, struct oval_object *object)
+struct oval_syschar *oval_syschar_model_get_new_syschar(struct oval_syschar_model *model, struct oval_object *object)
 {
 	char *object_id = oval_object_get_id(object);
 	struct oval_syschar *syschar = oval_syschar_model_get_syschar(model, object_id);
@@ -305,7 +305,7 @@ struct oval_syschar *oval_syschar_get_new(struct oval_syschar_model *model, stru
 	return syschar;
 }
 
-struct oval_sysitem *oval_sysitem_get_new(struct oval_syschar_model *model, const char *id)
+struct oval_sysitem *oval_syschar_model_get_new_sysitem(struct oval_syschar_model *model, const char *id)
 {
 	struct oval_sysitem *sysitem = oval_syschar_model_get_sysitem(model, id);
 	if (sysitem == NULL) {
