@@ -336,10 +336,15 @@ static xmlNode *oval_variable_model_to_dom(struct oval_variable_model * variable
 		root_node = xmlNewNode(NULL, BAD_CAST "oval_variables");
 		xmlDocSetRootElement(doc, root_node);
 	}
+
+	xmlNewProp(root_node, BAD_CAST "xsi:schemaLocation", BAD_CAST OVAL_VAR_SCHEMA_LOCATION);
+
 	xmlNs *ns_common = xmlNewNs(root_node, OVAL_COMMON_NAMESPACE, BAD_CAST "oval");
+	xmlNs *ns_xsi = xmlNewNs(root_node, OVAL_XMLNS_XSI, BAD_CAST "xsi");
 	xmlNs *ns_variables = xmlNewNs(root_node, OVAL_VARIABLES_NAMESPACE, NULL);
 
 	xmlSetNs(root_node, ns_common);
+	xmlSetNs(root_node, ns_xsi);
 	xmlSetNs(root_node, ns_variables);
 
 	oval_generator_to_dom(variable_model->generator, doc, root_node);

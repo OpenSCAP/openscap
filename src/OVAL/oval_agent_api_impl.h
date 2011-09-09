@@ -40,6 +40,8 @@ OSCAP_HIDDEN_START;
 
 #define OVAL_SUPPORTED "5.8"
 
+#define OVAL_XMLNS_XSI             BAD_CAST "http://www.w3.org/2001/XMLSchema-instance"
+
 #define OVAL_COMMON_NAMESPACE      BAD_CAST "http://oval.mitre.org/XMLSchema/oval-common-5"
 #define OVAL_DIGSIG_NAMESPACE      BAD_CAST "http://www.w3.org/2000/09/xmldsig#"
 
@@ -65,7 +67,8 @@ OSCAP_HIDDEN_START;
 
 #define OVAL_DIR_SCHEMA_LOCATION "http://oval.mitre.org/XMLSchema/oval-results-5 http://oval.mitre.org/language/version5.5/ovalresults/complete/oval-results-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 http://oval.mitre.org/XMLSchema/oval-directives-5"
 
-#define OVAL_XMLNS_XSI              BAD_CAST "http://www.w3.org/2001/XMLSchema-instance"
+#define OVAL_VAR_SCHEMA_LOCATION "http://oval.mitre.org/XMLSchema/oval-variables-5 oval-variables-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd"
+
 
 const char * oval_definition_model_get_schema(struct oval_definition_model * model);
 void oval_definition_model_set_schema(struct oval_definition_model *model, const char *version);
