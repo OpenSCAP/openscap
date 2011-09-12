@@ -1,4 +1,4 @@
-openscap-0.7.5							12-08-2011
+openscap-0.7.5							12-09-2011
 - Added an OVAL Directives schema to allow for a tool
   to supply a set of directives to more easily specify
   desired results content.
@@ -6,6 +6,7 @@ openscap-0.7.5							12-08-2011
   in allowed results content
 - added new OVAL objects(all OVAL 5.8 objects are covered now)
 - update dpkgprobe
+- all issues reported by coverity are fixed
 - added cvss score calculator from vector
 
 openscap-0.7.4							25-07-2011
