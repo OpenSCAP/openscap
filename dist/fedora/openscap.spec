@@ -112,6 +112,11 @@ make %{?_smp_mflags}
 # Remove shebang from bash-completion script
 sed -i '/^#!.*bin/,+1 d' dist/bash_completion.d/oscap
 
+%check
+#to run make check use "--with check"
+%if %{?_with_check:1}%{!?_with_check:0}
+make check
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT

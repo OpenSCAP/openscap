@@ -9,11 +9,7 @@ Group:          System Environment/Libraries
 License:        LGPLv2+
 URL:            http://www.open-scap.org/
 Source0:        http://www.open-scap.org/download/%{name}-%{version}.tar.gz
-# This works around some perl issue in RHEL6
-Patch1:         openscap-0.6.0-perl.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-# Remove next line when perl is fixed
-BuildRequires:  autoconf, automake, libtool
 BuildRequires:  swig libxml2-devel libxslt-devel m4 perl-XML-Parser
 BuildRequires:  rpm-devel
 BuildRequires:  libgcrypt-devel
@@ -95,12 +91,8 @@ commonly used and require additional dependencies.
 
 %prep
 %setup -q
-# Remove next line when perl is fixed
-%patch1 -p1
 
 %build
-# Remove next line when perl is fixed
-autoreconf -i -s
 %ifarch sparc64
 #sparc64 need big PIE
 export CFLAGS="$RPM_OPT_FLAGS -fPIE"
@@ -113,6 +105,12 @@ export LDFLAGS="-pie -Wl,-z,relro -Wl,-z,now"
 make %{?_smp_mflags}
 # Remove shebang from bash-completion script
 sed -i '/^#!.*bin/,+1 d' dist/bash_completion.d/oscap
+
+%check
+#to run make check use "--with check"
+%if %{?_with_check:1}%{!?_with_check:0}
+make check
+%endif
 
 
 %install
