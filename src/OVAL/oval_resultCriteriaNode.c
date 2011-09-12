@@ -471,7 +471,6 @@ int oval_result_criteria_node_parse(xmlTextReaderPtr reader, struct oval_parser_
 		rc = oval_parser_parse_tag(reader, context, _oval_result_criteria_parse, node);
 	} else if (strcmp((const char *)localName, "criterion") == 0) {
 		xmlChar *test_ref = xmlTextReaderGetAttribute(reader, BAD_CAST "test_ref");
-		int version = oval_parser_int_attribute(reader, "version", 0);
 		int variable_instance = oval_parser_int_attribute(reader, "variable_instance", 1);
 		int negate = oval_parser_boolean_attribute(reader, "negate", false);
 
