@@ -36,10 +36,12 @@
 #include <unistd.h>
 
 #include "oscap-tool.h"
-
+#include "oscap.h"
+#include "alloc.h"
 
 static int app_evaluate_xccdf(const struct oscap_action *action);
 static int app_xccdf_resolve(const struct oscap_action *action);
+static int app_xccdf_export_oval_variables(const struct oscap_action *action);
 static bool getopt_xccdf(int argc, char **argv, struct oscap_action *action);
 static bool getopt_generate(int argc, char **argv, struct oscap_action *action);
 static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show, const char *oval_template);
@@ -75,6 +77,15 @@ static struct oscap_module XCCDF_VALIDATE = {
     .usage = "xccdf-file.xml",
     .opt_parser = getopt_xccdf,
     .func = app_validate_xml
+};
+
+static struct oscap_module XCCDF_EXPORT_OVAL_VARIABLES = {
+    .name = "export-oval-variables",
+    .parent = &OSCAP_XCCDF_MODULE,
+    .summary = "Export XCCDF values as OVAL external-variables document(s)",
+    .usage = "[options] <xccdf benchmark file> [oval definitions files]",
+    .opt_parser = getopt_xccdf,
+    .func = app_xccdf_export_oval_variables,
 };
 
 static struct oscap_module XCCDF_EVAL = {
@@ -166,6 +177,7 @@ static struct oscap_module* XCCDF_SUBMODULES[] = {
     &XCCDF_EVAL,
     &XCCDF_RESOLVE,
     &XCCDF_VALIDATE,
+    &XCCDF_EXPORT_OVAL_VARIABLES,
     &XCCDF_GENERATE,
     NULL
 };
@@ -331,7 +343,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 
 	if (!oval_files[0]) {
-		fprintf(stderr, "No OVAL definition files present, aborting.\n", oval_files[idx]);
+		fprintf(stderr, "No OVAL definition files present, aborting.\n");
 		goto cleanup;
 	}
 
@@ -482,6 +494,177 @@ cleanup:
 
        	xccdf_policy_model_free(policy_model);
 	return retval;
+}
+
+static xccdf_test_result_type_t resolve_variables_wrapper(struct xccdf_policy *policy, const char *rule_id,
+	const char *id, const char *href, struct xccdf_value_binding_iterator *bnd_itr, void *usr)
+{
+	if (0 != oval_agent_resolve_variables((struct oval_agent_session *) usr, bnd_itr))
+		return XCCDF_RESULT_UNKNOWN;
+
+	return XCCDF_RESULT_PASS;
+}
+
+// todo: consolidate with app_evaluate_xccdf()
+static int app_xccdf_export_oval_variables(const struct oscap_action *action)
+{
+	struct xccdf_benchmark *benchmark;
+	struct xccdf_policy_model *policy_model;
+	struct xccdf_policy *policy = NULL;
+	struct xccdf_policy_iterator *policy_itr;
+	struct oval_definition_model **def_mod_lst = NULL;
+	struct oval_agent_session **ag_ses_lst;
+	struct xccdf_result *xres;
+	char **oval_file_lst = NULL;
+	int of_cnt = 0, i, ret = OSCAP_ERROR;
+
+	/* validate the XCCDF document */
+	if (action->validate) {
+		if (!oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF,
+			NULL, (action->verbosity >= 0) ? oscap_reporter_fd : NULL, stderr)) {
+			fprintf(stderr, "Ivalid XCCDF content in '%s'.\n", action->f_xccdf);
+			return OSCAP_ERROR;
+		}
+	}
+
+	/* import the XCCDF document */
+	benchmark = xccdf_benchmark_import(action->f_xccdf);
+	if (benchmark == NULL) {
+		fprintf(stderr, "Failed to import the XCCDF document from '%s'.\n", action->f_xccdf);
+		return OSCAP_ERROR;
+	}
+
+	/* create the policy model */
+	policy_model = xccdf_policy_model_new(benchmark);
+
+	/* select a profile */
+	if (action->profile != NULL) {
+		policy = xccdf_policy_model_get_policy_by_id(policy_model, action->profile);
+		if (policy == NULL) {
+			fprintf(stderr, "Unable to find profile '%s'.\n", action->profile);
+			goto cleanup;
+		}
+	} else {
+		/* use the first one if none specified */
+		policy_itr = xccdf_policy_model_get_policies(policy_model);
+		if (xccdf_policy_iterator_has_more(policy_itr))
+			policy = xccdf_policy_iterator_next(policy_itr);
+		xccdf_policy_iterator_free(policy_itr);
+		if (policy == NULL) {
+			fprintf(stderr, "No profile to evaluate.\n");
+			goto cleanup;
+		}
+	}
+
+	if (action->f_ovals != NULL) {
+		oval_file_lst = action->f_ovals;
+		for (of_cnt = 0; oval_file_lst[of_cnt]; of_cnt++);
+	} else {
+		char *xccdf_path_cpy, *dir_path;
+		struct oscap_stringlist *files;
+		struct oscap_string_iterator *files_itr;
+
+		oval_file_lst = oscap_talloc(char *);
+		oval_file_lst[0] = NULL;
+		of_cnt = 0;
+
+		xccdf_path_cpy = strdup(action->f_xccdf);
+		dir_path = dirname(xccdf_path_cpy);
+
+		files = xccdf_policy_model_get_files(policy_model);
+		files_itr = oscap_stringlist_get_strings(files);
+		while (oscap_string_iterator_has_more(files_itr)) {
+			char *filename;
+			char oval_path[PATH_MAX + 1];
+			struct stat sb;
+
+			filename = (char *) oscap_string_iterator_next(files_itr);
+			snprintf(oval_path, sizeof(oval_path), "%s/%s", dir_path, filename);
+			if (stat(oval_path, &sb)) {
+				fprintf(stderr, "warning: can't find file '%s' (referenced from XCCDF).\n", oval_path);
+			} else {
+				oval_file_lst[of_cnt++] = strdup(oval_path);
+				oval_file_lst = realloc(oval_file_lst, (of_cnt + 1) * sizeof(char *));
+				oval_file_lst[of_cnt] = NULL;
+			}
+		}
+		oscap_string_iterator_free(files_itr);
+		oscap_stringlist_free(files);
+		oscap_free(xccdf_path_cpy);
+	}
+
+	if (!oval_file_lst[0]) {
+		fprintf(stderr, "No OVAL definition files present, aborting.\n");
+		goto cleanup;
+	}
+
+	def_mod_lst = oscap_calloc(of_cnt, sizeof(struct oval_definition_model *));
+	ag_ses_lst = oscap_calloc(of_cnt, sizeof(struct oval_agent_session *));
+
+	for (i = 0; i < of_cnt; i++) {
+		def_mod_lst[i] = oval_definition_model_import(oval_file_lst[i]);
+		if (def_mod_lst[i] == NULL) {
+			fprintf(stderr, "Failed to import definitions model from '%s'.\n", oval_file_lst[i]);
+			goto cleanup;
+		}
+
+		ag_ses_lst[i] = oval_agent_new_session(def_mod_lst[i], basename(oval_file_lst[i]));
+		if (ag_ses_lst[i] == NULL) {
+			fprintf(stderr, "Failed to create new agent session for '%s'.\n", oval_file_lst[i]);
+			goto cleanup;
+		}
+
+		xccdf_policy_model_register_engine_callback(policy_model,
+			"http://oval.mitre.org/XMLSchema/oval-definitions-5",
+			resolve_variables_wrapper, ag_ses_lst[i]);
+	}
+
+	/* perform evaluation */
+	xres = xccdf_policy_evaluate(policy);
+	if (xres == NULL)
+		goto cleanup;
+
+	for (i = 0; i < of_cnt; i++) {
+		int j;
+		char *ses_name;
+		struct oval_variable_model_iterator *var_mod_itr;
+
+		j = 0;
+		ses_name = (char *) oval_agent_get_filename(ag_ses_lst[i]);
+
+		var_mod_itr = oval_definition_model_get_variable_models(def_mod_lst[i]);
+		while (oval_variable_model_iterator_has_more(var_mod_itr)) {
+			struct oval_variable_model *var_mod;
+			char fname[strlen(ses_name) + 32];
+
+			var_mod = oval_variable_model_iterator_next(var_mod_itr);
+			snprintf(fname, sizeof(fname), "%s-%d.variables-%d.xml", ses_name, i, j++);
+			oval_variable_model_export(var_mod, fname);
+		}
+		oval_variable_model_iterator_free(var_mod_itr);
+	}
+
+	ret = OSCAP_OK;
+
+ cleanup:
+	if (def_mod_lst != NULL) {
+		for (i = 0; i < of_cnt; i++) {
+			oval_agent_destroy_session(ag_ses_lst[i]);
+			oval_definition_model_free(def_mod_lst[i]);
+		}
+		oscap_free(ag_ses_lst);
+		oscap_free(def_mod_lst);
+	}
+
+	if (oval_file_lst && oval_file_lst != action->f_ovals) {
+		for (i = 0; i < of_cnt; i++)
+			oscap_free(oval_file_lst[i]);
+		oscap_free(oval_file_lst);
+	}
+
+	xccdf_policy_model_free(policy_model);
+
+	return ret;
 }
 
 int app_xccdf_resolve(const struct oscap_action *action)
