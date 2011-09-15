@@ -174,6 +174,11 @@ Force resolving XCCDF document even if it is already marked as resolved.
 Validate given XCCDF file against a XML schema. Every found error is printed to the standard output. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the XCCDF document is not valid.
 .RE
 .TP
+.B export-oval-variables\fR [\fIoptions\fR] xccdf-file [\fIoval-definitions-files\fR]
+.RS
+Collect all the XCCDF values that would be used by OVAL during evaluation of a certain profile and export them as OVAL external-variables document(s).
+.RE
+.TP
 .B \fBgenerate\fR [\fIoptions\fR] <submodule> [submodule-specific-options]
 .RS
 Generate another document form an XCCDF file such as security guide or result report.
