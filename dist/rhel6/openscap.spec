@@ -15,7 +15,7 @@ BuildRequires:  rpm-devel
 BuildRequires:  libgcrypt-devel
 BuildRequires:  pcre-devel
 BuildRequires:  libacl-devel
-BuildRequires:  libselinux-devel
+BuildRequires:  libselinux-devel libcap-devel
 BuildRequires:  libblkid-devel
 BuildRequires:  libnl-devel
 Requires(post):   /sbin/ldconfig

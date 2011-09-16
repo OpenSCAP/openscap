@@ -14,7 +14,7 @@ BuildRequires:  swig libxml2-devel libxslt-devel m4 perl-XML-Parser
 BuildRequires:  rpm-devel
 BuildRequires:  libgcrypt-devel
 BuildRequires:  pcre-devel
-BuildRequires:  libselinux-devel
+BuildRequires:  libselinux-devel libcap-devel
 BuildRequires:  libacl-devel
 BuildRequires:  libnl-devel
 Requires(post):   /sbin/ldconfig
