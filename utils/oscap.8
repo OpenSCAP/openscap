@@ -132,7 +132,7 @@ You may specify all required OVAL Definition files as last parameters. If you do
 .TP
 \fB\-\-profile PROFILE\fR
 .RS
-Select profile from XCCDF document, otherwise the first profile is used.
+Select a particular profile from XCCDF document.
 .RE
 .TP
 \fB\-\-results FILE\fR
@@ -176,7 +176,13 @@ Validate given XCCDF file against a XML schema. Every found error is printed to 
 .TP
 .B export-oval-variables\fR [\fIoptions\fR] xccdf-file [\fIoval-definitions-files\fR]
 .RS
-Collect all the XCCDF values that would be used by OVAL during evaluation of a certain profile and export them as OVAL external-variables document(s).
+Collect all the XCCDF values that would be used by OVAL during evaluation of a certain profile and export them as OVAL external-variables document(s). The filename format is '\fIoriginal-oval-definitions-filename\fR-\fIsession-index\fR.variables-\fIvariables-index\fR.xml'.
+.PP
+.TP
+\fB\-\-profile PROFILE\fR
+.RS
+Select a particular profile from XCCDF document.
+.RE
 .RE
 .TP
 .B \fBgenerate\fR [\fIoptions\fR] <submodule> [submodule-specific-options]
