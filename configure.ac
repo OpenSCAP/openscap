@@ -334,7 +334,7 @@ AC_CHECK_FUNC(sigwaitinfo, [sigwaitinfo_LIBS=""], [sigwaitinfo_LIBS="-lrt"])
 AC_SUBST(sigwaitinfo_LIBS)
 
 SAVE_CPPFLAGS="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS  -I/usr/include/apt-pkg   -I/usr/include/blkid -I/usr/include/uuid   -DORBIT2=1 -pthread -I/usr/include/gconf/2 -I/usr/include/orbit-2.0 -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include           -I/usr/include/libxml2   -I/usr/include/libxml2   "
+CPPFLAGS="$CPPFLAGS  $(pkg-config libapt-pkg --cflags) $(pkg-config blkid --cflags) $(pkg-config gconf-2.0 --cflags) $(pkg-config libnl-1 --cflags) $(pkg-config libpcre --cflags) $(pkg-config rpm --cflags) $(pkg-config libselinux --cflags) $(pkg-config libxml-2.0 --cflags) $(pkg-config libxslt --cflags) "
 
 echo
 echo ' * Checking presence of required headers for the system_info probe'

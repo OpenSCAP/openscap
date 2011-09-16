@@ -132,7 +132,7 @@ function ac_gen_probe_librarycheck() {
 	    #
 	    pkg-config ${pkgconfig_name} --modversion > /dev/null || exit 123
 
-	    echo -n "$(pkg-config ${pkgconfig_name} --cflags) " >> "${cflagsfile}"
+	    echo -n "\$(pkg-config ${pkgconfig_name} --cflags) " >> "${cflagsfile}"
 	else
 	    # non-pkgconfig check
 	    echo "SAVE_LIBS=$LIBS"
