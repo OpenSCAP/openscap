@@ -48,13 +48,20 @@
 #include <rpm/rpmmacro.h>
 #include <rpm/rpmlog.h>
 #include <rpm/rpmfi.h>
-
-#ifdef HAVE_LIBRPM44
 #include <rpm/header.h>
 #include <rpm/rpmcli.h>
-#define headerFormat(_h, _fmt, _emsg) headerSprintf((_h),( _fmt), rpmTagTable, rpmHeaderFormats, (_emsg))
-#define rpmFreeCrypto() while(0)
-#define rpmFreeFilesystems() while(0)
+
+#ifndef HAVE_HEADERFORMAT
+# define HAVE_LIBRPM44 1 /* hack */
+# define headerFormat(_h, _fmt, _emsg) headerSprintf((_h),( _fmt), rpmTagTable, rpmHeaderFormats, (_emsg))
+#endif
+
+#ifndef HAVE_RPMFREECRYPTO
+# define rpmFreeCrypto() while(0)
+#endif
+
+#ifndef HAVE_RPMFREEFILESYSTEMS
+# define rpmFreeFilesystems() while(0)
 #endif
 
 /* SEAP */
