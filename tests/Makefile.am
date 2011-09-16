@@ -2,4 +2,3 @@ if WANT_PROBES
 PROBE_SUBDIRS = probes mitre
 endif
 SUBDIRS = API $(PROBE_SUBDIRS)
-

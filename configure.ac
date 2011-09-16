@@ -983,72 +983,124 @@ AM_CONDITIONAL([WANT_UTIL_OSCAP], test "$util_oscap" = yes)
 AM_CONDITIONAL([WANT_BINDINGS], test "$bindings" = yes)
 AM_CONDITIONAL([ENABLE_VALGRIND_TESTS], test "$vgcheck" = yes)
 
-#AM_CONDITIONAL([ENABLE_PROBE_RPMINFO], test "$have_librpm" = yes)
-#AM_CONDITIONAL([ENABLE_PROBE_RPMINFO44], test "$have_librpm44" = yes)
-#AM_CONDITIONAL([ENABLE_PROBE_DPKGINFO], test "$have_libapt_pkg" = yes)
-#AM_CONDITIONAL([ENABLE_PROBE_GCONF], test "$have_libgconf2" = yes)
-#AM_CONDITIONAL([HAVE_ODBX], test "$have_odbx" = yes)
-#AM_CONDITIONAL([ENABLE_PROBE_LDAP57], test "$probe_independent_ldap57" = yes)
-#AM_CONDITIONAL(ENABLE_PROBES_SELINUX, [test "$have_selinux" = "yes"])
-
+#
+# Core
+#
 AC_CONFIG_FILES([Makefile
                  lib/Makefile
                  src/Makefile
-                 swig/Makefile
-                 src/OVAL/Makefile
-                 src/OVAL/probes/Makefile
-                 src/OVAL/probes/probe/Makefile
-                 src/OVAL/probes/crapi/Makefile
-                 src/OVAL/probes/SEAP/Makefile
-                 src/OVAL/probes/SEAP/generic/rbt/Makefile
-                 src/CVSS/Makefile
-                 src/CVE/Makefile
-                 src/CPE/Makefile
-                 src/CCE/Makefile
-                 src/XCCDF/Makefile
-                 src/XCCDF_POLICY/Makefile
-                 src/common/Makefile
-                 tests/Makefile
-                 tests/API/Makefile
-                 tests/API/CCE/Makefile
-                 tests/API/CVE/Makefile
-                 tests/API/CPE/Makefile
-                 tests/API/CPE/uri/Makefile
-                 tests/API/CPE/lang/Makefile
-                 tests/API/CPE/dict/Makefile
-                 tests/API/CVSS/Makefile
-                 tests/API/SEAP/Makefile
-                 tests/API/OVAL/Makefile
-                 tests/API/XCCDF/Makefile
-                 tests/API/crypt/Makefile
-                 tests/API/probes/Makefile
-                 tests/probes/Makefile
-                 tests/probes/file/Makefile
-                 tests/probes/fileextendedattribute/Makefile
-                 tests/probes/uname/Makefile
-                 tests/probes/shadow/Makefile
-                 tests/probes/family/Makefile
-                 tests/probes/vgtest/Makefile
-                 tests/probes/process/Makefile
-                 tests/probes/sysinfo/Makefile
-                 tests/probes/rpminfo/Makefile
-                 tests/probes/runlevel/Makefile
-                 tests/probes/filehash/Makefile
-                 tests/probes/filehash58/Makefile
-                 tests/probes/password/Makefile
-                 tests/probes/interface/Makefile
-                 tests/probes/textfilecontent54/Makefile
-                 tests/probes/environmentvariable/Makefile
-                 tests/probes/environmentvariable58/Makefile
-                 tests/probes/xinetd/Makefile
-                 tests/probes/selinuxboolean/Makefile
-		 tests/probes/isainfo/Makefile
-		 tests/probes/iflisteners/Makefile
-                 tests/mitre/Makefile
-                 utils/Makefile
                  xsl/Makefile
                  schemas/Makefile
-		 libopenscap.pc])
+		 libopenscap.pc
+                 src/common/Makefile
+                 tests/Makefile
+                 tests/API/Makefile])
+#
+# Bindings/SWIG
+#
+AM_COND_IF([WANT_BINDINGS],
+           [AC_CONFIG_FILES([swig/Makefile])])
+#
+# Utils
+#
+AM_COND_IF([WANT_UTIL_OSCAP],
+           [AC_CONFIG_FILES([utils/Makefile])])
+#
+# OVAL
+#
+AM_COND_IF([WANT_OVAL],
+           [AC_CONFIG_FILES([src/OVAL/Makefile
+                             tests/API/OVAL/Makefile
+			     tests/mitre/Makefile])
+            # probes
+            AM_COND_IF([WANT_PROBES],
+                       [AC_CONFIG_FILES([src/OVAL/probes/Makefile
+		                         src/OVAL/probes/probe/Makefile
+					 src/OVAL/probes/crapi/Makefile
+					 src/OVAL/probes/SEAP/Makefile
+					 src/OVAL/probes/SEAP/generic/rbt/Makefile
+					 tests/probes/Makefile
+					 tests/API/crypt/Makefile
+                 			 tests/API/SEAP/Makefile
+					 tests/API/probes/Makefile])
+			# Valgrind
+			AM_COND_IF([ENABLE_VALGRIND_TESTS],
+				   [AC_CONFIG_FILES([tests/probes/vgtest/Makefile])])])
+		        # ...
+			AM_COND_IF([probe_file_enabled],
+				   [AC_CONFIG_FILES([tests/probes/file/Makefile])])
+			AM_COND_IF([probe_fileextendedattribute_enabled],
+				   [AC_CONFIG_FILES([tests/probes/fileextendedattribute/Makefile])])
+			AM_COND_IF([probe_uname_enabled],
+				   [AC_CONFIG_FILES([tests/probes/uname/Makefile])])
+			AM_COND_IF([probe_shadow_enabled],
+				   [AC_CONFIG_FILES([tests/probes/shadow/Makefile])])
+			AM_COND_IF([probe_family_enabled],
+				   [AC_CONFIG_FILES([tests/probes/family/Makefile])])
+			AM_COND_IF([probe_process_enabled],
+				   [AC_CONFIG_FILES([tests/probes/process/Makefile])])
+			AM_COND_IF([probe_system_info_enabled],
+				   [AC_CONFIG_FILES([tests/probes/sysinfo/Makefile])])
+			AM_COND_IF([probe_rpminfo_enabled],
+				   [AC_CONFIG_FILES([tests/probes/rpminfo/Makefile])])
+			AM_COND_IF([probe_runlevel_enabled],
+				   [AC_CONFIG_FILES([tests/probes/runlevel/Makefile])])
+			AM_COND_IF([probe_filehash_enabled],
+				   [AC_CONFIG_FILES([tests/probes/filehash/Makefile])])
+			AM_COND_IF([probe_filehash58_enabled],
+				   [AC_CONFIG_FILES([tests/probes/filehash58/Makefile])])
+			AM_COND_IF([probe_password_enabled],
+				   [AC_CONFIG_FILES([tests/probes/password/Makefile])])
+			AM_COND_IF([probe_interface_enabled],
+				   [AC_CONFIG_FILES([tests/probes/interface/Makefile])])
+			AM_COND_IF([probe_textfilecontent54_enabled],
+				   [AC_CONFIG_FILES([tests/probes/textfilecontent54/Makefile])])
+			AM_COND_IF([probe_environmentvariable_enabled],
+				   [AC_CONFIG_FILES([tests/probes/environmentvariable/Makefile])])
+			AM_COND_IF([probe_environmentvariable58_enabled],
+				   [AC_CONFIG_FILES([tests/probes/environmentvariable58/Makefile])])
+			AM_COND_IF([probe_xinetd_enabled],
+				   [AC_CONFIG_FILES([tests/probes/xinetd/Makefile])])
+			AM_COND_IF([probe_selinuxboolean_enabled],
+				   [AC_CONFIG_FILES([tests/probes/selinuxboolean/Makefile])])
+			AM_COND_IF([probe_isainfo_enabled],
+				   [AC_CONFIG_FILES([tests/probes/isainfo/Makefile])])
+			AM_COND_IF([probe_iflisteners_enabled],
+				   [AC_CONFIG_FILES([tests/probes/iflisteners/Makefile])])])
+#
+# CVSS
+#
+AM_COND_IF([WANT_CVSS],
+           [AC_CONFIG_FILES([src/CVSS/Makefile
+                             tests/API/CVSS/Makefile])])
+#
+# CVE
+#
+AM_COND_IF([WANT_CVE],
+           [AC_CONFIG_FILES([src/CVE/Makefile
+                             tests/API/CVE/Makefile])])
+#
+# CPE
+#
+AM_COND_IF([WANT_CPE],
+           [AC_CONFIG_FILES([src/CPE/Makefile
+                             tests/API/CPE/Makefile
+			     tests/API/CPE/uri/Makefile
+                 	     tests/API/CPE/lang/Makefile
+                 	     tests/API/CPE/dict/Makefile])])
+#
+# CCE
+#
+AM_COND_IF([WANT_CCE],
+           [AC_CONFIG_FILES([src/CCE/Makefile
+                             tests/API/CCE/Makefile])])
+#
+# XCCDF
+#
+AM_COND_IF([WANT_XCCDF],
+           [AC_CONFIG_FILES([src/XCCDF/Makefile
+	                     src/XCCDF_POLICY/Makefile
+                             tests/API/XCCDF/Makefile])])
 
 AC_OUTPUT
 
