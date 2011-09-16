@@ -10,9 +10,9 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
                 -I$(top_srcdir)/src/OVAL/probes/SEAP/public \
                 -I$(top_srcdir)/src/OVAL/probes/SEAP/generic \
                 -I$(top_srcdir)/src \
-                @libxml_cflags@
+                @xml2_CFLAGS@
 
-LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_libs@
+LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
 
 EXTRA_DIST = $(top_srcdir)/tests/test_common.sh  \
              $(top_srcdir)/tests/assume.h
@@ -36,8 +36,8 @@ test_api_seap_string_SOURCES     = test_api_seap_string.c
 test_api_seap_number_SOURCES     = test_api_seap_number.c
 test_api_seap_list_SOURCES       = test_api_seap_list.c
 test_api_seap_concurency_SOURCES = test_api_seap_concurency.c
-test_api_seap_concurency_CFLAGS  = @pthread_cflags@
-test_api_seap_concurency_LDFLAGS = @pthread_ldflags@
+test_api_seap_concurency_CFLAGS  = @pthread_CFLAGS@
+test_api_seap_concurency_LDFLAGS = @pthread_LIBS@
 test_api_seap_spb_SOURCES        = test_api_seap_spb.c
 test_api_SEXP_deepcmp_SOURCES    = test_api_SEXP_deepcmp.c
 

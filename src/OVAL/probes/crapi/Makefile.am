@@ -13,5 +13,5 @@ libcrapi_la_SOURCES= 		\
 		crapi.h		\
 		crapi.c
 
-libcrapi_la_LDFLAGS= @crapi_libs@
-libcrapi_la_CFLAGS= @crapi_cflags@ -I. -I$(top_srcdir) -I$(top_srcdir)/src/common -I$(top_srcdir)/src/common/public -D_FILE_OFFSET_BITS=32
+libcrapi_la_LDFLAGS= @crapi_LIBS@
+libcrapi_la_CFLAGS= @crapi_CFLAGS@ -I. -I$(top_srcdir) -I$(top_srcdir)/src/common -I$(top_srcdir)/src/common/public -D_FILE_OFFSET_BITS=32

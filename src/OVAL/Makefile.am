@@ -76,7 +76,7 @@ common_oval_sources = \
 
 # -I options go to CPPFLAGS, not CFLAGS
 # lets build one common for both normal and probe sources (does it mind?)
-AM_CPPFLAGS = $(libxml_cflags) $(pthread_cflags) $(pcre_cflags) -I$(srcdir)/public -I$(top_srcdir)/src/common/public -I$(top_srcdir)/src -I$(top_srcdir)/src/OVAL/probes/SEAP/generic
+AM_CPPFLAGS = @xml2_CFLAGS@ @pthread_CFLAGS@ @pcre_CFLAGS@ -I$(srcdir)/public -I$(top_srcdir)/src/common/public -I$(top_srcdir)/src -I$(top_srcdir)/src/OVAL/probes/SEAP/generic
 if WANT_PROBES
 AM_CPPFLAGS += -I$(top_srcdir)/src -I$(top_srcdir)/src/common -I$(srcdir)/probes -I$(srcdir)/probes/public -I$(srcdir)/probes/SEAP/public -DSEAP_MSGID_BITS=32 -DSEAP_THREAD_SAFE -DOVAL_PROBE_DIR='"$(probe_dir)"'
 endif
@@ -85,7 +85,7 @@ AM_CPPFLAGS += -I$(top_srcdir)/src/XCCDF_POLICY/public -I$(top_srcdir)/src/XCCDF
 endif
 
 # -l or -L options go to LIBADD (or LDADD), not to LDFLAGS
-liboval_la_LIBADD = $(libxml_libs) $(pthread_ldflags) $(pcre_libs)
+liboval_la_LIBADD = @xml2_LIBS@ @pthread_LIBS@ @pcre_LIBS@
 liboval_testing_la_LIBADD = $(liboval_la_LIBADD)
 
 pkginclude_HEADERS  =	public/oval_agent_api.h \

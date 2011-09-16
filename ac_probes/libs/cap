@@ -1,0 +1,6 @@
+name=cap
+pkgconfig=no
+functions_req=(cap_init)
+functions_opt=
+probes_req=(process58)
+probes_opt=

@@ -1,0 +1,7 @@
+name=blkid
+pkgconfig=yes
+pkgconfig_name=blkid
+functions_req=
+functions_opt=
+probes_req=(partition)
+probes_opt=

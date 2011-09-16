@@ -63,57 +63,162 @@ CFLAGS_DEBUGGING="-fno-inline-functions -O0 -g3"
 CFLAGS_NODEBUG="-DNDEBUG -Wno-unused-function"
 
 
-#
-# fts_open
-#
-AC_CHECK_FUNCS([fts_open])
-
-#
-# sigwaitinfo
-#
-AC_CHECK_FUNC(sigwaitinfo, [sigwaitinfo_libs=""], [sigwaitinfo_libs="-lrt"])
-
-#
-# posix_memalign
-#
-AC_CHECK_FUNCS([posix_memalign memalign])
-
-#
-# xml2-config
-#
-AC_CHECK_PROG(
-  [HAVE_LIBXML_CONFIG],
-  [xml2-config],
-  [yes],,,
-)
-if test "x${HAVE_LIBXML_CONFIG}" != "xyes"; then
-  AC_MSG_FAILURE([xml2-config not found in PATH])
-fi
-
-#
-# xslt-config
-#
-AC_CHECK_PROG(
-  [HAVE_LIBXSLT_CONFIG],
-  [xslt-config],
-  [yes],,,
-)
-if test "x${HAVE_LIBXSLT_CONFIG}" != "xyes"; then
-  AC_MSG_FAILURE([xslt-config not found in PATH])
-fi
-
-
-#
-# pcre-config
-#
-AC_CHECK_PROG(
-  [HAVE_PCRE_CONFIG],
-  [pcre-config],
-  [yes],,,
-)
-if test "x${HAVE_PCRE_CONFIG}" != "xyes"; then
-  AC_MSG_FAILURE([pcre-config not found in PATH])
-fi
+probe_system_info_req_deps_ok=yes
+probe_system_info_req_deps_missing=
+probe_system_info_opt_deps_ok=yes
+probe_system_info_opt_deps_missing=
+probe_family_req_deps_ok=yes
+probe_family_req_deps_missing=
+probe_family_opt_deps_ok=yes
+probe_family_opt_deps_missing=
+probe_textfilecontent_req_deps_ok=yes
+probe_textfilecontent_req_deps_missing=
+probe_textfilecontent_opt_deps_ok=yes
+probe_textfilecontent_opt_deps_missing=
+probe_textfilecontent54_req_deps_ok=yes
+probe_textfilecontent54_req_deps_missing=
+probe_textfilecontent54_opt_deps_ok=yes
+probe_textfilecontent54_opt_deps_missing=
+probe_variable_req_deps_ok=yes
+probe_variable_req_deps_missing=
+probe_variable_opt_deps_ok=yes
+probe_variable_opt_deps_missing=
+probe_xmlfilecontent_req_deps_ok=yes
+probe_xmlfilecontent_req_deps_missing=
+probe_xmlfilecontent_opt_deps_ok=yes
+probe_xmlfilecontent_opt_deps_missing=
+probe_filehash_req_deps_ok=yes
+probe_filehash_req_deps_missing=
+probe_filehash_opt_deps_ok=yes
+probe_filehash_opt_deps_missing=
+probe_filehash58_req_deps_ok=yes
+probe_filehash58_req_deps_missing=
+probe_filehash58_opt_deps_ok=yes
+probe_filehash58_opt_deps_missing=
+probe_environmentvariable_req_deps_ok=yes
+probe_environmentvariable_req_deps_missing=
+probe_environmentvariable_opt_deps_ok=yes
+probe_environmentvariable_opt_deps_missing=
+probe_environmentvariable58_req_deps_ok=yes
+probe_environmentvariable58_req_deps_missing=
+probe_environmentvariable58_opt_deps_ok=yes
+probe_environmentvariable58_opt_deps_missing=
+probe_sql_req_deps_ok=yes
+probe_sql_req_deps_missing=
+probe_sql_opt_deps_ok=yes
+probe_sql_opt_deps_missing=
+probe_sql57_req_deps_ok=yes
+probe_sql57_req_deps_missing=
+probe_sql57_opt_deps_ok=yes
+probe_sql57_opt_deps_missing=
+probe_ldap57_req_deps_ok=yes
+probe_ldap57_req_deps_missing=
+probe_ldap57_opt_deps_ok=yes
+probe_ldap57_opt_deps_missing=
+probe_dnscache_req_deps_ok=yes
+probe_dnscache_req_deps_missing=
+probe_dnscache_opt_deps_ok=yes
+probe_dnscache_opt_deps_missing=
+probe_runlevel_req_deps_ok=yes
+probe_runlevel_req_deps_missing=
+probe_runlevel_opt_deps_ok=yes
+probe_runlevel_opt_deps_missing=
+probe_file_req_deps_ok=yes
+probe_file_req_deps_missing=
+probe_file_opt_deps_ok=yes
+probe_file_opt_deps_missing=
+probe_fileextendedattribute_req_deps_ok=yes
+probe_fileextendedattribute_req_deps_missing=
+probe_fileextendedattribute_opt_deps_ok=yes
+probe_fileextendedattribute_opt_deps_missing=
+probe_password_req_deps_ok=yes
+probe_password_req_deps_missing=
+probe_password_opt_deps_ok=yes
+probe_password_opt_deps_missing=
+probe_process_req_deps_ok=yes
+probe_process_req_deps_missing=
+probe_process_opt_deps_ok=yes
+probe_process_opt_deps_missing=
+probe_process58_req_deps_ok=yes
+probe_process58_req_deps_missing=
+probe_process58_opt_deps_ok=yes
+probe_process58_opt_deps_missing=
+probe_shadow_req_deps_ok=yes
+probe_shadow_req_deps_missing=
+probe_shadow_opt_deps_ok=yes
+probe_shadow_opt_deps_missing=
+probe_uname_req_deps_ok=yes
+probe_uname_req_deps_missing=
+probe_uname_opt_deps_ok=yes
+probe_uname_opt_deps_missing=
+probe_interface_req_deps_ok=yes
+probe_interface_req_deps_missing=
+probe_interface_opt_deps_ok=yes
+probe_interface_opt_deps_missing=
+probe_xinetd_req_deps_ok=yes
+probe_xinetd_req_deps_missing=
+probe_xinetd_opt_deps_ok=yes
+probe_xinetd_opt_deps_missing=
+probe_sysctl_req_deps_ok=yes
+probe_sysctl_req_deps_missing=
+probe_sysctl_opt_deps_ok=yes
+probe_sysctl_opt_deps_missing=
+probe_routingtable_req_deps_ok=yes
+probe_routingtable_req_deps_missing=
+probe_routingtable_opt_deps_ok=yes
+probe_routingtable_opt_deps_missing=
+probe_gconf_req_deps_ok=yes
+probe_gconf_req_deps_missing=
+probe_gconf_opt_deps_ok=yes
+probe_gconf_opt_deps_missing=
+probe_isainfo_req_deps_ok=yes
+probe_isainfo_req_deps_missing=
+probe_isainfo_opt_deps_ok=yes
+probe_isainfo_opt_deps_missing=
+probe_package_req_deps_ok=yes
+probe_package_req_deps_missing=
+probe_package_opt_deps_ok=yes
+probe_package_opt_deps_missing=
+probe_patch_req_deps_ok=yes
+probe_patch_req_deps_missing=
+probe_patch_opt_deps_ok=yes
+probe_patch_opt_deps_missing=
+probe_smf_req_deps_ok=yes
+probe_smf_req_deps_missing=
+probe_smf_opt_deps_ok=yes
+probe_smf_opt_deps_missing=
+probe_partition_req_deps_ok=yes
+probe_partition_req_deps_missing=
+probe_partition_opt_deps_ok=yes
+probe_partition_opt_deps_missing=
+probe_inetlisteningservers_req_deps_ok=yes
+probe_inetlisteningservers_req_deps_missing=
+probe_inetlisteningservers_opt_deps_ok=yes
+probe_inetlisteningservers_opt_deps_missing=
+probe_iflisteners_req_deps_ok=yes
+probe_iflisteners_req_deps_missing=
+probe_iflisteners_opt_deps_ok=yes
+probe_iflisteners_opt_deps_missing=
+probe_selinuxboolean_req_deps_ok=yes
+probe_selinuxboolean_req_deps_missing=
+probe_selinuxboolean_opt_deps_ok=yes
+probe_selinuxboolean_opt_deps_missing=
+probe_selinuxsecuritycontext_req_deps_ok=yes
+probe_selinuxsecuritycontext_req_deps_missing=
+probe_selinuxsecuritycontext_opt_deps_ok=yes
+probe_selinuxsecuritycontext_opt_deps_missing=
+probe_rpminfo_req_deps_ok=yes
+probe_rpminfo_req_deps_missing=
+probe_rpminfo_opt_deps_ok=yes
+probe_rpminfo_opt_deps_missing=
+probe_rpmverify_req_deps_ok=yes
+probe_rpmverify_req_deps_missing=
+probe_rpmverify_opt_deps_ok=yes
+probe_rpmverify_opt_deps_missing=
+probe_dpkginfo_req_deps_ok=yes
+probe_dpkginfo_req_deps_missing=
+probe_dpkginfo_opt_deps_ok=yes
+probe_dpkginfo_opt_deps_missing=
 
 #
 # env
@@ -137,293 +242,410 @@ AC_CHECK_PROG(
 
 AM_CONDITIONAL(VALGRIND_PRESENT, [test x"${HAVE_VALGRIND}" = xyes])
 
-# Checks for libraries.
+AC_HEADER_STDC
+AC_HEADER_STDBOOL
+AC_TYPE_SIZE_T
+
+AC_FUNC_MALLOC
+AC_FUNC_REALLOC
+
+AM_CHECK_PYTHON_HEADERS
 
 #
-# libxml2
+# threads
 #
-AC_CHECK_LIB(
-  [xml2],
-  [xmlParseFile],
-  [libxml_cflags=`xml2-config --cflags`
-   libxml_libs=`xml2-config --libs`
-  ],
-  [AC_MSG_FAILURE([libxml2 library is missing])],
-  [`xml2-config --libs`]
-)
+pthread_CFLAGS=error
+pthread_LIBS=error
+SAVE_LIBS=$LIBS
 
-#
-# libxslt
-#
-AC_CHECK_LIB(
-  [xslt],
-  [xsltApplyStylesheet],
-  [libxslt_cflags=`xslt-config --cflags`
-   libxslt_libs=`xslt-config --libs`
-  ],
-  [AC_MSG_FAILURE([libxslt library is missing])],
-  [`xslt-config --libs`]
-)
+if test "x$pthread_LIBS" = "xerror"; then
+   AC_CHECK_LIB(c_r, pthread_attr_init, [
+                     pthread_CFLAGS="-DOSCAP_THREAD_SAFE -D_THREAD_SAFE -pthread"
+                     pthread_LIBS="-pthread" ])
+fi
 
-#
-# libpcre
-#
-AC_CHECK_LIB(
-  [pcre],
-  [pcre_compile],
-  [pcre_cflags=`pcre-config --cflags`
-   pcre_libs=`pcre-config --libs`
-  ],
-  [AC_MSG_FAILURE([pcre library is missing])],
-  [`pcre-config --libs`]
-)
+if test "x$pthread_LIBS" = "xerror"; then
+   AC_CHECK_LIB(pthread, pthread_attr_init, [
+                         pthread_CFLAGS="-DOSCAP_THREAD_SAFE -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS"
+                         pthread_LIBS="-lpthread" ])
+fi
 
-probe_independent_ldap57=no
+if test "x$pthread_LIBS" = "xerror"; then
+   AC_CHECK_LIB(pthreads, pthread_attr_init, [
+                          pthread_CFLAGS="-DOSCAP_THREAD_SAFE -D_THREAD_SAFE"
+                          pthread_LIBS="-lpthreads" ])
+fi
 
-AC_CHECK_LIB(
-  [ldap],
-  [ldap_initialize],
-  [libopenldap_libs="-lldap -llber"
-   libopenldap_cflags=""
-   probe_independent_ldap57=yes
-  ],
-  [probe_independent_ldap57=no],
-  []
-)
+if test "x$pthread_LIBS" = "xerror"; then
+   AC_MSG_FAILURE(pthread library is missing)
+fi
 
-crapi_cflags=""
-crapi_libs=""
+LIBS=$SAVE_LIBS
+AC_SUBST(pthread_CFLAGS)
+AC_SUBST(pthread_LIBS)
+
+PKG_CHECK_MODULES([xml2], [libxml-2.0 >= 2.0],[],
+			  AC_MSG_FAILURE([libxml-2.0 devel support is missing]))
+
+PKG_CHECK_MODULES([xslt], [libxslt >= 1.1],[],
+			  AC_MSG_FAILURE([libxslt devel support is missing]))
+
+PKG_CHECK_MODULES([exslt], [libexslt >= 0.8],[],
+			  AC_MSG_FAILURE([libexslt devel support is missing]))
+
+crapi_CFLAGS=""
+crapi_LIBS=""
 
 if test "${with_crypto}" = ""; then
    with_crypto=gcrypt
 fi
 
 case "${with_crypto}" in
-     nss3)
-        AC_CHECK_LIB([nss3], [NSS_NoDB_Init],
-                     [crapi_cflags=`nss-config --cflags`
-                      crapi_libs=`nss-config --libs`
-                      crapi_libname="NSS 3.x"
-                      AC_DEFINE([HAVE_NSS3], [1], [Define to 1 if you have 'NSS' library.])
-                      AC_CHECK_LIB([nspr4], [PR_CreateThread],
-                       	           [crapi_cflags="$crapi_cflags `nspr-config --cflags`"
-                                    crapi_libs="$crapi_libs `nspr-config --libs`"
-         	                    AC_DEFINE([HAVE_NSPR4], [1], [Define to 1 if you have 'NSPR' library.])],
-                                   [AC_MSG_ERROR([library 'nspr4' is required for NSS.])],
-                                   [`nspr-config --libs`])],
-                     [AC_MSG_ERROR([library 'nss3' is required for NSS.])],
-                     [`nss-config --libs`])
+      nss3)
+	PKG_CHECK_MODULES([nss3], [nss >= 3.0],[],
+			  AC_MSG_FAILURE([libnss3 devel support is missing]))
+
+	crapi_libname="NSS 3.x"
+	crapi_CFLAGS=$nss3_CFLAGS
+	crapi_LIBS=$nss3_LIBS
+        AC_DEFINE([HAVE_NSS3], [1], [Define to 1 if you have 'NSS' library.])
         ;;
     gcrypt)
-         AC_CHECK_LIB([gcrypt], [gcry_check_version],
-                      [crapi_cflags=`libgcrypt-config --cflags`
-                       crapi_libs=`libgcrypt-config --libs`
-                       crapi_libname="GCrypt"
-                       AC_DEFINE([HAVE_GCRYPT], [1], [Define to 1 if you have 'gcrypt' library.])],
-                      [AC_MSG_ERROR([library 'gcrypt' is required for GCrypt.])],
-                      [`libgcrypt-config --libs`])
+	SAVE_LIBS=$LIBS
+        AC_CHECK_LIB([gcrypt], [gcry_check_version],
+                     [crapi_CFLAGS=`libgcrypt-config --cflags`;
+                      crapi_LIBS=`libgcrypt-config --libs`;
+                      crapi_libname="GCrypt";],
+                     [AC_MSG_ERROR([library 'gcrypt' is required for GCrypt.])],
+                     [])
+	LIBS=$SAVE_LIBS
+        AC_DEFINE([HAVE_GCRYPT], [1], [Define to 1 if you have 'gcrypt' library.])
         ;;
          *)
           AC_MSG_ERROR([unknown crypto backend])
         ;;
 esac
 
-AC_SUBST(crapi_cflags)
-AC_SUBST(crapi_libs)
+AC_SUBST(crapi_CFLAGS)
+AC_SUBST(crapi_LIBS)
 
-case "${host}" in
-    *-*-linux*)
+AC_CHECK_FUNCS([fts_open posix_memalign memalign])
+AC_CHECK_FUNC(sigwaitinfo, [sigwaitinfo_LIBS=""], [sigwaitinfo_LIBS="-lrt"])
+AC_SUBST(sigwaitinfo_LIBS)
 
-#
-# rpmlib
-# Check for rpmlib version and provide RHEL5 compatibility functions when necessary
-#
-have_librpm=no
-AC_SEARCH_LIBS(
-  [rpmtsCreate],
-  [rpm],
-  [AC_CHECK_LIB(
-     [rpm],
-     [headerFormat],
-     [rpm_cflags=`pkg-config rpm --cflags`
-      rpm_libs=`pkg-config rpm --libs`
-      have_librpm=yes
-      AC_DEFINE([HAVE_LIBRPM47],[1],[Use RPM lib 4.7 compatibility])],
-     [AC_MSG_CHECKING([for librpm v4.4])
-      saved_ldflags=$LDFLAGS
-      LDFLAGS="$LDFLAGS -lrpm -lrpmio"
-      AC_LINK_IFELSE(
-        [AC_LANG_PROGRAM(
-         [[#include <rpm/header.h>]],
-         [[headerSprintf(0,0,0,0,0);]])],
-        [rpm_cflags="-I/usr/include/rpm"
-         rpm_libs="-lrpm -lrpmio"
-         have_librpm=yes
-         AC_DEFINE([HAVE_LIBRPM44],[1],[Use RPM lib 4.4 compatibility])
-         AC_MSG_RESULT([yes])],
-        [AC_MSG_RESULT([no])
-         AC_MSG_NOTICE([RPM missing headerFormat & headerSprintf.  RPM probes will not be enabled.  Install RPM 4.7 or 4.4 libraries to enabled RPM support.])]
-      )
-      LDFLAGS=$saved_ldflags
-     ]
-   )
-  ],[AC_MSG_NOTICE([RPM missing rpmtsCreate compatibility.  RPM probes will not be enabled.])]
-)
-;;
-esac
+SAVE_CPPFLAGS="$CPPFLAGS"
+CPPFLAGS="$CPPFLAGS  -I/usr/include/apt-pkg   -I/usr/include/blkid -I/usr/include/uuid   -DORBIT2=1 -pthread -I/usr/include/gconf/2 -I/usr/include/orbit-2.0 -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include           -I/usr/include/libxml2   -I/usr/include/libxml2   "
 
-have_libapt_pkg=no
-AC_CHECK_LIB(
-  [apt-pkg],
-  [pkgVersion],
-  [deb_cflags=""
-   deb_libs="-lapt-pkg"
-   have_libapt_pkg=yes
-  ]
-)
+echo
+echo ' * Checking presence of required headers for the system_info probe'
+AC_CHECK_HEADERS([arpa/inet.h errno.h ifaddrs.h netdb.h net/if.h stdlib.h string.h sys/ioctl.h sys/socket.h sys/utsname.h unistd.h ],[],[probe_system_info_req_deps_ok=no; probe_system_info_req_deps_missing='header files'],[])
 
-#
-# threads
-#
-pthread_cflags=error
-pthread_ldflags=error
+echo
+echo ' * Checking presence of required headers for the family probe'
+AC_CHECK_HEADERS([string.h ],[],[probe_family_req_deps_ok=no; probe_family_req_deps_missing='header files'],[])
 
-if test "x$pthread_ldflags" = "xerror"; then
-   AC_CHECK_LIB(c_r, pthread_attr_init, [
-                     pthread_cflags="-DOSCAP_THREAD_SAFE -D_THREAD_SAFE -pthread"
-                     pthread_ldflags="-pthread" ])
-fi
+echo
+echo ' * Checking presence of required headers for the textfilecontent probe'
+AC_CHECK_HEADERS([fcntl.h limits.h pcre.h regex.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_textfilecontent_req_deps_ok=no; probe_textfilecontent_req_deps_missing='header files'],[])
 
-if test "x$pthread_ldflags" = "xerror"; then
-   AC_CHECK_LIB(pthread, pthread_attr_init, [
-                         pthread_cflags="-DOSCAP_THREAD_SAFE -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS"
-                         pthread_ldflags="-lpthread" ])
-fi
+echo
+echo ' * Checking presence of required headers for the textfilecontent54 probe'
+AC_CHECK_HEADERS([errno.h fcntl.h limits.h pcre.h regex.h stdio.h stdlib.h string.h sys/stat.h sys/types.h unistd.h ],[],[probe_textfilecontent54_req_deps_ok=no; probe_textfilecontent54_req_deps_missing='header files'],[])
 
-if test "x$pthread_ldflags" = "xerror"; then
-   AC_CHECK_LIB(pthreads, pthread_attr_init, [
-                          pthread_cflags="-DOSCAP_THREAD_SAFE -D_THREAD_SAFE"
-                          pthread_ldflags="-lpthreads" ])
-fi
+echo
+echo ' * Checking presence of required headers for the variable probe'
+AC_CHECK_HEADERS([errno.h stdio.h stdlib.h string.h ],[],[probe_variable_req_deps_ok=no; probe_variable_req_deps_missing='header files'],[])
 
-if test "x$pthread_ldflags" = "xerror"; then
-   AC_MSG_FAILURE(pthread library not found)
-fi
+echo
+echo ' * Checking presence of required headers for the xmlfilecontent probe'
+AC_CHECK_HEADERS([libxml/parser.h libxml/tree.h libxml/xpath.h libxml/xpathInternals.h limits.h stdlib.h string.h ],[],[probe_xmlfilecontent_req_deps_ok=no; probe_xmlfilecontent_req_deps_missing='header files'],[])
 
-AC_SUBST(pthread_cflags)
-AC_SUBST(pthread_ldflags)
+echo
+echo ' * Checking presence of required headers for the filehash probe'
+AC_CHECK_HEADERS([errno.h fcntl.h limits.h pthread.h stdlib.h string.h sys/stat.h sys/types.h ],[],[probe_filehash_req_deps_ok=no; probe_filehash_req_deps_missing='header files'],[])
 
-#
-# libacl
-#
-AC_CHECK_LIB(
-  [acl],
-  [acl_extended_file],
-  [libacl_cflags=
-   libacl_libs=-lacl
-   AC_DEFINE([HAVE_LIBACL], [1], [libacl is available])
-  ]
-)
+echo
+echo ' * Checking presence of required headers for the filehash58 probe'
+AC_CHECK_HEADERS([errno.h fcntl.h limits.h pthread.h stdlib.h string.h sys/stat.h sys/types.h ],[],[probe_filehash58_req_deps_ok=no; probe_filehash58_req_deps_missing='header files'],[])
 
-#
-# libblkid
-#
-AC_CHECK_LIB(
-  [blkid],
-  [blkid_get_tag_value],
-  [libblkid_cflags=
-   libblkid_libs=-lblkid
-   AC_DEFINE([HAVE_BLKID_GET_TAG_VALUE], [1], [blkid_get_tag_value is available])
-  ]
-)
+echo
+echo ' * Checking presence of required headers for the environmentvariable probe'
+AC_CHECK_HEADERS([errno.h stdio.h stdlib.h string.h ],[],[probe_environmentvariable_req_deps_ok=no; probe_environmentvariable_req_deps_missing='header files'],[])
 
-#
-# selinux
-#
-have_selinux=no
-AC_CHECK_LIB(
-  [selinux],
-  [is_selinux_enabled],
-  [selinux_cflags=`pkg-config libselinux --cflags`
-   selinux_libs=`pkg-config libselinux --libs`
-   have_selinux=yes
-   AC_DEFINE([ENABLE_PROBES_SELINUX], [1], [Define if SELinux is available])
-   AC_DEFINE([HAVE_SELINUX], [1], [Define if SELinux is available])
-  ]
-)
+echo
+echo ' * Checking presence of required headers for the environmentvariable58 probe'
+AC_CHECK_HEADERS([dirent.h errno.h fcntl.h stdio.h stdlib.h string.h sys/stat.h sys/types.h ],[],[probe_environmentvariable58_req_deps_ok=no; probe_environmentvariable58_req_deps_missing='header files'],[])
 
-#
-# libcap
-#
-AC_CHECK_LIB(
-  [cap],
-  [cap_get_pid],
-  [libcap_cflags=
-   libcap_libs=-lcap
-   AC_DEFINE([HAVE_LIBCAP], [1], [libcap is available])
-   AC_DEFINE([LIBCAP_VERSION], [2], [libcap-2 is available])
-  ],
-  [AC_CHECK_LIB(
-	[cap],
-	[capgetp],
-	[libcap_cflags=
-	 libcap_libs=-lcap
-	 AC_DEFINE([HAVE_LIBCAP], [1], [libcap is available])
-	 AC_DEFINE([LIBCAP_VERSION], [1], [libcap-1 is available])
-	]
-   )]
-)
+echo
+echo ' * Checking presence of required headers for the sql probe'
+AC_CHECK_HEADERS([ctype.h errno.h opendbx/api.h stdlib.h string.h time.h ],[],[probe_sql_req_deps_ok=no; probe_sql_req_deps_missing='header files'],[])
 
-# Checks for header files.
+echo
+echo ' * Checking presence of required headers for the sql57 probe'
+AC_CHECK_HEADERS([ctype.h errno.h opendbx/api.h stdlib.h string.h time.h ],[],[probe_sql57_req_deps_ok=no; probe_sql57_req_deps_missing='header files'],[])
 
-AC_HEADER_STDC
-AM_CHECK_PYTHON_HEADERS
-AC_CHECK_HEADERS(
-  [pthread.h],,
-  [AC_MSG_FAILURE([pthread header file is missing])]
-)
-AC_CHECK_HEADERS([endian.h sys/endian.h stdio_ext.h shadow.h],,,)
+echo
+echo ' * Checking presence of required headers for the ldap57 probe'
+AC_CHECK_HEADERS([ldap.h pthread.h stdbool.h ],[],[probe_ldap57_req_deps_ok=no; probe_ldap57_req_deps_missing='header files'],[])
 
-#
-# linux/magic.h
-#
-AC_CHECK_HEADERS(
-  [linux/magic.h],[AC_DEFINE([HAVE_PROC_MAGIC], [1], [linux/magic.h is avaialble])],
-)
+echo
+echo ' * Checking presence of required headers for the dnscache probe'
+AC_CHECK_HEADERS([string.h ],[],[probe_dnscache_req_deps_ok=no; probe_dnscache_req_deps_missing='header files'],[])
 
+echo
+echo ' * Checking presence of required headers for the runlevel probe'
+AC_CHECK_HEADERS([assert.h dirent.h errno.h limits.h stdbool.h stdio.h string.h sys/stat.h sys/types.h unistd.h ],[],[probe_runlevel_req_deps_ok=no; probe_runlevel_req_deps_missing='header files'],[])
 
-#
-# xml
-#
-CPPFLAGS_SAVE="$CPPFLAGS"
-CPPFLAGS="$libxml_cflags $CPPFLAGS"
-AC_CHECK_HEADERS(
-  [libxml2/libxml/xmlreader.h],,
-  [AC_MSG_FAILURE([libxml2 header files are missing])]
-)
-CPPFLAGS="$CPPFLAGS_SAVE"
+echo
+echo ' * Checking presence of required headers for the file probe'
+AC_CHECK_HEADERS([errno.h limits.h pthread.h stdlib.h string.h sys/stat.h ],[],[probe_file_req_deps_ok=no; probe_file_req_deps_missing='header files'],[])
 
-#
-# xslt
-#
-CPPFLAGS_SAVE="$CPPFLAGS"
-CPPFLAGS="$libxslt_cflags $CPPFLAGS"
-AC_CHECK_HEADERS(
-  [libxslt/xslt.h],,
-  [AC_MSG_FAILURE([libxslt header files are missing])]
-)
-CPPFLAGS="$CPPFLAGS_SAVE"
+echo
+echo ' * Checking presence of optional headers for the file probe'
+AC_CHECK_HEADERS([acl/libacl.h sys/types.h ],[],[probe_file_opt_deps_ok=no],[])
 
-#
-# pcre.h
-#
-CPPFLAGS_SAVE="$CPPFLAGS"
-CPPFLAGS="$pcre_cflags"
-AC_CHECK_HEADERS(
-  [pcre.h],,
-  [AC_MSG_FAILURE([pcre header file is missing])]
-)
-CPPFLAGS="$CPPFLAGS_SAVE"
+echo
+echo ' * Checking presence of required headers for the fileextendedattribute probe'
+AC_CHECK_HEADERS([attr/xattr.h errno.h limits.h pthread.h stdlib.h string.h sys/stat.h sys/types.h ],[],[probe_fileextendedattribute_req_deps_ok=no; probe_fileextendedattribute_req_deps_missing='header files'],[])
+
+echo
+echo ' * Checking presence of required headers for the password probe'
+AC_CHECK_HEADERS([errno.h pwd.h stdio.h stdlib.h string.h ],[],[probe_password_req_deps_ok=no; probe_password_req_deps_missing='header files'],[])
+
+echo
+echo ' * Checking presence of required headers for the process probe'
+AC_CHECK_HEADERS([dirent.h errno.h fcntl.h sched.h stdio.h stdlib.h string.h sys/stat.h time.h unistd.h ],[],[probe_process_req_deps_ok=no; probe_process_req_deps_missing='header files'],[])
+
+echo
+echo ' * Checking presence of optional headers for the process probe'
+AC_CHECK_HEADERS([stdio_ext.h ],[],[probe_process_opt_deps_ok=no],[])
+
+echo
+echo ' * Checking presence of required headers for the process58 probe'
+AC_CHECK_HEADERS([dirent.h errno.h fcntl.h sched.h stdio.h stdlib.h string.h sys/stat.h time.h unistd.h ],[],[probe_process58_req_deps_ok=no; probe_process58_req_deps_missing='header files'],[])
+
+echo
+echo ' * Checking presence of optional headers for the process58 probe'
+AC_CHECK_HEADERS([ctype.h selinux/context.h selinux/selinux.h stdio_ext.h sys/capability.h sys/types.h ],[],[probe_process58_opt_deps_ok=no],[])
+
+echo
+echo ' * Checking presence of required headers for the shadow probe'
+AC_CHECK_HEADERS([errno.h shadow.h stdio.h stdlib.h string.h ],[],[probe_shadow_req_deps_ok=no; probe_shadow_req_deps_missing='header files'],[])
+
+echo
+echo ' * Checking presence of required headers for the uname probe'
+AC_CHECK_HEADERS([string.h sys/utsname.h ],[],[probe_uname_req_deps_ok=no; probe_uname_req_deps_missing='header files'],[])
+
+echo
+echo ' * Checking presence of optional headers for the uname probe'
+AC_CHECK_HEADERS([stdio_ext.h ],[],[probe_uname_opt_deps_ok=no],[])
+
+echo
+echo ' * Checking presence of required headers for the interface probe'
+AC_CHECK_HEADERS([arpa/inet.h ifaddrs.h netdb.h net/if_arp.h net/if.h stdio.h string.h sys/ioctl.h sys/socket.h unistd.h ],[],[probe_interface_req_deps_ok=no; probe_interface_req_deps_missing='header files'],[])
+
+echo
+echo ' * Checking presence of required headers for the xinetd probe'
+AC_CHECK_HEADERS([ctype.h dirent.h errno.h fcntl.h fnmatch.h limits.h netdb.h stdbool.h stddef.h stdint.h stdlib.h string.h sys/stat.h sys/types.h unistd.h ],[],[probe_xinetd_req_deps_ok=no; probe_xinetd_req_deps_missing='header files'],[])
+
+echo
+echo ' * Checking presence of required headers for the sysctl probe'
+AC_CHECK_HEADERS([ctype.h errno.h limits.h stdio.h string.h ],[],[probe_sysctl_req_deps_ok=no; probe_sysctl_req_deps_missing='header files'],[])
+
+echo
+echo ' * Checking presence of required headers for the routingtable probe'
+AC_CHECK_HEADERS([errno.h stdio.h stdlib.h string.h ],[],[probe_routingtable_req_deps_ok=no; probe_routingtable_req_deps_missing='header files'],[])
+
+echo
+echo ' * Checking presence of optional headers for the routingtable probe'
+AC_CHECK_HEADERS([netinet/in.h netlink/cache.h netlink/genl/genl.h netlink/list.h netlink/netlink.h netlink/route/link.h netlink/route/nexthop.h netlink/route/route.h netlink/route/rtnl.h net/route.h ],[],[probe_routingtable_opt_deps_ok=no],[])
+
+echo
+echo ' * Checking presence of required headers for the gconf probe'
+AC_CHECK_HEADERS([gconf/gconf.h limits.h pcre.h stdint.h stdlib.h string.h ],[],[probe_gconf_req_deps_ok=no; probe_gconf_req_deps_missing='header files'],[])
+
+echo
+echo ' * Checking presence of required headers for the isainfo probe'
+AC_CHECK_HEADERS([arpa/inet.h dirent.h errno.h fcntl.h netdb.h regex.h stdio_ext.h stdio.h stdlib.h string.h sys/systeminfo.h ],[],[probe_isainfo_req_deps_ok=no; probe_isainfo_req_deps_missing='header files'],[])
+
+echo
+echo ' * Checking presence of required headers for the partition probe'
+AC_CHECK_HEADERS([fcntl.h limits.h mntent.h pcre.h stdint.h stdio.h stdlib.h string.h sys/stat.h sys/statvfs.h sys/types.h sys/vfs.h ],[],[probe_partition_req_deps_ok=no; probe_partition_req_deps_missing='header files'],[])
+
+echo
+echo ' * Checking presence of optional headers for the partition probe'
+AC_CHECK_HEADERS([blkid/blkid.h linux/magic.h ],[],[probe_partition_opt_deps_ok=no],[])
+
+echo
+echo ' * Checking presence of required headers for the inetlisteningservers probe'
+AC_CHECK_HEADERS([arpa/inet.h dirent.h errno.h fcntl.h netdb.h regex.h stdio_ext.h stdio.h stdlib.h string.h ],[],[probe_inetlisteningservers_req_deps_ok=no; probe_inetlisteningservers_req_deps_missing='header files'],[])
+
+echo
+echo ' * Checking presence of required headers for the iflisteners probe'
+AC_CHECK_HEADERS([arpa/inet.h dirent.h errno.h fcntl.h netdb.h regex.h stdio_ext.h stdio.h stdlib.h string.h ],[],[probe_iflisteners_req_deps_ok=no; probe_iflisteners_req_deps_missing='header files'],[])
+
+echo
+echo ' * Checking presence of required headers for the selinuxboolean probe'
+AC_CHECK_HEADERS([errno.h fcntl.h selinux/selinux.h stdio.h stdlib.h string.h sys/stat.h ],[],[probe_selinuxboolean_req_deps_ok=no; probe_selinuxboolean_req_deps_missing='header files'],[])
+
+echo
+echo ' * Checking presence of required headers for the selinuxsecuritycontext probe'
+AC_CHECK_HEADERS([dirent.h errno.h fcntl.h limits.h pthread.h selinux/context.h selinux/selinux.h stdlib.h string.h sys/stat.h sys/types.h ],[],[probe_selinuxsecuritycontext_req_deps_ok=no; probe_selinuxsecuritycontext_req_deps_missing='header files'],[])
+
+echo
+echo ' * Checking presence of required headers for the rpminfo probe'
+AC_CHECK_HEADERS([assert.h errno.h fcntl.h rpm/rpmdb.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_rpminfo_req_deps_ok=no; probe_rpminfo_req_deps_missing='header files'],[])
+
+echo
+echo ' * Checking presence of optional headers for the rpminfo probe'
+AC_CHECK_HEADERS([rpm/header.h ],[],[probe_rpminfo_opt_deps_ok=no],[])
+
+echo
+echo ' * Checking presence of required headers for the rpmverify probe'
+AC_CHECK_HEADERS([assert.h errno.h fcntl.h limits.h pcre.h rpm/rpmdb.h rpm/rpmfi.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_rpmverify_req_deps_ok=no; probe_rpmverify_req_deps_missing='header files'],[])
+
+echo
+echo ' * Checking presence of optional headers for the rpmverify probe'
+AC_CHECK_HEADERS([rpm/header.h rpm/rpmcli.h ],[],[probe_rpmverify_opt_deps_ok=no],[])
+
+echo
+echo ' * Checking presence of required headers for the dpkginfo probe'
+AC_CHECK_HEADERS([assert.h errno.h stdio.h string.h ],[],[probe_dpkginfo_req_deps_ok=no; probe_dpkginfo_req_deps_missing='header files'],[])
+
+CPPFLAGS="$SAVE_CPPFLAGS"
+
+echo
+echo '* Checking for acl library used by: file '
+SAVE_LIBS=
+AC_SEARCH_LIBS([acl_init],[acl],[
+acl_CFLAGS=;
+acl_LIBS=-lacl;
+],[
+probe_file_req_deps_ok=no;
+probe_file_req_deps_missing+=', acl';
+],[])
+AC_SUBST([acl_CFLAGS])
+AC_SUBST([acl_LIBS])
+LIBS=
+echo
+echo '* Checking for apt_pkg library used by: dpkginfo '
+PKG_CHECK_MODULES([apt_pkg], [libapt-pkg >= 0.0],[],[
+probe_dpkginfo_req_deps_ok=no;
+probe_dpkginfo_req_deps_missing+=', apt_pkg';
+])
+echo
+echo '* Checking for blkid library used by: partition '
+PKG_CHECK_MODULES([blkid], [blkid >= 0.0],[],[
+probe_partition_req_deps_ok=no;
+probe_partition_req_deps_missing+=', blkid';
+])
+echo
+echo '* Checking for cap library used by: process58 '
+SAVE_LIBS=
+AC_SEARCH_LIBS([cap_init],[cap],[
+cap_CFLAGS=;
+cap_LIBS=-lcap;
+],[
+probe_process58_req_deps_ok=no;
+probe_process58_req_deps_missing+=', cap';
+],[])
+AC_SUBST([cap_CFLAGS])
+AC_SUBST([cap_LIBS])
+LIBS=
+echo
+echo '* Checking for gconf2 library used by: gconf '
+PKG_CHECK_MODULES([gconf2], [gconf-2.0 >= 0.0],[],[
+probe_gconf_req_deps_ok=no;
+probe_gconf_req_deps_missing+=', gconf2';
+])
+echo
+echo '* Checking for lber library used by: ldap57 '
+SAVE_LIBS=
+AC_SEARCH_LIBS([ber_init],[lber],[
+lber_CFLAGS=;
+lber_LIBS=-llber;
+],[
+probe_ldap57_req_deps_ok=no;
+probe_ldap57_req_deps_missing+=', lber';
+],[])
+AC_SUBST([lber_CFLAGS])
+AC_SUBST([lber_LIBS])
+LIBS=
+echo
+echo '* Checking for ldap library used by: ldap57 '
+SAVE_LIBS=
+AC_SEARCH_LIBS([ldap_init],[ldap],[
+ldap_CFLAGS=;
+ldap_LIBS=-lldap;
+],[
+probe_ldap57_req_deps_ok=no;
+probe_ldap57_req_deps_missing+=', ldap';
+],[])
+AC_SUBST([ldap_CFLAGS])
+AC_SUBST([ldap_LIBS])
+LIBS=
+echo
+echo '* Checking for nl library used by: routingtable '
+PKG_CHECK_MODULES([nl], [libnl-1 >= 0.0],[],[
+probe_routingtable_req_deps_ok=no;
+probe_routingtable_req_deps_missing+=', nl';
+])
+echo
+echo '* Checking for odbx library used by: sql sql57 '
+SAVE_LIBS=
+AC_SEARCH_LIBS([odbx_init],[odbx],[
+odbx_CFLAGS=;
+odbx_LIBS=-lodbx;
+],[
+probe_sql_req_deps_ok=no;
+probe_sql_req_deps_missing+=', odbx';
+probe_sql57_req_deps_ok=no;
+probe_sql57_req_deps_missing+=', odbx';
+],[])
+AC_SUBST([odbx_CFLAGS])
+AC_SUBST([odbx_LIBS])
+LIBS=
+echo
+echo '* Checking for pcre library used by: textfilecontent54 textfilecontent partition '
+PKG_CHECK_MODULES([pcre], [libpcre >= 0.0],[],[
+probe_textfilecontent54_req_deps_ok=no;
+probe_textfilecontent54_req_deps_missing+=', pcre';
+probe_textfilecontent_req_deps_ok=no;
+probe_textfilecontent_req_deps_missing+=', pcre';
+probe_partition_req_deps_ok=no;
+probe_partition_req_deps_missing+=', pcre';
+])
+echo
+echo '* Checking for rpm library used by: rpminfo rpmverify '
+PKG_CHECK_MODULES([rpm], [rpm >= 0.0],[],[
+probe_rpminfo_req_deps_ok=no;
+probe_rpminfo_req_deps_missing+=', rpm';
+probe_rpmverify_req_deps_ok=no;
+probe_rpmverify_req_deps_missing+=', rpm';
+])
+echo
+echo '* Checking for selinux library used by: process58 selinuxboolean selinuxsecuritycontext '
+PKG_CHECK_MODULES([selinux], [libselinux >= 0.0],[],[
+probe_process58_req_deps_ok=no;
+probe_process58_req_deps_missing+=', selinux';
+probe_selinuxboolean_req_deps_ok=no;
+probe_selinuxboolean_req_deps_missing+=', selinux';
+probe_selinuxsecuritycontext_req_deps_ok=no;
+probe_selinuxsecuritycontext_req_deps_missing+=', selinux';
+])
+echo
+echo '* Checking for xml2 library used by: xmlfilecontent '
+PKG_CHECK_MODULES([xml2], [libxml-2.0 >= 0.0],[],[
+probe_xmlfilecontent_req_deps_ok=no;
+probe_xmlfilecontent_req_deps_missing+=', xml2';
+])
+echo
+echo '* Checking for xslt library used by: xmlfilecontent '
+PKG_CHECK_MODULES([xslt], [libxslt >= 0.0],[],[
+probe_xmlfilecontent_req_deps_ok=no;
+probe_xmlfilecontent_req_deps_missing+=', xslt';
+])
+echo
 
 AC_PATH_PROG(PERL, perl)
 PERL_INCLUDES="`$PERL -e 'use Config; print $Config{archlib}'`/CORE"
@@ -432,50 +654,6 @@ vendorarch="$( $PERL -e 'use Config; print $Config{vendorarch}' | sed "s|$($PERL
 AC_SUBST([PERL_INCLUDES], ["$PERL_INCLUDES"])
 AC_SUBST([perl_vendorlibdir], ['${prefix}'$vendorlib])
 AC_SUBST([perl_vendorarchdir], ['${prefix}'$vendorarch])
-
-AC_SUBST(sigwaitinfo_libs)
-
-AC_SUBST(libxml_cflags)
-AC_SUBST(libxml_libs)
-
-AC_SUBST(libxslt_cflags)
-AC_SUBST(libxslt_libs)
-
-AC_SUBST(pcre_cflags)
-AC_SUBST(pcre_libs)
-
-AC_SUBST(libopenldap_cflags)
-AC_SUBST(libopenldap_libs)
-
-AC_SUBST(rpm_cflags)
-AC_SUBST(rpm_libs)
-
-AC_SUBST(deb_cflags)
-AC_SUBST(deb_libs)
-
-AC_SUBST(libacl_cflags)
-AC_SUBST(libacl_libs)
-
-AC_SUBST(libcap_cflags)
-AC_SUBST(libcap_libs)
-
-AC_SUBST(libblkid_cflags)
-AC_SUBST(libblkid_libs)
-
-AC_SUBST(selinux_cflags)
-AC_SUBST(selinux_libs)
-
-# Checks for typedefs, structures, and compiler characteristics.
-AC_HEADER_STDBOOL
-AC_TYPE_SIZE_T
-
-# Checks for library functions.
-AC_FUNC_MALLOC
-AC_FUNC_REALLOC
-AC_CHECK_FUNCS([memset strcasecmp strdup])
-
-
-
 
 AC_ARG_ENABLE([oval],
      [AC_HELP_STRING([--enable-oval], [include support for OVAL (default=yes)])],
@@ -685,65 +863,6 @@ if test "$ssp" = "yes"; then
    GCC_STACK_PROTECT_CXX
 fi
 
-if test "$probes_independent" = "yes"; then
-#
-# OpenDBX
-#
-AC_CHECK_LIB(
-  [opendbx],
-  [odbx_init],
-  [libodbx_cflags=`pkg-config opendbx --cflags`
-   libodbx_libs=`pkg-config opendbx --libs`
-   have_odbx=yes
-  ],
-  [AC_MSG_NOTICE([OpenDBX library is missing])],
-  [`pkg-config opendbx --libs`]
-)
-AC_SUBST(libodbx_cflags)
-AC_SUBST(libodbx_libs)
-fi
-
-#
-# GConf2
-#
-have_libgconf2=no
-
-AC_CHECK_LIB(
-  [gconf-2],
-  [gconf_engine_get_entry],
-  [gconf_cflags=`pkg-config gconf-2.0 --cflags`
-   gconf_libs=`pkg-config gconf-2.0 --libs`
-   have_libgconf2=yes
-  ]
-)
-AC_SUBST(gconf_cflags)
-AC_SUBST(gconf_libs)
-
-#
-# libnl
-#
-have_libnl=no
-
-AC_CHECK_LIB(
-  [nl],
-  [rtnl_route_alloc_cache],
-  [libnl_cflags=`pkg-config libnl-1 --cflags`
-   libnl_libs=`pkg-config libnl-1 --libs`
-   have_libnl=yes
-   AC_DEFINE([HAVE_LIBNL], [1], ["Define to 1 if you have 'netlink' library."])
-  ]
-)
-AC_SUBST(libnl_cflags)
-AC_SUBST(libnl_libs)
-
-sql_probe_enabled=no
-
-if test "$probes_independent" = "yes"; then
-   if test "$have_odbx" = "yes"; then
-      sql_probe_enabled=yes
-   fi
-fi
-
 if test "$debug" = "yes"; then
    CFLAGS="$CFLAGS $CFLAGS_DEBUGGING"
 else
@@ -769,6 +888,86 @@ else
    vgcheck="no"
 fi
 
+
+AM_CONDITIONAL([probe_system_info_enabled], test "$probe_system_info_req_deps_ok" = yes)
+probe_system_info_enabled=$probe_system_info_req_deps_ok
+AM_CONDITIONAL([probe_family_enabled], test "$probe_family_req_deps_ok" = yes)
+probe_family_enabled=$probe_family_req_deps_ok
+AM_CONDITIONAL([probe_textfilecontent_enabled], test "$probe_textfilecontent_req_deps_ok" = yes)
+probe_textfilecontent_enabled=$probe_textfilecontent_req_deps_ok
+AM_CONDITIONAL([probe_textfilecontent54_enabled], test "$probe_textfilecontent54_req_deps_ok" = yes)
+probe_textfilecontent54_enabled=$probe_textfilecontent54_req_deps_ok
+AM_CONDITIONAL([probe_variable_enabled], test "$probe_variable_req_deps_ok" = yes)
+probe_variable_enabled=$probe_variable_req_deps_ok
+AM_CONDITIONAL([probe_xmlfilecontent_enabled], test "$probe_xmlfilecontent_req_deps_ok" = yes)
+probe_xmlfilecontent_enabled=$probe_xmlfilecontent_req_deps_ok
+AM_CONDITIONAL([probe_filehash_enabled], test "$probe_filehash_req_deps_ok" = yes)
+probe_filehash_enabled=$probe_filehash_req_deps_ok
+AM_CONDITIONAL([probe_filehash58_enabled], test "$probe_filehash58_req_deps_ok" = yes)
+probe_filehash58_enabled=$probe_filehash58_req_deps_ok
+AM_CONDITIONAL([probe_environmentvariable_enabled], test "$probe_environmentvariable_req_deps_ok" = yes)
+probe_environmentvariable_enabled=$probe_environmentvariable_req_deps_ok
+AM_CONDITIONAL([probe_environmentvariable58_enabled], test "$probe_environmentvariable58_req_deps_ok" = yes)
+probe_environmentvariable58_enabled=$probe_environmentvariable58_req_deps_ok
+AM_CONDITIONAL([probe_sql_enabled], test "$probe_sql_req_deps_ok" = yes)
+probe_sql_enabled=$probe_sql_req_deps_ok
+AM_CONDITIONAL([probe_sql57_enabled], test "$probe_sql57_req_deps_ok" = yes)
+probe_sql57_enabled=$probe_sql57_req_deps_ok
+AM_CONDITIONAL([probe_ldap57_enabled], test "$probe_ldap57_req_deps_ok" = yes)
+probe_ldap57_enabled=$probe_ldap57_req_deps_ok
+AM_CONDITIONAL([probe_dnscache_enabled], test "$probe_dnscache_req_deps_ok" = yes)
+probe_dnscache_enabled=$probe_dnscache_req_deps_ok
+AM_CONDITIONAL([probe_runlevel_enabled], test "$probe_runlevel_req_deps_ok" = yes)
+probe_runlevel_enabled=$probe_runlevel_req_deps_ok
+AM_CONDITIONAL([probe_file_enabled], test "$probe_file_req_deps_ok" = yes)
+probe_file_enabled=$probe_file_req_deps_ok
+AM_CONDITIONAL([probe_fileextendedattribute_enabled], test "$probe_fileextendedattribute_req_deps_ok" = yes)
+probe_fileextendedattribute_enabled=$probe_fileextendedattribute_req_deps_ok
+AM_CONDITIONAL([probe_password_enabled], test "$probe_password_req_deps_ok" = yes)
+probe_password_enabled=$probe_password_req_deps_ok
+AM_CONDITIONAL([probe_process_enabled], test "$probe_process_req_deps_ok" = yes)
+probe_process_enabled=$probe_process_req_deps_ok
+AM_CONDITIONAL([probe_process58_enabled], test "$probe_process58_req_deps_ok" = yes)
+probe_process58_enabled=$probe_process58_req_deps_ok
+AM_CONDITIONAL([probe_shadow_enabled], test "$probe_shadow_req_deps_ok" = yes)
+probe_shadow_enabled=$probe_shadow_req_deps_ok
+AM_CONDITIONAL([probe_uname_enabled], test "$probe_uname_req_deps_ok" = yes)
+probe_uname_enabled=$probe_uname_req_deps_ok
+AM_CONDITIONAL([probe_interface_enabled], test "$probe_interface_req_deps_ok" = yes)
+probe_interface_enabled=$probe_interface_req_deps_ok
+AM_CONDITIONAL([probe_xinetd_enabled], test "$probe_xinetd_req_deps_ok" = yes)
+probe_xinetd_enabled=$probe_xinetd_req_deps_ok
+AM_CONDITIONAL([probe_sysctl_enabled], test "$probe_sysctl_req_deps_ok" = yes)
+probe_sysctl_enabled=$probe_sysctl_req_deps_ok
+AM_CONDITIONAL([probe_routingtable_enabled], test "$probe_routingtable_req_deps_ok" = yes)
+probe_routingtable_enabled=$probe_routingtable_req_deps_ok
+AM_CONDITIONAL([probe_gconf_enabled], test "$probe_gconf_req_deps_ok" = yes)
+probe_gconf_enabled=$probe_gconf_req_deps_ok
+AM_CONDITIONAL([probe_isainfo_enabled], test "$probe_isainfo_req_deps_ok" = yes)
+probe_isainfo_enabled=$probe_isainfo_req_deps_ok
+AM_CONDITIONAL([probe_package_enabled], test "$probe_package_req_deps_ok" = yes)
+probe_package_enabled=$probe_package_req_deps_ok
+AM_CONDITIONAL([probe_patch_enabled], test "$probe_patch_req_deps_ok" = yes)
+probe_patch_enabled=$probe_patch_req_deps_ok
+AM_CONDITIONAL([probe_smf_enabled], test "$probe_smf_req_deps_ok" = yes)
+probe_smf_enabled=$probe_smf_req_deps_ok
+AM_CONDITIONAL([probe_partition_enabled], test "$probe_partition_req_deps_ok" = yes)
+probe_partition_enabled=$probe_partition_req_deps_ok
+AM_CONDITIONAL([probe_inetlisteningservers_enabled], test "$probe_inetlisteningservers_req_deps_ok" = yes)
+probe_inetlisteningservers_enabled=$probe_inetlisteningservers_req_deps_ok
+AM_CONDITIONAL([probe_iflisteners_enabled], test "$probe_iflisteners_req_deps_ok" = yes)
+probe_iflisteners_enabled=$probe_iflisteners_req_deps_ok
+AM_CONDITIONAL([probe_selinuxboolean_enabled], test "$probe_selinuxboolean_req_deps_ok" = yes)
+probe_selinuxboolean_enabled=$probe_selinuxboolean_req_deps_ok
+AM_CONDITIONAL([probe_selinuxsecuritycontext_enabled], test "$probe_selinuxsecuritycontext_req_deps_ok" = yes)
+probe_selinuxsecuritycontext_enabled=$probe_selinuxsecuritycontext_req_deps_ok
+AM_CONDITIONAL([probe_rpminfo_enabled], test "$probe_rpminfo_req_deps_ok" = yes)
+probe_rpminfo_enabled=$probe_rpminfo_req_deps_ok
+AM_CONDITIONAL([probe_rpmverify_enabled], test "$probe_rpmverify_req_deps_ok" = yes)
+probe_rpmverify_enabled=$probe_rpmverify_req_deps_ok
+AM_CONDITIONAL([probe_dpkginfo_enabled], test "$probe_dpkginfo_req_deps_ok" = yes)
+probe_dpkginfo_enabled=$probe_dpkginfo_req_deps_ok
+
 AM_CONDITIONAL([WANT_OVAL], test "$oval" = yes)
 AM_CONDITIONAL([WANT_CVSS], test "$cvss" = yes)
 AM_CONDITIONAL([WANT_CVE],  test "$cve"  = yes)
@@ -781,15 +980,16 @@ AM_CONDITIONAL([WANT_PROBES_UNIX], test "$probes_unix" = yes)
 AM_CONDITIONAL([WANT_PROBES_LINUX], test "$probes_linux" = yes)
 AM_CONDITIONAL([WANT_PROBES_SOLARIS], test "$probes_solaris" = yes)
 AM_CONDITIONAL([WANT_UTIL_OSCAP], test "$util_oscap" = yes)
-AM_CONDITIONAL([ENABLE_PROBE_RPMINFO], test "$have_librpm" = yes)
-AM_CONDITIONAL([ENABLE_PROBE_RPMINFO44], test "$have_librpm44" = yes)
-AM_CONDITIONAL([ENABLE_PROBE_DPKGINFO], test "$have_libapt_pkg" = yes)
-AM_CONDITIONAL([ENABLE_PROBE_GCONF], test "$have_libgconf2" = yes)
 AM_CONDITIONAL([WANT_BINDINGS], test "$bindings" = yes)
 AM_CONDITIONAL([ENABLE_VALGRIND_TESTS], test "$vgcheck" = yes)
-AM_CONDITIONAL([HAVE_ODBX], test "$have_odbx" = yes)
-AM_CONDITIONAL([ENABLE_PROBE_LDAP57], test "$probe_independent_ldap57" = yes)
-AM_CONDITIONAL(ENABLE_PROBES_SELINUX, [test "$have_selinux" = "yes"])
+
+#AM_CONDITIONAL([ENABLE_PROBE_RPMINFO], test "$have_librpm" = yes)
+#AM_CONDITIONAL([ENABLE_PROBE_RPMINFO44], test "$have_librpm44" = yes)
+#AM_CONDITIONAL([ENABLE_PROBE_DPKGINFO], test "$have_libapt_pkg" = yes)
+#AM_CONDITIONAL([ENABLE_PROBE_GCONF], test "$have_libgconf2" = yes)
+#AM_CONDITIONAL([HAVE_ODBX], test "$have_odbx" = yes)
+#AM_CONDITIONAL([ENABLE_PROBE_LDAP57], test "$probe_independent_ldap57" = yes)
+#AM_CONDITIONAL(ENABLE_PROBES_SELINUX, [test "$have_selinux" = "yes"])
 
 AC_CONFIG_FILES([Makefile
                  lib/Makefile
@@ -861,65 +1061,251 @@ echo "CVE enabled:                   $cve"
 echo "CVSS enabled:                  $cvss"
 echo "OVAL enabled:                  $oval"
 echo "OVAL probes enabled:           $probes"
-
-if test "x$probes" = "xyes"; then
-echo "  system info probe:           $probes"
-echo ""
-echo "  === independent probes ==="
-echo "  family probe:                $probes_independent"
-echo "  filehash probe:              $probes_independent"
-echo "  filehash58 probe:            $probes_independent"
-echo "  textfilecontent probe:       $probes_independent"
-echo "  textfilecontent54 probe:     $probes_independent"
-echo "  sql probe                    $sql_probe_enabled"
-echo "  sql57 probe:                 $sql_probe_enabled"
-echo "  xmlfilecontent probe:        $probes_independent"
-echo "  ldap57 probe:                $probe_independent_ldap57"
-echo ""
-
-echo "  === unix probes ==="
-echo "  dnscache probe:              $probes_unix"
-echo "  file probe:                  $probes_unix"
-echo "  fileextendedattribute probe: $probes_unix"
-echo "  interface probe:             $probes_unix"
-echo "  password probe:              $probes_unix"
-echo "  process probe:               $probes_unix"
-echo "  runlevel probe:              $probes_unix"
-echo "  shadow probe:                $probes_unix"
-echo "  uname probe:                 $probes_unix"
-echo "  xinetd probe:                $probes_unix"
-echo "  gconf probe:                 $have_libgconf2"
-echo "  routingtable probe:          $have_libnl"
-echo ""
-
-echo "  === linux probes ==="
-echo "  dpkginfo probe:              $have_libapt_pkg"
-echo "  inetlisteningservers probe:  $probes_linux"
-echo "  iflisteners probe:           $probes_linux"
-echo "  rpminfo probe:               $have_librpm"
-echo "  rpmverify probe:             $have_librpm"
-echo "  partition probe:             $probes_linux"
-echo "  selinuxboolean probe:        $have_selinux"
-echo "  selinuxsecuritycontext probe: $have_selinux"
-echo ""
-
-echo "  === solaris probes ==="
-echo "  isainfo probe:               $probes_solaris"
-echo "  package probe:               $probes_solaris"
-echo "  package54 probe:             $probes_solaris"
-echo "  patch probe:                 $probes_solaris"
-echo "  smf probe:                   $probes_solaris"
-echo ""
-
+echo
+echo '  === probes ==='
+if test "$probe_system_info_req_deps_ok" = "yes"; then
+  probe_system_info_table_result="yes"
+else
+  probe_system_info_table_result="NO (missing: $probe_system_info_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "system_info:" "$probe_system_info_table_result"
+if test "$probe_family_req_deps_ok" = "yes"; then
+  probe_family_table_result="yes"
+else
+  probe_family_table_result="NO (missing: $probe_family_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "family:" "$probe_family_table_result"
+if test "$probe_textfilecontent_req_deps_ok" = "yes"; then
+  probe_textfilecontent_table_result="yes"
+else
+  probe_textfilecontent_table_result="NO (missing: $probe_textfilecontent_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "textfilecontent:" "$probe_textfilecontent_table_result"
+if test "$probe_textfilecontent54_req_deps_ok" = "yes"; then
+  probe_textfilecontent54_table_result="yes"
+else
+  probe_textfilecontent54_table_result="NO (missing: $probe_textfilecontent54_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "textfilecontent54:" "$probe_textfilecontent54_table_result"
+if test "$probe_variable_req_deps_ok" = "yes"; then
+  probe_variable_table_result="yes"
+else
+  probe_variable_table_result="NO (missing: $probe_variable_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "variable:" "$probe_variable_table_result"
+if test "$probe_xmlfilecontent_req_deps_ok" = "yes"; then
+  probe_xmlfilecontent_table_result="yes"
+else
+  probe_xmlfilecontent_table_result="NO (missing: $probe_xmlfilecontent_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "xmlfilecontent:" "$probe_xmlfilecontent_table_result"
+if test "$probe_filehash_req_deps_ok" = "yes"; then
+  probe_filehash_table_result="yes"
+else
+  probe_filehash_table_result="NO (missing: $probe_filehash_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "filehash:" "$probe_filehash_table_result"
+if test "$probe_filehash58_req_deps_ok" = "yes"; then
+  probe_filehash58_table_result="yes"
+else
+  probe_filehash58_table_result="NO (missing: $probe_filehash58_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "filehash58:" "$probe_filehash58_table_result"
+if test "$probe_environmentvariable_req_deps_ok" = "yes"; then
+  probe_environmentvariable_table_result="yes"
+else
+  probe_environmentvariable_table_result="NO (missing: $probe_environmentvariable_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "environmentvariable:" "$probe_environmentvariable_table_result"
+if test "$probe_environmentvariable58_req_deps_ok" = "yes"; then
+  probe_environmentvariable58_table_result="yes"
+else
+  probe_environmentvariable58_table_result="NO (missing: $probe_environmentvariable58_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "environmentvariable58:" "$probe_environmentvariable58_table_result"
+if test "$probe_sql_req_deps_ok" = "yes"; then
+  probe_sql_table_result="yes"
+else
+  probe_sql_table_result="NO (missing: $probe_sql_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "sql:" "$probe_sql_table_result"
+if test "$probe_sql57_req_deps_ok" = "yes"; then
+  probe_sql57_table_result="yes"
+else
+  probe_sql57_table_result="NO (missing: $probe_sql57_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "sql57:" "$probe_sql57_table_result"
+if test "$probe_ldap57_req_deps_ok" = "yes"; then
+  probe_ldap57_table_result="yes"
+else
+  probe_ldap57_table_result="NO (missing: $probe_ldap57_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "ldap57:" "$probe_ldap57_table_result"
+if test "$probe_dnscache_req_deps_ok" = "yes"; then
+  probe_dnscache_table_result="yes"
+else
+  probe_dnscache_table_result="NO (missing: $probe_dnscache_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "dnscache:" "$probe_dnscache_table_result"
+if test "$probe_runlevel_req_deps_ok" = "yes"; then
+  probe_runlevel_table_result="yes"
+else
+  probe_runlevel_table_result="NO (missing: $probe_runlevel_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "runlevel:" "$probe_runlevel_table_result"
+if test "$probe_file_req_deps_ok" = "yes"; then
+  probe_file_table_result="yes"
+else
+  probe_file_table_result="NO (missing: $probe_file_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "file:" "$probe_file_table_result"
+if test "$probe_fileextendedattribute_req_deps_ok" = "yes"; then
+  probe_fileextendedattribute_table_result="yes"
+else
+  probe_fileextendedattribute_table_result="NO (missing: $probe_fileextendedattribute_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "fileextendedattribute:" "$probe_fileextendedattribute_table_result"
+if test "$probe_password_req_deps_ok" = "yes"; then
+  probe_password_table_result="yes"
+else
+  probe_password_table_result="NO (missing: $probe_password_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "password:" "$probe_password_table_result"
+if test "$probe_process_req_deps_ok" = "yes"; then
+  probe_process_table_result="yes"
+else
+  probe_process_table_result="NO (missing: $probe_process_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "process:" "$probe_process_table_result"
+if test "$probe_process58_req_deps_ok" = "yes"; then
+  probe_process58_table_result="yes"
+else
+  probe_process58_table_result="NO (missing: $probe_process58_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "process58:" "$probe_process58_table_result"
+if test "$probe_shadow_req_deps_ok" = "yes"; then
+  probe_shadow_table_result="yes"
+else
+  probe_shadow_table_result="NO (missing: $probe_shadow_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "shadow:" "$probe_shadow_table_result"
+if test "$probe_uname_req_deps_ok" = "yes"; then
+  probe_uname_table_result="yes"
+else
+  probe_uname_table_result="NO (missing: $probe_uname_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "uname:" "$probe_uname_table_result"
+if test "$probe_interface_req_deps_ok" = "yes"; then
+  probe_interface_table_result="yes"
+else
+  probe_interface_table_result="NO (missing: $probe_interface_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "interface:" "$probe_interface_table_result"
+if test "$probe_xinetd_req_deps_ok" = "yes"; then
+  probe_xinetd_table_result="yes"
+else
+  probe_xinetd_table_result="NO (missing: $probe_xinetd_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "xinetd:" "$probe_xinetd_table_result"
+if test "$probe_sysctl_req_deps_ok" = "yes"; then
+  probe_sysctl_table_result="yes"
+else
+  probe_sysctl_table_result="NO (missing: $probe_sysctl_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "sysctl:" "$probe_sysctl_table_result"
+if test "$probe_routingtable_req_deps_ok" = "yes"; then
+  probe_routingtable_table_result="yes"
+else
+  probe_routingtable_table_result="NO (missing: $probe_routingtable_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "routingtable:" "$probe_routingtable_table_result"
+if test "$probe_gconf_req_deps_ok" = "yes"; then
+  probe_gconf_table_result="yes"
+else
+  probe_gconf_table_result="NO (missing: $probe_gconf_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "gconf:" "$probe_gconf_table_result"
+if test "$probe_isainfo_req_deps_ok" = "yes"; then
+  probe_isainfo_table_result="yes"
+else
+  probe_isainfo_table_result="NO (missing: $probe_isainfo_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "isainfo:" "$probe_isainfo_table_result"
+if test "$probe_package_req_deps_ok" = "yes"; then
+  probe_package_table_result="yes"
+else
+  probe_package_table_result="NO (missing: $probe_package_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "package:" "$probe_package_table_result"
+if test "$probe_patch_req_deps_ok" = "yes"; then
+  probe_patch_table_result="yes"
+else
+  probe_patch_table_result="NO (missing: $probe_patch_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "patch:" "$probe_patch_table_result"
+if test "$probe_smf_req_deps_ok" = "yes"; then
+  probe_smf_table_result="yes"
+else
+  probe_smf_table_result="NO (missing: $probe_smf_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "smf:" "$probe_smf_table_result"
+if test "$probe_partition_req_deps_ok" = "yes"; then
+  probe_partition_table_result="yes"
+else
+  probe_partition_table_result="NO (missing: $probe_partition_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "partition:" "$probe_partition_table_result"
+if test "$probe_inetlisteningservers_req_deps_ok" = "yes"; then
+  probe_inetlisteningservers_table_result="yes"
+else
+  probe_inetlisteningservers_table_result="NO (missing: $probe_inetlisteningservers_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "inetlisteningservers:" "$probe_inetlisteningservers_table_result"
+if test "$probe_iflisteners_req_deps_ok" = "yes"; then
+  probe_iflisteners_table_result="yes"
+else
+  probe_iflisteners_table_result="NO (missing: $probe_iflisteners_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "iflisteners:" "$probe_iflisteners_table_result"
+if test "$probe_selinuxboolean_req_deps_ok" = "yes"; then
+  probe_selinuxboolean_table_result="yes"
+else
+  probe_selinuxboolean_table_result="NO (missing: $probe_selinuxboolean_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "selinuxboolean:" "$probe_selinuxboolean_table_result"
+if test "$probe_selinuxsecuritycontext_req_deps_ok" = "yes"; then
+  probe_selinuxsecuritycontext_table_result="yes"
+else
+  probe_selinuxsecuritycontext_table_result="NO (missing: $probe_selinuxsecuritycontext_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "selinuxsecuritycontext:" "$probe_selinuxsecuritycontext_table_result"
+if test "$probe_rpminfo_req_deps_ok" = "yes"; then
+  probe_rpminfo_table_result="yes"
+else
+  probe_rpminfo_table_result="NO (missing: $probe_rpminfo_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "rpminfo:" "$probe_rpminfo_table_result"
+if test "$probe_rpmverify_req_deps_ok" = "yes"; then
+  probe_rpmverify_table_result="yes"
+else
+  probe_rpmverify_table_result="NO (missing: $probe_rpmverify_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "rpmverify:" "$probe_rpmverify_table_result"
+if test "$probe_dpkginfo_req_deps_ok" = "yes"; then
+  probe_dpkginfo_table_result="yes"
+else
+  probe_dpkginfo_table_result="NO (missing: $probe_dpkginfo_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "dpkginfo:" "$probe_dpkginfo_table_result"
+echo
 echo "  === configuration ==="
 echo "  probe directory set to:      $probe_dir"
 echo ""
-fi
 
 echo "  === crypto === "
 echo "  library:                     $crapi_libname"
-echo "  libs:                        $crapi_libs"
-echo "  cflags:                      $crapi_cflags"
+echo "     libs:                     $crapi_LIBS"
+echo "   cflags:                     $crapi_CFLAGS"
 echo ""
 
 echo "XCCDF enabled:                 $xccdf"

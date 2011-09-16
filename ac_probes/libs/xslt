@@ -1,0 +1,7 @@
+name=xslt
+pkgconfig=yes
+pkgconfig_name=libxslt
+functions_req=
+functions_opt=
+probes_req=(xmlfilecontent)
+probes_opt=

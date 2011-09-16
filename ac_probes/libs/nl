@@ -1,0 +1,7 @@
+name=nl
+pkgconfig=yes
+pkgconfig_name=libnl-1
+functions_req=
+functions_opt=
+probes_req=(routingtable)
+probes_opt=

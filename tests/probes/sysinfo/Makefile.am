@@ -9,9 +9,9 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 		-I$(top_srcdir)/src/OVAL/probes/public \
 		-I$(top_srcdir)/src/OVAL/probes/SEAP/public \
 		-I$(top_srcdir)/src \
-		@libxml_cflags@
+		@xml2_CFLAGS@
 
-LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_libs@
+LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
 
 EXTRA_DIST = $(top_srcdir)/tests/test_common.sh \
              $(top_srcdir)/tests/assume.h
@@ -29,6 +29,6 @@ TESTS = test_probes_sysinfo.sh
 check_PROGRAMS = test_probes_sysinfo
 
 test_probes_sysinfo_SOURCES = test_probes_sysinfo.c
-test_probes_sysinfo_CFLAGS = -I$(top_srcdir)/src/OVAL @libxml_cflags@
+test_probes_sysinfo_CFLAGS = -I$(top_srcdir)/src/OVAL @xml2_CFLAGS@
 
 EXTRA_DIST += test_probes_sysinfo.sh

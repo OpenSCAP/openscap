@@ -9,9 +9,9 @@ endif
 if WANT_PROBES_LINUX
 LINUX_SUBDIRS = rpminfo iflisteners
 
-if ENABLE_PROBES_SELINUX
-LINUX_SUBDIRS += selinuxboolean
-endif
+#if ENABLE_PROBES_SELINUX
+#LINUX_SUBDIRS += selinuxboolean
+#endif
 
 endif
 

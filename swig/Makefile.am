@@ -5,7 +5,7 @@ PYLIBVER ?= python$(PYTHON_VERSION)
 AM_CPPFLAGS = -I${top_srcdir}/src/common/public \
 	        $(PYTHON_INCLUDES) -I$(PERL_INCLUDES) \
               -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE=1 -I/usr/include -include "sys/types.h" \
-		@libxml_cflags@
+		@xml2_CFLAGS@
 
 CFLAGS+= -Wno-missing-prototypes
 

@@ -1,0 +1,7 @@
+name=rpm
+pkgconfig=yes
+pkgconfig_name=rpm
+functions_req=
+functions_opt=
+probes_req=(rpminfo rpmverify)
+probes_opt=
