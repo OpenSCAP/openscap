@@ -111,7 +111,6 @@ static int app_cvss_describe(const struct oscap_action *action)
 {
     assert(action->cvss_vector);
 
-    bool ok = false;
     struct cvss_impact *impact = cvss_impact_new_from_vector(action->cvss_vector);
 
     if (impact) {
