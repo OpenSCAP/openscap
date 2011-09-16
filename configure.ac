@@ -338,185 +338,177 @@ CPPFLAGS="$CPPFLAGS  $(pkg-config libapt-pkg --cflags) $(pkg-config blkid --cfla
 
 echo
 echo ' * Checking presence of required headers for the system_info probe'
-AC_CHECK_HEADERS([arpa/inet.h errno.h ifaddrs.h netdb.h net/if.h stdlib.h string.h sys/ioctl.h sys/socket.h sys/utsname.h unistd.h ],[],[probe_system_info_req_deps_ok=no; probe_system_info_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([arpa/inet.h errno.h ifaddrs.h netdb.h net/if.h stdlib.h string.h sys/ioctl.h sys/socket.h sys/utsname.h unistd.h ],[],[probe_system_info_req_deps_ok=no; probe_system_info_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the family probe'
-AC_CHECK_HEADERS([string.h ],[],[probe_family_req_deps_ok=no; probe_family_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([string.h ],[],[probe_family_req_deps_ok=no; probe_family_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the textfilecontent probe'
-AC_CHECK_HEADERS([fcntl.h limits.h pcre.h regex.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_textfilecontent_req_deps_ok=no; probe_textfilecontent_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([fcntl.h limits.h pcre.h regex.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_textfilecontent_req_deps_ok=no; probe_textfilecontent_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the textfilecontent54 probe'
-AC_CHECK_HEADERS([errno.h fcntl.h limits.h pcre.h regex.h stdio.h stdlib.h string.h sys/stat.h sys/types.h unistd.h ],[],[probe_textfilecontent54_req_deps_ok=no; probe_textfilecontent54_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([errno.h fcntl.h limits.h pcre.h regex.h stdio.h stdlib.h string.h sys/stat.h sys/types.h unistd.h ],[],[probe_textfilecontent54_req_deps_ok=no; probe_textfilecontent54_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the variable probe'
-AC_CHECK_HEADERS([errno.h stdio.h stdlib.h string.h ],[],[probe_variable_req_deps_ok=no; probe_variable_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([errno.h stdio.h stdlib.h string.h ],[],[probe_variable_req_deps_ok=no; probe_variable_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the xmlfilecontent probe'
-AC_CHECK_HEADERS([libxml/parser.h libxml/tree.h libxml/xpath.h libxml/xpathInternals.h limits.h stdlib.h string.h ],[],[probe_xmlfilecontent_req_deps_ok=no; probe_xmlfilecontent_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([libxml/parser.h libxml/tree.h libxml/xpath.h libxml/xpathInternals.h limits.h stdlib.h string.h ],[],[probe_xmlfilecontent_req_deps_ok=no; probe_xmlfilecontent_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the filehash probe'
-AC_CHECK_HEADERS([errno.h fcntl.h limits.h pthread.h stdlib.h string.h sys/stat.h sys/types.h ],[],[probe_filehash_req_deps_ok=no; probe_filehash_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([errno.h fcntl.h limits.h pthread.h stdlib.h string.h sys/stat.h sys/types.h ],[],[probe_filehash_req_deps_ok=no; probe_filehash_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the filehash58 probe'
-AC_CHECK_HEADERS([errno.h fcntl.h limits.h pthread.h stdlib.h string.h sys/stat.h sys/types.h ],[],[probe_filehash58_req_deps_ok=no; probe_filehash58_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([errno.h fcntl.h limits.h pthread.h stdlib.h string.h sys/stat.h sys/types.h ],[],[probe_filehash58_req_deps_ok=no; probe_filehash58_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the environmentvariable probe'
-AC_CHECK_HEADERS([errno.h stdio.h stdlib.h string.h ],[],[probe_environmentvariable_req_deps_ok=no; probe_environmentvariable_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([errno.h stdio.h stdlib.h string.h ],[],[probe_environmentvariable_req_deps_ok=no; probe_environmentvariable_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the environmentvariable58 probe'
-AC_CHECK_HEADERS([dirent.h errno.h fcntl.h stdio.h stdlib.h string.h sys/stat.h sys/types.h ],[],[probe_environmentvariable58_req_deps_ok=no; probe_environmentvariable58_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([dirent.h errno.h fcntl.h stdio.h stdlib.h string.h sys/stat.h sys/types.h ],[],[probe_environmentvariable58_req_deps_ok=no; probe_environmentvariable58_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the sql probe'
-AC_CHECK_HEADERS([ctype.h errno.h opendbx/api.h stdlib.h string.h time.h ],[],[probe_sql_req_deps_ok=no; probe_sql_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([ctype.h errno.h opendbx/api.h stdlib.h string.h time.h ],[],[probe_sql_req_deps_ok=no; probe_sql_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the sql57 probe'
-AC_CHECK_HEADERS([ctype.h errno.h opendbx/api.h stdlib.h string.h time.h ],[],[probe_sql57_req_deps_ok=no; probe_sql57_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([ctype.h errno.h opendbx/api.h stdlib.h string.h time.h ],[],[probe_sql57_req_deps_ok=no; probe_sql57_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the ldap57 probe'
-AC_CHECK_HEADERS([ldap.h pthread.h stdbool.h ],[],[probe_ldap57_req_deps_ok=no; probe_ldap57_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([ldap.h pthread.h stdbool.h ],[],[probe_ldap57_req_deps_ok=no; probe_ldap57_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the dnscache probe'
-AC_CHECK_HEADERS([string.h ],[],[probe_dnscache_req_deps_ok=no; probe_dnscache_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([string.h ],[],[probe_dnscache_req_deps_ok=no; probe_dnscache_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the runlevel probe'
-AC_CHECK_HEADERS([assert.h dirent.h errno.h limits.h stdbool.h stdio.h string.h sys/stat.h sys/types.h unistd.h ],[],[probe_runlevel_req_deps_ok=no; probe_runlevel_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([assert.h dirent.h errno.h limits.h stdbool.h stdio.h string.h sys/stat.h sys/types.h unistd.h ],[],[probe_runlevel_req_deps_ok=no; probe_runlevel_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the file probe'
-AC_CHECK_HEADERS([errno.h limits.h pthread.h stdlib.h string.h sys/stat.h ],[],[probe_file_req_deps_ok=no; probe_file_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([errno.h limits.h pthread.h stdlib.h string.h sys/stat.h ],[],[probe_file_req_deps_ok=no; probe_file_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of optional headers for the file probe'
-AC_CHECK_HEADERS([acl/libacl.h sys/types.h ],[],[probe_file_opt_deps_ok=no],[])
+AC_CHECK_HEADERS([acl/libacl.h sys/types.h ],[],[probe_file_opt_deps_ok=no],[-])
 
 echo
 echo ' * Checking presence of required headers for the fileextendedattribute probe'
-AC_CHECK_HEADERS([attr/xattr.h errno.h limits.h pthread.h stdlib.h string.h sys/stat.h sys/types.h ],[],[probe_fileextendedattribute_req_deps_ok=no; probe_fileextendedattribute_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([attr/xattr.h errno.h limits.h pthread.h stdlib.h string.h sys/stat.h sys/types.h ],[],[probe_fileextendedattribute_req_deps_ok=no; probe_fileextendedattribute_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the password probe'
-AC_CHECK_HEADERS([errno.h pwd.h stdio.h stdlib.h string.h ],[],[probe_password_req_deps_ok=no; probe_password_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([errno.h pwd.h stdio.h stdlib.h string.h ],[],[probe_password_req_deps_ok=no; probe_password_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the process probe'
-AC_CHECK_HEADERS([dirent.h errno.h fcntl.h sched.h stdio.h stdlib.h string.h sys/stat.h time.h unistd.h ],[],[probe_process_req_deps_ok=no; probe_process_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([dirent.h errno.h fcntl.h sched.h stdio.h stdlib.h string.h sys/stat.h time.h unistd.h ],[],[probe_process_req_deps_ok=no; probe_process_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of optional headers for the process probe'
-AC_CHECK_HEADERS([stdio_ext.h ],[],[probe_process_opt_deps_ok=no],[])
+AC_CHECK_HEADERS([stdio_ext.h ],[],[probe_process_opt_deps_ok=no],[-])
 
 echo
 echo ' * Checking presence of required headers for the process58 probe'
-AC_CHECK_HEADERS([dirent.h errno.h fcntl.h sched.h stdio.h stdlib.h string.h sys/stat.h time.h unistd.h ],[],[probe_process58_req_deps_ok=no; probe_process58_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([dirent.h errno.h fcntl.h sched.h stdio.h stdlib.h string.h sys/stat.h time.h unistd.h ],[],[probe_process58_req_deps_ok=no; probe_process58_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of optional headers for the process58 probe'
-AC_CHECK_HEADERS([ctype.h selinux/context.h selinux/selinux.h stdio_ext.h sys/capability.h sys/types.h ],[],[probe_process58_opt_deps_ok=no],[])
+AC_CHECK_HEADERS([ctype.h selinux/context.h selinux/selinux.h stdio_ext.h sys/capability.h sys/types.h ],[],[probe_process58_opt_deps_ok=no],[-])
 
 echo
 echo ' * Checking presence of required headers for the shadow probe'
-AC_CHECK_HEADERS([errno.h shadow.h stdio.h stdlib.h string.h ],[],[probe_shadow_req_deps_ok=no; probe_shadow_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([errno.h shadow.h stdio.h stdlib.h string.h ],[],[probe_shadow_req_deps_ok=no; probe_shadow_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the uname probe'
-AC_CHECK_HEADERS([string.h sys/utsname.h ],[],[probe_uname_req_deps_ok=no; probe_uname_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([string.h sys/utsname.h ],[],[probe_uname_req_deps_ok=no; probe_uname_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of optional headers for the uname probe'
-AC_CHECK_HEADERS([stdio_ext.h ],[],[probe_uname_opt_deps_ok=no],[])
+AC_CHECK_HEADERS([stdio_ext.h ],[],[probe_uname_opt_deps_ok=no],[-])
 
 echo
 echo ' * Checking presence of required headers for the interface probe'
-AC_CHECK_HEADERS([arpa/inet.h ifaddrs.h netdb.h net/if_arp.h net/if.h stdio.h string.h sys/ioctl.h sys/socket.h unistd.h ],[],[probe_interface_req_deps_ok=no; probe_interface_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([arpa/inet.h ifaddrs.h netdb.h net/if_arp.h net/if.h stdio.h string.h sys/ioctl.h sys/socket.h unistd.h ],[],[probe_interface_req_deps_ok=no; probe_interface_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the xinetd probe'
-AC_CHECK_HEADERS([ctype.h dirent.h errno.h fcntl.h fnmatch.h limits.h netdb.h stdbool.h stddef.h stdint.h stdlib.h string.h sys/stat.h sys/types.h unistd.h ],[],[probe_xinetd_req_deps_ok=no; probe_xinetd_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([ctype.h dirent.h errno.h fcntl.h fnmatch.h limits.h netdb.h stdbool.h stddef.h stdint.h stdlib.h string.h sys/stat.h sys/types.h unistd.h ],[],[probe_xinetd_req_deps_ok=no; probe_xinetd_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the sysctl probe'
-AC_CHECK_HEADERS([ctype.h errno.h limits.h stdio.h string.h ],[],[probe_sysctl_req_deps_ok=no; probe_sysctl_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([ctype.h errno.h limits.h stdio.h string.h ],[],[probe_sysctl_req_deps_ok=no; probe_sysctl_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the routingtable probe'
-AC_CHECK_HEADERS([errno.h stdio.h stdlib.h string.h ],[],[probe_routingtable_req_deps_ok=no; probe_routingtable_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([errno.h stdio.h stdlib.h string.h ],[],[probe_routingtable_req_deps_ok=no; probe_routingtable_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of optional headers for the routingtable probe'
-AC_CHECK_HEADERS([netinet/in.h netlink/cache.h netlink/genl/genl.h netlink/list.h netlink/netlink.h netlink/route/link.h netlink/route/nexthop.h netlink/route/route.h netlink/route/rtnl.h net/route.h ],[],[probe_routingtable_opt_deps_ok=no],[])
+AC_CHECK_HEADERS([netinet/in.h netlink/cache.h netlink/genl/genl.h netlink/list.h netlink/netlink.h netlink/route/link.h netlink/route/nexthop.h netlink/route/route.h netlink/route/rtnl.h net/route.h ],[],[probe_routingtable_opt_deps_ok=no],[-])
 
 echo
 echo ' * Checking presence of required headers for the gconf probe'
-AC_CHECK_HEADERS([gconf/gconf.h limits.h pcre.h stdint.h stdlib.h string.h ],[],[probe_gconf_req_deps_ok=no; probe_gconf_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([gconf/gconf.h limits.h pcre.h stdint.h stdlib.h string.h ],[],[probe_gconf_req_deps_ok=no; probe_gconf_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the isainfo probe'
-AC_CHECK_HEADERS([arpa/inet.h dirent.h errno.h fcntl.h netdb.h regex.h stdio_ext.h stdio.h stdlib.h string.h sys/systeminfo.h ],[],[probe_isainfo_req_deps_ok=no; probe_isainfo_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([arpa/inet.h dirent.h errno.h fcntl.h netdb.h regex.h stdio_ext.h stdio.h stdlib.h string.h sys/systeminfo.h ],[],[probe_isainfo_req_deps_ok=no; probe_isainfo_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the partition probe'
-AC_CHECK_HEADERS([fcntl.h limits.h mntent.h pcre.h stdint.h stdio.h stdlib.h string.h sys/stat.h sys/statvfs.h sys/types.h sys/vfs.h ],[],[probe_partition_req_deps_ok=no; probe_partition_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([fcntl.h limits.h mntent.h pcre.h stdint.h stdio.h stdlib.h string.h sys/stat.h sys/statvfs.h sys/types.h sys/vfs.h ],[],[probe_partition_req_deps_ok=no; probe_partition_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of optional headers for the partition probe'
-AC_CHECK_HEADERS([blkid/blkid.h linux/magic.h ],[],[probe_partition_opt_deps_ok=no],[])
+AC_CHECK_HEADERS([blkid/blkid.h linux/magic.h ],[],[probe_partition_opt_deps_ok=no],[-])
 
 echo
 echo ' * Checking presence of required headers for the inetlisteningservers probe'
-AC_CHECK_HEADERS([arpa/inet.h dirent.h errno.h fcntl.h netdb.h regex.h stdio_ext.h stdio.h stdlib.h string.h ],[],[probe_inetlisteningservers_req_deps_ok=no; probe_inetlisteningservers_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([arpa/inet.h dirent.h errno.h fcntl.h netdb.h regex.h stdio_ext.h stdio.h stdlib.h string.h ],[],[probe_inetlisteningservers_req_deps_ok=no; probe_inetlisteningservers_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the iflisteners probe'
-AC_CHECK_HEADERS([arpa/inet.h dirent.h errno.h fcntl.h netdb.h regex.h stdio_ext.h stdio.h stdlib.h string.h ],[],[probe_iflisteners_req_deps_ok=no; probe_iflisteners_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([arpa/inet.h dirent.h errno.h fcntl.h netdb.h regex.h stdio_ext.h stdio.h stdlib.h string.h ],[],[probe_iflisteners_req_deps_ok=no; probe_iflisteners_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the selinuxboolean probe'
-AC_CHECK_HEADERS([errno.h fcntl.h selinux/selinux.h stdio.h stdlib.h string.h sys/stat.h ],[],[probe_selinuxboolean_req_deps_ok=no; probe_selinuxboolean_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([errno.h fcntl.h selinux/selinux.h stdio.h stdlib.h string.h sys/stat.h ],[],[probe_selinuxboolean_req_deps_ok=no; probe_selinuxboolean_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the selinuxsecuritycontext probe'
-AC_CHECK_HEADERS([dirent.h errno.h fcntl.h limits.h pthread.h selinux/context.h selinux/selinux.h stdlib.h string.h sys/stat.h sys/types.h ],[],[probe_selinuxsecuritycontext_req_deps_ok=no; probe_selinuxsecuritycontext_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([dirent.h errno.h fcntl.h limits.h pthread.h selinux/context.h selinux/selinux.h stdlib.h string.h sys/stat.h sys/types.h ],[],[probe_selinuxsecuritycontext_req_deps_ok=no; probe_selinuxsecuritycontext_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the rpminfo probe'
-AC_CHECK_HEADERS([assert.h errno.h fcntl.h rpm/rpmdb.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_rpminfo_req_deps_ok=no; probe_rpminfo_req_deps_missing='header files'],[])
-
-echo
-echo ' * Checking presence of optional headers for the rpminfo probe'
-AC_CHECK_HEADERS([rpm/header.h ],[],[probe_rpminfo_opt_deps_ok=no],[])
+AC_CHECK_HEADERS([assert.h errno.h fcntl.h rpm/header.h rpm/rpmdb.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_rpminfo_req_deps_ok=no; probe_rpminfo_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the rpmverify probe'
-AC_CHECK_HEADERS([assert.h errno.h fcntl.h limits.h pcre.h rpm/rpmdb.h rpm/rpmfi.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_rpmverify_req_deps_ok=no; probe_rpmverify_req_deps_missing='header files'],[])
-
-echo
-echo ' * Checking presence of optional headers for the rpmverify probe'
-AC_CHECK_HEADERS([rpm/header.h rpm/rpmcli.h ],[],[probe_rpmverify_opt_deps_ok=no],[])
+AC_CHECK_HEADERS([assert.h errno.h fcntl.h limits.h pcre.h rpm/header.h rpm/rpmcli.h rpm/rpmdb.h rpm/rpmfi.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_rpmverify_req_deps_ok=no; probe_rpmverify_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the dpkginfo probe'
-AC_CHECK_HEADERS([assert.h errno.h stdio.h string.h ],[],[probe_dpkginfo_req_deps_ok=no; probe_dpkginfo_req_deps_missing='header files'],[])
+AC_CHECK_HEADERS([assert.h errno.h stdio.h string.h ],[],[probe_dpkginfo_req_deps_ok=no; probe_dpkginfo_req_deps_missing='header files'],[-])
 
 CPPFLAGS="$SAVE_CPPFLAGS"
 
 echo
 echo '* Checking for acl library used by: file '
-SAVE_LIBS=
+SAVE_LIBS=$LIBS
 AC_SEARCH_LIBS([acl_init],[acl],[
 acl_CFLAGS=;
 acl_LIBS=-lacl;
@@ -526,22 +518,59 @@ probe_file_req_deps_missing+=', acl';
 ],[])
 AC_SUBST([acl_CFLAGS])
 AC_SUBST([acl_LIBS])
-LIBS=
+LIBS=$SAVE_LIBS
+SAVE_LIBS=$LIBS
+LIBS=$acl_LIBS
+AC_CHECK_FUNCS([acl_init], [], [
+probe_file_req_deps_ok=no;
+probe_file_req_deps_missing+=', library function(s)';
+])
+LIBS=$SAVE_LIBS
 echo
 echo '* Checking for apt_pkg library used by: dpkginfo '
 PKG_CHECK_MODULES([apt_pkg], [libapt-pkg >= 0.0],[],[
+SAVE_LIBS=$LIBS
+AC_SEARCH_LIBS([pkgInitConfig],[apt-pkg],[
+apt_pkg_CFLAGS=;
+apt_pkg_LIBS=-lapt-pkg;
+],[
 probe_dpkginfo_req_deps_ok=no;
 probe_dpkginfo_req_deps_missing+=', apt_pkg';
+],[])
+AC_SUBST([apt_pkg_CFLAGS])
+AC_SUBST([apt_pkg_LIBS])
+LIBS=$SAVE_LIBS
 ])
+SAVE_LIBS=$LIBS
+LIBS=$apt_pkg_LIBS
+AC_CHECK_FUNCS([pkgInitConfig pkgInitSystem], [], [
+probe_dpkginfo_req_deps_ok=no;
+probe_dpkginfo_req_deps_missing+=', library function(s)';
+])
+LIBS=$SAVE_LIBS
 echo
-echo '* Checking for blkid library used by: partition '
+echo '* Checking for blkid library used by:  partition'
 PKG_CHECK_MODULES([blkid], [blkid >= 0.0],[],[
-probe_partition_req_deps_ok=no;
-probe_partition_req_deps_missing+=', blkid';
+SAVE_LIBS=$LIBS
+AC_SEARCH_LIBS([blkid_get_cache],[blkid],[
+blkid_CFLAGS=;
+blkid_LIBS=-lblkid;
+],[
+probe_partition_opt_deps_ok=no;
+probe_partition_opt_deps_missing+=', blkid';
+],[])
+AC_SUBST([blkid_CFLAGS])
+AC_SUBST([blkid_LIBS])
+LIBS=$SAVE_LIBS
 ])
+SAVE_LIBS=$LIBS
+LIBS=$blkid_LIBS
+AC_CHECK_FUNCS([blkid_get_cache], [], [
+])
+LIBS=$SAVE_LIBS
 echo
 echo '* Checking for cap library used by: process58 '
-SAVE_LIBS=
+SAVE_LIBS=$LIBS
 AC_SEARCH_LIBS([cap_init],[cap],[
 cap_CFLAGS=;
 cap_LIBS=-lcap;
@@ -551,16 +580,39 @@ probe_process58_req_deps_missing+=', cap';
 ],[])
 AC_SUBST([cap_CFLAGS])
 AC_SUBST([cap_LIBS])
-LIBS=
+LIBS=$SAVE_LIBS
+SAVE_LIBS=$LIBS
+LIBS=$cap_LIBS
+AC_CHECK_FUNCS([cap_init], [], [
+probe_process58_req_deps_ok=no;
+probe_process58_req_deps_missing+=', library function(s)';
+])
+LIBS=$SAVE_LIBS
 echo
 echo '* Checking for gconf2 library used by: gconf '
 PKG_CHECK_MODULES([gconf2], [gconf-2.0 >= 0.0],[],[
+SAVE_LIBS=$LIBS
+AC_SEARCH_LIBS([gconf_engine_get_default],[gconf-2],[
+gconf2_CFLAGS=;
+gconf2_LIBS=-lgconf-2;
+],[
 probe_gconf_req_deps_ok=no;
 probe_gconf_req_deps_missing+=', gconf2';
+],[])
+AC_SUBST([gconf2_CFLAGS])
+AC_SUBST([gconf2_LIBS])
+LIBS=$SAVE_LIBS
 ])
+SAVE_LIBS=$LIBS
+LIBS=$gconf2_LIBS
+AC_CHECK_FUNCS([gconf_engine_get_default], [], [
+probe_gconf_req_deps_ok=no;
+probe_gconf_req_deps_missing+=', library function(s)';
+])
+LIBS=$SAVE_LIBS
 echo
 echo '* Checking for lber library used by: ldap57 '
-SAVE_LIBS=
+SAVE_LIBS=$LIBS
 AC_SEARCH_LIBS([ber_init],[lber],[
 lber_CFLAGS=;
 lber_LIBS=-llber;
@@ -570,10 +622,17 @@ probe_ldap57_req_deps_missing+=', lber';
 ],[])
 AC_SUBST([lber_CFLAGS])
 AC_SUBST([lber_LIBS])
-LIBS=
+LIBS=$SAVE_LIBS
+SAVE_LIBS=$LIBS
+LIBS=$lber_LIBS
+AC_CHECK_FUNCS([ber_init], [], [
+probe_ldap57_req_deps_ok=no;
+probe_ldap57_req_deps_missing+=', library function(s)';
+])
+LIBS=$SAVE_LIBS
 echo
 echo '* Checking for ldap library used by: ldap57 '
-SAVE_LIBS=
+SAVE_LIBS=$LIBS
 AC_SEARCH_LIBS([ldap_init],[ldap],[
 ldap_CFLAGS=;
 ldap_LIBS=-lldap;
@@ -583,16 +642,39 @@ probe_ldap57_req_deps_missing+=', ldap';
 ],[])
 AC_SUBST([ldap_CFLAGS])
 AC_SUBST([ldap_LIBS])
-LIBS=
+LIBS=$SAVE_LIBS
+SAVE_LIBS=$LIBS
+LIBS=$ldap_LIBS
+AC_CHECK_FUNCS([ldap_init], [], [
+probe_ldap57_req_deps_ok=no;
+probe_ldap57_req_deps_missing+=', library function(s)';
+])
+LIBS=$SAVE_LIBS
 echo
 echo '* Checking for nl library used by: routingtable '
 PKG_CHECK_MODULES([nl], [libnl-1 >= 0.0],[],[
+SAVE_LIBS=$LIBS
+AC_SEARCH_LIBS([nl_connect],[nl],[
+nl_CFLAGS=;
+nl_LIBS=-lnl;
+],[
 probe_routingtable_req_deps_ok=no;
 probe_routingtable_req_deps_missing+=', nl';
+],[])
+AC_SUBST([nl_CFLAGS])
+AC_SUBST([nl_LIBS])
+LIBS=$SAVE_LIBS
 ])
+SAVE_LIBS=$LIBS
+LIBS=$nl_LIBS
+AC_CHECK_FUNCS([nl_connect nl_handle_alloc], [], [
+probe_routingtable_req_deps_ok=no;
+probe_routingtable_req_deps_missing+=', library function(s)';
+])
+LIBS=$SAVE_LIBS
 echo
 echo '* Checking for odbx library used by: sql sql57 '
-SAVE_LIBS=
+SAVE_LIBS=$LIBS
 AC_SEARCH_LIBS([odbx_init],[odbx],[
 odbx_CFLAGS=;
 odbx_LIBS=-lodbx;
@@ -604,47 +686,147 @@ probe_sql57_req_deps_missing+=', odbx';
 ],[])
 AC_SUBST([odbx_CFLAGS])
 AC_SUBST([odbx_LIBS])
-LIBS=
+LIBS=$SAVE_LIBS
+SAVE_LIBS=$LIBS
+LIBS=$odbx_LIBS
+AC_CHECK_FUNCS([odbx_init], [], [
+probe_sql_req_deps_ok=no;
+probe_sql_req_deps_missing+=', library function(s)';
+probe_sql57_req_deps_ok=no;
+probe_sql57_req_deps_missing+=', library function(s)';
+])
+LIBS=$SAVE_LIBS
 echo
 echo '* Checking for pcre library used by: textfilecontent54 textfilecontent partition '
 PKG_CHECK_MODULES([pcre], [libpcre >= 0.0],[],[
+SAVE_LIBS=$LIBS
+AC_SEARCH_LIBS([pcre_exec],[pcre],[
+pcre_CFLAGS=;
+pcre_LIBS=-lpcre;
+],[
 probe_textfilecontent54_req_deps_ok=no;
 probe_textfilecontent54_req_deps_missing+=', pcre';
 probe_textfilecontent_req_deps_ok=no;
 probe_textfilecontent_req_deps_missing+=', pcre';
 probe_partition_req_deps_ok=no;
 probe_partition_req_deps_missing+=', pcre';
+],[])
+AC_SUBST([pcre_CFLAGS])
+AC_SUBST([pcre_LIBS])
+LIBS=$SAVE_LIBS
 ])
+SAVE_LIBS=$LIBS
+LIBS=$pcre_LIBS
+AC_CHECK_FUNCS([pcre_exec], [], [
+probe_textfilecontent54_req_deps_ok=no;
+probe_textfilecontent54_req_deps_missing+=', library function(s)';
+probe_textfilecontent_req_deps_ok=no;
+probe_textfilecontent_req_deps_missing+=', library function(s)';
+probe_partition_req_deps_ok=no;
+probe_partition_req_deps_missing+=', library function(s)';
+])
+LIBS=$SAVE_LIBS
 echo
 echo '* Checking for rpm library used by: rpminfo rpmverify '
 PKG_CHECK_MODULES([rpm], [rpm >= 0.0],[],[
+SAVE_LIBS=$LIBS
+AC_SEARCH_LIBS([rpmtsCreate],[rpm],[
+rpm_CFLAGS=;
+rpm_LIBS=-lrpm;
+],[
 probe_rpminfo_req_deps_ok=no;
 probe_rpminfo_req_deps_missing+=', rpm';
 probe_rpmverify_req_deps_ok=no;
 probe_rpmverify_req_deps_missing+=', rpm';
+],[])
+AC_SUBST([rpm_CFLAGS])
+AC_SUBST([rpm_LIBS])
+LIBS=$SAVE_LIBS
 ])
+SAVE_LIBS=$LIBS
+LIBS=$rpm_LIBS
+AC_CHECK_FUNCS([rpmtsCreate rpmReadConfigFiles], [], [
+probe_rpminfo_req_deps_ok=no;
+probe_rpminfo_req_deps_missing+=', library function(s)';
+probe_rpmverify_req_deps_ok=no;
+probe_rpmverify_req_deps_missing+=', library function(s)';
+])
+AC_CHECK_FUNCS([headerFormat headerSprintf rpmFreeCrypto rpmFreeFilesystems],[],[])
+LIBS=$SAVE_LIBS
 echo
 echo '* Checking for selinux library used by: process58 selinuxboolean selinuxsecuritycontext '
 PKG_CHECK_MODULES([selinux], [libselinux >= 0.0],[],[
+SAVE_LIBS=$LIBS
+AC_SEARCH_LIBS([security_get_boolean_names],[selinux],[
+selinux_CFLAGS=;
+selinux_LIBS=-lselinux;
+],[
 probe_process58_req_deps_ok=no;
 probe_process58_req_deps_missing+=', selinux';
 probe_selinuxboolean_req_deps_ok=no;
 probe_selinuxboolean_req_deps_missing+=', selinux';
 probe_selinuxsecuritycontext_req_deps_ok=no;
 probe_selinuxsecuritycontext_req_deps_missing+=', selinux';
+],[])
+AC_SUBST([selinux_CFLAGS])
+AC_SUBST([selinux_LIBS])
+LIBS=$SAVE_LIBS
 ])
+SAVE_LIBS=$LIBS
+LIBS=$selinux_LIBS
+AC_CHECK_FUNCS([security_get_boolean_names], [], [
+probe_process58_req_deps_ok=no;
+probe_process58_req_deps_missing+=', library function(s)';
+probe_selinuxboolean_req_deps_ok=no;
+probe_selinuxboolean_req_deps_missing+=', library function(s)';
+probe_selinuxsecuritycontext_req_deps_ok=no;
+probe_selinuxsecuritycontext_req_deps_missing+=', library function(s)';
+])
+LIBS=$SAVE_LIBS
 echo
 echo '* Checking for xml2 library used by: xmlfilecontent '
 PKG_CHECK_MODULES([xml2], [libxml-2.0 >= 0.0],[],[
+SAVE_LIBS=$LIBS
+AC_SEARCH_LIBS([xmlTextReaderRead],[xml2],[
+xml2_CFLAGS=;
+xml2_LIBS=-lxml2;
+],[
 probe_xmlfilecontent_req_deps_ok=no;
 probe_xmlfilecontent_req_deps_missing+=', xml2';
+],[])
+AC_SUBST([xml2_CFLAGS])
+AC_SUBST([xml2_LIBS])
+LIBS=$SAVE_LIBS
 ])
+SAVE_LIBS=$LIBS
+LIBS=$xml2_LIBS
+AC_CHECK_FUNCS([xmlTextReaderRead], [], [
+probe_xmlfilecontent_req_deps_ok=no;
+probe_xmlfilecontent_req_deps_missing+=', library function(s)';
+])
+LIBS=$SAVE_LIBS
 echo
 echo '* Checking for xslt library used by: xmlfilecontent '
 PKG_CHECK_MODULES([xslt], [libxslt >= 0.0],[],[
+SAVE_LIBS=$LIBS
+AC_SEARCH_LIBS([xsltDocumentFunction],[xslt],[
+xslt_CFLAGS=;
+xslt_LIBS=-lxslt;
+],[
 probe_xmlfilecontent_req_deps_ok=no;
 probe_xmlfilecontent_req_deps_missing+=', xslt';
+],[])
+AC_SUBST([xslt_CFLAGS])
+AC_SUBST([xslt_LIBS])
+LIBS=$SAVE_LIBS
 ])
+SAVE_LIBS=$LIBS
+LIBS=$xslt_LIBS
+AC_CHECK_FUNCS([xsltDocumentFunction], [], [
+probe_xmlfilecontent_req_deps_ok=no;
+probe_xmlfilecontent_req_deps_missing+=', library function(s)';
+])
+LIBS=$SAVE_LIBS
 echo
 
 AC_PATH_PROG(PERL, perl)

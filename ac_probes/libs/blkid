@@ -1,7 +1,7 @@
 name=blkid
 pkgconfig=yes
 pkgconfig_name=blkid
-functions_req=
+functions_req=(blkid_get_cache)
 functions_opt=
-probes_req=(partition)
-probes_opt=
+probes_req=
+probes_opt=(partition)

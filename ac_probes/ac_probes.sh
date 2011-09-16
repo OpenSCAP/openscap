@@ -80,9 +80,9 @@ function ac_gen_probe_headercheck() {
     echo "echo ' * Checking presence of $d headers for the $name probe'"
 
     if [[ "$required" == "yes" ]]; then
-	echo "AC_CHECK_HEADERS([${headers}],[],[probe_${name}_req_deps_ok=no; probe_${name}_req_deps_missing='header files'],[])"
+	echo "AC_CHECK_HEADERS([${headers}],[],[probe_${name}_req_deps_ok=no; probe_${name}_req_deps_missing='header files'],[-])"
     else
-	echo "AC_CHECK_HEADERS([${headers}],[],[probe_${name}_opt_deps_ok=no],[])"
+	echo "AC_CHECK_HEADERS([${headers}],[],[probe_${name}_opt_deps_ok=no],[-])"
     fi
     echo
 }
@@ -115,27 +115,8 @@ function ac_gen_probe_librarycheck() {
 	    #
 	    echo "PKG_CHECK_MODULES([${libname}], [${pkgconfig_name} >= ${pkgconfig_minver}],[],["
 
-	    for probe_name in ${probes_req[*]}; do
-		echo "probe_${probe_name}_req_deps_ok=no;"
-		echo "probe_${probe_name}_req_deps_missing+=', ${libname}';"
-	    done
-
-	    for probe_name in ${probes_opt[*]}; do
-		echo "probe_${probe_name}_opt_deps_ok=no;"
-		echo "probe_${probe_name}_opt_deps_missing+=', ${libname}';"
-	    done
-
-	    echo "])"
-
-	    #
-            # Collect CFLAGS for header checks
-	    #
-	    pkg-config ${pkgconfig_name} --modversion > /dev/null || exit 123
-
-	    echo -n "\$(pkg-config ${pkgconfig_name} --cflags) " >> "${cflagsfile}"
-	else
-	    # non-pkgconfig check
-	    echo "SAVE_LIBS=$LIBS"
+	    # non-pkgconfig check - fallback
+	    echo "SAVE_LIBS=\$LIBS"
 	    echo "AC_SEARCH_LIBS([${functions_req[0]}],[${name}],["
 
 	    echo "${libname}_CFLAGS=;"
@@ -158,8 +139,76 @@ function ac_gen_probe_librarycheck() {
 	    echo "AC_SUBST([${libname}_CFLAGS])"
 	    echo "AC_SUBST([${libname}_LIBS])"
 
-	    echo "LIBS=$SAVE_LIBS"
+	    echo "LIBS=\$SAVE_LIBS"
+
+	    #for probe_name in ${probes_req[*]}; do
+#		echo "probe_${probe_name}_req_deps_ok=no;"
+#		echo "probe_${probe_name}_req_deps_missing+=', ${libname}';"
+#	    done
+#
+#	    for probe_name in ${probes_opt[*]}; do
+#		echo "probe_${probe_name}_opt_deps_ok=no;"
+#		echo "probe_${probe_name}_opt_deps_missing+=', ${libname}';"
+#	    done
+
+	    echo "])"
+
+	    #
+            # Collect CFLAGS for header checks
+	    #
+	    pkg-config ${pkgconfig_name} --modversion > /dev/null || exit 123
+
+	    echo -n "\$(pkg-config ${pkgconfig_name} --cflags) " >> "${cflagsfile}"
+	else
+	    # non-pkgconfig check
+	    echo "SAVE_LIBS=\$LIBS"
+	    echo "AC_SEARCH_LIBS([${functions_req[0]}],[${name}],["
+
+	    echo "${libname}_CFLAGS=;"
+	    echo "${libname}_LIBS=-l${name};"
+
+	    echo "],["
+
+	    for probe_name in ${probes_req[*]}; do
+		echo "probe_${probe_name}_req_deps_ok=no;"
+		echo "probe_${probe_name}_req_deps_missing+=', ${libname}';"
+	    done
+
+	    for probe_name in ${probes_opt[*]}; do
+		echo "probe_${probe_name}_opt_deps_ok=no;"
+		echo "probe_${probe_name}_opt_deps_missing+=', ${libname}';"
+	    done
+
+	    echo "],[])"
+
+	    echo "AC_SUBST([${libname}_CFLAGS])"
+	    echo "AC_SUBST([${libname}_LIBS])"
+
+	    echo "LIBS=\$SAVE_LIBS"
 	fi
+
+	echo "SAVE_LIBS=\$LIBS"
+	echo "LIBS=\$${libname}_LIBS"
+
+	if [[ -n "${functions_req[0]}" ]]; then
+	    echo "AC_CHECK_FUNCS([${functions_req[*]}], [], ["
+
+	    for probe_name in ${probes_req[*]}; do
+		echo "probe_${probe_name}_req_deps_ok=no;"
+		echo "probe_${probe_name}_req_deps_missing+=', library function(s)';"
+	    done
+
+	    echo "])"
+	fi
+
+	if [[ -n "${functions_opt[0]}" ]]; then
+	    echo "AC_CHECK_FUNCS([${functions_opt[*]}],[],[])"
+	fi
+
+	echo "LIBS=\$SAVE_LIBS"
+
+	unset functions_opt
+	unset functions_req
     done
 }
 
