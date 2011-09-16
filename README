@@ -9,8 +9,9 @@ Get fresh sources from repository:
   * $autogen.sh
 
 You are OK with tarball from official release
-  - requirements: swig, libxml2-devel, rpm-devel, libgcrypt-devel, pcre-devel,
-                  python-devel, perl-devel, libxslt-devel, libtools
+  - requirements: swig libxml2-devel libxslt-devel m4 perl-XML-Parser
+                  rpm-devel libgcrypt-devel pcre-devel libacl-devel
+                  libselinux-devel libblkid-devel libnl-devel
   * $configure
   * $make
   * $make check
