@@ -507,14 +507,14 @@ AC_CHECK_HEADERS([assert.h errno.h stdio.h string.h ],[],[probe_dpkginfo_req_dep
 CPPFLAGS="$SAVE_CPPFLAGS"
 
 echo
-echo '* Checking for acl library used by: file '
+echo '* Checking for acl library used by:  file'
 SAVE_LIBS=$LIBS
 AC_SEARCH_LIBS([acl_init],[acl],[
 acl_CFLAGS=;
 acl_LIBS=-lacl;
 ],[
-probe_file_req_deps_ok=no;
-probe_file_req_deps_missing+=', acl';
+probe_file_opt_deps_ok=no;
+probe_file_opt_deps_missing+=', acl lib';
 ],[])
 AC_SUBST([acl_CFLAGS])
 AC_SUBST([acl_LIBS])
@@ -522,8 +522,6 @@ LIBS=$SAVE_LIBS
 SAVE_LIBS=$LIBS
 LIBS=$acl_LIBS
 AC_CHECK_FUNCS([acl_init], [], [
-probe_file_req_deps_ok=no;
-probe_file_req_deps_missing+=', library function(s)';
 ])
 LIBS=$SAVE_LIBS
 echo
@@ -543,10 +541,12 @@ LIBS=$SAVE_LIBS
 ])
 SAVE_LIBS=$LIBS
 LIBS=$apt_pkg_LIBS
+AC_LANG_PUSH([C++])
 AC_CHECK_FUNCS([pkgInitConfig pkgInitSystem], [], [
 probe_dpkginfo_req_deps_ok=no;
-probe_dpkginfo_req_deps_missing+=', library function(s)';
+probe_dpkginfo_req_deps_missing+=", $ac_func func";
 ])
+AC_LANG_POP([C++])
 LIBS=$SAVE_LIBS
 echo
 echo '* Checking for blkid library used by:  partition'
@@ -576,7 +576,7 @@ cap_CFLAGS=;
 cap_LIBS=-lcap;
 ],[
 probe_process58_req_deps_ok=no;
-probe_process58_req_deps_missing+=', cap';
+probe_process58_req_deps_missing+=', cap lib';
 ],[])
 AC_SUBST([cap_CFLAGS])
 AC_SUBST([cap_LIBS])
@@ -585,7 +585,7 @@ SAVE_LIBS=$LIBS
 LIBS=$cap_LIBS
 AC_CHECK_FUNCS([cap_init], [], [
 probe_process58_req_deps_ok=no;
-probe_process58_req_deps_missing+=', library function(s)';
+probe_process58_req_deps_missing+=", $ac_func func";
 ])
 LIBS=$SAVE_LIBS
 echo
@@ -607,7 +607,7 @@ SAVE_LIBS=$LIBS
 LIBS=$gconf2_LIBS
 AC_CHECK_FUNCS([gconf_engine_get_default], [], [
 probe_gconf_req_deps_ok=no;
-probe_gconf_req_deps_missing+=', library function(s)';
+probe_gconf_req_deps_missing+=", $ac_func func";
 ])
 LIBS=$SAVE_LIBS
 echo
@@ -618,7 +618,7 @@ lber_CFLAGS=;
 lber_LIBS=-llber;
 ],[
 probe_ldap57_req_deps_ok=no;
-probe_ldap57_req_deps_missing+=', lber';
+probe_ldap57_req_deps_missing+=', lber lib';
 ],[])
 AC_SUBST([lber_CFLAGS])
 AC_SUBST([lber_LIBS])
@@ -627,7 +627,7 @@ SAVE_LIBS=$LIBS
 LIBS=$lber_LIBS
 AC_CHECK_FUNCS([ber_init], [], [
 probe_ldap57_req_deps_ok=no;
-probe_ldap57_req_deps_missing+=', library function(s)';
+probe_ldap57_req_deps_missing+=", $ac_func func";
 ])
 LIBS=$SAVE_LIBS
 echo
@@ -638,7 +638,7 @@ ldap_CFLAGS=;
 ldap_LIBS=-lldap;
 ],[
 probe_ldap57_req_deps_ok=no;
-probe_ldap57_req_deps_missing+=', ldap';
+probe_ldap57_req_deps_missing+=', ldap lib';
 ],[])
 AC_SUBST([ldap_CFLAGS])
 AC_SUBST([ldap_LIBS])
@@ -647,7 +647,7 @@ SAVE_LIBS=$LIBS
 LIBS=$ldap_LIBS
 AC_CHECK_FUNCS([ldap_init], [], [
 probe_ldap57_req_deps_ok=no;
-probe_ldap57_req_deps_missing+=', library function(s)';
+probe_ldap57_req_deps_missing+=", $ac_func func";
 ])
 LIBS=$SAVE_LIBS
 echo
@@ -669,7 +669,7 @@ SAVE_LIBS=$LIBS
 LIBS=$nl_LIBS
 AC_CHECK_FUNCS([nl_connect nl_handle_alloc], [], [
 probe_routingtable_req_deps_ok=no;
-probe_routingtable_req_deps_missing+=', library function(s)';
+probe_routingtable_req_deps_missing+=", $ac_func func";
 ])
 LIBS=$SAVE_LIBS
 echo
@@ -680,9 +680,9 @@ odbx_CFLAGS=;
 odbx_LIBS=-lodbx;
 ],[
 probe_sql_req_deps_ok=no;
-probe_sql_req_deps_missing+=', odbx';
+probe_sql_req_deps_missing+=', odbx lib';
 probe_sql57_req_deps_ok=no;
-probe_sql57_req_deps_missing+=', odbx';
+probe_sql57_req_deps_missing+=', odbx lib';
 ],[])
 AC_SUBST([odbx_CFLAGS])
 AC_SUBST([odbx_LIBS])
@@ -691,9 +691,9 @@ SAVE_LIBS=$LIBS
 LIBS=$odbx_LIBS
 AC_CHECK_FUNCS([odbx_init], [], [
 probe_sql_req_deps_ok=no;
-probe_sql_req_deps_missing+=', library function(s)';
+probe_sql_req_deps_missing+=", $ac_func func";
 probe_sql57_req_deps_ok=no;
-probe_sql57_req_deps_missing+=', library function(s)';
+probe_sql57_req_deps_missing+=", $ac_func func";
 ])
 LIBS=$SAVE_LIBS
 echo
@@ -719,11 +719,11 @@ SAVE_LIBS=$LIBS
 LIBS=$pcre_LIBS
 AC_CHECK_FUNCS([pcre_exec], [], [
 probe_textfilecontent54_req_deps_ok=no;
-probe_textfilecontent54_req_deps_missing+=', library function(s)';
+probe_textfilecontent54_req_deps_missing+=", $ac_func func";
 probe_textfilecontent_req_deps_ok=no;
-probe_textfilecontent_req_deps_missing+=', library function(s)';
+probe_textfilecontent_req_deps_missing+=", $ac_func func";
 probe_partition_req_deps_ok=no;
-probe_partition_req_deps_missing+=', library function(s)';
+probe_partition_req_deps_missing+=", $ac_func func";
 ])
 LIBS=$SAVE_LIBS
 echo
@@ -747,9 +747,9 @@ SAVE_LIBS=$LIBS
 LIBS=$rpm_LIBS
 AC_CHECK_FUNCS([rpmtsCreate rpmReadConfigFiles], [], [
 probe_rpminfo_req_deps_ok=no;
-probe_rpminfo_req_deps_missing+=', library function(s)';
+probe_rpminfo_req_deps_missing+=", $ac_func func";
 probe_rpmverify_req_deps_ok=no;
-probe_rpmverify_req_deps_missing+=', library function(s)';
+probe_rpmverify_req_deps_missing+=", $ac_func func";
 ])
 AC_CHECK_FUNCS([headerFormat headerSprintf rpmFreeCrypto rpmFreeFilesystems],[],[])
 LIBS=$SAVE_LIBS
@@ -776,11 +776,11 @@ SAVE_LIBS=$LIBS
 LIBS=$selinux_LIBS
 AC_CHECK_FUNCS([security_get_boolean_names], [], [
 probe_process58_req_deps_ok=no;
-probe_process58_req_deps_missing+=', library function(s)';
+probe_process58_req_deps_missing+=", $ac_func func";
 probe_selinuxboolean_req_deps_ok=no;
-probe_selinuxboolean_req_deps_missing+=', library function(s)';
+probe_selinuxboolean_req_deps_missing+=", $ac_func func";
 probe_selinuxsecuritycontext_req_deps_ok=no;
-probe_selinuxsecuritycontext_req_deps_missing+=', library function(s)';
+probe_selinuxsecuritycontext_req_deps_missing+=", $ac_func func";
 ])
 LIBS=$SAVE_LIBS
 echo
@@ -802,7 +802,7 @@ SAVE_LIBS=$LIBS
 LIBS=$xml2_LIBS
 AC_CHECK_FUNCS([xmlTextReaderRead], [], [
 probe_xmlfilecontent_req_deps_ok=no;
-probe_xmlfilecontent_req_deps_missing+=', library function(s)';
+probe_xmlfilecontent_req_deps_missing+=", $ac_func func";
 ])
 LIBS=$SAVE_LIBS
 echo
@@ -824,7 +824,7 @@ SAVE_LIBS=$LIBS
 LIBS=$xslt_LIBS
 AC_CHECK_FUNCS([xsltDocumentFunction], [], [
 probe_xmlfilecontent_req_deps_ok=no;
-probe_xmlfilecontent_req_deps_missing+=', library function(s)';
+probe_xmlfilecontent_req_deps_missing+=", $ac_func func";
 ])
 LIBS=$SAVE_LIBS
 echo

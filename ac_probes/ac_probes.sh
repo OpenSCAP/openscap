@@ -98,6 +98,7 @@ function ac_gen_probe_librarycheck() {
 	local pkgconfig_minver="0.0"
 	local functions_req=
 	local functions_opt=
+	local functions_lang=
 	local probes_req=
 	local probes_opt=
 
@@ -118,10 +119,8 @@ function ac_gen_probe_librarycheck() {
 	    # non-pkgconfig check - fallback
 	    echo "SAVE_LIBS=\$LIBS"
 	    echo "AC_SEARCH_LIBS([${functions_req[0]}],[${name}],["
-
 	    echo "${libname}_CFLAGS=;"
 	    echo "${libname}_LIBS=-l${name};"
-
 	    echo "],["
 
 	    for probe_name in ${probes_req[*]}; do
@@ -135,22 +134,9 @@ function ac_gen_probe_librarycheck() {
 	    done
 
 	    echo "],[])"
-
 	    echo "AC_SUBST([${libname}_CFLAGS])"
 	    echo "AC_SUBST([${libname}_LIBS])"
-
 	    echo "LIBS=\$SAVE_LIBS"
-
-	    #for probe_name in ${probes_req[*]}; do
-#		echo "probe_${probe_name}_req_deps_ok=no;"
-#		echo "probe_${probe_name}_req_deps_missing+=', ${libname}';"
-#	    done
-#
-#	    for probe_name in ${probes_opt[*]}; do
-#		echo "probe_${probe_name}_opt_deps_ok=no;"
-#		echo "probe_${probe_name}_opt_deps_missing+=', ${libname}';"
-#	    done
-
 	    echo "])"
 
 	    #
@@ -171,12 +157,12 @@ function ac_gen_probe_librarycheck() {
 
 	    for probe_name in ${probes_req[*]}; do
 		echo "probe_${probe_name}_req_deps_ok=no;"
-		echo "probe_${probe_name}_req_deps_missing+=', ${libname}';"
+		echo "probe_${probe_name}_req_deps_missing+=', ${libname} lib';"
 	    done
 
 	    for probe_name in ${probes_opt[*]}; do
 		echo "probe_${probe_name}_opt_deps_ok=no;"
-		echo "probe_${probe_name}_opt_deps_missing+=', ${libname}';"
+		echo "probe_${probe_name}_opt_deps_missing+=', ${libname} lib';"
 	    done
 
 	    echo "],[])"
@@ -191,18 +177,34 @@ function ac_gen_probe_librarycheck() {
 	echo "LIBS=\$${libname}_LIBS"
 
 	if [[ -n "${functions_req[0]}" ]]; then
+	    if [[ -n "${functions_lang}" ]]; then
+		echo "AC_LANG_PUSH([${functions_lang}])"
+	    fi
+
 	    echo "AC_CHECK_FUNCS([${functions_req[*]}], [], ["
 
 	    for probe_name in ${probes_req[*]}; do
 		echo "probe_${probe_name}_req_deps_ok=no;"
-		echo "probe_${probe_name}_req_deps_missing+=', library function(s)';"
+		echo "probe_${probe_name}_req_deps_missing+=\", \$ac_func func\";"
 	    done
 
 	    echo "])"
+
+	    if [[ -n "${functions_lang}" ]]; then
+		echo "AC_LANG_POP([${functions_lang}])"
+	    fi
 	fi
 
 	if [[ -n "${functions_opt[0]}" ]]; then
+	    if [[ -n "${functions_lang}" ]]; then
+		echo "AC_LANG_PUSH([${functions_lang}])"
+	    fi
+
 	    echo "AC_CHECK_FUNCS([${functions_opt[*]}],[],[])"
+
+	    if [[ -n "${functions_lang}" ]]; then
+		echo "AC_LANG_POP([${functions_lang}])"
+	    fi
 	fi
 
 	echo "LIBS=\$SAVE_LIBS"
