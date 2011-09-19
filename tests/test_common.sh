@@ -66,3 +66,71 @@ function test_exit {
     [ $result -eq 0 ] && exit 0
     exit 1
 }
+
+# Check if requiremets are in a path, use it as follows:
+# require 'program' || return 255
+function require {
+    eval "which $1 > /dev/null 2>&1"    
+    if [ ! $? -eq 0 ]; then	
+        echo -e "No unzip found in $PATH!\n" 
+	return 1; # Test is not applicable.
+    fi
+    return 0
+}
+
+# Check if probe exists, use it as follows:
+# probecheck 'probe' || return 255
+function probecheck {
+    if [ ! -f ${OVAL_PROBE_DIR}/probe_${1} ]; then
+	echo -e "Probe $1 does not exist!\n"
+	return 255; # Test is not applicable.
+    fi
+    return 0
+}
+
+function verify_results {
+
+    require "grep" || return 255
+
+    local ret_val=0;
+    local TYPE="$1"
+    local CONTENT="$2"
+    local RESULTS="$3"
+    local COUNT="$4" 
+    local FULLTYPE="definition"
+    
+    [ $TYPE == "tst" ] && FULLTYPE="test"
+
+    ID=1
+    while [ $ID -le $COUNT ]; do
+	
+	CON_ITEM=`grep "id=\"oval:1:${TYPE}:${ID}\"" $CONTENT`
+	RES_ITEM=`grep "${FULLTYPE}_id=\"oval:1:${TYPE}:${ID}\"" $RESULTS`	
+	if (echo $RES_ITEM | grep "result=\"true\"") >/dev/null; then
+	    RES="TRUE"
+	elif (echo $RES_ITEM | grep "result=\"false\"" >/dev/null); then
+	    RES="FALSE"
+	else
+	    RES="ERROR"
+	fi
+	
+	if (echo $CON_ITEM | grep "comment=\"true\"" >/dev/null); then
+	    CMT="TRUE"
+	elif (echo $CON_ITEM | grep "comment=\"false\"" >/dev/null); then
+	    CMT="FALSE"
+	else
+	    CMT="ERROR"
+	fi
+	
+	if [ ! $RES = $CMT ]; then
+	    echo "Result of oval:1:${TYPE}:${ID} should be ${CMT} and is ${RES}" 
+	    ret_val=$[$ret_val + 1]
+	fi
+	
+	ID=$[$ID+1]
+    done
+
+    [ $ret_val -gt 0 ] && return 1 
+
+    return 0   
+}
