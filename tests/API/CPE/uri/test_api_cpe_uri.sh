@@ -21,6 +21,7 @@ function test_api_cpe_uri_smoke {
 }
 
 function test_api_cpe_uri_parse {
+    require "grep" || return 255
     local ret_val=0
     for URI in ${CPE_URIS[@]}; do
 	./test_api_cpe_uri --parsing  $URI parsing.out >/dev/null
@@ -38,6 +39,7 @@ function test_api_cpe_uri_parse {
 }
 
 function test_api_cpe_uri_create {
+    require "grep" || return 255
     local ret_val=0
     for URI in ${CPE_URIS[@]}; do
 	./test_api_cpe_uri --parsing  $URI parsing.out > parsing.out.1
@@ -71,6 +73,7 @@ function test_api_cpe_uri_create {
 }
 
 function test_api_cpe_uri_match {
+    require "grep" || return 255
     local ret_val=0
     for URI in ${CPE_URIS[@]}; do
 	./test_api_cpe_uri --parsing $URI parsing.out

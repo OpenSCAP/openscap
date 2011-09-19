@@ -18,6 +18,7 @@ function test_api_cpe_dict_smoke {
 }
 
 function test_api_cpe_dict_remove_cpe {
+    require "grep" || return 255
     ! ./test_api_cpe_dict --remove $srcdir/dict.xml "UTF-8" "cpe:/a:addsoft" | \
 	grep -s "addsoft"
     return $?
@@ -35,6 +36,7 @@ function test_api_cpe_dict_match_non_existing_cpe {
 }
 
 function test_api_cpe_dict_match_existing_cpe {
+    require "grep" || return 255
     CPE_URIS=(`grep "cpe:" $srcdir/dict.xml | \
                sed 's/^.*cpe:/cpe:/g' | sed 's/".*$//g' | tr '\n' ' '`)    
     for URI in ${CPE_URIS[@]}; do

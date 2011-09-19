@@ -16,6 +16,7 @@
 # Test cases.
 
 function test_api_xccdf_export {
+    require "egrep" || return 255
     local ret_val=0
 
     ./test_api_xccdf --export $srcdir/scap-rhel5-xccdf.xml \

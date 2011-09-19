@@ -54,6 +54,7 @@ function test_api_cve_add_entry {
 }
 
 function test_api_cve_export_all {
+    require "egrep" || return 255
     local ret_val=0
     ./test_api_cve --test-export-all $srcdir/nvdcve-2.0-recent.xml "UTF-8" \
 	export.out "UTF-8"
