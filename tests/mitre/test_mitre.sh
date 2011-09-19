@@ -13,12 +13,10 @@ EXTVARFILE="${MITRE_FILES}/External Variables/external-variables.xml"
 
 function test_mitre {
 
-    if [ ! -d "$MITRE_FILES" ]; then
-        eval "which unzip > /dev/null 2>&1"    
-        if [ ! $? -eq 0 ]; then	
-            echo -e "No unzip found in $PATH!\n" 
-	    return 255; # Test is not applicable.
-        fi
+    require "egrep" || return 255
+    require "unzip" || return 255
+
+    if [ ! -d "$MITRE_FILES" ]; then	
         /usr/bin/unzip -u ${srcdir}/ValidationSupportFiles.zip -d /tmp
         # workaround file access time issue
         find "$MITRE_FILES"
