@@ -18,17 +18,14 @@
 
 function test_probes_sysinfo {
 
-    if [ ! -x ${OVAL_PROBE_DIR}/probe_system_info ]; then		
-	echo -e "Probe sysinfo does not exist!\n" 
-	return 255; # Test is not applicable.
-    fi
+    probecheck "system_info" || return 255
 
     local ret_val=0;
     local LOGFILE="test_probes_sysinfo.log"
 
     ./test_probes_sysinfo >> "$LOGFILE"
 
-    if [ $? -eq 0 ] && [ -f $RESFILE ]; then
+    if [ $? -eq 0 ] && [ -f $RF ]; then
 	
 	OS_NAME="`uname -s`"
 	if ! grep "os_name: $OS_NAME" "$LOGFILE" > /dev/null; then

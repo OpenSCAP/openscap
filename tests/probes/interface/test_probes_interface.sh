@@ -18,78 +18,28 @@
 
 function test_probes_interface {
 
-    if [ ! -x ${OVAL_PROBE_DIR}/probe_interface ]; then		
-	echo -e "Probe interface does not exist!\n" 
+    probecheck "interface" || return 255
+
+    local ret_val=0;
+    local DF="test_probes_interface.xml"
+    local RF="results.xml"
+
+    [ -f $RF ] && rm -f $RF
+
+    if [ ! -x test_probes_interface ]; then		
+	echo -e "Testing binary not found!\n" 
 	return 255; # Test is not applicable.
     fi
 
-    local ret_val=0;
-    local DEFFILE="test_probes_interface.xml"
-    local RESFILE="results.xml"
-
-    [ -f $RESFILE ] && rm -f $RESFILE
-
     bash ${srcdir}/test_probes_interface.xml.sh `pwd`/test_probes_interface \
-	> $DEFFILE
+	> $DF
     LINES=$?
 
-    ../../../utils/.libs/oscap oval eval --results $RESFILE $DEFFILE
+    ../../../utils/.libs/oscap oval eval --results $RF $DF
     
-    if [ -f $RESFILE ]; then
-
-	DEF_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:def:1\""`
-	DEF_RES=`cat "$RESFILE" | grep "definition_id=\"oval:1:def:1\""`
-
-	if (echo $DEF_RES | grep "result=\"true\"" >/dev/null); then
-	    RES="TRUE"
-	elif (echo $DEF_RES | grep "result=\"false\"" >/dev/null); then
-	    RES="FALSE"
-	else
-	    RES="ERROR"
-	fi
-	
-	if (echo $DEF_DEF | grep "comment=\"true\"" >/dev/null); then
-	    CMT="TRUE"
-	elif (echo $DEF_DEF | grep "comment=\"false\"" >/dev/null); then
-	    CMT="FALSE"
-	else
-	    CMT="ERROR"
-	fi
-	
-	if [ ! $RES = $CMT ]; then
-	    echo "Result of oval:1:def:1 should be ${CMT}!" 
-	    ret_val=$[$ret_val + 1]
-	fi
-	
-	COUNT=$LINES; ID=1
-	while [ $ID -le $COUNT ]; do
-	    
-	    TEST_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:tst:${ID}\""`
-	    TEST_RES=`cat "$RESFILE" | grep "test_id=\"oval:1:tst:${ID}\""`
-
-	    if (echo $TEST_RES | grep "result=\"true\"" >/dev/null); then
-		RES="TRUE"
-	    elif (echo $TEST_RES | grep "result=\"false\"" >/dev/null); then
-		RES="FALSE"
-	    else
-		RES="ERROR"
-	    fi
-
-	    if (echo $TEST_DEF | grep "comment=\"true\"" >/dev/null); then
-		CMT="TRUE"
-	    elif (echo $TEST_DEF | grep "comment=\"false\"" >/dev/null); then
-		CMT="FALSE"
-	    else
-		CMT="ERROR"
-	    fi
-
-	    if [ ! $RES = $CMT ]; then
-		echo "Result of oval:1:tst:${ID} should be ${CMT}!" 
-		ret_val=$[$ret_val + 1]
-	    fi
-
-	    ID=$[$ID+1]
-	done
+    if [ -f $RF ]; then
+	verify_results "def" $DF $RF 1 && verify_results "tst" $DF $RF $LINES
+	ret_val=$?
     else 
 	ret_val=1
     fi

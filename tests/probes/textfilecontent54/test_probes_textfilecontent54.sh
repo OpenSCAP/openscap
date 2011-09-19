@@ -18,16 +18,13 @@
 
 function test_probes_textfilecontent54 {
 
-    if [ ! -x ${OVAL_PROBE_DIR}/probe_textfilecontent54 ]; then		
-	echo -e "Probe textfilecontent54 does not exist!\n" 
-	return 255; # Test is not applicable.
-    fi
-
+    probecheck "textfilecontent54" || return 255
+	
     local ret_val=0;
-    local DEFFILE="${srcdir}/test_probes_textfilecontent54.xml"
-    local RESFILE="results.xml"
+    local DF="${srcdir}/test_probes_textfilecontent54.xml"
+    local RF="results.xml"
     
-    [ -f $RESFILE ] && rm -f $RESFILE
+    [ -f $RF ] && rm -f $RF
 
     local FILE_A="/tmp/test_probes_textfilecontent54.tmp_file"
     local FILE_B="/tmp/test_probes_textfilecontent54.tmp_file_empty"
@@ -39,69 +36,11 @@ function test_probes_textfilecontent54 {
     echo "valid_key = valid_value" > "$FILE_A"
     echo "valid_key = valid_value" >> "$FILE_A"
 
-    ../../../utils/.libs/oscap oval eval --results $RESFILE $DEFFILE
+    ../../../utils/.libs/oscap oval eval --results $RF $DF
     
-    if [ -f $RESFILE ]; then
-
-	COUNT=13; ID=1
-	while [ $ID -le $COUNT ]; do
-	    
-	    DEF_DEF=`cat "$DEFFILE" | grep "id=\"oval:0:def:${ID}\""`
-	    DEF_RES=`cat "$RESFILE" | grep "definition_id=\"oval:0:def:${ID}\""`
-
-	    if (echo $DEF_RES | grep "result=\"true\"" >/dev/null); then
-		RES="TRUE"
-	    elif (echo $DEF_RES | grep "result=\"false\"" >/dev/null); then
-		RES="FALSE"
-	    else
-		RES="ERROR"
-	    fi
-
-	    if (echo $DEF_DEF | grep "comment=\"true\"" >/dev/null); then
-		CMT="TRUE"
-	    elif (echo $DEF_DEF | grep "comment=\"false\"" >/dev/null); then
-		CMT="FALSE"
-	    else
-		CMT="ERROR"
-	    fi
-
-	    if [ ! $RES = $CMT ]; then
-		echo "Result of oval:0:def:${ID} should be ${CMT}!" 
-		ret_val=$[$ret_val + 1]
-	    fi
-
-	    ID=$[$ID+1]
-	done
-
-	COUNT=16; ID=1
-	while [ $ID -le $COUNT ]; do
-	    
-	    TEST_DEF=`cat "$DEFFILE" | grep "id=\"oval:0:tst:${ID}\""`
-	    TEST_RES=`cat "$RESFILE" | grep "test_id=\"oval:0:tst:${ID}\""`
-
-	    if (echo $TEST_RES | grep "result=\"true\"" >/dev/null); then
-		RES="TRUE"
-	    elif (echo $TEST_RES | grep "result=\"false\"" >/dev/null); then
-		RES="FALSE"
-	    else
-		RES="ERROR"
-	    fi
-
-	    if (echo $TEST_DEF | grep "comment=\"true\"" >/dev/null); then
-		CMT="TRUE"
-	    elif (echo $TEST_DEF | grep "comment=\"false\"" >/dev/null); then
-		CMT="FALSE"
-	    else
-		CMT="ERROR"
-	    fi
-
-	    if [ ! $RES = $CMT ]; then
-		echo "Result of oval:0:tst:${ID} should be ${CMT}!" 
-		ret_val=$[$ret_val + 1]
-	    fi
-	    
-	    ID=$[$ID+1]
-	done
+    if [ -f $RF ]; then
+	verify_results "def" $DF $RF 13 && verify_results "tst" $DF $RF 16
+	ret_val=$?
     else 
 	ret_val=1
     fi

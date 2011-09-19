@@ -18,80 +18,19 @@
 
 function test_probes_family {
 
-    if [ ! -x ${OVAL_PROBE_DIR}/probe_family ]; then		
-	echo -e "Probe family does not exist!\n" 
-	return 255; # Test is not applicable.
-    fi
+    probecheck "family" || return 255
 
     local ret_val=0;
-    local DEFFILE="${srcdir}/test_probes_family.xml"
-    local RESFILE="results.xml"
+    local DF="${srcdir}/test_probes_family.xml"
+    local RF="results.xml"
 
-    [ -f $RESFILE ] && rm -f $RESFILE
+    [ -f $RF ] && rm -f $RF
 
-    ../../../utils/.libs/oscap oval eval --results $RESFILE $DEFFILE
+    ../../../utils/.libs/oscap oval eval --results $RF $DF
 
-    if [ -f $RESFILE ]; then
-
-	COUNT=7; ID=1
-	while [ $ID -le $COUNT ]; do
-	    
-	    DEF_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:def:\${ID}\""`
-	    DEF_RES=`cat "$RESFILE" | grep "definition_id=\"oval:1:def:${ID}\""`
-
-	    if (echo $DEF_RES | grep "result=\"true\"") >/dev/null; then
-		RES="TRUE"
-	    elif (echo $DEF_RES | grep "result=\"false\"" >/dev/null); then
-		RES="FALSE"
-	    else
-		RES="ERROR"
-	    fi
-
-	    if (echo $DEF_DEF | grep "comment=\"true\"" >/dev/null); then
-		CMT="TRUE"
-	    elif (echo $DEF_DEF | grep "comment=\"false\"" >/dev/null); then
-		CMT="FALSE"
-	    else
-		CMT="ERROR"
-	    fi
-
-	    if [ ! $RES = $CMT ]; then
-		echo "Result of oval:1:def:${ID} should be ${CMT}!" 
-		ret_val=$[$ret_val + 1]
-	    fi
-	    
-	    ID=$[$ID+1]
-	done
-
-	COUNT=42; ID=1
-	while [ $ID -le $COUNT ]; do
-	    
-	    TEST_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:tst:${ID}\""`
-	    TEST_RES=`cat "$RESFILE" | grep "test_id=\"oval:1:tst:${ID}\""`
-
-	    if (echo $TEST_RES | grep "result=\"true\"" >/dev/null); then
-		RES="TRUE"
-	    elif (echo $TEST_RES | grep "result=\"false\"" >/dev/null); then
-		RES="FALSE"
-	    else
-		RES="ERROR"
-	    fi
-
-	    if (echo $TEST_DEF | grep "comment=\"true\"" >/dev/null); then
-		CMT="TRUE"
-	    elif (echo $TEST_DEF | grep "comment=\"false\"" >/dev/null); then
-		CMT="FALSE"
-	    else
-		CMT="ERROR"
-	    fi
-
-	    if [ ! $RES = $CMT ]; then
-		echo "Result of oval:1:tst:${ID} should be ${CMT}!" 
-		ret_val=$[$ret_val + 1]
-	    fi
-	    
-	    ID=$[$ID+1]
-	done
+    if [ -f $RF ]; then
+	verify_results "def" $DF $RF 7 && verify_results "tst" $DF $RF 42
+	ret_val=$?
     else 
 	ret_val=1
     fi

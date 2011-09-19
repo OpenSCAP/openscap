@@ -18,6 +18,8 @@
 VGTEST_TMPDIR="/tmp/vgtest"
 
 function test_probes_vg {
+
+    require "valgrind" || return 255
     
     if [[ ! -d "$VGTEST_TMPDIR" ]]; then
 	mkdir -p "$VGTEST_TMPDIR" || exit 1

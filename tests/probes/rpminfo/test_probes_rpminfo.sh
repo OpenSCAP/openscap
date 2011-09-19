@@ -18,90 +18,24 @@
 
 function test_probes_rpminfo {
 
-    if [ ! -x ${OVAL_PROBE_DIR}/probe_rpminfo ]; then		
-	echo -e "Probe rpminfo does not exist!\n" 
-	return 255; # Test is not applicable.
-    fi
+    probecheck "rpminfo" || return 255
+    require "rpm" || return 255
 
     local ret_val=0;
-    local DEFFILE="test_probes_rpminfo.xml"
-    local RESFILE="results.xml"
+    local DF="test_probes_rpminfo.xml"
+    local RF="results.xml"
 
-    [ -f $RESFILE ] && rm -f $RESFILE
-
-    eval "which rpm > /dev/null 2>&1"    
-    if [ ! $? -eq 0 ]; then	
-	echo -e "No rpm found in $PATH!\n" 
-	return 255; # Test is not applicable.
-    fi
+    [ -f $RF ] && rm -f $RF
 
     local RPM_A_NAME=`rpm --qf "%{NAME}\n" -qa | sort -u | sed -n '1p'`
     local RPM_B_NAME=`rpm --qf "%{NAME}\n" -qa | sort -u | sed -n '2p'`
     
-    bash ${srcdir}/test_probes_rpminfo.xml.sh $RPM_A_NAME $RPM_B_NAME > $DEFFILE
-    ../../../utils/.libs/oscap oval eval --results $RESFILE $DEFFILE
+    bash ${srcdir}/test_probes_rpminfo.xml.sh $RPM_A_NAME $RPM_B_NAME > $DF
+    ../../../utils/.libs/oscap oval eval --results $RF $DF
         
-    if [ -f $RESFILE ]; then
-
-	COUNT=13; ID=1
-	while [ $ID -le $COUNT ]; do
-	    
-	    DEF_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:def:${ID}\""`
-	    DEF_RES=`cat "$RESFILE" | grep "definition_id=\"oval:1:def:${ID}\""`
-
-	    if (echo $DEF_RES | grep "result=\"true\"" >/dev/null); then
-		RES="TRUE"
-	    elif (echo $DEF_RES | grep "result=\"false\"" >/dev/null); then
-		RES="FALSE"
-	    else
-		RES="ERROR"
-	    fi
-
-	    if (echo $DEF_DEF | grep "comment=\"true\"" >/dev/null); then
-		CMT="TRUE"
-	    elif (echo $DEF_DEF | grep "comment=\"false\"" >/dev/null); then
-		CMT="FALSE"
-	    else
-		CMT="ERROR"
-	    fi
-
-	    if [ ! $RES = $CMT ]; then
-		echo "Result of oval:1:def:${ID} should be ${CMT}!" 
-		ret_val=$[$ret_val + 1]
-	    fi
-
-	    ID=$[$ID+1]
-	done
-
-	COUNT=200; ID=1
-	while [ $ID -le $COUNT ]; do
-	    
-	    TEST_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:tst:${ID}\""`
-	    TEST_RES=`cat "$RESFILE" | grep "test_id=\"oval:1:tst:${ID}\""`
-
-	    if (echo $TEST_RES | grep "result=\"true\"" >/dev/null); then
-		RES="TRUE"
-	    elif (echo $TEST_RES | grep "result=\"false\"" >/dev/null); then
-		RES="FALSE"
-	    else
-		RES="ERROR"
-	    fi
-
-	    if (echo $TEST_DEF | grep "comment=\"true\"" >/dev/null); then
-		CMT="TRUE"
-	    elif (echo $TEST_DEF | grep "comment=\"false\"" >/dev/null); then
-		CMT="FALSE"
-	    else
-		CMT="ERROR"
-	    fi
-
-	    if [ ! $RES = $CMT ]; then
-		echo "Result of oval:1:tst:${ID} should be ${CMT}!" 
-		ret_val=$[$ret_val + 1]
-	    fi
-
-	    ID=$[$ID+1]
-	done
+    if [ -f $RF ]; then
+	verify_results "def" $DF $RF 13 && verify_results "tst" $DF $RF 200
+	ret_val=$?
     else 
 	ret_val=1
     fi

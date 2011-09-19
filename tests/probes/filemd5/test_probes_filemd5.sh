@@ -18,10 +18,8 @@
 
 function test_probes_filemd5 {
 
-    if [ ! -x ${OVAL_PROBE_DIR}/probe_filemd5 ]; then		
-	echo -e "Probe filemd5 does not exist!\n" 
-	return 255; # Test is not applicable.
-    fi
+    probecheck "filemd5" || return 255
+    require "md5sum" || return 255
 
     local ret_val=0;
     local DEFFILE="test_probes_filemd5.xml"
@@ -29,76 +27,12 @@ function test_probes_filemd5 {
 
     [ -f $RESFILE ] && rm -f $RESFILE
 
-    eval "which md5sum > /dev/null 2>&1"    
-    if [ ! $? -eq 0 ]; then		
-	echo -e "No md5sum found in $PATH!\n" 
-	return 255; # Test is not applicable.
-    fi
-    
     bash ${srcdir}/test_probes_filemd5.xml.sh > $DEFFILE
     ../../../utils/.libs/oscap oval eval --results $RESFILE $DEFFILE
     
     if [ -f $RESFILE ]; then
-
-	COUNT=13; ID=1
-	while [ $ID -le $COUNT ]; do
-	    
-	    DEF_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:def:${ID}\""`
-	    DEF_RES=`cat "$RESFILE" | grep "definition_id=\"oval:1:def:${ID}\""`
-
-	    if (echo $DEF_RES | grep "result=\"true\"" >/dev/null); then
-		RES="TRUE"
-	    elif (echo $DEF_RES | grep "result=\"false\"" >/dev/null); then
-		RES="FALSE"
-	    else
-		RES="ERROR"
-	    fi
-
-	    if (echo $DEF_DEF | grep "comment=\"true\"" >/dev/null); then
-		CMT="TRUE"
-	    elif (echo $DEF_DEF | grep "comment=\"false\"" >/dev/null); then
-		CMT="FALSE"
-	    else
-		CMT="ERROR"
-	    fi
-
-	    if [ ! $RES = $CMT ]; then
-		echo "Result of oval:1:def:${ID} should be ${CMT}!" 
-		ret_val=$[$ret_val + 1]
-	    fi
-
-	    ID=$[$ID+1]
-	done
-
-	COUNT=96; ID=1
-	while [ $ID -le $COUNT ]; do
-	    
-	    TEST_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:tst:${ID}\""`
-	    TEST_RES=`cat "$RESFILE" | grep "test_id=\"oval:1:tst:${ID}\""`
-
-	    if (echo $TEST_RES | grep "result=\"true\"" >/dev/null); then
-		RES="TRUE"
-	    elif (echo $TEST_RES | grep "result=\"false\"" >/dev/null); then
-		RES="FALSE"
-	    else
-		RES="ERROR"
-	    fi
-
-	    if (echo $TEST_DEF | grep "comment=\"true\"" >/dev/null); then
-		CMT="TRUE"
-	    elif (echo $TEST_DEF | grep "comment=\"false\"" >/dev/null); then
-		CMT="FALSE"
-	    else
-		CMT="ERROR"
-	    fi
-
-	    if [ ! $RES = $CMT ]; then
-		echo "Result of oval:1:tst:${ID} should be ${CMT}!" 
-		ret_val=$[$ret_val + 1]
-	    fi
-
-	    ID=$[$ID+1]
-	done
+	verify_results "def" $DF $RF 13 && verify_results "tst" $DF $RF 96
+	ret_val=$?
     else 
 	ret_val=1
     fi

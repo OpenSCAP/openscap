@@ -18,16 +18,13 @@
 
 function test_probes_password {
 
-    if [ ! -x ${OVAL_PROBE_DIR}/probe_password ]; then		
-	echo -e "Probe password does not exist!\n" 
-	return 255; # Test is not applicable.
-    fi
+    probecheck "password" || return 255
 
     local ret_val=0;
-    local DEFFILE="test_probes_password.xml"
-    local RESFILE="results.xml"
+    local DF="test_probes_password.xml"
+    local RF="results.xml"
    
-    [ -f $RESFILE ] && rm -f $RESFILE
+    [ -f $RF ] && rm -f $RF
 
     eval "cat /etc/passwd > /dev/null 2>&1"    
     if [ ! $? -eq 0 ]; then	
@@ -35,64 +32,14 @@ function test_probes_password {
 	return 255; # Test is not applicable.
     fi
 
-    bash ${srcdir}/test_probes_password.xml.sh > $DEFFILE
-    ../../../utils/.libs/oscap oval eval --results $RESFILE $DEFFILE
+    LINES=`cat /etc/passwd | wc -l`
+
+    bash ${srcdir}/test_probes_password.xml.sh > $DF
+    ../../../utils/.libs/oscap oval eval --results $RF $DF
        
-    if [ -f $RESFILE ]; then
-
-	DEF_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:def:1\""`
-	DEF_RES=`cat "$RESFILE" | grep "definition_id=\"oval:1:def:1\""`
-
-	if (echo $DEF_RES | grep "result=\"true\"" >/dev/null); then
-	    RES="TRUE"
-	elif (echo $DEF_RES | grep "result=\"false\"" >/dev/null); then
-	    RES="FALSE"
-	else
-	    RES="ERROR"
-	fi
-	
-	if (echo $DEF_DEF | grep "comment=\"true\"" >/dev/null); then
-	    CMT="TRUE"
-	elif (echo $DEF_DEF | grep "comment=\"false\"" >/dev/null); then
-	    CMT="FALSE"
-	else
-	    CMT="ERROR"
-	fi
-	
-	if [ ! $RES = $CMT ]; then
-	    echo "Result of definition:1 should be ${CMT}!" 
-	    ret_val=$[$ret_val + 1]
-	fi
-	
-	COUNT=`cat /etc/passwd | wc -l`; ID=1
-	while [ $ID -le $COUNT ]; do
-	    
-	    TST_DEF=`cat "$DEFFILE" | grep "id=\"oval:1:tst:${ID}\""`
-	    TST_RES=`cat "$RESFILE" | grep "test_id=\"oval:1:tst:${ID}\""`
-
-	    if (echo $TST_RES | grep "result=\"true\"" >/dev/null); then
-		RES="TRUE"
-	    elif (echo $TST_RES | grep "result=\"false\"" >/dev/null); then
-		RES="FALSE"
-	    else
-		RES="ERROR"
-	    fi
-
-	    if (echo $TST_DEF | grep "comment=\"true\"" >/dev/null); then
-		CMT="TRUE"
-	    elif (echo $TST_DEF | grep "comment=\"false\"" >/dev/null); then
-		CMT="FALSE"
-	    else
-		CMT="ERROR"
-	    fi
-
-	    if [ ! $RES = $CMT ]; then
-		echo "Result of test:${ID} should be ${CMT}!" 
-		ret_val=$[$ret_val + 1]
-	    fi
-	    
-	    ID=$[$ID+1]
-	done
+    if [ -f $RF ]; then
+	verify_results "def" $DF $RF 1 && verify_results "tst" $DF $RF $LINES
+	ret_val=$?
     else 
 	ret_val=1
     fi
