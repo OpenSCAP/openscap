@@ -181,9 +181,10 @@ function ac_gen_probe_librarycheck() {
 		echo "AC_LANG_PUSH([${functions_lang}])"
 	    fi
 
-	    echo "AC_CHECK_FUNCS([${functions_req[*]}], [], ["
+	    echo -n "AC_CHECK_FUNCS([${functions_req[*]}], [], ["
 
 	    for probe_name in ${probes_req[*]}; do
+		echo
 		echo "probe_${probe_name}_req_deps_ok=no;"
 		echo "probe_${probe_name}_req_deps_missing+=\", \$ac_func func\";"
 	    done

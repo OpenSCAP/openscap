@@ -521,8 +521,7 @@ AC_SUBST([acl_LIBS])
 LIBS=$SAVE_LIBS
 SAVE_LIBS=$LIBS
 LIBS=$acl_LIBS
-AC_CHECK_FUNCS([acl_init], [], [
-])
+AC_CHECK_FUNCS([acl_init], [], [])
 LIBS=$SAVE_LIBS
 echo
 echo '* Checking for apt_pkg library used by: dpkginfo '
@@ -565,8 +564,7 @@ LIBS=$SAVE_LIBS
 ])
 SAVE_LIBS=$LIBS
 LIBS=$blkid_LIBS
-AC_CHECK_FUNCS([blkid_get_cache], [], [
-])
+AC_CHECK_FUNCS([blkid_get_cache], [], [])
 LIBS=$SAVE_LIBS
 echo
 echo '* Checking for cap library used by: process58 '
@@ -692,6 +690,7 @@ LIBS=$odbx_LIBS
 AC_CHECK_FUNCS([odbx_init], [], [
 probe_sql_req_deps_ok=no;
 probe_sql_req_deps_missing+=", $ac_func func";
+
 probe_sql57_req_deps_ok=no;
 probe_sql57_req_deps_missing+=", $ac_func func";
 ])
@@ -720,8 +719,10 @@ LIBS=$pcre_LIBS
 AC_CHECK_FUNCS([pcre_exec], [], [
 probe_textfilecontent54_req_deps_ok=no;
 probe_textfilecontent54_req_deps_missing+=", $ac_func func";
+
 probe_textfilecontent_req_deps_ok=no;
 probe_textfilecontent_req_deps_missing+=", $ac_func func";
+
 probe_partition_req_deps_ok=no;
 probe_partition_req_deps_missing+=", $ac_func func";
 ])
@@ -748,6 +749,7 @@ LIBS=$rpm_LIBS
 AC_CHECK_FUNCS([rpmtsCreate rpmReadConfigFiles], [], [
 probe_rpminfo_req_deps_ok=no;
 probe_rpminfo_req_deps_missing+=", $ac_func func";
+
 probe_rpmverify_req_deps_ok=no;
 probe_rpmverify_req_deps_missing+=", $ac_func func";
 ])
@@ -777,8 +779,10 @@ LIBS=$selinux_LIBS
 AC_CHECK_FUNCS([security_get_boolean_names], [], [
 probe_process58_req_deps_ok=no;
 probe_process58_req_deps_missing+=", $ac_func func";
+
 probe_selinuxboolean_req_deps_ok=no;
 probe_selinuxboolean_req_deps_missing+=", $ac_func func";
+
 probe_selinuxsecuritycontext_req_deps_ok=no;
 probe_selinuxsecuritycontext_req_deps_missing+=", $ac_func func";
 ])
