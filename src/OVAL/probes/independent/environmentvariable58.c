@@ -205,7 +205,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 		return PROBE_ENOENT;
 	}
 
-	PROBE_ENT_I32VAL(pid_ent, pid, pid = -1;);
+	PROBE_ENT_I32VAL(pid_ent, pid, pid = -1;, pid = 0;);
 
 	if (pid == -1) {
 		SEXP_free(name_ent);

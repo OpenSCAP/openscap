@@ -294,7 +294,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 	}
 
 	if (pid != NULL) {
-		PROBE_ENT_I32VAL(pid, process_pid, err = PROBE_ENOVAL;);
+		PROBE_ENT_I32VAL(pid, process_pid, err = PROBE_ENOVAL;, process_pid = 0;);
 		if (err != 0)
 			goto cleanup;
 

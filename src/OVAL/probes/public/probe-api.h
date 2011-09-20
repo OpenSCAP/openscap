@@ -551,13 +551,13 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
 		}						\
 	} while (0)
 
-#define PROBE_ENT_I32VAL(ent, dst, invalid_exp)                 \
+#define PROBE_ENT_I32VAL(ent, dst, invalid_exp, nil_exp)        \
 	do {							\
 		SEXP_t *___r;					\
 								\
 		if ((___r = probe_ent_getval(ent)) == NULL) {	\
 			_W("Entity has no value!\n");		\
-			invalid_exp				\
+			nil_exp;				\
 		} else {					\
 			if (!SEXP_numberp(___r)) {		\
 				_F("Invalid type\n");		\
