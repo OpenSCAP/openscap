@@ -101,7 +101,7 @@ cat <<EOF
     </environmentvariable58_object>
 
     <environmentvariable58_object version="1" id="oval:1:obj:3" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <pid operation="greater than" datatype="int">1</pid>
+      <pid operation="greater than" datatype="int">$$</pid>
       <!-- <name operation="pattern match">.*</name> -->
       <name>PATH</name>
     </environmentvariable58_object>
@@ -121,7 +121,7 @@ I=0
 while [ $I -lt ${#ENV_VAR[@]} ]; do
     cat <<EOF
   <environmentvariable58_state version="1" id="oval:1:ste:$[$I+2]" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-    <pid operation="greater than" datatype="int">1</pid>
+    <pid operation="greater than" datatype="int">$$</pid>
     <name>${ENV_VAR[$I]}</name>
     <value>${VAR_VAL[$I]}</value>
   </environmentvariable58_state>
@@ -131,7 +131,7 @@ done
 
 cat <<EOF
   <environmentvariable58_state version="1" id="oval:1:ste:$[$I+2]" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-    <pid datatype="int">1</pid>
+    <pid datatype="int">$$</pid>
     <!-- <name operation="pattern match">.*</name> -->
     <name>PATH</name>
     <value operation="pattern match">.*</value>
