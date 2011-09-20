@@ -18,8 +18,6 @@
 
 function test_probes_interface {
 
-    probecheck "interface" || return 255
-
     local ret_val=0;
     local DF="test_probes_interface.xml"
     local RF="results.xml"
