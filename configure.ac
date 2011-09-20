@@ -519,6 +519,10 @@ probe_file_opt_deps_missing+=', acl lib';
 AC_SUBST([acl_CFLAGS])
 AC_SUBST([acl_LIBS])
 LIBS=$SAVE_LIBS
+SAVE_LIBS=$LIBS
+LIBS=$acl_LIBS
+AC_CHECK_FUNCS([acl_init], [], [])
+LIBS=$SAVE_LIBS
 echo
 echo '* Checking for apt_pkg library used by: dpkginfo '
 PKG_CHECK_MODULES([apt_pkg], [libapt-pkg >= 0.0],[],[
@@ -534,6 +538,15 @@ AC_SUBST([apt_pkg_CFLAGS])
 AC_SUBST([apt_pkg_LIBS])
 LIBS=$SAVE_LIBS
 ])
+SAVE_LIBS=$LIBS
+LIBS=$apt_pkg_LIBS
+AC_LANG_PUSH([C++])
+AC_CHECK_FUNCS([pkgInitConfig pkgInitSystem], [], [
+probe_dpkginfo_req_deps_ok=no;
+probe_dpkginfo_req_deps_missing+=", $ac_func func";
+])
+AC_LANG_POP([C++])
+LIBS=$SAVE_LIBS
 echo
 echo '* Checking for blkid library used by:  partition'
 PKG_CHECK_MODULES([blkid], [blkid >= 0.0],[],[
@@ -549,6 +562,10 @@ AC_SUBST([blkid_CFLAGS])
 AC_SUBST([blkid_LIBS])
 LIBS=$SAVE_LIBS
 ])
+SAVE_LIBS=$LIBS
+LIBS=$blkid_LIBS
+AC_CHECK_FUNCS([blkid_get_cache], [], [])
+LIBS=$SAVE_LIBS
 echo
 echo '* Checking for cap library used by: process58 '
 SAVE_LIBS=$LIBS
@@ -561,6 +578,13 @@ probe_process58_req_deps_missing+=', cap lib';
 ],[])
 AC_SUBST([cap_CFLAGS])
 AC_SUBST([cap_LIBS])
+LIBS=$SAVE_LIBS
+SAVE_LIBS=$LIBS
+LIBS=$cap_LIBS
+AC_CHECK_FUNCS([cap_init], [], [
+probe_process58_req_deps_ok=no;
+probe_process58_req_deps_missing+=", $ac_func func";
+])
 LIBS=$SAVE_LIBS
 echo
 echo '* Checking for gconf2 library used by: gconf '
@@ -577,6 +601,13 @@ AC_SUBST([gconf2_CFLAGS])
 AC_SUBST([gconf2_LIBS])
 LIBS=$SAVE_LIBS
 ])
+SAVE_LIBS=$LIBS
+LIBS=$gconf2_LIBS
+AC_CHECK_FUNCS([gconf_engine_get_default], [], [
+probe_gconf_req_deps_ok=no;
+probe_gconf_req_deps_missing+=", $ac_func func";
+])
+LIBS=$SAVE_LIBS
 echo
 echo '* Checking for lber library used by: ldap57 '
 SAVE_LIBS=$LIBS
@@ -590,6 +621,13 @@ probe_ldap57_req_deps_missing+=', lber lib';
 AC_SUBST([lber_CFLAGS])
 AC_SUBST([lber_LIBS])
 LIBS=$SAVE_LIBS
+SAVE_LIBS=$LIBS
+LIBS=$lber_LIBS
+AC_CHECK_FUNCS([ber_init], [], [
+probe_ldap57_req_deps_ok=no;
+probe_ldap57_req_deps_missing+=", $ac_func func";
+])
+LIBS=$SAVE_LIBS
 echo
 echo '* Checking for ldap library used by: ldap57 '
 SAVE_LIBS=$LIBS
@@ -602,6 +640,13 @@ probe_ldap57_req_deps_missing+=', ldap lib';
 ],[])
 AC_SUBST([ldap_CFLAGS])
 AC_SUBST([ldap_LIBS])
+LIBS=$SAVE_LIBS
+SAVE_LIBS=$LIBS
+LIBS=$ldap_LIBS
+AC_CHECK_FUNCS([ldap_init], [], [
+probe_ldap57_req_deps_ok=no;
+probe_ldap57_req_deps_missing+=", $ac_func func";
+])
 LIBS=$SAVE_LIBS
 echo
 echo '* Checking for nl library used by: routingtable '
@@ -618,6 +663,13 @@ AC_SUBST([nl_CFLAGS])
 AC_SUBST([nl_LIBS])
 LIBS=$SAVE_LIBS
 ])
+SAVE_LIBS=$LIBS
+LIBS=$nl_LIBS
+AC_CHECK_FUNCS([nl_connect nl_handle_alloc], [], [
+probe_routingtable_req_deps_ok=no;
+probe_routingtable_req_deps_missing+=", $ac_func func";
+])
+LIBS=$SAVE_LIBS
 echo
 echo '* Checking for odbx library used by: sql sql57 '
 SAVE_LIBS=$LIBS
@@ -632,6 +684,16 @@ probe_sql57_req_deps_missing+=', odbx lib';
 ],[])
 AC_SUBST([odbx_CFLAGS])
 AC_SUBST([odbx_LIBS])
+LIBS=$SAVE_LIBS
+SAVE_LIBS=$LIBS
+LIBS=$odbx_LIBS
+AC_CHECK_FUNCS([odbx_init], [], [
+probe_sql_req_deps_ok=no;
+probe_sql_req_deps_missing+=", $ac_func func";
+
+probe_sql57_req_deps_ok=no;
+probe_sql57_req_deps_missing+=", $ac_func func";
+])
 LIBS=$SAVE_LIBS
 echo
 echo '* Checking for pcre library used by: textfilecontent54 textfilecontent partition '
@@ -652,6 +714,19 @@ AC_SUBST([pcre_CFLAGS])
 AC_SUBST([pcre_LIBS])
 LIBS=$SAVE_LIBS
 ])
+SAVE_LIBS=$LIBS
+LIBS=$pcre_LIBS
+AC_CHECK_FUNCS([pcre_exec], [], [
+probe_textfilecontent54_req_deps_ok=no;
+probe_textfilecontent54_req_deps_missing+=", $ac_func func";
+
+probe_textfilecontent_req_deps_ok=no;
+probe_textfilecontent_req_deps_missing+=", $ac_func func";
+
+probe_partition_req_deps_ok=no;
+probe_partition_req_deps_missing+=", $ac_func func";
+])
+LIBS=$SAVE_LIBS
 echo
 echo '* Checking for rpm library used by: rpminfo rpmverify '
 PKG_CHECK_MODULES([rpm], [rpm >= 0.0],[],[
@@ -669,6 +744,17 @@ AC_SUBST([rpm_CFLAGS])
 AC_SUBST([rpm_LIBS])
 LIBS=$SAVE_LIBS
 ])
+SAVE_LIBS=$LIBS
+LIBS=$rpm_LIBS
+AC_CHECK_FUNCS([rpmtsCreate rpmReadConfigFiles], [], [
+probe_rpminfo_req_deps_ok=no;
+probe_rpminfo_req_deps_missing+=", $ac_func func";
+
+probe_rpmverify_req_deps_ok=no;
+probe_rpmverify_req_deps_missing+=", $ac_func func";
+])
+AC_CHECK_FUNCS([headerFormat headerSprintf rpmFreeCrypto rpmFreeFilesystems],[],[])
+LIBS=$SAVE_LIBS
 echo
 echo '* Checking for selinux library used by: process58 selinuxboolean selinuxsecuritycontext '
 PKG_CHECK_MODULES([selinux], [libselinux >= 0.0],[],[
@@ -688,6 +774,19 @@ AC_SUBST([selinux_CFLAGS])
 AC_SUBST([selinux_LIBS])
 LIBS=$SAVE_LIBS
 ])
+SAVE_LIBS=$LIBS
+LIBS=$selinux_LIBS
+AC_CHECK_FUNCS([security_get_boolean_names], [], [
+probe_process58_req_deps_ok=no;
+probe_process58_req_deps_missing+=", $ac_func func";
+
+probe_selinuxboolean_req_deps_ok=no;
+probe_selinuxboolean_req_deps_missing+=", $ac_func func";
+
+probe_selinuxsecuritycontext_req_deps_ok=no;
+probe_selinuxsecuritycontext_req_deps_missing+=", $ac_func func";
+])
+LIBS=$SAVE_LIBS
 echo
 echo '* Checking for xml2 library used by: xmlfilecontent '
 PKG_CHECK_MODULES([xml2], [libxml-2.0 >= 0.0],[],[
@@ -703,6 +802,13 @@ AC_SUBST([xml2_CFLAGS])
 AC_SUBST([xml2_LIBS])
 LIBS=$SAVE_LIBS
 ])
+SAVE_LIBS=$LIBS
+LIBS=$xml2_LIBS
+AC_CHECK_FUNCS([xmlTextReaderRead], [], [
+probe_xmlfilecontent_req_deps_ok=no;
+probe_xmlfilecontent_req_deps_missing+=", $ac_func func";
+])
+LIBS=$SAVE_LIBS
 echo
 echo '* Checking for xslt library used by: xmlfilecontent '
 PKG_CHECK_MODULES([xslt], [libxslt >= 0.0],[],[
@@ -718,6 +824,13 @@ AC_SUBST([xslt_CFLAGS])
 AC_SUBST([xslt_LIBS])
 LIBS=$SAVE_LIBS
 ])
+SAVE_LIBS=$LIBS
+LIBS=$xslt_LIBS
+AC_CHECK_FUNCS([xsltDocumentFunction], [], [
+probe_xmlfilecontent_req_deps_ok=no;
+probe_xmlfilecontent_req_deps_missing+=", $ac_func func";
+])
+LIBS=$SAVE_LIBS
 echo
 
 AC_PATH_PROG(PERL, perl)

@@ -173,42 +173,42 @@ function ac_gen_probe_librarycheck() {
 	    echo "LIBS=\$SAVE_LIBS"
 	fi
 
-	# echo "SAVE_LIBS=\$LIBS"
-	# echo "LIBS=\$${libname}_LIBS"
+	echo "SAVE_LIBS=\$LIBS"
+	echo "LIBS=\$${libname}_LIBS"
 
-	# if [[ -n "${functions_req[0]}" ]]; then
-	#     if [[ -n "${functions_lang}" ]]; then
-	# 	echo "AC_LANG_PUSH([${functions_lang}])"
-	#     fi
+	if [[ -n "${functions_req[0]}" ]]; then
+	    if [[ -n "${functions_lang}" ]]; then
+		echo "AC_LANG_PUSH([${functions_lang}])"
+	    fi
 
-	#     echo -n "AC_CHECK_FUNCS([${functions_req[*]}], [], ["
+	    echo -n "AC_CHECK_FUNCS([${functions_req[*]}], [], ["
 
-	#     for probe_name in ${probes_req[*]}; do
-	# 	echo
-	# 	echo "probe_${probe_name}_req_deps_ok=no;"
-	# 	echo "probe_${probe_name}_req_deps_missing+=\", \$ac_func func\";"
-	#     done
+	    for probe_name in ${probes_req[*]}; do
+		echo
+		echo "probe_${probe_name}_req_deps_ok=no;"
+		echo "probe_${probe_name}_req_deps_missing+=\", \$ac_func func\";"
+	    done
 
-	#     echo "])"
+	    echo "])"
 
-	#     if [[ -n "${functions_lang}" ]]; then
-	# 	echo "AC_LANG_POP([${functions_lang}])"
-	#     fi
-	# fi
+	    if [[ -n "${functions_lang}" ]]; then
+		echo "AC_LANG_POP([${functions_lang}])"
+	    fi
+	fi
 
-	# if [[ -n "${functions_opt[0]}" ]]; then
-	#     if [[ -n "${functions_lang}" ]]; then
-	# 	echo "AC_LANG_PUSH([${functions_lang}])"
-	#     fi
+	if [[ -n "${functions_opt[0]}" ]]; then
+	    if [[ -n "${functions_lang}" ]]; then
+		echo "AC_LANG_PUSH([${functions_lang}])"
+	    fi
 
-	#     echo "AC_CHECK_FUNCS([${functions_opt[*]}],[],[])"
+	    echo "AC_CHECK_FUNCS([${functions_opt[*]}],[],[])"
 
-	#     if [[ -n "${functions_lang}" ]]; then
-	# 	echo "AC_LANG_POP([${functions_lang}])"
-	#     fi
-	# fi
+	    if [[ -n "${functions_lang}" ]]; then
+		echo "AC_LANG_POP([${functions_lang}])"
+	    fi
+	fi
 
-	# echo "LIBS=\$SAVE_LIBS"
+	echo "LIBS=\$SAVE_LIBS"
 
 	unset functions_opt
 	unset functions_req
