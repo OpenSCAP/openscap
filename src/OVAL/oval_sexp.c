@@ -879,12 +879,10 @@ static struct oval_sysitem *oval_sysitem_from_sexp(struct oval_syschar_model *mo
 	oval_sysitem_set_status(sysitem, status);
 	oval_sysitem_set_subtype(sysitem, type);
 
-	if (status == OVAL_STATUS_EXISTS) {
-		for (int i = 2; (sub = SEXP_list_nth(sexp, i)) != NULL; ++i) {
-			if ((sysent = oval_sysent_from_sexp(model, sub)) != NULL)
-				oval_sysitem_add_sysent(sysitem, sysent);
-			SEXP_free(sub);
-		}
+	for (int i = 2; (sub = SEXP_list_nth(sexp, i)) != NULL; ++i) {
+		if ((sysent = oval_sysent_from_sexp(model, sub)) != NULL)
+			oval_sysitem_add_sysent(sysitem, sysent);
+		SEXP_free(sub);
 	}
 
  cleanup:
