@@ -106,7 +106,7 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 					NULL
 			);
 
-			probe_item_setstatus(item, SYSCHAR_STATUS_NOT_COLLECTED);
+			probe_item_setstatus(item, SYSCHAR_STATUS_ERROR);
 			probe_item_add_msg(item, OVAL_MESSAGE_LEVEL_ERROR,
 					   "Can't open \"%s\": errno=%d, %s.", env_file, errno, strerror (errno));
 			probe_item_collect(ctx, item);
