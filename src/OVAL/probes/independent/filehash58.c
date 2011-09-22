@@ -99,7 +99,7 @@ static int mem2hex (uint8_t *mem, size_t mlen, char *str, size_t slen)
 
 static int filehash58_cb (const char *p, const char *f, const char *h, probe_ctx *ctx)
 {
-	SEXP_t *itm, *r0, *r1;
+	SEXP_t *itm;
 
 	char   pbuf[PATH_MAX+1];
 	size_t plen, flen;
@@ -134,30 +134,18 @@ static int filehash58_cb (const char *p, const char *f, const char *h, probe_ctx
 	fd = open (pbuf, O_RDONLY);
 
 	if (fd < 0) {
-		SEXP_t *at;
-
 		strerror_r (errno, pbuf, PATH_MAX);
 		pbuf[PATH_MAX] = '\0';
 
-		fd = open (p, O_RDONLY);
-		at = probe_attr_creat ("status",  r0 = SEXP_number_newi_32 (SYSCHAR_STATUS_ERROR), /* XXX: don't use newi_32 directly */
-				       "message", r1 = SEXP_string_newf ("%s", pbuf),
-				       NULL);
-
-		SEXP_vfree (r0, r1, NULL);
-
-		if (fd < 0) {
-			itm = probe_item_creat ("filehash58_item", NULL,
-						"path", at, NULL,
-						NULL);
-		} else {
-			close (fd);
-			itm = probe_item_creat ("filehash58_item", NULL,
-						"filename", at, NULL,
-						NULL);
-		}
-
-		SEXP_free (at);
+		itm = probe_item_create (OVAL_INDEPENDENT_FILE_HASH58, NULL,
+					"filepath", OVAL_DATATYPE_STRING, pbuf,
+					"path",     OVAL_DATATYPE_STRING, p,
+					"filename", OVAL_DATATYPE_STRING, f,
+					"hash_type",OVAL_DATATYPE_STRING, h,
+					NULL);
+		probe_item_add_msg(itm, OVAL_MESSAGE_LEVEL_ERROR,
+			"Can't open \"%s\": errno=%d, %s.", pbuf, errno, strerror (errno));
+		probe_item_setstatus(itm, SYSCHAR_STATUS_ERROR);
 	} else {
 		uint8_t hash_dst[1025];
 		size_t  hash_dstlen = sizeof hash_dst;
