@@ -556,11 +556,11 @@ static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
 		item_status = probe_ent_getstatus(item);
 
 		switch (item_status) {
-		case OVAL_STATUS_DOESNOTEXIST:
+		case SYSCHAR_STATUS_DOES_NOT_EXIST:
 			continue;
-		case OVAL_STATUS_ERROR:
+		case SYSCHAR_STATUS_ERROR:
 			break;
-		case OVAL_STATUS_NOTCOLLECTED:
+		case SYSCHAR_STATUS_NOT_COLLECTED:
 			{
 				SEXP_t *r0, *r1;
 

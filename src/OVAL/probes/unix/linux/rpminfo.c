@@ -368,7 +368,7 @@ int probe_main (probe_ctx *ctx, void *arg)
                                          "name", OVAL_DATATYPE_STRING, request_st.name,
                                          NULL);
 
-                probe_item_setstatus (item, OVAL_STATUS_ERROR);
+                probe_item_setstatus (item, SYSCHAR_STATUS_ERROR);
                 probe_item_collect(ctx, item);
                 break;
         default: /* Ok */

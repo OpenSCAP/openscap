@@ -922,10 +922,10 @@ oval_result_t probe_entste_cmp(SEXP_t * ent_ste, SEXP_t * ent_itm)
 
 	item_status = probe_ent_getstatus(ent_itm);
 	switch (item_status) {
-	case OVAL_STATUS_DOESNOTEXIST:
+	case SYSCHAR_STATUS_DOES_NOT_EXIST:
 		return OVAL_RESULT_FALSE;
-	case OVAL_STATUS_ERROR:
-	case OVAL_STATUS_NOTCOLLECTED:
+	case SYSCHAR_STATUS_ERROR:
+	case SYSCHAR_STATUS_NOT_COLLECTED:
 		return OVAL_RESULT_ERROR;
 	default:
 		break;

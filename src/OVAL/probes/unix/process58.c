@@ -679,7 +679,7 @@ int probe_main(probe_ctx *ctx, void *arg)
         SEXP_t *item_sexp;
 
 	item_sexp = probe_item_creat ("process58_item", NULL, NULL);
-        probe_item_setstatus (item_sexp, OVAL_STATUS_NOTCOLLECTED);
+        probe_item_setstatus (item_sexp, SYSCHAR_STATUS_NOT_COLLECTED);
         probe_item_collect(ctx, item_sexp);
 
 	return 0;

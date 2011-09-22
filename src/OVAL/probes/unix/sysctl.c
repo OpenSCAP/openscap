@@ -172,7 +172,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
                                 fclose(fp);
 
                         item = probe_item_creat("sysctl_item", NULL, NULL);
-                        probe_item_setstatus(item, OVAL_STATUS_ERROR);
+                        probe_item_setstatus(item, SYSCHAR_STATUS_ERROR);
                 add_item:
                         probe_item_collect(ctx, item);
                 }

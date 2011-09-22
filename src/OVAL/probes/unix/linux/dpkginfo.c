@@ -141,7 +141,7 @@ int probe_main (probe_ctx *ctx, void *arg)
 			item = probe_item_create(OVAL_LINUX_DPKG_INFO, NULL,
 					"name", OVAL_DATATYPE_STRING, request_st,
 					NULL);
-			probe_item_setstatus (item, OVAL_STATUS_ERROR);
+			probe_item_setstatus (item, SYSCHAR_STATUS_ERROR);
 			probe_item_collect(ctx, item);
 			break;
 		}

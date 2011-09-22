@@ -463,12 +463,6 @@ void probe_tfc54behaviors_canonicalize(SEXP_t **behaviors);
 #define PROBE_EFATAL   254	/**< Unrecoverable error */
 #define PROBE_EUNKNOWN 255	/**< Unknown/Unexpected error */
 
-#define OVAL_STATUS_UNKNOWN      SYSCHAR_STATUS_UNKNOWN
-#define OVAL_STATUS_ERROR        SYSCHAR_STATUS_ERROR
-#define OVAL_STATUS_EXISTS       SYSCHAR_STATUS_EXISTS
-#define OVAL_STATUS_DOESNOTEXIST SYSCHAR_STATUS_DOES_NOT_EXIST
-#define OVAL_STATUS_NOTCOLLECTED SYSCHAR_STATUS_NOT_COLLECTED
-
 #define PROBECMD_STE_FETCH 1 /**< State fetch command code */
 #define PROBECMD_OBJ_EVAL  2 /**< Object eval command code */
 #define PROBECMD_RESET     3 /**< Reset command code */

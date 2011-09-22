@@ -1213,7 +1213,7 @@ oval_syschar_status_t probe_ent_getstatus(const SEXP_t * ent)
                 sta = (oval_syschar_status_t) SEXP_number_geti_32 (val);
                 SEXP_free (val);
         } else {
-                sta = OVAL_STATUS_EXISTS;
+                sta = SYSCHAR_STATUS_EXISTS;
         }
 
 	return (sta);
@@ -1454,7 +1454,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
         bool    multiplied;
         int     value_i, multiply;
 
-        subtype_name = oval_subtype2str(item_subtype);
+        subtype_name = oval_subtype_to_str(item_subtype);
 
         if (subtype_name == NULL) {
                 dE("Invalid/Unknown subtype: %d\n", (int)item_subtype);

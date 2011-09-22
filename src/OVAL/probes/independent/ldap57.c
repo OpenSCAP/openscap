@@ -189,7 +189,7 @@ int probe_main(probe_ctx *ctx, void *mutex)
         if (ldap_get_option(NULL, LDAP_OPT_URI, &uri_list) != LDAP_OPT_SUCCESS) {
                 item = probe_item_creat("ldap57_item", NULL, NULL);
 
-                probe_item_setstatus(item, OVAL_STATUS_ERROR);
+                probe_item_setstatus(item, SYSCHAR_STATUS_ERROR);
                 probe_item_collect(ctx, item);
 
                 dE("ldap_get_option failed\n");
@@ -218,7 +218,7 @@ int probe_main(probe_ctx *ctx, void *mutex)
                 {
                         item = probe_item_creat("ldap57_item", NULL, NULL);
 
-                        probe_item_setstatus(item, OVAL_STATUS_ERROR);
+                        probe_item_setstatus(item, SYSCHAR_STATUS_ERROR);
                         probe_item_collect(ctx, item);
 
                         dE("ldap_search_ext_s failed\n");

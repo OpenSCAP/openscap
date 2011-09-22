@@ -70,7 +70,7 @@ typedef struct {
 } oval_subtypedsc_t;
 
 void oval_probe_tblinit(void);
-const char *oval_subtype2str(oval_subtype_t subtype);
-oval_subtype_t oval_str2subtype(const char *str);
+const char *oval_subtype_to_str(oval_subtype_t subtype);
+oval_subtype_t oval_str_to_subtype(const char *str);
 
 #endif /* OVAL_PROBE_IMPL_H */

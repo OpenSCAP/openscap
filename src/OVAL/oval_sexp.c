@@ -393,7 +393,7 @@ static SEXP_t *oval_behaviors_to_sexp(struct oval_behavior_iterator *bit)
 	return (r0);
 }
 
-int oval_object2sexp(void *sess, const char *typestr, struct oval_syschar *syschar, SEXP_t **out_sexp)
+int oval_object_to_sexp(void *sess, const char *typestr, struct oval_syschar *syschar, SEXP_t **out_sexp)
 {
 	unsigned int ent_cnt, varref_cnt;
 	int ret = -1;
@@ -593,14 +593,14 @@ static SEXP_t *oval_record_field_STATE_to_sexp(struct oval_record_field *rf)
 	return rf_sexp;
 }
 
-static struct oval_sysent *oval_sysent_from_sexp(struct oval_syschar_model *model, struct oval_sysitem *item, SEXP_t * sexp);
+static struct oval_sysent *oval_sexp_to_sysent(struct oval_syschar_model *model, struct oval_sysitem *item, SEXP_t * sexp);
 
 static struct oval_record_field *oval_record_field_ITEM_from_sexp(SEXP_t *sexp)
 {
 	struct oval_sysent *sysent;
 	struct oval_record_field *rf;
 
-	sysent = oval_sysent_from_sexp(NULL, NULL, sexp);
+	sysent = oval_sexp_to_sysent(NULL, NULL, sexp);
 	if (sysent == NULL)
 		return NULL;
 
@@ -616,7 +616,7 @@ static struct oval_record_field *oval_record_field_ITEM_from_sexp(SEXP_t *sexp)
 	return rf;
 }
 
-int oval_state2sexp(void *sess, struct oval_state *state, SEXP_t **out_sexp)
+int oval_state_to_sexp(void *sess, struct oval_state *state, SEXP_t **out_sexp)
 {
 	SEXP_t *ste, *ste_name, *ste_ent;
 	SEXP_t *r0, *r1, *r2, *r3, *r4;
@@ -625,7 +625,7 @@ int oval_state2sexp(void *sess, struct oval_state *state, SEXP_t **out_sexp)
 	const char *subtype_name;
 	struct oval_state_content_iterator *contents;
 
-        subtype_name = oval_subtype2str(oval_state_get_subtype(state));
+        subtype_name = oval_subtype_to_str(oval_state_get_subtype(state));
 
 	if (subtype_name == NULL) {
 		_D("FAIL: unknown subtype: %d\n", oval_state_get_subtype(state));
@@ -715,7 +715,7 @@ int oval_state2sexp(void *sess, struct oval_state *state, SEXP_t **out_sexp)
 	return (-1);
 }
 
-static struct oval_message *oval_sexp2msg(const SEXP_t *msg)
+static struct oval_message *oval_sexp_to_msg(const SEXP_t *msg)
 {
 	struct oval_message *message;
 	SEXP_t *r0;
@@ -736,7 +736,7 @@ static struct oval_message *oval_sexp2msg(const SEXP_t *msg)
 	return message;
 }
 
-static struct oval_sysent *oval_sysent_from_sexp(struct oval_syschar_model *model, struct oval_sysitem *item, SEXP_t * sexp)
+static struct oval_sysent *oval_sexp_to_sysent(struct oval_syschar_model *model, struct oval_sysitem *item, SEXP_t * sexp)
 {
 	char *key;
 	oval_syschar_status_t status;
@@ -781,7 +781,7 @@ static struct oval_sysent *oval_sysent_from_sexp(struct oval_syschar_model *mode
 	oval_sysent_set_datatype(ent, dt);
 	oval_sysent_set_mask(ent, probe_ent_getmask(sexp));
 
-	if (status != OVAL_STATUS_EXISTS)
+	if (status != SYSCHAR_STATUS_EXISTS)
 		return ent;
 
 	if (dt == OVAL_DATATYPE_RECORD) {
@@ -855,7 +855,7 @@ static struct oval_sysent *oval_sysent_from_sexp(struct oval_syschar_model *mode
 	return ent;
 }
 
-static struct oval_sysitem *oval_sysitem_from_sexp(struct oval_syschar_model *model, SEXP_t * sexp)
+static struct oval_sysitem *oval_sexp_to_sysitem(struct oval_syschar_model *model, SEXP_t * sexp)
 {
 	_A(sexp);
 
@@ -888,7 +888,7 @@ static struct oval_sysitem *oval_sysitem_from_sexp(struct oval_syschar_model *mo
 		*endptr = '\0';	// cut off the '_item' part
 	}
 
-	int type = oval_str2subtype(name);
+	int type = oval_str_to_subtype(name);
 
 	_D("Syschar entry type: %d '%s' => %s\n", type, name, (type ? "OK" : "FAILED to decode"));
 #ifndef NDEBUG
@@ -905,7 +905,7 @@ static struct oval_sysitem *oval_sysitem_from_sexp(struct oval_syschar_model *mo
 	oval_sysitem_set_subtype(sysitem, type);
 
 	for (int i = 2; (sub = SEXP_list_nth(sexp, i)) != NULL; ++i) {
-	    if ((sysent = oval_sysent_from_sexp(model, sysitem, sub)) != NULL)
+	    if ((sysent = oval_sexp_to_sysent(model, sysitem, sub)) != NULL)
 		    oval_sysitem_add_sysent(sysitem, sysent);
 		SEXP_free(sub);
 	}
@@ -916,7 +916,7 @@ static struct oval_sysitem *oval_sysitem_from_sexp(struct oval_syschar_model *mo
 	return sysitem;
 }
 
-int oval_sexp2sysch(const SEXP_t *cobj, struct oval_syschar *syschar)
+int oval_sexp_to_sysch(const SEXP_t *cobj, struct oval_syschar *syschar)
 {
 	oval_syschar_collection_flag_t flag;
 	SEXP_t *messages, *msg, *items, *item;
@@ -931,7 +931,7 @@ int oval_sexp2sysch(const SEXP_t *cobj, struct oval_syschar *syschar)
 	SEXP_list_foreach(msg, messages) {
 		struct oval_message *omsg;
 
-		omsg = oval_sexp2msg(msg);
+		omsg = oval_sexp_to_msg(msg);
 		if (omsg != NULL)
 			oval_syschar_add_message(syschar, omsg);
 	}
@@ -942,7 +942,7 @@ int oval_sexp2sysch(const SEXP_t *cobj, struct oval_syschar *syschar)
 	SEXP_list_foreach(item, items) {
 		struct oval_sysitem *sysitem;
 
-		sysitem = oval_sysitem_from_sexp(model, item);
+		sysitem = oval_sexp_to_sysitem(model, item);
 		if (sysitem != NULL)
 			oval_syschar_add_sysitem(syschar, sysitem);
 	}

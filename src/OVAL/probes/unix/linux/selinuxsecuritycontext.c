@@ -208,7 +208,7 @@ static int selinuxsecuritycontext_file_cb (const char *p, const char *f, probe_c
 		strerror_r (errno, pbuf, PATH_MAX);
 		pbuf[PATH_MAX] = '\0';
 
-		at = probe_attr_creat ("status",  r0 = SEXP_number_newi_32 (OVAL_STATUS_ERROR),
+		at = probe_attr_creat ("status",  r0 = SEXP_number_newi_32 (SYSCHAR_STATUS_ERROR),
 				       "message", r1 = SEXP_string_newf ("%s", pbuf),
 				       NULL);
 

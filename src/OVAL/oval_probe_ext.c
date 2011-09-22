@@ -293,7 +293,7 @@ static SEXP_t *oval_probe_cmd_ste_fetch(SEXP_t *sexp, void *arg)
 				return (NULL);
 			}
 
-			ret = oval_state2sexp(pext->sess_ptr, ste, &ste_sexp);
+			ret = oval_state_to_sexp(pext->sess_ptr, ste, &ste_sexp);
 			if (ret !=0) {
 				oscap_dlprintf(DBG_E, "Failed to convert OVAL state to SEXP, id: %s.\n",
 					       id_str);
@@ -1082,7 +1082,7 @@ int oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext, struc
 	}
 
 	object = oval_syschar_get_object(syschar);
-	ret = oval_object2sexp(pext->sess_ptr, oval_subtype2str(oval_object_get_subtype(object)), syschar, &s_obj);
+	ret = oval_object_to_sexp(pext->sess_ptr, oval_subtype_to_str(oval_object_get_subtype(object)), syschar, &s_obj);
 
 	if (ret != 0)
 		return (1);
@@ -1117,7 +1117,7 @@ int oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext, struc
         /*
 	 * Convert the received S-exp to OVAL system characteristic.
 	 */
-	ret = oval_sexp2sysch(s_sys, syschar);
+	ret = oval_sexp_to_sysch(s_sys, syschar);
 	SEXP_free(s_sys);
 
 	return (ret);

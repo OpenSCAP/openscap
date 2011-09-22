@@ -167,7 +167,7 @@ static void __init_once(void)
         return;
 }
 
-const char *oval_subtype2str(oval_subtype_t subtype)
+const char *oval_subtype_to_str(oval_subtype_t subtype)
 {
         oval_subtypedsc_t *d;
 
@@ -179,7 +179,7 @@ const char *oval_subtype2str(oval_subtype_t subtype)
         return (d == NULL ? NULL : d->name);
 }
 
-oval_subtype_t oval_str2subtype(const char *str)
+oval_subtype_t oval_str_to_subtype(const char *str)
 {
         oval_subtypedsc_t *d;
 

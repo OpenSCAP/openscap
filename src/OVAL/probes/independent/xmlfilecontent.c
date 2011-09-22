@@ -204,9 +204,9 @@ static int process_file(const char *path, const char *filename, void *arg)
 		node_cnt = nodes->nodeNr;
 		dI("node_cnt: %d.\n", node_cnt);
 		if (node_cnt == 0) {
-			probe_item_setstatus(item, OVAL_STATUS_DOESNOTEXIST);
+			probe_item_setstatus(item, SYSCHAR_STATUS_DOES_NOT_EXIST);
 			probe_item_ent_add(item, "value_of", NULL, NULL);
-			probe_itement_setstatus(item, "value_of", 1, OVAL_STATUS_DOESNOTEXIST);
+			probe_itement_setstatus(item, "value_of", 1, SYSCHAR_STATUS_DOES_NOT_EXIST);
 		} else {
 			node_tab = nodes->nodeTab;
 			for (i = 0; i < node_cnt; ++i) {
@@ -228,7 +228,7 @@ static int process_file(const char *path, const char *filename, void *arg)
 		break;
 	}
 	default:
-		probe_item_setstatus(item, OVAL_STATUS_DOESNOTEXIST);
+		probe_item_setstatus(item, SYSCHAR_STATUS_DOES_NOT_EXIST);
 		break;
 	}
 

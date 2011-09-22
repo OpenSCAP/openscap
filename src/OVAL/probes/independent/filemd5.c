@@ -116,7 +116,7 @@ static int filehash_cb (const char *p, const char *f, void *ptr, const SEXP_t *f
                 pbuf[PATH_MAX] = '\0';
 
                 fd = open (p, O_RDONLY);
-                at = probe_attr_creat ("status",  r0 = SEXP_number_newi_32 (OVAL_STATUS_ERROR), /* XXX: don't use newi_32 directly */
+                at = probe_attr_creat ("status",  r0 = SEXP_number_newi_32 (SYSCHAR_STATUS_ERROR), /* XXX: don't use newi_32 directly */
                                        "message", r1 = SEXP_string_newf ("%s", pbuf),
                                        NULL);
 

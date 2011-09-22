@@ -45,13 +45,13 @@ OSCAP_HIDDEN_START;
  */
 SEXP_t *oval_value_to_sexp(struct oval_value *val, oval_datatype_t dtype);
 
-int oval_object2sexp(void *sess, const char *typestr, struct oval_syschar *syschar, SEXP_t **out_sexp);
-int oval_state2sexp(void *sess, struct oval_state *state, SEXP_t **out_sexp);
+int oval_object_to_sexp(void *sess, const char *typestr, struct oval_syschar *syschar, SEXP_t **out_sexp);
+int oval_state_to_sexp(void *sess, struct oval_state *state, SEXP_t **out_sexp);
 
 /*
  * S-exp -> OVAL
  */
-int oval_sexp2sysch(const SEXP_t *cobj, struct oval_syschar *syschar);
+int oval_sexp_to_sysch(const SEXP_t *cobj, struct oval_syschar *syschar);
 OSCAP_HIDDEN_END;
 
 #endif				/* OVAL_SEXP_H */
