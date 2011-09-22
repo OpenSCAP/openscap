@@ -99,20 +99,17 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 		sprintf(env_file, "/proc/%d/environ", pid);
 
 		if ((fd = open(env_file, O_RDONLY)) == -1) {
-
-			SEXP_t *r0;
-
 			dE("Can't open \"%s\": errno=%d, %s.\n", env_file, errno, strerror (errno));
 			item = probe_item_create(
 					OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE58, NULL,
 					"pid", OVAL_DATATYPE_INTEGER, pid,
 					NULL
 			);
-			probe_item_setstatus(item, SYSCHAR_STATUS_NOT_COLLECTED);
-			probe_item_attr_add(item, "message", r0 = SEXP_string_newf("Can't open \"%s\": errno=%d, %s.", env_file, errno, strerror (errno)));
-			probe_item_collect(ctx, item);
-			SEXP_free(r0);
 
+			probe_item_setstatus(item, SYSCHAR_STATUS_NOT_COLLECTED);
+			probe_item_add_msg(item, OVAL_MESSAGE_LEVEL_ERROR,
+					   "Can't open \"%s\": errno=%d, %s.", env_file, errno, strerror (errno));
+			probe_item_collect(ctx, item);
 			continue;
 		}
 
