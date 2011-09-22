@@ -593,14 +593,14 @@ static SEXP_t *oval_record_field_STATE_to_sexp(struct oval_record_field *rf)
 	return rf_sexp;
 }
 
-static struct oval_sysent *oval_sysent_from_sexp(struct oval_syschar_model *model, SEXP_t * sexp);
+static struct oval_sysent *oval_sysent_from_sexp(struct oval_syschar_model *model, struct oval_sysitem *item, SEXP_t * sexp);
 
 static struct oval_record_field *oval_record_field_ITEM_from_sexp(SEXP_t *sexp)
 {
 	struct oval_sysent *sysent;
 	struct oval_record_field *rf;
 
-	sysent = oval_sysent_from_sexp(NULL, sexp);
+	sysent = oval_sysent_from_sexp(NULL, NULL, sexp);
 	if (sysent == NULL)
 		return NULL;
 
@@ -736,7 +736,7 @@ static struct oval_message *oval_sexp2msg(const SEXP_t *msg)
 	return message;
 }
 
-static struct oval_sysent *oval_sysent_from_sexp(struct oval_syschar_model *model, SEXP_t * sexp)
+static struct oval_sysent *oval_sysent_from_sexp(struct oval_syschar_model *model, struct oval_sysitem *item, SEXP_t * sexp)
 {
 	char *key;
 	oval_syschar_status_t status;
@@ -747,8 +747,28 @@ static struct oval_sysent *oval_sysent_from_sexp(struct oval_syschar_model *mode
 	if (!key)
 		return NULL;
 
-	if (strcmp("message", key) == 0) {
-	    /* TODO */
+	if (strcmp("message", key) == 0 && item != NULL) {
+	    struct oval_message *msg;
+	    oval_message_level_t lvl;
+	    SEXP_t *lvl_sexp, *txt_sexp;
+	    char txt[1024];
+
+	    lvl_sexp = probe_obj_getattrval(sexp, "level");
+	    lvl = SEXP_number_getu_32(lvl_sexp);
+
+	    txt_sexp = probe_ent_getval(sexp);
+	    SEXP_string_cstr_r(txt_sexp, txt, sizeof txt);
+
+	    SEXP_vfree(lvl_sexp, txt_sexp);
+
+	    /* TODO: sanity checks */
+
+	    msg = oval_message_new();
+
+	    oval_message_set_level(msg, lvl);
+	    oval_message_set_text(msg, txt);
+	    oval_sysitem_add_message(item, msg);
+
 	    return (NULL);
 	}
 
@@ -885,8 +905,8 @@ static struct oval_sysitem *oval_sysitem_from_sexp(struct oval_syschar_model *mo
 	oval_sysitem_set_subtype(sysitem, type);
 
 	for (int i = 2; (sub = SEXP_list_nth(sexp, i)) != NULL; ++i) {
-		if ((sysent = oval_sysent_from_sexp(model, sub)) != NULL)
-			oval_sysitem_add_sysent(sysitem, sysent);
+	    if ((sysent = oval_sysent_from_sexp(model, sysitem, sub)) != NULL)
+		    oval_sysitem_add_sysent(sysitem, sysent);
 		SEXP_free(sub);
 	}
 
