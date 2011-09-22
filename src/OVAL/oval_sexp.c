@@ -747,6 +747,11 @@ static struct oval_sysent *oval_sysent_from_sexp(struct oval_syschar_model *mode
 	if (!key)
 		return NULL;
 
+	if (strcmp("message", key) == 0) {
+	    /* TODO */
+	    return (NULL);
+	}
+
 	status = probe_ent_getstatus(sexp);
 	dt = probe_ent_getdatatype(sexp);
 

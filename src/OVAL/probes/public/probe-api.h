@@ -573,3 +573,5 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
 #endif				/* PROBE_API_H */
 
 oval_operation_t probe_ent_getoperation(SEXP_t *entity, oval_operation_t op);
+
+int probe_item_add_msg(SEXP_t *item, oval_message_level_t msglvl, char *msgfmt, ...);

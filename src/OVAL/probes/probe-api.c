@@ -1629,3 +1629,40 @@ oval_operation_t probe_ent_getoperation(SEXP_t *entity, oval_operation_t default
 
         return (ret);
 }
+
+int probe_item_add_msg(SEXP_t *item, oval_message_level_t msglvl, char *msgfmt, ...)
+{
+    va_list ap;
+    SEXP_t  lvl_sexp, msg_sexp;
+    SEXP_t *attrs;
+    char    msg_buffer[1024];
+    int     msg_length;
+
+    va_start(ap, msgfmt);
+
+    msg_length = vsnprintf(msg_buffer, sizeof msg_buffer, msgfmt, ap);
+
+    if (msg_length < 0) {
+	dE("vsnprintf failed! errno=%u, %s.\n", errno, strerror(errno));
+	return (-1);
+    }
+
+    if ((size_t)msg_length >= sizeof msg_buffer) {
+	dE("message too long!\n");
+	return (-1);
+    }
+
+    va_end(ap);
+
+    SEXP_number_newu_32_r(&lvl_sexp, msglvl);
+    SEXP_string_new_r(&msg_sexp, msg_buffer, msg_length);
+
+    attrs = probe_attr_creat("level", &lvl_sexp, NULL);
+    probe_item_ent_add(item, "message", attrs, &msg_sexp);
+
+    SEXP_free_r(&lvl_sexp);
+    SEXP_free_r(&msg_sexp);
+    SEXP_free(attrs);
+
+    return (0);
+}
