@@ -293,7 +293,7 @@ static int read_process(SEXP_t *cmd_ent, probe_ctx *ctx)
 			// Select format based on how long we've been running
 			fmt = "%H:%M";
 			if (tday != proc->tm_yday)
-				fmt = "%b%d";
+				fmt = "%b_%d";
 			if (tyear != proc->tm_year)
 				fmt = "%Y";
 			strftime(sbuf, sizeof(sbuf), fmt, proc);

@@ -95,7 +95,7 @@ while [ $I -le "${#PROCS[@]}" ]; do
       <pid datatype="int">`getField 'pid' ${PROCS[$I]}`</pid>
       <ppid datatype="int">`getField 'ppid' ${PROCS[$I]}`</ppid>
       <scheduling_class>`getField 'class' ${PROCS[$I]}`</scheduling_class>
-      <start_time>`getField 'stime' ${PROCS[$I]}`</start_time>
+      <start_time>`getField 'stime' ${PROCS[$I]} | sed 's/\([A-Z][a-z]\{2\}\)\([0-9]\{1,2\}\)/\1_\2/'`</start_time>
       <user_id datatype="int">`getField 'uid' ${PROCS[$I]}`</user_id>
     </process_state>
 EOF
