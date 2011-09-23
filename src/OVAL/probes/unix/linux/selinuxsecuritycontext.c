@@ -203,19 +203,17 @@ static int selinuxsecuritycontext_file_cb (const char *p, const char *f, probe_c
 
 	file_context_size = getfilecon(pbuf, &file_context);
 	if (file_context_size == -1) {
-		SEXP_t *at, *r0, *r1;
 		dE("Can't get context for %s: %s\n", pbuf, strerror(errno));
-		strerror_r (errno, pbuf, PATH_MAX);
-		pbuf[PATH_MAX] = '\0';
 
-		at = probe_attr_creat ("status",  r0 = SEXP_number_newi_32 (SYSCHAR_STATUS_ERROR),
-				       "message", r1 = SEXP_string_newf ("%s", pbuf),
-				       NULL);
+		item = probe_item_create(OVAL_LINUX_SELINUXSECURITYCONTEXT, NULL,
+						"filepath", OVAL_DATATYPE_STRING, pbuf,
+						"path",     OVAL_DATATYPE_STRING, p,
+						"filename", OVAL_DATATYPE_STRING, f,
+						NULL);
 
-		SEXP_vfree (r0, r1, NULL);
-
-		item = probe_item_creat ("selinuxsecuritycontext_item", at, NULL);
-		SEXP_free(at);
+		probe_item_add_msg(item, OVAL_MESSAGE_LEVEL_ERROR,
+			"Can't get context for %s: %s\n", pbuf, strerror(errno));
+		probe_item_setstatus(item, SYSCHAR_STATUS_ERROR);
 		err = errno;
 
 	}
