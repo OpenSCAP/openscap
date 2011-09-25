@@ -267,6 +267,11 @@ int app_collect_oval(const struct oscap_action *action)
 	struct oval_message_iterator *messages;
 	if (action->id) {
 		object = oval_definition_model_get_object(def_model, action->id);
+		if (!object) {
+			fprintf(stderr, "Object ID(%s) does not exist in %s.\n", action->id, action->f_oval);
+			ret = OSCAP_ERROR;
+			goto cleanup;
+		}
 		if (VERBOSE >= 0) fprintf(stderr, "Collected: \"%s\" : ", oval_object_get_id(object));
 		oval_probe_query_object(pb_sess, object, 0, &syschar);
 		sc_flg = oval_syschar_get_flag(syschar);
