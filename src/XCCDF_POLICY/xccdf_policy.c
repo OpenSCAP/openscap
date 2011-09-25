@@ -1544,7 +1544,9 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
 
         item = xccdf_benchmark_get_item(benchmark, xccdf_select_get_item(sel));
         if (item == NULL) {
-            oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EBADID, "Check-exports collection: ID of selector does not exist in Benchmark !");
+	    char msg[100];
+	    snprintf(msg, sizeof(msg), "Selector ID(%s) does not exist in Benchmark.", xccdf_select_get_item(sel));
+            oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EBADID, msg);
             continue; /* TODO: Should we just skip that selector ? XCCDF is not valid here !! */
         }
 
