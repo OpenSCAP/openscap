@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.59)
-AC_INIT([openscap], [0.7.5], [open-scap-list@redhat.com])
+AC_INIT([openscap], [0.8.0], [open-scap-list@redhat.com])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
@@ -55,8 +55,10 @@ canonical_wrap
 # Compiler flags
 CFLAGS="$CFLAGS -pipe -std=c99 -W -Wall -Wnonnull -Wshadow -Wformat -Wundef -Wno-unused-parameter -Wmissing-prototypes -Wno-unknown-pragmas -D_GNU_SOURCE -DOSCAP_THREAD_SAFE -D_POSIX_C_SOURCE=200112L"
 
-AS_CASE([$host],
-[*solaris*], [CFLAGS="$CFLAGS -D__EXTENSIONS__"])
+case $host in
+  *solaris*) :
+    CFLAGS="$CFLAGS -D__EXTENSIONS__" ;;
+esac
 
 CFLAGS_OPTIMIZED="-O2 -finline-functions"
 CFLAGS_DEBUGGING="-fno-inline-functions -O0 -g3"

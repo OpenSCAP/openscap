@@ -2,7 +2,7 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:           openscap
-Version:        0.7.5
+Version:        0.8.0
 Release:        1%{?dist}
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 Group:          System Environment/Libraries
@@ -189,6 +189,6 @@ fi
 %{_sysconfdir}/bash_completion.d
 
 %changelog
-* Fri Aug 12 2011 Peter Vrabec <pvrabec@redhat.com> 0.7.5-1
+* Mon Sep 26 2011 Peter Vrabec <pvrabec@redhat.com> 0.8.0-1
 - upgrade
 
