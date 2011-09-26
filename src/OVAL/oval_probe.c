@@ -401,11 +401,11 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
 				*out_syschar = sysc;
 			return 0;
 		}
-	} else {
+	} else
 		sysc = oval_syschar_new(model, object);
-		if (out_syschar)
-			*out_syschar = sysc;
-	}
+
+	if (out_syschar)
+		*out_syschar = sysc;
 
 	type = oval_object_get_subtype(object);
 	ph = oval_probe_handler_get(psess->ph, type);
