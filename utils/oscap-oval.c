@@ -264,7 +264,6 @@ int app_collect_oval(const struct oscap_action *action)
 	struct oval_object *object;
 	struct oval_syschar *syschar;
 	oval_syschar_collection_flag_t sc_flg;
-	struct oval_message_iterator *messages;
 	if (action->id) {
 		object = oval_definition_model_get_object(def_model, action->id);
 		if (!object) {
@@ -272,39 +271,23 @@ int app_collect_oval(const struct oscap_action *action)
 			ret = OSCAP_ERROR;
 			goto cleanup;
 		}
-		if (VERBOSE >= 0) fprintf(stderr, "Collected: \"%s\" : ", oval_object_get_id(object));
+		if (VERBOSE >= 0)
+			fprintf(stderr, "Collected: \"%s\" : ", oval_object_get_id(object));
 		oval_probe_query_object(pb_sess, object, 0, &syschar);
 		sc_flg = oval_syschar_get_flag(syschar);
-		if (VERBOSE >= 0) {
+		if (VERBOSE >= 0)
 			fprintf(stderr, "%s\n", oval_syschar_collection_flag_get_text(sc_flg));
-			if (sc_flg == SYSCHAR_FLAG_ERROR) {
-				messages = oval_syschar_get_messages(syschar);
-				while (oval_message_iterator_has_more(messages)) {
-					struct oval_message *message = oval_message_iterator_next(messages);
-					fprintf(stderr, "\t%s\n", oval_message_get_text(message));
-				}
-				oval_message_iterator_free(messages);
-			}
-		}
 	}
 	else {
 	        struct oval_object_iterator *objects = oval_definition_model_get_objects(def_model);
 		while (oval_object_iterator_has_more(objects)) {
 			object = oval_object_iterator_next(objects);
-			if (VERBOSE >= 0) fprintf(stderr, "Collected: \"%s\" : ", oval_object_get_id(object));
+			if (VERBOSE >= 0)
+				fprintf(stderr, "Collected: \"%s\" : ", oval_object_get_id(object));
 			oval_probe_query_object(pb_sess, object, 0, &syschar);
 			sc_flg = oval_syschar_get_flag(syschar);
-			if (VERBOSE >= 0) {
+			if (VERBOSE >= 0)
 				fprintf(stderr, "%s\n", oval_syschar_collection_flag_get_text(sc_flg));
-				if (sc_flg == SYSCHAR_FLAG_ERROR) {
-					messages = oval_syschar_get_messages(syschar);
-					while (oval_message_iterator_has_more(messages)) {
-						struct oval_message *message = oval_message_iterator_next(messages);
-						fprintf(stderr, "\t%s\n", oval_message_get_text(message));
-					}
-					oval_message_iterator_free(messages);
-				}
-			}
 		}
 		oval_object_iterator_free(objects);
 	}
