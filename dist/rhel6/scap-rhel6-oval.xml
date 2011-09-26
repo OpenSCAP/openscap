@@ -3199,6 +3199,7 @@
                 <ind-def:instance datatype="int">1</ind-def:instance>
         </ind-def:textfilecontent54_object>
         <ind-def:textfilecontent54_object id="oval:org.open-scap.rhel6:obj:112611" version="1" comment="The /etc/logrotate.d/syslog line that defines which files to look for">
+                <ind-def:behaviors multiline="true" singleline="true"/>
                 <ind-def:filepath>/etc/logrotate.d/syslog</ind-def:filepath>
                 <ind-def:pattern operation="pattern match">^(.*)[[:space:]]*{</ind-def:pattern>
                 <ind-def:instance datatype="int">1</ind-def:instance>
