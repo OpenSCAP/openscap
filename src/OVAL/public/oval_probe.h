@@ -78,4 +78,9 @@ int oval_probe_query_definition(oval_probe_session_t *sess, const char *id) __at
  */
 int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *variable);
 
+#define OVAL_PROBEMETA_LIST_VERBOSE 0x00000001 /**< Be verbose when listing supported probes */
+#define OVAL_PROBEMETA_LIST_DYNAMIC 0x00000002 /**< Perform additional checks when listing supported probes (i.e. list only existing external probes) */
+
+void oval_probe_meta_list(FILE *output, int flags);
+
 #endif				/* OVAL_PROBE_H */

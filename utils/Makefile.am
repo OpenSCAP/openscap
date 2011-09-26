@@ -10,7 +10,7 @@ EXTRA_DIST	= $(man_MANS)
 
 
 if WANT_PROBES
-oscap_CPPFLAGS	+= -DENABLE_OVAL
+oscap_CPPFLAGS	+= -DENABLE_OVAL -DOVAL_PROBE_DIR='"$(probe_dir)"'
 oscap_SOURCES	+= oscap-oval.c
 oscap_CPPFLAGS	+= -I$(top_srcdir)/src/OVAL/public
 

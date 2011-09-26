@@ -124,6 +124,7 @@ struct oscap_action {
 	int validate;
 	int oval_results;
 	int export_variables;
+        int list_dynamic;
 };
 
 int app_validate_xml(const struct oscap_action *action);

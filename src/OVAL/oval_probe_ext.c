@@ -1174,3 +1174,18 @@ int oval_probe_ext_abort(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
 
 	return (0);
 }
+
+const char *oval_probe_ext_getdir(void)
+{
+    const char *probe_dir;
+
+#if defined(OVAL_PROBEDIR_ENV)
+    probe_dir = getenv("OVAL_PROBE_DIR");
+#else
+    probe_dir = NULL;
+#endif
+    if (probe_dir == NULL)
+	probe_dir = OVAL_PROBE_DIR;
+
+    return (probe_dir);
+}

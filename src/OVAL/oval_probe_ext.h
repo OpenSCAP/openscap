@@ -77,4 +77,6 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...);
 
 extern const oval_pdsc_t OSCAP_GSYM(default_pdsc)[];
 
+const char *oval_probe_ext_getdir(void);
+
 #endif /* OVAL_PROBE_EXT_H */

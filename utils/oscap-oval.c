@@ -34,7 +34,9 @@
 static int app_collect_oval(const struct oscap_action *action);
 static int app_evaluate_oval(const struct oscap_action *action);
 static int app_oval_xslt(const struct oscap_action *action);
+static int app_oval_list_probes(const struct oscap_action *action);
 static bool getopt_oval(int argc, char **argv, struct oscap_action *action);
+static bool getopt_oval_list_probes(int argc, char **argv, struct oscap_action *action);
 static bool getopt_oval_validate(int argc, char **argv, struct oscap_action *action);
 static int app_analyse_oval(const struct oscap_action *action);
 
@@ -133,6 +135,19 @@ static struct oscap_module OVAL_REPORT = {
     .func = app_oval_xslt
 };
 
+static struct oscap_module OVAL_LIST_PROBES = {
+    .name = "list-probes",
+    .parent = &OSCAP_OVAL_MODULE,
+    .summary = "List supported object types (i.e. probes)",
+    .usage = "[options]",
+    .help = "Options:\n"
+            "   --static\r\t\t\t\t - List all probes defined in the internal tables.\n"
+            "   --dynamic\r\t\t\t\t - List all probes supported on the current system (this is default behavior).\n"
+            "   --verbose\r\t\t\t\t - Be verbose.",
+    .opt_parser = getopt_oval_list_probes,
+    .func = app_oval_list_probes
+};
+
 static struct oscap_module* OVAL_GEN_SUBMODULES[] = {
     &OVAL_REPORT,
     NULL
@@ -143,6 +158,7 @@ static struct oscap_module* OVAL_SUBMODULES[] = {
     &OVAL_ANALYSE,
     &OVAL_VALIDATE,
     &OVAL_GENERATE,
+    &OVAL_LIST_PROBES,
     NULL
 };
 
@@ -564,6 +580,18 @@ static int app_oval_xslt(const struct oscap_action *action)
     return app_xslt(action->f_oval, action->module->user, action->f_results, NULL);
 }
 
+static int app_oval_list_probes(const struct oscap_action *action)
+{
+    int flags = 0;
+
+    if (action->list_dynamic)
+	flags |= OVAL_PROBEMETA_LIST_DYNAMIC;
+    if (action->verbosity >= 10)
+	flags |= OVAL_PROBEMETA_LIST_VERBOSE;
+
+    oval_probe_meta_list(stdout, flags);
+    return (0);
+}
 
 enum oval_opt {
     OVAL_OPT_RESULT_FILE = 1,
@@ -627,6 +655,39 @@ bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 			return oscap_module_usage(action->module, stderr, "OVAL Results file is not specified(--results parameter)");
 		}
 	}
+
+	return true;
+}
+
+bool getopt_oval_list_probes(int argc, char **argv, struct oscap_action *action)
+{
+#define PROBE_LIST_STATIC  0
+#define PROBE_LIST_DYNAMIC 1
+
+        int list_type = PROBE_LIST_DYNAMIC;
+	VERBOSE = action->verbosity;
+
+	action->doctype = OSCAP_DOCUMENT_OVAL_DEFINITIONS;
+
+	/* Command-options */
+	struct option long_options[] = {
+        // flags
+		{ "static",	no_argument, &list_type, PROBE_LIST_STATIC  },
+		{ "dynamic",	no_argument, &list_type, PROBE_LIST_DYNAMIC },
+		{ "verbose",    no_argument, &action->verbosity, 10},
+        // end
+		{ 0, 0, 0, 0 }
+	};
+
+	int c;
+	while ((c = getopt_long(argc, argv, "", long_options, NULL)) != -1) {
+		switch (c) {
+        	case 0: break;
+		default: return oscap_module_usage(action->module, stderr, NULL);
+		}
+	}
+
+	action->list_dynamic = list_type == PROBE_LIST_DYNAMIC ? true : false;
 
 	return true;
 }
