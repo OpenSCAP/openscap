@@ -149,8 +149,8 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 
 	SEXP_t *r0;
 
-	int mtc_fts_options = FTS_PHYSICAL | FTS_COMFOLLOW;
-	int rec_fts_options = FTS_PHYSICAL | FTS_COMFOLLOW;
+	int mtc_fts_options = FTS_PHYSICAL | FTS_COMFOLLOW | FTS_NOCHDIR;
+	int rec_fts_options = FTS_PHYSICAL | FTS_COMFOLLOW | FTS_NOCHDIR;
 	int max_depth   = -1;
 	int direction   = -1;
 	int recurse     = -1;
