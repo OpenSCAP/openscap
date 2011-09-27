@@ -138,6 +138,26 @@ static bool OVAL_FTS_localp(OVAL_FTS *ofts, const char *path, void *id)
 		return (false);
 }
 
+static char *__regex_locate(char *str)
+{
+    char *regex_sch = "^*?$.(["; /*<< regex start chars */
+    bool  escaped = false;
+
+    while (*str != '\0') {
+	if (*str == '\\')
+	    escaped = ~escaped;
+	else if (strchr(regex_sch, *str) != NULL) {
+	    if (!escaped)
+		return (str);
+	    else
+		escaped = false;
+	}
+	++str;
+    }
+
+    return (NULL);
+}
+
 OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t *behaviors)
 {
 	OVAL_FTS *ofts;
@@ -282,12 +302,53 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	}
 
 	paths = oscap_alloc(sizeof(char *) * 2);
-	if (path_op == OVAL_OPERATION_EQUALS)
-		paths[0] = strdup(cstr_path);
-	else
-		paths[0] = strdup("/");
-	paths[1] = NULL;
+	paths[0] = NULL;
 
+	switch (path_op)
+	    {
+	    case OVAL_OPERATION_EQUALS:
+		paths[0] = strdup(cstr_path);
+		break;
+	    case OVAL_OPERATION_PATTERN_MATCH:
+		if (strlen(cstr_path) >= 2) {
+		    if (cstr_path[0] != '^' &&
+			cstr_path[1] != '/') {
+			/*
+			 * Locate the regex and try to extract a fixed
+			 * part of the path
+			 */
+			char *slash_loc;
+			char *regex_loc = __regex_locate(cstr_path + 1); /* +1 == skip '^' */
+
+			if (regex_loc == NULL) {
+			    paths[0] = strdup("/");
+			    break;
+			}
+
+			slash_loc = regex_loc - 1;
+
+			while (slash_loc != cstr_path + 2) {
+			    if (*slash_loc == '/') { /* XXX: use PATH_SEPARATOR ? */
+				*slash_loc = '\0';
+				paths[0] = strdup(cstr_path + 1);
+				*slash_loc = '/';
+			    }
+			    --slash_loc;
+			}
+		    }
+		}
+
+		if (paths[0] == NULL)
+		    paths[0] = strdup("/");
+
+		break;
+	    default:
+		paths[0] = strdup("/");
+	    }
+
+	dI("paths[0] = %s\n", paths[0]);
+
+	paths[1] = NULL;
 	ofts = OVAL_FTS_new();
 
 	ofts->ofts_match_path_fts = fts_open((char * const *) paths, mtc_fts_options, NULL);
