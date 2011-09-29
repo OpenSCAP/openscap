@@ -475,8 +475,10 @@ int oval_probe_query_definition(oval_probe_session_t *sess, const char *id) {
         definition_model = oval_syschar_model_get_definition_model(syschar_model);
 	definition = oval_definition_model_get_definition(definition_model, id);
 	if (definition == NULL) {
-		dE("No definition with ID: %s in definition model.", id);
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Unknown definition.");
+                char msg[100];
+                snprintf(msg, sizeof(msg), "No definition with ID: %s in definition model.", id);
+                dE(msg);
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, msg);
 		return -1;
 	}
 
