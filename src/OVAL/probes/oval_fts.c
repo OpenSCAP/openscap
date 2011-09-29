@@ -311,8 +311,8 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		break;
 	    case OVAL_OPERATION_PATTERN_MATCH:
 		if (strlen(cstr_path) >= 2) {
-		    if (cstr_path[0] != '^' &&
-			cstr_path[1] != '/') {
+		    if (cstr_path[0] == '^' &&
+			cstr_path[1] == '/') {
 			/*
 			 * Locate the regex and try to extract a fixed
 			 * part of the path
