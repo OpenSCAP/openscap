@@ -155,7 +155,7 @@ static char *__regex_locate(char *str)
 	++str;
     }
 
-    return (NULL);
+    return (str);
 }
 
 OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t *behaviors)
@@ -729,6 +729,9 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 				break;
 
 			ofts->ofts_match_path_fts_ent = NULL;
+
+			if (ofts->ofts_path_op == OVAL_OPERATION_EQUALS)
+			    return (NULL);
 		}
 	}
 
