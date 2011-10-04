@@ -42,6 +42,7 @@
 #endif
 
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
@@ -66,9 +67,9 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 	SEXP_t *env_name, *env_value, *item, *pid_sexp;
 	DIR *d;
 	struct dirent *d_entry;
-	char *buffer, env_file[256];
-	ssize_t read_size = 0;
-	size_t buffer_size = 0;
+	char *buffer, env_file[256], *null_char;
+	ssize_t buffer_used;
+	size_t buffer_size;
 
 	d = opendir("/proc");
 	if (d == NULL) {
@@ -113,20 +114,16 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 			continue;
 		}
 
-		*buffer = 0;
 		empty = 1;
 
-		if ((read_size = read(fd, buffer, buffer_size - 1)) > 0) {
+		if ((buffer_used = read(fd, buffer, buffer_size - 1)) > 0) {
 			empty = 0;
 		}
 
-		buffer[buffer_size - 1] = 0;
-
 		while (! empty) {
-			/* we dont have whole var=val string */
-			while (strlen(buffer) >= (size_t)read_size) {
+			while (! (null_char = memchr(buffer, 0, buffer_used))) {
 				ssize_t s;
-				if ((size_t)read_size + 1 >= buffer_size) {
+				if ((size_t)buffer_used >= buffer_size) {
 					buffer_size += BUFFER_SIZE;
 					buffer = oscap_realloc(buffer, buffer_size);
 					if (buffer == NULL) {
@@ -135,28 +132,29 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 					}
 
 				}
-				s = read(fd, buffer + read_size, buffer_size - read_size - 1);
+				s = read(fd, buffer + buffer_used, buffer_size - buffer_used);
 				if (s <= 0) {
 					empty = 1;
-					break;
+					buffer[buffer_used++] = 0;
 				}
-				read_size += s;
-				buffer[buffer_size - 1] = 0;
+				else {
+					buffer_used += s;
+				}
 			}
 
-			while (strlen(buffer) < (size_t)read_size && read_size > 0) {
-				char *buffer_split = strchr(buffer, '=');
-				if (buffer_split == NULL) {
+			do {
+				char *eq_char = strchr(buffer, '=');
+				if (eq_char == NULL) {
 					/* strange but possible:
 					 * $ strings /proc/1218/environ
  					/dev/input/event0 /dev/input/event1 /dev/input/event4 /dev/input/event3
 					*/
-					read_size -= strlen(buffer);
-					memmove(buffer, buffer + strlen(buffer) + 1, read_size--);
+					buffer_used -= null_char + 1 - buffer;
+					memmove(buffer, null_char + 1, buffer_used);
 					continue;
 				}
 
-				env_name_size =  buffer_split - buffer;
+				env_name_size =  eq_char - buffer;
 				env_name = SEXP_string_new(buffer, env_name_size);
 				env_value = SEXP_string_newf("%s", buffer + env_name_size + 1);
 				if (probe_entobj_cmp(name_ent, env_name) == OVAL_RESULT_TRUE) {
@@ -172,10 +170,11 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 				SEXP_free(env_name);
 				SEXP_free(env_value);
 
-				read_size -= strlen(buffer);
-				memmove(buffer, buffer + strlen(buffer) + 1, read_size--);
-			}
+				buffer_used -= null_char + 1 - buffer;
+				memmove(buffer, null_char + 1, buffer_used);
+			} while (null_char = memchr(buffer, 0, buffer_used));
 		}
+
 		close(fd);
 	}
 	closedir(d);
