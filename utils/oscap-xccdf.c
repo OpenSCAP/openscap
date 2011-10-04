@@ -492,7 +492,9 @@ cleanup:
 		free(oval_files);
 	}
 
-       	xccdf_policy_model_free(policy_model);
+	if (policy_model)
+		xccdf_policy_model_free(policy_model);
+
 	return retval;
 }
 
@@ -523,7 +525,7 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 		if (!oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF,
 			NULL, (action->verbosity >= 0) ? oscap_reporter_fd : NULL, stderr)) {
 			fprintf(stderr, "Ivalid XCCDF content in '%s'.\n", action->f_xccdf);
-			return OSCAP_ERROR;
+			goto cleanup;
 		}
 	}
 
@@ -531,7 +533,7 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	benchmark = xccdf_benchmark_import(action->f_xccdf);
 	if (benchmark == NULL) {
 		fprintf(stderr, "Failed to import the XCCDF document from '%s'.\n", action->f_xccdf);
-		return OSCAP_ERROR;
+		goto cleanup;
 	}
 
 	/* create the policy model */
@@ -647,6 +649,9 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	ret = OSCAP_OK;
 
  cleanup:
+	if (oscap_err())
+		fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+
 	if (def_mod_lst != NULL) {
 		for (i = 0; i < of_cnt; i++) {
 			oval_agent_destroy_session(ag_ses_lst[i]);
@@ -662,7 +667,8 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 		oscap_free(oval_file_lst);
 	}
 
-	xccdf_policy_model_free(policy_model);
+	if (policy_model)
+		xccdf_policy_model_free(policy_model);
 
 	return ret;
 }
