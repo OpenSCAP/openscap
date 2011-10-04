@@ -50,6 +50,7 @@
 
 #define INVALID_DOCUMENT_MSG "oscap was unable to validate the XML document you provided.\n"\
 			     "Please ensure that the XML document is valid and well-formed, and try again."
+#define OSCAP_ERR_MSG "OpenSCAP Error:"
 
 struct oscap_action;
 struct oscap_module;

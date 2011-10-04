@@ -468,7 +468,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 cleanup:
 	if (oscap_err())
-		fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 
 	/* Definition Models */
 	if (def_models) {
@@ -650,7 +650,7 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 
  cleanup:
 	if (oscap_err())
-		fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 
 	if (def_mod_lst != NULL) {
 		for (i = 0; i < of_cnt; i++) {

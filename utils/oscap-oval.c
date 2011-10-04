@@ -219,12 +219,11 @@ int app_collect_oval(const struct oscap_action *action)
 	struct oval_syschar_model	*sys_model = NULL;
 	struct oval_sysinfo		*sysinfo   = NULL;
 	struct oval_probe_session	*pb_sess   = NULL;
-	int ret;
+	int ret = OSCAP_ERROR;
 
 	/* validate inputs */
 	if (action->validate) {
 		if (!valid_inputs(action)) {
-			ret = OSCAP_ERROR;
 			goto cleanup;
 		}
 	}
@@ -233,9 +232,6 @@ int app_collect_oval(const struct oscap_action *action)
 	def_model = oval_definition_model_import(action->f_oval);
 	if (def_model == NULL) {
 		fprintf(stderr, "Failed to import the OVAL Definitions from (%s).\n", action->f_oval);
-		if(oscap_err())
-			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-		ret = OSCAP_ERROR;
 		goto cleanup;
 	}
 
@@ -244,17 +240,11 @@ int app_collect_oval(const struct oscap_action *action)
 		var_model = oval_variable_model_import(action->f_variables);
 		if (var_model == NULL) {
 			fprintf(stderr, "Failed to import the OVAL Variables from (%s).\n", action->f_oval);
-			if(oscap_err())
-				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-			ret = OSCAP_ERROR;
 			goto cleanup;
 		}
 
 		if (oval_definition_model_bind_variable_model(def_model, var_model)) {
 			fprintf(stderr, "Failed to bind Variables to Definitions\n");
-			if(oscap_err())
-				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-			ret = OSCAP_ERROR;
 			goto cleanup;
 		}
 	}
@@ -269,9 +259,6 @@ int app_collect_oval(const struct oscap_action *action)
 	ret = oval_probe_query_sysinfo(pb_sess, &sysinfo);
 	if (ret != 0) {
 		fprintf(stderr, "Failed to query sysinfo\n");
-		if(oscap_err())
-			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-		ret = OSCAP_ERROR;
 		goto cleanup;
 	}
 	oval_syschar_model_set_sysinfo(sys_model, sysinfo);
@@ -284,7 +271,6 @@ int app_collect_oval(const struct oscap_action *action)
 		object = oval_definition_model_get_object(def_model, action->id);
 		if (!object) {
 			fprintf(stderr, "Object ID(%s) does not exist in %s.\n", action->id, action->f_oval);
-			ret = OSCAP_ERROR;
 			goto cleanup;
 		}
 		if (VERBOSE >= 0)
@@ -317,11 +303,7 @@ int app_collect_oval(const struct oscap_action *action)
 		if (action->validate) {
 			if (!oscap_validate_document(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, NULL,
 			    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-				if (oscap_err()) {
-					fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-				}
 				fprintf(stdout, "OVAL System Characteristics are NOT exported correctly.\n");
-				ret = OSCAP_ERROR;
 				goto cleanup;
 			}
 			fprintf(stdout, "OVAL System Characteristics are exported correctly.\n");
@@ -331,6 +313,9 @@ int app_collect_oval(const struct oscap_action *action)
 	ret = OSCAP_OK;
 
 cleanup:
+	if(oscap_err())
+		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+
 	if (sysinfo) oval_sysinfo_free(sysinfo);
 	if (pb_sess) oval_probe_session_destroy(pb_sess);
 	if (sys_model) oval_syschar_model_free(sys_model);
@@ -348,12 +333,11 @@ int app_evaluate_oval(const struct oscap_action *action)
 	struct oval_directives_model	*dir_model = NULL;
 	struct oval_usr			*usr       = NULL;
 	oval_agent_session_t		*sess      = NULL;
-	int ret;
+	int ret = OSCAP_ERROR;
 
 	/* validate inputs */
 	if (action->validate) {
 		if (!valid_inputs(action)) {
-			ret = OSCAP_ERROR;
 			goto cleanup;
 		}
 	}
@@ -362,9 +346,6 @@ int app_evaluate_oval(const struct oscap_action *action)
 	def_model = oval_definition_model_import(action->f_oval);
 	if (def_model == NULL) {
 		fprintf(stderr, "Failed to import the OVAL Definitions from (%s).\n", action->f_oval);
-		if(oscap_err())
-			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-		ret = OSCAP_ERROR;
 		goto cleanup;
 	}
 
@@ -373,27 +354,18 @@ int app_evaluate_oval(const struct oscap_action *action)
 		var_model = oval_variable_model_import(action->f_variables);
 		if (var_model == NULL) {
 			fprintf(stderr, "Failed to import the OVAL Variables from (%s).\n", action->f_oval);
-			if(oscap_err())
-				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-			ret = OSCAP_ERROR;
 			goto cleanup;
 		}
 
 		if (oval_definition_model_bind_variable_model(def_model, var_model)) {
 			fprintf(stderr, "Failed to bind Variables to Definitions\n");
-			if(oscap_err())
-				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-			ret = OSCAP_ERROR;
 			goto cleanup;
 		}
 	}
 
 	sess = oval_agent_new_session(def_model, basename(action->f_oval));
 	if (sess == NULL) {
-		if (oscap_err())
-			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
 		fprintf(stderr, "Failed to create new agent session.\n");
-		ret = OSCAP_ERROR;
 		goto cleanup;
 	}
 
@@ -407,12 +379,10 @@ int app_evaluate_oval(const struct oscap_action *action)
 	else
 		oval_agent_eval_system(sess, app_oval_callback, usr);
 
-	if (oscap_err()) {
-		fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-		ret = OSCAP_ERROR;
+	if (oscap_err())
 		goto cleanup;
-	} else
-		printf("Evaluation done.\n");
+
+	printf("Evaluation done.\n");
 
 
 	/* export results to file */
@@ -433,11 +403,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 		if (action->validate) {
 			if (!oscap_validate_document(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, NULL,
 			    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-				if (oscap_err()) {
-					fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-				}
 				fprintf(stdout, "OVAL Results are NOT exported correctly.\n");
-				ret = OSCAP_ERROR;
 				goto cleanup;
 			}
 			fprintf(stdout, "OVAL Results are exported correctly.\n");
@@ -453,10 +419,6 @@ int app_evaluate_oval(const struct oscap_action *action)
 		oval_result_t res;
 
 		if (oval_agent_get_definition_result(sess, action->id, &res)==-1) {
-			if (oscap_err()) {
-				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-			}
-			ret=OSCAP_ERROR;
 			goto cleanup;
 		}
 
@@ -469,6 +431,9 @@ int app_evaluate_oval(const struct oscap_action *action)
 
 	/* clean up */
 cleanup:
+	if(oscap_err())
+		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+
 	if (usr) free(usr);
 	if (sess) oval_agent_destroy_session(sess);
 	if (def_model) oval_definition_model_free(def_model);
@@ -484,12 +449,11 @@ static int app_analyse_oval(const struct oscap_action *action) {
 	struct oval_variable_model	*var_model = NULL;
 	struct oval_directives_model	*dir_model = NULL;
  	struct oval_syschar_model	*sys_models[2];
-	int ret;
+	int ret = OSCAP_ERROR;
 
 	/* validate inputs */
 	if (action->validate) {
 		if (!valid_inputs(action)) {
-			ret = OSCAP_ERROR;
 			goto cleanup;
 		}
 	}
@@ -498,7 +462,6 @@ static int app_analyse_oval(const struct oscap_action *action) {
 	def_model = oval_definition_model_import(action->f_oval);
         if (def_model == NULL) {
                 fprintf(stderr, "Failed to import the OVAL Definitions from (%s).\n", action->f_oval);
-                ret = OSCAP_ERROR;
 		goto cleanup;
         }
 
@@ -507,15 +470,11 @@ static int app_analyse_oval(const struct oscap_action *action) {
 		var_model = oval_variable_model_import(action->f_variables);
 		if (var_model == NULL) {
 			fprintf(stderr, "Failed to import the OVAL Variables from (%s).\n", action->f_oval);
-			ret = OSCAP_ERROR;
 			goto cleanup;
 		}
 
 		if (oval_definition_model_bind_variable_model(def_model, var_model)) {
 			fprintf(stderr, "Failed to bind Variables to Definitions\n");
-			if(oscap_err())
-				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-			ret = OSCAP_ERROR;
 			goto cleanup;
 		}
 	}
@@ -524,9 +483,6 @@ static int app_analyse_oval(const struct oscap_action *action) {
 	sys_model = oval_syschar_model_new(def_model);
         if (oval_syschar_model_import(sys_model, action->f_syschar) ==  -1 ) {
                 fprintf(stderr, "Failed to import the System Characteristics from (%s).\n", action->f_syschar);
-		if(oscap_err())
-			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-		ret = OSCAP_ERROR;
                 goto cleanup;
         }
 
@@ -551,11 +507,7 @@ static int app_analyse_oval(const struct oscap_action *action) {
 		if (action->validate) {
 			if (!oscap_validate_document(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, NULL,
 			    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-				if (oscap_err()) {
-					fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-				}
 				fprintf(stdout, "OVAL Results are NOT exported correctly.\n");
-				ret = OSCAP_ERROR;
 				goto cleanup;
 			}
 			fprintf(stdout, "OVAL Results are exported correctly.\n");
@@ -566,6 +518,9 @@ static int app_analyse_oval(const struct oscap_action *action) {
 
 	/* clean up */
 cleanup:
+	if(oscap_err())
+		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+
 	if(res_model) oval_results_model_free(res_model);
 	if(sys_model) oval_syschar_model_free(sys_model);
 	if(def_model) oval_definition_model_free(def_model);
@@ -729,49 +684,43 @@ bool getopt_oval_validate(int argc, char **argv, struct oscap_action *action)
 }
 
 static bool valid_inputs(const struct oscap_action *action) {
+        bool ret = false;
+
 	/* validate OVAL Definitions & Variables & Syschars */
 	if (!oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS, NULL,
 	    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-		if (oscap_err()) {
-			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-		}
 		fprintf(stdout, "Invalid OVAL Definition content in %s\n", action->f_oval);
-		return false;
+		goto cleanup;
 	}
 
 	if (action->f_variables) {
 		if (!oscap_validate_document(action->f_variables, OSCAP_DOCUMENT_OVAL_VARIABLES, NULL,
 		    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-			if (oscap_err()) {
-				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-			}
 			fprintf(stdout, "Invalid OVAL Variables content in %s\n", action->f_variables);
-			return false;
+			goto cleanup;
 		}
 	}
 
 	if (action->f_directives) {
 		if (!oscap_validate_document(action->f_directives, OSCAP_DOCUMENT_OVAL_DIRECTIVES, NULL,
 		    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-			if (oscap_err()) {
-				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-			}
 			fprintf(stdout, "Invalid OVAL Directives content in %s\n", action->f_directives);
-			return false;
+			goto cleanup;
 		}
 	}
 
 	if (action->module == &OVAL_ANALYSE && action->f_syschar) {
 		if (!oscap_validate_document(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, NULL,
 		    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-			if (oscap_err()) {
-				fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-			}
 			fprintf(stdout, "Invalid OVAL System Characteristics content in %s\n", action->f_syschar);
-			return false;
+			goto cleanup;
 		}
 	}
 
-	return true;
+	ret = true;
+
+cleanup:
+
+	return ret;
 }
 
