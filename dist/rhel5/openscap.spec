@@ -68,6 +68,17 @@ Requires(preun): chkconfig initscripts
 %description    utils
 The %{name}-utils package contains various utilities based on %{name} library.
 
+%package        extra-probes
+Summary:        SCAP probes
+Group:          Applications/System
+Requires:       %{name} = %{version}-%{release}
+BuildRequires:  openldap-devel
+BuildRequires:  GConf2-devel
+
+%description    extra-probes
+The %{name}-extra-probes package contains additional probes that are not
+commonly used and require additional dependencies.
+
 %prep
 %setup -q
 
@@ -187,6 +198,10 @@ fi
 %{_mandir}/man8/*
 %{_bindir}/*
 %{_sysconfdir}/bash_completion.d
+
+%files extra-probes
+%{_libexecdir}/openscap/probe_ldap57
+%{_libexecdir}/openscap/probe_gconf
 
 %changelog
 * Mon Sep 26 2011 Peter Vrabec <pvrabec@redhat.com> 0.8.0-1
