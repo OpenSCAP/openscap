@@ -564,7 +564,8 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 
 			/* collect matching target */
 			if (collect_dirs) {
-				if (fts_ent->fts_info == FTS_D)
+				if (fts_ent->fts_info == FTS_D
+				    && (ofts->max_depth == -1 || fts_ent->fts_level <= ofts->max_depth))
 					out_fts_ent = fts_ent;
 			} else {
 				if (fts_ent->fts_info != FTS_D) {
@@ -731,8 +732,9 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 
 			ofts->ofts_match_path_fts_ent = NULL;
 
+			/* with 'equals', there's only one potential target */
 			if (ofts->ofts_path_op == OVAL_OPERATION_EQUALS)
-			    return (NULL);
+				return (NULL);
 		}
 	}
 
