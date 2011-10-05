@@ -332,6 +332,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 				*slash_loc = '\0';
 				paths[0] = strdup(cstr_path + 1);
 				*slash_loc = '/';
+				break;
 			    }
 			    --slash_loc;
 			}
