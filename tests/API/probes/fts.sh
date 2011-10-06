@@ -5,6 +5,7 @@
 #
 # Authors:
 #      Daniel Kopecek <dkopecek@redhat.com>
+#      Tomas Heinrich <theinric@redhat.com>
 #
 . ${srcdir}/../../test_common.sh
 
@@ -43,69 +44,124 @@ gen_tree "$ROOT"
 
 while read args; do
 	[ -z "$args" ] && continue
-	# todo: print test name
-	test_run "OVAL_FTS" oval_fts $args
+	test_run "OVAL_FTS ${args%% *}" oval_fts $args
 done <<EOF
-"test 1" \
+test1 \
 '' '' \
 '((filepath :operation 5) "'$ROOT'/d1/d12/f121")' \
 '((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "none" :recurse_file_system "all"))' \
 d1/d12/f121,
 
-"test 2" \
+test2 \
 '' '' \
 '((filepath :operation 11) "^'$ROOT'/d1/.*/f1111")' \
 '((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "none" :recurse_file_system "all"))' \
 d1/d11/d111/f1111,
 
-"test 3" \
+test3 \
 '((path :operation 5) "'$ROOT'/d2")' \
 '((filename :operation 5) "f21")' \
 '' \
 '((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "none" :recurse_file_system "all"))' \
 d2/f21,
 
-"test 4" \
+test4 \
 '((path :operation 5) "'$ROOT'/d1/d11")' \
 '((filename :operation 11) "^f11[23]$")' \
 '' \
 '((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "none" :recurse_file_system "all"))' \
 d1/d11/f112,d1/d11/f113,
 
-"test 5" \
+test5 \
 '((path :operation 11) "^'$ROOT'/d1/d1[12]$")' \
 '((filename :operation 11) "^f..1$")' \
 '' \
 '((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "none" :recurse_file_system "all"))' \
 d1/d11/f111,d1/d12/f121,
 
-"test 6" \
+test6 \
 '((path :operation 11) "^'$ROOT'/d1/.*")' \
 '((filename :operation 5) "f1111")' \
 '' \
 '((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "none" :recurse_file_system "all"))' \
 d1/d11/d111/f1111,
 
-"test 7" \
+test7 \
 '((path :operation 5) "'$ROOT'/d1")' \
 '((filename :operation 5) "f112")' \
 '' \
 '((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "down" :recurse_file_system "all"))' \
 d1/d11/f112,
 
-"test 8" \
+test8 \
 '((path :operation 5) "'$ROOT'/d1")' \
 '((filename :operation 11) "^f.*1$")' \
 '' \
 '((behaviors :max_depth "1" :recurse "symlinks and directories" :recurse_direction "down" :recurse_file_system "all"))' \
 d1/d11/f111,d1/d12/f121,d1/f11,
 
-"test 9" \
+test9 \
 '((path :operation 5) "'$ROOT'/d1/d11/d111")' \
 '((filename :operation 5) "f11")' \
 '' \
 '((behaviors :max_depth "3" :recurse "symlinks and directories" :recurse_direction "up" :recurse_file_system "all"))' \
 d1/f11,
+
+test10 \
+'((path :operation 5) "'$ROOT'/d2")' \
+'((filename :operation 11) "^f21.*$")' \
+'' \
+'((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "down" :recurse_file_system "all"))' \
+d2/d21/f211,d2/f21,
+
+test11 \
+'((path :operation 5) "'$ROOT'/d2")' \
+'((filename :operation 11) "^f21.*$")' \
+'' \
+'((behaviors :max_depth "-1" :recurse "symlinks" :recurse_direction "down" :recurse_file_system "all"))' \
+d2/f21,
+
+test12 \
+'((path :operation 5) "'$ROOT'/d1")' \
+'((filename :operation 5))' \
+'' \
+'((behaviors :max_depth "0" :recurse "symlinks and directories" :recurse_direction "none" :recurse_file_system "all"))' \
+d1/,
+
+test13 \
+'((path :operation 5) "'$ROOT'/d1")' \
+'((filename :operation 5))' \
+'' \
+'((behaviors :max_depth "0" :recurse "symlinks and directories" :recurse_direction "down" :recurse_file_system "all"))' \
+d1/,
+
+test14 \
+'((path :operation 5) "'$ROOT'/d1")' \
+'((filename :operation 5))' \
+'' \
+'((behaviors :max_depth "0" :recurse "symlinks and directories" :recurse_direction "up" :recurse_file_system "all"))' \
+d1/,
+
+test15 \
+'((path :operation 5) "'$ROOT'/d1")' \
+'((filename :operation 5))' \
+'' \
+'((behaviors :max_depth "1" :recurse "symlinks and directories" :recurse_direction "down" :recurse_file_system "all"))' \
+d1/,d1/d11/,d1/d12/,
+
+test16 \
+'((path :operation 5) "'$ROOT'/d1/d11")' \
+'((filename :operation 5))' \
+'' \
+'((behaviors :max_depth "1" :recurse "symlinks and directories" :recurse_direction "up" :recurse_file_system "all"))' \
+d1/,d1/d11/,
+
+test17 \
+'((path :operation 5) "'$ROOT'/d1/d11")' \
+'((filename :operation 5))' \
+'' \
+'((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "down" :recurse_file_system "all"))' \
+d1/d11/,d1/d11/d111/,
 
 EOF
 
