@@ -578,31 +578,32 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 				}
 			}
 
-			/* limit recursion depth */
-			if ((ofts->direction == OVAL_RECURSE_DIRECTION_NONE
-			     && fts_ent->fts_level > 0) /* don't skip fts root */
-			    || (ofts->max_depth != -1 && fts_ent->fts_level > ofts->max_depth)) {
-				fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
-				continue;
-			}
+			if (fts_ent->fts_level > 0) { /* don't skip fts root */
+				/* limit recursion depth */
+				if (ofts->direction == OVAL_RECURSE_DIRECTION_NONE
+				    || (ofts->max_depth != -1 && fts_ent->fts_level > ofts->max_depth)) {
+					fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
+					continue;
+				}
 
-			/* limit recursion only to selected file types */
-			switch (fts_ent->fts_info) {
-			case FTS_D:
-				if (!(ofts->recurse & OVAL_RECURSE_DIRS)) {
-					fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
+				/* limit recursion only to selected file types */
+				switch (fts_ent->fts_info) {
+				case FTS_D:
+					if (!(ofts->recurse & OVAL_RECURSE_DIRS)) {
+						fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
+						continue;
+					}
+					break;
+				case FTS_SL:
+					if (!(ofts->recurse & OVAL_RECURSE_SYMLINKS)) {
+						fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
+						continue;
+					}
+					fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_FOLLOW);
+					break;
+				default:
 					continue;
 				}
-				break;
-			case FTS_SL:
-				if (!(ofts->recurse & OVAL_RECURSE_SYMLINKS)) {
-					fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
-					continue;
-				}
-				fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_FOLLOW);
-				break;
-			default:
-				continue;
 			}
 
 			/* don't recurse into non-local fs if configured so */
