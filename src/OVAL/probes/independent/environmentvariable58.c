@@ -172,7 +172,7 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 
 				buffer_used -= null_char + 1 - buffer;
 				memmove(buffer, null_char + 1, buffer_used);
-			} while (null_char = memchr(buffer, 0, buffer_used));
+			} while ((null_char = memchr(buffer, 0, buffer_used)));
 		}
 
 		close(fd);

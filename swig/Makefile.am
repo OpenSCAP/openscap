@@ -44,7 +44,7 @@ AM_CPPFLAGS += -I$(top_srcdir)/src/OVAL/public
 endif
 if WANT_XCCDF
 WANT_MODULE += -DWANT_XCCDF
-AM_CPPFLAGS += -I$(top_srcdir)/src/XCCDF/public
+AM_CPPFLAGS += -I$(top_srcdir)/src/XCCDF/public -I$(top_srcdir)/src/XCCDF_POLICY/public -DENABLE_XCCDF
 endif
 
 ##beware of: http://www.gnu.org/software/automake/manual/html_node/Multiple-Outputs.html
