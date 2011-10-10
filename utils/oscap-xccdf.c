@@ -512,11 +512,11 @@ static xccdf_test_result_type_t resolve_variables_wrapper(struct xccdf_policy *p
 static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 {
 	struct xccdf_benchmark *benchmark;
-	struct xccdf_policy_model *policy_model;
+	struct xccdf_policy_model *policy_model = NULL;
 	struct xccdf_policy *policy = NULL;
 	struct xccdf_policy_iterator *policy_itr;
 	struct oval_definition_model **def_mod_lst = NULL;
-	struct oval_agent_session **ag_ses_lst;
+	struct oval_agent_session **ag_ses_lst = NULL;
 	struct xccdf_result *xres;
 	char **oval_file_lst = NULL;
 	int of_cnt = 0, i, ret = OSCAP_ERROR;
