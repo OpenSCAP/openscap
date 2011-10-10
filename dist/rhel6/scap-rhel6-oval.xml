@@ -3185,9 +3185,16 @@
         </unix-def:file_object>
         <ind-def:textfilecontent54_object id="oval:org.open-scap.rhel6:obj:11211111" version="1" comment="rsyslog log file paths">
                 <ind-def:filepath>/etc/rsyslog.conf</ind-def:filepath>
-                <ind-def:pattern operation="pattern match">^[[:space:]]*[^#$][^[:space:]]*[[:space:]]+-?(/[^;[:space:]]+)</ind-def:pattern>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*[^#$\n][^[:space:]]*[[:space:]]+-?(/[^;[:space:]]+)</ind-def:pattern>
 		<ind-def:instance datatype="int" operation="greater than or equal">1</ind-def:instance>
         </ind-def:textfilecontent54_object>
+ <ind-def:textfilecontent54_object id="oval:org.open-scap.rhel6:obj:11261111" version="1" comment="rsyslog log file paths (without bool.log)">
+                <ind-def:filepath>/etc/rsyslog.conf</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*[^#$\n][^[:space:]]*[[:space:]]+-?(/[^;[:space:]]+)</ind-def:pattern>
+		<ind-def:instance datatype="int" operation="greater than or equal">1</ind-def:instance>
+		<filter>oval:org.open-scap.rhel6:ste:112611111</filter>
+        </ind-def:textfilecontent54_object>
+
         <ind-def:textfilecontent54_object id="oval:org.open-scap.rhel6:obj:112411" version="1" comment="/etc/rsyslog.conf line sending all records to a remote host">
                 <ind-def:filepath>/etc/rsyslog.conf</ind-def:filepath>
                 <ind-def:pattern operation="pattern match">^[[:space:]]*\*\.\*[[:space:]]+(@|:omrelp)</ind-def:pattern>
@@ -3582,7 +3589,7 @@
         </unix-def:file_state>
         <ind-def:textfilecontent54_state id="oval:org.open-scap.rhel6:ste:112611" version="1" comment="Expected content of the file list in /etc/logrotate.d/syslog">
 		<!-- "pattern match" is used to (imprecisely) match each file name as a substring -->
-                <ind-def:subexpression var_check="all" operation="pattern match" var_ref="oval:org.open-scap.rhel6:var:1121111"/>
+                <ind-def:subexpression var_check="all" operation="pattern match" var_ref="oval:org.open-scap.rhel6:var:1126111"/>
         </ind-def:textfilecontent54_state>
         <unix-def:uname_state id="oval:org.open-scap.rhel6:ste:112911" version="1" comment="architectures that run 32-bit userspace">
 		<unix-def:processor_type operation="pattern match">^.*$</unix-def:processor_type> <!-- So far, at least... -->
@@ -3725,6 +3732,9 @@
         </ind-def:textfilecontent54_state>
         <ind-def:textfilecontent54_state id="oval:org.open-scap.rhel6:ste:114211" version="1" comment="-e 2">
 		<ind-def:subexpression>-e 2</ind-def:subexpression>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:org.open-scap.rhel6:ste:112611111" version="1" comment="bool.log filter">
+		<ind-def:subexpression>/var/log/boot.log</ind-def:subexpression>
         </ind-def:textfilecontent54_state>
 	</states>
 
@@ -3889,6 +3899,10 @@
         <local_variable id="oval:org.open-scap.rhel6:var:1121111" version="1" datatype="string" comment="rsyslog log files">
                 <object_component item_field="subexpression" object_ref="oval:org.open-scap.rhel6:obj:11211111"/>
         </local_variable>
+	<local_variable id="oval:org.open-scap.rhel6:var:1126111" version="1" datatype="string" comment="rsyslog log files (without bool.log)">
+                <object_component item_field="subexpression" object_ref="oval:org.open-scap.rhel6:obj:11261111"/>
+        </local_variable>
+
         <external_variable id="oval:org.open-scap.rhel6:var:1122" version="1" datatype="int" comment="Group owning rsyslog log files"/>
         <local_variable id="oval:org.open-scap.rhel6:var:11371111" version="1" datatype="string" comment="PROGRAMs for which /etc/audit/audit.rules contains '-a always,exit -F path=PROGRAM -F perm=x -F auid&gt;=500 -F auid!=4294967295 -k privileged'">
                 <object_component item_field="subexpression" object_ref="oval:org.open-scap.rhel6:obj:113711111"/>
