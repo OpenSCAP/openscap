@@ -223,7 +223,6 @@
 #endif
 
 #ifdef WANT_XCCDF
-#define ENABLE_XCCDF
 %module openscap
 %{
  #include "../src/XCCDF/public/xccdf.h"
@@ -258,6 +257,15 @@
 %include "../src/OVAL/public/oval_probe_session.h"
 #endif
 
+#ifdef WANT_OVAL
+#ifdef WANT_XCCDF
+%module openscap
+%{
+ #include "../src/OVAL/public/oval_agent_xccdf_api.h"
+%}
+%include "../src/OVAL/public/oval_agent_xccdf_api.h"
+#endif
+#endif
 
 /*%typemap(in) value[ANY] {
 

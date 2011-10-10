@@ -35,6 +35,7 @@
 #include <time.h>
 #include <assume.h>
 
+#include "oval_agent_api.h"
 #include "oval_definitions_impl.h"
 #include "oval_agent_api_impl.h"
 #include "oval_parser_impl.h"
@@ -47,6 +48,9 @@
 #include "common/_error.h"
 #include "common/reporter_priv.h"
 
+#ifdef ENABLE_XCCDF
+#include "oval_agent_xccdf_api.h"
+#endif
 
 struct oval_agent_session {
 	char *filename;

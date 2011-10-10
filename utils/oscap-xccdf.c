@@ -22,6 +22,7 @@
 
 #include <oval_probe.h>
 #include <oval_agent_api.h>
+#include <oval_agent_xccdf_api.h>
 #include <oval_results.h>
 #include <oval_variables.h>
 

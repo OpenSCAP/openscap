@@ -99,6 +99,10 @@ pkginclude_HEADERS  =	public/oval_agent_api.h \
 			public/oval_probe_session.h \
 			public/oval_probe_handler.h
 
+if WANT_XCCDF
+pkginclude_HEADERS  += public/oval_agent_xccdf_api.h
+endif
+
 if WANT_PROBES
 common_oval_sources += probes/probe-api.c 	\
 		       probes/_probe-api.h	\

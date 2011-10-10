@@ -44,10 +44,6 @@
 #include "oval_probe.h"
 #include "reporter.h"
 
-#ifdef ENABLE_XCCDF
-#include "xccdf_policy.h"
-#endif
-
 struct oval_agent_session;
 
 /**
@@ -106,76 +102,6 @@ const char * oval_agent_get_filename(oval_agent_session_t * ag_sess);
  */
 void oval_agent_destroy_session(oval_agent_session_t * ag_sess);
 
-
-#ifdef ENABLE_XCCDF
-
-/************************************************************/
-/**
- * @name Evaluators
- * @{
- * */
-
-/**
- * @param policy XCCDF Policy that is being evaluated
- * @param rule_id ID of XCCDF Rule
- * @param id ID of OVAL definition
- * @param it XCCDF Value Binding iterator with value bindings
- * @param usr Void pointer to the user data structure
- * @return XCCDF test result type of evaluated rule
- *
- */
-typedef xccdf_test_result_type_t (xccdf_policy_eval_rule_cb_t) (struct xccdf_policy * policy, const char * rule_id,
-        const char * id, struct xccdf_value_binding_iterator * it, void * usr);
-
-/**
- * Internal OVAL Agent Callback that can be used to evaluate XCCDF content.
- * \par Example
- * Next example shows common use of this function in evaluation proccess of XCCDF file.
- * \par
- * \code
- *  struct oval_definition_model * def_model = oval_definition_model_import(oval_file);
- *  struct xccdf_benchmark * benchmark = xccdf_benchmark_import(file);
- *  struct xccdf_policy_model * policy_model = xccdf_policy_model_new(benchmark);
- *  struct oval_agent_session * sess = oval_agent_new_session(def_model, "name-of-file");
- *  ...
- *  xccdf_policy_model_register_engine_callback(policy_model, "http://oval.mitre.org/XMLSchema/oval-definitions-5", oval_agent_eval_rule, (void *) sess);
- * \endcode
- * 
- */
-xccdf_test_result_type_t oval_agent_eval_rule (struct xccdf_policy * policy, const char * rule_id,
-        const char * id, const char * href, struct xccdf_value_binding_iterator * it, void * usr);
-
-/**
- * Resolve variables from XCCDF Value Bindings and set their values to OVAL Variables
- * @param session OVAL Agent Session
- * @param it XCCDF Value Bindng iterator
- * @return 0 if resolving pass
- * \par Example
- * Example in oval_agent.c in function oval_agent_eval_rule
- */
-int oval_agent_resolve_variables(struct oval_agent_session * session, struct xccdf_value_binding_iterator *it);
-
-
-/**
- * Function to register predefined oval callback for XCCDF evaluation proccess
- * @param model XCCDF Policy Model
- * @param sess oval_agent_session_t parameter for passing session data to callback
- * @memberof xccdf_policy_model
- * @return true if callback registered succesfully, false otherwise
- */
-bool xccdf_policy_model_register_engine_oval(struct xccdf_policy_model * model, struct oval_agent_session * sess);
-
-/**
- * Transform OVAL Sysinfo into XCCDF Test Result
- * @param session OVAL Agent session
- * @param ritem XCCDF Result
- */
-void oval_agent_export_sysinfo_to_xccdf_result(struct oval_agent_session * session, struct xccdf_result * ritem);
-
-/************************************************************/
-/** @} End of Evaluators group */
-
-#endif
 
 /**
  * @) END OVALDEF
