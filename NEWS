@@ -1,4 +1,4 @@
-openscap-0.8.0							26-09-2011
+openscap-0.8.0							11-10-2011
 - Added an OVAL Directives schema to allow for a tool
   to supply a set of directives to more easily specify
   desired results content.

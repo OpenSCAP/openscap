@@ -204,6 +204,6 @@ fi
 %{_libexecdir}/openscap/probe_gconf
 
 %changelog
-* Mon Sep 26 2011 Peter Vrabec <pvrabec@redhat.com> 0.8.0-1
+* Tue Oct 11 2011 Peter Vrabec <pvrabec@redhat.com> 0.8.0-1
 - upgrade
 
