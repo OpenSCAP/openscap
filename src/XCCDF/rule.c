@@ -971,9 +971,9 @@ void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *
 
 	if (XITEM(group)->item.defined_flags.selected) {
 		if (xccdf_group_get_selected(group))
-			xmlNewProp(group_node, BAD_CAST "selected", BAD_CAST "True");
+			xmlNewProp(group_node, BAD_CAST "selected", BAD_CAST "true");
 		else
-			xmlNewProp(group_node, BAD_CAST "selected", BAD_CAST "False");
+			xmlNewProp(group_node, BAD_CAST "selected", BAD_CAST "false");
 	}
 
 	xmlNewProp(group_node, BAD_CAST "hidden", BAD_CAST (xccdf_group_get_hidden(group) ? "true" : "false"));

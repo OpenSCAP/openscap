@@ -224,20 +224,6 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 		xmlNewProp(root_node, BAD_CAST "xml:lang", BAD_CAST lang);*/
 
 	/* Handle children */
-	struct xccdf_notice_iterator *notices = xccdf_benchmark_get_notices(benchmark);
-	while (xccdf_notice_iterator_has_more(notices)) {
-		struct xccdf_notice *notice = xccdf_notice_iterator_next(notices);
-		xmlNode *notice_node = oscap_text_to_dom(xccdf_notice_get_text(notice), root_node, "notice");
-
-		const char *id = xccdf_notice_get_id(notice);
-		if (id)
-			xmlNewProp(notice_node, BAD_CAST "id", BAD_CAST id);
-	}
-	xccdf_notice_iterator_free(notices);
-
-	xccdf_texts_to_dom(xccdf_benchmark_get_front_matter(benchmark), root_node, "front-matter");
-	xccdf_texts_to_dom(xccdf_benchmark_get_rear_matter(benchmark), root_node, "rear-matter");
-
 	struct oscap_string_iterator *platforms = xccdf_benchmark_get_platforms(benchmark);
 	while (oscap_string_iterator_has_more(platforms)) {
 		xmlNode *platform_node = xmlNewTextChild(root_node, ns_xccdf, BAD_CAST "platform", NULL);

@@ -294,7 +294,7 @@ void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, 
 
 	/* Handle attributes */
 	if (xccdf_profile_get_abstract(profile))
-		xmlNewProp(profile_node, BAD_CAST "abstract", BAD_CAST "True");
+		xmlNewProp(profile_node, BAD_CAST "abstract", BAD_CAST "true");
 
 	const char *extends = xccdf_profile_get_extends(profile);
 	if (extends)

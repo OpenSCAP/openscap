@@ -370,6 +370,26 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 	xccdf_texts_to_dom(xccdf_item_get_title(item), item_node, "title");
 	xccdf_texts_to_dom(xccdf_item_get_description(item), item_node, "description");
 
+	/* Handle some type specific children */
+	if (xccdf_item_get_type(item)==XCCDF_BENCHMARK) {
+		struct xccdf_benchmark *benchmark = XBENCHMARK(item);
+
+		struct xccdf_notice_iterator *notices = xccdf_benchmark_get_notices(benchmark);
+		while (xccdf_notice_iterator_has_more(notices)) {
+			struct xccdf_notice *notice = xccdf_notice_iterator_next(notices);
+			xmlNode *notice_node = oscap_text_to_dom(xccdf_notice_get_text(notice), item_node, "notice");
+
+			const char * notice_id = xccdf_notice_get_id(notice);
+			if (notice_id)
+				xmlNewProp(notice_node, BAD_CAST "id", BAD_CAST notice_id);
+		}
+		xccdf_notice_iterator_free(notices);
+
+		xccdf_texts_to_dom(xccdf_benchmark_get_front_matter(benchmark), item_node, "front-matter");
+		xccdf_texts_to_dom(xccdf_benchmark_get_rear_matter(benchmark), item_node, "rear-matter");
+	}
+
+	/* Handle generic item child nodes */
 	struct xccdf_warning_iterator *warnings = xccdf_item_get_warnings(item);
 	while (xccdf_warning_iterator_has_more(warnings)) {
 		struct xccdf_warning *warning = xccdf_warning_iterator_next(warnings);
@@ -468,7 +488,7 @@ xmlNode *xccdf_fixtext_to_dom(struct xccdf_fixtext *fixtext, xmlDoc *doc, xmlNod
 	xmlNode *fixtext_node = oscap_text_to_dom(xccdf_fixtext_get_text(fixtext), parent, "fixtext");
 	
 	if (xccdf_fixtext_get_reboot(fixtext))
-		xmlNewProp(fixtext_node, BAD_CAST "reboot", BAD_CAST "True");
+		xmlNewProp(fixtext_node, BAD_CAST "reboot", BAD_CAST "true");
 
 	const char *fixref = xccdf_fixtext_get_fixref(fixtext);
     if (fixref)
@@ -503,7 +523,7 @@ xmlNode *xccdf_fix_to_dom(struct xccdf_fix *fix, xmlDoc *doc, xmlNode *parent)
 	if (platform != NULL) xmlNewProp(fix_node, BAD_CAST "platform", BAD_CAST platform);
 
 	if (xccdf_fix_get_reboot(fix))
-		xmlNewProp(fix_node, BAD_CAST "reboot", BAD_CAST "True");
+		xmlNewProp(fix_node, BAD_CAST "reboot", BAD_CAST "true");
 
 	xccdf_level_t complexity = xccdf_fix_get_complexity(fix);
         if (complexity != 0)
