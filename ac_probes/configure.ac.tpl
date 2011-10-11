@@ -35,10 +35,10 @@ AC_PROG_SWIG([])
 # See http://sources.redhat.com/autobook/autobook/autobook_91.html#SEC91 for details
 
 ## increment if the interface has additions, changes, removals.
-LT_CURRENT=0
+LT_CURRENT=1
 
-## increment any time the source changes; set to if you increment CURRENT
-LT_REVISION=2
+## increment any time the source changes; set 0 to if you increment CURRENT
+LT_REVISION=0
 
 ## increment if any interfaces have been added; set to 0
 ## if any interfaces have been changed or removed. removal has
