@@ -422,6 +422,18 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	if (action->f_results != NULL) {
 		xccdf_benchmark_add_result(benchmark, xccdf_result_clone(ritem));
 		xccdf_benchmark_export(benchmark, action->f_results);
+
+		/* validate XCCDF Results */
+		if (action->validate) {
+			if (!oscap_validate_document(action->f_results, OSCAP_DOCUMENT_XCCDF, NULL,
+			    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+				fprintf(stdout, "XCCDF Results are NOT exported correctly.\n");
+				goto cleanup;
+			}
+			fprintf(stdout, "XCCDF Results are exported correctly.\n");
+		}
+
+		/* generate report */
 		if (action->f_report != NULL)
 			xccdf_gen_report(action->f_results, xccdf_result_get_id(ritem), action->f_report, "", (action->oval_results ? "%.result.xml" : ""));
 	}
