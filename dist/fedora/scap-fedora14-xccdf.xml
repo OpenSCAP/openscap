@@ -11,10 +11,11 @@
  resolved="1"
  id="scap-fedora14-xccdf.xml"
  xml:lang="en">
-  <status date="2010-09-11">draft</status>
-  <title>Guide to the Secure Configuration of Fedora Linux</title>
-  <description>This guide has been created to assist IT professionals, in effectively securing systems with Fedora Linux.</description>
-  <version>0.6.3</version>
+  <status date="2011-10-12">draft</status>
+  <title>Example of SCAP Security Guidance</title>
+  <description>This example security guidance has been created to demonstrate SCAP functionality
+on Linux.</description>
+  <version>0.1</version>
   <model system="urn:xccdf:scoring:default" />
   <model system="urn:xccdf:scoring:flat" />
   <!-- ==================================================================================================== -->
@@ -25,9 +26,11 @@
   <!-- Each defines the set of XCCDF rules that are applicable for that guidance as well as specific values -->
   <!-- to be used when determining complinace.                                                              -->
   <!--                                                                                                      -->
-  <Profile id="F14-Desktop" abstract="false">
-    <title xml:lang="en">Fedora 14 desktop settings</title>
-    <description xml:lang="en">This profile selects security controls that conform to default Fedora 14 configuration.</description>
+  <Profile id="F14-Default" abstract="false">
+    <title xml:lang="en">Default install settings</title>
+    <description xml:lang="en">This profile is an example policy that simply checks if some of Fedora 14 default
+install settings have been modified. It is not comprehensive nor checks security hardening. It is just for testing
+purposes.</description>
     <select idref="rule-2.1.1.1.1.a" selected="false" />	<!-- DONE -->		<!-- Separate Partition or Logical Volume for /tmp -->
     <select idref="rule-2.1.1.1.1.b" selected="false"/>		<!-- DONE -->		<!-- Minimum size of /tmp -->
     <select idref="rule-2.1.1.1.2.a" selected="false" />	<!-- DONE -->		<!-- Separate Partition or Logical Volume for /var -->

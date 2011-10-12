@@ -77,7 +77,8 @@ Group:          Applications/System
 Requires:       %{name} = %{version}-%{release}
 
 %description    content
-SCAP content for Fedora delivered by Open-SCAP project.
+Example of SCAP content for Fedora. Please note that this content
+is for testing purposes only.
 
 
 %package        extra-probes

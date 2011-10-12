@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Benchmark xmlns="http://checklists.nist.gov/xccdf/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="RHEL-6" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.1 xccdf-1.1.4.xsd" resolved="0" xml:lang="en-US">
-  <status date="2011-04-13">draft</status>
-  <title xml:lang="en-US">Guidance for Securing Red Hat Enterprise Linux 6</title>
-  <description xml:lang="en-US">This guide has been created to assist IT professionals in effectively securing
-		systems running Red Hat Enterprise Linux</description>
+  <status date="2011-10-12">draft</status>
+  <title xml:lang="en-US">Example of SCAP Security Guidance</title>
+  <description xml:lang="en-US">This example security guidance has been created to demonstrate SCAP functionality
+on Linux.</description>
   <platform idref="cpe:/o:redhat:enterprise_linux:6"/>
   <version>0.2</version>
   <model system="urn:xccdf:scoring:default"/>
   <model system="urn:xccdf:scoring:flat"/>
   <Profile id="RHEL6-Default">
-    <title xml:lang="en-US">RHEL 6 Profile For Default Installation</title>
-    <description xml:lang="en-US">XCCDF profile for evaluation of RHEL 6 updates.
-			This profile is designed for evaluation of default configuration of a 
-			fresh installation of RHEL 6 system. It should be executed for every 
-			RHEL 6 update. Additional security hardening of the system should be 
-			done prior to deploying it in a production environment.
-			All enabled XCCDF rules should pass.
-		</description>
+    <title xml:lang="en-US">Default install settings</title>
+    <description xml:lang="en-US">This profile is an example policy that simply checks if some of RHEL6 default
+install settings have been modified. It is not comprehensive nor checks security hardening. It is just for testing
+purposes.</description>
     <select idref="rule-1005" selected="true"/>
     <select idref="rule-1007" selected="true"/>
     <select idref="rule-1008" selected="true"/>
