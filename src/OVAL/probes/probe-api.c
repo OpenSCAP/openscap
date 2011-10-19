@@ -903,7 +903,7 @@ SEXP_t *probe_msg_creat(oval_message_level_t level, char *message)
 {
 	SEXP_t *lvl, *str, *msg;
 
-	_D(message);
+	_D("%s\n", message);
 	lvl = SEXP_number_newu(level);
 	str = SEXP_string_newf("%s", message);
 	msg = SEXP_list_new(lvl, str, NULL);
