@@ -442,7 +442,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 		SEXP_free(msg);
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
 
-		err = PROBE_EUNKNOWN;
+		err = 0;
 		goto cleanup;
 	}
 
