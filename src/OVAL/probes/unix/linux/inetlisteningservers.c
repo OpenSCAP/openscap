@@ -98,7 +98,6 @@ typedef struct {
 } llist;
 
 /* Local data */
-static int perm_warn = 0;
 static struct server_info req;
 
 /* Function prototypes */
@@ -246,11 +245,7 @@ static int collect_process_info(llist *l)
 		snprintf(buf, 32, "/proc/%d/fd", pid);
 		f = opendir(buf);
 		if (f == NULL) {
-			if (errno == EACCES && perm_warn == 0) {
-				/* Need DAC_OVERRIDE permission */
-				perm_warn = 1;
-			}
-			// Process might have ended or something - ignore it
+			// Process might have ended or we don;t have access - ignore it
 			free(text);
 			continue;
 		}
@@ -321,7 +316,7 @@ static int eval_data(const char *type, const char *local_address,
 	}
 	SEXP_free(r0);
 
-	r0 = SEXP_string_newf("%u", local_port);
+	r0 = SEXP_number_newu_32(local_port);
 	if (probe_entobj_cmp(req.local_port_ent, r0) != OVAL_RESULT_TRUE) {
 		SEXP_free(r0);
 		return 0;
@@ -334,10 +329,15 @@ static int eval_data(const char *type, const char *local_address,
 static void report_finding(struct result_info *res, llist *l, probe_ctx *ctx)
 {
         SEXP_t *item;
-        SEXP_t se_lport_mem, se_rport_mem, se_lfull_mem, se_ffull_mem, se_uid_mem;
-	lnode *n = list_get_cur(l);
+        SEXP_t se_lport_mem, se_rport_mem, se_lfull_mem, se_ffull_mem, *se_uid_mem = NULL;
+	lnode *n = NULL;
 
-        item = probe_item_create(OVAL_LINUX_INET_LISTENING_SERVERS, NULL,
+	if (l) {
+		n = list_get_cur(l);
+	}
+
+	if (n) {
+                item = probe_item_create(OVAL_LINUX_INET_LISTENING_SERVER, NULL,
                                  "protocol",             OVAL_DATATYPE_STRING,  res->proto,
                                  "local_address",        OVAL_DATATYPE_STRING,  res->laddr,
 				 "local_port",           OVAL_DATATYPE_SEXP, SEXP_number_newu_64_r(&se_lport_mem, res->lport),
@@ -349,8 +349,21 @@ static void report_finding(struct result_info *res, llist *l, probe_ctx *ctx)
                                  "foreign_full_address", OVAL_DATATYPE_SEXP,    SEXP_string_newf_r(&se_ffull_mem,
                                                                                                    "%s:%u", res->raddr, res->rport),
                                  "pid",                  OVAL_DATATYPE_INTEGER, (int64_t)n->pid,
-				 "user_id",              OVAL_DATATYPE_SEXP, SEXP_number_newu_64_r(&se_uid_mem, n->uid),
+				 "user_id",              OVAL_DATATYPE_SEXP, se_uid_mem = SEXP_number_newu_64(n->uid),
                                  NULL);
+	} else {
+                item = probe_item_create(OVAL_LINUX_INET_LISTENING_SERVER, NULL,
+                                 "protocol",             OVAL_DATATYPE_STRING,  res->proto,
+                                 "local_address",        OVAL_DATATYPE_STRING,  res->laddr,
+				 "local_port",           OVAL_DATATYPE_SEXP, SEXP_number_newu_64_r(&se_lport_mem, res->lport),
+                                 "local_full_address",   OVAL_DATATYPE_SEXP,    SEXP_string_newf_r(&se_lfull_mem,
+                                                                                                   "%s:%u", res->laddr, res->lport),
+                                 "foreign_address",      OVAL_DATATYPE_STRING,  res->raddr,
+				 "foreign_port",         OVAL_DATATYPE_SEXP, SEXP_number_newu_64_r(&se_rport_mem, res->rport),
+                                 "foreign_full_address", OVAL_DATATYPE_SEXP,    SEXP_string_newf_r(&se_ffull_mem,
+                                                                                                   "%s:%u", res->raddr, res->rport),
+                                 NULL);
+	}
 
         probe_item_collect(ctx, item);
 
@@ -358,7 +371,7 @@ static void report_finding(struct result_info *res, llist *l, probe_ctx *ctx)
         SEXP_free_r(&se_rport_mem);
         SEXP_free_r(&se_lfull_mem);
         SEXP_free_r(&se_ffull_mem);
-        SEXP_free_r(&se_uid_mem);
+        SEXP_free(se_uid_mem);
 }
 
 static void addr_convert(const char *src, char *dest, int size)
@@ -406,19 +419,22 @@ static int read_tcp(const char *proc, const char *type, llist *l, probe_ctx *ctx
 			&d, local_addr, &local_port, rem_addr, &rem_port,
 			&state, &txq, &rxq, &timer_run, &time_len, &retr,
 			&uid, &timeout, &inode, more);
-		if (list_find_inode(l, inode)) {
-			char src[NI_MAXHOST], dest[NI_MAXHOST];
-			addr_convert(local_addr, src, NI_MAXHOST);
-			addr_convert(rem_addr, dest, NI_MAXHOST);
-			_D("Have tcp port: %s:%u\n", src, local_port);
-			if (eval_data(type, src, local_port)) {
-				struct result_info r;
-				r.proto = type;
-				r.laddr = src;
-				r.lport = local_port;
-				r.raddr = dest;
-				r.rport = rem_port;
+
+		char src[NI_MAXHOST], dest[NI_MAXHOST];
+		addr_convert(local_addr, src, NI_MAXHOST);
+		addr_convert(rem_addr, dest, NI_MAXHOST);
+		_D("Have tcp port: %s:%u\n", src, local_port);
+		if (eval_data(type, src, local_port)) {
+			struct result_info r;
+			r.proto = type;
+			r.laddr = src;
+			r.lport = local_port;
+			r.raddr = dest;
+			r.rport = rem_port;
+			if (list_find_inode(l, inode)) {
 				report_finding(&r, l, ctx);
+			} else {
+				report_finding(&r, NULL, ctx);
 			}
 		}
 	}
@@ -454,19 +470,22 @@ static int read_udp(const char *proc, const char *type, llist *l, probe_ctx *ctx
 			&d, local_addr, &local_port, rem_addr, &rem_port,
 			&state, &txq, &rxq, &timer_run, &time_len, &retr,
 			&uid, &timeout, &inode, more);
-		if (list_find_inode(l, inode)) {
-			char src[NI_MAXHOST], dest[NI_MAXHOST];
-			addr_convert(local_addr, src, NI_MAXHOST);
-			addr_convert(rem_addr, dest, NI_MAXHOST);
-			_D("Have udp port: %s:%u\n", src, local_port);
-			if (eval_data(type, src, local_port)) {
-				struct result_info r;
-				r.proto = type;
-				r.laddr = src;
-				r.lport = local_port;
-				r.raddr = dest;
-				r.rport = rem_port;
+
+		char src[NI_MAXHOST], dest[NI_MAXHOST];
+		addr_convert(local_addr, src, NI_MAXHOST);
+		addr_convert(rem_addr, dest, NI_MAXHOST);
+		_D("Have udp port: %s:%u\n", src, local_port);
+		if (eval_data(type, src, local_port)) {
+			struct result_info r;
+			r.proto = type;
+			r.laddr = src;
+			r.lport = local_port;
+			r.raddr = dest;
+			r.rport = rem_port;
+			if (list_find_inode(l, inode)) {
 				report_finding(&r, l, ctx);
+			} else {
+				report_finding(&r, NULL, ctx);
 			}
 		}
 	}
@@ -502,19 +521,22 @@ static int read_raw(const char *proc, const char *type, llist *l, probe_ctx *ctx
 			&d, local_addr, &local_port, rem_addr, &rem_port,
 			&state, &txq, &rxq, &timer_run, &time_len, &retr,
 			&uid, &timeout, &inode, more);
-		if (list_find_inode(l, inode)) {
-			char src[NI_MAXHOST], dest[NI_MAXHOST];
-			addr_convert(local_addr, src, NI_MAXHOST);
-			addr_convert(rem_addr, dest, NI_MAXHOST);
-			_D("Have raw port: %s:%u\n", src, local_port);
-			if (eval_data(type, src, local_port)) {
-				struct result_info r;
-				r.proto = type;
-				r.laddr = src;
-				r.lport = local_port;
-				r.raddr = dest;
-				r.rport = rem_port;
+
+		char src[NI_MAXHOST], dest[NI_MAXHOST];
+		addr_convert(local_addr, src, NI_MAXHOST);
+		addr_convert(rem_addr, dest, NI_MAXHOST);
+		_D("Have raw port: %s:%u\n", src, local_port);
+		if (eval_data(type, src, local_port)) {
+			struct result_info r;
+			r.proto = type;
+			r.laddr = src;
+			r.lport = local_port;
+			r.raddr = dest;
+			r.rport = rem_port;
+			if (list_find_inode(l, inode)) {
 				report_finding(&r, l, ctx);
+			} else {
+				report_finding(&r, NULL, ctx);
 			}
 		}
 	}
@@ -550,7 +572,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 
 	// Now start collecting the info
 	list_create(&ll);
-	if (collect_process_info(&ll) || perm_warn) {
+	if (collect_process_info(&ll)) {
 		SEXP_t *msg;
 
 		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, "Permission error.");
