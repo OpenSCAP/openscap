@@ -455,6 +455,7 @@ static const struct oscap_string_map OVAL_SUBTYPE_IOS_MAP[] = {
 static const struct oscap_string_map OVAL_SUBTYPE_LINUX_MAP[] = {
 	{OVAL_LINUX_DPKG_INFO, "dpkginfo"},
 	{OVAL_LINUX_INET_LISTENING_SERVERS, "inetlisteningservers"},
+	{OVAL_LINUX_INET_LISTENING_SERVER, "inetlisteningserver"},
 	{OVAL_LINUX_RPM_INFO, "rpminfo"},
 	{OVAL_LINUX_SLACKWARE_PKG_INFO_TEST, "slackwarepkginfo"},
         {OVAL_LINUX_PARTITION, "partition"},
