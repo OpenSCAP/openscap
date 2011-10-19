@@ -5,7 +5,7 @@
     <oval:timestamp>2009-01-12T10:41:00-05:00</oval:timestamp>
   </generator>
   <definitions>
-    <definition id="oval:org.mitre.oval.test:def:282" version="1" class="miscellaneous">
+    <definition id="oval:org.mitre.oval.test:def:282" version="3" class="miscellaneous">
       <metadata>
         <title>Evaluate to true if the unix-def:file_test is properly supported</title>
         <description>This definition is intended to evalutate to true if the interpreter properly supports the unix-def:file_test.</description>
@@ -56,7 +56,7 @@
       <object object_ref="oval:org.mitre.oval.test:obj:1448"/>
       <state state_ref="oval:org.mitre.oval.test:ste:1565"/>
     </file_test>
-    <file_test id="oval:org.mitre.oval.test:tst:1912" version="1" comment="Test that the recurse_direction behavior is supported." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+    <file_test id="oval:org.mitre.oval.test:tst:1912" version="2" comment="Test that the recurse_direction behavior is supported." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:org.mitre.oval.test:obj:1509"/>
       <state state_ref="oval:org.mitre.oval.test:ste:1730"/>
     </file_test>
@@ -64,7 +64,7 @@
       <object object_ref="oval:org.mitre.oval.test:obj:1198"/>
       <state state_ref="oval:org.mitre.oval.test:ste:1754"/>
     </file_test>
-    <file_test id="oval:org.mitre.oval.test:tst:1675" version="1" comment="Test that the file_object is supported with the filepath entity matching some regular expression." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+    <file_test id="oval:org.mitre.oval.test:tst:1675" version="2" comment="Test that the file_object is supported with the filepath entity matching some regular expression." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:org.mitre.oval.test:obj:1377"/>
       <state state_ref="oval:org.mitre.oval.test:ste:1476"/>
     </file_test>
@@ -144,16 +144,16 @@
       <filename>rc</filename>
       <size datatype="int" operation="greater than">0</size>
     </file_state>
-    <file_state id="oval:org.mitre.oval.test:ste:1730" version="1" comment="This state represents a file_item which has a filepath equal to '/etc/profile', a path equal to '/etc/', a filename equal to 'profile'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+    <file_state id="oval:org.mitre.oval.test:ste:1730" version="2" comment="This state represents a file_item which has a filepath equal to '/etc/profile', a path equal to '/etc', a filename equal to 'profile'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <filepath>/etc/profile</filepath>
-      <path>/etc/</path>
+      <path>/etc</path>
       <filename>profile</filename>
     </file_state>
     <file_state id="oval:org.mitre.oval.test:ste:1754" version="1" comment="This state represents a file_item with the filepath equal to '/etc/rc.d/rc'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <filepath>/etc/rc.d/rc</filepath>
     </file_state>
-    <file_state id="oval:org.mitre.oval.test:ste:1476" version="1" comment="This state represents a file_item which has a filepath equal to '/etc/rc.d/rc', a path equal to '/etc/ssh', a filename equal to 'sshd_config', and a size greater than '0'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
-      <filepath operation="pattern match">^/etc/ssh/.+</filepath>
+    <file_state id="oval:org.mitre.oval.test:ste:1476" version="2" comment="This state represents a file_item which has a filepath equal to '/etc/rc.d/rc', a path equal to '/etc/ssh', a filename equal to 'sshd_config', and a size greater than '0'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <filepath operation="pattern match">^/etc/ssh.+</filepath>
       <size datatype="int" operation="greater than">0</size>
     </file_state>
   </states>

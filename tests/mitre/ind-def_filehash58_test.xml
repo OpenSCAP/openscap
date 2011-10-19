@@ -5,7 +5,7 @@
     <oval:timestamp>2010-08-26T14:07:45-05:00</oval:timestamp>
   </generator>
   <definitions>
-    <definition id="oval:org.mitre.oval.test:def:566" version="1" class="miscellaneous">
+    <definition id="oval:org.mitre.oval.test:def:566" version="7" class="miscellaneous">
       <metadata>
         <title>Evaluate to true if the ind-def:filehash58_test is properly supported</title>
         <description>This definition is intended to evalutate to true if the interpreter properly supports the ind-def:filehash58_test.</description>
@@ -21,49 +21,49 @@
     </definition>
   </definitions>
   <tests>
-    <filehash58_test id="oval:org.mitre.oval.test:tst:305" version="1" comment="Test specifying multiple values for hash_type." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+    <filehash58_test id="oval:org.mitre.oval.test:tst:305" version="3" comment="Test specifying multiple values for hash_type." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:org.mitre.oval.test:obj:313"/>
       <state state_ref="oval:org.mitre.oval.test:ste:531"/>
     </filehash58_test>
-    <filehash58_test id="oval:org.mitre.oval.test:tst:544" version="1" comment="Test specifying multiple values for hash_type with a 'none satisfy' var_check." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+    <filehash58_test id="oval:org.mitre.oval.test:tst:544" version="3" comment="Test specifying multiple values for hash_type with a 'none satisfy' var_check." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:org.mitre.oval.test:obj:105"/>
       <state state_ref="oval:org.mitre.oval.test:ste:774"/>
     </filehash58_test>
-    <filehash58_test id="oval:org.mitre.oval.test:tst:354" version="1" comment="Test computing the remaining four types of hashes." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+    <filehash58_test id="oval:org.mitre.oval.test:tst:354" version="3" comment="Test computing the remaining four types of hashes." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:org.mitre.oval.test:obj:421"/>
       <state state_ref="oval:org.mitre.oval.test:ste:257"/>
     </filehash58_test>
   </tests>
   <objects>
-    <filehash58_object id="oval:org.mitre.oval.test:obj:313" version="1" comment="MD5 and SHA-1 hashes of /bin/ls" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <path>/bin/</path>
+    <filehash58_object id="oval:org.mitre.oval.test:obj:313" version="2" comment="MD5 and SHA-1 hashes of /bin/ls" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/bin</path>
       <filename>ls</filename>
       <hash_type var_ref="oval:org.mitre.oval.test:var:429" var_check="at least one"/>
     </filehash58_object>
-    <filehash58_object id="oval:org.mitre.oval.test:obj:105" version="1" comment="MD5 and SHA-1 hashes of /bin/ls" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <path>/bin/</path>
+    <filehash58_object id="oval:org.mitre.oval.test:obj:105" version="2" comment="MD5 and SHA-1 hashes of /bin/ls" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/bin</path>
       <filename>ls</filename>
       <hash_type var_ref="oval:org.mitre.oval.test:var:761" var_check="none satisfy"/>
     </filehash58_object>
-    <filehash58_object id="oval:org.mitre.oval.test:obj:421" version="1" comment="SHA-224, SHA-256, SHA-384, and SHA-512 hashes of /bin/ls" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <path>/bin/</path>
+    <filehash58_object id="oval:org.mitre.oval.test:obj:421" version="2" comment="SHA-224, SHA-256, SHA-384, and SHA-512 hashes of /bin/ls" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/bin</path>
       <filename>ls</filename>
       <hash_type var_ref="oval:org.mitre.oval.test:var:761" var_check="at least one"/>
     </filehash58_object>
   </objects>
   <states>
-    <filehash58_state id="oval:org.mitre.oval.test:ste:531" version="1" comment="matches any MD5 and SHA-1 hashes of /bin/ls" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <path>/bin/</path>
+    <filehash58_state id="oval:org.mitre.oval.test:ste:531" version="2" comment="matches any MD5 and SHA-1 hashes of /bin/ls" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/bin</path>
       <filename>ls</filename>
       <hash_type var_ref="oval:org.mitre.oval.test:var:761" var_check="none satisfy"/>
     </filehash58_state>
-    <filehash58_state id="oval:org.mitre.oval.test:ste:774" version="1" comment="matches any MD5 and SHA-1 hashes of /bin/ls" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <path>/bin/</path>
+    <filehash58_state id="oval:org.mitre.oval.test:ste:774" version="2" comment="matches any MD5 and SHA-1 hashes of /bin/ls" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/bin</path>
       <filename>ls</filename>
       <hash_type var_ref="oval:org.mitre.oval.test:var:429" var_check="at least one"/>
     </filehash58_state>
-    <filehash58_state id="oval:org.mitre.oval.test:ste:257" version="1" comment="matches any SHA-224, SHA-256, SHA-384, or SHA-512 hashes of /bin/ls" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <path>/bin/</path>
+    <filehash58_state id="oval:org.mitre.oval.test:ste:257" version="2" comment="matches any SHA-224, SHA-256, SHA-384, or SHA-512 hashes of /bin/ls" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/bin</path>
       <filename>ls</filename>
       <hash_type var_ref="oval:org.mitre.oval.test:var:761" var_check="at least one"/>
     </filehash58_state>

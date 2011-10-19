@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent                         independent-definitions-schema.xsd                       http://oval.mitre.org/XMLSchema/oval-definitions-5                         oval-definitions-schema.xsd                       http://oval.mitre.org/XMLSchema/oval-common-5                         oval-common-schema.xsd" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5">
   <generator>
     <oval:schema_version>5.9</oval:schema_version>
     <oval:timestamp>2009-06-11T10:22:26-04:00</oval:timestamp>
   </generator>
   <definitions>
-    <definition id="oval:org.mitre.oval.test:def:29" version="1" class="miscellaneous">
+    <definition id="oval:org.mitre.oval.test:def:29" version="2" class="miscellaneous">
       <metadata>
         <title>Evaluate to true if the split function is properly supported</title>
         <description>This definition is intended to evaluate to true if the interpreter properly supports the split function.</description>
@@ -28,7 +28,7 @@
       <object object_ref="oval:org.mitre.oval.test:obj:136"/>
       <state state_ref="oval:org.mitre.oval.test:ste:547"/>
     </variable_test>
-    <variable_test id="oval:org.mitre.oval.test:tst:566" version="1" comment="Test that the split function is supported with a single component that contains a single string value that starts and ends with the string value specified in the delimiter attribute and returns a multiple valued result." check_existence="all_exist" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+    <variable_test id="oval:org.mitre.oval.test:tst:566" version="2" comment="Test that the split function is supported with a single component that contains a single string value that starts and ends with the string value specified in the delimiter attribute and returns a multiple valued result." check_existence="all_exist" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:org.mitre.oval.test:obj:627"/>
       <state state_ref="oval:org.mitre.oval.test:ste:278"/>
     </variable_test>
@@ -65,8 +65,8 @@
     <variable_state id="oval:org.mitre.oval.test:ste:547" version="1" comment="The state of all values being equal to ''." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <value/>
     </variable_state>
-    <variable_state id="oval:org.mitre.oval.test:ste:278" version="1" comment="placeholder state since the proper test is not yet possible" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <value/>
+    <variable_state id="oval:org.mitre.oval.test:ste:278" version="2" comment="The state where each value is either an empty string or a '-'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value var_ref="oval:org.mitre.oval.test:var:983" var_check="at least one"/>
     </variable_state>
     <variable_state id="oval:org.mitre.oval.test:ste:251" version="1" comment="The string 'foobar'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <value>foobar</value>
@@ -110,6 +110,10 @@
       <value>a</value>
       <value>b</value>
       <value>c</value>
+    </constant_variable>
+    <constant_variable id="oval:org.mitre.oval.test:var:983" version="1" comment="match empty string and '-'" datatype="string">
+      <value/>
+      <value>-</value>
     </constant_variable>
   </variables>
 </oval_definitions>

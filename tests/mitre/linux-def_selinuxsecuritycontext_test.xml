@@ -5,7 +5,7 @@
     <oval:timestamp>2011-04-09T14:48:11-04:00</oval:timestamp>
   </generator>
   <definitions>
-    <definition id="oval:org.mitre.oval.test:def:693" version="1" class="miscellaneous">
+    <definition id="oval:org.mitre.oval.test:def:693" version="4" class="miscellaneous">
       <metadata>
         <title>Evaluate to true if the linux-def:selinuxsecuritycontext_test is properly supported</title>
         <description>This definition is intended to evalutate to true if the interpreter properly supports the linux-def:selinuxsecuritycontext_test and all of its valid operations.</description>
@@ -44,11 +44,11 @@
       <object object_ref="oval:org.mitre.oval.test:obj:1474"/>
       <state state_ref="oval:org.mitre.oval.test:ste:1181"/>
     </selinuxsecuritycontext_test>
-    <selinuxsecuritycontext_test id="oval:org.mitre.oval.test:tst:1256" version="1" comment="Test getting context of a file (path+filename)." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <selinuxsecuritycontext_test id="oval:org.mitre.oval.test:tst:1256" version="2" comment="Test getting context of a file (path+filename)." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:org.mitre.oval.test:obj:1258"/>
       <state state_ref="oval:org.mitre.oval.test:ste:1324"/>
     </selinuxsecuritycontext_test>
-    <selinuxsecuritycontext_test id="oval:org.mitre.oval.test:tst:1925" version="1" comment="Test getting context of a set of files." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <selinuxsecuritycontext_test id="oval:org.mitre.oval.test:tst:1925" version="3" comment="Test getting context of a set of files." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:org.mitre.oval.test:obj:1385"/>
       <state state_ref="oval:org.mitre.oval.test:ste:1342"/>
     </selinuxsecuritycontext_test>
@@ -74,12 +74,12 @@
     <selinuxsecuritycontext_object id="oval:org.mitre.oval.test:obj:1474" version="1" comment="Get context of a particular file (filepath)." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <filepath>/etc/passwd</filepath>
     </selinuxsecuritycontext_object>
-    <selinuxsecuritycontext_object id="oval:org.mitre.oval.test:obj:1258" version="1" comment="Get context of a particular file (path+filename)." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-      <path>/etc/</path>
+    <selinuxsecuritycontext_object id="oval:org.mitre.oval.test:obj:1258" version="2" comment="Get context of a particular file (path+filename)." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <path>/etc</path>
       <filename>mtab</filename>
     </selinuxsecuritycontext_object>
-    <selinuxsecuritycontext_object id="oval:org.mitre.oval.test:obj:1385" version="1" comment="Get context of a set of files." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-      <path>/etc/profile.d/</path>
+    <selinuxsecuritycontext_object id="oval:org.mitre.oval.test:obj:1385" version="2" comment="Get context of a set of files." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <path>/etc/profile.d</path>
       <filename operation="pattern match">.*</filename>
     </selinuxsecuritycontext_object>
     <selinuxsecuritycontext_object id="oval:org.mitre.oval.test:obj:1468" version="1" comment="Get context of the directory /dev." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
@@ -100,8 +100,8 @@
     <selinuxsecuritycontext_state id="oval:org.mitre.oval.test:ste:1324" version="1" comment="accepts the context of /etc/mtab" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <filepath>/etc/mtab</filepath>
     </selinuxsecuritycontext_state>
-    <selinuxsecuritycontext_state id="oval:org.mitre.oval.test:ste:1342" version="1" comment="accepts the context of files in /etc/profile.d" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-      <path>/etc/profile.d/</path>
+    <selinuxsecuritycontext_state id="oval:org.mitre.oval.test:ste:1342" version="2" comment="accepts the context of files in /etc/profile.d" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <path>/etc/profile.d</path>
     </selinuxsecuritycontext_state>
   </states>
 </oval_definitions>

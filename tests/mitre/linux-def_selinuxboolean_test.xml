@@ -5,7 +5,7 @@
     <oval:timestamp>2009-01-12T10:41:00-05:00</oval:timestamp>
   </generator>
   <definitions>
-    <definition id="oval:org.mitre.oval.test:def:967" version="1" class="miscellaneous">
+    <definition id="oval:org.mitre.oval.test:def:967" version="2" class="miscellaneous">
       <metadata>
         <title>Evaluate to true if the linux-def:selinuxboolean_test is properly supported</title>
         <description>This definition is intended to evalutate to true if the interpreter properly supports the linux-def:selinuxboolean_test.</description>
@@ -21,15 +21,15 @@
     </definition>
   </definitions>
   <tests>
-    <selinuxboolean_test id="oval:org.mitre.oval.test:tst:1766" version="1" comment="Test that the selinuxboolean_object is supported with the name entity equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <selinuxboolean_test id="oval:org.mitre.oval.test:tst:1766" version="2" comment="Test that the selinuxboolean_object is supported with the name entity equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:org.mitre.oval.test:obj:1137"/>
       <state state_ref="oval:org.mitre.oval.test:ste:1660"/>
     </selinuxboolean_test>
-    <selinuxboolean_test id="oval:org.mitre.oval.test:tst:1067" version="1" comment="Test that the selinuxboolean_object is supported with the name entity not equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <selinuxboolean_test id="oval:org.mitre.oval.test:tst:1067" version="2" comment="Test that the selinuxboolean_object is supported with the name entity not equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:org.mitre.oval.test:obj:1464"/>
       <state state_ref="oval:org.mitre.oval.test:ste:1638"/>
     </selinuxboolean_test>
-    <selinuxboolean_test id="oval:org.mitre.oval.test:tst:1985" version="1" comment="Test that the selinuxboolean_object is supported with the name entity matching some regular expression." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <selinuxboolean_test id="oval:org.mitre.oval.test:tst:1985" version="2" comment="Test that the selinuxboolean_object is supported with the name entity matching some regular expression." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:org.mitre.oval.test:obj:1119"/>
       <state state_ref="oval:org.mitre.oval.test:ste:1701"/>
     </selinuxboolean_test>
@@ -46,20 +46,20 @@
     </selinuxboolean_object>
   </objects>
   <states>
-    <selinuxboolean_state id="oval:org.mitre.oval.test:ste:1660" version="1" comment="This state represents an selinuxboolean_item that has a name equal to 'allow_console_login', a current_status that is equal to either '0' or '1', and a pending_status that is not equal to either 'true' or 'false'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <selinuxboolean_state id="oval:org.mitre.oval.test:ste:1660" version="2" comment="This state represents an selinuxboolean_item that has a name equal to 'allow_console_login', a current_status that is equal to either '0' or '1', and a pending_status that is not equal to either 'true' or 'false'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <name>allow_console_login</name>
-      <current_status datatype="boolean" var_ref="oval:org.mitre.oval.test:var:911" entity_check="only one"/>
-      <pending_status datatype="boolean" operation="not equal" var_ref="oval:org.mitre.oval.test:var:280" entity_check="only one"/>
+      <current_status datatype="boolean" var_ref="oval:org.mitre.oval.test:var:911" var_check="only one"/>
+      <pending_status datatype="boolean" operation="not equal" var_ref="oval:org.mitre.oval.test:var:280" var_check="only one"/>
     </selinuxboolean_state>
-    <selinuxboolean_state id="oval:org.mitre.oval.test:ste:1638" version="1" comment="This state represents selinuxboolean_items that have a name not equal to 'allow_console_login', a current_status that is equal to either '0' or '1', and a pending_status that is not equal to either 'true' or 'false'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <selinuxboolean_state id="oval:org.mitre.oval.test:ste:1638" version="2" comment="This state represents selinuxboolean_items that have a name not equal to 'allow_console_login', a current_status that is equal to either '0' or '1', and a pending_status that is not equal to either 'true' or 'false'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <name operation="not equal">allow_console_login</name>
-      <current_status datatype="boolean" var_ref="oval:org.mitre.oval.test:var:911" entity_check="only one"/>
-      <pending_status datatype="boolean" operation="not equal" var_ref="oval:org.mitre.oval.test:var:280" entity_check="only one"/>
+      <current_status datatype="boolean" var_ref="oval:org.mitre.oval.test:var:911" var_check="only one"/>
+      <pending_status datatype="boolean" operation="not equal" var_ref="oval:org.mitre.oval.test:var:280" var_check="only one"/>
     </selinuxboolean_state>
-    <selinuxboolean_state id="oval:org.mitre.oval.test:ste:1701" version="1" comment="This state represents selinuxboolean_items that have a name that matches the regular expression '^allow[_a-z]+$', a current_status that is equal to either '0' or '1', and a pending_status that is not equal to either 'true' or 'false'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <selinuxboolean_state id="oval:org.mitre.oval.test:ste:1701" version="2" comment="This state represents selinuxboolean_items that have a name that matches the regular expression '^allow[_a-z]+$', a current_status that is equal to either '0' or '1', and a pending_status that is not equal to either 'true' or 'false'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <name operation="pattern match">^allow[_a-z]+$</name>
-      <current_status datatype="boolean" var_ref="oval:org.mitre.oval.test:var:911" entity_check="only one"/>
-      <pending_status datatype="boolean" operation="not equal" var_ref="oval:org.mitre.oval.test:var:280" entity_check="only one"/>
+      <current_status datatype="boolean" var_ref="oval:org.mitre.oval.test:var:911" var_check="only one"/>
+      <pending_status datatype="boolean" operation="not equal" var_ref="oval:org.mitre.oval.test:var:280" var_check="only one"/>
     </selinuxboolean_state>
   </states>
   <variables>

@@ -5,7 +5,7 @@
     <oval:timestamp>2009-09-02T17:05:02-05:00</oval:timestamp>
   </generator>
   <definitions>
-    <definition id="oval:org.mitre.oval.test:def:168" version="1" class="miscellaneous">
+    <definition id="oval:org.mitre.oval.test:def:168" version="3" class="miscellaneous">
       <metadata>
         <title>Evaluate to true if the ind-def:textfilecontent_test is properly supported.</title>
         <description>This definition is intended to evalutate to true if the interpreter properly supports the ind-def:textfilecontent_test.</description>
@@ -28,7 +28,7 @@
       <object object_ref="oval:org.mitre.oval.test:obj:845"/>
       <state state_ref="oval:org.mitre.oval.test:ste:891"/>
     </textfilecontent_test>
-    <textfilecontent_test id="oval:org.mitre.oval.test:tst:538" version="1" comment="Test that the textfilecontent_object with a path pattern match, filename, and line is supported." check_existence="all_exist" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+    <textfilecontent_test id="oval:org.mitre.oval.test:tst:538" version="2" comment="Test that the textfilecontent_object with a path pattern match, filename, and line is supported." check_existence="all_exist" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:org.mitre.oval.test:obj:158"/>
       <state state_ref="oval:org.mitre.oval.test:ste:891"/>
     </textfilecontent_test>
@@ -44,7 +44,7 @@
       <object object_ref="oval:org.mitre.oval.test:obj:392"/>
       <state state_ref="oval:org.mitre.oval.test:ste:891"/>
     </textfilecontent_test>
-    <textfilecontent_test id="oval:org.mitre.oval.test:tst:394" version="1" comment="Test that the recurse_direction behavior is supported." check_existence="all_exist" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+    <textfilecontent_test id="oval:org.mitre.oval.test:tst:394" version="2" comment="Test that the recurse_direction behavior is supported." check_existence="all_exist" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:org.mitre.oval.test:obj:800"/>
       <state state_ref="oval:org.mitre.oval.test:ste:156"/>
     </textfilecontent_test>
@@ -55,8 +55,8 @@
       <filename>build.win32.txt</filename>
       <line operation="pattern match">OVAL Interpreter</line>
     </textfilecontent_object>
-    <textfilecontent_object id="oval:org.mitre.oval.test:obj:158" version="1" comment="This textfilecontent_object retrieves all lines that match the regular expression 'OVAL Interpreter' in the file where the path matches the regular expression '^/tmp/ValidationSupportFiles/.+' and the filename equals 'build.win32.txt'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <path operation="pattern match">^/tmp/ValidationSupportFiles/.+</path>
+    <textfilecontent_object id="oval:org.mitre.oval.test:obj:158" version="2" comment="This textfilecontent_object retrieves all lines that match the regular expression 'OVAL Interpreter' in the file where the path matches the regular expression '^/tmp/ValidationSupportFiles.+' and the filename equals 'build.win32.txt'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path operation="pattern match">^/tmp/ValidationSupportFiles.+</path>
       <filename>build.win32.txt</filename>
       <line operation="pattern match">OVAL Interpreter</line>
     </textfilecontent_object>
@@ -90,8 +90,8 @@
       <filename>build.win32.txt</filename>
       <line operation="pattern match">OVAL Interpreter</line>
     </textfilecontent_state>
-    <textfilecontent_state id="oval:org.mitre.oval.test:ste:156" version="1" comment="This textfilecontent_state represents a textfilecontent_item where the path equals '/tmp/ValidationSupportFiles/TextFiles/TextFileContentTest/', filename equals 'build.win32.txt', and line matches the regular expression 'OVAL Interpreter'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <path>/tmp/ValidationSupportFiles/TextFiles/TextFileContentTest/</path>
+    <textfilecontent_state id="oval:org.mitre.oval.test:ste:156" version="2" comment="This textfilecontent_state represents a textfilecontent_item where the path equals '/tmp/ValidationSupportFiles/TextFiles/TextFileContentTest', filename equals 'build.win32.txt', and line matches the regular expression 'OVAL Interpreter'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp/ValidationSupportFiles/TextFiles/TextFileContentTest</path>
       <filename>build.win32.txt</filename>
       <line operation="pattern match">OVAL Interpreter</line>
     </textfilecontent_state>

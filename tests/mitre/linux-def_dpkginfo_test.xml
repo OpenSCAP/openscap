@@ -52,7 +52,7 @@
       <epoch operation="pattern match">.*</epoch>
       <release operation="pattern match">.*</release>
       <version operation="pattern match">.*</version>
-      <evr operation="pattern match">.*</evr>
+      <evr datatype="evr_string" operation="greater than">0</evr>
     </dpkginfo_state>
     <dpkginfo_state id="oval:org.mitre.oval.test:ste:499" version="1" comment="This state represents dpkginfo_items that have a name not equal to 'libapt-pkg-dev', and an arch, epoch, release, version, evr, and signature_keyid that match the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <name operation="not equal">libapt-pkg-dev</name>
@@ -60,7 +60,7 @@
       <epoch operation="pattern match">.*</epoch>
       <release operation="pattern match">.*</release>
       <version operation="pattern match">.*</version>
-      <evr operation="pattern match">.*</evr>
+      <evr datatype="evr_string" operation="greater than">0</evr>
     </dpkginfo_state>
     <dpkginfo_state id="oval:org.mitre.oval.test:ste:718" version="1" comment="This state represents dpkginfo_items that have a name that matches the regular expression '^libapt.pkg.dev$', and an arch, epoch, release, version, evr, and signature_keyid that match the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <name operation="pattern match">^libapt.pkg.dev$</name>
@@ -68,7 +68,7 @@
       <epoch operation="pattern match">.*</epoch>
       <release operation="pattern match">.*</release>
       <version operation="pattern match">.*</version>
-      <evr operation="pattern match">.*</evr>
+      <evr datatype="evr_string" operation="greater than">0</evr>
     </dpkginfo_state>
   </states>
 </oval_definitions>

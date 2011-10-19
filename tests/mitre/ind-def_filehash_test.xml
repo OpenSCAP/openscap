@@ -59,8 +59,8 @@
       <path>/bin</path>
       <filename>ls</filename>
     </filehash_object>
-    <filehash_object id="oval:org.mitre.oval.test:obj:813" version="1" comment="This object represents a filehash_item with a path that matches the regular expression '^b.n$' and a filename equal to 'ls'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <path operation="pattern match">^/b.n$</path>
+    <filehash_object id="oval:org.mitre.oval.test:obj:813" version="1" comment="This object represents a filehash_item with a path that matches the regular expression '^bin$' and a filename equal to 'ls'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path operation="pattern match">^/bin$</path>
       <filename>ls</filename>
     </filehash_object>
     <filehash_object id="oval:org.mitre.oval.test:obj:281" version="1" comment="This object represents a filehash_item with a path equal to '/bin' and a filename that matches the regular expression '^l'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">

@@ -5,7 +5,7 @@
     <oval:timestamp>2007-01-31T14:30:20.988-05:00</oval:timestamp>
   </generator>
   <definitions>
-    <definition id="oval:org.mitre.oval.test:def:870" version="1" class="compliance">
+    <definition id="oval:org.mitre.oval.test:def:870" version="2" class="compliance">
       <metadata>
         <title>Evaluate to true if the ind-def:xmlfilecontent_test is properly supported.</title>
         <description>This definition is intended to evalutate to true if the interpreter properly supports the ind-def:xmlfilecontent_test.</description>
@@ -49,7 +49,7 @@
       <object object_ref="oval:org.mitre.oval.test:obj:451"/>
       <state state_ref="oval:org.mitre.oval.test:ste:786"/>
     </xmlfilecontent_test>
-    <xmlfilecontent_test id="oval:org.mitre.oval.test:tst:20" version="1" comment="Test that the recurse_direction behavior is supported." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+    <xmlfilecontent_test id="oval:org.mitre.oval.test:tst:20" version="2" comment="Test that the recurse_direction behavior is supported." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:org.mitre.oval.test:obj:701"/>
       <state state_ref="oval:org.mitre.oval.test:ste:987"/>
     </xmlfilecontent_test>
@@ -131,8 +131,8 @@
       <xpath>//*/student[@status='full-time']/name/text()</xpath>
       <value_of operation="pattern match">(Bill|Kate)</value_of>
     </xmlfilecontent_state>
-    <xmlfilecontent_state id="oval:org.mitre.oval.test:ste:987" version="1" comment="This object represents a xmlfilecontent_item with a path equal to '/tmp/ValidationSupportFiles/XMLFiles/Classes/Class2/', a filename that matches the regular expression 'Section(1|2)\.xml', an xpath query equal to 'count(//*/student)', and a value_of equal to '4'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <path>/tmp/ValidationSupportFiles/XMLFiles/Classes/Class2/</path>
+    <xmlfilecontent_state id="oval:org.mitre.oval.test:ste:987" version="2" comment="This object represents a xmlfilecontent_item with a path equal to '/tmp/ValidationSupportFiles/XMLFiles/Classes/Class2', a filename that matches the regular expression 'Section(1|2)\.xml', an xpath query equal to 'count(//*/student)', and a value_of equal to '4'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp/ValidationSupportFiles/XMLFiles/Classes/Class2</path>
       <filename operation="pattern match">Section(1|2)\.xml</filename>
       <xpath>count(//*/student)</xpath>
       <value_of>4</value_of>
