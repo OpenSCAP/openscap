@@ -93,11 +93,8 @@ test_run "ind-def_xmlfilecontent_test.xml" test_mitre ind-def_xmlfilecontent_tes
 test_run "linux-def_partition_test.xml" test_mitre linux-def_partition_test.xml "true"
 test_run "linux-def_rpminfo_test.xml" test_mitre linux-def_rpminfo_test.xml "true"
 test_run "linux-def_rpmverify_test.xml" test_mitre linux-def_rpmverify_test.xml "true"
-
 test_run "linux-def_selinuxboolean_test.xml" test_mitre linux-def_selinuxboolean_test.xml "true"
-
-# root needed; ToDo - it seems there is a bug in openscap
-#test_run "linux-def_inetlisteningservers_test.xml" test_mitre linux-def_inetlisteningservers_test.xml
+test_run "linux-def_inetlisteningservers_test.xml" test_mitre linux-def_inetlisteningservers_test.xml "true"
 
 test_run "oval_binary_datatype.xml" test_mitre oval_binary_datatype.xml "true"
 test_run "oval_boolean_datatype.xml" test_mitre oval_boolean_datatype.xml "true"
