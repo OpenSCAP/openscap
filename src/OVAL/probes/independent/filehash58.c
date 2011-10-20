@@ -70,7 +70,9 @@ static const struct oscap_string_map CRAPI_ALG_MAP[] = {
 static const struct oscap_string_map CRAPI_ALG_MAP_SIZE[] = {
 	{16, "MD5"},
 	{20, "SHA-1"},
+	{28, "SHA-224"},
 	{32, "SHA-256"},
+	{48, "SHA-384"},
 	{64, "SHA-512"},
 	{20, "RMD-160"},
 	{0, NULL}
