@@ -157,12 +157,12 @@ int oval_value_cast(struct oval_value *value, oval_datatype_t new_dt)
 	return 0;
 }
 
-/*
-void oval_value_set_datatype(struct oval_value *value,
-			     oval_datatype_t datatype)
+void oval_value_set_datatype(struct oval_value *value, oval_datatype_t datatype)
 {
 	value->datatype = datatype;
 }
+
+/*
 void oval_value_set_text(struct oval_value *value, char *text)
 {
 	if(value->text!=NULL)

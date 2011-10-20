@@ -2363,6 +2363,15 @@ struct oval_value *oval_value_clone(struct oval_value *old_value);
 void oval_value_free(struct oval_value *);
 
 /**
+ * @name Setters
+ * @{
+ */
+/**
+ * @memberof oval_value
+ */
+void oval_value_set_datatype(struct oval_value *, oval_datatype_t);
+
+/**
  * @name Getters
  * @{
  */

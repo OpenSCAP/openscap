@@ -658,11 +658,13 @@ static int _oval_variable_parse_local_tag(xmlTextReaderPtr reader, struct oval_p
 
 #define DEFINITION_NAMESPACE "http://oval.mitre.org/XMLSchema/oval-definitions-5"
 
-static void _oval_variable_parse_value(char *text_value, struct oval_variable *variable)
+static void _const_tag_consumer(struct oval_value *val, void *user)
 {
+	oval_datatype_t dt;
 
-	struct oval_value *value = oval_value_new(oval_variable_get_datatype(variable), text_value);
-	oval_variable_add_value(variable, value);
+	dt = oval_variable_get_datatype(user);
+	oval_value_set_datatype(val, dt);
+	oval_variable_add_value(user, val);
 }
 
 static int _oval_variable_parse_constant_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *user)
@@ -670,16 +672,19 @@ static int _oval_variable_parse_constant_tag(xmlTextReaderPtr reader, struct ova
 	xmlChar *tagname = xmlTextReaderLocalName(reader);
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 	struct oval_variable *variable = (struct oval_variable *)user;
-	int return_code = 0;
-	if (strcmp("value", (char *)tagname) == 0 && strcmp(DEFINITION_NAMESPACE, (char *)namespace) == 0) {
-		oval_parser_text_value(reader, context, (oval_xml_value_consumer) _oval_variable_parse_value, variable);
-	} else {
+
+	if (strcmp("value", (char *) tagname) || strcmp(DEFINITION_NAMESPACE, (char *) namespace)) {
 		dW("Invalid element <%s:%s> in constant variable %s on line %d.\n",
-			       namespace, tagname, variable->id, xmlTextReaderGetParserLineNumber(reader));
+		   namespace, tagname, variable->id, xmlTextReaderGetParserLineNumber(reader));
+		goto out;
 	}
+
+	oval_value_parse_tag(reader, context, _const_tag_consumer, variable);
+
+ out:
 	oscap_free(tagname);
 	oscap_free(namespace);
-	return return_code;
+	return 0;
 }
 
 int oval_variable_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *usr)
