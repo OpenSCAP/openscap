@@ -3464,10 +3464,10 @@
                 <ind-def:subexpression>no</ind-def:subexpression>
         </ind-def:textfilecontent54_state>
         <ind-def:textfilecontent54_state id="oval:org.open-scap.rhel6:ste:107011" version="1" comment="Expected value of TMOUT in /etc/profile.d/tmout.sh">
-                <ind-def:subexpression var_check="all" datatype="int" operation="equals" var_ref="oval:org.open-scap.rhel6:var:1070111"/>
+                <ind-def:subexpression var_check="all" datatype="int" operation="less than or equal" var_ref="oval:org.open-scap.rhel6:var:1070111"/>
         </ind-def:textfilecontent54_state>
         <ind-def:textfilecontent54_state id="oval:org.open-scap.rhel6:ste:107111" version="1" comment="Expected value of autologout in /etc/profile.d/autologout.csh">
-                <ind-def:subexpression datatype="int" var_check="all" operation="equals" var_ref="oval:org.open-scap.rhel6:var:1070"/>
+                <ind-def:subexpression datatype="int" var_check="all" operation="less than or equal" var_ref="oval:org.open-scap.rhel6:var:1070"/>
         </ind-def:textfilecontent54_state>
         <ind-def:xmlfilecontent_state id="oval:org.open-scap.rhel6:ste:107211" version="1" comment="Expected value of /desktop/gnome/session/idle_delay">
                 <ind-def:value_of datatype="int" var_check="all" var_ref="oval:org.open-scap.rhel6:var:1070" />
