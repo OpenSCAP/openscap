@@ -82,9 +82,7 @@ test_run "ind-def_family_test.xml" test_mitre ind-def_family_test.xml "true"
 test_run "ind-def_textfilecontent54_test.xml" test_mitre ind-def_textfilecontent54_test.xml "true"
 test_run "ind-def_textfilecontent_test.xml" test_mitre ind-def_textfilecontent_test.xml "true"
 test_run "ind-def_xmlfilecontent_test.xml" test_mitre ind-def_xmlfilecontent_test.xml "true"
-
-# wtfi "none satisfy" (oval:org.mitre.oval.test:obj:105)
-#test_run "ind-def_filehash58_test.xml" test_mitre ind-def_filehash58_test.xml
+test_run "ind-def_filehash58_test.xml" test_mitre ind-def_filehash58_test.xml "true"
 
 # does not work because of symplink `/etc/rc' -> `/etc/rc.d/rc' (oval:org.mitre.oval.test:tst:102)
 #test_run "ind-def_filehash_test.xml" test_mitre ind-def_filehash_test.xml "true"
@@ -110,15 +108,12 @@ test_run "oval-def_end_function.xml" test_mitre oval-def_end_function.xml "true"
 test_run "oval-def_escape_regex_function.xml" test_mitre oval-def_escape_regex_function.xml "true"
 test_run "oval-def_extend_definition.xml" test_mitre oval-def_extend_definition.xml "oval:org.mitre.oval.test:def:117" "true" "oval:org.mitre.oval.test:def:97" "true"
 test_run "oval-def_external_variable.xml" test_mitre oval-def_external_variable.xml "true"
-
 test_run "oval-def_literal_component.xml" test_mitre oval-def_literal_component.xml "true"
 test_run "oval-def_local_variable.xml" test_mitre oval-def_local_variable.xml "true"
 test_run "oval-def_object_component.xml" test_mitre oval-def_object_component.xml "true"
 test_run "oval-def_regex_capture_function.xml" test_mitre oval-def_regex_capture_function.xml "true"
 test_run "oval-def_set.xml" test_mitre oval-def_set.xml "true"
-
-# ToDo - bad parsing of "<value/>"
-#test_run "oval-def_split_function.xml" test_mitre oval-def_split_function.xml "true"
+test_run "oval-def_split_function.xml" test_mitre oval-def_split_function.xml "true"
 
 # win_filetime format is currently unsupported, there are possibly some wrong values in the document
 #test_run "oval-def_time_difference_function.xml" test_mitre oval-def_time_difference_function.xml "true"
@@ -146,7 +141,6 @@ test_run "unix-def_uname_test.xml" test_mitre unix-def_uname_test.xml "true"
 
 # install xinetd, telnet-server and tftp-server in order to test xinetd probe
 #test_run "unix-def_xinetd_test.xml" test_mitre unix-def_xinetd_test.xml "true"
-
 
 # Unsupported objects on Fedora
 #test_run "ind-def_ldap_test.xml" test_mitre ind-def_ldap_test.xml "unknown"
