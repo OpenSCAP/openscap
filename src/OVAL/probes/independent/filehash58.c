@@ -49,6 +49,7 @@
 
 #include "oval_fts.h"
 #include "util.h"
+#include "probe/entcmp.h"
 
 #define FILE_SEPARATOR '/'
 
@@ -278,7 +279,17 @@ int probe_main(probe_ctx *ctx, void *mutex)
 
 	if ((ofts = oval_fts_open(path, filename, filepath, behaviors)) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
-			filehash58_cb(ofts_ent->path, ofts_ent->file, hash_type_str, ctx);
+			/* find hash types to compare with entity, think "not satisfy" */
+			const struct oscap_string_map *p = CRAPI_ALG_MAP;
+			while (p->value != CRAPI_INVALID) {
+				SEXP_t *crapi_hash_type_sexp = SEXP_string_new(p->string, strlen(p->string));
+				if (probe_entobj_cmp(hash_type, crapi_hash_type_sexp) == OVAL_RESULT_TRUE) {
+					filehash58_cb(ofts_ent->path, ofts_ent->file, p->string, ctx);
+				}
+
+				SEXP_free(crapi_hash_type_sexp);
+				p++;
+			}
 			oval_ftsent_free(ofts_ent);
 		}
 
