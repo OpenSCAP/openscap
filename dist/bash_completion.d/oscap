@@ -67,8 +67,8 @@ function _oscap {
 		case "$prev" in
 			--AV|--AC|--AU|--CI|--II|--AI|--EX|--RL|--RC|--CD|--TD|--CR|--IR|--AR)
 				COMPREPLY=( $(compgen -W "`$prog cvss $cmd -h | sed -r -n -e "s:^\s+$prev=\[(.+)\].+$:\1:gp" | tr '|' ' '`" -- ${cur}) ) ;;
-			--result-file|-o|--output|--template|--oval-template) _filedir 'xml' ;;
-            --report-file) _filedir 'html' ;;
+			--results|-o|--output|--template|--oval-template) _filedir 'xml' ;;
+            --report) _filedir 'html' ;;
             --format) COMPREPLY=( $(compgen -W "docbook html" -- ${cur}) ) ;;
 		esac
 
