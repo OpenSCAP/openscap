@@ -1,12 +1,12 @@
-
+SUBDIRS =
+oscap_LDADD =
 
 if WANT_UTIL_OSCAP
 bin_PROGRAMS	= oscap
 man_MANS	= oscap.8
 oscap_SOURCES	= oscap.c oscap-tool.h oscap-tool.c
 oscap_CPPFLAGS	= -I$(top_srcdir)/src/common/public @xml2_CFLAGS@
-oscap_LDADD	= $(top_builddir)/src/libopenscap.la
-oscap_LDADD += $(top_builddir)/src/common/liboscapcommon.la
+oscap_LDADD	+= $(top_builddir)/src/libopenscap.la
 EXTRA_DIST	= $(man_MANS)
 
 
@@ -36,5 +36,8 @@ oscap_SOURCES   += oscap-cpe.c
 oscap_CPPFLAGS  += -I$(top_srcdir)/src/CPE/public
 endif
 
+if WANT_SCE
+oscap_SOURCES += sce_engine.c
 endif
 
+endif

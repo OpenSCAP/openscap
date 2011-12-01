@@ -1058,6 +1058,18 @@ else
    AC_SUBST([NODEBUG], [-DNDEBUG]) #for swig alloc.h
 fi
 
+AC_ARG_ENABLE([sce],
+     [AC_HELP_STRING([--enable-sce], [enable script check engine (experimental) (default=no)])],
+     [case "${enableval}" in
+       yes) sce=yes ;;
+       no)  sce=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-sce]) ;;
+     esac],[sce=no])
+
+if test "x${sce}" = xyes; then
+  AC_DEFINE([ENABLE_SCE], [1], [compilation of script check engine enabled])
+fi
+
 AC_ARG_ENABLE([util-oscap],
      [AC_HELP_STRING([--enable-util-oscap], [enable compilation of the oscap utility (default=yes)])],
      [case "${enableval}" in
@@ -1169,6 +1181,7 @@ AM_CONDITIONAL([WANT_PROBES_UNIX], test "$probes_unix" = yes)
 AM_CONDITIONAL([WANT_PROBES_LINUX], test "$probes_linux" = yes)
 AM_CONDITIONAL([WANT_PROBES_SOLARIS], test "$probes_solaris" = yes)
 
+AM_CONDITIONAL([WANT_SCE], test "$sce" = yes)
 AM_CONDITIONAL([WANT_UTIL_OSCAP], test "$util_oscap" = yes)
 AM_CONDITIONAL([WANT_BINDINGS], test "$bindings" = yes)
 AM_CONDITIONAL([ENABLE_VALGRIND_TESTS], test "$vgcheck" = yes)
@@ -1243,7 +1256,9 @@ AC_CONFIG_FILES([Makefile
 
            	 src/XCCDF/Makefile
 	         src/XCCDF_POLICY/Makefile
-                 tests/API/XCCDF/Makefile])
+                 tests/API/XCCDF/Makefile
+
+                 tests/sce/Makefile])
 
 AC_OUTPUT
 
@@ -1505,6 +1520,7 @@ echo ""
 
 echo "XCCDF enabled:                 $xccdf"
 echo "python bindings enabled:       $bindings"
+echo "script check engine            $sce"
 echo "oscap tool:                    $util_oscap"
 echo "use POSIX regex:               $regex_posix"
 echo "debugging flags enabled:       $debug"

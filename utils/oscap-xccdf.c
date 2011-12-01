@@ -20,6 +20,10 @@
  *      Peter Vrabec   <pvrabec@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <oval_probe.h>
 #include <oval_agent_api.h>
 #include <oval_agent_xccdf_api.h>
@@ -244,6 +248,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	struct xccdf_policy *policy = NULL;
 	struct xccdf_benchmark *benchmark = NULL;
 	struct xccdf_policy_model *policy_model = NULL;
+	char * xccdf_pathcopy = NULL;
         void **def_models = NULL;
         void **sessions = NULL;
 	char ** oval_files = NULL;
@@ -350,30 +355,27 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		}
 	}
 
-	if (!oval_files[0]) {
-		fprintf(stderr, "No OVAL definition files present, aborting.\n");
-		goto cleanup;
-	}
-
 	/* Register checking engines */
-        for (idx=0; oval_files[idx]; idx++) {
+	for (idx=0; oval_files[idx]; idx++) {
 		/* file -> def_model */
-	        struct oval_definition_model *tmp_def_model = oval_definition_model_import(oval_files[idx]);
+		struct oval_definition_model *tmp_def_model = oval_definition_model_import(oval_files[idx]);
 		if (tmp_def_model == NULL) {
-			fprintf(stderr, "Failed to create definition model from: %s.\n", oval_files[idx]);
+			fprintf(stderr, "Failed to create OVAL definition model from: %s.\n", oval_files[idx]);
 			goto cleanup;
 		}
+
+		/* def_model -> session */
+                struct oval_agent_session *tmp_sess = oval_agent_new_session(tmp_def_model, basename(oval_files[idx]));
+		if (tmp_sess == NULL) {
+			fprintf(stderr, "Failed to create new OVAL agent session for: %s.\n", oval_files[idx]);
+			goto cleanup;
+		}
+
 		/* remember def_models */
 		def_models = realloc(def_models, (idx + 2) * sizeof(struct oval_definition_model *));
 		def_models[idx] = tmp_def_model;
 		def_models[idx+1] = NULL;
 
-		/* def_model -> session */
-                struct oval_agent_session *tmp_sess = oval_agent_new_session(tmp_def_model, basename(oval_files[idx]));
-		if (tmp_sess == NULL) {
-			fprintf(stderr, "Failed to create new agent session for: %s.\n", oval_files[idx]);
-			goto cleanup;
-		}
 		/* remember sessions */
 		sessions = realloc(sessions, (idx + 2) * sizeof(struct oval_agent_session *));
 		sessions[idx] = tmp_sess;
@@ -382,6 +384,14 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		/* register session */
 	        xccdf_policy_model_register_engine_oval(policy_model, tmp_sess);
 	}
+
+	// register sce system
+	xccdf_pathcopy =  strdup(action->f_xccdf);
+
+#ifdef ENABLE_SCE
+	char * xccdf_directory = dirname(xccdf_pathcopy);
+	sce_register_engine(policy_model, xccdf_directory);
+#endif
 
 	/* Perform evaluation */
 	struct xccdf_result *ritem = xccdf_policy_evaluate(policy);
@@ -489,6 +499,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 cleanup:
 	if (oscap_err())
 		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+
+	oscap_free(xccdf_pathcopy);
 
 	/* Definition Models */
 	if (def_models) {
