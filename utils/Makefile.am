@@ -6,6 +6,7 @@ man_MANS	= oscap.8
 oscap_SOURCES	= oscap.c oscap-tool.h oscap-tool.c
 oscap_CPPFLAGS	= -I$(top_srcdir)/src/common/public @xml2_CFLAGS@
 oscap_LDADD	= $(top_builddir)/src/libopenscap.la
+oscap_LDADD += $(top_builddir)/src/common/liboscapcommon.la
 EXTRA_DIST	= $(man_MANS)
 
 

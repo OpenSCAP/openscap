@@ -408,6 +408,67 @@ bool xccdf_policy_resolve(struct xccdf_policy * policy);
 struct xccdf_item * xccdf_policy_tailor_item(struct xccdf_policy * policy, struct xccdf_item * item);
 
 /**
+ * xccdf_policy_model_get_files and xccdf_item_get_files each return oscap_file_entries instead of raw strings
+ */
+struct oscap_file_entry;
+
+/// @memberof oscap_file_entry
+struct oscap_file_entry *oscap_file_entry_new(void);
+/// @memberof oscap_file_entry
+struct oscap_file_entry *oscap_file_entry_dup(struct oscap_file_entry* file_entry);
+/// @memberof oscap_file_entry
+void oscap_file_entry_free(struct oscap_file_entry* entry);
+/// @memberof oscap_file_entry
+const char* oscap_file_entry_get_system(struct oscap_file_entry* entry);
+/// @memberof oscap_file_entry
+const char* oscap_file_entry_get_file(struct oscap_file_entry* entry);
+
+/** @struct oscap_file_entry_iterator
+ * @see oscap_iterator
+ */
+struct oscap_file_entry_iterator;
+
+/// @memberof oscap_file_entry_iterator
+const char *oscap_file_entry_iterator_next(struct oscap_file_entry_iterator *it);
+/// @memberof oscap_file_entry_iterator
+bool oscap_file_entry_iterator_has_more(struct oscap_file_entry_iterator *it);
+/// @memberof oscap_file_entry_iterator
+void oscap_file_entry_iterator_free(struct oscap_file_entry_iterator *it);
+/// @memberof oscap_file_entry_iterator
+void oscap_file_entry_iterator_reset(struct oscap_file_entry_iterator *it);
+
+/** @struct oscap_file_entry_list
+ * @see oscap_list
+ */
+struct oscap_file_entry_list;
+
+/// @memberof oscap_file_entry_list
+struct oscap_file_entry_list* oscap_file_entry_list_new(void);
+/// @memberof oscap_file_entry_list
+void oscap_file_entry_list_free(struct oscap_file_entry_list* list);
+/// @memberof oscap_file_entry_list
+struct oscap_file_entry_iterator* oscap_file_entry_list_get_files(struct oscap_file_entry_list* list);
+
+/**
+ * Return names of files that are used in checks of particular rules. Every check needs this file to be
+ * evaluated properly. If this file will not be imported and bind to the XCCDF Policy system the result
+ * of rule after evaluation will be "Not checked"
+ *
+ *
+ * The resulting list should be freed with oscap_filelist_free.
+ */
+struct oscap_file_entry_list * xccdf_policy_model_get_systems_and_files(struct xccdf_policy_model * policy_model);
+
+/**
+ * Return names of files that are used in checks of particular rules. Every check needs this file to be
+ * evaluated properly. If this file will not be imported and bind to the XCCDF Policy system the result
+ * of rule after evaluation will be "Not checked"
+ *
+ * The resulting list should be freed with oscap_filelist_free.
+ */
+struct oscap_file_entry_list * xccdf_item_get_systems_and_files(struct xccdf_item * item);
+
+/**
  * Return names of files that are used in checks of particular rules. Every check needs this file to be
  * evaluated properly. If this file will not be imported and bind to the XCCDF Policy system the result
  * of rule after evaluation will be "Not checked"

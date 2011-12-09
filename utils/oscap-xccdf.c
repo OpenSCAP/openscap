@@ -296,6 +296,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	/* Use OVAL files from policy model */
 	if (action->f_ovals == NULL) {
 		struct stat sb;
+		struct oscap_file_entry * file_entry;
 		char * tmp_path;
 		
 		idx = 0;
@@ -305,11 +306,17 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		char * pathcopy =  strdup(action->f_xccdf);
 		char * path = dirname(pathcopy);
 
-		struct oscap_stringlist * files = xccdf_policy_model_get_files(policy_model);
-		struct oscap_string_iterator *files_it = oscap_stringlist_get_strings(files);
-		while (oscap_string_iterator_has_more(files_it)) {
+		struct oscap_file_entry_list * files = xccdf_policy_model_get_systems_and_files(policy_model);
+		struct oscap_file_entry_iterator *files_it = oscap_file_entry_list_get_files(files);
+		while (oscap_file_entry_iterator_has_more(files_it)) {
+			file_entry = (struct oscap_file_entry *)oscap_file_entry_iterator_next(files_it);
+
+			// we only care about OVAL referenced files
+			if (strcmp(oscap_file_entry_get_system(file_entry), "http://oval.mitre.org/XMLSchema/oval-definitions-5"))
+				continue;
+
 			tmp_path = malloc(PATH_MAX * sizeof(char));
-			sprintf(tmp_path, "%s/%s", path, oscap_string_iterator_next(files_it));
+			sprintf(tmp_path, "%s/%s", path, oscap_file_entry_get_file(file_entry));
 
 			if (stat(tmp_path, &sb)) {
 				fprintf(stderr, "WARNING: Skipping %s file which is referenced from XCCDF content\n", tmp_path);
@@ -322,8 +329,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 				oval_files[idx] = NULL;
 			}
 		}
-		oscap_string_iterator_free(files_it);
-		oscap_stringlist_free(files);
+		oscap_file_entry_iterator_free(files_it);
+		oscap_file_entry_list_free(files);
 		free(pathcopy);
 	} else
 		oval_files = action->f_ovals;
@@ -576,8 +583,8 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 		for (of_cnt = 0; oval_file_lst[of_cnt]; of_cnt++);
 	} else {
 		char *xccdf_path_cpy, *dir_path;
-		struct oscap_stringlist *files;
-		struct oscap_string_iterator *files_itr;
+		struct oscap_file_entry_list *files;
+		struct oscap_file_entry_iterator *files_itr;
 
 		oval_file_lst = oscap_talloc(char *);
 		oval_file_lst[0] = NULL;
@@ -586,15 +593,20 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 		xccdf_path_cpy = strdup(action->f_xccdf);
 		dir_path = dirname(xccdf_path_cpy);
 
-		files = xccdf_policy_model_get_files(policy_model);
-		files_itr = oscap_stringlist_get_strings(files);
-		while (oscap_string_iterator_has_more(files_itr)) {
-			char *filename;
+		files = xccdf_policy_model_get_systems_and_files(policy_model);
+		files_itr = oscap_file_entry_list_get_files(files);
+		while (oscap_file_entry_iterator_has_more(files_itr)) {
+			struct oscap_file_entry *entry;
 			char oval_path[PATH_MAX + 1];
 			struct stat sb;
 
-			filename = (char *) oscap_string_iterator_next(files_itr);
-			snprintf(oval_path, sizeof(oval_path), "%s/%s", dir_path, filename);
+			entry = (struct oscap_file_entry *) oscap_file_entry_iterator_next(files_itr);
+
+			// we only care about OVAL referenced files
+			if (strcmp(oscap_file_entry_get_system(entry), "http://oval.mitre.org/XMLSchema/oval-definitions-5"))
+				continue;
+
+			snprintf(oval_path, sizeof(oval_path), "%s/%s", dir_path, oscap_file_entry_get_file(entry));
 			if (stat(oval_path, &sb)) {
 				fprintf(stderr, "warning: can't find file '%s' (referenced from XCCDF).\n", oval_path);
 			} else {
@@ -603,8 +615,8 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 				oval_file_lst[of_cnt] = NULL;
 			}
 		}
-		oscap_string_iterator_free(files_itr);
-		oscap_stringlist_free(files);
+		oscap_file_entry_iterator_free(files_itr);
+		oscap_file_entry_list_free(files);
 		oscap_free(xccdf_path_cpy);
 	}
 

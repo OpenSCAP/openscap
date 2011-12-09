@@ -992,6 +992,215 @@ static struct xccdf_flat_score * xccdf_item_get_flat_score(struct xccdf_item * i
     return score;
 }
 
+struct oscap_file_entry {
+	char* system_name;
+	char* file;
+};
+
+struct oscap_file_entry *oscap_file_entry_new(void)
+{
+	struct oscap_file_entry *ret = oscap_calloc(1, sizeof(struct oscap_file_entry));
+	return ret;
+}
+
+struct oscap_file_entry *oscap_file_entry_dup(struct oscap_file_entry * file_entry)
+{
+	struct oscap_file_entry *source = (struct oscap_file_entry *) file_entry;
+
+	struct oscap_file_entry *ret = oscap_file_entry_new();
+	ret->system_name = oscap_strdup(source->system_name);
+	ret->file = oscap_strdup(source->file);
+
+	return ret;
+}
+
+void oscap_file_entry_free(struct oscap_file_entry * entry)
+{
+	oscap_free(entry->system_name);
+	oscap_free(entry->file);
+	oscap_free(entry);
+}
+
+const char* oscap_file_entry_get_system(struct oscap_file_entry* entry)
+{
+	return entry->system_name;
+}
+
+const char* oscap_file_entry_get_file(struct oscap_file_entry* entry)
+{
+	return entry->file;
+}
+
+const char *oscap_file_entry_iterator_next(struct oscap_file_entry_iterator *it)
+{
+	return oscap_iterator_next((struct oscap_iterator *)it);
+}
+
+bool oscap_file_entry_iterator_has_more(struct oscap_file_entry_iterator *it)
+{
+	return oscap_iterator_has_more((struct oscap_iterator *)it);
+}
+
+void oscap_file_entry_iterator_free(struct oscap_file_entry_iterator *it)
+{
+	oscap_iterator_free((struct oscap_iterator *)it);
+}
+
+void oscap_file_entry_iterator_reset(struct oscap_file_entry_iterator *it)
+{
+	oscap_iterator_reset((struct oscap_iterator *)it);
+}
+
+struct oscap_file_entry_list* oscap_file_entry_list_new(void)
+{
+	return (struct oscap_file_entry_list *) oscap_list_new();
+}
+
+static void oscap_file_entry_list_item_destructor(void* item)
+{
+	oscap_file_entry_free(item);
+}
+
+void oscap_file_entry_list_free(struct oscap_file_entry_list* list)
+{
+	oscap_list_free((struct oscap_list *) list, oscap_file_entry_list_item_destructor);
+}
+
+struct oscap_file_entry_iterator* oscap_file_entry_list_get_files(struct oscap_file_entry_list* list)
+{
+	return (struct oscap_file_entry_iterator *) oscap_iterator_new((struct oscap_list *) list);
+}
+
+static bool xccdf_file_entry_cmp_func(void *e1, void *e2)
+{
+	struct oscap_file_entry *entry1 = (struct oscap_file_entry *) e1;
+	struct oscap_file_entry *entry2 = (struct oscap_file_entry *) e2;
+
+	if (oscap_strcmp(entry1->system_name, entry2->system_name))
+		return false;
+
+	if (oscap_strcmp(entry1->file, entry2->file))
+		return false;
+
+	return true;
+}
+
+static struct oscap_file_entry_list * xccdf_check_get_systems_and_files(struct xccdf_check * check)
+{
+    struct xccdf_check_iterator             * child_it;
+    struct xccdf_check                      * child;
+    struct xccdf_check_content_ref_iterator * content_it;
+    struct xccdf_check_content_ref          * content;
+    struct oscap_file_entry					* file_entry;
+    char									* href;
+    char									* system_name;
+    struct oscap_file_entry_list            * files;
+    struct oscap_file_entry_list            * sub_files;
+
+    system_name = (char *) xccdf_check_get_system(check);
+
+    files = oscap_file_entry_list_new();
+    if (xccdf_check_get_complex(check)) {
+        child_it = xccdf_check_get_children(check);
+        while (xccdf_check_iterator_has_more(child_it)) {
+            child = xccdf_check_iterator_next(child_it);
+            sub_files = xccdf_check_get_systems_and_files(child);
+
+            struct oscap_file_entry_iterator *file_it = oscap_file_entry_list_get_files(sub_files);
+            while (oscap_file_entry_iterator_has_more(file_it)) {
+            	file_entry = (struct oscap_file_entry *) oscap_file_entry_iterator_next(file_it);
+
+                if (!oscap_list_contains((struct oscap_list *)files, (void *) file_entry, (oscap_cmp_func) xccdf_file_entry_cmp_func))
+                    oscap_list_add((struct oscap_list *)files, oscap_file_entry_dup(file_entry));
+            }
+            oscap_file_entry_iterator_free(file_it);
+            oscap_file_entry_list_free(sub_files);
+        }
+        xccdf_check_iterator_free(child_it);
+    } else {
+        content_it = xccdf_check_get_content_refs(check);
+        while (xccdf_check_content_ref_iterator_has_more(content_it)) {
+            content = xccdf_check_content_ref_iterator_next(content_it);
+            href = (char *) xccdf_check_content_ref_get_href(content);
+
+            file_entry = (struct oscap_file_entry *) oscap_file_entry_new();
+            file_entry->system_name = oscap_strdup(system_name);
+            file_entry->file = oscap_strdup(href);
+
+            if (!oscap_list_contains((struct oscap_list *) files, file_entry, (oscap_cmp_func) xccdf_file_entry_cmp_func))
+                oscap_list_add((struct oscap_list *) files, (void *) file_entry);
+            else
+            	oscap_file_entry_free((void *) file_entry);
+        }
+        xccdf_check_content_ref_iterator_free(content_it);
+    }
+
+    return files;
+}
+
+struct oscap_file_entry_list * xccdf_item_get_systems_and_files(struct xccdf_item * item)
+{
+
+    struct xccdf_item_iterator  * child_it;
+    struct xccdf_item           * child;
+    struct xccdf_check_iterator * check_it;
+    struct xccdf_check          * check;
+    struct oscap_file_entry_list * files;
+    struct oscap_file_entry_list * sub_files;
+    struct oscap_file_entry     * file_entry;
+
+    xccdf_type_t itype = xccdf_item_get_type(item);
+    files = oscap_file_entry_list_new();
+
+    switch (itype) {
+        case XCCDF_RULE:
+            check_it = xccdf_rule_get_checks((struct xccdf_rule *) item);
+            while(xccdf_check_iterator_has_more(check_it)) {
+                check = xccdf_check_iterator_next(check_it);
+                sub_files = xccdf_check_get_systems_and_files(check);
+
+                struct oscap_file_entry_iterator *file_it = oscap_file_entry_list_get_files(sub_files);
+                while (oscap_file_entry_iterator_has_more(file_it)) {
+                    file_entry = (struct oscap_file_entry *) oscap_file_entry_iterator_next(file_it);
+                    if (!oscap_list_contains((struct oscap_list *) files, file_entry, (oscap_cmp_func) xccdf_file_entry_cmp_func))
+                        oscap_list_add((struct oscap_list *) files, oscap_file_entry_dup(file_entry));
+                }
+                oscap_file_entry_iterator_free(file_it);
+                oscap_file_entry_list_free(sub_files);
+            }
+            xccdf_check_iterator_free(check_it);
+            break;
+
+        case XCCDF_BENCHMARK:
+        case XCCDF_GROUP:
+            if (itype == XCCDF_GROUP) child_it = xccdf_group_get_content((const struct xccdf_group *)item);
+            else child_it = xccdf_benchmark_get_content((const struct xccdf_benchmark *)item);
+            while (xccdf_item_iterator_has_more(child_it)) {
+                    child = xccdf_item_iterator_next(child_it);
+                    sub_files = xccdf_item_get_systems_and_files(child);
+
+                    struct oscap_file_entry_iterator *file_it = oscap_file_entry_list_get_files(sub_files);
+                    while (oscap_file_entry_iterator_has_more(file_it)) {
+                    	file_entry = (struct oscap_file_entry *) oscap_file_entry_iterator_next(file_it);
+
+                        if (!oscap_list_contains((struct oscap_list *) files, file_entry, (oscap_cmp_func) xccdf_file_entry_cmp_func))
+                            oscap_list_add((struct oscap_list *) files, oscap_file_entry_dup(file_entry));
+                    }
+                    oscap_file_entry_iterator_free(file_it);
+                    oscap_file_entry_list_free(sub_files);
+            }
+            xccdf_item_iterator_free(child_it);
+        break;
+        
+        default: 
+            oscap_file_entry_list_free(files);
+            files = NULL;
+            break;
+    } 
+
+    return files;
+}
+
 static bool xccdf_cmp_func(const char *s1, const char *s2)
 {
     if (!oscap_strcmp(s1, s2)) return true;
@@ -1091,18 +1300,15 @@ struct oscap_stringlist * xccdf_item_get_files(struct xccdf_item * item)
             }
             xccdf_item_iterator_free(child_it);
         break;
-        
-        default: 
+
+        default:
             oscap_stringlist_free(names);
             names = NULL;
             break;
-    } 
+    }
 
     return names;
 }
-
-
-
 
 /***************************************************************************/
 /* Public functions.
@@ -1753,6 +1959,11 @@ struct xccdf_item * xccdf_policy_tailor_item(struct xccdf_policy * policy, struc
             return NULL;
     }
     return new_item;
+}
+
+struct oscap_file_entry_list * xccdf_policy_model_get_systems_and_files(struct xccdf_policy_model * policy_model)
+{
+    return xccdf_item_get_systems_and_files((struct xccdf_item *) xccdf_policy_model_get_benchmark(policy_model));
 }
 
 struct oscap_stringlist * xccdf_policy_model_get_files(struct xccdf_policy_model * policy_model)
