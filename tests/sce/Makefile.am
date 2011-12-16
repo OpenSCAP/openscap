@@ -13,6 +13,6 @@ TESTS = test_sce.sh
 EXTRA_DIST +=	test_sce.sh \
 		sce_xccdf.xml \
 		unconfined_daemons.sh \
-		lua_failer.lua \
-		python_failer.py
+		lua_passer.lua \
+		python_passer.py
 		
