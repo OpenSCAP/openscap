@@ -63,7 +63,7 @@ for key, value in xccdf_result_map.iteritems():
 import subprocess
 
 for file_path in files:
-    result = subprocess.call(["./%s" % (file_path)], stdout = subprocess.PIPE)
+    result = subprocess.call(["./%s" % (file_path)])
     result_text = xccdf_reverse_result_map[result] if xccdf_reverse_result_map.has_key(result) else "Unknown exit code %i" % (result)
     print("Result of '%s' is %s" % (file_path, result_text))
 

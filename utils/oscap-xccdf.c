@@ -102,6 +102,7 @@ static struct oscap_module XCCDF_EVAL = {
         "Options:\n"
         "   --profile <name>\r\t\t\t\t - The name of Profile to be evaluated.\n"
         "   --oval-results\r\t\t\t\t - Save OVAL results as well.\n"
+        "   --sce-results <path>\r\t\t\t\t - Directory where SCE results will be saved to. If omitted, SCE results are not saved.\n"
         "   --export-variables\r\t\t\t\t - Export OVAL external variables provided by XCCDF.\n"
         "   --results <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
         "   --report <file>\r\t\t\t\t - Write HTML report into file.\n"
@@ -389,8 +390,11 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	xccdf_pathcopy =  strdup(action->f_xccdf);
 
 #ifdef ENABLE_SCE
-	char * xccdf_directory = dirname(xccdf_pathcopy);
-	sce_register_engine(policy_model, xccdf_directory);
+	struct sce_parameters parameters;
+	parameters.xccdf_directory = dirname(xccdf_pathcopy);
+	parameters.results_target_dir = action->sce_results ? "./" : 0;
+
+	sce_register_engine(policy_model, &parameters);
 #endif
 
 	/* Perform evaluation */
@@ -423,8 +427,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	xccdf_model_iterator_free(model_it);
 
 	/* Export OVAL results */
-	if (action->oval_results == true) {
-        	for (int i=0; sessions[i]; i++) {
+	if (action->oval_results == true && sessions) {
+		for (int i=0; sessions[i]; i++) {
 			/* get result model and session name*/
 			struct oval_results_model *res_model = oval_agent_get_results_model(sessions[i]);
 			char * name =  malloc(PATH_MAX * sizeof(char));
@@ -456,7 +460,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 
 	/* Export variables */
-	if (action->export_variables) {
+	if (action->export_variables && sessions) {
 		int i;
 
 		for (i = 0; sessions[i]; ++i) {
@@ -821,6 +825,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 	// flags
 		{"force",		no_argument, &action->force, 1},
 		{"oval-results",	no_argument, &action->oval_results, 1},
+		{"sce-results",	no_argument, &action->sce_results, 1},
 		{"skip-valid",		no_argument, &action->validate, 0},
 		{"hide-profile-info",	no_argument, &action->hide_profile_info, 1},
 		{"export-variables",	no_argument, &action->export_variables, 1},

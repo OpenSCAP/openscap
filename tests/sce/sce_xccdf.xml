@@ -19,6 +19,7 @@
     <select idref="rule-1000" selected="true"/>
     <select idref="rule-1001" selected="true"/>
     <select idref="rule-1002" selected="true"/>
+    <select idref="rule-1003" selected="true"/>
   </Profile>
   <Group id="unconfined-daemons" hidden="false">
     <title xml:lang="en-US">Daemons unconfined by SELINUX</title>
@@ -40,10 +41,35 @@
       </check>
     </Rule>
   </Group>
+  <Group id="python-is16" hidden="false">
+    <title xml:lang="en-US">Check in python that passed value is 16</title>
+    <description xml:lang="en-US">abcd</description>
+    <Value id="var-1.1" type="number" operator="equals">
+      <title>testing variable</title>
+      <description>
+        This is just to test whether passing environment variables works.
+      </description>
+      <question xml:lang="en">Select your favourite power of 2</question>
+      <value>16</value>
+      <value selector="0">0</value>
+      <value selector="1">1</value>
+      <value selector="2">2</value>
+      <value selector="4">4</value>
+      <value selector="8">8</value>
+      <value selector="16">16</value>
+    </Value>
+    <Rule id="rule-1002" selected="false" weight="10.000000">
+      <title xml:lang="en-US">Checks that passed variable is 16 (Python)</title>
+      <check system="http://open-scap.org/XMLSchema/SCE-definitions-1">
+        <check-export value-id="var-1.1" export-name="passed_value" />
+        <check-content-ref href="python_is16.py"/>
+      </check>
+    </Rule>
+  </Group>
   <Group id="lua-passer" hidden="false">
     <title xml:lang="en-US">Check in lua that always passes</title>
     <description xml:lang="en-US">abcd</description>
-    <Rule id="rule-1002" selected="false" weight="10.000000">
+    <Rule id="rule-1003" selected="false" weight="10.000000">
       <title xml:lang="en-US">Always passes (Lua)</title>
       <check system="http://open-scap.org/XMLSchema/SCE-definitions-1">
         <check-content-ref href="lua_passer.lua"/>

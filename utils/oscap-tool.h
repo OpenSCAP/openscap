@@ -127,6 +127,9 @@ struct oscap_action {
 	int force;
 	int validate;
 	int oval_results;
+#ifdef ENABLE_SCE
+	int sce_results;
+#endif
 	int export_variables;
         int list_dynamic;
 };
@@ -155,5 +158,12 @@ extern struct oscap_module OSCAP_CPE_MODULE;
 #ifdef ENABLE_SCE
 xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const char *rule_id, const char *id,
 			       const char *href, struct xccdf_value_binding_iterator *it, void *usr);
-bool sce_register_engine(struct xccdf_policy_model * model, const char *xccdf_directory);
+
+struct sce_parameters
+{
+	char * xccdf_directory;
+	char * results_target_dir;
+};
+
+bool sce_register_engine(struct xccdf_policy_model * model, struct sce_parameters *sce_parameters);
 #endif
