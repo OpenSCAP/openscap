@@ -825,7 +825,9 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 	// flags
 		{"force",		no_argument, &action->force, 1},
 		{"oval-results",	no_argument, &action->oval_results, 1},
+#ifdef ENABLE_SCE
 		{"sce-results",	no_argument, &action->sce_results, 1},
+#endif
 		{"skip-valid",		no_argument, &action->validate, 0},
 		{"hide-profile-info",	no_argument, &action->hide_profile_info, 1},
 		{"export-variables",	no_argument, &action->export_variables, 1},
