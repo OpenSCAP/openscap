@@ -424,47 +424,4 @@ bool xccdf_policy_model_register_engine_oval(struct xccdf_policy_model * model, 
     return xccdf_policy_model_register_engine_callback(model, "http://oval.mitre.org/XMLSchema/oval-definitions-5", oval_agent_eval_rule, (void *) usr);
 }
 
-void oval_agent_export_sysinfo_to_xccdf_result(struct oval_agent_session * sess, struct xccdf_result * ritem)
-{
-	struct oval_syschar_model *sys_model = NULL;
-	struct oval_results_model *res_model = NULL;
-	struct oval_result_system *re_system = NULL;
-	struct oval_result_system_iterator *re_system_it = NULL;
-	struct oval_sysinfo *sysinfo = NULL;
-
-	__attribute__nonnull__(sess);
-
-        /* Get all models we will need */
-	res_model = oval_agent_get_results_model(sess);
-
-        /* Get the very first system */
-        re_system_it = oval_results_model_get_systems(res_model);
-	re_system = oval_result_system_iterator_next(re_system_it);
-        oval_result_system_iterator_free(re_system_it);
-
-	sys_model = oval_result_system_get_syschar_model(re_system);
-	sysinfo = oval_syschar_model_get_sysinfo(sys_model);
-
-        /* Set the test system */
-        xccdf_result_add_target(ritem, oval_sysinfo_get_primary_host_name(sysinfo));
-
-	struct xccdf_target_fact *fact = NULL;
-	struct oval_sysint *sysint = NULL;
-
-        /* Add info for all interfaces */
-	struct oval_sysint_iterator *sysint_it = oval_sysinfo_get_interfaces(sysinfo);
-	while (oval_sysint_iterator_has_more(sysint_it)) {
-		sysint = oval_sysint_iterator_next(sysint_it);
-		xccdf_result_add_target_address(ritem, oval_sysint_get_ip_address(sysint));
-
-		if (oval_sysint_get_mac_address(sysint) != NULL) {
-			fact = xccdf_target_fact_new();
-			xccdf_target_fact_set_name(fact, "urn:xccdf:fact:ethernet:MAC");
-			xccdf_target_fact_set_string(fact, oval_sysint_get_mac_address(sysint));
-			xccdf_result_add_target_fact(ritem, fact);
-		}
-	}
-	oval_sysint_iterator_free(sysint_it);
-}
-
 #endif
