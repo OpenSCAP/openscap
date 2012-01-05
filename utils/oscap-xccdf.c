@@ -35,21 +35,10 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/utsname.h>
 #include <assert.h>
 #include <limits.h>
 #include <limits.h>
 #include <unistd.h>
-
-#if defined(__linux__)
-#include <arpa/inet.h>
-#include <ifaddrs.h>
-#include <net/if.h>
-#include <netdb.h>
-#include <string.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#endif
 
 #include "oscap-tool.h"
 #include "oscap.h"
@@ -246,79 +235,6 @@ static int callback(const struct oscap_reporter_message *msg, void *arg)
         }
 
 	return 0;
-}
-
-static void xccdf_result_fill_sysinfo(struct xccdf_result *ritem)
-{
-	struct utsname sname;
-	struct ifaddrs *ifaddr, *ifa;
-	int fd;
-
-	if (uname(&sname) == -1)
-		return;
-
-	/* store target name */
-	xccdf_result_add_target(ritem, sname.nodename);
-
-#if defined(__linux__)
-
-	/* get network interfaces */
-	if (getifaddrs(&ifaddr) == -1)
-		return;
-
-	fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
-	if (fd == -1)
-		goto out1;
-
-	for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
-		int family;
-		char hostip[NI_MAXHOST];
-		struct ifreq ifr;
-
-		if (!ifa->ifa_addr)
-			continue;
-		family = ifa->ifa_addr->sa_family;
-		if (family != AF_INET && family != AF_INET6)
-			continue;
-
-		if (family == AF_INET) {
-			if (getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
-					hostip, sizeof(hostip), NULL, 0, NI_NUMERICHOST))
-				goto out2;
-		} else {
-			struct sockaddr_in6 *sin6;
-
-			sin6 = (struct sockaddr_in6 *) ifa->ifa_addr;
-			if (!inet_ntop(family, (const void *) &sin6->sin6_addr,
-				       hostip, sizeof(hostip)))
-				goto out2;
-		}
-		/* store ip address */
-		xccdf_result_add_target_address(ritem, hostip);
-
-		memset(&ifr, 0, sizeof(ifr));
-		strcpy(ifr.ifr_name, ifa->ifa_name);
-		if (ioctl(fd, SIOCGIFHWADDR, &ifr) >= 0) {
-			struct xccdf_target_fact *fact;
-			unsigned char mac[6];
-			char macbuf[20];
-
-			memcpy(mac, ifr.ifr_hwaddr.sa_data, sizeof(mac));
-			snprintf(macbuf, sizeof(macbuf), "%02X:%02X:%02X:%02X:%02X:%02X",
-				 mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-			fact = xccdf_target_fact_new();
-			xccdf_target_fact_set_name(fact, "urn:xccdf:fact:ethernet:MAC");
-			xccdf_target_fact_set_string(fact, macbuf);
-			/* store mac address */
-			xccdf_result_add_target_fact(ritem, fact);
-		}
-	}
-
- out2:
-	close(fd);
- out1:
-	freeifaddrs(ifaddr);
-#endif
 }
 
 /**

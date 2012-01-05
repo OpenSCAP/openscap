@@ -25,7 +25,19 @@
 #endif
 
 #include <math.h>
+#include <sys/utsname.h>
 #include <text.h>
+
+#if defined(__linux__)
+#include <arpa/inet.h>
+#include <ifaddrs.h>
+#include <net/if.h>
+#include <netdb.h>
+#include <string.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#endif
 
 #include "item.h"
 #include "helpers.h"
@@ -125,6 +137,78 @@ XCCDF_LISTMANIP(result, score, scores)
 OSCAP_ITERATOR_GEN(xccdf_result)
 OSCAP_ITERATOR_REMOVE_F(xccdf_result)
 
+void xccdf_result_fill_sysinfo(struct xccdf_result *result)
+{
+	struct utsname sname;
+	struct ifaddrs *ifaddr, *ifa;
+	int fd;
+
+	if (uname(&sname) == -1)
+		return;
+
+	/* store target name */
+	xccdf_result_add_target(result, sname.nodename);
+
+#if defined(__linux__)
+
+	/* get network interfaces */
+	if (getifaddrs(&ifaddr) == -1)
+		return;
+
+	fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
+	if (fd == -1)
+		goto out1;
+
+	for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+		int family;
+		char hostip[NI_MAXHOST];
+		struct ifreq ifr;
+
+		if (!ifa->ifa_addr)
+			continue;
+		family = ifa->ifa_addr->sa_family;
+		if (family != AF_INET && family != AF_INET6)
+			continue;
+
+		if (family == AF_INET) {
+			if (getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
+					hostip, sizeof(hostip), NULL, 0, NI_NUMERICHOST))
+				goto out2;
+		} else {
+			struct sockaddr_in6 *sin6;
+
+			sin6 = (struct sockaddr_in6 *) ifa->ifa_addr;
+			if (!inet_ntop(family, (const void *) &sin6->sin6_addr,
+				       hostip, sizeof(hostip)))
+				goto out2;
+		}
+		/* store ip address */
+		xccdf_result_add_target_address(result, hostip);
+
+		memset(&ifr, 0, sizeof(ifr));
+		strcpy(ifr.ifr_name, ifa->ifa_name);
+		if (ioctl(fd, SIOCGIFHWADDR, &ifr) >= 0) {
+			struct xccdf_target_fact *fact;
+			unsigned char mac[6];
+			char macbuf[20];
+
+			memcpy(mac, ifr.ifr_hwaddr.sa_data, sizeof(mac));
+			snprintf(macbuf, sizeof(macbuf), "%02X:%02X:%02X:%02X:%02X:%02X",
+				 mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+			fact = xccdf_target_fact_new();
+			xccdf_target_fact_set_name(fact, "urn:xccdf:fact:ethernet:MAC");
+			xccdf_target_fact_set_string(fact, macbuf);
+			/* store mac address */
+			xccdf_result_add_target_fact(result, fact);
+		}
+	}
+
+ out2:
+	close(fd);
+ out1:
+	freeifaddrs(ifaddr);
+#endif
+}
 
 struct xccdf_rule_result *xccdf_rule_result_new(void)
 {

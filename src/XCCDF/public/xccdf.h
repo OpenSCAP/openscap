@@ -672,6 +672,12 @@ struct xccdf_benchmark* xccdf_benchmark_import(const char *file);
 int xccdf_benchmark_export(struct xccdf_benchmark *benchmark, const char *file);
 
 /**
+ * Collect system info and store it in the TestResult.
+ * @memberof xccdf_result
+ */
+void xccdf_result_fill_sysinfo(struct xccdf_result *result);
+
+/**
  * Export a TestResult to an XML stream
  * @memberof xccdf_result
  * @return Integer
