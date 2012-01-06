@@ -33,10 +33,13 @@
 #include <xccdf.h>
 #include <xccdf_policy.h>
 
+#ifdef ENABLE_SCE
+#include <sce_engine_api.h>
+#endif
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <assert.h>
-#include <limits.h>
 #include <limits.h>
 #include <unistd.h>
 
@@ -256,6 +259,10 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	char ** oval_files = NULL;
 	int idx = 0;
 
+	#ifdef ENABLE_SCE
+	struct sce_parameters* sce_parameters = 0;
+#endif
+
 	int retval = OSCAP_ERROR;
 	
 	/* Validate documents */
@@ -400,11 +407,11 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	xccdf_pathcopy =  strdup(action->f_xccdf);
 
 #ifdef ENABLE_SCE
-	struct sce_parameters parameters;
-	parameters.xccdf_directory = dirname(xccdf_pathcopy);
-	parameters.results_target_dir = action->sce_results ? "./" : 0;
+	sce_parameters = sce_parameters_new();
+	sce_parameters_set_xccdf_directory(sce_parameters, dirname(xccdf_pathcopy));
+	sce_parameters_set_results_target_directory(sce_parameters, action->sce_results ? "./" : 0);
 
-	sce_register_engine(policy_model, &parameters);
+	xccdf_policy_model_register_engine_sce(policy_model, sce_parameters);
 #endif
 
 	/* Perform evaluation */
@@ -512,6 +519,9 @@ cleanup:
 	if (oscap_err())
 		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 
+#ifdef ENABLE_SCE
+	sce_parameters_free(sce_parameters);
+#endif
 	oscap_free(xccdf_pathcopy);
 
 	/* Definition Models */

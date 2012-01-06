@@ -265,6 +265,15 @@
 %}
 %include "../src/OVAL/public/oval_agent_xccdf_api.h"
 #endif
+
+#endif
+
+#ifdef WANT_SCE
+%module openscap
+%{
+ #include "../src/SCE/public/sce_engine_api.h"
+%}
+%include "../src/SCE/public/sce_engine_api.h"
 #endif
 
 /*%typemap(in) value[ANY] {

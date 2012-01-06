@@ -1059,9 +1059,9 @@ else
 fi
 
 AC_ARG_ENABLE([sce],
-     [AC_HELP_STRING([--enable-sce], [enable script check engine (experimental) (default=no)])],
+     [AC_HELP_STRING([--enable-sce], [enable script check engine (experimental, depends on XCCDF) (default=no)])],
      [case "${enableval}" in
-       yes) sce=yes ;;
+       yes) sce=${xccdf} ;;
        no)  sce=no  ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-sce]) ;;
      esac],[sce=no])
@@ -1258,7 +1258,8 @@ AC_CONFIG_FILES([Makefile
 	         src/XCCDF_POLICY/Makefile
                  tests/API/XCCDF/Makefile
 
-                 tests/sce/Makefile])
+             src/SCE/Makefile
+             tests/sce/Makefile])
 
 AC_OUTPUT
 
@@ -1520,7 +1521,7 @@ echo ""
 
 echo "XCCDF enabled:                 $xccdf"
 echo "python bindings enabled:       $bindings"
-echo "script check engine            $sce"
+echo "SCE enabled (depends on XCCDF) $sce"
 echo "oscap tool:                    $util_oscap"
 echo "use POSIX regex:               $regex_posix"
 echo "debugging flags enabled:       $debug"

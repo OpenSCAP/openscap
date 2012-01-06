@@ -37,7 +37,8 @@ oscap_CPPFLAGS  += -I$(top_srcdir)/src/CPE/public
 endif
 
 if WANT_SCE
-oscap_SOURCES += sce_engine.c
+oscap_CPPFLAGS  += -DENABLE_SCE
+oscap_CPPFLAGS  += -I$(top_srcdir)/src/SCE/public
 endif
 
 endif

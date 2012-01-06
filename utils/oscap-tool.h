@@ -47,9 +47,6 @@
 #include <cpedict.h>
 #include <cpeuri.h>
 #endif
-#ifdef ENABLE_SCE
-#include <xccdf_policy.h>
-#endif
 
 #define OSCAP_PRODUCTNAME "cpe:/a:open-scap:oscap"
 #define INVALID_DOCUMENT_MSG "oscap was unable to validate the XML document you provided.\n"\
@@ -154,17 +151,4 @@ extern struct oscap_module OSCAP_OVAL_MODULE;
 #endif
 #ifdef ENABLE_CPE
 extern struct oscap_module OSCAP_CPE_MODULE;
-#endif
-
-#ifdef ENABLE_SCE
-xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const char *rule_id, const char *id,
-			       const char *href, struct xccdf_value_binding_iterator *it, void *usr);
-
-struct sce_parameters
-{
-	char * xccdf_directory;
-	char * results_target_dir;
-};
-
-bool sce_register_engine(struct xccdf_policy_model * model, struct sce_parameters *sce_parameters);
 #endif

@@ -29,15 +29,66 @@
 #include <config.h>
 #endif
 
-#include "oscap-tool.h"
+#include "alloc.h"
+#include "common/util.h"
+#include "sce_engine_api.h"
+
+#include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 #include <wait.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <assert.h>
 #include <fcntl.h>
+#include <sys/types.h>
+#include <limits.h>
+#include <unistd.h>
 
-#include "xccdf_policy.h"
+struct sce_parameters
+{
+	char * xccdf_directory;
+	char * results_target_dir;
+};
+
+struct sce_parameters* sce_parameters_new(void)
+{
+	struct sce_parameters *ret = oscap_alloc(sizeof(struct sce_parameters));
+	ret->xccdf_directory = 0;
+	ret->results_target_dir = 0;
+
+	return ret;
+}
+
+void sce_parameters_free(struct sce_parameters* v)
+{
+	oscap_free(v->xccdf_directory);
+	oscap_free(v->results_target_dir);
+
+	oscap_free(v);
+}
+
+void sce_parameters_set_xccdf_directory(struct sce_parameters* v, const char* value)
+{
+	oscap_free(v->xccdf_directory);
+	v->xccdf_directory = value == 0 ? 0 : oscap_strdup(value);
+}
+
+const char* sce_parameters_get_xccdf_directory(struct sce_parameters* v)
+{
+	return v->xccdf_directory;
+}
+
+void sce_parameters_set_results_target_directory(struct sce_parameters* v, const char* value)
+{
+	oscap_free(v->results_target_dir);
+	v->results_target_dir = value == 0 ? 0 : oscap_strdup(value);
+}
+
+const char* sce_parameters_get_results_target_directory(struct sce_parameters* v)
+{
+	return v->results_target_dir;
+}
 
 xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const char *rule_id, const char *id,
 			       const char *href, struct xccdf_value_binding_iterator *it, void *usr)
@@ -45,9 +96,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 	struct sce_parameters* parameters = (struct sce_parameters*)usr;
 	const char* xccdf_directory = parameters->xccdf_directory;
 
-	// +1 for /, +1 for the terminating \0
-	char *tmp_href = malloc((strlen(xccdf_directory) + 1 + strlen(href) + 1) * sizeof(char));
-	sprintf(tmp_href, "%s/%s", xccdf_directory, href);
+	char* tmp_href = oscap_sprintf("%s/%s", xccdf_directory, href);
 
 	if (access(tmp_href, F_OK))
 	{
@@ -58,7 +107,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 		// the script hasn't been found, perhaps another sce instance
 		// with a different XCCDF directory can find it?
 		printf("SCE couldn't find script file '%s'. Expected location: '%s'.\n", href, tmp_href);
-		free(tmp_href);
+		oscap_free(tmp_href);
 		return XCCDF_RESULT_NOT_CHECKED;
 	}
 
@@ -66,7 +115,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 	{
 		// again, only to provide helpful error message
 		printf("SCE has found script file '%s' at '%s' but it isn't executable!\n", href, tmp_href);
-		free(tmp_href);
+		oscap_free(tmp_href);
 		return XCCDF_RESULT_ERROR;
 	}
 
@@ -79,7 +128,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 	};
 
 	// bound values in KEY=VALUE form, ready to be passed as environment variables
-	char ** env_values = malloc(9 * sizeof(char * ));
+	char ** env_values = oscap_alloc(9 * sizeof(char * ));
 	size_t env_value_count = 9;
 
 	env_values[0] = "XCCDF_RESULT_PASS=101";
@@ -96,7 +145,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 	{
 		struct xccdf_value_binding* binding = xccdf_value_binding_iterator_next(it);
 
-		env_values = realloc(env_values, (env_value_count + 3) * sizeof(char*));
+		env_values = oscap_realloc(env_values, (env_value_count + 3) * sizeof(char*));
 
 		char* name = xccdf_value_binding_get_name(binding);
 		xccdf_value_type_t type = xccdf_value_binding_get_type(binding);
@@ -121,13 +170,8 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			break;
 		}
 
-		// +11 because of XCCDF_TYPE_, +1 because of = in the middle, +1 because of \0
-		char* env_type_entry = malloc((11 + strlen(name) + 1 + strlen(type_str) + 1) * sizeof(char));
-		sprintf(env_type_entry, "XCCDF_TYPE_%s=%s", name, type_str);
-
-		// +12 because of XCCDF_VALUE_, +1 because of = in the middle, +1 because of \0
-		char* env_value_entry = malloc((12 + strlen(name) + 1 + strlen(value) + 1) * sizeof(char));
-		sprintf(env_value_entry, "XCCDF_VALUE_%s=%s", name, value);
+		char* env_type_entry = oscap_sprintf("XCCDF_TYPE_%s=%s", name, type_str);
+		char* env_value_entry = oscap_sprintf("XCCDF_VALUE_%s=%s", name, value);
 
 		char* operator_str;
 		switch (operator)
@@ -159,9 +203,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			break;
 		}
 
-		// +15 because of XCCDF_OPERATOR_, +1 because of = in the middle, +1 because of \0
-		char* env_operator_entry = malloc(15 + strlen(name) + 1 + strlen(operator_str) + 1);
-		sprintf(env_operator_entry, "XCCDF_OPERATOR_%s=%s", name, operator_str);
+		char* env_operator_entry = oscap_sprintf("XCCDF_OPERATOR_%s=%s", name, operator_str);
 
 		env_values[env_value_count] = env_type_entry;
 		env_value_count++;
@@ -171,26 +213,25 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 		env_value_count++;
 	}
 
-	env_values = realloc(env_values, (env_value_count + 1) * sizeof(char*));
+	env_values = oscap_realloc(env_values, (env_value_count + 1) * sizeof(char*));
 	env_values[env_value_count] = NULL;
 
 	// +8 = strlen(".results"), +1 for \0
-	char * href_copy = strdup(href);
-	char * href_basename = basename(href_copy);
 	char * results_filename = NULL;
 	if (parameters->results_target_dir)
 	{
-		results_filename = malloc((strlen(parameters->results_target_dir) + 1 + strlen(href_basename) + 8 + 1) * sizeof(char));
-		sprintf(results_filename, "%s/%s.results", parameters->results_target_dir, href_basename);
+		char * href_copy = oscap_strdup(href);
+		char * href_basename = basename(href_copy);
+		results_filename = oscap_sprintf("%s/%s.results", parameters->results_target_dir, href_basename);
+		oscap_free(href_copy);
 	}
 	else
 	{
-		results_filename = strdup("/dev/null");
+		results_filename = oscap_strdup("/dev/null");
 	}
 
-	free(href_copy);
 	int results_file = creat(results_filename, S_IWUSR | S_IRUSR);
-	free(results_filename);
+	oscap_free(results_filename);
 
 	// FIXME: We definitely want to impose security restrictions in the forked child process in the future.
 	//        This would prevent scripts from writing to files or deleting them.
@@ -229,16 +270,16 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 		{
 			// we are the parent process
 			int wstatus;
-			wait(&wstatus);
+			waitpid(fork_result, &wstatus, 0);
 			dprintf(results_file, "[I] end of script output\n");
-			free(tmp_href);
+			oscap_free(tmp_href);
 
 			// the first 9 values (0 to 8) are compiled in
 			for (size_t i = 9; i < env_value_count; ++i)
 			{
-				free(env_values[i]);
+				oscap_free(env_values[i]);
 			}
-			free(env_values);
+			oscap_free(env_values);
 
 			// we subtract 100 here to shift the exit code to xccdf_test_result_type_t enum range
 			int raw_result = WEXITSTATUS(wstatus) - 100;
@@ -261,7 +302,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 	}
 }
 
-bool sce_register_engine(struct xccdf_policy_model * model, struct sce_parameters *parameters)
+bool xccdf_policy_model_register_engine_sce(struct xccdf_policy_model * model, struct sce_parameters *parameters)
 {
 	return xccdf_policy_model_register_engine_callback(model, "http://open-scap.org/XMLSchema/SCE-definitions-1", sce_engine_eval_rule, (void*)parameters);
 }

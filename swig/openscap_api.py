@@ -289,6 +289,10 @@ class OSCAP_Object(object):
         if self.object != "xccdf_policy_model": raise TypeError("Wrong call of register_engine_oval function on %s" % (self.object,))
         return OSCAP.xccdf_policy_model_register_engine_oval(self.instance, sess.instance)
 
+    def register_engine_sce(self, parameters):
+        if self.object != "xccdf_policy_model": raise TypeError("Wrong call of register_engine_sce function on %s" % (self.object,))
+        return OSCAP.xccdf_policy_model_register_engine_sce(self.instance, parameters.instance)
+
     def agent_eval_system(self, sess, cb, usr):
         if self.object != "oval": raise TypeError("Wrong call of oval_agent_eval_system function on %s" % (self.object,))
         return OSCAP.oval_agent_eval_system_py(sess.instance, self.__output_callback, (cb, usr))
@@ -655,7 +659,7 @@ class OSCAP_Object(object):
         if len(sessions.keys()) == 0:
             raise IOError("Export failed: Corrupted session list or no OVAL file loaded")
 
-        oval.agent_export_sysinfo_to_xccdf_result(sessions.values()[0], result)
+        OSCAP.xccdf_result_fill_sysinfo(result.instance)        
         files = [filename]
 
         for model in self.model.benchmark.models:
@@ -798,6 +802,22 @@ class CCE_Class(OSCAP_Object):
         return "<Oscap Object of type 'CCE Class' at %s>" % (hex(id(self)),)
 
 # ------------------------------------------------------------------------------------------------------------
+# SCE
+
+class SCE_Class(OSCAP_Object):
+    """
+    SCE Class
+    """
+
+    def __init__(self):
+        dict.__setattr__(self, "object", "sce")
+        #dict.__setattr__(self, "version", OSCAP.cce_supported())
+        pass
+
+    def __repr__(self):
+        return "<Oscap Object of type 'SCE Class' at %s>" % (hex(id(self)),)
+
+# ------------------------------------------------------------------------------------------------------------
 
 """ This part is very IMPORTANT! Implement your application functions
 to use openscap library this way:
@@ -814,4 +834,6 @@ cve   = CVE_Class()
 cce   = CCE_Class()
 cpe   = CPE_Class()
 cvss  = CVSS_Class()
+sce   = SCE_Class()
 common = OSCAP_Object("oscap")
+
