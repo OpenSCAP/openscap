@@ -128,9 +128,12 @@ test_run "oval_string_datatype.xml" test_mitre oval_string_datatype.xml "true"
 test_run "oval_version_datatype.xml" test_mitre oval_version_datatype.xml "true"
 
 test_run "unix-def_password_test.xml" test_mitre unix-def_password_test.xml "true"
-test_run "unix-def_process58_test.xml" test_mitre unix-def_process58_test.xml "true"
-test_run "unix-def_process_test.xml" test_mitre unix-def_process_test.xml "true"
-test_run "unix-def_runlevel_test.xml" test_mitre unix-def_runlevel_test.xml "true"
+
+# Fedora 16 (no init)
+#test_run "unix-def_process58_test.xml" test_mitre unix-def_process58_test.xml "true"
+#test_run "unix-def_process_test.xml" test_mitre unix-def_process_test.xml "true"
+#test_run "unix-def_runlevel_test.xml" test_mitre unix-def_runlevel_test.xml "true"
+
 test_run "unix-def_uname_test.xml" test_mitre unix-def_uname_test.xml "true"
 
 # needs only two interfaces - lo, eth0 - without ipv6 addresses
