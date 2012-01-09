@@ -60,6 +60,7 @@ struct oval_agent_session {
 	struct oval_syschar_model    * sys_models[2];
 	struct oval_results_model    * res_model;
 	oval_probe_session_t  * psess;
+	struct oval_generator *gen_tpl;
 };
 
 
@@ -88,9 +89,7 @@ static const struct oval_result_to_xccdf_spec XCCDF_OVAL_RESULTS_MAP[] = {
 
 #endif
 
-
 oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *model, const char * name) {
-
 	oval_agent_session_t *ag_sess;
 	struct oval_sysinfo *sysinfo;
 	int ret;
@@ -120,7 +119,29 @@ oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *mode
 	ag_sess->sys_models[0] = ag_sess->sys_model;
 	ag_sess->sys_models[1] = NULL;
 	ag_sess->res_model = oval_results_model_new(model, ag_sess->sys_models);
+
+	/* todo: accept 'gen_tpl' as an arg
+	if (gen_tpl)
+		oval_agent_set_generator_template(ag_sess, gen_tpl);
+	else
+	*/
+		ag_sess->gen_tpl = NULL;
+
 	return ag_sess;
+}
+
+void oval_agent_set_generator_template(oval_agent_session_t *ag_sess, struct oval_generator *gen_tpl)
+{
+	ag_sess->gen_tpl = gen_tpl;
+	gen_tpl = oval_generator_clone(gen_tpl);
+	oval_syschar_model_set_generator(ag_sess->sys_models[0], gen_tpl);
+	gen_tpl = oval_generator_clone(gen_tpl);
+	oval_results_model_set_generator(ag_sess->res_model, gen_tpl);
+}
+
+struct oval_generator *oval_agent_get_generator_template(oval_agent_session_t *ag_sess)
+{
+	return ag_sess->gen_tpl;
 }
 
 int oval_agent_eval_definition(oval_agent_session_t *ag_sess, const char *id)
@@ -186,6 +207,14 @@ int oval_agent_reset_session(oval_agent_session_t * ag_sess) {
 	/* Replace result model */
 	oval_results_model_free(ag_sess->res_model);
 	ag_sess->res_model = oval_results_model_new(ag_sess->def_model, ag_sess->sys_models);
+
+	/* Apply generator template to new model */
+	if (ag_sess->gen_tpl) {
+		struct oval_generator *gen_tpl;
+
+		gen_tpl = oval_generator_clone(ag_sess->gen_tpl);
+		oval_results_model_set_generator(ag_sess->res_model, gen_tpl);
+	}
 
 	oval_probe_session_destroy(ag_sess->psess);
 	ag_sess->psess = oval_probe_session_new(ag_sess->sys_model);
@@ -336,6 +365,13 @@ int oval_agent_resolve_variables(struct oval_agent_session * session, struct xcc
     if (!session->cur_var_model) {
 	    session->cur_var_model = oval_variable_model_new();
 	    oval_definition_model_bind_variable_model(def_model, session->cur_var_model);
+	    /* Apply generator template to new model */
+	    if (session->gen_tpl) {
+		    struct oval_generator *gen_tpl;
+
+		    gen_tpl = oval_generator_clone(session->gen_tpl);
+		    oval_variable_model_set_generator(session->cur_var_model, gen_tpl);
+	    }
     }
 
     /* Iterate through variable bindings and add variables into the variable model */

@@ -54,7 +54,7 @@ struct oval_generator *oval_generator_new(void)
 	char timestamp[] = "yyyy-mm-ddThh:mm:ss";
 
 	gen = oscap_alloc(sizeof(struct oval_generator));
-	gen->product_name = oscap_strdup("OpenSCAP");
+	gen->product_name = NULL;
 	gen->product_version = NULL;
 	gen->schema_version = oscap_strdup(OVAL_SUPPORTED);
 
