@@ -219,6 +219,7 @@ int app_collect_oval(const struct oscap_action *action)
 	struct oval_syschar_model	*sys_model = NULL;
 	struct oval_sysinfo		*sysinfo   = NULL;
 	struct oval_probe_session	*pb_sess   = NULL;
+	struct oval_generator *gen;
 	int ret = OSCAP_ERROR;
 
 	/* validate inputs */
@@ -251,6 +252,11 @@ int app_collect_oval(const struct oscap_action *action)
 
 	/* create empty syschar model */
 	sys_model = oval_syschar_model_new(def_model);
+
+	/* store our name in the generated document */
+	gen = oval_generator_new();
+	oval_generator_set_product_name(gen, OSCAP_PRODUCTNAME);
+	oval_syschar_model_set_generator(sys_model, gen);
 
 	/* create probe session */
 	pb_sess = oval_probe_session_new(sys_model);
@@ -333,6 +339,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 	struct oval_directives_model	*dir_model = NULL;
 	struct oval_usr			*usr       = NULL;
 	oval_agent_session_t		*sess      = NULL;
+	struct oval_generator		*gen_tpl;
 	int ret = OSCAP_ERROR;
 
 	/* validate inputs */
@@ -369,6 +376,11 @@ int app_evaluate_oval(const struct oscap_action *action)
 		goto cleanup;
 	}
 
+	/* store our name in the generated documents */
+	gen_tpl = oval_generator_new();
+	oval_generator_set_product_name(gen_tpl, OSCAP_PRODUCTNAME);
+	oval_agent_set_generator_template(sess, gen_tpl);
+
 	/* Init usr structure */
 	usr = malloc(sizeof(struct oval_usr));
 	memset(usr, 0, sizeof(struct oval_usr));
@@ -383,7 +395,6 @@ int app_evaluate_oval(const struct oscap_action *action)
 		goto cleanup;
 
 	printf("Evaluation done.\n");
-
 
 	/* export results to file */
 	if (action->f_results != NULL) {
@@ -449,6 +460,7 @@ static int app_analyse_oval(const struct oscap_action *action) {
 	struct oval_variable_model	*var_model = NULL;
 	struct oval_directives_model	*dir_model = NULL;
  	struct oval_syschar_model	*sys_models[2];
+	struct oval_generator *gen;
 	int ret = OSCAP_ERROR;
 
 	/* validate inputs */
@@ -490,6 +502,12 @@ static int app_analyse_oval(const struct oscap_action *action) {
 	sys_models[0] = sys_model;
 	sys_models[1] = NULL;
 	res_model = oval_results_model_new(def_model, sys_models);
+
+	/* store our name in the generated document */
+	gen = oval_generator_new();
+	oval_generator_set_product_name(gen, OSCAP_PRODUCTNAME);
+	oval_results_model_set_generator(res_model, gen);
+
 	oval_results_model_eval(res_model);
 
 	/* export results */

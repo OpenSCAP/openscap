@@ -51,6 +51,7 @@
 #include <xccdf_policy.h>
 #endif
 
+#define OSCAP_PRODUCTNAME "cpe:/a:open-scap:oscap"
 #define INVALID_DOCUMENT_MSG "oscap was unable to validate the XML document you provided.\n"\
 			     "Please ensure that the XML document is valid and well-formed, and try again."
 #define OSCAP_ERR_MSG "OpenSCAP Error:"
