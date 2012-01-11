@@ -294,6 +294,8 @@ const char * oval_agent_get_filename(oval_agent_session_t * ag_sess) {
 }
 
 void oval_agent_destroy_session(oval_agent_session_t * ag_sess) {
+	if (ag_sess->gen_tpl)
+		oval_generator_free(ag_sess->gen_tpl);
 	oval_probe_session_destroy(ag_sess->psess);
 	oval_syschar_model_free(ag_sess->sys_model);
 	oval_results_model_free(ag_sess->res_model);
