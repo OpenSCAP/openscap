@@ -1031,7 +1031,7 @@ const char* oscap_file_entry_get_file(struct oscap_file_entry* entry)
 	return entry->file;
 }
 
-const char *oscap_file_entry_iterator_next(struct oscap_file_entry_iterator *it)
+const struct oscap_file_entry *oscap_file_entry_iterator_next(struct oscap_file_entry_iterator *it)
 {
 	return oscap_iterator_next((struct oscap_iterator *)it);
 }

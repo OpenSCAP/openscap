@@ -105,7 +105,9 @@ static struct oscap_module XCCDF_EVAL = {
         "Options:\n"
         "   --profile <name>\r\t\t\t\t - The name of Profile to be evaluated.\n"
         "   --oval-results\r\t\t\t\t - Save OVAL results as well.\n"
-        "   --sce-results <path>\r\t\t\t\t - Directory where SCE results will be saved to. If omitted, SCE results are not saved.\n"
+#ifdef ENABLE_SCE
+        "   --sce-results\r\t\t\t\t - Save SCE results as well.\n"
+#endif
         "   --export-variables\r\t\t\t\t - Export OVAL external variables provided by XCCDF.\n"
         "   --results <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
         "   --report <file>\r\t\t\t\t - Write HTML report into file.\n"
@@ -259,7 +261,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	char ** oval_files = NULL;
 	int idx = 0;
 
-	#ifdef ENABLE_SCE
+#ifdef ENABLE_SCE
 	struct sce_parameters* sce_parameters = 0;
 #endif
 

@@ -429,7 +429,7 @@ const char* oscap_file_entry_get_file(struct oscap_file_entry* entry);
 struct oscap_file_entry_iterator;
 
 /// @memberof oscap_file_entry_iterator
-const char *oscap_file_entry_iterator_next(struct oscap_file_entry_iterator *it);
+const struct oscap_file_entry *oscap_file_entry_iterator_next(struct oscap_file_entry_iterator *it);
 /// @memberof oscap_file_entry_iterator
 bool oscap_file_entry_iterator_has_more(struct oscap_file_entry_iterator *it);
 /// @memberof oscap_file_entry_iterator

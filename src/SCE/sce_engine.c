@@ -222,7 +222,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 	{
 		char * href_copy = oscap_strdup(href);
 		char * href_basename = basename(href_copy);
-		results_filename = oscap_sprintf("%s/%s.results", parameters->results_target_dir, href_basename);
+		results_filename = oscap_sprintf("%s/%s.result.xml", parameters->results_target_dir, href_basename);
 		oscap_free(href_copy);
 	}
 	else
@@ -247,16 +247,18 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			dup2(results_file, fileno(stderr));
 
 			// we are the child process
-			printf("SCE results for '%s'\n", basename(tmp_href));
-			printf("***********************************************************\n");
+			printf("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
+			// FIXME: We definitely should escape the attribute!
+			printf("<sceres:sce_results xmlns:sceres=\"http://open-scap.org/XMLSchema/SCE-definitions-1\" script-path=\"%s\">\n", basename(tmp_href));
 
-			printf("[I] The following environment variables are being passed:\n");
+			printf("\t<sceres:environment>\n");
 			for (int i = 0; env_values[i]; i++)
 			{
-				printf("%s\n", env_values[i]);
+				printf("\t\t<sceres:entry><![CDATA[%s]]></sceres:entry>\n", env_values[i]);
 			}
+			printf("\t</sceres:environment>\n");
 
-			printf("[I] raw stdout and stderr output from the script:\n");
+			printf("\t<sceres:stdout><![CDATA[\n");
 			execve(tmp_href, argvp, env_values);
 
 			// no need to check the return value of execve, if it returned at all we are in trouble
@@ -271,7 +273,8 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			// we are the parent process
 			int wstatus;
 			waitpid(fork_result, &wstatus, 0);
-			dprintf(results_file, "[I] end of script output\n");
+			dprintf(results_file, "\n]]>\n");
+			dprintf(results_file, "\t</sceres:stdout>\n");
 			oscap_free(tmp_href);
 
 			// the first 9 values (0 to 8) are compiled in
@@ -287,11 +290,14 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			{
 				// the script returned invalid exit code, we need to safeguard us against that
 				raw_result = XCCDF_RESULT_ERROR;
-				dprintf(results_file, "[E] The check script returned an invalid exit code %i, interpreting it as error.\n", WEXITSTATUS(wstatus));
+				dprintf(results_file, "\t<sceres:debug_message>The check script returned an invalid exit code %i, interpreting it as error.</sceres:debug_message>\n", WEXITSTATUS(wstatus));
 			}
 
-			dprintf(results_file, "[I] exit code: %i, final XCCDF result: %i\n", WEXITSTATUS(wstatus), raw_result);
+			dprintf(results_file, "\t<sceres:exit_code>%i</sceres:exit_code>\n", WEXITSTATUS(wstatus));
+			dprintf(results_file, "\t<sceres:result>%i</sceres:result>\n", raw_result);
+			dprintf(results_file, "</sceres:sce_results>\n");
 			close(results_file);
+
 			return (xccdf_test_result_type_t)raw_result;
 		}
 	}

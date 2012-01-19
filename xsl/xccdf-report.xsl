@@ -33,11 +33,13 @@ Authors:
     xmlns:s="http://open-scap.org/"
     exclude-result-prefixes="xsl cdf db s exsl"
     xmlns:ovalres="http://oval.mitre.org/XMLSchema/oval-results-5"
+    xmlns:sceres="http://open-scap.org/XMLSchema/SCE-definitions-1"
     >
 
 <!--<xsl:include href="xccdf-common.xsl" />-->
 <xsl:import href="security-guide.xsl" />
 <xsl:import href="oval-report.xsl" />
+<xsl:import href="sce-report.xsl" />
 
 <xsl:output method="xml" encoding="UTF-8" indent="yes"/>
 
@@ -66,6 +68,14 @@ Authors:
     <xsl:when test='not($oval-template)' />
     <xsl:when test='substring($oval-template, 1, 1) = "/"'><xsl:value-of select='$oval-template'/></xsl:when>
     <xsl:otherwise><xsl:value-of select='concat($pwd, "/", $oval-template)'/></xsl:otherwise>
+  </xsl:choose>
+</xsl:variable>
+
+<xsl:variable name='sce-tmpl'>
+  <xsl:choose>
+    <xsl:when test='not($sce-template)' />
+    <xsl:when test='substring($sce-template, 1, 1) = "/"'><xsl:value-of select='$sce-template'/></xsl:when>
+    <xsl:otherwise><xsl:value-of select='concat($pwd, "/", $sce-template)'/></xsl:otherwise>
   </xsl:choose>
 </xsl:variable>
 
@@ -402,7 +412,7 @@ Authors:
 <xsl:template mode='dbout.html.toc' match='db:chapter'/>
 
 
-<!-- checking engine results related templates (currently just oval) -->
+<!-- checking engine results related templates -->
 <xsl:template match='cdf:rule-result' mode='engine-results'>
   <xsl:if test='contains(",fixed,fail,", concat(",", normalize-space(cdf:result), ","))'>
     <xsl:apply-templates mode='engine-results' select='key("items", @idref)'/>
@@ -414,11 +424,10 @@ Authors:
 </xsl:template>
 
 <xsl:template match='cdf:check[starts-with(@system, "http://oval.mitre.org/XMLSchema/oval")]' mode='engine-results'>
-  <xsl:apply-templates mode='engine-results' select='cdf:check-content-ref[1]'/>
+  <xsl:apply-templates mode='oval-engine-results' select='cdf:check-content-ref[1]'/>
 </xsl:template>
 
-<xsl:template match='cdf:check-content-ref' mode='engine-results'>
-
+<xsl:template match='cdf:check-content-ref' mode='oval-engine-results'>
   <xsl:variable name='filename'>
     <xsl:choose>
       <xsl:when test='contains($oval-tmpl, "%")'><xsl:value-of select='concat(substring-before($oval-tmpl, "%"), @href, substring-after($oval-tmpl, "%"))'/></xsl:when>
@@ -431,8 +440,25 @@ Authors:
       <xsl:with-param name='definition-id' select='@name'/>
     </xsl:apply-templates>
   </xsl:if>
+</xsl:template>
 
+<xsl:template match='cdf:check[starts-with(@system, "http://open-scap.org/XMLSchema/SCE-definitions")]' mode='engine-results'>
+   <xsl:apply-templates mode='sce-engine-results' select='cdf:check-content-ref[1]'/>
+</xsl:template>
+
+<xsl:template match='cdf:check-content-ref' mode='sce-engine-results'>
+  <xsl:variable name='filename'>
+    <xsl:choose>
+      <xsl:when test='contains($sce-tmpl, "%")'><xsl:value-of select='concat(substring-before($sce-tmpl, "%"), @href, substring-after($sce-tmpl, "%"))'/></xsl:when>
+      <xsl:otherwise><xsl:value-of select='$sce-tmpl'/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+
+   <xsl:if test='$sce-tmpl'>
+      <xsl:apply-templates select='document($filename)/sceres:sce_results' mode='brief' />
+  </xsl:if>
 </xsl:template>
 
 <xsl:template match='node()' mode='engine-results'/>
+
 </xsl:stylesheet>
