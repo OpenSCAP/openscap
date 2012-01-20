@@ -349,7 +349,7 @@ class OSCAP_Object(object):
             if check.complex:
                 # This check is complext so there is more checks within
                 for child in check.children: 
-                    self.get_values_by_rule_id(id, check=child)
+                    values.extend(self.get_values_by_rule_id(id, check=child))
             else:
                 for export in check.exports:
                     values.append(export.value)
@@ -656,8 +656,6 @@ class OSCAP_Object(object):
         result.title = o_title
 
         dirname = os.path.dirname(filename)
-        if len(sessions.keys()) == 0:
-            raise IOError("Export failed: Corrupted session list or no OVAL file loaded")
 
         OSCAP.xccdf_result_fill_sysinfo(result.instance)        
         files = [filename]
