@@ -15,8 +15,7 @@ function test_sce {
 
     [ -f $RESFILE ] && rm -f $RESFILE
     
-    # FIXME: skip-valid is a temporary workaround, <target> tag isn't exported when using SCE
-    ../../utils/.libs/oscap xccdf eval --results "$RESFILE" --profile "default" --skip-valid "$DEFFILE"
+    ../../utils/.libs/oscap xccdf eval --results "$RESFILE" --profile "default" "$DEFFILE"
     
     # catch error from oscap tool
     ret_val=$?
