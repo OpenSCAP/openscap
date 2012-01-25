@@ -224,6 +224,32 @@ class OSCAP_Object(object):
         """
         return OSCAP_Object(self.object+"_"+name)
 
+    def __dir__(self):
+        """Lists all attributes inside this object.
+        
+        This is mainly used by auto-completion and for dir(obj) in interactive prompt.
+        (only available in Python 2.6 and newer but doesn't hurt anything in older Pythons)
+        """
+        
+        ret = list()
+        ret.extend(dir(type(self)))
+        ret.extend(list(self.__dict__))
+        
+        # we intentionally don't add all functions from the library, having
+        # them in getattr has IMO not been the right call, they would just
+        # clutter everything...
+        
+        for key in OSCAP.__dict__.iterkeys():
+            if key.startswith(self.object + "_"):
+                # the getattr wrapper only deals with callables
+                if callable(OSCAP.__dict__[key]):
+                    ret.append(key[len(self.object) + 1:])
+                    
+        # we also don't add the object_get_{name} methods as {name}, it IMO
+        # only allows bugs to pass as working code
+
+        return sorted(ret)
+
     def __call__(self, *args, **kwargs):
         newargs = ()
         for arg in args:
