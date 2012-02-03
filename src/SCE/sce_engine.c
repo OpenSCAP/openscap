@@ -249,7 +249,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			// we are the child process
 			printf("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
 			// FIXME: We definitely should escape the attribute!
-			printf("<sceres:sce_results xmlns:sceres=\"http://open-scap.org/XMLSchema/SCE-definitions-1\" script-path=\"%s\">\n", basename(tmp_href));
+			printf("<sceres:sce_results xmlns:sceres=\"http://open-scap.org/page/SCE_result_file\" script-path=\"%s\">\n", basename(tmp_href));
 
 			printf("\t<sceres:environment>\n");
 			for (int i = 0; env_values[i]; i++)
@@ -310,5 +310,5 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 
 bool xccdf_policy_model_register_engine_sce(struct xccdf_policy_model * model, struct sce_parameters *parameters)
 {
-	return xccdf_policy_model_register_engine_callback(model, "http://open-scap.org/XMLSchema/SCE-definitions-1", sce_engine_eval_rule, (void*)parameters);
+	return xccdf_policy_model_register_engine_callback(model, "http://open-scap.org/page/SCE", sce_engine_eval_rule, (void*)parameters);
 }

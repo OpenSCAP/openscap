@@ -29,7 +29,7 @@ Authors:
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:svg="http://www.w3.org/2000/svg"
 	xmlns="http://docbook.org/ns/docbook"
-    xmlns:sceres="http://open-scap.org/XMLSchema/SCE-definitions-1"
+    xmlns:sceres="http://open-scap.org/page/SCE_result_file"
     >
 
 <xsl:template mode='brief' match='sceres:sce_results'>

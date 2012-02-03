@@ -26,7 +26,7 @@
     <description xml:lang="en-US">abcd</description>
     <Rule id="rule-1000" selected="false" weight="10.000000">
       <title xml:lang="en-US">Check that there are no unconfined daemons (SELINUX)</title>
-      <check system="http://open-scap.org/XMLSchema/SCE-definitions-1">
+      <check system="http://open-scap.org/page/SCE">
         <check-content-ref href="unconfined_daemons.sh"/>
       </check>
     </Rule>
@@ -36,7 +36,7 @@
     <description xml:lang="en-US">abcd</description>
     <Rule id="rule-1001" selected="false" weight="10.000000">
       <title xml:lang="en-US">Always passes (Python)</title>
-      <check system="http://open-scap.org/XMLSchema/SCE-definitions-1">
+      <check system="http://open-scap.org/page/SCE">
         <check-content-ref href="python_passer.py"/>
       </check>
     </Rule>
@@ -60,7 +60,7 @@
     </Value>
     <Rule id="rule-1002" selected="false" weight="10.000000">
       <title xml:lang="en-US">Checks that passed variable is 16 (Python)</title>
-      <check system="http://open-scap.org/XMLSchema/SCE-definitions-1">
+      <check system="http://open-scap.org/page/SCE">
         <check-export value-id="var-1.1" export-name="passed_value" />
         <check-content-ref href="python_is16.py"/>
       </check>
@@ -71,7 +71,7 @@
     <description xml:lang="en-US">abcd</description>
     <Rule id="rule-1003" selected="false" weight="10.000000">
       <title xml:lang="en-US">Always passes (Lua)</title>
-      <check system="http://open-scap.org/XMLSchema/SCE-definitions-1">
+      <check system="http://open-scap.org/page/SCE">
         <check-content-ref href="lua_passer.lua"/>
       </check>
     </Rule>

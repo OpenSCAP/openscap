@@ -33,7 +33,7 @@ Authors:
     xmlns:s="http://open-scap.org/"
     exclude-result-prefixes="xsl cdf db s exsl"
     xmlns:ovalres="http://oval.mitre.org/XMLSchema/oval-results-5"
-    xmlns:sceres="http://open-scap.org/XMLSchema/SCE-definitions-1"
+    xmlns:sceres="http://open-scap.org/page/SCE_result_file"
     >
 
 <!--<xsl:include href="xccdf-common.xsl" />-->
@@ -442,7 +442,7 @@ Authors:
   </xsl:if>
 </xsl:template>
 
-<xsl:template match='cdf:check[starts-with(@system, "http://open-scap.org/XMLSchema/SCE-definitions")]' mode='engine-results'>
+<xsl:template match='cdf:check[starts-with(@system, "http://open-scap.org/page/SCE")]' mode='engine-results'>
    <xsl:apply-templates mode='sce-engine-results' select='cdf:check-content-ref[1]'/>
 </xsl:template>
 
