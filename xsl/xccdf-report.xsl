@@ -414,7 +414,7 @@ Authors:
 
 <!-- checking engine results related templates -->
 <xsl:template match='cdf:rule-result' mode='engine-results'>
-  <xsl:if test='contains(",fixed,fail,", concat(",", normalize-space(cdf:result), ","))'>
+  <xsl:if test='contains(",fail,error,unknown,informational,", concat(",", normalize-space(cdf:result), ","))'>
     <xsl:apply-templates mode='engine-results' select='key("items", @idref)'/>
   </xsl:if>
 </xsl:template>
