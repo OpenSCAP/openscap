@@ -1,0 +1,7 @@
+Files in this folder are originally taken from http://github.org/mpreisler/sectool-xccdf
+
+The mentioned project contains all files necessary to generate XCCDF baseline
+for further editing.
+
+Requires openscap to be configured with --enable-sce flag.
+

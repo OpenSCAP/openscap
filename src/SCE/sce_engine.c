@@ -31,6 +31,7 @@
 
 #include "alloc.h"
 #include "common/util.h"
+#include "common/list.h"
 #include "sce_engine_api.h"
 
 #include <stdlib.h>
@@ -45,17 +46,138 @@
 #include <limits.h>
 #include <unistd.h>
 
+struct sce_check_result
+{
+	char* href;
+	char* basename;
+	char* details;
+	xccdf_test_result_type_t xccdf_result;
+};
+
+struct sce_check_result* sce_check_result_new(void)
+{
+	struct sce_check_result* ret = oscap_alloc(sizeof(struct sce_check_result));
+	ret->href = 0;
+	ret->basename = 0;
+	ret->details = 0;
+	ret->xccdf_result = XCCDF_RESULT_UNKNOWN;
+
+	return ret;
+}
+
+void sce_check_result_free(struct sce_check_result* v)
+{
+	oscap_free(v->href);
+	oscap_free(v->basename);
+	oscap_free(v->details);
+
+	oscap_free(v);
+}
+
+void sce_check_result_set_href(struct sce_check_result* v, const char* href)
+{
+	oscap_free(v->href);
+	v->href = oscap_strdup(href);
+}
+
+const char* sce_check_result_get_href(struct sce_check_result* v)
+{
+	return v->href;
+}
+
+void sce_check_result_set_basename(struct sce_check_result* v, const char* base_name)
+{
+	oscap_free(v->basename);
+	v->basename = oscap_strdup(base_name);
+}
+
+const char* sce_check_result_get_basename(struct sce_check_result* v)
+{
+	return v->basename;
+}
+
+void sce_check_result_set_details(struct sce_check_result* v, const char* details)
+{
+	oscap_free(v->details);
+	v->details = oscap_strdup(details);
+}
+
+const char* sce_check_result_get_details(struct sce_check_result* v)
+{
+	return v->details;
+}
+
+void sce_check_result_set_xccdf_result(struct sce_check_result* v, xccdf_test_result_type_t result)
+{
+	v->xccdf_result = result;
+}
+
+xccdf_test_result_type_t sce_check_result_get_xccdf_result(struct sce_check_result* v)
+{
+	return v->xccdf_result;
+}
+
+void sce_check_result_export(struct sce_check_result* v, const char* target_file)
+{
+	FILE* f = fopen(target_file, "w");
+	fwrite(sce_check_result_get_details(v), 1, strlen(v->details), f);
+	fclose(f);
+}
+
+struct sce_session
+{
+	struct oscap_list* results;
+};
+
+struct sce_session* sce_session_new(void)
+{
+	struct sce_session* ret = oscap_alloc(sizeof(struct sce_session));
+	ret->results = oscap_list_new();
+
+	return ret;
+}
+
+void sce_session_free(struct sce_session* s)
+{
+	oscap_list_free(s->results, (oscap_destruct_func) sce_check_result_free);
+	oscap_free(s);
+}
+
+void sce_session_reset(struct sce_session* s)
+{
+	oscap_list_free(s->results, (oscap_destruct_func) sce_check_result_free);
+	s->results = oscap_list_new();
+}
+
+void sce_session_add_check_result(struct sce_session* s, struct sce_check_result* result)
+{
+	oscap_list_push(s->results, result);
+}
+
+void sce_session_export_to_directory(struct sce_session* s, const char* directory)
+{
+	struct oscap_iterator* it = oscap_iterator_new(s->results);
+
+	while(oscap_iterator_has_more(it))
+	{
+		struct sce_check_result * result = oscap_iterator_next(it);
+		char* target = oscap_sprintf("%s/%s.result.xml", directory, sce_check_result_get_basename(result));
+		sce_check_result_export(result, target);
+		oscap_free(target);
+	}
+}
+
 struct sce_parameters
 {
 	char * xccdf_directory;
-	char * results_target_dir;
+	struct sce_session* session;
 };
 
 struct sce_parameters* sce_parameters_new(void)
 {
 	struct sce_parameters *ret = oscap_alloc(sizeof(struct sce_parameters));
 	ret->xccdf_directory = 0;
-	ret->results_target_dir = 0;
+	ret->session = 0;
 
 	return ret;
 }
@@ -63,7 +185,7 @@ struct sce_parameters* sce_parameters_new(void)
 void sce_parameters_free(struct sce_parameters* v)
 {
 	oscap_free(v->xccdf_directory);
-	oscap_free(v->results_target_dir);
+	sce_session_free(v->session);
 
 	oscap_free(v);
 }
@@ -79,15 +201,25 @@ const char* sce_parameters_get_xccdf_directory(struct sce_parameters* v)
 	return v->xccdf_directory;
 }
 
-void sce_parameters_set_results_target_directory(struct sce_parameters* v, const char* value)
+void sce_parameters_set_session(struct sce_parameters* v, struct sce_session* value)
 {
-	oscap_free(v->results_target_dir);
-	v->results_target_dir = value == 0 ? 0 : oscap_strdup(value);
+	if (v->session)
+	{
+		sce_session_free(v->session);
+		v->session = 0;
+	}
+
+	v->session = value;
 }
 
-const char* sce_parameters_get_results_target_directory(struct sce_parameters* v)
+struct sce_session* sce_parameters_get_session(struct sce_parameters* v)
 {
-	return v->results_target_dir;
+	return v->session;
+}
+
+void sce_parameters_allocate_session(struct sce_parameters* v)
+{
+	sce_parameters_set_session(v, sce_session_new());
 }
 
 xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const char *rule_id, const char *id,
@@ -216,22 +348,13 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 	env_values = oscap_realloc(env_values, (env_value_count + 1) * sizeof(char*));
 	env_values[env_value_count] = NULL;
 
-	// +8 = strlen(".results"), +1 for \0
-	char * results_filename = NULL;
-	if (parameters->results_target_dir)
-	{
-		char * href_copy = oscap_strdup(href);
-		char * href_basename = basename(href_copy);
-		results_filename = oscap_sprintf("%s/%s.result.xml", parameters->results_target_dir, href_basename);
-		oscap_free(href_copy);
-	}
-	else
-	{
-		results_filename = oscap_strdup("/dev/null");
-	}
-
-	int results_file = creat(results_filename, S_IWUSR | S_IRUSR);
-	oscap_free(results_filename);
+	// We open a pipe for communication with the forked process
+    int pipefd[2];
+    if (pipe(pipefd) == -1)
+    {
+        perror("pipe");
+        return XCCDF_RESULT_ERROR;
+    }
 
 	// FIXME: We definitely want to impose security restrictions in the forked child process in the future.
 	//        This would prevent scripts from writing to files or deleting them.
@@ -243,8 +366,17 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 
 		if (fork_result == 0)
 		{
-			dup2(results_file, fileno(stdout));
-			dup2(results_file, fileno(stderr));
+		    // we won't read from the pipe, so close the reading fd
+		    close(pipefd[0]);
+
+		    // forward stdout and stderr to the opened pipe
+			dup2(pipefd[1], fileno(stdout));
+			dup2(pipefd[1], fileno(stderr));
+
+			// we duplicated the file description twice, we can close the original
+			// one now, stdout and stderr will be closed properly after the execved
+			// script/executable finishes
+			close(pipefd[1]);
 
 			// we are the child process
 			printf("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
@@ -270,12 +402,36 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 		}
 		else
 		{
+			// we won't write to the pipe, so close the writing fd
+			close(pipefd[1]);
+
+			char* result_buffer = malloc(sizeof(char) * 128);
+			size_t result_buffer_size = 128;
+			size_t read_bytes = 0;
+
+			char readbuf;
+			// FIXME: Read by larger chunks in the future
+			while (read(pipefd[0], &readbuf, 1) > 0)
+			{
+				read_bytes += 1;
+				// + 1 because we want to add \0 at the end
+				if (read_bytes + 1 > result_buffer_size)
+				{
+					// we simply double the buffer when we blow it
+					result_buffer_size *= 2;
+					result_buffer = realloc(result_buffer, sizeof(char) * result_buffer_size);
+				}
+
+				// index from 0 onwards, first byte ends up on index 0
+				result_buffer[read_bytes - 1] = readbuf;
+			}
+			result_buffer[read_bytes] = '\0';
+
+			close(pipefd[0]);
+
 			// we are the parent process
 			int wstatus;
 			waitpid(fork_result, &wstatus, 0);
-			dprintf(results_file, "\n]]>\n");
-			dprintf(results_file, "\t</sceres:stdout>\n");
-			oscap_free(tmp_href);
 
 			// the first 9 values (0 to 8) are compiled in
 			for (size_t i = 9; i < env_value_count; ++i)
@@ -290,20 +446,48 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			{
 				// the script returned invalid exit code, we need to safeguard us against that
 				raw_result = XCCDF_RESULT_ERROR;
-				dprintf(results_file, "\t<sceres:debug_message>The check script returned an invalid exit code %i, interpreting it as error.</sceres:debug_message>\n", WEXITSTATUS(wstatus));
 			}
 
-			dprintf(results_file, "\t<sceres:exit_code>%i</sceres:exit_code>\n", WEXITSTATUS(wstatus));
-			dprintf(results_file, "\t<sceres:result>%i</sceres:result>\n", raw_result);
-			dprintf(results_file, "</sceres:sce_results>\n");
-			close(results_file);
+			char* result_details = oscap_sprintf(
+					"%s\n"
+					"]]>\n"
+					"\t</sceres:stdout>\n"
+					"\t<sceres:exit_code>%i</sceres:exit_code>\n"
+					"\t<sceres:result>%i</sceres:result>\n"
+					"</sceres:sce_results>\n",
+					result_buffer, WEXITSTATUS(wstatus), raw_result);
+
+			oscap_free(result_buffer);
+
+			struct sce_session* session = sce_parameters_get_session(parameters);
+			if (session)
+			{
+				struct sce_check_result* check_result = sce_check_result_new();
+				sce_check_result_set_href(check_result, tmp_href);
+				sce_check_result_set_basename(check_result, basename(tmp_href));
+				sce_check_result_set_details(check_result, result_details);
+				sce_check_result_set_xccdf_result(check_result, (xccdf_test_result_type_t)raw_result);
+
+				sce_session_add_check_result(session, check_result);
+			}
+
+			oscap_free(tmp_href);
+			oscap_free(result_details);
 
 			return (xccdf_test_result_type_t)raw_result;
 		}
 	}
 	else
 	{
-		close(results_file);
+		// the first 9 values (0 to 8) are compiled in
+		for (size_t i = 9; i < env_value_count; ++i)
+		{
+			oscap_free(env_values[i]);
+		}
+		oscap_free(env_values);
+
+		close(pipefd[0]);
+		close(pipefd[1]);
 		return XCCDF_RESULT_ERROR;
 	}
 }

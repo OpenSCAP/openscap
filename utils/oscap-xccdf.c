@@ -411,7 +411,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 #ifdef ENABLE_SCE
 	sce_parameters = sce_parameters_new();
 	sce_parameters_set_xccdf_directory(sce_parameters, dirname(xccdf_pathcopy));
-	sce_parameters_set_results_target_directory(sce_parameters, action->sce_results ? "./" : 0);
+	sce_parameters_allocate_session(sce_parameters);
 
 	xccdf_policy_model_register_engine_sce(policy_model, sce_parameters);
 #endif
@@ -456,6 +456,15 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			free(name);
 		}
 	}
+
+#ifdef ENABLE_SCE
+	/* Export SCE results */
+	if (action->sce_results == true) {
+		struct sce_session* session = sce_parameters_get_session(sce_parameters);
+		sce_session_export_to_directory(session, "./");
+	}
+#endif
+
 	/* Export results */
 	if (action->f_results != NULL) {
 		xccdf_benchmark_add_result(benchmark, xccdf_result_clone(ritem));
