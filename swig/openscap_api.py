@@ -674,25 +674,34 @@ class OSCAP_Object(object):
         """Export all files for given policy.
         """
 
-        if self.object != "xccdf_policy": raise TypeError("Wrong call of \"export\" function. Should be xccdf_policy (have %s)" %(self.object,))
+        if self.object != "xccdf_policy":
+            raise TypeError("Wrong call of \"export\" function. Should be xccdf_policy (have %s)" %(self.object,))
 
-        result.benchmark_uri = path or "benchmark.xml"
+        # FIXME: We clone both benchmark and the result to avoid changing them when just export is requested
+        #        Although this is the right behavior, it is potentially wasteful, result.clone() and benchmark.clone()
+        #        could potentially take a lot of time to complete.
+        #        A better solution would be to add the result, export and then remove the result
+        #        (with appropriate exception safety of course) or even better, allow export with custom result list.
+        
+        result_clone = result.clone()
+        result_clone.benchmark_uri = path or "benchmark.xml"
         o_title = common.text()
         o_title.text = title
-        result.title = o_title
-
-        dirname = os.path.dirname(filename)
-
-        OSCAP.xccdf_result_fill_sysinfo(result.instance)        
+        result_clone.title = o_title
+        result_clone.fill_sysinfo()
+        
         files = [filename]
 
-        for model in self.model.benchmark.models:
-            result.score = self.score(result, model.system)
+        benchmark_clone = self.model.benchmark.clone()
 
-        self.model.benchmark.result = result.clone()
+        for model in benchmark_clone.models:
+            result_clone.score = self.score(result_clone, model.system)
 
-        OSCAP.xccdf_benchmark_export(self.model.benchmark.instance, filename)
+        benchmark_clone.add_result(result_clone)
 
+        benchmark_clone.export(filename)
+        
+        dirname = os.path.dirname(filename)
         for path in sessions.keys():
             sess = sessions[path]
             rmodel = oval.agent_get_results_model(sess)
