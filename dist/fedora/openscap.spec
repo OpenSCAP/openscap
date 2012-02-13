@@ -80,6 +80,13 @@ Requires:       %{name} = %{version}-%{release}
 Example of SCAP content for Fedora. Please note that this content
 is for testing purposes only.
 
+%package        content-sectool
+Summary:        Sectool content
+Group:          Applications/System
+Requires:       %{name} = %{version}-%{release}
+
+%description    content-sectool
+SCAP/SCE content that conforms to sectool checks.
 
 %package        extra-probes
 Summary:        SCAP probes
@@ -107,7 +114,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fpie"
 export LDFLAGS="-pie -Wl,-z,relro -Wl,-z,now"
 %endif
 
-%configure
+%configure --enable-sce
 
 make %{?_smp_mflags}
 # Remove shebang from bash-completion script
@@ -232,6 +239,10 @@ fi
 %{_datadir}/openscap/scap-xccdf.xml
 %{_datadir}/openscap/scap-fedora14-oval.xml
 %{_datadir}/openscap/scap-fedora14-xccdf.xml
+
+%files content-sectool
+%defattr(-,root,root,-)
+%{_datadir}/openscap/sectool-sce
 
 %files extra-probes
 %{_libexecdir}/openscap/probe_ldap57
