@@ -52,7 +52,7 @@ static int app_xccdf_resolve(const struct oscap_action *action);
 static int app_xccdf_export_oval_variables(const struct oscap_action *action);
 static bool getopt_xccdf(int argc, char **argv, struct oscap_action *action);
 static bool getopt_generate(int argc, char **argv, struct oscap_action *action);
-static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show, const char *oval_template);
+static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show, const char *oval_template, const char* sce_template);
 static int app_xccdf_xslt(const struct oscap_action *action);
 
 static struct oscap_module* XCCDF_SUBMODULES[];
@@ -482,7 +482,17 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 		/* generate report */
 		if (action->f_report != NULL)
-			xccdf_gen_report(action->f_results, xccdf_result_get_id(ritem), action->f_report, "", (action->oval_results ? "%.result.xml" : ""));
+			xccdf_gen_report(action->f_results,
+			                 xccdf_result_get_id(ritem),
+			                 action->f_report,
+			                 "",
+			                 (action->oval_results ? "%.result.xml" : ""),
+#ifdef ENABLE_SCE
+			                 (action->sce_results  ? "%.result.xml" : "")
+#else
+			                 ""
+#endif
+			);
 	}
 
 	/* Export variables */
@@ -779,9 +789,9 @@ int app_xccdf_resolve(const struct oscap_action *action)
 	return ret;
 }
 
-static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show, const char *oval_template)
+static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show, const char *oval_template, const char *sce_template)
 {
-    const char *params[] = { "result-id", id, "show", show, "verbosity", "", "oval-template", oval_template, NULL };
+    const char *params[] = { "result-id", id, "show", show, "verbosity", "", "oval-template", oval_template, "sce-template", sce_template, NULL };
     return app_xslt(infile, "xccdf-report.xsl", outfile, params);
 }
 
@@ -795,6 +805,9 @@ int app_xccdf_xslt(const struct oscap_action *action)
         "template",          action->tmpl,
         "format",            action->format,
         "oval-template",     action->oval_template,
+#ifdef ENABLE_SCE
+        "sce-template",      action->sce_template,
+#endif
         "verbosity",         action->verbosity >= 0 ? "1" : "",
         "hide-profile-info", action->hide_profile_info ? "yes" : NULL,
         NULL };
@@ -828,6 +841,9 @@ enum oval_opt {
     XCCDF_OPT_TEMPLATE,
     XCCDF_OPT_FORMAT,
     XCCDF_OPT_OVAL_TEMPLATE,
+#ifdef ENABLE_SCE
+    XCCDF_OPT_SCE_TEMPLATE,
+#endif
     XCCDF_OPT_FILE_VERSION,
     XCCDF_OPT_OUTPUT = 'o',
     XCCDF_OPT_RESULT_ID = 'i'
@@ -851,6 +867,9 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"template", 		required_argument, NULL, XCCDF_OPT_TEMPLATE},
 		{"format", 		required_argument, NULL, XCCDF_OPT_FORMAT},
 		{"oval-template", 	required_argument, NULL, XCCDF_OPT_OVAL_TEMPLATE},
+#ifdef ENABLE_SCE
+		{"sce-template", 	required_argument, NULL, XCCDF_OPT_SCE_TEMPLATE},
+#endif
 	// flags
 		{"force",		no_argument, &action->force, 1},
 		{"oval-results",	no_argument, &action->oval_results, 1},
@@ -876,6 +895,9 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		case XCCDF_OPT_TEMPLATE:	action->tmpl = optarg;		break;
 		case XCCDF_OPT_FORMAT:		action->format = optarg;	break;
 		case XCCDF_OPT_OVAL_TEMPLATE:	action->oval_template = optarg; break;
+#ifdef ENABLE_SCE
+		case XCCDF_OPT_SCE_TEMPLATE:	action->sce_template = optarg; break;
+#endif
 		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}

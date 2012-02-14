@@ -126,6 +126,7 @@ struct oscap_action {
 	int validate;
 	int oval_results;
 #ifdef ENABLE_SCE
+	char *sce_template;
 	int sce_results;
 #endif
 	int export_variables;

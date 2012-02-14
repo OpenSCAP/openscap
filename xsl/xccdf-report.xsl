@@ -62,6 +62,7 @@ Authors:
 
 <!-- OVAL results parametres -->
 <xsl:param name='oval-template'/>
+<xsl:param name='sce-template'/>
 
 <xsl:variable name='oval-tmpl'>
   <xsl:choose>
