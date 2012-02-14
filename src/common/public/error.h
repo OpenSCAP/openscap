@@ -60,6 +60,7 @@ typedef uint16_t oscap_errcode_t;
 #define OSCAP_EFAMILY_OSCAP    3	/**< OSCAP general errors */
 #define OSCAP_EFAMILY_OVAL     4	/**< OVAL errors (OVAL & probes) */
 #define OSCAP_EFAMILY_XCCDF    5	/**< XCCDF errors */
+#define OSCAP_EFAMILY_SCE      6	/**< SCE errors */
 /** @} */
 
 /**

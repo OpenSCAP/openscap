@@ -30,6 +30,7 @@
 #endif
 
 #include "alloc.h"
+#include "common/_error.h"
 #include "common/util.h"
 #include "common/list.h"
 #include "sce_engine_api.h"
@@ -57,9 +58,9 @@ struct sce_check_result
 struct sce_check_result* sce_check_result_new(void)
 {
 	struct sce_check_result* ret = oscap_alloc(sizeof(struct sce_check_result));
-	ret->href = 0;
-	ret->basename = 0;
-	ret->details = 0;
+	ret->href = NULL;
+	ret->basename = NULL;
+	ret->details = NULL;
 	ret->xccdf_result = XCCDF_RESULT_UNKNOWN;
 
 	return ret;
@@ -67,16 +68,24 @@ struct sce_check_result* sce_check_result_new(void)
 
 void sce_check_result_free(struct sce_check_result* v)
 {
-	oscap_free(v->href);
-	oscap_free(v->basename);
-	oscap_free(v->details);
+	if (!v)
+		return;
+
+	if (v->href)
+		oscap_free(v->href);
+	if (v->basename)
+		oscap_free(v->basename);
+	if (v->details)
+		oscap_free(v->details);
 
 	oscap_free(v);
 }
 
 void sce_check_result_set_href(struct sce_check_result* v, const char* href)
 {
-	oscap_free(v->href);
+	if (v->href)
+		oscap_free(v->href);
+
 	v->href = oscap_strdup(href);
 }
 
@@ -87,7 +96,9 @@ const char* sce_check_result_get_href(struct sce_check_result* v)
 
 void sce_check_result_set_basename(struct sce_check_result* v, const char* base_name)
 {
-	oscap_free(v->basename);
+	if (v->basename)
+		oscap_free(v->basename);
+
 	v->basename = oscap_strdup(base_name);
 }
 
@@ -98,7 +109,9 @@ const char* sce_check_result_get_basename(struct sce_check_result* v)
 
 void sce_check_result_set_details(struct sce_check_result* v, const char* details)
 {
-	oscap_free(v->details);
+	if (v->details)
+		oscap_free(v->details);
+
 	v->details = oscap_strdup(details);
 }
 
@@ -120,6 +133,15 @@ xccdf_test_result_type_t sce_check_result_get_xccdf_result(struct sce_check_resu
 void sce_check_result_export(struct sce_check_result* v, const char* target_file)
 {
 	FILE* f = fopen(target_file, "w");
+	if (!f)
+	{
+		const char* desc = oscap_sprintf("Can't open file '%s' for writing.", target_file);
+		oscap_seterr(OSCAP_EFAMILY_SCE, OSCAP_EINVARG, desc);
+		oscap_free(desc);
+
+		return;
+	}
+
 	fwrite(sce_check_result_get_details(v), 1, strlen(v->details), f);
 	fclose(f);
 }
@@ -139,6 +161,9 @@ struct sce_session* sce_session_new(void)
 
 void sce_session_free(struct sce_session* s)
 {
+	if (!s)
+		return;
+
 	oscap_list_free(s->results, (oscap_destruct_func) sce_check_result_free);
 	oscap_free(s);
 }
@@ -165,35 +190,44 @@ void sce_session_export_to_directory(struct sce_session* s, const char* director
 		sce_check_result_export(result, target);
 		oscap_free(target);
 	}
+
+	oscap_iterator_free(it);
 }
 
 struct sce_parameters
 {
-	char * xccdf_directory;
+	char* xccdf_directory;
 	struct sce_session* session;
 };
 
 struct sce_parameters* sce_parameters_new(void)
 {
 	struct sce_parameters *ret = oscap_alloc(sizeof(struct sce_parameters));
-	ret->xccdf_directory = 0;
-	ret->session = 0;
+	ret->xccdf_directory = NULL;
+	ret->session = NULL;
 
 	return ret;
 }
 
 void sce_parameters_free(struct sce_parameters* v)
 {
-	oscap_free(v->xccdf_directory);
-	sce_session_free(v->session);
+	if (!v)
+		return;
+
+	if (v->xccdf_directory)
+		oscap_free(v->xccdf_directory);
+	if (v->session)
+		sce_session_free(v->session);
 
 	oscap_free(v);
 }
 
 void sce_parameters_set_xccdf_directory(struct sce_parameters* v, const char* value)
 {
-	oscap_free(v->xccdf_directory);
-	v->xccdf_directory = value == 0 ? 0 : oscap_strdup(value);
+	if (v->xccdf_directory)
+		oscap_free(v->xccdf_directory);
+
+	v->xccdf_directory = value == NULL ? NULL : oscap_strdup(value);
 }
 
 const char* sce_parameters_get_xccdf_directory(struct sce_parameters* v)
@@ -206,7 +240,7 @@ void sce_parameters_set_session(struct sce_parameters* v, struct sce_session* va
 	if (v->session)
 	{
 		sce_session_free(v->session);
-		v->session = 0;
+		v->session = NULL;
 	}
 
 	v->session = value;
