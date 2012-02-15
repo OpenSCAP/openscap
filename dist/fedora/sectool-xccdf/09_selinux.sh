@@ -11,7 +11,7 @@ fi
 
 if [[ $SELINUX_STATE != $XCCDF_VALUE_EXPECTED_STATE ]]
 then
-	echo "Selinux is in "$SELINUX_MODE" state."
+	echo "Selinux is in "$SELINUX_STATE" state."
 	echo "Expected state: "$XCCDF_VALUE_EXPECTED_STATE
 
 	if [[ $XCCDF_VALUE_EXPECTED_STATE == "enforcing" ]]; then
