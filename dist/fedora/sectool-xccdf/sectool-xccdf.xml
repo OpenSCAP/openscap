@@ -1,4 +1,4 @@
-<Benchmark id="migrated_sectool_checks" xml:lang="en" xmlns="http://checklists.nist.gov/xccdf/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<Benchmark id="migrated_sectool_checks" xml:lang="en" xmlns="http://checklists.nist.gov/xccdf/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <status date="2012-02-06">draft</status>
   <title>Migrated sectool checks</title>
   <description>These checks are originally from sectool (http://fedorahosted.org/sectool) and have been migrated to SCE for use with XCCDF and related technologies.</description>
@@ -11,16 +11,69 @@
   <platform idref="cpe:/o:redhat:enterprise_linux:6" />
   <version>0.1</version>
 
-  <Profile id="Limited_Privileges" abstract="false">
-    <title xml:lang="en">Limited privileges</title>
-    <description xml:lang="en">Selects only checks that don't require root privileges.</description>
+  <model system="urn:xccdf:scoring:default" />
+  <model system="urn:xccdf:scoring:flat" />
+
+  <Profile id="Desktop" abstract="false">
+    <title xml:lang="en">Server</title>
+    <description xml:lang="en">Strict checks</description>
+    <select idref="rule-1" selected="false" />
     <select idref="rule-2" selected="false" />
-    <select idref="rule-4" selected="false"/>
-    <select idref="rule-5" selected="false"/>
-    <select idref="rule-6" selected="false"/>
-    <select idref="rule-7" selected="false"/>
-    <select idref="rule-10" selected="false"/>
-    <select idref="rule-12" selected="false"/>
+    <select idref="rule-3" selected="false" />
+    <select idref="rule-4" selected="false" />
+    <select idref="rule-5" selected="false" />
+    <select idref="rule-6" selected="false" />
+    <select idref="rule-7" selected="false" />
+    <select idref="rule-8" selected="false" />
+    <select idref="rule-9" selected="false" />
+    <select idref="rule-10" selected="false" />
+    <select idref="rule-11" selected="false" />
+    <select idref="rule-12" selected="false" />
+    <select idref="rule-13" selected="false" />
+    <select idref="rule-14" selected="true" />
+    <select idref="rule-15" selected="false" />
+    <select idref="rule-16" selected="false" />
+    <select idref="rule-17" selected="false" />
+    <select idref="rule-18" selected="false" />
+    <select idref="rule-19" selected="true" />
+    <select idref="rule-20" selected="true" />
+    <select idref="rule-21" selected="true" />
+    <select idref="rule-22" selected="false" />
+    <select idref="rule-23" selected="false" />
+    <select idref="rule-24" selected="false" />
+    <select idref="rule-25" selected="false" />
+    <refine-value idref="var-20" selector="enforcing" />
+  </Profile>
+
+  <Profile id="Server" abstract="false">
+    <title xml:lang="en">Desktop</title>
+    <description xml:lang="en">Desktop checks</description>
+    <select idref="rule-1" selected="false" />
+    <select idref="rule-2" selected="false" />
+    <select idref="rule-3" selected="true" />
+    <select idref="rule-4" selected="true" />
+    <select idref="rule-5" selected="true" />
+    <select idref="rule-6" selected="true" />
+    <select idref="rule-7" selected="true" />
+    <select idref="rule-8" selected="true" />
+    <select idref="rule-9" selected="false" />
+    <select idref="rule-10" selected="true" />
+    <select idref="rule-11" selected="true" />
+    <select idref="rule-12" selected="true" />
+    <select idref="rule-13" selected="true" />
+    <select idref="rule-14" selected="false" />
+    <select idref="rule-15" selected="true" />
+    <select idref="rule-16" selected="true" />
+    <select idref="rule-17" selected="false" />
+    <select idref="rule-18" selected="false" />
+    <select idref="rule-19" selected="true" />
+    <select idref="rule-20" selected="true" />
+    <select idref="rule-21" selected="true" />
+    <select idref="rule-22" selected="false" />
+    <select idref="rule-23" selected="false" />
+    <select idref="rule-24" selected="false" />
+    <select idref="rule-25" selected="true" />
+    <refine-value idref="var-20" selector="permissive" />
   </Profile>
 
   <Rule id="rule-1" selected="true">
@@ -265,16 +318,38 @@ Checks if exec-shield is enabled.</xhtml:pre>
       <check-content-ref href="09_exec_shield.sh" />
     </check>
   </Rule>
-  <Rule id="rule-20" selected="true">
-    <title>selinux</title>
-    <description>
-      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
-Checks if you have SELinux enabled and monitors any booleans changes.</xhtml:pre>
-    </description>
-    <check system="http://open-scap.org/page/SCE">
-      <check-content-ref href="09_selinux.sh" />
-    </check>
-  </Rule>
+  <Group id="group-20" hidden="false">
+    <Value id="var-20" type="string" operator="equals">
+      <title>SELinux state</title>
+      <description xml:lang="en"> 
+	enforcing - SELinux security policy is enforced. <xhtml:br/>
+	permissive - SELinux prints warnings instead of enforcing.<xhtml:br/>
+	disabled - SELinux is fully disabled.
+      </description>
+      <question xml:lang="en">Set the SELinux state</question>
+      <value>enforcing</value>
+      <value selector="enforcing">enforcing</value>
+      <value selector="permissive">permissive</value>
+      <value selector="disabled">disabled</value>
+      <match>enforcing|permissive|disabled</match>
+      <choices mustMatch="1">
+	<choice>enforcing</choice>
+	<choice>permissive</choice>
+	<choice>disabled</choice>
+      </choices>
+    </Value>
+    <Rule id="rule-20" selected="true">
+      <title>selinux</title>
+      <description>
+	<xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+	Checks if you have SELinux enabled and monitors any booleans changes.</xhtml:pre>
+      </description>
+      <check system="http://open-scap.org/page/SCE">
+	<check-export value-id="var-20" export-name="EXPECTED_STATE" /> <!-- TBD -->
+	<check-content-ref href="09_selinux.sh" />
+      </check>
+    </Rule>
+  </Group>
   <Rule id="rule-21" selected="true">
     <title>va_randomization</title>
     <description>
