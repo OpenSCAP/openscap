@@ -462,4 +462,12 @@ bool xccdf_policy_model_register_engine_oval(struct xccdf_policy_model * model, 
     return xccdf_policy_model_register_engine_callback(model, "http://oval.mitre.org/XMLSchema/oval-definitions-5", oval_agent_eval_rule, (void *) usr);
 }
 
+void oval_agent_export_sysinfo_to_xccdf_result(struct oval_agent_session * sess, struct xccdf_result * ritem)
+{
+	// just a delegate to maintain API and ABI stability,
+	// this has been implemented elsewhere and this function is deprecated!
+
+	xccdf_result_fill_sysinfo(ritem);
+}
+
 #endif

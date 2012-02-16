@@ -90,6 +90,15 @@ int oval_agent_resolve_variables(struct oval_agent_session * session, struct xcc
  */
 bool xccdf_policy_model_register_engine_oval(struct xccdf_policy_model * model, struct oval_agent_session * sess);
 
+/**
+ * @deprecated
+ * Transform OVAL Sysinfo into XCCDF Test Result
+ * This function has been deprecated, please use xccdf_result_fill_sysinfo(..) instead
+ *
+ * @param session OVAL Agent session
+ * @param ritem XCCDF Result
+ */
+void oval_agent_export_sysinfo_to_xccdf_result(struct oval_agent_session * session, struct xccdf_result * ritem);
 
 /**
  * @) END OVALDEF
