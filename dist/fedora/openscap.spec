@@ -2,7 +2,7 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:           openscap
-Version:        0.8.0
+Version:        0.8.1
 Release:        1%{?dist}
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 Group:          System Environment/Libraries
@@ -64,8 +64,6 @@ libraries can be used by perl.
 Summary:        Openscap utilities
 Group:          Applications/System
 Requires:       %{name} = %{version}-%{release}
-Requires(post):  chkconfig
-Requires(preun): chkconfig initscripts
 
 %description    utils
 The %{name}-utils package contains various utilities based on %{name} library.
@@ -131,11 +129,6 @@ rm -rf $RPM_BUILD_ROOT
 
 make install INSTALL='install -p' DESTDIR=$RPM_BUILD_ROOT
 
-install -d -m 755 $RPM_BUILD_ROOT%{_initrddir}
-install -d -m 755 $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
-install -p -m 755 dist/fedora/oscap-scan.init $RPM_BUILD_ROOT%{_initrddir}/oscap-scan
-install -p -m 644 dist/fedora/oscap-scan.sys  $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/oscap-scan
-
 # create symlinks to default content
 ln -s  %{_datadir}/openscap/scap-fedora14-oval.xml $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-oval.xml
 ln -s  %{_datadir}/openscap/scap-fedora14-xccdf.xml $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-xccdf.xml
@@ -156,16 +149,6 @@ rm -rf $RPM_BUILD_ROOT
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
-
-
-%post utils
-/sbin/chkconfig --add oscap-scan
-
-%preun utils
-if [ $1 -eq 0 ]; then
-   /sbin/service oscap-scan stop > /dev/null 2>&1
-   /sbin/chkconfig --del oscap-scan
-fi
 
 
 %files
@@ -226,9 +209,7 @@ fi
 
 %files utils
 %defattr(-,root,root,-)
-%config(noreplace) %{_sysconfdir}/sysconfig/oscap-scan
 %doc docs/oscap-scan.cron
-%{_initrddir}/oscap-scan
 %{_mandir}/man8/*
 %{_bindir}/*
 %{_sysconfdir}/bash_completion.d
@@ -249,6 +230,6 @@ fi
 %{_libexecdir}/openscap/probe_gconf
 
 %changelog
-* Tue Oct 11 2011 Peter Vrabec <pvrabec@redhat.com> 0.8.0-1
+* Tue Feb 21 2012 Peter Vrabec <pvrabec@redhat.com> 0.8.1-1
 - upgrade
 
