@@ -29,10 +29,20 @@
 #include <unistd.h>
 #include <stdarg.h>
 #include <errno.h>
+#include <limits.h>
 
 #ifdef ENABLE_CVSS
 #include <cvss.h>
 #endif
+
+#ifndef PATH_MAX
+# define PATH_MAX 1024
+#else
+# if PATH_MAX < 1 || PATH_MAX > 4096
+#  undef PATH_MAX
+#  define PATH_MAX 2048
+# endif
+#endif /* PATH_MAX */
 
 static void oscap_action_init(struct oscap_action *action)
 {
@@ -69,7 +79,10 @@ static size_t paramlist_cpy(const char **to, const char **p) {
 
 int app_xslt(const char *infile, const char *xsltfile, const char *outfile, const char **params)
 {
-    const char *stdparams[] = { "oscap-version", oscap_get_version(), "pwd", getenv("PWD"), NULL };
+    char pwd[PATH_MAX];
+    getcwd(&pwd, sizeof(pwd));
+
+    const char *stdparams[] = { "oscap-version", oscap_get_version(), "pwd", pwd, NULL };
     const char *par[paramlist_size(params) + paramlist_size(stdparams) + 1];
     size_t s  = paramlist_cpy(par    , params);
            s += paramlist_cpy(par + s, stdparams);

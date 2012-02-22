@@ -60,7 +60,8 @@ Authors:
 <xsl:param name="show"/>
 <xsl:param name='profile' select='/cdf:Benchmark/cdf:TestResult[@id=$result-id][1]/cdf:profile/@idref'/>
 
-<!-- OVAL results parametres -->
+<!-- OVAL and SCE result parameters -->
+<xsl:param name='pwd'/>
 <xsl:param name='oval-template'/>
 <xsl:param name='sce-template'/>
 
