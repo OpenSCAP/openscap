@@ -43,7 +43,7 @@ ROOT="$(mktemp -d -t openscap-fts.XXXXXX)"
 gen_tree "$ROOT"
 
 while read args; do
-	[ -z "$args" ] && continue
+	[ -z "${args%%#*}" ] && continue
 	test_run "OVAL_FTS ${args%% *}" oval_fts $args
 done <<EOF
 test1 \
@@ -162,6 +162,14 @@ test17 \
 '' \
 '((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "down" :recurse_file_system "all"))' \
 d1/d11/,d1/d11/d111/,
+
+# support for empty string as a pattern in 'filename' entity
+test18 \
+'((path :operation 5) "'$ROOT'/d2")' \
+'((filename :operation 11) "")' \
+'' \
+'((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "none" :recurse_file_system "all"))' \
+d2/f21,
 
 EOF
 
