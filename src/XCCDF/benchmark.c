@@ -72,6 +72,12 @@ struct xccdf_benchmark *xccdf_benchmark_new(void)
 	bench->sub.benchmark.results = oscap_list_new();
     // hash tables
 	bench->sub.benchmark.dict = oscap_htable_new();
+
+	// add the implied default scoring model
+	struct xccdf_model *default_model = xccdf_model_new();
+	xccdf_model_set_system(default_model, "urn:xccdf:scoring:default");
+	xccdf_benchmark_add_model(XBENCHMARK(bench), default_model);
+
 	return XBENCHMARK(bench);
 }
 
@@ -106,6 +112,8 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 	int depth = oscap_element_depth(reader) + 1;
 
 	while (oscap_to_start_element(reader, depth)) {
+		struct xccdf_model *parsed_model;
+
 		switch (xccdf_element_get(reader)) {
 		case XCCDFE_NOTICE:
 				oscap_list_add(benchmark->sub.benchmark.notices, xccdf_notice_new_parse(reader));
@@ -124,7 +132,14 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 			oscap_list_add(benchmark->item.platforms, xccdf_attribute_copy(reader, XCCDFA_IDREF));
 			break;
 		case XCCDFE_MODEL:
-			oscap_list_add(benchmark->sub.benchmark.models, xccdf_model_new_xml(reader));
+			parsed_model = xccdf_model_new_xml(reader);
+
+			// we won't add the implied default scoring model, it is already in the benchmark
+			if (strcmp(xccdf_model_get_system(parsed_model), "urn:xccdf:scoring:default") != 0)
+				xccdf_benchmark_add_model(XBENCHMARK(benchmark), parsed_model);
+			else
+				xccdf_model_free(parsed_model);
+
 			break;
 		case XCCDFE_PLAIN_TEXT:{
 				const char *id = xccdf_attribute_get(reader, XCCDFA_ID);
