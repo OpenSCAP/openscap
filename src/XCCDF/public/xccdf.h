@@ -2221,6 +2221,8 @@ struct oscap_text *xccdf_profile_note_get_text(const struct xccdf_profile_note *
 /// @memberof xccdf_check_import
 const char *xccdf_check_import_get_name(const struct xccdf_check_import *item);
 /// @memberof xccdf_check_import
+const char *xccdf_check_import_get_xpath(const struct xccdf_check_import *item);
+/// @memberof xccdf_check_import
 const char *xccdf_check_import_get_content(const struct xccdf_check_import *item);
 /// @memberof xccdf_check_export
 const char *xccdf_check_export_get_value(const struct xccdf_check_export *item);
@@ -2655,6 +2657,8 @@ bool xccdf_profile_note_set_text(struct xccdf_profile_note *obj, struct oscap_te
 
 /// @memberof xccdf_check_import
 bool xccdf_check_import_set_name(struct xccdf_check_import *obj, const char *newval);
+/// @memberof xccdf_check_import
+bool xccdf_check_import_set_xpath(struct xccdf_check_import *obj, const char *newval);
 /// @memberof xccdf_check_import
 bool xccdf_check_import_set_content(struct xccdf_check_import *obj, const char *newval);
 

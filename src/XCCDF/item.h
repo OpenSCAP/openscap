@@ -264,6 +264,7 @@ struct xccdf_check_content_ref {
 
 struct xccdf_check_import {
 	char *name;
+	char *xpath;
 	char *content;
 };
 

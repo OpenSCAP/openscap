@@ -591,9 +591,12 @@ xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *par
 	while (xccdf_check_import_iterator_has_more(imports)) {
 		struct xccdf_check_import *import = xccdf_check_import_iterator_next(imports);
 		const char *name = xccdf_check_import_get_name(import);
+		const char *xpath = xccdf_check_import_get_xpath(import);
 		const char *content = xccdf_check_import_get_content(import);
 		xmlNode *import_node = xmlNewTextChild(check_node, ns_xccdf, BAD_CAST "check-import", BAD_CAST content);
 		xmlNewProp(import_node, BAD_CAST "import-name", BAD_CAST name);
+		if (xpath)
+			xmlNewProp(import_node, BAD_CAST "import-xpath", BAD_CAST xpath);
 	}
 	xccdf_check_import_iterator_free(imports);
 

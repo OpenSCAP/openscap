@@ -499,6 +499,8 @@ struct xccdf_check_import *xccdf_check_import_clone(const struct xccdf_check_imp
 {
 	struct xccdf_check_import *new_import = xccdf_check_import_new();
 	new_import->name = oscap_strdup(old_import->name);
+	if (old_import->xpath)
+		new_import->xpath = oscap_strdup(old_import->xpath);
 	new_import->content = oscap_strdup(old_import->content);
 	return new_import;
 }
@@ -568,10 +570,13 @@ struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader)
 			break;
 		case XCCDFE_CHECK_IMPORT:{
 				const char *name = xccdf_attribute_get(reader, XCCDFA_IMPORT_NAME);
-				if (name == NULL)
+				const char *xpath = xccdf_attribute_get(reader, XCCDFA_IMPORT_XPATH);
+				if (name == NULL) // @import-name is a required attribute
 					break;
 				struct xccdf_check_import *imp = xccdf_check_import_new();
 				imp->name = strdup(name);
+				if (xpath) // @import-xpath is just optional
+					imp->xpath = strdup(xpath);
 				imp->content = oscap_element_string_copy(reader);
 				oscap_list_add(check->imports, imp);
 				break;
@@ -667,6 +672,7 @@ void xccdf_check_import_free(struct xccdf_check_import *item)
 {
 	if (item) {
 		oscap_free(item->name);
+		oscap_free(item->xpath);
 		oscap_free(item->content);
 		oscap_free(item);
 	}
@@ -1080,7 +1086,8 @@ XCCDF_ITERATOR_GEN_S(check_content_ref)
 XCCDF_ITERATOR_GEN_S(check_export) XCCDF_ITERATOR_GEN_S(check_import) XCCDF_ITERATOR_GEN_S(check)
 
 OSCAP_ACCESSOR_STRING(xccdf_profile_note, reftag)    OSCAP_ACCESSOR_TEXT(xccdf_profile_note, text)
-OSCAP_ACCESSOR_STRING(xccdf_check_import, name)      OSCAP_ACCESSOR_STRING(xccdf_check_import, content)
+OSCAP_ACCESSOR_STRING(xccdf_check_import, name)      OSCAP_ACCESSOR_STRING(xccdf_check_import, xpath)
+OSCAP_ACCESSOR_STRING(xccdf_check_import, content)
 OSCAP_ACCESSOR_STRING(xccdf_check_export, name)      OSCAP_ACCESSOR_STRING(xccdf_check_export, value)
 OSCAP_ACCESSOR_STRING(xccdf_check_content_ref, name) OSCAP_ACCESSOR_STRING(xccdf_check_content_ref, href)
 

@@ -162,6 +162,7 @@ static const struct xccdf_attribute_spec XCCDF_ATTRIBUTE_MAP[] = {
 	{XCCDFA_IDREF, XCCDF_XMLNS, "idref"},
 	{XCCDFA_IID, XCCDF_XMLNS, "Id"},
 	{XCCDFA_IMPORT_NAME, XCCDF_XMLNS, "import-name"},
+	{XCCDFA_IMPORT_XPATH, XCCDF_XMLNS, "import-xpath"},
 	{XCCDFA_INTERACTIVE, XCCDF_XMLNS, "interactive"},
 	{XCCDFA_INTERFACEHINT, XCCDF_XMLNS, "interfaceHint"},
 	{XCCDFA_MAXIMUM, XCCDF_XMLNS, "maximum"},
