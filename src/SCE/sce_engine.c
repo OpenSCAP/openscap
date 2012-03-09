@@ -51,7 +51,8 @@ struct sce_check_result
 {
 	char* href;
 	char* basename;
-	char* details;
+	char* stdout;
+	int exit_code;
 	xccdf_test_result_type_t xccdf_result;
 };
 
@@ -60,7 +61,7 @@ struct sce_check_result* sce_check_result_new(void)
 	struct sce_check_result* ret = oscap_alloc(sizeof(struct sce_check_result));
 	ret->href = NULL;
 	ret->basename = NULL;
-	ret->details = NULL;
+	ret->stdout = NULL;
 	ret->xccdf_result = XCCDF_RESULT_UNKNOWN;
 
 	return ret;
@@ -75,8 +76,8 @@ void sce_check_result_free(struct sce_check_result* v)
 		oscap_free(v->href);
 	if (v->basename)
 		oscap_free(v->basename);
-	if (v->details)
-		oscap_free(v->details);
+	if (v->stdout)
+		oscap_free(v->stdout);
 
 	oscap_free(v);
 }
@@ -107,17 +108,27 @@ const char* sce_check_result_get_basename(struct sce_check_result* v)
 	return v->basename;
 }
 
-void sce_check_result_set_details(struct sce_check_result* v, const char* details)
+void sce_check_result_set_stdout(struct sce_check_result* v, const char* stdout)
 {
-	if (v->details)
-		oscap_free(v->details);
+	if (v->stdout)
+		oscap_free(v->stdout);
 
-	v->details = oscap_strdup(details);
+	v->stdout = oscap_strdup(stdout);
 }
 
-const char* sce_check_result_get_details(struct sce_check_result* v)
+const char* sce_check_result_get_stdout(struct sce_check_result* v)
 {
-	return v->details;
+	return v->stdout;
+}
+
+void sce_check_result_set_exit_code(struct sce_check_result* v, int exit_code)
+{
+	v->exit_code = exit_code;
+}
+
+int sce_check_result_get_exit_code(struct sce_check_result* v)
+{
+	return v->exit_code;
 }
 
 void sce_check_result_set_xccdf_result(struct sce_check_result* v, xccdf_test_result_type_t result)
@@ -142,7 +153,14 @@ void sce_check_result_export(struct sce_check_result* v, const char* target_file
 		return;
 	}
 
-	fwrite(sce_check_result_get_details(v), 1, strlen(v->details), f);
+	fprintf(f, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
+	fprintf(f, "<sceres:sce_results xmlns:sceres=\"http://open-scap.org/page/SCE_result_file\" script-path=\"%s\">\n", sce_check_result_get_basename(v));
+	fprintf(f, "\t<sceres:stdout><![CDATA[\n");
+	fwrite(v->stdout, 1, strlen(v->stdout), f);
+	fprintf(f, "\t]]></sceres:stdout>\n");
+	fprintf(f, "\t<sceres:exit_code>%i</sceres:exit_code>\n", sce_check_result_get_exit_code(v));
+	fprintf(f, "\t<sceres:result>%i</sceres:result>\n", sce_check_result_get_xccdf_result(v));
+	fprintf(f, "</sceres:sce_results>\n");
 	fclose(f);
 }
 
@@ -256,8 +274,10 @@ void sce_parameters_allocate_session(struct sce_parameters* v)
 	sce_parameters_set_session(v, sce_session_new());
 }
 
-xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const char *rule_id, const char *id,
-			       const char *href, struct xccdf_value_binding_iterator *it, void *usr)
+xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const char *rule_id, const char *id, const char *href,
+		struct xccdf_value_binding_iterator *value_binding_it,
+		struct xccdf_check_import_iterator *check_import_it,
+		void *usr)
 {
 	struct sce_parameters* parameters = (struct sce_parameters*)usr;
 	const char* xccdf_directory = parameters->xccdf_directory;
@@ -307,9 +327,9 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 	env_values[7] = "XCCDF_RESULT_INFORMATIONAL=108";
 	env_values[8] = "XCCDF_RESULT_FIXED=109";
 
-	while (xccdf_value_binding_iterator_has_more(it))
+	while (xccdf_value_binding_iterator_has_more(value_binding_it))
 	{
-		struct xccdf_value_binding* binding = xccdf_value_binding_iterator_next(it);
+		struct xccdf_value_binding* binding = xccdf_value_binding_iterator_next(value_binding_it);
 
 		env_values = oscap_realloc(env_values, (env_value_count + 3) * sizeof(char*));
 
@@ -413,18 +433,6 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			close(pipefd[1]);
 
 			// we are the child process
-			printf("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
-			// FIXME: We definitely should escape the attribute!
-			printf("<sceres:sce_results xmlns:sceres=\"http://open-scap.org/page/SCE_result_file\" script-path=\"%s\">\n", basename(tmp_href));
-
-			printf("\t<sceres:environment>\n");
-			for (int i = 0; env_values[i]; i++)
-			{
-				printf("\t\t<sceres:entry><![CDATA[%s]]></sceres:entry>\n", env_values[i]);
-			}
-			printf("\t</sceres:environment>\n");
-
-			printf("\t<sceres:stdout><![CDATA[\n");
 			execve(tmp_href, argvp, env_values);
 
 			// no need to check the return value of execve, if it returned at all we are in trouble
@@ -439,8 +447,8 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			// we won't write to the pipe, so close the writing fd
 			close(pipefd[1]);
 
-			char* result_buffer = malloc(sizeof(char) * 128);
-			size_t result_buffer_size = 128;
+			char* stdout_buffer = malloc(sizeof(char) * 128);
+			size_t stdout_buffer_size = 128;
 			size_t read_bytes = 0;
 
 			char readbuf;
@@ -449,17 +457,17 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			{
 				read_bytes += 1;
 				// + 1 because we want to add \0 at the end
-				if (read_bytes + 1 > result_buffer_size)
+				if (read_bytes + 1 > stdout_buffer_size)
 				{
 					// we simply double the buffer when we blow it
-					result_buffer_size *= 2;
-					result_buffer = realloc(result_buffer, sizeof(char) * result_buffer_size);
+					stdout_buffer_size *= 2;
+					stdout_buffer = realloc(stdout_buffer, sizeof(char) * stdout_buffer_size);
 				}
 
 				// index from 0 onwards, first byte ends up on index 0
-				result_buffer[read_bytes - 1] = readbuf;
+				stdout_buffer[read_bytes - 1] = readbuf;
 			}
-			result_buffer[read_bytes] = '\0';
+			stdout_buffer[read_bytes] = '\0';
 
 			close(pipefd[0]);
 
@@ -482,31 +490,34 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 				raw_result = XCCDF_RESULT_ERROR;
 			}
 
-			char* result_details = oscap_sprintf(
-					"%s\n"
-					"]]>\n"
-					"\t</sceres:stdout>\n"
-					"\t<sceres:exit_code>%i</sceres:exit_code>\n"
-					"\t<sceres:result>%i</sceres:result>\n"
-					"</sceres:sce_results>\n",
-					result_buffer, WEXITSTATUS(wstatus), raw_result);
-
-			oscap_free(result_buffer);
-
 			struct sce_session* session = sce_parameters_get_session(parameters);
 			if (session)
 			{
 				struct sce_check_result* check_result = sce_check_result_new();
 				sce_check_result_set_href(check_result, tmp_href);
 				sce_check_result_set_basename(check_result, basename(tmp_href));
-				sce_check_result_set_details(check_result, result_details);
+				sce_check_result_set_stdout(check_result, stdout_buffer);
+				sce_check_result_set_exit_code(check_result, WEXITSTATUS(wstatus));
 				sce_check_result_set_xccdf_result(check_result, (xccdf_test_result_type_t)raw_result);
 
 				sce_session_add_check_result(session, check_result);
 			}
 
+			// lets interpret the check imports passed to us
+			xccdf_check_import_iterator_reset(check_import_it);
+			while (xccdf_check_import_iterator_has_more(check_import_it))
+			{
+				struct xccdf_check_import * check_import = xccdf_check_content_ref_iterator_next(check_import_it);
+				const char *name = xccdf_check_import_get_name(check_import);
+
+				if (strcmp(name, "stdout") == 0)
+				{
+					xccdf_check_import_set_content(check_import, stdout_buffer);
+				}
+			}
+
 			oscap_free(tmp_href);
-			oscap_free(result_details);
+			oscap_free(stdout_buffer);
 
 			return (xccdf_test_result_type_t)raw_result;
 		}

@@ -593,7 +593,7 @@ xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *par
 		const char *name = xccdf_check_import_get_name(import);
 		const char *xpath = xccdf_check_import_get_xpath(import);
 		const char *content = xccdf_check_import_get_content(import);
-		xmlNode *import_node = xmlNewTextChild(check_node, ns_xccdf, BAD_CAST "check-import", BAD_CAST content);
+		xmlNode *import_node = xmlNewChild(check_node, ns_xccdf, BAD_CAST "check-import", BAD_CAST content);
 		xmlNewProp(import_node, BAD_CAST "import-name", BAD_CAST name);
 		if (xpath)
 			xmlNewProp(import_node, BAD_CAST "import-xpath", BAD_CAST xpath);

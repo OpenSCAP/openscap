@@ -424,7 +424,9 @@ static int oval_agent_callback(const struct oscap_reporter_message *msg, void *a
 }
 
 xccdf_test_result_type_t oval_agent_eval_rule(struct xccdf_policy *policy, const char *rule_id, const char *id,
-			       const char * href, struct xccdf_value_binding_iterator *it, void *usr)
+			       const char * href, struct xccdf_value_binding_iterator *it,
+			       struct xccdf_check_import_iterator * check_import_it,
+			       void *usr)
 {
         __attribute__nonnull__(usr);
 

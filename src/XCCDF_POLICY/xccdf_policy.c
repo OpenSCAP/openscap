@@ -53,7 +53,8 @@ typedef struct callback_t {
                       const char *,                             // Rule ID
                       const char *,                             // Definition ID
                       const char *,                             // HREF ID
-                      struct xccdf_value_binding_iterator * it, // Value Bindings Iterator
+                      struct xccdf_value_binding_iterator *, // Value Bindings Iterator
+                      struct xccdf_check_import_iterator *,  // Check imports for the checking engine to interpret
                       void *);                  ///< format of callback function 
     void * usr;                                 ///< User data structure
 
@@ -525,7 +526,7 @@ static void xccdf_policy_resolve_item(struct xccdf_policy * policy, struct xccdf
  */
 static int
 xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * sysname, const char * content, const char * href,
-        const char * rule_id, struct oscap_list * bindings) 
+        const char * rule_id, struct oscap_list * bindings, struct xccdf_check_import_iterator * check_import_it)
 {
     xccdf_test_result_type_t retval = XCCDF_RESULT_NOT_CHECKED;
     //struct oscap_iterator * cb_it = xccdf_policy_get_callbacks_by_sysname(policy, sysname); TODO: review
@@ -543,7 +544,7 @@ xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * sysname, con
 
         struct xccdf_value_binding_iterator * binding_it = (struct xccdf_value_binding_iterator *) oscap_iterator_new(bindings);
 
-        retval = cb->callback(policy, rule_id, content, href, binding_it, cb->usr);
+        retval = cb->callback(policy, rule_id, content, href, binding_it, check_import_it, cb->usr);
 
         if (binding_it != NULL) xccdf_value_binding_iterator_free(binding_it);
         if (retval != XCCDF_RESULT_NOT_CHECKED) break;
@@ -697,8 +698,15 @@ static int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccd
                 content = xccdf_check_content_ref_iterator_next(content_it);
                 content_name = xccdf_check_content_ref_get_name(content);
                 href = xccdf_check_content_ref_get_href(content);
-                /* Check if this is OVAL ? Never mind. Added to TODO */
-                ret = xccdf_policy_evaluate_cb(policy, system_name, content_name, href, rule_id, bindings);
+
+                struct xccdf_check_import_iterator * check_import_it = xccdf_check_get_imports(check);
+                ret = xccdf_policy_evaluate_cb(policy, system_name, content_name, href, rule_id, bindings, check_import_it);
+                // the evaluation has filled check imports at this point, we can simply free the iterator
+                xccdf_check_import_iterator_free(check_import_it);
+
+                // the content references are basically alternatives according to the specification
+                // we should go through them in the order they are defined and we are done as soon
+                // as we process one of them successfully
                 if ((xccdf_test_result_type_t) ret != XCCDF_RESULT_NOT_CHECKED) break;
             }
             xccdf_check_content_ref_iterator_free(content_it);
@@ -715,8 +723,6 @@ static int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccd
  */
 static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf_item * item, struct xccdf_result * result)
 {
-    struct xccdf_check_iterator     * check_it;
-    struct xccdf_check              * check;
     struct xccdf_item_iterator      * child_it;
     struct xccdf_item               * child;
     const char                      * rule_id;
@@ -753,16 +759,54 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
                 return retval;
             }
 
+            /* If applicable, create a rule result to add to the resulting policy */
+            struct xccdf_rule_result *rule_ritem = NULL;
+            if (result != NULL)
+            {
+            	rule_ritem = xccdf_rule_result_new();
+
+				/* --Set rule-- */
+				// we won't set the result here since the rule wasn't evaluated yet
+				xccdf_rule_result_set_idref(rule_ritem, rule_id);
+				xccdf_rule_result_set_weight(rule_ritem, xccdf_item_get_weight(item));
+				xccdf_rule_result_set_version(rule_ritem, xccdf_rule_get_version((struct xccdf_rule *) item));
+				xccdf_rule_result_set_severity(rule_ritem, xccdf_rule_get_severity((struct xccdf_rule *) item));
+				xccdf_rule_result_set_role(rule_ritem, xccdf_rule_get_role((struct xccdf_rule *) item));
+				// we won't set the time here since the rule wasn't evaluated yet
+
+				/* --Fix --*/
+				struct xccdf_fix_iterator * fix_it = xccdf_rule_get_fixes((struct xccdf_rule *) item);
+				while (xccdf_fix_iterator_has_more(fix_it)){
+					struct xccdf_fix * fix = xccdf_fix_iterator_next(fix_it);
+					xccdf_rule_result_add_fix(rule_ritem, xccdf_fix_clone(fix));
+				}
+				xccdf_fix_iterator_free(fix_it);
+
+				/* --Ident-- */
+				struct xccdf_ident_iterator * ident_it = xccdf_rule_get_idents((struct xccdf_rule *) item);
+				while (xccdf_ident_iterator_has_more(ident_it)){
+					struct xccdf_ident * ident = xccdf_ident_iterator_next(ident_it);
+					xccdf_rule_result_add_ident(rule_ritem, xccdf_ident_clone(ident));
+				}
+				xccdf_ident_iterator_free(ident_it);
+            }
+
             /* Evaluation of callback
              */
             if (xccdf_select_get_selected(sel)) {
-                check_it = xccdf_rule_get_checks((struct xccdf_rule *)item);
+                struct xccdf_check_iterator * check_it = xccdf_rule_get_checks((struct xccdf_rule *)item);
                 /* we need to evaluate all checks in rule, iteration begin */
                 while(xccdf_check_iterator_has_more(check_it)) {
-                        check = xccdf_check_iterator_next(check_it);
+                        struct xccdf_check * check = xccdf_check_iterator_next(check_it);
+
+                        // we need to clone the check to avoid changing the original content
+                        struct xccdf_check * cloned_check = xccdf_check_clone(check);
+                        xccdf_rule_result_add_check(rule_ritem, cloned_check);
+
+                        // TODO: Interpret check-import elements inside xccdf_check
 
                         /************** Evaluation  **************/
-                        ret = xccdf_policy_check_evaluate(policy, check, (char *) rule_id);
+                        ret = xccdf_policy_check_evaluate(policy, cloned_check, (char *) rule_id);
                         /*****************************************/
                         if (ret == -1) {
                             oscap_free(description);
@@ -772,40 +816,21 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
 
                         if (ret == false) /* we got item that can't be processed */
                             break;
+
                 }
                 xccdf_check_iterator_free(check_it);
-                /* iteration thorugh checks ends here */
+                /* iteration through checks ends here */
             } else {
                 ret = XCCDF_RESULT_NOT_SELECTED;
             }
 
             /* Add result to policy */
-            if (result != NULL) {
-                    struct xccdf_rule_result *rule_ritem = xccdf_rule_result_new();
-                    /* --Set rule-- */
+            if (rule_ritem != NULL) {
+                    // set result and time since we know both of them now
                     xccdf_rule_result_set_result(rule_ritem, (xccdf_test_result_type_t) ret);
-                    xccdf_rule_result_set_idref(rule_ritem, rule_id);
-                    xccdf_rule_result_set_weight(rule_ritem, xccdf_item_get_weight(item));
-                    xccdf_rule_result_set_version(rule_ritem, xccdf_rule_get_version((struct xccdf_rule *) item));
-                    xccdf_rule_result_set_severity(rule_ritem, xccdf_rule_get_severity((struct xccdf_rule *) item));
-                    xccdf_rule_result_set_role(rule_ritem, xccdf_rule_get_role((struct xccdf_rule *) item));
                     xccdf_rule_result_set_time(rule_ritem, time(NULL));
-                    /* --Fix --*/
-                    struct xccdf_fix_iterator * fix_it = xccdf_rule_get_fixes((struct xccdf_rule *) item);
-                    while (xccdf_fix_iterator_has_more(fix_it)){
-                        struct xccdf_fix * fix = xccdf_fix_iterator_next(fix_it);
-                        xccdf_rule_result_add_fix(rule_ritem, xccdf_fix_clone(fix));
-                    }
-                    xccdf_fix_iterator_free(fix_it);
-                    /* --Ident-- */
-                    struct xccdf_ident_iterator * ident_it = xccdf_rule_get_idents((struct xccdf_rule *) item);
-                    while (xccdf_ident_iterator_has_more(ident_it)){
-                        struct xccdf_ident * ident = xccdf_ident_iterator_next(ident_it);
-                        xccdf_rule_result_add_ident(rule_ritem, xccdf_ident_clone(ident));
-                    }
-                    xccdf_ident_iterator_free(ident_it);
-                    /* TODO: Check, override, message, instance */
-                    /* --Add rule-- */
+
+                    /* TODO: override, message, instance */
                     xccdf_result_add_rule_result(result, rule_ritem);
             }
 

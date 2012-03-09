@@ -33,8 +33,10 @@ void sce_check_result_set_href(struct sce_check_result* v, const char* href);
 const char* sce_check_result_get_href(struct sce_check_result* v);
 void sce_check_result_set_basename(struct sce_check_result* v, const char* basename);
 const char* sce_check_result_get_basename(struct sce_check_result* v);
-void sce_check_result_set_details(struct sce_check_result* v, const char* details);
+void sce_check_result_set_stdout(struct sce_check_result* v, const char* details);
 const char* sce_check_result_get_details(struct sce_check_result* v);
+void sce_check_result_set_exit_code(struct sce_check_result* v, int exit_code);
+int sce_check_result_get_exit_code(struct sce_check_result* v);
 void sce_check_result_set_xccdf_result(struct sce_check_result* v, xccdf_test_result_type_t result);
 xccdf_test_result_type_t sce_check_result_get_xccdf_result(struct sce_check_result* v);
 
@@ -86,8 +88,10 @@ void sce_parameters_allocate_session(struct sce_parameters* v);
  *
  * @see xccdf_policy_model_register_engine_sce
  */
-xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const char *rule_id, const char *id,
-			       const char *href, struct xccdf_value_binding_iterator *it, void *usr);
+xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const char *rule_id, const char *id, const char *href,
+			       struct xccdf_value_binding_iterator *value_binding_it,
+			       struct xccdf_check_import_iterator *check_import_it,
+			       void *usr);
 
 /**
  * Registers SCE to given policy model
