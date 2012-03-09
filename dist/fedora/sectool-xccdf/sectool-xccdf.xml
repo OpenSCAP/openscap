@@ -109,6 +109,7 @@ of binaries the command rpmverify (rpm -Vf) is used. A search
 for duplicates is also done for each command.</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="00_integrity.sh" />
     </check>
   </Rule>
@@ -121,6 +122,7 @@ Tests
 * password presence</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="01_bootloader.sh" />
     </check>
   </Rule>
@@ -131,6 +133,7 @@ Tests
 Tells user, which of mounted volumes are going to be full. Uses df to get this info.</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="01_disk_usage.sh" />
     </check>
   </Rule>
@@ -151,6 +154,7 @@ Checks group for whether
 * there are same groupnames</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="01_group.sh" />
     </check>
   </Rule>
@@ -182,6 +186,7 @@ Checks passwd for whether
 * user has valid shell (listed in /etc/shells)</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="01_passwd.sh" />
     </check>
   </Rule>
@@ -200,6 +205,7 @@ Checks shadow for whether
 * there are same usernames</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="01_shadow.sh" />
     </check>
   </Rule>
@@ -210,6 +216,7 @@ Checks shadow for whether
 Tests ownership and access rights to sensitive files (.bashrc, ssh/id_dsa etc.) in home directories of all users</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="02_home_files.sh" />
     </check>
   </Rule>
@@ -220,6 +227,7 @@ Tests ownership and access rights to sensitive files (.bashrc, ssh/id_dsa etc.) 
 Do not allow dot directories in "/"</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="02_root_dirs.sh" />
     </check>
   </Rule>
@@ -235,6 +243,7 @@ Tests environmental variable PATH for
 * writable executables</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="03_path.sh" />
     </check>
   </Rule>
@@ -245,6 +254,7 @@ Tests environmental variable PATH for
 Simple analysis of firewall policy rules.</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="04_firewall.sh" />
     </check>
   </Rule>
@@ -255,6 +265,7 @@ Simple analysis of firewall policy rules.</xhtml:pre>
 Audit of currently running network services.</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="05_netserv.sh" />
     </check>
   </Rule>
@@ -265,6 +276,7 @@ Audit of currently running network services.</xhtml:pre>
 OpenSSH configuration audit.</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="05_openssh.sh" />
     </check>
   </Rule>
@@ -275,6 +287,7 @@ OpenSSH configuration audit.</xhtml:pre>
 OpenVPN configuration audit.</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="05_openvpn.sh" />
     </check>
   </Rule>
@@ -288,6 +301,7 @@ are in messages printed out by this test). Use the command service(8) to restart
 processes that belong to a running system service.</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="05_removed_libs.sh" />
     </check>
   </Rule>
@@ -298,6 +312,7 @@ processes that belong to a running system service.</xhtml:pre>
 xinetd configuration audit.</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="05_xinetd.sh" />
     </check>
   </Rule>
@@ -308,6 +323,7 @@ xinetd configuration audit.</xhtml:pre>
 Tests logfiles presence, owner, group and permissions of logfiles.</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="07_log_files.sh" />
     </check>
   </Rule>
@@ -318,6 +334,7 @@ Tests logfiles presence, owner, group and permissions of logfiles.</xhtml:pre>
 PAM configuration audit.</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="08_pam.sh" />
     </check>
   </Rule>
@@ -328,6 +345,7 @@ PAM configuration audit.</xhtml:pre>
 Tests important directories for presence, permissions and owner</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="08_permissions.sh" />
     </check>
   </Rule>
@@ -338,20 +356,22 @@ Tests important directories for presence, permissions and owner</xhtml:pre>
 Checks if exec-shield is enabled.</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="09_exec_shield.sh" />
     </check>
   </Rule>
-    <Rule id="rule-20" selected="true">
-      <title>selinux</title>
-      <description>
-	<xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
-	Checks if you have SELinux enabled and monitors any booleans changes.</xhtml:pre>
-      </description>
-      <check system="http://open-scap.org/page/SCE">
-	<check-export value-id="var-20" export-name="EXPECTED_STATE" /> <!-- TBD -->
-	<check-content-ref href="09_selinux.sh" />
-      </check>
-    </Rule>
+  <Rule id="rule-20" selected="true">
+    <title>selinux</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+      Checks if you have SELinux enabled and monitors any booleans changes.</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
+      <check-export value-id="var-20" export-name="EXPECTED_STATE" /> <!-- TBD -->
+      <check-content-ref href="09_selinux.sh" />
+    </check>
+  </Rule>
   <Rule id="rule-21" selected="true">
     <title>va_randomization</title>
     <description>
@@ -359,6 +379,7 @@ Checks if exec-shield is enabled.</xhtml:pre>
 Checks whether va-randomization is enabled.</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="09_va_randomization.sh" />
     </check>
   </Rule>
@@ -373,6 +394,7 @@ Checks bash aliases for:
 * possibility of changing content of included file (world/other writable, owner not root)</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="11_aliases.sh" />
     </check>
   </Rule>
@@ -385,6 +407,7 @@ Looks for unexpected paths in the crontab PATH variable, checks ownership and
 permissions of cron related dirs and commands listed in crontab.</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="12_cron.sh" />
     </check>
   </Rule>
@@ -395,6 +418,7 @@ permissions of cron related dirs and commands listed in crontab.</xhtml:pre>
 Audit of nfs server. Finds RW exports</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="14_nfs.sh" />
     </check>
   </Rule>
@@ -405,6 +429,7 @@ Audit of nfs server. Finds RW exports</xhtml:pre>
 Checks whether all running applications, which are using libwrap, have some restrictions in /etc/hosts.deny and /etc.hosts allow</xhtml:pre>
     </description>
     <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout" />
       <check-content-ref href="15_tcp_wrappers.sh" />
     </check>
   </Rule>
