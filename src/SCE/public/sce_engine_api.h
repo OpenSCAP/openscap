@@ -34,9 +34,11 @@ const char* sce_check_result_get_href(struct sce_check_result* v);
 void sce_check_result_set_basename(struct sce_check_result* v, const char* basename);
 const char* sce_check_result_get_basename(struct sce_check_result* v);
 void sce_check_result_set_stdout(struct sce_check_result* v, const char* details);
-const char* sce_check_result_get_details(struct sce_check_result* v);
+const char* sce_check_result_get_stdout(struct sce_check_result* v);
 void sce_check_result_set_exit_code(struct sce_check_result* v, int exit_code);
 int sce_check_result_get_exit_code(struct sce_check_result* v);
+void sce_check_result_reset_environment_variables(struct sce_check_result* v);
+void sce_check_result_add_environment_variable(struct sce_check_result* v, const char* var);
 void sce_check_result_set_xccdf_result(struct sce_check_result* v, xccdf_test_result_type_t result);
 xccdf_test_result_type_t sce_check_result_get_xccdf_result(struct sce_check_result* v);
 

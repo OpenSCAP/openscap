@@ -53,6 +53,7 @@ struct sce_check_result
 	char* basename;
 	char* stdout;
 	int exit_code;
+	struct oscap_stringlist* environment_variables;
 	xccdf_test_result_type_t xccdf_result;
 };
 
@@ -62,6 +63,7 @@ struct sce_check_result* sce_check_result_new(void)
 	ret->href = NULL;
 	ret->basename = NULL;
 	ret->stdout = NULL;
+	ret->environment_variables = oscap_stringlist_new();
 	ret->xccdf_result = XCCDF_RESULT_UNKNOWN;
 
 	return ret;
@@ -78,6 +80,8 @@ void sce_check_result_free(struct sce_check_result* v)
 		oscap_free(v->basename);
 	if (v->stdout)
 		oscap_free(v->stdout);
+
+	oscap_stringlist_free(v->environment_variables);
 
 	oscap_free(v);
 }
@@ -108,12 +112,12 @@ const char* sce_check_result_get_basename(struct sce_check_result* v)
 	return v->basename;
 }
 
-void sce_check_result_set_stdout(struct sce_check_result* v, const char* stdout)
+void sce_check_result_set_stdout(struct sce_check_result* v, const char* _stdout)
 {
 	if (v->stdout)
 		oscap_free(v->stdout);
 
-	v->stdout = oscap_strdup(stdout);
+	v->stdout = oscap_strdup(_stdout);
 }
 
 const char* sce_check_result_get_stdout(struct sce_check_result* v)
@@ -129,6 +133,17 @@ void sce_check_result_set_exit_code(struct sce_check_result* v, int exit_code)
 int sce_check_result_get_exit_code(struct sce_check_result* v)
 {
 	return v->exit_code;
+}
+
+void sce_check_result_reset_environment_variables(struct sce_check_result* v)
+{
+	oscap_stringlist_free(v->environment_variables);
+	v->environment_variables = oscap_stringlist_new();
+}
+
+void sce_check_result_add_environment_variable(struct sce_check_result* v, const char* var)
+{
+	oscap_stringlist_add_string(v->environment_variables, var);
 }
 
 void sce_check_result_set_xccdf_result(struct sce_check_result* v, xccdf_test_result_type_t result)
@@ -155,6 +170,15 @@ void sce_check_result_export(struct sce_check_result* v, const char* target_file
 
 	fprintf(f, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
 	fprintf(f, "<sceres:sce_results xmlns:sceres=\"http://open-scap.org/page/SCE_result_file\" script-path=\"%s\">\n", sce_check_result_get_basename(v));
+	fprintf(f, "\t<sceres:environment>\n");
+	struct oscap_string_iterator* it = oscap_stringlist_get_strings(v->environment_variables);
+	while (oscap_string_iterator_has_more(it))
+	{
+		const char* env = oscap_string_iterator_next(it);
+		fprintf(f, "\t\t<sceres:entry><![CDATA[%s]]></sceres:entry>\n", env);
+	}
+	oscap_string_iterator_free(it);
+	fprintf(f, "\t</sceres:environment>\n");
 	fprintf(f, "\t<sceres:stdout><![CDATA[\n");
 	fwrite(v->stdout, 1, strlen(v->stdout), f);
 	fprintf(f, "\t]]></sceres:stdout>\n");
@@ -475,12 +499,6 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			int wstatus;
 			waitpid(fork_result, &wstatus, 0);
 
-			// the first 9 values (0 to 8) are compiled in
-			for (size_t i = 9; i < env_value_count; ++i)
-			{
-				oscap_free(env_values[i]);
-			}
-			oscap_free(env_values);
 
 			// we subtract 100 here to shift the exit code to xccdf_test_result_type_t enum range
 			int raw_result = WEXITSTATUS(wstatus) - 100;
@@ -500,14 +518,26 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 				sce_check_result_set_exit_code(check_result, WEXITSTATUS(wstatus));
 				sce_check_result_set_xccdf_result(check_result, (xccdf_test_result_type_t)raw_result);
 
+				for (size_t i = 0; i < env_value_count; ++i)
+				{
+					sce_check_result_add_environment_variable(check_result, env_values[i]);
+				}
+
 				sce_session_add_check_result(session, check_result);
 			}
+
+			// the first 9 values (0 to 8) are compiled in
+			for (size_t i = 9; i < env_value_count; ++i)
+			{
+				oscap_free(env_values[i]);
+			}
+			oscap_free(env_values);
 
 			// lets interpret the check imports passed to us
 			xccdf_check_import_iterator_reset(check_import_it);
 			while (xccdf_check_import_iterator_has_more(check_import_it))
 			{
-				struct xccdf_check_import * check_import = xccdf_check_content_ref_iterator_next(check_import_it);
+				struct xccdf_check_import * check_import = xccdf_check_import_iterator_next(check_import_it);
 				const char *name = xccdf_check_import_get_name(check_import);
 
 				if (strcmp(name, "stdout") == 0)
