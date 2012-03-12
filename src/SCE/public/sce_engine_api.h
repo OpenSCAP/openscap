@@ -26,32 +26,116 @@
 #include <xccdf.h>
 #include <xccdf_policy.h>
 
+/**
+ * @memberof sce_check_result
+ */
 struct sce_check_result* sce_check_result_new(void);
+
+/**
+ * @memberof sce_check_result
+ */
 void sce_check_result_free(struct sce_check_result* v);
 
+/**
+ * Sets the href used to execute the check that yielded given check result
+ *
+ * @memberof sce_check_result
+ */
 void sce_check_result_set_href(struct sce_check_result* v, const char* href);
+
+/**
+ * @memberof sce_check_result
+ */
 const char* sce_check_result_get_href(struct sce_check_result* v);
+
+/**
+ * Sets basename of the script that was used for check evaluation
+ *
+ * @memberof sce_check_result
+ */
 void sce_check_result_set_basename(struct sce_check_result* v, const char* basename);
+
+/**
+ * @memberof sce_check_result
+ */
 const char* sce_check_result_get_basename(struct sce_check_result* v);
+
+/**
+ * Sets stdout that was captured while script was evaluating
+ *
+ * @param stdout should contain output from both stdout and stderr (interleaved)
+ * @memberof sce_check_result
+ */
 void sce_check_result_set_stdout(struct sce_check_result* v, const char* details);
+
+/**
+ * @memberof sce_check_result
+ */
 const char* sce_check_result_get_stdout(struct sce_check_result* v);
+
+/**
+ * Sets exit code with which the script ended execution after evaluation
+ * @memberof sce_check_result
+ */
 void sce_check_result_set_exit_code(struct sce_check_result* v, int exit_code);
+
+/**
+ * @memberof sce_check_result
+ */
 int sce_check_result_get_exit_code(struct sce_check_result* v);
+
+/**
+ * Clears the list of passed environment variables
+ *
+ * @memberof sce_check_result
+ */
 void sce_check_result_reset_environment_variables(struct sce_check_result* v);
+
+/**
+ * Adds an environment variable entry to list of environment variables that
+ * were passed to the script. These include XCCDF result codes,
+ * bound XCCDF variables and possibly more.
+ *
+ * sce_check_result contains these mostly for debugging purposes.
+ *
+ * @param var entry that will be added, in "VARIABLE_NAME=VARIABLE_VALUE" form
+ * @memberof sce_check_result
+ */
 void sce_check_result_add_environment_variable(struct sce_check_result* v, const char* var);
+
+/**
+ * Sets the final xccdf result (after exit code to xccdf mapping takes place)
+ *
+ * @memberof sce_check_result
+ */
 void sce_check_result_set_xccdf_result(struct sce_check_result* v, xccdf_test_result_type_t result);
+
+/**
+ * @memberof sce_check_result
+ */
 xccdf_test_result_type_t sce_check_result_get_xccdf_result(struct sce_check_result* v);
 
 /**
  * Exports details (in XML form) of given check result to given file
+ *
+ * @memberof sce_check_result
  */
 void sce_check_result_export(struct sce_check_result* v, const char* target_file);
 
+/**
+ * @memberof sce_session
+ */
 struct sce_session* sce_session_new(void);
+
+/**
+ * @memberof sce_session
+ */
 void sce_session_free(struct sce_session* s);
 
 /**
  * Removes all check results from the session
+ *
+ * @memberof sce_session
  */
 void sce_session_reset(struct sce_session* s);
 
@@ -60,13 +144,38 @@ void sce_session_reset(struct sce_session* s);
  *
  * @param s session to add the check result to
  * @param result result to be added (the session takes ownership of it, don't deallocate it!)
+ * @memberof sce_session
  */
 void sce_session_add_check_result(struct sce_session* s, struct sce_check_result* result);
+
+/**
+ * Exports all check results to given directory
+ *
+ * @memberof sce_session
+ */
 void sce_session_export_to_directory(struct sce_session* s, const char* directory);
 
+/**
+ * @memberof sce_parameters
+ */
 struct sce_parameters* sce_parameters_new(void);
+
+/**
+ * @memberof sce_parameters
+ */
 void sce_parameters_free(struct sce_parameters* v);
+
+/**
+ * Sets the directory that contains XCCDF that will reference SCE checks
+ *
+ * @internal This is used to figure out where to look for the scripts
+ * @memberof sce_parameters
+ */
 void sce_parameters_set_xccdf_directory(struct sce_parameters* v, const char* value);
+
+/**
+ * @memberof sce_parameters
+ */
 const char* sce_parameters_get_xccdf_directory(struct sce_parameters* v);
 
 /**
@@ -74,14 +183,20 @@ const char* sce_parameters_get_xccdf_directory(struct sce_parameters* v);
  *
  * @param v
  * @param value SCE session to use (sce_parameters take ownership of it, don't deallocate it!)
+ * @memberof sce_parameters
  */
 void sce_parameters_set_session(struct sce_parameters* v, struct sce_session* value);
+
+/**
+ * @memberof sce_parameters
+ */
 struct sce_session* sce_parameters_get_session(struct sce_parameters* v);
 
 /**
  * Just a convenience shortcut of setting a session to a newly allocated session
  *
  * The session gets automatically freed when sce_parameters are freed, don't deallocate it!
+ * @memberof sce_parameters
  */
 void sce_parameters_allocate_session(struct sce_parameters* v);
 
