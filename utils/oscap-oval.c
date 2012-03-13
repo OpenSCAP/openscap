@@ -599,7 +599,7 @@ bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 	};
 
 	int c;
-	while ((c = getopt_long(argc, argv, "", long_options, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "o:", long_options, NULL)) != -1) {
 		switch (c) {
 		case OVAL_OPT_RESULT_FILE: action->f_results = optarg; break;
 		case OVAL_OPT_REPORT_FILE: action->f_report  = optarg; break;

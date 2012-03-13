@@ -884,7 +884,8 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 	};
 
 	int c;
-	while ((c = getopt_long(argc, argv, "", long_options, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "o:i:", long_options, NULL)) != -1) {
+
 		switch (c) {
 		case XCCDF_OPT_OUTPUT: 
 		case XCCDF_OPT_RESULT_FILE:	action->f_results = optarg;	break;
