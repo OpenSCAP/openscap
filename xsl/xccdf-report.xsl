@@ -449,6 +449,13 @@ Authors:
 </xsl:template>
 
 <xsl:template match='cdf:check-content-ref' mode='sce-engine-results'>
+  <xsl:variable name='rule-id' select='../../@id'/>
+  <xsl:variable name='stdout-check-imports' select='//cdf:rule-result[@idref=$rule-id]/descendant::cdf:check-import[@import-name="stdout"]'/>
+  
+  <xsl:apply-templates select='$stdout-check-imports' mode='brief' />
+  
+<xsl:if test='not($stdout-check-imports)'>
+  <!-- fallback that looks for SCE result files -->  
   <xsl:variable name='filename'>
     <xsl:choose>
       <xsl:when test='contains($sce-tmpl, "%")'><xsl:value-of select='concat(substring-before($sce-tmpl, "%"), @href, substring-after($sce-tmpl, "%"))'/></xsl:when>
@@ -456,9 +463,10 @@ Authors:
     </xsl:choose>
   </xsl:variable>
 
-   <xsl:if test='$sce-tmpl'>
-      <xsl:apply-templates select='document($filename)/sceres:sce_results' mode='brief' />
+  <xsl:if test='$sce-tmpl'>
+    <xsl:apply-templates select='document($filename)/sceres:sce_results' mode='brief' />
   </xsl:if>
+</xsl:if>
 </xsl:template>
 
 <xsl:template match='node()' mode='engine-results'/>

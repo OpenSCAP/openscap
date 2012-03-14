@@ -24,16 +24,19 @@ Authors:
 
 <xsl:stylesheet version="1.1"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	xmlns:cdf="http://checklists.nist.gov/xccdf/1.1"
-    xmlns:exsl="http://exslt.org/common"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:svg="http://www.w3.org/2000/svg"
 	xmlns="http://docbook.org/ns/docbook"
     xmlns:sceres="http://open-scap.org/page/SCE_result_file"
+    xmlns:xccdf="http://checklists.nist.gov/xccdf/1.1"
     >
 
+<!-- the concat workaround deals with preserved excessive whitespace -->
+
+<xsl:template mode='brief' match='xccdf:check-import'>
+  <programlisting><xsl:value-of select='concat("&#10;", text())' /></programlisting>
+</xsl:template>
+
 <xsl:template mode='brief' match='sceres:sce_results'>
-    <programlisting><xsl:value-of select='sceres:stdout/text()' /></programlisting>
+  <programlisting><xsl:value-of select='concat("&#10;", sceres:stdout/text())' /></programlisting>
 </xsl:template>
 
 </xsl:stylesheet>
