@@ -80,7 +80,7 @@ static size_t paramlist_cpy(const char **to, const char **p) {
 int app_xslt(const char *infile, const char *xsltfile, const char *outfile, const char **params)
 {
     char pwd[PATH_MAX];
-    getcwd(&pwd, sizeof(pwd));
+    getcwd(pwd, sizeof(pwd));
 
     const char *stdparams[] = { "oscap-version", oscap_get_version(), "pwd", pwd, NULL };
     const char *par[paramlist_size(params) + paramlist_size(stdparams) + 1];
