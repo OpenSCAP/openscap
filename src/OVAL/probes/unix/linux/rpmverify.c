@@ -187,67 +187,73 @@ static int rpmverify_collect(probe_ctx *ctx,
                 goto ret;
         }
 
+	assume_d(RPMTAG_BASENAMES != 0, -1);
+	assume_d(RPMTAG_DIRNAMES  != 0, -1);
+
         while ((pkgh = rpmdbNextIterator (match)) != NULL) {
                 rpmfi  fi;
+		rpmTag tag[2] = { RPMTAG_BASENAMES, RPMTAG_DIRNAMES };
                 struct rpmverify_res res;
                 errmsg_t rpmerr;
+		int i;
 
                 res.name = headerFormat(pkgh, "%{NAME}", &rpmerr);
 
                 /*
-                 * Inspect package files
+                 * Inspect package files & directories
                  */
+		for (i = 0; i < 2; ++i) {
+		  fi = rpmfiNew(g_rpm.rpmts, pkgh, tag[i], 1);
 
-                fi = rpmfiNew(g_rpm.rpmts, pkgh, RPMTAG_BASENAMES, 1);
+		  while (rpmfiNext(fi) != -1) {
+		    res.file   = rpmfiFN(fi);
+		    res.fflags = rpmfiFFlags(fi);
+		    res.oflags = omit;
 
-                while (rpmfiNext(fi) != -1) {
-                        res.file   = rpmfiFN(fi);
-                        res.fflags = rpmfiFFlags(fi);
-                        res.oflags = omit;
+		    if (((res.fflags & RPMFILE_CONFIG) && (flags & RPMVERIFY_SKIP_CONFIG)) ||
+			((res.fflags & RPMFILE_GHOST)  && (flags & RPMVERIFY_SKIP_GHOST)))
+		      continue;
 
-                        if (((res.fflags & RPMFILE_CONFIG) && (flags & RPMVERIFY_SKIP_CONFIG)) ||
-                            ((res.fflags & RPMFILE_GHOST)  && (flags & RPMVERIFY_SKIP_GHOST)))
-                                continue;
+		    switch(file_op) {
+		    case OVAL_OPERATION_EQUALS:
+		      if (strcmp(res.file, file) != 0)
+			continue;
+		      break;
+		    case OVAL_OPERATION_NOT_EQUAL:
+		      if (strcmp(res.file, file) == 0)
+			continue;
+		      break;
+		    case OVAL_OPERATION_PATTERN_MATCH:
+		      ret = pcre_exec(re, NULL, res.file, strlen(res.file), 0, 0, NULL, 0);
 
-                        switch(file_op) {
-                        case OVAL_OPERATION_EQUALS:
-                                if (strcmp(res.file, file) != 0)
-                                        continue;
-                                break;
-                        case OVAL_OPERATION_NOT_EQUAL:
-                                if (strcmp(res.file, file) == 0)
-                                        continue;
-                                break;
-                        case OVAL_OPERATION_PATTERN_MATCH:
-                                ret = pcre_exec(re, NULL, res.file, strlen(res.file), 0, 0, NULL, 0);
+		      switch(ret) {
+		      case 0: /* match */
+			break;
+		      case -1:
+			/* mismatch */
+			continue;
+		      default:
+			dE("pcre_exec() failed!\n");
+			ret = -1;
+			goto ret;
+		      }
+		      break;
+		    default:
+		      /* unsupported operation */
+		      dE("Operation \"%d\" on `filepath' not supported\n", file_op);
+		      ret = -1;
+		      goto ret;
+		    }
 
-                                switch(ret) {
-                                case 0: /* match */
-                                        break;
-                                case -1:
-                                        /* mismatch */
-                                        continue;
-                                default:
-                                        dE("pcre_exec() failed!\n");
-                                        ret = -1;
-                                        goto ret;
-                                }
-                                break;
-                        default:
-                                /* unsupported operation */
-                                dE("Operation \"%d\" on `filepath' not supported\n", file_op);
-                                ret = -1;
-                                goto ret;
-                        }
+		    if (rpmVerifyFile(g_rpm.rpmts, fi, &res.vflags, omit) != 0)
+		      res.vflags = RPMVERIFY_FAILURES;
 
-                        if (rpmVerifyFile(g_rpm.rpmts, fi, &res.vflags, omit) != 0)
-                                res.vflags = RPMVERIFY_FAILURES;
+		    callback(ctx, &res);
+		  }
 
-                        callback(ctx, &res);
-                }
-
-                rpmfiFree(fi);
-        }
+		  rpmfiFree(fi);
+		}
+	}
 
 	match = rpmdbFreeIterator (match);
         ret   = 0;
