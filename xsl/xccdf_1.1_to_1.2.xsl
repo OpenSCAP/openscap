@@ -31,7 +31,7 @@ Authors:
  
   <xsl:output method="xml" indent="yes"/>
 
-  <xsl:variable name="reverse_DNS" select="'org.open-scap'"/>
+  <xsl:param name="reverse_DNS"/>
 
   <!-- This is the generic matched template that by default copies everything
        verbatim, every template that is more specifically matched that this
@@ -46,7 +46,7 @@ Authors:
   <xsl:template match="xccdf_11:*"> <!-- select just elements from xccdf 1.1 -->
     <xsl:choose>
       <!-- Remove deprecated elements -->
-      <xsl:when test="local-name()='platform-definitions' or local-name()='Platform-Specification' or local-name()=cpe-list or local-name()=impact-metric">
+      <xsl:when test="local-name()='platform-definitions' or local-name()='Platform-Specification' or local-name()='cpe-list' or local-name()='impact-metric'">
         <!-- We will do a trick here to "comment" the deprecated elements,
              XSLT itself ignores all nodes inside <xsl:comment> except TEXT
              nodes, so we can't use that. -->
