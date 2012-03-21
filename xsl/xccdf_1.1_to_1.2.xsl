@@ -220,7 +220,7 @@ Authors:
 
   <!-- Group/@extends -->
   <!-- If present, update extends attribute -->
-  <xsl:template match="@extends[xccdf_11:Group]">
+  <xsl:template match="@extends[parent::xccdf_11:Group]">
     <xsl:variable name="old_extends" select="."/>
 
     <xsl:attribute name="extends">
@@ -237,7 +237,7 @@ Authors:
 
   <!-- Rule/@extends -->
   <!-- If present, update extends attribute -->
-  <xsl:template match="@extends[xccdf_11:Rule]">
+  <xsl:template match="@extends[parent::xccdf_11:Rule]">
     <xsl:variable name="old_extends" select="."/>
 
     <xsl:attribute name="extends">
@@ -254,7 +254,7 @@ Authors:
 
   <!-- Value/@extends -->
   <!-- If present, update extends attribute -->
-  <xsl:template match="@extends[xccdf_11:Value]">
+  <xsl:template match="@extends[parent::xccdf_11:Value]">
     <xsl:variable name="old_extends" select="."/>
 
     <xsl:attribute name="extends">
@@ -271,7 +271,7 @@ Authors:
 
   <!-- Profile/@extends -->
   <!-- If present, update extends attribute -->
-  <xsl:template match="@extends[xccdf_11:Profile]">
+  <xsl:template match="@extends[parent::xccdf_11:Profile]">
     <xsl:variable name="old_extends" select="."/>
 
     <xsl:attribute name="extends">
