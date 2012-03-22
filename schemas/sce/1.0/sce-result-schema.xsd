@@ -1,33 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema
-    targetNamespace="http://open-scap.org/page/SCE_result_file"
-    xmlns="http://www.w3.org/2001/XMLSchema"
-    xmlns:sceres="http://open-scap.org/page/SCE_result_file"
-    elementFormDefault="qualified">
-    
-    <annotation>
-    	<documentation>
-    	   Describes form of the ScriptCheckEngine result files. See http://open-scap.org/page/SCE_result_file for more info.
-    	</documentation>
-   	</annotation>
-   	
-    <element name="sce_results" type="sceres:sce_results_type"></element>
-    
-    <complexType name="sce_results_type">
-    	<sequence>
-    		<element name="environment" type="sceres:environment_type"></element>
-    		<element name="stdout" type="string"></element>
-    		<element name="exit_code" type="int"></element>
-    		<element name="result" type="int"></element>
-    	</sequence>
-    	<attribute name="script-path" type="string"></attribute>
-    </complexType>
+  targetNamespace="http://open-scap.org/page/SCE_result_file"
+  xmlns="http://www.w3.org/2001/XMLSchema"
+  xmlns:sceres="http://open-scap.org/page/SCE_result_file"
+  xmlns:xccdf="http://checklists.nist.gov/xccdf/1.1"
+  elementFormDefault="qualified">
+  
+  <annotation>
+    <documentation>
+      Describes form of the ScriptCheckEngine result files. See http://open-scap.org/page/SCE_result_file for more info.
+    </documentation>
+  </annotation>
 
-    <complexType name="environment_type">
-    	<sequence>
-    		<element name="entry" type="string" maxOccurs="unbounded" minOccurs="0"></element>
-    	</sequence>
-    </complexType>
+  <import namespace="http://checklists.nist.gov/xccdf/1.1"
+    schemaLocation="../../xccdf/1.1.4/xccdf-schema.xsd"/>
+      
+  <element name="sce_results" type="sceres:sce_results_type"></element>
+  
+  <complexType name="sce_results_type">
+    <sequence>
+      <element name="environment" type="sceres:environment_type"></element>
+      <element name="stdout" type="string"></element>
+      <element name="exit_code" type="int"></element>
+      <element name="result" type="xccdf:resultEnumType"></element>
+    </sequence>
+    <attribute name="script-path" type="string"></attribute>
+  </complexType>
 
-    	
+  <complexType name="environment_type">
+    <sequence>
+      <element name="entry" type="string" maxOccurs="unbounded" minOccurs="0"></element>
+    </sequence>
+  </complexType>
+
 </schema>

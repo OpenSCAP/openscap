@@ -183,7 +183,7 @@ void sce_check_result_export(struct sce_check_result* v, const char* target_file
 	fwrite(v->stdout, 1, strlen(v->stdout), f);
 	fprintf(f, "\t]]></sceres:stdout>\n");
 	fprintf(f, "\t<sceres:exit_code>%i</sceres:exit_code>\n", sce_check_result_get_exit_code(v));
-	fprintf(f, "\t<sceres:result>%i</sceres:result>\n", sce_check_result_get_xccdf_result(v));
+	fprintf(f, "\t<sceres:result>%s</sceres:result>\n", xccdf_test_result_type_get_text(sce_check_result_get_xccdf_result(v)));
 	fprintf(f, "</sceres:sce_results>\n");
 	fclose(f);
 }
