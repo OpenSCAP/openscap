@@ -1,5 +1,6 @@
 
 oval58dir = $(pkgdatadir)/schemas/oval/5.8/
+sce10dir = $(pkgdatadir)/schemas/sce/1.0/
 xccdf114dir = $(pkgdatadir)/schemas/xccdf/1.1.4/
 
 oval58_DATA = \
@@ -50,6 +51,9 @@ oval58_DATA = \
 		oval/5.8/windows-system-characteristics-schema.xsd \
 		oval/5.8/xmldsig-core-schema.xsd
 
+sce10_DATA = \
+		sce/1.0/sce-result-schema.xsd
+
 xccdf114_DATA = \
 		xccdf/1.1.4/xccdfp-1.1.xsd \
 		xccdf/1.1.4/cpe-1.0.xsd \
@@ -60,7 +64,6 @@ xccdf114_DATA = \
 		xccdf/1.1.4/xml.xsd \
 		xccdf/1.1.4/XMLSchema.dtd \
 		xccdf/1.1.4/datatypes.dtd
-
 
 EXTRA_DIST = \
 		oval/5.8/oval-definitions-schematron.xsl \
@@ -109,6 +112,7 @@ EXTRA_DIST = \
 		oval/5.8/windows-definitions-schema.xsd \
 		oval/5.8/windows-system-characteristics-schema.xsd \
 		oval/5.8/xmldsig-core-schema.xsd \
+		sce/1.0/sce-result-schema.xsd \
 		xccdf/1.1.4/xccdfp-1.1.xsd \
 		xccdf/1.1.4/cpe-1.0.xsd \
 		xccdf/1.1.4/cpe-language_2.0.xsd \

@@ -13,6 +13,7 @@ xsl_DATA =   security-guide.xsl \
              docbook-share.xsl \
              fix.xsl \
              fixtpl-bash.xml \
+             xccdf_1.1_to_1.2.xsl \
              xccdf-tailor.xsl \
              xccdf-substitute.xsl \
              xccdf-share.xsl
@@ -28,6 +29,7 @@ EXTRA_DIST = security-guide.xsl \
              docbook-share.xsl \
              fix.xsl \
              fixtpl-bash.xml \
+             xccdf_1.1_to_1.2.xsl \
              oscap-share.xsl \
              xccdf-tailor.xsl \
              xccdf-substitute.xsl \
