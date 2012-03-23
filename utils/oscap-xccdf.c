@@ -453,6 +453,18 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 			/* export result model to XML */
 			oval_results_model_export(res_model, NULL, name);
+
+			/* validate OVAL Results */
+			if (action->validate) {
+					if (!oscap_validate_document(name, OSCAP_DOCUMENT_OVAL_RESULTS, NULL,
+						(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+							fprintf(stdout, "OVAL Results are NOT exported correctly.\n");
+							free(name);
+							goto cleanup;
+					}
+					fprintf(stdout, "OVAL Results are exported correctly.\n");
+			}
+
 			free(name);
 		}
 	}
