@@ -221,19 +221,26 @@ void sce_session_add_check_result(struct sce_session* s, struct sce_check_result
 	oscap_list_push(s->results, result);
 }
 
+OSCAP_ITERATOR_GEN(sce_check_result)
+
+struct sce_check_result_iterator *sce_session_get_check_results(struct sce_session* s)
+{
+	return oscap_iterator_new(s->results);
+}
+
 void sce_session_export_to_directory(struct sce_session* s, const char* directory)
 {
-	struct oscap_iterator* it = oscap_iterator_new(s->results);
+	struct sce_check_result_iterator * it = sce_session_get_check_results(s);
 
-	while(oscap_iterator_has_more(it))
+	while(sce_check_result_iterator_has_more(it))
 	{
-		struct sce_check_result * result = oscap_iterator_next(it);
+		struct sce_check_result * result = sce_check_result_iterator_next(it);
 		char* target = oscap_sprintf("%s/%s.result.xml", directory, sce_check_result_get_basename(result));
 		sce_check_result_export(result, target);
 		oscap_free(target);
 	}
 
-	oscap_iterator_free(it);
+	sce_check_result_iterator_free(it);
 }
 
 struct sce_parameters

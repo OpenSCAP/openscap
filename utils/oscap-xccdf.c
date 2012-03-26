@@ -472,8 +472,25 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 #ifdef ENABLE_SCE
 	/* Export SCE results */
 	if (action->sce_results == true) {
-		struct sce_session* session = sce_parameters_get_session(sce_parameters);
-		sce_session_export_to_directory(session, "./");
+		struct sce_check_result_iterator * it = sce_session_get_check_results(sce_parameters_get_session(sce_parameters));
+
+		while(sce_check_result_iterator_has_more(it))
+		{
+			struct sce_check_result * result = sce_check_result_iterator_next(it);
+			char target[2 + strlen(sce_check_result_get_basename(result)) + 11 + 1];
+			snprintf(target, sizeof(target), "./%s.result.xml", sce_check_result_get_basename(result));
+			sce_check_result_export(result, target);
+
+			if (!oscap_validate_document(target, OSCAP_DOCUMENT_SCE_RESULT, NULL,
+				(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
+			{
+					fprintf(stdout, "SCE Result file has NOT been exported correctly.\n");
+					sce_check_result_iterator_free(it);
+					goto cleanup;
+			}
+		}
+
+		sce_check_result_iterator_free(it);
 	}
 #endif
 

@@ -149,6 +149,22 @@ void sce_session_reset(struct sce_session* s);
 void sce_session_add_check_result(struct sce_session* s, struct sce_check_result* result);
 
 /**
+ * @struct sce_check_result_iterator
+ * Iterator over collections of sce_check_results.
+ * @see sce_check_result_iterator
+ */
+struct sce_check_result_iterator;
+struct sce_check_result *sce_check_result_iterator_next(struct sce_check_result_iterator *it);
+/// @memberof sce_check_result_iterator
+bool sce_check_result_iterator_has_more(struct sce_check_result_iterator *it);
+/// @memberof sce_check_result_iterator
+void sce_check_result_iterator_free(struct sce_check_result_iterator *it);
+/// @memberof sce_check_result_iterator
+void sce_check_result_iterator_reset(struct sce_check_result_iterator *it);
+
+struct sce_check_result_iterator *sce_session_get_check_results(struct sce_session* s);
+
+/**
  * Exports all check results to given directory
  *
  * @memberof sce_session
