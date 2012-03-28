@@ -60,6 +60,7 @@ struct xccdf_benchmark *xccdf_benchmark_import(const char *file)
 struct xccdf_benchmark *xccdf_benchmark_new(void)
 {
 	struct xccdf_item *bench = xccdf_item_new(XCCDF_BENCHMARK, NULL);
+	bench->sub.benchmark.schema_version = oscap_strdup("unknown");
     // lists
 	bench->sub.benchmark.rear_matter  = oscap_list_new();
 	bench->sub.benchmark.front_matter = oscap_list_new();
@@ -318,6 +319,7 @@ void xccdf_benchmark_free(struct xccdf_benchmark *benchmark)
 {
 	if (benchmark) {
 		struct xccdf_item *bench = XITEM(benchmark);
+		oscap_free(bench->sub.benchmark.schema_version);
 		oscap_free(bench->sub.benchmark.style);
 		oscap_free(bench->sub.benchmark.style_href);
 		oscap_free(bench->sub.benchmark.metadata);
@@ -336,6 +338,7 @@ void xccdf_benchmark_free(struct xccdf_benchmark *benchmark)
 	}
 }
 
+XCCDF_ACCESSOR_STRING(benchmark, schema_version);
 XCCDF_ACCESSOR_STRING(benchmark, metadata)
 XCCDF_ACCESSOR_STRING(benchmark, style)
 XCCDF_ACCESSOR_STRING(benchmark, style_href)

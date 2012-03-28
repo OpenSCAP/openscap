@@ -737,6 +737,15 @@ XCCDF_BENCHGETTER(item)  XCCDF_BENCHGETTER(profile) XCCDF_BENCHGETTER(rule)
 XCCDF_BENCHGETTER(group) XCCDF_BENCHGETTER(value)   XCCDF_BENCHGETTER(result)
 #undef XCCDF_BENCHGETTER
 
+const char* xccdf_item_get_schema_version(struct xccdf_item* item)
+{
+	struct xccdf_benchmark* top_benchmark = xccdf_item_get_benchmark(item);
+	if (top_benchmark == NULL)
+		return "unknown";
+
+	return xccdf_benchmark_get_schema_version(top_benchmark);
+}
+
 static void *xccdf_item_convert(struct xccdf_item *item, xccdf_type_t type)
 {
 	return ((item != NULL && (item->type & type)) ? item : NULL);

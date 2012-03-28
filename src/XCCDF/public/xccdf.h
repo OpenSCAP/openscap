@@ -1687,6 +1687,17 @@ struct xccdf_rule_result * xccdf_result_get_rule_result_by_id(struct xccdf_resul
 struct xccdf_item *xccdf_item_get_parent(const struct xccdf_item *item);
 
 /**
+ * Retrieves the XCCDF version of top-level benchmark item.
+ *
+ * This is the version we use to determine how to process the item.
+ * Valid return values include "1.1.4", "1.2".
+ * You can use strverscmp to compare versions if you need to.
+ * Don't deallocate the returned buffer!
+ * @memberof xccdf_item
+ */
+const char* xccdf_item_get_schema_version(struct xccdf_item* item);
+
+/**
  * @memberof xccdf_benchmark
  */
 const char *xccdf_benchmark_get_id(const struct xccdf_benchmark *benchmark);
@@ -1706,6 +1717,10 @@ struct oscap_text_iterator *xccdf_benchmark_get_description(const struct xccdf_b
  * @memberof xccdf_benchmark
  */
 const char *xccdf_benchmark_get_version(const struct xccdf_benchmark *benchmark);
+/**
+ * @memberof xccdf_benchmark
+ */
+const char* xccdf_benchmark_get_schema_version(const struct xccdf_benchmark* item);
 /**
  * @memberof xccdf_benchmark
  */
@@ -2526,6 +2541,8 @@ bool xccdf_benchmark_set_version(struct xccdf_benchmark *item, const char *newva
 bool xccdf_benchmark_set_version_time(struct xccdf_benchmark *item, time_t newval);
 /// @memberof xccdf_benchmark
 bool xccdf_benchmark_set_version_update(struct xccdf_benchmark *item, const char *newval);
+/// @memberof xccdf_benchmark
+bool xccdf_benchmark_set_schema_version(struct xccdf_benchmark* item, const char* version);
 
 /// @memberof xccdf_profile
 bool xccdf_profile_set_note_tag(struct xccdf_profile *item, const char *newval);

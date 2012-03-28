@@ -160,6 +160,7 @@ struct xccdf_profile_item {
 };
 
 struct xccdf_benchmark_item {
+	char *schema_version;
 
 	struct oscap_htable *dict;
 	struct oscap_list *notices;
