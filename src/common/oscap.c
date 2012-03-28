@@ -147,7 +147,9 @@ bool oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_repor
 	struct oscap_reporter_context reporter_ctxt = { reporter, arg, (void*) xmlfile };
 	char *schemapath = oscap_get_schema_path(schemafile);
 	if (schemapath == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Schema file not found");
+		char* message = oscap_sprintf("Schema file '%s' not found! (When trying to validate '%s')", schemafile, xmlfile);
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, message);
+		oscap_free(message);
 		goto cleanup;
 	}
 
@@ -203,6 +205,7 @@ struct oscap_schema_table_entry OSCAP_SCHEMAS_TABLE[] = {
 	{ OSCAP_DOCUMENT_OVAL_RESULTS,     "oval",  "5.8",   "oval-results-schema.xsd"                },
 	{ OSCAP_DOCUMENT_OVAL_SYSCHAR,     "oval",  "5.8",   "oval-system-characteristics-schema.xsd" },
 	{ OSCAP_DOCUMENT_OVAL_DIRECTIVES,  "oval",  "5.8",   "oval-directives-schema.xsd"             },
+	{ OSCAP_DOCUMENT_XCCDF,            "xccdf", "1.2",   "xccdf-schema.xsd"                       },
 	{ OSCAP_DOCUMENT_XCCDF,            "xccdf", "1.1.4", "xccdf-schema.xsd"                       },
 	{ OSCAP_DOCUMENT_SCE_RESULT,       "sce",   "1.0",   "sce-result-schema.xsd"                  },
 	{ 0, NULL, NULL, NULL }
@@ -221,21 +224,23 @@ bool oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype,
 	}
 
 	struct oscap_schema_table_entry *entry = OSCAP_SCHEMAS_TABLE;
-	for (; entry->type != 0; ++entry) if (entry->type == doctype) break; // find entry
+	for (; entry->type != 0; ++entry) {
+		if (entry->type == doctype)  { // found entry
+			if (version == NULL || strcmp(entry->def_version, version) == 0) {
+				char *schemafile = oscap_sprintf("%s%s%s%s%s", entry->stdname, OSCAP_OS_PATH_DELIM, entry->def_version, OSCAP_OS_PATH_DELIM, entry->schema_fname);
+				bool ret = oscap_validate_xml(xmlfile, schemafile, reporter, arg);
+				oscap_free(schemafile);
 
-	if (entry->type == 0) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "OpenSCAP is not able to validate this document.");
-		return false;
+				if (ret) // the file is valid in at least one applicable schema
+					return true;
+				else if (version != NULL) // version was explicitly specified and the file didn't validate!
+					return false;
+			}
+		}
 	}
 
-	if (version == NULL) version = entry->def_version;
-
-	char *schemafile = oscap_sprintf("%s%s%s%s%s", entry->stdname, OSCAP_OS_PATH_DELIM, version, OSCAP_OS_PATH_DELIM, entry->schema_fname);
-
-	bool ret = oscap_validate_xml(xmlfile, schemafile, reporter, arg);
-
-	oscap_free(schemafile);
-	return ret;
+	oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "OpenSCAP is not able to validate this document with any schemas known to it.");
+	return false;
 }
 
 bool oscap_apply_xslt_var(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params, const char *pathvar, const char *defpath)
