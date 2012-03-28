@@ -100,6 +100,18 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 	if (benchmark->type != XCCDF_BENCHMARK)
 		return false;
 
+	const char* namespace_uri = xmlTextReaderNamespaceUri(reader);
+	char* schema_version = "unknown";
+
+	if (!strcmp(namespace_uri, "http://checklists.nist.gov/xccdf/1.1"))
+		schema_version = "1.1";
+	else if (!strcmp(namespace_uri, "http://checklists.nist.gov/xccdf/1.2"))
+		schema_version = "1.2";
+
+	//printf("namespace URI: %s, schema version: %s\n", namespace_uri, schema_version);
+
+	xccdf_benchmark_set_schema_version(XBENCHMARK(benchmark), schema_version);
+
 	if (!xccdf_item_process_attributes(benchmark, reader)) {
 		xccdf_benchmark_free(XBENCHMARK(benchmark));
 		return false;
