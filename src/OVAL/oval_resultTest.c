@@ -1151,7 +1151,9 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 			if (oval_entity_get_mask(state_entity))
 				oval_sysent_set_mask(item_entity,1);
 
-			if (state_entity_var != NULL) {
+			if (oval_sysent_get_status(item_entity) == SYSCHAR_STATUS_DOES_NOT_EXIST) {
+				ent_val_res = OVAL_RESULT_FALSE;
+			} else if (state_entity_var != NULL) {
 				struct oresults var_ores;
 				struct oval_value_iterator *val_itr;
 				oval_syschar_collection_flag_t flag;
