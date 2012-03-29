@@ -33,6 +33,7 @@
 #include <libexslt/exslt.h>
 #include <string.h>
 #include <unistd.h>
+#include <fcntl.h>
 
 #include "public/oscap.h"
 #include "_error.h"
@@ -231,7 +232,32 @@ bool oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype,
 		if (entry->type == doctype)  { // found entry
 			if (version == NULL || strcmp(entry->def_version, version) == 0) {
 				char *schemafile = oscap_sprintf("%s%s%s%s%s", entry->stdname, OSCAP_OS_PATH_DELIM, entry->def_version, OSCAP_OS_PATH_DELIM, entry->schema_fname);
+
+				int old_stdout;
+				if (version == NULL)
+				{
+					// we will not output various XSD validation warnings and errors
+					// in case we don't even know which XSD to use precisely
+
+					int devnull;
+					fflush(stdout);
+					old_stdout = dup(1);
+					devnull = open("/dev/null", O_WRONLY);
+					dup2(devnull, 1);
+					close(devnull);
+				}
+
 				bool ret = oscap_validate_xml(xmlfile, schemafile, reporter, arg);
+
+				if (version == NULL)
+				{
+					// restores stdout
+
+					fflush(stdout);
+					dup2(old_stdout, 1);
+					close(old_stdout);
+				}
+
 				oscap_free(schemafile);
 
 				if (ret) // the file is valid in at least one applicable schema
