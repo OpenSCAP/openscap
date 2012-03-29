@@ -1,7 +1,7 @@
 
 oval58dir = $(pkgdatadir)/schemas/oval/5.8/
 sce10dir = $(pkgdatadir)/schemas/sce/1.0/
-xccdf114dir = $(pkgdatadir)/schemas/xccdf/1.1.4/
+xccdf11dir = $(pkgdatadir)/schemas/xccdf/1.1/
 xccdf12dir = $(pkgdatadir)/schemas/xccdf/1.2/
 
 oval58_DATA = \
@@ -55,20 +55,20 @@ oval58_DATA = \
 sce10_DATA = \
 		sce/1.0/sce-result-schema.xsd
 
-xccdf114_DATA = \
-		xccdf/1.1.4/xccdfp-1.1.xsd \
-		xccdf/1.1.4/cpe-1.0.xsd \
-		xccdf/1.1.4/cpe-language_2.0.xsd \
-		xccdf/1.1.4/xccdf-schema.xsd \
-		xccdf/1.1.4/simpledc20021212.xsd \
-		xccdf/1.1.4/platform-0.2.3.xsd \
-		xccdf/1.1.4/xml.xsd \
-		xccdf/1.1.4/XMLSchema.dtd \
-		xccdf/1.1.4/datatypes.dtd
+xccdf11_DATA = \
+		xccdf/1.1/xccdfp-1.1.xsd \
+		xccdf/1.1/cpe-1.0.xsd \
+		xccdf/1.1/cpe-language_2.0.xsd \
+		xccdf/1.1/xccdf-schema.xsd \
+		xccdf/1.1/simpledc20021212.xsd \
+		xccdf/1.1/platform-0.2.3.xsd \
+		xccdf/1.1/xml.xsd \
+		xccdf/1.1/XMLSchema.dtd \
+		xccdf/1.1/datatypes.dtd
 
 xccdf12_DATA = \
 		xccdf/1.2/cpe-language_2.3.xsd \
-		xccdf/1.2/xccdf-schema.xsd \
+		xccdf/1.2/xccdf_1.2.xsd \
 		xccdf/1.2/xml.xsd \
 		xccdf/1.2/XMLSchema.dtd \
 		xccdf/1.2/datatypes.dtd
@@ -121,17 +121,17 @@ EXTRA_DIST = \
 		oval/5.8/windows-system-characteristics-schema.xsd \
 		oval/5.8/xmldsig-core-schema.xsd \
 		sce/1.0/sce-result-schema.xsd \
-		xccdf/1.1.4/xccdfp-1.1.xsd \
-		xccdf/1.1.4/cpe-1.0.xsd \
-		xccdf/1.1.4/cpe-language_2.0.xsd \
-		xccdf/1.1.4/xccdf-schema.xsd \
-		xccdf/1.1.4/simpledc20021212.xsd \
-		xccdf/1.1.4/platform-0.2.3.xsd \
-		xccdf/1.1.4/xml.xsd \
-		xccdf/1.1.4/XMLSchema.dtd \
-		xccdf/1.1.4/datatypes.dtd \
+		xccdf/1.1/xccdfp-1.1.xsd \
+		xccdf/1.1/cpe-1.0.xsd \
+		xccdf/1.1/cpe-language_2.0.xsd \
+		xccdf/1.1/xccdf-schema.xsd \
+		xccdf/1.1/simpledc20021212.xsd \
+		xccdf/1.1/platform-0.2.3.xsd \
+		xccdf/1.1/xml.xsd \
+		xccdf/1.1/XMLSchema.dtd \
+		xccdf/1.1/datatypes.dtd \
 		xccdf/1.2/cpe-language_2.3.xsd \
-		xccdf/1.2/xccdf-schema.xsd \
+		xccdf/1.2/xccdf_1.2.xsd \
 		xccdf/1.2/xml.xsd \
 		xccdf/1.2/XMLSchema.dtd \
 		xccdf/1.2/datatypes.dtd
