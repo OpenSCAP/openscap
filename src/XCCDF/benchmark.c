@@ -109,6 +109,7 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 		schema_version = "1.2";
 
 	//printf("namespace URI: %s, schema version: %s\n", namespace_uri, schema_version);
+	oscap_free(namespace_uri);
 
 	xccdf_benchmark_set_schema_version(XBENCHMARK(benchmark), schema_version);
 
