@@ -138,10 +138,6 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 		case XCCDFE_REAR_MATTER:
 				oscap_list_add(benchmark->sub.benchmark.rear_matter, oscap_text_new_parse(XCCDF_TEXT_HTMLSUB, reader));
 			break;
-		case XCCDFE_METADATA:
-			if (!benchmark->sub.benchmark.metadata)
-				benchmark->sub.benchmark.metadata = oscap_get_xml(reader);
-			break;
 		case XCCDFE_PLATFORM:
 			oscap_list_add(benchmark->item.platforms, xccdf_attribute_copy(reader, XCCDFA_IDREF));
 			break;
@@ -267,9 +263,6 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 	if (version)
 		xmlNewTextChild(root_node, ns_xccdf, BAD_CAST "version", BAD_CAST version);
 
-	const char *metadata = xccdf_benchmark_get_metadata(benchmark);
-	if (metadata) oscap_xmlstr_to_dom(root_node, "metadata", metadata);
-
 	OSCAP_FOR(xccdf_model, model, xccdf_benchmark_get_models(benchmark)) {
 		xmlNode *model_node = xmlNewTextChild(root_node, ns_xccdf, BAD_CAST "model", NULL);
 		xmlNewProp(model_node, BAD_CAST "system", BAD_CAST xccdf_model_get_system(model));
@@ -335,7 +328,6 @@ void xccdf_benchmark_free(struct xccdf_benchmark *benchmark)
 		oscap_free(bench->sub.benchmark.schema_version);
 		oscap_free(bench->sub.benchmark.style);
 		oscap_free(bench->sub.benchmark.style_href);
-		oscap_free(bench->sub.benchmark.metadata);
 		oscap_free(bench->sub.benchmark.lang);
 		oscap_list_free(bench->sub.benchmark.front_matter, (oscap_destruct_func) oscap_text_free);
 		oscap_list_free(bench->sub.benchmark.rear_matter, (oscap_destruct_func) oscap_text_free);
@@ -352,7 +344,6 @@ void xccdf_benchmark_free(struct xccdf_benchmark *benchmark)
 }
 
 XCCDF_ACCESSOR_STRING(benchmark, schema_version);
-XCCDF_ACCESSOR_STRING(benchmark, metadata)
 XCCDF_ACCESSOR_STRING(benchmark, style)
 XCCDF_ACCESSOR_STRING(benchmark, style_href)
 XCCDF_ACCESSOR_STRING(benchmark, lang)

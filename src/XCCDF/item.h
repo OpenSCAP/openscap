@@ -81,6 +81,8 @@ struct xccdf_item_base {
 	struct oscap_list *platforms;
 	struct xccdf_flags flags;
 	struct xccdf_defflags defined_flags;
+
+	struct oscap_list *metadata;
 };
 
 struct xccdf_rule_item {
@@ -168,7 +170,6 @@ struct xccdf_benchmark_item {
 
 	char *style;
 	char *style_href;
-	char *metadata;
 	char *lang;
 
 	struct oscap_list *front_matter;

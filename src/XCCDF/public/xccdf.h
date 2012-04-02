@@ -1698,6 +1698,11 @@ struct xccdf_item *xccdf_item_get_parent(const struct xccdf_item *item);
 const char* xccdf_item_get_schema_version(struct xccdf_item* item);
 
 /**
+ * @memberof xccdf_item
+ */
+struct oscap_string_iterator *xccdf_item_get_metadata(const struct xccdf_item *item);
+
+/**
  * @memberof xccdf_benchmark
  */
 const char *xccdf_benchmark_get_id(const struct xccdf_benchmark *benchmark);
@@ -1737,10 +1742,6 @@ struct oscap_text_iterator *xccdf_benchmark_get_front_matter(const struct xccdf_
  * @memberof xccdf_benchmark
  */
 struct oscap_text_iterator *xccdf_benchmark_get_rear_matter(const struct xccdf_benchmark *benchmark);
-/**
- * @memberof xccdf_benchmark
- */
-const char *xccdf_benchmark_get_metadata(const struct xccdf_benchmark *benchmark);
 /**
  * @memberof xccdf_benchmark
  */
@@ -1823,6 +1824,11 @@ struct xccdf_profile_iterator *xccdf_benchmark_get_profiles(const struct xccdf_b
 struct xccdf_item_iterator *xccdf_benchmark_get_content(const struct xccdf_benchmark *benchmark);
 
 /**
+ * @memberof xccdf_benchmark
+ */
+struct oscap_string_iterator *xccdf_benchmark_get_metadata(const struct xccdf_benchmark *benchmark);
+
+/**
  * @memberof xccdf_profile
  */
 const char *xccdf_profile_get_id(const struct xccdf_profile *profile);
@@ -1890,6 +1896,10 @@ struct xccdf_refine_value_iterator *xccdf_profile_get_refine_values(const struct
  * @memberof xccdf_profile
  */
 struct xccdf_refine_rule_iterator *xccdf_profile_get_refine_rules(const struct xccdf_profile *profile);
+/**
+ * @memberof xccdf_profile
+ */
+struct oscap_string_iterator *xccdf_profile_get_metadata(const struct xccdf_profile *profile);
 
 /**
  * Return rule's parent in the grouping hierarchy.
@@ -2018,6 +2028,10 @@ struct oscap_string_iterator *xccdf_rule_get_conflicts(const struct xccdf_rule* 
  * @memberof xccdf_rule
  */
 struct oscap_stringlist_iterator *xccdf_rule_get_requires(const struct xccdf_rule* rule);
+/**
+ * @memberof xccdf_rule
+ */
+struct oscap_string_iterator *xccdf_rule_get_metadata(const struct xccdf_rule *rule);
 
 /*
  * Return group's parent in the grouping hierarchy.
@@ -2080,6 +2094,8 @@ xccdf_status_type_t xccdf_group_get_status_current(const struct xccdf_group *gro
 struct oscap_string_iterator *xccdf_group_get_conflicts(const struct xccdf_group* group);
 /// @memberof xccdf_group
 struct oscap_stringlist_iterator *xccdf_group_get_requires(const struct xccdf_group* group);
+/// @memberof xccdf_group
+struct oscap_string_iterator *xccdf_group_get_metadata(const struct xccdf_group *group);
 
 /// @memberof xccdf_value
 struct oscap_text_iterator *xccdf_value_get_title(const struct xccdf_value *value);
@@ -2115,7 +2131,8 @@ struct xccdf_value_instance *xccdf_value_get_instance_by_selector(const struct x
 bool xccdf_value_add_instance(struct xccdf_value *value, struct xccdf_value_instance *instance);
 /// @memberof xccdf_value
 struct xccdf_value_instance_iterator *xccdf_value_get_instances(const struct xccdf_value *item);
-
+/// @memberof xccdf_value
+struct oscap_string_iterator *xccdf_value_get_metadata(const struct xccdf_value *value);
 
 /// @memberof xccdf_value_instance
 void xccdf_value_instance_free(struct xccdf_value_instance *inst);
@@ -2224,6 +2241,8 @@ const char *xccdf_check_get_content(const struct xccdf_check *check);
  * @see xccdf_check_get_export
  */
 struct xccdf_check_iterator *xccdf_check_get_children(const struct xccdf_check *check);
+/// @memberof xccdf_check
+struct oscap_string_iterator *xccdf_check_get_metadata(const struct xccdf_check *check);
 
 /// @memberof xccdf_check_content_ref
 const char *xccdf_check_content_ref_get_href(const struct xccdf_check_content_ref *ref);
@@ -2423,6 +2442,8 @@ struct xccdf_score_iterator *xccdf_result_get_scores(const struct xccdf_result *
 time_t xccdf_result_get_start_time(const struct xccdf_result *item);
 /// @memberof xccdf_result
 time_t xccdf_result_get_end_time(const struct xccdf_result *item);
+/// @memberof xccdf_result
+struct oscap_string_iterator *xccdf_result_get_metadata(const struct xccdf_result *result);
 
 /// @memberof xccdf_rule_result
 time_t xccdf_rule_result_get_time(const struct xccdf_rule_result *item);
@@ -2524,11 +2545,12 @@ bool xccdf_item_set_prohibit_changes(struct xccdf_item *item, bool newval);
 /// @memberof xccdf_item
 bool xccdf_item_set_selected(struct xccdf_item *item, bool newval);
 
+/// @memberof xccdf_item
+bool xccdf_item_add_metadata(struct xccdf_item *item, const char* metadata);
+
 /// @memberof xccdf_benchmark
 bool xccdf_benchmark_set_resolved(struct xccdf_benchmark *item, bool newval);
 
-/// @memberof xccdf_benchmark
-bool xccdf_benchmark_set_metadata(struct xccdf_benchmark *item, const char *newval);
 /// @memberof xccdf_benchmark
 bool xccdf_benchmark_set_style_href(struct xccdf_benchmark *item, const char *newval);
 /// @memberof xccdf_benchmark
@@ -2543,6 +2565,8 @@ bool xccdf_benchmark_set_version_time(struct xccdf_benchmark *item, time_t newva
 bool xccdf_benchmark_set_version_update(struct xccdf_benchmark *item, const char *newval);
 /// @memberof xccdf_benchmark
 bool xccdf_benchmark_set_schema_version(struct xccdf_benchmark* item, const char* version);
+/// @memberof xccdf_benchmark
+bool xccdf_benchmark_add_metadata(struct xccdf_benchmark* item, const char* metadata);
 
 /// @memberof xccdf_profile
 bool xccdf_profile_set_note_tag(struct xccdf_profile *item, const char *newval);
@@ -2560,6 +2584,8 @@ bool xccdf_profile_set_version(struct xccdf_profile *item, const char *newval);
 bool xccdf_profile_set_version_time(struct xccdf_profile *item, time_t newval);
 /// @memberof xccdf_profile
 bool xccdf_profile_set_version_update(struct xccdf_profile *item, const char *newval);
+/// @memberof xccdf_profile
+bool xccdf_profile_add_metadata(struct xccdf_profile* item, const char* metadata);
 
 /// @memberof xccdf_rule
 bool xccdf_rule_set_id(struct xccdf_rule *item, const char *newval);
@@ -2591,6 +2617,8 @@ bool xccdf_rule_set_impact_metric(struct xccdf_rule *item, const char *newval);
 bool xccdf_rule_set_role(struct xccdf_rule *item, xccdf_role_t newval);
 /// @memberof xccdf_rule
 bool xccdf_rule_set_severity(struct xccdf_rule *item, xccdf_level_t newval);
+/// @memberof xccdf_rule
+bool xccdf_rule_add_metadata(struct xccdf_rule* item, const char* metadata);
 
 /// @memberof xccdf_group
 bool xccdf_group_set_id(struct xccdf_group *item, const char *newval);
@@ -2612,6 +2640,8 @@ bool xccdf_group_set_hidden(struct xccdf_group *item, bool newval);
 bool xccdf_group_set_prohibit_changes(struct xccdf_group *item, bool newval);
 /// @memberof xccdf_group
 bool xccdf_group_set_selected(struct xccdf_group *item, bool newval);
+/// @memberof xccdf_group
+bool xccdf_group_add_metadata(struct xccdf_group* item, const char* metadata);
 
 /// @memberof xccdf_value
 bool xccdf_value_set_id(struct xccdf_value *item, const char *newval);
@@ -2637,6 +2667,8 @@ bool xccdf_value_set_prohibit_changes(struct xccdf_value *item, bool newval);
 bool xccdf_value_set_oper(struct xccdf_value * item, xccdf_operator_t oper);
 /// @memberof xccdf_value
 bool xccdf_value_set_interactive(struct xccdf_value *item, bool newval);
+/// @memberof xccdf_value
+bool xccdf_value_add_metadata(struct xccdf_value* item, const char* metadata);
 
 /// @memberof xccdf_status
 bool xccdf_status_set_date(struct xccdf_status *obj, time_t newval);
@@ -2661,6 +2693,8 @@ bool xccdf_check_set_selector(struct xccdf_check *obj, const char *newval);
 bool xccdf_check_set_content(struct xccdf_check *obj, const char *newval);
 /// @memberof xccdf_check
 bool xccdf_check_set_oper(struct xccdf_check *obj, xccdf_bool_operator_t newval);
+/// @memberof xccdf_check
+bool xccdf_check_add_metadata(struct xccdf_check* item, char* check);
 
 /// @memberof xccdf_check_content_ref
 bool xccdf_check_content_ref_set_name(struct xccdf_check_content_ref *obj, const char *newval);
@@ -2777,6 +2811,9 @@ bool xccdf_result_set_start_time(struct xccdf_result *item, time_t newval);
 bool xccdf_result_set_end_time(struct xccdf_result *item, time_t newval);
 /// @memberof xccdf_result
 bool xccdf_result_set_version(struct xccdf_result *item, const char *newval);
+/// @memberof xccdf_result
+bool xccdf_result_add_metadata(struct xccdf_result *item, const char *metadata);
+
 /// @memberof xccdf_rule_result
 bool xccdf_rule_result_set_time(struct xccdf_rule_result *obj, time_t newval);
 /// @memberof xccdf_rule_result

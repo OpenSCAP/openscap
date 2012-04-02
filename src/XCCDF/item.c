@@ -121,6 +121,8 @@ struct xccdf_item *xccdf_item_new(xccdf_type_t type, struct xccdf_item *parent)
 	item->item.weight = 1.0;
 	item->item.flags.selected = true;
 	item->item.parent = parent;
+	item->item.metadata = (struct oscap_list*)oscap_stringlist_new();
+
 	return item;
 }
 
@@ -186,6 +188,8 @@ void xccdf_item_base_clone(struct xccdf_item_base *new_base, const struct xccdf_
 	/* Handling flags */
 	new_base->flags = old_base->flags;
 	new_base->defined_flags = old_base->defined_flags;
+
+	new_base->metadata = (struct oscap_list*)oscap_stringlist_clone((struct oscap_stringlist*)(old_base->metadata));
 }
 
 /* Performs a deep copy of xccdf_status and returns a pointer to that copy */
@@ -225,6 +229,8 @@ void xccdf_item_release(struct xccdf_item *item)
 		oscap_free(item->item.version_update);
 		oscap_free(item->item.version);
 		oscap_free(item->item.extends);
+		oscap_stringlist_free((struct oscap_stringlist*)(item->item.metadata));
+
 		oscap_free(item);
 	}
 }
@@ -405,6 +411,13 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 		oscap_reference_to_dom(ref, item_node, doc, "reference");
 	}
     oscap_reference_iterator_free(references);
+
+    struct oscap_string_iterator* metadata = xccdf_item_get_metadata(item);
+    while (oscap_string_iterator_has_more(metadata))
+    {
+    	const char* meta = oscap_string_iterator_next(metadata);
+    	oscap_xmlstr_to_dom(item_node, "metadata", meta);
+    }
 
 	/* Handle type specific attributes and children */
 	switch (xccdf_item_get_type(item)) {
@@ -716,6 +729,12 @@ bool xccdf_item_process_element(struct xccdf_item * item, xmlTextReaderPtr reade
 	case XCCDFE_QUESTION:
         oscap_list_add(item->item.question, oscap_text_new_parse(XCCDF_TEXT_PLAIN, reader));
 		return true;
+	case XCCDFE_METADATA: {
+		char* xml = oscap_get_xml(reader);
+		xccdf_item_add_metadata(item, xml);
+		oscap_free(xml);
+		return true;
+	}
 	default:
 		break;
 	}
@@ -785,6 +804,14 @@ XCCDF_ITEM_GETTER(const char *, extends)
 XCCDF_FLAG_GETTER(resolved)
 XCCDF_FLAG_GETTER(hidden)
 XCCDF_FLAG_GETTER(selected)
+XCCDF_ITEM_SIGETTER(metadata);
+XCCDF_ITEM_ADDER_ONE(item, metadata, metadata, const char*, oscap_strdup);
+XCCDF_ITEM_ADDER_ONE(benchmark, metadata, metadata, const char*, oscap_strdup);
+XCCDF_ITEM_ADDER_ONE(profile, metadata, metadata, const char*, oscap_strdup);
+XCCDF_ITEM_ADDER_ONE(group, metadata, metadata, const char*, oscap_strdup);
+XCCDF_ITEM_ADDER_ONE(rule, metadata, metadata, const char*, oscap_strdup);
+XCCDF_ITEM_ADDER_ONE(value, metadata, metadata, const char*, oscap_strdup);
+XCCDF_ITEM_ADDER_ONE(result, metadata, metadata, const char*, oscap_strdup);
 XCCDF_FLAG_GETTER(multiple)
 XCCDF_FLAG_GETTER(prohibit_changes)
 XCCDF_FLAG_GETTER(abstract)
