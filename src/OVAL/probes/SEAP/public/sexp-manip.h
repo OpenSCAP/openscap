@@ -462,7 +462,7 @@ void       SEXP_listit_free (SEXP_it_t *it);
 
 typedef struct SEXP_list_it SEXP_list_it;
 
-SEXP_list_it *SEXP_list_it_new(SEXP_t *list);
+SEXP_list_it *SEXP_list_it_new(const SEXP_t *list);
 SEXP_t *SEXP_list_it_next(SEXP_list_it *it);
 void SEXP_list_it_free(SEXP_list_it *it);
 

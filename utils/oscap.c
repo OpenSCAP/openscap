@@ -128,12 +128,10 @@ int app_validate_xml(const struct oscap_action *action)
 	if (!xml_file)
 		return OSCAP_ERROR;
 	
-	bool ret = OSCAP_OK;
-
 	if (!oscap_validate_document(xml_file, action->doctype, NULL, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 		if (oscap_err()) {
 			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-			ret = OSCAP_FAIL;
+			return OSCAP_FAIL;
 		}
 		else {
 			fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
@@ -162,12 +160,12 @@ int app_validate_xml(const struct oscap_action *action)
 			const char *params[] = { NULL };
 			if (!oscap_apply_xslt_var(xml_file, xslfile, NULL, params, "OSCAP_SCHEMA_PATH", OSCAP_SCHEMA_PATH)) {
 				fprintf(stderr, "%s\n", "Error during schematron validation.");
-				ret = OSCAP_ERROR;
+				return OSCAP_ERROR;
 			}
 		}
 		else {
 			fprintf(stderr, "%s\n", "Could not find schematron validation file for this document type.");
-			ret = OSCAP_ERROR;
+			return OSCAP_ERROR;
 		}
 	}
 

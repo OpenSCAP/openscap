@@ -80,7 +80,7 @@ struct oval_generator *oval_generator_clone(struct oval_generator *old_generator
 {
 	struct oval_generator *new_gen;
 
-	new_gen = oval_generator_new();
+	new_gen = oscap_alloc(sizeof(*new_gen));
 	new_gen->product_name = oscap_strdup(old_generator->product_name);
 	new_gen->product_version = oscap_strdup(old_generator->product_version);
 	new_gen->schema_version = oscap_strdup(old_generator->schema_version);

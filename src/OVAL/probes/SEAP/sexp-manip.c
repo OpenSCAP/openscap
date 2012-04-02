@@ -1393,7 +1393,7 @@ struct SEXP_list_it{
         uint16_t count;
 };
 
-SEXP_list_it *SEXP_list_it_new(SEXP_t *list)
+SEXP_list_it *SEXP_list_it_new(const SEXP_t *list)
 {
         SEXP_val_t v_dsc;
         SEXP_list_it *it;
