@@ -968,7 +968,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 			return oscap_module_usage(action->module, stderr, "XCCDF file need to be specified!");
 		}
                 if (action->f_report && !action->f_results)
-                    return oscap_module_usage(action->module, stderr, "Please specify --result if you want to generate a HTML report.");
+                    return oscap_module_usage(action->module, stderr, "Please specify --results if you want to generate a HTML report.");
 
                 action->f_xccdf = argv[optind];
                 if (argc > (optind+1)) {
