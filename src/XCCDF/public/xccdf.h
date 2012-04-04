@@ -655,6 +655,13 @@ struct xccdf_value* xccdf_item_to_value(struct xccdf_item* item);
 struct xccdf_result* xccdf_item_to_result(struct xccdf_item* item);
 
 /**
+ * Starts parsing given XCCDF benchmark file to detect its version,
+ * stops as soon as the version is found
+ * @memberof xccdf_benchmark
+ */
+const char* xccdf_benchmark_detect_version(const char* file);
+
+/**
  * Import the content from a specified XML stream into a benchmark.
  * @memberof xccdf_benchmark
  * @param file filename.

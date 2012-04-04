@@ -93,6 +93,37 @@ struct xccdf_benchmark *xccdf_benchmark_clone(const struct xccdf_benchmark *old_
 	return XBENCHMARK(new_benchmark);
 }
 
+const char* xccdf_benchmark_detect_version(const char* file)
+{
+	xmlTextReaderPtr reader = xmlReaderForFile(file, NULL, 0);
+	if (!reader) {
+				if(errno)
+						oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, strerror(errno));
+				oscap_dlprintf(DBG_E, "Unable to open file.\n");
+		return NULL;
+	}
+	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != 1);
+	const char* ret = xccdf_benchmark_detect_version_parser(reader);
+	xmlFreeTextReader(reader);
+	return ret;
+}
+
+const char* xccdf_benchmark_detect_version_parser(xmlTextReaderPtr reader)
+{
+	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_BENCHMARK);
+
+	const char* namespace_uri = (const char*)xmlTextReaderNamespaceUri(reader);
+	char* schema_version = NULL;
+
+	if (!strcmp(namespace_uri, "http://checklists.nist.gov/xccdf/1.1"))
+		schema_version = "1.1";
+	else if (!strcmp(namespace_uri, "http://checklists.nist.gov/xccdf/1.2"))
+		schema_version = "1.2";
+
+	oscap_free(namespace_uri);
+	return schema_version;
+}
+
 bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reader)
 {
 	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_BENCHMARK);
@@ -100,17 +131,7 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 	if (benchmark->type != XCCDF_BENCHMARK)
 		return false;
 
-	const char* namespace_uri = xmlTextReaderNamespaceUri(reader);
-	char* schema_version = "unknown";
-
-	if (!strcmp(namespace_uri, "http://checklists.nist.gov/xccdf/1.1"))
-		schema_version = "1.1";
-	else if (!strcmp(namespace_uri, "http://checklists.nist.gov/xccdf/1.2"))
-		schema_version = "1.2";
-
-	//printf("namespace URI: %s, schema version: %s\n", namespace_uri, schema_version);
-	oscap_free(namespace_uri);
-
+	const char* schema_version = xccdf_benchmark_detect_version_parser(reader);
 	xccdf_benchmark_set_schema_version(XBENCHMARK(benchmark), schema_version);
 
 	if (!xccdf_item_process_attributes(benchmark, reader)) {

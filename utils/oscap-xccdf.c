@@ -286,7 +286,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	
 	/* Validate documents */
 	if( action->validate ) {
-		if (!oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, NULL, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+		if (!oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, xccdf_benchmark_detect_version(action->f_xccdf), (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 			fprintf(stdout, "Invalid XCCDF content in %s\n", action->f_xccdf);
 			goto cleanup;
         	}
@@ -518,7 +518,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 		/* validate XCCDF Results */
 		if (action->validate) {
-			if (!oscap_validate_document(action->f_results, OSCAP_DOCUMENT_XCCDF, NULL,
+			if (!oscap_validate_document(action->f_results, OSCAP_DOCUMENT_XCCDF, xccdf_benchmark_detect_version(action->f_results),
 			    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 				fprintf(stdout, "XCCDF Results are NOT exported correctly.\n");
 				goto cleanup;
@@ -644,7 +644,7 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	/* validate the XCCDF document */
 	if (action->validate) {
 		if (!oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF,
-			NULL, (action->verbosity >= 0) ? oscap_reporter_fd : NULL, stderr)) {
+			xccdf_benchmark_detect_version(action->f_xccdf), (action->verbosity >= 0) ? oscap_reporter_fd : NULL, stderr)) {
 			fprintf(stderr, "Ivalid XCCDF content in '%s'.\n", action->f_xccdf);
 			goto cleanup;
 		}
