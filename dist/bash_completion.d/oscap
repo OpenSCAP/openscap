@@ -37,6 +37,7 @@ function _oscap {
     opts[oscap:xccdf:generate:report]="-o --output -i --result-id --show --profile --format --oval-template"
     opts[oscap:xccdf:generate:guide]="-o --output --hide-profile-info --profile --format"
     opts[oscap:xccdf:generate:fix]="-o --output --template --profile --result-id --profile"
+    opts[oscap:xccdf:generate:custom]="-o --output --stylesheet"
     opts[oscap:cvss:score]=""
     opts[oscap:cvss:describe]=""
 

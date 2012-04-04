@@ -177,10 +177,25 @@ static struct oscap_module XCCDF_GEN_FIX = {
     .func = app_xccdf_xslt
 };
 
+static struct oscap_module XCCDF_GEN_CUSTOM = {
+    .name = "custom",
+    .parent = &XCCDF_GENERATE,
+    .summary = "Generate a custom output (depending on given XSLT file) from an XCCDF file",
+    .usage = "[options] xccdf-file.xml",
+    .help = GEN_OPTS
+        "\nOptions:\n"
+        "   --stylesheet <file>\r\t\t\t\t - Specify an absolute path to a custom stylesheet to format the output.\n"
+        "   --output <file>\r\t\t\t\t - Write the document into file.\n",
+    .opt_parser = getopt_xccdf,
+    .user = NULL,
+    .func = app_xccdf_xslt
+};
+
 static struct oscap_module* XCCDF_GEN_SUBMODULES[] = {
     &XCCDF_GEN_REPORT,
     &XCCDF_GEN_GUIDE,
     &XCCDF_GEN_FIX,
+    &XCCDF_GEN_CUSTOM,
     NULL
 };
 
@@ -199,6 +214,8 @@ static struct oscap_module* XCCDF_SUBMODULES[] = {
  * NOT_SELECTED:white(1;37), INFORMATIONAL:blue(34), FIXED:yellow(1;33)
  */
 static const char * RESULT_COLORS[] = {"", "32", "31", "1;31", "1;30", "1;37", "1;37", "1;37", "34", "1;33" };
+
+static char custom_stylesheet_path[PATH_MAX];
 
 /**
  * Callback for XCCDF evaluation. Callback is called before each XCCDF Rule evaluation
@@ -840,6 +857,12 @@ int app_xccdf_xslt(const struct oscap_action *action)
         "verbosity",         action->verbosity >= 0 ? "1" : "",
         "hide-profile-info", action->hide_profile_info ? "yes" : NULL,
         NULL };
+
+    // in case user wants to "generate custom"
+    if (action->module->user == NULL) {
+        action->module->user = (void*)action->stylesheet;
+    }
+
     return app_xslt(action->f_xccdf, action->module->user, action->f_results, params);
 }
 
@@ -870,6 +893,7 @@ enum oval_opt {
     XCCDF_OPT_TEMPLATE,
     XCCDF_OPT_FORMAT,
     XCCDF_OPT_OVAL_TEMPLATE,
+    XCCDF_OPT_STYLESHEET_FILE,
 #ifdef ENABLE_SCE
     XCCDF_OPT_SCE_TEMPLATE,
 #endif
@@ -896,6 +920,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"template", 		required_argument, NULL, XCCDF_OPT_TEMPLATE},
 		{"format", 		required_argument, NULL, XCCDF_OPT_FORMAT},
 		{"oval-template", 	required_argument, NULL, XCCDF_OPT_OVAL_TEMPLATE},
+		{"stylesheet",	required_argument, NULL, XCCDF_OPT_STYLESHEET_FILE},
 #ifdef ENABLE_SCE
 		{"sce-template", 	required_argument, NULL, XCCDF_OPT_SCE_TEMPLATE},
 #endif
@@ -925,6 +950,9 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		case XCCDF_OPT_TEMPLATE:	action->tmpl = optarg;		break;
 		case XCCDF_OPT_FORMAT:		action->format = optarg;	break;
 		case XCCDF_OPT_OVAL_TEMPLATE:	action->oval_template = optarg; break;
+		// we use realpath to get an absolute path to given XSLT to prevent openscap from looking
+		// into /usr/share/openscap/xsl instead of CWD
+		case XCCDF_OPT_STYLESHEET_FILE: realpath(optarg, custom_stylesheet_path); action->stylesheet = custom_stylesheet_path; break;
 #ifdef ENABLE_SCE
 		case XCCDF_OPT_SCE_TEMPLATE:	action->sce_template = optarg; break;
 #endif

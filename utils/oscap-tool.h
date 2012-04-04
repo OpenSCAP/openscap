@@ -117,6 +117,7 @@ struct oscap_action {
         char *cvss_vector;
         int verbosity;
         int hide_profile_info;
+        char *stylesheet;
         struct cvss_impact *cvss_impact;
 #ifdef ENABLE_CPE
 	struct cpe_action * cpe_action;
