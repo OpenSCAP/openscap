@@ -418,6 +418,7 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
     	const char* meta = oscap_string_iterator_next(metadata);
     	oscap_xmlstr_to_dom(item_node, "metadata", meta);
     }
+    oscap_string_iterator_free(metadata);
 
 	/* Handle type specific attributes and children */
 	switch (xccdf_item_get_type(item)) {
