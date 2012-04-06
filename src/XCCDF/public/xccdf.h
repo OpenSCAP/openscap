@@ -2260,8 +2260,6 @@ const char *xccdf_check_get_content(const struct xccdf_check *check);
  * @see xccdf_check_get_export
  */
 struct xccdf_check_iterator *xccdf_check_get_children(const struct xccdf_check *check);
-/// @memberof xccdf_check
-struct oscap_string_iterator *xccdf_check_get_metadata(const struct xccdf_check *check);
 
 /// @memberof xccdf_check_content_ref
 const char *xccdf_check_content_ref_get_href(const struct xccdf_check_content_ref *ref);
@@ -2712,8 +2710,6 @@ bool xccdf_check_set_selector(struct xccdf_check *obj, const char *newval);
 bool xccdf_check_set_content(struct xccdf_check *obj, const char *newval);
 /// @memberof xccdf_check
 bool xccdf_check_set_oper(struct xccdf_check *obj, xccdf_bool_operator_t newval);
-/// @memberof xccdf_check
-bool xccdf_check_add_metadata(struct xccdf_check* item, char* check);
 
 /// @memberof xccdf_check_content_ref
 bool xccdf_check_content_ref_set_name(struct xccdf_check_content_ref *obj, const char *newval);
