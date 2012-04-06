@@ -162,7 +162,7 @@ struct xccdf_profile_item {
 };
 
 struct xccdf_benchmark_item {
-	char *schema_version;
+	const struct xccdf_version_info *schema_version;
 
 	struct oscap_htable *dict;
 	struct oscap_list *notices;
@@ -390,12 +390,6 @@ void xccdf_item_release(struct xccdf_item *item);
 void xccdf_item_print(struct xccdf_item *item, int depth);
 void xccdf_item_dump(struct xccdf_item *item, int depth);
 struct xccdf_item* xccdf_item_get_benchmark_internal(struct xccdf_item* item);
-/**
- * Detects version from given xmlTextReader
- *
- * The reader has to be at the root <Benchmark> element
- */
-const char* xccdf_benchmark_detect_version_parser(xmlTextReaderPtr reader);
 bool xccdf_benchmark_parse(struct xccdf_item *benchmark, xmlTextReaderPtr reader);
 void xccdf_benchmark_dump(struct xccdf_benchmark *benchmark);
 bool xccdf_benchmark_register_item(struct xccdf_benchmark *benchmark, struct xccdf_item *item);

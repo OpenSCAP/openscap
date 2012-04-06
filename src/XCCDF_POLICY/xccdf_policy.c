@@ -1737,7 +1737,6 @@ bool xccdf_policy_resolve(struct xccdf_policy * policy)
  */
 struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
 {
-
     struct xccdf_select_iterator    * sel_it;
     struct xccdf_select             * sel;
     struct xccdf_item               * item;
@@ -1757,14 +1756,30 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
     else
         id = oscap_strdup("default-profile");
 
-    char rid[11+strlen(id)];
-    sprintf(rid, "OSCAP-Test-%s", id);
-    xccdf_result_set_id(result, rid);
+    /* Get all constant information */
+    benchmark = xccdf_policy_model_get_benchmark(xccdf_policy_get_model(policy));
+    const struct xccdf_version_info* version_info = xccdf_benchmark_get_schema_version(benchmark);
+
+    if (strverscmp("1.2", xccdf_version_info_get_version(version_info)) >= 0)
+    {
+        // we have to enforce a certain type of ids for XCCDF 1.2+
+
+        char rid[32+strlen(id)];
+        sprintf(rid, "xccdf_org.open-scap_testresult_%s", id);
+        xccdf_result_set_id(result, rid);
+    }
+    else
+    {
+    	// previous behaviour for backwards compatibility
+
+        char rid[11+strlen(id)];
+        sprintf(rid, "OSCAP-Test-%s", id);
+        xccdf_result_set_id(result, rid);
+    }
+
     oscap_free(id);
     /** */
 
-    /* Get all constant information */
-    benchmark = xccdf_policy_model_get_benchmark(xccdf_policy_get_model(policy));
 
     sel_it = xccdf_policy_get_selects(policy);
     while (xccdf_select_iterator_has_more(sel_it)) {

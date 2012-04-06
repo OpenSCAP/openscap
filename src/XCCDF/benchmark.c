@@ -60,7 +60,7 @@ struct xccdf_benchmark *xccdf_benchmark_import(const char *file)
 struct xccdf_benchmark *xccdf_benchmark_new(void)
 {
 	struct xccdf_item *bench = xccdf_item_new(XCCDF_BENCHMARK, NULL);
-	bench->sub.benchmark.schema_version = oscap_strdup("unknown");
+	bench->sub.benchmark.schema_version = NULL;
     // lists
 	bench->sub.benchmark.rear_matter  = oscap_list_new();
 	bench->sub.benchmark.front_matter = oscap_list_new();
@@ -93,37 +93,6 @@ struct xccdf_benchmark *xccdf_benchmark_clone(const struct xccdf_benchmark *old_
 	return XBENCHMARK(new_benchmark);
 }
 
-const char* xccdf_benchmark_detect_version(const char* file)
-{
-	xmlTextReaderPtr reader = xmlReaderForFile(file, NULL, 0);
-	if (!reader) {
-				if(errno)
-						oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, strerror(errno));
-				oscap_dlprintf(DBG_E, "Unable to open file.\n");
-		return NULL;
-	}
-	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != 1);
-	const char* ret = xccdf_benchmark_detect_version_parser(reader);
-	xmlFreeTextReader(reader);
-	return ret;
-}
-
-const char* xccdf_benchmark_detect_version_parser(xmlTextReaderPtr reader)
-{
-	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_BENCHMARK);
-
-	const char* namespace_uri = (const char*)xmlTextReaderNamespaceUri(reader);
-	char* schema_version = NULL;
-
-	if (!strcmp(namespace_uri, "http://checklists.nist.gov/xccdf/1.1"))
-		schema_version = "1.1";
-	else if (!strcmp(namespace_uri, "http://checklists.nist.gov/xccdf/1.2"))
-		schema_version = "1.2";
-
-	oscap_free(namespace_uri);
-	return schema_version;
-}
-
 bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reader)
 {
 	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_BENCHMARK);
@@ -131,8 +100,7 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 	if (benchmark->type != XCCDF_BENCHMARK)
 		return false;
 
-	const char* schema_version = xccdf_benchmark_detect_version_parser(reader);
-	xccdf_benchmark_set_schema_version(XBENCHMARK(benchmark), schema_version);
+	xccdf_benchmark_set_schema_version(XBENCHMARK(benchmark), xccdf_detect_version_parser(reader));
 
 	if (!xccdf_item_process_attributes(benchmark, reader)) {
 		xccdf_benchmark_free(XBENCHMARK(benchmark));
@@ -238,9 +206,14 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 		root_node = xccdf_item_to_dom(XITEM(benchmark), doc, parent);
 		xmlDocSetRootElement(doc, root_node);
 	}
-	xmlNewProp(root_node, BAD_CAST "xsi:schemaLocation", BAD_CAST XCCDF_SCHEMA_LOCATION);
 
-	xmlNs *ns_xccdf = xmlNewNs(root_node, XCCDF_BASE_NAMESPACE, NULL);
+	// FIXME!
+	//xmlNewProp(root_node, BAD_CAST "xsi:schemaLocation", BAD_CAST XCCDF_SCHEMA_LOCATION);
+
+	xmlNs *ns_xccdf = xmlNewNs(root_node,
+			(const xmlChar*)xccdf_version_info_get_namespace_uri(xccdf_benchmark_get_schema_version(benchmark)),
+			NULL);
+
 	xmlNs *ns_xsi = xmlNewNs(root_node, XCCDF_XSI_NAMESPACE, BAD_CAST "xsi");
 
 	xmlSetNs(root_node, ns_xsi);
@@ -346,7 +319,6 @@ void xccdf_benchmark_free(struct xccdf_benchmark *benchmark)
 {
 	if (benchmark) {
 		struct xccdf_item *bench = XITEM(benchmark);
-		oscap_free(bench->sub.benchmark.schema_version);
 		oscap_free(bench->sub.benchmark.style);
 		oscap_free(bench->sub.benchmark.style_href);
 		oscap_free(bench->sub.benchmark.lang);
@@ -364,7 +336,7 @@ void xccdf_benchmark_free(struct xccdf_benchmark *benchmark)
 	}
 }
 
-XCCDF_ACCESSOR_STRING(benchmark, schema_version);
+XCCDF_ACCESSOR_SIMPLE(benchmark, const struct xccdf_version_info*, schema_version);
 XCCDF_ACCESSOR_STRING(benchmark, style)
 XCCDF_ACCESSOR_STRING(benchmark, style_href)
 XCCDF_ACCESSOR_STRING(benchmark, lang)

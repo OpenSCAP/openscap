@@ -598,6 +598,25 @@ struct xccdf_target_fact_iterator;
  */
 struct xccdf_plain_text_iterator;
 
+/**
+ * Groups info about XCCDF spec versions, namespace, CPE version, etc...
+ */
+struct xccdf_version_info;
+
+/// @memberof xccdf_version_info
+const char* xccdf_version_info_get_version(const struct xccdf_version_info* v);
+/// @memberof xccdf_version_info
+const char* xccdf_version_info_get_namespace_uri(const struct xccdf_version_info* v);
+/// @memberof xccdf_version_info
+const char* xccdf_version_info_get_cpe_version(const struct xccdf_version_info* v);
+
+/**
+ * Starts parsing given XCCDF benchmark file to detect its version,
+ * stops as soon as the version is found
+ * @memberof xccdf_benchmark
+ */
+const struct xccdf_version_info* xccdf_detect_version(const char* file);
+
 /************************************************************/
 
 /// @memberof xccdf_item
@@ -653,13 +672,6 @@ struct xccdf_value* xccdf_item_to_value(struct xccdf_item* item);
  * @retval NULL on faliure (e.g. item is not a test result)
  */
 struct xccdf_result* xccdf_item_to_result(struct xccdf_item* item);
-
-/**
- * Starts parsing given XCCDF benchmark file to detect its version,
- * stops as soon as the version is found
- * @memberof xccdf_benchmark
- */
-const char* xccdf_benchmark_detect_version(const char* file);
 
 /**
  * Import the content from a specified XML stream into a benchmark.
@@ -1702,7 +1714,7 @@ struct xccdf_item *xccdf_item_get_parent(const struct xccdf_item *item);
  * Don't deallocate the returned buffer!
  * @memberof xccdf_item
  */
-const char* xccdf_item_get_schema_version(struct xccdf_item* item);
+const struct xccdf_version_info* xccdf_item_get_schema_version(struct xccdf_item* item);
 
 /**
  * @memberof xccdf_item
@@ -1732,7 +1744,7 @@ const char *xccdf_benchmark_get_version(const struct xccdf_benchmark *benchmark)
 /**
  * @memberof xccdf_benchmark
  */
-const char* xccdf_benchmark_get_schema_version(const struct xccdf_benchmark* item);
+const struct xccdf_version_info* xccdf_benchmark_get_schema_version(const struct xccdf_benchmark* item);
 /**
  * @memberof xccdf_benchmark
  */
@@ -2571,7 +2583,7 @@ bool xccdf_benchmark_set_version_time(struct xccdf_benchmark *item, time_t newva
 /// @memberof xccdf_benchmark
 bool xccdf_benchmark_set_version_update(struct xccdf_benchmark *item, const char *newval);
 /// @memberof xccdf_benchmark
-bool xccdf_benchmark_set_schema_version(struct xccdf_benchmark* item, const char* version);
+bool xccdf_benchmark_set_schema_version(struct xccdf_benchmark* item, const struct xccdf_version_info* newval);
 /// @memberof xccdf_benchmark
 bool xccdf_benchmark_add_metadata(struct xccdf_benchmark* item, const char* metadata);
 

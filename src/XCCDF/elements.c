@@ -30,8 +30,79 @@
 #include <ctype.h>
 #include <math.h>
 
+#include "public/xccdf.h"
+
 #include "elements.h"
 #include "common/elements.h"
+
+#include "common/_error.h"
+#include "common/debug_priv.h"
+
+struct xccdf_version_info {
+	const char* version; ///< MAJOR.MINOR, for example "1.1" or "1.2"
+	const char* namespace_uri; ///< XML namespace URI of that particular version
+	const char* cpe_version; ///< CPE version used in that particular XCCDF version
+};
+
+const char* xccdf_version_info_get_version(const struct xccdf_version_info* v)
+{
+	if (v == NULL)
+		return "unknown";
+
+	return v->version;
+}
+
+const char* xccdf_version_info_get_namespace_uri(const struct xccdf_version_info* v)
+{
+	if (v == NULL)
+		return "unknown";
+
+	return v->namespace_uri;
+}
+
+const char* xccdf_version_info_get_cpe_version(const struct xccdf_version_info* v)
+{
+	if (v == NULL)
+		return "unknown";
+
+	return v->cpe_version;
+}
+
+/// Map of XCCDF versions and their properties
+static const struct xccdf_version_info XCCDF_VERSION_MAP[] = {
+	{"1.2", "http://checklists.nist.gov/xccdf/1.2", "2.3"},
+	{"1.1", "http://checklists.nist.gov/xccdf/1.1", "2.0"},
+	{NULL, NULL, NULL}
+};
+
+const struct xccdf_version_info* xccdf_detect_version_parser(xmlTextReaderPtr reader)
+{
+	const char* namespace_uri = (const char*)xmlTextReaderConstNamespaceUri(reader);
+	const struct xccdf_version_info *mapptr;
+
+	for (mapptr = XCCDF_VERSION_MAP; mapptr->version != 0; ++mapptr) {
+		if (!strcmp(mapptr->namespace_uri, namespace_uri))
+			return mapptr;
+	}
+
+	return NULL;
+}
+
+const struct xccdf_version_info* xccdf_detect_version(const char* file)
+{
+	xmlTextReaderPtr reader = xmlReaderForFile(file, NULL, 0);
+	if (!reader) {
+		if(errno)
+			oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, strerror(errno));
+
+		oscap_dlprintf(DBG_E, "Unable to open file.\n");
+		return NULL;
+	}
+	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != 1);
+	const struct xccdf_version_info* ret = xccdf_detect_version_parser(reader);
+	xmlFreeTextReader(reader);
+	return ret;
+}
 
 struct xccdf_element_spec {
 	xccdf_element_t id;	///< element ID
@@ -127,9 +198,10 @@ xccdf_element_t xccdf_element_get(xmlTextReaderPtr reader)
     const char *nsuri = (const char *)xmlTextReaderConstNamespaceUri(reader);
 
 	for (mapptr = XCCDF_ELEMENT_MAP; mapptr->id != 0; ++mapptr) {
-		if ((!name && !nsuri) ||
+		// FIXME: We are not checking namespaces as a temporary workaround for multiple versions
+		if ((!name/* && !nsuri*/) ||
 		    //(name && nsuri && strcmp(mapptr->name, name) == 0 ))
-		    (name && nsuri && strcmp(mapptr->name, name) == 0 && strcmp(mapptr->ns, nsuri) == 0))
+		    (name && /*nsuri &&*/ strcmp(mapptr->name, name) == 0 /*&& strcmp(mapptr->ns, nsuri) == 0*/))
 			return mapptr->id;
 	}
 

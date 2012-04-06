@@ -866,7 +866,9 @@ bool xccdf_item_add_conflicts(struct xccdf_item* item, const char* conflicts)
 
 void xccdf_rule_to_dom(struct xccdf_rule *rule, xmlNode *rule_node, xmlDoc *doc, xmlNode *parent)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+	const struct xccdf_version_info* version_info = xccdf_item_get_schema_version(XITEM(rule));
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
+			(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
 
 	/* Handle Attributes */
 	const char *extends = xccdf_rule_get_extends(rule);
@@ -936,7 +938,7 @@ void xccdf_rule_to_dom(struct xccdf_rule *rule, xmlNode *rule_node, xmlDoc *doc,
 	struct xccdf_ident_iterator *idents = xccdf_rule_get_idents(rule);
 	while (xccdf_ident_iterator_has_more(idents)) {
 		struct xccdf_ident *ident = xccdf_ident_iterator_next(idents);
-		xccdf_ident_to_dom(ident, doc, rule_node);
+		xccdf_ident_to_dom(ident, doc, rule_node, version_info);
 	}
 	xccdf_ident_iterator_free(idents);
 
@@ -964,7 +966,7 @@ void xccdf_rule_to_dom(struct xccdf_rule *rule, xmlNode *rule_node, xmlDoc *doc,
 	struct xccdf_check_iterator *checks = xccdf_rule_get_checks(rule);
 	while (xccdf_check_iterator_has_more(checks)) {
 		struct xccdf_check *check = xccdf_check_iterator_next(checks);
-		xccdf_check_to_dom(check, doc, rule_node);
+		xccdf_check_to_dom(check, doc, rule_node, version_info);
 	}
 	xccdf_check_iterator_free(checks);
 }

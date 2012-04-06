@@ -326,7 +326,10 @@ void xccdf_texts_to_dom(struct oscap_text_iterator *texts, xmlNode *parent, cons
 
 xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+	const struct xccdf_version_info* version_info = xccdf_item_get_schema_version(item);
+
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
+			(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
 	xmlNode *item_node = NULL;
 	if (parent == NULL)
 		item_node = xmlNewNode(NULL, BAD_CAST "Item");
@@ -353,7 +356,7 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 	struct xccdf_status_iterator *statuses = xccdf_item_get_statuses(item);
 	while (xccdf_status_iterator_has_more(statuses)) {
 		struct xccdf_status *status = xccdf_status_iterator_next(statuses);
-		xccdf_status_to_dom(status, doc, item_node);
+		xccdf_status_to_dom(status, doc, item_node, version_info);
 	}
 	xccdf_status_iterator_free(statuses);
 
@@ -478,9 +481,10 @@ xmlNode *xccdf_warning_to_dom(struct xccdf_warning *warning, xmlDoc *doc, xmlNod
 	return warning_node;
 }
 
-xmlNode *xccdf_status_to_dom(struct xccdf_status *status, xmlDoc *doc, xmlNode *parent)
+xmlNode *xccdf_status_to_dom(struct xccdf_status *status, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
+				(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
 
 	xmlNode *status_node = NULL;
 	xccdf_status_type_t type = xccdf_status_get_status(status);
@@ -561,9 +565,11 @@ xmlNode *xccdf_fix_to_dom(struct xccdf_fix *fix, xmlDoc *doc, xmlNode *parent)
 	return fix_node;
 }
 
-xmlNode *xccdf_ident_to_dom(struct xccdf_ident *ident, xmlDoc *doc, xmlNode *parent)
+xmlNode *xccdf_ident_to_dom(struct xccdf_ident *ident, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
+			(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+
 	const char *id = xccdf_ident_get_id(ident);
 	xmlNode *ident_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "ident", BAD_CAST id);
 
@@ -573,9 +579,11 @@ xmlNode *xccdf_ident_to_dom(struct xccdf_ident *ident, xmlDoc *doc, xmlNode *par
 	return ident_node;
 }
 
-xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *parent)
+xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
+			(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+
 	xmlNode *check_node = NULL;
 	if (xccdf_check_get_complex(check))
 		check_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "complex-check", NULL);
@@ -597,7 +605,7 @@ xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *par
 	struct xccdf_check_iterator *checks = xccdf_check_get_children(check);
 	while (xccdf_check_iterator_has_more(checks)) {
 		struct xccdf_check *new_check = xccdf_check_iterator_next(checks);
-		xccdf_check_to_dom(new_check, doc, check_node);
+		xccdf_check_to_dom(new_check, doc, check_node, version_info);
 	}
 	xccdf_check_iterator_free(checks);
 
@@ -757,11 +765,11 @@ XCCDF_BENCHGETTER(item)  XCCDF_BENCHGETTER(profile) XCCDF_BENCHGETTER(rule)
 XCCDF_BENCHGETTER(group) XCCDF_BENCHGETTER(value)   XCCDF_BENCHGETTER(result)
 #undef XCCDF_BENCHGETTER
 
-const char* xccdf_item_get_schema_version(struct xccdf_item* item)
+const struct xccdf_version_info* xccdf_item_get_schema_version(struct xccdf_item* item)
 {
 	struct xccdf_benchmark* top_benchmark = xccdf_item_get_benchmark(item);
 	if (top_benchmark == NULL)
-		return "unknown";
+		return NULL;
 
 	return xccdf_benchmark_get_schema_version(top_benchmark);
 }
@@ -1009,6 +1017,8 @@ struct xccdf_benchmark_item * xccdf_benchmark_item_clone(struct xccdf_item *pare
 {
     struct xccdf_benchmark_item *item = &XITEM(bench)->sub.benchmark;
     struct xccdf_benchmark_item *clone = &parent->sub.benchmark;
+
+    clone->schema_version = item->schema_version;
 
 	clone->dict = oscap_htable_new();
 	clone->notices = oscap_list_clone(item->notices, (oscap_clone_func) xccdf_notice_clone);

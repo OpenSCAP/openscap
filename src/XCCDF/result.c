@@ -527,11 +527,14 @@ int xccdf_result_export(struct xccdf_result *result, const char *file)
 void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlDoc *doc, xmlNode *parent)
 {
         xmlNs *ns_xccdf = NULL;
+	const struct xccdf_version_info* version_info = xccdf_item_get_schema_version(XITEM(result));
 	if (parent) {
-	        ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+	        ns_xccdf = xmlSearchNsByHref(doc, parent,
+	        		(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
 	} else {
 		if (!result_node) result_node = xccdf_item_to_dom(XITEM(result), doc, NULL);
-                ns_xccdf = xmlNewNs(result_node, XCCDF_BASE_NAMESPACE, NULL);
+                ns_xccdf = xmlNewNs(result_node,
+                		(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info), NULL);
 		xmlDocSetRootElement(doc, result_node);
 	}
 
@@ -590,7 +593,7 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 	struct xccdf_setvalue_iterator *setvalues = xccdf_result_get_setvalues(result);
 	while (xccdf_setvalue_iterator_has_more(setvalues)) {
 		struct xccdf_setvalue *setvalue = xccdf_setvalue_iterator_next(setvalues);
-		xccdf_setvalue_to_dom(setvalue, doc, result_node);
+		xccdf_setvalue_to_dom(setvalue, doc, result_node, version_info);
 	}
 	xccdf_setvalue_iterator_free(setvalues);
 
@@ -630,7 +633,7 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 	struct xccdf_rule_result_iterator *rule_results = xccdf_result_get_rule_results(result);
 	while (xccdf_rule_result_iterator_has_more(rule_results)) {
 		struct xccdf_rule_result *rule_result = xccdf_rule_result_iterator_next(rule_results);
-		xccdf_rule_result_to_dom(rule_result, doc, result_node);
+		xccdf_rule_result_to_dom(rule_result, doc, result_node, version_info);
 	}
 	xccdf_rule_result_iterator_free(rule_results);
 
@@ -736,9 +739,11 @@ static struct xccdf_rule_result *xccdf_rule_result_new_parse(xmlTextReaderPtr re
 	return rr;
 }
 
-xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc, xmlNode *parent)
+xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
+			(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+
 	xmlNode *result_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "rule-result", NULL);
 
 	/* Handle attributes */
@@ -780,14 +785,14 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 	struct xccdf_override_iterator *overrides = xccdf_rule_result_get_overrides(result);
 	while (xccdf_override_iterator_has_more(overrides)) {
 		struct xccdf_override *override = xccdf_override_iterator_next(overrides);
-		xccdf_override_to_dom(override, doc, result_node);
+		xccdf_override_to_dom(override, doc, result_node, version_info);
 	}
 	xccdf_override_iterator_free(overrides);
 
 	struct xccdf_ident_iterator *idents = xccdf_rule_result_get_idents(result);
 	while (xccdf_ident_iterator_has_more(idents)) {
 		struct xccdf_ident *ident = xccdf_ident_iterator_next(idents);
-		xccdf_ident_to_dom(ident, doc, result_node);
+		xccdf_ident_to_dom(ident, doc, result_node, version_info);
 	}
 	xccdf_ident_iterator_free(idents);
 
@@ -829,7 +834,7 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 	struct xccdf_check_iterator *checks = xccdf_rule_result_get_checks(result);
 	while (xccdf_check_iterator_has_more(checks)) {
 		struct xccdf_check *check = xccdf_check_iterator_next(checks);
-		xccdf_check_to_dom(check, doc, result_node);
+		xccdf_check_to_dom(check, doc, result_node, version_info);
 	}
 	xccdf_check_iterator_free(checks);
 
@@ -867,9 +872,11 @@ static struct xccdf_override *xccdf_override_new_parse(xmlTextReaderPtr reader)
 	return override;
 }
 
-xmlNode *xccdf_override_to_dom(struct xccdf_override *override, xmlDoc *doc, xmlNode *parent)
+xmlNode *xccdf_override_to_dom(struct xccdf_override *override, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
+			(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+
 	xmlNode *override_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "override", NULL);
 
 	/* Handle attributes */
