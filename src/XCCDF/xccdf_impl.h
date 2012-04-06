@@ -30,15 +30,10 @@
 
 OSCAP_HIDDEN_START;
 
-#define XCCDF_BASE_NAMESPACE	BAD_CAST "http://checklists.nist.gov/xccdf/1.1"
 #define XCCDF_DC_NAMESPACE	BAD_CAST "http://purl.org/dc/elements/1.1/"
-#define XCCDF_CDF_NAMESPACE	BAD_CAST "http://checklists.nist.gov/xccdf/1.1"
-#define XCCDF_CPE_NAMESPACE	BAD_CAST "http://cpe.mitre.org/dictionary/2.0"
 #define XCCDF_DSIG_NAMESPACE	BAD_CAST "http://w3.org/2000/09/xmldsig#"
 #define XCCDF_XHTML_NAMESPACE	BAD_CAST "http://www.w3.org/1999/xhtml"
 #define XCCDF_XSI_NAMESPACE	BAD_CAST "http://www.w3.org/2001/XMLSchema-instance"
-
-#define XCCDF_SCHEMA_LOCATION   BAD_CAST "http://checklists.nist.gov/xccdf/1.1 xccdf-1.1.4.xsd"
 
 xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc,
 				xmlNode *parent, void *user_args);

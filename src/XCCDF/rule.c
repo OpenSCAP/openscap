@@ -973,7 +973,9 @@ void xccdf_rule_to_dom(struct xccdf_rule *rule, xmlNode *rule_node, xmlDoc *doc,
 
 void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *doc, xmlNode *parent)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent, XCCDF_BASE_NAMESPACE);
+	const struct xccdf_version_info* version_info = xccdf_item_get_schema_version(XITEM(group));
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
+			(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
 
 	/* Handle Attributes */
 	const char *extends = xccdf_group_get_extends(group);
