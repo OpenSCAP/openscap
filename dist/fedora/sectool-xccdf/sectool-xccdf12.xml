@@ -1,0 +1,438 @@
+<?xml version="1.0"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_org.open-scap_benchmark_migrated_sectool_checks" xml:lang="en">
+  <status date="2012-02-06">draft</status>
+  <title>Migrated sectool checks</title>
+  <description>These checks are originally from sectool (http://fedorahosted.org/sectool) and have been migrated to SCE for use with XCCDF and related technologies.</description>
+  <notice id="disclaimer">This XCCDF has been automatically generated, it should only serve as a baseline!</notice>
+  <front-matter>STUB</front-matter>
+  <rear-matter>STUB</rear-matter>
+  <reference href="http://open-scap.org/page/SCE"/>
+  <reference href="http://open-scap.org/page/SCE_result_file"/>
+  <reference href="http://fedorahosted.org/sectool"/>
+  <platform idref="cpe:/o:redhat:enterprise_linux:6"/>
+  <version>0.1</version>
+
+  <model system="urn:xccdf:scoring:default"/>
+  <model system="urn:xccdf:scoring:flat"/>
+
+  <Profile id="xccdf_org.open-scap_profile_Desktop" abstract="false">
+    <title xml:lang="en">Desktop</title>
+    <description xml:lang="en">Desktop checks</description>
+    <select idref="xccdf_org.open-scap_rule_1" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_2" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_3" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_4" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_5" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_6" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_7" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_8" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_9" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_10" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_11" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_12" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_13" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_14" selected="true"/>
+    <select idref="xccdf_org.open-scap_rule_15" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_16" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_17" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_18" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_19" selected="true"/>
+    <select idref="xccdf_org.open-scap_rule_20" selected="true"/>
+    <select idref="xccdf_org.open-scap_rule_21" selected="true"/>
+    <select idref="xccdf_org.open-scap_rule_22" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_23" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_24" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_25" selected="false"/>
+    <refine-value idref="xccdf_org.open-scap_value_var-20" selector="enforcing"/>
+  </Profile>
+
+  <Profile id="xccdf_org.open-scap_profile_Server" abstract="false">
+    <title xml:lang="en">Server</title>
+    <description xml:lang="en">Server checks</description>
+    <select idref="xccdf_org.open-scap_rule_1" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_2" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_3" selected="true"/>
+    <select idref="xccdf_org.open-scap_rule_4" selected="true"/>
+    <select idref="xccdf_org.open-scap_rule_5" selected="true"/>
+    <select idref="xccdf_org.open-scap_rule_6" selected="true"/>
+    <select idref="xccdf_org.open-scap_rule_7" selected="true"/>
+    <select idref="xccdf_org.open-scap_rule_8" selected="true"/>
+    <select idref="xccdf_org.open-scap_rule_9" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_10" selected="true"/>
+    <select idref="xccdf_org.open-scap_rule_11" selected="true"/>
+    <select idref="xccdf_org.open-scap_rule_12" selected="true"/>
+    <select idref="xccdf_org.open-scap_rule_13" selected="true"/>
+    <select idref="xccdf_org.open-scap_rule_14" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_15" selected="true"/>
+    <select idref="xccdf_org.open-scap_rule_16" selected="true"/>
+    <select idref="xccdf_org.open-scap_rule_17" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_18" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_19" selected="true"/>
+    <select idref="xccdf_org.open-scap_rule_20" selected="true"/>
+    <select idref="xccdf_org.open-scap_rule_21" selected="true"/>
+    <select idref="xccdf_org.open-scap_rule_22" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_23" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_24" selected="false"/>
+    <select idref="xccdf_org.open-scap_rule_25" selected="true"/>
+    <refine-value idref="xccdf_org.open-scap_value_var-20" selector="enforcing"/>
+  </Profile>
+
+  <Group id="xccdf_org.open-scap_group_gr-0" hidden="false">
+   <title>Sectool checks</title>
+
+    <Value id="xccdf_org.open-scap_value_var-20" type="string" operator="equals">
+      <title>SELinux state</title>
+      <description xml:lang="en"> 
+	enforcing - SELinux security policy is enforced. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+	permissive - SELinux prints warnings instead of enforcing.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+	disabled - SELinux is fully disabled.
+      </description>
+      <question xml:lang="en">Set the SELinux state</question>
+      <value>enforcing</value>
+      <value selector="enforcing">enforcing</value>
+      <value selector="permissive">permissive</value>
+      <value selector="disabled">disabled</value>
+      <match>enforcing|permissive|disabled</match>
+      <choices mustMatch="1">
+	<choice>enforcing</choice>
+	<choice>permissive</choice>
+	<choice>disabled</choice>
+      </choices>
+    </Value>
+
+  <Rule id="xccdf_org.open-scap_rule_1" selected="true">
+    <title>integrity</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+System integrity test. Checks presence and integrity of
+system commands and directories. For checking the integrity
+of binaries the command rpmverify (rpm -Vf) is used. A search
+for duplicates is also done for each command.</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="00_integrity.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_2" selected="true">
+    <title>bootloader</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+Tests
+* permission and owner of /etc/grub.conf
+* password presence</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="01_bootloader.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_3" selected="true">
+    <title>disk_usage</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+Tells user, which of mounted volumes are going to be full. Uses df to get this info.</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="01_disk_usage.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_4" selected="true">
+    <title>group</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+Checks group for whether
+* line is not blank
+* line has correct number of fields
+* groupname is not empty
+* groupname contains only alpha-numeric characters
+* groupname is shorter than 32 chars
+* all group passwords are shadowed
+* GIDs are valid numbers
+* GIDs are in range 0..60000
+* there are groups with same GID
+* there are same groupnames</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="01_group.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_5" selected="true">
+    <title>passwd</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+Checks passwd for whether
+* /etc/passwd has permission 644 and its owner is root:root
+* /etc/shadow has permission 400 and its owner is root:root
+* line is not blank
+* line has correct number of fields
+* username is not empty
+* username contains only alpha-numeric characters
+* username is shorter than 32 chars
+* all users have password
+* all passwords are shadowed
+* UID and GID are valid numbers
+* UID and GID are in range 500..60000
+* user has UID 0, but his username is not root
+* user has UID 1, but his username is not bin
+* user has GID 0, but his username is not root
+* user has GID 1, but his username is not bin
+* user has negative UID
+* user has negative GID
+* there are users with same UID
+* there are same username
+* root has UID 0
+* user has valid shell (listed in /etc/shells)</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="01_passwd.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_6" selected="true">
+    <title>shadow</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+Checks shadow for whether
+* /etc/shadow has permission 400 and its owner is root:root
+* line is not blank
+* line has correct number of fields
+* username is not empty
+* username contains only alpha-numeric characters
+* username is shorter than 32 chars
+* all users have password
+* there are same usernames</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="01_shadow.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_7" selected="true">
+    <title>home_files</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+Tests ownership and access rights to sensitive files (.bashrc, ssh/id_dsa etc.) in home directories of all users</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="02_home_files.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_8" selected="true">
+    <title>root_dirs</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+Do not allow dot directories in "/"</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="02_root_dirs.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_9" selected="true">
+    <title>path</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+Checks
+* if all directories listed in PATH exist
+Tests environmental variable PATH for
+* hazardous paths curent directiory, relative path, '/tmp'
+* group-writable or world-writable directories
+* writable executables</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="03_path.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_10" selected="true">
+    <title>firewall</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+Simple analysis of firewall policy rules.</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="04_firewall.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_11" selected="true">
+    <title>netserv</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+Audit of currently running network services.</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="05_netserv.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_12" selected="true">
+    <title>openssh</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+OpenSSH configuration audit.</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="05_openssh.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_13" selected="true">
+    <title>openvpn</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+OpenVPN configuration audit.</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="05_openvpn.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_14" selected="true">
+    <title>removed_libs</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+Checks if libraries mapped into memory are the same as the libraries on the disk.
+To get rid of this warnings simply restart these processes (their names and PIDs
+are in messages printed out by this test). Use the command service(8) to restart
+processes that belong to a running system service.</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="05_removed_libs.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_15" selected="true">
+    <title>xinetd</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+xinetd configuration audit.</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="05_xinetd.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_16" selected="true">
+    <title>log_files</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+Tests logfiles presence, owner, group and permissions of logfiles.</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="07_log_files.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_17" selected="true">
+    <title>pam</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+PAM configuration audit.</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="08_pam.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_18" selected="true">
+    <title>permissions</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+Tests important directories for presence, permissions and owner</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="08_permissions.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_19" selected="true">
+    <title>exec_shield</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+Checks if exec-shield is enabled.</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="09_exec_shield.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_20" selected="true">
+    <title>selinux</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+      Checks if you have SELinux enabled and monitors any booleans changes.</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-export value-id="xccdf_org.open-scap_value_var-20" export-name="EXPECTED_STATE"/> <!-- TBD -->
+      <check-content-ref href="09_selinux.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_21" selected="true">
+    <title>va_randomization</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+Checks whether va-randomization is enabled.</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="09_va_randomization.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_22" selected="true">
+    <title>aliases</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+Checks bash aliases for:
+* existence of included file
+* existence of command
+* possibility of changing content of file implementing the command (world/other writable, owner not root)
+* possibility of changing content of included file (world/other writable, owner not root)</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="11_aliases.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_23" selected="true">
+    <title>cron</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+Basic crontab checking.
+Looks for unexpected paths in the crontab PATH variable, checks ownership and
+permissions of cron related dirs and commands listed in crontab.</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="12_cron.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_24" selected="true">
+    <title>nfs</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+Audit of nfs server. Finds RW exports</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="14_nfs.sh"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_org.open-scap_rule_25" selected="true">
+    <title>tcp_wrappers</title>
+    <description>
+      <xhtml:pre xmlns:xhtml="http://www.w3.org/1999/xhtml">
+Checks whether all running applications, which are using libwrap, have some restrictions in /etc/hosts.deny and /etc.hosts allow</xhtml:pre>
+    </description>
+    <check system="http://open-scap.org/page/SCE">
+      <check-import import-name="stdout"/>
+      <check-content-ref href="15_tcp_wrappers.sh"/>
+    </check>
+  </Rule>
+  </Group>
+</Benchmark>
