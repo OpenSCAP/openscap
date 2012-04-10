@@ -17,6 +17,7 @@
 # Test Cases.
 
 function test_probes_interface {
+    require 'ipcalc' || return 255
 
     local ret_val=0;
     local DF="test_probes_interface.xml"
