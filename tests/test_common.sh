@@ -67,12 +67,12 @@ function test_exit {
     exit 1
 }
 
-# Check if requiremets are in a path, use it as follows:
+# Check if requirements are in a path, use it as follows:
 # require 'program' || return 255
 function require {
     eval "which $1 > /dev/null 2>&1"    
     if [ ! $? -eq 0 ]; then	
-        echo -e "No unzip found in $PATH!\n" 
+        echo -e "No '$1' found in $PATH!\n" 
 	return 1; # Test is not applicable.
     fi
     return 0
