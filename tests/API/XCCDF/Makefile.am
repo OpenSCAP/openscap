@@ -27,6 +27,6 @@ check_PROGRAMS = test_api_xccdf
 #test_api_xccdf_dump_SOURCES = test_api_xccdf_dump.c
 test_api_xccdf_SOURCES = test_api_xccdf.c
 
-EXTRA_DIST += test_api_xccdf.sh scap-rhel5-xccdf.xml 
+EXTRA_DIST += test_api_xccdf.sh scap-rhel5-xccdf11.xml scap-rhel5-xccdf12.xml 
 
 endif
