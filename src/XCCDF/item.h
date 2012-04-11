@@ -357,6 +357,16 @@ struct xccdf_target_fact {
 	char *value;
 };
 
+struct xccdf_target_identifier {
+	bool any_element; // if false, this represents <target-id-ref>, else it's any element
+
+	xmlNodePtr element;
+
+	const char* system;
+	const char* href;
+	const char* name;
+};
+
 struct xccdf_instance {
     char *context;
     char *parent_context;

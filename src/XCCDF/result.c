@@ -378,6 +378,120 @@ OSCAP_ACCESSOR_STRING(xccdf_target_fact, name)
 OSCAP_ITERATOR_GEN(xccdf_target_fact)
 OSCAP_ITERATOR_REMOVE_F(xccdf_target_fact)
 
+struct xccdf_target_identifier* xccdf_target_identifier_new(void)
+{
+    return oscap_calloc(1, sizeof(struct xccdf_target_identifier));
+}
+
+void xccdf_target_identifier_free(struct xccdf_target_identifier *ti)
+{
+    if (ti != NULL) {
+    	if (ti->any_element) {
+    		xmlFreeNode(ti->element);
+    	}
+		else {
+        	oscap_free(ti->system);
+        	oscap_free(ti->href);
+        	oscap_free(ti->name);
+        }
+
+    	oscap_free(ti);
+    }
+}
+
+bool xccdf_target_identifier_set_xml_node(struct xccdf_target_identifier *ti, void* node)
+{
+	if (!ti->any_element) {
+		oscap_free(ti->system);
+		oscap_free(ti->href);
+		oscap_free(ti->name);
+	}
+	else if (ti->element)
+		xmlFreeNode(ti->element);
+
+	ti->any_element = true;
+	ti->element = (xmlNodePtr)node;
+
+	return true;
+}
+
+void* xccdf_target_identifier_get_xml_node(const struct xccdf_target_identifier* ti)
+{
+	if (!ti->any_element)
+		return NULL;
+
+	return ti->element;
+}
+
+bool xccdf_target_identifier_set_system(struct xccdf_target_identifier *ti, const char *newval)
+{
+	if (ti->any_element) {
+		if (ti->element)
+			xmlFreeNode(ti->element);
+	}
+
+	ti->any_element = false;
+	oscap_free(ti->system);
+	ti->system = oscap_strdup(newval);
+
+	return true;
+}
+
+const char* xccdf_target_identifier_get_system(const struct xccdf_target_identifier* ti)
+{
+	if (ti->any_element)
+		return NULL;
+
+	return ti->system;
+}
+
+bool xccdf_target_identifier_set_href(struct xccdf_target_identifier *ti, const char *newval)
+{
+	if (ti->any_element) {
+		if (ti->element)
+			xmlFreeNode(ti->element);
+	}
+
+	ti->any_element = false;
+	oscap_free(ti->href);
+	ti->href = oscap_strdup(newval);
+
+	return true;
+}
+
+const char* xccdf_target_identifier_get_href(const struct xccdf_target_identifier* ti)
+{
+	if (ti->any_element)
+		return NULL;
+
+	return ti->href;
+}
+
+bool xccdf_target_identifier_set_name(struct xccdf_target_identifier *ti, const char *newval)
+{
+	if (ti->any_element) {
+		if (ti->element)
+			xmlFreeNode(ti->element);
+	}
+
+	ti->any_element = false;
+	oscap_free(ti->name);
+	ti->name = oscap_strdup(newval);
+
+	return true;
+}
+
+const char* xccdf_target_identifier_get_name(const struct xccdf_target_identifier* ti)
+{
+	if (ti->any_element)
+		return NULL;
+
+	return ti->name;
+}
+
+OSCAP_ITERATOR_GEN(xccdf_target_identifier)
+OSCAP_ITERATOR_REMOVE_F(xccdf_target_identifier)
+
 struct xccdf_instance *xccdf_instance_new(void)
 {
     struct xccdf_instance *inst = oscap_calloc(1, sizeof(struct xccdf_instance));
@@ -737,6 +851,38 @@ static struct xccdf_rule_result *xccdf_rule_result_new_parse(xmlTextReaderPtr re
 	}
 
 	return rr;
+}
+
+xmlNode *xccdf_target_identifier_to_dom(const struct xccdf_target_identifier *ti, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
+{
+	if (ti->any_element) {
+		// we have to copy since we are adding the node to an existing document
+		// and that document will take ownership
+		xmlNodePtr ret = xmlCopyNode(ti->element, 1);
+		xmlAddChild(parent, ret);
+		return ret;
+	}
+	else {
+		xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
+				(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+
+		xmlNode *target_idref_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "target-id-ref", NULL);
+
+		/* Handle attributes */
+		const char *system = xccdf_target_identifier_get_system(ti);
+		if (system)
+			xmlNewProp(target_idref_node, BAD_CAST "system", BAD_CAST system);
+
+		const char *href = xccdf_target_identifier_get_href(ti);
+		if (href)
+			xmlNewProp(target_idref_node, BAD_CAST "href", BAD_CAST href);
+
+		const char *name = xccdf_target_identifier_get_name(ti);
+		if (name)
+			xmlNewProp(target_idref_node, BAD_CAST "name", BAD_CAST name);
+
+		return target_idref_node;
+	}
 }
 
 xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)

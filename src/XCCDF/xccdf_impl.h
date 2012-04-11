@@ -49,6 +49,7 @@ void xccdf_value_to_dom(struct xccdf_value *value, xmlNode *value_node, xmlDoc *
 void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *doc, xmlNode *parent);
 void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, xmlDoc *doc, xmlNode *parent);
 void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlDoc *doc, xmlNode *parent);
+xmlNode *xccdf_target_identifier_to_dom(const struct xccdf_target_identifier *ti, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info);
 xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info);
 xmlNode *xccdf_ident_to_dom(struct xccdf_ident *ident, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info);
 xmlNode *xccdf_setvalue_to_dom(struct xccdf_setvalue *setvalue, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info);

@@ -390,6 +390,14 @@ struct xccdf_score;
 struct xccdf_target_fact;
 
 /**
+ * @struct xccdf_target_identifier
+ * Can be either <target-id-ref> or some other element.
+ * @see xccdf_result
+ * @note XCCDF 1.2+ only
+ */
+struct xccdf_target_identifier;
+
+/**
  * @struct xccdf_plain_text
  * XCCDF target fact.
  * @see xccdf_result
@@ -590,6 +598,13 @@ struct xccdf_score_iterator;
  * @see oscap_iterator
  */
 struct xccdf_target_fact_iterator;
+
+/**
+ * @struct xccdf_target_identifier_iterator
+ * Override iterator.
+ * @see oscap_iterator
+ */
+struct xccdf_target_identifier_iterator;
 
 /**
  * @struct xccdf_plain_text_iterator
@@ -952,6 +967,13 @@ struct xccdf_target_fact *xccdf_target_fact_new(void);
 struct xccdf_target_fact * xccdf_target_fact_clone(const struct xccdf_target_fact * tf);
 /// @memberof xccdf_target_fact
 void xccdf_target_fact_free(struct xccdf_target_fact *fact);
+
+/// @memberof xccdf_target_identifier
+struct xccdf_target_identifier *xccdf_target_identifier_new(void);
+/// @memberof xccdf_target_identifier
+struct xccdf_target_identifier * xccdf_target_identifier_clone(const struct xccdf_target_identifier * ti);
+/// @memberof xccdf_target_identifier
+void xccdf_target_identifier_free(struct xccdf_target_identifier *ti);
 
 /// @memberof xccdf_instance
 struct xccdf_instance *xccdf_instance_new(void);
@@ -1569,6 +1591,27 @@ void xccdf_target_fact_iterator_free(struct xccdf_target_fact_iterator *it);
  * @memberof xccdf_target_fact_iterator
  */
 void xccdf_target_fact_iterator_reset(struct xccdf_target_fact_iterator *it);
+
+/**
+ * Return the next xccdf_target_identifier structure from the list and increment the iterator
+ * @memberof xccdf_target_identifier_iterator
+ */
+struct xccdf_target_identifier *xccdf_target_identifier_iterator_next(struct xccdf_target_identifier_iterator *it);
+/**
+ * Return true if the list is not empty, false otherwise
+ * @memberof xccdf_target_identifier_iterator
+ */
+bool xccdf_target_identifier_iterator_has_more(struct xccdf_target_identifier_iterator *it);
+/**
+ * Free the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_target_identifier_iterator
+ */
+void xccdf_target_identifier_iterator_free(struct xccdf_target_identifier_iterator *it);
+/**
+ * Reset the iterator structure (it makes no changes to the list structure)
+ * @memberof xccdf_target_identifier_iterator
+ */
+void xccdf_target_identifier_iterator_reset(struct xccdf_target_identifier_iterator *it);
 
 
 /**
@@ -2520,6 +2563,14 @@ xccdf_value_type_t xccdf_target_fact_get_type(const struct xccdf_target_fact *it
 const char *xccdf_target_fact_get_value(const struct xccdf_target_fact *item);
 /// @memberof xccdf_target_fact
 const char *xccdf_target_fact_get_name(const struct xccdf_target_fact *item);
+/// @memberof xccdf_target_identifier
+void* xccdf_target_identifier_get_xml_node(const struct xccdf_target_identifier *item);
+/// @memberof xccdf_target_identifier
+const char *xccdf_target_identifier_get_system(const struct xccdf_target_identifier *item);
+/// @memberof xccdf_target_identifier
+const char *xccdf_target_identifier_get_href(const struct xccdf_target_identifier *item);
+/// @memberof xccdf_target_identifier
+const char *xccdf_target_identifier_get_name(const struct xccdf_target_identifier *item);
 /// @memberof xccdf_instance
 const char *xccdf_instance_get_context(const struct xccdf_instance *item);
 /// @memberof xccdf_instance
@@ -2883,6 +2934,15 @@ bool xccdf_target_fact_set_boolean(struct xccdf_target_fact *fact, bool val);
 /// @memberof xccdf_target_fact
 bool xccdf_target_fact_set_name(struct xccdf_target_fact *obj, const char *newval);
 
+/// @memberof xccdf_target_identifier
+bool xccdf_target_identifier_set_xml_node(struct xccdf_target_identifier *ti, void* node);
+/// @memberof xccdf_target_identifier
+bool xccdf_target_identifier_set_system(struct xccdf_target_identifier *ti, const char *newval);
+/// @memberof xccdf_target_identifier
+bool xccdf_target_identifier_set_href(struct xccdf_target_identifier *ti, const char *newval);
+/// @memberof xccdf_target_identifier
+bool xccdf_target_identifier_set_name(struct xccdf_target_identifier *ti, const char *newval);
+
 /// @memberof xccdf_instance
 bool xccdf_instance_set_context(struct xccdf_instance *obj, const char *newval);
 /// @memberof xccdf_instance
@@ -3153,6 +3213,8 @@ void xccdf_identity_iterator_remove(struct xccdf_identity_iterator *it);
 void xccdf_score_iterator_remove(struct xccdf_score_iterator *it);
 /// @memberof xccdf_target_fact_iterator
 void xccdf_target_fact_iterator_remove(struct xccdf_target_fact_iterator *it);
+/// @memberof xccdf_target_identifier_iterator
+void xccdf_target_identifier_iterator_remove(struct xccdf_target_identifier_iterator *it);
 /// @memberof xccdf_value_instance_iterator
 void xccdf_value_instance_iterator_remove(struct xccdf_value_instance_iterator *it);
 
