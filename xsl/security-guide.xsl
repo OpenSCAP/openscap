@@ -42,7 +42,7 @@ Authors:
 
 <xsl:param name='clean-profile-notes' select='1'/>
 <xsl:param name='hide-profile-info'/>
-<xsl:param name='hide-rules' select='$profile=""'/>
+<xsl:param name='hide-rules' select='false'/>
 
 <xsl:output method="xml" encoding="UTF-8" indent="yes"/>
 
