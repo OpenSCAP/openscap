@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 
 Authors:
      Lukas Kuklinek <lkuklinek@redhat.com>
+     Martin Preisler <mpreisle@redhat.com>
 -->
 
 
@@ -43,22 +44,10 @@ Authors:
 
 <xsl:output method="xml" encoding="UTF-8" indent="yes"/>
 
-<xsl:variable name='end-times'>
-  <s:times>
-  <xsl:for-each select='/cdf:Benchmark/cdf:TestResult/@end-time'>
-    <xsl:sort order='descending'/>
-    <s:t t='{.}'/>
-  </xsl:for-each>
-  </s:times>
-</xsl:variable>
-
-<xsl:variable name='last-test-time' select='exsl:node-set($end-times)/s:times/s:t[1]/@t'/>
-
 <!-- parameters -->
-<xsl:param name="result-id" select='/cdf:Benchmark/cdf:TestResult[@end-time=$last-test-time][last()]/@id'/>
+<xsl:param name="result-id"/>
 <xsl:param name="with-target-facts"/>
 <xsl:param name="show"/>
-<xsl:param name='profile' select='/cdf:Benchmark/cdf:TestResult[@id=$result-id][1]/cdf:profile/@idref'/>
 
 <!-- OVAL and SCE result parameters -->
 <xsl:param name='pwd'/>
@@ -81,8 +70,6 @@ Authors:
   </xsl:choose>
 </xsl:variable>
 
-<xsl:variable name='result' select='$root/cdf:TestResult[@id=$result-id][1]'/>
-
 <xsl:variable name='toshow'>
   <xsl:choose>
     <xsl:when test='substring($show, 1, 1) = "="'>,<xsl:value-of select='substring($show, 2)'/>,</xsl:when>
@@ -94,14 +81,39 @@ Authors:
 <xsl:key name="items" match="cdf:Group|cdf:Rule|cdf:Value" use="@id"/>
 <xsl:key name="profiles" match="cdf:Profile" use="@id"/>
 
-
 <!-- top-level template -->
 <xsl:template match='cdf:Benchmark'>
+  <xsl:variable name='end-times'>
+    <s:times>
+    <xsl:for-each select='cdf:TestResult/@end-time'>
+      <xsl:sort order='descending'/>
+      <s:t t='{.}'/>
+    </xsl:for-each>
+    </s:times>
+  </xsl:variable>
+
+  <xsl:variable name='last-test-time' select='exsl:node-set($end-times)/s:times/s:t[1]/@t'/>
+
+  <xsl:variable name='final-result-id'>
+    <xsl:choose>
+      <xsl:when test="$result-id">
+        <xsl:value-of select='$result-id'/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select='cdf:TestResult[@end-time=$last-test-time][last()]/@id'/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+
+  <xsl:variable name='result' select='cdf:TestResult[@id=$final-result-id]'/>
+
+  <xsl:variable name='profile' select='cdf:TestResult[@id=$result-id][1]/cdf:profile/@idref'/>
+
   <xsl:choose>
-    <xsl:when test='count($root/cdf:TestResult) = 0'>
+    <xsl:when test='count(cdf:TestResult) = 0'>
       <xsl:message terminate='yes'>This benchmark does not contain any test results.</xsl:message>
     </xsl:when>
-    <xsl:when test='$result-id and $result'>
+    <xsl:when test='$result'>
       <xsl:if test='$verbosity'>
         <xsl:message>TestResult ID: <xsl:value-of select='$result-id'/></xsl:message>
         <xsl:message>Profile: <xsl:value-of select='$profile'/></xsl:message>
