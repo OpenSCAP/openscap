@@ -180,6 +180,7 @@ static const struct xccdf_element_spec XCCDF_ELEMENT_MAP[] = {
 	{XCCDFE_TARGET, XCCDF_XMLNS, "target"},
 	{XCCDFE_TARGET_ADDRESS, XCCDF_XMLNS, "target-address"},
 	{XCCDFE_TARGET_FACTS, XCCDF_XMLNS, "target-facts"},
+	{XCCDFE_TARGET_IDENTIFIER, XCCDF_XMLNS, "target-id-ref"},
 	{XCCDFE_TITLE, XCCDF_XMLNS, "title"},
 	{XCCDFE_UPPER_BOUND, XCCDF_XMLNS, "upper-bound"},
 	{XCCDFE_VALUE_VAL, XCCDF_XMLNS, "value"},

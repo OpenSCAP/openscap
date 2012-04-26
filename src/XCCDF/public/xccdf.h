@@ -2493,6 +2493,8 @@ struct oscap_text_iterator *xccdf_result_get_remarks(const struct xccdf_result *
 /// @memberof xccdf_result
 struct xccdf_target_fact_iterator *xccdf_result_get_target_facts(const struct xccdf_result *item);
 /// @memberof xccdf_result
+struct xccdf_target_identifier_iterator *xccdf_result_get_target_id_refs(const struct xccdf_result *item);
+/// @memberof xccdf_result
 struct xccdf_setvalue_iterator *xccdf_result_get_setvalues(const struct xccdf_result *item);
 /// @memberof xccdf_result
 struct xccdf_rule_result_iterator *xccdf_result_get_rule_results(const struct xccdf_result *item);
@@ -3094,6 +3096,8 @@ bool xccdf_result_add_rule_result(struct xccdf_result *item, struct xccdf_rule_r
 bool xccdf_result_add_setvalue(struct xccdf_result *item, struct xccdf_setvalue *newval);
 /// @memberof xccdf_result
 bool xccdf_result_add_target_fact(struct xccdf_result *item, struct xccdf_target_fact *newval);
+/// @memberof xccdf_result
+bool xccdf_result_add_target_identifier(struct xccdf_result *item, struct xccdf_target_identifier *newval);
 /// @memberof xccdf_result
 bool xccdf_result_add_remark(struct xccdf_result *item, struct oscap_text *newval);
 /// @memberof xccdf_result

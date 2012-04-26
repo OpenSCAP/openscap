@@ -65,7 +65,8 @@ struct xccdf_result *xccdf_result_new(void)
 	struct xccdf_item *result = xccdf_item_new(XCCDF_RESULT, NULL);
 	oscap_create_lists(&result->sub.result.identities, &result->sub.result.targets,
 		&result->sub.result.remarks, &result->sub.result.target_addresses,
-		&result->sub.result.target_facts, &result->sub.result.setvalues, &result->sub.result.organizations,
+		&result->sub.result.target_facts, &result->sub.result.target_id_refs,
+		&result->sub.result.setvalues, &result->sub.result.organizations,
 		&result->sub.result.rule_results, &result->sub.result.scores, NULL);
 	return XRESULT(result);
 }
@@ -89,6 +90,7 @@ static inline void xccdf_result_free_impl(struct xccdf_item *result)
 
 		oscap_list_free(result->sub.result.identities, (oscap_destruct_func) xccdf_identity_free);
 		oscap_list_free(result->sub.result.target_facts, (oscap_destruct_func) xccdf_target_fact_free);
+		oscap_list_free(result->sub.result.target_id_refs, (oscap_destruct_func) xccdf_target_identifier_free);
 		oscap_list_free(result->sub.result.scores, (oscap_destruct_func) xccdf_score_free);
 		oscap_list_free(result->sub.result.targets, oscap_free);
 		oscap_list_free(result->sub.result.remarks, (oscap_destruct_func) oscap_text_free);
@@ -131,6 +133,7 @@ XCCDF_LISTMANIP_STRING(result, target_address, target_addresses)
 XCCDF_LISTMANIP_STRING(result, organization, organizations)
 XCCDF_LISTMANIP_TEXT(result, remark, remarks)
 XCCDF_LISTMANIP(result, target_fact, target_facts)
+XCCDF_LISTMANIP(result, target_identifier, target_id_refs)
 XCCDF_LISTMANIP(result, setvalue, setvalues)
 XCCDF_LISTMANIP(result, rule_result, rule_results)
 XCCDF_LISTMANIP(result, score, scores)
@@ -383,6 +386,22 @@ struct xccdf_target_identifier* xccdf_target_identifier_new(void)
     return oscap_calloc(1, sizeof(struct xccdf_target_identifier));
 }
 
+struct xccdf_target_identifier* xccdf_target_identifier_clone(const struct xccdf_target_identifier* ti)
+{
+	struct xccdf_target_identifier* ret = xccdf_target_identifier_new();
+
+	if (xccdf_target_identifier_get_xml_node(ti)) {
+		xccdf_target_identifier_set_xml_node(ret, xccdf_target_identifier_get_xml_node(ti));
+	}
+	else {
+		xccdf_target_identifier_set_system(ret, xccdf_target_identifier_get_system(ti));
+		xccdf_target_identifier_set_name(ret, xccdf_target_identifier_get_name(ti));
+		xccdf_target_identifier_set_href(ret, xccdf_target_identifier_get_href(ti));
+	}
+
+	return ret;
+}
+
 void xccdf_target_identifier_free(struct xccdf_target_identifier *ti)
 {
     if (ti != NULL) {
@@ -539,6 +558,7 @@ const struct oscap_string_map XCCDF_RESULT_MAP[] = {
 
 static struct xccdf_identity *xccdf_identity_new_parse(xmlTextReaderPtr reader);
 static struct xccdf_target_fact *xccdf_target_fact_new_parse(xmlTextReaderPtr reader);
+static struct xccdf_target_identifier *xccdf_target_identifier_new_parse(xmlTextReaderPtr reader);
 static struct xccdf_score *xccdf_score_new_parse(xmlTextReaderPtr reader);
 static struct xccdf_rule_result *xccdf_rule_result_new_parse(xmlTextReaderPtr reader);
 static struct xccdf_override *xccdf_override_new_parse(xmlTextReaderPtr reader);
@@ -588,6 +608,9 @@ struct xccdf_result *xccdf_result_new_parse(xmlTextReaderPtr reader)
 				xmlTextReaderRead(reader);
 			}
 			break;
+		case XCCDFE_TARGET_IDENTIFIER:
+			oscap_list_add(res->sub.result.target_id_refs, xccdf_target_identifier_new_parse(reader));
+			break;
 		case XCCDFE_SET_VALUE:
 			oscap_list_add(res->sub.result.setvalues, xccdf_setvalue_new_parse(reader));
 			break;
@@ -602,6 +625,8 @@ struct xccdf_result *xccdf_result_new_parse(xmlTextReaderPtr reader)
 				res->sub.result.benchmark_uri = xccdf_attribute_copy(reader, XCCDFA_HREF);
 			break;
 		default: xccdf_item_process_element(res, reader);
+
+		// TODO: any element from other namespace is supposed to go into xccdf_target_identifier
 		}
 		xmlTextReaderRead(reader);
 	}
@@ -744,6 +769,13 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
         }
         xccdf_target_fact_iterator_free(target_facts);
 
+	struct xccdf_target_identifier_iterator *target_id_refs = xccdf_result_get_target_id_refs(result);
+	while (xccdf_target_identifier_iterator_has_more(target_id_refs)) {
+		struct xccdf_target_identifier *target_identifier = xccdf_target_identifier_iterator_next(target_id_refs);
+		xccdf_target_identifier_to_dom(target_identifier, doc, result_node, version_info);
+	}
+	xccdf_target_identifier_iterator_free(target_id_refs);
+
 	struct xccdf_rule_result_iterator *rule_results = xccdf_result_get_rule_results(result);
 	while (xccdf_rule_result_iterator_has_more(rule_results)) {
 		struct xccdf_rule_result *rule_result = xccdf_rule_result_iterator_next(rule_results);
@@ -792,6 +824,23 @@ static struct xccdf_target_fact *xccdf_target_fact_new_parse(xmlTextReaderPtr re
 	fact->name = xccdf_attribute_copy(reader, XCCDFA_NAME);
 	fact->value = oscap_element_string_copy(reader);
 	return fact;
+}
+
+static struct xccdf_target_identifier *xccdf_target_identifier_new_parse(xmlTextReaderPtr reader)
+{
+	struct xccdf_target_identifier *ret = xccdf_target_identifier_new();
+
+	if (xccdf_element_get(reader) == XCCDFE_TARGET_IDENTIFIER) {
+		xccdf_target_identifier_set_system(ret, xccdf_attribute_get(reader, XCCDFA_SYSTEM));
+		xccdf_target_identifier_set_href(ret, xccdf_attribute_get(reader, XCCDFA_HREF));
+		xccdf_target_identifier_set_name(ret, xccdf_attribute_get(reader, XCCDFA_NAME));
+	}
+	else {
+		// this is OK because we clone the node in the setter
+		xccdf_target_identifier_set_xml_node(ret, xmlTextReaderCurrentNode(reader));
+	}
+
+	return ret;
 }
 
 static struct xccdf_score *xccdf_score_new_parse(xmlTextReaderPtr reader)
@@ -869,9 +918,9 @@ xmlNode *xccdf_target_identifier_to_dom(const struct xccdf_target_identifier *ti
 		xmlNode *target_idref_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "target-id-ref", NULL);
 
 		/* Handle attributes */
-		const char *system = xccdf_target_identifier_get_system(ti);
-		if (system)
-			xmlNewProp(target_idref_node, BAD_CAST "system", BAD_CAST system);
+		const char *psystem = xccdf_target_identifier_get_system(ti);
+		if (psystem)
+			xmlNewProp(target_idref_node, BAD_CAST "system", BAD_CAST psystem);
 
 		const char *href = xccdf_target_identifier_get_href(ti);
 		if (href)
@@ -1137,6 +1186,7 @@ void xccdf_result_dump(struct xccdf_result *res, int depth)
 		xccdf_print_depth(depth); printf("target addresses");
 		oscap_list_dump(XITEM(res)->sub.result.target_addresses, xccdf_cstring_dump, depth+1);
 		//xccdf_print_depth(depth); printf("target_facts");
+		//xccdf_print_depth(depth); printf("target_id_refs");
 		xccdf_print_depth(depth); printf("setvalues");
 		oscap_list_dump(XITEM(res)->sub.result.setvalues, xccdf_setvalue_dump, depth+1);
 		xccdf_print_depth(depth); printf("rule results");
