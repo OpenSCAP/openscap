@@ -152,14 +152,6 @@ Authors:
   <chapter id='summary'>
     <title>Summary</title>
     
-    <para>During <emphasis><xsl:value-of select='cdf:title[1]'/></emphasis> (ID <xsl:value-of select='@id'/>) processing
-       <xsl:if test='cdf:benchmark'> using the <emphasis><xsl:value-of select='cdf:benchmark/@href'/></emphasis> benchmark </xsl:if>
-       <xsl:if test='cdf:identity'> triggered by <emphasis><xsl:value-of select='cdf:identity'/></emphasis></xsl:if>
-       which <xsl:if test='@start-time'> started <phrase role='date'><xsl:apply-templates mode='date' select='@start-time'/></phrase> and </xsl:if>
-       ended <phrase role='date'><xsl:apply-templates mode='date' select='@end-time'/></phrase>,
-       <xsl:value-of select='count(cdf:rule-result)'/> rule results were recorded.
-    </para>
-
     <xsl:apply-templates select='@id|cdf:benchmark|cdf:version|@start-time|@end-time|cdf:profile|cdf:identity'/>
 
     <para>Target: <emphasis role='strong'><xsl:value-of select='cdf:target[1]'/></emphasis>
