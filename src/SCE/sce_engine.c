@@ -486,7 +486,13 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			// FIXME: Read by larger chunks in the future
 			while (read(pipefd[0], &readbuf, 1) > 0)
 			{
-				read_bytes += 1;
+				// & is a special case, we have to "escape" it manually
+				// (all else will eventually get handled by libxml)
+				if (readbuf == '&')
+					read_bytes += 5; // we have to write "&amp;" instead of just &
+				else
+					read_bytes += 1;
+
 				// + 1 because we want to add \0 at the end
 				if (read_bytes + 1 > stdout_buffer_size)
 				{
@@ -495,8 +501,20 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 					stdout_buffer = realloc(stdout_buffer, sizeof(char) * stdout_buffer_size);
 				}
 
-				// index from 0 onwards, first byte ends up on index 0
-				stdout_buffer[read_bytes - 1] = readbuf;
+				// write the escaped "&amp;" to the stdout buffer
+				if (readbuf == '&')
+				{
+					stdout_buffer[read_bytes - 5] = '&';
+					stdout_buffer[read_bytes - 4] = 'a';
+					stdout_buffer[read_bytes - 3] = 'm';
+					stdout_buffer[read_bytes - 2] = 'p';
+					stdout_buffer[read_bytes - 1] = ';';
+				}
+				else
+				{
+					// index from 0 onwards, first byte ends up on index 0
+					stdout_buffer[read_bytes - 1] = readbuf;
+				}
 			}
 			stdout_buffer[read_bytes] = '\0';
 
@@ -505,7 +523,6 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			// we are the parent process
 			int wstatus;
 			waitpid(fork_result, &wstatus, 0);
-
 
 			// we subtract 100 here to shift the exit code to xccdf_test_result_type_t enum range
 			int raw_result = WEXITSTATUS(wstatus) - 100;
