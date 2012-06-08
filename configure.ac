@@ -1,3 +1,7 @@
+# ! MAKE SURE YOU ARE EDITING THE ac_probes/configure.ac.tpl FILE,
+# ! THE configure.ac FILE ITSELF IS GENERATED FROM THE TEMPLATE USING
+# ! ac_probes/ac_probes.sh
+
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.59)
