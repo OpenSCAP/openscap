@@ -154,12 +154,6 @@ Authors:
     
     <xsl:apply-templates select='@id|cdf:benchmark|cdf:version|@start-time|@end-time|cdf:profile|cdf:identity'/>
 
-    <para>Target: <emphasis role='strong'><xsl:value-of select='cdf:target[1]'/></emphasis>
-      <xsl:for-each select='cdf:target[position() &gt; 1]'>,
-        <xsl:text>, </xsl:text><emphasis role='strong'><xsl:value-of select='.'/></emphasis>
-      </xsl:for-each>
-    </para>
-
     <table role='raw'>
       <title>Rule Results Summary</title>
       <tgroup>
