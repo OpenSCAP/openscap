@@ -187,24 +187,6 @@ Authors:
     </tbody>
   </table>
     
-    <table role='raw'>
-      <title>Rule Results Summary</title>
-      <tgroup>
-        <tbody>
-          <row><entry>pass</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="pass"])'/></entry></row>
-          <row><entry>fixed</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="fixed"])'/></entry></row>
-          <row><entry>fail</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="fail"])'/></entry></row>
-          <row><entry>error</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="error"])'/></entry></row>
-          <row><entry>not selected</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="notselected"])'/></entry></row>
-          <row><entry>not checked</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="notchecked"])'/></entry></row>
-          <row><entry>not applicable</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="notapplicable"])'/></entry></row>
-          <row><entry>informational</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="informational"])'/></entry></row>
-          <row><entry>unknown</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="unknown"])'/></entry></row>
-          <row><entry><emphasis role='strong'>total</emphasis></entry><entry><xsl:value-of select='count(cdf:rule-result)'/></entry></row>
-        </tbody>
-      </tgroup>
-    </table>
-  </chapter>
   <xsl:apply-templates select='cdf:identity'/>
 </xsl:template>
 
@@ -288,6 +270,24 @@ Authors:
     <title>Results</title>
     <xsl:choose>
       <xsl:when test='$results'>
+        <table role='raw'>
+          <title>Rule Results Summary</title>
+          <tgroup>
+            <tbody>
+              <row><entry>pass</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="pass"])'/></entry></row>
+              <row><entry>fixed</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="fixed"])'/></entry></row>
+              <row><entry>fail</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="fail"])'/></entry></row>
+              <row><entry>error</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="error"])'/></entry></row>
+              <row><entry>not selected</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="notselected"])'/></entry></row>
+              <row><entry>not checked</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="notchecked"])'/></entry></row>
+              <row><entry>not applicable</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="notapplicable"])'/></entry></row>
+              <row><entry>informational</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="informational"])'/></entry></row>
+              <row><entry>unknown</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="unknown"])'/></entry></row>
+              <row><entry><emphasis role='strong'>total</emphasis></entry><entry><xsl:value-of select='count(cdf:rule-result)'/></entry></row>
+            </tbody>
+          </tgroup>
+        </table>
+
         <xsl:apply-templates select='.' mode='rr.table'><xsl:with-param name='results' select='$results'/></xsl:apply-templates>
       </xsl:when>
       <xsl:otherwise><para role='unknown'>No rule results.</para></xsl:otherwise>
