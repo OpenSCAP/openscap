@@ -219,9 +219,10 @@ Authors:
       <xsl:with-param name='title' select='"Remarks"' />
     </xsl:call-template>
 
-    <xsl:if test='cdf:platform'>
+    <xsl:if test='/cdf:Benchmark/cdf:platform or cdf:platform'>
       <itemizedlist>
         <title>Platforms</title>
+        <xsl:apply-templates select='/cdf:Benchmark/cdf:platform'/>
         <xsl:apply-templates select='cdf:platform'/>
       </itemizedlist>
     </xsl:if>
