@@ -115,8 +115,8 @@ Authors:
     </xsl:when>
     <xsl:when test='$result'>
       <xsl:if test='$verbosity'>
-        <xsl:message>TestResult ID: <xsl:value-of select='$result-id'/></xsl:message>
-        <xsl:message>Profile: <xsl:value-of select='$profile'/></xsl:message>
+        <xsl:message>TestResult ID: <xsl:value-of select='$final-result-id'/></xsl:message>
+        <xsl:message>Profile: <xsl:choose><xsl:when test='$profile'><xsl:value-of select="$profile"/></xsl:when><xsl:otherwise>(Default)</xsl:otherwise></xsl:choose></xsl:message>
       </xsl:if>
       <xsl:apply-templates select='$result'/>
     </xsl:when>
