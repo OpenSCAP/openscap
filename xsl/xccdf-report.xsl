@@ -148,11 +148,45 @@ Authors:
 </xsl:template>
 
 <xsl:template name='summary'>
-  <chapter id='summary'>
-    <title>Summary</title>
+  <table id="test-result-summary">
+    <thead>
+      <row>
+        <entry>Result ID</entry>
+        <entry>Profile</entry>
+        <entry>Start time</entry>
+        <entry>End time</entry>
+        <entry>Benchmark version</entry>
+      </row>
+    </thead>
+    <tbody>
+      <row>
+        <entry align="center"><xsl:value-of select="@id"/></entry>
+        <entry align="center">
+          <xsl:choose>
+            <xsl:when test="cdf:profile">
+              <xsl:value-of select="cdf:profile/text()"/>
+            </xsl:when>
+            <xsl:otherwise>
+              (Default profile)
+            </xsl:otherwise>
+          </xsl:choose>
+        </entry>
+        <entry align="center"><date><xsl:value-of select="@start-time"/></date></entry>
+        <entry align="center"><date><xsl:value-of select="@end-time"/></date></entry>
+        <entry align="center">
+          <xsl:choose>
+            <xsl:when test="/cdf:Benchmark/cdf:version">
+              <xsl:value-of select="/cdf:Benchmark/cdf:version/text()"/>
+            </xsl:when>
+            <xsl:otherwise>
+              Unknown
+            </xsl:otherwise>
+          </xsl:choose>
+        </entry>
+      </row>
+    </tbody>
+  </table>
     
-    <xsl:apply-templates select='@id|cdf:benchmark|cdf:version|@start-time|@end-time|cdf:profile|cdf:identity'/>
-
     <table role='raw'>
       <title>Rule Results Summary</title>
       <tgroup>
@@ -171,6 +205,7 @@ Authors:
       </tgroup>
     </table>
   </chapter>
+  <xsl:apply-templates select='cdf:identity'/>
 </xsl:template>
 
 <xsl:template name='target-info'>
@@ -328,25 +363,8 @@ Authors:
   </para>
 </xsl:template>
 
-<xsl:template match='@id'>
-    <para>Result ID: <emphasis role='strong'><xsl:value-of select='.'/></emphasis></para>
-</xsl:template>
-
 <xsl:template match='@severity'>
     <para>Severity: <emphasis role='strong'><xsl:value-of select='.'/></emphasis></para>
-</xsl:template>
-
-<xsl:template match='cdf:identity'>
-    <para>Identity: <emphasis role='strong'><xsl:value-of select='.'/></emphasis>
-      (<xsl:if test='@authenticated!="1" and @authenticated!="true"'>not </xsl:if>authenticated, <xsl:if test='@privileged!="1" and @privileged!="true"'>not </xsl:if>privileged)</para>
-</xsl:template>
-
-<xsl:template match='@end-time'>
-    <para>End time: <emphasis role='strong'><phrase role='date'><xsl:apply-templates mode='date' select='.'/></phrase></emphasis></para>
-</xsl:template>
-
-<xsl:template match='@start-time'>
-    <para>Start time: <emphasis role='strong'><phrase role='date'><xsl:apply-templates mode='date' select='.'/></phrase></emphasis></para>
 </xsl:template>
 
 <xsl:template match='@time'>
