@@ -151,7 +151,15 @@ Authors:
 <xsl:template mode='dbout.html' match='db:thead'><thead><xsl:call-template name='dbout.html.inline'/></thead></xsl:template>
 <xsl:template mode='dbout.html' match='db:tbody'><tbody><xsl:call-template name='dbout.html.inline'/></tbody></xsl:template>
 <xsl:template mode='dbout.html' match='db:row'><tr><xsl:call-template name='dbout.html.inline'/></tr></xsl:template>
-<xsl:template mode='dbout.html' match='db:entry'><td><xsl:call-template name='dbout.html.inline'/></td></xsl:template>
+<xsl:template mode='dbout.html' match='db:entry'>
+  <td>
+    <xsl:if test="@align">
+      <xsl:attribute name="align"><xsl:value-of select="@align"/></xsl:attribute>  
+    </xsl:if>
+
+    <xsl:call-template name='dbout.html.inline'/>
+  </td>
+</xsl:template>
 
 <!-- inline elements -->
 
@@ -438,8 +446,8 @@ Authors:
     table td.num { text-align:right; }
     div#content p { text-align:justify; }
     div.result-detail { border: 1px solid black; margin: 2em 0; padding: 0 1em; }
-    div#content h2 { border-bottom:2px dashed; margin-top:2em; margin-bottom:1.5em; text-align:center; }
-    div#content h2#summary { margin-top:1em; }
+    div#content h2 { border-bottom:2px dashed; margin-top:1em; margin-bottom:0.5em; text-align:center; }
+    div#content h2#summary { margin-top:0; }
     h1 { margin:1em 0; }
     div.raw table, div.raw table td { border:none; width:auto; padding:0; }
     div.raw table { margin-left: 2em; }
@@ -455,12 +463,12 @@ Authors:
     .oval-results { font-size:.8em; overflow:auto; }
   </style>
   <style type='text/css' media='screen'>
-    div#content, div#header, div#footer { margin-left:5%; margin-right:25%; }
+    div#content, div#header, div#footer { margin-left:1em; margin-right:18em; }
     div#content { background-color: white; padding:2em; }
     div#footer, div#header { color:white; text-align:center; }
     a, a:visited { color:blue; text-decoration:underline; }
     div#content p.link { text-align:right; font-size:.8em; }
-    div#menu { position:absolute; left:80%; top:6.5em; width:15%; background-color:white; padding:0; }
+    div#menu { position:absolute; right:1em; top:6.5em; width:16em; background-color:white; padding:0; }
     div#menu[id="menu"] { position:fixed; } /* IE6 hack (won't be interpreted by IE6) */
     div#menu ul, div#menu ul li { margin:0; padding:0; list-style-type:none; font-size:.9em; }
     div#menu h2 { display:none; }
@@ -473,6 +481,7 @@ Authors:
     abbr { border-bottom: 1px black dotted; }
     abbr.date { border-bottom:none; }
     pre.code { overflow:auto; }
+    table tbody tr:hover { background: #ccc; }
   </style>
   <style type='text/css' media='print'>
     @page { margin:3cm; }
