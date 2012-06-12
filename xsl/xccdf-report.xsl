@@ -138,105 +138,122 @@ Authors:
         <xsl:call-template name='footerinfo'/>
     </info>
 
-    <xsl:call-template name='summary'/>
-    <xsl:call-template name='benchmark-info'/>
+    <xsl:call-template name='intro'/>
     <xsl:call-template name='score'/>
     <xsl:call-template name='rr'/>
   </book>
 </xsl:template>
 
-<xsl:template name='summary'>
-  <chapter id="summary">
-    <title>Summary</title>
+<xsl:template name='intro'>
+  <chapter id="intro">
+    <title>Introduction</title>
 
-    <table id="test-result-summary">
-      <thead>
-        <row>
-          <entry>Result ID</entry>
-          <entry>Profile</entry>
-          <entry>Start time</entry>
-          <entry>End time</entry>
-          <entry>Benchmark version</entry>
-        </row>
-      </thead>
-      <tbody>
-        <row>
-          <entry align="center"><xsl:value-of select="@id"/></entry>
-          <entry align="center">
-            <xsl:choose>
-              <xsl:when test="cdf:profile">
-                <xsl:value-of select="cdf:profile/text()"/>
-              </xsl:when>
-              <xsl:otherwise>
-                (Default profile)
-              </xsl:otherwise>
-            </xsl:choose>
-          </entry>
-          <entry align="center"><date><xsl:value-of select="@start-time"/></date></entry>
-          <entry align="center"><date><xsl:value-of select="@end-time"/></date></entry>
-          <entry align="center">
-            <xsl:choose>
-              <xsl:when test="/cdf:Benchmark/cdf:version">
-                <xsl:value-of select="/cdf:Benchmark/cdf:version/text()"/>
-              </xsl:when>
-              <xsl:otherwise>
-                Unknown
-              </xsl:otherwise>
-            </xsl:choose>
-          </entry>
-        </row>
-      </tbody>
-    </table>
-    
-    <xsl:apply-templates select='cdf:identity'/>
-
-    <xsl:call-template name='list'>
-      <xsl:with-param name='nodes' select='cdf:target' />
-      <xsl:with-param name='title' select='"Target"' />
-    </xsl:call-template>
-
-    <xsl:call-template name='list'>
-      <xsl:with-param name='nodes' select='cdf:target-address' />
-      <xsl:with-param name='title' select='"Addresses"' />
-    </xsl:call-template>
-
-    <xsl:if test="$with-target-facts">
-      <xsl:apply-templates select='cdf:target-facts' mode='result' />
-    </xsl:if>
-  </chapter>
-</xsl:template>
-
-<xsl:template name='benchmark-info'>
-  <chapter id='benchmark-info'>
-    <title>Benchmark Execution Information</title>
-
-    <xsl:call-template name='list'>
-      <xsl:with-param name='nodes' select='cdf:remark' />
-      <xsl:with-param name='title' select='"Remarks"' />
-    </xsl:call-template>
-
-    <xsl:if test='/cdf:Benchmark/cdf:platform or cdf:platform'>
-      <itemizedlist>
-        <title>Platforms</title>
-        <xsl:apply-templates select='/cdf:Benchmark/cdf:platform'/>
-        <xsl:apply-templates select='cdf:platform'/>
-      </itemizedlist>
-    </xsl:if>
-
-    <xsl:if test='cdf:set-value'>
-      <table>
-        <title>Values</title>
-        <tgroup>
-          <thead><row><entry>Name</entry><entry>Value</entry></row></thead>
-          <tbody><xsl:apply-templates select='cdf:set-value'/></tbody>
-        </tgroup>
+    <section>
+      <title>Test Result</title>
+      <table id="test-result-summary">
+        <thead>
+          <row>
+            <entry>Result ID</entry>
+            <entry>Profile</entry>
+            <entry>Start time</entry>
+            <entry>End time</entry>
+            <entry>Benchmark version</entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry align="center"><xsl:value-of select="@id"/></entry>
+            <entry align="center">
+              <xsl:choose>
+                <xsl:when test="cdf:profile">
+                  <xsl:value-of select="cdf:profile/text()"/>
+                </xsl:when>
+                <xsl:otherwise>
+                  (Default profile)
+                </xsl:otherwise>
+              </xsl:choose>
+            </entry>
+            <entry align="center"><date><xsl:value-of select="@start-time"/></date></entry>
+            <entry align="center"><date><xsl:value-of select="@end-time"/></date></entry>
+            <entry align="center">
+              <xsl:choose>
+                <xsl:when test="/cdf:Benchmark/cdf:version">
+                  <xsl:value-of select="/cdf:Benchmark/cdf:version/text()"/>
+                </xsl:when>
+                <xsl:otherwise>
+                  Unknown
+                </xsl:otherwise>
+              </xsl:choose>
+            </entry>
+          </row>
+        </tbody>
       </table>
-    </xsl:if>
+    </section>
+    <xsl:apply-templates select='cdf:identity'/>
+    <section>
+      <title>Target info</title>
+      <table role="raw">
+        <tbody>
+          <row>
+            <entry valign="top">
+              <xsl:call-template name='list'>
+                <xsl:with-param name='nodes' select='cdf:target' />
+                <xsl:with-param name='title' select='"Targets"' />
+              </xsl:call-template>
+            </entry>
 
-    <xsl:call-template name='list'>
-      <xsl:with-param name='nodes' select='cdf:organization' />
-      <xsl:with-param name='title' select='"Organization"' />
-    </xsl:call-template>
+            <entry valign="top">
+              <xsl:call-template name='list'>
+                <xsl:with-param name='nodes' select='cdf:target-address' />
+                <xsl:with-param name='title' select='"Addresses"' />
+              </xsl:call-template>
+            </entry>
+
+            <xsl:if test="$with-target-facts">
+              <entry valign="top">
+                <xsl:apply-templates select='cdf:target-facts' mode='result' />
+              </entry>
+            </xsl:if>
+
+            <entry>
+              <xsl:call-template name='list'>
+                <xsl:with-param name='nodes' select='cdf:remark' />
+                <xsl:with-param name='title' select='"Remarks"' />
+              </xsl:call-template>
+            </entry>
+
+            <xsl:if test='/cdf:Benchmark/cdf:platform or cdf:platform'>
+              <entry valign="top">
+                <itemizedlist>
+                  <title>Platforms</title>
+                  <xsl:apply-templates select='/cdf:Benchmark/cdf:platform'/>
+                  <xsl:apply-templates select='cdf:platform'/>
+                </itemizedlist>
+              </entry>
+            </xsl:if>
+
+            <xsl:if test='cdf:set-value'>
+              <entry valign="top">
+                <table>
+                  <title>Values</title>
+                  <tgroup>
+                    <thead><row><entry>Name</entry><entry>Value</entry></row></thead>
+                    <tbody><xsl:apply-templates select='cdf:set-value'/></tbody>
+                  </tgroup>
+                </table>
+              </entry>
+            </xsl:if>
+
+            <entry valign="top">
+              <xsl:call-template name='list'>
+                <xsl:with-param name='nodes' select='cdf:organization' />
+                <xsl:with-param name='title' select='"Organization"' />
+              </xsl:call-template>
+            </entry>
+          </row>
+        </tbody>
+      </table>
+    </section>
   </chapter>
 </xsl:template>
 

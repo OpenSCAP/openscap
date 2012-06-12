@@ -156,6 +156,9 @@ Authors:
     <xsl:if test="@align">
       <xsl:attribute name="align"><xsl:value-of select="@align"/></xsl:attribute>  
     </xsl:if>
+    <xsl:if test="@valign">
+      <xsl:attribute name="valign"><xsl:value-of select="@valign"/></xsl:attribute>  
+    </xsl:if>
 
     <xsl:call-template name='dbout.html.inline'/>
   </td>
