@@ -29,8 +29,7 @@ Authors:
     xmlns:exsl="http://exslt.org/common"
 	xmlns:db="http://docbook.org/ns/docbook"
     xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:svg="http://www.w3.org/2000/svg"
-	xmlns="http://docbook.org/ns/docbook"
+    xmlns="http://docbook.org/ns/docbook"
     xmlns:s="http://open-scap.org/"
     exclude-result-prefixes="xsl cdf db s exsl"
     xmlns:ovalres="http://oval.mitre.org/XMLSchema/oval-results-5"
@@ -140,7 +139,6 @@ Authors:
     </info>
 
     <xsl:call-template name='summary'/>
-    <xsl:call-template name='target-info'/>
     <xsl:call-template name='benchmark-info'/>
     <xsl:call-template name='score'/>
     <xsl:call-template name='rr'/>
@@ -148,51 +146,49 @@ Authors:
 </xsl:template>
 
 <xsl:template name='summary'>
-  <table id="test-result-summary">
-    <thead>
-      <row>
-        <entry>Result ID</entry>
-        <entry>Profile</entry>
-        <entry>Start time</entry>
-        <entry>End time</entry>
-        <entry>Benchmark version</entry>
-      </row>
-    </thead>
-    <tbody>
-      <row>
-        <entry align="center"><xsl:value-of select="@id"/></entry>
-        <entry align="center">
-          <xsl:choose>
-            <xsl:when test="cdf:profile">
-              <xsl:value-of select="cdf:profile/text()"/>
-            </xsl:when>
-            <xsl:otherwise>
-              (Default profile)
-            </xsl:otherwise>
-          </xsl:choose>
-        </entry>
-        <entry align="center"><date><xsl:value-of select="@start-time"/></date></entry>
-        <entry align="center"><date><xsl:value-of select="@end-time"/></date></entry>
-        <entry align="center">
-          <xsl:choose>
-            <xsl:when test="/cdf:Benchmark/cdf:version">
-              <xsl:value-of select="/cdf:Benchmark/cdf:version/text()"/>
-            </xsl:when>
-            <xsl:otherwise>
-              Unknown
-            </xsl:otherwise>
-          </xsl:choose>
-        </entry>
-      </row>
-    </tbody>
-  </table>
-    
-  <xsl:apply-templates select='cdf:identity'/>
-</xsl:template>
+  <chapter id="summary">
+    <title>Summary</title>
 
-<xsl:template name='target-info'>
-  <chapter id='target-info'>
-    <title>Target Information</title>
+    <table id="test-result-summary">
+      <thead>
+        <row>
+          <entry>Result ID</entry>
+          <entry>Profile</entry>
+          <entry>Start time</entry>
+          <entry>End time</entry>
+          <entry>Benchmark version</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry align="center"><xsl:value-of select="@id"/></entry>
+          <entry align="center">
+            <xsl:choose>
+              <xsl:when test="cdf:profile">
+                <xsl:value-of select="cdf:profile/text()"/>
+              </xsl:when>
+              <xsl:otherwise>
+                (Default profile)
+              </xsl:otherwise>
+            </xsl:choose>
+          </entry>
+          <entry align="center"><date><xsl:value-of select="@start-time"/></date></entry>
+          <entry align="center"><date><xsl:value-of select="@end-time"/></date></entry>
+          <entry align="center">
+            <xsl:choose>
+              <xsl:when test="/cdf:Benchmark/cdf:version">
+                <xsl:value-of select="/cdf:Benchmark/cdf:version/text()"/>
+              </xsl:when>
+              <xsl:otherwise>
+                Unknown
+              </xsl:otherwise>
+            </xsl:choose>
+          </entry>
+        </row>
+      </tbody>
+    </table>
+    
+    <xsl:apply-templates select='cdf:identity'/>
 
     <xsl:call-template name='list'>
       <xsl:with-param name='nodes' select='cdf:target' />
@@ -414,10 +410,10 @@ Authors:
       <inlinemediaobject role='score-bar'>
         <imageobject>
           <imagedata format='SVG'>
-            <svg:svg width="100%" height="100%" version="1.1" baseProfile="full">
-              <svg:rect width="100%" height="100%" fill="red"/>
-              <svg:rect height="100%" width="{format-number($percent, '#.00%')}" fill="green"/>
-            </svg:svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" version="1.1" baseProfile="full">
+              <rect width="100%" height="100%" fill="red"/>
+              <rect height="100%" width="{format-number($percent, '#.00%')}" fill="green"/>
+            </svg>
           </imagedata>
         </imageobject>
         <textobject><phrase><xsl:value-of select='format-number($percent, "#.0%")'/></phrase></textobject>
