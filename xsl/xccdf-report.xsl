@@ -135,8 +135,7 @@ Authors:
         id='{@id}'
     >
     <info>
-        <title>Security Check Result</title>
-        <subtitle><phrase xlink:href='http://scap.nist.gov/specifications/xccdf/'>XCCDF</phrase> Result Report</subtitle>
+        <title>XCCDF test result "<xsl:value-of select="@id"/>"</title>
         <xsl:call-template name='footerinfo'/>
     </info>
 
