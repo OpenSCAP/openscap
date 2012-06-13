@@ -284,7 +284,7 @@ Authors:
     <title>Results overview</title>
     <xsl:choose>
       <xsl:when test='$results'>
-        <table>
+        <table id="rule-results-summary">
           <title>Rule Results Summary</title>
           <tgroup>
             <thead>
@@ -302,7 +302,7 @@ Authors:
               </row>
             </thead>
             <tbody>
-              <row>
+              <row role="result-legend">
                 <entry align="center" role="result-pass"><emphasis role="strong"><xsl:value-of select='count(cdf:rule-result[cdf:result="pass"])'/></emphasis></entry>
                 <entry align="center" role="result-fixed"><emphasis role="strong"><xsl:value-of select='count(cdf:rule-result[cdf:result="fixed"])'/></emphasis></entry>
                 <entry align="center" role="result-fail"><emphasis role="strong"><xsl:value-of select='count(cdf:rule-result[cdf:result="fail"])'/></emphasis></entry>

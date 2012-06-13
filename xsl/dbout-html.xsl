@@ -447,6 +447,8 @@ Authors:
     table td { border-right: 1px black solid; }
     table td.result, table td.link { text-align:center; }
     table td.num { text-align:right; }
+    div#rule-results-summary { margin-bottom: 1em; }
+    table tr.result-legend td { width: 10%; }
     div#content p { text-align:justify; }
     div.result-detail { border: 1px solid black; margin: 2em 0; padding: 0 1em; }
     div#content h2 { border-bottom:2px dashed; margin-top:1em; margin-bottom:0.5em; text-align:center; }
