@@ -280,24 +280,40 @@ Authors:
 <xsl:template name='rr'>
   <xsl:variable name='results' select='cdf:rule-result[contains($toshow, concat(",",cdf:result,",")) and not(contains($toshow, concat(",-",cdf:result,",")))]'/>
 
-  <chapter id='results'>
-    <title>Results</title>
+  <chapter id='results-overview'>
+    <title>Results overview</title>
     <xsl:choose>
       <xsl:when test='$results'>
-        <table role='raw'>
+        <table>
           <title>Rule Results Summary</title>
           <tgroup>
+            <thead>
+              <row>
+                <entry>pass</entry>
+                <entry>fixed</entry>
+                <entry>fail</entry>
+                <entry>error</entry>
+                <entry>not selected</entry>
+                <entry>not checked</entry>
+                <entry>not applicable</entry>
+                <entry>informational</entry>
+                <entry>unknown</entry>
+                <entry>total</entry>
+              </row>
+            </thead>
             <tbody>
-              <row><entry>pass</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="pass"])'/></entry></row>
-              <row><entry>fixed</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="fixed"])'/></entry></row>
-              <row><entry>fail</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="fail"])'/></entry></row>
-              <row><entry>error</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="error"])'/></entry></row>
-              <row><entry>not selected</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="notselected"])'/></entry></row>
-              <row><entry>not checked</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="notchecked"])'/></entry></row>
-              <row><entry>not applicable</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="notapplicable"])'/></entry></row>
-              <row><entry>informational</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="informational"])'/></entry></row>
-              <row><entry>unknown</entry><entry><xsl:value-of select='count(cdf:rule-result[cdf:result="unknown"])'/></entry></row>
-              <row><entry><emphasis role='strong'>total</emphasis></entry><entry><xsl:value-of select='count(cdf:rule-result)'/></entry></row>
+              <row>
+                <entry align="center" role="result-pass"><emphasis role="strong"><xsl:value-of select='count(cdf:rule-result[cdf:result="pass"])'/></emphasis></entry>
+                <entry align="center" role="result-fixed"><emphasis role="strong"><xsl:value-of select='count(cdf:rule-result[cdf:result="fixed"])'/></emphasis></entry>
+                <entry align="center" role="result-fail"><emphasis role="strong"><xsl:value-of select='count(cdf:rule-result[cdf:result="fail"])'/></emphasis></entry>
+                <entry align="center" role="result-error"><emphasis role="strong"><xsl:value-of select='count(cdf:rule-result[cdf:result="error"])'/></emphasis></entry>
+                <entry align="center" role="result-notselected"><emphasis role="strong"><xsl:value-of select='count(cdf:rule-result[cdf:result="notselected"])'/></emphasis></entry>
+                <entry align="center" role="result-notchecked"><emphasis role="strong"><xsl:value-of select='count(cdf:rule-result[cdf:result="notchecked"])'/></emphasis></entry>
+                <entry align="center" role="result-notapplicable"><emphasis role="strong"><xsl:value-of select='count(cdf:rule-result[cdf:result="notapplicable"])'/></emphasis></entry>
+                <entry align="center" role="result-informational"><emphasis role="strong"><xsl:value-of select='count(cdf:rule-result[cdf:result="informational"])'/></emphasis></entry>
+                <entry align="center" role="result-unknown"><emphasis role="strong"><xsl:value-of select='count(cdf:rule-result[cdf:result="unknown"])'/></emphasis></entry>
+                <entry align="center"><emphasis role="strong"><xsl:value-of select='count(cdf:rule-result)'/></emphasis></entry>
+              </row>
             </tbody>
           </tgroup>
         </table>
@@ -306,6 +322,9 @@ Authors:
       </xsl:when>
       <xsl:otherwise><para role='unknown'>No rule results.</para></xsl:otherwise>
     </xsl:choose>
+  </chapter>
+  <chapter id='results-details'>
+    <title>Results details</title>
     <xsl:apply-templates select='$results'/>
   </chapter>
 </xsl:template>

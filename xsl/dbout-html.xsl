@@ -354,7 +354,7 @@ Authors:
 </xsl:template>
 
 <xsl:template mode='dbout.html.nav' match='db:section[@role="result-detail"]'>
-  <p class='link'><a href='#results'>results summary</a></p>
+  <p class='link'><a href='#results-overview'>results overview</a></p>
 </xsl:template>
 
 <xsl:template mode='dbout.html.nav' match='node()'/>
