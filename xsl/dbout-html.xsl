@@ -487,6 +487,7 @@ Authors:
     abbr.date { border-bottom:none; }
     pre.code { overflow:auto; }
     table tbody tr:hover { background: #ccc; }
+    div.raw table tbody tr:hover { background: transparent !important; }
   </style>
   <style type='text/css' media='print'>
     @page { margin:3cm; }
