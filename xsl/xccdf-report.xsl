@@ -360,7 +360,7 @@ Authors:
   <table>
     <title role='hidden'>Rule results summary</title>
     <tgroup>
-      <thead><row><entry>Title</entry><entry>Result</entry><entry>more</entry></row></thead>
+      <thead><row><entry>Title</entry><entry>Result</entry></row></thead>
       <tbody><xsl:apply-templates select='$results' mode='rr.table'/></tbody>
     </tgroup>
   </table>
@@ -368,9 +368,8 @@ Authors:
 
 <xsl:template mode='rr.table' match='cdf:rule-result'>
   <row role='result-{normalize-space(cdf:result)}'>
-    <entry role='id'    ><xsl:value-of select='(key("items",@idref)/cdf:title[1]|@idref)[1]'/></entry>
+    <entry role='id'    ><phrase xlink:href='#ruleresult-{generate-id(.)}'><xsl:value-of select='(key("items",@idref)/cdf:title[1]|@idref)[1]'/></phrase></entry>
     <entry role='result'><emphasis role='strong'><xsl:value-of select='normalize-space(cdf:result)'/></emphasis></entry>
-    <entry role='link'  ><phrase xlink:href='#ruleresult-{generate-id(.)}'>view</phrase></entry>
   </row>
 </xsl:template>
 
