@@ -204,9 +204,12 @@ Authors:
   <listitem>
     <xsl:variable name="ident"><xsl:value-of select='normalize-space(.)'/></xsl:variable>
     <xsl:choose>
-      <xsl:when test="starts-with($ident, 'CVE-')">
+      <xsl:when test="starts-with(@system, 'http://cve.mitre.org')">
         <phrase xlink:href='http://web.nvd.nist.gov/view/vuln/detail?vulnId={$ident}'><xsl:value-of select="$ident"/></phrase>
       </xsl:when>
+      <!--<xsl:when test="starts-with(@system, 'http://cce.mitre.org')">
+        <phrase xlink:href='http://open-scap.org/cce_view/?id={$ident}'><xsl:value-of select="$ident"/></phrase>
+      </xsl:when>-->
       <xsl:otherwise>
         <phrase><xsl:value-of select="$ident"/></phrase>
       </xsl:otherwise>
