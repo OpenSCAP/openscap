@@ -66,7 +66,7 @@ Authors:
   <div id='top'>
     <xsl:call-template name='dbout.html.attrs'/>
     <div id='header'><xsl:apply-templates mode='dbout.html.title' select='.'/></div>
-    <xsl:apply-templates mode='dbout.html.menu' select='.'/>
+    <!--<xsl:apply-templates mode='dbout.html.menu' select='.'/>-->
     <div id='content'><xsl:apply-templates mode='dbout.html'/></div>
     <div id='footer'><p>
       <xsl:if test='db:info/db:subtitle'><xsl:apply-templates mode='dbout.html' select='db:info/db:subtitle[1]/node()'/>. </xsl:if>
@@ -468,17 +468,11 @@ Authors:
     .oval-results { font-size:.8em; overflow:auto; }
   </style>
   <style type='text/css' media='screen'>
-    div#content, div#header, div#footer { margin-left:1em; margin-right:18em; }
+    div#content, div#header, div#footer { margin-left:1em; margin-right:1em; }
     div#content { background-color: white; padding:2em; }
     div#footer, div#header { color:white; text-align:center; }
     a, a:visited { color:blue; text-decoration:underline; }
     div#content p.link { text-align:right; font-size:.8em; }
-    div#menu { position:absolute; right:1em; top:6.5em; width:16em; background-color:white; padding:0; }
-    div#menu[id="menu"] { position:fixed; } /* IE6 hack (won't be interpreted by IE6) */
-    div#menu ul, div#menu ul li { margin:0; padding:0; list-style-type:none; font-size:.9em; }
-    div#menu h2 { display:none; }
-    div#menu a { display:block; text-align:center; padding:.3em 1em; text-decoration:none; }
-    div#menu a:hover { background: #ccc; }
     div#footer a { color:white; }
     div.xccdf-group, div.xccdf-rule { border-left: 3px solid white; padding-left:.3em; }
     div.xccdf-group:target, div.xccdf-rule:target { border-left-color:#ccc; }
@@ -492,7 +486,7 @@ Authors:
   <style type='text/css' media='print'>
     @page { margin:3cm; }
     html, body { background-color:white; font-family:serif; }
-    .link, div#menu { display:none; }
+    .link { display:none; }
     a, a:visited { color:black; text-decoration:none; }
     div#header, div#footer { text-align:center; }
     div#header { padding-top:36%; }
