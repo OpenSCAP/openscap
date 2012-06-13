@@ -166,7 +166,7 @@ Authors:
             <entry align="center">
               <xsl:choose>
                 <xsl:when test="cdf:profile">
-                  <xsl:value-of select="cdf:profile/text()"/>
+                  <xsl:value-of select="cdf:profile/@idref"/>
                 </xsl:when>
                 <xsl:otherwise>
                   (Default profile)
