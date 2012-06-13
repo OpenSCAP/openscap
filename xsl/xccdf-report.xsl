@@ -273,7 +273,7 @@ Authors:
 <xsl:template name='score.table'>
   <table>
     <tgroup>
-      <thead><row><entry>system</entry><entry>score</entry><entry>max</entry><entry>bar</entry></row></thead>
+      <thead><row><entry>system</entry><entry>score</entry><entry>max</entry><entry>%</entry><entry>bar</entry></row></thead>
       <tbody><xsl:apply-templates select='cdf:score'/></tbody>
     </tgroup>
   </table>
@@ -440,6 +440,7 @@ Authors:
     <entry role='score-sys'><xsl:value-of select='@system' /></entry>
     <entry role='score-val'><xsl:value-of select='format-number(string(.), $format)' /></entry>
     <entry role='score-max'><xsl:value-of select='format-number($max, $format)' /></entry>
+    <entry role='score-percent'><xsl:value-of select="format-number($percent, '#.00%')"/></entry>
     <entry role='score-bar'>
       <inlinemediaobject role='score-bar'>
         <imageobject>
@@ -447,6 +448,7 @@ Authors:
             <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" version="1.1" baseProfile="full">
               <rect width="100%" height="100%" fill="red"/>
               <rect height="100%" width="{format-number($percent, '#.00%')}" fill="green"/>
+              <rect height="100%" x="{format-number($percent, '#.00%')}" width="2" fill="black"/>
             </svg>
           </imagedata>
         </imageobject>

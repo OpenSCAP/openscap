@@ -437,7 +437,8 @@ Authors:
     abbr { text-transform:none; border:none; font-variant:normal; }
     div.score-outer { height: .8em; width:100%; min-width:100px; background-color: red; }
     div.score-inner { height: 100%; background-color: green; }
-    .score-max, .score-val { text-align:right; }
+    .score-max, .score-val, .score-percent { text-align:right; }
+    .score-percent { font-weight: bold; }
     th, td { padding-left:.5em; padding-right:.5em; }
     .rule-selected, .result-pass strong, .result-fixed strong { color:green; }
     .rule-inactive, .unknown, .result-notselected strong, .result-notchecked strong, .result-notapplicable strong, .result-informational strong, .result-unknown strong { color:#555; }
