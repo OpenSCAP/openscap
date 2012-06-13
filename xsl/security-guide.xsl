@@ -200,7 +200,19 @@ Authors:
 <xsl:template match='cdf:metadata'><info><xsl:apply-templates select='.' mode='db'/></info></xsl:template>
 <xsl:template match='cdf:reference'><biblioentry><xsl:apply-templates select='.' mode='db'/></biblioentry></xsl:template>
 <xsl:template match='cdf:platform'><listitem><simpara><xsl:value-of select='normalize-space(@idref)'/></simpara></listitem></xsl:template>
-<xsl:template match='cdf:ident'><listitem><simpara><xsl:value-of select='normalize-space(.)'/></simpara></listitem></xsl:template>
+<xsl:template match='cdf:ident'>
+  <listitem>
+    <xsl:variable name="ident"><xsl:value-of select='normalize-space(.)'/></xsl:variable>
+    <xsl:choose>
+      <xsl:when test="starts-with($ident, 'CVE-')">
+        <phrase xlink:href='http://web.nvd.nist.gov/view/vuln/detail?vulnId={$ident}'><xsl:value-of select="$ident"/></phrase>
+      </xsl:when>
+      <xsl:otherwise>
+        <phrase><xsl:value-of select="$ident"/></phrase>
+      </xsl:otherwise>
+    </xsl:choose>
+  </listitem>
+</xsl:template>
 <xsl:template match='cdf:rear-matter'><colophon id='rear-matter'><xsl:apply-templates select='.' mode='db'/></colophon></xsl:template>
 
 <xsl:template match='cdf:*'/>
