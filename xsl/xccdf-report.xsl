@@ -139,7 +139,6 @@ Authors:
     </info>
 
     <xsl:call-template name='intro'/>
-    <xsl:call-template name='score'/>
     <xsl:call-template name='rr'/>
   </book>
 </xsl:template>
@@ -254,22 +253,18 @@ Authors:
         </tbody>
       </table>
     </section>
-  </chapter>
-</xsl:template>
-
-<xsl:template name='score'>
-  <chapter id='score'>
-    <title>Score</title>
-    <xsl:choose>
-      <xsl:when test='cdf:score'><xsl:call-template name='score.table'/></xsl:when>
-      <xsl:otherwise><para role='unknown'>No score results.</para></xsl:otherwise>
-    </xsl:choose>
+    <section>
+      <title>Score</title>
+      <xsl:choose>
+        <xsl:when test='cdf:score'><xsl:call-template name='score.table'/></xsl:when>
+        <xsl:otherwise><para role='unknown'>No score results.</para></xsl:otherwise>
+      </xsl:choose>
+    </section>
   </chapter>
 </xsl:template>
 
 <xsl:template name='score.table'>
   <table>
-    <title role='hidden'>Security Score</title>
     <tgroup>
       <thead><row><entry>system</entry><entry>score</entry><entry>max</entry><entry>bar</entry></row></thead>
       <tbody><xsl:apply-templates select='cdf:score'/></tbody>
