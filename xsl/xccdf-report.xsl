@@ -156,6 +156,7 @@ Authors:
             <entry>Profile</entry>
             <entry>Start time</entry>
             <entry>End time</entry>
+            <entry>Benchmark</entry>
             <entry>Benchmark version</entry>
           </row>
         </thead>
@@ -174,6 +175,12 @@ Authors:
             </entry>
             <entry align="center"><date><xsl:value-of select="@start-time"/></date></entry>
             <entry align="center"><date><xsl:value-of select="@end-time"/></date></entry>
+            <entry align="center">
+              <xsl:choose>
+                <xsl:when test="@href"><phrase xlink:href="{@href}"><xsl:value-of select="@href"/></phrase></xsl:when>
+                <xsl:otherwise><phrase>embedded</phrase></xsl:otherwise>
+              </xsl:choose>
+            </entry>
             <entry align="center">
               <xsl:choose>
                 <xsl:when test="/cdf:Benchmark/cdf:version">
@@ -378,10 +385,6 @@ Authors:
          <xsl:if test='@context'> [context: <xsl:value-of select='@context'/>]</xsl:if>
          <xsl:if test='@parentContext'> [parent context: <xsl:value-of select='@parentContext'/>]</xsl:if>
   </simpara></listitem>
-</xsl:template>
-
-<xsl:template match='cdf:benchmark'>
-    <para>Used XCDF benchmark URI: <emphasis role='strong'><xsl:value-of select='@href'/></emphasis></para>
 </xsl:template>
 
 <xsl:template match='cdf:test-result/cdf:status'>
