@@ -457,6 +457,8 @@ Authors:
     div.raw table, div.raw table td { border:none; width:auto; padding:0; }
     div.raw table { margin-left: 2em; }
     div.raw table td { padding: .1em .7em; }
+    table tr { border-bottom: 1px dotted #000; }
+    dir.raw table tr { border-bottom: 0 !important; }
     pre.code { background: #ccc; padding:.2em; }
     ul.toc-struct li { list-style-type: none; }
     div.xccdf-rule { margin-left: 10%; }
