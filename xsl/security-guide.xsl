@@ -59,8 +59,17 @@ Authors:
       </xsl:with-param>
     </xsl:call-template>
     <preface id='preface'>
-      <xsl:call-template name='common-info'/>
-      <xsl:call-template name='revisions'/>
+      <table role="raw">
+        <tbody>
+          <row>
+            <entry valign="top"><xsl:call-template name='common-info'/></entry>
+            <entry valign="top">
+              <xsl:apply-templates select='cdf:version'/>
+              <xsl:call-template name='revisions'/>
+            </entry>
+          </row>
+        </tbody>
+      </table>
     </preface>
     <xsl:apply-templates select='cdf:Rule'/>
     <xsl:apply-templates select='cdf:Group'/>
@@ -146,10 +155,9 @@ Authors:
 
 <xsl:template match='cdf:version'>
   <releaseinfo role='version'>
-    <xsl:text>Version </xsl:text><emphasis role='strong'><xsl:value-of select='normalize-space(.)'/></emphasis>
+    <emphasis role='strong'>Version: </emphasis> <xsl:value-of select='normalize-space(.)'/>
     <xsl:if test='@time'> (as of <phrase role='date'><xsl:value-of select='@time'/></phrase>)</xsl:if>
     <xsl:if test='@update'> [<phrase xlink:href='{@update}'>updates</phrase>]</xsl:if>
-    <xsl:text>.</xsl:text>
   </releaseinfo>
 </xsl:template>
 

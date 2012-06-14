@@ -67,7 +67,6 @@ Authors:
       <xsl:call-template name='footerinfo'/>
     </xsl:if>
     <xsl:apply-templates select='cdf:metadata'/>
-    <xsl:apply-templates select='cdf:version'/>
     <xsl:apply-templates select='cdf:notice'/>
   </info>
 </xsl:template>
