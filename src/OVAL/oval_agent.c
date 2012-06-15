@@ -344,11 +344,26 @@ int oval_agent_resolve_variables(struct oval_agent_session * session, struct xcc
         /* Do we have comflict ? */
         if (variable != NULL) {
             value_it = oval_variable_get_values(variable);
+
             char * value = xccdf_value_binding_get_setvalue(binding);
             if (value == NULL) value = xccdf_value_binding_get_value(binding);
+
             if (oval_value_iterator_has_more(value_it)) {
                 struct oval_value * o_value = oval_value_iterator_next(value_it);
-                if (strcmp(oval_value_get_text(o_value), value)) {
+                const char* o_value_text = oval_value_get_text(o_value);
+                if (value == NULL && o_value_text == NULL)
+                {
+                    // both are null which is not a conflict!
+                    oscap_dlprintf(DBG_W, "Variable %s has the same value (NULL), skipping\n", xccdf_value_binding_get_name(binding));
+                }
+                else if (value == NULL || o_value_text == NULL)
+                {
+                    // only one of them is null, we have a conflict
+                    conflict = true;
+                    oscap_dlprintf(DBG_W, "Variable conflict: %s has different values, one of them is NULL", xccdf_value_binding_get_name(binding));
+                }
+                // both of them are not null, lets compare them
+                else if (strcmp(o_value_text, value)) {
                     conflict = true;
                     oscap_dlprintf(DBG_W, "Variable conflict: %s has different values %s != %s\n", xccdf_value_binding_get_name(binding), oval_value_get_text(o_value), value);
                 }
