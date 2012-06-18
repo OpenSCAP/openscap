@@ -134,7 +134,7 @@ Authors:
         id='{@id}'
     >
     <info>
-        <title>XCCDF test result "<xsl:value-of select="@id"/>"</title>
+        <title>XCCDF test result</title>
         <xsl:call-template name='footerinfo'/>
     </info>
 
