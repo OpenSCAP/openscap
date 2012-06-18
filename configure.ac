@@ -1198,72 +1198,74 @@ AC_CONFIG_FILES([Makefile
                  src/Makefile
                  xsl/Makefile
                  schemas/Makefile
-		 libopenscap.pc
+                 libopenscap.pc
                  src/common/Makefile
                  tests/Makefile
                  tests/API/Makefile
 
-		 swig/Makefile
+                 swig/Makefile
 
-		 utils/Makefile
+                 utils/Makefile
 
-		 src/OVAL/Makefile
+                 src/OVAL/Makefile
                  tests/API/OVAL/Makefile
                  tests/mitre/Makefile
 
-		 src/OVAL/probes/Makefile
-		 src/OVAL/probes/probe/Makefile
-		 src/OVAL/probes/crapi/Makefile
-		 src/OVAL/probes/SEAP/Makefile
-		 src/OVAL/probes/SEAP/generic/rbt/Makefile
-		 tests/probes/Makefile
-		 tests/API/crypt/Makefile
+                 src/OVAL/probes/Makefile
+                 src/OVAL/probes/probe/Makefile
+                 src/OVAL/probes/crapi/Makefile
+                 src/OVAL/probes/SEAP/Makefile
+                 src/OVAL/probes/SEAP/generic/rbt/Makefile
+                 tests/probes/Makefile
+                 tests/API/crypt/Makefile
                  tests/API/SEAP/Makefile
-		 tests/API/probes/Makefile
-		 tests/probes/file/Makefile
-        	 tests/probes/fileextendedattribute/Makefile
-	   	 tests/probes/uname/Makefile
-	   	 tests/probes/shadow/Makefile
-	   	 tests/probes/family/Makefile
-	   	 tests/probes/process/Makefile
-	   	 tests/probes/sysinfo/Makefile
-	   	 tests/probes/rpminfo/Makefile
-           	 tests/probes/runlevel/Makefile
-	   	 tests/probes/filehash/Makefile
-	   	 tests/probes/filehash58/Makefile
-	   	 tests/probes/password/Makefile
-	   	 tests/probes/interface/Makefile
-	   	 tests/probes/textfilecontent54/Makefile
-	   	 tests/probes/environmentvariable/Makefile
-	   	 tests/probes/environmentvariable58/Makefile
-	   	 tests/probes/xinetd/Makefile
-	   	 tests/probes/selinuxboolean/Makefile
-	   	 tests/probes/isainfo/Makefile
-	   	 tests/probes/iflisteners/Makefile
+                 tests/API/probes/Makefile
+                 tests/probes/file/Makefile
+                 tests/probes/fileextendedattribute/Makefile
+                 tests/probes/uname/Makefile
+                 tests/probes/shadow/Makefile
+                 tests/probes/family/Makefile
+                 tests/probes/process/Makefile
+                 tests/probes/sysinfo/Makefile
+                 tests/probes/rpminfo/Makefile
+                 tests/probes/runlevel/Makefile
+                 tests/probes/filehash/Makefile
+                 tests/probes/filehash58/Makefile
+                 tests/probes/password/Makefile
+                 tests/probes/interface/Makefile
+                 tests/probes/textfilecontent54/Makefile
+                 tests/probes/environmentvariable/Makefile
+                 tests/probes/environmentvariable58/Makefile
+                 tests/probes/xinetd/Makefile
+                 tests/probes/selinuxboolean/Makefile
+                 tests/probes/isainfo/Makefile
+                 tests/probes/iflisteners/Makefile
 
-		 tests/probes/vgtest/Makefile
+                 tests/probes/vgtest/Makefile
 
-           	 src/CVSS/Makefile
+                 src/CVSS/Makefile
                  tests/API/CVSS/Makefile
 
-           	 src/CVE/Makefile
+                 src/CVE/Makefile
                  tests/API/CVE/Makefile
 
-		 src/CPE/Makefile
+                 src/CPE/Makefile
                  tests/API/CPE/Makefile
-		 tests/API/CPE/uri/Makefile
+                 tests/API/CPE/uri/Makefile
                  tests/API/CPE/lang/Makefile
                  tests/API/CPE/dict/Makefile
 
-           	 src/CCE/Makefile
+                 src/CCE/Makefile
                  tests/API/CCE/Makefile
 
-           	 src/XCCDF/Makefile
-	         src/XCCDF_POLICY/Makefile
+                 src/DS/Makefile
+
+                 src/XCCDF/Makefile
+                 src/XCCDF_POLICY/Makefile
                  tests/API/XCCDF/Makefile
 
-             src/SCE/Makefile
-             tests/sce/Makefile])
+                 src/SCE/Makefile
+                 tests/sce/Makefile])
 
 AC_OUTPUT
 

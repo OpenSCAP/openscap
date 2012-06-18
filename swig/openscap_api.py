@@ -725,6 +725,19 @@ class OSCAP_Object(object):
 
 
 # ------------------------------------------------------------------------------------------------------------
+# DS
+
+class DS_Class(OSCAP_Object):
+
+    def __init__(self):
+        dict.__setattr__(self, "object", "ds")
+        #dict.__setattr__(self, "version", OSCAP.oval_definition_model_supported())
+
+    def __repr__(self):
+        return "<Oscap Object of type 'DS Class' at %s>" % (hex(id(self)),)
+
+
+# ------------------------------------------------------------------------------------------------------------
 # XCCDF
 
 class _XCCDF_Benchmark_Class(OSCAP_Object):
@@ -861,6 +874,7 @@ using OSCAP functions should look like:
     openscap.common.debug.seterr(err) (this will reflect oscap_debug_seterr() func)
 """
 
+ds    = DS_Class()
 xccdf = XCCDF_Class()
 oval  = OVAL_Class()
 cve   = CVE_Class()

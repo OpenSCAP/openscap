@@ -183,6 +183,8 @@
 %include "../src/common/public/reporter.h"
 %include "../src/common/public/reference.h"
 
+%include "../src/DS/public/ds.h"
+
 #ifdef WANT_CCE
 %module openscap
 %{
