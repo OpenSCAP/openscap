@@ -204,11 +204,11 @@ struct oscap_schema_table_entry {
 // patch version fragments are intentionally left out, we strive to ship
 // schemas of the newest patch versions of that particular minor.major version
 struct oscap_schema_table_entry OSCAP_SCHEMAS_TABLE[] = {
-	{ OSCAP_DOCUMENT_OVAL_DEFINITIONS, "oval",  "5.8",   "oval-definitions-schema.xsd"            },
-	{ OSCAP_DOCUMENT_OVAL_VARIABLES,   "oval",  "5.8",   "oval-variables-schema.xsd"              },
-	{ OSCAP_DOCUMENT_OVAL_RESULTS,     "oval",  "5.8",   "oval-results-schema.xsd"                },
-	{ OSCAP_DOCUMENT_OVAL_SYSCHAR,     "oval",  "5.8",   "oval-system-characteristics-schema.xsd" },
-	{ OSCAP_DOCUMENT_OVAL_DIRECTIVES,  "oval",  "5.8",   "oval-directives-schema.xsd"             },
+	{ OSCAP_DOCUMENT_OVAL_DEFINITIONS, "oval",  "5.10",   "oval-definitions-schema.xsd"            },
+	{ OSCAP_DOCUMENT_OVAL_VARIABLES,   "oval",  "5.10",   "oval-variables-schema.xsd"              },
+	{ OSCAP_DOCUMENT_OVAL_RESULTS,     "oval",  "5.10",   "oval-results-schema.xsd"                },
+	{ OSCAP_DOCUMENT_OVAL_SYSCHAR,     "oval",  "5.10",   "oval-system-characteristics-schema.xsd" },
+	{ OSCAP_DOCUMENT_OVAL_DIRECTIVES,  "oval",  "5.10",   "oval-directives-schema.xsd"             },
 	{ OSCAP_DOCUMENT_XCCDF,            "xccdf", "1.2",   "xccdf_1.2.xsd"                          },
 	{ OSCAP_DOCUMENT_XCCDF,            "xccdf", "1.1",   "xccdf-schema.xsd"                       },
 	{ OSCAP_DOCUMENT_SCE_RESULT,       "sce",   "1.0",   "sce-result-schema.xsd"                  },

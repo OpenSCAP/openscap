@@ -36,7 +36,7 @@ OSCAP_HIDDEN_START;
 
 #define OVAL_ENUMERATION_INVALID (-1)
 
-#define OVAL_SUPPORTED "5.8"
+#define OVAL_SUPPORTED "5.10"
 
 #define OVAL_XMLNS_XSI             BAD_CAST "http://www.w3.org/2001/XMLSchema-instance"
 
