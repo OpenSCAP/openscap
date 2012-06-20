@@ -199,7 +199,14 @@ static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
 
 static void ds_ids_dump_component_ref(xmlNodePtr component_ref, xmlDocPtr doc, xmlNodePtr datastream, const char* target_dir)
 {
-    ds_ids_dump_component_ref_as(component_ref, doc, datastream, target_dir, "a-xccdf.xml");
+    const char* xlink_href = (const char*)xmlGetProp(component_ref, (const xmlChar*)"href");
+    if (!xlink_href || xlink_href == '\0')
+    {
+        oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid xlink:href attribute on given component-ref.");
+        return;
+    }
+
+    ds_ids_dump_component_ref_as(component_ref, doc, datastream, target_dir, xlink_href + 1 * sizeof(char));
 }
 
 void ds_ids_decompose(const char* input_file, const char* id, const char* target_dir)
