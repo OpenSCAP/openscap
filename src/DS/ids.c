@@ -143,7 +143,7 @@ static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
     }
 
     const char* xlink_href = (const char*)xmlGetProp(component_ref, (const xmlChar*)"href");
-    if (!xlink_href || xlink_href == '\0')
+    if (!xlink_href || strlen(xlink_href) < 2)
     {
         oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid xlink:href attribute on given component-ref.");
         return;
@@ -177,7 +177,7 @@ static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
 
             const char* str_uri = (const char*)xmlGetProp(uri, (const xmlChar*)"uri");
 
-            if (!str_uri || str_uri == '\0')
+            if (!str_uri || strlen(str_uri) < 2)
             {
                 oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid URI for a component referenced in the catalog. Skipping...");
                 continue;
@@ -200,7 +200,7 @@ static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
 static void ds_ids_dump_component_ref(xmlNodePtr component_ref, xmlDocPtr doc, xmlNodePtr datastream, const char* target_dir)
 {
     const char* xlink_href = (const char*)xmlGetProp(component_ref, (const xmlChar*)"href");
-    if (!xlink_href || xlink_href == '\0')
+    if (!xlink_href || strlen(xlink_href) < 2)
     {
         oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid xlink:href attribute on given component-ref.");
         return;
