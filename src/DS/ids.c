@@ -44,7 +44,7 @@ static xmlNodePtr node_get_child_element(xmlNodePtr parent, const char* name)
         if (candidate->type != XML_ELEMENT_NODE)
             continue;
 
-        if (strcmp((const char*)(candidate->name), name) != 0)
+        if (name != NULL && strcmp((const char*)(candidate->name), name) != 0)
             continue;
 
         return candidate;
@@ -55,11 +55,52 @@ static xmlNodePtr node_get_child_element(xmlNodePtr parent, const char* name)
 
 void ds_ids_dump_component(const char* component_id, xmlDocPtr doc, const char* filename)
 {
+    xmlNodePtr root = xmlDocGetRootElement(doc);
+    xmlNodePtr component = NULL;
+    xmlNodePtr candidate = root->children;
+
+    for (; candidate != NULL; candidate = candidate->next)
+    {
+        if (candidate->type != XML_ELEMENT_NODE)
+            continue;
+
+        if (strcmp((const char*)(candidate->name), "component") != 0)
+            continue;
+
+        const char* candidate_id = (const char*)xmlGetProp(candidate, "id");
+        if (strcmp(candidate_id, component_id) == 0)
+        {
+            component = candidate;
+            break;
+        }
+    }
+
+    if (component == NULL)
+    {
+        // FIXME
+        printf("Component of id '%s' wasn't found in the document\n", component_id);
+        return;
+    }
+
+    xmlNodePtr inner_root = node_get_child_element(component, NULL); // FIXME: More checking!
+
+    xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
+
+    xmlDocPtr new_doc = xmlNewDoc("1.0");
+    xmlNodePtr res_node = NULL;
+    xmlDOMWrapCloneNode(wrap_ctxt, doc, inner_root, &res_node, new_doc, NULL, 1, 0);
+    xmlDocSetRootElement(new_doc, res_node);
+    xmlSaveFileEnc(filename, new_doc, "utf-8");
+    xmlFreeDoc(new_doc);
+
+    xmlDOMWrapFreeCtxt(wrap_ctxt);
 }
 
 void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc, const char* target_dir, const char* filename)
 {
-    const char* component_id = (const char*)xmlGetProp(component_ref, "id");
+    const char* cref_id = (const char*)xmlGetProp(component_ref, "id");
+    const char* xlink_href = (const char*)xmlGetProp(component_ref, "href");
+    const char* component_id = xlink_href + 1 * sizeof(char);
     const char* target_filename = oscap_sprintf("%s/%s", target_dir, filename);
     ds_ids_dump_component(component_id, doc, target_filename);
     oscap_free(target_filename);
