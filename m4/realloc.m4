@@ -1,8 +1,46 @@
-# realloc.m4 serial 11
-dnl Copyright (C) 2007, 2009-2011 Free Software Foundation, Inc.
+# realloc.m4 serial 13
+dnl Copyright (C) 2007, 2009-2012 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
+
+m4_version_prereq([2.70], [] ,[
+
+# This is taken from the following Autoconf patch:
+# http://git.savannah.gnu.org/gitweb/?p=autoconf.git;a=commitdiff;h=7fbb553727ed7e0e689a17594b58559ecf3ea6e9
+AC_DEFUN([_AC_FUNC_REALLOC_IF],
+[
+  AC_REQUIRE([AC_HEADER_STDC])dnl
+  AC_REQUIRE([AC_CANONICAL_HOST])dnl for cross-compiles
+  AC_CHECK_HEADERS([stdlib.h])
+  AC_CACHE_CHECK([for GNU libc compatible realloc],
+    [ac_cv_func_realloc_0_nonnull],
+    [AC_RUN_IFELSE(
+       [AC_LANG_PROGRAM(
+          [[#if defined STDC_HEADERS || defined HAVE_STDLIB_H
+            # include <stdlib.h>
+            #else
+            char *realloc ();
+            #endif
+          ]],
+          [[return ! realloc (0, 0);]])
+       ],
+       [ac_cv_func_realloc_0_nonnull=yes],
+       [ac_cv_func_realloc_0_nonnull=no],
+       [case "$host_os" in
+          # Guess yes on platforms where we know the result.
+          *-gnu* | freebsd* | netbsd* | openbsd* \
+          | hpux* | solaris* | cygwin* | mingw*)
+            ac_cv_func_realloc_0_nonnull=yes ;;
+          # If we don't know, assume the worst.
+          *) ac_cv_func_realloc_0_nonnull=no ;;
+        esac
+       ])
+    ])
+  AS_IF([test $ac_cv_func_realloc_0_nonnull = yes], [$1], [$2])
+])# AC_FUNC_REALLOC
+
+])
 
 # gl_FUNC_REALLOC_GNU
 # -------------------
@@ -17,7 +55,7 @@ AC_DEFUN([gl_FUNC_REALLOC_GNU],
                [Define to 1 if your system has a GNU libc compatible 'realloc'
                 function, and to 0 otherwise.])],
     [AC_DEFINE([HAVE_REALLOC_GNU], [0])
-     gl_REPLACE_REALLOC
+     REPLACE_REALLOC=1
     ])
 ])# gl_FUNC_REALLOC_GNU
 
@@ -33,12 +71,6 @@ AC_DEFUN([gl_FUNC_REALLOC_POSIX],
     AC_DEFINE([HAVE_REALLOC_POSIX], [1],
       [Define if the 'realloc' function is POSIX compliant.])
   else
-    gl_REPLACE_REALLOC
+    REPLACE_REALLOC=1
   fi
-])
-
-AC_DEFUN([gl_REPLACE_REALLOC],
-[
-  AC_LIBOBJ([realloc])
-  REPLACE_REALLOC=1
 ])

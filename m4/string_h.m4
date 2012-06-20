@@ -1,11 +1,11 @@
 # Configure a GNU-like replacement for <string.h>.
 
-# Copyright (C) 2007-2011 Free Software Foundation, Inc.
+# Copyright (C) 2007-2012 Free Software Foundation, Inc.
 # This file is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
 
-# serial 20
+# serial 21
 
 # Written by Paul Eggert.
 
@@ -27,9 +27,9 @@ AC_DEFUN([gl_HEADER_STRING_H_BODY],
   dnl guaranteed by C89.
   gl_WARN_ON_USE_PREPARE([[#include <string.h>
     ]],
-    [memmem mempcpy memrchr rawmemchr stpcpy stpncpy strchrnul strdup
-     strncat strndup strnlen strpbrk strsep strcasestr strtok_r strerror_r
-     strsignal strverscmp])
+    [ffsl ffsll memmem mempcpy memrchr rawmemchr stpcpy stpncpy strchrnul
+     strdup strncat strndup strnlen strpbrk strsep strcasestr strtok_r
+     strerror_r strsignal strverscmp])
 ])
 
 AC_DEFUN([gl_STRING_MODULE_INDICATOR],
@@ -43,6 +43,8 @@ AC_DEFUN([gl_STRING_MODULE_INDICATOR],
 
 AC_DEFUN([gl_HEADER_STRING_H_DEFAULTS],
 [
+  GNULIB_FFSL=0;        AC_SUBST([GNULIB_FFSL])
+  GNULIB_FFSLL=0;       AC_SUBST([GNULIB_FFSLL])
   GNULIB_MEMCHR=0;      AC_SUBST([GNULIB_MEMCHR])
   GNULIB_MEMMEM=0;      AC_SUBST([GNULIB_MEMMEM])
   GNULIB_MEMPCPY=0;     AC_SUBST([GNULIB_MEMPCPY])
@@ -80,6 +82,8 @@ AC_DEFUN([gl_HEADER_STRING_H_DEFAULTS],
   GNULIB_STRVERSCMP=0;  AC_SUBST([GNULIB_STRVERSCMP])
   HAVE_MBSLEN=0;        AC_SUBST([HAVE_MBSLEN])
   dnl Assume proper GNU behavior unless another module says otherwise.
+  HAVE_FFSL=1;                  AC_SUBST([HAVE_FFSL])
+  HAVE_FFSLL=1;                 AC_SUBST([HAVE_FFSLL])
   HAVE_MEMCHR=1;                AC_SUBST([HAVE_MEMCHR])
   HAVE_DECL_MEMMEM=1;           AC_SUBST([HAVE_DECL_MEMMEM])
   HAVE_MEMPCPY=1;               AC_SUBST([HAVE_MEMPCPY])
