@@ -27,7 +27,8 @@
 #include "public/ds.h"
 #include "oscap.h"
 #include "alloc.h"
-#include "error.h"
+#include "common/_error.h"
+#include "common/util.h"
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -53,7 +54,7 @@ static xmlNodePtr node_get_child_element(xmlNodePtr parent, const char* name)
     return NULL;
 }
 
-xmlNodePtr ds_ids_find_component_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* id)
+static xmlNodePtr ds_ids_find_component_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* id)
 {
     xmlNodePtr cref_parent = datastream->children;
 
@@ -72,7 +73,7 @@ xmlNodePtr ds_ids_find_component_ref(xmlDocPtr doc, xmlNodePtr datastream, const
             if (strcmp((const char*)(component_ref->name), "component-ref") != 0)
                 continue;
 
-            const char* cref_id = (const char*)xmlGetProp(component_ref, "id");
+            const char* cref_id = (const char*)xmlGetProp(component_ref, (const xmlChar*)"id");
             if (strcmp(cref_id, id) == 0)
             {
                 return component_ref;
@@ -83,7 +84,7 @@ xmlNodePtr ds_ids_find_component_ref(xmlDocPtr doc, xmlNodePtr datastream, const
     return NULL;
 }
 
-void ds_ids_dump_component(const char* component_id, xmlDocPtr doc, const char* filename)
+static void ds_ids_dump_component(const char* component_id, xmlDocPtr doc, const char* filename)
 {
     xmlNodePtr root = xmlDocGetRootElement(doc);
     xmlNodePtr component = NULL;
@@ -97,7 +98,7 @@ void ds_ids_dump_component(const char* component_id, xmlDocPtr doc, const char* 
         if (strcmp((const char*)(candidate->name), "component") != 0)
             continue;
 
-        const char* candidate_id = (const char*)xmlGetProp(candidate, "id");
+        const char* candidate_id = (const char*)xmlGetProp(candidate, (const xmlChar*)"id");
         if (strcmp(candidate_id, component_id) == 0)
         {
             component = candidate;
@@ -107,16 +108,21 @@ void ds_ids_dump_component(const char* component_id, xmlDocPtr doc, const char* 
 
     if (component == NULL)
     {
-        // FIXME
-        printf("Component of id '%s' wasn't found in the document\n", component_id);
+        oscap_seterr(OSCAP_EFAMILY_XML, 0, "Component of given id was not found in the document.");
         return;
     }
 
     xmlNodePtr inner_root = node_get_child_element(component, NULL); // FIXME: More checking!
 
+    if (inner_root == NULL)
+    {
+        oscap_seterr(OSCAP_EFAMILY_XML, 0, "Found component has no element contents, nothing to dump.");
+        return;
+    }
+
     xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
 
-    xmlDocPtr new_doc = xmlNewDoc("1.0");
+    xmlDocPtr new_doc = xmlNewDoc((const xmlChar*)"1.0");
     xmlNodePtr res_node = NULL;
     xmlDOMWrapCloneNode(wrap_ctxt, doc, inner_root, &res_node, new_doc, NULL, 1, 0);
     xmlDocSetRootElement(new_doc, res_node);
@@ -127,10 +133,22 @@ void ds_ids_dump_component(const char* component_id, xmlDocPtr doc, const char* 
     xmlDOMWrapFreeCtxt(wrap_ctxt);
 }
 
-void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc, xmlNodePtr datastream, const char* target_dir, const char* filename)
+static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc, xmlNodePtr datastream, const char* target_dir, const char* filename)
 {
-    const char* cref_id = (const char*)xmlGetProp(component_ref, "id");
-    const char* xlink_href = (const char*)xmlGetProp(component_ref, "href");
+    const char* cref_id = (const char*)xmlGetProp(component_ref, (const xmlChar*)"id");
+    if (!cref_id)
+    {
+        oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid id attribute on given component-ref.");
+        return;
+    }
+
+    const char* xlink_href = (const char*)xmlGetProp(component_ref, (const xmlChar*)"href");
+    if (!xlink_href || xlink_href == '\0')
+    {
+        oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid xlink:href attribute on given component-ref.");
+        return;
+    }
+
     const char* component_id = xlink_href + 1 * sizeof(char);
     const char* target_filename = oscap_sprintf("%s/%s", target_dir, filename);
     ds_ids_dump_component(component_id, doc, target_filename);
@@ -139,7 +157,6 @@ void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc, xmlNo
     xmlNodePtr catalog = node_get_child_element(component_ref, "catalog");
     if (catalog)
     {
-        printf("Inside catalog\n");
         xmlNodePtr uri = catalog->children;
 
         for (; uri != NULL; uri = uri->next)
@@ -150,42 +167,37 @@ void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc, xmlNo
             if (strcmp((const char*)(uri->name), "uri") != 0)
                 continue;
 
-            const char* name = (const char*)xmlGetProp(uri, "name");
+            const char* name = (const char*)xmlGetProp(uri, (const xmlChar*)"name");
 
             if (!name)
             {
-                printf("No name!\n");
-                // FIXME
+                oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid name for a component referenced in the catalog. Skipping...");
                 continue;
             }
 
-            const char* str_uri = (const char*)xmlGetProp(uri, "uri");
+            const char* str_uri = (const char*)xmlGetProp(uri, (const xmlChar*)"uri");
 
-            if (!str_uri)
+            if (!str_uri || str_uri == '\0')
             {
-                printf("No 'uri'!\n");
-                // FIXME
+                oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid URI for a component referenced in the catalog. Skipping...");
                 continue;
             }
 
-            printf("uri '%s'!\n", str_uri);
-
+            // the pointer arithmetics simply skips the first character which is '#'
             xmlNodePtr cat_component_ref = ds_ids_find_component_ref(doc, datastream, str_uri + 1 * sizeof(char));
 
             if (!cat_component_ref)
             {
-                // FIXME
-                printf("component-ref with id '%s' wasn't found in the document\n", str_uri + 1 * sizeof(char));
+                oscap_seterr(OSCAP_EFAMILY_XML, 0, "component-ref with given id wasn't found in the document!");
                 continue;
             }
 
             ds_ids_dump_component_ref_as(cat_component_ref, doc, datastream, target_dir, name);
         }
     }
-    printf("Dumped to '%s/%s'!\n", target_dir, filename);
 }
 
-void ds_ids_dump_component_ref(xmlNodePtr component_ref, xmlDocPtr doc, xmlNodePtr datastream, const char* target_dir)
+static void ds_ids_dump_component_ref(xmlNodePtr component_ref, xmlDocPtr doc, xmlNodePtr datastream, const char* target_dir)
 {
     ds_ids_dump_component_ref_as(component_ref, doc, datastream, target_dir, "a-xccdf.xml");
 }
@@ -194,11 +206,11 @@ void ds_ids_decompose(const char* input_file, const char* id, const char* target
 {
 	xmlDocPtr doc = xmlReadFile(input_file, NULL, 0);
 
-    if (!doc) {
-		// FIXME
-		//oscap_dlprintf(DBG_E, "Unable to open file.\n");
-		return;
-	}
+    if (!doc)
+    {
+        oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Could not read given input file.");
+        return;
+    }
 
     xmlNodePtr root = xmlDocGetRootElement(doc);
 
@@ -225,7 +237,7 @@ void ds_ids_decompose(const char* input_file, const char* id, const char* target
 
     if (!datastream)
     {
-        // FIXME
+        oscap_seterr(OSCAP_EFAMILY_XML, 0, "Could not find any matching datastream.");
         return;
     }
 
@@ -233,7 +245,7 @@ void ds_ids_decompose(const char* input_file, const char* id, const char* target
 
     if (!checklists)
     {
-        // FIXME
+        oscap_seterr(OSCAP_EFAMILY_XML, 0, "No checklists element found in the matching datastream.");
         return;
     }
 
