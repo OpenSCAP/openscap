@@ -120,6 +120,7 @@ void ds_ids_dump_component(const char* component_id, xmlDocPtr doc, const char* 
     xmlNodePtr res_node = NULL;
     xmlDOMWrapCloneNode(wrap_ctxt, doc, inner_root, &res_node, new_doc, NULL, 1, 0);
     xmlDocSetRootElement(new_doc, res_node);
+    xmlDOMWrapReconcileNamespaces(wrap_ctxt, res_node, 0);
     xmlSaveFileEnc(filename, new_doc, "utf-8");
     xmlFreeDoc(new_doc);
 
