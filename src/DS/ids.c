@@ -53,6 +53,36 @@ static xmlNodePtr node_get_child_element(xmlNodePtr parent, const char* name)
     return NULL;
 }
 
+xmlNodePtr ds_ids_find_component_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* id)
+{
+    xmlNodePtr cref_parent = datastream->children;
+
+    for (; cref_parent != NULL; cref_parent = cref_parent->next)
+    {
+        if (cref_parent->type != XML_ELEMENT_NODE)
+            continue;
+
+        xmlNodePtr component_ref = cref_parent->children;
+
+        for (; component_ref != NULL; component_ref = component_ref->next)
+        {
+            if (component_ref->type != XML_ELEMENT_NODE)
+                continue;
+
+            if (strcmp((const char*)(component_ref->name), "component-ref") != 0)
+                continue;
+
+            const char* cref_id = (const char*)xmlGetProp(component_ref, "id");
+            if (strcmp(cref_id, id) == 0)
+            {
+                return component_ref;
+            }
+        }
+    }
+
+    return NULL;
+}
+
 void ds_ids_dump_component(const char* component_id, xmlDocPtr doc, const char* filename)
 {
     xmlNodePtr root = xmlDocGetRootElement(doc);
@@ -96,7 +126,7 @@ void ds_ids_dump_component(const char* component_id, xmlDocPtr doc, const char* 
     xmlDOMWrapFreeCtxt(wrap_ctxt);
 }
 
-void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc, const char* target_dir, const char* filename)
+void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc, xmlNodePtr datastream, const char* target_dir, const char* filename)
 {
     const char* cref_id = (const char*)xmlGetProp(component_ref, "id");
     const char* xlink_href = (const char*)xmlGetProp(component_ref, "href");
@@ -108,6 +138,7 @@ void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc, const
     xmlNodePtr catalog = node_get_child_element(component_ref, "catalog");
     if (catalog)
     {
+        printf("Inside catalog\n");
         xmlNodePtr uri = catalog->children;
 
         for (; uri != NULL; uri = uri->next)
@@ -122,19 +153,40 @@ void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc, const
 
             if (!name)
             {
+                printf("No name!\n");
                 // FIXME
                 continue;
             }
 
-            //ds_ids_dump_component_ref_as(cat_component_ref, doc, target_dir, name);
+            const char* str_uri = (const char*)xmlGetProp(uri, "uri");
+
+            if (!str_uri)
+            {
+                printf("No 'uri'!\n");
+                // FIXME
+                continue;
+            }
+
+            printf("uri '%s'!\n", str_uri);
+
+            xmlNodePtr cat_component_ref = ds_ids_find_component_ref(doc, datastream, str_uri + 1 * sizeof(char));
+
+            if (!cat_component_ref)
+            {
+                // FIXME
+                printf("component-ref with id '%s' wasn't found in the document\n", str_uri + 1 * sizeof(char));
+                continue;
+            }
+
+            ds_ids_dump_component_ref_as(cat_component_ref, doc, datastream, target_dir, name);
         }
     }
     printf("Dumped to '%s/%s'!\n", target_dir, filename);
 }
 
-void ds_ids_dump_component_ref(xmlNodePtr component_ref, xmlDocPtr doc, const char* target_dir)
+void ds_ids_dump_component_ref(xmlNodePtr component_ref, xmlDocPtr doc, xmlNodePtr datastream, const char* target_dir)
 {
-    ds_ids_dump_component_ref_as(component_ref, doc, target_dir, "a-xccdf.xml");
+    ds_ids_dump_component_ref_as(component_ref, doc, datastream, target_dir, "a-xccdf.xml");
 }
 
 void ds_ids_decompose(const char* input_file, const char* id, const char* target_dir)
@@ -149,34 +201,34 @@ void ds_ids_decompose(const char* input_file, const char* id, const char* target
 
     xmlNodePtr root = xmlDocGetRootElement(doc);
 
-    xmlNodePtr data_stream = NULL;
-    xmlNodePtr candidate_data_stream = root->children;
+    xmlNodePtr datastream = NULL;
+    xmlNodePtr candidate_datastream = root->children;
 
-    for (; candidate_data_stream != NULL; candidate_data_stream = candidate_data_stream->next)
+    for (; candidate_datastream != NULL; candidate_datastream = candidate_datastream->next)
     {
-        if (candidate_data_stream->type != XML_ELEMENT_NODE)
+        if (candidate_datastream->type != XML_ELEMENT_NODE)
             continue;
 
-        if (strcmp((const char*)(candidate_data_stream->name), "data-stream") != 0)
+        if (strcmp((const char*)(candidate_datastream->name), "data-stream") != 0)
             continue;
 
         // at this point it is sure to be a <data-stream> element
 
-        const char* candidate_id = (const char*)xmlGetProp(candidate_data_stream, (const xmlChar*)"id");
+        const char* candidate_id = (const char*)xmlGetProp(candidate_datastream, (const xmlChar*)"id");
         if (id == NULL || (candidate_id != NULL && strcmp(id, candidate_id) == 0))
         {
-            data_stream = candidate_data_stream;
+            datastream = candidate_datastream;
             break;
         }
     }
 
-    if (!data_stream)
+    if (!datastream)
     {
         // FIXME
         return;
     }
 
-    xmlNodePtr checklists = node_get_child_element(data_stream, "checklists");
+    xmlNodePtr checklists = node_get_child_element(datastream, "checklists");
 
     if (!checklists)
     {
@@ -194,7 +246,7 @@ void ds_ids_decompose(const char* input_file, const char* id, const char* target
         if (strcmp((const char*)(component_ref->name), "component-ref") != 0)
             continue;
 
-        ds_ids_dump_component_ref(component_ref, doc, target_dir);
+        ds_ids_dump_component_ref(component_ref, doc, datastream, target_dir);
     }
 
     xmlFreeDoc(doc);
