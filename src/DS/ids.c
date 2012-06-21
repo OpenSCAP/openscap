@@ -130,12 +130,14 @@ static void ds_ids_dump_component(const char* component_id, xmlDocPtr doc, const
         if (strcmp((const char*)(candidate->name), "component") != 0)
             continue;
 
-        const char* candidate_id = (const char*)xmlGetProp(candidate, (const xmlChar*)"id");
+        char* candidate_id = (char*)xmlGetProp(candidate, (const xmlChar*)"id");
         if (strcmp(candidate_id, component_id) == 0)
         {
             component = candidate;
+            xmlFree(candidate_id);
             break;
         }
+        xmlFree(candidate_id);
     }
 
     if (component == NULL)
@@ -167,17 +169,19 @@ static void ds_ids_dump_component(const char* component_id, xmlDocPtr doc, const
 
 static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc, xmlNodePtr datastream, const char* target_dir, const char* filename)
 {
-    const char* cref_id = (const char*)xmlGetProp(component_ref, (const xmlChar*)"id");
+    char* cref_id = (char*)xmlGetProp(component_ref, (const xmlChar*)"id");
     if (!cref_id)
     {
         oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid id attribute on given component-ref.");
+        xmlFree(cref_id);
         return;
     }
 
-    const char* xlink_href = (const char*)xmlGetProp(component_ref, (const xmlChar*)"href");
+    char* xlink_href = (char*)xmlGetProp(component_ref, (const xmlChar*)"href");
     if (!xlink_href || strlen(xlink_href) < 2)
     {
         oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid xlink:href attribute on given component-ref.");
+        xmlFree(xlink_href);
         return;
     }
 
@@ -211,24 +215,27 @@ static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
             if (strcmp((const char*)(uri->name), "uri") != 0)
                 continue;
 
-            const char* name = (const char*)xmlGetProp(uri, (const xmlChar*)"name");
+            char* name = (char*)xmlGetProp(uri, (const xmlChar*)"name");
 
             if (!name)
             {
                 oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid name for a component referenced in the catalog. Skipping...");
+                xmlFree(name);
                 continue;
             }
 
-            const char* str_uri = (const char*)xmlGetProp(uri, (const xmlChar*)"uri");
+            char* str_uri = (char*)xmlGetProp(uri, (const xmlChar*)"uri");
 
             if (!str_uri || strlen(str_uri) < 2)
             {
                 oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid URI for a component referenced in the catalog. Skipping...");
+                xmlFree(str_uri);
                 continue;
             }
 
             // the pointer arithmetics simply skips the first character which is '#'
             xmlNodePtr cat_component_ref = ds_ids_find_component_ref(doc, datastream, str_uri + 1 * sizeof(char));
+            xmlFree(str_uri);
 
             if (!cat_component_ref)
             {
@@ -237,22 +244,27 @@ static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
             }
 
             ds_ids_dump_component_ref_as(cat_component_ref, doc, datastream, target_filename_dirname, name);
+            xmlFree(name);
         }
     }
 
     oscap_free(target_filename_dirname);
+    xmlFree(cref_id);
+    xmlFree(xlink_href);
 }
 
 static void ds_ids_dump_component_ref(xmlNodePtr component_ref, xmlDocPtr doc, xmlNodePtr datastream, const char* target_dir)
 {
-    const char* xlink_href = (const char*)xmlGetProp(component_ref, (const xmlChar*)"href");
+    char* xlink_href = (char*)xmlGetProp(component_ref, (const xmlChar*)"href");
     if (!xlink_href || strlen(xlink_href) < 2)
     {
         oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid xlink:href attribute on given component-ref.");
+        xmlFree(xlink_href);
         return;
     }
 
     ds_ids_dump_component_ref_as(component_ref, doc, datastream, target_dir, xlink_href + 1 * sizeof(char));
+    xmlFree(xlink_href);
 }
 
 void ds_ids_decompose(const char* input_file, const char* id, const char* target_dir)
@@ -280,12 +292,14 @@ void ds_ids_decompose(const char* input_file, const char* id, const char* target
 
         // at this point it is sure to be a <data-stream> element
 
-        const char* candidate_id = (const char*)xmlGetProp(candidate_datastream, (const xmlChar*)"id");
+        char* candidate_id = (char*)xmlGetProp(candidate_datastream, (const xmlChar*)"id");
         if (id == NULL || (candidate_id != NULL && strcmp(id, candidate_id) == 0))
         {
             datastream = candidate_datastream;
+            xmlFree(candidate_id);
             break;
         }
+        xmlFree(candidate_id);
     }
 
     if (!datastream)
