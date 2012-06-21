@@ -34,6 +34,20 @@
 
 #include "oscap.h"
 
+/**
+ * @brief takes given input data stream and decomposes it into separate files
+ *
+ * @param input_file
+ *     File containing a datastream collection we want to decompose parts from
+ *
+ * @param id
+ *     ID of a datastream we want to use from the given datastream
+ *     collection. The first encountered datastream is used if id is NULL.
+ *
+ * @param target_dir
+ *     Directory where the resulting files will be stored, names of the files
+ *     are deduced using component-refs inside the datastream.
+ */
 void ds_ids_decompose(const char* input_file, const char* id, const char* target_dir);
 
 #endif
