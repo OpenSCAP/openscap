@@ -1,7 +1,7 @@
-# serial 9  -*- Autoconf -*-
+# serial 11  -*- Autoconf -*-
 # Enable extensions on systems that normally disable them.
 
-# Copyright (C) 2003, 2006-2011 Free Software Foundation, Inc.
+# Copyright (C) 2003, 2006-2012 Free Software Foundation, Inc.
 # This file is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
@@ -43,7 +43,7 @@ AC_BEFORE([$0], [AC_RUN_IFELSE])dnl
   AC_CHECK_HEADER([minix/config.h], [MINIX=yes], [MINIX=])
   if test "$MINIX" = yes; then
     AC_DEFINE([_POSIX_SOURCE], [1],
-      [Define to 1 if you need to in order for `stat' and other
+      [Define to 1 if you need to in order for 'stat' and other
        things to work.])
     AC_DEFINE([_POSIX_1_SOURCE], [2],
       [Define to 2 if the system does not provide POSIX.1 features
@@ -66,6 +66,10 @@ AC_BEFORE([$0], [AC_RUN_IFELSE])dnl
 [/* Enable extensions on AIX 3, Interix.  */
 #ifndef _ALL_SOURCE
 # undef _ALL_SOURCE
+#endif
+/* Enable general extensions on MacOS X.  */
+#ifndef _DARWIN_C_SOURCE
+# undef _DARWIN_C_SOURCE
 #endif
 /* Enable GNU extensions on systems that have them.  */
 #ifndef _GNU_SOURCE
@@ -95,6 +99,7 @@ AC_BEFORE([$0], [AC_RUN_IFELSE])dnl
   test $ac_cv_safe_to_define___extensions__ = yes &&
     AC_DEFINE([__EXTENSIONS__])
   AC_DEFINE([_ALL_SOURCE])
+  AC_DEFINE([_DARWIN_C_SOURCE])
   AC_DEFINE([_GNU_SOURCE])
   AC_DEFINE([_POSIX_PTHREAD_SEMANTICS])
   AC_DEFINE([_TANDEM_SOURCE])

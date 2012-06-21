@@ -1,6 +1,6 @@
-# getdelim.m4 serial 8
+# getdelim.m4 serial 10
 
-dnl Copyright (C) 2005-2007, 2009-2011 Free Software Foundation, Inc.
+dnl Copyright (C) 2005-2007, 2009-2012 Free Software Foundation, Inc.
 dnl
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
@@ -19,6 +19,7 @@ AC_DEFUN([gl_FUNC_GETDELIM],
 
   AC_CHECK_FUNCS_ONCE([getdelim])
   if test $ac_cv_func_getdelim = yes; then
+    HAVE_GETDELIM=1
     dnl Found it in some library.  Verify that it works.
     AC_CACHE_CHECK([for working getdelim function], [gl_cv_func_working_getdelim],
     [echo fooNbarN | tr -d '\012' | tr N '\012' > conftest.data
@@ -62,23 +63,20 @@ AC_DEFUN([gl_FUNC_GETDELIM],
  #endif
 #endif
          ],
-         [gl_cv_func_working_getdelim=yes],
-         [gl_cv_func_working_getdelim=no])]
+         [gl_cv_func_working_getdelim="guessing yes"],
+         [gl_cv_func_working_getdelim="guessing no"])]
     )])
+    case "$gl_cv_func_working_getdelim" in
+      *no)
+        REPLACE_GETDELIM=1
+        ;;
+    esac
   else
-    gl_cv_func_working_getdelim=no
+    HAVE_GETDELIM=0
   fi
 
   if test $ac_cv_have_decl_getdelim = no; then
     HAVE_DECL_GETDELIM=0
-  fi
-
-  if test $gl_cv_func_working_getdelim = no; then
-    if test $ac_cv_func_getdelim = yes; then
-      REPLACE_GETDELIM=1
-    fi
-    AC_LIBOBJ([getdelim])
-    gl_PREREQ_GETDELIM
   fi
 ])
 

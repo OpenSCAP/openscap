@@ -1,5 +1,5 @@
-# stdint.m4 serial 41
-dnl Copyright (C) 2001-2011 Free Software Foundation, Inc.
+# stdint.m4 serial 43
+dnl Copyright (C) 2001-2012 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -69,8 +69,6 @@ AC_DEFUN_ONCE([gl_STDINT_H],
       [gl_cv_header_working_stdint_h=no
        AC_COMPILE_IFELSE([
          AC_LANG_PROGRAM([[
-#define __STDC_LIMIT_MACROS 1 /* to make it work also in C++ mode */
-#define __STDC_CONSTANT_MACROS 1 /* to make it work also in C++ mode */
 #define _GL_JUST_INCLUDE_SYSTEM_STDINT_H 1 /* work if build isn't clean */
 #include <stdint.h>
 /* Dragonfly defines WCHAR_MIN, WCHAR_MAX only in <wchar.h>.  */
@@ -219,8 +217,6 @@ struct s {
           dnl This detects a bug on HP-UX 11.23/ia64.
           AC_RUN_IFELSE([
             AC_LANG_PROGRAM([[
-#define __STDC_LIMIT_MACROS 1 /* to make it work also in C++ mode */
-#define __STDC_CONSTANT_MACROS 1 /* to make it work also in C++ mode */
 #define _GL_JUST_INCLUDE_SYSTEM_STDINT_H 1 /* work if build isn't clean */
 #include <stdint.h>
 ]
@@ -466,6 +462,14 @@ AC_DEFUN([gl_STDINT_TYPE_PROPERTIES],
   fi
   gl_INTEGER_TYPE_SUFFIX([sig_atomic_t wchar_t wint_t],
     [gl_STDINT_INCLUDES])
+
+  dnl If wint_t is smaller than 'int', it cannot satisfy the ISO C 99
+  dnl requirement that wint_t is "unchanged by default argument promotions".
+  dnl In this case gnulib's <wchar.h> and <wctype.h> override wint_t.
+  dnl Set the variable BITSIZEOF_WINT_T accordingly.
+  if test $BITSIZEOF_WINT_T -lt 32; then
+    BITSIZEOF_WINT_T=32
+  fi
 ])
 
 dnl Autoconf >= 2.61 has AC_COMPUTE_INT built-in.
