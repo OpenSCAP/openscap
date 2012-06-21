@@ -30,11 +30,43 @@
 #include "common/_error.h"
 #include "common/util.h"
 
+#include <sys/stat.h>
+#include <libgen.h>
+
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
 #include <string.h>
 #include <text.h>
+
+#ifndef MAXPATHLEN
+#   define MAXPATHLEN 1024
+#endif
+
+static int mkdir_p(const char* path)
+{
+    if (strlen(path) > MAXPATHLEN)
+    {
+        return 1;
+    }
+    else
+    {
+        char temp[MAXPATHLEN + 1]; // +1 for \0
+        unsigned int i;
+
+        for (i = 0; i <= strlen(path); i++)
+        {
+            if (path[i] == '/' || path[i] == '\0')
+            {
+                strncpy(temp, path, i);
+                temp[i] = '\0';
+                mkdir(temp, S_IRWXU);
+            }
+        }
+
+        return 0;
+    }
+}
 
 static xmlNodePtr node_get_child_element(xmlNodePtr parent, const char* name)
 {
@@ -112,7 +144,7 @@ static void ds_ids_dump_component(const char* component_id, xmlDocPtr doc, const
         return;
     }
 
-    xmlNodePtr inner_root = node_get_child_element(component, NULL); // FIXME: More checking!
+    xmlNodePtr inner_root = node_get_child_element(component, NULL);
 
     if (inner_root == NULL)
     {
@@ -150,9 +182,21 @@ static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
     }
 
     const char* component_id = xlink_href + 1 * sizeof(char);
-    const char* target_filename = oscap_sprintf("%s/%s", target_dir, filename);
+    char* filename_cpy = oscap_sprintf("./%s", filename);
+    char* file_reldir = dirname(filename_cpy);
+
+    // the cast is safe to do because we are using the GNU basename, it doesn't
+    // modify the string
+    const char* file_basename = basename((char*)filename);
+
+    const char* target_filename_dirname = oscap_sprintf("%s/%s", target_dir, file_reldir);
+    // TODO: error checking
+    mkdir_p(target_filename_dirname);
+
+    const char* target_filename = oscap_sprintf("%s/%s/%s", target_dir, file_reldir, file_basename);
     ds_ids_dump_component(component_id, doc, target_filename);
     oscap_free(target_filename);
+    oscap_free(filename_cpy);
 
     xmlNodePtr catalog = node_get_child_element(component_ref, "catalog");
     if (catalog)
@@ -192,9 +236,11 @@ static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
                 continue;
             }
 
-            ds_ids_dump_component_ref_as(cat_component_ref, doc, datastream, target_dir, name);
+            ds_ids_dump_component_ref_as(cat_component_ref, doc, datastream, target_filename_dirname, name);
         }
     }
+
+    oscap_free(target_filename_dirname);
 }
 
 static void ds_ids_dump_component_ref(xmlNodePtr component_ref, xmlDocPtr doc, xmlNodePtr datastream, const char* target_dir)
@@ -266,7 +312,7 @@ void ds_ids_decompose(const char* input_file, const char* id, const char* target
         if (strcmp((const char*)(component_ref->name), "component-ref") != 0)
             continue;
 
-        ds_ids_dump_component_ref(component_ref, doc, datastream, target_dir);
+        ds_ids_dump_component_ref(component_ref, doc, datastream, strcmp(target_dir, "") == 0 ? "." : target_dir);
     }
 
     xmlFreeDoc(doc);
