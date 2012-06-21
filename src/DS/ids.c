@@ -142,7 +142,9 @@ static void ds_ids_dump_component(const char* component_id, xmlDocPtr doc, const
 
     if (component == NULL)
     {
-        oscap_seterr(OSCAP_EFAMILY_XML, 0, "Component of given id was not found in the document.");
+        const char* error = oscap_sprintf("Component of given id '%s' was not found in the document.", component_id);
+        oscap_seterr(OSCAP_EFAMILY_XML, 0, error);
+        oscap_free(error);
         return;
     }
 
@@ -150,7 +152,9 @@ static void ds_ids_dump_component(const char* component_id, xmlDocPtr doc, const
 
     if (inner_root == NULL)
     {
-        oscap_seterr(OSCAP_EFAMILY_XML, 0, "Found component has no element contents, nothing to dump.");
+        const char* error = oscap_sprintf("Found component (id='%s') but it has no element contents, nothing to dump, skipping...", component_id);
+        oscap_seterr(OSCAP_EFAMILY_XML, 0, error);
+        oscap_free(error);
         return;
     }
 
@@ -239,7 +243,9 @@ static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
 
             if (!cat_component_ref)
             {
-                oscap_seterr(OSCAP_EFAMILY_XML, 0, "component-ref with given id wasn't found in the document!");
+                const char* error = oscap_sprintf("component-ref with given id '%s' wasn't found in the document!", str_uri + 1 * sizeof(char));
+                oscap_seterr(OSCAP_EFAMILY_XML, 0, error);
+                oscap_free(error);
                 continue;
             }
 
@@ -273,7 +279,9 @@ void ds_ids_decompose(const char* input_file, const char* id, const char* target
 
     if (!doc)
     {
-        oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Could not read given input file.");
+        const char* error = oscap_sprintf("Could not read/parse XML of given input file at path '%s'.", input_file);
+        oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, error);
+        oscap_free(error);
         return;
     }
 
@@ -304,7 +312,12 @@ void ds_ids_decompose(const char* input_file, const char* id, const char* target
 
     if (!datastream)
     {
-        oscap_seterr(OSCAP_EFAMILY_XML, 0, "Could not find any matching datastream.");
+        const char* error = id ?
+            oscap_sprintf("Could not find any datastream of id '%s'", id) :
+            oscap_sprintf("Could not find any datastream inside the file");
+
+        oscap_seterr(OSCAP_EFAMILY_XML, 0, error);
+        oscap_free(error);
         return;
     }
 
