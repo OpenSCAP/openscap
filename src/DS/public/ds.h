@@ -50,5 +50,8 @@
  */
 void ds_ids_decompose(const char* input_file, const char* id, const char* target_dir);
 
+/************************************************************
+ ** @} End of DS group */
+
 #endif
 
