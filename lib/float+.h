@@ -1,5 +1,5 @@
 /* Supplemental information about the floating-point formats.
-   Copyright (C) 2007, 2009-2012 Free Software Foundation, Inc.
+   Copyright (C) 2007, 2009-2011 Free Software Foundation, Inc.
    Written by Bruno Haible <bruno@clisp.org>, 2007.
 
    This program is free software; you can redistribute it and/or modify
@@ -13,7 +13,8 @@
    GNU Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public License
-   along with this program; if not, see <http://www.gnu.org/licenses/>.  */
+   along with this program; if not, write to the Free Software Foundation,
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 #ifndef _FLOATPLUS_H
 #define _FLOATPLUS_H

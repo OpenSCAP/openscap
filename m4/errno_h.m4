@@ -1,5 +1,5 @@
-# errno_h.m4 serial 11
-dnl Copyright (C) 2004, 2006, 2008-2012 Free Software Foundation, Inc.
+# errno_h.m4 serial 9
+dnl Copyright (C) 2004, 2006, 2008-2011 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -10,9 +10,6 @@ AC_DEFUN_ONCE([gl_HEADER_ERRNO_H],
   AC_CACHE_CHECK([for complete errno.h], [gl_cv_header_errno_h_complete], [
     AC_EGREP_CPP([booboo],[
 #include <errno.h>
-#if !defined ETXTBSY
-booboo
-#endif
 #if !defined ENOMSG
 booboo
 #endif
@@ -37,12 +34,6 @@ booboo
 #if !defined ENOTSUP
 booboo
 #endif
-#if !defined ENETRESET
-booboo
-#endif
-#if !defined ECONNABORTED
-booboo
-#endif
 #if !defined ESTALE
 booboo
 #endif
@@ -50,12 +41,6 @@ booboo
 booboo
 #endif
 #if !defined ECANCELED
-booboo
-#endif
-#if !defined EOWNERDEAD
-booboo
-#endif
-#if !defined ENOTRECOVERABLE
 booboo
 #endif
       ],

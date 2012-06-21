@@ -1,6 +1,6 @@
 /* Compile-time assert-like macros.
 
-   Copyright (C) 2005-2006, 2009-2012 Free Software Foundation, Inc.
+   Copyright (C) 2005-2006, 2009-2011 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as published by
@@ -21,11 +21,13 @@
 # define _GL_VERIFY_H
 
 
-/* Define _GL_HAVE__STATIC_ASSERT to 1 if _Static_assert works as per C11.
-   This is supported by GCC 4.6.0 and later, in C mode, and its use
-   here generates easier-to-read diagnostics when verify (R) fails.
+/* Define _GL_HAVE__STATIC_ASSERT to 1 if _Static_assert works as per the
+   C1X draft N1548 section 6.7.10.  This is supported by GCC 4.6.0 and
+   later, in C mode, and its use here generates easier-to-read diagnostics
+   when verify (R) fails.
 
-   Define _GL_HAVE_STATIC_ASSERT to 1 if static_assert works as per C++11.
+   Define _GL_HAVE_STATIC_ASSERT to 1 if static_assert works as per the
+   C++0X draft N3242 section 7.(4).
    This will likely be supported by future GCC versions, in C++ mode.
 
    Use this only with GCC.  If we were willing to slow 'configure'
@@ -162,13 +164,10 @@
     (!!sizeof (_GL_VERIFY_TYPE (R, DIAGNOSTIC)))
 
 # ifdef __cplusplus
-#  if !GNULIB_defined_struct__gl_verify_type
 template <int w>
   struct _gl_verify_type {
     unsigned int _gl_verify_error_if_negative: w;
   };
-#   define GNULIB_defined_struct__gl_verify_type 1
-#  endif
 #  define _GL_VERIFY_TYPE(R, DIAGNOSTIC) \
     _gl_verify_type<(R) ? 1 : -1>
 # elif defined _GL_HAVE__STATIC_ASSERT
@@ -186,7 +185,7 @@ template <int w>
    trailing ';'.  If R is false, fail at compile-time, preferably
    with a diagnostic that includes the string-literal DIAGNOSTIC.
 
-   Unfortunately, unlike C11, this implementation must appear as an
+   Unfortunately, unlike C1X, this implementation must appear as an
    ordinary declaration, and cannot appear inside struct { ... }.  */
 
 # ifdef _GL_HAVE__STATIC_ASSERT
@@ -203,11 +202,9 @@ template <int w>
 #   define _Static_assert(R, DIAGNOSTIC) _GL_VERIFY (R, DIAGNOSTIC)
 #  endif
 #  if !defined _GL_HAVE_STATIC_ASSERT && !defined static_assert
-#   define static_assert _Static_assert /* C11 requires this #define.  */
+#   define static_assert _Static_assert /* Draft C1X requires this #define.  */
 #  endif
-# endif
-
-/* @assert.h omit start@  */
+# else
 
 /* Each of these macros verifies that its argument R is nonzero.  To
    be portable, R should be an integer constant expression.  Unlike
@@ -219,23 +216,15 @@ template <int w>
    contexts, e.g., the top level.  */
 
 /* Verify requirement R at compile-time, as an integer constant expression.
-   Return 1.  This is equivalent to verify_expr (R, 1).
+   Return 1.  */
 
-   verify_true is obsolescent; please use verify_expr instead.  */
-
-# define verify_true(R) _GL_VERIFY_TRUE (R, "verify_true (" #R ")")
-
-/* Verify requirement R at compile-time.  Return the value of the
-   expression E.  */
-
-# define verify_expr(R, E) \
-    (_GL_VERIFY_TRUE (R, "verify_expr (" #R ", " #E ")") ? (E) : (E))
+#  define verify_true(R) _GL_VERIFY_TRUE (R, "verify_true (" #R ")")
 
 /* Verify requirement R at compile-time, as a declaration without a
    trailing ';'.  */
 
-# define verify(R) _GL_VERIFY (R, "verify (" #R ")")
+#  define verify(R) _GL_VERIFY (R, "verify (" #R ")")
 
-/* @assert.h omit end@  */
+# endif
 
 #endif

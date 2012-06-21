@@ -1,4 +1,4 @@
-/* Copyright (C) 2001-2002, 2004-2012 Free Software Foundation, Inc.
+/* Copyright (C) 2001-2002, 2004-2011 Free Software Foundation, Inc.
    Written by Paul Eggert, Bruno Haible, Sam Steingold, Peter Burwood.
    This file is part of gnulib.
 
@@ -13,14 +13,15 @@
    GNU Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public License
-   along with this program; if not, see <http://www.gnu.org/licenses/>.  */
+   along with this program; if not, write to the Free Software Foundation,
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /*
  * ISO C 99 <stdint.h> for platforms that lack it.
  * <http://www.opengroup.org/susv3xbd/stdint.h.html>
  */
 
-#ifndef _@GUARD_PREFIX@_STDINT_H
+#ifndef _GL_STDINT_H
 
 #if __GNUC__ >= 3
 @PRAGMA_SYSTEM_HEADER@
@@ -32,16 +33,6 @@
    problems with (for example) VMS, whose <sys/bitypes.h> includes
    <inttypes.h>.  */
 #define _GL_JUST_INCLUDE_SYSTEM_INTTYPES_H
-
-/* On Android (Bionic libc), <sys/types.h> includes this file before
-   having defined 'time_t'.  Therefore in this case avoid including
-   other system header files; just include the system's <stdint.h>.
-   Ideally we should test __BIONIC__ here, but it is only defined after
-   <sys/cdefs.h> has been included; hence test __ANDROID__ instead.  */
-#if defined __ANDROID__ \
-    && defined _SYS_TYPES_H_ && !defined _SSIZE_T_DEFINED_
-# @INCLUDE_NEXT@ @NEXT_STDINT_H@
-#else
 
 /* Get those types that are already defined in other system include
    files, so that we can "#define int8_t signed char" below without
@@ -58,27 +49,16 @@
       diagnostics.  */
 #  define __STDINT_H__
 # endif
-
-  /* Some pre-C++11 <stdint.h> implementations need this.  */
-# ifdef __cplusplus
-#  ifndef __STDC_CONSTANT_MACROS
-#   define __STDC_CONSTANT_MACROS 1
-#  endif
-#  ifndef __STDC_LIMIT_MACROS
-#   define __STDC_LIMIT_MACROS 1
-#  endif
-# endif
-
   /* Other systems may have an incomplete or buggy <stdint.h>.
      Include it before <inttypes.h>, since any "#include <stdint.h>"
      in <inttypes.h> would reinclude us, skipping our contents because
-     _@GUARD_PREFIX@_STDINT_H is defined.
+     _GL_STDINT_H is defined.
      The include_next requires a split double-inclusion guard.  */
 # @INCLUDE_NEXT@ @NEXT_STDINT_H@
 #endif
 
-#if ! defined _@GUARD_PREFIX@_STDINT_H && ! defined _GL_JUST_INCLUDE_SYSTEM_STDINT_H
-#define _@GUARD_PREFIX@_STDINT_H
+#if ! defined _GL_STDINT_H && ! defined _GL_JUST_INCLUDE_SYSTEM_STDINT_H
+#define _GL_STDINT_H
 
 /* <sys/types.h> defines some of the stdint.h types as well, on glibc,
    IRIX 6.5, and OpenBSD 3.8 (via <machine/types.h>).
@@ -90,8 +70,7 @@
 # include <sys/types.h>
 #endif
 
-/* Get SCHAR_MIN, SCHAR_MAX, UCHAR_MAX, INT_MIN, INT_MAX,
-   LONG_MIN, LONG_MAX, ULONG_MAX.  */
+/* Get LONG_MIN, LONG_MAX, ULONG_MAX.  */
 #include <limits.h>
 
 #if @HAVE_INTTYPES_H@
@@ -114,7 +93,7 @@
 
 #undef _GL_JUST_INCLUDE_SYSTEM_INTTYPES_H
 
-/* Minimum and maximum values for an integer type under the usual assumption.
+/* Minimum and maximum values for a integer type under the usual assumption.
    Return an unspecified value if BITS == 0, adding a check to pacify
    picky compilers.  */
 
@@ -247,9 +226,8 @@ typedef unsigned long long int gl_uint64_t;
 
 /* Here we assume a standard architecture where the hardware integer
    types have 8, 16, 32, optionally 64 bits. Therefore the fastN_t types
-   are taken from the same list of types.  The following code normally
-   uses types consistent with glibc, as that lessens the chance of
-   incompatibility with older GNU hosts.  */
+   are taken from the same list of types.  Assume that 'long int'
+   is fast enough for all narrower integers.  */
 
 #undef int_fast8_t
 #undef uint_fast8_t
@@ -259,21 +237,12 @@ typedef unsigned long long int gl_uint64_t;
 #undef uint_fast32_t
 #undef int_fast64_t
 #undef uint_fast64_t
-typedef signed char gl_int_fast8_t;
-typedef unsigned char gl_uint_fast8_t;
-
-#ifdef __sun
-/* Define types compatible with SunOS 5.10, so that code compiled under
-   earlier SunOS versions works with code compiled under SunOS 5.10.  */
-typedef int gl_int_fast32_t;
-typedef unsigned int gl_uint_fast32_t;
-#else
+typedef long int gl_int_fast8_t;
+typedef unsigned long int gl_uint_fast8_t;
+typedef long int gl_int_fast16_t;
+typedef unsigned long int gl_uint_fast16_t;
 typedef long int gl_int_fast32_t;
 typedef unsigned long int gl_uint_fast32_t;
-#endif
-typedef gl_int_fast32_t gl_int_fast16_t;
-typedef gl_uint_fast32_t gl_uint_fast16_t;
-
 #define int_fast8_t gl_int_fast8_t
 #define uint_fast8_t gl_uint_fast8_t
 #define int_fast16_t gl_int_fast16_t
@@ -301,36 +270,26 @@ typedef unsigned long int gl_uintptr_t;
 /* Note: These types are compiler dependent. It may be unwise to use them in
    public header files. */
 
-/* If the system defines INTMAX_MAX, assume that intmax_t works, and
-   similarly for UINTMAX_MAX and uintmax_t.  This avoids problems with
-   assuming one type where another is used by the system.  */
-
-#ifndef INTMAX_MAX
-# undef INTMAX_C
-# undef intmax_t
-# if @HAVE_LONG_LONG_INT@ && LONG_MAX >> 30 == 1
+#undef intmax_t
+#if @HAVE_LONG_LONG_INT@ && LONG_MAX >> 30 == 1
 typedef long long int gl_intmax_t;
-#  define intmax_t gl_intmax_t
-# elif defined GL_INT64_T
-#  define intmax_t int64_t
-# else
+# define intmax_t gl_intmax_t
+#elif defined GL_INT64_T
+# define intmax_t int64_t
+#else
 typedef long int gl_intmax_t;
-#  define intmax_t gl_intmax_t
-# endif
+# define intmax_t gl_intmax_t
 #endif
 
-#ifndef UINTMAX_MAX
-# undef UINTMAX_C
-# undef uintmax_t
-# if @HAVE_UNSIGNED_LONG_LONG_INT@ && ULONG_MAX >> 31 == 1
+#undef uintmax_t
+#if @HAVE_UNSIGNED_LONG_LONG_INT@ && ULONG_MAX >> 31 == 1
 typedef unsigned long long int gl_uintmax_t;
-#  define uintmax_t gl_uintmax_t
-# elif defined GL_UINT64_T
-#  define uintmax_t uint64_t
-# else
+# define uintmax_t gl_uintmax_t
+#elif defined GL_UINT64_T
+# define uintmax_t uint64_t
+#else
 typedef unsigned long int gl_uintmax_t;
-#  define uintmax_t gl_uintmax_t
-# endif
+# define uintmax_t gl_uintmax_t
 #endif
 
 /* Verify that intmax_t and uintmax_t have the same size.  Too much code
@@ -343,6 +302,8 @@ typedef int _verify_intmax_size[sizeof (intmax_t) == sizeof (uintmax_t)
 #endif /* !GNULIB_defined_stdint_types */
 
 /* 7.18.2. Limits of specified-width integer types */
+
+#if ! defined __cplusplus || defined __STDC_LIMIT_MACROS
 
 /* 7.18.2.1. Limits of exact-width integer types */
 
@@ -429,29 +390,23 @@ typedef int _verify_intmax_size[sizeof (intmax_t) == sizeof (uintmax_t)
 #undef INT_FAST8_MIN
 #undef INT_FAST8_MAX
 #undef UINT_FAST8_MAX
-#define INT_FAST8_MIN  SCHAR_MIN
-#define INT_FAST8_MAX  SCHAR_MAX
-#define UINT_FAST8_MAX  UCHAR_MAX
+#define INT_FAST8_MIN  LONG_MIN
+#define INT_FAST8_MAX  LONG_MAX
+#define UINT_FAST8_MAX  ULONG_MAX
 
 #undef INT_FAST16_MIN
 #undef INT_FAST16_MAX
 #undef UINT_FAST16_MAX
-#define INT_FAST16_MIN  INT_FAST32_MIN
-#define INT_FAST16_MAX  INT_FAST32_MAX
-#define UINT_FAST16_MAX  UINT_FAST32_MAX
+#define INT_FAST16_MIN  LONG_MIN
+#define INT_FAST16_MAX  LONG_MAX
+#define UINT_FAST16_MAX  ULONG_MAX
 
 #undef INT_FAST32_MIN
 #undef INT_FAST32_MAX
 #undef UINT_FAST32_MAX
-#ifdef __sun
-# define INT_FAST32_MIN  INT_MIN
-# define INT_FAST32_MAX  INT_MAX
-# define UINT_FAST32_MAX  UINT_MAX
-#else
-# define INT_FAST32_MIN  LONG_MIN
-# define INT_FAST32_MAX  LONG_MAX
-# define UINT_FAST32_MAX  ULONG_MAX
-#endif
+#define INT_FAST32_MIN  LONG_MIN
+#define INT_FAST32_MAX  LONG_MAX
+#define UINT_FAST32_MAX  ULONG_MAX
 
 #undef INT_FAST64_MIN
 #undef INT_FAST64_MAX
@@ -476,23 +431,21 @@ typedef int _verify_intmax_size[sizeof (intmax_t) == sizeof (uintmax_t)
 
 /* 7.18.2.5. Limits of greatest-width integer types */
 
-#ifndef INTMAX_MAX
-# undef INTMAX_MIN
-# ifdef INT64_MAX
-#  define INTMAX_MIN  INT64_MIN
-#  define INTMAX_MAX  INT64_MAX
-# else
-#  define INTMAX_MIN  INT32_MIN
-#  define INTMAX_MAX  INT32_MAX
-# endif
+#undef INTMAX_MIN
+#undef INTMAX_MAX
+#ifdef INT64_MAX
+# define INTMAX_MIN  INT64_MIN
+# define INTMAX_MAX  INT64_MAX
+#else
+# define INTMAX_MIN  INT32_MIN
+# define INTMAX_MAX  INT32_MAX
 #endif
 
-#ifndef UINTMAX_MAX
-# ifdef UINT64_MAX
-#  define UINTMAX_MAX  UINT64_MAX
-# else
-#  define UINTMAX_MAX  UINT32_MAX
-# endif
+#undef UINTMAX_MAX
+#ifdef UINT64_MAX
+# define UINTMAX_MAX  UINT64_MAX
+#else
+# define UINTMAX_MAX  UINT32_MAX
 #endif
 
 /* 7.18.3. Limits of other integer types */
@@ -569,7 +522,11 @@ typedef int _verify_intmax_size[sizeof (intmax_t) == sizeof (uintmax_t)
 #define WINT_MAX  \
    _STDINT_MAX (@HAVE_SIGNED_WINT_T@, @BITSIZEOF_WINT_T@, 0@WINT_T_SUFFIX@)
 
+#endif /* !defined __cplusplus || defined __STDC_LIMIT_MACROS */
+
 /* 7.18.4. Macros for integer constants */
+
+#if ! defined __cplusplus || defined __STDC_CONSTANT_MACROS
 
 /* 7.18.4.1. Macros for minimum-width integer constants */
 /* According to ISO C 99 Technical Corrigendum 1 */
@@ -611,26 +568,25 @@ typedef int _verify_intmax_size[sizeof (intmax_t) == sizeof (uintmax_t)
 
 /* 7.18.4.2. Macros for greatest-width integer constants */
 
-#ifndef INTMAX_C
-# if @HAVE_LONG_LONG_INT@ && LONG_MAX >> 30 == 1
-#  define INTMAX_C(x)   x##LL
-# elif defined GL_INT64_T
-#  define INTMAX_C(x)   INT64_C(x)
-# else
-#  define INTMAX_C(x)   x##L
-# endif
+#undef INTMAX_C
+#if @HAVE_LONG_LONG_INT@ && LONG_MAX >> 30 == 1
+# define INTMAX_C(x)   x##LL
+#elif defined GL_INT64_T
+# define INTMAX_C(x)   INT64_C(x)
+#else
+# define INTMAX_C(x)   x##L
 #endif
 
-#ifndef UINTMAX_C
-# if @HAVE_UNSIGNED_LONG_LONG_INT@ && ULONG_MAX >> 31 == 1
-#  define UINTMAX_C(x)  x##ULL
-# elif defined GL_UINT64_T
-#  define UINTMAX_C(x)  UINT64_C(x)
-# else
-#  define UINTMAX_C(x)  x##UL
-# endif
+#undef UINTMAX_C
+#if @HAVE_UNSIGNED_LONG_LONG_INT@ && ULONG_MAX >> 31 == 1
+# define UINTMAX_C(x)  x##ULL
+#elif defined GL_UINT64_T
+# define UINTMAX_C(x)  UINT64_C(x)
+#else
+# define UINTMAX_C(x)  x##UL
 #endif
 
-#endif /* _@GUARD_PREFIX@_STDINT_H */
-#endif /* !(defined __ANDROID__ && ...) */
-#endif /* !defined _@GUARD_PREFIX@_STDINT_H && !defined _GL_JUST_INCLUDE_SYSTEM_STDINT_H */
+#endif /* !defined __cplusplus || defined __STDC_CONSTANT_MACROS */
+
+#endif /* _GL_STDINT_H */
+#endif /* !defined _GL_STDINT_H && !defined _GL_JUST_INCLUDE_SYSTEM_STDINT_H */
