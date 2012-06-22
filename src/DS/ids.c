@@ -43,6 +43,8 @@
 #   define MAXPATHLEN 1024
 #endif
 
+static const char* datastream_ns_uri = "http://scap.nist.gov/schema/scap/source/1.2";
+
 static int mkdir_p(const char* path)
 {
     if (strlen(path) > MAXPATHLEN)
@@ -345,3 +347,71 @@ void ds_ids_decompose(const char* input_file, const char* id, const char* target
     xmlFreeDoc(doc);
 }
 
+static bool strendswith(const char* str, const char* suffix)
+{
+    int str_shift = strlen(str) - strlen(suffix);
+    if (str_shift < 0)
+        return false;
+
+    return strcmp(str + str_shift * sizeof(char), suffix) == 0;
+}
+
+void ds_ids_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id)
+{
+    xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, datastream_ns_uri);
+    xmlNodePtr cref = xmlNewNode(ds_ns, "component-ref");
+
+    xmlSetProp(cref, "id", cref_id);
+
+    // FIXME: namespace xlink
+    const char* xlink_href = oscap_sprintf("#%s", filepath);
+    xmlSetProp(cref, "href", xlink_href);
+    oscap_free(xlink_href);
+
+    xmlNodePtr cref_catalog = xmlNewNode(ds_ns, "catalog"); // FIXME: namespace
+    xmlAddNode(cref, cref_catalog);
+
+    xmlNodePtr cref_parent;
+
+    if (strendswith(filepath, "-xccdf.xml"))
+    {
+        cref_parent = node_get_child_element(datastream, "checklists");
+        //ds_ids_compose_add_xccdf_dependencies(doc, datastream, filepath, cref_catalog);
+    }
+    else if (strendswith(filepath, "-oval.xml"))
+    {
+        cref_parent = node_get_child_element(datastream, "checks");
+    }
+    else if (strendswith(filepath, "-cpe-oval.xml") || strendswith(filepath, "-cpe-dictionary.xml"))
+    {
+        cref_parent = node_get_child_element(datastream, "dictionaries");
+    }
+    else
+    {
+        cref_parent = node_get_child_element(datastream, "extended-components");
+    }
+
+    xmlAddChild(cref_parent, cref);
+}
+
+ds_ids_compose_from_xccdf(const char* xccdf_file, const char* target_datastream)
+{
+    xmlDocPtr doc = xmlNewDoc("utf-8");
+    xmlNodePtr root = xmlNewNode(NULL, "data-stream-collection");
+    xmlNsPtr ds_ns = xmlNewNs(root, datastream_ns_uri, "ds");
+    xmlSetNs(root, ds_ns);
+
+    xmlNodePtr dictionaries = xmlNewNode(ds_ns, "dictionaries");
+    xmlAddChild(root, dictionaries);
+
+    xmlNodePtr checklists = xmlNewNode(ds_ns, "checklists");
+    xmlAddChild(root, checklists);
+
+    xmlNodePtr checks = xmlNewNode(ds_ns, "checks");
+    xmlAddChild(root, checks);
+
+    xmlNodePtr extended_components = xmlNewNode(ds_ns, "extended-components");
+    xmlAddChild(root, extended_components);
+
+    ds_ids_add_component_with_ref(doc, xccdf_file, xccdf_file);
+}
