@@ -38,6 +38,8 @@
 #include "oval_agent_api_impl.h"
 #include "oval_system_characteristics_impl.h"
 #include "oval_collection_impl.h"
+#include "oval_parser_impl.h"
+
 #include "common/util.h"
 #include "common/debug_priv.h"
 
@@ -281,7 +283,7 @@ void oval_sysent_to_dom(struct oval_sysent *sysent, xmlDoc * doc, xmlNode * pare
 	bool mask = oval_sysent_get_mask(sysent);
 
 	/* omit the value in oval_results if mask=true */
-	if(mask && !xmlStrcmp(root_node->name, (const xmlChar *) "oval_results")) {
+	if (mask && !xmlStrcmp(root_node->name, BAD_CAST OVAL_ROOT_ELM_RESULTS)) {
 		sysent_tag = xmlNewTextChild(parent, ent_ns, BAD_CAST tagname, BAD_CAST "");
 	} else {
 		sysent_tag = xmlNewTextChild(parent, ent_ns, BAD_CAST tagname, BAD_CAST content);

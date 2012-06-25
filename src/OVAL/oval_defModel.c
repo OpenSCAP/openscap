@@ -493,9 +493,9 @@ xmlNode *oval_definition_model_to_dom(struct oval_definition_model *definition_m
 	xmlNodePtr root_node = NULL;
 
 	if (parent) { /* result file */
-		root_node = xmlNewTextChild(parent, NULL, BAD_CAST "oval_definitions", NULL);
+		root_node = xmlNewTextChild(parent, NULL, BAD_CAST OVAL_ROOT_ELM_DEFINITIONS, NULL);
 	} else {      /* definitions file, we are the root */
-		root_node = xmlNewNode(NULL, BAD_CAST "oval_definitions");
+		root_node = xmlNewNode(NULL, BAD_CAST OVAL_ROOT_ELM_DEFINITIONS);
 		xmlDocSetRootElement(doc, root_node);
 	}
 	xmlNewProp(root_node, BAD_CAST "xsi:schemaLocation", BAD_CAST definition_model->schema);

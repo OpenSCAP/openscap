@@ -27,6 +27,8 @@
 #include "oval_agent_api_impl.h"
 #include "oval_system_characteristics_impl.h"
 #include "oval_collection_impl.h"
+#include "oval_parser_impl.h"
+
 #include "common/util.h"
 #include "common/debug_priv.h"
 
@@ -421,7 +423,7 @@ xmlNode *oval_record_field_to_dom(struct oval_record_field *rf, bool parent_mask
 	root_node = xmlDocGetRootElement(doc);
 	name = oval_record_field_get_name(rf);
 	rf_mask = oval_record_field_get_mask(rf);
-	if (!xmlStrcmp(root_node->name, (const xmlChar *) "oval_results")
+	if (!xmlStrcmp(root_node->name, BAD_CAST OVAL_ROOT_ELM_RESULTS)
 	    && (rf_mask || parent_mask)) {
 		value = NULL;
 		masked = true;

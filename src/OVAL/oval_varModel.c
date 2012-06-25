@@ -285,7 +285,7 @@ static int _oval_variable_model_parse(struct oval_variable_model *model, xmlText
 	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
 	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
-	bool is_variables = (strcmp(NAMESPACE_VARIABLES, namespace) == 0) && (strcmp("oval_variables", tagname) == 0);
+	bool is_variables = (strcmp(NAMESPACE_VARIABLES, namespace) == 0) && (strcmp(OVAL_ROOT_ELM_VARIABLES, tagname) == 0);
 	if (is_variables) {
 		return_code =
 		    oval_parser_parse_tag(reader, &context, (oval_xml_tag_parser) _oval_variable_model_parse_tag, model);
@@ -331,9 +331,9 @@ static xmlNode *oval_variable_model_to_dom(struct oval_variable_model * variable
 	xmlNodePtr root_node;
 
 	if (parent) {
-		root_node = xmlNewTextChild(parent, NULL, BAD_CAST "oval_variables", NULL);
+		root_node = xmlNewTextChild(parent, NULL, BAD_CAST OVAL_ROOT_ELM_VARIABLES, NULL);
 	} else {
-		root_node = xmlNewNode(NULL, BAD_CAST "oval_variables");
+		root_node = xmlNewNode(NULL, BAD_CAST OVAL_ROOT_ELM_VARIABLES);
 		xmlDocSetRootElement(doc, root_node);
 	}
 

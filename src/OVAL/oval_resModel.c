@@ -174,7 +174,7 @@ int oval_results_model_import(struct oval_results_model *model, const char *file
 	namespace = (char *)xmlTextReaderNamespaceUri(reader);
 	int is_ovalres = strcmp((const char *)OVAL_RESULTS_NAMESPACE, namespace) == 0;
 	/* star parsing */
-	if (is_ovalres && (strcmp(tagname, "oval_results") == 0)) {
+	if (is_ovalres && (strcmp(tagname, OVAL_ROOT_ELM_RESULTS) == 0)) {
 		ret = oval_results_model_parse(reader, &context);
 	} else {
                 oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Missing \"oval_results\" element");
@@ -220,9 +220,9 @@ static xmlNode *oval_results_to_dom(struct oval_results_model *results_model,
 	struct oval_directives_model * dirs_model;
 
 	if (parent) {
-		root_node = xmlNewTextChild(parent, NULL, BAD_CAST "oval_results", NULL);
+		root_node = xmlNewTextChild(parent, NULL, BAD_CAST OVAL_ROOT_ELM_RESULTS, NULL);
 	} else {
-		root_node = xmlNewNode(NULL, BAD_CAST "oval_results");
+		root_node = xmlNewNode(NULL, BAD_CAST OVAL_ROOT_ELM_RESULTS);
 		xmlDocSetRootElement(doc, root_node);
 	}
 	xmlNewProp(root_node, BAD_CAST "xsi:schemaLocation", BAD_CAST OVAL_RES_SCHEMA_LOCATION);
@@ -321,7 +321,7 @@ int oval_results_model_parse(xmlTextReaderPtr reader, struct oval_parser_context
                                 class_dir = oval_directives_model_get_new_classdir(context->results_model->directives_model, class_type);
                                 ret = oval_parser_parse_tag(reader, context, &oval_result_directives_parse_tag, class_dir);
                                 oscap_free(class_str);
-                        } else if (is_ovaldef && (strcmp(tagname, "oval_definitions") == 0)) {
+                        } else if (is_ovaldef && (strcmp(tagname, OVAL_ROOT_ELM_DEFINITIONS) == 0)) {
                                 ret = oval_definition_model_parse(reader, context);
                         } else if (is_ovalres && (strcmp(tagname, "results") == 0)) {
                                 ret = oval_parser_parse_tag(reader, context, &oval_result_system_parse_tag , NULL);
