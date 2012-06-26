@@ -372,14 +372,18 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	/* Validate OVAL files */
 	if (action->validate) {
         	for (idx=0; oval_files[idx]; idx++) {
+			xmlChar *doc_version;
+
+			doc_version = oval_determine_document_schema_version((const char *) oval_files[idx],
+				OSCAP_DOCUMENT_OVAL_DEFINITIONS);
 			if (!oscap_validate_document(oval_files[idx],
-						     OSCAP_DOCUMENT_OVAL_DEFINITIONS,
-						     NULL,
-						     (action->verbosity >= 0 ? oscap_reporter_fd : NULL),
-						     stdout)) {
+				OSCAP_DOCUMENT_OVAL_DEFINITIONS, (const char *) doc_version,
+				(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 				fprintf(stdout, "Invalid OVAL Definition content in %s\n", oval_files[idx]);
+				xmlFree(doc_version);
 				goto cleanup;
 			}
+			xmlFree(doc_version);
 		}
 	}
 
@@ -473,13 +477,18 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 			/* validate OVAL Results */
 			if (action->validate) {
-					if (!oscap_validate_document(name, OSCAP_DOCUMENT_OVAL_RESULTS, NULL,
-						(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-							fprintf(stdout, "OVAL Results are NOT exported correctly.\n");
-							free(name);
-							goto cleanup;
-					}
-					fprintf(stdout, "OVAL Results are exported correctly.\n");
+				xmlChar *doc_version;
+
+				doc_version = oval_determine_document_schema_version((const char *) name, OSCAP_DOCUMENT_OVAL_RESULTS);
+				if (!oscap_validate_document(name, OSCAP_DOCUMENT_OVAL_RESULTS, (const char *) doc_version,
+					(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+					fprintf(stdout, "OVAL Results are NOT exported correctly.\n");
+					free(name);
+					xmlFree(doc_version);
+					goto cleanup;
+				}
+				xmlFree(doc_version);
+				fprintf(stdout, "OVAL Results are exported correctly.\n");
 			}
 
 			free(name);

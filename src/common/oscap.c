@@ -193,30 +193,39 @@ cleanup:
 }
 
 struct oscap_schema_table_entry {
-	oscap_document_type_t type;
-	const char *stdname;
-	const char *def_version;
-	const char *schema_fname;
+	oscap_document_type_t doc_type;
+	const char *schema_version;
+	const char *schema_path;
 };
 
 // TODO do not hardcode versions... (duplicities)
 
 // patch version fragments are intentionally left out, we strive to ship
 // schemas of the newest patch versions of that particular minor.major version
+// todo: ugly
 struct oscap_schema_table_entry OSCAP_SCHEMAS_TABLE[] = {
-	{ OSCAP_DOCUMENT_OVAL_DEFINITIONS, "oval",  "5.10",   "oval-definitions-schema.xsd"            },
-	{ OSCAP_DOCUMENT_OVAL_VARIABLES,   "oval",  "5.10",   "oval-variables-schema.xsd"              },
-	{ OSCAP_DOCUMENT_OVAL_RESULTS,     "oval",  "5.10",   "oval-results-schema.xsd"                },
-	{ OSCAP_DOCUMENT_OVAL_SYSCHAR,     "oval",  "5.10",   "oval-system-characteristics-schema.xsd" },
-	{ OSCAP_DOCUMENT_OVAL_DIRECTIVES,  "oval",  "5.10",   "oval-directives-schema.xsd"             },
-	{ OSCAP_DOCUMENT_XCCDF,            "xccdf", "1.2",   "xccdf_1.2.xsd"                          },
-	{ OSCAP_DOCUMENT_XCCDF,            "xccdf", "1.1",   "xccdf-schema.xsd"                       },
-	{ OSCAP_DOCUMENT_SCE_RESULT,       "sce",   "1.0",   "sce-result-schema.xsd"                  },
-	{ 0, NULL, NULL, NULL }
+	{OSCAP_DOCUMENT_OVAL_DEFINITIONS,	"5.8",	"oval/5.8/oval-definitions-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_DEFINITIONS,	"5.10",	"oval/5.10/oval-definitions-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_DIRECTIVES,	"5.8",	"oval/5.8/oval-directives-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_DIRECTIVES,	"5.10",	"oval/5.10/oval-directives-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_RESULTS,		"5.8",	"oval/5.8/oval-results-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_RESULTS,		"5.10",	"oval/5.10/oval-results-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_SYSCHAR,		"5.8",	"oval/5.8/oval-system-characteristics-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_SYSCHAR,		"5.10",	"oval/5.10/oval-system-characteristics-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_VARIABLES,		"5.8",	"oval/5.8/oval-variables-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_VARIABLES,		"5.10",	"oval/5.10/oval-variables-schema.xsd"},
+	{OSCAP_DOCUMENT_SCE_RESULT,		"1.0",	"sce/1.0/sce-result-schema.xsd"},
+	{OSCAP_DOCUMENT_XCCDF,			"1.2",	"xccdf/1.2/xccdf_1.2.xsd"},
+	{OSCAP_DOCUMENT_XCCDF,			"1.1",	"xccdf/1.2/xccdf-schema.xsd"},
+	{0, NULL, NULL }
 };
 
 bool oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, oscap_reporter reporter, void *arg)
 {
+	struct oscap_schema_table_entry *entry;
+	int old_stdout = -1, devnull;
+	bool ret = false;
+
 	if (xmlfile == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "No XML file given.");
 		return false;
@@ -227,49 +236,42 @@ bool oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype,
 		return false;
 	}
 
-	struct oscap_schema_table_entry *entry = OSCAP_SCHEMAS_TABLE;
-	for (; entry->type != 0; ++entry) {
-		if (entry->type == doctype)  { // found entry
-			if (version == NULL || strcmp(entry->def_version, version) == 0) {
-				char *schemafile = oscap_sprintf("%s%s%s%s%s", entry->stdname, OSCAP_OS_PATH_DELIM, entry->def_version, OSCAP_OS_PATH_DELIM, entry->schema_fname);
+	/* validate using specific version */
+	if (version != NULL) {
+		for (entry = OSCAP_SCHEMAS_TABLE; entry->doc_type != 0; ++entry) {
+			if (entry->doc_type != doctype || strcmp(entry->schema_version, version))
+				continue;
 
-				int old_stdout;
-				if (version == NULL)
-				{
-					// we will not output various XSD validation warnings and errors
-					// in case we don't even know which XSD to use precisely
-
-					int devnull;
-					fflush(stdout);
-					old_stdout = dup(1);
-					devnull = open("/dev/null", O_WRONLY);
-					dup2(devnull, 1);
-					close(devnull);
-				}
-
-				bool ret = oscap_validate_xml(xmlfile, schemafile, reporter, arg);
-
-				if (version == NULL)
-				{
-					// restores stdout
-
-					fflush(stdout);
-					dup2(old_stdout, 1);
-					close(old_stdout);
-				}
-
-				oscap_free(schemafile);
-
-				if (ret) // the file is valid in at least one applicable schema
-					return true;
-				else if (version != NULL) // version was explicitly specified and the file didn't validate!
-					return false;
-			}
+			return oscap_validate_xml(xmlfile, entry->schema_path, reporter, arg);
 		}
 	}
 
-	oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "OpenSCAP is not able to validate this document with any schemas known to it.");
-	return false;
+	/* requested schema not found or none specified, use any schema that succeeds */
+
+	/* don't output various XSD validation warnings and errors
+	 * in case we don't even know which XSD to use precisely */
+	fflush(stdout);
+	old_stdout = dup(1);
+	devnull = open("/dev/null", O_WRONLY);
+	dup2(devnull, 1);
+	close(devnull);
+
+	for (entry = OSCAP_SCHEMAS_TABLE; entry->doc_type != 0; ++entry) {
+		if (entry->doc_type != doctype)
+			continue;
+
+		ret = oscap_validate_xml(xmlfile, entry->schema_path, reporter, arg);
+		// todo: display the name of the schema file somewhere
+		if (ret == true)
+			break;
+	}
+
+	/* restore stdout */
+	fflush(stdout);
+	dup2(old_stdout, 1);
+	close(old_stdout);
+
+	return ret;
 }
 
 bool oscap_apply_xslt_var(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params, const char *pathvar, const char *defpath)
