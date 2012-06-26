@@ -443,7 +443,16 @@ void ds_ids_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream,
                 char* href = (char*)xmlGetProp(node, BAD_CAST "href");
                 const char* real_path = oscap_sprintf("%s/%s", strcmp(dir, "") == 0 ? "." : dir, href);
                 ds_ids_compose_add_component_with_ref(doc, datastream, real_path, href);
+
+                // TODO: namespace
+                xmlNodePtr catalog_uri = xmlNewNode(NULL, BAD_CAST "uri");
+                xmlSetProp(catalog_uri, BAD_CAST "name", BAD_CAST href);
+                char* uri = oscap_sprintf("#%s", real_path);
+                xmlSetProp(catalog_uri, BAD_CAST "uri", BAD_CAST uri);
+                oscap_free(uri);
                 xmlFree(href);
+
+                xmlAddChild(catalog, catalog_uri);
             }
         }
 
