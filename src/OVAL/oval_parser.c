@@ -42,6 +42,7 @@
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "common/elements.h"
+#include "common/public/oscap.h"
 
 void libxml_error_handler(void *user, const char *message, xmlParserSeverities severity, xmlTextReaderLocatorPtr locator)
 {
@@ -67,6 +68,77 @@ int oval_parser_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *c
 		}
 	}
 	return ret;
+}
+
+xmlChar *oval_determine_document_schema_version(const char *document, oscap_document_type_t doc_type)
+{
+	xmlTextReaderPtr reader;
+	char *root_name, *elm_name;
+	int depth;
+	xmlChar *version = NULL;
+
+	reader = xmlReaderForFile(document, NULL, 0);
+	if (!reader) {
+		dE("xml reader: unable to open file: '%s'.\n", document);
+		return NULL;
+	}
+
+	/* find root element */
+	while (xmlTextReaderRead(reader) == 1
+	       && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
+	/* verify document type */
+	switch (doc_type) {
+	case OSCAP_DOCUMENT_OVAL_DEFINITIONS:
+		root_name = OVAL_ROOT_ELM_DEFINITIONS;
+		break;
+	case OSCAP_DOCUMENT_OVAL_DIRECTIVES:
+		root_name = OVAL_ROOT_ELM_DIRECTIVES;
+		break;
+	case OSCAP_DOCUMENT_OVAL_RESULTS:
+		root_name = OVAL_ROOT_ELM_RESULTS;
+		break;
+	case OSCAP_DOCUMENT_OVAL_SYSCHAR:
+		root_name = OVAL_ROOT_ELM_SYSCHARS;
+		break;
+	case OSCAP_DOCUMENT_OVAL_VARIABLES:
+		root_name = OVAL_ROOT_ELM_VARIABLES;
+		break;
+	default:
+		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Unknown document type");
+		dE("Unknown document type: %d.\n", doc_type);
+		return NULL;
+	}
+	/* verify root element's name */
+	elm_name = (char *) xmlTextReaderLocalName(reader);
+	if (!elm_name || strcmp(root_name, elm_name)) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM,
+			     "Document type doesn't match root element's name");
+		dE("Document type doesn't match root element's name: '%s'.\n", elm_name);
+		return NULL;
+	}
+	/* find generator */
+	while (xmlTextReaderRead(reader) == 1
+	       && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
+	elm_name = (char *) xmlTextReaderLocalName(reader);
+	if (!elm_name || strcmp(elm_name, "generator")) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unexpected element");
+		dE("Unexpected element: '%s'.\n", elm_name);
+		return NULL;
+	}
+	/* find schema_version */
+	depth = xmlTextReaderDepth(reader);
+	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderDepth(reader) > depth) {
+		if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT)
+			continue;
+
+		elm_name = (char *) xmlTextReaderLocalName(reader);
+		if (!strcmp(elm_name, "schema_version")) {
+			version = xmlTextReaderReadString(reader);
+			break;
+		}
+	}
+
+	return version;
 }
 
 /*
