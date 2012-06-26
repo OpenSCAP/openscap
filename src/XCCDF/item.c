@@ -415,13 +415,15 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 	}
     oscap_reference_iterator_free(references);
 
-    struct oscap_string_iterator* metadata = xccdf_item_get_metadata(item);
-    while (oscap_string_iterator_has_more(metadata))
-    {
-    	const char* meta = oscap_string_iterator_next(metadata);
-    	oscap_xmlstr_to_dom(item_node, "metadata", meta);
+	if (xccdf_item_get_type(item)!=XCCDF_BENCHMARK) {
+		struct oscap_string_iterator* metadata = xccdf_item_get_metadata(item);
+		while (oscap_string_iterator_has_more(metadata))
+		{
+			const char* meta = oscap_string_iterator_next(metadata);
+			oscap_xmlstr_to_dom(item_node, "metadata", meta);
+		}
+		oscap_string_iterator_free(metadata);
     }
-    oscap_string_iterator_free(metadata);
 
 	/* Handle type specific attributes and children */
 	switch (xccdf_item_get_type(item)) {
