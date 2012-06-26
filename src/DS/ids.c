@@ -358,12 +358,12 @@ static bool strendswith(const char* str, const char* suffix)
 
 void ds_ids_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath)
 {
-    xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, datastream_ns_uri);
+    xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, (const xmlChar*)datastream_ns_uri);
 
-    xmlNodePtr component = xmlNewNode(ds_ns, "component");
-    xmlSetProp(component, (const xmlChar*)"id", filepath);
+    xmlNodePtr component = xmlNewNode(ds_ns, (const xmlChar*)"component");
+    xmlSetProp(component, (const xmlChar*)"id", (const xmlChar*)filepath);
     // TODO
-    xmlSetProp(component, (const xmlChar*)"timestamp", "TODOTODOTODO");
+    xmlSetProp(component, (const xmlChar*)"timestamp", (const xmlChar*)"TODOTODOTODO");
 
 	xmlDocPtr component_doc = xmlReadFile(filepath, NULL, 0);
 
@@ -379,7 +379,7 @@ void ds_ids_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, const ch
 
     xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
 
-    xmlNodePtr* res_component_root = NULL;
+    xmlNodePtr res_component_root = NULL;
     xmlDOMWrapCloneNode(wrap_ctxt, component_doc, component_root, &res_component_root, doc, NULL, 1, 0);
     xmlDOMWrapReconcileNamespaces(wrap_ctxt, res_component_root, 0);
 
@@ -395,20 +395,20 @@ void ds_ids_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, const ch
 
 void ds_ids_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id)
 {
-    xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, datastream_ns_uri);
+    xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, (const xmlChar*)datastream_ns_uri);
 
     ds_ids_compose_add_component(doc, datastream, filepath);
 
-    xmlNodePtr cref = xmlNewNode(ds_ns, "component-ref");
+    xmlNodePtr cref = xmlNewNode(ds_ns, (const xmlChar*)"component-ref");
 
-    xmlSetProp(cref, "id", cref_id);
+    xmlSetProp(cref, (const xmlChar*)"id", (const xmlChar*)cref_id);
 
     // FIXME: namespace xlink
     const char* xlink_href = oscap_sprintf("#%s", filepath);
-    xmlSetProp(cref, "href", xlink_href);
+    xmlSetProp(cref, (const xmlChar*)"href", (const xmlChar*)xlink_href);
     oscap_free(xlink_href);
 
-    xmlNodePtr cref_catalog = xmlNewNode(ds_ns, "catalog"); // FIXME: namespace
+    xmlNodePtr cref_catalog = xmlNewNode(ds_ns, (const xmlChar*)"catalog"); // FIXME: namespace
     xmlAddChild(cref, cref_catalog);
 
     xmlNodePtr cref_parent;
@@ -437,25 +437,25 @@ void ds_ids_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream,
 void ds_ids_compose_from_xccdf(const char* xccdf_file, const char* target_datastream)
 {
     xmlDocPtr doc = xmlNewDoc((const xmlChar*)"1.0");
-    xmlNodePtr root = xmlNewNode(NULL, "data-stream-collection");
+    xmlNodePtr root = xmlNewNode(NULL, (const xmlChar*)"data-stream-collection");
     xmlDocSetRootElement(doc, root);
 
-    xmlNsPtr ds_ns = xmlNewNs(root, datastream_ns_uri, "ds");
+    xmlNsPtr ds_ns = xmlNewNs(root, datastream_ns_uri, (const xmlChar*)"ds");
     xmlSetNs(root, ds_ns);
 
-    xmlNodePtr datastream = xmlNewNode(ds_ns, "data-stream");
+    xmlNodePtr datastream = xmlNewNode(ds_ns, (const xmlChar*)"data-stream");
     xmlAddChild(root, datastream);
 
-    xmlNodePtr dictionaries = xmlNewNode(ds_ns, "dictionaries");
+    xmlNodePtr dictionaries = xmlNewNode(ds_ns, (const xmlChar*)"dictionaries");
     xmlAddChild(datastream, dictionaries);
 
-    xmlNodePtr checklists = xmlNewNode(ds_ns, "checklists");
+    xmlNodePtr checklists = xmlNewNode(ds_ns, (const xmlChar*)"checklists");
     xmlAddChild(datastream, checklists);
 
-    xmlNodePtr checks = xmlNewNode(ds_ns, "checks");
+    xmlNodePtr checks = xmlNewNode(ds_ns, (const xmlChar*)"checks");
     xmlAddChild(datastream, checks);
 
-    xmlNodePtr extended_components = xmlNewNode(ds_ns, "extended-components");
+    xmlNodePtr extended_components = xmlNewNode(ds_ns, (const xmlChar*)"extended-components");
     xmlAddChild(datastream, extended_components);
 
     ds_ids_compose_add_component_with_ref(doc, datastream, xccdf_file, xccdf_file);
