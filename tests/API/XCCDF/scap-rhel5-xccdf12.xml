@@ -429,6 +429,8 @@
           <Rule id="xccdf_org.open-scap_rule_scap-rhel5-rule-0" selected="false" weight="10.000000">
             <title xml:lang="en">Disable the rhnsd Daemon </title>
             <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en">The rhnsd service should be enabled or disabled as appropriate.</description>
+            <metadata xmlns:xhtml="http://www.w3.org/1999/xhtml">
+                <otherns:arbitrary xmlns:otherns="http://open-scap.org/testing_namespace"><otherns:elements><otherns:here/></otherns:elements></otherns:arbitrary></metadata>
             <ident system="http://cce.mitre.org">CCE-3416-5</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref name="oval:gov.irs.rhel5:def:1" href="scap-rhel5-oval.xml"/>
