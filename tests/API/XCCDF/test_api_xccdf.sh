@@ -1,79 +1,57 @@
 #!/usr/bin/env bash
 
-# Copyright 2009 Red Hat Inc., Durham, North Carolina.
+# Copyright 2012 Red Hat Inc., Durham, North Carolina.
 # All Rights Reserved.
 #
 # OpenScap XCCDF Module Test Suite.
 #
 # Authors:
-#      Maros Barabas <mbarabas@redhat.com>
-#      Lukas Kuklinek <lkuklinek@redhat.com>
-#      Ondrej Moris <omoris@redhat.com>
+#      Peter Vrabec <pvrabec@redhat.com>
 
 
 . $srcdir/../../test_common.sh
 
 # Test cases.
 
-function test_api_xccdf11_export {
-    require "egrep" || return 255
-    local ret_val=0
+function test_api_xccdf_export {
+	local INPUT=$srcdir/$1
+	local OUTPUT=$1.out
 
-    ./test_api_xccdf --export $srcdir/scap-rhel5-xccdf11.xml \
-	scap-rhel5-xccdf11.xml.out
-    
-    if [ $? -eq 0 ]; then
-	local IGNORE_ATTRS="weight|schemaLocation|lang"
-	$srcdir/../../xmldiff.pl $srcdir/scap-rhel5-xccdf11.xml \
-	    scap-rhel5-xccdf11.xml.out | \
-	    egrep -v "[aA]ttribute '($IGNORE_ATTRS)'"
-	if [ $? -neq 0 ]; then
-	    echo "Exported file differs from what is expected!"
-	    ret_val=1
+	./test_api_xccdf --export $srcdir/$INPUT $OUTPUT
+
+	if [ $? -eq 0 ]; then
+		cmp $srcdir/$INPUT $OUTPUT
+		if [ $? -ne 0 ]; then
+			echo "Exported file differs from what is expected!"
+			return 1
+		fi
+	else
+		echo "Cannot export xccdf content!"
+		return 1
 	fi
-    else
-	echo "Cannot export xccdf content!"
-	ret_val=1
-    fi
 
-    return $ret_val
+	return 0
 }
 
-function test_api_xccdf12_export {
-    require "egrep" || return 255
-    local ret_val=0
+function test_api_xccdf_validate {
+	local INPUT=$1
+	local VER=$2
 
-    ./test_api_xccdf --export $srcdir/scap-rhel5-xccdf12.xml \
-        scap-rhel5-xccdf12.xml.out
+	./test_api_xccdf --validate $VER $srcdir/$INPUT
+	if [ $? -eq 0 ]; then
+		return 0;
+	fi
 
-    if [ $? -eq 0 ]; then
-        local IGNORE_ATTRS="weight|schemaLocation|lang"
-        $srcdir/../../xmldiff.pl $srcdir/scap-rhel5-xccdf12.xml \
-            scap-rhel5-xccdf12.xml.out | \
-            egrep -v "[aA]ttribute '($IGNORE_ATTRS)'"
-        if [ $? -neq 0 ]; then
-            echo "Exported file differs from what is expected!"
-            ret_val=1
-        fi
-    else
-        echo "Cannot export xccdf content!"
-        ret_val=1
-    fi
-
-    return $ret_val
-}
-
-function text_api_xccdf_import {
-    ./test_api_xccdf_dump $srcdir/scap-rhel5-xccdf.xml
-    return $?
+	return 1;
 }
 
 # Testing.
 
 test_init "test_api_xccdf.log"
 
-#test_run "text_api_xccdf_import" text_api_xccdf_import
-test_run "text_api_xccdf11_export" test_api_xccdf11_export
-test_run "text_api_xccdf12_export" test_api_xccdf12_export
+test_run "text_api_xccdf-1.1_export" test_api_xccdf_export scap-rhel5-xccdf11.xml
+test_run "text_api_xccdf-1.1_validate" test_api_xccdf_validate scap-rhel5-xccdf11.xml.out "1.1"
+test_run "text_api_xccdf-1.2_export" test_api_xccdf_export scap-rhel5-xccdf12.xml
+test_run "text_api_xccdf-1.2_validate" test_api_xccdf_validate scap-rhel5-xccdf12.xml.out "1.2"
 
 test_exit

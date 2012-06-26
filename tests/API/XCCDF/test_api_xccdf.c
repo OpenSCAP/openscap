@@ -7,13 +7,13 @@
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful, 
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software 
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors:
@@ -40,12 +40,12 @@ int main(int argc, char **argv)
 		return 0;
 	}
 	else if (strcmp(argv[1], "--validate") == 0) {
-		if (argc != 3) {
-			fprintf(stderr, "Usage: %s --validate xccdf\n", argv[0]);
+		if (argc != 4) {
+			fprintf(stderr, "Usage: %s --validate ver xccdf\n", argv[0]);
 			return 1;
 		}
 
-		if (!oscap_validate_document(argv[2], OSCAP_DOCUMENT_XCCDF, "1.1.4", oscap_reporter_fd, stdout)) {
+		if (!oscap_validate_document(argv[3], OSCAP_DOCUMENT_XCCDF, argv[2], oscap_reporter_fd, stdout)) {
 			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
 			return 1;
 		}
