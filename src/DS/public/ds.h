@@ -50,6 +50,8 @@
  */
 void ds_ids_decompose(const char* input_file, const char* id, const char* target_dir);
 
+void ds_ids_compose_from_xccdf(const char* xccdf_file, const char* target_datastream);
+
 /************************************************************
  ** @} End of DS group */
 

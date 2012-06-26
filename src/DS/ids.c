@@ -356,9 +356,49 @@ static bool strendswith(const char* str, const char* suffix)
     return strcmp(str + str_shift * sizeof(char), suffix) == 0;
 }
 
+void ds_ids_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath)
+{
+    xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, datastream_ns_uri);
+
+    xmlNodePtr component = xmlNewNode(ds_ns, "component");
+    xmlSetProp(component, (const xmlChar*)"id", filepath);
+    // TODO
+    xmlSetProp(component, (const xmlChar*)"timestamp", "TODOTODOTODO");
+
+	xmlDocPtr component_doc = xmlReadFile(filepath, NULL, 0);
+
+    if (!component_doc)
+    {
+        const char* error = oscap_sprintf("Could not read/parse XML of given input file at path '%s'.", filepath);
+        oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, error);
+        oscap_free(error);
+        return;
+    }
+
+    xmlNodePtr component_root = xmlDocGetRootElement(component_doc);
+
+    xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
+
+    xmlNodePtr* res_component_root = NULL;
+    xmlDOMWrapCloneNode(wrap_ctxt, component_doc, component_root, &res_component_root, doc, NULL, 1, 0);
+    xmlDOMWrapReconcileNamespaces(wrap_ctxt, res_component_root, 0);
+
+    xmlAddChild(component, res_component_root);
+
+    xmlDOMWrapFreeCtxt(wrap_ctxt);
+
+    xmlNodePtr doc_root = xmlDocGetRootElement(doc);
+    xmlAddChild(doc_root, component);
+
+    xmlFreeDoc(component_doc);
+}
+
 void ds_ids_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id)
 {
     xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, datastream_ns_uri);
+
+    ds_ids_compose_add_component(doc, datastream, filepath);
+
     xmlNodePtr cref = xmlNewNode(ds_ns, "component-ref");
 
     xmlSetProp(cref, "id", cref_id);
@@ -369,7 +409,7 @@ void ds_ids_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream,
     oscap_free(xlink_href);
 
     xmlNodePtr cref_catalog = xmlNewNode(ds_ns, "catalog"); // FIXME: namespace
-    xmlAddNode(cref, cref_catalog);
+    xmlAddChild(cref, cref_catalog);
 
     xmlNodePtr cref_parent;
 
@@ -394,24 +434,33 @@ void ds_ids_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream,
     xmlAddChild(cref_parent, cref);
 }
 
-ds_ids_compose_from_xccdf(const char* xccdf_file, const char* target_datastream)
+void ds_ids_compose_from_xccdf(const char* xccdf_file, const char* target_datastream)
 {
-    xmlDocPtr doc = xmlNewDoc("utf-8");
+    xmlDocPtr doc = xmlNewDoc((const xmlChar*)"1.0");
     xmlNodePtr root = xmlNewNode(NULL, "data-stream-collection");
+    xmlDocSetRootElement(doc, root);
+
     xmlNsPtr ds_ns = xmlNewNs(root, datastream_ns_uri, "ds");
     xmlSetNs(root, ds_ns);
 
+    xmlNodePtr datastream = xmlNewNode(ds_ns, "data-stream");
+    xmlAddChild(root, datastream);
+
     xmlNodePtr dictionaries = xmlNewNode(ds_ns, "dictionaries");
-    xmlAddChild(root, dictionaries);
+    xmlAddChild(datastream, dictionaries);
 
     xmlNodePtr checklists = xmlNewNode(ds_ns, "checklists");
-    xmlAddChild(root, checklists);
+    xmlAddChild(datastream, checklists);
 
     xmlNodePtr checks = xmlNewNode(ds_ns, "checks");
-    xmlAddChild(root, checks);
+    xmlAddChild(datastream, checks);
 
     xmlNodePtr extended_components = xmlNewNode(ds_ns, "extended-components");
-    xmlAddChild(root, extended_components);
+    xmlAddChild(datastream, extended_components);
 
-    ds_ids_add_component_with_ref(doc, xccdf_file, xccdf_file);
+    ds_ids_compose_add_component_with_ref(doc, datastream, xccdf_file, xccdf_file);
+
+    xmlSaveFileEnc("test.xml", doc, "utf-8");
+
+    xmlFreeDoc(doc);
 }
