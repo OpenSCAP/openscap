@@ -1,23 +1,28 @@
+oval55dir = $(pkgdatadir)/schemas/oval/5.5/
+oval56dir = $(pkgdatadir)/schemas/oval/5.6/
+oval57dir = $(pkgdatadir)/schemas/oval/5.7/
+oval58dir = $(pkgdatadir)/schemas/oval/5.8/
 oval510dir = $(pkgdatadir)/schemas/oval/5.10/
 sce10dir = $(pkgdatadir)/schemas/sce/1.0/
 xccdf11dir = $(pkgdatadir)/schemas/xccdf/1.1/
 xccdf12dir = $(pkgdatadir)/schemas/xccdf/1.2/
 
-oval510_DATA = \
-	oval/5.10/*.xsd
+oval55_DATA = $(wildcard oval/5.5/*.xsd)
+oval56_DATA = $(wildcard oval/5.6/*.xsd)
+oval57_DATA = $(wildcard oval/5.7/*.xsd)
+oval58_DATA = $(wildcard oval/5.8/*.xsd)
+oval510_DATA = $(wildcard oval/5.10/*.xsd)
 
-sce10_DATA = \
-		sce/1.0/sce-result-schema.xsd
+sce10_DATA = sce/1.0/sce-result-schema.xsd
 
-xccdf11_DATA = \
-	xccdf/1.1/*.xsd \
-	xccdf/1.1/*.dtd
-
-xccdf12_DATA = \
-	xccdf/1.2/*.xsd \
-	xccdf/1.2/*.dtd
+xccdf11_DATA = $(wildcard xccdf/1.1/*.xsd xccdf/1.1/*.dtd)
+xccdf12_DATA = $(wildcard xccdf/1.2/*.xsd xccdf/1.2/*.dtd)
 
 EXTRA_DIST = \
+	$(oval55_DATA) \
+	$(oval56_DATA) \
+	$(oval57_DATA) \
+	$(oval58_DATA) \
 	$(oval510_DATA) \
 	$(sce10_DATA) \
 	$(xccdf11_DATA) \
