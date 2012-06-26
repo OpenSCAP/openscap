@@ -35,6 +35,8 @@
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
+#include <libxml/xpath.h>
+#include <libxml/xpathInternals.h>
 
 #include <string.h>
 #include <text.h>
@@ -277,7 +279,7 @@ static void ds_ids_dump_component_ref(xmlNodePtr component_ref, xmlDocPtr doc, x
 
 void ds_ids_decompose(const char* input_file, const char* id, const char* target_dir)
 {
-	xmlDocPtr doc = xmlReadFile(input_file, NULL, 0);
+    xmlDocPtr doc = xmlReadFile(input_file, NULL, 0);
 
     if (!doc)
     {
@@ -365,7 +367,7 @@ void ds_ids_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, const ch
     // TODO
     xmlSetProp(component, (const xmlChar*)"timestamp", (const xmlChar*)"TODOTODOTODO");
 
-	xmlDocPtr component_doc = xmlReadFile(filepath, NULL, 0);
+    xmlDocPtr component_doc = xmlReadFile(filepath, NULL, 0);
 
     if (!component_doc)
     {
@@ -393,6 +395,67 @@ void ds_ids_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, const ch
     xmlFreeDoc(component_doc);
 }
 
+static void ds_ids_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id);
+
+void ds_ids_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, xmlNodePtr catalog)
+{
+    xmlDocPtr component_doc = xmlReadFile(filepath, NULL, 0);
+
+    xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
+    if (xpathCtx == NULL)
+    {
+        // TODO
+        //fprintf(stderr,"Error: unable to create new XPath context\n");
+        xmlFreeDoc(doc);
+        return;
+    }
+
+    //xmlXPathRegisterNs(xpathCtx, BAD_CAST "cdf11", BAD_CAST "http://checklists.nist.gov/xccdf/1.1");
+    //xmlXPathRegisterNs(xpathCtx, BAD_CAST "cdf12", BAD_CAST "http://checklists.nist.gov/xccdf/1.2");
+
+    xmlXPathObjectPtr xpathObj = xmlXPathEvalExpression(
+            // we want robustness and support for future versions, this expression
+            // retrieves check-content-refs from any namespace
+            BAD_CAST "//*[local-name() = 'check-content-ref']",
+            xpathCtx);
+
+    if (xpathObj == NULL)
+    {
+        // TODO
+        //fprintf(stderr,"Error: unable to evaluate xpath expression\n");
+        xmlXPathFreeContext(xpathCtx);
+        xmlFreeDoc(doc);
+
+        return;
+    }
+
+    xmlNodeSetPtr nodeset = xpathObj->nodesetval;
+    if (nodeset != NULL)
+    {
+        char* filepath_cpy = oscap_strdup(filepath);
+        const char* dir = dirname(filepath_cpy);
+
+        for (int i = 0; i < nodeset->nodeNr; i++)
+        {
+            xmlNodePtr node = nodeset->nodeTab[i];
+            if (xmlHasProp(node, BAD_CAST "href"))
+            {
+                char* href = (char*)xmlGetProp(node, BAD_CAST "href");
+                const char* real_path = oscap_sprintf("%s/%s", strcmp(dir, "") == 0 ? "." : dir, href);
+                ds_ids_compose_add_component_with_ref(doc, datastream, real_path, href);
+                xmlFree(href);
+            }
+        }
+
+        oscap_free(filepath_cpy);
+    }
+
+    xmlXPathFreeObject(xpathObj);
+    xmlXPathFreeContext(xpathCtx);
+
+    xmlFreeDoc(component_doc);
+}
+
 void ds_ids_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id)
 {
     xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, (const xmlChar*)datastream_ns_uri);
@@ -416,7 +479,7 @@ void ds_ids_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream,
     if (strendswith(filepath, "-xccdf.xml"))
     {
         cref_parent = node_get_child_element(datastream, "checklists");
-        //ds_ids_compose_add_xccdf_dependencies(doc, datastream, filepath, cref_catalog);
+        ds_ids_compose_add_xccdf_dependencies(doc, datastream, filepath, cref_catalog);
     }
     else if (strendswith(filepath, "-oval.xml"))
     {
@@ -440,7 +503,7 @@ void ds_ids_compose_from_xccdf(const char* xccdf_file, const char* target_datast
     xmlNodePtr root = xmlNewNode(NULL, (const xmlChar*)"data-stream-collection");
     xmlDocSetRootElement(doc, root);
 
-    xmlNsPtr ds_ns = xmlNewNs(root, datastream_ns_uri, (const xmlChar*)"ds");
+    xmlNsPtr ds_ns = xmlNewNs(root, BAD_CAST datastream_ns_uri, (const xmlChar*)"ds");
     xmlSetNs(root, ds_ns);
 
     xmlNodePtr datastream = xmlNewNode(ds_ns, (const xmlChar*)"data-stream");
