@@ -402,8 +402,7 @@ bool ds_ids_compose_catalog_has_uri(xmlDocPtr doc, xmlNodePtr catalog, const cha
     xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
     if (xpathCtx == NULL)
     {
-        // TODO
-        //fprintf(stderr,"Error: unable to create new XPath context\n");
+        oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: unable to create new XPath context.");
         return false;
     }
 
@@ -424,8 +423,7 @@ bool ds_ids_compose_catalog_has_uri(xmlDocPtr doc, xmlNodePtr catalog, const cha
 
     if (xpathObj == NULL)
     {
-        // TODO
-        //fprintf(stderr,"Error: unable to evaluate xpath expression\n");
+        oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: Unable to evalute XPath expression.");
         xmlXPathFreeContext(xpathCtx);
 
         return false;
@@ -452,8 +450,7 @@ void ds_ids_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream,
     xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
     if (xpathCtx == NULL)
     {
-        // TODO
-        //fprintf(stderr,"Error: unable to create new XPath context\n");
+        oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: unable to create new XPath context.");
         xmlFreeDoc(doc);
         return;
     }
@@ -469,8 +466,7 @@ void ds_ids_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream,
 
     if (xpathObj == NULL)
     {
-        // TODO
-        //fprintf(stderr,"Error: unable to evaluate xpath expression\n");
+        oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: Unable to evalute XPath expression.");
         xmlXPathFreeContext(xpathCtx);
         xmlFreeDoc(doc);
 
@@ -524,8 +520,7 @@ bool ds_ids_compose_has_component_ref(xmlDocPtr doc, xmlNodePtr datastream, cons
     xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
     if (xpathCtx == NULL)
     {
-        // TODO
-        //fprintf(stderr,"Error: unable to create new XPath context\n");
+        oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: unable to create new XPath context.");
         return false;
     }
 
@@ -546,8 +541,7 @@ bool ds_ids_compose_has_component_ref(xmlDocPtr doc, xmlNodePtr datastream, cons
 
     if (xpathObj == NULL)
     {
-        // TODO
-        //fprintf(stderr,"Error: unable to evaluate xpath expression\n");
+        oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: Unable to evalute XPath expression.");
         xmlXPathFreeContext(xpathCtx);
 
         return false;
