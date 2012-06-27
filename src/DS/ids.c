@@ -110,7 +110,7 @@ static xmlNodePtr ds_ids_find_component_ref(xmlDocPtr doc, xmlNodePtr datastream
             if (strcmp((const char*)(component_ref->name), "component-ref") != 0)
                 continue;
 
-            const char* cref_id = (const char*)xmlGetProp(component_ref, (const xmlChar*)"id");
+            const char* cref_id = (const char*)xmlGetProp(component_ref, BAD_CAST "id");
             if (strcmp(cref_id, id) == 0)
             {
                 return component_ref;
@@ -135,7 +135,7 @@ static void ds_ids_dump_component(const char* component_id, xmlDocPtr doc, const
         if (strcmp((const char*)(candidate->name), "component") != 0)
             continue;
 
-        char* candidate_id = (char*)xmlGetProp(candidate, (const xmlChar*)"id");
+        char* candidate_id = (char*)xmlGetProp(candidate, BAD_CAST "id");
         if (strcmp(candidate_id, component_id) == 0)
         {
             component = candidate;
@@ -165,7 +165,7 @@ static void ds_ids_dump_component(const char* component_id, xmlDocPtr doc, const
 
     xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
 
-    xmlDocPtr new_doc = xmlNewDoc((const xmlChar*)"1.0");
+    xmlDocPtr new_doc = xmlNewDoc(BAD_CAST "1.0");
     xmlNodePtr res_node = NULL;
     xmlDOMWrapCloneNode(wrap_ctxt, doc, inner_root, &res_node, new_doc, NULL, 1, 0);
     xmlDocSetRootElement(new_doc, res_node);
@@ -178,7 +178,7 @@ static void ds_ids_dump_component(const char* component_id, xmlDocPtr doc, const
 
 static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc, xmlNodePtr datastream, const char* target_dir, const char* filename)
 {
-    char* cref_id = (char*)xmlGetProp(component_ref, (const xmlChar*)"id");
+    char* cref_id = (char*)xmlGetProp(component_ref, BAD_CAST "id");
     if (!cref_id)
     {
         oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid id attribute on given component-ref.");
@@ -186,7 +186,7 @@ static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
         return;
     }
 
-    char* xlink_href = (char*)xmlGetProp(component_ref, (const xmlChar*)"href");
+    char* xlink_href = (char*)xmlGetProp(component_ref, BAD_CAST "href");
     if (!xlink_href || strlen(xlink_href) < 2)
     {
         oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid xlink:href attribute on given component-ref.");
@@ -224,7 +224,7 @@ static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
             if (strcmp((const char*)(uri->name), "uri") != 0)
                 continue;
 
-            char* name = (char*)xmlGetProp(uri, (const xmlChar*)"name");
+            char* name = (char*)xmlGetProp(uri, BAD_CAST "name");
 
             if (!name)
             {
@@ -233,7 +233,7 @@ static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
                 continue;
             }
 
-            char* str_uri = (char*)xmlGetProp(uri, (const xmlChar*)"uri");
+            char* str_uri = (char*)xmlGetProp(uri, BAD_CAST "uri");
 
             if (!str_uri || strlen(str_uri) < 2)
             {
@@ -266,7 +266,7 @@ static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
 
 static void ds_ids_dump_component_ref(xmlNodePtr component_ref, xmlDocPtr doc, xmlNodePtr datastream, const char* target_dir)
 {
-    char* xlink_href = (char*)xmlGetProp(component_ref, (const xmlChar*)"href");
+    char* xlink_href = (char*)xmlGetProp(component_ref, BAD_CAST "href");
     if (!xlink_href || strlen(xlink_href) < 2)
     {
         oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid xlink:href attribute on given component-ref.");
@@ -305,7 +305,7 @@ void ds_ids_decompose(const char* input_file, const char* id, const char* target
 
         // at this point it is sure to be a <data-stream> element
 
-        char* candidate_id = (char*)xmlGetProp(candidate_datastream, (const xmlChar*)"id");
+        char* candidate_id = (char*)xmlGetProp(candidate_datastream, BAD_CAST "id");
         if (id == NULL || (candidate_id != NULL && strcmp(id, candidate_id) == 0))
         {
             datastream = candidate_datastream;
@@ -361,12 +361,12 @@ static bool strendswith(const char* str, const char* suffix)
 
 void ds_ids_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath)
 {
-    xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, (const xmlChar*)datastream_ns_uri);
+    xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST datastream_ns_uri);
 
-    xmlNodePtr component = xmlNewNode(ds_ns, (const xmlChar*)"component");
-    xmlSetProp(component, (const xmlChar*)"id", (const xmlChar*)filepath);
+    xmlNodePtr component = xmlNewNode(ds_ns, BAD_CAST "component");
+    xmlSetProp(component, BAD_CAST "id", BAD_CAST filepath);
     // TODO
-    xmlSetProp(component, (const xmlChar*)"timestamp", (const xmlChar*)"TODOTODOTODO");
+    xmlSetProp(component, BAD_CAST "timestamp", BAD_CAST "TODOTODOTODO");
 
     xmlDocPtr component_doc = xmlReadFile(filepath, NULL, 0);
 
@@ -430,7 +430,7 @@ void ds_ids_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream,
         return;
     }
 
-    xmlNsPtr xlink_ns = xmlSearchNsByHref(doc, datastream, (const xmlChar*)xlink_ns_uri);
+    xmlNsPtr xlink_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST xlink_ns_uri);
 
     xmlNodeSetPtr nodeset = xpathObj->nodesetval;
     if (nodeset != NULL)
@@ -469,20 +469,20 @@ void ds_ids_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream,
 
 void ds_ids_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id)
 {
-    xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, (const xmlChar*)datastream_ns_uri);
-    xmlNsPtr xlink_ns = xmlSearchNsByHref(doc, datastream, (const xmlChar*)xlink_ns_uri);
+    xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST datastream_ns_uri);
+    xmlNsPtr xlink_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST xlink_ns_uri);
 
     ds_ids_compose_add_component(doc, datastream, filepath);
 
-    xmlNodePtr cref = xmlNewNode(ds_ns, (const xmlChar*)"component-ref");
+    xmlNodePtr cref = xmlNewNode(ds_ns, BAD_CAST "component-ref");
 
-    xmlSetProp(cref, (const xmlChar*)"id", (const xmlChar*)cref_id);
+    xmlSetProp(cref, BAD_CAST "id", BAD_CAST cref_id);
 
     const char* xlink_href = oscap_sprintf("#%s", filepath);
-    xmlSetNsProp(cref, xlink_ns, (const xmlChar*)"href", (const xmlChar*)xlink_href);
+    xmlSetNsProp(cref, xlink_ns, BAD_CAST "href", BAD_CAST xlink_href);
     oscap_free(xlink_href);
 
-    xmlNodePtr cref_catalog = xmlNewNode(xlink_ns, (const xmlChar*)"catalog");
+    xmlNodePtr cref_catalog = xmlNewNode(xlink_ns, BAD_CAST "catalog");
     xmlAddChild(cref, cref_catalog);
 
     xmlNodePtr cref_parent;
@@ -510,28 +510,29 @@ void ds_ids_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream,
 
 void ds_ids_compose_from_xccdf(const char* xccdf_file, const char* target_datastream)
 {
-    xmlDocPtr doc = xmlNewDoc((const xmlChar*)"1.0");
-    xmlNodePtr root = xmlNewNode(NULL, (const xmlChar*)"data-stream-collection");
+    xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+    xmlNodePtr root = xmlNewNode(NULL, BAD_CAST "data-stream-collection");
     xmlDocSetRootElement(doc, root);
 
-    xmlNsPtr ds_ns = xmlNewNs(root, BAD_CAST datastream_ns_uri, (const xmlChar*)"ds");
+    xmlNsPtr ds_ns = xmlNewNs(root, BAD_CAST datastream_ns_uri, BAD_CAST "ds");
     xmlSetNs(root, ds_ns);
 
-    xmlNsPtr xlink_ns = xmlNewNs(root, BAD_CAST xlink_ns_uri, (const xmlChar*)"xlink");
+    // we will need this namespace later when creating component-ref catalogs
+    xmlNewNs(root, BAD_CAST xlink_ns_uri, BAD_CAST "xlink");
 
-    xmlNodePtr datastream = xmlNewNode(ds_ns, (const xmlChar*)"data-stream");
+    xmlNodePtr datastream = xmlNewNode(ds_ns, BAD_CAST "data-stream");
     xmlAddChild(root, datastream);
 
-    xmlNodePtr dictionaries = xmlNewNode(ds_ns, (const xmlChar*)"dictionaries");
+    xmlNodePtr dictionaries = xmlNewNode(ds_ns, BAD_CAST "dictionaries");
     xmlAddChild(datastream, dictionaries);
 
-    xmlNodePtr checklists = xmlNewNode(ds_ns, (const xmlChar*)"checklists");
+    xmlNodePtr checklists = xmlNewNode(ds_ns, BAD_CAST "checklists");
     xmlAddChild(datastream, checklists);
 
-    xmlNodePtr checks = xmlNewNode(ds_ns, (const xmlChar*)"checks");
+    xmlNodePtr checks = xmlNewNode(ds_ns, BAD_CAST "checks");
     xmlAddChild(datastream, checks);
 
-    xmlNodePtr extended_components = xmlNewNode(ds_ns, (const xmlChar*)"extended-components");
+    xmlNodePtr extended_components = xmlNewNode(ds_ns, BAD_CAST "extended-components");
     xmlAddChild(datastream, extended_components);
 
     ds_ids_compose_add_component_with_ref(doc, datastream, xccdf_file, xccdf_file);
