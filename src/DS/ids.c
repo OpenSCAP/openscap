@@ -47,6 +47,7 @@
 
 static const char* datastream_ns_uri = "http://scap.nist.gov/schema/scap/source/1.2";
 static const char* xlink_ns_uri = "http://www.w3.org/1999/xlink";
+static const char* cat_ns_uri = "urn:oasis:names:tc:entity:xmlns:xml:catalog";
 
 static int mkdir_p(const char* path)
 {
@@ -430,7 +431,7 @@ void ds_ids_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream,
         return;
     }
 
-    xmlNsPtr xlink_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST xlink_ns_uri);
+    xmlNsPtr cat_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST cat_ns_uri);
 
     xmlNodeSetPtr nodeset = xpathObj->nodesetval;
     if (nodeset != NULL)
@@ -447,7 +448,7 @@ void ds_ids_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream,
                 const char* real_path = oscap_sprintf("%s/%s", strcmp(dir, "") == 0 ? "." : dir, href);
                 ds_ids_compose_add_component_with_ref(doc, datastream, real_path, href);
 
-                xmlNodePtr catalog_uri = xmlNewNode(xlink_ns, BAD_CAST "uri");
+                xmlNodePtr catalog_uri = xmlNewNode(cat_ns, BAD_CAST "uri");
                 xmlSetProp(catalog_uri, BAD_CAST "name", BAD_CAST href);
                 char* uri = oscap_sprintf("#%s", real_path);
                 xmlSetProp(catalog_uri, BAD_CAST "uri", BAD_CAST uri);
@@ -471,6 +472,7 @@ void ds_ids_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream,
 {
     xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST datastream_ns_uri);
     xmlNsPtr xlink_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST xlink_ns_uri);
+    xmlNsPtr cat_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST cat_ns_uri);
 
     ds_ids_compose_add_component(doc, datastream, filepath);
 
@@ -482,7 +484,7 @@ void ds_ids_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream,
     xmlSetNsProp(cref, xlink_ns, BAD_CAST "href", BAD_CAST xlink_href);
     oscap_free(xlink_href);
 
-    xmlNodePtr cref_catalog = xmlNewNode(xlink_ns, BAD_CAST "catalog");
+    xmlNodePtr cref_catalog = xmlNewNode(cat_ns, BAD_CAST "catalog");
     xmlAddChild(cref, cref_catalog);
 
     xmlNodePtr cref_parent;
@@ -517,8 +519,13 @@ void ds_ids_compose_from_xccdf(const char* xccdf_file, const char* target_datast
     xmlNsPtr ds_ns = xmlNewNs(root, BAD_CAST datastream_ns_uri, BAD_CAST "ds");
     xmlSetNs(root, ds_ns);
 
-    // we will need this namespace later when creating component-ref catalogs
+    // we will need this namespace later when creating xlink:href attr in
+    // component-ref
     xmlNewNs(root, BAD_CAST xlink_ns_uri, BAD_CAST "xlink");
+
+    // we will need this namespace later when creating component-ref
+    // dependency catalog
+    xmlNewNs(root, BAD_CAST cat_ns_uri, BAD_CAST "cat");
 
     xmlNodePtr datastream = xmlNewNode(ds_ns, BAD_CAST "data-stream");
     xmlAddChild(root, datastream);
