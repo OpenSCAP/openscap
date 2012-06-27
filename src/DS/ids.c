@@ -397,6 +397,52 @@ void ds_ids_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, const ch
     xmlFreeDoc(component_doc);
 }
 
+bool ds_ids_compose_catalog_has_uri(xmlDocPtr doc, xmlNodePtr catalog, const char* uri)
+{
+    xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
+    if (xpathCtx == NULL)
+    {
+        // TODO
+        //fprintf(stderr,"Error: unable to create new XPath context\n");
+        return false;
+    }
+
+    xmlXPathRegisterNs(xpathCtx, BAD_CAST "cat", BAD_CAST cat_ns_uri);
+    xmlXPathRegisterNs(xpathCtx, BAD_CAST "xlink", BAD_CAST xlink_ns_uri);
+
+    // limit xpath execution to just the catalog node
+    // this is done for performance reasons
+    xpathCtx->node = catalog;
+
+    const char* expression = oscap_sprintf("cat:uri[@uri = '%s']", uri);
+
+    xmlXPathObjectPtr xpathObj = xmlXPathEvalExpression(
+            BAD_CAST expression,
+            xpathCtx);
+
+    oscap_free(expression);
+
+    if (xpathObj == NULL)
+    {
+        // TODO
+        //fprintf(stderr,"Error: unable to evaluate xpath expression\n");
+        xmlXPathFreeContext(xpathCtx);
+
+        return false;
+    }
+
+    bool result = false;
+
+    xmlNodeSetPtr nodeset = xpathObj->nodesetval;
+    if (nodeset != NULL)
+        result = nodeset->nodeNr > 0;
+
+    xmlXPathFreeObject(xpathObj);
+    xmlXPathFreeContext(xpathCtx);
+
+    return result;
+}
+
 static void ds_ids_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id);
 
 void ds_ids_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, xmlNodePtr catalog)
@@ -446,11 +492,16 @@ void ds_ids_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream,
             {
                 char* href = (char*)xmlGetProp(node, BAD_CAST "href");
                 const char* real_path = oscap_sprintf("%s/%s", strcmp(dir, "") == 0 ? "." : dir, href);
+                char* uri = oscap_sprintf("#%s", real_path);
+
+                // we don't want duplicated uri elements in the catalog
+                if (ds_ids_compose_catalog_has_uri(doc, catalog, uri))
+                    continue;
+
                 ds_ids_compose_add_component_with_ref(doc, datastream, real_path, href);
 
                 xmlNodePtr catalog_uri = xmlNewNode(cat_ns, BAD_CAST "uri");
                 xmlSetProp(catalog_uri, BAD_CAST "name", BAD_CAST href);
-                char* uri = oscap_sprintf("#%s", real_path);
                 xmlSetProp(catalog_uri, BAD_CAST "uri", BAD_CAST uri);
                 oscap_free(uri);
                 xmlFree(href);
@@ -488,8 +539,6 @@ bool ds_ids_compose_has_component_ref(xmlDocPtr doc, xmlNodePtr datastream, cons
     const char* expression = oscap_sprintf("*/ds:component-ref[@xlink:href = '#%s' and @id = '%s']", filepath, cref_id);
 
     xmlXPathObjectPtr xpathObj = xmlXPathEvalExpression(
-            // we want robustness and support for future versions, this expression
-            // retrieves check-content-refs from any namespace
             BAD_CAST expression,
             xpathCtx);
 
