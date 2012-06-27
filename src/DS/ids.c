@@ -46,6 +46,7 @@
 #endif
 
 static const char* datastream_ns_uri = "http://scap.nist.gov/schema/scap/source/1.2";
+static const char* xlink_ns_uri = "http://www.w3.org/1999/xlink";
 
 static int mkdir_p(const char* path)
 {
@@ -429,6 +430,8 @@ void ds_ids_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream,
         return;
     }
 
+    xmlNsPtr xlink_ns = xmlSearchNsByHref(doc, datastream, (const xmlChar*)xlink_ns_uri);
+
     xmlNodeSetPtr nodeset = xpathObj->nodesetval;
     if (nodeset != NULL)
     {
@@ -444,8 +447,7 @@ void ds_ids_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream,
                 const char* real_path = oscap_sprintf("%s/%s", strcmp(dir, "") == 0 ? "." : dir, href);
                 ds_ids_compose_add_component_with_ref(doc, datastream, real_path, href);
 
-                // TODO: namespace
-                xmlNodePtr catalog_uri = xmlNewNode(NULL, BAD_CAST "uri");
+                xmlNodePtr catalog_uri = xmlNewNode(xlink_ns, BAD_CAST "uri");
                 xmlSetProp(catalog_uri, BAD_CAST "name", BAD_CAST href);
                 char* uri = oscap_sprintf("#%s", real_path);
                 xmlSetProp(catalog_uri, BAD_CAST "uri", BAD_CAST uri);
@@ -468,6 +470,7 @@ void ds_ids_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream,
 void ds_ids_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id)
 {
     xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, (const xmlChar*)datastream_ns_uri);
+    xmlNsPtr xlink_ns = xmlSearchNsByHref(doc, datastream, (const xmlChar*)xlink_ns_uri);
 
     ds_ids_compose_add_component(doc, datastream, filepath);
 
@@ -475,12 +478,11 @@ void ds_ids_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream,
 
     xmlSetProp(cref, (const xmlChar*)"id", (const xmlChar*)cref_id);
 
-    // FIXME: namespace xlink
     const char* xlink_href = oscap_sprintf("#%s", filepath);
-    xmlSetProp(cref, (const xmlChar*)"href", (const xmlChar*)xlink_href);
+    xmlSetNsProp(cref, xlink_ns, (const xmlChar*)"href", (const xmlChar*)xlink_href);
     oscap_free(xlink_href);
 
-    xmlNodePtr cref_catalog = xmlNewNode(ds_ns, (const xmlChar*)"catalog"); // FIXME: namespace
+    xmlNodePtr cref_catalog = xmlNewNode(xlink_ns, (const xmlChar*)"catalog");
     xmlAddChild(cref, cref_catalog);
 
     xmlNodePtr cref_parent;
@@ -514,6 +516,8 @@ void ds_ids_compose_from_xccdf(const char* xccdf_file, const char* target_datast
 
     xmlNsPtr ds_ns = xmlNewNs(root, BAD_CAST datastream_ns_uri, (const xmlChar*)"ds");
     xmlSetNs(root, ds_ns);
+
+    xmlNsPtr xlink_ns = xmlNewNs(root, BAD_CAST xlink_ns_uri, (const xmlChar*)"xlink");
 
     xmlNodePtr datastream = xmlNewNode(ds_ns, (const xmlChar*)"data-stream");
     xmlAddChild(root, datastream);
