@@ -50,8 +50,8 @@ function test_api_xccdf_validate {
 test_init "test_api_xccdf.log"
 
 test_run "text_api_xccdf-1.1_export" test_api_xccdf_export scap-rhel5-xccdf11.xml
-test_run "text_api_xccdf-1.1_validate" test_api_xccdf_validate scap-rhel5-xccdf11.xml.out "1.1"
+test_run "text_api_xccdf-1.1_validate" test_api_xccdf_validate scap-rhel5-xccdf11.xml "1.1"
 test_run "text_api_xccdf-1.2_export" test_api_xccdf_export scap-rhel5-xccdf12.xml
-test_run "text_api_xccdf-1.2_validate" test_api_xccdf_validate scap-rhel5-xccdf12.xml.out "1.2"
+test_run "text_api_xccdf-1.2_validate" test_api_xccdf_validate scap-rhel5-xccdf12.xml "1.2"
 
 test_exit
