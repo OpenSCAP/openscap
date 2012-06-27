@@ -61,9 +61,13 @@ void *probe_input_handler(void *arg)
         }
 
         pthread_cleanup_push((void(*)(void *))pthread_attr_destroy, (void *)&pth_attr);
-
-        if ((errno = pthread_barrier_wait(&OSCAP_GSYM(th_barrier))) != 0)
+        
+        switch (errno = pthread_barrier_wait(&OSCAP_GSYM(th_barrier)))
         {
+        case 0:
+        case PTHREAD_BARRIER_SERIAL_THREAD:
+	        break;
+        default:
 	        dE("pthread_barrier_wait: %d, %s.\n",
 	           errno, strerror(errno));
 	        return (NULL);
