@@ -468,11 +468,65 @@ void ds_ids_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream,
     xmlFreeDoc(component_doc);
 }
 
+bool ds_ids_compose_has_component_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id)
+{
+    xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
+    if (xpathCtx == NULL)
+    {
+        // TODO
+        //fprintf(stderr,"Error: unable to create new XPath context\n");
+        return false;
+    }
+
+    xmlXPathRegisterNs(xpathCtx, BAD_CAST "ds", BAD_CAST datastream_ns_uri);
+    xmlXPathRegisterNs(xpathCtx, BAD_CAST "xlink", BAD_CAST xlink_ns_uri);
+
+    // limit xpath execution to just the datastream node
+    // this is done for performance reasons
+    xpathCtx->node = datastream;
+
+    const char* expression = oscap_sprintf("*/ds:component-ref[@xlink:href = '#%s']", filepath);
+
+    xmlXPathObjectPtr xpathObj = xmlXPathEvalExpression(
+            // we want robustness and support for future versions, this expression
+            // retrieves check-content-refs from any namespace
+            BAD_CAST expression,
+            xpathCtx);
+
+    oscap_free(expression);
+
+    if (xpathObj == NULL)
+    {
+        // TODO
+        //fprintf(stderr,"Error: unable to evaluate xpath expression\n");
+        xmlXPathFreeContext(xpathCtx);
+
+        return false;
+    }
+
+    bool result = false;
+
+    xmlNodeSetPtr nodeset = xpathObj->nodesetval;
+    if (nodeset != NULL)
+        result = nodeset->nodeNr > 0;
+
+    xmlXPathFreeObject(xpathObj);
+    xmlXPathFreeContext(xpathCtx);
+
+    return result;
+}
+
 void ds_ids_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id)
 {
     xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST datastream_ns_uri);
     xmlNsPtr xlink_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST xlink_ns_uri);
     xmlNsPtr cat_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST cat_ns_uri);
+
+    // In case we already have this component we just return, no need to add
+    // it twice. We will typically have many references to OVAL files, adding
+    // component for each reference would create unnecessarily huge datastreams
+    if (ds_ids_compose_has_component_ref(doc, datastream, filepath, cref_id))
+        return;
 
     ds_ids_compose_add_component(doc, datastream, filepath);
 
