@@ -71,8 +71,13 @@ void *probe_signal_handler(void *arg)
         if (prctl(PR_SET_PDEATHSIG, SIGTERM) != 0)
                 dW("prctl(PR_SET_PDEATHSIG, SIGTERM) failed\n");
 #endif
-
+       
 	dI("Signal handler ready\n");
+	if ((errno = pthread_barrier_wait(&OSCAP_GSYM(th_barrier))) != 0)
+	{
+		dE("pthread_barrier_wait: %d, %s.\n", errno, strerror(errno));
+		return (NULL);
+	}
 
 	while (sigwaitinfo(&siset, &siinf) != -1) {
 

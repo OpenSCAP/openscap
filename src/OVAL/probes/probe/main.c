@@ -47,6 +47,7 @@ void  *OSCAP_GSYM(probe_arg)          = NULL;
 bool   OSCAP_GSYM(varref_handling)    = true;
 char **OSCAP_GSYM(no_varref_ents)     = NULL;
 size_t OSCAP_GSYM(no_varref_ents_cnt) = 0;
+pthread_barrier_t OSCAP_GSYM(th_barrier);
 
 extern probe_ncache_t *OSCAP_GSYM(ncache);
 
@@ -111,6 +112,15 @@ int main(int argc, char *argv[])
 	pthread_attr_t th_attr;
 	sigset_t       sigmask;
 	probe_t        probe;
+
+	if ((errno = pthread_barrier_init(&OSCAP_GSYM(th_barrier), NULL,
+	                                  1 + // signal thread
+	                                  1 + // input thread
+	                                  1 + // icache thread
+	                                  0)) != 0)
+	{
+		fail(errno, "pthread_barrier_init", __LINE__ - 6);
+	}
 
 	/*
 	 * Block signals, any signals received will be
