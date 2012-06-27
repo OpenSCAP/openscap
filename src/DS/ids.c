@@ -496,19 +496,26 @@ void ds_ids_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream,
             if (xmlHasProp(node, BAD_CAST "href"))
             {
                 char* href = (char*)xmlGetProp(node, BAD_CAST "href");
-                const char* real_path = oscap_sprintf("%s/%s", strcmp(dir, "") == 0 ? "." : dir, href);
+                char* real_path = oscap_sprintf("%s/%s", strcmp(dir, "") == 0 ? "." : dir, href);
                 char* uri = oscap_sprintf("#%s", real_path);
 
                 // we don't want duplicated uri elements in the catalog
                 if (ds_ids_compose_catalog_has_uri(doc, catalog, uri))
+                {
+                    oscap_free(uri);
+                    oscap_free(real_path);
+                    xmlFree(href);
                     continue;
+                }
 
                 ds_ids_compose_add_component_with_ref(doc, datastream, real_path, href);
 
                 xmlNodePtr catalog_uri = xmlNewNode(cat_ns, BAD_CAST "uri");
                 xmlSetProp(catalog_uri, BAD_CAST "name", BAD_CAST href);
                 xmlSetProp(catalog_uri, BAD_CAST "uri", BAD_CAST uri);
+
                 oscap_free(uri);
+                oscap_free(real_path);
                 xmlFree(href);
 
                 xmlAddChild(catalog, catalog_uri);
