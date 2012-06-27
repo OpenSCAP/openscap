@@ -50,6 +50,17 @@
  */
 void ds_ids_decompose(const char* input_file, const char* id, const char* target_dir);
 
+/**
+ * @brief takes given xccdf file and constructs a datastream
+ *
+ * @param xccdf_file
+ *      Path to the XCCDF file that should be included in the datastream
+ *      (including its dependencies).
+ *
+ * @param target_datastream
+ *      ID of the datastream that should contain the XCCDF file. It will be
+ *      the only datastream in the resulting data-stream-collection.
+ */
 void ds_ids_compose_from_xccdf(const char* xccdf_file, const char* target_datastream);
 
 /************************************************************
