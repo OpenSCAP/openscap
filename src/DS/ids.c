@@ -31,6 +31,7 @@
 #include "common/util.h"
 
 #include <sys/stat.h>
+#include <time.h>
 #include <libgen.h>
 
 #include <libxml/parser.h>
@@ -367,7 +368,15 @@ void ds_ids_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, const ch
     xmlNodePtr component = xmlNewNode(ds_ns, BAD_CAST "component");
     xmlSetProp(component, BAD_CAST "id", BAD_CAST filepath);
     // TODO
-    xmlSetProp(component, BAD_CAST "timestamp", BAD_CAST "TODOTODOTODO");
+
+    char file_timestamp[32];
+    strcpy(file_timestamp, "0000-00-00T00:00:00");
+
+    struct stat file_stat;
+    if (stat(filepath, &file_stat) == 0)
+        strftime(file_timestamp, 32, "%Y-%m-%dT%H:%M:%S", localtime(&file_stat.st_mtime));
+
+    xmlSetProp(component, BAD_CAST "timestamp", BAD_CAST file_timestamp);
 
     xmlDocPtr component_doc = xmlReadFile(filepath, NULL, 0);
 
