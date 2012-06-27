@@ -485,7 +485,7 @@ bool ds_ids_compose_has_component_ref(xmlDocPtr doc, xmlNodePtr datastream, cons
     // this is done for performance reasons
     xpathCtx->node = datastream;
 
-    const char* expression = oscap_sprintf("*/ds:component-ref[@xlink:href = '#%s']", filepath);
+    const char* expression = oscap_sprintf("*/ds:component-ref[@xlink:href = '#%s' and @id = '%s']", filepath, cref_id);
 
     xmlXPathObjectPtr xpathObj = xmlXPathEvalExpression(
             // we want robustness and support for future versions, this expression
