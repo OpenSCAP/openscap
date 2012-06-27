@@ -112,11 +112,13 @@ static xmlNodePtr ds_ids_find_component_ref(xmlDocPtr doc, xmlNodePtr datastream
             if (strcmp((const char*)(component_ref->name), "component-ref") != 0)
                 continue;
 
-            const char* cref_id = (const char*)xmlGetProp(component_ref, BAD_CAST "id");
+            char* cref_id = (char*)xmlGetProp(component_ref, BAD_CAST "id");
             if (strcmp(cref_id, id) == 0)
             {
+                xmlFree(cref_id);
                 return component_ref;
             }
+            xmlFree(cref_id);
         }
     }
 
@@ -241,6 +243,7 @@ static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
             {
                 oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid URI for a component referenced in the catalog. Skipping...");
                 xmlFree(str_uri);
+                xmlFree(name);
                 continue;
             }
 
@@ -253,6 +256,7 @@ static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
                 const char* error = oscap_sprintf("component-ref with given id '%s' wasn't found in the document!", str_uri + 1 * sizeof(char));
                 oscap_seterr(OSCAP_EFAMILY_XML, 0, error);
                 oscap_free(error);
+                xmlFree(name);
                 continue;
             }
 
@@ -367,7 +371,6 @@ void ds_ids_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, const ch
 
     xmlNodePtr component = xmlNewNode(ds_ns, BAD_CAST "component");
     xmlSetProp(component, BAD_CAST "id", BAD_CAST filepath);
-    // TODO
 
     char file_timestamp[32];
     strcpy(file_timestamp, "0000-00-00T00:00:00");
