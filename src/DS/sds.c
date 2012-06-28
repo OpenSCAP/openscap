@@ -93,7 +93,7 @@ static xmlNodePtr node_get_child_element(xmlNodePtr parent, const char* name)
     return NULL;
 }
 
-static xmlNodePtr ds_ids_find_component_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* id)
+static xmlNodePtr ds_sds_find_component_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* id)
 {
     xmlNodePtr cref_parent = datastream->children;
 
@@ -125,7 +125,7 @@ static xmlNodePtr ds_ids_find_component_ref(xmlDocPtr doc, xmlNodePtr datastream
     return NULL;
 }
 
-static void ds_ids_dump_component(const char* component_id, xmlDocPtr doc, const char* filename)
+static void ds_sds_dump_component(const char* component_id, xmlDocPtr doc, const char* filename)
 {
     xmlNodePtr root = xmlDocGetRootElement(doc);
     xmlNodePtr component = NULL;
@@ -180,7 +180,7 @@ static void ds_ids_dump_component(const char* component_id, xmlDocPtr doc, const
     xmlDOMWrapFreeCtxt(wrap_ctxt);
 }
 
-static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc, xmlNodePtr datastream, const char* target_dir, const char* filename)
+static void ds_sds_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc, xmlNodePtr datastream, const char* target_dir, const char* filename)
 {
     char* cref_id = (char*)xmlGetProp(component_ref, BAD_CAST "id");
     if (!cref_id)
@@ -211,7 +211,7 @@ static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
     mkdir_p(target_filename_dirname);
 
     const char* target_filename = oscap_sprintf("%s/%s/%s", target_dir, file_reldir, file_basename);
-    ds_ids_dump_component(component_id, doc, target_filename);
+    ds_sds_dump_component(component_id, doc, target_filename);
     oscap_free(target_filename);
     oscap_free(filename_cpy);
 
@@ -248,7 +248,7 @@ static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
             }
 
             // the pointer arithmetics simply skips the first character which is '#'
-            xmlNodePtr cat_component_ref = ds_ids_find_component_ref(doc, datastream, str_uri + 1 * sizeof(char));
+            xmlNodePtr cat_component_ref = ds_sds_find_component_ref(doc, datastream, str_uri + 1 * sizeof(char));
             xmlFree(str_uri);
 
             if (!cat_component_ref)
@@ -260,7 +260,7 @@ static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
                 continue;
             }
 
-            ds_ids_dump_component_ref_as(cat_component_ref, doc, datastream, target_filename_dirname, name);
+            ds_sds_dump_component_ref_as(cat_component_ref, doc, datastream, target_filename_dirname, name);
             xmlFree(name);
         }
     }
@@ -270,7 +270,7 @@ static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
     xmlFree(xlink_href);
 }
 
-static void ds_ids_dump_component_ref(xmlNodePtr component_ref, xmlDocPtr doc, xmlNodePtr datastream, const char* target_dir)
+static void ds_sds_dump_component_ref(xmlNodePtr component_ref, xmlDocPtr doc, xmlNodePtr datastream, const char* target_dir)
 {
     char* xlink_href = (char*)xmlGetNsProp(component_ref, BAD_CAST "href", BAD_CAST xlink_ns_uri);
     if (!xlink_href || strlen(xlink_href) < 2)
@@ -280,11 +280,11 @@ static void ds_ids_dump_component_ref(xmlNodePtr component_ref, xmlDocPtr doc, x
         return;
     }
 
-    ds_ids_dump_component_ref_as(component_ref, doc, datastream, target_dir, xlink_href + 1 * sizeof(char));
+    ds_sds_dump_component_ref_as(component_ref, doc, datastream, target_dir, xlink_href + 1 * sizeof(char));
     xmlFree(xlink_href);
 }
 
-void ds_ids_decompose(const char* input_file, const char* id, const char* target_dir)
+void ds_sds_decompose(const char* input_file, const char* id, const char* target_dir)
 {
     xmlDocPtr doc = xmlReadFile(input_file, NULL, 0);
 
@@ -350,7 +350,7 @@ void ds_ids_decompose(const char* input_file, const char* id, const char* target
         if (strcmp((const char*)(component_ref->name), "component-ref") != 0)
             continue;
 
-        ds_ids_dump_component_ref(component_ref, doc, datastream, strcmp(target_dir, "") == 0 ? "." : target_dir);
+        ds_sds_dump_component_ref(component_ref, doc, datastream, strcmp(target_dir, "") == 0 ? "." : target_dir);
     }
 
     xmlFreeDoc(doc);
@@ -365,7 +365,7 @@ static bool strendswith(const char* str, const char* suffix)
     return strcmp(str + str_shift * sizeof(char), suffix) == 0;
 }
 
-void ds_ids_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath)
+void ds_sds_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath)
 {
     xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST datastream_ns_uri);
 
@@ -409,7 +409,7 @@ void ds_ids_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, const ch
     xmlFreeDoc(component_doc);
 }
 
-bool ds_ids_compose_catalog_has_uri(xmlDocPtr doc, xmlNodePtr catalog, const char* uri)
+bool ds_sds_compose_catalog_has_uri(xmlDocPtr doc, xmlNodePtr catalog, const char* uri)
 {
     xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
     if (xpathCtx == NULL)
@@ -453,9 +453,9 @@ bool ds_ids_compose_catalog_has_uri(xmlDocPtr doc, xmlNodePtr catalog, const cha
     return result;
 }
 
-static void ds_ids_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id);
+static void ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id);
 
-void ds_ids_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, xmlNodePtr catalog)
+void ds_sds_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, xmlNodePtr catalog)
 {
     xmlDocPtr component_doc = xmlReadFile(filepath, NULL, 0);
 
@@ -507,7 +507,7 @@ void ds_ids_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream,
                 char* uri = oscap_sprintf("#%s", real_path);
 
                 // we don't want duplicated uri elements in the catalog
-                if (ds_ids_compose_catalog_has_uri(doc, catalog, uri))
+                if (ds_sds_compose_catalog_has_uri(doc, catalog, uri))
                 {
                     oscap_free(uri);
                     oscap_free(real_path);
@@ -515,7 +515,7 @@ void ds_ids_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream,
                     continue;
                 }
 
-                ds_ids_compose_add_component_with_ref(doc, datastream, real_path, real_path);
+                ds_sds_compose_add_component_with_ref(doc, datastream, real_path, real_path);
 
                 xmlNodePtr catalog_uri = xmlNewNode(cat_ns, BAD_CAST "uri");
                 xmlSetProp(catalog_uri, BAD_CAST "name", BAD_CAST href);
@@ -538,7 +538,7 @@ void ds_ids_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream,
     xmlFreeDoc(component_doc);
 }
 
-bool ds_ids_compose_has_component_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id)
+bool ds_sds_compose_has_component_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id)
 {
     xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
     if (xpathCtx == NULL)
@@ -582,7 +582,7 @@ bool ds_ids_compose_has_component_ref(xmlDocPtr doc, xmlNodePtr datastream, cons
     return result;
 }
 
-void ds_ids_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id)
+void ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id)
 {
     xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST datastream_ns_uri);
     xmlNsPtr xlink_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST xlink_ns_uri);
@@ -591,10 +591,10 @@ void ds_ids_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream,
     // In case we already have this component we just return, no need to add
     // it twice. We will typically have many references to OVAL files, adding
     // component for each reference would create unnecessarily huge datastreams
-    if (ds_ids_compose_has_component_ref(doc, datastream, filepath, cref_id))
+    if (ds_sds_compose_has_component_ref(doc, datastream, filepath, cref_id))
         return;
 
-    ds_ids_compose_add_component(doc, datastream, filepath);
+    ds_sds_compose_add_component(doc, datastream, filepath);
 
     xmlNodePtr cref = xmlNewNode(ds_ns, BAD_CAST "component-ref");
 
@@ -612,7 +612,7 @@ void ds_ids_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream,
     if (strendswith(filepath, "-xccdf.xml"))
     {
         cref_parent = node_get_child_element(datastream, "checklists");
-        ds_ids_compose_add_xccdf_dependencies(doc, datastream, filepath, cref_catalog);
+        ds_sds_compose_add_xccdf_dependencies(doc, datastream, filepath, cref_catalog);
     }
     else if (strendswith(filepath, "-oval.xml"))
     {
@@ -630,7 +630,7 @@ void ds_ids_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream,
     xmlAddChild(cref_parent, cref);
 }
 
-void ds_ids_compose_from_xccdf(const char* xccdf_file, const char* target_datastream)
+void ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastream)
 {
     xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
     xmlNodePtr root = xmlNewNode(NULL, BAD_CAST "data-stream-collection");
@@ -662,7 +662,7 @@ void ds_ids_compose_from_xccdf(const char* xccdf_file, const char* target_datast
     xmlNodePtr extended_components = xmlNewNode(ds_ns, BAD_CAST "extended-components");
     xmlAddChild(datastream, extended_components);
 
-    ds_ids_compose_add_component_with_ref(doc, datastream, xccdf_file, xccdf_file);
+    ds_sds_compose_add_component_with_ref(doc, datastream, xccdf_file, xccdf_file);
 
     xmlSaveFileEnc("test.xml", doc, "utf-8");
 
