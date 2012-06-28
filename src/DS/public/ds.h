@@ -63,6 +63,22 @@ void ds_sds_decompose(const char* input_file, const char* id, const char* target
  */
 void ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastream);
 
+/**
+ * @brief takes given source data stream and XCCDF result file and makes a result data stream
+ *
+ * @param sds_file
+ *      Path to the source data stream file that was used to generate the result XCCDF
+ *
+ * @param xccdf_result_file
+ *      Contains xccdf:TestResult(s) and the embedded Benchmark (optionally).
+ *      The embedded Benchmark (source data) will not be included in the result
+ *      data stream, we will instead bundle the source data stream.
+ *
+ * @param target_file
+ *      Path to the file where the result data stream will be stored
+ */
+void ds_rds_create(const char* sds_file, const char* xccdf_result_file, const char* target_file);
+
 /************************************************************
  ** @} End of DS group */
 
