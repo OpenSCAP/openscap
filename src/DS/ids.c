@@ -496,6 +496,10 @@ void ds_ids_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream,
         for (int i = 0; i < nodeset->nodeNr; i++)
         {
             xmlNodePtr node = nodeset->nodeTab[i];
+
+            if (node->type != XML_ELEMENT_NODE)
+                continue;
+
             if (xmlHasProp(node, BAD_CAST "href"))
             {
                 char* href = (char*)xmlGetProp(node, BAD_CAST "href");
