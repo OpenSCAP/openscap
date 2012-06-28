@@ -44,7 +44,24 @@
 
 static const char* arf_ns_uri = "http://scap.nist.gov/schema/asset-reporting-format/1.1";
 
-static xmlDocPtr ds_rds_create_from_dom(xmlDocPtr sds_doc, xmlDocPtr xccdf_result_file_doc)
+static void ds_rds_create_report(xmlDocPtr target_doc, xmlNodePtr reports_node, xmlDocPtr source_doc)
+{
+    xmlNsPtr arf_ns = xmlSearchNsByHref(target_doc, reports_node, BAD_CAST arf_ns_uri);
+
+    xmlNodePtr report = xmlNewNode(arf_ns, BAD_CAST "report");
+
+    xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
+    xmlNodePtr res_node = NULL;
+    xmlDOMWrapCloneNode(wrap_ctxt, source_doc, xmlDocGetRootElement(source_doc),
+                        &res_node, target_doc, NULL, 1, 0);
+    xmlAddChild(report, res_node);
+    xmlDOMWrapReconcileNamespaces(wrap_ctxt, res_node, 0);
+    xmlDOMWrapFreeCtxt(wrap_ctxt);
+
+    xmlAddChild(reports_node, report);
+}
+
+static xmlDocPtr ds_rds_create_from_dom(xmlDocPtr sds_doc, xmlDocPtr xccdf_result_file_doc, xmlDocPtr* oval_result_files)
 {
     xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
     xmlNodePtr root = xmlNewNode(NULL, BAD_CAST "asset-report-collection");
@@ -75,7 +92,14 @@ static xmlDocPtr ds_rds_create_from_dom(xmlDocPtr sds_doc, xmlDocPtr xccdf_resul
 
     xmlNodePtr reports = xmlNewNode(arf_ns, "reports");
 
-    // TODO: include xccdf and oval results in the reports elemenet
+    ds_rds_create_report(doc, reports, xccdf_result_file_doc);
+
+    while (oval_result_files != NULL)
+    {
+        xmlDocPtr oval_result_file = *oval_result_files;
+        ds_rds_create_report(doc, reports, oval_result_file);
+        oval_result_files++;
+    }
 
     xmlAddChild(root, reports);
 
@@ -87,8 +111,8 @@ void ds_rds_create(const char* sds_file, const char* xccdf_result_file, const ch
     xmlDocPtr sds_doc = xmlReadFile(sds_file, NULL, 0);
     xmlDocPtr result_file_doc = xmlReadFile(xccdf_result_file, NULL, 0);
 
-    xmlDocPtr rds_doc = ds_rds_create_from_dom(sds_doc, result_file_doc);
-    xmlSaveFileEnc(rds_doc, target_file, "utf-8");
+    xmlDocPtr rds_doc = ds_rds_create_from_dom(sds_doc, result_file_doc, NULL);
+    xmlSaveFileEnc(target_file, rds_doc, "utf-8");
     xmlFreeDoc(rds_doc);
 
     xmlFreeDoc(sds_doc);
