@@ -511,7 +511,7 @@ void ds_ids_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream,
                     continue;
                 }
 
-                ds_ids_compose_add_component_with_ref(doc, datastream, real_path, href);
+                ds_ids_compose_add_component_with_ref(doc, datastream, real_path, real_path);
 
                 xmlNodePtr catalog_uri = xmlNewNode(cat_ns, BAD_CAST "uri");
                 xmlSetProp(catalog_uri, BAD_CAST "name", BAD_CAST href);
