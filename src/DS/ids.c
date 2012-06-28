@@ -190,7 +190,7 @@ static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
         return;
     }
 
-    char* xlink_href = (char*)xmlGetProp(component_ref, BAD_CAST "href");
+    char* xlink_href = (char*)xmlGetNsProp(component_ref, BAD_CAST "href", BAD_CAST xlink_ns_uri);
     if (!xlink_href || strlen(xlink_href) < 2)
     {
         oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid xlink:href attribute on given component-ref.");
@@ -272,7 +272,7 @@ static void ds_ids_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
 
 static void ds_ids_dump_component_ref(xmlNodePtr component_ref, xmlDocPtr doc, xmlNodePtr datastream, const char* target_dir)
 {
-    char* xlink_href = (char*)xmlGetProp(component_ref, BAD_CAST "href");
+    char* xlink_href = (char*)xmlGetNsProp(component_ref, BAD_CAST "href", BAD_CAST xlink_ns_uri);
     if (!xlink_href || strlen(xlink_href) < 2)
     {
         oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid xlink:href attribute on given component-ref.");
