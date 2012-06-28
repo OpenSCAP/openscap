@@ -1,3 +1,8 @@
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <netinet/in.h>

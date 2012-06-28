@@ -4,6 +4,11 @@
  *  Created on: Mar 4, 2009
  *      Author: david.niemoller
  */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <oval_agent_api.h>

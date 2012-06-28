@@ -20,6 +20,9 @@
  *      Maros Barabas  <mbarabas@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 /* Standard header files */
 #include <stdio.h>

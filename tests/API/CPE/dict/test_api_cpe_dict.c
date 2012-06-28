@@ -8,6 +8,10 @@
  *      Ondrej Moris <omoris@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <cpedict.h>
 #include <cpeuri.h>
 #include <string.h>

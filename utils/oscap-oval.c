@@ -20,6 +20,10 @@
  *      Maros Barabas <mbarabas@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 /* OVAL & OSCAP common */
 #include <oval_probe.h>
 #include <oval_agent_api.h>

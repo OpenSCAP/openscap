@@ -19,6 +19,11 @@
  * Authors:
  *      Daniel Kopecek <dkopecek@redhat.com>
  */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <sexp.h>
 #include "probe-api.h"
 #include "probe.h"
