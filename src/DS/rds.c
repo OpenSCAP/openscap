@@ -44,11 +44,12 @@
 
 static const char* arf_ns_uri = "http://scap.nist.gov/schema/asset-reporting-format/1.1";
 
-static void ds_rds_create_report(xmlDocPtr target_doc, xmlNodePtr reports_node, xmlDocPtr source_doc)
+static void ds_rds_create_report(xmlDocPtr target_doc, xmlNodePtr reports_node, xmlDocPtr source_doc, const char* report_id)
 {
-    xmlNsPtr arf_ns = xmlSearchNsByHref(target_doc, reports_node, BAD_CAST arf_ns_uri);
+    xmlNsPtr arf_ns = xmlSearchNsByHref(target_doc, xmlDocGetRootElement(target_doc), BAD_CAST arf_ns_uri);
 
     xmlNodePtr report = xmlNewNode(arf_ns, BAD_CAST "report");
+    xmlSetProp(report, BAD_CAST "id", BAD_CAST report_id);
 
     xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
     xmlNodePtr res_node = NULL;
@@ -90,14 +91,19 @@ static xmlDocPtr ds_rds_create_from_dom(xmlDocPtr sds_doc, xmlDocPtr xccdf_resul
 
     xmlAddChild(report_requests, report_request);
 
-    xmlNodePtr reports = xmlNewNode(arf_ns, "reports");
+    xmlNodePtr reports = xmlNewNode(arf_ns, BAD_CAST "reports");
 
-    ds_rds_create_report(doc, reports, xccdf_result_file_doc);
+    ds_rds_create_report(doc, reports, xccdf_result_file_doc, "xccdf1");
 
+    unsigned int oval_report_suffix = 2;
     while (oval_result_files != NULL)
     {
         xmlDocPtr oval_result_file = *oval_result_files;
-        ds_rds_create_report(doc, reports, oval_result_file);
+
+        char* report_id = oscap_sprintf("oval%i", oval_report_suffix++);
+        ds_rds_create_report(doc, reports, oval_result_file, report_id);
+        oscap_free(report_id);
+
         oval_result_files++;
     }
 
