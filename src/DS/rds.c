@@ -93,6 +93,8 @@ static xmlDocPtr ds_rds_create_from_dom(xmlDocPtr sds_doc, xmlDocPtr xccdf_resul
 
     xmlNodePtr reports = xmlNewNode(arf_ns, BAD_CAST "reports");
 
+    // FIXME: We have to only add the <TestResult> elements, not the whole document.
+    //        If there are many of them we have to add them as separate reports.
     ds_rds_create_report(doc, reports, xccdf_result_file_doc, "xccdf1");
 
     unsigned int oval_report_suffix = 2;
@@ -112,14 +114,35 @@ static xmlDocPtr ds_rds_create_from_dom(xmlDocPtr sds_doc, xmlDocPtr xccdf_resul
     return doc;
 }
 
-void ds_rds_create(const char* sds_file, const char* xccdf_result_file, const char* target_file)
+void ds_rds_create(const char* sds_file, const char* xccdf_result_file, const char** oval_result_files, const char* target_file)
 {
     xmlDocPtr sds_doc = xmlReadFile(sds_file, NULL, 0);
     xmlDocPtr result_file_doc = xmlReadFile(xccdf_result_file, NULL, 0);
 
+    xmlDocPtr* oval_result_docs = oscap_alloc(1 * sizeof(xmlDocPtr));
+    size_t oval_result_docs_count = 0;
+    oval_result_docs[0] = NULL;
+
+    while (*oval_result_files != NULL)
+    {
+        oval_result_docs[oval_result_docs_count] = xmlReadFile(*oval_result_files, NULL, 0);
+        oval_result_docs = oscap_realloc(oval_result_docs, (++oval_result_docs_count + 1) * sizeof(xmlDocPtr));
+        oval_result_docs[oval_result_docs_count] = 0;
+        oval_result_files++;
+    }
+
     xmlDocPtr rds_doc = ds_rds_create_from_dom(sds_doc, result_file_doc, NULL);
     xmlSaveFileEnc(target_file, rds_doc, "utf-8");
     xmlFreeDoc(rds_doc);
+
+    xmlDocPtr* oval_result_docs_ptr = oval_result_docs;
+    while (*oval_result_docs_ptr != NULL)
+    {
+        xmlFreeDoc(*oval_result_docs_ptr);
+        oval_result_docs_ptr++;
+    }
+
+    oscap_free(oval_result_docs);
 
     xmlFreeDoc(sds_doc);
     xmlFreeDoc(result_file_doc);

@@ -74,10 +74,14 @@ void ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datast
  *      The embedded Benchmark (source data) will not be included in the result
  *      data stream, we will instead bundle the source data stream.
  *
+ * @param oval_result_files
+ *      NULL terminated list of paths to OVAL result files that should be bundled
+ *      in the result data stream.
+ *
  * @param target_file
  *      Path to the file where the result data stream will be stored
  */
-void ds_rds_create(const char* sds_file, const char* xccdf_result_file, const char* target_file);
+void ds_rds_create(const char* sds_file, const char* xccdf_result_file, const char** oval_result_files, const char* target_file);
 
 /************************************************************
  ** @} End of DS group */
