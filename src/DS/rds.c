@@ -62,6 +62,66 @@ static void ds_rds_create_report(xmlDocPtr target_doc, xmlNodePtr reports_node, 
     xmlAddChild(reports_node, report);
 }
 
+static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports, xmlDocPtr xccdf_result_file_doc)
+{
+    xmlNodePtr root_element = xmlDocGetRootElement(xccdf_result_file_doc);
+
+    // There are 2 possible scenarios here:
+
+    // 1) root element of given xccdf result file doc is a TestResult element
+    // This is the easier scenario, we will just use ds_rds_create_report and
+    // be done with it.
+    if (strcmp((const char*)root_element->name, "TestResult") == 0)
+    {
+        ds_rds_create_report(doc, reports, xccdf_result_file_doc, "xccdf1");
+    }
+
+    // 2) the root element is a Benchmark, TestResults are embedded within
+    // We will have to walk through all elements, wrap each TestResult
+    // in a xmlDoc and add them separately
+    else if (strcmp((const char*)root_element->name, "Benchmark") == 0)
+    {
+        unsigned int report_suffix = 1;
+
+        xmlNodePtr candidate_result = root_element->children;
+
+        for (; candidate_result != NULL; candidate_result = candidate_result->next)
+        {
+            if (candidate_result->type != XML_ELEMENT_NODE)
+                continue;
+
+            if (strcmp((const char*)(candidate_result->name), "TestResult") != 0)
+                continue;
+
+            xmlDocPtr wrap_doc = xmlNewDoc(BAD_CAST "1.0");
+
+            xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
+            xmlNodePtr res_node = NULL;
+            xmlDOMWrapCloneNode(wrap_ctxt, xccdf_result_file_doc, candidate_result,
+                                &res_node, wrap_doc, NULL, 1, 0);
+            xmlDocSetRootElement(wrap_doc, res_node);
+            xmlDOMWrapReconcileNamespaces(wrap_ctxt, res_node, 0);
+            xmlDOMWrapFreeCtxt(wrap_ctxt);
+
+            char* report_id = oscap_sprintf("xccdf%i", report_suffix++);
+            ds_rds_create_report(doc, reports, wrap_doc, report_id);
+            oscap_free(report_id);
+
+            xmlFreeDoc(wrap_doc);
+        }
+    }
+
+    else
+    {
+        char* error = oscap_sprintf(
+                "Unknown root element '%s' in given XCCDF result document, expected TestResult or Benchmark.",
+                (const char*)root_element->name);
+
+        oscap_seterr(OSCAP_EFAMILY_XML, 0, error);
+        oscap_free(error);
+    }
+}
+
 static xmlDocPtr ds_rds_create_from_dom(xmlDocPtr sds_doc, xmlDocPtr xccdf_result_file_doc, xmlDocPtr* oval_result_files)
 {
     xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
@@ -93,9 +153,7 @@ static xmlDocPtr ds_rds_create_from_dom(xmlDocPtr sds_doc, xmlDocPtr xccdf_resul
 
     xmlNodePtr reports = xmlNewNode(arf_ns, BAD_CAST "reports");
 
-    // FIXME: We have to only add the <TestResult> elements, not the whole document.
-    //        If there are many of them we have to add them as separate reports.
-    ds_rds_create_report(doc, reports, xccdf_result_file_doc, "xccdf1");
+    ds_rds_add_xccdf_test_results(doc, reports, xccdf_result_file_doc);
 
     unsigned int oval_report_suffix = 2;
     while (oval_result_files != NULL)
