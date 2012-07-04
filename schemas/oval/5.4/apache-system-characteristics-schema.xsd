@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" xmlns:apache-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#apache" xmlns:sch="http://purl.oclc.org/dsdl/schematron" targetNamespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#apache" elementFormDefault="qualified" version="5.4">
+	<xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" schemaLocation="oval-system-characteristics-schema.xsd"/>
+	<xsd:annotation>
+		<xsd:documentation>The following is a description of the elements, types, and attributes that compose the Apache specific system characteristic items found in Open Vulnerability and Assessment Language (OVAL).  Each item is an extension of the standard item element defined in the Core System Characteristic Schema.  Through extension, each item inherits a set of elements and attributes that are shared amongst all OVAL Items.  Each item is described in detail and should provide the information necessary to understand what each element and attribute represents.  This document is intended for developers and assumes some familiarity with XML.  A high level description of the interaction between the different tests and their relationship to the Core System Characteristic Schema is not outlined here.</xsd:documentation>
+		<xsd:documentation>The OVAL Schema is maintained by The Mitre Corporation and developed by the public OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
+		<xsd:appinfo>
+			<schema>Apache System Characteristics</schema>
+		     <version>5.4</version>
+		     <date>4/1/2008 10:41:38 AM</date>
+		      <terms_of_use>Copyright (c) 2002-2008, The MITRE Corporation. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at http://oval.mitre.org/oval/about/termsofuse.html. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+		      <sch:title>schematron validation of the Apache portion of an OVAL System Characteristics file</sch:title>
+			<sch:ns prefix="oval-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"/>
+			<sch:ns prefix="apache-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows"/>
+		</xsd:appinfo>
+	</xsd:annotation>
+	<!-- =============================================================================== -->
+	<!-- ================================  HTTPD ITEM  ================================= -->
+	<!-- =============================================================================== -->
+	<xsd:element name="httpd_item" substitutionGroup="oval-sc:item">
+		<xsd:annotation>
+			<xsd:documentation>The httpd item holds information about a installed Apache HTTPD binary.  It extends the standard ItemType as defined in the oval-system-characteristics schema and one should refer to the ItemType description for more information.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="oval-sc:ItemType">
+					<xsd:sequence>
+						<xsd:element name="path" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The path entity specifies the absolute path (excluding the filename) to a httpd binary found on the system.</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="httpditempath">
+										<sch:rule context="apache-sc:httpd_item/apache-sc:path">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the path entity of a httpd_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="binary_name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The name of the httpd binary.</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="httpditembinaryname">
+										<sch:rule context="apache-sc:httpd_item/apache-sc:binary_name">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the binary_name entity of a httpd_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="version" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The version entity holds the version of the specified httpd binary.</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="httpditemversion">
+										<sch:rule context="apache-sc:httpd_item/apache-sc:version">
+											<sch:assert test="@datatype='version'">item <sch:value-of select="../@id"/> - datatype attribute for the version entity of a httpd_item should be 'version'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- =============================================================================== -->
+	<!-- ===============================  VERSION ITEM  ================================ -->
+	<!-- =============================================================================== -->
+	<xsd:element name="version_item" substitutionGroup="oval-sc:item">
+		<xsd:annotation>
+			<xsd:documentation>This item has been deprecated.  It will be removed from the next major version release (6.0) of the OVAL Schema.  It has been replaced by the httpd_item.</xsd:documentation>
+			<xsd:documentation>The version item holds information about the version of Apache installed on the system.  It extends the standard ItemType as defined in the oval-system-characteristics schema and one should refer to the ItemType description for more information.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="oval-sc:ItemType">
+					<xsd:sequence>
+						<xsd:element name="version" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The version entity holds the version of Apache installed on the system.</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="apacheveritemversion">
+										<sch:rule context="apache-sc:version_item/apache-sc:version">
+											<sch:assert test="not(@datatype) or @datatype='version'">item <sch:value-of select="../@id"/> - datatype attribute for the version entity of a version_item should be 'version'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- =============================================================================== -->
+	<!-- =============================================================================== -->
+	<!-- =============================================================================== -->
+</xsd:schema>

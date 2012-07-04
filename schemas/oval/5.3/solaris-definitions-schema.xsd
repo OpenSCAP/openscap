@@ -1,0 +1,331 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:sol-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#solaris" xmlns:sch="http://purl.oclc.org/dsdl/schematron" targetNamespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#solaris" elementFormDefault="qualified" version="5.3">
+     <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5" schemaLocation="oval-definitions-schema.xsd"/>
+     <xsd:annotation>
+          <xsd:documentation>The following is a description of the elements, types, and attributes that compose the Solaris specific tests found in Open Vulnerability and Assessment Language (OVAL). Each test is an extension of the standard test element defined in the Core Definition Schema. Through extension, each test inherits a set of elements and attributes that are shared amongst all OVAL tests. Each test is described in detail and should provide the information necessary to understand what each element and attribute represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between the different tests and their relationship to the Core Definition Schema is not outlined here.</xsd:documentation>
+          <xsd:documentation>The OVAL Schema is maintained by The Mitre Corporation and developed by the public OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
+          <xsd:appinfo>
+               <schema>Solaris Definition</schema>
+               <version>5.3</version>
+               <date>6/22/2007 11:19:04 AM</date>
+               <sch:title>schematron validation of the Solaris portion of an OVAL Definitions file</sch:title>
+               <sch:ns prefix="oval-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5"/>
+               <sch:ns prefix="sol-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5#solaris"/>
+               <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+          </xsd:appinfo>
+     </xsd:annotation>
+     <!-- =============================================================================== -->
+     <!-- ===============================  ISAINFO TEST  ================================ -->
+     <!-- =============================================================================== -->
+     <xsd:element name="isainfo_test" substitutionGroup="oval-def:test">
+          <xsd:annotation>
+               <xsd:documentation>The isainfo test reveals information about the instruction set architectures. This information can be retrieved by the isainfo command. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references an isainfo_object and the optional state element specifies the metadata to check. The evaluation of the test is guided by the check attribute that is inherited from the TestType.</xsd:documentation>
+               <xsd:documentation>The isainfo_test was originally developed by Robert L. Hollis at ThreatGuard, Inc. Many thanks for their support of the OVAL project.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-def:TestType">
+                         <xsd:sequence>
+                              <xsd:element name="object" type="oval-def:ObjectRefType" minOccurs="1" maxOccurs="1"/>
+                              <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="1"/>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="isainfo_object" substitutionGroup="oval-def:object">
+          <xsd:annotation>
+               <xsd:documentation>The isainfo_object element is used by an isainfo test to define those objects to evaluated based on a specified state. There is actually only one object relating to isainfo and this is the system as a whole. Therefore, there are no child entities defined. Any OVAL Test written to check isainfo will reference the same isainfo_object which is basically an empty object element.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-def:ObjectType"/>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="isainfo_state" substitutionGroup="oval-def:state">
+          <xsd:annotation>
+               <xsd:documentation>The isainfo_state element defines the information about the instruction set architectures. Please refer to the individual elements in the schema for more details about what each represents.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-def:StateType">
+                         <xsd:sequence>
+                              <xsd:element name="bits" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the number of bits in the address space of the native instruction set (isainfo -b).</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="isastebits">
+                                                  <sch:rule context="sol-def:isainfo_state/sol-def:bits">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the bits entity of an isainfo_state should be 'string'</sch:assert>
+                                                       <sch:assert test="not(@operation) or @operation='equals' or @operation='not equal' or @operation='pattern match'"><sch:value-of select="../@id"/> - operation attribute for the bits entity of an isainfo_state should be 'equals', 'not equal', or 'pattern match'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="kernel_isa" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the name of the instruction set used by kernel components (isainfo -k).</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="isastekernel_isa">
+                                                  <sch:rule context="sol-def:isainfo_state/sol-def:kernel_isa">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the kernel_isa entity of an isainfo_state should be 'string'</sch:assert>
+                                                       <sch:assert test="not(@operation) or @operation='equals' or @operation='not equal' or @operation='pattern match'"><sch:value-of select="../@id"/> - operation attribute for the kernel_isa entity of an isainfo_state should be 'equals', 'not equal', or 'pattern match'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="application_isa" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the name of the instruction set used by portable applications (isainfo -n).</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="isasteapplication_isa">
+                                                  <sch:rule context="sol-def:isainfo_state/sol-def:application_isa">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the application_isa entity of an isainfo_state should be 'string'</sch:assert>
+                                                       <sch:assert test="not(@operation) or @operation='equals' or @operation='not equal' or @operation='pattern match'"><sch:value-of select="../@id"/> - operation attribute for the application_isa entity of an isainfo_state should be 'equals', 'not equal', or 'pattern match'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ===============================  PACKAGE TEST  ================================ -->
+     <!-- =============================================================================== -->
+     <xsd:element name="package_test" substitutionGroup="oval-def:test">
+          <xsd:annotation>
+               <xsd:documentation>The package test is used to check information associated with different packages installed on the system. The information used by this test is modeled after the /usr/bin/pkginfo command. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references an inetd_object and the optional state element specifies the information to check. The evaluation of the test is guided by the check attribute that is inherited from the TestType.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-def:TestType">
+                         <xsd:sequence>
+                              <xsd:element name="object" type="oval-def:ObjectRefType" minOccurs="1" maxOccurs="1"/>
+                              <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="1"/>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="package_object" substitutionGroup="oval-def:object">
+          <xsd:annotation>
+               <xsd:documentation>The package_object element is used by a package test to define the packages to be evaluated. Each object extends the standard ObjectType as definied in the oval-definitions-schema and one should refer to the ObjectType description for more information. The common set element allows complex objects to be created using filters and set logic. Again, please refer to the description of the set element in the oval-definitions-schema.</xsd:documentation>
+               <xsd:documentation>A package object consists of a single pkginst entity that identifies the package to be used.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-def:ObjectType">
+                         <xsd:sequence>
+                              <xsd:choice minOccurs="1" maxOccurs="1">
+                                   <xsd:element ref="oval-def:set"/>
+                                   <xsd:sequence>
+                                        <xsd:element name="pkginst" type="oval-def:EntityObjectStringType" minOccurs="1" maxOccurs="1">
+                                             <xsd:annotation>
+                                                  <xsd:documentation/>
+                                                  <xsd:appinfo>
+                                                       <sch:pattern id="packageobjpkginst">
+                                                            <sch:rule context="sol-def:package_object/sol-def:pkginst">
+                                                                 <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the pkginst entity of a package_object should be 'string'</sch:assert>
+                                                                 <sch:assert test="not(@operation) or @operation='equals' or @operation='not equal' or @operation='pattern match'"><sch:value-of select="../@id"/> - operation attribute for the pkginst entity of a package_object should be 'equals', 'not equal', or 'pattern match'</sch:assert>
+                                                            </sch:rule>
+                                                       </sch:pattern>
+                                                  </xsd:appinfo>
+                                             </xsd:annotation>
+                                        </xsd:element>
+                                   </xsd:sequence>
+                              </xsd:choice>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="package_state" substitutionGroup="oval-def:state">
+          <xsd:annotation>
+               <xsd:documentation>The package_state element defines the different information associated with packages installed on the system. Please refer to the individual elements in the schema for more details about what each represents.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-def:StateType">
+                         <xsd:sequence>
+                              <xsd:element name="pkginst" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="packagestepkginst">
+                                                  <sch:rule context="sol-def:package_state/sol-def:pkginst">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the pkginst entity of a package_state should be 'string'</sch:assert>
+                                                       <sch:assert test="not(@operation) or @operation='equals' or @operation='not equal' or @operation='pattern match'"><sch:value-of select="../@id"/> - operation attribute for the pkginst entity of a package_state should be 'equals', 'not equal', or 'pattern match'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="name" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="packagestename">
+                                                  <sch:rule context="sol-def:package_state/sol-def:name">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the name entity of a package_state should be 'string'</sch:assert>
+                                                       <sch:assert test="not(@operation) or @operation='equals' or @operation='not equal' or @operation='pattern match'"><sch:value-of select="../@id"/> - operation attribute for the name entity of a package_state should be 'equals', 'not equal', or 'pattern match'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="category" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="packagestecategory">
+                                                  <sch:rule context="sol-def:package_state/sol-def:category">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the category entity of a package_state should be 'string'</sch:assert>
+                                                       <sch:assert test="not(@operation) or @operation='equals' or @operation='not equal' or @operation='pattern match'"><sch:value-of select="../@id"/> - operation attribute for the category entity of a package_state should be 'equals', 'not equal', or 'pattern match'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="version" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="packagesteversion">
+                                                  <sch:rule context="sol-def:package_state/sol-def:version">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the version entity of a package_state should be 'string'</sch:assert>
+                                                       <sch:assert test="not(@operation) or @operation='equals' or @operation='not equal' or @operation='pattern match'"><sch:value-of select="../@id"/> - operation attribute for the version entity of a package_state should be 'equals', 'not equal', or 'pattern match'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="vendor" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="packagestevendor">
+                                                  <sch:rule context="sol-def:package_state/sol-def:vendor">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the vendor entity of a package_state should be 'string'</sch:assert>
+                                                       <sch:assert test="not(@operation) or @operation='equals' or @operation='not equal' or @operation='pattern match'"><sch:value-of select="../@id"/> - operation attribute for the vendor entity of a package_state should be 'equals', 'not equal', or 'pattern match'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="description" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="packagestedescription">
+                                                  <sch:rule context="sol-def:package_state/sol-def:description">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the description entity of a package_state should be 'string'</sch:assert>
+                                                       <sch:assert test="not(@operation) or @operation='equals' or @operation='not equal' or @operation='pattern match'"><sch:value-of select="../@id"/> - operation attribute for the description entity of a package_state should be 'equals', 'not equal', or 'pattern match'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ================================  PATCH TEST  ================================= -->
+     <!-- =============================================================================== -->
+     <xsd:element name="patch_test" substitutionGroup="oval-def:test">
+          <xsd:annotation>
+               <xsd:documentation>The patch test is used to check information associated with different patches installed on the system. The information being tested is based off the /usr/bin/showrev -p command. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references an inetd_object and the optional state element specifies the information to check. The evaluation of the test is guided by the check attribute that is inherited from the TestType.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-def:TestType">
+                         <xsd:sequence>
+                              <xsd:element name="object" type="oval-def:ObjectRefType" minOccurs="1" maxOccurs="1"/>
+                              <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="1"/>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="patch_object" substitutionGroup="oval-def:object">
+          <xsd:annotation>
+               <xsd:documentation>The patch_object element is used by a patch test to define the specific patch to be evaluated. Each object extends the standard ObjectType as definied in the oval-definitions-schema and one should refer to the ObjectType description for more information. The common set element allows complex objects to be created using filters and set logic. Again, please refer to the description of the set element in the oval-definitions-schema.</xsd:documentation>
+               <xsd:documentation>A patch object consists of a single base entity that identifies the patch to be used.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-def:ObjectType">
+                         <xsd:sequence>
+                              <xsd:choice minOccurs="1" maxOccurs="1">
+                                   <xsd:element ref="oval-def:set"/>
+                                   <xsd:sequence>
+                                        <xsd:element name="base" type="oval-def:EntityObjectIntType" minOccurs="1" maxOccurs="1">
+                                             <xsd:annotation>
+                                                  <xsd:documentation/>
+                                                  <xsd:appinfo>
+                                                       <sch:pattern id="patchobjbase">
+                                                            <sch:rule context="sol-def:patch_object/sol-def:base">
+                                                                 <sch:assert test="@datatype='int'"><sch:value-of select="../@id"/> - datatype attribute for the base entity of a patch_object should be 'int'</sch:assert>
+                                                                 <sch:assert test="not(@operation) or @operation='equals' or @operation='not equal' or @operation='greater than' or @operation='greater than or equal' or @operation='less than' or @operation='less than or equal'"><sch:value-of select="../@id"/> - operation attribute for the base entity of a patch_object should be 'equals', 'not equal', 'greater than', 'greater than or equal', 'less than', or 'less than or equal'</sch:assert>
+                                                            </sch:rule>
+                                                       </sch:pattern>
+                                                  </xsd:appinfo>
+                                             </xsd:annotation>
+                                        </xsd:element>
+                                   </xsd:sequence>
+                              </xsd:choice>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="patch_state" substitutionGroup="oval-def:state">
+          <xsd:annotation>
+               <xsd:documentation>The patch_state element defines the different information associated with a specific patch installed on the system. Please refer to the individual elements in the schema for more details about what each represents.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-def:StateType">
+                         <xsd:sequence>
+                              <xsd:element name="base" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="patchstebase">
+                                                  <sch:rule context="sol-def:patch_state/sol-def:base">
+                                                       <sch:assert test="@datatype='int'"><sch:value-of select="../@id"/> - datatype attribute for the base entity of a patch_state should be 'int'</sch:assert>
+                                                       <sch:assert test="not(@operation) or @operation='equals' or @operation='not equal' or @operation='greater than' or @operation='greater than or equal' or @operation='less than' or @operation='less than or equal'"><sch:value-of select="../@id"/> - operation attribute for the base entity of a patch_state should be 'equals', 'not equal', 'greater than', 'greater than or equal', 'less than', or 'less than or equal'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="version" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="patchsteversion">
+                                                  <sch:rule context="sol-def:patch_state/sol-def:version">
+                                                       <sch:assert test="@datatype='int'"><sch:value-of select="../@id"/> - datatype attribute for the version entity of a patch_state should be 'int'</sch:assert>
+                                                       <sch:assert test="not(@operation) or @operation='equals' or @operation='not equal' or @operation='greater than' or @operation='greater than or equal' or @operation='less than' or @operation='less than or equal'"><sch:value-of select="../@id"/> - operation attribute for the version entity of a patch_state should be 'equals', 'not equal', or 'pattern match'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- =============================================================================== -->
+     <!-- =============================================================================== -->
+</xsd:schema>
