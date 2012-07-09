@@ -91,7 +91,7 @@ struct cvss_impact;
 
 struct ds_action {
     char* file;
-    char* target_dir;
+    char* target;
 };
 
 #ifdef ENABLE_CPE

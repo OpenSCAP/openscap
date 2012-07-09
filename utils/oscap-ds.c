@@ -34,6 +34,7 @@
 static struct oscap_module* DS_SUBMODULES[];
 bool getopt_ds(int argc, char **argv, struct oscap_action *action);
 int app_ds_sds_split(const struct oscap_action *action);
+int app_ds_sds_compose(const struct oscap_action *action);
 
 struct oscap_module OSCAP_DS_MODULE = {
     .name = "ds",
@@ -52,8 +53,19 @@ static struct oscap_module DS_SDS_SPLIT_MODULE = {
     .func = app_ds_sds_split
 };
 
+static struct oscap_module DS_SDS_COMPOSE_MODULE = {
+    .name = "sds_compose",
+    .parent = &OSCAP_DS_MODULE,
+    .summary = "Compose SourceDataStream from given XCCDF",
+    .usage = "xccdf-file.xml target_datastream.xml",
+    .help = NULL,
+    .opt_parser = getopt_ds,
+    .func = app_ds_sds_compose
+};
+
 static struct oscap_module* DS_SUBMODULES[] = {
     &DS_SDS_SPLIT_MODULE,
+	&DS_SDS_COMPOSE_MODULE,
     NULL
 };
 
@@ -64,9 +76,18 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
             oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
             return false;
         }
-        action->ds_action = malloc(sizeof(struct cpe_action));
+        action->ds_action = malloc(sizeof(struct ds_action));
         action->ds_action->file = argv[3];
-        action->ds_action->target_dir = argv[4];
+        action->ds_action->target = argv[4];
+    }
+	else if( (action->module == &DS_SDS_COMPOSE_MODULE) ) {
+        if(  argc != 5 ) {
+            oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
+            return false;
+        }
+        action->ds_action = malloc(sizeof(struct ds_action));
+        action->ds_action->file = argv[3];
+        action->ds_action->target = argv[4];
     }
 
     return true;
@@ -75,9 +96,21 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 int app_ds_sds_split(const struct oscap_action *action) {
     int ret;
 
-    ds_sds_decompose(action->ds_action->file, NULL, action->ds_action->target_dir);
+    ds_sds_decompose(action->ds_action->file, NULL, action->ds_action->target);
 
-    ret = OSCAP_FAIL;
+	// TODO: error handling
+    ret = OSCAP_OK;
+
+    return ret;
+}
+
+int app_ds_sds_compose(const struct oscap_action *action) {
+    int ret;
+
+    ds_sds_compose_from_xccdf(action->ds_action->file, action->ds_action->target);
+
+	// TODO: error handling
+    ret = OSCAP_OK;
 
     return ret;
 }
