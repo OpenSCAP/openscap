@@ -664,7 +664,7 @@ void ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datast
 
     ds_sds_compose_add_component_with_ref(doc, datastream, xccdf_file, xccdf_file);
 
-    xmlSaveFileEnc("test.xml", doc, "utf-8");
+    xmlSaveFileEnc(target_datastream, doc, "utf-8");
 
     xmlFreeDoc(doc);
 }
