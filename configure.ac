@@ -1266,6 +1266,7 @@ AC_CONFIG_FILES([Makefile
                  tests/API/CCE/Makefile
 
                  src/DS/Makefile
+                 tests/DS/Makefile
 
                  src/XCCDF/Makefile
                  src/XCCDF_POLICY/Makefile
