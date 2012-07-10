@@ -257,7 +257,7 @@ int oval_syschar_model_import(struct oval_syschar_model *model, const char *file
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 	int is_ovalsys = strcmp((const char *)OVAL_SYSCHAR_NAMESPACE, namespace) == 0;
 	/* start parsing */
-	if (is_ovalsys && (strcmp(tagname, "oval_system_characteristics") == 0)) {
+	if (is_ovalsys && (strcmp(tagname, OVAL_ROOT_ELM_SYSCHARS) == 0)) {
 		ret = oval_syschar_model_parse(reader, &context);
 	} else {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Missing \"oval_system_characteristics\" element");
@@ -321,9 +321,9 @@ xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model, xm
 	xmlNodePtr root_node = NULL;
 
 	if (parent) { /* result file */
-		root_node = xmlNewTextChild(parent, NULL, BAD_CAST "oval_system_characteristics", NULL);
+		root_node = xmlNewTextChild(parent, NULL, BAD_CAST OVAL_ROOT_ELM_SYSCHARS, NULL);
 	} else { /* system characteristics file, we are the root */
-		root_node = xmlNewNode(NULL, BAD_CAST "oval_system_characteristics");
+		root_node = xmlNewNode(NULL, BAD_CAST OVAL_ROOT_ELM_SYSCHARS);
 		xmlDocSetRootElement(doc, root_node);
 	}
 	xmlNewProp(root_node, BAD_CAST "xsi:schemaLocation", BAD_CAST syschar_model->schema);

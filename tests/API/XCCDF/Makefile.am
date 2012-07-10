@@ -15,18 +15,21 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 
 LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
 
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh  
+EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
 
 DISTCLEANFILES = *.log *.out*
 CLEANFILES = *.log *.out*
 
+TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
+                  LD_PRELOAD=$(top_builddir)/src/.libs/libopenscap_testing.so \
+                  LD_LIBRARY_PATH=$(top_builddir)/src/.libs \
+                  OSCAP_SCHEMA_PATH=$(top_srcdir)/schemas
+
 TESTS = test_api_xccdf.sh
 check_PROGRAMS = test_api_xccdf
-# test_api_xccdf_dump 
 
-#test_api_xccdf_dump_SOURCES = test_api_xccdf_dump.c
 test_api_xccdf_SOURCES = test_api_xccdf.c
 
-EXTRA_DIST += test_api_xccdf.sh scap-rhel5-xccdf11.xml scap-rhel5-xccdf12.xml 
+EXTRA_DIST += test_api_xccdf.sh scap-rhel5-xccdf11.xml scap-rhel5-xccdf12.xml
 
 endif

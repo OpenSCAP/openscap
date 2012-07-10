@@ -1,0 +1,252 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" xmlns:aix-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#aix" xmlns:sch="http://purl.oclc.org/dsdl/schematron" targetNamespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#aix" elementFormDefault="qualified" version="5.4">
+     <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" schemaLocation="oval-system-characteristics-schema.xsd"/>
+     <xsd:annotation>
+          <xsd:documentation>The following is a description of the elements, types, and attributes that compose the AIX specific system characteristic items found in Open Vulnerability and Assessment Language (OVAL). Each item is an extension of the standard test element defined in the Core Definition Schema. Through extension, each test inherits a set of elements and attributes that are shared amongst all OVAL tests. Each test is described in detail and should provide the information necessary to understand what each element and attribute represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between the different tests and their relationship to the Core Definition Schema is not outlined here.</xsd:documentation>
+          <xsd:documentation>This schema was originally developed by Yuzheng Zhou and Todd Dolinsky at Hewlett-Packard. The OVAL Schema is maintained by The Mitre Corporation and developed by the public OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
+          <xsd:appinfo>
+               <schema>AIX System Characteristics</schema>
+               <version>5.4</version>
+               <date>4/11/2008 10:41:38 AM</date>
+                <terms_of_use>Copyright (c) 2002-2008, The MITRE Corporation. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at http://oval.mitre.org/oval/about/termsofuse.html. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+                <sch:title>schematron validation of the AIX portion of an OVAL System Characteristics file</sch:title>
+               <sch:ns prefix="oval-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"/>
+               <sch:ns prefix="aix-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#aix"/>
+          </xsd:appinfo>
+     </xsd:annotation>
+     <!-- =============================================================================== -->
+     <!-- ===============================  FILESET ITEM  ================================ -->
+     <!-- =============================================================================== -->
+     <xsd:element name="fileset_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>Output of /usr/bin/lslpp -l FilesetName. See lslpp manpage for specific fields.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="flstinst" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                         <xsd:documentation>Represents the name of the fileset being checked.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="filesetitemflstinst">
+                                                  <sch:rule context="aix-sc:fileset_item/aix-sc:flstinst">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the flstinst entity of a fileset_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="level" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                         <xsd:documentation>Maintenance level (also known as version in Solaris or Linux) of the fileset. For example, "5.3.0.10" is the level for 'bos.txt.tfs' fileset in one AIX machine.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="filesetitemlevel">
+                                                  <sch:rule context="aix-sc:fileset_item/aix-sc:level">
+                                                       <sch:assert test="@datatype='version'">item <sch:value-of select="../@id"/> - datatype attribute for the level entity of a fileset_item should be 'version'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                               <xsd:element name="state" type="aix-sc:EntityItemFilesetStateType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                         <xsd:documentation>This gives the state of the fileset being checked. The state can be 'APPLIED', 'APPLYING','BROKEN', 'COMMITTED', 'EFIX LOCKED', 'OBSOLETE', 'COMMITTING','REJECTING'.  See the manpage of the 'lslpp' command more information.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="filesetitemstate">
+                                                  <sch:rule context="aix-sc:fileset_item/aix-sc:state">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the state entity of a fileset_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="description" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                         <xsd:documentation>Short description of the fileset being checked.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="filesetitemdescription">
+                                                  <sch:rule context="aix-sc:fileset_item/aix-sc:description">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the description entity of a fileset_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- =============================  FIX ITEM  ==================================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="fix_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>From /usr/sbin/instfix -iavk APARNum Command. See instfix manpage for specific fields.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="apar_number" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                         <xsd:documentation>APAR is the short for 'Authorized Program Analysis Report'.  APAR identifies and describes a software product defect. An APAR number can obtain a PTF (Program Temporary Fix) for the defect, if a PTF is available.  An example of an apar_number is 'IY78751', it includes two alphabetic characters and a 5-digit integer.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="fixitemapar_number">
+                                                  <sch:rule context="aix-sc:fix_item/aix-sc:apar_number">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the apar_number entity of a fix_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="abstract" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                         <xsd:documentation>The abstract of the APAR being checked. For instance, 'LL syas rXct are available even when not susea' is the abstract of APAR 'IY78751'.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="fixitemabstract">
+                                                  <sch:rule context="aix-sc:fix_item/aix-sc:abstract">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the abstract entity of a fix_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="symptom" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                         <xsd:documentation>The symptom text related to the APAR being checked. For example, the symptom text for 'IY75211' is 'Daylight savings change for year 2007 and beyond'.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="fixitemsymptom">
+                                                  <sch:rule context="aix-sc:fix_item/aix-sc:symptom">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the symptom entity of a fix_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                               <xsd:element name="installation_status" type="aix-sc:EntityItemFixInstallationStatusType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                         <xsd:documentation>The installation status of files associated with the APAR.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="fixiteminstallation_status">
+                                                  <sch:rule context="aix-sc:fix_item/aix-sc:installation_status">
+                                                        <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the installation_status entity of a fix_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ===============================  OSLEVEL ITEM  ================================ -->
+      <!-- =============================================================================== -->
+      <xsd:element name="oslevel_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>Information about the release and maintenance level of AIX operating system. This information can be retrieved by the /usr/bin/oslevel -r command.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="maintenance_level" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>This is the maintenance level (system version) of current AIX operating system.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="oslevelitemmaintenance_level">
+                                                            <sch:rule context="aix-sc:oslevel_item/aix-sc:maintenance_level">
+                                                                  <sch:assert test="@datatype='version'">item <sch:value-of select="../@id"/> - datatype attribute for the maintenance_level entity of an oslevel_item should be 'version'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+     <!-- =============================================================================== -->
+     <!-- =============================================================================== -->
+      <xsd:complexType name="EntityItemFilesetStateType">
+            <xsd:annotation>
+                  <xsd:documentation>The EntityStateFilesetStateType complex type defines the different values that are valid for the state entity of a fileset state.  The empty string is also allowed as a valid value to support an empty element that is found when a variable reference is used within the state entity.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:documentation>The EntityStateFilesetStateType defines the different values that are valid for the state entity of a fileset item.  The empty string is also allowed as a valid value to support empty emlements associated with error conditions.</xsd:documentation>
+            <xsd:simpleContent>
+                  <xsd:restriction base="oval-def:EntityItemStringType">
+                        <xsd:enumeration value="APPLIED">
+                              <xsd:annotation>
+                                    <xsd:documentation>The specified fileset is installed on the system. The APPLIED state means that the fileset can be rejected with the installp command and the previous level of the fileset restored. This state is only valid for Version 4 fileset updates and 3.2 migrated filesets.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="APPLYING">
+                              <xsd:annotation>
+                                    <xsd:documentation>An attempt was made to apply the specified fileset, but it did not complete successfully, and cleanup was not performed.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="BROKEN">
+                              <xsd:annotation>
+                                    <xsd:documentation>The specified fileset or fileset update is broken and should be reinstalled before being used.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="COMMITTED">
+                              <xsd:annotation>
+                                    <xsd:documentation>The specified fileset is installed on the system. The COMMITTED state means that a commitment has been made to this level of the software. A committed fileset update cannot be rejected, but a committed fileset base level and its updates (regardless of state) can be removed or deinstalled by the installp command.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="COMMITTING">
+                              <xsd:annotation>
+                                    <xsd:documentation>An attempt was made to commit the specified fileset, but it did not complete successfully, and cleanup was not performed.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="EFIX LOCKED">
+                              <xsd:annotation>
+                                    <xsd:documentation>The specified fileset was installed sucessfully and locked by the interim fix (interim fix) manager.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="OBSOLETE">
+                              <xsd:annotation>
+                                    <xsd:documentation>The specified fileset was installed with an earlier version of the operating system but has been replaced by a repackaged (renamed) newer version. Some of the files that belonged to this fileset have been replaced by versions from the repackaged fileset.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="REJECTING">
+                              <xsd:annotation>
+                                    <xsd:documentation>An attempt was made to reject the specified fileset, but it did not complete successfully, and cleanup was not performed.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value=""/>
+                  </xsd:restriction>
+            </xsd:simpleContent>
+      </xsd:complexType>
+      <xsd:complexType name="EntityItemFixInstallationStatusType">
+            <xsd:annotation>>
+                  <xsd:documentation>The EntityStateFixInstallationStatusType defines the different values that are valid for the installation_status entity of a fix_state item.  The empty string is also allowed as a valid value to support empty emlements associated with error conditions.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:restriction base="oval-def:EntityItemStringType">
+                        <xsd:enumeration value="ALL_INSTALLED">
+                              <xsd:annotation>
+                                    <xsd:documentation>All filesets for XXXXXXX were found</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="SOME_INSTALLED">
+                              <xsd:annotation>
+                                    <xsd:documentation>Not all filesets for XXXXXXX were found</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="NONE_INSTALLED">
+                              <xsd:annotation>
+                                    <xsd:documentation>No filesets which have fixes for XXXXXXX are currently installed.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value=""/>
+                  </xsd:restriction>
+            </xsd:simpleContent>
+      </xsd:complexType>
+</xsd:schema>

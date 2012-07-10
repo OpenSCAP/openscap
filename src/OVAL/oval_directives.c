@@ -133,7 +133,7 @@ int oval_directives_model_import(struct oval_directives_model * model, char *fil
         namespace = (char *)xmlTextReaderNamespaceUri(reader);
         int is_ovaldir = strcmp((const char *)OVAL_DIRECTIVES_NAMESPACE, namespace) == 0;
         /* start parsing */
-        if (is_ovaldir && (strcmp(tagname, "oval_directives") == 0)) {
+        if (is_ovaldir && (strcmp(tagname, OVAL_ROOT_ELM_DIRECTIVES) == 0)) {
                 ret = oval_directives_model_parse(reader, &context);
         } else {
                 oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Missing \"oval_directives\" element");
@@ -417,7 +417,7 @@ xmlNode *oval_directives_model_to_dom(struct oval_directives_model *model, xmlDo
 
 
 	if(parent == NULL) { /* standalone OVAL Directives Document */
-		root_node = xmlNewNode(NULL, BAD_CAST "oval_directives");
+		root_node = xmlNewNode(NULL, BAD_CAST OVAL_ROOT_ELM_DIRECTIVES);
 		xmlDocSetRootElement(doc, root_node);
 
 		/*schemalocation */

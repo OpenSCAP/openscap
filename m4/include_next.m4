@@ -1,5 +1,5 @@
-# include_next.m4 serial 18
-dnl Copyright (C) 2006-2011 Free Software Foundation, Inc.
+# include_next.m4 serial 23
+dnl Copyright (C) 2006-2012 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -143,7 +143,7 @@ choke me
 # even if the compiler does not support include_next.
 # The three "///" are to pacify Sun C 5.8, which otherwise would say
 # "warning: #include of /usr/include/... may be non-portable".
-# Use `""', not `<>', so that the /// cannot be confused with a C99 comment.
+# Use '""', not '<>', so that the /// cannot be confused with a C99 comment.
 # Note: This macro assumes that the header file is not empty after
 # preprocessing, i.e. it does not only define preprocessor macros but also
 # provides some type/enum definitions or function/variable declarations.
@@ -175,11 +175,13 @@ AC_DEFUN([gl_NEXT_HEADERS_INTERNAL],
     [AC_CHECK_HEADERS_ONCE([$1])
     ])
 
+dnl FIXME: gl_next_header and gl_header_exists must be used unquoted
+dnl until we can assume autoconf 2.64 or newer.
   m4_foreach_w([gl_HEADER_NAME], [$1],
     [AS_VAR_PUSHDEF([gl_next_header],
                     [gl_cv_next_]m4_defn([gl_HEADER_NAME]))
      if test $gl_cv_have_include_next = yes; then
-       AS_VAR_SET([gl_next_header], ['<'gl_HEADER_NAME'>'])
+       AS_VAR_SET(gl_next_header, ['<'gl_HEADER_NAME'>'])
      else
        AC_CACHE_CHECK(
          [absolute name of <]m4_defn([gl_HEADER_NAME])[>],
@@ -205,33 +207,57 @@ AC_DEFUN([gl_NEXT_HEADERS_INTERNAL],
                  aix*) gl_absname_cpp="$ac_cpp -C" ;;
                  *)    gl_absname_cpp="$ac_cpp" ;;
                esac
+changequote(,)
+               case "$host_os" in
+                 mingw*)
+                   dnl For the sake of native Windows compilers (excluding gcc),
+                   dnl treat backslash as a directory separator, like /.
+                   dnl Actually, these compilers use a double-backslash as
+                   dnl directory separator, inside the
+                   dnl   # line "filename"
+                   dnl directives.
+                   gl_dirsep_regex='[/\\]'
+                   ;;
+                 *)
+                   gl_dirsep_regex='\/'
+                   ;;
+               esac
+               dnl A sed expression that turns a string into a basic regular
+               dnl expression, for use within "/.../".
+               gl_make_literal_regex_sed='s,[]$^\\.*/[],\\&,g'
+changequote([,])
+               gl_header_literal_regex=`echo ']m4_defn([gl_HEADER_NAME])[' \
+                                        | sed -e "$gl_make_literal_regex_sed"`
+               gl_absolute_header_sed="/${gl_dirsep_regex}${gl_header_literal_regex}/"'{
+                   s/.*"\(.*'"${gl_dirsep_regex}${gl_header_literal_regex}"'\)".*/\1/
+changequote(,)dnl
+                   s|^/[^/]|//&|
+changequote([,])dnl
+                   p
+                   q
+                 }'
                dnl eval is necessary to expand gl_absname_cpp.
                dnl Ultrix and Pyramid sh refuse to redirect output of eval,
                dnl so use subshell.
-               AS_VAR_SET([gl_next_header],
+               AS_VAR_SET(gl_next_header,
                  ['"'`(eval "$gl_absname_cpp conftest.$ac_ext") 2>&AS_MESSAGE_LOG_FD |
-                  sed -n '\#/]m4_defn([gl_HEADER_NAME])[#{
-                    s#.*"\(.*/]m4_defn([gl_HEADER_NAME])[\)".*#\1#
-                    s#^/[^/]#//&#
-                    p
-                    q
-                  }'`'"'])
+                      sed -n "$gl_absolute_header_sed"`'"'])
           m4_if([$2], [check],
             [else
-               AS_VAR_SET([gl_next_header], ['<'gl_HEADER_NAME'>'])
+               AS_VAR_SET(gl_next_header, ['<'gl_HEADER_NAME'>'])
              fi
             ])
          ])
      fi
      AC_SUBST(
        AS_TR_CPP([NEXT_]m4_defn([gl_HEADER_NAME])),
-       [AS_VAR_GET([gl_next_header])])
+       [AS_VAR_GET(gl_next_header)])
      if test $gl_cv_have_include_next = yes || test $gl_cv_have_include_next = buggy; then
        # INCLUDE_NEXT_AS_FIRST_DIRECTIVE='include_next'
        gl_next_as_first_directive='<'gl_HEADER_NAME'>'
      else
        # INCLUDE_NEXT_AS_FIRST_DIRECTIVE='include'
-       gl_next_as_first_directive=AS_VAR_GET([gl_next_header])
+       gl_next_as_first_directive=AS_VAR_GET(gl_next_header)
      fi
      AC_SUBST(
        AS_TR_CPP([NEXT_AS_FIRST_DIRECTIVE_]m4_defn([gl_HEADER_NAME])),

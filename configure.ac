@@ -66,7 +66,7 @@ esac
 
 CFLAGS_OPTIMIZED="-O2 -finline-functions"
 CFLAGS_DEBUGGING="-fno-inline-functions -O0 -g3"
-CFLAGS_NODEBUG="-DNDEBUG -Wno-unused-function"
+CFLAGS_NODEBUG="-Wno-unused-function"
 
 
 probe_system_info_req_deps_ok=yes
@@ -267,24 +267,30 @@ SAVE_LIBS=$LIBS
 if test "x$pthread_LIBS" = "xerror"; then
    AC_CHECK_LIB(c_r, pthread_attr_init, [
                      pthread_CFLAGS="-DOSCAP_THREAD_SAFE -D_THREAD_SAFE -pthread"
-                     pthread_LIBS="-pthread" ])
+                     pthread_LIBS="-pthread -lrt" ])
 fi
 
 if test "x$pthread_LIBS" = "xerror"; then
    AC_CHECK_LIB(pthread, pthread_attr_init, [
                          pthread_CFLAGS="-DOSCAP_THREAD_SAFE -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS"
-                         pthread_LIBS="-lpthread" ])
+                         pthread_LIBS="-lpthread -lrt" ])
 fi
 
 if test "x$pthread_LIBS" = "xerror"; then
    AC_CHECK_LIB(pthreads, pthread_attr_init, [
                           pthread_CFLAGS="-DOSCAP_THREAD_SAFE -D_THREAD_SAFE"
-                          pthread_LIBS="-lpthreads" ])
+                          pthread_LIBS="-lpthreads -lrt" ])
 fi
 
 if test "x$pthread_LIBS" = "xerror"; then
    AC_MSG_FAILURE(pthread library is missing)
 fi
+
+SAVE_CFLAGS=$CFLAGS
+CFLAGS="$CFLAGS -D_GNU_SOURCE"
+LIBS="$pthread_LIBS"
+AC_CHECK_FUNCS([pthread_timedjoin_np clock_gettime])
+CFLAGS=$SAVE_CFLAGS
 
 LIBS=$SAVE_LIBS
 AC_SUBST(pthread_CFLAGS)
@@ -1060,6 +1066,7 @@ if test "$debug" = "yes"; then
 else
    CFLAGS="$CFLAGS $CFLAGS_NODEBUG"
    AC_SUBST([NODEBUG], [-DNDEBUG]) #for swig alloc.h
+   AC_DEFINE([NDEBUG], [1], [No Debug defined])
 fi
 
 AC_ARG_ENABLE([sce],

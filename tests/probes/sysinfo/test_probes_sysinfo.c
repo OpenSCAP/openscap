@@ -1,3 +1,8 @@
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 #include "../../assume.h"
 #include "oval_agent_api.h"

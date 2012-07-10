@@ -179,10 +179,10 @@ oval_result_t probe_ent_cmp_float(SEXP_t * val1, SEXP_t * val2, oval_operation_t
 oval_result_t probe_ent_cmp_int(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
-	int v1, v2;
+	int64_t v1, v2;
 
-	v1 = SEXP_number_geti_32(val1);
-	v2 = SEXP_number_geti_32(val2);
+	v1 = SEXP_number_geti_64(val1);
+	v2 = SEXP_number_geti_64(val2);
 
 	switch (op) {
 	case OVAL_OPERATION_EQUALS:

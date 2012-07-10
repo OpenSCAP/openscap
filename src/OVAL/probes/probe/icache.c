@@ -98,8 +98,19 @@ static void *probe_icache_worker(void *arg)
         }
 
 	pair = &pair_mem;
-
         dI("icache worker ready\n");
+
+        switch (errno = pthread_barrier_wait(&OSCAP_GSYM(th_barrier)))
+        {
+        case 0:
+        case PTHREAD_BARRIER_SERIAL_THREAD:
+	        break;
+        default:
+	        dE("pthread_barrier_wait: %d, %s.\n",
+	           errno, strerror(errno));
+	        pthread_mutex_unlock(&cache->queue_mutex);
+	        return (NULL);
+        }
 
         while(pthread_cond_wait(&cache->queue_notempty, &cache->queue_mutex) == 0) {
                 assume_d(cache->queue_cnt > 0, NULL);

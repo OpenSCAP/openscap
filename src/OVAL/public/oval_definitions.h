@@ -3158,6 +3158,14 @@ void oval_string_iterator_free(struct oval_string_iterator *);
 
 /**
  * @) END OVALDEF
+ */
+
+/**
+ * Returns the version of the schema this document should be validated against
+ */
+xmlChar *oval_determine_document_schema_version(const char *, oscap_document_type_t);
+
+/**
  * @) END OVAL
  */
 #endif

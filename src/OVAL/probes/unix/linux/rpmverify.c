@@ -120,7 +120,15 @@ static int rpmverify_collect(probe_ctx *ctx,
         rpmVerifyAttrs omit = (rpmVerifyAttrs)(flags & RPMVERIFY_RPMATTRMASK);
 	Header pkgh;
         pcre *re = NULL;
+	char *real_file;
 	int  ret = -1;
+
+	/* find real path of file */
+	if ((real_file = realpath(file, NULL)) == NULL) {
+		dW("cannot canonicalize '%s': %s", file, strerror(errno));
+		real_file = strdup(file);
+	}
+	dI("real_file=\"%s\"", real_file);
 
         /* pre-compile regex if needed */
         if (file_op == OVAL_OPERATION_PATTERN_MATCH) {
@@ -216,11 +224,12 @@ static int rpmverify_collect(probe_ctx *ctx,
 
 		    switch(file_op) {
 		    case OVAL_OPERATION_EQUALS:
-		      if (strcmp(res.file, file) != 0)
+		      if (strcmp(res.file, real_file) != 0)
 			continue;
+		      res.file = file;
 		      break;
 		    case OVAL_OPERATION_NOT_EQUAL:
-		      if (strcmp(res.file, file) == 0)
+		      if (strcmp(res.file, real_file) == 0)
 			continue;
 		      break;
 		    case OVAL_OPERATION_PATTERN_MATCH:
@@ -260,6 +269,8 @@ static int rpmverify_collect(probe_ctx *ctx,
 ret:
         if (re != NULL)
                 pcre_free(re);
+
+	free(real_file);
 
         RPMVERIFY_UNLOCK;
         return (ret);

@@ -1,0 +1,597 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" xmlns:hpux-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#hpux" xmlns:sch="http://purl.oclc.org/dsdl/schematron" targetNamespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#hpux" elementFormDefault="qualified" version="5.4">
+	<xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" schemaLocation="oval-system-characteristics-schema.xsd"/>
+	<xsd:annotation>
+		<xsd:documentation>The following is a description of the elements, types, and attributes that compose the HP-UX specific system characteristic items found in Open Vulnerability and Assessment Language (OVAL).  Each item is an extension of the standard item element defined in the Core System Characteristic Schema.  Through extension, each item inherits a set of elements and attributes that are shared amongst all OVAL Items.  Each item is described in detail and should provide the information necessary to understand what each element and attribute represents.  This document is intended for developers and assumes some familiarity with XML.  A high level description of the interaction between the different tests and their relationship to the Core System Characteristic Schema is not outlined here.</xsd:documentation>
+		<xsd:documentation>The OVAL Schema is maintained by The Mitre Corporation and developed by the public OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
+		<xsd:appinfo>
+			<schema>HP-UX System Characteristics</schema>
+		     <version>5.4</version>
+		     <date>4/1/2008 10:41:40 AM</date>
+		      <terms_of_use>Copyright (c) 2002-2008, The MITRE Corporation. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at http://oval.mitre.org/oval/about/termsofuse.html. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+		      <sch:title>schematron validation of the HP-UX portion of an OVAL System Characteristics file</sch:title>
+			<sch:ns prefix="oval-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"/>
+			<sch:ns prefix="hpux-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#hpux"/>
+		</xsd:appinfo>
+	</xsd:annotation>
+	<!-- =============================================================================== -->
+	<!-- ===============================  GETCONF ITEM  ================================ -->
+	<!-- =============================================================================== -->
+	<xsd:element name="getconf_item" substitutionGroup="oval-sc:item">
+		<xsd:annotation>
+			<xsd:documentation>These items contain getconf items.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="oval-sc:ItemType">
+					<xsd:sequence>
+						<xsd:element name="parameter_name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>This is the parameter name to check</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="gcitemparameter_name">
+										<sch:rule context="hpux-sc:getconf_item/hpux-sc:parameter_name">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the parameter_name entity of a getconf_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pathname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>This is the pathname to check</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="gcitempathname">
+										<sch:rule context="hpux-sc:getconf_item/hpux-sc:pathname">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the pathname entity of a getconf_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="output" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The output produced by the getconf command.</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="gcitemoutput">
+										<sch:rule context="hpux-sc:getconf_item/hpux-sc:output">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the output entity of a getconf_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ================================  PATCH ITEM  ================================= -->
+	<!-- =============================================================================== -->
+	<xsd:element name="patch_item" substitutionGroup="oval-sc:item">
+		<xsd:annotation>
+		     <xsd:documentation>From /usr/sbin/swlist -l patch PHxx_yyyyy. See swlist manpage for specific fields</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="oval-sc:ItemType">
+					<xsd:sequence>
+					     <xsd:element name="swtype" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+					          <xsd:annotation>
+					               <xsd:documentation>HP-UX patch names begin with 'PH'</xsd:documentation>
+					               <xsd:appinfo>
+					                    <sch:pattern id="patchitemswtype">
+					                         <sch:rule context="hpux-def:patch_state/hpux-def:swtype">
+					                              <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the swtype entity of a patch_item should be 'string'</sch:assert>
+					                         </sch:rule>
+					                    </sch:pattern>
+					               </xsd:appinfo>
+					          </xsd:annotation>
+					     </xsd:element>
+					     <xsd:element name="area_patched" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+							     <xsd:documentation>The third and fourth characters in HP-UX patch names indicate the area of software being patched. CO - General HP-UX commands KL - Kernel patches NE - Network specific patches SS - All other subsystems (X11, starbase, etc.)</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="patchitemarea_patched">
+										<sch:rule context="hpux-sc:patch_item/hpux-sc:area_patched">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the area_patched entity of a patch_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="patch_number" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The sixth through tenth characters in HP-UX patch names represent a unique numeric identifier for the patch.</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="patchitempatch_number">
+										<sch:rule context="hpux-sc:patch_item/hpux-sc:patch_number">
+											<sch:assert test="not(@datatype) or @datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the patch_number entity of a patch_item should be 'int'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- =============================================================================== -->
+	<!-- =============================  SOFTWARE LIST ITEM  ============================ -->
+	<!-- =============================================================================== -->
+	<xsd:element name="swlist_item" substitutionGroup="oval-sc:item">
+		<xsd:annotation>
+			<xsd:documentation>Output of /usr/sbin/swlist command.  Note:  A quick way to check for the installation of a specific fileset is to use the command 'swlist -a version -l fileset filesetname'. See manpage for swlist for explanation of additional command options.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="oval-sc:ItemType">
+					<xsd:sequence>
+						<xsd:element name="swlist" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>This is the name of the bundle or fileset to check.</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="swlistitemswlist">
+										<sch:rule context="hpux-sc:swlist_item/hpux-sc:swlist">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the swlist entity of a swlist_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="bundle" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation/>
+								<xsd:appinfo>
+									<sch:pattern id="swlistitembundle">
+										<sch:rule context="hpux-sc:swlist_item/hpux-sc:bundle">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the bundle entity of a swlist_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="fileset" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation/>
+								<xsd:appinfo>
+									<sch:pattern id="swlistitemfileset">
+										<sch:rule context="hpux-sc:swlist_item/hpux-sc:fileset">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the fileset entity of a swlist_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="version" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation/>
+								<xsd:appinfo>
+									<sch:pattern id="swlistitemversion">
+										<sch:rule context="hpux-sc:swlist_item/hpux-sc:version">
+										      <sch:assert test="@datatype='fileset_revision'">item <sch:value-of select="../@id"/> - datatype attribute for the version entity of a swlist_item should be 'fileset_revision'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="title" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation/>
+								<xsd:appinfo>
+									<sch:pattern id="swlistitemtitle">
+										<sch:rule context="hpux-sc:swlist_item/hpux-sc:title">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the title entity of a swlist_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="vendor" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation/>
+								<xsd:appinfo>
+									<sch:pattern id="swlistitemvendor">
+										<sch:rule context="hpux-sc:swlist_item/hpux-sc:vendor">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the vendor entity of a swlist_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- =============================================================================== -->
+	<!-- ===========================  TRUSTED ACCOUNTS ITEM  =========================== -->
+	<!-- =============================================================================== -->
+	<xsd:element name="trusted_item" substitutionGroup="oval-sc:item">
+		<xsd:annotation>
+			<xsd:documentation>These items contain account settings for trusted HP-UX installations.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="oval-sc:ItemType">
+					<xsd:sequence>
+						<xsd:element name="username" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>This is the name of the user being checked</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitemtrustitem">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:trustitem">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the trustitem entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="uid" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The user's ID</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitemuid">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:uid">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the uid entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="password" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>This is the encrypted version of the user's password</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitempassword">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:password">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the password entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="account_owner" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The Account owner for pseudo-users</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitemaccount_owner">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:account_owner">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the account_owner entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="boot_auth" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Boot authorization</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitemboot_auth">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:boot_auth">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the boot_auth entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="audit_id" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>getprpwaid uses the audit ID rather than the UID</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitemaudit_id">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:audit_id">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the audit_id entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="audit_flag" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation/>
+								<xsd:appinfo>
+									<sch:pattern id="trustitemaudit_flag">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:audit_flag">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the audit_flag entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pw_change_min" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Minimum time between password changes</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitempw_change_min">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:pw_change_min">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the pw_change_min entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pw_max_size" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Maximum password length in characters</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitempw_max_size">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:pw_max_size">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the pw_max_size entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pw_expiration" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Password expiration time in seconds</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitempw_expiration">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:pw_expiration">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the pw_expiration entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pw_life" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Trusted lifetime, after which the account is locked</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitempw_life">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:pw_life">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the pw_life entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pw_change_s" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Time of last successful password change</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitempw_change_s">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:pw_change_s">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the pw_change_s entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pw_change_u" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Time of last unsuccessful password change</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitempw_change_u">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:pw_change_u">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the pw_change_u entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="acct_expire" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Absolute account lifetime in seconds</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitemacct_expire">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:acct_expire">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the acct_expire entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="max_llogin" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Maximum time allowed between logins before the account is locked</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitemmax_llogin">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:max_llogin">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the max_llogin entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="exp_warning" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The time in seconds before expiration when a warning will appear</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitemexp_warning">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:exp_warning">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the exp_warning entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="usr_chg_pw" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Who can change this user's password</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitemusr_chg_pw">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:usr_chg_pw">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the usr_chg_pw entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="gen_pw" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Allows user to use system-generated passwords</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitemgen_pw">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:gen_pw">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the gen_pw entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pw_restrict" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Whether a triviality check is performed on user-generated passwords</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitempw_restrict">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:pw_restrict">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the pw_restrict entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pw_null" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Determines if null passwords are allowed for this account</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitempw_null">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:pw_null">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the pw_null entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pw_gen_char" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Allows password generator to use random printable ASCII characters</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitempw_gen_char">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:pw_gen_char">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the pw_gen_char entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pw_gen_let" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Allows password generator to use random letters</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitempw_gen_let">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:swlistpw_gen_let">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the pw_gen_let entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="login_time" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Specifies the times when the user may login to this account</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitemlogin_time">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:login_time">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the login_time entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pw_changer" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The user ID of the user who last changed the password on the user's account, if it was not the account owner</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitempw_changer">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:pw_changer">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the pw_changer entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="login_time_s" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The time of the last successful login using this account</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitemlogin_time_s">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:login_time_s">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the login_time_s entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="login_time_u" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The time of the last unsuccessful login using this account</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitemlogin_time_u">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:login_time_u">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the login_time_u entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="login_tty_s" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The terminal or remote host associated with the last successful login to the account</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitemlogin_tty_s">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:login_tty_s">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the login_tty_s entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="login_tty_u" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The terminal or remote hosts associated with the last unsuccessful login to the account</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitemlogin_tty_u">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:login_tty_u">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the login_tty_u entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="num_u_logins" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The number of unsuccessful login attempts since that last successful login</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitemnum_u_logins">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:num_u_logins">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the num_u_logins entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="max_u_logins" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The maximum number of unsuccessful login attempts before the account is locked</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitemmax_u_logins">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:max_u_logins">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the max_u_logins entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="lock_flag" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Indicates whether the administrative lock on the account is set</xsd:documentation>
+								<xsd:appinfo>
+									<sch:pattern id="trustitemlock_flag">
+										<sch:rule context="hpux-sc:trusted_item/hpux-sc:lock_flag">
+											<sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the lock_flag entity of a trusted_item should be 'string'</sch:assert>
+										</sch:rule>
+									</sch:pattern>
+								</xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

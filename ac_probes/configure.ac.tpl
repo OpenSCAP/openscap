@@ -130,6 +130,12 @@ if test "x$pthread_LIBS" = "xerror"; then
    AC_MSG_FAILURE(pthread library is missing)
 fi
 
+SAVE_CFLAGS=$CFLAGS
+CFLAGS="$CFLAGS -D_GNU_SOURCE"
+LIBS=$pthread_LIBS
+AC_CHECK_FUNCS([pthread_timedjoin_np clock_gettime])
+CFLAGS=$SAVE_CFLAGS
+
 LIBS=$SAVE_LIBS
 AC_SUBST(pthread_CFLAGS)
 AC_SUBST(pthread_LIBS)

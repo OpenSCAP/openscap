@@ -20,6 +20,12 @@
  *      Daniel Kopecek <dkopecek@redhat.com>
  *      Tomas Heinrich <theinric@redhat.com>
  */
+#include <config.h>
+#if !defined(_GNU_SOURCE)
+# if defined(HAVE_PTHREAD_TIMEDJOIN_NP) && defined(HAVE_CLOCK_GETTIME)
+#  define _GNU_SOURCE
+# endif
+#endif
 #include <stdio.h>
 #include <string.h>
 #include <signal.h>
@@ -47,6 +53,7 @@ void  *OSCAP_GSYM(probe_arg)          = NULL;
 bool   OSCAP_GSYM(varref_handling)    = true;
 char **OSCAP_GSYM(no_varref_ents)     = NULL;
 size_t OSCAP_GSYM(no_varref_ents_cnt) = 0;
+pthread_barrier_t OSCAP_GSYM(th_barrier);
 
 extern probe_ncache_t *OSCAP_GSYM(ncache);
 
@@ -111,6 +118,15 @@ int main(int argc, char *argv[])
 	pthread_attr_t th_attr;
 	sigset_t       sigmask;
 	probe_t        probe;
+
+	if ((errno = pthread_barrier_init(&OSCAP_GSYM(th_barrier), NULL,
+	                                  1 + // signal thread
+	                                  1 + // input thread
+	                                  1 + // icache thread
+	                                  0)) != 0)
+	{
+		fail(errno, "pthread_barrier_init", __LINE__ - 6);
+	}
 
 	/*
 	 * Block signals, any signals received will be
@@ -202,9 +218,22 @@ int main(int argc, char *argv[])
 	/*
 	 * Wait for the input_handler thread
 	 */
+#if defined(HAVE_PTHREAD_TIMEDJOIN_NP) && defined(HAVE_CLOCK_GETTIME)
+	{
+		struct timespec j_tm;
+
+		if (clock_gettime(CLOCK_REALTIME, &j_tm) == -1)
+			fail(errno, "clock_gettime", __LINE__ - 1);
+
+		j_tm.tv_sec += 3;
+
+		if (pthread_timedjoin_np(probe.th_input, NULL, &j_tm) != 0)
+			fail(errno, "pthread_timedjoin_np", __LINE__ - 1);
+	}
+#else
 	if (pthread_join(probe.th_input, NULL))
 		fail(errno, "pthread_join", __LINE__ - 1);
-
+#endif
 	/*
 	 * Cleanup
 	 */

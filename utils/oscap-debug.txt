@@ -1,3 +1,0 @@
-#use the right paths and "testing" library
-PREFIX=".." OVAL_PROBE_DIR="$PREFIX/src/OVAL/probes" LD_PRELOAD="$PREFIX/src/.libs/libopenscap_testing.so" LD_LIBRARY_PATH="$PREFIX/src/.libs" OSCAP_SCHEMA_PATH="$PREFIX/schemas" .libs/oscap 
-

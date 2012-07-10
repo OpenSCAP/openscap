@@ -20,6 +20,10 @@
  *      Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "oscap-tool.h"
 #include <assert.h>
 #include <getopt.h>
@@ -263,6 +267,50 @@ int oscap_module_call(struct oscap_action *action)
     return OSCAP_UNIMPL_MOD;
 }
 
+static void getopt_parse_env(struct oscap_module *module, int *argc, char ***argv)
+{
+	int ofs, nargc, eargc;
+	char *opt, *opts, *state, **nargv, **eargv;
+	const char *delim = ",";
+
+	if (!module->parent
+	    || strcmp(module->parent->name, "oval"))
+		return;
+
+	opts = getenv("OSCAP_OVAL_COMMAND_OPTIONS");
+	if (opts == NULL)
+		return;
+
+	/* parse the args supplied from the env var */
+	eargv = NULL;
+	eargc = 0;
+	opts = strdup(opts);
+	opt = strtok_r(opts, delim, &state);
+	while (opt != NULL) {
+		eargc++;
+		eargv = realloc(eargv, eargc * sizeof(char *));
+		eargv[eargc - 1] = strdup(opt);
+		opt = strtok_r(NULL, delim, &state);
+	}
+
+	nargc = *argc + eargc;
+	nargv = malloc((nargc + 1) * sizeof(char *));
+	/* copy main args up to the command name */
+	for (ofs = 0; strcmp((*argv)[ofs], OSCAP_OVAL_MODULE.name); ofs++);
+	ofs += 2;
+	memcpy(nargv, *argv, ofs * sizeof(char *));
+	/* copy env args */
+	memcpy(nargv + ofs, eargv, eargc * sizeof(char *));
+	/* copy rest of the main args */
+	memcpy(nargv + ofs + eargc, *argv + ofs, (*argc - ofs) * sizeof(char *));
+	nargv[nargc] = NULL;
+
+	*argc = nargc;
+	*argv = nargv;
+	free(opts);
+	free(eargv);
+}
+
 int oscap_module_process(struct oscap_module *module, int argc, char **argv)
 {
     assert(module != NULL);
@@ -278,6 +326,8 @@ int oscap_module_process(struct oscap_module *module, int argc, char **argv)
 
         ++optind; // skip current module key index
         action.module = module; // update current module
+
+	getopt_parse_env(module, &argc, &argv);
 
         switch (oscap_parse_common_opts(argc, argv)) {
             case OPT_HELP: oscap_module_print_help(module, stdout); goto cleanup;

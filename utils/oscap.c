@@ -20,6 +20,10 @@
  *      Maros Barabas  <mbarabas@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 /* Standard header files */
 #include <stdio.h>
 #include <stdlib.h>
@@ -123,13 +127,30 @@ static int print_versions(const struct oscap_action *action)
 
 int app_validate_xml(const struct oscap_action *action)
 {
-	const char *xml_file = action->f_oval;
-	if (!xml_file)
+	const char *xml_file;
+	xmlChar *doc_version;
+
+	switch (action->doctype) {
+	case OSCAP_DOCUMENT_OVAL_DEFINITIONS:
+	case OSCAP_DOCUMENT_OVAL_VARIABLES:
+	case OSCAP_DOCUMENT_OVAL_SYSCHAR:
+	case OSCAP_DOCUMENT_OVAL_RESULTS:
+	case OSCAP_DOCUMENT_OVAL_DIRECTIVES:
+		xml_file = action->f_oval;
+		doc_version = oval_determine_document_schema_version((const char *) xml_file, action->doctype);
+		break;
+	default:
 		xml_file = action->f_xccdf;
-	if (!xml_file)
+		doc_version = NULL;
+	}
+
+	if (!xml_file) {
+		fprintf(stderr, "Missing xml file.\n");
 		return OSCAP_ERROR;
-	
-	if (!oscap_validate_document(xml_file, action->doctype, NULL, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+	}
+
+	if (!oscap_validate_document(xml_file, action->doctype, (const char *) doc_version,
+		(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 		if (oscap_err()) {
 			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
 			return OSCAP_FAIL;

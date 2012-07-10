@@ -1,0 +1,420 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" xmlns:macos-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#macos" xmlns:sch="http://purl.oclc.org/dsdl/schematron" targetNamespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#macos" elementFormDefault="qualified" version="5.3">
+     <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" schemaLocation="oval-system-characteristics-schema.xsd"/>
+     <xsd:annotation>
+          <xsd:documentation>The following is a description of the elements, types, and attributes that compose the MacOS specific system characteristic items found in Open Vulnerability and Assessment Language (OVAL). Each item is an extension of the standard test element defined in the Core Definition Schema. Through extension, each test inherits a set of elements and attributes that are shared amongst all OVAL tests. Each test is described in detail and should provide the information necessary to understand what each element and attribute represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between the different tests and their relationship to the Core Definition Schema is not outlined here.</xsd:documentation>
+          <xsd:documentation>The MacOS System Characteristics Schema was initially developed by The Center for Internet Security. Many thanks to their contributions to OVAL and the security community.</xsd:documentation>
+          <xsd:documentation>The OVAL Schema is maintained by The Mitre Corporation and developed by the public OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
+          <xsd:appinfo>
+               <schema>MacOS System Characteristics</schema>
+               <version>5.3</version>
+               <date>6/22/2007 11:18:03 AM</date>
+               <sch:title>schematron validation of the MacOS portion of an OVAL System Characteristics file</sch:title>
+               <sch:ns prefix="oval-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"/>
+               <sch:ns prefix="macos-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#macos"/>
+          </xsd:appinfo>
+     </xsd:annotation>
+     <!-- =============================================================================== -->
+     <!-- =============================  ACCOUNT INFO ITEM  ============================= -->
+     <!-- =============================================================================== -->
+     <xsd:element name="accountinfo_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>This item stores sser account information (username, uid, gid, etc.).</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="username" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The user associated with the information collected.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="accountitemusername">
+                                                  <sch:rule context="macos-sc:accountinfo_item/macos-sc:username">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the username entity of an accountinfo_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="password" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Obfuscated (*****) or encrypted password for this user.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="accountitempassword">
+                                                  <sch:rule context="macos-sc:accountinfo_item/macos-sc:password">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the password entity of an accountinfo_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="uid" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The numeric user id, or uid, is the third column of each user's entry in /etc/passwd. This element represents the owner of the file.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="accountitemuid">
+                                                  <sch:rule context="macos-sc:accountinfo_item/macos-sc:uid">
+                                                       <sch:assert test="not(@datatype) or @datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the uid entity of an accountinfo_item should be 'int'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="gid" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Group ID of this account.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="accountitemgid">
+                                                  <sch:rule context="macos-sc:accountinfo_item/macos-sc:gid">
+                                                       <sch:assert test="not(@datatype) or @datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the gid entity of an accountinfo_item should be 'int'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="realname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>User's real name, aka gecos field of /etc/passwd.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="accountitemrealname">
+                                                  <sch:rule context="macos-sc:accountinfo_item/macos-sc:realname">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the realname entity of an accountinfo_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="home_dir" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="accountitemhome_dir">
+                                                  <sch:rule context="macos-sc:accountinfo_item/macos-sc:home_dir">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the home_dir entity of an accountinfo_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="login_shell" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="accountitemlogin_shell">
+                                                  <sch:rule context="macos-sc:accountinfo_item/macos-sc:login_shell">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the login_shell entity of an accountinfo_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ========================  INET LISTENING SERVERS ITEM  ======================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="inetlisteningserver_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>An inet listening server item stores the results of checking for network servers currently active on a system.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="program_name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the name of the communicating program.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="macosilsitemprogram_name">
+                                                  <sch:rule context="macos-sc:inetlisteningserver_item/macos-sc:program_name">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the program_name entity of an inetlisteningserver_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="local_address" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the IP address of the network interface on which the program listens.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="macosilsitemlocal_address">
+                                                  <sch:rule context="macos-sc:inetlisteningserver_item/macos-sc:local_address">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the local_address entity of an inetlisteningserver_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="local_full_address" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the IP address and network port on which the program listens, equivalent to local_address:local_port.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="macosilsitemlocal_full_address">
+                                                  <sch:rule context="macos-sc:inetlisteningserver_item/macos-sc:local_full_address">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the local_full_address entity of an inetlisteningserver_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="local_port" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the TCP or UDP port on which the program listens. Note that this is not a list -- if a program listens on multiple ports, or on a combination of TCP and UDP, each will have its own entry in the table data stored by this item.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="macosilsitemlocal_port">
+                                                  <sch:rule context="macos-sc:inetlisteningserver_item/macos-sc:local_port">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the local_port entity of an inetlisteningserver_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="foreign_address" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the IP address with which the program is communicating, or with which it will communicate, in the case of a listening server.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="macosilsitemforeign_address">
+                                                  <sch:rule context="macos-sc:inetlisteningserver_item/macos-sc:foreign_address">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the foreign_address entity of an inetlisteningserver_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="foreign_full_address" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the IP address and network port to which the program is communicating or will accept communications from, equivalent to foreign_address:foreign_port.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="macosilsitemforeign_full_address">
+                                                  <sch:rule context="macos-sc:inetlisteningserver_item/macos-sc:foreign_full_address">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the foreign_full_address entity of an inetlisteningserver_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="foreign_port" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the TCP or UDP port to which the program communicates. In the case of a listening program accepting new connections, this is usually a *.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="macosilsitemforeign_port">
+                                                  <sch:rule context="macos-sc:inetlisteningserver_item/macos-sc:foreign_port">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the foreign_port entity of an inetlisteningserver_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="pid" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the process ID of the process. The process in question is that of the program communicating on the network.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="macosilsitempid">
+                                                  <sch:rule context="macos-sc:inetlisteningserver_item/macos-sc:pid">
+                                                       <sch:assert test="not(@datatype) or @datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the pid entity of an inetlisteningserver_item should be 'int'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="protocol" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the transport-layer protocol, in lowercase: tcp or udp.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="macosilsitemprotocol">
+                                                  <sch:rule context="macos-sc:inetlisteningserver_item/macos-sc:protocol">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the protocol entity of an inetlisteningserver_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="user_id" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The numeric user id, or uid, is the third column of each user's entry in /etc/passwd. It represents the owner, and thus privilege level, of the specified program.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="macosilsitemuser_id">
+                                                  <sch:rule context="macos-sc:inetlisteningserver_item/macos-sc:user_id">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the user_id entity of an inetlisteningserver_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ==============================  NVRAM INFO ITEM   ============================= -->
+     <!-- =============================================================================== -->
+     <xsd:element name="nvram_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>Output of 'nvram -p'</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="nvram_var" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>A nvram variabl.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="nvramitemnvram_var">
+                                                  <sch:rule context="macos-sc:nvram_item/macos-sc:nvram_var">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the nvram_var entity of a nvram_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="nvram_value" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the value of the associated nvram variable.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="nvramitemnvram_value">
+                                                  <sch:rule context="macos-sc:nvram_item/macos-sc:nvram_value">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the nvram_value entity of a nvram_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ===============================  PWPOLICY ITEM  =============================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="pwpolicy_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>Output of 'pwpolicy -getpolicy'</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="username" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="pwpitemusername">
+                                                  <sch:rule context="macos-sc:pwpolicy_item/macos-sc:username">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the username entity of a pwpolicy_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="userpass" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="pwpitemuserpass">
+                                                  <sch:rule context="macos-sc:pwpolicy_item/macos-sc:userpass">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the userpass entity of a pwpolicy_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="directory_node" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="pwpitemdirectory_node">
+                                                  <sch:rule context="macos-sc:pwpolicy_item/macos-sc:directory_node">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the directory_node entity of a pwpolicy_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="maxChars" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Maximum number of characters allowed in a password.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="pwpitemmaxChars">
+                                                  <sch:rule context="macos-sc:pwpolicy_item/macos-sc:maxChars">
+                                                       <sch:assert test="not(@datatype) or @datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the maxChars entity of a pwpolicy_item should be 'int'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="maxFailedLoginAttempts" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Maximum number of failed logins before the account is locked.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="pwpitemmaxFailedLoginAttempts">
+                                                  <sch:rule context="macos-sc:pwpolicy_item/macos-sc:maxFailedLoginAttempts">
+                                                       <sch:assert test="not(@datatype) or @datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the maxFailedLoginAttempts entity of a pwpolicy_item should be 'int'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="minChars" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Minimum number of characters allowed in a password</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="pwpitemminChars">
+                                                  <sch:rule context="macos-sc:pwpolicy_item/macos-sc:minChars">
+                                                       <sch:assert test="not(@datatype) or @datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the minChars entity of a pwpolicy_item should be 'int'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="passwordCannotBeName" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Defines if the password is allowed to be the same as the username or not</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="pwpitempasswordCannotBeName">
+                                                  <sch:rule context="macos-sc:pwpolicy_item/macos-sc:passwordCannotBeName">
+                                                       <sch:assert test="not(@datatype) or @datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the passwordCannotBeName entity of a pwpolicy_item should be 'boolean'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="requiresAlpha" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Defines if the password must contain an alphabetical character or not</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="pwpitemrequiresAlpha">
+                                                  <sch:rule context="macos-sc:pwpolicy_item/macos-sc:requiresAlpha">
+                                                       <sch:assert test="not(@datatype) or @datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the requiresAlpha entity of a pwpolicy_item should be 'boolean'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="requiresNumeric" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Defines if the password must contain an numeric character or not</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="pwpitemrequiresNumeric">
+                                                  <sch:rule context="macos-sc:pwpolicy_item/macos-sc:requiresNumeric">
+                                                       <sch:assert test="not(@datatype) or @datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the requiresNumeric entity of a pwpolicy_item should be 'boolean'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- =============================================================================== -->
+     <!-- =============================================================================== -->
+</xsd:schema>

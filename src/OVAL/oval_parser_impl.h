@@ -36,6 +36,12 @@
 
 OSCAP_HIDDEN_START;
 
+#define OVAL_ROOT_ELM_DEFINITIONS "oval_definitions"
+#define OVAL_ROOT_ELM_DIRECTIVES "oval_directives"
+#define OVAL_ROOT_ELM_RESULTS "oval_results"
+#define OVAL_ROOT_ELM_SYSCHARS "oval_system_characteristics"
+#define OVAL_ROOT_ELM_VARIABLES "oval_variables"
+
 struct oval_parser_context {
 	struct oval_definition_model *definition_model;
 	struct oval_syschar_model *syschar_model;

@@ -20,6 +20,10 @@
  *      Maros Barabas <mbarabas@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 /* OVAL & OSCAP common */
 #include <oval_probe.h>
 #include <oval_agent_api.h>
@@ -307,12 +311,17 @@ int app_collect_oval(const struct oscap_action *action)
 
 		/* validate OVAL System Characteristics */
 		if (action->validate) {
-			if (!oscap_validate_document(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, NULL,
+			xmlChar *doc_version;
+
+			doc_version = oval_determine_document_schema_version((const char *) action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR);
+			if (!oscap_validate_document(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, (const char *) doc_version,
 			    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 				fprintf(stdout, "OVAL System Characteristics are NOT exported correctly.\n");
+				xmlFree(doc_version);
 				goto cleanup;
 			}
 			fprintf(stdout, "OVAL System Characteristics are exported correctly.\n");
+			xmlFree(doc_version);
 		}
 	}
 
@@ -412,12 +421,17 @@ int app_evaluate_oval(const struct oscap_action *action)
 
 		/* validate OVAL Results */
 		if (action->validate) {
-			if (!oscap_validate_document(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, NULL,
+			xmlChar *doc_version;
+
+			doc_version = oval_determine_document_schema_version((const char *) action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS);
+			if (!oscap_validate_document(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, (const char *) doc_version,
 			    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 				fprintf(stdout, "OVAL Results are NOT exported correctly.\n");
+				xmlFree(doc_version);
 				goto cleanup;
 			}
 			fprintf(stdout, "OVAL Results are exported correctly.\n");
+			xmlFree(doc_version);
 		}
 
 		/* generate report */
@@ -523,12 +537,17 @@ static int app_analyse_oval(const struct oscap_action *action) {
 
 		/* validate OVAL Results */
 		if (action->validate) {
-			if (!oscap_validate_document(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, NULL,
+			xmlChar *doc_version;
+
+			doc_version = oval_determine_document_schema_version((const char *) action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS);
+			if (!oscap_validate_document(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, (const char *) doc_version,
 			    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 				fprintf(stdout, "OVAL Results are NOT exported correctly.\n");
+				xmlFree(doc_version);
 				goto cleanup;
 			}
 			fprintf(stdout, "OVAL Results are exported correctly.\n");
+			xmlFree(doc_version);
 		}
 	}
 
@@ -703,16 +722,20 @@ bool getopt_oval_validate(int argc, char **argv, struct oscap_action *action)
 
 static bool valid_inputs(const struct oscap_action *action) {
         bool ret = false;
+	xmlChar *doc_version;
 
 	/* validate OVAL Definitions & Variables & Syschars */
-	if (!oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS, NULL,
+	doc_version = oval_determine_document_schema_version((const char *) action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS);
+	if (!oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS, (const char *) doc_version,
 	    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 		fprintf(stdout, "Invalid OVAL Definition content in %s\n", action->f_oval);
 		goto cleanup;
 	}
 
 	if (action->f_variables) {
-		if (!oscap_validate_document(action->f_variables, OSCAP_DOCUMENT_OVAL_VARIABLES, NULL,
+		xmlFree(doc_version);
+		doc_version = oval_determine_document_schema_version((const char *) action->f_variables, OSCAP_DOCUMENT_OVAL_VARIABLES);
+		if (!oscap_validate_document(action->f_variables, OSCAP_DOCUMENT_OVAL_VARIABLES, (const char *) doc_version,
 		    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 			fprintf(stdout, "Invalid OVAL Variables content in %s\n", action->f_variables);
 			goto cleanup;
@@ -720,7 +743,9 @@ static bool valid_inputs(const struct oscap_action *action) {
 	}
 
 	if (action->f_directives) {
-		if (!oscap_validate_document(action->f_directives, OSCAP_DOCUMENT_OVAL_DIRECTIVES, NULL,
+		xmlFree(doc_version);
+		doc_version = oval_determine_document_schema_version((const char *) action->f_directives, OSCAP_DOCUMENT_OVAL_DIRECTIVES);
+		if (!oscap_validate_document(action->f_directives, OSCAP_DOCUMENT_OVAL_DIRECTIVES, (const char *) doc_version,
 		    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 			fprintf(stdout, "Invalid OVAL Directives content in %s\n", action->f_directives);
 			goto cleanup;
@@ -728,7 +753,9 @@ static bool valid_inputs(const struct oscap_action *action) {
 	}
 
 	if (action->module == &OVAL_ANALYSE && action->f_syschar) {
-		if (!oscap_validate_document(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, NULL,
+		xmlFree(doc_version);
+		doc_version = oval_determine_document_schema_version((const char *) action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR);
+		if (!oscap_validate_document(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, (const char *) doc_version,
 		    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 			fprintf(stdout, "Invalid OVAL System Characteristics content in %s\n", action->f_syschar);
 			goto cleanup;
@@ -738,6 +765,7 @@ static bool valid_inputs(const struct oscap_action *action) {
 	ret = true;
 
 cleanup:
+	xmlFree(doc_version);
 
 	return ret;
 }

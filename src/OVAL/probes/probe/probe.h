@@ -74,6 +74,6 @@ struct probe_ctx {
         probe_icache_t *icache;    /**< item cache */
 };
 
-
+extern pthread_barrier_t OSCAP_GSYM(th_barrier);
 
 #endif /* PROBE_H */

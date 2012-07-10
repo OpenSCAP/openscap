@@ -41,6 +41,8 @@
 #include "oval_results_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_string_map_impl.h"
+#include "oval_parser_impl.h"
+
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "common/util.h"
@@ -279,7 +281,7 @@ static int oval_result_system_parse(xmlTextReaderPtr reader, struct oval_parser_
                 return_code = oval_parser_parse_tag(reader, context, oval_result_definition_parse_tag, sys);
 	} else if (strcmp((const char *)localName, "tests") == 0) {
 		return_code = oval_parser_parse_tag(reader, context, oval_result_test_parse_tag, sys);
-	} else if (strcmp((const char *)localName, "oval_system_characteristics") == 0) {
+	} else if (strcmp((const char *)localName, OVAL_ROOT_ELM_SYSCHARS) == 0) {
 		return_code = oval_syschar_model_parse(reader, context);
 	} else {
                 dW("Skipping tag: %s\n", localName);
