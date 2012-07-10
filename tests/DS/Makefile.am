@@ -12,5 +12,7 @@ TESTS = test_ds.sh
 EXTRA_DIST += test_ds.sh \
 		empty/empty-xccdf.xml \
 		simple/scap-fedora14-xccdf.xml \
-		simple/scap-fedora14-oval.xml
-
+		simple/scap-fedora14-oval.xml \
+		multiple_oval/multiple-oval-xccdf.xml \
+		multiple_oval/first-oval.xml \
+		multiple_oval/second-oval.xml

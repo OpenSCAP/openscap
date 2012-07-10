@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xccdf:Benchmark xmlns:xccdf="http://checklists.nist.gov/xccdf/1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="xccdf_cdf_benchmark_scap-fedora14-xccdf.xml" resolved="1" style="SCAP_1.2" xml:lang="en" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.2 http://scap.nist.gov/schema/xccdf/1.2/xccdf_1.2.xsd http://cpe.mitre.org/dictionary/2.0 http://scap.nist.gov/schema/cpe/2.3/cpe-dictionary_2.3.xsd">
+    <xccdf:status date="2011-10-12">draft</xccdf:status>
+    <xccdf:title>Example of SCAP Security Guidance</xccdf:title>
+    <xccdf:description>This example security guidance has been created to demonstrate SCAP functionality
+        on Linux.</xccdf:description>
+    <xccdf:version>0.1</xccdf:version>
+    <xccdf:model system="urn:xccdf:scoring:default"/>
+    <xccdf:model system="urn:xccdf:scoring:flat"/>
+    <xccdf:Group hidden="false" id="xccdf_cdf_group_group-2.1.1.1.1">
+        <xccdf:title xml:lang="en">Create Separate Partition or Logical Volume for /tmp</xccdf:title>
+        <xccdf:description xml:lang="en">
+            The /tmp directory is a world-writable directory used for 
+            temporary ﬁle storage. Ensure that it has its own partition or logical volume.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+            <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+            Because software may need to use /tmp to temporarily store large ﬁles, ensure 
+            that it is of adequate size.  For a modern, general-purpose system, 10GB should be adequate. Smaller or larger sizes could be used, depending on
+            the availability of space on the drive and the system’s operating requirements
+        </xccdf:description>
+        <xccdf:Rule id="xccdf_cdf_rule_first-oval" selected="true" weight="10.0">
+            <xccdf:title xml:lang="en">Ensure that /tmp has its own partition or logical volume</xccdf:title>
+            <xccdf:description xml:lang="en">The /tmp directory is a world-writable directory used for temporary ﬁle storage.  Ensure that it has its own partition or logical volume.</xccdf:description>
+            <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+                <xccdf:check-content-ref href="first-oval.xml" name="oval:org.open-scap.f14:def:20000"/>
+            </xccdf:check>
+        </xccdf:Rule>
+        <xccdf:Rule id="xccdf_cdf_rule_second-oval" selected="true" weight="10.0">
+            <xccdf:title xml:lang="en">Ensure that /tmp has its own partition or logical volume</xccdf:title>
+            <xccdf:description xml:lang="en">The /tmp directory is a world-writable directory used for temporary ﬁle storage.  Ensure that it has its own partition or logical volume.</xccdf:description>
+            <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+                <xccdf:check-content-ref href="second-oval.xml" name="oval:org.open-scap.f14:def:20001"/>
+            </xccdf:check>
+        </xccdf:Rule>
+    </xccdf:Group>
+</xccdf:Benchmark>
