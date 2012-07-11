@@ -504,18 +504,21 @@ void ds_sds_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream,
             {
                 char* href = (char*)xmlGetProp(node, BAD_CAST "href");
                 char* real_path = oscap_sprintf("%s/%s", strcmp(dir, "") == 0 ? "." : dir, href);
-                char* uri = oscap_sprintf("#%s", real_path);
+                char* cref_id = oscap_sprintf("scap_org.open-scap_cref_%s", real_path);
+                char* uri = oscap_sprintf("#%s", cref_id);
 
                 // we don't want duplicated uri elements in the catalog
                 if (ds_sds_compose_catalog_has_uri(doc, catalog, uri))
                 {
                     oscap_free(uri);
+                    oscap_free(cref_id);
                     oscap_free(real_path);
                     xmlFree(href);
                     continue;
                 }
 
-                ds_sds_compose_add_component_with_ref(doc, datastream, real_path, real_path);
+                ds_sds_compose_add_component_with_ref(doc, datastream, real_path, cref_id);
+                oscap_free(cref_id);
 
                 xmlNodePtr catalog_uri = xmlNewNode(cat_ns, BAD_CAST "uri");
                 xmlSetProp(catalog_uri, BAD_CAST "name", BAD_CAST href);
@@ -662,7 +665,34 @@ void ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datast
     xmlNodePtr extended_components = xmlNewNode(ds_ns, BAD_CAST "extended-components");
     xmlAddChild(datastream, extended_components);
 
-    ds_sds_compose_add_component_with_ref(doc, datastream, xccdf_file, xccdf_file);
+    char* cref_id = oscap_sprintf("scap_org.open-scap_cref_%s", xccdf_file);
+    ds_sds_compose_add_component_with_ref(doc, datastream, xccdf_file, cref_id);
+    oscap_free(cref_id);
+
+    // the XSD of source data stream enforces that the collection elements are
+    // not empty if they are there, we will therefore now removes collections
+    // where nothing has been added
+
+    if (dictionaries->children == NULL)
+    {
+        xmlUnlinkNode(dictionaries);
+        xmlFreeNode(dictionaries);
+    }
+    if (checklists->children == NULL)
+    {
+        xmlUnlinkNode(checklists);
+        xmlFreeNode(checklists);
+    }
+    if (checks->children == NULL)
+    {
+        xmlUnlinkNode(checks);
+        xmlFreeNode(checks);
+    }
+    if (extended_components->children == NULL)
+    {
+        xmlUnlinkNode(extended_components);
+        xmlFreeNode(extended_components);
+    }
 
     xmlSaveFileEnc(target_datastream, doc, "utf-8");
 
