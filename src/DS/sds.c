@@ -646,9 +646,9 @@ void ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datast
     // component-ref
     xmlNewNs(root, BAD_CAST xlink_ns_uri, BAD_CAST "xlink");
 
-    char* collection_name = oscap_sprintf("scap_org.open-scap_collection_from_xccdf_%s", xccdf_file);
-    xmlSetProp(root, BAD_CAST "id", BAD_CAST collection_name);
-    oscap_free(collection_name);
+    char* collection_id = oscap_sprintf("scap_org.open-scap_collection_from_xccdf_%s", xccdf_file);
+    xmlSetProp(root, BAD_CAST "id", BAD_CAST collection_id);
+    oscap_free(collection_id);
 
     xmlSetProp(root, BAD_CAST "schematron-version", BAD_CAST "1.0");
 
@@ -658,6 +658,14 @@ void ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datast
 
     xmlNodePtr datastream = xmlNewNode(ds_ns, BAD_CAST "data-stream");
     xmlAddChild(root, datastream);
+
+    char* datastream_id = oscap_sprintf("scap_org.open-scap_datastream_from_xccdf_%s", xccdf_file);
+    xmlSetProp(datastream, BAD_CAST "id", BAD_CAST datastream_id);
+    oscap_free(datastream_id);
+
+    xmlSetProp(datastream, BAD_CAST "scap-version", BAD_CAST "1.2");
+
+    xmlSetProp(datastream, BAD_CAST "use-case", BAD_CAST "OTHER");
 
     xmlNodePtr dictionaries = xmlNewNode(ds_ns, BAD_CAST "dictionaries");
     xmlAddChild(datastream, dictionaries);
