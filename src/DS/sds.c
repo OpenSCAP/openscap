@@ -630,6 +630,13 @@ void ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream,
         cref_parent = node_get_child_element(datastream, "extended-components");
     }
 
+    // the source data stream XSD requires either no catalog or a non-empty one
+    if (cref_catalog->children == NULL)
+    {
+        xmlUnlinkNode(cref_catalog);
+        xmlFreeNode(cref_catalog);
+    }
+
     xmlAddChild(cref_parent, cref);
 }
 
