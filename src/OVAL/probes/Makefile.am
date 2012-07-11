@@ -255,6 +255,13 @@ probe_rpmverify_CFLAGS= @rpm_CFLAGS@
 probe_rpmverify_LDFLAGS= @rpm_LIBS@
 endif
 
+if probe_rpmverifyfile_enabled
+pkglibexec_PROGRAMS += probe_rpmverifyfile
+probe_rpmverifyfile_SOURCES= unix/linux/rpmverifyfile.c
+probe_rpmverifyfile_CFLAGS= @rpm_CFLAGS@
+probe_rpmverifyfile_LDFLAGS= @rpm_LIBS@
+endif
+
 if probe_dpkginfo_enabled
 pkglibexec_PROGRAMS += probe_dpkginfo
 probe_dpkginfo_SOURCES= unix/linux/dpkginfo.c \

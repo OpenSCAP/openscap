@@ -221,6 +221,10 @@ probe_rpmverify_req_deps_ok=yes
 probe_rpmverify_req_deps_missing=
 probe_rpmverify_opt_deps_ok=yes
 probe_rpmverify_opt_deps_missing=
+probe_rpmverifyfile_req_deps_ok=yes
+probe_rpmverifyfile_req_deps_missing=
+probe_rpmverifyfile_opt_deps_ok=yes
+probe_rpmverifyfile_opt_deps_missing=
 probe_dpkginfo_req_deps_ok=yes
 probe_dpkginfo_req_deps_missing=
 probe_dpkginfo_opt_deps_ok=yes
@@ -513,6 +517,10 @@ echo ' * Checking presence of required headers for the rpmverify probe'
 AC_CHECK_HEADERS([assert.h errno.h fcntl.h limits.h pcre.h rpm/header.h rpm/rpmcli.h rpm/rpmdb.h rpm/rpmfi.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_rpmverify_req_deps_ok=no; probe_rpmverify_req_deps_missing='header files'],[-])
 
 echo
+echo ' * Checking presence of required headers for the rpmverifyfile probe'
+AC_CHECK_HEADERS([assert.h errno.h fcntl.h limits.h pcre.h rpm/header.h rpm/rpmcli.h rpm/rpmdb.h rpm/rpmfi.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_rpmverifyfile_req_deps_ok=no; probe_rpmverifyfile_req_deps_missing='header files'],[-])
+
+echo
 echo ' * Checking presence of required headers for the dpkginfo probe'
 AC_CHECK_HEADERS([assert.h errno.h stdio.h string.h ],[],[probe_dpkginfo_req_deps_ok=no; probe_dpkginfo_req_deps_missing='header files'],[-])
 
@@ -740,7 +748,7 @@ probe_partition_req_deps_missing+=", $ac_func func";
 ])
 LIBS=$SAVE_LIBS
 echo
-echo '* Checking for rpm library used by: rpminfo rpmverify '
+echo '* Checking for rpm library used by: rpminfo rpmverify rpmverifyfile '
 PKG_CHECK_MODULES([rpm], [rpm >= 0.0],[],[
 SAVE_LIBS=$LIBS
 AC_SEARCH_LIBS([rpmtsCreate],[rpm],[
@@ -751,6 +759,8 @@ probe_rpminfo_req_deps_ok=no;
 probe_rpminfo_req_deps_missing+=', rpm';
 probe_rpmverify_req_deps_ok=no;
 probe_rpmverify_req_deps_missing+=', rpm';
+probe_rpmverifyfile_req_deps_ok=no;
+probe_rpmverifyfile_req_deps_missing+=', rpm';
 ],[])
 AC_SUBST([rpm_CFLAGS])
 AC_SUBST([rpm_LIBS])
@@ -764,6 +774,9 @@ probe_rpminfo_req_deps_missing+=", $ac_func func";
 
 probe_rpmverify_req_deps_ok=no;
 probe_rpmverify_req_deps_missing+=", $ac_func func";
+
+probe_rpmverifyfile_req_deps_ok=no;
+probe_rpmverifyfile_req_deps_missing+=", $ac_func func";
 ])
 AC_CHECK_FUNCS([headerFormat headerSprintf rpmFreeCrypto rpmFreeFilesystems],[],[])
 LIBS=$SAVE_LIBS
@@ -1176,6 +1189,8 @@ AM_CONDITIONAL([probe_rpminfo_enabled], test "$probe_rpminfo_req_deps_ok" = yes)
 probe_rpminfo_enabled=$probe_rpminfo_req_deps_ok
 AM_CONDITIONAL([probe_rpmverify_enabled], test "$probe_rpmverify_req_deps_ok" = yes)
 probe_rpmverify_enabled=$probe_rpmverify_req_deps_ok
+AM_CONDITIONAL([probe_rpmverifyfile_enabled], test "$probe_rpmverifyfile_req_deps_ok" = yes)
+probe_rpmverifyfile_enabled=$probe_rpmverifyfile_req_deps_ok
 AM_CONDITIONAL([probe_dpkginfo_enabled], test "$probe_dpkginfo_req_deps_ok" = yes)
 probe_dpkginfo_enabled=$probe_dpkginfo_req_deps_ok
 
@@ -1513,6 +1528,12 @@ else
   probe_rpmverify_table_result="NO (missing: $probe_rpmverify_req_deps_missing)"
 fi
 printf "  %-28s %s\n" "rpmverify:" "$probe_rpmverify_table_result"
+if test "$probe_rpmverifyfile_req_deps_ok" = "yes"; then
+  probe_rpmverifyfile_table_result="yes"
+else
+  probe_rpmverifyfile_table_result="NO (missing: $probe_rpmverifyfile_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "rpmverifyfile:" "$probe_rpmverifyfile_table_result"
 if test "$probe_dpkginfo_req_deps_ok" = "yes"; then
   probe_dpkginfo_table_result="yes"
 else

@@ -69,6 +69,7 @@ oval_probe_meta_t OSCAP_GSYM(__probe_meta)[] = {
         OVAL_PROBE_EXTERNAL(OVAL_LINUX_PARTITION, "partition"),
         OVAL_PROBE_EXTERNAL(OVAL_LINUX_IFLISTENERS, "iflisteners"),
         OVAL_PROBE_EXTERNAL(OVAL_LINUX_RPMVERIFY, "rpmverify"),
+        OVAL_PROBE_EXTERNAL(OVAL_LINUX_RPMVERIFYFILE, "rpmverifyfile"),
         OVAL_PROBE_EXTERNAL(OVAL_LINUX_SELINUXBOOLEAN, "selinuxboolean"),
         OVAL_PROBE_EXTERNAL(OVAL_LINUX_SELINUXSECURITYCONTEXT, "selinuxsecuritycontext"),
         OVAL_PROBE_EXTERNAL(OVAL_SOLARIS_ISAINFO, "isainfo"),
