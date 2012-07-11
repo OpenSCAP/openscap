@@ -37,92 +37,92 @@ int app_ds_sds_split(const struct oscap_action *action);
 int app_ds_sds_compose(const struct oscap_action *action);
 
 struct oscap_module OSCAP_DS_MODULE = {
-    .name = "ds",
-    .parent = &OSCAP_ROOT_MODULE,
-    .summary = "DataStream utilities",
-    .submodules = DS_SUBMODULES
+	.name = "ds",
+	.parent = &OSCAP_ROOT_MODULE,
+	.summary = "DataStream utilities",
+	.submodules = DS_SUBMODULES
 };
 
 static struct oscap_module DS_SDS_SPLIT_MODULE = {
-    .name = "sds_split",
-    .parent = &OSCAP_DS_MODULE,
-    .summary = "Split given SourceDataStream into separate files",
-    .usage = "sds.xml target_directory/",
-    .help = NULL,
-    .opt_parser = getopt_ds,
-    .func = app_ds_sds_split
+	.name = "sds_split",
+	.parent = &OSCAP_DS_MODULE,
+	.summary = "Split given SourceDataStream into separate files",
+	.usage = "sds.xml target_directory/",
+	.help = NULL,
+	.opt_parser = getopt_ds,
+	.func = app_ds_sds_split
 };
 
 static struct oscap_module DS_SDS_COMPOSE_MODULE = {
-    .name = "sds_compose",
-    .parent = &OSCAP_DS_MODULE,
-    .summary = "Compose SourceDataStream from given XCCDF",
-    .usage = "xccdf-file.xml target_datastream.xml",
-    .help = NULL,
-    .opt_parser = getopt_ds,
-    .func = app_ds_sds_compose
+	.name = "sds_compose",
+	.parent = &OSCAP_DS_MODULE,
+	.summary = "Compose SourceDataStream from given XCCDF",
+	.usage = "xccdf-file.xml target_datastream.xml",
+	.help = NULL,
+	.opt_parser = getopt_ds,
+	.func = app_ds_sds_compose
 };
 
 static struct oscap_module* DS_SUBMODULES[] = {
-    &DS_SDS_SPLIT_MODULE,
+	&DS_SDS_SPLIT_MODULE,
 	&DS_SDS_COMPOSE_MODULE,
-    NULL
+	NULL
 };
 
 bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 
-    if( (action->module == &DS_SDS_SPLIT_MODULE) ) {
-        if(  argc != 5 ) {
-            oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
-            return false;
-        }
-        action->ds_action = malloc(sizeof(struct ds_action));
-        action->ds_action->file = argv[3];
-        action->ds_action->target = argv[4];
-    }
+	if( (action->module == &DS_SDS_SPLIT_MODULE) ) {
+		if(  argc != 5 ) {
+			oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
+			return false;
+		}
+		action->ds_action = malloc(sizeof(struct ds_action));
+		action->ds_action->file = argv[3];
+		action->ds_action->target = argv[4];
+	}
 	else if( (action->module == &DS_SDS_COMPOSE_MODULE) ) {
-        if(  argc != 5 ) {
-            oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
-            return false;
-        }
-        action->ds_action = malloc(sizeof(struct ds_action));
-        action->ds_action->file = argv[3];
-        action->ds_action->target = argv[4];
-    }
+		if(  argc != 5 ) {
+			oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
+			return false;
+		}
+		action->ds_action = malloc(sizeof(struct ds_action));
+		action->ds_action->file = argv[3];
+		action->ds_action->target = argv[4];
+	}
 
-    return true;
+	return true;
 }
 
 int app_ds_sds_split(const struct oscap_action *action) {
-    int ret;
+	int ret;
 
-    /* Validate */
-    /*
-    if( action->validate ) {
-        if (!oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_SDS, "1.2", (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
-        {
-            fprintf(stdout, "Invalid input source data stream in in %s\n", action->ds_action->file);
-            ret = OSCAP_ERROR;
-            goto cleanup;
-        }
-    }
-*/
-    ds_sds_decompose(action->ds_action->file, NULL, action->ds_action->target, NULL);
+	/* Validate */
+	/*
+	   if( action->validate ) {
+	   if (!oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_SDS, "1.2", (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
+	   {
+	   fprintf(stdout, "Invalid input source data stream in in %s\n", action->ds_action->file);
+	   ret = OSCAP_ERROR;
+	   goto cleanup;
+	   }
+	   }
+	   */
+	ds_sds_decompose(action->ds_action->file, NULL, action->ds_action->target, NULL);
 
 	// TODO: error handling
-    ret = OSCAP_OK;
+	ret = OSCAP_OK;
 
 cleanup:
-    return ret;
+	return ret;
 }
 
 int app_ds_sds_compose(const struct oscap_action *action) {
-    int ret;
+	int ret;
 
-    ds_sds_compose_from_xccdf(action->ds_action->file, action->ds_action->target);
+	ds_sds_compose_from_xccdf(action->ds_action->file, action->ds_action->target);
 
 	// TODO: error handling
-    ret = OSCAP_OK;
+	ret = OSCAP_OK;
 
-    return ret;
+	return ret;
 }

@@ -52,692 +52,692 @@ static const char* cat_ns_uri = "urn:oasis:names:tc:entity:xmlns:xml:catalog";
 
 static int mkdir_p(const char* path)
 {
-    if (strlen(path) > MAXPATHLEN)
-    {
-        return 1;
-    }
-    else
-    {
-        char temp[MAXPATHLEN + 1]; // +1 for \0
-        unsigned int i;
+	if (strlen(path) > MAXPATHLEN)
+	{
+		return 1;
+	}
+	else
+	{
+		char temp[MAXPATHLEN + 1]; // +1 for \0
+		unsigned int i;
 
-        for (i = 0; i <= strlen(path); i++)
-        {
-            if (path[i] == '/' || path[i] == '\0')
-            {
-                strncpy(temp, path, i);
-                temp[i] = '\0';
-                mkdir(temp, S_IRWXU);
-            }
-        }
+		for (i = 0; i <= strlen(path); i++)
+		{
+			if (path[i] == '/' || path[i] == '\0')
+			{
+				strncpy(temp, path, i);
+				temp[i] = '\0';
+				mkdir(temp, S_IRWXU);
+			}
+		}
 
-        return 0;
-    }
+		return 0;
+	}
 }
 
 static xmlNodePtr node_get_child_element(xmlNodePtr parent, const char* name)
 {
-    xmlNodePtr candidate = parent->children;
+	xmlNodePtr candidate = parent->children;
 
-    for (; candidate != NULL; candidate = candidate->next)
-    {
-        if (candidate->type != XML_ELEMENT_NODE)
-            continue;
+	for (; candidate != NULL; candidate = candidate->next)
+	{
+		if (candidate->type != XML_ELEMENT_NODE)
+			continue;
 
-        if (name != NULL && strcmp((const char*)(candidate->name), name) != 0)
-            continue;
+		if (name != NULL && strcmp((const char*)(candidate->name), name) != 0)
+			continue;
 
-        return candidate;
-    }
+		return candidate;
+	}
 
-    return NULL;
+	return NULL;
 }
 
 static xmlNodePtr ds_sds_find_component_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* id)
 {
-    xmlNodePtr cref_parent = datastream->children;
+	xmlNodePtr cref_parent = datastream->children;
 
-    for (; cref_parent != NULL; cref_parent = cref_parent->next)
-    {
-        if (cref_parent->type != XML_ELEMENT_NODE)
-            continue;
+	for (; cref_parent != NULL; cref_parent = cref_parent->next)
+	{
+		if (cref_parent->type != XML_ELEMENT_NODE)
+			continue;
 
-        xmlNodePtr component_ref = cref_parent->children;
+		xmlNodePtr component_ref = cref_parent->children;
 
-        for (; component_ref != NULL; component_ref = component_ref->next)
-        {
-            if (component_ref->type != XML_ELEMENT_NODE)
-                continue;
+		for (; component_ref != NULL; component_ref = component_ref->next)
+		{
+			if (component_ref->type != XML_ELEMENT_NODE)
+				continue;
 
-            if (strcmp((const char*)(component_ref->name), "component-ref") != 0)
-                continue;
+			if (strcmp((const char*)(component_ref->name), "component-ref") != 0)
+				continue;
 
-            char* cref_id = (char*)xmlGetProp(component_ref, BAD_CAST "id");
-            if (strcmp(cref_id, id) == 0)
-            {
-                xmlFree(cref_id);
-                return component_ref;
-            }
-            xmlFree(cref_id);
-        }
-    }
+			char* cref_id = (char*)xmlGetProp(component_ref, BAD_CAST "id");
+			if (strcmp(cref_id, id) == 0)
+			{
+				xmlFree(cref_id);
+				return component_ref;
+			}
+			xmlFree(cref_id);
+		}
+	}
 
-    return NULL;
+	return NULL;
 }
 
 static void ds_sds_dump_component(const char* component_id, xmlDocPtr doc, const char* filename)
 {
-    xmlNodePtr root = xmlDocGetRootElement(doc);
-    xmlNodePtr component = NULL;
-    xmlNodePtr candidate = root->children;
+	xmlNodePtr root = xmlDocGetRootElement(doc);
+	xmlNodePtr component = NULL;
+	xmlNodePtr candidate = root->children;
 
-    for (; candidate != NULL; candidate = candidate->next)
-    {
-        if (candidate->type != XML_ELEMENT_NODE)
-            continue;
+	for (; candidate != NULL; candidate = candidate->next)
+	{
+		if (candidate->type != XML_ELEMENT_NODE)
+			continue;
 
-        if (strcmp((const char*)(candidate->name), "component") != 0)
-            continue;
+		if (strcmp((const char*)(candidate->name), "component") != 0)
+			continue;
 
-        char* candidate_id = (char*)xmlGetProp(candidate, BAD_CAST "id");
-        if (strcmp(candidate_id, component_id) == 0)
-        {
-            component = candidate;
-            xmlFree(candidate_id);
-            break;
-        }
-        xmlFree(candidate_id);
-    }
+		char* candidate_id = (char*)xmlGetProp(candidate, BAD_CAST "id");
+		if (strcmp(candidate_id, component_id) == 0)
+		{
+			component = candidate;
+			xmlFree(candidate_id);
+			break;
+		}
+		xmlFree(candidate_id);
+	}
 
-    if (component == NULL)
-    {
-        const char* error = oscap_sprintf("Component of given id '%s' was not found in the document.", component_id);
-        oscap_seterr(OSCAP_EFAMILY_XML, 0, error);
-        oscap_free(error);
-        return;
-    }
+	if (component == NULL)
+	{
+		const char* error = oscap_sprintf("Component of given id '%s' was not found in the document.", component_id);
+		oscap_seterr(OSCAP_EFAMILY_XML, 0, error);
+		oscap_free(error);
+		return;
+	}
 
-    xmlNodePtr inner_root = node_get_child_element(component, NULL);
+	xmlNodePtr inner_root = node_get_child_element(component, NULL);
 
-    if (inner_root == NULL)
-    {
-        const char* error = oscap_sprintf("Found component (id='%s') but it has no element contents, nothing to dump, skipping...", component_id);
-        oscap_seterr(OSCAP_EFAMILY_XML, 0, error);
-        oscap_free(error);
-        return;
-    }
+	if (inner_root == NULL)
+	{
+		const char* error = oscap_sprintf("Found component (id='%s') but it has no element contents, nothing to dump, skipping...", component_id);
+		oscap_seterr(OSCAP_EFAMILY_XML, 0, error);
+		oscap_free(error);
+		return;
+	}
 
-    xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
+	xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
 
-    xmlDocPtr new_doc = xmlNewDoc(BAD_CAST "1.0");
-    xmlNodePtr res_node = NULL;
-    xmlDOMWrapCloneNode(wrap_ctxt, doc, inner_root, &res_node, new_doc, NULL, 1, 0);
-    xmlDocSetRootElement(new_doc, res_node);
-    xmlDOMWrapReconcileNamespaces(wrap_ctxt, res_node, 0);
-    xmlSaveFileEnc(filename, new_doc, "utf-8");
-    xmlFreeDoc(new_doc);
+	xmlDocPtr new_doc = xmlNewDoc(BAD_CAST "1.0");
+	xmlNodePtr res_node = NULL;
+	xmlDOMWrapCloneNode(wrap_ctxt, doc, inner_root, &res_node, new_doc, NULL, 1, 0);
+	xmlDocSetRootElement(new_doc, res_node);
+	xmlDOMWrapReconcileNamespaces(wrap_ctxt, res_node, 0);
+	xmlSaveFileEnc(filename, new_doc, "utf-8");
+	xmlFreeDoc(new_doc);
 
-    xmlDOMWrapFreeCtxt(wrap_ctxt);
+	xmlDOMWrapFreeCtxt(wrap_ctxt);
 }
 
 static void ds_sds_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc, xmlNodePtr datastream, const char* target_dir, const char* filename)
 {
-    char* cref_id = (char*)xmlGetProp(component_ref, BAD_CAST "id");
-    if (!cref_id)
-    {
-        oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid id attribute on given component-ref.");
-        xmlFree(cref_id);
-        return;
-    }
+	char* cref_id = (char*)xmlGetProp(component_ref, BAD_CAST "id");
+	if (!cref_id)
+	{
+		oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid id attribute on given component-ref.");
+		xmlFree(cref_id);
+		return;
+	}
 
-    char* xlink_href = (char*)xmlGetNsProp(component_ref, BAD_CAST "href", BAD_CAST xlink_ns_uri);
-    if (!xlink_href || strlen(xlink_href) < 2)
-    {
-        oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid xlink:href attribute on given component-ref.");
-        xmlFree(xlink_href);
-        return;
-    }
+	char* xlink_href = (char*)xmlGetNsProp(component_ref, BAD_CAST "href", BAD_CAST xlink_ns_uri);
+	if (!xlink_href || strlen(xlink_href) < 2)
+	{
+		oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid xlink:href attribute on given component-ref.");
+		xmlFree(xlink_href);
+		return;
+	}
 
-    const char* component_id = xlink_href + 1 * sizeof(char);
-    char* filename_cpy = oscap_sprintf("./%s", filename);
-    char* file_reldir = dirname(filename_cpy);
+	const char* component_id = xlink_href + 1 * sizeof(char);
+	char* filename_cpy = oscap_sprintf("./%s", filename);
+	char* file_reldir = dirname(filename_cpy);
 
-    // the cast is safe to do because we are using the GNU basename, it doesn't
-    // modify the string
-    const char* file_basename = basename((char*)filename);
+	// the cast is safe to do because we are using the GNU basename, it doesn't
+	// modify the string
+	const char* file_basename = basename((char*)filename);
 
-    const char* target_filename_dirname = oscap_sprintf("%s/%s", target_dir, file_reldir);
-    // TODO: error checking
-    mkdir_p(target_filename_dirname);
+	const char* target_filename_dirname = oscap_sprintf("%s/%s", target_dir, file_reldir);
+	// TODO: error checking
+	mkdir_p(target_filename_dirname);
 
-    const char* target_filename = oscap_sprintf("%s/%s/%s", target_dir, file_reldir, file_basename);
-    ds_sds_dump_component(component_id, doc, target_filename);
-    oscap_free(target_filename);
-    oscap_free(filename_cpy);
+	const char* target_filename = oscap_sprintf("%s/%s/%s", target_dir, file_reldir, file_basename);
+	ds_sds_dump_component(component_id, doc, target_filename);
+	oscap_free(target_filename);
+	oscap_free(filename_cpy);
 
-    xmlNodePtr catalog = node_get_child_element(component_ref, "catalog");
-    if (catalog)
-    {
-        xmlNodePtr uri = catalog->children;
+	xmlNodePtr catalog = node_get_child_element(component_ref, "catalog");
+	if (catalog)
+	{
+		xmlNodePtr uri = catalog->children;
 
-        for (; uri != NULL; uri = uri->next)
-        {
-            if (uri->type != XML_ELEMENT_NODE)
-                continue;
+		for (; uri != NULL; uri = uri->next)
+		{
+			if (uri->type != XML_ELEMENT_NODE)
+				continue;
 
-            if (strcmp((const char*)(uri->name), "uri") != 0)
-                continue;
+			if (strcmp((const char*)(uri->name), "uri") != 0)
+				continue;
 
-            char* name = (char*)xmlGetProp(uri, BAD_CAST "name");
+			char* name = (char*)xmlGetProp(uri, BAD_CAST "name");
 
-            if (!name)
-            {
-                oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid name for a component referenced in the catalog. Skipping...");
-                xmlFree(name);
-                continue;
-            }
+			if (!name)
+			{
+				oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid name for a component referenced in the catalog. Skipping...");
+				xmlFree(name);
+				continue;
+			}
 
-            char* str_uri = (char*)xmlGetProp(uri, BAD_CAST "uri");
+			char* str_uri = (char*)xmlGetProp(uri, BAD_CAST "uri");
 
-            if (!str_uri || strlen(str_uri) < 2)
-            {
-                oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid URI for a component referenced in the catalog. Skipping...");
-                xmlFree(str_uri);
-                xmlFree(name);
-                continue;
-            }
+			if (!str_uri || strlen(str_uri) < 2)
+			{
+				oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid URI for a component referenced in the catalog. Skipping...");
+				xmlFree(str_uri);
+				xmlFree(name);
+				continue;
+			}
 
-            // the pointer arithmetics simply skips the first character which is '#'
-            xmlNodePtr cat_component_ref = ds_sds_find_component_ref(doc, datastream, str_uri + 1 * sizeof(char));
-            xmlFree(str_uri);
+			// the pointer arithmetics simply skips the first character which is '#'
+			xmlNodePtr cat_component_ref = ds_sds_find_component_ref(doc, datastream, str_uri + 1 * sizeof(char));
+			xmlFree(str_uri);
 
-            if (!cat_component_ref)
-            {
-                const char* error = oscap_sprintf("component-ref with given id '%s' wasn't found in the document!", str_uri + 1 * sizeof(char));
-                oscap_seterr(OSCAP_EFAMILY_XML, 0, error);
-                oscap_free(error);
-                xmlFree(name);
-                continue;
-            }
+			if (!cat_component_ref)
+			{
+				const char* error = oscap_sprintf("component-ref with given id '%s' wasn't found in the document!", str_uri + 1 * sizeof(char));
+				oscap_seterr(OSCAP_EFAMILY_XML, 0, error);
+				oscap_free(error);
+				xmlFree(name);
+				continue;
+			}
 
-            ds_sds_dump_component_ref_as(cat_component_ref, doc, datastream, target_filename_dirname, name);
-            xmlFree(name);
-        }
-    }
+			ds_sds_dump_component_ref_as(cat_component_ref, doc, datastream, target_filename_dirname, name);
+			xmlFree(name);
+		}
+	}
 
-    oscap_free(target_filename_dirname);
-    xmlFree(cref_id);
-    xmlFree(xlink_href);
+	oscap_free(target_filename_dirname);
+	xmlFree(cref_id);
+	xmlFree(xlink_href);
 }
 
 static void ds_sds_dump_component_ref(xmlNodePtr component_ref, xmlDocPtr doc, xmlNodePtr datastream, const char* target_dir)
 {
-    char* xlink_href = (char*)xmlGetNsProp(component_ref, BAD_CAST "href", BAD_CAST xlink_ns_uri);
-    if (!xlink_href || strlen(xlink_href) < 2)
-    {
-        oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid xlink:href attribute on given component-ref.");
-        xmlFree(xlink_href);
-        return;
-    }
+	char* xlink_href = (char*)xmlGetNsProp(component_ref, BAD_CAST "href", BAD_CAST xlink_ns_uri);
+	if (!xlink_href || strlen(xlink_href) < 2)
+	{
+		oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid xlink:href attribute on given component-ref.");
+		xmlFree(xlink_href);
+		return;
+	}
 
-    size_t offset = 1;
+	size_t offset = 1;
 
-    // the prefix that we artificially add to conform the XSD for valiation
-    // can be stripped for easier to use filenames
-    const char* filler_prefix = "scap_org.open-scap_comp_";
-    if (strncmp(xlink_href + offset * sizeof(char), filler_prefix, strlen(filler_prefix)) == 0)
-    {
-        offset += strlen(filler_prefix);
-    }
+	// the prefix that we artificially add to conform the XSD for valiation
+	// can be stripped for easier to use filenames
+	const char* filler_prefix = "scap_org.open-scap_comp_";
+	if (strncmp(xlink_href + offset * sizeof(char), filler_prefix, strlen(filler_prefix)) == 0)
+	{
+		offset += strlen(filler_prefix);
+	}
 
-    ds_sds_dump_component_ref_as(component_ref, doc, datastream, target_dir, xlink_href + offset * sizeof(char));
-    xmlFree(xlink_href);
+	ds_sds_dump_component_ref_as(component_ref, doc, datastream, target_dir, xlink_href + offset * sizeof(char));
+	xmlFree(xlink_href);
 }
 
 void ds_sds_decompose(const char* input_file, const char* id, const char* target_dir, const char* xccdf_filename)
 {
-    xmlDocPtr doc = xmlReadFile(input_file, NULL, 0);
+	xmlDocPtr doc = xmlReadFile(input_file, NULL, 0);
 
-    if (!doc)
-    {
-        const char* error = oscap_sprintf("Could not read/parse XML of given input file at path '%s'.", input_file);
-        oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, error);
-        oscap_free(error);
-        return;
-    }
+	if (!doc)
+	{
+		const char* error = oscap_sprintf("Could not read/parse XML of given input file at path '%s'.", input_file);
+		oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, error);
+		oscap_free(error);
+		return;
+	}
 
-    xmlNodePtr root = xmlDocGetRootElement(doc);
+	xmlNodePtr root = xmlDocGetRootElement(doc);
 
-    xmlNodePtr datastream = NULL;
-    xmlNodePtr candidate_datastream = root->children;
+	xmlNodePtr datastream = NULL;
+	xmlNodePtr candidate_datastream = root->children;
 
-    for (; candidate_datastream != NULL; candidate_datastream = candidate_datastream->next)
-    {
-        if (candidate_datastream->type != XML_ELEMENT_NODE)
-            continue;
+	for (; candidate_datastream != NULL; candidate_datastream = candidate_datastream->next)
+	{
+		if (candidate_datastream->type != XML_ELEMENT_NODE)
+			continue;
 
-        if (strcmp((const char*)(candidate_datastream->name), "data-stream") != 0)
-            continue;
+		if (strcmp((const char*)(candidate_datastream->name), "data-stream") != 0)
+			continue;
 
-        // at this point it is sure to be a <data-stream> element
+		// at this point it is sure to be a <data-stream> element
 
-        char* candidate_id = (char*)xmlGetProp(candidate_datastream, BAD_CAST "id");
-        if (id == NULL || (candidate_id != NULL && strcmp(id, candidate_id) == 0))
-        {
-            datastream = candidate_datastream;
-            xmlFree(candidate_id);
-            break;
-        }
-        xmlFree(candidate_id);
-    }
+		char* candidate_id = (char*)xmlGetProp(candidate_datastream, BAD_CAST "id");
+		if (id == NULL || (candidate_id != NULL && strcmp(id, candidate_id) == 0))
+		{
+			datastream = candidate_datastream;
+			xmlFree(candidate_id);
+			break;
+		}
+		xmlFree(candidate_id);
+	}
 
-    if (!datastream)
-    {
-        const char* error = id ?
-            oscap_sprintf("Could not find any datastream of id '%s'", id) :
-            oscap_sprintf("Could not find any datastream inside the file");
+	if (!datastream)
+	{
+		const char* error = id ?
+			oscap_sprintf("Could not find any datastream of id '%s'", id) :
+			oscap_sprintf("Could not find any datastream inside the file");
 
-        oscap_seterr(OSCAP_EFAMILY_XML, 0, error);
-        oscap_free(error);
-        return;
-    }
+		oscap_seterr(OSCAP_EFAMILY_XML, 0, error);
+		oscap_free(error);
+		return;
+	}
 
-    xmlNodePtr checklists = node_get_child_element(datastream, "checklists");
+	xmlNodePtr checklists = node_get_child_element(datastream, "checklists");
 
-    if (!checklists)
-    {
-        oscap_seterr(OSCAP_EFAMILY_XML, 0, "No checklists element found in the matching datastream.");
-        return;
-    }
+	if (!checklists)
+	{
+		oscap_seterr(OSCAP_EFAMILY_XML, 0, "No checklists element found in the matching datastream.");
+		return;
+	}
 
-    xmlNodePtr component_ref = checklists->children;
+	xmlNodePtr component_ref = checklists->children;
 
-    for (; component_ref != NULL; component_ref = component_ref->next)
-    {
-        if (component_ref->type != XML_ELEMENT_NODE)
-            continue;
+	for (; component_ref != NULL; component_ref = component_ref->next)
+	{
+		if (component_ref->type != XML_ELEMENT_NODE)
+			continue;
 
-        if (strcmp((const char*)(component_ref->name), "component-ref") != 0)
-            continue;
+		if (strcmp((const char*)(component_ref->name), "component-ref") != 0)
+			continue;
 
-        if (xccdf_filename == NULL)
-        {
-            ds_sds_dump_component_ref(component_ref, doc, datastream, strcmp(target_dir, "") == 0 ? "." : target_dir);
-        }
-        else
-        {
-            ds_sds_dump_component_ref_as(component_ref, doc, datastream, strcmp(target_dir, "") == 0 ? "." : target_dir, xccdf_filename);
-        }
-    }
+		if (xccdf_filename == NULL)
+		{
+			ds_sds_dump_component_ref(component_ref, doc, datastream, strcmp(target_dir, "") == 0 ? "." : target_dir);
+		}
+		else
+		{
+			ds_sds_dump_component_ref_as(component_ref, doc, datastream, strcmp(target_dir, "") == 0 ? "." : target_dir, xccdf_filename);
+		}
+	}
 
-    xmlFreeDoc(doc);
+	xmlFreeDoc(doc);
 }
 
 static bool strendswith(const char* str, const char* suffix)
 {
-    int str_shift = strlen(str) - strlen(suffix);
-    if (str_shift < 0)
-        return false;
+	int str_shift = strlen(str) - strlen(suffix);
+	if (str_shift < 0)
+		return false;
 
-    return strcmp(str + str_shift * sizeof(char), suffix) == 0;
+	return strcmp(str + str_shift * sizeof(char), suffix) == 0;
 }
 
 void ds_sds_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* comp_id)
 {
-    xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST datastream_ns_uri);
+	xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST datastream_ns_uri);
 
-    xmlNodePtr component = xmlNewNode(ds_ns, BAD_CAST "component");
-    xmlSetProp(component, BAD_CAST "id", BAD_CAST comp_id);
+	xmlNodePtr component = xmlNewNode(ds_ns, BAD_CAST "component");
+	xmlSetProp(component, BAD_CAST "id", BAD_CAST comp_id);
 
-    char file_timestamp[32];
-    strcpy(file_timestamp, "0000-00-00T00:00:00");
+	char file_timestamp[32];
+	strcpy(file_timestamp, "0000-00-00T00:00:00");
 
-    struct stat file_stat;
-    if (stat(filepath, &file_stat) == 0)
-        strftime(file_timestamp, 32, "%Y-%m-%dT%H:%M:%S", localtime(&file_stat.st_mtime));
+	struct stat file_stat;
+	if (stat(filepath, &file_stat) == 0)
+		strftime(file_timestamp, 32, "%Y-%m-%dT%H:%M:%S", localtime(&file_stat.st_mtime));
 
-    xmlSetProp(component, BAD_CAST "timestamp", BAD_CAST file_timestamp);
+	xmlSetProp(component, BAD_CAST "timestamp", BAD_CAST file_timestamp);
 
-    xmlDocPtr component_doc = xmlReadFile(filepath, NULL, 0);
+	xmlDocPtr component_doc = xmlReadFile(filepath, NULL, 0);
 
-    if (!component_doc)
-    {
-        const char* error = oscap_sprintf("Could not read/parse XML of given input file at path '%s'.", filepath);
-        oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, error);
-        oscap_free(error);
-        return;
-    }
+	if (!component_doc)
+	{
+		const char* error = oscap_sprintf("Could not read/parse XML of given input file at path '%s'.", filepath);
+		oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, error);
+		oscap_free(error);
+		return;
+	}
 
-    xmlNodePtr component_root = xmlDocGetRootElement(component_doc);
+	xmlNodePtr component_root = xmlDocGetRootElement(component_doc);
 
-    xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
+	xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
 
-    xmlNodePtr res_component_root = NULL;
-    xmlDOMWrapCloneNode(wrap_ctxt, component_doc, component_root, &res_component_root, doc, NULL, 1, 0);
-    xmlDOMWrapReconcileNamespaces(wrap_ctxt, res_component_root, 0);
+	xmlNodePtr res_component_root = NULL;
+	xmlDOMWrapCloneNode(wrap_ctxt, component_doc, component_root, &res_component_root, doc, NULL, 1, 0);
+	xmlDOMWrapReconcileNamespaces(wrap_ctxt, res_component_root, 0);
 
-    xmlAddChild(component, res_component_root);
+	xmlAddChild(component, res_component_root);
 
-    xmlDOMWrapFreeCtxt(wrap_ctxt);
+	xmlDOMWrapFreeCtxt(wrap_ctxt);
 
-    xmlNodePtr doc_root = xmlDocGetRootElement(doc);
-    xmlAddChild(doc_root, component);
+	xmlNodePtr doc_root = xmlDocGetRootElement(doc);
+	xmlAddChild(doc_root, component);
 
-    xmlFreeDoc(component_doc);
+	xmlFreeDoc(component_doc);
 }
 
 bool ds_sds_compose_catalog_has_uri(xmlDocPtr doc, xmlNodePtr catalog, const char* uri)
 {
-    xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
-    if (xpathCtx == NULL)
-    {
-        oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: unable to create new XPath context.");
-        return false;
-    }
+	xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
+	if (xpathCtx == NULL)
+	{
+		oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: unable to create new XPath context.");
+		return false;
+	}
 
-    xmlXPathRegisterNs(xpathCtx, BAD_CAST "cat", BAD_CAST cat_ns_uri);
-    xmlXPathRegisterNs(xpathCtx, BAD_CAST "xlink", BAD_CAST xlink_ns_uri);
+	xmlXPathRegisterNs(xpathCtx, BAD_CAST "cat", BAD_CAST cat_ns_uri);
+	xmlXPathRegisterNs(xpathCtx, BAD_CAST "xlink", BAD_CAST xlink_ns_uri);
 
-    // limit xpath execution to just the catalog node
-    // this is done for performance reasons
-    xpathCtx->node = catalog;
+	// limit xpath execution to just the catalog node
+	// this is done for performance reasons
+	xpathCtx->node = catalog;
 
-    const char* expression = oscap_sprintf("cat:uri[@uri = '%s']", uri);
+	const char* expression = oscap_sprintf("cat:uri[@uri = '%s']", uri);
 
-    xmlXPathObjectPtr xpathObj = xmlXPathEvalExpression(
-            BAD_CAST expression,
-            xpathCtx);
+	xmlXPathObjectPtr xpathObj = xmlXPathEvalExpression(
+			BAD_CAST expression,
+			xpathCtx);
 
-    oscap_free(expression);
+	oscap_free(expression);
 
-    if (xpathObj == NULL)
-    {
-        oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: Unable to evalute XPath expression.");
-        xmlXPathFreeContext(xpathCtx);
+	if (xpathObj == NULL)
+	{
+		oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: Unable to evalute XPath expression.");
+		xmlXPathFreeContext(xpathCtx);
 
-        return false;
-    }
+		return false;
+	}
 
-    bool result = false;
+	bool result = false;
 
-    xmlNodeSetPtr nodeset = xpathObj->nodesetval;
-    if (nodeset != NULL)
-        result = nodeset->nodeNr > 0;
+	xmlNodeSetPtr nodeset = xpathObj->nodesetval;
+	if (nodeset != NULL)
+		result = nodeset->nodeNr > 0;
 
-    xmlXPathFreeObject(xpathObj);
-    xmlXPathFreeContext(xpathCtx);
+	xmlXPathFreeObject(xpathObj);
+	xmlXPathFreeContext(xpathCtx);
 
-    return result;
+	return result;
 }
 
 static void ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id);
 
 void ds_sds_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, xmlNodePtr catalog)
 {
-    xmlDocPtr component_doc = xmlReadFile(filepath, NULL, 0);
+	xmlDocPtr component_doc = xmlReadFile(filepath, NULL, 0);
 
-    xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
-    if (xpathCtx == NULL)
-    {
-        oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: unable to create new XPath context.");
-        xmlFreeDoc(doc);
-        return;
-    }
+	xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
+	if (xpathCtx == NULL)
+	{
+		oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: unable to create new XPath context.");
+		xmlFreeDoc(doc);
+		return;
+	}
 
-    //xmlXPathRegisterNs(xpathCtx, BAD_CAST "cdf11", BAD_CAST "http://checklists.nist.gov/xccdf/1.1");
-    //xmlXPathRegisterNs(xpathCtx, BAD_CAST "cdf12", BAD_CAST "http://checklists.nist.gov/xccdf/1.2");
+	//xmlXPathRegisterNs(xpathCtx, BAD_CAST "cdf11", BAD_CAST "http://checklists.nist.gov/xccdf/1.1");
+	//xmlXPathRegisterNs(xpathCtx, BAD_CAST "cdf12", BAD_CAST "http://checklists.nist.gov/xccdf/1.2");
 
-    xmlXPathObjectPtr xpathObj = xmlXPathEvalExpression(
-            // we want robustness and support for future versions, this expression
-            // retrieves check-content-refs from any namespace
-            BAD_CAST "//*[local-name() = 'check-content-ref']",
-            xpathCtx);
+	xmlXPathObjectPtr xpathObj = xmlXPathEvalExpression(
+			// we want robustness and support for future versions, this expression
+			// retrieves check-content-refs from any namespace
+			BAD_CAST "//*[local-name() = 'check-content-ref']",
+			xpathCtx);
 
-    if (xpathObj == NULL)
-    {
-        oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: Unable to evalute XPath expression.");
-        xmlXPathFreeContext(xpathCtx);
-        xmlFreeDoc(doc);
+	if (xpathObj == NULL)
+	{
+		oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: Unable to evalute XPath expression.");
+		xmlXPathFreeContext(xpathCtx);
+		xmlFreeDoc(doc);
 
-        return;
-    }
+		return;
+	}
 
-    xmlNsPtr cat_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST cat_ns_uri);
+	xmlNsPtr cat_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST cat_ns_uri);
 
-    xmlNodeSetPtr nodeset = xpathObj->nodesetval;
-    if (nodeset != NULL)
-    {
-        char* filepath_cpy = oscap_strdup(filepath);
-        const char* dir = dirname(filepath_cpy);
+	xmlNodeSetPtr nodeset = xpathObj->nodesetval;
+	if (nodeset != NULL)
+	{
+		char* filepath_cpy = oscap_strdup(filepath);
+		const char* dir = dirname(filepath_cpy);
 
-        for (int i = 0; i < nodeset->nodeNr; i++)
-        {
-            xmlNodePtr node = nodeset->nodeTab[i];
+		for (int i = 0; i < nodeset->nodeNr; i++)
+		{
+			xmlNodePtr node = nodeset->nodeTab[i];
 
-            if (node->type != XML_ELEMENT_NODE)
-                continue;
+			if (node->type != XML_ELEMENT_NODE)
+				continue;
 
-            if (xmlHasProp(node, BAD_CAST "href"))
-            {
-                char* href = (char*)xmlGetProp(node, BAD_CAST "href");
-                char* real_path = (strcmp(dir, "") == 0 || strcmp(dir, ".") == 0) ?
-                    oscap_strdup(href) : oscap_sprintf("%s/%s", dir, href);
+			if (xmlHasProp(node, BAD_CAST "href"))
+			{
+				char* href = (char*)xmlGetProp(node, BAD_CAST "href");
+				char* real_path = (strcmp(dir, "") == 0 || strcmp(dir, ".") == 0) ?
+					oscap_strdup(href) : oscap_sprintf("%s/%s", dir, href);
 
-                char* cref_id = oscap_sprintf("scap_org.open-scap_cref_%s", real_path);
-                char* uri = oscap_sprintf("#%s", cref_id);
+				char* cref_id = oscap_sprintf("scap_org.open-scap_cref_%s", real_path);
+				char* uri = oscap_sprintf("#%s", cref_id);
 
-                // we don't want duplicated uri elements in the catalog
-                if (ds_sds_compose_catalog_has_uri(doc, catalog, uri))
-                {
-                    oscap_free(uri);
-                    oscap_free(cref_id);
-                    oscap_free(real_path);
-                    xmlFree(href);
-                    continue;
-                }
+				// we don't want duplicated uri elements in the catalog
+				if (ds_sds_compose_catalog_has_uri(doc, catalog, uri))
+				{
+					oscap_free(uri);
+					oscap_free(cref_id);
+					oscap_free(real_path);
+					xmlFree(href);
+					continue;
+				}
 
-                ds_sds_compose_add_component_with_ref(doc, datastream, real_path, cref_id);
-                oscap_free(cref_id);
+				ds_sds_compose_add_component_with_ref(doc, datastream, real_path, cref_id);
+				oscap_free(cref_id);
 
-                xmlNodePtr catalog_uri = xmlNewNode(cat_ns, BAD_CAST "uri");
-                xmlSetProp(catalog_uri, BAD_CAST "name", BAD_CAST href);
-                xmlSetProp(catalog_uri, BAD_CAST "uri", BAD_CAST uri);
+				xmlNodePtr catalog_uri = xmlNewNode(cat_ns, BAD_CAST "uri");
+				xmlSetProp(catalog_uri, BAD_CAST "name", BAD_CAST href);
+				xmlSetProp(catalog_uri, BAD_CAST "uri", BAD_CAST uri);
 
-                oscap_free(uri);
-                oscap_free(real_path);
-                xmlFree(href);
+				oscap_free(uri);
+				oscap_free(real_path);
+				xmlFree(href);
 
-                xmlAddChild(catalog, catalog_uri);
-            }
-        }
+				xmlAddChild(catalog, catalog_uri);
+			}
+		}
 
-        oscap_free(filepath_cpy);
-    }
+		oscap_free(filepath_cpy);
+	}
 
-    xmlXPathFreeObject(xpathObj);
-    xmlXPathFreeContext(xpathCtx);
+	xmlXPathFreeObject(xpathObj);
+	xmlXPathFreeContext(xpathCtx);
 
-    xmlFreeDoc(component_doc);
+	xmlFreeDoc(component_doc);
 }
 
 bool ds_sds_compose_has_component_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id)
 {
-    xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
-    if (xpathCtx == NULL)
-    {
-        oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: unable to create new XPath context.");
-        return false;
-    }
+	xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
+	if (xpathCtx == NULL)
+	{
+		oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: unable to create new XPath context.");
+		return false;
+	}
 
-    xmlXPathRegisterNs(xpathCtx, BAD_CAST "ds", BAD_CAST datastream_ns_uri);
-    xmlXPathRegisterNs(xpathCtx, BAD_CAST "xlink", BAD_CAST xlink_ns_uri);
+	xmlXPathRegisterNs(xpathCtx, BAD_CAST "ds", BAD_CAST datastream_ns_uri);
+	xmlXPathRegisterNs(xpathCtx, BAD_CAST "xlink", BAD_CAST xlink_ns_uri);
 
-    // limit xpath execution to just the datastream node
-    // this is done for performance reasons
-    xpathCtx->node = datastream;
+	// limit xpath execution to just the datastream node
+	// this is done for performance reasons
+	xpathCtx->node = datastream;
 
-    const char* expression = oscap_sprintf("*/ds:component-ref[@xlink:href = '#%s' and @id = '%s']", filepath, cref_id);
+	const char* expression = oscap_sprintf("*/ds:component-ref[@xlink:href = '#%s' and @id = '%s']", filepath, cref_id);
 
-    xmlXPathObjectPtr xpathObj = xmlXPathEvalExpression(
-            BAD_CAST expression,
-            xpathCtx);
+	xmlXPathObjectPtr xpathObj = xmlXPathEvalExpression(
+			BAD_CAST expression,
+			xpathCtx);
 
-    oscap_free(expression);
+	oscap_free(expression);
 
-    if (xpathObj == NULL)
-    {
-        oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: Unable to evalute XPath expression.");
-        xmlXPathFreeContext(xpathCtx);
+	if (xpathObj == NULL)
+	{
+		oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: Unable to evalute XPath expression.");
+		xmlXPathFreeContext(xpathCtx);
 
-        return false;
-    }
+		return false;
+	}
 
-    bool result = false;
+	bool result = false;
 
-    xmlNodeSetPtr nodeset = xpathObj->nodesetval;
-    if (nodeset != NULL)
-        result = nodeset->nodeNr > 0;
+	xmlNodeSetPtr nodeset = xpathObj->nodesetval;
+	if (nodeset != NULL)
+		result = nodeset->nodeNr > 0;
 
-    xmlXPathFreeObject(xpathObj);
-    xmlXPathFreeContext(xpathCtx);
+	xmlXPathFreeObject(xpathObj);
+	xmlXPathFreeContext(xpathCtx);
 
-    return result;
+	return result;
 }
 
 void ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id)
 {
-    xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST datastream_ns_uri);
-    xmlNsPtr xlink_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST xlink_ns_uri);
-    xmlNsPtr cat_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST cat_ns_uri);
+	xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST datastream_ns_uri);
+	xmlNsPtr xlink_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST xlink_ns_uri);
+	xmlNsPtr cat_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST cat_ns_uri);
 
-    // In case we already have this component we just return, no need to add
-    // it twice. We will typically have many references to OVAL files, adding
-    // component for each reference would create unnecessarily huge datastreams
-    if (ds_sds_compose_has_component_ref(doc, datastream, filepath, cref_id))
-        return;
+	// In case we already have this component we just return, no need to add
+	// it twice. We will typically have many references to OVAL files, adding
+	// component for each reference would create unnecessarily huge datastreams
+	if (ds_sds_compose_has_component_ref(doc, datastream, filepath, cref_id))
+		return;
 
-    char* comp_id = oscap_sprintf("scap_org.open-scap_comp_%s", filepath);
-    ds_sds_compose_add_component(doc, datastream, filepath, comp_id);
+	char* comp_id = oscap_sprintf("scap_org.open-scap_comp_%s", filepath);
+	ds_sds_compose_add_component(doc, datastream, filepath, comp_id);
 
-    xmlNodePtr cref = xmlNewNode(ds_ns, BAD_CAST "component-ref");
+	xmlNodePtr cref = xmlNewNode(ds_ns, BAD_CAST "component-ref");
 
-    xmlSetProp(cref, BAD_CAST "id", BAD_CAST cref_id);
+	xmlSetProp(cref, BAD_CAST "id", BAD_CAST cref_id);
 
-    const char* xlink_href = oscap_sprintf("#%s", comp_id);
-    oscap_free(comp_id);
+	const char* xlink_href = oscap_sprintf("#%s", comp_id);
+	oscap_free(comp_id);
 
-    xmlSetNsProp(cref, xlink_ns, BAD_CAST "href", BAD_CAST xlink_href);
-    oscap_free(xlink_href);
+	xmlSetNsProp(cref, xlink_ns, BAD_CAST "href", BAD_CAST xlink_href);
+	oscap_free(xlink_href);
 
-    xmlNodePtr cref_catalog = xmlNewNode(cat_ns, BAD_CAST "catalog");
-    xmlAddChild(cref, cref_catalog);
+	xmlNodePtr cref_catalog = xmlNewNode(cat_ns, BAD_CAST "catalog");
+	xmlAddChild(cref, cref_catalog);
 
-    xmlNodePtr cref_parent;
+	xmlNodePtr cref_parent;
 
-    if (strendswith(filepath, "-xccdf.xml"))
-    {
-        cref_parent = node_get_child_element(datastream, "checklists");
-        ds_sds_compose_add_xccdf_dependencies(doc, datastream, filepath, cref_catalog);
-    }
-    else if (strendswith(filepath, "-oval.xml"))
-    {
-        cref_parent = node_get_child_element(datastream, "checks");
-    }
-    else if (strendswith(filepath, "-cpe-oval.xml") || strendswith(filepath, "-cpe-dictionary.xml"))
-    {
-        cref_parent = node_get_child_element(datastream, "dictionaries");
-    }
-    else
-    {
-        cref_parent = node_get_child_element(datastream, "extended-components");
-    }
+	if (strendswith(filepath, "-xccdf.xml"))
+	{
+		cref_parent = node_get_child_element(datastream, "checklists");
+		ds_sds_compose_add_xccdf_dependencies(doc, datastream, filepath, cref_catalog);
+	}
+	else if (strendswith(filepath, "-oval.xml"))
+	{
+		cref_parent = node_get_child_element(datastream, "checks");
+	}
+	else if (strendswith(filepath, "-cpe-oval.xml") || strendswith(filepath, "-cpe-dictionary.xml"))
+	{
+		cref_parent = node_get_child_element(datastream, "dictionaries");
+	}
+	else
+	{
+		cref_parent = node_get_child_element(datastream, "extended-components");
+	}
 
-    // the source data stream XSD requires either no catalog or a non-empty one
-    if (cref_catalog->children == NULL)
-    {
-        xmlUnlinkNode(cref_catalog);
-        xmlFreeNode(cref_catalog);
-    }
+	// the source data stream XSD requires either no catalog or a non-empty one
+	if (cref_catalog->children == NULL)
+	{
+		xmlUnlinkNode(cref_catalog);
+		xmlFreeNode(cref_catalog);
+	}
 
-    xmlAddChild(cref_parent, cref);
+	xmlAddChild(cref_parent, cref);
 }
 
 void ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastream)
 {
-    xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
-    xmlNodePtr root = xmlNewNode(NULL, BAD_CAST "data-stream-collection");
-    xmlDocSetRootElement(doc, root);
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+	xmlNodePtr root = xmlNewNode(NULL, BAD_CAST "data-stream-collection");
+	xmlDocSetRootElement(doc, root);
 
-    xmlNsPtr ds_ns = xmlNewNs(root, BAD_CAST datastream_ns_uri, BAD_CAST "ds");
-    xmlSetNs(root, ds_ns);
+	xmlNsPtr ds_ns = xmlNewNs(root, BAD_CAST datastream_ns_uri, BAD_CAST "ds");
+	xmlSetNs(root, ds_ns);
 
-    // we will need this namespace later when creating xlink:href attr in
-    // component-ref
-    xmlNewNs(root, BAD_CAST xlink_ns_uri, BAD_CAST "xlink");
+	// we will need this namespace later when creating xlink:href attr in
+	// component-ref
+	xmlNewNs(root, BAD_CAST xlink_ns_uri, BAD_CAST "xlink");
 
-    char* collection_id = oscap_sprintf("scap_org.open-scap_collection_from_xccdf_%s", xccdf_file);
-    xmlSetProp(root, BAD_CAST "id", BAD_CAST collection_id);
-    oscap_free(collection_id);
+	char* collection_id = oscap_sprintf("scap_org.open-scap_collection_from_xccdf_%s", xccdf_file);
+	xmlSetProp(root, BAD_CAST "id", BAD_CAST collection_id);
+	oscap_free(collection_id);
 
-    xmlSetProp(root, BAD_CAST "schematron-version", BAD_CAST "1.0");
+	xmlSetProp(root, BAD_CAST "schematron-version", BAD_CAST "1.0");
 
-    // we will need this namespace later when creating component-ref
-    // dependency catalog
-    xmlNewNs(root, BAD_CAST cat_ns_uri, BAD_CAST "cat");
+	// we will need this namespace later when creating component-ref
+	// dependency catalog
+	xmlNewNs(root, BAD_CAST cat_ns_uri, BAD_CAST "cat");
 
-    xmlNodePtr datastream = xmlNewNode(ds_ns, BAD_CAST "data-stream");
-    xmlAddChild(root, datastream);
+	xmlNodePtr datastream = xmlNewNode(ds_ns, BAD_CAST "data-stream");
+	xmlAddChild(root, datastream);
 
-    char* datastream_id = oscap_sprintf("scap_org.open-scap_datastream_from_xccdf_%s", xccdf_file);
-    xmlSetProp(datastream, BAD_CAST "id", BAD_CAST datastream_id);
-    oscap_free(datastream_id);
+	char* datastream_id = oscap_sprintf("scap_org.open-scap_datastream_from_xccdf_%s", xccdf_file);
+	xmlSetProp(datastream, BAD_CAST "id", BAD_CAST datastream_id);
+	oscap_free(datastream_id);
 
-    xmlSetProp(datastream, BAD_CAST "scap-version", BAD_CAST "1.2");
+	xmlSetProp(datastream, BAD_CAST "scap-version", BAD_CAST "1.2");
 
-    xmlSetProp(datastream, BAD_CAST "use-case", BAD_CAST "OTHER");
+	xmlSetProp(datastream, BAD_CAST "use-case", BAD_CAST "OTHER");
 
-    xmlNodePtr dictionaries = xmlNewNode(ds_ns, BAD_CAST "dictionaries");
-    xmlAddChild(datastream, dictionaries);
+	xmlNodePtr dictionaries = xmlNewNode(ds_ns, BAD_CAST "dictionaries");
+	xmlAddChild(datastream, dictionaries);
 
-    xmlNodePtr checklists = xmlNewNode(ds_ns, BAD_CAST "checklists");
-    xmlAddChild(datastream, checklists);
+	xmlNodePtr checklists = xmlNewNode(ds_ns, BAD_CAST "checklists");
+	xmlAddChild(datastream, checklists);
 
-    xmlNodePtr checks = xmlNewNode(ds_ns, BAD_CAST "checks");
-    xmlAddChild(datastream, checks);
+	xmlNodePtr checks = xmlNewNode(ds_ns, BAD_CAST "checks");
+	xmlAddChild(datastream, checks);
 
-    xmlNodePtr extended_components = xmlNewNode(ds_ns, BAD_CAST "extended-components");
-    xmlAddChild(datastream, extended_components);
+	xmlNodePtr extended_components = xmlNewNode(ds_ns, BAD_CAST "extended-components");
+	xmlAddChild(datastream, extended_components);
 
-    char* cref_id = oscap_sprintf("scap_org.open-scap_cref_%s", xccdf_file);
-    ds_sds_compose_add_component_with_ref(doc, datastream, xccdf_file, cref_id);
-    oscap_free(cref_id);
+	char* cref_id = oscap_sprintf("scap_org.open-scap_cref_%s", xccdf_file);
+	ds_sds_compose_add_component_with_ref(doc, datastream, xccdf_file, cref_id);
+	oscap_free(cref_id);
 
-    // the XSD of source data stream enforces that the collection elements are
-    // not empty if they are there, we will therefore now removes collections
-    // where nothing has been added
+	// the XSD of source data stream enforces that the collection elements are
+	// not empty if they are there, we will therefore now removes collections
+	// where nothing has been added
 
-    if (dictionaries->children == NULL)
-    {
-        xmlUnlinkNode(dictionaries);
-        xmlFreeNode(dictionaries);
-    }
-    if (checklists->children == NULL)
-    {
-        xmlUnlinkNode(checklists);
-        xmlFreeNode(checklists);
-    }
-    if (checks->children == NULL)
-    {
-        xmlUnlinkNode(checks);
-        xmlFreeNode(checks);
-    }
-    if (extended_components->children == NULL)
-    {
-        xmlUnlinkNode(extended_components);
-        xmlFreeNode(extended_components);
-    }
+	if (dictionaries->children == NULL)
+	{
+		xmlUnlinkNode(dictionaries);
+		xmlFreeNode(dictionaries);
+	}
+	if (checklists->children == NULL)
+	{
+		xmlUnlinkNode(checklists);
+		xmlFreeNode(checklists);
+	}
+	if (checks->children == NULL)
+	{
+		xmlUnlinkNode(checks);
+		xmlFreeNode(checks);
+	}
+	if (extended_components->children == NULL)
+	{
+		xmlUnlinkNode(extended_components);
+		xmlFreeNode(extended_components);
+	}
 
-    xmlSaveFileEnc(target_datastream, doc, "utf-8");
+	xmlSaveFileEnc(target_datastream, doc, "utf-8");
 
-    xmlFreeDoc(doc);
+	xmlFreeDoc(doc);
 }
