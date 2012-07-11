@@ -50,7 +50,6 @@ function test_sds {
 # Testing.
 test_init "test_ds.log"
 
-test_run "empty_xccdf_sds" test_sds empty/empty-xccdf.xml
 test_run "simple_xccdf_sds" test_sds simple/scap-fedora14-xccdf.xml
 test_run "multiple_oval_sds" test_sds multiple_oval/multiple-oval-xccdf.xml
 
