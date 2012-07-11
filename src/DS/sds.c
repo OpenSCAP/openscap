@@ -646,6 +646,12 @@ void ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datast
     // component-ref
     xmlNewNs(root, BAD_CAST xlink_ns_uri, BAD_CAST "xlink");
 
+    char* collection_name = oscap_sprintf("scap_org.open-scap_collection_from_xccdf_%s", xccdf_file);
+    xmlSetProp(root, BAD_CAST "id", BAD_CAST collection_name);
+    oscap_free(collection_name);
+
+    xmlSetProp(root, BAD_CAST "schematron-version", BAD_CAST "1.0");
+
     // we will need this namespace later when creating component-ref
     // dependency catalog
     xmlNewNs(root, BAD_CAST cat_ns_uri, BAD_CAST "cat");
