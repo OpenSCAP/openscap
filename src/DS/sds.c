@@ -280,11 +280,21 @@ static void ds_sds_dump_component_ref(xmlNodePtr component_ref, xmlDocPtr doc, x
         return;
     }
 
-    ds_sds_dump_component_ref_as(component_ref, doc, datastream, target_dir, xlink_href + 1 * sizeof(char));
+    size_t offset = 1;
+
+    // the prefix that we artificially add to conform the XSD for valiation
+    // can be stripped for easier to use filenames
+    const char* filler_prefix = "scap_org.open-scap_comp_";
+    if (strncmp(xlink_href + offset * sizeof(char), filler_prefix, strlen(filler_prefix)) == 0)
+    {
+        offset += strlen(filler_prefix);
+    }
+
+    ds_sds_dump_component_ref_as(component_ref, doc, datastream, target_dir, xlink_href + offset * sizeof(char));
     xmlFree(xlink_href);
 }
 
-void ds_sds_decompose(const char* input_file, const char* id, const char* target_dir)
+void ds_sds_decompose(const char* input_file, const char* id, const char* target_dir, const char* xccdf_filename)
 {
     xmlDocPtr doc = xmlReadFile(input_file, NULL, 0);
 
@@ -350,7 +360,14 @@ void ds_sds_decompose(const char* input_file, const char* id, const char* target
         if (strcmp((const char*)(component_ref->name), "component-ref") != 0)
             continue;
 
-        ds_sds_dump_component_ref(component_ref, doc, datastream, strcmp(target_dir, "") == 0 ? "." : target_dir);
+        if (xccdf_filename == NULL)
+        {
+            ds_sds_dump_component_ref(component_ref, doc, datastream, strcmp(target_dir, "") == 0 ? "." : target_dir);
+        }
+        else
+        {
+            ds_sds_dump_component_ref_as(component_ref, doc, datastream, strcmp(target_dir, "") == 0 ? "." : target_dir, xccdf_filename);
+        }
     }
 
     xmlFreeDoc(doc);
@@ -365,12 +382,12 @@ static bool strendswith(const char* str, const char* suffix)
     return strcmp(str + str_shift * sizeof(char), suffix) == 0;
 }
 
-void ds_sds_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath)
+void ds_sds_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* comp_id)
 {
     xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST datastream_ns_uri);
 
     xmlNodePtr component = xmlNewNode(ds_ns, BAD_CAST "component");
-    xmlSetProp(component, BAD_CAST "id", BAD_CAST filepath);
+    xmlSetProp(component, BAD_CAST "id", BAD_CAST comp_id);
 
     char file_timestamp[32];
     strcpy(file_timestamp, "0000-00-00T00:00:00");
@@ -503,7 +520,9 @@ void ds_sds_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream,
             if (xmlHasProp(node, BAD_CAST "href"))
             {
                 char* href = (char*)xmlGetProp(node, BAD_CAST "href");
-                char* real_path = oscap_sprintf("%s/%s", strcmp(dir, "") == 0 ? "." : dir, href);
+                char* real_path = (strcmp(dir, "") == 0 || strcmp(dir, ".") == 0) ?
+                    oscap_strdup(href) : oscap_sprintf("%s/%s", dir, href);
+
                 char* cref_id = oscap_sprintf("scap_org.open-scap_cref_%s", real_path);
                 char* uri = oscap_sprintf("#%s", cref_id);
 
@@ -597,13 +616,16 @@ void ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream,
     if (ds_sds_compose_has_component_ref(doc, datastream, filepath, cref_id))
         return;
 
-    ds_sds_compose_add_component(doc, datastream, filepath);
+    char* comp_id = oscap_sprintf("scap_org.open-scap_comp_%s", filepath);
+    ds_sds_compose_add_component(doc, datastream, filepath, comp_id);
 
     xmlNodePtr cref = xmlNewNode(ds_ns, BAD_CAST "component-ref");
 
     xmlSetProp(cref, BAD_CAST "id", BAD_CAST cref_id);
 
-    const char* xlink_href = oscap_sprintf("#%s", filepath);
+    const char* xlink_href = oscap_sprintf("#%s", comp_id);
+    oscap_free(comp_id);
+
     xmlSetNsProp(cref, xlink_ns, BAD_CAST "href", BAD_CAST xlink_href);
     oscap_free(xlink_href);
 

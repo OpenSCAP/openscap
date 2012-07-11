@@ -47,8 +47,13 @@
  * @param target_dir
  *     Directory where the resulting files will be stored, names of the files
  *     are deduced using component-refs inside the datastream.
+ *
+ * @param xccdf_filename
+ *     Base name of the target XCCDF file, if NULL is given the filename will
+ *     be deduced from the contents of the datastream.
  */
-void ds_sds_decompose(const char* input_file, const char* id, const char* target_dir);
+void ds_sds_decompose(const char* input_file, const char* id,
+        const char* target_dir, const char* xccdf_filename);
 
 /**
  * @brief takes given xccdf file and constructs a source datastream
@@ -81,7 +86,8 @@ void ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datast
  * @param target_file
  *      Path to the file where the result data stream will be stored
  */
-void ds_rds_create(const char* sds_file, const char* xccdf_result_file, const char** oval_result_files, const char* target_file);
+void ds_rds_create(const char* sds_file, const char* xccdf_result_file,
+        const char** oval_result_files, const char* target_file);
 
 /************************************************************
  ** @} End of DS group */
