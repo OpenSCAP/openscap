@@ -90,8 +90,11 @@ enum oscap_exitcode {
 struct cvss_impact;
 
 struct ds_action {
-    char* file;
-    char* target;
+	char* file;
+	char* target;
+	char* xccdf_result;
+	char** oval_results;
+	size_t oval_result_count;
 };
 
 #ifdef ENABLE_CPE

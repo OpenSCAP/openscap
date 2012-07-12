@@ -35,6 +35,7 @@ static struct oscap_module* DS_SUBMODULES[];
 bool getopt_ds(int argc, char **argv, struct oscap_action *action);
 int app_ds_sds_split(const struct oscap_action *action);
 int app_ds_sds_compose(const struct oscap_action *action);
+int app_ds_rds_create(const struct oscap_action *action);
 
 struct oscap_module OSCAP_DS_MODULE = {
 	.name = "ds",
@@ -63,9 +64,20 @@ static struct oscap_module DS_SDS_COMPOSE_MODULE = {
 	.func = app_ds_sds_compose
 };
 
+static struct oscap_module DS_RDS_CREATE_MODULE = {
+	.name = "rds_create",
+	.parent = &OSCAP_DS_MODULE,
+	.summary = "Create a ResultDataStream from given SourceDataStream, XCCDF results and one or more OVAL results",
+	.usage = "sds.xml target-arf.xml results-xccdf.xml [results-oval1.xml [results-oval2.xml]]",
+	.help = NULL,
+	.opt_parser = getopt_ds,
+	.func = app_ds_rds_create
+};
+
 static struct oscap_module* DS_SUBMODULES[] = {
 	&DS_SDS_SPLIT_MODULE,
 	&DS_SDS_COMPOSE_MODULE,
+	&DS_RDS_CREATE_MODULE,
 	NULL
 };
 
@@ -89,7 +101,18 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 		action->ds_action->file = argv[3];
 		action->ds_action->target = argv[4];
 	}
-
+	else if( (action->module == &DS_RDS_CREATE_MODULE) ) {
+		if(  argc < 6 ) {
+			oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
+			return false;
+		}
+		action->ds_action = malloc(sizeof(struct ds_action));
+		action->ds_action->file = argv[3];
+		action->ds_action->target = argv[4];
+		action->ds_action->xccdf_result = argv[5];
+		action->ds_action->oval_results = &argv[6];
+		action->ds_action->oval_result_count = argc - 6;
+	}
 	return true;
 }
 
@@ -130,6 +153,30 @@ int app_ds_sds_compose(const struct oscap_action *action) {
 			goto cleanup;
 		}
 	}
+
+	// TODO: error handling
+	ret = OSCAP_OK;
+
+cleanup:
+	return ret;
+}
+
+int app_ds_rds_create(const struct oscap_action *action) {
+	int ret;
+
+	char** oval_result_files = malloc(sizeof(char*) * (action->ds_action->oval_result_count + 1));
+
+	size_t i;
+	for (i = 0; i < action->ds_action->oval_result_count; ++i)
+	{
+		oval_result_files[i] = action->ds_action->oval_results[i];
+	}
+	oval_result_files[i] = NULL;
+
+	ds_rds_create(action->ds_action->file, action->ds_action->xccdf_result,
+		   oval_result_files, action->ds_action->target);
+
+	free(oval_result_files);
 
 	// TODO: error handling
 	ret = OSCAP_OK;
