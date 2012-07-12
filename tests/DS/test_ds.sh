@@ -50,8 +50,8 @@ function test_sds {
 # Testing.
 test_init "test_ds.log"
 
-test_run "simple_xccdf_sds" test_sds simple/scap-fedora14-xccdf.xml
-test_run "multiple_oval_sds" test_sds multiple_oval/multiple-oval-xccdf.xml
+test_run "sds_simple_xccdf" test_sds sds_simple/scap-fedora14-xccdf.xml
+test_run "sds_multiple_oval" test_sds sds_multiple_oval/multiple-oval-xccdf.xml
 
 test_exit
 
