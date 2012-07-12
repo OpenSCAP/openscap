@@ -122,7 +122,7 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports, xml
 	}
 }
 
-static xmlDocPtr ds_rds_create_from_dom(xmlDocPtr sds_doc, xmlDocPtr xccdf_result_file_doc, xmlDocPtr* oval_result_files)
+static xmlDocPtr ds_rds_create_from_dom(xmlDocPtr sds_doc, xmlDocPtr xccdf_result_file_doc, xmlDocPtr* oval_result_docs)
 {
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
 	xmlNodePtr root = xmlNewNode(NULL, BAD_CAST "asset-report-collection");
@@ -156,15 +156,15 @@ static xmlDocPtr ds_rds_create_from_dom(xmlDocPtr sds_doc, xmlDocPtr xccdf_resul
 	ds_rds_add_xccdf_test_results(doc, reports, xccdf_result_file_doc);
 
 	unsigned int oval_report_suffix = 2;
-	while (oval_result_files != NULL)
+	while (*oval_result_docs != NULL)
 	{
-		xmlDocPtr oval_result_file = *oval_result_files;
+		xmlDocPtr oval_result_doc = *oval_result_docs;
 
 		char* report_id = oscap_sprintf("oval%i", oval_report_suffix++);
-		ds_rds_create_report(doc, reports, oval_result_file, report_id);
+		ds_rds_create_report(doc, reports, oval_result_doc, report_id);
 		oscap_free(report_id);
 
-		oval_result_files++;
+		oval_result_docs++;
 	}
 
 	xmlAddChild(root, reports);
@@ -189,7 +189,7 @@ void ds_rds_create(const char* sds_file, const char* xccdf_result_file, const ch
 		oval_result_files++;
 	}
 
-	xmlDocPtr rds_doc = ds_rds_create_from_dom(sds_doc, result_file_doc, NULL);
+	xmlDocPtr rds_doc = ds_rds_create_from_dom(sds_doc, result_file_doc, oval_result_docs);
 	xmlSaveFileEnc(target_file, rds_doc, "utf-8");
 	xmlFreeDoc(rds_doc);
 
