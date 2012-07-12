@@ -97,16 +97,17 @@ int app_ds_sds_split(const struct oscap_action *action) {
 	int ret;
 
 	/* Validate */
-	/*
-	   if( action->validate ) {
-	   if (!oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_SDS, "1.2", (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
-	   {
-	   fprintf(stdout, "Invalid input source data stream in in %s\n", action->ds_action->file);
-	   ret = OSCAP_ERROR;
-	   goto cleanup;
-	   }
-	   }
-	   */
+
+	if (action->validate)
+	{
+		if (!oscap_validate_document(action->ds_action->file, OSCAP_DOCUMENT_SDS, NULL, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
+		{
+			fprintf(stdout, "Invalid input source data stream in in %s\n", action->ds_action->file);
+			ret = OSCAP_ERROR;
+			goto cleanup;
+		}
+	}
+
 	ds_sds_decompose(action->ds_action->file, NULL, action->ds_action->target, NULL);
 
 	// TODO: error handling
