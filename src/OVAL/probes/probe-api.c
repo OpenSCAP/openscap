@@ -1764,8 +1764,8 @@ SEXP_t *probe_ent_from_cstr(const char *name, oval_datatype_t type,
 	if (ent_val == NULL)
 		ent_val = SEXP_string_new(value, vallen);
 
-	assume_d(name != NULL);
-	assume_d(ent_val != NULL);
+	assume_d(name != NULL, NULL);
+	assume_d(ent_val != NULL, NULL);
 	
 	/* Create the entity... */
 	ent = probe_ent_creat1(name, NULL, ent_val);	
