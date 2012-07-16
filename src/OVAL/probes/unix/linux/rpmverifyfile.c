@@ -442,26 +442,13 @@ int probe_main (probe_ctx *ctx, void *arg)
 	}
 
 	PROBE_ENT_STRVAL(file_ent, file, file_len, /* void */, strcpy(file, ""););
+	SEXP_free(file_ent);
 
 	name_ent = probe_obj_getent(probe_in, "name", 1);
 	epoch_ent = probe_obj_getent(probe_in, "epoch", 1);
 	version_ent = probe_obj_getent(probe_in, "version", 1);
 	release_ent = probe_obj_getent(probe_in, "release", 1);
 	arch_ent = probe_obj_getent(probe_in, "arch", 1);
-#if 0	
-	if (name_ent) {
-		name_op = probe_ent_getoperation(name_ent, OVAL_OPERATION_EQUALS);
-		PROBE_ENT_STRVAL(name_ent, name, name_len, /* void */, strcpy(name, ""););
-	}
-	else
-		strcpy(name, "")
-#endif
-
-	/*
-	 * Extract entity values
-	 */
-
-	SEXP_free(file_ent);
 
 	/*
 	 * Parse behaviors
