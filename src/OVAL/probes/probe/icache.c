@@ -242,15 +242,15 @@ static void *probe_icache_worker(void *arg)
                         }
 
                         if (probe_cobj_add_item(pair->cobj, pair->p.item) != 0) {
-                                dE("An error ocured while adding an item to the collected object\n");
-                                return (NULL);
+                            dW("An error ocured while adding the item to the collected object\n");
+                            SEXP_free(pair->p.item);
                         }
                 }
 
                 if (pthread_mutex_lock(&cache->queue_mutex) != 0) {
                         dE("An error ocured while re-locking the queue mutex: %u, %s\n",
                            errno, strerror(errno));
-                        return (NULL);
+                        abort();
                 }
 
                 if (cache->queue_cnt > 0)

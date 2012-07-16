@@ -1402,7 +1402,7 @@ static SEXP_t *probe_item_optimize(const SEXP_t *item)
 #define PROBE_RESULT_MEMCHECK_MAXRATIO   0.80   /* max. memory usage ratio - used/total */
 
 /**
- * Return true if the memory constraints are not reached.
+ * Returns zero if the memory constraints are not reached.
  */
 static int probe_cobj_memcheck(size_t item_cnt)
 {
