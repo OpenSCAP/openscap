@@ -243,7 +243,6 @@ static void *probe_icache_worker(void *arg)
 
                         if (probe_cobj_add_item(pair->cobj, pair->p.item) != 0) {
                             dW("An error ocured while adding the item to the collected object\n");
-                            SEXP_free(pair->p.item);
                         }
                 }
 
