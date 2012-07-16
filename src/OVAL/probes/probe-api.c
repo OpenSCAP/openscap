@@ -1670,13 +1670,13 @@ int probe_item_add_msg(SEXP_t *item, oval_message_level_t msglvl, char *msgfmt, 
     return (0);
 }
 
-SEXP_t *probe_ent_from_cstr(const char *name, oval_datatype_t type,
-                            const char *value, size_t vallen)
+SEXP_t *probe_entval_from_cstr(oval_datatype_t type,
+                               const char *value, size_t vallen)
 {
-	SEXP_t *ent = NULL, *ent_val = NULL;
+  SEXP_t *ent_val = NULL;
 
-	if (name == NULL || value == NULL || vallen == 0)
-		return NULL;
+  if (value == NULL || vallen == 0)
+    return NULL;
 
 	switch (type) {
 	case OVAL_DATATYPE_FLOAT:
@@ -1764,9 +1764,22 @@ SEXP_t *probe_ent_from_cstr(const char *name, oval_datatype_t type,
 	if (ent_val == NULL)
 		ent_val = SEXP_string_new(value, vallen);
 
-	assume_d(name != NULL, NULL);
-	assume_d(ent_val != NULL, NULL);
-	
+  return ent_val;
+}
+
+SEXP_t *probe_ent_from_cstr(const char *name, oval_datatype_t type,
+                            const char *value, size_t vallen)
+{
+	SEXP_t *ent = NULL, *ent_val = NULL;
+
+	if (name == NULL || value == NULL || vallen == 0)
+		return NULL;
+
+  ent_val = probe_entval_from_cstr(type, value, vallen);
+
+  if (ent_val == NULL)
+    return NULL;
+  
 	/* Create the entity... */
 	ent = probe_ent_creat1(name, NULL, ent_val);	
 	SEXP_free(ent_val);
