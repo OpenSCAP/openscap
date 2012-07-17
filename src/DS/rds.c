@@ -53,11 +53,14 @@ static xmlNodePtr ds_rds_create_report(xmlDocPtr target_doc, xmlNodePtr reports_
 	xmlNodePtr report = xmlNewNode(arf_ns, BAD_CAST "report");
 	xmlSetProp(report, BAD_CAST "id", BAD_CAST report_id);
 
+	xmlNodePtr report_content = xmlNewNode(arf_ns, BAD_CAST "content");
+	xmlAddChild(report, report_content);
+
 	xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
 	xmlNodePtr res_node = NULL;
 	xmlDOMWrapCloneNode(wrap_ctxt, source_doc, xmlDocGetRootElement(source_doc),
 			&res_node, target_doc, NULL, 1, 0);
-	xmlAddChild(report, res_node);
+	xmlAddChild(report_content, res_node);
 	xmlDOMWrapReconcileNamespaces(wrap_ctxt, res_node, 0);
 	xmlDOMWrapFreeCtxt(wrap_ctxt);
 
