@@ -43,8 +43,9 @@
 #include <text.h>
 
 static const char* arf_ns_uri = "http://scap.nist.gov/schema/asset-reporting-format/1.1";
+static const char* core_ns_uri = "http://scap.nist.gov/schema/reporting-core/1.1";
 
-static void ds_rds_create_report(xmlDocPtr target_doc, xmlNodePtr reports_node, xmlDocPtr source_doc, const char* report_id)
+static xmlNodePtr ds_rds_create_report(xmlDocPtr target_doc, xmlNodePtr reports_node, xmlDocPtr source_doc, const char* report_id)
 {
 	xmlNsPtr arf_ns = xmlSearchNsByHref(target_doc, xmlDocGetRootElement(target_doc), BAD_CAST arf_ns_uri);
 
@@ -60,11 +61,34 @@ static void ds_rds_create_report(xmlDocPtr target_doc, xmlNodePtr reports_node, 
 	xmlDOMWrapFreeCtxt(wrap_ctxt);
 
 	xmlAddChild(reports_node, report);
+
+	return report;
 }
 
-static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports, xmlDocPtr xccdf_result_file_doc)
+static void ds_rds_add_relationship(xmlDocPtr doc, xmlNodePtr relationships,
+		const char* report_id, const char* report_request_id)
+{
+	xmlNsPtr core_ns = xmlSearchNsByHref(doc, xmlDocGetRootElement(doc), BAD_CAST core_ns_uri);
+
+	// create relationship between given request and the report
+	xmlNodePtr relationship = xmlNewNode(core_ns, BAD_CAST "relationship");
+	xmlSetProp(relationship, BAD_CAST "type", BAD_CAST "arfvocab:createdFor");
+	xmlSetProp(relationship, BAD_CAST "subject", BAD_CAST report_id);
+
+	xmlNodePtr ref = xmlNewNode(core_ns, BAD_CAST "ref");
+	xmlNodeSetContent(ref, BAD_CAST report_request_id);
+	xmlAddChild(relationship, ref);
+
+	xmlAddChild(relationships, relationship);
+}
+
+static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
+		xmlDocPtr xccdf_result_file_doc, xmlNodePtr relationships,
+		const char* report_request_id)
 {
 	xmlNodePtr root_element = xmlDocGetRootElement(xccdf_result_file_doc);
+
+	xmlNsPtr core_ns = xmlSearchNsByHref(doc, xmlDocGetRootElement(doc), BAD_CAST core_ns_uri);
 
 	// There are 2 possible scenarios here:
 
@@ -74,6 +98,7 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports, xml
 	if (strcmp((const char*)root_element->name, "TestResult") == 0)
 	{
 		ds_rds_create_report(doc, reports, xccdf_result_file_doc, "xccdf1");
+		ds_rds_add_relationship(doc, relationships, "xccdf1", report_request_id);
 	}
 
 	// 2) the root element is a Benchmark, TestResults are embedded within
@@ -105,6 +130,7 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports, xml
 
 			char* report_id = oscap_sprintf("xccdf%i", report_suffix++);
 			ds_rds_create_report(doc, reports, wrap_doc, report_id);
+			ds_rds_add_relationship(doc, relationships, report_id, report_request_id);
 			oscap_free(report_id);
 
 			xmlFreeDoc(wrap_doc);
@@ -131,6 +157,11 @@ static xmlDocPtr ds_rds_create_from_dom(xmlDocPtr sds_doc, xmlDocPtr xccdf_resul
 	xmlNsPtr arf_ns = xmlNewNs(root, BAD_CAST arf_ns_uri, BAD_CAST "arf");
 	xmlSetNs(root, arf_ns);
 
+	xmlNsPtr core_ns = xmlNewNs(root, BAD_CAST core_ns_uri, BAD_CAST "core");
+
+	xmlNodePtr relationships = xmlNewNode(core_ns, BAD_CAST "relationships");
+	xmlAddChild(root, relationships);
+
 	xmlNodePtr report_requests = xmlNewNode(arf_ns, BAD_CAST "report-requests");
 	xmlAddChild(root, report_requests);
 
@@ -153,7 +184,8 @@ static xmlDocPtr ds_rds_create_from_dom(xmlDocPtr sds_doc, xmlDocPtr xccdf_resul
 
 	xmlNodePtr reports = xmlNewNode(arf_ns, BAD_CAST "reports");
 
-	ds_rds_add_xccdf_test_results(doc, reports, xccdf_result_file_doc);
+	ds_rds_add_xccdf_test_results(doc, reports, xccdf_result_file_doc,
+			relationships, "collection1");
 
 	unsigned int oval_report_suffix = 2;
 	while (*oval_result_docs != NULL)
