@@ -44,6 +44,7 @@
 
 static const char* arf_ns_uri = "http://scap.nist.gov/schema/asset-reporting-format/1.1";
 static const char* core_ns_uri = "http://scap.nist.gov/schema/reporting-core/1.1";
+static const char* arfvocab_ns_uri = "http://scap.nist.gov/vocabulary/arf/relationships/1.0#";
 
 static xmlNodePtr ds_rds_create_report(xmlDocPtr target_doc, xmlNodePtr reports_node, xmlDocPtr source_doc, const char* report_id)
 {
@@ -158,6 +159,7 @@ static xmlDocPtr ds_rds_create_from_dom(xmlDocPtr sds_doc, xmlDocPtr xccdf_resul
 	xmlNsPtr core_ns = xmlNewNs(root, BAD_CAST core_ns_uri, BAD_CAST "core");
 
 	xmlNodePtr relationships = xmlNewNode(core_ns, BAD_CAST "relationships");
+	xmlNewNs(relationships, BAD_CAST arfvocab_ns_uri, BAD_CAST "arfvocab");
 	xmlAddChild(root, relationships);
 
 	xmlNodePtr report_requests = xmlNewNode(arf_ns, BAD_CAST "report-requests");
