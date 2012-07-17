@@ -146,13 +146,17 @@ void *probe_input_handler(void *arg)
                                         {
                                                 dE("Cannot start a new worker thread: %d, %s.\n", errno, strerror(errno));
 
-                                                if (rbt_i32_del(probe->workers, pair->pth->sid, NULL) != 0) {
-                                                        /* ... do something ... */
-                                                }
+                                                if (rbt_i32_del(probe->workers, pair->pth->sid, NULL) != 0)
+	                                                dE("rbt_i32_del: failed to remove worker thread (ID=%u)\n", pair->pth->sid);
 
                                                 SEAP_msg_free(pair->pth->msg);
                                                 oscap_free(pair->pth);
                                                 oscap_free(pair);
+
+                                                probe_ret = PROBE_EUNKNOWN;
+                                                probe_out = NULL;
+
+                                                goto __error_reply;
                                         }
                                 }
 
@@ -170,6 +174,7 @@ void *probe_input_handler(void *arg)
                 }
 
 		if (probe_out == NULL || probe_ret != 0) {
+		__error_reply:
 			if (SEAP_replyerr(probe->SEAP_ctx, probe->sd, seap_request, probe_ret) == -1)
                         {
 				dE("An error ocured while sending error status. errno=%u, %s.\n",
