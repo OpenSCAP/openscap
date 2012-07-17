@@ -636,18 +636,6 @@ int probe_cobj_add_item(SEXP_t *cobj, const SEXP_t *item)
 
 	lst = SEXP_listref_nth(cobj, 3);
 	item_cnt = SEXP_list_length(lst);
-
-	if (probe_cobj_memcheck(item_cnt) != 0) {
-		SEXP_t *msg;
-
-		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_WARNING, "Object is incomplete due to memory constraints.");
-		probe_cobj_add_msg(cobj, msg);
-		probe_cobj_set_flag(cobj, SYSCHAR_FLAG_INCOMPLETE);
-		SEXP_vfree(lst, msg, NULL);
-
-		return -1;
-	}
-
 	oitem = probe_item_optimize(item);
 	SEXP_list_add(lst, oitem);
 	SEXP_vfree(lst, oitem, NULL);
@@ -1395,48 +1383,6 @@ static SEXP_t *probe_item_optimize(const SEXP_t *item)
 {
 	// todo
 	return SEXP_ref(item);
-}
-
-#define PROBE_RESULT_MEMCHECK_CTRESHOLD  32768  /* item count */
-#define PROBE_RESULT_MEMCHECK_MINFREEMEM 128    /* MiB */
-#define PROBE_RESULT_MEMCHECK_MAXRATIO   0.80   /* max. memory usage ratio - used/total */
-
-/**
- * Returns zero if the memory constraints are not reached.
- */
-static int probe_cobj_memcheck(size_t item_cnt)
-{
-	if (item_cnt > PROBE_RESULT_MEMCHECK_CTRESHOLD) {
-		struct memusage mu;
-		struct sysinfo  si;
-		double c_ratio;
-
-		// todo: add an error message to the collected object?
-
-		if (memusage (&mu) != 0)
-			return (-1);
-
-		if (oscap_sysinfo (&si) != 0)
-			return (-1);
-
-		c_ratio = (double)mu.mu_data/(double)((si.totalram * si.mem_unit) / 1024);
-
-		if (c_ratio > PROBE_RESULT_MEMCHECK_MAXRATIO) {
-			dW("Memory usage ratio limit reached! limit=%f, current=%f\n",
-			   PROBE_RESULT_MEMCHECK_MAXRATIO, c_ratio);
-			errno = ENOMEM;
-			return (-1);
-		}
-
-		if (((si.freeram * si.mem_unit) / 1048576) < PROBE_RESULT_MEMCHECK_MINFREEMEM) {
-			dW("Minimum free memory limit reached! limit=%zu, current=%zu\n",
-			   PROBE_RESULT_MEMCHECK_MINFREEMEM, (si.freeram * si.mem_unit) / 1048576);
-			errno = ENOMEM;
-			return (-1);
-		}
-	}
-
-	return (0);
 }
 
 SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attributes[],

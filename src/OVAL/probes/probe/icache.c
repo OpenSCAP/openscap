@@ -35,6 +35,8 @@
 #include "../SEAP/generic/rbt/rbt.h"
 #include "probe-api.h"
 #include "common/debug_priv.h"
+#include "common/memusage.h"
+#include "common/oscap_sysinfo.h"
 
 #include "probe.h"
 #include "icache.h"
@@ -436,8 +438,101 @@ int probe_icache_nop(probe_icache_t *cache)
         return (0);
 }
 
+#define PROBE_RESULT_MEMCHECK_CTRESHOLD  32768  /* item count */
+#define PROBE_RESULT_MEMCHECK_MINFREEMEM 128    /* MiB */
+#define PROBE_RESULT_MEMCHECK_MAXRATIO   0.80   /* max. memory usage ratio - used/total */
+
+/**
+ * Returns zero if the memory constraints are not reached.
+ */
+static int probe_cobj_memcheck(size_t item_cnt)
+{
+	if (item_cnt > PROBE_RESULT_MEMCHECK_CTRESHOLD) {
+		struct memusage mu;
+		struct sysinfo  si;
+		double c_ratio;
+
+		if (memusage (&mu) != 0)
+			return (-1);
+
+		if (oscap_sysinfo (&si) != 0)
+			return (-1);
+
+		c_ratio = (double)mu.mu_rss/(double)((si.totalram * si.mem_unit) / 1024);
+
+		if (c_ratio > PROBE_RESULT_MEMCHECK_MAXRATIO) {
+			dW("Memory usage ratio limit reached! limit=%f, current=%f\n",
+			   PROBE_RESULT_MEMCHECK_MAXRATIO, c_ratio);
+			errno = ENOMEM;
+			return (-1);
+		}
+
+		if (((si.freeram * si.mem_unit) / 1048576) < PROBE_RESULT_MEMCHECK_MINFREEMEM) {
+			dW("Minimum free memory limit reached! limit=%zu, current=%zu\n",
+			   PROBE_RESULT_MEMCHECK_MINFREEMEM, (si.freeram * si.mem_unit) / 1048576);
+			errno = ENOMEM;
+			return (-1);
+		}
+	}
+
+	return (0);
+}
+
+/**
+ * Collect an item
+ * This function adds an item the collected object assosiated
+ * with the given probe context.
+ *
+ * Returns:
+ * 0 ... the item was succesfully added to the collected object
+ * 1 ... the item was filtered out
+ * 2 ... the item was not added because of memory constraints
+ *       and the collected object was flagged as incomplete
+ *-1 ... unexpected/internal error
+ *
+ * The caller must not free the item, it's freed automatically
+ * by this function or by the icache worker thread.
+ */
 int probe_item_collect(struct probe_ctx *ctx, SEXP_t *item)
 {
+	SEXP_t *cobj_content;
+	size_t  cobj_itemcnt;
+
+	assume_d(ctx != NULL, -1);
+	assume_d(ctx->probe_out != NULL, -1);
+	assume_d(item != NULL, -1);
+
+	cobj_content = SEXP_listref_nth(ctx->probe_out, 3);
+	cobj_itemcnt = SEXP_list_length(cobj_content);
+	SEXP_free(cobj_content);
+
+	if (probe_cobj_memcheck(cobj_itemcnt) != 0) {
+
+		/*
+		 * Don't set the message again if the collected object is
+		 * already flagged as incomplete.
+		 */
+		if (probe_cobj_get_flag(ctx->probe_out) != SYSCHAR_FLAG_INCOMPLETE) {
+			SEXP_t *msg;
+			/*
+			 * Sync with the icache thread before modifying the
+			 * collected object.
+			 */
+			if (probe_icache_nop(ctx->icache) != 0)
+				return -1;
+
+			msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_WARNING,
+			                      "Object is incomplete due to memory constraints.");
+
+			probe_cobj_add_msg(ctx->probe_out, msg);
+			probe_cobj_set_flag(ctx->probe_out, SYSCHAR_FLAG_INCOMPLETE);
+
+			SEXP_free(msg);
+		}
+
+		return 2;
+	}
+
         if (ctx->filters != NULL && probe_item_filtered(item, ctx->filters)) {
                 SEXP_free(item);
 		return (1);
