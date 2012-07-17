@@ -136,6 +136,7 @@ int app_ds_sds_split(const struct oscap_action *action) {
 	ret = OSCAP_OK;
 
 cleanup:
+	free(action->ds_action);
 	return ret;
 }
 
@@ -158,6 +159,7 @@ int app_ds_sds_compose(const struct oscap_action *action) {
 	ret = OSCAP_OK;
 
 cleanup:
+	free(action->ds_action);
 	return ret;
 }
 
@@ -182,5 +184,6 @@ int app_ds_rds_create(const struct oscap_action *action) {
 	ret = OSCAP_OK;
 
 cleanup:
+	free(action->ds_action);
 	return ret;
 }
