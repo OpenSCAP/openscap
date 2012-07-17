@@ -166,12 +166,39 @@ cleanup:
 int app_ds_rds_create(const struct oscap_action *action) {
 	int ret;
 
+	if (action->validate)
+	{
+		if (!oscap_validate_document(action->ds_action->file, OSCAP_DOCUMENT_SDS, NULL, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
+		{
+			fprintf(stdout, "Given Source Data Stream '%s' does not validate!", action->ds_action->file);
+			ret = OSCAP_ERROR;
+			goto cleanup;
+		}
+
+		if (!oscap_validate_document(action->ds_action->xccdf_result, OSCAP_DOCUMENT_XCCDF, NULL, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
+		{
+			fprintf(stdout, "Given XCCDF result file '%s' does not validate!", action->ds_action->xccdf_result);
+			ret = OSCAP_ERROR;
+			goto cleanup;
+		}
+	}
+
 	char** oval_result_files = malloc(sizeof(char*) * (action->ds_action->oval_result_count + 1));
 
 	size_t i;
 	for (i = 0; i < action->ds_action->oval_result_count; ++i)
 	{
 		oval_result_files[i] = action->ds_action->oval_results[i];
+
+		if (action->validate)
+		{
+			if (!oscap_validate_document(oval_result_files[i], OSCAP_DOCUMENT_OVAL_RESULTS, NULL, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
+			{
+				fprintf(stdout, "Given OVAL results file '%s' does not validate!", oval_result_files[i]);
+				ret = OSCAP_ERROR;
+				goto cleanup;
+			}
+		}
 	}
 	oval_result_files[i] = NULL;
 
@@ -179,6 +206,16 @@ int app_ds_rds_create(const struct oscap_action *action) {
 		   oval_result_files, action->ds_action->target);
 
 	free(oval_result_files);
+
+	if (action->validate)
+	{
+		if (!oscap_validate_document(action->ds_action->target, OSCAP_DOCUMENT_ARF, NULL, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
+		{
+			fprintf(stdout, "Exported Result Data Stream '%s' is not valid, it has not been exported correctly!", action->ds_action->target);
+			ret = OSCAP_ERROR;
+			goto cleanup;
+		}
+	}
 
 	// TODO: error handling
 	ret = OSCAP_OK;
