@@ -149,7 +149,7 @@ int app_ds_sds_compose(const struct oscap_action *action) {
 	{
 		if (!oscap_validate_document(action->ds_action->target, OSCAP_DOCUMENT_SDS, NULL, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
 		{
-			fprintf(stdout, "Exported Source Data Stream '%s' is not valid, it has not been exported correctly!", action->ds_action->target);
+			fprintf(stdout, "Exported Source Data Stream '%s' is not valid, it has not been exported correctly!\n", action->ds_action->target);
 			ret = OSCAP_ERROR;
 			goto cleanup;
 		}
@@ -170,14 +170,14 @@ int app_ds_rds_create(const struct oscap_action *action) {
 	{
 		if (!oscap_validate_document(action->ds_action->file, OSCAP_DOCUMENT_SDS, NULL, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
 		{
-			fprintf(stdout, "Given Source Data Stream '%s' does not validate!", action->ds_action->file);
+			fprintf(stdout, "Given Source Data Stream '%s' does not validate!\n", action->ds_action->file);
 			ret = OSCAP_ERROR;
 			goto cleanup;
 		}
 
 		if (!oscap_validate_document(action->ds_action->xccdf_result, OSCAP_DOCUMENT_XCCDF, NULL, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
 		{
-			fprintf(stdout, "Given XCCDF result file '%s' does not validate!", action->ds_action->xccdf_result);
+			fprintf(stdout, "Given XCCDF result file '%s' does not validate!\n", action->ds_action->xccdf_result);
 			ret = OSCAP_ERROR;
 			goto cleanup;
 		}
@@ -194,7 +194,7 @@ int app_ds_rds_create(const struct oscap_action *action) {
 		{
 			if (!oscap_validate_document(oval_result_files[i], OSCAP_DOCUMENT_OVAL_RESULTS, NULL, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
 			{
-				fprintf(stdout, "Given OVAL results file '%s' does not validate!", oval_result_files[i]);
+				fprintf(stdout, "Given OVAL results file '%s' does not validate!\n", oval_result_files[i]);
 				ret = OSCAP_ERROR;
 				goto cleanup;
 			}
@@ -211,7 +211,7 @@ int app_ds_rds_create(const struct oscap_action *action) {
 	{
 		if (!oscap_validate_document(action->ds_action->target, OSCAP_DOCUMENT_ARF, NULL, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
 		{
-			fprintf(stdout, "Exported Result Data Stream '%s' is not valid, it has not been exported correctly!", action->ds_action->target);
+			fprintf(stdout, "Exported Result Data Stream '%s' is not valid, it has not been exported correctly!\n", action->ds_action->target);
 			ret = OSCAP_ERROR;
 			goto cleanup;
 		}

@@ -88,8 +88,6 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 {
 	xmlNodePtr root_element = xmlDocGetRootElement(xccdf_result_file_doc);
 
-	xmlNsPtr core_ns = xmlSearchNsByHref(doc, xmlDocGetRootElement(doc), BAD_CAST core_ns_uri);
-
 	// There are 2 possible scenarios here:
 
 	// 1) root element of given xccdf result file doc is a TestResult element
@@ -168,7 +166,7 @@ static xmlDocPtr ds_rds_create_from_dom(xmlDocPtr sds_doc, xmlDocPtr xccdf_resul
 	xmlNodePtr report_request = xmlNewNode(arf_ns, BAD_CAST "report-request");
 	xmlSetProp(report_request, BAD_CAST "id", BAD_CAST "collection1");
 
-	xmlNodePtr arf_content = xmlNewNode(arf_ns, BAD_CAST "arf-content");
+	xmlNodePtr arf_content = xmlNewNode(arf_ns, BAD_CAST "content");
 
 	xmlDOMWrapCtxtPtr sds_wrap_ctxt = xmlDOMWrapNewCtxt();
 	xmlNodePtr sds_res_node = NULL;
