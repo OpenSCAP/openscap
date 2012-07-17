@@ -50,3 +50,8 @@ lib/unistd.h
 lib/warn-on-use.h
 lib/wchar.h
 
+oscap_debug.log.*
+
+*~
+.*.swp
+.clang_complete
