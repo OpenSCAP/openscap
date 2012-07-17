@@ -149,7 +149,7 @@ int app_ds_sds_compose(const struct oscap_action *action) {
 	{
 		if (!oscap_validate_document(action->ds_action->target, OSCAP_DOCUMENT_SDS, NULL, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
 		{
-			fprintf(stdout, "Exported Source Data Stream is not valid, it has not been exported correctly!", action->ds_action->target);
+			fprintf(stdout, "Exported Source Data Stream '%s' is not valid, it has not been exported correctly!", action->ds_action->target);
 			ret = OSCAP_ERROR;
 			goto cleanup;
 		}
