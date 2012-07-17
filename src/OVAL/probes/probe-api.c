@@ -36,6 +36,8 @@
 #include <stdarg.h>
 #include <string.h>
 #include <errno.h>
+#include <arpa/inet.h> /* inet_pton() in probe_ent_from_cstr() */
+#include <netinet/in.h>
 
 #include "debug_priv.h"
 #include "_probe-api.h"
@@ -44,6 +46,7 @@
 #include "oscap_sysinfo.h"
 #include "oval_probe_impl.h"
 #include "probe/entcmp.h"
+#include "SEAP/generic/strto.h"
 
 extern probe_rcache_t  *OSCAP_GSYM(pcache);
 extern probe_ncache_t  *OSCAP_GSYM(ncache);
@@ -633,18 +636,6 @@ int probe_cobj_add_item(SEXP_t *cobj, const SEXP_t *item)
 
 	lst = SEXP_listref_nth(cobj, 3);
 	item_cnt = SEXP_list_length(lst);
-
-	if (probe_cobj_memcheck(item_cnt) != 0) {
-		SEXP_t *msg;
-
-		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_WARNING, "Object is incomplete due to memory constraints.");
-		probe_cobj_add_msg(cobj, msg);
-		probe_cobj_set_flag(cobj, SYSCHAR_FLAG_INCOMPLETE);
-		SEXP_vfree(lst, msg, NULL);
-
-		return -1;
-	}
-
 	oitem = probe_item_optimize(item);
 	SEXP_list_add(lst, oitem);
 	SEXP_vfree(lst, oitem, NULL);
@@ -1394,48 +1385,6 @@ static SEXP_t *probe_item_optimize(const SEXP_t *item)
 	return SEXP_ref(item);
 }
 
-#define PROBE_RESULT_MEMCHECK_CTRESHOLD  32768  /* item count */
-#define PROBE_RESULT_MEMCHECK_MINFREEMEM 128    /* MiB */
-#define PROBE_RESULT_MEMCHECK_MAXRATIO   0.80   /* max. memory usage ratio - used/total */
-
-/**
- * Return true if the memory constraints are not reached.
- */
-static int probe_cobj_memcheck(size_t item_cnt)
-{
-	if (item_cnt > PROBE_RESULT_MEMCHECK_CTRESHOLD) {
-		struct memusage mu;
-		struct sysinfo  si;
-		double c_ratio;
-
-		// todo: add an error message to the collected object?
-
-		if (memusage (&mu) != 0)
-			return (-1);
-
-		if (oscap_sysinfo (&si) != 0)
-			return (-1);
-
-		c_ratio = (double)mu.mu_data/(double)((si.totalram * si.mem_unit) / 1024);
-
-		if (c_ratio > PROBE_RESULT_MEMCHECK_MAXRATIO) {
-			dW("Memory usage ratio limit reached! limit=%f, current=%f\n",
-			   PROBE_RESULT_MEMCHECK_MAXRATIO, c_ratio);
-			errno = ENOMEM;
-			return (-1);
-		}
-
-		if (((si.freeram * si.mem_unit) / 1048576) < PROBE_RESULT_MEMCHECK_MINFREEMEM) {
-			dW("Minimum free memory limit reached! limit=%zu, current=%zu\n",
-			   PROBE_RESULT_MEMCHECK_MINFREEMEM, (si.freeram * si.mem_unit) / 1048576);
-			errno = ENOMEM;
-			return (-1);
-		}
-	}
-
-	return (0);
-}
-
 SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attributes[],
                           /* const char *value_name, oval_datatype_t value_type, void *value, */ ...)
 {
@@ -1665,4 +1614,127 @@ int probe_item_add_msg(SEXP_t *item, oval_message_level_t msglvl, char *msgfmt, 
     SEXP_free(attrs);
 
     return (0);
+}
+
+SEXP_t *probe_entval_from_cstr(oval_datatype_t type,
+                               const char *value, size_t vallen)
+{
+  SEXP_t *ent_val = NULL;
+
+  if (value == NULL || vallen == 0)
+    return NULL;
+
+	switch (type) {
+	case OVAL_DATATYPE_FLOAT:
+	{
+		double val;
+		char *end = NULL;
+
+		val = strto_double(value, vallen, &end);
+		ent_val = SEXP_number_newf(val);
+
+	}	break;
+	case OVAL_DATATYPE_INTEGER:
+	{
+		int64_t val;
+		char *end;
+
+		val = strto_int64(value, vallen, &end, 10);
+		ent_val = SEXP_number_newi_64(val);
+
+	}	break;
+	case OVAL_DATATYPE_BOOLEAN:
+		switch(vallen) {
+		case 1:
+			switch(*value)
+			{
+			case '1':
+				ent_val = SEXP_number_newb(true);
+				break;
+			case '0':
+				ent_val = SEXP_number_newb(false);
+				break;
+			}
+			break;
+		case 4:
+			if (strncasecmp(value, "true", 4) == 0)
+				ent_val = SEXP_number_newb(true);
+			break;
+		case 5:
+			if (strncasecmp(value, "false", 5) == 0)
+				ent_val = SEXP_number_newb(false);
+			break;
+		}
+
+		if (ent_val == NULL)
+			return NULL;
+		break;
+
+
+	case OVAL_DATATYPE_IPV4ADDR:
+	{
+		struct in_addr ip4;
+
+		if (inet_pton(AF_INET, value, &ip4) != 1)
+			return NULL;
+	}	break;
+	case OVAL_DATATYPE_IPV6ADDR:
+	{
+		struct in6_addr ip6;
+
+		if (inet_pton(AF_INET6, value, &ip6) != 1)
+			return NULL;
+	}	break;
+
+	case OVAL_DATATYPE_EVR_STRING:
+	case OVAL_DATATYPE_FILESET_REVISION:
+	case OVAL_DATATYPE_IOS_VERSION:
+	case OVAL_DATATYPE_STRING:
+	case OVAL_DATATYPE_VERSION:
+		break;
+
+	case OVAL_DATATYPE_BINARY:
+	case OVAL_DATATYPE_SEXP:
+	case OVAL_DATATYPE_UNKNOWN:
+	case OVAL_DATATYPE_STRING_M:
+	case OVAL_DATATYPE_RECORD:
+	default:
+		return NULL;
+	}
+
+	/*
+	 * If we got here and ent_val is still NULL, then
+	 * no special conversion procedure is needed and
+	 * we can simply create an SEXP string...
+	 */
+	if (ent_val == NULL)
+		ent_val = SEXP_string_new(value, vallen);
+
+  return ent_val;
+}
+
+SEXP_t *probe_ent_from_cstr(const char *name, oval_datatype_t type,
+                            const char *value, size_t vallen)
+{
+	SEXP_t *ent = NULL, *ent_val = NULL;
+
+	if (name == NULL || value == NULL || vallen == 0)
+		return NULL;
+
+  ent_val = probe_entval_from_cstr(type, value, vallen);
+
+  if (ent_val == NULL)
+    return NULL;
+  
+	/* Create the entity... */
+	ent = probe_ent_creat1(name, NULL, ent_val);	
+	SEXP_free(ent_val);
+
+	/* ...and annotate with the specified OVAL datatype */
+	if (probe_ent_setdatatype(ent, type) != 0) {
+		SEXP_free(ent);
+		return NULL;
+	}
+
+	return ent;
 }

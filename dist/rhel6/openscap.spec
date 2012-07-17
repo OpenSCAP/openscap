@@ -178,6 +178,7 @@ fi
 %{_libexecdir}/openscap/probe_routingtable
 %{_libexecdir}/openscap/probe_rpminfo
 %{_libexecdir}/openscap/probe_rpmverify
+%{_libexecdir}/openscap/probe_rpmverifyfile
 %{_libexecdir}/openscap/probe_runlevel
 %{_libexecdir}/openscap/probe_selinuxboolean
 %{_libexecdir}/openscap/probe_selinuxsecuritycontext

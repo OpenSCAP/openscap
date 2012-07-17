@@ -484,6 +484,46 @@ int main (void)
         }
 
         SEXP_free (obj);
+
+        {
+	        SEXP_t *ent;
+	        int i;
+
+	        struct test {
+		        oval_datatype_t t;
+		        const char     *v;
+	        } __test_array[] = {
+		        { OVAL_DATATYPE_FLOAT,   "1.2345" },
+		        { OVAL_DATATYPE_INTEGER, "12345" },
+		        { OVAL_DATATYPE_BOOLEAN, "1" },
+		        { OVAL_DATATYPE_BOOLEAN, "0" },
+		        { OVAL_DATATYPE_BOOLEAN, "true" },
+		        { OVAL_DATATYPE_BOOLEAN, "false" },
+		        { OVAL_DATATYPE_IPV4ADDR, "192.168.0.1" },
+		        { OVAL_DATATYPE_IPV6ADDR, "fe80::f2de:f1ff:fe6a:13fd" },
+		        { OVAL_DATATYPE_EVR_STRING, "1.7.2p1" },
+		        { OVAL_DATATYPE_FILESET_REVISION, "12345" },
+		        { OVAL_DATATYPE_IOS_VERSION, "1234" },
+		        { OVAL_DATATYPE_STRING, "Hello world!" },
+		        { OVAL_DATATYPE_VERSION, "1.7.2p1" }
+	        };
+
+	        for (int i = 0;
+	             i < sizeof __test_array/(sizeof(struct test)); ++i)
+		        {
+			        ent = probe_ent_from_cstr("test",
+			                                  __test_array[i].t,
+			                                  __test_array[i].v,
+			                                  strlen(__test_array[i].v));
+			        if (ent == NULL)
+				        FAIL(1, "probe_ent_from_cstr(%s, %d, %s, %zu) == NULL\n",
+				             "test", __test_array[i].t,
+				             __test_array[i].v,
+				             strlen(__test_array[i].v));
+			        print_asdf(ent);
+			        SEXP_free(ent);
+		        }
+        }
         
         return (0);
 }
