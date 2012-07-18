@@ -45,6 +45,7 @@
 static const char* arf_ns_uri = "http://scap.nist.gov/schema/asset-reporting-format/1.1";
 static const char* core_ns_uri = "http://scap.nist.gov/schema/reporting-core/1.1";
 static const char* arfvocab_ns_uri = "http://scap.nist.gov/vocabulary/arf/relationships/1.0#";
+static const char* ai_ns_uri = "http://scap.nist.gov/schema/asset-identification/1.1";
 
 static xmlNodePtr ds_rds_create_report(xmlDocPtr target_doc, xmlNodePtr reports_node, xmlDocPtr source_doc, const char* report_id)
 {
@@ -70,24 +71,71 @@ static xmlNodePtr ds_rds_create_report(xmlDocPtr target_doc, xmlNodePtr reports_
 }
 
 static void ds_rds_add_relationship(xmlDocPtr doc, xmlNodePtr relationships,
-		const char* report_id, const char* report_request_id)
+		const char* type, const char* subject, const char* ref)
 {
 	xmlNsPtr core_ns = xmlSearchNsByHref(doc, xmlDocGetRootElement(doc), BAD_CAST core_ns_uri);
 
 	// create relationship between given request and the report
 	xmlNodePtr relationship = xmlNewNode(core_ns, BAD_CAST "relationship");
-	xmlSetProp(relationship, BAD_CAST "type", BAD_CAST "arfvocab:createdFor");
-	xmlSetProp(relationship, BAD_CAST "subject", BAD_CAST report_id);
+	xmlSetProp(relationship, BAD_CAST "type", BAD_CAST type);
+	xmlSetProp(relationship, BAD_CAST "subject", BAD_CAST subject);
 
-	xmlNodePtr ref = xmlNewNode(core_ns, BAD_CAST "ref");
-	xmlNodeSetContent(ref, BAD_CAST report_request_id);
-	xmlAddChild(relationship, ref);
+	xmlNodePtr ref_node = xmlNewNode(core_ns, BAD_CAST "ref");
+	xmlNodeSetContent(ref_node, BAD_CAST ref);
+	xmlAddChild(relationship, ref_node);
 
 	xmlAddChild(relationships, relationship);
 }
 
+static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr assets,
+		xmlDocPtr xccdf_result_doc)
+{
+	xmlNsPtr arf_ns = xmlSearchNsByHref(doc, xmlDocGetRootElement(doc), BAD_CAST arf_ns_uri);
+	xmlNsPtr ai_ns = xmlSearchNsByHref(doc, xmlDocGetRootElement(doc), BAD_CAST ai_ns_uri);
+
+	xmlNodePtr asset = xmlNewNode(arf_ns, BAD_CAST "asset");
+
+	// Lets figure out a unique asset identification
+	// The format is: "asset%i" where %i is a increasing integer suffix
+	//
+	// We use a very simple optimization, we know that assets will be "ordered"
+	// by their @id because we are adding them there in that order.
+	// Whenever we get a collision we can simply bump the suffix and continue,
+	// no need to go back and check the previous assets.
+
+	xmlNodePtr child_asset = assets->children;
+
+	unsigned int suffix = 0;
+	for (; child_asset != NULL; child_asset = child_asset->next)
+	{
+		if (child_asset->type != XML_ELEMENT_NODE)
+			continue;
+
+		if (strcmp((const char*)(child_asset->name), "asset") != 0)
+			continue;
+
+		char* id_candidate = oscap_sprintf("asset%i", suffix);
+		xmlChar* id = xmlGetProp(child_asset, BAD_CAST "id");
+
+		if (strcmp(id_candidate, (const char*)id) == 0)
+		{
+			suffix++;
+		}
+	}
+
+	char* id = oscap_sprintf("asset%i", suffix);
+	xmlSetProp(asset, BAD_CAST "id", BAD_CAST id);
+
+	xmlAddChild(assets, asset);
+
+	xmlNodePtr computing_device = xmlNewNode(ai_ns, BAD_CAST "computing-device");
+	xmlAddChild(asset, computing_device);
+
+	return asset;
+}
+
 static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
-		xmlDocPtr xccdf_result_file_doc, xmlNodePtr relationships,
+		xmlDocPtr xccdf_result_file_doc, xmlNodePtr relationships, xmlNodePtr assets,
 		const char* report_request_id)
 {
 	xmlNodePtr root_element = xmlDocGetRootElement(xccdf_result_file_doc);
@@ -100,7 +148,14 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 	if (strcmp((const char*)root_element->name, "TestResult") == 0)
 	{
 		ds_rds_create_report(doc, reports, xccdf_result_file_doc, "xccdf1");
-		ds_rds_add_relationship(doc, relationships, "xccdf1", report_request_id);
+		ds_rds_add_relationship(doc, relationships, "arfvocab:createdFor",
+				"xccdf1", report_request_id);
+
+		xmlNodePtr asset = ds_rds_add_ai_from_xccdf_results(doc, assets, xccdf_result_file_doc);
+		char* asset_id = (char*)xmlGetProp(asset, BAD_CAST "id");
+		ds_rds_add_relationship(doc, relationships, "arfvocab:isAbout",
+				"xccdf1", asset_id);
+		xmlFree(asset_id);
 	}
 
 	// 2) the root element is a Benchmark, TestResults are embedded within
@@ -132,7 +187,15 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 
 			char* report_id = oscap_sprintf("xccdf%i", report_suffix++);
 			ds_rds_create_report(doc, reports, wrap_doc, report_id);
-			ds_rds_add_relationship(doc, relationships, report_id, report_request_id);
+			ds_rds_add_relationship(doc, relationships, "arfvocab:createdFor",
+					report_id, report_request_id);
+
+			xmlNodePtr asset = ds_rds_add_ai_from_xccdf_results(doc, assets, wrap_doc);
+			char* asset_id = (char*)xmlGetProp(asset, BAD_CAST "id");
+			ds_rds_add_relationship(doc, relationships, "arfvocab:isAbout",
+					report_id, asset_id);
+			xmlFree(asset_id);
+
 			oscap_free(report_id);
 
 			xmlFreeDoc(wrap_doc);
@@ -160,6 +223,7 @@ static xmlDocPtr ds_rds_create_from_dom(xmlDocPtr sds_doc, xmlDocPtr xccdf_resul
 	xmlSetNs(root, arf_ns);
 
 	xmlNsPtr core_ns = xmlNewNs(root, BAD_CAST core_ns_uri, BAD_CAST "core");
+	xmlNewNs(root, BAD_CAST ai_ns_uri, BAD_CAST "ai");
 
 	xmlNodePtr relationships = xmlNewNode(core_ns, BAD_CAST "relationships");
 	xmlNewNs(relationships, BAD_CAST arfvocab_ns_uri, BAD_CAST "arfvocab");
@@ -167,6 +231,9 @@ static xmlDocPtr ds_rds_create_from_dom(xmlDocPtr sds_doc, xmlDocPtr xccdf_resul
 
 	xmlNodePtr report_requests = xmlNewNode(arf_ns, BAD_CAST "report-requests");
 	xmlAddChild(root, report_requests);
+
+	xmlNodePtr assets = xmlNewNode(arf_ns, BAD_CAST "assets");
+	xmlAddChild(root, assets);
 
 	xmlNodePtr report_request = xmlNewNode(arf_ns, BAD_CAST "report-request");
 	xmlSetProp(report_request, BAD_CAST "id", BAD_CAST "collection1");
@@ -188,7 +255,7 @@ static xmlDocPtr ds_rds_create_from_dom(xmlDocPtr sds_doc, xmlDocPtr xccdf_resul
 	xmlNodePtr reports = xmlNewNode(arf_ns, BAD_CAST "reports");
 
 	ds_rds_add_xccdf_test_results(doc, reports, xccdf_result_file_doc,
-			relationships, "collection1");
+			relationships, assets, "collection1");
 
 	unsigned int oval_report_suffix = 2;
 	while (*oval_result_docs != NULL)
