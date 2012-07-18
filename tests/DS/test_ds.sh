@@ -70,6 +70,8 @@ function test_rds
     #rm sds.xml
     #popd
 
+    rm -r "$DS_TARGET_DIR"
+
     return "$ret_val"
 }
 
@@ -79,6 +81,7 @@ test_init "test_ds.log"
 test_run "sds_simple_xccdf" test_sds sds_simple/scap-fedora14-xccdf.xml
 test_run "sds_multiple_oval" test_sds sds_multiple_oval/multiple-oval-xccdf.xml
 test_run "rds_simple" test_rds rds_simple/sds.xml rds_simple/results-xccdf.xml rds_simple/results-oval.xml
+test_run "rds_testresult" test_rds rds_testresult/sds.xml rds_testresult/results-xccdf.xml rds_testresult/results-oval.xml
 
 test_exit
 
