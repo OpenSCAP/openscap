@@ -42,8 +42,6 @@
 #include "debug_priv.h"
 #include "_probe-api.h"
 #include "assume.h"
-#include "memusage.h"
-#include "oscap_sysinfo.h"
 #include "oval_probe_impl.h"
 #include "probe/entcmp.h"
 #include "SEAP/generic/strto.h"
@@ -627,7 +625,6 @@ SEXP_t *probe_cobj_get_msgs(const SEXP_t *cobj)
 }
 
 static SEXP_t *probe_item_optimize(const SEXP_t *item);
-static int probe_cobj_memcheck(size_t item_cnt);
 
 int probe_cobj_add_item(SEXP_t *cobj, const SEXP_t *item)
 {
