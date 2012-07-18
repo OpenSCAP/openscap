@@ -131,6 +131,21 @@ static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr ass
 	xmlNodePtr computing_device = xmlNewNode(ai_ns, BAD_CAST "computing-device");
 	xmlAddChild(asset, computing_device);
 
+	xmlNodePtr test_result = xmlDocGetRootElement(xccdf_result_doc);
+
+	xmlNodePtr test_result_child = test_result->children;
+
+	for (; test_result_child != NULL; test_result_child = test_result_child->next)
+	{
+		if (test_result_child->type != XML_ELEMENT_NODE)
+			continue;
+
+		if (strcmp((const char*)(test_result_child->name), "target") == 0)
+		{
+			xmlNewTextChild(computing_device, ai_ns, BAD_CAST "fqdn", xmlNodeGetContent(test_result_child));
+		}
+	}
+
 	return asset;
 }
 
