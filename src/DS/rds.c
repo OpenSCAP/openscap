@@ -116,6 +116,7 @@ static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr ass
 
 		char* id_candidate = oscap_sprintf("asset%i", suffix);
 		xmlChar* id = xmlGetProp(child_asset, BAD_CAST "id");
+		oscap_free(id_candidate);
 
 		if (strcmp(id_candidate, (const char*)id) == 0)
 		{
@@ -125,11 +126,15 @@ static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr ass
 
 	char* id = oscap_sprintf("asset%i", suffix);
 	xmlSetProp(asset, BAD_CAST "id", BAD_CAST id);
+	oscap_free(id);
 
 	xmlAddChild(assets, asset);
 
 	xmlNodePtr computing_device = xmlNewNode(ai_ns, BAD_CAST "computing-device");
 	xmlAddChild(asset, computing_device);
+
+	xmlNodePtr connections = xmlNewNode(ai_ns, BAD_CAST "connections");
+	xmlAddChild(computing_device, connections);
 
 	xmlNodePtr test_result = xmlDocGetRootElement(xccdf_result_doc);
 
@@ -142,7 +147,20 @@ static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr ass
 
 		if (strcmp((const char*)(test_result_child->name), "target") == 0)
 		{
-			xmlNewTextChild(computing_device, ai_ns, BAD_CAST "fqdn", xmlNodeGetContent(test_result_child));
+			xmlChar* content = xmlNodeGetContent(test_result_child);
+			xmlNewTextChild(computing_device, ai_ns, BAD_CAST "fqdn", content);
+			xmlFree(content);
+		}
+		else if (strcmp((const char*)(test_result_child->name), "target-address") == 0)
+		{
+			xmlNodePtr connection = xmlNewNode(ai_ns, BAD_CAST "connection");
+			xmlAddChild(connections, connection);
+			xmlNodePtr ip_address = xmlNewNode(ai_ns, BAD_CAST "ip-address");
+			xmlAddChild(connection, ip_address);
+
+			xmlChar* content = xmlNodeGetContent(test_result_child);
+			xmlNewTextChild(ip_address, ai_ns, BAD_CAST "ip-v4", content);
+			xmlFree(content);
 		}
 	}
 
