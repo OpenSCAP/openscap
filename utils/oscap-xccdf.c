@@ -48,6 +48,8 @@
 #include "oscap.h"
 #include "alloc.h"
 
+#include <ftw.h>
+
 static int app_evaluate_xccdf(const struct oscap_action *action);
 static int app_xccdf_resolve(const struct oscap_action *action);
 static int app_xccdf_export_oval_variables(const struct oscap_action *action);
@@ -258,6 +260,16 @@ static int callback(const struct oscap_reporter_message *msg, void *arg)
         }
 
 	return 0;
+}
+
+static int __unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)
+{
+	int rv = remove(fpath);
+
+	if (rv)
+		perror(fpath);
+
+	return rv;
 }
 
 /**
@@ -645,7 +657,11 @@ cleanup:
 		xccdf_policy_model_free(policy_model);
 
 	if (temp_dir)
+	{
+		// recursively remove the directory we created for data stream split
+		nftw(temp_dir, __unlink_cb, 64, FTW_DEPTH | FTW_PHYS | FTW_MOUNT);
 		free(temp_dir);
+	}
 
 	free(xccdf_file);
 
