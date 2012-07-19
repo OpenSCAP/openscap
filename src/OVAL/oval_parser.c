@@ -73,7 +73,8 @@ int oval_parser_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *c
 xmlChar *oval_determine_document_schema_version(const char *document, oscap_document_type_t doc_type)
 {
 	xmlTextReaderPtr reader;
-	char *root_name, *elm_name;
+	const char *root_name;
+	const char* elm_name;
 	int depth;
 	xmlChar *version = NULL;
 
@@ -106,23 +107,26 @@ xmlChar *oval_determine_document_schema_version(const char *document, oscap_docu
 	default:
 		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Unknown document type");
 		dE("Unknown document type: %d.\n", doc_type);
+		xmlFreeTextReader(reader);
 		return NULL;
 	}
 	/* verify root element's name */
-	elm_name = (char *) xmlTextReaderLocalName(reader);
+	elm_name = (const char *) xmlTextReaderConstLocalName(reader);
 	if (!elm_name || strcmp(root_name, elm_name)) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM,
 			     "Document type doesn't match root element's name");
 		dE("Document type doesn't match root element's name: '%s'.\n", elm_name);
+		xmlFreeTextReader(reader);
 		return NULL;
 	}
 	/* find generator */
 	while (xmlTextReaderRead(reader) == 1
 	       && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
-	elm_name = (char *) xmlTextReaderLocalName(reader);
+	elm_name = (const char *) xmlTextReaderConstLocalName(reader);
 	if (!elm_name || strcmp(elm_name, "generator")) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unexpected element");
 		dE("Unexpected element: '%s'.\n", elm_name);
+		xmlFreeTextReader(reader);
 		return NULL;
 	}
 	/* find schema_version */
@@ -131,13 +135,14 @@ xmlChar *oval_determine_document_schema_version(const char *document, oscap_docu
 		if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT)
 			continue;
 
-		elm_name = (char *) xmlTextReaderLocalName(reader);
+		elm_name = (const char *) xmlTextReaderConstLocalName(reader);
 		if (!strcmp(elm_name, "schema_version")) {
 			version = xmlTextReaderReadString(reader);
 			break;
 		}
 	}
 
+	xmlFreeTextReader(reader);
 	return version;
 }
 
