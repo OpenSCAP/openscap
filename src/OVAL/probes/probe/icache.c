@@ -439,39 +439,40 @@ int probe_icache_nop(probe_icache_t *cache)
 }
 
 #define PROBE_RESULT_MEMCHECK_CTRESHOLD  32768  /* item count */
-#define PROBE_RESULT_MEMCHECK_MINFREEMEM 128    /* MiB */
-#define PROBE_RESULT_MEMCHECK_MAXRATIO   0.80   /* max. memory usage ratio - used/total */
+#define PROBE_RESULT_MEMCHECK_MINFREEMEM 512    /* MiB */
+#define PROBE_RESULT_MEMCHECK_MAXRATIO   0.8   /* max. memory usage ratio - used/total */
 
 /**
- * Returns zero if the memory constraints are not reached.
+ * Returns 0 if the memory constraints are not reached. Otherwise, 1 is returned.
+ * In case of an error, -1 is returned.
  */
 static int probe_cobj_memcheck(size_t item_cnt)
 {
 	if (item_cnt > PROBE_RESULT_MEMCHECK_CTRESHOLD) {
-		struct memusage mu;
-		struct sysinfo  si;
+		struct proc_memusage mu_proc;
+		struct sys_memusage  mu_sys;
 		double c_ratio;
 
-		if (memusage (&mu) != 0)
+		if (oscap_proc_memusage (&mu_proc) != 0)
 			return (-1);
 
-		if (oscap_sysinfo (&si) != 0)
+		if (oscap_sys_memusage (&mu_sys) != 0)
 			return (-1);
 
-		c_ratio = (double)mu.mu_rss/(double)((si.totalram * si.mem_unit) / 1024);
+		c_ratio = (double)mu_proc.mu_rss/(double)(mu_sys.mu_total);
 
 		if (c_ratio > PROBE_RESULT_MEMCHECK_MAXRATIO) {
 			dW("Memory usage ratio limit reached! limit=%f, current=%f\n",
 			   PROBE_RESULT_MEMCHECK_MAXRATIO, c_ratio);
 			errno = ENOMEM;
-			return (-1);
+			return (1);
 		}
 
-		if (((si.freeram * si.mem_unit) / 1048576) < PROBE_RESULT_MEMCHECK_MINFREEMEM) {
+		if ((mu_sys.mu_realfree / 1024) < PROBE_RESULT_MEMCHECK_MINFREEMEM) {
 			dW("Minimum free memory limit reached! limit=%zu, current=%zu\n",
-			   PROBE_RESULT_MEMCHECK_MINFREEMEM, (si.freeram * si.mem_unit) / 1048576);
+			   PROBE_RESULT_MEMCHECK_MINFREEMEM, mu_sys.mu_realfree / 1024);
 			errno = ENOMEM;
-			return (-1);
+			return (1);
 		}
 	}
 

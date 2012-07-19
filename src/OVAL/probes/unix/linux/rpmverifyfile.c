@@ -151,7 +151,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 			     const char *file, oval_operation_t file_op,
 			     SEXP_t *name_ent, SEXP_t *epoch_ent, SEXP_t *version_ent, SEXP_t *release_ent, SEXP_t *arch_ent,
 			     uint64_t flags,
-			     void (*callback)(probe_ctx *, struct rpmverify_res *))
+			     int (*callback)(probe_ctx *, struct rpmverify_res *))
 {
 	rpmdbMatchIterator match;
 	rpmVerifyAttrs omit = (rpmVerifyAttrs)(flags & RPMVERIFY_RPMATTRMASK);
@@ -303,7 +303,10 @@ static int rpmverify_collect(probe_ctx *ctx,
 		    if (rpmVerifyFile(g_rpm.rpmts, fi, &res.vflags, omit) != 0)
 		      res.vflags = RPMVERIFY_FAILURES;
 
-		    callback(ctx, &res);
+		    if (callback(ctx, &res) != 0) {
+			    ret = 0;
+			    goto ret;
+		    }
 		  }
 
 		  rpmfiFree(fi);
@@ -350,7 +353,7 @@ void probe_fini (void *ptr)
 	return;
 }
 
-static void rpmverify_additem(probe_ctx *ctx, struct rpmverify_res *res)
+static int rpmverify_additem(probe_ctx *ctx, struct rpmverify_res *res)
 {
 	SEXP_t *item;
 
@@ -383,7 +386,7 @@ static void rpmverify_additem(probe_ctx *ctx, struct rpmverify_res *res)
 				 "readme_file",	 OVAL_DATATYPE_BOOLEAN, FF_RESULT(RPMFILE_README),
 				 NULL);
 
-	probe_item_collect(ctx, item);
+	return probe_item_collect(ctx, item) == 0 ? 0 : 1;
 }
 
 typedef struct {

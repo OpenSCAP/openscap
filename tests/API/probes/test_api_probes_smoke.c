@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <seap.h>
 #include <probe-api.h>
+#include "common/memusage.h"
 
 #define FAIL(ret, ...)                                        \
         do {                                                  \
@@ -524,6 +525,48 @@ int main (void)
 			        SEXP_free(ent);
 		        }
         }
-        
+
+        {
+	        struct sys_memusage mu_sys;
+	        struct proc_memusage mu_proc;
+
+	        if (oscap_sys_memusage(&mu_sys) != 0)
+		        FAIL(1, "oscap_sys_memusage != 0\n");
+	        if (oscap_proc_memusage(&mu_proc) != 0)
+		        FAIL(1, "oscap_proc_memusage != 0\n");
+
+	        printf("mu_sys:\n"
+	               "   mu_active: %zu\n"
+	               "  mu_buffers: %zu\n"
+	               "   mu_cached: %zu\n"
+	               " mu_inactive: %zu\n"
+	               "     mu_free: %zu\n"
+	               "    mu_total: %zu\n"
+	               " mu_realfree: %zu\n",
+	               mu_sys.mu_active,
+	               mu_sys.mu_buffers,
+	               mu_sys.mu_cached,
+	               mu_sys.mu_inactive,
+	               mu_sys.mu_free,
+	               mu_sys.mu_total,
+	               mu_sys.mu_realfree);
+
+	        printf("mu_proc:\n"
+	               "  mu_data: %zu\n"
+	               "  mu_text: %zu\n"
+	               "   mu_hwm: %zu\n"
+	               "  mu_lock: %zu\n"
+	               "   mu_lib: %zu\n"
+	               "   mu_rss: %zu\n"
+	               " mu_stack: %zu\n",
+	               mu_proc.mu_data,
+	               mu_proc.mu_text,
+	               mu_proc.mu_hwm,
+	               mu_proc.mu_lock,
+	               mu_proc.mu_lib,
+	               mu_proc.mu_rss,
+	               mu_proc.mu_stack);
+        }
+
         return (0);
 }
