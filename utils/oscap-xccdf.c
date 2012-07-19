@@ -30,6 +30,7 @@
 #include <oval_results.h>
 #include <oval_variables.h>
 
+#include <ds.h>
 #include <xccdf.h>
 #include <xccdf_policy.h>
 
@@ -278,26 +279,44 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	char ** oval_files = NULL;
 	int idx = 0;
 
+	char* temp_dir = 0;
+
+	char* xccdf_file;
+
+	if (ds_is_sds(action->f_xccdf))
+	{
+		temp_dir = strdup("/tmp/oscap.XXXXXX");
+		temp_dir = mkdtemp(temp_dir);
+
+		ds_sds_decompose(action->f_xccdf, NULL, temp_dir, "xccdf.xml");
+		xccdf_file = malloc(PATH_MAX * sizeof(char));
+		sprintf(xccdf_file, "%s/%s", temp_dir, "xccdf.xml");
+	}
+	else
+	{
+		xccdf_file = strdup(action->f_xccdf);
+	}
+
 #ifdef ENABLE_SCE
 	struct sce_parameters* sce_parameters = 0;
 #endif
 
 	int retval = OSCAP_ERROR;
-	
+
 	/* Validate documents */
 	if( action->validate ) {
-		if (!oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, xccdf_version_info_get_version(xccdf_detect_version(action->f_xccdf)), (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-			fprintf(stdout, "Invalid XCCDF content in %s\n", action->f_xccdf);
+		if (!oscap_validate_document(xccdf_file, OSCAP_DOCUMENT_XCCDF, xccdf_version_info_get_version(xccdf_detect_version(xccdf_file)), (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+			fprintf(stdout, "Invalid XCCDF content in %s\n", xccdf_file);
 			goto cleanup;
-        	}
+		}
 	}
 
 	/* Load XCCDF model and XCCDF Policy model */
-	benchmark = xccdf_benchmark_import(action->f_xccdf);
+	benchmark = xccdf_benchmark_import(xccdf_file);
 	if (benchmark == NULL) {
-		fprintf(stderr, "Failed to import the XCCDF content from (%s).\n", action->f_xccdf);
+		fprintf(stderr, "Failed to import the XCCDF content from (%s).\n", xccdf_file);
 		goto cleanup;
-        }
+	}
 
 	/* Create policy model */
 	policy_model = xccdf_policy_model_new(benchmark);
@@ -336,7 +355,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		oval_files = malloc(sizeof(char *));
 		oval_files[idx] = NULL;
 
-		char * pathcopy =  strdup(action->f_xccdf);
+		char * pathcopy =  strdup(xccdf_file);
 		char * path = dirname(pathcopy);
 
 		struct oscap_file_entry_list * files = xccdf_policy_model_get_systems_and_files(policy_model);
@@ -427,7 +446,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	oval_generator_free(gen_tpl);
 
 	// register sce system
-	xccdf_pathcopy =  strdup(action->f_xccdf);
+	xccdf_pathcopy =  strdup(xccdf_file);
 
 #ifdef ENABLE_SCE
 	sce_parameters = sce_parameters_new();
@@ -624,6 +643,11 @@ cleanup:
 
 	if (policy_model)
 		xccdf_policy_model_free(policy_model);
+
+	if (temp_dir)
+		free(temp_dir);
+
+	free(xccdf_file);
 
 	return retval;
 }
