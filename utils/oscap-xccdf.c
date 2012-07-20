@@ -315,8 +315,12 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	int retval = OSCAP_ERROR;
 
+	const char* full_validation = getenv("OSCAP_FULL_VALIDATION");
+
 	/* Validate documents */
-	if( action->validate ) {
+	// we will only validate if the file doesn't come from a datastream
+	// or if full validation was explicitly requested
+	if( action->validate && (!temp_dir || full_validation) ) {
 		if (!oscap_validate_document(xccdf_file, OSCAP_DOCUMENT_XCCDF, xccdf_version_info_get_version(xccdf_detect_version(xccdf_file)), (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 			fprintf(stdout, "Invalid XCCDF content in %s\n", xccdf_file);
 			goto cleanup;
@@ -399,10 +403,12 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	} else
 		oval_files = action->f_ovals;
 
-	
+
 	/* Validate OVAL files */
-	if (action->validate) {
-        	for (idx=0; oval_files[idx]; idx++) {
+	// we will only validate if the file doesn't come from a datastream
+	// or if full validation was explicitly requested
+	if (action->validate && (!temp_dir || full_validation)) {
+		for (idx=0; oval_files[idx]; idx++) {
 			xmlChar *doc_version;
 
 			doc_version = oval_determine_document_schema_version((const char *) oval_files[idx],
@@ -494,8 +500,6 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		xccdf_result_add_score(ritem, score);
 	}
 	xccdf_model_iterator_free(model_it);
-
-	const char* full_validation = getenv("OSCAP_FULL_VALIDATION");
 
 	/* Export OVAL results */
 	if (action->oval_results == true && sessions) {

@@ -207,7 +207,9 @@ int app_ds_rds_create(const struct oscap_action *action) {
 
 	free(oval_result_files);
 
-	if (action->validate)
+	const char* full_validation = getenv("OSCAP_FULL_VALIDATION");
+
+	if (action->validate && full_validation)
 	{
 		if (!oscap_validate_document(action->ds_action->target, OSCAP_DOCUMENT_ARF, NULL, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
 		{
