@@ -58,10 +58,6 @@ int main(int argc, char **argv)
 
 
 	{
-		oval_version_t va, vb;
-		char va_str[16];
-		int ret;
-
 #define TEST_CONV(v)                                                    \
 		do { \
 			oval_version_t V; \
@@ -73,34 +69,14 @@ int main(int argc, char **argv)
 		do { \
 			oval_version_t a, b; \
 			int r; \
-			int e = 0;\
-			const char *_op = #op; \
-				a = oval_version_from_cstr(#v1); \
-				b = oval_version_from_cstr(#v2); \
-				r = oval_version_cmp(a, b); \
-				if (strcmp(_op, "<") == 0) { \
-					if (r >= 0) e = 1; \
-				} \
-				if (strcmp(_op, ">") == 0) { \
-					if (r <= 0) e = 1; \
-				} \
-				if (strcmp(_op, "==") == 0) { \
-					if (r != 0) e = 1; \
-				} \
-				if (strcmp(_op, "<=") == 0) { \
-					if (r > 0) e = 1; \
-				} \
-				if (strcmp(_op, ">=") == 0) { \
-					if (r < 0) e = 1; \
-				} \
-				if (strcmp(_op, "!=") == 0) {\
-					if (r == 0) e = 1;\
-				} \
-				if (e) { \
-					fprintf(stderr, "%s %s %s: not true\n", \
-					        #v1, #op, #v2); \
-					        return 1; \
-				}\
+			a = oval_version_from_cstr(#v1); \
+			b = oval_version_from_cstr(#v2); \
+			r = oval_version_cmp(a, b); \
+			if (!(r op 0)) { \
+				fprintf(stderr, "%s %s %s: not true\n", \
+				        #v1, #op, #v2); \
+				return 1; \
+			} \
 		} while(0)
 
 		TEST_CONV(5);
