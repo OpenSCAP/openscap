@@ -72,7 +72,8 @@ common_oval_sources = \
 	_oval_probe_handler.h \
 	fts_sun.c \
 	fts_sun.h \
-	oval_probe_meta.h
+	oval_probe_meta.h	\
+	oval_version.c
 
 # -I options go to CPPFLAGS, not CFLAGS
 # lets build one common for both normal and probe sources (does it mind?)
@@ -97,7 +98,8 @@ pkginclude_HEADERS  =	public/oval_agent_api.h \
 			public/oval_types.h \
 			public/oval_probe.h \
 			public/oval_probe_session.h \
-			public/oval_probe_handler.h
+			public/oval_probe_handler.h	\
+			public/oval_version.h
 
 if WANT_XCCDF
 pkginclude_HEADERS  += public/oval_agent_xccdf_api.h
