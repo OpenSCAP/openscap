@@ -47,6 +47,13 @@ function test_sds {
     return "$ret_val"
 }
 
+function test_eval {
+
+    local OSCAP_DIR=`cd ../../utils/.libs; pwd`
+
+    $OSCAP_DIR/oscap xccdf eval "$1"
+    return $?
+}
 function test_rds
 {
     local ret_val=0;
@@ -80,6 +87,9 @@ test_init "test_ds.log"
 
 test_run "sds_simple_xccdf" test_sds sds_simple/scap-fedora14-xccdf.xml
 test_run "sds_multiple_oval" test_sds sds_multiple_oval/multiple-oval-xccdf.xml
+
+test_run "eval_simple" test_eval eval_simple/sds.xml
+
 test_run "rds_simple" test_rds rds_simple/sds.xml rds_simple/results-xccdf.xml rds_simple/results-oval.xml
 test_run "rds_testresult" test_rds rds_testresult/sds.xml rds_testresult/results-xccdf.xml rds_testresult/results-oval.xml
 
