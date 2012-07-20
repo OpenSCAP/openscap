@@ -464,6 +464,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 	xccdf_model_iterator_free(model_it);
 
+	const char* full_validation = getenv("OSCAP_FULL_VALIDATION");
+
 	/* Export OVAL results */
 	if (action->oval_results == true && sessions) {
 		for (int i=0; sessions[i]; i++) {
@@ -476,7 +478,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			oval_results_model_export(res_model, NULL, name);
 
 			/* validate OVAL Results */
-			if (action->validate) {
+			if (action->validate && full_validation) {
 				xmlChar *doc_version;
 
 				doc_version = oval_determine_document_schema_version((const char *) name, OSCAP_DOCUMENT_OVAL_RESULTS);
@@ -507,12 +509,14 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			snprintf(target, sizeof(target), "./%s.result.xml", sce_check_result_get_basename(result));
 			sce_check_result_export(result, target);
 
-			if (!oscap_validate_document(target, OSCAP_DOCUMENT_SCE_RESULT, NULL,
-				(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
-			{
-					fprintf(stdout, "SCE Result file has NOT been exported correctly.\n");
-					sce_check_result_iterator_free(it);
-					goto cleanup;
+			if (action->validate && full_validation) {
+				if (!oscap_validate_document(target, OSCAP_DOCUMENT_SCE_RESULT, NULL,
+					(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
+				{
+						fprintf(stdout, "SCE Result file has NOT been exported correctly.\n");
+						sce_check_result_iterator_free(it);
+						goto cleanup;
+				}
 			}
 		}
 
@@ -526,7 +530,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		xccdf_benchmark_export(benchmark, action->f_results);
 
 		/* validate XCCDF Results */
-		if (action->validate) {
+		if (action->validate && full_validation) {
 			if (!oscap_validate_document(action->f_results, OSCAP_DOCUMENT_XCCDF, xccdf_version_info_get_version(xccdf_detect_version(action->f_results)),
 			    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 				fprintf(stdout, "XCCDF Results are NOT exported correctly.\n");
@@ -654,7 +658,7 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	if (action->validate) {
 		if (!oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF,
 			xccdf_version_info_get_version(xccdf_detect_version(action->f_xccdf)), (action->verbosity >= 0) ? oscap_reporter_fd : NULL, stderr)) {
-			fprintf(stderr, "Ivalid XCCDF content in '%s'.\n", action->f_xccdf);
+			fprintf(stderr, "Invalid XCCDF content in '%s'.\n", action->f_xccdf);
 			goto cleanup;
 		}
 	}

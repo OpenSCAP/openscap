@@ -304,13 +304,15 @@ int app_collect_oval(const struct oscap_action *action)
 		oval_object_iterator_free(objects);
 	}
 
+	const char* full_validation = getenv("OSCAP_FULL_VALIDATION");
+
 	/* output */
 	if (action->f_syschar != NULL) {
 		/* export OVAL System Characteristics */
 		oval_syschar_model_export(sys_model, action->f_syschar);
 
 		/* validate OVAL System Characteristics */
-		if (action->validate) {
+		if (action->validate && full_validation) {
 			xmlChar *doc_version;
 
 			doc_version = oval_determine_document_schema_version((const char *) action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR);
@@ -419,8 +421,10 @@ int app_evaluate_oval(const struct oscap_action *action)
 		/* export result model to XML */
 		oval_results_model_export(res_model, dir_model, action->f_results);
 
+		const char* full_validation = getenv("OSCAP_FULL_VALIDATION");
+
 		/* validate OVAL Results */
-		if (action->validate) {
+		if (action->validate && full_validation) {
 			xmlChar *doc_version;
 
 			doc_version = oval_determine_document_schema_version((const char *) action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS);
@@ -535,8 +539,10 @@ static int app_analyse_oval(const struct oscap_action *action) {
 		/* export result model to XML */
 		oval_results_model_export(res_model, dir_model, action->f_results);
 
+		const char* full_validation = getenv("OSCAP_FULL_VALIDATION");
+
 		/* validate OVAL Results */
-		if (action->validate) {
+		if (action->validate && full_validation) {
 			xmlChar *doc_version;
 
 			doc_version = oval_determine_document_schema_version((const char *) action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS);
