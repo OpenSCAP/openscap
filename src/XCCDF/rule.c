@@ -898,13 +898,7 @@ void xccdf_rule_to_dom(struct xccdf_rule *rule, xmlNode *rule_node, xmlDoc *doc,
 		xmlNewProp(rule_node, BAD_CAST "severity", BAD_CAST XCCDF_LEVEL_MAP[severity - 1].string);
 
 	/* Handle Child Nodes */
-	struct oscap_text_iterator *rationales = xccdf_rule_get_rationale(rule);
-	while (oscap_text_iterator_has_more(rationales)) {
-		struct oscap_text *rationale = oscap_text_iterator_next(rationales);
-		xmlNode * child = xmlNewTextChild(rule_node, ns_xccdf, BAD_CAST "rationale", BAD_CAST oscap_text_get_text(rationale));
-                if (oscap_text_get_lang(rationale) != NULL) xmlNewProp(child, BAD_CAST "xml:lang", BAD_CAST oscap_text_get_lang(rationale));
-	}
-	oscap_text_iterator_free(rationales);
+	xccdf_texts_to_dom(xccdf_rule_get_rationale(rule), rule_node, "rationale");
 
 	struct oscap_string_iterator *platforms = xccdf_rule_get_platforms(rule);
 	while (oscap_string_iterator_has_more(platforms)) {
