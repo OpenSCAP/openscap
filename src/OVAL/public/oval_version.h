@@ -17,6 +17,8 @@ typedef uint32_t oval_version_t;
  */
 oval_version_t oval_version_from_cstr(const char *version_str);
 
+#define OVAL_VERSION(v) oval_version_from_cstr(#v)
+
 /**
  * Convert the internal representation of the version to the
  * string representation

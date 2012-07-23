@@ -39,6 +39,7 @@
 #include "oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
 #include "common/debug_priv.h"
+#include "public/oval_version.h"
 
 typedef struct oval_object {
 	struct oval_definition_model *model;
@@ -127,6 +128,22 @@ int oval_object_get_version(struct oval_object *object)
 	__attribute__nonnull__(object);
 
 	return ((struct oval_object *)object)->version;
+}
+
+oval_version_t oval_object_get_schema_version(struct oval_object *object)
+{
+	struct oval_generator *gen;
+	const char *ver_str;
+
+	__attribute__nonnull__(object);
+
+	if (object->model == NULL)
+		return OVAL_VERSION_INVALID;
+
+	gen = oval_definition_model_get_generator(object->model);
+	ver_str = oval_generator_get_schema_version(gen);
+
+	return oval_version_from_cstr(ver_str);
 }
 
 struct oval_object_content_iterator *oval_object_get_object_contents(struct
