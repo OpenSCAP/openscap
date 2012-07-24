@@ -101,8 +101,11 @@ static void xccdf_resolve_warning(void *w1, void *w2) {
 }
 
 #define XCCDF_RESOLVE_FLAG(ITEM,PARENT,FLAGNAME) do { \
-	if (!ITEM->item.defined_flags.FLAGNAME) ITEM->item.flags.FLAGNAME = PARENT->item.flags.FLAGNAME; \
-	} while (false) 
+	if (!ITEM->item.defined_flags.FLAGNAME) { \
+		ITEM->item.flags.FLAGNAME = PARENT->item.flags.FLAGNAME; \
+		ITEM->item.defined_flags.FLAGNAME = true; \
+	}\
+} while (false)
 
 static void xccdf_resolve_item(struct xccdf_item *item)
 {

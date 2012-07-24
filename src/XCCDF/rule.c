@@ -983,8 +983,6 @@ void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *
 			xmlNewProp(group_node, BAD_CAST "selected", BAD_CAST "false");
 	}
 
-	xmlNewProp(group_node, BAD_CAST "hidden", BAD_CAST (xccdf_group_get_hidden(group) ? "true" : "false"));
-
 	if (XITEM(group)->item.defined_flags.weight) {
 		float weight = xccdf_group_get_weight(group);
 		char *weight_str = oscap_sprintf("%f", weight);
