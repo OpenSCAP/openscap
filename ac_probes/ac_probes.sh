@@ -18,7 +18,7 @@ TEMPLATE_LIBRARY_SECTION="@@@@PROBE_LIBRARIES@@@@"
 TEMPLATE_TABLE_SECTION="@@@@PROBE_TABLE@@@@"
 TEMPLATE_EVAL_SECTION="@@@@PROBE_EVAL@@@@"
 
-TEMPDIR="/tmp/ac_probes"
+TEMPDIR="$(mktemp -d)"
 HEADERS_INTERNAL=(
     alloc.h
     bfind.h
@@ -320,3 +320,5 @@ replace_pattern_with_file "${TEMPLATE_HEADER_SECTION}"  "${TEMPDIR}/ac_probes.ch
 replace_pattern_with_file "${TEMPLATE_LIBRARY_SECTION}" "${TEMPDIR}/ac_probes.libs.out" |\
 replace_pattern_with_file "${TEMPLATE_EVAL_SECTION}"    "${TEMPDIR}/ac_probes.eval.out" |\
 replace_pattern_with_file "${TEMPLATE_TABLE_SECTION}"   "${TEMPDIR}/ac_probes.table.out"
+
+rm -f "${TEMPDIR}"/* && rmdir "${TEMPDIR}"
