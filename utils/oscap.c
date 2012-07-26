@@ -140,7 +140,7 @@ int app_validate_xml(const struct oscap_action *action)
 		break;
 	default:
 		xml_file = action->f_xccdf;
-		doc_version = NULL;
+		doc_version = xccdf_version_info_get_version(xccdf_detect_version(action->f_xccdf));
 	}
 
 	if (!xml_file) {
