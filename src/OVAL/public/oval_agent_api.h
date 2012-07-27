@@ -61,12 +61,12 @@ typedef struct oval_agent_session oval_agent_session_t;
 oval_agent_session_t * oval_agent_new_session(struct oval_definition_model * model, const char * name);
 
 /**
- * Set a generator template for the provided agent session. The
- * template should be used for all newly created OVAL documents. If
+ * Set a product name for the provided agent session. The
+ * product name should be used for all newly created OVAL documents. If
  * there already are some models in the session, they are modified as
  * well.
  */
-void oval_agent_set_generator_template(oval_agent_session_t *, struct oval_generator *);
+void oval_agent_set_product_name(oval_agent_session_t *, char *);
 
 /**
  * Get the current generator template from the session.

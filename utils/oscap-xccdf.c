@@ -261,7 +261,7 @@ static int callback(const struct oscap_reporter_message *msg, void *arg)
 
 /**
  * XCCDF Processing fucntion
- * @param action OSCAP Action structure 
+ * @param action OSCAP Action structure
  * @param sess OVAL Agent Session
  */
 int app_evaluate_xccdf(const struct oscap_action *action)
@@ -271,7 +271,6 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	struct xccdf_policy *policy = NULL;
 	struct xccdf_benchmark *benchmark = NULL;
 	struct xccdf_policy_model *policy_model = NULL;
-	struct oval_generator *gen_tpl;
 	char * xccdf_pathcopy = NULL;
         void **def_models = NULL;
         void **sessions = NULL;
@@ -283,7 +282,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 #endif
 
 	int retval = OSCAP_ERROR;
-	
+
 	/* Validate documents */
 	if( action->validate ) {
 		if (!oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, xccdf_version_info_get_version(xccdf_detect_version(action->f_xccdf)), (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
@@ -331,7 +330,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		struct stat sb;
 		struct oscap_file_entry * file_entry;
 		char * tmp_path;
-		
+
 		idx = 0;
 		oval_files = malloc(sizeof(char *));
 		oval_files[idx] = NULL;
@@ -355,7 +354,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 				fprintf(stderr, "WARNING: Skipping %s file which is referenced from XCCDF content\n", tmp_path);
 				free(tmp_path);
 			}
-			else { 
+			else {
 				oval_files[idx] = tmp_path;
 				idx++;
 				oval_files = realloc(oval_files, (idx + 1) * sizeof(char *));
@@ -368,7 +367,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	} else
 		oval_files = action->f_ovals;
 
-	
+
 	/* Validate OVAL files */
 	if (action->validate) {
         	for (idx=0; oval_files[idx]; idx++) {
@@ -387,10 +386,6 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		}
 	}
 
-	/* store our name in the generated documents */
-	gen_tpl = oval_generator_new();
-	oval_generator_set_product_name(gen_tpl, OSCAP_PRODUCTNAME);
-
 	/* Register checking engines */
 	for (idx=0; oval_files[idx]; idx++) {
 		/* file -> def_model */
@@ -407,8 +402,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			goto cleanup;
 		}
 
-		oval_agent_set_generator_template(tmp_sess, gen_tpl);
-		gen_tpl = oval_generator_clone(gen_tpl);
+		/* store our name in the generated documents */
+		oval_agent_set_product_name(tmp_sess, OSCAP_PRODUCTNAME);
 
 		/* remember def_models */
 		def_models = realloc(def_models, (idx + 2) * sizeof(struct oval_definition_model *));
@@ -423,8 +418,6 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		/* register session */
 	        xccdf_policy_model_register_engine_oval(policy_model, tmp_sess);
 	}
-
-	oval_generator_free(gen_tpl);
 
 	// register sce system
 	xccdf_pathcopy =  strdup(action->f_xccdf);
