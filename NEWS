@@ -1,3 +1,14 @@
+openscap-0.8.3 							30-07-2012
+- added XCCDF 1.2 schemas
+- changed XCCDF report format
+- updated schemas for OVAL 5.10
+- added additional OVAL schemas - 5.3, 5.4, 5.5, 5.6, 5.7
+- multi version support for XCCDF and OVAL
+- a schema version of an imported and exported content is same
+- added rpmverifyfile probe
+- results are validated only if an OSCAP_FULL_VALIDATION variable is set
+- bug fixes
+
 openscap-0.8.2							28-03-2012
 - XCCDF check-import support
 - XSLT transformation for XCCDF 1.1 to 1.2 migration
