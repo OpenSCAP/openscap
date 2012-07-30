@@ -69,11 +69,6 @@ oval_agent_session_t * oval_agent_new_session(struct oval_definition_model * mod
 void oval_agent_set_product_name(oval_agent_session_t *, char *);
 
 /**
- * Get the current generator template from the session.
- */
-struct oval_generator *oval_agent_get_generator_template(oval_agent_session_t *);
-
-/**
  * Probe the system and evaluate specified definition
  * @return 0 on success; -1 error; 1 warning
  */
