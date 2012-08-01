@@ -35,6 +35,7 @@ static struct oscap_module* DS_SUBMODULES[];
 bool getopt_ds(int argc, char **argv, struct oscap_action *action);
 int app_ds_sds_split(const struct oscap_action *action);
 int app_ds_sds_compose(const struct oscap_action *action);
+int app_ds_sds_validate(const struct oscap_action *action);
 int app_ds_rds_create(const struct oscap_action *action);
 
 struct oscap_module OSCAP_DS_MODULE = {
@@ -64,6 +65,16 @@ static struct oscap_module DS_SDS_COMPOSE_MODULE = {
 	.func = app_ds_sds_compose
 };
 
+static struct oscap_module DS_SDS_VALIDATE_MODULE = {
+	.name = "sds_validate",
+	.parent = &OSCAP_DS_MODULE,
+	.summary = "Validate given SourceDataStream",
+	.usage = "source_datastream.xml",
+	.help = NULL,
+	.opt_parser = getopt_ds,
+	.func = app_ds_sds_validate
+};
+
 static struct oscap_module DS_RDS_CREATE_MODULE = {
 	.name = "rds_create",
 	.parent = &OSCAP_DS_MODULE,
@@ -77,6 +88,7 @@ static struct oscap_module DS_RDS_CREATE_MODULE = {
 static struct oscap_module* DS_SUBMODULES[] = {
 	&DS_SDS_SPLIT_MODULE,
 	&DS_SDS_COMPOSE_MODULE,
+	&DS_SDS_VALIDATE_MODULE,
 	&DS_RDS_CREATE_MODULE,
 	NULL
 };
@@ -100,6 +112,14 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 		action->ds_action = malloc(sizeof(struct ds_action));
 		action->ds_action->file = argv[3];
 		action->ds_action->target = argv[4];
+	}
+	else if( (action->module == &DS_SDS_VALIDATE_MODULE) ) {
+		if(  argc != 4 ) {
+			oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
+			return false;
+		}
+		action->ds_action = malloc(sizeof(struct ds_action));
+		action->ds_action->file = argv[3];
 	}
 	else if( (action->module == &DS_RDS_CREATE_MODULE) ) {
 		if(  argc < 6 ) {
@@ -155,7 +175,23 @@ int app_ds_sds_compose(const struct oscap_action *action) {
 		}
 	}
 
-	// TODO: error handling
+	ret = OSCAP_OK;
+
+cleanup:
+	free(action->ds_action);
+	return ret;
+}
+
+int app_ds_sds_validate(const struct oscap_action *action) {
+	int ret;
+
+	if (!oscap_validate_document(action->ds_action->file, OSCAP_DOCUMENT_SDS, NULL, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
+	{
+		fprintf(stdout, "Given Source Data Stream '%s' is not valid!\n", action->ds_action->file);
+		ret = OSCAP_ERROR;
+		goto cleanup;
+	}
+
 	ret = OSCAP_OK;
 
 cleanup:
