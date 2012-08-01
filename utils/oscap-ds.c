@@ -46,7 +46,7 @@ struct oscap_module OSCAP_DS_MODULE = {
 };
 
 static struct oscap_module DS_SDS_SPLIT_MODULE = {
-	.name = "sds_split",
+	.name = "sds-split",
 	.parent = &OSCAP_DS_MODULE,
 	.summary = "Split given SourceDataStream into separate files",
 	.usage = "sds.xml target_directory/",
@@ -56,7 +56,7 @@ static struct oscap_module DS_SDS_SPLIT_MODULE = {
 };
 
 static struct oscap_module DS_SDS_COMPOSE_MODULE = {
-	.name = "sds_compose",
+	.name = "sds-compose",
 	.parent = &OSCAP_DS_MODULE,
 	.summary = "Compose SourceDataStream from given XCCDF",
 	.usage = "xccdf-file.xml target_datastream.xml",
@@ -66,7 +66,7 @@ static struct oscap_module DS_SDS_COMPOSE_MODULE = {
 };
 
 static struct oscap_module DS_SDS_VALIDATE_MODULE = {
-	.name = "sds_validate",
+	.name = "sds-validate",
 	.parent = &OSCAP_DS_MODULE,
 	.summary = "Validate given SourceDataStream",
 	.usage = "source_datastream.xml",
@@ -76,7 +76,7 @@ static struct oscap_module DS_SDS_VALIDATE_MODULE = {
 };
 
 static struct oscap_module DS_RDS_CREATE_MODULE = {
-	.name = "rds_create",
+	.name = "rds-create",
 	.parent = &OSCAP_DS_MODULE,
 	.summary = "Create a ResultDataStream from given SourceDataStream, XCCDF results and one or more OVAL results",
 	.usage = "sds.xml target-arf.xml results-xccdf.xml [results-oval1.xml [results-oval2.xml]]",
@@ -152,7 +152,6 @@ int app_ds_sds_split(const struct oscap_action *action) {
 
 	ds_sds_decompose(action->ds_action->file, NULL, action->ds_action->target, NULL);
 
-	// TODO: error handling
 	ret = OSCAP_OK;
 
 cleanup:
@@ -239,7 +238,7 @@ int app_ds_rds_create(const struct oscap_action *action) {
 	oval_result_files[i] = NULL;
 
 	ds_rds_create(action->ds_action->file, action->ds_action->xccdf_result,
-		   oval_result_files, action->ds_action->target);
+		   (const char**)oval_result_files, action->ds_action->target);
 
 	free(oval_result_files);
 
@@ -255,7 +254,6 @@ int app_ds_rds_create(const struct oscap_action *action) {
 		}
 	}
 
-	// TODO: error handling
 	ret = OSCAP_OK;
 
 cleanup:

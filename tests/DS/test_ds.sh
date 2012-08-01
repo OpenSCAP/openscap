@@ -20,13 +20,13 @@ function test_sds {
 
     pushd "$XCCDF_DIR"
 
-    $OSCAP_DIR/oscap ds sds_compose "`basename $XCCDF_FILE`" "$DS_FILE"
+    $OSCAP_DIR/oscap ds sds-compose "`basename $XCCDF_FILE`" "$DS_FILE"
 
     popd
 
     pushd "$DS_TARGET_DIR"
 
-    $OSCAP_DIR/oscap ds sds_split "`basename $DS_FILE`" "$DS_TARGET_DIR"
+    $OSCAP_DIR/oscap ds sds-split "`basename $DS_FILE`" "$DS_TARGET_DIR"
 
     rm sds.xml
 
@@ -66,7 +66,7 @@ function test_rds
 
     local OSCAP_DIR=`cd ../../utils/.libs; pwd`
 
-    $OSCAP_DIR/oscap ds rds_create "$SDS_FILE" "$DS_FILE" "$XCCDF_RESULT_FILE" "$OVAL_RESULT_FILE"
+    $OSCAP_DIR/oscap ds rds-create "$SDS_FILE" "$DS_FILE" "$XCCDF_RESULT_FILE" "$OVAL_RESULT_FILE"
 
     if [ $? -ne 0 ]; then
         ret_val=1
