@@ -37,6 +37,7 @@ int app_ds_sds_split(const struct oscap_action *action);
 int app_ds_sds_compose(const struct oscap_action *action);
 int app_ds_sds_validate(const struct oscap_action *action);
 int app_ds_rds_create(const struct oscap_action *action);
+int app_ds_rds_validate(const struct oscap_action *action);
 
 struct oscap_module OSCAP_DS_MODULE = {
 	.name = "ds",
@@ -85,11 +86,22 @@ static struct oscap_module DS_RDS_CREATE_MODULE = {
 	.func = app_ds_rds_create
 };
 
+static struct oscap_module DS_RDS_VALIDATE_MODULE = {
+	.name = "rds-validate",
+	.parent = &OSCAP_DS_MODULE,
+	.summary = "Validate given ResultDataStream",
+	.usage = "result_datastream.xml",
+	.help = NULL,
+	.opt_parser = getopt_ds,
+	.func = app_ds_rds_validate
+};
+
 static struct oscap_module* DS_SUBMODULES[] = {
 	&DS_SDS_SPLIT_MODULE,
 	&DS_SDS_COMPOSE_MODULE,
 	&DS_SDS_VALIDATE_MODULE,
 	&DS_RDS_CREATE_MODULE,
+	&DS_RDS_VALIDATE_MODULE,
 	NULL
 };
 
@@ -132,6 +144,14 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 		action->ds_action->xccdf_result = argv[5];
 		action->ds_action->oval_results = &argv[6];
 		action->ds_action->oval_result_count = argc - 6;
+	}
+	else if( (action->module == &DS_RDS_VALIDATE_MODULE) ) {
+		if(  argc != 4 ) {
+			oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
+			return false;
+		}
+		action->ds_action = malloc(sizeof(struct ds_action));
+		action->ds_action->file = argv[3];
 	}
 	return true;
 }
@@ -252,6 +272,23 @@ int app_ds_rds_create(const struct oscap_action *action) {
 			ret = OSCAP_ERROR;
 			goto cleanup;
 		}
+	}
+
+	ret = OSCAP_OK;
+
+cleanup:
+	free(action->ds_action);
+	return ret;
+}
+
+int app_ds_rds_validate(const struct oscap_action *action) {
+	int ret;
+
+	if (!oscap_validate_document(action->ds_action->file, OSCAP_DOCUMENT_ARF, NULL, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
+	{
+		fprintf(stdout, "Given Result Data Stream '%s' is not valid!\n", action->ds_action->file);
+		ret = OSCAP_ERROR;
+		goto cleanup;
 	}
 
 	ret = OSCAP_OK;

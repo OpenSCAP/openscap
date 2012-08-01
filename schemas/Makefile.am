@@ -9,6 +9,7 @@ sce10dir = $(pkgdatadir)/schemas/sce/1.0/
 xccdf11dir = $(pkgdatadir)/schemas/xccdf/1.1/
 xccdf12dir = $(pkgdatadir)/schemas/xccdf/1.2/
 sds12dir = $(pkgdatadir)/schemas/sds/1.2/
+arf11dir = $(pkgdatadir)/schemas/arf/1.1/
 ocil20dir = $(pkgdatadir)/schemas/ocil/2.0/
 
 oval53_DATA = $(wildcard oval/5.3/*.xsd)
@@ -25,6 +26,7 @@ xccdf11_DATA = $(wildcard xccdf/1.1/*.xsd xccdf/1.1/*.dtd)
 xccdf12_DATA = $(wildcard xccdf/1.2/*.xsd xccdf/1.2/*.dtd)
 
 sds12_DATA = $(wildcard sds/1.2/*.xsd sds/1.2/*.dtd)
+arf11_DATA = $(wildcard arf/1.1/*.xsd)
 
 ocil20_DATA = $(wildcard ocil/2.0/*.xsd sds/2.0/*.dtd)
 
