@@ -414,6 +414,15 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 				dE("fsdev_init() failed.\n");
 				return (NULL);
 			}
+		} else if (filesystem == OVAL_RECURSE_FS_DEFINED) {
+			/* store the device id for future comparison */
+			FTSENT *fts_ent;
+
+			fts_ent = fts_read(ofts->ofts_match_path_fts);
+			if (fts_ent != NULL) {
+				ofts->ofts_recurse_path_devid = fts_ent->fts_statp->st_dev;
+				fts_set(ofts->ofts_match_path_fts, fts_ent, FTS_AGAIN);
+			}
 		}
 
 		ofts->ofts_spath = SEXP_ref(path); /* path entity */
@@ -486,6 +495,23 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 					return NULL;
 				}
 			}
+		}
+
+		/* don't recurse into non-local filesystems */
+		if (ofts->filesystem == OVAL_RECURSE_FS_LOCAL
+		    && (fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)
+		    && (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
+					 (fts_ent->fts_statp != NULL) ?
+					 &fts_ent->fts_statp->st_dev : NULL))) {
+			fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
+			continue;
+		}
+		/* don't recurse beyond the initial filesystem */
+		if (ofts->filesystem == OVAL_RECURSE_FS_DEFINED
+		    && (fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)
+		    && ofts->ofts_recurse_path_devid != fts_ent->fts_statp->st_dev) {
+			fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
+			continue;
 		}
 
 		if ((ofts->ofts_sfilepath && fts_ent->fts_info == FTS_D)
@@ -618,12 +644,19 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 				}
 			}
 
-			/* don't recurse into non-local fs if configured so */
+			/* don't recurse into non-local filesystems */
 			if (ofts->filesystem == OVAL_RECURSE_FS_LOCAL
 			    && (fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)
 			    && (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
 					(fts_ent->fts_statp != NULL) ?
 					&fts_ent->fts_statp->st_dev : NULL))) {
+				fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
+				continue;
+			}
+			/* don't recurse beyond the initial filesystem */
+			if (ofts->filesystem == OVAL_RECURSE_FS_DEFINED
+			    && (fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)
+			    && ofts->ofts_recurse_path_devid != fts_ent->fts_statp->st_dev) {
 				fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
 				continue;
 			}
@@ -654,8 +687,15 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 				if (fts_ent == NULL)
 					break;
 
+				/*
+				   it would be more accurate to obtain the device
+				   id here, but for the sake of supporting the
+				   comparison also in oval_fts_read_match_path(),
+				   the device id is obtained in oval_fts_open()
+
 				if (ofts->ofts_recurse_path_curdepth == 0)
 					ofts->ofts_recurse_path_devid = fts_ent->fts_statp->st_dev;
+				*/
 
 				if (ofts->filesystem == OVAL_RECURSE_FS_LOCAL
 				    && (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
