@@ -103,8 +103,9 @@ static struct oscap_module XCCDF_EVAL = {
     .name = "eval",
     .parent = &OSCAP_XCCDF_MODULE,
     .summary = "Perform evaluation driven by XCCDF file and use OVAL as checking engine",
-    .usage = "[options] xccdf-benchmark.xml [oval-definitions-files]",
+    .usage = "[options] INPUT_FILE [oval-definitions-files]",
     .help =
+		"INPUT_FILE - XCCDF file or a source data stream file\n\n"
         "Options:\n"
         "   --profile <name>\r\t\t\t\t - The name of Profile to be evaluated.\n"
         "   --oval-results\r\t\t\t\t - Save OVAL results as well.\n"
@@ -113,9 +114,9 @@ static struct oscap_module XCCDF_EVAL = {
 #endif
         "   --export-variables\r\t\t\t\t - Export OVAL external variables provided by XCCDF.\n"
         "   --results <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
+        "   --results-arf <file>\r\t\t\t\t - Write ARF (result data stream) into file.\n"
         "   --report <file>\r\t\t\t\t - Write HTML report into file.\n"
-        "   --skip-valid \r\t\t\t\t - Skip validation.\n"
-                                 "\t\t\t\t   (--results must be also specified for this to work)\n",
+        "   --skip-valid \r\t\t\t\t - Skip validation.",
     .opt_parser = getopt_xccdf,
     .func = app_evaluate_xccdf
 };
