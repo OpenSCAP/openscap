@@ -23,7 +23,7 @@
  * Authors:
  *       Daniel Kopecek <dkopecek@redhat.com>
  *       Peter Vrabec <pvrabec@redhat.com>
- */ 
+ */
 
 #pragma once
 #ifndef OSCAP_DEBUG_PRIV_H_
@@ -32,7 +32,13 @@
 #include "util.h"
 #include "public/debug.h"
 
+
 #define OSCAP_DEBUGOBJ_SEXP 1
+
+#include <assert.h>
+#ifndef _A
+#define _A(x) assert(x)
+#endif
 
 #if defined(NDEBUG)
 # define oscap_dlprintf(...) while(0)
@@ -64,7 +70,7 @@ extern int __debuglog_level;
  *   foo = do_something_only_in_debug_mode();
  *   ...
  * }
- * 
+ *
  */
 # define debug(l) if ((__debuglog_level = (__debuglog_level == -1 ? atoi (getenv (OSCAP_DEBUG_LEVEL_ENV) == NULL ? "0" : getenv (OSCAP_DEBUG_LEVEL_ENV)) : __debuglog_level)) && __debuglog_level >= (l))
 

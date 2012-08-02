@@ -307,8 +307,6 @@ static SEXP_t *probe_ste_fetch(probe_t *probe, SEXP_t *id_list)
 	SEXP_t *res, *ste, *id;
 	uint32_t i_len, r_len;
 
-	_LOGCALL_;
-
 	i_len = SEXP_list_length(id_list);
 
 	if (i_len == 0)
@@ -361,8 +359,6 @@ static SEXP_t *probe_ste_fetch(probe_t *probe, SEXP_t *id_list)
 static SEXP_t *probe_obj_eval(probe_t *probe, SEXP_t *id)
 {
 	SEXP_t *res, *rid;
-
-	_LOGCALL_;
 
 	res = SEAP_cmd_exec(probe->SEAP_ctx, probe->sd, 0, PROBECMD_OBJ_EVAL, id, SEAP_CMDTYPE_SYNC, NULL, NULL);
 
@@ -551,8 +547,6 @@ static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
 	oval_syschar_status_t item_status;
 	oval_syschar_collection_flag_t flag;
 
-	_LOGCALL_;
-
 	result_items = SEXP_list_new(NULL);
 	flag = probe_cobj_get_flag(cobj);
 	items = probe_cobj_get_items(cobj);
@@ -624,12 +618,10 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 
 	SEXP_t *r0, *r1, *result, *Omsg = NULL;
 
-	_LOGCALL_;
-
 	if (depth > MAX_EVAL_DEPTH) {
 		char *fmt = "probe_set_eval: Too many levels: max=%zu.";
 #ifndef NDEBUG
-                _D(fmt, (size_t) MAX_EVAL_DEPTH);
+                dI(fmt, (size_t) MAX_EVAL_DEPTH);
 		abort();
 #endif
 		r0 = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, fmt, (size_t) MAX_EVAL_DEPTH);
@@ -835,22 +827,22 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 
                 for (i = 0; i < s_subset_i; ++i) {
                         if (s_subset[i] != NULL) {
-                                _I("=== s_subset[%d] ===\n", i);
-                                _SE(s_subset[i]);
-                                _I("\n");
+                                dI("=== s_subset[%d] ===\n", i);
+                                dO(OSCAP_DEBUGOBJ_SEXP, s_subset[i]);
+                                dI("\n");
                         }
                 }
 
                 for (i = 0; i < o_subset_i; ++i) {
                         if (o_subset[i] != NULL) {
-                                _I("=== o_subset[%d] ===\n", i);
-                                _SE(o_subset[i]);
-                                _I("\n");
+                                dI("=== o_subset[%d] ===\n", i);
+                                dO(OSCAP_DEBUGOBJ_SEXP, o_subset[i]);
+                                dI("\n");
                         }
                 }
         }
 
-        _I("OP= %d\n", op_num);
+        dI("OP= %d\n", op_num);
 #endif
 
 	SEXP_free(filters_a);
@@ -861,9 +853,9 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 	SEXP_free(s_subset[0]);
 	SEXP_free(s_subset[1]);
 
-        _I("=== RESULT ===\n");
-        _SE(result);
-        _I("\n");
+        dI("=== RESULT ===\n");
+        dO(OSCAP_DEBUGOBJ_SEXP, result);
+        dI("\n");
 
 	return (result);
  eval_fail:

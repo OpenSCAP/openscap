@@ -69,7 +69,7 @@ oval_result_t probe_ent_cmp_binary(SEXP_t * val1, SEXP_t * val2, oval_operation_
 			result = OVAL_RESULT_FALSE;
 		break;
 	default:
-		_D("Unexpected compare operation: %d\n", op);
+		dI("Unexpected compare operation: %d\n", op);
 	}
 
         oscap_free(s1);
@@ -100,7 +100,7 @@ oval_result_t probe_ent_cmp_bool(SEXP_t * val1, SEXP_t * val2, oval_operation_t 
 			result = OVAL_RESULT_FALSE;
 		break;
 	default:
-		_D("Unexpected compare operation: %d\n", op);
+		dI("Unexpected compare operation: %d\n", op);
 	}
 
 	return result;
@@ -170,7 +170,7 @@ oval_result_t probe_ent_cmp_float(SEXP_t * val1, SEXP_t * val2, oval_operation_t
 			result = OVAL_RESULT_FALSE;
 		break;
 	default:
-		_D("Unexpected compare operation: %d\n", op);
+		dI("Unexpected compare operation: %d\n", op);
 	}
 
 	return result;
@@ -234,7 +234,7 @@ oval_result_t probe_ent_cmp_int(SEXP_t * val1, SEXP_t * val2, oval_operation_t o
 			result = OVAL_RESULT_FALSE;
 		break;
 	default:
-		_D("Unexpected compare operation: %d\n", op);
+		dI("Unexpected compare operation: %d\n", op);
 	}
 
 	return result;
@@ -319,7 +319,7 @@ oval_result_t probe_ent_cmp_version(SEXP_t * val1, SEXP_t * val2, oval_operation
 		result = OVAL_RESULT_FALSE;
 		break;
 	default:
-		_D("Unexpected compare operation: %d\n", op);
+		dI("Unexpected compare operation: %d\n", op);
 		goto fail;
 	}
 
@@ -468,7 +468,7 @@ oval_result_t probe_ent_cmp_string(SEXP_t * val1, SEXP_t * val2, oval_operation_
 		}
 		break;
 	default:
-		_D("Unexpected compare operation: %d\n", op);
+		dI("Unexpected compare operation: %d\n", op);
 	}
 
         oscap_free(s1);
@@ -740,7 +740,7 @@ static oval_result_t probe_ent_cmp(SEXP_t * ent, SEXP_t * val2)
 
 	SEXP_list_foreach(val1, vals) {
 		if (SEXP_typeof(val1) != SEXP_typeof(val2)) {
-			_D("Types of values to compare don't match: val1: %d, val2: %d\n",
+			dI("Types of values to compare don't match: val1: %d, val2: %d\n",
 			   SEXP_typeof(val1), SEXP_typeof(val2));
 
                         SEXP_free(vals);
@@ -786,7 +786,7 @@ static oval_result_t probe_ent_cmp(SEXP_t * ent, SEXP_t * val2)
 			break;
 		default:
 			ores = OVAL_RESULT_ERROR;
-			_D("Unexpected data type: %d\n", dtype);
+			dI("Unexpected data type: %d\n", dtype);
 		}
 
 		SEXP_list_add(res_lst, r0 = SEXP_number_newi_32(ores));

@@ -258,14 +258,12 @@ fail1:
 
 int sch_pipe_openfd (SEAP_desc_t *desc, int fd, uint32_t flags)
 {
-        _LOGCALL_;
         errno = EOPNOTSUPP;
         return (-1);
 }
 
 int sch_pipe_openfd2 (SEAP_desc_t *desc, int ifd, int ofd, uint32_t flags)
 {
-        _LOGCALL_;
         errno = EOPNOTSUPP;
         return (-1);
 }

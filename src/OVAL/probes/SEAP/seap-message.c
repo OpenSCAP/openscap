@@ -71,7 +71,7 @@ void SEAP_msg_free (SEAP_msg_t *msg)
 
         if (msg->attrs != NULL) {
                 for (; msg->attrs_cnt > 0; --msg->attrs_cnt) {
-                        _D("name=%s, value=%p\n",
+                        dI("name=%s, value=%p\n",
                            msg->attrs[msg->attrs_cnt - 1].name,
                            msg->attrs[msg->attrs_cnt - 1].value);
 
@@ -134,13 +134,12 @@ bool SEAP_msgattr_exists (SEAP_msg_t *msg, const char *name)
 
         _A(msg  != NULL);
         _A(name != NULL);
-        _LOGCALL_;
 
-        _D("cnt = %u\n", msg->attrs_cnt);
+        dI("cnt = %u\n", msg->attrs_cnt);
 
         /* FIXME: this is stupid */
         for (i = 0; i < msg->attrs_cnt; ++i) {
-                _D("%s ?= %s\n", name, msg->attrs[i].name);
+                dI("%s ?= %s\n", name, msg->attrs[i].name);
                 if (strcmp (name, msg->attrs[i].name) == 0)
                         return (true);
         }

@@ -47,6 +47,7 @@
 #include <errno.h>
 #include <crapi/crapi.h>
 
+#include "common/debug_priv.h"
 #include "oval_fts.h"
 #include "util.h"
 #include "probe/entcmp.h"
@@ -190,8 +191,6 @@ static int filehash58_cb (const char *p, const char *f, const char *h, probe_ctx
 
 void *probe_init (void)
 {
-	_LOGCALL_;
-
 	/*
 	 * Initialize crypto API
 	 */
@@ -205,7 +204,7 @@ void *probe_init (void)
 	case 0:
 		return ((void *)&__filehash58_probe_mutex);
 	default:
-		_D("Can't initialize mutex: errno=%u, %s.\n", errno, strerror (errno));
+		dI("Can't initialize mutex: errno=%u, %s.\n", errno, strerror (errno));
 	}
 
 	return (NULL);
@@ -271,7 +270,7 @@ int probe_main(probe_ctx *ctx, void *mutex)
 	case 0:
 		break;
 	default:
-		_D("Can't lock mutex(%p): %u, %s.\n", &__filehash58_probe_mutex, errno, strerror (errno));
+		dI("Can't lock mutex(%p): %u, %s.\n", &__filehash58_probe_mutex, errno, strerror (errno));
 
 		err = PROBE_EFATAL;
 		goto cleanup;
@@ -307,7 +306,7 @@ cleanup:
 	case 0:
 		break;
 	default:
-		_D("Can't unlock mutex(%p): %u, %s.\n", &__filehash58_probe_mutex, errno, strerror (errno));
+		dI("Can't unlock mutex(%p): %u, %s.\n", &__filehash58_probe_mutex, errno, strerror (errno));
 
 		err = PROBE_EFATAL;
 	}

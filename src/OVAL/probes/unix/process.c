@@ -66,6 +66,7 @@
 #include "probe-api.h"
 #include "probe/entcmp.h"
 #include "alloc.h"
+#include "common/debug_priv.h"
 
 /* Convenience structure for the results being reported */
 struct result_info {
@@ -246,7 +247,7 @@ static int read_process(SEXP_t *cmd_ent, probe_ctx *ctx)
 			continue;
 
 		err = 0; // If we get this far, no permission problems
-		_D("Have command: %s\n", cmd);
+		dI("Have command: %s\n", cmd);
 		cmd_sexp = SEXP_string_newf("%s", cmd);
 		if (probe_entobj_cmp(cmd_ent, cmd_sexp) == OVAL_RESULT_TRUE) {
 			struct result_info r;
@@ -400,7 +401,7 @@ static int read_process(SEXP_t *cmd_ent, probe_ctx *ctx)
 
 
 		err = 0; // If we get this far, no permission problems
-		_D("Have command: %s\n", psinfo->pr_fname);
+		dI("Have command: %s\n", psinfo->pr_fname);
 		cmd_sexp = SEXP_string_newf("%s", psinfo->pr_fname);
 		if (probe_entobj_cmp(cmd_ent, cmd_sexp) == OVAL_RESULT_TRUE) {
 			struct result_info r;

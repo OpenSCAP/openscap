@@ -42,7 +42,6 @@
 #include "alloc.h"
 #include "debug_priv.h"
 #include "oval_fts.h"
-#include "SEAP/public/seap-debug.h"
 #if defined(__SVR4) && defined(__sun)
 #include "fts_sun.h"
 #else
@@ -112,7 +111,7 @@ static OVAL_FTSENT *OVAL_FTSENT_new(OVAL_FTS *ofts, FTSENT *fts_ent)
 	}
 
 #if defined(OSCAP_VERBOSE_DEBUG)
-	_I("\n"
+	dI("\n"
 	   "New OVAL_FTSENT:\n"
 	   "\t    file: '%s'.\n"
 	   "\t    path: '%s'.\n", ofts_ent->file, ofts_ent->path);
@@ -195,7 +194,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		path_op = OVAL_OPERATION_EQUALS;
 	}
 #if defined(OSCAP_VERBOSE_DEBUG)
-	_I("path_op: %u, '%s'.\n", path_op, oval_operation_get_text(path_op));
+	dI("path_op: %u, '%s'.\n", path_op, oval_operation_get_text(path_op));
 #endif
 	if (path) { /* filepath == NULL */
 		PROBE_ENT_STRVAL(path, cstr_path, sizeof cstr_path,
@@ -207,7 +206,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 					 return NULL;, /* noop */;);
 		}
 #if defined(OSCAP_VERBOSE_DEBUG)
-		_I("\n"
+		dI("\n"
 		   "        path: '%s'.\n"
 		   "    filename: '%s'.\n"
 		   "nil filename: %d.\n", cstr_path, nilfilename ? "" : cstr_file, nilfilename);
@@ -217,12 +216,12 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
 		max_depth = strtol(cstr_buff, NULL, 10);
 		if (errno == EINVAL || errno == ERANGE) {
-			_F("Invalid value of the `%s' attribute: %s\n", "recurse_direction", cstr_buff);
+			dE("Invalid value of the `%s' attribute: %s\n", "recurse_direction", cstr_buff);
 			SEXP_free(r0);
 			return (NULL);
 		}
 #if defined(OSCAP_VERBOSE_DEBUG)
-		_I("bh.max_depth: %s => max_depth: %d\n", cstr_buff, max_depth);
+		dI("bh.max_depth: %s => max_depth: %d\n", cstr_buff, max_depth);
 #endif
 		SEXP_free(r0);
 
@@ -237,12 +236,12 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		} else if (strcmp(cstr_buff, "up") == 0) {
 			direction = OVAL_RECURSE_DIRECTION_UP;
 		} else {
-			_F("Invalid direction: %s\n", cstr_buff);
+			dE("Invalid direction: %s\n", cstr_buff);
 			SEXP_free(r0);
 			return (NULL);
 		}
 #if defined(OSCAP_VERBOSE_DEBUG)
-		_I("bh.direction: %s => direction: %d\n", cstr_buff, direction);
+		dI("bh.direction: %s => direction: %d\n", cstr_buff, direction);
 #endif
 		SEXP_free(r0);
 
@@ -260,7 +259,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 			} else if (strcmp(cstr_buff, "directories") == 0) {
 				recurse = OVAL_RECURSE_DIRS;
 			} else {
-				_F("Invalid recurse: %s\n", cstr_buff);
+				dE("Invalid recurse: %s\n", cstr_buff);
 				SEXP_free(r0);
 				return (NULL);
 			}
@@ -268,7 +267,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 			recurse = OVAL_RECURSE_SYMLINKS_AND_DIRS;
 		}
 #if defined(OSCAP_VERBOSE_DEBUG)
-		_I("bh.recurse: %s => recurse: %d\n", cstr_buff, recurse);
+		dI("bh.recurse: %s => recurse: %d\n", cstr_buff, recurse);
 #endif
 		SEXP_free(r0);
 
@@ -286,7 +285,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 				filesystem = OVAL_RECURSE_FS_DEFINED;
 				rec_fts_options |= FTS_XDEV;
 			} else {
-				_F("Invalid recurse filesystem: %s\n", cstr_buff);
+				dE("Invalid recurse filesystem: %s\n", cstr_buff);
 				SEXP_free(r0);
 				return (NULL);
 			}
@@ -294,7 +293,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 			filesystem = OVAL_RECURSE_FS_ALL;
 		}
 #if defined(OSCAP_VERBOSE_DEBUG)
-		_I("bh.filesystem: %s => filesystem: %d\n", cstr_buff, filesystem);
+		dI("bh.filesystem: %s => filesystem: %d\n", cstr_buff, filesystem);
 #endif
 		SEXP_free(r0);
 	} else { /* filepath != NULL */
@@ -373,7 +372,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 
 		regex = pcre_compile(cstr_path, 0, &errptr, &errofs, NULL);
 		if (regex == NULL) {
-			_F("pcre_compile() failed: pattern: '%s', err offset: %d, err msg: '%s'.\n",
+			dE("pcre_compile() failed: pattern: '%s', err offset: %d, err msg: '%s'.\n",
 			   cstr_path, errofs, errptr);
 			return (NULL);
 		} else {
@@ -385,7 +384,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 			pcre_fullinfo(regex, ofts->ofts_path_regex_extra,
 				      PCRE_INFO_FIRSTBYTE, &firstbyte);
 
-			_I("pcre_fullinfo(): firstbyte: %d '%c'.\n", firstbyte, firstbyte);
+			dI("pcre_fullinfo(): firstbyte: %d '%c'.\n", firstbyte, firstbyte);
 
 			ret = pcre_exec(ofts->ofts_path_regex, ofts->ofts_path_regex_extra,
 					"/f0o/bar/baz", 12, 0, PCRE_PARTIAL, svec, 1);
@@ -403,7 +402,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 				ofts->ofts_path_regex = NULL;
 				ofts->ofts_path_regex_extra = NULL;
 			} else {
-				_I("Partial-match optimization enabled.\n");
+				dI("Partial-match optimization enabled.\n");
 			}
 		}
 	}
@@ -412,7 +411,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		if (filesystem == OVAL_RECURSE_FS_LOCAL) {
 			ofts->localdevs = fsdev_init(NULL, 0);
 			if (ofts->localdevs == NULL) {
-				_F("fsdev_init() failed.\n");
+				dE("fsdev_init() failed.\n");
 				return (NULL);
 			}
 		}

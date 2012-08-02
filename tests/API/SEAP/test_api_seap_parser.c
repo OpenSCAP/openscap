@@ -8,6 +8,8 @@
 #include <string.h>
 #include <sexp.h>
 
+#include "common/debug_priv.h"
+
 static int print_sexp (SEXP_t *s_exp)
 {
         strbuf_t *sb;

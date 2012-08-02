@@ -59,7 +59,6 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    sexp-atomic.c		\
 		    _sexp-atomic.h		\
 		    public/seap-command.h	\
-		    public/seap-debug.h		\
 		    public/seap-types.h		\
 		    public/seap.h		\
 		    public/seap-scheme.h	\

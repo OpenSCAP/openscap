@@ -47,6 +47,7 @@
 #include <crapi/crapi.h>
 
 #include "oval_fts.h"
+#include <common/debug_priv.h>
 
 #define FILE_SEPARATOR '/'
 
@@ -165,8 +166,6 @@ static int filehash_cb (const char *p, const char *f, probe_ctx *ctx)
 
 void *probe_init (void)
 {
-        _LOGCALL_;
-
         /*
          * Initialize crypto API
          */
@@ -180,7 +179,7 @@ void *probe_init (void)
         case 0:
                 return ((void *)&__filehash_probe_mutex);
         default:
-                _D("Can't initialize mutex: errno=%u, %s.\n", errno, strerror (errno));
+                dI("Can't initialize mutex: errno=%u, %s.\n", errno, strerror (errno));
         }
 
         return (NULL);
@@ -240,7 +239,7 @@ int probe_main (probe_ctx *ctx, void *mutex)
         case 0:
                 break;
         default:
-                _D("Can't lock mutex(%p): %u, %s.\n", &__filehash_probe_mutex, errno, strerror (errno));
+                dI("Can't lock mutex(%p): %u, %s.\n", &__filehash_probe_mutex, errno, strerror (errno));
 
 		SEXP_free (behaviors);
 		SEXP_free (path);
@@ -268,7 +267,7 @@ int probe_main (probe_ctx *ctx, void *mutex)
         case 0:
                 break;
         default:
-                _D("Can't unlock mutex(%p): %u, %s.\n", &__filehash_probe_mutex, errno, strerror (errno));
+                dI("Can't unlock mutex(%p): %u, %s.\n", &__filehash_probe_mutex, errno, strerror (errno));
 
 		return (PROBE_EFATAL);
         }

@@ -50,10 +50,7 @@
 
 #include "oval_fts.h"
 #include "SEAP/generic/rbt/rbt.h"
-
-#ifndef _A
-#define _A(x) assert(x)
-#endif
+#include "common/debug_priv.h"
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096
@@ -234,7 +231,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
 	}
 
         if (lstat (st_path, &st) == -1) {
-                _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
+                dI("FAIL: errno=%u, %s.\n", errno, strerror (errno));
                 return (-1);
         } else {
                 SEXP_t *se_usr_id, *se_grp_id;
@@ -296,8 +293,6 @@ static pthread_mutex_t __file_probe_mutex;
 
 void *probe_init (void)
 {
-        _LOGCALL_;
-
         /*
          * Initialize true/false global reference.
          */
@@ -339,7 +334,7 @@ void *probe_init (void)
         case 0:
                 return ((void *)&__file_probe_mutex);
         default:
-                _D("Can't initialize mutex: errno=%u, %s.\n", errno, strerror (errno));
+                dI("Can't initialize mutex: errno=%u, %s.\n", errno, strerror (errno));
         }
 #if 0
 	probe_setoption(PROBE_VARREF_HANDLING, false, "path");
@@ -419,7 +414,7 @@ int probe_main (probe_ctx *ctx, void *mutex)
         case 0:
                 break;
         default:
-                _D("Can't lock mutex(%p): %u, %s.\n", &__file_probe_mutex, errno, strerror (errno));
+                dI("Can't lock mutex(%p): %u, %s.\n", &__file_probe_mutex, errno, strerror (errno));
 
 		SEXP_free(path);
 		SEXP_free(filename);
@@ -451,7 +446,7 @@ int probe_main (probe_ctx *ctx, void *mutex)
         case 0:
                 break;
         default:
-                _D("Can't unlock mutex(%p): %u, %s.\n", &__file_probe_mutex, errno, strerror (errno));
+                dI("Can't unlock mutex(%p): %u, %s.\n", &__file_probe_mutex, errno, strerror (errno));
 
                 return PROBE_EFATAL;
         }

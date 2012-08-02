@@ -98,8 +98,6 @@ ssize_t sch_generic_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
         ssize_t   ret;
         strbuf_t *sb;
 
-        _LOGCALL_;
-
         ret = 0;
         sb  = strbuf_new (SEAP_STRBUF_MAX);
 
@@ -167,7 +165,7 @@ int sch_generic_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t fl
         switch (select (fd + 1, rptr, wptr, NULL, tv_ptr)) {
         case -1:
                 protect_errno {
-                        _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
+                        dI("FAIL: errno=%u, %s.\n", errno, strerror (errno));
                 }
                 return (-1);
         case  0:

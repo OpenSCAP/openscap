@@ -71,10 +71,6 @@
 #include "debug_priv.h"
 #include "probe/entcmp.h"
 
-#ifndef _A
-#define _A(x) assert(x)
-#endif
-
 struct rpmverify_res {
         char *name;  /**< package name */
         const char *file;  /**< filepath */
@@ -279,7 +275,7 @@ ret:
 void *probe_init (void)
 {
         if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {
-                _D("rpmReadConfigFiles failed: %u, %s.\n", errno, strerror (errno));
+                dI("rpmReadConfigFiles failed: %u, %s.\n", errno, strerror (errno));
                 return (NULL);
         }
 

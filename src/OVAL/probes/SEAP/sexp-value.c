@@ -47,7 +47,7 @@ int SEXP_val_new (SEXP_val_t *dst, size_t vmemsize, SEXP_type_t type)
         dst->type      = type;
         dst->ptr       = SEXP_val_ptr (dst);
 #if defined(SEAP_VERBOSE_DEBUG)
-        _D("\n"
+        dI("\n"
            "new value: hdr->refs = %u\n"
            "           hdr->size = %zu\n"
            "                type = %hhu\n"
@@ -304,8 +304,6 @@ uintptr_t SEXP_rawval_lblk_last (uintptr_t lblkp)
 SEXP_t *SEXP_rawval_lblk_nth (uintptr_t lblkp, uint32_t n)
 {
         register struct SEXP_val_lblk *lblk;
-
-        _LOGCALL_;
 
         lblk = SEXP_VALP_LBLK(lblkp);
 

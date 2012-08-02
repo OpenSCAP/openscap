@@ -64,6 +64,7 @@
 #include "probe-api.h"
 #include "probe/entcmp.h"
 #include "alloc.h"
+#include "common/debug_priv.h"
 
 /* This structure contains the information OVAL is asking or requesting */
 struct server_info {
@@ -423,7 +424,7 @@ static int read_tcp(const char *proc, const char *type, llist *l, probe_ctx *ctx
 		char src[NI_MAXHOST], dest[NI_MAXHOST];
 		addr_convert(local_addr, src, NI_MAXHOST);
 		addr_convert(rem_addr, dest, NI_MAXHOST);
-		_D("Have tcp port: %s:%u\n", src, local_port);
+		dI("Have tcp port: %s:%u\n", src, local_port);
 		if (eval_data(type, src, local_port)) {
 			struct result_info r;
 			r.proto = type;
@@ -474,7 +475,7 @@ static int read_udp(const char *proc, const char *type, llist *l, probe_ctx *ctx
 		char src[NI_MAXHOST], dest[NI_MAXHOST];
 		addr_convert(local_addr, src, NI_MAXHOST);
 		addr_convert(rem_addr, dest, NI_MAXHOST);
-		_D("Have udp port: %s:%u\n", src, local_port);
+		dI("Have udp port: %s:%u\n", src, local_port);
 		if (eval_data(type, src, local_port)) {
 			struct result_info r;
 			r.proto = type;
@@ -525,7 +526,7 @@ static int read_raw(const char *proc, const char *type, llist *l, probe_ctx *ctx
 		char src[NI_MAXHOST], dest[NI_MAXHOST];
 		addr_convert(local_addr, src, NI_MAXHOST);
 		addr_convert(rem_addr, dest, NI_MAXHOST);
-		_D("Have raw port: %s:%u\n", src, local_port);
+		dI("Have raw port: %s:%u\n", src, local_port);
 		if (eval_data(type, src, local_port)) {
 			struct result_info r;
 			r.proto = type;

@@ -24,7 +24,6 @@
 #ifndef SEXP_H
 #define SEXP_H
 
-#include <seap-debug.h>
 #include <sexp-types.h>
 #include <sexp-manip.h>
 #include <sexp-manip_r.h>

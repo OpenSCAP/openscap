@@ -26,7 +26,6 @@
 
 #include <stdint.h>
 #include <stdarg.h>
-#include <seap-debug.h>
 #include <sexp-types.h>
 #include <seap-types.h>
 

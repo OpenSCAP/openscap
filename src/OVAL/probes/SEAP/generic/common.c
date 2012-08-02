@@ -32,10 +32,6 @@
 #include "public/sm_alloc.h"
 #include "common.h"
 
-#ifndef _A
-#define _A(x) assert(x)
-#endif
-
 void *xmemdup (const void *src, size_t len)
 {
         void *new;

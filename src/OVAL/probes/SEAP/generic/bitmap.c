@@ -35,10 +35,6 @@
 #include "common.h"
 #include "bitmap.h"
 
-#ifndef _A
-#define _A(x) assert(x)
-#endif
-
 bitmap_t *bitmap_new (bitmap_size_t size)
 {
         bitmap_t *bitmap;

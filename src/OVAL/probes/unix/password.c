@@ -56,6 +56,7 @@
 #include "probe-api.h"
 #include "probe/entcmp.h"
 #include "alloc.h"
+#include "common/debug_priv.h"
 
 /* Convenience structure for the results being reported */
 struct result_info {
@@ -92,7 +93,7 @@ static int read_password(SEXP_t *un_ent, probe_ctx *ctx)
         while ((pw = getpwent())) {
                 SEXP_t *un;
 
-                _D("Have user: %s\n", pw->pw_name);
+                dI("Have user: %s\n", pw->pw_name);
                 un = SEXP_string_newf("%s", pw->pw_name);
                 if (probe_entobj_cmp(un_ent, un) == OVAL_RESULT_TRUE) {
                         struct result_info r;

@@ -57,6 +57,7 @@
 #include "probe-api.h"
 #include "probe/entcmp.h"
 #include "alloc.h"
+#include "common/debug_priv.h"
 
 #ifndef HAVE_SHADOW_H
 int probe_main(probe_ctx *ctx, void *arg)
@@ -178,7 +179,7 @@ static int read_shadow(SEXP_t *un_ent, probe_ctx *ctx)
 	while ((pw = getspent())) {
 		SEXP_t *un;
 
-		_D("Have user: %s\n", pw->sp_namp);
+		dI("Have user: %s\n", pw->sp_namp);
 		err = 0;
 		un = SEXP_string_newf("%s", pw->sp_namp);
 		if (probe_entobj_cmp(un_ent, un) == OVAL_RESULT_TRUE) {

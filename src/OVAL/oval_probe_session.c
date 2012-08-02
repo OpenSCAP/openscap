@@ -39,6 +39,9 @@
 #include "common/_error.h"
 #include "common/assume.h"
 #include "common/bfind.h"
+#include "common/debug_priv.h"
+
+
 #include "public/oval_definitions.h"
 #include "_oval_probe_session.h"
 #include "_oval_probe_handler.h"

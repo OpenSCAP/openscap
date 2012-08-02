@@ -54,10 +54,6 @@
 #include <netdb.h>
 #include "../SEAP/generic/rbt/rbt.h"
 
-#define dI(...) oscap_dlprintf(DBG_I, __VA_ARGS__)
-#define dW(...) oscap_dlprintf(DBG_W, __VA_ARGS__)
-#define dE(...) oscap_dlprintf(DBG_E, __VA_ARGS__)
-
 #define PATH_SEPARATOR '/'
 
 /*
@@ -1590,7 +1586,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 
 	SEXP_free (eval);
 
-	_D("Updating xinetd configuration cache");
+	dI("Updating xinetd configuration cache");
 
 	if (xiconf_update(arg) != 0) {
 		err = PROBE_EUNKNOWN;

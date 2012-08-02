@@ -47,7 +47,6 @@
 static void SEAP_CTX_initdefault (SEAP_CTX_t *ctx)
 {
         _A(ctx != NULL);
-        _LOGCALL_;
 
         ctx->parser  = NULL /* PARSER(label) */;
         ctx->pflags  = SEXP_PFLAG_EOFOK;
@@ -69,8 +68,6 @@ SEAP_CTX_t *SEAP_CTX_new (void)
 {
         SEAP_CTX_t *ctx;
 
-        _LOGCALL_;
-
         ctx = sm_talloc (SEAP_CTX_t);
         SEAP_CTX_initdefault (ctx);
 
@@ -80,8 +77,6 @@ SEAP_CTX_t *SEAP_CTX_new (void)
 void SEAP_CTX_init (SEAP_CTX_t *ctx)
 {
         _A(ctx != NULL);
-        _LOGCALL_;
-
         SEAP_CTX_initdefault (ctx);
         return;
 }
@@ -89,8 +84,6 @@ void SEAP_CTX_init (SEAP_CTX_t *ctx)
 void SEAP_CTX_free (SEAP_CTX_t *ctx)
 {
         _A(ctx != NULL);
-        _LOGCALL_;
-
         SEAP_desctable_free(ctx->sd_table);
         SEAP_cmdtbl_free (ctx->cmd_c_table);
         sm_free (ctx);
@@ -104,8 +97,6 @@ int SEAP_connect (SEAP_CTX_t *ctx, const char *uri, uint32_t flags)
         SEAP_scheme_t scheme;
         size_t schstr_len = 0;
         int sd;
-
-        _LOGCALL_;
 
         while (uri[schstr_len] != ':') {
                 if (uri[schstr_len] == '\0') {
@@ -125,7 +116,7 @@ int SEAP_connect (SEAP_CTX_t *ctx, const char *uri, uint32_t flags)
         sd = SEAP_desc_add (ctx->sd_table, NULL, scheme, NULL);
 
         if (sd < 0) {
-                _D("Can't create/add new SEAP descriptor\n");
+                dI("Can't create/add new SEAP descriptor\n");
                 return (-1);
         }
 
@@ -137,7 +128,7 @@ int SEAP_connect (SEAP_CTX_t *ctx, const char *uri, uint32_t flags)
         }
 
         if (SCH_CONNECT(scheme, dsc, uri + schstr_len + 1, flags) != 0) {
-                _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
+                dI("FAIL: errno=%u, %s.\n", errno, strerror (errno));
                 SEAP_desc_del(ctx->sd_table, sd);
 
                 return (-1);
@@ -148,14 +139,12 @@ int SEAP_connect (SEAP_CTX_t *ctx, const char *uri, uint32_t flags)
 
 int SEAP_open (SEAP_CTX_t *ctx, const char *path, uint32_t flags)
 {
-        _LOGCALL_;
         errno = EOPNOTSUPP;
         return (-1);
 }
 
 int SEAP_openfd (SEAP_CTX_t *ctx, int fd, uint32_t flags)
 {
-        _LOGCALL_;
         errno = EOPNOTSUPP;
         return (-1);
 }
@@ -165,12 +154,10 @@ int SEAP_openfd2 (SEAP_CTX_t *ctx, int ifd, int ofd, uint32_t flags)
         SEAP_desc_t *dsc;
         int sd;
 
-        _LOGCALL_;
-
         sd = SEAP_desc_add (ctx->sd_table, NULL, SCH_GENERIC, NULL);
 
         if (sd < 0) {
-                _D("Can't create/add new SEAP descriptor\n");
+                dI("Can't create/add new SEAP descriptor\n");
                 return (-1);
         }
 
@@ -182,7 +169,7 @@ int SEAP_openfd2 (SEAP_CTX_t *ctx, int ifd, int ofd, uint32_t flags)
         }
 
         if (SCH_OPENFD2(SCH_GENERIC, dsc, ifd, ofd, flags) != 0) {
-                _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
+                dI("FAIL: errno=%u, %s.\n", errno, strerror (errno));
                 return (-1);
         }
 
@@ -192,8 +179,6 @@ int SEAP_openfd2 (SEAP_CTX_t *ctx, int ifd, int ofd, uint32_t flags)
 int SEAP_recvsexp (SEAP_CTX_t *ctx, int sd, SEXP_t **sexp)
 {
         SEAP_msg_t *msg = NULL;
-
-        _LOGCALL_;
 
         if (SEAP_recvmsg (ctx, sd, &msg) == 0) {
                 *sexp = SEAP_msg_get (msg);
@@ -212,8 +197,6 @@ static int __SEAP_cmdexec_reply (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
         SEXP_t        *res;
         SEAP_packet_t *packet;
         SEAP_cmd_t    *cmdrep;
-
-        _LOGCALL_;
 
         dsc = SEAP_desc_get (ctx->sd_table, sd);
 
@@ -236,7 +219,7 @@ static int __SEAP_cmdexec_reply (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
 
         if (SEAP_packet_send (ctx, sd, packet) != 0) {
                 protect_errno {
-                        _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
+                        dI("FAIL: errno=%u, %s.\n", errno, strerror (errno));
                         SEAP_packet_free (packet);
                 }
                 return (-1);
@@ -256,7 +239,6 @@ static void *__SEAP_cmdexec_worker (void *arg)
 
         _A(job != NULL);
         _A(job->cmd != NULL);
-        _LOGCALL_;
 
         if (job->cmd->flags & SEAP_CMDFLAG_REPLY) {
                 (void) SEAP_cmd_exec (job->ctx, job->sd, SEAP_EXEC_WQUEUE,
@@ -273,7 +255,6 @@ int __SEAP_recvmsg_process_cmd (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
 {
         _A(ctx != NULL);
         _A(cmd != NULL);
-        _LOGCALL_;
 
         if (ctx->cflags & SEAP_CFLG_THREAD) {
                 /*
@@ -298,7 +279,7 @@ int __SEAP_recvmsg_process_cmd (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
                 if (pthread_create (&th, &th_attrs,
                                     &__SEAP_cmdexec_worker, (void *)job) != 0)
                 {
-                        _D("Can't create worker thread: %u, %s.\n", errno, strerror (errno));
+                        dI("Can't create worker thread: %u, %s.\n", errno, strerror (errno));
                         SEAP_cmdjob_free (job);
                         pthread_attr_destroy (&th_attrs);
 
@@ -364,7 +345,6 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
 
         _A(ctx      != NULL);
         _A(seap_msg != NULL);
-        _LOGCALL_;
 
         (*seap_msg) = NULL;
 
@@ -374,7 +354,7 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
         for (;;) {
                 if (SEAP_packet_recv (ctx, sd, &packet) != 0) {
 			protect_errno {
-				_D("FAIL: ctx=%p, sd=%d, errno=%u, %s.\n",
+				dI("FAIL: ctx=%p, sd=%d, errno=%u, %s.\n",
 				   ctx, sd, errno, strerror (errno));
 			}
                         return (-1);
@@ -430,8 +410,6 @@ int SEAP_sendmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *seap_msg)
         SEAP_packet_t *packet;
         SEAP_msg_t    *msg;
 
-        _LOGCALL_;
-
         packet = SEAP_packet_new ();
         msg    = (SEAP_msg_t *)SEAP_packet_settype (packet, SEAP_PACKET_MSG);
 
@@ -450,8 +428,6 @@ int SEAP_sendsexp (SEAP_CTX_t *ctx, int sd, SEXP_t *sexp)
 {
         SEAP_msg_t *msg;
         int ret;
-
-        _LOGCALL_;
 
         msg = SEAP_msg_new ();
 
@@ -473,7 +449,6 @@ int SEAP_reply (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, SEAP_msg_t *req_ms
         _A(ctx     != NULL);
         _A(rep_msg != NULL);
         _A(req_msg != NULL);
-        _LOGCALL_;
 
         if (SEAP_msgattr_set (rep_msg, "reply-id",
 #if SEAP_MSGID_BITS == 64
@@ -489,7 +464,7 @@ int SEAP_reply (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, SEAP_msg_t *req_ms
                         SEAP_msg_t *nil_msg;
                         int         ret;
 
-                        _D("no-reply set: sending empty reply\n");
+                        dI("no-reply set: sending empty reply\n");
 
                         nil_msg = SEAP_msg_clone (rep_msg);
                         SEAP_msg_unset (nil_msg);
@@ -498,7 +473,7 @@ int SEAP_reply (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, SEAP_msg_t *req_ms
 
                         return (ret);
                 } else {
-                        _D("no-reply not set: sending full reply\n");
+                        dI("no-reply not set: sending full reply\n");
                         return SEAP_sendmsg (ctx, sd, rep_msg);
                 }
         } else {
@@ -514,7 +489,6 @@ static int __SEAP_senderr (SEAP_CTX_t *ctx, int sd, SEAP_err_t *err, unsigned in
 
         _A(ctx != NULL);
         _A(err != NULL);
-        _LOGCALL_;
 
         packet = SEAP_packet_new ();
         errptr = SEAP_packet_settype (packet, SEAP_PACKET_ERR);
@@ -524,7 +498,7 @@ static int __SEAP_senderr (SEAP_CTX_t *ctx, int sd, SEAP_err_t *err, unsigned in
 
         if (SEAP_packet_send (ctx, sd, packet) != 0) {
                 protect_errno {
-                        _D("FAIL: errno=%u, %s.\n", errno, strerror (errno));
+                        dI("FAIL: errno=%u, %s.\n", errno, strerror (errno));
                         SEAP_packet_free (packet);
                 }
 
@@ -537,7 +511,6 @@ static int __SEAP_senderr (SEAP_CTX_t *ctx, int sd, SEAP_err_t *err, unsigned in
 
 int SEAP_senderr (SEAP_CTX_t *ctx, int sd, SEAP_err_t *err)
 {
-        _LOGCALL_;
         return (__SEAP_senderr (ctx, sd, err, SEAP_ETYPE_USER));
 }
 
@@ -547,7 +520,6 @@ int SEAP_replyerr (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, uint32_t e)
 
         _A(ctx != NULL);
         _A(rep_msg != NULL);
-        _LOGCALL_;
 
         err.code = e;
         err.id   = rep_msg->id;
@@ -558,7 +530,6 @@ int SEAP_replyerr (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, uint32_t e)
 
 int SEAP_recverr (SEAP_CTX_t *ctx, int sd, SEAP_err_t **err)
 {
-        _LOGCALL_;
         errno = EOPNOTSUPP;
         return (-1);
 }
@@ -602,14 +573,12 @@ int SEAP_recverr_byid (SEAP_CTX_t *ctx, int sd, SEAP_err_t **err, SEAP_msgid_t i
 
 SEXP_t *SEAP_read (SEAP_CTX_t *ctx, int sd)
 {
-        _LOGCALL_;
         errno = EOPNOTSUPP;
         return (NULL);
 }
 
 int SEAP_write (SEAP_CTX_t *ctx, int sd, SEXP_t *sexp)
 {
-        _LOGCALL_;
         errno = EOPNOTSUPP;
         return (-1);
 }
@@ -620,7 +589,6 @@ int SEAP_close (SEAP_CTX_t *ctx, int sd)
         int ret;
 
         _A(ctx != NULL);
-        _LOGCALL_;
 
         if (sd < 0) {
                 errno = EBADF;
@@ -639,7 +607,7 @@ int SEAP_close (SEAP_CTX_t *ctx, int sd)
         protect_errno {
                 if (SEAP_desc_del (ctx->sd_table, sd) != 0) {
                         /* something very bad happened */
-                        _D("SEAP_desc_del failed\n");
+                        dI("SEAP_desc_del failed\n");
                         return(-1);
                 }
         }

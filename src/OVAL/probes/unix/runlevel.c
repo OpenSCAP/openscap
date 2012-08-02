@@ -66,10 +66,6 @@
 #include <alloc.h>
 #include "common/debug_priv.h"
 
-#ifndef _A
-#define _A(x) assert(x)
-#endif
-
 struct runlevel_req {
         SEXP_t *service_name_ent;
         SEXP_t *runlevel_ent;
@@ -106,12 +102,12 @@ static int get_runlevel_sysv (struct runlevel_req *req, struct runlevel_rep **re
 
         init_dir = opendir(init_path);
         if (init_dir == NULL) {
-                _D("Can't open directory \"%s\": errno=%d, %s.\n",
+                dI("Can't open directory \"%s\": errno=%d, %s.\n",
                    init_path, errno, strerror (errno));
                 return (-1);
         }
 	if (chdir(init_path) != 0) {
-                _D("Can't fchdir to \"%s\": errno=%d, %s.\n",
+                dI("Can't fchdir to \"%s\": errno=%d, %s.\n",
                    init_path, errno, strerror (errno));
                 closedir(init_dir);
                 return (-1);
@@ -123,7 +119,7 @@ static int get_runlevel_sysv (struct runlevel_req *req, struct runlevel_rep **re
 		SEXP_t *r0;
 
                 if (stat(init_dp->d_name, &init_st) != 0) {
-                        _D("Can't stat file %s/%s: errno=%d, %s.\n",
+                        dI("Can't stat file %s/%s: errno=%d, %s.\n",
                            init_path, init_dp->d_name, errno, strerror(errno));
                         continue;
                 }
@@ -151,12 +147,12 @@ static int get_runlevel_sysv (struct runlevel_req *req, struct runlevel_rep **re
 			snprintf(pathbuf, sizeof (pathbuf), rc_path, runlevel_list[i]);
 			rc_dir = opendir(pathbuf);
 			if (rc_dir == NULL) {
-				_D("Can't open directory \"%s\": errno=%d, %s.\n",
+				dI("Can't open directory \"%s\": errno=%d, %s.\n",
 				   rc_path, errno, strerror (errno));
 				continue;
 			}
 			if (chdir(pathbuf) != 0) {
-				_D("Can't fchdir to \"%s\": errno=%d, %s.\n",
+				dI("Can't fchdir to \"%s\": errno=%d, %s.\n",
 				   rc_path, errno, strerror (errno));
 				closedir(rc_dir);
 				continue;
@@ -166,7 +162,7 @@ static int get_runlevel_sysv (struct runlevel_req *req, struct runlevel_rep **re
 
 			while ((rc_dp = readdir(rc_dir)) != NULL) {
 				if (stat(rc_dp->d_name, &rc_st) != 0) {
-					_D("Can't stat file %s/%s: errno=%d, %s.\n",
+					dI("Can't stat file %s/%s: errno=%d, %s.\n",
 					   rc_path, rc_dp->d_name, errno, strerror(errno));
 					continue;
 				}
@@ -179,7 +175,7 @@ static int get_runlevel_sysv (struct runlevel_req *req, struct runlevel_rep **re
 						kill = true;
 						break;
 					} else {
-						_D("Unexpected character in filename: %c, %s/%s.\n",
+						dI("Unexpected character in filename: %c, %s/%s.\n",
 						   rc_dp->d_name[0], pathbuf, rc_dp->d_name);
 					}
 				}
@@ -365,7 +361,7 @@ int probe_main (probe_ctx *ctx, void *arg)
 
 	request_st.service_name_ent = probe_obj_getent(object, "service_name", 1);
 	if (request_st.service_name_ent == NULL) {
-		_D("%s: element not found\n", "service_name");
+		dI("%s: element not found\n", "service_name");
 
 		return PROBE_ENOELM;
 	}
@@ -373,7 +369,7 @@ int probe_main (probe_ctx *ctx, void *arg)
 	request_st.runlevel_ent = probe_obj_getent(object, "runlevel", 1);
 	if (request_st.runlevel_ent == NULL) {
 		SEXP_free(request_st.service_name_ent);
-		_D("%s: element not found\n", "runlevel");
+		dI("%s: element not found\n", "runlevel");
 
 		return PROBE_ENOELM;
 	}

@@ -51,9 +51,6 @@
 #include "common/_error.h"
 #include "public/oval_version.h"
 
-#ifndef _A
-# define _A(x) assert(x)
-#endif
 
 SEXP_t *oval_value_to_sexp(struct oval_value *val, oval_datatype_t dtype)
 {
@@ -637,7 +634,7 @@ int oval_state_to_sexp(void *sess, struct oval_state *state, SEXP_t **out_sexp)
         subtype_name = oval_subtype_to_str(oval_state_get_subtype(state));
 
 	if (subtype_name == NULL) {
-		_D("FAIL: unknown subtype: %d\n", oval_state_get_subtype(state));
+		dI("FAIL: unknown subtype: %d\n", oval_state_get_subtype(state));
 		return (-1);
 	}
 
@@ -899,7 +896,7 @@ static struct oval_sysitem *oval_sexp_to_sysitem(struct oval_syschar_model *mode
 
 	int type = oval_str_to_subtype(name);
 
-	_D("Syschar entry type: %d '%s' => %s\n", type, name, (type ? "OK" : "FAILED to decode"));
+	dI("Syschar entry type: %d '%s' => %s\n", type, name, (type ? "OK" : "FAILED to decode"));
 #ifndef NDEBUG
 	if (!type)
 		abort();

@@ -52,6 +52,7 @@
 
 #include "oval_fts.h"
 #include "util.h"
+#include "common/debug_priv.h"
 
 #define FILE_SEPARATOR '/'
 

@@ -72,11 +72,6 @@ typedef uint8_t SEXP_format_t;
 #define SEXP_FMT_ADVANCED   3
 #define SEXP_FMT_AUTODETECT 4
 
-#include <assert.h>
-#ifndef _A
-# define _A(x) assert(x)
-#endif
-
 #define SEXP_TYPE_EMPTY  0
 #define SEXP_TYPE_STRING 1
 #define SEXP_TYPE_NUMBER 2

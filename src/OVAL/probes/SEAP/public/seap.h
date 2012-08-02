@@ -33,7 +33,6 @@ extern "C" {
 #endif
 
 #include <stdint.h>
-#include <seap-debug.h>
 #include <sexp.h>
 #include <seap-types.h>
 #include <seap-message.h>

@@ -26,7 +26,6 @@
 
 #include <stdio.h>
 #include <unistd.h>
-#include <seap-debug.h>
 #include <sexp-types.h>
 #include <strbuf.h>
 

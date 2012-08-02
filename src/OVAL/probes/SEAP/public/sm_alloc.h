@@ -24,8 +24,8 @@
 #ifndef SM_ALLOC_H
 #define SM_ALLOC_H
 
-#include <seap-debug.h>
 #include "config.h"
+#include "src/common/debug_priv.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -78,9 +78,6 @@ __ATTRIB void sm_free     (void *p) { __sm_free_dbg (p, __FUNCTION__, 0); }
 #define  sm_valloc(v) ((typeof(v) *) sm_alloc(sizeof v))
 
 #include <assert.h>
-#ifndef _A
-# define _A(x) assert(x)
-#endif /* _A */
 
 #ifdef __cplusplus
 }

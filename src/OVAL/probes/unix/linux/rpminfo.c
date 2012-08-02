@@ -83,11 +83,8 @@
 #include "probe/entcmp.h"
 #include <alloc.h>
 #include <common/assume.h>
+#include "common/debug_priv.h"
 
-
-#ifndef _A
-#define _A(x) assert(x)
-#endif
 
 struct rpminfo_req {
         char *name;
@@ -266,7 +263,7 @@ ret:
 void *probe_init (void)
 {
         if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {
-                _D("rpmReadConfigFiles failed: %u, %s.\n", errno, strerror (errno));
+                dI("rpmReadConfigFiles failed: %u, %s.\n", errno, strerror (errno));
                 return (NULL);
         }
 
@@ -308,7 +305,7 @@ int probe_main (probe_ctx *ctx, void *arg)
         val = probe_ent_getval (ent);
 
         if (val == NULL) {
-                _D("%s: no value\n", "name");
+                dI("%s: no value\n", "name");
                 SEXP_free (ent);
                 return (PROBE_ENOVAL);
         }
@@ -342,11 +339,11 @@ int probe_main (probe_ctx *ctx, void *arg)
 		SEXP_free (ent);
                 switch (errno) {
                 case EINVAL:
-                        _D("%s: invalid value type\n", "name");
+                        dI("%s: invalid value type\n", "name");
 			return PROBE_EINVAL;
                         break;
                 case EFAULT:
-                        _D("%s: element not found\n", "name");
+                        dI("%s: element not found\n", "name");
 			return PROBE_ENOELM;
                         break;
 		default:
@@ -359,10 +356,10 @@ int probe_main (probe_ctx *ctx, void *arg)
         /* get info from RPM db */
         switch (rpmret = get_rpminfo (&request_st, &reply_st)) {
         case 0: /* Not found */
-                _D("Package \"%s\" not found.\n", request_st.name);
+                dI("Package \"%s\" not found.\n", request_st.name);
                 break;
         case -1: /* Error */
-                _D("get_rpminfo failed\n");
+                dI("get_rpminfo failed\n");
 
                 item = probe_item_create(OVAL_LINUX_RPM_INFO, NULL,
                                          "name", OVAL_DATATYPE_STRING, request_st.name,

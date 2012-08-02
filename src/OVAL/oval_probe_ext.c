@@ -679,12 +679,12 @@ static int oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, struct oval_sysch
                 val = probe_obj_getentval (obj, __STRING(name), 1);     \
                                                                         \
                 if (val == NULL) {                                      \
-                        _D("No entity or value: %s\n", __STRING(name)); \
+                        dI("No entity or value: %s\n", __STRING(name)); \
                         goto fail;                                      \
                 }                                                       \
                                                                         \
                 if (SEXP_string_cstr_r (val, buf, sizeof buf) >= sizeof buf) { \
-                        _D("Value too large: %s\n", __STRING(name));    \
+                        dI("Value too large: %s\n", __STRING(name));    \
                         SEXP_free (val);                                \
                         goto fail;                                      \
                 }                                                       \
@@ -715,12 +715,12 @@ static int oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, struct oval_sysch
                                 val = probe_ent_getattrval (ent, __STRING(name)); \
                                                                         \
                                 if (val == NULL) {                      \
-                                        _D("No value: %s\n", __STRING(name)); \
+                                        dI("No value: %s\n", __STRING(name)); \
                                         goto fail;                      \
                                 }                                       \
                                                                         \
                                 if (SEXP_string_cstr_r (val, buf, sizeof buf) >= sizeof buf) { \
-                                        _D("Value too large: %s\n", __STRING(name)); \
+                                        dI("Value too large: %s\n", __STRING(name)); \
                                         SEXP_free (val);                \
                                         goto fail;                      \
                                 }                                       \
