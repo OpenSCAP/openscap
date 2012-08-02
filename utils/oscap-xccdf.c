@@ -290,6 +290,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
         void **sessions = NULL;
 	char ** oval_files = NULL;
 	int idx = 0;
+	char* f_results = NULL;
 
 	char* temp_dir = 0;
 
@@ -559,14 +560,27 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 #endif
 
+	f_results = action->f_results ? strdup(action->f_results) : NULL;
+	if (!f_results && (action->f_report != NULL || action->f_results_arf != NULL))
+	{
+		if (!temp_dir)
+		{
+			temp_dir = strdup("/tmp/oscap.XXXXXX");
+			temp_dir = mkdtemp(temp_dir);
+		}
+
+		f_results = malloc(PATH_MAX * sizeof(char));
+		sprintf(f_results, "%s/xccdf-result.xml", temp_dir);
+	}
+
 	/* Export results */
-	if (action->f_results != NULL) {
+	if (f_results != NULL) {
 		xccdf_benchmark_add_result(benchmark, xccdf_result_clone(ritem));
-		xccdf_benchmark_export(benchmark, action->f_results);
+		xccdf_benchmark_export(benchmark, f_results);
 
 		/* validate XCCDF Results */
 		if (action->validate && full_validation) {
-			if (!oscap_validate_document(action->f_results, OSCAP_DOCUMENT_XCCDF, xccdf_version_info_get_version(xccdf_detect_version(action->f_results)),
+			if (!oscap_validate_document(f_results, OSCAP_DOCUMENT_XCCDF, xccdf_version_info_get_version(xccdf_detect_version(f_results)),
 			    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 				fprintf(stdout, "XCCDF Results are NOT exported correctly.\n");
 				goto cleanup;
@@ -576,7 +590,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 		/* generate report */
 		if (action->f_report != NULL)
-			xccdf_gen_report(action->f_results,
+			xccdf_gen_report(f_results,
 			                 xccdf_result_get_id(ritem),
 			                 action->f_report,
 			                 "",
@@ -671,6 +685,7 @@ cleanup:
 		free(temp_dir);
 	}
 
+	free(f_results);
 	free(xccdf_file);
 
 	return retval;
@@ -944,6 +959,7 @@ bool getopt_generate(int argc, char **argv, struct oscap_action *action)
 
 enum oval_opt {
     XCCDF_OPT_RESULT_FILE = 1,
+    XCCDF_OPT_RESULT_FILE_ARF,
     XCCDF_OPT_PROFILE,
     XCCDF_OPT_REPORT_FILE,
     XCCDF_OPT_SHOW,
@@ -970,6 +986,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 	// options
 		{"output",		required_argument, NULL, XCCDF_OPT_OUTPUT},
 		{"results", 		required_argument, NULL, XCCDF_OPT_RESULT_FILE},
+		{"results-arf",		required_argument, NULL, XCCDF_OPT_RESULT_FILE_ARF},
 		{"profile", 		required_argument, NULL, XCCDF_OPT_PROFILE},
 		{"result-id",		required_argument, NULL, XCCDF_OPT_RESULT_ID},
 		{"report", 		required_argument, NULL, XCCDF_OPT_REPORT_FILE},
@@ -1000,6 +1017,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		switch (c) {
 		case XCCDF_OPT_OUTPUT: 
 		case XCCDF_OPT_RESULT_FILE:	action->f_results = optarg;	break;
+		case XCCDF_OPT_RESULT_FILE_ARF:	action->f_results_arf = optarg;	break;
 		case XCCDF_OPT_PROFILE:		action->profile = optarg;	break;
 		case XCCDF_OPT_RESULT_ID:	action->id = optarg;		break;
 		case XCCDF_OPT_REPORT_FILE:	action->f_report = optarg; 	break;
@@ -1024,8 +1042,6 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 			/* TODO */
 			return oscap_module_usage(action->module, stderr, "XCCDF file need to be specified!");
 		}
-                if (action->f_report && !action->f_results)
-                    return oscap_module_usage(action->module, stderr, "Please specify --results if you want to generate a HTML report.");
 
                 action->f_xccdf = argv[optind];
                 if (argc > (optind+1)) {
