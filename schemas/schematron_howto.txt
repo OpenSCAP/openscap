@@ -22,3 +22,30 @@ Validating an document without oscap tool
 
   $ xsltproc oval/${OVAL_VERSION}/oval-definitions-schematron.xsl  path/to/your/file.xml
 
+
+
+
+--------------------
+#! /bin/bash
+
+version="$1"
+
+wget -N http://www.schematron.com/tmp/iso-schematron-xslt1.zip
+unzip -o iso-schematron-xslt1.zip
+
+wget -N "http://oval.mitre.org/language/version$version/ovaldefinition/schematron/oval-definitions-schematron.zip"
+unzip -o "oval-definitions-schematron.zip"
+xsltproc iso_schematron_skeleton_for_xslt1.xsl "oval-definitions-schematron.sch" >"oval-definitions-schematron.xsl"
+
+wget -N "http://oval.mitre.org/language/version$version/ovalsc/schematron/oval-system-characteristics-schematron.zip"
+unzip -o "oval-system-characteristics-schematron.zip"
+xsltproc iso_schematron_skeleton_for_xslt1.xsl "oval-system-characteristics-schematron.sch" >"oval-system-characteristic-schematron.xsl"
+
+wget -N "http://oval.mitre.org/language/version$version/ovalresults/schematron/oval-results-schematron.zip"
+unzip -o "oval-results-schematron.zip"
+xsltproc iso_schematron_skeleton_for_xslt1.xsl "oval-results-schematron.sch" >"oval-results-schematron.xsl"
+
+wget -N "http://oval.mitre.org/language/version$version/ovalvar/schematron/oval-variables-schematron.zip"
+unzip -o "oval-variables-schematron.zip"
+xsltproc iso_schematron_skeleton_for_xslt1.xsl "oval-variables-schematron.sch" >"oval-variables-schematron.xsl"
+
