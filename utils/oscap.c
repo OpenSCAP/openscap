@@ -162,7 +162,7 @@ int app_validate_xml(const struct oscap_action *action)
 
 	// schematron-based validation forced
 	if (action->force) {
-		const char *version = oval_definition_model_supported(), *std = "oval", *filename = NULL;
+		const char *std = "oval", *filename = NULL;
 
 		switch (action->doctype) {
 			case OSCAP_DOCUMENT_OVAL_DEFINITIONS: filename = "oval-definitions-schematron.xsl";            break;
@@ -175,7 +175,7 @@ int app_validate_xml(const struct oscap_action *action)
 		if (filename) {
 			size_t buffsize = 1024;
 			char xslfile[buffsize];
-			snprintf(xslfile, buffsize, "%s%s%s%s%s", std, OSCAP_OS_PATH_DELIM, version, OSCAP_OS_PATH_DELIM, filename);
+			snprintf(xslfile, buffsize, "%s%s%s%s%s", std, OSCAP_OS_PATH_DELIM, doc_version, OSCAP_OS_PATH_DELIM, filename);
 			xslfile[buffsize - 1] = '\0';
 
 			const char *params[] = { NULL };
