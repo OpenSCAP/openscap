@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <inttypes.h>
 
 #include "public/oval_version.h"
 
@@ -82,11 +83,11 @@ int oval_version_to_cstr(oval_version_t version, char *buffer, size_t buflen)
 		return 1;
 
 	if (patch != 0)
-		s = snprintf(buffer, buflen, "%hu.%hu.%hu", major, minor, patch);
+		s = snprintf(buffer, buflen, "%"PRIu8".%"PRIu8".%"PRIu8, major, minor, patch);
 	else if (minor != 0)
-		s = snprintf(buffer, buflen, "%hu.%hu", major, minor);
+		s = snprintf(buffer, buflen, "%"PRIu8".%"PRIu8, major, minor);
 	else
-		s = snprintf(buffer, buflen, "%hu", major);
+		s = snprintf(buffer, buflen, "%"PRIu8, major);
 
 	return s < 0 || (size_t)s >= buflen ? -1 : 0;
 }
