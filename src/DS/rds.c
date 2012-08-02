@@ -316,12 +316,17 @@ void ds_rds_create(const char* sds_file, const char* xccdf_result_file, const ch
 	size_t oval_result_docs_count = 0;
 	oval_result_docs[0] = NULL;
 
-	while (*oval_result_files != NULL)
+	// this check is there to allow passing NULL instead of having to allocate
+	// an empty array
+	if (oval_result_files != NULL)
 	{
-		oval_result_docs[oval_result_docs_count] = xmlReadFile(*oval_result_files, NULL, 0);
-		oval_result_docs = oscap_realloc(oval_result_docs, (++oval_result_docs_count + 1) * sizeof(xmlDocPtr));
-		oval_result_docs[oval_result_docs_count] = 0;
-		oval_result_files++;
+		while (*oval_result_files != NULL)
+		{
+			oval_result_docs[oval_result_docs_count] = xmlReadFile(*oval_result_files, NULL, 0);
+			oval_result_docs = oscap_realloc(oval_result_docs, (++oval_result_docs_count + 1) * sizeof(xmlDocPtr));
+			oval_result_docs[oval_result_docs_count] = 0;
+			oval_result_files++;
+		}
 	}
 
 	xmlDocPtr rds_doc = ds_rds_create_from_dom(sds_doc, result_file_doc, oval_result_docs);

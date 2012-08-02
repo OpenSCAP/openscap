@@ -632,6 +632,24 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		}
 	}
 
+	if (action->f_results_arf != NULL)
+	{
+		char* sds_path = 0;
+
+		if (ds_is_sds(action->f_xccdf))
+		{
+			sds_path = strdup(action->f_xccdf);
+		}
+		else
+		{
+			// fixme
+		}
+
+		ds_rds_create(sds_path, f_results, 0, action->f_results_arf);
+
+		free(sds_path);
+	}
+
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
 	retval = OSCAP_OK;
 	struct xccdf_rule_result_iterator *res_it = xccdf_result_get_rule_results(ritem);
