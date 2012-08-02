@@ -159,7 +159,16 @@ static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr ass
 			xmlAddChild(connection, ip_address);
 
 			xmlChar* content = xmlNodeGetContent(test_result_child);
-			xmlNewTextChild(ip_address, ai_ns, BAD_CAST "ip-v4", content);
+
+			// we need to figure out whether the address is IPv4 or IPv6
+			if (strchr((char*)content, '.') != NULL) // IPv4 has to have 4 dots
+			{
+				xmlNewTextChild(ip_address, ai_ns, BAD_CAST "ip-v4", content);
+			}
+			else // IPv6 has semicolons instead of dots
+			{
+				xmlNewTextChild(ip_address, ai_ns, BAD_CAST "ip-v6", content);
+			}
 			xmlFree(content);
 		}
 	}
