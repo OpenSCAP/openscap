@@ -59,43 +59,6 @@ typedef struct oval_definition_model {
         char *schema;
 } oval_definition_model_t;
 
-/* TODO: Use this to generate links
-static char * _oval_generate_schema_location(const char * version)
-{
-
-        char * schema = oscap_alloc(sizeof(char)*(strlen(OVAL_DEF_SCHEMA_LOCATION_DEF_PX)+strlen(version)+strlen(OVAL_DEF_SCHEMA_LOCATION_DEF_SX)+2));
-        strncat(schema, OVAL_DEF_SCHEMA_LOCATION_DEF_PX, strlen(OVAL_DEF_SCHEMA_LOCATION_DEF_PX));
-        strncat(schema, version, strlen(version));
-        strncat(schema, OVAL_DEF_SCHEMA_LOCATION_DEF_SX, strlen(OVAL_DEF_SCHEMA_LOCATION_DEF_SX));
-        strncat(schema, " ", 1);
-
-        oscap_realloc(schema, sizeof(char)*(strlen(schema)+strlen(OVAL_DEF_SCHEMA_LOCATION_IND_PX)+strlen(version)+strlen(OVAL_DEF_SCHEMA_LOCATION_IND_SX)+1));
-        strncat(schema, OVAL_DEF_SCHEMA_LOCATION_IND_PX, strlen(OVAL_DEF_SCHEMA_LOCATION_IND_PX));
-        strncat(schema, version, strlen(version));
-        strncat(schema, OVAL_DEF_SCHEMA_LOCATION_IND_SX, strlen(OVAL_DEF_SCHEMA_LOCATION_IND_SX));
-        strncat(schema, " ", 1);
-
-        oscap_realloc(schema, sizeof(char)*(strlen(schema)+strlen(OVAL_DEF_SCHEMA_LOCATION_UNX_PX)+strlen(version)+strlen(OVAL_DEF_SCHEMA_LOCATION_UNX_SX)+1));
-        strncat(schema, OVAL_DEF_SCHEMA_LOCATION_UNX_PX, strlen(OVAL_DEF_SCHEMA_LOCATION_UNX_PX));
-        strncat(schema, version, strlen(version));
-        strncat(schema, OVAL_DEF_SCHEMA_LOCATION_UNX_SX, strlen(OVAL_DEF_SCHEMA_LOCATION_UNX_SX));
-        strncat(schema, " ", 1);
-
-        oscap_realloc(schema, sizeof(char)*(strlen(schema)+strlen(OVAL_DEF_SCHEMA_LOCATION_LNX_PX)+strlen(version)+strlen(OVAL_DEF_SCHEMA_LOCATION_LNX_SX)+1));
-        strncat(schema, OVAL_DEF_SCHEMA_LOCATION_LNX_PX, strlen(OVAL_DEF_SCHEMA_LOCATION_LNX_PX));
-        strncat(schema, version, strlen(version));
-        strncat(schema, OVAL_DEF_SCHEMA_LOCATION_LNX_SX, strlen(OVAL_DEF_SCHEMA_LOCATION_LNX_SX));
-        strncat(schema, " ", 1);
-
-        oscap_realloc(schema, sizeof(char)*(strlen(schema)+strlen(OVAL_DEF_SCHEMA_LOCATION_CMN_PX)+strlen(version)+strlen(OVAL_DEF_SCHEMA_LOCATION_CMN_SX)+1));
-        strncat(schema, OVAL_DEF_SCHEMA_LOCATION_CMN_PX, strlen(OVAL_DEF_SCHEMA_LOCATION_CMN_PX));
-        strncat(schema, version, strlen(version));
-        strncat(schema, OVAL_DEF_SCHEMA_LOCATION_CMN_SX, strlen(OVAL_DEF_SCHEMA_LOCATION_CMN_SX));
-
-
-        return schema;
-}*/
-
 /* failed   - NULL
  * success  - oval_definition_model
  * */
@@ -127,8 +90,8 @@ struct oval_definition_model *oval_definition_model_new()
 
 typedef void (*_oval_clone_func) (void *, struct oval_definition_model *);
 
-static void _oval_definition_model_clone(struct oval_string_map *oldmap, 
-					 struct oval_definition_model *newmodel, 
+static void _oval_definition_model_clone(struct oval_string_map *oldmap,
+					 struct oval_definition_model *newmodel,
 					 _oval_clone_func cloner)
 {
 	struct oval_string_iterator *keys = (struct oval_string_iterator *)oval_string_map_keys(oldmap);

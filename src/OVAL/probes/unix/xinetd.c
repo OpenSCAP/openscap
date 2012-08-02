@@ -458,8 +458,11 @@ void xiconf_free(xiconf_t *xiconf)
         rbt_str_free_cb(xiconf->stree, xiconf_stree_free_cb);
         rbt_str_free_cb(xiconf->ttree, xiconf_ttree_free_cb);
 
-	oscap_free(xiconf->defaults->name);
-	oscap_free(xiconf->defaults);
+        if (xiconf->defaults != NULL) {
+	        oscap_free(xiconf->defaults->name);
+	        oscap_free(xiconf->defaults);
+        }
+
 	oscap_free(xiconf);
 
 	return;

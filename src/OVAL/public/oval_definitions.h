@@ -40,6 +40,7 @@
 #define OVAL_DEFINITIONS
 
 #include "oval_types.h"
+#include "oval_version.h"
 #include <stdbool.h>
 #include <libxml/tree.h>
 
@@ -1339,6 +1340,12 @@ bool oval_object_get_deprecated(struct oval_object *);
  * @memberof oval_object
  */
 int oval_object_get_version(struct oval_object *);
+
+/**
+ * Returns schema version of the associated definition model
+ */
+oval_version_t oval_object_get_schema_version(struct oval_object *object);
+
 /**
  * Returns attribute @ref oval_object->contents.
  * @return A new iterator for the object_content attribute of the specified @ref oval_object.

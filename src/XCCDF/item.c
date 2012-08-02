@@ -344,8 +344,12 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 	if (cluster_id)
 		xmlNewProp(item_node, BAD_CAST "cluster-id", BAD_CAST cluster_id);
 
-	if (xccdf_item_get_hidden(item))
-		xmlNewProp(item_node, BAD_CAST "hidden", BAD_CAST "true");
+	if (item->item.defined_flags.hidden) {
+		if (xccdf_item_get_hidden(item))
+			xmlNewProp(item_node, BAD_CAST "hidden", BAD_CAST "true");
+		else
+			xmlNewProp(item_node, BAD_CAST "hidden", BAD_CAST "false");
+	}
 
 	if (xccdf_item_get_prohibit_changes(item))
 		xmlNewProp(item_node, BAD_CAST "prohibitChanges", BAD_CAST "true");

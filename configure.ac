@@ -5,7 +5,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.59)
-AC_INIT([openscap], [0.8.2], [open-scap-list@redhat.com])
+AC_INIT([openscap], [0.8.3], [open-scap-list@redhat.com])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
@@ -518,7 +518,7 @@ AC_CHECK_HEADERS([assert.h errno.h fcntl.h limits.h pcre.h rpm/header.h rpm/rpmc
 
 echo
 echo ' * Checking presence of required headers for the rpmverifyfile probe'
-AC_CHECK_HEADERS([assert.h errno.h fcntl.h limits.h pcre.h rpm/header.h rpm/rpmcli.h rpm/rpmdb.h rpm/rpmfi.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_rpmverifyfile_req_deps_ok=no; probe_rpmverifyfile_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([assert.h errno.h fcntl.h limits.h pcre.h rpm/header.h rpm/rpmcli.h rpm/rpmdb.h rpm/rpmfi.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmtag.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_rpmverifyfile_req_deps_ok=no; probe_rpmverifyfile_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the dpkginfo probe'

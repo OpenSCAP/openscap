@@ -49,6 +49,7 @@
 #include "oval_system_characteristics_impl.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
+#include "public/oval_version.h"
 
 #ifndef _A
 # define _A(x) assert(x)
@@ -397,8 +398,8 @@ int oval_object_to_sexp(void *sess, const char *typestr, struct oval_syschar *sy
 {
 	unsigned int ent_cnt, varref_cnt;
 	int ret = -1;
-	SEXP_t *obj_sexp, *obj_name, *elm, *varrefs, *ent_lst, *lst, *stmp;
-	SEXP_t *r0, *r1, *r2;
+	SEXP_t *obj_sexp, *elm, *varrefs, *ent_lst, *lst, *stmp;
+	SEXP_t *r0, *r1, *r2, *obj_attr, sm0, sm1;
 
 	struct oval_object *object;
 	struct oval_object_content_iterator *cit;
@@ -406,21 +407,29 @@ int oval_object_to_sexp(void *sess, const char *typestr, struct oval_syschar *sy
 	struct oval_object_content *content;
 	struct oval_entity *entity;
 
+	oval_version_t obj_over;
+	char obj_name[128];
+	const char *obj_id;
+
 	object = oval_syschar_get_object(syschar);
 
 	/*
 	 * Object name & attributes (id)
 	 */
-	obj_name = SEXP_list_new(r0 = SEXP_string_newf("%s_object", typestr),
-				 r1 = SEXP_string_new(":id", 3),
-				 r2 = SEXP_string_newf("%s", oval_object_get_id(object)), NULL);
-	SEXP_free(r0);
-	SEXP_free(r1);
-	SEXP_free(r2);
+	if (snprintf(obj_name, sizeof obj_name, "%s_object", typestr) >= sizeof obj_name)
+		return -1;
 
-	obj_sexp = SEXP_list_new(obj_name, NULL);
+	obj_over = oval_object_get_schema_version(object);
+	obj_id   = oval_object_get_id(object);
+	obj_attr = probe_attr_creat("id", SEXP_string_new_r(&sm0, obj_id, strlen(obj_id)),
+	                            "oval_version", SEXP_number_newu_32_r(&sm1, obj_over),
+	                            NULL);
 
-	SEXP_free(obj_name);
+	obj_sexp = probe_obj_new(obj_name, obj_attr);
+
+	SEXP_free_r(&sm0);
+	SEXP_free_r(&sm1);
+	SEXP_free(obj_attr);
 
 	/*
 	 * Object content

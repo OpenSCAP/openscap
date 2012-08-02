@@ -263,6 +263,7 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 		const char* meta = oscap_string_iterator_next(metadata);
 		oscap_xmlstr_to_dom(root_node, "metadata", meta);
 	}
+	oscap_string_iterator_free(metadata);
 
 	OSCAP_FOR(xccdf_model, model, xccdf_benchmark_get_models(benchmark)) {
 		xmlNode *model_node = xmlNewTextChild(root_node, ns_xccdf, BAD_CAST "model", NULL);

@@ -506,6 +506,19 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 			break;
 	} /* for (;;) */
 
+	/*
+	 * If we know that we are not going to return anything
+	 * else, then we can close the path FTS and return NULL
+	 * the next time...
+	 */
+	if (ofts->ofts_path_op   == OVAL_OPERATION_EQUALS &&
+	    ofts->direction      == OVAL_RECURSE_DIRECTION_NONE &&
+	    ofts->ofts_sfilename == NULL &&
+	    ofts->ofts_sfilepath == NULL)
+	{
+		fts_set(ofts->ofts_match_path_fts, fts_ent, FTS_SKIP);
+	}
+
 	return fts_ent;
 }
 

@@ -482,6 +482,24 @@ int probe_obj_getentvals(const SEXP_t * obj, const char *name, uint32_t n, SEXP_
 	return (ret);
 }
 
+oval_version_t probe_obj_get_schema_version(const SEXP_t *obj)
+{
+	SEXP_t *sexp_ver;
+	oval_version_t ver;
+
+	if (obj == NULL)
+		return OVAL_VERSION_INVALID;
+	sexp_ver = probe_obj_getattrval(obj, "oval_version");
+
+	if (!SEXP_numberp(sexp_ver))
+		return OVAL_VERSION_INVALID;
+
+	ver = SEXP_number_getu_32(sexp_ver);
+	SEXP_free(sexp_ver);
+
+	return ver;
+}
+
 SEXP_t *probe_obj_getattrval(const SEXP_t * obj, const char *name)
 {
 	SEXP_t *obj_name;

@@ -133,8 +133,22 @@ static int read_status(const char *source, void *base, struct stat_parser *spt, 
 
 			dI("spt: %s\n", linebuf);
 
-			if (sp == NULL)
+			if (sp == NULL) {
+				/* drop end of unread line */
+				while (strchr(strval, '\n') == NULL) {
+					linebuf[0] = '\n';
+					fgets(linebuf, sizeof linebuf - 1, fp);
+					strval = linebuf;
+				}
 				continue;
+			}
+
+			/* line is too long, somthing is wrong */
+			if (strchr(strval, '\n') == NULL) {
+				dE("value for %s key is too long", linebuf);
+				fclose(fp);
+				return (-1);
+			}
 
 			if (sp->storval((void *)((uintptr_t)(base) + sp->offset), strval) != 0) {
 				fclose (fp);

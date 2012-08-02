@@ -100,9 +100,25 @@ static void xccdf_resolve_warning(void *w1, void *w2) {
 		xccdf_warning_set_category(w1, xccdf_warning_get_category(w2));
 }
 
+/*
+This macro will look for flags that both undefined in the item AND defined
+in the ancestor/base item. If such a case occurs we define the flag in our
+item to the same value as in the ancestor.
+
+NOTE: Profile is an Item in current openscap implementation. That is not
+how the specification describes it and there are several problems with that.
+
+Some flags that can be defined for a Profile via the internals can't be
+exported without the result being invalid! (e.g. Profile/@hidden)
+*/
 #define XCCDF_RESOLVE_FLAG(ITEM,PARENT,FLAGNAME) do { \
-	if (!ITEM->item.defined_flags.FLAGNAME) ITEM->item.flags.FLAGNAME = PARENT->item.flags.FLAGNAME; \
-	} while (false) 
+	if (!ITEM->item.defined_flags.FLAGNAME) { \
+		if (PARENT->item.defined_flags.FLAGNAME) { \
+			ITEM->item.flags.FLAGNAME = PARENT->item.flags.FLAGNAME; \
+			ITEM->item.defined_flags.FLAGNAME = true; \
+		} \
+	} \
+} while (false)
 
 static void xccdf_resolve_item(struct xccdf_item *item)
 {

@@ -135,9 +135,9 @@ static const char *correct_fstype(char *type)
 }
 
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
-static int collect_item(probe_ctx *ctx, struct mntent *mnt_ent, blkid_cache blkcache)
+static int collect_item(probe_ctx *ctx, oval_version_t over, struct mntent *mnt_ent, blkid_cache blkcache)
 #else
-static int collect_item(probe_ctx *ctx, struct mntent *mnt_ent)
+static int collect_item(probe_ctx *ctx, oval_version_t over, struct mntent *mnt_ent)
 #endif
 {
         SEXP_t *item;
@@ -178,7 +178,8 @@ static int collect_item(probe_ctx *ctx, struct mntent *mnt_ent)
 	 * "Correct" the type (this won't be (hopefully) needed in a later version
 	 * of OVAL)
 	 */
-	mnt_ent->mnt_type = (char *)correct_fstype(mnt_ent->mnt_type);
+        if (oval_version_cmp(over, OVAL_VERSION(5.10)) < 0)
+	        mnt_ent->mnt_type = (char *)correct_fstype(mnt_ent->mnt_type);
 
         /*
          * Create the item
@@ -207,6 +208,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
         char    mnt_path[PATH_MAX];
         oval_operation_t mnt_op;
         FILE *mnt_fp;
+        oval_version_t obj_over;
 #if defined(PROC_CHECK) && defined(__linux__)
         int   mnt_fd;
         struct statfs stfs;
@@ -239,6 +241,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
                 return (PROBE_ESYSTEM);
 #endif
         probe_in   = probe_ctx_getobject(ctx);
+        obj_over   = probe_obj_get_schema_version(probe_in);
         mnt_entity = probe_obj_getent(probe_in, "mount_point", 1);
 
         if (mnt_entity == NULL) {
@@ -300,20 +303,22 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
                         if (mnt_op == OVAL_OPERATION_EQUALS) {
                                 if (strcmp(mnt_entp->mnt_dir, mnt_path) == 0) {
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
-                                        collect_item(ctx, mnt_entp, blkcache);
+	                                collect_item(ctx, obj_over, mnt_entp, blkcache);
 #else
-                                        collect_item(ctx, mnt_entp);
+	                                collect_item(ctx, obj_over, mnt_entp);
 #endif
                                         break;
                                 }
 			} else if (mnt_op == OVAL_OPERATION_NOT_EQUAL) {
 				if (strcmp(mnt_entp->mnt_dir, mnt_path) != 0) {
+					if (
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
-                                        collect_item(ctx, mnt_entp, blkcache);
+						collect_item(ctx, obj_over, mnt_entp, blkcache)
 #else
-                                        collect_item(ctx, mnt_entp);
+						collect_item(ctx, obj_over, mnt_entp)
 #endif
-                                        break;
+					!= 0)
+						break;
                                 }
                         } else if (mnt_op == OVAL_OPERATION_PATTERN_MATCH) {
                                 int rc;
@@ -322,11 +327,14 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
                                                strlen(mnt_entp->mnt_dir), 0, 0, NULL, 0);
 
                                 if (rc == 0) {
+	                                if (
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
-                                        collect_item(ctx, mnt_entp, blkcache);
+		                                collect_item(ctx, obj_over, mnt_entp, blkcache)
 #else
-                                        collect_item(ctx, mnt_entp);
+		                                collect_item(ctx, obj_over, mnt_entp)
 #endif
+                                        != 0)
+		                                break;
                                 }
                                 /* XXX: check for pcre_exec error */
                         }
