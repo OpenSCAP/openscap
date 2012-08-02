@@ -170,8 +170,7 @@ int oval_agent_get_definition_result(oval_agent_session_t *ag_sess, const char *
 	rsystem_it = oval_results_model_get_systems(rmodel);
 	if (!oval_result_system_iterator_has_more(rsystem_it)) {
 		oval_result_system_iterator_free(rsystem_it);
-                dE("No results system in agent sessin.");
-                oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Missing result system.");
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "No results system in agent sessin.");
                 return -1;
 	}
 
@@ -181,7 +180,6 @@ int oval_agent_get_definition_result(oval_agent_session_t *ag_sess, const char *
         if (rdef == NULL) {
                 char msg[100];
                 snprintf(msg, sizeof(msg), "No definition with ID: %s in result model.", id);
-                dE(msg);
                 oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, msg);
                 return -1;
         }

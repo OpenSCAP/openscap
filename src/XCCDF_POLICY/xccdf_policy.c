@@ -611,8 +611,9 @@ static struct oscap_list * xccdf_policy_check_get_value_bindings(struct xccdf_po
             binding = xccdf_value_binding_new();
             value = (struct xccdf_value *) xccdf_benchmark_get_item(benchmark, xccdf_check_export_get_value(check));
             if (value == NULL) {
-                oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EVALUE, "Value does not exist\n");
-                oscap_dlprintf(DBG_E, "Value \"%s\" does not exist in benchmark\n", xccdf_check_export_get_value(check));
+		char msg[150];
+		snprintf(msg, sizeof(msg), "Value \"%s\" does not exist in benchmark", xccdf_check_export_get_value(check));
+                oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EVALUE, msg);
 		oscap_list_free(list, oscap_free);
                 return NULL;
             }
@@ -632,11 +633,12 @@ static struct oscap_list * xccdf_policy_check_get_value_bindings(struct xccdf_po
                 } else binding->operator = xccdf_value_get_oper(value);
 
             } else binding->operator = xccdf_value_get_oper(value);
-            
+
             const struct xccdf_value_instance * val = xccdf_value_get_instance_by_selector(value, selector);
             if (val == NULL) {
-                oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EVALUE, "Value instance does not exist\n");
-                oscap_dlprintf(DBG_E, "Attempt to get non-existent selector \"%s\" from variable \"%s\"\n", selector, xccdf_value_get_id(value));
+                char msg[150];
+                snprintf(msg, sizeof(msg), "Attempt to get non-existent selector \"%s\" from variable \"%s\"", selector, xccdf_value_get_id(value));
+                oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EVALUE, msg);
 		oscap_list_free(list, oscap_free);
                 return NULL;
             }
