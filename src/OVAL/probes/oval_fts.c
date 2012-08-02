@@ -458,6 +458,7 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 			continue;
 		case FTS_DC:
 			dW("Filesystem tree cycle detected at '%s'.\n", fts_ent->fts_path);
+			fts_set(ofts->ofts_match_path_fts, fts_ent, FTS_SKIP);
 			continue;
 		}
 
@@ -590,6 +591,7 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 				continue;
 			case FTS_DC:
 				dW("Filesystem tree cycle detected at '%s'.\n", fts_ent->fts_path);
+				fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
 				continue;
 			}
 
