@@ -294,6 +294,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	char* temp_dir = 0;
 
 	char* xccdf_file;
+	char** oval_result_files = NULL;
 
 	if (ds_is_sds(action->f_xccdf))
 	{
@@ -456,6 +457,9 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		/* register session */
 	        xccdf_policy_model_register_engine_oval(policy_model, tmp_sess);
 	}
+	// -1 because we are counting the last NULL too, +1 because of conversion
+	// from indices to array lengths
+	unsigned int oval_session_count = (idx - 1) + 1;
 
 	// register sce system
 	xccdf_pathcopy =  strdup(xccdf_file);
@@ -495,13 +499,34 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 	xccdf_model_iterator_free(model_it);
 
+	oval_result_files = malloc((oval_session_count + 1) * sizeof(char*));
+	oval_result_files[0] = NULL;
+
 	/* Export OVAL results */
-	if (action->oval_results == true && sessions) {
-		for (int i=0; sessions[i]; i++) {
+	if ((action->oval_results == true || action->f_results_arf) && sessions) {
+		int i;
+		for (i=0; sessions[i]; i++) {
 			/* get result model and session name*/
 			struct oval_results_model *res_model = oval_agent_get_results_model(sessions[i]);
 			char * name =  malloc(PATH_MAX * sizeof(char));
-			sprintf(name, "%s.result.xml", oval_agent_get_filename(sessions[i]));
+			const char* oval_results_directory = NULL;
+
+			if (action->oval_results == true)
+			{
+				oval_results_directory = ".";
+			}
+			else
+			{
+				if (!temp_dir)
+				{
+					temp_dir = strdup("/tmp/oscap.XXXXXX");
+					temp_dir = mkdtemp(temp_dir);
+				}
+
+				oval_results_directory = temp_dir;
+			}
+
+			sprintf(name, "%s/%s.result.xml", oval_results_directory, oval_agent_get_filename(sessions[i]));
 
 			/* export result model to XML */
 			oval_results_model_export(res_model, NULL, name);
@@ -522,8 +547,12 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 				fprintf(stdout, "OVAL Results are exported correctly.\n");
 			}
 
+			oval_result_files[i] = strdup(name);
+
 			free(name);
 		}
+
+		oval_result_files[i] = NULL;
 	}
 
 #ifdef ENABLE_SCE
@@ -646,7 +675,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			ds_sds_compose_from_xccdf(action->f_xccdf, sds_path);
 		}
 
-		ds_rds_create(sds_path, f_results, 0, action->f_results_arf);
+		ds_rds_create(sds_path, f_results, (const char**)oval_result_files, action->f_results_arf);
 
 		free(sds_path);
 	}
@@ -702,6 +731,16 @@ cleanup:
 		// recursively remove the directory we created for data stream split
 		nftw(temp_dir, __unlink_cb, 64, FTW_DEPTH | FTW_PHYS | FTW_MOUNT);
 		free(temp_dir);
+	}
+
+	if (oval_result_files)
+	{
+		for(idx = 0; oval_result_files[idx] != NULL; idx++)
+		{
+			free(oval_result_files[idx]);
+		}
+
+		free(oval_result_files);
 	}
 
 	free(f_results);
