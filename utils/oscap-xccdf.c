@@ -635,7 +635,15 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		}
 		else
 		{
-			// fixme
+			if (!temp_dir)
+			{
+				temp_dir = strdup("/tmp/oscap.XXXXXX");
+				temp_dir = mkdtemp(temp_dir);
+			}
+
+			sds_path =  malloc(PATH_MAX * sizeof(char));
+			sprintf(sds_path, "%s/sds.xml", temp_dir);
+			ds_sds_compose_from_xccdf(action->f_xccdf, sds_path);
 		}
 
 		ds_rds_create(sds_path, f_results, 0, action->f_results_arf);
