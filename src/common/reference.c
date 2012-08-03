@@ -124,7 +124,10 @@ xmlNode *oscap_reference_to_dom(struct oscap_reference *ref, xmlNode *parent, xm
     return ref_node;
 }
 
-#define DC_DOM_SCAN(ITEM) do { if (oscap_streq((const char*)cur->name, #ITEM)) ref->ITEM = (char*) xmlNodeGetContent(ref_node); } while(0)
+#define DC_DOM_SCAN(ITEM) do { \
+    if (oscap_streq((const char*)cur->name, #ITEM)) \
+        ref->ITEM = (char*) xmlNodeGetContent(cur); \
+    } while(0)
 
 struct oscap_reference *oscap_reference_new_parse(xmlTextReaderPtr reader)
 {
@@ -147,6 +150,7 @@ struct oscap_reference *oscap_reference_new_parse(xmlTextReaderPtr reader)
 				|| cur->ns == NULL
 				|| !oscap_streq((const char* ) cur->ns->href, (const char *) NS_DUBLINCORE))
 					continue;
+
             DC_DOM_SCAN(title);
             DC_DOM_SCAN(creator);
             DC_DOM_SCAN(subject);
