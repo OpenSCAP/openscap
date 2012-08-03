@@ -29,7 +29,7 @@
 #include <config.h>
 #endif
 
-#include "alloc.h"
+#include "common/alloc.h"
 #include "common/_error.h"
 #include "common/util.h"
 #include "common/list.h"
