@@ -297,12 +297,16 @@ static int collect_process_info(llist *l)
 	return 0;
 }
 
-static void report_finding(struct result_info *res, llist *l, probe_ctx *ctx)
+static void report_finding(struct result_info *res, llist *l, probe_ctx *ctx, oval_version_t over)
 {
         SEXP_t *item, *user_id;
 	lnode *n = list_get_cur(l);
 
-	user_id = SEXP_string_newf("%d", n->uid);
+	if (oval_version_cmp(over, OVAL_VERSION(5.10)) < 0)
+		user_id = SEXP_string_newf("%d", n->uid);
+	else
+		user_id = SEXP_number_newi_64((int64_t)n->uid);
+
 	item = probe_item_create(OVAL_LINUX_IFLISTENERS, NULL,
                                  "interface_name",       OVAL_DATATYPE_STRING,  res->interface_name,
                                  "protocol",             OVAL_DATATYPE_STRING,  res->protocol,
@@ -365,7 +369,7 @@ static int get_interface(const int ent_ifindex, struct interface_t *interface) {
 	return 0;
 }
 
-static int read_packet(llist *l, probe_ctx *ctx)
+static int read_packet(llist *l, probe_ctx *ctx, oval_version_t over)
 {
 	int line = 0;
 	FILE *f;
@@ -412,7 +416,7 @@ static int read_packet(llist *l, probe_ctx *ctx)
 			r.interface_name = interface.interface_name;
 			r.protocol = oscap_enum_to_string(ProtocolType, proto_num);
 			r.hw_address = interface.hw_address;
-			report_finding(&r, l, ctx);
+			report_finding(&r, l, ctx, over);
 		}
 	}
 	fclose(f);
@@ -424,8 +428,10 @@ int probe_main(probe_ctx *ctx, void *arg)
         SEXP_t *object;
 	int err;
 	llist ll;
+	oval_version_t over;
 
         object = probe_ctx_getobject(ctx);
+        over   = probe_obj_get_schema_version(object);
 
 	interface_name_ent = probe_obj_getent(object, "interface_name", 1);
 	if (interface_name_ent == NULL) {
@@ -447,7 +453,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 		goto cleanup;
 	}
 
-	read_packet(&ll, ctx);
+	read_packet(&ll, ctx, over);
 
 	list_clear(&ll);
 
