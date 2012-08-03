@@ -8,7 +8,7 @@
  xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
 	<generator>
 		<oval:product_name>vim</oval:product_name>
-		<oval:schema_version>5.6</oval:schema_version>
+		<oval:schema_version>5.8</oval:schema_version>
 		<oval:timestamp>2011-03-06T12:00:00-04:00</oval:timestamp>
 	</generator>
 
