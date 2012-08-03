@@ -443,7 +443,7 @@ bool xccdf_policy_model_register_engine_callback_py(struct xccdf_policy_model *m
     PyEval_InitThreads();
     Py_INCREF(func);
     Py_INCREF(usr);
-    new_usrdata = oscap_alloc(sizeof(struct internal_usr));
+    new_usrdata = malloc(sizeof(struct internal_usr));
     if (new_usrdata == NULL) return false;
 
     new_usrdata->func = func;
@@ -457,7 +457,7 @@ bool xccdf_policy_model_register_output_callback_py(struct xccdf_policy_model *m
     PyEval_InitThreads();
     Py_INCREF(func);
     Py_INCREF(usr);
-    new_usrdata = oscap_alloc(sizeof(struct internal_usr));
+    new_usrdata = malloc(sizeof(struct internal_usr));
     if (new_usrdata == NULL) return false;
 
     new_usrdata->func = func;
@@ -471,7 +471,7 @@ bool xccdf_policy_model_register_start_callback_py(struct xccdf_policy_model *mo
     PyEval_InitThreads();
     Py_INCREF(func);
     Py_INCREF(usr);
-    new_usrdata = oscap_alloc(sizeof(struct internal_usr));
+    new_usrdata = malloc(sizeof(struct internal_usr));
     if (new_usrdata == NULL) return false;
 
     new_usrdata->func = func;
@@ -485,7 +485,7 @@ int oval_agent_eval_system_py(oval_agent_session_t * asess, PyObject * func, PyO
     PyEval_InitThreads();
     Py_INCREF(func);
     Py_INCREF(usr);
-    new_usrdata = oscap_alloc(sizeof(struct internal_usr));
+    new_usrdata = malloc(sizeof(struct internal_usr));
     if (new_usrdata == NULL) return false;
 
     new_usrdata->func = func;
@@ -499,7 +499,7 @@ bool oscap_validate_document_py(const char *xmlfile, oscap_document_type_t docty
     PyEval_InitThreads();
     Py_INCREF(func);
     Py_INCREF(usr);
-    new_usrdata = oscap_alloc(sizeof(struct internal_usr));
+    new_usrdata = malloc(sizeof(struct internal_usr));
     if (new_usrdata == NULL) return false;
 
     new_usrdata->func = func;
@@ -513,7 +513,7 @@ char * oscap_text_xccdf_substitute_py(const char *text, PyObject *func, PyObject
     PyEval_InitThreads();
     Py_INCREF(func);
     Py_INCREF(usr);
-    new_usrdata = oscap_alloc(sizeof(struct internal_usr));
+    new_usrdata = malloc(sizeof(struct internal_usr));
     if (new_usrdata == NULL) return false;
 
     new_usrdata->func = func;
