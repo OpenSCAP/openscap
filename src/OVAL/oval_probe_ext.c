@@ -34,7 +34,7 @@
 #include <stdlib.h>
 
 #include "common/_error.h"
-#include "common/public/alloc.h"
+#include "common/alloc.h"
 #include "common/assume.h"
 #include "common/util.h"
 #include "common/bfind.h"

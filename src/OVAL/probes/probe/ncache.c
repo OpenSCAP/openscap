@@ -30,7 +30,7 @@
 #include <pthread.h>
 #include <sexp.h>
 
-#include "common/public/alloc.h"
+#include "common/alloc.h"
 #include "common/bfind.h"
 #include "common/assume.h"
 

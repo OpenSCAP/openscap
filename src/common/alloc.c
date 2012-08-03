@@ -27,7 +27,7 @@
 
 #include <stdlib.h>
 
-#include "public/alloc.h"
+#include "alloc.h"
 #include "_error.h"
 #include "assume.h"
 

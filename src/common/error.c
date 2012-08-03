@@ -28,7 +28,7 @@
 #include <pthread.h>
 #include <string.h>
 
-#include "public/alloc.h"
+#include "alloc.h"
 #include "_error.h"
 #include "debug_priv.h"
 

@@ -27,7 +27,7 @@
 #include <stddef.h>
 #include <sexp.h>
 
-#include "common/public/alloc.h"
+#include "common/alloc.h"
 #include "common/assume.h"
 #include "../SEAP/generic/rbt/rbt.h"
 

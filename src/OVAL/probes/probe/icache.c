@@ -30,13 +30,13 @@
 #include <string.h>
 #include <inttypes.h>
 
-#include "common/public/alloc.h"
-#include "common/assume.h"
 #include "../SEAP/generic/rbt/rbt.h"
 #include "probe-api.h"
 #include "common/debug_priv.h"
 #include "common/memusage.h"
 #include "common/oscap_sysinfo.h"
+#include "common/alloc.h"
+#include "common/assume.h"
 
 #include "probe.h"
 #include "icache.h"

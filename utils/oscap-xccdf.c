@@ -45,7 +45,6 @@
 
 #include "oscap-tool.h"
 #include "oscap.h"
-#include "alloc.h"
 
 static int app_evaluate_xccdf(const struct oscap_action *action);
 static int app_xccdf_resolve(const struct oscap_action *action);
@@ -595,7 +594,7 @@ cleanup:
 #ifdef ENABLE_SCE
 	sce_parameters_free(sce_parameters);
 #endif
-	oscap_free(xccdf_pathcopy);
+	free(xccdf_pathcopy);
 
 	/* Definition Models */
 	if (def_models) {
@@ -693,7 +692,7 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 		struct oscap_file_entry_list *files;
 		struct oscap_file_entry_iterator *files_itr;
 
-		oval_file_lst = oscap_talloc(char *);
+		oval_file_lst = malloc(sizeof(char *));
 		oval_file_lst[0] = NULL;
 		of_cnt = 0;
 
@@ -724,7 +723,7 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 		}
 		oscap_file_entry_iterator_free(files_itr);
 		oscap_file_entry_list_free(files);
-		oscap_free(xccdf_path_cpy);
+		free(xccdf_path_cpy);
 	}
 
 	if (!oval_file_lst[0]) {
@@ -732,8 +731,8 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 		goto cleanup;
 	}
 
-	def_mod_lst = oscap_calloc(of_cnt, sizeof(struct oval_definition_model *));
-	ag_ses_lst = oscap_calloc(of_cnt, sizeof(struct oval_agent_session *));
+	def_mod_lst = calloc(of_cnt, sizeof(struct oval_definition_model *));
+	ag_ses_lst = calloc(of_cnt, sizeof(struct oval_agent_session *));
 
 	for (i = 0; i < of_cnt; i++) {
 		def_mod_lst[i] = oval_definition_model_import(oval_file_lst[i]);
@@ -789,14 +788,14 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 			oval_agent_destroy_session(ag_ses_lst[i]);
 			oval_definition_model_free(def_mod_lst[i]);
 		}
-		oscap_free(ag_ses_lst);
-		oscap_free(def_mod_lst);
+		free(ag_ses_lst);
+		free(def_mod_lst);
 	}
 
 	if (oval_file_lst && oval_file_lst != action->f_ovals) {
 		for (i = 0; i < of_cnt; i++)
-			oscap_free(oval_file_lst[i]);
-		oscap_free(oval_file_lst);
+			free(oval_file_lst[i]);
+		free(oval_file_lst);
 	}
 
 	if (policy_model)

@@ -8,7 +8,7 @@
  * @{
  * Memory allocation wrapper functions used in library.
  *
- * It's recommended to use these wrappers for allocation and freeing dynamic memory 
+ * It's recommended to use these wrappers for allocation and freeing dynamic memory
  * for OpenSCAP objects, objects members, ... .
  */
 

@@ -32,7 +32,7 @@
 #include <config.h>
 #endif
 
-#include "common/public/alloc.h"
+#include "common/alloc.h"
 #include "common/bfind.h"
 #include "common/assume.h"
 #include "_oval_probe_handler.h"
