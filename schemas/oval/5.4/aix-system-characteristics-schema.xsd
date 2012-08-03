@@ -177,9 +177,8 @@
             <xsd:annotation>
                   <xsd:documentation>The EntityStateFilesetStateType complex type defines the different values that are valid for the state entity of a fileset state.  The empty string is also allowed as a valid value to support an empty element that is found when a variable reference is used within the state entity.</xsd:documentation>
             </xsd:annotation>
-            <xsd:documentation>The EntityStateFilesetStateType defines the different values that are valid for the state entity of a fileset item.  The empty string is also allowed as a valid value to support empty emlements associated with error conditions.</xsd:documentation>
             <xsd:simpleContent>
-                  <xsd:restriction base="oval-def:EntityItemStringType">
+                  <xsd:restriction base="oval-sc:EntityItemStringType">
                         <xsd:enumeration value="APPLIED">
                               <xsd:annotation>
                                     <xsd:documentation>The specified fileset is installed on the system. The APPLIED state means that the fileset can be rejected with the installp command and the previous level of the fileset restored. This state is only valid for Version 4 fileset updates and 3.2 migrated filesets.</xsd:documentation>
@@ -225,11 +224,11 @@
             </xsd:simpleContent>
       </xsd:complexType>
       <xsd:complexType name="EntityItemFixInstallationStatusType">
-            <xsd:annotation>>
+            <xsd:annotation>
                   <xsd:documentation>The EntityStateFixInstallationStatusType defines the different values that are valid for the installation_status entity of a fix_state item.  The empty string is also allowed as a valid value to support empty emlements associated with error conditions.</xsd:documentation>
             </xsd:annotation>
             <xsd:simpleContent>
-                  <xsd:restriction base="oval-def:EntityItemStringType">
+                  <xsd:restriction base="oval-sc:EntityItemStringType">
                         <xsd:enumeration value="ALL_INSTALLED">
                               <xsd:annotation>
                                     <xsd:documentation>All filesets for XXXXXXX were found</xsd:documentation>

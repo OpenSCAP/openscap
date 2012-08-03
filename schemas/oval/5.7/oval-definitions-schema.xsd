@@ -1179,7 +1179,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntityObjectBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:hexBinary oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
             </xsd:restriction>
         </xsd:simpleContent>
@@ -1191,7 +1191,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntityObjectBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:boolean oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
             </xsd:restriction>
         </xsd:simpleContent>
@@ -1203,7 +1203,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntityObjectBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:float oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
             </xsd:restriction>
         </xsd:simpleContent>
@@ -1215,7 +1215,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntityObjectBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:integer oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
             </xsd:restriction>
         </xsd:simpleContent>
@@ -1275,7 +1275,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntityStateBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:hexBinary oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
             </xsd:restriction>
         </xsd:simpleContent>
@@ -1287,7 +1287,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntityStateBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:boolean oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
             </xsd:restriction>
         </xsd:simpleContent>
@@ -1299,7 +1299,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntityStateBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:float oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
             </xsd:restriction>
         </xsd:simpleContent>
@@ -1311,7 +1311,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntityStateBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:integer oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
             </xsd:restriction>
         </xsd:simpleContent>
