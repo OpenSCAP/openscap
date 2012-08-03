@@ -54,6 +54,10 @@ bool oscap_reference_get_is_dublincore(const struct oscap_reference *item);
 bool oscap_reference_set_is_dublincore(struct oscap_reference *obj, bool newval);
 
 /// @memberof oscap_reference
+const char *oscap_reference_get_href(const struct oscap_reference *item);
+/// @memberof oscap_reference
+bool oscap_reference_set_href(struct oscap_reference *obj, const char *newval);
+/// @memberof oscap_reference
 const char *oscap_reference_get_title(const struct oscap_reference *item);
 /// @memberof oscap_reference
 bool oscap_reference_set_title(struct oscap_reference *obj, const char *newval);

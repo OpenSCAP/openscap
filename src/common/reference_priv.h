@@ -49,6 +49,7 @@ struct oscap_reference {
     char *coverage;
     char *rights;
     bool is_dublincore;
+    char *href;
 };
 
 xmlNode *oscap_reference_to_dom(struct oscap_reference *ref, xmlNode *parent, xmlDoc *doc, const char *elname);

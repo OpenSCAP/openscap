@@ -36,6 +36,7 @@
 #define NS_DUBLINCORE BAD_CAST "http://purl.org/dc/elements/1.1/"
 
 OSCAP_ACCESSOR_SIMPLE(bool,oscap_reference,is_dublincore)
+OSCAP_ACCESSOR_STRING(oscap_reference,href)
 OSCAP_ACCESSOR_STRING(oscap_reference,title)
 OSCAP_ACCESSOR_STRING(oscap_reference,creator)
 OSCAP_ACCESSOR_STRING(oscap_reference,subject)
@@ -77,6 +78,7 @@ void oscap_reference_free(struct oscap_reference *ref)
         oscap_free(ref->relation);
         oscap_free(ref->coverage);
         oscap_free(ref->rights);
+        oscap_free(ref->href);
         oscap_free(ref);
     }
 }
@@ -90,10 +92,12 @@ xmlNode *oscap_reference_to_dom(struct oscap_reference *ref, xmlNode *parent, xm
 {
     if (!ref) return NULL;
     xmlNode *ref_node = xmlNewChild(parent, NULL, BAD_CAST elname, NULL);
-    
+
+    if (ref->href != NULL)
+        xmlNewProp(ref_node, BAD_CAST "href", BAD_CAST ref->href);
+
     if (!ref->is_dublincore) {
         xmlNodeAddContent(ref_node, BAD_CAST ref->title);
-        xmlNewProp(ref_node, BAD_CAST "href", BAD_CAST ref->identifier);
         return ref_node;
     }
     
@@ -132,6 +136,8 @@ struct oscap_reference *oscap_reference_new_parse(xmlTextReaderPtr reader)
 
     xmlNode* ref_node = xmlTextReaderExpand(reader);
 
+    ref->href = (char*) xmlGetProp(ref_node, BAD_CAST "href");
+
     for (xmlNode* cur = ref_node->children; cur != NULL; cur = cur->next)
 		if (cur->type == XML_ELEMENT_NODE) { ref->is_dublincore = true; break; }
 
@@ -159,7 +165,6 @@ struct oscap_reference *oscap_reference_new_parse(xmlTextReaderPtr reader)
         }
     }
     else {
-        ref->identifier = (char*) xmlGetProp(ref_node, BAD_CAST "href");
         ref->title = (char*) xmlNodeGetContent(ref_node);
     }
 
@@ -193,6 +198,7 @@ struct oscap_reference *oscap_reference_clone(const struct oscap_reference *ref)
     DC_ITEM_CLONE(relation);
     DC_ITEM_CLONE(coverage);
     DC_ITEM_CLONE(rights);
+    DC_ITEM_CLONE(href);
 
     return new_ref;
 }
