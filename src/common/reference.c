@@ -81,7 +81,10 @@ void oscap_reference_free(struct oscap_reference *ref)
     }
 }
 
-#define DC_ITEM_TO_DOM(ITEM) do { xmlNewTextChild(ref_node, ns_dc, BAD_CAST #ITEM, BAD_CAST ref->ITEM); } while(0)
+#define DC_ITEM_TO_DOM(ITEM) do { \
+    if (ref->ITEM != NULL) \
+        xmlNewTextChild(ref_node, ns_dc, BAD_CAST #ITEM, BAD_CAST ref->ITEM); \
+    } while(0)
 
 xmlNode *oscap_reference_to_dom(struct oscap_reference *ref, xmlNode *parent, xmlDoc *doc, const char *elname)
 {
@@ -95,6 +98,9 @@ xmlNode *oscap_reference_to_dom(struct oscap_reference *ref, xmlNode *parent, xm
     }
     
     xmlNs *ns_dc = xmlSearchNsByHref(doc, parent, NS_DUBLINCORE);
+    if (ns_dc == NULL) // the namespace hasn't been defined in ancestor elements
+        ns_dc = xmlNewNs(ref_node, NS_DUBLINCORE, BAD_CAST "dc");
+
     DC_ITEM_TO_DOM(title);
     DC_ITEM_TO_DOM(creator);
     DC_ITEM_TO_DOM(subject);
@@ -131,7 +137,7 @@ struct oscap_reference *oscap_reference_new_parse(xmlTextReaderPtr reader)
 
     if (ref->is_dublincore) {
         for (xmlNode* cur = ref_node->children; cur != NULL; cur = cur->next) {
-            if (cur->type == XML_ELEMENT_NODE
+            if (cur->type != XML_ELEMENT_NODE
 				|| cur->ns == NULL
 				|| !oscap_streq((const char* ) cur->ns->href, (const char *) NS_DUBLINCORE))
 					continue;
