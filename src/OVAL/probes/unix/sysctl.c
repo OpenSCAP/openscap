@@ -55,9 +55,13 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
         SEXP_t *name_entity, *probe_in;
         SEXP_t *r0, *r1, *r2;
         SEXP_t *ent_attrs, *bh_entity, *path_entity, *filename_entity;
+        oval_version_t over;
+        int over_cmp;
 
         probe_in    = probe_ctx_getobject(ctx);
         name_entity = probe_obj_getent(probe_in, "name", 1);
+        over        = probe_obj_get_schema_version(probe_in);
+        over_cmp    = oval_version_cmp(over, OVAL_VERSION(5.10));
 
         if (name_entity == NULL) {
                 dE("Missing \"name\" entity in the input object\n");
@@ -121,8 +125,10 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
                 if (probe_entobj_cmp(name_entity, se_mib) == OVAL_RESULT_TRUE) {
                         FILE   *fp;
                         SEXP_t *item;
-                        char    sysctl_value[512];
-                        size_t  i, l;
+                        char    sysval[8192];
+                        char   *sysvals[512];
+                        long i, l;
+                        size_t s;
 
                         dI("MIB match\n");
 
@@ -137,40 +143,55 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
                                 goto fail_item;
                         }
 
-                        l = fread(sysctl_value, 1, sizeof sysctl_value - 1, fp);
+                        l = fread(sysval, 1, sizeof sysval - 1, fp);
 
                         if (ferror(fp)) {
-                                dE("An error ocured when reading from \"%s\" (fp=%p): %u, %s\n",
-                                   mibpath, fp, errno, strerror(errno));
+                                dE("An error ocured when reading from \"%s\" (fp=%p): l=%ld, %u, %s\n",
+                                    mibpath, fp, l, errno, strerror(errno));
                                 goto fail_item;
                         }
 
                         fclose(fp);
-                        assume_d(l < sizeof sysctl_value, NULL);
 
                         /*
                          * sanitize the value
                          *  - only printable and whitespace chars allowed
                          *  - remove the last '\n'
                          */
-                        for(i = 0; i < l; ++i) {
-                                if (!isprint(sysctl_value[i]) && !isspace(sysctl_value[i])) {
-                                        sysctl_value[i] = '\0';
-                                        break;
+                        sysvals[0] = sysval;
+
+                        for(s = 0, i = 0; i < l && s < sizeof sysvals/sizeof(char *) - 1; ++i) {
+	                        if (!isprint(sysval[i]) && !isspace(sysval[i])) {
+                                        sysval[i] = '\0';
+                                        sysvals[++s] = sysval + i + 1;
                                 }
+	                        /* Only in OVAL 5.10 and above */
+	                        if (over_cmp >= 0 && sysval[i] == '\n') {
+		                        sysval[i] = '\0';
+                                        sysvals[++s] = sysval + i + 1;
+	                        }
                         }
 
-                        if (sysctl_value[l - 1] == '\n')
-                                sysctl_value[l - 1] = '\0';
+                        if (sysval[l - 1] == '\n')
+                                sysval[l - 1] = '\0';
                         else
-                                sysctl_value[l] = '\0';
+                                sysval[l] = '\0';
 
-                        dI("sanitized value: %s\n", sysctl_value);
+                        sysvals[++s] = NULL;
 
-                        item = probe_item_create(OVAL_UNIX_SYSCTL, NULL,
-                                                 "name",  OVAL_DATATYPE_SEXP,   se_mib,
-                                                 "value", OVAL_DATATYPE_STRING, sysctl_value,
-                                                 NULL);
+                        if (over_cmp >= 0) {
+	                        /* Only in OVAL 5.10 and above */
+	                        item = probe_item_create(OVAL_UNIX_SYSCTL, NULL,
+	                                                 "name",  OVAL_DATATYPE_SEXP,   se_mib,
+	                                                 "value", OVAL_DATATYPE_STRING_M, sysvals,
+	                                                 NULL);
+                        } else {
+	                        item = probe_item_create(OVAL_UNIX_SYSCTL, NULL,
+	                                                 "name",  OVAL_DATATYPE_SEXP,   se_mib,
+	                                                 "value", OVAL_DATATYPE_STRING, sysval,
+	                                                 NULL);
+                        }
+
                         goto add_item;
                 fail_item:
                         if (fp != NULL)
