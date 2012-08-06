@@ -41,7 +41,6 @@
  * home_dir
  * login_shell
  */
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -51,6 +50,8 @@
 #include <stdio.h>
 #include <errno.h>
 #include <pwd.h>
+#include <paths.h>
+#include <lastlog.h>
 
 #include "seap.h"
 #include "probe-api.h"
@@ -67,9 +68,10 @@ struct result_info {
         const char *gcos;
         const char *home_dir;
         const char *login_shell;
+	int64_t last_login;
 };
 
-static void report_finding(struct result_info *res, probe_ctx *ctx)
+static void report_finding(struct result_info *res, probe_ctx *ctx, oval_version_t over)
 {
         SEXP_t *item;
 
@@ -83,10 +85,17 @@ static void report_finding(struct result_info *res, probe_ctx *ctx)
                                  "login_shell", OVAL_DATATYPE_STRING, res->login_shell,
                                  NULL);
 
+        if (oval_version_cmp(over, OVAL_VERSION(5.10)) >= 0) {
+	        SEXP_t last_login;
+	        SEXP_number_newi_64_r(&last_login, res->last_login);
+	        probe_item_ent_add(item, "last_login", NULL, &last_login);
+	        SEXP_free_r(&last_login);
+        }
+
         probe_item_collect(ctx, item);
 }
 
-static int read_password(SEXP_t *un_ent, probe_ctx *ctx)
+static int read_password(SEXP_t *un_ent, probe_ctx *ctx, oval_version_t over)
 {
         struct passwd *pw;
 
@@ -97,6 +106,7 @@ static int read_password(SEXP_t *un_ent, probe_ctx *ctx)
                 un = SEXP_string_newf("%s", pw->pw_name);
                 if (probe_entobj_cmp(un_ent, un) == OVAL_RESULT_TRUE) {
                         struct result_info r;
+
                         r.username = pw->pw_name;
                         r.password = pw->pw_passwd;
                         r.user_id = pw->pw_uid;
@@ -104,8 +114,22 @@ static int read_password(SEXP_t *un_ent, probe_ctx *ctx)
                         r.gcos = pw->pw_gecos;
                         r.home_dir = pw->pw_dir;
                         r.login_shell = pw->pw_shell;
+                        r.last_login = -1;
 
-                        report_finding(&r, ctx);
+                        if (oval_version_cmp(over, OVAL_VERSION(5.10)) >= 0) {
+	                        FILE *ll_fp = fopen(_PATH_LASTLOG, "r");
+
+	                        if (ll_fp != NULL) {
+		                        struct lastlog ll;
+
+		                        if (fseeko(ll_fp, (off_t)pw->pw_uid * sizeof(ll), SEEK_SET) == 0)
+			                        if (fread((char *)&ll, sizeof(ll), 1, ll_fp) == 1)
+				                        r.last_login = (int64_t)ll.ll_time;
+		                        fclose(ll_fp);
+	                        }
+                        }
+
+                        report_finding(&r, ctx, over);
                 }
                 SEXP_free(un);
         }
@@ -115,15 +139,23 @@ static int read_password(SEXP_t *un_ent, probe_ctx *ctx)
 
 int probe_main(probe_ctx *ctx, void *arg)
 {
-        SEXP_t *ent;
+	SEXP_t *ent, *obj;
+	oval_version_t over;
 
-        ent = probe_obj_getent(probe_ctx_getobject(ctx), "username", 1);
+	obj = probe_ctx_getobject(ctx);
+
+	if (obj == NULL)
+		return PROBE_ENOOBJ;
+
+	over= probe_obj_get_schema_version(obj);
+        ent = probe_obj_getent(obj, "username", 1);
+
         if (ent == NULL) {
                 return PROBE_ENOVAL;
         }
 
         // Now we check the file...
-        read_password(ent, ctx);
+        read_password(ent, ctx, over);
         SEXP_free(ent);
 
         return 0;
