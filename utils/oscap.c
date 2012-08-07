@@ -130,6 +130,7 @@ int app_validate_xml(const struct oscap_action *action)
 	const char *xml_file;
 	xmlChar *doc_version;
 	int ret;
+	int result = OSCAP_ERROR;
 
 	switch (action->doctype) {
 	case OSCAP_DOCUMENT_OVAL_DEFINITIONS:
@@ -147,19 +148,21 @@ int app_validate_xml(const struct oscap_action *action)
 
 	if (!xml_file) {
 		fprintf(stderr, "Missing xml file.\n");
-		return OSCAP_ERROR;
+		goto cleanup;
+	}
+
+	if (!doc_version) {
+		goto cleanup;
 	}
 
 	ret=oscap_validate_document(xml_file, action->doctype, (const char *) doc_version, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout);
 	if (ret==1) {
-			fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
-			return OSCAP_FAIL;
+		fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
+		result=OSCAP_FAIL;
+		goto cleanup;
 	}
 	else if (ret==-1) {
-		if (oscap_err()) {
-			fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
-			return OSCAP_ERROR;
-		}
+		goto cleanup;
 	}
 
 	// schematron-based validation forced
@@ -183,15 +186,21 @@ int app_validate_xml(const struct oscap_action *action)
 			const char *params[] = { NULL };
 			if (!oscap_apply_xslt_var(xml_file, xslfile, NULL, params, "OSCAP_SCHEMA_PATH", OSCAP_SCHEMA_PATH)) {
 				fprintf(stderr, "%s\n", "Error during schematron validation.");
-				return OSCAP_ERROR;
+				goto cleanup;
 			}
 		}
 		else {
 			fprintf(stderr, "%s\n", "Could not find schematron validation file for this document type.");
-			return OSCAP_ERROR;
+			goto cleanup;
 		}
 	}
 
-	return OSCAP_OK;
+	result=OSCAP_OK;
+
+cleanup:
+	if (oscap_err())
+		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+
+	return result;
 }
 
