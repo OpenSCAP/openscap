@@ -26,7 +26,7 @@
 
 #include "public/ds.h"
 #include "oscap.h"
-#include "alloc.h"
+#include "common/alloc.h"
 #include "common/_error.h"
 #include "common/util.h"
 
