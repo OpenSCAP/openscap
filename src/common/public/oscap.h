@@ -181,6 +181,8 @@ typedef enum oscap_document_type {
 	OSCAP_DOCUMENT_CPE_LANGUAGE,          ///< CPE language file
 	OSCAP_DOCUMENT_CPE_DICTIONARY,        ///< CPE dictionary file
 	OSCAP_DOCUMENT_SCE_RESULT,            ///< SCE result file
+	OSCAP_DOCUMENT_SDS,                   ///< Source Data Stream file
+	OSCAP_DOCUMENT_ARF                    ///< Result Data Stream file
 } oscap_document_type_t;
 
 

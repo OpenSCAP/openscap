@@ -38,6 +38,7 @@ static int print_versions(const struct oscap_action*);
 extern struct oscap_module OSCAP_VERSION_MODULE;
 
 struct oscap_module* OSCAP_ROOT_SUBMODULES[] = {
+    &OSCAP_DS_MODULE,
 #ifdef ENABLE_OVAL
     &OSCAP_OVAL_MODULE,
 #endif

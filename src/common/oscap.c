@@ -203,6 +203,8 @@ struct oscap_schema_table_entry {
 // patch version fragments are intentionally left out, we strive to ship
 // schemas of the newest patch versions of that particular minor.major version
 // todo: ugly
+// FIXME: we ship OCIL schemes but they aren't supported in openscap
+//        and aren't in this list
 struct oscap_schema_table_entry OSCAP_SCHEMAS_TABLE[] = {
 	{OSCAP_DOCUMENT_OVAL_DEFINITIONS,	"5.3",	"oval/5.3/oval-definitions-schema.xsd"},
 	{OSCAP_DOCUMENT_OVAL_DEFINITIONS,	"5.4",	"oval/5.4/oval-definitions-schema.xsd"},
@@ -247,6 +249,8 @@ struct oscap_schema_table_entry OSCAP_SCHEMAS_TABLE[] = {
 	{OSCAP_DOCUMENT_SCE_RESULT,		"1.0",	"sce/1.0/sce-result-schema.xsd"},
 	{OSCAP_DOCUMENT_XCCDF,			"1.2",	"xccdf/1.2/xccdf_1.2.xsd"},
 	{OSCAP_DOCUMENT_XCCDF,			"1.1",	"xccdf/1.1/xccdf-schema.xsd"},
+	{OSCAP_DOCUMENT_SDS,                "1.2",  "sds/1.2/scap-source-data-stream_1.2.xsd"},
+	{OSCAP_DOCUMENT_ARF,                "1.1",  "arf/1.1/asset-reporting-format_1.1.0.xsd"},
 	{0, NULL, NULL }
 };
 
@@ -287,9 +291,11 @@ bool oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype,
 	close(devnull);
 
 	for (entry = OSCAP_SCHEMAS_TABLE; entry->doc_type != 0; ++entry) {
+		printf("Browsing over %s\n", entry->schema_path);
 		if (entry->doc_type != doctype)
 			continue;
 
+		printf("Validating with %s\n", entry->schema_path);
 		ret = oscap_validate_xml(xmlfile, entry->schema_path, reporter, arg);
 		// todo: display the name of the schema file somewhere
 		if (ret == true)

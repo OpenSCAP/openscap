@@ -89,6 +89,14 @@ enum oscap_exitcode {
 
 struct cvss_impact;
 
+struct ds_action {
+	char* file;
+	char* target;
+	char* xccdf_result;
+	char** oval_results;
+	size_t oval_result_count;
+};
+
 #ifdef ENABLE_CPE
 struct cpe_action {
 	char * name;
@@ -105,6 +113,7 @@ struct oscap_action {
 	char *f_syschar;
 	char *f_directives;
         char *f_results;
+	char *f_results_arf;
         char *f_report;
 	char *f_variables;
 	/* others */
@@ -119,6 +128,7 @@ struct oscap_action {
         int hide_profile_info;
         char *stylesheet;
         struct cvss_impact *cvss_impact;
+    struct ds_action* ds_action;
 #ifdef ENABLE_CPE
 	struct cpe_action * cpe_action;
 #endif
@@ -142,6 +152,7 @@ bool oscap_module_usage(struct oscap_module *module, FILE *out, const char *err,
 int oscap_module_call(struct oscap_action *action);
 
 extern struct oscap_module OSCAP_ROOT_MODULE;
+extern struct oscap_module OSCAP_DS_MODULE;
 #ifdef ENABLE_XCCDF
 extern struct oscap_module OSCAP_XCCDF_MODULE;
 #endif

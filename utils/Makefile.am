@@ -4,8 +4,8 @@ oscap_LDADD =
 if WANT_UTIL_OSCAP
 bin_PROGRAMS	= oscap
 man_MANS	= oscap.8
-oscap_SOURCES	= oscap.c oscap-tool.h oscap-tool.c
-oscap_CPPFLAGS	= -I$(top_srcdir)/src/common/public @xml2_CFLAGS@
+oscap_SOURCES	= oscap.c oscap-tool.h oscap-tool.c oscap-ds.c
+oscap_CPPFLAGS	= -I$(top_srcdir)/src/common/public -I$(top_srcdir)/src/DS/public @xml2_CFLAGS@
 oscap_LDADD	+= $(top_builddir)/src/libopenscap.la
 EXTRA_DIST	= $(man_MANS)
 
