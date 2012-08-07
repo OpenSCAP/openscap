@@ -29,6 +29,7 @@
 #include <string.h>
 
 #include "alloc.h"
+#include "util.h"
 #include "_error.h"
 #include "debug_priv.h"
 
@@ -48,7 +49,7 @@ static struct oscap_err_t *oscap_err_new(oscap_errfamily_t family, oscap_errcode
 	err = oscap_talloc(struct oscap_err_t);
 	err->family = family;
 	err->code = code;
-	err->desc = (desc == NULL ? NULL : strdup(desc));
+	err->desc = oscap_sprintf("%s [%s:%d]", desc, file, line);
 	err->func = func;
 	err->line = line;
 	err->file = file;
