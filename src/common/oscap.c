@@ -291,11 +291,9 @@ bool oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype,
 	close(devnull);
 
 	for (entry = OSCAP_SCHEMAS_TABLE; entry->doc_type != 0; ++entry) {
-		printf("Browsing over %s\n", entry->schema_path);
 		if (entry->doc_type != doctype)
 			continue;
 
-		printf("Validating with %s\n", entry->schema_path);
 		ret = oscap_validate_xml(xmlfile, entry->schema_path, reporter, arg);
 		// todo: display the name of the schema file somewhere
 		if (ret == true)
