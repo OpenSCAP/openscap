@@ -78,6 +78,7 @@
 # error "Sorry, your OS isn't supported."
 #endif
 
+oval_version_t over;
 
 static SEXP_t *gr_true   = NULL, *gr_false  = NULL, *gr_t_reg  = NULL;
 static SEXP_t *gr_t_dir  = NULL, *gr_t_lnk  = NULL, *gr_t_blk  = NULL;
@@ -116,7 +117,11 @@ static SEXP_t *ID_cache_get(int32_t id)
 	if (rbt_i32_get(g_ID_cache, id, (void *)&s_id) == 0)
 		return SEXP_ref(s_id); /* cache hit (first attempt) */
 
-	s_id = SEXP_number_newu_32(id);
+	if (oval_version_cmp(over, OVAL_VERSION(5.8)) < 0) {
+		s_id = SEXP_string_newf("%u", id);
+	} else {
+		s_id = SEXP_number_newu_32(id);
+	}
 
 	if (g_ID_cache_max == 0 || rbt_i32_size(g_ID_cache) < g_ID_cache_max) {
 		if (rbt_i32_add(g_ID_cache, id, (void *)s_id, NULL) == 0)
@@ -152,7 +157,7 @@ static void ID_cache_free(void)
 
 static SEXP_t *get_atime(struct stat *st, SEXP_t *sexp)
 {
-	return SEXP_number_newu_64_r (sexp,
+	uint64_t t = (
 #if defined(OS_FREEBSD)
 # if (__STDC_VERSION__ >= 199901L)
 		(uint64_t) st->st_atimespec.tv_sec
@@ -163,11 +168,17 @@ static SEXP_t *get_atime(struct stat *st, SEXP_t *sexp)
 		(uint64_t) st->st_atim.tv_sec
 #endif
 		);
+
+	if (oval_version_cmp(over, OVAL_VERSION(5.8)) < 0) {
+		return SEXP_string_newf_r(sexp, "%llu", (long long unsigned) t);
+	} else {
+		return SEXP_number_newu_64_r(sexp, t);
+	}
 }
 
 static SEXP_t *get_ctime(struct stat *st, SEXP_t *sexp)
 {
-	return SEXP_number_newu_64_r (sexp,
+	uint64_t t = (
 #if defined(OS_FREEBSD)
 # if (__STDC_VERSION__ >= 199901L)
 		(uint64_t) st->st_ctimespec.tv_sec
@@ -178,11 +189,17 @@ static SEXP_t *get_ctime(struct stat *st, SEXP_t *sexp)
 		(uint64_t) st->st_ctim.tv_sec
 #endif
 		);
+
+	if (oval_version_cmp(over, OVAL_VERSION(5.8)) < 0) {
+		return SEXP_string_newf_r(sexp, "%llu", (long long unsigned) t);
+	} else {
+		return SEXP_number_newu_64_r(sexp, t);
+	}
 }
 
 static SEXP_t *get_mtime(struct stat *st, SEXP_t *sexp)
 {
-	return SEXP_number_newu_64_r (sexp,
+	uint64_t t = (
 #if defined(OS_FREEBSD)
 # if (__STDC_VERSION__ >= 199901L)
 		(uint64_t) st->st_mtimespec.tv_sec
@@ -193,6 +210,12 @@ static SEXP_t *get_mtime(struct stat *st, SEXP_t *sexp)
 		(uint64_t) st->st_mtim.tv_sec
 #endif
 		);
+
+	if (oval_version_cmp(over, OVAL_VERSION(5.8)) < 0) {
+		return SEXP_string_newf_r(sexp, "%llu", (long long unsigned) t);
+	} else {
+		return SEXP_number_newu_64_r(sexp, t);
+	}
 }
 
 static SEXP_t *get_size(struct stat *st, SEXP_t *sexp)
@@ -236,6 +259,14 @@ static int file_cb (const char *p, const char *f, void *ptr)
         } else {
                 SEXP_t *se_usr_id, *se_grp_id;
                 SEXP_t  se_atime_mem, se_ctime_mem, se_mtime_mem, se_size_mem;
+		SEXP_t *se_filepath, *se_acl;
+
+		if (oval_version_cmp(over, OVAL_VERSION(5.6)) < 0
+		    || f == NULL) {
+			se_filepath = NULL;
+		} else {
+			se_filepath = SEXP_string_newf("%s", st_path);
+		}
 
 		se_usr_id = ID_cache_get(st.st_uid);
 		se_grp_id = st.st_gid != st.st_uid ? ID_cache_get(st.st_gid) : SEXP_ref(se_usr_id);
@@ -248,8 +279,18 @@ static int file_cb (const char *p, const char *f, void *ptr)
 		} else
 			SEXP_string_new_r(&gr_lastpath, p, strlen(p));
 
+#if defined(HAVE_LIBACL)
+		if (oval_version_cmp(over, OVAL_VERSION(5.7)) < 0) {
+			se_acl = NULL;
+		} else {
+			se_acl = acl_extended_file(st_path) ? gr_true : gr_false;
+		}
+#else
+		se_acl = NULL;
+#endif
+
                 item = probe_item_create(OVAL_UNIX_FILE, NULL,
-                                         "filepath", OVAL_DATATYPE_STRING, f == NULL ? NULL : st_path,
+                                         "filepath", OVAL_DATATYPE_SEXP, se_filepath,
                                          "path",     OVAL_DATATYPE_SEXP,  &gr_lastpath,
                                          "filename", OVAL_DATATYPE_STRING, f == NULL ? "" : f,
                                          "type",     OVAL_DATATYPE_SEXP, se_filetype(st.st_mode),
@@ -271,13 +312,12 @@ static int file_cb (const char *p, const char *f, void *ptr)
                                          "oread",    OVAL_DATATYPE_SEXP, MODEP(&st, S_IROTH),
                                          "owrite",   OVAL_DATATYPE_SEXP, MODEP(&st, S_IWOTH),
                                          "oexec",    OVAL_DATATYPE_SEXP, MODEP(&st, S_IXOTH),
-#if defined(HAVE_LIBACL)
-                                         "has_extended_acl", OVAL_DATATYPE_SEXP, acl_extended_file(st_path) ? gr_true : gr_false,
-#endif
+					 "has_extended_acl", OVAL_DATATYPE_SEXP, se_acl,
                                          NULL);
 
                 SEXP_free(se_grp_id);
                 SEXP_free(se_usr_id);
+		SEXP_free(se_filepath);
                 SEXP_free_r(&se_atime_mem);
                 SEXP_free_r(&se_ctime_mem);
                 SEXP_free_r(&se_mtime_mem);
@@ -387,6 +427,7 @@ int probe_main (probe_ctx *ctx, void *mutex)
 
         probe_in  = probe_ctx_getobject(ctx);
 
+	over = probe_obj_get_schema_version(probe_in);
         path      = probe_obj_getent (probe_in, "path",      1);
         filename  = probe_obj_getent (probe_in, "filename",  1);
         behaviors = probe_obj_getent (probe_in, "behaviors", 1);
