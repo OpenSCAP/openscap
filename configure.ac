@@ -426,7 +426,7 @@ AC_CHECK_HEADERS([attr/xattr.h errno.h limits.h pthread.h stdlib.h string.h sys/
 
 echo
 echo ' * Checking presence of required headers for the password probe'
-AC_CHECK_HEADERS([errno.h pwd.h stdio.h stdlib.h string.h ],[],[probe_password_req_deps_ok=no; probe_password_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([errno.h lastlog.h paths.h pwd.h stdio.h stdlib.h string.h ],[],[probe_password_req_deps_ok=no; probe_password_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the process probe'
