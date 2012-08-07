@@ -1,3 +1,8 @@
+openscap-0.8.4							07-08-2012
+- added OVAL schemas 5.9, 5.10.1
+- alloc.h is no more public api
+- bug fixes
+
 openscap-0.8.3 							30-07-2012
 - added XCCDF 1.2 schemas
 - changed XCCDF report format
