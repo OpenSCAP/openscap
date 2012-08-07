@@ -365,8 +365,11 @@ void oscap_strtoupper(char *str);
 // check pointer equality
 bool oscap_ptr_cmp(void *node1, void *node2);
 
-// validate given XML file
-bool oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_reporter reporter, void *arg);
+/**
+ * validate given XML file
+ * @return 0 on pass; -1 error; 1 fail
+ */
+int oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_reporter reporter, void *arg);
 // check file existence
 bool oscap_file_exists(const char *path, int mode);
 

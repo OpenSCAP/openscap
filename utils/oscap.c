@@ -129,6 +129,7 @@ int app_validate_xml(const struct oscap_action *action)
 {
 	const char *xml_file;
 	xmlChar *doc_version;
+	int ret;
 
 	switch (action->doctype) {
 	case OSCAP_DOCUMENT_OVAL_DEFINITIONS:
@@ -149,14 +150,14 @@ int app_validate_xml(const struct oscap_action *action)
 		return OSCAP_ERROR;
 	}
 
-	if (!oscap_validate_document(xml_file, action->doctype, (const char *) doc_version,
-		(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-		if (oscap_err()) {
-			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
-			return OSCAP_FAIL;
-		}
-		else {
+	ret=oscap_validate_document(xml_file, action->doctype, (const char *) doc_version, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout);
+	if (ret==1) {
 			fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
+			return OSCAP_FAIL;
+	}
+	else if (ret==-1) {
+		if (oscap_err()) {
+			fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 			return OSCAP_ERROR;
 		}
 	}

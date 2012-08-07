@@ -314,16 +314,15 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	struct sce_parameters* sce_parameters = 0;
 #endif
 
-	int retval = OSCAP_ERROR;
+	int result = OSCAP_ERROR;
+	int ret;
 
 	const char* full_validation = getenv("OSCAP_FULL_VALIDATION");
 
 	/* Validate documents */
-	// we will only validate if the file doesn't come from a datastream
-	// or if full validation was explicitly requested
-	if( action->validate && (!temp_dir || full_validation) ) {
-		if (!oscap_validate_document(xccdf_file, OSCAP_DOCUMENT_XCCDF, xccdf_version_info_get_version(xccdf_detect_version(xccdf_file)), (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-			fprintf(stdout, "Invalid XCCDF content in %s\n", xccdf_file);
+	if( action->validate && (!temp_dir || full_validation)) {
+		if ((ret=oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, xccdf_version_info_get_version(xccdf_detect_version(action->f_xccdf)), (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))) {
+			if (ret==1) fprintf(stdout, "Invalid XCCDF content in %s\n", action->f_xccdf);
 			goto cleanup;
 		}
 	}
@@ -414,10 +413,10 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 			doc_version = oval_determine_document_schema_version((const char *) oval_files[idx],
 				OSCAP_DOCUMENT_OVAL_DEFINITIONS);
-			if (!oscap_validate_document(oval_files[idx],
+			if ((ret=oscap_validate_document(oval_files[idx],
 				OSCAP_DOCUMENT_OVAL_DEFINITIONS, (const char *) doc_version,
-				(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-				fprintf(stdout, "Invalid OVAL Definition content in %s\n", oval_files[idx]);
+				(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))) {
+				if (ret==1) fprintf(stdout, "Invalid OVAL Definition content in %s\n", oval_files[idx]);
 				xmlFree(doc_version);
 				goto cleanup;
 			}
@@ -536,7 +535,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 				xmlChar *doc_version;
 
 				doc_version = oval_determine_document_schema_version((const char *) name, OSCAP_DOCUMENT_OVAL_RESULTS);
-				if (!oscap_validate_document(name, OSCAP_DOCUMENT_OVAL_RESULTS, (const char *) doc_version,
+				if (oscap_validate_document(name, OSCAP_DOCUMENT_OVAL_RESULTS, (const char *) doc_version,
 					(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 					fprintf(stdout, "OVAL Results are NOT exported correctly.\n");
 					free(name);
@@ -568,7 +567,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			sce_check_result_export(result, target);
 
 			if (action->validate && full_validation) {
-				if (!oscap_validate_document(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0",
+				if (oscap_validate_document(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0",
 					(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
 				{
 						fprintf(stdout, "SCE Result file has NOT been exported correctly.\n");
@@ -602,7 +601,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 		/* validate XCCDF Results */
 		if (action->validate && full_validation) {
-			if (!oscap_validate_document(f_results, OSCAP_DOCUMENT_XCCDF, xccdf_version_info_get_version(xccdf_detect_version(f_results)),
+			if (oscap_validate_document(f_results, OSCAP_DOCUMENT_XCCDF, xccdf_version_info_get_version(xccdf_detect_version(f_results)),
 			    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 				fprintf(stdout, "XCCDF Results are NOT exported correctly.\n");
 				goto cleanup;
@@ -681,13 +680,13 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
-	retval = OSCAP_OK;
+	result = OSCAP_OK;
 	struct xccdf_rule_result_iterator *res_it = xccdf_result_get_rule_results(ritem);
 	while (xccdf_rule_result_iterator_has_more(res_it)) {
 		struct xccdf_rule_result *res = xccdf_rule_result_iterator_next(res_it);
-		xccdf_test_result_type_t result = xccdf_rule_result_get_result(res);
-		if ((result == XCCDF_RESULT_FAIL) || (result == XCCDF_RESULT_UNKNOWN))
-			retval = OSCAP_FAIL;
+		xccdf_test_result_type_t rule_result = xccdf_rule_result_get_result(res);
+		if ((rule_result == XCCDF_RESULT_FAIL) || (rule_result == XCCDF_RESULT_UNKNOWN))
+			result = OSCAP_FAIL;
 	}
 	xccdf_rule_result_iterator_free(res_it);
 
@@ -746,7 +745,7 @@ cleanup:
 	free(f_results);
 	free(xccdf_file);
 
-	return retval;
+	return result;
 }
 
 static xccdf_test_result_type_t resolve_variables_wrapper(struct xccdf_policy *policy, const char *rule_id,
@@ -769,13 +768,14 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	struct oval_agent_session **ag_ses_lst = NULL;
 	struct xccdf_result *xres;
 	char **oval_file_lst = NULL;
-	int of_cnt = 0, i, ret = OSCAP_ERROR;
+	int of_cnt = 0, i, ret;
+	int result = OSCAP_ERROR;
 
 	/* validate the XCCDF document */
 	if (action->validate) {
-		if (!oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF,
-			xccdf_version_info_get_version(xccdf_detect_version(action->f_xccdf)), (action->verbosity >= 0) ? oscap_reporter_fd : NULL, stderr)) {
-			fprintf(stderr, "Invalid XCCDF content in '%s'.\n", action->f_xccdf);
+		if ((ret=oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF,
+			xccdf_version_info_get_version(xccdf_detect_version(action->f_xccdf)), (action->verbosity >= 0) ? oscap_reporter_fd : NULL, stderr))) {
+			if (ret==1) fprintf(stderr, "Invalid XCCDF content in '%s'.\n", action->f_xccdf);
 			goto cleanup;
 		}
 	}
@@ -902,7 +902,7 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 		oval_variable_model_iterator_free(var_mod_itr);
 	}
 
-	ret = OSCAP_OK;
+	result = OSCAP_OK;
 
  cleanup:
 	if (oscap_err())
@@ -926,7 +926,7 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	if (policy_model)
 		xccdf_policy_model_free(policy_model);
 
-	return ret;
+	return result;
 }
 
 int app_xccdf_resolve(const struct oscap_action *action)

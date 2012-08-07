@@ -137,9 +137,9 @@ static void oscap_xml_validity_handler(void *user, xmlErrorPtr error)
     oscap_reporter_report_xml(user, error);
 }
 
-bool oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_reporter reporter, void *arg)
+int oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_reporter reporter, void *arg)
 {
-	bool result = false; int ret = 0;
+	int result = -1;
 	xmlSchemaParserCtxtPtr parser_ctxt = NULL;
 	xmlSchemaPtr schema = NULL;
 	xmlSchemaValidCtxtPtr ctxt = NULL;
@@ -147,12 +147,12 @@ bool oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_repor
 
         if (xmlfile == NULL) {
                 oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "'xmlfile' == NULL");
-                return false;
+                return -1;
         }
 
         if (schemafile == NULL) {
                 oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "'schemafile' == NULL");
-                return false;
+                return -1;
         }
 
 	char *schemapath = oscap_get_schema_path(schemafile);
@@ -160,7 +160,7 @@ bool oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_repor
 		char* message = oscap_sprintf("Schema file '%s' not found when trying to validate '%s'", schemafile, xmlfile);
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, message);
 		oscap_free(message);
-		goto cleanup;
+		return -1;
 	}
 
 	parser_ctxt = xmlSchemaNewParserCtxt(schemapath);
@@ -185,18 +185,25 @@ bool oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_repor
 
 	xmlSchemaSetValidStructuredErrors(ctxt, oscap_xml_validity_handler, &reporter_ctxt);
 
-	ret = xmlSchemaValidateFile(ctxt, xmlfile, 0);
-	switch (ret) {
-		case  0: result = true; break;
-		case -1: oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Validation failure"); break;
-		default: result = false; break;
-	}
+	result = xmlSchemaValidateFile(ctxt, xmlfile, 0);
+
+	/*
+	 * xmlSchemaValidateFile() returns "-1" if document is not well formed
+	 * thefore we ignore libxml internal errors here and map return code to
+	 * either pass or fail.
+	 */
+	if (result < 0)
+		result = 1;
+	/* This would be nicer
+	 * if (result ==  -1)
+	 *	oscap_setxmlerr(xmlGetLastError());
+	*/
 
 cleanup:
-	oscap_free(schemapath);
 	if (ctxt)        xmlSchemaFreeValidCtxt(ctxt);
 	if (schema)      xmlSchemaFree(schema);
 	if (parser_ctxt) xmlSchemaFreeParserCtxt(parser_ctxt);
+	oscap_free(schemapath);
 
 	return result;
 }
@@ -263,23 +270,23 @@ struct oscap_schema_table_entry OSCAP_SCHEMAS_TABLE[] = {
 	{0, NULL, NULL }
 };
 
-bool oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, oscap_reporter reporter, void *arg)
+int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, oscap_reporter reporter, void *arg)
 {
 	struct oscap_schema_table_entry *entry;
 
 	if (xmlfile == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "'xmlfile' == NULL");
-		return false;
+		return -1;
 	}
 
 	if (access(xmlfile, R_OK)) {
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, strerror(errno));
-		return false;
+		return -1;
 	}
 
 	if (version == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "'version' == NULL");
-		return false;
+		return -1;
 	}
 
 	/* find a right schema file */
@@ -296,11 +303,11 @@ bool oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype,
 		char* msg = oscap_sprintf("Schema file not found when trying to validate '%s'", xmlfile);
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, msg);
 		oscap_free(msg);
-		return false;
+		return -1;
 	}
 
 	/* we shouldn't get here */
-	return false;
+	return -1;
 }
 
 bool oscap_apply_xslt_var(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params, const char *pathvar, const char *defpath)

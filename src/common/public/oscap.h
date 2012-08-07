@@ -201,9 +201,9 @@ typedef enum oscap_document_type {
  * @param version Version of the document, use NULL for library's default.
  * @param reporetr A reporter to by notified of encountered issues. Can be NULL, if a binary document validates / does not validate answer is satisfactonary.
  * @param arg Argument for the reporter.
- * @return Success or failure.
+ * @return 0 on pass; -1 error; 1 fail
  */
-bool oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, oscap_reporter reporter, void *arg);
+int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, oscap_reporter reporter, void *arg);
 
 /**
  * Apply a XSLT stylesheet to a XML file.
