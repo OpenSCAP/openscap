@@ -20,6 +20,8 @@ function test_mitre {
         /usr/bin/unzip -u ${srcdir}/ValidationSupportFiles.zip -d /tmp
         # workaround file access time issue
         find "$MITRE_FILES"
+	# workaround old schema version in linux-external-variables.xml
+	sed -i 's/5.0/5.5/' "$EXTVARFILE"
     fi
 
     local ret_val=0;
