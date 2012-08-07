@@ -568,7 +568,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			sce_check_result_export(result, target);
 
 			if (action->validate && full_validation) {
-				if (!oscap_validate_document(target, OSCAP_DOCUMENT_SCE_RESULT, NULL,
+				if (!oscap_validate_document(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0",
 					(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
 				{
 						fprintf(stdout, "SCE Result file has NOT been exported correctly.\n");

@@ -41,6 +41,7 @@
 #include "list.h"
 #include "elements.h"
 #include "reporter_priv.h"
+#include "assume.h"
 
 #ifndef OSCAP_DEFAULT_SCHEMA_PATH
 const char * const OSCAP_SCHEMA_PATH = "/usr/local/share/openscap/schemas";
@@ -138,17 +139,25 @@ static void oscap_xml_validity_handler(void *user, xmlErrorPtr error)
 
 bool oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_reporter reporter, void *arg)
 {
-	assert(xmlfile != NULL);
-	assert(schemafile != NULL); // TODO: validate even w/o schema, just for well-formness
-
 	bool result = false; int ret = 0;
 	xmlSchemaParserCtxtPtr parser_ctxt = NULL;
 	xmlSchemaPtr schema = NULL;
 	xmlSchemaValidCtxtPtr ctxt = NULL;
 	struct oscap_reporter_context reporter_ctxt = { reporter, arg, (void*) xmlfile };
+
+        if (xmlfile == NULL) {
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "'xmlfile' == NULL");
+                return false;
+        }
+
+        if (schemafile == NULL) {
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "'schemafile' == NULL");
+                return false;
+        }
+
 	char *schemapath = oscap_get_schema_path(schemafile);
 	if (schemapath == NULL) {
-		char* message = oscap_sprintf("Schema file '%s' not found! (When trying to validate '%s')", schemafile, xmlfile);
+		char* message = oscap_sprintf("Schema file '%s' not found when trying to validate '%s'", schemafile, xmlfile);
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, message);
 		oscap_free(message);
 		goto cleanup;
@@ -257,11 +266,9 @@ struct oscap_schema_table_entry OSCAP_SCHEMAS_TABLE[] = {
 bool oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, oscap_reporter reporter, void *arg)
 {
 	struct oscap_schema_table_entry *entry;
-	int old_stdout = -1, devnull;
-	bool ret = false;
 
 	if (xmlfile == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "No XML file given.");
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "'xmlfile' == NULL");
 		return false;
 	}
 
@@ -270,42 +277,30 @@ bool oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype,
 		return false;
 	}
 
-	/* validate using specific version */
-	if (version != NULL) {
-		for (entry = OSCAP_SCHEMAS_TABLE; entry->doc_type != 0; ++entry) {
-			if (entry->doc_type != doctype || strcmp(entry->schema_version, version))
-				continue;
-
-			return oscap_validate_xml(xmlfile, entry->schema_path, reporter, arg);
-		}
+	if (version == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "'version' == NULL");
+		return false;
 	}
 
-	/* requested schema not found or none specified, use any schema that succeeds */
-
-	/* don't output various XSD validation warnings and errors
-	 * in case we don't even know which XSD to use precisely */
-	fflush(stdout);
-	old_stdout = dup(1);
-	devnull = open("/dev/null", O_WRONLY);
-	dup2(devnull, 1);
-	close(devnull);
-
+	/* find a right schema file */
 	for (entry = OSCAP_SCHEMAS_TABLE; entry->doc_type != 0; ++entry) {
-		if (entry->doc_type != doctype)
+		if (entry->doc_type != doctype || strcmp(entry->schema_version, version))
 			continue;
 
-		ret = oscap_validate_xml(xmlfile, entry->schema_path, reporter, arg);
-		// todo: display the name of the schema file somewhere
-		if (ret == true)
-			break;
+		/* validate */
+		return oscap_validate_xml(xmlfile, entry->schema_path, reporter, arg);
 	}
 
-	/* restore stdout */
-	fflush(stdout);
-	dup2(old_stdout, 1);
-	close(old_stdout);
+	/* schema not found */
+	if (entry->doc_type == 0) {
+		char* msg = oscap_sprintf("Schema file not found when trying to validate '%s'", xmlfile);
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, msg);
+		oscap_free(msg);
+		return false;
+	}
 
-	return ret;
+	/* we shouldn't get here */
+	return false;
 }
 
 bool oscap_apply_xslt_var(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params, const char *pathvar, const char *defpath)
