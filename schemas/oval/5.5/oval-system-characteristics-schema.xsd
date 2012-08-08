@@ -384,7 +384,6 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-sc:EntityItemBaseType">
                 <xsd:simpleType>
-                    <!--<xsd:restriction base="xsd:string"/>
 					<xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
             </xsd:restriction>
@@ -397,7 +396,6 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-sc:EntityItemBaseType">
                 <xsd:simpleType>
-                    <!--<xsd:restriction base="xsd:string"/>
 					<xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
             </xsd:restriction>
@@ -410,7 +408,6 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-sc:EntityItemBaseType">
                 <xsd:simpleType>
-                    <!--<xsd:restriction base="xsd:string"/>
 					<xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
             </xsd:restriction>
@@ -423,7 +420,6 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-sc:EntityItemBaseType">
                 <xsd:simpleType>
-                    <!--<xsd:restriction base="xsd:string"/>
 					<xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
             </xsd:restriction>
