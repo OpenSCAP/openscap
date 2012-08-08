@@ -310,71 +310,80 @@ int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, 
 	return -1;
 }
 
-bool oscap_apply_xslt_var(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params, const char *pathvar, const char *defpath)
+int oscap_apply_xslt_var(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params, const char *pathvar, const char *defpath)
 {
-    bool ret = false;
-    char *xsltpath = oscap_find_file(xsltfile, R_OK, pathvar, defpath);
-    xsltStylesheetPtr cur = NULL;
-    xmlDocPtr doc = NULL, res = NULL;
-    FILE *f = NULL;
-    size_t argc = 0; while(params[argc]) argc += 2;
-    char *args[argc+1]; memset(args, 0, sizeof(char*) * (argc + 1));
+	xsltStylesheetPtr cur = NULL;
+	xmlDocPtr doc = NULL, res = NULL;
+	FILE *f = NULL;
 
-    if (xsltpath == NULL) {
-        oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "XSLT file to be used by the transformation was not found.");
-        goto cleanup;
-    }
+	size_t argc = 0;
+	while(params[argc]) argc += 2;
 
-    cur = xsltParseStylesheetFile(BAD_CAST xsltpath);
-    if (cur == NULL) {
-        oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Could not parse XSLT file");
-        goto cleanup;
-    }
+	char *args[argc+1];
+	memset(args, 0, sizeof(char*) * (argc + 1));
 
-    doc = xmlParseFile(xmlfile);
-    if (doc == NULL) {
-        oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Could not parse the XML document");
-        goto cleanup;
-    }
+	char *xsltpath = oscap_find_file(xsltfile, R_OK, pathvar, defpath);
+	int ret = -1; /* error */
 
-    for (size_t i = 0; i < argc; i += 2) {
-        args[i] = (char*) params[i];
-        if (params[i+1]) args[i+1] = oscap_sprintf("'%s'", params[i+1]);
-    }
 
-    res = xsltApplyStylesheet(cur, doc, (const char **) args);
-    if (res == NULL) {
-        oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Could not apply XSLT to your XML file");
-        goto cleanup;
-    }
+	if (xsltpath == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "XSLT file to be used by the transformation was not found.");
+		goto cleanup;
+	}
 
-    if (outfile) f = fopen(outfile, "w");
-    else f = stdout;
+	cur = xsltParseStylesheetFile(BAD_CAST xsltpath);
+	if (cur == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Could not parse XSLT file");
+		goto cleanup;
+	}
 
-    if (f == NULL) {
-        oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Could not open output file");
-        goto cleanup;
-    }
+	doc = xmlParseFile(xmlfile);
+	if (doc == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Could not parse the XML document");
+		goto cleanup;
+	}
 
-    if (xsltSaveResultToFile(f, res, cur) < 0) {
-        oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Could not save result document");
-        goto cleanup;
-    }
+	for (size_t i = 0; i < argc; i += 2) {
+		args[i] = (char*) params[i];
+		if (params[i+1]) args[i+1] = oscap_sprintf("'%s'", params[i+1]);
+	}
 
-    ret = true;
+	res = xsltApplyStylesheet(cur, doc, (const char **) args);
+	if (res == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Could not apply XSLT to your XML file");
+		goto cleanup;
+	}
+
+	if (outfile)
+		f = fopen(outfile, "w");
+	else
+		f = stdout;
+
+	if (f == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Could not open output file");
+		goto cleanup;
+	}
+
+	/* "calculate" return code */
+	if ((ret=xsltSaveResultToFile(f, res, cur)) < 0) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Could not save result document");
+		goto cleanup;
+	}
 
 cleanup:
-    for (size_t i = 0; args[i]; i += 2) oscap_free(args[i+1]);
-    if (f) fclose(f);
-    if (cur) xsltFreeStylesheet(cur);
-    if (res) xmlFreeDoc(res);
-    if (doc) xmlFreeDoc(doc);
-    oscap_free(xsltpath);
-    return ret;
+	for (size_t i = 0; args[i]; i += 2) oscap_free(args[i+1]);
+	if (outfile) fclose(f);
+	if (cur) xsltFreeStylesheet(cur);
+	if (res) xmlFreeDoc(res);
+	if (doc) xmlFreeDoc(doc);
+	oscap_free(xsltpath);
+
+	return ret;
 }
 
-bool oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params)
+int oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params)
 {
 	return oscap_apply_xslt_var(xmlfile, xsltfile, outfile, params, "OSCAP_XSLT_PATH", OSCAP_XSLT_PATH);
 }
+
 

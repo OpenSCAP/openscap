@@ -216,9 +216,9 @@ int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, 
  * @param xsltfile XSLT filename
  * @param outfile Result file shall be written here (NULL for stdout).
  * @param params list of key-value pairs to pass to the stylesheet.
- * @return Success or failure.
+ * @return the number of bytes written or -1 in case of failure
  */
-bool oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params);
+int oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params);
 
 /**
  * Apply XSLT stylesheet to a XML file.
@@ -231,9 +231,9 @@ bool oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *out
  * @param xsltfile XSLT filename
  * @param outfile Result file shall be written here (NULL for stdout).
  * @param params list of key-value pairs to pass to the stylesheet.
- * @return Success or failure.
+ * @return the number of bytes written or -1 in case of failure
  */
-bool oscap_apply_xslt_var(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params, const char *pathvar, const char *defpath);
+int oscap_apply_xslt_var(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params, const char *pathvar, const char *defpath);
 
 /************************************************************/
 /** @} validation group end */
