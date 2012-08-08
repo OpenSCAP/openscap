@@ -192,7 +192,7 @@ int oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_report
 	 * thefore we ignore libxml internal errors here and map return code to
 	 * either pass or fail.
 	 */
-	if (result < 0)
+	if (result != 0)
 		result = 1;
 	/* This would be nicer
 	 * if (result ==  -1)
