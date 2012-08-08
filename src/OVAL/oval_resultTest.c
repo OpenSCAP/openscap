@@ -644,8 +644,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else if (operation == OVAL_OPERATION_PATTERN_MATCH) {
 			return strregcomp(state_data, sys_data);
 		} else {
-			oscap_dlprintf(DBG_E, "Invalid type of operation in string evaluation: %d.\n", operation);
-			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in string evaluation");
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in string evaluation: %d.", operation);
 			return OVAL_RESULT_ERROR;
 		}
 	} else if (state_data_type == OVAL_DATATYPE_INTEGER) {
@@ -669,8 +668,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else if (operation == OVAL_OPERATION_BITWISE_OR) {
 			return (((syschar_val | state_val) == state_val) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
 		} else {
-			oscap_dlprintf(DBG_E, "Invalid type of operation in integer evaluation: %d.\n", operation);
-			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in integer evaluation");
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in integer evaluation: %d.", operation);
 			return OVAL_RESULT_ERROR;
 		}
 	} else if (state_data_type == OVAL_DATATYPE_FLOAT) {
@@ -691,8 +689,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else if (operation == OVAL_OPERATION_LESS_THAN_OR_EQUAL) {
 			return ((cmp_float(sys_val, state_val) <= 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
 		} else {
-			oscap_dlprintf(DBG_E, "Invalid type of operation in float evaluation: %s.\n", oval_operation_get_text(operation));
-			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in float evaluation");
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in float evaluation: %s.", oval_operation_get_text(operation));
 			return OVAL_RESULT_ERROR;
 		}
 	} else if (state_data_type == OVAL_DATATYPE_BOOLEAN) {
@@ -705,8 +702,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
 			return ((state_int != sys_int) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
 		} else {
-			oscap_dlprintf(DBG_E, "Invalid type of operation in boolean evaluation: %d.\n", operation);
-			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in boolean evaluation");
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in boolean evaluation: %d.", operation);
 			return OVAL_RESULT_ERROR;
 		}
 	} else if (state_data_type == OVAL_DATATYPE_BINARY) {	// I'm going to use case insensitive compare here - don't know if it's necessary
@@ -715,8 +711,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
 			return ((istrcmp(state_data, sys_data) != 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
 		} else {
-			oscap_dlprintf(DBG_E, "Invalid type of operation in binary evaluation: %d.\n", operation);
-			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in binary evaluation");
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in binary evaluation: %d.", operation);
 			return OVAL_RESULT_ERROR;
 		}
 	} else if (state_data_type == OVAL_DATATYPE_EVR_STRING) {
@@ -735,8 +730,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		} else if (operation == OVAL_OPERATION_LESS_THAN_OR_EQUAL) {
 			return ((result != 1) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
 		} else {
-			oscap_dlprintf(DBG_E, "Invalid type of operation in rpm version comparison: %d.\n", operation);
-			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in rpm version comparison");
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in rpm version comparison: %d.", operation);
 			return OVAL_RESULT_ERROR;
 		}
 	} else if (state_data_type == OVAL_DATATYPE_VERSION) {
@@ -771,8 +765,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 				if (tmp_sys_int > tmp_state_int)
 					return (OVAL_RESULT_FALSE);
 			} else {
-				oscap_dlprintf(DBG_E, "Invalid type of operation in version comparison: %d.\n", operation);
-				oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid type of operation in version comparison");
+				oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in version comparison: %d.", operation);
 				return OVAL_RESULT_ERROR;
 			}
 
@@ -816,8 +809,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		return OVAL_RESULT_NOT_EVALUATED;
 	}
 
-        oscap_dlprintf(DBG_E, "Ivalid OVAL data type: %d.\n", state_data_type);
-        oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Ivalid OVAL data type");
+        oscap_seterr(OSCAP_EFAMILY_OVAL, "Ivalid OVAL data type: %d.\n", state_data_type);
         return OVAL_RESULT_ERROR;
 }
 
@@ -843,8 +835,7 @@ int ores_add_res(struct oresults *ores, oval_result_t res)
 			ores->notappl_cnt++;
 			break;
 		default:
-	                oscap_dlprintf(DBG_E, "Invalid oval result type: %d.\n", res);
-        	        oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Invalid oval result type");
+        	        oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid oval result type: %d.\n", res);
 			return 1;
 		}
 
@@ -938,8 +929,7 @@ oval_result_t ores_get_result_bychk(struct oresults *ores, oval_check_t check)
 		}
 		break;
 	default:
-                oscap_dlprintf(DBG_E, "Invalid check value: %d.\n", check);
-                oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Invalid check value");
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid check value: %d.", check);
 		result = OVAL_RESULT_ERROR;
 	}
 
@@ -1040,8 +1030,7 @@ oval_result_t ores_get_result_byopr(struct oresults *ores, oval_operator_t op)
 		}
 		break;
 	default:
-                oscap_dlprintf(DBG_E, "Invalid operator value: %d.\n", op);
-                oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Invalid operator value");
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid operator value: %d.", op);
 		result = OVAL_RESULT_ERROR;
 		break;
 	}
@@ -1076,21 +1065,15 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 		bool found_matching_item;
 
 		if ((content = oval_state_content_iterator_next(state_contents_itr)) == NULL) {
-			oscap_dlprintf(DBG_E, "Found NULL state content.\n");
-			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT,
-				     "OVAL internal error: found NULL state content");
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "OVAL internal error: found NULL state content");
 			goto fail;
 		}
 		if ((state_entity = oval_state_content_get_entity(content)) == NULL) {
-			oscap_dlprintf(DBG_E, "Found NULL entity.\n");
-			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT,
-				     "OVAL internal error: found NULL entity");
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "OVAL internal error: found NULL entity");
 			goto fail;
 		}
 		if ((state_entity_name = oval_entity_get_name(state_entity)) == NULL) {
-			oscap_dlprintf(DBG_E, "Found NULL entity name.\n");
-			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT,
-				     "OVAL internal error: found NULL entity name");
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "OVAL internal error: found NULL entity name");
 			goto fail;
 		}
 
@@ -1099,9 +1082,7 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 
 		if (oval_entity_get_varref_type(state_entity) == OVAL_ENTITY_VARREF_ATTRIBUTE) {
 			if ((state_entity_var = oval_entity_get_variable(state_entity)) == NULL) {
-				oscap_dlprintf(DBG_E, "Found NULL variable.\n");
-				oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT,
-					     "OVAL internal error: found NULL variable");
+				oscap_seterr(OSCAP_EFAMILY_OVAL, "OVAL internal error: found NULL variable");
 				goto fail;
 			}
 			var_check = oval_state_content_get_var_check(content);
@@ -1109,15 +1090,11 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 			state_entity_var = NULL;
 
 			if ((state_entity_val = oval_entity_get_value(state_entity)) == NULL) {
-				oscap_dlprintf(DBG_E, "Found NULL entity value.\n");
-				oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT,
-					     "OVAL internal error: found NULL entity value");
+				oscap_seterr(OSCAP_EFAMILY_OVAL, "OVAL internal error: found NULL entity value");
 				goto fail;
 			}
 			if ((state_entity_val_text = oval_value_get_text(state_entity_val)) == NULL) {
-				oscap_dlprintf(DBG_E, "Found NULL entity value text.\n");
-				oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT,
-					     "OVAL internal error: found NULL entity value text");
+				oscap_seterr(OSCAP_EFAMILY_OVAL, "OVAL internal error: found NULL entity value text");
 				goto fail;
 			}
 			state_entity_val_datatype = oval_value_get_datatype(state_entity_val);
@@ -1134,9 +1111,7 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 
 			item_entity = oval_sysent_iterator_next(item_entities_itr);
 			if (item_entity == NULL) {
-				oscap_dlprintf(DBG_E, "Found NULL sysent.\n");
-				oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT,
-					     "OVAL internal error: found NULL sysent");
+				oscap_seterr(OSCAP_EFAMILY_OVAL, "OVAL internal error: found NULL sysent");
 				oval_sysent_iterator_free(item_entities_itr);
 				goto fail;
 			}
@@ -1374,8 +1349,7 @@ static oval_result_t eval_check_existence(oval_existence_t check_existence, int 
 		}
 		break;
 	default:
-                oscap_dlprintf(DBG_E, "Invalid check_existence value: %d.\n", check_existence);
-                oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, "Invalid check_existence value");
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid check_existence value: %d.\n", check_existence);
                 result = OVAL_RESULT_ERROR;
 		break;
 	}
@@ -1404,8 +1378,7 @@ _oval_result_test_evaluate_items(struct oval_test *test, struct oval_syschar *sy
 
 		item = oval_sysitem_iterator_next(collected_items_itr);
 		if (item == NULL) {
-			oscap_dlprintf(DBG_E, "Iterator returned null.");
-			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Iterator returned null");
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "Iterator returned null.");
 			oval_sysitem_iterator_free(collected_items_itr);
 			return OVAL_RESULT_ERROR;
 		}
@@ -1498,8 +1471,7 @@ _oval_result_test_evaluate_items(struct oval_test *test, struct oval_syschar *sy
 		}
 		break;
 	default:
-		oscap_dlprintf(DBG_E, "Unknown syschar flag: %d.\n", oval_syschar_get_flag(syschar_object));
-		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Unknown syschar flag");
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown syschar flag: %d.\n", oval_syschar_get_flag(syschar_object));
 		return OVAL_RESULT_ERROR;
 	}
 

@@ -82,13 +82,11 @@ SEXP_t *oval_value_to_sexp(struct oval_value *val, oval_datatype_t dtype)
 	case OVAL_DATATYPE_FILESET_REVISION:
 	case OVAL_DATATYPE_IOS_VERSION:
 		// todo:
-		oscap_dlprintf(DBG_E, "Unsupported datatype: %s.\n", dtype);
-		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Unsupported datatype");
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unsupported datatype: %s.", dtype);
 		val_sexp = NULL;
 		break;
 	default:
-		oscap_dlprintf(DBG_E, "Unknown datatype: %s.\n", dtype);
-		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Unknown datatype");
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown datatype: %s.", dtype);
 		val_sexp = NULL;
 		break;
 	}
@@ -250,11 +248,9 @@ static int oval_varref_elm_to_sexp(void *sess, struct oval_variable *var, oval_d
 		val = oval_value_iterator_next(val_itr);
 		vs = oval_value_to_sexp(val, dt);
 		if (vs == NULL) {
-			oscap_dlprintf(DBG_E, "Failed to convert OVAL value to SEXP: "
-				       "datatype: %s, text: %s.\n",
-				       oval_datatype_get_text(dt),
-				       oval_value_get_text(val));
-			oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Failed to convert OVAL value to SEXP");
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "Failed to convert OVAL value to SEXP: "
+                                       "datatype: %s, text: %s.", oval_datatype_get_text(dt),
+                                       oval_value_get_text(val));
 			oval_value_iterator_free(val_itr);
 			SEXP_free(val_lst);
 			return -1;

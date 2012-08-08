@@ -351,8 +351,7 @@ struct oval_variable *oval_variable_new(struct oval_definition_model *model, con
 		};
 		break;
 	default:
-		oscap_dlprintf(DBG_E, "Variable type is not valid: %d.\n", type);
-		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Invalid OVAL variable type");
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Variable type is not valid: %d.\n", type);
 		return NULL;
 	}
 

@@ -54,8 +54,10 @@ static const char* cat_ns_uri = "urn:oasis:names:tc:entity:xmlns:xml:catalog";
 bool ds_is_sds(const char* file)
 {
 	xmlTextReaderPtr reader = xmlReaderForFile(file, NULL, 0);
-	if (!reader)
+	if (!reader) {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
 		return false;
+	}
 
 	bool result = false;
 
@@ -181,9 +183,7 @@ static void ds_sds_dump_component(const char* component_id, xmlDocPtr doc, const
 
 	if (component == NULL)
 	{
-		const char* error = oscap_sprintf("Component of given id '%s' was not found in the document.", component_id);
-		oscap_seterr(OSCAP_EFAMILY_XML, 0, error);
-		oscap_free(error);
+		oscap_seterr(OSCAP_EFAMILY_XML, "Component of given id '%s' was not found in the document.", component_id);
 		return;
 	}
 
@@ -191,9 +191,7 @@ static void ds_sds_dump_component(const char* component_id, xmlDocPtr doc, const
 
 	if (inner_root == NULL)
 	{
-		const char* error = oscap_sprintf("Found component (id='%s') but it has no element contents, nothing to dump, skipping...", component_id);
-		oscap_seterr(OSCAP_EFAMILY_XML, 0, error);
-		oscap_free(error);
+		oscap_seterr(OSCAP_EFAMILY_XML, "Found component (id='%s') but it has no element contents, nothing to dump, skipping...", component_id);
 		return;
 	}
 
@@ -215,7 +213,7 @@ static void ds_sds_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
 	char* cref_id = (char*)xmlGetProp(component_ref, BAD_CAST "id");
 	if (!cref_id)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid id attribute on given component-ref.");
+		oscap_seterr(OSCAP_EFAMILY_XML, "No or invalid id attribute on given component-ref.");
 		xmlFree(cref_id);
 		return;
 	}
@@ -223,7 +221,7 @@ static void ds_sds_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
 	char* xlink_href = (char*)xmlGetNsProp(component_ref, BAD_CAST "href", BAD_CAST xlink_ns_uri);
 	if (!xlink_href || strlen(xlink_href) < 2)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid xlink:href attribute on given component-ref.");
+		oscap_seterr(OSCAP_EFAMILY_XML, "No or invalid xlink:href attribute on given component-ref.");
 		xmlFree(xlink_href);
 		return;
 	}
@@ -262,7 +260,7 @@ static void ds_sds_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
 
 			if (!name)
 			{
-				oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid name for a component referenced in the catalog. Skipping...");
+				oscap_seterr(OSCAP_EFAMILY_XML, "No or invalid name for a component referenced in the catalog. Skipping...");
 				xmlFree(name);
 				continue;
 			}
@@ -271,7 +269,7 @@ static void ds_sds_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
 
 			if (!str_uri || strlen(str_uri) < 2)
 			{
-				oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid URI for a component referenced in the catalog. Skipping...");
+				oscap_seterr(OSCAP_EFAMILY_XML, "No or invalid URI for a component referenced in the catalog. Skipping...");
 				xmlFree(str_uri);
 				xmlFree(name);
 				continue;
@@ -283,9 +281,7 @@ static void ds_sds_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc
 
 			if (!cat_component_ref)
 			{
-				const char* error = oscap_sprintf("component-ref with given id '%s' wasn't found in the document!", str_uri + 1 * sizeof(char));
-				oscap_seterr(OSCAP_EFAMILY_XML, 0, error);
-				oscap_free(error);
+				oscap_seterr(OSCAP_EFAMILY_XML, "component-ref with given id '%s' wasn't found in the document!", str_uri + 1 * sizeof(char));
 				xmlFree(name);
 				continue;
 			}
@@ -305,7 +301,7 @@ static void ds_sds_dump_component_ref(xmlNodePtr component_ref, xmlDocPtr doc, x
 	char* xlink_href = (char*)xmlGetNsProp(component_ref, BAD_CAST "href", BAD_CAST xlink_ns_uri);
 	if (!xlink_href || strlen(xlink_href) < 2)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, 0, "No or invalid xlink:href attribute on given component-ref.");
+		oscap_seterr(OSCAP_EFAMILY_XML, "No or invalid xlink:href attribute on given component-ref.");
 		xmlFree(xlink_href);
 		return;
 	}
@@ -330,9 +326,7 @@ void ds_sds_decompose(const char* input_file, const char* id, const char* target
 
 	if (!doc)
 	{
-		const char* error = oscap_sprintf("Could not read/parse XML of given input file at path '%s'.", input_file);
-		oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, error);
-		oscap_free(error);
+		oscap_seterr(OSCAP_EFAMILY_XML, "Could not read/parse XML of given input file at path '%s'.", input_file);
 		return;
 	}
 
@@ -367,7 +361,7 @@ void ds_sds_decompose(const char* input_file, const char* id, const char* target
 			oscap_sprintf("Could not find any datastream of id '%s'", id) :
 			oscap_sprintf("Could not find any datastream inside the file");
 
-		oscap_seterr(OSCAP_EFAMILY_XML, 0, error);
+		oscap_seterr(OSCAP_EFAMILY_XML, error);
 		oscap_free(error);
 		return;
 	}
@@ -376,7 +370,7 @@ void ds_sds_decompose(const char* input_file, const char* id, const char* target
 
 	if (!checklists)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, 0, "No checklists element found in the matching datastream.");
+		oscap_seterr(OSCAP_EFAMILY_XML, "No checklists element found in the matching datastream.");
 		return;
 	}
 
@@ -432,9 +426,7 @@ void ds_sds_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, const ch
 
 	if (!component_doc)
 	{
-		const char* error = oscap_sprintf("Could not read/parse XML of given input file at path '%s'.", filepath);
-		oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, error);
-		oscap_free(error);
+		oscap_seterr(OSCAP_EFAMILY_XML, "Could not read/parse XML of given input file at path '%s'.", filepath);
 		return;
 	}
 
@@ -461,7 +453,7 @@ bool ds_sds_compose_catalog_has_uri(xmlDocPtr doc, xmlNodePtr catalog, const cha
 	xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
 	if (xpathCtx == NULL)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: unable to create new XPath context.");
+		oscap_seterr(OSCAP_EFAMILY_XML, "Error: unable to create new XPath context.");
 		return false;
 	}
 
@@ -482,7 +474,7 @@ bool ds_sds_compose_catalog_has_uri(xmlDocPtr doc, xmlNodePtr catalog, const cha
 
 	if (xpathObj == NULL)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: Unable to evalute XPath expression.");
+		oscap_seterr(OSCAP_EFAMILY_XML, "Error: Unable to evalute XPath expression.");
 		xmlXPathFreeContext(xpathCtx);
 
 		return false;
@@ -509,7 +501,7 @@ void ds_sds_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream,
 	xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
 	if (xpathCtx == NULL)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: unable to create new XPath context.");
+		oscap_seterr(OSCAP_EFAMILY_XML, "Error: unable to create new XPath context.");
 		xmlFreeDoc(doc);
 		return;
 	}
@@ -525,7 +517,7 @@ void ds_sds_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream,
 
 	if (xpathObj == NULL)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: Unable to evalute XPath expression.");
+		oscap_seterr(OSCAP_EFAMILY_XML, "Error: Unable to evalute XPath expression.");
 		xmlXPathFreeContext(xpathCtx);
 		xmlFreeDoc(doc);
 
@@ -595,7 +587,7 @@ bool ds_sds_compose_has_component_ref(xmlDocPtr doc, xmlNodePtr datastream, cons
 	xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
 	if (xpathCtx == NULL)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: unable to create new XPath context.");
+		oscap_seterr(OSCAP_EFAMILY_XML, "Error: unable to create new XPath context.");
 		return false;
 	}
 
@@ -616,7 +608,7 @@ bool ds_sds_compose_has_component_ref(xmlDocPtr doc, xmlNodePtr datastream, cons
 
 	if (xpathObj == NULL)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Error: Unable to evalute XPath expression.");
+		oscap_seterr(OSCAP_EFAMILY_XML, "Error: Unable to evalute XPath expression.");
 		xmlXPathFreeContext(xpathCtx);
 
 		return false;

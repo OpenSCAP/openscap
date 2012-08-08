@@ -593,7 +593,7 @@ struct cpe_dict_model *cpe_dict_model_parse_xml(const char *file)
 		xmlTextReaderNextNode(reader);
 		dict = cpe_dict_model_parse(reader);
 	} else {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, "Unable to open file.");
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
 	}
 	xmlFreeTextReader(reader);
 	return dict;
@@ -654,7 +654,7 @@ struct cpe_dict_model *cpe_dict_model_parse(xmlTextReaderPtr reader)
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_COMPONENT_TREE_STR)) {	// <vendor> | count = 0-n
 			// we just need to jump over this element
 		} else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in CPE dictionary");
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element in CPE dictionary");
 		}
 		// get the next node
 		next_ret = xmlTextReaderNextElement(reader);
@@ -703,8 +703,7 @@ struct cpe_generator *cpe_generator_parse(xmlTextReaderPtr reader)
 				(xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)) {
 				ret->timestamp = (char *)xmlTextReaderReadString(reader);
 			} else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-				oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM,
-					     "Unknown XML element in CPE dictionary generator");
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element in CPE dictionary generator");
 			}
 			// element saved. Let's jump on the very next one node (not element, because we need to 
 			// find XML_READER_TYPE_END_ELEMENT node, see "while" condition and the condition below "while"

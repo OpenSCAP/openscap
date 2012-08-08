@@ -161,10 +161,7 @@ void sce_check_result_export(struct sce_check_result* v, const char* target_file
 	FILE* f = fopen(target_file, "w");
 	if (!f)
 	{
-		const char* desc = oscap_sprintf("Can't open file '%s' for writing.", target_file);
-		oscap_seterr(OSCAP_EFAMILY_SCE, OSCAP_EINVARG, desc);
-		oscap_free(desc);
-
+		oscap_seterr(OSCAP_EFAMILY_SCE, "Can't open file '%s' for writing.", target_file);
 		return;
 	}
 

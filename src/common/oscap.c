@@ -146,26 +146,24 @@ int oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_report
 	struct oscap_reporter_context reporter_ctxt = { reporter, arg, (void*) xmlfile };
 
         if (xmlfile == NULL) {
-                oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "'xmlfile' == NULL");
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, "'xmlfile' == NULL");
                 return -1;
         }
 
         if (schemafile == NULL) {
-                oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "'schemafile' == NULL");
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, "'schemafile' == NULL");
                 return -1;
         }
 
 	char *schemapath = oscap_get_schema_path(schemafile);
 	if (schemapath == NULL) {
-		char* message = oscap_sprintf("Schema file '%s' not found when trying to validate '%s'", schemafile, xmlfile);
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, message);
-		oscap_free(message);
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Schema file '%s' not found when trying to validate '%s'", schemafile, xmlfile);
 		return -1;
 	}
 
 	parser_ctxt = xmlSchemaNewParserCtxt(schemapath);
 	if (parser_ctxt == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Could not create parser context for validation");
+		oscap_seterr(OSCAP_EFAMILY_XML, "Could not create parser context for validation");
 		goto cleanup;
 	}
 
@@ -173,13 +171,13 @@ int oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_report
 
 	schema = xmlSchemaParse(parser_ctxt);
 	if (schema == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Could not parse XML schema");
+		oscap_seterr(OSCAP_EFAMILY_XML, "Could not parse XML schema");
 		goto cleanup;
 	}
 
 	ctxt = xmlSchemaNewValidCtxt(schema);
 	if (ctxt == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_XML, xmlGetLastError() ? xmlGetLastError()->code : 0, "Could not create validation context");
+		oscap_seterr(OSCAP_EFAMILY_XML, "Could not create validation context");
 		goto cleanup;
 	}
 
@@ -275,17 +273,17 @@ int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, 
 	struct oscap_schema_table_entry *entry;
 
 	if (xmlfile == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "'xmlfile' == NULL");
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "'xmlfile' == NULL");
 		return -1;
 	}
 
 	if (access(xmlfile, R_OK)) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, strerror(errno));
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, strerror(errno));
 		return -1;
 	}
 
 	if (version == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, "'version' == NULL");
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "'version' == NULL");
 		return -1;
 	}
 
@@ -300,9 +298,7 @@ int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, 
 
 	/* schema not found */
 	if (entry->doc_type == 0) {
-		char* msg = oscap_sprintf("Schema file not found when trying to validate '%s'", xmlfile);
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EINVARG, msg);
-		oscap_free(msg);
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Schema file not found when trying to validate '%s'", xmlfile);
 		return -1;
 	}
 
@@ -327,19 +323,19 @@ int oscap_apply_xslt_var(const char *xmlfile, const char *xsltfile, const char *
 
 
 	if (xsltpath == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "XSLT file to be used by the transformation was not found.");
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "XSLT file to be used by the transformation was not found.");
 		goto cleanup;
 	}
 
 	cur = xsltParseStylesheetFile(BAD_CAST xsltpath);
 	if (cur == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Could not parse XSLT file");
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not parse XSLT file");
 		goto cleanup;
 	}
 
 	doc = xmlParseFile(xmlfile);
 	if (doc == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Could not parse the XML document");
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not parse the XML document");
 		goto cleanup;
 	}
 
@@ -350,7 +346,7 @@ int oscap_apply_xslt_var(const char *xmlfile, const char *xsltfile, const char *
 
 	res = xsltApplyStylesheet(cur, doc, (const char **) args);
 	if (res == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Could not apply XSLT to your XML file");
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not apply XSLT to your XML file");
 		goto cleanup;
 	}
 
@@ -360,13 +356,13 @@ int oscap_apply_xslt_var(const char *xmlfile, const char *xsltfile, const char *
 		f = stdout;
 
 	if (f == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Could not open output file");
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not open output file");
 		goto cleanup;
 	}
 
 	/* "calculate" return code */
 	if ((ret=xsltSaveResultToFile(f, res, cur)) < 0) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, 0, "Could not save result document");
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save result document");
 		goto cleanup;
 	}
 

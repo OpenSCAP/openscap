@@ -238,9 +238,7 @@ int oval_definition_model_merge(struct oval_definition_model *model, const char 
 
 	xmlTextReader *reader = xmlNewTextReaderFilename(file);
 	if (reader == NULL) {
-		if(errno)
-			oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, strerror(errno));
-		oscap_dlprintf(DBG_E, "Unable to open file.\n");
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
 		return -1;
 	}
 

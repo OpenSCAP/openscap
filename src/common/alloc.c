@@ -37,7 +37,7 @@ static void __oscap_err_check(void *m)
 {
 
 	if (m == NULL) 
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, "Memory allocation failed.");
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, strerror(errno));
 }
 
 #if defined(NDEBUG)

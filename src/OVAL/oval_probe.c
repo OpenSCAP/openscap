@@ -445,12 +445,12 @@ int oval_probe_query_sysinfo(oval_probe_session_t *sess, struct oval_sysinfo **o
         ph = oval_probe_handler_get(sess->ph, OVAL_SUBTYPE_SYSINFO);
 
         if (ph == NULL) {
-                oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBENOTSUPP, "OVAL object not supported");
+                oscap_seterr (OSCAP_EFAMILY_OVAL, "OVAL object not supported");
 		return(-1);
         }
 
         if (ph->func == NULL) {
-                oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBENOTSUPP, "OVAL object not correctly defined");
+                oscap_seterr (OSCAP_EFAMILY_OVAL, "OVAL object not correctly defined");
 		return(-1);
         }
 
@@ -477,10 +477,7 @@ int oval_probe_query_definition(oval_probe_session_t *sess, const char *id) {
         definition_model = oval_syschar_model_get_definition_model(syschar_model);
 	definition = oval_definition_model_get_definition(definition_model, id);
 	if (definition == NULL) {
-                char msg[100];
-                snprintf(msg, sizeof(msg), "No definition with ID: %s in definition model.", id);
-                dE(msg);
-                oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, msg);
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, "No definition with ID: %s in definition model.", id);
 		return -1;
 	}
 

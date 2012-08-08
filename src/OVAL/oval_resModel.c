@@ -156,9 +156,7 @@ int oval_results_model_import(struct oval_results_model *model, const char *file
 
 	xmlTextReader *reader = xmlNewTextReaderFilename(file);
 	if (reader == NULL) {
-                if(errno)
-                        oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, strerror(errno));
-                oscap_dlprintf(DBG_E, "Unable to open file.\n");
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
                 ret = -1;
 		goto cleanup;
 	}
@@ -181,8 +179,7 @@ int oval_results_model_import(struct oval_results_model *model, const char *file
 	if (is_ovalres && (strcmp(tagname, OVAL_ROOT_ELM_RESULTS) == 0)) {
 		ret = oval_results_model_parse(reader, &context);
 	} else {
-                oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Missing \"oval_results\" element");
-                dE("Unprocessed tag: <%s:%s>.\n", namespace, tagname);
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, "Missing \"oval_results\" element");
 		ret = -1;
 	}
 

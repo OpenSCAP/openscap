@@ -21,12 +21,10 @@ static int _test_error(void)
 {
         if (oscap_err ()) {
                 oscap_errfamily_t f;
-                oscap_errcode_t   c;
                 const char       *d;
 
-                fprintf (stderr, "GOT error: %d, %d, %s.\n",
+                fprintf (stderr, "GOT error: %d, %s.\n",
                         f = oscap_err_family (),
-                        c = oscap_err_code (),
                         d = oscap_err_desc ());
         }
                 

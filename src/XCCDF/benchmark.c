@@ -45,9 +45,7 @@ struct xccdf_benchmark *xccdf_benchmark_import(const char *file)
 {
 	xmlTextReaderPtr reader = xmlReaderForFile(file, NULL, 0);
 	if (!reader) {
-                if(errno)
-                        oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, strerror(errno));
-                oscap_dlprintf(DBG_E, "Unable to open file.\n");
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
 		return NULL;
 	}
 	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != 1) ;

@@ -534,8 +534,7 @@ xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * sysname, con
     while (oscap_iterator_has_more(cb_it)) {
         callback * cb = (callback *) oscap_iterator_next(cb_it);
         if (cb == NULL) { /* No callback found - checking system not registered */
-            oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EUNKNOWNCB, 
-                    "Unknown callback for given checking system. Set callback first");
+            oscap_seterr(OSCAP_EFAMILY_XCCDF, "Unknown callback for given checking system. Set callback first");
             oscap_iterator_free(cb_it);
             return XCCDF_RESULT_NOT_CHECKED;
         }
@@ -611,9 +610,7 @@ static struct oscap_list * xccdf_policy_check_get_value_bindings(struct xccdf_po
             binding = xccdf_value_binding_new();
             value = (struct xccdf_value *) xccdf_benchmark_get_item(benchmark, xccdf_check_export_get_value(check));
             if (value == NULL) {
-		char msg[150];
-		snprintf(msg, sizeof(msg), "Value \"%s\" does not exist in benchmark", xccdf_check_export_get_value(check));
-                oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EVALUE, msg);
+                oscap_seterr(OSCAP_EFAMILY_XCCDF, "Value \"%s\" does not exist in benchmark", xccdf_check_export_get_value(check));
 		oscap_list_free(list, oscap_free);
                 return NULL;
             }
@@ -636,9 +633,7 @@ static struct oscap_list * xccdf_policy_check_get_value_bindings(struct xccdf_po
 
             const struct xccdf_value_instance * val = xccdf_value_get_instance_by_selector(value, selector);
             if (val == NULL) {
-                char msg[150];
-                snprintf(msg, sizeof(msg), "Attempt to get non-existent selector \"%s\" from variable \"%s\"", selector, xccdf_value_get_id(value));
-                oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EVALUE, msg);
+                oscap_seterr(OSCAP_EFAMILY_XCCDF, "Attempt to get non-existent selector \"%s\" from variable \"%s\"", selector, xccdf_value_get_id(value));
 		oscap_list_free(list, oscap_free);
                 return NULL;
             }
@@ -1699,8 +1694,7 @@ bool xccdf_policy_resolve(struct xccdf_policy * policy)
             if (xccdf_item_get_type(item) == XCCDF_GROUP) { 
                 /* Perform check of weight attribute  - ignore other attributes */
                 if (xccdf_refine_rule_get_weight(r_rule) == NAN) {
-                        oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EREFGROUPATTR, 
-                                "'Weight' attribute not specified, only 'weight' attribute applies to groups items");
+                        oscap_seterr(OSCAP_EFAMILY_XCCDF, "'Weight' attribute not specified, only 'weight' attribute applies to groups items");
                         xccdf_refine_rule_iterator_free(r_rule_it);
                         return false;            
                 }
@@ -1719,8 +1713,7 @@ bool xccdf_policy_resolve(struct xccdf_policy * policy)
             } else {}/* TODO oscap_err ? */;
 
         } else {
-            oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EREFIDCONFLICT, 
-                    "Refine rule item points to nonexisting XCCDF item");
+            oscap_seterr(OSCAP_EFAMILY_XCCDF, "Refine rule item points to nonexisting XCCDF item");
             xccdf_refine_rule_iterator_free(r_rule_it);
             return false;            
         }
@@ -1792,9 +1785,7 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
 
         item = xccdf_benchmark_get_item(benchmark, xccdf_select_get_item(sel));
         if (item == NULL) {
-	    char msg[100];
-	    snprintf(msg, sizeof(msg), "Selector ID(%s) does not exist in Benchmark.", xccdf_select_get_item(sel));
-            oscap_seterr(OSCAP_EFAMILY_XCCDF, XCCDF_EBADID, msg);
+            oscap_seterr(OSCAP_EFAMILY_XCCDF, "Selector ID(%s) does not exist in Benchmark.", xccdf_select_get_item(sel));
             continue; /* TODO: Should we just skip that selector ? XCCDF is not valid here !! */
         }
 

@@ -957,7 +957,7 @@ int app_xccdf_resolve(const struct oscap_action *action)
 	struct xccdf_benchmark *bench = xccdf_benchmark_import(action->f_xccdf);
 	if (bench == NULL) {
 		if (oscap_err())
-			fprintf(stderr, "Error: (%d) %s\n", oscap_err_code(), oscap_err_desc());
+			fprintf(stderr, "Error: %s\n", oscap_err_desc());
 	        return OSCAP_ERROR;
 	}
 

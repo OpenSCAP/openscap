@@ -80,7 +80,7 @@ xmlChar *oval_determine_document_schema_version(const char *document, oscap_docu
 
 	reader = xmlReaderForFile(document, NULL, 0);
 	if (!reader) {
-		dE("xml reader: unable to open file: '%s'.\n", document);
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", document);
 		return NULL;
 	}
 
@@ -105,17 +105,14 @@ xmlChar *oval_determine_document_schema_version(const char *document, oscap_docu
 		root_name = OVAL_ROOT_ELM_VARIABLES;
 		break;
 	default:
-		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "Unknown document type");
-		dE("Unknown document type: %d.\n", doc_type);
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown document type: %d.", doc_type);
 		xmlFreeTextReader(reader);
 		return NULL;
 	}
 	/* verify root element's name */
 	elm_name = (const char *) xmlTextReaderConstLocalName(reader);
 	if (!elm_name || strcmp(root_name, elm_name)) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM,
-			     "Document type doesn't match root element's name");
-		dE("Document type doesn't match root element's name: '%s'.\n", elm_name);
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Document type doesn't match root element's name: '%s'.", elm_name);
 		xmlFreeTextReader(reader);
 		return NULL;
 	}
@@ -124,8 +121,7 @@ xmlChar *oval_determine_document_schema_version(const char *document, oscap_docu
 	       && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
 	elm_name = (const char *) xmlTextReaderConstLocalName(reader);
 	if (!elm_name || strcmp(elm_name, "generator")) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unexpected element");
-		dE("Unexpected element: '%s'.\n", elm_name);
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unexpected element: '%s'.", elm_name);
 		xmlFreeTextReader(reader);
 		return NULL;
 	}

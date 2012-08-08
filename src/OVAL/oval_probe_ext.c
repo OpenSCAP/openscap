@@ -250,8 +250,8 @@ static SEXP_t *oval_probe_cmd_obj_eval(SEXP_t *sexp, void *arg)
 	SEXP_free(ret_code);
 
 	if (oscap_err()) {
-		oscap_dlprintf(DBG_E, "Failed: id: %s, err: %d, %d, %s.\n",
-			       id_str, oscap_err_family(), oscap_err_code(), oscap_err_desc());
+		oscap_dlprintf(DBG_E, "Failed: id: %s, err: %d, %s.\n",
+			       id_str, oscap_err_family(), oscap_err_desc());
 		oscap_clearerr();
 		oscap_free(id_str);
 		SEXP_free(ret);
@@ -350,9 +350,9 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
                                         }
 
                                         if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
-                                                oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBECONN, "Can't connect to the probe");
+                                                oscap_seterr (OSCAP_EFAMILY_OVAL, "Can't connect to the probe");
                                         else
-                                                oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBECONN, errbuf);
+                                                oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
 
 					return (-1);
 				}
@@ -369,7 +369,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
                                 }
 
                                 SEAP_msg_free(s_omsg);
-                                oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBEUNKNOWN, NULL);
+                                oscap_seterr (OSCAP_EFAMILY_OVAL, "OVAL_EPROBEUNKNOWN");
 
 				return (-1);
 			}
@@ -387,9 +387,9 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
                                 char errbuf[__ERRBUF_SIZE];
 
                                 if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
-                                        oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBESEND, "Unable to send a message to probe");
+                                        oscap_seterr (OSCAP_EFAMILY_OVAL, "Unable to send a message to probe");
                                 else
-					oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBESEND, errbuf);
+					oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
 
 				SEAP_msg_free(s_omsg);
 				return (-1);
@@ -404,9 +404,9 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
                                 }
 
                                 if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
-                                        oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBECLOSE, "Can't close sd");
+                                        oscap_seterr (OSCAP_EFAMILY_OVAL, "Can't close sd");
                                 else
-                                        oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBECLOSE, errbuf);
+                                        oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
 
 				pd->sd = -1;
 				return (-1);
@@ -426,9 +426,9 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
                                 }
 
                                 if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
-                                        oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBESEND, "Unable to send a message to probe");
+                                        oscap_seterr (OSCAP_EFAMILY_OVAL, "Unable to send a message to probe");
                                 else
-                                        oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBESEND, errbuf);
+                                        oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
 
 				return (ret);
 			}
@@ -460,14 +460,12 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 						break;
 					case  1: /* no error found */
 						dE("Internal error: An error was signaled on sd=%d but the error queue is empty.\n");
-						oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EPROBE,
-							     "SEAP_recverr_byid: internal error: empty error queue.");
+						oscap_seterr(OSCAP_EFAMILY_OVAL, "SEAP_recverr_byid: internal error: empty error queue.");
 						SEAP_msg_free(s_omsg);
 						return (-1);
 					case -1: /* internal error */
 						dE("Internal error: SEAP_recverr_byid returned -1\n");
-						oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EPROBE,
-							     "SEAP_recverr_byid: internal error.");
+						oscap_seterr(OSCAP_EFAMILY_OVAL, "SEAP_recverr_byid: internal error.");
 						SEAP_msg_free(s_omsg);
 						return (-1);
 					}
@@ -520,11 +518,11 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 
 						snprintf(errmsg, sizeof errmsg, "probe at sd=%d reported an error: %s", pd->sd, codemsg);
 						dE("Received an error from probe at sd=%d: %u, \"%s\"\n", pd->sd, err->code, errmsg);
-						oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EPROBE, errmsg);
+						oscap_seterr(OSCAP_EFAMILY_OVAL, errmsg);
 						break;
 					}
 					case SEAP_ETYPE_INT:
-						oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EPROBE, "Internal error");
+						oscap_seterr(OSCAP_EFAMILY_OVAL, "Internal error");
 						break;
 					}
 
@@ -540,9 +538,9 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 				char errbuf[__ERRBUF_SIZE];
 
                                 if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
-                                        oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBESEND, "Unable to receive a message to probe");
+                                        oscap_seterr (OSCAP_EFAMILY_OVAL, "Unable to receive a message to probe");
                                 else
-					oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBESEND, errbuf);
+					oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
 
 				SEAP_msg_free(s_imsg);
 				SEAP_msg_free(s_omsg);
@@ -560,9 +558,9 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
                                 }
 
                                 if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
-                                        oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBECLOSE, "Unable to close probe sd");
+                                        oscap_seterr (OSCAP_EFAMILY_OVAL, "Unable to close probe sd");
                                 else
-                                        oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBECLOSE, errbuf);
+                                        oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
 
 				pd->sd = -1;
 				return (-1);
@@ -584,9 +582,9 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 					}
 
 					if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
-						oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBERECV, "Unable to receive a message from probe");
+						oscap_seterr (OSCAP_EFAMILY_OVAL, "Unable to receive a message from probe");
 					else
-						oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBERECV, errbuf);
+						oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
 
 					return (ret);
 				}
@@ -798,8 +796,7 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
                 probe_dsc = oval_pdsc_lookup(pext->pdsc, pext->pdsc_cnt, type);
 
 		if (probe_dsc == NULL) {
-			snprintf (errmsg, sizeof errmsg, "subtype %u not supported", type);
-			oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBENOTSUPP, errmsg);
+			oscap_seterr (OSCAP_EFAMILY_OVAL, "subtype %u not supported", type);
 
 			ret = -1;
 			break;
@@ -809,16 +806,14 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
                                         "%s://%s/%s", OVAL_PROBE_SCHEME, probe_dir, probe_dsc->file);
 
                 if (probe_urilen >= sizeof probe_uri) {
-                        snprintf (errmsg, sizeof errmsg, "probe URI too long");
-                        oscap_seterr (OSCAP_EFAMILY_GLIBC, ENAMETOOLONG, errmsg);
+                        oscap_seterr (OSCAP_EFAMILY_GLIBC, "probe URI too long");
 
                         ret = -1;
                 } else {
                         oscap_dlprintf(DBG_I, "URI: %s.\n", probe_uri);
 
                         if (oval_pdtbl_add(pext->pdtbl, type, -1, probe_uri) != 0) {
-                                snprintf (errmsg, sizeof errmsg, "%s probe not supported", probe_dsc->name);
-                                oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EPROBENOTSUPP, errmsg);
+                                oscap_seterr (OSCAP_EFAMILY_OVAL, "%s probe not supported", probe_dsc->name);
 
                                 ret = -1;
                         }
@@ -878,8 +873,7 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                                                 "%s://%s/%s", OVAL_PROBE_SCHEME, probe_dir, probe_dsc->file);
 
                         if (probe_urilen >= sizeof probe_uri) {
-                                snprintf (errmsg, sizeof errmsg, "probe URI too long");
-                                oscap_seterr (OSCAP_EFAMILY_GLIBC, ENAMETOOLONG, errmsg);
+                                oscap_seterr (OSCAP_EFAMILY_GLIBC, "probe URI too long");
 				va_end(ap);
                                 return (-1);
                         }
@@ -896,7 +890,7 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
 			pd = oval_pdtbl_get(pext->pdtbl, oval_object_get_subtype(obj));
 
                         if (pd == NULL) {
-                                oscap_seterr (OSCAP_EFAMILY_OVAL, OVAL_EOVALINT, "internal error");
+                                oscap_seterr (OSCAP_EFAMILY_OVAL, "internal error");
 				va_end(ap);
                                 return (-1);
                         }
@@ -1077,7 +1071,7 @@ int oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext, struc
 	int ret;
 
 	if (syschar == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OVAL, OVAL_EPROBEINVAL, "Internal error: syschar == NULL");
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Internal error: syschar == NULL");
 		return (-1);
 	}
 

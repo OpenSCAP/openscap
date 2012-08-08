@@ -488,7 +488,7 @@ struct cve_model *cve_model_parse_xml(const char *file)
 		xmlTextReaderNextNode(reader);
 		ret = cve_model_parse(reader);
 	} else {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, "Unable to open file.");
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
 	}
 	xmlFreeTextReader(reader);
 
@@ -656,7 +656,7 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 				oscap_list_add(ret->summaries, summary);
                         }
 		} else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in CVE entry");
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element in CVE entry");
 		}
 
 		/* get the next node */

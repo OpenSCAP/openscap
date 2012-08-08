@@ -361,9 +361,7 @@ int oval_result_system_eval_definition(struct oval_result_system *sys, const cha
 	definition_model = oval_results_model_get_definition_model(res_model);
 	oval_definition = oval_definition_model_get_definition(definition_model, id);
 	if (oval_definition == NULL) {
-		char msg[100];
-		snprintf(msg, sizeof(msg), "No definition with ID: %s in definition model.", id);
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OVAL_EOVALINT, msg);
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "No definition with ID: %s in definition model.", id);
 		return -1;
 	}
 

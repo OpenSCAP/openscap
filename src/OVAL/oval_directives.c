@@ -112,9 +112,7 @@ int oval_directives_model_import(struct oval_directives_model * model, char *fil
 	/* open file */
         xmlTextReader *reader = xmlNewTextReaderFilename(file);
         if (reader == NULL) {
-                if(errno)
-                        oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, strerror(errno));
-                oscap_dlprintf(DBG_E, "Unable to open file.\n");
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
 		ret = -1;
 		goto cleanup;
         }
@@ -136,8 +134,7 @@ int oval_directives_model_import(struct oval_directives_model * model, char *fil
         if (is_ovaldir && (strcmp(tagname, OVAL_ROOT_ELM_DIRECTIVES) == 0)) {
                 ret = oval_directives_model_parse(reader, &context);
         } else {
-                oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Missing \"oval_directives\" element");
-                dE("Unprocessed tag: <%s:%s>.\n", namespace, tagname);
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, "Missing \"oval_directives\" element");
                 ret = -1;
         }
 

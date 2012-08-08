@@ -241,9 +241,7 @@ int oval_syschar_model_import(struct oval_syschar_model *model, const char *file
 
 	xmlTextReader *reader = xmlNewTextReaderFilename(file);
 	if (reader == NULL) {
-                if(errno)
-                        oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, strerror(errno));
-                oscap_dlprintf(DBG_E, "Unable to open file.\n");
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
                 return -1;
 	}
 
@@ -264,7 +262,7 @@ int oval_syschar_model_import(struct oval_syschar_model *model, const char *file
 	if (is_ovalsys && (strcmp(tagname, OVAL_ROOT_ELM_SYSCHARS) == 0)) {
 		ret = oval_syschar_model_parse(reader, &context);
 	} else {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Missing \"oval_system_characteristics\" element");
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Missing \"oval_system_characteristics\" element");
 		dE("Unprocessed tag: <%s:%s>.\n", namespace, tagname);
 		ret = -1;
 	}

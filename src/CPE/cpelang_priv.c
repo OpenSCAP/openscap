@@ -284,7 +284,7 @@ struct cpe_lang_model *cpe_lang_model_parse_xml(const char *file)
 		xmlTextReaderNextNode(reader);
 		ret = cpe_lang_model_parse(reader);
 	} else {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, "Unable to open file.");
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
 	}
 	xmlFreeTextReader(reader);
 
@@ -359,7 +359,7 @@ struct cpe_platform *cpe_platform_parse(xmlTextReaderPtr reader)
 			xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 			ret->expr = cpe_testexpr_parse(reader);
 		} else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in platform");
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element in platform");
 		// get the next node
 		xmlTextReaderNextNode(reader);
 	}
@@ -412,7 +412,7 @@ struct cpe_testexpr *cpe_testexpr_parse(xmlTextReaderPtr reader)
 			ret->oper |= CPE_LANG_OPER_NOT;
 		xmlFree(temp);
 	} else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in test expression");
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element in test expression");
 
 	// go to next node
 	// skip to next node
@@ -453,7 +453,7 @@ struct cpe_testexpr *cpe_testexpr_parse(xmlTextReaderPtr reader)
 			xmlFree(temp);
 			oscap_list_add(ret->meta.expr, subexpr);
 		} else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in test expression");
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element in test expression");
 		}
 		xmlTextReaderNextNode(reader);
 	}
@@ -483,7 +483,7 @@ static char *parse_text_element(xmlTextReaderPtr reader, char *name)
 			string = (char *)xmlTextReaderValue(reader);
 			break;
 		default:
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, OSCAP_EXMLELEM, "Unknown XML element in platform");
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element in platform");
 			break;
 		}
 	}
