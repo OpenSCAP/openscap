@@ -298,6 +298,12 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	if (ds_is_sds(action->f_xccdf))
 	{
+		if (oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_SDS, "1.2", (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout) != 0)
+		{
+			fprintf(stdout, "Invalid source datastream in %s\n", action->f_xccdf);
+			goto cleanup;
+		}
+
 		temp_dir = strdup("/tmp/oscap.XXXXXX");
 		temp_dir = mkdtemp(temp_dir);
 
