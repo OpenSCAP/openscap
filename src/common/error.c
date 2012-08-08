@@ -92,15 +92,24 @@ void __oscap_setxmlerr(const char *file, uint32_t line, const char *func, xmlErr
 
 }
 
-void __oscap_seterr(const char *file,
-		    uint32_t line, const char *func, oscap_errfamily_t family, const char *desc)
+void __oscap_seterr(const char *file, uint32_t line, const char *func, oscap_errfamily_t family, ...)
 {
 	struct oscap_err_t *err;
+	char *msg;
+	va_list ap;
+	const char *fmt;
 
 	(void)pthread_once(&__once, oscap_errkey_init);
 
 	oscap_clearerr();
-	err = oscap_err_new(family, desc, func, line, file);
+
+	va_start(ap, family);
+	fmt = va_arg(ap, const char *);
+	msg = oscap_vsprintf(fmt, ap);
+	va_end(ap);
+
+	err = oscap_err_new(family, msg, func, line, file);
+
 	(void)pthread_setspecific(__key, err);
 
 	return;
