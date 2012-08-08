@@ -32,7 +32,7 @@ function test_sds {
 
     popd
 
-    DIFFERENCE=$(diff "$XCCDF_DIR" "$DS_TARGET_DIR")
+    DIFFERENCE=$(diff --exclude "oscap_debug.log.*" "$XCCDF_DIR" "$DS_TARGET_DIR")
 
     if [ $? -ne 0 ]; then
         echo "The files are different after going through source data stream! diff follows:"
