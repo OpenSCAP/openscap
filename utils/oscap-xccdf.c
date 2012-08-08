@@ -321,8 +321,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	/* Validate documents */
 	if( action->validate && (!temp_dir || full_validation)) {
-		if ((ret=oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, xccdf_version_info_get_version(xccdf_detect_version(action->f_xccdf)), (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))) {
-			if (ret==1) fprintf(stdout, "Invalid XCCDF content in %s\n", action->f_xccdf);
+		if ((ret=oscap_validate_document(xccdf_file, OSCAP_DOCUMENT_XCCDF, xccdf_version_info_get_version(xccdf_detect_version(xccdf_file)), (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))) {
+			if (ret==1) fprintf(stdout, "Invalid XCCDF content in %s\n", xccdf_file);
 			goto cleanup;
 		}
 	}
