@@ -78,6 +78,8 @@
 
 #define FILE_SEPARATOR '/'
 
+oval_version_t over;
+
 #if defined USE_REGEX_PCRE
 static int get_substrings(char *str, pcre *re, int want_substrs, char ***substrings) {
 	int i, ret, rc;
@@ -180,21 +182,33 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
 	int i;
 	SEXP_t *item;
         SEXP_t *r0;
-        char filepath[PATH_MAX+1];
+	SEXP_t *se_instance, *se_filepath;
+	char *text;
 
         if (strlen(path) + strlen(filename) + 1 > PATH_MAX) {
                 dE("path+filename too long\n");
                 return (NULL);
         }
 
-        snprintf(filepath, PATH_MAX, "%s%c%s", path, FILE_SEPARATOR, filename);
+	if (oval_version_cmp(over, OVAL_VERSION(5.4)) < 0) {
+		pattern = text = NULL;
+		se_instance = NULL;
+	} else {
+		text = substrs[0];
+		se_instance = SEXP_number_newu_64((int64_t) instance);
+	}
+	if (oval_version_cmp(over, OVAL_VERSION(5.6)) < 0) {
+		se_filepath = NULL;
+	} else {
+		se_filepath = SEXP_string_newf("%s%c%s", path, FILE_SEPARATOR, filename);
+	}
 
         item = probe_item_create(OVAL_INDEPENDENT_TEXT_FILE_CONTENT, NULL,
-                                 "filepath", OVAL_DATATYPE_STRING, filepath,
+                                 "filepath", OVAL_DATATYPE_SEXP, se_filepath,
                                  "path",     OVAL_DATATYPE_STRING, path,
                                  "filename", OVAL_DATATYPE_STRING, filename,
-                                 "pattern",  OVAL_DATATYPE_STRING, "",
-                                 "instance", OVAL_DATATYPE_INTEGER, (int64_t)instance,
+                                 "pattern",  OVAL_DATATYPE_STRING, pattern,
+                                 "instance", OVAL_DATATYPE_SEXP, se_instance,
                                  "line",     OVAL_DATATYPE_STRING, pattern,
                                  "text",     OVAL_DATATYPE_STRING, substrs[0],
                                  NULL);
@@ -308,6 +322,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 
         probe_in = probe_ctx_getobject(ctx);
 
+	over = probe_obj_get_schema_version(probe_in);
 	path_ent = probe_obj_getent(probe_in, "path",     1);
 	filename_ent = probe_obj_getent(probe_in, "filename", 1);
 	line_ent = probe_obj_getent(probe_in, "line",  1);
