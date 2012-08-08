@@ -29,9 +29,9 @@
 #include <libxml/xmlerror.h>
 #include "public/error.h"
 
-#define oscap_assert_errno(cond, etype, desc) \
-	{ if (!(cond)) { if ((errno)) oscap_seterr(OSCAP_EFAMILY_GLIBC, errno, desc); \
-                         else oscap_seterr(OSCAP_EFAMILY_OSCAP, (etype), desc); } }
+#define oscap_assert_errno(cond, desc) \
+	{ if (!(cond)) { if ((errno)) oscap_seterr(OSCAP_EFAMILY_GLIBC, desc); \
+                         else oscap_seterr(OSCAP_EFAMILY_OSCAP, desc); } }
 
 #define oscap_setxmlerr(error) __oscap_setxmlerr (__FILE__, __LINE__, __PRETTY_FUNCTION__, error)
 
@@ -39,7 +39,6 @@ void __oscap_setxmlerr(const char *file, uint32_t line, const char *func, xmlErr
 
 struct oscap_err_t {
 	oscap_errfamily_t family;
-	oscap_errcode_t code;
 	char *desc;
 	const char *func;
 	const char *file;
@@ -49,13 +48,12 @@ struct oscap_err_t {
 /**
  * __oscap_seterr() wrapper function
  */
-#define oscap_seterr(family, code, desc) __oscap_seterr (__FILE__, __LINE__, __PRETTY_FUNCTION__, family, code, desc)
+#define oscap_seterr(family, desc) __oscap_seterr (__FILE__, __LINE__, __PRETTY_FUNCTION__, family, desc)
 
 
 /**
  * Set an error
  */
-void __oscap_seterr(const char *file, uint32_t line, const char *func,
-		    oscap_errfamily_t family, oscap_errcode_t code, const char *desc);
+void __oscap_seterr(const char *file, uint32_t line, const char *func, oscap_errfamily_t family, const char *desc);
 
 #endif				/* _OSCAP_ERROR_H */
