@@ -323,7 +323,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
                 SEXP_free_r(&se_mtime_mem);
                 SEXP_free_r(&se_size_mem);
 
-                probe_item_collect(args->ctx, item); /* XXX: handle ENOMEM */
+                return probe_item_collect(args->ctx, item);
         }
 
         return (0);
@@ -470,7 +470,10 @@ int probe_main (probe_ctx *ctx, void *mutex)
 
 	if ((ofts = oval_fts_open(path, filename, filepath, behaviors)) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
-			file_cb(ofts_ent->path, ofts_ent->file, &cbargs);
+			if (file_cb(ofts_ent->path, ofts_ent->file, &cbargs) != 0) {
+				oval_ftsent_free(ofts_ent);
+				break;
+			}
 			oval_ftsent_free(ofts_ent);
 		}
 		oval_fts_close(ofts);
