@@ -67,7 +67,7 @@ static void OVAL_FTS_free(OVAL_FTS *ofts)
 	if (ofts->ofts_match_path_fts != NULL)
 		fts_close(ofts->ofts_match_path_fts);
 	if (ofts->ofts_recurse_path_fts != NULL)
-		fts_close(ofts->ofts_match_path_fts);
+		fts_close(ofts->ofts_recurse_path_fts);
 
 	oscap_free(ofts);
 	return;
