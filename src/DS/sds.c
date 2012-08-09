@@ -406,7 +406,7 @@ static bool strendswith(const char* str, const char* suffix)
 	return strcmp(str + str_shift * sizeof(char), suffix) == 0;
 }
 
-void ds_sds_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* comp_id)
+static void ds_sds_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* comp_id)
 {
 	xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST datastream_ns_uri);
 
@@ -448,7 +448,7 @@ void ds_sds_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, const ch
 	xmlFreeDoc(component_doc);
 }
 
-bool ds_sds_compose_catalog_has_uri(xmlDocPtr doc, xmlNodePtr catalog, const char* uri)
+static bool ds_sds_compose_catalog_has_uri(xmlDocPtr doc, xmlNodePtr catalog, const char* uri)
 {
 	xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
 	if (xpathCtx == NULL)
@@ -494,7 +494,7 @@ bool ds_sds_compose_catalog_has_uri(xmlDocPtr doc, xmlNodePtr catalog, const cha
 
 static void ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id);
 
-void ds_sds_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, xmlNodePtr catalog)
+static void ds_sds_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, xmlNodePtr catalog)
 {
 	xmlDocPtr component_doc = xmlReadFile(filepath, NULL, 0);
 
@@ -582,7 +582,7 @@ void ds_sds_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream,
 	xmlFreeDoc(component_doc);
 }
 
-bool ds_sds_compose_has_component_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id)
+static bool ds_sds_compose_has_component_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id)
 {
 	xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
 	if (xpathCtx == NULL)
