@@ -108,6 +108,7 @@ struct oscap_action {
         struct oscap_module *module;
 	/* files */
         char *f_xccdf;
+	char *f_datastream_id;
         char *f_oval;
         char **f_ovals;
 	char *f_syschar;
