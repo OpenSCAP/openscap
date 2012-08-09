@@ -30,21 +30,6 @@
  *   Steve Grubb <sgrubb@redhat.com>
  */
 
-/*
- * process probe:
- *
- * command
- * exec_time
- * pid
- * ppid
- * priority
- * ruid
- * scheduling_class
- * start_time
- * tty
- * user_id
- */
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -68,6 +53,8 @@
 #include "alloc.h"
 #include "common/debug_priv.h"
 
+oval_version_t over;
+
 /* Convenience structure for the results being reported */
 struct result_info {
         const char *command;
@@ -85,6 +72,13 @@ struct result_info {
 static void report_finding(struct result_info *res, probe_ctx *ctx)
 {
         SEXP_t *item, se_tty_mem;
+	SEXP_t *se_ruid;
+
+	if (oval_version_cmp(over, OVAL_VERSION(5.8)) < 0) {
+		se_ruid = NULL;
+	} else {
+		se_ruid = SEXP_number_newu_64(res->ruid);
+	}
 
         item = probe_item_create(OVAL_UNIX_PROCESS, NULL,
                                  "command",   OVAL_DATATYPE_STRING, res->command,
@@ -92,7 +86,7 @@ static void report_finding(struct result_info *res, probe_ctx *ctx)
                                  "pid",       OVAL_DATATYPE_INTEGER, (int64_t)res->pid,
                                  "ppid",      OVAL_DATATYPE_INTEGER, (int64_t)res->ppid,
                                  "priority",  OVAL_DATATYPE_INTEGER, (int64_t)res->priority,
-				 "ruid", OVAL_DATATYPE_INTEGER, (int64_t) res->ruid,
+				 "ruid",      OVAL_DATATYPE_SEXP, se_ruid,
                                  "scheduling_class", OVAL_DATATYPE_STRING, res->scheduling_class,
                                  "start_time", OVAL_DATATYPE_STRING, res->start_time,
                                  "tty",        OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_tty_mem, "%d", res->tty),
@@ -463,9 +457,11 @@ static int read_process(SEXP_t *cmd_ent, probe_ctx *ctx)
 
 int probe_main(probe_ctx *ctx, void *arg)
 {
-	SEXP_t *ent;
+	SEXP_t *obj, *ent;
 
-	ent = probe_obj_getent(probe_ctx_getobject(ctx), "command", 1);
+	obj = probe_ctx_getobject(ctx);
+	over = probe_obj_get_schema_version(obj);
+	ent = probe_obj_getent(obj, "command", 1);
 	if (ent == NULL) {
 		return PROBE_ENOVAL;
 	}
