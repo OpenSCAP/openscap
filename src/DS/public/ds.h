@@ -41,13 +41,15 @@
  * 	   Path to the file we want checked
  *
  * @returns
- * 	   true if given file is *likely* a source data stream
+ * 	    0 if given file is *likely* a source data stream
+ * 	    1 if given file is *likely not* a source data stream
+ * 	   -1 in case of errors (file not found or root element not found)
  *
  * @par
  * This check is only "preliminary", it is designed to be reasonably fast
  * and won't do validation! It looks at the root element only.
  */
-bool ds_is_sds(const char* xccdf_file);
+int ds_is_sds(const char* xccdf_file);
 
 /**
  * @brief takes given source data stream and decomposes it into separate files
@@ -66,8 +68,12 @@ bool ds_is_sds(const char* xccdf_file);
  * @param xccdf_filename
  *     Base name of the target XCCDF file, if NULL is given the filename will
  *     be deduced from the contents of the datastream.
+ *
+ * @returns
+ * 	    0 if no errors were encountered
+ * 	   -1 in case of errors
  */
-void ds_sds_decompose(const char* input_file, const char* id,
+int ds_sds_decompose(const char* input_file, const char* id,
         const char* target_dir, const char* xccdf_filename);
 
 /**
@@ -80,8 +86,12 @@ void ds_sds_decompose(const char* input_file, const char* id,
  * @param target_datastream
  *      ID of the datastream that should contain the XCCDF file. It will be
  *      the only datastream in the resulting data-stream-collection.
+ *
+ * @returns
+ * 	    0 if no errors were encountered
+ * 	   -1 in case of errors
  */
-void ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastream);
+int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastream);
 
 /**
  * @brief takes given source data stream and XCCDF result file and makes a result data stream

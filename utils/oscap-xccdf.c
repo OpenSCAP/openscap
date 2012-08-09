@@ -296,7 +296,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	char* xccdf_file;
 	char** oval_result_files = NULL;
 
-	if (ds_is_sds(action->f_xccdf))
+	if (ds_is_sds(action->f_xccdf) == 0)
 	{
 		if (oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_SDS, "1.2", (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout) != 0)
 		{
@@ -663,7 +663,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	{
 		char* sds_path = 0;
 
-		if (ds_is_sds(action->f_xccdf))
+		if (ds_is_sds(action->f_xccdf) == 0)
 		{
 			sds_path = strdup(action->f_xccdf);
 		}
