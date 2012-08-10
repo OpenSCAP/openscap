@@ -201,6 +201,27 @@ void oscap_reporter_report_xml(struct oscap_reporter_context *rctxt, xmlErrorPtr
     if (error == NULL) error = xmlGetLastError();
     if (error == NULL) return;
 
+	if (error->code == 3083)
+	{
+		/*
+		libxml2 outputs a warning for something that is completely harmless
+		and happens very often, clogging the screen and making real issues
+		hard to spot.
+
+		The message of the warning is:
+
+		Skipping import of schema located at ...  for the namespace ...,
+		since this namespace was already imported with the schema located at ..."
+
+		We can't prevent this with the schemas because they are interdependent
+		and it is not a good idea to alter XSD schemas comming from standard
+		bodies anyways.
+		*/
+
+		// ignore the warning as if it never existed
+		return;
+	}
+
     const char *file = error->file;
     if (file == NULL) file = rctxt->user;
 
