@@ -295,21 +295,30 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	char* temp_dir = 0;
 
-	char* xccdf_file;
+	char* xccdf_file = NULL;
 	char** oval_result_files = NULL;
 
 	if (ds_is_sds(action->f_xccdf) == 0)
 	{
-		if (oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_SDS, "1.2", (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout) != 0)
+		if (action->validate)
 		{
-			fprintf(stdout, "Invalid source datastream in %s\n", action->f_xccdf);
-			goto cleanup;
+			int ret;
+			if ((ret = oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_SDS, "1.2", (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout) != 0))
+			{
+				if (ret==1) fprintf(stdout, "Invalid source datastream in %s\n", action->f_xccdf);
+				goto cleanup;
+			}
 		}
 
 		temp_dir = strdup("/tmp/oscap.XXXXXX");
 		temp_dir = mkdtemp(temp_dir);
 
-		ds_sds_decompose(action->f_xccdf, action->f_datastream_id, temp_dir, "xccdf.xml");
+		if (ds_sds_decompose(action->f_xccdf, action->f_datastream_id, temp_dir, "xccdf.xml") != 0)
+		{
+			fprintf(stdout, "Failed to decompose source datastream in '%s'\n", action->f_xccdf);
+			goto cleanup;
+		}
+
 		xccdf_file = malloc(PATH_MAX * sizeof(char));
 		sprintf(xccdf_file, "%s/%s", temp_dir, "xccdf.xml");
 	}
