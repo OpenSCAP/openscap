@@ -255,8 +255,10 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 	}
 }
 
-static xmlDocPtr ds_rds_create_from_dom(xmlDocPtr sds_doc, xmlDocPtr xccdf_result_file_doc, xmlDocPtr* oval_result_docs)
+static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr xccdf_result_file_doc, xmlDocPtr* oval_result_docs)
 {
+	*ret = NULL;
+
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
 	xmlNodePtr root = xmlNewNode(NULL, BAD_CAST "asset-report-collection");
 	xmlDocSetRootElement(doc, root);
@@ -313,7 +315,8 @@ static xmlDocPtr ds_rds_create_from_dom(xmlDocPtr sds_doc, xmlDocPtr xccdf_resul
 
 	xmlAddChild(root, reports);
 
-	return doc;
+	*ret = doc;
+	return 0;
 }
 
 int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const char** oval_result_files, const char* target_file)
@@ -337,6 +340,7 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const cha
 	size_t oval_result_docs_count = 0;
 	oval_result_docs[0] = NULL;
 
+	int result = 0;
 	// this check is there to allow passing NULL instead of having to allocate
 	// an empty array
 	if (oval_result_files != NULL)
@@ -346,11 +350,9 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const cha
 			oval_result_docs[oval_result_docs_count] = xmlReadFile(*oval_result_files, NULL, 0);
 			if (!oval_result_docs[oval_result_docs_count])
 			{
-				xmlFreeDoc(sds_doc);
-				xmlFreeDoc(result_file_doc);
-				oscap_free(oval_result_docs);
-				// FIXME: We are leaking oval result docs read up to this point!
-				return -1;
+				oscap_seterr(OSCAP_EFAMILY_XML, "Failed to read OVAL result file document from '%s'.\n", *oval_result_files);
+				result = -1;
+				continue;
 			}
 
 			oval_result_docs = oscap_realloc(oval_result_docs, (++oval_result_docs_count + 1) * sizeof(xmlDocPtr));
@@ -359,8 +361,17 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const cha
 		}
 	}
 
-	xmlDocPtr rds_doc = ds_rds_create_from_dom(sds_doc, result_file_doc, oval_result_docs);
-	xmlSaveFileEnc(target_file, rds_doc, "utf-8");
+	xmlDocPtr rds_doc = NULL;
+	// if reading OVAL docs failed at any point we won't create the RDS DOM
+	if (result == 0)
+		result = ds_rds_create_from_dom(&rds_doc, sds_doc, result_file_doc, oval_result_docs);
+
+	// we won't even try to save the file if error happened when creating the DOM
+	if (result == 0 && xmlSaveFileEnc(target_file, rds_doc, "utf-8") == -1)
+	{
+		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to save the result datastream to '%s'.\n", target_file);
+		result = -1;
+	}
 	xmlFreeDoc(rds_doc);
 
 	xmlDocPtr* oval_result_docs_ptr = oval_result_docs;
@@ -375,5 +386,5 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const cha
 	xmlFreeDoc(sds_doc);
 	xmlFreeDoc(result_file_doc);
 
-	return 0;
+	return result;
 }
