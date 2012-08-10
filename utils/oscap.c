@@ -128,7 +128,7 @@ static int print_versions(const struct oscap_action *action)
 int app_validate_xml(const struct oscap_action *action)
 {
 	const char *xml_file;
-	xmlChar *doc_version;
+	const xmlChar *doc_version;
 	int ret;
 	int result = OSCAP_ERROR;
 
@@ -143,7 +143,7 @@ int app_validate_xml(const struct oscap_action *action)
 		break;
 	default:
 		xml_file = action->f_xccdf;
-		doc_version = xccdf_version_info_get_version(xccdf_detect_version(action->f_xccdf));
+		doc_version = (const xmlChar*)xccdf_version_info_get_version(xccdf_detect_version(action->f_xccdf));
 	}
 
 	if (!xml_file) {
