@@ -316,10 +316,22 @@ static xmlDocPtr ds_rds_create_from_dom(xmlDocPtr sds_doc, xmlDocPtr xccdf_resul
 	return doc;
 }
 
-void ds_rds_create(const char* sds_file, const char* xccdf_result_file, const char** oval_result_files, const char* target_file)
+int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const char** oval_result_files, const char* target_file)
 {
 	xmlDocPtr sds_doc = xmlReadFile(sds_file, NULL, 0);
+	if (!sds_doc)
+	{
+		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to read source datastream from '%s'.\n", sds_file);
+		return -1;
+	}
+
 	xmlDocPtr result_file_doc = xmlReadFile(xccdf_result_file, NULL, 0);
+	if (!result_file_doc)
+	{
+		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to read XCCDF result file document from '%s'.\n", xccdf_result_file);
+		xmlFreeDoc(sds_doc);
+		return -1;
+	}
 
 	xmlDocPtr* oval_result_docs = oscap_alloc(1 * sizeof(xmlDocPtr));
 	size_t oval_result_docs_count = 0;
@@ -332,6 +344,15 @@ void ds_rds_create(const char* sds_file, const char* xccdf_result_file, const ch
 		while (*oval_result_files != NULL)
 		{
 			oval_result_docs[oval_result_docs_count] = xmlReadFile(*oval_result_files, NULL, 0);
+			if (!oval_result_docs[oval_result_docs_count])
+			{
+				xmlFreeDoc(sds_doc);
+				xmlFreeDoc(result_file_doc);
+				oscap_free(oval_result_docs);
+				// FIXME: We are leaking oval result docs read up to this point!
+				return -1;
+			}
+
 			oval_result_docs = oscap_realloc(oval_result_docs, (++oval_result_docs_count + 1) * sizeof(xmlDocPtr));
 			oval_result_docs[oval_result_docs_count] = 0;
 			oval_result_files++;
@@ -353,4 +374,6 @@ void ds_rds_create(const char* sds_file, const char* xccdf_result_file, const ch
 
 	xmlFreeDoc(sds_doc);
 	xmlFreeDoc(result_file_doc);
+
+	return 0;
 }

@@ -110,8 +110,12 @@ int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastr
  *
  * @param target_file
  *      Path to the file where the result data stream will be stored
+ *
+ * @returns
+ * 	    0 if no errors were encountered
+ * 	   -1 in case of errors
  */
-void ds_rds_create(const char* sds_file, const char* xccdf_result_file,
+int ds_rds_create(const char* sds_file, const char* xccdf_result_file,
         const char** oval_result_files, const char* target_file);
 
 /************************************************************
