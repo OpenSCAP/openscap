@@ -355,13 +355,22 @@ static const char *as_str(const char *str)
 	return str;
 }
 
+/**
+ * Takes given string and replaces occurences of non-alphanumber characters
+ * except -._~ with % followed by hex digits representing that particular
+ * character.
+ *
+ * cpe_urlencode(" abc") would return "%20abc",
+ * cpe_urlencode("%") would return "%25".
+ */
 static char *cpe_urlencode(const char *str)
 {
-	//return strdup(str);
 	if (str == NULL)
 		return NULL;
 
 	// allocate enough space
+	// in the worst case (all characters need to be replaced), the memory
+	// we will need is 3 times the size of input, + 1 for the terminating \0
 	char *result = oscap_alloc(strlen(str) * 3 * sizeof(char) + 1);
 	char *out = result;
 
@@ -370,11 +379,14 @@ static char *cpe_urlencode(const char *str)
 			*out = *in;
 		else {
 			// this char shall be %-encoded
-			sprintf(out, "%%%02X", *in);
-			out += 2;
+			snprintf(out, 4, "%%%02X", *in); // we write 3 chars and \0
+			out += 2; // for loop does another ++, giving us += 3 effectively
 		}
 	}
 
+	// if the last character was alphanumeric we need to terminate
+	// if the last cahracter was non-alphanum we will have 2 consecutive
+	// \0s at the end of the string which doesn't hurt anything
 	*out = '\0';
 
 	return result;
