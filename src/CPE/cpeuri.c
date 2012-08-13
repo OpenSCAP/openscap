@@ -235,10 +235,17 @@ struct cpe_name * cpe_name_clone(struct cpe_name * old_name)
         return new_name;
 }
 
-
+/**
+ * Takes given urlencoded string and replaces all occurences of % followed by
+ * 2 hex digits with a character.
+ *
+ * The operation is done in-place and is destructive to the data, even in
+ * case of a failure!
+ *
+ * @see cpe_urlencode
+ */
 static bool cpe_urldecode(char *str)
 {
-
 	__attribute__nonnull__(str);
 
 	char *inptr, *outptr;
@@ -249,10 +256,15 @@ static bool cpe_urldecode(char *str)
 				char hex[3] = { inptr[1], inptr[2], '\0' };
 				unsigned out;
 				sscanf(hex, "%x", &out);
-				// if (out == 0) return false; // this is strange
+				if (out == 0) {
+					// %00 encoded in the URI is definitely invalid
+					*outptr++ = '\0';
+					return false;
+				}
 				*outptr++ = out;
 				inptr += 2;
 			} else {
+				// % followed by characters that are not hex digits is invalid
 				*outptr = '\0';
 				return false;
 			}
