@@ -346,6 +346,7 @@ static int rpmverifypackage_additem(probe_ctx *ctx, struct rpmverify_res *res)
 				 "version", 		OVAL_DATATYPE_STRING, res->version,
 				 "release", 	 	OVAL_DATATYPE_STRING, res->release,
 				 "arch", 		OVAL_DATATYPE_STRING, res->arch,
+				 "extended_name", 	OVAL_DATATYPE_STRING, res->extended_name,
 				 NULL);
 
 	if (res->vflags & VERIFY_DEPS) {
