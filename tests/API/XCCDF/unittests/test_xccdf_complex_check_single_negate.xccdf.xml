@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xccdf:Benchmark xmlns:xccdf="http://checklists.nist.gov/xccdf/1.1" id="testing-xcccdf">
+  <xccdf:status>incomplete</xccdf:status>
+  <xccdf:version>1.0</xccdf:version>
+  <xccdf:Rule selected="true" id="def-20120006">
+    <xccdf:complex-check operator="AND" negate="1">
+      <xccdf:check system="http://check-engine.test/fail">
+        <xccdf:check-content-ref href="file" name="oval:blah"/>
+      </xccdf:check>
+    </xccdf:complex-check>
+  </xccdf:Rule>
+</xccdf:Benchmark>
