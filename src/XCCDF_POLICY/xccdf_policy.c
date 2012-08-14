@@ -439,18 +439,26 @@ static xccdf_test_result_type_t _resolve_operation(int A, int B, xccdf_bool_oper
         case XCCDF_OPERATOR_NOR:
             value = (xccdf_test_result_type_t) RESULT_TABLE_OR[A][B];
             break;
-        case XCCDF_OPERATOR_NOT: /* TODO */
+        case XCCDF_OPERATOR_NOT: /* This one should be never reached */
         case XCCDF_OPERATOR_MASK:
 	    oscap_dlprintf(DBG_E, "Operation not supported.\n");
             return 0;
             break;
     }
 
-    if ((oper == XCCDF_OPERATOR_NOR) || (oper == XCCDF_OPERATOR_NAND)) {
-        if (value == XCCDF_RESULT_PASS) value = XCCDF_RESULT_FAIL;
-        else if (value == XCCDF_RESULT_FAIL) value = XCCDF_RESULT_PASS;
-    }
+    return value;
+}
 
+/**
+ * Handle the negation="true" paramter of xccdf:complex-check.
+ * Shall be run only once per a complex-check.
+ */
+static xccdf_test_result_type_t _resolve_negate(xccdf_test_result_type_t value, xccdf_bool_operator_t oper)
+{
+    if (oper & XCCDF_OPERATOR_NOT) {
+        if (value == XCCDF_RESULT_PASS) return XCCDF_RESULT_FAIL;
+        else if (value == XCCDF_RESULT_FAIL) return XCCDF_RESULT_PASS;
+    }
     return value;
 }
 
@@ -682,6 +690,9 @@ static int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccd
                 }
             }
             xccdf_check_iterator_free(child_it);
+
+            /* Negate only once -> the result of the complex-check */
+            ret = _resolve_negate(ret, xccdf_check_get_oper(check));
     } else { /* This is <check> element */
             /* It depends on what operation we process - we do only Compliance Check */
             content_it = xccdf_check_get_content_refs(check);
