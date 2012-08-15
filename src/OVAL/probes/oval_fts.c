@@ -552,6 +552,7 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 {
 	FTSENT *out_fts_ent = NULL;
+	/* the condition below is correct because ofts_sfilepath is NULL here */
 	bool collect_dirs = (ofts->ofts_sfilename == NULL);
 
 	switch (ofts->direction) {
@@ -787,6 +788,7 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 
 			ofts->ofts_match_path_fts_ent = NULL;
 
+			// todo: is this true when variables are used?
 			/* with 'equals', there's only one potential target */
 			if (ofts->ofts_path_op == OVAL_OPERATION_EQUALS)
 				return (NULL);

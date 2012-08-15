@@ -128,7 +128,7 @@ static int print_versions(const struct oscap_action *action)
 int app_validate_xml(const struct oscap_action *action)
 {
 	const char *xml_file;
-	const xmlChar *doc_version;
+	char *doc_version;
 	int ret;
 	int result = OSCAP_ERROR;
 
@@ -143,7 +143,7 @@ int app_validate_xml(const struct oscap_action *action)
 		break;
 	default:
 		xml_file = action->f_xccdf;
-		doc_version = (const xmlChar*)xccdf_version_info_get_version(xccdf_detect_version(action->f_xccdf));
+		doc_version = strdup(xccdf_version_info_get_version(xccdf_detect_version(action->f_xccdf)));
 	}
 
 	if (!xml_file) {
@@ -155,7 +155,7 @@ int app_validate_xml(const struct oscap_action *action)
 		goto cleanup;
 	}
 
-	ret=oscap_validate_document(xml_file, action->doctype, (const char *) doc_version, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout);
+	ret=oscap_validate_document(xml_file, action->doctype, doc_version, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout);
 	if (ret==-1) {
 		result=OSCAP_ERROR;
 		goto cleanup;
@@ -206,6 +206,8 @@ cleanup:
 
 	if (result==OSCAP_FAIL)
 		fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
+
+	free(doc_version);
 
 	return result;
 }

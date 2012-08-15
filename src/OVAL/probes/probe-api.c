@@ -907,7 +907,7 @@ SEXP_t *probe_msg_creatf(oval_message_level_t level, const char *fmt, ...)
 	if (len < 0)
 		return NULL;
 
-	dI(cstr);
+	dI("%s\n", cstr);
 	str = SEXP_string_new(cstr, len);
 	oscap_free(cstr);
 	lvl = SEXP_number_newu(level);

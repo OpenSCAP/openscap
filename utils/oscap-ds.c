@@ -277,20 +277,22 @@ int app_ds_rds_create(const struct oscap_action *action) {
 
 		if (action->validate)
 		{
-			xmlChar *doc_version;
+			char *doc_version;
 			doc_version = oval_determine_document_schema_version((const char *) oval_result_files[i],
 				OSCAP_DOCUMENT_OVAL_RESULTS);
 
 			int valret;
 			if ((valret = oscap_validate_document(oval_result_files[i], OSCAP_DOCUMENT_OVAL_RESULTS,
-			              (const char*)doc_version, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)))
+			              doc_version, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)))
 			{
 				if (valret == 1)
 					fprintf(stdout, "Given OVAL results file '%s' does not validate!\n", oval_result_files[i]);
 
 				ret = OSCAP_ERROR;
+				free(doc_version);
 				goto cleanup;
 			}
+			free(doc_version);
 		}
 	}
 	oval_result_files[i] = NULL;
