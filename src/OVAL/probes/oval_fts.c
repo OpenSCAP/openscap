@@ -94,6 +94,7 @@ static OVAL_FTSENT *OVAL_FTSENT_new(OVAL_FTS *ofts, FTSENT *fts_ent)
 
 	ofts_ent = oscap_talloc(OVAL_FTSENT);
 
+	ofts_ent->fts_info = fts_ent->fts_info;
 	if (ofts->ofts_sfilename || ofts->ofts_sfilepath) {
 		ofts_ent->path_len = pathlen_from_ftse(fts_ent->fts_pathlen, fts_ent->fts_namelen);
 		ofts_ent->path = oscap_alloc(ofts_ent->path_len + 1);
