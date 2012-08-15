@@ -129,10 +129,10 @@ struct oscap_action {
         int hide_profile_info;
         char *stylesheet;
         struct cvss_impact *cvss_impact;
-    struct ds_action* ds_action;
-#ifdef ENABLE_CPE
+
+	struct ds_action* ds_action;
 	struct cpe_action * cpe_action;
-#endif
+
         int doctype;
 	int force;
 	int validate;

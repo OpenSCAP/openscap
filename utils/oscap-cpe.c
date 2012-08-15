@@ -40,6 +40,7 @@ static struct oscap_module* CPE_SUBMODULES[];
 bool getopt_cpe(int argc, char **argv, struct oscap_action *action);
 int app_cpe_check(const struct oscap_action *action);
 int app_cpe_match(const struct oscap_action *action);
+int app_cpe_validate(const struct oscap_action *action);
 
 struct oscap_module OSCAP_CPE_MODULE = {
     .name = "cpe",
@@ -68,9 +69,20 @@ static struct oscap_module CPE_CHECK_MODULE = {
     .func = app_cpe_check
 };
 
+static struct oscap_module CPE_VALIDATE = {
+    .name = "validate-xml",
+    .parent = &OSCAP_CPE_MODULE,
+    .summary = "Validate CPE Dictionary content",
+    .usage = "cpe-dict.xml",
+    .help = NULL,
+    .opt_parser = getopt_cpe,
+    .func = app_cpe_validate
+};
+
 static struct oscap_module* CPE_SUBMODULES[] = {
     &CPE_MATCH_MODULE,
     &CPE_CHECK_MODULE,
+    &CPE_VALIDATE,
     NULL
 };
 
@@ -95,6 +107,16 @@ bool getopt_cpe(int argc, char **argv, struct oscap_action *action) {
 		action->cpe_action->name=argv[3];
 	}
 
+        if( (action->module == &CPE_VALIDATE)) {
+                if( argc != 4 ) {
+                        oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
+                        return false;
+                }
+		action->doctype = OSCAP_DOCUMENT_CPE_DICTIONARY;
+                action->cpe_action = malloc(sizeof(struct cpe_action));
+                action->cpe_action->dict=argv[3];
+        }
+
 
 	return true;
 }
@@ -103,7 +125,7 @@ int app_cpe_check(const struct oscap_action *action) {
 	int ret;
 
 	if (!cpe_name_check(action->cpe_action->name)) {
-		fprintf(stdout,"'%s' is NOT Valid CPE name.\n", action->cpe_action->name);	
+		fprintf(stdout,"'%s' is NOT Valid CPE name.\n", action->cpe_action->name);
 		ret = OSCAP_FAIL;
 	}
 	else {
@@ -154,4 +176,38 @@ clean:
 	return ret;
 }
 
+int app_cpe_validate(const struct oscap_action *action) {
+
+	int ret;
+	char *doc_version;
+	int result;
+
+	doc_version = cpe_dict_detect_version(action->cpe_action->dict);
+        if (!doc_version) {
+		result = OSCAP_ERROR;
+		goto cleanup;
+	}
+
+	ret=oscap_validate_document(action->cpe_action->dict, action->doctype, doc_version, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout);
+	if (ret==-1) {
+		result=OSCAP_ERROR;
+		goto cleanup;
+	}
+	else if (ret==1) {
+		result=OSCAP_FAIL;
+	}
+	else
+		result=OSCAP_OK;
+
+cleanup:
+        if (oscap_err())
+                fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+
+        if (result==OSCAP_FAIL)
+                fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
+
+        free(doc_version);
+	free(action->cpe_action);
+        return result;
+}
 

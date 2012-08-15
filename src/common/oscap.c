@@ -127,11 +127,6 @@ char *oscap_find_file(const char *filename, int mode, const char *pathvar, const
 	return ret;
 }
 
-static char *oscap_get_schema_path(const char *filename)
-{
-	return oscap_find_file(filename, R_OK, "OSCAP_SCHEMA_PATH", OSCAP_SCHEMA_PATH);
-}
-
 static void oscap_xml_validity_handler(void *user, xmlErrorPtr error)
 {
     oscap_reporter_report_xml(user, error);
@@ -155,10 +150,10 @@ int oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_report
                 return -1;
         }
 
-	char *schemapath = oscap_get_schema_path(schemafile);
+	char *schemapath = oscap_find_file(schemafile, R_OK, "OSCAP_SCHEMA_PATH", OSCAP_SCHEMA_PATH);
 	if (schemapath == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Schema file '%s' not found when trying to validate '%s'", schemafile, xmlfile);
-		return -1;
+		goto cleanup;
 	}
 
 	parser_ctxt = xmlSchemaNewParserCtxt(schemapath);
@@ -265,6 +260,10 @@ struct oscap_schema_table_entry OSCAP_SCHEMAS_TABLE[] = {
 	{OSCAP_DOCUMENT_XCCDF,			"1.1",	"xccdf/1.1/xccdf-schema.xsd"},
 	{OSCAP_DOCUMENT_SDS,                "1.2",  "sds/1.2/scap-source-data-stream_1.2.xsd"},
 	{OSCAP_DOCUMENT_ARF,                "1.1",  "arf/1.1/asset-reporting-format_1.1.0.xsd"},
+	{OSCAP_DOCUMENT_CPE_DICTIONARY,		"2.0", "cpe/2.0/cpe-dictionary_2.0.xsd"},
+	{OSCAP_DOCUMENT_CPE_DICTIONARY,		"2.1", "cpe/2.1/cpe-dictionary_2.1.xsd"},
+	{OSCAP_DOCUMENT_CPE_DICTIONARY,		"2.2", "cpe/2.2/cpe-dictionary_2.2.xsd"},
+	{OSCAP_DOCUMENT_CPE_DICTIONARY,		"2.3", "cpe/2.2/cpe-dictionary_2.2.xsd"}, /* use 2.2 */
 	{0, NULL, NULL }
 };
 
