@@ -822,11 +822,18 @@ void cpe_language_iterator_reset(struct cpe_language_iterator *it);
  * */
 
 /**
- * Get supported version of CPE dictionary XML
+ * Get the newest supported version of CPE dictionary XML
  * @return version of XML file format
  * @memberof cpe_dict_model
  */
 const char * cpe_dict_model_supported(void);
+
+/**
+ * Detects which version the given CPE file is
+ *
+ * Deallocate the result after use with "free(..)".
+ */
+char * cpe_dict_detect_version(const char* file);
 
 /** 
  * Verify wether given CPE is known according to specified dictionary

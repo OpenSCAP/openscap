@@ -37,6 +37,8 @@
 
 #include "common/list.h"
 #include "common/util.h"
+#include "common/_error.h"
+#include <string.h>
 
 #define CPE_DICT_SUPPORTED "2.2"
 
@@ -113,3 +115,53 @@ const char * cpe_dict_model_supported(void)
         return CPE_DICT_SUPPORTED;
 }
 
+char * cpe_dict_detect_version(const char* file)
+{
+	xmlTextReaderPtr reader;
+	xmlChar *version = NULL;
+
+	reader = xmlReaderForFile(file, NULL, 0);
+	if (!reader) {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
+		return NULL;
+	}
+
+	/* find root element */
+	while (xmlTextReaderRead(reader) == 1
+	       && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
+
+	const char* elm_name = (const char *) xmlTextReaderConstLocalName(reader);
+	if (!elm_name || strcmp("cpe-list", elm_name)) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Expected root element name 'cpe-list', found '%s'.", elm_name);
+		xmlFreeTextReader(reader);
+		return NULL;
+	}
+
+	/* find generator */
+	while (xmlTextReaderRead(reader) == 1
+	       && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
+	elm_name = (const char *) xmlTextReaderConstLocalName(reader);
+	if (!elm_name || strcmp(elm_name, "generator")) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unexpected element: '%s'.", elm_name);
+		xmlFreeTextReader(reader);
+		return NULL;
+	}
+	/* find schema_version */
+	const int depth = xmlTextReaderDepth(reader);
+	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderDepth(reader) > depth) {
+		if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT)
+			continue;
+
+		elm_name = (const char *) xmlTextReaderConstLocalName(reader);
+		if (!strcmp(elm_name, "schema_version")) {
+			version = xmlTextReaderReadString(reader);
+			break;
+		}
+	}
+
+	xmlFreeTextReader(reader);
+	char* ret = strdup((const char*)version);
+	xmlFree(version);
+
+	return ret;
+}
