@@ -110,6 +110,7 @@ void __oscap_seterr(const char *file, uint32_t line, const char *func, oscap_err
 
 	err = oscap_err_new(family, msg, func, line, file);
 
+	oscap_free(msg);
 	(void)pthread_setspecific(__key, err);
 
 	return;
