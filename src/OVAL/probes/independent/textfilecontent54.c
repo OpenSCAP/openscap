@@ -452,7 +452,9 @@ int probe_main(probe_ctx *ctx, void *arg)
 
 	if ((ofts = oval_fts_open(path_ent, file_ent, filepath_ent, bh_ent)) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
-			process_file(ofts_ent->path, ofts_ent->file, &pfd);
+			if (ofts_ent->fts_info == FTS_F)
+				/* we're only interested in contents of regular files */
+				process_file(ofts_ent->path, ofts_ent->file, &pfd);
 			oval_ftsent_free(ofts_ent);
 		}
 
