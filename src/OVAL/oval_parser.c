@@ -70,7 +70,7 @@ int oval_parser_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *c
 	return ret;
 }
 
-xmlChar *oval_determine_document_schema_version(const char *document, oscap_document_type_t doc_type)
+char *oval_determine_document_schema_version(const char *document, oscap_document_type_t doc_type)
 {
 	xmlTextReaderPtr reader;
 	const char *root_name;
@@ -139,7 +139,10 @@ xmlChar *oval_determine_document_schema_version(const char *document, oscap_docu
 	}
 
 	xmlFreeTextReader(reader);
-	return version;
+	char* ret = strdup((const char*)version);
+	xmlFree(version);
+
+	return ret;
 }
 
 /*
