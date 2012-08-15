@@ -281,7 +281,7 @@ static int process_file(const char *path, const char *file, void *arg)
 		if (ret == -1) {
 			SEXP_t *msg;
 
-			msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "read(): %s.", strerror(errno));
+			msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "read(): '%s' %s.", whole_path, strerror(errno));
 			probe_cobj_add_msg(probe_ctx_getresult(pfd->ctx), msg);
 			SEXP_free(msg);
 			probe_cobj_set_flag(probe_ctx_getresult(pfd->ctx), SYSCHAR_FLAG_ERROR);
