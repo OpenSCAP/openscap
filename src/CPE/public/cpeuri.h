@@ -49,6 +49,13 @@ typedef enum {
 	CPE_PART_APP		///< application
 } cpe_part_t;
 
+typedef enum {
+	CPE_FORMAT_UNKNOWN, ///< can't be serialized, is usually used to signal errors
+	CPE_FORMAT_URI, ///< available in all CPE versions, default in CPE 2.2 and previous
+	CPE_FORMAT_STRING, ///< available in CPE 2.3 and newer
+	CPE_FORMAT_WFN  ///< available in CPE 2.3 and newer versions, default in CPE 2.3 and newer
+} cpe_format_t;
+
 /**
  * @struct cpe_name
  * Structure holding Common Platform Enumeration URI data.
@@ -89,6 +96,12 @@ void cpe_name_free(struct cpe_name *cpe);
  * Use remove function otherwise.
  * @{
  * */
+
+/**
+ * Get how the CPE name was loaded and how it should be saved
+ * @memberof cpe_name
+ */
+cpe_format_t cpe_name_get_format(const struct cpe_name *cpe);
 
 /**
  * Get CPE name part type field.
@@ -142,6 +155,16 @@ const char *cpe_name_get_language(const struct cpe_name *cpe);
  */
 char *cpe_name_get_uri(const struct cpe_name *cpe);
 
+/**
+ * Return CPE WFN as a new string
+ * @memberof cpe_name
+ * @note Returned string is newly allocated and is caller's responsibility to free it.
+ * @param cpe CPE to be converted
+ * @return CPE WFN as string
+ * @retval NULL on failure
+ */
+char *cpe_name_get_wfn(const struct cpe_name *wfn);
+
 /************************************************************/
 /** @} End of Getters group */
 
@@ -152,6 +175,12 @@ char *cpe_name_get_uri(const struct cpe_name *cpe);
  * be freed by caller.
  * @{
  */
+
+/**
+ * Set how the CPE name was loaded and how it should be saved
+ * @memberof cpe_name
+ */
+bool cpe_name_set_format(struct cpe_name *cpe, cpe_format_t newval);
 
 /**
  * Set CPE name part type field.
@@ -232,7 +261,14 @@ bool cpe_name_match_cpes(const struct cpe_name *name, size_t n, struct cpe_name 
 int cpe_name_write(const struct cpe_name *cpe, FILE * f);
 
 /**
- * Ensures @a str is in proper CPE format.
+ * Looks at given string and returns format it is in
+ *
+ * CPE_FORMAT_UNKNOWN is used in case of errors
+ */
+cpe_format_t cpe_name_get_format_of_str(const char *str);
+
+/**
+ * Checks whether @a str is valid CPE string (in any supported format).
  * @memberof cpe_name
  * @param str string to be validated
  */

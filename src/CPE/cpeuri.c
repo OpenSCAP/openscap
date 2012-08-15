@@ -46,25 +46,42 @@
 
 // enumeration of CPE URI fields (useful for indexing arrays)
 enum cpe_field_t {
-	CPE_FIELD_TYPE,
+	CPE_FIELD_TYPE = 0,
 	CPE_FIELD_VENDOR,
 	CPE_FIELD_PRODUCT,
 	CPE_FIELD_VERSION,
 	CPE_FIELD_UPDATE,
 	CPE_FIELD_EDITION,
 	CPE_FIELD_LANGUAGE,
-	CPE_FIELDNUM,
+	CPE_BASIC_FIELDNUM,
+	CPE_FIELD_SW_EDITION = CPE_BASIC_FIELDNUM,
+	CPE_FIELD_TARGET_SW,
+	CPE_FIELD_TARGET_HW,
+	CPE_FIELD_OTHER,
+	CPE_TOTAL_FIELDNUM
 };
 
 struct cpe_name {
 //      char *uri;       // complete URI cache
+	cpe_format_t format;
 	cpe_part_t part;	// part
 	char *vendor;		// vendor
 	char *product;		// product
 	char *version;		// version
 	char *update;		// update
-	char *edition;		// edition
+	/* also used to pack the 4 extended attributes to CPE 2.2 URIs
+	   we always load these into the model so the packed format should
+	   never appear in the edition field itself
+	*/
+	char *edition;
 	char *language;		// language
+
+	/* extended attributes */
+	char *sw_edition;
+	char *target_sw;
+	char *target_hw;
+	char *other;
+	/* end of extended attributes */
 };
 
 /* h - hardware
@@ -110,7 +127,7 @@ static int cpe_fields_num(const struct cpe_name *cpe)
 		return 0;
 	int maxnum = 0;
 	int i;
-	for (i = 0; i < CPE_FIELDNUM; ++i)
+	for (i = 0; i < CPE_TOTAL_FIELDNUM; ++i)
 		if (cpe_get_field(cpe, i))
 			maxnum = i + 1;
 	return maxnum;
@@ -138,6 +155,14 @@ static const char *cpe_get_field(const struct cpe_name *cpe, int idx)
 		return cpe->edition;
 	case 6:
 		return cpe->language;
+	case 7:
+		return cpe->sw_edition;
+	case 8:
+		return cpe->target_sw;
+	case 9:
+		return cpe->target_hw;
+	case 10:
+		return cpe->other;
 	default:
 		assert(false);
 		return NULL;
@@ -176,6 +201,19 @@ bool cpe_set_field(struct cpe_name * cpe, int idx, const char *newval)
 	case 6:
 		fieldptr = &cpe->language;
 		break;
+	case 7:
+		fieldptr = &cpe->sw_edition;
+		break;
+	case 8:
+		fieldptr = &cpe->target_sw;
+		break;
+	case 9:
+		fieldptr = &cpe->target_hw;
+		break;
+	case 10:
+		fieldptr = &cpe->other;
+		break;
+
 	default:
 		assert(false);
 		return false;
@@ -198,7 +236,8 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 	int i;
 	struct cpe_name *cpe;
 
-	if (cpestr && !cpe_name_check(cpestr))
+	cpe_format_t format = cpe_name_get_format_of_str(cpestr);
+	if (cpestr && format == CPE_FORMAT_UNKNOWN)
 		return NULL;
 
 	cpe = oscap_alloc(sizeof(struct cpe_name));
@@ -207,13 +246,51 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 	memset(cpe, 0, sizeof(struct cpe_name));	// zero memory
 
 	if (cpestr) {
-		char *data_ = strdup(cpestr + 5);	// without 'cpe:/'
-		char **fields_ = oscap_split(data_, ":");
-		for (i = 0; fields_[i]; ++i)
-			cpe_urldecode(fields_[i]);
-		cpe_assign_values(cpe, fields_);
-		oscap_free(data_);
-		oscap_free(fields_);
+		if (format == CPE_FORMAT_URI) {
+			char *data_ = strdup(cpestr + 5);	// without 'cpe:/'
+			char **fields_ = oscap_split(data_, ":");
+			for (i = 0; fields_[i]; ++i)
+			{
+				if (i == CPE_FIELD_EDITION)
+				{
+					// extended properties may be packed in "edition" field
+					if (strlen(fields_[i]) >= 2 && fields_[i][0] == '~') {
+						// first character is ~, that means that extended
+						// attributes are embedded into "edition" field
+
+						char **extended_attribs = oscap_split(fields_[i] + 1 * sizeof(char*), "~");
+						// the first extended attribute is actually the edition
+						oscap_free(fields_[i]);
+						fields_[i] = extended_attribs[0];
+						// the rest are ~-encoded extended attributes
+						for (int j = 0; j < 4; ++j) {
+							if (!cpe_urldecode(extended_attribs[1 + j])) {
+								oscap_free(data_);
+								oscap_free(fields_);
+								return NULL;
+							}
+
+							cpe_set_field(cpe, CPE_BASIC_FIELDNUM + j, extended_attribs[1 + 0]);
+						}
+
+						oscap_free(extended_attribs); // we have used all the pointed to data
+					}
+				}
+
+				if (!cpe_urldecode(fields_[i])) {
+					oscap_free(data_);
+					oscap_free(fields_);
+				}
+			}
+			cpe_assign_values(cpe, fields_);
+			oscap_free(data_);
+			oscap_free(fields_);
+		}
+		else if (format == CPE_FORMAT_STRING) {
+		}
+		else if (format == CPE_FORMAT_WFN)
+		{
+		}
 	}
 	return cpe;
 }
@@ -224,6 +301,7 @@ struct cpe_name * cpe_name_clone(struct cpe_name * old_name)
         if (new_name == NULL) 
             return NULL;
 
+	new_name->format = old_name->format;
 	new_name->part = old_name->part;
 	new_name->vendor = oscap_strdup(old_name->vendor);
 	new_name->product = oscap_strdup(old_name->product);
@@ -273,6 +351,63 @@ static bool cpe_urldecode(char *str)
 	}
 	*outptr = '\0';
 	return true;
+}
+
+/**
+ * Takes given string and replaces occurences of non-alphanumber characters
+ * except -._~ with % followed by hex digits representing that particular
+ * character.
+ *
+ * cpe_urlencode(" abc") would return "%20abc",
+ * cpe_urlencode("%") would return "%25".
+ */
+static char *cpe_urlencode(const char *str)
+{
+	if (str == NULL)
+		return NULL;
+
+	// allocate enough space
+	// in the worst case (all characters need to be replaced), the memory
+	// we will need is 3 times the size of input, + 1 for the terminating \0
+	char *result = oscap_alloc(strlen(str) * 3 * sizeof(char) + 1);
+	char *out = result;
+
+	for (const char *in = str; *in != '\0'; ++in, ++out) {
+		if (isalnum(*in) || strchr("-._~", *in))
+			*out = *in;
+		else {
+			// this char shall be %-encoded
+			snprintf(out, 4, "%%%02X", *in); // we write 3 chars and \0
+			out += 2; // for loop does another ++, giving us += 3 effectively
+		}
+	}
+
+	// if the last character was alphanumeric we need to terminate
+	// if the last character was non-alphanum we will have 2 consecutive
+	// \0s at the end of the string which doesn't hurt anything
+	*out = '\0';
+
+	return result;
+}
+
+static bool cpe_has_extended_attributes(const struct cpe_name *cpe)
+{
+	return cpe && (
+			cpe->sw_edition ||
+			cpe->target_sw ||
+			cpe->target_hw ||
+			cpe->other
+	);
+}
+
+static char *cpe_pack_extended_attributes(const struct cpe_name *cpe)
+{
+	return oscap_sprintf("~%s~%s~%s~%s",
+			cpe_urlencode(cpe->sw_edition),
+			cpe_urlencode(cpe->target_sw),
+			cpe_urlencode(cpe->target_hw),
+			cpe_urlencode(cpe->other)
+	);
 }
 
 bool cpe_name_match_one(const struct cpe_name * cpe, const struct cpe_name * against)
@@ -339,25 +474,45 @@ int cpe_name_match_strs(const char *candidate, size_t n, char **targets)
 	return -1;
 }
 
-bool cpe_name_check(const char *str)
+cpe_format_t cpe_name_get_format_of_str(const char *str)
 {
-	__attribute__nonnull__(str);
-
 	if (str == NULL)
-		return false;
+		return CPE_FORMAT_UNKNOWN;
 
 	pcre *re;
 	const char *error;
 	int erroffset;
-	re = pcre_compile("^cpe:/[aho]?(:[a-z0-9._~%-]*){0,6}$", PCRE_CASELESS, &error, &erroffset, NULL);
-
 	int rc;
 	int ovector[30];
-	rc = pcre_exec(re, NULL, str, strlen(str), 0, 0, ovector, 30);
 
+	re = pcre_compile("^cpe:/[aho]?(:[a-z0-9._~%-]*){0,6}$", PCRE_CASELESS, &error, &erroffset, NULL);
+	rc = pcre_exec(re, NULL, str, strlen(str), 0, 0, ovector, 30);
 	pcre_free(re);
 
-	return rc >= 0;
+	if (rc >= 0)
+		return CPE_FORMAT_URI;
+
+	re = pcre_compile("^cpe:2.3:[aho]?(:[a-z0-9._~%-]*){0,6}$", PCRE_CASELESS, &error, &erroffset, NULL);
+	rc = pcre_exec(re, NULL, str, strlen(str), 0, 0, ovector, 30);
+	pcre_free(re);
+
+	if (rc >= 0)
+		return CPE_FORMAT_STRING;
+
+	// FIXME: This should be way more strict
+	re = pcre_compile("^wfn:.+$", PCRE_CASELESS, &error, &erroffset, NULL);
+	rc = pcre_exec(re, NULL, str, strlen(str), 0, 0, ovector, 30);
+	pcre_free(re);
+
+	if (rc >= 0)
+		return CPE_FORMAT_WFN;
+
+	return CPE_FORMAT_UNKNOWN;
+}
+
+bool cpe_name_check(const char *str)
+{
+	return cpe_name_get_format_of_str(str) != CPE_FORMAT_UNKNOWN;
 }
 
 static const char *as_str(const char *str)
@@ -367,43 +522,6 @@ static const char *as_str(const char *str)
 	return str;
 }
 
-/**
- * Takes given string and replaces occurences of non-alphanumber characters
- * except -._~ with % followed by hex digits representing that particular
- * character.
- *
- * cpe_urlencode(" abc") would return "%20abc",
- * cpe_urlencode("%") would return "%25".
- */
-static char *cpe_urlencode(const char *str)
-{
-	if (str == NULL)
-		return NULL;
-
-	// allocate enough space
-	// in the worst case (all characters need to be replaced), the memory
-	// we will need is 3 times the size of input, + 1 for the terminating \0
-	char *result = oscap_alloc(strlen(str) * 3 * sizeof(char) + 1);
-	char *out = result;
-
-	for (const char *in = str; *in != '\0'; ++in, ++out) {
-		if (isalnum(*in) || strchr("-._~", *in))
-			*out = *in;
-		else {
-			// this char shall be %-encoded
-			snprintf(out, 4, "%%%02X", *in); // we write 3 chars and \0
-			out += 2; // for loop does another ++, giving us += 3 effectively
-		}
-	}
-
-	// if the last character was alphanumeric we need to terminate
-	// if the last cahracter was non-alphanum we will have 2 consecutive
-	// \0s at the end of the string which doesn't hurt anything
-	*out = '\0';
-
-	return result;
-}
-
 char *cpe_name_get_uri(const struct cpe_name *cpe)
 {
 	__attribute__nonnull__(cpe);
@@ -411,14 +529,18 @@ char *cpe_name_get_uri(const struct cpe_name *cpe)
 	int len = 16;
 	int i;
 	char *result;
-	char* part[CPE_FIELDNUM] = { NULL }; // CPE URI parts
+	char* part[CPE_BASIC_FIELDNUM] = { NULL }; // CPE URI parts
 
 	if (cpe == NULL)
 		return NULL;
 
 	// get individual parts (%-encded)
-	for (i = 0; i < CPE_FIELDNUM; ++i) {
-		part[i] = cpe_urlencode(as_str(cpe_get_field(cpe, i)));
+	for (i = 0; i < CPE_BASIC_FIELDNUM; ++i) {
+		if (i == CPE_FIELD_EDITION && cpe_has_extended_attributes(cpe))
+			part[i] = cpe_pack_extended_attributes(cpe);
+		else
+			part[i] = cpe_urlencode(as_str(cpe_get_field(cpe, i)));
+
 		len += strlen(part[i]);
 	}
 
@@ -432,7 +554,7 @@ char *cpe_name_get_uri(const struct cpe_name *cpe)
 	);
 
 	// free individual parts
-	for (int j = 0; j < CPE_FIELDNUM; ++j)
+	for (int j = 0; j < CPE_BASIC_FIELDNUM; ++j)
 		oscap_free(part[j]);
 
 	// trim trailing colons
@@ -478,12 +600,11 @@ static bool cpe_assign_values(struct cpe_name *cpe, char **fields)
 
 void cpe_name_free(struct cpe_name *cpe)
 {
-
 	if (cpe == NULL)
 		return;
 
 	int i;
-	for (i = 0; i < CPE_FIELDNUM; ++i)
+	for (i = 0; i < CPE_TOTAL_FIELDNUM; ++i)
 		cpe_set_field(cpe, i, NULL);
 	oscap_free(cpe);
 }
@@ -493,10 +614,11 @@ const char * cpe_name_supported(void)
         return CPE_URI_SUPPORTED;
 }
 
+OSCAP_ACCESSOR_SIMPLE(cpe_format_t, cpe_name, format)
 OSCAP_ACCESSOR_SIMPLE(cpe_part_t, cpe_name, part)
-    OSCAP_ACCESSOR_STRING(cpe_name, vendor)
-    OSCAP_ACCESSOR_STRING(cpe_name, product)
-    OSCAP_ACCESSOR_STRING(cpe_name, version)
-    OSCAP_ACCESSOR_STRING(cpe_name, update)
-    OSCAP_ACCESSOR_STRING(cpe_name, edition)
-    OSCAP_ACCESSOR_STRING(cpe_name, language)
+OSCAP_ACCESSOR_STRING(cpe_name, vendor)
+OSCAP_ACCESSOR_STRING(cpe_name, product)
+OSCAP_ACCESSOR_STRING(cpe_name, version)
+OSCAP_ACCESSOR_STRING(cpe_name, update)
+OSCAP_ACCESSOR_STRING(cpe_name, edition)
+OSCAP_ACCESSOR_STRING(cpe_name, language)
