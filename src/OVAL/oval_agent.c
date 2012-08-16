@@ -344,7 +344,7 @@ int oval_agent_resolve_variables(struct oval_agent_session * session, struct xcc
                 if (value == NULL && o_value_text == NULL)
                 {
                     // both are null which is not a conflict!
-                    oscap_dlprintf(DBG_W, "Variable %s has the same value (NULL), skipping\n", xccdf_value_binding_get_name(binding));
+                    oscap_dlprintf(DBG_W, "Variable %s has the same value (NULL), skip it.\n", xccdf_value_binding_get_name(binding));
                 }
                 else if (value == NULL || o_value_text == NULL)
                 {
@@ -357,7 +357,7 @@ int oval_agent_resolve_variables(struct oval_agent_session * session, struct xcc
                     conflict = true;
                     oscap_dlprintf(DBG_W, "Variable conflict: %s has different values %s != %s\n", xccdf_value_binding_get_name(binding), oval_value_get_text(o_value), value);
                 }
-                else oscap_dlprintf(DBG_W, "Variable %s has the same value, skipping\n", xccdf_value_binding_get_name(binding));
+                else oscap_dlprintf(DBG_W, "Variable %s has the same value, skip it.\n", xccdf_value_binding_get_name(binding));
             }
             oval_value_iterator_free(value_it);
         }
@@ -390,16 +390,15 @@ int oval_agent_resolve_variables(struct oval_agent_session * session, struct xcc
         struct oval_variable *variable = oval_definition_model_get_variable(def_model, name);
         if (variable != NULL) {
                 oval_datatype_t o_type = oval_variable_get_datatype(variable);
-                /* TODO: check of variable type ? */
-                if (oval_variable_model_has_variable(session->cur_var_model, name))
-			oscap_dlprintf(DBG_E, "External variable %s in conflict! Probably content failure.\n", name);
-                /* Add variable to variable model */
                 value_it = oval_variable_get_values(variable);
 		if (!oval_value_iterator_has_more(value_it)) {
+			/* Add variable to variable model */
 			oval_variable_model_add(session->cur_var_model, name, "Unknown", o_type, value);
 			oval_variable_bind_ext_var(variable, session->cur_var_model, name);
+			oscap_dlprintf(DBG_I, "Adding external variable %s.\n", name);
 		} else {
-			oscap_dlprintf(DBG_W, "External variable %s in conflict but with same value.\n", name);
+			/* Skip this variable (we assume it has same values otherwise conflict was detected) */
+			oscap_dlprintf(DBG_W, "Skipping external variable %s.\n", name);
 		}
                 oval_value_iterator_free(value_it);
         } else {
