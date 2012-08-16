@@ -130,6 +130,7 @@ bool xccdf_result_add_question(struct xccdf_result *item, struct oscap_text *new
 bool xccdf_result_add_rationale(struct xccdf_result *item, struct oscap_text *newval);
 bool xccdf_result_add_reference(struct xccdf_result *item, struct oscap_reference *newval);
 bool xccdf_result_add_status(struct xccdf_result *item, struct xccdf_status *newval);
+bool xccdf_result_add_dc_status(struct xccdf_result *item, struct oscap_reference *newval);
 bool xccdf_result_add_warning(struct xccdf_result *item, struct xccdf_warning *newval);
 bool xccdf_rule_set_interactive(struct xccdf_rule *item, bool newval);
 bool xccdf_item_get_interactive(const struct xccdf_item *item);
