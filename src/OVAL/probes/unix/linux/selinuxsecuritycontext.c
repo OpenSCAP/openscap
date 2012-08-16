@@ -268,6 +268,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 
 	probe_in  = probe_ctx_getobject(ctx);
 
+	behaviors = probe_obj_getent (probe_in, "behaviors", 1);
 	path      = probe_obj_getent (probe_in, "path",      1);
 	filename  = probe_obj_getent (probe_in, "filename",  1);
 	filepath  = probe_obj_getent (probe_in, "filepath", 1);
