@@ -53,24 +53,7 @@ static struct oscap_err_t *oscap_err_new(oscap_errfamily_t family, const char *d
 	err->line = line;
 	err->file = file;
 
-	char *family_str;
-
-	switch (family) {
-	case OSCAP_EFAMILY_XML:
-		family_str = "XML";
-		break;
-	case OSCAP_EFAMILY_GLIBC:
-		family_str = "GLIBC";
-		break;
-	case OSCAP_EFAMILY_OSCAP:
-		family_str = "OSCAP";
-		break;
-	default:
-		family_str = "UNKNOWN";
-		break;
-	}
-
-	dE("\(%s:%d:%s\(\)\) %s\n", file, line, func, desc);
+	dE("\(%s:%d:%s\()) %s\n", file, line, func, desc);
 
 	return (err);
 }
