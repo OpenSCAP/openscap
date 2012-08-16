@@ -89,7 +89,7 @@ int main(int argc, char **argv)
 	    cpe_print(name);	    
 	    ret_val = 0;
 	  } else {
-	    fprintf(stderr, "Output CPE URI doesn't match the input URI");
+	    fprintf(stderr, "Output CPE URI '%s' doesn't match the input URI '%s'", cpe_uri, argv[2]);
       }
 	  cpe_name_free(name);
 	} else

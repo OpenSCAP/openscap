@@ -6,6 +6,9 @@
         <schema_version>2.1</schema_version>
         <timestamp>2009-03-05T09:28:18</timestamp>
     </generator>
+    <cpe-item name="cpe:/a:vendor:product:version:update:~a~b~c~d~e:f">
+        <title xml:lang="en-US">Test of CPE 2.3 extended attributes parsing</title>
+    </cpe-item>
     <cpe-item name="cpe:/a:3com:3c15100d">
         <title xml:lang="en-US">3Com Network Supervisor</title>
         <meta:item-metadata modification-date="2008-04-01T12:09:16.777-04:00" status="DRAFT" nvd-id="44" />

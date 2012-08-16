@@ -47,18 +47,22 @@
 // enumeration of CPE URI fields (useful for indexing arrays)
 enum cpe_field_t {
 	CPE_FIELD_TYPE = 0,
-	CPE_FIELD_VENDOR,
-	CPE_FIELD_PRODUCT,
-	CPE_FIELD_VERSION,
-	CPE_FIELD_UPDATE,
-	CPE_FIELD_EDITION,
-	CPE_FIELD_LANGUAGE,
-	CPE_BASIC_FIELDNUM,
-	CPE_FIELD_SW_EDITION = CPE_BASIC_FIELDNUM,
-	CPE_FIELD_TARGET_SW,
-	CPE_FIELD_TARGET_HW,
-	CPE_FIELD_OTHER,
-	CPE_TOTAL_FIELDNUM
+	CPE_FIELD_VENDOR = 1,
+	CPE_FIELD_PRODUCT = 2,
+	CPE_FIELD_VERSION = 3,
+	CPE_FIELD_UPDATE = 4,
+	CPE_FIELD_EDITION = 5,
+	CPE_FIELD_LANGUAGE = 6,
+	CPE_BASIC_FIELDNUM = 7,
+
+	// Extended attributes CPE 2.3 only but packed so they are not garbled
+	// by CPE 2.2-only tools
+	CPE_FIELD_SW_EDITION = 7,
+	CPE_FIELD_TARGET_SW = 8,
+	CPE_FIELD_TARGET_HW = 9,
+	CPE_FIELD_OTHER = 10,
+
+	CPE_TOTAL_FIELDNUM = 11
 };
 
 struct cpe_name {
@@ -258,19 +262,18 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 						// first character is ~, that means that extended
 						// attributes are embedded into "edition" field
 
-						char **extended_attribs = oscap_split(fields_[i] + 1 * sizeof(char*), "~");
+						char **extended_attribs = oscap_split(fields_[i] + 1 * sizeof(char), "~");
 						// the first extended attribute is actually the edition
-						oscap_free(fields_[i]);
 						fields_[i] = extended_attribs[0];
 						// the rest are ~-encoded extended attributes
-						for (int j = 0; j < 4; ++j) {
+						for (int j = 0; j < 5 && extended_attribs[1 + j] != NULL; ++j) {
 							if (!cpe_urldecode(extended_attribs[1 + j])) {
 								oscap_free(data_);
 								oscap_free(fields_);
 								return NULL;
 							}
 
-							cpe_set_field(cpe, CPE_BASIC_FIELDNUM + j, extended_attribs[1 + 0]);
+							cpe_set_field(cpe, CPE_BASIC_FIELDNUM + j, extended_attribs[1 + j]);
 						}
 
 						oscap_free(extended_attribs); // we have used all the pointed to data
@@ -280,8 +283,10 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 				if (!cpe_urldecode(fields_[i])) {
 					oscap_free(data_);
 					oscap_free(fields_);
+					return NULL;
 				}
 			}
+
 			cpe_assign_values(cpe, fields_);
 			oscap_free(data_);
 			oscap_free(fields_);
@@ -402,12 +407,27 @@ static bool cpe_has_extended_attributes(const struct cpe_name *cpe)
 
 static char *cpe_pack_extended_attributes(const struct cpe_name *cpe)
 {
-	return oscap_sprintf("~%s~%s~%s~%s",
-			cpe_urlencode(cpe->sw_edition),
-			cpe_urlencode(cpe->target_sw),
-			cpe_urlencode(cpe->target_hw),
-			cpe_urlencode(cpe->other)
+	char* encoded_edition = cpe_urlencode(cpe->edition ? cpe->edition : "");
+	char* encoded_sw_edition = cpe_urlencode(cpe->sw_edition ? cpe->sw_edition : "");
+	char* encoded_target_sw = cpe_urlencode(cpe->target_sw ? cpe->target_sw : "");
+	char* encoded_target_hw = cpe_urlencode(cpe->target_hw ? cpe->target_hw : "");
+	char* encoded_other = cpe_urlencode(cpe->other ? cpe->other : "");
+
+	char* ret = oscap_sprintf("~%s~%s~%s~%s~%s",
+			encoded_edition,
+			encoded_sw_edition,
+			encoded_target_sw,
+			encoded_target_hw,
+			encoded_other
 	);
+
+	oscap_free(encoded_edition);
+	oscap_free(encoded_sw_edition);
+	oscap_free(encoded_target_sw);
+	oscap_free(encoded_target_hw);
+	oscap_free(encoded_other);
+
+	return ret;
 }
 
 bool cpe_name_match_one(const struct cpe_name * cpe, const struct cpe_name * against)
