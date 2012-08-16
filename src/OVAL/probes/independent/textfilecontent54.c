@@ -91,6 +91,7 @@ static int get_substrings(char *str, int *ofs, pcre *re, int want_substrs, char 
 	ret = 0;
 	if (rc == 0) {
 		/* vector too small */
+		// todo: report partial results
 		rc = ovector_len / 3;
 	}
 
@@ -205,6 +206,11 @@ struct pfdata {
 	int re_opts;
 	SEXP_t *instance_ent;
         probe_ctx *ctx;
+#if defined USE_REGEX_PCRE
+	pcre *compiled_regex;
+#elif defined USE_REGEX_POSIX
+	regex_t *compiled_regex;
+#endif
 };
 
 static int process_file(const char *path, const char *file, void *arg)
@@ -215,36 +221,6 @@ static int process_file(const char *path, const char *file, void *arg)
 	char *whole_path = NULL, *buf = NULL;
 	SEXP_t *next_inst = NULL;
 
-// todo: move to probe_main()?
-#if defined USE_REGEX_PCRE
-	int erroffset = -1;
-	pcre *re = NULL;
-	const char *error;
-
-	re = pcre_compile(pfd->pattern, pfd->re_opts, &error, &erroffset, NULL);
-	if (re == NULL) {
-		SEXP_t *msg;
-
-		msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "pcre_compile() '%s' %s.", pfd->pattern, error);
-		probe_cobj_add_msg(probe_ctx_getresult(pfd->ctx), msg);
-		SEXP_free(msg);
-		probe_cobj_set_flag(probe_ctx_getresult(pfd->ctx), SYSCHAR_FLAG_ERROR);
-		return -1;
-	}
-#elif defined USE_REGEX_POSIX
-	regex_t _re, *re = &_re;
-
-	int err;
-	if ( (err=regcomp(re, pfd->pattern, pfd->re_opts)) != 0) {
-		SEXP_t *msg;
-
-		msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "regcomp() '%s' returned %d.", pfd->pattern, err);
-		probe_cobj_add_msg(probe_ctx_getresult(pfd->ctx), msg);
-		SEXP_free(msg);
-		probe_cobj_set_flag(probe_ctx_getresult(pfd->ctx), SYSCHAR_FLAG_ERROR);
-		return -1;
-	}
-#endif
 	if (file == NULL)
 		goto cleanup;
 
@@ -308,7 +284,7 @@ static int process_file(const char *path, const char *file, void *arg)
 			want_instance = 0;
 
 		SEXP_free(next_inst);
-		substr_cnt = get_substrings(buf, &ofs, re, want_instance, &substrs);
+		substr_cnt = get_substrings(buf, &ofs, pfd->compiled_regex, want_instance, &substrs);
 
 		if (substr_cnt > 0) {
 			++cur_inst;
@@ -335,12 +311,7 @@ static int process_file(const char *path, const char *file, void *arg)
 	oscap_free(buf);
 	if (whole_path != NULL)
 		oscap_free(whole_path);
-#if defined USE_REGEX_PCRE
-	if (re != NULL)
-		pcre_free(re);
-#elif defined USE_REGEX_POSIX
-	regfree(re);
-#endif
+
 	return ret;
 }
 
@@ -348,15 +319,24 @@ int probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *path_ent, *file_ent, *inst_ent, *bh_ent, *patt_ent, *filepath_ent, *probe_in;
         SEXP_t *r0;
-	char *pattern;
 	/* char *i_val, *m_val, *s_val; */
 	bool val;
 	struct pfdata pfd;
-
+	int ret = 0;
+#if defined USE_REGEX_PCRE
+	int errorffset = -1;
+	const char *error;
+#elif defined USE_REGEX_POSIX
+	regex_t _re;
+	pfd.compiled_regex = &_re;
+	int err;
+#endif
 	OVAL_FTS    *ofts;
 	OVAL_FTSENT *ofts_ent;
 
         (void)arg;
+
+	memset(&pfd, 0, sizeof(pfd));
 
         probe_in = probe_ctx_getobject(ctx);
 
@@ -372,21 +352,16 @@ int probe_main(probe_ctx *ctx, void *arg)
         if ( ((path_ent == NULL || file_ent == NULL) && filepath_ent==NULL) || 
              inst_ent==NULL || 
              patt_ent==NULL) {
-                SEXP_free (path_ent);
-                SEXP_free (file_ent);
-                SEXP_free (inst_ent);
                 SEXP_free (patt_ent);
-                SEXP_free (filepath_ent);
-		SEXP_free (bh_ent);
-
-                return PROBE_ENOELM;
+		ret = PROBE_ENOELM;
+		goto cleanup;
         }
 
 	/* get pattern from SEXP */
         SEXP_t *ent_val;
         ent_val = probe_ent_getval(patt_ent);
-        pattern = SEXP_string_cstr(ent_val);
-        assume_d(pattern != NULL, -1);
+	pfd.pattern = SEXP_string_cstr(ent_val);
+	assume_d(pfd.pattern != NULL, -1);
         SEXP_free(patt_ent);
         SEXP_free(ent_val);
 
@@ -413,7 +388,6 @@ int probe_main(probe_ctx *ctx, void *arg)
 
 	probe_tfc54behaviors_canonicalize(&bh_ent);
 
-	pfd.pattern      = pattern;
 	pfd.instance_ent = inst_ent;
         pfd.ctx          = ctx;
 #if defined USE_REGEX_PCRE
@@ -439,6 +413,19 @@ int probe_main(probe_ctx *ctx, void *arg)
 		if (val)
 			pfd.re_opts |= PCRE_DOTALL;
 	}
+
+	pfd.compiled_regex = pcre_compile(pfd.pattern, pfd.re_opts, &error,
+					  &errorffset, NULL);
+	if (pfd.compiled_regex == NULL) {
+		SEXP_t *msg;
+
+		msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "pcre_compile() '%s' %s.", pfd.pattern, error);
+		probe_cobj_add_msg(probe_ctx_getresult(pfd.ctx), msg);
+		SEXP_free(msg);
+		probe_cobj_set_flag(probe_ctx_getresult(pfd.ctx), SYSCHAR_FLAG_ERROR);
+		ret = PROBE_EFATAL;
+		goto cleanup;
+	}
 #elif defined USE_REGEX_POSIX
 	pfd.re_opts = REG_EXTENDED | REG_NEWLINE;
 	r0 = probe_ent_getattrval(bh_ent, "ignore_case");
@@ -448,11 +435,22 @@ int probe_main(probe_ctx *ctx, void *arg)
 		if (val)
 			pfd.re_opts |= REG_ICASE;
 	}
-#endif
 
+	if ((err = regcomp(pfd.compiled_regex, pfd.pattern, pfd.re_opts)) != 0) {
+		SEXP_t *msg;
+
+		msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "regcomp() '%s' returned %d.", pfd.pattern, err);
+		probe_cobj_add_msg(probe_ctx_getresult(pfd.ctx), msg);
+		SEXP_free(msg);
+		probe_cobj_set_flag(probe_ctx_getresult(pfd.ctx), SYSCHAR_FLAG_ERROR);
+		ret = PROBE_EFATAL;
+		goto cleanup;
+	}
+#endif
 	if ((ofts = oval_fts_open(path_ent, file_ent, filepath_ent, bh_ent)) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
 			if (ofts_ent->fts_info == FTS_F)
+				// todo: handle return code
 				/* we're only interested in contents of regular files */
 				process_file(ofts_ent->path, ofts_ent->file, &pfd);
 			oval_ftsent_free(ofts_ent);
@@ -461,12 +459,19 @@ int probe_main(probe_ctx *ctx, void *arg)
 		oval_fts_close(ofts);
 	}
 
+ cleanup:
         SEXP_free(file_ent);
         SEXP_free(path_ent);
         SEXP_free(inst_ent);
         SEXP_free(bh_ent);
         SEXP_free(filepath_ent);
-        oscap_free(pattern);
-
-	return 0;
+	if (pfd.pattern != NULL)
+		oscap_free(pfd.pattern);
+#if defined USE_REGEX_PCRE
+	if (pfd.compiled_regex != NULL)
+		pcre_free(pfd.compiled_regex);
+#elif defined USE_REGEX_POSIX
+	regfree(re);
+#endif
+	return ret;
 }
