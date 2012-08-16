@@ -28,15 +28,21 @@ TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
 		OSCAP=$(top_builddir)/utils/.libs/oscap
 
 TESTS = all.sh
-check_SCRIPTS = test_xccdf_xml_escaping_value.sh
 check_PROGRAMS = test_xccdf_shall_pass
+check_SCRIPTS = \
+	test_xccdf_check_content_ref_without_name_attr.sh \
+	test_xccdf_xml_escaping_value.sh
 
 test_xccdf_shall_pass_SOURCES = test_xccdf_shall_pass.c unit_helper.c
 
 EXTRA_DIST += \
 	all.sh \
+	not_executable \
 	test_xccdf_complex_check_nand.xccdf.xml \
 	test_xccdf_complex_check_single_negate.xccdf.xml \
+	test_xccdf_check_content_ref_without_name_attr.oval.xml \
+	test_xccdf_check_content_ref_without_name_attr.xccdf.xml \
+	test_xccdf_check_content_ref_without_name_attr.sh \
 	test_xccdf_overlaping_IDs.xccdf.xml \
 	test_xccdf_xml_escaping_value.sh \
 	test_xccdf_xml_escaping_value.xccdf.xml \
