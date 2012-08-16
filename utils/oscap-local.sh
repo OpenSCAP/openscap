@@ -7,7 +7,10 @@ if [ $# -eq 0 ]; then
 	echo "Usage: \"$ ./oscap-local.sh .libs/oscap xccdf eval ...\"";
 fi
 
-PREFIX=".."
+# parent directory of the script, this is so that you can cd anywhere
+# and still be able to run oscap or various tests, etc...
+PARENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PREFIX="$PARENT_DIR/.."
 
 # Preload testing library that accept various environment variables
 export LD_PRELOAD="$PREFIX/src/.libs/libopenscap_testing.so"
