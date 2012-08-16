@@ -88,7 +88,9 @@ int main(int argc, char **argv)
 	    // Print CPE to the screen.
 	    cpe_print(name);	    
 	    ret_val = 0;
-	  }
+	  } else {
+	    fprintf(stderr, "Output CPE URI doesn't match the input URI");
+      }
 	  cpe_name_free(name);
 	} else
 	  fprintf(stderr, "Not enough memory!\n");
