@@ -116,6 +116,7 @@ typedef struct {
 	size_t file_len;
 	char *path;
 	size_t path_len;
+	unsigned int fts_info;
 } OVAL_FTSENT;
 
 /*

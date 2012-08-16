@@ -11,4 +11,15 @@ TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
 
 TESTS = test_probes_textfilecontent54.sh
 
-EXTRA_DIST += test_probes_textfilecontent54.sh test_probes_textfilecontent54.xml
+EXTRA_DIST += \
+	test_probes_textfilecontent54.sh \
+	test_probes_textfilecontent54.xml \
+	tfc54-def-5.4-invalid.xml \
+	tfc54-def-5.4-valid.xml \
+	tfc54-def-5.5-valid.xml \
+	tfc54-def-5.6-valid.xml \
+	tfc54-def-5.7-valid.xml \
+	tfc54-def-5.8-valid.xml \
+	tfc54-def-5.9-valid.xml \
+	tfc54-def-5.10-valid.xml \
+	tfc54-def-5.10.1-valid.xml

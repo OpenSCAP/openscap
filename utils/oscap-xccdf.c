@@ -331,7 +331,6 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	struct sce_parameters* sce_parameters = 0;
 #endif
 
-	int result = OSCAP_ERROR;
 	int ret;
 
 	const char* full_validation = getenv("OSCAP_FULL_VALIDATION");
@@ -426,7 +425,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	// or if full validation was explicitly requested
 	if (action->validate && (!temp_dir || full_validation)) {
 		for (idx=0; oval_files[idx]; idx++) {
-			xmlChar *doc_version;
+			char *doc_version;
 
 			doc_version = oval_determine_document_schema_version((const char *) oval_files[idx],
 				OSCAP_DOCUMENT_OVAL_DEFINITIONS);
@@ -434,10 +433,10 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 				OSCAP_DOCUMENT_OVAL_DEFINITIONS, (const char *) doc_version,
 				(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))) {
 				if (ret==1) fprintf(stdout, "Invalid OVAL Definition content in %s\n", oval_files[idx]);
-				xmlFree(doc_version);
+				free(doc_version);
 				goto cleanup;
 			}
-			xmlFree(doc_version);
+			free(doc_version);
 		}
 	}
 
@@ -549,17 +548,17 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 			/* validate OVAL Results */
 			if (action->validate && full_validation) {
-				xmlChar *doc_version;
+				char *doc_version;
 
 				doc_version = oval_determine_document_schema_version((const char *) name, OSCAP_DOCUMENT_OVAL_RESULTS);
 				if (oscap_validate_document(name, OSCAP_DOCUMENT_OVAL_RESULTS, (const char *) doc_version,
 					(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
 					fprintf(stdout, "OVAL Results are NOT exported correctly.\n");
 					free(name);
-					xmlFree(doc_version);
+					free(doc_version);
 					goto cleanup;
 				}
-				xmlFree(doc_version);
+				free(doc_version);
 				fprintf(stdout, "OVAL Results are exported correctly.\n");
 			}
 
@@ -697,7 +696,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
-	result = OSCAP_OK;
+	int result = OSCAP_OK;
 	struct xccdf_rule_result_iterator *res_it = xccdf_result_get_rule_results(ritem);
 	while (xccdf_rule_result_iterator_has_more(res_it)) {
 		struct xccdf_rule_result *res = xccdf_rule_result_iterator_next(res_it);

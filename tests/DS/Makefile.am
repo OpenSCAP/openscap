@@ -13,9 +13,15 @@ TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(shell cd $(top_builddir); pwd)/src/OVAL/probe
 TESTS = test_ds.sh
 
 EXTRA_DIST += test_ds.sh \
-		empty/empty-xccdf.xml \
-		simple/scap-fedora14-xccdf.xml \
-		simple/scap-fedora14-oval.xml \
-		multiple_oval/multiple-oval-xccdf.xml \
-		multiple_oval/first-oval.xml \
-		multiple_oval/second-oval.xml
+		eval_simple/sds.xml \
+		rds_simple/results-oval.xml \
+		rds_simple/results-xccdf.xml \
+		rds_simple/sds.xml \
+		rds_testresult/results-oval.xml \
+		rds_testresult/results-xccdf.xml \
+		rds_testresult/sds.xml \
+		sds_multiple_oval/first-oval.xml \
+		sds_multiple_oval/second-oval.xml \
+		sds_multiple_oval/multiple-oval-xccdf.xml \
+		sds_simple/scap-fedora14-oval.xml \
+		sds_simple/scap-fedora14-xccdf.xml

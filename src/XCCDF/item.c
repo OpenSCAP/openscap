@@ -115,6 +115,7 @@ struct xccdf_item *xccdf_item_new(xccdf_type_t type, struct xccdf_item *parent)
 	item->item.question = oscap_list_new();
 	item->item.rationale = oscap_list_new();
 	item->item.statuses = oscap_list_new();
+	item->item.dc_statuses = oscap_list_new();
 	item->item.platforms = oscap_list_new();
 	item->item.warnings = oscap_list_new();
 	item->item.references = oscap_list_new();
@@ -182,6 +183,7 @@ void xccdf_item_base_clone(struct xccdf_item_base *new_base, const struct xccdf_
 
 	new_base->warnings = oscap_list_clone(old_base->warnings, (oscap_clone_func) xccdf_warning_clone);
 	new_base->statuses = oscap_list_clone(old_base->statuses, (oscap_clone_func) xccdf_status_clone);
+	new_base->dc_statuses = oscap_list_clone(old_base->dc_statuses, (oscap_clone_func) oscap_reference_clone);
 	new_base->references = oscap_list_clone(old_base->references, (oscap_clone_func) oscap_reference_clone);
 	new_base->platforms = oscap_list_clone(old_base->platforms, (oscap_clone_func) oscap_strdup);
 
@@ -201,7 +203,6 @@ struct xccdf_status *xccdf_status_clone(const struct xccdf_status *old_status)
 	return new_status;
 }
 
-
 /* Performs a deep copy of xccdf_warning and returns a pointer to that copy */
 struct xccdf_warning *xccdf_warning_clone(const struct xccdf_warning *old_warning)
 {
@@ -216,6 +217,7 @@ void xccdf_item_release(struct xccdf_item *item)
 {
 	if (item) {
 		oscap_list_free(item->item.statuses, (oscap_destruct_func) xccdf_status_free);
+		oscap_list_free(item->item.dc_statuses, (oscap_destruct_func) oscap_reference_free);
 		oscap_list_free(item->item.platforms, oscap_free);
 		oscap_list_free(item->item.title, (oscap_destruct_func) oscap_text_free);
 		oscap_list_free(item->item.description, (oscap_destruct_func) oscap_text_free);
@@ -363,6 +365,13 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 		xccdf_status_to_dom(status, doc, item_node, version_info);
 	}
 	xccdf_status_iterator_free(statuses);
+
+	struct oscap_reference_iterator *dc_statuses = xccdf_item_get_dc_statuses(item);
+	while (oscap_reference_iterator_has_more(dc_statuses)) {
+		struct oscap_reference *ref = oscap_reference_iterator_next(dc_statuses);
+		oscap_reference_to_dom(ref, item_node, doc, "dc-status");
+	}
+	oscap_reference_iterator_free(dc_statuses);
 
     time_t vt = xccdf_item_get_version_time(item);
 	const char *version = xccdf_item_get_version(item);
@@ -722,6 +731,9 @@ bool xccdf_item_process_element(struct xccdf_item * item, xmlTextReaderPtr reade
         }
         break;
     }
+	case XCCDFE_DC_STATUS:
+        oscap_list_add(item->item.dc_statuses, oscap_reference_new_parse(reader));
+		return true;
 	case XCCDFE_VERSION: {
         xmlNode *ver = xmlTextReaderExpand(reader);
         char *vt = (char*) xmlGetProp(ver, BAD_CAST "time");
@@ -838,6 +850,7 @@ XCCDF_ITEM_IGETTER(status, statuses)
 XCCDF_ITEM_ADDER(struct oscap_reference *, reference, references)
 XCCDF_ITEM_ADDER(struct xccdf_warning *, warning, warnings)
 XCCDF_ITEM_ADDER(struct xccdf_status *, status, statuses)
+XCCDF_ITEM_ADDER(struct oscap_reference *, dc_status, dc_statuses)
 XCCDF_ITERATOR_GEN_S(item) XCCDF_ITERATOR_GEN_S(status)
 OSCAP_ITERATOR_GEN(xccdf_warning)
 OSCAP_ITERATOR_REMOVE_F(xccdf_warning)
@@ -856,11 +869,17 @@ XCCDF_SETTER_ID(rule) XCCDF_SETTER_ID(group) XCCDF_SETTER_ID(value) XCCDF_SETTER
 #undef XCCDF_SETTER_ID
 
 struct oscap_reference_iterator *xccdf_item_get_references(const struct xccdf_item *item) { return oscap_iterator_new(item->item.references); }
+struct oscap_reference_iterator *xccdf_item_get_dc_statuses(const struct xccdf_item *item) { return oscap_iterator_new(item->item.dc_statuses); }
 struct oscap_reference_iterator *xccdf_benchmark_get_references(const struct xccdf_benchmark *item) { return oscap_iterator_new(XITEM(item)->item.references); }
+struct oscap_reference_iterator *xccdf_benchmark_get_dc_statuses(const struct xccdf_benchmark *item) { return oscap_iterator_new(XITEM(item)->item.dc_statuses); }
 struct oscap_reference_iterator *xccdf_value_get_references(const struct xccdf_value *item) { return oscap_iterator_new(XITEM(item)->item.references); }
+struct oscap_reference_iterator *xccdf_value_get_dc_statuses(const struct xccdf_value *item) { return oscap_iterator_new(XITEM(item)->item.dc_statuses); }
 struct oscap_reference_iterator *xccdf_group_get_references(const struct xccdf_group *item) { return oscap_iterator_new(XITEM(item)->item.references); }
+struct oscap_reference_iterator *xccdf_group_get_dc_statuses(const struct xccdf_group *item) { return oscap_iterator_new(XITEM(item)->item.dc_statuses); }
 struct oscap_reference_iterator *xccdf_rule_get_references(const struct xccdf_rule *item) { return oscap_iterator_new(XITEM(item)->item.references); }
+struct oscap_reference_iterator *xccdf_rule_get_dc_statuses(const struct xccdf_rule *item) { return oscap_iterator_new(XITEM(item)->item.dc_statuses); }
 struct oscap_reference_iterator *xccdf_profile_get_references(const struct xccdf_profile *item) { return oscap_iterator_new(XITEM(item)->item.references); }
+struct oscap_reference_iterator *xccdf_profile_get_dc_statuses(const struct xccdf_profile *item) { return oscap_iterator_new(XITEM(item)->item.dc_statuses); }
 
 struct xccdf_item_iterator *xccdf_item_get_content(const struct xccdf_item *item)
 {

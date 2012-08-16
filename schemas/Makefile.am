@@ -13,6 +13,9 @@ xccdf12dir = $(pkgdatadir)/schemas/xccdf/1.2/
 sds12dir = $(pkgdatadir)/schemas/sds/1.2/
 arf11dir = $(pkgdatadir)/schemas/arf/1.1/
 ocil20dir = $(pkgdatadir)/schemas/ocil/2.0/
+cpe20dir = $(pkgdatadir)/schemas/cpe/2.0/
+cpe21dir = $(pkgdatadir)/schemas/cpe/2.1/
+cpe22dir = $(pkgdatadir)/schemas/cpe/2.2/
 
 oval53_DATA = $(wildcard oval/5.3/*.xsd)
 oval54_DATA = $(wildcard oval/5.4/*.xsd)
@@ -34,6 +37,10 @@ arf11_DATA = $(wildcard arf/1.1/*.xsd)
 
 ocil20_DATA = $(wildcard ocil/2.0/*.xsd sds/2.0/*.dtd)
 
+cpe20_DATA = cpe/2.0/cpe-dictionary_2.0.xsd
+cpe21_DATA = cpe/2.1/cpe-dictionary_2.1.xsd
+cpe22_DATA = cpe/2.2/cpe-dictionary_2.2.xsd
+
 EXTRA_DIST = \
 	$(oval53_DATA) \
 	$(oval54_DATA) \
@@ -48,4 +55,8 @@ EXTRA_DIST = \
 	$(xccdf11_DATA) \
 	$(xccdf12_DATA) \
 	$(sds12_DATA) \
-	$(ocil20_DATA)
+	$(ocil20_DATA) \
+	$(cpe20_DATA) \
+	$(cpe21_DATA) \
+	$(cpe22_DATA)
+

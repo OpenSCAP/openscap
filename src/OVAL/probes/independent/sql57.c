@@ -77,7 +77,7 @@ dbEngineMap_t engine_map[] = {
 	{ "monetdb",   NULL       },
 	{ "mimer",     NULL       },
 	{ "mssql",     "mssql"    }, /* non-standard */
-	{ "mysql",     "mysql"    }, /* non-standard */
+	{ "mysql",     "mysql"    }, /* standard since OVAL 5.10 */
 	{ "oracle",    "oracle"   },
 	{ "paradox",   NULL       },
 	{ "pervasive", NULL       },

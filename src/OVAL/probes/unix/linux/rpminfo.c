@@ -41,7 +41,9 @@
  *                string release,
  *                string version,
  *                string evr,
- *                string signature_keyid)
+ *                string signature_keyid
+ *                string extended_status OVAL >= 5.10
+ *              )
  */
 
 #ifdef HAVE_CONFIG_H
@@ -99,6 +101,7 @@ struct rpminfo_rep {
         char *version;
         char *evr;
         char *signature_keyid;
+	char extended_name[1024];
 };
 
 struct rpminfo_global {
@@ -141,6 +144,7 @@ static void pkgh2rep (Header h, struct rpminfo_rep *r)
         r->epoch   = str;
         r->release = headerFormat (h, "%{RELEASE}", &rpmerr);
         r->version = headerFormat (h, "%{VERSION}", &rpmerr);
+	snprintf(r->extended_name, 1024, "%s-%s:%s-%s.%s", r->name, r->epoch, r->version, r->release, r->arch);
 
         len = (strlen (r->epoch)   +
                strlen (r->release) +
@@ -288,15 +292,85 @@ void probe_fini (void *ptr)
         return;
 }
 
+static int collect_rpm_files(SEXP_t *item, struct rpminfo_rep rep) {
+	SEXP_t *value;
+	rpmdbMatchIterator ts;
+	Header pkgh;
+	rpmfi fi;
+	rpmTag tag[2] = { RPMTAG_BASENAMES, RPMTAG_DIRNAMES };
+	int i, ret = 0;
+
+	ts = rpmtsInitIterator(g_rpm.rpmts, RPMDBI_PACKAGES, NULL, 0);
+	if (ts == NULL) {
+		return -1;
+	}
+
+	if (rpmdbSetIteratorRE(ts, RPMTAG_NAME, RPMMIRE_STRCMP, rep.name) != 0) {
+		ret = -1;
+		goto cleanup;
+	}
+	if (rpmdbSetIteratorRE(ts, RPMTAG_EPOCH, RPMMIRE_STRCMP, rep.epoch) != 0) {
+		ret = -1;
+		goto cleanup;
+	}
+	if (rpmdbSetIteratorRE(ts, RPMTAG_VERSION, RPMMIRE_STRCMP, rep.version) != 0) {
+		ret = -1;
+		goto cleanup;
+	}
+	if (rpmdbSetIteratorRE(ts, RPMTAG_RELEASE, RPMMIRE_STRCMP, rep.release) != 0) {
+		ret = -1;
+		goto cleanup;
+	}
+	if (rpmdbSetIteratorRE(ts, RPMTAG_ARCH, RPMMIRE_STRCMP, rep.arch) != 0) {
+		ret = -1;
+		goto cleanup;
+	}
+
+	while ((pkgh = rpmdbNextIterator(ts)) != NULL) {
+		/*
+		 * Inspect package files & directories
+		 */
+		for (i = 0; i < 2; ++i) {
+			fi = rpmfiNew(g_rpm.rpmts, pkgh, tag[i], 1);
+
+			while (rpmfiNext(fi) != -1) {
+				const char *filepath;
+				filepath = rpmfiFN(fi);
+				value = probe_entval_from_cstr(
+						OVAL_DATATYPE_STRING,
+						filepath,
+						strlen(filepath)
+						);
+				if (value != NULL) {
+					probe_item_ent_add(item, "filepath", NULL, value);
+					SEXP_free(value);
+				}
+			}
+			rpmfiFree(fi);
+		}
+
+	}
+cleanup:
+	ts = rpmdbFreeIterator(ts);
+	return ret;
+}
+
 int probe_main (probe_ctx *ctx, void *arg)
 {
-        SEXP_t *val, *item, *ent;
+	SEXP_t *val, *item, *ent, *probe_in;
+	oval_version_t over;
 	int rpmret, i;
 
         struct rpminfo_req request_st;
         struct rpminfo_rep *reply_st;
 
-        ent = probe_obj_getent (probe_ctx_getobject(ctx), "name", 1);
+	probe_in = probe_ctx_getobject(ctx);
+	if (probe_in == NULL)
+		return PROBE_ENOOBJ;
+
+	over = probe_obj_get_schema_version(probe_in);
+
+        ent = probe_obj_getent (probe_in, "name", 1);
 
         if (ent == NULL) {
                 return (PROBE_ENOENT);
@@ -392,10 +466,42 @@ int probe_main (probe_ctx *ctx, void *arg)
                                                          "signature_keyid", OVAL_DATATYPE_STRING, reply_st[i].signature_keyid,
                                                          NULL);
 
-                                probe_item_collect(ctx, item);
+				/* OVAL 5.10 added extended_name and filepaths behavior */
+				if (oval_version_cmp(over, OVAL_VERSION(5.10)) >= 0) {
+					SEXP_t *value, *bh_value;
+					value = probe_entval_from_cstr(
+							OVAL_DATATYPE_STRING,
+							reply_st[i].extended_name,
+							strlen(reply_st[i].extended_name)
+					);
+					probe_item_ent_add(item, "extended_name", NULL, value);
+					SEXP_free(value);
+
+					/*
+					 * Parse behaviors
+					 */
+					value = probe_obj_getent(probe_in, "behaviors", 1);
+					if (value != NULL) {
+						bh_value = probe_ent_getattrval(value, "filepaths");
+						if (bh_value != NULL) {
+							if (SEXP_strcmp(bh_value, "true") == 0) {
+								/* collect package files */
+								collect_rpm_files(item, reply_st[i]);
+
+							}
+							SEXP_free(bh_value);
+						}
+						SEXP_free(value);
+					}
+
+				}
+
 
 				SEXP_free(name);
                                 __rpminfo_rep_free (&(reply_st[i]));
+
+				if (probe_item_collect(ctx, item))
+					return 1;
                         }
 
                         oscap_free (reply_st);

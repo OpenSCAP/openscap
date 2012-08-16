@@ -77,6 +77,7 @@ struct xccdf_item_base {
 	struct xccdf_item *parent;
 	char *extends;
 	struct oscap_list *statuses;
+	struct oscap_list *dc_statuses;
 	struct oscap_list *references;
 	struct oscap_list *platforms;
 	struct xccdf_flags flags;

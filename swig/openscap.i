@@ -172,6 +172,8 @@
  #include "../src/common/public/text.h"
  #include "../src/common/public/reporter.h"
  #include "../src/common/public/reference.h"
+
+ #include "../src/DS/public/ds.h"
 %}
 
 %include "../src/common/public/oscap.h"

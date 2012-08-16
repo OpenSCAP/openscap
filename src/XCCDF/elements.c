@@ -131,6 +131,7 @@ static const struct xccdf_element_spec XCCDF_ELEMENT_MAP[] = {
 	{XCCDFE_COMPLEX_CHECK, XCCDF_XMLNS, "complex-check"},
 	{XCCDFE_CONFLICTS, XCCDF_XMLNS, "conflicts"},
 	{XCCDFE_CPE_LIST, CPE1D_XMLNS, "cpe-list"},
+	{XCCDFE_DC_STATUS, XCCDF_XMLNS, "dc-status"},
 	{XCCDFE_DEFAULT, XCCDF_XMLNS, "default"},
 	{XCCDFE_DESCRIPTION, XCCDF_XMLNS, "description"},
 	{XCCDFE_FACT, XCCDF_XMLNS, "fact"},
