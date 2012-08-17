@@ -47,19 +47,7 @@ function test_api_cpe_uri_create {
 	    if [ "`cat  parsing.out`X" == "${URI}X" ]; then
 		sed 's/^\s*//g' parsing.out.1 > parsing.out.sed-tmp ; mv parsing.out.sed-tmp parsing.out.1
 		sed 's/(null)//g' parsing.out.1 > parsing.out.sed-tmp ; mv parsing.out.sed-tmp parsing.out.1
-		CPE=(`cat parsing.out.1 | tr '\n' ' '`)
-		./test_api_cpe_uri --creation  \
-		    "${CPE[0]}" \
-		    "${CPE[1]}" \
-                    "${CPE[2]}" \
-                    "${CPE[3]}" \
-                    "${CPE[4]}" \
-                    "${CPE[5]}" \
-                    "${CPE[6]}" \
-                    "${CPE[7]}" \
-                    "${CPE[8]}" \
-                    "${CPE[9]}" \
-                    "${CPE[10]}" > creation.out
+		cat parsing.out.1 | xargs -d '\n' ./test_api_cpe_uri --creation > creation.out
  		if [ ! $? -eq 0 ] || [ "${URI}X" != "`cat creation.out`X" ]; then
 		    echo "${URI}X != `cat creation.out`X"
 		    ret_val=1; 
