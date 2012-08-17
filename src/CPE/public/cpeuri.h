@@ -146,6 +146,30 @@ const char *cpe_name_get_edition(const struct cpe_name *cpe);
 const char *cpe_name_get_language(const struct cpe_name *cpe);
 
 /**
+ * Get CPE name sw_edition field.
+ * @memberof cpe_name
+ */
+const char *cpe_name_get_sw_edition(const struct cpe_name *cpe);
+
+/**
+ * Get CPE name target_sw field.
+ * @memberof cpe_name
+ */
+const char *cpe_name_get_target_sw(const struct cpe_name *cpe);
+
+/**
+ * Get CPE name target_hw field.
+ * @memberof cpe_name
+ */
+const char *cpe_name_get_target_hw(const struct cpe_name *cpe);
+
+/**
+ * Get CPE name other field.
+ * @memberof cpe_name
+ */
+const char *cpe_name_get_other(const struct cpe_name *cpe);
+
+/**
  * Return CPE URI as a new string.
  * @memberof cpe_name
  * @note Returned string is newly allocated and is caller's responsibility to free it.
@@ -223,6 +247,30 @@ bool cpe_name_set_edition(struct cpe_name *cpe, const char *newval);
  * @memberof cpe_name
  */
 bool cpe_name_set_language(struct cpe_name *cpe, const char *newval);
+
+/**
+ * Set CPE name sw_edition field.
+ * @memberof cpe_name
+ */
+bool cpe_name_set_sw_edition(struct cpe_name *cpe, const char *newval);
+
+/**
+ * Set CPE name target_sw field.
+ * @memberof cpe_name
+ */
+bool cpe_name_set_target_sw(struct cpe_name *cpe, const char *newval);
+
+/**
+ * Set CPE name target_hw field.
+ * @memberof cpe_name
+ */
+bool cpe_name_set_target_hw(struct cpe_name *cpe, const char *newval);
+
+/**
+ * Set CPE name other field.
+ * @memberof cpe_name
+ */
+bool cpe_name_set_other(struct cpe_name *cpe, const char *newval);
 
 /************************************************************/
 /** @} End of Setters group */

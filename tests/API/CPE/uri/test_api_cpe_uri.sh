@@ -55,7 +55,11 @@ function test_api_cpe_uri_create {
                     "${CPE[3]}" \
                     "${CPE[4]}" \
                     "${CPE[5]}" \
-                    "${CPE[6]}" > creation.out
+                    "${CPE[6]}" \
+                    "${CPE[7]}" \
+                    "${CPE[8]}" \
+                    "${CPE[9]}" \
+                    "${CPE[10]}" > creation.out
  		if [ ! $? -eq 0 ] || [ "${URI}X" != "`cat creation.out`X" ]; then
 		    echo "${URI}X != `cat creation.out`X"
 		    ret_val=1; 

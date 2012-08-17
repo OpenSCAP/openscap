@@ -314,6 +314,10 @@ struct cpe_name * cpe_name_clone(struct cpe_name * old_name)
 	new_name->update = oscap_strdup(old_name->update);
 	new_name->edition = oscap_strdup(old_name->edition);
 	new_name->language = oscap_strdup(old_name->language);
+	new_name->sw_edition = oscap_strdup(old_name->sw_edition);
+	new_name->target_sw = oscap_strdup(old_name->target_sw);
+	new_name->target_hw = oscap_strdup(old_name->target_hw);
+	new_name->other = oscap_strdup(old_name->other);
 
         return new_name;
 }
@@ -398,10 +402,10 @@ static char *cpe_urlencode(const char *str)
 static bool cpe_has_extended_attributes(const struct cpe_name *cpe)
 {
 	return cpe && (
-			cpe->sw_edition ||
-			cpe->target_sw ||
-			cpe->target_hw ||
-			cpe->other
+			(cpe->sw_edition && strcmp(cpe->sw_edition, "")) ||
+			(cpe->target_sw && strcmp(cpe->target_sw, "")) ||
+			(cpe->target_hw && strcmp(cpe->target_hw, "")) ||
+			(cpe->other && strcmp(cpe->other, ""))
 	);
 }
 
@@ -642,3 +646,7 @@ OSCAP_ACCESSOR_STRING(cpe_name, version)
 OSCAP_ACCESSOR_STRING(cpe_name, update)
 OSCAP_ACCESSOR_STRING(cpe_name, edition)
 OSCAP_ACCESSOR_STRING(cpe_name, language)
+OSCAP_ACCESSOR_STRING(cpe_name, sw_edition)
+OSCAP_ACCESSOR_STRING(cpe_name, target_sw)
+OSCAP_ACCESSOR_STRING(cpe_name, target_hw)
+OSCAP_ACCESSOR_STRING(cpe_name, other)
