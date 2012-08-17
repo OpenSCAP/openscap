@@ -68,6 +68,10 @@ void __oscap_setxmlerr(const char *file, uint32_t line, const char *func, xmlErr
 	(void)pthread_once(&__once, oscap_errkey_init);
 
 	oscap_clearerr();
+	/* get rid of a newline that was pass by xmlGetLastError() */
+	int len = strlen(error->message);
+	if( error->message[len-1] == '\n' )
+		error->message[len-1] = 0;
 	err = oscap_err_new(OSCAP_EFAMILY_XML, error->message, func, line, file);
 	(void)pthread_setspecific(__key, err);
 
