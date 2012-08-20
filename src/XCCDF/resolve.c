@@ -42,7 +42,7 @@ static struct oscap_list *xccdf_benchmark_resolve_dependencies(void *itemptr, vo
 	struct xccdf_value_iterator *val_it = NULL;
 
 	const char *extends = xccdf_item_get_extends(item);
-	if (extends) oscap_list_add(ret, xccdf_benchmark_get_item(xccdf_item_get_benchmark(item), extends));
+	if (extends) oscap_list_add(ret, xccdf_benchmark_get_member(xccdf_item_get_benchmark(item), xccdf_item_get_type(item), extends));
 
 	switch (xccdf_item_get_type(item)) {
 		case XCCDF_BENCHMARK: {
@@ -124,10 +124,13 @@ static void xccdf_resolve_item(struct xccdf_item *item)
 {
 	assert(item != NULL);
 
-	if (xccdf_item_get_type(item) == XCCDF_BENCHMARK)
+	if (xccdf_item_get_type(item) == XCCDF_BENCHMARK) {
 		xccdf_benchmark_set_resolved(xccdf_item_to_benchmark(item), true);
+		return; // benchmark has no extends
+	}
 
-	struct xccdf_item *parent = xccdf_benchmark_get_item(xccdf_item_get_benchmark(item), xccdf_item_get_extends(item));
+	assert(!xccdf_item_get_extends(item) || xccdf_item_get_type(item) & (XCCDF_PROFILE | XCCDF_ITEM));
+	struct xccdf_item *parent = xccdf_benchmark_get_member(xccdf_item_get_benchmark(item), xccdf_item_get_type(item), xccdf_item_get_extends(item));
 	if (parent == NULL) return;
 	if (xccdf_item_get_type(item) != xccdf_item_get_type(parent)) return;
 
@@ -248,7 +251,7 @@ static struct xccdf_item *xccdf_resolve_copy_item(struct xccdf_item *src)
 		case XCCDF_VALUE: prefix = "inherited-value-"; break;
 		default: assert(false);
 	}
-	char *newid = xccdf_benchmark_gen_id(bench, prefix);
+	char *newid = xccdf_benchmark_gen_id(bench, xccdf_item_get_type(src), prefix);
 	struct xccdf_item *clone = xccdf_item_clone(src);
 	xccdf_item_set_id(clone, newid);
 	oscap_free(newid);

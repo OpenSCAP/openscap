@@ -35,6 +35,8 @@
 
 #define XCCDF_SUPPORTED "1.1.4"
 
+static struct oscap_htable *xccdf_benchmark_find_target_htable(const struct xccdf_benchmark *, xccdf_type_t);
+
 struct xccdf_backref {
 	struct xccdf_item **ptr;	// pointer to a pointer that is supposed to be pointing to an item with id 'id'
 	xccdf_type_t type;	// expected item type
@@ -70,7 +72,9 @@ struct xccdf_benchmark *xccdf_benchmark_new(void)
 	bench->sub.benchmark.profiles = oscap_list_new();
 	bench->sub.benchmark.results = oscap_list_new();
     // hash tables
-	bench->sub.benchmark.dict = oscap_htable_new();
+	bench->sub.benchmark.items_dict = oscap_htable_new();
+	bench->sub.benchmark.profiles_dict = oscap_htable_new();
+	bench->sub.benchmark.results_dict = oscap_htable_new();
 
 	// add the implied default scoring model
 	struct xccdf_model *default_model = xccdf_model_new();
@@ -337,7 +341,9 @@ void xccdf_benchmark_free(struct xccdf_benchmark *benchmark)
 		oscap_list_free(bench->sub.benchmark.results, (oscap_destruct_func) xccdf_result_free);
 		oscap_list_free(bench->sub.benchmark.plain_texts, (oscap_destruct_func) xccdf_plain_text_free);
 		oscap_list_free(bench->sub.benchmark.profiles, (oscap_destruct_func) xccdf_profile_free);
-		oscap_htable_free(bench->sub.benchmark.dict, NULL);
+		oscap_htable_free(bench->sub.benchmark.items_dict, NULL);
+		oscap_htable_free(bench->sub.benchmark.profiles_dict, NULL);
+		oscap_htable_free(bench->sub.benchmark.results_dict, NULL);
 		xccdf_item_release(bench);
 	}
 }
@@ -358,7 +364,7 @@ XCCDF_ITERATOR_GEN_S(notice)
 XCCDF_ITERATOR_GEN_S(model)
 XCCDF_ITERATOR_GEN_S(profile)
 XCCDF_LISTMANIP(benchmark, plain_text, plain_texts)
-XCCDF_HTABLE_GETTER(struct xccdf_item *, benchmark, item, sub.benchmark.dict)
+XCCDF_HTABLE_GETTER(struct xccdf_item *, benchmark, item, sub.benchmark.items_dict)
 XCCDF_STATUS_CURRENT(benchmark)
 OSCAP_ITERATOR_GEN(xccdf_plain_text)
 OSCAP_ITERATOR_REMOVE_F(xccdf_plain_text)
@@ -474,7 +480,7 @@ struct xccdf_rule *xccdf_benchmark_append_new_rule(struct xccdf_benchmark *bench
 
 static const size_t XCCDF_ID_SIZE = 32;
 
-char *xccdf_benchmark_gen_id(struct xccdf_benchmark *benchmark, const char *prefix)
+char *xccdf_benchmark_gen_id(struct xccdf_benchmark *benchmark, xccdf_type_t type, const char *prefix)
 {
 	assert(prefix != NULL);
 
@@ -484,7 +490,7 @@ char *xccdf_benchmark_gen_id(struct xccdf_benchmark *benchmark, const char *pref
 
 	do {
 		snprintf(buff, XCCDF_ID_SIZE - 1, "%s%03d", prefix, ++i);
-	} while (xccdf_benchmark_get_item(benchmark, buff) != NULL);
+	} while (xccdf_benchmark_get_member(benchmark, type, buff) != NULL);
 
 	return oscap_strdup(buff);
 }
@@ -501,7 +507,7 @@ bool xccdf_add_item(struct oscap_list *list, struct xccdf_item *parent, struct x
 
 	if (bench != NULL) {
 		if (xccdf_item_get_id(item) == NULL)
-			item->item.id = xccdf_benchmark_gen_id(bench, prefix);
+			item->item.id = xccdf_benchmark_gen_id(bench, xccdf_item_get_type(item), prefix);
 
 		if (xccdf_benchmark_register_item(bench, item)) {
 			item->item.parent = parent;
@@ -513,13 +519,19 @@ bool xccdf_add_item(struct oscap_list *list, struct xccdf_item *parent, struct x
     return false;
 }
 
+struct xccdf_item *
+xccdf_benchmark_get_member(const struct xccdf_benchmark *benchmark, xccdf_type_t type, const char *key)
+{
+	return (struct xccdf_item *)oscap_htable_get(xccdf_benchmark_find_target_htable(benchmark, type), key);
+}
+
 bool xccdf_benchmark_register_item(struct xccdf_benchmark *benchmark, struct xccdf_item *item)
 {
 	if (benchmark == NULL || item == NULL || xccdf_item_get_id(item) == NULL)
 		return false;
 
 	const char *id = xccdf_item_get_id(item);
-	struct xccdf_item *found = xccdf_benchmark_get_item(benchmark, id);
+	struct xccdf_item *found = xccdf_benchmark_get_member(benchmark, xccdf_item_get_type(item), id);
 	if (found != NULL) return found == item; // already registered
 
     if (item->type == XCCDF_GROUP) {
@@ -529,7 +541,8 @@ bool xccdf_benchmark_register_item(struct xccdf_benchmark *benchmark, struct xcc
             xccdf_benchmark_register_item(benchmark, XITEM(val));
     }
 
-	return oscap_htable_add(XITEM(benchmark)->sub.benchmark.dict, xccdf_item_get_id(item), item);
+	return oscap_htable_add(xccdf_benchmark_find_target_htable(benchmark, xccdf_item_get_type(item)),
+		xccdf_item_get_id(item), item);
 }
 
 bool xccdf_benchmark_unregister_item(struct xccdf_item *item)
@@ -539,9 +552,9 @@ bool xccdf_benchmark_unregister_item(struct xccdf_item *item)
 	struct xccdf_benchmark *bench = xccdf_item_get_benchmark(item);
 	if (bench == NULL) return false;
 
-	assert(xccdf_benchmark_get_item(bench, xccdf_item_get_id(item)) == item);
+	assert(xccdf_benchmark_get_member(bench, xccdf_item_get_type(item), xccdf_item_get_id(item)) == item);
 
-	return oscap_htable_detach(XITEM(bench)->sub.benchmark.dict, xccdf_item_get_id(item)) != NULL;
+	return oscap_htable_detach(xccdf_benchmark_find_target_htable(bench, xccdf_item_get_type(item)), xccdf_item_get_id(item)) != NULL;
 }
 
 bool xccdf_benchmark_rename_item(struct xccdf_item *item, const char *newid)
@@ -552,20 +565,36 @@ bool xccdf_benchmark_rename_item(struct xccdf_item *item, const char *newid)
 	struct xccdf_item *bench = XITEM(xccdf_item_get_benchmark(item));
 
 	if (bench != NULL) {
-		if (newid != NULL && xccdf_benchmark_get_item(XBENCHMARK(bench), newid) != NULL)
+		if (newid != NULL && xccdf_benchmark_get_member(XBENCHMARK(bench), xccdf_item_get_type(item), newid) != NULL)
 			return false; // ID already assigned
 
 		if (xccdf_item_get_id(item) != NULL)
 			xccdf_benchmark_unregister_item(item);
 
 		if (newid != NULL)
-			oscap_htable_add(bench->sub.benchmark.dict, newid, item);
+			oscap_htable_add(xccdf_benchmark_find_target_htable(xccdf_item_get_benchmark(item), xccdf_item_get_type(item)), newid, item);
 	}
 
 	oscap_free(item->item.id);
 	item->item.id = oscap_strdup(newid);
 
 	return true;
+}
+
+/**
+ * Find appropriate hashtable based on the type (xccdf type) of the item.
+ * Note that IDs of xccdf:Profile and xccdf:Item are not guaranteed to not
+ * overlap -> thus the need for separate hashtables.
+ */
+struct oscap_htable *
+xccdf_benchmark_find_target_htable(const struct xccdf_benchmark *benchmark, xccdf_type_t type)
+{
+	assert(type & (XCCDF_ITEM | XCCDF_PROFILE | XCCDF_RESULT));
+	if (type == XCCDF_PROFILE)
+		return XITEM(benchmark)->sub.benchmark.profiles_dict;
+	if (type == XCCDF_RESULT)
+		return XITEM(benchmark)->sub.benchmark.results_dict;
+	return XITEM(benchmark)->sub.benchmark.items_dict;
 }
 
 
