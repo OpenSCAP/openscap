@@ -141,9 +141,6 @@ int app_validate_xml(const struct oscap_action *action)
 		xml_file = action->f_oval;
 		doc_version = oval_determine_document_schema_version((const char *) xml_file, action->doctype);
 		break;
-	default:
-		xml_file = action->f_xccdf;
-		doc_version = xccdf_detect_version(action->f_xccdf);
 	}
 
 	if (!xml_file) {

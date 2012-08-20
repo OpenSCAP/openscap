@@ -50,6 +50,7 @@
 #include <ftw.h>
 
 static int app_evaluate_xccdf(const struct oscap_action *action);
+static int app_xccdf_validate(const struct oscap_action *action);
 static int app_xccdf_resolve(const struct oscap_action *action);
 static int app_xccdf_export_oval_variables(const struct oscap_action *action);
 static bool getopt_xccdf(int argc, char **argv, struct oscap_action *action);
@@ -86,7 +87,7 @@ static struct oscap_module XCCDF_VALIDATE = {
     .summary = "Validate XCCDF XML content",
     .usage = "xccdf-file.xml",
     .opt_parser = getopt_xccdf,
-    .func = app_validate_xml
+    .func = app_xccdf_validate
 };
 
 static struct oscap_module XCCDF_EXPORT_OVAL_VARIABLES = {
@@ -1212,3 +1213,41 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 	return true;
 }
 
+int app_xccdf_validate(const struct oscap_action *action) {
+	int ret;
+	char *doc_version;
+	int result;
+
+
+	doc_version = xccdf_detect_version(action->f_xccdf);
+        if (!doc_version) {
+                result = OSCAP_ERROR;
+                goto cleanup;
+        }
+
+        ret=oscap_validate_document(action->f_xccdf,
+				    action->doctype,
+				    doc_version,
+				    (action->verbosity >= 0 ? oscap_reporter_fd : NULL),
+				    stdout);
+        if (ret==-1) {
+                result=OSCAP_ERROR;
+                goto cleanup;
+        }
+        else if (ret==1) {
+                result=OSCAP_FAIL;
+        }
+        else
+                result=OSCAP_OK;
+
+cleanup:
+        if (oscap_err())
+                fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+
+        if (result==OSCAP_FAIL)
+                fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
+
+        free(doc_version);
+        return result;
+
+}
