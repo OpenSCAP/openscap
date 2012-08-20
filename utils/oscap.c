@@ -143,7 +143,7 @@ int app_validate_xml(const struct oscap_action *action)
 		break;
 	default:
 		xml_file = action->f_xccdf;
-		doc_version = strdup(xccdf_version_info_get_version(xccdf_detect_version(action->f_xccdf)));
+		doc_version = xccdf_detect_version(action->f_xccdf);
 	}
 
 	if (!xml_file) {
@@ -151,9 +151,8 @@ int app_validate_xml(const struct oscap_action *action)
 		goto cleanup;
 	}
 
-	if (!doc_version) {
+	if (!doc_version)
 		goto cleanup;
-	}
 
 	ret=oscap_validate_document(xml_file, action->doctype, doc_version, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout);
 	if (ret==-1) {

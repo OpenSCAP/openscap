@@ -627,10 +627,11 @@ const char* xccdf_version_info_get_cpe_version(const struct xccdf_version_info* 
 
 /**
  * Starts parsing given XCCDF benchmark file to detect its version,
- * stops as soon as the version is found
+ * stops as soon as the version is found. Returned string should be
+ * freed by caller. Return NULL if error occur.
  * @memberof xccdf_benchmark
  */
-const struct xccdf_version_info* xccdf_detect_version(const char* file);
+char * xccdf_detect_version(const char* file);
 
 /************************************************************/
 
