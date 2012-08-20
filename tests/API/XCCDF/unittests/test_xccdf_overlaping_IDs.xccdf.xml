@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.1" id="testing-xcccdf">
+  <status>incomplete</status>
+  <version>1.0</version>
+  <Profile id="overlaps">
+    <title>Profile with the same ID as one of the Rules.</title>
+  </Profile>
+  <Rule selected="true" id="overlaps">
+    <check system="http://check-engine.test/pass">
+      <check-content-ref href="file" name="oval:def:20120006"/>
+    </check>
+  </Rule>
+</Benchmark>

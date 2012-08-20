@@ -34,5 +34,6 @@ test_xccdf_shall_pass_SOURCES = test_xccdf_shall_pass.c unit_helper.c
 EXTRA_DIST += all.sh \
 		test_xccdf_complex_check_nand.xccdf.xml \
 		test_xccdf_complex_check_single_negate.xccdf.xml \
+                test_xccdf_overlaping_IDs.xccdf.xml
 		unit_helper.c \
 		unit_helper.h
