@@ -524,7 +524,7 @@ cpe_format_t cpe_name_get_format_of_str(const char *str)
 		return CPE_FORMAT_STRING;
 
 	// FIXME: This should be way more strict
-	re = pcre_compile("^wfn:.+$", PCRE_CASELESS, &error, &erroffset, NULL);
+	re = pcre_compile("^wfn:\\[.+\\]$", PCRE_CASELESS, &error, &erroffset, NULL);
 	rc = pcre_exec(re, NULL, str, strlen(str), 0, 0, ovector, 30);
 	pcre_free(re);
 
