@@ -80,18 +80,6 @@ const char * const OSCAP_OS_PATH_DELIM  = "/";
 
 const char *OSCAP_PATH_SEPARATOR = ":";
 
-bool oscap_file_exists(const char *path, int mode)
-{
-	if (path == NULL) return false;
-#if HAVE_UNISTD_H
-	return access(path, mode) == 0;
-#else
-	FILE *f = fopen(path, "r");
-	if (f) { fclose(f); return true; }
-	else return false;
-#endif
-}
-
 char *oscap_find_file(const char *filename, int mode, const char *pathvar, const char *defpath)
 {
 	const char *path = NULL;
@@ -127,7 +115,7 @@ char *oscap_find_file(const char *filename, int mode, const char *pathvar, const
 			**paths = '/';
 
 		char *curpath = oscap_sprintf("%s%s%s", *paths, OSCAP_OS_PATH_DELIM, filename);
-		if (oscap_file_exists(curpath, mode)) {
+		if (access(curpath, mode)==0) {
 			ret = curpath;
 			break;
 		}
