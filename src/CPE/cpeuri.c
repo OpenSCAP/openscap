@@ -516,7 +516,7 @@ cpe_format_t cpe_name_get_format_of_str(const char *str)
 	if (rc >= 0)
 		return CPE_FORMAT_URI;
 
-	re = pcre_compile("^cpe:2.3:[aho]?(:[a-z0-9._~%-]*){0,6}$", PCRE_CASELESS, &error, &erroffset, NULL);
+	re = pcre_compile("^cpe:2.3:[aho](:[a-z0-9._~%-]*){10}$", PCRE_CASELESS, &error, &erroffset, NULL);
 	rc = pcre_exec(re, NULL, str, strlen(str), 0, 0, ovector, 30);
 	pcre_free(re);
 
