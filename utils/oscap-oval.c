@@ -798,31 +798,9 @@ static int app_oval_validate(const struct oscap_action *action) {
 	else
 		result=OSCAP_OK;
 
-	// schematron-based validation forced
+	/* schematron-based validation requested */
 	if (action->force) {
-		const char *std = "oval", *filename = NULL;
-
-		switch (action->doctype) {
-			case OSCAP_DOCUMENT_OVAL_DEFINITIONS: filename = "oval-definitions-schematron.xsl";            break;
-			case OSCAP_DOCUMENT_OVAL_SYSCHAR:     filename = "oval-system-characteristics-schematron.xsl"; break;
-			case OSCAP_DOCUMENT_OVAL_RESULTS:     filename = "oval-results-schematron.xsl";                break;
-			case OSCAP_DOCUMENT_OVAL_VARIABLES:   filename = "oval-variables-schematron.xsl";              break;
-			case OSCAP_DOCUMENT_OVAL_DIRECTIVES:  filename = "oval-directives-schematron.xsl";             break;
-		}
-
-		if (!filename) {
-			fprintf(stderr, "%s\n", "Could not find schematron validation file for this document type.");
-			result=OSCAP_ERROR;
-			goto cleanup;
-		}
-
-		size_t buffsize = 1024;
-		char xslfile[buffsize];
-		snprintf(xslfile, buffsize, "%s%s%s%s%s", std, OSCAP_OS_PATH_DELIM, doc_version, OSCAP_OS_PATH_DELIM, filename);
-		xslfile[buffsize - 1] = '\0';
-		const char *params[] = { NULL };
-
-		ret=oscap_apply_xslt_var(action->f_oval, xslfile, NULL, params, "OSCAP_SCHEMA_PATH", OSCAP_SCHEMA_PATH);
+		ret=oscap_schematron_validate_document(action->f_oval, action->doctype, doc_version, NULL);
 		if (ret==-1) {
 			result=OSCAP_ERROR;
 		}
@@ -830,7 +808,6 @@ static int app_oval_validate(const struct oscap_action *action) {
 			result=OSCAP_FAIL;
 		}
 	}
-
 
 cleanup:
 	if (oscap_err())
