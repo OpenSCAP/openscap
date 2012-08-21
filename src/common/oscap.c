@@ -94,25 +94,37 @@ bool oscap_file_exists(const char *path, int mode)
 
 char *oscap_find_file(const char *filename, int mode, const char *pathvar, const char *defpath)
 {
-	if (filename == NULL) return NULL;
+	const char *path = NULL;
+	char *pathdup = NULL;
+
+	if (filename == NULL)
+		return NULL;
+
 	if (strstr(filename, OSCAP_OS_PATH_DELIM) == filename)
-		return oscap_strdup(filename); // it is an absolute path
+		return oscap_strdup(filename);	/*  it is an absolute path */
 
-    const char *path = NULL;
-    char *pathdup = NULL;
-    if (pathvar != NULL) path = getenv(pathvar);
-	if (path == NULL || oscap_streq(path, "")) path = defpath;
-    else pathdup = oscap_sprintf("%s:%s", path, defpath);
+	if (pathvar != NULL)
+		path = getenv(pathvar);
 
-	if (!pathdup) pathdup = oscap_strdup(path);
+	if (path == NULL || oscap_streq(path, ""))
+		path = defpath;
+	else
+		pathdup = oscap_sprintf("%s:%s", path, defpath);
+
+	if (!pathdup)
+		pathdup = oscap_strdup(path);
+
 	char **paths = oscap_split(pathdup, OSCAP_PATH_SEPARATOR);
 	char **paths_bck = paths;
 	char *ret = NULL;
 
 	while (*paths) {
-		if (oscap_streq(*paths, "")) continue;
-		oscap_rtrim(*paths, '/');  // strip slases at the end of the path
-		if (oscap_streq(*paths, "")) **paths = '/';
+		if (oscap_streq(*paths, ""))
+			continue;
+
+		oscap_rtrim(*paths, '/');  /* strip slases at the end of the path */
+		if (oscap_streq(*paths, ""))
+			**paths = '/';
 
 		char *curpath = oscap_sprintf("%s%s%s", *paths, OSCAP_OS_PATH_DELIM, filename);
 		if (oscap_file_exists(curpath, mode)) {
