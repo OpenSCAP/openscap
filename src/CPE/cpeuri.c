@@ -249,6 +249,9 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 		return NULL;
 	memset(cpe, 0, sizeof(struct cpe_name));	// zero memory
 
+	// remember the detected format so that we save with the same format
+	cpe_name_set_format(cpe, format);
+
 	if (cpestr) {
 		if (format == CPE_FORMAT_URI) {
 			char *data_ = strdup(cpestr + 5);	// without 'cpe:/'
@@ -285,13 +288,29 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 					oscap_free(fields_);
 					return NULL;
 				}
+
+				cpe_set_field(cpe, i, fields_[i]);
 			}
 
-			cpe_assign_values(cpe, fields_);
 			oscap_free(data_);
 			oscap_free(fields_);
 		}
 		else if (format == CPE_FORMAT_STRING) {
+			char *data_ = strdup(cpestr + 8);	// without 'cpe:2.3:'
+			char **fields_ = oscap_split(data_, ":");
+			for (i = 0; fields_[i] && i < CPE_TOTAL_FIELDNUM; ++i)
+			{
+				if (!cpe_urldecode(fields_[i])) {
+					oscap_free(data_);
+					oscap_free(fields_);
+					return NULL;
+				}
+
+				cpe_set_field(cpe, i, fields_[i]);
+			}
+
+			oscap_free(data_);
+			oscap_free(fields_);
 		}
 		else if (format == CPE_FORMAT_WFN)
 		{
