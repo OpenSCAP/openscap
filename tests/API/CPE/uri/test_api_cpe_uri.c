@@ -186,6 +186,7 @@ struct cpe_name *cpe_example_creation(int part,
   
   if ((cpe = cpe_name_new(NULL)) != NULL) {
     
+    cpe_name_set_format(cpe, CPE_FORMAT_URI);
     // Set fields.
     cpe_name_set_part(cpe, part);
     cpe_name_set_vendor (cpe, vendor);

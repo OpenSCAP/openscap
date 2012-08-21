@@ -569,42 +569,84 @@ char *cpe_name_get_uri(const struct cpe_name *cpe)
 {
 	__attribute__nonnull__(cpe);
 
-	int len = 16;
-	int i;
-	char *result;
-	char* part[CPE_BASIC_FIELDNUM] = { NULL }; // CPE URI parts
+	cpe_format_t format = cpe_name_get_format(cpe);
 
-	if (cpe == NULL)
-		return NULL;
+	if (format == CPE_FORMAT_URI)
+	{
+		int len = 16;
+		int i;
+		char *result;
+		char* part[CPE_BASIC_FIELDNUM] = { NULL }; // CPE URI parts
 
-	// get individual parts (%-encded)
-	for (i = 0; i < CPE_BASIC_FIELDNUM; ++i) {
-		if (i == CPE_FIELD_EDITION && cpe_has_extended_attributes(cpe))
-			part[i] = cpe_pack_extended_attributes(cpe);
-		else
-			part[i] = cpe_urlencode(as_str(cpe_get_field(cpe, i)));
+		if (cpe == NULL)
+			return NULL;
 
-		len += strlen(part[i]);
+		// get individual parts (%-encoded)
+		for (i = 0; i < CPE_BASIC_FIELDNUM; ++i) {
+			if (i == CPE_FIELD_EDITION && cpe_has_extended_attributes(cpe))
+				part[i] = cpe_pack_extended_attributes(cpe);
+			else
+				part[i] = cpe_urlencode(as_str(cpe_get_field(cpe, i)));
+
+			len += strlen(part[i]);
+		}
+
+		result = oscap_alloc(len * sizeof(char));
+		if (result == NULL)
+			return NULL;
+
+		// create the URI
+		i = snprintf(result, len, "cpe:/%s:%s:%s:%s:%s:%s:%s",
+			part[0], part[1], part[2], part[3], part[4], part[5], part[6]
+		);
+
+		// free individual parts
+		for (int j = 0; j < CPE_BASIC_FIELDNUM; ++j)
+			oscap_free(part[j]);
+
+		// trim trailing colons
+		while (result[--i] == ':')
+			result[i] = '\0';
+
+		return result;
 	}
+	else if (format == CPE_FORMAT_STRING)
+	{
+		int len = 19;
+		int i;
+		char *result;
+		char* part[CPE_TOTAL_FIELDNUM] = { NULL }; // CPE string parts
 
-	result = oscap_alloc(len * sizeof(char));
-	if (result == NULL)
+		if (cpe == NULL)
+			return NULL;
+
+		// get individual parts (%-encoded)
+		for (i = 0; i < CPE_TOTAL_FIELDNUM; ++i) {
+				part[i] = cpe_urlencode(as_str(cpe_get_field(cpe, i)));
+
+			len += strlen(part[i]);
+		}
+
+		result = oscap_alloc(len * sizeof(char));
+		if (result == NULL)
+			return NULL;
+
+		// create the URI
+		i = snprintf(result, len, "cpe:2.3:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s",
+			part[0], part[1], part[2], part[3], part[4], part[5], part[6],
+			part[7], part[8], part[9], part[10]
+		);
+
+		// free individual parts
+		for (int j = 0; j < CPE_TOTAL_FIELDNUM; ++j)
+			oscap_free(part[j]);
+
+		return result;
+	}
+	else
+	{
 		return NULL;
-
-	// create the URI
-	i = snprintf(result, len, "cpe:/%s:%s:%s:%s:%s:%s:%s",
-		part[0], part[1], part[2], part[3], part[4], part[5], part[6]
-	);
-
-	// free individual parts
-	for (int j = 0; j < CPE_BASIC_FIELDNUM; ++j)
-		oscap_free(part[j]);
-
-	// trim trailing colons
-	while (result[--i] == ':')
-		result[i] = '\0';
-
-	return result;
+	}
 }
 
 int cpe_name_write(const struct cpe_name *cpe, FILE * f)
