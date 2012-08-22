@@ -42,7 +42,7 @@
 #include "cpeuri.h"
 #include "common/util.h"
 
-#define CPE_URI_SUPPORTED "2.2"
+#define CPE_URI_SUPPORTED "2.3"
 
 // enumeration of CPE URI fields (useful for indexing arrays)
 enum cpe_field_t {
