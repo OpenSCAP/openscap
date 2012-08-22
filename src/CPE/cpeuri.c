@@ -109,19 +109,6 @@ bool cpe_name_check(const char *str);
 static const char *cpe_get_field(const struct cpe_name *cpe, int idx);
 static const char *as_str(const char *str);
 static bool cpe_set_field(struct cpe_name *cpe, int idx, const char *newval);
-/*
- * Fill @a cpe structure with parsed @a fields.
- *
- * Fields can be obtained via cpe_split().
- * Pointers in target sructure will point to same strings as pointers in @a fields do.
- * No string duplication is performed.
- *
- * @see cpe_split
- * @param cpe structure to be filled
- * @param fields NULL-terminated array of strings representing individual fields
- * @return true on success
- */
-static bool cpe_assign_values(struct cpe_name *cpe, char **fields);
 
 static int cpe_fields_num(const struct cpe_name *cpe)
 {
@@ -665,22 +652,6 @@ int cpe_name_write(const struct cpe_name *cpe, FILE * f)
 
 	oscap_free(uri);
 	return ret;
-}
-
-static bool cpe_assign_values(struct cpe_name *cpe, char **fields)
-{
-	__attribute__nonnull__(cpe);
-	__attribute__nonnull__(fields);
-
-	int i;
-
-	if (cpe == NULL || fields == NULL)
-		return false;
-
-	for (i = 0; fields[i]; ++i)
-		cpe_set_field(cpe, i, fields[i]);
-
-	return true;
 }
 
 void cpe_name_free(struct cpe_name *cpe)
