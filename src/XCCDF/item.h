@@ -406,8 +406,6 @@ void xccdf_item_dump(struct xccdf_item *item, int depth);
 struct xccdf_item* xccdf_item_get_benchmark_internal(struct xccdf_item* item);
 bool xccdf_benchmark_parse(struct xccdf_item *benchmark, xmlTextReaderPtr reader);
 void xccdf_benchmark_dump(struct xccdf_benchmark *benchmark);
-struct xccdf_item *xccdf_benchmark_get_member(const struct xccdf_benchmark *benchmark, xccdf_type_t type, const char *key);
-struct xccdf_item *xccdf_benchmark_get_item(const struct xccdf_benchmark *benchmark, const char *id);
 bool xccdf_benchmark_register_item(struct xccdf_benchmark *benchmark, struct xccdf_item *item);
 bool xccdf_benchmark_unregister_item(struct xccdf_item *item);
 bool xccdf_benchmark_rename_item(struct xccdf_item *item, const char *newid);
