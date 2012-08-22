@@ -515,14 +515,20 @@ cpe_format_t cpe_name_get_format_of_str(const char *str)
 	int rc;
 	int ovector[30];
 
-	re = pcre_compile("^cpe:/[aho]?(:[a-z0-9._~%-]*){0,6}$", PCRE_CASELESS, &error, &erroffset, NULL);
+	// The regex was taken from the official XSD at
+	// http://scap.nist.gov/schema/cpe/2.3/cpe-naming_2.3.xsd
+
+	// FIXME: I think [c] is a bug and it should be been [cC] instead, not sure though.
+	re = pcre_compile("^[c][pP][eE]:/[AHOaho]?(:[A-Za-z0-9\\._\\-~%]*){0,6}$", 0, &error, &erroffset, NULL);
 	rc = pcre_exec(re, NULL, str, strlen(str), 0, 0, ovector, 30);
 	pcre_free(re);
 
 	if (rc >= 0)
 		return CPE_FORMAT_URI;
 
-	re = pcre_compile("^cpe:2.3:[aho](:[a-z0-9._~%-]*){10}$", PCRE_CASELESS, &error, &erroffset, NULL);
+	// The regex was taken from the official XSD at
+	// http://scap.nist.gov/schema/cpe/2.3/cpe-naming_2.3.xsd
+	re = pcre_compile("^cpe:2\\.3:[aho\\*\\-](:(((\\?*|\\*?)([a-zA-Z0-9\\-\\._]|(\\\\[\\\\\\*\\?!\"#$$%&'\\(\\)\\+,/:;<=>@\\[\\]\\^`\\{\\|}~]))+(\\?*|\\*?))|[\\*\\-])){5}(:(([a-zA-Z]{2,3}(-([a-zA-Z]{2}|[0-9]{3}))?)|[\\*\\-]))(:(((\\?*|\\*?)([a-zA-Z0-9\\-\\._]|(\\\\[\\\\\\*\\?!\"#$$%&'\\(\\)\\+,/:;<=>@\\[\\]\\^`\\{\\|}~]))+(\\?*|\\*?))|[\\*\\-])){4}$", 0, &error, &erroffset, NULL);
 	rc = pcre_exec(re, NULL, str, strlen(str), 0, 0, ovector, 30);
 	pcre_free(re);
 
