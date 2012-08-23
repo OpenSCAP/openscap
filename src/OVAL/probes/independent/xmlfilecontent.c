@@ -128,18 +128,36 @@ static int process_file(const char *path, const char *filename, void *arg)
 
 	doc = xmlParseFile(whole_path);
 	if (doc == NULL) {
+                SEXP_t *msg;
+                msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "Can't parse '%s'.", whole_path);
+                probe_cobj_add_msg(probe_ctx_getresult(pfd->ctx), msg);
+                SEXP_free(msg);
+                probe_cobj_set_flag(probe_ctx_getresult(pfd->ctx), SYSCHAR_FLAG_ERROR);
+
 		ret = -1;
 		goto cleanup;
 	}
 
 	xpath_ctx = xmlXPathNewContext(doc);
 	if (xpath_ctx == NULL) {
+                SEXP_t *msg;
+                msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "xmlXPathNewContext() error.");
+                probe_cobj_add_msg(probe_ctx_getresult(pfd->ctx), msg);
+                SEXP_free(msg);
+                probe_cobj_set_flag(probe_ctx_getresult(pfd->ctx), SYSCHAR_FLAG_ERROR);
+
 		ret = -2;
 		goto cleanup;
 	}
 
 	xpath_obj = xmlXPathEvalExpression(BAD_CAST pfd->xpath, xpath_ctx);
 	if (xpath_obj == NULL) {
+                SEXP_t *msg;
+                msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "xmlXPathEvalExpression() error");
+                probe_cobj_add_msg(probe_ctx_getresult(pfd->ctx), msg);
+                SEXP_free(msg);
+                probe_cobj_set_flag(probe_ctx_getresult(pfd->ctx), SYSCHAR_FLAG_ERROR);
+
 		ret = -3;
 		goto cleanup;
 	}

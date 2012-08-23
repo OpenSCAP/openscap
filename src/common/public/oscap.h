@@ -206,6 +206,21 @@ typedef enum oscap_document_type {
 int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, oscap_reporter reporter, void *arg);
 
 /**
+ * Validate a SCAP document file against schematron rules.
+ *
+ * The rules are searched relative to path specified by the OSCAP_SCHEMA_PATH environment variable,
+ * which contains a list of colon-separated paths.
+ * If the variable does not exist a default path is used (usually something like $PREFIX/share/openscap/schemas).
+ *
+ * @param xmlfile File to be validated.
+ * @param doctype Document type represented by the file.
+ * @param version Version of the document, use NULL for library's default.
+ * @param outfile Report from schematron validation is written into the outfile. If NULL, stdou will be used.
+ * @return 0 on pass; <0 error; >0 fail
+ */
+int oscap_schematron_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, const char *outfile);
+
+/**
  * Apply a XSLT stylesheet to a XML file.
  *
  * Stylesheets are searched relative to path specified by the OSCAP_XSLT_PATH environment variable,

@@ -166,7 +166,9 @@ struct xccdf_profile_item {
 struct xccdf_benchmark_item {
 	const struct xccdf_version_info *schema_version;
 
-	struct oscap_htable *dict;
+	struct oscap_htable *items_dict;		/* Stores only xccdf:Item */
+	struct oscap_htable *profiles_dict;		/* xccdf:Profile */
+	struct oscap_htable *results_dict;		/* xccdf:TestResult */
 	struct oscap_list *notices;
 	struct oscap_list *plain_texts;
 
@@ -407,7 +409,7 @@ void xccdf_benchmark_dump(struct xccdf_benchmark *benchmark);
 bool xccdf_benchmark_register_item(struct xccdf_benchmark *benchmark, struct xccdf_item *item);
 bool xccdf_benchmark_unregister_item(struct xccdf_item *item);
 bool xccdf_benchmark_rename_item(struct xccdf_item *item, const char *newid);
-char *xccdf_benchmark_gen_id(struct xccdf_benchmark *benchmark, const char *prefix);
+char *xccdf_benchmark_gen_id(struct xccdf_benchmark *benchmark, xccdf_type_t type, const char *prefix);
 bool xccdf_add_item(struct oscap_list *list, struct xccdf_item *parent, struct xccdf_item *item, const char *prefix);
 
 struct xccdf_item *xccdf_profile_new_internal(struct xccdf_item *bench);

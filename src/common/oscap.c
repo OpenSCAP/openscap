@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009,2010,2011 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -7,17 +7,18 @@
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful, 
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software 
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors:
  *      Lukas Kuklinek <lkuklinek@redhat.com>
+ *      Peter Vrabec <pvrabec@redhat.com>
  */
 
 #ifdef HAVE_CONFIG_H
@@ -79,42 +80,42 @@ const char * const OSCAP_OS_PATH_DELIM  = "/";
 
 const char *OSCAP_PATH_SEPARATOR = ":";
 
-bool oscap_file_exists(const char *path, int mode)
-{
-	if (path == NULL) return false;
-#if HAVE_UNISTD_H
-	return access(path, mode) == 0;
-#else
-	FILE *f = fopen(path, "r");
-	if (f) { fclose(f); return true; }
-	else return false;
-#endif
-}
-
 char *oscap_find_file(const char *filename, int mode, const char *pathvar, const char *defpath)
 {
-	if (filename == NULL) return NULL;
+	const char *path = NULL;
+	char *pathdup = NULL;
+
+	if (filename == NULL)
+		return NULL;
+
 	if (strstr(filename, OSCAP_OS_PATH_DELIM) == filename)
-		return oscap_strdup(filename); // it is an absolute path
+		return oscap_strdup(filename);	/*  it is an absolute path */
 
-    const char *path = NULL;
-    char *pathdup = NULL;
-    if (pathvar != NULL) path = getenv(pathvar);
-	if (path == NULL || oscap_streq(path, "")) path = defpath;
-    else pathdup = oscap_sprintf("%s:%s", path, defpath);
+	if (pathvar != NULL)
+		path = getenv(pathvar);
 
-	if (!pathdup) pathdup = oscap_strdup(path);
+	if (path == NULL || oscap_streq(path, ""))
+		path = defpath;
+	else
+		pathdup = oscap_sprintf("%s:%s", path, defpath);
+
+	if (!pathdup)
+		pathdup = oscap_strdup(path);
+
 	char **paths = oscap_split(pathdup, OSCAP_PATH_SEPARATOR);
 	char **paths_bck = paths;
 	char *ret = NULL;
 
 	while (*paths) {
-		if (oscap_streq(*paths, "")) continue;
-		oscap_rtrim(*paths, '/');  // strip slases at the end of the path
-		if (oscap_streq(*paths, "")) **paths = '/';
+		if (oscap_streq(*paths, ""))
+			continue;
+
+		oscap_rtrim(*paths, '/');  /* strip slases at the end of the path */
+		if (oscap_streq(*paths, ""))
+			**paths = '/';
 
 		char *curpath = oscap_sprintf("%s%s%s", *paths, OSCAP_OS_PATH_DELIM, filename);
-		if (oscap_file_exists(curpath, mode)) {
+		if (access(curpath, mode)==0) {
 			ret = curpath;
 			break;
 		}
@@ -374,6 +375,88 @@ cleanup:
 	oscap_free(xsltpath);
 
 	return ret;
+}
+
+struct oscap_schema_table_entry OSCAP_SCHEMATRON_TABLE[] = {
+        {OSCAP_DOCUMENT_OVAL_DEFINITIONS,       "5.3",		"oval/5.3/oval-definitions-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_DEFINITIONS,       "5.4",  	"oval/5.4/oval-definitions-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_DEFINITIONS,       "5.5",  	"oval/5.5/oval-definitions-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_DEFINITIONS,       "5.6",  	"oval/5.6/oval-definitions-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_DEFINITIONS,       "5.7",  	"oval/5.7/oval-definitions-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_DEFINITIONS,       "5.8",  	"oval/5.8/oval-definitions-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_DEFINITIONS,       "5.9",  	"oval/5.9/oval-definitions-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_DEFINITIONS,       "5.10",  	"oval/5.10/oval-definitions-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_DEFINITIONS,       "5.10.1",	"oval/5.10.1/oval-definitions-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_SYSCHAR,		"5.3",		"oval/5.3/oval-system-characteristics-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_SYSCHAR,		"5.4",		"oval/5.4/oval-system-characteristics-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_SYSCHAR,		"5.5",		"oval/5.5/oval-system-characteristics-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_SYSCHAR,		"5.6",		"oval/5.6/oval-system-characteristics-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_SYSCHAR,		"5.7",		"oval/5.7/oval-system-characteristics-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_SYSCHAR,		"5.8",		"oval/5.8/oval-system-characteristics-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_SYSCHAR,		"5.9",		"oval/5.9/oval-system-characteristics-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_SYSCHAR,		"5.10",		"oval/5.10/oval-system-characteristics-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_SYSCHAR,		"5.10.1",	"oval/5.10.1/oval-system-characteristics-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_RESULTS,		"5.3",		"oval/5.3/oval-results-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_RESULTS,		"5.4",		"oval/5.4/oval-results-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_RESULTS,		"5.5",		"oval/5.5/oval-results-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_RESULTS,		"5.6",		"oval/5.6/oval-results-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_RESULTS,		"5.7",		"oval/5.7/oval-results-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_RESULTS,		"5.8",		"oval/5.8/oval-results-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_RESULTS,		"5.9",		"oval/5.9/oval-results-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_RESULTS,		"5.10",		"oval/5.10/oval-results-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_RESULTS,		"5.10.1",	"oval/5.10.1/oval-results-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_VARIABLES,		"5.3",		"oval/5.3/oval-variables-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_VARIABLES,		"5.4",		"oval/5.4/oval-variables-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_VARIABLES,		"5.5",		"oval/5.5/oval-variables-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_VARIABLES,		"5.6",		"oval/5.6/oval-variables-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_VARIABLES,		"5.7",		"oval/5.7/oval-variables-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_VARIABLES,		"5.8",		"oval/5.8/oval-variables-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_VARIABLES,		"5.9",		"oval/5.9/oval-variables-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_VARIABLES,		"5.10",		"oval/5.10/oval-variables-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_VARIABLES,		"5.10.1",	"oval/5.10.1/oval-variables-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_DIRECTIVES,	"5.8",		"oval/5.8/oval-directives-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_DIRECTIVES,	"5.9",		"oval/5.9/oval-directives-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_DIRECTIVES,	"5.10",		"oval/5.10/oval-directives-schematron.xsl"},
+        {OSCAP_DOCUMENT_OVAL_DIRECTIVES,	"5.10.1",	"oval/5.10.1/oval-directives-schematron.xsl"}
+};
+
+int oscap_schematron_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, const char *outfile) {
+
+        struct oscap_schema_table_entry *entry;
+	const char *params[] = { NULL };
+
+        if (xmlfile == NULL) {
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, "'xmlfile' == NULL");
+                return -1;
+        }
+
+        if (access(xmlfile, R_OK)) {
+                oscap_seterr(OSCAP_EFAMILY_GLIBC, strerror(errno));
+                return -1;
+        }
+
+        if (version == NULL) {
+                oscap_seterr(OSCAP_EFAMILY_OSCAP, "'version' == NULL");
+                return -1;
+        }
+
+	/* find a right schematron file */
+	for (entry = OSCAP_SCHEMATRON_TABLE; entry->doc_type != 0; ++entry) {
+		if (entry->doc_type != doctype || strcmp(entry->schema_version, version))
+			continue;
+
+		/* validate */
+                return oscap_apply_xslt_var(xmlfile, entry->schema_path, NULL, params, "OSCAP_SCHEMA_PATH", OSCAP_SCHEMA_PATH);
+	}
+
+	/* schematron not found */
+	if (entry->doc_type == 0) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Schematron rules not found when trying to validate '%s'", xmlfile);
+		return -1;
+	}
+
+	/* we shouldn't get here */
+	return -1;
 }
 
 int oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params)

@@ -698,7 +698,7 @@ bool xccdf_item_process_attributes(struct xccdf_item *item, xmlTextReaderPtr rea
 	if (item->item.id) {
 		struct xccdf_item *bench = XITEM(xccdf_item_get_benchmark_internal(item));
 		if (bench != NULL && bench != item)
-			oscap_htable_add(bench->sub.benchmark.dict, item->item.id, item);
+			xccdf_benchmark_register_item(xccdf_item_get_benchmark(item), item);
 	}
 	return item->item.id != NULL;
 }
@@ -1045,7 +1045,9 @@ struct xccdf_benchmark_item * xccdf_benchmark_item_clone(struct xccdf_item *pare
 
     clone->schema_version = item->schema_version;
 
-	clone->dict = oscap_htable_new();
+	clone->items_dict = oscap_htable_new();
+	clone->profiles_dict = oscap_htable_new();
+	clone->results_dict = oscap_htable_new();
 	clone->notices = oscap_list_clone(item->notices, (oscap_clone_func) xccdf_notice_clone);
 	clone->plain_texts = oscap_list_clone(item->plain_texts, (oscap_clone_func) xccdf_plain_text_clone);
 	

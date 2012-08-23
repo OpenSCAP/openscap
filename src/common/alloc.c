@@ -26,6 +26,7 @@
 #endif
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "alloc.h"
 #include "_error.h"
@@ -36,7 +37,7 @@ static void __oscap_err_check(void *m);
 static void __oscap_err_check(void *m)
 {
 
-	if (m == NULL) 
+	if (m == NULL)
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, strerror(errno));
 }
 

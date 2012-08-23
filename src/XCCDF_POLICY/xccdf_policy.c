@@ -1748,6 +1748,7 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
     struct xccdf_item               * item;
     struct xccdf_benchmark          * benchmark;
     int                               ret       = -1;
+    const char			    * doc_version = NULL;
 
     __attribute__nonnull__(policy);
 
@@ -1765,8 +1766,9 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
     /* Get all constant information */
     benchmark = xccdf_policy_model_get_benchmark(xccdf_policy_get_model(policy));
     const struct xccdf_version_info* version_info = xccdf_benchmark_get_schema_version(benchmark);
+    doc_version = xccdf_version_info_get_version(version_info);
 
-    if (strverscmp("1.2", xccdf_version_info_get_version(version_info)) >= 0)
+    if (strverscmp("1.2", doc_version) >= 0)
     {
         // we have to enforce a certain type of ids for XCCDF 1.2+
 

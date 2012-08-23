@@ -256,16 +256,25 @@ int app_ds_rds_create(const struct oscap_action *action) {
 			goto cleanup;
 		}
 
-		if ((valret = oscap_validate_document(action->ds_action->xccdf_result, OSCAP_DOCUMENT_XCCDF,
-		              xccdf_version_info_get_version(xccdf_detect_version(action->ds_action->xccdf_result)),
-		              (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)))
-		{
+		char *doc_version = NULL;
+		doc_version = xccdf_detect_version(action->ds_action->xccdf_result);
+		if (!doc_version) {
+			ret = OSCAP_ERROR;
+			goto cleanup;
+		}
+		if ((valret = oscap_validate_document(action->ds_action->xccdf_result,
+						      OSCAP_DOCUMENT_XCCDF,
+						      doc_version,
+						      (action->verbosity >= 0 ? oscap_reporter_fd : NULL),
+						      stdout))) {
 			if (valret == 1)
 				fprintf(stdout, "Given XCCDF result file '%s' is not valid!\n", action->ds_action->xccdf_result);
 
 			ret = OSCAP_ERROR;
+			free(doc_version);
 			goto cleanup;
 		}
+		free(doc_version);
 	}
 
 	char** oval_result_files = malloc(sizeof(char*) * (action->ds_action->oval_result_count + 1));

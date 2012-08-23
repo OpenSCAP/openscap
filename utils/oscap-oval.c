@@ -37,6 +37,7 @@
 
 static int app_collect_oval(const struct oscap_action *action);
 static int app_evaluate_oval(const struct oscap_action *action);
+static int app_oval_validate(const struct oscap_action *action);
 static int app_oval_xslt(const struct oscap_action *action);
 static int app_oval_list_probes(const struct oscap_action *action);
 static bool getopt_oval(int argc, char **argv, struct oscap_action *action);
@@ -69,7 +70,7 @@ static struct oscap_module OVAL_VALIDATE = {
         "   --results\r\t\t\t\t - Validate OVAL Results\n"
         "   --schematron\r\t\t\t\t - Use schematron-based validation in addition to XML Schema\n",
     .opt_parser = getopt_oval_validate,
-    .func = app_validate_xml
+    .func = app_oval_validate
 };
 
 static struct oscap_module OVAL_EVAL = {
@@ -770,5 +771,54 @@ cleanup:
 	free(doc_version);
 
 	return result;
+}
+
+static int app_oval_validate(const struct oscap_action *action) {
+	char *doc_version;
+	int ret;
+	int result = OSCAP_ERROR;
+
+
+	doc_version = oval_determine_document_schema_version(action->f_oval, action->doctype);
+	if (!doc_version)
+		goto cleanup;
+
+	ret=oscap_validate_document(action->f_oval,
+				    action->doctype,
+				    doc_version,
+				    (action->verbosity >= 0 ? oscap_reporter_fd : NULL),
+				    stdout);
+	if (ret==-1) {
+		result=OSCAP_ERROR;
+		goto cleanup;
+	}
+	else if (ret==1) {
+		result=OSCAP_FAIL;
+	}
+	else
+		result=OSCAP_OK;
+
+	/* schematron-based validation requested */
+	if (action->force) {
+		ret=oscap_schematron_validate_document(action->f_oval, action->doctype, doc_version, NULL);
+		if (ret==-1) {
+			result=OSCAP_ERROR;
+		}
+		else if (ret>0) {
+			result=OSCAP_FAIL;
+		}
+	}
+
+cleanup:
+	if (oscap_err())
+		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+
+	if (result==OSCAP_FAIL)
+		fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
+
+	free(doc_version);
+
+	return result;
+
 }
 

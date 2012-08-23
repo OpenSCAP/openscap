@@ -627,10 +627,11 @@ const char* xccdf_version_info_get_cpe_version(const struct xccdf_version_info* 
 
 /**
  * Starts parsing given XCCDF benchmark file to detect its version,
- * stops as soon as the version is found
+ * stops as soon as the version is found. Returned string should be
+ * freed by caller. Return NULL if error occur.
  * @memberof xccdf_benchmark
  */
-const struct xccdf_version_info* xccdf_detect_version(const char* file);
+char * xccdf_detect_version(const char* file);
 
 /************************************************************/
 
@@ -1855,13 +1856,22 @@ const char *xccdf_benchmark_get_lang(const struct xccdf_benchmark *item);
 const char *xccdf_benchmark_get_plain_text(const struct xccdf_benchmark *benchmark, const char *id);
 
 /**
- * Get benchmark item by ID.
+ * Get benchmark xccdf:Item by ID.
  * @memberof xccdf_benchmark
  * @param item ID
  * @return Item with given ID
  * @retval NULL if no such item exists
  */
 struct xccdf_item *xccdf_benchmark_get_item(const struct xccdf_benchmark *benchmark, const char *id);
+
+/**
+ * Get a registered member of xccdf_benchmakr by ID.
+ * @memberof xccdf_benchmark
+ * @param type of member: either XCCDF_ITEM, XCCDF_PROFILE, or XCCDF_TESTRESULT
+ * @return xccdf_item with given ID and type
+ * @return NULL if no such member exists
+ */
+struct xccdf_item *xccdf_benchmark_get_member(const struct xccdf_benchmark *benchmark, xccdf_type_t type, const char *key);
 
 /**
  * Get an iterator to the benchmark legal notices.
