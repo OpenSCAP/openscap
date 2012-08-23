@@ -153,7 +153,9 @@ static void xccdf_unit_node(struct oscap_list *list, xccdf_value_type_t type, co
 	if (!given) return;
 	xmlNode *node = xmlNewNode(ns, BAD_CAST elname);
 	if ((selector) && (strlen(selector) > 0)) xmlNewProp(node, BAD_CAST "selector", BAD_CAST selector);
-    xmlNodeSetContent(node, BAD_CAST u);
+	xmlChar *escaped = xmlEncodeSpecialChars(NULL, BAD_CAST u);
+	xmlNodeSetContent(node, escaped);
+	xmlFree(escaped);
 	oscap_list_add(list, node);
 }
 
