@@ -1061,12 +1061,12 @@ void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer)
 
 	xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_ITEM_STR, CPEDICT_NS);
 	if (item->name != NULL) {
-		temp = cpe_name_get_uri(item->name);
+		temp = cpe_name_get_as_format(item->name, CPE_FORMAT_URI);
 		xmlTextWriterWriteAttribute(writer, ATTR_NAME_STR, BAD_CAST temp);
 		oscap_free(temp);
 	}
 	if (item->deprecated != NULL) {
-		temp = cpe_name_get_uri(item->deprecated);
+		temp = cpe_name_get_as_format(item->deprecated, CPE_FORMAT_URI);
 		xmlTextWriterWriteAttribute(writer, ATTR_DEPRECATED_STR, VAL_TRUE_STR);
 		xmlTextWriterWriteAttribute(writer, ATTR_DEPRECATION_DATE_STR, BAD_CAST item->deprecation_date);
 		xmlTextWriterWriteAttribute(writer, ATTR_DEPRECATED_BY_STR, BAD_CAST temp);

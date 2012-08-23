@@ -45,7 +45,7 @@ int main(int argc, char **argv)
     if ((name = cpe_example_creation(atoi(argv[2]), argv[3], argv[4], argv[5], argv[6], argv[7], argv[8], argv[9], argv[10], argv[11], argv[12])) != NULL) {	
       
       // Extract URI of created CPE.
-      if ((cpe_uri = cpe_name_get_uri(name)) != NULL) {
+      if ((cpe_uri = cpe_name_get_as_str(name)) != NULL) {
 
 	// Check if URI is valid.
 	if (cpe_name_check(cpe_uri)) {	    
@@ -75,7 +75,7 @@ int main(int argc, char **argv)
       if ((name = cpe_name_new(argv[2])) != NULL) {
 	
 	// Extract URI from created CPE.
-	if ((cpe_uri = cpe_name_get_uri(name)) != NULL) {
+	if ((cpe_uri = cpe_name_get_as_str(name)) != NULL) {
       
 	  // Compare it to the original URI.
 	  if (!strcmp(cpe_uri, argv[2])) {

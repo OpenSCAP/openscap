@@ -558,11 +558,9 @@ static const char *as_str(const char *str)
 	return str;
 }
 
-char *cpe_name_get_uri(const struct cpe_name *cpe)
+char *cpe_name_get_as_format(const struct cpe_name *cpe, cpe_format_t format)
 {
 	__attribute__nonnull__(cpe);
-
-	cpe_format_t format = cpe_name_get_format(cpe);
 
 	if (format == CPE_FORMAT_URI)
 	{
@@ -642,6 +640,13 @@ char *cpe_name_get_uri(const struct cpe_name *cpe)
 	}
 }
 
+char *cpe_name_get_as_str(const struct cpe_name *cpe)
+{
+	cpe_format_t format = cpe_name_get_format(cpe);
+
+	return cpe_name_get_as_format(cpe, format);
+}
+
 int cpe_name_write(const struct cpe_name *cpe, FILE * f)
 {
 	__attribute__nonnull__(cpe);
@@ -650,7 +655,7 @@ int cpe_name_write(const struct cpe_name *cpe, FILE * f)
 	int ret;
 	char *uri;
 
-	uri = cpe_name_get_uri(cpe);
+	uri = cpe_name_get_as_str(cpe);
 	if (uri == NULL)
 		return EOF;
 

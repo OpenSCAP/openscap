@@ -566,7 +566,8 @@ void cpe_testexpr_export(const struct cpe_testexpr *expr, xmlTextWriterPtr write
 
 	if (expr->oper == CPE_LANG_OPER_MATCH) {
 		xmlTextWriterStartElementNS(writer, NULL, TAG_FACT_REF_STR, NULL);
-		xmlTextWriterWriteAttribute(writer, ATTR_NAME_STR, BAD_CAST cpe_name_get_uri(expr->meta.cpe));
+		// FIXME: both URI and string are allowed in this attribute, how do we choose?
+		xmlTextWriterWriteAttribute(writer, ATTR_NAME_STR, BAD_CAST cpe_name_get_as_format(expr->meta.cpe, CPE_FORMAT_URI));
 		xmlTextWriterEndElement(writer);
 		return;
 	} else {

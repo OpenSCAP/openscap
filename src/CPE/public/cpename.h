@@ -170,14 +170,25 @@ const char *cpe_name_get_target_hw(const struct cpe_name *cpe);
 const char *cpe_name_get_other(const struct cpe_name *cpe);
 
 /**
- * Return CPE URI as a new string.
+ * Return CPE URI as a new string in specified format.
+ * @memberof cpe_name
+ * @note Returned string is newly allocated and is caller's responsibility to free it.
+ * @param cpe CPE to be converted
+ * @param format Which format should the string be in
+ * @return CPE URI as string
+ * @retval NULL on failure
+ */
+char *cpe_name_get_as_format(const struct cpe_name *cpe, cpe_format_t format);
+
+/**
+ * Return CPE URI as a new string in the format in which it was loaded.
  * @memberof cpe_name
  * @note Returned string is newly allocated and is caller's responsibility to free it.
  * @param cpe CPE to be converted
  * @return CPE URI as string
  * @retval NULL on failure
  */
-char *cpe_name_get_uri(const struct cpe_name *cpe);
+char *cpe_name_get_as_str(const struct cpe_name *cpe);
 
 /**
  * Return CPE WFN as a new string

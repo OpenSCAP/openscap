@@ -172,8 +172,8 @@ int main (int argc, char *argv[])
     // make cpe_name
     name1 = cpe_name_new(argv[4]);
     name2 = cpe_name_new(argv[5]);
-    if ( (uri = cpe_name_get_uri(name1)) == NULL ) return 1;
-    if ( (uri = cpe_name_get_uri(name2)) == NULL ) return 1;
+    if ( (uri = cpe_name_get_as_str(name1)) == NULL ) return 1;
+    if ( (uri = cpe_name_get_as_str(name2)) == NULL ) return 1;
     // actually we need array of cpe_name-s
     struct cpe_name ** names = (struct cpe_name **) malloc(2*sizeof(struct cpe_name *)); // <-- just for clear what I'm doing
     names[0] = name1;
@@ -240,7 +240,7 @@ int print_expr_prefix_form(const struct cpe_testexpr *expr)
 	OSCAP_FOREACH(cpe_testexpr, sub, cpe_testexpr_get_meta_expr(expr), print_expr_prefix_form(sub););
     break;
   case CPE_LANG_OPER_MATCH:
-    printf("%s", cpe_name_get_uri(cpe_testexpr_get_meta_cpe(expr)));
+    printf("%s", cpe_name_get_as_str(cpe_testexpr_get_meta_cpe(expr)));
     break;
   default:  
     return 1;
