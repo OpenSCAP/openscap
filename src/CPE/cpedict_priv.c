@@ -787,8 +787,6 @@ struct cpe_item *cpe_item_parse(xmlTextReaderPtr reader)
 				ref = cpe_reference_parse(reader);
 				if (ref)
 					oscap_list_add(ret->references, ref);
-				if (ref)
-					printf("ref: %s\n", ref->href);
 			} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ITEM_METADATA_STR) == 0) {
 				data = (char *)xmlTextReaderGetAttribute(reader, ATTR_MODIFICATION_DATE_STR);
 				if ((data == NULL) || ((ret->metadata = cpe_item_metadata_new()) == NULL)) {
