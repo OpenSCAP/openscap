@@ -18,6 +18,8 @@
 # Test Cases.
 
 function test_probes_selinuxboolean {
+    # if the user doesn't have SELinux enabled we will skip the test
+    selinuxenabled || return 255
 
     probecheck "selinuxboolean" || return 255
 
