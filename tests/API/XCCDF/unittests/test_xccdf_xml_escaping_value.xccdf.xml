@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="reproducer" resolved="1" xml:lang="en-US">
+  <status date="2011-12-20">draft</status>
+  <title xml:lang="en-US">A minimal reproducer of trac#167</title>
+  <version>0.1</version>
+  <model system="urn:xccdf:scoring:default"/>
+  <Value id="login_banner_text" operator="equals" type="string">
+    <value selector="dod_short">I have read &amp; consent to terms in IS user agreement.</value>
+  </Value>
+</Benchmark>
