@@ -36,7 +36,7 @@
 #ifndef CPEDICT_H_
 #define CPEDICT_H_
 
-#include "cpeuri.h"
+#include "cpename.h"
 #include "oscap.h"
 
 /**

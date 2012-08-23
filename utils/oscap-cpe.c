@@ -30,10 +30,6 @@
 #include <string.h>
 #include <getopt.h>
 
-/* CPE */
-#include <cpeuri.h>
-#include <cpedict.h>
-
 #include "oscap-tool.h"
 
 static struct oscap_module* CPE_SUBMODULES[];

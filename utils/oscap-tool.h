@@ -44,8 +44,7 @@
 #include <xccdf.h>
 #endif
 #ifdef ENABLE_CPE
-#include <cpedict.h>
-#include <cpeuri.h>
+#include <cpe.h>
 #endif
 
 #define OSCAP_PRODUCTNAME "cpe:/a:open-scap:oscap"

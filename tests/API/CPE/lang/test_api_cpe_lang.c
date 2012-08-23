@@ -14,8 +14,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <cpelang.h>
-#include <cpeuri.h>
+#include <cpe.h>
 #include <oscap.h>
 
 // Strings representing operators.

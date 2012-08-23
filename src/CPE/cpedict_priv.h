@@ -34,7 +34,7 @@
 #include <libxml/xmlwriter.h>
 #include <stdlib.h>
 
-#include "cpeuri.h"
+#include "cpename.h"
 #include "../common/public/oscap.h"
 #include "../common/util.h"
 #include "../common/elements.h"

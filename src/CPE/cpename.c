@@ -1,4 +1,4 @@
-/*! \file cpeuri.c
+/*! \file cpename.c
  *  \brief Interface to Common Platform Enumeration (CPE) URI
  *  
  *   See more details at http://nvd.nist.gov/cpe.cfm
@@ -39,7 +39,7 @@
 #include <pcre.h>
 #include <ctype.h>
 
-#include "cpeuri.h"
+#include "cpename.h"
 #include "common/util.h"
 
 #define CPE_URI_SUPPORTED "2.3"

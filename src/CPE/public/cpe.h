@@ -30,7 +30,7 @@
 #ifndef CPE_H_INCLUDED
 #define CPE_H_INCLUDED
 
-#include "cpeuri.h"
+#include "cpename.h"
 #include "cpedict.h"
 #include "cpelang.h"
 

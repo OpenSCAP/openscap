@@ -12,8 +12,7 @@
 #include <config.h>
 #endif
 
-#include <cpedict.h>
-#include <cpeuri.h>
+#include <cpe.h>
 #include <string.h>
 
 void print_usage(const char *, FILE *);

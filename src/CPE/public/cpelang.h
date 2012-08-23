@@ -38,7 +38,7 @@
 
 #include <stdlib.h>
 
-#include "cpeuri.h"
+#include "cpename.h"
 #include "oscap.h"
 
 /**

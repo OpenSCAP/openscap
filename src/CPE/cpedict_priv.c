@@ -39,7 +39,6 @@
 #include <string.h>
 
 #include "public/cpedict.h"
-#include "public/cpeuri.h"
 #include "cpedict_priv.h"
 
 #include "common/list.h"

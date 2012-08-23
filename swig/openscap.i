@@ -197,13 +197,9 @@
 #ifdef WANT_CPE
 %module openscap
 %{
- #include "../src/CPE/public/cpeuri.h"
- #include "../src/CPE/public/cpedict.h"
- #include "../src/CPE/public/cpelang.h"
+ #include "../src/CPE/public/cpe.h"
 %}
-%include "../src/CPE/public/cpeuri.h"
-%include "../src/CPE/public/cpedict.h"
-%include "../src/CPE/public/cpelang.h"
+%include "../src/CPE/public/cpe.h"
 #endif
 
 

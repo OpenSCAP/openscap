@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <cpeuri.h>
+#include <cpe.h>
 
 void print_usage(const char *, FILE *);
 
