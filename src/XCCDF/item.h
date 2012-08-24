@@ -172,6 +172,8 @@ struct xccdf_benchmark_item {
 	struct oscap_list *notices;
 	struct oscap_list *plain_texts;
 
+	struct cpe_dict_model *cpe_list;
+
 	char *style;
 	char *style_href;
 	char *lang;

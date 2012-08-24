@@ -37,6 +37,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include "oscap.h"
+#include "cpe.h"
 
 /*--------------------*\
 |     Enumerations     |
@@ -1909,6 +1910,11 @@ struct xccdf_item_iterator *xccdf_benchmark_get_content(const struct xccdf_bench
 struct oscap_string_iterator *xccdf_benchmark_get_metadata(const struct xccdf_benchmark *benchmark);
 
 /**
+ * @memberof xccdf_benchmark
+ */
+struct cpe_dict_model *xccdf_benchmark_get_cpe_list(const struct xccdf_benchmark *benchmark);
+
+/**
  * @memberof xccdf_profile
  */
 const char *xccdf_profile_get_id(const struct xccdf_profile *profile);
@@ -2667,7 +2673,8 @@ bool xccdf_benchmark_set_version_update(struct xccdf_benchmark *item, const char
 bool xccdf_benchmark_set_schema_version(struct xccdf_benchmark* item, const struct xccdf_version_info* newval);
 /// @memberof xccdf_benchmark
 bool xccdf_benchmark_add_metadata(struct xccdf_benchmark* item, const char* metadata);
-
+/// @memberof xccdf_benchmark
+bool xccdf_benchmark_set_cpe_list(struct xccdf_benchmark* item, struct cpe_dict_model* cpe_list);
 /// @memberof xccdf_profile
 bool xccdf_profile_set_note_tag(struct xccdf_profile *item, const char *newval);
 /// @memberof xccdf_profile

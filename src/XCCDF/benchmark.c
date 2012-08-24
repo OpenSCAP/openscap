@@ -69,6 +69,7 @@ struct xccdf_benchmark *xccdf_benchmark_new(void)
 	bench->sub.benchmark.content = oscap_list_new();
 	bench->sub.benchmark.values = oscap_list_new();
 	bench->sub.benchmark.plain_texts = oscap_list_new();
+	bench->sub.benchmark.cpe_list = NULL;
 	bench->sub.benchmark.profiles = oscap_list_new();
 	bench->sub.benchmark.results = oscap_list_new();
     // hash tables
@@ -340,6 +341,7 @@ void xccdf_benchmark_free(struct xccdf_benchmark *benchmark)
 		oscap_list_free(bench->sub.benchmark.values, (oscap_destruct_func) xccdf_value_free);
 		oscap_list_free(bench->sub.benchmark.results, (oscap_destruct_func) xccdf_result_free);
 		oscap_list_free(bench->sub.benchmark.plain_texts, (oscap_destruct_func) xccdf_plain_text_free);
+		cpe_dict_model_free(bench->sub.benchmark.cpe_list);
 		oscap_list_free(bench->sub.benchmark.profiles, (oscap_destruct_func) xccdf_profile_free);
 		oscap_htable_free(bench->sub.benchmark.items_dict, NULL);
 		oscap_htable_free(bench->sub.benchmark.profiles_dict, NULL);
@@ -398,6 +400,29 @@ const char *xccdf_benchmark_get_plain_text(const struct xccdf_benchmark *bench, 
         }
     }
     return NULL;
+}
+
+bool xccdf_benchmark_set_cpe_list(struct xccdf_benchmark *benchmark, struct cpe_dict_model* cpe_list)
+{
+	struct xccdf_item *bench = XITEM(benchmark);
+
+	assert(bench != NULL);
+
+	if (bench->sub.benchmark.cpe_list)
+		cpe_dict_model_free(bench->sub.benchmark.cpe_list);
+
+	bench->sub.benchmark.cpe_list = cpe_list;
+
+	return true;
+}
+
+struct cpe_dict_model *xccdf_benchmark_get_cpe_list(const struct xccdf_benchmark *benchmark)
+{
+	const struct xccdf_item *bench = XITEM(benchmark);
+
+	assert(bench != NULL);
+
+	return bench->sub.benchmark.cpe_list;
 }
 
 struct xccdf_notice *xccdf_notice_new(void)
