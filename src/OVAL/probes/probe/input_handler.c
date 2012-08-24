@@ -107,63 +107,80 @@ void *probe_input_handler(void *arg)
                  * result cache.
                  */
 		oid = probe_obj_getattrval(probe_in, "id");
-                SEXP_free(probe_in);
 
 		if (oid != NULL) {
 			SEXP_VALIDATE(oid);
-
 			probe_out = probe_rcache_sexp_get(probe->rcache, oid);
-                        SEXP_free(oid);
 
-			if (probe_out == NULL) {
-				/* cache miss */
-                                probe_pwpair_t *pair;
+			if (probe_out == NULL) { /* cache miss */
+				SEXP_t *skip_flag;
 
-                                pair = oscap_talloc(probe_pwpair_t);
-                                pair->probe = probe;
-                                pair->pth   = probe_worker_new();
-                                pair->pth->sid = SEAP_msg_id(seap_request);
-                                pair->pth->msg = seap_request;
-                                pair->pth->msg_handler = &probe_worker;
+				skip_flag = probe_obj_getattrval(probe_in, "skip_eval");
+				SEXP_free(probe_in);
 
-                                if (rbt_i32_add(probe->workers, pair->pth->sid, pair->pth, NULL) != 0) {
-                                        /*
-                                         * Getting here means that there is already a
-                                         * thread handling the message with the given
-                                         * ID.
-                                         */
-                                        dW("Attempt to evaluate an object "
-                                           "(ID=%u) " // TODO: 64b IDs
-                                           "which is already being evaluated by an other thread.\n", pair->pth->sid);
+				if (skip_flag != NULL) {
+					oval_syschar_collection_flag_t cobj_flag;
 
-                                        oscap_free(pair->pth);
-                                        oscap_free(pair);
-                                        SEAP_msg_free(seap_request);
-                                } else {
-                                        /* OK */
+					cobj_flag = SEXP_number_geti_32(skip_flag);
+					probe_out = probe_cobj_new(cobj_flag, NULL, NULL);
 
-                                        if (pthread_create(&pair->pth->tid, &pth_attr, &probe_worker_runfn, pair))
-                                        {
-                                                dE("Cannot start a new worker thread: %d, %s.\n", errno, strerror(errno));
+					if (probe_rcache_sexp_add(probe->rcache, oid, probe_out) != 0) {
+						/* TODO */
+						abort();
+					}
 
-                                                if (rbt_i32_del(probe->workers, pair->pth->sid, NULL) != 0)
-	                                                dE("rbt_i32_del: failed to remove worker thread (ID=%u)\n", pair->pth->sid);
+					SEXP_free(oid);
+				} else {
+					probe_pwpair_t *pair;
 
-                                                SEAP_msg_free(pair->pth->msg);
-                                                oscap_free(pair->pth);
-                                                oscap_free(pair);
+					pair = oscap_talloc(probe_pwpair_t);
+					pair->probe = probe;
+					pair->pth   = probe_worker_new();
+					pair->pth->sid = SEAP_msg_id(seap_request);
+					pair->pth->msg = seap_request;
+					pair->pth->msg_handler = &probe_worker;
 
-                                                probe_ret = PROBE_EUNKNOWN;
-                                                probe_out = NULL;
+					if (rbt_i32_add(probe->workers, pair->pth->sid, pair->pth, NULL) != 0) {
+						/*
+						 * Getting here means that there is already a
+						 * thread handling the message with the given
+						 * ID.
+						 */
+						dW("Attempt to evaluate an object "
+						   "(ID=%u) " // TODO: 64b IDs
+						   "which is already being evaluated by an other thread.\n", pair->pth->sid);
 
-                                                goto __error_reply;
-                                        }
-                                }
+						oscap_free(pair->pth);
+						oscap_free(pair);
+						SEAP_msg_free(seap_request);
+					} else {
+						/* OK */
 
-				seap_request = NULL;
-				continue;
+						if (pthread_create(&pair->pth->tid, &pth_attr, &probe_worker_runfn, pair))
+						{
+							dE("Cannot start a new worker thread: %d, %s.\n", errno, strerror(errno));
+
+							if (rbt_i32_del(probe->workers, pair->pth->sid, NULL) != 0)
+								dE("rbt_i32_del: failed to remove worker thread (ID=%u)\n", pair->pth->sid);
+
+							SEAP_msg_free(pair->pth->msg);
+							oscap_free(pair->pth);
+							oscap_free(pair);
+
+							probe_ret = PROBE_EUNKNOWN;
+							probe_out = NULL;
+
+							goto __error_reply;
+						}
+					}
+
+					seap_request = NULL;
+					continue;
+				}
 			} else {
 				/* cache hit */
+				SEXP_free(oid);
+				SEXP_free(probe_in);
 				probe_ret = 0;
 			}
 		} else {
