@@ -53,7 +53,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
         OVAL_FTSENT *ofts_ent;
 
         SEXP_t *name_entity, *probe_in;
-        SEXP_t *r0, *r1, *r2;
+        SEXP_t *r0, *r1, *r2, *r3;
         SEXP_t *ent_attrs, *bh_entity, *path_entity, *filename_entity;
         oval_version_t over;
         int over_cmp;
@@ -74,15 +74,18 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
         ent_attrs = probe_attr_creat("max_depth",           r0 = SEXP_string_newf("%d", PROC_SYS_MAXDEPTH),
                                      "recurse_direction",   r1 = SEXP_string_new("down", 4),
                                      "recurse_file_system", r2 = SEXP_string_new("defined", 7),
+                                     "recurse", r3 = SEXP_string_new("symlinks and directories", 24),
                                      NULL);
         bh_entity = probe_ent_creat1("behaviors", ent_attrs, NULL);
-        SEXP_vfree(r0, r1, r2, ent_attrs, NULL);
+        SEXP_vfree(r0, r1, r2, r3, ent_attrs, NULL);
 
         /*
          * prepare path, filename
          */
-        path_entity = probe_ent_creat1("path", NULL, r0 = SEXP_string_new(PROC_SYS_DIR, strlen(PROC_SYS_DIR)));
-        SEXP_free(r0);
+        ent_attrs = probe_attr_creat("operation", r0 = SEXP_number_newi(OVAL_OPERATION_EQUALS),
+                                     NULL);
+        path_entity = probe_ent_creat1("path", ent_attrs, r1 = SEXP_string_new(PROC_SYS_DIR, strlen(PROC_SYS_DIR)));
+        SEXP_vfree(r0, r1, NULL);
 
         ent_attrs = probe_attr_creat("operation", r0 = SEXP_number_newi(OVAL_OPERATION_PATTERN_MATCH),
                                      NULL);
