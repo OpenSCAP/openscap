@@ -48,6 +48,8 @@
 #include <fts.h>
 #endif
 
+#undef OSCAP_FTS_DEBUG
+
 static OVAL_FTS *OVAL_FTS_new()
 {
 	OVAL_FTS *ofts;
@@ -111,7 +113,7 @@ static OVAL_FTSENT *OVAL_FTSENT_new(OVAL_FTS *ofts, FTSENT *fts_ent)
 		ofts_ent->file = NULL;
 	}
 
-#if defined(OSCAP_VERBOSE_DEBUG)
+#if defined(OSCAP_FTS_DEBUG)
 	dI("\n"
 	   "New OVAL_FTSENT:\n"
 	   "\t    file: '%s'.\n"
@@ -194,7 +196,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	} else {
 		path_op = OVAL_OPERATION_EQUALS;
 	}
-#if defined(OSCAP_VERBOSE_DEBUG)
+#if defined(OSCAP_FTS_DEBUG)
 	dI("path_op: %u, '%s'.\n", path_op, oval_operation_get_text(path_op));
 #endif
 	if (path) { /* filepath == NULL */
@@ -206,7 +208,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 			PROBE_ENT_STRVAL(filename, cstr_file, sizeof cstr_file,
 					 return NULL;, /* noop */;);
 		}
-#if defined(OSCAP_VERBOSE_DEBUG)
+#if defined(OSCAP_FTS_DEBUG)
 		dI("\n"
 		   "        path: '%s'.\n"
 		   "    filename: '%s'.\n"
@@ -221,7 +223,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 			SEXP_free(r0);
 			return (NULL);
 		}
-#if defined(OSCAP_VERBOSE_DEBUG)
+#if defined(OSCAP_FTS_DEBUG)
 		dI("bh.max_depth: %s => max_depth: %d\n", cstr_buff, max_depth);
 #endif
 		SEXP_free(r0);
@@ -241,7 +243,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 			SEXP_free(r0);
 			return (NULL);
 		}
-#if defined(OSCAP_VERBOSE_DEBUG)
+#if defined(OSCAP_FTS_DEBUG)
 		dI("bh.direction: %s => direction: %d\n", cstr_buff, direction);
 #endif
 		SEXP_free(r0);
@@ -267,7 +269,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		} else {
 			recurse = OVAL_RECURSE_SYMLINKS_AND_DIRS;
 		}
-#if defined(OSCAP_VERBOSE_DEBUG)
+#if defined(OSCAP_FTS_DEBUG)
 		dI("bh.recurse: %s => recurse: %d\n", cstr_buff, recurse);
 #endif
 		SEXP_free(r0);
@@ -293,7 +295,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		} else {
 			filesystem = OVAL_RECURSE_FS_ALL;
 		}
-#if defined(OSCAP_VERBOSE_DEBUG)
+#if defined(OSCAP_FTS_DEBUG)
 		dI("bh.filesystem: %s => filesystem: %d\n", cstr_buff, filesystem);
 #endif
 		SEXP_free(r0);
@@ -402,6 +404,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 				pcre_free(ofts->ofts_path_regex_extra);
 				ofts->ofts_path_regex = NULL;
 				ofts->ofts_path_regex_extra = NULL;
+				dI("Partial-match optimization disabled.\n");
 			} else {
 				dI("Partial-match optimization enabled.\n");
 			}
@@ -463,7 +466,7 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 			continue;
 		}
 
-#if defined(OSCAP_VERBOSE_DEBUG)
+#if defined(OSCAP_FTS_DEBUG)
 		dI("fts_path: '%s' (l=%d).\n"
 		   "fts_name: '%s' (l=%d).\n"
 		   "fts_info: %u.\n", fts_ent->fts_path, fts_ent->fts_pathlen,
@@ -471,7 +474,9 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 #endif
 
 		if (fts_ent->fts_info == FTS_SL) {
-			dI("Only the target of a symlink gets reported, skipping.\n");
+#if defined(OSCAP_FTS_DEBUG)
+			dI("Only the target of a symlink gets reported, skipping '%s'.\n", fts_ent->fts_path, fts_ent->fts_name);
+#endif
 			fts_set(ofts->ofts_match_path_fts, fts_ent, FTS_FOLLOW);
 			continue;
 		}
@@ -486,11 +491,11 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 			if (ret < 0) {
 				switch (ret) {
 				case PCRE_ERROR_NOMATCH:
-					dI("Partial match optimization: PCRE_ERROR_NOMATCH -> skipping.\n");
+					dI("Partial match optimization: PCRE_ERROR_NOMATCH, skipping.\n");
 					fts_set(ofts->ofts_match_path_fts, fts_ent, FTS_SKIP);
 					continue;
 				case PCRE_ERROR_PARTIAL:
-					dI("Partial match optimization: PCRE_ERROR_PARTIAL -> continuing.\n");
+					dI("Partial match optimization: PCRE_ERROR_PARTIAL, continuing.\n");
 					continue;
 				default:
 					dE("pcre_exec() error: %d.\n", ret);
@@ -505,6 +510,7 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 		    && (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
 					 (fts_ent->fts_statp != NULL) ?
 					 &fts_ent->fts_statp->st_dev : NULL))) {
+			dI("Don't recurse into non-local filesystems, skipping '%s'.\n", fts_ent->fts_path);
 			fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
 			continue;
 		}
@@ -597,7 +603,7 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 				continue;
 			}
 
-#if defined(OSCAP_VERBOSE_DEBUG)
+#if defined(OSCAP_FTS_DEBUG)
 			dI("fts_path: '%s' (l=%d).\n"
 			   "fts_name: '%s' (l=%d).\n"
 			   "fts_info: %u.\n", fts_ent->fts_path, fts_ent->fts_pathlen,
@@ -764,7 +770,7 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 {
 	FTSENT *fts_ent;
 
-#if defined(OSCAP_VERBOSE_DEBUG)
+#if defined(OSCAP_FTS_DEBUG)
 	dI("ofts: %p.\n", ofts);
 #endif
 
