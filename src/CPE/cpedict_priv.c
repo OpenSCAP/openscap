@@ -664,8 +664,20 @@ struct cpe_dict_model *cpe_dict_model_parse(xmlTextReaderPtr reader)
 		} else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element in CPE dictionary, local name is '%s'.", xmlTextReaderConstLocalName(reader));
 		}
-		// get the next node
-		next_ret = xmlTextReaderNextElement(reader);
+
+		do {
+			next_ret = xmlTextReaderRead(reader);
+			if (next_ret < 1)
+				break;
+
+			if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_END_ELEMENT) {
+				if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CPE_LIST_STR)) {
+					// we have reached the </cpe-list> end tag, we have to exit
+					// to prevent reading nodes that don't belong to us
+					break;
+				}
+			}
+		} while (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
 	}
 
 	return ret;
