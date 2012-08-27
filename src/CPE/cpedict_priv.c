@@ -617,6 +617,10 @@ struct cpe_dict_model *cpe_dict_model_parse(xmlTextReaderPtr reader)
 			return NULL;
 		}
 	}
+
+	// make sure we exit when we reach this depth again
+	int entry_depth = xmlTextReaderDepth(reader);
+
 	// we found cpe-list element, let's roll !
 	// allocate memory for cpe_dict so we can fill items and vendors and general structures
 	ret = cpe_dict_model_new();
@@ -626,6 +630,11 @@ struct cpe_dict_model *cpe_dict_model_parse(xmlTextReaderPtr reader)
 	// go through elements and switch through actions till end of file..
 	next_ret = xmlTextReaderNextElement(reader);
 	while (next_ret != 0) {
+		if (xmlTextReaderDepth(reader) <= entry_depth) {
+			// we have reached the end of <cpe-list>
+			// this is necessary to make XCCDF CPE integration to work
+			break;
+		}
 
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GENERATOR_STR)) {	// <generator> | count = 1
 			ret->generator = cpe_generator_parse(reader);
@@ -653,7 +662,7 @@ struct cpe_dict_model *cpe_dict_model_parse(xmlTextReaderPtr reader)
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_COMPONENT_TREE_STR)) {	// <vendor> | count = 0-n
 			// we just need to jump over this element
 		} else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element in CPE dictionary");
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element in CPE dictionary, local name is '%s'.", xmlTextReaderConstLocalName(reader));
 		}
 		// get the next node
 		next_ret = xmlTextReaderNextElement(reader);

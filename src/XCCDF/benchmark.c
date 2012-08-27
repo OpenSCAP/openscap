@@ -33,6 +33,8 @@
 #include "common/_error.h"
 #include "common/debug_priv.h"
 
+#include "CPE/cpedict_priv.h"
+
 #define XCCDF_SUPPORTED "1.1.4"
 
 static struct oscap_htable *xccdf_benchmark_find_target_htable(const struct xccdf_benchmark *, xccdf_type_t);
@@ -151,6 +153,9 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
                                 xccdf_plain_text_new_fill(id, data));
 				break;
 			}
+		case XCCDFE_CPE_LIST:
+			xccdf_benchmark_set_cpe_list(XBENCHMARK(benchmark), cpe_dict_model_parse(reader));
+			break;
 		case XCCDFE_PROFILE:
 			oscap_list_add(benchmark->sub.benchmark.profiles, xccdf_profile_parse(reader, benchmark));
 			break;
@@ -246,6 +251,14 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 		xmlNewProp(root_node, BAD_CAST "xml:lang", BAD_CAST lang);*/
 
 	/* Handle children */
+	if (xccdf_benchmark_get_cpe_list(benchmark)) {
+		// CPE API can only export via xmlTextWriter, we export via DOM
+		// this is used to bridge both methods
+		xmlTextWriterPtr writer = xmlNewTextWriterTree(doc, root_node, 0);
+		cpe_dict_export(xccdf_benchmark_get_cpe_list(benchmark), writer);
+		xmlFreeTextWriter(writer);
+	}
+
 	struct oscap_string_iterator *platforms = xccdf_benchmark_get_platforms(benchmark);
 	while (oscap_string_iterator_has_more(platforms)) {
 		xmlNode *platform_node = xmlNewTextChild(root_node, ns_xccdf, BAD_CAST "platform", NULL);
