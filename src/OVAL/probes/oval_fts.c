@@ -160,6 +160,39 @@ static char *__regex_locate(char *str)
     return (str);
 }
 
+static char *__string_unescape(char *str, size_t len)
+{
+    char *ret_str;
+    size_t i, j;
+
+    if (str == NULL || len == 0)
+        return NULL;
+
+    ret_str = strndup(str, len);
+
+    if (ret_str == NULL)
+        return NULL;
+
+    for (i = j = 0; i < len && j <= i; ++i) {
+        if (str[i] == '\\') {
+            if (str[i+1] == '\0') {
+                free(ret_str);
+                return NULL;
+            }
+            ret_str[j] = str[i+1];
+            ++j;
+            ++i;
+        } else {
+            ret_str[j] = str[i];
+            ++j;
+        }
+    }
+
+    ret_str[j] = '\0';
+
+    return ret_str;
+}
+
 OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t *behaviors)
 {
 	OVAL_FTS *ofts;
@@ -313,33 +346,28 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		break;
 	    case OVAL_OPERATION_PATTERN_MATCH:
 		if (strlen(cstr_path) >= 2) {
-		    if (cstr_path[0] == '^' &&
-			cstr_path[1] == '/') {
-			/*
-			 * Locate the regex and try to extract a fixed
-			 * part of the path
-			 */
-			char *slash_loc;
-			char *regex_loc = __regex_locate(cstr_path + 1); /* +1 == skip '^' */
+                    char *regex_loc;
 
-			if (regex_loc == NULL) {
-			    paths[0] = strdup("/");
-			    break;
-			}
+                    if (cstr_path[0] == '^' &&
+                        (regex_loc = __regex_locate(cstr_path + 1)) != NULL)
+                    {
+                        char *slash_loc = regex_loc - 1;
 
-			slash_loc = regex_loc - 1;
-
-			while (slash_loc != cstr_path + 2) {
-			    if (*slash_loc == '/') { /* XXX: use PATH_SEPARATOR ? */
-				*slash_loc = '\0';
-				paths[0] = strdup(cstr_path + 1);
-				*slash_loc = '/';
-				break;
-			    }
-			    --slash_loc;
-			}
-		    }
-		}
+                        while(slash_loc != cstr_path + 2) {
+                            if (*slash_loc == '/') {
+                                paths[0] = __string_unescape(cstr_path + 1, (size_t)(slash_loc - cstr_path) - 1);
+                                if (paths[0] != NULL) {
+                                    if (paths[0][0] != '/') {
+                                        free(paths[0]);
+                                        paths[0] = NULL;
+                                    }
+                                    break;
+                                }
+                            }
+                            --slash_loc;
+                        }
+                    }
+                }
 
 		if (paths[0] == NULL)
 		    paths[0] = strdup("/");
