@@ -51,7 +51,7 @@ function test_eval {
 
     local OSCAP_DIR=`cd ../../utils/.libs; pwd`
 
-    $OSCAP_DIR/oscap xccdf eval "$1"
+    $OSCAP_DIR/oscap xccdf eval "${srcdir}/$1"
     return $?
 }
 function test_rds

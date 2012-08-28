@@ -390,7 +390,7 @@ static SEXP_t *oval_behaviors_to_sexp(struct oval_behavior_iterator *bit)
 int oval_object_to_sexp(void *sess, const char *typestr, struct oval_syschar *syschar, SEXP_t **out_sexp)
 {
 	unsigned int ent_cnt, varref_cnt;
-	int ret = -1;
+	int ret;
 	SEXP_t *obj_sexp, *elm, *varrefs, *ent_lst, *lst, *stmp;
 	SEXP_t *r0, *r1, *r2, *obj_attr, sm0, sm1;
 
@@ -454,26 +454,23 @@ int oval_object_to_sexp(void *sess, const char *typestr, struct oval_syschar *sy
 						   r0 = SEXP_number_newu_32(ochk));
 				SEXP_free(r0);
 			}
-
+			ret = 0;
 			vr_type = oval_entity_get_varref_type(entity);
 			if (vr_type == OVAL_ENTITY_VARREF_ATTRIBUTE) {
 				ret = oval_varref_attr_to_sexp(sess, entity, syschar, &stmp);
-				if (ret != 0) {
-					SEXP_free(elm);
-					elm = NULL;
-					break;
-				}
 
-				if (varrefs == NULL) {
-					varrefs = SEXP_list_new(NULL);
-				}
-				SEXP_list_add(varrefs, stmp);
-                                SEXP_free(stmp);
-				// todo: don't add duplicates
-				++varref_cnt;
+				if (ret == 0) {
+					if (varrefs == NULL)
+						varrefs = SEXP_list_new(NULL);
 
-				lst = obj_sexp;
-				++ent_cnt;
+					SEXP_list_add(varrefs, stmp);
+					SEXP_free(stmp);
+					// todo: don't add duplicates
+					++varref_cnt;
+
+					lst = obj_sexp;
+					++ent_cnt;
+				}
 			} else if (vr_type == OVAL_ENTITY_VARREF_ELEMENT) {
 				SEXP_t *val_lst;
 				struct oval_variable *var;
@@ -481,17 +478,31 @@ int oval_object_to_sexp(void *sess, const char *typestr, struct oval_syschar *sy
 
 				var = oval_entity_get_variable(entity);
 				dt = oval_entity_get_datatype(entity);
-
 				ret = oval_varref_elm_to_sexp(sess, var, dt, &val_lst);
-				if (ret != 0) {
-					SEXP_free(elm);
-					elm = NULL;
-					break;
-				}
 
-				SEXP_list_add(elm, val_lst);
-				SEXP_free(val_lst);
+				if (ret == 0) {
+					SEXP_list_add(elm, val_lst);
+					SEXP_free(val_lst);
+				}
 			}
+
+			if (ret != 0) {
+				SEXP_t s_flag;
+				SEXP_number_newi_32_r(&s_flag, SYSCHAR_FLAG_DOES_NOT_EXIST);
+				probe_item_attr_add(obj_sexp, "skip_eval", &s_flag);
+				SEXP_free_r(&s_flag);
+
+				SEXP_free(elm);
+				SEXP_free(ent_lst);
+				if (varrefs != NULL)
+					SEXP_free(varrefs);
+				oval_object_content_iterator_free(cit);
+
+				*out_sexp = obj_sexp;
+
+				return (0);
+			}
+
 			break;
 
 		case OVAL_OBJECTCONTENT_SET:
@@ -513,7 +524,7 @@ int oval_object_to_sexp(void *sess, const char *typestr, struct oval_syschar *sy
 				SEXP_free(varrefs);
 			oval_object_content_iterator_free(cit);
 
-			return (ret);
+			return -1;
 		}
 
 		SEXP_list_add(lst, elm);
@@ -530,6 +541,7 @@ int oval_object_to_sexp(void *sess, const char *typestr, struct oval_syschar *sy
 		SEXP_list_add(obj_sexp, r0);
 		SEXP_vfree(stmp, varrefs, r0, NULL);
 	}
+
 	stmp = SEXP_list_join(obj_sexp, ent_lst);
 	SEXP_free(obj_sexp);
 	SEXP_free(ent_lst);
