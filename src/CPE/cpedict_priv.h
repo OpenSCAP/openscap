@@ -173,8 +173,9 @@ void cpe_generator_export(const struct cpe_generator *generator, xmlTextWriterPt
  * Exporting function for CPE item
  * @param item CPE item structure
  * @param writer xmlTextWriterPtr representing XML model
+ * @param what is the base version of target CPE dict (1 for CPE 1.x, 2 for CPE 2.x, ...)
  */
-void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer);
+void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer, int base_version);
 
 /**
  * Exporting function for CPE vendor

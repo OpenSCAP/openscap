@@ -132,9 +132,11 @@ OSCAP_ACCESSOR_STRING(cpe_generator, product_name)
 struct cpe_dict_model {		// the main node
 	struct oscap_list *items;	// dictionary items
 	struct oscap_list *vendors;
+	int base_version;
 	struct cpe_generator *generator;
 };
 OSCAP_GETTER(struct cpe_generator *, cpe_dict_model, generator)
+OSCAP_ACCESSOR_SIMPLE(int, cpe_dict_model, base_version)
 OSCAP_IGETTER_GEN(cpe_item, cpe_dict_model, items)
 OSCAP_ITERATOR_REMOVE_F(cpe_item)
 OSCAP_IGETINS_GEN(cpe_vendor, cpe_dict_model, vendors, vendor) OSCAP_ITERATOR_REMOVE_F(cpe_vendor)
@@ -247,7 +249,8 @@ OSCAP_ACCESSOR_STRING(cpe_language, value)
 #define ATTR_XML_LANG_STR   BAD_CAST "xml:lang"
 #define VAL_TRUE_STR        BAD_CAST "true"
 /* Namespaces */
-#define CPEDICT_NS BAD_CAST "http://cpe.mitre.org/dictionary/2.0"
+#define CPE_1_DICT_NS BAD_CAST "http://cpe.mitre.org/XMLSchema/cpe/1.0"
+#define CPE_2_DICT_NS BAD_CAST "http://cpe.mitre.org/dictionary/2.0"
 #define CPEMETA_NS BAD_CAST "http://scap.nist.gov/schema/cpe-dictionary-metadata/0.2"
 /* End of XML string variables definitions
  * */
@@ -380,6 +383,8 @@ struct cpe_dict_model *cpe_dict_model_new()
 
 	dict->vendors = oscap_list_new();
 	dict->items = oscap_list_new();
+
+	dict->base_version = 2; // default to CPE 2.x
 
 	return dict;
 }
@@ -626,6 +631,23 @@ struct cpe_dict_model *cpe_dict_model_parse(xmlTextReaderPtr reader)
 	ret = cpe_dict_model_new();
 	if (ret == NULL)
 		return NULL;
+
+	// let us figure out the base version based on the namespace of cpe-list
+	const xmlChar* nsuri = xmlTextReaderConstNamespaceUri(reader);
+
+	if (nsuri && !xmlStrcmp(nsuri, CPE_1_DICT_NS))
+	{
+		cpe_dict_model_set_base_version(ret, 1);
+	}
+	else if (nsuri && !xmlStrcmp(nsuri, CPE_2_DICT_NS)) {
+		cpe_dict_model_set_base_version(ret, 2);
+	}
+	else
+	{
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't figure out CPE version from namespace URI '%s'. Assuming CPE 2.x.", nsuri);
+		// unknown version, let us default to CPE 2.x and hope for the best :-/
+		cpe_dict_model_set_base_version(ret, 2);
+	}
 
 	// go through elements and switch through actions till end of file..
 	next_ret = xmlTextReaderNextElement(reader);
@@ -1015,7 +1037,21 @@ void cpe_dict_export(const struct cpe_dict_model *dict, xmlTextWriterPtr writer)
 	__attribute__nonnull__(dict);
 	__attribute__nonnull__(writer);
 
-	xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_LIST_STR, CPEDICT_NS);
+	const int base_version = cpe_dict_model_get_base_version(dict);
+
+	switch (base_version) {
+		case 1:
+			xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_LIST_STR, CPE_1_DICT_NS);
+			break;
+		case 2:
+			xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_LIST_STR, CPE_2_DICT_NS);
+			break;
+		default:
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown CPE base version '%i'.", base_version);
+			xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_LIST_STR, BAD_CAST "http://open-scap.org/CPE/unknown");
+			break;
+	}
+
 	xmlTextWriterWriteAttribute(writer, BAD_CAST "xmlns:meta", CPEMETA_NS);
 	xmlTextWriterWriteAttribute(writer, BAD_CAST "xmlns:xsi", BAD_CAST "http://www.w3.org/2001/XMLSchema-instance");
 	xmlTextWriterWriteAttribute(writer, BAD_CAST "xsi:schemaLocation", BAD_CAST
@@ -1025,11 +1061,14 @@ void cpe_dict_export(const struct cpe_dict_model *dict, xmlTextWriterPtr writer)
 	if (dict->generator) cpe_generator_export(dict->generator, writer);
 	OSCAP_FOREACH(cpe_item, item, cpe_dict_model_get_items(dict),
 		      // dump its contents to XML tree
-		      cpe_item_export(item, writer);)
+		      cpe_item_export(item, writer, base_version);)
+
+	if (base_version >= 2) {
 	    // TODO: NEED TO HAVE COMPONENT-TREE STRUCTURE TO GET XML-NAMESPACE 
 	    xmlTextWriterStartElementNS(writer, NULL, TAG_COMPONENT_TREE_STR, CPEMETA_NS);
-	OSCAP_FOREACH(cpe_vendor, vendor, cpe_dict_model_get_vendors(dict), cpe_vendor_export(vendor, writer);)
+		OSCAP_FOREACH(cpe_vendor, vendor, cpe_dict_model_get_vendors(dict), cpe_vendor_export(vendor, writer);)
 	    xmlTextWriterEndElement(writer);	//</component-tree>
+	}
 
 	xmlTextWriterEndElement(writer);
 	if (xmlGetLastError() != NULL)
@@ -1069,7 +1108,7 @@ void cpe_generator_export(const struct cpe_generator *generator, xmlTextWriterPt
 
 }
 
-void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer)
+void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer, int base_version)
 {
 
 	char *temp;
@@ -1078,7 +1117,19 @@ void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer)
 	__attribute__nonnull__(item);
 	__attribute__nonnull__(writer);
 
-	xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_ITEM_STR, CPEDICT_NS);
+	switch (base_version) {
+		case 1:
+			xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_ITEM_STR, CPE_1_DICT_NS);
+			break;
+		case 2:
+			xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_ITEM_STR, CPE_2_DICT_NS);
+			break;
+		default:
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown CPE base version '%i'.", base_version);
+			xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_ITEM_STR, BAD_CAST "http://open-scap.org/CPE/unknown");
+			break;
+	}
+
 	if (item->name != NULL) {
 		temp = cpe_name_get_as_format(item->name, CPE_FORMAT_URI);
 		xmlTextWriterWriteAttribute(writer, ATTR_NAME_STR, BAD_CAST temp);

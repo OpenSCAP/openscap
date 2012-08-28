@@ -241,6 +241,25 @@ const char *cpe_generator_get_schema_version(const struct cpe_generator *item);
  */
 const char *cpe_generator_get_timestamp(const struct cpe_generator *item);
 
+/** cpe_dict_model functions to get the base version from CPE dictionary model
+ *
+ * The base version is the major CPE version, 1 or 2. These two versions differ
+ * in namespace when exporting so we have to remember which version we loaded.
+ *
+ * CPE 1.0 also doesn't have cpe_generator structure inside so we can't get
+ * the version info from there.
+ *
+ * @memberof cpe_dict_model
+ * @param item dictionary model
+ */
+int cpe_dict_model_get_base_version(const struct cpe_dict_model *item);
+
+/** cpe_dict_model functions to get the base version from CPE dictionary model
+ * @memberof cpe_dict_model
+ * @param item dictionary model
+ */
+bool cpe_dict_model_set_base_version(struct cpe_dict_model *item, int base_version);
+
 /** cpe_dict_model functions to get generator from CPE dictionary model
  * @memberof cpe_dict_model
  * @memberof cpe_generator
