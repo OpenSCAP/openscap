@@ -321,7 +321,7 @@ static int xmlTextReaderNextElement(xmlTextReaderPtr reader)
  *
  * This function makes sure we don't go past end tag of given element
  * */
-static int xmlTextReaderNextElementWE(xmlTextReaderPtr reader, const char* end_tag)
+static int xmlTextReaderNextElementWE(xmlTextReaderPtr reader, xmlChar* end_tag)
 {
 
 	__attribute__nonnull__(reader);
@@ -334,7 +334,7 @@ static int xmlTextReaderNextElementWE(xmlTextReaderPtr reader, const char* end_t
 			break;
 
 		if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_END_ELEMENT) {
-			if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST end_tag)) {
+			if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), end_tag)) {
 				ret = 0;
 				break;
 			}
@@ -348,6 +348,7 @@ static int xmlTextReaderNextElementWE(xmlTextReaderPtr reader, const char* end_t
 
 	return ret;
 }
+
 /* Function testing reader function 
  */
 static int xmlTextReaderNextNode(xmlTextReaderPtr reader)
@@ -681,7 +682,7 @@ struct cpe_dict_model *cpe_dict_model_parse(xmlTextReaderPtr reader)
 	}
 
 	// go through elements and switch through actions till end of file..
-	next_ret = xmlTextReaderNextElementWE(reader, "cpe-list");
+	next_ret = xmlTextReaderNextElementWE(reader, TAG_CPE_LIST_STR);
 	while (next_ret != 0) {
 		if (xmlTextReaderDepth(reader) <= entry_depth) {
 			// we have reached the end of <cpe-list>
@@ -696,7 +697,7 @@ struct cpe_dict_model *cpe_dict_model_parse(xmlTextReaderPtr reader)
 				// something bad happend, let's try to recover and continue
 				// add here some bad nodes list to write it to stdout after parsing is done
 				// get the next node
-				next_ret = xmlTextReaderNextElementWE(reader, "cpe-list");
+				next_ret = xmlTextReaderNextElementWE(reader, TAG_CPE_LIST_STR);
 				continue;
 			}
 			// We got an item !
@@ -718,7 +719,7 @@ struct cpe_dict_model *cpe_dict_model_parse(xmlTextReaderPtr reader)
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element in CPE dictionary, local name is '%s'.", xmlTextReaderConstLocalName(reader));
 		}
 
-		next_ret = xmlTextReaderNextElementWE(reader, "cpe-list");
+		next_ret = xmlTextReaderNextElementWE(reader, TAG_CPE_LIST_STR);
 	}
 
 	return ret;
@@ -825,7 +826,7 @@ struct cpe_item *cpe_item_parse(xmlTextReaderPtr reader)
 		oscap_free(data);
 		// ************************************************************************************
 
-		xmlTextReaderNextElementWE(reader, "cpe-item");
+		xmlTextReaderNextElementWE(reader, TAG_CPE_ITEM_STR);
 		// Now it's time to go deaply to cpe-item element and parse it's children
 		// Do while there is another cpe-item element. Then return.
 		while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CPE_ITEM_STR) != 0) {
@@ -880,7 +881,7 @@ struct cpe_item *cpe_item_parse(xmlTextReaderPtr reader)
 			} else {
 				return ret;	// <-- we need to return here, because we don't want to jump to next element 
 			}
-			xmlTextReaderNextElementWE(reader, "cpe-item");
+			xmlTextReaderNextElementWE(reader, TAG_CPE_ITEM_STR);
 		}
 	}
 
