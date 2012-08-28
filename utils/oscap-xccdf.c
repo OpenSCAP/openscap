@@ -299,6 +299,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	char* xccdf_file = NULL;
 	char* xccdf_doc_version = NULL;
 	char** oval_result_files = NULL;
+	int result = OSCAP_ERROR;
 
 	if (ds_is_sds(action->f_xccdf) == 0)
 	{
@@ -710,7 +711,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
-	int result = OSCAP_OK;
+	result = OSCAP_OK;
 	struct xccdf_rule_result_iterator *res_it = xccdf_result_get_rule_results(ritem);
 	while (xccdf_rule_result_iterator_has_more(res_it)) {
 		struct xccdf_rule_result *res = xccdf_rule_result_iterator_next(res_it);
