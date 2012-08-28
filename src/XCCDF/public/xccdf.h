@@ -1915,6 +1915,11 @@ struct oscap_string_iterator *xccdf_benchmark_get_metadata(const struct xccdf_be
 struct cpe_dict_model *xccdf_benchmark_get_cpe_list(const struct xccdf_benchmark *benchmark);
 
 /**
+ * @memberof xccdf_benchmark
+ */
+struct cpe_lang_model *xccdf_benchmark_get_cpe_lang_model(const struct xccdf_benchmark *benchmark);
+
+/**
  * @memberof xccdf_profile
  */
 const char *xccdf_profile_get_id(const struct xccdf_profile *profile);
@@ -2675,6 +2680,8 @@ bool xccdf_benchmark_set_schema_version(struct xccdf_benchmark* item, const stru
 bool xccdf_benchmark_add_metadata(struct xccdf_benchmark* item, const char* metadata);
 /// @memberof xccdf_benchmark
 bool xccdf_benchmark_set_cpe_list(struct xccdf_benchmark* item, struct cpe_dict_model* cpe_list);
+/// @memberof xccdf_benchmark
+bool xccdf_benchmark_set_cpe_lang_model(struct xccdf_benchmark* item, struct cpe_lang_model* cpe_lang_model);
 /// @memberof xccdf_profile
 bool xccdf_profile_set_note_tag(struct xccdf_profile *item, const char *newval);
 /// @memberof xccdf_profile
