@@ -17,7 +17,7 @@
     <platform id="test_and_test">
       <logical-test xmlns="http://cpe.mitre.org/language/2.0" operator="AND" negate="false">
         <fact-ref name="cpe:/a:test:test"/>
-        <fact-ref name="cpe:2.3:a:test:test:66.6:a:b:en-US:d:e:f:g"/>
+        <fact-ref name="cpe:2.3:a:test:test:66.6:\*\*\\:*:en-US:d:e:f:g"/>
       </logical-test>
     </platform>
   </platform-specification>

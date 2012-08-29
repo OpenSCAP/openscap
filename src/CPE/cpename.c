@@ -105,6 +105,7 @@ static const struct oscap_string_map CPE_PART_MAP[] = {
 
 char **cpe_uri_split(char *str, const char *delim);
 static bool cpe_urldecode(char *str);
+static bool cpestring_comp_decode(char *str);
 bool cpe_name_check(const char *str);
 static const char *cpe_get_field(const struct cpe_name *cpe, int idx);
 static const char *as_str(const char *str);
@@ -287,7 +288,7 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 			char **fields_ = oscap_split(data_, ":");
 			for (i = 0; fields_[i] && i < CPE_TOTAL_FIELDNUM; ++i)
 			{
-				if (!cpe_urldecode(fields_[i])) {
+				if (!cpestring_comp_decode(fields_[i])) {
 					oscap_free(data_);
 					oscap_free(fields_);
 					return NULL;
@@ -390,6 +391,86 @@ static char *cpe_urlencode(const char *str)
 	for (const char *in = str; *in != '\0'; ++in, ++out) {
 		if (isalnum(*in) || strchr("-._~", *in))
 			*out = *in;
+		else {
+			// this char shall be %-encoded
+			snprintf(out, 4, "%%%02X", *in); // we write 3 chars and \0
+			out += 2; // for loop does another ++, giving us += 3 effectively
+		}
+	}
+
+	// if the last character was alphanumeric we need to terminate
+	// if the last character was non-alphanum we will have 2 consecutive
+	// \0s at the end of the string which doesn't hurt anything
+	*out = '\0';
+
+	return result;
+}
+
+static bool cpestring_comp_decode(char *str)
+{
+	__attribute__nonnull__(str);
+
+	char *inptr, *outptr;
+
+	for (inptr = outptr = str; *inptr; ++inptr) {
+		if (*inptr == '\\' && *(inptr + sizeof(char)) == ':') {
+			*outptr = ':';
+			inptr++;
+		}
+		else if (*inptr == '%') {
+			if (isxdigit(inptr[1]) && isxdigit(inptr[2])) {
+				char hex[3] = { inptr[1], inptr[2], '\0' };
+				unsigned out;
+				sscanf(hex, "%x", &out);
+				if (out == 0) {
+					// %00 encoded in the URI is definitely invalid
+					*outptr++ = '\0';
+					return false;
+				}
+				*outptr++ = out;
+				inptr += 2;
+			} else {
+				// % followed by characters that are not hex digits is invalid
+				*outptr = '\0';
+				return false;
+			}
+		} else
+			*outptr++ = *inptr;
+	}
+	*outptr = '\0';
+	return true;
+}
+
+static char *cpestring_comp_encode(const char *str)
+{
+	if (str == NULL)
+		return NULL;
+
+	// allocate enough space
+	// in the worst case (all characters need to be replaced), the memory
+	// we will need is 3 times the size of input, + 1 for the terminating \0
+	char *result = oscap_alloc(strlen(str) * 3 * sizeof(char) + 1);
+	char *out = result;
+
+	for (const char *in = str; *in != '\0'; ++in, ++out) {
+		if (isalnum(*in) || strchr("._~", *in)) {
+			*out = *in;
+		}
+		else if (*in == '\\') {
+			// anything escaped stays escaped
+			*(out++) = *(in++);
+			*(out) = *(in);
+		}
+		else if (*in == ':') {
+			*(out++) = '\\';
+			*(out) = *in;
+		}
+		else if (*in == '*') {
+			*out = *in;
+		}
+		else if (*in == '-') {
+			*out = *in;
+		}
 		else {
 			// this char shall be %-encoded
 			snprintf(out, 4, "%%%02X", *in); // we write 3 chars and \0
@@ -613,7 +694,7 @@ char *cpe_name_get_as_format(const struct cpe_name *cpe, cpe_format_t format)
 
 		// get individual parts (%-encoded)
 		for (i = 0; i < CPE_TOTAL_FIELDNUM; ++i) {
-				part[i] = cpe_urlencode(as_str(cpe_get_field(cpe, i)));
+				part[i] = cpestring_comp_encode(as_str(cpe_get_field(cpe, i)));
 
 			len += strlen(part[i]);
 		}
