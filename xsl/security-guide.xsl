@@ -59,11 +59,11 @@ Authors:
       </xsl:with-param>
     </xsl:call-template>
     <preface id='preface'>
-      <table role="raw">
+      <table role="raw" id="guide-top-table">
         <tbody>
           <row>
-            <entry valign="top"><xsl:call-template name='common-info'/></entry>
-            <entry valign="top">
+            <entry id="common-info" valign="top"><xsl:call-template name='common-info'/></entry>
+            <entry id="versions-revisions" valign="top">
               <xsl:apply-templates select='cdf:version'/>
               <xsl:call-template name='revisions'/>
             </entry>

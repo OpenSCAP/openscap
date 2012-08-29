@@ -469,6 +469,9 @@ Authors:
     td.score-bar { text-align:center; }
     td.score-bar span.media { width:100%; min-width:7em; height:.8em; display:block; margin:0; padding:0; }
     .oval-results { font-size:.8em; overflow:auto; }
+    div#guide-top-table table { width: 100%; }
+    td#common-info { min-width: 25.0em; border-right: 1px solid #000; }
+    td#versions-revisions { width: 25.0em; }
   </style>
   <style type='text/css' media='screen'>
     div#content, div#header, div#footer { margin-left:1em; margin-right:1em; }
