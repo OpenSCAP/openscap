@@ -61,7 +61,7 @@ Authors:
 <xsl:variable name='root' select='exsl:node-set($benchmark.s2)/cdf:Benchmark'/>
 
 <xsl:template name='warn-unresolved'>
-  <xsl:if test='$warn-unresolved and cdf:Benchmark[not(number(@resolved)=1)]'>
+  <xsl:if test='$warn-unresolved and cdf:Benchmark[not(@resolved=1)][not(@resolved="true")]'>
     <xsl:message>WARNING: Processing an unresolved XCCDF document. This may have unexpected results.</xsl:message>
   </xsl:if>
 </xsl:template>
