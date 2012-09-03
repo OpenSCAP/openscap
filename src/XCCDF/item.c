@@ -660,7 +660,8 @@ xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *par
 		xmlNode *ref_node = xmlNewTextChild(check_node, ns_xccdf, BAD_CAST "check-content-ref", NULL);
 
 		const char *name = xccdf_check_content_ref_get_name(ref);
-		xmlNewProp(ref_node, BAD_CAST "name", BAD_CAST name);
+		if (name != NULL)
+			xmlNewProp(ref_node, BAD_CAST "name", BAD_CAST name);
 
 		const char *href = xccdf_check_content_ref_get_href(ref);
 		xmlNewProp(ref_node, BAD_CAST "href", BAD_CAST href);
