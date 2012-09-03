@@ -170,7 +170,7 @@ int oval_agent_get_definition_result(oval_agent_session_t *ag_sess, const char *
 	rsystem_it = oval_results_model_get_systems(rmodel);
 	if (!oval_result_system_iterator_has_more(rsystem_it)) {
 		oval_result_system_iterator_free(rsystem_it);
-                oscap_seterr(OSCAP_EFAMILY_OSCAP, "No results system in agent sessin.");
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "No results system in agent session.");
                 return -1;
 	}
 
