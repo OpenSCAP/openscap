@@ -30,6 +30,68 @@
 
 #include "strto.h"
 
+uint8_t strto_uint8_hex (const char *str, size_t len, char **endptr)
+{
+    uint8_t n, t;
+    char    *s;
+    unsigned char c;
+
+    errno = 0;
+    n = t = 0;
+    s = (char *)str;
+
+    while (len > 0) {
+        switch (*s) {
+            case '+': ++s; --len;
+            break;
+            case ' ': ++s; --len;
+            continue;
+        }
+
+        break;
+    }
+
+    if (len > 2) {
+        errno = ERANGE;
+        return UINT8_MAX;
+    }
+
+    while (len > 0 && len <= 2) {
+        if (*s < '0' || *s > 'f')
+            break;
+
+        n *= 16;
+
+        if (*s <= '9')
+            c = *s - '0';
+        else if (*s >= 'a')
+            c = *s - 'a' + 10;
+        else if (*s >= 'A' && *s <= 'F')
+            c = *s - 'A' + 10;
+        else
+            break;
+
+        if (n < t || (UINT8_MAX - n) < c) {
+            errno = ERANGE;
+            return (UINT8_MAX);
+        }
+
+        n += c;
+        t  = n;
+        --len;
+        ++s;
+    }
+
+    if (len != 0) {
+        if (s == str)
+            errno = EINVAL;
+        if (endptr != NULL)
+            *endptr = s;
+    }
+
+    return (n);
+}
+
 int64_t strto_int64 (const char *str, size_t len, char **endptr, int base)
 {
         switch (base) {
