@@ -15,10 +15,12 @@ TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
 
 TESTS = all.sh
 
-check_SCRIPTS = test_applicability_check.sh
+check_SCRIPTS = test_applicability_check.sh test_empty_filename.sh
 
 EXTRA_DIST += \
 	all.sh \
 	test_applicability_check.sh \
-	applicability_check.xml
+	applicability_check.xml \
+	test_empty_filename.sh \
+	empty_filename.xml
 
