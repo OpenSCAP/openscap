@@ -32,64 +32,28 @@
 
 uint8_t strto_uint8_hex (const char *str, size_t len, char **endptr)
 {
-    uint8_t n, t;
-    char    *s;
-    unsigned char c;
+    uint64_t r = strto_uint64_hex(str, len, endptr);
 
-    errno = 0;
-    n = t = 0;
-    s = (char *)str;
-
-    while (len > 0) {
-        switch (*s) {
-            case '+': ++s; --len;
-            break;
-            case ' ': ++s; --len;
-            continue;
-        }
-
-        break;
-    }
-
-    if (len > 2) {
+    if (errno != 0 && r <= UINT16_MAX)
+        return (uint8_t)r;
+    else if (r > UINT8_MAX) {
         errno = ERANGE;
         return UINT8_MAX;
-    }
+    } else
+        return (uint8_t)r;
+}
 
-    while (len > 0 && len <= 2) {
-        if (*s < '0' || *s > 'f')
-            break;
+uint16_t strto_uint16_hex(const char *str, size_t len, char **endptr)
+{
+    uint64_t r = strto_uint64_hex(str, len, endptr);
 
-        n *= 16;
-
-        if (*s <= '9')
-            c = *s - '0';
-        else if (*s >= 'a')
-            c = *s - 'a' + 10;
-        else if (*s >= 'A' && *s <= 'F')
-            c = *s - 'A' + 10;
-        else
-            break;
-
-        if (n < t || (UINT8_MAX - n) < c) {
-            errno = ERANGE;
-            return (UINT8_MAX);
-        }
-
-        n += c;
-        t  = n;
-        --len;
-        ++s;
-    }
-
-    if (len != 0) {
-        if (s == str)
-            errno = EINVAL;
-        if (endptr != NULL)
-            *endptr = s;
-    }
-
-    return (n);
+    if (errno != 0 && r <= UINT16_MAX)
+        return (uint16_t)r;
+    else if (r > UINT16_MAX) {
+        errno = ERANGE;
+        return UINT16_MAX;
+    } else
+        return (uint16_t)r;
 }
 
 int64_t strto_int64 (const char *str, size_t len, char **endptr, int base)
