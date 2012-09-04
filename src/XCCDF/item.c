@@ -508,10 +508,12 @@ xmlNode *xccdf_status_to_dom(struct xccdf_status *status, xmlDoc *doc, xmlNode *
 							BAD_CAST XCCDF_STATUS_MAP[type - 1].string);
 
 	time_t date_time = xccdf_status_get_date(status);
-	struct tm *date = localtime(&date_time);
-	char date_str[] = "YYYY-DD-MM";
-	snprintf(date_str, sizeof(date_str), "%04d-%02d-%02d", date->tm_year + 1900, date->tm_mon + 1, date->tm_mday);
-	xmlNewProp(status_node, BAD_CAST "date", BAD_CAST date_str);
+	if (date_time != NULL) {
+		struct tm *date = localtime(&date_time);
+		char date_str[] = "YYYY-DD-MM";
+		snprintf(date_str, sizeof(date_str), "%04d-%02d-%02d", date->tm_year + 1900, date->tm_mon + 1, date->tm_mday);
+		xmlNewProp(status_node, BAD_CAST "date", BAD_CAST date_str);
+	}
 
 	return status_node;
 }
