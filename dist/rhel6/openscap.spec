@@ -76,6 +76,7 @@ The %{name}-utils package contains various utilities based on %{name} library.
 Summary:        SCAP content
 Group:          Applications/System
 Requires:       %{name} = %{version}-%{release}
+BuildArch:      noarch
 
 %description    content
 Example of SCAP content for Red Hat Enterprise Linux. Please note
