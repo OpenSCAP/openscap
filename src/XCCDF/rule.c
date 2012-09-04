@@ -488,6 +488,7 @@ struct xccdf_check *xccdf_check_clone(const struct xccdf_check* old_check)
 	new_check->selector = oscap_strdup(old_check->selector);
 	new_check->content =  oscap_strdup(old_check->content);
 	new_check->oper = old_check->oper;
+	new_check->flags = old_check->flags;
 
 	new_check->imports = oscap_list_clone(old_check->imports, (oscap_clone_func) xccdf_check_import_clone);
 	new_check->exports = oscap_list_clone(old_check->exports, (oscap_clone_func) xccdf_check_export_clone);
@@ -544,6 +545,10 @@ struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader)
 	check->system = xccdf_attribute_copy(reader, XCCDFA_SYSTEM);
 	check->selector = xccdf_attribute_copy(reader, XCCDFA_SELECTOR);
 	check->oper = oscap_string_to_enum(XCCDF_BOOLOP_MAP, xccdf_attribute_get(reader, XCCDFA_OPERATOR));
+	if (xccdf_attribute_has(reader, XCCDFA_MULTICHECK) && el != XCCDFE_COMPLEX_CHECK) {
+		check->flags.def_multicheck = true;
+		check->flags.multicheck = xccdf_attribute_get_bool(reader, XCCDFA_MULTICHECK);
+	}
 	if (xccdf_attribute_get_bool(reader, XCCDFA_NEGATE))
 		check->oper |= XCCDF_OPERATOR_NOT;
 
@@ -1076,6 +1081,7 @@ OSCAP_ACCESSOR_STRING(xccdf_check, id)
 OSCAP_ACCESSOR_STRING(xccdf_check, system)
 OSCAP_ACCESSOR_STRING(xccdf_check, selector)
 OSCAP_ACCESSOR_STRING(xccdf_check, content)
+OSCAP_ACCESSOR_EXP(bool, xccdf_check, multicheck, flags.multicheck)
 OSCAP_ACCESSOR_SIMPLE(xccdf_bool_operator_t, xccdf_check, oper)
 OSCAP_IGETINS(xccdf_check_import, xccdf_check, imports, import)
 OSCAP_IGETINS(xccdf_check_export, xccdf_check, exports, export)

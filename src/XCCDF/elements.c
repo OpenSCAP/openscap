@@ -253,6 +253,7 @@ static const struct xccdf_attribute_spec XCCDF_ATTRIBUTE_MAP[] = {
 	{XCCDFA_INTERACTIVE, XCCDF_XMLNS, "interactive"},
 	{XCCDFA_INTERFACEHINT, XCCDF_XMLNS, "interfaceHint"},
 	{XCCDFA_MAXIMUM, XCCDF_XMLNS, "maximum"},
+	{XCCDFA_MULTICHECK, XCCDF_XMLNS, "multi-check"},
 	{XCCDFA_MULTIPLE, XCCDF_XMLNS, "multiple"},
 	{XCCDFA_MUSTMATCH, XCCDF_XMLNS, "mustMatch"},
 	{XCCDFA_NAME, XCCDF_XMLNS, "name"},

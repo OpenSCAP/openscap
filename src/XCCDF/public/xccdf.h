@@ -2326,6 +2326,8 @@ const char *xccdf_check_get_selector(const struct xccdf_check *check);
 /// @memberof xccdf_check
 const char *xccdf_check_get_content(const struct xccdf_check *check);
 /// @memberof xccdf_check
+bool xccdf_check_get_multicheck(const struct xccdf_check *check);
+/// @memberof xccdf_check
 //struct xccdf_rule *xccdf_check_get_parent(const struct xccdf_check *check);
 /**
  * Get an iterator to nested checks of the complex check.
@@ -2793,6 +2795,8 @@ bool xccdf_check_set_selector(struct xccdf_check *obj, const char *newval);
 bool xccdf_check_set_content(struct xccdf_check *obj, const char *newval);
 /// @memberof xccdf_check
 bool xccdf_check_set_oper(struct xccdf_check *obj, xccdf_bool_operator_t newval);
+/// @memberof xccdf_check
+bool xccdf_check_set_multicheck(struct xccdf_check *obj, bool newval);
 
 /// @memberof xccdf_check_content_ref
 bool xccdf_check_content_ref_set_name(struct xccdf_check_content_ref *obj, const char *newval);

@@ -258,6 +258,10 @@ struct xccdf_check {
 	char *system;
 	char *selector;
 	char *content;
+	struct _xccdf_check_flags {
+		bool multicheck:1;
+		bool def_multicheck:1;
+	} flags;
 	struct oscap_list *imports;
 	struct oscap_list *exports;
 	struct oscap_list *content_refs;
