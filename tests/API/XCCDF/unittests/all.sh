@@ -10,5 +10,6 @@ test_run "Certain id's of xccdf_items may overlap" ./test_xccdf_shall_pass $srcd
 
 test_run "Assert for environment" [ ! -x $srcdir/not_executable ]
 test_run "Escaping of xml &amp within xccdf:value" $srcdir/test_xccdf_xml_escaping_value.sh
+test_run "check/@multi-check" $srcdir/test_xccdf_check_multi_check.sh
 test_run "xccdf:check-content-ref without @name" $srcdir/test_xccdf_check_content_ref_without_name_attr.sh
 test_exit
