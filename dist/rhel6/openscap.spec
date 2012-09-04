@@ -18,6 +18,9 @@ BuildRequires:  libacl-devel
 BuildRequires:  libselinux-devel libcap-devel
 BuildRequires:  libblkid-devel
 BuildRequires:  libnl-devel
+%if %{?_with_check:1}%{!?_with_check:0}
+BuildRequires:  perl-XML-XPath
+%endif
 Requires(post):   /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 
