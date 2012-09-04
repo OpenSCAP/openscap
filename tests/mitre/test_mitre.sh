@@ -16,7 +16,7 @@ function test_mitre {
     require "egrep" || return 255
     require "unzip" || return 255
 
-    if [ ! -d "$MITRE_FILES" ]; then	
+    if [ ! -d "$MITRE_FILES" ]; then
         /usr/bin/unzip -u ${srcdir}/ValidationSupportFiles.zip -d /tmp
         # workaround file access time issue
         find "$MITRE_FILES"
@@ -29,7 +29,7 @@ function test_mitre {
     local RESFILE=$1.results
 
     [ -f $RESFILE ] && rm -f $RESFILE
-    ../../utils/.libs/oscap oval eval --results "$RESFILE" --variables "$EXTVARFILE"  "$DEFFILE"
+    $OSCAP oval eval --results "$RESFILE" --variables "$EXTVARFILE"  "$DEFFILE"
     # catch error from oscap tool
     ret_val=$?
     if [ $ret_val -eq 1 ]; then
