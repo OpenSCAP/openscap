@@ -487,6 +487,7 @@ AC_CONFIG_FILES([Makefile
 
                  src/OVAL/Makefile
                  tests/API/OVAL/Makefile
+                 tests/API/OVAL/unittests/Makefile
                  tests/mitre/Makefile
 
                  src/OVAL/probes/Makefile
