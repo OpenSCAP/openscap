@@ -19,5 +19,6 @@ $OSCAP xccdf validate-xml $result
 [ $(xpath $result '//rule-result[@idref="def-20120006"]/result/text()') == "fail" ]
 [ $(xpath $result 'count(//rule-result/check/check-content-ref)') == "1" ]
 [ $(xpath $result 'count(//rule-result/check/check-content-ref[not(@name)])') == "1" ]
+[ $(xpath $result 'count(//check[@multi-check])') == "0" ]
 [ $(xpath $result '/Benchmark/TestResult/score[@system="urn:xccdf:scoring:default"]/text()') == "0.000000" ] \
 	&& rm -rf $result
