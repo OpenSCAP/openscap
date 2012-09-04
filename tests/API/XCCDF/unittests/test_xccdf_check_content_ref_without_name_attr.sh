@@ -14,6 +14,7 @@ echo "Result file = $result"
 
 $OSCAP xccdf validate-xml $result
 
+[ $(xpath $result 'count(/Benchmark/status[not(@date)])') == "1" ]
 [ $(xpath $result 'count(//rule-result)') == "1" ]
 [ $(xpath $result '//rule-result[@idref="def-20120006"]/result/text()') == "fail" ]
 [ $(xpath $result 'count(//rule-result/check/check-content-ref)') == "1" ]
