@@ -1,0 +1,2 @@
+run confgen.sh to generate configure.ac from the template
+
