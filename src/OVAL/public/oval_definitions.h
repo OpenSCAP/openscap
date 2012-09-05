@@ -209,7 +209,9 @@ typedef enum {
 	OVAL_FUNCTION_TIMEDIF = OVAL_FUNCTION + 6,
 	OVAL_FUNCTION_ESCAPE_REGEX = OVAL_FUNCTION + 7,
 	OVAL_FUNCTION_REGEX_CAPTURE = OVAL_FUNCTION + 8,
-	OVAL_FUNCTION_ARITHMETIC = OVAL_FUNCTION + 9
+	OVAL_FUNCTION_ARITHMETIC = OVAL_FUNCTION + 9,
+	OVAL_FUNCTION_COUNT = OVAL_FUNCTION + 10,
+	OVAL_FUNCTION_LAST = OVAL_FUNCTION + 11
 } oval_component_type_t;
 
 /// Arithmetic format enumeration
@@ -472,6 +474,9 @@ struct oval_filter_iterator;
  *		For example assume a local variable has two sub-components: a basic component element returns the values "abc" and "def", and a literal component element that has a value of "xyz".
  *		The local_variable element would be evaluated to have two values, "abcxyz" and "defxyz". If one of the components does not exist,
  *		then the result of the concat operation should be does not exist.
+ *	- If @ref oval_component_get_type == @ref OVAL_FUNCTION_COUNT - Counting function.
+ *		- The count function counts the values represented by one or more components as an integer. This function determines the total number of values referenced 
+ *		by all of thespecified sub-components.
  *	- If @ref oval_component_get_type == @ref OVAL_FUNCTION_ARITHMETIC - Arithmetic function.
  *		- The arithmetic function takes two or more integer or float components and performs a basic mathmetical function on them.
  *		The result of this function in a single integer or float unless one of the components returns multiple values.
@@ -2859,6 +2864,8 @@ void oval_setobject_iterator_free(struct oval_setobject_iterator *);
  *	- type -- initialized to the value of the type parameter.
  *	- If type == @ref OVAL_FUNCTION_CONCAT
  *		- components -- initialized to empty iterator
+ *	- If type == @ref OVAL_FUNCTION_COUNT
+ *		- components --  initialized to empty iterator
  *	- If type == @ref OVAL_FUNCTION_ESCAPE_REGEX
  *		- components -- initialized to empty iterator
  *	- If type == @ref OVAL_FUNCTION_ARITHMETIC
