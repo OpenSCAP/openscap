@@ -621,6 +621,9 @@ xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *par
 		xmlNewProp(check_node, BAD_CAST "multi-check",
 			BAD_CAST xccdf_check_get_multicheck(check) ? "true" : "false");
 	}
+	if (check->flags.def_negate || xccdf_check_get_negate(check))
+		xmlNewProp(check_node, BAD_CAST "negate",
+			BAD_CAST xccdf_check_get_negate(check) ? "true" : "false");
 
 	/* Handle complex checks */
 	struct xccdf_check_iterator *checks = xccdf_check_get_children(check);
