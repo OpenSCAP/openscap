@@ -582,8 +582,9 @@ void oval_result_item_iterator_free(struct oval_result_item_iterator *);
 /**
  * @memberof oval_result_criteria_node
  */
-struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_result_system *, oval_criteria_node_type_t,
-								int, ...);
+struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_result_system *,
+								oval_criteria_node_type_t,
+								int, int, ...);
 /**
  * @return A copy of the specified @ref oval_result_criteria_node.
  * @memberof oval_result_criteria_node
@@ -607,6 +608,10 @@ void oval_result_criteria_node_set_result(struct oval_result_criteria_node *, ov
  * @memberof oval_result_criteria_node
  */
 void oval_result_criteria_node_set_negate(struct oval_result_criteria_node *, bool);
+/**
+ * @memberof oval_result_criteria_node
+ */
+void oval_result_criteria_node_set_applicability_check(struct oval_result_criteria_node *, bool);
 /**
  * @memberof oval_result_criteria_node
  */
@@ -644,6 +649,10 @@ oval_result_t oval_result_criteria_node_get_result(struct oval_result_criteria_n
  * @memberof oval_result_criteria_node
  */
 bool oval_result_criteria_node_get_negate(struct oval_result_criteria_node *);
+/**
+ * @memberof oval_result_criteria_node
+ */
+bool oval_result_criteria_node_get_applicability_check(struct oval_result_criteria_node *);
 /**
  * @memberof oval_result_criteria_node
  */

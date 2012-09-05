@@ -1984,6 +1984,12 @@ void oval_criteria_node_free(struct oval_criteria_node *);
  */
 void oval_criteria_node_set_negate(struct oval_criteria_node *, bool negate);
 /**
+ * Set attribute @ref Oval_criteria_node->applicability_check.
+ * @param applicability_check - the required value of the applicability_check attribute
+ * @memberof oval_criteria_node
+ */
+void oval_criteria_node_set_applicability_check(struct oval_criteria_node *, bool applicability_check);
+/**
  * Set attribute @ref Oval_criteria_node->type.
  * @param type - the required value of the type attribute
  * @memberof oval_criteria_node
@@ -2046,6 +2052,12 @@ oval_criteria_node_type_t oval_criteria_node_get_type(struct oval_criteria_node 
  * @memberof oval_criteria_node
  */
 bool oval_criteria_node_get_negate(struct oval_criteria_node *);
+/**
+ * Returns attribute @ref Oval_criteria_node->applicability_check.
+ * @memberof oval_criteria_node
+ */
+bool oval_criteria_node_get_applicability_check(struct oval_criteria_node *);
+
 /**
  * Returns attribute @ref Oval_criteria_node->comment.
  * @return A pointer to the comment attribute of the specified @ref oval_criteria_node.

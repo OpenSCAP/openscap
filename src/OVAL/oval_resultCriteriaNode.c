@@ -46,6 +46,7 @@ typedef struct oval_result_criteria_node {
 	oval_criteria_node_type_t type;
 	oval_result_t result;
 	int negate;
+	int applicability_check;
 } oval_result_criteria_node_t;
 
 typedef struct oval_result_criteria_node_CRITERIA {
@@ -53,6 +54,7 @@ typedef struct oval_result_criteria_node_CRITERIA {
 	oval_criteria_node_type_t type;
 	oval_result_t result;
 	int negate;
+	int applicability_check;
 	oval_operator_t operator;
 	struct oval_collection *subnodes;
 } oval_result_criteria_node_CRITERIA_t;
@@ -62,6 +64,7 @@ typedef struct oval_result_criteria_node_CRITERION {
 	oval_criteria_node_type_t type;
 	oval_result_t result;
 	int negate;
+	int applicability_check;
 	int variable_instance;
 	struct oval_result_test *test;
 } oval_result_criteria_node_CRITERION_t;
@@ -71,19 +74,24 @@ typedef struct oval_result_criteria_node_EXTENDDEF {
 	oval_criteria_node_type_t type;
 	oval_result_t result;
 	int negate;
+	int applicability_check;
 	int variable_instance;
 	struct oval_result_definition *extends;
 } oval_result_criteria_node_EXTENDDEF_t;
 
-struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_result_system *sys, oval_criteria_node_type_t type, int negate, ...) {
+struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_result_system *sys,
+								oval_criteria_node_type_t type,
+								int negate,
+								int applicability_check,
+								...) {
 
 	oval_result_criteria_node_t *node = NULL;
 	va_list ap;
 
-	va_start(ap, negate);
+	va_start(ap, applicability_check);
 	switch (type) {
 	case OVAL_NODETYPE_CRITERIA:{
-			/*(NODETYPE_CRITERIA, negate, operator); */
+			/*(NODETYPE_CRITERIA, negate, applicability_check, operator); */
 			node = (oval_result_criteria_node_t *)
 			    oscap_alloc(sizeof(oval_result_criteria_node_CRITERIA_t));
 			if (node == NULL) {
@@ -97,7 +105,7 @@ struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_resu
 		};
 		break;
 	case OVAL_NODETYPE_CRITERION:{
-			/*(NODETYPE_CRITERION, negate, test, variable_instance); */
+			/*(NODETYPE_CRITERION, negate, applicability_check, test, variable_instance); */
 			node = (oval_result_criteria_node_t *)
 			    oscap_alloc(sizeof(oval_result_criteria_node_CRITERION_t));
 			if (node == NULL) {
@@ -112,7 +120,7 @@ struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_resu
 		};
 		break;
 	case OVAL_NODETYPE_EXTENDDEF:{
-			/*(NODETYPE_EXTENDDEF, negate, definition, variable_instance); */
+			/*(NODETYPE_EXTENDDEF, negate, applicability_check, definition, variable_instance); */
 			node = (oval_result_criteria_node_t *)
 			    oscap_alloc(sizeof(oval_result_criteria_node_EXTENDDEF_t));
 			if (node == NULL) {
@@ -132,6 +140,7 @@ struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_resu
 	}
 	node->sys = sys;
 	node->negate = negate;
+	node->applicability_check = applicability_check;
 	node->result = OVAL_RESULT_NOT_EVALUATED;
 	node->type = type;
 	va_end(ap);
@@ -143,10 +152,15 @@ struct oval_result_criteria_node *oval_result_criteria_node_clone
 	oval_criteria_node_type_t type = oval_result_criteria_node_get_type(old_node);
 	struct oval_result_criteria_node *new_node = NULL;
 	bool negate = oval_result_criteria_node_get_negate(old_node);
+	bool applicability_check = oval_result_criteria_node_get_applicability_check(old_node);
 	switch (type) {
 	case OVAL_NODETYPE_CRITERIA:{
 			oval_operator_t operator = oval_result_criteria_node_get_operator(old_node);
-			new_node = oval_result_criteria_node_new(new_system, OVAL_NODETYPE_CRITERIA, negate, operator);
+			new_node = oval_result_criteria_node_new(new_system,
+								 OVAL_NODETYPE_CRITERIA,
+								 negate,
+								 applicability_check,
+								 operator);
 			struct oval_result_criteria_node_iterator *old_subs =
 			    oval_result_criteria_node_get_subnodes(old_node);
 			while (oval_result_criteria_node_iterator_has_more(old_subs)) {
@@ -162,15 +176,22 @@ struct oval_result_criteria_node *oval_result_criteria_node_clone
 	case OVAL_NODETYPE_CRITERION:{
 			struct oval_result_test *old_test = oval_result_criteria_node_get_test(old_node);
 			struct oval_result_test *new_test = oval_result_test_clone(new_system, old_test);
-			new_node =
-			    oval_result_criteria_node_new(new_system, OVAL_NODETYPE_CRITERION, negate, new_test, 1);
+			new_node = oval_result_criteria_node_new(new_system,
+								 OVAL_NODETYPE_CRITERION,
+								 negate,
+								 applicability_check,
+								 new_test,
+								 1);
 		};
 		break;
 	case OVAL_NODETYPE_EXTENDDEF:{
 			struct oval_result_definition *old_def = oval_result_criteria_node_get_extends(old_node);
 			struct oval_result_definition *new_def = oval_result_definition_clone(new_system, old_def);
-			new_node =
-			    oval_result_criteria_node_new(new_system, OVAL_NODETYPE_EXTENDDEF, negate, new_def, 1);
+			new_node = oval_result_criteria_node_new(new_system,
+								 OVAL_NODETYPE_EXTENDDEF,
+								 negate,
+								 applicability_check,
+								 new_def, 1);
 		} break;
 	default:
 		break;
@@ -217,10 +238,15 @@ struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_n
 	if (oval_node) {
 		oval_criteria_node_type_t type = oval_criteria_node_get_type(oval_node);
 		bool negate = oval_criteria_node_get_negate(oval_node);
+		bool applicability_check = oval_criteria_node_get_applicability_check(oval_node);
 		switch (type) {
 		case OVAL_NODETYPE_CRITERIA:{
 				oval_operator_t operator = oval_criteria_node_get_operator(oval_node);
-				rslt_node = oval_result_criteria_node_new(sys, type, negate, operator);
+				rslt_node = oval_result_criteria_node_new(sys,
+									  type,
+									  negate,
+									  applicability_check,
+									  operator);
 				struct oval_criteria_node_iterator *oval_subnodes
 				    = oval_criteria_node_get_subnodes(oval_node);
 				while (oval_criteria_node_iterator_has_more(oval_subnodes)) {
@@ -235,13 +261,21 @@ struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_n
 		case OVAL_NODETYPE_CRITERION:{
 				struct oval_test *oval_test = oval_criteria_node_get_test(oval_node);
 				struct oval_result_test *rslt_test = oval_result_system_get_new_test(sys, oval_test);
-				rslt_node = oval_result_criteria_node_new(sys, type, negate, rslt_test, 1);
+				rslt_node = oval_result_criteria_node_new(sys,
+									  type,
+									  negate,
+									  applicability_check,
+									  rslt_test, 1);
 			} break;
 		case OVAL_NODETYPE_EXTENDDEF:{
 				struct oval_definition *oval_definition = oval_criteria_node_get_definition(oval_node);
 				struct oval_result_definition *rslt_definition
 				    = oval_result_system_get_new_definition(sys, oval_definition);
-				rslt_node = oval_result_criteria_node_new(sys, type, negate, rslt_definition, 1);
+				rslt_node = oval_result_criteria_node_new(sys,
+									  type,
+									  negate,
+									  applicability_check,
+									  rslt_definition, 1);
 			} break;
 		default:
 			rslt_node = NULL;
@@ -357,6 +391,12 @@ bool oval_result_criteria_node_get_negate(struct oval_result_criteria_node * nod
 	return node->negate;
 }
 
+bool oval_result_criteria_node_get_applicability_check(struct oval_result_criteria_node * node) {
+	__attribute__nonnull__(node);
+
+	return node->applicability_check;
+}
+
 oval_operator_t oval_result_criteria_node_get_operator(struct oval_result_criteria_node * node)
 {
 	/*type==NODETYPE_CRITERIA */
@@ -399,19 +439,26 @@ struct oval_result_definition *oval_result_criteria_node_get_extends(struct oval
 	return extends;
 }
 
-void oval_result_criteria_node_set_result(struct oval_result_criteria_node *node, oval_result_t result) 
+void oval_result_criteria_node_set_result(struct oval_result_criteria_node *node, oval_result_t result)
 {
 	__attribute__nonnull__(node);
 	node->result = result;
 }
 
-void oval_result_criteria_node_set_negate(struct oval_result_criteria_node *node, bool negate) 
+void oval_result_criteria_node_set_negate(struct oval_result_criteria_node *node, bool negate)
 {
 	__attribute__nonnull__(node);
 	node->negate = negate;
 }
 
-void oval_result_criteria_node_add_subnode(struct oval_result_criteria_node *node, struct oval_result_criteria_node *subnode) 
+void oval_result_criteria_node_set_applicability_check(struct oval_result_criteria_node *node,
+						       bool applicability_check)
+{
+	__attribute__nonnull__(node);
+	node->applicability_check = applicability_check;
+}
+
+void oval_result_criteria_node_add_subnode(struct oval_result_criteria_node *node, struct oval_result_criteria_node *subnode)
 {
 	__attribute__nonnull__(node);
 
@@ -422,7 +469,7 @@ void oval_result_criteria_node_add_subnode(struct oval_result_criteria_node *nod
 	}
 }
 
-void oval_result_criteria_node_set_operator(struct oval_result_criteria_node *node, oval_operator_t operator) 
+void oval_result_criteria_node_set_operator(struct oval_result_criteria_node *node, oval_operator_t operator)
 {
 	__attribute__nonnull__(node);
 	/*type==NODETYPE_CRITERIA */
@@ -458,7 +505,11 @@ static int _oval_result_criteria_parse(xmlTextReaderPtr reader, struct oval_pars
 	return oval_result_criteria_node_parse(reader, context, sys, (oscap_consumer_func) _oval_result_criteria_consume_subnode, usr);
 }
 
-int oval_result_criteria_node_parse(xmlTextReaderPtr reader, struct oval_parser_context *context, struct oval_result_system *sys, oscap_consumer_func consumer, void *client) 
+int oval_result_criteria_node_parse(xmlTextReaderPtr reader,
+				    struct oval_parser_context *context,
+				    struct oval_result_system *sys,
+				    oscap_consumer_func consumer,
+				    void *client)
 {
 	xmlChar *localName = xmlTextReaderLocalName(reader);
 	int rc = 0;
@@ -467,29 +518,46 @@ int oval_result_criteria_node_parse(xmlTextReaderPtr reader, struct oval_parser_
 	if (strcmp((const char *)localName, "criteria") == 0) {
 		oval_operator_t operator = oval_operator_parse(reader, "operator", OVAL_OPERATOR_UNKNOWN);
 		int negate = oval_parser_boolean_attribute(reader, "negate", false);
-		node = oval_result_criteria_node_new(sys, OVAL_NODETYPE_CRITERIA, negate, operator);
+		int applicability_check = oval_parser_boolean_attribute(reader, "applicability_check", false);
+		node = oval_result_criteria_node_new(sys,
+						     OVAL_NODETYPE_CRITERIA,
+						     negate,
+						     applicability_check,
+						     operator);
 		rc = oval_parser_parse_tag(reader, context, _oval_result_criteria_parse, node);
 	} else if (strcmp((const char *)localName, "criterion") == 0) {
 		xmlChar *test_ref = xmlTextReaderGetAttribute(reader, BAD_CAST "test_ref");
 		int variable_instance = oval_parser_int_attribute(reader, "variable_instance", 1);
 		int negate = oval_parser_boolean_attribute(reader, "negate", false);
+		int applicability_check = oval_parser_boolean_attribute(reader, "applicability_check", false);
 
 		struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
 		struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
 		struct oval_test *oval_test = oval_definition_model_get_new_test(definition_model, (char *)test_ref);
 		struct oval_result_test *rslt_test = oval_result_system_get_new_test(sys, oval_test);
 
-		node = oval_result_criteria_node_new(sys, OVAL_NODETYPE_CRITERION, negate, rslt_test, variable_instance);
+		node = oval_result_criteria_node_new(sys,
+						     OVAL_NODETYPE_CRITERION,
+						     negate,
+						     applicability_check,
+						     rslt_test,
+						     variable_instance);
 		oscap_free(test_ref);
 	} else if (strcmp((const char *)localName, "extend_definition") == 0) {
 		xmlChar *definition_ref = xmlTextReaderGetAttribute(reader, BAD_CAST "definition_ref");
 		int variable_instance = oval_parser_int_attribute(reader, "variable_instance", 1);
 		int negate = oval_parser_boolean_attribute(reader, "negate", false);
+		int applicability_check = oval_parser_boolean_attribute(reader, "applicability_check", false);
 		struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
 		struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
 		struct oval_definition *oval_definition = oval_definition_model_get_new_definition(definition_model, (char *)definition_ref);
 		struct oval_result_definition *rslt_definition = oval_result_system_get_new_definition(sys, oval_definition);
-		node = oval_result_criteria_node_new(sys, OVAL_NODETYPE_EXTENDDEF, negate, rslt_definition, variable_instance);
+		node = oval_result_criteria_node_new(sys,
+						     OVAL_NODETYPE_EXTENDDEF,
+						     negate,
+						     applicability_check,
+						     rslt_definition,
+						     variable_instance);
 		oscap_free(definition_ref);
 	} else {
 		dW("unhandled criteria node: <%s>.\n",(char *)localName);
@@ -603,6 +671,11 @@ xmlNode *oval_result_criteria_node_to_dom(struct oval_result_criteria_node * nod
 		bool negate = oval_result_criteria_node_get_negate(node);
 		if (negate != false) {
 			xmlNewProp(criteria_node, BAD_CAST "negate", BAD_CAST "true");
+		}
+
+		bool applicability_check = oval_result_criteria_node_get_applicability_check(node);
+		if (applicability_check != false) {
+			xmlNewProp(criteria_node, BAD_CAST "applicability_check", BAD_CAST "true");
 		}
 	}
 	return criteria_node;
