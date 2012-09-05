@@ -14,7 +14,7 @@ echo "Result file = $result"
 
 $OSCAP xccdf validate-xml $result
 
-[ $(xpath $result 'count(//check[not(@multi-check)') == "0" ]
+[ $(xpath $result 'count(//check[not(@multi-check)])') == "0" ]
 
 assert_exists_once() { [ $(xpath $result 'count('$1')') == "1" ]; }
 assert_exists_once '//Rule[@id="xccdf_moc.elpmaxe.www_rule_1"]/check[@multi-check="true"]'
