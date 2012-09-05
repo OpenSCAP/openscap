@@ -261,6 +261,8 @@ struct xccdf_check {
 	struct _xccdf_check_flags {
 		bool multicheck:1;
 		bool def_multicheck:1;
+		bool negate:1;
+		bool def_negate:1;
 	} flags;
 	struct oscap_list *imports;
 	struct oscap_list *exports;

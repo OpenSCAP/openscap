@@ -549,8 +549,8 @@ struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader)
 		check->flags.def_multicheck = true;
 		check->flags.multicheck = xccdf_attribute_get_bool(reader, XCCDFA_MULTICHECK);
 	}
-	if (xccdf_attribute_get_bool(reader, XCCDFA_NEGATE))
-		check->oper |= XCCDF_OPERATOR_NOT;
+	check->flags.def_negate = xccdf_attribute_has(reader, XCCDFA_NEGATE);
+	check->flags.negate = xccdf_attribute_get_bool(reader, XCCDFA_NEGATE);
 
 	int depth = oscap_element_depth(reader) + 1;
 
@@ -1082,6 +1082,7 @@ OSCAP_ACCESSOR_STRING(xccdf_check, system)
 OSCAP_ACCESSOR_STRING(xccdf_check, selector)
 OSCAP_ACCESSOR_STRING(xccdf_check, content)
 OSCAP_ACCESSOR_EXP(bool, xccdf_check, multicheck, flags.multicheck)
+OSCAP_ACCESSOR_EXP(bool, xccdf_check, negate, flags.negate);
 OSCAP_ACCESSOR_SIMPLE(xccdf_bool_operator_t, xccdf_check, oper)
 OSCAP_IGETINS(xccdf_check_import, xccdf_check, imports, import)
 OSCAP_IGETINS(xccdf_check_export, xccdf_check, exports, export)

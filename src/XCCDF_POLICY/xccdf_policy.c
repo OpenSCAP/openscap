@@ -431,16 +431,13 @@ static xccdf_test_result_type_t _resolve_operation(int A, int B, xccdf_bool_oper
 
     switch (oper) {
         case XCCDF_OPERATOR_AND: /* AND */
-        case XCCDF_OPERATOR_NAND:
             value = (xccdf_test_result_type_t) RESULT_TABLE_AND[A][B];
             break;
 
         case XCCDF_OPERATOR_OR: /* OR */
-        case XCCDF_OPERATOR_NOR:
             value = (xccdf_test_result_type_t) RESULT_TABLE_OR[A][B];
             break;
-        case XCCDF_OPERATOR_NOT: /* This one should be never reached */
-        case XCCDF_OPERATOR_MASK:
+	default:
 	    oscap_dlprintf(DBG_E, "Operation not supported.\n");
             return 0;
             break;
@@ -453,9 +450,9 @@ static xccdf_test_result_type_t _resolve_operation(int A, int B, xccdf_bool_oper
  * Handle the negation="true" paramter of xccdf:complex-check.
  * Shall be run only once per a complex-check.
  */
-static xccdf_test_result_type_t _resolve_negate(xccdf_test_result_type_t value, xccdf_bool_operator_t oper)
+static xccdf_test_result_type_t _resolve_negate(xccdf_test_result_type_t value, const struct xccdf_check *check)
 {
-    if (oper & XCCDF_OPERATOR_NOT) {
+    if (xccdf_check_get_negate(check)) {
         if (value == XCCDF_RESULT_PASS) return XCCDF_RESULT_FAIL;
         else if (value == XCCDF_RESULT_FAIL) return XCCDF_RESULT_PASS;
     }
@@ -691,8 +688,6 @@ static int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccd
             }
             xccdf_check_iterator_free(child_it);
 
-            /* Negate only once -> the result of the complex-check */
-            ret = _resolve_negate(ret, xccdf_check_get_oper(check));
     } else { /* This is <check> element */
             /* It depends on what operation we process - we do only Compliance Check */
             content_it = xccdf_check_get_content_refs(check);
@@ -720,6 +715,8 @@ static int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccd
             xccdf_check_content_ref_iterator_free(content_it);
             oscap_list_free(bindings, (oscap_destruct_func) xccdf_value_binding_free);
     }
+    /* Negate only once */
+    ret = _resolve_negate(ret, check);
     return ret;
 }
 
@@ -802,6 +799,14 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
             /* Evaluation of callback
              */
             if (xccdf_select_get_selected(sel)) {
+		/**
+		 * Important notes from XCCDF 1.2 (NISTIR-7275-r4) about check processing:
+		 *
+		 * 1) If an <xccdf:Rule> contains an <xccdf:complex-check>, then the benchmark consumer MUST process it
+		 *    and MUST ignore any <xccdf:check> elements that are also contained by the <xccdf:Rule>.
+		 * 2)
+		 *
+		 */
                 struct xccdf_check_iterator * check_it = xccdf_rule_get_checks((struct xccdf_rule *)item);
                 /* we need to evaluate all checks in rule, iteration begin */
                 while(xccdf_check_iterator_has_more(check_it)) {

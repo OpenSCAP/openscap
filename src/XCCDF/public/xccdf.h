@@ -108,10 +108,6 @@ typedef enum {
 typedef enum {
 	XCCDF_OPERATOR_AND = 0x0002,	///< Logical and.
 	XCCDF_OPERATOR_OR = 0x0003,	///< Logical or.
-	XCCDF_OPERATOR_NOT = 0x0100,	///< Logical negation.
-	XCCDF_OPERATOR_NAND = XCCDF_OPERATOR_AND | XCCDF_OPERATOR_NOT,	///< Logical nand.
-	XCCDF_OPERATOR_NOR = XCCDF_OPERATOR_OR | XCCDF_OPERATOR_NOT,	///< Logical nor.
-	XCCDF_OPERATOR_MASK = 0x00ff	///< Mask to strip the negation away (using bitwise and).
 } xccdf_bool_operator_t;
 
 /// XCCDF error, complexity, disruption, or severity level
@@ -2328,6 +2324,8 @@ const char *xccdf_check_get_content(const struct xccdf_check *check);
 /// @memberof xccdf_check
 bool xccdf_check_get_multicheck(const struct xccdf_check *check);
 /// @memberof xccdf_check
+bool xccdf_check_get_negate(const struct xccdf_check *check);
+/// @memberof xccdf_check
 //struct xccdf_rule *xccdf_check_get_parent(const struct xccdf_check *check);
 /**
  * Get an iterator to nested checks of the complex check.
@@ -2797,6 +2795,8 @@ bool xccdf_check_set_content(struct xccdf_check *obj, const char *newval);
 bool xccdf_check_set_oper(struct xccdf_check *obj, xccdf_bool_operator_t newval);
 /// @memberof xccdf_check
 bool xccdf_check_set_multicheck(struct xccdf_check *obj, bool newval);
+/// @memberof xccdf_check
+bool xccdf_check_set_negate(struct xccdf_check *obj, bool newval);
 
 /// @memberof xccdf_check_content_ref
 bool xccdf_check_content_ref_set_name(struct xccdf_check_content_ref *obj, const char *newval);
