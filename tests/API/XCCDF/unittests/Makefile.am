@@ -31,6 +31,7 @@ TESTS = all.sh
 check_PROGRAMS = test_xccdf_shall_pass
 check_SCRIPTS = \
 	test_xccdf_check_content_ref_without_name_attr.sh \
+	test_xccdf_check_negate.sh \
 	test_xccdf_check_multi_check.sh \
 	test_xccdf_xml_escaping_value.sh
 
@@ -44,6 +45,8 @@ EXTRA_DIST += \
 	test_xccdf_check_content_ref_without_name_attr.oval.xml \
 	test_xccdf_check_content_ref_without_name_attr.xccdf.xml \
 	test_xccdf_check_content_ref_without_name_attr.sh \
+	test_xccdf_check_negate.sh \
+	test_xccdf_check_negate.xccdf.xml \
 	test_xccdf_check_multi_check.sh \
 	test_xccdf_check_multi_check.xccdf.xml \
 	test_xccdf_overlaping_IDs.xccdf.xml \
