@@ -27,6 +27,7 @@
 #include <stdbool.h>
 #include <assert.h>
 #include "public/oscap.h"
+#include "public/adt.h"
 #include "alloc.h"
 
 #define __attribute__nonnull__(x) assert((x) != NULL)
@@ -44,11 +45,6 @@
 #define OSCAP_HIDDEN_END _Pragma("GCC visibility pop")
 
 OSCAP_HIDDEN_START
-
-/**
- * Function pointer to an object destructor.
- */
-typedef void (*oscap_destruct_func) (void *);
 
 /**
  * Pointer to a clone function.

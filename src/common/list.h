@@ -33,6 +33,7 @@
 
 #include "util.h"
 #include "public/oscap.h"
+#include "public/htable.h"
 
 OSCAP_HIDDEN_START;
 
@@ -123,43 +124,15 @@ struct oscap_htable {
 struct oscap_htable *oscap_htable_new1(oscap_compare_func cmp, size_t hsize);
 
 /*
- * Create a new hash table.
- *
- * The table will use strcmp() as the comparison function and will have default table size.
- * @see oscap_htable_new1()
- * @return new hash table
- */
-struct oscap_htable *oscap_htable_new(void);
-
-/*
  * Do a Deep Copy of a hashtable and all of its items
  *
  * @return deep copy of hash table
  */
 struct oscap_htable * oscap_htable_clone(const struct oscap_htable * table, oscap_clone_func cloner);
 
-/*
- * Add an item to the hash table.
- * @return True on success, false if the key already exists.
- */
-bool oscap_htable_add(struct oscap_htable *htable, const char *key, void *item);
-
-/*
- * Get a hash table item.
- * @return An item, NULL if item with specified key is not present in the hash table.
- */
-void *oscap_htable_get(struct oscap_htable *htable, const char *key);
-
 void *oscap_htable_detach(struct oscap_htable *htable, const char *key);
 
 void oscap_htable_dump(struct oscap_htable *htable, oscap_dump_func dumper, int depth);
-
-/*
- * Delete the hash table.
- * @param htable Hash table to be deleted.
- * @param destructor Function used to delete individual items.
- */
-void oscap_htable_free(struct oscap_htable *htable, oscap_destruct_func destructor);
 
 void oscap_print_depth(int depth);
 
