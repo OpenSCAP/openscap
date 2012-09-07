@@ -8,4 +8,10 @@ liboscapcommon_la_SOURCES = oscap.c alloc.c alloc.h text.c tsort.c tsort.h \
 liboscapcommon_la_CPPFLAGS  = @xml2_CFLAGS@ @xslt_CFLAGS@ @exslt_CFLAGS@ -I$(srcdir)/public -I$(top_srcdir)/src/OVAL/probes/SEAP/public -I$(top_srcdir)/src
 liboscapcommon_la_LIBADD = @xml2_LIBS@ @xslt_LIBS@ @exslt_LIBS@ @pthread_LIBS@
 
-pkginclude_HEADERS  = public/oscap.h public/debug.h public/error.h public/text.h public/reporter.h public/reference.h
+pkginclude_HEADERS =\
+	public/debug.h \
+	public/error.h \
+	public/oscap.h \
+	public/reference.h \
+	public/reporter.h \
+	public/text.h
