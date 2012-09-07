@@ -167,8 +167,6 @@ endif
 if probe_routingtable_enabled
 pkglibexec_PROGRAMS += probe_routingtable
 probe_routingtable_SOURCES= unix/routingtable.c
-probe_routingtable_CFLAGS= @nl_CFLAGS@
-probe_routingtable_LDFLAGS= @nl_LIBS@
 endif
 
 if probe_gconf_enabled
