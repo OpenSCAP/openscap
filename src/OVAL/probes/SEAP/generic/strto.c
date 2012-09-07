@@ -56,6 +56,19 @@ uint16_t strto_uint16_hex(const char *str, size_t len, char **endptr)
         return (uint16_t)r;
 }
 
+uint32_t strto_uint32_hex(const char *str, size_t len, char **endptr)
+{
+    uint64_t r = strto_uint64_hex(str, len, endptr);
+
+    if (errno != 0 && r <= UINT32_MAX)
+        return (uint32_t)r;
+    else if (r > UINT32_MAX) {
+        errno = ERANGE;
+        return UINT32_MAX;
+    } else
+        return (uint32_t)r;
+}
+
 int64_t strto_int64 (const char *str, size_t len, char **endptr, int base)
 {
         switch (base) {
