@@ -15,7 +15,11 @@ TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
 
 TESTS = all.sh
 
-check_SCRIPTS = test_applicability_check.sh test_empty_filename.sh test_deprecated_def.sh test_count_function.sh
+check_SCRIPTS = test_applicability_check.sh \
+		test_empty_filename.sh \
+		test_deprecated_def.sh \
+		test_count_function.sh \
+		test_item_not_exist.sh
 
 EXTRA_DIST += \
 	all.sh \
@@ -26,6 +30,7 @@ EXTRA_DIST += \
 	test_deprecated_def.sh \
 	deprecated_def.xml \
 	test_count_function.sh \
-	oval-def_count_function.xml
-
+	oval-def_count_function.xml \
+	test_item_not_exist.sh \
+	item_not_exist.xml
 
