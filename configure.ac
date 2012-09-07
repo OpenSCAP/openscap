@@ -354,7 +354,7 @@ AC_CHECK_FUNC(sigwaitinfo, [sigwaitinfo_LIBS=""], [sigwaitinfo_LIBS="-lrt"])
 AC_SUBST(sigwaitinfo_LIBS)
 
 SAVE_CPPFLAGS="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS  $(pkg-config libapt-pkg --cflags) $(pkg-config blkid --cflags) $(pkg-config gconf-2.0 --cflags) $(pkg-config libnl-1 --cflags) $(pkg-config libpcre --cflags) $(pkg-config rpm --cflags) $(pkg-config libselinux --cflags) $(pkg-config libxml-2.0 --cflags) $(pkg-config libxslt --cflags) "
+CPPFLAGS="$CPPFLAGS  $(pkg-config libapt-pkg --cflags) $(pkg-config blkid --cflags) $(pkg-config gconf-2.0 --cflags) $(pkg-config libpcre --cflags) $(pkg-config rpm --cflags) $(pkg-config libselinux --cflags) $(pkg-config libxml-2.0 --cflags) $(pkg-config libxslt --cflags) "
 
 echo
 echo ' * Checking presence of required headers for the system_info probe'
@@ -474,11 +474,7 @@ AC_CHECK_HEADERS([ctype.h errno.h limits.h stdio.h string.h ],[],[probe_sysctl_r
 
 echo
 echo ' * Checking presence of required headers for the routingtable probe'
-AC_CHECK_HEADERS([errno.h stdio.h stdlib.h string.h ],[],[probe_routingtable_req_deps_ok=no; probe_routingtable_req_deps_missing='header files'],[-])
-
-echo
-echo ' * Checking presence of optional headers for the routingtable probe'
-AC_CHECK_HEADERS([netinet/in.h netlink/cache.h netlink/genl/genl.h netlink/list.h netlink/netlink.h netlink/route/link.h netlink/route/nexthop.h netlink/route/route.h netlink/route/rtnl.h net/route.h ],[],[probe_routingtable_opt_deps_ok=no],[-])
+AC_CHECK_HEADERS([arpa/inet.h endian.h errno.h netinet/in.h netinet/ip6.h netinet/ip.h net/route.h stdio.h stdlib.h string.h ],[],[probe_routingtable_req_deps_ok=no; probe_routingtable_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the gconf probe'
@@ -674,28 +670,6 @@ LIBS=$ldap_LIBS
 AC_CHECK_FUNCS([ldap_init], [], [
 probe_ldap57_req_deps_ok=no;
 probe_ldap57_req_deps_missing+=", $ac_func func";
-])
-LIBS=$SAVE_LIBS
-echo
-echo '* Checking for nl library used by: routingtable '
-PKG_CHECK_MODULES([nl], [libnl-1 >= 0.0],[],[
-SAVE_LIBS=$LIBS
-AC_SEARCH_LIBS([nl_connect],[nl],[
-nl_CFLAGS=;
-nl_LIBS=-lnl;
-],[
-probe_routingtable_req_deps_ok=no;
-probe_routingtable_req_deps_missing+=', nl';
-],[])
-AC_SUBST([nl_CFLAGS])
-AC_SUBST([nl_LIBS])
-LIBS=$SAVE_LIBS
-])
-SAVE_LIBS=$LIBS
-LIBS=$nl_LIBS
-AC_CHECK_FUNCS([nl_connect nl_handle_alloc], [], [
-probe_routingtable_req_deps_ok=no;
-probe_routingtable_req_deps_missing+=", $ac_func func";
 ])
 LIBS=$SAVE_LIBS
 echo
