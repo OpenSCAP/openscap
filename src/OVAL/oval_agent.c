@@ -461,11 +461,31 @@ xccdf_test_result_type_t oval_agent_eval_rule(struct xccdf_policy *policy, const
 	return xccdf_get_result_from_oval(result);
 }
 
+static struct ocap_stringlist *
+_oval_agent_list_definitions(void *usr, xccdf_policy_engine_query_t query_type, void *query_data)
+{
+	__attribute__nonnull__(usr);
+	struct oval_agent_session *sess = (struct oval_agent_session *) usr;
+	if (query_type != POLICY_ENGINE_QUERY_NAMES_FOR_HREF || (query_data != NULL && strcmp(sess->filename, (const char *) query_data)))
+		return NULL;
+	struct oval_definition_iterator *iterator = oval_definition_model_get_definitions(sess->def_model);
+	struct oscap_stringlist *result = oscap_stringlist_new();
+	struct oval_definition *oval_def;
+
+	while (oval_definition_iterator_has_more(iterator)) {
+		oval_def = oval_definition_iterator_next(iterator);
+		oscap_stringlist_add_string(result, oval_definition_get_id(oval_def));
+	}
+
+	oval_definition_iterator_free(iterator);
+	return result;
+}
 
 bool xccdf_policy_model_register_engine_oval(struct xccdf_policy_model * model, struct oval_agent_session * usr)
 {
 
-    return xccdf_policy_model_register_engine_callback(model, "http://oval.mitre.org/XMLSchema/oval-definitions-5", oval_agent_eval_rule, (void *) usr);
+    return xccdf_policy_model_register_engine_and_query_callback(model, "http://oval.mitre.org/XMLSchema/oval-definitions-5",
+		oval_agent_eval_rule, (void *) usr, _oval_agent_list_definitions);
 }
 
 void oval_agent_export_sysinfo_to_xccdf_result(struct oval_agent_session * sess, struct xccdf_result * ritem)

@@ -58,6 +58,7 @@ typedef struct callback_t {
                       struct xccdf_check_import_iterator *,  // Check imports for the checking engine to interpret
                       void *);                  ///< format of callback function 
     void * usr;                                 ///< User data structure
+    xccdf_policy_engine_query_fn query_fn;      ///< query callback function
 
 } callback;
 
@@ -552,6 +553,28 @@ xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * sysname, con
     oscap_iterator_free(cb_it);
 
     return retval;
+}
+
+/**
+ * Find all posible names for given check-content-ref/@href, considering also the check/@system.
+ * This is usefull for multi-check="true" feature.
+ * @return list of names (even empty) if the given href found, NULL otherwise.
+ */
+static struct oscap_stringlist *
+_xccdf_policy_get_namesfor_href(struct xccdf_policy *policy, const char *sysname, const char *href)
+{
+	struct oscap_iterator *cb_it = oscap_iterator_new(policy->model->callbacks);
+	struct oscap_stringlist *result = NULL;
+	while (oscap_iterator_has_more(cb_it) && result == NULL) {
+		callback *cb = (callback *) oscap_iterator_next(cb_it);
+		if (cb == NULL)
+			break;
+		if (oscap_strcmp(cb->system, sysname) || cb->query_fn == NULL)
+			continue;
+		result = (struct oscap_stringlist *) cb->query_fn(cb->usr, POLICY_ENGINE_QUERY_NAMES_FOR_HREF, (void *)href);
+	}
+	oscap_iterator_free(cb_it);
+	return result;
 }
 
 static int xccdf_policy_report_cb(struct xccdf_policy * policy, const char * sysname, const char * rule_id, 
@@ -1398,7 +1421,11 @@ const char * xccdf_policy_get_id(struct xccdf_policy * policy)
  */
 bool xccdf_policy_model_register_engine_callback(struct xccdf_policy_model * model, char * sys, void * func, void * usr)
 {
+	return xccdf_policy_model_register_engine_and_query_callback(model, sys, func, usr, NULL);
+}
 
+bool xccdf_policy_model_register_engine_and_query_callback(struct xccdf_policy_model *model, char *sys, void *func, void *usr, xccdf_policy_engine_query_fn query_fn)
+{
         __attribute__nonnull__(model);
         callback * cb = oscap_alloc(sizeof(callback));
         if (cb == NULL) return false;
@@ -1406,6 +1433,7 @@ bool xccdf_policy_model_register_engine_callback(struct xccdf_policy_model * mod
         cb->system   = sys;
         cb->callback = func;
         cb->usr      = usr;
+	cb->query_fn = query_fn;
 
         return oscap_list_add(model->callbacks, cb);
 }
