@@ -385,9 +385,11 @@ void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, 
 			xmlNewProp(refrule_node, BAD_CAST "severity", BAD_CAST XCCDF_LEVEL_MAP[severity - 1].string);
 
 		float weight = xccdf_refine_rule_get_weight(refine_rule);
-		char *weight_str = oscap_sprintf("%f", weight);
-		xmlNewProp(refrule_node, BAD_CAST "weight", BAD_CAST weight_str);
-        oscap_free(weight_str);
+		if (weight != -1) {
+			char *weight_str = oscap_sprintf("%f", weight);
+			xmlNewProp(refrule_node, BAD_CAST "weight", BAD_CAST weight_str);
+			oscap_free(weight_str);
+		}
 		
 		xccdf_texts_to_dom(xccdf_refine_rule_get_remarks(refine_rule), refrule_node, "remark");
 	}
