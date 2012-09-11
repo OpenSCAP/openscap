@@ -198,10 +198,10 @@ void xccdf_value_to_dom(struct xccdf_value *value, xmlNode *value_node, xmlDoc *
 		xccdf_unit_node(defval_nodes, inst->type, inst->defval, inst->flags.defval_given, ns_xccdf, "default", inst->selector);
         snprintf(buff, 15, "%f", inst->lower_bound);
 		xccdf_unit_node(lower_bound_nodes, inst->type, buff,
-			inst->type == XCCDF_TYPE_NUMBER && inst->lower_bound != NAN && buff[0] != 'n', ns_xccdf, "lower-bound", inst->selector);
+			inst->type == XCCDF_TYPE_NUMBER && !isnan(inst->lower_bound) && buff[0] != 'n', ns_xccdf, "lower-bound", inst->selector);
         snprintf(buff, 15, "%f", inst->upper_bound);
 		xccdf_unit_node(upper_bound_nodes, inst->type, buff,
-			inst->type == XCCDF_TYPE_NUMBER && inst->upper_bound != NAN && buff[0] != 'n', ns_xccdf, "upper-bound", inst->selector);
+			inst->type == XCCDF_TYPE_NUMBER && !isnan(inst->upper_bound) && buff[0] != 'n', ns_xccdf, "upper-bound", inst->selector);
 		xccdf_unit_node(match_nodes, inst->type, inst->match,
 			inst->type == XCCDF_TYPE_STRING && inst->match != NULL, ns_xccdf, "match", inst->selector);
         if (inst->choices->first) {

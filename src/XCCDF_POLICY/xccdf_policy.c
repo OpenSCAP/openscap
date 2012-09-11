@@ -630,7 +630,7 @@ static struct oscap_list * xccdf_policy_check_get_value_bindings(struct xccdf_po
             if (r_value != NULL) {
                 selector = xccdf_refine_value_get_selector(r_value);
                 /* This refine value changes the value content */
-                if (xccdf_refine_value_get_oper(r_value) != NAN) {
+                if (!isnan(xccdf_refine_value_get_oper(r_value))) {
                     binding->operator = xccdf_refine_value_get_oper(r_value);
                 } else binding->operator = xccdf_value_get_oper(value);
 
@@ -1721,9 +1721,9 @@ bool xccdf_policy_resolve(struct xccdf_policy * policy)
                 
             } else if (xccdf_item_get_type(item) == XCCDF_RULE) {
                 /* Perform all changes in rule */
-                if (xccdf_refine_rule_get_role(r_rule) != NAN)
+                if (!isnan(xccdf_refine_rule_get_role(r_rule)))
                     xccdf_rule_set_role((struct xccdf_rule *) item, xccdf_refine_rule_get_role(r_rule));
-                if (xccdf_refine_rule_get_severity(r_rule) != NAN)
+                if (!isnan(xccdf_refine_rule_get_severity(r_rule)))
                     xccdf_rule_set_severity((struct xccdf_rule *) item, xccdf_refine_rule_get_severity(r_rule));
 
             } else {}/* TODO oscap_err ? */;
@@ -1952,9 +1952,9 @@ struct xccdf_item * xccdf_policy_tailor_item(struct xccdf_policy * policy, struc
             if (r_rule == NULL) return item;
 
             new_item = (struct xccdf_item *) xccdf_rule_clone((struct xccdf_rule *) item);
-            if (xccdf_refine_rule_get_role(r_rule) != NAN)
+            if (!isnan(xccdf_refine_rule_get_role(r_rule)))
                 xccdf_rule_set_role((struct xccdf_rule *) new_item, xccdf_refine_rule_get_role(r_rule));
-            if (xccdf_refine_rule_get_severity(r_rule) != NAN)
+            if (!isnan(xccdf_refine_rule_get_severity(r_rule)))
                 xccdf_rule_set_severity((struct xccdf_rule *) new_item, xccdf_refine_rule_get_severity(r_rule));
             if (xccdf_refine_rule_weight_defined(r_rule))
                 xccdf_rule_set_weight((struct xccdf_rule *) new_item, xccdf_refine_rule_get_weight(r_rule));
