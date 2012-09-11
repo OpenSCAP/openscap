@@ -24,6 +24,8 @@
 #include <config.h>
 #endif
 
+#include <math.h>
+
 #include "item.h"
 #include "helpers.h"
 #include "xccdf_impl.h"
@@ -109,6 +111,11 @@ struct xccdf_refine_rule * xccdf_refine_rule_clone(const struct xccdf_refine_rul
 	clone->remarks = oscap_list_clone(rule->remarks, (oscap_clone_func) oscap_text_clone);
 	return clone;
 }	
+
+bool xccdf_refine_rule_weight_defined(const struct xccdf_refine_rule *rule)
+{
+	return !isnan(rule->weight);
+}
 
 struct xccdf_select *xccdf_select_new(void)
 {
@@ -247,9 +254,7 @@ struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_ite
 				struct xccdf_refine_rule *rr = xccdf_refine_rule_new();
 				rr->item = oscap_strdup(id);
 				rr->selector = xccdf_attribute_copy(reader, XCCDFA_SELECTOR);
-				if (xccdf_attribute_has(reader, XCCDFA_WEIGHT))
-				    rr->weight = xccdf_attribute_get_float(reader, XCCDFA_WEIGHT);
-                                else rr->weight = -1.0;
+				rr->weight = xccdf_attribute_get_float(reader, XCCDFA_WEIGHT);
 				if (xccdf_attribute_has(reader, XCCDFA_ROLE))
 					rr->role =
 					    oscap_string_to_enum(XCCDF_ROLE_MAP,
@@ -384,8 +389,8 @@ void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, 
 		if (severity != 0)
 			xmlNewProp(refrule_node, BAD_CAST "severity", BAD_CAST XCCDF_LEVEL_MAP[severity - 1].string);
 
-		float weight = xccdf_refine_rule_get_weight(refine_rule);
-		if (weight != -1) {
+		if (xccdf_refine_rule_weight_defined(refine_rule)) {
+			float weight = xccdf_refine_rule_get_weight(refine_rule);
 			char *weight_str = oscap_sprintf("%f", weight);
 			xmlNewProp(refrule_node, BAD_CAST "weight", BAD_CAST weight_str);
 			oscap_free(weight_str);

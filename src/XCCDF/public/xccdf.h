@@ -2475,6 +2475,9 @@ xccdf_level_t xccdf_refine_rule_get_severity(const struct xccdf_refine_rule* rr)
 struct oscap_text_iterator* xccdf_refine_rule_get_remarks(const struct xccdf_refine_rule *rr);
 /// @memberof xccdf_refine_rule
 xccdf_numeric xccdf_refine_rule_get_weight(const struct xccdf_refine_rule *item);
+/// @memberof xccdf_refine_rule
+bool xccdf_refine_rule_weight_defined(const struct xccdf_refine_rule *item);
+/// @memberof xccdf_refine_value
 const char *     xccdf_refine_value_get_item(const struct xccdf_refine_value* rv);
 /// @memberof xccdf_refine_value
 const char *     xccdf_refine_value_get_selector(const struct xccdf_refine_value* rv);

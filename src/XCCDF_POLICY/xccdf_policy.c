@@ -1709,7 +1709,7 @@ bool xccdf_policy_resolve(struct xccdf_policy * policy)
             /* In r_rule we have refine rule that match  - no more then one !*/
             if (xccdf_item_get_type(item) == XCCDF_GROUP) { 
                 /* Perform check of weight attribute  - ignore other attributes */
-                if (xccdf_refine_rule_get_weight(r_rule) == NAN) {
+                if (xccdf_refine_rule_weight_defined(r_rule)) {
                         oscap_seterr(OSCAP_EFAMILY_XCCDF, "'Weight' attribute not specified, only 'weight' attribute applies to groups items");
                         xccdf_refine_rule_iterator_free(r_rule_it);
                         return false;            
@@ -1956,7 +1956,7 @@ struct xccdf_item * xccdf_policy_tailor_item(struct xccdf_policy * policy, struc
                 xccdf_rule_set_role((struct xccdf_rule *) new_item, xccdf_refine_rule_get_role(r_rule));
             if (xccdf_refine_rule_get_severity(r_rule) != NAN)
                 xccdf_rule_set_severity((struct xccdf_rule *) new_item, xccdf_refine_rule_get_severity(r_rule));
-            if (xccdf_refine_rule_get_weight(r_rule) != -1.0)
+            if (xccdf_refine_rule_weight_defined(r_rule))
                 xccdf_rule_set_weight((struct xccdf_rule *) new_item, xccdf_refine_rule_get_weight(r_rule));
             break;
         }
@@ -1965,7 +1965,7 @@ struct xccdf_item * xccdf_policy_tailor_item(struct xccdf_policy * policy, struc
             if (r_rule == NULL) return item;
 
             new_item = (struct xccdf_item *) xccdf_group_clone((struct xccdf_group *) item);
-            if (xccdf_refine_rule_get_weight(r_rule) != NAN)
+            if (xccdf_refine_rule_weight_defined(r_rule))
                 xccdf_group_set_weight((struct xccdf_group *) new_item, xccdf_refine_rule_get_weight(r_rule));
             else {
                 xccdf_group_free(new_item);
