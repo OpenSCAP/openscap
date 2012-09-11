@@ -321,8 +321,8 @@ OSCAP_ITERATOR_REMOVE_F(xccdf_value_instance)
 struct xccdf_value_instance *xccdf_value_instance_new(xccdf_value_type_t type)
 {
 	struct xccdf_value_instance *inst = oscap_calloc(1, sizeof(struct xccdf_value_instance));
-    inst->lower_bound = NAN;	//TODO: REPLACE WITH ANSI
-    inst->upper_bound = NAN;	//TODO: REPLACE WITH ANSI
+	inst->lower_bound = NAN;
+	inst->upper_bound = NAN;
 
 	inst->type = type;
 	inst->choices = oscap_list_new();

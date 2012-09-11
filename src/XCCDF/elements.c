@@ -338,7 +338,7 @@ float xccdf_attribute_get_float(xmlTextReaderPtr reader, xccdf_attribute_t attr)
 	if (xccdf_attribute_has(reader, attr) && sscanf(xccdf_attribute_get(reader, attr), "%f", &res) == 1)
 		return res;
 	else
-		return NAN;	//TODO: Replace with ANSI
+		return NAN;
 }
 
 

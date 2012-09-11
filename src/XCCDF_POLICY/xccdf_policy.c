@@ -29,7 +29,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <math.h> /* For NAN <- TODO */
+#include <math.h> /* For isnan() */
 #include <time.h> /* For timestamps in rule results and TestResult */
 
 #include "public/xccdf_policy.h"
