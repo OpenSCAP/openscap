@@ -231,10 +231,7 @@ static bool xccdf_policy_filter_selected(void *item, void *policy)
  */
 static bool xccdf_policy_filter_select(void *item, void *selectid)
 {
-        if( !strcmp(xccdf_select_get_item((struct xccdf_select *) item), (char *) selectid) )
-            return true;
-        else 
-            return false;
+	return !strcmp(xccdf_select_get_item((struct xccdf_select *) item), (char *) selectid);
 }
 
 /**
