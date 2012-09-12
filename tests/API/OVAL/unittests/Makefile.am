@@ -19,7 +19,8 @@ check_SCRIPTS = \
 	test_deprecated_def.sh \
 	test_empty_filename.sh \
 	test_item_not_exist.sh \
-	test_oval_empty_variable_evaluation.sh
+	test_oval_empty_variable_evaluation.sh \
+	test_anyxml.sh
 
 EXTRA_DIST += \
 	all.sh \
@@ -34,4 +35,8 @@ EXTRA_DIST += \
 	test_oval_empty_variable_evaluation.sh \
 	test_oval_empty_variable_evaluation.xml \
 	test_item_not_exist.sh \
-	item_not_exist.xml
+	item_not_exist.xml \
+	anyxmlsyschar.xml \
+	anyxmloval.xml \
+	test_anyxml.sh
+

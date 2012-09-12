@@ -937,13 +937,6 @@ struct oval_reference_iterator *oval_definition_get_references(struct oval_defin
  */
 struct oval_string_iterator *oval_definition_get_notes(struct oval_definition *);
 /**
- * @return A pointer to the xmlNode element holding any unstructured metadata included
- * in the definition. Adding and removing child elements is permitted.
- * All the child elements will be exported in the metadata of the definition.
- * @memberof oval_definition
- */
-xmlNode *oval_definition_get_metadata(struct oval_definition *);
-/**
  * Returns attribute @ref oval_definition->criteria.
  * @return A pointer to the criteria attribute of the specified @ref oval_definition.
  * @memberof oval_definition

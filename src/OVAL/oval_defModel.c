@@ -55,7 +55,6 @@ typedef struct oval_definition_model {
 	struct oval_string_map *state_map;
 	struct oval_string_map *variable_map;
 	struct oval_collection *bound_variable_models;
-	xmlDoc *metadata_doc;
         char *schema;
 } oval_definition_model_t;
 
@@ -78,12 +77,6 @@ struct oval_definition_model *oval_definition_model_new()
 	newmodel->variable_map = oval_string_map_new();
 	newmodel->bound_variable_models = NULL;
         newmodel->schema = strdup(OVAL_DEF_SCHEMA_LOCATION);
-
-	root = xmlNewNode(NULL, BAD_CAST "root");
-	ns = xmlNewNs(root, OVAL_DEFINITIONS_NAMESPACE, NULL);
-	xmlSetNs(root, ns);
-	newmodel->metadata_doc = xmlNewDoc(BAD_CAST "1.0");
-	xmlDocSetRootElement(newmodel->metadata_doc, root);
 
 	return newmodel;
 }
@@ -122,7 +115,6 @@ struct oval_definition_model *oval_definition_model_clone(struct oval_definition
 	_oval_definition_model_clone(oldmodel->test_map, newmodel, (_oval_clone_func) oval_test_clone);
 	_oval_definition_model_clone
 	    (oldmodel->variable_map, newmodel, (_oval_clone_func) oval_variable_clone);
-	newmodel->metadata_doc = xmlCopyDoc(oldmodel->metadata_doc, 1);
         newmodel->schema = oscap_strdup(oldmodel->schema);
 	return newmodel;
 }
@@ -140,8 +132,6 @@ void oval_definition_model_free(struct oval_definition_model *model)
 		oval_collection_free_items(model->bound_variable_models,
 					   (oscap_destruct_func) oval_variable_model_free);
 
-	xmlFreeDoc(model->metadata_doc);
-
         if (model->schema != NULL)
             oscap_free(model->schema);
 
@@ -150,7 +140,6 @@ void oval_definition_model_free(struct oval_definition_model *model)
 	model->state_map = NULL;
 	model->test_map = NULL;
 	model->variable_map = NULL;
-	model->metadata_doc = NULL;
         model->schema = NULL;
 
 	oval_generator_free(model->generator);
@@ -441,11 +430,6 @@ struct oval_test *oval_definition_model_get_new_test(struct oval_definition_mode
 		test = oval_test_new(model, id);
 	}
 	return test;
-}
-
-xmlDoc *oval_definition_model_get_metadata_doc(struct oval_definition_model *model)
-{
-	return model->metadata_doc;
 }
 
 xmlNode *oval_definition_model_to_dom(struct oval_definition_model *definition_model, xmlDocPtr doc, xmlNode * parent)
