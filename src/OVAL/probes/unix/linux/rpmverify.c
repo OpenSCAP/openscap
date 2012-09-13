@@ -109,6 +109,7 @@ static struct rpmverify_global g_rpm;
 static int rpmverify_collect(probe_ctx *ctx,
                              const char *name, oval_operation_t name_op,
                              const char *file, oval_operation_t file_op,
+			     SEXP_t *name_ent, SEXP_t *filepath_ent,
                              uint64_t flags,
                              void (*callback)(probe_ctx *, struct rpmverify_res *))
 {
@@ -200,8 +201,16 @@ static int rpmverify_collect(probe_ctx *ctx,
                 struct rpmverify_res res;
                 errmsg_t rpmerr;
 		int i;
+		SEXP_t *name_sexp;
 
                 res.name = headerFormat(pkgh, "%{NAME}", &rpmerr);
+
+		name_sexp = SEXP_string_newf("%s", res.name);
+		if (probe_entobj_cmp(name_ent, name_sexp) != OVAL_RESULT_TRUE) {
+			SEXP_free(name_sexp);
+			continue;
+		}
+		SEXP_free(name_sexp);
 
                 /*
                  * Inspect package files & directories
@@ -210,6 +219,8 @@ static int rpmverify_collect(probe_ctx *ctx,
 		  fi = rpmfiNew(g_rpm.rpmts, pkgh, tag[i], 1);
 
 		  while (rpmfiNext(fi) != -1) {
+		    SEXP_t *filepath_sexp;
+
 		    res.file   = rpmfiFN(fi);
 		    res.fflags = rpmfiFFlags(fi);
 		    res.oflags = omit;
@@ -218,37 +229,12 @@ static int rpmverify_collect(probe_ctx *ctx,
 			((res.fflags & RPMFILE_GHOST)  && (flags & RPMVERIFY_SKIP_GHOST)))
 		      continue;
 
-		    switch(file_op) {
-		    case OVAL_OPERATION_EQUALS:
-		      if (strcmp(res.file, real_file) != 0)
-			continue;
-		      res.file = file;
-		      break;
-		    case OVAL_OPERATION_NOT_EQUAL:
-		      if (strcmp(res.file, real_file) == 0)
-			continue;
-		      break;
-		    case OVAL_OPERATION_PATTERN_MATCH:
-		      ret = pcre_exec(re, NULL, res.file, strlen(res.file), 0, 0, NULL, 0);
-
-		      switch(ret) {
-		      case 0: /* match */
-			break;
-		      case -1:
-			/* mismatch */
-			continue;
-		      default:
-			dE("pcre_exec() failed!\n");
-			ret = -1;
-			goto ret;
-		      }
-		      break;
-		    default:
-		      /* unsupported operation */
-		      dE("Operation \"%d\" on `filepath' not supported\n", file_op);
-		      ret = -1;
-		      goto ret;
+		    filepath_sexp = SEXP_string_newf("%s", res.file);
+		    if (probe_entobj_cmp(filepath_ent, filepath_sexp) != OVAL_RESULT_TRUE) {
+		      SEXP_free(filepath_sexp);
+		      continue;
 		    }
+		    SEXP_free(filepath_sexp);
 
 		    if (rpmVerifyFile(g_rpm.rpmts, fi, &res.vflags, omit) != 0)
 		      res.vflags = RPMVERIFY_FAILURES;
@@ -402,9 +388,6 @@ int probe_main (probe_ctx *ctx, void *arg)
         PROBE_ENT_STRVAL(name_ent, name, name_len, /* void */, strcpy(name, ""););
         PROBE_ENT_STRVAL(file_ent, file, file_len, /* void */, strcpy(file, ""););
 
-        SEXP_free(name_ent);
-        SEXP_free(file_ent);
-
         /*
          * Parse behaviors
          */
@@ -435,12 +418,16 @@ int probe_main (probe_ctx *ctx, void *arg)
         if (rpmverify_collect(ctx,
                               name, name_op,
                               file, file_op,
+			      name_ent, file_ent,
                               collect_flags,
                               rpmverify_additem) != 0)
         {
                 dE("An error ocured while collecting rpmverify data\n");
                 probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
         }
+
+	SEXP_free(name_ent);
+	SEXP_free(file_ent);
 
         return 0;
 }
