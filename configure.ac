@@ -673,22 +673,22 @@ probe_ldap57_req_deps_missing+=", $ac_func func";
 ])
 LIBS=$SAVE_LIBS
 echo
-echo '* Checking for odbx library used by: sql sql57 '
+echo '* Checking for opendbx library used by: sql sql57 '
 SAVE_LIBS=$LIBS
-AC_SEARCH_LIBS([odbx_init],[odbx],[
-odbx_CFLAGS=;
-odbx_LIBS=-lodbx;
+AC_SEARCH_LIBS([odbx_init],[opendbx],[
+opendbx_CFLAGS=;
+opendbx_LIBS=-lopendbx;
 ],[
 probe_sql_req_deps_ok=no;
-probe_sql_req_deps_missing+=', odbx lib';
+probe_sql_req_deps_missing+=', opendbx lib';
 probe_sql57_req_deps_ok=no;
-probe_sql57_req_deps_missing+=', odbx lib';
+probe_sql57_req_deps_missing+=', opendbx lib';
 ],[])
-AC_SUBST([odbx_CFLAGS])
-AC_SUBST([odbx_LIBS])
+AC_SUBST([opendbx_CFLAGS])
+AC_SUBST([opendbx_LIBS])
 LIBS=$SAVE_LIBS
 SAVE_LIBS=$LIBS
-LIBS=$odbx_LIBS
+LIBS=$opendbx_LIBS
 AC_CHECK_FUNCS([odbx_init], [], [
 probe_sql_req_deps_ok=no;
 probe_sql_req_deps_missing+=", $ac_func func";
