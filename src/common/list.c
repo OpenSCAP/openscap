@@ -221,7 +221,6 @@ void *oscap_iterator_new_filter(struct oscap_list *list, oscap_filter_func filte
 	struct oscap_iterator *it = oscap_iterator_new(list);
 	it->filter = filter;
 	it->user_data = user_data;
-	oscap_iterator_find_nearest(it);
 	return it;
 }
 
