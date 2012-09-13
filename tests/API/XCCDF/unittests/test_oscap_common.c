@@ -27,10 +27,12 @@
 #include "../../../assume.h"
 
 static void _test_first_item_is_not_skipped(void);
+static void _test_not_matching_last_item_is_not_returned(void);
 
 int main(int argc, char *argv[])
 {
 	_test_first_item_is_not_skipped();
+	_test_not_matching_last_item_is_not_returned();
 	return 0;
 }
 
@@ -55,5 +57,18 @@ static void _test_first_item_is_not_skipped(void)
 	assume(strcmp(oscap_string_iterator_next(it), "Peter") == 0);
 	assume(oscap_string_iterator_has_more(it));
 	assume(strcmp(oscap_string_iterator_next(it), "Peter") == 0);
+	assume(oscap_string_iterator_has_more(it) == false);
+}
+
+static void _test_not_matching_last_item_is_not_returned(void)
+{
+	// Test that oscap_iterator_has_more works with filter.
+	struct oscap_stringlist *names = oscap_stringlist_new();
+	assume(oscap_stringlist_add_string(names, "Peter"));
+	struct oscap_string_iterator *it =
+		(struct oscap_string_iterator*) oscap_iterator_new_filter(
+			(struct oscap_list *) names,
+			(oscap_filter_func) _simple_string_filter,
+			"Tomas");
 	assume(oscap_string_iterator_has_more(it) == false);
 }
