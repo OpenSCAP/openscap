@@ -55,6 +55,8 @@ static void _test_first_item_is_not_skipped(void)
 	assume(oscap_string_iterator_has_more(it));
 	assume(strcmp(oscap_string_iterator_next(it), "Peter") == 0);
 	assume(oscap_string_iterator_has_more(it) == false);
+	oscap_string_iterator_free(it);
+	oscap_stringlist_free(names);
 }
 
 static void _test_not_matching_last_item_is_not_returned(void)
@@ -70,6 +72,8 @@ static void _test_not_matching_last_item_is_not_returned(void)
 	assume(oscap_string_iterator_has_more(it) == false);
 	oscap_string_iterator_reset(it);
 	assume(oscap_string_iterator_has_more(it) == false);
+	oscap_string_iterator_free(it);
+	oscap_stringlist_free(names);
 }
 
 static void _test_empty_list_has_more(void)
@@ -79,6 +83,8 @@ static void _test_empty_list_has_more(void)
 	assume(oscap_string_iterator_has_more(it) == false);
 	oscap_string_iterator_reset(it);
 	assume(oscap_string_iterator_has_more(it) == false);
+	oscap_string_iterator_free(it);
+	oscap_stringlist_free(names);
 }
 
 static void _test_empty_list_filter_has_more(void)
@@ -92,6 +98,8 @@ static void _test_empty_list_filter_has_more(void)
 	assume(oscap_string_iterator_has_more(it) == false);
 	oscap_string_iterator_reset(it);
 	assume(oscap_string_iterator_has_more(it) == false);
+	oscap_string_iterator_free(it);
+	oscap_stringlist_free(names);
 }
 
 int main(int argc, char *argv[])
