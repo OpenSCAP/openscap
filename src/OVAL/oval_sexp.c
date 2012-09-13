@@ -47,6 +47,7 @@
 #include "probes/public/probe-api.h"
 #include "oval_definitions_impl.h"
 #include "oval_system_characteristics_impl.h"
+#include "oval_string_map_impl.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "public/oval_version.h"
@@ -935,6 +936,7 @@ int oval_sexp_to_sysch(const SEXP_t *cobj, struct oval_syschar *syschar)
 	oval_syschar_collection_flag_t flag;
 	SEXP_t *messages, *msg, *items, *item;
 	struct oval_syschar_model *model;
+	struct oval_string_map *itm_id_map;
 
 	_A(cobj != NULL);
 
@@ -951,16 +953,25 @@ int oval_sexp_to_sysch(const SEXP_t *cobj, struct oval_syschar *syschar)
 	}
 	SEXP_free(messages);
 
+	itm_id_map = oval_string_map_new();
 	model = oval_syschar_get_model(syschar);
 	items = probe_cobj_get_items(cobj);
 	SEXP_list_foreach(item, items) {
 		struct oval_sysitem *sysitem;
 
 		sysitem = oval_sexp_to_sysitem(model, item);
-		if (sysitem != NULL)
-			oval_syschar_add_sysitem(syschar, sysitem);
+		if (sysitem != NULL) {
+			char *itm_id;
+
+			itm_id = oval_sysitem_get_id(sysitem);
+			if (oval_string_map_get_value(itm_id_map, itm_id) == NULL) {
+				oval_string_map_put(itm_id_map, itm_id, itm_id);
+				oval_syschar_add_sysitem(syschar, sysitem);
+			}
+		}
 	}
 	SEXP_free(items);
+	oval_string_map_free(itm_id_map, NULL);
 
 	return 0;
 }
