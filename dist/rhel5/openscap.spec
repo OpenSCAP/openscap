@@ -16,7 +16,6 @@ BuildRequires:  libgcrypt-devel
 BuildRequires:  pcre-devel
 BuildRequires:  libselinux-devel libcap-devel
 BuildRequires:  libacl-devel
-BuildRequires:  libnl-devel
 Requires(post):   /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 
