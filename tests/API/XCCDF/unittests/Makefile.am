@@ -28,7 +28,9 @@ TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
 		OSCAP=$(top_builddir)/utils/.libs/oscap
 
 TESTS = all.sh
-check_PROGRAMS = test_xccdf_shall_pass
+check_PROGRAMS = \
+	test_oscap_common \
+	test_xccdf_shall_pass
 check_SCRIPTS = \
 	test_xccdf_check_content_ref_without_name_attr.sh \
 	test_xccdf_check_negate.sh \
@@ -36,6 +38,8 @@ check_SCRIPTS = \
 	test_xccdf_refine_rule.sh \
 	test_xccdf_xml_escaping_value.sh
 
+test_oscap_common_SOURCES = test_oscap_common.c
+test_oscap_common_SOURCES += $(top_srcdir)/src/common/util.c $(top_srcdir)/src/common/list.c # This needs love (See trac#198)
 test_xccdf_shall_pass_SOURCES = test_xccdf_shall_pass.c unit_helper.c
 
 EXTRA_DIST += \
