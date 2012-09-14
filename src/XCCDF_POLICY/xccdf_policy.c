@@ -220,11 +220,8 @@ static bool xccdf_policy_filter_selected(void *item, void *policy)
             oscap_dlprintf(DBG_E, "Item \"%s\" does not exist. Remove it from Profile !\n", xccdf_select_get_item((struct xccdf_select *) item));
             return false;
         }
-        if ((xccdf_item_get_type(titem) == XCCDF_RULE) 
-            && (xccdf_select_get_selected((struct xccdf_select *) item)))
-            return true;
-        else 
-            return false;
+	return ((xccdf_item_get_type(titem) == XCCDF_RULE) &&
+		(xccdf_select_get_selected((struct xccdf_select *) item)));
 }
 
 /**
@@ -1275,8 +1272,7 @@ struct oscap_file_entry_list * xccdf_item_get_systems_and_files(struct xccdf_ite
 
 static bool xccdf_cmp_func(const char *s1, const char *s2)
 {
-    if (!oscap_strcmp(s1, s2)) return true;
-    else return false;
+    return !oscap_strcmp(s1, s2);
 }
 
 static struct oscap_stringlist * xccdf_check_get_files(struct xccdf_check * check)
