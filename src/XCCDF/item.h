@@ -433,6 +433,8 @@ void xccdf_group_dump(struct xccdf_item *group, int depth);
 struct xccdf_item *xccdf_rule_new_internal(struct xccdf_item *parent);
 struct xccdf_item *xccdf_rule_parse(xmlTextReaderPtr reader, struct xccdf_item *parent);
 void xccdf_rule_dump(struct xccdf_item *rule, int depth);
+struct xccdf_check_iterator *xccdf_rule_get_checks_filtered(struct xccdf_item *rule, char *selector);
+struct xccdf_check_iterator *xccdf_rule_get_complex_checks(struct xccdf_item *rule);
 
 struct xccdf_item *xccdf_value_parse(xmlTextReaderPtr reader, struct xccdf_item *parent);
 struct xccdf_item *xccdf_value_new_internal(struct xccdf_item *parent, xccdf_value_type_t type);

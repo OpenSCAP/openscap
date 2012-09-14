@@ -390,6 +390,46 @@ void xccdf_rule_free(struct xccdf_item *rule)
 	}
 }
 
+/**
+ * Filter function returning true if the check/@selector matches with selectid
+ */
+static bool
+_xccdf_check_filter_selector(struct xccdf_check *check, char *selectid)
+{
+	return !oscap_strcmp((char*) xccdf_check_get_selector(check), selectid);
+}
+
+/**
+ * Filter all checks within a rule by their @selector attribute.
+ * @param rule which encapsulates the checks
+ * @param selector string to filter these checks. NULL or "" values might be used
+ * in order to filter checks without @selector attribute.
+ */
+struct xccdf_check_iterator *
+xccdf_rule_get_checks_filtered(struct xccdf_item *rule, char *selector)
+{
+	return (struct xccdf_check_iterator *) oscap_iterator_new_filter(rule->sub.rule.checks, (oscap_filter_func) _xccdf_check_filter_selector, selector);
+}
+
+/**
+ * Filter function returning true if the xccdf_check is complex-check
+ */
+static bool
+_xccdf_check_filter_complex(struct xccdf_check *check, void *unused)
+{
+	return xccdf_check_get_complex(check);
+}
+
+/**
+ * Filter checks and return complex-check.
+ * Note: In valid XCCDF 1.2 documents there must not be more than one check within the given rule.
+ */
+struct xccdf_check_iterator *
+xccdf_rule_get_complex_checks(struct xccdf_item *rule)
+{
+	return (struct xccdf_check_iterator *) oscap_iterator_new_filter(rule->sub.rule.checks, (oscap_filter_func) _xccdf_check_filter_complex, NULL);
+}
+
 struct xccdf_ident * xccdf_ident_clone(const struct xccdf_ident * ident)
 {
 	struct xccdf_ident * clone = xccdf_ident_new();

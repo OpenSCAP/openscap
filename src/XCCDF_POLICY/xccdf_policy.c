@@ -35,6 +35,7 @@
 #include "public/xccdf_policy.h"
 #include "XCCDF/public/xccdf.h"
 
+#include "XCCDF/item.h"
 #include "common/list.h"
 #include "common/_error.h"
 #include "common/public/text.h"
@@ -165,6 +166,7 @@ typedef struct xccdf_flat_score {
  * These function shoud not be called from outside. For exporting these 
  * elements has to call parent element's 
  */
+static struct xccdf_refine_rule * xccdf_policy_get_refine_rules_by_rule(struct xccdf_policy * policy, struct xccdf_item * item);
 
 /**
  * Get callback from callback structure when system is selected 
@@ -717,6 +719,49 @@ static int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccd
     return ret;
 }
 
+static bool
+_xccdf_policy_callback_filter_sysname(const callback *callback_in, const char *sysname)
+{
+	return !oscap_strcmp(callback_in->system, sysname);
+}
+
+
+static inline bool
+_xccdf_policy_is_engine_registered(struct xccdf_policy *policy, char *sysname)
+{
+	return oscap_list_contains(policy->model->callbacks, (void *) sysname, (oscap_cmp_func) _xccdf_policy_callback_filter_sysname);
+}
+
+static struct xccdf_check *
+_xccdf_policy_rule_get_applicable_check(struct xccdf_policy *policy, struct xccdf_item *rule)
+{
+	// Citations inline come from NISTIR-7275r4.
+	struct xccdf_check *result = NULL;
+	{
+		// If an <xccdf:Rule> contains an <xccdf:complex-check>, then the benchmark consumer MUST process
+		// it and MUST ignore any <xccdf:check> elements that are also contained by the <xccdf:Rule>.
+		struct xccdf_check_iterator *check_it = xccdf_rule_get_complex_checks(rule);
+		if (xccdf_check_iterator_has_more(check_it))
+			result = xccdf_check_iterator_next(check_it);
+		xccdf_check_iterator_free(check_it);
+	}
+	if (result == NULL) {
+		// Check Processing Algorithm -- Check.Initialize
+		// Check Processing Algorithm -- Check.Selector
+		struct xccdf_refine_rule *r_rule = xccdf_policy_get_refine_rules_by_rule(policy, rule);
+		struct xccdf_check_iterator *candidate_it = xccdf_rule_get_checks_filtered(rule, (r_rule != NULL) ? (char *) xccdf_refine_rule_get_selector(r_rule) : "");
+		// Check Processing Algorithm -- Check.System
+		while (xccdf_check_iterator_has_more(candidate_it)) {
+			struct xccdf_check *check = xccdf_check_iterator_next(candidate_it);
+			if (_xccdf_policy_is_engine_registered(policy, (char *) xccdf_check_get_system(check)))
+				result = check;
+		}
+		xccdf_check_iterator_free(candidate_it);
+	}
+	// A tool processing the Benchmark for compliance checking must pick at most one check or
+	// complex-check element to process for each Rule.
+	return result;
+}
 
 /** 
  * Evaluate the XCCDF item. If it is group, start recursive cycle, otherwise get XCCDF check
@@ -793,43 +838,35 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
 				xccdf_ident_iterator_free(ident_it);
             }
 
+
+
+
             /* Evaluation of callback
              */
             if (xccdf_select_get_selected(sel)) {
-		/**
-		 * Important notes from XCCDF 1.2 (NISTIR-7275-r4) about check processing:
-		 *
-		 * 1) If an <xccdf:Rule> contains an <xccdf:complex-check>, then the benchmark consumer MUST process it
-		 *    and MUST ignore any <xccdf:check> elements that are also contained by the <xccdf:Rule>.
-		 * 2)
-		 *
-		 */
-                struct xccdf_check_iterator * check_it = xccdf_rule_get_checks((struct xccdf_rule *)item);
-                /* we need to evaluate all checks in rule, iteration begin */
-                while(xccdf_check_iterator_has_more(check_it)) {
-                        struct xccdf_check * check = xccdf_check_iterator_next(check_it);
-
+		struct xccdf_check *check = _xccdf_policy_rule_get_applicable_check(policy, item);
+		if (check == NULL) {
+			ret = XCCDF_RESULT_NOT_CHECKED;
+			// TODO: We might be nice and export some more information.
+		}
+		else {
                         // we need to clone the check to avoid changing the original content
                         struct xccdf_check * cloned_check = xccdf_check_clone(check);
                         xccdf_rule_result_add_check(rule_ritem, cloned_check);
 
-                        // TODO: Interpret check-import elements inside xccdf_check
-
                         /************** Evaluation  **************/
                         ret = xccdf_policy_check_evaluate(policy, cloned_check, (char *) rule_id);
                         /*****************************************/
+
+                        // TODO: Interpret check-import elements inside xccdf_check
                         if (ret == -1) {
                             oscap_free(description);
-                            xccdf_check_iterator_free(check_it);
                             return -1;
                         }
 
                         if (ret == false) /* we got item that can't be processed */
                             break;
-
-                }
-                xccdf_check_iterator_free(check_it);
-                /* iteration through checks ends here */
+		}
             } else {
                 ret = XCCDF_RESULT_NOT_SELECTED;
             }
