@@ -8,7 +8,7 @@ Summary:        Set of open source libraries enabling integration of the SCAP li
 Group:          System Environment/Libraries
 License:        LGPLv2+
 URL:            http://www.open-scap.org/
-Source0:        http://www.open-scap.org/download/%{name}-%{version}.tar.gz
+Source0:        http://fedorahosted.org/releases/o/p/openscap/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  swig libxml2-devel libxslt-devel perl-XML-Parser
 BuildRequires:  rpm-devel
