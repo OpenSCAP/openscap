@@ -39,7 +39,7 @@ check_SCRIPTS = \
 	test_xccdf_xml_escaping_value.sh
 
 test_oscap_common_SOURCES = test_oscap_common.c
-test_oscap_common_SOURCES += $(top_srcdir)/src/common/util.c $(top_srcdir)/src/common/list.c # This needs love (See trac#198)
+test_oscap_common_SOURCES += $(top_srcdir)/src/common/util.c $(top_srcdir)/src/common/list.c $(top_srcdir)/src/common/alloc.c # This needs love (See trac#198)
 test_xccdf_shall_pass_SOURCES = test_xccdf_shall_pass.c unit_helper.c
 
 EXTRA_DIST += \
