@@ -34,7 +34,6 @@
 #include "probe-api.h"
 #include "common/debug_priv.h"
 #include "common/memusage.h"
-#include "common/oscap_sysinfo.h"
 #include "common/alloc.h"
 #include "common/assume.h"
 
