@@ -278,7 +278,7 @@ int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, 
 	}
 
 	if (access(xmlfile, R_OK)) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, strerror(errno));
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), xmlfile);
 		return -1;
 	}
 
@@ -311,6 +311,7 @@ int oscap_apply_xslt_var(const char *xmlfile, const char *xsltfile, const char *
 	xsltStylesheetPtr cur = NULL;
 	xmlDocPtr doc = NULL, res = NULL;
 	FILE *f = NULL;
+	int ret = -1;
 
 	size_t argc = 0;
 	while(params[argc]) argc += 2;
@@ -319,23 +320,20 @@ int oscap_apply_xslt_var(const char *xmlfile, const char *xsltfile, const char *
 	memset(args, 0, sizeof(char*) * (argc + 1));
 
 	char *xsltpath = oscap_find_file(xsltfile, R_OK, pathvar, defpath);
-	int ret = -1; /* error */
-
-
 	if (xsltpath == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "XSLT file to be used by the transformation was not found.");
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "XSLT file '%s' not found when trying to transformation '%s'", xsltfile, xmlfile);
 		goto cleanup;
 	}
 
 	cur = xsltParseStylesheetFile(BAD_CAST xsltpath);
 	if (cur == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not parse XSLT file");
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not parse XSLT file '%s'", xsltpath);
 		goto cleanup;
 	}
 
 	doc = xmlParseFile(xmlfile);
 	if (doc == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not parse the XML document");
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not parse the XML document '%s'", xmlfile);
 		goto cleanup;
 	}
 
@@ -346,7 +344,7 @@ int oscap_apply_xslt_var(const char *xmlfile, const char *xsltfile, const char *
 
 	res = xsltApplyStylesheet(cur, doc, (const char **) args);
 	if (res == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not apply XSLT to your XML file");
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not apply XSLT(%s) to XML file(%s)", xsltpath, xmlfile);
 		goto cleanup;
 	}
 
@@ -356,7 +354,7 @@ int oscap_apply_xslt_var(const char *xmlfile, const char *xsltfile, const char *
 		f = stdout;
 
 	if (f == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not open output file");
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not open output file '%s'", outfile ? outfile : "stdout");
 		goto cleanup;
 	}
 
@@ -431,7 +429,7 @@ int oscap_schematron_validate_document(const char *xmlfile, oscap_document_type_
         }
 
         if (access(xmlfile, R_OK)) {
-                oscap_seterr(OSCAP_EFAMILY_GLIBC, strerror(errno));
+                oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), xmlfile);
                 return -1;
         }
 

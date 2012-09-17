@@ -96,7 +96,7 @@ int app_xslt(const char *infile, const char *xsltfile, const char *outfile, cons
            s += paramlist_cpy(par + s, stdparams);
 
     if (oscap_apply_xslt(infile, xsltfile, outfile, par)==-1) {
-        fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+        fprintf(stderr, "%s: %s\n", OSCAP_ERR_MSG, oscap_err_desc());
         return OSCAP_ERROR;
     }
     return OSCAP_OK;

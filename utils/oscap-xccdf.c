@@ -357,7 +357,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	/* Load XCCDF model and XCCDF Policy model */
 	benchmark = xccdf_benchmark_import(xccdf_file);
 	if (benchmark == NULL) {
-		fprintf(stderr, "Failed to import the XCCDF content from (%s).\n", xccdf_file);
+		fprintf(stderr, "Failed to import the XCCDF content from '%s'.\n", xccdf_file);
 		goto cleanup;
 	}
 
@@ -456,14 +456,14 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		/* file -> def_model */
 		struct oval_definition_model *tmp_def_model = oval_definition_model_import(oval_files[idx]);
 		if (tmp_def_model == NULL) {
-			fprintf(stderr, "Failed to create OVAL definition model from: %s.\n", oval_files[idx]);
+			fprintf(stderr, "Failed to create OVAL definition model from: '%s'.\n", oval_files[idx]);
 			goto cleanup;
 		}
 
 		/* def_model -> session */
                 struct oval_agent_session *tmp_sess = oval_agent_new_session(tmp_def_model, basename(oval_files[idx]));
 		if (tmp_sess == NULL) {
-			fprintf(stderr, "Failed to create new OVAL agent session for: %s.\n", oval_files[idx]);
+			fprintf(stderr, "Failed to create new OVAL agent session for: '%s'.\n", oval_files[idx]);
 			goto cleanup;
 		}
 

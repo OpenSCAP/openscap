@@ -156,7 +156,7 @@ int oval_results_model_import(struct oval_results_model *model, const char *file
 
 	xmlTextReader *reader = xmlNewTextReaderFilename(file);
 	if (reader == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), file);
                 ret = -1;
 		goto cleanup;
 	}
