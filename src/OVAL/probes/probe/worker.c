@@ -416,7 +416,7 @@ static SEXP_t *probe_prepare_filters(probe_t *probe, SEXP_t *obj)
  */
 static SEXP_t *probe_set_combine(SEXP_t *cobj0, SEXP_t *cobj1, oval_setobject_operation_t op)
 {
-        SEXP_t *set0, *set1, *res_cobj;
+        SEXP_t *set0, *set1, *res_cobj, *cobj0_mask, *cobj1_mask, *res_mask;
         register int cmp;
         register SEXP_t *item0, *item1, *res;
         register SEXP_list_it *sit0, *sit1;
@@ -429,11 +429,14 @@ static SEXP_t *probe_set_combine(SEXP_t *cobj0, SEXP_t *cobj1, oval_setobject_op
 
         set0 = probe_cobj_get_items(cobj0);
         set1 = probe_cobj_get_items(cobj1);
+        cobj0_mask = probe_cobj_get_mask(cobj0);
+        cobj1_mask = probe_cobj_get_mask(cobj1);
 
         /* prepare storage for results */
         res = SEXP_list_new(NULL);
         res_flag = probe_cobj_combine_flags(probe_cobj_get_flag(cobj0),
                                             probe_cobj_get_flag(cobj1), op);
+        res_mask = SEXP_list_join(cobj0_mask, cobj1_mask);
 
         /* prepare iterators & first items */
         sit0  = SEXP_list_it_new(set0);
@@ -524,11 +527,10 @@ static SEXP_t *probe_set_combine(SEXP_t *cobj0, SEXP_t *cobj1, oval_setobject_op
 	if (res_flag == SYSCHAR_FLAG_COMPLETE && SEXP_list_length(res) == 0)
 		res_flag = SYSCHAR_FLAG_DOES_NOT_EXIST;
 
-	res_cobj = probe_cobj_new(res_flag, NULL, res);
+	res_cobj = probe_cobj_new(res_flag, NULL, res, res_mask);
 
-	SEXP_free(set0);
-	SEXP_free(set1);
-	SEXP_free(res);
+        SEXP_vfree(set0, set1, res, res_mask);
+        SEXP_vfree(cobj0_mask, cobj1_mask);
 
 	// todo: variables
 
@@ -543,13 +545,14 @@ static SEXP_t *probe_set_combine(SEXP_t *cobj0, SEXP_t *cobj1, oval_setobject_op
  */
 static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
 {
-	SEXP_t *result_items, *items, *item;
+	SEXP_t *result_items, *items, *item, *mask;
 	oval_syschar_status_t item_status;
 	oval_syschar_collection_flag_t flag;
 
 	result_items = SEXP_list_new(NULL);
 	flag = probe_cobj_get_flag(cobj);
 	items = probe_cobj_get_items(cobj);
+        mask = probe_cobj_get_mask(cobj);
 
 	SEXP_list_foreach(item, items) {
 		item_status = probe_ent_getstatus(item);
@@ -566,7 +569,7 @@ static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
                                 r0 = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
                                                       "Supplied item has an invalid status: %d.", item_status);
 				r1 = SEXP_list_new(r0, NULL);
-				cobj = probe_cobj_new(SYSCHAR_FLAG_ERROR, r1, NULL);
+				cobj = probe_cobj_new(SYSCHAR_FLAG_ERROR, r1, NULL, NULL);
 				SEXP_vfree(items, item, result_items, r0, r1, NULL);
 				return cobj;
 			}
@@ -587,8 +590,8 @@ static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
 	    && SEXP_list_length(result_items) == 0)
 		flag = SYSCHAR_FLAG_DOES_NOT_EXIST;
 
-	cobj = probe_cobj_new(flag, NULL, result_items);
-	SEXP_vfree(items, result_items, NULL);
+	cobj = probe_cobj_new(flag, NULL, result_items, mask);
+	SEXP_vfree(items, result_items, mask);
 
 	return cobj;
 }
@@ -626,7 +629,7 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 #endif
 		r0 = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, fmt, (size_t) MAX_EVAL_DEPTH);
 		r1 = SEXP_list_new(r0, NULL);
-		result = probe_cobj_new(SYSCHAR_FLAG_ERROR, r1, NULL);
+		result = probe_cobj_new(SYSCHAR_FLAG_ERROR, r1, NULL, NULL);
 		SEXP_vfree(r0, r1, NULL);
 		return result;
 	}
@@ -873,7 +876,7 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 	SEXP_free(result);
 
         r1 = SEXP_list_new(Omsg, NULL);
-	result = probe_cobj_new(SYSCHAR_FLAG_ERROR, r1, NULL);
+	result = probe_cobj_new(SYSCHAR_FLAG_ERROR, r1, NULL, NULL);
 	SEXP_vfree(Omsg, r1, NULL);
 	return result;
 }
@@ -910,11 +913,12 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 		*ret = 0;
 	} else {
                 struct probe_ctx pctx;
-		SEXP_t *varrefs;
+		SEXP_t *varrefs, *mask;
 
 		/* simple object */
                 pctx.icache  = probe->icache;
 		pctx.filters = probe_prepare_filters(probe, probe_in);
+                mask = probe_obj_getmask(probe_in);
 
 		if (OSCAP_GSYM(varref_handling))
 			varrefs = probe_obj_getent(probe_in, "varrefs", 1);
@@ -925,7 +929,7 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
                         /*
                          * Prepare the collected object
                          */
-			probe_out = probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, NULL, NULL);
+			probe_out = probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, NULL, NULL, mask);
 
                         pctx.probe_in  = probe_in;
                         pctx.probe_out = probe_out;
@@ -962,7 +966,7 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
                                 /*
                                  * Prepare the collected object
                                  */
-				cobj = probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, NULL, NULL);
+				cobj = probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, NULL, NULL, mask);
 
                                 pctx.probe_in  = ctx->pi2;
                                 pctx.probe_out = cobj;

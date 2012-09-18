@@ -113,16 +113,17 @@ void *probe_input_handler(void *arg)
 			probe_out = probe_rcache_sexp_get(probe->rcache, oid);
 
 			if (probe_out == NULL) { /* cache miss */
-				SEXP_t *skip_flag;
+				SEXP_t *skip_flag, *obj_mask;
 
 				skip_flag = probe_obj_getattrval(probe_in, "skip_eval");
+                                obj_mask  = probe_obj_getmask(probe_in);
 				SEXP_free(probe_in);
 
 				if (skip_flag != NULL) {
 					oval_syschar_collection_flag_t cobj_flag;
 
 					cobj_flag = SEXP_number_geti_32(skip_flag);
-					probe_out = probe_cobj_new(cobj_flag, NULL, NULL);
+					probe_out = probe_cobj_new(cobj_flag, NULL, NULL, obj_mask);
 
 					if (probe_rcache_sexp_add(probe->rcache, oid, probe_out) != 0) {
 						/* TODO */
@@ -132,6 +133,7 @@ void *probe_input_handler(void *arg)
 					probe_ret = 0;
 					SEXP_free(oid);
                                         SEXP_free(skip_flag);
+                                        SEXP_free(obj_mask);
 				} else {
 					probe_pwpair_t *pair;
 

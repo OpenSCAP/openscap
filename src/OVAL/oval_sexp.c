@@ -108,6 +108,11 @@ static SEXP_t *oval_entity_to_sexp(struct oval_entity *ent)
 				 r2 = SEXP_number_newu_32(oval_entity_get_operation(ent)), NULL);
 	SEXP_vfree(r0, r1, r2, NULL);
 
+        if (oval_entity_get_mask(ent)) {
+            SEXP_list_add(elm_name, r0 = SEXP_string_new("mask", 4));
+            SEXP_free(r0);
+        }
+
 	elm = SEXP_list_new(NULL);
 	datatype = oval_entity_get_datatype(ent);
 	probe_ent_setdatatype(elm, datatype);
@@ -608,14 +613,14 @@ static SEXP_t *oval_record_field_STATE_to_sexp(struct oval_record_field *rf)
 	return rf_sexp;
 }
 
-static struct oval_sysent *oval_sexp_to_sysent(struct oval_syschar_model *model, struct oval_sysitem *item, SEXP_t * sexp);
+static struct oval_sysent *oval_sexp_to_sysent(struct oval_syschar_model *model, struct oval_sysitem *item, SEXP_t * sexp, struct oval_string_map *mask_map);
 
 static struct oval_record_field *oval_record_field_ITEM_from_sexp(SEXP_t *sexp)
 {
 	struct oval_sysent *sysent;
 	struct oval_record_field *rf;
 
-	sysent = oval_sexp_to_sysent(NULL, NULL, sexp);
+	sysent = oval_sexp_to_sysent(NULL, NULL, sexp, NULL);
 	if (sysent == NULL)
 		return NULL;
 
@@ -751,7 +756,7 @@ static struct oval_message *oval_sexp_to_msg(const SEXP_t *msg)
 	return message;
 }
 
-static struct oval_sysent *oval_sexp_to_sysent(struct oval_syschar_model *model, struct oval_sysitem *item, SEXP_t * sexp)
+static struct oval_sysent *oval_sexp_to_sysent(struct oval_syschar_model *model, struct oval_sysitem *item, SEXP_t * sexp, struct oval_string_map *mask_map)
 {
 	char *key;
 	oval_syschar_status_t status;
@@ -794,7 +799,7 @@ static struct oval_sysent *oval_sexp_to_sysent(struct oval_syschar_model *model,
 	oval_sysent_set_name(ent, key);
 	oval_sysent_set_status(ent, status);
 	oval_sysent_set_datatype(ent, dt);
-	oval_sysent_set_mask(ent, probe_ent_getmask(sexp));
+	oval_sysent_set_mask(ent, oval_string_map_get_value(mask_map, key) == NULL ? 0 : 1);
 
 	if (status != SYSCHAR_STATUS_EXISTS)
 		return ent;
@@ -870,7 +875,7 @@ static struct oval_sysent *oval_sexp_to_sysent(struct oval_syschar_model *model,
 	return ent;
 }
 
-static struct oval_sysitem *oval_sexp_to_sysitem(struct oval_syschar_model *model, SEXP_t * sexp)
+static struct oval_sysitem *oval_sexp_to_sysitem(struct oval_syschar_model *model, SEXP_t * sexp, struct oval_string_map *mask_map)
 {
 	_A(sexp);
 
@@ -920,7 +925,7 @@ static struct oval_sysitem *oval_sexp_to_sysitem(struct oval_syschar_model *mode
 	oval_sysitem_set_subtype(sysitem, type);
 
 	for (int i = 2; (sub = SEXP_list_nth(sexp, i)) != NULL; ++i) {
-	    if ((sysent = oval_sexp_to_sysent(model, sysitem, sub)) != NULL)
+	    if ((sysent = oval_sexp_to_sysent(model, sysitem, sub, mask_map)) != NULL)
 		    oval_sysitem_add_sysent(sysitem, sysent);
 		SEXP_free(sub);
 	}
@@ -934,9 +939,10 @@ static struct oval_sysitem *oval_sexp_to_sysitem(struct oval_syschar_model *mode
 int oval_sexp_to_sysch(const SEXP_t *cobj, struct oval_syschar *syschar)
 {
 	oval_syschar_collection_flag_t flag;
-	SEXP_t *messages, *msg, *items, *item;
+	SEXP_t *messages, *msg, *items, *item, *mask;
 	struct oval_syschar_model *model;
 	struct oval_string_map *itm_id_map;
+        struct oval_string_map *item_mask_map;
 
 	_A(cobj != NULL);
 
@@ -956,10 +962,23 @@ int oval_sexp_to_sysch(const SEXP_t *cobj, struct oval_syschar *syschar)
 	itm_id_map = oval_string_map_new();
 	model = oval_syschar_get_model(syschar);
 	items = probe_cobj_get_items(cobj);
+
+        mask = probe_cobj_get_mask(cobj);
+        if (mask != NULL) {
+            SEXP_t *mask_entname;
+            char mask_entname_cstr[128];
+            item_mask_map = oval_string_map_new();
+            SEXP_list_foreach(mask_entname, mask) {
+                SEXP_string_cstr_r(mask_entname, mask_entname_cstr, sizeof mask_entname_cstr);
+                oval_string_map_put_string(item_mask_map, mask_entname_cstr, mask_entname_cstr);
+            }
+        } else
+            item_mask_map = NULL;
+
 	SEXP_list_foreach(item, items) {
 		struct oval_sysitem *sysitem;
 
-		sysitem = oval_sexp_to_sysitem(model, item);
+		sysitem = oval_sexp_to_sysitem(model, item, item_mask_map);
 		if (sysitem != NULL) {
 			char *itm_id;
 
@@ -972,6 +991,8 @@ int oval_sexp_to_sysch(const SEXP_t *cobj, struct oval_syschar *syschar)
 	}
 	SEXP_free(items);
 	oval_string_map_free(itm_id_map, NULL);
+        if (item_mask_map != NULL)
+            oval_string_map_free(item_mask_map, NULL);
 
 	return 0;
 }
