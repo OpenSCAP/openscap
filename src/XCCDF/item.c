@@ -596,6 +596,12 @@ xmlNode *xccdf_ident_to_dom(struct xccdf_ident *ident, xmlDoc *doc, xmlNode *par
 	return ident_node;
 }
 
+static const struct oscap_string_map XCCDF_BOOLOP_MAP[] = {
+	{XCCDF_OPERATOR_AND, "AND"},
+	{XCCDF_OPERATOR_OR, "OR"},
+	{0, NULL}
+};
+
 xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
 {
 	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
@@ -625,6 +631,9 @@ xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *par
 	if (check->flags.def_negate || xccdf_check_get_negate(check))
 		xmlNewProp(check_node, BAD_CAST "negate",
 			BAD_CAST (xccdf_check_get_negate(check) ? "true" : "false"));
+	if (xccdf_check_get_complex(check))
+		xmlNewProp(check_node, BAD_CAST "operator",
+			BAD_CAST oscap_enum_to_string(XCCDF_BOOLOP_MAP, xccdf_check_get_oper(check)));
 
 	/* Handle complex checks */
 	struct xccdf_check_iterator *checks = xccdf_check_get_children(check);
