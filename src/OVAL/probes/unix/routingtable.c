@@ -179,7 +179,7 @@ static int process_line_ip4(char *line, struct route_info *rt)
         proc_ip4_to_string(TOK_gw, strlen(TOK_gw), rt->ip_gw, sizeof rt->ip_gw) != 0)
         return -1;
 
-    strncpy(rt->if_name, TOK_flags, IF_NAME_MAXLEN); /* interface name */
+    strncpy(rt->if_name, TOK_ifname, IF_NAME_MAXLEN); /* interface name */
     rt_flags = strto_uint16_hex(TOK_flags, strlen(TOK_flags), NULL);
 
     if (errno != 0)
