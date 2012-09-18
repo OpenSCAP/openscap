@@ -328,6 +328,33 @@ AR:[ND|L|M|H]         E   Availability requirement: Not Defined, Low, Medium, Hi
 .RE
 .PP
 
+.SH DS OPERATIONS
+.TP
+.B \fBsds-compose\fR SOURCE_XCCDF TARGET_SDS
+.RS
+Creates a source datastream from the XCCDF file given in SOURCE_XCCDF and stores the result in TARGET_SDS. Dependencies like OVAL files are automatically detected and bundled in target source datastream.
+.RE
+.TP
+.B \fBsds-split\fR SOURCE_DS TARGET_DIR
+.RS
+Splits given source datastream into multiple files and stores all the files in TARGET_DIR.
+.RE
+.TP
+.B \fBsds-validate\fR SOURCE_DS
+.RS
+Validate given source datastream file against a XML schema. Every found error is printed to the standard output. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the source datastream is not valid.
+.RE
+.TP
+.B \fBrds-create\fR SDS TARGET_ARF XCCDF_RESULTS [OVAL_RESULTS [OVAL_RESULTS ..]]
+.RS
+Takes given source datastream, XCCDF and OVAL results and creates a result datastream (in Asset Reporting Format) and saves it to file given in TARGET_ARF.
+.RE
+.TP
+.B \fBrds-validate\fR SOURCE_RDS
+.RS
+Validate given result datastream file against a XML schema. Every found error is printed to the standard output. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the result datastream is not valid.
+.RE
+
 
 .SH CONTENT
 .TP
