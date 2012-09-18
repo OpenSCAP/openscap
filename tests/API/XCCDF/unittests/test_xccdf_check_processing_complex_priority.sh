@@ -10,7 +10,7 @@ for args in "" "--profile xccdf_moc.elpmaxe.www_profile_1"; do
 	stderr=$(mktemp -t ${name}.out.XXXXXX)
 	# If an <xccdf:Rule> contains an <xccdf:complex-check>, then the benchmark consumer MUST process it
 	# and MUST ignore any <xccdf:check> elements that are also contained by the <xccdf:Rule>.
-	$OSCAP xccdf eval --skip-valid --results $result $srcdir/${name}.xccdf.xml 2> $stderr || [ $? == 2 ]
+	$OSCAP xccdf eval --skip-valid --results $result $srcdir/${name}.xccdf.xml 2> $stderr
 
 	echo "Stderr file = $stderr"
 	echo "Result file = $result"

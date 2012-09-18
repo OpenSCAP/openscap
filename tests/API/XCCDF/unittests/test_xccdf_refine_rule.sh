@@ -7,7 +7,7 @@ name=$(basename $0 .sh)
 result=$(mktemp -t ${name}.out.XXXXXX)
 stderr=$(mktemp -t ${name}.out.XXXXXX)
 
-$OSCAP xccdf eval --results $result $srcdir/${name}.xccdf.xml 2> $stderr || [ $? == 2 ]
+$OSCAP xccdf eval --results $result $srcdir/${name}.xccdf.xml 2> $stderr
 
 echo "Stderr file = $stderr"
 echo "Result file = $result"
