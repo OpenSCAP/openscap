@@ -551,7 +551,13 @@ bool probe_obj_attrexists(const SEXP_t * obj, const char *name)
 						return (true);
 					}
 					++i;
-				}
+				} else {
+                                    if (SEXP_strcmp(attr, name_buf + 1) == 0) {
+                                        SEXP_free(attr);
+                                        SEXP_free(obj_name);
+                                        return true;
+                                    }
+                                }
 				++i;
 			}
 
