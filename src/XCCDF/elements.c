@@ -81,6 +81,7 @@ const struct xccdf_version_info* xccdf_detect_version_parser(xmlTextReaderPtr re
 
 	const char* namespace_uri = (const char*)xmlTextReaderConstNamespaceUri(reader);
 	if (!namespace_uri) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "Could not found namespace of the root element.");
                 oscap_setxmlerr(xmlGetLastError());
                 return NULL;
 	}
@@ -253,6 +254,7 @@ static const struct xccdf_attribute_spec XCCDF_ATTRIBUTE_MAP[] = {
 	{XCCDFA_INTERACTIVE, XCCDF_XMLNS, "interactive"},
 	{XCCDFA_INTERFACEHINT, XCCDF_XMLNS, "interfaceHint"},
 	{XCCDFA_MAXIMUM, XCCDF_XMLNS, "maximum"},
+	{XCCDFA_MULTICHECK, XCCDF_XMLNS, "multi-check"},
 	{XCCDFA_MULTIPLE, XCCDF_XMLNS, "multiple"},
 	{XCCDFA_MUSTMATCH, XCCDF_XMLNS, "mustMatch"},
 	{XCCDFA_NAME, XCCDF_XMLNS, "name"},
@@ -336,7 +338,7 @@ float xccdf_attribute_get_float(xmlTextReaderPtr reader, xccdf_attribute_t attr)
 	if (xccdf_attribute_has(reader, attr) && sscanf(xccdf_attribute_get(reader, attr), "%f", &res) == 1)
 		return res;
 	else
-		return NAN;	//TODO: Replace with ANSI
+		return NAN;
 }
 
 

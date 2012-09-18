@@ -112,7 +112,7 @@ int oval_directives_model_import(struct oval_directives_model * model, char *fil
 	/* open file */
         xmlTextReader *reader = xmlNewTextReaderFilename(file);
         if (reader == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), file);
 		ret = -1;
 		goto cleanup;
         }

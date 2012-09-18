@@ -48,6 +48,7 @@ typedef struct oval_sysinfo {
 	char *osArchitecture;
 	char *primaryHostName;
 	struct oval_collection *interfaces;
+	char *anyxml;
 } oval_sysinfo_t;
 
 struct oval_sysinfo *oval_sysinfo_new(struct oval_syschar_model *model)
@@ -62,6 +63,7 @@ struct oval_sysinfo *oval_sysinfo_new(struct oval_syschar_model *model)
 	sysinfo->primaryHostName = NULL;
 	sysinfo->interfaces = oval_collection_new();
 	sysinfo->model = model;
+	sysinfo->anyxml = NULL;
 	return sysinfo;
 }
 
@@ -74,36 +76,40 @@ struct oval_sysinfo *oval_sysinfo_clone(struct oval_syschar_model *new_model, st
 		oval_sysinfo_add_interface(new_sysinfo, interface);
 	}
 	oval_sysint_iterator_free(interfaces);
+
 	char *os_architecture = oval_sysinfo_get_os_architecture(old_sysinfo);
-	if (os_architecture) {
+	if (os_architecture)
 		oval_sysinfo_set_os_architecture(new_sysinfo, os_architecture);
-	}
 	char *os_name = oval_sysinfo_get_os_name(old_sysinfo);
-	if (os_name) {
+	if (os_name)
 		oval_sysinfo_set_os_name(new_sysinfo, os_name);
-	}
 	char *os_version = oval_sysinfo_get_os_version(old_sysinfo);
-	if (os_version) {
+	if (os_version)
 		oval_sysinfo_set_os_version(new_sysinfo, os_version);
-	}
 	char *host_name = oval_sysinfo_get_primary_host_name(old_sysinfo);
-	if (host_name) {
+	if (host_name)
 		oval_sysinfo_set_primary_host_name(new_sysinfo, host_name);
-	}
+
+	if (old_sysinfo->anyxml)
+		new_sysinfo->anyxml = oscap_strdup(old_sysinfo->anyxml);
+
 	return new_sysinfo;
 }
 
 void oval_sysinfo_free(struct oval_sysinfo *sysinfo)
 {
 	if (sysinfo) {
-		if (sysinfo->osArchitecture != NULL)
+		if (sysinfo->osArchitecture)
 			oscap_free(sysinfo->osArchitecture);
-		if (sysinfo->osName != NULL)
+		if (sysinfo->osName)
 			oscap_free(sysinfo->osName);
-		if (sysinfo->osVersion != NULL)
+		if (sysinfo->osVersion)
 			oscap_free(sysinfo->osVersion);
-		if (sysinfo->primaryHostName != NULL)
+		if (sysinfo->primaryHostName)
 			oscap_free(sysinfo->primaryHostName);
+		if (sysinfo->anyxml)
+			oscap_free(sysinfo->anyxml);
+
 		oval_collection_free_items(sysinfo->interfaces, (oscap_destruct_func) oval_sysint_free);
 
 		sysinfo->interfaces = NULL;
@@ -111,6 +117,7 @@ void oval_sysinfo_free(struct oval_sysinfo *sysinfo)
 		sysinfo->osName = NULL;
 		sysinfo->osVersion = NULL;
 		sysinfo->primaryHostName = NULL;
+		sysinfo->anyxml = NULL;
 
 		oscap_free(sysinfo);
 	}
@@ -255,8 +262,8 @@ static int _oval_sysinfo_parse_tag(xmlTextReaderPtr reader, struct oval_parser_c
 	} else if (is_ovalsys && (strcmp(tagname, "interfaces") == 0)) {
 		return_code = oval_parser_parse_tag(reader, context, &_oval_sysinfo_parse_tag_parse_tag, sysinfo);
 	} else {
-		dW("Skipping tag: <%s:%s>.\n", namespace, tagname);
-		oval_parser_skip_tag(reader, context);
+                sysinfo->anyxml = (char *) xmlTextReaderReadOuterXml(reader);
+                return_code = oval_parser_skip_tag(reader, context);
 	}
 
 	oscap_free(tagname);
@@ -297,26 +304,34 @@ int oval_sysinfo_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 
 void oval_sysinfo_to_dom(struct oval_sysinfo *sysinfo, xmlDoc * doc, xmlNode * tag_parent)
 {
+        xmlNode *nodestr, *nodelst;
+        xmlDoc  *docstr;
+	int i;
+
 	if (sysinfo) {
 		xmlNs *ns_syschar = xmlSearchNsByHref(doc, tag_parent, OVAL_SYSCHAR_NAMESPACE);
 		xmlNode *tag_sysinfo = xmlNewTextChild(tag_parent, ns_syschar, BAD_CAST "system_info", NULL);
+
 		xmlNewTextChild(tag_sysinfo, ns_syschar, BAD_CAST "os_name", BAD_CAST oval_sysinfo_get_os_name(sysinfo));
-		xmlNewTextChild
-		    (tag_sysinfo, ns_syschar, BAD_CAST "os_version", BAD_CAST oval_sysinfo_get_os_version(sysinfo));
-		xmlNewTextChild
-		    (tag_sysinfo, ns_syschar, BAD_CAST "architecture",
-		     BAD_CAST oval_sysinfo_get_os_architecture(sysinfo));
-		xmlNewTextChild
-		    (tag_sysinfo, ns_syschar, BAD_CAST "primary_host_name",
-		     BAD_CAST oval_sysinfo_get_primary_host_name(sysinfo));
+		xmlNewTextChild(tag_sysinfo, ns_syschar, BAD_CAST "os_version", BAD_CAST oval_sysinfo_get_os_version(sysinfo));
+		xmlNewTextChild(tag_sysinfo, ns_syschar, BAD_CAST "architecture", BAD_CAST oval_sysinfo_get_os_architecture(sysinfo));
+		xmlNewTextChild(tag_sysinfo, ns_syschar, BAD_CAST "primary_host_name", BAD_CAST oval_sysinfo_get_primary_host_name(sysinfo));
 
 		xmlNode *tag_interfaces = xmlNewTextChild(tag_sysinfo, ns_syschar, BAD_CAST "interfaces", NULL);
 		struct oval_sysint_iterator *intrfcs = oval_sysinfo_get_interfaces(sysinfo);
-		int i;
 		for (i = 1; oval_sysint_iterator_has_more(intrfcs); i++) {
 			struct oval_sysint *intrfc = oval_sysint_iterator_next(intrfcs);
 			oval_sysint_to_dom(intrfc, doc, tag_interfaces);
 		}
 		oval_sysint_iterator_free(intrfcs);
+
+	        if (sysinfo->anyxml) {
+			docstr = xmlReadDoc(BAD_CAST sysinfo->anyxml, NULL, NULL, 0);
+			nodestr = xmlDocGetRootElement(docstr);
+
+			nodelst = xmlDocCopyNode(nodestr, doc, 1);
+			xmlAddChildList(tag_sysinfo, nodelst);
+			xmlFreeDoc(docstr);
+        	}
 	}
 }

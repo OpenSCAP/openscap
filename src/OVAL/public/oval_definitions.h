@@ -209,7 +209,9 @@ typedef enum {
 	OVAL_FUNCTION_TIMEDIF = OVAL_FUNCTION + 6,
 	OVAL_FUNCTION_ESCAPE_REGEX = OVAL_FUNCTION + 7,
 	OVAL_FUNCTION_REGEX_CAPTURE = OVAL_FUNCTION + 8,
-	OVAL_FUNCTION_ARITHMETIC = OVAL_FUNCTION + 9
+	OVAL_FUNCTION_ARITHMETIC = OVAL_FUNCTION + 9,
+	OVAL_FUNCTION_COUNT = OVAL_FUNCTION + 10,
+	OVAL_FUNCTION_LAST = OVAL_FUNCTION + 11
 } oval_component_type_t;
 
 /// Arithmetic format enumeration
@@ -472,6 +474,9 @@ struct oval_filter_iterator;
  *		For example assume a local variable has two sub-components: a basic component element returns the values "abc" and "def", and a literal component element that has a value of "xyz".
  *		The local_variable element would be evaluated to have two values, "abcxyz" and "defxyz". If one of the components does not exist,
  *		then the result of the concat operation should be does not exist.
+ *	- If @ref oval_component_get_type == @ref OVAL_FUNCTION_COUNT - Counting function.
+ *		- The count function counts the values represented by one or more components as an integer. This function determines the total number of values referenced 
+ *		by all of thespecified sub-components.
  *	- If @ref oval_component_get_type == @ref OVAL_FUNCTION_ARITHMETIC - Arithmetic function.
  *		- The arithmetic function takes two or more integer or float components and performs a basic mathmetical function on them.
  *		The result of this function in a single integer or float unless one of the components returns multiple values.
@@ -931,13 +936,6 @@ struct oval_reference_iterator *oval_definition_get_references(struct oval_defin
  * @memberof oval_definition
  */
 struct oval_string_iterator *oval_definition_get_notes(struct oval_definition *);
-/**
- * @return A pointer to the xmlNode element holding any unstructured metadata included
- * in the definition. Adding and removing child elements is permitted.
- * All the child elements will be exported in the metadata of the definition.
- * @memberof oval_definition
- */
-xmlNode *oval_definition_get_metadata(struct oval_definition *);
 /**
  * Returns attribute @ref oval_definition->criteria.
  * @return A pointer to the criteria attribute of the specified @ref oval_definition.
@@ -1979,6 +1977,12 @@ void oval_criteria_node_free(struct oval_criteria_node *);
  */
 void oval_criteria_node_set_negate(struct oval_criteria_node *, bool negate);
 /**
+ * Set attribute @ref Oval_criteria_node->applicability_check.
+ * @param applicability_check - the required value of the applicability_check attribute
+ * @memberof oval_criteria_node
+ */
+void oval_criteria_node_set_applicability_check(struct oval_criteria_node *, bool applicability_check);
+/**
  * Set attribute @ref Oval_criteria_node->type.
  * @param type - the required value of the type attribute
  * @memberof oval_criteria_node
@@ -2041,6 +2045,12 @@ oval_criteria_node_type_t oval_criteria_node_get_type(struct oval_criteria_node 
  * @memberof oval_criteria_node
  */
 bool oval_criteria_node_get_negate(struct oval_criteria_node *);
+/**
+ * Returns attribute @ref Oval_criteria_node->applicability_check.
+ * @memberof oval_criteria_node
+ */
+bool oval_criteria_node_get_applicability_check(struct oval_criteria_node *);
+
 /**
  * Returns attribute @ref Oval_criteria_node->comment.
  * @return A pointer to the comment attribute of the specified @ref oval_criteria_node.
@@ -2859,6 +2869,8 @@ void oval_setobject_iterator_free(struct oval_setobject_iterator *);
  *	- type -- initialized to the value of the type parameter.
  *	- If type == @ref OVAL_FUNCTION_CONCAT
  *		- components -- initialized to empty iterator
+ *	- If type == @ref OVAL_FUNCTION_COUNT
+ *		- components --  initialized to empty iterator
  *	- If type == @ref OVAL_FUNCTION_ESCAPE_REGEX
  *		- components -- initialized to empty iterator
  *	- If type == @ref OVAL_FUNCTION_ARITHMETIC

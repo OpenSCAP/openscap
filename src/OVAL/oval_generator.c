@@ -44,6 +44,7 @@ struct oval_generator {
 	char *product_version;
 	char *schema_version;
 	char *timestamp;
+	char *anyxml;
 };
 
 struct oval_generator *oval_generator_new(void)
@@ -57,6 +58,7 @@ struct oval_generator *oval_generator_new(void)
 	gen->product_name = NULL;
 	gen->product_version = NULL;
 	gen->schema_version = oscap_strdup(OVAL_SUPPORTED);
+	gen->anyxml = NULL;
 
 	time(&et);
 	lt = localtime(&et);
@@ -73,6 +75,7 @@ void oval_generator_free(struct oval_generator *generator)
 	oscap_free(generator->product_version);
 	oscap_free(generator->schema_version);
 	oscap_free(generator->timestamp);
+	oscap_free(generator->anyxml);
 	oscap_free(generator);
 }
 
@@ -85,6 +88,7 @@ struct oval_generator *oval_generator_clone(struct oval_generator *old_generator
 	new_gen->product_version = oscap_strdup(old_generator->product_version);
 	new_gen->schema_version = oscap_strdup(old_generator->schema_version);
 	new_gen->timestamp = oscap_strdup(old_generator->timestamp);
+	new_gen->anyxml = oscap_strdup(old_generator->anyxml);
 
 	return new_gen;
 }
@@ -138,6 +142,9 @@ xmlNode *oval_generator_to_dom(struct oval_generator *generator, xmlDocPtr doc, 
 	xmlNode *gen_node;
 	xmlNs *ns_common;
 
+	xmlNode *nodestr, *nodelst;
+	xmlDoc  *docstr;
+
 	gen_node = xmlNewTextChild(parent, NULL, BAD_CAST "generator", NULL);
 	ns_common = xmlSearchNsByHref(doc, parent, OVAL_COMMON_NAMESPACE);
 	if (generator->product_name)
@@ -148,6 +155,15 @@ xmlNode *oval_generator_to_dom(struct oval_generator *generator, xmlDocPtr doc, 
 		xmlNewTextChild(gen_node, ns_common, BAD_CAST "schema_version", BAD_CAST generator->schema_version);
 	if (generator->timestamp)
 		xmlNewTextChild(gen_node, ns_common, BAD_CAST "timestamp", BAD_CAST generator->timestamp);
+
+	if (generator->anyxml) {
+		docstr = xmlReadDoc(BAD_CAST generator->anyxml, NULL, NULL, 0);
+        	nodestr = xmlDocGetRootElement(docstr);
+
+	        nodelst = xmlDocCopyNode(nodestr, doc, 1);
+        	xmlAddChildList(gen_node, nodelst);
+	        xmlFreeDoc(docstr);
+	}
 
 	return gen_node;
 }
@@ -178,9 +194,8 @@ int oval_generator_parse_tag(xmlTextReader *reader, struct oval_parser_context *
 		val = (char *) xmlTextReaderValue(reader);
 		oval_generator_set_timestamp(gen, val);
 	} else {
-		dW("Unprocessed tag: <%s:%s>.\n", namespace, tagname);
-		oval_parser_skip_tag(reader, context);
-		ret = 1;
+		gen->anyxml = (char *) xmlTextReaderReadOuterXml(reader);
+		ret = oval_parser_skip_tag(reader, context);
 	}
 
 	oscap_free(tagname);

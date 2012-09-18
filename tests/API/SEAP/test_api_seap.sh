@@ -482,6 +482,15 @@ function test_api_seap_concurency {
     return $ret_val
 }
 
+function test_api_strto {
+    local ret_val=0;
+
+    ./test_api_strto
+    ret_val=$?
+
+    return $ret_val
+}
+
 # Testing.
 
 test_init "test_api_seap.log"
@@ -495,5 +504,6 @@ test_run "test_api_seap_list"                 ./test_api_seap_list
 test_run "test_api_seap_number_expression"    ./test_api_seap_number
 test_run "test_api_seap_string_expression"    ./test_api_seap_string
 test_run "test_api_SEXP_deepcmp"              ./test_api_SEXP_deepcmp
+test_run "test_api_strto"                     ./test_api_strto
 
 test_exit

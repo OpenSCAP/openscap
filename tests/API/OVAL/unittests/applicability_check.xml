@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+      <generator>
+            <oval:product_name>VIM</oval:product_name>
+            <oval:product_version>1.0</oval:product_version>
+            <oval:schema_version>5.10</oval:schema_version>
+            <oval:timestamp>2012-03-31T00:00:00-00:00</oval:timestamp>
+      </generator>
+
+      <definitions>
+            <definition class="inventory" version="1" id="oval:gov.irs.rhel5:def:10000">
+                  <metadata>
+                        <title>Red Hat Enterprise Linux 5</title>
+                        <affected family="unix">
+                              <platform>Red Hat Enterprise Linux 5</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:redhat:enterprise_linux:5" source="CPE"/>
+                        <description>The operating system installed on the system is Red Hat Enterprise Linux 5</description>
+                  </metadata>
+                  <criteria>
+                        <criterion test_ref="oval:gov.irs.rhel5:tst:10000" comment="Red Hat Enterprise Linux 5 is installed"/>
+                        <criterion test_ref="oval:gov.irs.rhel5:tst:10001" comment="Installed operating system is part of the unix family"/>
+                  </criteria>
+            </definition>
+
+            <definition class="compliance" version="1" id="oval:gov.irs.rhel5:def:1">
+                  <metadata>
+                        <title>Service rhnsd should be disabled</title>
+                        <affected family="unix">
+                              <platform>Red Hat Enterprise Linux 5</platform>
+                        </affected>
+                        <reference ref_id="CCE-3416-5" source="CCE"/>
+                        <description>Service rhnsd should be disabled</description>
+                  </metadata>
+                  <criteria applicability_check="true">
+                        <criterion test_ref="oval:gov.irs.rhel5:tst:4" applicability_check="true" comment="The rhnsd service should not be started at runlevel 5"/>
+                        <extend_definition definition_ref="oval:gov.irs.rhel5:def:10000" applicability_check="true" comment="Red Hat Enterprise Linux 5 is installed"/>
+                  </criteria>
+            </definition>
+
+      </definitions>
+
+      <tests>
+            <rpminfo_test check_existence="at_least_one_exists" comment="redhat-release is version 5" version="1" id="oval:gov.irs.rhel5:tst:10000" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:gov.irs.rhel5:obj:10000"/>
+                  <state state_ref="oval:gov.irs.rhel5:ste:10000"/>
+            </rpminfo_test>
+            <family_test check_existence="at_least_one_exists" comment="installed operating system is part of the Unix family" version="1" id="oval:gov.irs.rhel5:tst:10001" check="only one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+                  <object object_ref="oval:gov.irs.rhel5:obj:10001"/>
+                  <state state_ref="oval:gov.irs.rhel5:ste:10001"/>
+            </family_test>
+            <runlevel_test check_existence="any_exist" comment="The rhnsd service should not be started at runlevel 5" version="1" id="oval:gov.irs.rhel5:tst:4" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+                  <object object_ref="oval:gov.irs.rhel5:obj:4"/>
+                  <state state_ref="oval:gov.irs.rhel5:ste:1"/>
+            </runlevel_test>
+      </tests>
+
+      <objects>
+            <rpminfo_object version="1" id="oval:gov.irs.rhel5:obj:10000" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <name>redhat-release</name>
+            </rpminfo_object>
+            <family_object version="1" id="oval:gov.irs.rhel5:obj:10001" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"/>
+            <runlevel_object version="1" id="oval:gov.irs.rhel5:obj:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+                  <service_name>rhnsd</service_name>
+                  <runlevel>2</runlevel>
+            </runlevel_object>
+            <runlevel_object version="1" id="oval:gov.irs.rhel5:obj:4" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+                  <service_name>rhnsd</service_name>
+                  <runlevel>5</runlevel>
+            </runlevel_object>
+      </objects>
+
+      <states>
+            <rpminfo_state version="1" id="oval:gov.irs.rhel5:ste:10000" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^5[^[:digit:]]</version>
+            </rpminfo_state>
+            <family_state version="1" id="oval:gov.irs.rhel5:ste:10001" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+                  <family>unix</family>
+            </family_state>
+            <runlevel_state version="1" id="oval:gov.irs.rhel5:ste:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+                  <start datatype="boolean">false</start>
+            </runlevel_state>
+      </states>
+</oval_definitions>

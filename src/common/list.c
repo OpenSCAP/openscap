@@ -30,6 +30,7 @@
 #include <stdarg.h>
 
 #include "list.h"
+static inline bool _oscap_iterator_has_more_internal(const struct oscap_iterator *it);
 
 struct oscap_list *oscap_list_new(void)
 {
@@ -161,7 +162,7 @@ void* oscap_list_find(struct oscap_list *list, void *what, oscap_cmp_func compar
 
 	struct oscap_iterator *it = oscap_iterator_new(list);
 
-	while (oscap_iterator_has_more(it)) {
+	while (_oscap_iterator_has_more_internal(it)) {
 		void *item = oscap_iterator_next(it);
 		if (compare(item, what)) {
 			oscap_iterator_free(it);
@@ -204,7 +205,7 @@ static inline void oscap_iterator_find_nearest(struct oscap_iterator *it)
 
 	do {
 		it->cur = (it->cur ? it->cur->next : it->list->first);
-	} while (it->cur && !it->filter(it->cur->data, it->user_data) && oscap_iterator_has_more(it));
+	} while (it->cur && !it->filter(it->cur->data, it->user_data) && _oscap_iterator_has_more_internal(it));
 }
 
 void *oscap_iterator_new(struct oscap_list *list)
@@ -221,7 +222,6 @@ void *oscap_iterator_new_filter(struct oscap_list *list, oscap_filter_func filte
 	struct oscap_iterator *it = oscap_iterator_new(list);
 	it->filter = filter;
 	it->user_data = user_data;
-	oscap_iterator_find_nearest(it);
 	return it;
 }
 
@@ -283,10 +283,24 @@ void *oscap_iterator_next(struct oscap_iterator *it)
 	return it->cur->data;
 }
 
+static inline bool _oscap_iterator_has_more_internal(const struct oscap_iterator *it)
+{
+	return (!it->cur && it->list->first) || (it->cur && it->cur->next);
+}
+
 bool oscap_iterator_has_more(struct oscap_iterator *it)
 {
-	if (!it) return false;
-	return (!it->cur && it->list->first) || (it->cur && it->cur->next);
+	if (!it || !it->list || !it->list->first)
+		return false;
+	if (it->cur == NULL) {
+		if (it->filter(it->list->first->data, it->user_data))
+			return true;
+		else
+			it->cur = it->list->first;
+	}
+	while (it->cur->next && !it->filter(it->cur->next->data, it->user_data))
+		it->cur = it->cur->next;
+	return it->cur->next != NULL;
 }
 
 void oscap_iterator_reset(struct oscap_iterator * it)

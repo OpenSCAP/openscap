@@ -5,7 +5,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.59)
-AC_INIT([openscap], [0.8.4], [open-scap-list@redhat.com])
+AC_INIT([openscap], [0.8.6], [open-scap-list@redhat.com])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
@@ -354,7 +354,7 @@ AC_CHECK_FUNC(sigwaitinfo, [sigwaitinfo_LIBS=""], [sigwaitinfo_LIBS="-lrt"])
 AC_SUBST(sigwaitinfo_LIBS)
 
 SAVE_CPPFLAGS="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS  $(pkg-config libapt-pkg --cflags) $(pkg-config blkid --cflags) $(pkg-config gconf-2.0 --cflags) $(pkg-config libnl-1 --cflags) $(pkg-config libpcre --cflags) $(pkg-config rpm --cflags) $(pkg-config libselinux --cflags) $(pkg-config libxml-2.0 --cflags) $(pkg-config libxslt --cflags) "
+CPPFLAGS="$CPPFLAGS  $(pkg-config libapt-pkg --cflags) $(pkg-config blkid --cflags) $(pkg-config gconf-2.0 --cflags) $(pkg-config libpcre --cflags) $(pkg-config rpm --cflags) $(pkg-config libselinux --cflags) $(pkg-config libxml-2.0 --cflags) $(pkg-config libxslt --cflags) "
 
 echo
 echo ' * Checking presence of required headers for the system_info probe'
@@ -474,11 +474,7 @@ AC_CHECK_HEADERS([ctype.h errno.h limits.h stdio.h string.h ],[],[probe_sysctl_r
 
 echo
 echo ' * Checking presence of required headers for the routingtable probe'
-AC_CHECK_HEADERS([errno.h stdio.h stdlib.h string.h ],[],[probe_routingtable_req_deps_ok=no; probe_routingtable_req_deps_missing='header files'],[-])
-
-echo
-echo ' * Checking presence of optional headers for the routingtable probe'
-AC_CHECK_HEADERS([netinet/in.h netlink/cache.h netlink/genl/genl.h netlink/list.h netlink/netlink.h netlink/route/link.h netlink/route/nexthop.h netlink/route/route.h netlink/route/rtnl.h net/route.h ],[],[probe_routingtable_opt_deps_ok=no],[-])
+AC_CHECK_HEADERS([arpa/inet.h endian.h errno.h netinet/in.h netinet/ip6.h netinet/ip.h net/route.h stdio.h stdlib.h string.h ],[],[probe_routingtable_req_deps_ok=no; probe_routingtable_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the gconf probe'
@@ -677,44 +673,22 @@ probe_ldap57_req_deps_missing+=", $ac_func func";
 ])
 LIBS=$SAVE_LIBS
 echo
-echo '* Checking for nl library used by: routingtable '
-PKG_CHECK_MODULES([nl], [libnl-1 >= 0.0],[],[
+echo '* Checking for opendbx library used by: sql sql57 '
 SAVE_LIBS=$LIBS
-AC_SEARCH_LIBS([nl_connect],[nl],[
-nl_CFLAGS=;
-nl_LIBS=-lnl;
-],[
-probe_routingtable_req_deps_ok=no;
-probe_routingtable_req_deps_missing+=', nl';
-],[])
-AC_SUBST([nl_CFLAGS])
-AC_SUBST([nl_LIBS])
-LIBS=$SAVE_LIBS
-])
-SAVE_LIBS=$LIBS
-LIBS=$nl_LIBS
-AC_CHECK_FUNCS([nl_connect nl_handle_alloc], [], [
-probe_routingtable_req_deps_ok=no;
-probe_routingtable_req_deps_missing+=", $ac_func func";
-])
-LIBS=$SAVE_LIBS
-echo
-echo '* Checking for odbx library used by: sql sql57 '
-SAVE_LIBS=$LIBS
-AC_SEARCH_LIBS([odbx_init],[odbx],[
-odbx_CFLAGS=;
-odbx_LIBS=-lodbx;
+AC_SEARCH_LIBS([odbx_init],[opendbx],[
+opendbx_CFLAGS=;
+opendbx_LIBS=-lopendbx;
 ],[
 probe_sql_req_deps_ok=no;
-probe_sql_req_deps_missing+=', odbx lib';
+probe_sql_req_deps_missing+=', opendbx lib';
 probe_sql57_req_deps_ok=no;
-probe_sql57_req_deps_missing+=', odbx lib';
+probe_sql57_req_deps_missing+=', opendbx lib';
 ],[])
-AC_SUBST([odbx_CFLAGS])
-AC_SUBST([odbx_LIBS])
+AC_SUBST([opendbx_CFLAGS])
+AC_SUBST([opendbx_LIBS])
 LIBS=$SAVE_LIBS
 SAVE_LIBS=$LIBS
-LIBS=$odbx_LIBS
+LIBS=$opendbx_LIBS
 AC_CHECK_FUNCS([odbx_init], [], [
 probe_sql_req_deps_ok=no;
 probe_sql_req_deps_missing+=", $ac_func func";
@@ -1246,6 +1220,7 @@ AC_CONFIG_FILES([Makefile
 
                  src/OVAL/Makefile
                  tests/API/OVAL/Makefile
+                 tests/API/OVAL/unittests/Makefile
                  tests/mitre/Makefile
 
                  src/OVAL/probes/Makefile
@@ -1265,6 +1240,7 @@ AC_CONFIG_FILES([Makefile
                  tests/probes/process/Makefile
                  tests/probes/sysinfo/Makefile
                  tests/probes/rpminfo/Makefile
+                 tests/probes/rpmverify/Makefile
                  tests/probes/runlevel/Makefile
                  tests/probes/filehash/Makefile
                  tests/probes/filehash58/Makefile

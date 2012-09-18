@@ -8,6 +8,7 @@
  *   @defgroup Reporters
  *   @defgroup Debug
  *   @defgroup Memory
+ *   @defgroup ADT Abstract Data Types
  * @}
  *
  * @defgroup OVAL

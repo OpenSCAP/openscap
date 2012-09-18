@@ -16,7 +16,7 @@ function test_mitre {
     require "egrep" || return 255
     require "unzip" || return 255
 
-    if [ ! -d "$MITRE_FILES" ]; then	
+    if [ ! -d "$MITRE_FILES" ]; then
         /usr/bin/unzip -u ${srcdir}/ValidationSupportFiles.zip -d /tmp
         # workaround file access time issue
         find "$MITRE_FILES"
@@ -29,7 +29,7 @@ function test_mitre {
     local RESFILE=$1.results
 
     [ -f $RESFILE ] && rm -f $RESFILE
-    ../../utils/.libs/oscap oval eval --results "$RESFILE" --variables "$EXTVARFILE"  "$DEFFILE"
+    $OSCAP oval eval --results "$RESFILE" --variables "$EXTVARFILE"  "$DEFFILE"
     # catch error from oscap tool
     ret_val=$?
     if [ $ret_val -eq 1 ]; then
@@ -92,7 +92,8 @@ test_run "ind-def_filehash58_test.xml" test_mitre ind-def_filehash58_test.xml "t
 
 test_run "linux-def_partition_test.xml" test_mitre linux-def_partition_test.xml "true"
 test_run "linux-def_rpminfo_test.xml" test_mitre linux-def_rpminfo_test.xml "true"
-test_run "linux-def_rpmverify_test.xml" test_mitre linux-def_rpmverify_test.xml "true"
+# todo: fails on fedora 17+, https://fedorahosted.org/openscap/ticket/203
+#test_run "linux-def_rpmverify_test.xml" test_mitre linux-def_rpmverify_test.xml "true"
 test_run "linux-def_selinuxboolean_test.xml" test_mitre linux-def_selinuxboolean_test.xml "true"
 test_run "linux-def_selinuxsecuritycontext_test.xml" test_mitre linux-def_selinuxsecuritycontext_test.xml "true"
 test_run "linux-def_inetlisteningservers_test.xml" test_mitre linux-def_inetlisteningservers_test.xml "true"

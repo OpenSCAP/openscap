@@ -390,6 +390,46 @@ void xccdf_rule_free(struct xccdf_item *rule)
 	}
 }
 
+/**
+ * Filter function returning true if the check/@selector matches with selectid
+ */
+static bool
+_xccdf_check_filter_selector(struct xccdf_check *check, char *selectid)
+{
+	return !oscap_strcmp((char*) xccdf_check_get_selector(check), selectid);
+}
+
+/**
+ * Filter all checks within a rule by their @selector attribute.
+ * @param rule which encapsulates the checks
+ * @param selector string to filter these checks. NULL or "" values might be used
+ * in order to filter checks without @selector attribute.
+ */
+struct xccdf_check_iterator *
+xccdf_rule_get_checks_filtered(struct xccdf_item *rule, char *selector)
+{
+	return (struct xccdf_check_iterator *) oscap_iterator_new_filter(rule->sub.rule.checks, (oscap_filter_func) _xccdf_check_filter_selector, selector);
+}
+
+/**
+ * Filter function returning true if the xccdf_check is complex-check
+ */
+static bool
+_xccdf_check_filter_complex(struct xccdf_check *check, void *unused)
+{
+	return xccdf_check_get_complex(check);
+}
+
+/**
+ * Filter checks and return complex-check.
+ * Note: In valid XCCDF 1.2 documents there must not be more than one check within the given rule.
+ */
+struct xccdf_check_iterator *
+xccdf_rule_get_complex_checks(struct xccdf_item *rule)
+{
+	return (struct xccdf_check_iterator *) oscap_iterator_new_filter(rule->sub.rule.checks, (oscap_filter_func) _xccdf_check_filter_complex, NULL);
+}
+
 struct xccdf_ident * xccdf_ident_clone(const struct xccdf_ident * ident)
 {
 	struct xccdf_ident * clone = xccdf_ident_new();
@@ -488,6 +528,7 @@ struct xccdf_check *xccdf_check_clone(const struct xccdf_check* old_check)
 	new_check->selector = oscap_strdup(old_check->selector);
 	new_check->content =  oscap_strdup(old_check->content);
 	new_check->oper = old_check->oper;
+	new_check->flags = old_check->flags;
 
 	new_check->imports = oscap_list_clone(old_check->imports, (oscap_clone_func) xccdf_check_import_clone);
 	new_check->exports = oscap_list_clone(old_check->exports, (oscap_clone_func) xccdf_check_export_clone);
@@ -544,8 +585,12 @@ struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader)
 	check->system = xccdf_attribute_copy(reader, XCCDFA_SYSTEM);
 	check->selector = xccdf_attribute_copy(reader, XCCDFA_SELECTOR);
 	check->oper = oscap_string_to_enum(XCCDF_BOOLOP_MAP, xccdf_attribute_get(reader, XCCDFA_OPERATOR));
-	if (xccdf_attribute_get_bool(reader, XCCDFA_NEGATE))
-		check->oper |= XCCDF_OPERATOR_NOT;
+	if (xccdf_attribute_has(reader, XCCDFA_MULTICHECK) && el != XCCDFE_COMPLEX_CHECK) {
+		check->flags.def_multicheck = true;
+		check->flags.multicheck = xccdf_attribute_get_bool(reader, XCCDFA_MULTICHECK);
+	}
+	check->flags.def_negate = xccdf_attribute_has(reader, XCCDFA_NEGATE);
+	check->flags.negate = xccdf_attribute_get_bool(reader, XCCDFA_NEGATE);
 
 	int depth = oscap_element_depth(reader) + 1;
 
@@ -1076,6 +1121,8 @@ OSCAP_ACCESSOR_STRING(xccdf_check, id)
 OSCAP_ACCESSOR_STRING(xccdf_check, system)
 OSCAP_ACCESSOR_STRING(xccdf_check, selector)
 OSCAP_ACCESSOR_STRING(xccdf_check, content)
+OSCAP_ACCESSOR_EXP(bool, xccdf_check, multicheck, flags.multicheck)
+OSCAP_ACCESSOR_EXP(bool, xccdf_check, negate, flags.negate);
 OSCAP_ACCESSOR_SIMPLE(xccdf_bool_operator_t, xccdf_check, oper)
 OSCAP_IGETINS(xccdf_check_import, xccdf_check, imports, import)
 OSCAP_IGETINS(xccdf_check_export, xccdf_check, exports, export)

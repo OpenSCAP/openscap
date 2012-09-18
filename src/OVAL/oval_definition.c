@@ -61,7 +61,7 @@ typedef struct oval_definition {
 	struct oval_collection *affected;
 	struct oval_collection *reference;
 	struct oval_collection *notes;
-	xmlNode *metadata;
+	char *anyxml;
 	struct oval_criteria_node *criteria;
 } oval_definition_t;
 
@@ -137,13 +137,6 @@ struct oval_string_iterator *oval_definition_get_notes(struct oval_definition *d
 	    oval_collection_iterator(definition->notes);
 }
 
-xmlNode *oval_definition_get_metadata(struct oval_definition *definition)
-{
-	__attribute__nonnull__(definition);
-
-	return definition->metadata;
-}
-
 struct oval_criteria_node *oval_definition_get_criteria(struct oval_definition
 							*definition)
 {
@@ -171,8 +164,8 @@ struct oval_definition *oval_definition_new(struct oval_definition_model *model,
 	definition->affected = oval_collection_new();
 	definition->reference = oval_collection_new();
 	definition->notes = oval_collection_new();
-	root = xmlDocGetRootElement(oval_definition_model_get_metadata_doc(model));
-	definition->metadata = xmlNewChild(root, NULL, BAD_CAST "metadata", NULL);
+
+	definition->anyxml = NULL;
 	definition->criteria = NULL;
 	definition->model = model;
 
@@ -215,12 +208,9 @@ struct oval_definition *oval_definition_clone
 		}
 		oval_string_iterator_free(notes);
 
-		metadata = xmlDocCopyNode(old_definition->metadata, oval_definition_model_get_metadata_doc(new_model), 1);
-		root = xmlDocGetRootElement(oval_definition_model_get_metadata_doc(new_model));
-		xmlAddChild(root, metadata);
+		new_definition->anyxml = strdup(old_definition->anyxml);
 
-		oval_definition_set_criteria(new_definition,
-					     oval_criteria_node_clone(new_model, old_definition->criteria));
+		oval_definition_set_criteria(new_definition, oval_criteria_node_clone(new_model, old_definition->criteria));
 	}
 	return new_definition;
 }
@@ -240,8 +230,8 @@ void oval_definition_free(struct oval_definition *definition)
 	oval_collection_free_items(definition->affected, (oscap_destruct_func) oval_affected_free);
 	oval_collection_free_items(definition->reference, (oscap_destruct_func) oval_reference_free);
 	oval_collection_free_items(definition->notes, (oscap_destruct_func) oscap_free);
-	xmlUnlinkNode(definition->metadata);
-	xmlFreeNode(definition->metadata);
+
+	oscap_free(definition->anyxml);
 
 	definition->affected = NULL;
 	definition->criteria = NULL;
@@ -249,7 +239,7 @@ void oval_definition_free(struct oval_definition *definition)
 	definition->id = NULL;
 	definition->reference = NULL;
 	definition->notes = NULL;
-	definition->metadata = NULL;
+	definition->anyxml = NULL;
 	definition->title = NULL;
 	oscap_free(definition);
 }
@@ -413,20 +403,7 @@ static int _oval_definition_parse_metadata(xmlTextReaderPtr reader, struct oval_
 	} else if (strcmp(tagname, "reference") == 0) {
 		return_code = oval_reference_parse_tag(reader, context, &oval_reference_consume, definition);
 	} else {
-		char *str;
-		xmlDoc *doc;
-		xmlNode *node;
-
-		str = (char *) xmlTextReaderReadOuterXml(reader);
-		doc = xmlReadDoc(BAD_CAST str, NULL, NULL, 0);
-		xmlFree(str);
-
-		node = xmlDocGetRootElement(doc);
-		// todo: reattach instead of copying?
-		node = xmlDocCopyNode(node, oval_definition_model_get_metadata_doc(definition->model), 1);
-		xmlAddChild(definition->metadata, node);
-		xmlFreeDoc(doc);
-
+		definition->anyxml = (char *) xmlTextReaderReadOuterXml(reader);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 	oscap_free(tagname);
@@ -485,7 +462,8 @@ int oval_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parser_contex
 
 xmlNode *oval_definition_to_dom(struct oval_definition *definition, xmlDoc * doc, xmlNode * parent)
 {
-	xmlNode *nodelst;
+	xmlNode *nodestr, *nodelst;
+	xmlDoc * docstr;
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
 	xmlNode *definition_node = xmlNewTextChild(parent, ns_definitions, BAD_CAST "definition", NULL);
 
@@ -557,8 +535,11 @@ xmlNode *oval_definition_to_dom(struct oval_definition *definition, xmlDoc * doc
 	}
 	oval_string_iterator_free(notes);
 
-	nodelst = xmlDocCopyNodeList(doc, definition->metadata->children);
+	docstr = xmlReadDoc(BAD_CAST definition->anyxml, NULL, NULL, 0);
+	nodestr = xmlDocGetRootElement(docstr);
+	nodelst = xmlDocCopyNode(nodestr, doc, 1);
 	xmlAddChildList(metadata_node, nodelst);
+	xmlFreeDoc(docstr);
 
 	struct oval_criteria_node *criteria = oval_definition_get_criteria(definition);
 	if (criteria)

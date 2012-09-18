@@ -154,7 +154,6 @@ int oval_generator_parse_tag(xmlTextReader *, struct oval_parser_context *, void
 xmlNode *oval_generator_to_dom(struct oval_generator *, xmlDocPtr, xmlNode *);
 
 /* definition_model */
-xmlDoc *oval_definition_model_get_metadata_doc(struct oval_definition_model *);
 xmlNode *oval_definition_model_to_dom(struct oval_definition_model *definition_model, xmlDocPtr doc, xmlNode * parent);
 void oval_definition_model_optimize_by_filter_propagation(struct oval_definition_model *);
 

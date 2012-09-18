@@ -15,12 +15,12 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 
 LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
 
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh  
+EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
 
 DISTCLEANFILES = *.log *.out* oscap_debug.log* exported*
 CLEANFILES = *.log *.out* oscap_debug.log* exported*
 
-TESTS = test_api_oval.sh 
+TESTS = test_api_oval.sh
 
 check_PROGRAMS = test_api_oval test_api_syschar test_api_results test_api_directives
 
@@ -36,4 +36,7 @@ EXTRA_DIST += test_api_oval.sh \
 	      results.xml \
               directives.xml \
               results-good.xml
+
+SUBDIRS = unittests
+
 endif

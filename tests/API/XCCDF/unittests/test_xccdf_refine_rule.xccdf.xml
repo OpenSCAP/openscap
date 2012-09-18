@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.1" id="testing-xcccdf" resolved="true">
+  <status>incomplete</status>
+  <version>1.0</version>
+  <Profile id="x">
+    <title>is kinda compulsory</title>
+    <select idref="def-20120006" selected="true"/>
+    <refine-rule idref="def-20120006" selector="failing-check"/>
+  </Profile>
+  <Rule selected="true" id="def-20120006">
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" selector="failing-check">
+      <check-content-ref href="test_xccdf_check_content_ref_without_name_attr.oval.xml" name="oval:moc.elpmaxe.www:def:2"/>
+    </check>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" selector="passing-check">
+      <check-content-ref href="test_xccdf_check_content_ref_without_name_attr.oval.xml" name="oval:moc.elpmaxe.www:def:1"/>
+    </check>
+  </Rule>
+</Benchmark>

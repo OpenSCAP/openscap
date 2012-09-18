@@ -52,6 +52,7 @@ typedef struct oval_criteria_node {
 	oval_criteria_node_type_t type;
 	int negate;
 	char *comment;
+	int applicability_check;
 } oval_criteria_node_t;
 
 typedef struct oval_criteria_node_CRITERIA {
@@ -59,6 +60,7 @@ typedef struct oval_criteria_node_CRITERIA {
 	oval_criteria_node_type_t type;
 	int negate;
 	char *comment;
+	int applicability_check;
 	oval_operator_t operator;	/*type==NODETYPE_CRITERIA */
 	struct oval_collection *subnodes;	/*type==NODETYPE_CRITERIA */
 } oval_criteria_node_CRITERIA_t;
@@ -68,6 +70,7 @@ typedef struct oval_criteria_node_CRITERION {
 	oval_criteria_node_type_t type;
 	int negate;
 	char *comment;
+	int applicability_check;
 	struct oval_test *test;	/*type==NODETYPE_CRITERION */
 } oval_criteria_node_CRITERION_t;
 
@@ -76,6 +79,7 @@ typedef struct oval_criteria_node_EXTENDDEF {
 	oval_criteria_node_type_t type;
 	int negate;
 	char *comment;
+	int applicability_check;
 	struct oval_definition *definition;	/*type==NODETYPE_EXTENDDEF */
 } oval_criteria_node_EXTENDDEF_t;
 
@@ -120,6 +124,13 @@ bool oval_criteria_node_get_negate(struct oval_criteria_node *node)
 	__attribute__nonnull__(node);
 
 	return ((struct oval_criteria_node *)node)->negate;
+}
+
+bool oval_criteria_node_get_applicability_check(struct oval_criteria_node *node)
+{
+	__attribute__nonnull__(node);
+
+	return ((struct oval_criteria_node *)node)->applicability_check;
 }
 
 char *oval_criteria_node_get_comment(struct oval_criteria_node *node)
@@ -204,6 +215,7 @@ struct oval_criteria_node *oval_criteria_node_new(struct oval_definition_model *
 	node->type = type;
 	node->negate = 0;
 	node->comment = NULL;
+	node->applicability_check = 0;
 	node->model = model;
 	return node;
 }
@@ -296,6 +308,12 @@ void oval_criteria_node_set_negate(struct oval_criteria_node *node, bool negate)
 	node->negate = negate;
 }
 
+void oval_criteria_node_set_applicability_check(struct oval_criteria_node *node, bool applicability_check)
+{
+	__attribute__nonnull__(node);
+	node->applicability_check = applicability_check;
+}
+
 void oval_criteria_node_set_comment(struct oval_criteria_node *node, char *comm)
 {
 	__attribute__nonnull__(node);
@@ -366,7 +384,7 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context 
 		type = OVAL_NODETYPE_EXTENDDEF;
 	int return_code;
 	if (type != OVAL_NODETYPE_UNKNOWN) {
-		assert(context != NULL);	/* This is not asserted as attribute, because we 
+		assert(context != NULL);	/* This is not asserted as attribute, because we
 						   can pass NULL pointer in case of OVAL_NODETYPE_UNKNOWN */
 		struct oval_criteria_node *node = oval_criteria_node_new(context->definition_model, type);
 		node->type = type;
@@ -377,6 +395,7 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context 
 			comm = NULL;
 		}
 		oval_criteria_node_set_negate(node, oval_parser_boolean_attribute(reader, "negate", 0));
+		oval_criteria_node_set_applicability_check(node, oval_parser_boolean_attribute(reader, "applicability_check", 0));
 		return_code = 0;
 		switch (oval_criteria_node_get_type(node)) {
 		case OVAL_NODETYPE_CRITERIA:{
@@ -477,6 +496,10 @@ xmlNode *oval_criteria_node_to_dom(struct oval_criteria_node * cnode, xmlDoc * d
 	bool negate = oval_criteria_node_get_negate(cnode);
 	if (negate)
 		xmlNewProp(criteria_node, BAD_CAST "negate", BAD_CAST "true");
+
+	bool applicability_check = oval_criteria_node_get_applicability_check(cnode);
+	if (applicability_check)
+		xmlNewProp(criteria_node, BAD_CAST "applicability_check", BAD_CAST "true");
 
 	char *comm = oval_criteria_node_get_comment(cnode);
 	if (comm)

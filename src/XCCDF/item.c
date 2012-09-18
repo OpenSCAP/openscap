@@ -508,10 +508,12 @@ xmlNode *xccdf_status_to_dom(struct xccdf_status *status, xmlDoc *doc, xmlNode *
 							BAD_CAST XCCDF_STATUS_MAP[type - 1].string);
 
 	time_t date_time = xccdf_status_get_date(status);
-	struct tm *date = localtime(&date_time);
-	char date_str[] = "YYYY-DD-MM";
-	snprintf(date_str, sizeof(date_str), "%04d-%02d-%02d", date->tm_year + 1900, date->tm_mon + 1, date->tm_mday);
-	xmlNewProp(status_node, BAD_CAST "date", BAD_CAST date_str);
+	if (date_time != NULL) {
+		struct tm *date = localtime(&date_time);
+		char date_str[] = "YYYY-DD-MM";
+		snprintf(date_str, sizeof(date_str), "%04d-%02d-%02d", date->tm_year + 1900, date->tm_mon + 1, date->tm_mday);
+		xmlNewProp(status_node, BAD_CAST "date", BAD_CAST date_str);
+	}
 
 	return status_node;
 }
@@ -615,6 +617,13 @@ xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *par
 	const char *selector = xccdf_check_get_selector(check);
 	if (selector)
 		xmlNewProp(check_node, BAD_CAST "selector", BAD_CAST selector);
+	if (!xccdf_check_get_complex(check) && (check->flags.def_multicheck || xccdf_check_get_multicheck(check))) {
+		xmlNewProp(check_node, BAD_CAST "multi-check",
+			BAD_CAST xccdf_check_get_multicheck(check) ? "true" : "false");
+	}
+	if (check->flags.def_negate || xccdf_check_get_negate(check))
+		xmlNewProp(check_node, BAD_CAST "negate",
+			BAD_CAST xccdf_check_get_negate(check) ? "true" : "false");
 
 	/* Handle complex checks */
 	struct xccdf_check_iterator *checks = xccdf_check_get_children(check);
@@ -660,7 +669,8 @@ xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *par
 		xmlNode *ref_node = xmlNewTextChild(check_node, ns_xccdf, BAD_CAST "check-content-ref", NULL);
 
 		const char *name = xccdf_check_content_ref_get_name(ref);
-		xmlNewProp(ref_node, BAD_CAST "name", BAD_CAST name);
+		if (name != NULL)
+			xmlNewProp(ref_node, BAD_CAST "name", BAD_CAST name);
 
 		const char *href = xccdf_check_content_ref_get_href(ref);
 		xmlNewProp(ref_node, BAD_CAST "href", BAD_CAST href);

@@ -1,4 +1,4 @@
-name=odbx
+name=opendbx
 pkgconfig=no
 functions_req=(odbx_init)
 functions_opt=

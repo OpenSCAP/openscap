@@ -2,13 +2,13 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:           openscap
-Version:        0.8.4
+Version:        0.8.5
 Release:        1%{?dist}
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 Group:          System Environment/Libraries
 License:        LGPLv2+
 URL:            http://www.open-scap.org/
-Source0:        http://www.open-scap.org/download/%{name}-%{version}.tar.gz
+Source0:        http://fedorahosted.org/releases/o/p/openscap/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  swig libxml2-devel libxslt-devel m4 perl-XML-Parser
 BuildRequires:  rpm-devel
@@ -16,7 +16,6 @@ BuildRequires:  libgcrypt-devel
 BuildRequires:  pcre-devel
 BuildRequires:  libselinux-devel libcap-devel
 BuildRequires:  libacl-devel
-BuildRequires:  libnl-devel
 Requires(post):   /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 
@@ -157,6 +156,7 @@ fi
 %{_libexecdir}/openscap/probe_rpminfo
 %{_libexecdir}/openscap/probe_rpmverify
 %{_libexecdir}/openscap/probe_rpmverifyfile
+%{_libexecdir}/openscap/probe_rpmverifypackage
 %{_libexecdir}/openscap/probe_runlevel
 %{_libexecdir}/openscap/probe_selinuxboolean
 %{_libexecdir}/openscap/probe_selinuxsecuritycontext
@@ -205,6 +205,9 @@ fi
 %{_libexecdir}/openscap/probe_gconf
 
 %changelog
+* Mon Aug 27 2012 Petr Lautrbach <plautrba@redhat.com> 0.8.5-1
+- upgrade
+
 * Tue Aug 07 2012 Petr Lautrbach <plautrba@redhat.com> 0.8.4-1
 - upgrade
 

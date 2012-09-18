@@ -79,15 +79,15 @@ endif
 if probe_sql_enabled
 pkglibexec_PROGRAMS += probe_sql
 probe_sql_SOURCES= independent/sql.c
-probe_sql_CFLAGS= @odbx_CFLAGS@
-probe_sql_LDFLAGS= @odbx_LIBS@
+probe_sql_CFLAGS= @opendbx_CFLAGS@
+probe_sql_LDFLAGS= @opendbx_LIBS@
 endif
 
 if probe_sql57_enabled
 pkglibexec_PROGRAMS += probe_sql57
 probe_sql57_SOURCES= independent/sql57.c
-probe_sql57_CFLAGS= @odbx_CFLAGS@
-probe_sql57_LDFLAGS= @odbx_LIBS@
+probe_sql57_CFLAGS= @opendbx_CFLAGS@
+probe_sql57_LDFLAGS= @opendbx_LIBS@
 endif
 
 if probe_ldap57_enabled
@@ -167,8 +167,6 @@ endif
 if probe_routingtable_enabled
 pkglibexec_PROGRAMS += probe_routingtable
 probe_routingtable_SOURCES= unix/routingtable.c
-probe_routingtable_CFLAGS= @nl_CFLAGS@
-probe_routingtable_LDFLAGS= @nl_LIBS@
 endif
 
 if probe_gconf_enabled

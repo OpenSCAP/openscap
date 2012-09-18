@@ -17,15 +17,15 @@ cpe20dir = $(pkgdatadir)/schemas/cpe/2.0/
 cpe21dir = $(pkgdatadir)/schemas/cpe/2.1/
 cpe22dir = $(pkgdatadir)/schemas/cpe/2.2/
 
-oval53_DATA = $(wildcard oval/5.3/*.xsd)
-oval54_DATA = $(wildcard oval/5.4/*.xsd)
-oval55_DATA = $(wildcard oval/5.5/*.xsd)
-oval56_DATA = $(wildcard oval/5.6/*.xsd)
-oval57_DATA = $(wildcard oval/5.7/*.xsd)
-oval58_DATA = $(wildcard oval/5.8/*.xsd)
-oval59_DATA = $(wildcard oval/5.9/*.xsd)
-oval510_DATA = $(wildcard oval/5.10/*.xsd)
-oval5101_DATA = $(wildcard oval/5.10.1/*.xsd)
+oval53_DATA = $(wildcard oval/5.3/*.xsd oval/5.3/*.xsl)
+oval54_DATA = $(wildcard oval/5.4/*.xsd oval/5.4/*.xsl)
+oval55_DATA = $(wildcard oval/5.5/*.xsd oval/5.5/*.xsl)
+oval56_DATA = $(wildcard oval/5.6/*.xsd oval/5.6/*.xsl)
+oval57_DATA = $(wildcard oval/5.7/*.xsd oval/5.7/*.xsl)
+oval58_DATA = $(wildcard oval/5.8/*.xsd oval/5.8/*.xsl)
+oval59_DATA = $(wildcard oval/5.9/*.xsd oval/5.9/*.xsl)
+oval510_DATA = $(wildcard oval/5.10/*.xsd oval/5.10/*.xsl)
+oval5101_DATA = $(wildcard oval/5.10.1/*.xsd oval/5.10.1/*.xsl)
 
 sce10_DATA = sce/1.0/sce-result-schema.xsd
 

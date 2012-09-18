@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2012 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -7,33 +7,38 @@
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful, 
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software 
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Authors:
- *      Daniel Kopecek <dkopecek@redhat.com>
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#pragma once
+#ifndef OSCAP_ADT_H
+#define OSCAP_ADT_H
 
-#include "oscap_sysinfo.h"
+/**
+ * @file
+ * Supporting structures for OpenSCAP Abstract Data Types.
+ *
+ * @addtogroup COMMON
+ * @{
+ * @addtogroup ADT
+ * @{
+ * Abstract Data Types
+ */
 
-#if defined(__linux__)
-int oscap_sysinfo(struct sysinfo *info)
-{
-	return sysinfo(info);
-}
-#elif defined(__FreeBSD__) || defined(__SVR4)
-int oscap_sysinfo(struct sysinfo *info)
-{
-	return (-1);
-}
+/**
+ * Function pointer to an object destructor.
+ */
+typedef void (*oscap_destruct_func) (void *);
+
+/** @} */
+/** @} */
+
 #endif

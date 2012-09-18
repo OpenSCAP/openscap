@@ -64,6 +64,30 @@ struct xccdf_value_binding_iterator;
  */
 struct xccdf_policy_iterator;
 
+/**
+ * Type of a query over checking-engine data.
+ * This allows xccdf_policy module to query checking engine and acquire comprehensive info.
+ */
+typedef enum {
+	POLICY_ENGINE_QUERY_NAMES_FOR_HREF = 1,		/// Considering xccdf:check-content-ref, what are possible @name attributes for given href?
+} xccdf_policy_engine_query_t;
+
+/**
+ * Type of function which implements queries defined within xccdf_policy_engine_query_t.
+ *
+ * Each checking engine may register its own function of the xccdf_policy_engine_query_fn
+ * type. The registered function is then used by xccdf_policy module to acquire comprehensive
+ * info about the checking-engine itself or the data fed in. First argument of the function
+ * is always user data as registered. Second argument defines the query. Third argument is
+ * dependent on query and defined as follows:
+ *  - (const char *)href -- for POLICY_ENGINE_QUERY_NAMES_FOR_HREF
+ *
+ * Expected return type depends also on query as follows:
+ *  - (struct oscap_stringlists *) -- for POLICY_ENGINE_QUERY_NAMES_FOR_HREF
+ *  - NULL shall be returned if the function doesn't understand the query.
+ */
+typedef void *(*xccdf_policy_engine_query_fn) (void *, xccdf_policy_engine_query_t, void *);
+
 /************************************************************/
 
 /**
@@ -117,6 +141,18 @@ void xccdf_value_binding_free(struct xccdf_value_binding *);
  * @return true if callback registered succesfully, false otherwise
  */
 bool xccdf_policy_model_register_engine_callback(struct xccdf_policy_model * model, char * sys, void * func, void * usr);
+
+/**
+ * Function to register callback for checking system
+ * @param model XCCDF Policy Model
+ * @param sys String representing given checking system
+ * @param func Callback - pointer to function called by XCCDF Policy system when rule parsed
+ * @param usr optional parameter for passing user data to callback
+ * @param query_fn - optional parameter for providing xccdf_policy_engine_query_fn implementation for given system.
+ * @memberof xccdf_policy_model
+ * @return true if callback registered succesfully, false otherwise
+ */
+bool xccdf_policy_model_register_engine_and_query_callback(struct xccdf_policy_model *model, char *sys, void *eval_fn, void *usr, xccdf_policy_engine_query_fn query_fn);
 
 /**
  * Function to register output callback for checking system that will be called AFTER each rule evaluation.

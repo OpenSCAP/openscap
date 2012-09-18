@@ -305,7 +305,7 @@ struct oval_variable_model * oval_variable_model_import(const char *file)
 
 	xmlTextReader *reader = xmlNewTextReaderFilename(file);
 	if (reader == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), file);
                 return NULL;
 	}
 
@@ -315,7 +315,7 @@ struct oval_variable_model * oval_variable_model_import(const char *file)
 	if (ret != 1) {
 		oval_variable_model_free(model);
 		model = NULL;
-	}		
+	}
 	xmlFreeTextReader(reader);
 
 	return model;

@@ -338,9 +338,9 @@ static void xccdf_resolve_value_instance(struct xccdf_value_instance *child, str
 	if (child->type == XCCDF_TYPE_STRING && child->match == NULL)
 		xccdf_value_instance_set_match(child, xccdf_value_instance_get_match(parent));
 	if (child->type == XCCDF_TYPE_NUMBER) {
-		if (child->lower_bound == NAN)
+		if (isnan(child->lower_bound))
 			child->lower_bound = parent->lower_bound;
-		if (child->upper_bound == NAN)
+		if (isnan(child->upper_bound))
 			child->upper_bound = parent->upper_bound;
 	}
 
