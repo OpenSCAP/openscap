@@ -604,15 +604,16 @@ xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *par
 	xmlNode *check_node = NULL;
 	if (xccdf_check_get_complex(check))
 		check_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "complex-check", NULL);
-	else
+	else {
 		check_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "check", NULL);
+		const char *sys = xccdf_check_get_system(check);
+		xmlNewProp(check_node, BAD_CAST "system", BAD_CAST sys);
+	}
+
 
 	const char *id = xccdf_check_get_id(check);
 	if (id)
 		xmlNewProp(check_node, BAD_CAST "id", BAD_CAST id);
-
-	const char *sys = xccdf_check_get_system(check);
-	xmlNewProp(check_node, BAD_CAST "system", BAD_CAST sys);
 
 	const char *selector = xccdf_check_get_selector(check);
 	if (selector)
