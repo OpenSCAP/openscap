@@ -138,9 +138,11 @@ Be verbose.
 
 .SH XCCDF OPERATIONS
 .TP
-.B \fBeval\fR [\fIoptions\fR] xccdf-file [\fIoval-definitions-files\fR]
+.B \fBeval\fR [\fIoptions\fR] INPUT_FILE [\fIoval-definitions-files\fR]
 .RS
-Perform evaluation driven by XCCDF file and use OVAL as checking engine. Print result of each rule to standard output. oscap returns 0 if all rules pass. If there is an error during evaluation, the return code is 1. If there is at least one failed rule, oscap-scan finishes with return code 2.
+Perform evaluation driven by XCCDF file given as INPUT_FILE and use OVAL as the checking engine. Print result of each rule to standard output. oscap returns 0 if all rules pass. If there is an error during evaluation, the return code is 1. If there is at least one failed rule, oscap-scan finishes with return code 2.
+.PP
+Optionally you can give a source datastream as the INPUT_FILE instead of an XCCDF file. One of the XCCDFs inside the datastream will be used for evaluation (see --datastream-id).
 .PP
 You may specify all required OVAL Definition files as last parameters. If you don't do that, oscap tool will try to load all OVAL Definition files referenced from XCCDF automaticaly(search in the same path as XCCDF).
 .PP
@@ -153,6 +155,11 @@ Select a particular profile from XCCDF document.
 \fB\-\-results FILE\fR
 .RS
 Write XCCDF results into file.
+.RE
+.TP
+\fB\-\-results-arf FILE\fR
+.RS
+Writes results to a given FILE in Asset Reporting Format. It is recommended to use this option instead of --results when dealing with datastreams.
 .RE
 .TP
 \fB\-\-report FILE\fR
@@ -168,6 +175,11 @@ Generate OVAL Result file for each OVAL session used for evaluation. File with n
 \fB\-\-export-variables\fR
 .RS
 Generate OVAL Variables documents which contain external variables' values that were provided to the OVAL checking engine during evaluation. The filename format is '\fIoriginal-oval-definitions-filename\fR-\fIsession-index\fR.variables-\fIvariables-index\fR.xml'.
+.RE
+.TP
+\fB\-\-datastream-id ID\fR
+.RS
+Uses a datastream with that particular ID from the given datastream collection. If not given the first datastream is used. Only applies if you give source datastream in place of an XCCDF file.
 .RE
 .TP
 \fB\-\-skip-valid\fR
