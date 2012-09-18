@@ -28,5 +28,7 @@ for args in "" "--profile xccdf_moc.elpmaxe.www_profile_1"; do
 	assert_exists_once '//rule-result/complex-check/check[@system="http://oval.mitre.org/XMLSchema/oval-definitions-5"]/check-content-ref'
 	assert_exists_once '//rule-result/complex-check/check[@system="http://oval.mitre.org/XMLSchema/oval-definitions-5"]/check-content-ref[@name="oval:moc.elpmaxe.www:def:1"]'
 	assert_exists_once '//rule-result/complex-check/check[@system="http://oval.mitre.org/XMLSchema/oval-definitions-5"]/check-content-ref[@href="test_xccdf_check_content_ref_without_name_attr.oval.xml"]'
+	assert_exists_once '//Rule/complex-check[not(@system)]'
+	assert_exists_once '//rule-result/complex-check[not(@system)]'
 	rm -rf $result
 done
