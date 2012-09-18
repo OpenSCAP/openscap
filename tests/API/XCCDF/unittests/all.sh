@@ -15,4 +15,5 @@ test_run "check/@negate" $srcdir/test_xccdf_check_negate.sh
 test_run "check/@multi-check" $srcdir/test_xccdf_check_multi_check.sh
 test_run "xccdf:check-content-ref without @name" $srcdir/test_xccdf_check_content_ref_without_name_attr.sh
 test_run "xccdf:refine-rule/@weight shall not be exported" $srcdir/test_xccdf_refine_rule.sh
+test_run "Check Processing Algorithm -- complex-check priority" $srcdir/test_xccdf_check_processing_complex_priority.sh
 test_exit

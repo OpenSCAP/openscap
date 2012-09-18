@@ -35,6 +35,7 @@ check_SCRIPTS = \
 	test_xccdf_check_content_ref_without_name_attr.sh \
 	test_xccdf_check_negate.sh \
 	test_xccdf_check_multi_check.sh \
+	test_xccdf_check_processing_complex_priority.sh \
 	test_xccdf_refine_rule.sh \
 	test_xccdf_xml_escaping_value.sh
 
@@ -54,6 +55,8 @@ EXTRA_DIST += \
 	test_xccdf_check_negate.xccdf.xml \
 	test_xccdf_check_multi_check.sh \
 	test_xccdf_check_multi_check.xccdf.xml \
+	test_xccdf_check_processing_complex_priority.sh \
+	test_xccdf_check_processing_complex_priority.xccdf.xml \
 	test_xccdf_overlaping_IDs.xccdf.xml \
 	test_xccdf_refine_rule.sh \
 	test_xccdf_refine_rule.xccdf.xml \
