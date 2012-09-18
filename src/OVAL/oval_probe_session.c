@@ -46,15 +46,15 @@
 #include "_oval_probe_session.h"
 #include "_oval_probe_handler.h"
 #include "oval_probe_impl.h"
-#if defined(ENABLE_PROBES)
-# include "oval_probe_ext.h"
-# include "oval_probe_meta.h"
+#include "oval_probe_ext.h"
+#include "oval_probe_meta.h"
+
 #if defined(OSCAP_THREAD_SAFE)
-# include <pthread.h>
+#include <pthread.h>
 static pthread_once_t __oval_probe_session_init_once = PTHREAD_ONCE_INIT;
 #else
 static volatile int __oval_probe_session_init_once = 0;
-#endif
+#endif /* OSCAP_THREAD_SAFE */
 
 /**
  * Entity name cache exit hook. This hook is registered using
@@ -104,20 +104,17 @@ static void __init_once(void)
 #endif
         return;
 }
-#endif /* ENABLE_PROBES */
 
 oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
 {
         oval_probe_session_t *sess;
-#if defined(ENABLE_PROBES)
         void *handler_arg;
         register size_t i;
-#endif
+
         sess = oscap_talloc(oval_probe_session_t);
         sess->ph = oval_phtbl_new();
         sess->sys_model = model;
         sess->flg = 0;
-#if defined(ENABLE_PROBES)
         sess->pext = oval_pext_new();
         sess->pext->model    = &sess->sys_model;
         sess->pext->sess_ptr = sess;
@@ -138,7 +135,6 @@ oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
         }
 
         oval_probe_handler_set(sess->ph, OVAL_SUBTYPE_ALL, oval_probe_ext_handler, sess->pext); /* special case for reset */
-#endif
         return(sess);
 }
 
@@ -150,9 +146,7 @@ void oval_probe_session_destroy(oval_probe_session_t *sess)
 	}
 
         oval_phtbl_free(sess->ph);
-#if defined(ENABLE_PROBES)
         oval_pext_free(sess->pext);
-#endif
         oscap_free(sess);
 }
 
@@ -164,7 +158,6 @@ int oval_probe_session_close(oval_probe_session_t *sess)
 
 int oval_probe_session_reset(oval_probe_session_t *sess, struct oval_syschar_model *sysch)
 {
-#if defined(ENABLE_PROBES)
         oval_ph_t *ph;
 
         if ((ph = oval_probe_handler_get(sess->ph, OVAL_SUBTYPE_ALL)) == NULL) {
@@ -175,7 +168,6 @@ int oval_probe_session_reset(oval_probe_session_t *sess, struct oval_syschar_mod
         if (ph->func(OVAL_SUBTYPE_ALL, ph->uptr, PROBE_HANDLER_ACT_RESET) != 0) {
                 return(-1);
         }
-#endif
         if (sysch != NULL)
                 sess->sys_model = sysch;
 
@@ -184,7 +176,6 @@ int oval_probe_session_reset(oval_probe_session_t *sess, struct oval_syschar_mod
 
 int oval_probe_session_abort(oval_probe_session_t *sess)
 {
-#if defined(ENABLE_PROBES)
 	oval_ph_t *ph;
 
 	if ((ph = oval_probe_handler_get(sess->ph, OVAL_SUBTYPE_ALL) ) == NULL) {
@@ -193,9 +184,6 @@ int oval_probe_session_abort(oval_probe_session_t *sess)
 	}
 
         return ph->func(OVAL_SUBTYPE_ALL, ph->uptr, PROBE_HANDLER_ACT_ABORT);
-#else
-	return (-1);
-#endif
 }
 
 int oval_probe_session_sethandler(oval_probe_session_t *sess, oval_subtype_t type, oval_probe_handler_t handler, void *ptr)

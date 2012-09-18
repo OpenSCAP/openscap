@@ -1245,7 +1245,6 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 									 struct oval_component *component,
 									 struct oval_collection *value_collection)
 {
-#ifdef ENABLE_PROBES
 	__attribute__nonnull__(component);
 
 	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_ERROR;
@@ -1328,11 +1327,6 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 	}
 
 	return flag;
-#else
-	oscap_seterr(OSCAP_EFAMILY_OSCAP, "This feature is not implemented, compiled without probes support.");
-	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_ERROR;
-	return flag;
-#endif
 }
 
 #define _HAS_VALUES(flag) (flag==SYSCHAR_FLAG_COMPLETE || flag==SYSCHAR_FLAG_INCOMPLETE)

@@ -1,6 +1,4 @@
-if WANT_PROBES
 PROBE_SUBDIRS = probes mitre
-endif
 
 if WANT_SCE
 SCE_SUBDIRS = sce

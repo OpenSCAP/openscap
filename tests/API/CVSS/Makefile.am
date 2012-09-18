@@ -1,4 +1,3 @@
-if WANT_CVSS
 
 AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 		-I$(top_srcdir)/src/CVE/public \
@@ -15,7 +14,7 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 
 LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
 
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh  
+EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
 
 DISTCLEANFILES = *.log *.out*
 CLEANFILES = *.log *.out*
@@ -29,5 +28,4 @@ test_api_cvss_CFLAGS  = -ffloat-store
 EXTRA_DIST += test_api_cvss.sh \
               test_api_cvss.c \
 			  vectors.txt
-endif
 

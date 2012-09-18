@@ -34,10 +34,7 @@
 #include <stdarg.h>
 #include <errno.h>
 #include <limits.h>
-
-#ifdef ENABLE_CVSS
 #include <cvss.h>
-#endif
 
 #ifndef PATH_MAX
 # define PATH_MAX 1024
@@ -60,9 +57,7 @@ static void oscap_action_release(struct oscap_action *action)
 {
 	assert(action != NULL);
 	free(action->f_ovals);
-#ifdef ENABLE_CVSS
 	cvss_impact_free(action->cvss_impact);
-#endif
 }
 
 

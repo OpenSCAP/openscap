@@ -32,9 +32,7 @@
 
 #include "public/oval_probe_session.h"
 #include "_oval_probe_handler.h"
-#if defined(ENABLE_PROBES)
-# include "oval_probe_ext.h"
-#endif
+#include "oval_probe_ext.h"
 
 /** OVAL probe session structure.
  * This structure holds all the library side state information associated with
@@ -43,14 +41,11 @@
  */
 struct oval_probe_session {
         oval_phtbl_t *ph;   /**< probe handler table */
-#if defined(ENABLE_PROBES)
         oval_pext_t  *pext; /**< state information associated with external probes */
-#else
-        void         *pext; /**< dummy pointer */
-#endif
         struct oval_syschar_model *sys_model; /**< system characteristics model */
         char         *dir;  /**< probe session directory */
         uint32_t      flg;  /**< probe session flags */
 };
 
 #endif /* _OVAL_PROBE_SESSION */
+

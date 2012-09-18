@@ -47,6 +47,7 @@
 #include "_oval_probe_session.h"
 #include "_oval_probe_handler.h"
 #include "oval_probe_meta.h"
+#include "oval_probe_ext.h"
 
 oval_probe_meta_t OSCAP_GSYM(__probe_meta)[] = {
         { OVAL_SUBTYPE_SYSINFO, "system_info", &oval_probe_sys_handler, OVAL_PROBEMETA_EXTERNAL, "probe_system_info" },
@@ -108,7 +109,6 @@ static int __n2s_tbl_cmp(const char *name, oval_subtypedsc_t *dsc)
         return strcmp(name, dsc->name);
 }
 
-#if defined(ENABLE_PROBES)
 /*
  * Library side entity name cache. Initialization needs to be
  * thread-safe and is done by oval_probe_session_new. Freeing
@@ -117,7 +117,6 @@ static int __n2s_tbl_cmp(const char *name, oval_subtypedsc_t *dsc)
  */
 probe_ncache_t  *OSCAP_GSYM(ncache) = NULL;
 struct id_desc_t OSCAP_GSYM(id_desc);
-#endif
 
 #if defined(OSCAP_THREAD_SAFE)
 # include <pthread.h>

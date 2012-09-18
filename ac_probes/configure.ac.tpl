@@ -202,48 +202,26 @@ AC_SUBST([PERL_INCLUDES], ["$PERL_INCLUDES"])
 AC_SUBST([perl_vendorlibdir], ['${prefix}'$vendorlib])
 AC_SUBST([perl_vendorarchdir], ['${prefix}'$vendorarch])
 
-AC_ARG_ENABLE([oval],
-     [AC_HELP_STRING([--enable-oval], [include support for OVAL (default=yes)])],
-     [case "${enableval}" in
-       yes) oval=yes ;;
-       no)  oval=no  ;;
-       *) AC_MSG_ERROR([bad value ${enableval} for --enable-oval]) ;;
-     esac],[oval=yes])
 
-AC_ARG_ENABLE([probes],
-     [AC_HELP_STRING([--enable-probes], [enable compilation of probes (default=yes)])],
-     [case "${enableval}" in
-       yes) probes=yes ;;
-       no)  probes=no  ;;
-       *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes]) ;;
-     esac],[probes=yes])
+#check for atomic functions
+case $host_cpu in
+	i386 | i486 | i586 | i686)
+		CFLAGS="$CFLAGS  -march=i686"
+		;;
+esac
 
-if test "x${oval}" = xno; then
-	probes=no
+AC_CACHE_CHECK([for atomic builtins], [ac_cv_atomic_builtins],
+[AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <stdint.h>
+				  uint16_t foovar=0; uint16_t old=1; uint16_t new=2;],
+				[__sync_bool_compare_and_swap(&foovar,old,new); return __sync_fetch_and_add(&foovar, 1);])],
+		[ac_cv_atomic_builtins=yes],
+		[ac_cv_atomic_builtins=no])])
+if test $ac_cv_atomic_builtins = yes; then
+  AC_DEFINE([HAVE_ATOMIC_BUILTINS], 1, [Define to 1 if the compiler supports atomic builtins.])
+else
+  AC_MSG_NOTICE([!!! Compiler does not support atomic builtins. Atomic operation will be emulated using mutex-based locking. !!!])
 fi
 
-if test "x${probes}" = xyes; then
-	AC_DEFINE([ENABLE_PROBES], [1], [compilation of probes is enabled])
-
-	#check for atomic functions
-	case $host_cpu in
-		i386 | i486 | i586 | i686)
-			CFLAGS="$CFLAGS  -march=i686"
-			;;
-	esac
-
-	AC_CACHE_CHECK([for atomic builtins], [ac_cv_atomic_builtins],
-	[AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <stdint.h>
-					  uint16_t foovar=0; uint16_t old=1; uint16_t new=2;],
-	                                [__sync_bool_compare_and_swap(&foovar,old,new); return __sync_fetch_and_add(&foovar, 1);])],
-	                [ac_cv_atomic_builtins=yes],
-	                [ac_cv_atomic_builtins=no])])
-	if test $ac_cv_atomic_builtins = yes; then
-	  AC_DEFINE([HAVE_ATOMIC_BUILTINS], 1, [Define to 1 if the compiler supports atomic builtins.])
-	else
-	  AC_MSG_NOTICE([!!! Compiler does not support atomic builtins. Atomic operation will be emulated using mutex-based locking. !!!])
-	fi
-fi
 
 AC_ARG_ENABLE([probes-independent],
      [AC_HELP_STRING([--enable-probes-independent], [enable compilation of probes independent of the base system (default=yes)])],
@@ -293,45 +271,21 @@ AC_ARG_ENABLE([probes-solaris],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes-solaris]) ;;
      esac],)
 
-AC_ARG_ENABLE([cvss],
-     [AC_HELP_STRING([--enable-cvss], [include support for CVSS (default=yes)])],
-     [case "${enableval}" in
-       yes) cvss=yes ;;
-       no)  cvss=no  ;;
-       *) AC_MSG_ERROR([bad value ${enableval} for --enable-cvss]) ;;
-     esac],[cvss=yes])
-
 AC_ARG_ENABLE([cve],
-     [AC_HELP_STRING([--enable-cve], [include support for CVE (default=yes)])],
+     [AC_HELP_STRING([--enable-cve], [include support for CVE (default=no)])],
      [case "${enableval}" in
        yes) cve=yes ;;
        no)  cve=no  ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-cve]) ;;
-     esac],[cve=yes])
-
-AC_ARG_ENABLE([cpe],
-     [AC_HELP_STRING([--enable-cpe], [include support for CPE (default=yes)])],
-     [case "${enableval}" in
-       yes) cpe=yes ;;
-       no)  cpe=no  ;;
-       *) AC_MSG_ERROR([bad value ${enableval} for --enable-cpe]) ;;
-     esac],[cpe=yes])
+     esac],[cve=no])
 
 AC_ARG_ENABLE([cce],
-     [AC_HELP_STRING([--enable-cce], [include support for CCE (default=yes)])],
+     [AC_HELP_STRING([--enable-cce], [include support for CCE (default=no)])],
      [case "${enableval}" in
        yes) cce=yes ;;
        no)  cce=no  ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-cce]) ;;
-     esac],[cce=yes])
-
-AC_ARG_ENABLE([xccdf],
-     [AC_HELP_STRING([--enable-xccdf], [include support for XCCDF (default=yes)])],
-     [case "${enableval}" in
-       yes) xccdf=yes ;;
-       no)  xccdf=no  ;;
-       *) AC_MSG_ERROR([bad value ${enableval} for --enable-xccdf]) ;;
-     esac],[xccdf=yes])
+     esac],[cce=no])
 
 AC_ARG_ENABLE([bindings],
      [AC_HELP_STRING([--enable-bindings], [enable compilation of bindings (default=yes)])],
@@ -414,14 +368,13 @@ if test "$debug" = "yes"; then
    CFLAGS="$CFLAGS $CFLAGS_DEBUGGING"
 else
    CFLAGS="$CFLAGS $CFLAGS_NODEBUG"
-   AC_SUBST([NODEBUG], [-DNDEBUG]) #for swig alloc.h
    AC_DEFINE([NDEBUG], [1], [No Debug defined])
 fi
 
 AC_ARG_ENABLE([sce],
-     [AC_HELP_STRING([--enable-sce], [enable script check engine (experimental, depends on XCCDF) (default=no)])],
+     [AC_HELP_STRING([--enable-sce], [enable script check engine (default=no)])],
      [case "${enableval}" in
-       yes) sce=${xccdf} ;;
+       yes) sce=yes ;;
        no)  sce=no  ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-sce]) ;;
      esac],[sce=no])
@@ -450,14 +403,9 @@ fi
 
 @@@@PROBE_EVAL@@@@
 
-AM_CONDITIONAL([WANT_OVAL], test "$oval" = yes)
-AM_CONDITIONAL([WANT_CVSS], test "$cvss" = yes)
 AM_CONDITIONAL([WANT_CVE],  test "$cve"  = yes)
-AM_CONDITIONAL([WANT_CPE],  test "$cpe"  = yes)
 AM_CONDITIONAL([WANT_CCE],  test "$cce"  = yes)
-AM_CONDITIONAL([WANT_XCCDF],  test "$xccdf"  = yes)
 
-AM_CONDITIONAL([WANT_PROBES], test "$probes" = yes)
 AM_CONDITIONAL([WANT_PROBES_INDEPENDENT], test "$probes_independent" = yes)
 AM_CONDITIONAL([WANT_PROBES_UNIX], test "$probes_unix" = yes)
 AM_CONDITIONAL([WANT_PROBES_LINUX], test "$probes_linux" = yes)
@@ -557,12 +505,13 @@ AC_OUTPUT
 echo "******************************************************"
 echo "OpenSCAP will be compiled with the following settings:"
 echo
+echo "oscap tool:                    $util_oscap"
+echo "python bindings enabled:       $bindings"
+echo "use POSIX regex:               $regex_posix"
+echo "SCE enabled                    $sce"
+echo "debugging flags enabled:       $debug"
 echo "CCE enabled:                   $cce"
-echo "CPE enabled:                   $cpe"
 echo "CVE enabled:                   $cve"
-echo "CVSS enabled:                  $cvss"
-echo "OVAL enabled:                  $oval"
-echo "OVAL probes enabled:           $probes"
 echo
 @@@@PROBE_TABLE@@@@
 echo
@@ -576,12 +525,6 @@ echo "     libs:                     $crapi_LIBS"
 echo "   cflags:                     $crapi_CFLAGS"
 echo ""
 
-echo "XCCDF enabled:                 $xccdf"
-echo "python bindings enabled:       $bindings"
-echo "SCE enabled (depends on XCCDF) $sce"
-echo "oscap tool:                    $util_oscap"
-echo "use POSIX regex:               $regex_posix"
-echo "debugging flags enabled:       $debug"
 echo "Valgrind checks enabled:       $vgcheck"
 echo "CFLAGS:                        $CFLAGS"
 echo "CXXFLAGS:                      $CXXFLAGS"

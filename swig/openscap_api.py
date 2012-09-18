@@ -790,7 +790,7 @@ class CVE_Class(OSCAP_Object):
 
     def __init__(self):
         dict.__setattr__(self, "object", "cve")
-        dict.__setattr__(self, "version", OSCAP.cve_model_supported())
+#        dict.__setattr__(self, "version", OSCAP.cve_model_supported())
         pass
 
     def __repr__(self):
@@ -841,7 +841,7 @@ class CCE_Class(OSCAP_Object):
 
     def __init__(self):
         dict.__setattr__(self, "object", "cce")
-        dict.__setattr__(self, "version", OSCAP.cce_supported())
+#        dict.__setattr__(self, "version", OSCAP.cce_supported())
         pass
 
     def __repr__(self):

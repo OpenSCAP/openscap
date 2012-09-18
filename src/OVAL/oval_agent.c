@@ -47,10 +47,7 @@
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "common/reporter_priv.h"
-
-#ifdef ENABLE_XCCDF
 #include "oval_agent_xccdf_api.h"
-#endif
 
 struct oval_agent_session {
 	char *filename;
@@ -65,7 +62,6 @@ struct oval_agent_session {
 };
 
 
-#ifdef ENABLE_XCCDF
 /**
  * Specification of structure for transformation of OVAL Result type
  * to XCCDF result type.
@@ -87,8 +83,6 @@ static const struct oval_result_to_xccdf_spec XCCDF_OVAL_RESULTS_MAP[] = {
 	{OVAL_RESULT_NOT_APPLICABLE, XCCDF_RESULT_NOT_APPLICABLE},
 	{0, 0}
 };
-
-#endif
 
 oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *model, const char * name) {
 	oval_agent_session_t *ag_sess;
@@ -295,7 +289,6 @@ void oval_agent_destroy_session(oval_agent_session_t * ag_sess) {
 }
 
 
-#ifdef ENABLE_XCCDF
 /**
  * Function for OVAL Result type -> XCCDF result type transformation
  * @param id OVAL_RESULT_* type
@@ -496,4 +489,3 @@ void oval_agent_export_sysinfo_to_xccdf_result(struct oval_agent_session * sess,
 	xccdf_result_fill_sysinfo(ritem);
 }
 
-#endif

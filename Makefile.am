@@ -2,9 +2,7 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = lib src
 
-if WANT_PROBES
 SUBDIRS += src/OVAL/probes
-endif
 
 if WANT_BINDINGS
 SUBDIRS += swig

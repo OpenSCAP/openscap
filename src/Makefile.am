@@ -18,42 +18,36 @@ SUBDIRS += DS
 libopenscap_la_LIBADD += DS/libds.la
 libopenscap_testing_la_LIBADD += DS/libds.la
 
-if WANT_OVAL
 SUBDIRS += OVAL
 libopenscap_la_LIBADD += OVAL/liboval.la
 libopenscap_testing_la_LIBADD += OVAL/liboval_testing.la
 
-endif
-
-if WANT_CPE
 SUBDIRS += CPE
 libopenscap_la_LIBADD += CPE/libcpe.la
 libopenscap_testing_la_LIBADD += CPE/libcpe.la
-
-endif
 
 if WANT_CVE
 SUBDIRS += CVE
 libopenscap_la_LIBADD += CVE/libcve.la
 libopenscap_testing_la_LIBADD += CVE/libcve.la
-
 endif
 
 if WANT_CCE
 SUBDIRS += CCE
 libopenscap_la_LIBADD += CCE/libcce.la
 libopenscap_testing_la_LIBADD += CCE/libcce.la
-
 endif
 
-if WANT_CVSS
+if WANT_SCE
+SUBDIRS += SCE
+libopenscap_la_LIBADD += SCE/libsce.la
+libopenscap_testing_la_LIBADD += SCE/libsce.la
+endif
+
 SUBDIRS += CVSS
 libopenscap_la_LIBADD += CVSS/libcvss.la
 libopenscap_testing_la_LIBADD += CVSS/libcvss.la
 
-endif
-
-if WANT_XCCDF
 SUBDIRS += XCCDF
 libopenscap_la_LIBADD += XCCDF/libxccdf.la
 libopenscap_testing_la_LIBADD += XCCDF/libxccdf.la
@@ -62,11 +56,4 @@ SUBDIRS += XCCDF_POLICY
 libopenscap_la_LIBADD += XCCDF_POLICY/libxccdf_policy.la
 libopenscap_testing_la_LIBADD += XCCDF_POLICY/libxccdf_policy.la
 
-endif
 
-if WANT_SCE
-SUBDIRS += SCE
-libopenscap_la_LIBADD += SCE/libsce.la
-libopenscap_testing_la_LIBADD += SCE/libsce.la
-
-endif

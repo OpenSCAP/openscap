@@ -32,8 +32,6 @@
 #ifndef OVAL_PROBE_IMPL_H
 #define OVAL_PROBE_IMPL_H
 
-#ifdef ENABLE_PROBES
-
 #include <seap-types.h>
 #include "oval_definitions_impl.h"
 #include "oval_agent_api_impl.h"
@@ -61,8 +59,6 @@ OSCAP_HIDDEN_START;
 OSCAP_HIDDEN_END;
 
 extern probe_ncache_t *OSCAP_GSYM(ncache);
-
-#endif /* ENABLE_PROBES */
 
 typedef struct {
         oval_subtype_t type;
