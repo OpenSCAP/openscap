@@ -520,6 +520,7 @@ AC_CONFIG_FILES([Makefile
                  tests/probes/selinuxboolean/Makefile
                  tests/probes/isainfo/Makefile
                  tests/probes/iflisteners/Makefile
+		 tests/probes/maskattr/Makefile
 
                  tests/probes/vgtest/Makefile
 
