@@ -568,5 +568,79 @@ int main (void)
 	               mu_proc.mu_stack);
         }
 
+        /*
+         * ((test_object :attr1 123) ((ent1 :entattr1 456) "abc"))
+         */
+
+        {
+            SEXP_t *a1val, *e1a1val, *e1val, *oatt, *e1att;
+
+            a1val = SEXP_number_newu_8 (123);
+            e1a1val = SEXP_number_newu_16 (456);
+            e1val = SEXP_string_newf ("abc");
+
+            oatt  = probe_attr_creat ("attr1", a1val, NULL);
+            e1att = probe_attr_creat ("entattr1", e1a1val, NULL);
+
+            obj = probe_obj_creat ("test_object", oatt,
+                                   "ent1", e1att, e1val,
+                                   NULL);
+
+            SEXP_free (a1val);
+            SEXP_free (e1a1val);
+            SEXP_free (e1val);
+            SEXP_free (oatt);
+            SEXP_free (e1att);
+        }
+
+        print_asdf (obj);
+
+        {
+            ent = probe_obj_getent(obj, "ent1", 1);
+            if (ent == NULL)
+               FAIL(1, "`ent1' not found!\n");
+            if (probe_ent_attrexists(ent, "mask"))
+                FAIL(1, "`mask' attribute found in obj!");
+            SEXP_free(ent);
+        }
+        SEXP_free(obj);
+
+        /*
+         * ((test_object :attr1 123) ((ent1 :entattr1 456 mask :attr2 345) "abc"))
+         */
+
+        {
+            SEXP_t *a1val, *e1a1val, *e1val, *oatt, *e1att;
+
+            a1val = SEXP_number_newu_8 (123);
+            e1a1val = SEXP_number_newu_16 (456);
+            e1val = SEXP_string_newf ("abc");
+
+            oatt  = probe_attr_creat ("attr1", a1val, NULL);
+            e1att = probe_attr_creat ("entattr1", e1a1val, "mask", NULL, "attr2", e1a1val, NULL);
+
+            obj = probe_obj_creat ("test_object", oatt,
+                                   "ent1", e1att, e1val,
+                                   NULL);
+
+            SEXP_free (a1val);
+            SEXP_free (e1a1val);
+            SEXP_free (e1val);
+            SEXP_free (oatt);
+            SEXP_free (e1att);
+        }
+
+        print_asdf (obj);
+
+        {
+            ent = probe_obj_getent(obj, "ent1", 1);
+            if (ent == NULL)
+                FAIL(1, "`ent1' not found!\n");
+            if (!probe_ent_attrexists(ent, "mask"))
+                FAIL(1, "`mask' attribute not found in obj!\n");
+            SEXP_free(ent);
+        }
+        SEXP_free(obj);
+
         return (0);
 }
