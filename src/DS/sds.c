@@ -583,6 +583,40 @@ static int ds_sds_compose_catalog_has_uri(xmlDocPtr doc, xmlNodePtr catalog, con
 	return result;
 }
 
+// takes given relative filepath and mangles it so that it's acceptable
+// as a component id
+static char* ds_sds_mangle_filepath(const char* filepath)
+{
+	if (filepath == NULL)
+		return NULL;
+
+	// the string will grow 2x the size in the worst case (every char is /)
+	// TODO: We can do better than this by counting the slashes
+	char* ret = oscap_alloc(strlen(filepath) * sizeof(char) * 2);
+
+	const char* src_it = filepath;
+	char* dst_it = ret;
+
+	while (*src_it)
+	{
+		if (*src_it == '/')
+		{
+			*dst_it++ = '-';
+			*dst_it++ = '-';
+		}
+		else
+		{
+			*dst_it++ = *src_it;
+		}
+
+		src_it++;
+	}
+
+	*dst_it = '\0';
+
+	return ret;
+}
+
 static int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id);
 
 static int ds_sds_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, xmlNodePtr catalog)
@@ -641,7 +675,10 @@ static int ds_sds_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datas
 				char* real_path = (strcmp(dir, "") == 0 || strcmp(dir, ".") == 0) ?
 					oscap_strdup(href) : oscap_sprintf("%s/%s", dir, href);
 
-				char* cref_id = oscap_sprintf("scap_org.open-scap_cref_%s", real_path);
+				char* mangled_path = ds_sds_mangle_filepath(real_path);
+				char* cref_id = oscap_sprintf("scap_org.open-scap_cref_%s", mangled_path);
+				oscap_free(mangled_path);
+
 				char* uri = oscap_sprintf("#%s", cref_id);
 
 				// we don't want duplicated uri elements in the catalog
@@ -756,7 +793,10 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 		return -1;
 	}
 
-	char* comp_id = oscap_sprintf("scap_org.open-scap_comp_%s", filepath);
+	char* mangled_filepath = ds_sds_mangle_filepath(filepath);
+	char* comp_id = oscap_sprintf("scap_org.open-scap_comp_%s", mangled_filepath);
+	oscap_free(mangled_filepath);
+
 	ds_sds_compose_add_component(doc, datastream, filepath, comp_id);
 
 	xmlNodePtr cref = xmlNewNode(ds_ns, BAD_CAST "component-ref");
@@ -821,7 +861,8 @@ int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastr
 	// component-ref
 	xmlNewNs(root, BAD_CAST xlink_ns_uri, BAD_CAST "xlink");
 
-	char* collection_id = oscap_sprintf("scap_org.open-scap_collection_from_xccdf_%s", xccdf_file);
+	char* mangled_xccdf_file = ds_sds_mangle_filepath(xccdf_file);
+	char* collection_id = oscap_sprintf("scap_org.open-scap_collection_from_xccdf_%s", mangled_xccdf_file);
 	xmlSetProp(root, BAD_CAST "id", BAD_CAST collection_id);
 	oscap_free(collection_id);
 
@@ -834,7 +875,7 @@ int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastr
 	xmlNodePtr datastream = xmlNewNode(ds_ns, BAD_CAST "data-stream");
 	xmlAddChild(root, datastream);
 
-	char* datastream_id = oscap_sprintf("scap_org.open-scap_datastream_from_xccdf_%s", xccdf_file);
+	char* datastream_id = oscap_sprintf("scap_org.open-scap_datastream_from_xccdf_%s", mangled_xccdf_file);
 	xmlSetProp(datastream, BAD_CAST "id", BAD_CAST datastream_id);
 	oscap_free(datastream_id);
 
@@ -854,7 +895,7 @@ int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastr
 	xmlNodePtr extended_components = xmlNewNode(ds_ns, BAD_CAST "extended-components");
 	xmlAddChild(datastream, extended_components);
 
-	char* cref_id = oscap_sprintf("scap_org.open-scap_cref_%s", xccdf_file);
+	char* cref_id = oscap_sprintf("scap_org.open-scap_cref_%s", mangled_xccdf_file);
 	if (ds_sds_compose_add_component_with_ref(doc, datastream, xccdf_file, cref_id) != 0)
 	{
 		// oscap_seterr already called
@@ -887,6 +928,8 @@ int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastr
 		xmlUnlinkNode(extended_components);
 		xmlFreeNode(extended_components);
 	}
+
+	oscap_free(mangled_xccdf_file);
 
 	if (xmlSaveFileEnc(target_datastream, doc, "utf-8") == -1)
 	{
