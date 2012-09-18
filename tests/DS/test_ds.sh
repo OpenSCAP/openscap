@@ -11,16 +11,17 @@ function test_sds {
 
     local ret_val=0;
 
-    local XCCDF_FILE="${srcdir}/$1"
-    local XCCDF_DIR="`dirname ${XCCDF_FILE}`"
+    local DIR="${srcdir}/$1"
+    local XCCDF_FILE="$2"
+    local SKIP_DIFF="$3"
     local DS_TARGET_DIR="`mktemp -d`"
     local DS_FILE="$DS_TARGET_DIR/sds.xml"
 
     local OSCAP_DIR=`cd ../../utils/.libs; pwd`
 
-    pushd "$XCCDF_DIR"
+    pushd "$DIR"
 
-    $OSCAP_DIR/oscap ds sds-compose "`basename $XCCDF_FILE`" "$DS_FILE"
+    $OSCAP_DIR/oscap ds sds-compose "$XCCDF_FILE" "$DS_FILE"
 
     popd
 
@@ -32,14 +33,16 @@ function test_sds {
 
     popd
 
-    DIFFERENCE=$(diff --exclude "oscap_debug.log.*" "$XCCDF_DIR" "$DS_TARGET_DIR")
+    if [ "$SKIP_DIFF" != "1" ]; then
+        DIFFERENCE=$(diff --exclude "oscap_debug.log.*" "$DIR" "$DS_TARGET_DIR")
 
-    if [ $? -ne 0 ]; then
-        echo "The files are different after going through source data stream! diff follows:"
-        echo "$DIFFERENCE"
-        echo
+        if [ $? -ne 0 ]; then
+            echo "The files are different after going through source data stream! diff follows:"
+            echo "$DIFFERENCE"
+            echo
 
-        ret_val=1
+            ret_val=1
+        fi
     fi
 
     rm -r "$DS_TARGET_DIR"
@@ -85,8 +88,9 @@ function test_rds
 # Testing.
 test_init "test_ds.log"
 
-test_run "sds_simple_xccdf" test_sds sds_simple/scap-fedora14-xccdf.xml
-test_run "sds_multiple_oval" test_sds sds_multiple_oval/multiple-oval-xccdf.xml
+test_run "sds_simple_xccdf" test_sds sds_simple scap-fedora14-xccdf.xml 0
+test_run "sds_multiple_oval" test_sds sds_multiple_oval multiple-oval-xccdf.xml 0
+test_run "sds_subdir" test_sds sds_subdir subdir/scap-fedora14-xccdf.xml 1
 
 test_run "eval_simple" test_eval eval_simple/sds.xml
 
