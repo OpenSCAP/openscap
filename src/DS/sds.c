@@ -631,7 +631,7 @@ static int ds_sds_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datas
 		return -1;
 	}
 
-	xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
+	xmlXPathContextPtr xpathCtx = xmlXPathNewContext(component_doc);
 	if (xpathCtx == NULL)
 	{
 		oscap_seterr(OSCAP_EFAMILY_XML, "Error: unable to create new XPath context.");
