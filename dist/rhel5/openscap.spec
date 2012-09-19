@@ -20,9 +20,9 @@ Requires(post):   /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 
 %description
-OpenSCAP is a set of open source libraries providing an easier path 
-for integration of the SCAP line of standards. SCAP is a line of standards 
-managed by NIST with the goal of providing a standard language 
+OpenSCAP is a set of open source libraries providing an easier path
+for integration of the SCAP line of standards. SCAP is a line of standards
+managed by NIST with the goal of providing a standard language
 for the expression of Computer Network Defense related information.
 
 %package        devel
@@ -40,22 +40,11 @@ developing applications that use %{name}.
 Summary:        Python bindings for %{name}
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-BuildRequires:  python-devel 
+BuildRequires:  python-devel
 
 %description    python
 The %{name}-python package contains the bindings so that %{name}
 libraries can be used by python.
-
-%package        perl
-Summary:        Perl bindings for %{name}
-Group:          Development/Libraries
-Requires:       %{name} = %{version}-%{release}
-Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
-BuildRequires:  perl
-
-%description    perl
-The %{name}-perl package contains the bindings so that %{name}
-libraries can be used by perl.
 
 %package        utils
 Summary:        Openscap utilities
@@ -178,11 +167,6 @@ fi
 %files python
 %defattr(-,root,root,-)
 %{python_sitearch}/*
-
-%files perl
-%defattr(-,root,root,-)
-%{perl_vendorarch}/*
-%{perl_vendorlib}/*
 
 %files devel
 %defattr(-,root,root,-)

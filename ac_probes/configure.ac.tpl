@@ -194,14 +194,6 @@ AC_SUBST(sigwaitinfo_LIBS)
 @@@@PROBE_LIBRARIES@@@@
 echo
 
-AC_PATH_PROG(PERL, perl)
-PERL_INCLUDES="`$PERL -e 'use Config; print $Config{archlib}'`/CORE"
-vendorlib="$(  $PERL -e 'use Config; print $Config{vendorlib}'  | sed "s|$($PERL -e 'use Config; print $Config{prefix}')||" )"
-vendorarch="$( $PERL -e 'use Config; print $Config{vendorarch}' | sed "s|$($PERL -e 'use Config; print $Config{prefix}')||" )"
-AC_SUBST([PERL_INCLUDES], ["$PERL_INCLUDES"])
-AC_SUBST([perl_vendorlibdir], ['${prefix}'$vendorlib])
-AC_SUBST([perl_vendorarchdir], ['${prefix}'$vendorarch])
-
 
 #check for atomic functions
 case $host_cpu in
@@ -287,13 +279,21 @@ AC_ARG_ENABLE([cce],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-cce]) ;;
      esac],[cce=no])
 
-AC_ARG_ENABLE([bindings],
-     [AC_HELP_STRING([--enable-bindings], [enable compilation of bindings (default=yes)])],
+AC_ARG_ENABLE([python],
+     [AC_HELP_STRING([--enable-python], [enable compilation of python bindings (default=yes)])],
      [case "${enableval}" in
-       yes) bindings=yes ;;
-       no)  bindings=no  ;;
-       *) AC_MSG_ERROR([bad value ${enableval} for --enable-bindings]) ;;
-     esac],[bindings=yes])
+       yes) python_bind=yes ;;
+       no)  python_bind=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-python]) ;;
+     esac],[python_bind=yes])
+
+AC_ARG_ENABLE([perl],
+     [AC_HELP_STRING([--enable-perl], [enable compilation of perl bindings (default=no)])],
+     [case "${enableval}" in
+       yes) perl_bind=yes ;;
+       no)  perl_bind=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-perl]) ;;
+     esac],[perl_bind=no])
 
 AC_ARG_ENABLE([regex-posix],
      [AC_HELP_STRING([--enable-regex-posix], [compile with POSIX instead of PCRE regex (default=no)])],
@@ -318,6 +318,7 @@ AC_ARG_ENABLE([valgrind],
        no)  vgdebug=no ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-valgrind]) ;;
      esac], [vgdebug=no])
+
 
 AC_ARG_ENABLE([ssp],
      [AC_HELP_STRING([--enable-ssp], [enable SSP (fstack-protector, default=no)])],
@@ -401,6 +402,20 @@ else
    vgcheck="no"
 fi
 
+if test "x${perl_bind}" = xyes; then
+	AC_PATH_PROG(PERL, perl)
+	PERL_INCLUDES="`$PERL -e 'use Config; print $Config{archlib}'`/CORE"
+	vendorlib="$(  $PERL -e 'use Config; print $Config{vendorlib}'  | sed "s|$($PERL -e 'use Config; print $Config{prefix}')||" )"
+	vendorarch="$( $PERL -e 'use Config; print $Config{vendorarch}' | sed "s|$($PERL -e 'use Config; print $Config{prefix}')||" )"
+	AC_SUBST([PERL_INCLUDES], ["-I$PERL_INCLUDES"])
+	AC_SUBST([perl_vendorlibdir], ['${prefix}'$vendorlib])
+	AC_SUBST([perl_vendorarchdir], ['${prefix}'$vendorarch])
+	save_CPPFLAGS="$CPPFLAGS"
+	CPPFLAGS="$CPPFLAGS $PERL_INCLUDES"
+	AC_CHECK_HEADERS([EXTERN.h],[],[AC_MSG_ERROR(Perl development librarier are needed for perl bindings)],[-])
+	CPPFLAGS="$save_CPPFLAGS"
+fi
+
 @@@@PROBE_EVAL@@@@
 
 AM_CONDITIONAL([WANT_CVE],  test "$cve"  = yes)
@@ -413,7 +428,8 @@ AM_CONDITIONAL([WANT_PROBES_SOLARIS], test "$probes_solaris" = yes)
 
 AM_CONDITIONAL([WANT_SCE], test "$sce" = yes)
 AM_CONDITIONAL([WANT_UTIL_OSCAP], test "$util_oscap" = yes)
-AM_CONDITIONAL([WANT_BINDINGS], test "$bindings" = yes)
+AM_CONDITIONAL([WANT_PYTHON], test "$python_bind" = yes)
+AM_CONDITIONAL([WANT_PERL], test "$perl_bind" = yes)
 AM_CONDITIONAL([ENABLE_VALGRIND_TESTS], test "$vgcheck" = yes)
 
 #
@@ -506,7 +522,8 @@ echo "******************************************************"
 echo "OpenSCAP will be compiled with the following settings:"
 echo
 echo "oscap tool:                    $util_oscap"
-echo "python bindings enabled:       $bindings"
+echo "python bindings enabled:       $python_bind"
+echo "perl bindings enabled:         $perl_bind"
 echo "use POSIX regex:               $regex_posix"
 echo "SCE enabled                    $sce"
 echo "debugging flags enabled:       $debug"

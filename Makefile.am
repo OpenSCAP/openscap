@@ -1,19 +1,19 @@
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = lib src
-
-SUBDIRS += src/OVAL/probes
-
-if WANT_BINDINGS
-SUBDIRS += swig
-endif
-
-SUBDIRS += utils tests xsl schemas
+SUBDIRS = lib src src/OVAL/probes utils tests xsl schemas
 
 dist_pkgdata_DATA = dist/fedora/scap-fedora14-oval.xml \
                     dist/fedora/scap-fedora14-xccdf.xml \
                     dist/rhel6/scap-rhel6-oval.xml \
                     dist/rhel6/scap-rhel6-xccdf.xml
+
+if WANT_PYTHON
+  SUBDIRS += swig
+else
+  if WANT_PERL
+    SUBDIRS += swig
+  endif
+endif
 
 if WANT_SCE
 sectoolscedir= $(pkgdatadir)/sectool-sce
@@ -102,7 +102,7 @@ EXTRA_DIST =	m4/gnulib-cache.m4 \
 dist-hook: ChangeLog
 	cd $(distdir)/docs && doxygen Doxyfile
 
-ChangeLog:	
+ChangeLog:
 	git log | sed '/^commit/d; /^Merge/d' > ChangeLog
 
 CONFIG_CLEAN_FILES = config/*
