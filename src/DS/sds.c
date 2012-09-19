@@ -467,7 +467,7 @@ static bool strendswith(const char* str, const char* suffix)
 	return strcmp(str + str_shift * sizeof(char), suffix) == 0;
 }
 
-static int ds_sds_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* comp_id)
+static int ds_sds_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* comp_id, bool extended)
 {
 	xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST datastream_ns_uri);
 	if (!ds_ns)
@@ -479,7 +479,7 @@ static int ds_sds_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, co
 		return -1;
 	}
 
-	xmlNodePtr component = xmlNewNode(ds_ns, BAD_CAST "component");
+	xmlNodePtr component = xmlNewNode(ds_ns, BAD_CAST (extended ? "extended-component" : "component"));
 	xmlSetProp(component, BAD_CAST "id", BAD_CAST comp_id);
 
 	char file_timestamp[32];
@@ -796,26 +796,10 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 		return -1;
 	}
 
-	char* mangled_filepath = ds_sds_mangle_filepath(filepath);
-	char* comp_id = oscap_sprintf("scap_org.open-scap_comp_%s", mangled_filepath);
-	oscap_free(mangled_filepath);
-
-	ds_sds_compose_add_component(doc, datastream, filepath, comp_id);
-
-	xmlNodePtr cref = xmlNewNode(ds_ns, BAD_CAST "component-ref");
-
-	xmlSetProp(cref, BAD_CAST "id", BAD_CAST cref_id);
-
-	const char* xlink_href = oscap_sprintf("#%s", comp_id);
-	oscap_free(comp_id);
-
-	xmlSetNsProp(cref, xlink_ns, BAD_CAST "href", BAD_CAST xlink_href);
-	oscap_free(xlink_href);
-
 	xmlNodePtr cref_catalog = xmlNewNode(cat_ns, BAD_CAST "catalog");
-	xmlAddChild(cref, cref_catalog);
-
 	xmlNodePtr cref_parent;
+
+	bool extended_component = false;
 
 	if (strendswith(filepath, "-xccdf.xml"))
 	{
@@ -866,10 +850,30 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 			else
 			{
 				// not an XCCDF file, not an OVAL file, assume it goes into extended components
+				extended_component = true;
 				cref_parent = node_get_child_element(datastream, "extended-components");
 			}
 		}
 	}
+
+	char* mangled_filepath = ds_sds_mangle_filepath(filepath);
+	// extended components (sadly :-/) use a different ID scheme and have
+	// a different element name than "normal" components
+	char* comp_id = oscap_sprintf("scap_org.open-scap_%scomp_%s",
+		extended_component ? "e" : "", mangled_filepath);
+	oscap_free(mangled_filepath);
+
+	ds_sds_compose_add_component(doc, datastream, filepath, comp_id, extended_component);
+
+	xmlNodePtr cref = xmlNewNode(ds_ns, BAD_CAST "component-ref");
+	xmlAddChild(cref, cref_catalog);
+	xmlSetProp(cref, BAD_CAST "id", BAD_CAST cref_id);
+
+	const char* xlink_href = oscap_sprintf("#%s", comp_id);
+	oscap_free(comp_id);
+
+	xmlSetNsProp(cref, xlink_ns, BAD_CAST "href", BAD_CAST xlink_href);
+	oscap_free(xlink_href);
 
 	// the source data stream XSD requires either no catalog or a non-empty one
 	if (cref_catalog->children == NULL)
