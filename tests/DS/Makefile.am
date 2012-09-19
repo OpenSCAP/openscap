@@ -21,8 +21,13 @@ EXTRA_DIST += test_ds.sh \
 		rds_testresult/results-oval.xml \
 		rds_testresult/results-xccdf.xml \
 		rds_testresult/sds.xml \
+		sds_extended_component/check.xml \
+		sds_extended_component/fake-check-xccdf.xml \
+		sds_extended_component/scap-fedora14-oval.xml \
 		sds_multiple_oval/first-oval.xml \
 		sds_multiple_oval/second-oval.xml \
 		sds_multiple_oval/multiple-oval-xccdf.xml \
 		sds_simple/scap-fedora14-oval.xml \
-		sds_simple/scap-fedora14-xccdf.xml
+		sds_simple/scap-fedora14-xccdf.xml \
+		sds_subdir/subdir/scap-fedora14-oval.xml \
+		sds_subdir/subdir/scap-fedora14-xccdf.xml
