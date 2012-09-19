@@ -158,6 +158,8 @@ static char* ds_rds_expand_ip_v6(const char* input)
 			*output_it++ = ':';
 	}
 
+	*output_it = '\0';
+
 	return ret;
 }
 
