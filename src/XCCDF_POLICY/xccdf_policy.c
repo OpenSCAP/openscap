@@ -769,7 +769,13 @@ _xccdf_policy_rule_get_applicable_check(struct xccdf_policy *policy, struct xccd
 		// Check Processing Algorithm -- Check.Initialize
 		// Check Processing Algorithm -- Check.Selector
 		struct xccdf_refine_rule *r_rule = xccdf_policy_get_refine_rules_by_rule(policy, rule);
-		struct xccdf_check_iterator *candidate_it = xccdf_rule_get_checks_filtered(rule, (r_rule != NULL) ? (char *) xccdf_refine_rule_get_selector(r_rule) : "");
+		char *selector = (r_rule == NULL) ? NULL : (char *) xccdf_refine_rule_get_selector(r_rule);
+		struct xccdf_check_iterator *candidate_it = xccdf_rule_get_checks_filtered(rule, selector);
+		if (selector != NULL && !xccdf_check_iterator_has_more(candidate_it)) {
+			xccdf_check_iterator_free(candidate_it);
+			// If the refined selector does not match, checks without selector shall be used.
+			candidate_it = xccdf_rule_get_checks_filtered(rule, NULL);
+		}
 		// Check Processing Algorithm -- Check.System
 		while (xccdf_check_iterator_has_more(candidate_it)) {
 			struct xccdf_check *check = xccdf_check_iterator_next(candidate_it);
