@@ -478,7 +478,7 @@ bool xccdf_policy_model_register_engine_oval(struct xccdf_policy_model * model, 
 {
 
     return xccdf_policy_model_register_engine_and_query_callback(model, "http://oval.mitre.org/XMLSchema/oval-definitions-5",
-		oval_agent_eval_rule, (void *) usr, _oval_agent_list_definitions);
+		oval_agent_eval_rule, (void *) usr, (xccdf_policy_engine_query_fn) _oval_agent_list_definitions);
 }
 
 void oval_agent_export_sysinfo_to_xccdf_result(struct oval_agent_session * sess, struct xccdf_result * ritem)
