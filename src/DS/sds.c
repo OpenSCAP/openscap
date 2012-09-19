@@ -43,6 +43,9 @@
 #include <string.h>
 #include <text.h>
 
+#include "xccdf.h"
+#include "oval_definitions.h"
+
 #ifndef MAXPATHLEN
 #   define MAXPATHLEN 1024
 #endif
@@ -833,7 +836,39 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 	}
 	else
 	{
-		cref_parent = node_get_child_element(datastream, "extended-components");
+		// the fast file suffix tests were unsuccessful, lets try to inspect
+		// contents of the files, perhaps it's just a wrong path suffix
+		//
+		// NOTE: We only do this after all else failed, determining versions based
+		//       on file contents is very time consuming!
+
+		char* potential_xccdf_version = xccdf_detect_version(filepath);
+		if (potential_xccdf_version != NULL)
+		{
+			free(potential_xccdf_version);
+
+			cref_parent = node_get_child_element(datastream, "checklists");
+			if (ds_sds_compose_add_xccdf_dependencies(doc, datastream, filepath, cref_catalog) != 0)
+			{
+				// oscap_seterr has already been called
+				return -1;
+			}
+		}
+		else
+		{
+			char* potential_oval_version = oval_determine_document_schema_version(filepath, OSCAP_DOCUMENT_OVAL_DEFINITIONS);
+			if (potential_oval_version != NULL)
+			{
+				free(potential_oval_version);
+
+				cref_parent = node_get_child_element(datastream, "checks");
+			}
+			else
+			{
+				// not an XCCDF file, not an OVAL file, assume it goes into extended components
+				cref_parent = node_get_child_element(datastream, "extended-components");
+			}
+		}
 	}
 
 	// the source data stream XSD requires either no catalog or a non-empty one
