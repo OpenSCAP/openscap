@@ -823,13 +823,13 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 			return -1;
 		}
 	}
-	else if (strendswith(filepath, "-oval.xml"))
-	{
-		cref_parent = node_get_child_element(datastream, "checks");
-	}
 	else if (strendswith(filepath, "-cpe-oval.xml") || strendswith(filepath, "-cpe-dictionary.xml"))
 	{
 		cref_parent = node_get_child_element(datastream, "dictionaries");
+	}
+	else if (strendswith(filepath, "-oval.xml"))
+	{
+		cref_parent = node_get_child_element(datastream, "checks");
 	}
 	else
 	{
