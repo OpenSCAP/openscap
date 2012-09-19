@@ -175,7 +175,8 @@ static int ds_sds_dump_component(const char* component_id, xmlDocPtr doc, const 
 		if (candidate->type != XML_ELEMENT_NODE)
 			continue;
 
-		if (strcmp((const char*)(candidate->name), "component") != 0)
+		if ((strcmp((const char*)(candidate->name), "component") != 0) &&
+		    (strcmp((const char*)(candidate->name), "extended-component") != 0))
 			continue;
 
 		char* candidate_id = (char*)xmlGetProp(candidate, BAD_CAST "id");
@@ -535,7 +536,29 @@ static int ds_sds_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, co
 	xmlDOMWrapFreeCtxt(wrap_ctxt);
 
 	xmlNodePtr doc_root = xmlDocGetRootElement(doc);
-	xmlAddChild(doc_root, component);
+
+	if (extended)
+	{
+		// extended components always go at the end
+		xmlAddChild(doc_root, component);
+	}
+	else
+	{
+		// this component is not extended, we have to figure out if there
+		// already is an extended-component and if so, add it right before
+		// that component
+
+		xmlNodePtr first_extended_component = node_get_child_element(doc_root, "extended-component");
+		if (first_extended_component == NULL)
+		{
+			// no extended component yet, add to the end
+			xmlAddChild(doc_root, component);
+		}
+		else
+		{
+			xmlAddPrevSibling(first_extended_component, component);
+		}
+	}
 
 	xmlFreeDoc(component_doc);
 
