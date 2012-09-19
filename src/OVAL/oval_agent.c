@@ -454,7 +454,7 @@ xccdf_test_result_type_t oval_agent_eval_rule(struct xccdf_policy *policy, const
 	return xccdf_get_result_from_oval(result);
 }
 
-static struct ocap_stringlist *
+static struct oscap_stringlist *
 _oval_agent_list_definitions(void *usr, xccdf_policy_engine_query_t query_type, void *query_data)
 {
 	__attribute__nonnull__(usr);
