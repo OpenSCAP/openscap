@@ -88,9 +88,10 @@ function test_rds
 # Testing.
 test_init "test_ds.log"
 
-test_run "sds_simple_xccdf" test_sds sds_simple scap-fedora14-xccdf.xml 0
+test_run "sds_simple" test_sds sds_simple scap-fedora14-xccdf.xml 0
 test_run "sds_multiple_oval" test_sds sds_multiple_oval multiple-oval-xccdf.xml 0
 test_run "sds_subdir" test_sds sds_subdir subdir/scap-fedora14-xccdf.xml 1
+test_run "sds_extended_component" test_sds sds_extended_component fake-check-xccdf.xml 0
 
 test_run "eval_simple" test_eval eval_simple/sds.xml
 
