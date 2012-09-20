@@ -239,34 +239,21 @@ static bool xccdf_policy_filter_select(void *item, void *selectid)
  * false otherwise.
  * This function is only called from iterator constructor
  */
-/*static bool xccdf_policy_filter_callback(void *cb, void *sysname)*/
-/*{*/
-        /* If system string of callback is NULL and sysname 
-         * is NULL we can't call strcmp, because it will raise 
-         * SIGSEG so we want to avoid such behavior
-         */
-/*if ((((callback *)cb)->system == NULL) && ( (const char *) sysname == NULL))*/
-/*return true;*/
-/*else if ((((callback *)cb)->system == NULL) || ((const char *) sysname == NULL))*/
-/*return false;*/
-
-        /* If both structures have system strings, compare 
-         * them to equality
-         */
-/*else if (!strcmp(((callback *)cb)->system, (const char *) sysname)) {*/
-/*return true;*/
-/*} else return false;*/
-/*}*/
+static bool
+_xccdf_policy_filter_callback(callback *cb, const char *sysname)
+{
+	return !oscap_strcmp(cb->system, sysname);
+}
 
 /**
  * Get callbacks that match sysname. Call this function to get iterator over list of callbacks
  * that have the same system name
  */
-/*static struct oscap_iterator * xccdf_policy_get_callbacks_by_sysname(struct xccdf_policy * policy, const char * sysname) {
-
-    return oscap_iterator_new_filter( policy->model->callbacks, (oscap_filter_func) xccdf_policy_filter_callback,
-            (void *) sysname);
-}*/
+static struct oscap_iterator *
+_xccdf_policy_get_callbacks_by_sysname(struct xccdf_policy * policy, const char * sysname)
+{
+	return oscap_iterator_new_filter( policy->model->callbacks, (oscap_filter_func) _xccdf_policy_filter_callback, (void *) sysname);
+}
 
 /**
  * Return true if given policy has the select, false otherwise.
@@ -531,8 +518,7 @@ xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * sysname, con
         const char * rule_id, struct oscap_list * bindings, struct xccdf_check_import_iterator * check_import_it)
 {
     xccdf_test_result_type_t retval = XCCDF_RESULT_NOT_CHECKED;
-    //struct oscap_iterator * cb_it = xccdf_policy_get_callbacks_by_sysname(policy, sysname); TODO: review
-    struct oscap_iterator * cb_it = oscap_iterator_new(policy->model->callbacks);
+    struct oscap_iterator * cb_it = _xccdf_policy_get_callbacks_by_sysname(policy, sysname);
     while (oscap_iterator_has_more(cb_it)) {
         callback * cb = (callback *) oscap_iterator_next(cb_it);
         if (cb == NULL) { /* No callback found - checking system not registered */
@@ -540,8 +526,6 @@ xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * sysname, con
             oscap_iterator_free(cb_it);
             return XCCDF_RESULT_NOT_CHECKED;
         }
-        if (oscap_strcmp(cb->system, sysname))
-            continue;
 
         struct xccdf_value_binding_iterator * binding_it = (struct xccdf_value_binding_iterator *) oscap_iterator_new(bindings);
 
