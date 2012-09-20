@@ -209,7 +209,6 @@ static struct xccdf_refine_rule * xccdf_policy_get_refine_rules_by_rule(struct x
 
 /**
  * Filter function returning true if the item is selected, false otherwise
- * This function is only called from iterator constructor
  */
 static bool xccdf_policy_filter_selected(void *item, void *policy)
 {
@@ -227,7 +226,6 @@ static bool xccdf_policy_filter_selected(void *item, void *policy)
 
 /**
  * Filter function returning true if the rule match ruleid, false otherwise
- * This function is only called from iterator constructor
  */
 static bool xccdf_policy_filter_select(void *item, void *selectid)
 {
@@ -237,7 +235,6 @@ static bool xccdf_policy_filter_select(void *item, void *selectid)
 /**
  * Filter function returning true if given callback is for the given checking engine,
  * false otherwise.
- * This function is only called from iterator constructor
  */
 static bool
 _xccdf_policy_filter_callback(callback *cb, const char *sysname)
