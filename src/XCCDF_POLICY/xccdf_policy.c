@@ -544,13 +544,13 @@ xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * sysname, con
 static struct oscap_stringlist *
 _xccdf_policy_get_namesfor_href(struct xccdf_policy *policy, const char *sysname, const char *href)
 {
-	struct oscap_iterator *cb_it = oscap_iterator_new(policy->model->callbacks);
+	struct oscap_iterator *cb_it = _xccdf_policy_get_callbacks_by_sysname(policy, sysname);
 	struct oscap_stringlist *result = NULL;
 	while (oscap_iterator_has_more(cb_it) && result == NULL) {
 		callback *cb = (callback *) oscap_iterator_next(cb_it);
 		if (cb == NULL)
 			break;
-		if (oscap_strcmp(cb->system, sysname) || cb->query_fn == NULL)
+		if (cb->query_fn == NULL)
 			continue;
 		result = (struct oscap_stringlist *) cb->query_fn(cb->usr, POLICY_ENGINE_QUERY_NAMES_FOR_HREF, (void *)href);
 	}
@@ -562,15 +562,9 @@ static int xccdf_policy_report_cb(struct xccdf_policy * policy, const char * sys
         const char * description, const char * title, int ret)
 {
     int retval = 0;
-    struct oscap_iterator * cb_it = oscap_iterator_new(policy->model->callbacks);
+    struct oscap_iterator * cb_it = _xccdf_policy_get_callbacks_by_sysname(policy, sysname);
     while (oscap_iterator_has_more(cb_it)) {
         callback_out * cb = (callback_out *) oscap_iterator_next(cb_it);
-
-        /* Check if the callback match sysname, 
-         * continue otherwise
-         */
-        if (oscap_strcmp(cb->system, sysname))
-            continue;
 
         /* Report by oscap_reporter_message
          */
@@ -720,17 +714,10 @@ static int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccd
     return ret;
 }
 
-static bool
-_xccdf_policy_callback_filter_sysname(const callback *callback_in, const char *sysname)
-{
-	return !oscap_strcmp(callback_in->system, sysname);
-}
-
-
 static inline bool
 _xccdf_policy_is_engine_registered(struct xccdf_policy *policy, char *sysname)
 {
-	return oscap_list_contains(policy->model->callbacks, (void *) sysname, (oscap_cmp_func) _xccdf_policy_callback_filter_sysname);
+	return oscap_list_contains(policy->model->callbacks, (void *) sysname, (oscap_cmp_func) _xccdf_policy_filter_callback);
 }
 
 static struct xccdf_check *
