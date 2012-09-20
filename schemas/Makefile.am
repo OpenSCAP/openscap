@@ -55,6 +55,7 @@ EXTRA_DIST = \
 	$(xccdf11_DATA) \
 	$(xccdf12_DATA) \
 	$(sds12_DATA) \
+	$(arf11_DATA) \
 	$(ocil20_DATA) \
 	$(cpe20_DATA) \
 	$(cpe21_DATA) \
