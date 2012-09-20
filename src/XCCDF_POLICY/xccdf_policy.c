@@ -170,44 +170,6 @@ typedef struct xccdf_flat_score {
 static struct xccdf_refine_rule * xccdf_policy_get_refine_rules_by_rule(struct xccdf_policy * policy, struct xccdf_item * item);
 
 /**
- * Get callback from callback structure when system is selected 
- * Parameter policy handle callback structure and sysname the name of system specified in XCCDF file
- */
-/*static callback * xccdf_policy_get_callback(struct xccdf_policy * policy, const char * sysname) {*/
-
-/*struct oscap_list * cbs = policy->model->callbacks;*/
-
-/*struct oscap_iterator * callback_it = oscap_iterator_new(cbs);*/
-/*while (oscap_iterator_has_more(callback_it)) {*/
-/*callback * cb = oscap_iterator_next(callback_it);*/
-
-            /* If system string of callback is NULL and sysname 
-             * is NULL we can't call strcmp, because it will raise 
-             * SIGSEG so we want to avoid such behavior
-             */
-/*if ((cb->system == NULL) && (sysname == NULL)) {*/
-/*oscap_iterator_free(callback_it);*/
-/*return cb;*/
-/*} else if ((cb->system == NULL) || (sysname == NULL)) continue;*/
-
-            /* If both structures have system strings, compare 
-             * them to equality
-             */
-/*else if (!strcmp(cb->system, sysname)) {*/
-/*oscap_iterator_free(callback_it);*/
-/*return cb;*/
-/*}*/
-
-/*}*/
-/*oscap_iterator_free(callback_it);*/
-        
-        /* There are no callbacks
-         */
-/*return NULL;*/
-        
-/*}*/
-
-/**
  * Filter function returning true if the item is selected, false otherwise
  */
 static bool xccdf_policy_filter_selected(void *item, void *policy)
