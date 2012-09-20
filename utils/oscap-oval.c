@@ -34,6 +34,7 @@
 #include <assert.h>
 
 #include "oscap-tool.h"
+#include "ds.h"
 
 static int app_collect_oval(const struct oscap_action *action);
 static int app_evaluate_oval(const struct oscap_action *action);
@@ -727,12 +728,23 @@ static bool valid_inputs(const struct oscap_action *action) {
 	int ret;
 	char *doc_version;
 
-	/* validate OVAL Definitions & Variables & Syschars */
-	doc_version = oval_determine_document_schema_version((const char *) action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS);
-	if ((ret=oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS, doc_version,
-	    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))) {
-		if (ret==1) fprintf(stdout, "Invalid OVAL Definition content in %s\n", action->f_oval);
-		goto cleanup;
+	/* validate SDS or OVAL Definitions & Variables & Syschars,
+	   depending on the data */
+	if (ds_is_sds(action->f_oval) == 0) {
+		doc_version = strdup("1.2");
+		if ((ret = oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_SDS, doc_version,
+			(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout) != 0)) {
+			if (ret==1) fprintf(stdout, "Invalid source datastream in %s\n", action->f_oval);
+			goto cleanup;
+		}
+	}
+	else {
+		doc_version = oval_determine_document_schema_version((const char *) action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS);
+		if ((ret=oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS, doc_version,
+			(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))) {
+			if (ret==1) fprintf(stdout, "Invalid OVAL Definition content in %s\n", action->f_oval);
+			goto cleanup;
+		}
 	}
 
 	if (action->f_variables) {
@@ -778,16 +790,22 @@ static int app_oval_validate(const struct oscap_action *action) {
 	int ret;
 	int result = OSCAP_ERROR;
 
+	/* validate SDS or OVAL Definitions & Variables & Syschars,
+	   depending on the data */
+	if (ds_is_sds(action->f_oval) == 0) {
+		doc_version = strdup("1.2");
+		ret = oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_SDS, doc_version,
+			(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout);
+	}
+	else {
+		doc_version = oval_determine_document_schema_version((const char *) action->f_oval, action->doctype);
+		if (!doc_version)
+			goto cleanup;
 
-	doc_version = oval_determine_document_schema_version(action->f_oval, action->doctype);
-	if (!doc_version)
-		goto cleanup;
+		ret=oscap_validate_document(action->f_oval, action->doctype, doc_version,
+			(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout);
+	}
 
-	ret=oscap_validate_document(action->f_oval,
-				    action->doctype,
-				    doc_version,
-				    (action->verbosity >= 0 ? oscap_reporter_fd : NULL),
-				    stdout);
 	if (ret==-1) {
 		result=OSCAP_ERROR;
 		goto cleanup;
@@ -798,8 +816,10 @@ static int app_oval_validate(const struct oscap_action *action) {
 	else
 		result=OSCAP_OK;
 
-	/* schematron-based validation requested */
-	if (action->force) {
+	/* schematron-based validation requested
+	   We can only do schematron validation if the file isn't a source datastream
+	*/
+	if (action->force && ds_is_sds(action->f_oval) != 0) {
 		ret=oscap_schematron_validate_document(action->f_oval, action->doctype, doc_version, NULL);
 		if (ret==-1) {
 			result=OSCAP_ERROR;
