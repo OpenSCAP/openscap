@@ -10,9 +10,9 @@ dist_pkgdata_DATA = dist/fedora/scap-fedora14-oval.xml \
 if WANT_PYTHON
   SUBDIRS += swig
 else
-  if WANT_PERL
+if WANT_PERL
     SUBDIRS += swig
-  endif
+endif
 endif
 
 if WANT_SCE
