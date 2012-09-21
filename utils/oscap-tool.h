@@ -35,6 +35,7 @@
 #include <reporter.h>
 
 #include <oval_definitions.h>
+#include <oval_probe.h>
 #include <cvss.h>
 #include <xccdf.h>
 #include <cpedict.h>

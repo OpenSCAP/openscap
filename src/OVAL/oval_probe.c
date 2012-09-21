@@ -639,14 +639,10 @@ void oval_probe_meta_list(FILE *output, int flags)
 	    }
 	}
 
-	fprintf(output, "%-32s %-32s %c",
-		meta[i].stype, meta[i].pname,
-		meta[i].flags & OVAL_PROBEMETA_EXTERNAL ? 'E' : '.');
+	fprintf(output, "%-28s %-28s", meta[i].stype, meta[i].pname);
 
 	if (flags & OVAL_PROBEMETA_LIST_VERBOSE) {
-	    fprintf(output, " %-5u %s\n",
-		    meta[i].otype,
-		    meta[i].flags & OVAL_PROBEMETA_EXTERNAL ? probe_path : "");
+	    fprintf(output, " %-5u %s\n", meta[i].otype, probe_path);
 	} else
 	    fprintf(output, "\n");
     }

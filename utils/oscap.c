@@ -100,12 +100,29 @@ bool getopt_root(int argc, char **argv, struct oscap_action *action)
 
 static int print_versions(const struct oscap_action *action)
 {
-	fprintf(stdout,
-		"OSCAP util (oscap) %s\n" "Copyright 2009,2010 Red Hat Inc., Durham, North Carolina.\n\n", oscap_get_version());
-	fprintf(stdout, "OVAL Version: \r\t\t%s\n", oval_definition_model_supported());
-	fprintf(stdout, "XCCDF Version: \r\t\t%s\n", xccdf_benchmark_supported());
-	fprintf(stdout, "CPE Version: \r\t\t%s\n", cpe_dict_model_supported());
-	fprintf(stdout, "CVSS Version: \r\t\t%s\n", cvss_model_supported());
-    return OSCAP_OK;
+	printf("OSCAP util (oscap) %s\n" "Copyright 2009,2010,2011 Red Hat Inc., Durham, North Carolina.\n\n", oscap_get_version());
+
+	printf("==== Supported specifications ====\n");
+	printf("XCCDF Version: %s\n", xccdf_benchmark_supported());
+	printf("OVAL Version: %s\n", oval_definition_model_supported());
+	printf("CPE Version: %s\n", cpe_dict_model_supported());
+	printf("CVSS Version: %s\n", cvss_model_supported());
+	printf("Asset Identification Version: %s\n", "1.1");
+	printf("Asset Reporting Format Version: %s\n", "1.1");
+#ifdef ENABLE_SCE
+	printf("Script check engine: %s\n", "1.0");
+#endif
+	printf("\n");
+
+	printf("==== Paths ====\n");
+	printf("Schema files: %s\n", oscap_path_to_schemas());
+	printf("Schematron files: %s\n", oscap_path_to_schematron());
+	printf("Probes: %s\n", oval_probe_ext_getdir());
+	printf("\n");
+
+	printf("==== Supported OVAL objects and associated OpenSCAP probes ====\n");
+	oval_probe_meta_list(stdout, OVAL_PROBEMETA_LIST_DYNAMIC);
+
+	return OSCAP_OK;
 }
 
