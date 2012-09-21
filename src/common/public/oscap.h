@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009,2010,2011 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -7,17 +7,18 @@
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful, 
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software 
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors:
  *      Lukas Kuklinek <lkuklinek@redhat.com>
+ *      Peter Vrabec <pvrabec@redhat.com>
  */
 
 /**
@@ -142,15 +143,6 @@
 #	define OSCAP_DEPRECATED(func) func
 #endif
 
-/// OS-specific filesystem path delimiter
-extern const char * const OSCAP_OS_PATH_DELIM;
-
-/// Default XML Schema path (if not overridden by the environment variable)
-extern const char * const OSCAP_SCHEMA_PATH;
-
-/// Default XSLT path (if not overridden by the environment variable)
-extern const char * const OSCAP_XSLT_PATH;
-
 
 /**
  * Initialize OpenSCAP library.
@@ -201,8 +193,7 @@ typedef enum oscap_document_type {
 /**
  * Validate a SCAP document file against a XML schema.
  *
- * Schemas are searched relative to path specified by the OSCAP_SCHEMA_PATH environment variable,
- * which contains a list of colon-separated paths.
+ * Schemas are searched relative to path specified by the OSCAP_SCHEMA_PATH environment variable.
  * If the variable does not exist a default path is used (usually something like $PREFIX/share/openscap/schemas).
  *
  * Directory structure must adhere $SCHEMA_PATH/$STANDARD/$VERSION/$SCHEMAFILE.xsd structure, where $STANDARD
@@ -220,8 +211,7 @@ int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, 
 /**
  * Validate a SCAP document file against schematron rules.
  *
- * The rules are searched relative to path specified by the OSCAP_SCHEMA_PATH environment variable,
- * which contains a list of colon-separated paths.
+ * The rules are searched relative to path specified by the OSCAP_SCHEMA_PATH environment variable.
  * If the variable does not exist a default path is used (usually something like $PREFIX/share/openscap/schemas).
  *
  * @param xmlfile File to be validated.
@@ -235,8 +225,7 @@ int oscap_schematron_validate_document(const char *xmlfile, oscap_document_type_
 /**
  * Apply a XSLT stylesheet to a XML file.
  *
- * Stylesheets are searched relative to path specified by the OSCAP_XSLT_PATH environment variable,
- * which contains a list of colon-separated paths.
+ * Stylesheets are searched relative to path specified by the OSCAP_XSLT_PATH environment variable.
  * If the variable does not exist a default path is used (usually something like $PREFIX/share/openscap/schemas).
  *
  * @param xmlfile File to be transformed.
@@ -248,19 +237,14 @@ int oscap_schematron_validate_document(const char *xmlfile, oscap_document_type_
 int oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params);
 
 /**
- * Apply XSLT stylesheet to a XML file.
- *
- * This function lets user specify environment variable with
- * a XSL stylesheet search path(s) and a fallback path if the variable is not defined.
- * Except for this it is completely identical to oscap_apply_xslt().
- *
- * @param xmlfile File to be transformed.
- * @param xsltfile XSLT filename
- * @param outfile Result file shall be written here (NULL for stdout).
- * @param params list of key-value pairs to pass to the stylesheet.
- * @return the number of bytes written or -1 in case of failure
+ * Function returns path used to locate OpenSCAP XML schemas
  */
-int oscap_apply_xslt_var(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params, const char *pathvar, const char *defpath);
+const char * oscap_path_to_schemas(void);
+
+/**
+ * Function returns path used to locate OpenSCAP Schematron files
+ */
+const char * oscap_path_to_schematron(void);
 
 /************************************************************/
 /** @} validation group end */
