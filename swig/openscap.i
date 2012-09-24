@@ -168,7 +168,6 @@
 %{
  #include "../src/common/public/oscap.h"
  #include "../src/common/public/error.h"
- #include "../src/common/public/debug.h"
  #include "../src/common/public/text.h"
  #include "../src/common/public/reporter.h"
  #include "../src/common/public/reference.h"
@@ -178,7 +177,6 @@
 
 %include "../src/common/public/oscap.h"
 %include "../src/common/public/error.h"
-%include "../src/common/public/debug.h"
 %include "../src/common/public/text.h"
 %include "../src/common/public/reporter.h"
 %include "../src/common/public/reference.h"
