@@ -516,7 +516,7 @@ static oval_result_t ipv4addr_cmp(char *s1, char *s2, oval_operation_t op)
  cleanup:
 	oscap_free(s);
 
-	return OVAL_RESULT_ERROR;
+	return result;
 }
 
 static void mask_v6_addrs(struct in6_addr *addr1, int p1len, struct in6_addr *addr2, int p2len)
