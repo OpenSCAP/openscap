@@ -366,7 +366,8 @@ static int ds_sds_dump_component_ref(xmlNodePtr component_ref, xmlDocPtr doc, xm
 	return result;
 }
 
-int ds_sds_decompose(const char* input_file, const char* id, const char* target_dir, const char* xccdf_filename)
+int ds_sds_decompose_custom(const char* input_file, const char* id, const char* target_dir,
+		const char* container_name, const char* component_id, const char* target_filename)
 {
 	xmlDocPtr doc = xmlReadFile(input_file, NULL, 0);
 
@@ -413,20 +414,20 @@ int ds_sds_decompose(const char* input_file, const char* id, const char* target_
 		return -1;
 	}
 
-	xmlNodePtr checklists = node_get_child_element(datastream, "checklists");
+	xmlNodePtr container = node_get_child_element(datastream, container_name);
 
-	if (!checklists)
+	if (!container)
 	{
 		if (!id)
-			oscap_seterr(OSCAP_EFAMILY_XML, "No checklists element found in file '%s' in the first datastream.", input_file);
+			oscap_seterr(OSCAP_EFAMILY_XML, "No '%s' container element found in file '%s' in the first datastream.", container_name, input_file);
 		else
-			oscap_seterr(OSCAP_EFAMILY_XML, "No checklists element found in file '%s' in datastream of id '%s'.", input_file, id);
+			oscap_seterr(OSCAP_EFAMILY_XML, "No '%s' container element found in file '%s' in datastream of id '%s'.", container_name, input_file, id);
 
 		xmlFreeDoc(doc);
 		return -1;
 	}
 
-	xmlNodePtr component_ref = checklists->children;
+	xmlNodePtr component_ref = container->children;
 
 	for (; component_ref != NULL; component_ref = component_ref->next)
 	{
@@ -436,15 +437,25 @@ int ds_sds_decompose(const char* input_file, const char* id, const char* target_
 		if (strcmp((const char*)(component_ref->name), "component-ref") != 0)
 			continue;
 
+		xmlChar* cref_id = xmlGetProp(component_ref, BAD_CAST "id");
+		// if cref_id is zero we have encountered a fatal error that will be handled
+		// in ds_sds_dump_component_ref
+		if (component_id && cref_id && strcmp(component_id, (char*)cref_id) != 0)
+		{
+			xmlFree(cref_id);
+			continue;
+		}
+		xmlFree(cref_id);
+
 		int result;
 
-		if (xccdf_filename == NULL)
+		if (target_filename == NULL)
 		{
 			result = ds_sds_dump_component_ref(component_ref, doc, datastream, strcmp(target_dir, "") == 0 ? "." : target_dir);
 		}
 		else
 		{
-			result = ds_sds_dump_component_ref_as(component_ref, doc, datastream, strcmp(target_dir, "") == 0 ? "." : target_dir, xccdf_filename);
+			result = ds_sds_dump_component_ref_as(component_ref, doc, datastream, strcmp(target_dir, "") == 0 ? "." : target_dir, target_filename);
 		}
 
 		if (result != 0)
@@ -457,6 +468,11 @@ int ds_sds_decompose(const char* input_file, const char* id, const char* target_
 
 	xmlFreeDoc(doc);
 	return 0;
+}
+
+int ds_sds_decompose(const char* input_file, const char* id, const char* target_dir, const char* xccdf_filename)
+{
+	return ds_sds_decompose_custom(input_file, id, target_dir, "checklists", NULL, xccdf_filename);
 }
 
 static bool strendswith(const char* str, const char* suffix)

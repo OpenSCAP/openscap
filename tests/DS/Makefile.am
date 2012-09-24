@@ -15,6 +15,7 @@ TESTS = test_ds.sh
 
 EXTRA_DIST += test_ds.sh \
 		eval_simple/sds.xml \
+		eval_just_oval/sds.xml \
 		rds_simple/results-oval.xml \
 		rds_simple/results-xccdf.xml \
 		rds_simple/sds.xml \
