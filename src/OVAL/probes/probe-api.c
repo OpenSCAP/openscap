@@ -636,10 +636,8 @@ static SEXP_t *probe_item_optimize(const SEXP_t *item);
 int probe_cobj_add_item(SEXP_t *cobj, const SEXP_t *item)
 {
 	SEXP_t *lst, *oitem;
-	size_t item_cnt;
 
 	lst = SEXP_listref_nth(cobj, 3);
-	item_cnt = SEXP_list_length(lst);
 	oitem = probe_item_optimize(item);
 	SEXP_list_add(lst, oitem);
 	SEXP_vfree(lst, oitem, NULL);
