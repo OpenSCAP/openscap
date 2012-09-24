@@ -415,8 +415,11 @@ int oval_object_to_sexp(void *sess, const char *typestr, struct oval_syschar *sy
 	/*
 	 * Object name & attributes (id)
 	 */
-	if (snprintf(obj_name, sizeof obj_name, "%s_object", typestr) >= sizeof obj_name)
+	ret = snprintf(obj_name, sizeof obj_name, "%s_object", typestr);
+	if (ret<0 || (unsigned int) ret > sizeof obj_name) {
+		dE("obj_name length too short");
 		return -1;
+	}
 
 	obj_over = oval_object_get_schema_version(object);
 	obj_id   = oval_object_get_id(object);

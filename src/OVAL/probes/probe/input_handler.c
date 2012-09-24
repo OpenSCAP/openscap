@@ -48,7 +48,7 @@ void *probe_input_handler(void *arg)
         pthread_attr_t pth_attr;
         probe_t       *probe = (probe_t *)arg;
 
-        int probe_ret, ret, cstate; /* XXX */
+        int probe_ret, cstate; /* XXX */
         SEAP_msg_t *seap_request, *seap_reply;
         SEXP_t *probe_in, *probe_out, *oid;
 
@@ -82,8 +82,6 @@ void *probe_input_handler(void *arg)
                 TH_CANCEL_ON;
 
 		if (SEAP_recvmsg(probe->SEAP_ctx, probe->sd, &seap_request) == -1) {
-			ret = errno;
-
 			dE("An error ocured while receiving SEAP message. errno=%u, %s.\n", errno, strerror(errno));
 
                         /*
@@ -215,8 +213,6 @@ void *probe_input_handler(void *arg)
                         SEXP_free(probe_out);
 
 			if (SEAP_reply(probe->SEAP_ctx, probe->sd, seap_reply, seap_request) == -1) {
-				ret = errno;
-
 				dE("An error ocured while sending SEAP message. errno=%u, %s.\n",
 				   errno, strerror(errno));
 

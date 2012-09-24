@@ -476,7 +476,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 					switch (err->type) {
 					case SEAP_ETYPE_USER:
 					{
-						char errmsg[512] = "", *codemsg;
+						char * codemsg;
 
 						/*
 						 * Errors of type USER should all be from the probe "namespace" (i.e. only codes
@@ -516,9 +516,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 							codemsg = "Unknown error";
 						}
 
-						snprintf(errmsg, sizeof errmsg, "probe at sd=%d reported an error: %s", pd->sd, codemsg);
-						dE("Received an error from probe at sd=%d: %u, \"%s\"\n", pd->sd, err->code, errmsg);
-						oscap_seterr(OSCAP_EFAMILY_OVAL, errmsg);
+						oscap_seterr(OSCAP_EFAMILY_OVAL, "Probe at sd=%d reported an error: %s", pd->sd, codemsg);
 						break;
 					}
 					case SEAP_ETYPE_INT:
@@ -787,7 +785,7 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
         }
         case PROBE_HANDLER_ACT_OPEN:
         {
-                char         probe_uri[PATH_MAX + 1], errmsg[__ERRBUF_SIZE];
+                char         probe_uri[PATH_MAX + 1];
                 size_t       probe_urilen;
                 char        *probe_dir;
                 oval_pdsc_t *probe_dsc;
@@ -854,7 +852,7 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                 pd = oval_pdtbl_get(pext->pdtbl, oval_object_get_subtype(obj));
 
                 if (pd == NULL) {
-                        char         probe_uri[PATH_MAX + 1], errmsg[__ERRBUF_SIZE];
+                        char         probe_uri[PATH_MAX + 1];
                         size_t       probe_urilen;
                         char        *probe_dir;
                         oval_pdsc_t *probe_dsc;
