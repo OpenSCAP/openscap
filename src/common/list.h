@@ -7,13 +7,13 @@
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful, 
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software 
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors:
@@ -91,6 +91,68 @@ void *oscap_iterator_detach(struct oscap_iterator *it);
 void oscap_iterator_free(struct oscap_iterator *it);
 
 void *oscap_list_find(struct oscap_list *list, void *what, oscap_cmp_func compare);
+
+/**
+ * Iterate over an array, given an iterator.
+ * Execute @a code for each array member stored in @a val.
+ * It is NOT safe to use return or goto inside of the @a code,
+ * the iterator would not be freed properly.
+ */
+#define OSCAP_FOREACH_GENERIC(itype, vtype, val, init_val, code) \
+    {                                                            \
+        struct itype##_iterator *val##_iter = (init_val);        \
+        vtype val;                                               \
+        while (itype##_iterator_has_more(val##_iter)) {          \
+            val = itype##_iterator_next(val##_iter);             \
+            code                                                 \
+        }                                                        \
+        itype##_iterator_free(val##_iter);                       \
+    }
+
+/**
+ * Iterate over an array, given an iterator.
+ * @param type type of array elements (w/o the struct keyword)
+ * @param val name of an variable the member will be sequentially stored in
+ * @param init_val initial member value (i.e. an iterator pointing to the start element)
+ * @param code code to be executed for each element the iterator hits
+ * @see OSCAP_FOREACH_GENERIC
+ */
+#define OSCAP_FOREACH(type, val, init_val, code) \
+        OSCAP_FOREACH_GENERIC(type, struct type *, val, init_val, code)
+
+/**
+ * Iterate over an array, given an iterator.
+ * It is generally not safe to use break, return or goto inside the loop
+ * (iterator wouldn't be properly freed otherwise).
+ * Two variables, named VAL and VAL_iter (substitute VAL for actual macro argument)
+ * will be added to current variable scope. You can free the iterator explicitly
+ * after previous unusual escape from the loop (e.g. using break).
+ * @param val name of an variable the string will be sequentially stored in
+ * @param init_val initial member value (i.e. an iterator pointing to the start element)
+ * @param code code to be executed for each string the iterator hits
+ */
+#define OSCAP_FOR_GENERIC(itype, vtype, val, init_val)                  \
+    vtype val = NULL; struct itype##_iterator *val##_iter = (init_val); \
+    while (itype##_iterator_has_more(val##_iter)                        \
+            ? (val = itype##_iterator_next(val##_iter), true)           \
+            : (itype##_iterator_free(val##_iter), val##_iter = NULL, false))
+
+/**
+ * Iterate over an array, given an iterator.
+ * @param type type of array elements (w/o the struct keyword)
+ * @param val name of an variable the member will be sequentially stored in
+ * @param init_val initial member value (i.e. an iterator pointing to the start element)
+ * @see OSCAP_FOR_GENERIC
+ */
+#define OSCAP_FOR(type, val, init_val) OSCAP_FOR_GENERIC(type, struct type *, val, init_val)
+
+/**
+ * Iterate over an array of strings, given an iterator.
+ * @param val name of an variable the member will be sequentially stored in
+ * @param init_val initial member value (i.e. an iterator pointing to the start element)
+ * @see OSCAP_FOR_GENERIC
+ */
+#define OSCAP_FOR_STR(val, init_val) OSCAP_FOR_GENERIC(oscap_string, const char *, val, init_val)
 
 /*
  * Hash table
