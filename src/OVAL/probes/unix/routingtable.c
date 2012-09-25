@@ -61,7 +61,7 @@
 #define RT_INFO_DELIMITERS " \t"
 
 #ifndef htobe32
-#include <bits/byteswap.h>
+#include <byteswap.h>
 # if BYTE_ORDER == LITTLE_ENDIAN
 #  define htobe32(x) __bswap_32 (x)
 # else
