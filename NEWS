@@ -1,8 +1,14 @@
+openscap-0.9.0							25-09-2012
+- consolidate public headers naming
+- do not build untested modules
+- improved support of SCAP datastreams
+- various fixes in OVAL and XCCDF
+
 openscap-0.8.5							27-08-2012
 - added rpmverifypackage probe
 - added initial support for source and target datastreams
 - added xccdf 1.2 dc-status support
-- several probes updated to conform to OVAL 5.10.1 
+- several probes updated to conform to OVAL 5.10.1
 - bug fixes
 
 openscap-0.8.4							07-08-2012
