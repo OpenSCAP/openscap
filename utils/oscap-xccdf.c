@@ -30,8 +30,8 @@
 #include <oval_results.h>
 #include <oval_variables.h>
 
-#include <ds.h>
-#include <xccdf.h>
+#include <scap_ds.h>
+#include <xccdf_benchmark.h>
 #include <xccdf_policy.h>
 
 #ifdef ENABLE_SCE

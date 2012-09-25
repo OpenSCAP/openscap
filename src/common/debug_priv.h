@@ -30,7 +30,45 @@
 #define OSCAP_DEBUG_PRIV_H_
 
 #include "util.h"
-#include "public/debug.h"
+
+/**
+ * Hardcodede output filename. This is used as the default
+ * filename if the variable specified by OSCAP_DEBUG_FILE_ENV
+ * isn't defined.
+ */
+#ifndef OSCAP_DEBUG_FILE
+# define OSCAP_DEBUG_FILE     "oscap_debug.log"
+#endif
+
+/**
+ * Name of the environment variable that can be used to change
+ * the default output filename.
+ */
+#ifndef OSCAP_DEBUG_FILE_ENV
+# define OSCAP_DEBUG_FILE_ENV "OSCAP_DEBUG_FILE"
+#endif
+
+/**
+ * Name of the environment variable that can be used to change
+ * the debug level, i.e. the number and verbosity of the debug
+ * messages.
+ * XXX: not implemented yet
+ */
+#ifndef OSCAP_DEBUG_LEVEL_ENV
+# define OSCAP_DEBUG_LEVEL_ENV "OSCAP_DEBUG_LEVEL"
+#endif
+
+/**
+ * Name of the environment variable that can be used to enable
+ * striping of __FILE__ paths. It's numeric value specifies how
+ * many path tokens from the end should remain after striping.
+ * Value 1 is equal to basename(__FILE__)
+ * If this environment variable isn't defined or is set to 0
+ * then no striping is done.
+ */
+#ifndef OSCAP_DEBUG_PATHSTRIP_ENV
+# define OSCAP_DEBUG_PATHSTRIP_ENV "OSCAP_DEBUG_PSTRIP"
+#endif
 
 
 #define OSCAP_DEBUGOBJ_SEXP 1

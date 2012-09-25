@@ -1,4 +1,3 @@
-if WANT_XCCDF
 
 AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 		-I$(top_srcdir)/src/CVE/public \
@@ -34,4 +33,3 @@ EXTRA_DIST += test_api_xccdf.sh scap-rhel5-xccdf11.xml scap-rhel5-xccdf12.xml
 
 SUBDIRS = unittests
 
-endif

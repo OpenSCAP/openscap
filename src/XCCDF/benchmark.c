@@ -36,7 +36,7 @@
 #include "CPE/cpedict_priv.h"
 #include "CPE/cpelang_priv.h"
 
-#define XCCDF_SUPPORTED "1.1.4"
+#define XCCDF_SUPPORTED "1.2"
 
 static struct oscap_htable *xccdf_benchmark_find_target_htable(const struct xccdf_benchmark *, xccdf_type_t);
 

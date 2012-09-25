@@ -48,7 +48,7 @@ void *probe_input_handler(void *arg)
         pthread_attr_t pth_attr;
         probe_t       *probe = (probe_t *)arg;
 
-        int probe_ret, ret, cstate; /* XXX */
+        int probe_ret, cstate; /* XXX */
         SEAP_msg_t *seap_request, *seap_reply;
         SEXP_t *probe_in, *probe_out, *oid;
 
@@ -82,8 +82,6 @@ void *probe_input_handler(void *arg)
                 TH_CANCEL_ON;
 
 		if (SEAP_recvmsg(probe->SEAP_ctx, probe->sd, &seap_request) == -1) {
-			ret = errno;
-
 			dE("An error ocured while receiving SEAP message. errno=%u, %s.\n", errno, strerror(errno));
 
                         /*
@@ -113,16 +111,17 @@ void *probe_input_handler(void *arg)
 			probe_out = probe_rcache_sexp_get(probe->rcache, oid);
 
 			if (probe_out == NULL) { /* cache miss */
-				SEXP_t *skip_flag;
+				SEXP_t *skip_flag, *obj_mask;
 
 				skip_flag = probe_obj_getattrval(probe_in, "skip_eval");
+                                obj_mask  = probe_obj_getmask(probe_in);
 				SEXP_free(probe_in);
 
 				if (skip_flag != NULL) {
 					oval_syschar_collection_flag_t cobj_flag;
 
 					cobj_flag = SEXP_number_geti_32(skip_flag);
-					probe_out = probe_cobj_new(cobj_flag, NULL, NULL);
+					probe_out = probe_cobj_new(cobj_flag, NULL, NULL, obj_mask);
 
 					if (probe_rcache_sexp_add(probe->rcache, oid, probe_out) != 0) {
 						/* TODO */
@@ -132,6 +131,7 @@ void *probe_input_handler(void *arg)
 					probe_ret = 0;
 					SEXP_free(oid);
                                         SEXP_free(skip_flag);
+                                        SEXP_free(obj_mask);
 				} else {
 					probe_pwpair_t *pair;
 
@@ -213,8 +213,6 @@ void *probe_input_handler(void *arg)
                         SEXP_free(probe_out);
 
 			if (SEAP_reply(probe->SEAP_ctx, probe->sd, seap_reply, seap_request) == -1) {
-				ret = errno;
-
 				dE("An error ocured while sending SEAP message. errno=%u, %s.\n",
 				   errno, strerror(errno));
 

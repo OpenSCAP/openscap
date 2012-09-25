@@ -36,7 +36,7 @@
 #include <libxml/tree.h>
 #include <string.h>
 
-#include "public/cpelang.h"
+#include "public/cpe_lang.h"
 #include "cpelang_priv.h"
 
 #include "common/util.h"

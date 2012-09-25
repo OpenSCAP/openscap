@@ -26,7 +26,7 @@
  * @addtogroup CVSS
  * @{
  *
- * @file cvss.h
+ * @file cvss_score.h
  *  \brief Interface to Common Vulnerability Scoring System Version 2
  *
  */

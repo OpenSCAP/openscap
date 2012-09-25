@@ -508,7 +508,7 @@ xmlNode *xccdf_status_to_dom(struct xccdf_status *status, xmlDoc *doc, xmlNode *
 							BAD_CAST XCCDF_STATUS_MAP[type - 1].string);
 
 	time_t date_time = xccdf_status_get_date(status);
-	if (date_time != NULL) {
+	if (date_time) {
 		struct tm *date = localtime(&date_time);
 		char date_str[] = "YYYY-DD-MM";
 		snprintf(date_str, sizeof(date_str), "%04d-%02d-%02d", date->tm_year + 1900, date->tm_mon + 1, date->tm_mday);
@@ -596,6 +596,12 @@ xmlNode *xccdf_ident_to_dom(struct xccdf_ident *ident, xmlDoc *doc, xmlNode *par
 	return ident_node;
 }
 
+static const struct oscap_string_map XCCDF_BOOLOP_MAP[] = {
+	{XCCDF_OPERATOR_AND, "AND"},
+	{XCCDF_OPERATOR_OR, "OR"},
+	{0, NULL}
+};
+
 xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
 {
 	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
@@ -604,26 +610,30 @@ xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *par
 	xmlNode *check_node = NULL;
 	if (xccdf_check_get_complex(check))
 		check_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "complex-check", NULL);
-	else
+	else {
 		check_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "check", NULL);
+		const char *sys = xccdf_check_get_system(check);
+		xmlNewProp(check_node, BAD_CAST "system", BAD_CAST sys);
+	}
+
 
 	const char *id = xccdf_check_get_id(check);
 	if (id)
 		xmlNewProp(check_node, BAD_CAST "id", BAD_CAST id);
-
-	const char *sys = xccdf_check_get_system(check);
-	xmlNewProp(check_node, BAD_CAST "system", BAD_CAST sys);
 
 	const char *selector = xccdf_check_get_selector(check);
 	if (selector)
 		xmlNewProp(check_node, BAD_CAST "selector", BAD_CAST selector);
 	if (!xccdf_check_get_complex(check) && (check->flags.def_multicheck || xccdf_check_get_multicheck(check))) {
 		xmlNewProp(check_node, BAD_CAST "multi-check",
-			BAD_CAST xccdf_check_get_multicheck(check) ? "true" : "false");
+			BAD_CAST (xccdf_check_get_multicheck(check) ? "true" : "false"));
 	}
 	if (check->flags.def_negate || xccdf_check_get_negate(check))
 		xmlNewProp(check_node, BAD_CAST "negate",
-			BAD_CAST xccdf_check_get_negate(check) ? "true" : "false");
+			BAD_CAST (xccdf_check_get_negate(check) ? "true" : "false"));
+	if (xccdf_check_get_complex(check))
+		xmlNewProp(check_node, BAD_CAST "operator",
+			BAD_CAST oscap_enum_to_string(XCCDF_BOOLOP_MAP, xccdf_check_get_oper(check)));
 
 	/* Handle complex checks */
 	struct xccdf_check_iterator *checks = xccdf_check_get_children(check);

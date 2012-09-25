@@ -83,4 +83,5 @@ int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *
 
 void oval_probe_meta_list(FILE *output, int flags);
 
+const char *oval_probe_ext_getdir(void);
 #endif				/* OVAL_PROBE_H */

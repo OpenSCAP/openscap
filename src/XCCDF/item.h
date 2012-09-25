@@ -23,13 +23,15 @@
 #ifndef XCCDF_ITEM_
 #define XCCDF_ITEM_
 
-#include "public/xccdf.h"
 #include <assert.h>
+
+#include "public/xccdf_benchmark.h"
 #include "elements.h"
-#include "../common/reference_priv.h"
-#include "../common/list.h"
-#include "../common/util.h"
-#include "../common/text_priv.h"
+
+#include "common/reference_priv.h"
+#include "common/list.h"
+#include "common/util.h"
+#include "common/text_priv.h"
 
 OSCAP_HIDDEN_START;
 

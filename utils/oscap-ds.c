@@ -25,9 +25,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
+#include <unistd.h>
+
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
 
 /* DS */
-#include <ds.h>
+#include <scap_ds.h>
 
 #include "oscap-tool.h"
 
@@ -192,16 +197,50 @@ cleanup:
 }
 
 int app_ds_sds_compose(const struct oscap_action *action) {
-	int ret;
+	int ret = OSCAP_ERROR;
 
-	ds_sds_compose_from_xccdf(action->ds_action->file, action->ds_action->target);
+	// The API will correctly deal with the file parameter having directory
+	// references in it. However this will create a hard to navigate mangled
+	// component IDs in the resulting datastream.
+	//
+	// To fix this we will chdir to parent dir of the given XCCDF and chdir
+	// back after we are done.
+
+	char previous_cwd[PATH_MAX + 1];
+	if (getcwd(previous_cwd, PATH_MAX) == NULL)
+	{
+		fprintf(stdout, "Can't find out current working directory.\n");
+
+		goto cleanup;
+	}
+
+	char target_abs_path[PATH_MAX + 1];
+
+	// if the path is already absolute we just use it as it is
+	if (*action->ds_action->target == '/')
+		snprintf(target_abs_path, PATH_MAX, "%s", action->ds_action->target);
+	else
+		snprintf(target_abs_path, PATH_MAX, "%s/%s", previous_cwd, action->ds_action->target);
+
+	char* temp_cwd = strdup(action->ds_action->file);
+	chdir(dirname(temp_cwd));
+	free(temp_cwd);
+
+	char* source_xccdf = strdup(action->ds_action->file);
+	ds_sds_compose_from_xccdf(basename(source_xccdf), target_abs_path);
+	free(source_xccdf);
+
+	chdir(previous_cwd);
 
 	if (action->validate)
 	{
-		if (oscap_validate_document(action->ds_action->target, OSCAP_DOCUMENT_SDS, "1.2", (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout) != 0)
+		if (oscap_validate_document(target_abs_path, OSCAP_DOCUMENT_SDS, "1.2",
+					(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout) != 0)
 		{
-			fprintf(stdout, "Exported Source Data Stream '%s' is not valid, it has not been exported correctly!\n", action->ds_action->target);
-			ret = OSCAP_ERROR;
+			fprintf(stdout, "Exported Source Data Stream '%s' (absolute path: '%s') "
+					"is not valid, it has not been exported correctly!\n",
+					action->ds_action->target, target_abs_path);
+
 			goto cleanup;
 		}
 	}

@@ -38,7 +38,8 @@
 // for functins memset, strcpy
 #include <string.h>
 
-#include "public/cpedict.h"
+#include "public/cpe_dict.h"
+#include "public/cpe_name.h"
 #include "cpedict_priv.h"
 
 #include "common/list.h"

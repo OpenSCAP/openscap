@@ -34,12 +34,13 @@
 #include <libxml/xmlwriter.h>
 #include <stdlib.h>
 
-#include "cpename.h"
+#include "cpe_name.h"
+
 #include "../common/public/oscap.h"
 #include "../common/util.h"
 #include "../common/elements.h"
 
-/** 
+/**
  * @cond INTERNAL
  */
 OSCAP_HIDDEN_START;

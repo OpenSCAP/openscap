@@ -1,9 +1,10 @@
+
 #include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include <cvss.h>
+#include <cvss_score.h>
 
 static void print_score(float s)
 {

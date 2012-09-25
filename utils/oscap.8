@@ -13,7 +13,7 @@ different SCAP specifications(modules).
 .SH GENERAL OPTIONS
 .TP
 \fB\-V, -\-version\fR
-SCAP specification supported by the module.
+Print supported SCAP specification, location of schema files, schematron files, probes and supported OVAL objects.
 .TP
 \fB\-q, \-\-quiet\fR
 No output for certain operations, only return code.
@@ -138,9 +138,11 @@ Be verbose.
 
 .SH XCCDF OPERATIONS
 .TP
-.B \fBeval\fR [\fIoptions\fR] xccdf-file [\fIoval-definitions-files\fR]
+.B \fBeval\fR [\fIoptions\fR] INPUT_FILE [\fIoval-definitions-files\fR]
 .RS
-Perform evaluation driven by XCCDF file and use OVAL as checking engine. Print result of each rule to standard output. oscap returns 0 if all rules pass. If there is an error during evaluation, the return code is 1. If there is at least one failed rule, oscap-scan finishes with return code 2.
+Perform evaluation driven by XCCDF file given as INPUT_FILE and use OVAL as the checking engine. Print result of each rule to standard output. oscap returns 0 if all rules pass. If there is an error during evaluation, the return code is 1. If there is at least one failed rule, oscap-scan finishes with return code 2.
+.PP
+Optionally you can give a source datastream as the INPUT_FILE instead of an XCCDF file. One of the XCCDFs inside the datastream will be used for evaluation (see --datastream-id).
 .PP
 You may specify all required OVAL Definition files as last parameters. If you don't do that, oscap tool will try to load all OVAL Definition files referenced from XCCDF automaticaly(search in the same path as XCCDF).
 .PP
@@ -153,6 +155,11 @@ Select a particular profile from XCCDF document.
 \fB\-\-results FILE\fR
 .RS
 Write XCCDF results into file.
+.RE
+.TP
+\fB\-\-results-arf FILE\fR
+.RS
+Writes results to a given FILE in Asset Reporting Format. It is recommended to use this option instead of --results when dealing with datastreams.
 .RE
 .TP
 \fB\-\-report FILE\fR
@@ -168,6 +175,11 @@ Generate OVAL Result file for each OVAL session used for evaluation. File with n
 \fB\-\-export-variables\fR
 .RS
 Generate OVAL Variables documents which contain external variables' values that were provided to the OVAL checking engine during evaluation. The filename format is '\fIoriginal-oval-definitions-filename\fR-\fIsession-index\fR.variables-\fIvariables-index\fR.xml'.
+.RE
+.TP
+\fB\-\-datastream-id ID\fR
+.RS
+Uses a datastream with that particular ID from the given datastream collection. If not given the first datastream is used. Only applies if you give source datastream in place of an XCCDF file.
 .RE
 .TP
 \fB\-\-skip-valid\fR
@@ -315,6 +327,33 @@ AR:[ND|L|M|H]         E   Availability requirement: Not Defined, Low, Medium, Hi
 .RE
 .RE
 .PP
+
+.SH DS OPERATIONS
+.TP
+.B \fBsds-compose\fR SOURCE_XCCDF TARGET_SDS
+.RS
+Creates a source datastream from the XCCDF file given in SOURCE_XCCDF and stores the result in TARGET_SDS. Dependencies like OVAL files are automatically detected and bundled in target source datastream.
+.RE
+.TP
+.B \fBsds-split\fR SOURCE_DS TARGET_DIR
+.RS
+Splits given source datastream into multiple files and stores all the files in TARGET_DIR.
+.RE
+.TP
+.B \fBsds-validate\fR SOURCE_DS
+.RS
+Validate given source datastream file against a XML schema. Every found error is printed to the standard output. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the source datastream is not valid.
+.RE
+.TP
+.B \fBrds-create\fR SDS TARGET_ARF XCCDF_RESULTS [OVAL_RESULTS [OVAL_RESULTS ..]]
+.RS
+Takes given source datastream, XCCDF and OVAL results and creates a result datastream (in Asset Reporting Format) and saves it to file given in TARGET_ARF.
+.RE
+.TP
+.B \fBrds-validate\fR SOURCE_RDS
+.RS
+Validate given result datastream file against a XML schema. Every found error is printed to the standard output. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the result datastream is not valid.
+.RE
 
 
 .SH CONTENT

@@ -32,7 +32,7 @@
 #include <config.h>
 #endif
 
-#include "public/cpedict.h"
+#include "public/cpe_dict.h"
 #include "cpedict_priv.h"
 
 #include "common/list.h"
@@ -40,7 +40,7 @@
 #include "common/_error.h"
 #include <string.h>
 
-#define CPE_DICT_SUPPORTED "2.2"
+#define CPE_DICT_SUPPORTED "2.3"
 
 struct cpe_dict_model *cpe_dict_model_import(const char *file)
 {

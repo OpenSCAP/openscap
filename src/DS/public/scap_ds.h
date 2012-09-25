@@ -2,7 +2,7 @@
  * @addtogroup DS
  * @{
  *
- * @file ds.h
+ * @file scap_ds.h
  * Open-scap Data Stream interface.
  * @author Martin Preisler <mpreisle@redhat.com>
  */
@@ -54,6 +54,12 @@ int ds_is_sds(const char* xccdf_file);
 /**
  * @brief takes given source data stream and decomposes it into separate files
  *
+ * This function bases the output on an XCCDF embedded in the "checklists"
+ * element in the datastream. Most of the times this is what everybody wants.
+ *
+ * If you want to decompose just an OVAL file or some other custom behavior,
+ * see ds_sds_decompose_custom.
+ *
  * @param input_file
  *     File containing a datastream collection we want to decompose parts from
  *
@@ -65,7 +71,7 @@ int ds_is_sds(const char* xccdf_file);
  *     Directory where the resulting files will be stored, names of the files
  *     are deduced using component-refs inside the datastream.
  *
- * @param xccdf_filename
+ * @param target_filename
  *     Base name of the target XCCDF file, if NULL is given the filename will
  *     be deduced from the contents of the datastream.
  *
@@ -74,7 +80,25 @@ int ds_is_sds(const char* xccdf_file);
  * 	   -1 in case of errors
  */
 int ds_sds_decompose(const char* input_file, const char* id,
-        const char* target_dir, const char* xccdf_filename);
+		const char* target_dir, const char* target_filename);
+
+/**
+ * @brief same as ds_sds_decompose but works with other components than just XCCDFs
+ *
+ * @param container component reference container such as "checklists", "checks", ...
+ *
+ * @param component_id
+ * 		id of the component you want to start the export from. If NULL, all
+ * 		components refs inside given container will be exported.
+ *
+ * @param target_filename
+ *     Base name of the target file, if NULL is given the filename will
+ *     be deduced from the contents of the datastream.
+ *
+ * @see ds_sds_decompose
+ */
+int ds_sds_decompose_custom(const char* input_file, const char* id, const char* target_dir,
+		const char* container_name, const char* component_id, const char* target_filename);
 
 /**
  * @brief takes given xccdf file and constructs a source datastream

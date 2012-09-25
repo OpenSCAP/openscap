@@ -9,7 +9,7 @@
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful, 
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
@@ -33,12 +33,12 @@
 #include <time.h> /* For timestamps in rule results and TestResult */
 
 #include "public/xccdf_policy.h"
-#include "XCCDF/public/xccdf.h"
+#include "public/xccdf_benchmark.h"
+#include "public/text.h"
 
-#include "XCCDF/item.h"
+#include "item.h"
 #include "common/list.h"
 #include "common/_error.h"
-#include "common/public/text.h"
 #include "common/debug_priv.h"
 #include "common/reporter_priv.h"
 
@@ -769,7 +769,13 @@ _xccdf_policy_rule_get_applicable_check(struct xccdf_policy *policy, struct xccd
 		// Check Processing Algorithm -- Check.Initialize
 		// Check Processing Algorithm -- Check.Selector
 		struct xccdf_refine_rule *r_rule = xccdf_policy_get_refine_rules_by_rule(policy, rule);
-		struct xccdf_check_iterator *candidate_it = xccdf_rule_get_checks_filtered(rule, (r_rule != NULL) ? (char *) xccdf_refine_rule_get_selector(r_rule) : "");
+		char *selector = (r_rule == NULL) ? NULL : (char *) xccdf_refine_rule_get_selector(r_rule);
+		struct xccdf_check_iterator *candidate_it = xccdf_rule_get_checks_filtered(rule, selector);
+		if (selector != NULL && !xccdf_check_iterator_has_more(candidate_it)) {
+			xccdf_check_iterator_free(candidate_it);
+			// If the refined selector does not match, checks without selector shall be used.
+			candidate_it = xccdf_rule_get_checks_filtered(rule, NULL);
+		}
 		// Check Processing Algorithm -- Check.System
 		while (xccdf_check_iterator_has_more(candidate_it)) {
 			struct xccdf_check *check = xccdf_check_iterator_next(candidate_it);

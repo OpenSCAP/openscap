@@ -551,7 +551,13 @@ bool probe_obj_attrexists(const SEXP_t * obj, const char *name)
 						return (true);
 					}
 					++i;
-				}
+				} else {
+                                    if (SEXP_strcmp(attr, name_buf + 1) == 0) {
+                                        SEXP_free(attr);
+                                        SEXP_free(obj_name);
+                                        return true;
+                                    }
+                                }
 				++i;
 			}
 
@@ -587,17 +593,19 @@ size_t probe_obj_getname_r(const SEXP_t * obj, char *buffer, size_t buflen)
 /*
  * collected objects
  */
-SEXP_t *probe_cobj_new(oval_syschar_collection_flag_t flag, SEXP_t *msg_list, SEXP_t *item_list)
+SEXP_t *probe_cobj_new(oval_syschar_collection_flag_t flag, SEXP_t *msg_list, SEXP_t *item_list, SEXP_t *mask_list)
 {
 	SEXP_t *cobj, *r0;
 
 	msg_list = (msg_list == NULL) ? SEXP_list_new(NULL) : SEXP_ref(msg_list);
 	item_list = (item_list == NULL) ? SEXP_list_new(NULL) : SEXP_ref(item_list);
+        mask_list = mask_list == NULL ? SEXP_list_new(NULL) : SEXP_ref(mask_list);
 	cobj = SEXP_list_new(r0 = SEXP_number_newu(flag),
 			     msg_list,
 			     item_list,
+                             mask_list,
 			     NULL);
-	SEXP_vfree(msg_list, item_list, r0, NULL);
+	SEXP_vfree(msg_list, item_list, mask_list, r0, NULL);
 
 	return cobj;
 }
@@ -618,15 +626,18 @@ SEXP_t *probe_cobj_get_msgs(const SEXP_t *cobj)
 	return SEXP_list_nth(cobj, 2);
 }
 
+SEXP_t *probe_cobj_get_mask(const SEXP_t *cobj)
+{
+    return SEXP_list_nth(cobj, 4);
+}
+
 static SEXP_t *probe_item_optimize(const SEXP_t *item);
 
 int probe_cobj_add_item(SEXP_t *cobj, const SEXP_t *item)
 {
 	SEXP_t *lst, *oitem;
-	size_t item_cnt;
 
 	lst = SEXP_listref_nth(cobj, 3);
-	item_cnt = SEXP_list_length(lst);
 	oitem = probe_item_optimize(item);
 	SEXP_list_add(lst, oitem);
 	SEXP_vfree(lst, oitem, NULL);
@@ -1705,4 +1716,37 @@ SEXP_t *probe_ent_from_cstr(const char *name, oval_datatype_t type,
 	}
 
 	return ent;
+}
+
+SEXP_t *probe_obj_getmask(SEXP_t *obj)
+{
+    SEXP_t *objents, *ent, *ent_name, *mask;
+
+    SEXP_VALIDATE(obj);
+
+    if (obj == NULL)
+       return NULL;
+
+    ent     = NULL;
+    mask    = SEXP_list_new(NULL);
+    objents = SEXP_list_rest(obj);
+
+    SEXP_list_foreach(ent, objents) {
+        ent_name = SEXP_list_first(ent);
+
+        if (SEXP_listp(ent_name)) {
+            SEXP_t *nr;
+
+            nr = SEXP_list_first(ent_name);
+            SEXP_free(ent_name);
+            ent_name = nr;
+
+            if (probe_ent_attrexists(ent, "mask"))
+                SEXP_list_add(mask, ent_name);
+        }
+        SEXP_free(ent_name);
+    }
+
+    SEXP_free(objents);
+    return (mask);
 }

@@ -34,18 +34,12 @@
 #include <text.h>
 #include <reporter.h>
 
-#ifdef ENABLE_OVAL
 #include <oval_definitions.h>
-#endif
-#ifdef ENABLE_CVSS
-#include <cvss.h>
-#endif
-#ifdef ENABLE_XCCDF
-#include <xccdf.h>
-#endif
-#ifdef ENABLE_CPE
-#include <cpe.h>
-#endif
+#include <oval_probe.h>
+#include <cvss_score.h>
+#include <xccdf_benchmark.h>
+#include <cpe_dict.h>
+#include <cpe_name.h>
 
 #define OSCAP_PRODUCTNAME "cpe:/a:open-scap:oscap"
 #define INVALID_DOCUMENT_MSG "oscap was unable to validate the XML document you provided.\n"\
@@ -96,12 +90,10 @@ struct ds_action {
 	size_t oval_result_count;
 };
 
-#ifdef ENABLE_CPE
 struct cpe_action {
 	char * name;
 	char * dict;
 };
-#endif
 
 struct oscap_action {
         struct oscap_module *module;
@@ -153,15 +145,8 @@ int oscap_module_call(struct oscap_action *action);
 
 extern struct oscap_module OSCAP_ROOT_MODULE;
 extern struct oscap_module OSCAP_DS_MODULE;
-#ifdef ENABLE_XCCDF
 extern struct oscap_module OSCAP_XCCDF_MODULE;
-#endif
-#ifdef ENABLE_CVSS
 extern struct oscap_module OSCAP_CVSS_MODULE;
-#endif
-#ifdef ENABLE_OVAL
 extern struct oscap_module OSCAP_OVAL_MODULE;
-#endif
-#ifdef ENABLE_CPE
 extern struct oscap_module OSCAP_CPE_MODULE;
-#endif
+

@@ -149,7 +149,6 @@ struct oval_definition *oval_definition_new(struct oval_definition_model *model,
 {
 	__attribute__nonnull__(model);
 	struct oval_definition *definition;
-	xmlNode *root;
 
 	definition = (struct oval_definition *)oscap_talloc(oval_definition_t);
 
@@ -180,7 +179,6 @@ struct oval_definition *oval_definition_clone
 
 	struct oval_definition *new_definition = oval_definition_model_get_definition(new_model, old_definition->id);
 	if (new_definition == NULL) {
-		xmlNode *root, *metadata;
 
 		new_definition = oval_definition_new(new_model, old_definition->id);
 		oval_definition_set_version(new_definition, old_definition->version);

@@ -168,22 +168,20 @@
 %{
  #include "../src/common/public/oscap.h"
  #include "../src/common/public/error.h"
- #include "../src/common/public/debug.h"
  #include "../src/common/public/text.h"
  #include "../src/common/public/reporter.h"
  #include "../src/common/public/reference.h"
 
- #include "../src/DS/public/ds.h"
+ #include "../src/DS/public/scap_ds.h"
 %}
 
 %include "../src/common/public/oscap.h"
 %include "../src/common/public/error.h"
-%include "../src/common/public/debug.h"
 %include "../src/common/public/text.h"
 %include "../src/common/public/reporter.h"
 %include "../src/common/public/reference.h"
 
-%include "../src/DS/public/ds.h"
+%include "../src/DS/public/scap_ds.h"
 
 #ifdef WANT_CCE
 %module openscap
@@ -194,13 +192,15 @@
 #endif
 
 
-#ifdef WANT_CPE
 %module openscap
 %{
- #include "../src/CPE/public/cpe.h"
+ #include "../src/CPE/public/cpe_name.h"
+ #include "../src/CPE/public/cpe_dict.h"
+ #include "../src/CPE/public/cpe_lang.h"
 %}
-%include "../src/CPE/public/cpe.h"
-#endif
+%include "../src/CPE/public/cpe_name.h"
+%include "../src/CPE/public/cpe_dict.h"
+%include "../src/CPE/public/cpe_lang.h"
 
 
 #ifdef WANT_CVE
@@ -212,26 +212,21 @@
 #endif
 
 
-#ifdef WANT_CVSS
 %module openscap
 %{
- #include "../src/CVSS/public/cvss.h"
+ #include "../src/CVSS/public/cvss_score.h"
 %}
-%include "../src/CVSS/public/cvss.h"
-#endif
+%include "../src/CVSS/public/cvss_score.h"
 
-#ifdef WANT_XCCDF
 %module openscap
 %{
- #include "../src/XCCDF/public/xccdf.h"
+ #include "../src/XCCDF/public/xccdf_benchmark.h"
  #include "../src/XCCDF_POLICY/public/xccdf_policy.h"
 %}
-%include "../src/XCCDF/public/xccdf.h"
+%include "../src/XCCDF/public/xccdf_benchmark.h"
 %include "../src/XCCDF_POLICY/public/xccdf_policy.h"
-#endif
 
 
-#ifdef WANT_OVAL
 %module openscap
 %{
  #include "../src/OVAL/public/oval_agent_api.h"
@@ -253,18 +248,13 @@
 %include "../src/OVAL/public/oval_probe.h"
 %include "../src/OVAL/public/oval_probe_handler.h"
 %include "../src/OVAL/public/oval_probe_session.h"
-#endif
 
-#ifdef WANT_OVAL
-#ifdef WANT_XCCDF
 %module openscap
 %{
  #include "../src/OVAL/public/oval_agent_xccdf_api.h"
 %}
 %include "../src/OVAL/public/oval_agent_xccdf_api.h"
-#endif
 
-#endif
 
 #ifdef WANT_SCE
 %module openscap
@@ -305,7 +295,6 @@
 
 #if defined(SWIGPYTHON)
 
-#ifdef WANT_XCCDF
 
 %{
 struct internal_usr {
@@ -523,5 +512,4 @@ char * oscap_text_xccdf_substitute_py(const char *text, PyObject *func, PyObject
 }
 
 %}
-#endif
 #endif

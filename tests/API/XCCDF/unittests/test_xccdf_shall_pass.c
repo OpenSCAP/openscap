@@ -21,11 +21,12 @@
  */
 
 #include <stdio.h>
-#include <xccdf.h>
+
+#include <xccdf_benchmark.h>
 #include <xccdf_policy.h>
 
 #include "unit_helper.h"
-#include "../../../assume.h"
+#include <../../../assume.h>
 
 int main(int argc, char *argv[])
 {

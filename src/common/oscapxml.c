@@ -56,6 +56,29 @@ const char * const OSCAP_XSLT_PATH = "/usr/local/share/openscap/xsl";
 const char * const OSCAP_XSLT_PATH = OSCAP_DEFAULT_XSLT_PATH;
 #endif
 
+/* return default path if pathvar is not defined */
+static const char * oscap_path_to(const char *pathvar, const char *defpath) {
+	const char *path = NULL;
+
+	if (pathvar != NULL)
+		path = getenv(pathvar);
+
+	if (path == NULL || oscap_streq(path, ""))
+		path = defpath;
+
+	return path;
+}
+
+const char * oscap_path_to_schemas() {
+	return oscap_path_to("OSCAP_SCHEMA_PATH", OSCAP_SCHEMA_PATH);
+}
+
+
+const char * oscap_path_to_schematron() {
+	return oscap_path_to("OSCAP_XSLT_PATH", OSCAP_XSLT_PATH);
+}
+
+
 void oscap_init(void)
 {
     xmlInitParser();
@@ -72,61 +95,6 @@ void oscap_cleanup(void)
 
 const char *oscap_get_version(void) { return VERSION; }
 
-#ifdef WIN32
-const char * const OSCAP_OS_PATH_DELIM  = "\\";
-#else
-const char * const OSCAP_OS_PATH_DELIM  = "/";
-#endif
-
-const char *OSCAP_PATH_SEPARATOR = ":";
-
-char *oscap_find_file(const char *filename, int mode, const char *pathvar, const char *defpath)
-{
-	const char *path = NULL;
-	char *pathdup = NULL;
-
-	if (filename == NULL)
-		return NULL;
-
-	if (strstr(filename, OSCAP_OS_PATH_DELIM) == filename)
-		return oscap_strdup(filename);	/*  it is an absolute path */
-
-	if (pathvar != NULL)
-		path = getenv(pathvar);
-
-	if (path == NULL || oscap_streq(path, ""))
-		path = defpath;
-	else
-		pathdup = oscap_sprintf("%s:%s", path, defpath);
-
-	if (!pathdup)
-		pathdup = oscap_strdup(path);
-
-	char **paths = oscap_split(pathdup, OSCAP_PATH_SEPARATOR);
-	char **paths_bck = paths;
-	char *ret = NULL;
-
-	while (*paths) {
-		if (oscap_streq(*paths, ""))
-			continue;
-
-		oscap_rtrim(*paths, '/');  /* strip slases at the end of the path */
-		if (oscap_streq(*paths, ""))
-			**paths = '/';
-
-		char *curpath = oscap_sprintf("%s%s%s", *paths, OSCAP_OS_PATH_DELIM, filename);
-		if (access(curpath, mode)==0) {
-			ret = curpath;
-			break;
-		}
-		oscap_free(curpath);
-		++paths;
-	}
-
-	oscap_free(pathdup);
-	oscap_free(paths_bck);
-	return ret;
-}
 
 static void oscap_xml_validity_handler(void *user, xmlErrorPtr error)
 {
@@ -151,9 +119,9 @@ int oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_report
                 return -1;
         }
 
-	char *schemapath = oscap_find_file(schemafile, R_OK, "OSCAP_SCHEMA_PATH", OSCAP_SCHEMA_PATH);
-	if (schemapath == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Schema file '%s' not found when trying to validate '%s'", schemafile, xmlfile);
+	char * schemapath = oscap_sprintf("%s%s%s", oscap_path_to_schemas(), "/", schemafile);
+	if (access(schemapath, R_OK)) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Schema file '%s' not found in path '%s' when trying to validate '%s'", schemafile, oscap_path_to_schemas(), xmlfile);
 		goto cleanup;
 	}
 
@@ -306,7 +274,8 @@ int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, 
 	return -1;
 }
 
-int oscap_apply_xslt_var(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params, const char *pathvar, const char *defpath)
+static int oscap_apply_xslt_path(const char *xmlfile, const char *xsltfile,
+				 const char *outfile, const char **params, const char *path_to)
 {
 	xsltStylesheetPtr cur = NULL;
 	xmlDocPtr doc = NULL, res = NULL;
@@ -319,9 +288,9 @@ int oscap_apply_xslt_var(const char *xmlfile, const char *xsltfile, const char *
 	char *args[argc+1];
 	memset(args, 0, sizeof(char*) * (argc + 1));
 
-	char *xsltpath = oscap_find_file(xsltfile, R_OK, pathvar, defpath);
-	if (xsltpath == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "XSLT file '%s' not found when trying to transformation '%s'", xsltfile, xmlfile);
+	char * xsltpath = oscap_sprintf("%s%s%s", path_to, "/", xsltfile);
+	if (access(xsltpath, R_OK)) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "XSLT file '%s' not found in path '%s' when trying to transformation '%s'", xsltfile, path_to, xmlfile);
 		goto cleanup;
 	}
 
@@ -444,7 +413,7 @@ int oscap_schematron_validate_document(const char *xmlfile, oscap_document_type_
 			continue;
 
 		/* validate */
-                return oscap_apply_xslt_var(xmlfile, entry->schema_path, NULL, params, "OSCAP_SCHEMA_PATH", OSCAP_SCHEMA_PATH);
+                return oscap_apply_xslt_path(xmlfile, entry->schema_path, NULL, params, oscap_path_to_schemas());
 	}
 
 	/* schematron not found */
@@ -459,7 +428,9 @@ int oscap_schematron_validate_document(const char *xmlfile, oscap_document_type_
 
 int oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params)
 {
-	return oscap_apply_xslt_var(xmlfile, xsltfile, outfile, params, "OSCAP_XSLT_PATH", OSCAP_XSLT_PATH);
+	return oscap_apply_xslt_path(xmlfile, xsltfile, outfile, params, oscap_path_to_schematron());
 }
+
+
 
 

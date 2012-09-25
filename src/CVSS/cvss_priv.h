@@ -1,9 +1,9 @@
 /**
  * @file cvss_priv.h
  * \brief Interface to Common Vulnerability Scoring System Version 2
- * 
+ *
  *  See details at http://nvd.nist.gov/cvss.cfm
- *  
+ *
  */
 
 /*
@@ -36,8 +36,8 @@
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
 
-#include "public/cvss.h"
-#include "../common/util.h"
+#include "public/cvss_score.h"
+#include "common/util.h"
 
 OSCAP_HIDDEN_START;
 

@@ -46,7 +46,7 @@
 
 #include "CPE/cpelang_priv.h"
 #include "CVSS/cvss_priv.h"
-#include "CVSS/public/cvss.h"
+#include "CVSS/public/cvss_score.h"
 
 /***************************************************************************/
 /* Variable definitions

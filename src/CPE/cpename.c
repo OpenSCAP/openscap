@@ -39,7 +39,7 @@
 #include <pcre.h>
 #include <ctype.h>
 
-#include "cpename.h"
+#include "cpe_name.h"
 #include "common/util.h"
 
 #define CPE_URI_SUPPORTED "2.3"

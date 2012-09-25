@@ -37,7 +37,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include "oscap.h"
-#include "cpename.h"
+#include "cpe_name.h"
 
 /** 
  * @struct cve_model

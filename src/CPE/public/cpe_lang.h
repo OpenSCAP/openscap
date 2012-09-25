@@ -5,7 +5,7 @@
  * @{
  *
  * @image html cpe_language.png "Class diagram"
- * @file cpelang.h
+ * @file cpe_lang.h
  *
  * @brief Interface to Common Platform Enumeration (CPE) Language
  */
@@ -38,7 +38,7 @@
 
 #include <stdlib.h>
 
-#include "cpename.h"
+#include "cpe_name.h"
 #include "oscap.h"
 
 /**

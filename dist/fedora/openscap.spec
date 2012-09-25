@@ -24,9 +24,9 @@ Requires(post):   /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 
 %description
-OpenSCAP is a set of open source libraries providing an easier path 
-for integration of the SCAP line of standards. SCAP is a line of standards 
-managed by NIST with the goal of providing a standard language 
+OpenSCAP is a set of open source libraries providing an easier path
+for integration of the SCAP line of standards. SCAP is a line of standards
+managed by NIST with the goal of providing a standard language
 for the expression of Computer Network Defense related information.
 
 %package        devel
@@ -44,7 +44,7 @@ developing applications that use %{name}.
 Summary:        Python bindings for %{name}
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-BuildRequires:  python-devel 
+BuildRequires:  python-devel
 
 %description    python
 The %{name}-python package contains the bindings so that %{name}
@@ -115,7 +115,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fpie"
 export LDFLAGS="-pie -Wl,-z,relro -Wl,-z,now"
 %endif
 
-%configure --enable-sce
+%configure --enable-sce --enable-perl
 
 make %{?_smp_mflags}
 # Remove shebang from bash-completion script

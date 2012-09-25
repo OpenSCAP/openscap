@@ -16,10 +16,8 @@ CFLAGS +=	@xml2_CFLAGS@ @pthread_CFLAGS@ @pcre_CFLAGS@	\
 
 LDADD= probe/libprobe.la @sigwaitinfo_LIBS@
 
-if WANT_PROBES
 pkglibexec_PROGRAMS += probe_system_info
 probe_system_info_SOURCES= independent/system_info.c
-endif
 
 if WANT_PROBES_INDEPENDENT
 

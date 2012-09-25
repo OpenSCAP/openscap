@@ -47,10 +47,7 @@
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "common/reporter_priv.h"
-
-#ifdef ENABLE_XCCDF
 #include "oval_agent_xccdf_api.h"
-#endif
 
 struct oval_agent_session {
 	char *filename;
@@ -65,7 +62,6 @@ struct oval_agent_session {
 };
 
 
-#ifdef ENABLE_XCCDF
 /**
  * Specification of structure for transformation of OVAL Result type
  * to XCCDF result type.
@@ -87,8 +83,6 @@ static const struct oval_result_to_xccdf_spec XCCDF_OVAL_RESULTS_MAP[] = {
 	{OVAL_RESULT_NOT_APPLICABLE, XCCDF_RESULT_NOT_APPLICABLE},
 	{0, 0}
 };
-
-#endif
 
 oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *model, const char * name) {
 	oval_agent_session_t *ag_sess;
@@ -295,7 +289,6 @@ void oval_agent_destroy_session(oval_agent_session_t * ag_sess) {
 }
 
 
-#ifdef ENABLE_XCCDF
 /**
  * Function for OVAL Result type -> XCCDF result type transformation
  * @param id OVAL_RESULT_* type
@@ -461,7 +454,7 @@ xccdf_test_result_type_t oval_agent_eval_rule(struct xccdf_policy *policy, const
 	return xccdf_get_result_from_oval(result);
 }
 
-static struct ocap_stringlist *
+static struct oscap_stringlist *
 _oval_agent_list_definitions(void *usr, xccdf_policy_engine_query_t query_type, void *query_data)
 {
 	__attribute__nonnull__(usr);
@@ -485,7 +478,7 @@ bool xccdf_policy_model_register_engine_oval(struct xccdf_policy_model * model, 
 {
 
     return xccdf_policy_model_register_engine_and_query_callback(model, "http://oval.mitre.org/XMLSchema/oval-definitions-5",
-		oval_agent_eval_rule, (void *) usr, _oval_agent_list_definitions);
+		oval_agent_eval_rule, (void *) usr, (xccdf_policy_engine_query_fn) _oval_agent_list_definitions);
 }
 
 void oval_agent_export_sysinfo_to_xccdf_result(struct oval_agent_session * sess, struct xccdf_result * ritem)
@@ -496,4 +489,3 @@ void oval_agent_export_sysinfo_to_xccdf_result(struct oval_agent_session * sess,
 	xccdf_result_fill_sysinfo(ritem);
 }
 
-#endif

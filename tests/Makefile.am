@@ -1,13 +1,16 @@
-if WANT_PROBES
 PROBE_SUBDIRS = probes mitre
-endif
 
 if WANT_SCE
 SCE_SUBDIRS = sce
 endif
 
-if WANT_BINDINGS
-BINDINGS_SUBDIRS = bindings
+BINDINGS_SUBDIRS=
+if WANT_PYTHON
+  BINDINGS_SUBDIRS += bindings
+else
+if WANT_PERL
+    BINDINGS_SUBDIRS += bindings
+endif
 endif
 
 SUBDIRS = API DS $(PROBE_SUBDIRS) $(SCE_SUBDIRS) $(BINDINGS_SUBDIRS)

@@ -1,4 +1,3 @@
-if WANT_OVAL
 
 AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 		-I$(top_srcdir)/src/CVE/public \
@@ -39,4 +38,3 @@ EXTRA_DIST += test_api_oval.sh \
 
 SUBDIRS = unittests
 
-endif

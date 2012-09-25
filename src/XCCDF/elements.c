@@ -30,11 +30,10 @@
 #include <ctype.h>
 #include <math.h>
 
-#include "public/xccdf.h"
+#include "public/xccdf_benchmark.h"
 
 #include "elements.h"
 #include "common/elements.h"
-
 #include "common/_error.h"
 #include "common/debug_priv.h"
 
@@ -210,8 +209,8 @@ xccdf_element_t xccdf_element_get(xmlTextReaderPtr reader)
 		return XCCDFE_ERROR;
 
 	const struct xccdf_element_spec *mapptr;
-    const char *name = (const char *)xmlTextReaderConstLocalName(reader);
-    const char *nsuri = (const char *)xmlTextReaderConstNamespaceUri(reader);
+	const char *name = (const char *)xmlTextReaderConstLocalName(reader);
+	/* const char *nsuri = (const char *)xmlTextReaderConstNamespaceUri(reader); */
 
 	for (mapptr = XCCDF_ELEMENT_MAP; mapptr->id != 0; ++mapptr) {
 		// FIXME: We are not checking namespaces as a temporary workaround for multiple versions

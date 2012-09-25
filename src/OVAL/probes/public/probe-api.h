@@ -275,9 +275,10 @@ size_t probe_obj_getname_r(const SEXP_t * obj, char *buffer, size_t buflen);
  * collected objects
  */
 
-SEXP_t *probe_cobj_new(oval_syschar_collection_flag_t flag, SEXP_t *msg_list, SEXP_t *item_list);
+SEXP_t *probe_cobj_new(oval_syschar_collection_flag_t flag, SEXP_t *msg_list, SEXP_t *item_list, SEXP_t *mask_list);
 int probe_cobj_add_msg(SEXP_t *cobj, const SEXP_t *msg);
 SEXP_t *probe_cobj_get_msgs(const SEXP_t *cobj);
+SEXP_t *probe_cobj_get_mask(const SEXP_t *cobj);
 int probe_cobj_add_item(SEXP_t *cobj, const SEXP_t *item);
 SEXP_t *probe_cobj_get_items(const SEXP_t *cobj);
 void probe_cobj_set_flag(SEXP_t *cobj, oval_syschar_collection_flag_t flag);
@@ -574,3 +575,9 @@ SEXP_t *probe_entval_from_cstr(oval_datatype_t type, const char *value, size_t v
 SEXP_t *probe_ent_from_cstr(const char *name, oval_datatype_t type, const char *value, size_t vallen);
 
 oval_version_t probe_obj_get_schema_version(const SEXP_t *obj);
+
+/**
+ * Get object entity mask
+ * @returns a list of masked entities
+ */
+SEXP_t *probe_obj_getmask(SEXP_t *obj);

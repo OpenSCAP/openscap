@@ -23,7 +23,7 @@
 #ifndef SCE_ENGINE_API_H_
 #define SCE_ENGINE_API_H
 
-#include <xccdf.h>
+#include <xccdf_benchmark.h>
 #include <xccdf_policy.h>
 
 /**

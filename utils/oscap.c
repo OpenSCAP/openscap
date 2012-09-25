@@ -39,18 +39,10 @@ extern struct oscap_module OSCAP_VERSION_MODULE;
 
 struct oscap_module* OSCAP_ROOT_SUBMODULES[] = {
     &OSCAP_DS_MODULE,
-#ifdef ENABLE_OVAL
     &OSCAP_OVAL_MODULE,
-#endif
-#ifdef ENABLE_XCCDF
     &OSCAP_XCCDF_MODULE,
-#endif
-#ifdef ENABLE_CVSS
     &OSCAP_CVSS_MODULE,
-#endif
-#ifdef ENABLE_CPE
     &OSCAP_CPE_MODULE,
-#endif
     &OSCAP_VERSION_MODULE,
     NULL
 };
@@ -108,20 +100,29 @@ bool getopt_root(int argc, char **argv, struct oscap_action *action)
 
 static int print_versions(const struct oscap_action *action)
 {
-	fprintf(stdout,
-		"OSCAP util (oscap) %s\n" "Copyright 2009,2010 Red Hat Inc., Durham, North Carolina.\n\n", oscap_get_version());
-#ifdef ENABLE_XCCDF
-	fprintf(stdout, "OVAL Version: \r\t\t%s\n", oval_definition_model_supported());
+	printf("OSCAP util (oscap) %s\n" "Copyright 2009,2010,2011 Red Hat Inc., Durham, North Carolina.\n\n", oscap_get_version());
+
+	printf("==== Supported specifications ====\n");
+	printf("XCCDF Version: %s\n", xccdf_benchmark_supported());
+	printf("OVAL Version: %s\n", oval_definition_model_supported());
+	printf("CPE Version: %s\n", cpe_dict_model_supported());
+	printf("CVSS Version: %s\n", cvss_model_supported());
+	printf("Asset Identification Version: %s\n", "1.1");
+	printf("Asset Reporting Format Version: %s\n", "1.1");
+#ifdef ENABLE_SCE
+	printf("Script check engine: %s\n", "1.0");
 #endif
-#ifdef ENABLE_XCCDF
-	fprintf(stdout, "XCCDF Version: \r\t\t%s\n", xccdf_benchmark_supported());
-#endif
-#ifdef ENABLE_CPE
-	fprintf(stdout, "CPE Version: \r\t\t%s\n", cpe_dict_model_supported());
-#endif
-#ifdef ENABLE_CVSS
-	fprintf(stdout, "CVSS Version: \r\t\t%s\n", cvss_model_supported());
-#endif
-    return OSCAP_OK;
+	printf("\n");
+
+	printf("==== Paths ====\n");
+	printf("Schema files: %s\n", oscap_path_to_schemas());
+	printf("Schematron files: %s\n", oscap_path_to_schematron());
+	printf("Probes: %s\n", oval_probe_ext_getdir());
+	printf("\n");
+
+	printf("==== Supported OVAL objects and associated OpenSCAP probes ====\n");
+	oval_probe_meta_list(stdout, OVAL_PROBEMETA_LIST_DYNAMIC);
+
+	return OSCAP_OK;
 }
 

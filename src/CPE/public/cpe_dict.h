@@ -5,7 +5,7 @@
  * @{
  *
  * @image html cpe_dictionary.png "Class diagram"
- * @file cpedict.h
+ * @file cpe_dict.h
  *
  * \brief Interface to Common Platform Enumeration (CPE) Dictionary.
  */
@@ -36,7 +36,7 @@
 #ifndef CPEDICT_H_
 #define CPEDICT_H_
 
-#include "cpename.h"
+#include "cpe_name.h"
 #include "oscap.h"
 
 /**
