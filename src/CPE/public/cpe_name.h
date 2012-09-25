@@ -190,16 +190,6 @@ char *cpe_name_get_as_format(const struct cpe_name *cpe, cpe_format_t format);
  */
 char *cpe_name_get_as_str(const struct cpe_name *cpe);
 
-/**
- * Return CPE WFN as a new string
- * @memberof cpe_name
- * @note Returned string is newly allocated and is caller's responsibility to free it.
- * @param cpe CPE to be converted
- * @return CPE WFN as string
- * @retval NULL on failure
- */
-char *cpe_name_get_wfn(const struct cpe_name *wfn);
-
 /************************************************************/
 /** @} End of Getters group */
 
