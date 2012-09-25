@@ -56,7 +56,6 @@ bashcomp_DATA = dist/bash_completion.d/oscap
 
 EXTRA_DIST =	m4/gnulib-cache.m4 \
 		dist/rhel5/openscap.spec \
-		dist/rhel5/openscap-0.6.3-noValidate.patch \
 		dist/fedora/openscap.spec \
 		dist/fedora/oscap-scan.sys \
 		dist/fedora/oscap-scan.init \
