@@ -32,8 +32,7 @@
 #include <assert.h>
 #include <math.h>
 
-/* CVSS */
-#include <cvss.h>
+#include <cvss_score.h>
 
 #include "oscap-tool.h"
 

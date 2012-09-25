@@ -25,7 +25,10 @@
 #endif
 
 #include "public/scap_ds.h"
-#include "oscap.h"
+#include "public/xccdf_benchmark.h"
+#include "public/oval_definitions.h"
+#include "public/oscap.h"
+
 #include "common/alloc.h"
 #include "common/_error.h"
 #include "common/util.h"
@@ -43,8 +46,6 @@
 #include <string.h>
 #include <text.h>
 
-#include "xccdf.h"
-#include "oval_definitions.h"
 
 #ifndef MAXPATHLEN
 #   define MAXPATHLEN 1024

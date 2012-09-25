@@ -214,16 +214,16 @@
 
 %module openscap
 %{
- #include "../src/CVSS/public/cvss.h"
+ #include "../src/CVSS/public/cvss_score.h"
 %}
-%include "../src/CVSS/public/cvss.h"
+%include "../src/CVSS/public/cvss_score.h"
 
 %module openscap
 %{
- #include "../src/XCCDF/public/xccdf.h"
+ #include "../src/XCCDF/public/xccdf_benchmark.h"
  #include "../src/XCCDF_POLICY/public/xccdf_policy.h"
 %}
-%include "../src/XCCDF/public/xccdf.h"
+%include "../src/XCCDF/public/xccdf_benchmark.h"
 %include "../src/XCCDF_POLICY/public/xccdf_policy.h"
 
 

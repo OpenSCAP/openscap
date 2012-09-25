@@ -22,11 +22,14 @@
 
 #ifndef XCCDF_ELEMENTS_H_
 #define XCCDF_ELEMENTS_H_
-#include <libxml/xmlreader.h>
+
 #include <stdbool.h>
 #include <time.h>
-#include "../common/util.h"
-#include "../common/elements.h"
+
+#include "common/util.h"
+#include "common/elements.h"
+
+#include <libxml/xmlreader.h>
 
 OSCAP_HIDDEN_START;
 

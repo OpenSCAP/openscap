@@ -30,11 +30,10 @@
 #include <ctype.h>
 #include <math.h>
 
-#include "public/xccdf.h"
+#include "public/xccdf_benchmark.h"
 
 #include "elements.h"
 #include "common/elements.h"
-
 #include "common/_error.h"
 #include "common/debug_priv.h"
 

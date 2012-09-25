@@ -1,6 +1,6 @@
 /*! \file cvss.c
  *  \brief Interface to Common Vulnerability Scoring System Version 2
- *  
+ *
  *  See details at http://nvd.nist.gov/cvss.cfm
  *
  */
@@ -38,9 +38,9 @@
 #include <math.h>
 #include <string.h>
 
-#include "public/cvss.h"
+#include "public/cvss_score.h"
 #include "cvss_priv.h"
-#include "../common/elements.h"
+#include "common/elements.h"
 
 #define CVSS_SUPPORTED "2.0"
 #define NS_VULN_STR BAD_CAST "vuln"

@@ -23,7 +23,7 @@
 #ifndef UNIT_HELPER_H_
 #define UNIT_HELPER_H_
 
-#include <xccdf.h>
+#include <xccdf_benchmark.h>
 #include <xccdf_policy.h>
 
 void				uh_register_simple_engines(struct xccdf_policy_model *);

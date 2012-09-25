@@ -21,7 +21,7 @@
  */
 
 #include "unit_helper.h"
-#include <xccdf.h>
+#include <xccdf_benchmark.h>
 #include <oval_agent_xccdf_api.h>
 
 static xccdf_test_result_type_t _always_pass_eval_rule(struct xccdf_policy *, const char *, const char *, const char *, struct xccdf_value_binding_iterator *, struct xccdf_check_import_iterator *, void *);

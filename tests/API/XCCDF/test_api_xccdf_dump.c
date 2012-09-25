@@ -24,7 +24,7 @@
 #include <config.h>
 #endif
 
-#include <xccdf.h>
+#include <xccdf_benchmark.h>
 #include <stdio.h>
 #include <stdlib.h>
 

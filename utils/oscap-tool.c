@@ -34,7 +34,7 @@
 #include <stdarg.h>
 #include <errno.h>
 #include <limits.h>
-#include <cvss.h>
+#include <cvss_score.h>
 
 #ifndef PATH_MAX
 # define PATH_MAX 1024

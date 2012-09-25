@@ -24,9 +24,9 @@
 #ifndef XCCDF_IMPL
 #define XCCDF_IMPL
 
+#include <public/xccdf_benchmark.h>
+#include <common/util.h>
 #include <libxml/xmlreader.h>
-#include <public/xccdf.h>
-#include <../common/util.h>
 
 OSCAP_HIDDEN_START;
 

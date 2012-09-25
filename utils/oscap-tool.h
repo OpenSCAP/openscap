@@ -36,8 +36,8 @@
 
 #include <oval_definitions.h>
 #include <oval_probe.h>
-#include <cvss.h>
-#include <xccdf.h>
+#include <cvss_score.h>
+#include <xccdf_benchmark.h>
 #include <cpe_dict.h>
 #include <cpe_uri.h>
 

@@ -9,7 +9,7 @@
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful, 
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
@@ -33,12 +33,12 @@
 #include <time.h> /* For timestamps in rule results and TestResult */
 
 #include "public/xccdf_policy.h"
-#include "XCCDF/public/xccdf.h"
+#include "public/xccdf_benchmark.h"
+#include "public/text.h"
 
-#include "XCCDF/item.h"
+#include "item.h"
 #include "common/list.h"
 #include "common/_error.h"
-#include "common/public/text.h"
 #include "common/debug_priv.h"
 #include "common/reporter_priv.h"
 
