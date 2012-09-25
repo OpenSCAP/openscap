@@ -5,7 +5,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.59)
-AC_INIT([openscap], [0.8.6], [open-scap-list@redhat.com])
+AC_INIT([openscap], [0.9.0], [open-scap-list@redhat.com])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
@@ -35,11 +35,11 @@ AC_PROG_LIBTOOL
 # swig
 AC_PROG_SWIG([])
 
-# libtool versioning 
+# libtool versioning
 # See http://sources.redhat.com/autobook/autobook/autobook_91.html#SEC91 for details
 
 ## increment if the interface has additions, changes, removals.
-LT_CURRENT=1
+LT_CURRENT=2
 
 ## increment any time the source changes; set 0 to if you increment CURRENT
 LT_REVISION=0
