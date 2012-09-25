@@ -38,7 +38,6 @@
 # include <sexp.h>
 # include <sexp-output.h>
 
-# include "public/debug.h"
 # include "debug_priv.h"
 
 #ifndef PATH_SEPARATOR
