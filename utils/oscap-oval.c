@@ -36,7 +36,7 @@
 #include <ftw.h>
 
 #include "oscap-tool.h"
-#include "ds.h"
+#include "scap_ds.h"
 
 static int app_collect_oval(const struct oscap_action *action);
 static int app_evaluate_oval(const struct oscap_action *action);

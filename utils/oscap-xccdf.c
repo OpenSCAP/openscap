@@ -30,7 +30,7 @@
 #include <oval_results.h>
 #include <oval_variables.h>
 
-#include <ds.h>
+#include <scap_ds.h>
 #include <xccdf.h>
 #include <xccdf_policy.h>
 

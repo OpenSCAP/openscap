@@ -32,7 +32,7 @@
 #endif
 
 /* DS */
-#include <ds.h>
+#include <scap_ds.h>
 
 #include "oscap-tool.h"
 

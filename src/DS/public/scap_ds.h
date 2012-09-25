@@ -2,7 +2,7 @@
  * @addtogroup DS
  * @{
  *
- * @file ds.h
+ * @file scap_ds.h
  * Open-scap Data Stream interface.
  * @author Martin Preisler <mpreisle@redhat.com>
  */

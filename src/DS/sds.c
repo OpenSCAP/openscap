@@ -24,7 +24,7 @@
 #include <config.h>
 #endif
 
-#include "public/ds.h"
+#include "public/scap_ds.h"
 #include "oscap.h"
 #include "common/alloc.h"
 #include "common/_error.h"
