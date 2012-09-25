@@ -32,7 +32,7 @@
 #include <config.h>
 #endif
 
-#include "public/cpedict.h"
+#include "public/cpe_dict.h"
 #include "cpedict_priv.h"
 
 #include "common/list.h"

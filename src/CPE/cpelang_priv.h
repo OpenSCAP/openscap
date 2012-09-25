@@ -33,13 +33,13 @@
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
 
-#include "cpelang.h"
+#include "cpe_lang.h"
 #include "../common/util.h"
 #include "../common/list.h"
 #include "../common/elements.h"
 #include "../common/public/oscap.h"
 
-/** 
+/**
  * @cond INTERNAL
  */
 OSCAP_HIDDEN_START;

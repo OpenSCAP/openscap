@@ -194,13 +194,13 @@
 
 %module openscap
 %{
- #include "../src/CPE/public/cpeuri.h"
- #include "../src/CPE/public/cpedict.h"
- #include "../src/CPE/public/cpelang.h"
+ #include "../src/CPE/public/cpe_uri.h"
+ #include "../src/CPE/public/cpe_dict.h"
+ #include "../src/CPE/public/cpe_lang.h"
 %}
-%include "../src/CPE/public/cpeuri.h"
-%include "../src/CPE/public/cpedict.h"
-%include "../src/CPE/public/cpelang.h"
+%include "../src/CPE/public/cpe_uri.h"
+%include "../src/CPE/public/cpe_dict.h"
+%include "../src/CPE/public/cpe_lang.h"
 
 
 #ifdef WANT_CVE

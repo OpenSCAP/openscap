@@ -38,8 +38,8 @@
 #include <oval_probe.h>
 #include <cvss.h>
 #include <xccdf.h>
-#include <cpedict.h>
-#include <cpeuri.h>
+#include <cpe_dict.h>
+#include <cpe_uri.h>
 
 #define OSCAP_PRODUCTNAME "cpe:/a:open-scap:oscap"
 #define INVALID_DOCUMENT_MSG "oscap was unable to validate the XML document you provided.\n"\

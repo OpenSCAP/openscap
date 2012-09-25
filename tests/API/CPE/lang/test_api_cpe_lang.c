@@ -14,8 +14,8 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <cpelang.h>
-#include <cpeuri.h>
+#include <cpe_lang.h>
+#include <cpe_uri.h>
 #include <oscap.h>
 
 #define OSCAP_FOREACH_GENERIC(itype, vtype, val, init_val, code) \

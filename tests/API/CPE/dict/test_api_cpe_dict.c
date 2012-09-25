@@ -12,8 +12,8 @@
 #include <config.h>
 #endif
 
-#include <cpedict.h>
-#include <cpeuri.h>
+#include <cpe_dict.h>
+#include <cpe_uri.h>
 #include <string.h>
 
 #define OSCAP_FOREACH_GENERIC(itype, vtype, val, init_val, code) \
