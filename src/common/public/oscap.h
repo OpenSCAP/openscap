@@ -40,6 +40,18 @@
 #include "reporter.h"
 
 /**
+ * This macro will warn, when a deprecated function is used.
+ */
+#if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
+# define OSCAP_DEPRECATED(func) func __attribute__ ((deprecated))
+#elif defined(_MSC_VER)
+# define OSCAP_DEPRECATED(func) __declspec(deprecated) func
+#else
+# pragma message("WARNING: You need to implement OSCAP_DEPRECATED for this compiler---in order to get deprecation warnings.")
+# define OSCAP_DEPRECATED(func) func
+#endif
+
+/**
  * Initialize OpenSCAP library.
  *
  * This is currently needed only in multithreaded applications
