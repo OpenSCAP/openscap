@@ -72,6 +72,9 @@ void cpe_dict_model_export(const struct cpe_dict_model *dict, const char *file)
 
 bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict_model * dict)
 {
+	// FIXME: We could match faster by matching per component and storing all
+	//        cpe_dict items in a big tree where leaves contain cpe_items and
+	//        inner nodes are the components.
 
 	__attribute__nonnull__(cpe);
 	__attribute__nonnull__(dict);
@@ -80,17 +83,18 @@ bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict_model * dict)
 		return false;
 
 	struct cpe_item_iterator *items = cpe_dict_model_get_items(dict);
-	size_t n = oscap_iterator_get_itemcount((struct oscap_iterator *)items);
-	struct cpe_name **cpes = oscap_alloc(sizeof(struct cpe_name *) * n);
-	//struct oscap_list_item* cur = ((struct oscap_list *) cpe_dict_model_get_items(dict))->first;
 
-	int i = 0;
-	OSCAP_FOREACH(cpe_item, item, items, cpes[i++] = cpe_item_get_name(item);)
+	bool ret = false;
+	while (cpe_item_iterator_has_more(items)) {
+		struct cpe_item* item = cpe_item_iterator_next(items);
+		struct cpe_name* name = cpe_item_get_name(item);
 
-	bool ret = cpe_name_match_cpes(cpe, n, cpes);
-
-	oscap_free(cpes);
-
+		if (cpe_name_match_one(name, cpe)) {
+			ret = true;
+			break;
+		}
+	}
+	cpe_item_iterator_free(items);
 	return ret;
 }
 
