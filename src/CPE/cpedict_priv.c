@@ -1331,6 +1331,12 @@ static void cpe_reference_export(const struct cpe_reference *ref, xmlTextWriterP
  * */
 /***************************************************************************/
 
+bool cpe_check_evaluate(const struct cpe_check* check)
+{
+	// TODO: Implement!
+	return true;
+}
+
 /***************************************************************************/
 /* Free functions - all are static private, do not use them outside this file
  */

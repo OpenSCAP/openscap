@@ -114,6 +114,56 @@ bool cpe_name_match_dict_str(const char *cpestr, struct cpe_dict_model * dict)
 	return ret;
 }
 
+bool cpe_name_applicable_dict(struct cpe_name * cpe, struct cpe_dict_model * dict)
+{
+	// FIXME: We could match faster by matching per component and storing all
+	//        cpe_dict items in a big tree where leaves contain cpe_items and
+	//        inner nodes are the components.
+
+	__attribute__nonnull__(cpe);
+	__attribute__nonnull__(dict);
+
+	if (cpe == NULL || dict == NULL)
+		return false;
+
+	struct cpe_item_iterator *items = cpe_dict_model_get_items(dict);
+
+	// essentially, we want at least one applicable match so as soon as we find
+	// a match we break and return true
+
+	bool ret = false;
+	while (cpe_item_iterator_has_more(items)) {
+		struct cpe_item* item = cpe_item_iterator_next(items);
+		struct cpe_name* name = cpe_item_get_name(item);
+
+		if (cpe_name_match_one(name, cpe)) {
+			if (cpe_item_is_applicable(item)) {
+				ret = true;
+				break;
+			}
+		}
+	}
+	cpe_item_iterator_free(items);
+	return ret;
+}
+
+bool cpe_item_is_applicable(struct cpe_item* item)
+{
+	struct cpe_check_iterator* checks = cpe_item_get_checks(item);
+
+	bool ret = false;
+	while (cpe_check_iterator_has_more(checks)) {
+		struct cpe_check* check = cpe_check_iterator_next(checks);
+		if (cpe_check_evaluate(check)) {
+			ret = true;
+			break;
+		}
+	}
+	cpe_check_iterator_free(checks);
+
+	return ret;
+}
+
 const char * cpe_dict_model_supported(void) 
 {
         return CPE_DICT_SUPPORTED;

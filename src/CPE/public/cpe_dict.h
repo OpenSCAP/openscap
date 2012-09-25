@@ -874,6 +874,20 @@ bool cpe_name_match_dict(struct cpe_name *cpe, struct cpe_dict_model *dict);
  */
 bool cpe_name_match_dict_str(const char *cpe, struct cpe_dict_model *dict);
 
+/**
+ * Verify whether given CPE is applicable to current platform by evaluating checks associated with it
+ *
+ * @memberof cpe_name
+ * @memberof cpe_dict_model
+ * @param cpe CPE to verify
+ * @param dict used CPE dictionary
+ * @return true if dictionary contains given CPE and the CPE is applicable
+ */
+bool cpe_name_applicable_dict(struct cpe_name *cpe, struct cpe_dict_model *dict);
+
+/// @memberof cpe_item
+bool cpe_item_is_applicable(struct cpe_item* item);
+
 /************************************************************/
 /** @} End of Evaluators group */
 

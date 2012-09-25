@@ -114,6 +114,12 @@ struct cpe_edition;
 struct cpe_language;
 
 /**
+ * Evaluates given check
+ * @return false upon error or failure, true if the evaluation passed
+ */
+bool cpe_check_evaluate(const struct cpe_check* check);
+
+/**
  * Function to parse XML to CPE dictionary model
  * @param source Structure of name and encoding of importing XML file
  */
