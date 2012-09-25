@@ -13,15 +13,6 @@ TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
 
 TESTS = all.sh
 
-check_SCRIPTS = \
-	test_applicability_check.sh \
-	test_count_function.sh \
-	test_deprecated_def.sh \
-	test_empty_filename.sh \
-	test_item_not_exist.sh \
-	test_oval_empty_variable_evaluation.sh \
-	test_anyxml.sh
-
 EXTRA_DIST += \
 	all.sh \
 	test_applicability_check.sh \
