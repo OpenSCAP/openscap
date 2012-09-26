@@ -84,6 +84,7 @@ struct xccdf_policy_model {
         struct xccdf_benchmark  * benchmark;    ///< Benchmark element (root element of XML file)
 	struct oscap_list       * policies;     ///< List of xccdf_policy structures
         struct oscap_list       * callbacks;    ///< Callbacks for checking engines (see callback_t)
+        struct oscap_htable     * cpe_oval_sessions; ///< Caches CPE OVAL check results
 };
 /* Macros to generate iterators, getters and setters */
 OSCAP_GETTER(struct xccdf_benchmark *, xccdf_policy_model, benchmark)
@@ -789,6 +790,11 @@ _xccdf_policy_rule_get_applicable_check(struct xccdf_policy *policy, struct xccd
 	return result;
 }
 
+static bool xccdf_policy_model_item_is_applicable(struct xccdf_policy_model* model, struct xccdf_item* item)
+{
+	return true;
+}
+
 /** 
  * Evaluate the XCCDF item. If it is group, start recursive cycle, otherwise get XCCDF check
  * and evaluate it.
@@ -802,6 +808,8 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
     int                               ret = XCCDF_RESULT_UNKNOWN;
 
     xccdf_type_t itype = xccdf_item_get_type(item);
+
+	bool applicable = xccdf_policy_model_item_is_applicable(policy->model, item);
 
     switch (itype) {
         case XCCDF_RULE:{
@@ -825,8 +833,9 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
 
             /* Report evaluating
              */
-            retval = xccdf_policy_report_cb(policy, "urn:xccdf:system:callback:start", rule_id, description, title, 
-                    (xccdf_select_get_selected(sel) ? 0 : XCCDF_RESULT_NOT_SELECTED ));
+			retval = xccdf_policy_report_cb(policy, "urn:xccdf:system:callback:start", rule_id, description, title,
+					(xccdf_select_get_selected(sel) ? (applicable ? 0 : XCCDF_RESULT_NOT_APPLICABLE) : XCCDF_RESULT_NOT_SELECTED));
+
             if (retval != 0) {
                 oscap_free(description);
                 return retval;
@@ -869,32 +878,32 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
 
             /* Evaluation of callback
              */
-            if (xccdf_select_get_selected(sel)) {
-		struct xccdf_check *check = _xccdf_policy_rule_get_applicable_check(policy, item);
-		if (check == NULL) {
-			ret = XCCDF_RESULT_NOT_CHECKED;
-			// TODO: We might be nice and export some more information.
-		}
-		else {
-                        // we need to clone the check to avoid changing the original content
-                        struct xccdf_check * cloned_check = xccdf_check_clone(check);
-                        xccdf_rule_result_add_check(rule_ritem, cloned_check);
+			if (xccdf_select_get_selected(sel) && applicable) {
+				struct xccdf_check *check = _xccdf_policy_rule_get_applicable_check(policy, item);
+				if (check == NULL) {
+					ret = XCCDF_RESULT_NOT_CHECKED;
+					// TODO: We might be nice and export some more information.
+				}
+				else {
+					// we need to clone the check to avoid changing the original content
+					struct xccdf_check * cloned_check = xccdf_check_clone(check);
+					xccdf_rule_result_add_check(rule_ritem, cloned_check);
 
-                        /************** Evaluation  **************/
-                        ret = xccdf_policy_check_evaluate(policy, cloned_check, (char *) rule_id);
-                        /*****************************************/
+					/************** Evaluation  **************/
+					ret = xccdf_policy_check_evaluate(policy, cloned_check, (char *) rule_id);
+					/*****************************************/
 
-                        // TODO: Interpret check-import elements inside xccdf_check
-                        if (ret == -1) {
-                            oscap_free(description);
-                            return -1;
-                        }
+					// TODO: Interpret check-import elements inside xccdf_check
+					if (ret == -1) {
+						oscap_free(description);
+						return -1;
+					}
 
-                        if (ret == false) /* we got item that can't be processed */
-                            break;
-		}
+					if (ret == false) /* we got item that can't be processed */
+						break;
+				}
             } else {
-                ret = XCCDF_RESULT_NOT_SELECTED;
+                ret = xccdf_select_get_selected(sel) ? XCCDF_RESULT_NOT_APPLICABLE : XCCDF_RESULT_NOT_SELECTED;
             }
 
             /* Add result to policy */
@@ -916,19 +925,23 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
         } break;
 
         case XCCDF_GROUP:{
-                    child_it = xccdf_group_get_content((const struct xccdf_group *)item);
-                    while (xccdf_item_iterator_has_more(child_it)) {
-                            child = xccdf_item_iterator_next(child_it);
-                            ret = xccdf_policy_item_evaluate(policy, child, result);
-                            if (ret == -1) {
-                                xccdf_item_iterator_free(child_it);
-                                return -1;
-                            }
+			// FIXME: Do we descend and then report all children as NOT_APPLICABLE
+			//        or do we cut the recursion as we do now?
+			if (applicable) {
+				child_it = xccdf_group_get_content((const struct xccdf_group *)item);
+				while (xccdf_item_iterator_has_more(child_it)) {
+					child = xccdf_item_iterator_next(child_it);
+					ret = xccdf_policy_item_evaluate(policy, child, result);
+					if (ret == -1) {
+						xccdf_item_iterator_free(child_it);
+						return -1;
+					}
 
-                            if (ret == false) /* we got item that can't be processed */
-                                break;
-                    }
-                    xccdf_item_iterator_free(child_it);
+					if (ret == false) /* we got item that can't be processed */
+						break;
+				}
+				xccdf_item_iterator_free(child_it);
+			}
         } break;
         
         default: 
