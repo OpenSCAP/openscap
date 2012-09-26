@@ -719,15 +719,15 @@ _xccdf_policy_rule_get_applicable_check(struct xccdf_policy *policy, struct xccd
 	return result;
 }
 
-struct xccdf_rule_result *
+static struct xccdf_rule_result *
 _build_rule_result(const struct xccdf_rule *rule)
 {
-	rule_ritem = xccdf_rule_result_new();
+	struct xccdf_rule_result *rule_ritem = xccdf_rule_result_new();
 
 	/* --Set rule-- */
 	// we won't set the result here since the rule wasn't evaluated yet
 	xccdf_rule_result_set_idref(rule_ritem, xccdf_rule_get_id(rule));
-	xccdf_rule_result_set_weight(rule_ritem, xccdf_item_get_weight(rule));
+	xccdf_rule_result_set_weight(rule_ritem, xccdf_item_get_weight((struct xccdf_item *) rule));
 	xccdf_rule_result_set_version(rule_ritem, xccdf_rule_get_version(rule));
 	xccdf_rule_result_set_severity(rule_ritem, xccdf_rule_get_severity(rule));
 	xccdf_rule_result_set_role(rule_ritem, xccdf_rule_get_role(rule));
@@ -742,12 +742,13 @@ _build_rule_result(const struct xccdf_rule *rule)
 	xccdf_fix_iterator_free(fix_it);
 
 	/* --Ident-- */
-	struct xccdf_ident_iterator * ident_it = xccdf_rule_get_idents((struct xccdf_rule *) item);
+	struct xccdf_ident_iterator * ident_it = xccdf_rule_get_idents(rule);
 	while (xccdf_ident_iterator_has_more(ident_it)){
 		struct xccdf_ident * ident = xccdf_ident_iterator_next(ident_it);
 		xccdf_rule_result_add_ident(rule_ritem, xccdf_ident_clone(ident));
 	}
 	xccdf_ident_iterator_free(ident_it);
+	return rule_ritem;
 }
 
 /** 
