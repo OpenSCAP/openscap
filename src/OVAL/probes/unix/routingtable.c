@@ -60,6 +60,15 @@
 
 #define RT_INFO_DELIMITERS " \t"
 
+#ifndef htobe32
+#include <byteswap.h>
+# if BYTE_ORDER == LITTLE_ENDIAN
+#  define htobe32(x) __bswap_32 (x)
+# else
+#  define htobe32(x) (x)
+# endif
+#endif
+
 struct route_info {
     SEXP_t *ip_dst_ent;
     char ip_dst[INET6_ADDRSTRLEN+1];

@@ -36,15 +36,6 @@ TESTS = all.sh
 check_PROGRAMS = \
 	test_oscap_common \
 	test_xccdf_shall_pass
-check_SCRIPTS = \
-	test_xccdf_check_content_ref_without_name_attr.sh \
-	test_xccdf_check_negate.sh \
-	test_xccdf_check_multi_check.sh \
-	test_xccdf_check_processing_complex_priority.sh \
-	test_xccdf_check_processing_selector_empty.sh \
-	test_xccdf_check_processing_selector_bad.sh \
-	test_xccdf_refine_rule.sh \
-	test_xccdf_xml_escaping_value.sh
 
 test_oscap_common_SOURCES = test_oscap_common.c
 test_oscap_common_SOURCES += $(top_srcdir)/src/common/util.c $(top_srcdir)/src/common/list.c $(top_srcdir)/src/common/alloc.c # This needs love (See trac#198)

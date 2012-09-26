@@ -5,7 +5,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.59)
-AC_INIT([openscap], [0.8.6], [open-scap-list@redhat.com])
+AC_INIT([openscap], [0.9.0], [open-scap-list@redhat.com])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
@@ -35,11 +35,11 @@ AC_PROG_LIBTOOL
 # swig
 AC_PROG_SWIG([])
 
-# libtool versioning 
+# libtool versioning
 # See http://sources.redhat.com/autobook/autobook/autobook_91.html#SEC91 for details
 
 ## increment if the interface has additions, changes, removals.
-LT_CURRENT=1
+LT_CURRENT=2
 
 ## increment any time the source changes; set 0 to if you increment CURRENT
 LT_REVISION=0
@@ -474,7 +474,7 @@ AC_CHECK_HEADERS([ctype.h errno.h limits.h stdio.h string.h ],[],[probe_sysctl_r
 
 echo
 echo ' * Checking presence of required headers for the routingtable probe'
-AC_CHECK_HEADERS([arpa/inet.h endian.h errno.h netinet/in.h netinet/ip6.h netinet/ip.h net/route.h stdio.h stdlib.h string.h ],[],[probe_routingtable_req_deps_ok=no; probe_routingtable_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([arpa/inet.h byteswap.h endian.h errno.h netinet/in.h netinet/ip6.h netinet/ip.h net/route.h stdio.h stdlib.h string.h ],[],[probe_routingtable_req_deps_ok=no; probe_routingtable_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the gconf probe'
