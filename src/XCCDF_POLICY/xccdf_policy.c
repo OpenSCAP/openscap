@@ -793,6 +793,12 @@ _xccdf_policy_rule_get_applicable_check(struct xccdf_policy *policy, struct xccd
 	return result;
 }
 
+static bool _xccdf_policy_cpe_check_cb(const char* href, const char* name, void* usr)
+{
+	struct xccdf_policy_model* model = (struct xccdf_policy_model*)usr;
+	return true;
+}
+
 static bool xccdf_policy_model_item_is_applicable_dict(struct xccdf_policy_model* model, struct cpe_dict_model* dict, struct xccdf_item* item)
 {
 	struct oscap_string_iterator* platforms = xccdf_item_get_platforms(item);
@@ -804,7 +810,7 @@ static bool xccdf_policy_model_item_is_applicable_dict(struct xccdf_policy_model
 	{
 		const char* platform = oscap_string_iterator_next(platforms);
 		struct cpe_name* name = cpe_name_new(platform);
-		const bool applicable = cpe_name_applicable_dict(name, dict);
+		const bool applicable = cpe_name_applicable_dict(name, dict, (cpe_check_fn) _xccdf_policy_cpe_check_cb, model);
 		cpe_name_free(name);
 
 		if (applicable)

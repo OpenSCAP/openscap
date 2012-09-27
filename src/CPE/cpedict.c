@@ -114,7 +114,7 @@ bool cpe_name_match_dict_str(const char *cpestr, struct cpe_dict_model * dict)
 	return ret;
 }
 
-bool cpe_name_applicable_dict(struct cpe_name * cpe, struct cpe_dict_model * dict)
+bool cpe_name_applicable_dict(struct cpe_name *cpe, struct cpe_dict_model *dict, cpe_check_fn cb, void* usr)
 {
 	// FIXME: We could match faster by matching per component and storing all
 	//        cpe_dict items in a big tree where leaves contain cpe_items and
@@ -137,7 +137,7 @@ bool cpe_name_applicable_dict(struct cpe_name * cpe, struct cpe_dict_model * dic
 		struct cpe_name* name = cpe_item_get_name(item);
 
 		if (cpe_name_match_one(name, cpe)) {
-			if (cpe_item_is_applicable(item)) {
+			if (cpe_item_is_applicable(item, cb, usr)) {
 				ret = true;
 				break;
 			}
@@ -147,14 +147,22 @@ bool cpe_name_applicable_dict(struct cpe_name * cpe, struct cpe_dict_model * dic
 	return ret;
 }
 
-bool cpe_item_is_applicable(struct cpe_item* item)
+static bool cpe_check_evaluate(const struct cpe_check* check, cpe_check_fn cb, void* usr)
+{
+	const char* href = cpe_check_get_href(check);
+	const char* name = cpe_check_get_identifier(check);
+
+	return cb(href, name, usr);
+}
+
+bool cpe_item_is_applicable(struct cpe_item* item, cpe_check_fn cb, void* usr)
 {
 	struct cpe_check_iterator* checks = cpe_item_get_checks(item);
 
 	bool ret = false;
 	while (cpe_check_iterator_has_more(checks)) {
 		struct cpe_check* check = cpe_check_iterator_next(checks);
-		if (cpe_check_evaluate(check)) {
+		if (cpe_check_evaluate(check, cb, usr)) {
 			ret = true;
 			break;
 		}
