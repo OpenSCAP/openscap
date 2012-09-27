@@ -796,7 +796,23 @@ _xccdf_policy_rule_get_applicable_check(struct xccdf_policy *policy, struct xccd
 static bool _xccdf_policy_cpe_check_cb(const char* href, const char* name, void* usr)
 {
 	struct xccdf_policy_model* model = (struct xccdf_policy_model*)usr;
-	return true;
+	struct oval_agent_session* session = (struct oval_agent_session*)oscap_htable_get(model->cpe_oval_sessions, href);
+
+	if (session == NULL)
+	{
+		struct oval_definition_model* oval_model = oval_definition_model_import(href);
+		session = oval_agent_new_session(oval_model, href);
+		oscap_htable_add(model->cpe_oval_sessions, href, session);
+	}
+
+	oval_agent_eval_definition(session, name);
+	oval_result_t result = OVAL_RESULT_NOT_EVALUATED;
+	if (oval_agent_get_definition_result(session, name, &result) != 0)
+	{
+		// TODO: error
+	}
+
+	return result == OVAL_RESULT_TRUE;
 }
 
 static bool xccdf_policy_model_item_is_applicable_dict(struct xccdf_policy_model* model, struct cpe_dict_model* dict, struct xccdf_item* item)
@@ -2148,13 +2164,21 @@ struct oscap_stringlist * xccdf_policy_model_get_files(struct xccdf_policy_model
     return xccdf_item_get_files((struct xccdf_item *) xccdf_policy_model_get_benchmark(policy_model));
 }
 
+static void _xccdf_policy_destroy_cpe_oval_session(void* ptr)
+{
+	struct oval_agent_session* session = (struct oval_agent_session*)ptr;
+	struct oval_definition_model* model = oval_agent_get_definition_model(session);
+	oval_agent_destroy_session(session);
+	oval_definition_model_free(model);
+}
+
 void xccdf_policy_model_free(struct xccdf_policy_model * model) {
 
 	oscap_list_free(model->policies, (oscap_destruct_func) xccdf_policy_free);
 	oscap_list_free(model->callbacks, (oscap_destruct_func) oscap_free);
         xccdf_benchmark_free(model->benchmark);
 	oscap_list_free(model->cpe_dicts, (oscap_destruct_func) cpe_dict_model_free);
-	oscap_htable_free(model->cpe_oval_sessions, (oscap_destruct_func) oval_agent_destroy_session);
+	oscap_htable_free(model->cpe_oval_sessions, (oscap_destruct_func) _xccdf_policy_destroy_cpe_oval_session);
         oscap_free(model);
 }
 
