@@ -1,20 +1,67 @@
 #!/usr/bin/env bash
 
-TMP_P=(`LD_PRELOAD= ps -A -o pid -o ppid -o comm | awk '$1 != 2 && $2 != 2 {print $3}' | \
-        sed -n '2,30p'`)
+# number of processes used in the content
+PCNT=30
+# a list of relevant process information obtained from 'ps'
+declare -A PROCSALL
+# count duplicates
+declare -A dups
 
-COUNTER=1
-for I in "${TMP_P[@]}"; do
-    J="`echo $I | sed 's/^-/\\\\-/'`"
-    if [ `LD_PRELOAD= ps -A -o comm| grep $J | wc -l` -eq 1 ]; then
-	PROCS[$COUNTER]="$I"
-	COUNTER=$[$COUNTER+1];
-    fi
+IFS=$'\n'
+# the '=' is there to remove the header
+ps=( $(ps -A -o etime= -o pid= -o ppid= -o class= -o uid= -o comm= -o stime= | \
+# replace spaces in 'etime' with '-' to enable sorting
+sed 'h;s/.\{2,9\}:.. / /;x;s/\(.\{2,9\}:..\) .*/\1/;s/ /-/g;G;s/\n//') )
+IFS=$' \t\n'
+
+for l in "${ps[@]}"; do
+    # todo: spaces in 'comm' are a problem
+    a=( $l )
+    ((dups[${a[5]}]++))
+    # skip kthreads and direct descendants
+    [ ${a[1]} == 2 -o ${a[2]} == 2 ] && continue
+    PROCSALL[${a[1]}]="$l"
+done
+
+# prefer the longest running processes to prevent race conditions
+IFS=$'\n'
+timelst=( $(sort -r <<<"${PROCSALL[*]}") )
+IFS=$' \t\n'
+
+# create a pid list for queries
+declare PROCS
+PROCS[0]=dummy
+for l in "${timelst[@]}"; do
+    [ ${#PROCS[@]} -eq $PCNT ] && break;
+    a=( $l )
+    [ ${dups[${a[5]}]} -eq 1 ] && PROCS+=( ${a[1]} )
 done
 
 function getField {
-    COMM="`echo ${2} | sed 's/^-/\\\\-/'`"
-    echo `LD_PRELOAD= ps -A -o comm -o ${1} | grep ${COMM} | awk '{ print $2 }'`
+    a=( ${PROCSALL[$2]} )
+    case "$1" in
+        comm)
+            echo "${a[5]}"
+            ;;
+        pid)
+            echo "${a[1]}"
+            ;;
+        ppid)
+            echo "${a[2]}"
+            ;;
+        class)
+            echo "${a[3]}"
+            ;;
+        uid)
+            echo "${a[4]}"
+            ;;
+        stime)
+            echo "${a[6]}"
+            ;;
+        *)
+            echo "null"
+            ;;
+    esac
 }
 
 cat <<EOF
@@ -38,8 +85,9 @@ cat <<EOF
       <criteria>
         <criteria operator="AND">
 EOF
+
 I=1
-while [ $I -le "${#PROCS[@]}" ]; do
+while [ $I -lt "${#PROCS[@]}" ]; do
     echo "<criterion test_ref=\"oval:1:tst:${I}\"/>"
     I=$[$I+1]
 done
@@ -55,7 +103,7 @@ cat <<EOF
 EOF
 
 I=1
-while [ $I -le "${#PROCS[@]}" ]; do
+while [ $I -lt "${#PROCS[@]}" ]; do
     cat <<EOF
     <process_test version="1" id="oval:1:tst:${I}" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <object object_ref="oval:1:obj:${I}"/>
@@ -72,7 +120,7 @@ cat <<EOF
 EOF
 
 I=1
-while [ $I -le "${#PROCS[@]}" ]; do
+while [ $I -lt "${#PROCS[@]}" ]; do
     cat <<EOF
     <process_object version="1" id="oval:1:obj:${I}" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <command>`getField 'comm' ${PROCS[$I]}`</command>
@@ -88,7 +136,7 @@ cat <<EOF
 EOF
 
 I=1
-while [ $I -le "${#PROCS[@]}" ]; do
+while [ $I -lt "${#PROCS[@]}" ]; do
     cat <<EOF
     <process_state version="1" id="oval:1:ste:${I}" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <command>`getField 'comm' ${PROCS[$I]}`</command>
