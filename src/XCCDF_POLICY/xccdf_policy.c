@@ -36,6 +36,8 @@
 #include "public/xccdf_benchmark.h"
 #include "public/text.h"
 
+#include "oval_agent_api.h"
+
 #include "item.h"
 #include "common/list.h"
 #include "common/_error.h"
@@ -84,6 +86,7 @@ struct xccdf_policy_model {
         struct xccdf_benchmark  * benchmark;    ///< Benchmark element (root element of XML file)
 	struct oscap_list       * policies;     ///< List of xccdf_policy structures
         struct oscap_list       * callbacks;    ///< Callbacks for checking engines (see callback_t)
+        struct oscap_list       * cpe_dicts; ///< All CPE dictionaries except the one embedded in XCCDF
         struct oscap_htable     * cpe_oval_sessions; ///< Caches CPE OVAL check results
 };
 /* Macros to generate iterators, getters and setters */
@@ -790,9 +793,51 @@ _xccdf_policy_rule_get_applicable_check(struct xccdf_policy *policy, struct xccd
 	return result;
 }
 
+static bool xccdf_policy_model_item_is_applicable_dict(struct xccdf_policy_model* model, struct cpe_dict_model* dict, struct xccdf_item* item)
+{
+	struct oscap_string_iterator* platforms = xccdf_item_get_platforms(item);
+
+	// no platform defined means that the item is applicable to all platforms
+	bool ret = !oscap_string_iterator_has_more(platforms);
+
+	while (oscap_string_iterator_has_more(platforms))
+	{
+		const char* platform = oscap_string_iterator_next(platforms);
+		struct cpe_name* name = cpe_name_new(platform);
+		const bool applicable = cpe_name_applicable_dict(name, dict);
+		cpe_name_free(name);
+
+		if (applicable)
+		{
+			ret = true;
+			break;
+		}
+	}
+	oscap_string_iterator_free(platforms);
+
+	return ret;
+}
+
 static bool xccdf_policy_model_item_is_applicable(struct xccdf_policy_model* model, struct xccdf_item* item)
 {
-	return true;
+	struct xccdf_benchmark* benchmark = xccdf_item_get_benchmark(item);
+
+	struct xccdf_item* parent = xccdf_item_get_parent(item);
+	if (!parent || xccdf_policy_model_item_is_applicable(model, parent))
+	{
+		bool ret = false;
+		struct cpe_dict_model* embedded_dict = xccdf_benchmark_get_cpe_list(benchmark);
+		if (embedded_dict != NULL) {
+			ret = xccdf_policy_model_item_is_applicable_dict(model, embedded_dict, item);
+		}
+
+		return ret;
+	}
+	else
+	{
+		// parent is not applicable
+		return false;
+	}
 }
 
 /** 
@@ -925,23 +970,19 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
         } break;
 
         case XCCDF_GROUP:{
-			// FIXME: Do we descend and then report all children as NOT_APPLICABLE
-			//        or do we cut the recursion as we do now?
-			if (applicable) {
-				child_it = xccdf_group_get_content((const struct xccdf_group *)item);
-				while (xccdf_item_iterator_has_more(child_it)) {
-					child = xccdf_item_iterator_next(child_it);
-					ret = xccdf_policy_item_evaluate(policy, child, result);
-					if (ret == -1) {
-						xccdf_item_iterator_free(child_it);
-						return -1;
-					}
-
-					if (ret == false) /* we got item that can't be processed */
-						break;
+			child_it = xccdf_group_get_content((const struct xccdf_group *)item);
+			while (xccdf_item_iterator_has_more(child_it)) {
+				child = xccdf_item_iterator_next(child_it);
+				ret = xccdf_policy_item_evaluate(policy, child, result);
+				if (ret == -1) {
+					xccdf_item_iterator_free(child_it);
+					return -1;
 				}
-				xccdf_item_iterator_free(child_it);
+
+				if (ret == false) /* we got item that can't be processed */
+					break;
 			}
+			xccdf_item_iterator_free(child_it);
         } break;
         
         default: 
@@ -1530,6 +1571,8 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
 	model->benchmark = benchmark;
 	model->policies  = oscap_list_new();
         model->callbacks = oscap_list_new();
+	model->cpe_dicts = oscap_list_new();
+	model->cpe_oval_sessions = oscap_htable_new();
 
         /* Resolve document */
         xccdf_benchmark_resolve(benchmark);
@@ -2104,6 +2147,8 @@ void xccdf_policy_model_free(struct xccdf_policy_model * model) {
 	oscap_list_free(model->policies, (oscap_destruct_func) xccdf_policy_free);
 	oscap_list_free(model->callbacks, (oscap_destruct_func) oscap_free);
         xccdf_benchmark_free(model->benchmark);
+	oscap_list_free(model->cpe_dicts, (oscap_destruct_func) cpe_dict_model_free);
+	oscap_htable_free(model->cpe_oval_sessions, (oscap_destruct_func) oval_agent_destroy_session);
         oscap_free(model);
 }
 

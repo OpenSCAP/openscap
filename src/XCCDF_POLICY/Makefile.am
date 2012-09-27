@@ -11,7 +11,8 @@ libxccdf_policy_la_CFLAGS = \
 	-I$(top_srcdir)/src/common \
 	-I$(top_srcdir)/src/XCCDF_POLICY \
 	-I$(top_srcdir)/src/XCCDF \
-	-I$(top_srcdir)/src/CPE/public
+	-I$(top_srcdir)/src/CPE/public \
+	-I$(top_srcdir)/src/OVAL/public
 
 libxccdf_policy_la_LDFLAGS = @xml2_LIBS@
 
