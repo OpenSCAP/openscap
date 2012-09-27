@@ -825,8 +825,8 @@ static bool xccdf_policy_model_item_is_applicable_dict(struct xccdf_policy_model
 {
 	struct oscap_string_iterator* platforms = xccdf_item_get_platforms(item);
 
-	// no platform defined means that the item is applicable to all platforms
-	bool ret = !oscap_string_iterator_has_more(platforms);
+	// at this point we know that the item has 1 or more platforms specified
+	bool ret = false;
 
 	while (oscap_string_iterator_has_more(platforms))
 	{
@@ -853,10 +853,23 @@ static bool xccdf_policy_model_item_is_applicable(struct xccdf_policy_model* mod
 	struct xccdf_item* parent = xccdf_item_get_parent(item);
 	if (!parent || xccdf_policy_model_item_is_applicable(model, parent))
 	{
-		bool ret = false;
-		struct cpe_dict_model* embedded_dict = xccdf_benchmark_get_cpe_list(benchmark);
-		if (embedded_dict != NULL) {
-			ret = xccdf_policy_model_item_is_applicable_dict(model, embedded_dict, item);
+		// we have to check whether the item has any platforms at all, if it has none
+		// it should be applicable to all platforms
+		struct oscap_string_iterator* platforms = xccdf_item_get_platforms(item);
+		bool has_platforms = oscap_string_iterator_has_more(platforms);
+		oscap_string_iterator_free(platforms);
+
+		bool ret = true;
+		if (has_platforms)
+		{
+			ret = false;
+
+			struct cpe_dict_model* embedded_dict = xccdf_benchmark_get_cpe_list(benchmark);
+			if (embedded_dict != NULL) {
+				ret = xccdf_policy_model_item_is_applicable_dict(model, embedded_dict, item);
+			}
+
+			// TODO: Check CPE dicts associated in the XCCDF policy model
 		}
 
 		return ret;
