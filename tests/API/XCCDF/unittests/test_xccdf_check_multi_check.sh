@@ -6,7 +6,7 @@ set -o pipefail
 result=`mktemp`
 stderr=`mktemp`
 
-$OSCAP xccdf eval --results $result $srcdir/test_xccdf_check_multi_check.xccdf.xml 2> $stderr
+$OSCAP xccdf eval --results $result $srcdir/test_xccdf_check_multi_check.xccdf.xml 2>&1 > $stderr
 
 echo "Stderr file = $stderr"
 echo "Result file = $result"
