@@ -738,7 +738,8 @@ bool getopt_oval_validate(int argc, char **argv, struct oscap_action *action)
 {
 	VERBOSE = action->verbosity;
 
-	action->doctype = OSCAP_DOCUMENT_OVAL_DEFINITIONS;
+	/* we assume 0 is unknown */
+	action->doctype = 0;
 
 	/* Command-options */
 	struct option long_options[] = {
@@ -762,7 +763,7 @@ bool getopt_oval_validate(int argc, char **argv, struct oscap_action *action)
 		}
 	}
 
-	/* We should have Definitions file here */
+	/* we should have OVAL content here */
 	if (optind >= argc)
 		return oscap_module_usage(action->module, stderr, "Definitions file needs to be specified!");
 	action->f_oval = argv[optind];
@@ -845,6 +846,11 @@ static int app_oval_validate(const struct oscap_action *action) {
 			(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout);
 	}
 	else {
+		if (!action->doctype) {
+			if(oval_determine_document_type((const char *) action->f_oval, &action->doctype))
+				goto cleanup;
+		}
+
 		doc_version = oval_determine_document_schema_version((const char *) action->f_oval, action->doctype);
 		if (!doc_version)
 			goto cleanup;

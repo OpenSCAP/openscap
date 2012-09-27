@@ -96,12 +96,12 @@ Do not validate input/output files.
 .RE
 
 .TP
-.B validate-xml\fR [\fIoptions\fR] definitions-file
+.B validate-xml\fR [\fIoptions\fR] oval-file
 .RS
 Validate given OVAL file against a XML schema. Every found error is printed to the standard output. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the OVAL document is not valid.
 .TP
 \fB\-\-definitions\fR, \fB\-\-variables\fR, \fB\-\-syschar\fR, \fB\-\-results\fR \fB\-\-directives\fR
-Specify whether the validated document is an OVAL Definitions file, external OVAL Variables, OVAL System Characteristics file,  OVAL Results file or OVAL Directives file. Default: definitions.
+Type of the OVAL document is automatically detected by default. If you want enforce certain document type, you can use one of these options.
 .TP
 \fB\-\-schematron\fR
 Turn on Schematron-based validation. It is able to find more errors and inconsistencies but is much slower.

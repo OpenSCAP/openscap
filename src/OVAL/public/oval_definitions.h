@@ -3186,6 +3186,13 @@ void oval_string_iterator_free(struct oval_string_iterator *);
  */
 char *oval_determine_document_schema_version(const char *, oscap_document_type_t);
 
+/*
+ * Find out OVAL docuemnt type
+ * @param document
+ * @doc_type indentified document
+ * @return -1 if an error occurred
+ */
+int oval_determine_document_type(const char *document, oscap_document_type_t *doc_type);
 /**
  * @) END OVAL
  */
