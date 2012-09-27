@@ -14,7 +14,7 @@ for args in "" "--profile xccdf_moc.elpmaxe.www_profile_1"; do
 
 	echo "Stderr file = $stderr"
 	echo "Result file = $result"
-	[ -s $stderr ] && rm -rf $stderr
+	[ -f $stderr ]; [ ! -s $stderr ]; rm -rf $stderr
 
 	$OSCAP xccdf validate-xml $result || [ $? == 2 ]
 

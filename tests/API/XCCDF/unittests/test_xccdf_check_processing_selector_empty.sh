@@ -12,7 +12,7 @@ $OSCAP xccdf eval --profile xccdf_moc.elpmaxe.www_profile_1 --results $result $s
 
 echo "Stderr file = $stderr"
 echo "Result file = $result"
-[ -s $stderr ] && rm -rf $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; rm -rf $stderr
 
 $OSCAP xccdf validate-xml $result
 

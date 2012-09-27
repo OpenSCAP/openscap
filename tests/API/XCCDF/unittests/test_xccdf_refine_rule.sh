@@ -11,7 +11,7 @@ $OSCAP xccdf eval --results $result $srcdir/${name}.xccdf.xml 2> $stderr
 
 echo "Stderr file = $stderr"
 echo "Result file = $result"
-[ -s $stderr ] && rm -rf $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; rm -rf $stderr
 
 $OSCAP xccdf validate-xml $result
 

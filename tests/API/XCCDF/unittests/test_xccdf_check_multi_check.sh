@@ -10,7 +10,7 @@ $OSCAP xccdf eval --results $result $srcdir/test_xccdf_check_multi_check.xccdf.x
 
 echo "Stderr file = $stderr"
 echo "Result file = $result"
-[ -s $stderr ] && rm -rf $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; rm -rf $stderr
 
 $OSCAP xccdf validate-xml $result
 
@@ -20,5 +20,5 @@ assert_exists_once() { [ $(xpath $result 'count('$1')') == "1" ]; }
 assert_exists_once '//Rule[@id="xccdf_moc.elpmaxe.www_rule_1"]/check[@multi-check="true"]'
 assert_exists_once '//Rule[@id="xccdf_moc.elpmaxe.www_rule_2"]/check[@multi-check="true"]'
 assert_exists_once '//Rule[@id="xccdf_moc.elpmaxe.www_rule_3"]/check[@multi-check="false"]'
-assert_exists_once '//Rule[@id="xccdf_moc.elpmaxe.www_rule_4"]/check[@multi-check="false"]' && \
-	rm -rf $result
+assert_exists_once '//Rule[@id="xccdf_moc.elpmaxe.www_rule_4"]/check[@multi-check="false"]'
+rm -rf $result
