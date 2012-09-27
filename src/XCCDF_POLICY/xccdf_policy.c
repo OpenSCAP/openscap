@@ -801,6 +801,12 @@ static bool _xccdf_policy_cpe_check_cb(const char* href, const char* name, void*
 	if (session == NULL)
 	{
 		struct oval_definition_model* oval_model = oval_definition_model_import(href);
+		if (oval_model == NULL)
+		{
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't import OVAL definition model '%s' for CPE applicability checking", href);
+			return false;
+		}
+
 		session = oval_agent_new_session(oval_model, href);
 		oscap_htable_add(model->cpe_oval_sessions, href, session);
 	}
@@ -809,7 +815,7 @@ static bool _xccdf_policy_cpe_check_cb(const char* href, const char* name, void*
 	oval_result_t result = OVAL_RESULT_NOT_EVALUATED;
 	if (oval_agent_get_definition_result(session, name, &result) != 0)
 	{
-		// TODO: error
+		// error message should already be set in the function
 	}
 
 	return result == OVAL_RESULT_TRUE;
