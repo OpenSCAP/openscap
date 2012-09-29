@@ -671,6 +671,22 @@ void xccdf_check_dump(struct xccdf_check *check, int depth)
 	oscap_list_dump(check->content_refs, (oscap_dump_func) xccdf_check_content_ref_dump, depth + 1);
 }
 
+/**
+ * Enforce given content with given name to be the only check-content of the check.
+ * This may turn to be usefull,when processing check within rule-result --
+ * such check may (and in some cases must) refer only to the executed content.
+ */
+bool
+xccdf_check_inject_content_ref(struct xccdf_check *check, const struct xccdf_check_content_ref *content, const char *name)
+{
+	struct xccdf_check_content_ref *content_clone = xccdf_check_content_ref_clone(content);
+	if (name != NULL)
+		xccdf_check_content_ref_set_name(content_clone, name);
+	oscap_list_free(check->content_refs, (oscap_destruct_func) xccdf_check_content_ref_free);
+	check->content_refs = oscap_list_new();
+	return oscap_list_add(check->content_refs, content_clone);
+}
+
 bool xccdf_check_get_complex(const struct xccdf_check *check)
 {
 	return check->oper ? true : false;

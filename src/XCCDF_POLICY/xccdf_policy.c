@@ -666,7 +666,10 @@ static int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccd
                 // the content references are basically alternatives according to the specification
                 // we should go through them in the order they are defined and we are done as soon
                 // as we process one of them successfully
-                if ((xccdf_test_result_type_t) ret != XCCDF_RESULT_NOT_CHECKED) break;
+                if ((xccdf_test_result_type_t) ret != XCCDF_RESULT_NOT_CHECKED) {
+			xccdf_check_inject_content_ref(check, content, NULL);
+			break;
+		}
             }
             xccdf_check_content_ref_iterator_free(content_it);
             oscap_list_free(bindings, (oscap_destruct_func) xccdf_value_binding_free);
@@ -719,19 +722,26 @@ _xccdf_policy_rule_get_applicable_check(struct xccdf_policy *policy, struct xccd
 	return result;
 }
 
+static inline bool
+_xccdf_policy_is_rule_selected(struct xccdf_policy *policy, const struct xccdf_rule *rule)
+{
+	const struct xccdf_select *sel = xccdf_policy_get_select_by_id(policy, xccdf_rule_get_id(rule));
+	return xccdf_select_get_selected(sel);
+}
+
 static struct xccdf_rule_result *
-_build_rule_result(const struct xccdf_rule *rule)
+_build_rule_result(const struct xccdf_rule *rule, struct xccdf_check *check, xccdf_test_result_type_t eval_result)
 {
 	struct xccdf_rule_result *rule_ritem = xccdf_rule_result_new();
 
 	/* --Set rule-- */
-	// we won't set the result here since the rule wasn't evaluated yet
+        xccdf_rule_result_set_result(rule_ritem, eval_result);
 	xccdf_rule_result_set_idref(rule_ritem, xccdf_rule_get_id(rule));
 	xccdf_rule_result_set_weight(rule_ritem, xccdf_item_get_weight((struct xccdf_item *) rule));
 	xccdf_rule_result_set_version(rule_ritem, xccdf_rule_get_version(rule));
 	xccdf_rule_result_set_severity(rule_ritem, xccdf_rule_get_severity(rule));
 	xccdf_rule_result_set_role(rule_ritem, xccdf_rule_get_role(rule));
-	// we won't set the time here since the rule wasn't evaluated yet
+	xccdf_rule_result_set_time(rule_ritem, time(NULL));
 
 	/* --Fix --*/
 	struct xccdf_fix_iterator *fix_it = xccdf_rule_get_fixes(rule);
@@ -748,7 +758,156 @@ _build_rule_result(const struct xccdf_rule *rule)
 		xccdf_rule_result_add_ident(rule_ritem, xccdf_ident_clone(ident));
 	}
 	xccdf_ident_iterator_free(ident_it);
+	if (check != NULL)
+		xccdf_rule_result_add_check(rule_ritem, check);
 	return rule_ritem;
+}
+
+static int
+_xccdf_policy_report_rule(struct xccdf_policy *policy, const char * sysname, const struct xccdf_rule *rule, int ret)
+{
+	/* Get all information for callbacks */
+	struct oscap_text_iterator * dsc_it = xccdf_rule_get_description(rule);
+	struct oscap_text_iterator * title_it = xccdf_rule_get_title(rule);
+	char * description = NULL;
+	const char * title = NULL;
+	if (oscap_text_iterator_has_more(dsc_it))
+		description = oscap_text_get_plaintext(oscap_text_iterator_next(dsc_it));
+	oscap_text_iterator_free(dsc_it);
+	if (oscap_text_iterator_has_more(title_it))
+		title = oscap_text_get_text(oscap_text_iterator_next(title_it));
+	oscap_text_iterator_free(title_it);
+
+	int retval = 0;
+	/* Report evaluating */
+        retval = xccdf_policy_report_cb(policy, sysname, xccdf_rule_get_id(rule), description, title, ret);
+	oscap_free(description);
+	return retval;
+}
+
+static int
+_xccdf_policy_report_rule_result(struct xccdf_policy *policy, struct xccdf_result *result,
+		const struct xccdf_rule *rule, struct xccdf_check *check, int ret)
+{
+	if (ret == -1)
+		return ret;
+	if (result != NULL)
+		/* Add result to policy */
+		/* TODO: override, message, instance */
+		xccdf_result_add_rule_result(result, _build_rule_result(rule, check, ret));
+	else
+		xccdf_check_free(check);
+	return _xccdf_policy_report_rule(policy, "urn:xccdf:system:callback:output", rule, ret);
+}
+
+/**
+ * Evaluate given check which is immediate child of the rule.
+ * A possibe child checks will be evaluated by xccdf_policy_check_evaluate.
+ * This duplication is needed to handle @multi-check correctly,
+ * which is (in general) not predictable in any way.
+ */
+static inline int
+_xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rule *rule, struct xccdf_result *result)
+{
+	const bool is_selected = _xccdf_policy_is_rule_selected(policy, rule);
+
+	int report = _xccdf_policy_report_rule(policy, "urn:xccdf:system:callback:start", rule, is_selected ? 0 : XCCDF_RESULT_NOT_SELECTED);
+	if (report)
+		return report;
+
+	if (!is_selected)
+		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED);
+
+	const struct xccdf_check *orig_check = _xccdf_policy_rule_get_applicable_check(policy, (struct xccdf_item *) rule);
+	if (orig_check == NULL)
+		// No candidate or applicable check found.
+		// TODO: One day, we might be nice and export some information
+		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_CHECKED);
+
+	// we need to clone the check to avoid changing the original content
+	struct xccdf_check *check = xccdf_check_clone(orig_check);
+	if (xccdf_check_get_complex(check))
+		return _xccdf_policy_report_rule_result(policy, result, rule, check, xccdf_policy_check_evaluate(policy, check, NULL));
+
+	// Now we are evaluating single simple xccdf:check within xccdf:rule.
+	// Since the fact that a check will yield multi-check is not predictable in general
+	// we will evaluate the check here. (A link between rule and its only check is
+	// somewhat tigher that the one between checks in complex-check tree).
+	//
+	// Important: if touching this code, please revisit also xccdf_policy_check_evaluate.
+	const char *system_name = xccdf_check_get_system(check);
+	struct oscap_list *bindings = xccdf_policy_check_get_value_bindings(policy, xccdf_check_get_exports(check));
+	if (bindings == NULL)
+		return _xccdf_policy_report_rule_result(policy, result, rule, check, XCCDF_RESULT_UNKNOWN);
+
+
+	struct xccdf_check_content_ref_iterator *content_it = xccdf_check_get_content_refs(check);
+	struct xccdf_check_content_ref *content;
+	const char *content_name;
+	const char *href;
+	int ret;
+	while (xccdf_check_content_ref_iterator_has_more(content_it)) {
+		content = xccdf_check_content_ref_iterator_next(content_it);
+		content_name = xccdf_check_content_ref_get_name(content);
+		href = xccdf_check_content_ref_get_href(content);
+
+		if (content_name == NULL && xccdf_check_get_multicheck(check)) {
+			// parent element is Rule, @multi-check is required
+			struct oscap_stringlist *names = _xccdf_policy_get_namesfor_href(policy, system_name, href);
+			if (names != NULL) {
+				// multi-check is supported by checking-engine
+				struct oscap_string_iterator *name_it = oscap_stringlist_get_strings(names);
+				if (!oscap_string_iterator_has_more(name_it)) {
+					// Super special case when oval file contains no definitions
+					// thus multi-check shall yield zero rule-results.
+					report = _xccdf_policy_report_rule(policy, "urn:xccdf:system:callback:output", rule, 0);
+					if (report)
+						return report;
+				}
+				while (oscap_string_iterator_has_more(name_it)) {
+					const char *name = oscap_string_iterator_next(name_it);
+					struct xccdf_check *cloned_check = xccdf_check_clone(check);
+					xccdf_check_inject_content_ref(cloned_check, content, name);
+					int inner_ret = xccdf_policy_check_evaluate(policy, cloned_check, NULL);
+					if (inner_ret == -1) {
+						xccdf_check_free(cloned_check);
+						report = inner_ret;
+						break;
+					}
+					if ((report = _xccdf_policy_report_rule_result(policy, result, rule, cloned_check, inner_ret)) != 0)
+						break;
+					if (oscap_string_iterator_has_more(name_it))
+						if ((report = _xccdf_policy_report_rule(policy, "urn:xccdf:system:callback:start", rule, 0)) != 0)
+							break;
+				}
+				oscap_string_iterator_free(name_it);
+				oscap_stringlist_free(names);
+				xccdf_check_content_ref_iterator_free(content_it);
+				oscap_list_free(bindings, (oscap_destruct_func) xccdf_value_binding_free);
+				xccdf_check_free(check);
+				return report;
+			}
+			// else checking engine does not support multicheck -- TODO: some debug message
+		}
+
+		struct xccdf_check_import_iterator *check_import_it = xccdf_check_get_imports(check);
+		ret = xccdf_policy_evaluate_cb(policy, system_name, content_name, href, NULL, bindings, check_import_it);
+		// the evaluation has filled check imports at this point, we can simply free the iterator
+		xccdf_check_import_iterator_free(check_import_it);
+
+		// the content references are basically alternatives according to the specification
+		// we should go through them in the order they are defined and we are done as soon
+		// as we process one of them successfully
+		if ((xccdf_test_result_type_t) ret != XCCDF_RESULT_NOT_CHECKED) {
+			xccdf_check_inject_content_ref(check, content, NULL);
+			break;
+		}
+	}
+	xccdf_check_content_ref_iterator_free(content_it);
+	oscap_list_free(bindings, (oscap_destruct_func) xccdf_value_binding_free);
+	/* Negate only once */
+	ret = _resolve_negate(ret, check);
+	return _xccdf_policy_report_rule_result(policy, result, rule, check, ret);
 }
 
 /** 
@@ -760,91 +919,13 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
 {
     struct xccdf_item_iterator      * child_it;
     struct xccdf_item               * child;
-    const char                      * rule_id;
     int                               ret = XCCDF_RESULT_UNKNOWN;
 
     xccdf_type_t itype = xccdf_item_get_type(item);
 
     switch (itype) {
         case XCCDF_RULE:{
-            /* Get all checks of rule */
-            rule_id = xccdf_rule_get_id((struct xccdf_rule *)item);
-            struct xccdf_select * sel = xccdf_policy_get_select_by_id(policy, rule_id);
-
-            /* Get all information for callbacks
-             */
-            struct oscap_text_iterator * dsc_it = xccdf_rule_get_description((struct xccdf_rule *) item);
-            struct oscap_text_iterator * title_it = xccdf_rule_get_title((struct xccdf_rule *) item);
-            char * description = NULL;
-            const char * title = NULL;
-            if (oscap_text_iterator_has_more(dsc_it))
-                description = oscap_text_get_plaintext(oscap_text_iterator_next(dsc_it));
-            oscap_text_iterator_free(dsc_it);
-            if (oscap_text_iterator_has_more(title_it))
-                title = oscap_text_get_text(oscap_text_iterator_next(title_it));
-            oscap_text_iterator_free(title_it);     
-            int retval = 0;
-
-            /* Report evaluating
-             */
-            retval = xccdf_policy_report_cb(policy, "urn:xccdf:system:callback:start", rule_id, description, title, 
-                    (xccdf_select_get_selected(sel) ? 0 : XCCDF_RESULT_NOT_SELECTED ));
-            if (retval != 0) {
-                oscap_free(description);
-                return retval;
-            }
-
-            /* If applicable, create a rule result to add to the resulting policy */
-            struct xccdf_rule_result *rule_ritem = NULL;
-            if (result != NULL)
-		rule_ritem = _build_rule_result((struct xccdf_rule *) item);
-
-            /* Evaluation of callback
-             */
-            if (xccdf_select_get_selected(sel)) {
-		struct xccdf_check *check = _xccdf_policy_rule_get_applicable_check(policy, item);
-		if (check == NULL) {
-			ret = XCCDF_RESULT_NOT_CHECKED;
-			// TODO: We might be nice and export some more information.
-		}
-		else {
-                        // we need to clone the check to avoid changing the original content
-                        struct xccdf_check * cloned_check = xccdf_check_clone(check);
-                        xccdf_rule_result_add_check(rule_ritem, cloned_check);
-
-                        /************** Evaluation  **************/
-                        ret = xccdf_policy_check_evaluate(policy, cloned_check, (char *) rule_id);
-                        /*****************************************/
-
-                        // TODO: Interpret check-import elements inside xccdf_check
-                        if (ret == -1) {
-                            oscap_free(description);
-                            return -1;
-                        }
-
-                        if (ret == false) /* we got item that can't be processed */
-                            break;
-		}
-            } else {
-                ret = XCCDF_RESULT_NOT_SELECTED;
-            }
-
-            /* Add result to policy */
-            if (rule_ritem != NULL) {
-                    // set result and time since we know both of them now
-                    xccdf_rule_result_set_result(rule_ritem, (xccdf_test_result_type_t) ret);
-                    xccdf_rule_result_set_time(rule_ritem, time(NULL));
-
-                    /* TODO: override, message, instance */
-                    xccdf_result_add_rule_result(result, rule_ritem);
-            }
-
-            /* Report result
-             */
-            retval = xccdf_policy_report_cb(policy, "urn:xccdf:system:callback:output", rule_id, description, title, ret);
-            oscap_free(description);
-            if (retval != 0) return retval;
-
+			return _xccdf_policy_rule_evaluate(policy, (struct xccdf_rule *) item, result);
         } break;
 
         case XCCDF_GROUP:{

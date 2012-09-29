@@ -456,6 +456,7 @@ struct xccdf_result *xccdf_result_new_parse(xmlTextReaderPtr reader);
 
 struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader);
 void xccdf_check_dump(struct xccdf_check *check, int depth);
+bool xccdf_check_inject_content_ref(struct xccdf_check *check, const struct xccdf_check_content_ref *content, const char *name);
 void xccdf_check_content_ref_dump(struct xccdf_check_content_ref *ref, int depth);
 struct xccdf_ident *xccdf_ident_parse(xmlTextReaderPtr reader);
 void xccdf_ident_dump(struct xccdf_ident *ident, int depth);
