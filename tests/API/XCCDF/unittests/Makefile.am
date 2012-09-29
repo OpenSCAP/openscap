@@ -52,6 +52,8 @@ EXTRA_DIST += \
 	test_xccdf_check_negate.xccdf.xml \
 	test_xccdf_check_multi_check.sh \
 	test_xccdf_check_multi_check.xccdf.xml \
+	test_xccdf_check_multi_check2.sh \
+	test_xccdf_check_multi_check2.xccdf.xml \
 	test_xccdf_check_processing_complex_priority.sh \
 	test_xccdf_check_processing_complex_priority.xccdf.xml \
 	test_xccdf_check_processing_selector_empty.sh \
