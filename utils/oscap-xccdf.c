@@ -1244,14 +1244,16 @@ int app_xccdf_validate(const struct oscap_action *action) {
         else
                 result=OSCAP_OK;
 
+        if (result==OSCAP_FAIL)
+		validation_failed(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version);
+
 cleanup:
         if (oscap_err())
                 fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 
-        if (result==OSCAP_FAIL)
-		validation_failed(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version);
+        if (doc_version)
+		free(doc_version);
 
-        free(doc_version);
         return result;
 
 }

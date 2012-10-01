@@ -199,12 +199,12 @@ int app_cpe_validate(const struct oscap_action *action) {
 	else
 		result=OSCAP_OK;
 
+        if (result==OSCAP_FAIL)
+                validation_failed(action->cpe_action->dict, action->doctype, doc_version);
+
 cleanup:
         if (oscap_err())
                 fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
-
-        if (result==OSCAP_FAIL)
-                validation_failed(action->cpe_action->dict, action->doctype, doc_version);
 
         free(doc_version);
 	free(action->cpe_action);

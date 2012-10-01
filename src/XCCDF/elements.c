@@ -80,7 +80,6 @@ const struct xccdf_version_info* xccdf_detect_version_parser(xmlTextReaderPtr re
 
 	const char* namespace_uri = (const char*)xmlTextReaderConstNamespaceUri(reader);
 	if (!namespace_uri) {
-		oscap_seterr(OSCAP_EFAMILY_XML, "Could not found namespace of the root element.");
                 oscap_setxmlerr(xmlGetLastError());
                 return NULL;
 	}

@@ -839,8 +839,8 @@ cleanup:
 }
 
 static int app_oval_validate(const struct oscap_action *action) {
-	char *doc_version;
 	int ret;
+	char *doc_version = NULL;
 	int result = OSCAP_ERROR;
 
 	/* validate SDS or OVAL Definitions & Variables & Syschars,
@@ -887,14 +887,15 @@ static int app_oval_validate(const struct oscap_action *action) {
 		}
 	}
 
+	if (result==OSCAP_FAIL)
+		validation_failed(action->f_oval, action->doctype, doc_version);
+
 cleanup:
 	if (oscap_err())
 		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 
-	if (result==OSCAP_FAIL)
-		validation_failed(action->f_oval, action->doctype, doc_version);
-
-	free(doc_version);
+	if (doc_version)
+		free(doc_version);
 
 	return result;
 
