@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2010,2011 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -7,13 +7,13 @@
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful, 
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software 
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors:
@@ -308,7 +308,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			int ret;
 			if ((ret = oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_SDS, "1.2", (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout) != 0))
 			{
-				if (ret==1) fprintf(stdout, "Invalid source datastream in %s\n", action->f_xccdf);
+				if (ret==1)
+					validation_failed(action->f_xccdf, OSCAP_DOCUMENT_SDS, "1.2");
 				goto cleanup;
 			}
 		}
@@ -349,7 +350,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 						 xccdf_doc_version,
 						 (action->verbosity >= 0 ? oscap_reporter_fd : NULL),
 						 stdout))) {
-			if (ret==1) fprintf(stdout, "Invalid XCCDF content in %s\n", xccdf_file);
+			if (ret==1)
+				validation_failed(xccdf_file, OSCAP_DOCUMENT_XCCDF, xccdf_doc_version);
 			goto cleanup;
 		}
 	}
@@ -438,12 +440,12 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		for (idx=0; oval_files[idx]; idx++) {
 			char *doc_version;
 
-			doc_version = oval_determine_document_schema_version((const char *) oval_files[idx],
-				OSCAP_DOCUMENT_OVAL_DEFINITIONS);
+			doc_version = oval_determine_document_schema_version((const char *) oval_files[idx], OSCAP_DOCUMENT_OVAL_DEFINITIONS);
 			if ((ret=oscap_validate_document(oval_files[idx],
 				OSCAP_DOCUMENT_OVAL_DEFINITIONS, (const char *) doc_version,
 				(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))) {
-				if (ret==1) fprintf(stdout, "Invalid OVAL Definition content in %s\n", oval_files[idx]);
+				if (ret==1)
+					validation_failed(oval_files[idx], OSCAP_DOCUMENT_OVAL_DEFINITIONS, doc_version);
 				free(doc_version);
 				goto cleanup;
 			}
@@ -564,7 +566,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 				doc_version = oval_determine_document_schema_version((const char *) name, OSCAP_DOCUMENT_OVAL_RESULTS);
 				if (oscap_validate_document(name, OSCAP_DOCUMENT_OVAL_RESULTS, (const char *) doc_version,
 					(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
-					fprintf(stdout, "OVAL Results are NOT exported correctly.\n");
+					validation_failed(name, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version);
 					free(name);
 					free(doc_version);
 					goto cleanup;
@@ -597,9 +599,9 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 				if (oscap_validate_document(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0",
 					(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
 				{
-						fprintf(stdout, "SCE Result file has NOT been exported correctly.\n");
-						sce_check_result_iterator_free(it);
-						goto cleanup;
+					validation_failed(terget, OSCAP_DOCUMENT_SCE_RESULT, "1.0");
+					sce_check_result_iterator_free(it);
+					goto cleanup;
 				}
 			}
 		}
@@ -634,7 +636,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 						    xccdf_doc_version,
 						    (action->verbosity >= 0 ? oscap_reporter_fd : NULL),
 						    stdout)) {
-				fprintf(stdout, "XCCDF Results are NOT exported correctly.\n");
+				validation_failed(f_results, OSCAP_DOCUMENT_XCCDF, xccdf_doc_version);
 				goto cleanup;
 			}
 			fprintf(stdout, "XCCDF Results are exported correctly.\n");
@@ -816,7 +818,8 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 						 OSCAP_DOCUMENT_XCCDF,
 						 doc_version,
 						 (action->verbosity >= 0) ? oscap_reporter_fd : NULL, stderr))) {
-			if (ret==1) fprintf(stderr, "Invalid XCCDF content in '%s'.\n", action->f_xccdf);
+			if (ret==1)
+				validation_failed(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version);
 			goto cleanup;
 		}
 	}
@@ -995,12 +998,12 @@ int app_xccdf_resolve(const struct oscap_action *action)
 			return OSCAP_ERROR;
 		}
 
-		if (oscap_validate_document(action->f_xccdf, 
+		if (oscap_validate_document(action->f_xccdf,
 					    OSCAP_DOCUMENT_XCCDF,
-					    doc_version, 
-					    (action->verbosity >= 0) ? oscap_reporter_fd : NULL, 
+					    doc_version,
+					    (action->verbosity >= 0) ? oscap_reporter_fd : NULL,
 					    stderr) != 0) {
-			fprintf(stderr, "Invalid XCCDF content in '%s'.\n", action->f_xccdf);
+			validation_failed(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version);
 			goto cleanup;
 		}
 	}
@@ -1009,13 +1012,13 @@ int app_xccdf_resolve(const struct oscap_action *action)
 	if (!bench)
 		goto cleanup;
 
-	if (action->force) 
+	if (action->force)
 		xccdf_benchmark_set_resolved(bench, false);
 
 	if (xccdf_benchmark_get_resolved(bench))
 		fprintf(stderr, "Benchmark is already resolved!\n");
 	else {
-		if (!xccdf_benchmark_resolve(bench)) 
+		if (!xccdf_benchmark_resolve(bench))
 			fprintf(stderr, "Benchmark resolving failure (probably a dependency loop)!\n");
 
 		{
@@ -1028,12 +1031,12 @@ int app_xccdf_resolve(const struct oscap_action *action)
 
 					/* reuse doc_version from unresolved document
 					   it should be same in resolved one */
-					if (oscap_validate_document(action->f_results, 
-								    OSCAP_DOCUMENT_XCCDF, 
-								    doc_version, 
-								    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), 
+					if (oscap_validate_document(action->f_results,
+								    OSCAP_DOCUMENT_XCCDF,
+								    doc_version,
+								    (action->verbosity >= 0 ? oscap_reporter_fd : NULL),
 								    stdout)) {
-						fprintf(stdout, "Resolved XCCDF has NOT been exported correctly.\n");
+						validation_failed(action->f_results, OSCAP_DOCUMENT_XCCDF, doc_version);
 						ret = OSCAP_ERROR;
 					}
 					else
@@ -1164,7 +1167,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 	while ((c = getopt_long(argc, argv, "o:i:", long_options, NULL)) != -1) {
 
 		switch (c) {
-		case XCCDF_OPT_OUTPUT: 
+		case XCCDF_OPT_OUTPUT:
 		case XCCDF_OPT_RESULT_FILE:	action->f_results = optarg;	break;
 		case XCCDF_OPT_RESULT_FILE_ARF:	action->f_results_arf = optarg;	break;
 		case XCCDF_OPT_DATASTREAM_ID:	action->f_datastream_id = optarg;	break;
@@ -1246,7 +1249,7 @@ cleanup:
                 fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 
         if (result==OSCAP_FAIL)
-                fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
+		validation_failed(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version);
 
         free(doc_version);
         return result;

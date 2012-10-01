@@ -7,13 +7,13 @@
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful, 
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software 
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors:
@@ -172,7 +172,7 @@ int app_ds_sds_split(const struct oscap_action *action) {
 		              "1.2", (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)))
 		{
 			if (valret == 1)
-				fprintf(stdout, "Invalid input source data stream in in %s\n", action->ds_action->file);
+				validation_failed(action->ds_action->file, OSCAP_DOCUMENT_SDS, "1.2");
 
 			ret = OSCAP_ERROR;
 			goto cleanup;
@@ -237,10 +237,7 @@ int app_ds_sds_compose(const struct oscap_action *action) {
 		if (oscap_validate_document(target_abs_path, OSCAP_DOCUMENT_SDS, "1.2",
 					(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout) != 0)
 		{
-			fprintf(stdout, "Exported Source Data Stream '%s' (absolute path: '%s') "
-					"is not valid, it has not been exported correctly!\n",
-					action->ds_action->target, target_abs_path);
-
+			validation_failed(target_abs_path, OSCAP_DOCUMENT_SDS, "1.2");
 			goto cleanup;
 		}
 	}
@@ -263,7 +260,7 @@ int app_ds_sds_validate(const struct oscap_action *action) {
 	              "1.2", (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)))
 	{
 		if (valret == 1)
-			fprintf(stdout, "Given Source Data Stream '%s' is not valid!\n", action->ds_action->file);
+			validation_failed(action->ds_action->file, OSCAP_DOCUMENT_SDS, "1.2");
 
 		ret = OSCAP_ERROR;
 		goto cleanup;
@@ -289,7 +286,7 @@ int app_ds_rds_create(const struct oscap_action *action) {
 		              "1.2", (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)))
 		{
 			if (valret == 1)
-				fprintf(stdout, "Given Source Data Stream '%s' is not valid!\n", action->ds_action->file);
+				validation_failed(action->ds_action->file, OSCAP_DOCUMENT_SDS, "1.2");
 
 			ret = OSCAP_ERROR;
 			goto cleanup;
@@ -307,7 +304,7 @@ int app_ds_rds_create(const struct oscap_action *action) {
 						      (action->verbosity >= 0 ? oscap_reporter_fd : NULL),
 						      stdout))) {
 			if (valret == 1)
-				fprintf(stdout, "Given XCCDF result file '%s' is not valid!\n", action->ds_action->xccdf_result);
+				validation_failed(action->ds_action->xccdf_result, OSCAP_DOCUMENT_XCCDF, doc_version);
 
 			ret = OSCAP_ERROR;
 			free(doc_version);
@@ -334,7 +331,7 @@ int app_ds_rds_create(const struct oscap_action *action) {
 			              doc_version, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)))
 			{
 				if (valret == 1)
-					fprintf(stdout, "Given OVAL results file '%s' does not validate!\n", oval_result_files[i]);
+					validation_failed(oval_result_files[i], OSCAP_DOCUMENT_OVAL_RESULTS, doc_version);
 
 				ret = OSCAP_ERROR;
 				free(doc_version);
@@ -366,7 +363,7 @@ int app_ds_rds_create(const struct oscap_action *action) {
 		              (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)))
 		{
 			if (valret == 1)
-				fprintf(stdout, "Exported Result Data Stream '%s' is not valid, it has not been exported correctly!\n", action->ds_action->target);
+				validation_failed(action->ds_action->target, OSCAP_DOCUMENT_ARF, "1.1");
 
 			ret = OSCAP_ERROR;
 			goto cleanup;
@@ -391,7 +388,7 @@ int app_ds_rds_validate(const struct oscap_action *action) {
 	              (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)))
 	{
 		if (valret == 1)
-			fprintf(stdout, "Given Result Data Stream '%s' is not valid!\n", action->ds_action->file);
+			validation_failed(action->ds_action->file, OSCAP_DOCUMENT_ARF, "1.2");
 
 		ret = OSCAP_ERROR;
 		goto cleanup;
