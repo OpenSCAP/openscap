@@ -869,7 +869,12 @@ static bool xccdf_policy_model_item_is_applicable(struct xccdf_policy_model* mod
 				ret = xccdf_policy_model_item_is_applicable_dict(model, embedded_dict, item);
 			}
 
-			// TODO: Check CPE dicts associated in the XCCDF policy model
+			struct oscap_iterator* dicts = oscap_iterator_new(model->cpe_dicts);
+			while (!ret && oscap_iterator_has_more(dicts)) {
+				struct cpe_dict_model *dict = (struct cpe_dict_model*)oscap_iterator_next(dicts);
+				ret = xccdf_policy_model_item_is_applicable_dict(model, dict, item);
+			}
+			oscap_iterator_free(dicts);
 		}
 
 		return ret;
@@ -1506,6 +1511,14 @@ struct oscap_stringlist * xccdf_item_get_files(struct xccdf_item * item)
 /* Public functions.
  */
 
+bool xccdf_policy_model_add_cpe_dict(struct xccdf_policy_model *model, const char * cpe_dict)
+{
+        __attribute__nonnull__(model);
+		__attribute__nonnull__(cpe_dict);
+
+		struct cpe_dict_model* dict = cpe_dict_model_import(cpe_dict);
+        return oscap_list_add(model->cpe_dicts, dict);
+}
 /**
  * Get ID of XCCDF Profile that belongs to XCCDF Policy
  */
