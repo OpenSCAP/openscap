@@ -204,7 +204,7 @@ cleanup:
                 fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 
         if (result==OSCAP_FAIL)
-                fprintf(stdout, "%s\n", INVALID_DOCUMENT_MSG);
+                validation_failed(action->cpe_action->dict, action->doctype, doc_version);
 
         free(doc_version);
 	free(action->cpe_action);

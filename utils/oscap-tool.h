@@ -42,8 +42,6 @@
 #include <cpe_name.h>
 
 #define OSCAP_PRODUCTNAME "cpe:/a:open-scap:oscap"
-#define INVALID_DOCUMENT_MSG "oscap was unable to validate the XML document you provided.\n"\
-			     "Please ensure that the XML document is valid and well-formed, and try again."
 #define OSCAP_ERR_MSG "OpenSCAP Error:"
 
 struct oscap_action;
@@ -137,8 +135,8 @@ struct oscap_action {
         int list_dynamic;
 };
 
-int app_validate_xml(const struct oscap_action *action);
 int app_xslt(const char *infile, const char *xsltfile, const char *outfile, const char **params);
+void validation_failed(const char *xmlfile, oscap_document_type_t doctype, const char *version);
 
 int oscap_module_process(struct oscap_module *module, int argc, char **argv);
 bool oscap_module_usage(struct oscap_module *module, FILE *out, const char *err, ...);
