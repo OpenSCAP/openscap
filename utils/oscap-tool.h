@@ -119,6 +119,7 @@ struct oscap_action {
         int verbosity;
         int hide_profile_info;
         char *stylesheet;
+        char *cpe_dict;
         struct cvss_impact *cvss_impact;
 
 	struct ds_action* ds_action;

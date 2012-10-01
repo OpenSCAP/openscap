@@ -108,6 +108,7 @@ static struct oscap_module XCCDF_EVAL = {
 		"INPUT_FILE - XCCDF file or a source data stream file\n\n"
         "Options:\n"
         "   --profile <name>\r\t\t\t\t - The name of Profile to be evaluated.\n"
+        "   --cpe-dict <name>\r\t\t\t\t - Use given CPE dictionary for applicability checks.\n"
         "   --oval-results\r\t\t\t\t - Save OVAL results as well.\n"
 #ifdef ENABLE_SCE
         "   --sce-results\r\t\t\t\t - Save SCE results as well.\n"
@@ -382,6 +383,11 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			fprintf(stderr, "No Policy to evaluate. \n");
 			goto cleanup;
 		}
+	}
+
+	/* Use custom CPE dict if given */
+	if (action->cpe_dict != NULL) {
+		xccdf_policy_model_add_cpe_dict(policy_model, action->cpe_dict);
 	}
 
 	/* Register callback */
@@ -1119,6 +1125,7 @@ enum oval_opt {
     XCCDF_OPT_SCE_TEMPLATE,
 #endif
     XCCDF_OPT_FILE_VERSION,
+    XCCDF_OPT_CPE_DICT,
     XCCDF_OPT_OUTPUT = 'o',
     XCCDF_OPT_RESULT_ID = 'i'
 };
@@ -1144,6 +1151,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"format", 		required_argument, NULL, XCCDF_OPT_FORMAT},
 		{"oval-template", 	required_argument, NULL, XCCDF_OPT_OVAL_TEMPLATE},
 		{"stylesheet",	required_argument, NULL, XCCDF_OPT_STYLESHEET_FILE},
+		{"cpe-dict",	required_argument, NULL, XCCDF_OPT_CPE_DICT},
 #ifdef ENABLE_SCE
 		{"sce-template", 	required_argument, NULL, XCCDF_OPT_SCE_TEMPLATE},
 #endif
@@ -1178,6 +1186,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		// we use realpath to get an absolute path to given XSLT to prevent openscap from looking
 		// into /usr/share/openscap/xsl instead of CWD
 		case XCCDF_OPT_STYLESHEET_FILE: realpath(optarg, custom_stylesheet_path); action->stylesheet = custom_stylesheet_path; break;
+		case XCCDF_OPT_CPE_DICT:	action->cpe_dict = optarg; break;
 #ifdef ENABLE_SCE
 		case XCCDF_OPT_SCE_TEMPLATE:	action->sce_template = optarg; break;
 #endif
