@@ -842,27 +842,29 @@ static int app_oval_validate(const struct oscap_action *action) {
 	int ret;
 	char *doc_version = NULL;
 	int result = OSCAP_ERROR;
+	oscap_document_type_t doc_type = 0;
 
-	/* validate SDS or OVAL Definitions & Variables & Syschars,
-	   depending on the data */
+	/* find out what we want to validate */
 	if (ds_is_sds(action->f_oval) == 0) {
+		doc_type = OSCAP_DOCUMENT_SDS;
 		doc_version = strdup("1.2");
-		ret = oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_SDS, doc_version,
-			(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout);
 	}
 	else {
 		if (!action->doctype) {
-			if(oval_determine_document_type((const char *) action->f_oval, &action->doctype))
+			if(oval_determine_document_type(action->f_oval, &doc_type))
 				goto cleanup;
 		}
+		else
+			doc_type = action->doctype;
 
-		doc_version = oval_determine_document_schema_version((const char *) action->f_oval, action->doctype);
+		doc_version = oval_determine_document_schema_version(action->f_oval, doc_type);
 		if (!doc_version)
 			goto cleanup;
 
-		ret=oscap_validate_document(action->f_oval, action->doctype, doc_version,
-			(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout);
 	}
+
+	ret=oscap_validate_document(action->f_oval, doc_type, doc_version,
+		(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout);
 
 	if (ret==-1) {
 		result=OSCAP_ERROR;
@@ -888,7 +890,7 @@ static int app_oval_validate(const struct oscap_action *action) {
 	}
 
 	if (result==OSCAP_FAIL)
-		validation_failed(action->f_oval, action->doctype, doc_version);
+		validation_failed(action->f_oval, doc_type, doc_version);
 
 cleanup:
 	if (oscap_err())
