@@ -58,6 +58,16 @@ function test_eval {
     return $?
 }
 
+function test_invalid_eval {
+    local OSCAP_DIR=`cd ../../utils/.libs; pwd`
+
+    $OSCAP_DIR/oscap xccdf eval "${srcdir}/$1"
+    if [ $? -eq 1 ]; then
+        return 0
+    fi
+    return 1
+}
+
 function test_oval_eval {
 
     local OSCAP_DIR=`cd ../../utils/.libs; pwd`
@@ -103,6 +113,7 @@ test_run "sds_subdir" test_sds sds_subdir subdir/scap-fedora14-xccdf.xml 1
 test_run "sds_extended_component" test_sds sds_extended_component fake-check-xccdf.xml 0
 
 test_run "eval_simple" test_eval eval_simple/sds.xml
+test_run "eval_invalid" test_invalid_eval eval_invalid/sds.xml
 test_run "eval_just_oval" test_oval_eval eval_just_oval/sds.xml
 
 test_run "rds_simple" test_rds rds_simple/sds.xml rds_simple/results-xccdf.xml rds_simple/results-oval.xml
