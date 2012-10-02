@@ -861,8 +861,6 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 					// Super special case when oval file contains no definitions
 					// thus multi-check shall yield zero rule-results.
 					report = _xccdf_policy_report_rule(policy, "urn:xccdf:system:callback:output", rule, 0);
-					if (report)
-						return report;
 				}
 				while (oscap_string_iterator_has_more(name_it)) {
 					const char *name = oscap_string_iterator_next(name_it);
