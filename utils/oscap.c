@@ -164,6 +164,9 @@ void validation_failed(const char *xmlfile, oscap_document_type_t doc_type, cons
         case OSCAP_DOCUMENT_ARF:
 		doc_name = "ARF Result Datastream";
                 break;
+        default:
+		fprintf(stdout, "Unrecognized document type.\n");
+		return;
 	}
 
 	fprintf(stdout, "Invalid %s content(%s) in %s.\n", doc_name, version, xmlfile);

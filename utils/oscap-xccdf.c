@@ -300,6 +300,9 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	char* xccdf_doc_version = NULL;
 	char** oval_result_files = NULL;
 	int result = OSCAP_ERROR;
+#ifdef ENABLE_SCE
+	struct sce_parameters* sce_parameters = 0;
+#endif
 
 	if (ds_is_sds(action->f_xccdf) == 0)
 	{
@@ -331,9 +334,6 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		xccdf_file = strdup(action->f_xccdf);
 	}
 
-#ifdef ENABLE_SCE
-	struct sce_parameters* sce_parameters = 0;
-#endif
 
 	int ret;
 
@@ -590,16 +590,16 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 		while(sce_check_result_iterator_has_more(it))
 		{
-			struct sce_check_result * result = sce_check_result_iterator_next(it);
-			char target[2 + strlen(sce_check_result_get_basename(result)) + 11 + 1];
-			snprintf(target, sizeof(target), "./%s.result.xml", sce_check_result_get_basename(result));
-			sce_check_result_export(result, target);
+			struct sce_check_result * check_result = sce_check_result_iterator_next(it);
+			char target[2 + strlen(sce_check_result_get_basename(check_result)) + 11 + 1];
+			snprintf(target, sizeof(target), "./%s.result.xml", sce_check_result_get_basename(check_result));
+			sce_check_result_export(check_result, target);
 
 			if (action->validate && full_validation) {
 				if (oscap_validate_document(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0",
 					(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
 				{
-					validation_failed(terget, OSCAP_DOCUMENT_SCE_RESULT, "1.0");
+					validation_failed(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0");
 					sce_check_result_iterator_free(it);
 					goto cleanup;
 				}
