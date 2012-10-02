@@ -708,8 +708,19 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		}
 
 		ds_rds_create(sds_path, f_results, (const char**)oval_result_files, action->f_results_arf);
-
 		free(sds_path);
+
+		if (full_validation)
+		{
+			if (oscap_validate_document(action->f_results_arf, OSCAP_DOCUMENT_ARF, "1.1",
+				(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
+			{
+				validation_failed(action->f_results_arf, OSCAP_DOCUMENT_ARF, "1.1");
+				ret = OSCAP_ERROR;
+				goto cleanup;
+			}
+			fprintf(stdout, "Result DataStream exported correctly.\n");
+		}
 	}
 
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
