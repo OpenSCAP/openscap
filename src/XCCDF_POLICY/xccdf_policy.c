@@ -870,6 +870,11 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 					// Super special case when oval file contains no definitions
 					// thus multi-check shall yield zero rule-results.
 					report = _xccdf_policy_report_rule_result(policy, result, rule, check, XCCDF_RESULT_UNKNOWN, "No definitions found for @multi-check.");
+					oscap_string_iterator_free(name_it);
+					oscap_stringlist_free(names);
+					xccdf_check_content_ref_iterator_free(content_it);
+					oscap_list_free(bindings, (oscap_destruct_func) xccdf_value_binding_free);
+					return report;
 				}
 				while (oscap_string_iterator_has_more(name_it)) {
 					const char *name = oscap_string_iterator_next(name_it);
