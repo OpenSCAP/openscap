@@ -119,4 +119,14 @@
 # define assume_d(...) while(0)
 #endif
 
+#ifndef NDEBUG
+// Assume and always execute.
+// In debug mode it asserts for return value
+// Elsewhere it only executes the expression.
+# define assume_ex(expr, retval, ...) assume(expr, retval, __VA_ARGS__)
+#else
+# define assume_ex(expr, retval, ...) expr
+#endif
+
+
 #endif /* ASSUME_H */
