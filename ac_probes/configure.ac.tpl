@@ -511,6 +511,7 @@ AC_CONFIG_FILES([Makefile
                  src/XCCDF/Makefile
                  src/XCCDF_POLICY/Makefile
                  tests/API/XCCDF/Makefile
+                 tests/API/XCCDF/applicability/Makefile
                  tests/API/XCCDF/unittests/Makefile
 
                  src/SCE/Makefile
