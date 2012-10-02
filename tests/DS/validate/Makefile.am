@@ -17,4 +17,6 @@ EXTRA_DIST += all.sh \
 			  sds-valid.xml \
 			  sds-invalid.xml \
 			  sds-invalid-xccdf.xml \
-			  sds-invalid-oval.xml
+			  sds-invalid-oval.xml \
+			  rds-valid.xml \
+			  rds-invalid.xml

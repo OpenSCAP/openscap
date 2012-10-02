@@ -20,4 +20,7 @@ test_run "valid-sds" test_validation sds sds-valid.xml 0
 test_run "invalid-sds" test_validation sds sds-invalid.xml 1
 test_run "invalid-xccdf-sds" test_validation sds sds-invalid-xccdf.xml 1
 test_run "invalid-oval-sds" test_validation sds sds-invalid-oval.xml 1
+
+test_run "valid-rds" test_validation rds rds-valid.xml 0
+test_run "invalid-rds" test_validation rds rds-invalid.xml 1
 test_exit
