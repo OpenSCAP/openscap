@@ -41,6 +41,7 @@
 #include "common/_error.h"
 #include "common/debug_priv.h"
 #include "common/reporter_priv.h"
+#include "common/assume.h"
 
 /**
  * Typedef of callback structure with system identificator, callback function and usr data (optional) 
@@ -730,7 +731,7 @@ _xccdf_policy_is_rule_selected(struct xccdf_policy *policy, const struct xccdf_r
 }
 
 static struct xccdf_rule_result *
-_build_rule_result(const struct xccdf_rule *rule, struct xccdf_check *check, xccdf_test_result_type_t eval_result)
+_build_rule_result(const struct xccdf_rule *rule, struct xccdf_check *check, xccdf_test_result_type_t eval_result, const char *message)
 {
 	struct xccdf_rule_result *rule_ritem = xccdf_rule_result_new();
 
@@ -760,6 +761,13 @@ _build_rule_result(const struct xccdf_rule *rule, struct xccdf_check *check, xcc
 	xccdf_ident_iterator_free(ident_it);
 	if (check != NULL)
 		xccdf_rule_result_add_check(rule_ritem, check);
+
+	if (message != NULL) {
+		struct xccdf_message *msg = xccdf_message_new();
+		assume_ex(xccdf_message_set_content(msg, message), rule_ritem);
+		assume_ex(xccdf_message_set_severity(msg, XCCDF_MSG_INFO), rule_ritem);
+		assume_ex(xccdf_rule_result_add_message(rule_ritem, msg), rule_ritem);
+	}
 	return rule_ritem;
 }
 
@@ -787,14 +795,14 @@ _xccdf_policy_report_rule(struct xccdf_policy *policy, const char * sysname, con
 
 static int
 _xccdf_policy_report_rule_result(struct xccdf_policy *policy, struct xccdf_result *result,
-		const struct xccdf_rule *rule, struct xccdf_check *check, int ret)
+		const struct xccdf_rule *rule, struct xccdf_check *check, int ret, const char *message)
 {
 	if (ret == -1)
 		return ret;
 	if (result != NULL)
 		/* Add result to policy */
-		/* TODO: override, message, instance */
-		xccdf_result_add_rule_result(result, _build_rule_result(rule, check, ret));
+		/* TODO: instance */
+		xccdf_result_add_rule_result(result, _build_rule_result(rule, check, ret, message));
 	else
 		xccdf_check_free(check);
 	return _xccdf_policy_report_rule(policy, "urn:xccdf:system:callback:output", rule, ret);
@@ -810,24 +818,24 @@ static inline int
 _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rule *rule, struct xccdf_result *result)
 {
 	const bool is_selected = _xccdf_policy_is_rule_selected(policy, rule);
+	const char *message = NULL;
 
 	int report = _xccdf_policy_report_rule(policy, "urn:xccdf:system:callback:start", rule, is_selected ? 0 : XCCDF_RESULT_NOT_SELECTED);
 	if (report)
 		return report;
 
 	if (!is_selected)
-		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED);
+		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
 
 	const struct xccdf_check *orig_check = _xccdf_policy_rule_get_applicable_check(policy, (struct xccdf_item *) rule);
 	if (orig_check == NULL)
 		// No candidate or applicable check found.
-		// TODO: One day, we might be nice and export some information
-		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_CHECKED);
+		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_CHECKED, "No candidate or applicable check found.");
 
 	// we need to clone the check to avoid changing the original content
 	struct xccdf_check *check = xccdf_check_clone(orig_check);
 	if (xccdf_check_get_complex(check))
-		return _xccdf_policy_report_rule_result(policy, result, rule, check, xccdf_policy_check_evaluate(policy, check, NULL));
+		return _xccdf_policy_report_rule_result(policy, result, rule, check, xccdf_policy_check_evaluate(policy, check, NULL), NULL);
 
 	// Now we are evaluating single simple xccdf:check within xccdf:rule.
 	// Since the fact that a check will yield multi-check is not predictable in general
@@ -838,7 +846,7 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 	const char *system_name = xccdf_check_get_system(check);
 	struct oscap_list *bindings = xccdf_policy_check_get_value_bindings(policy, xccdf_check_get_exports(check));
 	if (bindings == NULL)
-		return _xccdf_policy_report_rule_result(policy, result, rule, check, XCCDF_RESULT_UNKNOWN);
+		return _xccdf_policy_report_rule_result(policy, result, rule, check, XCCDF_RESULT_UNKNOWN, "Value bindings not found.");
 
 
 	struct xccdf_check_content_ref_iterator *content_it = xccdf_check_get_content_refs(check);
@@ -847,6 +855,7 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 	const char *href;
 	int ret;
 	while (xccdf_check_content_ref_iterator_has_more(content_it)) {
+		message = NULL;
 		content = xccdf_check_content_ref_iterator_next(content_it);
 		content_name = xccdf_check_content_ref_get_name(content);
 		href = xccdf_check_content_ref_get_href(content);
@@ -872,7 +881,7 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 						report = inner_ret;
 						break;
 					}
-					if ((report = _xccdf_policy_report_rule_result(policy, result, rule, cloned_check, inner_ret)) != 0)
+					if ((report = _xccdf_policy_report_rule_result(policy, result, rule, cloned_check, inner_ret, NULL)) != 0)
 						break;
 					if (oscap_string_iterator_has_more(name_it))
 						if ((report = _xccdf_policy_report_rule(policy, "urn:xccdf:system:callback:start", rule, 0)) != 0)
@@ -885,7 +894,8 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 				xccdf_check_free(check);
 				return report;
 			}
-			// else checking engine does not support multicheck -- TODO: some debug message
+			else
+				message = "Checking engine does not support multi-check; falling back to multi-check='false'";
 		}
 
 		struct xccdf_check_import_iterator *check_import_it = xccdf_check_get_imports(check);
@@ -905,7 +915,7 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 	oscap_list_free(bindings, (oscap_destruct_func) xccdf_value_binding_free);
 	/* Negate only once */
 	ret = _resolve_negate(ret, check);
-	return _xccdf_policy_report_rule_result(policy, result, rule, check, ret);
+	return _xccdf_policy_report_rule_result(policy, result, rule, check, ret, message);
 }
 
 /** 
