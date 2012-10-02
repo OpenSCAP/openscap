@@ -36,5 +36,5 @@ EXTRA_DIST += test_api_oval.sh \
               directives.xml \
               results-good.xml
 
-SUBDIRS = unittests
+SUBDIRS = unittests validate
 
