@@ -185,6 +185,16 @@ void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer, int b
  */
 void cpe_vendor_export(const struct cpe_vendor *vendor, xmlTextWriterPtr writer);
 
+/* <cpe-list>
+ * */
+struct cpe_dict_model {		// the main node
+	struct oscap_list *items;	// dictionary items
+	struct oscap_list *vendors;
+	int base_version;
+	struct cpe_generator *generator;
+	char* origin_file;
+};
+
 /** 
  * @cond INTERNAL
  */

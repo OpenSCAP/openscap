@@ -128,14 +128,6 @@ OSCAP_ACCESSOR_STRING(cpe_generator, product_name)
     OSCAP_ACCESSOR_STRING(cpe_generator, schema_version)
     OSCAP_ACCESSOR_STRING(cpe_generator, timestamp)
 
-/* <cpe-list>
- * */
-struct cpe_dict_model {		// the main node
-	struct oscap_list *items;	// dictionary items
-	struct oscap_list *vendors;
-	int base_version;
-	struct cpe_generator *generator;
-};
 OSCAP_GETTER(struct cpe_generator *, cpe_dict_model, generator)
 OSCAP_ACCESSOR_SIMPLE(int, cpe_dict_model, base_version)
 OSCAP_IGETTER_GEN(cpe_item, cpe_dict_model, items)
@@ -418,6 +410,8 @@ struct cpe_dict_model *cpe_dict_model_new()
 	dict->items = oscap_list_new();
 
 	dict->base_version = 2; // default to CPE 2.x
+
+	dict->origin_file = 0;
 
 	return dict;
 }
@@ -1336,13 +1330,13 @@ static void cpe_reference_export(const struct cpe_reference *ref, xmlTextWriterP
  */
 void cpe_dict_model_free(struct cpe_dict_model *dict)
 {
-
 	if (dict == NULL)
 		return;
 
 	oscap_list_free(dict->items, (oscap_destruct_func) cpe_item_free);
 	oscap_list_free(dict->vendors, (oscap_destruct_func) cpe_vendor_free);
 	cpe_generator_free(dict->generator);
+	oscap_free(dict->origin_file);
 	oscap_free(dict);
 }
 

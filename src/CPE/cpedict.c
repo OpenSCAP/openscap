@@ -44,7 +44,6 @@
 
 struct cpe_dict_model *cpe_dict_model_import(const char *file)
 {
-
 	__attribute__nonnull__(file);
 
 	if (file == NULL)
@@ -53,8 +52,14 @@ struct cpe_dict_model *cpe_dict_model_import(const char *file)
 	struct cpe_dict_model *dict;
 
 	dict = cpe_dict_model_parse_xml(file);
+	dict->origin_file = oscap_strdup(file);
 
 	return dict;
+}
+
+const char* cpe_dict_model_get_origin_file(const struct cpe_dict_model* dict)
+{
+	return dict->origin_file;
 }
 
 void cpe_dict_model_export(const struct cpe_dict_model *dict, const char *file)

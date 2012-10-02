@@ -909,6 +909,15 @@ void cpe_dict_model_export(const struct cpe_dict_model *dict, const char *file);
  */
 struct cpe_dict_model *cpe_dict_model_import(const char *file);
 
+/**
+ * Gets the file the CPE dict model was loaded from
+ * @internal
+ * This is necessary to figure out the full OVAL file path for applicability
+ * testing. We can't do applicability here in the CPE module because that
+ * would create awful interdependencies.
+ */
+const char* cpe_dict_model_get_origin_file(const struct cpe_dict_model* dict);
+
 /** @} */
 
 /** @} */

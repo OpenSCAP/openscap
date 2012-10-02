@@ -31,6 +31,7 @@
 #include <string.h>
 #include <math.h> /* For isnan() */
 #include <time.h> /* For timestamps in rule results and TestResult */
+#include <libgen.h>
 
 #include "public/xccdf_policy.h"
 #include "public/xccdf_benchmark.h"
@@ -793,22 +794,43 @@ _xccdf_policy_rule_get_applicable_check(struct xccdf_policy *policy, struct xccd
 	return result;
 }
 
+struct cpe_check_cb_usr
+{
+	struct xccdf_policy_model* model;
+	struct cpe_dict_model* dict;
+};
+
 static bool _xccdf_policy_cpe_check_cb(const char* href, const char* name, void* usr)
 {
-	struct xccdf_policy_model* model = (struct xccdf_policy_model*)usr;
-	struct oval_agent_session* session = (struct oval_agent_session*)oscap_htable_get(model->cpe_oval_sessions, href);
+	struct cpe_check_cb_usr* cb_usr = (struct cpe_check_cb_usr*)usr;
+
+	struct xccdf_policy_model* model = cb_usr->model;
+	struct cpe_dict_model* dict = cb_usr->dict;
+
+	// the href path is relative to the CPE dictionary, we need to figre out
+	// a "prefixed path" to deal with the case where CPE dict is not in CWD
+	const char* origin_file_c = cpe_dict_model_get_origin_file(dict);
+	// we need to strdup because dirname potentially alters the string
+	char* origin_file = oscap_strdup(origin_file_c ? origin_file_c : "");
+	const char* prefix_dirname = dirname(origin_file);
+	char* prefixed_href = oscap_sprintf("%s/%s", prefix_dirname, href);
+	oscap_free(origin_file);
+
+	struct oval_agent_session* session = (struct oval_agent_session*)oscap_htable_get(model->cpe_oval_sessions, prefixed_href);
 
 	if (session == NULL)
 	{
-		struct oval_definition_model* oval_model = oval_definition_model_import(href);
+		struct oval_definition_model* oval_model = oval_definition_model_import(prefixed_href);
 		if (oval_model == NULL)
 		{
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't import OVAL definition model '%s' for CPE applicability checking", href);
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't import OVAL definition model '%s' for CPE applicability checking", prefixed_href);
+			oscap_free(prefixed_href);
 			return false;
 		}
 
-		session = oval_agent_new_session(oval_model, href);
-		oscap_htable_add(model->cpe_oval_sessions, href, session);
+		session = oval_agent_new_session(oval_model, prefixed_href);
+		oscap_htable_add(model->cpe_oval_sessions, prefixed_href, session);
+		oscap_free(prefixed_href);
 	}
 
 	oval_agent_eval_definition(session, name);
@@ -832,7 +854,13 @@ static bool xccdf_policy_model_item_is_applicable_dict(struct xccdf_policy_model
 	{
 		const char* platform = oscap_string_iterator_next(platforms);
 		struct cpe_name* name = cpe_name_new(platform);
-		const bool applicable = cpe_name_applicable_dict(name, dict, (cpe_check_fn) _xccdf_policy_cpe_check_cb, model);
+
+		struct cpe_check_cb_usr* usr = oscap_alloc(sizeof(struct cpe_check_cb_usr));
+		usr->model = model;
+		usr->dict = dict;
+		const bool applicable = cpe_name_applicable_dict(name, dict, (cpe_check_fn) _xccdf_policy_cpe_check_cb, usr);
+		oscap_free(usr);
+
 		cpe_name_free(name);
 
 		if (applicable)
