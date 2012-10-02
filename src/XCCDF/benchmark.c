@@ -32,6 +32,7 @@
 #include "xccdf_impl.h"
 #include "common/_error.h"
 #include "common/debug_priv.h"
+#include "common/assume.h"
 
 #define XCCDF_SUPPORTED "1.2"
 
@@ -79,7 +80,7 @@ struct xccdf_benchmark *xccdf_benchmark_new(void)
 	// add the implied default scoring model
 	struct xccdf_model *default_model = xccdf_model_new();
 	xccdf_model_set_system(default_model, "urn:xccdf:scoring:default");
-	xccdf_benchmark_add_model(XBENCHMARK(bench), default_model);
+	assume_ex(xccdf_benchmark_add_model(XBENCHMARK(bench), default_model), XBENCHMARK(bench));
 
 	return XBENCHMARK(bench);
 }
@@ -137,7 +138,7 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 
 			// we won't add the implied default scoring model, it is already in the benchmark
 			if (strcmp(xccdf_model_get_system(parsed_model), "urn:xccdf:scoring:default") != 0)
-				xccdf_benchmark_add_model(XBENCHMARK(benchmark), parsed_model);
+				assume_ex(xccdf_benchmark_add_model(XBENCHMARK(benchmark), parsed_model), false);
 			else
 				xccdf_model_free(parsed_model);
 
@@ -161,7 +162,7 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 			oscap_list_add(benchmark->sub.benchmark.values, xccdf_value_parse(reader, benchmark));
 			break;
 		case XCCDFE_TESTRESULT:
-			xccdf_benchmark_add_result(XBENCHMARK(benchmark), xccdf_result_new_parse(reader));
+			assume_ex(xccdf_benchmark_add_result(XBENCHMARK(benchmark), xccdf_result_new_parse(reader)), false);
 			break;
 		default:
 			xccdf_item_process_element(benchmark, reader);
@@ -458,7 +459,7 @@ struct xccdf_group *xccdf_benchmark_append_new_group(struct xccdf_benchmark *ben
 	if (benchmark == NULL) return NULL;
 	struct xccdf_group *group = xccdf_group_new();
 	xccdf_group_set_id(group, id);
-	xccdf_benchmark_add_group(benchmark, group);
+	assume_ex(xccdf_benchmark_add_group(benchmark, group), group);
     return group;
 }
 struct xccdf_value *xccdf_benchmark_append_new_value(struct xccdf_benchmark *benchmark, const char *id, xccdf_value_type_t type)
@@ -466,7 +467,7 @@ struct xccdf_value *xccdf_benchmark_append_new_value(struct xccdf_benchmark *ben
 	if (benchmark == NULL) return NULL;
 	struct xccdf_value *value = xccdf_value_new(type);
 	xccdf_value_set_id(value, id);
-	xccdf_benchmark_add_value(benchmark, value);
+	assume_ex(xccdf_benchmark_add_value(benchmark, value), value);
     return value;
 }
 struct xccdf_rule *xccdf_benchmark_append_new_rule(struct xccdf_benchmark *benchmark, const char *id)
@@ -474,7 +475,7 @@ struct xccdf_rule *xccdf_benchmark_append_new_rule(struct xccdf_benchmark *bench
 	if (benchmark == NULL) return NULL;
 	struct xccdf_rule *rule = xccdf_rule_new();
 	xccdf_rule_set_id(rule, id);
-	xccdf_benchmark_add_rule(benchmark, rule);
+	assume_ex(xccdf_benchmark_add_rule(benchmark, rule), value);
     return rule;
 }
 
