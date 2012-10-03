@@ -92,7 +92,7 @@
     </rpmverify_state>
     <rpmverify_state id="oval:org.mitre.oval.test:ste:1362" version="1" comment="accepts /bin/ls" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <name operation="pattern match"/>
-      <filepath>/bin/ls</filepath>
+      <filepath var_ref="oval:org.mitre.oval.test:var:805" var_check="at least one"/>
     </rpmverify_state>
     <rpmverify_state id="oval:org.mitre.oval.test:ste:719" version="1" comment="accepts any file under /etc/X11 owned by any package" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <name operation="pattern match"/>
