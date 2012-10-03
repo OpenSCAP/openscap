@@ -13,7 +13,7 @@ MITRE_FILES="/tmp/support"
 EXTVARFILE="${MITRE_FILES}/var/linux-external-variables.xml"
 
 DISTRO_NAME="$(cat /etc/*-release | awk '{print $1}' | head -n1)"
-DISTRO_RELEASE="$(cat /etc/*-release | sed -n 's|^[^0-9]*\([0-9]*\).*$|\1|p') | head -n1"
+DISTRO_RELEASE="$(cat /etc/*-release | sed -n 's|^[^0-9]*\([0-9]*\).*$|\1|p' | head -n1)"
 
 function test_mitre {
 
@@ -139,7 +139,7 @@ test_run "oval_version_datatype.xml" test_mitre oval_version_datatype.xml "true"
 test_run "unix-def_password_test.xml" test_mitre unix-def_password_test.xml "true"
 
 # Fedora 16 (no init)
-if ! [[ $DISTRO_NAME == "Fedora" && $DISTRO_RELEASE >= 16 ]]; then
+if [[ ! ( $DISTRO_NAME == "Fedora" && $DISTRO_RELEASE > 15 ) ]]; then
 	test_run "unix-def_process58_test.xml" test_mitre unix-def_process58_test.xml "true"
 	test_run "unix-def_process_test.xml" test_mitre unix-def_process_test.xml "true"
 	test_run "unix-def_runlevel_test.xml" test_mitre unix-def_runlevel_test.xml "true"
