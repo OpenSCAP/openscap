@@ -1,8 +1,9 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:win-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5">
   <generator>
-    <oval:schema_version>5.9</oval:schema_version>
+    <oval:schema_version>5.10.1</oval:schema_version>
     <oval:timestamp>2007-01-31T14:30:20.988-05:00</oval:timestamp>
+    <terms_of_use>Copyright (c) 2002-2012, The MITRE Corporation. All rights reserved. The contents of this file are subject to the license described in terms.txt.</terms_of_use>
   </generator>
   <definitions>
     <definition id="oval:org.mitre.oval.test:def:870" version="2" class="compliance">
@@ -55,85 +56,85 @@
     </xmlfilecontent_test>
   </tests>
   <objects>
-    <xmlfilecontent_object id="oval:org.mitre.oval.test:obj:48" version="1" comment="This object represents a xmlfilecontent_item with a path equal to '/tmp/ValidationSupportFiles/XMLFiles/Classes/Class1', a filename equal to 'Section1.xml', and an xpath query equal to '//*/grades/grade[@type='test']/text()'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <path>/tmp/ValidationSupportFiles/XMLFiles/Classes/Class1</path>
-      <filename>Section1.xml</filename>
+    <xmlfilecontent_object id="oval:org.mitre.oval.test:obj:48" version="1" comment="This object represents a xmlfilecontent_item with a path equal to '/tmp/support/xml/classes/class1', a filename equal to 'section1.xml', and an xpath query equal to '//*/grades/grade[@type='test']/text()'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp/support/xml/classes/class1</path>
+      <filename>section1.xml</filename>
       <xpath>//*/grades/grade[@type='test']/text()</xpath>
     </xmlfilecontent_object>
-    <xmlfilecontent_object id="oval:org.mitre.oval.test:obj:85" version="1" comment="This object represents a xmlfilecontent_item with a path that matches the regular expression '^/tmp/ValidationSupportFiles/XMLFiles/Classes/Class[0-9]$', a filename equal to 'Section1.xml', and an xpath query equal to '//*/student[@status='full-time']/name/text()'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <path operation="pattern match">^/tmp/ValidationSupportFiles/XMLFiles/Classes/Class[0-9]$</path>
-      <filename>Section1.xml</filename>
+    <xmlfilecontent_object id="oval:org.mitre.oval.test:obj:85" version="1" comment="This object represents a xmlfilecontent_item with a path that matches the regular expression '^/tmp/support/xml/classes/class[0-9]$', a filename equal to 'section1.xml', and an xpath query equal to '//*/student[@status='full-time']/name/text()'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path operation="pattern match">^/tmp/support/xml/classes/class[0-9]$</path>
+      <filename>section1.xml</filename>
       <xpath>//*/student[@status='full-time']/name/text()</xpath>
     </xmlfilecontent_object>
-    <xmlfilecontent_object id="oval:org.mitre.oval.test:obj:252" version="1" comment="This object represents a xmlfilecontent_item with a path equal to '/tmp/ValidationSupportFiles/XMLFiles/Classes/Class2', a filename that matches the regular expression 'Section(1|2)\.xml', and an xpath query equal to 'count(//*/student)'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <path>/tmp/ValidationSupportFiles/XMLFiles/Classes/Class2</path>
-      <filename operation="pattern match">Section(1|2)\.xml</filename>
+    <xmlfilecontent_object id="oval:org.mitre.oval.test:obj:252" version="1" comment="This object represents a xmlfilecontent_item with a path equal to '/tmp/support/xml/classes/class2', a filename that matches the regular expression 'section(1|2)\.xml', and an xpath query equal to 'count(//*/student)'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp/support/xml/classes/class2</path>
+      <filename operation="pattern match">section(1|2)\.xml</filename>
       <xpath>count(//*/student)</xpath>
     </xmlfilecontent_object>
-    <xmlfilecontent_object id="oval:org.mitre.oval.test:obj:109" version="1" comment="This object represents a xmlfilecontent_item with a path equal to '/tmp/ValidationSupportFiles/XMLFiles/Classes/Class1', a filename equal to 'Section1.xml', and an xpath query equal to '//*/grades/grade[@type='test']/text()'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <path>/tmp/ValidationSupportFiles/XMLFiles/Classes/Class1</path>
-      <filename operation="not equal">Section1.xml</filename>
+    <xmlfilecontent_object id="oval:org.mitre.oval.test:obj:109" version="1" comment="This object represents a xmlfilecontent_item with a path equal to '/tmp/support/xml/classes/class1', a filename equal to 'section1.xml', and an xpath query equal to '//*/grades/grade[@type='test']/text()'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp/support/xml/classes/class1</path>
+      <filename operation="not equal">section1.xml</filename>
       <xpath>//*/grades/grade[@type='test']/text()</xpath>
     </xmlfilecontent_object>
-    <xmlfilecontent_object id="oval:org.mitre.oval.test:obj:751" version="1" comment="This object represents a xmlfilecontent_item with a path equal to '/tmp/ValidationSupportFiles/XMLFiles/Classes', recursing down one level, a filename equal to 'Section1.xml', and an xpath query equal to '//*/grades/grade[@type='test']/text()'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+    <xmlfilecontent_object id="oval:org.mitre.oval.test:obj:751" version="1" comment="This object represents a xmlfilecontent_item with a path equal to '/tmp/support/xml/classes', recursing down one level, a filename equal to 'section1.xml', and an xpath query equal to '//*/grades/grade[@type='test']/text()'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <behaviors max_depth="1" recurse_direction="down"/>
-      <path>/tmp/ValidationSupportFiles/XMLFiles/Classes</path>
-      <filename>Section1.xml</filename>
+      <path>/tmp/support/xml/classes</path>
+      <filename>section1.xml</filename>
       <xpath>//*/grades/grade[@type='test']/text()</xpath>
     </xmlfilecontent_object>
-    <xmlfilecontent_object id="oval:org.mitre.oval.test:obj:451" version="1" comment="This object represents a xmlfilecontent_item with a path equal to '/tmp/ValidationSupportFiles', recursing down infinitely, a filename equal to 'Section1.xml', and an xpath query equal to '//*/student[@status='full-time']/name/text()'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+    <xmlfilecontent_object id="oval:org.mitre.oval.test:obj:451" version="1" comment="This object represents a xmlfilecontent_item with a path equal to '/tmp/support', recursing down infinitely, a filename equal to 'section1.xml', and an xpath query equal to '//*/student[@status='full-time']/name/text()'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <behaviors max_depth="-1" recurse_direction="down"/>
-      <path>/tmp/ValidationSupportFiles</path>
-      <filename>Section1.xml</filename>
+      <path>/tmp/support</path>
+      <filename>section1.xml</filename>
       <xpath>//*/student[@status='full-time']/name/text()</xpath>
     </xmlfilecontent_object>
-    <xmlfilecontent_object id="oval:org.mitre.oval.test:obj:701" version="1" comment="This object represents a xmlfilecontent_item with a path equal to '/tmp/ValidationSupportFiles/XMLFiles/Classes/Class2/SubClass2', recursing up one level, a filename that matches the regular expression 'Section(1|2)\.xml', and an xpath query equal to 'count(//*/student)'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+    <xmlfilecontent_object id="oval:org.mitre.oval.test:obj:701" version="1" comment="This object represents a xmlfilecontent_item with a path equal to '/tmp/support/xml/classes/class2/subclass2', recursing up one level, a filename that matches the regular expression 'section(1|2)\.xml', and an xpath query equal to 'count(//*/student)'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <behaviors max_depth="1" recurse_direction="up"/>
-      <path>/tmp/ValidationSupportFiles/XMLFiles/Classes/Class2/SubClass2</path>
-      <filename operation="pattern match">Section(1|2)\.xml</filename>
+      <path>/tmp/support/xml/classes/class2/subclass2</path>
+      <filename operation="pattern match">section(1|2)\.xml</filename>
       <xpath>count(//*/student)</xpath>
     </xmlfilecontent_object>
   </objects>
   <states>
-    <xmlfilecontent_state id="oval:org.mitre.oval.test:ste:360" version="1" comment="This state represents a xmlfilecontent_item with a path equal to '/tmp/ValidationSupportFiles/XMLFiles/Classes/Class1', a filename equal to 'Section1.xml', an xpath query equal to '//*/grades/grade[@type='test']/text()', and a value_of that matches the regular expression '(83|87|93|86|100|76|53|97)'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <path>/tmp/ValidationSupportFiles/XMLFiles/Classes/Class1</path>
-      <filename>Section1.xml</filename>
+    <xmlfilecontent_state id="oval:org.mitre.oval.test:ste:360" version="1" comment="This state represents a xmlfilecontent_item with a path equal to '/tmp/support/xml/classes/class1', a filename equal to 'section1.xml', an xpath query equal to '//*/grades/grade[@type='test']/text()', and a value_of that matches the regular expression '(83|87|93|86|100|76|53|97)'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp/support/xml/classes/class1</path>
+      <filename>section1.xml</filename>
       <xpath>//*/grades/grade[@type='test']/text()</xpath>
       <value_of operation="pattern match">(83|87|93|86|100|76|53|97)</value_of>
     </xmlfilecontent_state>
-    <xmlfilecontent_state id="oval:org.mitre.oval.test:ste:582" version="1" comment="This state represents a xmlfilecontent_item with a path that matches the regular expression '^/tmp/ValidationSupportFiles/XMLFiles/Classes/Class[0-9]$', a filename equal to 'Section1.xml', an xpath query equal to '//*/student[@status='full-time']/name/text()', and value_of that matches the regular expression '(Bill|Kate)'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <path operation="pattern match">^/tmp/ValidationSupportFiles/XMLFiles/Classes/Class[0-9]$</path>
-      <filename>Section1.xml</filename>
+    <xmlfilecontent_state id="oval:org.mitre.oval.test:ste:582" version="1" comment="This state represents a xmlfilecontent_item with a path that matches the regular expression '^/tmp/support/xml/classes/class[0-9]$', a filename equal to 'section1.xml', an xpath query equal to '//*/student[@status='full-time']/name/text()', and value_of that matches the regular expression '(Bill|Kate)'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path operation="pattern match">^/tmp/support/xml/classes/class[0-9]$</path>
+      <filename>section1.xml</filename>
       <xpath>//*/student[@status='full-time']/name/text()</xpath>
       <value_of operation="pattern match">(Bill|Kate)</value_of>
     </xmlfilecontent_state>
-    <xmlfilecontent_state id="oval:org.mitre.oval.test:ste:276" version="1" comment="This state represents a xmlfilecontent_item with a path equal to '/tmp/ValidationSupportFiles/XMLFiles/Classes/Class2', a filename that matches the regular expression 'Section(1|2)\.xml', an xpath query equal to 'count(//*/student)', and a value_of equal to '4'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <path>/tmp/ValidationSupportFiles/XMLFiles/Classes/Class2</path>
-      <filename operation="pattern match">Section(1|2)\.xml</filename>
+    <xmlfilecontent_state id="oval:org.mitre.oval.test:ste:276" version="1" comment="This state represents a xmlfilecontent_item with a path equal to '/tmp/support/xml/classes/class2', a filename that matches the regular expression 'section(1|2)\.xml', an xpath query equal to 'count(//*/student)', and a value_of equal to '4'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp/support/xml/classes/class2</path>
+      <filename operation="pattern match">section(1|2)\.xml</filename>
       <xpath>count(//*/student)</xpath>
       <value_of>4</value_of>
     </xmlfilecontent_state>
-    <xmlfilecontent_state id="oval:org.mitre.oval.test:ste:101" version="1" comment="This state represents a xmlfilecontent_item with a path equal to '/tmp/ValidationSupportFiles/XMLFiles/Classes/Class1', a filename equal to 'Section1.xml', an xpath query equal to '//*/grades/grade[@type='test']/text()', and a value_of that matches the regular expression '(83|87|93|86|100|76|53|97)'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <path>/tmp/ValidationSupportFiles/XMLFiles/Classes/Class1</path>
-      <filename operation="not equal">Section1.xml</filename>
+    <xmlfilecontent_state id="oval:org.mitre.oval.test:ste:101" version="1" comment="This state represents a xmlfilecontent_item with a path equal to '/tmp/support/xml/classes/class1', a filename equal to 'section1.xml', an xpath query equal to '//*/grades/grade[@type='test']/text()', and a value_of that matches the regular expression '(83|87|93|86|100|76|53|97)'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp/support/xml/classes/class1</path>
+      <filename operation="not equal">section1.xml</filename>
       <xpath>//*/grades/grade[@type='test']/text()</xpath>
       <value_of operation="pattern match">(83|87|93|86|100|76|53|97)</value_of>
     </xmlfilecontent_state>
-    <xmlfilecontent_state id="oval:org.mitre.oval.test:ste:192" version="1" comment="This state represents a xmlfilecontent_item with a path that matches the regular expression '^/tmp/ValidationSupportFiles/XMLFiles/Classes/Class[0-9]$', a filename equal to 'Section1.xml', an xpath query equal to '//*/grades/grade[@type='test']/text()', and a value_of that matches the regular expression '(83|87|93|86|100|76|53|97)'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <path operation="pattern match">^/tmp/ValidationSupportFiles/XMLFiles/Classes/Class[0-9]$</path>
-      <filename>Section1.xml</filename>
+    <xmlfilecontent_state id="oval:org.mitre.oval.test:ste:192" version="1" comment="This state represents a xmlfilecontent_item with a path that matches the regular expression '^/tmp/support/xml/classes/class[0-9]$', a filename equal to 'section1.xml', an xpath query equal to '//*/grades/grade[@type='test']/text()', and a value_of that matches the regular expression '(83|87|93|86|100|76|53|97)'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path operation="pattern match">^/tmp/support/xml/classes/class[0-9]$</path>
+      <filename>section1.xml</filename>
       <xpath>//*/grades/grade[@type='test']/text()</xpath>
       <value_of operation="pattern match">(83|87|93|86|100|76|53|97)</value_of>
     </xmlfilecontent_state>
-    <xmlfilecontent_state id="oval:org.mitre.oval.test:ste:786" version="1" comment="This state represents a xmlfilecontent_item with a path that matches the regular expression '^/tmp/ValidationSupportFiles/XMLFiles/Classes/Class[0-9]$', a filename equal to 'Section1.xml', an xpath query equal to '//*/student[@status='full-time']/name/text()', and a value_of that matches the regular expression '(Bill|Kate)'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <path operation="pattern match">^/tmp/ValidationSupportFiles/XMLFiles/Classes/Class[0-9]$</path>
-      <filename>Section1.xml</filename>
+    <xmlfilecontent_state id="oval:org.mitre.oval.test:ste:786" version="1" comment="This state represents a xmlfilecontent_item with a path that matches the regular expression '^/tmp/support/xml/classes/class[0-9]$', a filename equal to 'section1.xml', an xpath query equal to '//*/student[@status='full-time']/name/text()', and a value_of that matches the regular expression '(Bill|Kate)'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path operation="pattern match">^/tmp/support/xml/classes/class[0-9]$</path>
+      <filename>section1.xml</filename>
       <xpath>//*/student[@status='full-time']/name/text()</xpath>
       <value_of operation="pattern match">(Bill|Kate)</value_of>
     </xmlfilecontent_state>
-    <xmlfilecontent_state id="oval:org.mitre.oval.test:ste:987" version="2" comment="This object represents a xmlfilecontent_item with a path equal to '/tmp/ValidationSupportFiles/XMLFiles/Classes/Class2', a filename that matches the regular expression 'Section(1|2)\.xml', an xpath query equal to 'count(//*/student)', and a value_of equal to '4'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <path>/tmp/ValidationSupportFiles/XMLFiles/Classes/Class2</path>
-      <filename operation="pattern match">Section(1|2)\.xml</filename>
+    <xmlfilecontent_state id="oval:org.mitre.oval.test:ste:987" version="2" comment="This object represents a xmlfilecontent_item with a path equal to '/tmp/support/xml/classes/class2', a filename that matches the regular expression 'section(1|2)\.xml', an xpath query equal to 'count(//*/student)', and a value_of equal to '4'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp/support/xml/classes/class2</path>
+      <filename operation="pattern match">section(1|2)\.xml</filename>
       <xpath>count(//*/student)</xpath>
       <value_of>4</value_of>
     </xmlfilecontent_state>

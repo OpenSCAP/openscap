@@ -2,22 +2,26 @@
 
 # Author:
 #      Peter Vrabec, <pvrabec@redhat.com>
+#	   Daniel Kopecek <dkopecek@redhat.com>
 
 
 . ${srcdir}/../test_common.sh
 
 # Test Cases.
 
-MITRE_FILES="/tmp/ValidationSupportFiles"
-EXTVARFILE="${MITRE_FILES}/External Variables/linux-external-variables.xml"
+MITRE_FILES="/tmp/support"
+EXTVARFILE="${MITRE_FILES}/var/linux-external-variables.xml"
+
+DISTRO_NAME="$(cat /etc/*-release | awk '{print $1}' | head -n1)"
+DISTRO_RELEASE="$(cat /etc/*-release | sed -n 's|^[^0-9]*\([0-9]*\).*$|\1|p') | head -n1"
 
 function test_mitre {
 
     require "egrep" || return 255
-    require "unzip" || return 255
+    require "awk" || return 255
 
     if [ ! -d "$MITRE_FILES" ]; then
-        /usr/bin/unzip -u ${srcdir}/ValidationSupportFiles.zip -d /tmp
+    	tar zxf ${srcdir}/support.tgz -C /tmp
         # workaround file access time issue
         find "$MITRE_FILES"
 	# workaround old schema version in linux-external-variables.xml
@@ -80,6 +84,7 @@ test_init "test_mitre.log"
 test_run "ind-def_unknown_test.xml" test_mitre ind-def_unknown_test.xml "unknown"
 test_run "ind-def_variable_test.xml" test_mitre ind-def_variable_test.xml "true"
 test_run "ind-def_environmentvariable_test.xml" test_mitre ind-def_environmentvariable_test.xml "true"
+test_run "ind-def_environmentvariable58_test.xml" test_mitre ind-def_environmentvariable_test.xml "true"
 test_run "ind-def_family_test.xml" test_mitre ind-def_family_test.xml "true"
 test_run "ind-def_textfilecontent54_test.xml" test_mitre ind-def_textfilecontent54_test.xml "true"
 test_run "ind-def_textfilecontent_test.xml" test_mitre ind-def_textfilecontent_test.xml "true"
@@ -92,8 +97,7 @@ test_run "ind-def_filehash58_test.xml" test_mitre ind-def_filehash58_test.xml "t
 
 test_run "linux-def_partition_test.xml" test_mitre linux-def_partition_test.xml "true"
 test_run "linux-def_rpminfo_test.xml" test_mitre linux-def_rpminfo_test.xml "true"
-# todo: fails on fedora 17+, https://fedorahosted.org/openscap/ticket/203
-#test_run "linux-def_rpmverify_test.xml" test_mitre linux-def_rpmverify_test.xml "true"
+test_run "linux-def_rpmverify_test.xml" test_mitre linux-def_rpmverify_test.xml "true"
 test_run "linux-def_selinuxboolean_test.xml" test_mitre linux-def_selinuxboolean_test.xml "true"
 test_run "linux-def_selinuxsecuritycontext_test.xml" test_mitre linux-def_selinuxsecuritycontext_test.xml "true"
 test_run "linux-def_inetlisteningservers_test.xml" test_mitre linux-def_inetlisteningservers_test.xml "true"
@@ -102,6 +106,7 @@ test_run "oval_binary_datatype.xml" test_mitre oval_binary_datatype.xml "true"
 test_run "oval_boolean_datatype.xml" test_mitre oval_boolean_datatype.xml "true"
 test_run "oval_check_enumeration_entity.xml" test_mitre oval_check_enumeration_entity.xml "true"
 test_run "oval_check_enumeration_object_state.xml" test_mitre oval_check_enumeration_object_state.xml "true"
+test_run "oval_check_enumeration_variable_values.xml" test_mitre oval_check_enumeration_variable_values.xml "true"
 test_run "oval-def_arithmetic_function.xml" test_mitre oval-def_arithmetic_function.xml "true"
 test_run "oval-def_begin_function.xml" test_mitre oval-def_begin_function.xml "true"
 test_run "oval-def_concat_function.xml" test_mitre oval-def_concat_function.xml "true"
@@ -134,9 +139,11 @@ test_run "oval_version_datatype.xml" test_mitre oval_version_datatype.xml "true"
 test_run "unix-def_password_test.xml" test_mitre unix-def_password_test.xml "true"
 
 # Fedora 16 (no init)
-#test_run "unix-def_process58_test.xml" test_mitre unix-def_process58_test.xml "true"
-#test_run "unix-def_process_test.xml" test_mitre unix-def_process_test.xml "true"
-#test_run "unix-def_runlevel_test.xml" test_mitre unix-def_runlevel_test.xml "true"
+if ! [[ $DISTRO_NAME == "Fedora" && $DISTRO_RELEASE >= 16 ]]; then
+	test_run "unix-def_process58_test.xml" test_mitre unix-def_process58_test.xml "true"
+	test_run "unix-def_process_test.xml" test_mitre unix-def_process_test.xml "true"
+	test_run "unix-def_runlevel_test.xml" test_mitre unix-def_runlevel_test.xml "true"
+fi
 
 test_run "unix-def_uname_test.xml" test_mitre unix-def_uname_test.xml "true"
 
@@ -144,16 +151,23 @@ test_run "unix-def_uname_test.xml" test_mitre unix-def_uname_test.xml "true"
 #test_run "unix-def_interface_test.xml" test_mitre unix-def_interface_test.xml "true"
 
 # root needed
-#test_run "unix-def_shadow_test.xml" test_mitre unix-def_shadow_test.xml "true"
+if [[ $(id -u) == 0 ]]; then
+	test_run "unix-def_shadow_test.xml" test_mitre unix-def_shadow_test.xml "true"
+fi
 
 # install xinetd, telnet-server and tftp-server in order to test xinetd probe
-#test_run "unix-def_xinetd_test.xml" test_mitre unix-def_xinetd_test.xml "true"
+if [[ -f "/etc/xinetd.conf" && -f "/etc/xinetd.d/tftp" && -f "/etc/xinetd.d/telnet" ]]; then
+	test_run "unix-def_xinetd_test.xml" test_mitre unix-def_xinetd_test.xml "true"
+fi
 
 # Unsupported objects on Fedora
 #test_run "ind-def_ldap_test.xml" test_mitre ind-def_ldap_test.xml "unknown"
 #test_run "ind-def_sql_test.xml" test_mitre ind-def_sql_test.xml "unknown"
 #test_run "linux-def_slackwarepkginfo_test.xml" test_mitre linux-def_slackwarepkginfo_test.xml "unknown"
 #test_run "unix-def_inetd_test.xml" test_mitre unix-def_inetd_test.xml "unknown"
-#test_run "linux-def_dpkginfo_test.xml" test_mitre linux-def_dpkginfo_test.xml
+
+if [[ $DISTRO_NAME == "Debian" ]]; then
+	test_run "linux-def_dpkginfo_test.xml" test_mitre linux-def_dpkginfo_test.xml "true"
+fi
 
 test_exit cleanup

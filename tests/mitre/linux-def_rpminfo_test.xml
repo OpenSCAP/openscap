@@ -1,11 +1,12 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:linux-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
   <generator>
-    <oval:schema_version>5.9</oval:schema_version>
+    <oval:schema_version>5.10.1</oval:schema_version>
     <oval:timestamp>2009-01-12T10:41:00-05:00</oval:timestamp>
+    <terms_of_use>Copyright (c) 2002-2012, The MITRE Corporation. All rights reserved. The contents of this file are subject to the license described in terms.txt.</terms_of_use>
   </generator>
   <definitions>
-    <definition id="oval:org.mitre.oval.test:def:121" version="1" class="miscellaneous">
+    <definition id="oval:org.mitre.oval.test:def:121" version="5" class="miscellaneous">
       <metadata>
         <title>Evaluate to true if the linux-def:rpminfo_test is properly supported</title>
         <description>This definition is intended to evalutate to true if the interpreter properly supports the linux-def:rpminfo_test.</description>
@@ -21,15 +22,15 @@
     </definition>
   </definitions>
   <tests>
-    <rpminfo_test id="oval:org.mitre.oval.test:tst:617" version="1" comment="Test that the rpminfo_object is supported with the name entity equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <rpminfo_test id="oval:org.mitre.oval.test:tst:617" version="2" comment="Test that the rpminfo_object is supported with the name entity equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:org.mitre.oval.test:obj:251"/>
       <state state_ref="oval:org.mitre.oval.test:ste:599"/>
     </rpminfo_test>
-    <!--<rpminfo_test id="oval:org.mitre.oval.test:tst:416" version="1" comment="Test that the rpminfo_object is supported with the name entity not equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <!--<rpminfo_test id="oval:org.mitre.oval.test:tst:416" version="3" comment="Test that the rpminfo_object is supported with the name entity not equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:org.mitre.oval.test:obj:348"/>
       <state state_ref="oval:org.mitre.oval.test:ste:341"/>
     </rpminfo_test>-->
-    <rpminfo_test id="oval:org.mitre.oval.test:tst:793" version="1" comment="Test that the rpminfo_object is supported with the name entity matching some regular expression." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <rpminfo_test id="oval:org.mitre.oval.test:tst:793" version="2" comment="Test that the rpminfo_object is supported with the name entity matching some regular expression." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:org.mitre.oval.test:obj:236"/>
       <state state_ref="oval:org.mitre.oval.test:ste:525"/>
     </rpminfo_test>
@@ -38,39 +39,38 @@
     <rpminfo_object id="oval:org.mitre.oval.test:obj:251" version="1" comment="Retrieve an rpminfo_item with a name equal to 'rpm'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <name>rpm</name>
     </rpminfo_object>
-    <!--<rpminfo_object id="oval:org.mitre.oval.test:obj:348" version="1" comment="Retrieve rpminfo_items with names that are not equal to 'rpm'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <!--<rpminfo_object id="oval:org.mitre.oval.test:obj:348" version="3" comment="Retrieve rpminfo_items with names that are not equal to 'rpm'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <name operation="not equal">rpm</name>
     </rpminfo_object>-->
-    <rpminfo_object id="oval:org.mitre.oval.test:obj:236" version="1" comment="Retrieve rpminfo_items with names that match the regular expression '^r.m$'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <rpminfo_object id="oval:org.mitre.oval.test:obj:236" version="2" comment="Retrieve rpminfo_items with names that match the regular expression '^r.m$'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <name operation="pattern match">^r.m$</name>
     </rpminfo_object>
   </objects>
   <states>
-    <rpminfo_state id="oval:org.mitre.oval.test:ste:599" version="1" comment="This state represents an rpminfo_item that has a name equal to 'rpm', and an arch, epoch, release, version, evr, and signature_keyid that match the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <rpminfo_state id="oval:org.mitre.oval.test:ste:599" version="2" comment="This state represents an rpminfo_item that has a name equal to 'rpm', and an arch, epoch, release, version, evr, and signature_keyid that match the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <name>rpm</name>
       <arch operation="pattern match">.*</arch>
       <epoch operation="pattern match">.*</epoch>
       <release operation="pattern match">.*</release>
       <version operation="pattern match">.*</version>
-      <evr datatype="evr_string" operation="greater than or equal">0</evr>
+      <evr datatype="evr_string" operation="greater than or equal">0:0-0</evr>
       <signature_keyid operation="pattern match">.*</signature_keyid>
     </rpminfo_state>
-    <rpminfo_state id="oval:org.mitre.oval.test:ste:341" version="1" comment="This state represents rpminfo_items that have a name not equal to 'rpm', and an arch, epoch, release, version, evr, and signature_keyid that match the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <rpminfo_state id="oval:org.mitre.oval.test:ste:341" version="3" comment="This state represents rpminfo_items that have a name not equal to 'rpm', and an arch, epoch, release, version, evr, and signature_keyid that match the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <name operation="not equal">rpm</name>
       <arch operation="pattern match">.*</arch>
       <epoch operation="pattern match">.*</epoch>
       <release operation="pattern match">.*</release>
       <version operation="pattern match">.*</version>
-      <evr datatype="evr_string" operation="greater than or equal">0</evr>
-      <signature_keyid operation="pattern match">.*</signature_keyid>
+      <evr datatype="evr_string" operation="greater than or equal">0:0-0</evr>
     </rpminfo_state>
-    <rpminfo_state id="oval:org.mitre.oval.test:ste:525" version="1" comment="This state represents rpminfo_items that have a name that matches the regular expression '^r.m$' and an arch, epoch, release, version, evr, and signature_keyid that match the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <rpminfo_state id="oval:org.mitre.oval.test:ste:525" version="2" comment="This state represents rpminfo_items that have a name that matches the regular expression '^r.m$' and an arch, epoch, release, version, evr, and signature_keyid that match the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <name operation="pattern match">^r.m$</name>
       <arch operation="pattern match">.*</arch>
       <epoch operation="pattern match">.*</epoch>
       <release operation="pattern match">.*</release>
       <version operation="pattern match">.*</version>
-      <evr datatype="evr_string" operation="greater than or equal">0</evr>
+      <evr datatype="evr_string" operation="greater than or equal">0:0-0</evr>
       <signature_keyid operation="pattern match">.*</signature_keyid>
     </rpminfo_state>
   </states>

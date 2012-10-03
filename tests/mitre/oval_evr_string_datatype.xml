@@ -1,11 +1,12 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd      http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5">
   <generator>
-    <oval:schema_version>5.9</oval:schema_version>
+    <oval:schema_version>5.10.1</oval:schema_version>
     <oval:timestamp>2009-01-12T10:41:00-05:00</oval:timestamp>
+    <terms_of_use>Copyright (c) 2002-2012, The MITRE Corporation. All rights reserved. The contents of this file are subject to the license described in terms.txt.</terms_of_use>
   </generator>
   <definitions>
-    <definition id="oval:org.mitre.oval.test:def:392" version="1" class="miscellaneous">
+    <definition id="oval:org.mitre.oval.test:def:392" version="6" class="miscellaneous">
       <metadata>
         <title>Evaluate to true if the evr_string datatype is properly supported</title>
         <description>This definition is intended to evalutate to true if the interpreter properly supports the evr_string datatype and all of its valid operations.</description>
@@ -55,11 +56,11 @@
       <object object_ref="oval:org.mitre.oval.test:obj:515"/>
       <state state_ref="oval:org.mitre.oval.test:ste:355"/>
     </variable_test>
-    <variable_test id="oval:org.mitre.oval.test:tst:26" version="1" comment="Test that the not equal operation is supported with two unequal evr_string values." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+    <variable_test id="oval:org.mitre.oval.test:tst:26" version="4" comment="Test that the not equal operation is supported with two unequal evr_string values." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:org.mitre.oval.test:obj:904"/>
       <state state_ref="oval:org.mitre.oval.test:ste:883"/>
     </variable_test>
-    <variable_test id="oval:org.mitre.oval.test:tst:114" version="1" comment="Test that the greater than operation is supported with a greater than evr_string value." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+    <variable_test id="oval:org.mitre.oval.test:tst:114" version="3" comment="Test that the greater than operation is supported with a greater than evr_string value." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <object object_ref="oval:org.mitre.oval.test:obj:181"/>
       <state state_ref="oval:org.mitre.oval.test:ste:391"/>
     </variable_test>
@@ -118,7 +119,7 @@
     <variable_object id="oval:org.mitre.oval.test:obj:882" version="1" comment="This variable_object references the evr_string value '15:4.9.3-6.7.8.9'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <var_ref>oval:org.mitre.oval.test:var:67</var_ref>
     </variable_object>
-    <variable_object id="oval:org.mitre.oval.test:obj:904" version="1" comment="This variable_object references the evr_string value ':3.5ssa-0.20030801.48'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+    <variable_object id="oval:org.mitre.oval.test:obj:904" version="4" comment="This variable_object references the evr_string value '0:3.5ssa-0.20030801.48'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <var_ref>oval:org.mitre.oval.test:var:235</var_ref>
     </variable_object>
     <variable_object id="oval:org.mitre.oval.test:obj:181" version="1" comment="This variable_object references the evr_string value '5:1.9.10-1.RHEL'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
@@ -138,8 +139,8 @@
     <variable_state id="oval:org.mitre.oval.test:ste:883" version="1" comment="This variable_state references the evr_string value '1:2.3.4-5.6'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <value datatype="evr_string" operation="not equal">1:2.3.4-5.6</value>
     </variable_state>
-    <variable_state id="oval:org.mitre.oval.test:ste:391" version="1" comment="This variable_state references the evr_string value ':3.5ssa-0.20030801.48'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <value datatype="evr_string" operation="greater than">:3.5ssa-0.20030801.48</value>
+    <variable_state id="oval:org.mitre.oval.test:ste:391" version="3" comment="This variable_state references the evr_string value '0:3.5ssa-0.20030801.48'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value datatype="evr_string" operation="greater than">0:3.5ssa-0.20030801.48</value>
     </variable_state>
     <variable_state id="oval:org.mitre.oval.test:ste:62" version="1" comment="This variable_state references the evr_string value '1:2.3.4-5.6'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <value datatype="evr_string" operation="greater than">1:2.3.4-5.6</value>
@@ -191,8 +192,8 @@
     <constant_variable id="oval:org.mitre.oval.test:var:67" version="1" comment="This variable_object represents the evr_string value '15:4.9.3-6.7.8.9'." datatype="evr_string">
       <value>15:4.9.3-6.7.8.9</value>
     </constant_variable>
-    <constant_variable id="oval:org.mitre.oval.test:var:235" version="1" comment="This variable_object represents the evr_string value ':3.5ssa-0.20030801.48'." datatype="evr_string">
-      <value>:3.5ssa-0.20030801.48</value>
+    <constant_variable id="oval:org.mitre.oval.test:var:235" version="3" comment="This variable_object represents the evr_string value '0:3.5ssa-0.20030801.48'." datatype="evr_string">
+      <value>0:3.5ssa-0.20030801.48</value>
     </constant_variable>
     <constant_variable id="oval:org.mitre.oval.test:var:678" version="1" comment="This variable_object represents the evr_string value '5:1.9.10-1.RHEL'." datatype="evr_string">
       <value>5:1.9.10-1.RHEL</value>

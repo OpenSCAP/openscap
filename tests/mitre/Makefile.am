@@ -13,7 +13,8 @@ TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
 TESTS = test_mitre.sh
 
 EXTRA_DIST +=	test_mitre.sh \
-		ValidationSupportFiles.zip \
+		support.tgz \
+		ind-def_environmentvariable58_test.xml \
 		ind-def_environmentvariable_test.xml \
 		ind-def_family_test.xml \
 		ind-def_filehash58_test.xml \
@@ -73,4 +74,3 @@ EXTRA_DIST +=	test_mitre.sh \
 		unix-def_shadow_test.xml \
 		unix-def_uname_test.xml \
 		unix-def_xinetd_test.xml
-

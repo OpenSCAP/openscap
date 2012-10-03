@@ -1,11 +1,12 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:linux-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
   <generator>
-    <oval:schema_version>5.9</oval:schema_version>
+    <oval:schema_version>5.10.1</oval:schema_version>
     <oval:timestamp>2009-01-12T10:41:00-05:00</oval:timestamp>
+    <terms_of_use>Copyright (c) 2002-2012, The MITRE Corporation. All rights reserved. The contents of this file are subject to the license described in terms.txt.</terms_of_use>
   </generator>
   <definitions>
-    <definition id="oval:org.mitre.oval.test:def:683" version="1" class="miscellaneous">
+    <definition id="oval:org.mitre.oval.test:def:683" version="4" class="miscellaneous">
       <metadata>
         <title>Evaluate to true if the linux-def:dpkginfo_test is properly supported</title>
         <description>This definition is intended to evalutate to true if the interpreter properly supports the linux-def:dpkginfo_test.</description>
@@ -21,15 +22,15 @@
     </definition>
   </definitions>
   <tests>
-    <dpkginfo_test id="oval:org.mitre.oval.test:tst:709" version="1" comment="Test that the dpkginfo_object is supported with the name entity equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <dpkginfo_test id="oval:org.mitre.oval.test:tst:709" version="2" comment="Test that the dpkginfo_object is supported with the name entity equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:org.mitre.oval.test:obj:102"/>
       <state state_ref="oval:org.mitre.oval.test:ste:787"/>
     </dpkginfo_test>
-    <dpkginfo_test id="oval:org.mitre.oval.test:tst:568" version="1" comment="Test that the dpkginfo_object is supported with the name entity not equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <dpkginfo_test id="oval:org.mitre.oval.test:tst:568" version="2" comment="Test that the dpkginfo_object is supported with the name entity not equal to some value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:org.mitre.oval.test:obj:566"/>
       <state state_ref="oval:org.mitre.oval.test:ste:499"/>
     </dpkginfo_test>
-    <dpkginfo_test id="oval:org.mitre.oval.test:tst:122" version="1" comment="Test that the dpkginfo_object is supported with the name entity matching some regular expression." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <dpkginfo_test id="oval:org.mitre.oval.test:tst:122" version="2" comment="Test that the dpkginfo_object is supported with the name entity matching some regular expression." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:org.mitre.oval.test:obj:57"/>
       <state state_ref="oval:org.mitre.oval.test:ste:718"/>
     </dpkginfo_test>
@@ -46,29 +47,29 @@
     </dpkginfo_object>
   </objects>
   <states>
-    <dpkginfo_state id="oval:org.mitre.oval.test:ste:787" version="1" comment="This state represents an dpkginfo_item that has a name equal to 'libapt-pkg-dev', and an arch, epoch, release, version, evr, and signature_keyid that match the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <dpkginfo_state id="oval:org.mitre.oval.test:ste:787" version="2" comment="This state represents an dpkginfo_item that has a name equal to 'libapt-pkg-dev', and an arch, epoch, release, version, evr, and signature_keyid that match the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <name>libapt-pkg-dev</name>
       <arch operation="pattern match">.*</arch>
       <epoch operation="pattern match">.*</epoch>
       <release operation="pattern match">.*</release>
       <version operation="pattern match">.*</version>
-      <evr datatype="evr_string" operation="greater than">0</evr>
+      <evr datatype="evr_string" operation="greater than">0:0-0</evr>
     </dpkginfo_state>
-    <dpkginfo_state id="oval:org.mitre.oval.test:ste:499" version="1" comment="This state represents dpkginfo_items that have a name not equal to 'libapt-pkg-dev', and an arch, epoch, release, version, evr, and signature_keyid that match the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <dpkginfo_state id="oval:org.mitre.oval.test:ste:499" version="2" comment="This state represents dpkginfo_items that have a name not equal to 'libapt-pkg-dev', and an arch, epoch, release, version, evr, and signature_keyid that match the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <name operation="not equal">libapt-pkg-dev</name>
       <arch operation="pattern match">.*</arch>
       <epoch operation="pattern match">.*</epoch>
       <release operation="pattern match">.*</release>
       <version operation="pattern match">.*</version>
-      <evr datatype="evr_string" operation="greater than">0</evr>
+      <evr datatype="evr_string" operation="greater than">0:0-0</evr>
     </dpkginfo_state>
-    <dpkginfo_state id="oval:org.mitre.oval.test:ste:718" version="1" comment="This state represents dpkginfo_items that have a name that matches the regular expression '^libapt.pkg.dev$', and an arch, epoch, release, version, evr, and signature_keyid that match the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <dpkginfo_state id="oval:org.mitre.oval.test:ste:718" version="2" comment="This state represents dpkginfo_items that have a name that matches the regular expression '^libapt.pkg.dev$', and an arch, epoch, release, version, evr, and signature_keyid that match the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <name operation="pattern match">^libapt.pkg.dev$</name>
       <arch operation="pattern match">.*</arch>
       <epoch operation="pattern match">.*</epoch>
       <release operation="pattern match">.*</release>
       <version operation="pattern match">.*</version>
-      <evr datatype="evr_string" operation="greater than">0</evr>
+      <evr datatype="evr_string" operation="greater than">0:0-0</evr>
     </dpkginfo_state>
   </states>
 </oval_definitions>

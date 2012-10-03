@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd      http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:linux-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5">
   <generator>
-    <oval:schema_version>5.9</oval:schema_version>
+    <oval:schema_version>5.10.1</oval:schema_version>
     <oval:timestamp>2011-04-01T18:07:26-04:00</oval:timestamp>
+    <terms_of_use>Copyright (c) 2002-2012, The MITRE Corporation. All rights reserved. The contents of this file are subject to the license described in terms.txt.</terms_of_use>
   </generator>
   <definitions>
-    <definition id="oval:org.mitre.oval.test:def:449" version="1" class="miscellaneous">
+    <definition id="oval:org.mitre.oval.test:def:449" version="2" class="miscellaneous">
       <metadata>
         <title>Evaluate to true if the linux-def:family_test is properly supported</title>
         <description>This definition is intended to evalutate to true if the interpreter properly supports the linux-def:rpmverify_test and all of its valid operations.</description>
@@ -32,7 +33,7 @@
       <object object_ref="oval:org.mitre.oval.test:obj:1484"/>
       <state state_ref="oval:org.mitre.oval.test:ste:1364"/>
     </rpmverify_test>
-    <rpmverify_test id="oval:org.mitre.oval.test:tst:2059" version="1" comment="Test looking up a package by filepath." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <rpmverify_test id="oval:org.mitre.oval.test:tst:2059" version="2" comment="Test looking up a package by filepath." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:org.mitre.oval.test:obj:1386"/>
       <state state_ref="oval:org.mitre.oval.test:ste:1362"/>
     </rpmverify_test>
@@ -60,10 +61,10 @@
       <name>bash</name>
       <filepath operation="pattern match"/>
     </rpmverify_object>
-    <rpmverify_object id="oval:org.mitre.oval.test:obj:1386" version="1" comment="Try looking up a package by filepath." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <rpmverify_object id="oval:org.mitre.oval.test:obj:1386" version="2" comment="Try looking up a package by filepath." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <behaviors nodeps="true" nofiles="false" nodigest="true" noscripts="true" nosignature="true"/>
       <name operation="pattern match"/>
-      <filepath>/bin/ls</filepath>
+      <filepath var_ref="oval:org.mitre.oval.test:var:805" var_check="at least one"/>
     </rpmverify_object>
     <rpmverify_object id="oval:org.mitre.oval.test:obj:1394" version="1" comment="Verify all package-owned files under /etc/X11." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <behaviors nodeps="true" nofiles="false" nodigest="true" noscripts="true" nosignature="true"/>
@@ -108,4 +109,10 @@
       <configuration_file datatype="boolean">false</configuration_file>
     </rpmverify_state>
   </states>
+  <variables>
+    <constant_variable id="oval:org.mitre.oval.test:var:805" version="1" comment="This variable contains both paths /bin/ls and /usr/bin/ls to support multiple versions of linux (e.g. pre-Fedora 17 and Fedora 17+)" datatype="string">
+      <value>/bin/ls</value>
+      <value>/usr/bin/ls</value>
+    </constant_variable>
+  </variables>
 </oval_definitions>
