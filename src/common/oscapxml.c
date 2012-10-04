@@ -251,7 +251,7 @@ int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, 
 	}
 
 	if (version == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "'version' == NULL");
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not determine version for file: %s", xmlfile);
 		return -1;
 	}
 
