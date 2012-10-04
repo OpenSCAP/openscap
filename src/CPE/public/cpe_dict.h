@@ -36,7 +36,7 @@
 #ifndef CPEDICT_H_
 #define CPEDICT_H_
 
-#include "cpe_uri.h"
+#include "cpe_name.h"
 #include "oscap.h"
 
 /**
@@ -240,6 +240,25 @@ const char *cpe_generator_get_schema_version(const struct cpe_generator *item);
  * @param item document generator
  */
 const char *cpe_generator_get_timestamp(const struct cpe_generator *item);
+
+/** cpe_dict_model functions to get the base version from CPE dictionary model
+ *
+ * The base version is the major CPE version, 1 or 2. These two versions differ
+ * in namespace when exporting so we have to remember which version we loaded.
+ *
+ * CPE 1.0 also doesn't have cpe_generator structure inside so we can't get
+ * the version info from there.
+ *
+ * @memberof cpe_dict_model
+ * @param item dictionary model
+ */
+int cpe_dict_model_get_base_version(const struct cpe_dict_model *item);
+
+/** cpe_dict_model functions to get the base version from CPE dictionary model
+ * @memberof cpe_dict_model
+ * @param item dictionary model
+ */
+bool cpe_dict_model_set_base_version(struct cpe_dict_model *item, int base_version);
 
 /** cpe_dict_model functions to get generator from CPE dictionary model
  * @memberof cpe_dict_model
@@ -855,6 +874,22 @@ bool cpe_name_match_dict(struct cpe_name *cpe, struct cpe_dict_model *dict);
  */
 bool cpe_name_match_dict_str(const char *cpe, struct cpe_dict_model *dict);
 
+typedef bool *(*cpe_check_fn) (const char*, const char*, void*);
+
+/**
+ * Verify whether given CPE is applicable to current platform by evaluating checks associated with it
+ *
+ * @memberof cpe_name
+ * @memberof cpe_dict_model
+ * @param cpe CPE to verify
+ * @param dict used CPE dictionary
+ * @return true if dictionary contains given CPE and the CPE is applicable
+ */
+bool cpe_name_applicable_dict(struct cpe_name *cpe, struct cpe_dict_model *dict, cpe_check_fn cb, void* usr);
+
+/// @memberof cpe_item
+bool cpe_item_is_applicable(struct cpe_item* item, cpe_check_fn cb, void* usr);
+
 /************************************************************/
 /** @} End of Evaluators group */
 
@@ -873,6 +908,15 @@ void cpe_dict_model_export(const struct cpe_dict_model *dict, const char *file);
  * @retval NULL on failure
  */
 struct cpe_dict_model *cpe_dict_model_import(const char *file);
+
+/**
+ * Gets the file the CPE dict model was loaded from
+ * @internal
+ * This is necessary to figure out the full OVAL file path for applicability
+ * testing. We can't do applicability here in the CPE module because that
+ * would create awful interdependencies.
+ */
+const char* cpe_dict_model_get_origin_file(const struct cpe_dict_model* dict);
 
 /** @} */
 

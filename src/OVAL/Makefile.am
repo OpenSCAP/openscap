@@ -109,6 +109,7 @@ AM_CPPFLAGS =	@xml2_CFLAGS@ \
 		-I$(top_srcdir)/src/OVAL/probes/SEAP/generic \
 		-I$(top_srcdir)/src/XCCDF_POLICY/public \
 		-I$(top_srcdir)/src/XCCDF/public \
+		-I$(top_srcdir)/src/CPE/public \
 		-DSEAP_MSGID_BITS=32 \
 		-DSEAP_THREAD_SAFE \
 		-DOVAL_PROBE_DIR='"$(probe_dir)"'

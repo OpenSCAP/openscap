@@ -16,11 +16,11 @@ libxccdf_la_SOURCES = \
 	unused.h \
 	xccdf_impl.h
 
-
 libxccdf_la_CPPFLAGS  = @xml2_CFLAGS@ \
 			-I$(top_srcdir)/src \
 			-I$(top_srcdir)/src/XCCDF/public \
 			-I$(top_srcdir)/src/common/public \
+			-I$(top_srcdir)/src/CPE/public \
 			-I$(top_srcdir)/lib
 
 libxccdf_la_LDFLAGS = @xml2_LIBS@

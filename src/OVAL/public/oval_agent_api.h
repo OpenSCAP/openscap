@@ -61,6 +61,11 @@ typedef struct oval_agent_session oval_agent_session_t;
 oval_agent_session_t * oval_agent_new_session(struct oval_definition_model * model, const char * name);
 
 /**
+ * Retrieves OVAL definition model associated with given session
+ */
+struct oval_definition_model* oval_agent_get_definition_model(oval_agent_session_t* ag_sess);
+
+/**
  * Set a product name for the provided agent session. The
  * product name should be used for all newly created OVAL documents. If
  * there already are some models in the session, they are modified as

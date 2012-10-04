@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="scap-rhel5-benchmark" resolved="0" xml:lang="en">
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="scap-rhel5-benchmark" resolved="0">
   <status date="2008-03-27">accepted</status>
   <title xml:lang="en">SCAP: Guide To The Secure Configuration of Red Hat Enterprise Linux 5</title>
   <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en">This guide has been created to assist IT professionals, in effectively securing systems with Red Hat Enterprise Linux 5.</description>
@@ -10,6 +10,11 @@
             <xhtml:br/>
             <xhtml:br/>Red Hat and Red Hat Enterprise Linux are either registered trademarks or trademarks of Red Hat, Inc in the United States and other countries. <xhtml:br/>
             <xhtml:br/>All other names are registered trademarks or trademarks of their respective companies. </rear-matter>
+  <cpe-list xmlns:meta="http://scap.nist.gov/schema/cpe-dictionary-metadata/0.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://cpe.mitre.org/XMLSchema/cpe/1.0" xsi:schemaLocation="http://scap.nist.gov/schema/cpe-dictionary-metadata/0.2 http://nvd.nist.gov/schema/cpe-dictionary-metadata_0.2.xsd http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd">
+    <cpe-item xmlns="http://cpe.mitre.org/XMLSchema/cpe/1.0" name="cpe:/a:test:test">
+      <title>Test</title>
+    </cpe-item>
+  </cpe-list>
   <platform idref="cpe:/o:redhat:enterprise_linux:5"/>
   <version>1.0</version>
   <metadata xmlns:xhtml="http://www.w3.org/1999/xhtml">

@@ -194,11 +194,11 @@
 
 %module openscap
 %{
- #include "../src/CPE/public/cpe_uri.h"
+ #include "../src/CPE/public/cpe_name.h"
  #include "../src/CPE/public/cpe_dict.h"
  #include "../src/CPE/public/cpe_lang.h"
 %}
-%include "../src/CPE/public/cpe_uri.h"
+%include "../src/CPE/public/cpe_name.h"
 %include "../src/CPE/public/cpe_dict.h"
 %include "../src/CPE/public/cpe_lang.h"
 

@@ -39,7 +39,7 @@
 #include <string.h>
 
 #include "public/cpe_dict.h"
-#include "public/cpe_uri.h"
+#include "public/cpe_name.h"
 #include "cpedict_priv.h"
 
 #include "common/list.h"
@@ -128,14 +128,8 @@ OSCAP_ACCESSOR_STRING(cpe_generator, product_name)
     OSCAP_ACCESSOR_STRING(cpe_generator, schema_version)
     OSCAP_ACCESSOR_STRING(cpe_generator, timestamp)
 
-/* <cpe-list>
- * */
-struct cpe_dict_model {		// the main node
-	struct oscap_list *items;	// dictionary items
-	struct oscap_list *vendors;
-	struct cpe_generator *generator;
-};
 OSCAP_GETTER(struct cpe_generator *, cpe_dict_model, generator)
+OSCAP_ACCESSOR_SIMPLE(int, cpe_dict_model, base_version)
 OSCAP_IGETTER_GEN(cpe_item, cpe_dict_model, items)
 OSCAP_ITERATOR_REMOVE_F(cpe_item)
 OSCAP_IGETINS_GEN(cpe_vendor, cpe_dict_model, vendors, vendor) OSCAP_ITERATOR_REMOVE_F(cpe_vendor)
@@ -248,7 +242,8 @@ OSCAP_ACCESSOR_STRING(cpe_language, value)
 #define ATTR_XML_LANG_STR   BAD_CAST "xml:lang"
 #define VAL_TRUE_STR        BAD_CAST "true"
 /* Namespaces */
-#define CPEDICT_NS BAD_CAST "http://cpe.mitre.org/dictionary/2.0"
+#define CPE_1_DICT_NS BAD_CAST "http://cpe.mitre.org/XMLSchema/cpe/1.0"
+#define CPE_2_DICT_NS BAD_CAST "http://cpe.mitre.org/dictionary/2.0"
 #define CPEMETA_NS BAD_CAST "http://scap.nist.gov/schema/cpe-dictionary-metadata/0.2"
 /* End of XML string variables definitions
  * */
@@ -305,6 +300,38 @@ static int xmlTextReaderNextElement(xmlTextReaderPtr reader)
 		// if end of file
 		if (ret < 1)
 			break;
+	} while (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
+
+	if (ret == -1) {
+		oscap_setxmlerr(xmlCtxtGetLastError(reader));
+		/* TODO: Should we end here as fatal ? */
+	}
+
+	return ret;
+}
+
+/* Function that jump to next XML starting element.
+ *
+ * This function makes sure we don't go past end tag of given element
+ * */
+static int xmlTextReaderNextElementWE(xmlTextReaderPtr reader, xmlChar* end_tag)
+{
+
+	__attribute__nonnull__(reader);
+
+	int ret;
+	do {
+		ret = xmlTextReaderRead(reader);
+		// if end of file
+		if (ret < 1)
+			break;
+
+		if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_END_ELEMENT) {
+			if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), end_tag)) {
+				ret = 0;
+				break;
+			}
+		}
 	} while (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
 
 	if (ret == -1) {
@@ -381,6 +408,10 @@ struct cpe_dict_model *cpe_dict_model_new()
 
 	dict->vendors = oscap_list_new();
 	dict->items = oscap_list_new();
+
+	dict->base_version = 2; // default to CPE 2.x
+
+	dict->origin_file = 0;
 
 	return dict;
 }
@@ -618,15 +649,41 @@ struct cpe_dict_model *cpe_dict_model_parse(xmlTextReaderPtr reader)
 			return NULL;
 		}
 	}
+
+	// make sure we exit when we reach this depth again
+	int entry_depth = xmlTextReaderDepth(reader);
+
 	// we found cpe-list element, let's roll !
 	// allocate memory for cpe_dict so we can fill items and vendors and general structures
 	ret = cpe_dict_model_new();
 	if (ret == NULL)
 		return NULL;
 
+	// let us figure out the base version based on the namespace of cpe-list
+	const xmlChar* nsuri = xmlTextReaderConstNamespaceUri(reader);
+
+	if (nsuri && !xmlStrcmp(nsuri, CPE_1_DICT_NS))
+	{
+		cpe_dict_model_set_base_version(ret, 1);
+	}
+	else if (nsuri && !xmlStrcmp(nsuri, CPE_2_DICT_NS)) {
+		cpe_dict_model_set_base_version(ret, 2);
+	}
+	else
+	{
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't figure out CPE version from namespace URI '%s'. Assuming CPE 2.x.", nsuri);
+		// unknown version, let us default to CPE 2.x and hope for the best :-/
+		cpe_dict_model_set_base_version(ret, 2);
+	}
+
 	// go through elements and switch through actions till end of file..
-	next_ret = xmlTextReaderNextElement(reader);
+	next_ret = xmlTextReaderNextElementWE(reader, TAG_CPE_LIST_STR);
 	while (next_ret != 0) {
+		if (xmlTextReaderDepth(reader) <= entry_depth) {
+			// we have reached the end of <cpe-list>
+			// this is necessary to make XCCDF CPE integration to work
+			break;
+		}
 
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GENERATOR_STR)) {	// <generator> | count = 1
 			ret->generator = cpe_generator_parse(reader);
@@ -635,7 +692,7 @@ struct cpe_dict_model *cpe_dict_model_parse(xmlTextReaderPtr reader)
 				// something bad happend, let's try to recover and continue
 				// add here some bad nodes list to write it to stdout after parsing is done
 				// get the next node
-				next_ret = xmlTextReaderNextElement(reader);
+				next_ret = xmlTextReaderNextElementWE(reader, TAG_CPE_LIST_STR);
 				continue;
 			}
 			// We got an item !
@@ -654,10 +711,10 @@ struct cpe_dict_model *cpe_dict_model_parse(xmlTextReaderPtr reader)
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_COMPONENT_TREE_STR)) {	// <vendor> | count = 0-n
 			// we just need to jump over this element
 		} else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element in CPE dictionary");
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element in CPE dictionary, local name is '%s'.", xmlTextReaderConstLocalName(reader));
 		}
-		// get the next node
-		next_ret = xmlTextReaderNextElement(reader);
+
+		next_ret = xmlTextReaderNextElementWE(reader, TAG_CPE_LIST_STR);
 	}
 
 	return ret;
@@ -764,7 +821,7 @@ struct cpe_item *cpe_item_parse(xmlTextReaderPtr reader)
 		oscap_free(data);
 		// ************************************************************************************
 
-		xmlTextReaderNextElement(reader);
+		xmlTextReaderNextElementWE(reader, TAG_CPE_ITEM_STR);
 		// Now it's time to go deaply to cpe-item element and parse it's children
 		// Do while there is another cpe-item element. Then return.
 		while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CPE_ITEM_STR) != 0) {
@@ -788,8 +845,6 @@ struct cpe_item *cpe_item_parse(xmlTextReaderPtr reader)
 				ref = cpe_reference_parse(reader);
 				if (ref)
 					oscap_list_add(ret->references, ref);
-				if (ref)
-					printf("ref: %s\n", ref->href);
 			} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ITEM_METADATA_STR) == 0) {
 				data = (char *)xmlTextReaderGetAttribute(reader, ATTR_MODIFICATION_DATE_STR);
 				if ((data == NULL) || ((ret->metadata = cpe_item_metadata_new()) == NULL)) {
@@ -821,7 +876,7 @@ struct cpe_item *cpe_item_parse(xmlTextReaderPtr reader)
 			} else {
 				return ret;	// <-- we need to return here, because we don't want to jump to next element 
 			}
-			xmlTextReaderNextElement(reader);
+			xmlTextReaderNextElementWE(reader, TAG_CPE_ITEM_STR);
 		}
 	}
 
@@ -997,7 +1052,21 @@ void cpe_dict_export(const struct cpe_dict_model *dict, xmlTextWriterPtr writer)
 	__attribute__nonnull__(dict);
 	__attribute__nonnull__(writer);
 
-	xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_LIST_STR, CPEDICT_NS);
+	const int base_version = cpe_dict_model_get_base_version(dict);
+
+	switch (base_version) {
+		case 1:
+			xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_LIST_STR, CPE_1_DICT_NS);
+			break;
+		case 2:
+			xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_LIST_STR, CPE_2_DICT_NS);
+			break;
+		default:
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown CPE base version '%i'.", base_version);
+			xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_LIST_STR, BAD_CAST "http://open-scap.org/CPE/unknown");
+			break;
+	}
+
 	xmlTextWriterWriteAttribute(writer, BAD_CAST "xmlns:meta", CPEMETA_NS);
 	xmlTextWriterWriteAttribute(writer, BAD_CAST "xmlns:xsi", BAD_CAST "http://www.w3.org/2001/XMLSchema-instance");
 	xmlTextWriterWriteAttribute(writer, BAD_CAST "xsi:schemaLocation", BAD_CAST
@@ -1007,11 +1076,14 @@ void cpe_dict_export(const struct cpe_dict_model *dict, xmlTextWriterPtr writer)
 	if (dict->generator) cpe_generator_export(dict->generator, writer);
 	OSCAP_FOREACH(cpe_item, item, cpe_dict_model_get_items(dict),
 		      // dump its contents to XML tree
-		      cpe_item_export(item, writer);)
+		      cpe_item_export(item, writer, base_version);)
+
+	if (base_version >= 2) {
 	    // TODO: NEED TO HAVE COMPONENT-TREE STRUCTURE TO GET XML-NAMESPACE 
 	    xmlTextWriterStartElementNS(writer, NULL, TAG_COMPONENT_TREE_STR, CPEMETA_NS);
-	OSCAP_FOREACH(cpe_vendor, vendor, cpe_dict_model_get_vendors(dict), cpe_vendor_export(vendor, writer);)
+		OSCAP_FOREACH(cpe_vendor, vendor, cpe_dict_model_get_vendors(dict), cpe_vendor_export(vendor, writer);)
 	    xmlTextWriterEndElement(writer);	//</component-tree>
+	}
 
 	xmlTextWriterEndElement(writer);
 	if (xmlGetLastError() != NULL)
@@ -1051,7 +1123,7 @@ void cpe_generator_export(const struct cpe_generator *generator, xmlTextWriterPt
 
 }
 
-void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer)
+void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer, int base_version)
 {
 
 	char *temp;
@@ -1060,14 +1132,26 @@ void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer)
 	__attribute__nonnull__(item);
 	__attribute__nonnull__(writer);
 
-	xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_ITEM_STR, CPEDICT_NS);
+	switch (base_version) {
+		case 1:
+			xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_ITEM_STR, CPE_1_DICT_NS);
+			break;
+		case 2:
+			xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_ITEM_STR, CPE_2_DICT_NS);
+			break;
+		default:
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown CPE base version '%i'.", base_version);
+			xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_ITEM_STR, BAD_CAST "http://open-scap.org/CPE/unknown");
+			break;
+	}
+
 	if (item->name != NULL) {
-		temp = cpe_name_get_uri(item->name);
+		temp = cpe_name_get_as_format(item->name, CPE_FORMAT_URI);
 		xmlTextWriterWriteAttribute(writer, ATTR_NAME_STR, BAD_CAST temp);
 		oscap_free(temp);
 	}
 	if (item->deprecated != NULL) {
-		temp = cpe_name_get_uri(item->deprecated);
+		temp = cpe_name_get_as_format(item->deprecated, CPE_FORMAT_URI);
 		xmlTextWriterWriteAttribute(writer, ATTR_DEPRECATED_STR, VAL_TRUE_STR);
 		xmlTextWriterWriteAttribute(writer, ATTR_DEPRECATION_DATE_STR, BAD_CAST item->deprecation_date);
 		xmlTextWriterWriteAttribute(writer, ATTR_DEPRECATED_BY_STR, BAD_CAST temp);
@@ -1246,13 +1330,13 @@ static void cpe_reference_export(const struct cpe_reference *ref, xmlTextWriterP
  */
 void cpe_dict_model_free(struct cpe_dict_model *dict)
 {
-
 	if (dict == NULL)
 		return;
 
 	oscap_list_free(dict->items, (oscap_destruct_func) cpe_item_free);
 	oscap_list_free(dict->vendors, (oscap_destruct_func) cpe_vendor_free);
 	cpe_generator_free(dict->generator);
+	oscap_free(dict->origin_file);
 	oscap_free(dict);
 }
 

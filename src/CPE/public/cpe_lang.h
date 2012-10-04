@@ -38,7 +38,7 @@
 
 #include <stdlib.h>
 
-#include "cpe_uri.h"
+#include "cpe_name.h"
 #include "oscap.h"
 
 /**

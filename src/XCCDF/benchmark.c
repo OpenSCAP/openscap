@@ -34,6 +34,9 @@
 #include "common/debug_priv.h"
 #include "common/assume.h"
 
+#include "CPE/cpedict_priv.h"
+#include "CPE/cpelang_priv.h"
+
 #define XCCDF_SUPPORTED "1.2"
 
 static struct oscap_htable *xccdf_benchmark_find_target_htable(const struct xccdf_benchmark *, xccdf_type_t);
@@ -70,6 +73,8 @@ struct xccdf_benchmark *xccdf_benchmark_new(void)
 	bench->sub.benchmark.content = oscap_list_new();
 	bench->sub.benchmark.values = oscap_list_new();
 	bench->sub.benchmark.plain_texts = oscap_list_new();
+	bench->sub.benchmark.cpe_list = NULL;
+	bench->sub.benchmark.cpe_lang_model = NULL;
 	bench->sub.benchmark.profiles = oscap_list_new();
 	bench->sub.benchmark.results = oscap_list_new();
     // hash tables
@@ -151,6 +156,12 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
                                 xccdf_plain_text_new_fill(id, data));
 				break;
 			}
+		case XCCDFE_CPE_LIST:
+			xccdf_benchmark_set_cpe_list(XBENCHMARK(benchmark), cpe_dict_model_parse(reader));
+			break;
+		case XCCDFE_CPE2_PLATFORMSPEC:
+			xccdf_benchmark_set_cpe_lang_model(XBENCHMARK(benchmark), cpe_lang_model_parse(reader));
+			break;
 		case XCCDFE_PROFILE:
 			oscap_list_add(benchmark->sub.benchmark.profiles, xccdf_profile_parse(reader, benchmark));
 			break;
@@ -246,6 +257,21 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 		xmlNewProp(root_node, BAD_CAST "xml:lang", BAD_CAST lang);*/
 
 	/* Handle children */
+	if (xccdf_benchmark_get_cpe_list(benchmark)) {
+		// CPE API can only export via xmlTextWriter, we export via DOM
+		// this is used to bridge both methods
+		xmlTextWriterPtr writer = xmlNewTextWriterTree(doc, root_node, 0);
+		cpe_dict_export(xccdf_benchmark_get_cpe_list(benchmark), writer);
+		xmlFreeTextWriter(writer);
+	}
+	if (xccdf_benchmark_get_cpe_lang_model(benchmark)) {
+		// CPE API can only export via xmlTextWriter, we export via DOM
+		// this is used to bridge both methods
+		xmlTextWriterPtr writer = xmlNewTextWriterTree(doc, root_node, 0);
+		cpe_lang_export(xccdf_benchmark_get_cpe_lang_model(benchmark), writer);
+		xmlFreeTextWriter(writer);
+	}
+
 	struct oscap_string_iterator *platforms = xccdf_benchmark_get_platforms(benchmark);
 	while (oscap_string_iterator_has_more(platforms)) {
 		xmlNode *platform_node = xmlNewTextChild(root_node, ns_xccdf, BAD_CAST "platform", NULL);
@@ -341,6 +367,8 @@ void xccdf_benchmark_free(struct xccdf_benchmark *benchmark)
 		oscap_list_free(bench->sub.benchmark.values, (oscap_destruct_func) xccdf_value_free);
 		oscap_list_free(bench->sub.benchmark.results, (oscap_destruct_func) xccdf_result_free);
 		oscap_list_free(bench->sub.benchmark.plain_texts, (oscap_destruct_func) xccdf_plain_text_free);
+		cpe_dict_model_free(bench->sub.benchmark.cpe_list);
+		cpe_lang_model_free(bench->sub.benchmark.cpe_lang_model);
 		oscap_list_free(bench->sub.benchmark.profiles, (oscap_destruct_func) xccdf_profile_free);
 		oscap_htable_free(bench->sub.benchmark.items_dict, NULL);
 		oscap_htable_free(bench->sub.benchmark.profiles_dict, NULL);
@@ -399,6 +427,52 @@ const char *xccdf_benchmark_get_plain_text(const struct xccdf_benchmark *bench, 
         }
     }
     return NULL;
+}
+
+bool xccdf_benchmark_set_cpe_list(struct xccdf_benchmark *benchmark, struct cpe_dict_model* cpe_list)
+{
+	struct xccdf_item *bench = XITEM(benchmark);
+
+	assert(bench != NULL);
+
+	if (bench->sub.benchmark.cpe_list)
+		cpe_dict_model_free(bench->sub.benchmark.cpe_list);
+
+	bench->sub.benchmark.cpe_list = cpe_list;
+
+	return true;
+}
+
+struct cpe_dict_model *xccdf_benchmark_get_cpe_list(const struct xccdf_benchmark *benchmark)
+{
+	const struct xccdf_item *bench = XITEM(benchmark);
+
+	assert(bench != NULL);
+
+	return bench->sub.benchmark.cpe_list;
+}
+
+bool xccdf_benchmark_set_cpe_lang_model(struct xccdf_benchmark *benchmark, struct cpe_lang_model* cpe_lang_model)
+{
+	struct xccdf_item *bench = XITEM(benchmark);
+
+	assert(bench != NULL);
+
+	if (bench->sub.benchmark.cpe_lang_model)
+		cpe_lang_model_free(bench->sub.benchmark.cpe_lang_model);
+
+	bench->sub.benchmark.cpe_lang_model = cpe_lang_model;
+
+	return true;
+}
+
+struct cpe_lang_model *xccdf_benchmark_get_cpe_lang_model(const struct xccdf_benchmark *benchmark)
+{
+	const struct xccdf_item *bench = XITEM(benchmark);
+
+	assert(bench != NULL);
+
+	return bench->sub.benchmark.cpe_lang_model;
 }
 
 struct xccdf_notice *xccdf_notice_new(void)

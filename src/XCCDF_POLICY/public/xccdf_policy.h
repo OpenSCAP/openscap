@@ -132,6 +132,12 @@ void xccdf_policy_free(struct xccdf_policy *);
 void xccdf_value_binding_free(struct xccdf_value_binding *);
 
 /**
+ * Registers an additional CPE dictionary for applicability testing
+ * The ones embedded in the evaluated XCCDF take precedence!
+ */
+bool xccdf_policy_model_add_cpe_dict(struct xccdf_policy_model * model, const char * cpe_dict);
+
+/**
  * Function to register callback for checking system
  * @param model XCCDF Policy Model
  * @param sys String representing given checking system

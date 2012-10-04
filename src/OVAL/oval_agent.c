@@ -120,6 +120,11 @@ oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *mode
 	return ag_sess;
 }
 
+struct oval_definition_model* oval_agent_get_definition_model(oval_agent_session_t* ag_sess)
+{
+	return ag_sess->def_model;
+}
+
 void oval_agent_set_product_name(oval_agent_session_t *ag_sess, char * product_name)
 {
 	struct oval_generator *generator;

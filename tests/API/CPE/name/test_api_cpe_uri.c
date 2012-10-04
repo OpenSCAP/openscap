@@ -15,13 +15,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <cpe_uri.h>
+
+#include <cpe_name.h>
 
 void print_usage(const char *, FILE *);
 
-struct cpe_name *cpe_example_creation(int, const char *, const char *,
-				      const char *, const char *, const char *,
-				      const char *);
+struct cpe_name *cpe_example_creation(int, const char *, const char *, const char *,
+        const char *, const char *, const char *,
+        const char *, const char *, const char *, const char *);
 
 void cpe_print(struct cpe_name *);
 
@@ -39,16 +40,16 @@ int main(int argc, char **argv)
 		ret_val = 0;
 	}
 	// Create a new CPE name from given information and store it to given file.
-	else if (argc == 9 && strcmp(argv[1], "--creation") == 0) {
+	else if (argc == 13 && strcmp(argv[1], "--creation") == 0) {
 
 		// Create CPE from given information.
 		if ((name =
-		     cpe_example_creation(atoi(argv[2]), argv[3], argv[4],
-					  argv[5], argv[6], argv[7],
-					  argv[8])) != NULL) {
+		     cpe_example_creation(atoi(argv[2]), argv[3], argv[4], argv[5],
+					  argv[6], argv[7], argv[8],
+					  argv[9], argv[10], argv[11], argv[12])) != NULL) {
 
 			// Extract URI of created CPE.
-			if ((cpe_uri = cpe_name_get_uri(name)) != NULL) {
+			if ((cpe_uri = cpe_name_get_as_str(name)) != NULL) {
 
 				// Check if URI is valid.
 				if (cpe_name_check(cpe_uri)) {
@@ -79,7 +80,7 @@ int main(int argc, char **argv)
 			if ((name = cpe_name_new(argv[2])) != NULL) {
 
 				// Extract URI from created CPE.
-				if ((cpe_uri = cpe_name_get_uri(name)) != NULL) {
+				if ((cpe_uri = cpe_name_get_as_str(name)) != NULL) {
 
 					// Compare it to the original URI.
 					if (!strcmp(cpe_uri, argv[2])) {
@@ -190,20 +191,30 @@ struct cpe_name *cpe_example_creation(int part,
 				      const char *product,
 				      const char *version,
 				      const char *update,
-				      const char *edition, const char *language)
+				      const char *edition,
+				      const char *language,
+					  const char *sw_edition,
+					  const char *target_sw,
+					  const char *target_hw,
+					  const char *other)
 {
 	struct cpe_name *cpe = NULL;
 
 	if ((cpe = cpe_name_new(NULL)) != NULL) {
 
+		cpe_name_set_format(cpe, CPE_FORMAT_URI);
 		// Set fields.
 		cpe_name_set_part(cpe, part);
-		cpe_name_set_vendor(cpe, vendor);
+		cpe_name_set_vendor (cpe, vendor);
 		cpe_name_set_product(cpe, product);
 		cpe_name_set_version(cpe, version);
 		cpe_name_set_update(cpe, update);
 		cpe_name_set_edition(cpe, edition);
 		cpe_name_set_language(cpe, language);
+		cpe_name_set_sw_edition(cpe, sw_edition);
+		cpe_name_set_target_sw(cpe, target_sw);
+		cpe_name_set_target_hw(cpe, target_hw);
+		cpe_name_set_other(cpe, other);
 	}
 
 	return cpe;
@@ -212,19 +223,16 @@ struct cpe_name *cpe_example_creation(int part,
 // Parse CPE URI string and print all contained information.
 void cpe_print(struct cpe_name *name)
 {
-
 	// Print out all contained information.
 	printf(" %d\n", cpe_name_get_part(name));
-	printf(" %s\n",
-	       cpe_name_get_vendor(name) ? cpe_name_get_vendor(name) : "");
-	printf(" %s\n",
-	       cpe_name_get_product(name) ? cpe_name_get_product(name) : "");
-	printf(" %s\n",
-	       cpe_name_get_version(name) ? cpe_name_get_version(name) : "");
-	printf(" %s\n",
-	       cpe_name_get_update(name) ? cpe_name_get_update(name) : "");
-	printf(" %s\n",
-	       cpe_name_get_edition(name) ? cpe_name_get_edition(name) : "");
-	printf(" %s\n",
-	       cpe_name_get_language(name) ? cpe_name_get_language(name) : "");
+	printf(" %s\n", cpe_name_get_vendor(name) ? cpe_name_get_vendor(name) : "");
+	printf(" %s\n", cpe_name_get_product(name) ? cpe_name_get_product(name) : "");
+	printf(" %s\n", cpe_name_get_version(name) ? cpe_name_get_version(name) : "");
+	printf(" %s\n", cpe_name_get_update(name) ? cpe_name_get_update(name) : "");
+	printf(" %s\n", cpe_name_get_edition(name) ? cpe_name_get_edition(name) : "");
+	printf(" %s\n", cpe_name_get_language(name) ? cpe_name_get_language(name) : "");
+	printf(" %s\n", cpe_name_get_sw_edition(name) ? cpe_name_get_sw_edition(name) : "");
+	printf(" %s\n", cpe_name_get_target_sw(name) ? cpe_name_get_target_sw(name) : "");
+	printf(" %s\n", cpe_name_get_target_hw(name) ? cpe_name_get_target_hw(name) : "");
+	printf(" %s\n", cpe_name_get_other(name) ? cpe_name_get_other(name) : "");
 }

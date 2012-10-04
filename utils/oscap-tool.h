@@ -39,7 +39,7 @@
 #include <cvss_score.h>
 #include <xccdf_benchmark.h>
 #include <cpe_dict.h>
-#include <cpe_uri.h>
+#include <cpe_name.h>
 
 #define OSCAP_PRODUCTNAME "cpe:/a:open-scap:oscap"
 #define OSCAP_ERR_MSG "OpenSCAP Error:"
@@ -117,6 +117,7 @@ struct oscap_action {
         int verbosity;
         int hide_profile_info;
         char *stylesheet;
+        char *cpe_dict;
         struct cvss_impact *cvss_impact;
 
 	struct ds_action* ds_action;

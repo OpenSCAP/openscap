@@ -31,7 +31,7 @@
 #include <getopt.h>
 
 /* CPE */
-#include <cpe_uri.h>
+#include <cpe_name.h>
 #include <cpe_dict.h>
 
 #include "oscap-tool.h"

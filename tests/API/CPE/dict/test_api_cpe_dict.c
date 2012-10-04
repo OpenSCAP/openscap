@@ -13,7 +13,7 @@
 #endif
 
 #include <cpe_dict.h>
-#include <cpe_uri.h>
+#include <cpe_name.h>
 #include <string.h>
 
 #define OSCAP_FOREACH_GENERIC(itype, vtype, val, init_val, code) \

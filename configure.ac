@@ -1230,7 +1230,7 @@ AC_CONFIG_FILES([Makefile
 
                  src/CPE/Makefile
                  tests/API/CPE/Makefile
-                 tests/API/CPE/uri/Makefile
+                 tests/API/CPE/name/Makefile
                  tests/API/CPE/lang/Makefile
                  tests/API/CPE/dict/Makefile
 
@@ -1246,6 +1246,7 @@ AC_CONFIG_FILES([Makefile
                  src/XCCDF/Makefile
                  src/XCCDF_POLICY/Makefile
                  tests/API/XCCDF/Makefile
+                 tests/API/XCCDF/applicability/Makefile
                  tests/API/XCCDF/unittests/Makefile
 
                  src/SCE/Makefile

@@ -1,2 +1,1 @@
-SUBDIRS = dict uri lang
-
+SUBDIRS = dict name lang
