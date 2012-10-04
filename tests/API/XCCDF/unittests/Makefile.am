@@ -54,6 +54,8 @@ EXTRA_DIST += \
 	test_xccdf_check_multi_check.xccdf.xml \
 	test_xccdf_check_multi_check2.sh \
 	test_xccdf_check_multi_check2.xccdf.xml \
+	test_xccdf_check_multi_check_zero_definitions.sh \
+	test_xccdf_check_multi_check_zero_definitions.xccdf.xml \
 	test_xccdf_check_processing_complex_priority.sh \
 	test_xccdf_check_processing_complex_priority.xccdf.xml \
 	test_xccdf_check_processing_selector_empty.sh \
@@ -65,5 +67,6 @@ EXTRA_DIST += \
 	test_xccdf_refine_rule.xccdf.xml \
 	test_xccdf_xml_escaping_value.sh \
 	test_xccdf_xml_escaping_value.xccdf.xml \
+	oval_without_definitions.oval.xml \
 	unit_helper.c \
 	unit_helper.h

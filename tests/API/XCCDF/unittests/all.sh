@@ -16,6 +16,7 @@ test_run "Escaping of xml &amp within xccdf:value" $srcdir/test_xccdf_xml_escapi
 test_run "check/@negate" $srcdir/test_xccdf_check_negate.sh
 test_run "check/@multi-check import/export" $srcdir/test_xccdf_check_multi_check.sh
 test_run "check/@multi-check simple" $srcdir/test_xccdf_check_multi_check2.sh
+test_run "check/@multi-check that has zero definitions" $srcdir/test_xccdf_check_multi_check_zero_definitions.sh
 test_run "xccdf:check-content-ref without @name" $srcdir/test_xccdf_check_content_ref_without_name_attr.sh
 test_run "xccdf:refine-rule/@weight shall not be exported" $srcdir/test_xccdf_refine_rule.sh
 test_run "Check Processing Algorithm -- complex-check priority" $srcdir/test_xccdf_check_processing_complex_priority.sh
