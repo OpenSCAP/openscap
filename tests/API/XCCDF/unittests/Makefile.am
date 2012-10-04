@@ -59,6 +59,8 @@ EXTRA_DIST += \
 	test_xccdf_check_multi_check_zero_definitions.xccdf.xml \
 	test_xccdf_check_processing_complex_priority.sh \
 	test_xccdf_check_processing_complex_priority.xccdf.xml \
+	test_xccdf_check_processing_invalid_content_refs.sh \
+	test_xccdf_check_processing_invalid_content_refs.xccdf.xml \
 	test_xccdf_check_processing_selector_empty.sh \
 	test_xccdf_check_processing_selector_empty.xccdf.xml \
 	test_xccdf_check_processing_selector_bad.sh \
