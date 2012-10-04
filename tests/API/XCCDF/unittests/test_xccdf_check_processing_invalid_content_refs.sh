@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 set -e
 set -o pipefail
@@ -14,7 +14,7 @@ $OSCAP xccdf eval --results $result $srcdir/${name}.xccdf.xml > $stdout 2> $stde
 echo "Stdout file = $stdout"
 echo "Stderr file = $stderr"
 echo "Result file = $result"
-[ -f $stderr ]; [ "`cat $stderr`" == "WARNING: Skipping ./nonexistent-file file which is referenced from XCCDF content" ]; rm -rf $stderr
+[ -f $stderr ]; [ "`cat $stderr`" == "WARNING: Skipping $srcdir/nonexistent-file file which is referenced from XCCDF content" ]; rm -rf $stderr
 grep '^Result.*notchecked$' $stdout
 rm -rf $stdout
 
