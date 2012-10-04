@@ -669,10 +669,6 @@ xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *par
 	}
 	xccdf_check_export_iterator_free(exports);
 
-	const char *content = xccdf_check_get_content(check);
-	if (content)
-		xmlNewTextChild(check_node, ns_xccdf, BAD_CAST "check-content", BAD_CAST content);
-
 	struct xccdf_check_content_ref_iterator *refs = xccdf_check_get_content_refs(check);
 	while (xccdf_check_content_ref_iterator_has_more(refs)) {
 		struct xccdf_check_content_ref *ref = xccdf_check_content_ref_iterator_next(refs);
@@ -686,6 +682,11 @@ xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *par
 		xmlNewProp(ref_node, BAD_CAST "href", BAD_CAST href);
 	}
 	xccdf_check_content_ref_iterator_free(refs);
+
+	const char *content = xccdf_check_get_content(check);
+	if (content) {
+		oscap_xmlstr_to_dom(check_node, "check-content", content);
+	}
 
 	return check_node;
 }

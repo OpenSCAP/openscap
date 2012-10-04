@@ -614,7 +614,7 @@ struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader)
 			}
 		case XCCDFE_CHECK_CONTENT:
 			if (check->content == NULL)
-				check->content = oscap_element_string_copy(reader);
+				check->content = oscap_get_xml(reader);
 			break;
 		case XCCDFE_CHECK_IMPORT:{
 				const char *name = xccdf_attribute_get(reader, XCCDFA_IMPORT_NAME);

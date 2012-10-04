@@ -443,6 +443,7 @@
             <ident system="http://cce.mitre.org">CCE-3416-5</ident>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref name="oval:gov.irs.rhel5:def:1" href="scap-rhel5-oval.xml"/>
+              <check-content xmlns:xhtml="http://www.w3.org/1999/xhtml">just text in here</check-content>
             </check>
           </Rule>
         </Group>
@@ -462,6 +463,7 @@
               <ident system="http://cce.mitre.org">CCE-4218-4</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref name="oval:gov.irs.rhel5:def:2" href="scap-rhel5-oval.xml"/>
+                <check-content xmlns:xhtml="http://www.w3.org/1999/xhtml">mixed text<otherns:arbitrary xmlns:otherns="http://open-scap.org/testing_namespace">and element</otherns:arbitrary></check-content>
               </check>
             </Rule>
           </Group>
@@ -482,6 +484,9 @@
               <ident system="http://cce.mitre.org">CCE-4209-3</ident>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref name="oval:gov.irs.rhel5:def:3" href="scap-rhel5-oval.xml"/>
+                <check-content xmlns:xhtml="http://www.w3.org/1999/xhtml">
+                  <otherns:arbitrary xmlns:otherns="http://open-scap.org/testing_namespace">just element</otherns:arbitrary>
+                </check-content>
               </check>
             </Rule>
           </Group>
