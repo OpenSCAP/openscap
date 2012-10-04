@@ -4,12 +4,15 @@ set -e
 set -o pipefail
 
 result=`mktemp`
-output=`mktemp`
+stdout=`mktemp`
+stderr=`mktemp`
 
-$OSCAP xccdf eval --results $result $srcdir/test_xccdf_xml_escaping_value.xccdf.xml 2>&1 > $output
+$OSCAP xccdf eval --results $result $srcdir/test_xccdf_xml_escaping_value.xccdf.xml > $stdout 2> $stderr
+echo "Stdout file = $stdout"
+echo "Stderr file = $stderr"
+[ -f $stderr ]; [ ! -s $stderr ]; rm -rf $stderr
+[ "`cat $stdout`" == "XCCDF Results are exported correctly." ]; rm -rf $stdout
 
-echo "Output file = $output"
-[ -f $output ]; [ ! -s $output ]; rm -rf $output
 
 echo "Result file = $result"
 grep '<value selector="dod_short">I have read &amp; consent to terms in IS user agreement.</value>' $result
