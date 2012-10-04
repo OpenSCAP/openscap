@@ -23,4 +23,5 @@ test_run "Check Processing Algorithm -- complex-check priority" $srcdir/test_xcc
 test_run "Check Processing Algorithm -- bad refine must select check without @selector" $srcdir/test_xccdf_check_processing_selector_bad.sh
 test_run "Check Processing Algorithm -- none selected for candidate" $srcdir/test_xccdf_check_processing_selector_empty.sh
 test_run "Check Processing Algorithm -- none check-content-ref resolvable." $srcdir/test_xccdf_check_processing_invalid_content_refs.sh
+test_run "Unsupported Check System" $srcdir/test_xccdf_check_unsupported_check_system.sh
 test_exit

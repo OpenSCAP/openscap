@@ -72,4 +72,7 @@ EXTRA_DIST += \
 	test_xccdf_xml_escaping_value.xccdf.xml \
 	oval_without_definitions.oval.xml \
 	unit_helper.c \
-	unit_helper.h
+	unit_helper.h \
+	test_xccdf_check_unsupported_check_system.sh \
+	test_xccdf_check_unsupported_check_system.xml
+
