@@ -69,19 +69,20 @@ struct oval_agent_session {
 struct oval_result_to_xccdf_spec {
 	oval_result_t oval;
 	xccdf_test_result_type_t xccdf;
+	xccdf_test_result_type_t reversed_xccdf;
 };
 
 /**
  * Array of transformation rules from OVAL Result type to XCCDF result type
  */
 static const struct oval_result_to_xccdf_spec XCCDF_OVAL_RESULTS_MAP[] = {
-	{OVAL_RESULT_TRUE, XCCDF_RESULT_PASS},
-	{OVAL_RESULT_FALSE, XCCDF_RESULT_FAIL},
-	{OVAL_RESULT_UNKNOWN, XCCDF_RESULT_UNKNOWN},
-	{OVAL_RESULT_ERROR, XCCDF_RESULT_ERROR},
-	{OVAL_RESULT_NOT_EVALUATED, XCCDF_RESULT_NOT_CHECKED},
-	{OVAL_RESULT_NOT_APPLICABLE, XCCDF_RESULT_NOT_APPLICABLE},
-	{0, 0}
+	{OVAL_RESULT_TRUE, XCCDF_RESULT_PASS, XCCDF_RESULT_FAIL},
+	{OVAL_RESULT_FALSE, XCCDF_RESULT_FAIL, XCCDF_RESULT_PASS},
+	{OVAL_RESULT_UNKNOWN, XCCDF_RESULT_UNKNOWN, XCCDF_RESULT_UNKNOWN},
+	{OVAL_RESULT_ERROR, XCCDF_RESULT_ERROR, XCCDF_RESULT_ERROR},
+	{OVAL_RESULT_NOT_EVALUATED, XCCDF_RESULT_NOT_CHECKED, XCCDF_RESULT_NOT_CHECKED},
+	{OVAL_RESULT_NOT_APPLICABLE, XCCDF_RESULT_NOT_APPLICABLE, XCCDF_RESULT_NOT_APPLICABLE},
+	{0, 0, 0}
 };
 
 oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *model, const char * name) {
@@ -299,14 +300,15 @@ void oval_agent_destroy_session(oval_agent_session_t * ag_sess) {
  * @param id OVAL_RESULT_* type
  * @return xccdf_test_result_type_t
  */
-static xccdf_test_result_type_t xccdf_get_result_from_oval(oval_result_t id)
+static xccdf_test_result_type_t xccdf_get_result_from_oval(oval_definition_class_t class, oval_result_t id)
 {
 
 	const struct oval_result_to_xccdf_spec *mapptr;
 
 	for (mapptr = XCCDF_OVAL_RESULTS_MAP; mapptr->oval != 0; ++mapptr) {
 		if (id == mapptr->oval)
-			return mapptr->xccdf;
+			// SP800-126r2: Deriving XCCDF Check Results from OVAL Definition Results
+			return (class == OVAL_CLASS_VULNERABILITY || class == OVAL_CLASS_PATCH) ? mapptr->reversed_xccdf : mapptr->xccdf;
 	}
 
 	return XCCDF_RESULT_UNKNOWN;
@@ -443,20 +445,20 @@ xccdf_test_result_type_t oval_agent_eval_rule(struct xccdf_policy *policy, const
         if (retval != 0) return XCCDF_RESULT_UNKNOWN;
 
         if (id != NULL) {
+		struct oval_definition *definition = oval_definition_model_get_definition(oval_results_model_get_definition_model(oval_agent_get_results_model(sess)), id);
             /* If there is no such OVAL definition, return XCCDF_RESUL_NOT_CHECKED. XDCCDF should look for alternative definition in this case. */
-            if (oval_definition_model_get_definition(oval_results_model_get_definition_model(oval_agent_get_results_model(sess)), id) == NULL)
+            if (definition == NULL)
                     return XCCDF_RESULT_NOT_CHECKED;
             /* Evaluate OVAL definition */
 	    oval_agent_eval_definition(sess, id);
 	    oval_agent_get_definition_result(sess, id, &result);
+		return xccdf_get_result_from_oval(oval_definition_get_class(definition), result);
         } else {
             int res = 0;
             oval_agent_eval_system(sess, oval_agent_callback, (void *) &res);
             if (res == 0) return XCCDF_RESULT_PASS;
             else return XCCDF_RESULT_FAIL;
         }
-
-	return xccdf_get_result_from_oval(result);
 }
 
 static struct oscap_stringlist *

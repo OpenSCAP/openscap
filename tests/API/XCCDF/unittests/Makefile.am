@@ -46,8 +46,8 @@ EXTRA_DIST += \
 	all.sh \
 	test_deriving_xccdf_result_from_oval.sh \
 	test_deriving_xccdf_result_from_oval.xccdf.xml \
-	test_deriving_xccdf_result_from_oval_pass.oval.xml
-	test_deriving_xccdf_result_from_oval_fail.oval.xml
+	test_deriving_xccdf_result_from_oval_fail.oval.xml \
+	test_deriving_xccdf_result_from_oval_pass.oval.xml \
 	test_xccdf_complex_check_nand.xccdf.xml \
 	test_xccdf_complex_check_single_negate.xccdf.xml \
 	test_xccdf_check_content_ref_without_name_attr.oval.xml \
