@@ -44,6 +44,8 @@ test_xccdf_shall_pass_SOURCES = test_xccdf_shall_pass.c unit_helper.c
 
 EXTRA_DIST += \
 	all.sh \
+	test_deriving_xccdf_result_from_oval2.sh \
+	test_deriving_xccdf_result_from_oval2.xccdf.xml \
 	test_deriving_xccdf_result_from_oval.sh \
 	test_deriving_xccdf_result_from_oval.xccdf.xml \
 	test_deriving_xccdf_result_from_oval_fail.oval.xml \

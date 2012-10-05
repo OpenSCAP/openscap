@@ -24,5 +24,6 @@ test_run "Check Processing Algorithm -- bad refine must select check without @se
 test_run "Check Processing Algorithm -- none selected for candidate" $srcdir/test_xccdf_check_processing_selector_empty.sh
 test_run "Check Processing Algorithm -- none check-content-ref resolvable." $srcdir/test_xccdf_check_processing_invalid_content_refs.sh
 test_run "Deriving XCCDF Check Results from OVAL Definition Results" $srcdir/test_deriving_xccdf_result_from_oval.sh
+test_run "Deriving XCCDF Check Results from OVAL Definition Results 2" $srcdir/test_deriving_xccdf_result_from_oval2.sh
 test_run "Unsupported Check System" $srcdir/test_xccdf_check_unsupported_check_system.sh
 test_exit
