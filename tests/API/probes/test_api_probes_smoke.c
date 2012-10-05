@@ -17,7 +17,7 @@
 
 #define WARN(...) fprintf (stderr, "WARN: " __VA_ARGS__)
 
-void print_asdf (SEXP_t *asdf)
+static void print_asdf (SEXP_t *asdf)
 {
         (void) SEXP_fprintfa (stdout, asdf);
         (void) fputc ('\n', stdout);
