@@ -508,7 +508,7 @@ int main (void)
 		        { OVAL_DATATYPE_VERSION, "1.7.2p1" }
 	        };
 
-	        for (int i = 0;
+	        for (unsigned int i = 0;
 	             i < sizeof __test_array/(sizeof(struct test)); ++i)
 		        {
 			        ent = probe_ent_from_cstr("test",
