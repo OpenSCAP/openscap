@@ -488,7 +488,6 @@ int main (void)
 
         {
 	        SEXP_t *ent;
-	        int i;
 
 	        struct test {
 		        oval_datatype_t t;
