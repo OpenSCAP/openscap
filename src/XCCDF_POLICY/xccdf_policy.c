@@ -1072,8 +1072,6 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
 
     xccdf_type_t itype = xccdf_item_get_type(item);
 
-	bool applicable = xccdf_policy_model_item_is_applicable(policy->model, item);
-
     switch (itype) {
         case XCCDF_RULE:{
 			return _xccdf_policy_rule_evaluate(policy, (struct xccdf_rule *) item, result);
