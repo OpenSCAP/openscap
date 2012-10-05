@@ -409,22 +409,35 @@ int oval_agent_resolve_variables(struct oval_agent_session * session, struct xcc
     return retval;
 }
 
-static int oval_agent_callback(const struct oscap_reporter_message *msg, void *arg)
+static int
+oval_agent_eval_multi_check(oval_agent_session_t *sess)
 {
+	// This is special handling of evaluation when the process is driven by XCCDF
+	// and xccdf:check/@multi-check=false. We need extra function for this to apply
+	// the XCCDF Truth Table for AND.
+	struct oval_definition *oval_def;
+	struct oval_definition_iterator *oval_def_it;
+	const char *id;
+	oval_result_t oval_result;
+	xccdf_test_result_type_t xccdf_result;
+	xccdf_test_result_type_t final_result = 0;
 
-        /*printf("Evalutated definition %s: %s\n",
-                oscap_reporter_message_get_user1str(msg),
-                oval_result_get_text(oscap_reporter_message_get_user2num(msg)));*/
-	switch ((oval_result_t) oscap_reporter_message_get_user2num(msg)) {
-            case OVAL_RESULT_FALSE:
-            case OVAL_RESULT_UNKNOWN:
-                    (*((int *)arg))++;
-                    break;
-            default:
-                    break;
+	oval_def_it = oval_definition_model_get_definitions(sess->def_model);
+	while (oval_definition_iterator_has_more(oval_def_it)) {
+		oval_def = oval_definition_iterator_next(oval_def_it);
+		id = oval_definition_get_id(oval_def);
+
+		// Evaluate definition.
+		assume_r(oval_agent_eval_definition(sess, id) != -1, -1);
+		assume_r(oval_agent_get_definition_result(sess, id, &oval_result) != -1, -1);
+		// Get XCCDF equivalent of the oval result.
+		xccdf_result = xccdf_get_result_from_oval(oval_definition_get_class(oval_def), oval_result);
+		// AND as described in (NISTIR-7275r4): Table 12: Truth Table for AND
+		final_result = (final_result == 0) ? xccdf_result :
+			xccdf_test_result_resolve_and_operation(final_result, xccdf_result);
 	}
-
-	return 0;
+	oval_definition_iterator_free(oval_def_it);
+	return final_result;
 }
 
 xccdf_test_result_type_t oval_agent_eval_rule(struct xccdf_policy *policy, const char *rule_id, const char *id,
@@ -454,10 +467,7 @@ xccdf_test_result_type_t oval_agent_eval_rule(struct xccdf_policy *policy, const
 	    oval_agent_get_definition_result(sess, id, &result);
 		return xccdf_get_result_from_oval(oval_definition_get_class(definition), result);
         } else {
-            int res = 0;
-            oval_agent_eval_system(sess, oval_agent_callback, (void *) &res);
-            if (res == 0) return XCCDF_RESULT_PASS;
-            else return XCCDF_RESULT_FAIL;
+		return oval_agent_eval_multi_check(sess);
         }
 }
 

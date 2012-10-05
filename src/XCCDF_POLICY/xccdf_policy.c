@@ -395,6 +395,11 @@ static xccdf_test_result_type_t _resolve_operation(int A, int B, xccdf_bool_oper
     return value;
 }
 
+xccdf_test_result_type_t xccdf_test_result_resolve_and_operation(xccdf_test_result_type_t A, xccdf_test_result_type_t B)
+{
+	return _resolve_operation((int)A, (int)B, XCCDF_OPERATOR_AND);
+}
+
 /**
  * Handle the negation="true" paramter of xccdf:complex-check.
  * Shall be run only once per a complex-check.

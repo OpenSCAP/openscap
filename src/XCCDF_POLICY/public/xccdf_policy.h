@@ -524,6 +524,13 @@ struct oscap_stringlist * xccdf_policy_model_get_files(struct xccdf_policy_model
  */
 struct oscap_stringlist * xccdf_item_get_files(struct xccdf_item * item);
 
+/**
+ * Return result of the AND operation for two given attributes.
+ * For more details about the attributes A and B please consult 'Table 26: Possible Results for a Single Test' from NISTIR-7275r4.
+ * For more details about the AND operation please consult 'Table 12: Truth Table for AND' in the very same document.
+ */
+xccdf_test_result_type_t xccdf_test_result_resolve_and_operation(xccdf_test_result_type_t A, xccdf_test_result_type_t B);
+
 /************************************************************/
 /** @} End of Evaluators group */
 
