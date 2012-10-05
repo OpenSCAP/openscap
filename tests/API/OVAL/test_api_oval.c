@@ -44,8 +44,7 @@ int main(int argc, char **argv)
 		printf("NO DEFINITIONS FOUND\n");
 		return 1;
 	}
-	int index;
-	for (index = 1; oval_definition_iterator_has_more(definitions); index++) {
+	while(oval_definition_iterator_has_more(definitions)) {
 		oval_definition_iterator_next(definitions);
 	       /* output is not needed for pusrpuse of this test, is it? */
 	}
