@@ -28,6 +28,7 @@ assert_exists 4 '//rule-result/check/check-content-ref[@href="test_deriving_xccd
 assert_exists 4 '//rule-result/check/check-content-ref[@href="test_deriving_xccdf_result_from_oval_pass.oval.xml"]'
 assert_exists 0 '//message'
 
-# TODO investigate the given score and assert for this.
+assert_exists 1 '//TestResult/score[@system="urn:xccdf:scoring:default"][text()="100.000000"]'
+assert_exists 1 '//TestResult/score[@system="urn:xccdf:scoring:flat"][text()="8.000000"]'
 
 rm -rf $result
