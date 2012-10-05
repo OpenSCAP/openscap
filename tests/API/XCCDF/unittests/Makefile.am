@@ -73,6 +73,8 @@ EXTRA_DIST += \
 	test_xccdf_check_processing_selector_empty.xccdf.xml \
 	test_xccdf_check_processing_selector_bad.sh \
 	test_xccdf_check_processing_selector_bad.xccdf.xml \
+	test_xccdf_check_unsupported_check_system.sh \
+	test_xccdf_check_unsupported_check_system.xml \
 	test_xccdf_overlaping_IDs.xccdf.xml \
 	test_xccdf_refine_rule.sh \
 	test_xccdf_refine_rule.xccdf.xml \
@@ -80,7 +82,4 @@ EXTRA_DIST += \
 	test_xccdf_xml_escaping_value.xccdf.xml \
 	oval_without_definitions.oval.xml \
 	unit_helper.c \
-	unit_helper.h \
-	test_xccdf_check_unsupported_check_system.sh \
-	test_xccdf_check_unsupported_check_system.xml
-
+	unit_helper.h
