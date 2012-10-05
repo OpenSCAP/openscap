@@ -43,6 +43,7 @@
 #include <assert.h>
 #include <limits.h>
 #include <unistd.h>
+#include <syslog.h>
 
 #include "oscap-tool.h"
 #include "oscap.h"
@@ -258,7 +259,7 @@ static int callback(const struct oscap_reporter_message *msg, void *arg)
             xccdf_test_result_type_t result = oscap_reporter_message_get_user2num(msg);
             if (result == XCCDF_RESULT_NOT_SELECTED) return 0;
 
-            if (isatty(1)) 
+            if (isatty(1))
                 printf("\033[%sm%s\033[0m\n", RESULT_COLORS[result], xccdf_test_result_type_get_text((xccdf_test_result_type_t) result));
             else printf("%s\n", xccdf_test_result_type_get_text((xccdf_test_result_type_t) result));
         }
@@ -301,9 +302,16 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	char* xccdf_doc_version = NULL;
 	char** oval_result_files = NULL;
 	int result = OSCAP_ERROR;
+	float base_score = 0;
 #ifdef ENABLE_SCE
 	struct sce_parameters* sce_parameters = 0;
 #endif
+	int priority = LOG_NOTICE;
+	char msg[1024];
+
+	/* syslog message */
+	snprintf(msg, sizeof(msg),"Evaluation started. Content: %s, Profile: %s.", action->f_xccdf, action->profile);
+	syslog(priority, msg);
 
 	if (ds_is_sds(action->f_xccdf) == 0)
 	{
@@ -528,8 +536,13 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	struct xccdf_model_iterator *model_it = xccdf_benchmark_get_models(benchmark);
 	while (xccdf_model_iterator_has_more(model_it)) {
 		struct xccdf_model *model = xccdf_model_iterator_next(model_it);
-		struct xccdf_score *score = xccdf_policy_get_score(policy, ritem, xccdf_model_get_system(model));
+		const char *score_model = xccdf_model_get_system(model);
+		struct xccdf_score *score = xccdf_policy_get_score(policy, ritem, score_model);
 		xccdf_result_add_score(ritem, score);
+
+		/* record default base score for later use */
+		if (!strcmp(score_model, "urn:xccdf:scoring:default"))
+			base_score = xccdf_score_get_score(score);
 	}
 	xccdf_model_iterator_free(model_it);
 
@@ -744,6 +757,10 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 cleanup:
 	if (oscap_err())
 		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+
+	/* syslog message */
+	snprintf(msg, sizeof(msg),"Evaluation finnished. Return code: %d, Base score %f.", result, base_score);
+	syslog(priority, msg);
 
 	if (xccdf_doc_version)
 		free(xccdf_doc_version);
