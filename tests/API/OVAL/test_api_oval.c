@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 	}
 	int index;
 	for (index = 1; oval_definition_iterator_has_more(definitions); index++) {
-		struct oval_definition *definition =  oval_definition_iterator_next(definitions);
+		oval_definition_iterator_next(definitions);
 	       /* output is not needed for pusrpuse of this test, is it? */
 	}
 	oval_definition_iterator_free(definitions);
