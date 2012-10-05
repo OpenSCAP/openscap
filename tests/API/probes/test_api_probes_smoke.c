@@ -487,8 +487,6 @@ int main (void)
         SEXP_free (obj);
 
         {
-	        SEXP_t *ent;
-
 	        struct test {
 		        oval_datatype_t t;
 		        const char     *v;
