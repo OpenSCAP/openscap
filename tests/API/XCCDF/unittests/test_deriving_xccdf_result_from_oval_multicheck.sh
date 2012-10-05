@@ -1,0 +1,1 @@
+test_deriving_xccdf_result_from_oval.sh
