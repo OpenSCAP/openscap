@@ -1105,151 +1105,188 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
 static struct xccdf_default_score * xccdf_item_get_default_score(struct xccdf_item * item, struct xccdf_result * test_result)
 {
 
-    struct xccdf_default_score  * score;
-    struct xccdf_default_score  * ch_score;
-    struct xccdf_rule_result    * rule_result;
-    struct xccdf_item           * child;
+	struct xccdf_default_score  * score;
+	struct xccdf_default_score  * ch_score;
+	struct xccdf_rule_result    * rule_result;
+	struct xccdf_item           * child;
 
-    xccdf_type_t itype = xccdf_item_get_type(item);
+	xccdf_type_t itype = xccdf_item_get_type(item);
 
-    switch (itype) {
-        case XCCDF_RULE:{
-                    /* Rule */
-                    rule_result = xccdf_result_get_rule_result_by_id(test_result, xccdf_rule_get_id((const struct xccdf_rule *) item));
-                    if ((rule_result == NULL) || 
-                        (xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_NOT_SELECTED) ||
-                        (xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_NOT_APPLICABLE) ||
-                        (xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_INFORMATIONAL) ) {
-			    /*oscap_dlprintf(DBG_E, "No result of rule %s.\n", xccdf_rule_get_id((const struct xccdf_rule *) item));
-                            No result for this rule, just skip */
+	switch (itype) {
+        case XCCDF_RULE: {
+		/* Rule */
+		const char *rule_id = xccdf_rule_get_id((const struct xccdf_rule *) item);
+		rule_result = xccdf_result_get_rule_result_by_id(test_result, rule_id);
+		if (rule_result == NULL) {
+			dE("Rule result ID(%s) not fount", rule_id);
+			return NULL;
+		}
+
+		/* Ignore these rules */
+		if ((xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_NOT_SELECTED) ||
+		    (xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_NOT_APPLICABLE) ||
+		    (xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_INFORMATIONAL) ||
+		    (xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_NOT_CHECKED))
 			    return NULL;
-                    }
 
-                    score = oscap_alloc(sizeof(struct xccdf_default_score));
-                    /* If the node is a Rule, then assign a count of 1 */
-                    score->count = 1;
-                    /* If the test result is 'pass', assign the node a score of 100, otherwise assign a score of 0 */
-                    if ((xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_PASS) ||
-                        (xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_FIXED)) 
-                            score->score = 100.0;
-                    else score->score = 0.0;
-                    /* Add weight */
-                    score->weight_score = xccdf_item_get_weight(item) * score->score;
+		score = oscap_alloc(sizeof(struct xccdf_default_score));
+
+		/* Count with this rule */
+		score->count = 1;
+
+		/* If the test result is 'pass', assign the node a score of 100, otherwise assign a score of 0 */
+		if ((xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_PASS) ||
+		    (xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_FIXED))
+			score->score = 100.0;
+		else
+			score->score = 0.0;
+
+		/* Default weight */
+		score->weight_score = score->score * xccdf_item_get_weight(item);
         } break;
 
         case XCCDF_BENCHMARK:
-        case XCCDF_GROUP:{
-                    /* Init */
-                    score = oscap_alloc(sizeof(struct xccdf_default_score));
-                    score->count = 0; score->score = 0.0; score->accumulator = 0.0;
-                    /* Recurse */
-                    struct xccdf_item_iterator * child_it;
-                    if (itype == XCCDF_GROUP) child_it = xccdf_group_get_content((const struct xccdf_group *)item);
-                    else child_it = xccdf_benchmark_get_content((const struct xccdf_benchmark *)item);
-                    while (xccdf_item_iterator_has_more(child_it)) {
-                            child = xccdf_item_iterator_next(child_it);
-                            ch_score = xccdf_item_get_default_score(child, test_result);
-                            if (ch_score == NULL) /* we got item that can't be processed */
-                                continue; /* TODO */
-                            if (ch_score->count == 0) {  /* we got item that has no selected items */
-                                oscap_free(ch_score);
-                                continue;
-                            }
-                            /* If child's count value is not 0, then add the child's wighted score to this node's score */
-                            if (ch_score->count != 0) { 
-                                score->score += ch_score->weight_score;
-                                score->count++;
-                                score->accumulator += xccdf_item_get_weight(child);
-                            }
-                            oscap_free(ch_score);
-                            /* Normalize */
-                            if (score->accumulator != 0) /* Division by zero */
-                                score->score = score->score / score->accumulator;
-                            else
-				    oscap_dlprintf(DBG_E, "Avoided division by zero - Score accumulator is 0!\n");
-                            score->weight_score = score->score * xccdf_item_get_weight(item);
-                    }
-                    xccdf_item_iterator_free(child_it);
-        } break;
+        case XCCDF_GROUP: {
+		/* Init */
+		score = oscap_alloc(sizeof(struct xccdf_default_score));
+		score->count = 0;
+		score->score = 0.0;
+		score->accumulator = 0.0;
 
-        
-        default: 
-                    /* TODO: set warning bad argument and return ? */
-                    score=NULL;
-            break;
-    } 
+		/* Recurse */
+		struct xccdf_item_iterator * child_it;
+		if (itype == XCCDF_GROUP)
+			child_it = xccdf_group_get_content((const struct xccdf_group *)item);
+		else
+			child_it = xccdf_benchmark_get_content((const struct xccdf_benchmark *)item);
+
+		while (xccdf_item_iterator_has_more(child_it)) {
+			child = xccdf_item_iterator_next(child_it);
+			ch_score = xccdf_item_get_default_score(child, test_result);
+
+			if (ch_score == NULL) /* we got item that can't be processed */
+				continue;
+
+			if (ch_score->count == 0) {  /* we got item that has no selected items */
+				oscap_free(ch_score);
+				continue;
+			}
+
+			/* If child's count value is not 0, then add the child's wighted score to this node's score */
+			score->score += ch_score->weight_score;
+			score->count++;
+			score->accumulator += xccdf_item_get_weight(child);
+
+			oscap_free(ch_score);
+		}
+
+		/* Normalize */
+		if (score->count && score->accumulator)
+			score->score = score->score / score->accumulator;
+		/* Default weight */
+                score->weight_score = score->score * xccdf_item_get_weight(item);
+
+		xccdf_item_iterator_free(child_it);
+	} break;
+
+        default: {
+		dE("Unsupported item type: %d", itype);
+		score=NULL;
+	} break;
+
+	} /* switch */
 
     return score;
 }
 
 static struct xccdf_flat_score * xccdf_item_get_flat_score(struct xccdf_item * item, struct xccdf_result * test_result, bool unweighted)
 {
+	struct xccdf_flat_score     * score;
+	struct xccdf_flat_score     * ch_score;
+	struct xccdf_rule_result    * rule_result;
+	struct xccdf_item           * child;
 
-    struct xccdf_flat_score     * score;
-    struct xccdf_flat_score     * ch_score;
-    struct xccdf_rule_result    * rule_result;
-    struct xccdf_item           * child;
+	xccdf_type_t itype = xccdf_item_get_type(item);
 
-    xccdf_type_t itype = xccdf_item_get_type(item);
+	switch (itype) {
+	case XCCDF_RULE:{
+		/* Rule */
+		const char *rule_id = xccdf_rule_get_id((const struct xccdf_rule *) item);
+		rule_result = xccdf_result_get_rule_result_by_id(test_result, rule_id);
+		if (rule_result == NULL) {
+			dE("Rule result ID(%s) not fount", rule_id);
+			return NULL;
+		}
 
-    switch (itype) {
-        case XCCDF_RULE:{
-                    /* Rule */
-                    rule_result = xccdf_result_get_rule_result_by_id(test_result, xccdf_rule_get_id((const struct xccdf_rule *) item));
-                    if ((rule_result == NULL) || 
-                        (xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_NOT_SELECTED) ||
-                        (xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_NOT_APPLICABLE) ||
-                        (xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_INFORMATIONAL) ) {
-			    /*oscap_dlprintf(DBG_E, "No result of rule %s.\n", xccdf_rule_get_id((const struct xccdf_rule *) item));
-                            No result for this rule, just skip */
+		/* Ignore these rules */
+		if ((xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_NOT_SELECTED) ||
+		    (xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_NOT_APPLICABLE) ||
+		    (xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_INFORMATIONAL) ||
+		    (xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_NOT_CHECKED))
 			    return NULL;
-                    }
 
-                    score = oscap_alloc(sizeof(struct xccdf_flat_score));
-                    if (unweighted) score->weight = 1.0;
-                    else score->weight = xccdf_item_get_weight(item);
-                    if ((xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_PASS) ||
-                        (xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_FIXED)) {
-                            if (unweighted) score->score = 1.0;
-                            else score->score = xccdf_item_get_weight(item);
-                    } else score->score = 0.0;
-        } break;
+		score = oscap_alloc(sizeof(struct xccdf_flat_score));
 
+		/* max possible score = sum of weights*/
+		if (unweighted)
+			score->weight = 1.0;
+		else score->weight =
+			xccdf_item_get_weight(item);
+
+		/* score = sum of weights of rules that pass */
+		if ((xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_PASS) ||
+		    (xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_FIXED)) {
+			if (unweighted)
+				score->score = 1.0;
+			else
+				score->score = xccdf_item_get_weight(item);
+		} else
+			score->score = 0.0;	/* fail */
+	} break;
         case XCCDF_BENCHMARK:
         case XCCDF_GROUP:{
-                    /* Init */
-                    score = oscap_alloc(sizeof(struct xccdf_flat_score));
-                    score->score = 0; score->weight = 0.0;
-                    /* Recurse */
-                    struct xccdf_item_iterator * child_it;
-                    if (itype == XCCDF_GROUP) child_it = xccdf_group_get_content((const struct xccdf_group *)item);
-                    else child_it = xccdf_benchmark_get_content((const struct xccdf_benchmark *)item);
-                    while (xccdf_item_iterator_has_more(child_it)) {
-                            child = xccdf_item_iterator_next(child_it);
+		/* Init */
+		score = oscap_alloc(sizeof(struct xccdf_flat_score));
+		score->score = 0;
+		score->weight = 0.0;
 
-                            ch_score = xccdf_item_get_flat_score(child, test_result, unweighted);
-                            if (ch_score == NULL) /* we got item that can't be processed */
-                                continue; /* TODO */
-                            if (ch_score->weight == 0) {  /* we got item that has no selected items */
-                                oscap_free(ch_score);
-                                continue;
-                            }
-                            /* If child's count value is not 0, then add the child's wighted score to this node's score */
-                            score->score += ch_score->score;
-                            score->weight += ch_score->weight;
-                            oscap_free(ch_score);
-                    }
-                    xccdf_item_iterator_free(child_it);
-        } break;
+		/* Recurse */
+		struct xccdf_item_iterator * child_it;
+		if (itype == XCCDF_GROUP)
+			child_it = xccdf_group_get_content((const struct xccdf_group *)item);
+		else
+			child_it = xccdf_benchmark_get_content((const struct xccdf_benchmark *)item);
 
-        
-        default: 
-                    /* TODO: set warning bad argument and return ? */
-                    score=NULL;
-            break;
-    } 
+		while (xccdf_item_iterator_has_more(child_it)) {
+			child = xccdf_item_iterator_next(child_it);
+			ch_score = xccdf_item_get_flat_score(child, test_result, unweighted);
 
-    return score;
+			if (ch_score == NULL) /* we got item that can't be processed */
+				continue;
+
+			if (ch_score->weight == 0) {  /* we got item that has no selected items */
+				oscap_free(ch_score);
+				continue;
+			}
+
+			/* If child's count value is not 0, then add the child's wighted score to this node's score */
+			score->score += ch_score->score;
+			score->weight += ch_score->weight;
+
+			oscap_free(ch_score);
+		}
+
+		xccdf_item_iterator_free(child_it);
+	} break;
+
+        default: {
+		dE("Unsupported item type: %d", itype);
+		score=NULL;
+	} break;
+
+	} /* switch */
+
+	return score;
 }
 
 struct oscap_file_entry {
