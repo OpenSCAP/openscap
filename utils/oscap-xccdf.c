@@ -262,12 +262,12 @@ static int scallback(const struct oscap_reporter_message *msg, void *arg)
 	const char * rule_id = xccdf_rule_get_id(rule);
 
 	if (isatty(1))
-		printf("Rule:\r\t\t\033[1m%s\033[0;0m\n", rule_id);
+		printf("Rule\r\t\033[1m%s\033[0;0m\n", title);
 	else
-		printf("Rule:\r\t\t%s\n", rule_id);
-	printf("Ident:\r\t\t%s\n", ident_id);
-	printf("Title:\r\t\t%s\n", title);
-	printf("Result:\r\t\t");
+		printf("Rule\r\t%s\n", title);
+	printf("Title\r\t%s\n", rule_id);
+	printf("Ident\r\t%s\n", ident_id);
+	printf("Result\r\t");
 	fflush(stdout);
 
 	return 0;
