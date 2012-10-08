@@ -262,10 +262,10 @@ static int scallback(const struct oscap_reporter_message *msg, void *arg)
 	const char * rule_id = xccdf_rule_get_id(rule);
 
 	if (isatty(1))
-		printf("Rule\r\t\033[1m%s\033[0;0m\n", title);
+		printf("Title\r\t\033[1m%s\033[0;0m\n", title);
 	else
-		printf("Rule\r\t%s\n", title);
-	printf("Title\r\t%s\n", rule_id);
+		printf("Title\r\t%s\n", title);
+	printf("Rule\r\t%s\n", rule_id);
 	printf("Ident\r\t%s\n", ident_id);
 	printf("Result\r\t");
 	fflush(stdout);
@@ -290,10 +290,32 @@ static int callback(const struct oscap_reporter_message *msg, void *arg)
 	if (result == XCCDF_RESULT_NOT_SELECTED)
 		return 0;
 
+	const struct xccdf_rule *rule = (const struct xccdf_rule *) oscap_reporter_message_get_user1ptr(msg);
+
+	/* print result */
+	const char * result_str = xccdf_test_result_type_get_text((xccdf_test_result_type_t) result);
 	if (isatty(1))
-		printf("\033[%sm%s\033[0m\n\n", RESULT_COLORS[result], xccdf_test_result_type_get_text((xccdf_test_result_type_t) result));
+		printf("\033[%sm%s\033[0m\n\n", RESULT_COLORS[result], result_str);
 	else
-		printf("%s\n\n", xccdf_test_result_type_get_text((xccdf_test_result_type_t) result));
+		printf("%s\n\n", result_str);
+
+	/* log to syslog */
+	if ((result == XCCDF_RESULT_FAIL) || (result == XCCDF_RESULT_UNKNOWN)) {
+		char sys_msg[1024];
+		const char * ident_id = NULL;
+		int priority = LOG_NOTICE;
+
+		/* get the first ident */
+		struct xccdf_ident_iterator *idents = xccdf_rule_get_idents(rule);
+		if (xccdf_ident_iterator_has_more(idents)) {
+			const struct xccdf_ident *ident = xccdf_ident_iterator_next(idents);
+			ident_id = xccdf_ident_get_id(ident);
+		}
+		xccdf_ident_iterator_free(idents);
+
+	        snprintf(sys_msg, sizeof(sys_msg),"Rule: %s, Ident: %s, Result: %s.", xccdf_rule_get_id(rule), ident_id, result_str);
+		syslog(priority, sys_msg);
+	}
 
 	return 0;
 }
