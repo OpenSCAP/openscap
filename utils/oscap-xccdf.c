@@ -120,6 +120,7 @@ static struct oscap_module XCCDF_EVAL = {
         "   --results-arf <file>\r\t\t\t\t - Write ARF (result data stream) into file.\n"
         "   --report <file>\r\t\t\t\t - Write HTML report into file.\n"
         "   --skip-valid \r\t\t\t\t - Skip validation.\n"
+	"   --fetch-remote-resources \r\t\t\t\t - Download remote content referenced by XCCDF.\n"
         "   --datastream-id <id> \r\t\t\t\t - ID of the datastream in the collection to use.\n"
         "                        \r\t\t\t\t   (only applicable for source datastreams)\n"
         "   --xccdf-id <id> \r\t\t\t\t - ID of XCCDF in the datastream that should be evaluated.\n"
@@ -470,6 +471,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 		struct oscap_file_entry_list * files = xccdf_policy_model_get_systems_and_files(policy_model);
 		struct oscap_file_entry_iterator *files_it = oscap_file_entry_list_get_files(files);
+		bool fetch_option_suggested = false;
+		char *printable_path = NULL;
 		while (oscap_file_entry_iterator_has_more(files_it)) {
 			file_entry = (struct oscap_file_entry *)oscap_file_entry_iterator_next(files_it);
 
@@ -481,7 +484,41 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			sprintf(tmp_path, "%s/%s", path, oscap_file_entry_get_file(file_entry));
 
 			if (stat(tmp_path, &sb)) {
-				fprintf(stderr, "WARNING: Skipping %s file which is referenced from XCCDF content\n", tmp_path);
+				if (oscap_acquire_url_is_supported(oscap_file_entry_get_file(file_entry))) {
+					// Strip out the 'path' for printing the url.
+					printable_path = (char *) oscap_file_entry_get_file(file_entry);
+
+					if (action->remote_resources) {
+						if (temp_dir == NULL)
+							temp_dir = oscap_acquire_temp_dir();
+						if (temp_dir == NULL) {
+							oscap_file_entry_iterator_free(files_it);
+							oscap_file_entry_list_free(files);
+							free(pathcopy);
+							goto cleanup;
+						}
+
+						char *file = oscap_acquire_url_download(temp_dir, printable_path);
+						if (file != NULL) {
+							contents[idx] = malloc(sizeof(struct oscap_content_resource));
+							contents[idx]->href = strdup(printable_path);
+							contents[idx]->filename = file;
+							idx++;
+							contents = realloc(contents, (idx + 1) * sizeof(struct oscap_content_resource *));
+							contents[idx] = NULL;
+							free(tmp_path);
+							continue;
+						}
+						free(file);
+					}
+					else if (!fetch_option_suggested) {
+						printf("This content points out to the remote resources. Use `--fetch-remote-resources' option to download them.\n");
+						fetch_option_suggested = true;
+					}
+				}
+				else
+					printable_path = tmp_path;
+				fprintf(stderr, "WARNING: Skipping %s file which is referenced from XCCDF content\n", printable_path);
 				free(tmp_path);
 			}
 			else {
@@ -1240,6 +1277,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"sce-results",	no_argument, &action->sce_results, 1},
 #endif
 		{"skip-valid",		no_argument, &action->validate, 0},
+		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},
 		{"hide-profile-info",	no_argument, &action->hide_profile_info, 1},
 		{"export-variables",	no_argument, &action->export_variables, 1},
 	// end

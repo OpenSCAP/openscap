@@ -100,3 +100,9 @@ oscap_acquire_url_download(const char *temp_dir, const char *url)
 	fclose(fp);
 	return output_filename;
 }
+
+bool
+oscap_acquire_url_is_supported(const char *url)
+{
+	return !strncmp(url, "http://", strlen("http://"));
+}

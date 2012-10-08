@@ -21,6 +21,8 @@
 #ifndef OSCAP_ACQUIRE_H_
 #define OSCAP_ACQUIRE_H_
 
+#include <stdbool.h>
+
 /**
  * Create an oscap temp dir. (While ideally all the operations are being
  * made on unliked files using file descriptors, this is bordeline impossible
@@ -37,5 +39,12 @@ char *oscap_acquire_temp_dir(void);
  * @return the filename of the newly created file or NULL on error.
  */
 char *oscap_acquire_url_download(const char *temp_dir, const char *url);
+
+/**
+ * Is the given url supported by OpenSCAP?
+ * @param url Requested url
+ * @return true if the given string reminds supported url.
+ */
+bool oscap_acquire_url_is_supported(const char *url);
 
 #endif
