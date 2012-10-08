@@ -37,6 +37,8 @@
 #include "public/xccdf_benchmark.h"
 #include "public/text.h"
 
+#include "cpe_lang.h"
+
 #include "oval_agent_api.h"
 
 #include "item.h"
@@ -89,6 +91,7 @@ struct xccdf_policy_model {
 	struct oscap_list       * policies;     ///< List of xccdf_policy structures
         struct oscap_list       * callbacks;    ///< Callbacks for checking engines (see callback_t)
         struct oscap_list       * cpe_dicts; ///< All CPE dictionaries except the one embedded in XCCDF
+	struct oscap_list       * cpe_lang_models; ///< All CPE lang models except the one embedded in XCCDF
         struct oscap_htable     * cpe_oval_sessions; ///< Caches CPE OVAL check results
 };
 /* Macros to generate iterators, getters and setters */
@@ -898,6 +901,23 @@ static bool xccdf_policy_model_item_is_applicable_dict(struct xccdf_policy_model
 	return ret;
 }
 
+static bool xccdf_policy_model_item_is_applicable_lang_model(struct xccdf_policy_model* model, struct cpe_lang_model* lang_model, struct xccdf_item* item)
+{
+	struct oscap_string_iterator* platforms = xccdf_item_get_platforms(item);
+
+	// at this point we know that the item has 1 or more platforms specified
+	bool ret = false;
+
+	while (oscap_string_iterator_has_more(platforms))
+	{
+		const char* platform = oscap_string_iterator_next(platforms);
+		// TODO: stub
+	}
+	oscap_string_iterator_free(platforms);
+
+	return ret;
+}
+
 static bool xccdf_policy_model_item_is_applicable(struct xccdf_policy_model* model, struct xccdf_item* item)
 {
 	struct xccdf_benchmark* benchmark = xccdf_item_get_benchmark(item);
@@ -912,14 +932,40 @@ static bool xccdf_policy_model_item_is_applicable(struct xccdf_policy_model* mod
 		oscap_string_iterator_free(platforms);
 
 		bool ret = true;
-		if (has_platforms)
+
+		// while is used just because of the break "early outs"
+		while (has_platforms)
 		{
 			ret = false;
+
+			// We do not check whether the platform entries are valid platform refs
+			// or CPE names. We let the policy_model methods do that instead.
+			// Therefore we check all 4 (!) places where a platform may match.
+			// CPE2 takes precedence over CPE1 in this implementation. This is not
+			// dictated by the specification, it's an arbitrary choice.
+
+			struct cpe_lang_model* embedded_lang_model = xccdf_benchmark_get_cpe_lang_model(benchmark);
+			if (embedded_lang_model != NULL) {
+				ret = xccdf_policy_model_item_is_applicable_lang_model(model, embedded_lang_model, item);
+			}
+			if (ret)
+				break;
+
+			struct oscap_iterator* lang_models = oscap_iterator_new(model->cpe_lang_models);
+			while (!ret && oscap_iterator_has_more(lang_models)) {
+				struct cpe_lang_model *lang_model = (struct cpe_lang_model*)oscap_iterator_next(lang_models);
+				ret = xccdf_policy_model_item_is_applicable_lang_model(model, lang_model, item);
+			}
+			oscap_iterator_free(lang_models);
+			if (ret)
+				break;
 
 			struct cpe_dict_model* embedded_dict = xccdf_benchmark_get_cpe_list(benchmark);
 			if (embedded_dict != NULL) {
 				ret = xccdf_policy_model_item_is_applicable_dict(model, embedded_dict, item);
 			}
+			if (ret)
+				break;
 
 			struct oscap_iterator* dicts = oscap_iterator_new(model->cpe_dicts);
 			while (!ret && oscap_iterator_has_more(dicts)) {
@@ -927,6 +973,7 @@ static bool xccdf_policy_model_item_is_applicable(struct xccdf_policy_model* mod
 				ret = xccdf_policy_model_item_is_applicable_dict(model, dict, item);
 			}
 			oscap_iterator_free(dicts);
+			break;
 		}
 
 		return ret;
@@ -1612,11 +1659,20 @@ struct oscap_stringlist * xccdf_item_get_files(struct xccdf_item * item)
 
 bool xccdf_policy_model_add_cpe_dict(struct xccdf_policy_model *model, const char * cpe_dict)
 {
-        __attribute__nonnull__(model);
+		__attribute__nonnull__(model);
 		__attribute__nonnull__(cpe_dict);
 
 		struct cpe_dict_model* dict = cpe_dict_model_import(cpe_dict);
-        return oscap_list_add(model->cpe_dicts, dict);
+		return oscap_list_add(model->cpe_dicts, dict);
+}
+
+bool xccdf_policy_model_add_cpe_lang_model(struct xccdf_policy_model *model, const char * cpe_lang)
+{
+		__attribute__nonnull__(model);
+		__attribute__nonnull__(cpe_lang);
+
+		struct cpe_lang_model* lang_model = cpe_lang_model_import(cpe_lang);
+		return oscap_list_add(model->cpe_lang_models, lang_model);
 }
 /**
  * Get ID of XCCDF Profile that belongs to XCCDF Policy
@@ -1725,6 +1781,7 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
 	model->policies  = oscap_list_new();
         model->callbacks = oscap_list_new();
 	model->cpe_dicts = oscap_list_new();
+	model->cpe_lang_models = oscap_list_new();
 	model->cpe_oval_sessions = oscap_htable_new();
 
         /* Resolve document */
@@ -2309,6 +2366,7 @@ void xccdf_policy_model_free(struct xccdf_policy_model * model) {
 	oscap_list_free(model->callbacks, (oscap_destruct_func) oscap_free);
         xccdf_benchmark_free(model->benchmark);
 	oscap_list_free(model->cpe_dicts, (oscap_destruct_func) cpe_dict_model_free);
+	oscap_list_free(model->cpe_lang_models, (oscap_destruct_func) cpe_lang_model_free);
 	oscap_htable_free(model->cpe_oval_sessions, (oscap_destruct_func) _xccdf_policy_destroy_cpe_oval_session);
         oscap_free(model);
 }
