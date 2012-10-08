@@ -880,6 +880,11 @@ static bool xccdf_policy_model_item_is_applicable_dict(struct xccdf_policy_model
 	while (oscap_string_iterator_has_more(platforms))
 	{
 		const char* platform = oscap_string_iterator_next(platforms);
+		// Platform could be a reference to CPE2 platform, skip the ones
+		// that aren't valid CPE names.
+		if (!cpe_name_check(platform))
+			continue;
+
 		struct cpe_name* name = cpe_name_new(platform);
 
 		struct cpe_check_cb_usr* usr = oscap_alloc(sizeof(struct cpe_check_cb_usr));
