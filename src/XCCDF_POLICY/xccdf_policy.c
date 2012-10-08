@@ -780,28 +780,6 @@ _build_rule_result(const struct xccdf_rule *rule, struct xccdf_check *check, xcc
 }
 
 static int
-_xccdf_policy_report_rule(struct xccdf_policy *policy, const char * sysname, const struct xccdf_rule *rule, int ret)
-{
-	/* Get all information for callbacks */
-	struct oscap_text_iterator * dsc_it = xccdf_rule_get_description(rule);
-	struct oscap_text_iterator * title_it = xccdf_rule_get_title(rule);
-	char * description = NULL;
-	const char * title = NULL;
-	if (oscap_text_iterator_has_more(dsc_it))
-		description = oscap_text_get_plaintext(oscap_text_iterator_next(dsc_it));
-	oscap_text_iterator_free(dsc_it);
-	if (oscap_text_iterator_has_more(title_it))
-		title = oscap_text_get_text(oscap_text_iterator_next(title_it));
-	oscap_text_iterator_free(title_it);
-
-	int retval = 0;
-	/* Report evaluating */
-        retval = xccdf_policy_report_cb(policy, sysname, rule, ret);
-	oscap_free(description);
-	return retval;
-}
-
-static int
 _xccdf_policy_report_rule_result(struct xccdf_policy *policy, struct xccdf_result *result,
 		const struct xccdf_rule *rule, struct xccdf_check *check, int ret, const char *message)
 {
@@ -813,7 +791,7 @@ _xccdf_policy_report_rule_result(struct xccdf_policy *policy, struct xccdf_resul
 		xccdf_result_add_rule_result(result, _build_rule_result(rule, check, ret, message));
 	else
 		xccdf_check_free(check);
-	return _xccdf_policy_report_rule(policy, "urn:xccdf:system:callback:output", rule, ret);
+	return xccdf_policy_report_cb(policy, "urn:xccdf:system:callback:output", rule, ret);
 }
 
 struct cpe_check_cb_usr
@@ -949,7 +927,7 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 	const bool is_applicable = xccdf_policy_model_item_is_applicable(policy->model, (struct xccdf_item*)rule);
 	const char *message = NULL;
 
-	int report = _xccdf_policy_report_rule(policy, "urn:xccdf:system:callback:start", rule, is_selected ? 0 : XCCDF_RESULT_NOT_SELECTED);
+	int report = xccdf_policy_report_cb(policy, "urn:xccdf:system:callback:start", rule, is_selected ? 0 : XCCDF_RESULT_NOT_SELECTED);
 	if (report)
 		return report;
 
@@ -1021,7 +999,7 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 					if ((report = _xccdf_policy_report_rule_result(policy, result, rule, cloned_check, inner_ret, NULL)) != 0)
 						break;
 					if (oscap_string_iterator_has_more(name_it))
-						if ((report = _xccdf_policy_report_rule(policy, "urn:xccdf:system:callback:start", rule, 0)) != 0)
+						if ((report = xccdf_policy_report_cb(policy, "urn:xccdf:system:callback:start", rule, 0)) != 0)
 							break;
 				}
 				oscap_string_iterator_free(name_it);
