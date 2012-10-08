@@ -531,8 +531,7 @@ _xccdf_policy_get_namesfor_href(struct xccdf_policy *policy, const char *sysname
 	return result;
 }
 
-static int xccdf_policy_report_cb(struct xccdf_policy * policy, const char * sysname, const char * rule_id, 
-        const char * description, const char * title, int ret)
+static int xccdf_policy_report_cb(struct xccdf_policy * policy, const char * sysname, const struct xccdf_rule *rule, int ret)
 {
     int retval = 0;
     struct oscap_iterator * cb_it = _xccdf_policy_get_callbacks_by_sysname(policy, sysname);
@@ -544,10 +543,9 @@ static int xccdf_policy_report_cb(struct xccdf_policy * policy, const char * sys
         struct oscap_reporter_message * msg = oscap_reporter_message_new_fmt(
                 OSCAP_REPORTER_FAMILY_XCCDF, /* FAMILY */
                 0,                           /* CODE */
-                description);
-        oscap_reporter_message_set_user1str(msg, rule_id);
-        oscap_reporter_message_set_user2num(msg, (xccdf_test_result_type_t) ret); // Result
-        oscap_reporter_message_set_user3str(msg, title);
+                NULL);
+        oscap_reporter_message_set_user1ptr(msg, (void *) rule);
+	oscap_reporter_message_set_user2num(msg, (xccdf_test_result_type_t) ret);
         retval = oscap_reporter_report(cb->callback, msg, cb->usr);
 
         /* We still want to stop evaluation if user cancel it
@@ -798,7 +796,7 @@ _xccdf_policy_report_rule(struct xccdf_policy *policy, const char * sysname, con
 
 	int retval = 0;
 	/* Report evaluating */
-        retval = xccdf_policy_report_cb(policy, sysname, xccdf_rule_get_id(rule), description, title, ret);
+        retval = xccdf_policy_report_cb(policy, sysname, rule, ret);
 	oscap_free(description);
 	return retval;
 }
