@@ -138,3 +138,14 @@ bool cpe_language_match_str(const char* cpe, const struct cpe_platform* platform
 	return ret;
 }
 */
+
+bool cpe_platform_applicable_lang_model(const char* platform, struct cpe_lang_model *lang_model, cpe_check_fn cb, void* usr)
+{
+	struct cpe_platform* plat = cpe_lang_model_get_item(lang_model, platform);
+
+	if (plat == NULL) // can't find any matching platform implies not applicable
+		return false;
+
+	// FIXME: stub!
+	return true;
+}

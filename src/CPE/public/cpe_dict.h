@@ -874,8 +874,6 @@ bool cpe_name_match_dict(struct cpe_name *cpe, struct cpe_dict_model *dict);
  */
 bool cpe_name_match_dict_str(const char *cpe, struct cpe_dict_model *dict);
 
-typedef bool *(*cpe_check_fn) (const char*, const char*, void*);
-
 /**
  * Verify whether given CPE is applicable to current platform by evaluating checks associated with it
  *

@@ -160,6 +160,16 @@ struct cpe_platform_iterator *cpe_lang_model_get_platforms(const struct cpe_lang
 struct cpe_platform *cpe_lang_model_get_item(const struct cpe_lang_model *item, const char *key);
 
 /**
+ * Verify whether given CPE platform idref is applicable by evaluating test expression associated with it
+ *
+ * @memberof cpe_lang_model
+ * @param platform idref to the platform to verify (do not pass with "#" prepended)
+ * @param lang_model used CPE language model
+ * @return true if lang model contains given platform and the platform is applicable
+ */
+bool cpe_platform_applicable_lang_model(const char* platform, struct cpe_lang_model *lang_model, cpe_check_fn cb, void* usr);
+
+/**
  * cpe_platform functions to get id
  * @memberof cpe_platform
  */
