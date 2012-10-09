@@ -69,6 +69,13 @@ struct xccdf_benchmark *xccdf_benchmark_import(const char *file)
 		cpe_dict_model_set_origin_file(embedded_dict, file);
 	}
 
+	// same situation with embedded CPE2 lang model
+	// FIXME: Refactor and move this somewhere else
+	struct cpe_lang_model* embedded_lang_model = xccdf_benchmark_get_cpe_lang_model(XBENCHMARK(benchmark));
+	if (embedded_lang_model != NULL) {
+		cpe_lang_model_set_origin_file(embedded_lang_model, file);
+	}
+
 	return XBENCHMARK(benchmark);
 }
 
