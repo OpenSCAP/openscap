@@ -227,9 +227,9 @@ static const char * RESULT_COLORS[] = {"", "32", "31", "1;31", "1;30", "1;37", "
 
 static char custom_stylesheet_path[PATH_MAX];
 
-static int callback_scr_rule(const struct oscap_reporter_message *msg, void *arg)
+static int callback_scr_rule(void *ptr, void *arg)
 {
-	const struct xccdf_rule *rule = (const struct xccdf_rule *) oscap_reporter_message_get_user1ptr(msg);
+	const struct xccdf_rule *rule = (const struct xccdf_rule *) ptr;
 	const char * rule_id = xccdf_rule_get_id(rule);
 
 	/* is rule selected? we print only selected rules */
@@ -266,9 +266,9 @@ static int callback_scr_rule(const struct oscap_reporter_message *msg, void *arg
 	return 0;
 }
 
-static int callback_scr_result(const struct oscap_reporter_message *msg, void *arg)
+static int callback_scr_result(void *ptr, void *arg)
 {
-	const struct xccdf_rule_result *rule_result = (const struct xccdf_rule_result *) oscap_reporter_message_get_user1ptr(msg);
+	const struct xccdf_rule_result *rule_result = (const struct xccdf_rule_result *) ptr;
 	xccdf_test_result_type_t result = xccdf_rule_result_get_result(rule_result);
 
 	/* is result from selected rule? we print only selected rules */

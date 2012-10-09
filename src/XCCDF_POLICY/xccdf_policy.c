@@ -73,7 +73,7 @@ typedef struct callback_t {
 typedef struct callback_out_t {
 
     char * system;                              ///< Identificator of checking engine (output engine)
-    oscap_reporter callback;                    ///< oscap reporter callback - output callback specified by tool
+    policy_reporter callback;                    ///< oscap reporter callback - output callback specified by tool
     void * usr;                                 ///< User data structure
 
 } callback_out;
@@ -538,14 +538,8 @@ static int xccdf_policy_report_cb(struct xccdf_policy * policy, const char * sys
     while (oscap_iterator_has_more(cb_it)) {
         callback_out * cb = (callback_out *) oscap_iterator_next(cb_it);
 
-        /* Report by oscap_reporter_message
-         */
-        struct oscap_reporter_message * msg = oscap_reporter_message_new_fmt(
-                OSCAP_REPORTER_FAMILY_XCCDF, /* FAMILY */
-                0,                           /* CODE */
-                NULL);
-        oscap_reporter_message_set_user1ptr(msg, (void *) rule);
-        retval = oscap_reporter_report(cb->callback, msg, cb->usr);
+        /* Report */
+	retval = cb->callback((void *)rule, cb->usr);
 
         /* We still want to stop evaluation if user cancel it
          * TODO: We should have a way to stop evaluation of current item
@@ -1638,7 +1632,7 @@ bool xccdf_policy_model_register_engine_and_query_callback(struct xccdf_policy_m
         return oscap_list_add(model->callbacks, cb);
 }
 
-bool xccdf_policy_model_register_start_callback(struct xccdf_policy_model * model, oscap_reporter func, void * usr)
+bool xccdf_policy_model_register_start_callback(struct xccdf_policy_model * model, policy_reporter func, void * usr)
 {
 
         __attribute__nonnull__(model);
@@ -1652,7 +1646,7 @@ bool xccdf_policy_model_register_start_callback(struct xccdf_policy_model * mode
         return oscap_list_add(model->callbacks, (callback *) cb);
 }
 
-bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * model, oscap_reporter func, void * usr)
+bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * model, policy_reporter func, void * usr)
 {
 
         __attribute__nonnull__(model);

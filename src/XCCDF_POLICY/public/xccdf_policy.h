@@ -160,6 +160,8 @@ bool xccdf_policy_model_register_engine_callback(struct xccdf_policy_model * mod
  */
 bool xccdf_policy_model_register_engine_and_query_callback(struct xccdf_policy_model *model, char *sys, void *eval_fn, void *usr, xccdf_policy_engine_query_fn query_fn);
 
+typedef int (*policy_reporter)(void *ptr, void *arg);
+
 /**
  * Function to register output callback for checking system that will be called AFTER each rule evaluation.
  * @param model XCCDF Policy Model
@@ -167,30 +169,8 @@ bool xccdf_policy_model_register_engine_and_query_callback(struct xccdf_policy_m
  * @param usr optional parameter for passing user data to callback
  * @memberof xccdf_policy_model
  * @return true if callback registered succesfully, false otherwise
- * \par Example
- * With the first function below (register output callback) user registers the callback that will be called after
- * each rule evalution is done. Second callback is registered as callback for evaluation itself and will be called
- * during the evaluation.
- * \code
- * xccdf_policy_model_register_output_callback(policy_model, callback, NULL);
- * xccdf_policy_model_register_engine_callback(policy_model, "http://oval.mitre.org/XMLSchema/oval-definitions-5", oval_agent_eval_rule, (void *) sess);
- * \endcode
- * The example of callback:
- * \code
- * static int callback(const struct oscap_reporter_message *msg, void *arg)
- * {
- *      xccdf_test_result_type_t result = oscap_reporter_message_get_user2num(msg);
- *      if (result == XCCDF_RESULT_NOT_SELECTED) return 0;
- * 
- *      printf("\n");
- *      printf("Rule ID:\r\t\t\033[1m%s\033[0;0m\n", oscap_reporter_message_get_user1str(msg));
- *      printf("Title:\r\t\t%s\n", oscap_reporter_message_get_user3str(msg));
- *      printf("Result:\r\t\t\033[%sm%s\033[0m\n", RESULT_COLORS[result], xccdf_test_result_type_get_text((xccdf_test_result_type_t) result));
- *      return 0;
- * }
- * \endcode
  */
-bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * model, oscap_reporter func, void * usr);
+bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * model, policy_reporter func, void * usr);
 
 /**
  * Function to register start callback for checking system that will be called BEFORE each rule evaluation.
@@ -199,25 +179,8 @@ bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * mod
  * @param usr optional parameter for passing user data to callback
  * @memberof xccdf_policy_model
  * @return true if callback registered succesfully, false otherwise
- * \par Example
- * With the first function below (register start callback) user registers the callback that will be called before
- * each rule evalution is started. Second callback is registered as callback for evaluation itself and will be called
- * during the evaluation. Last callback is registered output callback.
- * \code
- * xccdf_policy_model_register_start_callback(policy_model, callback_start, NULL);
- * xccdf_policy_model_register_engine_callback(policy_model, "http://oval.mitre.org/XMLSchema/oval-definitions-5", oval_agent_eval_rule, (void *) sess);
- * xccdf_policy_model_register_output_callback(policy_model, callback_end, NULL);
- * \endcode
- * The example of callback_start:
- * \code
- * static int callback(const struct oscap_reporter_message *msg, void *arg)
- * {
- *      printf("Evaluating rule \"%s\". Please wait.". oscap_reporter_message_get_user1num(msg));
- *      return 0;
- * }
- * \endcode
  */
-bool xccdf_policy_model_register_start_callback(struct xccdf_policy_model * model, oscap_reporter func, void * usr);
+bool xccdf_policy_model_register_start_callback(struct xccdf_policy_model * model, policy_reporter func, void * usr);
 
 /************************************************************/
 /**
