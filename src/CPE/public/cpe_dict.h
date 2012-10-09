@@ -908,6 +908,13 @@ void cpe_dict_model_export(const struct cpe_dict_model *dict, const char *file);
 struct cpe_dict_model *cpe_dict_model_import(const char *file);
 
 /**
+ * Sets the origin file hint
+ * @note This is intended for internal use only!
+ * @see cpe_dict_model_get_origin_file
+ */
+bool cpe_dict_model_set_origin_file(struct cpe_dict_model* dict, const char* origin_file);
+
+/**
  * Gets the file the CPE dict model was loaded from
  * @internal
  * This is necessary to figure out the full OVAL file path for applicability

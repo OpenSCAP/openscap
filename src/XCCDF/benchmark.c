@@ -58,6 +58,17 @@ struct xccdf_benchmark *xccdf_benchmark_import(const char *file)
 	struct xccdf_item *benchmark = XITEM(xccdf_benchmark_new());
 	xccdf_benchmark_parse(benchmark, reader);
 	xmlFreeTextReader(reader);
+
+	// This is sadly the only place where we can pass origin file information
+	// to the CPE1 embedded dictionary (if any). It is necessary to figure out
+	// proper paths to OVAL files referenced from CPE1 dictionaries.
+
+	// FIXME: Refactor and move this somewhere else
+	struct cpe_dict_model* embedded_dict = xccdf_benchmark_get_cpe_list(XBENCHMARK(benchmark));
+	if (embedded_dict != NULL) {
+		cpe_dict_model_set_origin_file(embedded_dict, file);
+	}
+
 	return XBENCHMARK(benchmark);
 }
 
