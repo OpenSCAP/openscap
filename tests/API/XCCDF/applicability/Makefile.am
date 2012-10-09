@@ -14,4 +14,6 @@ EXTRA_DIST = \
 	applicable-rule-xccdf.xml \
 	cpe-dict.xml \
 	cpe-oval.xml \
-	nonexistant-platforms-rule-xccdf.xml
+	nonexistant-platforms-rule-xccdf.xml \
+	cpe2-applicable-rule-xccdf.xml \
+	cpe2-and-rule-xccdf.xml
