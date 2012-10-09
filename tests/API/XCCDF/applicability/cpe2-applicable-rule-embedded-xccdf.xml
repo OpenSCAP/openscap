@@ -15,7 +15,7 @@
   <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_1">
     <platform idref="#platform1"/>
     <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-      <check-content-ref href="cpe-oval.xml"/>
+      <check-content-ref href="cpe-oval.xml" name="oval:x:def:1"/>
     </check>
   </Rule>
 </Benchmark>
