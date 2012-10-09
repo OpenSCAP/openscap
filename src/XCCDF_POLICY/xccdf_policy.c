@@ -881,12 +881,32 @@ static bool _xccdf_policy_cpe_check_cb(const char* href, const char* name, void*
 	return result == OVAL_RESULT_TRUE;
 }
 
-static bool _xccdf_policy_cpe_dict_cb(const char* href, const char* name, void* usr)
+static bool _xccdf_policy_cpe_dict_cb(struct cpe_name* name, void* usr)
 {
 	struct cpe_check_cb_usr* cb_usr = (struct cpe_check_cb_usr*)usr;
 
-	// TODO: stub
-	return true;
+	// We have to check all CPE1 dicts in the model.
+	// cb_usr->dict has nothing to do with this callback! Do NOT touch it here.
+
+	struct xccdf_policy_model* model = cb_usr->model;
+	struct xccdf_benchmark* benchmark = xccdf_policy_model_get_benchmark(model);
+
+	bool ret = false;
+
+	struct cpe_dict_model* embedded_dict = xccdf_benchmark_get_cpe_list(benchmark);
+	if (embedded_dict != NULL) {
+		ret = cpe_name_applicable_dict(name, embedded_dict, (cpe_check_fn) _xccdf_policy_cpe_check_cb, usr);
+	}
+	if (ret)
+		return true;
+
+	struct oscap_iterator* dicts = oscap_iterator_new(model->cpe_dicts);
+	while (!ret && oscap_iterator_has_more(dicts)) {
+		struct cpe_dict_model *dict = (struct cpe_dict_model*)oscap_iterator_next(dicts);
+		ret = cpe_name_applicable_dict(name, dict, (cpe_check_fn) _xccdf_policy_cpe_check_cb, usr);
+	}
+	oscap_iterator_free(dicts);
+	return ret;
 }
 
 static bool xccdf_policy_model_item_is_applicable_dict(struct xccdf_policy_model* model, struct cpe_dict_model* dict, struct xccdf_item* item)
