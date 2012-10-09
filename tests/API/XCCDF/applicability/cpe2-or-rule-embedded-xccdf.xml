@@ -4,18 +4,18 @@
   <cpe2:platform-specification>
     <cpe2:platform id="platform1">
       <cpe2:title xml:lang="en-US">Test Platform 1</cpe2:title>
-      <cpe2:logical-test operator="AND" negate="true">
+      <cpe2:logical-test operator="OR" negate="true">
         <cpe2:check-fact-ref system="http://oval.mitre.org/XMLSchema/oval-definitions-5"
             href="cpe-oval.xml"
-            id-ref="oval:x:def:1"/>
+            id-ref="oval:x:def:2"/>
         <cpe2:check-fact-ref system="http://oval.mitre.org/XMLSchema/oval-definitions-5"
             href="cpe-oval.xml"
-            id-ref="oval:x:def:1"/>
+            id-ref="oval:x:def:2"/>
       </cpe2:logical-test>
     </cpe2:platform>
     <cpe2:platform id="platform2">
       <cpe2:title xml:lang="en-US">Test Platform 1</cpe2:title>
-      <cpe2:logical-test operator="AND" negate="false">
+      <cpe2:logical-test operator="OR" negate="false">
         <cpe2:check-fact-ref system="http://oval.mitre.org/XMLSchema/oval-definitions-5"
             href="cpe-oval.xml"
             id-ref="oval:x:def:1"/>
