@@ -531,7 +531,7 @@ _xccdf_policy_get_namesfor_href(struct xccdf_policy *policy, const char *sysname
 	return result;
 }
 
-static int xccdf_policy_report_cb(struct xccdf_policy * policy, const char * sysname, const struct xccdf_rule *rule, int ret)
+static int xccdf_policy_report_cb(struct xccdf_policy * policy, const char * sysname, void *rule)
 {
     int retval = 0;
     struct oscap_iterator * cb_it = _xccdf_policy_get_callbacks_by_sysname(policy, sysname);
@@ -545,7 +545,6 @@ static int xccdf_policy_report_cb(struct xccdf_policy * policy, const char * sys
                 0,                           /* CODE */
                 NULL);
         oscap_reporter_message_set_user1ptr(msg, (void *) rule);
-	oscap_reporter_message_set_user2num(msg, (xccdf_test_result_type_t) ret);
         retval = oscap_reporter_report(cb->callback, msg, cb->usr);
 
         /* We still want to stop evaluation if user cancel it
@@ -738,8 +737,10 @@ _xccdf_policy_is_rule_selected(struct xccdf_policy *policy, const struct xccdf_r
 	return xccdf_select_get_selected(sel);
 }
 
-static struct xccdf_rule_result *
-_build_rule_result(const struct xccdf_rule *rule, struct xccdf_check *check, xccdf_test_result_type_t eval_result, const char *message)
+static struct xccdf_rule_result * _xccdf_rule_result_new_from_rule(const struct xccdf_rule *rule,
+								  struct xccdf_check *check,
+								  xccdf_test_result_type_t eval_result,
+								  const char *message)
 {
 	struct xccdf_rule_result *rule_ritem = xccdf_rule_result_new();
 
@@ -779,19 +780,29 @@ _build_rule_result(const struct xccdf_rule *rule, struct xccdf_check *check, xcc
 	return rule_ritem;
 }
 
-static int
-_xccdf_policy_report_rule_result(struct xccdf_policy *policy, struct xccdf_result *result,
-		const struct xccdf_rule *rule, struct xccdf_check *check, int ret, const char *message)
+static int _xccdf_policy_report_rule_result(struct xccdf_policy *policy,
+					    struct xccdf_result *result,
+					    const struct xccdf_rule *rule,
+					    struct xccdf_check *check,
+					    int res,
+					    const char *message)
 {
-	if (ret == -1)
-		return ret;
-	if (result != NULL)
+	struct xccdf_rule_result * rule_result = NULL;
+	int ret=0;
+
+	if (res == -1)
+		return res;
+
+	if (result != NULL) {
 		/* Add result to policy */
 		/* TODO: instance */
-		xccdf_result_add_rule_result(result, _build_rule_result(rule, check, ret, message));
-	else
+		rule_result = _xccdf_rule_result_new_from_rule(rule, check, res, message);
+		xccdf_result_add_rule_result(result, rule_result);
+	} else
 		xccdf_check_free(check);
-	return xccdf_policy_report_cb(policy, "urn:xccdf:system:callback:output", rule, ret);
+
+	ret = xccdf_policy_report_cb(policy, "urn:xccdf:system:callback:output", (void *) rule_result);
+	return ret;
 }
 
 struct cpe_check_cb_usr
@@ -927,7 +938,7 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 	const bool is_applicable = xccdf_policy_model_item_is_applicable(policy->model, (struct xccdf_item*)rule);
 	const char *message = NULL;
 
-	int report = xccdf_policy_report_cb(policy, "urn:xccdf:system:callback:start", rule, is_selected ? 0 : XCCDF_RESULT_NOT_SELECTED);
+	int report = xccdf_policy_report_cb(policy, "urn:xccdf:system:callback:start", (void *) rule);
 	if (report)
 		return report;
 
@@ -999,7 +1010,7 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 					if ((report = _xccdf_policy_report_rule_result(policy, result, rule, cloned_check, inner_ret, NULL)) != 0)
 						break;
 					if (oscap_string_iterator_has_more(name_it))
-						if ((report = xccdf_policy_report_cb(policy, "urn:xccdf:system:callback:start", rule, 0)) != 0)
+						if ((report = xccdf_policy_report_cb(policy, "urn:xccdf:system:callback:start", (void *) rule)) != 0)
 							break;
 				}
 				oscap_string_iterator_free(name_it);
