@@ -369,7 +369,7 @@ bool oscap_ptr_cmp(void *node1, void *node2);
  * validate given XML file
  * @return 0 on pass; -1 error; 1 fail
  */
-int oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_reporter reporter, void *arg);
+int oscap_validate_xml(const char *xmlfile, const char *schemafile, xml_reporter reporter, void *arg);
 
 /**
  * find file with given name and mode in given paths

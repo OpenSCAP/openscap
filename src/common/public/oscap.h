@@ -94,6 +94,7 @@ typedef enum oscap_document_type {
 	OSCAP_DOCUMENT_ARF                    ///< Result Data Stream file
 } oscap_document_type_t;
 
+typedef int (*xml_reporter)(const char *file, int line, const char *msg, void *arg);
 
 /**
  * Validate a SCAP document file against a XML schema.
@@ -111,7 +112,7 @@ typedef enum oscap_document_type {
  * @param arg Argument for the reporter.
  * @return 0 on pass; -1 error; 1 fail
  */
-int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, oscap_reporter reporter, void *arg);
+int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, xml_reporter reporter, void *arg);
 
 /**
  * Validate a SCAP document file against schematron rules.

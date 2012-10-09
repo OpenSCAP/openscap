@@ -188,7 +188,7 @@ int app_cpe_validate(const struct oscap_action *action) {
 		goto cleanup;
 	}
 
-	ret=oscap_validate_document(action->cpe_action->dict, action->doctype, doc_version, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout);
+	ret=oscap_validate_document(action->cpe_action->dict, action->doctype, doc_version, reporter, (void*) action);
 	if (ret==-1) {
 		result=OSCAP_ERROR;
 		goto cleanup;

@@ -321,8 +321,7 @@ int app_collect_oval(const struct oscap_action *action)
 			char *doc_version;
 
 			doc_version = oval_determine_document_schema_version((const char *) action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR);
-			if (oscap_validate_document(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, doc_version,
-			    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+			if (oscap_validate_document(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, doc_version, reporter, (void*) action)) {
 				validation_failed(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, doc_version);
 				free(doc_version);
 				goto cleanup;
@@ -461,8 +460,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 			char *doc_version;
 
 			doc_version = oval_determine_document_schema_version((const char *) action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS);
-			if (oscap_validate_document(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version,
-			    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+			if (oscap_validate_document(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version, reporter, (void*)action)) {
 				validation_failed(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version);
 				free(doc_version);
 				goto cleanup;
@@ -587,8 +585,7 @@ static int app_analyse_oval(const struct oscap_action *action) {
 			char *doc_version;
 
 			doc_version = oval_determine_document_schema_version((const char *) action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS);
-			if (oscap_validate_document(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version,
-			    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+			if (oscap_validate_document(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version, reporter, (void*)action)) {
 				validation_failed(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version);
 				free(doc_version);
 				goto cleanup;
@@ -783,8 +780,7 @@ static bool valid_inputs(const struct oscap_action *action) {
 	   depending on the data */
 	if (ds_is_sds(action->f_oval) == 0) {
 		doc_version = strdup("1.2");
-		if ((ret = oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_SDS, doc_version,
-			(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout) != 0)) {
+		if ((ret = oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_SDS, doc_version, reporter, (void*) action))) {
 			if (ret==1)
 				validation_failed(action->f_oval, OSCAP_DOCUMENT_SDS, doc_version);
 			goto cleanup;
@@ -792,8 +788,7 @@ static bool valid_inputs(const struct oscap_action *action) {
 	}
 	else {
 		doc_version = oval_determine_document_schema_version((const char *) action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS);
-		if ((ret=oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS, doc_version,
-			(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))) {
+		if ((ret=oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS, doc_version, reporter, (void*) action))) {
 			if (ret==1)
 				validation_failed(action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS, doc_version);
 			goto cleanup;
@@ -803,8 +798,7 @@ static bool valid_inputs(const struct oscap_action *action) {
 	if (action->f_variables) {
 		free(doc_version);
 		doc_version = oval_determine_document_schema_version((const char *) action->f_variables, OSCAP_DOCUMENT_OVAL_VARIABLES);
-		if ((ret=oscap_validate_document(action->f_variables, OSCAP_DOCUMENT_OVAL_VARIABLES, doc_version,
-		    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))) {
+		if ((ret=oscap_validate_document(action->f_variables, OSCAP_DOCUMENT_OVAL_VARIABLES, doc_version, reporter, (void*) action))) {
 			if (ret==1)
 				validation_failed(action->f_variables, OSCAP_DOCUMENT_OVAL_VARIABLES, doc_version);
 			goto cleanup;
@@ -814,8 +808,7 @@ static bool valid_inputs(const struct oscap_action *action) {
 	if (action->f_directives) {
 		free(doc_version);
 		doc_version = oval_determine_document_schema_version((const char *) action->f_directives, OSCAP_DOCUMENT_OVAL_DIRECTIVES);
-		if ((ret=oscap_validate_document(action->f_directives, OSCAP_DOCUMENT_OVAL_DIRECTIVES, doc_version,
-		    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))) {
+		if ((ret=oscap_validate_document(action->f_directives, OSCAP_DOCUMENT_OVAL_DIRECTIVES, doc_version, reporter, (void*) action))) {
 			if (ret==1)
 				validation_failed(action->f_directives, OSCAP_DOCUMENT_OVAL_DIRECTIVES, doc_version);
 			goto cleanup;
@@ -825,8 +818,7 @@ static bool valid_inputs(const struct oscap_action *action) {
 	if (action->module == &OVAL_ANALYSE && action->f_syschar) {
 		free(doc_version);
 		doc_version = oval_determine_document_schema_version((const char *) action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR);
-		if ((ret=oscap_validate_document(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, doc_version,
-		    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))) {
+		if ((ret=oscap_validate_document(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, doc_version, reporter, (void*) action))) {
 			if (ret==1)
 				validation_failed(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, doc_version);
 			goto cleanup;
@@ -866,8 +858,7 @@ static int app_oval_validate(const struct oscap_action *action) {
 
 	}
 
-	ret=oscap_validate_document(action->f_oval, doc_type, doc_version,
-		(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout);
+	ret=oscap_validate_document(action->f_oval, doc_type, doc_version, reporter, (void*) action);
 
 	if (ret==-1) {
 		result=OSCAP_ERROR;

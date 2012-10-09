@@ -366,7 +366,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		if (action->validate)
 		{
 			int ret;
-			if ((ret = oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_SDS, "1.2", (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout) != 0))
+			if ((ret = oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_SDS, "1.2", reporter, (void*)action) != 0))
 			{
 				if (ret==1)
 					validation_failed(action->f_xccdf, OSCAP_DOCUMENT_SDS, "1.2");
@@ -401,11 +401,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		if (!xccdf_doc_version)
 			goto cleanup;
 
-		if ((ret=oscap_validate_document(xccdf_file,
-						 OSCAP_DOCUMENT_XCCDF,
-						 xccdf_doc_version,
-						 (action->verbosity >= 0 ? oscap_reporter_fd : NULL),
-						 stdout))) {
+		if ((ret=oscap_validate_document(xccdf_file, OSCAP_DOCUMENT_XCCDF, xccdf_doc_version, reporter, (void*) action))) {
 			if (ret==1)
 				validation_failed(xccdf_file, OSCAP_DOCUMENT_XCCDF, xccdf_doc_version);
 			goto cleanup;
@@ -505,9 +501,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			char *doc_version;
 
 			doc_version = oval_determine_document_schema_version((const char *) oval_files[idx], OSCAP_DOCUMENT_OVAL_DEFINITIONS);
-			if ((ret=oscap_validate_document(oval_files[idx],
-				OSCAP_DOCUMENT_OVAL_DEFINITIONS, (const char *) doc_version,
-				(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))) {
+			if ((ret=oscap_validate_document(oval_files[idx], OSCAP_DOCUMENT_OVAL_DEFINITIONS, (const char *) doc_version,
+							 reporter, (void*)action))) {
 				if (ret==1)
 					validation_failed(oval_files[idx], OSCAP_DOCUMENT_OVAL_DEFINITIONS, doc_version);
 				free(doc_version);
@@ -634,7 +629,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 				doc_version = oval_determine_document_schema_version((const char *) name, OSCAP_DOCUMENT_OVAL_RESULTS);
 				if (oscap_validate_document(name, OSCAP_DOCUMENT_OVAL_RESULTS, (const char *) doc_version,
-					(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+							    reporter, (void*)action)) {
 					validation_failed(name, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version);
 					free(name);
 					free(doc_version);
@@ -665,9 +660,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			sce_check_result_export(check_result, target);
 
 			if (action->validate && full_validation) {
-				if (oscap_validate_document(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0",
-					(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
-				{
+				if (oscap_validate_document(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0", reporter, (void*)action)) {
 					validation_failed(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0");
 					sce_check_result_iterator_free(it);
 					goto cleanup;
@@ -700,11 +693,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		/* validate XCCDF Results */
 		if (action->validate && full_validation) {
 			/* we assume there is a same xccdf doc_version on input and output */
-			if (oscap_validate_document(f_results,
-						    OSCAP_DOCUMENT_XCCDF,
-						    xccdf_doc_version,
-						    (action->verbosity >= 0 ? oscap_reporter_fd : NULL),
-						    stdout)) {
+			if (oscap_validate_document(f_results, OSCAP_DOCUMENT_XCCDF, xccdf_doc_version, reporter, (void*) action)) {
 				validation_failed(f_results, OSCAP_DOCUMENT_XCCDF, xccdf_doc_version);
 				goto cleanup;
 			}
@@ -781,8 +770,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 		if (full_validation)
 		{
-			if (oscap_validate_document(action->f_results_arf, OSCAP_DOCUMENT_ARF, "1.1",
-				(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
+			if (oscap_validate_document(action->f_results_arf, OSCAP_DOCUMENT_ARF, "1.1", reporter, (void*)action))
 			{
 				validation_failed(action->f_results_arf, OSCAP_DOCUMENT_ARF, "1.1");
 				ret = OSCAP_ERROR;
@@ -898,10 +886,7 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	        if (!doc_version)
         	        goto cleanup;
 
-		if ((ret=oscap_validate_document(action->f_xccdf,
-						 OSCAP_DOCUMENT_XCCDF,
-						 doc_version,
-						 (action->verbosity >= 0) ? oscap_reporter_fd : NULL, stderr))) {
+		if ((ret=oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version, reporter, (void*)action))) {
 			if (ret==1)
 				validation_failed(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version);
 			goto cleanup;
@@ -1082,11 +1067,7 @@ int app_xccdf_resolve(const struct oscap_action *action)
 			return OSCAP_ERROR;
 		}
 
-		if (oscap_validate_document(action->f_xccdf,
-					    OSCAP_DOCUMENT_XCCDF,
-					    doc_version,
-					    (action->verbosity >= 0) ? oscap_reporter_fd : NULL,
-					    stderr) != 0) {
+		if (oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version, reporter, (void*) action) != 0) {
 			validation_failed(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version);
 			goto cleanup;
 		}
@@ -1112,14 +1093,9 @@ int app_xccdf_resolve(const struct oscap_action *action)
 				/* validate exported results */
 				const char* full_validation = getenv("OSCAP_FULL_VALIDATION");
 				if (action->validate && full_validation) {
-
 					/* reuse doc_version from unresolved document
 					   it should be same in resolved one */
-					if (oscap_validate_document(action->f_results,
-								    OSCAP_DOCUMENT_XCCDF,
-								    doc_version,
-								    (action->verbosity >= 0 ? oscap_reporter_fd : NULL),
-								    stdout)) {
+					if (oscap_validate_document(action->f_results, OSCAP_DOCUMENT_XCCDF, doc_version, reporter, (void*)action)) {
 						validation_failed(action->f_results, OSCAP_DOCUMENT_XCCDF, doc_version);
 						ret = OSCAP_ERROR;
 					}
@@ -1319,11 +1295,7 @@ int app_xccdf_validate(const struct oscap_action *action) {
                 goto cleanup;
         }
 
-        ret=oscap_validate_document(action->f_xccdf,
-				    action->doctype,
-				    doc_version,
-				    (action->verbosity >= 0 ? oscap_reporter_fd : NULL),
-				    stdout);
+        ret=oscap_validate_document(action->f_xccdf, action->doctype, doc_version, reporter, (void*)action);
         if (ret==-1) {
                 result=OSCAP_ERROR;
                 goto cleanup;

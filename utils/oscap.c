@@ -172,3 +172,9 @@ void validation_failed(const char *xmlfile, oscap_document_type_t doc_type, cons
 	fprintf(stdout, "Invalid %s content(%s) in %s.\n", doc_name, version, xmlfile);
 }
 
+int reporter(const char *file, int line, const char *msg, void *arg) {
+	if ( ((struct oscap_action *)arg)->verbosity >= 0)
+		fprintf(stdout, "File '%s' line %d: %s", file, line, msg);
+	return 0;
+}
+

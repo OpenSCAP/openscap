@@ -168,8 +168,7 @@ int app_ds_sds_split(const struct oscap_action *action) {
 	if (action->validate)
 	{
 		int valret;
-		if ((valret = oscap_validate_document(action->ds_action->file, OSCAP_DOCUMENT_SDS,
-		              "1.2", (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)))
+		if ((valret = oscap_validate_document(action->ds_action->file, OSCAP_DOCUMENT_SDS, "1.2", reporter, (void*) action)))
 		{
 			if (valret == 1)
 				validation_failed(action->ds_action->file, OSCAP_DOCUMENT_SDS, "1.2");
@@ -234,8 +233,7 @@ int app_ds_sds_compose(const struct oscap_action *action) {
 
 	if (action->validate)
 	{
-		if (oscap_validate_document(target_abs_path, OSCAP_DOCUMENT_SDS, "1.2",
-					(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout) != 0)
+		if (oscap_validate_document(target_abs_path, OSCAP_DOCUMENT_SDS, "1.2", reporter, (void*) action) != 0)
 		{
 			validation_failed(target_abs_path, OSCAP_DOCUMENT_SDS, "1.2");
 			goto cleanup;
@@ -256,8 +254,7 @@ int app_ds_sds_validate(const struct oscap_action *action) {
 	int ret;
 
 	int valret;
-	if ((valret = oscap_validate_document(action->ds_action->file, OSCAP_DOCUMENT_SDS,
-	              "1.2", (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)))
+	if ((valret = oscap_validate_document(action->ds_action->file, OSCAP_DOCUMENT_SDS, "1.2", reporter, (void*) action)))
 	{
 		if (valret == 1)
 			validation_failed(action->ds_action->file, OSCAP_DOCUMENT_SDS, "1.2");
@@ -282,8 +279,7 @@ int app_ds_rds_create(const struct oscap_action *action) {
 	if (action->validate)
 	{
 		int valret;
-		if ((valret = oscap_validate_document(action->ds_action->file, OSCAP_DOCUMENT_SDS,
-		              "1.2", (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)))
+		if ((valret = oscap_validate_document(action->ds_action->file, OSCAP_DOCUMENT_SDS, "1.2", reporter, (void*) action)))
 		{
 			if (valret == 1)
 				validation_failed(action->ds_action->file, OSCAP_DOCUMENT_SDS, "1.2");
@@ -298,11 +294,7 @@ int app_ds_rds_create(const struct oscap_action *action) {
 			ret = OSCAP_ERROR;
 			goto cleanup;
 		}
-		if ((valret = oscap_validate_document(action->ds_action->xccdf_result,
-						      OSCAP_DOCUMENT_XCCDF,
-						      doc_version,
-						      (action->verbosity >= 0 ? oscap_reporter_fd : NULL),
-						      stdout))) {
+		if ((valret = oscap_validate_document(action->ds_action->xccdf_result, OSCAP_DOCUMENT_XCCDF, doc_version, reporter, (void*) action))) {
 			if (valret == 1)
 				validation_failed(action->ds_action->xccdf_result, OSCAP_DOCUMENT_XCCDF, doc_version);
 
@@ -327,8 +319,7 @@ int app_ds_rds_create(const struct oscap_action *action) {
 				OSCAP_DOCUMENT_OVAL_RESULTS);
 
 			int valret;
-			if ((valret = oscap_validate_document(oval_result_files[i], OSCAP_DOCUMENT_OVAL_RESULTS,
-			              doc_version, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)))
+			if ((valret = oscap_validate_document(oval_result_files[i], OSCAP_DOCUMENT_OVAL_RESULTS, doc_version, reporter, (void*) action)))
 			{
 				if (valret == 1)
 					validation_failed(oval_result_files[i], OSCAP_DOCUMENT_OVAL_RESULTS, doc_version);
@@ -359,8 +350,7 @@ int app_ds_rds_create(const struct oscap_action *action) {
 	if (action->validate && full_validation)
 	{
 		int valret;
-		if ((valret = oscap_validate_document(action->ds_action->target, OSCAP_DOCUMENT_ARF, "1.1",
-		              (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)))
+		if ((valret = oscap_validate_document(action->ds_action->target, OSCAP_DOCUMENT_ARF, "1.1", reporter, (void*) action)))
 		{
 			if (valret == 1)
 				validation_failed(action->ds_action->target, OSCAP_DOCUMENT_ARF, "1.1");
@@ -384,8 +374,7 @@ int app_ds_rds_validate(const struct oscap_action *action) {
 	int ret;
 
 	int valret;
-	if ((valret = oscap_validate_document(action->ds_action->file, OSCAP_DOCUMENT_ARF, "1.1",
-	              (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)))
+	if ((valret = oscap_validate_document(action->ds_action->file, OSCAP_DOCUMENT_ARF, "1.1", reporter, (void*) action)))
 	{
 		if (valret == 1)
 			validation_failed(action->ds_action->file, OSCAP_DOCUMENT_ARF, "1.2");

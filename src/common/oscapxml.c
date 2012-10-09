@@ -95,19 +95,36 @@ void oscap_cleanup(void)
 
 const char *oscap_get_version(void) { return VERSION; }
 
+struct ctxt {
+	xml_reporter reporter;
+	void *arg; 
+	void *user;
+};
 
 static void oscap_xml_validity_handler(void *user, xmlErrorPtr error)
 {
-    oscap_reporter_report_xml(user, error);
+	struct ctxt * context = (struct ctxt *) user;
+
+	if (context == NULL || context->reporter == NULL) 
+		return;
+
+	if (error == NULL) 
+		error = xmlGetLastError();
+
+	const char *file = error->file;
+	if (file == NULL) 
+		file = context->user;
+
+	context->reporter(file, error->line, error->message, context->arg);
 }
 
-int oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_reporter reporter, void *arg)
+int oscap_validate_xml(const char *xmlfile, const char *schemafile, xml_reporter reporter, void *arg)
 {
 	int result = -1;
 	xmlSchemaParserCtxtPtr parser_ctxt = NULL;
 	xmlSchemaPtr schema = NULL;
 	xmlSchemaValidCtxtPtr ctxt = NULL;
-	struct oscap_reporter_context reporter_ctxt = { reporter, arg, (void*) xmlfile };
+	struct ctxt context = { reporter, arg, (void*) xmlfile };
 
         if (xmlfile == NULL) {
                 oscap_seterr(OSCAP_EFAMILY_OSCAP, "'xmlfile' == NULL");
@@ -131,7 +148,7 @@ int oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_report
 		goto cleanup;
 	}
 
-	xmlSchemaSetParserStructuredErrors(parser_ctxt, oscap_xml_validity_handler, &reporter_ctxt);
+	xmlSchemaSetParserStructuredErrors(parser_ctxt, oscap_xml_validity_handler, &context);
 
 	schema = xmlSchemaParse(parser_ctxt);
 	if (schema == NULL) {
@@ -145,7 +162,7 @@ int oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_report
 		goto cleanup;
 	}
 
-	xmlSchemaSetValidStructuredErrors(ctxt, oscap_xml_validity_handler, &reporter_ctxt);
+	xmlSchemaSetValidStructuredErrors(ctxt, oscap_xml_validity_handler, &context);
 
 	result = xmlSchemaValidateFile(ctxt, xmlfile, 0);
 
@@ -236,7 +253,7 @@ struct oscap_schema_table_entry OSCAP_SCHEMAS_TABLE[] = {
 	{0, NULL, NULL }
 };
 
-int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, oscap_reporter reporter, void *arg)
+int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, xml_reporter reporter, void *arg)
 {
 	struct oscap_schema_table_entry *entry;
 
