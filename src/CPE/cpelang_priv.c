@@ -59,6 +59,7 @@ OSCAP_ITERATOR_GEN(cpe_testexpr)
 struct cpe_lang_model {
 	struct oscap_list *platforms;	// list of items
 	struct oscap_htable *item;	// item by ID
+	char* origin_file; // from which file the lang model was loaded
 };
 OSCAP_IGETTER_GEN(cpe_platform, cpe_lang_model, platforms)
 OSCAP_HGETTER_STRUCT(cpe_platform, cpe_lang_model, item)
@@ -253,6 +254,7 @@ struct cpe_lang_model *cpe_lang_model_new()
 
 	ret->platforms = oscap_list_new();
 	ret->item = oscap_htable_new();
+	ret->origin_file = NULL;
 
 	return ret;
 }
@@ -682,6 +684,8 @@ void cpe_lang_model_free(struct cpe_lang_model *platformspec)
 
 	oscap_htable_free(platformspec->item, NULL);
 	oscap_list_free(platformspec->platforms, (oscap_destruct_func) cpe_platform_free);
+	oscap_free(platformspec->origin_file);
+
 	oscap_free(platformspec);
 }
 
@@ -833,4 +837,17 @@ bool cpe_platform_set_expr(struct cpe_platform *platform, struct cpe_testexpr *e
 	cpe_testexpr_free(platform->expr);
 	platform->expr = expr;
 	return true;
+}
+
+bool cpe_lang_model_set_origin_file(struct cpe_lang_model* lang_model, const char* origin_file)
+{
+	oscap_free(lang_model->origin_file);
+	lang_model->origin_file = oscap_strdup(origin_file);
+
+	return true;
+}
+
+const char* cpe_lang_model_get_origin_file(const struct cpe_lang_model* lang_model)
+{
+	return lang_model->origin_file;
 }
