@@ -48,7 +48,8 @@ typedef enum {
 	CPE_LANG_OPER_INVALID = 0x00,   ///< invalid or unknown operation
 	CPE_LANG_OPER_AND = 0x01,	///< logical AND
 	CPE_LANG_OPER_OR = 0x02,	///< logical OR
-	CPE_LANG_OPER_MATCH = 0x04,	///< match against specified CPE
+	CPE_LANG_OPER_MATCH = 0x04,	///< fact-ref = match given CPE name against available dictionaries
+	CPE_LANG_OPER_CHECK = 0x08, ///< check-ref = evaluate given check 
 
 	CPE_LANG_OPER_MASK = 0xFF,	///< mask to extract the operator w/o possible negation
 	CPE_LANG_OPER_NOT = 0x100,	///< negate
@@ -141,6 +142,20 @@ struct cpe_testexpr_iterator *cpe_testexpr_get_meta_expr(const struct cpe_testex
 const struct cpe_name *cpe_testexpr_get_meta_cpe(const struct cpe_testexpr *item);
 
 /**
+ * Get check href to evaluate
+ * Only valid for CPE_LANG_OPER_CHECK.
+ * @memberof cpe_testexpr
+ */
+const char* cpe_testexpr_get_meta_check_href(const struct cpe_testexpr *item);
+
+/**
+ * Get check idref to evaluate
+ * Only valid for CPE_LANG_OPER_CHECK.
+ * @memberof cpe_testexpr
+ */
+const char* cpe_testexpr_get_meta_check_id(const struct cpe_testexpr *item);
+
+/**
  * Function to get next expr from array
  * @param expr CPE Test expression structure
  * @memberof cpe_testexpr
@@ -167,7 +182,7 @@ struct cpe_platform *cpe_lang_model_get_item(const struct cpe_lang_model *item, 
  * @param lang_model used CPE language model
  * @return true if lang model contains given platform and the platform is applicable
  */
-bool cpe_platform_applicable_lang_model(const char* platform, struct cpe_lang_model *lang_model, cpe_check_fn cb, void* usr);
+bool cpe_platform_applicable_lang_model(const char* platform, struct cpe_lang_model *lang_model, cpe_check_fn check_cb, cpe_dict_fn dict_cb, void* usr);
 
 /**
  * cpe_platform functions to get id

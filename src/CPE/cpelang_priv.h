@@ -54,6 +54,10 @@ struct cpe_testexpr {
 	union {
 		struct oscap_list *expr;	///< array of subexpressions for operators
 		struct cpe_name *cpe;	///< CPE for match operation
+		struct {
+			const char* href;
+			const char* id;
+		} check;
 	} meta;			///< operation metadata
 };
 

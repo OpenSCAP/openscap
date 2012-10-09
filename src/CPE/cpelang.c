@@ -139,13 +139,48 @@ bool cpe_language_match_str(const char* cpe, const struct cpe_platform* platform
 }
 */
 
-bool cpe_platform_applicable_lang_model(const char* platform, struct cpe_lang_model *lang_model, cpe_check_fn cb, void* usr)
+static bool cpe_testexpr_evaluate(const struct cpe_testexpr* expr, cpe_check_fn check_cb, cpe_dict_fn dict_cb, void* usr)
+{
+	bool ret = false;
+
+	switch (cpe_testexpr_get_oper(expr) & CPE_LANG_OPER_MASK) {
+	case CPE_LANG_OPER_AND:
+		ret = true;
+		OSCAP_FOREACH(cpe_testexpr, cur, cpe_testexpr_get_meta_expr(expr),
+			if (!cpe_testexpr_evaluate(cur, check_cb, dict_cb, usr)) {
+				ret = false;
+				break;
+			}
+		)
+		break;
+	case CPE_LANG_OPER_OR:
+		OSCAP_FOREACH(cpe_testexpr, cur, cpe_testexpr_get_meta_expr(expr),
+			if (cpe_testexpr_evaluate(cur, check_cb, dict_cb, usr)) {
+				ret = true;
+				break;
+			}
+		)
+		break;
+	case CPE_LANG_OPER_MATCH:
+		ret = dict_cb(cpe_testexpr_get_meta_cpe(expr), usr);
+		break;
+	case CPE_LANG_OPER_CHECK:
+		ret = check_cb(cpe_testexpr_get_meta_check_href(expr), cpe_testexpr_get_meta_check_id(expr), usr);
+		break;
+	default:
+		assert(false);
+	}
+
+	return (cpe_testexpr_get_oper(expr) & CPE_LANG_OPER_NOT) ? !ret : ret;
+}
+
+bool cpe_platform_applicable_lang_model(const char* platform, struct cpe_lang_model *lang_model, cpe_check_fn check_cb, cpe_dict_fn dict_fn, void* usr)
 {
 	struct cpe_platform* plat = cpe_lang_model_get_item(lang_model, platform);
 
 	if (plat == NULL) // can't find any matching platform implies not applicable
 		return false;
 
-	// FIXME: stub!
-	return true;
+	const struct cpe_testexpr* expr = cpe_platform_get_expr(plat);
+	return cpe_testexpr_evaluate(expr, check_cb, dict_fn, usr);
 }

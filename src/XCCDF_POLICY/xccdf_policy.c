@@ -881,6 +881,14 @@ static bool _xccdf_policy_cpe_check_cb(const char* href, const char* name, void*
 	return result == OVAL_RESULT_TRUE;
 }
 
+static bool _xccdf_policy_cpe_dict_cb(const char* href, const char* name, void* usr)
+{
+	struct cpe_check_cb_usr* cb_usr = (struct cpe_check_cb_usr*)usr;
+
+	// TODO: stub
+	return true;
+}
+
 static bool xccdf_policy_model_item_is_applicable_dict(struct xccdf_policy_model* model, struct cpe_dict_model* dict, struct xccdf_item* item)
 {
 	struct oscap_string_iterator* platforms = xccdf_item_get_platforms(item);
@@ -944,7 +952,7 @@ static bool xccdf_policy_model_item_is_applicable_lang_model(struct xccdf_policy
 		usr->model = model;
 		usr->dict = NULL;
 		usr->lang_model = lang_model;
-		const bool applicable = cpe_platform_applicable_lang_model(platform_shifted, lang_model, (cpe_check_fn)_xccdf_policy_cpe_check_cb, usr);
+		const bool applicable = cpe_platform_applicable_lang_model(platform_shifted, lang_model, (cpe_check_fn)_xccdf_policy_cpe_check_cb, (cpe_dict_fn)_xccdf_policy_cpe_dict_cb, usr);
 		oscap_free(usr);
 
 		if (applicable)

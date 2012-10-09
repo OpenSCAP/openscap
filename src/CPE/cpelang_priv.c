@@ -87,12 +87,15 @@ OSCAP_GETTER(const struct cpe_testexpr*, cpe_platform, expr)
 #define TAG_PLATFORM_STR        BAD_CAST "platform"
 #define TAG_LOGICAL_TEST_STR    BAD_CAST "logical-test"
 #define TAG_FACT_REF_STR        BAD_CAST "fact-ref"
+#define TAG_CHECK_FACT_REF_STR  BAD_CAST "check-fact-ref"
 #define TAG_REMARK_STR          BAD_CAST "remark"
 #define ATTR_TITLE_STR      BAD_CAST "title"
 #define ATTR_NAME_STR       BAD_CAST "name"
 #define ATTR_OPERATOR_STR   BAD_CAST "operator"
 #define ATTR_NEGATE_STR     BAD_CAST "negate"
 #define ATTR_ID_STR         BAD_CAST "id"
+#define ATTR_HREF_STR       BAD_CAST "href"
+#define ATTR_ID_REF_STR     BAD_CAST "id-ref"
 #define VAL_AND_STR     BAD_CAST "AND"
 #define VAL_OR_STR      BAD_CAST "OR"
 #define VAL_FALSE_STR   BAD_CAST "false"
@@ -203,26 +206,40 @@ const struct cpe_testexpr *cpe_testexpr_get_next(const struct cpe_testexpr *expr
 
 struct cpe_testexpr *cpe_testexpr_new()
 {
-
 	struct cpe_testexpr *ret;
 
 	ret = oscap_calloc(1, sizeof(struct cpe_testexpr));
 	if (ret == NULL)
 		return NULL;
 
+	ret->oper = CPE_LANG_OPER_AND;
 	ret->meta.expr = NULL;
-	ret->meta.cpe = NULL;
 
 	return ret;
 }
 
 struct cpe_testexpr * cpe_testexpr_clone(struct cpe_testexpr * old_expr)
 {
-        struct cpe_testexpr * new_expr = cpe_testexpr_new();
-        new_expr->oper = old_expr->oper;
-        new_expr->meta.cpe = cpe_name_clone(old_expr->meta.cpe);
-        new_expr->meta.expr = oscap_list_clone(old_expr->meta.expr, (oscap_clone_func) cpe_testexpr_clone);
-        return new_expr;
+	struct cpe_testexpr * new_expr = cpe_testexpr_new();
+	new_expr->oper = old_expr->oper;
+
+	switch (new_expr->oper & CPE_LANG_OPER_MASK) {
+	case CPE_LANG_OPER_AND:
+	case CPE_LANG_OPER_OR:
+		new_expr->meta.expr = oscap_list_clone(old_expr->meta.expr, (oscap_clone_func) cpe_testexpr_clone);
+		break;
+	case CPE_LANG_OPER_MATCH:
+		new_expr->meta.cpe = cpe_name_clone(old_expr->meta.cpe);
+		break;
+	case CPE_LANG_OPER_CHECK:
+		new_expr->meta.check.href = oscap_strdup(old_expr->meta.check.href);
+		new_expr->meta.check.id = oscap_strdup(old_expr->meta.check.id);
+		break;
+	default:
+		break;
+	}
+
+	return new_expr;
 }
 
 struct cpe_lang_model *cpe_lang_model_new()
@@ -419,6 +436,13 @@ struct cpe_testexpr *cpe_testexpr_parse(xmlTextReaderPtr reader)
 		ret->meta.cpe = cpe_name_new((char *)temp);
 		xmlFree(temp);
 		return ret;
+	// it's check-fact-ref only, fill the structure and return it
+	} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CHECK_FACT_REF_STR) &&
+	    xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+		ret->oper = CPE_LANG_OPER_CHECK;
+		ret->meta.check.href = (char*)xmlTextReaderGetAttribute(reader, ATTR_HREF_STR);
+		ret->meta.check.id = (char*)xmlTextReaderGetAttribute(reader, ATTR_ID_REF_STR);
+		return ret;
 	} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_LOGICAL_TEST_STR) &&
 		   xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 		// it's logical-test, fill the structure and go to next node
@@ -463,6 +487,10 @@ struct cpe_testexpr *cpe_testexpr_parse(xmlTextReaderPtr reader)
 		}
 		elem_cnt++;
 
+		// We assume that the expression is a logical one (meaning that it
+		// can have subexpressions).
+		// TODO: Enforce that assumption and don't rely on just validation.
+
 		// .. and the next node is logical-test element, we need recursive call
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_LOGICAL_TEST_STR) &&
 		    xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
@@ -472,8 +500,8 @@ struct cpe_testexpr *cpe_testexpr_parse(xmlTextReaderPtr reader)
                                 return ret;
                         } else if (xmlTextReaderDepth(reader) == depth) continue;
 
-		} else		// .. or it's fact-ref only
-		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_FACT_REF_STR) &&
+		}
+		else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_FACT_REF_STR) &&
 			    xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 			// fill the structure
 			struct cpe_testexpr *subexpr = cpe_testexpr_new();
@@ -482,6 +510,13 @@ struct cpe_testexpr *cpe_testexpr_parse(xmlTextReaderPtr reader)
 			subexpr->meta.cpe = cpe_name_new((char *)temp);
                         //printf("FACT-REF: %s\n", temp);
 			xmlFree(temp);
+			oscap_list_add(ret->meta.expr, subexpr);
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CHECK_FACT_REF_STR) &&
+				xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+			struct cpe_testexpr *subexpr = cpe_testexpr_new();
+			subexpr->oper = CPE_LANG_OPER_CHECK;
+			subexpr->meta.check.href = (char*)xmlTextReaderGetAttribute(reader, ATTR_HREF_STR);
+			subexpr->meta.check.id = (char*)xmlTextReaderGetAttribute(reader, ATTR_ID_REF_STR);
 			oscap_list_add(ret->meta.expr, subexpr);
 		} else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element in test expression");
@@ -676,6 +711,12 @@ static void cpe_testexpr_meta_free(struct cpe_testexpr *expr)
 		cpe_name_free(expr->meta.cpe);
 		expr->meta.cpe = NULL;
 		break;
+	case CPE_LANG_OPER_CHECK:
+		oscap_free(expr->meta.check.href);
+		expr->meta.check.href = NULL;
+		oscap_free(expr->meta.check.id);
+		expr->meta.check.id = NULL;
+		break;
 	default:
 		break;
 	}
@@ -713,6 +754,22 @@ const struct cpe_name *cpe_testexpr_get_meta_cpe(const struct cpe_testexpr *expr
 	if ((expr->oper & CPE_LANG_OPER_MASK) != CPE_LANG_OPER_MATCH)
 		return NULL;
 	return expr->meta.cpe;
+}
+
+const char* cpe_testexpr_get_meta_check_href(const struct cpe_testexpr *expr)
+{
+	assert(expr != NULL);
+	if ((expr->oper & CPE_LANG_OPER_MASK) != CPE_LANG_OPER_CHECK)
+		return NULL;
+	return expr->meta.check.href;
+}
+
+const char* cpe_testexpr_get_meta_check_id(const struct cpe_testexpr *expr)
+{
+	assert(expr != NULL);
+	if ((expr->oper & CPE_LANG_OPER_MASK) != CPE_LANG_OPER_CHECK)
+		return NULL;
+	return expr->meta.check.id;
 }
 
 bool cpe_testexpr_set_oper(struct cpe_testexpr *expr, cpe_lang_oper_t oper)
