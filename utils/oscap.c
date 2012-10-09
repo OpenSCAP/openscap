@@ -100,7 +100,7 @@ bool getopt_root(int argc, char **argv, struct oscap_action *action)
 
 static int print_versions(const struct oscap_action *action)
 {
-	printf("OSCAP util (oscap) %s\n" "Copyright 2009,2010,2011 Red Hat Inc., Durham, North Carolina.\n\n", oscap_get_version());
+	printf("OSCAP util (oscap) %s\n" "Copyright 2009--2012 Red Hat Inc., Durham, North Carolina.\n\n", oscap_get_version());
 
 	printf("==== Supported specifications ====\n");
 	printf("XCCDF Version: %s\n", xccdf_benchmark_supported());
