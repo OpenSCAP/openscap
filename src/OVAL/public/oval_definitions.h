@@ -42,8 +42,6 @@
 #include "oval_types.h"
 #include "oval_version.h"
 #include <stdbool.h>
-#include <libxml/tree.h>
-
 
 /**
  * Affected family enumeration.
