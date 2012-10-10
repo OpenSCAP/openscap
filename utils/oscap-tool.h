@@ -98,6 +98,7 @@ struct oscap_action {
 	/* files */
         char *f_xccdf;
 	char *f_datastream_id;
+	char *f_xccdf_id;
         char *f_oval;
         char **f_ovals;
 	char *f_syschar;

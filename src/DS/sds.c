@@ -471,9 +471,9 @@ int ds_sds_decompose_custom(const char* input_file, const char* id, const char* 
 	return 0;
 }
 
-int ds_sds_decompose(const char* input_file, const char* id, const char* target_dir, const char* xccdf_filename)
+int ds_sds_decompose(const char* input_file, const char* id, const char* xccdf_id, const char* target_dir, const char* xccdf_filename)
 {
-	return ds_sds_decompose_custom(input_file, id, target_dir, "checklists", NULL, xccdf_filename);
+	return ds_sds_decompose_custom(input_file, id, target_dir, "checklists", xccdf_id, xccdf_filename);
 }
 
 static bool strendswith(const char* str, const char* suffix)

@@ -179,7 +179,7 @@ int app_ds_sds_split(const struct oscap_action *action) {
 		}
 	}
 
-	if (ds_sds_decompose(action->ds_action->file, NULL, action->ds_action->target, NULL) != 0)
+	if (ds_sds_decompose(action->ds_action->file, NULL, NULL, action->ds_action->target, NULL) != 0)
 	{
 		fprintf(stdout, "Failed to split given source datastream '%s'.\n", action->ds_action->file);
 		ret = OSCAP_ERROR;

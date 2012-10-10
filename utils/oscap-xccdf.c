@@ -120,7 +120,9 @@ static struct oscap_module XCCDF_EVAL = {
         "   --report <file>\r\t\t\t\t - Write HTML report into file.\n"
         "   --skip-valid \r\t\t\t\t - Skip validation.\n"
         "   --datastream-id <id> \r\t\t\t\t - ID of the datastream in the collection to use.\n"
-        "                        \r\t\t\t\t   (only applicable for source datastreams)",
+        "                        \r\t\t\t\t   (only applicable for source datastreams)\n"
+        "   --xccdf-id <id> \r\t\t\t\t - ID of XCCDF in the datastream that should be evaluated.\n"
+        "                   \r\t\t\t\t   (only applicable for source datastreams)",
     .opt_parser = getopt_xccdf,
     .func = app_evaluate_xccdf
 };
@@ -375,7 +377,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		temp_dir = strdup("/tmp/oscap.XXXXXX");
 		temp_dir = mkdtemp(temp_dir);
 
-		if (ds_sds_decompose(action->f_xccdf, action->f_datastream_id, temp_dir, "xccdf.xml") != 0)
+		if (ds_sds_decompose(action->f_xccdf, action->f_datastream_id, action->f_xccdf_id, temp_dir, "xccdf.xml") != 0)
 		{
 			fprintf(stdout, "Failed to decompose source datastream in '%s'\n", action->f_xccdf);
 			goto cleanup;
@@ -388,7 +390,6 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	{
 		xccdf_file = strdup(action->f_xccdf);
 	}
-
 
 	int ret;
 
@@ -1194,6 +1195,7 @@ enum oval_opt {
     XCCDF_OPT_RESULT_FILE = 1,
     XCCDF_OPT_RESULT_FILE_ARF,
     XCCDF_OPT_DATASTREAM_ID,
+    XCCDF_OPT_XCCDF_ID,
     XCCDF_OPT_PROFILE,
     XCCDF_OPT_REPORT_FILE,
     XCCDF_OPT_SHOW,
@@ -1223,6 +1225,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"results", 		required_argument, NULL, XCCDF_OPT_RESULT_FILE},
 		{"results-arf",		required_argument, NULL, XCCDF_OPT_RESULT_FILE_ARF},
 		{"datastream-id",		required_argument, NULL, XCCDF_OPT_DATASTREAM_ID},
+		{"xccdf-id",		required_argument, NULL, XCCDF_OPT_XCCDF_ID},
 		{"profile", 		required_argument, NULL, XCCDF_OPT_PROFILE},
 		{"result-id",		required_argument, NULL, XCCDF_OPT_RESULT_ID},
 		{"report", 		required_argument, NULL, XCCDF_OPT_REPORT_FILE},
@@ -1256,6 +1259,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		case XCCDF_OPT_RESULT_FILE:	action->f_results = optarg;	break;
 		case XCCDF_OPT_RESULT_FILE_ARF:	action->f_results_arf = optarg;	break;
 		case XCCDF_OPT_DATASTREAM_ID:	action->f_datastream_id = optarg;	break;
+		case XCCDF_OPT_XCCDF_ID:	action->f_xccdf_id = optarg; break;
 		case XCCDF_OPT_PROFILE:		action->profile = optarg;	break;
 		case XCCDF_OPT_RESULT_ID:	action->id = optarg;		break;
 		case XCCDF_OPT_REPORT_FILE:	action->f_report = optarg; 	break;
