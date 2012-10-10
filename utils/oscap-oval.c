@@ -90,7 +90,9 @@ static struct oscap_module OVAL_EVAL = {
         "   --report <file>\r\t\t\t\t - Create human readable (HTML) report from OVAL Results.\n"
         "   --skip-valid\r\t\t\t\t - Skip validation.\n"
         "   --datastream-id <id> \r\t\t\t\t - ID of the datastream in the collection to use.\n"
-        "                        \r\t\t\t\t   (only applicable for source datastreams)",
+        "                        \r\t\t\t\t   (only applicable for source datastreams)"
+        "   --oval-id <id> \r\t\t\t\t - ID of the OVAL component ref in the datastream to use.\n"
+        "                  \r\t\t\t\t   (only applicable for source datastreams)",
     .opt_parser = getopt_oval,
     .func = app_evaluate_oval
 };
@@ -381,7 +383,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 		temp_dir = strdup("/tmp/oscap.XXXXXX");
 		temp_dir = mkdtemp(temp_dir);
 
-		if (ds_sds_decompose_custom(action->f_oval, action->f_datastream_id, temp_dir, "checks", NULL, "oval.xml") != 0)
+		if (ds_sds_decompose_custom(action->f_oval, action->f_datastream_id, temp_dir, "checks", action->f_oval_id, "oval.xml") != 0)
 		{
 			fprintf(stdout, "Failed to decompose source datastream in '%s'\n", action->f_oval);
 			goto cleanup;
@@ -640,6 +642,7 @@ enum oval_opt {
     OVAL_OPT_SYSCHAR,
     OVAL_OPT_DIRECTIVES,
     OVAL_OPT_DATASTREAM_ID,
+    OVAL_OPT_OVAL_ID,
     OVAL_OPT_OUTPUT = 'o'
 };
 
@@ -660,6 +663,7 @@ bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 		{ "syschar",	required_argument, NULL, OVAL_OPT_SYSCHAR      },
 		{ "directives",	required_argument, NULL, OVAL_OPT_DIRECTIVES   },
 		{ "datastream-id",required_argument, NULL, OVAL_OPT_DATASTREAM_ID},
+		{ "oval-id",    required_argument, NULL, OVAL_OPT_OVAL_ID},
         // flags
 		{ "skip-valid",	no_argument, &action->validate, 0 },
         // end
@@ -677,6 +681,7 @@ bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 		case OVAL_OPT_SYSCHAR: action->f_syschar = optarg; break;
 		case OVAL_OPT_DIRECTIVES: action->f_directives = optarg; break;
 		case OVAL_OPT_DATASTREAM_ID: action->f_datastream_id = optarg;	break;
+		case OVAL_OPT_OVAL_ID: action->f_oval_id = optarg;	break;
 		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
