@@ -182,6 +182,11 @@ Generate OVAL Variables documents which contain external variables' values that 
 Uses a datastream with that particular ID from the given datastream collection. If not given the first datastream is used. Only applies if you give source datastream in place of an XCCDF file.
 .RE
 .TP
+\fB\-\-xccdf-id ID\fR
+.RS
+Takes component ref with given ID from checklists. This allows to select a particular XCCDF component even in cases where there are 2 XCCDFs in one datastream.
+.RE
+.TP
 \fB\-\-skip-valid\fR
 .RS
 Do not validate input/output files.

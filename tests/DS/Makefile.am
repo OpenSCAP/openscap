@@ -14,8 +14,10 @@ TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(shell cd $(top_builddir); pwd)/src/OVAL/probe
 TESTS = test_ds.sh
 
 EXTRA_DIST += test_ds.sh \
+		eval_invalid/sds.xml \
 		eval_simple/sds.xml \
 		eval_just_oval/sds.xml \
+		eval_xccdf_id/sds.xml \
 		rds_simple/results-oval.xml \
 		rds_simple/results-xccdf.xml \
 		rds_simple/sds.xml \
