@@ -219,6 +219,7 @@ static const struct oscap_string_map _OVAL_FUNCTION_MAP[] = {
 	{OVAL_FUNCTION_REGEX_CAPTURE, "regex_capture"},
 	{OVAL_FUNCTION_ARITHMETIC, "arithmetic"},
 	{OVAL_FUNCTION_COUNT, "count"},
+	{OVAL_FUNCTION_UNIQUE, "unique"},
 	{0, NULL}
 };
 
@@ -843,6 +844,7 @@ void oval_component_free(struct oval_component *component)
 		break;
 	case OVAL_FUNCTION_CONCAT:
 	case OVAL_FUNCTION_COUNT:
+	case OVAL_FUNCTION_UNIQUE:
 	case OVAL_FUNCTION_SUBSTRING:
 	case OVAL_FUNCTION_TIMEDIF:
 	case OVAL_FUNCTION_ESCAPE_REGEX:
@@ -1077,6 +1079,9 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 		return_code = _oval_component_parse_FUNCTION_tag(reader, context, component);
 	} else if (strcmp(tagname, "count") == 0) {
 		component = oval_component_new(model, OVAL_FUNCTION_COUNT);
+		return_code = _oval_component_parse_FUNCTION_tag(reader, context, component);
+	} else if (strcmp(tagname, "unique") == 0) {
+		component = oval_component_new(model, OVAL_FUNCTION_UNIQUE);
 		return_code = _oval_component_parse_FUNCTION_tag(reader, context, component);
 	} else if (strcmp(tagname, "end") == 0) {
 		component = oval_component_new(model, OVAL_FUNCTION_END);
@@ -1561,6 +1566,49 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_COUNT(oval_argu_t
 	oval_collection_add(value_collection, value);
 
 	oval_component_iterator_free(subcomps);
+	return flag;
+}
+
+static oval_syschar_collection_flag_t _oval_component_evaluate_UNIQUE(oval_argu_t *argu,
+								      struct oval_component *component,
+								      struct oval_collection *value_collection)
+{
+	int idx0 = 0;
+	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_UNKNOWN;
+	struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
+	int len_subcomps = oval_component_iterator_remaining(subcomps);
+	struct oval_collection *component_colls[len_subcomps];
+
+	for (idx0 = 0; oval_component_iterator_has_more(subcomps); idx0++) {
+		struct oval_collection *subcoll = oval_collection_new();
+		struct oval_component *subcomp = oval_component_iterator_next(subcomps);
+		oval_syschar_collection_flag_t subflag = oval_component_eval_common(argu, subcomp, subcoll);
+		flag = _AGG_FLAG(flag, subflag);
+		component_colls[idx0] = subcoll;
+	}
+
+	bool not_finished = (len_subcomps > 0) && _HAS_VALUES(flag);
+	struct oval_string_map *valmap = oval_string_map_new();
+
+	if (not_finished) {
+		for (idx0 = 0; idx0 < len_subcomps; idx0++) {
+			struct oval_value_iterator *comp_values =
+			    (struct oval_value_iterator *)oval_collection_iterator(component_colls[idx0]);
+
+			while (oval_value_iterator_has_more(comp_values)) {
+				char *valtxt;
+				if ((valtxt = oval_value_get_text(oval_value_iterator_next(comp_values))) != NULL) {
+					struct oval_value *value = oval_value_new(OVAL_DATATYPE_STRING, valtxt);
+					oval_string_map_put(valmap, valtxt, value);
+				}
+			}
+			oval_value_iterator_free(comp_values);
+		}
+	}
+
+	oval_string_map_collect_values(valmap, value_collection);
+	oval_string_map_free(valmap, NULL);
+
 	return flag;
 }
 
@@ -2158,6 +2206,7 @@ static _oval_component_evaluator *_component_evaluators[] = {
 	_oval_component_evaluate_REGEX_CAPTURE,
 	_oval_component_evaluate_ARITHMETIC,
 	_oval_component_evaluate_COUNT,
+	_oval_component_evaluate_UNIQUE,
 	NULL
 };
 
