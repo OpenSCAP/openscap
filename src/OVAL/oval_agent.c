@@ -187,6 +187,26 @@ int oval_agent_get_definition_result(oval_agent_session_t *ag_sess, const char *
 	return 0;
 }
 
+struct oval_result_definition * oval_agent_get_result_definition(oval_agent_session_t *ag_sess, const char *id) {
+	struct oval_results_model *rmodel;
+	struct oval_result_system_iterator *rsystem_it;
+	struct oval_result_system *rsystem;
+	struct oval_result_definition *rdef;
+
+	rmodel = oval_agent_get_results_model(ag_sess);
+	rsystem_it = oval_results_model_get_systems(rmodel);
+	if (!oval_result_system_iterator_has_more(rsystem_it)) {
+		oval_result_system_iterator_free(rsystem_it);
+                return NULL;
+	}
+
+	rsystem = oval_result_system_iterator_next(rsystem_it);
+	oval_result_system_iterator_free(rsystem_it);
+	rdef = oval_result_system_get_definition(rsystem, id);
+
+	return rdef;
+}
+
 int oval_agent_reset_session(oval_agent_session_t * ag_sess) {
 	ag_sess->cur_var_model = NULL;
 	oval_definition_model_clear_external_variables(ag_sess->def_model);
@@ -220,7 +240,7 @@ int oval_agent_abort_session(oval_agent_session_t *ag_sess)
 	return oval_probe_session_abort(ag_sess->psess);
 }
 
-int oval_agent_eval_system(oval_agent_session_t * ag_sess, oscap_reporter cb, void *arg) {
+int oval_agent_eval_system(oval_agent_session_t * ag_sess, agent_reporter cb, void *arg) {
 	struct oval_definition *oval_def;
 	struct oval_definition_iterator *oval_def_it;
 	char   *id;
@@ -240,21 +260,9 @@ int oval_agent_eval_system(oval_agent_session_t * ag_sess, oscap_reporter cb, vo
 
 		/* callback */
                 if (cb != NULL) {
-			struct oscap_reporter_message * msg = oscap_reporter_message_new_fmt(
-				OSCAP_REPORTER_FAMILY_OVAL, /* FAMILY */
-				0,                           /* CODE */
-				"%s",
-				oval_definition_get_description(oval_def));
-			oscap_reporter_message_set_user1str(msg, id);
-			ret = oval_agent_get_definition_result(ag_sess, id, &result);
-			if (ret == -1) {
-				oscap_reporter_message_free(msg);
-				goto cleanup;
-			}
-
-			oscap_reporter_message_set_user2num(msg, result);
-			oscap_reporter_message_set_user3str(msg, oval_definition_get_title(oval_def));
-			ret = oscap_reporter_report(cb, msg, arg);
+			struct oval_result_definition * res_def = oval_agent_get_result_definition(ag_sess, id);
+			ret = cb(res_def,arg);
+			/* stop? */
 			if (ret!=0)
 				goto cleanup;
 		}

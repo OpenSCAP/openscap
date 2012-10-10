@@ -189,14 +189,18 @@ static int oval_gen_report(const char *infile, const char *outfile)
     return app_xslt(infile, "oval-results-report.xsl", outfile, NULL);
 }
 
-static int app_oval_callback(const struct oscap_reporter_message *msg, void *arg)
+static int app_oval_callback(const struct oval_result_definition * res_def, void *arg)
 {
 
-	if (VERBOSE >= 0)
-		printf("Definition %s: %s\n",
-		       oscap_reporter_message_get_user1str(msg),
-		       oval_result_get_text(oscap_reporter_message_get_user2num(msg)));
-	switch ((oval_result_t) oscap_reporter_message_get_user2num(msg)) {
+	if (VERBOSE <= 0)
+		return 0;
+
+	struct oval_definition *oval_def = oval_result_definition_get_definition(res_def);
+	oval_result_t result =  oval_result_definition_get_result(res_def);
+
+	printf("Definition %s: %s\n", oval_definition_get_title(oval_def), oval_result_get_text(result));
+
+	switch (result) {
 	case OVAL_RESULT_TRUE:
 		((struct oval_usr *)arg)->result_true++;
 		break;

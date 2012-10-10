@@ -86,6 +86,12 @@ int oval_agent_eval_definition(oval_agent_session_t *, const char *);
 int oval_agent_get_definition_result(oval_agent_session_t *, const char *, oval_result_t *);
 
 /**
+ * Get the OVAL result definition from an agent session
+ * @return NULL if not found
+ */
+struct oval_result_definition * oval_agent_get_result_definition(oval_agent_session_t *ag_sess, const char *id);
+
+/**
  * Clean resuls that were generated in this agent session
  */
 int oval_agent_reset_session(oval_agent_session_t * ag_sess);
@@ -95,11 +101,13 @@ int oval_agent_reset_session(oval_agent_session_t * ag_sess);
  */
 int oval_agent_abort_session(oval_agent_session_t *ag_sess);
 
+typedef int (*agent_reporter)(const struct oval_result_definition * res_def, void *arg);
+
 /**
  * Probe and evaluate all definitions from the content, call the callback functions upon single evaluation
  * @return 0 on success; -1 error; 1 warning
  */
-int oval_agent_eval_system(oval_agent_session_t * ag_sess, oscap_reporter cb, void *arg);
+int oval_agent_eval_system(oval_agent_session_t * ag_sess, agent_reporter cb, void *arg);
 
 /**
  * Get a result model from agent session
