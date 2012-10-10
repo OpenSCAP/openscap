@@ -46,6 +46,7 @@ struct oval_iterator *oval_string_map_values(struct oval_string_map *);
 void *oval_string_map_get_value(struct oval_string_map *, const char *);
 void oval_string_map_free(struct oval_string_map *, oscap_destruct_func);
 void oval_string_map_free_string(struct oval_string_map *);
+struct oval_collection *oval_string_map_collect_values(struct oval_string_map *map, struct oval_collection *collection);
 
 OSCAP_HIDDEN_END;
 

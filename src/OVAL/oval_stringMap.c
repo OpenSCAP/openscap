@@ -280,6 +280,15 @@ static int __oval_iterator_addval(struct rbt_str_node *n, void *u)
 	return (0);
 }
 
+static int __oval_collection_addval(struct rbt_str_node *n, void *u)
+{
+	struct oval_collection *c = (struct oval_collection *)u;
+
+	oval_collection_add(c, n->data);
+
+	return (0);
+}
+
 struct oval_iterator *oval_string_map_keys(struct oval_string_map *map)
 {
 	struct oval_iterator *it;
@@ -302,6 +311,17 @@ struct oval_iterator *oval_string_map_values(struct oval_string_map *map)
 	rbt_str_walk_inorder2((rbt_t *)map, __oval_iterator_addval, it, 0);
 
 	return (it);
+}
+
+struct oval_collection *oval_string_map_collect_values(struct oval_string_map *map, struct oval_collection *collection)
+{
+	assume_d(map != NULL, NULL);
+
+	if (collection == NULL)
+		collection = oval_collection_new();
+	rbt_str_walk_inorder2((rbt_t *)map, __oval_collection_addval, collection, 0);
+
+	return (collection);
 }
 
 #endif /* OVAL_STRINGMAP_LINEAR */
