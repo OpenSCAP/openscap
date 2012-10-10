@@ -42,8 +42,6 @@
 #include "oval_types.h"
 #include "oval_version.h"
 #include <stdbool.h>
-#include <libxml/tree.h>
-
 
 /**
  * Affected family enumeration.
@@ -211,7 +209,8 @@ typedef enum {
 	OVAL_FUNCTION_REGEX_CAPTURE = OVAL_FUNCTION + 8,
 	OVAL_FUNCTION_ARITHMETIC = OVAL_FUNCTION + 9,
 	OVAL_FUNCTION_COUNT = OVAL_FUNCTION + 10,
-	OVAL_FUNCTION_LAST = OVAL_FUNCTION + 11
+	OVAL_FUNCTION_UNIQUE = OVAL_FUNCTION + 11,
+	OVAL_FUNCTION_LAST = OVAL_FUNCTION + 12
 } oval_component_type_t;
 
 /// Arithmetic format enumeration

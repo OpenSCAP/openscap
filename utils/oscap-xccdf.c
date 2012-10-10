@@ -225,44 +225,90 @@ static const char * RESULT_COLORS[] = {"", "32", "31", "1;31", "1;30", "1;37", "
 
 static char custom_stylesheet_path[PATH_MAX];
 
-/**
- * Callback for XCCDF evaluation. Callback is called before each XCCDF Rule evaluation
- * @param msg OSCAP Reporter message
- * @param arg User defined data structure
- */
-static int scallback(const struct oscap_reporter_message *msg, void *arg)
+static int callback_scr_rule(const struct oscap_reporter_message *msg, void *arg)
 {
-	if (((const struct oscap_action*) arg)->verbosity >= 0) {
-            xccdf_test_result_type_t result = oscap_reporter_message_get_user2num(msg);
-            if (result == XCCDF_RESULT_NOT_SELECTED) return 0;
+	const struct xccdf_rule *rule = (const struct xccdf_rule *) oscap_reporter_message_get_user1ptr(msg);
+	const char * rule_id = xccdf_rule_get_id(rule);
 
-            printf("\n");
-            if (isatty(1)) 
-                printf("Rule ID:\r\t\t\033[1m%s\033[0;0m\n", oscap_reporter_message_get_user1str(msg));
-            else printf("Rule ID:\r\t\t%s\n", oscap_reporter_message_get_user1str(msg));
-            printf("Title:\r\t\t%s\n", oscap_reporter_message_get_user3str(msg));
-            /*printf("Description:\r\t\t%s\n", oscap_reporter_message_get_string(msg));*/
-            printf("Result:\r\t\t");
-            fflush(stdout);
-        }
+	/* is rule selected? we print only selected rules */
+        const struct xccdf_select *sel = xccdf_policy_get_select_by_id((struct xccdf_policy *) arg, rule_id);
+        if (!xccdf_select_get_selected(sel))
+		return 0;
+
+	/* get the first title */
+	const char * title = NULL;
+	struct oscap_text_iterator * title_it = xccdf_rule_get_title(rule);
+	if (oscap_text_iterator_has_more(title_it))
+		title = oscap_text_get_text(oscap_text_iterator_next(title_it));
+	oscap_text_iterator_free(title_it);
+
+	/* get the first ident */
+	const char * ident_id = NULL;
+	struct xccdf_ident_iterator *idents = xccdf_rule_get_idents(rule);
+	if (xccdf_ident_iterator_has_more(idents)) {
+		const struct xccdf_ident *ident = xccdf_ident_iterator_next(idents);
+		ident_id = xccdf_ident_get_id(ident);
+	}
+	xccdf_ident_iterator_free(idents);
+
+	/* print */
+	if (isatty(1))
+		printf("Title\r\t\033[1m%s\033[0;0m\n", title);
+	else
+		printf("Title\r\t%s\n", title);
+	printf("Rule\r\t%s\n", rule_id);
+	printf("Ident\r\t%s\n", ident_id);
+	printf("Result\r\t");
+	fflush(stdout);
 
 	return 0;
 }
-/**
- * Callback for XCCDF evaluation. Callback is called after each XCCDF Rule evaluation
- * @param msg OSCAP Reporter message
- * @param arg User defined data structure
- */
-static int callback(const struct oscap_reporter_message *msg, void *arg)
-{
-	if (((const struct oscap_action*) arg)->verbosity >= 0) {
-            xccdf_test_result_type_t result = oscap_reporter_message_get_user2num(msg);
-            if (result == XCCDF_RESULT_NOT_SELECTED) return 0;
 
-            if (isatty(1))
-                printf("\033[%sm%s\033[0m\n", RESULT_COLORS[result], xccdf_test_result_type_get_text((xccdf_test_result_type_t) result));
-            else printf("%s\n", xccdf_test_result_type_get_text((xccdf_test_result_type_t) result));
-        }
+static int callback_scr_result(const struct oscap_reporter_message *msg, void *arg)
+{
+	const struct xccdf_rule_result *rule_result = (const struct xccdf_rule_result *) oscap_reporter_message_get_user1ptr(msg);
+	xccdf_test_result_type_t result = xccdf_rule_result_get_result(rule_result);
+
+	/* is result from selected rule? we print only selected rules */
+	if (result == XCCDF_RESULT_NOT_SELECTED)
+		return 0;
+
+	/* print result */
+	const char * result_str = xccdf_test_result_type_get_text(result);
+	if (isatty(1))
+		printf("\033[%sm%s\033[0m\n\n", RESULT_COLORS[result], result_str);
+	else
+		printf("%s\n\n", result_str);
+
+	return 0;
+}
+
+static int callback_syslog_result(const struct oscap_reporter_message *msg, void *arg)
+{
+	const struct xccdf_rule_result *rule_result = (const struct xccdf_rule_result *) oscap_reporter_message_get_user1ptr(msg);
+	xccdf_test_result_type_t result = xccdf_rule_result_get_result(rule_result);
+
+	/* do we log it? */
+	if ((result != XCCDF_RESULT_FAIL) && (result != XCCDF_RESULT_UNKNOWN))
+		return 0;
+
+	/* yes we do */
+	const char * result_str = xccdf_test_result_type_get_text(result);
+	char sys_msg[1024];
+	const char * ident_id = NULL;
+	int priority = LOG_NOTICE;
+
+	/* get ident */
+	struct xccdf_ident_iterator *idents = xccdf_rule_result_get_idents(rule_result);
+	if (xccdf_ident_iterator_has_more(idents)) {
+		const struct xccdf_ident *ident = xccdf_ident_iterator_next(idents);
+		ident_id = xccdf_ident_get_id(ident);
+	}
+	xccdf_ident_iterator_free(idents);
+
+	/* emit the message */
+	snprintf(sys_msg, sizeof(sys_msg),"Rule: %s, Ident: %s, Result: %s.", xccdf_rule_result_get_idref(rule_result), ident_id, result_str);
+	syslog(priority, sys_msg);
 
 	return 0;
 }
@@ -400,9 +446,12 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		xccdf_policy_model_add_cpe_dict(policy_model, action->cpe_dict);
 	}
 
-	/* Register callback */
-	xccdf_policy_model_register_start_callback(policy_model, scallback, (void*) action);
-	xccdf_policy_model_register_output_callback(policy_model, callback, (void*) action);
+	/* Register callbacks */
+	if (action->verbosity >= 0) {
+		xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule, (void *) policy);
+		xccdf_policy_model_register_output_callback(policy_model, callback_scr_result, NULL);
+	}
+	/* xccdf_policy_model_register_output_callback(policy_model, callback_syslog_result, NULL); */
 
 	/* Use OVAL files from policy model */
 	if (action->f_ovals == NULL) {
