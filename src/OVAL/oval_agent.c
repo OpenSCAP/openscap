@@ -46,7 +46,6 @@
 #include "common/util.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
-#include "common/reporter_priv.h"
 #include "oval_agent_xccdf_api.h"
 
 struct oval_agent_session {

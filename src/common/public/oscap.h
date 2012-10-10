@@ -35,7 +35,8 @@
 #include <stdbool.h>
 #include <wchar.h>
 
-#include "reporter.h"
+#include "text.h"
+#include "reference.h"
 
 /**
  * This macro will warn, when a deprecated function is used.

@@ -43,7 +43,6 @@
 #include "common/list.h"
 #include "common/_error.h"
 #include "common/debug_priv.h"
-#include "common/reporter_priv.h"
 #include "common/assume.h"
 
 /**

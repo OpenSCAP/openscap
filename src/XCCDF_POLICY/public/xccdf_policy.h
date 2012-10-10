@@ -35,7 +35,6 @@
 #include <stdbool.h>
 #include <time.h>
 #include <oscap.h>
-#include <reporter.h>
 
 /**
  * @struct xccdf_policy_model

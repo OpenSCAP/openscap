@@ -28,6 +28,7 @@
 #include <assert.h>
 #include "public/oscap.h"
 #include "alloc.h"
+#include <stdarg.h>
 
 #define __attribute__nonnull__(x) assert((x) != NULL)
 

@@ -44,7 +44,6 @@
 #include "common/util.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
-#include "common/reporter_priv.h"
 
 
 typedef struct oval_syschar_model {

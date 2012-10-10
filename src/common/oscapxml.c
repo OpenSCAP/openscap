@@ -41,7 +41,6 @@
 #include "util.h"
 #include "list.h"
 #include "elements.h"
-#include "reporter_priv.h"
 #include "assume.h"
 
 #ifndef OSCAP_DEFAULT_SCHEMA_PATH
