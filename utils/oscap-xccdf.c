@@ -47,6 +47,7 @@
 
 #include "oscap-tool.h"
 #include "oscap.h"
+#include "oscap_acquire.h"
 
 #include <ftw.h>
 
@@ -371,8 +372,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			}
 		}
 
-		temp_dir = strdup("/tmp/oscap.XXXXXX");
-		temp_dir = mkdtemp(temp_dir);
+		temp_dir = oscap_acquire_temp_dir();
 
 		if (ds_sds_decompose(action->f_xccdf, action->f_datastream_id, action->f_xccdf_id, temp_dir, "xccdf.xml") != 0)
 		{
@@ -607,10 +607,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			else
 			{
 				if (!temp_dir)
-				{
-					temp_dir = strdup("/tmp/oscap.XXXXXX");
-					temp_dir = mkdtemp(temp_dir);
-				}
+					temp_dir = oscap_acquire_temp_dir();
 
 				oval_results_directory = temp_dir;
 			}
@@ -673,10 +670,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	if (!f_results && (action->f_report != NULL || action->f_results_arf != NULL))
 	{
 		if (!temp_dir)
-		{
-			temp_dir = strdup("/tmp/oscap.XXXXXX");
-			temp_dir = mkdtemp(temp_dir);
-		}
+			temp_dir = oscap_acquire_temp_dir();
 
 		f_results = malloc(PATH_MAX * sizeof(char));
 		sprintf(f_results, "%s/xccdf-result.xml", temp_dir);
@@ -752,10 +746,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		else
 		{
 			if (!temp_dir)
-			{
-				temp_dir = strdup("/tmp/oscap.XXXXXX");
-				temp_dir = mkdtemp(temp_dir);
-			}
+				temp_dir = oscap_acquire_temp_dir();
 
 			sds_path =  malloc(PATH_MAX * sizeof(char));
 			sprintf(sds_path, "%s/sds.xml", temp_dir);

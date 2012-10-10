@@ -35,6 +35,7 @@
 
 #include "oscap-tool.h"
 #include "scap_ds.h"
+#include "oscap_acquire.h"
 
 static int app_collect_oval(const struct oscap_action *action);
 static int app_evaluate_oval(const struct oscap_action *action);
@@ -381,8 +382,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 
 	if (ds_is_sds(action->f_oval) == 0)
 	{
-		temp_dir = strdup("/tmp/oscap.XXXXXX");
-		temp_dir = mkdtemp(temp_dir);
+		temp_dir = oscap_acquire_temp_dir();
 
 		if (ds_sds_decompose_custom(action->f_oval, action->f_datastream_id, temp_dir, "checks", action->f_oval_id, "oval.xml") != 0)
 		{
