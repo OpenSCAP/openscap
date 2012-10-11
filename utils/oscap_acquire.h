@@ -30,4 +30,12 @@
  */
 char *oscap_acquire_temp_dir(void);
 
+/**
+ * Download the given url to a random file in the given directory.
+ * @param temp_dir Directory to store the result in.
+ * @param url The url to acquire.
+ * @return the filename of the newly created file or NULL on error.
+ */
+char *oscap_acquire_url_download(const char *temp_dir, const char *url);
+
 #endif
