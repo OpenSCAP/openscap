@@ -300,12 +300,15 @@ class OSCAP_Object(object):
 
     """ ********* Implementation of non-trivial functions ********* """
 
-    def __output_callback(self, msg, obj):
-        return obj[0](OSCAP_Object("oscap_reporter_message", msg), obj[1])
+    def __start_callback(self, rule, obj):
+        return obj[0](OSCAP_Object("xccdf_rule", rule), obj[1])
+
+    def __output_callback(self, rule_result, obj):
+        return obj[0](OSCAP_Object("xccdf_rule_result", rule_result), obj[1])
 
     def register_start_callback(self, cb, usr):
         if self.object != "xccdf_policy_model": raise TypeError("Wrong call of register_start_callback function on %s" % (self.object,))
-        return OSCAP.xccdf_policy_model_register_start_callback_py(self.instance, self.__output_callback, (cb, usr))
+        return OSCAP.xccdf_policy_model_register_start_callback_py(self.instance, self.__start_callback, (cb, usr))
 
     def register_output_callback(self, cb, usr):
         if self.object != "xccdf_policy_model": raise TypeError("Wrong call of register_output_callback function on %s" % (self.object,))
