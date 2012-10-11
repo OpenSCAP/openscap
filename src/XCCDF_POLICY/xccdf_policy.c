@@ -72,7 +72,7 @@ typedef struct callback_t {
 typedef struct callback_out_t {
 
     char * system;                              ///< Identificator of checking engine (output engine)
-    policy_reporter callback;                    ///< oscap reporter callback - output callback specified by tool
+    int (*callback)(void*,void*);             	///< policy report callback {output,start}
     void * usr;                                 ///< User data structure
 
 } callback_out;
@@ -538,7 +538,7 @@ static int xccdf_policy_report_cb(struct xccdf_policy * policy, const char * sys
         callback_out * cb = (callback_out *) oscap_iterator_next(cb_it);
 
         /* Report */
-	retval = cb->callback((void *)rule, cb->usr);
+	retval = cb->callback(rule, cb->usr);
 
         /* We still want to stop evaluation if user cancel it
          * TODO: We should have a way to stop evaluation of current item
@@ -1631,7 +1631,7 @@ bool xccdf_policy_model_register_engine_and_query_callback(struct xccdf_policy_m
         return oscap_list_add(model->callbacks, cb);
 }
 
-bool xccdf_policy_model_register_start_callback(struct xccdf_policy_model * model, policy_reporter func, void * usr)
+bool xccdf_policy_model_register_start_callback(struct xccdf_policy_model * model, policy_reporter_start func, void * usr)
 {
 
         __attribute__nonnull__(model);
@@ -1639,13 +1639,13 @@ bool xccdf_policy_model_register_start_callback(struct xccdf_policy_model * mode
         if (cb == NULL) return false;
 
         cb->system   = "urn:xccdf:system:callback:start";
-        cb->callback = func;
+        cb->callback = (void*)func;
         cb->usr      = usr;
 
         return oscap_list_add(model->callbacks, (callback *) cb);
 }
 
-bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * model, policy_reporter func, void * usr)
+bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * model, policy_reporter_output func, void * usr)
 {
 
         __attribute__nonnull__(model);
@@ -1653,7 +1653,7 @@ bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * mod
         if (cb == NULL) return false;
 
         cb->system   = "urn:xccdf:system:callback:output";
-        cb->callback = func;
+        cb->callback = (void*)func;
         cb->usr      = usr;
 
         return oscap_list_add(model->callbacks, (callback *) cb);

@@ -159,7 +159,7 @@ bool xccdf_policy_model_register_engine_callback(struct xccdf_policy_model * mod
  */
 bool xccdf_policy_model_register_engine_and_query_callback(struct xccdf_policy_model *model, char *sys, void *eval_fn, void *usr, xccdf_policy_engine_query_fn query_fn);
 
-typedef int (*policy_reporter)(void *ptr, void *arg);
+typedef int (*policy_reporter_output)(struct xccdf_rule_result *, void *);
 
 /**
  * Function to register output callback for checking system that will be called AFTER each rule evaluation.
@@ -169,7 +169,9 @@ typedef int (*policy_reporter)(void *ptr, void *arg);
  * @memberof xccdf_policy_model
  * @return true if callback registered succesfully, false otherwise
  */
-bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * model, policy_reporter func, void * usr);
+bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * model, policy_reporter_output func, void * usr);
+
+typedef int (*policy_reporter_start)(struct xccdf_rule *, void *);
 
 /**
  * Function to register start callback for checking system that will be called BEFORE each rule evaluation.
@@ -179,7 +181,7 @@ bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * mod
  * @memberof xccdf_policy_model
  * @return true if callback registered succesfully, false otherwise
  */
-bool xccdf_policy_model_register_start_callback(struct xccdf_policy_model * model, policy_reporter func, void * usr);
+bool xccdf_policy_model_register_start_callback(struct xccdf_policy_model * model, policy_reporter_start func, void * usr);
 
 /************************************************************/
 /**
