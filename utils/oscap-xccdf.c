@@ -374,6 +374,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		}
 
 		temp_dir = oscap_acquire_temp_dir();
+		if (temp_dir == NULL)
+			goto cleanup;
 
 		if (ds_sds_decompose(action->f_xccdf, action->f_datastream_id, action->f_xccdf_id, temp_dir, "xccdf.xml") != 0)
 		{
@@ -598,8 +600,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		for (i=0; sessions[i]; i++) {
 			/* get result model and session name*/
 			struct oval_results_model *res_model = oval_agent_get_results_model(sessions[i]);
-			char * name =  malloc(PATH_MAX * sizeof(char));
 			const char* oval_results_directory = NULL;
+			char *name = NULL;
 
 			if (action->oval_results == true)
 			{
@@ -609,10 +611,13 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			{
 				if (!temp_dir)
 					temp_dir = oscap_acquire_temp_dir();
+				if (temp_dir == NULL)
+					goto cleanup;
 
 				oval_results_directory = temp_dir;
 			}
 
+			name = malloc(PATH_MAX * sizeof(char));
 			sprintf(name, "%s/%s.result.xml", oval_results_directory, oval_agent_get_filename(sessions[i]));
 
 			/* export result model to XML */
@@ -672,6 +677,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	{
 		if (!temp_dir)
 			temp_dir = oscap_acquire_temp_dir();
+		if (temp_dir == NULL)
+			goto cleanup;
 
 		f_results = malloc(PATH_MAX * sizeof(char));
 		sprintf(f_results, "%s/xccdf-result.xml", temp_dir);
@@ -748,6 +755,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		{
 			if (!temp_dir)
 				temp_dir = oscap_acquire_temp_dir();
+			if (temp_dir == NULL)
+				goto cleanup;
 
 			sds_path =  malloc(PATH_MAX * sizeof(char));
 			sprintf(sds_path, "%s/sds.xml", temp_dir);

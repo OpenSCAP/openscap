@@ -25,7 +25,8 @@
  * Create an oscap temp dir. (While ideally all the operations are being
  * made on unliked files using file descriptors, this is bordeline impossible
  * in short term given the library interfaces.
- * @return filename of the temporary directory.
+ * This function emits a message on stderr in case of error.
+ * @return filename of the temporary directory or NULL on error.
  */
 char *oscap_acquire_temp_dir(void);
 

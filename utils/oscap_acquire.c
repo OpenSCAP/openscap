@@ -18,14 +18,21 @@
  *
  */
 
+#include <stdio.h> // needed only for fprintf, may be removed once migrated to the lib.
 #include <string.h>
 #include <stdlib.h>
+#include <errno.h>
 
 #include "oscap_acquire.h"
+
+# define TEMP_DIR_TEMPLATE "/tmp/oscap.XXXXXX"
 
 char *
 oscap_acquire_temp_dir()
 {
-	char *temp_dir = strdup("/tmp/oscap.XXXXXX");
-	return mkdtemp(temp_dir);
+	char *temp_dir = strdup(TEMP_DIR_TEMPLATE);
+	temp_dir = mkdtemp(temp_dir);
+	if (temp_dir == NULL)
+		fprintf(stderr, "Could not create temp directory " TEMP_DIR_TEMPLATE ". %s\n", strerror(errno));
+	return temp_dir;
 }

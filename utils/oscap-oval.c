@@ -383,6 +383,8 @@ int app_evaluate_oval(const struct oscap_action *action)
 	if (ds_is_sds(action->f_oval) == 0)
 	{
 		temp_dir = oscap_acquire_temp_dir();
+		if (temp_dir == NULL)
+			goto cleanup;
 
 		if (ds_sds_decompose_custom(action->f_oval, action->f_datastream_id, temp_dir, "checks", action->f_oval_id, "oval.xml") != 0)
 		{
