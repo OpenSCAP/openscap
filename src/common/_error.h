@@ -27,7 +27,7 @@
 
 #include <errno.h>
 #include <libxml/xmlerror.h>
-#include "public/error.h"
+#include "public/oscap_error.h"
 
 #define oscap_assert_errno(cond, desc) \
 	{ if (!(cond)) { if ((errno)) oscap_seterr(OSCAP_EFAMILY_GLIBC, desc); \

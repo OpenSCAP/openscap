@@ -30,7 +30,7 @@
 
 /* openscap common */
 #include <oscap.h>
-#include <error.h>
+#include <oscap_error.h>
 #include <text.h>
 #include <reporter.h>
 

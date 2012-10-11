@@ -29,7 +29,7 @@
 #include <errno.h>
 #include <limits.h>
 
-#include "public/error.h"
+#include "public/oscap_error.h"
 #include "reporter_priv.h"
 #include "list.h"
 

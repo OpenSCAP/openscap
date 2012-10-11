@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "common/public/error.h"
+#include "common/public/oscap_error.h"
 
 
 int main(int argc, char **argv)

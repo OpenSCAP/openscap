@@ -9,7 +9,7 @@ liboscapcommon_la_CPPFLAGS  = @xml2_CFLAGS@ @xslt_CFLAGS@ @exslt_CFLAGS@ -I$(src
 liboscapcommon_la_LIBADD = @xml2_LIBS@ @xslt_LIBS@ @exslt_LIBS@ @pthread_LIBS@
 
 pkginclude_HEADERS =\
-	public/error.h \
+	public/oscap_error.h \
 	public/oscap.h \
 	public/reference.h \
 	public/reporter.h \
