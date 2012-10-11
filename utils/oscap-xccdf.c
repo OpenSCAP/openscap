@@ -342,7 +342,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	int idx = 0;
 	char* f_results = NULL;
 
-	char* temp_dir = 0;
+	char* temp_dir = NULL;
 
 	char* xccdf_file = NULL;
 	char* xccdf_doc_version = NULL;
@@ -394,7 +394,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	const char* full_validation = getenv("OSCAP_FULL_VALIDATION");
 
 	/* Validate documents */
-	if( action->validate && (!temp_dir || full_validation)) {
+	if (action->validate && (!sds_likely || full_validation)) {
 		xccdf_doc_version = xccdf_detect_version(xccdf_file);
 		if (!xccdf_doc_version)
 			goto cleanup;
@@ -494,7 +494,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	/* Validate OVAL files */
 	// we will only validate if the file doesn't come from a datastream
 	// or if full validation was explicitly requested
-	if (action->validate && (!temp_dir || full_validation)) {
+	if (action->validate && (!sds_likely || full_validation)) {
 		for (idx=0; oval_files[idx]; idx++) {
 			char *doc_version;
 
