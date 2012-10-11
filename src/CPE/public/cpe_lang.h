@@ -39,7 +39,7 @@
 #include <stdlib.h>
 
 #include "cpe_name.h"
-#include "oscap.h"
+#include "oscap_text.h"
 
 /**
  * CPE language operators

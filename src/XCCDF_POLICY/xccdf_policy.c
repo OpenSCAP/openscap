@@ -35,7 +35,7 @@
 
 #include "public/xccdf_policy.h"
 #include "public/xccdf_benchmark.h"
-#include "public/text.h"
+#include "public/oscap_text.h"
 
 #include "oval_agent_api.h"
 

@@ -28,6 +28,7 @@
 #include "public/xccdf_benchmark.h"
 #include "public/oval_definitions.h"
 #include "public/oscap.h"
+#include "public/oscap_text.h"
 
 #include "common/alloc.h"
 #include "common/_error.h"
@@ -44,7 +45,6 @@
 #include <libxml/xpathInternals.h>
 
 #include <string.h>
-#include <text.h>
 
 
 #ifndef MAXPATHLEN

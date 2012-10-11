@@ -37,7 +37,7 @@
 #define CPEDICT_H_
 
 #include "cpe_name.h"
-#include "oscap.h"
+#include "oscap_text.h"
 
 /**
  * @struct cpe_dict_model

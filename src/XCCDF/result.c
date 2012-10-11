@@ -26,7 +26,6 @@
 
 #include <math.h>
 #include <sys/utsname.h>
-#include <text.h>
 
 #if defined(__linux__)
 #include <arpa/inet.h>
@@ -43,6 +42,7 @@
 #include "helpers.h"
 #include "xccdf_impl.h"
 #include "common/_error.h"
+#include "oscap_text.h"
 
 
 // constants

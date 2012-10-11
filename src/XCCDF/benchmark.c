@@ -25,8 +25,8 @@
 #endif
 
 #include <string.h>
-#include <text.h>
 
+#include "oscap_text.h"
 #include "item.h"
 #include "helpers.h"
 #include "xccdf_impl.h"

@@ -33,6 +33,7 @@
 
 #include "util.h"
 #include "public/oscap.h"
+#include "public/oscap_text.h"
 
 OSCAP_HIDDEN_START;
 

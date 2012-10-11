@@ -35,7 +35,6 @@
 #include <stdbool.h>
 #include <wchar.h>
 
-#include "text.h"
 #include "reporter.h"
 
 /**

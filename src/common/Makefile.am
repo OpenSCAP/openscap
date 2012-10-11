@@ -13,4 +13,4 @@ pkginclude_HEADERS =\
 	public/oscap.h \
 	public/oscap_reference.h \
 	public/reporter.h \
-	public/text.h
+	public/oscap_text.h

@@ -31,7 +31,7 @@
 /* openscap common */
 #include <oscap.h>
 #include <oscap_error.h>
-#include <text.h>
+#include <oscap_text.h>
 #include <reporter.h>
 
 #include <oval_definitions.h>
