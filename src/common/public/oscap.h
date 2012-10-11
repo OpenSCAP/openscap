@@ -35,8 +35,8 @@
 #include <stdbool.h>
 #include <wchar.h>
 
-#include "text.h"
-#include "reference.h"
+#include "oscap_text.h"
+#include "oscap_reference.h"
 
 /**
  * This macro will warn, when a deprecated function is used.
