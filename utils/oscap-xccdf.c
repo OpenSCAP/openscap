@@ -359,7 +359,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	snprintf(msg, sizeof(msg),"Evaluation started. Content: %s, Profile: %s.", action->f_xccdf, action->profile);
 	syslog(priority, msg);
 
-	if (ds_is_sds(action->f_xccdf) == 0)
+	const bool sds_likely = ds_is_sds(action->f_xccdf) == 0;
+	if (sds_likely)
 	{
 		if (action->validate)
 		{
@@ -739,7 +740,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	{
 		char* sds_path = 0;
 
-		if (ds_is_sds(action->f_xccdf) == 0)
+		if (sds_likely)
 		{
 			sds_path = strdup(action->f_xccdf);
 		}
