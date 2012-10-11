@@ -169,7 +169,6 @@
  #include "../src/common/public/oscap.h"
  #include "../src/common/public/oscap_error.h"
  #include "../src/common/public/oscap_text.h"
- #include "../src/common/public/reporter.h"
 
  #include "../src/DS/public/scap_ds.h"
 %}
@@ -339,10 +338,10 @@ static int xccdf_policy_model_callback_wrapper(struct xccdf_policy *policy, char
     return dres;
 }
 
-int output_callback_wrapper(const struct oscap_reporter_message *msg, void *arg)
+int output_callback_wrapper(struct xccdf_rule_result* rule_result, void *arg)
 {
     PyGILState_STATE state;
-    PyObject *py_msg;
+    PyObject *py_rule_result;
     PyObject *arglist;
     PyObject *func, *usrdata;
     struct internal_usr *data;
@@ -350,11 +349,48 @@ int output_callback_wrapper(const struct oscap_reporter_message *msg, void *arg)
     double    dres = 0;
 
     state = PyGILState_Ensure();
-    py_msg = SWIG_NewPointerObj(msg, SWIGTYPE_p_oscap_reporter_message, 1);
+    py_rule_result = SWIG_NewPointerObj(rule_result, SWIGTYPE_p_xccdf_rule_result, 1);
     data = (struct internal_usr *) arg;
     func = data->func;
     usrdata = data->usr;
-    arglist = Py_BuildValue("OO", py_msg, usrdata);
+    arglist = Py_BuildValue("OO", py_rule_result, usrdata);
+    if (!PyCallable_Check(func)) {
+      PyGILState_Release(state);
+      return 1;
+    }
+    result = PyEval_CallObject(func,arglist);
+    if (result == NULL) {
+        if (PyErr_Occurred() != NULL)
+            PyErr_PrintEx(0);
+        PyErr_Print();
+        Py_DECREF(arglist);
+        Py_XDECREF(result);
+        PyGILState_Release(state);
+        return -1;
+    }
+    Py_DECREF(arglist);
+    dres = PyInt_AsLong(result);
+    Py_XDECREF(result);
+    PyGILState_Release(state);
+    return dres;
+}
+
+int start_callback_wrapper(struct xccdf_rule* rule, void *arg)
+{
+    PyGILState_STATE state;
+    PyObject *py_rule;
+    PyObject *arglist;
+    PyObject *func, *usrdata;
+    struct internal_usr *data;
+    PyObject *result;
+    double    dres = 0;
+
+    state = PyGILState_Ensure();
+    py_rule = SWIG_NewPointerObj(rule, SWIGTYPE_p_xccdf_rule, 1);
+    data = (struct internal_usr *) arg;
+    func = data->func;
+    usrdata = data->usr;
+    arglist = Py_BuildValue("OO", py_rule, usrdata);
     if (!PyCallable_Check(func)) {
       PyGILState_Release(state);
       return 1;
@@ -464,7 +500,7 @@ bool xccdf_policy_model_register_start_callback_py(struct xccdf_policy_model *mo
     new_usrdata->func = func;
     new_usrdata->usr = usr;
   
-    return xccdf_policy_model_register_start_callback(model, output_callback_wrapper, (void *)new_usrdata);
+    return xccdf_policy_model_register_start_callback(model, start_callback_wrapper, (void *)new_usrdata);
 }
 
 int oval_agent_eval_system_py(oval_agent_session_t * asess, PyObject * func, PyObject *usr) {
