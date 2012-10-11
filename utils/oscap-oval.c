@@ -198,7 +198,7 @@ static int app_oval_callback(const struct oval_result_definition * res_def, void
 	struct oval_definition *oval_def = oval_result_definition_get_definition(res_def);
 	oval_result_t result =  oval_result_definition_get_result(res_def);
 
-	printf("Definition %s: %s\n", oval_definition_get_title(oval_def), oval_result_get_text(result));
+	printf("Definition %s: %s\n", oval_definition_get_id(oval_def), oval_result_get_text(result));
 
 	switch (result) {
 	case OVAL_RESULT_TRUE:
