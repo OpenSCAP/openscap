@@ -18,14 +18,18 @@
  *
  */
 
-#include <stdio.h> // needed only for fprintf, may be removed once migrated to the lib.
+#include <stdio.h> // for P_tmpdir macro
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
 
 #include "oscap_acquire.h"
 
-# define TEMP_DIR_TEMPLATE "/tmp/oscap.XXXXXX"
+#ifndef P_tmpdir
+#define P_tmpdir "/tmp"
+#endif
+
+#define TEMP_DIR_TEMPLATE P_tmpdir "/oscap.XXXXXX"
 
 char *
 oscap_acquire_temp_dir()
