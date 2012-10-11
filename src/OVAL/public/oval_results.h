@@ -339,15 +339,15 @@ void oval_result_definition_add_message(struct oval_result_definition *, struct 
 /**
  * @memberof oval_result_definition
  */
-struct oval_definition *oval_result_definition_get_definition(struct oval_result_definition *);
+struct oval_definition *oval_result_definition_get_definition(const struct oval_result_definition *);
 /**
  * @memberof oval_result_definition
  */
-struct oval_result_system *oval_result_definition_get_system(struct oval_result_definition *);
+struct oval_result_system *oval_result_definition_get_system(const struct oval_result_definition *);
 /**
  * @memberof oval_result_definition
  */
-int oval_result_definition_get_instance(struct oval_result_definition *);
+int oval_result_definition_get_instance(const struct oval_result_definition *);
 /**
  * @memberof oval_result_definition
  */
@@ -355,15 +355,15 @@ oval_result_t oval_result_definition_eval(struct oval_result_definition *);
 /**
  * @memberof oval_result_definition
  */
-oval_result_t oval_result_definition_get_result(struct oval_result_definition *);
+oval_result_t oval_result_definition_get_result(const struct oval_result_definition *);
 /**
  * @memberof oval_result_definition
  */
-struct oval_message_iterator *oval_result_definition_get_messages(struct oval_result_definition *);
+struct oval_message_iterator *oval_result_definition_get_messages(const struct oval_result_definition *);
 /**
  * @memberof oval_result_definition
  */
-struct oval_result_criteria_node *oval_result_definition_get_criteria(struct oval_result_definition *);
+struct oval_result_criteria_node *oval_result_definition_get_criteria(const struct oval_result_definition *);
 /** @} */
 
 /**

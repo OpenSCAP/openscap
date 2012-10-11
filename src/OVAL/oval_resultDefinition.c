@@ -135,19 +135,19 @@ struct oval_result_definition *make_result_definition_from_oval_definition
 	return rslt_definition;
 }
 
-struct oval_definition *oval_result_definition_get_definition(struct oval_result_definition *definition) {
+struct oval_definition *oval_result_definition_get_definition(const struct oval_result_definition *definition) {
 	__attribute__nonnull__(definition);
 
 	return definition->definition;
 }
 
-struct oval_result_system *oval_result_definition_get_system(struct oval_result_definition *definition) {
+struct oval_result_system *oval_result_definition_get_system(const struct oval_result_definition *definition) {
 	__attribute__nonnull__(definition);
 
 	return definition->system;
 }
 
-int oval_result_definition_get_instance(struct oval_result_definition *definition) {
+int oval_result_definition_get_instance(const struct oval_result_definition *definition) {
 	__attribute__nonnull__(definition);
 
 	return definition->instance;
@@ -166,14 +166,14 @@ oval_result_t oval_result_definition_eval(struct oval_result_definition * defini
 	return definition->result;
 }
 
-oval_result_t oval_result_definition_get_result(struct oval_result_definition * definition)
+oval_result_t oval_result_definition_get_result(const struct oval_result_definition * definition)
 {
 	__attribute__nonnull__(definition);
 
 	return definition->result;
 }
 
-struct oval_message_iterator *oval_result_definition_get_messages(struct oval_result_definition *definition) 
+struct oval_message_iterator *oval_result_definition_get_messages(const struct oval_result_definition *definition) 
 {
 	__attribute__nonnull__(definition);
 
@@ -181,7 +181,7 @@ struct oval_message_iterator *oval_result_definition_get_messages(struct oval_re
 	    oval_collection_iterator(definition->messages);
 }
 
-struct oval_result_criteria_node *oval_result_definition_get_criteria(struct oval_result_definition *definition) 
+struct oval_result_criteria_node *oval_result_definition_get_criteria(const struct oval_result_definition *definition) 
 {
 	__attribute__nonnull__(definition);
 
