@@ -11,6 +11,6 @@ liboscapcommon_la_LIBADD = @xml2_LIBS@ @xslt_LIBS@ @exslt_LIBS@ @pthread_LIBS@
 pkginclude_HEADERS =\
 	public/oscap_error.h \
 	public/oscap.h \
-	public/reference.h \
+	public/oscap_reference.h \
 	public/reporter.h \
 	public/text.h

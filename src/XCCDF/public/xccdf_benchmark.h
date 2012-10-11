@@ -36,7 +36,8 @@
 
 #include <stdbool.h>
 #include <time.h>
-#include "oscap.h"
+#include <oscap_reference.h>
+#include <oscap.h>
 #include "cpe_dict.h"
 
 /*--------------------*\
