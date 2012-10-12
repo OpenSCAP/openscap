@@ -60,18 +60,22 @@ oscap_acquire_url_download(const char *temp_dir, const char *url)
 	CURL *curl;
 	CURLcode res;
 
+	printf("Downloading: %s ... ", url);
+	fflush(stdout);
 	output_filename = malloc(PATH_MAX * sizeof(char));
 	snprintf(output_filename, PATH_MAX, "%s/%s", temp_dir, TEMP_URL_TEMPLATE);
 	output_fd = mkstemp(output_filename);
 	if (output_fd == -1) {
-		fprintf(stderr, "%s\n", strerror(errno));
+		printf("error\n");
+		fprintf(stderr, "%s", strerror(errno));
 		free(output_filename);
 		return NULL;
 	}
 
 	fp = fdopen(output_fd, "w");
 	if (fp == NULL) {
-		fprintf(stderr, "%s\n", strerror(errno));
+		printf("error\n");
+		fprintf(stderr, "%s", strerror(errno));
 		remove(output_filename);
 		close(output_fd);
 		free(output_filename);
@@ -80,7 +84,8 @@ oscap_acquire_url_download(const char *temp_dir, const char *url)
 
 	curl = curl_easy_init();
 	if (curl == NULL) {
-		fprintf(stderr, "Failed to initialize libcurl.\n");
+		printf("error\n");
+		fprintf(stderr, "Failed to initialize libcurl.");
 		remove(output_filename);
 		fclose(fp);
 		free(output_filename);
@@ -91,11 +96,14 @@ oscap_acquire_url_download(const char *temp_dir, const char *url)
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
 	res = curl_easy_perform(curl);
 	if (res != 0) {
-		fprintf(stderr, "%s\n", curl_easy_strerror(res));
+		printf("error\n");
+		fprintf(stderr, "%s", curl_easy_strerror(res));
 		remove(output_filename);
 		free(output_filename);
 		output_filename = NULL;
 	}
+	else
+		printf("0k\n");
 	curl_easy_cleanup(curl);
 	fclose(fp);
 	return output_filename;
