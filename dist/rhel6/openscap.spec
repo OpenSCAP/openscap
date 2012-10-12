@@ -54,8 +54,10 @@ libraries can be used by python.
 Summary:        Openscap utilities
 Group:          Applications/System
 Requires:       %{name} = %{version}-%{release}
+Requires:       libcurl >= 7.12.0
 Requires(post):  chkconfig
 Requires(preun): chkconfig initscripts
+BuildRequires:  libcurl-devel >= 7.12.0
 
 %description    utils
 The %{name}-utils package contains various utilities based on %{name} library.
