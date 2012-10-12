@@ -323,6 +323,11 @@ static int __unlink_cb(const char *fpath, const struct stat *sb, int typeflag, s
 	return rv;
 }
 
+struct oscap_content_resource {
+	char *href;	/* Coresponds with xccdf:check-content-ref/@href. */
+	char *filename; /* Points to the filename on the filesystem. */
+};
+
 /**
  * XCCDF Processing fucntion
  * @param action OSCAP Action structure
@@ -338,7 +343,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	char * xccdf_pathcopy = NULL;
         void **def_models = NULL;
         void **sessions = NULL;
-	char ** oval_files = NULL;
+	struct oscap_content_resource **contents = NULL;
 	int idx = 0;
 	char* f_results = NULL;
 
@@ -457,8 +462,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		char * tmp_path;
 
 		idx = 0;
-		oval_files = malloc(sizeof(char *));
-		oval_files[idx] = NULL;
+		contents = malloc(sizeof(struct oscap_content_resource *));
+		contents[idx] = NULL;
 
 		char * pathcopy =  strdup(xccdf_file);
 		char * path = dirname(pathcopy);
@@ -480,31 +485,45 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 				free(tmp_path);
 			}
 			else {
-				oval_files[idx] = tmp_path;
+				contents[idx] = malloc(sizeof(struct oscap_content_resource));
+				contents[idx]->href = strdup(oscap_file_entry_get_file(file_entry));
+				contents[idx]->filename = tmp_path;
 				idx++;
-				oval_files = realloc(oval_files, (idx + 1) * sizeof(char *));
-				oval_files[idx] = NULL;
+				contents = realloc(contents, (idx + 1) * sizeof(struct oscap_content_resource *));
+				contents[idx] = NULL;
 			}
 		}
 		oscap_file_entry_iterator_free(files_it);
 		oscap_file_entry_list_free(files);
 		free(pathcopy);
-	} else
-		oval_files = action->f_ovals;
+	} else if (action->f_ovals) {
+		/* Use OVAL files from command-line */
+		contents = malloc(sizeof(struct oscap_content_resource *));
+		contents[0] = NULL;
 
+		for (int i=0; action->f_ovals[i]; i++) {
+			contents[i] = malloc(sizeof(struct oscap_content_resource));
+			contents[i]->href = strdup(basename(action->f_ovals[i]));
+			contents[i]->filename = strdup(action->f_ovals[i]);
+			i++;
+			contents = realloc(contents, (i + 1) * sizeof(struct oscap_content_resource *));
+			contents[i] = NULL;
+		}
+	}
 
 	/* Validate OVAL files */
 	// we will only validate if the file doesn't come from a datastream
 	// or if full validation was explicitly requested
 	if (action->validate && (!sds_likely || full_validation)) {
-		for (idx=0; oval_files[idx]; idx++) {
+		for (idx=0; contents[idx]; idx++) {
 			char *doc_version;
 
-			doc_version = oval_determine_document_schema_version((const char *) oval_files[idx], OSCAP_DOCUMENT_OVAL_DEFINITIONS);
-			if ((ret=oscap_validate_document(oval_files[idx], OSCAP_DOCUMENT_OVAL_DEFINITIONS, (const char *) doc_version,
-							 reporter, (void*)action))) {
+			doc_version = oval_determine_document_schema_version((const char *) contents[idx]->filename, OSCAP_DOCUMENT_OVAL_DEFINITIONS);
+			if ((ret=oscap_validate_document(contents[idx]->filename, OSCAP_DOCUMENT_OVAL_DEFINITIONS,
+				(const char *) doc_version, reporter, (void *) action))) {
+
 				if (ret==1)
-					validation_failed(oval_files[idx], OSCAP_DOCUMENT_OVAL_DEFINITIONS, doc_version);
+					validation_failed(contents[idx]->filename, OSCAP_DOCUMENT_OVAL_DEFINITIONS, doc_version);
 				free(doc_version);
 				goto cleanup;
 			}
@@ -513,18 +532,18 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 
 	/* Register checking engines */
-	for (idx=0; oval_files[idx]; idx++) {
+	for (idx=0; contents[idx]; idx++) {
 		/* file -> def_model */
-		struct oval_definition_model *tmp_def_model = oval_definition_model_import(oval_files[idx]);
+		struct oval_definition_model *tmp_def_model = oval_definition_model_import(contents[idx]->filename);
 		if (tmp_def_model == NULL) {
-			fprintf(stderr, "Failed to create OVAL definition model from: '%s'.\n", oval_files[idx]);
+			fprintf(stderr, "Failed to create OVAL definition model from: '%s'.\n", contents[idx]->filename);
 			goto cleanup;
 		}
 
 		/* def_model -> session */
-                struct oval_agent_session *tmp_sess = oval_agent_new_session(tmp_def_model, basename(oval_files[idx]));
+                struct oval_agent_session *tmp_sess = oval_agent_new_session(tmp_def_model, contents[idx]->href);
 		if (tmp_sess == NULL) {
-			fprintf(stderr, "Failed to create new OVAL agent session for: '%s'.\n", oval_files[idx]);
+			fprintf(stderr, "Failed to create new OVAL agent session for: '%s'.\n", contents[idx]->href);
 			goto cleanup;
 		}
 
@@ -820,12 +839,14 @@ cleanup:
 		free(sessions);
 	}
 
-	/* OVAL files imported from XCCDF */
-	if (oval_files && (oval_files != action->f_ovals)) {
-		for(int i=0; oval_files[i]; i++) {
-			free(oval_files[i]);
+	/* OVAL and SCE files */
+	if (contents) {
+		for (int i=0; contents[i]; i++) {
+			free(contents[i]->filename);
+			free(contents[i]->href);
+			free(contents[i]);
 		}
-		free(oval_files);
+		free(contents);
 	}
 
 	if (policy_model)
