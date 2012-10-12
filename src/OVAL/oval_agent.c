@@ -244,7 +244,6 @@ int oval_agent_eval_system(oval_agent_session_t * ag_sess, agent_reporter cb, vo
 	struct oval_definition_iterator *oval_def_it;
 	char   *id;
 	int ret = 0;
-	oval_result_t result;
 
 	oval_def_it = oval_definition_model_get_definitions(ag_sess->def_model);
 	while (oval_definition_iterator_has_more(oval_def_it)) {
