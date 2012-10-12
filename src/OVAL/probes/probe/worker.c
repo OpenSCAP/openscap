@@ -930,7 +930,8 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
                          * Prepare the collected object
                          */
 			probe_out = probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, NULL, NULL, mask);
-
+			SEXP_free(mask);
+			
                         pctx.probe_in  = probe_in;
                         pctx.probe_out = probe_out;
                         /*
@@ -987,6 +988,7 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 			} while (*ret == 0
 				 && probe_varref_iterate_ctx(ctx));
 
+			SEXP_free(mask);
 			probe_varref_destroy_ctx(ctx);
 		}
 

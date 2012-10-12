@@ -975,6 +975,7 @@ int oval_sexp_to_sysch(const SEXP_t *cobj, struct oval_syschar *syschar)
                 SEXP_string_cstr_r(mask_entname, mask_entname_cstr, sizeof mask_entname_cstr);
                 oval_string_map_put_string(item_mask_map, mask_entname_cstr, mask_entname_cstr);
             }
+            SEXP_free(mask);
         } else
             item_mask_map = NULL;
 
@@ -995,7 +996,7 @@ int oval_sexp_to_sysch(const SEXP_t *cobj, struct oval_syschar *syschar)
 	SEXP_free(items);
 	oval_string_map_free(itm_id_map, NULL);
         if (item_mask_map != NULL)
-            oval_string_map_free(item_mask_map, NULL);
+            oval_string_map_free_string(item_mask_map);
 
 	return 0;
 }
