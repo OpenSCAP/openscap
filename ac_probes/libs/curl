@@ -1,0 +1,8 @@
+name=curl
+pkgconfig=yes
+pkgconfig_name=libcurl
+pkgconfig_minver=7.12.0
+functions_req=(curl_easy_strerror)
+functions_opt=
+probes_req=
+probes_opt=
