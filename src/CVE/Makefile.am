@@ -9,5 +9,5 @@ libcve_la_CPPFLAGS  = @xml2_CFLAGS@	-I${srcdir}/public \
 					-I${top_srcdir}/src/CVSS/public
 libcve_la_LDFLAGS = @xml2_LIBS@
 
-pkginclude_HEADERS = public/cve.h
+pkginclude_HEADERS = public/cve_nvd.h
 
