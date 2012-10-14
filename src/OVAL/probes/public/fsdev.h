@@ -89,3 +89,4 @@ int fsdev_path(fsdev_t * lfs, const char *path);
 int fsdev_fd(fsdev_t * lfs, int fd);
 
 #endif				/* FSDEV_H */
+/// @}

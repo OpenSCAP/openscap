@@ -1000,3 +1000,5 @@ int oval_sexp_to_sysch(const SEXP_t *cobj, struct oval_syschar *syschar)
 
 	return 0;
 }
+
+/// @}

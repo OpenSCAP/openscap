@@ -171,3 +171,5 @@ xmlNode *oval_filter_to_dom(struct oval_filter *filter, xmlDoc *doc, xmlNode *pa
 
 	return filter_node;
 }
+
+/// @}

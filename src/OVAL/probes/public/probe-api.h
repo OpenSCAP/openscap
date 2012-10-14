@@ -581,3 +581,5 @@ oval_version_t probe_obj_get_schema_version(const SEXP_t *obj);
  * @returns a list of masked entities
  */
 SEXP_t *probe_obj_getmask(SEXP_t *obj);
+
+/// @}

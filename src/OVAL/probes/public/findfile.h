@@ -57,4 +57,6 @@
  */
 int find_files(SEXP_t *spath, SEXP_t *sfilename, SEXP_t *behaviors,
 	       int (*cb) (const char *, const char *, void *), void *arg);
+
 #endif
+/// @}

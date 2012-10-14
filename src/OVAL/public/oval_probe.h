@@ -85,3 +85,4 @@ void oval_probe_meta_list(FILE *output, int flags);
 
 const char *oval_probe_ext_getdir(void);
 #endif				/* OVAL_PROBE_H */
+/// @}

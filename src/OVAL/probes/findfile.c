@@ -459,3 +459,4 @@ static void rglobfree(rglob_t * result)
 	result->pathc = 0;
 }
 
+/// @}

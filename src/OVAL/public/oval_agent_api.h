@@ -124,8 +124,8 @@ void oval_agent_destroy_session(oval_agent_session_t * ag_sess);
 
 
 /**
- * @) END OVALDEF
- * @) END OVALAGENT
+ * @} END OVALDEF
+ * @} END OVALAGENT
  */
 #endif				/**OVAL_AGENT_API_H_ */
 

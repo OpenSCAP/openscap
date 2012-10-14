@@ -82,4 +82,6 @@ oscap_errfamily_t oscap_err_family(void);
 const char *oscap_err_desc(void);
 
 
+/// @}
+/// @}
 #endif				/* OSCAP_ERROR_H */

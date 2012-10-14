@@ -70,3 +70,4 @@ const char *oval_subtype_to_str(oval_subtype_t subtype);
 oval_subtype_t oval_str_to_subtype(const char *str);
 
 #endif /* OVAL_PROBE_IMPL_H */
+/// @}

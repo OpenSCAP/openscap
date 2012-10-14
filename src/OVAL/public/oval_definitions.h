@@ -3175,7 +3175,7 @@ void oval_string_iterator_free(struct oval_string_iterator *);
 /** @} */
 
 /**
- * @) END OVALDEF
+ * @} END OVALDEF
  */
 
 /**
@@ -3193,6 +3193,6 @@ char *oval_determine_document_schema_version(const char *, oscap_document_type_t
  */
 int oval_determine_document_type(const char *document, oscap_document_type_t *doc_type);
 /**
- * @) END OVAL
+ * @} END OVAL
  */
 #endif

@@ -1750,3 +1750,5 @@ SEXP_t *probe_obj_getmask(SEXP_t *obj)
     SEXP_free(objents);
     return (mask);
 }
+
+/// @}

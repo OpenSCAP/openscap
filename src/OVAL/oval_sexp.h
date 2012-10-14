@@ -55,3 +55,5 @@ int oval_sexp_to_sysch(const SEXP_t *cobj, struct oval_syschar *syschar);
 OSCAP_HIDDEN_END;
 
 #endif				/* OVAL_SEXP_H */
+
+/// @}

@@ -571,7 +571,7 @@ char* xccdf_policy_substitute(const char *text, struct xccdf_policy *policy);
 /************************************************************/
 /** @} End of Iterators group */
 
-/*
+/**
  * @}
  */
 #endif

@@ -146,8 +146,8 @@ int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastr
 int ds_rds_create(const char* sds_file, const char* xccdf_result_file,
         const char** oval_result_files, const char* target_file);
 
-/************************************************************
- ** @} End of DS group */
+/************************************************************/
+/** @} End of DS group */
 
 #endif
 

@@ -3343,7 +3343,8 @@ typedef char*(*xccdf_substitution_func)(xccdf_subst_type_t type, const char *id,
  */
 char* oscap_text_xccdf_substitute(const char *text, xccdf_substitution_func cb, void *arg);
 
-/************************************************************
- ** @} End of XCCDF group */
+/************************************************************/
+/** @} End of XCCDF group */
+/// @}
 
 #endif

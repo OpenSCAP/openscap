@@ -607,4 +607,6 @@ void __SEXP_VALIDATE(const SEXP_t *s_exp, const char *file, uint32_t line, const
 #endif
 
 #endif /* SEXP_MANIP_H */
-/* @}@}@} */
+/// @}
+/// @}
+/// @}

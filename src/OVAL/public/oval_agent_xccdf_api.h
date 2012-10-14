@@ -103,8 +103,8 @@ bool xccdf_policy_model_register_engine_oval(struct xccdf_policy_model * model, 
 void oval_agent_export_sysinfo_to_xccdf_result(struct oval_agent_session * session, struct xccdf_result * ritem);
 
 /**
- * @) END OVALDEF
- * @) END OVALAGENT
+ * @} END OVALDEF
+ * @} END OVALAGENT
  */
 #endif				/**OVAL_AGENT_XCCDF_API_H_ */
 

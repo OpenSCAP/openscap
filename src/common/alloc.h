@@ -159,3 +159,5 @@ __ATTRIB void oscap_free(void *p)
 /// @endcond
 
 #endif				/* OSCAP_ALLOC_H */
+/// @}
+/// @}

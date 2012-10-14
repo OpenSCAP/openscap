@@ -54,3 +54,4 @@ typedef int (oval_probe_handler_t)(oval_subtype_t, void *, int, ...);
 #define PROBE_HANDLER_IGNORE NULL
 
 #endif /* OVAL_PROBE_HANDLER */
+/// @}
