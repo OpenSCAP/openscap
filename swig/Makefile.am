@@ -9,6 +9,7 @@ AM_CPPFLAGS =	@xml2_CFLAGS@ \
 		-I$(top_srcdir)/src/XCCDF/public \
 		-I$(top_srcdir)/src/XCCDF_POLICY/public \
 		-I${top_srcdir}/src/common/public \
+		-I$(top_srcdir)/src/CVE/public \
 		-I/usr/include -include "sys/types.h" \
 		-D_LARGEFILE64_SOURCE \
 		-D_LARGEFILE_SOURCE=1
@@ -37,10 +38,6 @@ WANT_MODULE=
 if WANT_CCE
 WANT_MODULE += -DWANT_CCE
 AM_CPPFLAGS += -I$(top_srcdir)/src/CCE/public
-endif
-if WANT_CVE
-WANT_MODULE += -DWANT_CVE
-AM_CPPFLAGS += -I$(top_srcdir)/src/CVE/public
 endif
 if WANT_SCE
 WANT_MODULE += -DWANT_SCE

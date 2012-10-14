@@ -150,5 +150,6 @@ extern struct oscap_module OSCAP_DS_MODULE;
 extern struct oscap_module OSCAP_XCCDF_MODULE;
 extern struct oscap_module OSCAP_CVSS_MODULE;
 extern struct oscap_module OSCAP_OVAL_MODULE;
+extern struct oscap_module OSCAP_CVE_MODULE;
 extern struct oscap_module OSCAP_CPE_MODULE;
 

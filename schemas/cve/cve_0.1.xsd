@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+== Model: Version 0-3 NetD
+== Package: cve
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://scap.nist.gov/schema/cve/0.1"
+  xmlns:scap_core="http://scap.nist.gov/schema/scap-core/0.1"
+  targetNamespace="http://scap.nist.gov/schema/cve/0.1"
+  elementFormDefault="qualified" attributeFormDefault="unqualified"
+  version="0.1">
+  <xsd:import namespace="http://scap.nist.gov/schema/scap-core/0.1" schemaLocation="scap-core_0.1.xsd"/>
+  <!-- ================================================== -->
+  <!-- =====  Simple Type Definitions  -->
+  <!-- ================================================== -->
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+  <!--  CVE_Name_Type  <<simpleType>>  -->
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+  <xsd:simpleType name="cveNamePatternType">
+    <xsd:annotation>
+      <xsd:documentation>Format for CVE Names is CVE-YYYY-NNNN, where YYYY is the year of publication and NNNN is a sequence number.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:token">
+      <xsd:pattern value="CVE-([1,2])\d{3}-\d{4}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+  <!--  CVE_Status  <<simpleType>>  -->
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+  <xsd:simpleType name="cveStatus">
+    <xsd:annotation>
+      <xsd:documentation>Enumeration containing valid values for CVE status: Candidate, Entry, and Deprecated</xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:token">
+      <xsd:enumeration value="CANDIDATE"/>
+      <xsd:enumeration value="ENTRY"/>
+      <xsd:enumeration value="DEPRECATED"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <!-- ================================================== -->
+  <!-- =====  Complex Type Definitions  -->
+  <!-- ================================================== -->
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+  <!--  CVE  -->
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+  <xsd:complexType name="cveType">
+    <xsd:sequence>
+      <xsd:element name="status" type="cveStatus" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>Status of Vulnerability -- Candidate, Entry, Deprecated</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="description" type="xsd:string" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>Free text field to describe the vulnerability</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="references" type="scap_core:referenceType" maxOccurs="unbounded" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>Discretionary information and links relevant to a given vulnerability referenced by the CVE</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="id" type="cveNamePatternType" use="required">
+      <xsd:annotation>
+        <xsd:documentation>CVE name in the CVE-YYYY-NNNN format</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+</xsd:schema>

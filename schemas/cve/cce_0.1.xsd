@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+== Model: Version 0-3 NetD
+== Package: cce
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://scap.nist.gov/schema/cce/0.1"
+  xmlns:scap-core="http://scap.nist.gov/schema/scap-core/0.1"
+  targetNamespace="http://scap.nist.gov/schema/cce/0.1"
+  elementFormDefault="qualified" attributeFormDefault="unqualified"
+  version="0.1">
+  <xsd:annotation>
+    <xsd:documentation>CCE is at an early phase of adoption.  This schema is a work in progress and is far from
+      final.  Additional work with using CCEs in a practical setting is required.</xsd:documentation>
+  </xsd:annotation>
+  <xsd:import namespace="http://scap.nist.gov/schema/scap-core/0.1" schemaLocation="scap-core_0.1.xsd"/>
+  <!-- ================================================== -->
+  <!-- =====  Simple Type Definitions  -->
+  <!-- ================================================== -->
+  <xsd:simpleType name="cceNamePatternType">
+    <xsd:annotation>
+      <xsd:documentation>The format for a CCE name is CCE-NNNNNNNNNNN, where NNNNNNNNNNN is a sequence number.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:token">
+      <xsd:pattern value="CCE-[1-9]\d{0,10}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <!-- ================================================== -->
+  <!-- =====  Complex Type Definitions  -->
+  <!-- ================================================== -->
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+  <!--  CCE  -->
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+  <xsd:complexType name="cceType">
+    <xsd:sequence>
+      <xsd:element name="definition" type="xsd:string" minOccurs="0"/>
+      <xsd:element name="parameter" type="cceParameterType" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="technical-mechanisms" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="references" type="scap-core:referenceType" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    <xsd:attribute name="id" type="cceNamePatternType" use="required"/>
+  </xsd:complexType>
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+  <!--  CCE_Parameter  -->
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+  <xsd:complexType name="cceParameterType">
+    <xsd:sequence>
+      <xsd:element name="value" type="xsd:string" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    <xsd:attribute name="identifier" type="xsd:token">
+      <xsd:annotation>
+        <xsd:documentation>TODO: What does this identify?</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="operator" type="xsd:token">
+      <xsd:annotation>
+        <xsd:documentation>TODO: should this be an enumeration?</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+</xsd:schema>

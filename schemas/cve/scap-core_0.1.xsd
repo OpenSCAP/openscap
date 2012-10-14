@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+== Model: MITRE CPE 2.1
+== Package: scap-core_0.1
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+      xmlns="http://scap.nist.gov/schema/scap-core/0.1"
+      xmlns:xml="http://www.w3.org/XML/1998/namespace"
+      targetNamespace="http://scap.nist.gov/schema/scap-core/0.1"
+      elementFormDefault="qualified"
+      attributeFormDefault="unqualified"
+      version="0.1">
+      <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+      <!-- ================================================== -->
+      <!-- =====  Complex Type Definitions  -->
+      <!-- ================================================== -->
+      <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+      <!--  check  <<complexType>>  -->
+      <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+      <xsd:complexType name="checkReferenceType">
+            <xsd:annotation>
+                  <xsd:documentation xml:lang="en">Data type for the check element, a checking system specification URI, string content, and an optional external file reference. The checking system specification should be the URI for a particular version of OVAL or a related system testing language, and the content will be an identifier of a test written in that language. The external file reference could be used to point to the file in which the content test identifier is defined.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:attribute name="system" type="xsd:anyURI" use="required"/>
+            <xsd:attribute name="href" type="xsd:anyURI" use="required"/>
+            <xsd:attribute name="name" type="xsd:token" use="optional"/>
+      </xsd:complexType>
+
+      <xsd:complexType name="checkSearchType">
+            <xsd:attribute name="system" type="xsd:anyURI" use="required"/>
+            <xsd:attribute name="name" type="xsd:token" use="optional"/>
+      </xsd:complexType>
+      
+      <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+      <!--  notes  -->
+      <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+      <xsd:complexType name="notesType">
+            <xsd:annotation>
+                  <xsd:documentation xml:lang="en">The notesType defines an element that consists of one or more child note elements. It is assumed that each of these note elements are representative of the same language as defined by their parent.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:sequence>
+                  <xsd:element maxOccurs="unbounded" name="note" type="textType"/>
+            </xsd:sequence>
+      </xsd:complexType>
+      <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+      <!--  reference  <<complexType>>  -->
+      <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+      <xsd:complexType name="referenceType">
+            <xsd:annotation>
+                  <xsd:documentation xml:lang="en">Type for a reference in the description of a CPE item. This would normally be used to point to extra descriptive material, or the supplier's web site, or the platform documentation. It consists of a piece of text (intended to be human-readable) and a URI (intended to be a URL, and point to a real resource).</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:extension base="textType">
+                        <xsd:attribute name="href" type="xsd:anyURI"/>
+                  </xsd:extension>
+            </xsd:simpleContent>
+      </xsd:complexType>
+      <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+      <!--  tag  -->
+      <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+      <xsd:complexType name="tagType">
+            <xsd:attribute name="name" type="xsd:token" use="required"/>
+            <xsd:attribute name="value" type="xsd:token" use="required"/>
+      </xsd:complexType>
+      <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+      <!--  text  <<complexType>>  -->
+      <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+      <xsd:complexType name="textType">
+            <xsd:annotation>
+                  <xsd:documentation xml:lang="en">This type allows the xml:lang attribute to associate a specific language with an element's string content.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:extension base="xsd:string">
+                        <xsd:attribute ref="xml:lang"/>
+                  </xsd:extension>
+            </xsd:simpleContent>
+      </xsd:complexType>
+      
+      <xsd:group name="cpeReferenceGroup">
+            <xsd:choice>
+                  <xsd:element name="cpe-name" type="cpeNamePatternType"/>
+                  <xsd:element name="cpe-searchable-name" type="cpeSearchableNamePatternType"/>
+            </xsd:choice>
+      </xsd:group>
+      
+      <xsd:complexType name="searchableCpeReferencesType">
+            <xsd:sequence>
+                  <xsd:group ref="cpeReferenceGroup" minOccurs="1" maxOccurs="unbounded"/>
+            </xsd:sequence>
+      </xsd:complexType>
+      
+      <!-- =============================================================================== -->
+      <!-- ================================  ID PATTERNS  ================================ -->
+      <!-- =============================================================================== -->
+      <xsd:simpleType name="cpeNamePatternType">
+            <xsd:annotation>
+                  <xsd:documentation xml:lang="en">Define the format for acceptable CPE Names. An urn format is used with the id starting with the word oval followed by a unique string, followed by the three letter code 'def', and ending with an integer.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:anyURI">
+                  <xsd:pattern value="[c][pP][eE]:/[AHOaho]?(:[A-Za-z0-9\\._\\-~]*){0,6}"/>
+            </xsd:restriction>
+      </xsd:simpleType>
+      
+      <xsd:simpleType name="cpeSearchableNamePatternType">
+            <xsd:annotation>
+                  <xsd:documentation xml:lang="en">Define the format for acceptable
+                        searchableCPE Names.  The URI escaped code '%25' may be used
+                        to represent the character '%' which will be interpreted as a
+                        wildcard.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:anyURI">
+                  <xsd:pattern value="[c][pP][eE]:/[AHOaho]?(:[A-Za-z0-9\\._\\-~*]*){0,6}"/>
+            </xsd:restriction>
+      </xsd:simpleType>
+      
+      <xsd:simpleType name="cpeComponentPatternType">
+            <xsd:annotation>
+                  <xsd:documentation>The name pattern of a CPE component.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:token">
+                  <xsd:pattern value="[A-Za-z0-9\._\-~]*"/>
+            </xsd:restriction>
+      </xsd:simpleType>
+
+      <xsd:simpleType name="cpePartComponentPatternType">
+            <xsd:annotation>
+                  <xsd:documentation>The name pattern of the CPE part component.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:restriction base="cpeComponentPatternType">
+                  <xsd:pattern value="[hoaHOA]"/>
+            </xsd:restriction>
+      </xsd:simpleType>
+
+      <xsd:simpleType name="cweNamePatternType">
+            <xsd:restriction base="xsd:token">
+                  <xsd:pattern value="CWE-[1-9]\d{0,5}"></xsd:pattern>
+            </xsd:restriction>
+      </xsd:simpleType>
+</xsd:schema>

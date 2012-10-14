@@ -16,6 +16,7 @@ ocil20dir = $(pkgdatadir)/schemas/ocil/2.0/
 cpe20dir = $(pkgdatadir)/schemas/cpe/2.0/
 cpe21dir = $(pkgdatadir)/schemas/cpe/2.1/
 cpe22dir = $(pkgdatadir)/schemas/cpe/2.2/
+cvedir = $(pkgdatadir)/schemas/cve/
 
 oval53_DATA = $(wildcard oval/5.3/*.xsd oval/5.3/*.xsl)
 oval54_DATA = $(wildcard oval/5.4/*.xsd oval/5.4/*.xsl)
@@ -41,6 +42,8 @@ cpe20_DATA = $(wildcard cpe/2.0/*.xsd cpe/2.0/*.dtd)
 cpe21_DATA = $(wildcard cpe/2.1/*.xsd cpe/2.1/*.dtd)
 cpe22_DATA = $(wildcard cpe/2.2/*.xsd cpe/2.2/*.dtd)
 
+cve_DATA = $(wildcard cve/*.xsd)
+
 EXTRA_DIST = \
 	$(oval53_DATA) \
 	$(oval54_DATA) \
@@ -59,5 +62,6 @@ EXTRA_DIST = \
 	$(ocil20_DATA) \
 	$(cpe20_DATA) \
 	$(cpe21_DATA) \
-	$(cpe22_DATA)
+	$(cpe22_DATA) \
+	$(cve_DATA)
 

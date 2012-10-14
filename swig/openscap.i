@@ -200,13 +200,11 @@
 %include "../src/CPE/public/cpe_lang.h"
 
 
-#ifdef WANT_CVE
 %module openscap
 %{
- #include "../src/CVE/public/cve.h"
+ #include "../src/CVE/public/cve_nvd.h"
 %}
-%include "../src/CVE/public/cve.h"
-#endif
+%include "../src/CVE/public/cve_nvd.h"
 
 
 %module openscap
