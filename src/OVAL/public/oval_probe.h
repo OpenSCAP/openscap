@@ -1,5 +1,5 @@
 /**
- * @file   oval_probe_h
+ * @file   oval_probe.h
  * @brief  OVAL probe interface API public header
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  *

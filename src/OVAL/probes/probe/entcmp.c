@@ -1,5 +1,5 @@
 /**
- * @file   probe-entcmp.c
+ * @file   entcmp.c
  * @author "Tomas Heinrich" <theinric@redhat.com>
  *
  * @addtogroup PROBEAPI

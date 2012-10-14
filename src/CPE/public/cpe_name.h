@@ -5,7 +5,7 @@
  * @{
  *
  *
- * @file cpeuri.h
+ * @file cpe_name.h
  * \brief Interface to Common Platform Enumeration (CPE) URI
  *  
  *   See more details at http://nvd.nist.gov/cpe.cfm

@@ -2,7 +2,7 @@
  * @addtogroup XCCDF
  * @{
  *
- * @file xccdf.h
+ * @file xccdf_benchmark.h
  * Open-scap XCCDF library interface.
  * @author Lukas Kuklinek <lkuklinek@redhat.com>
  */

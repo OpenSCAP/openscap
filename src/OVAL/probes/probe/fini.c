@@ -1,5 +1,5 @@
 /**
- * @file   probe-fini.c
+ * @file   fini.c
  * @brief  file containg the dummy probe_fini function
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  */
