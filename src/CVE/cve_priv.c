@@ -38,7 +38,7 @@
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
 
-#include "public/cve.h"
+#include "public/cve_nvd.h"
 #include "cve_priv.h"
 
 #include "common/list.h"
@@ -176,6 +176,7 @@ OSCAP_ACCESSOR_STRING(cve_entry, id)
 /* namespaces */
 #define CVE_NS  BAD_CAST "http://scap.nist.gov/schema/vulnerability/0.4"
 #define FEED_NS BAD_CAST "http://scap.nist.gov/schema/feed/vulnerability/2.0"
+#define FEED_NS_LOCATION BAD_CAST "http://scap.nist.gov/schema/feed/vulnerability/2.0 http://nvd.nist.gov/schema/nvd-cve-feed_2.0.xsd"
 /* End of XML string variables definitions
  * */
 /***************************************************************************/
@@ -707,6 +708,7 @@ void cve_export(const struct cve_model *cve, xmlTextWriterPtr writer)
 
 	xmlTextWriterStartElementNS(writer, NULL, TAG_NVD_STR, FEED_NS);
 	xmlTextWriterWriteAttribute(writer, BAD_CAST "nvd_xml_version", BAD_CAST cve->nvd_xml_version);
+
 	if (cve->pub_date) {
 		struct tm *lt = localtime(&cve->pub_date);
 		char timestamp[] = "yyyy-mm-ddThh:mm:ss";
@@ -715,10 +717,13 @@ void cve_export(const struct cve_model *cve, xmlTextWriterPtr writer)
 		xmlTextWriterWriteAttribute(writer, BAD_CAST "pub_date", BAD_CAST timestamp);
 	}
 
-		OSCAP_FOREACH(cve_entry, e, cve_model_get_entries(cve),
-			      /* dump its contents to XML tree */
-			      cve_entry_export(e, writer);)
-	    xmlTextWriterEndElement(writer);
+	xmlTextWriterWriteAttribute(writer, BAD_CAST "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+	xmlTextWriterWriteAttribute(writer, BAD_CAST "xsi:schemaLocation", FEED_NS_LOCATION);
+
+	/* dump its contents to XML tree */
+	OSCAP_FOREACH(cve_entry, e, cve_model_get_entries(cve), cve_entry_export(e, writer);)
+
+	xmlTextWriterEndElement(writer);
 	if (xmlGetLastError() != NULL)
 		oscap_setxmlerr(xmlGetLastError());
 }
@@ -729,19 +734,22 @@ void cve_reference_export(const struct cve_reference *refer, xmlTextWriterPtr wr
 	__attribute__nonnull__(refer);
 	__attribute__nonnull__(writer);
 
+	/* references */
 	xmlTextWriterStartElementNS(writer, NULL, TAG_REFERENCES_STR, CVE_NS);
 
 
 	if ((refer->type) != NULL)
 		xmlTextWriterWriteAttribute(writer, ATTR_REFERENCE_TYPE_STR, BAD_CAST refer->type);
+	if (refer->lang)
+		xmlTextWriterWriteAttribute(writer, BAD_CAST "xml:lang", BAD_CAST refer->lang);
 
 	if ((refer->source) != NULL) {
 		xmlTextWriterStartElementNS(writer, NULL, TAG_SOURCE_STR, NULL);
 		xmlTextWriterWriteString(writer, BAD_CAST refer->source);
-		/*</source> */
 		xmlTextWriterEndElement(writer);
 	}
 
+	/* reference */
 	xmlTextWriterStartElementNS(writer, NULL, TAG_REFERENCE_STR, NULL);
 	if (refer->lang) xmlTextWriterWriteAttribute(writer, BAD_CAST "xml:lang", BAD_CAST refer->lang);
 
@@ -750,10 +758,10 @@ void cve_reference_export(const struct cve_reference *refer, xmlTextWriterPtr wr
 
 	xmlTextWriterWriteString(writer, BAD_CAST refer->value);
 
-	/*</reference> */
+	/* reference */
 	xmlTextWriterEndElement(writer);
 
-	/*</references> */
+	/* references */
 	xmlTextWriterEndElement(writer);
 	if (xmlGetLastError() != NULL)
 		oscap_setxmlerr(xmlGetLastError());

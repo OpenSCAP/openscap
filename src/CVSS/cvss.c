@@ -594,8 +594,6 @@ bool cvss_metrics_export(const struct cvss_metrics *m, xmlTextWriterPtr writer)
         xmlTextWriterWriteElementNS(writer, NULL, BAD_CAST "score", NULL, BAD_CAST score_str);
         oscap_free(score_str);
     }
-    if (m->source) xmlTextWriterWriteElementNS(writer, NULL, BAD_CAST "source", NULL, BAD_CAST m->source);
-    if (m->generated_on_datetime) xmlTextWriterWriteElementNS(writer, NULL, BAD_CAST "generated-on-datetime", NULL, BAD_CAST m->generated_on_datetime);
 
     for (size_t i = 0; i < cvss_metrics_component_num(m); ++i) {
         const struct cvss_valtab_entry *val = cvss_valtab(m->category | i, m->metrics.ANY[i], NULL, NULL);
@@ -603,6 +601,10 @@ bool cvss_metrics_export(const struct cvss_metrics *m, xmlTextWriterPtr writer)
         if (key->xml_str != NULL && val->xml_str != NULL)
             xmlTextWriterWriteElementNS(writer, NULL, BAD_CAST key->xml_str, NULL, BAD_CAST val->xml_str);
     }
+
+    if (m->source) xmlTextWriterWriteElementNS(writer, NULL, BAD_CAST "source", NULL, BAD_CAST m->source);
+    if (m->generated_on_datetime) xmlTextWriterWriteElementNS(writer, NULL, BAD_CAST "generated-on-datetime", NULL, BAD_CAST m->generated_on_datetime);
+
 
     xmlTextWriterEndElement(writer);
 

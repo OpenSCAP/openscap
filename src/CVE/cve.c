@@ -35,7 +35,7 @@
 #include <config.h>
 #endif
 
-#include "public/cve.h"
+#include "public/cve_nvd.h"
 #include "cve_priv.h"
 
 #include "common/util.h"
