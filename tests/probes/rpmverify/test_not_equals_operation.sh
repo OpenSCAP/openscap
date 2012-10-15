@@ -15,11 +15,11 @@ $OSCAP oval eval --results $result $srcdir/${name}.xml || [ $? == 2 ]
 echo "Validating results."
 $OSCAP oval validate-xml --results $result
 echo "Testing results values."
-[ "$(xpath $result 'string(/oval_results/results/system/tests/test[@test_id="oval:x:tst:1"]/@result)')" == "true" ]
+[ "$($XPATH $result 'string(/oval_results/results/system/tests/test[@test_id="oval:x:tst:1"]/@result)')" == "true" ]
 echo "Testing syschar values."
-[ "$(xpath $result 'string(/oval_results/results/system/oval_system_characteristics/collected_objects/object[@id="oval:x:obj:1"]/@flag)')" == "complete" ]
-[ "$(xpath $result 'count(/oval_results/results/system/oval_system_characteristics/collected_objects/object[@id="oval:x:obj:1"]/reference)')" == "1" ]
-[ "$(xpath $result 'string(/oval_results/results/system/oval_system_characteristics/collected_objects/object[@id="oval:x:obj:2"]/@flag)')" == "complete" ]
-[ "$(xpath $result 'count(/oval_results/results/system/oval_system_characteristics/collected_objects/object[@id="oval:x:obj:2"]/reference)')" == "1" ]
+[ "$($XPATH $result 'string(/oval_results/results/system/oval_system_characteristics/collected_objects/object[@id="oval:x:obj:1"]/@flag)')" == "complete" ]
+[ "$($XPATH $result 'count(/oval_results/results/system/oval_system_characteristics/collected_objects/object[@id="oval:x:obj:1"]/reference)')" == "1" ]
+[ "$($XPATH $result 'string(/oval_results/results/system/oval_system_characteristics/collected_objects/object[@id="oval:x:obj:2"]/@flag)')" == "complete" ]
+[ "$($XPATH $result 'count(/oval_results/results/system/oval_system_characteristics/collected_objects/object[@id="oval:x:obj:2"]/reference)')" == "1" ]
 
 rm -rf $result

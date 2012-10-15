@@ -11,7 +11,8 @@ TESTS_ENVIRONMENT = \
 	OSCAP=$(top_builddir)/utils/.libs/oscap \
 	OSCAP_SCHEMA_PATH=$(top_srcdir)/schemas \
 	OSCAP_FULL_VALIDATION=1 \
-	OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes
+	OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
+	XPATH=$(top_builddir)/tests/xpath.pl
 
 if WANT_PROBES_UNIX
 if probe_file_enabled
@@ -22,6 +23,7 @@ endif
 check_SCRIPTS = test_object_entity_mask.sh test_object_entity_nomask.sh
 
 EXTRA_DIST += \
+	$(top_srcdir)/tests/xpath.pl \
 	all.sh \
 	test_object_entity_mask.sh \
 	test_object_entity_mask.xml \
