@@ -165,6 +165,9 @@ void validation_failed(const char *xmlfile, oscap_document_type_t doc_type, cons
         case OSCAP_DOCUMENT_ARF:
 		doc_name = "ARF Result Datastream";
                 break;
+        case OSCAP_DOCUMENT_CVE_FEED:
+		doc_name = "CVE NVD Feed";
+                break;
         default:
 		fprintf(stdout, "Unrecognized document type.\n");
 		return;

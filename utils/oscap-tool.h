@@ -92,6 +92,11 @@ struct cpe_action {
 	char * dict;
 };
 
+struct cve_action {
+        char * file;
+        char * cve;
+};
+
 struct oscap_action {
         struct oscap_module *module;
 	/* files */
@@ -119,10 +124,11 @@ struct oscap_action {
         int hide_profile_info;
         char *stylesheet;
         char *cpe_dict;
-        struct cvss_impact *cvss_impact;
 
+        struct cvss_impact *cvss_impact;
 	struct ds_action* ds_action;
 	struct cpe_action * cpe_action;
+	struct cve_action * cve_action;
 
         int doctype;
 	int force;
