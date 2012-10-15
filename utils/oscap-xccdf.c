@@ -495,6 +495,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 							oscap_file_entry_iterator_free(files_it);
 							oscap_file_entry_list_free(files);
 							free(pathcopy);
+							free(tmp_path);
 							goto cleanup;
 						}
 
