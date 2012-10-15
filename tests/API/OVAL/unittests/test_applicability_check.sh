@@ -1,7 +1,7 @@
 #! /bin/bash
 
 result=`mktemp`
-xpath=`which xpath`
+xpath="$XPATH"
 
 $OSCAP oval eval --results $result $srcdir/applicability_check.xml
 

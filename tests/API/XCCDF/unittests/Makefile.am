@@ -31,7 +31,8 @@ TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
 		LD_LIBRARY_PATH=$(top_builddir)/src/.libs \
 		OSCAP_SCHEMA_PATH=$(top_srcdir)/schemas \
 		OSCAP=$(top_builddir)/utils/.libs/oscap \
-		OSCAP_FULL_VALIDATION=1
+		OSCAP_FULL_VALIDATION=1 \
+		XPATH=$(top_builddir)/tests/xpath.pl
 
 TESTS = all.sh
 check_PROGRAMS = \
@@ -43,6 +44,7 @@ test_oscap_common_SOURCES += $(top_srcdir)/src/common/util.c $(top_srcdir)/src/c
 test_xccdf_shall_pass_SOURCES = test_xccdf_shall_pass.c unit_helper.c
 
 EXTRA_DIST += \
+	$(top_srcdir)/tests/xpath.pl \
 	all.sh \
 	test_deriving_xccdf_result_from_oval2.sh \
 	test_deriving_xccdf_result_from_oval2.xccdf.xml \

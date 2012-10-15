@@ -18,7 +18,7 @@ function test_api_xccdf_cpe_eval {
         return 1
     fi
 
-    local NOTAPPLICABLE_COUNT=$(xpath $TMP_RESULTS 'count(//result[text()="notapplicable"])')
+    local NOTAPPLICABLE_COUNT=$($XPATH $TMP_RESULTS 'count(//result[text()="notapplicable"])')
     rm -f $TMP_RESULTS
 
     if [ "$NOTAPPLICABLE_COUNT" == "$EXPECTED_NA" ]; then
@@ -40,7 +40,7 @@ function test_api_xccdf_embedded_cpe_eval {
         return 1
     fi
 
-    local NOTAPPLICABLE_COUNT=$(xpath $TMP_RESULTS 'count(//result[text()="notapplicable"])')
+    local NOTAPPLICABLE_COUNT=$($XPATH $TMP_RESULTS 'count(//result[text()="notapplicable"])')
     rm -f $TMP_RESULTS
 
     if [ "$NOTAPPLICABLE_COUNT" == "$EXPECTED_NA" ]; then
