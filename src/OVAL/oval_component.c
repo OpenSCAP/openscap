@@ -1566,6 +1566,10 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_COUNT(oval_argu_t
 	oval_collection_add(value_collection, value);
 
 	oval_component_iterator_free(subcomps);
+
+	for (idx0 = 0; idx0 < len_subcomps; ++idx0)
+	  oval_collection_free_items(component_colls[idx0], (oscap_destruct_func) oval_value_free);
+
 	return flag;
 }
 
@@ -1587,6 +1591,8 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_UNIQUE(oval_argu_
 		component_colls[idx0] = subcoll;
 	}
 
+	oval_component_iterator_free(subcomps);
+
 	bool not_finished = (len_subcomps > 0) && _HAS_VALUES(flag);
 	struct oval_string_map *valmap = oval_string_map_new();
 
@@ -1598,8 +1604,10 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_UNIQUE(oval_argu_
 			while (oval_value_iterator_has_more(comp_values)) {
 				char *valtxt;
 				if ((valtxt = oval_value_get_text(oval_value_iterator_next(comp_values))) != NULL) {
+				  if (oval_string_map_get_value(valmap, valtxt) == NULL) {
 					struct oval_value *value = oval_value_new(OVAL_DATATYPE_STRING, valtxt);
 					oval_string_map_put(valmap, valtxt, value);
+				  }
 				}
 			}
 			oval_value_iterator_free(comp_values);
@@ -1608,6 +1616,9 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_UNIQUE(oval_argu_
 
 	oval_string_map_collect_values(valmap, value_collection);
 	oval_string_map_free(valmap, NULL);
+
+	for (idx0 = 0; idx0 < len_subcomps; ++idx0)
+	  oval_collection_free_items(component_colls[idx0], (oscap_destruct_func) oval_value_free);
 
 	return flag;
 }
