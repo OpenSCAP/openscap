@@ -41,9 +41,11 @@ char *
 oscap_acquire_temp_dir()
 {
 	char *temp_dir = strdup(TEMP_DIR_TEMPLATE);
-	temp_dir = mkdtemp(temp_dir);
-	if (temp_dir == NULL)
+	if (mkdtemp(temp_dir) == NULL) {
+		free(temp_dir);
 		fprintf(stderr, "Could not create temp directory " TEMP_DIR_TEMPLATE ". %s\n", strerror(errno));
+		return NULL;
+	}
 	return temp_dir;
 }
 
