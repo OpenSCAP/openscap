@@ -304,6 +304,9 @@ LIBS=$SAVE_LIBS
 AC_SUBST(pthread_CFLAGS)
 AC_SUBST(pthread_LIBS)
 
+PKG_CHECK_MODULES([curl], [libcurl >= 7.12.0],[],
+                          AC_MSG_FAILURE([libxml-2.0 devel support is missing]))
+
 PKG_CHECK_MODULES([xml2], [libxml-2.0 >= 2.0],[],
 			  AC_MSG_FAILURE([libxml-2.0 devel support is missing]))
 
@@ -354,7 +357,7 @@ AC_CHECK_FUNC(sigwaitinfo, [sigwaitinfo_LIBS=""], [sigwaitinfo_LIBS="-lrt"])
 AC_SUBST(sigwaitinfo_LIBS)
 
 SAVE_CPPFLAGS="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS  $(pkg-config libapt-pkg --cflags) $(pkg-config blkid --cflags) $(pkg-config libcurl --cflags) $(pkg-config gconf-2.0 --cflags) $(pkg-config libpcre --cflags) $(pkg-config rpm --cflags) $(pkg-config libselinux --cflags) $(pkg-config libxml-2.0 --cflags) $(pkg-config libxslt --cflags) "
+CPPFLAGS="$CPPFLAGS  $(pkg-config libapt-pkg --cflags) $(pkg-config blkid --cflags) $(pkg-config gconf-2.0 --cflags) $(pkg-config libpcre --cflags) $(pkg-config rpm --cflags) $(pkg-config libselinux --cflags) $(pkg-config libxml-2.0 --cflags) $(pkg-config libxslt --cflags) "
 
 echo
 echo ' * Checking presence of required headers for the system_info probe'
@@ -609,23 +612,6 @@ AC_CHECK_FUNCS([cap_init], [], [
 probe_process58_req_deps_ok=no;
 probe_process58_req_deps_missing+=", $ac_func func";
 ])
-LIBS=$SAVE_LIBS
-echo
-echo '* Checking for curl library used by:  '
-PKG_CHECK_MODULES([curl], [libcurl >= 7.12.0],[],[
-SAVE_LIBS=$LIBS
-AC_SEARCH_LIBS([curl_easy_strerror],[curl],[
-curl_CFLAGS=;
-curl_LIBS=-lcurl;
-],[
-],[])
-AC_SUBST([curl_CFLAGS])
-AC_SUBST([curl_LIBS])
-LIBS=$SAVE_LIBS
-])
-SAVE_LIBS=$LIBS
-LIBS=$curl_LIBS
-AC_CHECK_FUNCS([curl_easy_strerror], [], [])
 LIBS=$SAVE_LIBS
 echo
 echo '* Checking for gconf2 library used by: gconf '

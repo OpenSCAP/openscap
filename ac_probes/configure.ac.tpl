@@ -140,6 +140,9 @@ LIBS=$SAVE_LIBS
 AC_SUBST(pthread_CFLAGS)
 AC_SUBST(pthread_LIBS)
 
+PKG_CHECK_MODULES([curl], [libcurl >= 7.12.0],[],
+                          AC_MSG_FAILURE([libxml-2.0 devel support is missing]))
+
 PKG_CHECK_MODULES([xml2], [libxml-2.0 >= 2.0],[],
 			  AC_MSG_FAILURE([libxml-2.0 devel support is missing]))
 
