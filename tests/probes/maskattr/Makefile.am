@@ -12,7 +12,7 @@ TESTS_ENVIRONMENT = \
 	OSCAP_SCHEMA_PATH=$(top_srcdir)/schemas \
 	OSCAP_FULL_VALIDATION=1 \
 	OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
-	XPATH=$(top_builddir)/tests/xpath.pl
+	XPATH=$(top_srcdir)/tests/xpath.pl
 
 if WANT_PROBES_UNIX
 if probe_file_enabled
