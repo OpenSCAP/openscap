@@ -39,6 +39,7 @@
 #include <xccdf_benchmark.h>
 #include <cpe_dict.h>
 #include <cpe_name.h>
+#include <cve_nvd.h>
 
 #define OSCAP_PRODUCTNAME "cpe:/a:open-scap:oscap"
 #define OSCAP_ERR_MSG "OpenSCAP Error:"

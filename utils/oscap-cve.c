@@ -115,7 +115,6 @@ static int app_cve_find(const struct oscap_action *action)
 	int result;
 	struct cve_product_iterator *prod_it;
 	struct cve_product *product;
-	char *doc_version = "2.0";
 
 	model = cve_model_import(action->cve_action->file);
 	if(!model) {

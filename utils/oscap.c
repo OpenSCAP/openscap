@@ -108,6 +108,7 @@ static int print_versions(const struct oscap_action *action)
 	printf("OVAL Version: %s\n", oval_definition_model_supported());
 	printf("CPE Version: %s\n", cpe_dict_model_supported());
 	printf("CVSS Version: %s\n", cvss_model_supported());
+	printf("CVE Version: %s\n", cve_model_supported());
 	printf("Asset Identification Version: %s\n", "1.1");
 	printf("Asset Reporting Format Version: %s\n", "1.1");
 #ifdef ENABLE_SCE
