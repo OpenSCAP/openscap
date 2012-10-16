@@ -678,7 +678,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			const char *filename = oval_agent_get_filename(sessions[i]);
 			if (oscap_acquire_url_is_supported(filename)) {
 				escaped_url = oscap_acquire_url_to_filename(filename);
-				if (filename == NULL)
+				if (escaped_url == NULL)
 					goto cleanup;
 			}
 
