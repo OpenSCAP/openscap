@@ -688,7 +688,10 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 				free(escaped_url);
 
 			/* export result model to XML */
-			oval_results_model_export(res_model, NULL, name);
+			if (oval_results_model_export(res_model, NULL, name) == -1) {
+				free(name);
+				goto cleanup;
+			}
 
 			/* validate OVAL Results */
 			if (action->validate && full_validation) {
