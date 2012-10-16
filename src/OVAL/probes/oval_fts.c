@@ -353,7 +353,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
                     {
                         char *slash_loc = regex_loc - 1;
 
-                        while(slash_loc != cstr_path + 2) {
+                        while(slash_loc > cstr_path + 2) {
                             if (*slash_loc == '/') {
                                 paths[0] = __string_unescape(cstr_path + 1, (size_t)(slash_loc - cstr_path) - 1);
                                 if (paths[0] != NULL) {
