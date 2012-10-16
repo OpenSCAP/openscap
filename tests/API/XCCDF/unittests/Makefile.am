@@ -55,6 +55,8 @@ EXTRA_DIST += \
 	test_deriving_xccdf_result_from_oval_multicheck.sh \
 	test_deriving_xccdf_result_from_oval_multicheck.xccdf.xml \
 	test_deriving_xccdf_result_from_oval_pass.oval.xml \
+	test_multiple_oval_files_with_same_basename.sh \
+	test_multiple_oval_files_with_same_basename.xccdf.xml \
 	test_xccdf_complex_check_nand.xccdf.xml \
 	test_xccdf_complex_check_single_negate.xccdf.xml \
 	test_xccdf_check_content_ref_without_name_attr.oval.xml \
@@ -83,6 +85,7 @@ EXTRA_DIST += \
 	test_xccdf_refine_rule.xccdf.xml \
 	test_xccdf_xml_escaping_value.sh \
 	test_xccdf_xml_escaping_value.xccdf.xml \
+	oval \
 	oval_without_definitions.oval.xml \
 	unit_helper.c \
 	unit_helper.h
