@@ -762,11 +762,10 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
         switch(act) {
         case PROBE_HANDLER_ACT_EVAL:
         {
-                struct oval_object   *obj;
                 struct oval_sysinfo **inf;
                 /* int flags = va_arg(ap, int); */
 
-                obj = va_arg(ap, struct oval_object *);
+                va_arg(ap, struct oval_object *);
                 inf = va_arg(ap, struct oval_sysinfo **);
                 pd  = oval_pdtbl_get(pext->pdtbl, type);
 
@@ -1117,9 +1116,7 @@ int oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext, struc
 
 int oval_probe_ext_reset(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
 {
-        void *res;
-
-        res = SEAP_cmd_exec(ctx, pd->sd, SEAP_EXEC_RECV, PROBECMD_RESET, NULL, SEAP_CMDTYPE_SYNC, NULL, NULL);
+        SEAP_cmd_exec(ctx, pd->sd, SEAP_EXEC_RECV, PROBECMD_RESET, NULL, SEAP_CMDTYPE_SYNC, NULL, NULL);
 
         return (0);
 }
