@@ -143,6 +143,7 @@ int oscap_validate_xml(const char *xmlfile, const char *schemafile, xml_reporter
 	xmlSchemaParserCtxtPtr parser_ctxt = NULL;
 	xmlSchemaPtr schema = NULL;
 	xmlSchemaValidCtxtPtr ctxt = NULL;
+	xmlDocPtr doc = NULL;
 	struct ctxt context = { reporter, arg, (void*) xmlfile };
 
         if (xmlfile == NULL) {
@@ -183,7 +184,11 @@ int oscap_validate_xml(const char *xmlfile, const char *schemafile, xml_reporter
 
 	xmlSchemaSetValidStructuredErrors(ctxt, oscap_xml_validity_handler, &context);
 
-	result = xmlSchemaValidateFile(ctxt, xmlfile, 0);
+	doc = xmlReadFile(xmlfile, NULL, 0);
+	if (!doc)
+		goto cleanup;
+
+	result = xmlSchemaValidateDoc(ctxt, doc);
 
 	/*
 	 * xmlSchemaValidateFile() returns "-1" if document is not well formed
