@@ -105,7 +105,70 @@ cleanup:
 
 static int app_cve_find(const struct oscap_action *action)
 {
-        return OSCAP_OK;
+        struct cve_model *model = NULL;
+        struct cve_entry *entry = NULL;
+	struct cve_entry_iterator *entry_it;
+	const struct cvss_impact *cvss;
+        struct cvss_metrics *metrics;
+        float base_score;
+	char * vector;
+	int result;
+	struct cve_product_iterator *prod_it;
+	struct cve_product *product;
+	char *doc_version = "2.0";
+
+	model = cve_model_import(action->cve_action->file);
+	if(!model) {
+		result=OSCAP_ERROR;
+		goto cleanup;
+	}
+
+	entry_it = cve_model_get_entries(model);
+	while (cve_entry_iterator_has_more(entry_it)) {
+		entry = cve_entry_iterator_next(entry_it);
+		if (!strcmp(cve_entry_get_id(entry), action->cve_action->cve))
+			break;
+		entry = NULL;
+	}
+	cve_entry_iterator_free(entry_it);
+
+	if (!entry) {
+		result=OSCAP_FAIL;
+		goto cleanup;
+	}
+
+	printf("ID: %s\n", cve_entry_get_id(entry));
+
+	/* cvss content */
+	cvss = cve_entry_get_cvss(entry);
+	if (cvss) {
+		metrics = cvss_impact_get_base_metrics(cvss);
+		base_score = cvss_metrics_get_score(metrics);
+		vector =  cvss_impact_to_vector(cvss);
+		printf("Base Score: %.1f\n", base_score);
+		printf("Vector String:\n\t%s\n", vector);
+		free(vector);
+	}
+
+	/* vulnerable-software-list */
+	printf("Vulnerable Software:\n");
+	prod_it=cve_entry_get_products(entry);
+	while(cve_product_iterator_has_more(prod_it)) {
+		product = cve_product_iterator_next(prod_it);
+		printf("\t%s\n", cve_product_get_value(product));
+	}
+	cve_product_iterator_free(prod_it);
+
+	result=OSCAP_OK;
+
+cleanup:
+        if (oscap_err())
+                fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+
+        if (model)
+		cve_model_free(model);
+        free(action->cve_action);
+        return result;
 }
 
 bool getopt_cve(int argc, char **argv, struct oscap_action *action)
@@ -119,6 +182,16 @@ bool getopt_cve(int argc, char **argv, struct oscap_action *action)
                 action->cve_action = malloc(sizeof(struct cve_action));
                 action->cve_action->file=argv[3];
         }
+	else if (action->module == &CVE_FIND_MODULE) {
+	        if( argc != 5 ) {
+                        oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
+                        return false;
+                }
+		action->doctype = OSCAP_DOCUMENT_CVE_FEED;
+		action->cve_action = malloc(sizeof(struct cve_action));
+		action->cve_action->cve=argv[3];
+		action->cve_action->file=argv[4];
+	}
 
 	return true;
 }

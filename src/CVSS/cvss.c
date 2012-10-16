@@ -362,9 +362,9 @@ static inline const struct cvss_valtab_entry *cvss_impact_entry(const struct cvs
 void cvss_impact_free(struct cvss_impact* impact)
 {
     if (impact) {
-        oscap_free(impact->base_metrics);
-        oscap_free(impact->temporal_metrics);
-        oscap_free(impact->environmental_metrics);
+        cvss_metrics_free(cvss_impact_get_base_metrics(impact));
+        cvss_metrics_free(cvss_impact_get_temporal_metrics(impact));
+        cvss_metrics_free(cvss_impact_get_environmental_metrics(impact));
         oscap_free(impact);
     }
 }
