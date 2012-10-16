@@ -44,6 +44,7 @@
 #include "common/util.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
+#include "common/elements.h"
 
 
 typedef struct oval_syschar_model {
@@ -405,8 +406,6 @@ int oval_syschar_model_export(struct oval_syschar_model *model, const char *file
 
 	__attribute__nonnull__(model);
 
-	int retcode = 0;
-
 	LIBXML_TEST_VERSION;
 
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
@@ -416,15 +415,6 @@ int oval_syschar_model_export(struct oval_syschar_model *model, const char *file
 	}
 
 	oval_syschar_model_to_dom(model, doc, NULL, NULL, NULL);
-	/*
-	 * Dumping document to stdio or file
-	 */
-	retcode = xmlSaveFormatFileEnc(file, doc, "UTF-8", 1);
-
-	if (retcode < 1)
-		oscap_setxmlerr(xmlGetLastError());
-
-	xmlFreeDoc(doc);
-	return retcode;
+	return oscap_xml_save_filename(file, doc);
 }
 

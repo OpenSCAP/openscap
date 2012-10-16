@@ -188,8 +188,6 @@ int xccdf_benchmark_export(struct xccdf_benchmark *benchmark, const char *file)
 {
 	__attribute__nonnull__(file);
 
-	int retcode = 0;
-
 	LIBXML_TEST_VERSION;
 
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
@@ -200,13 +198,7 @@ int xccdf_benchmark_export(struct xccdf_benchmark *benchmark, const char *file)
 
 	xccdf_benchmark_to_dom(benchmark, doc, NULL, NULL);
 
-	retcode = xmlSaveFormatFileEnc(file, doc, "UTF-8", 1);
-	if (retcode < 1)
-		oscap_setxmlerr(xmlGetLastError());
-
-	xmlFreeDoc(doc);
-
-	return retcode;
+	return oscap_xml_save_filename(file, doc);
 }
 
 xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc,

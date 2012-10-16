@@ -268,8 +268,6 @@ int oval_results_model_export(struct oval_results_model *results_model,
 {
 	__attribute__nonnull__(results_model);
 
-	int xmlCode = 0;
-
 	LIBXML_TEST_VERSION;
 
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
@@ -279,15 +277,8 @@ int oval_results_model_export(struct oval_results_model *results_model,
 	}
 
 	oval_results_to_dom(results_model, directives_model, doc, NULL);
-	xmlCode = xmlSaveFormatFileEnc(file, doc, "UTF-8", 1);
-	if (xmlCode <= 0) {
-		oscap_setxmlerr(xmlGetLastError());
-		oscap_dlprintf(DBG_W, "No bytes exported: xmlCode: %d.\n", xmlCode);
-	}
 
-	xmlFreeDoc(doc);
-
-	return ((xmlCode >= 1) ? 1 : -1);
+	return oscap_xml_save_filename(file, doc);
 }
 
 int oval_results_model_parse(xmlTextReaderPtr reader, struct oval_parser_context *context) {

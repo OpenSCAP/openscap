@@ -642,8 +642,6 @@ int xccdf_result_export(struct xccdf_result *result, const char *file)
 {
 	__attribute__nonnull__(file);
 
-	int retcode = 0;
-
 	LIBXML_TEST_VERSION;
 
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
@@ -654,13 +652,7 @@ int xccdf_result_export(struct xccdf_result *result, const char *file)
 
 	xccdf_result_to_dom(result, NULL, doc, NULL);
 
-	retcode = xmlSaveFormatFileEnc(file, doc, "UTF-8", 1);
-	if (retcode < 1)
-		oscap_setxmlerr(xmlGetLastError());
-
-	xmlFreeDoc(doc);
-
-	return retcode;
+	return oscap_xml_save_filename(file, doc);
 }
 
 void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlDoc *doc, xmlNode *parent)

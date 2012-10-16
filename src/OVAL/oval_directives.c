@@ -148,7 +148,6 @@ cleanup:
 int oval_directives_model_export(struct oval_directives_model *model, const char *file) {
 	 __attribute__nonnull__(model);
 
-	int xmlCode = 0;
 	xmlDocPtr doc;
 
         doc = xmlNewDoc(BAD_CAST "1.0");
@@ -158,15 +157,7 @@ int oval_directives_model_export(struct oval_directives_model *model, const char
         }
 
         oval_directives_model_to_dom(model, doc, NULL);
-        xmlCode = xmlSaveFormatFileEnc(file, doc, "UTF-8", 1);
-        if (xmlCode <= 0) {
-                oscap_setxmlerr(xmlGetLastError());
-                oscap_dlprintf(DBG_W, "No bytes exported: xmlCode: %d.\n", xmlCode);
-        }
-
-        xmlFreeDoc(doc);
-
-        return ((xmlCode >= 1) ? 1 : -1);
+	return oscap_xml_save_filename(file, doc);
 }
 
 

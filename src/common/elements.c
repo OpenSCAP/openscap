@@ -33,6 +33,8 @@
 #include "public/oscap.h"
 #include "util.h"
 #include "list.h"
+#include "_error.h"
+#include "debug_priv.h"
 #include "elements.h"
 
 
@@ -159,4 +161,34 @@ const char *oscap_strlist_find_value(char ** const kvalues, const char *key)
 	return NULL;
 }
 
+int
+oscap_xml_save_filename(const char *filename, xmlDocPtr doc)
+{
+	FILE *f;
+	xmlOutputBufferPtr buff;
+	int xmlCode;
+
+	f = fopen(filename, "w");
+	if (f == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), filename);
+		return -1;
+	}
+
+	buff = xmlOutputBufferCreateFile(f, NULL);
+	if (buff == NULL) {
+		fclose(f);
+		oscap_setxmlerr(xmlGetLastError());
+		oscap_dlprintf(DBG_W, "xmlOutputBufferCreateFile() failed.\n");
+		return -1;
+	}
+
+	xmlCode = xmlSaveFormatFileTo(buff, doc, "UTF-8", 1);
+	if (xmlCode <= 0) {
+		oscap_setxmlerr(xmlGetLastError());
+		oscap_dlprintf(DBG_W, "No bytes exported: xmlCode: %d.\n", xmlCode);
+	}
+
+	xmlFreeDoc(doc);
+	return (xmlCode >= 1) ? 1 : -1;
+}
 
