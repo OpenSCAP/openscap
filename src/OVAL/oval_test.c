@@ -41,6 +41,7 @@
 #include "oval_agent_api_impl.h"
 #include "common/util.h"
 #include "common/debug_priv.h"
+#include "common/_error.h"
 
 typedef struct oval_test {
 	struct oval_definition_model *model;
@@ -365,7 +366,7 @@ int oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *con
 
 	oval_subtype_t subtype = oval_subtype_parse(reader);
         if ( subtype == OVAL_SUBTYPE_UNKNOWN) {
-                oscap_dlprintf(DBG_E,  "Unknown test %s.\n", id);
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown test type %s.", id);
 		ret = -1;
 		goto cleanup;
         }

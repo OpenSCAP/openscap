@@ -369,12 +369,20 @@ oval_family_t oval_family_parse(xmlTextReaderPtr reader)
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 	char *family_text = strrchr(namespace, '#');
 	if (family_text == NULL) {
+		dW("No OVAL family for namespace: %s", namespace);
 		oscap_free(namespace);
 		return OVAL_FAMILY_UNKNOWN;
 	}
+
 	int ret = oscap_string_to_enum(OVAL_FAMILY_MAP, ++family_text);
+
+	if (ret == OVAL_ENUMERATION_INVALID) {
+		dW("Unknown OVAL family: %s", family_text);
+		ret = OVAL_FAMILY_UNKNOWN;
+	}
+
 	oscap_free(namespace);
-	return (ret != OVAL_ENUMERATION_INVALID ? ret : OVAL_FAMILY_UNKNOWN);
+	return ret;
 }
 
 const char *oval_family_get_text(oval_family_t family)
@@ -405,7 +413,9 @@ static const struct oscap_string_map OVAL_SUBTYPE_CATOS_MAP[] = {
 
 static const struct oscap_string_map OVAL_SUBTYPE_ESX_MAP[] = {
 	{OVAL_ESX_PATCH, "patch"},
+	{OVAL_ESX_PATCH56, "patch56"},
 	{OVAL_ESX_VERSION, "version"},
+	{OVAL_ESX_VISDKMANAGEDOBJECT, "visdkmanagedobject"},
 	{OVAL_SUBTYPE_UNKNOWN, NULL}
 };
 
@@ -420,6 +430,9 @@ static const struct oscap_string_map OVAL_SUBTYPE_HPUX_MAP[] = {
 	{OVAL_HPUX_PATCH, "patch"},
 	{OVAL_HPUX_SOFTWARE_LIST, "softwarelist"},
 	{OVAL_HPUX_TRUSTED_ACCOUNTS, "trustedaccounts"},
+	{OVAL_HPUX_NDD, "ndd"},
+	{OVAL_HPUX_SWLIST, "swlist"},
+	{OVAL_HPUX_TRUSTED, "trusted"},
 	{OVAL_SUBTYPE_UNKNOWN, NULL}
 };
 
@@ -487,7 +500,10 @@ static const struct oscap_string_map OVAL_SUBTYPE_SOLARIS_MAP[] = {
 	{OVAL_SOLARIS_ISAINFO, "isainfo"},
 	{OVAL_SOLARIS_PACKAGE, "package"},
 	{OVAL_SOLARIS_PATCH, "patch"},
+	{OVAL_SOLARIS_PATCH54, "patch54"},
 	{OVAL_SOLARIS_SMF, "smf"},
+	{OVAL_SOLARIS_NDD, "ndd"},
+	{OVAL_SOLARIS_PACKAGECHECK, "packagecheck"},
 	{OVAL_SUBTYPE_UNKNOWN, NULL}
 };
 
@@ -610,6 +626,9 @@ oval_subtype_t oval_subtype_parse(xmlTextReaderPtr reader)
 	}
 
 	subtype = oscap_string_to_enum(map, tagname);
+
+	if (subtype == OVAL_ENUMERATION_INVALID)
+		dW("Unknown OVAL family subtype: %s", tagname);
 
  cleanup:
 	oscap_free(tagname);
