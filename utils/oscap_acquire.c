@@ -116,3 +116,28 @@ oscap_acquire_url_is_supported(const char *url)
 {
 	return !strncmp(url, "http://", strlen("http://"));
 }
+
+char *
+oscap_acquire_url_to_filename(const char *url)
+{
+	/* RFC 3986: 2.1. Percent-Encoding */
+	char *curl_filename = NULL;
+	char *filename = NULL;
+	CURL *curl;
+
+	curl = curl_easy_init();
+	if (curl == NULL) {
+		fprintf(stderr, "Failed to initialize libcurl.\n");
+		return NULL;
+	}
+
+	curl_filename = curl_easy_escape(curl , url , 0);
+	if (curl_filename == NULL) {
+		fprintf(stderr, "Failed to escape the given url %s\n", url);
+		return NULL;
+	}
+	filename = strdup(curl_filename);
+	curl_free(curl_filename);
+	curl_easy_cleanup(curl);
+	return filename;
+}

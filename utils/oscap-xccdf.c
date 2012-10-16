@@ -674,8 +674,18 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 				oval_results_directory = temp_dir;
 			}
 
+			char *escaped_url = NULL;
+			const char *filename = oval_agent_get_filename(sessions[i]);
+			if (oscap_acquire_url_is_supported(filename)) {
+				escaped_url = oscap_acquire_url_to_filename(filename);
+				if (filename == NULL)
+					goto cleanup;
+			}
+
 			name = malloc(PATH_MAX * sizeof(char));
-			snprintf(name, PATH_MAX, "%s/%s.result.xml", oval_results_directory, oval_agent_get_filename(sessions[i]));
+			snprintf(name, PATH_MAX, "%s/%s.result.xml", oval_results_directory, escaped_url != NULL ? escaped_url : filename);
+			if (escaped_url != NULL)
+				free(escaped_url);
 
 			/* export result model to XML */
 			oval_results_model_export(res_model, NULL, name);

@@ -47,4 +47,11 @@ char *oscap_acquire_url_download(const char *temp_dir, const char *url);
  */
 bool oscap_acquire_url_is_supported(const char *url);
 
+/**
+ * Escape characters in the url so it can be used as POSIX filename.
+ * @param url Requested url
+ * @return escaped url or NULL
+ */
+char *oscap_acquire_url_to_filename(const char *url);
+
 #endif
