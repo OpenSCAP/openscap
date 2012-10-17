@@ -36,7 +36,6 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
-#include <libxml/xmlreader.h>
 
 #include "oval_directives_impl.h"
 #include "oval_collection_impl.h"
