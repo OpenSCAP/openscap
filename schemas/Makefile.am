@@ -37,9 +37,9 @@ arf11_DATA = $(wildcard arf/1.1/*.xsd)
 
 ocil20_DATA = $(wildcard ocil/2.0/*.xsd sds/2.0/*.dtd)
 
-cpe20_DATA = cpe/2.0/cpe-dictionary_2.0.xsd
-cpe21_DATA = cpe/2.1/cpe-dictionary_2.1.xsd
-cpe22_DATA = cpe/2.2/cpe-dictionary_2.2.xsd
+cpe20_DATA = $(wildcard cpe/2.0/*.xsd cpe/2.0/*.dtd)
+cpe21_DATA = $(wildcard cpe/2.1/*.xsd cpe/2.1/*.dtd)
+cpe22_DATA = $(wildcard cpe/2.2/*.xsd cpe/2.2/*.dtd)
 
 EXTRA_DIST = \
 	$(oval53_DATA) \
