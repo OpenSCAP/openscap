@@ -59,8 +59,24 @@ struct oscap_module OSCAP_OVAL_MODULE = {
     .submodules = OVAL_SUBMODULES
 };
 
-static struct oscap_module OVAL_VALIDATE = {
+static struct oscap_module OVAL_VALIDATE_XML = {
     .name = "validate-xml",
+    .parent = &OSCAP_OVAL_MODULE,
+    .summary = "Validate OVAL XML content",
+    .usage = "[options] oval-file.xml",
+    .help =
+        "Options:\n"
+        "   --definitions\r\t\t\t\t - Validate OVAL Definitions\n"
+        "   --variables\r\t\t\t\t - Validate external OVAL Variables\n"
+        "   --syschar\r\t\t\t\t - Validate OVAL System Characteristics\n"
+        "   --results\r\t\t\t\t - Validate OVAL Results\n"
+        "   --schematron\r\t\t\t\t - Use schematron-based validation in addition to XML Schema\n",
+    .opt_parser = getopt_oval_validate,
+    .func = app_oval_validate
+};
+
+static struct oscap_module OVAL_VALIDATE = {
+    .name = "validate",
     .parent = &OSCAP_OVAL_MODULE,
     .summary = "Validate OVAL XML content",
     .usage = "[options] oval-file.xml",
@@ -168,6 +184,7 @@ static struct oscap_module* OVAL_SUBMODULES[] = {
     &OVAL_EVAL,
     &OVAL_ANALYSE,
     &OVAL_VALIDATE,
+    &OVAL_VALIDATE_XML,
     &OVAL_GENERATE,
     &OVAL_LIST_PROBES,
     NULL

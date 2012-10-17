@@ -83,8 +83,17 @@ static struct oscap_module XCCDF_RESOLVE = {
     .func = app_xccdf_resolve
 };
 
-static struct oscap_module XCCDF_VALIDATE = {
+static struct oscap_module XCCDF_VALIDATE_XML = {
     .name = "validate-xml",
+    .parent = &OSCAP_XCCDF_MODULE,
+    .summary = "Validate XCCDF XML content",
+    .usage = "xccdf-file.xml",
+    .opt_parser = getopt_xccdf,
+    .func = app_xccdf_validate
+};
+
+static struct oscap_module XCCDF_VALIDATE = {
+    .name = "validate",
     .parent = &OSCAP_XCCDF_MODULE,
     .summary = "Validate XCCDF XML content",
     .usage = "xccdf-file.xml",
@@ -215,6 +224,7 @@ static struct oscap_module* XCCDF_SUBMODULES[] = {
     &XCCDF_EVAL,
     &XCCDF_RESOLVE,
     &XCCDF_VALIDATE,
+    &XCCDF_VALIDATE_XML,
     &XCCDF_EXPORT_OVAL_VARIABLES,
     &XCCDF_GENERATE,
     NULL
