@@ -168,21 +168,26 @@ oscap_xml_save_filename(const char *filename, xmlDocPtr doc)
 	xmlOutputBufferPtr buff;
 	int xmlCode;
 
-	f = fopen(filename, "w");
-	if (f == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), filename);
-		return -1;
+	if (strcmp(filename, "-") == 0) {
+		xmlCode = xmlSaveFormatFileEnc(filename, doc, "UTF-8", 1);
 	}
+	else {
+		f = fopen(filename, "w");
+		if (f == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), filename);
+			return -1;
+		}
 
-	buff = xmlOutputBufferCreateFile(f, NULL);
-	if (buff == NULL) {
-		fclose(f);
-		oscap_setxmlerr(xmlGetLastError());
-		oscap_dlprintf(DBG_W, "xmlOutputBufferCreateFile() failed.\n");
-		return -1;
+		buff = xmlOutputBufferCreateFile(f, NULL);
+		if (buff == NULL) {
+			fclose(f);
+			oscap_setxmlerr(xmlGetLastError());
+			oscap_dlprintf(DBG_W, "xmlOutputBufferCreateFile() failed.\n");
+			return -1;
+		}
+
+		xmlCode = xmlSaveFormatFileTo(buff, doc, "UTF-8", 1);
 	}
-
-	xmlCode = xmlSaveFormatFileTo(buff, doc, "UTF-8", 1);
 	if (xmlCode <= 0) {
 		oscap_setxmlerr(xmlGetLastError());
 		oscap_dlprintf(DBG_W, "No bytes exported: xmlCode: %d.\n", xmlCode);
