@@ -57,7 +57,7 @@ static int app_xccdf_resolve(const struct oscap_action *action);
 static int app_xccdf_export_oval_variables(const struct oscap_action *action);
 static bool getopt_xccdf(int argc, char **argv, struct oscap_action *action);
 static bool getopt_generate(int argc, char **argv, struct oscap_action *action);
-static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show, const char *oval_template, const char* sce_template);
+static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show, const char *oval_template, const char* sce_template, const char* profile);
 static int app_xccdf_xslt(const struct oscap_action *action);
 
 static struct oscap_module* XCCDF_SUBMODULES[];
@@ -777,10 +777,11 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			                 "",
 			                 (action->oval_results ? "%.result.xml" : ""),
 #ifdef ENABLE_SCE
-			                 (action->sce_results  ? "%.result.xml" : "")
+			                 (action->sce_results  ? "%.result.xml" : ""),
 #else
-			                 ""
+			                 "",
 #endif
+			                 action->profile == NULL ? "" : action->profile
 			);
 	}
 
@@ -1187,10 +1188,19 @@ cleanup:
 	return ret;
 }
 
-static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show, const char *oval_template, const char *sce_template)
+static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show, const char *oval_template, const char *sce_template, const char* profile)
 {
-    const char *params[] = { "result-id", id, "show", show, "verbosity", "", "oval-template", oval_template, "sce-template", sce_template, NULL };
-    return app_xslt(infile, "xccdf-report.xsl", outfile, params);
+	const char *params[] = {
+		"result-id",         id,
+		"show",              show,
+		"profile",           profile,
+		"oval-template",     oval_template,
+		"sce-template",      sce_template,
+		"verbosity",         "",
+		"hide-profile-info", NULL,
+		NULL };
+
+	return app_xslt(infile, "xccdf-report.xsl", outfile, params);
 }
 
 int app_xccdf_xslt(const struct oscap_action *action)
