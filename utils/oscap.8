@@ -34,6 +34,9 @@ Common Platform Enumeration.
 .TP
 \fBcvss\fR
 Common Vulnerability Scoring System
+.TP
+\fBcve\fR
+Common Vulnerabilities and Exposures
 
 .SH OVAL OPERATIONS
 .TP
@@ -365,6 +368,17 @@ Takes given source datastream, XCCDF and OVAL results and creates a result datas
 Validate given result datastream file against a XML schema. Every found error is printed to the standard output. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the result datastream is not valid.
 .RE
 
+.SH CVE OPERATIONS
+.TP
+.B validate\fR cve-nvd-feed.xml
+.RS
+Validate given CVE data feed.
+.RE
+.TP
+.B find\fR CVE cve-nvd-feed.xml
+.RS
+Find given CVE in data feed and report base score, vector string and vulnerable software list.
+.RE
 
 .SH CONTENT
 .TP
