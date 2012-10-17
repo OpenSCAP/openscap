@@ -916,7 +916,7 @@ static struct oval_sysitem *oval_sexp_to_sysitem(struct oval_syschar_model *mode
 	dI("Syschar entry type: %d '%s' => %s\n", type, name,
 	   ((type != OVAL_SUBTYPE_UNKNOWN) ? "OK" : "FAILED to decode"));
 #ifndef NDEBUG
-	if (type == OVAL_SUBTYPE_UNKNOWN))
+	if (type == OVAL_SUBTYPE_UNKNOWN)
 		abort();
 #endif
 	SEXP_t *sub;
