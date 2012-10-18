@@ -176,15 +176,6 @@ static struct oscap_module* OVAL_SUBMODULES[] = {
 
 int VERBOSE;
 
-struct oval_usr {
-	int result_false;
-	int result_true;
-	int result_error;
-	int result_unknown;
-	int result_neval;
-	int result_napp;
-};
-
 static int oval_gen_report(const char *infile, const char *outfile)
 {
     return app_xslt(infile, "oval-results-report.xsl", outfile, NULL);
@@ -200,29 +191,6 @@ static int app_oval_callback(const struct oval_result_definition * res_def, void
 	oval_result_t result =  oval_result_definition_get_result(res_def);
 
 	printf("Definition %s: %s\n", oval_definition_get_id(oval_def), oval_result_get_text(result));
-
-	switch (result) {
-	case OVAL_RESULT_TRUE:
-		((struct oval_usr *)arg)->result_true++;
-		break;
-	case OVAL_RESULT_FALSE:
-		((struct oval_usr *)arg)->result_false++;
-		break;
-	case OVAL_RESULT_ERROR:
-		((struct oval_usr *)arg)->result_error++;
-		break;
-	case OVAL_RESULT_UNKNOWN:
-		((struct oval_usr *)arg)->result_unknown++;
-		break;
-	case OVAL_RESULT_NOT_EVALUATED:
-		((struct oval_usr *)arg)->result_neval++;
-		break;
-	case OVAL_RESULT_NOT_APPLICABLE:
-		((struct oval_usr *)arg)->result_napp++;
-		break;
-	default:
-		break;
-	}
 
 	return 0;
 }
@@ -366,7 +334,6 @@ int app_evaluate_oval(const struct oscap_action *action)
 	struct oval_definition_model	*def_model = NULL;
 	struct oval_variable_model	*var_model = NULL;
 	struct oval_directives_model	*dir_model = NULL;
-	struct oval_usr			*usr       = NULL;
 	oval_agent_session_t		*sess      = NULL;
 	int ret = OSCAP_ERROR;
 
@@ -430,15 +397,11 @@ int app_evaluate_oval(const struct oscap_action *action)
 	/* set product name */
 	oval_agent_set_product_name(sess, OSCAP_PRODUCTNAME);
 
-	/* Init usr structure */
-	usr = malloc(sizeof(struct oval_usr));
-	memset(usr, 0, sizeof(struct oval_usr));
-
 	/* Evaluation */
 	if (action->id)
 		oval_agent_eval_definition(sess, action->id);
 	else
-		oval_agent_eval_system(sess, app_oval_callback, usr);
+		oval_agent_eval_system(sess, app_oval_callback, NULL);
 
 	if (oscap_err())
 		goto cleanup;
@@ -480,27 +443,13 @@ int app_evaluate_oval(const struct oscap_action *action)
         		oval_gen_report(action->f_results, action->f_report);
 	}
 
-	/* "calculate" return code */
-	if (action->id) {
-		oval_result_t res;
-
-		if (oval_agent_get_definition_result(sess, action->id, &res)==-1) {
-			goto cleanup;
-		}
-
-		if (VERBOSE >= 0)
-			printf("Definition %s: %s\n", action->id, oval_result_get_text(res));
-		ret = (res == OVAL_RESULT_FALSE) ? OSCAP_FAIL : OSCAP_OK;
-	} else {
-		ret = (usr->result_false > 0) ? OSCAP_FAIL : OSCAP_OK;
-	}
+	ret = OSCAP_OK;
 
 	/* clean up */
 cleanup:
 	if(oscap_err())
 		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 
-	if (usr) free(usr);
 	if (sess) oval_agent_destroy_session(sess);
 	if (def_model) oval_definition_model_free(def_model);
 	if (dir_model) oval_directives_model_free(dir_model);
