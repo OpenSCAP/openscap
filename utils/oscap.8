@@ -140,7 +140,7 @@ Be verbose.
 .TP
 .B \fBeval\fR [\fIoptions\fR] INPUT_FILE [\fIoval-definitions-files\fR]
 .RS
-Perform evaluation driven by XCCDF file given as INPUT_FILE and use OVAL as the checking engine. Print result of each rule to standard output. oscap returns 0 if all rules pass. If there is an error during evaluation, the return code is 1. If there is at least one failed rule, oscap-scan finishes with return code 2.
+Perform evaluation driven by XCCDF file given as INPUT_FILE and use OVAL as the checking engine. Print result of each rule to standard output. oscap returns 0 if all rules pass. If there is an error during evaluation, the return code is 1. If there is at least one rule with either fail or unknown result, oscap-scan finishes with return code 2.
 .PP
 Optionally you can give a source datastream as the INPUT_FILE instead of an XCCDF file. One of the XCCDFs inside the datastream will be used for evaluation (see --datastream-id).
 .PP
