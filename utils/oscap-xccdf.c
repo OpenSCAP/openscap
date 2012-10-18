@@ -795,8 +795,15 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			struct oval_results_model *resmod;
 			struct oval_definition_model *defmod;
 			struct oval_variable_model_iterator *varmod_itr;
+			char *escaped_url = NULL;
 
 			sname = (char *) oval_agent_get_filename(sessions[i]);
+			if (oscap_acquire_url_is_supported(sname)) {
+				escaped_url = oscap_acquire_url_to_filename(sname);
+				if (escaped_url == NULL)
+					goto cleanup;
+				sname = escaped_url;
+			}
 			resmod = oval_agent_get_results_model(sessions[i]);
 			defmod = oval_results_model_get_definition_model(resmod);
 
@@ -810,6 +817,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 				snprintf(fname, sizeof(fname), "%s-%d.variables-%d.xml", sname, i, j++);
 				oval_variable_model_export(varmod, fname);
 			}
+			if (escaped_url != NULL)
+				free(escaped_url);
 			oval_variable_model_iterator_free(varmod_itr);
 		}
 	}
