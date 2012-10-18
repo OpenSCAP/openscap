@@ -121,7 +121,6 @@ struct oscap_action {
         char *id;
         char *oval_template;
         char *cvss_vector;
-        int verbosity;
         int hide_profile_info;
         char *stylesheet;
         char *cpe_dict;
@@ -131,6 +130,7 @@ struct oscap_action {
 	struct cpe_action * cpe_action;
 	struct cve_action * cve_action;
 
+	int verbosity;
         int doctype;
 	int force;
 	int validate;

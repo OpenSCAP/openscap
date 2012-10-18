@@ -49,7 +49,6 @@ static void oscap_action_init(struct oscap_action *action)
 {
     assert(action != NULL);
     memset(action, 0, sizeof(*action));
-    action->verbosity = true;
     action->validate = 1;
 }
 

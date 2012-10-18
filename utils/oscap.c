@@ -90,7 +90,9 @@ bool getopt_root(int argc, char **argv, struct oscap_action *action)
 		if (c == -1) break;
 
 		switch (c) {
-		case 'q': action->verbosity = -1; break;
+		case 'q':
+			printf("Warning: '-q' is obsoleted option, please use '#oscap ... >/dev/null 2>&1' instead\n");
+		break;
 		case 'V': action->module = &OSCAP_VERSION_MODULE; break;
         case '?': return oscap_module_usage(action->module, stderr, NULL);
 		}
@@ -178,8 +180,7 @@ void validation_failed(const char *xmlfile, oscap_document_type_t doc_type, cons
 }
 
 int reporter(const char *file, int line, const char *msg, void *arg) {
-	if ( ((struct oscap_action *)arg)->verbosity >= 0)
-		fprintf(stdout, "File '%s' line %d: %s", file, line, msg);
+	fprintf(stdout, "File '%s' line %d: %s", file, line, msg);
 	return 0;
 }
 

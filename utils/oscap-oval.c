@@ -190,9 +190,6 @@ static struct oscap_module* OVAL_SUBMODULES[] = {
     NULL
 };
 
-
-int VERBOSE;
-
 static int oval_gen_report(const char *infile, const char *outfile)
 {
     return app_xslt(infile, "oval-results-report.xsl", outfile, NULL);
@@ -200,10 +197,6 @@ static int oval_gen_report(const char *infile, const char *outfile)
 
 static int app_oval_callback(const struct oval_result_definition * res_def, void *arg)
 {
-
-	if (VERBOSE <= 0)
-		return 0;
-
 	struct oval_definition *oval_def = oval_result_definition_get_definition(res_def);
 	oval_result_t result =  oval_result_definition_get_result(res_def);
 
@@ -278,23 +271,19 @@ int app_collect_oval(const struct oscap_action *action)
 			fprintf(stderr, "Object ID(%s) does not exist in '%s'.\n", action->id, action->f_oval);
 			goto cleanup;
 		}
-		if (VERBOSE >= 0)
-			fprintf(stderr, "Collected: \"%s\" : ", oval_object_get_id(object));
+		fprintf(stderr, "Collected: \"%s\" : ", oval_object_get_id(object));
 		oval_probe_query_object(pb_sess, object, 0, &syschar);
 		sc_flg = oval_syschar_get_flag(syschar);
-		if (VERBOSE >= 0)
-			fprintf(stderr, "%s\n", oval_syschar_collection_flag_get_text(sc_flg));
+		fprintf(stderr, "%s\n", oval_syschar_collection_flag_get_text(sc_flg));
 	}
 	else {
 	        struct oval_object_iterator *objects = oval_definition_model_get_objects(def_model);
 		while (oval_object_iterator_has_more(objects)) {
 			object = oval_object_iterator_next(objects);
-			if (VERBOSE >= 0)
-				fprintf(stderr, "Collected: \"%s\" : ", oval_object_get_id(object));
+			fprintf(stderr, "Collected: \"%s\" : ", oval_object_get_id(object));
 			oval_probe_query_object(pb_sess, object, 0, &syschar);
 			sc_flg = oval_syschar_get_flag(syschar);
-			if (VERBOSE >= 0)
-				fprintf(stderr, "%s\n", oval_syschar_collection_flag_get_text(sc_flg));
+			fprintf(stderr, "%s\n", oval_syschar_collection_flag_get_text(sc_flg));
 		}
 		oval_object_iterator_free(objects);
 	}
@@ -615,8 +604,6 @@ enum oval_opt {
 
 bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 {
-	VERBOSE = action->verbosity;
-
 	action->doctype = OSCAP_DOCUMENT_OVAL_DEFINITIONS;
 
 	/* Command-options */
@@ -679,9 +666,8 @@ bool getopt_oval_list_probes(int argc, char **argv, struct oscap_action *action)
 #define PROBE_LIST_DYNAMIC 1
 
         int list_type = PROBE_LIST_DYNAMIC;
-	VERBOSE = action->verbosity;
-
 	action->doctype = OSCAP_DOCUMENT_OVAL_DEFINITIONS;
+	action->verbosity = 0;
 
 	/* Command-options */
 	struct option long_options[] = {
@@ -708,8 +694,6 @@ bool getopt_oval_list_probes(int argc, char **argv, struct oscap_action *action)
 
 bool getopt_oval_validate(int argc, char **argv, struct oscap_action *action)
 {
-	VERBOSE = action->verbosity;
-
 	/* we assume 0 is unknown */
 	action->doctype = 0;
 

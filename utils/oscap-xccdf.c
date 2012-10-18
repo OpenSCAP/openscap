@@ -456,10 +456,9 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 
 	/* Register callbacks */
-	if (action->verbosity >= 0) {
-		xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule, (void *) policy);
-		xccdf_policy_model_register_output_callback(policy_model, callback_scr_result, NULL);
-	}
+	xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule, (void *) policy);
+	xccdf_policy_model_register_output_callback(policy_model, callback_scr_result, NULL);
+
 	/* xccdf_policy_model_register_output_callback(policy_model, callback_syslog_result, NULL); */
 
 	/* Use OVAL files from policy model */
@@ -1230,7 +1229,7 @@ int app_xccdf_xslt(const struct oscap_action *action)
 #ifdef ENABLE_SCE
         "sce-template",      action->sce_template,
 #endif
-        "verbosity",         action->verbosity >= 0 ? "1" : "",
+        "verbosity",         "",
         "hide-profile-info", action->hide_profile_info ? "yes" : NULL,
         NULL };
 
