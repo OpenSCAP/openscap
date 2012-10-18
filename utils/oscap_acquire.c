@@ -105,7 +105,7 @@ oscap_acquire_url_download(const char *temp_dir, const char *url)
 		output_filename = NULL;
 	}
 	else
-		printf("0k\n");
+		printf("Ok\n");
 	curl_easy_cleanup(curl);
 	fclose(fp);
 	return output_filename;
