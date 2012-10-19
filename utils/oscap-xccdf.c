@@ -295,7 +295,6 @@ static int callback_syslog_result(struct xccdf_rule_result *rule_result, void *a
 
 	/* yes we do */
 	const char * result_str = xccdf_test_result_type_get_text(result);
-	char sys_msg[1024];
 	const char * ident_id = NULL;
 	int priority = LOG_NOTICE;
 
@@ -308,8 +307,7 @@ static int callback_syslog_result(struct xccdf_rule_result *rule_result, void *a
 	xccdf_ident_iterator_free(idents);
 
 	/* emit the message */
-	snprintf(sys_msg, sizeof(sys_msg),"Rule: %s, Ident: %s, Result: %s.", xccdf_rule_result_get_idref(rule_result), ident_id, result_str);
-	syslog(priority, sys_msg);
+	syslog(priority, "Rule: %s, Ident: %s, Result: %s.", xccdf_rule_result_get_idref(rule_result), ident_id, result_str);
 
 	return 0;
 }
@@ -359,11 +357,9 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	struct sce_parameters* sce_parameters = 0;
 #endif
 	int priority = LOG_NOTICE;
-	char msg[1024];
 
 	/* syslog message */
-	snprintf(msg, sizeof(msg),"Evaluation started. Content: %s, Profile: %s.", action->f_xccdf, action->profile);
-	syslog(priority, msg);
+	syslog(priority, "Evaluation started. Content: %s, Profile: %s.", action->f_xccdf, action->profile);
 
 	const bool sds_likely = ds_is_sds(action->f_xccdf) == 0;
 	if (sds_likely)
@@ -875,8 +871,7 @@ cleanup:
 		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 
 	/* syslog message */
-	snprintf(msg, sizeof(msg),"Evaluation finnished. Return code: %d, Base score %f.", result, base_score);
-	syslog(priority, msg);
+	syslog(priority, "Evaluation finnished. Return code: %d, Base score %f.", result, base_score);
 
 	if (xccdf_doc_version)
 		free(xccdf_doc_version);
