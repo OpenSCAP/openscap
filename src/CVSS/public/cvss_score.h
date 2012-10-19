@@ -412,5 +412,5 @@ bool cvss_metrics_set_availability_requirement(struct cvss_metrics* metrics, enu
 
 /** @} */
 
-/*@}*/
+/**@}*/
 #endif // _CVSSCALC_H_

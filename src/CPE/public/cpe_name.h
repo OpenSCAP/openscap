@@ -345,8 +345,8 @@ const char * cpe_name_supported(void);
 /************************************************************/
 /** @} End of Evaluators group */
 
-/*@}*/
+/**@}*/
 
-/*@}*/
+/**@}*/
 
 #endif				/* _CPEURI_H_ */

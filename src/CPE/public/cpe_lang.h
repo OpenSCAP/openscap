@@ -346,8 +346,8 @@ struct cpe_lang_model *cpe_lang_model_import(const char *file);
  */
 void cpe_lang_model_export(const struct cpe_lang_model *spec, const char *file);
 
-/*@}*/
+/**@}*/
 
-/*@}*/
+/**@}*/
 
 #endif				/* _CPELANG_H_ */
