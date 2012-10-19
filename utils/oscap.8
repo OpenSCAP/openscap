@@ -144,7 +144,7 @@ Perform evaluation driven by XCCDF file given as INPUT_FILE and use OVAL as the 
 .PP
 Optionally you can give a source datastream as the INPUT_FILE instead of an XCCDF file. One of the XCCDFs inside the datastream will be used for evaluation (see --datastream-id).
 .PP
-You may specify all required OVAL Definition files as last parameters. If you don't do that, oscap tool will try to load all OVAL Definition files referenced from XCCDF automaticaly(search in the same path as XCCDF).
+You may specify OVAL Definition files as the last parameter, XCCDF evaluation will then proceed only with those specified files. Otherwise, when \fIoval-definitions-files\fR parameter is missing, oscap tool will try to load all OVAL Definition files referenced from XCCDF automaticaly (search in the same path as XCCDF).
 .PP
 .TP
 \fB\-\-profile PROFILE\fR
