@@ -196,7 +196,7 @@ static bool xccdf_policy_filter_selected(void *item, void *policy)
  */
 static bool xccdf_policy_filter_select(void *item, void *selectid)
 {
-	return !strcmp(xccdf_select_get_item((struct xccdf_select *) item), (char *) selectid);
+	return strcmp(xccdf_select_get_item((struct xccdf_select *) item), (char *) selectid) == 0;
 }
 
 /**
@@ -206,7 +206,7 @@ static bool xccdf_policy_filter_select(void *item, void *selectid)
 static bool
 _xccdf_policy_filter_callback(callback *cb, const char *sysname)
 {
-	return !oscap_strcmp(cb->system, sysname);
+	return oscap_strcmp(cb->system, sysname) == 0;
 }
 
 /**
