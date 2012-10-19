@@ -1856,7 +1856,7 @@ const char *xccdf_benchmark_get_plain_text(const struct xccdf_benchmark *benchma
 /**
  * Get benchmark xccdf:Item by ID.
  * @memberof xccdf_benchmark
- * @param item ID
+ * @param id ID
  * @return Item with given ID
  * @retval NULL if no such item exists
  */

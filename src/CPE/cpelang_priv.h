@@ -71,7 +71,7 @@ struct cpe_platform;
 
 /**
  * Function for parsing XML CPE language file
- * @param source structure of import source with filename and encoding
+ * @param file filename
  */
 struct cpe_lang_model *cpe_lang_model_parse_xml(const char *file);
 
@@ -97,8 +97,8 @@ struct cpe_testexpr *cpe_testexpr_parse(xmlTextReaderPtr reader);
 
 /**
  * Function for export CPE language model to XML
- * @param target structure with exporting information such filename and encoding
  * @param spec CPE language model structure
+ * @param file filename
  */
 void cpe_lang_model_export_xml(const struct cpe_lang_model *spec, const char *file);
 

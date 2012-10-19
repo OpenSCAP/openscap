@@ -342,7 +342,7 @@ struct cpe_lang_model *cpe_lang_model_import(const char *file);
  * Write the lang_model to a file.
  * @memberof cpe_lang_model
  * @param spec CPE lang model
- * @param target target structure with filename, endcoding and indent information
+ * @param file filename
  */
 void cpe_lang_model_export(const struct cpe_lang_model *spec, const char *file);
 

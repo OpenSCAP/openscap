@@ -659,7 +659,7 @@ void cve_configuration_iterator_reset(struct cve_configuration_iterator *it);
  * Export CVE model to XML file
  * @memberof cve_model
  * @param cve CVE model
- * @param target OSCAP export target
+ * @param file OSCAP export target
  */
 void cve_model_export(struct cve_model *cve, const char *file);
 

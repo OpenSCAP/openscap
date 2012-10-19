@@ -151,7 +151,7 @@ bool xccdf_policy_model_register_engine_callback(struct xccdf_policy_model * mod
  * Function to register callback for checking system
  * @param model XCCDF Policy Model
  * @param sys String representing given checking system
- * @param func Callback - pointer to function called by XCCDF Policy system when rule parsed
+ * @param eval_fn Callback - pointer to function called by XCCDF Policy system when rule parsed
  * @param usr optional parameter for passing user data to callback
  * @param query_fn - optional parameter for providing xccdf_policy_engine_query_fn implementation for given system.
  * @memberof xccdf_policy_model
