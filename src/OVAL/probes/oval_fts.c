@@ -147,7 +147,7 @@ static char *__regex_locate(char *str)
 
     while (*str != '\0') {
 	if (*str == '\\')
-	    escaped = ~escaped;
+	    escaped = !escaped;
 	else if (strchr(regex_sch, *str) != NULL) {
 	    if (!escaped)
 		return (str);
