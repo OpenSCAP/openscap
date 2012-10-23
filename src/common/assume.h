@@ -70,7 +70,7 @@
 #define __atomic_emitmsg(...)                           \
         do {                                            \
                 if (ftrylockfile(__emitmsg_fp) == 0) {  \
-                        fprintf (stderr, __VA_ARGS__);  \
+                        fprintf (__emitmsg_fp, __VA_ARGS__);  \
                         funlockfile(__emitmsg_fp);      \
                 }                                       \
         } while (0)
