@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # number of processes used in the content
-PCNT=30
+PCNT=15
 # a list of relevant process information obtained from 'ps'
 declare -A PROCSALL
 # count duplicates
