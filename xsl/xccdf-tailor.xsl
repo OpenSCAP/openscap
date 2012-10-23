@@ -65,7 +65,7 @@ Authors:
   <xsl:variable name='name' select='name()'/>
   <xsl:variable name='rule' select='ancestor::cdf:Rule[1]'/>
   <xsl:variable name='rr' select='$theprofile/cdf:refine-rule[@idref=$rule/@id or @idref=$rule/@cluster-id][1]'/>
-  <xsl:for-each select='self::*[@selector=$rr/@selector or (not(@selector) and count($rule/*[name()=$name][@selector=$rr/@selector])=0)]'>
+  <xsl:for-each select='self::*[@selector=$rr/@selector or ((not(@selector) or @selector="") and count($rule/*[name()=$name][@selector=$rr/@selector])=0)]'>
     <xsl:copy><xsl:apply-templates mode='profile' select="node()|@*"/></xsl:copy>
   </xsl:for-each>
 </xsl:template>
@@ -100,7 +100,7 @@ Authors:
   <xsl:variable name='val' select='ancestor::cdf:Value'/>
   <xsl:variable name='name' select='name()'/>
   <xsl:variable name='rv' select='$theprofile/cdf:refine-value[@idref=$val/@id or @idref=$val/@cluster-id][1]'/>
-  <xsl:for-each select='self::*[@selector=$rv/@selector or (not(@selector) and count($val/*[name()=$name][@selector=$rv/@selector])=0)]'>
+  <xsl:for-each select='self::*[@selector=$rv/@selector or ((not(@selector) or @selector="") and count($val/*[name()=$name][@selector=$rv/@selector])=0)]'>
     <xsl:copy><xsl:apply-templates mode='profile' select="node()|@*"/></xsl:copy>
   </xsl:for-each>
 </xsl:template>
