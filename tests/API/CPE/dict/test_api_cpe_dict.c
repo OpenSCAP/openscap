@@ -57,7 +57,8 @@ int main(int argc, char **argv)
 	struct oscap_text_iterator *titles_it;
 
 	struct cpe_name *name = NULL;
-	int ret_val = 0, ret_val_1 = 0, ret_val_2 = 0;
+	int ret_val = 0;
+	bool ret_val_1 = false, ret_val_2 = false;
 
 	if (argc == 2 && !strcmp(argv[1], "--help"))
 		print_usage(argv[0], stdout);
@@ -193,7 +194,7 @@ int main(int argc, char **argv)
 				argv[4]);
 			ret_val = 2;
 		} else
-			ret_val = !ret_val_1;
+			ret_val = (ret_val_1 == false) ? 1 : 0;
 
 		cpe_name_free(name);
 		cpe_dict_model_free(dict_model);
@@ -270,7 +271,7 @@ int main(int argc, char **argv)
 
 	else {
 		print_usage(argv[0], stderr);
-		ret_val = 1;
+		ret_val = 3;
 	}
 
 	return ret_val;
