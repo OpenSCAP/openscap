@@ -472,7 +472,7 @@ Authors:
   <xsl:apply-templates mode='oval-engine-results' select='cdf:check-content-ref[1]'/>
 </xsl:template>
 
-<xsl:template match='cdf:check-content-ref' mode='oval-engine-results'>
+<xsl:template match='cdf:check-content-ref[@name]' mode='oval-engine-results'>
   <xsl:variable name='filename'>
     <xsl:choose>
       <xsl:when test='contains($oval-tmpl, "%")'><xsl:value-of select='concat(substring-before($oval-tmpl, "%"), @href, substring-after($oval-tmpl, "%"))'/></xsl:when>
