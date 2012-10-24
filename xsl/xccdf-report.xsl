@@ -464,12 +464,8 @@ Authors:
 <!-- checking engine results related templates -->
 <xsl:template match='cdf:rule-result' mode='engine-results'>
   <xsl:if test='contains(",fail,error,unknown,informational,", concat(",", normalize-space(cdf:result), ","))'>
-    <xsl:apply-templates mode='engine-results' select='key("items", @idref)'/>
-  </xsl:if>
-</xsl:template>
-
-<xsl:template match='cdf:Rule' mode='engine-results'>
     <xsl:apply-templates mode='engine-results' select='cdf:check'/>
+  </xsl:if>
 </xsl:template>
 
 <xsl:template match='cdf:check[starts-with(@system, "http://oval.mitre.org/XMLSchema/oval")]' mode='engine-results'>
@@ -496,8 +492,7 @@ Authors:
 </xsl:template>
 
 <xsl:template match='cdf:check-content-ref' mode='sce-engine-results'>
-  <xsl:variable name='rule-id' select='../../@id'/>
-  <xsl:variable name='stdout-check-imports' select='//cdf:rule-result[@idref=$rule-id]/descendant::cdf:check-import[@import-name="stdout"]'/>
+  <xsl:variable name='stdout-check-imports' select='../cdf:check-import[@import-name="stdout"]'/>
   
   <xsl:apply-templates select='$stdout-check-imports' mode='brief' />
   
