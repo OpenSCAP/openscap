@@ -1220,13 +1220,19 @@ static int xccdf_gen_report(const char *infile, const char *id, const char *outf
 int app_xccdf_xslt(const struct oscap_action *action)
 {
     assert(action->module->user);
+
+	const char *oval_template = action->oval_template;
+	if (action->module == &XCCDF_GEN_REPORT && oval_template == NULL)
+		// If generating the report and the option is missing -> use defaults
+		oval_template = "%.result.xml";
+
     const char *params[] = {
         "result-id",         action->id,
         "show",              action->show,
         "profile",           action->profile,
         "template",          action->tmpl,
         "format",            action->format,
-        "oval-template",     action->oval_template,
+        "oval-template",     oval_template,
 #ifdef ENABLE_SCE
         "sce-template",      action->sce_template,
 #endif
