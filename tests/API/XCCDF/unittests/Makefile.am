@@ -30,6 +30,7 @@ TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
 		LD_PRELOAD=$(top_builddir)/src/.libs/libopenscap_testing.so \
 		LD_LIBRARY_PATH=$(top_builddir)/src/.libs \
 		OSCAP_SCHEMA_PATH=$(top_srcdir)/schemas \
+		OSCAP_XSLT_PATH=$(top_srcdir)/xsl \
 		OSCAP=$(top_builddir)/utils/.libs/oscap \
 		OSCAP_FULL_VALIDATION=1 \
 		XPATH=$(top_srcdir)/tests/xpath.pl
@@ -57,6 +58,9 @@ EXTRA_DIST += \
 	test_deriving_xccdf_result_from_oval_pass.oval.xml \
 	test_multiple_oval_files_with_same_basename.sh \
 	test_multiple_oval_files_with_same_basename.xccdf.xml \
+	test_report_check_with_empty_selector.sh \
+	test_report_check_with_empty_selector.xccdf.xml.result.xml \
+	test_report_check_with_empty_selector.oval.xml.result.xml \
 	test_xccdf_complex_check_nand.xccdf.xml \
 	test_xccdf_complex_check_single_negate.xccdf.xml \
 	test_xccdf_check_content_ref_without_name_attr.oval.xml \
