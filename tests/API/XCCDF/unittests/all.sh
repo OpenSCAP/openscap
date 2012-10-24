@@ -30,4 +30,5 @@ test_run "Multiple oval files with the same basename." $srcdir/test_multiple_ova
 test_run "Unsupported Check System" $srcdir/test_xccdf_check_unsupported_check_system.sh
 
 test_run 'generate report: xccdf:check/@selector=""' $srcdir/test_report_check_with_empty_selector.sh
+test_run "generate report: missing xsl shall not segfault" $srcdir/test_report_without_xsl_fails_gracefully.sh
 test_exit
