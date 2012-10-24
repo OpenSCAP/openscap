@@ -377,7 +377,7 @@ static int oscap_apply_xslt_path(const char *xmlfile, const char *xsltfile,
 
 cleanup:
 	for (size_t i = 0; args[i]; i += 2) oscap_free(args[i+1]);
-	if (f) fclose(f);
+	if (outfile && f) fclose(f);
 	if (cur) xsltFreeStylesheet(cur);
 	if (res) xmlFreeDoc(res);
 	if (doc) xmlFreeDoc(doc);
