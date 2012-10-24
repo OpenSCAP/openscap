@@ -19,9 +19,9 @@ function test_api_cve_cvss {
 function test_api_cve_export {
     local ret_val=0
 
-    ./test_api_cve --export-all $srcdir/nvdcve-2.0-recent.xml nvdcve-2.0-recent-out.xml
-    if [ $? -eq 0 ] && [ -f nvdcve-2.0-recent-out.xml ]; then
- 	if ! $srcdir/../../xmldiff.pl $srcdir/nvdcve-2.0-recent.xml nvdcve-2.0-recent-out.xml; then
+    ./test_api_cve --export-all $srcdir/nvdcve-2.0-recent.xml nvdcve-2.0-recent.out.xml
+    if [ $? -eq 0 ] && [ -f nvdcve-2.0-recent.out.xml ]; then
+ 	if ! $srcdir/../../xmldiff.pl $srcdir/nvdcve-2.0-recent.xml nvdcve-2.0-recent.out.xml; then
 	    echo "Exported file differs from what is expected!"
 	    ret_val=1
 	fi
