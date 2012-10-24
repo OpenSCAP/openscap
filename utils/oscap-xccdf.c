@@ -163,7 +163,8 @@ static struct oscap_module XCCDF_GEN_REPORT = {
         "\nOptions:\n"
         "   --result-id <id>\r\t\t\t\t - TestResult ID to be processed. Default is the most recent one.\n"
         "   --show <result-type*>\r\t\t\t\t - Rule results to show. Defaults to everything but notselected and notapplicable.\n"
-        "   --output <file>\r\t\t\t\t - Write the document into file.",
+        "   --output <file>\r\t\t\t\t - Write the document into file.\n"
+        "   --oval-template <template-string> - Template which will be used to obtain OVAL result files.\n",
     .opt_parser = getopt_xccdf,
     .user = "xccdf-report.xsl",
     .func = app_xccdf_xslt
