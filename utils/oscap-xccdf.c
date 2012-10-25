@@ -516,7 +516,6 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 							free(tmp_path);
 							continue;
 						}
-						free(file);
 					}
 					else if (!fetch_option_suggested) {
 						printf("This content points out to the remote resources. Use `--fetch-remote-resources' option to download them.\n");
