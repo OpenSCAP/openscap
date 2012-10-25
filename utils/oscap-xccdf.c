@@ -424,6 +424,23 @@ xccdf_policy_get_oval_resources(struct xccdf_policy_model *policy_model, bool al
 	return resources;
 }
 
+static struct oscap_content_resource **
+command_line_get_oval_resources(char **oval_filenames)
+{
+	struct oscap_content_resource **resources = malloc(sizeof(struct oscap_content_resource *));
+	resources[0] = NULL;
+
+	for (int i = 0; oval_filenames[i];) {
+		resources[i] = malloc(sizeof(struct oscap_content_resource));
+		resources[i]->href = strdup(basename(oval_filenames[i]));
+		resources[i]->filename = strdup(oval_filenames[i]);
+		i++;
+		resources = realloc(resources, (i + 1) * sizeof(struct oscap_content_resource *));
+		resources[i] = NULL;
+	}
+	return resources;
+}
+
 /**
  * XCCDF Processing fucntion
  * @param action OSCAP Action structure
@@ -558,20 +575,9 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 		if (contents == NULL)
 			goto cleanup;
-	} else {
-		/* Use OVAL files from command-line */
-		contents = malloc(sizeof(struct oscap_content_resource *));
-		contents[0] = NULL;
+	} else
+		contents = command_line_get_oval_resources(action->f_ovals);
 
-		for (int i=0; action->f_ovals[i];) {
-			contents[i] = malloc(sizeof(struct oscap_content_resource));
-			contents[i]->href = strdup(basename(action->f_ovals[i]));
-			contents[i]->filename = strdup(action->f_ovals[i]);
-			i++;
-			contents = realloc(contents, (i + 1) * sizeof(struct oscap_content_resource *));
-			contents[i] = NULL;
-		}
-	}
 
 	/* Validate OVAL files */
 	// we will only validate if the file doesn't come from a datastream
