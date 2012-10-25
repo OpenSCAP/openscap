@@ -563,7 +563,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		contents = malloc(sizeof(struct oscap_content_resource *));
 		contents[0] = NULL;
 
-		for (int i=0; action->f_ovals[i]; i++) {
+		for (int i=0; action->f_ovals[i];) {
 			contents[i] = malloc(sizeof(struct oscap_content_resource));
 			contents[i]->href = strdup(basename(action->f_ovals[i]));
 			contents[i]->filename = strdup(action->f_ovals[i]);
