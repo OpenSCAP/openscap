@@ -203,6 +203,7 @@ int oscap_validate_xml(const char *xmlfile, const char *schemafile, xml_reporter
 	*/
 
 cleanup:
+	if (doc) xmlFreeDoc(doc);
 	if (ctxt)        xmlSchemaFreeValidCtxt(ctxt);
 	if (schema)      xmlSchemaFree(schema);
 	if (parser_ctxt) xmlSchemaFreeParserCtxt(parser_ctxt);
