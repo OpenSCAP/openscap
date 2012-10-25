@@ -1086,7 +1086,14 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 		struct oval_variable_model_iterator *var_mod_itr;
 
 		j = 0;
+		char *escaped_url = NULL;
 		ses_name = (char *) oval_agent_get_filename(ag_ses_lst[i]);
+		if (oscap_acquire_url_is_supported(ses_name)) {
+			escaped_url = oscap_acquire_url_to_filename(ses_name);
+			if (escaped_url == NULL)
+				goto cleanup;
+			ses_name = escaped_url;
+		}
 
 		var_mod_itr = oval_definition_model_get_variable_models(def_mod_lst[i]);
 		while (oval_variable_model_iterator_has_more(var_mod_itr)) {
@@ -1098,6 +1105,8 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 			oval_variable_model_export(var_mod, fname);
 		}
 		oval_variable_model_iterator_free(var_mod_itr);
+		if (escaped_url != NULL)
+			free(escaped_url);
 	}
 
 	result = OSCAP_OK;
