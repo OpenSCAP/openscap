@@ -926,14 +926,12 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
         case PROBE_HANDLER_ACT_RESET:
 	case PROBE_HANDLER_ACT_ABORT:
         {
-                size_t i;
-
                 if (type == OVAL_SUBTYPE_ALL) {
                         /*
                          * Iterate thru probe descriptor table and execute the reset operation
                          * for each probe descriptor.
                          */
-                        for (i = 0; i < pext->pdtbl->count; ++i) {
+                        for (size_t i = 0; i < pext->pdtbl->count; ++i) {
                                 pd  = pext->pdtbl->memb[i];
 
 				if (pd == NULL) {

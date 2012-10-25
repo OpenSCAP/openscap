@@ -1448,7 +1448,6 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_CONCAT(oval_argu_
 								      struct oval_collection *value_collection)
 {
 	int idx0 = 0;
-	int passnum = 0;
 
 	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_UNKNOWN;
 	struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
@@ -1487,7 +1486,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_CONCAT(oval_argu_
 				texts[idx0] = NULL;
 			}
 		}
-		for (passnum = 1; passnum - 1 < catnum; passnum++) {
+		for (int passnum = 1; passnum - 1 < catnum; passnum++) {
 			int len_cat = 1;
 			for (idx0 = 0; idx0 < len_subcomps; idx0++)
 				if (texts[idx0])

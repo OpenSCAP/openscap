@@ -120,7 +120,6 @@ static void _gen_item_id(SEXP_t *item)
 
 static int oval_probe_variable_eval(oval_probe_session_t *sess, struct oval_syschar *syschar)
 {
-        struct oval_value    *val;
         struct oval_value_iterator *vit;
         struct oval_variable *var;
 	struct oval_object *obj;
@@ -176,6 +175,7 @@ static int oval_probe_variable_eval(oval_probe_session_t *sess, struct oval_sysc
 
                 while (oval_value_iterator_has_more(vit)) {
 			oval_datatype_t dtype;
+			struct oval_value *val;
 
                         val = oval_value_iterator_next(vit);
 

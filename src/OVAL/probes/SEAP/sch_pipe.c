@@ -309,7 +309,6 @@ ssize_t sch_pipe_send (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
 
 ssize_t sch_pipe_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
 {
-        strbuf_t *sb;
         sch_pipedata_t *data;
 
         assume_d (desc != NULL, -1, errno = EFAULT;);
@@ -323,6 +322,7 @@ ssize_t sch_pipe_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
                 return (-1);
         else {
                 ssize_t ret;
+		strbuf_t *sb;
 
                 ret = 0;
                 sb  = strbuf_new (SEAP_STRBUF_MAX);

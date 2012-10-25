@@ -1372,7 +1372,6 @@ SEXP_t *SEXP_list_sort(SEXP_t *list, int(*compare)(const SEXP_t *, const SEXP_t 
         SEXP_val_t v_dsc;
         SEXP_list_it *list_it;
         size_t list_it_count, list_it_alloc;
-        register size_t i, j;
 
         if (list == NULL || compare == NULL) {
                 errno = EFAULT;
@@ -1433,7 +1432,7 @@ SEXP_t *SEXP_list_sort(SEXP_t *list, int(*compare)(const SEXP_t *, const SEXP_t 
                 /*
                  * PASS #2: Mergesort all blocks
                  */
-                for (i = 0; i < list_it_count - 1; ++i) {
+                for (register size_t i = 0; i < list_it_count - 1; ++i) {
                         while(list_it[i].index < list_it[i].count) {
                                 SEXP_t *min_v, tmp_v, *first_v;
                                 size_t  min_i = i;
@@ -1441,7 +1440,7 @@ SEXP_t *SEXP_list_sort(SEXP_t *list, int(*compare)(const SEXP_t *, const SEXP_t 
                                 /* search for minimal s_valp value */
                                 min_v = first_v = list_it[i].block->memb + list_it[i].index;
 
-                                for (j = i + 1; j < list_it_count; ++j) {
+                                for (register size_t j = i + 1; j < list_it_count; ++j) {
                                         if (compare(list_it[j].block->memb + list_it[j].index, min_v) < 0) {
                                                 min_v = list_it[j].block->memb + list_it[j].index;
                                                 min_i = j;
