@@ -338,6 +338,92 @@ struct oscap_content_resource {
 	char *filename; /* Points to the filename on the filesystem. */
 };
 
+static struct oscap_content_resource **
+xccdf_policy_get_oval_resources(struct xccdf_policy_model *policy_model, bool allow_remote_resources, const char *path, char **temp_dir)
+{
+	struct oscap_content_resource **resources = NULL;
+	struct oscap_file_entry_list *files = NULL;
+	struct oscap_file_entry_iterator *files_it = NULL;
+	int idx = 0;
+	char *tmp_path;
+	char *printable_path;
+	bool fetch_option_suggested = false;
+
+	resources = malloc(sizeof(struct oscap_content_resource *));
+	resources[idx] = NULL;
+
+	files = xccdf_policy_model_get_systems_and_files(policy_model);
+	files_it = oscap_file_entry_list_get_files(files);
+	while (oscap_file_entry_iterator_has_more(files_it)) {
+		struct oscap_file_entry *file_entry;
+		struct stat sb;
+
+		file_entry = (struct oscap_file_entry *) oscap_file_entry_iterator_next(files_it);
+
+		// we only care about OVAL referenced files
+		if (strcmp(oscap_file_entry_get_system(file_entry), "http://oval.mitre.org/XMLSchema/oval-definitions-5"))
+			continue;
+
+		tmp_path = malloc(PATH_MAX * sizeof(char));
+		snprintf(tmp_path, PATH_MAX, "%s/%s", path, oscap_file_entry_get_file(file_entry));
+
+		if (stat(tmp_path, &sb) == 0) {
+			resources[idx] = malloc(sizeof(struct oscap_content_resource));
+			resources[idx]->href = strdup(oscap_file_entry_get_file(file_entry));
+			resources[idx]->filename = tmp_path;
+			idx++;
+			resources = realloc(resources, (idx + 1) * sizeof(struct oscap_content_resource *));
+			resources[idx] = NULL;
+		}
+		else {
+			if (oscap_acquire_url_is_supported(oscap_file_entry_get_file(file_entry))) {
+				// Strip out the 'path' for printing the url.
+				printable_path = (char *) oscap_file_entry_get_file(file_entry);
+
+				if (allow_remote_resources) {
+					if (*temp_dir == NULL)
+						*temp_dir = oscap_acquire_temp_dir();
+					if (*temp_dir == NULL) {
+						oscap_file_entry_iterator_free(files_it);
+						oscap_file_entry_list_free(files);
+						free(tmp_path);
+						for (int i = 0; resources[i]; i++) {
+							free(resources[i]->filename);
+							free(resources[i]->href);
+							free(resources[i]);
+						}
+						free(resources);
+						return NULL;
+					}
+
+					char *file = oscap_acquire_url_download(*temp_dir, printable_path);
+					if (file != NULL) {
+						resources[idx] = malloc(sizeof(struct oscap_content_resource));
+						resources[idx]->href = strdup(printable_path);
+						resources[idx]->filename = file;
+						idx++;
+						resources = realloc(resources, (idx + 1) * sizeof(struct oscap_content_resource *));
+						resources[idx] = NULL;
+						free(tmp_path);
+						continue;
+					}
+				}
+				else if (!fetch_option_suggested) {
+					printf("This content points out to the remote resources. Use `--fetch-remote-resources' option to download them.\n");
+					fetch_option_suggested = true;
+				}
+			}
+			else
+				printable_path = tmp_path;
+			fprintf(stderr, "WARNING: Skipping %s file which is referenced from XCCDF content\n", printable_path);
+			free(tmp_path);
+		}
+	}
+	oscap_file_entry_iterator_free(files_it);
+	oscap_file_entry_list_free(files);
+	return resources;
+}
+
 /**
  * XCCDF Processing fucntion
  * @param action OSCAP Action structure
@@ -464,81 +550,14 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	/* Use OVAL files from policy model */
 	if (action->f_ovals == NULL) {
-		struct stat sb;
-		struct oscap_file_entry * file_entry;
-		char * tmp_path;
-
-		idx = 0;
-		contents = malloc(sizeof(struct oscap_content_resource *));
-		contents[idx] = NULL;
-
 		char * pathcopy =  strdup(xccdf_file);
 		char * path = dirname(pathcopy);
 
-		struct oscap_file_entry_list * files = xccdf_policy_model_get_systems_and_files(policy_model);
-		struct oscap_file_entry_iterator *files_it = oscap_file_entry_list_get_files(files);
-		bool fetch_option_suggested = false;
-		char *printable_path = NULL;
-		while (oscap_file_entry_iterator_has_more(files_it)) {
-			file_entry = (struct oscap_file_entry *)oscap_file_entry_iterator_next(files_it);
-
-			// we only care about OVAL referenced files
-			if (strcmp(oscap_file_entry_get_system(file_entry), "http://oval.mitre.org/XMLSchema/oval-definitions-5"))
-				continue;
-
-			tmp_path = malloc(PATH_MAX * sizeof(char));
-			snprintf(tmp_path, PATH_MAX, "%s/%s", path, oscap_file_entry_get_file(file_entry));
-
-			if (stat(tmp_path, &sb)) {
-				if (oscap_acquire_url_is_supported(oscap_file_entry_get_file(file_entry))) {
-					// Strip out the 'path' for printing the url.
-					printable_path = (char *) oscap_file_entry_get_file(file_entry);
-
-					if (action->remote_resources) {
-						if (temp_dir == NULL)
-							temp_dir = oscap_acquire_temp_dir();
-						if (temp_dir == NULL) {
-							oscap_file_entry_iterator_free(files_it);
-							oscap_file_entry_list_free(files);
-							free(pathcopy);
-							free(tmp_path);
-							goto cleanup;
-						}
-
-						char *file = oscap_acquire_url_download(temp_dir, printable_path);
-						if (file != NULL) {
-							contents[idx] = malloc(sizeof(struct oscap_content_resource));
-							contents[idx]->href = strdup(printable_path);
-							contents[idx]->filename = file;
-							idx++;
-							contents = realloc(contents, (idx + 1) * sizeof(struct oscap_content_resource *));
-							contents[idx] = NULL;
-							free(tmp_path);
-							continue;
-						}
-					}
-					else if (!fetch_option_suggested) {
-						printf("This content points out to the remote resources. Use `--fetch-remote-resources' option to download them.\n");
-						fetch_option_suggested = true;
-					}
-				}
-				else
-					printable_path = tmp_path;
-				fprintf(stderr, "WARNING: Skipping %s file which is referenced from XCCDF content\n", printable_path);
-				free(tmp_path);
-			}
-			else {
-				contents[idx] = malloc(sizeof(struct oscap_content_resource));
-				contents[idx]->href = strdup(oscap_file_entry_get_file(file_entry));
-				contents[idx]->filename = tmp_path;
-				idx++;
-				contents = realloc(contents, (idx + 1) * sizeof(struct oscap_content_resource *));
-				contents[idx] = NULL;
-			}
-		}
-		oscap_file_entry_iterator_free(files_it);
-		oscap_file_entry_list_free(files);
+		contents = xccdf_policy_get_oval_resources(policy_model, action->remote_resources, path, &temp_dir);
 		free(pathcopy);
+
+		if (contents == NULL)
+			goto cleanup;
 	} else if (action->f_ovals) {
 		/* Use OVAL files from command-line */
 		contents = malloc(sizeof(struct oscap_content_resource *));
