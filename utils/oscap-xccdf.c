@@ -558,7 +558,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 		if (contents == NULL)
 			goto cleanup;
-	} else if (action->f_ovals) {
+	} else {
 		/* Use OVAL files from command-line */
 		contents = malloc(sizeof(struct oscap_content_resource *));
 		contents[0] = NULL;
