@@ -984,10 +984,11 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	struct oval_definition_model **def_mod_lst = NULL;
 	struct oval_agent_session **ag_ses_lst = NULL;
 	struct xccdf_result *xres;
-	char **oval_file_lst = NULL;
+	struct oscap_content_resource **oval_resources = NULL;
 	int of_cnt = 0, i, ret;
 	int result = OSCAP_ERROR;
 	char *doc_version = NULL;
+	char *temp_dir = NULL;
 
 	/* validate the XCCDF document */
 	if (action->validate) {
@@ -1032,48 +1033,22 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	}
 
 	if (action->f_ovals != NULL) {
-		oval_file_lst = action->f_ovals;
-		for (of_cnt = 0; oval_file_lst[of_cnt]; of_cnt++);
+		oval_resources = command_line_get_oval_resources(action->f_ovals);
 	} else {
 		char *xccdf_path_cpy, *dir_path;
-		struct oscap_file_entry_list *files;
-		struct oscap_file_entry_iterator *files_itr;
-
-		oval_file_lst = malloc(sizeof(char *));
-		oval_file_lst[0] = NULL;
-		of_cnt = 0;
 
 		xccdf_path_cpy = strdup(action->f_xccdf);
 		dir_path = dirname(xccdf_path_cpy);
 
-		files = xccdf_policy_model_get_systems_and_files(policy_model);
-		files_itr = oscap_file_entry_list_get_files(files);
-		while (oscap_file_entry_iterator_has_more(files_itr)) {
-			struct oscap_file_entry *entry;
-			char oval_path[PATH_MAX + 1];
-			struct stat sb;
-
-			entry = (struct oscap_file_entry *) oscap_file_entry_iterator_next(files_itr);
-
-			// we only care about OVAL referenced files
-			if (strcmp(oscap_file_entry_get_system(entry), "http://oval.mitre.org/XMLSchema/oval-definitions-5"))
-				continue;
-
-			snprintf(oval_path, sizeof(oval_path), "%s/%s", dir_path, oscap_file_entry_get_file(entry));
-			if (stat(oval_path, &sb)) {
-				fprintf(stderr, "warning: can't find file '%s' (referenced from XCCDF).\n", oval_path);
-			} else {
-				oval_file_lst[of_cnt++] = strdup(oval_path);
-				oval_file_lst = realloc(oval_file_lst, (of_cnt + 1) * sizeof(char *));
-				oval_file_lst[of_cnt] = NULL;
-			}
-		}
-		oscap_file_entry_iterator_free(files_itr);
-		oscap_file_entry_list_free(files);
+		oval_resources = xccdf_policy_get_oval_resources(policy_model, action->remote_resources, dir_path, &temp_dir);
 		free(xccdf_path_cpy);
-	}
 
-	if (!oval_file_lst[0]) {
+		if (oval_resources == NULL)
+			goto cleanup;
+	}
+	for (of_cnt = 0; oval_resources[of_cnt]; of_cnt++);
+
+	if (oval_resources[0] == NULL) {
 		fprintf(stderr, "No OVAL definition files present, aborting.\n");
 		goto cleanup;
 	}
@@ -1082,15 +1057,15 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	ag_ses_lst = calloc(of_cnt, sizeof(struct oval_agent_session *));
 
 	for (i = 0; i < of_cnt; i++) {
-		def_mod_lst[i] = oval_definition_model_import(oval_file_lst[i]);
+		def_mod_lst[i] = oval_definition_model_import(oval_resources[i]->filename);
 		if (def_mod_lst[i] == NULL) {
-			fprintf(stderr, "Failed to import definitions model from '%s'.\n", oval_file_lst[i]);
+			fprintf(stderr, "Failed to import definitions model from '%s'.\n", oval_resources[i]->filename);
 			goto cleanup;
 		}
 
-		ag_ses_lst[i] = oval_agent_new_session(def_mod_lst[i], basename(oval_file_lst[i]));
+		ag_ses_lst[i] = oval_agent_new_session(def_mod_lst[i], oval_resources[i]->href);
 		if (ag_ses_lst[i] == NULL) {
-			fprintf(stderr, "Failed to create new agent session for '%s'.\n", oval_file_lst[i]);
+			fprintf(stderr, "Failed to create new agent session for '%s'.\n", oval_resources[i]->href);
 			goto cleanup;
 		}
 
@@ -1151,14 +1126,24 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 		free(def_mod_lst);
 	}
 
-	if (oval_file_lst && oval_file_lst != action->f_ovals) {
-		for (i = 0; i < of_cnt; i++)
-			free(oval_file_lst[i]);
-		free(oval_file_lst);
+	if (oval_resources) {
+		for (int i=0; oval_resources[i]; i++) {
+			free(oval_resources[i]->filename);
+			free(oval_resources[i]->href);
+			free(oval_resources[i]);
+		}
+		free(oval_resources);
 	}
 
 	if (policy_model)
 		xccdf_policy_model_free(policy_model);
+
+	if (temp_dir)
+	{
+		// recursively remove the directory we created for data stream split
+		nftw(temp_dir, __unlink_cb, 64, FTW_DEPTH | FTW_PHYS | FTW_MOUNT);
+		free(temp_dir);
+	}
 
 	return result;
 }
