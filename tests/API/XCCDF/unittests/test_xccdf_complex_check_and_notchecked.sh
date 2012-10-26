@@ -13,7 +13,7 @@ $OSCAP xccdf eval --results $result $srcdir/${name}.xccdf.xml 2> $stderr
 echo "Stderr file = $stderr"
 echo "Result file = $result"
 [ -f $stderr ]
-[ "WARNING: Skipping ./_non_existent_.oval.xml file which is referenced from XCCDF content" == "`cat $stderr`" ]
+[ "WARNING: Skipping $srcdir/_non_existent_.oval.xml file which is referenced from XCCDF content" == "`cat $stderr`" ]
 rm -rf $stderr
 
 $OSCAP xccdf validate-xml $result
