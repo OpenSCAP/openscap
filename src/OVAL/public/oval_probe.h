@@ -31,6 +31,7 @@
 #ifndef OVAL_PROBE_H
 #define OVAL_PROBE_H
 
+#include <stdio.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include "oval_definitions.h"
