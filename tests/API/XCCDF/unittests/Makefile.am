@@ -61,6 +61,8 @@ EXTRA_DIST += \
 	test_report_check_with_empty_selector.sh \
 	test_report_check_with_empty_selector.xccdf.xml.result.xml \
 	test_report_check_with_empty_selector.oval.xml.result.xml \
+	test_xccdf_complex_check_and_notchecked.sh \
+	test_xccdf_complex_check_and_notchecked.xccdf.xml \
 	test_report_without_xsl_fails_gracefully.sh \
 	test_xccdf_complex_check_nand.xccdf.xml \
 	test_xccdf_complex_check_single_negate.xccdf.xml \
