@@ -364,7 +364,8 @@ static xccdf_test_result_type_t _resolve_operation(int A, int B, xccdf_bool_oper
 
     /* No test result can end with 0
      */
-    if ((A == 0) || (B == 0)) {
+    if ((A == 0) || (B == 0)
+	|| A > XCCDF_RESULT_INFORMATIONAL || B > XCCDF_RESULT_INFORMATIONAL) {
 	oscap_dlprintf(DBG_E, "Bad test results %d, %d.\n", A, B);
 	return 0;
     }
