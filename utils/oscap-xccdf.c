@@ -338,6 +338,19 @@ struct oscap_content_resource {
 	char *filename; /* Points to the filename on the filesystem. */
 };
 
+static void
+oscap_content_resources_free(struct oscap_content_resource **resources)
+{
+	if (resources) {
+		for (int i=0; resources[i]; i++) {
+			free(resources[i]->filename);
+			free(resources[i]->href);
+			free(resources[i]);
+		}
+		free(resources);
+	}
+}
+
 static struct oscap_content_resource **
 xccdf_policy_get_oval_resources(struct xccdf_policy_model *policy_model, bool allow_remote_resources, const char *path, char **temp_dir)
 {
@@ -387,12 +400,7 @@ xccdf_policy_get_oval_resources(struct xccdf_policy_model *policy_model, bool al
 						oscap_file_entry_iterator_free(files_it);
 						oscap_file_entry_list_free(files);
 						free(tmp_path);
-						for (int i = 0; resources[i]; i++) {
-							free(resources[i]->filename);
-							free(resources[i]->href);
-							free(resources[i]);
-						}
-						free(resources);
+						oscap_content_resources_free(resources);
 						return NULL;
 					}
 
@@ -930,14 +938,7 @@ cleanup:
 	}
 
 	/* OVAL and SCE files */
-	if (contents) {
-		for (int i=0; contents[i]; i++) {
-			free(contents[i]->filename);
-			free(contents[i]->href);
-			free(contents[i]);
-		}
-		free(contents);
-	}
+	oscap_content_resources_free(contents);
 
 	if (policy_model)
 		xccdf_policy_model_free(policy_model);
@@ -1126,14 +1127,7 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 		free(def_mod_lst);
 	}
 
-	if (oval_resources) {
-		for (int i=0; oval_resources[i]; i++) {
-			free(oval_resources[i]->filename);
-			free(oval_resources[i]->href);
-			free(oval_resources[i]);
-		}
-		free(oval_resources);
-	}
+	oscap_content_resources_free(oval_resources);
 
 	if (policy_model)
 		xccdf_policy_model_free(policy_model);
