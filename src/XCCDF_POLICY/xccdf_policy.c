@@ -338,8 +338,6 @@ static xccdf_test_result_type_t _resolve_operation(int A, int B, xccdf_bool_oper
 
     xccdf_test_result_type_t value = 0;
 
-    /* Bit table for operation AND
-     */
     xccdf_test_result_type_t RESULT_TABLE_AND[9][9] = {
         /*  P  F  E  U  N  N  N  P */
         {0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -354,8 +352,6 @@ static xccdf_test_result_type_t _resolve_operation(int A, int B, xccdf_bool_oper
 
         {0, 1, 2, 3, 4, 1, 1, 1, 1}  /* P */};
 
-    /* Bit table for operation OR
-     */
     xccdf_test_result_type_t RESULT_TABLE_OR[9][9] = {
         /*  P  F  E  U  N  N  N  P */
         {0, 0, 0, 0, 0, 0, 0, 0, 0},
