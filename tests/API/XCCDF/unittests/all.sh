@@ -26,6 +26,7 @@ test_run "Check Processing Algorithm -- none selected for candidate" $srcdir/tes
 test_run "Check Processing Algorithm -- none check-content-ref resolvable." $srcdir/test_xccdf_check_processing_invalid_content_refs.sh
 test_run "Deriving XCCDF Check Results from OVAL Definition Results" $srcdir/test_deriving_xccdf_result_from_oval.sh
 test_run "Deriving XCCDF Check Results from OVAL Definition Results 2" $srcdir/test_deriving_xccdf_result_from_oval2.sh
+test_run "Deriving XCCDF Check Results from OVAL without definition." $srcdir/test_oval_without_definition.sh
 test_run "Deriving XCCDF Check Results from OVAL Definition Results + multi-check" $srcdir/test_deriving_xccdf_result_from_oval_multicheck.sh
 test_run "Multiple oval files with the same basename." $srcdir/test_multiple_oval_files_with_same_basename.sh
 test_run "Unsupported Check System" $srcdir/test_xccdf_check_unsupported_check_system.sh

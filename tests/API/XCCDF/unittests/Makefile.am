@@ -58,6 +58,9 @@ EXTRA_DIST += \
 	test_deriving_xccdf_result_from_oval_pass.oval.xml \
 	test_multiple_oval_files_with_same_basename.sh \
 	test_multiple_oval_files_with_same_basename.xccdf.xml \
+	test_oval_without_definition.oval.xml \
+	test_oval_without_definition.sh \
+	test_oval_without_definition.xccdf.xml \
 	test_report_check_with_empty_selector.sh \
 	test_report_check_with_empty_selector.xccdf.xml.result.xml \
 	test_report_check_with_empty_selector.oval.xml.result.xml \
