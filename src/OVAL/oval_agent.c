@@ -429,6 +429,12 @@ oval_agent_eval_multi_check(oval_agent_session_t *sess)
 	xccdf_test_result_type_t final_result = 0;
 
 	oval_def_it = oval_definition_model_get_definitions(sess->def_model);
+	if (!oval_definition_iterator_has_more(oval_def_it)) {
+		// We are evaluating oval, which has no definitions. We are in state
+		// which is not explicitly covered in SCAP 1.2 Specification, we are
+		// better to report error.
+		final_result = XCCDF_RESULT_ERROR;
+	}
 	while (oval_definition_iterator_has_more(oval_def_it)) {
 		oval_def = oval_definition_iterator_next(oval_def_it);
 		id = oval_definition_get_id(oval_def);
