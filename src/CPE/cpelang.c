@@ -165,7 +165,7 @@ static bool cpe_testexpr_evaluate(const struct cpe_testexpr* expr, cpe_check_fn 
 		ret = dict_cb(cpe_testexpr_get_meta_cpe(expr), usr);
 		break;
 	case CPE_LANG_OPER_CHECK:
-		ret = check_cb(cpe_testexpr_get_meta_check_href(expr), cpe_testexpr_get_meta_check_id(expr), usr);
+		ret = check_cb(cpe_testexpr_get_meta_check_system(expr), cpe_testexpr_get_meta_check_href(expr), cpe_testexpr_get_meta_check_id(expr), usr);
 		break;
 	default:
 		assert(false);

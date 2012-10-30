@@ -801,8 +801,10 @@ struct cpe_check_cb_usr
 	struct cpe_lang_model* lang_model;
 };
 
-static bool _xccdf_policy_cpe_check_cb(const char* href, const char* name, void* usr)
+static bool _xccdf_policy_cpe_check_cb(const char* system, const char* href, const char* name, void* usr)
 {
+	// FIXME: Check that system is OVAL
+
 	struct cpe_check_cb_usr* cb_usr = (struct cpe_check_cb_usr*)usr;
 
 	struct xccdf_policy_model* model = cb_usr->model;

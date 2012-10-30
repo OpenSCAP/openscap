@@ -352,12 +352,14 @@ const char * cpe_name_supported(void);
 /**
  * Shared callback definition used to evaluate checks to perform applicability tests
  *
- * first argument = href
- * second argument = check name / id
- * third argument = arbitrary pointer / user data
+ * first arg = system
+ * second arg = href
+ * third arg = check name / id
+ * fourth arg = arbitrary pointer / user data
+ *
  * returns true = applicable, false = not applicable
  */
-typedef bool *(*cpe_check_fn) (const char*, const char*, void*);
+typedef bool *(*cpe_check_fn) (const char*, const char*, const char*, void*);
 
 /**
  * Shared callback definition used to match CPE names to perform applicability tests

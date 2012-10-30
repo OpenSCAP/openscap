@@ -142,6 +142,13 @@ struct cpe_testexpr_iterator *cpe_testexpr_get_meta_expr(const struct cpe_testex
 const struct cpe_name *cpe_testexpr_get_meta_cpe(const struct cpe_testexpr *item);
 
 /**
+ * Get check system to evaluate
+ * Only valid for CPE_LANG_OPER_CHECK.
+ * @memberof cpe_testexpr
+ */
+const char* cpe_testexpr_get_meta_check_system(const struct cpe_testexpr *item);
+
+/**
  * Get check href to evaluate
  * Only valid for CPE_LANG_OPER_CHECK.
  * @memberof cpe_testexpr

@@ -769,6 +769,14 @@ const struct cpe_name *cpe_testexpr_get_meta_cpe(const struct cpe_testexpr *expr
 	return expr->meta.cpe;
 }
 
+const char* cpe_testexpr_get_meta_check_system(const struct cpe_testexpr *expr)
+{
+	assert(expr != NULL);
+	if ((expr->oper & CPE_LANG_OPER_MASK) != CPE_LANG_OPER_CHECK)
+		return NULL;
+	return expr->meta.check.system;
+}
+
 const char* cpe_testexpr_get_meta_check_href(const struct cpe_testexpr *expr)
 {
 	assert(expr != NULL);
