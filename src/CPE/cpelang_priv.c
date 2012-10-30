@@ -96,6 +96,7 @@ OSCAP_GETTER(const struct cpe_testexpr*, cpe_platform, expr)
 #define ATTR_NEGATE_STR     BAD_CAST "negate"
 #define ATTR_ID_STR         BAD_CAST "id"
 #define ATTR_HREF_STR       BAD_CAST "href"
+#define ATTR_SYSTEM_STR     BAD_CAST "system"
 #define ATTR_ID_REF_STR     BAD_CAST "id-ref"
 #define VAL_AND_STR     BAD_CAST "AND"
 #define VAL_OR_STR      BAD_CAST "OR"
@@ -517,6 +518,7 @@ struct cpe_testexpr *cpe_testexpr_parse(xmlTextReaderPtr reader)
 				xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 			struct cpe_testexpr *subexpr = cpe_testexpr_new();
 			subexpr->oper = CPE_LANG_OPER_CHECK;
+			subexpr->meta.check.system = (char*)xmlTextReaderGetAttribute(reader, ATTR_SYSTEM_STR);
 			subexpr->meta.check.href = (char*)xmlTextReaderGetAttribute(reader, ATTR_HREF_STR);
 			subexpr->meta.check.id = (char*)xmlTextReaderGetAttribute(reader, ATTR_ID_REF_STR);
 			oscap_list_add(ret->meta.expr, subexpr);
@@ -639,6 +641,7 @@ void cpe_testexpr_export(const struct cpe_testexpr *expr, xmlTextWriterPtr write
 	}
 	else if (expr->oper == CPE_LANG_OPER_CHECK) {
 		xmlTextWriterStartElementNS(writer, NULL, TAG_CHECK_FACT_REF_STR, NULL);
+		xmlTextWriterWriteAttribute(writer, ATTR_SYSTEM_STR, BAD_CAST expr->meta.check.system);
 		xmlTextWriterWriteAttribute(writer, ATTR_HREF_STR, BAD_CAST expr->meta.check.href);
 		xmlTextWriterWriteAttribute(writer, ATTR_ID_REF_STR, BAD_CAST expr->meta.check.id);
 		xmlTextWriterEndElement(writer);
