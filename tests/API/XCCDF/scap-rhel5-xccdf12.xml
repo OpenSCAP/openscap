@@ -18,6 +18,7 @@
       <logical-test xmlns="http://cpe.mitre.org/language/2.0" operator="AND" negate="false">
         <fact-ref name="cpe:/a:test:test"/>
         <fact-ref name="cpe:2.3:a:test:test:66.6:\*\*\\:*:en-US:d:e:f:g"/>
+        <check-fact-ref system="system" href="href" id-ref="id-ref"/>
       </logical-test>
     </platform>
   </platform-specification>
