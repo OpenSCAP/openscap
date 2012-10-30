@@ -636,37 +636,43 @@ void cpe_testexpr_export(const struct cpe_testexpr *expr, xmlTextWriterPtr write
 		xmlTextWriterStartElementNS(writer, NULL, TAG_FACT_REF_STR, NULL);
 		xmlTextWriterWriteAttribute(writer, ATTR_NAME_STR, BAD_CAST cpe_name_get_as_str(expr->meta.cpe));
 		xmlTextWriterEndElement(writer);
-		return;
-	} else {
+	}
+	else if (expr->oper == CPE_LANG_OPER_CHECK) {
+		xmlTextWriterStartElementNS(writer, NULL, TAG_CHECK_FACT_REF_STR, NULL);
+		xmlTextWriterWriteAttribute(writer, ATTR_HREF_STR, BAD_CAST expr->meta.check.href);
+		xmlTextWriterWriteAttribute(writer, ATTR_ID_REF_STR, BAD_CAST expr->meta.check.id);
+		xmlTextWriterEndElement(writer);
+	}
+	else {
 		xmlTextWriterStartElementNS(writer, NULL, TAG_LOGICAL_TEST_STR, CPELANG_NS);
+
+		if (expr->oper == CPE_LANG_OPER_AND) {
+			xmlTextWriterWriteAttribute(writer, ATTR_OPERATOR_STR, VAL_AND_STR);
+			xmlTextWriterWriteAttribute(writer, ATTR_NEGATE_STR, VAL_FALSE_STR);
+		} else if (expr->oper == CPE_LANG_OPER_OR) {
+			xmlTextWriterWriteAttribute(writer, ATTR_OPERATOR_STR, VAL_OR_STR);
+			xmlTextWriterWriteAttribute(writer, ATTR_NEGATE_STR, VAL_FALSE_STR);
+		} else if (expr->oper == CPE_LANG_OPER_NOR) {
+			xmlTextWriterWriteAttribute(writer, ATTR_OPERATOR_STR, VAL_OR_STR);
+			xmlTextWriterWriteAttribute(writer, ATTR_NEGATE_STR, VAL_TRUE_STR);
+		} else if (expr->oper == CPE_LANG_OPER_NAND) {
+			xmlTextWriterWriteAttribute(writer, ATTR_OPERATOR_STR, VAL_AND_STR);
+			xmlTextWriterWriteAttribute(writer, ATTR_NEGATE_STR, VAL_TRUE_STR);
+		} else {
+			/* can this happen? */
+			return;
+		}
+
+		if (expr->meta.expr == NULL)
+			return;
+		OSCAP_FOREACH(cpe_testexpr, subexpr, oscap_iterator_new(expr->meta.expr),
+			cpe_testexpr_export(subexpr, writer);
+		);
+		xmlTextWriterEndElement(writer);
 	}
 
-	if (expr->oper == CPE_LANG_OPER_AND) {
-		xmlTextWriterWriteAttribute(writer, ATTR_OPERATOR_STR, VAL_AND_STR);
-		xmlTextWriterWriteAttribute(writer, ATTR_NEGATE_STR, VAL_FALSE_STR);
-	} else if (expr->oper == CPE_LANG_OPER_OR) {
-		xmlTextWriterWriteAttribute(writer, ATTR_OPERATOR_STR, VAL_OR_STR);
-		xmlTextWriterWriteAttribute(writer, ATTR_NEGATE_STR, VAL_FALSE_STR);
-	} else if (expr->oper == CPE_LANG_OPER_NOR) {
-		xmlTextWriterWriteAttribute(writer, ATTR_OPERATOR_STR, VAL_OR_STR);
-		xmlTextWriterWriteAttribute(writer, ATTR_NEGATE_STR, VAL_TRUE_STR);
-	} else if (expr->oper == CPE_LANG_OPER_NAND) {
-		xmlTextWriterWriteAttribute(writer, ATTR_OPERATOR_STR, VAL_AND_STR);
-		xmlTextWriterWriteAttribute(writer, ATTR_NEGATE_STR, VAL_TRUE_STR);
-	} else {
-		/* can this happen? */
-		return;
-	}
-
-	if (expr->meta.expr == NULL)
-		return;
-	OSCAP_FOREACH(cpe_testexpr, subexpr, oscap_iterator_new(expr->meta.expr),
-		cpe_testexpr_export(subexpr, writer);
-	);
-	xmlTextWriterEndElement(writer);
 	if (xmlGetLastError() != NULL)
 		oscap_setxmlerr(xmlGetLastError());
-
 }
 
 /* End of private export functions
