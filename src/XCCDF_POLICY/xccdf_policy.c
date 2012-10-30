@@ -809,24 +809,33 @@ static bool _xccdf_policy_cpe_check_cb(const char* system, const char* href, con
 
 	struct xccdf_policy_model* model = cb_usr->model;
 	struct cpe_dict_model* dict = cb_usr->dict;
+	struct cpe_lang_model* lang_model = cb_usr->lang_model;
 
 	char* prefixed_href = NULL;
 
-	if (cb_usr->dict != NULL)
+	if (dict != NULL || lang_model != NULL)
 	{
-		// the href path is relative to the CPE dictionary, we need to figre out
-		// a "prefixed path" to deal with the case where CPE dict is not in CWD
-		const char* origin_file_c = cpe_dict_model_get_origin_file(dict);
+		char* origin_file = NULL;
+		const char* origin_file_c = NULL;
+
+		if (dict != NULL)
+		{
+			// the href path is relative to the CPE dictionary, we need to figre out
+			// a "prefixed path" to deal with the case where CPE dict is not in CWD
+			origin_file_c = cpe_dict_model_get_origin_file(dict);
+		}
+		else
+		{
+			// the href path is relative to the CPE2 dictionary, we need to figre out
+			// a "prefixed path" to deal with the case where CPE2 dict is not in CWD
+			origin_file_c = cpe_lang_model_get_origin_file(lang_model);
+		}
+
 		// we need to strdup because dirname potentially alters the string
-		char* origin_file = oscap_strdup(origin_file_c ? origin_file_c : "");
+		origin_file = oscap_strdup(origin_file_c ? origin_file_c : "");
 		const char* prefix_dirname = dirname(origin_file);
 		prefixed_href = oscap_sprintf("%s/%s", prefix_dirname, href);
 		oscap_free(origin_file);
-	}
-	else if (cb_usr->lang_model != NULL)
-	{
-		// FIXME: STUB!
-		prefixed_href = oscap_strdup(href);
 	}
 
 	struct oval_agent_session* session = (struct oval_agent_session*)oscap_htable_get(model->cpe_oval_sessions, prefixed_href);
