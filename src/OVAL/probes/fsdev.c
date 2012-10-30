@@ -408,3 +408,4 @@ int fsdev_fd(fsdev_t * lfs, int fd)
 
 	return fsdev_search(lfs, &st.st_dev);
 }
+/// @}

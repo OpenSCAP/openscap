@@ -47,6 +47,7 @@
 
 #include "oscap-tool.h"
 #include "oscap.h"
+#include "oscap_acquire.h"
 
 #include <ftw.h>
 
@@ -56,7 +57,7 @@ static int app_xccdf_resolve(const struct oscap_action *action);
 static int app_xccdf_export_oval_variables(const struct oscap_action *action);
 static bool getopt_xccdf(int argc, char **argv, struct oscap_action *action);
 static bool getopt_generate(int argc, char **argv, struct oscap_action *action);
-static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show, const char *oval_template, const char* sce_template);
+static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show, const char *oval_template, const char* sce_template, const char* profile);
 static int app_xccdf_xslt(const struct oscap_action *action);
 
 static struct oscap_module* XCCDF_SUBMODULES[];
@@ -82,8 +83,17 @@ static struct oscap_module XCCDF_RESOLVE = {
     .func = app_xccdf_resolve
 };
 
-static struct oscap_module XCCDF_VALIDATE = {
+static struct oscap_module XCCDF_VALIDATE_XML = {
     .name = "validate-xml",
+    .parent = &OSCAP_XCCDF_MODULE,
+    .summary = "Validate XCCDF XML content",
+    .usage = "xccdf-file.xml",
+    .opt_parser = getopt_xccdf,
+    .func = app_xccdf_validate
+};
+
+static struct oscap_module XCCDF_VALIDATE = {
+    .name = "validate",
     .parent = &OSCAP_XCCDF_MODULE,
     .summary = "Validate XCCDF XML content",
     .usage = "xccdf-file.xml",
@@ -119,8 +129,11 @@ static struct oscap_module XCCDF_EVAL = {
         "   --results-arf <file>\r\t\t\t\t - Write ARF (result data stream) into file.\n"
         "   --report <file>\r\t\t\t\t - Write HTML report into file.\n"
         "   --skip-valid \r\t\t\t\t - Skip validation.\n"
+	"   --fetch-remote-resources \r\t\t\t\t - Download remote content referenced by XCCDF.\n"
         "   --datastream-id <id> \r\t\t\t\t - ID of the datastream in the collection to use.\n"
-        "                        \r\t\t\t\t   (only applicable for source datastreams)",
+        "                        \r\t\t\t\t   (only applicable for source datastreams)\n"
+        "   --xccdf-id <id> \r\t\t\t\t - ID of XCCDF in the datastream that should be evaluated.\n"
+        "                   \r\t\t\t\t   (only applicable for source datastreams)",
     .opt_parser = getopt_xccdf,
     .func = app_evaluate_xccdf
 };
@@ -150,7 +163,8 @@ static struct oscap_module XCCDF_GEN_REPORT = {
         "\nOptions:\n"
         "   --result-id <id>\r\t\t\t\t - TestResult ID to be processed. Default is the most recent one.\n"
         "   --show <result-type*>\r\t\t\t\t - Rule results to show. Defaults to everything but notselected and notapplicable.\n"
-        "   --output <file>\r\t\t\t\t - Write the document into file.",
+        "   --output <file>\r\t\t\t\t - Write the document into file.\n"
+        "   --oval-template <template-string> - Template which will be used to obtain OVAL result files.\n",
     .opt_parser = getopt_xccdf,
     .user = "xccdf-report.xsl",
     .func = app_xccdf_xslt
@@ -211,6 +225,7 @@ static struct oscap_module* XCCDF_SUBMODULES[] = {
     &XCCDF_EVAL,
     &XCCDF_RESOLVE,
     &XCCDF_VALIDATE,
+    &XCCDF_VALIDATE_XML,
     &XCCDF_EXPORT_OVAL_VARIABLES,
     &XCCDF_GENERATE,
     NULL
@@ -225,9 +240,8 @@ static const char * RESULT_COLORS[] = {"", "32", "31", "1;31", "1;30", "1;37", "
 
 static char custom_stylesheet_path[PATH_MAX];
 
-static int callback_scr_rule(const struct oscap_reporter_message *msg, void *arg)
+static int callback_scr_rule(struct xccdf_rule *rule, void *arg)
 {
-	const struct xccdf_rule *rule = (const struct xccdf_rule *) oscap_reporter_message_get_user1ptr(msg);
 	const char * rule_id = xccdf_rule_get_id(rule);
 
 	/* is rule selected? we print only selected rules */
@@ -264,9 +278,8 @@ static int callback_scr_rule(const struct oscap_reporter_message *msg, void *arg
 	return 0;
 }
 
-static int callback_scr_result(const struct oscap_reporter_message *msg, void *arg)
+static int callback_scr_result(struct xccdf_rule_result *rule_result, void *arg)
 {
-	const struct xccdf_rule_result *rule_result = (const struct xccdf_rule_result *) oscap_reporter_message_get_user1ptr(msg);
 	xccdf_test_result_type_t result = xccdf_rule_result_get_result(rule_result);
 
 	/* is result from selected rule? we print only selected rules */
@@ -283,9 +296,8 @@ static int callback_scr_result(const struct oscap_reporter_message *msg, void *a
 	return 0;
 }
 
-static int callback_syslog_result(const struct oscap_reporter_message *msg, void *arg)
+static int callback_syslog_result(struct xccdf_rule_result *rule_result, void *arg)
 {
-	const struct xccdf_rule_result *rule_result = (const struct xccdf_rule_result *) oscap_reporter_message_get_user1ptr(msg);
 	xccdf_test_result_type_t result = xccdf_rule_result_get_result(rule_result);
 
 	/* do we log it? */
@@ -294,7 +306,6 @@ static int callback_syslog_result(const struct oscap_reporter_message *msg, void
 
 	/* yes we do */
 	const char * result_str = xccdf_test_result_type_get_text(result);
-	char sys_msg[1024];
 	const char * ident_id = NULL;
 	int priority = LOG_NOTICE;
 
@@ -307,8 +318,7 @@ static int callback_syslog_result(const struct oscap_reporter_message *msg, void
 	xccdf_ident_iterator_free(idents);
 
 	/* emit the message */
-	snprintf(sys_msg, sizeof(sys_msg),"Rule: %s, Ident: %s, Result: %s.", xccdf_rule_result_get_idref(rule_result), ident_id, result_str);
-	syslog(priority, sys_msg);
+	syslog(priority, "Rule: %s, Ident: %s, Result: %s.", xccdf_rule_result_get_idref(rule_result), ident_id, result_str);
 
 	return 0;
 }
@@ -321,6 +331,122 @@ static int __unlink_cb(const char *fpath, const struct stat *sb, int typeflag, s
 		perror(fpath);
 
 	return rv;
+}
+
+struct oscap_content_resource {
+	char *href;	/* Coresponds with xccdf:check-content-ref/@href. */
+	char *filename; /* Points to the filename on the filesystem. */
+};
+
+static void
+oscap_content_resources_free(struct oscap_content_resource **resources)
+{
+	if (resources) {
+		for (int i=0; resources[i]; i++) {
+			free(resources[i]->filename);
+			free(resources[i]->href);
+			free(resources[i]);
+		}
+		free(resources);
+	}
+}
+
+static struct oscap_content_resource **
+xccdf_policy_get_oval_resources(struct xccdf_policy_model *policy_model, bool allow_remote_resources, const char *path, char **temp_dir)
+{
+	struct oscap_content_resource **resources = NULL;
+	struct oscap_file_entry_list *files = NULL;
+	struct oscap_file_entry_iterator *files_it = NULL;
+	int idx = 0;
+	char *tmp_path;
+	char *printable_path;
+	bool fetch_option_suggested = false;
+
+	resources = malloc(sizeof(struct oscap_content_resource *));
+	resources[idx] = NULL;
+
+	files = xccdf_policy_model_get_systems_and_files(policy_model);
+	files_it = oscap_file_entry_list_get_files(files);
+	while (oscap_file_entry_iterator_has_more(files_it)) {
+		struct oscap_file_entry *file_entry;
+		struct stat sb;
+
+		file_entry = (struct oscap_file_entry *) oscap_file_entry_iterator_next(files_it);
+
+		// we only care about OVAL referenced files
+		if (strcmp(oscap_file_entry_get_system(file_entry), "http://oval.mitre.org/XMLSchema/oval-definitions-5"))
+			continue;
+
+		tmp_path = malloc(PATH_MAX * sizeof(char));
+		snprintf(tmp_path, PATH_MAX, "%s/%s", path, oscap_file_entry_get_file(file_entry));
+
+		if (stat(tmp_path, &sb) == 0) {
+			resources[idx] = malloc(sizeof(struct oscap_content_resource));
+			resources[idx]->href = strdup(oscap_file_entry_get_file(file_entry));
+			resources[idx]->filename = tmp_path;
+			idx++;
+			resources = realloc(resources, (idx + 1) * sizeof(struct oscap_content_resource *));
+			resources[idx] = NULL;
+		}
+		else {
+			if (oscap_acquire_url_is_supported(oscap_file_entry_get_file(file_entry))) {
+				// Strip out the 'path' for printing the url.
+				printable_path = (char *) oscap_file_entry_get_file(file_entry);
+
+				if (allow_remote_resources) {
+					if (*temp_dir == NULL)
+						*temp_dir = oscap_acquire_temp_dir();
+					if (*temp_dir == NULL) {
+						oscap_file_entry_iterator_free(files_it);
+						oscap_file_entry_list_free(files);
+						free(tmp_path);
+						oscap_content_resources_free(resources);
+						return NULL;
+					}
+
+					char *file = oscap_acquire_url_download(*temp_dir, printable_path);
+					if (file != NULL) {
+						resources[idx] = malloc(sizeof(struct oscap_content_resource));
+						resources[idx]->href = strdup(printable_path);
+						resources[idx]->filename = file;
+						idx++;
+						resources = realloc(resources, (idx + 1) * sizeof(struct oscap_content_resource *));
+						resources[idx] = NULL;
+						free(tmp_path);
+						continue;
+					}
+				}
+				else if (!fetch_option_suggested) {
+					printf("This content points out to the remote resources. Use `--fetch-remote-resources' option to download them.\n");
+					fetch_option_suggested = true;
+				}
+			}
+			else
+				printable_path = tmp_path;
+			fprintf(stderr, "WARNING: Skipping %s file which is referenced from XCCDF content\n", printable_path);
+			free(tmp_path);
+		}
+	}
+	oscap_file_entry_iterator_free(files_it);
+	oscap_file_entry_list_free(files);
+	return resources;
+}
+
+static struct oscap_content_resource **
+command_line_get_oval_resources(char **oval_filenames)
+{
+	struct oscap_content_resource **resources = malloc(sizeof(struct oscap_content_resource *));
+	resources[0] = NULL;
+
+	for (int i = 0; oval_filenames[i];) {
+		resources[i] = malloc(sizeof(struct oscap_content_resource));
+		resources[i]->href = strdup(basename(oval_filenames[i]));
+		resources[i]->filename = strdup(oval_filenames[i]);
+		i++;
+		resources = realloc(resources, (i + 1) * sizeof(struct oscap_content_resource *));
+		resources[i] = NULL;
+	}
+	return resources;
 }
 
 /**
@@ -338,11 +464,11 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	char * xccdf_pathcopy = NULL;
         void **def_models = NULL;
         void **sessions = NULL;
-	char ** oval_files = NULL;
+	struct oscap_content_resource **contents = NULL;
 	int idx = 0;
 	char* f_results = NULL;
 
-	char* temp_dir = 0;
+	char* temp_dir = NULL;
 
 	char* xccdf_file = NULL;
 	char* xccdf_doc_version = NULL;
@@ -353,18 +479,17 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	struct sce_parameters* sce_parameters = 0;
 #endif
 	int priority = LOG_NOTICE;
-	char msg[1024];
 
 	/* syslog message */
-	snprintf(msg, sizeof(msg),"Evaluation started. Content: %s, Profile: %s.", action->f_xccdf, action->profile);
-	syslog(priority, msg);
+	syslog(priority, "Evaluation started. Content: %s, Profile: %s.", action->f_xccdf, action->profile);
 
-	if (ds_is_sds(action->f_xccdf) == 0)
+	const bool sds_likely = ds_is_sds(action->f_xccdf) == 0;
+	if (sds_likely)
 	{
 		if (action->validate)
 		{
 			int ret;
-			if ((ret = oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_SDS, "1.2", (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout) != 0))
+			if ((ret = oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_SDS, "1.2", reporter, (void*)action) != 0))
 			{
 				if (ret==1)
 					validation_failed(action->f_xccdf, OSCAP_DOCUMENT_SDS, "1.2");
@@ -372,39 +497,35 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			}
 		}
 
-		temp_dir = strdup("/tmp/oscap.XXXXXX");
-		temp_dir = mkdtemp(temp_dir);
+		temp_dir = oscap_acquire_temp_dir();
+		if (temp_dir == NULL)
+			goto cleanup;
 
-		if (ds_sds_decompose(action->f_xccdf, action->f_datastream_id, temp_dir, "xccdf.xml") != 0)
+		if (ds_sds_decompose(action->f_xccdf, action->f_datastream_id, action->f_xccdf_id, temp_dir, "xccdf.xml") != 0)
 		{
 			fprintf(stdout, "Failed to decompose source datastream in '%s'\n", action->f_xccdf);
 			goto cleanup;
 		}
 
 		xccdf_file = malloc(PATH_MAX * sizeof(char));
-		sprintf(xccdf_file, "%s/%s", temp_dir, "xccdf.xml");
+		snprintf(xccdf_file, PATH_MAX, "%s/%s", temp_dir, "xccdf.xml");
 	}
 	else
 	{
 		xccdf_file = strdup(action->f_xccdf);
 	}
 
-
 	int ret;
 
 	const char* full_validation = getenv("OSCAP_FULL_VALIDATION");
 
 	/* Validate documents */
-	if( action->validate && (!temp_dir || full_validation)) {
+	if (action->validate && (!sds_likely || full_validation)) {
 		xccdf_doc_version = xccdf_detect_version(xccdf_file);
 		if (!xccdf_doc_version)
 			goto cleanup;
 
-		if ((ret=oscap_validate_document(xccdf_file,
-						 OSCAP_DOCUMENT_XCCDF,
-						 xccdf_doc_version,
-						 (action->verbosity >= 0 ? oscap_reporter_fd : NULL),
-						 stdout))) {
+		if ((ret=oscap_validate_document(xccdf_file, OSCAP_DOCUMENT_XCCDF, xccdf_doc_version, reporter, (void*) action))) {
 			if (ret==1)
 				validation_failed(xccdf_file, OSCAP_DOCUMENT_XCCDF, xccdf_doc_version);
 			goto cleanup;
@@ -447,68 +568,38 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 
 	/* Register callbacks */
-	if (action->verbosity >= 0) {
-		xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule, (void *) policy);
-		xccdf_policy_model_register_output_callback(policy_model, callback_scr_result, NULL);
-	}
+	xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule, (void *) policy);
+	xccdf_policy_model_register_output_callback(policy_model, callback_scr_result, NULL);
+
 	/* xccdf_policy_model_register_output_callback(policy_model, callback_syslog_result, NULL); */
 
 	/* Use OVAL files from policy model */
 	if (action->f_ovals == NULL) {
-		struct stat sb;
-		struct oscap_file_entry * file_entry;
-		char * tmp_path;
-
-		idx = 0;
-		oval_files = malloc(sizeof(char *));
-		oval_files[idx] = NULL;
-
 		char * pathcopy =  strdup(xccdf_file);
 		char * path = dirname(pathcopy);
 
-		struct oscap_file_entry_list * files = xccdf_policy_model_get_systems_and_files(policy_model);
-		struct oscap_file_entry_iterator *files_it = oscap_file_entry_list_get_files(files);
-		while (oscap_file_entry_iterator_has_more(files_it)) {
-			file_entry = (struct oscap_file_entry *)oscap_file_entry_iterator_next(files_it);
-
-			// we only care about OVAL referenced files
-			if (strcmp(oscap_file_entry_get_system(file_entry), "http://oval.mitre.org/XMLSchema/oval-definitions-5"))
-				continue;
-
-			tmp_path = malloc(PATH_MAX * sizeof(char));
-			sprintf(tmp_path, "%s/%s", path, oscap_file_entry_get_file(file_entry));
-
-			if (stat(tmp_path, &sb)) {
-				fprintf(stderr, "WARNING: Skipping %s file which is referenced from XCCDF content\n", tmp_path);
-				free(tmp_path);
-			}
-			else {
-				oval_files[idx] = tmp_path;
-				idx++;
-				oval_files = realloc(oval_files, (idx + 1) * sizeof(char *));
-				oval_files[idx] = NULL;
-			}
-		}
-		oscap_file_entry_iterator_free(files_it);
-		oscap_file_entry_list_free(files);
+		contents = xccdf_policy_get_oval_resources(policy_model, action->remote_resources, path, &temp_dir);
 		free(pathcopy);
+
+		if (contents == NULL)
+			goto cleanup;
 	} else
-		oval_files = action->f_ovals;
+		contents = command_line_get_oval_resources(action->f_ovals);
 
 
 	/* Validate OVAL files */
 	// we will only validate if the file doesn't come from a datastream
 	// or if full validation was explicitly requested
-	if (action->validate && (!temp_dir || full_validation)) {
-		for (idx=0; oval_files[idx]; idx++) {
+	if (action->validate && (!sds_likely || full_validation)) {
+		for (idx=0; contents[idx]; idx++) {
 			char *doc_version;
 
-			doc_version = oval_determine_document_schema_version((const char *) oval_files[idx], OSCAP_DOCUMENT_OVAL_DEFINITIONS);
-			if ((ret=oscap_validate_document(oval_files[idx],
-				OSCAP_DOCUMENT_OVAL_DEFINITIONS, (const char *) doc_version,
-				(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))) {
+			doc_version = oval_determine_document_schema_version((const char *) contents[idx]->filename, OSCAP_DOCUMENT_OVAL_DEFINITIONS);
+			if ((ret=oscap_validate_document(contents[idx]->filename, OSCAP_DOCUMENT_OVAL_DEFINITIONS,
+				(const char *) doc_version, reporter, (void *) action))) {
+
 				if (ret==1)
-					validation_failed(oval_files[idx], OSCAP_DOCUMENT_OVAL_DEFINITIONS, doc_version);
+					validation_failed(contents[idx]->filename, OSCAP_DOCUMENT_OVAL_DEFINITIONS, doc_version);
 				free(doc_version);
 				goto cleanup;
 			}
@@ -517,18 +608,18 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 
 	/* Register checking engines */
-	for (idx=0; oval_files[idx]; idx++) {
+	for (idx=0; contents[idx]; idx++) {
 		/* file -> def_model */
-		struct oval_definition_model *tmp_def_model = oval_definition_model_import(oval_files[idx]);
+		struct oval_definition_model *tmp_def_model = oval_definition_model_import(contents[idx]->filename);
 		if (tmp_def_model == NULL) {
-			fprintf(stderr, "Failed to create OVAL definition model from: '%s'.\n", oval_files[idx]);
+			fprintf(stderr, "Failed to create OVAL definition model from: '%s'.\n", contents[idx]->filename);
 			goto cleanup;
 		}
 
 		/* def_model -> session */
-                struct oval_agent_session *tmp_sess = oval_agent_new_session(tmp_def_model, basename(oval_files[idx]));
+                struct oval_agent_session *tmp_sess = oval_agent_new_session(tmp_def_model, contents[idx]->href);
 		if (tmp_sess == NULL) {
-			fprintf(stderr, "Failed to create new OVAL agent session for: '%s'.\n", oval_files[idx]);
+			fprintf(stderr, "Failed to create new OVAL agent session for: '%s'.\n", contents[idx]->href);
 			goto cleanup;
 		}
 
@@ -604,8 +695,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		for (i=0; sessions[i]; i++) {
 			/* get result model and session name*/
 			struct oval_results_model *res_model = oval_agent_get_results_model(sessions[i]);
-			char * name =  malloc(PATH_MAX * sizeof(char));
 			const char* oval_results_directory = NULL;
+			char *name = NULL;
 
 			if (action->oval_results == true)
 			{
@@ -614,18 +705,31 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			else
 			{
 				if (!temp_dir)
-				{
-					temp_dir = strdup("/tmp/oscap.XXXXXX");
-					temp_dir = mkdtemp(temp_dir);
-				}
+					temp_dir = oscap_acquire_temp_dir();
+				if (temp_dir == NULL)
+					goto cleanup;
 
 				oval_results_directory = temp_dir;
 			}
 
-			sprintf(name, "%s/%s.result.xml", oval_results_directory, oval_agent_get_filename(sessions[i]));
+			char *escaped_url = NULL;
+			const char *filename = oval_agent_get_filename(sessions[i]);
+			if (oscap_acquire_url_is_supported(filename)) {
+				escaped_url = oscap_acquire_url_to_filename(filename);
+				if (escaped_url == NULL)
+					goto cleanup;
+			}
+
+			name = malloc(PATH_MAX * sizeof(char));
+			snprintf(name, PATH_MAX, "%s/%s.result.xml", oval_results_directory, escaped_url != NULL ? escaped_url : filename);
+			if (escaped_url != NULL)
+				free(escaped_url);
 
 			/* export result model to XML */
-			oval_results_model_export(res_model, NULL, name);
+			if (oval_results_model_export(res_model, NULL, name) == -1) {
+				free(name);
+				goto cleanup;
+			}
 
 			/* validate OVAL Results */
 			if (action->validate && full_validation) {
@@ -633,7 +737,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 				doc_version = oval_determine_document_schema_version((const char *) name, OSCAP_DOCUMENT_OVAL_RESULTS);
 				if (oscap_validate_document(name, OSCAP_DOCUMENT_OVAL_RESULTS, (const char *) doc_version,
-					(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+							    reporter, (void*)action)) {
 					validation_failed(name, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version);
 					free(name);
 					free(doc_version);
@@ -664,9 +768,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			sce_check_result_export(check_result, target);
 
 			if (action->validate && full_validation) {
-				if (oscap_validate_document(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0",
-					(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
-				{
+				if (oscap_validate_document(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0", reporter, (void*)action)) {
 					validation_failed(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0");
 					sce_check_result_iterator_free(it);
 					goto cleanup;
@@ -682,13 +784,12 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	if (!f_results && (action->f_report != NULL || action->f_results_arf != NULL))
 	{
 		if (!temp_dir)
-		{
-			temp_dir = strdup("/tmp/oscap.XXXXXX");
-			temp_dir = mkdtemp(temp_dir);
-		}
+			temp_dir = oscap_acquire_temp_dir();
+		if (temp_dir == NULL)
+			goto cleanup;
 
 		f_results = malloc(PATH_MAX * sizeof(char));
-		sprintf(f_results, "%s/xccdf-result.xml", temp_dir);
+		snprintf(f_results, PATH_MAX, "%s/xccdf-result.xml", temp_dir);
 	}
 
 	/* Export results */
@@ -699,11 +800,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		/* validate XCCDF Results */
 		if (action->validate && full_validation) {
 			/* we assume there is a same xccdf doc_version on input and output */
-			if (oscap_validate_document(f_results,
-						    OSCAP_DOCUMENT_XCCDF,
-						    xccdf_doc_version,
-						    (action->verbosity >= 0 ? oscap_reporter_fd : NULL),
-						    stdout)) {
+			if (oscap_validate_document(f_results, OSCAP_DOCUMENT_XCCDF, xccdf_doc_version, reporter, (void*) action)) {
 				validation_failed(f_results, OSCAP_DOCUMENT_XCCDF, xccdf_doc_version);
 				goto cleanup;
 			}
@@ -718,10 +815,11 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			                 "",
 			                 (action->oval_results ? "%.result.xml" : ""),
 #ifdef ENABLE_SCE
-			                 (action->sce_results  ? "%.result.xml" : "")
+			                 (action->sce_results  ? "%.result.xml" : ""),
 #else
-			                 ""
+			                 "",
 #endif
+			                 action->profile == NULL ? "" : action->profile
 			);
 	}
 
@@ -735,8 +833,15 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			struct oval_results_model *resmod;
 			struct oval_definition_model *defmod;
 			struct oval_variable_model_iterator *varmod_itr;
+			char *escaped_url = NULL;
 
 			sname = (char *) oval_agent_get_filename(sessions[i]);
+			if (oscap_acquire_url_is_supported(sname)) {
+				escaped_url = oscap_acquire_url_to_filename(sname);
+				if (escaped_url == NULL)
+					goto cleanup;
+				sname = escaped_url;
+			}
 			resmod = oval_agent_get_results_model(sessions[i]);
 			defmod = oval_results_model_get_definition_model(resmod);
 
@@ -750,6 +855,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 				snprintf(fname, sizeof(fname), "%s-%d.variables-%d.xml", sname, i, j++);
 				oval_variable_model_export(varmod, fname);
 			}
+			if (escaped_url != NULL)
+				free(escaped_url);
 			oval_variable_model_iterator_free(varmod_itr);
 		}
 	}
@@ -758,20 +865,19 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	{
 		char* sds_path = 0;
 
-		if (ds_is_sds(action->f_xccdf) == 0)
+		if (sds_likely)
 		{
 			sds_path = strdup(action->f_xccdf);
 		}
 		else
 		{
 			if (!temp_dir)
-			{
-				temp_dir = strdup("/tmp/oscap.XXXXXX");
-				temp_dir = mkdtemp(temp_dir);
-			}
+				temp_dir = oscap_acquire_temp_dir();
+			if (temp_dir == NULL)
+				goto cleanup;
 
 			sds_path =  malloc(PATH_MAX * sizeof(char));
-			sprintf(sds_path, "%s/sds.xml", temp_dir);
+			snprintf(sds_path, PATH_MAX, "%s/sds.xml", temp_dir);
 			ds_sds_compose_from_xccdf(action->f_xccdf, sds_path);
 		}
 
@@ -780,8 +886,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 		if (full_validation)
 		{
-			if (oscap_validate_document(action->f_results_arf, OSCAP_DOCUMENT_ARF, "1.1",
-				(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))
+			if (oscap_validate_document(action->f_results_arf, OSCAP_DOCUMENT_ARF, "1.1", reporter, (void*)action))
 			{
 				validation_failed(action->f_results_arf, OSCAP_DOCUMENT_ARF, "1.1");
 				ret = OSCAP_ERROR;
@@ -808,8 +913,7 @@ cleanup:
 		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 
 	/* syslog message */
-	snprintf(msg, sizeof(msg),"Evaluation finnished. Return code: %d, Base score %f.", result, base_score);
-	syslog(priority, msg);
+	syslog(priority, "Evaluation finnished. Return code: %d, Base score %f.", result, base_score);
 
 	if (xccdf_doc_version)
 		free(xccdf_doc_version);
@@ -833,13 +937,8 @@ cleanup:
 		free(sessions);
 	}
 
-	/* OVAL files imported from XCCDF */
-	if (oval_files && (oval_files != action->f_ovals)) {
-		for(int i=0; oval_files[i]; i++) {
-			free(oval_files[i]);
-		}
-		free(oval_files);
-	}
+	/* OVAL and SCE files */
+	oscap_content_resources_free(contents);
 
 	if (policy_model)
 		xccdf_policy_model_free(policy_model);
@@ -886,10 +985,11 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	struct oval_definition_model **def_mod_lst = NULL;
 	struct oval_agent_session **ag_ses_lst = NULL;
 	struct xccdf_result *xres;
-	char **oval_file_lst = NULL;
+	struct oscap_content_resource **oval_resources = NULL;
 	int of_cnt = 0, i, ret;
 	int result = OSCAP_ERROR;
 	char *doc_version = NULL;
+	char *temp_dir = NULL;
 
 	/* validate the XCCDF document */
 	if (action->validate) {
@@ -897,10 +997,7 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	        if (!doc_version)
         	        goto cleanup;
 
-		if ((ret=oscap_validate_document(action->f_xccdf,
-						 OSCAP_DOCUMENT_XCCDF,
-						 doc_version,
-						 (action->verbosity >= 0) ? oscap_reporter_fd : NULL, stderr))) {
+		if ((ret=oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version, reporter, (void*)action))) {
 			if (ret==1)
 				validation_failed(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version);
 			goto cleanup;
@@ -937,48 +1034,22 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	}
 
 	if (action->f_ovals != NULL) {
-		oval_file_lst = action->f_ovals;
-		for (of_cnt = 0; oval_file_lst[of_cnt]; of_cnt++);
+		oval_resources = command_line_get_oval_resources(action->f_ovals);
 	} else {
 		char *xccdf_path_cpy, *dir_path;
-		struct oscap_file_entry_list *files;
-		struct oscap_file_entry_iterator *files_itr;
-
-		oval_file_lst = malloc(sizeof(char *));
-		oval_file_lst[0] = NULL;
-		of_cnt = 0;
 
 		xccdf_path_cpy = strdup(action->f_xccdf);
 		dir_path = dirname(xccdf_path_cpy);
 
-		files = xccdf_policy_model_get_systems_and_files(policy_model);
-		files_itr = oscap_file_entry_list_get_files(files);
-		while (oscap_file_entry_iterator_has_more(files_itr)) {
-			struct oscap_file_entry *entry;
-			char oval_path[PATH_MAX + 1];
-			struct stat sb;
-
-			entry = (struct oscap_file_entry *) oscap_file_entry_iterator_next(files_itr);
-
-			// we only care about OVAL referenced files
-			if (strcmp(oscap_file_entry_get_system(entry), "http://oval.mitre.org/XMLSchema/oval-definitions-5"))
-				continue;
-
-			snprintf(oval_path, sizeof(oval_path), "%s/%s", dir_path, oscap_file_entry_get_file(entry));
-			if (stat(oval_path, &sb)) {
-				fprintf(stderr, "warning: can't find file '%s' (referenced from XCCDF).\n", oval_path);
-			} else {
-				oval_file_lst[of_cnt++] = strdup(oval_path);
-				oval_file_lst = realloc(oval_file_lst, (of_cnt + 1) * sizeof(char *));
-				oval_file_lst[of_cnt] = NULL;
-			}
-		}
-		oscap_file_entry_iterator_free(files_itr);
-		oscap_file_entry_list_free(files);
+		oval_resources = xccdf_policy_get_oval_resources(policy_model, action->remote_resources, dir_path, &temp_dir);
 		free(xccdf_path_cpy);
-	}
 
-	if (!oval_file_lst[0]) {
+		if (oval_resources == NULL)
+			goto cleanup;
+	}
+	for (of_cnt = 0; oval_resources[of_cnt]; of_cnt++);
+
+	if (oval_resources[0] == NULL) {
 		fprintf(stderr, "No OVAL definition files present, aborting.\n");
 		goto cleanup;
 	}
@@ -987,15 +1058,15 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	ag_ses_lst = calloc(of_cnt, sizeof(struct oval_agent_session *));
 
 	for (i = 0; i < of_cnt; i++) {
-		def_mod_lst[i] = oval_definition_model_import(oval_file_lst[i]);
+		def_mod_lst[i] = oval_definition_model_import(oval_resources[i]->filename);
 		if (def_mod_lst[i] == NULL) {
-			fprintf(stderr, "Failed to import definitions model from '%s'.\n", oval_file_lst[i]);
+			fprintf(stderr, "Failed to import definitions model from '%s'.\n", oval_resources[i]->filename);
 			goto cleanup;
 		}
 
-		ag_ses_lst[i] = oval_agent_new_session(def_mod_lst[i], basename(oval_file_lst[i]));
+		ag_ses_lst[i] = oval_agent_new_session(def_mod_lst[i], oval_resources[i]->href);
 		if (ag_ses_lst[i] == NULL) {
-			fprintf(stderr, "Failed to create new agent session for '%s'.\n", oval_file_lst[i]);
+			fprintf(stderr, "Failed to create new agent session for '%s'.\n", oval_resources[i]->href);
 			goto cleanup;
 		}
 
@@ -1015,7 +1086,14 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 		struct oval_variable_model_iterator *var_mod_itr;
 
 		j = 0;
+		char *escaped_url = NULL;
 		ses_name = (char *) oval_agent_get_filename(ag_ses_lst[i]);
+		if (oscap_acquire_url_is_supported(ses_name)) {
+			escaped_url = oscap_acquire_url_to_filename(ses_name);
+			if (escaped_url == NULL)
+				goto cleanup;
+			ses_name = escaped_url;
+		}
 
 		var_mod_itr = oval_definition_model_get_variable_models(def_mod_lst[i]);
 		while (oval_variable_model_iterator_has_more(var_mod_itr)) {
@@ -1027,6 +1105,8 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 			oval_variable_model_export(var_mod, fname);
 		}
 		oval_variable_model_iterator_free(var_mod_itr);
+		if (escaped_url != NULL)
+			free(escaped_url);
 	}
 
 	result = OSCAP_OK;
@@ -1047,14 +1127,17 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 		free(def_mod_lst);
 	}
 
-	if (oval_file_lst && oval_file_lst != action->f_ovals) {
-		for (i = 0; i < of_cnt; i++)
-			free(oval_file_lst[i]);
-		free(oval_file_lst);
-	}
+	oscap_content_resources_free(oval_resources);
 
 	if (policy_model)
 		xccdf_policy_model_free(policy_model);
+
+	if (temp_dir)
+	{
+		// recursively remove the directory we created for data stream split
+		nftw(temp_dir, __unlink_cb, 64, FTW_DEPTH | FTW_PHYS | FTW_MOUNT);
+		free(temp_dir);
+	}
 
 	return result;
 }
@@ -1081,11 +1164,7 @@ int app_xccdf_resolve(const struct oscap_action *action)
 			return OSCAP_ERROR;
 		}
 
-		if (oscap_validate_document(action->f_xccdf,
-					    OSCAP_DOCUMENT_XCCDF,
-					    doc_version,
-					    (action->verbosity >= 0) ? oscap_reporter_fd : NULL,
-					    stderr) != 0) {
+		if (oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version, reporter, (void*) action) != 0) {
 			validation_failed(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version);
 			goto cleanup;
 		}
@@ -1111,14 +1190,9 @@ int app_xccdf_resolve(const struct oscap_action *action)
 				/* validate exported results */
 				const char* full_validation = getenv("OSCAP_FULL_VALIDATION");
 				if (action->validate && full_validation) {
-
 					/* reuse doc_version from unresolved document
 					   it should be same in resolved one */
-					if (oscap_validate_document(action->f_results,
-								    OSCAP_DOCUMENT_XCCDF,
-								    doc_version,
-								    (action->verbosity >= 0 ? oscap_reporter_fd : NULL),
-								    stdout)) {
+					if (oscap_validate_document(action->f_results, OSCAP_DOCUMENT_XCCDF, doc_version, reporter, (void*)action)) {
 						validation_failed(action->f_results, OSCAP_DOCUMENT_XCCDF, doc_version);
 						ret = OSCAP_ERROR;
 					}
@@ -1140,26 +1214,41 @@ cleanup:
 	return ret;
 }
 
-static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show, const char *oval_template, const char *sce_template)
+static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show, const char *oval_template, const char *sce_template, const char* profile)
 {
-    const char *params[] = { "result-id", id, "show", show, "verbosity", "", "oval-template", oval_template, "sce-template", sce_template, NULL };
-    return app_xslt(infile, "xccdf-report.xsl", outfile, params);
+	const char *params[] = {
+		"result-id",         id,
+		"show",              show,
+		"profile",           profile,
+		"oval-template",     oval_template,
+		"sce-template",      sce_template,
+		"verbosity",         "",
+		"hide-profile-info", NULL,
+		NULL };
+
+	return app_xslt(infile, "xccdf-report.xsl", outfile, params);
 }
 
 int app_xccdf_xslt(const struct oscap_action *action)
 {
     assert(action->module->user);
+
+	const char *oval_template = action->oval_template;
+	if (action->module == &XCCDF_GEN_REPORT && oval_template == NULL)
+		// If generating the report and the option is missing -> use defaults
+		oval_template = "%.result.xml";
+
     const char *params[] = {
         "result-id",         action->id,
         "show",              action->show,
         "profile",           action->profile,
         "template",          action->tmpl,
         "format",            action->format,
-        "oval-template",     action->oval_template,
+        "oval-template",     oval_template,
 #ifdef ENABLE_SCE
         "sce-template",      action->sce_template,
 #endif
-        "verbosity",         action->verbosity >= 0 ? "1" : "",
+        "verbosity",         "",
         "hide-profile-info", action->hide_profile_info ? "yes" : NULL,
         NULL };
 
@@ -1194,6 +1283,7 @@ enum oval_opt {
     XCCDF_OPT_RESULT_FILE = 1,
     XCCDF_OPT_RESULT_FILE_ARF,
     XCCDF_OPT_DATASTREAM_ID,
+    XCCDF_OPT_XCCDF_ID,
     XCCDF_OPT_PROFILE,
     XCCDF_OPT_REPORT_FILE,
     XCCDF_OPT_SHOW,
@@ -1223,6 +1313,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"results", 		required_argument, NULL, XCCDF_OPT_RESULT_FILE},
 		{"results-arf",		required_argument, NULL, XCCDF_OPT_RESULT_FILE_ARF},
 		{"datastream-id",		required_argument, NULL, XCCDF_OPT_DATASTREAM_ID},
+		{"xccdf-id",		required_argument, NULL, XCCDF_OPT_XCCDF_ID},
 		{"profile", 		required_argument, NULL, XCCDF_OPT_PROFILE},
 		{"result-id",		required_argument, NULL, XCCDF_OPT_RESULT_ID},
 		{"report", 		required_argument, NULL, XCCDF_OPT_REPORT_FILE},
@@ -1242,6 +1333,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"sce-results",	no_argument, &action->sce_results, 1},
 #endif
 		{"skip-valid",		no_argument, &action->validate, 0},
+		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},
 		{"hide-profile-info",	no_argument, &action->hide_profile_info, 1},
 		{"export-variables",	no_argument, &action->export_variables, 1},
 	// end
@@ -1256,6 +1348,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		case XCCDF_OPT_RESULT_FILE:	action->f_results = optarg;	break;
 		case XCCDF_OPT_RESULT_FILE_ARF:	action->f_results_arf = optarg;	break;
 		case XCCDF_OPT_DATASTREAM_ID:	action->f_datastream_id = optarg;	break;
+		case XCCDF_OPT_XCCDF_ID:	action->f_xccdf_id = optarg; break;
 		case XCCDF_OPT_PROFILE:		action->profile = optarg;	break;
 		case XCCDF_OPT_RESULT_ID:	action->id = optarg;		break;
 		case XCCDF_OPT_REPORT_FILE:	action->f_report = optarg; 	break;
@@ -1315,11 +1408,7 @@ int app_xccdf_validate(const struct oscap_action *action) {
                 goto cleanup;
         }
 
-        ret=oscap_validate_document(action->f_xccdf,
-				    action->doctype,
-				    doc_version,
-				    (action->verbosity >= 0 ? oscap_reporter_fd : NULL),
-				    stdout);
+        ret=oscap_validate_document(action->f_xccdf, action->doctype, doc_version, reporter, (void*)action);
         if (ret==-1) {
                 result=OSCAP_ERROR;
                 goto cleanup;

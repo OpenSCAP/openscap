@@ -44,7 +44,6 @@
 #include "common/util.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
-#include "common/reporter_priv.h"
 #include "common/elements.h"
 
 typedef struct oval_definition_model {
@@ -529,8 +528,6 @@ int oval_definition_model_export(struct oval_definition_model *model, const char
 
 	__attribute__nonnull__(model);
 
-	int retcode = 0;
-
 	LIBXML_TEST_VERSION;
 
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
@@ -540,14 +537,7 @@ int oval_definition_model_export(struct oval_definition_model *model, const char
 	}
 
 	oval_definition_model_to_dom(model, doc, NULL);
-	retcode = xmlSaveFormatFileEnc(file, doc, "UTF-8", 1);
-
-	if (retcode < 1)
-		oscap_setxmlerr(xmlGetLastError());
-
-	xmlFreeDoc(doc);
-
-	return retcode;
+	return oscap_xml_save_filename(file, doc);
 }
 
 static void _fp_set_recurse(struct oval_definition_model *model, struct oval_setobject *set, char *set_id)

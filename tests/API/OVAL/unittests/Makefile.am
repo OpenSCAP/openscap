@@ -9,11 +9,13 @@ TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
 		LD_LIBRARY_PATH=$(top_builddir)/src/.libs \
 		OSCAP_SCHEMA_PATH=$(top_srcdir)/schemas \
 		OSCAP=$(top_builddir)/utils/.libs/oscap \
-		OSCAP_FULL_VALIDATION=1
+		OSCAP_FULL_VALIDATION=1 \
+		XPATH=$(top_srcdir)/tests/xpath.pl
 
 TESTS = all.sh
 
 EXTRA_DIST += \
+	$(top_srcdir)/tests/xpath.pl \
 	all.sh \
 	test_applicability_check.sh \
 	applicability_check.xml \

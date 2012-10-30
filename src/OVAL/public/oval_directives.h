@@ -133,4 +133,5 @@ bool oval_result_directives_get_included(struct oval_result_directives *);
 oval_result_directive_content_t oval_result_directives_get_content(struct oval_result_directives *, oval_result_t);
 
 #endif				/* OVAL_DIRECTIVES_H_ */
-
+/// @}
+/// @}

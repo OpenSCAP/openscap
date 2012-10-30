@@ -49,3 +49,4 @@ struct oval_probe_session {
 
 #endif /* _OVAL_PROBE_SESSION */
 
+/// @}

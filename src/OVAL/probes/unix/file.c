@@ -323,7 +323,11 @@ static int file_cb (const char *p, const char *f, void *ptr)
                 SEXP_free_r(&se_mtime_mem);
                 SEXP_free_r(&se_size_mem);
 
-                return probe_item_collect(args->ctx, item);
+		/*
+		 * Stop collecting if we hit the memory usage limit
+		 * (return code == 2)
+		 */
+                return probe_item_collect(args->ctx, item) == 2 ? 1 : 0;
         }
 
         return (0);

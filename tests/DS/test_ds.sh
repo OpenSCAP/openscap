@@ -68,11 +68,42 @@ function test_invalid_eval {
     return 1
 }
 
+function test_eval_id {
+
+    local OSCAP_DIR=`cd ../../utils/.libs; pwd`
+
+    OUT=$($OSCAP_DIR/oscap xccdf eval --datastream-id $2 --xccdf-id $3 "${srcdir}/$1")
+    local RET=$?
+
+    if [ $RET -ne 0 ]; then
+        return 1
+    fi
+
+    echo "$OUT" | grep $4 > /dev/null
+    return $?
+}
+
 function test_oval_eval {
 
     local OSCAP_DIR=`cd ../../utils/.libs; pwd`
 
     $OSCAP_DIR/oscap oval eval "${srcdir}/$1"
+    return $?
+}
+
+function test_oval_eval_id {
+
+    local OSCAP_DIR=`cd ../../utils/.libs; pwd`
+
+    OUT=$($OSCAP_DIR/oscap oval eval --datastream-id $2 --oval-id $3 "${srcdir}/$1")
+    local RET=$?
+
+    if [ $RET -ne 0 ]; then
+        return 1
+    fi
+    echo "out: $OUT"
+
+    echo "$OUT" | grep $4 > /dev/null
     return $?
 }
 
@@ -114,7 +145,11 @@ test_run "sds_extended_component" test_sds sds_extended_component fake-check-xcc
 
 test_run "eval_simple" test_eval eval_simple/sds.xml
 test_run "eval_invalid" test_invalid_eval eval_invalid/sds.xml
+test_run "eval_xccdf_id1" test_eval_id eval_xccdf_id/sds.xml scap_org.open-scap_datastream_tst scap_org.open-scap_cref_first-xccdf.xml first
+test_run "eval_xccdf_id2" test_eval_id eval_xccdf_id/sds.xml scap_org.open-scap_datastream_tst scap_org.open-scap_cref_second-xccdf.xml second
 test_run "eval_just_oval" test_oval_eval eval_just_oval/sds.xml
+test_run "eval_oval_id1" test_oval_eval_id eval_oval_id/sds.xml scap_org.open-scap_datastream_just_oval scap_org.open-scap_cref_scap-oval1.xml "oval:x:def:1"
+test_run "eval_oval_id2" test_oval_eval_id eval_oval_id/sds.xml scap_org.open-scap_datastream_just_oval scap_org.open-scap_cref_scap-oval2.xml "oval:x:def:2"
 
 test_run "rds_simple" test_rds rds_simple/sds.xml rds_simple/results-xccdf.xml rds_simple/results-oval.xml
 test_run "rds_testresult" test_rds rds_testresult/sds.xml rds_testresult/results-xccdf.xml rds_testresult/results-oval.xml

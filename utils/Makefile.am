@@ -24,9 +24,16 @@ oscap_CPPFLAGS	+= -I$(top_srcdir)/src/CVSS/public
 oscap_SOURCES   += oscap-cpe.c
 oscap_CPPFLAGS  += -I$(top_srcdir)/src/CPE/public
 
+oscap_SOURCES   += oscap-cve.c
+oscap_CPPFLAGS  += -I$(top_srcdir)/src/CVE/public
+
 if WANT_SCE
 oscap_CPPFLAGS  += -DENABLE_SCE
 oscap_CPPFLAGS  += -I$(top_srcdir)/src/SCE/public
 endif
 
+oscap_SOURCES	+= oscap_acquire.c
+EXTRA_DIST	+= oscap_acquire.h
+oscap_CPPFLAGS	+= @curl_CFLAGS@
+oscap_LDADD	+= @curl_LIBS@
 endif

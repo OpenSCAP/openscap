@@ -1,5 +1,5 @@
 /**
- * @file   probe-fini.c
+ * @file   init.c
  * @brief  file containg the dummy probe_init function
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  */

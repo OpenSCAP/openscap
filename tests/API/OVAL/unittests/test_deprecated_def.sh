@@ -1,7 +1,7 @@
 #! /bin/bash
 
 result=`mktemp`
-xpath=`which xpath`
+xpath="$XPATH"
 
 set -e
 set -o pipefail

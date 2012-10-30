@@ -37,7 +37,7 @@
 #define CPEDICT_H_
 
 #include "cpe_name.h"
-#include "oscap.h"
+#include "oscap_text.h"
 
 /**
  * @struct cpe_dict_model
@@ -325,9 +325,9 @@ const char *cpe_version_get_value(const struct cpe_version *item);
 /** cpe_version functions to get value of version
  * @memberof cpe_version
  * @memberof cpe_update
- * @param item cpe_version 
+ * @param item cpe_version
  */
-struct cpe_update_iterator *cpe_version_get_updates(const struct cpe_version *items);
+struct cpe_update_iterator *cpe_version_get_updates(const struct cpe_version *item);
 
 /** cpe_update functions to get updates of version
  * @memberof cpe_update
@@ -340,7 +340,7 @@ const char *cpe_update_get_value(const struct cpe_update *item);
  * @memberof cpe_edition
  * @param item cpe_update of product element
  */
-struct cpe_edition_iterator *cpe_update_get_editions(const struct cpe_update *items);
+struct cpe_edition_iterator *cpe_update_get_editions(const struct cpe_update *item);
 
 /** cpe_edition functions to get value of edition
  * @memberof cpe_edition
@@ -353,7 +353,7 @@ const char *cpe_edition_get_value(const struct cpe_edition *item);
  * @memberof cpe_language
  * @param item cpe_edition of update
  */
-struct cpe_language_iterator *cpe_edition_get_languages(const struct cpe_edition *items);
+struct cpe_language_iterator *cpe_edition_get_languages(const struct cpe_edition *item);
 
 /** cpe_language functions to get value of language
  * @memberof cpe_language

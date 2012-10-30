@@ -138,10 +138,12 @@ test_run "oval_version_datatype.xml" test_mitre oval_version_datatype.xml "true"
 
 test_run "unix-def_password_test.xml" test_mitre unix-def_password_test.xml "true"
 
+# these are outdated
+#test_run "unix-def_process58_test.xml" test_mitre unix-def_process58_test.xml "true"
+#test_run "unix-def_process_test.xml" test_mitre unix-def_process_test.xml "true"
+
 # Fedora 16 (no init)
 if [[ ! ( $DISTRO_NAME == "Fedora" && $DISTRO_RELEASE > 15 ) ]]; then
-	test_run "unix-def_process58_test.xml" test_mitre unix-def_process58_test.xml "true"
-	test_run "unix-def_process_test.xml" test_mitre unix-def_process_test.xml "true"
 	test_run "unix-def_runlevel_test.xml" test_mitre unix-def_runlevel_test.xml "true"
 fi
 

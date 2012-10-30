@@ -39,6 +39,7 @@ swig/openscap.pm
 swig/openscap.py
 swig/openscap_pm_wrap.c
 swig/openscap_py_wrap.c
+swig/openscap_api.pyc
 config/py-compile
 lib/alloca.h
 lib/arg-nonnull.h

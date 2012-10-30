@@ -27,7 +27,7 @@
 
 
 #include "util.h"
-#include "public/reference.h"
+#include "public/oscap_reference.h"
 #include "elements.h"
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>

@@ -1,5 +1,5 @@
 /**
- * @file   inetlisteningserver.c
+ * @file   inetlisteningservers.c
  * @brief  inetlisteningserver probe
  * @author "Steve Grubb" <sgrubb@redhat.com>
  *

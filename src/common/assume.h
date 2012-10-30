@@ -70,7 +70,7 @@
 #define __atomic_emitmsg(...)                           \
         do {                                            \
                 if (ftrylockfile(__emitmsg_fp) == 0) {  \
-                        fprintf (stderr, __VA_ARGS__);  \
+                        fprintf (__emitmsg_fp, __VA_ARGS__);  \
                         funlockfile(__emitmsg_fp);      \
                 }                                       \
         } while (0)
@@ -89,8 +89,8 @@
 
 #define __assume(expr, exprstr, retval, ...)                            \
         do {                                                            \
-                int OSCAP_CONCAT(__cont, __LINE__) = 1;                        \
                 if (!(expr)) {                                          \
+			int OSCAP_CONCAT(__cont, __LINE__) = 1;		\
                         __emitmsg ("%s:%d (%s): Assumption `%s' not fulfilled!\n", __FILE__, __LINE__, __PRETTY_FUNCTION__, exprstr); \
                         do {__LB(__VA_ARGS__)} while((OSCAP_CONCAT(__cont, __LINE__) = 0)); \
                         if (OSCAP_CONCAT(__cont, __LINE__) == 0) __terminate(retval); \

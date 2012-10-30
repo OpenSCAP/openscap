@@ -28,20 +28,27 @@
 #include <assert.h>
 #include "public/oscap.h"
 #include "alloc.h"
+#include <stdarg.h>
 
+#ifndef __attribute__nonnull__
 #define __attribute__nonnull__(x) assert((x) != NULL)
+#endif
 
 /*
  * Start a list of declarations that should not be available from outside the
  * library.  Must be matched with OSCAP_HIDDEN_END.
  */
+#ifndef OSCAP_HIDDEN_START
 #define OSCAP_HIDDEN_START _Pragma("GCC visibility push(hidden)")
+#endif
 
 /*
  * Start a list of declarations that should not be available from outside the
  * library started by OSCAP_HIDDEN_END.
  */
+#ifndef OSCAP_HIDDEN_END
 #define OSCAP_HIDDEN_END _Pragma("GCC visibility pop")
+#endif
 
 OSCAP_HIDDEN_START
 
@@ -369,7 +376,7 @@ bool oscap_ptr_cmp(void *node1, void *node2);
  * validate given XML file
  * @return 0 on pass; -1 error; 1 fail
  */
-int oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_reporter reporter, void *arg);
+int oscap_validate_xml(const char *xmlfile, const char *schemafile, xml_reporter reporter, void *arg);
 
 /**
  * find file with given name and mode in given paths

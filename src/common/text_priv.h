@@ -25,7 +25,7 @@
 #ifndef OSCAP_TEXT_PRIV_H_
 #define OSCAP_TEXT_PRIV_H_
 
-#include "public/text.h"
+#include "public/oscap_text.h"
 #include "elements.h"
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>

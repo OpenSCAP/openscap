@@ -9,7 +9,7 @@
 #include "oval_agent_api.h"
 #include "oval_results.h"
 #include "oscap.h"
-#include "error.h"
+#include "oscap_error.h"
 
 int main(int argc, char **argv)
 {

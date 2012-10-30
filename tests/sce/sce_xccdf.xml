@@ -3,7 +3,7 @@
   <status date="2011-12-08">draft</status>
   <title xml:lang="en-US">Sample XCCDF using SCE test engine</title>
   <description xml:lang="en-US">abcd</description>
-  <platform idref="cpe:/o:redhat:enterprise_linux:6"/>
+  <!--<platform idref="cpe:/o:redhat:enterprise_linux:6"/> -->
   <version>0.1</version>
   <model system="urn:xccdf:scoring:default"/>
   <model system="urn:xccdf:scoring:flat"/>

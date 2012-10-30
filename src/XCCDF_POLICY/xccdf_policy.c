@@ -35,7 +35,7 @@
 
 #include "public/xccdf_policy.h"
 #include "public/xccdf_benchmark.h"
-#include "public/text.h"
+#include "public/oscap_text.h"
 
 #include "cpe_lang.h"
 
@@ -45,7 +45,6 @@
 #include "common/list.h"
 #include "common/_error.h"
 #include "common/debug_priv.h"
-#include "common/reporter_priv.h"
 #include "common/assume.h"
 
 /**
@@ -75,7 +74,7 @@ typedef struct callback_t {
 typedef struct callback_out_t {
 
     char * system;                              ///< Identificator of checking engine (output engine)
-    oscap_reporter callback;                    ///< oscap reporter callback - output callback specified by tool
+    int (*callback)(void*,void*);             	///< policy report callback {output,start}
     void * usr;                                 ///< User data structure
 
 } callback_out;
@@ -200,7 +199,7 @@ static bool xccdf_policy_filter_selected(void *item, void *policy)
  */
 static bool xccdf_policy_filter_select(void *item, void *selectid)
 {
-	return !strcmp(xccdf_select_get_item((struct xccdf_select *) item), (char *) selectid);
+	return strcmp(xccdf_select_get_item((struct xccdf_select *) item), (char *) selectid) == 0;
 }
 
 /**
@@ -210,7 +209,7 @@ static bool xccdf_policy_filter_select(void *item, void *selectid)
 static bool
 _xccdf_policy_filter_callback(callback *cb, const char *sysname)
 {
-	return !oscap_strcmp(cb->system, sysname);
+	return oscap_strcmp(cb->system, sysname) == 0;
 }
 
 /**
@@ -342,41 +341,34 @@ static xccdf_test_result_type_t _resolve_operation(int A, int B, xccdf_bool_oper
 
     xccdf_test_result_type_t value = 0;
 
-    /* Bit table for operation AND
-     */
-    xccdf_test_result_type_t RESULT_TABLE_AND[9][9] = {
-        /*  P  F  E  U  N  N  N  P */
+    static const xccdf_test_result_type_t RESULT_TABLE_AND[9][9] = {
+        /*  P  F  E  U  N  K  S  I */
         {0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 1, 2, 3, 4, 1, 1, 1, 1}, /* P */
-        {0, 2, 2, 2, 2, 2, 2, 2, 2}, /* F */
-        {0, 3, 2, 3, 4, 3, 3, 3, 3}, /* E */
-        {0, 4, 2, 4, 4, 4, 4, 4, 4}, /* U */
+	{0, 1, 2, 3, 4, 1, 1, 1, 1}, /* P (pass)*/
+	{0, 2, 2, 2, 2, 2, 2, 2, 2}, /* F (fail) */
+	{0, 4, 2, 4, 4, 4, 4, 4, 4}, /* E (error) */
+	{0, 3, 2, 3, 4, 3, 3, 3, 3}, /* U (unknown) */
+	{0, 1, 2, 3, 4, 5, 5, 5, 5}, /* N (notapplicable) */
+	{0, 1, 2, 3, 4, 5, 6, 6, 6}, /* K (notchecked) */
+	{0, 1, 2, 3, 4, 5, 6, 7, 7}, /* S (notselected) */
+	{0, 1, 2, 3, 4, 5, 6, 7, 8}};/* I (informational) */
 
-        {0, 1, 2, 3, 4, 5, 5, 5, 1}, /* N */
-        {0, 1, 2, 3, 4, 5, 5, 5, 1},
-        {0, 1, 2, 3, 4, 5, 5, 5, 1},
-
-        {0, 1, 2, 3, 4, 1, 1, 1, 1}  /* P */};
-
-    /* Bit table for operation OR
-     */
-    xccdf_test_result_type_t RESULT_TABLE_OR[9][9] = {
-        /*  P  F  E  U  N  N  N  P */
+    static const xccdf_test_result_type_t RESULT_TABLE_OR[9][9] = {
+        /*  P  F  E  U  N  K  S  I */
         {0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 1, 1, 1, 1, 1, 1, 1, 1}, /* P */
-        {0, 1, 2, 3, 4, 2, 2, 2, 1}, /* F */
-        {0, 1, 3, 3, 4, 3, 3, 3, 1}, /* E */
-        {0, 1, 4, 4, 4, 4, 4, 4, 1}, /* U */
-
-        {0, 1, 2, 3, 4, 5, 5, 5, 1}, /* N */
-        {0, 1, 2, 3, 4, 5, 5, 5, 1},
-        {0, 1, 2, 3, 4, 5, 5, 5, 1},
-
-        {0, 1, 1, 1, 1, 1, 1, 1, 1}  /* P */};
+	{0, 1, 1, 1, 1, 1, 1, 1, 1}, /* P (pass)*/
+	{0, 1, 2, 3, 4, 2, 2, 2, 2}, /* F (fail) */
+	{0, 1, 4, 4, 4, 4, 4, 4, 4}, /* E (error) */
+	{0, 1, 3, 3, 4, 3, 3, 3, 3}, /* U (unknown) */
+	{0, 1, 2, 3, 4, 5, 5, 5, 5}, /* N (notapplicable) */
+	{0, 1, 2, 3, 4, 5, 6, 6, 6}, /* K (notchecked) */
+	{0, 1, 2, 3, 4, 5, 6, 7, 7}, /* S (notselected) */
+	{0, 1, 2, 3, 4, 5, 6, 7, 8}};/* I (informational) */
 
     /* No test result can end with 0
      */
-    if ((A == 0) || (B == 0)) {
+    if ((A == 0) || (B == 0)
+	|| A > XCCDF_RESULT_INFORMATIONAL || B > XCCDF_RESULT_INFORMATIONAL) {
 	oscap_dlprintf(DBG_E, "Bad test results %d, %d.\n", A, B);
 	return 0;
     }
@@ -541,14 +533,8 @@ static int xccdf_policy_report_cb(struct xccdf_policy * policy, const char * sys
     while (oscap_iterator_has_more(cb_it)) {
         callback_out * cb = (callback_out *) oscap_iterator_next(cb_it);
 
-        /* Report by oscap_reporter_message
-         */
-        struct oscap_reporter_message * msg = oscap_reporter_message_new_fmt(
-                OSCAP_REPORTER_FAMILY_XCCDF, /* FAMILY */
-                0,                           /* CODE */
-                NULL);
-        oscap_reporter_message_set_user1ptr(msg, (void *) rule);
-        retval = oscap_reporter_report(cb->callback, msg, cb->usr);
+        /* Report */
+	retval = cb->callback(rule, cb->usr);
 
         /* We still want to stop evaluation if user cancel it
          * TODO: We should have a way to stop evaluation of current item
@@ -1762,7 +1748,7 @@ bool xccdf_policy_model_register_engine_and_query_callback(struct xccdf_policy_m
         return oscap_list_add(model->callbacks, cb);
 }
 
-bool xccdf_policy_model_register_start_callback(struct xccdf_policy_model * model, oscap_reporter func, void * usr)
+bool xccdf_policy_model_register_start_callback(struct xccdf_policy_model * model, policy_reporter_start func, void * usr)
 {
 
         __attribute__nonnull__(model);
@@ -1770,13 +1756,13 @@ bool xccdf_policy_model_register_start_callback(struct xccdf_policy_model * mode
         if (cb == NULL) return false;
 
         cb->system   = "urn:xccdf:system:callback:start";
-        cb->callback = func;
+        cb->callback = (void*)func;
         cb->usr      = usr;
 
         return oscap_list_add(model->callbacks, (callback *) cb);
 }
 
-bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * model, oscap_reporter func, void * usr)
+bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * model, policy_reporter_output func, void * usr)
 {
 
         __attribute__nonnull__(model);
@@ -1784,7 +1770,7 @@ bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * mod
         if (cb == NULL) return false;
 
         cb->system   = "urn:xccdf:system:callback:output";
-        cb->callback = func;
+        cb->callback = (void*)func;
         cb->usr      = usr;
 
         return oscap_list_add(model->callbacks, (callback *) cb);

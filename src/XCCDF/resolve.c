@@ -229,7 +229,7 @@ static bool xccdf_refine_value_idcmp(void *s1, void *s2) {
 
 static void xccdf_resolve_profile(struct xccdf_item *child, struct xccdf_item *parent)
 {
-	if (child->sub.profile.note_tag != NULL && child->sub.profile.note_tag != NULL) {
+	if (child->sub.profile.note_tag != NULL) {
 		char *note_tag = oscap_sprintf("%s %s", xccdf_profile_get_note_tag(XPROFILE(child)), xccdf_profile_get_note_tag(XPROFILE(parent)));
 		xccdf_profile_set_note_tag(XPROFILE(child), note_tag);
 		oscap_free(note_tag);

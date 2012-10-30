@@ -29,14 +29,13 @@
 #include <oval_agent_api.h>
 #include <oval_results.h>
 #include <oval_variables.h>
-#include <error.h>
-#include <text.h>
 #include <assert.h>
 #include <limits.h>
 #include <ftw.h>
 
 #include "oscap-tool.h"
 #include "scap_ds.h"
+#include "oscap_acquire.h"
 
 static int app_collect_oval(const struct oscap_action *action);
 static int app_evaluate_oval(const struct oscap_action *action);
@@ -60,8 +59,24 @@ struct oscap_module OSCAP_OVAL_MODULE = {
     .submodules = OVAL_SUBMODULES
 };
 
-static struct oscap_module OVAL_VALIDATE = {
+static struct oscap_module OVAL_VALIDATE_XML = {
     .name = "validate-xml",
+    .parent = &OSCAP_OVAL_MODULE,
+    .summary = "Validate OVAL XML content",
+    .usage = "[options] oval-file.xml",
+    .help =
+        "Options:\n"
+        "   --definitions\r\t\t\t\t - Validate OVAL Definitions\n"
+        "   --variables\r\t\t\t\t - Validate external OVAL Variables\n"
+        "   --syschar\r\t\t\t\t - Validate OVAL System Characteristics\n"
+        "   --results\r\t\t\t\t - Validate OVAL Results\n"
+        "   --schematron\r\t\t\t\t - Use schematron-based validation in addition to XML Schema\n",
+    .opt_parser = getopt_oval_validate,
+    .func = app_oval_validate
+};
+
+static struct oscap_module OVAL_VALIDATE = {
+    .name = "validate",
     .parent = &OSCAP_OVAL_MODULE,
     .summary = "Validate OVAL XML content",
     .usage = "[options] oval-file.xml",
@@ -90,7 +105,9 @@ static struct oscap_module OVAL_EVAL = {
         "   --report <file>\r\t\t\t\t - Create human readable (HTML) report from OVAL Results.\n"
         "   --skip-valid\r\t\t\t\t - Skip validation.\n"
         "   --datastream-id <id> \r\t\t\t\t - ID of the datastream in the collection to use.\n"
-        "                        \r\t\t\t\t   (only applicable for source datastreams)",
+        "                        \r\t\t\t\t   (only applicable for source datastreams)"
+        "   --oval-id <id> \r\t\t\t\t - ID of the OVAL component ref in the datastream to use.\n"
+        "                  \r\t\t\t\t   (only applicable for source datastreams)",
     .opt_parser = getopt_oval,
     .func = app_evaluate_oval
 };
@@ -167,21 +184,10 @@ static struct oscap_module* OVAL_SUBMODULES[] = {
     &OVAL_EVAL,
     &OVAL_ANALYSE,
     &OVAL_VALIDATE,
+    &OVAL_VALIDATE_XML,
     &OVAL_GENERATE,
     &OVAL_LIST_PROBES,
     NULL
-};
-
-
-int VERBOSE;
-
-struct oval_usr {
-	int result_false;
-	int result_true;
-	int result_error;
-	int result_unknown;
-	int result_neval;
-	int result_napp;
 };
 
 static int oval_gen_report(const char *infile, const char *outfile)
@@ -189,35 +195,12 @@ static int oval_gen_report(const char *infile, const char *outfile)
     return app_xslt(infile, "oval-results-report.xsl", outfile, NULL);
 }
 
-static int app_oval_callback(const struct oscap_reporter_message *msg, void *arg)
+static int app_oval_callback(const struct oval_result_definition * res_def, void *arg)
 {
+	struct oval_definition *oval_def = oval_result_definition_get_definition(res_def);
+	oval_result_t result =  oval_result_definition_get_result(res_def);
 
-	if (VERBOSE >= 0)
-		printf("Definition %s: %s\n",
-		       oscap_reporter_message_get_user1str(msg),
-		       oval_result_get_text(oscap_reporter_message_get_user2num(msg)));
-	switch ((oval_result_t) oscap_reporter_message_get_user2num(msg)) {
-	case OVAL_RESULT_TRUE:
-		((struct oval_usr *)arg)->result_true++;
-		break;
-	case OVAL_RESULT_FALSE:
-		((struct oval_usr *)arg)->result_false++;
-		break;
-	case OVAL_RESULT_ERROR:
-		((struct oval_usr *)arg)->result_error++;
-		break;
-	case OVAL_RESULT_UNKNOWN:
-		((struct oval_usr *)arg)->result_unknown++;
-		break;
-	case OVAL_RESULT_NOT_EVALUATED:
-		((struct oval_usr *)arg)->result_neval++;
-		break;
-	case OVAL_RESULT_NOT_APPLICABLE:
-		((struct oval_usr *)arg)->result_napp++;
-		break;
-	default:
-		break;
-	}
+	printf("Definition %s: %s\n", oval_definition_get_id(oval_def), oval_result_get_text(result));
 
 	return 0;
 }
@@ -288,23 +271,19 @@ int app_collect_oval(const struct oscap_action *action)
 			fprintf(stderr, "Object ID(%s) does not exist in '%s'.\n", action->id, action->f_oval);
 			goto cleanup;
 		}
-		if (VERBOSE >= 0)
-			fprintf(stderr, "Collected: \"%s\" : ", oval_object_get_id(object));
+		fprintf(stderr, "Collected: \"%s\" : ", oval_object_get_id(object));
 		oval_probe_query_object(pb_sess, object, 0, &syschar);
 		sc_flg = oval_syschar_get_flag(syschar);
-		if (VERBOSE >= 0)
-			fprintf(stderr, "%s\n", oval_syschar_collection_flag_get_text(sc_flg));
+		fprintf(stderr, "%s\n", oval_syschar_collection_flag_get_text(sc_flg));
 	}
 	else {
 	        struct oval_object_iterator *objects = oval_definition_model_get_objects(def_model);
 		while (oval_object_iterator_has_more(objects)) {
 			object = oval_object_iterator_next(objects);
-			if (VERBOSE >= 0)
-				fprintf(stderr, "Collected: \"%s\" : ", oval_object_get_id(object));
+			fprintf(stderr, "Collected: \"%s\" : ", oval_object_get_id(object));
 			oval_probe_query_object(pb_sess, object, 0, &syschar);
 			sc_flg = oval_syschar_get_flag(syschar);
-			if (VERBOSE >= 0)
-				fprintf(stderr, "%s\n", oval_syschar_collection_flag_get_text(sc_flg));
+			fprintf(stderr, "%s\n", oval_syschar_collection_flag_get_text(sc_flg));
 		}
 		oval_object_iterator_free(objects);
 	}
@@ -321,8 +300,7 @@ int app_collect_oval(const struct oscap_action *action)
 			char *doc_version;
 
 			doc_version = oval_determine_document_schema_version((const char *) action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR);
-			if (oscap_validate_document(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, doc_version,
-			    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+			if (oscap_validate_document(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, doc_version, reporter, (void*) action)) {
 				validation_failed(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, doc_version);
 				free(doc_version);
 				goto cleanup;
@@ -362,7 +340,6 @@ int app_evaluate_oval(const struct oscap_action *action)
 	struct oval_definition_model	*def_model = NULL;
 	struct oval_variable_model	*var_model = NULL;
 	struct oval_directives_model	*dir_model = NULL;
-	struct oval_usr			*usr       = NULL;
 	oval_agent_session_t		*sess      = NULL;
 	int ret = OSCAP_ERROR;
 
@@ -378,10 +355,11 @@ int app_evaluate_oval(const struct oscap_action *action)
 
 	if (ds_is_sds(action->f_oval) == 0)
 	{
-		temp_dir = strdup("/tmp/oscap.XXXXXX");
-		temp_dir = mkdtemp(temp_dir);
+		temp_dir = oscap_acquire_temp_dir();
+		if (temp_dir == NULL)
+			goto cleanup;
 
-		if (ds_sds_decompose_custom(action->f_oval, action->f_datastream_id, temp_dir, "checks", NULL, "oval.xml") != 0)
+		if (ds_sds_decompose_custom(action->f_oval, action->f_datastream_id, temp_dir, "checks", action->f_oval_id, "oval.xml") != 0)
 		{
 			fprintf(stdout, "Failed to decompose source datastream in '%s'\n", action->f_oval);
 			goto cleanup;
@@ -425,15 +403,11 @@ int app_evaluate_oval(const struct oscap_action *action)
 	/* set product name */
 	oval_agent_set_product_name(sess, OSCAP_PRODUCTNAME);
 
-	/* Init usr structure */
-	usr = malloc(sizeof(struct oval_usr));
-	memset(usr, 0, sizeof(struct oval_usr));
-
 	/* Evaluation */
 	if (action->id)
 		oval_agent_eval_definition(sess, action->id);
 	else
-		oval_agent_eval_system(sess, app_oval_callback, usr);
+		oval_agent_eval_system(sess, app_oval_callback, NULL);
 
 	if (oscap_err())
 		goto cleanup;
@@ -461,8 +435,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 			char *doc_version;
 
 			doc_version = oval_determine_document_schema_version((const char *) action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS);
-			if (oscap_validate_document(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version,
-			    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+			if (oscap_validate_document(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version, reporter, (void*)action)) {
 				validation_failed(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version);
 				free(doc_version);
 				goto cleanup;
@@ -476,27 +449,13 @@ int app_evaluate_oval(const struct oscap_action *action)
         		oval_gen_report(action->f_results, action->f_report);
 	}
 
-	/* "calculate" return code */
-	if (action->id) {
-		oval_result_t res;
-
-		if (oval_agent_get_definition_result(sess, action->id, &res)==-1) {
-			goto cleanup;
-		}
-
-		if (VERBOSE >= 0)
-			printf("Definition %s: %s\n", action->id, oval_result_get_text(res));
-		ret = (res == OVAL_RESULT_FALSE) ? OSCAP_FAIL : OSCAP_OK;
-	} else {
-		ret = (usr->result_false > 0) ? OSCAP_FAIL : OSCAP_OK;
-	}
+	ret = OSCAP_OK;
 
 	/* clean up */
 cleanup:
 	if(oscap_err())
 		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 
-	if (usr) free(usr);
 	if (sess) oval_agent_destroy_session(sess);
 	if (def_model) oval_definition_model_free(def_model);
 	if (dir_model) oval_directives_model_free(dir_model);
@@ -587,8 +546,7 @@ static int app_analyse_oval(const struct oscap_action *action) {
 			char *doc_version;
 
 			doc_version = oval_determine_document_schema_version((const char *) action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS);
-			if (oscap_validate_document(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version,
-			    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout)) {
+			if (oscap_validate_document(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version, reporter, (void*)action)) {
 				validation_failed(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version);
 				free(doc_version);
 				goto cleanup;
@@ -640,13 +598,12 @@ enum oval_opt {
     OVAL_OPT_SYSCHAR,
     OVAL_OPT_DIRECTIVES,
     OVAL_OPT_DATASTREAM_ID,
+    OVAL_OPT_OVAL_ID,
     OVAL_OPT_OUTPUT = 'o'
 };
 
 bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 {
-	VERBOSE = action->verbosity;
-
 	action->doctype = OSCAP_DOCUMENT_OVAL_DEFINITIONS;
 
 	/* Command-options */
@@ -660,6 +617,7 @@ bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 		{ "syschar",	required_argument, NULL, OVAL_OPT_SYSCHAR      },
 		{ "directives",	required_argument, NULL, OVAL_OPT_DIRECTIVES   },
 		{ "datastream-id",required_argument, NULL, OVAL_OPT_DATASTREAM_ID},
+		{ "oval-id",    required_argument, NULL, OVAL_OPT_OVAL_ID},
         // flags
 		{ "skip-valid",	no_argument, &action->validate, 0 },
         // end
@@ -677,6 +635,7 @@ bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 		case OVAL_OPT_SYSCHAR: action->f_syschar = optarg; break;
 		case OVAL_OPT_DIRECTIVES: action->f_directives = optarg; break;
 		case OVAL_OPT_DATASTREAM_ID: action->f_datastream_id = optarg;	break;
+		case OVAL_OPT_OVAL_ID: action->f_oval_id = optarg;	break;
 		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
@@ -707,9 +666,8 @@ bool getopt_oval_list_probes(int argc, char **argv, struct oscap_action *action)
 #define PROBE_LIST_DYNAMIC 1
 
         int list_type = PROBE_LIST_DYNAMIC;
-	VERBOSE = action->verbosity;
-
 	action->doctype = OSCAP_DOCUMENT_OVAL_DEFINITIONS;
+	action->verbosity = 0;
 
 	/* Command-options */
 	struct option long_options[] = {
@@ -736,8 +694,6 @@ bool getopt_oval_list_probes(int argc, char **argv, struct oscap_action *action)
 
 bool getopt_oval_validate(int argc, char **argv, struct oscap_action *action)
 {
-	VERBOSE = action->verbosity;
-
 	/* we assume 0 is unknown */
 	action->doctype = 0;
 
@@ -780,8 +736,7 @@ static bool valid_inputs(const struct oscap_action *action) {
 	   depending on the data */
 	if (ds_is_sds(action->f_oval) == 0) {
 		doc_version = strdup("1.2");
-		if ((ret = oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_SDS, doc_version,
-			(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout) != 0)) {
+		if ((ret = oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_SDS, doc_version, reporter, (void*) action))) {
 			if (ret==1)
 				validation_failed(action->f_oval, OSCAP_DOCUMENT_SDS, doc_version);
 			goto cleanup;
@@ -789,8 +744,7 @@ static bool valid_inputs(const struct oscap_action *action) {
 	}
 	else {
 		doc_version = oval_determine_document_schema_version((const char *) action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS);
-		if ((ret=oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS, doc_version,
-			(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))) {
+		if ((ret=oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS, doc_version, reporter, (void*) action))) {
 			if (ret==1)
 				validation_failed(action->f_oval, OSCAP_DOCUMENT_OVAL_DEFINITIONS, doc_version);
 			goto cleanup;
@@ -800,8 +754,7 @@ static bool valid_inputs(const struct oscap_action *action) {
 	if (action->f_variables) {
 		free(doc_version);
 		doc_version = oval_determine_document_schema_version((const char *) action->f_variables, OSCAP_DOCUMENT_OVAL_VARIABLES);
-		if ((ret=oscap_validate_document(action->f_variables, OSCAP_DOCUMENT_OVAL_VARIABLES, doc_version,
-		    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))) {
+		if ((ret=oscap_validate_document(action->f_variables, OSCAP_DOCUMENT_OVAL_VARIABLES, doc_version, reporter, (void*) action))) {
 			if (ret==1)
 				validation_failed(action->f_variables, OSCAP_DOCUMENT_OVAL_VARIABLES, doc_version);
 			goto cleanup;
@@ -811,8 +764,7 @@ static bool valid_inputs(const struct oscap_action *action) {
 	if (action->f_directives) {
 		free(doc_version);
 		doc_version = oval_determine_document_schema_version((const char *) action->f_directives, OSCAP_DOCUMENT_OVAL_DIRECTIVES);
-		if ((ret=oscap_validate_document(action->f_directives, OSCAP_DOCUMENT_OVAL_DIRECTIVES, doc_version,
-		    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))) {
+		if ((ret=oscap_validate_document(action->f_directives, OSCAP_DOCUMENT_OVAL_DIRECTIVES, doc_version, reporter, (void*) action))) {
 			if (ret==1)
 				validation_failed(action->f_directives, OSCAP_DOCUMENT_OVAL_DIRECTIVES, doc_version);
 			goto cleanup;
@@ -822,8 +774,7 @@ static bool valid_inputs(const struct oscap_action *action) {
 	if (action->module == &OVAL_ANALYSE && action->f_syschar) {
 		free(doc_version);
 		doc_version = oval_determine_document_schema_version((const char *) action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR);
-		if ((ret=oscap_validate_document(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, doc_version,
-		    (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout))) {
+		if ((ret=oscap_validate_document(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, doc_version, reporter, (void*) action))) {
 			if (ret==1)
 				validation_failed(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, doc_version);
 			goto cleanup;
@@ -863,8 +814,7 @@ static int app_oval_validate(const struct oscap_action *action) {
 
 	}
 
-	ret=oscap_validate_document(action->f_oval, doc_type, doc_version,
-		(action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout);
+	ret=oscap_validate_document(action->f_oval, doc_type, doc_version, reporter, (void*) action);
 
 	if (ret==-1) {
 		result=OSCAP_ERROR;

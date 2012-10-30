@@ -15,9 +15,6 @@ different SCAP specifications(modules).
 \fB\-V, -\-version\fR
 Print supported SCAP specification, location of schema files, schematron files, probes and supported OVAL objects.
 .TP
-\fB\-q, \-\-quiet\fR
-No output for certain operations, only return code.
-.TP
 \fB\-h, \-\-help\fR
 Help screen.
 
@@ -34,6 +31,9 @@ Common Platform Enumeration.
 .TP
 \fBcvss\fR
 Common Vulnerability Scoring System
+.TP
+\fBcve\fR
+Common Vulnerabilities and Exposures
 
 .SH OVAL OPERATIONS
 .TP
@@ -57,7 +57,7 @@ Do not validate input/output files.
 .TP
 .B eval\fR [\fIoptions\fR] definitions-file
 .RS
-Probe the system and evaluate all definitions from OVAL Definition file. Print result of each definition to standard output. oscap returns 0 if all definitions pass. If there is an error during evaluation, the return code is 1. If there is at least one failed result definition, oscap-scan finishes with return code 2.
+Probe the system and evaluate all definitions from OVAL Definition file. Print result of each definition to standard output. oscap returns 0 if all definitions pass. If there is an error during evaluation, the return code is 1.
 .PP
 .TP
 \fB\-\-id DEFINITION-ID\fR
@@ -96,7 +96,7 @@ Do not validate input/output files.
 .RE
 
 .TP
-.B validate-xml\fR [\fIoptions\fR] oval-file
+.B validate\fR [\fIoptions\fR] oval-file
 .RS
 Validate given OVAL file against a XML schema. Every found error is printed to the standard output. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the OVAL document is not valid.
 .TP
@@ -140,11 +140,11 @@ Be verbose.
 .TP
 .B \fBeval\fR [\fIoptions\fR] INPUT_FILE [\fIoval-definitions-files\fR]
 .RS
-Perform evaluation driven by XCCDF file given as INPUT_FILE and use OVAL as the checking engine. Print result of each rule to standard output. oscap returns 0 if all rules pass. If there is an error during evaluation, the return code is 1. If there is at least one failed rule, oscap-scan finishes with return code 2.
+Perform evaluation driven by XCCDF file given as INPUT_FILE and use OVAL as the checking engine. Print result of each rule to standard output. oscap returns 0 if all rules pass. If there is an error during evaluation, the return code is 1. If there is at least one rule with either fail or unknown result, oscap-scan finishes with return code 2.
 .PP
 Optionally you can give a source datastream as the INPUT_FILE instead of an XCCDF file. One of the XCCDFs inside the datastream will be used for evaluation (see --datastream-id).
 .PP
-You may specify all required OVAL Definition files as last parameters. If you don't do that, oscap tool will try to load all OVAL Definition files referenced from XCCDF automaticaly(search in the same path as XCCDF).
+You may specify OVAL Definition files as the last parameter, XCCDF evaluation will then proceed only with those specified files. Otherwise, when \fIoval-definitions-files\fR parameter is missing, oscap tool will try to load all OVAL Definition files referenced from XCCDF automaticaly (search in the same path as XCCDF).
 .PP
 .TP
 \fB\-\-profile PROFILE\fR
@@ -182,9 +182,19 @@ Generate OVAL Variables documents which contain external variables' values that 
 Uses a datastream with that particular ID from the given datastream collection. If not given the first datastream is used. Only applies if you give source datastream in place of an XCCDF file.
 .RE
 .TP
+\fB\-\-xccdf-id ID\fR
+.RS
+Takes component ref with given ID from checklists. This allows to select a particular XCCDF component even in cases where there are 2 XCCDFs in one datastream.
+.RE
+.TP
 \fB\-\-skip-valid\fR
 .RS
 Do not validate input/output files.
+.RE
+.TP
+\fB\-\-fetch-remote-resources\fR
+.RS
+Allow download of remote OVAL content referenced from XCCDF by check-content-ref/@href.
 .RE
 .RE
 .TP
@@ -196,7 +206,7 @@ Resolve an XCCDF file as described in the XCCDF specification. It will flatten i
 Force resolving XCCDF document even if it is already marked as resolved.
 .RE
 .TP
-.B validate-xml\fR [\fIoptions\fR] xccdf-file
+.B validate\fR [\fIoptions\fR] xccdf-file
 .RS
 Validate given XCCDF file against a XML schema. Every found error is printed to the standard output. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the XCCDF document is not valid.
 .RE
@@ -278,7 +288,7 @@ Check whether name is in correct CPE format.
 Find an exact match of CPE name in the dictionary.
 .RE
 .PP
-.B validate-xml\fR  cpe-dict-file
+.B validate\fR  cpe-dict-file
 .RS
 Validate given CPE dictionary file against a XML schema. Every found error is printed to the standard output. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the XCCDF document is not valid.
 
@@ -355,6 +365,17 @@ Takes given source datastream, XCCDF and OVAL results and creates a result datas
 Validate given result datastream file against a XML schema. Every found error is printed to the standard output. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the result datastream is not valid.
 .RE
 
+.SH CVE OPERATIONS
+.TP
+.B validate\fR cve-nvd-feed.xml
+.RS
+Validate given CVE data feed.
+.RE
+.TP
+.B find\fR CVE cve-nvd-feed.xml
+.RS
+Find given CVE in data feed and report base score, vector string and vulnerable software list.
+.RE
 
 .SH CONTENT
 .TP

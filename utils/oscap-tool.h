@@ -30,9 +30,8 @@
 
 /* openscap common */
 #include <oscap.h>
-#include <error.h>
-#include <text.h>
-#include <reporter.h>
+#include <oscap_error.h>
+#include <oscap_text.h>
 
 #include <oval_definitions.h>
 #include <oval_probe.h>
@@ -40,6 +39,7 @@
 #include <xccdf_benchmark.h>
 #include <cpe_dict.h>
 #include <cpe_name.h>
+#include <cve_nvd.h>
 
 #define OSCAP_PRODUCTNAME "cpe:/a:open-scap:oscap"
 #define OSCAP_ERR_MSG "OpenSCAP Error:"
@@ -93,11 +93,18 @@ struct cpe_action {
 	char * dict;
 };
 
+struct cve_action {
+        char * file;
+        char * cve;
+};
+
 struct oscap_action {
         struct oscap_module *module;
 	/* files */
         char *f_xccdf;
 	char *f_datastream_id;
+	char *f_xccdf_id;
+	char *f_oval_id;
         char *f_oval;
         char **f_ovals;
 	char *f_syschar;
@@ -114,18 +121,20 @@ struct oscap_action {
         char *id;
         char *oval_template;
         char *cvss_vector;
-        int verbosity;
         int hide_profile_info;
         char *stylesheet;
         char *cpe_dict;
-        struct cvss_impact *cvss_impact;
 
+        struct cvss_impact *cvss_impact;
 	struct ds_action* ds_action;
 	struct cpe_action * cpe_action;
+	struct cve_action * cve_action;
 
+	int verbosity;
         int doctype;
 	int force;
 	int validate;
+	int remote_resources;
 	int oval_results;
 #ifdef ENABLE_SCE
 	char *sce_template;
@@ -137,6 +146,7 @@ struct oscap_action {
 
 int app_xslt(const char *infile, const char *xsltfile, const char *outfile, const char **params);
 void validation_failed(const char *xmlfile, oscap_document_type_t doctype, const char *version);
+int reporter(const char *file, int line, const char *msg, void *arg);
 
 int oscap_module_process(struct oscap_module *module, int argc, char **argv);
 bool oscap_module_usage(struct oscap_module *module, FILE *out, const char *err, ...);
@@ -147,5 +157,6 @@ extern struct oscap_module OSCAP_DS_MODULE;
 extern struct oscap_module OSCAP_XCCDF_MODULE;
 extern struct oscap_module OSCAP_CVSS_MODULE;
 extern struct oscap_module OSCAP_OVAL_MODULE;
+extern struct oscap_module OSCAP_CVE_MODULE;
 extern struct oscap_module OSCAP_CPE_MODULE;
 

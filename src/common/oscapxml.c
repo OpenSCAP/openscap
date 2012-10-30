@@ -41,7 +41,6 @@
 #include "util.h"
 #include "list.h"
 #include "elements.h"
-#include "reporter_priv.h"
 #include "assume.h"
 
 #ifndef OSCAP_DEFAULT_SCHEMA_PATH
@@ -95,19 +94,57 @@ void oscap_cleanup(void)
 
 const char *oscap_get_version(void) { return VERSION; }
 
+struct ctxt {
+	xml_reporter reporter;
+	void *arg; 
+	void *user;
+};
 
 static void oscap_xml_validity_handler(void *user, xmlErrorPtr error)
 {
-    oscap_reporter_report_xml(user, error);
+	struct ctxt * context = (struct ctxt *) user;
+
+	if (context == NULL || context->reporter == NULL) 
+		return;
+
+	if (error == NULL) 
+		error = xmlGetLastError();
+
+        if (error->code == 3083) {
+                /*
+                libxml2 outputs a warning for something that is completely harmless
+                and happens very often, clogging the screen and making real issues
+                hard to spot.
+
+                The message of the warning is:
+
+                Skipping import of schema located at ...  for the namespace ...,
+                since this namespace was already imported with the schema located at ..."
+
+                We can't prevent this with the schemas because they are interdependent
+                and it is not a good idea to alter XSD schemas comming from standard
+                bodies anyways.
+                */
+
+                // ignore the warning as if it never existed
+                return;
+        }
+
+	const char *file = error->file;
+	if (file == NULL) 
+		file = context->user;
+
+	context->reporter(file, error->line, error->message, context->arg);
 }
 
-int oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_reporter reporter, void *arg)
+int oscap_validate_xml(const char *xmlfile, const char *schemafile, xml_reporter reporter, void *arg)
 {
 	int result = -1;
 	xmlSchemaParserCtxtPtr parser_ctxt = NULL;
 	xmlSchemaPtr schema = NULL;
 	xmlSchemaValidCtxtPtr ctxt = NULL;
-	struct oscap_reporter_context reporter_ctxt = { reporter, arg, (void*) xmlfile };
+	xmlDocPtr doc = NULL;
+	struct ctxt context = { reporter, arg, (void*) xmlfile };
 
         if (xmlfile == NULL) {
                 oscap_seterr(OSCAP_EFAMILY_OSCAP, "'xmlfile' == NULL");
@@ -131,7 +168,7 @@ int oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_report
 		goto cleanup;
 	}
 
-	xmlSchemaSetParserStructuredErrors(parser_ctxt, oscap_xml_validity_handler, &reporter_ctxt);
+	xmlSchemaSetParserStructuredErrors(parser_ctxt, oscap_xml_validity_handler, &context);
 
 	schema = xmlSchemaParse(parser_ctxt);
 	if (schema == NULL) {
@@ -145,9 +182,13 @@ int oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_report
 		goto cleanup;
 	}
 
-	xmlSchemaSetValidStructuredErrors(ctxt, oscap_xml_validity_handler, &reporter_ctxt);
+	xmlSchemaSetValidStructuredErrors(ctxt, oscap_xml_validity_handler, &context);
 
-	result = xmlSchemaValidateFile(ctxt, xmlfile, 0);
+	doc = xmlReadFile(xmlfile, NULL, 0);
+	if (!doc)
+		goto cleanup;
+
+	result = xmlSchemaValidateDoc(ctxt, doc);
 
 	/*
 	 * xmlSchemaValidateFile() returns "-1" if document is not well formed
@@ -162,6 +203,7 @@ int oscap_validate_xml(const char *xmlfile, const char *schemafile, oscap_report
 	*/
 
 cleanup:
+	if (doc) xmlFreeDoc(doc);
 	if (ctxt)        xmlSchemaFreeValidCtxt(ctxt);
 	if (schema)      xmlSchemaFree(schema);
 	if (parser_ctxt) xmlSchemaFreeParserCtxt(parser_ctxt);
@@ -233,10 +275,11 @@ struct oscap_schema_table_entry OSCAP_SCHEMAS_TABLE[] = {
 	{OSCAP_DOCUMENT_CPE_DICTIONARY,		"2.1", "cpe/2.1/cpe-dictionary_2.1.xsd"},
 	{OSCAP_DOCUMENT_CPE_DICTIONARY,		"2.2", "cpe/2.2/cpe-dictionary_2.2.xsd"},
 	{OSCAP_DOCUMENT_CPE_DICTIONARY,		"2.3", "cpe/2.2/cpe-dictionary_2.2.xsd"}, /* use 2.2 */
+	{OSCAP_DOCUMENT_CVE_FEED,		"2.0", "cve/nvd-cve-feed_2.0.xsd"},
 	{0, NULL, NULL }
 };
 
-int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, oscap_reporter reporter, void *arg)
+int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, xml_reporter reporter, void *arg)
 {
 	struct oscap_schema_table_entry *entry;
 
@@ -335,7 +378,7 @@ static int oscap_apply_xslt_path(const char *xmlfile, const char *xsltfile,
 
 cleanup:
 	for (size_t i = 0; args[i]; i += 2) oscap_free(args[i+1]);
-	if (outfile) fclose(f);
+	if (outfile && f) fclose(f);
 	if (cur) xsltFreeStylesheet(cur);
 	if (res) xmlFreeDoc(res);
 	if (doc) xmlFreeDoc(doc);

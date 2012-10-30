@@ -1,3 +1,12 @@
+openscap-0.9.1							22-10-2012
+- the http in the check-content-ref/@hrefhref support
+- the cpedict support
+- obsoleted the oscap_reporter
+- send start and finish messages to the syslog
+- the XCCDF multi-check evaluation support
+- "oscap oval validate-xml" autodetect a document type
+- bug fixes
+
 openscap-0.9.0							25-09-2012
 - consolidate public headers naming
 - do not build untested modules

@@ -69,8 +69,18 @@ static struct oscap_module CPE_CHECK_MODULE = {
     .func = app_cpe_check
 };
 
-static struct oscap_module CPE_VALIDATE = {
+static struct oscap_module CPE_VALIDATE_XML = {
     .name = "validate-xml",
+    .parent = &OSCAP_CPE_MODULE,
+    .summary = "Validate CPE Dictionary content",
+    .usage = "cpe-dict.xml",
+    .help = NULL,
+    .opt_parser = getopt_cpe,
+    .func = app_cpe_validate
+};
+
+static struct oscap_module CPE_VALIDATE = {
+    .name = "validate",
     .parent = &OSCAP_CPE_MODULE,
     .summary = "Validate CPE Dictionary content",
     .usage = "cpe-dict.xml",
@@ -83,6 +93,7 @@ static struct oscap_module* CPE_SUBMODULES[] = {
     &CPE_MATCH_MODULE,
     &CPE_CHECK_MODULE,
     &CPE_VALIDATE,
+    &CPE_VALIDATE_XML,
     NULL
 };
 
@@ -188,7 +199,7 @@ int app_cpe_validate(const struct oscap_action *action) {
 		goto cleanup;
 	}
 
-	ret=oscap_validate_document(action->cpe_action->dict, action->doctype, doc_version, (action->verbosity >= 0 ? oscap_reporter_fd : NULL), stdout);
+	ret=oscap_validate_document(action->cpe_action->dict, action->doctype, doc_version, reporter, (void*) action);
 	if (ret==-1) {
 		result=OSCAP_ERROR;
 		goto cleanup;

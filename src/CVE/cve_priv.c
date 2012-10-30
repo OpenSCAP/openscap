@@ -38,7 +38,7 @@
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
 
-#include "public/cve.h"
+#include "public/cve_nvd.h"
 #include "cve_priv.h"
 
 #include "common/list.h"
@@ -176,6 +176,7 @@ OSCAP_ACCESSOR_STRING(cve_entry, id)
 /* namespaces */
 #define CVE_NS  BAD_CAST "http://scap.nist.gov/schema/vulnerability/0.4"
 #define FEED_NS BAD_CAST "http://scap.nist.gov/schema/feed/vulnerability/2.0"
+#define FEED_NS_LOCATION BAD_CAST "http://scap.nist.gov/schema/feed/vulnerability/2.0 http://nvd.nist.gov/schema/nvd-cve-feed_2.0.xsd"
 /* End of XML string variables definitions
  * */
 /***************************************************************************/
@@ -384,18 +385,17 @@ struct cve_model * cve_model_clone(struct cve_model * old_model)
 /***************************************************************************/
 /* Declaration of static (private to this file) functions
  * These function shoud not be called from outside. For exporting these elements
- * has to call parent element's 
+ * has to call parent element's
  */
 
 static int xmlTextReaderNextElement(xmlTextReaderPtr reader);
-static bool cve_validate_xml(const char *filename);
 static int xmlTextReaderNextNode(xmlTextReaderPtr reader);
 
-/* End of static declarations 
+/* End of static declarations
  * */
 /***************************************************************************/
 
-/* Function testing reader function 
+/* Function testing reader function
  */
 static int xmlTextReaderNextNode(xmlTextReaderPtr reader)
 {
@@ -404,10 +404,8 @@ static int xmlTextReaderNextNode(xmlTextReaderPtr reader)
 
 	int ret;
 	ret = xmlTextReaderRead(reader);
-	if (ret == -1) {
-		oscap_setxmlerr(xmlCtxtGetLastError(reader));
-		/* TODO: Should we end here as fatal ? */
-	}
+	if (ret == -1)
+		oscap_setxmlerr(xmlGetLastError());
 
 	return ret;
 }
@@ -435,38 +433,6 @@ static int xmlTextReaderNextElement(xmlTextReaderPtr reader)
 	return ret;
 }
 
-static bool cve_validate_xml(const char *filename)
-{
-
-	__attribute__nonnull__(filename);
-
-	xmlParserCtxtPtr ctxt;	/* the parser context */
-	xmlDocPtr doc;		/* the resulting document tree */
-	bool ret = false;
-
-	/* create a parser context */
-	ctxt = xmlNewParserCtxt();
-	if (ctxt == NULL)
-		return false;
-	/* parse the file, activating the DTD validation option */
-	doc = xmlCtxtReadFile(ctxt, filename, NULL, XML_PARSE_DTDATTR);
-	/* check if parsing suceeded */
-	if (doc == NULL) {
-		xmlFreeParserCtxt(ctxt);
-		oscap_setxmlerr(xmlCtxtGetLastError(ctxt));
-		return false;
-	}
-	/* check if validation suceeded */
-	if (ctxt->valid)
-		ret = true;
-	else			/* set xml error */
-		oscap_setxmlerr(xmlCtxtGetLastError(ctxt));
-	xmlFreeDoc(doc);
-	/* free up the parser context */
-	xmlFreeParserCtxt(ctxt);
-	return ret;
-}
-
 /***************************************************************************/
 /* Private parsing functions cve_*<structure>*_parse( xmlTextReaderPtr )
  * More info in representive header file.
@@ -477,21 +443,25 @@ struct cve_model *cve_model_parse_xml(const char *file)
 
 	__attribute__nonnull__(file);
 
-	xmlTextReaderPtr reader;
+	xmlTextReaderPtr reader=NULL;
 	struct cve_model *ret = NULL;
-
-	if (!cve_validate_xml(file))
-		return NULL;
+	int rc;
 
 	reader = xmlReaderForFile(file, NULL, 0);
-	if (reader != NULL) {
-		xmlTextReaderNextNode(reader);
-		ret = cve_model_parse(reader);
-	} else {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
+	if (!reader) {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), file);
+		return NULL;
 	}
-	xmlFreeTextReader(reader);
 
+	rc = xmlTextReaderNextNode(reader);
+	if (rc == -1) {
+		xmlFreeTextReader(reader);
+		return NULL;
+	}
+
+	ret = cve_model_parse(reader);
+
+	xmlFreeTextReader(reader);
 	return ret;
 }
 
@@ -569,15 +539,14 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABLE_CONFIGURATION_STR) &&
 		    xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-			/* here will come function to parse test-expr */
-			conf = cve_configuration_new();
 
-                        if (conf) {
-                                conf->id = (char *)xmlTextReaderGetAttribute(reader, ATTR_CVE_ID_STR);
-                                xmlTextReaderNextElement(reader);
-                                conf->expr = cpe_testexpr_parse(reader);
-                                oscap_list_add(ret->configurations, conf);
-                        }
+			conf = oscap_alloc(sizeof(struct cve_configuration));
+
+			conf->id = (char *)xmlTextReaderGetAttribute(reader, ATTR_CVE_ID_STR);
+			xmlTextReaderNextElement(reader);
+			conf->expr = cpe_testexpr_parse(reader);
+
+			oscap_list_add(ret->configurations, conf);
                         continue;
 		} else
 		    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABLE_SOFTWARE_LIST_STR) &&
@@ -611,7 +580,7 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 		} else
 		    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVSS_STR) &&
 			xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-            if (ret->cvss == NULL) ret->cvss = cvss_impact_new_from_xml(reader);
+		    if (ret->cvss == NULL) ret->cvss = cvss_impact_new_from_xml(reader);
 		} else
 		    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_SECURITY_PROTECTION_STR) &&
 			xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
@@ -707,6 +676,7 @@ void cve_export(const struct cve_model *cve, xmlTextWriterPtr writer)
 
 	xmlTextWriterStartElementNS(writer, NULL, TAG_NVD_STR, FEED_NS);
 	xmlTextWriterWriteAttribute(writer, BAD_CAST "nvd_xml_version", BAD_CAST cve->nvd_xml_version);
+
 	if (cve->pub_date) {
 		struct tm *lt = localtime(&cve->pub_date);
 		char timestamp[] = "yyyy-mm-ddThh:mm:ss";
@@ -715,10 +685,13 @@ void cve_export(const struct cve_model *cve, xmlTextWriterPtr writer)
 		xmlTextWriterWriteAttribute(writer, BAD_CAST "pub_date", BAD_CAST timestamp);
 	}
 
-		OSCAP_FOREACH(cve_entry, e, cve_model_get_entries(cve),
-			      /* dump its contents to XML tree */
-			      cve_entry_export(e, writer);)
-	    xmlTextWriterEndElement(writer);
+	xmlTextWriterWriteAttribute(writer, BAD_CAST "xmlns:xsi", BAD_CAST "http://www.w3.org/2001/XMLSchema-instance");
+	xmlTextWriterWriteAttribute(writer, BAD_CAST "xsi:schemaLocation", FEED_NS_LOCATION);
+
+	/* dump its contents to XML tree */
+	OSCAP_FOREACH(cve_entry, e, cve_model_get_entries(cve), cve_entry_export(e, writer);)
+
+	xmlTextWriterEndElement(writer);
 	if (xmlGetLastError() != NULL)
 		oscap_setxmlerr(xmlGetLastError());
 }
@@ -729,19 +702,22 @@ void cve_reference_export(const struct cve_reference *refer, xmlTextWriterPtr wr
 	__attribute__nonnull__(refer);
 	__attribute__nonnull__(writer);
 
+	/* references */
 	xmlTextWriterStartElementNS(writer, NULL, TAG_REFERENCES_STR, CVE_NS);
 
 
 	if ((refer->type) != NULL)
 		xmlTextWriterWriteAttribute(writer, ATTR_REFERENCE_TYPE_STR, BAD_CAST refer->type);
+	if (refer->lang)
+		xmlTextWriterWriteAttribute(writer, BAD_CAST "xml:lang", BAD_CAST refer->lang);
 
 	if ((refer->source) != NULL) {
 		xmlTextWriterStartElementNS(writer, NULL, TAG_SOURCE_STR, NULL);
 		xmlTextWriterWriteString(writer, BAD_CAST refer->source);
-		/*</source> */
 		xmlTextWriterEndElement(writer);
 	}
 
+	/* reference */
 	xmlTextWriterStartElementNS(writer, NULL, TAG_REFERENCE_STR, NULL);
 	if (refer->lang) xmlTextWriterWriteAttribute(writer, BAD_CAST "xml:lang", BAD_CAST refer->lang);
 
@@ -750,10 +726,10 @@ void cve_reference_export(const struct cve_reference *refer, xmlTextWriterPtr wr
 
 	xmlTextWriterWriteString(writer, BAD_CAST refer->value);
 
-	/*</reference> */
+	/* reference */
 	xmlTextWriterEndElement(writer);
 
-	/*</references> */
+	/* references */
 	xmlTextWriterEndElement(writer);
 	if (xmlGetLastError() != NULL)
 		oscap_setxmlerr(xmlGetLastError());
@@ -915,8 +891,8 @@ void cve_entry_free(struct cve_entry *entry)
 	if (entry == NULL)
 		return;
 
-	if (entry->id != NULL)
-		xmlFree(entry->id);
+	xmlFree(entry->id);
+	xmlFree(entry->cve_id);
 	xmlFree(entry->published);
 	xmlFree(entry->modified);
 	xmlFree(entry->sec_protection);

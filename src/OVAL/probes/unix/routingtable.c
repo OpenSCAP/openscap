@@ -117,12 +117,13 @@ static int collect_item(struct route_info *rt, probe_ctx *ctx)
 				NULL);
 
         SEXP_free(rt_dst);
-	return probe_item_collect(ctx, item);
+	return probe_item_collect(ctx, item) == 2 ? 1 : 0;
 }
 
 static int proc_ip4_to_string(const char *proc_ip, size_t proc_iplen, char *strbuf, size_t strbuflen)
 {
     uint8_t bb[4];
+    uint32_t *addr = (uint32_t *)bb;
     struct in_addr ip4;
 
     assume_d(strbuf != NULL, -1);
@@ -131,7 +132,7 @@ static int proc_ip4_to_string(const char *proc_ip, size_t proc_iplen, char *strb
     if (hexstring2bin(proc_ip, proc_iplen, bb, sizeof bb) != 0)
         return -1;
 
-    ip4.s_addr = htobe32(*(uint32_t *)bb);
+    ip4.s_addr = htobe32(*addr);
 
     if (inet_ntop(AF_INET, &ip4, strbuf, strbuflen) == NULL)
         return -1;

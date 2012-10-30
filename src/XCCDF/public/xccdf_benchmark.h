@@ -2,7 +2,7 @@
  * @addtogroup XCCDF
  * @{
  *
- * @file xccdf.h
+ * @file xccdf_benchmark.h
  * Open-scap XCCDF library interface.
  * @author Lukas Kuklinek <lkuklinek@redhat.com>
  */
@@ -36,7 +36,8 @@
 
 #include <stdbool.h>
 #include <time.h>
-#include "oscap.h"
+#include <oscap_reference.h>
+#include <oscap.h>
 #include "cpe_dict.h"
 
 /*--------------------*\
@@ -781,7 +782,7 @@ struct xccdf_value * xccdf_value_clone(const struct xccdf_value * value);
 struct xccdf_status *xccdf_status_new(void);
 /// @memberof xccdf_status
 struct xccdf_status * xccdf_status_clone(const struct xccdf_status * old_status);
-/// @memeberof xccdf_status
+/// @memberof xccdf_status
 struct xccdf_status *xccdf_status_new_fill(const char *status, const char *date);
 /// @memberof xccdf_status
 void xccdf_status_free(struct xccdf_status *status);
@@ -1855,7 +1856,7 @@ const char *xccdf_benchmark_get_plain_text(const struct xccdf_benchmark *benchma
 /**
  * Get benchmark xccdf:Item by ID.
  * @memberof xccdf_benchmark
- * @param item ID
+ * @param id ID
  * @return Item with given ID
  * @retval NULL if no such item exists
  */
@@ -2474,15 +2475,15 @@ struct oscap_text_iterator *xccdf_select_get_remarks(const struct xccdf_select *
 xccdf_warning_category_t xccdf_warning_get_category(const struct xccdf_warning *warning);
 /// @memberof xccdf_warning
 struct oscap_text *xccdf_warning_get_text(const struct xccdf_warning *warning);
-/// @memeberof xccdf_refine_rule
+/// @memberof xccdf_refine_rule
 const char *  xccdf_refine_rule_get_item(const struct xccdf_refine_rule* rr);
-/// @memeberof xccdf_refine_rule
+/// @memberof xccdf_refine_rule
 const char *  xccdf_refine_rule_get_selector(const struct xccdf_refine_rule* rr);
-/// @memeberof xccdf_refine_rule
+/// @memberof xccdf_refine_rule
 xccdf_role_t  xccdf_refine_rule_get_role(const struct xccdf_refine_rule* rr);
-/// @memeberof xccdf_refine_rule
+/// @memberof xccdf_refine_rule
 xccdf_level_t xccdf_refine_rule_get_severity(const struct xccdf_refine_rule* rr);
-/// @memeberof xccdf_refine_rule
+/// @memberof xccdf_refine_rule
 struct oscap_text_iterator* xccdf_refine_rule_get_remarks(const struct xccdf_refine_rule *rr);
 /// @memberof xccdf_refine_rule
 xccdf_numeric xccdf_refine_rule_get_weight(const struct xccdf_refine_rule *item);
@@ -2905,7 +2906,7 @@ bool xccdf_refine_value_set_oper(struct xccdf_refine_value *obj, xccdf_operator_
 
 /// @memberof xccdf_set_value
 struct xccdf_setvalue *xccdf_setvalue_new(void);
-/// @memeberof xccdf_set_value
+/// @memberof xccdf_set_value
 struct xccdf_setvalue * xccdf_setvalue_clone(const struct xccdf_setvalue * old_value);
 /// @memberof xccdf_set_value
 bool xccdf_setvalue_set_item(struct xccdf_setvalue *obj, const char *newval);
@@ -3342,7 +3343,8 @@ typedef char*(*xccdf_substitution_func)(xccdf_subst_type_t type, const char *id,
  */
 char* oscap_text_xccdf_substitute(const char *text, xccdf_substitution_func cb, void *arg);
 
-/************************************************************
- ** @} End of XCCDF group */
+/************************************************************/
+/** @} End of XCCDF group */
+/// @}
 
 #endif

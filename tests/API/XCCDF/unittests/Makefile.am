@@ -30,8 +30,10 @@ TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
 		LD_PRELOAD=$(top_builddir)/src/.libs/libopenscap_testing.so \
 		LD_LIBRARY_PATH=$(top_builddir)/src/.libs \
 		OSCAP_SCHEMA_PATH=$(top_srcdir)/schemas \
+		OSCAP_XSLT_PATH=$(top_srcdir)/xsl \
 		OSCAP=$(top_builddir)/utils/.libs/oscap \
-		OSCAP_FULL_VALIDATION=1
+		OSCAP_FULL_VALIDATION=1 \
+		XPATH=$(top_srcdir)/tests/xpath.pl
 
 TESTS = all.sh
 check_PROGRAMS = \
@@ -40,9 +42,11 @@ check_PROGRAMS = \
 
 test_oscap_common_SOURCES = test_oscap_common.c
 test_oscap_common_SOURCES += $(top_srcdir)/src/common/util.c $(top_srcdir)/src/common/list.c $(top_srcdir)/src/common/alloc.c # This needs love (See trac#198)
+test_oscap_common_CPPFLAGS = $(AM_CPPFLAGS) -DNDEBUG
 test_xccdf_shall_pass_SOURCES = test_xccdf_shall_pass.c unit_helper.c
 
 EXTRA_DIST += \
+	$(top_srcdir)/tests/xpath.pl \
 	all.sh \
 	test_deriving_xccdf_result_from_oval2.sh \
 	test_deriving_xccdf_result_from_oval2.xccdf.xml \
@@ -52,6 +56,17 @@ EXTRA_DIST += \
 	test_deriving_xccdf_result_from_oval_multicheck.sh \
 	test_deriving_xccdf_result_from_oval_multicheck.xccdf.xml \
 	test_deriving_xccdf_result_from_oval_pass.oval.xml \
+	test_multiple_oval_files_with_same_basename.sh \
+	test_multiple_oval_files_with_same_basename.xccdf.xml \
+	test_oval_without_definition.oval.xml \
+	test_oval_without_definition.sh \
+	test_oval_without_definition.xccdf.xml \
+	test_report_check_with_empty_selector.sh \
+	test_report_check_with_empty_selector.xccdf.xml.result.xml \
+	test_report_check_with_empty_selector.oval.xml.result.xml \
+	test_xccdf_complex_check_and_notchecked.sh \
+	test_xccdf_complex_check_and_notchecked.xccdf.xml \
+	test_report_without_xsl_fails_gracefully.sh \
 	test_xccdf_complex_check_nand.xccdf.xml \
 	test_xccdf_complex_check_single_negate.xccdf.xml \
 	test_xccdf_check_content_ref_without_name_attr.oval.xml \
@@ -80,6 +95,7 @@ EXTRA_DIST += \
 	test_xccdf_refine_rule.xccdf.xml \
 	test_xccdf_xml_escaping_value.sh \
 	test_xccdf_xml_escaping_value.xccdf.xml \
+	oval \
 	oval_without_definitions.oval.xml \
 	unit_helper.c \
 	unit_helper.h

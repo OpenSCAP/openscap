@@ -39,7 +39,7 @@
 #include <stdlib.h>
 
 #include "cpe_name.h"
-#include "oscap.h"
+#include "oscap_text.h"
 
 /**
  * CPE language operators
@@ -383,12 +383,12 @@ const char* cpe_lang_model_get_origin_file(const struct cpe_lang_model* lang_mod
  * Write the lang_model to a file.
  * @memberof cpe_lang_model
  * @param spec CPE lang model
- * @param target target structure with filename, endcoding and indent information
+ * @param file filename
  */
 void cpe_lang_model_export(const struct cpe_lang_model *spec, const char *file);
 
-/*@}*/
+/**@}*/
 
-/*@}*/
+/**@}*/
 
 #endif				/* _CPELANG_H_ */

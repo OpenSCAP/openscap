@@ -913,9 +913,10 @@ static struct oval_sysitem *oval_sexp_to_sysitem(struct oval_syschar_model *mode
 
 	int type = oval_str_to_subtype(name);
 
-	dI("Syschar entry type: %d '%s' => %s\n", type, name, (type ? "OK" : "FAILED to decode"));
+	dI("Syschar entry type: %d '%s' => %s\n", type, name,
+	   ((type != OVAL_SUBTYPE_UNKNOWN) ? "OK" : "FAILED to decode"));
 #ifndef NDEBUG
-	if (!type)
+	if (type == OVAL_SUBTYPE_UNKNOWN)
 		abort();
 #endif
 	SEXP_t *sub;
@@ -975,6 +976,7 @@ int oval_sexp_to_sysch(const SEXP_t *cobj, struct oval_syschar *syschar)
                 SEXP_string_cstr_r(mask_entname, mask_entname_cstr, sizeof mask_entname_cstr);
                 oval_string_map_put_string(item_mask_map, mask_entname_cstr, mask_entname_cstr);
             }
+            SEXP_free(mask);
         } else
             item_mask_map = NULL;
 
@@ -995,7 +997,9 @@ int oval_sexp_to_sysch(const SEXP_t *cobj, struct oval_syschar *syschar)
 	SEXP_free(items);
 	oval_string_map_free(itm_id_map, NULL);
         if (item_mask_map != NULL)
-            oval_string_map_free(item_mask_map, NULL);
+            oval_string_map_free_string(item_mask_map);
 
 	return 0;
 }
+
+/// @}

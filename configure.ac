@@ -5,7 +5,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.59)
-AC_INIT([openscap], [0.9.1], [open-scap-list@redhat.com])
+AC_INIT([openscap], [0.9.2], [open-scap-list@redhat.com])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
@@ -303,6 +303,9 @@ CFLAGS=$SAVE_CFLAGS
 LIBS=$SAVE_LIBS
 AC_SUBST(pthread_CFLAGS)
 AC_SUBST(pthread_LIBS)
+
+PKG_CHECK_MODULES([curl], [libcurl >= 7.12.0],[],
+                          AC_MSG_FAILURE([libcurl devel support is missing]))
 
 PKG_CHECK_MODULES([xml2], [libxml-2.0 >= 2.0],[],
 			  AC_MSG_FAILURE([libxml-2.0 devel support is missing]))
@@ -914,14 +917,6 @@ AC_ARG_ENABLE([probes-solaris],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes-solaris]) ;;
      esac],)
 
-AC_ARG_ENABLE([cve],
-     [AC_HELP_STRING([--enable-cve], [include support for CVE (default=no)])],
-     [case "${enableval}" in
-       yes) cve=yes ;;
-       no)  cve=no  ;;
-       *) AC_MSG_ERROR([bad value ${enableval} for --enable-cve]) ;;
-     esac],[cve=no])
-
 AC_ARG_ENABLE([cce],
      [AC_HELP_STRING([--enable-cce], [include support for CCE (default=no)])],
      [case "${enableval}" in
@@ -1151,7 +1146,6 @@ probe_rpmverifypackage_enabled=$probe_rpmverifypackage_req_deps_ok
 AM_CONDITIONAL([probe_dpkginfo_enabled], test "$probe_dpkginfo_req_deps_ok" = yes)
 probe_dpkginfo_enabled=$probe_dpkginfo_req_deps_ok
 
-AM_CONDITIONAL([WANT_CVE],  test "$cve"  = yes)
 AM_CONDITIONAL([WANT_CCE],  test "$cce"  = yes)
 
 AM_CONDITIONAL([WANT_PROBES_INDEPENDENT], test "$probes_independent" = yes)
@@ -1264,7 +1258,6 @@ echo "use POSIX regex:               $regex_posix"
 echo "SCE enabled                    $sce"
 echo "debugging flags enabled:       $debug"
 echo "CCE enabled:                   $cce"
-echo "CVE enabled:                   $cve"
 echo
 echo '  === probes ==='
 if test "$probe_system_info_req_deps_ok" = "yes"; then

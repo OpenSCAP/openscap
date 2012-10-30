@@ -67,6 +67,10 @@ int ds_is_sds(const char* xccdf_file);
  *     ID of a datastream we want to use from the given datastream
  *     collection. The first encountered datastream is used if id is NULL.
  *
+ * @param xccdf_id
+ *     ID of the component containing the XCCDF we want to process.
+ *     The first encountered XCCDF component is used if id is NULL.
+ *
  * @param target_dir
  *     Directory where the resulting files will be stored, names of the files
  *     are deduced using component-refs inside the datastream.
@@ -79,7 +83,7 @@ int ds_is_sds(const char* xccdf_file);
  * 	    0 if no errors were encountered
  * 	   -1 in case of errors
  */
-int ds_sds_decompose(const char* input_file, const char* id,
+int ds_sds_decompose(const char* input_file, const char* id, const char* xccdf_id,
 		const char* target_dir, const char* target_filename);
 
 /**
@@ -142,8 +146,8 @@ int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastr
 int ds_rds_create(const char* sds_file, const char* xccdf_result_file,
         const char** oval_result_files, const char* target_file);
 
-/************************************************************
- ** @} End of DS group */
+/************************************************************/
+/** @} End of DS group */
 
 #endif
 

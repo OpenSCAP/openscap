@@ -136,6 +136,8 @@ void *probe_input_handler(void *arg)
 					probe_pwpair_t *pair;
 
                                         SEXP_free(oid);
+					SEXP_free(skip_flag);
+					SEXP_free(obj_mask);
 
                                         pair = oscap_talloc(probe_pwpair_t);
 					pair->probe = probe;

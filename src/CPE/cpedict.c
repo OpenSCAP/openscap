@@ -51,7 +51,9 @@ struct cpe_dict_model *cpe_dict_model_import(const char *file)
 
 	struct cpe_dict_model *dict;
 
-	dict = cpe_dict_model_parse_xml(file);
+	if ((dict = cpe_dict_model_parse_xml(file)) == NULL)
+		return NULL;
+
 	dict->origin_file = oscap_strdup(file);
 
 	return dict;

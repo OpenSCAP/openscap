@@ -374,7 +374,7 @@ static int rpmverifypackage_additem(probe_ctx *ctx, struct rpmverify_res *res)
 		SEXP_free(value);
 	}
 
-	return probe_item_collect(ctx, item);
+	return probe_item_collect(ctx, item) == 2 ? 1 : 0;
 }
 int probe_main (probe_ctx *ctx, void *arg)
 {

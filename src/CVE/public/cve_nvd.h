@@ -628,7 +628,7 @@ void cwe_entry_free(struct cwe_entry *entry);
  */
 void cve_configuration_free(struct cve_configuration *conf);
 
-/*@}*/
+/**@}*/
 
 /// @memberof cve_entry_iterator
 void cve_entry_iterator_remove(struct cve_entry_iterator *it);
@@ -659,7 +659,7 @@ void cve_configuration_iterator_reset(struct cve_configuration_iterator *it);
  * Export CVE model to XML file
  * @memberof cve_model
  * @param cve CVE model
- * @param target OSCAP export target
+ * @param file OSCAP export target
  */
 void cve_model_export(struct cve_model *cve, const char *file);
 
@@ -681,6 +681,6 @@ time_t cve_model_get_pub_date(const struct cve_model *item);
 /// @memberof cve_model
 bool cve_model_set_pub_date(struct cve_model *obj, time_t newval);
 
-/*@}*/
+/**@}*/
 
 #endif				/* _CVE_H_ */

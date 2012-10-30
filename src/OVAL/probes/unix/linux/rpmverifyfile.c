@@ -372,7 +372,7 @@ static int rpmverify_additem(probe_ctx *ctx, struct rpmverify_res *res)
 				 "readme_file",	 OVAL_DATATYPE_BOOLEAN, FF_RESULT(RPMFILE_README),
 				 NULL);
 
-	return probe_item_collect(ctx, item) == 0 ? 0 : 1;
+	return probe_item_collect(ctx, item) == 2 ? 1 : 0;
 }
 
 typedef struct {

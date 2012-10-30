@@ -343,7 +343,7 @@ OSCAP_ITERATOR_REMOVE(oscap_stringlist, oscap_stringlist_free)
     /*OSCAP_ITERATOR_RESET(oscap_string)*/
 
 
-#define OSCAP_DEFAULT_HSIZE 256
+#define OSCAP_DEFAULT_HSIZE 389
 static inline unsigned int oscap_htable_hash(const char *str, size_t htable_size)
 {
 	unsigned h = 0;

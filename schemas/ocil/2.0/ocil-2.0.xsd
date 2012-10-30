@@ -57,7 +57,7 @@
       </xsd:appinfo>
   </xsd:annotation>
 
-  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/03/xml.xsd">
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd">
     <xsd:annotation>
       <xsd:documentation>This namespace is required for xml:lang
             support.</xsd:documentation>

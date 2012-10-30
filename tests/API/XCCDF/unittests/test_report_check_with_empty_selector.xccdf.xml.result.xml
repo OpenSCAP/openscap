@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="USGCB-RHEL-5-Desktop" resolved="1" xml:lang="en-US" style="SCAP_1.1">
+  <status date="2011-09-30">accepted</status>
+  <title xml:lang="en-US" override="false">USGCB: Guidance for Securing Redhat Enterprise Linux 5 Desktop Systems for IT
+		Professionals</title>
+  <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" override="false">This guide has been created to assist IT professionals in effectively securing
+		systems running Red Hat Enterprise Linux 5 desktops.</description>
+  <notice xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" id="terms_of_use"> Do not attempt to implement any of the settings in
+		this guide without first testing them in a non-operational environment. NIST assumes no
+		responsibility whatsoever for its use by other parties, and makes no guarantees, expressed
+		or implied, about its quality, reliability, or any other characteristic. NIST would
+		appreciate acknowledgement if the document and template are used.</notice>
+  <front-matter xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" override="false">TODO::Insert</front-matter>
+  <rear-matter xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" override="false"><xhtml:strong>Trademark Information</xhtml:strong><xhtml:br/><xhtml:br/> Red Hat and Red Hat Enterprise Linux are either registered trademarks or
+		trademarks of Red Hat, Inc. in the United States and other countries.<xhtml:br/><xhtml:br/><xhtml:br/>All other names are registered trademarks or trademarks of their
+		respective companies. </rear-matter>
+  <reference href="TODO::INSERT">
+	</reference>
+  <version>1.0.5.0</version>
+  <metadata xmlns:xhtml="http://www.w3.org/1999/xhtml">
+		<dc:publisher xmlns="http://purl.org/dc/elements/1.1/" xmlns:dc="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</dc:publisher>
+		<dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</dc:creator>
+		<dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Jeff Blank</dc:contributor>
+		<dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Melanie Cook</dc:contributor>
+		<dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Kurt Dillard</dc:contributor>
+		<dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Vladimir Gizspenci</dc:contributor>
+		<dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Steve Grubb</dc:contributor>
+		<dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Rob Hollis</dc:contributor>
+		<dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Matthew Kerr</dc:contributor>
+		<dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Murugiah Souppaya</dc:contributor>
+		<dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Miloslav Trmac</dc:contributor>
+		<dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Stephen Quinn</dc:contributor>
+		<dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Peter Vrabec</dc:contributor>
+		<dc:source xmlns:dc="http://purl.org/dc/elements/1.1/">http://usgcb.nist.gov</dc:source>
+	</metadata>
+  <model system="urn:xccdf:scoring:default"/>
+  <Profile id="united_states_government_configuration_baseline">
+    <title xml:lang="en-US" override="false">United States Government Configuration Baseline 1.0.5.0</title>
+    <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" override="false">This profile represents guidance outlined in United States
+			Government Configuration Baseline for desktop systems with Redhat Enterprise Linux 5
+			installed.</description>
+    <select idref="usgcb-rhel5desktop-rule-2.2.3.1.i" selected="true"/>
+  </Profile>
+          <Rule id="usgcb-rhel5desktop-rule-2.2.3.1.i" hidden="false" selected="false" weight="10.000000" role="full" severity="unknown">
+            <status date="2010-07-01">accepted</status>
+            <version update="1"/>
+            <title xml:lang="en-US" override="false">CCE-4130-1:Verify permissions on 'shadow' file</title>
+            <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" override="false">File permissions for /etc/shadow should be set
+							correctly.</description>
+            <ident system="http://cce.mitre.org">CCE-4130-1</ident>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" selector="">
+              <check-content-ref name="oval:gov.nist.usgcb.rhel:def:20042" href="test_report_check_with_empty_selector.oval.xml"/>
+            </check>
+          </Rule>
+  <TestResult id="xccdf_org.open-scap_testresult_united_states_government_configuration_baseline" start-time="2012-10-24T10:10:50" end-time="2012-10-24T10:11:02">
+    <title>OSCAP Scan Result</title>
+    <profile idref="united_states_government_configuration_baseline"/>
+    <target>dhcp-2-170.brq.redhat.com</target>
+    <target-address>127.0.0.1</target-address>
+    <target-address>10.34.2.170</target-address>
+    <target-address>192.168.56.1</target-address>
+    <target-address>::1</target-address>
+    <target-address>2620:52:0:221d:f2de:f1ff:fed5:c12f</target-address>
+    <target-address>2620:52:0:2202:f2de:f1ff:fed5:c12f</target-address>
+    <target-address>fe80::f2de:f1ff:fed5:c12f</target-address>
+    <target-address>fe80::800:27ff:fe00:0</target-address>
+    <target-facts>
+      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">00:00:00:00:00:00</fact>
+      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">F0:DE:F1:D5:C1:2F</fact>
+      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">0A:00:27:00:00:00</fact>
+      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">00:00:00:00:00:00</fact>
+      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">F0:DE:F1:D5:C1:2F</fact>
+      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">F0:DE:F1:D5:C1:2F</fact>
+      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">F0:DE:F1:D5:C1:2F</fact>
+      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">0A:00:27:00:00:00</fact>
+    </target-facts>
+    <rule-result idref="usgcb-rhel5desktop-rule-2.2.3.1.i" role="full" time="2012-10-24T10:11:01" severity="unknown" weight="10.000000">
+      <result>fail</result>
+      <ident system="http://cce.mitre.org">CCE-4130-1</ident>
+      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" selector="">
+        <check-content-ref name="oval:gov.nist.usgcb.rhel:def:20042" href="test_report_check_with_empty_selector.oval.xml"/>
+      </check>
+    </rule-result>
+    <score system="urn:xccdf:scoring:default" maximum="100.000000">0.000000</score>
+  </TestResult>
+</Benchmark>

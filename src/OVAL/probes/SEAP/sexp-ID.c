@@ -123,3 +123,5 @@ SEXP_ID_t SEXP_ID_v2(const SEXP_t *s)
 
         return (pair.hash);
 }
+
+/// @}

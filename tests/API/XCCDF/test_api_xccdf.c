@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "common/public/error.h"
+#include "common/public/oscap_error.h"
 
 
 int main(int argc, char **argv)
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 			return 1;
 		}
 
-		if (oscap_validate_document(argv[3], OSCAP_DOCUMENT_XCCDF, argv[2], oscap_reporter_fd, stdout)) {
+		if (oscap_validate_document(argv[3], OSCAP_DOCUMENT_XCCDF, argv[2], NULL, stdout)) {
 			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
 			return 1;
 		}

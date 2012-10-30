@@ -3,7 +3,7 @@
     xmlns:cpe-name="http://cpe.mitre.org/naming/2.0" xmlns:sch="http://purl.oclc.org/dsdl/schematron"
     targetNamespace="http://cpe.mitre.org/language/2.0" elementFormDefault="qualified"
     attributeFormDefault="unqualified" version="2.3">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>
     <xsd:import namespace="http://cpe.mitre.org/naming/2.0" schemaLocation="cpe-naming_2.3.xsd"/>
     <xsd:annotation>
         <xsd:documentation xml:lang="en">This XML Schema defines the CPE Applicability Language. An individual CPE Name

@@ -7,13 +7,13 @@
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful, 
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software 
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors:
@@ -43,6 +43,7 @@ struct oscap_module* OSCAP_ROOT_SUBMODULES[] = {
     &OSCAP_XCCDF_MODULE,
     &OSCAP_CVSS_MODULE,
     &OSCAP_CPE_MODULE,
+    &OSCAP_CVE_MODULE,
     &OSCAP_VERSION_MODULE,
     NULL
 };
@@ -89,7 +90,9 @@ bool getopt_root(int argc, char **argv, struct oscap_action *action)
 		if (c == -1) break;
 
 		switch (c) {
-		case 'q': action->verbosity = -1; break;
+		case 'q':
+			printf("Warning: '-q' is obsoleted option, please use '#oscap ... >/dev/null 2>&1' instead\n");
+		break;
 		case 'V': action->module = &OSCAP_VERSION_MODULE; break;
         case '?': return oscap_module_usage(action->module, stderr, NULL);
 		}
@@ -100,13 +103,14 @@ bool getopt_root(int argc, char **argv, struct oscap_action *action)
 
 static int print_versions(const struct oscap_action *action)
 {
-	printf("OSCAP util (oscap) %s\n" "Copyright 2009,2010,2011 Red Hat Inc., Durham, North Carolina.\n\n", oscap_get_version());
+	printf("OSCAP util (oscap) %s\n" "Copyright 2009--2012 Red Hat Inc., Durham, North Carolina.\n\n", oscap_get_version());
 
 	printf("==== Supported specifications ====\n");
 	printf("XCCDF Version: %s\n", xccdf_benchmark_supported());
 	printf("OVAL Version: %s\n", oval_definition_model_supported());
 	printf("CPE Version: %s\n", cpe_dict_model_supported());
 	printf("CVSS Version: %s\n", cvss_model_supported());
+	printf("CVE Version: %s\n", cve_model_supported());
 	printf("Asset Identification Version: %s\n", "1.1");
 	printf("Asset Reporting Format Version: %s\n", "1.1");
 #ifdef ENABLE_SCE
@@ -164,11 +168,19 @@ void validation_failed(const char *xmlfile, oscap_document_type_t doc_type, cons
         case OSCAP_DOCUMENT_ARF:
 		doc_name = "ARF Result Datastream";
                 break;
+        case OSCAP_DOCUMENT_CVE_FEED:
+		doc_name = "CVE NVD Feed";
+                break;
         default:
 		fprintf(stdout, "Unrecognized document type.\n");
 		return;
 	}
 
 	fprintf(stdout, "Invalid %s content(%s) in %s.\n", doc_name, version, xmlfile);
+}
+
+int reporter(const char *file, int line, const char *msg, void *arg) {
+	fprintf(stdout, "File '%s' line %d: %s", file, line, msg);
+	return 0;
 }
 

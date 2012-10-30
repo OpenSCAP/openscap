@@ -5,7 +5,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.59)
-AC_INIT([openscap], [0.9.1], [open-scap-list@redhat.com])
+AC_INIT([openscap], [0.9.2], [open-scap-list@redhat.com])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
@@ -139,6 +139,9 @@ CFLAGS=$SAVE_CFLAGS
 LIBS=$SAVE_LIBS
 AC_SUBST(pthread_CFLAGS)
 AC_SUBST(pthread_LIBS)
+
+PKG_CHECK_MODULES([curl], [libcurl >= 7.12.0],[],
+                          AC_MSG_FAILURE([libcurl devel support is missing]))
 
 PKG_CHECK_MODULES([xml2], [libxml-2.0 >= 2.0],[],
 			  AC_MSG_FAILURE([libxml-2.0 devel support is missing]))

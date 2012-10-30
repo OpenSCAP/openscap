@@ -20,8 +20,8 @@ rm -rf $stdout
 
 $OSCAP xccdf validate-xml $result
 
-assert_exists_once() { [ "$(xpath $result 'count('"$1"')')" == "1" ]; }
-assert_exists_twice() { [ "$(xpath $result 'count('"$1"')')" == "2" ]; }
+assert_exists_once() { [ "$($XPATH $result 'count('"$1"')')" == "1" ]; }
+assert_exists_twice() { [ "$($XPATH $result 'count('"$1"')')" == "2" ]; }
 
 assert_exists_once '//Rule[@id="xccdf_moc.elpmaxe.www_rule_1"]/check[@multi-check="true"]'
 assert_exists_twice '//check-content-ref[not(@name)]'

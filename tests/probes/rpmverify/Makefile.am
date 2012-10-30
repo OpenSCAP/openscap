@@ -11,7 +11,8 @@ TESTS_ENVIRONMENT = \
 	OSCAP=$(top_builddir)/utils/.libs/oscap \
 	OSCAP_SCHEMA_PATH=$(top_srcdir)/schemas \
 	OSCAP_FULL_VALIDATION=1 \
-	OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes
+	OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
+	XPATH=$(top_srcdir)/tests/xpath.pl
 
 if WANT_PROBES_LINUX
 if probe_rpmverify_enabled
@@ -22,6 +23,7 @@ endif
 check_SCRIPTS = test_not_equals_operation.sh
 
 EXTRA_DIST += \
+	$(top_srcdir)/tests/xpath.pl \
 	all.sh \
 	test_not_equals_operation.sh \
 	test_not_equals_operation.xml

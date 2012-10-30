@@ -2,7 +2,7 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:           openscap
-Version:        0.9.1
+Version:        0.9.2
 Release:        1%{?dist}
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 Group:          System Environment/Libraries
@@ -66,6 +66,8 @@ libraries can be used by perl.
 Summary:        Openscap utilities
 Group:          Applications/System
 Requires:       %{name} = %{version}-%{release}
+Requires:       libcurl >= 7.12.0
+BuildRequires:  libcurl-devel >= 7.12.0
 
 %description    utils
 The %{name}-utils package contains various utilities based on %{name} library.
@@ -235,6 +237,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libexecdir}/openscap/probe_gconf
 
 %changelog
+* Mon Oct 22 2012 Petr Lautrbach <plautrba@redhat.com> 0.9.1-1
+- release
+
 * Tue Sep 25 2012 Peter Vrabec <pvrabec@redhat.com> 0.9.0-1
 - upgrade
 

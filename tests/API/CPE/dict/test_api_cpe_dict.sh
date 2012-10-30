@@ -19,20 +19,20 @@ function test_api_cpe_dict_smoke {
 
 function test_api_cpe_dict_remove_cpe {
     require "grep" || return 255
-    ! ./test_api_cpe_dict --remove $srcdir/dict.xml "UTF-8" "cpe:/a:addsoft" | \
-	grep -s "addsoft"
-    return $?
+    ./test_api_cpe_dict --remove $srcdir/dict.xml "UTF-8" "cpe:/a:addsoft" | \
+    grep -s "addsoft"
+    return $([ $? -eq 1 ])
 }
 
 function test_api_cpe_dict_import_damaged_xml {
-    ! ./test_api_cpe_dict --list-cpe-names $srcdir/dict-damaged.xml "UTF-8"
-    return $?
+    ./test_api_cpe_dict --list-cpe-names $srcdir/dict-damaged.xml "UTF-8"
+    return $([ $? -eq 2 ])
 }
 
 function test_api_cpe_dict_match_non_existing_cpe {
-    ! ./test_api_cpe_dict --match $srcdir/dict.xml \
-	"UTF-8" "cpe:/a:3com:3c16115-usNOT_IN_THE_DICTIONARY"
-    return $?
+    ./test_api_cpe_dict --match $srcdir/dict.xml \
+    "UTF-8" "cpe:/a:3com:3c16115-usNOT_IN_THE_DICTIONARY"
+    return $([ $? -eq 1 ])
 }
 
 function test_api_cpe_dict_match_existing_cpe {

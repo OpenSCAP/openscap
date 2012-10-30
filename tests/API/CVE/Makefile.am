@@ -1,5 +1,3 @@
-if WANT_CVE
-
 AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 		-I$(top_srcdir)/src/CVE/public \
 		-I${top_srcdir}/src/CVSS/public \
@@ -28,7 +26,4 @@ test_api_cve_SOURCES = test_api_cve.c
 
 EXTRA_DIST += test_api_cve.sh        \
               test_api_cve.c         \
-	      cve.xml                \
-	      cve_cvss.xml           \
 	      nvdcve-2.0-recent.xml
-endif

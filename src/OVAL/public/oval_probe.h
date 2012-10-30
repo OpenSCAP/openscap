@@ -1,5 +1,5 @@
 /**
- * @file   oval_probe_h
+ * @file   oval_probe.h
  * @brief  OVAL probe interface API public header
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  *
@@ -31,6 +31,7 @@
 #ifndef OVAL_PROBE_H
 #define OVAL_PROBE_H
 
+#include <stdio.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include "oval_definitions.h"
@@ -85,3 +86,4 @@ void oval_probe_meta_list(FILE *output, int flags);
 
 const char *oval_probe_ext_getdir(void);
 #endif				/* OVAL_PROBE_H */
+/// @}

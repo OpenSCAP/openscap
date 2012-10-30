@@ -5,7 +5,7 @@
  * @{
  *
  *
- * @file cpeuri.h
+ * @file cpe_name.h
  * \brief Interface to Common Platform Enumeration (CPE) URI
  *  
  *   See more details at http://nvd.nist.gov/cpe.cfm
@@ -345,9 +345,9 @@ const char * cpe_name_supported(void);
 /************************************************************/
 /** @} End of Evaluators group */
 
-/*@}*/
+/**@}*/
 
-/*@}*/
+/**@}*/
 
 /**
  * Shared callback definition used to evaluate checks to perform applicability tests

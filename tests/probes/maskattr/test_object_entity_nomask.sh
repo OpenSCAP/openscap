@@ -17,13 +17,13 @@ echo "Validating results."
 $OSCAP oval validate-xml --results $result
 
 echo "Testing results values."
-[ "$(xpath $result 'string(/oval_results/results/system/tests/test[@test_id="oval:x:tst:1"]/@result)')" == "true" ]
+[ "$($XPATH $result 'string(/oval_results/results/system/tests/test[@test_id="oval:x:tst:1"]/@result)')" == "true" ]
 
 echo "Testing syschar values."
-[ "$(xpath $result 'string(/oval_results/results/system/oval_system_characteristics/collected_objects/object[@id="oval:x:obj:1"]/@flag)')" == "complete" ]
-[ "$(xpath $result 'count(/oval_results/results/system/oval_system_characteristics/collected_objects/object[@id="oval:x:obj:1"]/reference)')" == "1" ]
+[ "$($XPATH $result 'string(/oval_results/results/system/oval_system_characteristics/collected_objects/object[@id="oval:x:obj:1"]/@flag)')" == "complete" ]
+[ "$($XPATH $result 'count(/oval_results/results/system/oval_system_characteristics/collected_objects/object[@id="oval:x:obj:1"]/reference)')" == "1" ]
 
-[ "$(xpath $result 'boolean(/oval_results/results/system/oval_system_characteristics/system_data/unix-sys:file_item/unix-sys:filepath/@mask)')" == "0" ]
-[ "$(xpath $result 'string(/oval_results/results/system/oval_system_characteristics/system_data/unix-sys:file_item/unix-sys:filepath)')" == "/etc/passwd" ]
+[ "$($XPATH $result 'boolean(/oval_results/results/system/oval_system_characteristics/system_data/unix-sys:file_item/unix-sys:filepath/@mask)')" == "0" ]
+[ "$($XPATH $result 'string(/oval_results/results/system/oval_system_characteristics/system_data/unix-sys:file_item/unix-sys:filepath)')" == "/etc/passwd" ]
 
 rm -rf $result

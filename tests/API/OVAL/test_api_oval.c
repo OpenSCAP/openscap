@@ -15,7 +15,7 @@
 #include <oval_agent_api.h>
 #include <oval_version.h>
 #include <oscap.h>
-#include "error.h"
+#include "oscap_error.h"
 
 static int _test_error(void)
 {

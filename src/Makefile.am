@@ -26,11 +26,9 @@ SUBDIRS += CPE
 libopenscap_la_LIBADD += CPE/libcpe.la
 libopenscap_testing_la_LIBADD += CPE/libcpe.la
 
-if WANT_CVE
 SUBDIRS += CVE
 libopenscap_la_LIBADD += CVE/libcve.la
 libopenscap_testing_la_LIBADD += CVE/libcve.la
-endif
 
 if WANT_CCE
 SUBDIRS += CCE
