@@ -1,0 +1,10 @@
+<cpe2:platform-specification xmlns:cpe2="http://cpe.mitre.org/language/2.0">
+    <cpe2:platform id="platform1">
+        <cpe2:title xml:lang="en-US">Test Platform 1</cpe2:title>
+        <cpe2:logical-test operator="AND" negate="false">
+            <cpe2:check-fact-ref system="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+                href="cpe-oval.xml"
+                id-ref="oval:x:def:1"/>
+        </cpe2:logical-test>
+    </cpe2:platform>
+</cpe2:platform-specification>
