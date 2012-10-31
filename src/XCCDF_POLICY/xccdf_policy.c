@@ -820,13 +820,13 @@ static bool _xccdf_policy_cpe_check_cb(const char* system, const char* href, con
 
 		if (dict != NULL)
 		{
-			// the href path is relative to the CPE dictionary, we need to figre out
+			// the href path is relative to the CPE dictionary, we need to figure out
 			// a "prefixed path" to deal with the case where CPE dict is not in CWD
 			origin_file_c = cpe_dict_model_get_origin_file(dict);
 		}
 		else
 		{
-			// the href path is relative to the CPE2 dictionary, we need to figre out
+			// the href path is relative to the CPE2 dictionary, we need to figure out
 			// a "prefixed path" to deal with the case where CPE2 dict is not in CWD
 			origin_file_c = cpe_lang_model_get_origin_file(lang_model);
 		}
