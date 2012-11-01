@@ -42,6 +42,7 @@
 #include "list.h"
 #include "elements.h"
 #include "assume.h"
+#include "debug_priv.h"
 
 #ifndef OSCAP_DEFAULT_SCHEMA_PATH
 const char * const OSCAP_SCHEMA_PATH = "/usr/local/share/openscap/schemas";
@@ -474,6 +475,73 @@ int oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outf
 	return oscap_apply_xslt_path(xmlfile, xsltfile, outfile, params, oscap_path_to_schematron());
 }
 
+int oscap_determine_document_type(const char *document, oscap_document_type_t *doc_type) {
+        xmlTextReaderPtr reader;
+        const char* elm_name = NULL;
+        *doc_type = 0;
 
+        reader = xmlReaderForFile(document, NULL, 0);
+        if (!reader) {
+                oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", document);
+                return -1;
+        }
 
+        /* find root element */
+        while (xmlTextReaderRead(reader) == 1
+               && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
+
+        /* identify document type */
+        elm_name = (const char *) xmlTextReaderConstLocalName(reader);
+        if (!elm_name) {
+                oscap_setxmlerr(xmlGetLastError());
+                xmlFreeTextReader(reader);
+                return -1;
+        }
+        else if (!strcmp("oval_definitions", elm_name)) {
+                *doc_type = OSCAP_DOCUMENT_OVAL_DEFINITIONS;
+        }
+        else if (!strcmp("oval_directives", elm_name)) {
+                *doc_type = OSCAP_DOCUMENT_OVAL_DIRECTIVES;
+        }
+        else if (!strcmp("oval_results", elm_name)) {
+                *doc_type = OSCAP_DOCUMENT_OVAL_RESULTS;
+        }
+        else if (!strcmp("oval_system_characteristics", elm_name)) {
+                *doc_type = OSCAP_DOCUMENT_OVAL_SYSCHAR;
+        }
+        else if (!strcmp("oval_variables", elm_name)) {
+                *doc_type = OSCAP_DOCUMENT_OVAL_VARIABLES;
+        }
+        else if (!strcmp("Benchmark", elm_name)) {
+                *doc_type = OSCAP_DOCUMENT_XCCDF;
+        }
+        else if (!strcmp("cpe-list", elm_name)) {
+                *doc_type = OSCAP_DOCUMENT_CPE_DICTIONARY;
+        }
+        else if (!strcmp("platform-specification", elm_name)) {
+                *doc_type = OSCAP_DOCUMENT_CPE_LANGUAGE;
+        }
+        else if (!strcmp("nvd", elm_name)) {
+                *doc_type = OSCAP_DOCUMENT_CVE_FEED;
+        }
+        else if (!strcmp("data-stream-collection", elm_name)) {
+                *doc_type = OSCAP_DOCUMENT_SDS;
+        }
+        else if (!strcmp("asset-report-collection", elm_name)) {
+                *doc_type = OSCAP_DOCUMENT_ARF;
+	}
+	else if (!strcmp("sce_results", elm_name)) {
+                *doc_type = OSCAP_DOCUMENT_SCE_RESULT;
+        }
+	else {
+                oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown document type: '%s'", document);
+                xmlFreeTextReader(reader);
+                return -1;
+        }
+
+        dI("Identified document type: %s", elm_name);
+
+        xmlFreeTextReader(reader);
+        return 0;
+}
 

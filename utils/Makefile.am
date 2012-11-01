@@ -27,6 +27,9 @@ oscap_CPPFLAGS  += -I$(top_srcdir)/src/CPE/public
 oscap_SOURCES   += oscap-cve.c
 oscap_CPPFLAGS  += -I$(top_srcdir)/src/CVE/public
 
+oscap_SOURCES   += oscap-info.c
+oscap_CPPFLAGS  += -I$(top_srcdir)/src/CVE/public
+
 if WANT_SCE
 oscap_CPPFLAGS  += -DENABLE_SCE
 oscap_CPPFLAGS  += -I$(top_srcdir)/src/SCE/public

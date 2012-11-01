@@ -315,7 +315,7 @@ void xccdf_item_print(struct xccdf_item *item, int depth)
 		printf("platforms ");
 		oscap_list_dump(item->item.platforms, xccdf_cstring_dump, depth + 1);
 		xccdf_print_depth(depth);
-		printf("status (cur = %d)", xccdf_item_get_current_status(item));
+		printf("status (cur = %d)", xccdf_item_get_current_status(item)->status);
 		oscap_list_dump(item->item.statuses, xccdf_status_dump, depth + 1);
 	}
 }
@@ -931,6 +931,11 @@ struct xccdf_status *xccdf_status_new(void)
     return oscap_calloc(1, sizeof(struct xccdf_status));
 }
 
+const char *xccdf_status_type_to_text(xccdf_status_type_t id)
+{
+	return oscap_enum_to_string(XCCDF_STATUS_MAP, id);
+}
+
 void xccdf_status_dump(struct xccdf_status *status, int depth)
 {
 	xccdf_print_depth(depth);
@@ -947,21 +952,21 @@ void xccdf_status_free(struct xccdf_status *status)
 OSCAP_ACCESSOR_SIMPLE(time_t, xccdf_status, date)
 OSCAP_ACCESSOR_SIMPLE(xccdf_status_type_t, xccdf_status, status)
 
-xccdf_status_type_t xccdf_item_get_current_status(const struct xccdf_item *item)
+struct xccdf_status * xccdf_item_get_current_status(const struct xccdf_item *item)
 {
 	time_t maxtime = 0;
-	xccdf_status_type_t maxtype = XCCDF_STATUS_NOT_SPECIFIED;
-	const struct oscap_list_item *li = item->item.statuses->first;
+	struct xccdf_status *max_status = NULL;
 	struct xccdf_status *status;
+	const struct oscap_list_item *li = item->item.statuses->first;
 	while (li) {
 		status = li->data;
 		if (status->date == 0 || status->date >= maxtime) {
 			maxtime = status->date;
-			maxtype = status->status;
+			max_status = status;
 		}
 		li = li->next;
 	}
-	return maxtype;
+	return max_status;
 }
 
 struct xccdf_model *xccdf_model_clone(const struct xccdf_model *old_model)

@@ -802,7 +802,7 @@ static int app_oval_validate(const struct oscap_action *action) {
 	}
 	else {
 		if (!action->doctype) {
-			if(oval_determine_document_type(action->f_oval, &doc_type))
+			if(oscap_determine_document_type(action->f_oval, &doc_type))
 				goto cleanup;
 		}
 		else

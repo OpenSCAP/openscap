@@ -130,6 +130,7 @@ struct oscap_action {
 	struct ds_action* ds_action;
 	struct cpe_action * cpe_action;
 	struct cve_action * cve_action;
+	char *file;
 
 	int verbosity;
         int doctype;
@@ -160,4 +161,5 @@ extern struct oscap_module OSCAP_CVSS_MODULE;
 extern struct oscap_module OSCAP_OVAL_MODULE;
 extern struct oscap_module OSCAP_CVE_MODULE;
 extern struct oscap_module OSCAP_CPE_MODULE;
+extern struct oscap_module OSCAP_INFO_MODULE;
 

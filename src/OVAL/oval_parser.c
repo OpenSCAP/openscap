@@ -70,55 +70,6 @@ int oval_parser_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *c
 	return ret;
 }
 
-int oval_determine_document_type(const char *document, oscap_document_type_t *doc_type) {
-	xmlTextReaderPtr reader;
-	const char* elm_name = NULL;
-	*doc_type = 0;
-
-	reader = xmlReaderForFile(document, NULL, 0);
-	if (!reader) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", document);
-		return -1;
-	}
-
-	/* find root element */
-	while (xmlTextReaderRead(reader) == 1
-	       && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
-
-	/* identify document type */
-	elm_name = (const char *) xmlTextReaderConstLocalName(reader);
-	if (!elm_name) {
-		oscap_setxmlerr(xmlGetLastError());
-		xmlFreeTextReader(reader);
-		return -1;
-	}
-	else if (!strcmp(OVAL_ROOT_ELM_DEFINITIONS, elm_name)) {
-		*doc_type = OSCAP_DOCUMENT_OVAL_DEFINITIONS;
-	}
-	else if (!strcmp(OVAL_ROOT_ELM_DIRECTIVES, elm_name)) {
-		*doc_type = OSCAP_DOCUMENT_OVAL_DIRECTIVES;
-	}
-	else if (!strcmp(OVAL_ROOT_ELM_RESULTS, elm_name)) {
-		*doc_type = OSCAP_DOCUMENT_OVAL_RESULTS;
-	}
-	else if (!strcmp(OVAL_ROOT_ELM_SYSCHARS, elm_name)) {
-		*doc_type = OSCAP_DOCUMENT_OVAL_SYSCHAR;
-	}
-	else if (!strcmp(OVAL_ROOT_ELM_VARIABLES, elm_name)) {
-		*doc_type = OSCAP_DOCUMENT_OVAL_VARIABLES;
-	}
-	else {
-		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown document type: '%s'", document);
-		xmlFreeTextReader(reader);
-		return -1;
-	}
-
-	dI("Identified document type: %s", elm_name);
-
-	xmlFreeTextReader(reader);
-	return 0;
-}
-
 
 char *oval_determine_document_schema_version(const char *document, oscap_document_type_t doc_type)
 {

@@ -20,6 +20,9 @@ Help screen.
 
 .SH MODULES
 .TP
+\fBinfo\fR
+Determine type and print information about a file.
+.TP
 \fBoval\fR
 Open Vulnerability and Assessment Language.
 .TP
@@ -34,6 +37,12 @@ Common Vulnerability Scoring System
 .TP
 \fBcve\fR
 Common Vulnerabilities and Exposures
+
+.SH INFO OPERATIONS
+.TP
+scap-file.xml
+.RS
+This module prints information about SCAP content in a file specified on a command line. It determines SCAP content type, specification version, date of creation, date of import and so on. Info module doesn't require any additional opperation switch.
 
 .SH OVAL OPERATIONS
 .TP

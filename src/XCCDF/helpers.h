@@ -37,7 +37,7 @@
 #define XRESULT(item) ((struct xccdf_result*)item)
 
 #define XCCDF_STATUS_CURRENT(TYPE) \
-		xccdf_status_type_t xccdf_##TYPE##_get_status_current(const struct xccdf_##TYPE* item) {\
+		struct xccdf_status * xccdf_##TYPE##_get_status_current(const struct xccdf_##TYPE* item) {\
 			return xccdf_item_get_current_status(XITEM(item)); }
 
 #define XCCDF_TEXT_IGETTER(SNAME,MNAME,MEXP) \

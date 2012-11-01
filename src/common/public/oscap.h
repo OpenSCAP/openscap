@@ -154,6 +154,11 @@ const char * oscap_path_to_schemas(void);
  */
 const char * oscap_path_to_schematron(void);
 
+/**
+ * Determine document type
+ */
+int oscap_determine_document_type(const char *document, oscap_document_type_t *doc_type);
+
 /************************************************************/
 /** @} validation group end */
 

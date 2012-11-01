@@ -45,6 +45,7 @@ struct oscap_module* OSCAP_ROOT_SUBMODULES[] = {
     &OSCAP_CPE_MODULE,
     &OSCAP_CVE_MODULE,
     &OSCAP_VERSION_MODULE,
+    &OSCAP_INFO_MODULE,
     NULL
 };
 

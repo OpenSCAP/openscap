@@ -1714,7 +1714,7 @@ struct oscap_stringlist_iterator *xccdf_item_get_requires(const struct xccdf_ite
 /**
  * @memberof xccdf_item
  */
-xccdf_status_type_t xccdf_item_get_current_status(const struct xccdf_item *item);
+struct xccdf_status * xccdf_item_get_current_status(const struct xccdf_item *item);
 /**
  * @memberof xccdf_item
  */
@@ -1826,7 +1826,7 @@ struct oscap_string_iterator *xccdf_benchmark_get_platforms(const struct xccdf_b
 /**
  * @memberof xccdf_benchmark
  */
-xccdf_status_type_t xccdf_benchmark_get_status_current(const struct xccdf_benchmark *benchmark);
+struct xccdf_status * xccdf_benchmark_get_status_current(const struct xccdf_benchmark *benchmark);
 /**
  * @memberof xccdf_benchmark
  */
@@ -1967,7 +1967,7 @@ struct oscap_reference_iterator *xccdf_profile_get_references(const struct xccdf
 /**
  * @memberof xccdf_profile
  */
-xccdf_status_type_t xccdf_profile_get_status_current(const struct xccdf_profile *profile);
+struct xccdf_status * xccdf_profile_get_status_current(const struct xccdf_profile *profile);
 /**
  * @memberof xccdf_profile
  */
@@ -2083,7 +2083,7 @@ struct oscap_reference_iterator *xccdf_rule_get_references(const struct xccdf_ru
 /**
  * @memberof xccdf_rule
  */
-xccdf_status_type_t xccdf_rule_get_status_current(const struct xccdf_rule *rule);
+struct xccdf_status * xccdf_rule_get_status_current(const struct xccdf_rule *rule);
 /**
  * @memberof xccdf_rule
  */
@@ -2187,7 +2187,7 @@ struct oscap_reference_iterator *xccdf_group_get_dc_statuses(const struct xccdf_
 /// @memberof xccdf_group
 struct oscap_reference_iterator *xccdf_group_get_references(const struct xccdf_group *group);
 /// @memberof xccdf_group
-xccdf_status_type_t xccdf_group_get_status_current(const struct xccdf_group *group);
+struct xccdf_status * xccdf_group_get_status_current(const struct xccdf_group *group);
 /// @memberof xccdf_group
 struct oscap_string_iterator *xccdf_group_get_conflicts(const struct xccdf_group* group);
 /// @memberof xccdf_group
@@ -2218,7 +2218,7 @@ struct oscap_reference_iterator *xccdf_value_get_dc_statuses(const struct xccdf_
 /// @memberof xccdf_value
 struct oscap_reference_iterator *xccdf_value_get_references(const struct xccdf_value *value);
 /// @memberof xccdf_value
-xccdf_status_type_t xccdf_value_get_status_current(const struct xccdf_value *value);
+struct xccdf_status * xccdf_value_get_status_current(const struct xccdf_value *value);
 /// @memberof xccdf_value
 xccdf_value_type_t xccdf_value_get_type(const struct xccdf_value *value);
 /// @memberof xccdf_value
@@ -2299,6 +2299,9 @@ struct xccdf_item *xccdf_value_get_parent(const struct xccdf_value *value);
 time_t xccdf_status_get_date(const struct xccdf_status *status);
 /// @memberof xccdf_status
 xccdf_status_type_t xccdf_status_get_status(const struct xccdf_status *status);
+/// @memberof xccdf_status
+const char *xccdf_status_type_to_text(xccdf_status_type_t id);
+
 /// @memberof xccdf_notice
 const char *xccdf_notice_get_id(const struct xccdf_notice *notice);
 /// @memberof xccdf_notice
