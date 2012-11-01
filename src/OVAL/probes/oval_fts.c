@@ -377,14 +377,14 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		paths[0] = strdup("/");
 	    }
 
-	dI("paths[0] = %s\n", paths[0]);
+	dI("fts_open args: path: \"%s\", options: %d.\n", paths[0], mtc_fts_options);
 
 	paths[1] = NULL;
 	ofts = OVAL_FTS_new();
 
 	ofts->ofts_match_path_fts = fts_open((char * const *) paths, mtc_fts_options, NULL);
-	if (ofts->ofts_match_path_fts == NULL) {
-		dE("fts_open(%p, %d, NULL) failed: errno: %d.\n", paths, mtc_fts_options, errno);
+	if (ofts->ofts_match_path_fts == NULL || errno != 0) {
+		dE("fts_open() failed, errno: %d \"%s\".\n", errno, strerror(errno));
 		OVAL_FTS_free(ofts);
 		return (NULL);
 	}
@@ -608,6 +608,15 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 
 			ofts->ofts_recurse_path_fts = fts_open(paths,
 				ofts->ofts_recurse_path_fts_opts, NULL);
+			if (ofts->ofts_recurse_path_fts == NULL || errno != 0) {
+				dE("fts_open() failed, errno: %d \"%s\".\n",
+					errno, strerror(errno));
+				if (ofts->ofts_recurse_path_fts != NULL) {
+					fts_close(ofts->ofts_recurse_path_fts);
+					ofts->ofts_recurse_path_fts = NULL;
+				}
+				return (NULL);
+			}
 		}
 
 		/* iterate until a match is found or all elements have been traversed */
@@ -715,6 +724,18 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 
 				ofts->ofts_recurse_path_fts = fts_open(paths,
 					ofts->ofts_recurse_path_fts_opts, NULL);
+				if (ofts->ofts_recurse_path_fts == NULL || errno != 0) {
+					char s[128];
+
+					strerror_r(errno, s, sizeof(s));
+					dE("fts_open() failed, errno: %d \"%s\".\n",
+						errno, strerror(errno));
+					if (ofts->ofts_recurse_path_fts != NULL) {
+						fts_close(ofts->ofts_recurse_path_fts);
+						ofts->ofts_recurse_path_fts = NULL;
+					}
+					return (NULL);
+				}
 			}
 
 			/* iterate until a match is found or all elements have been traversed */
