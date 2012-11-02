@@ -178,6 +178,14 @@ test19 \
 '((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "none" :recurse_file_system "all"))' \
 # intentionally left blank
 
+# test for a regression caused by the errno check that follows calls to fts_open()
+test20 \
+'((path :operation 5) "'$ROOT'/d1/d11/d111")' \
+'((filename :operation 5) "f1111")' \
+'' \
+'((behaviors :max_depth "-1" :recurse "directories" :recurse_direction "down" :recurse_file_system "local"))' \
+d1/d11/d111/f1111,
+
 EOF
 
 # cleanup
