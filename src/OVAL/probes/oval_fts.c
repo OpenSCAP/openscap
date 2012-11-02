@@ -606,11 +606,19 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 		if (ofts->ofts_recurse_path_fts == NULL) {
 			char * const paths[2] = { ofts->ofts_match_path_fts_ent->fts_path, NULL };
 
+#if defined(OSCAP_FTS_DEBUG)
+			dI("fts_open args: path: \"%s\", options: %d.\n",
+				paths[0], ofts->ofts_recurse_path_fts_opts);
+#endif
 			ofts->ofts_recurse_path_fts = fts_open(paths,
 				ofts->ofts_recurse_path_fts_opts, NULL);
 			if (ofts->ofts_recurse_path_fts == NULL || errno != 0) {
 				dE("fts_open() failed, errno: %d \"%s\".\n",
 					errno, strerror(errno));
+#if !defined(OSCAP_FTS_DEBUG)
+				dE("fts_open args: path: \"%s\", options: %d.\n",
+					paths[0], ofts->ofts_recurse_path_fts_opts);
+#endif
 				if (ofts->ofts_recurse_path_fts != NULL) {
 					fts_close(ofts->ofts_recurse_path_fts);
 					ofts->ofts_recurse_path_fts = NULL;
@@ -722,11 +730,19 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 			if (ofts->ofts_recurse_path_fts == NULL) {
 				char * const paths[2] = { ofts->ofts_recurse_path_curpth, NULL };
 
+#if defined(OSCAP_FTS_DEBUG)
+				dI("fts_open args: path: \"%s\", options: %d.\n",
+					paths[0], ofts->ofts_recurse_path_fts_opts);
+#endif
 				ofts->ofts_recurse_path_fts = fts_open(paths,
 					ofts->ofts_recurse_path_fts_opts, NULL);
 				if (ofts->ofts_recurse_path_fts == NULL || errno != 0) {
 					dE("fts_open() failed, errno: %d \"%s\".\n",
 						errno, strerror(errno));
+#if !defined(OSCAP_FTS_DEBUG)
+					dE("fts_open args: path: \"%s\", options: %d.\n",
+						paths[0], ofts->ofts_recurse_path_fts_opts);
+#endif
 					if (ofts->ofts_recurse_path_fts != NULL) {
 						fts_close(ofts->ofts_recurse_path_fts);
 						ofts->ofts_recurse_path_fts = NULL;
