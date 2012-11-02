@@ -171,6 +171,13 @@ test18 \
 '((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "none" :recurse_file_system "all"))' \
 d2/f21,
 
+# don't return nonexistent filepath
+test19 \
+'' '' \
+'((filepath :operation 5) "/nonexistent")' \
+'((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "none" :recurse_file_system "all"))' \
+# intentionally left blank
+
 EOF
 
 # cleanup
