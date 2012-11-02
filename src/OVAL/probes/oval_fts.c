@@ -725,9 +725,6 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 				ofts->ofts_recurse_path_fts = fts_open(paths,
 					ofts->ofts_recurse_path_fts_opts, NULL);
 				if (ofts->ofts_recurse_path_fts == NULL || errno != 0) {
-					char s[128];
-
-					strerror_r(errno, s, sizeof(s));
 					dE("fts_open() failed, errno: %d \"%s\".\n",
 						errno, strerror(errno));
 					if (ofts->ofts_recurse_path_fts != NULL) {
