@@ -382,7 +382,11 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	paths[1] = NULL;
 	ofts = OVAL_FTS_new();
 
+	/* reset errno as fts_open() doesn't do it itself. */
+	errno = 0;
 	ofts->ofts_match_path_fts = fts_open((char * const *) paths, mtc_fts_options, NULL);
+	/* fts_open() doesn't return NULL for all errors (e.g. nonexistent paths),
+	   so check errno to detect it. Far from being perfect. */
 	if (ofts->ofts_match_path_fts == NULL || errno != 0) {
 		dE("fts_open() failed, errno: %d \"%s\".\n", errno, strerror(errno));
 		OVAL_FTS_free(ofts);
@@ -610,8 +614,13 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 			dI("fts_open args: path: \"%s\", options: %d.\n",
 				paths[0], ofts->ofts_recurse_path_fts_opts);
 #endif
+			/* reset errno as fts_open() doesn't do it itself. */
+			errno = 0;
 			ofts->ofts_recurse_path_fts = fts_open(paths,
 				ofts->ofts_recurse_path_fts_opts, NULL);
+			/* fts_open() doesn't return NULL for all errors
+			   (e.g. nonexistent paths), so check errno to detect it.
+			   Far from being perfect. */
 			if (ofts->ofts_recurse_path_fts == NULL || errno != 0) {
 				dE("fts_open() failed, errno: %d \"%s\".\n",
 					errno, strerror(errno));
@@ -734,6 +743,11 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 				dI("fts_open args: path: \"%s\", options: %d.\n",
 					paths[0], ofts->ofts_recurse_path_fts_opts);
 #endif
+				/* reset errno as fts_open() doesn't do it itself. */
+				errno = 0;
+				/* fts_open() doesn't return NULL for all errors
+				   (e.g. nonexistent paths), so check errno to
+				   detect it. Far from being perfect. */
 				ofts->ofts_recurse_path_fts = fts_open(paths,
 					ofts->ofts_recurse_path_fts_opts, NULL);
 				if (ofts->ofts_recurse_path_fts == NULL || errno != 0) {
