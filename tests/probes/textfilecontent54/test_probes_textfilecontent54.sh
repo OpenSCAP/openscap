@@ -45,6 +45,8 @@ function test_probes_textfilecontent54 {
 	ret_val=1
     fi
 
+    rm -f $FILE_A $FILE_B $FILE_C
+
     return $ret_val
 }
 
