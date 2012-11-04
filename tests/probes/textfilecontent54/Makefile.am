@@ -11,9 +11,10 @@ TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
                   OSCAP_SCHEMA_PATH=$(top_srcdir)/schemas \
 		  OSCAP_FULL_VALIDATION=1
 
-TESTS = test_probes_textfilecontent54.sh test_validation_of_various_oval_versions.sh
+TESTS = all.sh
 
 EXTRA_DIST += \
+	all.sh \
 	test_probes_textfilecontent54.sh \
 	test_probes_textfilecontent54.xml \
 	test_validation_of_various_oval_versions.sh \

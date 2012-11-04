@@ -14,8 +14,6 @@
 
 . ${srcdir}/../../test_common.sh
 
-# Test Cases.
-
 function test_probes_textfilecontent54 {
 
     probecheck "textfilecontent54" || return 255
@@ -50,10 +48,4 @@ function test_probes_textfilecontent54 {
     return $ret_val
 }
 
-# Testing.
-
-test_init "test_probes_textfilecontent54.log"
-
-test_run "test_probes_textfilencontent54" test_probes_textfilecontent54
-
-test_exit
+test_probes_textfilecontent54

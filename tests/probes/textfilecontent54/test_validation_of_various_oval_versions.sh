@@ -1,7 +1,5 @@
 #!/bin/bash
 
-. ${srcdir}/../../test_common.sh
-
 LST_VALID="
 	tfc54-def-5.4-valid.xml
 	tfc54-def-5.5-valid.xml
@@ -18,8 +16,6 @@ LST_INVALID="
 
 function tfc54_validation {
 	local ret=0
-
-	probecheck "textfilecontent54" || return 255
 
 	echo "*** Validating and evaluating correct OVAL content:"
 	for i in $LST_VALID; do
@@ -46,9 +42,5 @@ function tfc54_validation {
 	return $ret
 }
 
-test_init "test_validation_of_various_oval_versions.log"
-
 export OSCAP_FULL_VALIDATION=1
-test_run "textfilecontent54 validation" tfc54_validation
-
-test_exit
+tfc54_validation
