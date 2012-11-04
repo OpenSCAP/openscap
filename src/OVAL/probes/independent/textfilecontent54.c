@@ -220,6 +220,7 @@ static int process_file(const char *path, const char *file, void *arg)
 		buf_size = 0, buf_used = 0, ofs = 0, buf_inc = 4096;
 	char *whole_path = NULL, *buf = NULL;
 	SEXP_t *next_inst = NULL;
+	struct stat st;
 
 	if (file == NULL)
 		goto cleanup;
@@ -237,6 +238,11 @@ static int process_file(const char *path, const char *file, void *arg)
 
 	memcpy(whole_path + path_len, file, file_len + 1);
 
+	if (stat(whole_path, &st) == -1)
+		goto cleanup;
+	if (!S_ISREG(st.st_mode))
+		goto cleanup;
+
 	fd = open(whole_path, O_RDONLY);
 	if (fd == -1) {
 		SEXP_t *msg;
@@ -245,7 +251,6 @@ static int process_file(const char *path, const char *file, void *arg)
 		probe_cobj_add_msg(probe_ctx_getresult(pfd->ctx), msg);
 		SEXP_free(msg);
 		probe_cobj_set_flag(probe_ctx_getresult(pfd->ctx), SYSCHAR_FLAG_ERROR);
-
 		ret = -1;
 		goto cleanup;
 	}
@@ -261,7 +266,6 @@ static int process_file(const char *path, const char *file, void *arg)
 			probe_cobj_add_msg(probe_ctx_getresult(pfd->ctx), msg);
 			SEXP_free(msg);
 			probe_cobj_set_flag(probe_ctx_getresult(pfd->ctx), SYSCHAR_FLAG_ERROR);
-
 			ret = -2;
 			goto cleanup;
 		}
@@ -449,10 +453,11 @@ int probe_main(probe_ctx *ctx, void *arg)
 #endif
 	if ((ofts = oval_fts_open(path_ent, file_ent, filepath_ent, bh_ent)) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
-			if (ofts_ent->fts_info == FTS_F)
+			if (ofts_ent->fts_info == FTS_F
+			    || ofts_ent->fts_info == FTS_SL) {
 				// todo: handle return code
-				/* we're only interested in contents of regular files */
 				process_file(ofts_ent->path, ofts_ent->file, &pfd);
+			}
 			oval_ftsent_free(ofts_ent);
 		}
 
