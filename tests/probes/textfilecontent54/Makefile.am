@@ -21,6 +21,8 @@ EXTRA_DIST += \
 	test_probes_textfilecontent54.sh \
 	test_probes_textfilecontent54.xml \
 	test_validation_of_various_oval_versions.sh \
+	test_symlinks.sh \
+	test_symlinks.xml.tpl \
 	tfc54-def-5.4-invalid.xml \
 	tfc54-def-5.4-valid.xml \
 	tfc54-def-5.5-valid.xml \
