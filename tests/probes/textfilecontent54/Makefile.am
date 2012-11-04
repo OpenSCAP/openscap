@@ -5,11 +5,14 @@ CLEANFILES = \
 	*.log \
 	*results.xml
 
-TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
-                  LD_PRELOAD=$(top_builddir)/src/.libs/libopenscap_testing.so \
-                  LD_LIBRARY_PATH=$(top_builddir)/src/.libs \
-                  OSCAP_SCHEMA_PATH=$(top_srcdir)/schemas \
-		  OSCAP_FULL_VALIDATION=1
+TESTS_ENVIRONMENT = \
+	LD_LIBRARY_PATH=$(top_builddir)/src/.libs \
+	LD_PRELOAD=$(top_builddir)/src/.libs/libopenscap_testing.so \
+	OSCAP=$(top_builddir)/utils/.libs/oscap \
+	OSCAP_FULL_VALIDATION=1 \
+	OSCAP_SCHEMA_PATH=$(top_srcdir)/schemas \
+	OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
+	XPATH=$(top_srcdir)/tests/xpath.pl
 
 TESTS = all.sh
 
