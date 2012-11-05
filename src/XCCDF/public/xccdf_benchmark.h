@@ -981,19 +981,6 @@ struct xccdf_instance * xccdf_instance_clone(const struct xccdf_instance * insta
 /// @memberof xccdf_instance
 void xccdf_instance_free(struct xccdf_instance *inst);
 
-/*
- * Get an iterator to the list of XCCDF value's possible (or suggested) values.
- * @ralates xccdf_value
- * @retval NULL on failure (e.g. the value is not a string)
- */
-// struct oscap_string_iterator* xccdf_value_choices_string(const struct xccdf_value* value);
-
-/**
- * Get an iterator to the XCCDF value's source URIs.
- * @memberof xccdf_value
- */
-/* struct oscap_string_iterator* xccdf_value_get_sources(const struct xccdf_value* value); TODO */
-
 /// @memberof xccdf_value_instance
 struct oscap_string_iterator *xccdf_value_instance_get_choices(const struct xccdf_value_instance *item);
 
@@ -1971,10 +1958,6 @@ struct xccdf_status * xccdf_profile_get_status_current(const struct xccdf_profil
 /**
  * @memberof xccdf_profile
  */
-/* const char* xccdf_profile_note_get_tag(const struct xccdf_profile* profile); TODO */
-/**
- * @memberof xccdf_profile
- */
 struct xccdf_select_iterator *xccdf_profile_get_selects(const struct xccdf_profile *profile);
 /**
  * @memberof xccdf_profile
@@ -2308,8 +2291,6 @@ const char *xccdf_notice_get_id(const struct xccdf_notice *notice);
 struct oscap_text *xccdf_notice_get_text(const struct xccdf_notice *notice);
 /// @memberof xccdf_model
 const char *xccdf_model_get_system(const struct xccdf_model *model);
-/// @memberof xccdf_model
-/* const char* xccdf_model_get_param(const struct xccdf_model* model, const char* param_name); TODO */
 /// @memberof xccdf_ident
 const char *xccdf_ident_get_id(const struct xccdf_ident *ident);
 /// @memberof xccdf_ident

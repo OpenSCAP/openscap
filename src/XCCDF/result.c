@@ -1144,18 +1144,6 @@ static void xccdf_rule_result_dump(struct xccdf_rule_result *res, int depth)
 	xccdf_print_depth(depth); printf("Rule result: %s\n", xccdf_rule_result_get_idref(res)); ++depth;
 	xccdf_print_depth(depth); printf("version:   %s\n", xccdf_rule_result_get_version(res));
 	xccdf_print_depth(depth); printf("weight:    %f\n", xccdf_rule_result_get_weight(res));
-	/*
-	xccdf_role_t role;
-	time_t time;
-	xccdf_level_t severity;
-	xccdf_test_result_type_t result;
-	struct oscap_list *overrides;
-	struct oscap_list *idents;
-	struct oscap_list *messages;
-	struct oscap_list *instances;
-	struct oscap_list *fixes;
-	struct oscap_list *checks;
-	*/
 }
 
 void xccdf_result_dump(struct xccdf_result *res, int depth)
