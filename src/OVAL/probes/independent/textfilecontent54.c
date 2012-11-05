@@ -238,6 +238,15 @@ static int process_file(const char *path, const char *file, void *arg)
 
 	memcpy(whole_path + path_len, file, file_len + 1);
 
+	/*
+	 * If stat() fails, don't report an error and just skip the file.
+	 * This is an expected situation, because the fts_*() functions
+	 * are called with the 'FTS_PHYSICAL' option. Normally, stumbling
+	 * upon a symlink without a target would cause fts_read() to return
+	 * the 'FTS_SLNONE' flag, but the 'FTS_PHYSICAL' option causes it
+	 * to return 'FTS_SL' and the presence of a valid target has to
+	 * be determined with stat().
+	 */
 	if (stat(whole_path, &st) == -1)
 		goto cleanup;
 	if (!S_ISREG(st.st_mode))
