@@ -131,13 +131,11 @@ struct xccdf_item *xccdf_item_clone(const struct xccdf_item *old_item)
 {
 	struct xccdf_item *new_item = oscap_calloc(1, sizeof(struct xccdf_item));
 
-	//new_item->item = *(xccdf_item_base_clone(&(old_item->item)));
     xccdf_item_base_clone(&new_item->item, &(old_item->item));
 	new_item->type = old_item->type;
 
 	switch (new_item->type) {
 	case XCCDF_BENCHMARK:
-		 //new_item->sub.benchmark = *(xccdf_benchmark_item_clone(&(old_item->sub.benchmark), new_item));
         xccdf_benchmark_item_clone(new_item, XBENCHMARK(old_item));
 		break;
 	case XCCDF_RULE:
@@ -1141,8 +1139,6 @@ struct xccdf_value_instance * xccdf_value_instance_clone(const struct xccdf_valu
 
 void xccdf_value_item_clone(struct xccdf_value_item *clone, const struct xccdf_value_item * item)
 {
-	//struct xccdf_value_item * clone = oscap_calloc(1, sizeof(struct xccdf_value_item));
-
 	//these three are values which can be directly assigned.
 	clone->type = item->type;
 	clone->interface_hint = item->interface_hint;
