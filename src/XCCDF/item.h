@@ -315,13 +315,6 @@ struct xccdf_fixtext {
 	char *fixref;
 };
 
-/*
-struct xccdf_reference {
-	struct oscap_text *text;
-    char *href;
-};
-*/
-
 struct xccdf_rule_result {
 	char *idref;
 	xccdf_role_t role;
@@ -470,7 +463,6 @@ struct xccdf_setvalue *xccdf_setvalue_new_parse(xmlTextReaderPtr reader);
 void xccdf_setvalue_dump(struct xccdf_setvalue *sv, int depth);
 
 struct xccdf_warning *xccdf_warning_new_parse(xmlTextReaderPtr reader);
-//struct xccdf_reference *xccdf_reference_new_parse(xmlTextReaderPtr reader);
 
 //private methods for cloning items
 //Will clone the item member of a xccdf_item object
