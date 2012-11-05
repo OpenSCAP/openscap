@@ -659,9 +659,7 @@ xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *par
 	struct xccdf_check_export_iterator *exports = xccdf_check_get_exports(check);
 	while (xccdf_check_export_iterator_has_more(exports)) {
 		struct xccdf_check_export *export = xccdf_check_export_iterator_next(exports);
-		// This function seems like it should be in OpenSCAP, but isn't according to the docs
-		//const char *name = xccdf_check_export_get_name(export);
-		const char *name = export->name;
+		const char *name = xccdf_check_export_get_name(export);
 		const char *value= xccdf_check_export_get_value(export);
 		xmlNode *export_node = xmlNewTextChild(check_node, ns_xccdf, BAD_CAST "check-export", NULL);
 		xmlNewProp(export_node, BAD_CAST "export-name", BAD_CAST name);
