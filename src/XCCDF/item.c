@@ -538,7 +538,7 @@ xmlNode *xccdf_fixtext_to_dom(struct xccdf_fixtext *fixtext, xmlDoc *doc, xmlNod
 	        xmlNewProp(fixtext_node, BAD_CAST "disruption", BAD_CAST XCCDF_LEVEL_MAP[disruption-1].string);
 
 	xccdf_strategy_t strategy = xccdf_fixtext_get_strategy(fixtext);
-        if (strategy != 0)
+        if (strategy != XCCDF_STRATEGY_UNKNOWN)
 	        xmlNewProp(fixtext_node, BAD_CAST "strategy", BAD_CAST XCCDF_STRATEGY_MAP[strategy].string);
 
 	return fixtext_node;
@@ -569,7 +569,7 @@ xmlNode *xccdf_fix_to_dom(struct xccdf_fix *fix, xmlDoc *doc, xmlNode *parent)
 	        xmlNewProp(fix_node, BAD_CAST "disruption", BAD_CAST XCCDF_LEVEL_MAP[disruption-1].string);
 
 	xccdf_strategy_t strategy = xccdf_fix_get_strategy(fix);
-        if (strategy != 0)
+        if (strategy != XCCDF_STRATEGY_UNKNOWN)
 	        xmlNewProp(fix_node, BAD_CAST "strategy", BAD_CAST XCCDF_STRATEGY_MAP[strategy-1].string);
 
         // Sub element is used to store XCCDF value substitutions, not a content
