@@ -233,6 +233,7 @@ static int process_file(const char *path, const char *filename, void *arg)
 	int ret = 0, path_len, filename_len;
 	char *whole_path = NULL;
 	FILE *fp = NULL;
+	struct stat st;
 
 // todo: move to probe_main()?
 #if defined USE_REGEX_PCRE
@@ -264,6 +265,20 @@ static int process_file(const char *path, const char *filename, void *arg)
 		++path_len;
 	}
 	memcpy(whole_path + path_len, filename, filename_len + 1);
+
+	/*
+	 * If stat() fails, don't report an error and just skip the file.
+	 * This is an expected situation, because the fts_*() functions
+	 * are called with the 'FTS_PHYSICAL' option. Normally, stumbling
+	 * upon a symlink without a target would cause fts_read() to return
+	 * the 'FTS_SLNONE' flag, but the 'FTS_PHYSICAL' option causes it
+	 * to return 'FTS_SL' and the presence of a valid target has to
+	 * be determined with stat().
+	 */
+	if (stat(whole_path, &st) == -1)
+		goto cleanup;
+	if (!S_ISREG(st.st_mode))
+		goto cleanup;
 
 	fp = fopen(whole_path, "rb");
 	if (fp == NULL) {
@@ -362,9 +377,11 @@ int probe_main(probe_ctx *ctx, void *arg)
 
 	if ((ofts = oval_fts_open(path_ent, filename_ent, filepath_ent, behaviors_ent)) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
-			if (ofts_ent->fts_info == FTS_F)
-				/* we're only interested in contents of regular files */
+			if (ofts_ent->fts_info == FTS_F
+			    || ofts_ent->fts_info == FTS_SL) {
+				// todo: handle return code
 				process_file(ofts_ent->path, ofts_ent->file, &pfd);
+			}
 			oval_ftsent_free(ofts_ent);
 		}
 
