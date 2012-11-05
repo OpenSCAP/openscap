@@ -955,7 +955,7 @@ void xccdf_rule_to_dom(struct xccdf_rule *rule, xmlNode *rule_node, xmlDoc *doc,
 		xmlNewProp(rule_node, BAD_CAST "role", BAD_CAST XCCDF_ROLE_MAP[role - 1].string);
 
 	xccdf_level_t severity = xccdf_rule_get_severity(rule);
-	if (severity != 0)
+	if (severity != XCCDF_LEVEL_NOT_DEFINED)
 		xmlNewProp(rule_node, BAD_CAST "severity", BAD_CAST XCCDF_LEVEL_MAP[severity - 1].string);
 
 	/* Handle Child Nodes */

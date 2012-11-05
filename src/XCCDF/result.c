@@ -952,7 +952,7 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 	}
 
 	xccdf_level_t severity = xccdf_rule_result_get_severity(result);
-	if (severity != 0)
+	if (severity != XCCDF_LEVEL_NOT_DEFINED)
             xmlNewProp(result_node, BAD_CAST "severity", BAD_CAST XCCDF_LEVEL_MAP[severity - 1].string);
 
 	const char *version = xccdf_rule_result_get_version(result);
@@ -990,7 +990,7 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 		xmlNode *message_node = xmlNewTextChild(result_node, ns_xccdf, BAD_CAST "message", BAD_CAST content);
 
                 xccdf_level_t message_severity = xccdf_message_get_severity(message);
-		if (message_severity != 0)
+		if (message_severity != XCCDF_LEVEL_NOT_DEFINED)
                     xmlNewProp(message_node, BAD_CAST "severity", BAD_CAST XCCDF_LEVEL_MAP[message_severity - 1].string);
 	}
 	xccdf_message_iterator_free(messages);

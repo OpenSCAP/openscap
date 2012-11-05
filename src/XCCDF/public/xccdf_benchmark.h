@@ -114,6 +114,7 @@ typedef enum {
 
 /// XCCDF error, complexity, disruption, or severity level
 typedef enum {
+	XCCDF_LEVEL_NOT_DEFINED = 0,
 	XCCDF_UNKNOWN = 1,	        ///< Unknown.
 	XCCDF_INFO,		        ///< Info.
 	XCCDF_LOW,		        ///< Low.

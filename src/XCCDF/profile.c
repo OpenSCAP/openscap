@@ -386,7 +386,7 @@ void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, 
 			xmlNewProp(refrule_node, BAD_CAST "selector", BAD_CAST selector);
 
 		xccdf_level_t severity = xccdf_refine_rule_get_severity(refine_rule);
-		if (severity != 0)
+		if (severity != XCCDF_LEVEL_NOT_DEFINED)
 			xmlNewProp(refrule_node, BAD_CAST "severity", BAD_CAST XCCDF_LEVEL_MAP[severity - 1].string);
 
 		if (xccdf_refine_rule_weight_defined(refine_rule)) {

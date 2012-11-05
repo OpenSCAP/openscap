@@ -57,7 +57,7 @@ const struct oscap_string_map XCCDF_LEVEL_MAP[] = {
 	{XCCDF_LOW, "low"},
 	{XCCDF_MEDIUM, "medium"},
 	{XCCDF_HIGH, "high"},
-	{XCCDF_UNKNOWN, NULL}
+	{XCCDF_LEVEL_NOT_DEFINED, NULL}
 };
 
 static const struct oscap_string_map XCCDF_STATUS_MAP[] = {
@@ -528,11 +528,11 @@ xmlNode *xccdf_fixtext_to_dom(struct xccdf_fixtext *fixtext, xmlDoc *doc, xmlNod
 	    xmlNewProp(fixtext_node, BAD_CAST "fixref", BAD_CAST fixref);
 
 	xccdf_level_t complexity = xccdf_fixtext_get_complexity(fixtext);
-        if (complexity != 0)
+        if (complexity != XCCDF_LEVEL_NOT_DEFINED)
 	        xmlNewProp(fixtext_node, BAD_CAST "complexity", BAD_CAST XCCDF_LEVEL_MAP[complexity-1].string);
 
 	xccdf_level_t disruption = xccdf_fixtext_get_disruption(fixtext);
-        if (disruption != 0)
+        if (disruption != XCCDF_LEVEL_NOT_DEFINED)
 	        xmlNewProp(fixtext_node, BAD_CAST "disruption", BAD_CAST XCCDF_LEVEL_MAP[disruption-1].string);
 
 	xccdf_strategy_t strategy = xccdf_fixtext_get_strategy(fixtext);
@@ -559,11 +559,11 @@ xmlNode *xccdf_fix_to_dom(struct xccdf_fix *fix, xmlDoc *doc, xmlNode *parent)
 		xmlNewProp(fix_node, BAD_CAST "reboot", BAD_CAST "true");
 
 	xccdf_level_t complexity = xccdf_fix_get_complexity(fix);
-        if (complexity != 0)
+        if (complexity != XCCDF_LEVEL_NOT_DEFINED)
 	    xmlNewProp(fix_node, BAD_CAST "complexity", BAD_CAST XCCDF_LEVEL_MAP[complexity-1].string);
 
 	xccdf_level_t disruption = xccdf_fix_get_disruption(fix);
-        if (disruption != 0)
+        if (disruption != XCCDF_LEVEL_NOT_DEFINED)
 	        xmlNewProp(fix_node, BAD_CAST "disruption", BAD_CAST XCCDF_LEVEL_MAP[disruption-1].string);
 
 	xccdf_strategy_t strategy = xccdf_fix_get_strategy(fix);
