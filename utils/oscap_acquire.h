@@ -28,9 +28,16 @@
  * made on unliked files using file descriptors, this is bordeline impossible
  * in short term given the library interfaces.
  * This function emits a message on stderr in case of error.
- * @return filename of the temporary directory or NULL on error.
+ * @return filename of the temporary directory or NULL on error. Returned value
+ * shall be freed by oscap_acquire_cleanup_dir() call.
  */
 char *oscap_acquire_temp_dir(void);
+
+/**
+ * Unlink given directory recursivelly.
+ * @param dir_path path to the directory for removal.
+ */
+void oscap_acquire_cleanup_dir(char **dir_path);
 
 /**
  * Download the given url to a random file in the given directory.

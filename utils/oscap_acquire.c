@@ -28,6 +28,8 @@
 #include <curl/curl.h>
 #include <curl/easy.h>
 
+#include <ftw.h>
+
 #include "oscap_acquire.h"
 
 #ifndef P_tmpdir
@@ -47,6 +49,28 @@ oscap_acquire_temp_dir()
 		return NULL;
 	}
 	return temp_dir;
+}
+
+static int
+__unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)
+{
+	int rv = remove(fpath);
+
+	if (rv)
+		perror(fpath);
+
+	return rv;
+}
+
+void
+oscap_acquire_cleanup_dir(char **dir_path)
+{
+	if (*dir_path != NULL)
+	{
+		nftw(*dir_path, __unlink_cb, 64, FTW_DEPTH | FTW_PHYS | FTW_MOUNT);
+		free(*dir_path);
+		*dir_path = NULL;
+	}
 }
 
 char *

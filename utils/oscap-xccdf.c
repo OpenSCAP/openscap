@@ -49,8 +49,6 @@
 #include "oscap.h"
 #include "oscap_acquire.h"
 
-#include <ftw.h>
-
 static int app_evaluate_xccdf(const struct oscap_action *action);
 static int app_xccdf_validate(const struct oscap_action *action);
 static int app_xccdf_resolve(const struct oscap_action *action);
@@ -322,16 +320,6 @@ static int callback_syslog_result(struct xccdf_rule_result *rule_result, void *a
 	syslog(priority, "Rule: %s, Ident: %s, Result: %s.", xccdf_rule_result_get_idref(rule_result), ident_id, result_str);
 
 	return 0;
-}
-
-static int __unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)
-{
-	int rv = remove(fpath);
-
-	if (rv)
-		perror(fpath);
-
-	return rv;
 }
 
 struct oscap_content_resource {
@@ -948,12 +936,7 @@ cleanup:
 	if (policy_model)
 		xccdf_policy_model_free(policy_model);
 
-	if (temp_dir)
-	{
-		// recursively remove the directory we created for data stream split
-		nftw(temp_dir, __unlink_cb, 64, FTW_DEPTH | FTW_PHYS | FTW_MOUNT);
-		free(temp_dir);
-	}
+	oscap_acquire_cleanup_dir(&temp_dir);
 
 	if (oval_result_files)
 	{
@@ -1137,12 +1120,7 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	if (policy_model)
 		xccdf_policy_model_free(policy_model);
 
-	if (temp_dir)
-	{
-		// recursively remove the directory we created for data stream split
-		nftw(temp_dir, __unlink_cb, 64, FTW_DEPTH | FTW_PHYS | FTW_MOUNT);
-		free(temp_dir);
-	}
+	oscap_acquire_cleanup_dir(&temp_dir);
 
 	return result;
 }
