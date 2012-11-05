@@ -90,6 +90,8 @@ EXTRA_DIST += \
 	test_xccdf_check_processing_selector_bad.xccdf.xml \
 	test_xccdf_check_unsupported_check_system.sh \
 	test_xccdf_check_unsupported_check_system.xml \
+	test_xccdf_fix_attr_export.sh \
+	test_xccdf_fix_attr_export.xccdf.xml \
 	test_xccdf_overlaping_IDs.xccdf.xml \
 	test_xccdf_refine_rule.sh \
 	test_xccdf_refine_rule.xccdf.xml \
