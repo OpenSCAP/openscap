@@ -191,7 +191,6 @@ char *xccdf_attribute_copy(xmlTextReaderPtr reader, xccdf_attribute_t attr);
 bool xccdf_attribute_get_bool(xmlTextReaderPtr reader, xccdf_attribute_t attr);
 int xccdf_attribute_get_int(xmlTextReaderPtr reader, xccdf_attribute_t attr);
 float xccdf_attribute_get_float(xmlTextReaderPtr reader, xccdf_attribute_t attr);
-//void xccdf_read_flag(xmlTextReaderPtr reader, xccdf_attribute_t attr, xccdf_flags* flags, xccdf_flag_t flag);
 
 extern const struct oscap_string_map XCCDF_BOOL_MAP[];
 
