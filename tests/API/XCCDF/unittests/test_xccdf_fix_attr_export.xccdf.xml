@@ -3,6 +3,8 @@
   <status>incomplete</status>
   <version>1.0</version>
   <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_1">
-	<fix id="F-31213r1_fix"/>
+	<fix id="fix-empty"/>
+	<fix id="fix-unknown" disruption="unknown" complexity="unknown" strategy="unknown"/>
+	<fix id="fix-restrict" disruption="medium" complexity="high" strategy="restrict"/>
   </Rule>
 </Benchmark>
