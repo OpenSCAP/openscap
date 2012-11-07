@@ -3,6 +3,6 @@
 . $srcdir/../../test_common.sh
 
 test_init ds_sds_index.log
-test_run "ds_sds_index" ./test_ds_sds_index
-test_run "ds_sds_index_multiple" ./test_ds_sds_index_multiple
+test_run "ds_sds_index" ./test_ds_sds_index $srcdir/sds.xml
+test_run "ds_sds_index_multiple" ./test_ds_sds_index_multiple $srcdir/sds_multiple.xml
 test_exit

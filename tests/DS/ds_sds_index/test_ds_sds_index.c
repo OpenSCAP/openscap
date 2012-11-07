@@ -19,7 +19,13 @@
 
 int main(int argc, char **argv)
 {
-	struct ds_sds_index* index = ds_sds_index_import("sds.xml");
+	if (argc != 2)
+	{
+		printf("Invalid arguments, usage: ./test_ds_sds_index FILE");
+		return 2;
+	}
+
+	struct ds_sds_index* index = ds_sds_index_import(argv[1]);
 	struct ds_stream_index_iterator* streams = ds_sds_index_get_streams(index);
 
 	// number of streams in the collection
