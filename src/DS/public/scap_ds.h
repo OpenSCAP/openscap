@@ -149,6 +149,10 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file,
 struct ds_stream_index* ds_stream_index_new(void);
 void ds_stream_index_free(struct ds_stream_index* s);
 const char* ds_stream_index_get_id(struct ds_stream_index* s);
+struct oscap_string_iterator* ds_stream_index_get_checks(struct ds_stream_index* s);
+struct oscap_string_iterator* ds_stream_index_get_checklists(struct ds_stream_index* s);
+struct oscap_string_iterator* ds_stream_index_get_dictionaries(struct ds_stream_index* s);
+struct oscap_string_iterator* ds_stream_index_get_extended_components(struct ds_stream_index* s);
 struct ds_sds_index* ds_sds_index_new(void);
 void ds_sds_index_free(struct ds_sds_index* s);
 void ds_sds_index_add_stream(struct ds_sds_index* s, struct ds_stream_index* stream);

@@ -40,6 +40,7 @@ struct ds_stream_index
 	struct oscap_stringlist* check_components;
 	struct oscap_stringlist* checklist_components;
 	struct oscap_stringlist* dictionary_components;
+	struct oscap_stringlist* extended_components;
 };
 
 struct ds_stream_index* ds_stream_index_new(void)
@@ -69,6 +70,26 @@ void ds_stream_index_free(struct ds_stream_index* s)
 const char* ds_stream_index_get_id(struct ds_stream_index* s)
 {
 	return s->id;
+}
+
+struct oscap_string_iterator* ds_stream_index_get_checks(struct ds_stream_index* s)
+{
+	return oscap_iterator_new((struct oscap_list*)s->check_components);
+}
+
+struct oscap_string_iterator* ds_stream_index_get_checklists(struct ds_stream_index* s)
+{
+	return oscap_iterator_new((struct oscap_list*)s->checklist_components);
+}
+
+struct oscap_string_iterator* ds_stream_index_get_dictionaries(struct ds_stream_index* s)
+{
+	return oscap_iterator_new((struct oscap_list*)s->dictionary_components);
+}
+
+struct oscap_string_iterator* ds_stream_index_get_extended_components(struct ds_stream_index* s)
+{
+	return oscap_iterator_new((struct oscap_list*)s->extended_components);
 }
 
 static struct ds_stream_index* ds_stream_index_parse(xmlTextReaderPtr reader)
@@ -117,6 +138,10 @@ static struct ds_stream_index* ds_stream_index_parse(xmlTextReaderPtr reader)
 		else if (strcmp(local_name, "dictionaries") == 0)
 		{
 			cref_target = node_type == 1 ? ret->dictionary_components : NULL;
+		}
+		else if (strcmp(local_name, "extended-components") == 0)
+		{
+			cref_target = node_type == 1 ? ret->extended_components : NULL;
 		}
 		// reading of the component refs, we only care about their ID
 		else if (strcmp(local_name, "component-ref") == 0 &&
