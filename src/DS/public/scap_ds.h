@@ -35,23 +35,6 @@
 #include "oscap.h"
 
 /**
- * @brief checks whether given file contains a source data stream
- *
- * @param xccdf_file
- * 	   Path to the file we want checked
- *
- * @returns
- * 	    0 if given file is *likely* a source data stream
- * 	    1 if given file is *likely not* a source data stream
- * 	   -1 in case of errors (file not found or root element not found)
- *
- * @par
- * This check is only "preliminary", it is designed to be reasonably fast
- * and won't do validation! It looks at the root element only.
- */
-int ds_is_sds(const char* xccdf_file);
-
-/**
  * @brief takes given source data stream and decomposes it into separate files
  *
  * This function bases the output on an XCCDF embedded in the "checklists"

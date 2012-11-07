@@ -55,41 +55,6 @@ static const char* datastream_ns_uri = "http://scap.nist.gov/schema/scap/source/
 static const char* xlink_ns_uri = "http://www.w3.org/1999/xlink";
 static const char* cat_ns_uri = "urn:oasis:names:tc:entity:xmlns:xml:catalog";
 
-int ds_is_sds(const char* file)
-{
-	xmlTextReaderPtr reader = xmlReaderForFile(file, NULL, 0);
-	if (!reader) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
-		return -1;
-	}
-
-	int result = -1;
-
-	int ret;
-	ret = xmlTextReaderRead(reader);
-	while (ret == 1)
-	{
-		if (xmlTextReaderNodeType(reader) == 1)
-		{
-			const char* name = (const char*)xmlTextReaderConstLocalName(reader);
-			if (name == NULL)
-				break;
-
-			result = strcmp(name, "data-stream-collection") == 0 ? 0 : 1;
-			break;
-		}
-
-		ret = xmlTextReaderRead(reader);
-	}
-
-	xmlFreeTextReader(reader);
-
-	if (result == -1)
-		oscap_seterr(OSCAP_EFAMILY_XML, "Can't locate the root element of '%s' XML file.", file);
-
-	return result;
-}
-
 static int mkdir_p(const char* path)
 {
 	if (strlen(path) > MAXPATHLEN)

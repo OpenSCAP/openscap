@@ -353,7 +353,8 @@ int app_evaluate_oval(const struct oscap_action *action)
 		}
 	}
 
-	if (ds_is_sds(action->f_oval) == 0)
+	oscap_document_type_t doc_type = 0;
+	if (oscap_determine_document_type(action->f_oval, &doc_type) == 0 && doc_type == OSCAP_DOCUMENT_SDS)
 	{
 		temp_dir = oscap_acquire_temp_dir();
 		if (temp_dir == NULL)
@@ -731,10 +732,11 @@ static bool valid_inputs(const struct oscap_action *action) {
         bool result = false;
 	int ret;
 	char *doc_version;
+	oscap_document_type_t doc_type = 0;
 
 	/* validate SDS or OVAL Definitions & Variables & Syschars,
 	   depending on the data */
-	if (ds_is_sds(action->f_oval) == 0) {
+	if (oscap_determine_document_type(action->f_oval, &doc_type) == 0 && doc_type == OSCAP_DOCUMENT_SDS) {
 		doc_version = strdup("1.2");
 		if ((ret = oscap_validate_document(action->f_oval, OSCAP_DOCUMENT_SDS, doc_version, reporter, (void*) action))) {
 			if (ret==1)
@@ -796,7 +798,7 @@ static int app_oval_validate(const struct oscap_action *action) {
 	oscap_document_type_t doc_type = 0;
 
 	/* find out what we want to validate */
-	if (ds_is_sds(action->f_oval) == 0) {
+	if (oscap_determine_document_type(action->f_oval, &doc_type) == 0 && doc_type == OSCAP_DOCUMENT_SDS) {
 		doc_type = OSCAP_DOCUMENT_SDS;
 		doc_version = strdup("1.2");
 	}
@@ -829,7 +831,7 @@ static int app_oval_validate(const struct oscap_action *action) {
 	/* schematron-based validation requested
 	   We can only do schematron validation if the file isn't a source datastream
 	*/
-	if (action->force && ds_is_sds(action->f_oval) != 0) {
+	if (action->force && doc_type != OSCAP_DOCUMENT_SDS) {
 		ret=oscap_schematron_validate_document(action->f_oval, doc_type, doc_version, NULL);
 		if (ret==-1) {
 			result=OSCAP_ERROR;

@@ -472,7 +472,9 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	/* syslog message */
 	syslog(priority, "Evaluation started. Content: %s, Profile: %s.", action->f_xccdf, action->profile);
 
-	const bool sds_likely = ds_is_sds(action->f_xccdf) == 0;
+	oscap_document_type_t doc_type = 0;
+
+	const bool sds_likely = oscap_determine_document_type(action->f_xccdf, &doc_type) == 0 && doc_type == OSCAP_DOCUMENT_SDS;
 	if (sds_likely)
 	{
 		if (action->validate)
