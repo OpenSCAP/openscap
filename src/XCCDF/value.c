@@ -258,6 +258,20 @@ static void xccdf_string_dump(const char *s, int depth)
 	printf("%s\n", s);
 }
 
+static void
+_xccdf_value_type_dump(xccdf_value_type_t type, int depth)
+{
+	xccdf_print_depth(depth);
+	printf("type: ");
+	switch (type) {
+	case XCCDF_TYPE_NUMBER: printf("number\n"); break;
+	case XCCDF_TYPE_STRING: printf("string\n"); break;
+	case XCCDF_TYPE_BOOLEAN: printf("boolean\n"); break;
+	default:
+		assert(false);
+	}
+}
+
 void xccdf_value_dump(struct xccdf_item *value, int depth)
 {
 	xccdf_print_depth(depth++);
@@ -266,15 +280,7 @@ void xccdf_value_dump(struct xccdf_item *value, int depth)
 		return;
 	xccdf_item_print(value, depth);
 	//void (*valdump) (struct xccdf_value_instance * val, int depth) = NULL;
-	xccdf_print_depth(depth);
-	printf("type: ");
-	switch (value->sub.value.type) {
-	case XCCDF_TYPE_NUMBER: printf("number\n"); break;
-	case XCCDF_TYPE_STRING: printf("string\n"); break;
-	case XCCDF_TYPE_BOOLEAN: printf("boolean\n"); break;
-	default:
-		assert(false);
-	}
+	_xccdf_value_type_dump(value->sub.value.type, depth);
 	xccdf_print_depth(depth);
 	printf("values");
 	//oscap_list_dump(value->sub.value.instances, (oscap_dump_func) valdump, depth + 1);
