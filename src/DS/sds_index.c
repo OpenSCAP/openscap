@@ -189,10 +189,24 @@ static void ds_sds_index_add_stream(struct ds_sds_index* s, struct ds_stream_ind
 	oscap_list_add(s->streams, stream);
 }
 
-struct ds_stream_index* ds_sds_index_get_stream(struct ds_sds_index* s, const char* stream_id)
+struct ds_stream_index* ds_sds_index_get_stream(struct ds_sds_index* sds, const char* stream_id)
 {
-	// FIXME
-	return NULL;
+	struct ds_stream_index* ret = NULL;
+
+	struct ds_stream_index_iterator* streams = ds_sds_index_get_streams(sds);
+	while (ds_stream_index_iterator_has_more(streams))
+	{
+		struct ds_stream_index* stream = ds_stream_index_iterator_next(streams);
+		if (strcmp(ds_stream_index_get_id(stream), stream_id) == 0)
+		{
+			ret = stream;
+			break;
+		}
+
+	}
+	ds_stream_index_iterator_free(streams);
+
+	return ret;
 }
 
 struct ds_stream_index_iterator* ds_sds_index_get_streams(struct ds_sds_index* s)
