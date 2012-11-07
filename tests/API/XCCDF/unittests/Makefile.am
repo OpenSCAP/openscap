@@ -103,5 +103,8 @@ EXTRA_DIST += \
 	unit_helper.h \
 	test_default_selector.xccdf.xml \
 	test_default_selector.oval.xml \
-	test_default_selector.sh
+	test_default_selector.sh \
+	test_inherit_selector.xccdf.xml \
+	test_inherit_selector.oval.xml \
+	test_inherit_selector.sh
 
