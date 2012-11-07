@@ -159,6 +159,8 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file,
  * Inside it are components divided into categories called "containers".
  * These are "checks", "checklists", "dictionaries" and "extended-components".
  * See the specification for more details about their meaning.
+ *
+ * @see ds_sds_index
  */
 struct ds_stream_index;
 
@@ -202,11 +204,43 @@ struct oscap_string_iterator* ds_stream_index_get_dictionaries(struct ds_stream_
  */
 struct oscap_string_iterator* ds_stream_index_get_extended_components(struct ds_stream_index* s);
 
+/**
+ * @struct ds_sds_index
+ *
+ * Represents <data-stream-collection> element - the root element of each
+ * source datastream. Its purpose is to provide IDs and other metadata.
+ *
+ * Contains a list of ds_stream_index structures, each representing one
+ * data-stream inside the collection.
+ *
+ * @see ds_stream_index
+ */
+struct ds_sds_index;
+
+/// @memberof ds_sds_index
 struct ds_sds_index* ds_sds_index_new(void);
+/// @memberof ds_sds_index
 void ds_sds_index_free(struct ds_sds_index* s);
-void ds_sds_index_add_stream(struct ds_sds_index* s, struct ds_stream_index* stream);
+
+/**
+ * @brief retrieves a stream index by data-stream ID
+ *
+ * @memberof ds_sds_index
+ */
 struct ds_stream_index* ds_sds_index_get_stream(struct ds_sds_index* s, const char* stream_id);
+
+/**
+ * @brief retrieves all streams indexed inside this structure
+ *
+ * @memberof ds_sds_index
+ */
 struct ds_stream_index_iterator* ds_sds_index_get_streams(struct ds_sds_index* s);
+
+/**
+ * @brief imports given source datastream and indexes it
+ *
+ * @memberof ds_sds_index
+ */
 struct ds_sds_index *ds_sds_index_import(const char* file);
 
 /** 

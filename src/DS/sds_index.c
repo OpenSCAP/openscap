@@ -184,7 +184,7 @@ void ds_sds_index_free(struct ds_sds_index* s)
 	oscap_free(s);
 }
 
-void ds_sds_index_add_stream(struct ds_sds_index* s, struct ds_stream_index* stream)
+static void ds_sds_index_add_stream(struct ds_sds_index* s, struct ds_stream_index* stream)
 {
 	oscap_list_add(s->streams, stream);
 }
