@@ -53,6 +53,25 @@ int main(int argc, char **argv)
 		}
 	}
 	ds_stream_index_iterator_free(streams);
+
+	if (ds_sds_index_get_stream(index, "scap_org.open-scap_datastream_from_xccdf_scap-fedora14-xccdf.xml") == NULL)
+	{
+		printf("Attempted to retrieve 'scap_org.open-scap_datastream_from_xccdf_scap-fedora14-xccdf.xml' "
+		       "by ID but got NULL as a result!\n");
+		return 1;
+	}
+	if (ds_sds_index_get_stream(index, "scap_org.open-scap_datastream_from_xccdf_scap-fedora14-xccdf.xml_2") == NULL)
+	{
+		printf("Attempted to retrieve 'scap_org.open-scap_datastream_from_xccdf_scap-fedora14-xccdf.xml_2' "
+		       "by ID but got NULL as a result!\n");
+		return 1;
+	}
+	if (ds_sds_index_get_stream(index, "nonexistant_rubbish") != NULL)
+	{
+		printf("Attempted to retrieve a nonexistant stream by ID but got a non-NULL result!\n");
+		return 1;
+	}
+
 	ds_sds_index_free(index);
 
 	if (nr_streams != 2)
