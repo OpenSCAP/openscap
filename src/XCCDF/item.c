@@ -313,7 +313,12 @@ void xccdf_item_print(struct xccdf_item *item, int depth)
 		printf("platforms ");
 		oscap_list_dump(item->item.platforms, xccdf_cstring_dump, depth + 1);
 		xccdf_print_depth(depth);
-		printf("status (cur = %d)", xccdf_item_get_current_status(item)->status);
+		printf("status (cur = ");
+		const struct xccdf_status *status = xccdf_item_get_current_status(item);
+		if (status != NULL)
+			printf("%d)", xccdf_status_get_status(status));
+		else
+			printf("(NULL))");
 		oscap_list_dump(item->item.statuses, xccdf_status_dump, depth + 1);
 	}
 }
