@@ -20,9 +20,10 @@ DISTCLEANFILES = *.log *.out*
 CLEANFILES = *.log *.out*
 
 TESTS = all.sh
-check_PROGRAMS = test_ds_sds_index test_ds_sds_index_multiple
+check_PROGRAMS = test_ds_sds_index test_ds_sds_index_multiple test_ds_sds_index_invalid
 
 test_ds_sds_index_SOURCES = test_ds_sds_index.c
 test_ds_sds_index_multiple_SOURCES = test_ds_sds_index_multiple.c
+test_ds_sds_index_invalid_SOURCES = test_ds_sds_index_invalid.c
 
-EXTRA_DIST += all.sh test_ds_sds_index.c test_ds_sds_index_multiple.c sds.xml sds_multiple.xml
+EXTRA_DIST += all.sh test_ds_sds_index.c test_ds_sds_index_multiple.c test_ds_sds_index_invalid.c sds.xml sds_multiple.xml sds_invalid.xml
