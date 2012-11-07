@@ -272,6 +272,25 @@ _xccdf_value_type_dump(xccdf_value_type_t type, int depth)
 	}
 }
 
+static void
+_xccdf_value_instance_dump(struct xccdf_value_instance *vi, int depth)
+{
+	xccdf_print_depth(depth++);
+	printf("Value Instance: ");
+	if (vi == NULL) {
+		printf("(NULL)\n");
+		return;
+	}
+	printf("\n");
+	xccdf_print_depth(depth);
+	printf("selector: '%s'\n", vi->selector == NULL ? "(NULL)" : vi->selector);
+	_xccdf_value_type_dump(vi->type, depth);
+	xccdf_print_depth(depth);
+	printf("value: '%s'\n", vi->value == NULL ? "(NULL)" : vi->value);
+	xccdf_print_depth(depth);
+	printf("defval:'%s'\n", vi->defval == NULL ? "(NULL)" : vi->defval);
+}
+
 void xccdf_value_dump(struct xccdf_item *value, int depth)
 {
 	xccdf_print_depth(depth++);
@@ -279,11 +298,10 @@ void xccdf_value_dump(struct xccdf_item *value, int depth)
 	if (!value)
 		return;
 	xccdf_item_print(value, depth);
-	//void (*valdump) (struct xccdf_value_instance * val, int depth) = NULL;
 	_xccdf_value_type_dump(value->sub.value.type, depth);
 	xccdf_print_depth(depth);
 	printf("values");
-	//oscap_list_dump(value->sub.value.instances, (oscap_dump_func) valdump, depth + 1);
+	oscap_list_dump(value->sub.value.instances, (oscap_dump_func) _xccdf_value_instance_dump, depth + 1);
 	if (value->sub.value.sources->itemcount != 0) {
 		xccdf_print_depth(depth);
 		printf("sources");
