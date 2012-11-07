@@ -146,6 +146,29 @@ int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastr
 int ds_rds_create(const char* sds_file, const char* xccdf_result_file,
         const char** oval_result_files, const char* target_file);
 
+struct ds_stream_index* ds_stream_index_new(void);
+void ds_stream_index_free(struct ds_stream_index* s);
+const char* ds_stream_index_get_id(struct ds_stream_index* s);
+struct ds_sds_index* ds_sds_index_new(void);
+void ds_sds_index_free(struct ds_sds_index* s);
+void ds_sds_index_add_stream(struct ds_sds_index* s, struct ds_stream_index* stream);
+struct ds_stream_index* ds_sds_index_get_stream(struct ds_sds_index* s, const char* stream_id);
+struct ds_stream_index_iterator* ds_sds_index_get_streams(struct ds_sds_index* s);
+struct ds_sds_index *ds_sds_index_import(const char* file);
+
+/** 
+ * @struct ds_stream_index_iterator
+ * @see oscap_iterator
+ */
+struct ds_stream_index_iterator;
+
+/// @memberof ds_stream_index_iterator
+struct ds_stream_index *ds_stream_index_iterator_next(struct ds_stream_index_iterator *it);
+/// @memberof ds_stream_index_iterator
+bool ds_stream_index_iterator_has_more(struct ds_stream_index_iterator *it);
+/// @memberof ds_stream_index_iterator
+void ds_stream_index_iterator_free(struct ds_stream_index_iterator *it);
+
 /************************************************************/
 /** @} End of DS group */
 
