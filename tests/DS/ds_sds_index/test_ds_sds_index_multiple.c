@@ -19,22 +19,27 @@
 
 int main(int argc, char **argv)
 {
-	struct ds_sds_index* index = ds_sds_index_import("sds.xml");
+	struct ds_sds_index* index = ds_sds_index_import("sds_multiple.xml");
 	struct ds_stream_index_iterator* streams = ds_sds_index_get_streams(index);
-
-	// number of streams in the collection
 	int nr_streams = 0;
-
 	while (ds_stream_index_iterator_has_more(streams))
 	{
 		struct ds_stream_index* stream = ds_stream_index_iterator_next(streams);
 		nr_streams++;
 
-		if (strcmp(ds_stream_index_get_id(stream),
-		    "scap_org.open-scap_datastream_from_xccdf_scap-fedora14-xccdf.xml") != 0)
+		if (nr_streams == 1 &&
+		    strcmp(ds_stream_index_get_id(stream), "scap_org.open-scap_datastream_from_xccdf_scap-fedora14-xccdf.xml") != 0)
 		{
 			printf("Failed to read datastream ID correctly. "
 			       "Expected 'scap_org.open-scap_datastream_from_xccdf_scap-fedora14-xccdf.xml', "
+			       "found '%s'.\n", ds_stream_index_get_id(stream));
+			return 1;
+		}
+		if (nr_streams == 2 &&
+		    strcmp(ds_stream_index_get_id(stream), "scap_org.open-scap_datastream_from_xccdf_scap-fedora14-xccdf.xml_2") != 0)
+		{
+			printf("Failed to read datastream ID correctly. "
+			       "Expected 'scap_org.open-scap_datastream_from_xccdf_scap-fedora14-xccdf.xml_2', "
 			       "found '%s'.\n", ds_stream_index_get_id(stream));
 			return 1;
 		}
@@ -42,9 +47,9 @@ int main(int argc, char **argv)
 	ds_stream_index_iterator_free(streams);
 	ds_sds_index_free(index);
 
-	if (nr_streams != 1)
+	if (nr_streams != 2)
 	{
-		printf("Expected to read 1 data-stream from the source datastream collection, "
+		printf("Expected to read 2 data-streams from the source datastream collection, "
 		       "instead read %i!\n", nr_streams);
 		return 1;
 	}
