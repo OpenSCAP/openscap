@@ -293,7 +293,18 @@ static bool xccdf_value_has_selector(void *inst, void *sel)
 
 struct xccdf_value_instance *xccdf_value_get_instance_by_selector(const struct xccdf_value *value, const char *selector)
 {
-	return oscap_list_find(XITEM(value)->sub.value.instances, (void*)selector, xccdf_value_has_selector);
+	struct xccdf_value_instance *val = oscap_list_find(XITEM(value)->sub.value.instances, (void*)selector, xccdf_value_has_selector);
+	if (val == NULL && oscap_streq(selector, "")) {
+		/* From NISTIR-7275r4:
+		 * If there is no <xccdf:value> or <xccdf:complex-value> element with an empty
+		 * or absent @selector, the first <xccdf:value> or <xccdf:complex-value>
+		 * element in top-down processing of the XML SHALL be the default element. */
+		struct xccdf_value_instance_iterator *instance_it = xccdf_value_get_instances(value);
+		if (xccdf_value_instance_iterator_has_more(instance_it))
+			val = xccdf_value_instance_iterator_next(instance_it);
+		xccdf_value_instance_iterator_free(instance_it);
+	}
+	return val;
 }
 
 bool xccdf_value_add_instance(struct xccdf_value *value, struct xccdf_value_instance *instance)
