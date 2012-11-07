@@ -288,10 +288,7 @@ static bool xccdf_value_has_selector(void *inst, void *sel)
 {
         if (inst == NULL)
                 return false;
-
-        if (sel != NULL)
-                return oscap_streq(((struct xccdf_value_instance *)inst)->selector, sel);
-        else    return oscap_streq(((struct xccdf_value_instance *)inst)->selector, "");
+	return oscap_streq(((struct xccdf_value_instance *)inst)->selector, sel);
 }
 
 struct xccdf_value_instance *xccdf_value_get_instance_by_selector(const struct xccdf_value *value, const char *selector)
