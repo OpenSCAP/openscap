@@ -100,4 +100,8 @@ EXTRA_DIST += \
 	oval \
 	oval_without_definitions.oval.xml \
 	unit_helper.c \
-	unit_helper.h
+	unit_helper.h \
+	test_default_selector.xccdf.xml \
+	test_default_selector.oval.xml \
+	test_default_selector.sh
+

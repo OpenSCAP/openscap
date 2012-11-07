@@ -1,0 +1,106 @@
+<oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:linux="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
+  <generator>
+    <oval:product_name>python</oval:product_name>
+    <oval:product_version>2.6.6</oval:product_version>
+    <oval:schema_version>5.10</oval:schema_version>
+    <oval:timestamp>2011-09-21T13:44:00</oval:timestamp>
+  </generator>
+
+  <definitions>
+    <definition class="compliance" id="oval:ssg:def:346" version="1">
+      <metadata>
+        <title>Service sshd Disabled</title>
+        <affected family="unix">
+          <platform>Red Hat Enterprise Linux 6</platform>
+        </affected>
+        <description>The sshd service should be disabled if possible.</description>
+      <reference source="ssg" ref_id="service_sshd_disabled"/></metadata>
+      <criteria comment="package openssh-server removed or service sshd is not configured to start" operator="OR">
+        <criteria operator="AND" comment="service sshd is not configured to start">
+          <criterion comment="sshd runlevel 0" test_ref="oval:ssg:tst:1106"/>
+          <criterion comment="sshd runlevel 1" test_ref="oval:ssg:tst:1107"/>
+          <criterion comment="sshd runlevel 2" test_ref="oval:ssg:tst:1108"/>
+          <criterion comment="sshd runlevel 3" test_ref="oval:ssg:tst:1109"/>
+          <criterion comment="sshd runlevel 4" test_ref="oval:ssg:tst:1110"/>
+          <criterion comment="sshd runlevel 5" test_ref="oval:ssg:tst:1111"/>
+          <criterion comment="sshd runlevel 6" test_ref="oval:ssg:tst:1112"/>
+        </criteria>
+      </criteria>
+    </definition>
+  </definitions>
+
+  <tests>
+    <unix:runlevel_test check="all" check_existence="any_exist" comment="Runlevel test" id="oval:ssg:tst:1106" version="2">
+      <unix:object object_ref="oval:ssg:obj:2338"/>
+      <unix:state state_ref="oval:ssg:ste:2339"/>
+    </unix:runlevel_test>
+    <unix:runlevel_test check="all" check_existence="any_exist" comment="Runlevel test" id="oval:ssg:tst:1107" version="2">
+      <unix:object object_ref="oval:ssg:obj:2340"/>
+      <unix:state state_ref="oval:ssg:ste:2339"/>
+    </unix:runlevel_test>
+    <unix:runlevel_test check="all" check_existence="any_exist" comment="Runlevel test" id="oval:ssg:tst:1108" version="2">
+      <unix:object object_ref="oval:ssg:obj:2341"/>
+      <unix:state state_ref="oval:ssg:ste:2339"/>
+    </unix:runlevel_test>
+    <unix:runlevel_test check="all" check_existence="any_exist" comment="Runlevel test" id="oval:ssg:tst:1109" version="2">
+      <unix:object object_ref="oval:ssg:obj:2342"/>
+      <unix:state state_ref="oval:ssg:ste:2339"/>
+    </unix:runlevel_test>
+    <unix:runlevel_test check="all" check_existence="any_exist" comment="Runlevel test" id="oval:ssg:tst:1110" version="2">
+      <unix:object object_ref="oval:ssg:obj:2343"/>
+      <unix:state state_ref="oval:ssg:ste:2339"/>
+    </unix:runlevel_test>
+    <unix:runlevel_test check="all" check_existence="any_exist" comment="Runlevel test" id="oval:ssg:tst:1111" version="2">
+      <unix:object object_ref="oval:ssg:obj:2344"/>
+      <unix:state state_ref="oval:ssg:ste:2339"/>
+    </unix:runlevel_test>
+    <unix:runlevel_test check="all" check_existence="any_exist" comment="Runlevel test" id="oval:ssg:tst:1112" version="2">
+      <unix:object object_ref="oval:ssg:obj:2345"/>
+      <unix:state state_ref="oval:ssg:ste:2339"/>
+    </unix:runlevel_test>
+  </tests>
+
+  <objects>
+    <unix:runlevel_object id="oval:ssg:obj:2338" version="1">
+      <unix:service_name>sshd</unix:service_name>
+      <unix:runlevel operation="equals">0</unix:runlevel>
+    </unix:runlevel_object>
+    <unix:runlevel_object id="oval:ssg:obj:2340" version="1">
+      <unix:service_name>sshd</unix:service_name>
+      <unix:runlevel operation="equals">1</unix:runlevel>
+    </unix:runlevel_object>
+    <unix:runlevel_object id="oval:ssg:obj:2341" version="1">
+      <unix:service_name>sshd</unix:service_name>
+      <unix:runlevel operation="equals">2</unix:runlevel>
+    </unix:runlevel_object>
+    <unix:runlevel_object id="oval:ssg:obj:2342" version="1">
+      <unix:service_name>sshd</unix:service_name>
+      <unix:runlevel operation="equals">3</unix:runlevel>
+    </unix:runlevel_object>
+    <unix:runlevel_object id="oval:ssg:obj:2343" version="1">
+      <unix:service_name>sshd</unix:service_name>
+      <unix:runlevel operation="equals">4</unix:runlevel>
+    </unix:runlevel_object>
+    <unix:runlevel_object id="oval:ssg:obj:2344" version="1">
+      <unix:service_name>sshd</unix:service_name>
+      <unix:runlevel operation="equals">5</unix:runlevel>
+    </unix:runlevel_object>
+    <unix:runlevel_object id="oval:ssg:obj:2345" version="1">
+      <unix:service_name>sshd</unix:service_name>
+      <unix:runlevel operation="equals">6</unix:runlevel>
+    </unix:runlevel_object>
+  </objects>
+
+  <states>
+    <unix:runlevel_state comment="not configured to start" id="oval:ssg:ste:2339" version="1">
+      <unix:start datatype="boolean">false</unix:start>
+      <unix:kill datatype="boolean">true</unix:kill>
+    </unix:runlevel_state>
+  </states>
+
+  <variables>
+    <external_variable comment="default1" datatype="int" id="oval:ssg:var:1" version="1"/>
+    <external_variable comment="default2" datatype="int" id="oval:ssg:var:2" version="1"/>
+    <external_variable comment="default3" datatype="int" id="oval:ssg:var:3" version="1"/>
+  </variables>
+</oval_definitions>

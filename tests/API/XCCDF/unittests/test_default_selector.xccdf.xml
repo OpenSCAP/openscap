@@ -1,0 +1,62 @@
+<Benchmark xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://checklists.nist.gov/xccdf/1.1" id="RHEL-6" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.1 xccdf-1.1.4.xsd" resolved="false" xml:lang="en-US">
+  <status date="2012-11-06+01:00">draft</status>
+  <title>Title</title>
+  <description>Description.</description>
+  <notice id="terms_of_use">Notice.</notice>
+  <front-matter>test</front-matter>
+  <rear-matter>bla bla</rear-matter>
+  <reference href="TODO::INSERT"/>
+  <version>0.1</version>
+
+  <Profile id="test">
+    <title>test</title>
+    <description>This profile is for testing.</description>
+    <select idref="ssh_server_disabled" selected="true"/>
+    <refine-value idref="val1" selector="5_minutes"/>
+  </Profile>
+
+  <Profile id="test2">
+    <title>test</title>
+    <description>This profile is for testing.</description>
+    <select idref="ssh_server_disabled" selected="true"/>
+    <refine-value idref="val1" selector="10_minutes"/>
+    <refine-value idref="val2" selector="10_minutes"/>
+  </Profile>
+
+  <Group id="ssh">
+      <title>SSH Server</title>
+      <description>The SSH protocol is recommended.</description>
+      <Value id="val1" type="number" operator="equals" interactive="0">
+        <title>SSH session Idle time</title>
+        <description>Specify duration of allowed idle time.</description>
+        <value selector="5_minutes">300</value>
+        <value selector="">100</value>
+        <value selector="10_minutes">600</value>
+      </Value>
+      <Value id="val2" type="number" operator="equals" interactive="0">
+        <title>SSH session Idle time</title>
+        <description>Specify duration of allowed idle time.</description>
+        <value selector="5_minutes">300</value>
+        <value selector="10_minutes">600</value>
+        <value>100</value>
+      </Value>
+       <Value id="val3" type="number" operator="equals" interactive="0">
+        <title>SSH session Idle time</title>
+        <description>Specify duration of allowed idle time.</description>
+        <value selector="100_seconds">100</value>
+        <value selector="5_minutes">300</value>
+        <value selector="10_minutes">600</value>
+      </Value>
+       <Rule id="ssh_server_disabled" severity="low" selected="true">
+        <title>Disable SSH Server If Possible (Unusual)</title>
+        <description>Bla bla</description>
+        <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+	  <check-export export-name="oval:ssg:var:1" value-id="val1"/>
+	  <check-export export-name="oval:ssg:var:2" value-id="val2"/>
+	  <check-export export-name="oval:ssg:var:3" value-id="val3"/>
+          <check-content-ref href="test_default_selector.oval.xml" name="oval:ssg:def:346"/>
+        </check>
+      </Rule>
+  </Group>
+</Benchmark>
+
