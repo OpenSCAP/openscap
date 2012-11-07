@@ -146,13 +146,62 @@ int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastr
 int ds_rds_create(const char* sds_file, const char* xccdf_result_file,
         const char** oval_result_files, const char* target_file);
 
+/**
+ * @struct ds_stream_index
+ *
+ * Contains information about one particular "<data-stream>" element in
+ * the datastream collection (also called SDS = source datastream). Is
+ * contained inside ds_sds_index which indexes the entire datastream collection.
+ *
+ * Only contains IDs, does not contain the data of components themselves!
+ * See ds_sds_decompose for that.
+ *
+ * Inside it are components divided into categories called "containers".
+ * These are "checks", "checklists", "dictionaries" and "extended-components".
+ * See the specification for more details about their meaning.
+ */
+struct ds_stream_index;
+
+/// @memberof ds_stream_index
 struct ds_stream_index* ds_stream_index_new(void);
+/// @memberof ds_stream_index
 void ds_stream_index_free(struct ds_stream_index* s);
+
+/**
+ * @brief Gets ID of the <data-stream> elements the index represents.
+ *
+ * @memberof ds_stream_index
+ */
 const char* ds_stream_index_get_id(struct ds_stream_index* s);
+
+/**
+ * @brief Retrieves iterator over all components inside the <checks> element.
+ *
+ * @memberof ds_stream_index
+ */
 struct oscap_string_iterator* ds_stream_index_get_checks(struct ds_stream_index* s);
+
+/**
+ * @brief Retrieves iterator over all components inside the <checklists> element.
+ *
+ * @memberof ds_stream_index
+ */
 struct oscap_string_iterator* ds_stream_index_get_checklists(struct ds_stream_index* s);
+
+/**
+ * @brief Retrieves iterator over all components inside the <dictionaries> element.
+ *
+ * @memberof ds_stream_index
+ */
 struct oscap_string_iterator* ds_stream_index_get_dictionaries(struct ds_stream_index* s);
+
+/**
+ * @brief Retrieves iterator over all components inside the <extended-components> element.
+ *
+ * @memberof ds_stream_index
+ */
 struct oscap_string_iterator* ds_stream_index_get_extended_components(struct ds_stream_index* s);
+
 struct ds_sds_index* ds_sds_index_new(void);
 void ds_sds_index_free(struct ds_sds_index* s);
 void ds_sds_index_add_stream(struct ds_sds_index* s, struct ds_stream_index* stream);
