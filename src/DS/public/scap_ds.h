@@ -146,6 +146,116 @@ int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastr
 int ds_rds_create(const char* sds_file, const char* xccdf_result_file,
         const char** oval_result_files, const char* target_file);
 
+/**
+ * @struct ds_stream_index
+ *
+ * Contains information about one particular "<data-stream>" element in
+ * the datastream collection (also called SDS = source datastream). Is
+ * contained inside ds_sds_index which indexes the entire datastream collection.
+ *
+ * Only contains IDs, does not contain the data of components themselves!
+ * See ds_sds_decompose for that.
+ *
+ * Inside it are components divided into categories called "containers".
+ * These are "checks", "checklists", "dictionaries" and "extended-components".
+ * See the specification for more details about their meaning.
+ *
+ * @see ds_sds_index
+ */
+struct ds_stream_index;
+
+/// @memberof ds_stream_index
+struct ds_stream_index* ds_stream_index_new(void);
+/// @memberof ds_stream_index
+void ds_stream_index_free(struct ds_stream_index* s);
+
+/**
+ * @brief Gets ID of the <data-stream> elements the index represents.
+ *
+ * @memberof ds_stream_index
+ */
+const char* ds_stream_index_get_id(struct ds_stream_index* s);
+
+/**
+ * @brief Retrieves iterator over all components inside the <checks> element.
+ *
+ * @memberof ds_stream_index
+ */
+struct oscap_string_iterator* ds_stream_index_get_checks(struct ds_stream_index* s);
+
+/**
+ * @brief Retrieves iterator over all components inside the <checklists> element.
+ *
+ * @memberof ds_stream_index
+ */
+struct oscap_string_iterator* ds_stream_index_get_checklists(struct ds_stream_index* s);
+
+/**
+ * @brief Retrieves iterator over all components inside the <dictionaries> element.
+ *
+ * @memberof ds_stream_index
+ */
+struct oscap_string_iterator* ds_stream_index_get_dictionaries(struct ds_stream_index* s);
+
+/**
+ * @brief Retrieves iterator over all components inside the <extended-components> element.
+ *
+ * @memberof ds_stream_index
+ */
+struct oscap_string_iterator* ds_stream_index_get_extended_components(struct ds_stream_index* s);
+
+/**
+ * @struct ds_sds_index
+ *
+ * Represents <data-stream-collection> element - the root element of each
+ * source datastream. Its purpose is to provide IDs and other metadata.
+ *
+ * Contains a list of ds_stream_index structures, each representing one
+ * data-stream inside the collection.
+ *
+ * @see ds_stream_index
+ */
+struct ds_sds_index;
+
+/// @memberof ds_sds_index
+struct ds_sds_index* ds_sds_index_new(void);
+/// @memberof ds_sds_index
+void ds_sds_index_free(struct ds_sds_index* s);
+
+/**
+ * @brief retrieves a stream index by data-stream ID
+ *
+ * @memberof ds_sds_index
+ */
+struct ds_stream_index* ds_sds_index_get_stream(struct ds_sds_index* s, const char* stream_id);
+
+/**
+ * @brief retrieves all streams indexed inside this structure
+ *
+ * @memberof ds_sds_index
+ */
+struct ds_stream_index_iterator* ds_sds_index_get_streams(struct ds_sds_index* s);
+
+/**
+ * @brief imports given source datastream and indexes it
+ *
+ * @memberof ds_sds_index
+ */
+struct ds_sds_index *ds_sds_index_import(const char* file);
+
+/** 
+ * @struct ds_stream_index_iterator
+ * @see oscap_iterator
+ */
+struct ds_stream_index_iterator;
+
+/// @memberof ds_stream_index_iterator
+struct ds_stream_index *ds_stream_index_iterator_next(struct ds_stream_index_iterator *it);
+/// @memberof ds_stream_index_iterator
+bool ds_stream_index_iterator_has_more(struct ds_stream_index_iterator *it);
+/// @memberof ds_stream_index_iterator
+void ds_stream_index_iterator_free(struct ds_stream_index_iterator *it);
+
 /************************************************************/
 /** @} End of DS group */
 

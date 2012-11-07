@@ -1234,6 +1234,7 @@ AC_CONFIG_FILES([Makefile
                  src/DS/Makefile
                  tests/DS/Makefile
                  tests/DS/validate/Makefile
+                 tests/DS/ds_sds_index/Makefile
 
                  tests/bindings/Makefile
 
