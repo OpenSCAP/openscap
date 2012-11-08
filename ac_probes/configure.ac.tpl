@@ -520,6 +520,8 @@ AC_CONFIG_FILES([Makefile
                  tests/API/XCCDF/applicability/Makefile
                  tests/API/XCCDF/unittests/Makefile
 
+                 tests/schemas/Makefile
+
                  src/SCE/Makefile
                  tests/sce/Makefile])
 
