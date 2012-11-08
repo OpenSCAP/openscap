@@ -76,6 +76,21 @@ static const struct oscap_string_map XCCDF_IFACE_HINT_MAP[] = {
 	{XCCDF_IFACE_HINT_NONE, NULL}
 };
 
+static struct xccdf_value_instance *
+_xccdf_value_find_or_create_instance(struct xccdf_value *value, const char *selector, xccdf_value_type_t type)
+{
+	struct xccdf_value_instance *val = _xccdf_value_get_instance_by_selector_internal(value, selector);
+	if (val == NULL) {
+		val = xccdf_value_instance_new(type);
+		assert(val != NULL);
+		xccdf_value_instance_set_selector(val, selector);
+		oscap_list_add(XITEM(value)->sub.value.instances, val);
+	}
+	else
+		assert(type == xccdf_value_instance_get_type(val));
+	return val;
+}
+
 struct xccdf_item *xccdf_value_parse(xmlTextReaderPtr reader, struct xccdf_item *parent)
 {
 	if (xccdf_element_get(reader) != XCCDFE_VALUE)
@@ -93,43 +108,47 @@ struct xccdf_item *xccdf_value_parse(xmlTextReaderPtr reader, struct xccdf_item 
 
 	int depth = oscap_element_depth(reader) + 1;
 
+	struct xccdf_value_instance *val;
 	while (oscap_to_start_element(reader, depth)) {
 		xccdf_element_t el = xccdf_element_get(reader);
 		const char *selector = xccdf_attribute_get(reader, XCCDFA_SELECTOR);
 		if (selector == NULL) selector = "";
-		struct xccdf_value_instance *val = _xccdf_value_get_instance_by_selector_internal(XVALUE(value), selector);
-		if (val == NULL) {
-			val = xccdf_value_instance_new(type);
-			xccdf_value_instance_set_selector(val, selector);
-			assert(val != NULL);
-			oscap_list_add(value->sub.value.instances, val);
-		}
 
+		val = NULL;
 		switch (el) {
 		case XCCDFE_SOURCE:
 			oscap_list_add(value->sub.value.sources, oscap_element_string_copy(reader));
 			break;
 		case XCCDFE_VALUE_VAL:
+			val = _xccdf_value_find_or_create_instance(XVALUE(value), selector, type);
 			val->value = oscap_element_string_copy(reader);
 			val->flags.value_given = true;
 			break;
 		case XCCDFE_DEFAULT:
+			val = _xccdf_value_find_or_create_instance(XVALUE(value), selector, type);
 			val->defval = oscap_element_string_copy(reader);
 			val->flags.defval_given = true;
 			break;
 		case XCCDFE_MATCH:
-			if (type == XCCDF_TYPE_STRING && !val->match)
+			if (type == XCCDF_TYPE_STRING) {
+				val = _xccdf_value_find_or_create_instance(XVALUE(value), selector, type);
 				val->match = oscap_element_string_copy(reader);
+			}
 			break;
 		case XCCDFE_LOWER_BOUND:
-			if (type == XCCDF_TYPE_NUMBER)
+			if (type == XCCDF_TYPE_NUMBER) {
+				val = _xccdf_value_find_or_create_instance(XVALUE(value), selector, type);
 				val->lower_bound = atof(oscap_element_string_get(reader));
+			}
 			break;
 		case XCCDFE_UPPER_BOUND:
-			if (type == XCCDF_TYPE_NUMBER)
+			if (type == XCCDF_TYPE_NUMBER) {
+				val = _xccdf_value_find_or_create_instance(XVALUE(value), selector, type);
 				val->upper_bound = atof(oscap_element_string_get(reader));
+			}
 			break;
 		case XCCDFE_CHOICES:
+			val = _xccdf_value_find_or_create_instance(XVALUE(value), selector, type);
 			val->flags.must_match = xccdf_attribute_get_bool(reader, XCCDFA_MUSTMATCH);
 			val->flags.must_match_given = true;
                         xmlTextReaderRead(reader); /* Move to the next node (subnode of <choices>)*/
