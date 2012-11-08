@@ -1061,9 +1061,9 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 			goto cleanup;
 		}
 
-		xccdf_policy_model_register_engine_callback(policy_model,
+		xccdf_policy_model_register_engine_and_query_callback(policy_model,
 			"http://oval.mitre.org/XMLSchema/oval-definitions-5",
-			resolve_variables_wrapper, ag_ses_lst[i]);
+			resolve_variables_wrapper, ag_ses_lst[i], NULL);
 	}
 
 	/* perform evaluation */

@@ -32,8 +32,8 @@ static xccdf_test_result_type_t _always_fail_eval_rule(struct xccdf_policy *, co
 void
 uh_register_simple_engines(struct xccdf_policy_model * model)
 {
-	xccdf_policy_model_register_engine_callback(model, "http://check-engine.test/pass", _always_pass_eval_rule, (void*)NULL);
-	xccdf_policy_model_register_engine_callback(model, "http://check-engine.test/fail", _always_fail_eval_rule, (void*)NULL);
+	xccdf_policy_model_register_engine_and_query_callback(model, "http://check-engine.test/pass", _always_pass_eval_rule, (void*)NULL, NULL);
+	xccdf_policy_model_register_engine_and_query_callback(model, "http://check-engine.test/fail", _always_fail_eval_rule, (void*)NULL, NULL);
 }
 
 struct xccdf_policy_model *

@@ -87,6 +87,16 @@ typedef enum {
  */
 typedef void *(*xccdf_policy_engine_query_fn) (void *, xccdf_policy_engine_query_t, void *);
 
+/**
+ * Type of function which implements OpenSCAP checking engine.
+ *
+ * This function defines basic interface between XCCDF module and thee checking engine.
+ * For each checking engine required for evaluation there should be at least one such
+ * function registerd. The registered function is then used by xccdf_policy module to
+ * perform evaluation on the machine.
+ */
+typedef xccdf_test_result_type_t (*xccdf_policy_engine_eval_fn) (struct xccdf_policy *policy, const char *rule_id, const char *definition_id, const char *href_if, struct xccdf_value_binding_iterator *value_binding_it, struct xccdf_check_import_iterator *check_imports_it, void *user_data);
+
 /************************************************************/
 
 /**
@@ -163,7 +173,7 @@ bool xccdf_policy_model_register_engine_callback(struct xccdf_policy_model * mod
  * @memberof xccdf_policy_model
  * @return true if callback registered succesfully, false otherwise
  */
-bool xccdf_policy_model_register_engine_and_query_callback(struct xccdf_policy_model *model, char *sys, void *eval_fn, void *usr, xccdf_policy_engine_query_fn query_fn);
+bool xccdf_policy_model_register_engine_and_query_callback(struct xccdf_policy_model *model, char *sys, xccdf_policy_engine_eval_fn eval_fn, void *usr, xccdf_policy_engine_query_fn query_fn);
 
 typedef int (*policy_reporter_output)(struct xccdf_rule_result *, void *);
 

@@ -55,13 +55,7 @@
 typedef struct callback_t {
 
     char * system;                              ///< Identificator of checking engine
-    int (*callback) (struct xccdf_policy *,                     // Policy model
-                      const char *,                             // Rule ID
-                      const char *,                             // Definition ID
-                      const char *,                             // HREF ID
-                      struct xccdf_value_binding_iterator *, // Value Bindings Iterator
-                      struct xccdf_check_import_iterator *,  // Check imports for the checking engine to interpret
-                      void *);                  ///< format of callback function 
+	xccdf_policy_engine_eval_fn callback;	///< format of callback function
     void * usr;                                 ///< User data structure
     xccdf_policy_engine_query_fn query_fn;      ///< query callback function
 
@@ -1745,14 +1739,15 @@ bool xccdf_policy_model_register_engine_callback(struct xccdf_policy_model * mod
 	return xccdf_policy_model_register_engine_and_query_callback(model, sys, func, usr, NULL);
 }
 
-bool xccdf_policy_model_register_engine_and_query_callback(struct xccdf_policy_model *model, char *sys, void *func, void *usr, xccdf_policy_engine_query_fn query_fn)
+bool
+xccdf_policy_model_register_engine_and_query_callback(struct xccdf_policy_model *model, char *sys, xccdf_policy_engine_eval_fn eval_fn, void *usr, xccdf_policy_engine_query_fn query_fn)
 {
         __attribute__nonnull__(model);
         callback * cb = oscap_alloc(sizeof(callback));
         if (cb == NULL) return false;
 
         cb->system   = sys;
-        cb->callback = func;
+        cb->callback = eval_fn;
         cb->usr      = usr;
 	cb->query_fn = query_fn;
 
