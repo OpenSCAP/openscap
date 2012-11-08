@@ -107,5 +107,5 @@ EXTRA_DIST += \
 	oval_without_definitions.oval.xml \
 	unit_helper.c \
 	unit_helper.h
-	# HELLO PAL, THIS LIST IS ALPHABETICALLY SORTED.
+# HELLO PAL, THIS LIST IS ALPHABETICALLY SORTED.
 
