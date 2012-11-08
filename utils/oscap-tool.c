@@ -77,23 +77,25 @@ static size_t paramlist_cpy(const char **to, const char **p) {
 
 int app_xslt(const char *infile, const char *xsltfile, const char *outfile, const char **params)
 {
-    char pwd[PATH_MAX];
+	char pwd[PATH_MAX];
 
-    if (getcwd(pwd, sizeof(pwd)) == NULL) {
-        fprintf(stderr, "ERROR: %s\n", strerror(errno));
-	return OSCAP_ERROR;
-    }
+	if (getcwd(pwd, sizeof(pwd)) == NULL) {
+		fprintf(stderr, "ERROR: %s\n", strerror(errno));
+		return OSCAP_ERROR;
+	}
 
-    const char *stdparams[] = { "oscap-version", oscap_get_version(), "pwd", pwd, NULL };
-    const char *par[paramlist_size(params) + paramlist_size(stdparams) + 1];
-    size_t s  = paramlist_cpy(par    , params);
-           s += paramlist_cpy(par + s, stdparams);
+	/* add params oscap-version & pwd */
+	const char *stdparams[] = { "oscap-version", oscap_get_version(), "pwd", pwd, NULL };
+	const char *par[paramlist_size(params) + paramlist_size(stdparams) + 1];
+	size_t s  = paramlist_cpy(par    , params);
+        s += paramlist_cpy(par + s, stdparams);
 
-    if (oscap_apply_xslt(infile, xsltfile, outfile, par)==-1) {
-        fprintf(stderr, "%s: %s\n", OSCAP_ERR_MSG, oscap_err_desc());
-        return OSCAP_ERROR;
-    }
-    return OSCAP_OK;
+	if (oscap_apply_xslt(infile, xsltfile, outfile, par)==-1) {
+		fprintf(stderr, "%s: %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+		return OSCAP_ERROR;
+	}
+
+	return OSCAP_OK;
 }
 
 

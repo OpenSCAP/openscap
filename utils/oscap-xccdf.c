@@ -146,7 +146,7 @@ static struct oscap_module XCCDF_GENERATE = {
     .name = "generate",
     .parent = &OSCAP_XCCDF_MODULE,
     .summary = "Convert XCCDF Benchmark to other formats",
-    .usage = "[gen-options]",
+    .usage = "[options]",
     .usage_extra = "<subcommand> [sub-options] benchmark-file.xml",
     .help = GEN_OPTS,
     .opt_parser = getopt_generate,
@@ -159,7 +159,7 @@ static struct oscap_module XCCDF_GEN_REPORT = {
     .summary = "Generate results report",
     .usage = "[options] xccdf-file.xml",
     .help = GEN_OPTS
-        "\nOptions:\n"
+        "\nReport Options:\n"
         "   --result-id <id>\r\t\t\t\t - TestResult ID to be processed. Default is the most recent one.\n"
         "   --show <result-type*>\r\t\t\t\t - Rule results to show. Defaults to everything but notselected and notapplicable.\n"
         "   --output <file>\r\t\t\t\t - Write the document into file.\n"
@@ -175,7 +175,7 @@ static struct oscap_module XCCDF_GEN_GUIDE = {
     .summary = "Generate security guide",
     .usage = "[options] xccdf-file.xml",
     .help = GEN_OPTS
-        "\nOptions:\n"
+        "\nGuide Options:\n"
         "   --output <file>\r\t\t\t\t - Write the document into file.\n"
         "   --hide-profile-info\r\t\t\t\t - Do not output additional information about selected profile.\n",
     .opt_parser = getopt_xccdf,
@@ -189,7 +189,7 @@ static struct oscap_module XCCDF_GEN_FIX = {
     .summary = "Generate a fix script from an XCCDF file",
     .usage = "[options] xccdf-file.xml",
     .help = GEN_OPTS
-        "\nOptions:\n"
+        "\nFix Options:\n"
         "   --output <file>\r\t\t\t\t - Write the script into file.\n"
         "   --result-id <id>\r\t\t\t\t - Fixes will be generated for failed rule-results of the specified TestResult.\n"
         "   --template <id|filename>\r\t\t\t\t - Fix template. (default: bash)\n",
@@ -202,9 +202,9 @@ static struct oscap_module XCCDF_GEN_CUSTOM = {
     .name = "custom",
     .parent = &XCCDF_GENERATE,
     .summary = "Generate a custom output (depending on given XSLT file) from an XCCDF file",
-    .usage = "[options] xccdf-file.xml",
+    .usage = "--stylesheet <file> [--output <file>] xccdf-file.xml",
     .help = GEN_OPTS
-        "\nOptions:\n"
+        "\nCustom Options:\n"
         "   --stylesheet <file>\r\t\t\t\t - Specify an absolute path to a custom stylesheet to format the output.\n"
         "   --output <file>\r\t\t\t\t - Write the document into file.\n",
     .opt_parser = getopt_xccdf,
@@ -1216,33 +1216,34 @@ static int xccdf_gen_report(const char *infile, const char *id, const char *outf
 
 int app_xccdf_xslt(const struct oscap_action *action)
 {
-    assert(action->module->user);
-
 	const char *oval_template = action->oval_template;
-	if (action->module == &XCCDF_GEN_REPORT && oval_template == NULL)
-		// If generating the report and the option is missing -> use defaults
+
+	/* If generating the report and the option is missing -> use defaults */
+	if (action->module == &XCCDF_GEN_REPORT && oval_template == NULL) {
 		oval_template = "%.result.xml";
+	}
 
-    const char *params[] = {
-        "result-id",         action->id,
-        "show",              action->show,
-        "profile",           action->profile,
-        "template",          action->tmpl,
-        "format",            action->format,
-        "oval-template",     oval_template,
+	if (action->module == &XCCDF_GEN_CUSTOM) {
+	        action->module->user = (void*)action->stylesheet;
+	}
+
+	const char *params[] = {
+		"result-id",         action->id,
+		"show",              action->show,
+		"profile",           action->profile,
+		"template",          action->tmpl,
+		"format",            action->format,
+		"oval-template",     oval_template,
 #ifdef ENABLE_SCE
-        "sce-template",      action->sce_template,
+		"sce-template",      action->sce_template,
 #endif
-        "verbosity",         "",
-        "hide-profile-info", action->hide_profile_info ? "yes" : NULL,
-        NULL };
+		"verbosity",         "",
+		"hide-profile-info", action->hide_profile_info ? "yes" : NULL,
+		NULL
+	};
 
-    // in case user wants to "generate custom"
-    if (action->module->user == NULL) {
-        action->module->user = (void*)action->stylesheet;
-    }
-
-    return app_xslt(action->f_xccdf, action->module->user, action->f_results, params);
+	int ret = app_xslt(action->f_xccdf, action->module->user, action->f_results, params);
+	return ret;
 }
 
 bool getopt_generate(int argc, char **argv, struct oscap_action *action)
@@ -1343,8 +1344,8 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		case XCCDF_OPT_TEMPLATE:	action->tmpl = optarg;		break;
 		case XCCDF_OPT_FORMAT:		action->format = optarg;	break;
 		case XCCDF_OPT_OVAL_TEMPLATE:	action->oval_template = optarg; break;
-		// we use realpath to get an absolute path to given XSLT to prevent openscap from looking
-		// into /usr/share/openscap/xsl instead of CWD
+		/* we use realpath to get an absolute path to given XSLT to prevent openscap from looking
+		   into /usr/share/openscap/xsl instead of CWD */
 		case XCCDF_OPT_STYLESHEET_FILE: realpath(optarg, custom_stylesheet_path); action->stylesheet = custom_stylesheet_path; break;
 		case XCCDF_OPT_CPE_DICT:	action->cpe_dict = optarg; break;
 		case XCCDF_OPT_CPE2_DICT:	action->cpe2_dict = optarg; break;
@@ -1375,6 +1376,14 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
                 } else {
                     action->f_ovals = NULL;
                 }
+	} else if (action->module == &XCCDF_GEN_CUSTOM) {
+		if (!action->stylesheet) {
+			return oscap_module_usage(action->module, stderr, "XSLT Stylesheet needs to be specified!");
+		}
+
+		if (optind >= argc)
+			return oscap_module_usage(action->module, stderr, "XCCDF file needs to be specified!");
+		action->f_xccdf = argv[optind];
 	} else {
 		if (optind >= argc)
 			return oscap_module_usage(action->module, stderr, "XCCDF file needs to be specified!");

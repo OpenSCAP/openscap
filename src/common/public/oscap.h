@@ -133,11 +133,11 @@ int oscap_schematron_validate_document(const char *xmlfile, oscap_document_type_
 /**
  * Apply a XSLT stylesheet to a XML file.
  *
- * Stylesheets are searched relative to path specified by the OSCAP_XSLT_PATH environment variable.
+ * If xsltfile is not an absolute path, the file will be searched relatively to a path specified by the OSCAP_XSLT_PATH environment variable.
  * If the variable does not exist a default path is used (usually something like $PREFIX/share/openscap/schemas).
  *
  * @param xmlfile File to be transformed.
- * @param xsltfile XSLT filename
+ * @param xsltfile XSLT file
  * @param outfile Result file shall be written here (NULL for stdout).
  * @param params list of key-value pairs to pass to the stylesheet.
  * @return the number of bytes written or -1 in case of failure

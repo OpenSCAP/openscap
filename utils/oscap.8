@@ -284,6 +284,17 @@ With this option the script generating engine will pick rules that failed for gi
 \fB\-\-template \fIID|FILE\fR\fR
 Template to be used to generate the script. If it contains a dot '.' it is interpreted as a location of a file with the template definition. Otherwise it identifies a template from standard set which currently includes: \fIbash\fR (default if no --template switch present). Brief explanation of the process of writing your own templates is in the XSL file \fIxsl/fix.xsl\fR in the openscap data directory. You can also take a look at the default template \fIxsl/fixtpl-bash.xml\fR.
 .RE
+.TP
+.B \fBcustom\fR  --stylesheet xslt-file [\fIoptions\fR] xccdf-file
+.RS
+Generate a custom output (depending on given XSLT file) from an XCCDF file.
+.TP
+\fB\-\-stylesheet \fIFILE\fR\fR
+Specify an absolute path to a custom stylesheet to format the output.
+.TP
+\fB\-\-output FILE\fR
+ Write the document into file.
+.RE
 
 .SH CPE OPERATIONS
 .TP

@@ -318,8 +318,13 @@ int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, 
 	return -1;
 }
 
+/*
+ * Apply stylesheet on XML file.
+ * If xsltfile is an absolute path to the stylesheet, path_to_xslt will not be used.
+ *
+ */
 static int oscap_apply_xslt_path(const char *xmlfile, const char *xsltfile,
-				 const char *outfile, const char **params, const char *path_to)
+				 const char *outfile, const char **params, const char *path_to_xslt)
 {
 	xsltStylesheetPtr cur = NULL;
 	xmlDocPtr doc = NULL, res = NULL;
@@ -332,10 +337,21 @@ static int oscap_apply_xslt_path(const char *xmlfile, const char *xsltfile,
 	char *args[argc+1];
 	memset(args, 0, sizeof(char*) * (argc + 1));
 
-	char * xsltpath = oscap_sprintf("%s%s%s", path_to, "/", xsltfile);
-	if (access(xsltpath, R_OK)) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "XSLT file '%s' not found in path '%s' when trying to transformation '%s'", xsltfile, path_to, xmlfile);
-		goto cleanup;
+	/*  is it an absolute path? */
+	char * xsltpath;
+	if (strstr(xsltfile, "/") == xsltfile) {
+		xsltpath = strdup(xsltfile);
+		if (access(xsltpath, R_OK)) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "XSLT file '%s' not found when trying to transform '%s'", xsltfile, xmlfile);
+			goto cleanup;
+		}
+	}
+	else {
+		xsltpath = oscap_sprintf("%s%s%s", path_to_xslt, "/", xsltfile);
+		if (access(xsltpath, R_OK)) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "XSLT file '%s' not found in path '%s' when trying to transform '%s'", xsltfile, path_to_xslt, xmlfile);
+			goto cleanup;
+		}
 	}
 
 	cur = xsltParseStylesheetFile(BAD_CAST xsltpath);

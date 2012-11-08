@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2010,2011,2012 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -18,6 +18,7 @@
  *
  * Authors:
  *      Maros Barabas  <mbarabas@redhat.com>
+ *      Peter Vrabec  <pvrabec@redhat.com>
  */
 
 #ifdef HAVE_CONFIG_H
@@ -51,11 +52,11 @@ struct oscap_module* OSCAP_ROOT_SUBMODULES[] = {
 
 struct oscap_module OSCAP_ROOT_MODULE = {
     .name = "oscap",
-    .usage = "[general-options]",
+    .usage = "[options]",
     .usage_extra = "module operation [operation-options-and-arguments]",
     .summary = "OpenSCAP command-line tool",
     .help =
-		"General options:\n"
+		"oscap options:\n"
 		"   -h --help\r\t\t\t\t - show this help\n"
 		"   -q --quiet\r\t\t\t\t - quiet mode\n"
 		"   -V --version\r\t\t\t\t - print info about supported SCAP versions",
