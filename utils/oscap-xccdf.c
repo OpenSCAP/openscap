@@ -957,7 +957,8 @@ cleanup:
 }
 
 static xccdf_test_result_type_t resolve_variables_wrapper(struct xccdf_policy *policy, const char *rule_id,
-	const char *id, const char *href, struct xccdf_value_binding_iterator *bnd_itr, void *usr)
+	const char *id, const char *href, struct xccdf_value_binding_iterator *bnd_itr,
+	struct xccdf_check_import_iterator *check_import_it, void *usr)
 {
 	if (0 != oval_agent_resolve_variables((struct oval_agent_session *) usr, bnd_itr))
 		return XCCDF_RESULT_UNKNOWN;
