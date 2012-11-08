@@ -17,9 +17,9 @@
     <xs:import namespace="urn:oasis:names:tc:ciq:xsdschema:xNL:2.0"
         schemaLocation="http://docs.oasis-open.org/election/external/xNL.xsd"/>
     <xs:import namespace="http://scap.nist.gov/schema/reporting-core/1.1"
-        schemaLocation="http://scap.nist.gov/schema/reporting-core/1.1/reporting-core_1.1.0.xsd"/>
+        schemaLocation="reporting-core_1.1.0.xsd"/>
     <xs:import namespace="http://cpe.mitre.org/naming/2.0"
-        schemaLocation="http://scap.nist.gov/schema/cpe/2.3/cpe-naming_2.3.xsd"/>
+        schemaLocation="../../cpe/2.3/cpe-naming_2.3.xsd"/>
     <!--The following elements are first-order citizens of this model-->
     <xs:element name="asset-related" type="ai:asset-identification-type">
         <xs:key name="assetRelKey">

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema targetNamespace="http://cpe.mitre.org/language/2.0" xmlns:cpe="http://cpe.mitre.org/language/2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xml="http://www.w3.org/XML/1998/namespace" elementFormDefault="qualified" attributeFormDefault="unqualified">
-      <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+      <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>
       <xsd:annotation>
             <xsd:documentation xml:lang="en">This XML Schema defines the CPE Language. An individual CPE Name addresses a single part of an actual system. To identify more complex platform types, there needs to be a way to combine different CPE Names using logical operators. For example, there may be a need to identify a platform with a particular operating system AND a certain application. The CPE Language exists to satisfy this need, enabling the CPE Name for the operating system to be combined with the CPE Name for the application. For more information, consult the CPE Specification document.</xsd:documentation>
             <xsd:appinfo>
