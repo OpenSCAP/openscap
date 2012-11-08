@@ -34,6 +34,7 @@
 #include "common/elements.h"
 
 static struct xccdf_value_instance *xccdf_value_instance_new(xccdf_value_type_t type);
+static struct xccdf_value_instance *_xccdf_value_get_instance_by_selector_internal(const struct xccdf_value *value, const char *selector);
 
 struct xccdf_item *xccdf_value_new_internal(struct xccdf_item *parent, xccdf_value_type_t type)
 {
@@ -96,7 +97,7 @@ struct xccdf_item *xccdf_value_parse(xmlTextReaderPtr reader, struct xccdf_item 
 		xccdf_element_t el = xccdf_element_get(reader);
 		const char *selector = xccdf_attribute_get(reader, XCCDFA_SELECTOR);
 		if (selector == NULL) selector = "";
-		struct xccdf_value_instance *val = xccdf_value_get_instance_by_selector(XVALUE(value), selector);
+		struct xccdf_value_instance *val = _xccdf_value_get_instance_by_selector_internal(XVALUE(value), selector);
 		if (val == NULL) {
 			val = xccdf_value_instance_new(type);
 			xccdf_value_instance_set_selector(val, selector);
@@ -291,9 +292,15 @@ static bool xccdf_value_has_selector(void *inst, void *sel)
 	return oscap_streq(((struct xccdf_value_instance *)inst)->selector, sel);
 }
 
+static inline struct xccdf_value_instance *
+_xccdf_value_get_instance_by_selector_internal(const struct xccdf_value *value, const char *selector)
+{
+	return oscap_list_find(XITEM(value)->sub.value.instances, (void*)selector, xccdf_value_has_selector);
+}
+
 struct xccdf_value_instance *xccdf_value_get_instance_by_selector(const struct xccdf_value *value, const char *selector)
 {
-	struct xccdf_value_instance *val = oscap_list_find(XITEM(value)->sub.value.instances, (void*)selector, xccdf_value_has_selector);
+	struct xccdf_value_instance *val = _xccdf_value_get_instance_by_selector_internal(value, selector);
 	if (val == NULL && oscap_streq(selector, "")) {
 		/* From NISTIR-7275r4:
 		 * If there is no <xccdf:value> or <xccdf:complex-value> element with an empty
