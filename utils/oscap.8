@@ -235,6 +235,16 @@ Write OVAL Results into file.
 \fB\-\-report FILE\fR
 Create human readable (HTML) report from OVAL Results.
 .TP
+\fB\-\-datastream-id ID\fR
+.RS
+Uses a datastream with that particular ID from the given datastream collection. If not given the first datastream is used. Only applies if you give source datastream in place of an OVAL file.
+.RE
+.TP
+\fB\-\-oval-id ID\fR
+.RS
+Takes component ref with given ID from checks. This allows to select a particular OVAL component even in cases where there are 2 OVALs in one datastream.
+.RE
+.TP
 \fB\-\-skip-valid\fR
 Do not validate input/output files.
 .RE

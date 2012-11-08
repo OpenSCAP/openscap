@@ -105,7 +105,7 @@ static struct oscap_module OVAL_EVAL = {
         "   --report <file>\r\t\t\t\t - Create human readable (HTML) report from OVAL Results.\n"
         "   --skip-valid\r\t\t\t\t - Skip validation.\n"
         "   --datastream-id <id> \r\t\t\t\t - ID of the datastream in the collection to use.\n"
-        "                        \r\t\t\t\t   (only applicable for source datastreams)"
+        "                        \r\t\t\t\t   (only applicable for source datastreams)\n"
         "   --oval-id <id> \r\t\t\t\t - ID of the OVAL component ref in the datastream to use.\n"
         "                  \r\t\t\t\t   (only applicable for source datastreams)",
     .opt_parser = getopt_oval,
