@@ -42,10 +42,15 @@ static int app_evaluate_oval(const struct oscap_action *action);
 static int app_oval_validate(const struct oscap_action *action);
 static int app_oval_xslt(const struct oscap_action *action);
 static int app_oval_list_probes(const struct oscap_action *action);
-static bool getopt_oval(int argc, char **argv, struct oscap_action *action);
+static int app_analyse_oval(const struct oscap_action *action);
+
+static bool getopt_oval_eval(int argc, char **argv, struct oscap_action *action);
+static bool getopt_oval_collect(int argc, char **argv, struct oscap_action *action);
+static bool getopt_oval_analyse(int argc, char **argv, struct oscap_action *action);
 static bool getopt_oval_list_probes(int argc, char **argv, struct oscap_action *action);
 static bool getopt_oval_validate(int argc, char **argv, struct oscap_action *action);
-static int app_analyse_oval(const struct oscap_action *action);
+static bool getopt_oval_report(int argc, char **argv, struct oscap_action *action);
+
 
 static bool valid_inputs(const struct oscap_action *action);
 
@@ -108,7 +113,7 @@ static struct oscap_module OVAL_EVAL = {
         "                        \r\t\t\t\t   (only applicable for source datastreams)\n"
         "   --oval-id <id> \r\t\t\t\t - ID of the OVAL component ref in the datastream to use.\n"
         "                  \r\t\t\t\t   (only applicable for source datastreams)",
-    .opt_parser = getopt_oval,
+    .opt_parser = getopt_oval_eval,
     .func = app_evaluate_oval
 };
 
@@ -123,7 +128,7 @@ static struct oscap_module OVAL_COLLECT = {
         "   --syschar <file>\r\t\t\t\t - Write OVAL System Characteristic into file.\n"
 	"   --variables <file>\r\t\t\t\t - Provide external variables expected by OVAL Definitions.\n"
         "   --skip-valid\r\t\t\t\t - Skip validation.\n",
-    .opt_parser = getopt_oval,
+    .opt_parser = getopt_oval_collect,
     .func = app_collect_oval
 };
 
@@ -137,7 +142,7 @@ static struct oscap_module OVAL_ANALYSE = {
 	"   --variables <file>\r\t\t\t\t - Provide external variables expected by OVAL Definitions.\n"
         "   --directives <file>\r\t\t\t\t - Use OVAL Directives content to specify desired results content.\n"
         "   --skip-valid\r\t\t\t\t - Skip validation.\n",
-    .opt_parser = getopt_oval,
+    .opt_parser = getopt_oval_analyse,
     .func = app_analyse_oval
 };
 
@@ -157,7 +162,7 @@ static struct oscap_module OVAL_REPORT = {
     .help =
         "Options:\n"
         "   --output <file>\r\t\t\t\t - Write the HTML into file.",
-    .opt_parser = getopt_oval,
+    .opt_parser = getopt_oval_report,
     .user = "oval-results-report.xsl",
     .func = app_oval_xslt
 };
@@ -603,25 +608,20 @@ enum oval_opt {
     OVAL_OPT_OUTPUT = 'o'
 };
 
-bool getopt_oval(int argc, char **argv, struct oscap_action *action)
+bool getopt_oval_eval(int argc, char **argv, struct oscap_action *action)
 {
 	action->doctype = OSCAP_DOCUMENT_OVAL_DEFINITIONS;
 
 	/* Command-options */
 	struct option long_options[] = {
-        // options
 		{ "results", 	required_argument, NULL, OVAL_OPT_RESULT_FILE  },
 		{ "report",  	required_argument, NULL, OVAL_OPT_REPORT_FILE  },
 		{ "id",        	required_argument, NULL, OVAL_OPT_ID           },
-		{ "output",    	required_argument, NULL, OVAL_OPT_OUTPUT       },
 		{ "variables",	required_argument, NULL, OVAL_OPT_VARIABLES    },
-		{ "syschar",	required_argument, NULL, OVAL_OPT_SYSCHAR      },
 		{ "directives",	required_argument, NULL, OVAL_OPT_DIRECTIVES   },
 		{ "datastream-id",required_argument, NULL, OVAL_OPT_DATASTREAM_ID},
 		{ "oval-id",    required_argument, NULL, OVAL_OPT_OVAL_ID},
-        // flags
 		{ "skip-valid",	no_argument, &action->validate, 0 },
-        // end
 		{ 0, 0, 0, 0 }
 	};
 
@@ -630,13 +630,75 @@ bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 		switch (c) {
 		case OVAL_OPT_RESULT_FILE: action->f_results = optarg; break;
 		case OVAL_OPT_REPORT_FILE: action->f_report  = optarg; break;
-		case OVAL_OPT_OUTPUT: action->f_results = optarg; break;
 		case OVAL_OPT_ID: action->id = optarg; break;
 		case OVAL_OPT_VARIABLES: action->f_variables = optarg; break;
-		case OVAL_OPT_SYSCHAR: action->f_syschar = optarg; break;
 		case OVAL_OPT_DIRECTIVES: action->f_directives = optarg; break;
 		case OVAL_OPT_DATASTREAM_ID: action->f_datastream_id = optarg;	break;
 		case OVAL_OPT_OVAL_ID: action->f_oval_id = optarg;	break;
+		case 0: break;
+		default: return oscap_module_usage(action->module, stderr, NULL);
+		}
+	}
+
+	/* We should have Definitions file here */
+	if (optind >= argc)
+		return oscap_module_usage(action->module, stderr, "Definitions file is not specified!");
+	action->f_oval = argv[optind];
+
+	return true;
+}
+
+bool getopt_oval_collect(int argc, char **argv, struct oscap_action *action)
+{
+	action->doctype = OSCAP_DOCUMENT_OVAL_DEFINITIONS;
+
+	/* Command-options */
+	struct option long_options[] = {
+		{ "id",        	required_argument, NULL, OVAL_OPT_ID           },
+		{ "variables",	required_argument, NULL, OVAL_OPT_VARIABLES    },
+		{ "syschar",	required_argument, NULL, OVAL_OPT_SYSCHAR      },
+		{ "skip-valid",	no_argument, &action->validate, 0 },
+		{ 0, 0, 0, 0 }
+	};
+
+	int c;
+	while ((c = getopt_long(argc, argv, "o:", long_options, NULL)) != -1) {
+		switch (c) {
+		case OVAL_OPT_ID: action->id = optarg; break;
+		case OVAL_OPT_VARIABLES: action->f_variables = optarg; break;
+		case OVAL_OPT_SYSCHAR: action->f_syschar = optarg; break;
+		case 0: break;
+		default: return oscap_module_usage(action->module, stderr, NULL);
+		}
+	}
+
+	/* We should have Definitions file here */
+	if (optind >= argc)
+		return oscap_module_usage(action->module, stderr, "Definitions file is not specified!");
+	action->f_oval = argv[optind];
+
+	return true;
+}
+
+bool getopt_oval_analyse(int argc, char **argv, struct oscap_action *action)
+{
+	action->doctype = OSCAP_DOCUMENT_OVAL_DEFINITIONS;
+
+	/* Command-options */
+	struct option long_options[] = {
+		{ "results", 	required_argument, NULL, OVAL_OPT_RESULT_FILE  },
+		{ "variables",	required_argument, NULL, OVAL_OPT_VARIABLES    },
+		{ "directives",	required_argument, NULL, OVAL_OPT_DIRECTIVES   },
+		{ "skip-valid",	no_argument, &action->validate, 0 },
+		{ 0, 0, 0, 0 }
+	};
+
+	int c;
+	while ((c = getopt_long(argc, argv, "o:", long_options, NULL)) != -1) {
+		switch (c) {
+		case OVAL_OPT_RESULT_FILE: action->f_results = optarg; break;
+		case OVAL_OPT_VARIABLES: action->f_variables = optarg; break;
+		case OVAL_OPT_DIRECTIVES: action->f_directives = optarg; break;
 		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
@@ -657,6 +719,37 @@ bool getopt_oval(int argc, char **argv, struct oscap_action *action)
 			return oscap_module_usage(action->module, stderr, "OVAL Results file is not specified(--results parameter)");
 		}
 	}
+
+	return true;
+}
+
+bool getopt_oval_report(int argc, char **argv, struct oscap_action *action)
+{
+	action->doctype = OSCAP_DOCUMENT_OVAL_DEFINITIONS;
+
+	/* Command-options */
+	struct option long_options[] = {
+		{ "output",    	required_argument, NULL, OVAL_OPT_OUTPUT       },
+		{ 0, 0, 0, 0 }
+	};
+
+	/*
+	 * it is not nice that we use action->f_results for output and
+	 * action->f_oval as input here.
+	 */
+	int c;
+	while ((c = getopt_long(argc, argv, "o:", long_options, NULL)) != -1) {
+		switch (c) {
+		case OVAL_OPT_OUTPUT: action->f_results = optarg; break;
+		case 0: break;
+		default: return oscap_module_usage(action->module, stderr, NULL);
+		}
+	}
+
+	/* We should have oval results file here */
+	if (optind >= argc)
+		return oscap_module_usage(action->module, stderr, "Definitions file is not specified!");
+	action->f_oval = argv[optind];
 
 	return true;
 }
