@@ -48,30 +48,38 @@ test_xccdf_shall_pass_SOURCES = test_xccdf_shall_pass.c unit_helper.c
 EXTRA_DIST += \
 	$(top_srcdir)/tests/xpath.pl \
 	all.sh \
-	test_deriving_xccdf_result_from_oval2.sh \
-	test_deriving_xccdf_result_from_oval2.xccdf.xml \
+	test_default_selector.oval.xml \
+	test_default_selector.sh \
+	test_default_selector.xccdf.xml \
 	test_deriving_xccdf_result_from_oval.sh \
 	test_deriving_xccdf_result_from_oval.xccdf.xml \
+	test_deriving_xccdf_result_from_oval2.sh \
+	test_deriving_xccdf_result_from_oval2.xccdf.xml \
 	test_deriving_xccdf_result_from_oval_fail.oval.xml \
 	test_deriving_xccdf_result_from_oval_multicheck.sh \
 	test_deriving_xccdf_result_from_oval_multicheck.xccdf.xml \
 	test_deriving_xccdf_result_from_oval_pass.oval.xml \
+	test_inherit_selector.oval.xml \
+	test_inherit_selector.sh \
+	test_inherit_selector.xccdf.xml \
 	test_multiple_oval_files_with_same_basename.sh \
 	test_multiple_oval_files_with_same_basename.xccdf.xml \
 	test_oval_without_definition.oval.xml \
 	test_oval_without_definition.sh \
 	test_oval_without_definition.xccdf.xml \
+	test_report_check_with_empty_selector.oval.xml.result.xml \
 	test_report_check_with_empty_selector.sh \
 	test_report_check_with_empty_selector.xccdf.xml.result.xml \
-	test_report_check_with_empty_selector.oval.xml.result.xml \
+	test_report_without_xsl_fails_gracefully.sh \
+	test_xccdf_fix_attr_export.sh \
+	test_xccdf_fix_attr_export.xccdf.xml \
 	test_xccdf_complex_check_and_notchecked.sh \
 	test_xccdf_complex_check_and_notchecked.xccdf.xml \
-	test_report_without_xsl_fails_gracefully.sh \
 	test_xccdf_complex_check_nand.xccdf.xml \
 	test_xccdf_complex_check_single_negate.xccdf.xml \
 	test_xccdf_check_content_ref_without_name_attr.oval.xml \
-	test_xccdf_check_content_ref_without_name_attr.xccdf.xml \
 	test_xccdf_check_content_ref_without_name_attr.sh \
+	test_xccdf_check_content_ref_without_name_attr.xccdf.xml \
 	test_xccdf_check_negate.sh \
 	test_xccdf_check_negate.xccdf.xml \
 	test_xccdf_check_multi_check.sh \
@@ -84,14 +92,12 @@ EXTRA_DIST += \
 	test_xccdf_check_processing_complex_priority.xccdf.xml \
 	test_xccdf_check_processing_invalid_content_refs.sh \
 	test_xccdf_check_processing_invalid_content_refs.xccdf.xml \
-	test_xccdf_check_processing_selector_empty.sh \
-	test_xccdf_check_processing_selector_empty.xccdf.xml \
 	test_xccdf_check_processing_selector_bad.sh \
 	test_xccdf_check_processing_selector_bad.xccdf.xml \
+	test_xccdf_check_processing_selector_empty.sh \
+	test_xccdf_check_processing_selector_empty.xccdf.xml \
 	test_xccdf_check_unsupported_check_system.sh \
 	test_xccdf_check_unsupported_check_system.xml \
-	test_xccdf_fix_attr_export.sh \
-	test_xccdf_fix_attr_export.xccdf.xml \
 	test_xccdf_overlaping_IDs.xccdf.xml \
 	test_xccdf_refine_rule.sh \
 	test_xccdf_refine_rule.xccdf.xml \
@@ -100,11 +106,6 @@ EXTRA_DIST += \
 	oval \
 	oval_without_definitions.oval.xml \
 	unit_helper.c \
-	unit_helper.h \
-	test_default_selector.xccdf.xml \
-	test_default_selector.oval.xml \
-	test_default_selector.sh \
-	test_inherit_selector.xccdf.xml \
-	test_inherit_selector.oval.xml \
-	test_inherit_selector.sh
+	unit_helper.h
+	# HELLO PAL, THIS LIST IS ALPHABETICALLY SORTED.
 
