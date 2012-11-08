@@ -23,11 +23,11 @@ Help screen.
 \fBinfo\fR
 Determine type and print information about a file.
 .TP
-\fBoval\fR
-Open Vulnerability and Assessment Language.
-.TP
 \fBxccdf\fR
 The eXtensible Configuration Checklist Description Format.
+.TP
+\fBoval\fR
+Open Vulnerability and Assessment Language.
 .TP
 \fBcpe\fR
 Common Platform Enumeration.
@@ -43,107 +43,6 @@ Common Vulnerabilities and Exposures
 scap-file.xml
 .RS
 This module prints information about SCAP content in a file specified on a command line. It determines SCAP content type, specification version, date of creation, date of import and so on. Info module doesn't require any additional opperation switch.
-
-.SH OVAL OPERATIONS
-.TP
-.B collect\fR [\fIoptions\fR] definitions-file
-.RS
-Probe the system and gather system characteristics for all objects in OVAL Definition file.
-.PP
-.TP
-\fB\-\-id OBJECT-ID\fR
-Collect system characteristics ONLY for specified OVAL Object.
-.TP
-\fB\-\-variables FILE\fR
-Provide external variables expected by OVAL Definitions.
-.TP
-\fB\-\-syschar FILE\fR
-Write OVAL System Characteristic into file
-.TP
-\fB\-\-skip-valid\fR
-Do not validate input/output files.
-.RE
-.TP
-.B eval\fR [\fIoptions\fR] definitions-file
-.RS
-Probe the system and evaluate all definitions from OVAL Definition file. Print result of each definition to standard output. oscap returns 0 if all definitions pass. If there is an error during evaluation, the return code is 1.
-.PP
-.TP
-\fB\-\-id DEFINITION-ID\fR
-Evaluate ONLY specified OVAL Definition.
-.TP
-\fB\-\-variables FILE\fR
-Provide external variables expected by OVAL Definitions.
-.TP
-\fB\-\-directives FILE\fR
-Use OVAL Directives content to specify desired results content.
-.TP
-\fB\-\-results FILE\fR
-Write OVAL Results into file.
-.TP
-\fB\-\-report FILE\fR
-Create human readable (HTML) report from OVAL Results.
-.TP
-\fB\-\-skip-valid\fR
-Do not validate input/output files.
-.RE
-.RE
-
-.TP
-.B analyse\fR [\fIoptions\fR] --results FILE definitions-file syschar-file
-.RS
-In this mode, the oscap tool does not perform data collection on the local system, but relies upon the input file, which may have been generated on another system. The output (OVAL Results) is printed to file specified by \fB--results\fR parameter
-.TP
-\fB\-\-variables FILE\fR
-Provide external variables expected by OVAL Definitions.
-.TP
-\fB\-\-directives FILE\fR
-Use OVAL Directives content to specify desired results content.
-.TP
-\fB\-\-skip-valid\fR
-Do not validate input/output files.
-.RE
-
-.TP
-.B validate\fR [\fIoptions\fR] oval-file
-.RS
-Validate given OVAL file against a XML schema. Every found error is printed to the standard output. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the OVAL document is not valid.
-.TP
-\fB\-\-definitions\fR, \fB\-\-variables\fR, \fB\-\-syschar\fR, \fB\-\-results\fR \fB\-\-directives\fR
-Type of the OVAL document is automatically detected by default. If you want enforce certain document type, you can use one of these options.
-.TP
-\fB\-\-schematron\fR
-Turn on Schematron-based validation. It is able to find more errors and inconsistencies but is much slower.
-.RE
-.TP
-.B \fBgenerate\fR <submodule> [submodule-specific-options]
-.RS
-Generate another document form an OVAL file.
-.TP
-Available submodules:
-.TP
-.B \fBreport\fR  [\fIoptions\fR] oval-results-file
-.RS
-Generate a formatted HTML page containing visualisation of an OVAL results file. Unless the --output option is specified it will be written to the standard output.
-.TP
-\fB\-\-output FILE\fR
-Write the report to this file instead of standard output.
-.RE
-.RE
-.TP
-.B \fBlist-probes\fR  [\fIoptions\fR]
-.RS
-List supported object types (i.e. probes)
-.TP
-\fB\-\-static\fR
-List all probes defined in the internal tables.
-.TP
-\fB\-\-dynamic\fR
-List all probes supported on the current system (this is default behavior).
-.TP
-\fB\-\-verbose\fR
-Be verbose.
-.RE
 
 .SH XCCDF OPERATIONS
 .TP
@@ -295,6 +194,108 @@ Specify an absolute path to a custom stylesheet to format the output.
 \fB\-\-output FILE\fR
  Write the document into file.
 .RE
+
+.SH OVAL OPERATIONS
+.TP
+.B collect\fR [\fIoptions\fR] definitions-file
+.RS
+Probe the system and gather system characteristics for all objects in OVAL Definition file.
+.PP
+.TP
+\fB\-\-id OBJECT-ID\fR
+Collect system characteristics ONLY for specified OVAL Object.
+.TP
+\fB\-\-variables FILE\fR
+Provide external variables expected by OVAL Definitions.
+.TP
+\fB\-\-syschar FILE\fR
+Write OVAL System Characteristic into file
+.TP
+\fB\-\-skip-valid\fR
+Do not validate input/output files.
+.RE
+.TP
+.B eval\fR [\fIoptions\fR] definitions-file
+.RS
+Probe the system and evaluate all definitions from OVAL Definition file. Print result of each definition to standard output. oscap returns 0 if all definitions pass. If there is an error during evaluation, the return code is 1.
+.PP
+.TP
+\fB\-\-id DEFINITION-ID\fR
+Evaluate ONLY specified OVAL Definition.
+.TP
+\fB\-\-variables FILE\fR
+Provide external variables expected by OVAL Definitions.
+.TP
+\fB\-\-directives FILE\fR
+Use OVAL Directives content to specify desired results content.
+.TP
+\fB\-\-results FILE\fR
+Write OVAL Results into file.
+.TP
+\fB\-\-report FILE\fR
+Create human readable (HTML) report from OVAL Results.
+.TP
+\fB\-\-skip-valid\fR
+Do not validate input/output files.
+.RE
+.RE
+
+.TP
+.B analyse\fR [\fIoptions\fR] --results FILE definitions-file syschar-file
+.RS
+In this mode, the oscap tool does not perform data collection on the local system, but relies upon the input file, which may have been generated on another system. The output (OVAL Results) is printed to file specified by \fB--results\fR parameter
+.TP
+\fB\-\-variables FILE\fR
+Provide external variables expected by OVAL Definitions.
+.TP
+\fB\-\-directives FILE\fR
+Use OVAL Directives content to specify desired results content.
+.TP
+\fB\-\-skip-valid\fR
+Do not validate input/output files.
+.RE
+
+.TP
+.B validate\fR [\fIoptions\fR] oval-file
+.RS
+Validate given OVAL file against a XML schema. Every found error is printed to the standard output. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the OVAL document is not valid.
+.TP
+\fB\-\-definitions\fR, \fB\-\-variables\fR, \fB\-\-syschar\fR, \fB\-\-results\fR \fB\-\-directives\fR
+Type of the OVAL document is automatically detected by default. If you want enforce certain document type, you can use one of these options.
+.TP
+\fB\-\-schematron\fR
+Turn on Schematron-based validation. It is able to find more errors and inconsistencies but is much slower.
+.RE
+.TP
+.B \fBgenerate\fR <submodule> [submodule-specific-options]
+.RS
+Generate another document form an OVAL file.
+.TP
+Available submodules:
+.TP
+.B \fBreport\fR  [\fIoptions\fR] oval-results-file
+.RS
+Generate a formatted HTML page containing visualisation of an OVAL results file. Unless the --output option is specified it will be written to the standard output.
+.TP
+\fB\-\-output FILE\fR
+Write the report to this file instead of standard output.
+.RE
+.RE
+.TP
+.B \fBlist-probes\fR  [\fIoptions\fR]
+.RS
+List supported object types (i.e. probes)
+.TP
+\fB\-\-static\fR
+List all probes defined in the internal tables.
+.TP
+\fB\-\-dynamic\fR
+List all probes supported on the current system (this is default behavior).
+.TP
+\fB\-\-verbose\fR
+Be verbose.
+.RE
+
 
 .SH CPE OPERATIONS
 .TP
