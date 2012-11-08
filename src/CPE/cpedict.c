@@ -164,11 +164,11 @@ bool cpe_name_applicable_dict(struct cpe_name *cpe, struct cpe_dict_model *dict,
 
 static bool cpe_check_evaluate(const struct cpe_check* check, cpe_check_fn cb, void* usr)
 {
-	const char* system = cpe_check_get_system(check);
+	const char* sys = cpe_check_get_system(check);
 	const char* href = cpe_check_get_href(check);
 	const char* name = cpe_check_get_identifier(check);
 
-	return cb(system, href, name, usr);
+	return cb(sys, href, name, usr);
 }
 
 bool cpe_item_is_applicable(struct cpe_item* item, cpe_check_fn cb, void* usr)
