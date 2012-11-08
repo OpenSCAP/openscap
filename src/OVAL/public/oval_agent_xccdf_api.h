@@ -54,6 +54,12 @@ typedef xccdf_test_result_type_t (xccdf_policy_eval_rule_cb_t) (struct xccdf_pol
 
 /**
  * Internal OVAL Agent Callback that can be used to evaluate XCCDF content.
+ *
+ * You can either register this function with xccdf_policy (old fashioned way
+ * as described in the example bellow). Alternativelly you can use high level
+ * function xccdf_policy_model_register_engine_oval() (recommended) which will
+ * register the oval_engine.
+ *
  * \par Example
  * Next example shows common use of this function in evaluation proccess of XCCDF file.
  * \par
@@ -63,7 +69,7 @@ typedef xccdf_test_result_type_t (xccdf_policy_eval_rule_cb_t) (struct xccdf_pol
  *  struct xccdf_policy_model * policy_model = xccdf_policy_model_new(benchmark);
  *  struct oval_agent_session * sess = oval_agent_new_session(def_model, "name-of-file");
  *  ...
- *  xccdf_policy_model_register_engine_callback(policy_model, "http://oval.mitre.org/XMLSchema/oval-definitions-5", oval_agent_eval_rule, (void *) sess);
+ *  xccdf_policy_model_register_engine_and_query_callback(policy_model, "http://oval.mitre.org/XMLSchema/oval-definitions-5", oval_agent_eval_rule, (void *) sess, NULL);
  * \endcode
  * 
  */

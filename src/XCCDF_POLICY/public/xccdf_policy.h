@@ -404,7 +404,7 @@ struct xccdf_select * xccdf_policy_get_select_by_id(struct xccdf_policy * policy
  * Every checking engine must have registered callback or the particular check will be skipped.
  * In the code below is used the predefined function \ref oval_agent_eval_rule for evaluation OVAL checks:
  * \code
- * xccdf_policy_model_register_engine_callback(policy_model, "http://oval.mitre.org/XMLSchema/oval-definitions-5", oval_agent_eval_rule, (void *) usr);
+ * xccdf_policy_model_register_engine_oval(policy_mode, agent_session)
  * \endcode
  * \par
  * If you use this predefined OVAL callback, user data structure (last parameter of register function) \b MUST be of type \ref\a oval_agent_session_t:
