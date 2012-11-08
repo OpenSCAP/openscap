@@ -197,34 +197,17 @@ Specify an absolute path to a custom stylesheet to format the output.
 
 .SH OVAL OPERATIONS
 .TP
-.B collect\fR [\fIoptions\fR] definitions-file
-.RS
-Probe the system and gather system characteristics for all objects in OVAL Definition file.
-.PP
-.TP
-\fB\-\-id OBJECT-ID\fR
-Collect system characteristics ONLY for specified OVAL Object.
-.TP
-\fB\-\-variables FILE\fR
-Provide external variables expected by OVAL Definitions.
-.TP
-\fB\-\-syschar FILE\fR
-Write OVAL System Characteristic into file
-.TP
-\fB\-\-skip-valid\fR
-Do not validate input/output files.
-.RE
-.TP
-.B eval\fR [\fIoptions\fR] definitions-file
+.B eval\fR [\fIoptions\fR] INPUT_FILE
 .RS
 Probe the system and evaluate all definitions from OVAL Definition file. Print result of each definition to standard output. oscap returns 0 if all definitions pass. If there is an error during evaluation, the return code is 1.
 .PP
+INPUT_FILE can be either OVAL Definition File or SCAP Source Datastream, it depends on used options.
 .TP
 \fB\-\-id DEFINITION-ID\fR
-Evaluate ONLY specified OVAL Definition.
+Evaluate ONLY specified OVAL Definition from OVAL Definition File.
 .TP
 \fB\-\-variables FILE\fR
-Provide external variables expected by OVAL Definitions.
+Provide external variables expected by OVAL Definition File.
 .TP
 \fB\-\-directives FILE\fR
 Use OVAL Directives content to specify desired results content.
@@ -248,12 +231,30 @@ Takes component ref with given ID from checks. This allows to select a particula
 \fB\-\-skip-valid\fR
 Do not validate input/output files.
 .RE
+
+.TP
+.B collect\fR [\fIoptions\fR] definitions-file
+.RS
+Probe the system and gather system characteristics for all objects in OVAL Definition file.
+.PP
+.TP
+\fB\-\-id OBJECT-ID\fR
+Collect system characteristics ONLY for specified OVAL Object.
+.TP
+\fB\-\-variables FILE\fR
+Provide external variables expected by OVAL Definitions.
+.TP
+\fB\-\-syschar FILE\fR
+Write OVAL System Characteristic into file.
+.TP
+\fB\-\-skip-valid\fR
+Do not validate input/output files.
 .RE
 
 .TP
 .B analyse\fR [\fIoptions\fR] --results FILE definitions-file syschar-file
 .RS
-In this mode, the oscap tool does not perform data collection on the local system, but relies upon the input file, which may have been generated on another system. The output (OVAL Results) is printed to file specified by \fB--results\fR parameter
+In this mode, the oscap tool does not perform data collection on the local system, but relies upon the input file, which may have been generated on another system. The output (OVAL Results) is printed to file specified by \fB--results\fR parameter.
 .TP
 \fB\-\-variables FILE\fR
 Provide external variables expected by OVAL Definitions.
