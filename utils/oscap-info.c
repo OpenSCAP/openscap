@@ -151,11 +151,11 @@ static int app_info(const struct oscap_action *action)
 			char * doc_version =  xccdf_detect_version(action->file);
 			printf("Checklist version: %s\n", doc_version);
 			/* get current status */
-			struct xccdf_status * stat = NULL;
-			stat = xccdf_benchmark_get_status_current(bench);
-			if (stat) {
-				printf("Status: %s\n", xccdf_status_type_to_text(xccdf_status_get_status(stat)));
-				const time_t date_time = xccdf_status_get_date(stat);
+			struct xccdf_status * status = NULL;
+			status = xccdf_benchmark_get_status_current(bench);
+			if (status) {
+				printf("Status: %s\n", xccdf_status_type_to_text(xccdf_status_get_status(status)));
+				const time_t date_time = xccdf_status_get_date(status);
 				struct tm *date = localtime(&date_time);
 				char date_str[] = "YYYY-DD-MM";
 				snprintf(date_str, sizeof(date_str), "%04d-%02d-%02d", date->tm_year + 1900, date->tm_mon + 1, date->tm_mday);
