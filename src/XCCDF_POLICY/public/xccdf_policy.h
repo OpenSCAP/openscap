@@ -160,8 +160,11 @@ bool xccdf_policy_model_add_cpe_lang_model(struct xccdf_policy_model * model, co
  * @param usr optional parameter for passing user data to callback
  * @memberof xccdf_policy_model
  * @return true if callback registered succesfully, false otherwise
+ *
+ * @deprecated This function is deprecated by xccdf_policy_model_register_engine_and_query_callback
+ * and might be dropped from future releases.
  */
-bool xccdf_policy_model_register_engine_callback(struct xccdf_policy_model * model, char * sys, void * func, void * usr);
+OSCAP_DEPRECATED(bool xccdf_policy_model_register_engine_callback(struct xccdf_policy_model * model, char * sys, void * func, void * usr));
 
 /**
  * Function to register callback for checking system
