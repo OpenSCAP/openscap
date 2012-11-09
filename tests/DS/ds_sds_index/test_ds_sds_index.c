@@ -52,6 +52,14 @@ int main(int argc, char **argv)
 			       "found '%s'.\n", ds_stream_index_get_timestamp(stream));
 			return 1;
 		}
+		if (strcmp(ds_stream_index_get_version(stream),
+		    "1.2") != 0)
+		{
+			printf("Failed to read datastream scap-version correctly. "
+			       "Expected '1.2', "
+			       "found '%s'.\n", ds_stream_index_get_version(stream));
+			return 1;
+		}
 	}
 	ds_stream_index_iterator_free(streams);
 
