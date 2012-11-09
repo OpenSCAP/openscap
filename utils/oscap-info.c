@@ -162,6 +162,7 @@ static int app_info(const struct oscap_action *action)
 				printf("Generated: %s\n", date_str);
 			}
 			print_time(action->file);
+			printf("Resolved: %s\n", xccdf_benchmark_get_resolved(bench) ? "true" : "false");
 			struct xccdf_profile_iterator * prof_it = xccdf_benchmark_get_profiles(bench);
 			printf("Profiles:\n");
 			struct xccdf_profile * prof = NULL;
