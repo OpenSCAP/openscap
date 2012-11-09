@@ -253,7 +253,7 @@ int oval_agent_eval_system(oval_agent_session_t * ag_sess, agent_reporter cb, vo
 		/* probe and eval */
 		ret = oval_agent_eval_definition(ag_sess, id);
 		if (ret==-1) {
-			return -1;
+			goto cleanup;
 		}
 
 		/* callback */
