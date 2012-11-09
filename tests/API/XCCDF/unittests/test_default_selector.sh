@@ -12,10 +12,16 @@ $OSCAP xccdf eval --export-variable $srcdir/${name}.xccdf.xml 2> $stderr
 
 echo "Stderr file = $stderr"
 echo "Result file = $result"
-[ -f $stderr ]; [ ! -s $stderr ]; rm -rf $stderr
+[ -f $stderr ]; [ ! -s $stderr ]
 
 assert_exists() { [ $($XPATH $result 'count('$2')') == "$1" ]; }
 assert_exists 3 '//variable/value[text()="100"]'
 
 rm -rf $result
+
+# Ensure that it works even for export-oval-variables (trac#267)
+$OSCAP xccdf export-oval-variables $srcdir/${name}.xccdf.xml 2>&1 > $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
+assert_exists 3 '//variable/value[text()="100"]'
+rm $result
 
