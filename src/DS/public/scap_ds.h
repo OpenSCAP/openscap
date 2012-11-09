@@ -153,18 +153,25 @@ struct ds_stream_index* ds_stream_index_new(void);
 void ds_stream_index_free(struct ds_stream_index* s);
 
 /**
- * @brief Gets ID of the <data-stream> elements the index represents.
+ * @brief Gets ID of the <data-stream> element the index represents.
  *
  * @memberof ds_stream_index
  */
 const char* ds_stream_index_get_id(struct ds_stream_index* s);
 
 /**
- * @brief Timestamp of creation OR modification of the the <data-stream> elements the index represents.
+ * @brief Timestamp of creation OR modification of the <data-stream> element the index represents.
  *
  * @memberof ds_stream_index
  */
 const char* ds_stream_index_get_timestamp(struct ds_stream_index* s);
+
+/**
+ * @brief scap-version of the the <data-stream> element the index represents.
+ *
+ * @memberof ds_stream_index
+ */
+const char* ds_stream_index_get_version(struct ds_stream_index* s);
 
 /**
  * @brief Retrieves iterator over all components inside the <checks> element.

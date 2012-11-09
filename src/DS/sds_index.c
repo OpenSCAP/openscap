@@ -37,6 +37,7 @@ struct ds_stream_index
 {
 	char* id;
 	char* timestamp;
+	char* version;
 
 	struct oscap_stringlist* check_components;
 	struct oscap_stringlist* checklist_components;
@@ -50,6 +51,7 @@ struct ds_stream_index* ds_stream_index_new(void)
 
 	ret->id = NULL;
 	ret->timestamp = NULL;
+	ret->version = NULL;
 
 	ret->check_components = oscap_stringlist_new();
 	ret->checklist_components = oscap_stringlist_new();
@@ -62,6 +64,7 @@ void ds_stream_index_free(struct ds_stream_index* s)
 {
 	oscap_free(s->id);
 	oscap_free(s->timestamp);
+	oscap_free(s->version);
 
 	oscap_stringlist_free(s->check_components);
 	oscap_stringlist_free(s->checklist_components);
@@ -78,6 +81,11 @@ const char* ds_stream_index_get_id(struct ds_stream_index* s)
 const char* ds_stream_index_get_timestamp(struct ds_stream_index* s)
 {
 	return s->timestamp;
+}
+
+const char* ds_stream_index_get_version(struct ds_stream_index* s)
+{
+	return s->version;
 }
 
 struct oscap_string_iterator* ds_stream_index_get_checks(struct ds_stream_index* s)
@@ -118,6 +126,7 @@ static struct ds_stream_index* ds_stream_index_parse(xmlTextReaderPtr reader)
 
 	ret->id = (char*)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	ret->timestamp = (char*)xmlTextReaderGetAttribute(reader, BAD_CAST "timestamp");
+	ret->version = (char*)xmlTextReaderGetAttribute(reader, BAD_CAST "scap-version");
 
 	// We assume well-formedness and validity of the datastream.
 	// The parser can be broken with invalid content such as:
