@@ -160,6 +160,13 @@ void ds_stream_index_free(struct ds_stream_index* s);
 const char* ds_stream_index_get_id(struct ds_stream_index* s);
 
 /**
+ * @brief Timestamp of creation OR modification of the the <data-stream> elements the index represents.
+ *
+ * @memberof ds_stream_index
+ */
+const char* ds_stream_index_get_timestamp(struct ds_stream_index* s);
+
+/**
  * @brief Retrieves iterator over all components inside the <checks> element.
  *
  * @memberof ds_stream_index
