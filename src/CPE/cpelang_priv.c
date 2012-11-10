@@ -727,6 +727,8 @@ static void cpe_testexpr_meta_free(struct cpe_testexpr *expr)
 		expr->meta.cpe = NULL;
 		break;
 	case CPE_LANG_OPER_CHECK:
+		oscap_free(expr->meta.check.system);
+		expr->meta.check.system = NULL;
 		oscap_free(expr->meta.check.href);
 		expr->meta.check.href = NULL;
 		oscap_free(expr->meta.check.id);
