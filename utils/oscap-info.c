@@ -213,7 +213,7 @@ static int app_info(const struct oscap_action *action)
 			printf("\tChecklists:\n");
 			struct oscap_string_iterator* checklist_it = ds_stream_index_get_checklists(stream);
 			while (oscap_string_iterator_has_more(checklist_it)) {
-				char * id = oscap_string_iterator_next(checklist_it);
+				const char * id = oscap_string_iterator_next(checklist_it);
 				printf("\t\t Ref-Id: %s\n", id);
 			}
 			oscap_string_iterator_free(checklist_it);
@@ -221,7 +221,7 @@ static int app_info(const struct oscap_action *action)
 			printf("\tChecks:\n");
 			struct oscap_string_iterator* checks_it = ds_stream_index_get_checks(stream);
 			while (oscap_string_iterator_has_more(checks_it)) {
-				char * id = oscap_string_iterator_next(checks_it);
+				const char * id = oscap_string_iterator_next(checks_it);
 				printf("\t\t Ref-Id: %s\n", id);
 			}
 			oscap_string_iterator_free(checks_it);
@@ -232,7 +232,7 @@ static int app_info(const struct oscap_action *action)
 			else
 				printf("\tNo dictionaries.\n");
 			while (oscap_string_iterator_has_more(dict_it)) {
-				char * id = oscap_string_iterator_next(dict_it);
+				const char * id = oscap_string_iterator_next(dict_it);
 				printf("\t\t Ref-Id: %s\n", id);
 			}
 			oscap_string_iterator_free(dict_it);
