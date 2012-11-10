@@ -408,6 +408,8 @@ struct cpe_platform *cpe_platform_parse(xmlTextReaderPtr reader)
 		} else
 		    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_LOGICAL_TEST_STR) &&
 			xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+			/* Maybe we shall not allocate this in constructor? */
+			cpe_testexpr_free(ret->expr);
 			ret->expr = cpe_testexpr_parse(reader);
 		} else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element in platform");
