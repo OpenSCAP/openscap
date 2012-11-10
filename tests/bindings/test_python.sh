@@ -8,9 +8,7 @@
 # Test Cases.
 
 function test_python_import {
-
     python -c "import openscap_api"
-    return $?
 }
 
 # Testing.

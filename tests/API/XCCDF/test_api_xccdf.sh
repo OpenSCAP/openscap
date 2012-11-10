@@ -38,11 +38,7 @@ function test_api_xccdf_validate {
 	local VER=$2
 
 	./test_api_xccdf --validate $VER $srcdir/$INPUT
-	if [ $? -eq 0 ]; then
-		return 0;
-	fi
-
-	return 1;
+	return $([ $? -eq 0 ])
 }
 
 # Testing.

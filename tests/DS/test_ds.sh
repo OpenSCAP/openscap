@@ -55,17 +55,13 @@ function test_eval {
     local OSCAP_DIR=`cd ../../utils/.libs; pwd`
 
     $OSCAP_DIR/oscap xccdf eval "${srcdir}/$1"
-    return $?
 }
 
 function test_invalid_eval {
     local OSCAP_DIR=`cd ../../utils/.libs; pwd`
 
     $OSCAP_DIR/oscap xccdf eval "${srcdir}/$1"
-    if [ $? -eq 1 ]; then
-        return 0
-    fi
-    return 1
+    return $([ $? -eq 1 ])
 }
 
 function test_eval_id {
@@ -80,7 +76,6 @@ function test_eval_id {
     fi
 
     echo "$OUT" | grep $4 > /dev/null
-    return $?
 }
 
 function test_oval_eval {
@@ -88,7 +83,6 @@ function test_oval_eval {
     local OSCAP_DIR=`cd ../../utils/.libs; pwd`
 
     $OSCAP_DIR/oscap oval eval "${srcdir}/$1"
-    return $?
 }
 
 function test_oval_eval_id {
@@ -104,7 +98,6 @@ function test_oval_eval_id {
     echo "out: $OUT"
 
     echo "$OUT" | grep $4 > /dev/null
-    return $?
 }
 
 function test_rds

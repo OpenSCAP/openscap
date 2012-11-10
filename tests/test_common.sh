@@ -130,7 +130,5 @@ function verify_results {
 	ID=$[$ID+1]
     done
 
-    [ $ret_val -gt 0 ] && return 1 
-
-    return 0   
+    return $([ $ret_val -eq 0 ])
 }

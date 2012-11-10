@@ -18,7 +18,6 @@
 
 function test_api_probes_smoke {
     ./test_api_probes_smoke
-    return $?
 }
 
 # Testing.

@@ -13,7 +13,6 @@
 
 function test_api_cve_cvss {
      ./test_api_cve --test-cvss $srcdir/nvdcve-2.0-recent.xml
-     return $?
 }
 
 function test_api_cve_export {

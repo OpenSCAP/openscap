@@ -17,7 +17,6 @@ CPE_URIS=(`grep "cpe:" $srcdir/dict.xml | \
 
 function test_api_cpe_uri_smoke {
     ./test_api_cpe_uri --smoke-test
-    return $?
 }
 
 function test_api_cpe_uri_parse {

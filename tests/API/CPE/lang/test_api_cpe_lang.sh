@@ -14,17 +14,14 @@
 
 function test_api_cpe_lang_smoke {
     ./test_api_cpe_lang --smoke-test
-    return $?
 }
 
 function test_api_cpe_lang_import {
     ./test_api_cpe_lang --get-all $srcdir/lang.xml "UTF-8"
-    return $?
 }
 
 function test_api_cpe_lang_import_damaged {
     ! ./test_api_cpe_lang --get-all $srcdir/lang-damaged.xml "UTF-8" 
-    return $?
 }
 
 function test_api_cpe_lang_import_key {
@@ -145,7 +142,6 @@ function test_api_cpe_lang_match {
     echo '</cpe:platform-specification>' >> export.xml.out.0
 
     ./test_api_cpe_lang --match-cpe export.xml.out.0 "UTF-8" "cpe:/a:adobe:reader" "cpe:/o:microsoft:windows_xp"
-    return $?
 }
 
 # Testing.

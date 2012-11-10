@@ -126,13 +126,7 @@ function test_api_seap_incorrect_expression {
 	ret_val=$[$ret_val+$?]
     done 
 
-    if [ $ret_val -eq ${#ARGS[@]} ]; then
-	ret_val=0
-    else
-	ret_val=1
-    fi
-
-    return $ret_val
+    return $([ $ret_val -eq ${#ARGS[@]} ])
 }
 
 # Parsing correct expression.
@@ -483,12 +477,7 @@ function test_api_seap_concurency {
 }
 
 function test_api_strto {
-    local ret_val=0;
-
     ./test_api_strto
-    ret_val=$?
-
-    return $ret_val
 }
 
 # Testing.
