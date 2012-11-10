@@ -25,20 +25,20 @@ int main(int argc, char **argv)
 		return 2;
 	}
 
-	struct ds_sds_index* index = ds_sds_index_import("nonexistant_file");
-	if (index != NULL)
+	struct ds_sds_index* idx = ds_sds_index_import("nonexistant_file");
+	if (idx != NULL)
 	{
 		printf("Expected to get NULL when importing nonexistant file with ds_sds_index_import, "
-		       "got '%p' instead!\n", index);
+		       "got '%p' instead!\n", idx);
 
 		return 1;
 	}
 
-	struct ds_sds_index* index2 = ds_sds_index_import(".");
-	if (index2 != NULL)
+	struct ds_sds_index* idx2 = ds_sds_index_import(".");
+	if (idx2 != NULL)
 	{
 		printf("Expected to get NULL when importing a directory instead of a file with ds_sds_index_import, "
-		       "got '%p' instead!\n", index2);
+		       "got '%p' instead!\n", idx2);
 
 		return 1;
 	}

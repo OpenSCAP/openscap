@@ -25,8 +25,8 @@ int main(int argc, char **argv)
 		return 2;
 	}
 
-	struct ds_sds_index* index = ds_sds_index_import(argv[1]);
-	struct ds_stream_index_iterator* streams = ds_sds_index_get_streams(index);
+	struct ds_sds_index* idx = ds_sds_index_import(argv[1]);
+	struct ds_stream_index_iterator* streams = ds_sds_index_get_streams(idx);
 
 	// number of streams in the collection
 	int nr_streams = 0;
@@ -63,19 +63,19 @@ int main(int argc, char **argv)
 	}
 	ds_stream_index_iterator_free(streams);
 
-	if (ds_sds_index_get_stream(index, "scap_org.open-scap_datastream_from_xccdf_scap-fedora14-xccdf.xml") == NULL)
+	if (ds_sds_index_get_stream(idx, "scap_org.open-scap_datastream_from_xccdf_scap-fedora14-xccdf.xml") == NULL)
 	{
 		printf("Attempted to retrieve 'scap_org.open-scap_datastream_from_xccdf_scap-fedora14-xccdf.xml' "
 		       "by ID but got NULL as a result!\n");
 		return 1;
 	}
-	if (ds_sds_index_get_stream(index, "nonexistant_rubbish") != NULL)
+	if (ds_sds_index_get_stream(idx, "nonexistant_rubbish") != NULL)
 	{
 		printf("Attempted to retrieve a nonexistant stream by ID but got a non-NULL result!\n");
 		return 1;
 	}
 
-	ds_sds_index_free(index);
+	ds_sds_index_free(idx);
 
 	if (nr_streams != 1)
 	{
