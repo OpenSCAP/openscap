@@ -846,8 +846,8 @@ static bool _xccdf_policy_cpe_check_cb(const char* sys, const char* href, const 
 
 		session = oval_agent_new_session(oval_model, prefixed_href);
 		oscap_htable_add(model->cpe_oval_sessions, prefixed_href, session);
-		oscap_free(prefixed_href);
 	}
+	oscap_free(prefixed_href);
 
 	oval_agent_eval_definition(session, name);
 	oval_result_t result = OVAL_RESULT_NOT_EVALUATED;
