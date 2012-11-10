@@ -226,8 +226,11 @@ static int app_info(const struct oscap_action *action)
 			}
 			oscap_string_iterator_free(checks_it);
 
-			printf("\tDictionaries:\n");
 			struct oscap_string_iterator* dict_it = ds_stream_index_get_dictionaries(stream);
+			if (oscap_string_iterator_has_more(dict_it))
+				printf("\tDictionaries:\n");
+			else
+				printf("\tNo dictionaries.\n");
 			while (oscap_string_iterator_has_more(dict_it)) {
 				char * id = oscap_string_iterator_next(dict_it);
 				printf("\t\t Ref-Id: %s\n", id);
