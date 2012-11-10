@@ -234,6 +234,7 @@ struct cpe_testexpr * cpe_testexpr_clone(struct cpe_testexpr * old_expr)
 		new_expr->meta.cpe = cpe_name_clone(old_expr->meta.cpe);
 		break;
 	case CPE_LANG_OPER_CHECK:
+		new_expr->meta.check.system = oscap_strdup(old_expr->meta.check.system);
 		new_expr->meta.check.href = oscap_strdup(old_expr->meta.check.href);
 		new_expr->meta.check.id = oscap_strdup(old_expr->meta.check.id);
 		break;
@@ -445,6 +446,7 @@ struct cpe_testexpr *cpe_testexpr_parse(xmlTextReaderPtr reader)
 	} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CHECK_FACT_REF_STR) &&
 	    xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 		ret->oper = CPE_LANG_OPER_CHECK;
+		ret->meta.check.system = (char*)xmlTextReaderGetAttribute(reader, ATTR_SYSTEM_STR);
 		ret->meta.check.href = (char*)xmlTextReaderGetAttribute(reader, ATTR_HREF_STR);
 		ret->meta.check.id = (char*)xmlTextReaderGetAttribute(reader, ATTR_ID_REF_STR);
 		return ret;
