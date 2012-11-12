@@ -297,45 +297,6 @@ struct internal_usr {
     PyObject *usr;
 };
 
-static int xccdf_policy_model_callback_wrapper(struct xccdf_policy *policy, char *href, char *id, struct xccdf_value_binding_iterator *it, void *usr)
-{
-    PyGILState_STATE state;
-    PyObject *arglist;
-    PyObject *py_policy;
-    PyObject *py_bindings;
-    PyObject *func, *usrdata;
-    struct internal_usr *data;
-    PyObject *result;
-    double    dres = 0;
-
-    state = PyGILState_Ensure();
-    py_policy = SWIG_NewPointerObj(policy, SWIGTYPE_p_xccdf_policy, 1);
-    py_bindings = SWIG_NewPointerObj(it, SWIGTYPE_p_xccdf_value_binding_iterator, 1);
-    data = (struct internal_usr *)usr;
-    func = data->func;
-    usrdata = data->usr;
-    arglist = Py_BuildValue("OssOO", py_policy, href, id, py_bindings, usrdata);
-    if (!PyCallable_Check(func)) {
-      PyGILState_Release(state);
-      return false;
-    }
-    result = PyEval_CallObject(func,arglist);
-    if (result == NULL) {
-        if (PyErr_Occurred() != NULL)
-            PyErr_PrintEx(0);
-        PyErr_Print();
-        Py_DECREF(arglist);
-        Py_XDECREF(result);
-        PyGILState_Release(state);
-        return false;
-    }
-    Py_DECREF(arglist);
-    dres = PyInt_AsLong(result);
-    Py_XDECREF(result);
-    PyGILState_Release(state);
-    return dres;
-}
-
 int output_callback_wrapper(struct xccdf_rule_result* rule_result, void *arg)
 {
     PyGILState_STATE state;
@@ -458,20 +419,6 @@ char * sub_callback_wrapper(xccdf_subst_type_t type, const char *id, void *arg)
 %}
 
 %inline %{
-
-bool xccdf_policy_model_register_engine_callback_py(struct xccdf_policy_model *model, char *sys, PyObject *func, PyObject *usr) {
-    struct internal_usr *new_usrdata;
-    PyEval_InitThreads();
-    Py_INCREF(func);
-    Py_INCREF(usr);
-    new_usrdata = malloc(sizeof(struct internal_usr));
-    if (new_usrdata == NULL) return false;
-
-    new_usrdata->func = func;
-    new_usrdata->usr = usr;
-  
-    return xccdf_policy_model_register_engine_callback(model, sys, xccdf_policy_model_callback_wrapper, (void *)new_usrdata);
-}
 
 bool xccdf_policy_model_register_output_callback_py(struct xccdf_policy_model *model, PyObject *func, PyObject *usr) {
     struct internal_usr *new_usrdata;
