@@ -164,15 +164,12 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
                         sysvals[0] = sysval;
 
                         for(s = 0, i = 0; i < l && s < sizeof sysvals/sizeof(char *) - 1; ++i) {
-	                        if (!isprint(sysval[i]) && !isspace(sysval[i])) {
+	                        if ((!isprint(sysval[i]) && !isspace(sysval[i]))
+	                            || (over_cmp >= 0 && sysval[i] == '\n' /* OVAL 5.10 and above */))
+                                {
                                         sysval[i] = '\0';
                                         sysvals[++s] = sysval + i + 1;
                                 }
-	                        /* Only in OVAL 5.10 and above */
-	                        if (over_cmp >= 0 && sysval[i] == '\n') {
-		                        sysval[i] = '\0';
-                                        sysvals[++s] = sysval + i + 1;
-	                        }
                         }
 
                         if (sysval[l - 1] == '\n')
@@ -180,7 +177,10 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
                         else
                                 sysval[l] = '\0';
 
-                        sysvals[++s] = NULL;
+                        if (strlen(sysvals[s]) == 0)
+                                sysvals[s] = NULL;
+                        else
+                                sysvals[++s] = NULL;
 
                         if (over_cmp >= 0) {
 	                        /* Only in OVAL 5.10 and above */
