@@ -3,7 +3,7 @@
 set -e -o pipefail
 
 name=$(basename $0 .sh)
-tmpdir=$(mktemp --tmpdir -d "${name}.XXXXXX")
+tmpdir=$(mktemp -t -d "${name}.XXXXXX")
 tpl=${srcdir}/${name}.xml.tpl
 input=${tmpdir}/${name}.xml
 result=${tmpdir}/${name}.results.xml
