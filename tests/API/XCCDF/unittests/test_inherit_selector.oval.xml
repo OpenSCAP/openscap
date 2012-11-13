@@ -1,104 +1,59 @@
-<oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:linux="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
+<?xml version="1.0"?>
+<oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
   <generator>
-    <oval:product_name>python</oval:product_name>
-    <oval:product_version>2.6.6</oval:product_version>
-    <oval:schema_version>5.10</oval:schema_version>
-    <oval:timestamp>2011-09-21T13:44:00</oval:timestamp>
+    <oval:schema_version>5.10.1</oval:schema_version>
+    <oval:timestamp>0001-01-01T00:00:00+00:00</oval:timestamp>
   </generator>
 
   <definitions>
-    <definition class="compliance" id="oval:ssg:def:346" version="1">
+    <definition class="compliance" version="1" id="oval:x:def:1">
       <metadata>
-        <title>Service sshd Disabled</title>
+        <title>x</title>
+        <description>x</description>
         <affected family="unix">
-          <platform>Red Hat Enterprise Linux 6</platform>
+          <platform>x</platform>
         </affected>
-        <description>The sshd service should be disabled if possible.</description>
-      <reference source="ssg" ref_id="service_sshd_disabled"/></metadata>
-      <criteria comment="package openssh-server removed or service sshd is not configured to start" operator="OR">
-        <criteria operator="AND" comment="service sshd is not configured to start">
-          <criterion comment="sshd runlevel 0" test_ref="oval:ssg:tst:1106"/>
-          <criterion comment="sshd runlevel 1" test_ref="oval:ssg:tst:1107"/>
-          <criterion comment="sshd runlevel 2" test_ref="oval:ssg:tst:1108"/>
-          <criterion comment="sshd runlevel 3" test_ref="oval:ssg:tst:1109"/>
-          <criterion comment="sshd runlevel 4" test_ref="oval:ssg:tst:1110"/>
-          <criterion comment="sshd runlevel 5" test_ref="oval:ssg:tst:1111"/>
-          <criterion comment="sshd runlevel 6" test_ref="oval:ssg:tst:1112"/>
-        </criteria>
+      </metadata>
+      <criteria comment="x" operator="OR">
+        <criterion test_ref="oval:x:tst:1" comment="always pass"/>
+        <criterion test_ref="oval:x:tst:2" comment="always fail"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:2">
+      <metadata>
+        <title>x</title>
+        <description>x</description>
+        <affected family="unix">
+          <platform>x</platform>
+        </affected>
+      </metadata>
+      <criteria comment="x" operator="AND">
+        <criterion test_ref="oval:x:tst:1" comment="always pass"/>
+        <criterion test_ref="oval:x:tst:2" comment="always fail"/>
       </criteria>
     </definition>
   </definitions>
 
   <tests>
-    <unix:runlevel_test check="all" check_existence="any_exist" comment="Runlevel test" id="oval:ssg:tst:1106" version="2">
-      <unix:object object_ref="oval:ssg:obj:2338"/>
-      <unix:state state_ref="oval:ssg:ste:2339"/>
-    </unix:runlevel_test>
-    <unix:runlevel_test check="all" check_existence="any_exist" comment="Runlevel test" id="oval:ssg:tst:1107" version="2">
-      <unix:object object_ref="oval:ssg:obj:2340"/>
-      <unix:state state_ref="oval:ssg:ste:2339"/>
-    </unix:runlevel_test>
-    <unix:runlevel_test check="all" check_existence="any_exist" comment="Runlevel test" id="oval:ssg:tst:1108" version="2">
-      <unix:object object_ref="oval:ssg:obj:2341"/>
-      <unix:state state_ref="oval:ssg:ste:2339"/>
-    </unix:runlevel_test>
-    <unix:runlevel_test check="all" check_existence="any_exist" comment="Runlevel test" id="oval:ssg:tst:1109" version="2">
-      <unix:object object_ref="oval:ssg:obj:2342"/>
-      <unix:state state_ref="oval:ssg:ste:2339"/>
-    </unix:runlevel_test>
-    <unix:runlevel_test check="all" check_existence="any_exist" comment="Runlevel test" id="oval:ssg:tst:1110" version="2">
-      <unix:object object_ref="oval:ssg:obj:2343"/>
-      <unix:state state_ref="oval:ssg:ste:2339"/>
-    </unix:runlevel_test>
-    <unix:runlevel_test check="all" check_existence="any_exist" comment="Runlevel test" id="oval:ssg:tst:1111" version="2">
-      <unix:object object_ref="oval:ssg:obj:2344"/>
-      <unix:state state_ref="oval:ssg:ste:2339"/>
-    </unix:runlevel_test>
-    <unix:runlevel_test check="all" check_existence="any_exist" comment="Runlevel test" id="oval:ssg:tst:1112" version="2">
-      <unix:object object_ref="oval:ssg:obj:2345"/>
-      <unix:state state_ref="oval:ssg:ste:2339"/>
-    </unix:runlevel_test>
+    <variable_test id="oval:x:tst:1" check="all" comment="always pass" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:1"/>
+    </variable_test>
+
+    <variable_test id="oval:x:tst:2" check="all" check_existence="none_exist" comment="always fail" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:1"/>
+    </variable_test>
   </tests>
 
   <objects>
-    <unix:runlevel_object id="oval:ssg:obj:2338" version="1">
-      <unix:service_name>sshd</unix:service_name>
-      <unix:runlevel operation="equals">0</unix:runlevel>
-    </unix:runlevel_object>
-    <unix:runlevel_object id="oval:ssg:obj:2340" version="1">
-      <unix:service_name>sshd</unix:service_name>
-      <unix:runlevel operation="equals">1</unix:runlevel>
-    </unix:runlevel_object>
-    <unix:runlevel_object id="oval:ssg:obj:2341" version="1">
-      <unix:service_name>sshd</unix:service_name>
-      <unix:runlevel operation="equals">2</unix:runlevel>
-    </unix:runlevel_object>
-    <unix:runlevel_object id="oval:ssg:obj:2342" version="1">
-      <unix:service_name>sshd</unix:service_name>
-      <unix:runlevel operation="equals">3</unix:runlevel>
-    </unix:runlevel_object>
-    <unix:runlevel_object id="oval:ssg:obj:2343" version="1">
-      <unix:service_name>sshd</unix:service_name>
-      <unix:runlevel operation="equals">4</unix:runlevel>
-    </unix:runlevel_object>
-    <unix:runlevel_object id="oval:ssg:obj:2344" version="1">
-      <unix:service_name>sshd</unix:service_name>
-      <unix:runlevel operation="equals">5</unix:runlevel>
-    </unix:runlevel_object>
-    <unix:runlevel_object id="oval:ssg:obj:2345" version="1">
-      <unix:service_name>sshd</unix:service_name>
-      <unix:runlevel operation="equals">6</unix:runlevel>
-    </unix:runlevel_object>
+    <variable_object id="oval:x:obj:1" version="1" comment="x" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:1</var_ref>
+    </variable_object>
   </objects>
 
-  <states>
-    <unix:runlevel_state comment="not configured to start" id="oval:ssg:ste:2339" version="1">
-      <unix:start datatype="boolean">false</unix:start>
-      <unix:kill datatype="boolean">true</unix:kill>
-    </unix:runlevel_state>
-  </states>
-
   <variables>
+    <constant_variable id="oval:x:var:1" version="1" comment="x" datatype="string">
+      <value>x</value>
+    </constant_variable>
     <external_variable comment="default1" datatype="int" id="oval:ssg:var:1" version="1"/>
     <external_variable comment="default2" datatype="int" id="oval:ssg:var:2" version="1"/>
     <external_variable comment="default3" datatype="int" id="oval:ssg:var:3" version="1"/>

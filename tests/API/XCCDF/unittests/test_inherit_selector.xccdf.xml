@@ -55,7 +55,7 @@
 	  <check-export export-name="oval:ssg:var:1" value-id="val1"/>
 	  <check-export export-name="oval:ssg:var:2" value-id="val2"/>
 	  <check-export export-name="oval:ssg:var:3" value-id="val3"/>
-          <check-content-ref href="test_inherit_selector.oval.xml" name="oval:ssg:def:346"/>
+          <check-content-ref href="test_inherit_selector.oval.xml" name="oval:x:def:1"/>
         </check>
       </Rule>
   </Group>
