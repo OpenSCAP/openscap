@@ -29,7 +29,13 @@ function test_sds {
 
     $OSCAP_DIR/oscap ds sds-split "`basename $DS_FILE`" "$DS_TARGET_DIR"
 
-    rm sds.xml
+    rm "$DS_FILE"
+
+    # get rid of filler prefix to make the diff work
+    for file in scap_org.open-scap_cref_*;
+    do
+        mv "$file" "${file#scap_org.open-scap_cref_}"
+    done
 
     popd
 

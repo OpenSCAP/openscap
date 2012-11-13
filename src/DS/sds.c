@@ -307,26 +307,16 @@ static int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc,
 
 static int ds_sds_dump_component_ref(xmlNodePtr component_ref, xmlDocPtr doc, xmlNodePtr datastream, const char* target_dir)
 {
-	char* xlink_href = (char*)xmlGetNsProp(component_ref, BAD_CAST "href", BAD_CAST xlink_ns_uri);
-	if (!xlink_href || strlen(xlink_href) < 2)
+	char* cref_id = (char*)xmlGetProp(component_ref, BAD_CAST "id");
+	if (!cref_id)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "No or invalid xlink:href attribute on given component-ref.");
-		xmlFree(xlink_href);
+		oscap_seterr(OSCAP_EFAMILY_XML, "No or invalid id attribute on given component-ref.");
+		xmlFree(cref_id);
 		return -1;
 	}
 
-	size_t offset = 1;
-
-	// the prefix that we artificially add to conform the XSD for valiation
-	// can be stripped for easier to use filenames
-	const char* filler_prefix = "scap_org.open-scap_comp_";
-	if (strncmp(xlink_href + offset * sizeof(char), filler_prefix, strlen(filler_prefix)) == 0)
-	{
-		offset += strlen(filler_prefix);
-	}
-
-	int result = ds_sds_dump_component_ref_as(component_ref, doc, datastream, target_dir, xlink_href + offset * sizeof(char));
-	xmlFree(xlink_href);
+	int result = ds_sds_dump_component_ref_as(component_ref, doc, datastream, target_dir, cref_id);
+	xmlFree(cref_id);
 
 	// if result is -1, oscap_seterr was already called, no need to call it again
 	return result;
