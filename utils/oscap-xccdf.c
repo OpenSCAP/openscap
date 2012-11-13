@@ -1373,6 +1373,7 @@ enum oval_opt {
 #endif
     XCCDF_OPT_FILE_VERSION,
     XCCDF_OPT_CPE,
+    XCCDF_OPT_CPE_DICT,
     XCCDF_OPT_OUTPUT = 'o',
     XCCDF_OPT_RESULT_ID = 'i'
 };
@@ -1400,6 +1401,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"oval-template", 	required_argument, NULL, XCCDF_OPT_OVAL_TEMPLATE},
 		{"stylesheet",	required_argument, NULL, XCCDF_OPT_STYLESHEET_FILE},
 		{"cpe",	required_argument, NULL, XCCDF_OPT_CPE},
+		{"cpe-dict",	required_argument, NULL, XCCDF_OPT_CPE_DICT}, // DEPRECATED!
 #ifdef ENABLE_SCE
 		{"sce-template", 	required_argument, NULL, XCCDF_OPT_SCE_TEMPLATE},
 #endif
@@ -1437,6 +1439,11 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		   into /usr/share/openscap/xsl instead of CWD */
 		case XCCDF_OPT_STYLESHEET_FILE: realpath(optarg, custom_stylesheet_path); action->stylesheet = custom_stylesheet_path; break;
 		case XCCDF_OPT_CPE:			action->cpe = optarg; break;
+		case XCCDF_OPT_CPE_DICT:
+			{
+				fprintf(stdout, "Warning: --cpe-dict is a deprecated option. Please use --cpe instead!\n\n");
+				action->cpe = optarg; break;
+			}
 #ifdef ENABLE_SCE
 		case XCCDF_OPT_SCE_TEMPLATE:	action->sce_template = optarg; break;
 #endif
