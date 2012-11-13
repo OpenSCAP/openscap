@@ -11,7 +11,7 @@ function test_api_xccdf_cpe_eval {
     local EXPECTED_NA=$3
 
     local TMP_RESULTS=`mktemp`
-    $OSCAP xccdf eval --cpe-dict $CPE_DICT --results $TMP_RESULTS $INPUT
+    $OSCAP xccdf eval --cpe $CPE_DICT --results $TMP_RESULTS $INPUT
     if [ "$?" != "0" ]; then
         return 1
     fi
@@ -32,7 +32,7 @@ function test_api_xccdf_cpe2_eval {
     local EXPECTED_NA=$3
 
     local TMP_RESULTS=`mktemp`
-    $OSCAP xccdf eval --cpe2-dict $CPE_DICT --results $TMP_RESULTS $INPUT
+    $OSCAP xccdf eval --cpe $CPE_DICT --results $TMP_RESULTS $INPUT
     if [ "$?" != "0" ]; then
         return 1
     fi

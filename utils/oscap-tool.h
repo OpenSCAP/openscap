@@ -123,8 +123,7 @@ struct oscap_action {
         char *cvss_vector;
         int hide_profile_info;
         char *stylesheet;
-	char *cpe_dict;
-	char *cpe2_dict;
+	char *cpe;
 
         struct cvss_impact *cvss_impact;
 	struct ds_action* ds_action;
