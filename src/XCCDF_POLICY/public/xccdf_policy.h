@@ -153,6 +153,13 @@ bool xccdf_policy_model_add_cpe_dict(struct xccdf_policy_model * model, const ch
 bool xccdf_policy_model_add_cpe_lang_model(struct xccdf_policy_model * model, const char * cpe_lang);
 
 /**
+ * Registers an additional CPE resource (either dictionary or language)
+ * Autodetects given file and acts accordingly.
+ * The one embedded in the evaluated XCCDF take precedence!
+ */
+bool xccdf_policy_model_add_cpe_autodetect(struct xccdf_policy_model *model, const char* filepath);
+
+/**
  * Function to register callback for checking system
  * @param model XCCDF Policy Model
  * @param sys String representing given checking system

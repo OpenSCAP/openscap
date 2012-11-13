@@ -645,8 +645,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 				char* full_cpe_filename = malloc(PATH_MAX * sizeof(char));
 				snprintf(full_cpe_filename, PATH_MAX, "%s/%s", temp_dir, cpe_filename);
-				// FIXME: This only supports CPE dictionary!
-				xccdf_policy_model_add_cpe_dict(policy_model, full_cpe_filename);
+				xccdf_policy_model_add_cpe_autodetect(policy_model, full_cpe_filename);
 				free(full_cpe_filename);
 			}
 		}

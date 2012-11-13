@@ -1720,6 +1720,28 @@ bool xccdf_policy_model_add_cpe_lang_model(struct xccdf_policy_model *model, con
 		struct cpe_lang_model* lang_model = cpe_lang_model_import(cpe_lang);
 		return oscap_list_add(model->cpe_lang_models, lang_model);
 }
+
+bool xccdf_policy_model_add_cpe_autodetect(struct xccdf_policy_model *model, const char* filepath)
+{
+	oscap_document_type_t doc_type = 0;
+	if (oscap_determine_document_type(filepath, &doc_type) != 0) {
+		oscap_seterr(OSCAP_EFAMILY_XCCDF, "Encountered issues when detecting document "
+		                                  "type of '%s'.", filepath);
+		return false;
+	}
+
+	if (doc_type == OSCAP_DOCUMENT_CPE_DICTIONARY) {
+		return xccdf_policy_model_add_cpe_dict(model, filepath);
+	}
+	else if (doc_type == OSCAP_DOCUMENT_CPE_LANGUAGE) {
+		return xccdf_policy_model_add_cpe_lang_model(model, filepath);
+	}
+
+	oscap_seterr(OSCAP_EFAMILY_XCCDF, "File '%s' wasn't detected as either CPE dictionary or "
+	                                  "CPE lang model. Can't register it to the XCCDF policy model.", filepath);
+	return false;
+}
+
 /**
  * Get ID of XCCDF Profile that belongs to XCCDF Policy
  */
