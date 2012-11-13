@@ -476,6 +476,9 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	oscap_document_type_t doc_type = 0;
 
 	const bool sds_likely = oscap_determine_document_type(action->f_xccdf, &doc_type) == 0 && doc_type == OSCAP_DOCUMENT_SDS;
+	const char* f_datastream_id = NULL;
+	const char* f_component_id = NULL;
+
 	if (sds_likely)
 	{
 		if (action->validate)
@@ -509,8 +512,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		// we look for the first datastream (topdown in XML) that has any
 		// checklist.
 
-		const char* f_datastream_id = action->f_datastream_id;
-		const char* f_component_id = action->f_xccdf_id;
+		f_datastream_id = action->f_datastream_id;
+		f_component_id = action->f_xccdf_id;
 
 		struct ds_stream_index_iterator* streams_it = ds_sds_index_get_streams(sds_idx);
 		while (ds_stream_index_iterator_has_more(streams_it) && (!f_datastream_id || !f_component_id))
@@ -614,6 +617,41 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	/* Use custom CPE2 lang model if given */
 	if (action->cpe2_dict != NULL) {
 		xccdf_policy_model_add_cpe_lang_model(policy_model, action->cpe2_dict);
+	}
+
+	if (sds_likely)
+	{
+		struct ds_stream_index* stream_idx = ds_sds_index_get_stream(sds_idx, f_datastream_id);
+		struct oscap_string_iterator* cpe_it = ds_stream_index_get_dictionaries(stream_idx);
+
+		// This potentially allows us to skip yet another decompose if we are sure
+		// there are no CPE dictionaries or language models inside the datastream.
+		if (oscap_string_iterator_has_more(cpe_it))
+		{
+			// FIXME: Decomposing means that the source datastream will be parsed
+			//        into DOM even though it has already been parsed once when the
+			//        XCCDF was split from it. We should optimize this out someday!
+			if (ds_sds_decompose_custom(action->f_xccdf, f_datastream_id, temp_dir,
+			                            "dictionaries", NULL, NULL) != 0)
+			{
+				fprintf(stderr, "Can't decompose CPE dictionaries from datastream '%s' from file '%s'!\n",
+						f_datastream_id, action->f_xccdf);
+				goto cleanup;
+			}
+
+			while (oscap_string_iterator_has_more(cpe_it))
+			{
+				const char* cpe_filename = oscap_string_iterator_next(cpe_it);
+
+				char* full_cpe_filename = malloc(PATH_MAX * sizeof(char));
+				snprintf(full_cpe_filename, PATH_MAX, "%s/%s", temp_dir, cpe_filename);
+				// FIXME: This only supports CPE dictionary!
+				xccdf_policy_model_add_cpe_dict(policy_model, full_cpe_filename);
+				free(full_cpe_filename);
+			}
+		}
+
+		oscap_string_iterator_free(cpe_it);
 	}
 
 	/* Register callbacks */
