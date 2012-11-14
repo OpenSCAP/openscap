@@ -13,9 +13,9 @@
         </xs:appinfo>
     </xs:annotation>
     <xs:import namespace="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0"
-        schemaLocation="http://docs.oasis-open.org/election/external/xAL.xsd"/>
+        schemaLocation="xAL.xsd"/>
     <xs:import namespace="urn:oasis:names:tc:ciq:xsdschema:xNL:2.0"
-        schemaLocation="http://docs.oasis-open.org/election/external/xNL.xsd"/>
+        schemaLocation="xNL.xsd"/>
     <xs:import namespace="http://scap.nist.gov/schema/reporting-core/1.1"
         schemaLocation="reporting-core_1.1.0.xsd"/>
     <xs:import namespace="http://cpe.mitre.org/naming/2.0"
