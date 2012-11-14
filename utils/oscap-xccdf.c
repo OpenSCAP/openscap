@@ -673,6 +673,40 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 				char* full_cpe_filename = malloc(PATH_MAX * sizeof(char));
 				snprintf(full_cpe_filename, PATH_MAX, "%s/%s", temp_dir, cpe_filename);
+
+				if (full_validation) {
+					oscap_document_type_t cpe_doc_type;
+					char* cpe_doc_version = NULL;
+
+					if (oscap_determine_document_type(full_cpe_filename, &cpe_doc_type) != 0) {
+						fprintf(stderr, "Can't determine document type of '%s'. This file was "
+								"embedded in SDS '%s' and was split into that file as a CPE resource.\n",
+						        full_cpe_filename, action->f_xccdf);
+						goto cleanup;
+					}
+
+					if (cpe_doc_type == OSCAP_DOCUMENT_CPE_DICTIONARY) {
+						cpe_doc_version = cpe_dict_detect_version(full_cpe_filename);
+					}
+					else if (cpe_doc_type == OSCAP_DOCUMENT_CPE_LANGUAGE) {
+						cpe_doc_version = cpe_lang_model_detect_version(full_cpe_filename);
+					}
+					else {
+						fprintf(stderr, "Document '%s' that was split from SDS '%s' and passed as a CPE "
+						        "resource was not detected to be of type CPE dictionary or CPE language.\n",
+						        full_cpe_filename, action->f_xccdf);
+						goto cleanup;
+					}
+
+					if ((ret=oscap_validate_document(full_cpe_filename, cpe_doc_type, cpe_doc_version, reporter, (void*) action))) {
+						if (ret==1)
+							validation_failed(full_cpe_filename, cpe_doc_type, cpe_doc_version);
+						free(cpe_doc_version);
+						goto cleanup;
+					}
+					free(cpe_doc_version);
+				}
+
 				xccdf_policy_model_add_cpe_autodetect(policy_model, full_cpe_filename);
 				free(full_cpe_filename);
 			}
