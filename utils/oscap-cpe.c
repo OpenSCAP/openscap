@@ -33,6 +33,7 @@
 /* CPE */
 #include <cpe_name.h>
 #include <cpe_dict.h>
+#include <cpe_lang.h>
 
 #include "oscap-tool.h"
 
@@ -118,15 +119,15 @@ bool getopt_cpe(int argc, char **argv, struct oscap_action *action) {
 		action->cpe_action->name=argv[3];
 	}
 
-        if( (action->module == &CPE_VALIDATE)) {
-                if( argc != 4 ) {
-                        oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
-                        return false;
-                }
-		action->doctype = OSCAP_DOCUMENT_CPE_DICTIONARY;
-                action->cpe_action = malloc(sizeof(struct cpe_action));
-                action->cpe_action->dict=argv[3];
-        }
+	if( (action->module == &CPE_VALIDATE)) {
+		if( argc != 4 ) {
+			oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
+			return false;
+		}
+
+		action->cpe_action = malloc(sizeof(struct cpe_action));
+		action->cpe_action->dict=argv[3];
+	}
 
 
 	return true;
@@ -190,16 +191,38 @@ clean:
 int app_cpe_validate(const struct oscap_action *action) {
 
 	int ret;
-	char *doc_version;
+	oscap_document_type_t doc_type;
+	char *doc_version = NULL;
 	int result;
 
-	doc_version = cpe_dict_detect_version(action->cpe_action->dict);
-        if (!doc_version) {
+	if (oscap_determine_document_type(action->cpe_action->dict, &doc_type) != 0) {
+		fprintf(stderr, "Unable to determine document type of '%s'.", action->cpe_action->dict);
 		result = OSCAP_ERROR;
 		goto cleanup;
 	}
 
-	ret=oscap_validate_document(action->cpe_action->dict, action->doctype, doc_version, reporter, (void*) action);
+	if (doc_type != OSCAP_DOCUMENT_CPE_DICTIONARY &&
+	    doc_type != OSCAP_DOCUMENT_CPE_LANGUAGE)
+	{
+		fprintf(stderr, "'%s' was not detected as a CPE dictionary or CPE language.", action->cpe_action->dict);
+		result = OSCAP_ERROR;
+		goto cleanup;
+	}
+
+	if (doc_type == OSCAP_DOCUMENT_CPE_DICTIONARY) {
+		doc_version = cpe_dict_detect_version(action->cpe_action->dict);
+	}
+	else if (doc_type == OSCAP_DOCUMENT_CPE_LANGUAGE) {
+		doc_version = cpe_lang_model_detect_version(action->cpe_action->dict);
+	}
+
+	if (!doc_version) {
+		result = OSCAP_ERROR;
+		goto cleanup;
+	}
+
+	ret = oscap_validate_document(action->cpe_action->dict, doc_type, doc_version, reporter, (void*) action);
+
 	if (ret==-1) {
 		result=OSCAP_ERROR;
 		goto cleanup;
@@ -207,18 +230,19 @@ int app_cpe_validate(const struct oscap_action *action) {
 	else if (ret==1) {
 		result=OSCAP_FAIL;
 	}
-	else
+	else {
 		result=OSCAP_OK;
+	}
 
-        if (result==OSCAP_FAIL)
-                validation_failed(action->cpe_action->dict, action->doctype, doc_version);
+	if (result==OSCAP_FAIL)
+		validation_failed(action->cpe_action->dict, doc_type, doc_version);
 
 cleanup:
-        if (oscap_err())
-                fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+	if (oscap_err())
+		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 
-        free(doc_version);
+	free(doc_version);
 	free(action->cpe_action);
-        return result;
+	return result;
 }
 

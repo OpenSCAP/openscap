@@ -276,7 +276,7 @@ struct oscap_schema_table_entry OSCAP_SCHEMAS_TABLE[] = {
 	{OSCAP_DOCUMENT_CPE_DICTIONARY,		"2.1", "cpe/2.1/cpe-dictionary_2.1.xsd"},
 	{OSCAP_DOCUMENT_CPE_DICTIONARY,		"2.2", "cpe/2.2/cpe-dictionary_2.2.xsd"},
 	{OSCAP_DOCUMENT_CPE_DICTIONARY,		"2.3", "cpe/2.3/cpe-dictionary_2.3.xsd"},
-	{OSCAP_DOCUMENT_CPE_LANGUAGE,		"2.3", "cpe/2.3/cpe-language-2.3.xsd"},
+	{OSCAP_DOCUMENT_CPE_LANGUAGE,		"2.3", "cpe/2.3/cpe-language_2.3.xsd"},
 	{OSCAP_DOCUMENT_CVE_FEED,		"2.0", "cve/nvd-cve-feed_2.0.xsd"},
 	{0, NULL, NULL }
 };

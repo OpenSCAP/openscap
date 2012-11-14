@@ -122,6 +122,13 @@ const char * cpe_lang_model_supported(void)
         return CPE_LANG_SUPPORTED;
 }
 
+char * cpe_lang_model_detect_version(const char* file)
+{
+	// FIXME: There is no detection logic in there, since there is only
+	//        one version of CPE language so we just return that.
+	return oscap_strdup("2.3");
+}
+
 /*
 bool cpe_language_match_str(const char* cpe, const struct cpe_platform* platform)
 {

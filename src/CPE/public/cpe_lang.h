@@ -353,6 +353,12 @@ void cpe_platform_free(struct cpe_platform *platform);
 const char * cpe_lang_model_supported(void);
 
 /**
+ * Detect version of given CPE language XML
+ * @memberof cpe_lang_model
+ */
+char * cpe_lang_model_detect_version(const char* file);
+
+/**
  * Function to match cpe in platform
  * @param cpe to be matched with
  * @param n size
