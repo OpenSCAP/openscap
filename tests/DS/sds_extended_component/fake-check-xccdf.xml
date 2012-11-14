@@ -17,7 +17,7 @@
              datastream which prevents validation issues.
         -->
         <xccdf:description>STUB</xccdf:description>
-        <xccdf:check system="fake_check_system">
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <xccdf:check-content-ref href="scap-fedora14-oval.xml"/>
         </xccdf:check>
     </xccdf:Rule>
