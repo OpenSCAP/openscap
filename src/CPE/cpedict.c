@@ -196,7 +196,7 @@ const char * cpe_dict_model_supported(void)
 char * cpe_dict_detect_version(const char* file)
 {
 	xmlTextReaderPtr reader;
-	xmlChar *version = NULL;
+	char *version = NULL;
 
 	reader = xmlReaderForFile(file, NULL, 0);
 	if (!reader) {
@@ -214,32 +214,38 @@ char * cpe_dict_detect_version(const char* file)
 		xmlFreeTextReader(reader);
 		return NULL;
 	}
+	const char* ns_uri = (const char *) xmlTextReaderConstNamespaceUri(reader);
 
 	/* find generator */
 	while (xmlTextReaderRead(reader) == 1
-	       && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
+		   && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
 	elm_name = (const char *) xmlTextReaderConstLocalName(reader);
-	if (!elm_name || strcmp(elm_name, "generator")) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unexpected element: '%s'.", elm_name);
-		xmlFreeTextReader(reader);
-		return NULL;
-	}
-	/* find schema_version */
-	const int depth = xmlTextReaderDepth(reader);
-	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderDepth(reader) > depth) {
-		if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT)
-			continue;
 
-		elm_name = (const char *) xmlTextReaderConstLocalName(reader);
-		if (!strcmp(elm_name, "schema_version")) {
-			version = xmlTextReaderReadString(reader);
-			break;
+	// if the element found is a generator, use it to figure out the version
+	if (elm_name && strcmp(elm_name, "generator") == 0) {
+		/* find schema_version */
+		const int depth = xmlTextReaderDepth(reader);
+		while (xmlTextReaderRead(reader) == 1 && xmlTextReaderDepth(reader) > depth) {
+			if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT)
+				continue;
+
+			elm_name = (const char *) xmlTextReaderConstLocalName(reader);
+			if (!strcmp(elm_name, "schema_version")) {
+				xmlChar* inner = xmlTextReaderReadString(reader);
+				version = oscap_strdup((const char *)inner);
+				xmlFree(inner);
+				break;
+			}
+		}
+	}
+	else {
+		if (strcmp(ns_uri, "http://cpe.mitre.org/dictionary/2.0") == 0) {
+			// return the newest 2.x version we support
+			version = oscap_strdup("2.3");
 		}
 	}
 
 	xmlFreeTextReader(reader);
-	char* ret = strdup((const char*)version);
-	xmlFree(version);
 
-	return ret;
+	return version;
 }
