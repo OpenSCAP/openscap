@@ -796,7 +796,12 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 
 	bool extended_component = false;
 
-	if (strendswith(filepath, "-xccdf.xml"))
+	oscap_document_type_t doc_type;
+	// This may as well fail to detect the content but in such case the component
+	// could be a valid extended-component content!
+	int doc_type_result = oscap_determine_document_type(filepath, &doc_type);
+
+	if (doc_type_result == 0 && doc_type == OSCAP_DOCUMENT_XCCDF)
 	{
 		cref_parent = node_get_child_element(datastream, "checklists");
 		if (ds_sds_compose_add_xccdf_dependencies(doc, datastream, filepath, cref_catalog) != 0)
@@ -805,50 +810,19 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 			return -1;
 		}
 	}
-	else if (strendswith(filepath, "-cpe-oval.xml") || strendswith(filepath, "-cpe-dictionary.xml"))
+	else if (doc_type_result == 0 && (doc_type == OSCAP_DOCUMENT_CPE_DICTIONARY || doc_type == OSCAP_DOCUMENT_CPE_LANGUAGE))
 	{
 		cref_parent = node_get_child_element(datastream, "dictionaries");
 	}
-	else if (strendswith(filepath, "-oval.xml"))
+	else if (doc_type_result == 0 && doc_type == OSCAP_DOCUMENT_OVAL_DEFINITIONS)
 	{
 		cref_parent = node_get_child_element(datastream, "checks");
 	}
 	else
 	{
-		// the fast file suffix tests were unsuccessful, lets try to inspect
-		// contents of the files, perhaps it's just a wrong path suffix
-		//
-		// NOTE: We only do this after all else failed, determining versions based
-		//       on file contents is very time consuming!
-
-		char* potential_xccdf_version = xccdf_detect_version(filepath);
-		if (potential_xccdf_version != NULL)
-		{
-			free(potential_xccdf_version);
-
-			cref_parent = node_get_child_element(datastream, "checklists");
-			if (ds_sds_compose_add_xccdf_dependencies(doc, datastream, filepath, cref_catalog) != 0)
-			{
-				// oscap_seterr has already been called
-				return -1;
-			}
-		}
-		else
-		{
-			char* potential_oval_version = oval_determine_document_schema_version(filepath, OSCAP_DOCUMENT_OVAL_DEFINITIONS);
-			if (potential_oval_version != NULL)
-			{
-				free(potential_oval_version);
-
-				cref_parent = node_get_child_element(datastream, "checks");
-			}
-			else
-			{
-				// not an XCCDF file, not an OVAL file, assume it goes into extended components
-				extended_component = true;
-				cref_parent = node_get_child_element(datastream, "extended-components");
-			}
-		}
+		// not an XCCDF file, not an OVAL file, not a dict/lang, assume it goes into extended components
+		extended_component = true;
+		cref_parent = node_get_child_element(datastream, "extended-components");
 	}
 
 	char* mangled_filepath = ds_sds_mangle_filepath(filepath);
