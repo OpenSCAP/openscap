@@ -455,7 +455,6 @@ command_line_get_oval_resources(char **oval_filenames)
 int app_evaluate_xccdf(const struct oscap_action *action)
 {
 
-	struct xccdf_policy_iterator *policy_it = NULL;
 	struct xccdf_policy *policy = NULL;
 	struct xccdf_benchmark *benchmark = NULL;
 	struct xccdf_policy_model *policy_model = NULL;
@@ -600,23 +599,13 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	policy_model = xccdf_policy_model_new(benchmark);
 
 	/* Select profile */
-	if (action->profile != NULL) {
-		policy = xccdf_policy_model_get_policy_by_id(policy_model, action->profile);
-		if(policy == NULL) {
-                        fprintf(stderr, "Profile \"%s\" was not found.\n", action->profile);
-                        goto cleanup;
-                }
-	} else { /* Take first policy */
-		policy_it = xccdf_policy_model_get_policies(policy_model);
-		if (xccdf_policy_iterator_has_more(policy_it)) {
-			policy = xccdf_policy_iterator_next(policy_it);
-		}
-		xccdf_policy_iterator_free(policy_it);
-
-		if (policy == NULL) {
-			fprintf(stderr, "No Policy to evaluate. \n");
-			goto cleanup;
-		}
+	policy = xccdf_policy_model_get_policy_by_id(policy_model, action->profile);
+	if (policy == NULL) {
+		if (action->profile != NULL)
+			fprintf(stderr, "Profile \"%s\" was not found.\n", action->profile);
+		else
+			fprintf(stderr, "No Policy was found for default profile.\n");
+		goto cleanup;
 	}
 
 	/* Use custom CPE dict if given */
@@ -1134,7 +1123,6 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	struct xccdf_benchmark *benchmark;
 	struct xccdf_policy_model *policy_model = NULL;
 	struct xccdf_policy *policy = NULL;
-	struct xccdf_policy_iterator *policy_itr;
 	struct oval_definition_model **def_mod_lst = NULL;
 	struct oval_agent_session **ag_ses_lst = NULL;
 	struct xccdf_result *xres;
@@ -1168,22 +1156,13 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	policy_model = xccdf_policy_model_new(benchmark);
 
 	/* select a profile */
-	if (action->profile != NULL) {
-		policy = xccdf_policy_model_get_policy_by_id(policy_model, action->profile);
-		if (policy == NULL) {
-			fprintf(stderr, "Unable to find profile '%s'.\n", action->profile);
-			goto cleanup;
-		}
-	} else {
-		/* use the first one if none specified */
-		policy_itr = xccdf_policy_model_get_policies(policy_model);
-		if (xccdf_policy_iterator_has_more(policy_itr))
-			policy = xccdf_policy_iterator_next(policy_itr);
-		xccdf_policy_iterator_free(policy_itr);
-		if (policy == NULL) {
-			fprintf(stderr, "No profile to evaluate.\n");
-			goto cleanup;
-		}
+	policy = xccdf_policy_model_get_policy_by_id(policy_model, action->profile);
+	if (policy == NULL) {
+		if (action->profile != NULL)
+			fprintf(stderr, "Profile \"%s\" was not found.\n", action->profile);
+		else
+			fprintf(stderr, "No Policy was found for default profile.\n");
+		goto cleanup;
 	}
 
 	if (action->f_ovals != NULL) {
