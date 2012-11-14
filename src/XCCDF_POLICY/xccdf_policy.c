@@ -1925,8 +1925,11 @@ struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct
         while (xccdf_select_iterator_has_more(sel_it)) {
 
             sel = xccdf_select_iterator_next(sel_it);
-            /* Should we set the error code and return NULL here ? */
-            if (sel != NULL) oscap_list_add(policy->selects, xccdf_select_clone(sel));
+		if (sel == NULL) {
+			assert(false);
+			continue;
+		}
+		oscap_list_add(policy->selects, xccdf_select_clone(sel));
         }
         xccdf_select_iterator_free(sel_it);
 
