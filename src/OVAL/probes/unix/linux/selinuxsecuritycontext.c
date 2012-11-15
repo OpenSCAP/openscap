@@ -77,6 +77,11 @@ static void split_range(const char *range, char **l_s, char **l_c, char **h_s, c
 	char *level;
 	const char *range_split;
 
+	if (range == NULL) {
+		dW("%s: range is NULL", __func__);
+		*l_s = *l_c = *h_s = *h_c = NULL;
+		return;
+	}
 	range_split = strchr(range, '-');
 	if (range_split == NULL) {
 		/* there is only 1 level */
@@ -136,19 +141,28 @@ static int selinuxsecuritycontext_process_cb (SEXP_t *pid_ent, probe_ctx *ctx) {
 			role = context_role_get(context);
 			type = context_type_get(context);
 			range = context_range_get(context);
+			if (range != NULL) {
+				split_range(range, &l_sensitivity, &l_category, &h_sensitivity, &h_category);
+				item = probe_item_create(OVAL_LINUX_SELINUXSECURITYCONTEXT, NULL,
+					"pid",     OVAL_DATATYPE_INTEGER, pid_number,
+					"user",     OVAL_DATATYPE_STRING, user,
+					"role",     OVAL_DATATYPE_STRING, role,
+					"type",     OVAL_DATATYPE_STRING, type,
+					"low_sensitivity", OVAL_DATATYPE_STRING, l_sensitivity,
+					"low_category", OVAL_DATATYPE_STRING, l_category,
+					"high_sensitivity", OVAL_DATATYPE_STRING, h_sensitivity,
+					"high_category", OVAL_DATATYPE_STRING, h_category,
+					NULL);
+			}
+			else {
+				item = probe_item_create(OVAL_LINUX_SELINUXSECURITYCONTEXT, NULL,
+					"pid",     OVAL_DATATYPE_INTEGER, pid_number,
+					"user",     OVAL_DATATYPE_STRING, user,
+					"role",     OVAL_DATATYPE_STRING, role,
+					"type",     OVAL_DATATYPE_STRING, type,
+					NULL);
+			}
 
-			split_range(range, &l_sensitivity, &l_category, &h_sensitivity, &h_category);
-			item = probe_item_create(OVAL_LINUX_SELINUXSECURITYCONTEXT, NULL,
-				"pid",     OVAL_DATATYPE_INTEGER, pid_number,
-				"user",     OVAL_DATATYPE_STRING, user,
-				"role",     OVAL_DATATYPE_STRING, role,
-				"type",     OVAL_DATATYPE_STRING, type,
-				"low_sensitivity", OVAL_DATATYPE_STRING, l_sensitivity,
-				"low_category", OVAL_DATATYPE_STRING, l_category,
-				"high_sensitivity", OVAL_DATATYPE_STRING, h_sensitivity,
-				"high_category", OVAL_DATATYPE_STRING, h_category,
-
-				NULL);
 			probe_item_collect(ctx, item);
 
 			context_free(context);
@@ -226,28 +240,42 @@ static int selinuxsecuritycontext_file_cb (const char *p, const char *f, probe_c
 		type = context_type_get(context);
 		range = context_range_get(context);
 
-		split_range(range, &l_sensitivity, &l_category, &h_sensitivity, &h_category);
+		if (range != NULL) {
+			split_range(range, &l_sensitivity, &l_category, &h_sensitivity, &h_category);
+			item = probe_item_create(OVAL_LINUX_SELINUXSECURITYCONTEXT, NULL,
+							"filepath", OVAL_DATATYPE_STRING, pbuf,
+							"path",     OVAL_DATATYPE_STRING, p,
+							"filename", OVAL_DATATYPE_STRING, f,
+							"user",     OVAL_DATATYPE_STRING, user,
+							"role",     OVAL_DATATYPE_STRING, role,
+							"type",     OVAL_DATATYPE_STRING, type,
+							"low_sensitivity", OVAL_DATATYPE_STRING, l_sensitivity,
+							"low_category", OVAL_DATATYPE_STRING, l_category,
+							"high_sensitivity", OVAL_DATATYPE_STRING, h_sensitivity,
+							"high_category", OVAL_DATATYPE_STRING, h_category,
+							"rawlow_sensitivity", OVAL_DATATYPE_STRING, l_sensitivity,
+							"rawlow_category", OVAL_DATATYPE_STRING, l_category,
+							"rawhigh_sensitivity", OVAL_DATATYPE_STRING, h_sensitivity,
+							"rawhigh_category", OVAL_DATATYPE_STRING, h_category,
+							NULL);
+		}
+		else {
+			item = probe_item_create(OVAL_LINUX_SELINUXSECURITYCONTEXT, NULL,
+							"filepath", OVAL_DATATYPE_STRING, pbuf,
+							"path",     OVAL_DATATYPE_STRING, p,
+							"filename", OVAL_DATATYPE_STRING, f,
+							"user",     OVAL_DATATYPE_STRING, user,
+							"role",     OVAL_DATATYPE_STRING, role,
+							"type",     OVAL_DATATYPE_STRING, type,
+							NULL);
+		}
 
-		item = probe_item_create(OVAL_LINUX_SELINUXSECURITYCONTEXT, NULL,
-						"filepath", OVAL_DATATYPE_STRING, pbuf,
-						"path",     OVAL_DATATYPE_STRING, p,
-						"filename", OVAL_DATATYPE_STRING, f,
-						"user",     OVAL_DATATYPE_STRING, user,
-						"role",     OVAL_DATATYPE_STRING, role,
-						"type",     OVAL_DATATYPE_STRING, type,
-						"low_sensitivity", OVAL_DATATYPE_STRING, l_sensitivity,
-						"low_category", OVAL_DATATYPE_STRING, l_category,
-						"high_sensitivity", OVAL_DATATYPE_STRING, h_sensitivity,
-						"high_category", OVAL_DATATYPE_STRING, h_category,
-						"rawlow_sensitivity", OVAL_DATATYPE_STRING, l_sensitivity,
-						"rawlow_category", OVAL_DATATYPE_STRING, l_category,
-						"rawhigh_sensitivity", OVAL_DATATYPE_STRING, h_sensitivity,
-						"rawhigh_category", OVAL_DATATYPE_STRING, h_category,
-						NULL);
 		context_free(context);
-		freecon(file_context);
 	}
 	probe_item_collect(ctx, item);
+
+	if (file_context != NULL)
+		freecon(file_context);
 
 	return (err);
 }
