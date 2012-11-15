@@ -193,6 +193,308 @@ static char *__string_unescape(char *str, size_t len)
     return ret_str;
 }
 
+static char *extract_fixed_path_prefix(char *path)
+{
+	char *s;
+
+	if (path[0] == '^')
+		path++;
+
+	s = __regex_locate(path);
+	if (*s != '\0')
+		for (s--; s > (path + 1) && *s != '/'; s--);
+	if (s > (path + 1)) {
+		s = __string_unescape(path, (size_t) (s - path));
+		if (s != NULL) {
+			if (s[0] == '/')
+				return s;
+			free(s);
+		}
+	}
+
+	return strdup("/");
+}
+
+static int badpartial_check_slash(const char *pattern)
+{
+	pcre *regex;
+	const char *errptr = NULL;
+	int errofs = 0, fb, ret;
+
+	regex = pcre_compile(pattern + 1 /* skip '^' */, 0, &errptr, &errofs, NULL);
+	if (regex == NULL) {
+		dE("Failed to validate the pattern: pcre_compile(): "
+		   "error: '%s', error offset: %d, pattern: '%s'.\n",
+		   errofs, errptr, pattern);
+		return -1;
+	}
+	ret = pcre_fullinfo(regex, NULL, PCRE_INFO_FIRSTBYTE, &fb);
+	pcre_free(regex);
+	regex = NULL;
+	if (ret != 0) {
+		dE("Failed to validate the pattern: pcre_fullinfo(): "
+		   "return code: %d, pattern: '%s'.\n", ret, pattern);
+		return -1;
+	}
+	if (fb != '/') {
+		dE("Failed to validate the pattern: pcre_fullinfo(): "
+		   "first byte: %d '%c', pattern: '%s' - the first "
+		   "byte should be a '/'.\n", fb, fb, pattern);
+		return -2;
+	}
+
+	return 0;
+}
+
+#define TEST_PATH1 "/"
+#define TEST_PATH2 "x"
+
+static int badpartial_transform_pattern(char *pattern, pcre **regex_out)
+{
+	/*
+	  PCREPARTIAL(3)
+	  http://pcre.org/pcre.txt
+	  Last updated: 21 January 2012
+
+	  For releases of PCRE prior to 8.00, because of the way
+	  certain internal optimizations were implemented in the
+	  pcre_exec() function, the PCRE_PARTIAL option (predecessor
+	  of PCRE_PARTIAL_SOFT) could not be used with all patterns.
+
+	  Items that were formerly restricted were repeated single
+	  characters and repeated metasequences. If PCRE_PARTIAL was
+	  set for a pattern that did not conform to the restrictions,
+	  pcre_exec() returned the error code PCRE_ERROR_BADPARTIAL
+	  (-13).
+	*/
+
+	int ret, brkt_lvl = 0, errofs = 0;
+	const char *rchars = "\\[]()*+{"; /* probably incomplete */
+	const char *test_path1 = TEST_PATH1;
+	const char *errptr = NULL;
+	char *s, *brkt_mark;
+	bool bracketed = false, found_regex = false;
+	pcre *regex;
+
+	/* The processing bellow builds upon the assumption that
+	   the pattern has been validated by pcre_compile() */
+	for (s = brkt_mark = pattern; (s = strpbrk(s, rchars)) != NULL; s++) {
+		switch (*s) {
+		case '\\':
+			s++;
+			break;
+		case '[':
+			if (!bracketed) {
+				bracketed = true;
+				if (s[1] == ']')
+					s++;
+			}
+			break;
+		case ']':
+			bracketed = false;
+			break;
+		case '(':
+			if (!bracketed) {
+				if (brkt_lvl++ == 0)
+					brkt_mark = s;
+			}
+			break;
+		case ')':
+			if (!bracketed)
+				brkt_lvl--;
+			break;
+		default:
+			if (!bracketed)
+				found_regex = true;
+			break;
+		}
+		if (found_regex)
+			break;
+	}
+
+	if (s == NULL) {
+		dW("Nonfatal failure: can't transform the pattern for partial "
+		   "match optimization: none of the suspected culprits found, "
+		   "pattern: '%s'.\n", pattern);
+		return -1;
+	}
+
+	if (brkt_lvl > 0)
+		*brkt_mark = '\0';
+	else
+		*s = '\0';
+
+	regex = pcre_compile(pattern, 0, &errptr, &errofs, NULL);
+	if (regex == NULL) {
+		dW("Nonfatal failure: can't transform the pattern for partial "
+		   "match optimization, error: '%s', error offset: %d, "
+		   "pattern: '%s'.\n", errptr, errofs, pattern);
+		return -1;
+	}
+
+	ret = pcre_exec(regex, NULL, test_path1, strlen(test_path1), 0,
+		PCRE_PARTIAL, NULL, 0);
+	if (ret != PCRE_ERROR_PARTIAL && ret < 0) {
+		pcre_free(regex);
+		dW("Nonfatal failure: can't transform the pattern for partial "
+		   "match optimization, pcre_exec() return code: %d, pattern: "
+		   "'%s'.\n", ret, pattern);
+		return -1;
+	}
+
+	if (regex_out != NULL)
+		*regex_out = regex;
+
+	return 0;
+}
+
+/* Verify that the path is usable and try to craft a regex to speed up
+   the filesystem traversal. If the path to match is ill-designed, an
+   ugly heuristic is employed to obtain something meaningfull. */
+static int process_pattern_match(const char *path, pcre **regex_out)
+{
+	int ret, errofs = 0;
+	char *pattern;
+	const char *test_path1 = TEST_PATH1;
+	//const char *test_path2 = TEST_PATH2;
+	const char *errptr = NULL;
+	pcre *regex;
+
+	if (path[0] != '^') {
+		/* Matching has to have a fixed starting point and thus
+		   every pattern has to start with a caret. */
+		size_t plen;
+
+		plen = strlen(path) + 1;
+		pattern = malloc(plen + 1);
+		pattern[0] = '^';
+		memcpy(pattern + 1, path, plen);
+		dW("The pattern doesn't contain a leading caret - added. "
+		   "All paths with the 'pattern match' operation must begin "
+		   "with a caret.\n");
+	} else {
+		pattern = strdup(path);
+	}
+
+	regex = pcre_compile(pattern, 0, &errptr, &errofs, NULL);
+	if (regex == NULL) {
+		dE("Failed to validate the pattern: pcre_compile(): "
+		   "error offset: %d, error: '%s', pattern: '%s'.\n",
+		   errofs, errptr, pattern);
+		free(pattern);
+		return -1;
+	}
+	ret = pcre_exec(regex, NULL, test_path1, strlen(test_path1), 0,
+		PCRE_PARTIAL, NULL, 0);
+
+	switch (ret) {
+	case PCRE_ERROR_PARTIAL:
+		/* The pattern has matched a prefix of the test path
+		   and probably begins with a slash. Make sure that it
+		   doesn't match an arbitrary prefix. */
+
+		/* todo:
+		   Convince folks that they should really fix their
+		   OVAL definitions that use ".*" as 'path' and then
+		   uncomment this.
+
+		dI("pcre_exec() returned PCRE_ERROR_PARTIAL for pattern '%s' "
+		   "and test path '%s'.\n", pattern, test_path1);
+		ret = pcre_exec(regex, NULL, test_path2, strlen(test_path2),
+			0, PCRE_PARTIAL, NULL, 0);
+		if (ret == PCRE_ERROR_PARTIAL || ret >= 0) {
+			dE("Failed to validate the pattern: test path '%s' "
+			   "matched by pattern '%s' - the pattern is too "
+			   "general, i.e. inefficient. This could take a "
+			   "lifetime to complete.\n", test_path2, pattern);
+			pcre_free(regex);
+			free(pattern);
+			return -2;
+		}
+		*/
+		break;
+	case PCRE_ERROR_BADPARTIAL:
+		dI("pcre_exec() returned PCRE_ERROR_BADPARTIAL for pattern "
+		   "'%s' and a test path '%s'. Falling back to "
+		   "pcre_fullinfo().\n", pattern, test_path1);
+		pcre_free(regex);
+		regex = NULL;
+
+		/* Fallback to first byte check to determin if
+		   the pattern begins with a slash. */
+		ret = badpartial_check_slash((const char *) pattern);
+		if (ret != 0) {
+			free(pattern);
+			return ret;
+		}
+		/* The pattern contains features that this version of
+		   PCRE can't handle for partial matching. At least
+		   try to find the longest well-bracketed prefix that
+		   can be handled. */
+		badpartial_transform_pattern(pattern, &regex);
+		break;
+	case PCRE_ERROR_NOMATCH:
+		/* The pattern doesn't contain a leading slash (or
+		   some part of this code is broken). Apologise to the
+		   user and fail. */
+		dE("Failed to validate the pattern: pcre_exec() returned "
+		   "PCRE_ERROR_NOMATCH for pattern '%s' and a test path '%s'. "
+		   "This indicates the pattern doesn't match a leading '/'.\n",
+		   pattern, test_path1);
+		pcre_free(regex);
+		free(pattern);
+		return -2;
+	default:
+		if (ret >= 0) {
+			/* The pattern actually matches the test
+			   path. Iteresting… Make sure that it doesn't
+			   match an arbitrary prefix. */
+
+			/* todo:
+			   Convince folks that they should really fix
+			   their OVAL definitions that use ".*" as
+			   'path' and then uncomment this.
+
+			ret = pcre_exec(regex, NULL, test_path2, strlen(test_path2),
+					0, PCRE_PARTIAL, NULL, 0);
+			if (ret == PCRE_ERROR_PARTIAL || ret >= 0) {
+				dE("Failed to validate the pattern: test path '%s' "
+				   "matched by pattern '%s' - the pattern is too "
+				   "general, i.e. inefficient. This could take a "
+				   "lifetime to complete.\n", test_path2, pattern);
+				pcre_free(regex);
+				free(pattern);
+				return -2;
+			}
+			*/
+			break;
+		}
+		/* Some other error. */
+		dE("Failed to validate the pattern: pcre_exec() return "
+		   "code: %d, pattern '%s', test path '%s'.\n", ret,
+		   pattern, test_path1);
+		pcre_free(regex);
+		free(pattern);
+		return -1;
+	}
+
+	if (regex == NULL) {
+		dI("Disabling partial match optimization.\n");
+	} else {
+		dI("Enabling partial match optimization using "
+		   "pattern: '%s'.\n", pattern);
+		if (regex_out != NULL)
+			*regex_out = regex;
+	}
+
+	free(pattern);
+
+	return 0;
+}
+
+#undef TEST_PATH1
+#undef TEST_PATH2
+
 OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t *behaviors)
 {
 	OVAL_FTS *ofts;
@@ -213,6 +515,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 
 	uint32_t path_op;
 	bool nilfilename = false;
+	pcre *regex = NULL;
 	struct stat st;
 
 	assume_d((path == NULL && filename == NULL && filepath != NULL)
@@ -337,44 +640,23 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		PROBE_ENT_STRVAL(filepath, cstr_path, sizeof cstr_path, return NULL;, return NULL;);
 	}
 
+	/* todo:
+	   Still missing is a propagation of the error to the
+	   user. Currently, all the information is provided in the
+	   debug log, but the oval_fts api has no way of passing this
+	   information to the user.
+	*/
 
-	switch (path_op)
-	    {
-	    case OVAL_OPERATION_EQUALS:
+	if (path_op == OVAL_OPERATION_EQUALS) {
 		paths[0] = strdup(cstr_path);
-		break;
-	    case OVAL_OPERATION_PATTERN_MATCH:
-		if (strlen(cstr_path) >= 2) {
-                    char *regex_loc;
-
-                    if (cstr_path[0] == '^' &&
-                        (regex_loc = __regex_locate(cstr_path + 1)) != NULL)
-                    {
-                        char *slash_loc = regex_loc - 1;
-
-                        while(slash_loc > cstr_path + 2) {
-                            if (*slash_loc == '/') {
-                                paths[0] = __string_unescape(cstr_path + 1, (size_t)(slash_loc - cstr_path) - 1);
-                                if (paths[0] != NULL) {
-                                    if (paths[0][0] != '/') {
-                                        free((void *) paths[0]);
-                                        paths[0] = NULL;
-                                    }
-                                    break;
-                                }
-                            }
-                            --slash_loc;
-                        }
-                    }
-                }
-
-		if (paths[0] == NULL)
-		    paths[0] = strdup("/");
-
-		break;
-	    default:
+	} else if (path_op == OVAL_OPERATION_PATTERN_MATCH) {
+		if (process_pattern_match(cstr_path, &regex) != 0)
+			return NULL;
+		paths[0] = extract_fixed_path_prefix(cstr_path);
+		dI("Extracted fixed path: '%s'.\n", paths[0]);
+	} else {
 		paths[0] = strdup("/");
-	    }
+	}
 
 	/* Fail if the provided path doensn't actually exist. Symlinks
 	   without targets are accepted. */
@@ -404,49 +686,11 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 
 	ofts->ofts_recurse_path_fts_opts = rec_fts_options;
 	ofts->ofts_path_op = path_op;
-
-	/* todo: would this also be useful for other operations? */
-	if (path_op == OVAL_OPERATION_PATTERN_MATCH) {
-		pcre *regex;
-		int errofs = 0;
+	if (regex != NULL) {
 		const char *errptr = NULL;
 
-		regex = pcre_compile(cstr_path, 0, &errptr, &errofs, NULL);
-		if (regex == NULL) {
-			dE("pcre_compile() failed: pattern: '%s', err offset: %d, err msg: '%s'.\n",
-			   cstr_path, errofs, errptr);
-			return (NULL);
-		} else {
-			int firstbyte = -1, ret, svec[3];
-
-			ofts->ofts_path_regex = regex;
-			ofts->ofts_path_regex_extra = pcre_study(regex, 0, &errptr);
-
-			pcre_fullinfo(regex, ofts->ofts_path_regex_extra,
-				      PCRE_INFO_FIRSTBYTE, &firstbyte);
-
-			dI("pcre_fullinfo(): firstbyte: %d '%c'.\n", firstbyte, firstbyte);
-
-			ret = pcre_exec(ofts->ofts_path_regex, ofts->ofts_path_regex_extra,
-					"/f0o/bar/baz", 12, 0, PCRE_PARTIAL, svec, 1);
-
-			/*
-			 * If firstbyte == '/', the path is an absolute path.
-			 * If firstbyte == -2, the pattern starts with a '^'.
-			 * In both cases, the traversal through every path
-			 * continues only as long as the path partialy matches
-			 * the pattern.
-			 */
-			if ((firstbyte != '/' && firstbyte != -2) || ret == PCRE_ERROR_BADPARTIAL) {
-				pcre_free(ofts->ofts_path_regex);
-				pcre_free(ofts->ofts_path_regex_extra);
-				ofts->ofts_path_regex = NULL;
-				ofts->ofts_path_regex_extra = NULL;
-				dI("Partial-match optimization disabled.\n");
-			} else {
-				dI("Partial-match optimization enabled.\n");
-			}
-		}
+		ofts->ofts_path_regex = regex;
+		ofts->ofts_path_regex_extra = pcre_study(regex, 0, &errptr);
 	}
 
 	if (path) { /* filepath == NULL */
