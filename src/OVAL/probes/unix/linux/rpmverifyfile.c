@@ -52,7 +52,6 @@
 #include <rpm/rpmfi.h>
 #include <rpm/header.h>
 #include <rpm/rpmcli.h>
-#include <rpm/rpmtag.h>
 
 #ifndef HAVE_HEADERFORMAT
 # define HAVE_LIBRPM44 1 /* hack */

@@ -52,7 +52,6 @@
 #include <rpm/rpmfi.h>
 #include <rpm/header.h>
 #include <rpm/rpmcli.h>
-#include <rpm/rpmtag.h>
 #include <popt.h>
 
 #ifndef HAVE_HEADERFORMAT
@@ -278,7 +277,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 
 			rpmReadConfigFiles ((const char *)NULL, (const char *)NULL);
 			rpmts ts = rpmtsCreate();
-			ret = rpmcliVerify(ts, qva, (ARGV_const_t)poptGetArgs(rpmcli_context));
+			ret = rpmcliVerify(ts, qva, poptGetArgs(rpmcli_context));
 			ts = rpmtsFree(ts);
 			rpmcli_context = rpmcliFini(rpmcli_context);
 
