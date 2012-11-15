@@ -213,6 +213,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 
 	uint32_t path_op;
 	bool nilfilename = false;
+	struct stat st;
 
 	assume_d((path == NULL && filename == NULL && filepath != NULL)
 		 || (path != NULL && filepath == NULL), NULL);
@@ -374,6 +375,17 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	    default:
 		paths[0] = strdup("/");
 	    }
+
+	/* Fail if the provided path doensn't actually exist. Symlinks
+	   without targets are accepted. */
+	if (lstat(paths[0], &st) == -1) {
+		if (errno) {
+			dE("lstat() failed: errno: %d, '%s'.\n",
+			   errno, strerror(errno));
+		}
+		free((void *) paths[0]);
+		return NULL;
+	}
 
 	dI("fts_open args: path: \"%s\", options: %d.\n", paths[0], mtc_fts_options);
 
