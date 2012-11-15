@@ -220,12 +220,6 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filter
 		return (PROBE_ENOELM);
         }
 
-        /* behaviours are not important if filepath is used */
-        if(filepath != NULL && behaviors != NULL) {
-                SEXP_free (behaviors);
-                behaviors = NULL;
-        }
-
 	probe_filebehaviors_canonicalize(&behaviors);
 
         switch (pthread_mutex_lock (&__filemd5_probe_mutex)) {
