@@ -76,10 +76,6 @@ typedef struct {
 	char *ofts_recurse_path_curpth;
 	dev_t ofts_recurse_path_devid;
 
-	char   **ofts_st_path;       /**< starting paths - NULL terminated */
-	uint16_t ofts_st_path_count; /**< number of starting paths */
-	uint16_t ofts_st_path_index; /**< current starting path */
-
 	pcre       *ofts_path_regex;
 	pcre_extra *ofts_path_regex_extra;
 	uint32_t ofts_path_op;

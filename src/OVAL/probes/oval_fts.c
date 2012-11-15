@@ -200,7 +200,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	char cstr_path[PATH_MAX+1];
 	char cstr_file[PATH_MAX+1];
 	char cstr_buff[32];
-	char **paths;
+	const char *paths[2] = { NULL, NULL };
 
 	SEXP_t *r0;
 
@@ -336,8 +336,6 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		PROBE_ENT_STRVAL(filepath, cstr_path, sizeof cstr_path, return NULL;, return NULL;);
 	}
 
-	paths = oscap_alloc(sizeof(char *) * 2);
-	paths[0] = NULL;
 
 	switch (path_op)
 	    {
@@ -358,7 +356,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
                                 paths[0] = __string_unescape(cstr_path + 1, (size_t)(slash_loc - cstr_path) - 1);
                                 if (paths[0] != NULL) {
                                     if (paths[0][0] != '/') {
-                                        free(paths[0]);
+                                        free((void *) paths[0]);
                                         paths[0] = NULL;
                                     }
                                     break;
@@ -379,12 +377,11 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 
 	dI("fts_open args: path: \"%s\", options: %d.\n", paths[0], mtc_fts_options);
 
-	paths[1] = NULL;
 	ofts = OVAL_FTS_new();
-
 	/* reset errno as fts_open() doesn't do it itself. */
 	errno = 0;
 	ofts->ofts_match_path_fts = fts_open((char * const *) paths, mtc_fts_options, NULL);
+	free((void *) paths[0]);
 	/* fts_open() doesn't return NULL for all errors (e.g. nonexistent paths),
 	   so check errno to detect it. Far from being perfect. */
 	if (ofts->ofts_match_path_fts == NULL || errno != 0) {
@@ -394,9 +391,6 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	}
 
 	ofts->ofts_recurse_path_fts_opts = rec_fts_options;
-	ofts->ofts_st_path = paths; /* NULL-terminated array of starting paths */
-	ofts->ofts_st_path_count = 1;
-	ofts->ofts_st_path_index = 0;
 	ofts->ofts_path_op = path_op;
 
 	/* todo: would this also be useful for other operations? */
@@ -888,18 +882,8 @@ void oval_ftsent_free(OVAL_FTSENT *ofts_ent)
 
 int oval_fts_close(OVAL_FTS *ofts)
 {
-	register uint16_t i;
-
-	if (ofts->ofts_st_path_count > 0) {
-		for (i = 0; i < ofts->ofts_st_path_count; ++i)
-			oscap_free(ofts->ofts_st_path[i]);
-		oscap_free(ofts->ofts_st_path);
-	}
-
 	if (ofts->ofts_recurse_path_pthcpy != NULL)
 		oscap_free(ofts->ofts_recurse_path_pthcpy);
-
-	ofts->ofts_st_path = NULL;
 
 	if (ofts->ofts_path_regex)
 		pcre_free(ofts->ofts_path_regex);
