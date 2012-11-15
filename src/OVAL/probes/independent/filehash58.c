@@ -258,12 +258,6 @@ int probe_main(probe_ctx *ctx, void *mutex)
 	if (err != 0)
 		goto cleanup;
 
-	/* behaviours are not important if filepath is used */
-	if(filepath != NULL && behaviors != NULL) {
-		SEXP_free (behaviors);
-		behaviors = NULL;
-	}
-
 	probe_filebehaviors_canonicalize(&behaviors);
 
 	switch (pthread_mutex_lock (&__filehash58_probe_mutex)) {
