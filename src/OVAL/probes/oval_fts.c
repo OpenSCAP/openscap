@@ -765,6 +765,24 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 			continue;
 		}
 
+		/* don't recurse into non-local filesystems */
+		if (ofts->filesystem == OVAL_RECURSE_FS_LOCAL
+		    && (fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)
+		    && (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
+					 (fts_ent->fts_statp != NULL) ?
+					 &fts_ent->fts_statp->st_dev : NULL))) {
+			dI("Don't recurse into non-local filesystems, skipping '%s'.\n", fts_ent->fts_path);
+			fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
+			continue;
+		}
+		/* don't recurse beyond the initial filesystem */
+		if (ofts->filesystem == OVAL_RECURSE_FS_DEFINED
+		    && (fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)
+		    && ofts->ofts_recurse_path_devid != fts_ent->fts_statp->st_dev) {
+			fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
+			continue;
+		}
+
 		/* partial match optimization for OVAL_OPERATION_PATTERN_MATCH operation on path and filepath */
 		if (ofts->ofts_path_regex != NULL && fts_ent->fts_info == FTS_D) {
 			int ret, svec[3];
@@ -786,24 +804,6 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 					return NULL;
 				}
 			}
-		}
-
-		/* don't recurse into non-local filesystems */
-		if (ofts->filesystem == OVAL_RECURSE_FS_LOCAL
-		    && (fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)
-		    && (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
-					 (fts_ent->fts_statp != NULL) ?
-					 &fts_ent->fts_statp->st_dev : NULL))) {
-			dI("Don't recurse into non-local filesystems, skipping '%s'.\n", fts_ent->fts_path);
-			fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
-			continue;
-		}
-		/* don't recurse beyond the initial filesystem */
-		if (ofts->filesystem == OVAL_RECURSE_FS_DEFINED
-		    && (fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)
-		    && ofts->ofts_recurse_path_devid != fts_ent->fts_statp->st_dev) {
-			fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
-			continue;
 		}
 
 		if ((ofts->ofts_sfilepath && fts_ent->fts_info == FTS_D)
