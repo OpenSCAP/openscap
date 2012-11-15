@@ -551,94 +551,95 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		   "    filename: '%s'.\n"
 		   "nil filename: %d.\n", cstr_path, nilfilename ? "" : cstr_file, nilfilename);
 #endif
-		/* max_depth */
-		PROBE_ENT_AREF(behaviors, r0, "max_depth", return NULL;);
-		SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
-		max_depth = strtol(cstr_buff, NULL, 10);
-		if (errno == EINVAL || errno == ERANGE) {
-			dE("Invalid value of the `%s' attribute: %s\n", "recurse_direction", cstr_buff);
-			SEXP_free(r0);
-			return (NULL);
-		}
-#if defined(OSCAP_FTS_DEBUG)
-		dI("bh.max_depth: %s => max_depth: %d\n", cstr_buff, max_depth);
-#endif
-		SEXP_free(r0);
-
-		/* recurse_direction */
-		PROBE_ENT_AREF(behaviors, r0, "recurse_direction", return NULL;);
-		SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
-		/* todo: use oscap_string_to_enum() */
-		if (strcmp(cstr_buff, "none") == 0) {
-			direction = OVAL_RECURSE_DIRECTION_NONE;
-		} else if (strcmp(cstr_buff, "down") == 0) {
-			direction = OVAL_RECURSE_DIRECTION_DOWN;
-		} else if (strcmp(cstr_buff, "up") == 0) {
-			direction = OVAL_RECURSE_DIRECTION_UP;
-		} else {
-			dE("Invalid direction: %s\n", cstr_buff);
-			SEXP_free(r0);
-			return (NULL);
-		}
-#if defined(OSCAP_FTS_DEBUG)
-		dI("bh.direction: %s => direction: %d\n", cstr_buff, direction);
-#endif
-		SEXP_free(r0);
-
-		/* recurse */
-		PROBE_ENT_AREF(behaviors, r0, "recurse", /**/);
-		if (r0 != NULL) {
-			SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
-			/* todo: use oscap_string_to_enum() */
-			if (strcmp(cstr_buff, "symlinks and directories") == 0) {
-				recurse = OVAL_RECURSE_SYMLINKS_AND_DIRS;
-			} else if (strcmp(cstr_buff, "files and directories") == 0) {
-				recurse = OVAL_RECURSE_FILES_AND_DIRS;
-			} else if (strcmp(cstr_buff, "symlinks") == 0) {
-				recurse = OVAL_RECURSE_SYMLINKS;
-			} else if (strcmp(cstr_buff, "directories") == 0) {
-				recurse = OVAL_RECURSE_DIRS;
-			} else {
-				dE("Invalid recurse: %s\n", cstr_buff);
-				SEXP_free(r0);
-				return (NULL);
-			}
-		} else {
-			recurse = OVAL_RECURSE_SYMLINKS_AND_DIRS;
-		}
-#if defined(OSCAP_FTS_DEBUG)
-		dI("bh.recurse: %s => recurse: %d\n", cstr_buff, recurse);
-#endif
-		SEXP_free(r0);
-
-		/* recurse_file_system */
-		PROBE_ENT_AREF(behaviors, r0, "recurse_file_system", /**/);
-
-		if (r0 != NULL) {
-			SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
-			/* todo: use oscap_string_to_enum() */
-			if (strcmp(cstr_buff, "local") == 0) {
-				filesystem = OVAL_RECURSE_FS_LOCAL;
-			} else if (strcmp(cstr_buff, "all") == 0) {
-				filesystem = OVAL_RECURSE_FS_ALL;
-			} else if (strcmp(cstr_buff, "defined") == 0) {
-				filesystem = OVAL_RECURSE_FS_DEFINED;
-				rec_fts_options |= FTS_XDEV;
-			} else {
-				dE("Invalid recurse filesystem: %s\n", cstr_buff);
-				SEXP_free(r0);
-				return (NULL);
-			}
-		} else {
-			filesystem = OVAL_RECURSE_FS_ALL;
-		}
-#if defined(OSCAP_FTS_DEBUG)
-		dI("bh.filesystem: %s => filesystem: %d\n", cstr_buff, filesystem);
-#endif
-		SEXP_free(r0);
 	} else { /* filepath != NULL */
 		PROBE_ENT_STRVAL(filepath, cstr_path, sizeof cstr_path, return NULL;, return NULL;);
 	}
+
+	/* max_depth */
+	PROBE_ENT_AREF(behaviors, r0, "max_depth", return NULL;);
+	SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
+	max_depth = strtol(cstr_buff, NULL, 10);
+	if (errno == EINVAL || errno == ERANGE) {
+		dE("Invalid value of the `%s' attribute: %s\n", "recurse_direction", cstr_buff);
+		SEXP_free(r0);
+		return (NULL);
+	}
+#if defined(OSCAP_FTS_DEBUG)
+	dI("bh.max_depth: %s => max_depth: %d\n", cstr_buff, max_depth);
+#endif
+	SEXP_free(r0);
+
+	/* recurse_direction */
+	PROBE_ENT_AREF(behaviors, r0, "recurse_direction", return NULL;);
+	SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
+	/* todo: use oscap_string_to_enum() */
+	if (strcmp(cstr_buff, "none") == 0) {
+		direction = OVAL_RECURSE_DIRECTION_NONE;
+	} else if (strcmp(cstr_buff, "down") == 0) {
+		direction = OVAL_RECURSE_DIRECTION_DOWN;
+	} else if (strcmp(cstr_buff, "up") == 0) {
+		direction = OVAL_RECURSE_DIRECTION_UP;
+	} else {
+		dE("Invalid direction: %s\n", cstr_buff);
+		SEXP_free(r0);
+		return (NULL);
+	}
+#if defined(OSCAP_FTS_DEBUG)
+	dI("bh.direction: %s => direction: %d\n", cstr_buff, direction);
+#endif
+	SEXP_free(r0);
+
+	/* recurse */
+	PROBE_ENT_AREF(behaviors, r0, "recurse", /**/);
+	if (r0 != NULL) {
+		SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
+		/* todo: use oscap_string_to_enum() */
+		if (strcmp(cstr_buff, "symlinks and directories") == 0) {
+			recurse = OVAL_RECURSE_SYMLINKS_AND_DIRS;
+		} else if (strcmp(cstr_buff, "files and directories") == 0) {
+			recurse = OVAL_RECURSE_FILES_AND_DIRS;
+		} else if (strcmp(cstr_buff, "symlinks") == 0) {
+			recurse = OVAL_RECURSE_SYMLINKS;
+		} else if (strcmp(cstr_buff, "directories") == 0) {
+			recurse = OVAL_RECURSE_DIRS;
+		} else {
+			dE("Invalid recurse: %s\n", cstr_buff);
+			SEXP_free(r0);
+			return (NULL);
+		}
+	} else {
+		recurse = OVAL_RECURSE_SYMLINKS_AND_DIRS;
+	}
+#if defined(OSCAP_FTS_DEBUG)
+	dI("bh.recurse: %s => recurse: %d\n", cstr_buff, recurse);
+#endif
+	SEXP_free(r0);
+
+	/* recurse_file_system */
+	PROBE_ENT_AREF(behaviors, r0, "recurse_file_system", /**/);
+
+	if (r0 != NULL) {
+		SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
+		/* todo: use oscap_string_to_enum() */
+		if (strcmp(cstr_buff, "local") == 0) {
+			filesystem = OVAL_RECURSE_FS_LOCAL;
+		} else if (strcmp(cstr_buff, "all") == 0) {
+			filesystem = OVAL_RECURSE_FS_ALL;
+		} else if (strcmp(cstr_buff, "defined") == 0) {
+			filesystem = OVAL_RECURSE_FS_DEFINED;
+			rec_fts_options |= FTS_XDEV;
+		} else {
+			dE("Invalid recurse filesystem: %s\n", cstr_buff);
+			SEXP_free(r0);
+			return (NULL);
+		}
+	} else {
+		filesystem = OVAL_RECURSE_FS_ALL;
+	}
+#if defined(OSCAP_FTS_DEBUG)
+	dI("bh.filesystem: %s => filesystem: %d\n", cstr_buff, filesystem);
+#endif
+	SEXP_free(r0);
 
 	/* todo:
 	   Still missing is a propagation of the error to the
@@ -693,32 +694,33 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		ofts->ofts_path_regex_extra = pcre_study(regex, 0, &errptr);
 	}
 
-	if (path) { /* filepath == NULL */
-		if (filesystem == OVAL_RECURSE_FS_LOCAL) {
-			ofts->localdevs = fsdev_init(NULL, 0);
-			if (ofts->localdevs == NULL) {
-				dE("fsdev_init() failed.\n");
-				return (NULL);
-			}
-		} else if (filesystem == OVAL_RECURSE_FS_DEFINED) {
-			/* store the device id for future comparison */
-			FTSENT *fts_ent;
-
-			fts_ent = fts_read(ofts->ofts_match_path_fts);
-			if (fts_ent != NULL) {
-				ofts->ofts_recurse_path_devid = fts_ent->fts_statp->st_dev;
-				fts_set(ofts->ofts_match_path_fts, fts_ent, FTS_AGAIN);
-			}
+	if (filesystem == OVAL_RECURSE_FS_LOCAL) {
+		ofts->localdevs = fsdev_init(NULL, 0);
+		if (ofts->localdevs == NULL) {
+			dE("fsdev_init() failed.\n");
+			return (NULL);
 		}
+	} else if (filesystem == OVAL_RECURSE_FS_DEFINED) {
+		/* store the device id for future comparison */
+		FTSENT *fts_ent;
 
+		fts_ent = fts_read(ofts->ofts_match_path_fts);
+		if (fts_ent != NULL) {
+			ofts->ofts_recurse_path_devid = fts_ent->fts_statp->st_dev;
+			fts_set(ofts->ofts_match_path_fts, fts_ent, FTS_AGAIN);
+		}
+	}
+
+	ofts->recurse = recurse;
+	ofts->filesystem = filesystem;
+
+	if (path) { /* filepath == NULL */
 		ofts->ofts_spath = SEXP_ref(path); /* path entity */
 		if (!nilfilename)
 			ofts->ofts_sfilename = SEXP_ref(filename); /* filename entity */
 
 		ofts->max_depth = max_depth;
 		ofts->direction = direction;
-		ofts->recurse = recurse;
-		ofts->filesystem = filesystem;
 	} else { /* filepath != NULL */
 		ofts->ofts_sfilepath = SEXP_ref(filepath);
 	}
