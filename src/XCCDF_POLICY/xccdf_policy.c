@@ -2457,7 +2457,7 @@ void xccdf_policy_free(struct xccdf_policy * policy) {
 	oscap_list_free(policy->selects, (oscap_destruct_func) xccdf_select_free);
 	oscap_list_free(policy->values, (oscap_destruct_func) xccdf_value_binding_free);
 	oscap_list_free(policy->results, (oscap_destruct_func) xccdf_result_free);
-        oscap_htable_free(policy->ht_selects, (oscap_destruct_func) NULL);
+	oscap_htable_free0(policy->ht_selects);
         oscap_free(policy);
 }
 

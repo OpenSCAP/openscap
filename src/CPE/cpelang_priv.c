@@ -695,7 +695,7 @@ void cpe_lang_model_free(struct cpe_lang_model *platformspec)
 	if (platformspec == NULL)
 		return;
 
-	oscap_htable_free(platformspec->item, NULL);
+	oscap_htable_free0(platformspec->item);
 	oscap_list_free(platformspec->platforms, (oscap_destruct_func) cpe_platform_free);
 	oscap_free(platformspec->origin_file);
 

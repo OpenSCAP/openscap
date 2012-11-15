@@ -380,9 +380,9 @@ void xccdf_benchmark_free(struct xccdf_benchmark *benchmark)
 		cpe_dict_model_free(bench->sub.benchmark.cpe_list);
 		cpe_lang_model_free(bench->sub.benchmark.cpe_lang_model);
 		oscap_list_free(bench->sub.benchmark.profiles, (oscap_destruct_func) xccdf_profile_free);
-		oscap_htable_free(bench->sub.benchmark.items_dict, NULL);
-		oscap_htable_free(bench->sub.benchmark.profiles_dict, NULL);
-		oscap_htable_free(bench->sub.benchmark.results_dict, NULL);
+		oscap_htable_free0(bench->sub.benchmark.items_dict);
+		oscap_htable_free0(bench->sub.benchmark.profiles_dict);
+		oscap_htable_free0(bench->sub.benchmark.results_dict);
 		xccdf_item_release(bench);
 	}
 }

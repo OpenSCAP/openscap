@@ -223,6 +223,11 @@ void oscap_htable_dump(struct oscap_htable *htable, oscap_dump_func dumper, int 
  * @param destructor Function used to delete individual items.
  */
 void oscap_htable_free(struct oscap_htable *htable, oscap_destruct_func destructor);
+/*
+ * Dispose the hash table -- do not dispose individial items.
+ * @param htable Hash table to be deleted.
+ */
+void oscap_htable_free0(struct oscap_htable *htable);
 
 void oscap_print_depth(int depth);
 

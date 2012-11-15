@@ -50,7 +50,7 @@ static struct cce *cce_new_empty(void)
 void cce_free(struct cce *cce)
 {
 	if (cce) {
-		oscap_htable_free(cce->entry, NULL);
+		oscap_htable_free0(cce->entry);
 		oscap_list_free(cce->entries, (oscap_destruct_func) cce_entry_free);
 		oscap_free(cce);
 	}

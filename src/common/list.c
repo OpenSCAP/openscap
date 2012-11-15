@@ -511,6 +511,11 @@ void oscap_htable_free(struct oscap_htable *htable, oscap_destruct_func destruct
 	}
 }
 
+void oscap_htable_free0(struct oscap_htable *htable)
+{
+	oscap_htable_free(htable, NULL);
+}
+
 void oscap_print_depth(int depth)
 {
 	while (depth--)
