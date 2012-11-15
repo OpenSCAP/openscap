@@ -99,6 +99,7 @@ struct xccdf_benchmark *xccdf_benchmark_new(void)
 	bench->sub.benchmark.items_dict = oscap_htable_new();
 	bench->sub.benchmark.profiles_dict = oscap_htable_new();
 	bench->sub.benchmark.results_dict = oscap_htable_new();
+	bench->sub.benchmark.clusters_dict = oscap_htable_new();
 
 	// add the implied default scoring model
 	struct xccdf_model *default_model = xccdf_model_new();
@@ -383,6 +384,7 @@ void xccdf_benchmark_free(struct xccdf_benchmark *benchmark)
 		oscap_htable_free0(bench->sub.benchmark.items_dict);
 		oscap_htable_free0(bench->sub.benchmark.profiles_dict);
 		oscap_htable_free0(bench->sub.benchmark.results_dict);
+		oscap_htable_free(bench->sub.benchmark.clusters_dict, (oscap_destruct_func) oscap_htable_free0);
 		xccdf_item_release(bench);
 	}
 }
@@ -610,6 +612,33 @@ xccdf_benchmark_get_member(const struct xccdf_benchmark *benchmark, xccdf_type_t
 	return (struct xccdf_item *)oscap_htable_get(xccdf_benchmark_find_target_htable(benchmark, type), key);
 }
 
+static inline bool
+_register_item_to_cluster(struct xccdf_benchmark *benchmark, struct xccdf_item *item)
+{
+	if (!oscap_streq(xccdf_item_get_cluster_id(item), "")) {
+		struct oscap_htable *cluster = oscap_htable_get(XITEM(benchmark)->sub.benchmark.clusters_dict, xccdf_item_get_cluster_id(item));
+		if (cluster == NULL) {
+			cluster = oscap_htable_new();
+			if (cluster == NULL || !oscap_htable_add(XITEM(benchmark)->sub.benchmark.clusters_dict, xccdf_item_get_cluster_id(item), cluster)) {
+				oscap_htable_free0(cluster);
+				return false;
+			}
+		}
+		return oscap_htable_add(cluster, xccdf_item_get_id(item), item);
+	}
+	return true;
+}
+
+static inline bool
+_unregister_item_from_cluster(struct xccdf_benchmark *benchmark, struct xccdf_item *item)
+{
+	if (!oscap_streq(xccdf_item_get_cluster_id(item), "")) {
+		struct oscap_htable *cluster = oscap_htable_get(XITEM(benchmark)->sub.benchmark.clusters_dict, xccdf_item_get_cluster_id(item));
+		return cluster != NULL && oscap_htable_detach(cluster, xccdf_item_get_cluster_id(item)) != NULL;
+	}
+	return true;
+}
+
 bool xccdf_benchmark_register_item(struct xccdf_benchmark *benchmark, struct xccdf_item *item)
 {
 	if (benchmark == NULL || item == NULL || xccdf_item_get_id(item) == NULL)
@@ -626,8 +655,8 @@ bool xccdf_benchmark_register_item(struct xccdf_benchmark *benchmark, struct xcc
             xccdf_benchmark_register_item(benchmark, XITEM(val));
     }
 
-	return oscap_htable_add(xccdf_benchmark_find_target_htable(benchmark, xccdf_item_get_type(item)),
-		xccdf_item_get_id(item), item);
+	return oscap_htable_add(xccdf_benchmark_find_target_htable(benchmark, xccdf_item_get_type(item)), xccdf_item_get_id(item), item) &&
+		_register_item_to_cluster(benchmark, item);
 }
 
 bool xccdf_benchmark_unregister_item(struct xccdf_item *item)
@@ -639,7 +668,8 @@ bool xccdf_benchmark_unregister_item(struct xccdf_item *item)
 
 	assert(xccdf_benchmark_get_member(bench, xccdf_item_get_type(item), xccdf_item_get_id(item)) == item);
 
-	return oscap_htable_detach(xccdf_benchmark_find_target_htable(bench, xccdf_item_get_type(item)), xccdf_item_get_id(item)) != NULL;
+	return oscap_htable_detach(xccdf_benchmark_find_target_htable(bench, xccdf_item_get_type(item)), xccdf_item_get_id(item)) != NULL &&
+		_unregister_item_from_cluster(bench, item);
 }
 
 bool xccdf_benchmark_rename_item(struct xccdf_item *item, const char *newid)
@@ -656,8 +686,10 @@ bool xccdf_benchmark_rename_item(struct xccdf_item *item, const char *newid)
 		if (xccdf_item_get_id(item) != NULL)
 			xccdf_benchmark_unregister_item(item);
 
-		if (newid != NULL)
+		if (newid != NULL) {
 			oscap_htable_add(xccdf_benchmark_find_target_htable(xccdf_item_get_benchmark(item), xccdf_item_get_type(item)), newid, item);
+			_register_item_to_cluster(xccdf_item_get_benchmark(item), item);
+		}
 	}
 
 	oscap_free(item->item.id);

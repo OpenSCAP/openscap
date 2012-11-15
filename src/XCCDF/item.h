@@ -171,6 +171,7 @@ struct xccdf_benchmark_item {
 	struct oscap_htable *items_dict;		/* Stores only xccdf:Item */
 	struct oscap_htable *profiles_dict;		/* xccdf:Profile */
 	struct oscap_htable *results_dict;		/* xccdf:TestResult */
+	struct oscap_htable *clusters_dict;		/* xccdf:items by cluster-id */
 	struct oscap_list *notices;
 	struct oscap_list *plain_texts;
 
