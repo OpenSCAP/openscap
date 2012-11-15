@@ -447,12 +447,6 @@ int probe_main (probe_ctx *ctx, void *mutex)
                 return PROBE_ENOELM;
         }
 
-	/* behaviours are not important if filepath is used */
-	if(filepath != NULL && behaviors != NULL) {
-		SEXP_free (behaviors);
-		behaviors = NULL;
-	}
-
 	probe_filebehaviors_canonicalize(&behaviors);
 
         switch (pthread_mutex_lock (&__file_probe_mutex)) {
