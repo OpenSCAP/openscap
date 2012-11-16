@@ -297,7 +297,7 @@ struct internal_usr {
     PyObject *usr;
 };
 
-int output_callback_wrapper(struct xccdf_rule_result* rule_result, void *arg)
+int rule_result_output_callback_wrapper(struct xccdf_rule_result* rule_result, void *arg)
 {
     PyGILState_STATE state;
     PyObject *py_rule_result;
@@ -334,7 +334,7 @@ int output_callback_wrapper(struct xccdf_rule_result* rule_result, void *arg)
     return dres;
 }
 
-int start_callback_wrapper(struct xccdf_rule* rule, void *arg)
+int rule_start_callback_wrapper(struct xccdf_rule* rule, void *arg)
 {
     PyGILState_STATE state;
     PyObject *py_rule;
@@ -350,6 +350,78 @@ int start_callback_wrapper(struct xccdf_rule* rule, void *arg)
     func = data->func;
     usrdata = data->usr;
     arglist = Py_BuildValue("OO", py_rule, usrdata);
+    if (!PyCallable_Check(func)) {
+      PyGILState_Release(state);
+      return 1;
+    }
+    result = PyEval_CallObject(func,arglist);
+    if (result == NULL) {
+        if (PyErr_Occurred() != NULL)
+            PyErr_PrintEx(0);
+        PyErr_Print();
+        Py_DECREF(arglist);
+        Py_XDECREF(result);
+        PyGILState_Release(state);
+        return -1;
+    }
+    Py_DECREF(arglist);
+    dres = PyInt_AsLong(result);
+    Py_XDECREF(result);
+    PyGILState_Release(state);
+    return dres;
+}
+
+int agent_reporter_callback_wrapper(const struct oval_result_definition* res_def, void *arg)
+{
+    PyGILState_STATE state;
+    PyObject *py_res_def;
+    PyObject *arglist;
+    PyObject *func, *usrdata;
+    struct internal_usr *data;
+    PyObject *result;
+    double    dres = 0;
+
+    state = PyGILState_Ensure();
+    py_res_def = SWIG_NewPointerObj(res_def, SWIGTYPE_p_oval_result_definition, 1);
+    data = (struct internal_usr *) arg;
+    func = data->func;
+    usrdata = data->usr;
+    arglist = Py_BuildValue("OO", py_res_def, usrdata);
+    if (!PyCallable_Check(func)) {
+      PyGILState_Release(state);
+      return 1;
+    }
+    result = PyEval_CallObject(func,arglist);
+    if (result == NULL) {
+        if (PyErr_Occurred() != NULL)
+            PyErr_PrintEx(0);
+        PyErr_Print();
+        Py_DECREF(arglist);
+        Py_XDECREF(result);
+        PyGILState_Release(state);
+        return -1;
+    }
+    Py_DECREF(arglist);
+    dres = PyInt_AsLong(result);
+    Py_XDECREF(result);
+    PyGILState_Release(state);
+    return dres;
+}
+
+int validate_callback_wrapper(const char* file, int line, const char* msg, void *arg)
+{
+    PyGILState_STATE state;
+    PyObject *arglist;
+    PyObject *func, *usrdata;
+    struct internal_usr *data;
+    PyObject *result;
+    double    dres = 0;
+
+    state = PyGILState_Ensure();
+    data = (struct internal_usr *) arg;
+    func = data->func;
+    usrdata = data->usr;
+    arglist = Py_BuildValue("sisO", file, line, msg, usrdata);
     if (!PyCallable_Check(func)) {
       PyGILState_Release(state);
       return 1;
@@ -431,7 +503,7 @@ bool xccdf_policy_model_register_output_callback_py(struct xccdf_policy_model *m
     new_usrdata->func = func;
     new_usrdata->usr = usr;
   
-    return xccdf_policy_model_register_output_callback(model, output_callback_wrapper, (void *)new_usrdata);
+    return xccdf_policy_model_register_output_callback(model, rule_result_output_callback_wrapper, (void *)new_usrdata);
 }
 
 bool xccdf_policy_model_register_start_callback_py(struct xccdf_policy_model *model, PyObject *func, PyObject *usr) {
@@ -445,7 +517,7 @@ bool xccdf_policy_model_register_start_callback_py(struct xccdf_policy_model *mo
     new_usrdata->func = func;
     new_usrdata->usr = usr;
   
-    return xccdf_policy_model_register_start_callback(model, start_callback_wrapper, (void *)new_usrdata);
+    return xccdf_policy_model_register_start_callback(model, rule_start_callback_wrapper, (void *)new_usrdata);
 }
 
 int oval_agent_eval_system_py(oval_agent_session_t * asess, PyObject * func, PyObject *usr) {
@@ -458,8 +530,8 @@ int oval_agent_eval_system_py(oval_agent_session_t * asess, PyObject * func, PyO
 
     new_usrdata->func = func;
     new_usrdata->usr = usr;
-  
-    return oval_agent_eval_system(asess, output_callback_wrapper, (void *) new_usrdata);
+
+    return oval_agent_eval_system(asess, agent_reporter_callback_wrapper, (void *) new_usrdata);
 }
 
 bool oscap_validate_document_py(const char *xmlfile, oscap_document_type_t doctype, const char *version, PyObject *func, PyObject *usr) {
@@ -472,8 +544,8 @@ bool oscap_validate_document_py(const char *xmlfile, oscap_document_type_t docty
 
     new_usrdata->func = func;
     new_usrdata->usr = usr;
-  
-    return oscap_validate_document(xmlfile, doctype, version, output_callback_wrapper, (void *)new_usrdata);
+
+    return oscap_validate_document(xmlfile, doctype, version, validate_callback_wrapper, (void *)new_usrdata);
 }
 
 char * oscap_text_xccdf_substitute_py(const char *text, PyObject *func, PyObject *usr) {
