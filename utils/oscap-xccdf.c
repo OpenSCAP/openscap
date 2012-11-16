@@ -298,20 +298,24 @@ static int callback_scr_result(struct xccdf_rule_result *rule_result, void *arg)
 	return 0;
 }
 
+
+/*
+ * Send XCCDF Rule Results info message to syslog
+ *
 static int callback_syslog_result(struct xccdf_rule_result *rule_result, void *arg)
 {
 	xccdf_test_result_type_t result = xccdf_rule_result_get_result(rule_result);
 
-	/* do we log it? */
+	// do we log it?
 	if ((result != XCCDF_RESULT_FAIL) && (result != XCCDF_RESULT_UNKNOWN))
 		return 0;
 
-	/* yes we do */
+	// yes we do
 	const char * result_str = xccdf_test_result_type_get_text(result);
 	const char * ident_id = NULL;
 	int priority = LOG_NOTICE;
 
-	/* get ident */
+	// get ident
 	struct xccdf_ident_iterator *idents = xccdf_rule_result_get_idents(rule_result);
 	if (xccdf_ident_iterator_has_more(idents)) {
 		const struct xccdf_ident *ident = xccdf_ident_iterator_next(idents);
@@ -319,11 +323,13 @@ static int callback_syslog_result(struct xccdf_rule_result *rule_result, void *a
 	}
 	xccdf_ident_iterator_free(idents);
 
-	/* emit the message */
+	// emit the message
 	syslog(priority, "Rule: %s, Ident: %s, Result: %s.", xccdf_rule_result_get_idref(rule_result), ident_id, result_str);
 
 	return 0;
 }
+*/
+
 
 struct oscap_content_resource {
 	char *href;	/* Coresponds with xccdf:check-content-ref/@href. */
