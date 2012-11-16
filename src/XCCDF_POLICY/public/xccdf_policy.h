@@ -384,12 +384,6 @@ bool xccdf_policy_add_result(struct xccdf_policy * policy, struct xccdf_result *
 bool xccdf_policy_add_value(struct xccdf_policy *, struct xccdf_value_binding *);
 
 /**
- * Add check export to the Value Binding structure
- * @memberof xccdf_value_binding
- * @return true if rule has been added succesfully
- */
-//bool xccdf_value_binding_add_check_export(struct xccdf_value_binding *, struct xccdf_check_export *);
-/**
  * Get select from policy by specified ID of XCCDF Item
  * @memberof xccdf_policy
  * @return XCCDF Select
