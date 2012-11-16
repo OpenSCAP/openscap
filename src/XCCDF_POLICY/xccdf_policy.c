@@ -1848,9 +1848,35 @@ _xccdf_policy_add_selector_internal(struct xccdf_policy *policy, struct xccdf_be
 		return result;
 	}
 
-	// TODO: Selector may point out to the cluster-id.
-	assert(false);
-	return false;
+	/** If the selector doesn't point to an item it can still point to the cluster. */
+	struct oscap_htable_iterator *hit = xccdf_benchmark_get_cluster_items(benchmark, xccdf_select_get_item(sel));
+	if (hit == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_XCCDF, "Selector ID(%s) does not exist in Benchmark.", xccdf_select_get_item(sel));
+		return false;
+	}
+	if (!oscap_htable_iterator_has_more(hit))
+		return false;
+	while (oscap_htable_iterator_has_more(hit)) {
+		const char *item_id = oscap_htable_iterator_next_key(hit);
+		if (item_id == NULL) {
+			assert(item_id != NULL);
+			continue;
+		}
+		oscap_htable_detach(policy->selected_internal, item_id);
+		result &= oscap_htable_add(policy->selected_internal, item_id, sel);
+	}
+	if (resolve) {
+		oscap_htable_iterator_reset(hit);
+		while (oscap_htable_iterator_has_more(hit)) {
+			item = (struct xccdf_item *) oscap_htable_iterator_next_value(hit);
+			if (item == NULL)
+				continue;
+			const struct xccdf_item *parent = xccdf_item_get_parent(item);
+			xccdf_policy_resolve_item(policy, item, (parent == NULL) ? true : xccdf_policy_is_item_selected(policy, xccdf_item_get_id(parent)));
+		}
+	}
+	oscap_htable_iterator_free(hit);
+	return result;
 }
 
 bool

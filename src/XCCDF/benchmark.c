@@ -639,6 +639,14 @@ _unregister_item_from_cluster(struct xccdf_benchmark *benchmark, struct xccdf_it
 	return true;
 }
 
+struct oscap_htable_iterator *
+xccdf_benchmark_get_cluster_items(struct xccdf_benchmark *benchmark, const char *cluster_id)
+{
+	/* Get iterator through all items with given cluster-id */
+	struct oscap_htable *cluster = oscap_htable_get(XITEM(benchmark)->sub.benchmark.clusters_dict, cluster_id);
+	return (cluster == NULL) ? NULL : oscap_htable_iterator_new(cluster);
+}
+
 bool xccdf_benchmark_register_item(struct xccdf_benchmark *benchmark, struct xccdf_item *item)
 {
 	if (benchmark == NULL || item == NULL || xccdf_item_get_id(item) == NULL)
