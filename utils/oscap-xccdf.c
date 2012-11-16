@@ -247,8 +247,8 @@ static int callback_scr_rule(struct xccdf_rule *rule, void *arg)
 	const char * rule_id = xccdf_rule_get_id(rule);
 
 	/* is rule selected? we print only selected rules */
-        const struct xccdf_select *sel = xccdf_policy_get_select_by_id((struct xccdf_policy *) arg, rule_id);
-        if (!xccdf_select_get_selected(sel))
+	bool selected = xccdf_policy_is_item_selected((struct xccdf_policy *) arg, rule_id);
+        if (!selected)
 		return 0;
 
 	/* get the first title */
