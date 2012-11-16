@@ -103,11 +103,15 @@ struct xccdf_policy {
 
         struct xccdf_policy_model   * model;    ///< XCCDF Policy model
         struct xccdf_profile        * profile;  ///< Profile structure (from benchmark)
-        struct oscap_list           * selects;  ///< Selected rules and groups of profile
+	/** A list of all selects. Either from profile or later added through API. */
+        struct oscap_list           * selects;
         struct oscap_list           * values;   ///< Bound values of profile
         struct oscap_list           * results;  ///< List of XCCDF results
-        /* Private sector */
-        struct oscap_htable         * ht_selects; ///< Hash table of selects
+	/** A hash which for given item points to the latest selector applicable.
+	 * There might not be one. Note that it migth be a selector for cluster-id. */
+	struct oscap_htable		*selected_internal;
+	/** A hash which for given item defines final selection */
+	struct oscap_htable		*selected_final;
 };
 
 /* Macros to generate iterators, getters and setters */
@@ -214,28 +218,6 @@ static struct oscap_iterator *
 _xccdf_policy_get_callbacks_by_sysname(struct xccdf_policy * policy, const char * sysname)
 {
 	return oscap_iterator_new_filter( policy->model->callbacks, (oscap_filter_func) _xccdf_policy_filter_callback, (void *) sysname);
-}
-
-/**
- * Return true if given policy has the select, false otherwise.
- */
-static bool xccdf_policy_has_select(struct xccdf_policy * policy, const char *item_id)
-{
-        __attribute__nonnull__(policy);
-        
-        struct xccdf_select_iterator    * sel_it;
-        struct xccdf_select             * sel;
-
-        sel_it = xccdf_policy_get_selects(policy);
-        while (xccdf_select_iterator_has_more(sel_it)) {
-                sel = xccdf_select_iterator_next(sel_it);
-                if (!strcmp(xccdf_select_get_item(sel), item_id)) {
-                    xccdf_select_iterator_free(sel_it);
-                    return true;
-                }
-        }
-        xccdf_select_iterator_free(sel_it);
-        return false;
 }
 
 /**
@@ -415,58 +397,26 @@ static void xccdf_policy_resolve_item(struct xccdf_policy * policy, struct xccdf
         __attribute__nonnull__(policy);
         __attribute__nonnull__(item);
 
-        struct xccdf_item_iterator  * child_it;
-        struct xccdf_item           * child;
-        struct xccdf_select         * sel;
+	static bool TRUE = true;
+	static bool FALSE = false;
+	bool result;
 
-        xccdf_type_t itype = xccdf_item_get_type(item);
+	oscap_htable_detach(policy->selected_final, xccdf_item_get_id(item));
+	if (!selected)
+		result = false;
+	else {
+		struct xccdf_select *sel = xccdf_policy_get_select_by_id(policy, xccdf_item_get_id(item));
+		result = (sel != NULL) ? xccdf_select_get_selected(sel) : xccdf_item_get_selected(item);
+	}
 
-        switch (itype) {
+	if (xccdf_item_get_type(item) == XCCDF_GROUP) {
+		struct xccdf_item_iterator *child_it = xccdf_group_get_content((const struct xccdf_group *)item);
+		while (xccdf_item_iterator_has_more(child_it))
+			xccdf_policy_resolve_item(policy, xccdf_item_iterator_next(child_it), result);
+		xccdf_item_iterator_free(child_it);
+	}
 
-            case XCCDF_RULE:{
-                /* We don't have this rule's selector in policy yet - make new selector, set the rule attribute
-                 * "selected" to the value of "Is parent selected and this rule is selected by default"
-                 */
-                if (!xccdf_policy_has_select(policy, xccdf_rule_get_id((const struct xccdf_rule *)item))) {
-                    sel = xccdf_select_new();
-                    xccdf_select_set_selected(sel, selected & xccdf_rule_get_selected((const struct xccdf_rule *)item));
-                    xccdf_select_set_item(sel, xccdf_rule_get_id((const struct xccdf_rule *)item));
-                    oscap_list_add(policy->selects, sel);
-                /* The rule's selector is already in policy and we need to change "selected" attribute to the desired
-                 * value (see comment above).
-                 */
-                } else {
-                    sel = xccdf_policy_get_select_by_id(policy, xccdf_rule_get_id((const struct xccdf_rule *)item));
-                    xccdf_select_set_selected(sel, selected & xccdf_select_get_selected(sel));
-                }
-            } break;
-
-            case XCCDF_GROUP:{
-                /* It is a group, if selected is 0, then group will be not processed, but if selected is 1 or nothing 
-                 * by default, group will be processed and we need to iterate through list of rules
-                 */
-                if (selected) {
-                    if (xccdf_policy_has_select(policy, xccdf_item_get_id(item))) {
-                        sel = xccdf_policy_get_select_by_id(policy, xccdf_item_get_id(item));
-                        selected = xccdf_select_get_selected(sel);
-                    } else if (xccdf_group_get_selected((const struct xccdf_group *)item)){ /* it's selected */
-                        selected = true;
-                    } else selected = false;
-                }
-
-                child_it = xccdf_group_get_content((const struct xccdf_group *)item);
-                while (xccdf_item_iterator_has_more(child_it)) {
-                        child = xccdf_item_iterator_next(child_it);
-                        xccdf_policy_resolve_item(policy, child, selected);
-                }
-                xccdf_item_iterator_free(child_it);
-            } break;
-            
-            default: 
-              /* TODO: set warning bad argument and return ? */
-              break;
-
-        } 
+	assume_ex(oscap_htable_add(policy->selected_final, xccdf_item_get_id(item), result ? &TRUE : &FALSE), NULL);
 }
 
 /**
@@ -1889,6 +1839,24 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
 	return model;
 }
 
+static inline bool
+_xccdf_policy_add_selector_internal(struct xccdf_policy *policy, struct xccdf_benchmark *benchmark, struct xccdf_select *sel)
+{
+	/* This is the only way, how one can add selector to a policy. */
+	oscap_list_add(policy->selects, sel);
+
+	struct xccdf_item *item = xccdf_benchmark_get_member(benchmark, XCCDF_ITEM, xccdf_select_get_item(sel));
+	if (item != NULL) {
+		/* If selector points to a single item. Update internal dictionary. */
+		oscap_htable_detach(policy->selected_internal, xccdf_select_get_item(sel));
+		return oscap_htable_add(policy->selected_internal, xccdf_select_get_item(sel), sel);
+	}
+
+	// TODO: Selector may point out to the cluster-id.
+	assert(false);
+	return false;
+}
+
 /**
  * Constructor for structure XCCDF Policy. Create the structure and resolve all rules
  * from benchmark that are not present in selectors. This step is necessary because of 
@@ -1915,10 +1883,11 @@ struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct
 	policy->values  = oscap_list_new();
         policy->results = oscap_list_new();
 
-        policy->ht_selects = NULL;
+	policy->selected_internal = oscap_htable_new();
+	policy->selected_final = oscap_htable_new();
         policy->model = model;
 
-        /* Create selects from benchmark model */
+        benchmark = xccdf_policy_model_get_benchmark(model);
         if (profile != NULL)
             sel_it = xccdf_profile_get_selects(profile);
         /* Iterate through selects in profile */
@@ -1929,40 +1898,18 @@ struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct
 			assert(false);
 			continue;
 		}
-		oscap_list_add(policy->selects, xccdf_select_clone(sel));
+		struct xccdf_select *clone = xccdf_select_clone(sel);
+		_xccdf_policy_add_selector_internal(policy, benchmark, clone);
         }
         xccdf_select_iterator_free(sel_it);
 
         /* Iterate through items in benchmark and resolve rules */
-        benchmark = xccdf_policy_model_get_benchmark(model);
         item_it = xccdf_benchmark_get_content(benchmark);
         while (xccdf_item_iterator_has_more(item_it)) {
             item = xccdf_item_iterator_next(item_it);
             xccdf_policy_resolve_item(policy, item, true);
         }
         xccdf_item_iterator_free(item_it);
-
-        /* Create hash table for selects
-         * s_count -> number of selects to create optimal size of
-         * hash table
-         */
-        sel_it = xccdf_policy_get_selects(policy);
-        const int HTABLE_MIN_SIZE = 256;
-        int s_count = oscap_iterator_get_itemcount((struct oscap_iterator *) sel_it);
-        if (s_count < HTABLE_MIN_SIZE)
-            s_count = HTABLE_MIN_SIZE;
-        policy->ht_selects = oscap_htable_new1((oscap_compare_func) strcmp, s_count);
-        if (policy->ht_selects == NULL) {
-	    oscap_dlprintf(DBG_E, "Can't make hash table for policy selects\n");
-            xccdf_select_iterator_free(sel_it);
-            return policy;
-        }
-        while (xccdf_select_iterator_has_more(sel_it)) {
-            sel = xccdf_select_iterator_next(sel_it);
-            oscap_htable_add(policy->ht_selects, xccdf_select_get_item(sel), sel);
-        }
-        xccdf_select_iterator_free(sel_it);
-
 	return policy;
 }
 
@@ -1996,30 +1943,7 @@ struct xccdf_value_binding * xccdf_value_binding_new() {
 struct xccdf_select * xccdf_policy_get_select_by_id(struct xccdf_policy * policy, const char *item_id)
 {
         __attribute__nonnull__(policy);
-        
-        struct xccdf_select_iterator    * sel_it;
-        struct xccdf_select             * sel = NULL;
-
-        if (policy->ht_selects != NULL) {
-            /* We have hash table -> faster
-             */
-            sel = oscap_htable_get(policy->ht_selects, item_id);
-        }
-        if (sel == NULL) {
-            /* We don't have hash table :( -> do it old way
-             */
-            sel_it = xccdf_policy_get_selects(policy);
-            while (xccdf_select_iterator_has_more(sel_it)) {
-                    sel = xccdf_select_iterator_next(sel_it);
-                    if (!strcmp(xccdf_select_get_item(sel), item_id)) {
-                        xccdf_select_iterator_free(sel_it);
-                        return sel;
-                    }
-            }
-            xccdf_select_iterator_free(sel_it);
-        } else return sel;
-
-        return NULL;
+	return oscap_htable_get(policy->selected_internal, item_id);
 }
 
 
@@ -2457,7 +2381,8 @@ void xccdf_policy_free(struct xccdf_policy * policy) {
 	oscap_list_free(policy->selects, (oscap_destruct_func) xccdf_select_free);
 	oscap_list_free(policy->values, (oscap_destruct_func) xccdf_value_binding_free);
 	oscap_list_free(policy->results, (oscap_destruct_func) xccdf_result_free);
-	oscap_htable_free0(policy->ht_selects);
+	oscap_htable_free0(policy->selected_internal);
+	oscap_htable_free0(policy->selected_final);
         oscap_free(policy);
 }
 
