@@ -193,14 +193,6 @@ static bool xccdf_policy_filter_selected(void *item, void *policy)
 }
 
 /**
- * Filter function returning true if the rule match ruleid, false otherwise
- */
-static bool xccdf_policy_filter_select(void *item, void *selectid)
-{
-	return strcmp(xccdf_select_get_item((struct xccdf_select *) item), (char *) selectid) == 0;
-}
-
-/**
  * Filter function returning true if given callback is for the given checking engine,
  * false otherwise.
  */
@@ -1953,28 +1945,11 @@ struct xccdf_select_iterator * xccdf_policy_get_selected_rules(struct xccdf_poli
                                                                        policy);
 }
 
-/**
- * Make the rule from benchmark selected in Policy
- */
+OSCAP_DEPRECATED(
 bool xccdf_policy_set_selected(struct xccdf_policy * policy, char * idref) {
-    bool ret;
-    struct oscap_iterator *sel_it = 
-        oscap_iterator_new_filter( policy->selects, (oscap_filter_func) xccdf_policy_filter_select, idref);
-    if (oscap_iterator_get_itemcount(sel_it) > 0) {
-        /* There is rule already, skip */
-        ret = 0;
-    }
-    else {
-        /* There is no such rule, add */
-        struct xccdf_select * sel = NULL;
-        //TODO: sel = xccdf_select_new <-- missing implementation
-        oscap_list_add(policy->selects, sel);
-        ret = 1;
-
-    }
-    oscap_iterator_free(sel_it);
-    return ret;
+	return false;
 }
+)
 
 /**
  * Get Policy from Policy model by it's id.

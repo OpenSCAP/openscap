@@ -363,8 +363,12 @@ bool xccdf_policy_add_select(struct xccdf_policy *, struct xccdf_select *);
  * Set a new selector to the Policy structure
  * @memberof xccdf_policy
  * @return true if rule has been added succesfully
+ * @deprecated This function is deprecated by xccdf_policy_add_select
+ * and might be dropped from future releases.
  */
-bool xccdf_policy_set_selected(struct xccdf_policy * policy, char * idref);
+OSCAP_DEPRECATED(
+bool xccdf_policy_set_selected(struct xccdf_policy * policy, char * idref)
+);
 
 /**
  * Add result to XCCDF Policy Model
