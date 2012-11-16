@@ -2063,9 +2063,6 @@ bool xccdf_policy_resolve(struct xccdf_policy * policy)
  */
 struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
 {
-    struct xccdf_select_iterator    * sel_it;
-    struct xccdf_select             * sel;
-    struct xccdf_item               * item;
     struct xccdf_benchmark          * benchmark;
     int                               ret       = -1;
     const char			    * doc_version = NULL;
@@ -2106,32 +2103,23 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
     }
 
     oscap_free(id);
-    /** */
 
+	/** We need to process document top-down order.
+	 * See conflicts/requires and Item Processing Algorithm */
+	struct xccdf_item_iterator *item_it = xccdf_benchmark_get_content(benchmark);
+	while (xccdf_item_iterator_has_more(item_it)) {
+		struct xccdf_item *item = xccdf_item_iterator_next(item_it);
+		ret = xccdf_policy_item_evaluate(policy, item, result);
+		if (ret == -1) {
+			xccdf_item_iterator_free(item_it);
+			xccdf_result_free(result);
+			return NULL;
+		}
+		if (ret != 0)
+			break;
+	}
+	xccdf_item_iterator_free(item_it);
 
-    sel_it = xccdf_policy_get_selects(policy);
-    while (xccdf_select_iterator_has_more(sel_it)) {
-        sel = xccdf_select_iterator_next(sel_it);
-
-        /* Get the refid string and find xccdf_item in benchmark */
-        /* TODO: we need to check if every requirement is met - some of required Item has to be sleected too */
-
-        item = xccdf_benchmark_get_item(benchmark, xccdf_select_get_item(sel));
-        if (item == NULL) {
-            oscap_seterr(OSCAP_EFAMILY_XCCDF, "Selector ID(%s) does not exist in Benchmark.", xccdf_select_get_item(sel));
-            continue; /* TODO: Should we just skip that selector ? XCCDF is not valid here !! */
-        }
-
-        if (xccdf_item_get_type(item) == XCCDF_GROUP) continue;
-        ret = xccdf_policy_item_evaluate(policy, item, result);
-        if (ret == -1) {
-            xccdf_select_iterator_free(sel_it);
-            xccdf_result_free(result);
-            return NULL;
-        }
-        if (ret != 0) break;
-    }
-    xccdf_select_iterator_free(sel_it);
     xccdf_policy_add_result(policy, result);
     xccdf_result_set_end_time(result, time(NULL));
 
