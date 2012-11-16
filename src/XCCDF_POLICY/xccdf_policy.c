@@ -117,7 +117,7 @@ struct xccdf_policy {
 /* Macros to generate iterators, getters and setters */
 OSCAP_GETTER(struct xccdf_policy_model *, xccdf_policy, model)
 OSCAP_GETTER(struct xccdf_profile *, xccdf_policy, profile)
-OSCAP_IGETINS(xccdf_select, xccdf_policy, selects, select)
+OSCAP_IGETTER(xccdf_select, xccdf_policy, selects)
 OSCAP_IGETINS_GEN(xccdf_value_binding, xccdf_policy, values, value)
 OSCAP_IGETINS(xccdf_result, xccdf_policy, results, result)
 
@@ -1831,22 +1831,35 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
 }
 
 static inline bool
-_xccdf_policy_add_selector_internal(struct xccdf_policy *policy, struct xccdf_benchmark *benchmark, struct xccdf_select *sel)
+_xccdf_policy_add_selector_internal(struct xccdf_policy *policy, struct xccdf_benchmark *benchmark, struct xccdf_select *sel, bool resolve)
 {
 	/* This is the only way, how one can add selector to a policy. */
-	oscap_list_add(policy->selects, sel);
+	bool result = oscap_list_add(policy->selects, sel);
 
 	struct xccdf_item *item = xccdf_benchmark_get_member(benchmark, XCCDF_ITEM, xccdf_select_get_item(sel));
 	if (item != NULL) {
 		/* If selector points to a single item. Update internal dictionary. */
 		oscap_htable_detach(policy->selected_internal, xccdf_select_get_item(sel));
-		return oscap_htable_add(policy->selected_internal, xccdf_select_get_item(sel), sel);
+		result &= oscap_htable_add(policy->selected_internal, xccdf_select_get_item(sel), sel);
+		if (resolve) {
+			const struct xccdf_item *parent = xccdf_item_get_parent(item);
+			xccdf_policy_resolve_item(policy, item, (parent == NULL) ? true : _xccdf_policy_is_item_selected(policy, parent));
+		}
+		return result;
 	}
 
 	// TODO: Selector may point out to the cluster-id.
 	assert(false);
 	return false;
 }
+
+bool
+xccdf_policy_add_select(struct xccdf_policy *policy, struct xccdf_select *sel)
+{
+	struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(xccdf_policy_get_model(policy));
+	return _xccdf_policy_add_selector_internal(policy, benchmark, sel, true);
+}
+
 
 /**
  * Constructor for structure XCCDF Policy. Create the structure and resolve all rules
@@ -1890,7 +1903,7 @@ struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct
 			continue;
 		}
 		struct xccdf_select *clone = xccdf_select_clone(sel);
-		_xccdf_policy_add_selector_internal(policy, benchmark, clone);
+		_xccdf_policy_add_selector_internal(policy, benchmark, clone, false);
         }
         xccdf_select_iterator_free(sel_it);
 
