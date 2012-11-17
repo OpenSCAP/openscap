@@ -655,10 +655,10 @@ _xccdf_policy_rule_get_applicable_check(struct xccdf_policy *policy, struct xccd
 	return result;
 }
 
-static inline bool
-_xccdf_policy_is_item_selected(struct xccdf_policy *policy, const struct xccdf_item *item)
+bool
+xccdf_policy_is_item_selected(struct xccdf_policy *policy, const char *id)
 {
-	return *((const bool*) oscap_htable_get(policy->selected_final, xccdf_item_get_id(item)));
+	return *((const bool*) oscap_htable_get(policy->selected_final, id));
 }
 
 static struct xccdf_rule_result * _xccdf_rule_result_new_from_rule(const struct xccdf_rule *rule,
@@ -981,7 +981,7 @@ static bool xccdf_policy_model_item_is_applicable(struct xccdf_policy_model* mod
 static inline int
 _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rule *rule, struct xccdf_result *result)
 {
-	const bool is_selected = _xccdf_policy_is_item_selected(policy, (const struct xccdf_item *) rule);
+	const bool is_selected = xccdf_policy_is_item_selected(policy, xccdf_rule_get_id(rule));
 	const char *message = NULL;
 
 	int report = xccdf_policy_report_cb(policy, "urn:xccdf:system:callback:start", (void *) rule);
@@ -1843,7 +1843,7 @@ _xccdf_policy_add_selector_internal(struct xccdf_policy *policy, struct xccdf_be
 		result &= oscap_htable_add(policy->selected_internal, xccdf_select_get_item(sel), sel);
 		if (resolve) {
 			const struct xccdf_item *parent = xccdf_item_get_parent(item);
-			xccdf_policy_resolve_item(policy, item, (parent == NULL) ? true : _xccdf_policy_is_item_selected(policy, parent));
+			xccdf_policy_resolve_item(policy, item, (parent == NULL) ? true : xccdf_policy_is_item_selected(policy, xccdf_item_get_id(parent)));
 		}
 		return result;
 	}

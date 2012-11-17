@@ -384,6 +384,12 @@ bool xccdf_policy_add_result(struct xccdf_policy * policy, struct xccdf_result *
 bool xccdf_policy_add_value(struct xccdf_policy *, struct xccdf_value_binding *);
 
 /**
+ * Get the selection settings of the item.
+ * @memberof xccdf_policy
+ * @return true if the item is selected
+ */
+bool xccdf_policy_is_item_selected(struct xccdf_policy *policy, const char *id);
+/**
  * Get select from policy by specified ID of XCCDF Item
  * @memberof xccdf_policy
  * @return XCCDF Select
