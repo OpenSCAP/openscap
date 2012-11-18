@@ -516,6 +516,98 @@ void oscap_htable_free0(struct oscap_htable *htable)
 	oscap_htable_free(htable, NULL);
 }
 
+struct oscap_htable_iterator {
+	struct oscap_htable *htable;	// Table we iterate through
+	struct oscap_htable_item *cur;	// The current item
+	size_t hpos;			// Line on which we are now
+};
+
+struct oscap_htable_iterator *
+oscap_htable_iterator_new(struct oscap_htable *htable)
+{
+	struct oscap_htable_iterator *hit = oscap_calloc(1, sizeof(struct oscap_htable_iterator));
+	hit->htable = htable;
+	hit->cur = NULL;
+	hit->hpos = 0;
+	return hit;
+}
+
+bool
+oscap_htable_iterator_has_more(struct oscap_htable_iterator *hit)
+{
+	__attribute__nonnull__(hit);
+	size_t i = hit->hpos;
+	if (hit->cur != NULL) {
+		if (hit->cur->next != NULL)
+			return true;
+		if (i + 1 >= hit->htable->hsize)
+			return false;
+		i++;
+	}
+	for (; i < hit->htable->hsize; i++) {
+		if (hit->htable->table[i] == NULL)
+			continue;
+		if (i != hit->hpos)
+			hit->hpos = i - 1;
+		return true;
+	}
+	hit->hpos = i;
+	return false;
+}
+
+const struct oscap_htable_item *
+oscap_htable_iterator_next(struct oscap_htable_iterator *hit)
+{
+	__attribute__nonnull__(hit);
+	if (hit->cur != NULL) {
+		if (hit->cur->next != NULL) {
+			hit->cur = hit->cur->next;
+			return hit->cur;
+		}
+		if (hit->hpos + 1 >= hit->htable->hsize) {
+			assert(false);
+			return NULL;
+		}
+		hit->hpos++;
+	}
+	for (; hit->hpos < hit->htable->hsize; hit->hpos++) {
+		if (hit->htable->table[hit->hpos] == NULL)
+			continue;
+		hit->cur = hit->htable->table[hit->hpos];
+		return hit->cur;
+	}
+	assert(false); // no more item found
+	return NULL;
+}
+
+const char *
+oscap_htable_iterator_next_key(struct oscap_htable_iterator *hit)
+{
+	const struct oscap_htable_item *item = oscap_htable_iterator_next(hit);
+	return (item == NULL) ? NULL : item->key;
+}
+
+void *
+oscap_htable_iterator_next_value(struct oscap_htable_iterator *hit)
+{
+	const struct oscap_htable_item *item = oscap_htable_iterator_next(hit);
+	return (item == NULL) ? NULL : item->value;
+}
+
+void
+oscap_htable_iterator_reset(struct oscap_htable_iterator *hit)
+{
+	__attribute__nonnull__(hit);
+	hit->cur = NULL;
+	hit->hpos = 0;
+}
+
+void
+oscap_htable_iterator_free(struct oscap_htable_iterator *hit)
+{
+	oscap_free(hit);
+}
+
 void oscap_print_depth(int depth)
 {
 	while (depth--)

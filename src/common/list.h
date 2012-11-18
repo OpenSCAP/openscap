@@ -229,6 +229,59 @@ void oscap_htable_free(struct oscap_htable *htable, oscap_destruct_func destruct
  */
 void oscap_htable_free0(struct oscap_htable *htable);
 
+
+/**
+ * Iterator through htable structure.
+ */
+struct oscap_htable_iterator;
+
+/**
+ * Create new iterator through hash table. No ordering is defined for items.
+ * @param htable Hash table to iterate through.
+ * @return the iterator
+ */
+struct oscap_htable_iterator *oscap_htable_iterator_new(struct oscap_htable *htable);
+
+/**
+ * Query if the given iterator has more hash table items.
+ * @param iterator iterator
+ * @return true is there is at least one more item.
+ */
+bool oscap_htable_iterator_has_more(struct oscap_htable_iterator *hit);
+
+/**
+ * Get the next item from iterator. The behavior is undefined if the prior call
+ * of oscap_htable_iterator_has_more() returns false
+ * @param hit iterator
+ */
+const struct oscap_htable_item *oscap_htable_iterator_next(struct oscap_htable_iterator *hit);
+
+/**
+ * Get the key of next item from the iterator. The behavior is undefined
+ * if the prior call of oscap_htable_iterator_has_more returns false.
+ * @param hit iterator
+ */
+const char *oscap_htable_iterator_next_key(struct oscap_htable_iterator *hit);
+
+/**
+ * Get the value of next item from the iterator. The behavior is undefined
+ * if the prior call of oscap_htable_iterator_has_more returns false.
+ * @param hit iterator
+ */
+void *oscap_htable_iterator_next_value(struct oscap_htable_iterator *hit);
+
+/**
+ * Reset the hashtable iterator to the begin
+ * @param hit iterator
+ */
+void oscap_htable_iterator_reset(struct oscap_htable_iterator *hit);
+
+/**
+ * Dispose the iterator
+ * @param hit the iterator to dispose
+ */
+void oscap_htable_iterator_free(struct oscap_htable_iterator *hit);
+
 void oscap_print_depth(int depth);
 
 OSCAP_HIDDEN_END;
