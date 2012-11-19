@@ -224,6 +224,9 @@ fi
 %{_libexecdir}/openscap/probe_gconf
 
 %changelog
+* Mon Nov 19 2012 Petr Lautrbach <plautrba@redhat.com> 0.9.2-1
+- upgrade
+
 * Mon Oct 22 2012 Petr Lautrbach <plautrba@redhat.com> 0.9.1-1
 - release
 
