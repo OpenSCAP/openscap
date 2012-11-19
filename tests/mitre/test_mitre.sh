@@ -121,7 +121,11 @@ test_run "oval-def_literal_component.xml" test_mitre oval-def_literal_component.
 test_run "oval-def_local_variable.xml" test_mitre oval-def_local_variable.xml "true"
 test_run "oval-def_object_component.xml" test_mitre oval-def_object_component.xml "true"
 test_run "oval-def_regex_capture_function.xml" test_mitre oval-def_regex_capture_function.xml "true"
-test_run "oval-def_set.xml" test_mitre oval-def_set.xml "true"
+# this test fails on filesystems without relatime - directory access time is changed every time 
+# is readed
+if grep " / " /proc/mounts  | grep -q relatime; then
+	test_run "oval-def_set.xml" test_mitre oval-def_set.xml "true"
+fi
 test_run "oval-def_split_function.xml" test_mitre oval-def_split_function.xml "true"
 
 # win_filetime format is currently unsupported, there are possibly some wrong values in the document
