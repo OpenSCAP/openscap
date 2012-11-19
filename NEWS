@@ -1,3 +1,15 @@
+openscap-0.9.2							19-11-2012
+- rewritten the heuristic for pattern matching on path and filepath
+- CPE 2.3 language applicability testing
+- new ds_sds_index API providing a datastream overview
+- CPEs in source datastreams are automatically registered and used
+  for XCCDF evaluation
+- --cpe option autodetects CPE dictionary and language
+- CVE support (validate feed, print CVEs)
+- introduced info module
+- made "$oscap xccdf generate custom" work again -> man page update
+- bug fixes
+
 openscap-0.9.1							22-10-2012
 - the http in the check-content-ref/@hrefhref support
 - the cpedict support
