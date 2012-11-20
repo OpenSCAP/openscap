@@ -1999,22 +1999,9 @@ struct xccdf_policy * xccdf_policy_model_get_policy_by_id(struct xccdf_policy_mo
     struct xccdf_policy          * policy;
 
     policy_it = xccdf_policy_model_get_policies(policy_model);
-    if (id == NULL) {
-        while (xccdf_policy_iterator_has_more(policy_it)) {
-            policy = xccdf_policy_iterator_next(policy_it);
-            if (xccdf_policy_get_id(policy) == NULL) {
-                xccdf_policy_iterator_free(policy_it);
-                return policy;
-            }
-        }
-        xccdf_policy_iterator_free(policy_it);
-        return NULL;
-    }
-
     while (xccdf_policy_iterator_has_more(policy_it)) {
         policy = xccdf_policy_iterator_next(policy_it);
-        if (xccdf_policy_get_id(policy) == NULL) continue;
-        if (!strcmp(xccdf_policy_get_id(policy), id)) {
+        if (oscap_streq(xccdf_policy_get_id(policy), id)) {
             xccdf_policy_iterator_free(policy_it);
             return policy;
         }
