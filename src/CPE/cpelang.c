@@ -52,7 +52,8 @@ struct cpe_lang_model *cpe_lang_model_import(const char *file)
 
 	struct cpe_lang_model *lang;
 
-	lang = cpe_lang_model_parse_xml(file);
+	if ((lang = cpe_lang_model_parse_xml(file)) == NULL)
+		return NULL;
 	cpe_lang_model_set_origin_file(lang, file);
 
 	return lang;
