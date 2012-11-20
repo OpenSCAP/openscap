@@ -103,6 +103,8 @@ EXTRA_DIST += \
 	test_xccdf_refine_rule.xccdf.xml \
 	test_xccdf_selectors_cluster1.sh \
 	test_xccdf_selectors_cluster1.xccdf.xml \
+	test_xccdf_selectors_cluster2.sh \
+	test_xccdf_selectors_cluster2.xccdf.xml \
 	test_xccdf_xml_escaping_value.sh \
 	test_xccdf_xml_escaping_value.xccdf.xml \
 	oval \
