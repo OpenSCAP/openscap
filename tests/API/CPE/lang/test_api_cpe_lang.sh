@@ -21,7 +21,8 @@ function test_api_cpe_lang_import {
 }
 
 function test_api_cpe_lang_import_damaged {
-    ! ./test_api_cpe_lang --get-all $srcdir/lang-damaged.xml "UTF-8" 
+    ./test_api_cpe_lang --get-all $srcdir/lang-damaged.xml "UTF-8"
+    [ "$?" == "1" ]
 }
 
 function test_api_cpe_lang_import_key {
