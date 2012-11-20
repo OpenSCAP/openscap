@@ -28,6 +28,6 @@
 
 void				uh_register_simple_engines(struct xccdf_policy_model *);
 struct xccdf_policy_model *	uh_load_xccdf(const char *);
-struct xccdf_policy *		uh_get_first_policy(struct xccdf_policy_model *);
+struct xccdf_policy *		uh_get_default_policy(struct xccdf_policy_model *);
 
 #endif

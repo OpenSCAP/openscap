@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 {
 	assume(argc == 2);
 	struct xccdf_policy_model* policy_model = uh_load_xccdf(argv[1]);
-	struct xccdf_policy *policy = uh_get_first_policy(policy_model);
+	struct xccdf_policy *policy = uh_get_default_policy(policy_model);
 	uh_register_simple_engines(policy_model);
 
 	struct xccdf_result *ritem = xccdf_policy_evaluate(policy);

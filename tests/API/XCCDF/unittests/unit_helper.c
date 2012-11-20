@@ -46,13 +46,9 @@ uh_load_xccdf(const char *filename)
 }
 
 struct xccdf_policy *
-uh_get_first_policy(struct xccdf_policy_model *policy_model)
+uh_get_default_policy(struct xccdf_policy_model *policy_model)
 {
-	struct xccdf_policy *policy = NULL;
-	struct xccdf_policy_iterator *policy_it = xccdf_policy_model_get_policies(policy_model);
-	if (xccdf_policy_iterator_has_more(policy_it))
-		policy = xccdf_policy_iterator_next(policy_it);
-	xccdf_policy_iterator_free(policy_it);
+	struct xccdf_policy *policy = xccdf_policy_model_get_policy_by_id(policy_model, NULL);
 	if (policy == NULL)
 		fprintf(stderr, "No Policy to evaluate.\n");
 	return policy;
