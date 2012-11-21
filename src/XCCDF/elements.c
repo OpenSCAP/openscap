@@ -116,6 +116,23 @@ char * xccdf_detect_version(const char* file)
 	return doc_version;
 }
 
+bool
+xccdf_version_cmp(const struct xccdf_version_info *actual, const char *desired)
+{
+	/* Since the "unknown" value is strdup-ed during clone, we cannot just use common strcmp.
+	 * We need to handle "unknown" version first.
+	 */
+	if (actual == NULL)
+		return -1;
+	if (oscap_streq(xccdf_version_info_get_version(actual), "unknown"))
+		return 1;
+	if (desired == NULL)
+		return 1;
+	if (oscap_streq(desired, "") || oscap_streq(desired, "unknow"))
+		return -1;
+	return strcmp(xccdf_version_info_get_version(actual), desired);
+}
+
 struct xccdf_element_spec {
 	xccdf_element_t id;	///< element ID
 	const char *ns;		///< namespace URI

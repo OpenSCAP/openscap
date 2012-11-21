@@ -39,6 +39,7 @@ OSCAP_HIDDEN_START;
  * The reader has to be at the root <Benchmark> element
  */
 const struct xccdf_version_info* xccdf_detect_version_parser(xmlTextReaderPtr reader);
+bool xccdf_version_cmp(const struct xccdf_version_info *actual, const char *desired);
 
 typedef enum {
 	XCCDFE_ERROR = -1,
