@@ -1798,35 +1798,6 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
 
         /* Resolve document */
         xccdf_benchmark_resolve(benchmark);
-
-        /* Create policy without profile */
-        profile = xccdf_profile_new();
-        xccdf_profile_set_id(profile, NULL);
-        struct oscap_text * title = oscap_text_new();
-        oscap_text_set_text(title, "No profile (default benchmark)");
-        oscap_text_set_lang(title, "en");
-        xccdf_profile_add_title(profile, title);
-        policy = xccdf_policy_new(model, profile); 
-        if (policy != NULL) oscap_list_add(model->policies, policy);
-
-        /* Create policies from benchmark model */
-        profile_it = xccdf_benchmark_get_profiles(benchmark);
-        /* Iterate through profiles and create policies */
-        while (xccdf_profile_iterator_has_more(profile_it)) {
-
-            profile = xccdf_profile_iterator_next(profile_it);
-            policy = xccdf_policy_new(model, profile);
-
-            /* Should we set the error code and return NULL here ? */
-            if (policy != NULL) oscap_list_add(model->policies, policy);
-            else {
-                xccdf_profile_iterator_free(profile_it);
-                xccdf_policy_model_free(model);
-                return NULL;
-            }
-        }
-        xccdf_profile_iterator_free(profile_it);
-
 	return model;
 }
 
@@ -2008,7 +1979,30 @@ struct xccdf_policy * xccdf_policy_model_get_policy_by_id(struct xccdf_policy_mo
     }
     xccdf_policy_iterator_free(policy_it);
 
-    return NULL;
+	struct xccdf_profile *profile = NULL;
+	if (id == NULL) {
+		profile = xccdf_profile_new();
+		xccdf_profile_set_id(profile, NULL);
+		struct oscap_text * title = oscap_text_new();
+		oscap_text_set_text(title, "No profile (default benchmark)");
+		oscap_text_set_lang(title, "en");
+		xccdf_profile_add_title(profile, title);
+	}
+	else {
+		struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(policy_model);
+		if (benchmark == NULL) {
+			assert(benchmark != NULL);
+			return NULL;
+		}
+		profile = xccdf_benchmark_get_profile_by_id(benchmark, id);
+		if (profile == NULL)
+			return NULL;
+	}
+
+	policy = xccdf_policy_new(policy_model, profile);
+	if (policy != NULL)
+		oscap_list_add(policy_model->policies, policy);
+	return policy;
 }
 
 /**

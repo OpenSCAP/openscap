@@ -416,6 +416,25 @@ XCCDF_ITEM_ADDER_REG(benchmark, group, content)
 XCCDF_ITEM_ADDER_REG(benchmark, value, values)
 XCCDF_ITEM_ADDER_REG(benchmark, profile, profiles)
 
+struct xccdf_profile *
+xccdf_benchmark_get_profile_by_id(struct xccdf_benchmark *benchmark, const char *profile_id)
+{
+	struct xccdf_profile_iterator *profit = xccdf_benchmark_get_profiles(benchmark);
+	while (xccdf_profile_iterator_has_more(profit)) {
+		struct xccdf_profile *profile = xccdf_profile_iterator_next(profit);
+		if (profile == NULL) {
+			assert(profile != NULL);
+			continue;
+		}
+		if (oscap_streq(xccdf_profile_get_id(profile), profile_id)) {
+			xccdf_profile_iterator_free(profit);
+			return profile;
+		}
+	}
+	xccdf_profile_iterator_free(profit);
+	return NULL;
+}
+
 bool xccdf_benchmark_add_content(struct xccdf_benchmark *bench, struct xccdf_item *item)
 {
 	if (item == NULL) return false;

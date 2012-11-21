@@ -240,7 +240,8 @@ struct xccdf_benchmark * xccdf_policy_model_get_benchmark(const struct xccdf_pol
 struct xccdf_value_binding_iterator  * xccdf_policy_get_values(const struct xccdf_policy * item);
 
 /**
- * Get policies from Policy Model
+ * Get policies from Policy Model. Be aware, this function returns only a list of previously
+ * initialized policies. A policy can be initialized by xccdf_policy_model_get_policy_by_id.
  * @param model Policy Model
  * @return Iterator for list of policies
  * @memberof xccdf_policy_model
