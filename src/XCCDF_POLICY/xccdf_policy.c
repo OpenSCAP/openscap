@@ -1780,9 +1780,6 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
 	__attribute__nonnull__(benchmark);
 
 	struct xccdf_policy_model       * model;
-        struct xccdf_profile_iterator   * profile_it;
-        struct xccdf_profile            * profile;
-        struct xccdf_policy             * policy;
 
 	model = oscap_alloc(sizeof(struct xccdf_policy_model));
 	if (model == NULL)
