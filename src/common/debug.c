@@ -112,7 +112,7 @@ static void __oscap_vdlprintf(int level, const char *file, const char *fn, size_
 			logfile = OSCAP_DEBUG_FILE;
 
 		if (snprintf(pathbuf, sizeof pathbuf, "%s.%u",
-			     logfile, (unsigned int)getpid()) >= sizeof pathbuf)
+			     logfile, (unsigned int)getpid()) >= (signed int) sizeof pathbuf)
 		{
                         __UNLOCK_FP;
 			return;
@@ -210,7 +210,7 @@ void __oscap_debuglog_object (const char *file, const char *fn, size_t line, int
                         logfile = OSCAP_DEBUG_FILE;
 
 		if (snprintf(pathbuf, sizeof pathbuf, "%s.%u",
-			     logfile, (unsigned int)getpid()) >= sizeof pathbuf)
+			     logfile, (unsigned int)getpid()) >= (signed int) sizeof pathbuf)
 		{
                         __UNLOCK_FP;
 			return;
