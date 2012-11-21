@@ -133,6 +133,8 @@ static void xccdf_resolve_item(struct xccdf_item *item)
 	struct xccdf_item *parent = xccdf_benchmark_get_member(xccdf_item_get_benchmark(item), xccdf_item_get_type(item), xccdf_item_get_extends(item));
 	if (parent == NULL) return;
 	if (xccdf_item_get_type(item) != xccdf_item_get_type(parent)) return;
+	if (xccdf_item_get_type(item) == XCCDF_GROUP && xccdf_version_cmp(xccdf_item_get_schema_version(item), "1.2") >= 0)
+		return;	// Group/@extends= has been obsoleted in XCCDF 1.2
 
 	// resolve flags
 	XCCDF_RESOLVE_FLAG(item, parent, selected);
