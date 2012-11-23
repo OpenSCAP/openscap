@@ -32,5 +32,5 @@ test_api_xccdf_SOURCES = test_api_xccdf.c
 
 EXTRA_DIST += test_api_xccdf.sh scap-rhel5-xccdf11.xml scap-rhel5-xccdf12.xml
 
-SUBDIRS = applicability unittests
+SUBDIRS = applicability default_cpe unittests 
 
