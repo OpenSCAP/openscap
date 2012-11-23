@@ -1,0 +1,8 @@
+This folder contains the default CPE dictionary and its associated OVAL file.
+
+The CPE names inside are taken from official CPE dictionary found at
+https://nvd.nist.gov/cpe.cfm with the following exceptions:
+
+1) cpe:/o:redhat:enterprise_linux:6 (adapted from RHEL5 CPE name)
+2) cpe:/o:fedoraproject:fedora:16 (taken from CPE_NAME in /etc/os-release on F16)
+3) cpe:/o:fedoraproject:fedora:17 (taken from CPE_NAME in /etc/os-release on F17)

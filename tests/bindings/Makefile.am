@@ -10,7 +10,8 @@ TESTS_ENVIRONMENT =	OVAL_PROBE_DIR=$(shell cd $(top_builddir); pwd)/src/OVAL/pro
 			LD_LIBRARY_PATH=$(shell cd $(top_builddir); pwd)/src/.libs:$(shell cd $(top_builddir); pwd)/swig/.libs \
 			PYTHONPATH=$(shell cd $(top_builddir); pwd)/swig:$(shell cd $(top_srcdir); pwd)/swig:$(shell cd $(top_builddir); pwd)/swig/.libs \
 			PERL5LIB=$(shell cd $(top_builddir); pwd)/swig:$(shell cd $(top_srcdir); pwd)/swig:$(shell cd $(top_builddir); pwd)/swig/.libs \
-			OSCAP_SCHEMA_PATH=$(shell cd $(top_srcdir); pwd)/schemas
+			OSCAP_SCHEMA_PATH=$(shell cd $(top_srcdir); pwd)/schemas \
+			OSCAP_CPE_PATH=$(shell cd $(top_srcdir); pwd)/cpe
 
 TESTS =
 if WANT_PYTHON

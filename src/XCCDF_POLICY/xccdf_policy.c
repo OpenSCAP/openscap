@@ -1770,6 +1770,8 @@ struct xccdf_result * xccdf_policy_get_result_by_id(struct xccdf_policy * policy
  * returns the type of <structure>
  */
 
+static bool xccdf_policy_model_add_default_cpe(struct xccdf_policy_model* model);
+
 /**
  * New XCCDF Policy model. Create new structure and fill the policies list with 
  * policy entries that are inherited from XCCDF benchmark Profile elements. For each 
@@ -1793,9 +1795,43 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
 	model->cpe_lang_models = oscap_list_new();
 	model->cpe_oval_sessions = oscap_htable_new();
 
+	if (!xccdf_policy_model_add_default_cpe(model))
+	{
+		oscap_seterr(OSCAP_EFAMILY_XCCDF, "Failed to add default CPE to newly created XCCDF policy model.");
+	}
+
         /* Resolve document */
         xccdf_benchmark_resolve(benchmark);
 	return model;
+}
+
+/* return default path if pathvar is not defined */
+static const char * oscap_cpe_path_to(const char *pathvar, const char *defpath) {
+	const char *path = NULL;
+
+	if (pathvar != NULL)
+		path = getenv(pathvar);
+
+	if (path == NULL || oscap_streq(path, ""))
+		path = defpath;
+
+	return path;
+}
+
+static bool xccdf_policy_model_add_default_cpe(struct xccdf_policy_model* model)
+{
+#ifndef OSCAP_DEFAULT_CPE_PATH
+	const char * const default_cpe_path = "/usr/local/share/openscap/cpe";
+#else
+	const char * const default_cpe_path = OSCAP_DEFAULT_CPE_PATH;
+#endif
+
+	const char* cpe_path_prefix = oscap_cpe_path_to("OSCAP_CPE_PATH", default_cpe_path);
+	char* cpe_dict_path = oscap_sprintf("%s/openscap-cpe-dict.xml", cpe_path_prefix);
+	const bool ret = xccdf_policy_model_add_cpe_dict(model, cpe_dict_path);
+	oscap_free(cpe_dict_path);
+
+	return ret;
 }
 
 static inline bool

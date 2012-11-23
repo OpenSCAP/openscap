@@ -7,6 +7,7 @@ TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
                   LD_PRELOAD=$(top_builddir)/src/.libs/libopenscap_testing.so \
                   LD_LIBRARY_PATH=$(top_builddir)/src/.libs \
                   OSCAP_SCHEMA_PATH=$(top_srcdir)/schemas \
+				  OSCAP_CPE_PATH=$(top_srcdir)/cpe \
 		  OSCAP=$(top_builddir)/utils/.libs/oscap \
 		  OSCAP_FULL_VALIDATION=1
 

@@ -1000,6 +1000,12 @@ else
 	AC_DEFINE_UNQUOTED([OSCAP_DEFAULT_XSLT_PATH], ["${prefix}/share/openscap/xsl"], [Path to xslt files])
 fi
 
+if test "x${prefix}" = xNONE; then
+	AC_DEFINE_UNQUOTED([OSCAP_DEFAULT_CPE_PATH], ["/usr/local/share/openscap/cpe"], [Path to cpe files])
+else
+	AC_DEFINE_UNQUOTED([OSCAP_DEFAULT_CPE_PATH], ["${prefix}/share/openscap/cpe"], [Path to cpe files])
+fi
+
 if test "$regex_posix" = "yes"; then
    AC_DEFINE([USE_REGEX_POSIX], [1], [Use POSIX regular expressions])
 else
@@ -1167,6 +1173,7 @@ AC_CONFIG_FILES([Makefile
                  src/Makefile
                  xsl/Makefile
                  schemas/Makefile
+                 cpe/Makefile
                  libopenscap.pc
                  src/common/Makefile
                  tests/Makefile
@@ -1242,6 +1249,7 @@ AC_CONFIG_FILES([Makefile
                  src/XCCDF_POLICY/Makefile
                  tests/API/XCCDF/Makefile
                  tests/API/XCCDF/applicability/Makefile
+                 tests/API/XCCDF/default_cpe/Makefile
                  tests/API/XCCDF/unittests/Makefile
 
                  tests/schemas/Makefile
