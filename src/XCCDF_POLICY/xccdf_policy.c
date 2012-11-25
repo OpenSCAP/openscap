@@ -1124,7 +1124,8 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
         
         default: 
                     /* TODO: set warning bad argument and return ? */
-                    ret=false;
+			assert(false);
+			return -1;
             break;
     } 
 
