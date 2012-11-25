@@ -29,7 +29,7 @@ function test_fedora {
     local INPUT=fedora${FEDORA_VERSION}-xccdf.xml
 
     local TMP_RESULTS=`mktemp`
-    $OSCAP xccdf eval --results $TMP_RESULTS $INPUT
+    $OSCAP xccdf eval --results $TMP_RESULTS $srcdir/$INPUT
     if [ "x$?" != "x0" ]; then
         return 1
     fi
@@ -68,7 +68,7 @@ function test_rhel {
     local INPUT=rhel${RHEL_VERSION}-xccdf.xml
 
     local TMP_RESULTS=`mktemp`
-    $OSCAP xccdf eval --results $TMP_RESULTS $INPUT
+    $OSCAP xccdf eval --results $TMP_RESULTS $srcdir/$INPUT
     if [ "x$?" != "x0" ]; then
         return 1
     fi
