@@ -1116,12 +1116,7 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
 			while (xccdf_item_iterator_has_more(child_it)) {
 				child = xccdf_item_iterator_next(child_it);
 				ret = xccdf_policy_item_evaluate(policy, child, result);
-				if (ret == -1) {
-					xccdf_item_iterator_free(child_it);
-					return -1;
-				}
-
-				if (ret == false) /* we got item that can't be processed */
+				if (ret != 0)
 					break;
 			}
 			xccdf_item_iterator_free(child_it);
@@ -1133,7 +1128,7 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
             break;
     } 
 
-    return 0;
+    return ret;
 }
 
 static struct xccdf_default_score * xccdf_item_get_default_score(struct xccdf_item * item, struct xccdf_result * test_result)
