@@ -100,6 +100,9 @@ static xmlNodePtr node_get_child_element(xmlNodePtr parent, const char* name)
 
 static xmlNodePtr ds_sds_find_component_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* id)
 {
+	/* This searches for a ds:component-ref (XLink) element with a given id.
+	 * It returns a first such element in a given ds:data-stream.
+	 */
 	xmlNodePtr cref_parent = datastream->children;
 
 	for (; cref_parent != NULL; cref_parent = cref_parent->next)
