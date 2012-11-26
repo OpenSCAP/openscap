@@ -189,8 +189,10 @@ fi
 %dir %{_datadir}/openscap
 %dir %{_datadir}/openscap/schemas
 %dir %{_datadir}/openscap/xsl
+%dir %{_datadir}/openscap/cpe
 %{_datadir}/openscap/schemas/*
 %{_datadir}/openscap/xsl/*
+%{_datadir}/openscap/cpe/*
 
 %files python
 %defattr(-,root,root,-)
