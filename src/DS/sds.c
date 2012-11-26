@@ -221,6 +221,7 @@ static int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc,
 		return -1;
 	}
 
+	assert(xlink_href[0] == '#');
 	const char* component_id = xlink_href + 1 * sizeof(char);
 	char* filename_cpy = oscap_sprintf("./%s", filename);
 	char* file_reldir = dirname(filename_cpy);
@@ -278,6 +279,7 @@ static int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc,
 			}
 
 			// the pointer arithmetics simply skips the first character which is '#'
+			assert(str_uri[0] == '#');
 			xmlNodePtr cat_component_ref = ds_sds_find_component_ref(doc, datastream, str_uri + 1 * sizeof(char));
 
 			if (!cat_component_ref)
