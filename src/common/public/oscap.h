@@ -155,6 +155,11 @@ const char * oscap_path_to_schemas(void);
 const char * oscap_path_to_schematron(void);
 
 /**
+ * Function returns path used to locate OpenSCAP Default CPE files
+ */
+const char * oscap_path_to_cpe(void);
+
+/**
  * Determine document type
  */
 int oscap_determine_document_type(const char *document, oscap_document_type_t *doc_type);

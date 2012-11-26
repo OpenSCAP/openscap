@@ -56,6 +56,12 @@ const char * const OSCAP_XSLT_PATH = "/usr/local/share/openscap/xsl";
 const char * const OSCAP_XSLT_PATH = OSCAP_DEFAULT_XSLT_PATH;
 #endif
 
+#ifndef OSCAP_DEFAULT_CPE_PATH
+const char * const OSCAP_CPE_PATH = "/usr/local/share/openscap/cpe";
+#else
+const char * const OSCAP_CPE_PATH = OSCAP_DEFAULT_CPE_PATH;
+#endif
+
 /* return default path if pathvar is not defined */
 static const char * oscap_path_to(const char *pathvar, const char *defpath) {
 	const char *path = NULL;
@@ -78,6 +84,9 @@ const char * oscap_path_to_schematron() {
 	return oscap_path_to("OSCAP_XSLT_PATH", OSCAP_XSLT_PATH);
 }
 
+const char * oscap_path_to_cpe() {
+	return oscap_path_to("OSCAP_CPE_PATH", OSCAP_CPE_PATH);
+}
 
 void oscap_init(void)
 {

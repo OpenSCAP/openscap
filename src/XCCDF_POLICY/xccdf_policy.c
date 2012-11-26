@@ -1801,29 +1801,9 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
 	return model;
 }
 
-/* return default path if pathvar is not defined */
-static const char * oscap_cpe_path_to(const char *pathvar, const char *defpath) {
-	const char *path = NULL;
-
-	if (pathvar != NULL)
-		path = getenv(pathvar);
-
-	if (path == NULL || oscap_streq(path, ""))
-		path = defpath;
-
-	return path;
-}
-
 static bool xccdf_policy_model_add_default_cpe(struct xccdf_policy_model* model)
 {
-#ifndef OSCAP_DEFAULT_CPE_PATH
-	const char * const default_cpe_path = "/usr/local/share/openscap/cpe";
-#else
-	const char * const default_cpe_path = OSCAP_DEFAULT_CPE_PATH;
-#endif
-
-	const char* cpe_path_prefix = oscap_cpe_path_to("OSCAP_CPE_PATH", default_cpe_path);
-	char* cpe_dict_path = oscap_sprintf("%s/openscap-cpe-dict.xml", cpe_path_prefix);
+	char* cpe_dict_path = oscap_sprintf("%s/openscap-cpe-dict.xml", oscap_path_to_cpe());
 	const bool ret = xccdf_policy_model_add_cpe_dict(model, cpe_dict_path);
 	oscap_free(cpe_dict_path);
 
