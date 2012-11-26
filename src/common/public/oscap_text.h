@@ -233,6 +233,19 @@ void oscap_stringlist_iterator_reset(struct oscap_stringlist_iterator *it);
 /** @} End of Iterators group */
 
 /** @} */
+
+/**
+ * @brief gets a plaintext string representing given textlist
+ *
+ * Iterates through given texts and looks at each to see if the language matches
+ * given preferred_lang. If preferred_lang is NULL, OSCAP_DEFAULT_LANG is matched.
+ *
+ * If a match is found it, a copy of plaintext representation of that text is
+ * returned. If nothing is found, plaintext representation of the first text in
+ * the list is returned. If the textlist is empty, NULL is returned.
+ */
+char* oscap_textlist_get_preferred_plaintext(struct oscap_text_iterator* texts, const char* preferred_lang);
+
 /** @} */
 
 #endif
