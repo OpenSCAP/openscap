@@ -13,7 +13,8 @@ different SCAP specifications(modules).
 .SH GENERAL OPTIONS
 .TP
 \fB\-V, -\-version\fR
-Print supported SCAP specification, location of schema files, schematron files, probes and supported OVAL objects.
+Print supported SCAP specification, location of schema files, schematron files, CPE files, probes and supported OVAL objects.
+Displays a list of inbuilt CPE names.
 .TP
 \fB\-h, \-\-help\fR
 Help screen.
@@ -62,7 +63,7 @@ Select a particular profile from XCCDF document.
 .TP
 \fB\-\-cpe CPE_FILE\fR
 .RS
-Use given CPE dictionary or language (autodetected) for applicability checks.
+Use given CPE dictionary or language (autodetected) for applicability checks. (Some CPE names are provided by openscap, see oscap --version for Inbuilt CPE names)
 .RE
 .TP
 \fB\-\-results FILE\fR
