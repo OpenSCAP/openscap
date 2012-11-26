@@ -89,6 +89,7 @@ const struct xccdf_version_info* xccdf_detect_version_parser(xmlTextReaderPtr re
 			return mapptr;
 	}
 
+	oscap_seterr(OSCAP_EFAMILY_XML, "This is not known XCCDF namespace: %s.", namespace_uri);
 	return NULL;
 }
 
