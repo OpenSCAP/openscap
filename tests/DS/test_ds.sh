@@ -3,6 +3,8 @@
 # Author:
 #   Martin Preisler <mpreisle@redhat.com>
 
+set -e -o pipefail
+
 . ${srcdir}/../test_common.sh
 
 # Test Cases.
@@ -65,9 +67,9 @@ function test_eval {
 
 function test_invalid_eval {
     local OSCAP_DIR=`cd ../../utils/.libs; pwd`
-
-    $OSCAP_DIR/oscap xccdf eval "${srcdir}/$1"
-    return $([ $? -eq 1 ])
+    local ret=0
+    $OSCAP_DIR/oscap xccdf eval "${srcdir}/$1" || ret=$?
+    return $([ $ret -eq 1 ])
 }
 
 function test_eval_id {

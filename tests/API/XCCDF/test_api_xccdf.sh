@@ -8,6 +8,7 @@
 # Authors:
 #      Peter Vrabec <pvrabec@redhat.com>
 
+set -e -o pipefail
 
 . $srcdir/../../test_common.sh
 

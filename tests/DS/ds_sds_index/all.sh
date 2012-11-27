@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e -o pipefail
+
 . $srcdir/../../test_common.sh
 
 test_init ds_sds_index.log

@@ -3,6 +3,8 @@
 # Copyright 2012 Red Hat Inc., Durham, North Carolina.
 # All Rights Reserved.
 
+set -e -o pipefail
+
 . $srcdir/../../../test_common.sh
 
 function test_api_xccdf_cpe_eval {

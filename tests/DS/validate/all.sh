@@ -1,14 +1,15 @@
 #!/bin/bash
 
+set -e -o pipefail
+
 . $srcdir/../../test_common.sh
 
 function test_validation {
     local TYPE=$1
     local FILE=${srcdir}/$2
     local EXPECTED_CODE=$3
-
-	$OSCAP ds $TYPE-validate $FILE
-	ret=$?
+	local ret=0
+	$OSCAP ds $TYPE-validate $FILE || ret=$?
 	if [ $ret -eq $EXPECTED_CODE ]; then
 		return 0
 	fi
