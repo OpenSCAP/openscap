@@ -247,6 +247,7 @@ static int crapi_sha2_fd (int algo, int fd, void *dst, size_t *size)
                         gcry_md_close (hd);
 #if _FILE_OFFSET_BITS == 32
                 } else {
+			/* XXX: FIPS: Note that this function will abort the process if an unavailable algorithm is used. */
                         gcry_md_hash_buffer (algo, dst, (const void *)buffer, buflen);
                         munmap (buffer, buflen);
                 }
@@ -265,7 +266,11 @@ static void *crapi_sha2_init(void *dst, void *size, int alg)
 {
         struct crapi_sha2_ctx *ctx = oscap_talloc (struct crapi_sha2_ctx);
 
-        gcry_md_open (&ctx->ctx, alg, 0);
+        if (gcry_md_open (&ctx->ctx, alg, 0) != 0) {
+		oscap_free(ctx);
+		return NULL;
+	}
+
         ctx->dst  = dst;
         ctx->size = size;
 

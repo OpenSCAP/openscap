@@ -138,7 +138,8 @@ int crapi_mdigest_fd (int fd, int num, ... /* crapi_alg_t alg, void *dst, size_t
                         goto fail;
                 }
 
-                ctbl[i].ctx = ctbl[i].init (dst, size);
+                if ((ctbl[i].ctx = ctbl[i].init (dst, size)) == NULL)
+			*size = 0;
         }
 
         va_end (ap);
@@ -146,6 +147,8 @@ int crapi_mdigest_fd (int fd, int num, ... /* crapi_alg_t alg, void *dst, size_t
         while ((ret = read (fd, fd_buf, sizeof fd_buf)) == sizeof fd_buf) {
 #pragma omp parallel for
                 for (i = 0; i < num; ++i) {
+			if (ctbl[i].ctx == NULL)
+				continue;
                         if (ctbl[i].update (ctbl[i].ctx, fd_buf, sizeof fd_buf) != 0) {
                                 goto fail;
                         }
@@ -161,14 +164,19 @@ int crapi_mdigest_fd (int fd, int num, ... /* crapi_alg_t alg, void *dst, size_t
                 assume_r (ret > 0, -1, goto fail;);
 
                 for (i = 0; i < num; ++i) {
+			if (ctbl[i].ctx == NULL)
+				continue;
                         if (ctbl[i].update (ctbl[i].ctx, fd_buf, (size_t)ret) != 0) {
                                 goto fail;
                         }
                 }
         }
 
-        for (i = 0; i < num; ++i)
+        for (i = 0; i < num; ++i) {
+		if (ctbl[i].ctx == NULL)
+			continue;
                 ctbl[i].fini (ctbl[i].ctx);
+	}
 
         return (0);
 fail:

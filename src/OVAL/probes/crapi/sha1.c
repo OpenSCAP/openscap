@@ -107,7 +107,11 @@ void *crapi_sha1_init (void *dst, void *size)
 {
         struct crapi_sha1_ctx *ctx = oscap_talloc (struct crapi_sha1_ctx);
 
-        gcry_md_open (&ctx->ctx, GCRY_MD_SHA1, 0);
+        if (gcry_md_open (&ctx->ctx, GCRY_MD_SHA1, 0) != 0) {
+		oscap_free(ctx);
+		return NULL;
+	}
+
         ctx->dst  = dst;
         ctx->size = size;
 
@@ -204,6 +208,7 @@ int crapi_sha1_fd (int fd, void *dst, size_t *size)
                 }
 # elif defined(HAVE_GCRYPT)
                 } else {
+		/* XXX: FIPS: Note that this function will abort the process if an unavailable algorithm is used. */
                         gcry_md_hash_buffer (GCRY_MD_SHA1, dst, (const void *)buffer, buflen);
                         
                         if (munmap (buffer, buflen) != 0)
