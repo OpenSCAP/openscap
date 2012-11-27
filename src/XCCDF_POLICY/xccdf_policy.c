@@ -1102,7 +1102,7 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
 {
     struct xccdf_item_iterator      * child_it;
     struct xccdf_item               * child;
-    int                               ret = XCCDF_RESULT_UNKNOWN;
+    int ret = 0;
 
     xccdf_type_t itype = xccdf_item_get_type(item);
 
