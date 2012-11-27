@@ -46,7 +46,7 @@
                         <affected family="unix">
                             <platform>Fedora 16</platform>
                         </affected>
-                        <reference ref_id="cpe:/o:fedora:project:16" source="CPE"/>
+                        <reference ref_id="cpe:/o:fedoraproject:fedora:16" source="CPE"/>
                         <description>The operating system installed on the system is Fedora 16</description>
                   </metadata>
                   <criteria>
@@ -60,7 +60,7 @@
                         <affected family="unix">
                             <platform>Fedora 17</platform>
                         </affected>
-                        <reference ref_id="cpe:/o:fedora:project:17" source="CPE"/>
+                        <reference ref_id="cpe:/o:fedoraproject:fedora:17" source="CPE"/>
                         <description>The operating system installed on the system is Fedora 17</description>
                   </metadata>
                   <criteria>
@@ -74,7 +74,7 @@
                         <affected family="unix">
                             <platform>Fedora 18</platform>
                         </affected>
-                        <reference ref_id="cpe:/o:fedora:project:18" source="CPE"/>
+                        <reference ref_id="cpe:/o:fedoraproject:fedora:18" source="CPE"/>
                         <description>The operating system installed on the system is Fedora 18</description>
                   </metadata>
                   <criteria>
