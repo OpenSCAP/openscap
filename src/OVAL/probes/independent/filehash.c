@@ -144,8 +144,10 @@ static int filehash_cb (const char *p, const char *f, probe_ctx *ctx)
 
                 close (fd);
 
-                mem2hex (md5_dst,  sizeof md5_dst,  md5_str,  sizeof md5_str);
-                mem2hex (sha1_dst, sizeof sha1_dst, sha1_str, sizeof sha1_str);
+		md5_str[0] = '\0';
+		sha1_str[0] = '\0';
+                mem2hex (md5_dst,  md5_dstlen,  md5_str,  sizeof md5_str);
+                mem2hex (sha1_dst, sha1_dstlen, sha1_str, sizeof sha1_str);
 
                 /*
                  * Create and add the item
@@ -157,6 +159,15 @@ static int filehash_cb (const char *p, const char *f, probe_ctx *ctx)
                                         "md5",      OVAL_DATATYPE_STRING, md5_str,
                                         "sha1",     OVAL_DATATYPE_STRING, sha1_str,
                                         NULL);
+
+		if (md5_dstlen == 0 || sha1_dstlen == 0)
+			probe_item_setstatus(itm, SYSCHAR_STATUS_ERROR);
+		if (md5_dstlen == 0)
+			probe_item_add_msg(itm, OVAL_MESSAGE_LEVEL_ERROR,
+					   "Unable to compute md5 hash value of \"%s\".", pbuf);
+		if (sha1_dstlen == 0)
+			probe_item_add_msg(itm, OVAL_MESSAGE_LEVEL_ERROR,
+					   "Unable to compute sha1 hash value of \"%s\".", pbuf);
         }
 
         probe_item_collect(ctx, itm);

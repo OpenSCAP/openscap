@@ -170,6 +170,7 @@ static int filehash58_cb (const char *p, const char *f, const char *h, probe_ctx
 
 		close (fd);
 
+		hash_str[0] = '\0';
 		mem2hex (hash_dst, hash_dstlen, hash_str, sizeof hash_str);
 
 		/*
@@ -182,6 +183,12 @@ static int filehash58_cb (const char *p, const char *f, const char *h, probe_ctx
 					"hash_type",OVAL_DATATYPE_STRING, h,
 					"hash",     OVAL_DATATYPE_STRING, hash_str,
 					NULL);
+
+		if (hash_dstlen == 0) {
+			probe_item_add_msg(itm, OVAL_MESSAGE_LEVEL_ERROR,
+					   "Unable to compute %s hash value of \"%s\".", h, pbuf);
+			probe_item_setstatus(itm, SYSCHAR_STATUS_ERROR);
+		}
 	}
 
 	probe_item_collect(ctx, itm);
