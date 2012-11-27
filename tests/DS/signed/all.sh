@@ -1,0 +1,20 @@
+#!/bin/bash
+
+. $srcdir/../../test_common.sh
+
+function test_eval_no_verify {
+
+	local OSCAP_DIR=`cd ../../../utils/.libs; pwd`
+
+	$OSCAP_DIR/oscap xccdf eval "${srcdir}/$1"
+}
+
+function test_verify {
+	# just for reference and not used for now
+	xmlsec1 verify --pubkey-pem "$2" "$1"
+}
+
+test_init test_signed.log
+test_run "signed-sds-no-verification" test_eval_no_verify sds-signed.xml
+#test_run "signed-sds-verify" test_verify sds-signed.xml sds-signed-key.pub
+test_exit

@@ -38,4 +38,4 @@ EXTRA_DIST += test_ds.sh \
 		sds_subdir/subdir/scap-fedora14-oval.xml \
 		sds_subdir/subdir/scap-fedora14-xccdf.xml
 
-SUBDIRS = validate ds_sds_index
+SUBDIRS = ds_sds_index signed validate
