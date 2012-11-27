@@ -17,4 +17,8 @@
             <title xml:lang="en-us">Fedora 17</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:17</check>
       </cpe-item>
+      <cpe-item name="cpe:/o:fedoraproject:fedora:18">
+            <title xml:lang="en-us">Fedora 18</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:18</check>
+      </cpe-item>
 </cpe-list>
