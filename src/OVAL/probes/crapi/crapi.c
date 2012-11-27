@@ -37,6 +37,9 @@ int crapi_init (void *unused)
 #include <gcrypt.h>
 int crapi_init (void *unused)
 {
+#ifdef HAVE_GCRYCTL_SET_ENFORCED_FIPS_FLAG
+	gcry_control(GCRYCTL_SET_ENFORCED_FIPS_FLAG, 0);
+#endif
         if (!gcry_check_version(GCRYPT_VERSION))
                 return(-1);
 
