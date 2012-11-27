@@ -65,7 +65,7 @@ static const struct oscap_string_map CRAPI_ALG_MAP[] = {
 	{CRAPI_DIGEST_SHA256, "SHA-256"},
 	{CRAPI_DIGEST_SHA384, "SHA-384"},
 	{CRAPI_DIGEST_SHA512, "SHA-512"},
-	{CRAPI_DIGEST_RMD160, "RMD-160"},
+	/* {CRAPI_DIGEST_RMD160, "RMD-160"}, OVAL doesn't support this */
 	{CRAPI_INVALID, NULL}
 };
 
@@ -76,7 +76,7 @@ static const struct oscap_string_map CRAPI_ALG_MAP_SIZE[] = {
 	{32, "SHA-256"},
 	{48, "SHA-384"},
 	{64, "SHA-512"},
-	{20, "RMD-160"},
+	/* {20, "RMD-160"}, OVAL doesn't support this */
 	{0, NULL}
 };
 
