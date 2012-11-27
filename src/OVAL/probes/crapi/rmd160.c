@@ -66,23 +66,58 @@ int crapi_rmd160_fd (int fd, void *dst, size_t *size)
 #elif defined(HAVE_GCRYPT)
 #include <gcrypt.h>
 
+struct crapi_rmd160_ctx {
+        gcry_md_hd_t ctx;
+        void        *dst;
+        void        *size;
+};
+
+#define CRAPI_RMD160DST_LEN gcry_md_get_algo_dlen (GCRY_MD_RMD160)
+
 void *crapi_rmd160_init (void *dst, void *size)
 {
-        return (NULL);
+        struct crapi_rmd160_ctx *ctx = oscap_talloc (struct crapi_rmd160_ctx);
+
+        if (gcry_md_open (&ctx->ctx, GCRY_MD_RMD160, 0) != 0) {
+		oscap_free(ctx);
+		return NULL;
+	}
+
+        ctx->dst  = dst;
+        ctx->size = size;
+
+        return (ctx);
 }
 
 int crapi_rmd160_update (void *ctxp, void *bptr, size_t blen)
 {
-        return (-1);
+        struct crapi_rmd160_ctx *ctx = (struct crapi_rmd160_ctx *)ctxp;
+
+        gcry_md_write (ctx->ctx, (const void *)bptr, blen);
+        return (0);
 }
 
 int crapi_rmd160_fini (void *ctxp)
 {
-        return (-1);
+        struct crapi_rmd160_ctx *ctx = (struct crapi_rmd160_ctx *)ctxp;
+        void *buffer;
+
+        gcry_md_final (ctx->ctx);
+        buffer = (void *)gcry_md_read (ctx->ctx, GCRY_MD_RMD160);
+        memcpy (ctx->dst, buffer, gcry_md_get_algo_dlen (GCRY_MD_RMD160));
+        gcry_md_close (ctx->ctx);
+        oscap_free(ctx);
+
+        return (0);
 }
 
 void crapi_rmd160_free (void *ctxp)
 {
+        struct crapi_rmd160_ctx *ctx = (struct crapi_rmd160_ctx *)ctxp;
+
+        gcry_md_close (ctx->ctx);
+        oscap_free(ctx);
+
         return;
 }
 
