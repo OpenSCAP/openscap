@@ -9,6 +9,21 @@ set -e -o pipefail
 
 # Test Cases.
 
+function assert_correct_xlinks()
+{
+	local DS=$1
+	# First of all make sure that there is at least one ds:component-ref.
+	[ "$($XPATH $DS 'count(//*[local-name()="component-ref"])')" != "0" ]
+	# We want to catch cases when this element has different namespace.
+	local ns=$($XPATH $DS 'name(//*[local-name()="component-ref"][1])' | sed 's/:.*$/:/')
+	[ "$ns" != "component-ref" ] || ns=""
+	# Ensure there is at least some xlink.
+	[ "`$XPATH $DS \"count(//${ns}component-ref/@xlink:href)\"`" != "0" ]
+	# This asserts that there is none component-ref/xlink:href broken.
+	# Previously, we have seen datastreams with broken xlinks (see trac#286).
+	[ "`$XPATH $DS  \"count(//${ns}component-ref[substring(@xlink:href, 2, 10000) != (//${ns}component/@${ns}id | //${ns}extended-component/@${ns}id)])\"`" == "0" ]
+}
+
 function test_sds {
 
     local ret_val=0;
@@ -25,6 +40,7 @@ function test_sds {
 
     $OSCAP_DIR/oscap ds sds-compose "$XCCDF_FILE" "$DS_FILE"
 
+    assert_correct_xlinks $DS_FILE
     popd
 
     pushd "$DS_TARGET_DIR"
@@ -125,6 +141,8 @@ function test_rds
     if [ $? -ne 0 ]; then
         ret_val=1
     fi
+
+    assert_correct_xlinks $DS_FILE
 
     #pushd "$DS_TARGET_DIR"
     #$OSCAP_DIR/oscap ds sds_split "`basename $DS_FILE`" "$DS_TARGET_DIR"
