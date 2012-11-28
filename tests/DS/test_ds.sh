@@ -102,6 +102,40 @@ function test_eval_id {
     echo "$OUT" | grep $4 > /dev/null
 }
 
+function test_eval_complex()
+{
+	local name=${FUNCNAME}
+	local arf=$(mktemp -t ${name}.arf.XXXXXX)
+	local stderr=$(mktemp -t ${name}.err.XXXXXX)
+	local stdout=$(mktemp -t ${name}.out.XXXXXX)
+
+	$OSCAP xccdf eval \
+		--results-arf $arf \
+		--datastream-id scap_org.open-scap_datastream_tst2 \
+		--xccdf-id scap_org.open-scap_cref_second-xccdf.xml2 \
+		--profile xccdf_moc.elpmaxe.www_profile_2 \
+		$srcdir/eval_xccdf_id/sds-complex.xml 2> $stderr > $stdout
+
+	# Ensure the sanity of the output.
+	[ -f $stderr ]; [ ! -s $stderr ]
+	[ "`grep ^Rule $stdout | wc -l`" == "1" ]
+	grep ^Rule $stdout | grep xccdf_moc.elpmaxe.www_rule_secon
+	rm $stdout
+
+	# Ensure basic correctness of the ARF
+	$OSCAP ds rds-validate $arf 2>&1 > $stderr
+	[ -f $srderr ]; [ ! -s $stderr ]; rm -rf $stderr
+	assert_correct_xlinks $arf
+
+	# Ensure that results are there
+	assert_exists() { [ "$($XPATH $arf 'count('"$2"')')" == "$1" ]; }
+	assert_exists 1 '//rule-result'
+	assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_second"]'
+	assert_exists 1 '//rule-result/result'
+	assert_exists 1 '//rule-result/result[text()="pass"]'
+	rm $arf
+}
+
 function test_oval_eval {
 
     local OSCAP_DIR=`cd ../../utils/.libs; pwd`
@@ -173,6 +207,7 @@ test_run "eval_cpe" test_eval eval_cpe/sds.xml
 
 test_run "rds_simple" test_rds rds_simple/sds.xml rds_simple/results-xccdf.xml rds_simple/results-oval.xml
 test_run "rds_testresult" test_rds rds_testresult/sds.xml rds_testresult/results-xccdf.xml rds_testresult/results-oval.xml
+test_run "test_eval_complex" test_eval_complex
 
 test_exit
 

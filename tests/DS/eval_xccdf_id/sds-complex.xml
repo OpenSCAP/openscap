@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ds:data-stream-collection xmlns:ds="http://scap.nist.gov/schema/scap/source/1.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog" id="scap_org.open-scap_collection_from_xccdf_first-xccdf.xml" schematron-version="1.0">
+  <!-- This is bit more complex Datastream. The purpose is to test that scanner is able to find
+        * datastream-id scap_org.open-scap_datastream_tst2
+        * xccdf-id scap_org.open-scap_cref_second-xccdf.xml2
+        * profile xccdf_moc.elpmaxe.www_profile_2
+    -->
+  <ds:data-stream id="scap_org.open-scap_datastream_tst" scap-version="1.2" use-case="OTHER">
+    <ds:checklists>
+      <ds:component-ref id="scap_org.open-scap_cref_first-xccdf.xml" xlink:href="#scap_org.open-scap_comp_first-xccdf.xml">
+        <cat:catalog>
+          <cat:uri name="stub-oval.xml" uri="#scap_org.open-scap_cref_stub-oval.xml"/>
+        </cat:catalog>
+      </ds:component-ref>
+      <ds:component-ref id="scap_org.open-scap_cref_second-xccdf.xml" xlink:href="#scap_org.open-scap_comp_second-xccdf.xml">
+        <cat:catalog>
+          <cat:uri name="stub-oval.xml" uri="#scap_org.open-scap_cref_stub-oval.xml"/>
+        </cat:catalog>
+      </ds:component-ref>
+    </ds:checklists>
+    <ds:checks>
+      <ds:component-ref id="scap_org.open-scap_cref_stub-oval.xml" xlink:href="#scap_org.open-scap_comp_stub-oval.xml"/>
+    </ds:checks>
+  </ds:data-stream>
+  <ds:data-stream id="scap_org.open-scap_datastream_tst2" scap-version="1.2" use-case="OTHER">
+    <ds:checklists>
+      <ds:component-ref id="scap_org.open-scap_cref_first-xccdf.xml2" xlink:href="#scap_org.open-scap_comp_first-xccdf.xml">
+        <cat:catalog>
+          <cat:uri name="stub-oval.xml" uri="#scap_org.open-scap_cref_stub-oval.xml2"/>
+        </cat:catalog>
+      </ds:component-ref>
+      <ds:component-ref id="scap_org.open-scap_cref_second-xccdf.xml2" xlink:href="#scap_org.open-scap_comp_second-xccdf.xml2">
+        <cat:catalog>
+          <cat:uri name="stub-oval.xml" uri="#scap_org.open-scap_cref_stub-oval.xml2"/>
+        </cat:catalog>
+      </ds:component-ref>
+    </ds:checklists>
+    <ds:checks>
+      <ds:component-ref id="scap_org.open-scap_cref_stub-oval.xml2" xlink:href="#scap_org.open-scap_comp_stub-oval.xml"/>
+    </ds:checks>
+  </ds:data-stream>
+  <ds:component id="scap_org.open-scap_comp_stub-oval.xml" timestamp="2012-10-10T13:33:44">
+    <oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+      <generator>
+        <oval:schema_version>5.10</oval:schema_version>
+        <oval:timestamp>0001-01-01T00:00:00+00:00</oval:timestamp>
+      </generator>
+      <definitions>
+        <definition class="compliance" version="1" id="oval:x:def:1">
+          <metadata>
+            <title>x</title>
+            <description>x</description>
+            <affected family="unix">
+              <platform>x</platform>
+            </affected>
+          </metadata>
+          <criteria comment="x">
+            <criterion test_ref="oval:x:tst:1"/>
+          </criteria>
+        </definition>
+      </definitions>
+      <tests>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:x:tst:1" check="all" comment="x" version="1">
+          <object object_ref="oval:x:obj:1"/>
+        </variable_test>
+      </tests>
+      <objects>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:x:obj:1" version="1" comment="x">
+          <var_ref>oval:x:var:1</var_ref>
+        </variable_object>
+      </objects>
+      <variables>
+        <constant_variable id="oval:x:var:1" version="1" comment="x" datatype="string">
+          <value>x</value>
+        </constant_variable>
+      </variables>
+    </oval_definitions>
+  </ds:component>
+  <ds:component id="scap_org.open-scap_comp_first-xccdf.xml" timestamp="2012-10-10T13:34:54">
+    <Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_moc.elpmaxe.www_benchmark_first">
+      <status>incomplete</status>
+      <version>1.0</version>
+      <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_first">
+        <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" negate="true">
+          <check-content-ref href="stub-oval.xml"/>
+        </check>
+      </Rule>
+    </Benchmark>
+  </ds:component>
+  <ds:component id="scap_org.open-scap_comp_second-xccdf.xml2" timestamp="2012-10-10T13:34:54">
+    <Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_moc.elpmaxe.www_benchmark_second">
+      <status>incomplete</status>
+      <version>1.0</version>
+      <Profile id="xccdf_moc.elpmaxe.www_profile_1">
+        <title>is kinda compulsory</title>
+        <select idref="xccdf_moc.elpmaxe.www_rule_second" selected="true"/>
+      </Profile>
+      <Profile id="xccdf_moc.elpmaxe.www_profile_2" extends="xccdf_moc.elpmaxe.www_profile_1">
+        <title>is kinda compulsory</title>
+        <select idref="xccdf_moc.elpmaxe.www_group_one" selected="true"/>
+      </Profile>
+      <Group selected="false" id="xccdf_moc.elpmaxe.www_group_one">
+        <Rule selected="false" id="xccdf_moc.elpmaxe.www_rule_second">
+          <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <check-content-ref href="stub-oval.xml"/>
+          </check>
+        </Rule>
+      </Group>
+    </Benchmark>
+  </ds:component>
+  <ds:component id="scap_org.open-scap_comp_second-xccdf.xml" timestamp="2012-10-10T13:34:54">
+    <Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_moc.elpmaxe.www_benchmark_second">
+      <status>incomplete</status>
+      <version>1.0</version>
+      <Profile id="xccdf_moc.elpmaxe.www_profile_1">
+        <title>is kinda compulsory</title>
+        <select idref="xccdf_moc.elpmaxe.www_rule_second" selected="true"/>
+      </Profile>
+      <Profile id="xccdf_moc.elpmaxe.www_profile_2" extends="xccdf_moc.elpmaxe.www_profile_1">
+        <title>is kinda compulsory</title>
+        <select idref="xccdf_moc.elpmaxe.www_rule_second" selected="true"/>
+      </Profile>
+      <Group selected="false" id="xccdf_moc.elpmaxe.www_group_one">
+        <Rule selected="false" id="xccdf_moc.elpmaxe.www_rule_second">
+          <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <check-content-ref href="stub-oval.xml"/>
+          </check>
+        </Rule>
+      </Group>
+    </Benchmark>
+  </ds:component>
+</ds:data-stream-collection>
