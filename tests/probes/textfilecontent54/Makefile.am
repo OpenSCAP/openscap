@@ -11,8 +11,7 @@ TESTS_ENVIRONMENT = \
 	OSCAP=$(top_builddir)/utils/.libs/oscap \
 	OSCAP_FULL_VALIDATION=1 \
 	OSCAP_SCHEMA_PATH=$(top_srcdir)/schemas \
-	OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
-	XPATH=$(top_srcdir)/tests/xpath.pl
+	OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes
 
 TESTS = all.sh
 
