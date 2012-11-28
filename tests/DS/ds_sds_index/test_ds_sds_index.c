@@ -45,10 +45,10 @@ int main(int argc, char **argv)
 			return 1;
 		}
 		if (strcmp(ds_stream_index_get_timestamp(stream),
-		    "2012-11-01") != 0)
+		    "2012-11-01T12:22:58") != 0)
 		{
 			printf("Failed to read datastream timestamp correctly. "
-			       "Expected '2012-11-01', "
+			       "Expected '2012-11-01T12:22:58', "
 			       "found '%s'.\n", ds_stream_index_get_timestamp(stream));
 			return 1;
 		}
