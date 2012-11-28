@@ -550,7 +550,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 		if (f_datastream_id == NULL || f_component_id == NULL)
 		{
-			fprintf(stdout, "Failed to locate a datastream with ID matching '%s' ID"
+			fprintf(stdout, "Failed to locate a datastream with ID matching '%s' ID "
 			                "and checklist inside matching '%s' ID.\n",
 			                action->f_datastream_id == NULL ? "<any>" : action->f_datastream_id,
 			                action->f_xccdf_id == NULL ? "<any>" : action->f_xccdf_id);
