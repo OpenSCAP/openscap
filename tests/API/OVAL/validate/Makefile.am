@@ -9,7 +9,7 @@ TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
                   OSCAP_SCHEMA_PATH=$(top_srcdir)/schemas \
 				  OSCAP_CPE_PATH=$(top_srcdir)/cpe \
                   OSCAP_XSLT_PATH=$(top_srcdir)/xsl \
-		  OSCAP=$(top_builddir)/utils/.libs/oscap \
+		builddir=$(top_builddir) \
 		  OSCAP_FULL_VALIDATION=1
 
 TESTS = all.sh
