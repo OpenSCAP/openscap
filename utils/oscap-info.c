@@ -241,6 +241,10 @@ static int app_info(const struct oscap_action *action)
 		ds_sds_index_free(sds);
 	}
 	break;
+	case OSCAP_DOCUMENT_ARF: {
+		printf("Document type: Result Data Stream\n");
+	}
+	break;
 	default:
 		printf("Document type not handled yet\n");
 		break;
