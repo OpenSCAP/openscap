@@ -34,6 +34,7 @@
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <linux/limits.h>
 
 #include <oscap.h>
 #include <oval_results.h>
@@ -43,6 +44,7 @@
 #include <scap_ds.h>
 
 #include "oscap-tool.h"
+#include "oscap_acquire.h"
 
 static bool getopt_info(int argc, char **argv, struct oscap_action *action);
 static int app_info(const struct oscap_action *action);
@@ -201,39 +203,68 @@ static int app_info(const struct oscap_action *action)
 		if (!sds)
 			goto cleanup;
 		/* iterate over streams */
-		printf("Streams:\n");
 		struct ds_stream_index_iterator* sds_it = ds_sds_index_get_streams(sds);
 		while (ds_stream_index_iterator_has_more(sds_it)) {
 			struct ds_stream_index * stream = ds_stream_index_iterator_next(sds_it);
 
-			printf("\tID: %s\n", ds_stream_index_get_id(stream));
-			printf("\tGenerated: %s\n", ds_stream_index_get_timestamp(stream));
-			printf("\tVersion: %s\n", ds_stream_index_get_version(stream));
+			printf("\nStream: %s\n", ds_stream_index_get_id(stream));
+			printf("Generated: %s\n", ds_stream_index_get_timestamp(stream));
+			printf("Version: %s\n", ds_stream_index_get_version(stream));
 
-			printf("\tChecklists:\n");
+			printf("Checklists:\n");
 			struct oscap_string_iterator* checklist_it = ds_stream_index_get_checklists(stream);
 			while (oscap_string_iterator_has_more(checklist_it)) {
 				const char * id = oscap_string_iterator_next(checklist_it);
-				printf("\t\t Ref-Id: %s\n", id);
+				printf("\tRef-Id: %s\n", id);
+
+				char * temp_dir = NULL;
+				char * xccdf_file = NULL;
+
+		                temp_dir = oscap_acquire_temp_dir();
+		                if (temp_dir == NULL)
+					goto cleanup;
+
+				/* decompose */
+				ds_sds_decompose(action->file, ds_stream_index_get_id(stream), id, temp_dir, "xccdf.xml");
+
+				/* import xccdf */
+		                xccdf_file = malloc(PATH_MAX * sizeof(char));
+				snprintf(xccdf_file, PATH_MAX, "%s/%s", temp_dir, "xccdf.xml");
+				struct xccdf_benchmark* bench = NULL;
+		                bench = xccdf_benchmark_import(xccdf_file);
+				if(!bench)
+					goto cleanup;
+
+				/* print profiles */
+				struct xccdf_profile_iterator * prof_it = xccdf_benchmark_get_profiles(bench);
+				while (xccdf_profile_iterator_has_more(prof_it)) {
+					struct xccdf_profile * prof = xccdf_profile_iterator_next(prof_it);
+					printf("\t\tProfile: %s\n", xccdf_profile_get_id(prof));
+				}
+				xccdf_profile_iterator_free(prof_it);
+				xccdf_benchmark_free(bench);
+
+				oscap_acquire_cleanup_dir(&temp_dir);
+				free(xccdf_file);
 			}
 			oscap_string_iterator_free(checklist_it);
 
-			printf("\tChecks:\n");
+			printf("Checks:\n");
 			struct oscap_string_iterator* checks_it = ds_stream_index_get_checks(stream);
 			while (oscap_string_iterator_has_more(checks_it)) {
 				const char * id = oscap_string_iterator_next(checks_it);
-				printf("\t\t Ref-Id: %s\n", id);
+				printf("\tRef-Id: %s\n", id);
 			}
 			oscap_string_iterator_free(checks_it);
 
 			struct oscap_string_iterator* dict_it = ds_stream_index_get_dictionaries(stream);
 			if (oscap_string_iterator_has_more(dict_it))
-				printf("\tDictionaries:\n");
+				printf("Dictionaries:\n");
 			else
-				printf("\tNo dictionaries.\n");
+				printf("No dictionaries.\n");
 			while (oscap_string_iterator_has_more(dict_it)) {
 				const char * id = oscap_string_iterator_next(dict_it);
-				printf("\t\t Ref-Id: %s\n", id);
+				printf("\tRef-Id: %s\n", id);
 			}
 			oscap_string_iterator_free(dict_it);
 		}
