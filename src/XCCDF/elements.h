@@ -120,8 +120,6 @@ typedef enum {
 	XCCDFE_END_
 } xccdf_element_t;
 
-#define XCCDF_XMLNS "http://checklists.nist.gov/xccdf/1.1"
-
 xccdf_element_t xccdf_element_get(xmlTextReaderPtr reader);
 
 #define XCCDF_ASSERT_ELEMENT(reader, element) do { if (xccdf_element_get(reader) != element) return false; } while(false)

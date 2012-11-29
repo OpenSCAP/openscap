@@ -1302,7 +1302,8 @@ char* oscap_text_xccdf_substitute(const char *text, xccdf_substitution_func cb, 
     xpathCtx = xmlXPathNewContext(doc);
     if (xpathCtx == NULL) goto cleanup;
 
-    if (xmlXPathRegisterNs(xpathCtx, BAD_CAST "cdf", BAD_CAST XCCDF_XMLNS) != 0) goto cleanup;
+    // FIXME: Remove hardcoded version
+    if (xmlXPathRegisterNs(xpathCtx, BAD_CAST "cdf", BAD_CAST "http://checklists.nist.gov/xccdf/1.1") != 0) goto cleanup;
 
     xpathObj = xmlXPathEvalExpression(BAD_CAST xpath, xpathCtx);
     if (xpathObj == NULL) goto cleanup;
