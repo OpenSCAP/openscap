@@ -32,6 +32,7 @@
 #include "helpers.h"
 #include "xccdf_impl.h"
 #include "common/elements.h"
+#include "common/debug_priv.h"
 
 static struct xccdf_value_instance *xccdf_value_instance_new(xccdf_value_type_t type);
 static struct xccdf_value_instance *_xccdf_value_get_instance_by_selector_internal(const struct xccdf_value *value, const char *selector);
@@ -159,7 +160,10 @@ struct xccdf_item *xccdf_value_parse(xmlTextReaderPtr reader, struct xccdf_item 
 			}
                         break;
 		default:
-			xccdf_item_process_element(value, reader);
+			if (!xccdf_item_process_element(value, reader))
+				dW("Encountered an unknown element '%s' while parsing XCCDF group.",
+				   xmlTextReaderConstLocalName(reader));
+			break;
 		}
 		xmlTextReaderRead(reader);
 	}

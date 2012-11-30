@@ -43,7 +43,7 @@
 #include "xccdf_impl.h"
 #include "common/_error.h"
 #include "oscap_text.h"
-
+#include "common/debug_priv.h"
 
 // constants
 static const xccdf_numeric XCCDF_SCORE_MAX_DAFAULT = 100.0f;
@@ -624,7 +624,11 @@ struct xccdf_result *xccdf_result_new_parse(xmlTextReaderPtr reader)
 			if (res->sub.result.benchmark_uri == NULL)
 				res->sub.result.benchmark_uri = xccdf_attribute_copy(reader, XCCDFA_HREF);
 			break;
-		default: xccdf_item_process_element(res, reader);
+		default:
+			if (!xccdf_item_process_element(res, reader))
+				dW("Encountered an unknown element '%s' while parsing XCCDF result.",
+				   xmlTextReaderConstLocalName(reader));
+			break;
 
 		// TODO: any element from other namespace is supposed to go into xccdf_target_identifier
 		}

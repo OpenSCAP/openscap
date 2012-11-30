@@ -34,6 +34,7 @@
 #include "helpers.h"
 #include "xccdf_impl.h"
 #include "common/assume.h"
+#include "common/debug_priv.h"
 
 bool xccdf_content_parse(xmlTextReaderPtr reader, struct xccdf_item *parent)
 {
@@ -227,7 +228,9 @@ struct xccdf_item *xccdf_group_parse(xmlTextReaderPtr reader, struct xccdf_item 
 			oscap_list_add(group->sub.group.values, xccdf_value_parse(reader, group));
 			break;
 		default:
-			xccdf_item_process_element(group, reader);
+			if (!xccdf_item_process_element(group, reader))
+				dW("Encountered an unknown element '%s' while parsing XCCDF group.",
+				   xmlTextReaderConstLocalName(reader));
 		}
 		xmlTextReaderRead(reader);
 	}
@@ -352,7 +355,9 @@ struct xccdf_item *xccdf_rule_parse(xmlTextReaderPtr reader, struct xccdf_item *
 			oscap_list_add(rule->sub.rule.idents, xccdf_ident_parse(reader));
 			break;
 		default:
-			xccdf_item_process_element(rule, reader);
+			if (!xccdf_item_process_element(rule, reader))
+				dW("Encountered an unknown element '%s' while parsing XCCDF group.",
+				   xmlTextReaderConstLocalName(reader));
 		}
 		xmlTextReaderRead(reader);
 	}

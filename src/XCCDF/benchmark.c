@@ -201,7 +201,9 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 			assume_ex(xccdf_benchmark_add_result(XBENCHMARK(benchmark), xccdf_result_new_parse(reader)), false);
 			break;
 		default:
-			xccdf_item_process_element(benchmark, reader);
+			if (!xccdf_item_process_element(benchmark, reader))
+				dW("Encountered an unknown element '%s' while parsing XCCDF benchmark.",
+				   xmlTextReaderConstLocalName(reader));
 		}
 		xmlTextReaderRead(reader);
 	}

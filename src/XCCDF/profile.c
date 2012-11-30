@@ -29,6 +29,7 @@
 #include "item.h"
 #include "helpers.h"
 #include "xccdf_impl.h"
+#include "common/debug_priv.h"
 
 struct xccdf_setvalue *xccdf_setvalue_new(void)
 {
@@ -287,7 +288,9 @@ struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_ite
 				break;
 			}
 		default:
-			xccdf_item_process_element(prof, reader);
+			if (!xccdf_item_process_element(prof, reader))
+				dW("Encountered an unknown element '%s' while parsing XCCDF profile.",
+				   xmlTextReaderConstLocalName(reader));
 		}
 		xmlTextReaderRead(reader);
 	}
