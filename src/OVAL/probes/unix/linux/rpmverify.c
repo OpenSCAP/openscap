@@ -73,7 +73,7 @@
 
 struct rpmverify_res {
         char *name;  /**< package name */
-        const char *file;  /**< filepath */
+        char *file;  /**< filepath */
         rpmVerifyAttrs vflags; /**< rpm verify flags */
         rpmVerifyAttrs oflags; /**< rpm verify omit flags */
         rpmfileAttrs   fflags; /**< rpm file flags */
@@ -213,7 +213,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 		  while (rpmfiNext(fi) != -1) {
 		    SEXP_t *filepath_sexp;
 
-		    res.file   = rpmfiFN(fi);
+		    res.file   = strdup(rpmfiFN(fi));
 		    res.fflags = rpmfiFFlags(fi);
 		    res.oflags = omit;
 
@@ -232,6 +232,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 		      res.vflags = RPMVERIFY_FAILURES;
 
 		    callback(ctx, &res);
+		    free(res.file);
 		  }
 
 		  rpmfiFree(fi);
