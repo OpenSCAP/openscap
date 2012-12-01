@@ -4,9 +4,7 @@
 
 function test_eval_no_verify {
 
-	local OSCAP_DIR=`cd ../../../utils/.libs; pwd`
-
-	$OSCAP_DIR/oscap xccdf eval "${srcdir}/$1"
+	$OSCAP xccdf eval "${srcdir}/$1"
 }
 
 function test_verify {

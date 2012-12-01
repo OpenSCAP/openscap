@@ -34,18 +34,16 @@ function test_sds {
     local DS_TARGET_DIR="`mktemp -d`"
     local DS_FILE="$DS_TARGET_DIR/sds.xml"
 
-    local OSCAP_DIR=`cd ../../utils/.libs; pwd`
-
     pushd "$DIR"
 
-    $OSCAP_DIR/oscap ds sds-compose "$XCCDF_FILE" "$DS_FILE"
+    $OSCAP ds sds-compose "$XCCDF_FILE" "$DS_FILE"
 
     assert_correct_xlinks $DS_FILE
     popd
 
     pushd "$DS_TARGET_DIR"
 
-    $OSCAP_DIR/oscap ds sds-split "`basename $DS_FILE`" "$DS_TARGET_DIR"
+    $OSCAP ds sds-split "`basename $DS_FILE`" "$DS_TARGET_DIR"
 
     rm "$DS_FILE"
 
@@ -76,23 +74,18 @@ function test_sds {
 
 function test_eval {
 
-    local OSCAP_DIR=`cd ../../utils/.libs; pwd`
-
-    $OSCAP_DIR/oscap xccdf eval "${srcdir}/$1"
+    $OSCAP xccdf eval "${srcdir}/$1"
 }
 
 function test_invalid_eval {
-    local OSCAP_DIR=`cd ../../utils/.libs; pwd`
     local ret=0
-    $OSCAP_DIR/oscap xccdf eval "${srcdir}/$1" || ret=$?
+    $OSCAP xccdf eval "${srcdir}/$1" || ret=$?
     return $([ $ret -eq 1 ])
 }
 
 function test_eval_id {
 
-    local OSCAP_DIR=`cd ../../utils/.libs; pwd`
-
-    OUT=$($OSCAP_DIR/oscap xccdf eval --datastream-id $2 --xccdf-id $3 "${srcdir}/$1")
+    OUT=$($OSCAP xccdf eval --datastream-id $2 --xccdf-id $3 "${srcdir}/$1")
     local RET=$?
 
     if [ $RET -ne 0 ]; then
@@ -138,16 +131,12 @@ function test_eval_complex()
 
 function test_oval_eval {
 
-    local OSCAP_DIR=`cd ../../utils/.libs; pwd`
-
-    $OSCAP_DIR/oscap oval eval "${srcdir}/$1"
+    $OSCAP oval eval "${srcdir}/$1"
 }
 
 function test_oval_eval_id {
 
-    local OSCAP_DIR=`cd ../../utils/.libs; pwd`
-
-    OUT=$($OSCAP_DIR/oscap oval eval --datastream-id $2 --oval-id $3 "${srcdir}/$1")
+    OUT=$($OSCAP oval eval --datastream-id $2 --oval-id $3 "${srcdir}/$1")
     local RET=$?
 
     if [ $RET -ne 0 ]; then
@@ -168,9 +157,7 @@ function test_rds
     local DS_TARGET_DIR="`mktemp -d`"
     local DS_FILE="$DS_TARGET_DIR/rds.xml"
 
-    local OSCAP_DIR=`cd ../../utils/.libs; pwd`
-
-    $OSCAP_DIR/oscap ds rds-create "$SDS_FILE" "$DS_FILE" "$XCCDF_RESULT_FILE" "$OVAL_RESULT_FILE"
+    $OSCAP ds rds-create "$SDS_FILE" "$DS_FILE" "$XCCDF_RESULT_FILE" "$OVAL_RESULT_FILE"
 
     if [ $? -ne 0 ]; then
         ret_val=1
@@ -179,7 +166,7 @@ function test_rds
     assert_correct_xlinks $DS_FILE
 
     #pushd "$DS_TARGET_DIR"
-    #$OSCAP_DIR/oscap ds sds_split "`basename $DS_FILE`" "$DS_TARGET_DIR"
+    #$OSCAP ds sds_split "`basename $DS_FILE`" "$DS_TARGET_DIR"
     #rm sds.xml
     #popd
 
