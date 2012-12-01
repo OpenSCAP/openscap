@@ -80,10 +80,6 @@ function test_probes_runlevel_B {
 
     probecheck "runlevel" || return 255
 
-    export OVAL_PROBE_DIR=`pwd`/../../../src/OVAL/probes/
-    export LD_LIBRARY_PATH=`pwd`/../../../src/.libs
-    export OSCAP_SCHEMA_PATH=$srcdir/../../../schemas
-
     local ret_val=0;
     local DF="test_probes_runlevel_B.xml"
     local RF="results_B.xml"
