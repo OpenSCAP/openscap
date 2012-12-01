@@ -52,7 +52,7 @@ function test_probes_vg {
     echo ""
     echo "---------------- Valgrind checks -----------------"
     for xml in "$VGTEST_TMPDIR"/*.xml; do
-	bash $srcdir/vgrun.sh "../../../utils/.libs/oscap oval eval --results $xml.res $xml"
+	bash $srcdir/vgrun.sh "$OSCAP oval eval --results $xml.res $xml"
 	[ $? -eq 0 ] || ret=1
     done
     echo "--------------------------------------------------"

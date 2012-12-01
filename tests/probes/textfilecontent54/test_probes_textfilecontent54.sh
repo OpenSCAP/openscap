@@ -34,7 +34,7 @@ function test_probes_textfilecontent54 {
     echo "valid_key = valid_value" > "$FILE_A"
     echo "valid_key = valid_value" >> "$FILE_A"
 
-    ../../../utils/.libs/oscap oval eval --results $RF $DF
+    $OSCAP oval eval --results $RF $DF
     
     if [ -f $RF ]; then
 	verify_results "def" $DF $RF 13 && verify_results "tst" $DF $RF 16

@@ -32,7 +32,7 @@ function test_probes_runlevel_A {
     [ -f $RF ] && rm -f $RF
 
     bash ${srcdir}/test_probes_runlevel_A.xml.sh > $DF
-    ../../../utils/.libs/oscap oval eval --results $RF $DF
+    $OSCAP oval eval --results $RF $DF
         
     if [ -f $RF ]; then
 
@@ -92,7 +92,7 @@ function test_probes_runlevel_B {
     local SERVICE_B=`get_services_matching 3 off | head -1`
 
     bash ${srcdir}/test_probes_runlevel_B.xml.sh $SERVICE_A $SERVICE_B > $DF
-    ../../../utils/.libs/oscap oval eval --results $RF $DF
+    $OSCAP oval eval --results $RF $DF
         
     if [ -f $RF ]; then
 	verify_results "def" $DF $RF 13 && verify_results "tst" $DF $RF 40

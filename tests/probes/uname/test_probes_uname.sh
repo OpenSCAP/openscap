@@ -28,7 +28,7 @@ function test_probes_uname {
     [ -f $RF ] && rm -f $RF
     
     bash ${srcdir}/test_probes_uname.xml.sh > "$DF"
-    ../../../utils/.libs/oscap oval eval --results $RF $DF
+    $OSCAP oval eval --results $RF $DF
     
     if [ -f $RF ]; then
 	verify_results "def" $DF $RF 13 && verify_results "tst" $DF $RF 96

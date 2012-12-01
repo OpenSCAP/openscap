@@ -31,7 +31,7 @@ function test_probes_rpminfo {
     local RPM_B_NAME=`rpm --qf "%{NAME}\n" -qa | sort -u | sed -n '2p'`
     
     bash ${srcdir}/test_probes_rpminfo.xml.sh $RPM_A_NAME $RPM_B_NAME > $DF
-    ../../../utils/.libs/oscap oval eval --results $RF $DF
+    $OSCAP oval eval --results $RF $DF
         
     if [ -f $RF ]; then
 	verify_results "def" $DF $RF 13 && verify_results "tst" $DF $RF 200

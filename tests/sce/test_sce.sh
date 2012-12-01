@@ -15,7 +15,7 @@ function test_sce {
 
     [ -f $RESFILE ] && rm -f $RESFILE
     
-    ../../utils/.libs/oscap xccdf eval --results "$RESFILE" --profile "default" "$DEFFILE"
+    $OSCAP xccdf eval --results "$RESFILE" --profile "default" "$DEFFILE"
     
     # catch error from oscap tool
     ret_val=$?

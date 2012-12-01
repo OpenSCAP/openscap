@@ -35,7 +35,7 @@ function test_probes_shadow {
     LINES=`cat /etc/shadow | wc -l`; ID=1
    
     bash ${srcdir}/test_probes_shadow.xml.sh > $DF
-    ../../../utils/.libs/oscap oval eval --results $RF $DF
+    $OSCAP oval eval --results $RF $DF
         
     if [ -f $RF ]; then
 	verify_results "def" $DF $RF 1 && verify_results "tst" $DF $RF $LINES

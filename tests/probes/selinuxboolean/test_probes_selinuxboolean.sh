@@ -32,7 +32,7 @@ function test_probes_selinuxboolean {
     bash ${srcdir}/$1.xml.sh > $DF
     LINES=$?
 
-    ../../../utils/.libs/oscap oval eval --results $RF $DF
+    $OSCAP oval eval --results $RF $DF
 
     if [ -f $RF ]; then
 	verify_results "def" $DF $RF 1 && verify_results "tst" $DF $RF $LINES

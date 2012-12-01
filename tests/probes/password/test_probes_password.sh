@@ -35,7 +35,7 @@ function test_probes_password {
     LINES=`cat /etc/passwd | wc -l`
 
     bash ${srcdir}/test_probes_password.xml.sh > $DF
-    ../../../utils/.libs/oscap oval eval --results $RF $DF
+    $OSCAP oval eval --results $RF $DF
        
     if [ -f $RF ]; then
 	verify_results "def" $DF $RF 1 && verify_results "tst" $DF $RF $LINES

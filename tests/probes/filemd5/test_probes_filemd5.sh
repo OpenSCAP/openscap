@@ -28,7 +28,7 @@ function test_probes_filemd5 {
     [ -f $RESFILE ] && rm -f $RESFILE
 
     bash ${srcdir}/test_probes_filemd5.xml.sh > $DEFFILE
-    ../../../utils/.libs/oscap oval eval --results $RESFILE $DEFFILE
+    $OSCAP oval eval --results $RESFILE $DEFFILE
     
     if [ -f $RESFILE ]; then
 	verify_results "def" $DF $RF 13 && verify_results "tst" $DF $RF 96

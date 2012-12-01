@@ -26,7 +26,7 @@ function test_probes_file {
 
     [ -f $RF ] && rm -f $RF
 
-    ../../../utils/.libs/oscap oval eval --results $RF $DF
+    $OSCAP oval eval --results $RF $DF
 
     if [ -f $RF ]; then
 	verify_results "def" $DF $RF 13 && verify_results "tst" $DF $RF 204

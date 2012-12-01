@@ -34,7 +34,7 @@ function test_probes_iflisteners {
     bash ${srcdir}/$1.xml.sh > $DEFFILE
     LINES=$?
 
-    ../../../utils/.libs/oscap oval eval --results $RESFILE $DEFFILE
+    $OSCAP oval eval --results $RESFILE $DEFFILE
     
     if [ -f $RESFILE ]; then
 	verify_results "def" $DF $RF 1 && verify_results "tst" $DF $RF $LINES
