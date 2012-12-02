@@ -341,8 +341,18 @@ case "${with_crypto}" in
                       crapi_libname="GCrypt";],
                      [AC_MSG_ERROR([library 'gcrypt' is required for GCrypt.])],
                      [])
-	LIBS=$SAVE_LIBS
         AC_DEFINE([HAVE_GCRYPT], [1], [Define to 1 if you have 'gcrypt' library.])
+	AC_CACHE_CHECK([for GCRYCTL_SET_ENFORCED_FIPS_FLAG],
+                    [ac_cv_gcryctl_set_enforced_fips_flag],
+                    [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([#include<gcrypt.h>],
+                                                        [return GCRYCTL_SET_ENFORCED_FIPS_FLAG;])],
+                                       [ac_cv_gcryctl_set_enforced_fips_flag=yes],
+                                       [ac_cv_gcryctl_set_enforced_fips_flag=no])])
+
+	if test "${ac_cv_gcryctl_set_enforced_fips_flag}" == "yes"; then
+	   AC_DEFINE([HAVE_GCRYCTL_SET_ENFORCED_FIPS_FLAG], [1], [Define to 1 if you have 'gcrypt' library with GCRYCTL_SET_ENFORCED_FIPS_FLAG.])
+	fi
+	LIBS=$SAVE_LIBS
         ;;
          *)
           AC_MSG_ERROR([unknown crypto backend])
@@ -1252,6 +1262,7 @@ AC_CONFIG_FILES([Makefile
                  tests/API/XCCDF/applicability/Makefile
                  tests/API/XCCDF/default_cpe/Makefile
                  tests/API/XCCDF/unittests/Makefile
+                 tests/API/XCCDF/parser/Makefile
 
                  tests/schemas/Makefile
 

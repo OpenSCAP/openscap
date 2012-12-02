@@ -1,36 +1,3 @@
 
-AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
-		-I$(top_srcdir)/src/CVE/public \
-		-I$(top_srcdir)/src/CVSS/public \
-		-I$(top_srcdir)/src/CPE/public \
-		-I$(top_srcdir)/src/CCE/public \
-		-I$(top_srcdir)/src/OVAL/public \
-		-I$(top_srcdir)/src/XCCDF/public \
-	 	-I$(top_srcdir)/src/common/public \
-		-I$(top_srcdir)/src/OVAL/probes/public \
-		-I$(top_srcdir)/src/OVAL/probes/SEAP/public \
-		-I$(top_srcdir)/src \
-		@xml2_CFLAGS@
-
-LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
-
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
-
-DISTCLEANFILES = *.log *.out*
-CLEANFILES = *.log *.out*
-
-TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
-                  LD_PRELOAD=$(top_builddir)/src/.libs/libopenscap_testing.so \
-                  LD_LIBRARY_PATH=$(top_builddir)/src/.libs \
-                  OSCAP_SCHEMA_PATH=$(top_srcdir)/schemas \
-		  OSCAP_CPE_PATH=$(top_srcdir)/cpe
-
-TESTS = test_api_xccdf.sh
-check_PROGRAMS = test_api_xccdf
-
-test_api_xccdf_SOURCES = test_api_xccdf.c
-
-EXTRA_DIST += test_api_xccdf.sh xccdf11.xml xccdf12.xml xccdf11-results.xml
-
-SUBDIRS = applicability default_cpe unittests
+SUBDIRS = applicability default_cpe unittests parser
 

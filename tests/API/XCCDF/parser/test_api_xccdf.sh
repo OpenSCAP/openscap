@@ -10,7 +10,7 @@
 
 set -e -o pipefail
 
-. $srcdir/../../test_common.sh
+. $srcdir/../../../test_common.sh
 
 # Test cases.
 
