@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="RHEL-6" resolved="1" xml:lang="en-US">
+  <status date="2012-11-06">draft</status>
+  <title xml:lang="en-US">Title</title>
+  <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">Description.</description>
+  <notice xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" id="terms_of_use">Notice.</notice>
+  <front-matter xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">test</front-matter>
+  <rear-matter xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">bla bla</rear-matter>
+  <reference href="TODO::INSERT"/>
+  <version>0.1</version>
+  <model system="urn:xccdf:scoring:default"/>
+  <Profile id="test">
+    <title xml:lang="en-US">test</title>
+    <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">This profile is for testing.</description>
+    <select idref="ssh_server_disabled" selected="true"/>
+    <refine-value idref="val1" selector="5_minutes"/>
+  </Profile>
+  <Profile id="test2">
+    <title xml:lang="en-US">test</title>
+    <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">This profile is for testing.</description>
+    <select idref="ssh_server_disabled" selected="true"/>
+    <refine-value idref="val1" selector="10_minutes"/>
+    <refine-value idref="val2" selector="10_minutes"/>
+  </Profile>
+  <Group id="ssh">
+    <version time="2012-12-01T20:47:54">0.1</version>
+    <title xml:lang="en-US">SSH Server</title>
+    <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">The SSH protocol is recommended.</description>
+    <Value id="val1" operator="equals" type="number">
+      <title xml:lang="en-US">SSH session Idle time</title>
+      <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">Specify duration of allowed idle time.</description>
+      <value selector="5_minutes">300</value>
+      <value>100</value>
+      <value selector="10_minutes">600</value>
+    </Value>
+    <Value id="val2" operator="equals" type="number">
+      <title xml:lang="en-US">SSH session Idle time</title>
+      <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">Specify duration of allowed idle time.</description>
+      <value selector="5_minutes">300</value>
+      <value selector="10_minutes">600</value>
+      <value>100</value>
+    </Value>
+    <Value id="val3" operator="equals" type="number">
+      <title xml:lang="en-US">SSH session Idle time</title>
+      <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">Specify duration of allowed idle time.</description>
+      <value selector="100_seconds">100</value>
+      <value selector="5_minutes">300</value>
+      <value selector="10_minutes">600</value>
+    </Value>
+    <Rule id="ssh_server_disabled" selected="true" severity="low">
+      <title xml:lang="en-US">Disable SSH Server If Possible (Unusual)</title>
+      <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">Bla bla</description>
+      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <check-export export-name="oval:ssg:var:1" value-id="val1"/>
+        <check-export export-name="oval:ssg:var:2" value-id="val2"/>
+        <check-export export-name="oval:ssg:var:3" value-id="val3"/>
+        <check-content-ref name="oval:x:def:1" href="test_default_selector.oval.xml"/>
+      </check>
+    </Rule>
+  </Group>
+  <TestResult id="xccdf_org.open-scap_testresult_default-profile" start-time="2012-12-01T20:47:54" end-time="2012-12-01T20:47:54">
+    <title>OSCAP Scan Result</title>
+    <target>mars</target>
+    <target-address>127.0.0.1</target-address>
+    <target-address>192.168.1.116</target-address>
+    <target-address>192.168.122.1</target-address>
+    <target-address>10.36.5.11</target-address>
+    <target-address>::1</target-address>
+    <target-address>fe80::224:d7ff:fe8f:3e38</target-address>
+    <target-facts>
+      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">00:00:00:00:00:00</fact>
+      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">00:24:D7:8F:3E:38</fact>
+      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">52:54:00:CB:16:48</fact>
+      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">00:00:00:00:00:00</fact>
+      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">00:00:00:00:00:00</fact>
+      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">00:24:D7:8F:3E:38</fact>
+    </target-facts>
+    <rule-result idref="ssh_server_disabled" time="2012-12-01T20:47:54" severity="low" weight="1.000000">
+      <result>pass</result>
+      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <check-export export-name="oval:ssg:var:1" value-id="val1"/>
+        <check-export export-name="oval:ssg:var:2" value-id="val2"/>
+        <check-export export-name="oval:ssg:var:3" value-id="val3"/>
+        <check-content-ref name="oval:x:def:1" href="test_default_selector.oval.xml"/>
+      </check>
+    </rule-result>
+    <score system="urn:xccdf:scoring:default" maximum="100.000000">100.000000</score>
+  </TestResult>
+</Benchmark>

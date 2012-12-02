@@ -24,8 +24,7 @@ function test_api_xccdf_export {
 	sed -i 's|<cpe-list xmlns="http://cpe.mitre.org/XMLSchema/cpe/1.0" xmlns:meta="http://scap.nist.gov/schema/cpe-dictionary-metadata/0.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"|<cpe-list xmlns:meta="http://scap.nist.gov/schema/cpe-dictionary-metadata/0.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://cpe.mitre.org/XMLSchema/cpe/1.0"|' $OUTPUT
 
 	if [ $? -eq 0 ]; then
-		cmp $srcdir/$INPUT $OUTPUT
-		if [ $? -ne 0 ]; then
+		if ! $XMLDIFF $srcdir/$INPUT $OUTPUT; then
 			echo "Exported file differs from what is expected!"
 			return 1
 		fi
@@ -34,6 +33,7 @@ function test_api_xccdf_export {
 		return 1
 	fi
 
+	rm -rf $OUTPUT
 	return 0
 }
 
@@ -49,9 +49,10 @@ function test_api_xccdf_validate {
 
 test_init "test_api_xccdf.log"
 
-test_run "text_api_xccdf-1.1_export" test_api_xccdf_export scap-rhel5-xccdf11.xml
-test_run "text_api_xccdf-1.1_validate" test_api_xccdf_validate scap-rhel5-xccdf11.xml "1.1"
-test_run "text_api_xccdf-1.2_export" test_api_xccdf_export scap-rhel5-xccdf12.xml
-test_run "text_api_xccdf-1.2_validate" test_api_xccdf_validate scap-rhel5-xccdf12.xml "1.2"
+test_run "export xccdf 1.1" test_api_xccdf_export xccdf11.xml
+test_run "validate xccdf 1.1" test_api_xccdf_validate xccdf11.xml "1.1"
+test_run "export xccdf 1.2" test_api_xccdf_export xccdf12.xml
+test_run "validate xccdf 1.2" test_api_xccdf_validate xccdf12.xml "1.2"
+test_run "export xccdf results 1.1" test_api_xccdf_export xccdf11-results.xml
 
 test_exit

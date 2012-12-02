@@ -23,14 +23,14 @@ TESTS_ENVIRONMENT=OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
                   LD_PRELOAD=$(top_builddir)/src/.libs/libopenscap_testing.so \
                   LD_LIBRARY_PATH=$(top_builddir)/src/.libs \
                   OSCAP_SCHEMA_PATH=$(top_srcdir)/schemas \
-				  OSCAP_CPE_PATH=$(top_srcdir)/cpe
+		  OSCAP_CPE_PATH=$(top_srcdir)/cpe
 
 TESTS = test_api_xccdf.sh
 check_PROGRAMS = test_api_xccdf
 
 test_api_xccdf_SOURCES = test_api_xccdf.c
 
-EXTRA_DIST += test_api_xccdf.sh scap-rhel5-xccdf11.xml scap-rhel5-xccdf12.xml
+EXTRA_DIST += test_api_xccdf.sh xccdf11.xml xccdf12.xml xccdf11-results.xml
 
-SUBDIRS = applicability default_cpe unittests 
+SUBDIRS = applicability default_cpe unittests
 

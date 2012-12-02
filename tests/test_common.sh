@@ -13,6 +13,7 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 
 export XPATH=$(cd $(dirname $BASH_SOURCE); pwd)/xpath.pl
 [ -z "$builddir" ] || export OSCAP=$(cd $builddir/utils/.libs; pwd)/oscap
+export XMLDIFF=$(cd $(dirname $BASH_SOURCE); pwd)/xmldiff.pl
 
 # Overall test result.
 result=0
