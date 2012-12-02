@@ -13,8 +13,7 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 
 LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
 
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh \
-             $(top_srcdir)/tests/xmldiff.pl     
+EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
 
 DISTCLEANFILES = *.log *.out*
 CLEANFILES = *.log *.out*

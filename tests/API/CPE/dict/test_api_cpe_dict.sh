@@ -48,7 +48,7 @@ function test_api_cpe_dict_match_existing_cpe {
 function test_api_cpe_dict_export_xml {
     ./test_api_cpe_dict --export $srcdir/dict.xml "UTF-8" \
 	dict.xml.out "UTF-8" && \
-	$srcdir/../../../xmldiff.pl $srcdir/dict.xml dict.xml.out
+	$XMLDIFF $srcdir/dict.xml dict.xml.out
 }
 
 function test_api_cpe_dict_import_cp1250_xml {

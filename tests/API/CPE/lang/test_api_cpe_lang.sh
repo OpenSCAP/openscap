@@ -59,7 +59,7 @@ function test_api_cpe_lang_export_empty {
 
     ./test_api_cpe_lang --set-new export.xml.out.1 "UTF-8" "Foo" "Bar"
     if [ $? -eq 0 ] && [ -f export.xml.out.1 ]; then
-	if ! $srcdir/../../../xmldiff.pl export.xml.out.0 export.xml.out.1; then
+	if ! $XMLDIFF export.xml.out.0 export.xml.out.1; then
 	    echo "Exported file differs from what is expected!"
 	    ret_val=1
 	fi
@@ -81,7 +81,7 @@ function test_cpelang_export_new_model {
 
     ./test_api_cpe_lang --set-new export.xml.out.1 "UTF-8" "Foo" "Bar" 1 10
     if [ $? -eq 0 ] && [ -f export.xml.out.1 ]; then
-	if ! $srcdir/../../../xmldiff.pl export.xml.out.0 export.xml.out.1; then
+	if ! $XMLDIFF export.xml.out.0 export.xml.out.1; then
 	    echo "Exported file differs from what is expected!"	    
 	    ret_val=1
 	fi
@@ -100,7 +100,7 @@ function test_api_cpe_lang_export_encoding {
 
     ./test_api_cpe_lang --set-new export.xml.out.1 "UnknownEncoding" "Foo" "Bar"
     if [ $? -eq 0 ] && [ -f export.xml.out.1 ]; then
-	if ! $srcdir/../../../xmldiff.pl export.xml.out.0 export.xml.out.1; then
+	if ! $XMLDIFF export.xml.out.0 export.xml.out.1; then
 	    echo "Exported file differs from what is expected!"	    
 	    ret_val=1
 	fi
@@ -119,7 +119,7 @@ function test_api_cpe_lang_export_namespace {
 
     ./test_api_cpe_lang --export-all export.xml.out.0 "UTF-8" export.xml.out.1 "UTF-8"
     if [ $? -eq 0 ] && [ -f export.xml.out.1 ]; then
-	if ! $srcdir/../../../xmldiff.pl export.xml.out.0 export.xml.out.1; then
+	if ! $XMLDIFF export.xml.out.0 export.xml.out.1; then
 	    echo "Exported file differs from what is expected!"	    
 	    ret_val=1
 	fi

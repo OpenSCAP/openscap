@@ -14,3 +14,8 @@ endif
 endif
 
 SUBDIRS = API DS $(PROBE_SUBDIRS) $(SCE_SUBDIRS) $(BINDINGS_SUBDIRS) schemas
+
+EXTRA_DIST = $(top_srcdir)/tests/test_common.sh \
+	     $(top_srcdir)/tests/xpath.pl \
+	     $(top_srcdir)/tests/xmldiff.pl
+
