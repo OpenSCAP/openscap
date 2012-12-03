@@ -602,6 +602,10 @@ struct xccdf_result *xccdf_result_new_parse(xmlTextReaderPtr reader)
 			oscap_list_add(res->sub.result.target_addresses, oscap_element_string_copy(reader));
 			break;
 		case XCCDFE_TARGET_FACTS:
+			// we have to read inside the target-facts element
+			xmlTextReaderRead(reader);
+
+			// iterate over all inner elements of the target-facts element
 			while (oscap_to_start_element(reader, depth + 1)) {
 				if (xccdf_element_get(reader) == XCCDFE_FACT)
 					oscap_list_add(res->sub.result.target_facts, xccdf_target_fact_new_parse(reader));
