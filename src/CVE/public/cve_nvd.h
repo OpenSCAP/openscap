@@ -677,9 +677,9 @@ const char *cve_model_get_nvd_xml_version(const struct cve_model *item);
 /// @memberof cve_model
 bool cve_model_set_nvd_xml_version(struct cve_model *obj, const char *newval);
 /// @memberof cve_model
-time_t cve_model_get_pub_date(const struct cve_model *item);
+const char *cve_model_get_pub_date(const struct cve_model *item);
 /// @memberof cve_model
-bool cve_model_set_pub_date(struct cve_model *obj, time_t newval);
+bool cve_model_set_pub_date(struct cve_model *obj, const char *newval);
 
 /**@}*/
 

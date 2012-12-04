@@ -58,14 +58,14 @@
  * It represents holds all CVE Items.
  */
 struct cve_model {
-	time_t pub_date;
+	char  *pub_date;
 	char  *nvd_xml_version;
 	struct oscap_list *entries;	/* 1-n */
 };
     OSCAP_IGETINS_GEN(cve_entry, cve_model, entries, entry)
     OSCAP_ITERATOR_REMOVE_F(cve_entry)
 	OSCAP_ACCESSOR_STRING(cve_model, nvd_xml_version)
-	OSCAP_ACCESSOR_SIMPLE(time_t, cve_model, pub_date)
+	OSCAP_ACCESSOR_STRING(cve_model, pub_date)
 
 /*
  */
@@ -481,9 +481,7 @@ struct cve_model *cve_model_parse(xmlTextReaderPtr reader)
 			return NULL;
 
 		ret->nvd_xml_version = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "nvd_xml_version");
-		char *attr = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "pub_date");
-		ret->pub_date = oscap_get_datetime(attr);
-		oscap_free(attr);
+		ret->pub_date = (char*) xmlTextReaderGetAttribute(reader, BAD_CAST "pub_date");
 
 		/* skip nodes until new element */
 		xmlTextReaderNextElement(reader);
@@ -678,11 +676,7 @@ void cve_export(const struct cve_model *cve, xmlTextWriterPtr writer)
 	xmlTextWriterWriteAttribute(writer, BAD_CAST "nvd_xml_version", BAD_CAST cve->nvd_xml_version);
 
 	if (cve->pub_date) {
-		struct tm *lt = localtime(&cve->pub_date);
-		char timestamp[] = "yyyy-mm-ddThh:mm:ss";
-		snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
-			 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
-		xmlTextWriterWriteAttribute(writer, BAD_CAST "pub_date", BAD_CAST timestamp);
+		xmlTextWriterWriteAttribute(writer, BAD_CAST "pub_date", BAD_CAST cve->pub_date);
 	}
 
 	xmlTextWriterWriteAttribute(writer, BAD_CAST "xmlns:xsi", BAD_CAST "http://www.w3.org/2001/XMLSchema-instance");
