@@ -17,7 +17,7 @@
     <!-- =============================================================================== -->
     <!-- =============================================================================== -->
     <!-- =============================================================================== -->
-    <xsd:import namespace="http://cpe.mitre.org/naming/2.0" schemaLocation="cpe-naming_2.3.xsd"/>
+    <xsd:import namespace="http://cpe.mitre.org/naming/2.0" schemaLocation="../../cpe/2.3/cpe-naming_2.3.xsd"/>
     <xsd:element name="cpe-list" type="cpe_dict:ListType">
         <xsd:annotation>
             <xsd:documentation xml:lang="en">The cpe-list element acts as a top-level container for CPE Name items. Each
