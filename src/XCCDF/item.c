@@ -1209,7 +1209,7 @@ struct xccdf_rule_result * xccdf_rule_result_clone(const struct xccdf_rule_resul
 	struct xccdf_rule_result * clone = oscap_calloc(1, sizeof(struct xccdf_rule_result));
 	clone->idref = oscap_strdup(result->idref);
 	clone->role = result->role;
-	clone->time = result->time;
+	clone->time = oscap_strdup(result->time);
 	clone->weight = result->weight;
 	clone->severity = result->severity;
 	clone->result = result->result;

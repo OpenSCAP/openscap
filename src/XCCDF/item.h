@@ -319,7 +319,7 @@ struct xccdf_fixtext {
 struct xccdf_rule_result {
 	char *idref;
 	xccdf_role_t role;
-	time_t time;
+	char *time;
 	float weight;
 	xccdf_level_t severity;
 	xccdf_test_result_type_t result;

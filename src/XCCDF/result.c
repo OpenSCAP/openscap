@@ -226,6 +226,7 @@ void xccdf_rule_result_free(struct xccdf_rule_result *rr)
 	if (rr != NULL) {
 		oscap_free(rr->idref);
 		oscap_free(rr->version);
+		oscap_free(rr->time);
 
 		oscap_list_free(rr->overrides, (oscap_destruct_func) xccdf_override_free);
 		oscap_list_free(rr->idents, (oscap_destruct_func) xccdf_ident_free);
@@ -238,11 +239,11 @@ void xccdf_rule_result_free(struct xccdf_rule_result *rr)
 	}
 }
 
-OSCAP_ACCESSOR_SIMPLE(time_t, xccdf_rule_result, time)
 OSCAP_ACCESSOR_SIMPLE(xccdf_role_t, xccdf_rule_result, role)
 OSCAP_ACCESSOR_SIMPLE(float, xccdf_rule_result, weight)
 OSCAP_ACCESSOR_SIMPLE(xccdf_level_t, xccdf_rule_result, severity)
 OSCAP_ACCESSOR_SIMPLE(xccdf_test_result_type_t, xccdf_rule_result, result)
+OSCAP_ACCESSOR_STRING(xccdf_rule_result, time)
 OSCAP_ACCESSOR_STRING(xccdf_rule_result, version)
 OSCAP_ACCESSOR_STRING(xccdf_rule_result, idref)
 OSCAP_IGETINS(xccdf_ident, xccdf_rule_result, idents, ident)
@@ -864,7 +865,7 @@ static struct xccdf_rule_result *xccdf_rule_result_new_parse(xmlTextReaderPtr re
 
 	rr->idref    = xccdf_attribute_copy(reader, XCCDFA_IDREF);
 	rr->role     = oscap_string_to_enum(XCCDF_ROLE_MAP, xccdf_attribute_get(reader, XCCDFA_ROLE));
-	rr->time     = oscap_get_datetime(xccdf_attribute_get(reader, XCCDFA_TIME));
+	rr->time     = xccdf_attribute_copy(reader, XCCDFA_TIME);
 	rr->version  = xccdf_attribute_copy(reader, XCCDFA_VERSION);
 	rr->weight   = xccdf_attribute_get_float(reader, XCCDFA_WEIGHT);
 	rr->severity = oscap_string_to_enum(XCCDF_LEVEL_MAP, xccdf_attribute_get(reader, XCCDFA_SEVERITY));
@@ -947,16 +948,12 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 		xmlNewProp(result_node, BAD_CAST "idref", BAD_CAST idref);
 
 	xccdf_role_t role = xccdf_rule_result_get_role(result);
-	if (role != 0) 
+	if (role != 0)
             xmlNewProp(result_node, BAD_CAST "role", BAD_CAST XCCDF_ROLE_MAP[role - 1].string);
 
-	time_t date = xccdf_rule_result_get_time(result);
-	if (date) {
-		struct tm *lt = localtime(&date);
-		char timestamp[] = "yyyy-mm-ddThh:mm:ss";
-		snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
-			 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
-		xmlNewProp(result_node, BAD_CAST "time", BAD_CAST timestamp);
+	const char * tm = xccdf_rule_result_get_time(result);
+	if (tm) {
+		xmlNewProp(result_node, BAD_CAST "time", BAD_CAST tm);
 	}
 
 	xccdf_level_t severity = xccdf_rule_result_get_severity(result);

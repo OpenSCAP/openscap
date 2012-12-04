@@ -2538,7 +2538,7 @@ time_t xccdf_result_get_end_time(const struct xccdf_result *item);
 struct oscap_string_iterator *xccdf_result_get_metadata(const struct xccdf_result *result);
 
 /// @memberof xccdf_rule_result
-time_t xccdf_rule_result_get_time(const struct xccdf_rule_result *item);
+const char * xccdf_rule_result_get_time(const struct xccdf_rule_result *item);
 /// @memberof xccdf_rule_result
 xccdf_role_t xccdf_rule_result_get_role(const struct xccdf_rule_result *item);
 /// @memberof xccdf_rule_result
@@ -2920,7 +2920,7 @@ bool xccdf_result_set_version(struct xccdf_result *item, const char *newval);
 bool xccdf_result_add_metadata(struct xccdf_result *item, const char *metadata);
 
 /// @memberof xccdf_rule_result
-bool xccdf_rule_result_set_time(struct xccdf_rule_result *obj, time_t newval);
+bool xccdf_rule_result_set_time(struct xccdf_rule_result *obj, const char *newval);
 /// @memberof xccdf_rule_result
 bool xccdf_rule_result_set_role(struct xccdf_rule_result *obj, xccdf_role_t newval);
 /// @memberof xccdf_rule_result

@@ -667,6 +667,9 @@ static struct xccdf_rule_result * _xccdf_rule_result_new_from_rule(const struct 
 								  const char *message)
 {
 	struct xccdf_rule_result *rule_ritem = xccdf_rule_result_new();
+	struct tm *lt;
+	time_t tm;
+	char timestamp[] = "yyyy-mm-ddThh:mm:ss";
 
 	/* --Set rule-- */
         xccdf_rule_result_set_result(rule_ritem, eval_result);
@@ -675,7 +678,12 @@ static struct xccdf_rule_result * _xccdf_rule_result_new_from_rule(const struct 
 	xccdf_rule_result_set_version(rule_ritem, xccdf_rule_get_version(rule));
 	xccdf_rule_result_set_severity(rule_ritem, xccdf_rule_get_severity(rule));
 	xccdf_rule_result_set_role(rule_ritem, xccdf_rule_get_role(rule));
-	xccdf_rule_result_set_time(rule_ritem, time(NULL));
+
+	tm = time(NULL);
+	lt = localtime(&tm);
+	snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
+		 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
+	xccdf_rule_result_set_time(rule_ritem, timestamp);
 
 	/* --Fix --*/
 	struct xccdf_fix_iterator *fix_it = xccdf_rule_get_fixes(rule);
