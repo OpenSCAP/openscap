@@ -67,7 +67,7 @@
     <!-- *   External Schemae                                                       * -->
     <!-- **************************************************************************** -->
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" 
-                schemaLocation="xml.xsd">
+                schemaLocation="../../common/xml.xsd">
         <xsd:annotation>
             <xsd:documentation>
                 Get access to the xml: attribute groups for xml:lang.

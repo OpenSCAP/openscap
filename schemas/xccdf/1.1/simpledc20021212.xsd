@@ -18,7 +18,7 @@
       xs:appinfo also removed.
     </xs:documentation>
 	</xs:annotation>
-	<xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>
+	<xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../common/xml.xsd"/>
 	<xs:element name="title" type="elementType"/>
 	<xs:element name="creator" type="elementType"/>
 	<xs:element name="subject" type="elementType"/>

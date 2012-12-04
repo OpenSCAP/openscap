@@ -18,6 +18,7 @@ cpe21dir = $(pkgdatadir)/schemas/cpe/2.1/
 cpe22dir = $(pkgdatadir)/schemas/cpe/2.2/
 cpe23dir = $(pkgdatadir)/schemas/cpe/2.3/
 cvedir = $(pkgdatadir)/schemas/cve/
+commondir = $(pkgdatadir)/schemas/common/
 
 oval53_DATA = $(wildcard oval/5.3/*.xsd oval/5.3/*.xsl)
 oval54_DATA = $(wildcard oval/5.4/*.xsd oval/5.4/*.xsl)
@@ -45,6 +46,7 @@ cpe22_DATA = $(wildcard cpe/2.2/*.xsd cpe/2.2/*.dtd)
 cpe23_DATA = $(wildcard cpe/2.3/*.xsd cpe/2.3/*.dtd)
 
 cve_DATA = $(wildcard cve/*.xsd)
+common_DATA = $(wildcard common/*.xsd)
 
 EXTRA_DIST = \
 	$(oval53_DATA) \
@@ -66,5 +68,6 @@ EXTRA_DIST = \
 	$(cpe21_DATA) \
 	$(cpe22_DATA) \
 	$(cpe23_DATA) \
+	$(common_DATA) \
 	$(cve_DATA)
 
