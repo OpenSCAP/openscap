@@ -40,6 +40,8 @@ int main(int argc, char **argv)
 		struct xccdf_benchmark *bench = xccdf_benchmark_import(argv[2]);
 		if (bench == NULL) return 1;
 		xccdf_benchmark_export(bench, argv[3]);
+		xccdf_benchmark_free(bench);
+		oscap_cleanup();
 		return 0;
 	}
 	else if (strcmp(argv[1], "--validate") == 0) {
