@@ -83,6 +83,12 @@ function test_invalid_eval {
     return $([ $ret -eq 1 ])
 }
 
+function test_invalid_oval_eval {
+    local ret=0
+    $OSCAP oval eval "${srcdir}/$1" || ret=$?
+    return $([ $ret -eq 1 ])
+}
+
 function test_eval_id {
 
     OUT=$($OSCAP xccdf eval --datastream-id $2 --xccdf-id $3 "${srcdir}/$1")
@@ -185,6 +191,7 @@ test_run "sds_extended_component" test_sds sds_extended_component fake-check-xcc
 
 test_run "eval_simple" test_eval eval_simple/sds.xml
 test_run "eval_invalid" test_invalid_eval eval_invalid/sds.xml
+test_run "eval_invalid_oval" test_invalid_oval_eval eval_invalid/sds-oval.xml
 test_run "eval_xccdf_id1" test_eval_id eval_xccdf_id/sds.xml scap_org.open-scap_datastream_tst scap_org.open-scap_cref_first-xccdf.xml first
 test_run "eval_xccdf_id2" test_eval_id eval_xccdf_id/sds.xml scap_org.open-scap_datastream_tst scap_org.open-scap_cref_second-xccdf.xml second
 test_run "eval_just_oval" test_oval_eval eval_just_oval/sds.xml

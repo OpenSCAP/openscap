@@ -17,6 +17,7 @@ TESTS = test_ds.sh
 
 EXTRA_DIST += test_ds.sh \
 		eval_invalid/sds.xml \
+		eval_invalid/sds-oval.xml \
 		eval_simple/sds.xml \
 		eval_just_oval/sds.xml \
 		eval_xccdf_id/sds.xml \
