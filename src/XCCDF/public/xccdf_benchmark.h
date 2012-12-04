@@ -2576,7 +2576,7 @@ xccdf_numeric xccdf_score_get_score(const struct xccdf_score *item);
 /// @memberof xccdf_score
 const char *xccdf_score_get_system(const struct xccdf_score *item);
 /// @memberof xccdf_override
-time_t xccdf_override_get_time(const struct xccdf_override *item);
+const char *xccdf_override_get_time(const struct xccdf_override *item);
 /// @memberof xccdf_override
 xccdf_test_result_type_t xccdf_override_get_new_result(const struct xccdf_override *item);
 /// @memberof xccdf_override
@@ -2949,7 +2949,7 @@ bool xccdf_score_set_score(struct xccdf_score *obj, xccdf_numeric newval);
 bool xccdf_score_set_system(struct xccdf_score *obj, const char *newval);
 
 /// @memberof xccdf_override
-bool xccdf_override_set_time(struct xccdf_override *obj, time_t newval);
+bool xccdf_override_set_time(struct xccdf_override *obj, const char *newval);
 /// @memberof xccdf_override
 bool xccdf_override_set_new_result(struct xccdf_override *obj, xccdf_test_result_type_t newval);
 /// @memberof xccdf_override

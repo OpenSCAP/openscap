@@ -299,9 +299,9 @@ void xccdf_override_free(struct xccdf_override *oride)
 	}
 }
 
-OSCAP_ACCESSOR_SIMPLE(time_t, xccdf_override, time)
 OSCAP_ACCESSOR_SIMPLE(xccdf_test_result_type_t, xccdf_override, new_result)
 OSCAP_ACCESSOR_SIMPLE(xccdf_test_result_type_t, xccdf_override, old_result)
+OSCAP_ACCESSOR_STRING(xccdf_override, time)
 OSCAP_ACCESSOR_STRING(xccdf_override, authority)
 OSCAP_ACCESSOR_TEXT(xccdf_override, remark)
 
@@ -1017,7 +1017,7 @@ static struct xccdf_override *xccdf_override_new_parse(xmlTextReaderPtr reader)
 
 	struct xccdf_override *override = xccdf_override_new();
 
-	override->time      = oscap_get_datetime(xccdf_attribute_get(reader, XCCDFA_TIME));
+	override->time      = xccdf_attribute_copy(reader, XCCDFA_TIME);
 	override->authority = xccdf_attribute_copy(reader, XCCDFA_AUTHORITY);
 
 	int depth = oscap_element_depth(reader) + 1;
@@ -1050,12 +1050,10 @@ xmlNode *xccdf_override_to_dom(struct xccdf_override *override, xmlDoc *doc, xml
 	xmlNode *override_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "override", NULL);
 
 	/* Handle attributes */
-	time_t date = xccdf_override_get_time(override);
-	struct tm *lt = localtime(&date);
-	char timestamp[] = "yyyy-mm-ddThh:mm:ss";
-	snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
-		 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
-	xmlNewProp(override_node, BAD_CAST "date", BAD_CAST timestamp);
+	const char *tm = xccdf_override_get_time(override);
+	if(tm) {
+		xmlNewProp(override_node, BAD_CAST "date", BAD_CAST tm);
+	}
 
 	const char *authority = xccdf_override_get_authority(override);
 	if (authority)

@@ -348,7 +348,7 @@ struct xccdf_score {
 };
 
 struct xccdf_override {
-	time_t time;
+	char *time;
 	char *authority;
 	xccdf_test_result_type_t old_result;
 	xccdf_test_result_type_t new_result;
