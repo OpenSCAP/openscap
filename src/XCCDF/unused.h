@@ -83,7 +83,7 @@ struct oscap_reference_iterator *xccdf_result_get_references(const struct xccdf_
 struct xccdf_warning_iterator *xccdf_result_get_warnings(const struct xccdf_result *item);
 const char *xccdf_result_get_cluster_id(const struct xccdf_result *item);
 const char *xccdf_result_get_version_update(const struct xccdf_result *item);
-time_t xccdf_result_get_version_time(const struct xccdf_result *item);
+const char *xccdf_result_get_version_time(const struct xccdf_result *item);
 float xccdf_result_get_weight(const struct xccdf_result *item);
 struct xccdf_item *xccdf_result_get_parent(const struct xccdf_result *item);
 const char *xccdf_result_get_extends(const struct xccdf_result *item);
@@ -111,7 +111,7 @@ bool xccdf_value_set_weight(struct xccdf_value *item, xccdf_numeric newval);
 bool xccdf_result_set_weight(struct xccdf_result *item, xccdf_numeric newval);
 bool xccdf_result_set_cluster_id(struct xccdf_result *item, const char *newval);
 bool xccdf_result_set_extends(struct xccdf_result *item, const char *newval);
-bool xccdf_result_set_version_time(struct xccdf_result *item, time_t newval);
+bool xccdf_result_set_version_time(struct xccdf_result *item, const char *newval);
 bool xccdf_result_set_version_update(struct xccdf_result *item, const char *newval);
 bool xccdf_profile_set_cluster_id(struct xccdf_profile *item, const char *newval);
 bool xccdf_benchmark_set_cluster_id(struct xccdf_benchmark *item, const char *newval);

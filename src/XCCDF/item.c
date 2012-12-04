@@ -166,11 +166,13 @@ void xccdf_item_base_clone(struct xccdf_item_base *new_base, const struct xccdf_
 {
 	new_base->id = oscap_strdup(old_base->id);
 	new_base->cluster_id = oscap_strdup(old_base->cluster_id);
-	new_base->version = oscap_strdup(old_base->version);
-	new_base->version_update = oscap_strdup(old_base->version_update);
 	new_base->extends = oscap_strdup(old_base->extends);
 
-	new_base->version_time = old_base->version_time;
+	new_base->version = oscap_strdup(old_base->version);
+	new_base->version_update = oscap_strdup(old_base->version_update);
+	new_base->version_time = oscap_strdup(old_base->version_time);
+
+
 	new_base->weight = old_base->weight;
 	new_base->parent = NULL;
 
@@ -226,6 +228,7 @@ void xccdf_item_release(struct xccdf_item *item)
 		if (item->type != XCCDF_BENCHMARK) xccdf_benchmark_unregister_item(item);
 		oscap_free(item->item.id);
 		oscap_free(item->item.cluster_id);
+		oscap_free(item->item.version_time);
 		oscap_free(item->item.version_update);
 		oscap_free(item->item.version);
 		oscap_free(item->item.extends);
@@ -376,20 +379,19 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 	}
 	oscap_reference_iterator_free(dc_statuses);
 
-    time_t vt = xccdf_item_get_version_time(item);
+	/* version and attributes */
 	const char *version = xccdf_item_get_version(item);
-	if (xccdf_item_get_type(item) != XCCDF_BENCHMARK && (version || vt || xccdf_item_get_version_update(item))) {
+	if ((xccdf_item_get_type(item) != XCCDF_BENCHMARK) && version) {
 		xmlNode* version_node = xmlNewTextChild(item_node, ns_xccdf, BAD_CAST "version", BAD_CAST version);
-        if (xccdf_item_get_version_update(item))
-		    xmlNewProp(version_node, BAD_CAST "update", BAD_CAST xccdf_item_get_version_update(item));
-        if (vt) {
-            struct tm *lt = localtime(&vt);
-            char timestamp[] = "yyyy-mm-ddThh:mm:ss";
-            snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
-                 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
-            xmlNewProp(version_node, BAD_CAST "time", BAD_CAST timestamp);
-        }
-    }
+
+		const char *version_update = xccdf_item_get_version_update(item);
+		if (version_update)
+			xmlNewProp(version_node, BAD_CAST "update", BAD_CAST version_update);
+
+		const char *version_time = xccdf_item_get_version_time(item);
+		if (version_time)
+			xmlNewProp(version_node, BAD_CAST "time", BAD_CAST version_time);
+	}
 
 	/* Handle generic item child nodes */
 	xccdf_texts_to_dom(xccdf_item_get_title(item), item_node, "title");
@@ -757,16 +759,16 @@ bool xccdf_item_process_element(struct xccdf_item * item, xmlTextReaderPtr reade
         oscap_list_add(item->item.dc_statuses, oscap_reference_new_parse(reader));
 		return true;
 	case XCCDFE_VERSION: {
-        xmlNode *ver = xmlTextReaderExpand(reader);
-        char *vt = (char*) xmlGetProp(ver, BAD_CAST "time");
-        if (vt) item->item.version_time = oscap_get_datetime(vt);
-        oscap_free(vt);
-        item->item.version_update = (char*) xmlGetProp(ver, BAD_CAST "update");
-        item->item.version = (char *) xmlNodeGetContent(ver);
-        if (oscap_streq(item->item.version, "")) {
-            oscap_free(item->item.version);
-            item->item.version = NULL;
-        }
+	        xmlNode *ver = xmlTextReaderExpand(reader);
+		/* optional attributes */
+		item->item.version_time = (char*) xmlGetProp(ver, BAD_CAST "time");
+		item->item.version_update = (char*) xmlGetProp(ver, BAD_CAST "update");
+		/* content */
+		item->item.version = (char *) xmlNodeGetContent(ver);
+		if (oscap_streq(item->item.version, "")) {
+			oscap_free(item->item.version);
+			item->item.version = NULL;
+		}
 		return true;
     }
 	case XCCDFE_RATIONALE:
@@ -847,7 +849,9 @@ XCCDF_ITEM_ADDER(struct oscap_text *, rationale, rationale)
 
 XCCDF_ITEM_GETTER(const char *, version)
 XCCDF_ITEM_GETTER(const char *, cluster_id)
-XCCDF_ITEM_GETTER(const char *, version_update) XCCDF_ITEM_GETTER(time_t, version_time) XCCDF_ITEM_GETTER(float, weight)
+XCCDF_ITEM_GETTER(const char *, version_update)
+XCCDF_ITEM_GETTER(const char *, version_time)
+XCCDF_ITEM_GETTER(float, weight)
 XCCDF_ITEM_GETTER(struct xccdf_item *, parent)
 XCCDF_ITEM_GETTER(const char *, extends)
 XCCDF_FLAG_GETTER(resolved)
@@ -878,7 +882,7 @@ OSCAP_ITERATOR_GEN(xccdf_warning)
 OSCAP_ITERATOR_REMOVE_F(xccdf_warning)
 
 XCCDF_ITEM_SETTER_SIMPLE(xccdf_numeric, weight)
-XCCDF_ITEM_SETTER_SIMPLE(time_t, version_time)
+XCCDF_ITEM_SETTER_STRING(version_time)
 XCCDF_ITEM_SETTER_STRING(version)
 XCCDF_ITEM_SETTER_STRING(version_update)
 XCCDF_ITEM_SETTER_STRING(extends)

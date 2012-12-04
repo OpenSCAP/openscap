@@ -2387,7 +2387,7 @@ struct xccdf_warning_iterator *xccdf_value_get_warnings(const struct xccdf_value
 /// @memberof xccdf_value
 const char *xccdf_value_get_version_update(const struct xccdf_value *value);
 /// @memberof xccdf_value
-time_t xccdf_value_get_version_time(const struct xccdf_value *value);
+const char *xccdf_value_get_version_time(const struct xccdf_value *value);
 /// @memberof xccdf_value
 struct xccdf_benchmark *xccdf_value_get_benchmark(const struct xccdf_value *value);
 /// @memberof xccdf_value
@@ -2406,7 +2406,7 @@ const char *xccdf_item_get_cluster_id(const struct xccdf_item *item);
 /// @memberof xccdf_item
 const char *xccdf_item_get_version_update(const struct xccdf_item *item);
 /// @memberof xccdf_item
-time_t xccdf_item_get_version_time(const struct xccdf_item *item);
+const char *xccdf_item_get_version_time(const struct xccdf_item *item);
 /// @memberof xccdf_item
 float xccdf_item_get_weight(const struct xccdf_item *item);
 /// @memberof xccdf_item
@@ -2419,24 +2419,24 @@ struct xccdf_warning_iterator *xccdf_benchmark_get_warnings(const struct xccdf_b
 /// @memberof xccdf_benchmark
 const char *xccdf_benchmark_get_version_update(const struct xccdf_benchmark *benchmark);
 /// @memberof xccdf_benchmark
-time_t xccdf_benchmark_get_version_time(const struct xccdf_benchmark *benchmark);
+const char *xccdf_benchmark_get_version_time(const struct xccdf_benchmark *benchmark);
 
 /// @memberof xccdf_profile
 const char *xccdf_profile_get_version_update(const struct xccdf_profile *profile);
 /// @memberof xccdf_profile
-time_t xccdf_profile_get_version_time(const struct xccdf_profile *profile);
+const char *xccdf_profile_get_version_time(const struct xccdf_profile *profile);
 /// @memberof xccdf_profile
 const char *xccdf_profile_get_note_tag(const struct xccdf_profile *profile);
 
 /// @memberof xccdf_rule
 const char *xccdf_rule_get_version_update(const struct xccdf_rule *rule);
 /// @memberof xccdf_rule
-time_t xccdf_rule_get_version_time(const struct xccdf_rule *rule);
+const char *xccdf_rule_get_version_time(const struct xccdf_rule *rule);
 /// @memberof xccdf_rule
 struct xccdf_benchmark *xccdf_rule_get_benchmark(const struct xccdf_rule *rule);
 
 /// @memberof xccdf_group
-time_t xccdf_group_get_version_time(const struct xccdf_group *group);
+const char *xccdf_group_get_version_time(const struct xccdf_group *group);
 /// @memberof xccdf_group
 const char *xccdf_group_get_version_update(const struct xccdf_group *group);
 /// @memberof xccdf_group
@@ -2633,7 +2633,7 @@ bool xccdf_item_set_extends(struct xccdf_item *item, const char *newval);
 /// @memberof xccdf_item
 bool xccdf_item_set_version(struct xccdf_item *item, const char *newval);
 /// @memberof xccdf_item
-bool xccdf_item_set_version_time(struct xccdf_item *item, time_t newval);
+bool xccdf_item_set_version_time(struct xccdf_item *item, const char *newval);
 /// @memberof xccdf_item
 bool xccdf_item_set_version_update(struct xccdf_item *item, const char *newval);
 /// @memberof xccdf_item
@@ -2660,7 +2660,7 @@ bool xccdf_benchmark_set_id(struct xccdf_benchmark *item, const char *newval);
 /// @memberof xccdf_benchmark
 bool xccdf_benchmark_set_version(struct xccdf_benchmark *item, const char *newval);
 /// @memberof xccdf_benchmark
-bool xccdf_benchmark_set_version_time(struct xccdf_benchmark *item, time_t newval);
+bool xccdf_benchmark_set_version_time(struct xccdf_benchmark *item, const char *newval);
 /// @memberof xccdf_benchmark
 bool xccdf_benchmark_set_version_update(struct xccdf_benchmark *item, const char *newval);
 /// @memberof xccdf_benchmark
@@ -2684,7 +2684,7 @@ bool xccdf_profile_set_extends(struct xccdf_profile *item, const char *newval);
 /// @memberof xccdf_profile
 bool xccdf_profile_set_version(struct xccdf_profile *item, const char *newval);
 /// @memberof xccdf_profile
-bool xccdf_profile_set_version_time(struct xccdf_profile *item, time_t newval);
+bool xccdf_profile_set_version_time(struct xccdf_profile *item, const char *newval);
 /// @memberof xccdf_profile
 bool xccdf_profile_set_version_update(struct xccdf_profile *item, const char *newval);
 /// @memberof xccdf_profile
@@ -2699,7 +2699,7 @@ bool xccdf_rule_set_extends(struct xccdf_rule *item, const char *newval);
 /// @memberof xccdf_rule
 bool xccdf_rule_set_version(struct xccdf_rule *item, const char *newval);
 /// @memberof xccdf_rule
-bool xccdf_rule_set_version_time(struct xccdf_rule *item, time_t newval);
+bool xccdf_rule_set_version_time(struct xccdf_rule *item, const char *newval);
 /// @memberof xccdf_rule
 bool xccdf_rule_set_version_update(struct xccdf_rule *item, const char *newval);
 /// @memberof xccdf_rule
@@ -2732,7 +2732,7 @@ bool xccdf_group_set_extends(struct xccdf_group *item, const char *newval);
 /// @memberof xccdf_group
 bool xccdf_group_set_version(struct xccdf_group *item, const char *newval);
 /// @memberof xccdf_group
-bool xccdf_group_set_version_time(struct xccdf_group *item, time_t newval);
+bool xccdf_group_set_version_time(struct xccdf_group *item, const char *newval);
 /// @memberof xccdf_group
 bool xccdf_group_set_version_update(struct xccdf_group *item, const char *newval);
 /// @memberof xccdf_group
@@ -2755,7 +2755,7 @@ bool xccdf_value_set_extends(struct xccdf_value *item, const char *newval);
 /// @memberof xccdf_value
 bool xccdf_value_set_version(struct xccdf_value *item, const char *newval);
 /// @memberof xccdf_value
-bool xccdf_value_set_version_time(struct xccdf_value *item, time_t newval);
+bool xccdf_value_set_version_time(struct xccdf_value *item, const char *newval);
 /// @memberof xccdf_value
 bool xccdf_value_set_version_update(struct xccdf_value *item, const char *newval);
 /// @memberof xccdf_value

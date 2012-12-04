@@ -74,7 +74,7 @@ struct xccdf_item_base {
 
 	char *version;
 	char *version_update;
-	time_t version_time;
+	char *version_time;
 
 	struct xccdf_item *parent;
 	char *extends;
