@@ -139,38 +139,22 @@ static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 	lfs->cnt = DEVID_ARRAY_SIZE;
 	i = 0;
 
-	if (fs == NULL) {
-		while ((ment = getmntent(fp)) != NULL) {
-                        /* TODO: Is this check reliable? */
-                        if (stat (ment->mnt_fsname, &st) == 0
-			    && S_ISBLK(st.st_mode)) {
-				if (stat(ment->mnt_dir, &st) != 0)
-					continue;
-
-				if (i >= lfs->cnt) {
-					lfs->cnt += DEVID_ARRAY_ADD;
-					lfs->ids = realloc(lfs->ids, sizeof(dev_t) * lfs->cnt);
-				}
-
-				memcpy(&(lfs->ids[i++]), &st.st_dev, sizeof(dev_t));
-			}
+	while ((ment = getmntent(fp)) != NULL) {
+		if (fs == NULL) {
+			if (strcmp(ment->mnt_fsname, "tmpfs") != 0
+			    && (stat(ment->mnt_fsname, &st) != 0
+				|| !(S_ISBLK(st.st_mode))))
+				continue;
+		} else if (!match_fs(ment->mnt_type, fs, fs_cnt)) {
+				continue;
 		}
-	} else {
-		while ((ment = getmntent(fp)) != NULL) {
-
-			if (match_fs(ment->mnt_type, fs, fs_cnt)) {
-
-				if (stat(ment->mnt_dir, &st) != 0)
-					continue;
-
-				if (i >= lfs->cnt) {
-					lfs->cnt += DEVID_ARRAY_ADD;
-					lfs->ids = realloc(lfs->ids, sizeof(dev_t) * lfs->cnt);
-				}
-
-				memcpy(&(lfs->ids[i++]), &st.st_dev, sizeof(dev_t));
-			}
+		if (stat(ment->mnt_dir, &st) != 0)
+			continue;
+		if (i >= lfs->cnt) {
+			lfs->cnt += DEVID_ARRAY_ADD;
+			lfs->ids = realloc(lfs->ids, sizeof(dev_t) * lfs->cnt);
 		}
+		memcpy(&(lfs->ids[i++]), &st.st_dev, sizeof(dev_t));
 	}
 
 	fclose(fp);
