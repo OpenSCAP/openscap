@@ -12,7 +12,7 @@
   <xs:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5" schemaLocation="../../oval/5.10/oval-definitions-schema.xsd"/>
   <xs:import namespace="http://cpe.mitre.org/dictionary/2.0" schemaLocation="cpe-dictionary_2.3.xsd"/>
   <xs:import namespace="http://scap.nist.gov/schema/ocil/2.0" schemaLocation="../../ocil/2.0/ocil-2.0.xsd"/>
-  <xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="xmldsig-core-schema.xsd"/>
+  <xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="../../common/xmldsig-core-schema.xsd"/>
   <xs:import namespace="urn:oasis:names:tc:entity:xmlns:xml:catalog" schemaLocation="catalog.xsd"/>
   <xs:import namespace="http://www.w3.org/1999/xlink" schemaLocation="xlink.xsd"/>
   <xs:element name="data-stream-collection">
