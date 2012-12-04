@@ -84,6 +84,8 @@ struct xccdf_result * xccdf_result_clone(const struct xccdf_result * result)
 static inline void xccdf_result_free_impl(struct xccdf_item *result)
 {
 	if (result != NULL) {
+		oscap_free(result->sub.result.start_time);
+		oscap_free(result->sub.result.end_time);
 		oscap_free(result->sub.result.test_system);
 		oscap_free(result->sub.result.benchmark_uri);
 		oscap_free(result->sub.result.profile);
@@ -103,27 +105,10 @@ static inline void xccdf_result_free_impl(struct xccdf_item *result)
 	}
 }
 
-time_t xccdf_result_get_start_time(const struct xccdf_result* result)
-{
-	return ((struct xccdf_item *)result)->sub.result.start_time;
-}
-
-time_t xccdf_result_get_end_time(const struct xccdf_result* result)
-{
-	return ((struct xccdf_item *)result)->sub.result.end_time;
-}
-
-_Bool xccdf_result_set_start_time(struct xccdf_result* result, time_t start)
-{
-	return (((struct xccdf_item *)result)->sub.result.start_time = start);
-}
-
-_Bool xccdf_result_set_end_time(struct xccdf_result* result, time_t end)
-{
-	return (((struct xccdf_item *)result)->sub.result.end_time = end);
-}
 XCCDF_FREE_GEN(result)
 
+XCCDF_ACCESSOR_STRING(result, start_time)
+XCCDF_ACCESSOR_STRING(result, end_time)
 XCCDF_ACCESSOR_STRING(result, test_system)
 XCCDF_ACCESSOR_STRING(result, benchmark_uri)
 XCCDF_ACCESSOR_STRING(result, profile)
@@ -573,12 +558,17 @@ struct xccdf_result *xccdf_result_new_parse(xmlTextReaderPtr reader)
 
 	struct xccdf_item *res = XITEM(xccdf_result_new());
 
-	if (!xccdf_item_process_attributes(res, reader)) goto fail;
+	if (!xccdf_item_process_attributes(res, reader))
+		goto fail;
 
-	if (xccdf_attribute_has(reader, XCCDFA_END_TIME))
-		res->sub.result.end_time = oscap_get_datetime(xccdf_attribute_get(reader, XCCDFA_END_TIME));
-	else goto fail;
-	res->sub.result.start_time = oscap_get_datetime(xccdf_attribute_get(reader, XCCDFA_START_TIME));
+	/* end time attribute is mandatory */
+	if (!xccdf_attribute_has(reader, XCCDFA_END_TIME)) {
+		oscap_seterr(OSCAP_EFAMILY_XCCDF, "Missing end-time attribute in TestResult element: %s", xccdf_item_get_id(res));
+		goto fail;
+	}
+	res->sub.result.end_time = xccdf_attribute_copy(reader, XCCDFA_END_TIME);
+	res->sub.result.start_time = xccdf_attribute_copy(reader, XCCDFA_START_TIME);
+
 	res->item.version = xccdf_attribute_copy(reader, XCCDFA_VERSION);
 	res->sub.result.test_system = xccdf_attribute_copy(reader, XCCDFA_TEST_SYSTEM);
 
@@ -679,23 +669,11 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 	}
 
 	/* Handle attributes */
-	time_t start = xccdf_result_get_start_time(result);
+	const char * start = xccdf_result_get_start_time(result);
 	if (start) {
-		struct tm *lt = localtime(&start);
-		char timestamp[] = "yyyy-mm-ddThh:mm:ss";
-		snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
-			 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
-		xmlNewProp(result_node, BAD_CAST "start-time", BAD_CAST timestamp);
+		xmlNewProp(result_node, BAD_CAST "start-time", BAD_CAST start);
 	}
-
-	time_t end = xccdf_result_get_end_time(result);
-	if (end) {
-		struct tm *lt = localtime(&end);
-		char timestamp[] = "yyyy-mm-ddThh:mm:ss";
-		snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
-			 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
-		xmlNewProp(result_node, BAD_CAST "end-time", BAD_CAST timestamp);
-	}
+	xmlNewProp(result_node, BAD_CAST "end-time", BAD_CAST xccdf_result_get_end_time(result));
 
 	/* Handle children */
 	xccdf_texts_to_dom(xccdf_result_get_remarks(result), result_node, "remark");

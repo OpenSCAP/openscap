@@ -1234,8 +1234,8 @@ struct xccdf_score * xccdf_score_clone(const struct xccdf_score * score)
 
 void xccdf_result_item_clone(struct xccdf_result_item *clone, const struct xccdf_result_item * item)
 {
-	clone->start_time = item->start_time;
-	clone->end_time = item->end_time;
+	clone->start_time = oscap_strdup(item->start_time);
+	clone->end_time = oscap_strdup(item->end_time);
 	clone->test_system = oscap_strdup(item->test_system);
 	clone->benchmark_uri = oscap_strdup(item->benchmark_uri);
 	clone->profile = oscap_strdup(item->profile);

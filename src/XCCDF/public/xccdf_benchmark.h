@@ -2531,9 +2531,9 @@ struct xccdf_rule_result_iterator *xccdf_result_get_rule_results(const struct xc
 /// @memberof xccdf_result
 struct xccdf_score_iterator *xccdf_result_get_scores(const struct xccdf_result *item);
 /// @memberof xccdf_result
-time_t xccdf_result_get_start_time(const struct xccdf_result *item);
+const char * xccdf_result_get_start_time(const struct xccdf_result *item);
 /// @memberof xccdf_result
-time_t xccdf_result_get_end_time(const struct xccdf_result *item);
+const char * xccdf_result_get_end_time(const struct xccdf_result *item);
 /// @memberof xccdf_result
 struct oscap_string_iterator *xccdf_result_get_metadata(const struct xccdf_result *result);
 
@@ -2911,9 +2911,9 @@ bool xccdf_result_set_benchmark_uri(struct xccdf_result *item, const char *newva
 /// @memberof xccdf_result
 bool xccdf_result_set_profile(struct xccdf_result *item, const char *newval);
 /// @memberof xccdf_result
-bool xccdf_result_set_start_time(struct xccdf_result *item, time_t newval);
+bool xccdf_result_set_start_time(struct xccdf_result *item, const char *newval);
 /// @memberof xccdf_result
-bool xccdf_result_set_end_time(struct xccdf_result *item, time_t newval);
+bool xccdf_result_set_end_time(struct xccdf_result *item, const char *newval);
 /// @memberof xccdf_result
 bool xccdf_result_set_version(struct xccdf_result *item, const char *newval);
 /// @memberof xccdf_result

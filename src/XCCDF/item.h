@@ -139,8 +139,8 @@ struct xccdf_value_item {
 };
 
 struct xccdf_result_item {
-	time_t start_time;
-	time_t end_time;
+	char *start_time;
+	char *end_time;
 	char *test_system;
 	char *benchmark_uri;
 	char *profile;
