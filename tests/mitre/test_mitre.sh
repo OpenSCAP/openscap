@@ -129,7 +129,7 @@ test_run "oval-def_object_component.xml" test_mitre oval-def_object_component.xm
 test_run "oval-def_regex_capture_function.xml" test_mitre oval-def_regex_capture_function.xml "true"
 # this test fails on filesystems without relatime - directory access time is changed every time 
 # is readed
-if grep " / " /proc/mounts  | grep -q relatime; then
+if (grep " /tmp " /proc/mounts || grep " / " /proc/mounts) | grep -q relatime; then
 	test_run "oval-def_set.xml" test_mitre oval-def_set.xml "true"
 fi
 test_run "oval-def_split_function.xml" test_mitre oval-def_split_function.xml "true"
