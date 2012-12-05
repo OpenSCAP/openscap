@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 #
 # Copyright 2011 Red Hat Inc., Durham, North Carolina.
 # All Rights Reserved.
@@ -15,9 +15,10 @@ function gen_tree {
 }
 
 function oval_fts {
+	echo "=== $1 ==="
 	shift
-	./oval_fts_list "$@" | sort | tee oval_fts_list.out | \
-		sed "s|${ROOT}/||" | tr '\n' ',' > oval_fts_list.out2
+	./oval_fts_list "$@" | sort | tee ${tmpdir}/oval_fts_list.out | \
+		sed "s|${ROOT}/||" | tr '\n' ',' > ${tmpdir}/oval_fts_list.out2
 	if [ $? -ne 0 ]; then
 		echo "oval_fts_list failed"
 		return 2
@@ -25,18 +26,23 @@ function oval_fts {
 
 	shift 4
 	echo -e "expected result:\n$1\noval_fts_list.out2:"
-	cat oval_fts_list.out2
+	cat ${tmpdir}/oval_fts_list.out2
 	echo
-	if [ "$(cat oval_fts_list.out2 | openssl md5)" == \
-		"$(echo -n $1 | openssl md5)" ] ; then
+	if [ "$(cat ${tmpdir}/oval_fts_list.out2 | openssl md5)" == \
+		"$(echo -n $1 | openssl md5)" ]; then
 		return 0
 	else
 		return 1
 	fi
 }
 
-ROOT="$(mktemp -d -t openscap-fts.XXXXXX)"
-gen_tree "$ROOT"
+set -e -o pipefail
+
+name=$(basename $0 .sh)
+tmpdir=$(mktemp -t -d "${name}.XXXXXX")
+ROOT=${tmpdir}/ftsroot
+echo "Temp dir: ${tmpdir}."
+gen_tree $ROOT
 
 while read args; do
 	[ -z "${args%%#*}" ] && continue
@@ -184,5 +190,4 @@ d1/d11/d111/f1111,
 
 EOF
 
-# cleanup
-rm -rf "$ROOT"
+rm -rf $tmpdir
