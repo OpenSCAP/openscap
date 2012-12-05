@@ -12,6 +12,7 @@
 MITRE_FILES="/tmp/support"
 EXTVARFILE="${MITRE_FILES}/var/linux-external-variables.xml"
 
+DISTRO="$(cat /etc/*-release | head -n1)"
 DISTRO_NAME="$(cat /etc/*-release | awk '{print $1}' | head -n1)"
 DISTRO_RELEASE="$(cat /etc/*-release | sed -n 's|^[^0-9]*\([0-9]*\).*$|\1|p' | head -n1)"
 
@@ -98,7 +99,12 @@ test_run "ind-def_filehash58_test.xml" test_mitre ind-def_filehash58_test.xml "t
 test_run "linux-def_partition_test.xml" test_mitre linux-def_partition_test.xml "true"
 test_run "linux-def_rpminfo_test.xml" test_mitre linux-def_rpminfo_test.xml "true"
 test_run "linux-def_rpmverify_test.xml" test_mitre linux-def_rpmverify_test.xml "true"
-test_run "linux-def_selinuxboolean_test.xml" test_mitre linux-def_selinuxboolean_test.xml "true"
+# Fedora 18 and RHEL-7 - no allow_console_login
+if [[ ( ${DISTRO#Fedora} != "$DISTRO" && $DISTRO_RELEASE -lt 18 ) || \
+	( ${DISTRO#Red Hat} != "$DISTRO" && $DISTRO_RELEASE -lt 7 ) ]]; then
+	test_run "linux-def_selinuxboolean_test.xml" test_mitre linux-def_selinuxboolean_test.xml "true"
+fi
+
 test_run "linux-def_selinuxsecuritycontext_test.xml" test_mitre linux-def_selinuxsecuritycontext_test.xml "true"
 test_run "linux-def_inetlisteningservers_test.xml" test_mitre linux-def_inetlisteningservers_test.xml "true"
 
@@ -146,8 +152,9 @@ test_run "unix-def_password_test.xml" test_mitre unix-def_password_test.xml "tru
 #test_run "unix-def_process58_test.xml" test_mitre unix-def_process58_test.xml "true"
 #test_run "unix-def_process_test.xml" test_mitre unix-def_process_test.xml "true"
 
-# Fedora 16 (no init)
-if [[ ! ( $DISTRO_NAME == "Fedora" && $DISTRO_RELEASE > 15 ) ]]; then
+# Fedora 16 and RHEL-7 - no runlevel
+if [[ ( ${DISTRO#Fedora} != "$DISTRO" && $DISTRO_RELEASE -lt 16 ) || \
+	( ${DISTRO#Red Hat} != "$DISTRO" && $DISTRO_RELEASE -lt 7 ) ]]; then
 	test_run "unix-def_runlevel_test.xml" test_mitre unix-def_runlevel_test.xml "true"
 fi
 
