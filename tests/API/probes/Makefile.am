@@ -26,7 +26,7 @@ TESTS_ENVIRONMENT = \
 	LD_PRELOAD=$(top_builddir)/src/.libs/libopenscap_testing.so \
 	OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
 	$(SHELL) -x
-TESTS = test_api_probes.sh fts.sh
+TESTS = all.sh
 check_PROGRAMS = test_api_probes_smoke oval_fts_list
 
 test_api_probes_smoke_SOURCES = test_api_probes_smoke.c
@@ -34,7 +34,7 @@ oval_fts_list_CFLAGS= -I$(top_srcdir)/src/OVAL/probes
 oval_fts_list_SOURCES= oval_fts_list.c
 
 EXTRA_DIST += \
+	all.sh \
 	fts.sh \
 	gentree.sh \
-	test_api_probes.sh \
 	test_api_probes_smoke.c

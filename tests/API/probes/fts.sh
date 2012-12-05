@@ -6,8 +6,6 @@
 # Authors:
 #      Daniel Kopecek <dkopecek@redhat.com>
 #      Tomas Heinrich <theinric@redhat.com>
-#
-. ${srcdir}/../../test_common.sh
 
 function gen_tree {
 	echo "Generating tree for traversal" >&2
@@ -37,14 +35,12 @@ function oval_fts {
 	fi
 }
 
-# init
-test_init "fts.log"
 ROOT="$(mktemp -d -t openscap-fts.XXXXXX)"
 gen_tree "$ROOT"
 
 while read args; do
 	[ -z "${args%%#*}" ] && continue
-	test_run "OVAL_FTS ${args%% *}" oval_fts $args
+	eval oval_fts $args
 done <<EOF
 test1 \
 '' '' \
@@ -190,4 +186,3 @@ EOF
 
 # cleanup
 rm -rf "$ROOT"
-test_exit
