@@ -85,12 +85,16 @@ oscap_acquire_url_download(const char *temp_dir, const char *url)
 	FILE *fp;
 	CURL *curl;
 	CURLcode res;
+	mode_t old_mode;
 
 	printf("Downloading: %s ... ", url);
 	fflush(stdout);
 	output_filename = malloc(PATH_MAX * sizeof(char));
 	snprintf(output_filename, PATH_MAX, "%s/%s", temp_dir, TEMP_URL_TEMPLATE);
+
+	old_mode = umask(077);  /* Override unusual umask. Ensure 0700 permissions. */
 	output_fd = mkstemp(output_filename);
+	(void) umask(old_mode);
 	if (output_fd == -1) {
 		printf("error\n");
 		fprintf(stderr, "%s\n", strerror(errno));
