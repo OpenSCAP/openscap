@@ -102,7 +102,8 @@ oscap_acquire_url_download(const char *temp_dir, const char *url)
 	if (fp == NULL) {
 		printf("error\n");
 		fprintf(stderr, "%s\n", strerror(errno));
-		remove(output_filename);
+		if (remove(output_filename))
+			fprintf(stderr, "Failed to remove temp file %s. %s\n", output_filename, strerror(errno));
 		close(output_fd);
 		free(output_filename);
 		return NULL;
@@ -112,7 +113,8 @@ oscap_acquire_url_download(const char *temp_dir, const char *url)
 	if (curl == NULL) {
 		printf("error\n");
 		fprintf(stderr, "Failed to initialize libcurl.\n");
-		remove(output_filename);
+		if (remove(output_filename))
+			fprintf(stderr, "Failed to remove temp file %s. %s\n", output_filename, strerror(errno));
 		fclose(fp);
 		free(output_filename);
 		return NULL;
@@ -124,7 +126,8 @@ oscap_acquire_url_download(const char *temp_dir, const char *url)
 	if (res != 0) {
 		printf("error\n");
 		fprintf(stderr, "%s\n", curl_easy_strerror(res));
-		remove(output_filename);
+		if (remove(output_filename))
+			fprintf(stderr, "Failed to remove temp file %s. %s\n", output_filename, strerror(errno));
 		free(output_filename);
 		output_filename = NULL;
 	}
