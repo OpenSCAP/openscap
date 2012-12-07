@@ -147,13 +147,13 @@
                   <version operation="pattern match">^6[^\d]</version>
             </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:16" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-                  <version operation="pattern match">^16[^\d]</version>
+                  <version operation="pattern match">^16$</version>
             </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:17" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-                  <version operation="pattern match">^17[^\d]</version>
+                  <version operation="pattern match">^17$</version>
             </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:18" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-                  <version operation="pattern match">^18[^\d]</version>
+                  <version operation="pattern match">^18$</version>
             </rpminfo_state>
       </states>
 </oval_definitions>
