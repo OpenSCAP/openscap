@@ -232,8 +232,10 @@ static int app_info(const struct oscap_action *action)
 				snprintf(xccdf_file, PATH_MAX, "%s/%s", temp_dir, "xccdf.xml");
 				struct xccdf_benchmark* bench = NULL;
 		                bench = xccdf_benchmark_import(xccdf_file);
-				if(!bench)
+				if(!bench) {
+					oscap_acquire_cleanup_dir(&temp_dir);
 					goto cleanup;
+				}
 
 				/* print profiles */
 				struct xccdf_profile_iterator * prof_it = xccdf_benchmark_get_profiles(bench);
