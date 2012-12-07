@@ -97,7 +97,7 @@
             </rpminfo_test>
             <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:6" version="1" check="at least one" comment="redhat-release is version 6"
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-                  <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:1"/>
+                  <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:3"/>
                   <state state_ref="oval:org.open-scap.cpe.rhel:ste:6"/>
             </rpminfo_test>
             <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.fedora:tst:16" version="1" check="at least one" comment="fedora-release is version Fedora 16"
@@ -123,6 +123,16 @@
             <lin-def:rpminfo_object id="oval:org.open-scap.cpe.fedora-release:obj:2" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <lin-def:name>fedora-release</lin-def:name>
             </lin-def:rpminfo_object>
+            <lin-def:rpmverifyfile_object id="oval:org.open-scap.cpe.redhat-release:obj:3" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <!-- Sadly, OVAL cannot do the right query (rpm -q -whatprovides system-release). Let's check the filename instead. -->
+                  <behaviors nolinkto='true' nomd5='true' nosize='true' nouser='true' nogroup='true' nomtime='true' nomode='true' nordev='true' noconfigfiles='true' noghostfiles='true' />
+                  <lin-def:name operation="pattern match"/>
+                  <lin-def:epoch operation="pattern match"/>
+                  <lin-def:version operation="pattern match"/>
+                  <lin-def:release operation="pattern match"/>
+                  <lin-def:arch operation="pattern match"/>
+                  <lin-def:filepath>/etc/redhat-release</lin-def:filepath>
+            </lin-def:rpmverifyfile_object>
             <family_object id="oval:org.open-scap.cpe.unix:obj:1" version="1"  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"/>
       </objects>
       <states>
@@ -133,6 +143,7 @@
                   <version operation="pattern match">^5[^\d]</version>
             </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.rhel:ste:6" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <name operation="pattern match">^redhat-release</name>
                   <version operation="pattern match">^6[^\d]</version>
             </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:16" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
