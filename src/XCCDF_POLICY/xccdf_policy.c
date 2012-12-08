@@ -1843,8 +1843,10 @@ _xccdf_policy_add_selector_internal(struct xccdf_policy *policy, struct xccdf_be
 		oscap_seterr(OSCAP_EFAMILY_XCCDF, "Selector ID(%s) does not exist in Benchmark.", xccdf_select_get_item(sel));
 		return false;
 	}
-	if (!oscap_htable_iterator_has_more(hit))
+	if (!oscap_htable_iterator_has_more(hit)) {
+		oscap_htable_iterator_free(hit);
 		return false;
+	}
 	while (oscap_htable_iterator_has_more(hit)) {
 		const char *item_id = oscap_htable_iterator_next_key(hit);
 		if (item_id == NULL) {
