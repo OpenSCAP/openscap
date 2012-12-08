@@ -52,9 +52,8 @@ bool xccdf_content_parse(xmlTextReaderPtr reader, struct xccdf_item *parent)
 		break;
 	default:
 		assert(false);
+		return false;
 	}
-
-	assert(list != NULL);
 
 	switch (xccdf_element_get(reader)) {
 	case XCCDFE_RULE:
