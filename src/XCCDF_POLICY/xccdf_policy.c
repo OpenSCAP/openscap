@@ -501,13 +501,13 @@ static struct oscap_list * xccdf_policy_check_get_value_bindings(struct xccdf_po
         while (xccdf_check_export_iterator_has_more(check_it)) {
             check = xccdf_check_export_iterator_next(check_it);
 
-            binding = xccdf_value_binding_new();
             value = (struct xccdf_value *) xccdf_benchmark_get_item(benchmark, xccdf_check_export_get_value(check));
             if (value == NULL) {
                 oscap_seterr(OSCAP_EFAMILY_XCCDF, "Value \"%s\" does not exist in benchmark", xccdf_check_export_get_value(check));
 		oscap_list_free(list, oscap_free);
                 return NULL;
             }
+            binding = xccdf_value_binding_new();
 
             /* Apply related setvalue from policy profile */
             s_value = xccdf_policy_get_setvalue(policy, xccdf_value_get_id(value));
