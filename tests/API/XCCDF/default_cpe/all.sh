@@ -52,11 +52,13 @@ function test_rhel {
     if [ "x$?" != "x0" ]; then
         EXPECTED_NA=1
     else
-        RHEL_RELEASE=$(rpm -q redhat-release)
+        RHEL_RELEASE=$(rpm -q --whatprovides redhat-release)
         if [ "x$?" != "x0" ]; then
             EXPECTED_NA=1
         else
-            if echo "$RHEL_RELEASE" | grep -F ".el${RHEL_VERSION}."; then
+            if ! echo "$RHEL_RELEASE" | grep '^redhat-release'; then
+                EXPECTED_NA=1
+            elif echo "$RHEL_RELEASE" | grep -F ".el${RHEL_VERSION}."; then
                 EXPECTED_NA=0
             elif [ "$RHEL_VERSION" == "5" ] && echo "$RHEL_RELEASE" | grep '^redhat-release-5'; then
                 # On RHEL 5 the redhat-release package does not have %{RELEASE} defined.
