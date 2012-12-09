@@ -58,6 +58,9 @@ function test_rhel {
         else
             if ! echo "$RHEL_RELEASE" | grep '^redhat-release'; then
                 EXPECTED_NA=1
+            elif rpm -q --queryformat "%{VERSION}" --whatprovides redhat-release | grep ${RHEL_VERSION}'\.9'; then
+                # Workaround alpha and beta releases of Red Hat Enterprise Linux
+                EXPECTED_NA=0
             elif echo "$RHEL_RELEASE" | grep -F ".el${RHEL_VERSION}."; then
                 EXPECTED_NA=0
             elif [ "$RHEL_VERSION" == "5" ] && echo "$RHEL_RELEASE" | grep '^redhat-release-5'; then
