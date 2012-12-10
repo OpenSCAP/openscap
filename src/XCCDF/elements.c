@@ -132,9 +132,11 @@ xccdf_version_cmp(const struct xccdf_version_info *actual, const char *desired)
 	if (oscap_streq(desired, "") || oscap_streq(desired, "unknown"))
 		return -1;
 
-	// FIXME: This will only work as long as XCCDF version components don't
-	//        go higher than 9. Consider strcmp("9.1", "19.1").
+#ifdef __USE_GNU
+	return strverscmp(xccdf_version_info_get_version(actual), desired);
+#else
 	return strcmp(xccdf_version_info_get_version(actual), desired);
+#endif
 }
 
 struct xccdf_element_spec {
