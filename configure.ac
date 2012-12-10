@@ -1264,6 +1264,7 @@ AC_CONFIG_FILES([Makefile
                  tests/API/XCCDF/fix/Makefile
                  tests/API/XCCDF/unittests/Makefile
                  tests/API/XCCDF/parser/Makefile
+                 tests/API/XCCDF/report/Makefile
 
                  tests/schemas/Makefile
 
