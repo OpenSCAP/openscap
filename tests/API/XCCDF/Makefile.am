@@ -1,3 +1,3 @@
 
-SUBDIRS = applicability default_cpe unittests parser
+SUBDIRS = applicability default_cpe unittests parser fix
 
