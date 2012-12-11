@@ -328,6 +328,41 @@ int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, 
 	return -1;
 }
 
+#define XCCDF11_NS "http://checklists.nist.gov/xccdf/1.1"
+#define XCCDF12_NS "http://checklists.nist.gov/xccdf/1.2"
+
+/*
+ * Goes through the tree (DFS) and changes namespace of all XCCDF 1.2 elements
+ * to XCCDF 1.1 namespace URI. This ensures that the XCCDF works fine with
+ * XSLTs provided in openscap.
+ */
+static int xccdf_ns_xslt_workaround(xmlDocPtr doc, xmlNodePtr node)
+{
+	if (node == NULL || node->ns == NULL || strcmp((const char*)node->ns->href, XCCDF12_NS) != 0) {
+		// nothing to do, this part of the document isn't XCCDF 1.2
+		return 0;
+	}
+
+	xmlNsPtr xccdf11 = xmlNewNs(node,
+			BAD_CAST XCCDF11_NS,
+			BAD_CAST "cdf11");
+
+	xmlSetNs(node, xccdf11);
+
+	xmlNodePtr child = node->children;
+
+	for (; child != NULL; child = child->next) {
+		if (child->type != XML_ELEMENT_NODE)
+			continue;
+
+		int res = xccdf_ns_xslt_workaround(doc, child);
+		if (res != 0)
+			return res;
+	}
+
+	return 0;
+}
+
 /*
  * Apply stylesheet on XML file.
  * If xsltfile is an absolute path to the stylesheet, path_to_xslt will not be used.
@@ -347,6 +382,11 @@ static int oscap_apply_xslt_path(const char *xmlfile, const char *xsltfile,
 	char *args[argc+1];
 	memset(args, 0, sizeof(char*) * (argc + 1));
 
+	// Should we change all XCCDF namespaces (versioned) to one?
+	// This is a workaround needed to make XSLTs work with multiple versions.
+	// (currently 1.1 and 1.2)
+	bool ns_workaround = false;
+
 	/*  is it an absolute path? */
 	char * xsltpath;
 	if (strstr(xsltfile, "/") == xsltfile) {
@@ -362,6 +402,11 @@ static int oscap_apply_xslt_path(const char *xmlfile, const char *xsltfile,
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "XSLT file '%s' not found in path '%s' when trying to transform '%s'", xsltfile, path_to_xslt, xmlfile);
 			goto cleanup;
 		}
+
+		if (strcmp(xsltfile, "xccdf-report.xsl") == 0 ||
+				strcmp(xsltfile, "fix.xsl") == 0 ||
+				strcmp(xsltfile, "security-guide.xsl") == 0)
+			ns_workaround = true;
 	}
 
 	cur = xsltParseStylesheetFile(BAD_CAST xsltpath);
@@ -374,6 +419,13 @@ static int oscap_apply_xslt_path(const char *xmlfile, const char *xsltfile,
 	if (doc == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not parse the XML document '%s'", xmlfile);
 		goto cleanup;
+	}
+
+	if (ns_workaround) {
+		if (xccdf_ns_xslt_workaround(doc, xmlDocGetRootElement(doc)) != 0) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Had problems employing XCCDF XSLT namespace workaround for XML document '%s'", xmlfile);
+			goto cleanup;
+		}
 	}
 
 	for (size_t i = 0; i < argc; i += 2) {

@@ -32,6 +32,6 @@ function test_generate_fix {
 test_init "test_api_xccdf_fix.log"
 
 test_run "test_api_xccdf_fix_xccdf11" test_generate_fix results-xccdf11.xml xccdf_org.open-scap_testresult_default-profile echo
-#test_run "test_api_xccdf_fix_xccdf12" test_generate_fix results-xccdf12.xml xccdf_org.open-scap_testresult_default-profile echo
+test_run "test_api_xccdf_fix_xccdf12" test_generate_fix results-xccdf12.xml xccdf_org.open-scap_testresult_default-profile echo
 
 test_exit

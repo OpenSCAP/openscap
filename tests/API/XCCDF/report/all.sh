@@ -33,6 +33,6 @@ function test_generate_report {
 test_init "test_api_xccdf_report.log"
 
 test_run "test_api_xccdf_report_xccdf11" test_generate_report results-xccdf11.xml xccdf_moc.elpmaxe.www_rule_1
-#test_run "test_api_xccdf_report_xccdf12" test_generate_report results-xccdf12.xml xccdf_moc.elpmaxe.www_rule_1
+test_run "test_api_xccdf_report_xccdf12" test_generate_report results-xccdf12.xml xccdf_moc.elpmaxe.www_rule_1
 
 test_exit
