@@ -529,6 +529,7 @@ AC_CONFIG_FILES([Makefile
                  tests/API/XCCDF/applicability/Makefile
                  tests/API/XCCDF/default_cpe/Makefile
                  tests/API/XCCDF/fix/Makefile
+                 tests/API/XCCDF/guide/Makefile
                  tests/API/XCCDF/unittests/Makefile
                  tests/API/XCCDF/parser/Makefile
                  tests/API/XCCDF/report/Makefile
