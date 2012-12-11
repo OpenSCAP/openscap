@@ -108,8 +108,14 @@ $val        - actual XCCDF fix text value (substitutions already performed, <fix
 <xsl:template match='/'>
   <xsl:call-template name='tpl.elem'><xsl:with-param name='elem' select='"before"'/></xsl:call-template>
   <xsl:choose>
-    <xsl:when test='$testresult'><xsl:apply-templates select='$testresult/cdf:rule-result[cdf:result="fail"]'/></xsl:when>
-    <xsl:otherwise><xsl:apply-templates select='$root//cdf:Rule[@selected="true" or @selected="1"]'/></xsl:otherwise>
+    <xsl:when test='$testresult'>
+# Generating fixes for all failed rules in test result '<xsl:value-of select="$result-id"/>'.
+
+<xsl:apply-templates select='$testresult/cdf:rule-result[cdf:result="fail"]'/></xsl:when>
+    <xsl:otherwise>
+# Generating fixes for all Rules that are selected in the default profile.
+
+<xsl:apply-templates select='$root//cdf:Rule[@selected="true" or @selected="1"]'/></xsl:otherwise>
   </xsl:choose>
   <xsl:call-template name='tpl.elem'><xsl:with-param name='elem' select='"after"'/></xsl:call-template>
 </xsl:template>
