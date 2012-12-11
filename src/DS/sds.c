@@ -239,6 +239,7 @@ static int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc,
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error making directory '%s' while dumping component to file '%s'.", target_dir, filename);
 		xmlFree(cref_id);
 		xmlFree(xlink_href);
+		oscap_free(filename_cpy);
 		return -1;
 	}
 	const char* target_filename = oscap_sprintf("%s/%s/%s", target_dir, file_reldir, file_basename);
