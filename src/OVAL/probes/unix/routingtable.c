@@ -204,8 +204,6 @@ static int process_line_ip4(char *line, struct route_info *rt)
     RT_COND_ADD_FLAG(RTF_REINSTATE, "REINSTATE");
     RT_COND_ADD_FLAG(RTF_DYNAMIC, "DYNAMIC");
     RT_COND_ADD_FLAG(RTF_MODIFIED, "MODIFIED");
-    RT_COND_ADD_FLAG(RTF_ADDRCONF, "ADDRCONF");
-    RT_COND_ADD_FLAG(RTF_CACHE, "CACHE");
     RT_COND_ADD_FLAG(RTF_REJECT, "REJECT");
     rt->rt_flags[i] = NULL;
 
