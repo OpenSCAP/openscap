@@ -193,12 +193,13 @@ static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr ass
 
 		char* id_candidate = oscap_sprintf("asset%i", suffix);
 		xmlChar* id = xmlGetProp(child_asset, BAD_CAST "id");
-		oscap_free(id_candidate);
 
 		if (strcmp(id_candidate, (const char*)id) == 0)
 		{
 			suffix++;
 		}
+
+		oscap_free(id_candidate);
 	}
 
 	char* id = oscap_sprintf("asset%i", suffix);
