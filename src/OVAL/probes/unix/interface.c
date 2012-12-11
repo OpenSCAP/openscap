@@ -195,13 +195,14 @@ static void get_flags(const struct ifaddrs *ifa, char ***fp) {
 
 }
 
-static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx)
+static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx, oval_version_t over)
 {
 	struct ifaddrs *ifaddr, *ifa;
 	int family, rc=1;
 	char host[NI_MAXHOST], broad[NI_MAXHOST], mask[NI_MAXHOST], *mac, *type, **flags;
 	oval_datatype_t address_type;
 	SEXP_t *item;
+	bool include_type, use_ipstring;
 
 	if (getifaddrs(&ifaddr) == -1) {
 		SEXP_t *msg;
@@ -225,6 +226,9 @@ static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx)
 
 		goto leave1;
 	}
+
+	include_type = oval_version_cmp(over, OVAL_VERSION(5.6)) >= 0;
+	use_ipstring = oval_version_cmp(over, OVAL_VERSION(5.8)) >= 0;
 
         /* Walk through linked list, maintaining head pointer so we
 	   can free list later */
@@ -267,7 +271,7 @@ static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx)
 
 				goto leave2;
 			}
-			address_type = OVAL_DATATYPE_IPV4ADDR;
+			address_type = use_ipstring ? OVAL_DATATYPE_IPV4ADDR : OVAL_DATATYPE_STRING;
 
 			rc = getnameinfo(ifa->ifa_netmask, sizeof(struct sockaddr_in),
 					mask, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
@@ -304,7 +308,7 @@ static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx)
 				goto leave2;
 			}
 
-			address_type = OVAL_DATATYPE_IPV6ADDR;
+			address_type = use_ipstring ? OVAL_DATATYPE_IPV6ADDR : OVAL_DATATYPE_STRING;
 			*mask = '\0';
 
 			/* count prefix */
@@ -343,7 +347,7 @@ static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx)
 
                 item = probe_item_create(OVAL_UNIX_INTERFACE, NULL,
                                          "name",           OVAL_DATATYPE_STRING, ifa->ifa_name,
-                                         "type",           OVAL_DATATYPE_STRING, type,
+					"type",           OVAL_DATATYPE_STRING, include_type ? type : NULL,
                                          "hardware_addr",  OVAL_DATATYPE_STRING, mac,
                                          "inet_addr",      address_type, host,
                                          "broadcast_addr", address_type, broad,
@@ -362,7 +366,7 @@ leave1:
 	return rc;
 }
 #else
-static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx)
+static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx, oval_version_t over)
 {
 	/* todo */
 	SEXP_t *item;
@@ -383,16 +387,20 @@ static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx)
 
 int probe_main(probe_ctx *ctx, void *arg)
 {
-	SEXP_t *name_ent;
+	SEXP_t *name_ent, *probe_in;
+	oval_version_t over;
 
         (void)arg;
 
-	name_ent = probe_obj_getent(probe_ctx_getobject(ctx), "name", 1);
+	probe_in = probe_ctx_getobject(ctx);
+	name_ent = probe_obj_getent(probe_in, "name", 1);
+	over     = probe_obj_get_schema_version(probe_in);
+
 	if (name_ent == NULL) {
 		return PROBE_ENOELM;
 	}
 
-	get_ifs(name_ent, ctx);
+	get_ifs(name_ent, ctx, over);
 	SEXP_free(name_ent);
 
 	return 0;
