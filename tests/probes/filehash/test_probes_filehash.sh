@@ -38,6 +38,8 @@ function test_probes_filehash {
 	ret_val=1
     fi
 
+    [ $ret_val -eq 0 ] && rm -f /tmp/test_probes_filehash.tmp
+
     return $ret_val
 }
 

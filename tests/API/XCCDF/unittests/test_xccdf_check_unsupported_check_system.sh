@@ -7,6 +7,8 @@ result=`mktemp`
 stderr=`mktemp`
 
 $OSCAP xccdf eval --results $result $srcdir/test_xccdf_check_unsupported_check_system.xml 2> $stderr
+echo "Stderr file = $stderr"
+[ -f $stderr ]; [ ! -s $stderr ]; rm -rf $stderr
 
 $OSCAP xccdf validate-xml $result
 
