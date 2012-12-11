@@ -73,12 +73,12 @@ static int mem2hex (uint8_t *mem, size_t mlen, char *str, size_t slen)
         return (0);
 }
 
-static int filehash_cb (const char *p, const char *f, probe_ctx *ctx)
+static int filehash_cb (const char *p, const char *f, probe_ctx *ctx, oval_version_t over)
 {
         SEXP_t *itm;
         char   pbuf[PATH_MAX+1];
         size_t plen, flen;
-
+	bool include_filepath;
         int fd;
 
         if (f == NULL)
@@ -102,6 +102,7 @@ static int filehash_cb (const char *p, const char *f, probe_ctx *ctx)
 
         memcpy (pbuf + plen, f, sizeof (char) * flen);
         pbuf[plen+flen] = '\0';
+	include_filepath = oval_version_cmp(over, OVAL_VERSION(5.6)) >= 0;
 
         /*
          * Open the file
@@ -113,7 +114,7 @@ static int filehash_cb (const char *p, const char *f, probe_ctx *ctx)
                 pbuf[PATH_MAX] = '\0';
 
 		itm = probe_item_create(OVAL_INDEPENDENT_FILE_HASH, NULL,
-				"filepath", OVAL_DATATYPE_STRING, pbuf,
+				"filepath", OVAL_DATATYPE_STRING, include_filepath ? pbuf : NULL,
 				"path",     OVAL_DATATYPE_STRING, p,
 				"filename", OVAL_DATATYPE_STRING, f,
 				NULL
@@ -153,7 +154,7 @@ static int filehash_cb (const char *p, const char *f, probe_ctx *ctx)
                  * Create and add the item
                  */
                 itm = probe_item_create(OVAL_INDEPENDENT_FILE_HASH, NULL,
-                                        "filepath", OVAL_DATATYPE_STRING, pbuf,
+                                        "filepath", OVAL_DATATYPE_STRING, include_filepath ? pbuf : NULL,
                                         "path",     OVAL_DATATYPE_STRING, p,
                                         "filename", OVAL_DATATYPE_STRING, f,
                                         "md5",      OVAL_DATATYPE_STRING, md5_str,
@@ -214,6 +215,7 @@ int probe_main (probe_ctx *ctx, void *mutex)
 
 	OVAL_FTS    *ofts;
 	OVAL_FTSENT *ofts_ent;
+	oval_version_t over;
 
         if (mutex == NULL) {
 		return (PROBE_EINIT);
@@ -227,6 +229,7 @@ int probe_main (probe_ctx *ctx, void *mutex)
         filename  = probe_obj_getent (probe_in, "filename",  1);
         behaviors = probe_obj_getent (probe_in, "behaviors", 1);
         filepath = probe_obj_getent (probe_in, "filepath", 1);
+	over = probe_obj_get_schema_version(probe_in);
 
         /* we want either path+filename or filepath */
         if ( (path == NULL || filename == NULL) && filepath==NULL ) {
@@ -256,7 +259,7 @@ int probe_main (probe_ctx *ctx, void *mutex)
 
 	if ((ofts = oval_fts_open(path, filename, filepath, behaviors)) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
-			filehash_cb(ofts_ent->path, ofts_ent->file, ctx);
+			filehash_cb(ofts_ent->path, ofts_ent->file, ctx, over);
 			oval_ftsent_free(ofts_ent);
 		}
 
