@@ -669,6 +669,7 @@ TD.text {font: 10pt/12pt "Arial"}
 						</a>
 						-->
 						<xsl:value-of select="@ref_id"/>
+						<xsl:text> </xsl:text>
 					</xsl:for-each>&#160;
 				</xsl:for-each>&#160;
 			</td>
