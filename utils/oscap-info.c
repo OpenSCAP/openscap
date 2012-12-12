@@ -222,6 +222,7 @@ static int app_info(const struct oscap_action *action)
 
 		                temp_dir = oscap_acquire_temp_dir();
 		                if (temp_dir == NULL) {
+					ds_sds_index_free(sds);
 					oscap_string_iterator_free(checklist_it);
 					goto cleanup;
 				}
@@ -235,6 +236,7 @@ static int app_info(const struct oscap_action *action)
 				struct xccdf_benchmark* bench = NULL;
 		                bench = xccdf_benchmark_import(xccdf_file);
 				if(!bench) {
+					ds_sds_index_free(sds);
 					oscap_string_iterator_free(checklist_it);
 					oscap_acquire_cleanup_dir(&temp_dir);
 					goto cleanup;
