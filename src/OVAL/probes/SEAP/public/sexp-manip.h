@@ -534,6 +534,22 @@ int SEXP_refcmp(const SEXP_t *a, const SEXP_t *b);
 
 bool SEXP_deepcmp(const SEXP_t *a, const SEXP_t *b);
 
+#ifdef __COVERITY__
+/*
+ * An alternative implementation for Coverity, which reports
+ * a lot of false positives because it is not be able to
+ * handle functions with variable number of arguments
+ */
+# define SEXP_vfree_coverity(...) \
+	do { \
+		SEXP_t *__svf##__LINE__[] = { __VA_ARGS__ }; \
+		size_t __svfc##__LINE__ = sizeof (__svf##__LINE__)/sizeof(SEXP_t *); \
+		for (; __svfc##__LINE__ > 0; --__svfc##__LINE__) \
+			if (__svf##__LINE__[__svfc##__LINE__ - 1]) \
+				SEXP_free(__svf##__LINE__[__svfc##__LINE__ - 1]); \
+	} while(0)
+#endif /* __COVERITY__ */
+
 #if defined(NDEBUG)
 /**
  * Free a sexp object.
@@ -548,11 +564,19 @@ void     SEXP_free (SEXP_t *s_exp);
  * @param ... arbitrary number of objects to be freed
  */
 void     __SEXP_vfree (int n, SEXP_t *s_exp, ...);
+#ifdef __COVERITY__
+# define SEXP_vfree(...) SEXP_vfree_coverity(__VA_ARGS__)
+#else
 # define SEXP_vfree(...) __SEXP_vfree(PP_NARG(__VA_ARGS__), __VA_ARGS__)
+#endif
 #else
 # define SEXP_free(ptr) __SEXP_free (ptr, __FILE__, __LINE__, __PRETTY_FUNCTION__)
 void     __SEXP_free (SEXP_t *s_exp, const char *file, uint32_t line, const char *func);
+#ifdef __COVERITY__
+# define SEXP_vfree(...) SEXP_vfree_coverity(__VA_ARGS__)
+#else
 # define SEXP_vfree(...) __SEXP_vfree (__FILE__, __LINE__, __PRETTY_FUNCTION__, PP_NARG(__VA_ARGS__), __VA_ARGS__)
+#endif
 void     __SEXP_vfree (const char *file, uint32_t line, const char *func, int n, SEXP_t *s_exp, ...);
 #endif
 
