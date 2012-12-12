@@ -132,6 +132,8 @@ static struct oscap_module XCCDF_EVAL = {
         "   --report <file>\r\t\t\t\t - Write HTML report into file.\n"
         "   --skip-valid \r\t\t\t\t - Skip validation.\n"
 	"   --fetch-remote-resources \r\t\t\t\t - Download remote content referenced by XCCDF.\n"
+	"   --progress \r\t\t\t\t - Switch to sparse output suitable for progress reporting.\n"
+	"              \r\t\t\t\t   Format is \"$rule_id:$result\\n\".\n"
         "   --datastream-id <id> \r\t\t\t\t - ID of the datastream in the collection to use.\n"
         "                        \r\t\t\t\t   (only applicable for source datastreams)\n"
         "   --xccdf-id <id> \r\t\t\t\t - ID of XCCDF in the datastream that should be evaluated.\n"
@@ -298,6 +300,37 @@ static int callback_scr_result(struct xccdf_rule_result *rule_result, void *arg)
 	return 0;
 }
 
+static int callback_scr_rule_progress(struct xccdf_rule *rule, void *arg)
+{
+	const char * rule_id = xccdf_rule_get_id(rule);
+
+	/* is rule selected? we print only selected rules */
+	const bool selected = xccdf_policy_is_item_selected((struct xccdf_policy *) arg, rule_id);
+	if (!selected)
+		return 0;
+
+	printf("%s:", rule_id);
+	fflush(stdout);
+
+	return 0;
+}
+
+static int callback_scr_result_progress(struct xccdf_rule_result *rule_result, void *arg)
+{
+	xccdf_test_result_type_t result = xccdf_rule_result_get_result(rule_result);
+
+	/* is result from selected rule? we print only selected rules */
+	if (result == XCCDF_RESULT_NOT_SELECTED)
+		return 0;
+
+	/* print result */
+	const char * result_str = xccdf_test_result_type_get_text(result);
+
+	printf("%s\n", result_str);
+	fflush(stdout);
+
+	return 0;
+}
 
 /*
  * Send XCCDF Rule Results info message to syslog
@@ -711,8 +744,14 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 
 	/* Register callbacks */
-	xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule, (void *) policy);
-	xccdf_policy_model_register_output_callback(policy_model, callback_scr_result, NULL);
+	if (action->progress) {
+		xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule_progress, (void *) policy);
+		xccdf_policy_model_register_output_callback(policy_model, callback_scr_result_progress, NULL);
+	}
+	else {
+		xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule, (void *) policy);
+		xccdf_policy_model_register_output_callback(policy_model, callback_scr_result, NULL);
+	}
 
 	/* xccdf_policy_model_register_output_callback(policy_model, callback_syslog_result, NULL); */
 
@@ -1464,6 +1503,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 #endif
 		{"skip-valid",		no_argument, &action->validate, 0},
 		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},
+		{"progress", no_argument, &action->progress, 1},
 		{"hide-profile-info",	no_argument, &action->hide_profile_info, 1},
 		{"export-variables",	no_argument, &action->export_variables, 1},
 	// end

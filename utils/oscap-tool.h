@@ -136,6 +136,7 @@ struct oscap_action {
 	int force;
 	int validate;
 	int remote_resources;
+	int progress;
 	int oval_results;
 #ifdef ENABLE_SCE
 	char *sce_template;
