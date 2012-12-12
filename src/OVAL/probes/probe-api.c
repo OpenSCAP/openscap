@@ -1480,6 +1480,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
 			   value_type, oval_datatype_get_text(value_type), value_name);
                         SEXP_free(item);
 
+			va_end(ap);
                         return (NULL);
                 }
 
@@ -1572,11 +1573,13 @@ int probe_item_add_msg(SEXP_t *item, oval_message_level_t msglvl, char *msgfmt, 
 
     if (msg_length < 0) {
 	dE("vsnprintf failed! errno=%u, %s.\n", errno, strerror(errno));
+	va_end(ap);
 	return (-1);
     }
 
     if ((size_t)msg_length >= sizeof msg_buffer) {
 	dE("message too long!\n");
+	va_end(ap);
 	return (-1);
     }
 
