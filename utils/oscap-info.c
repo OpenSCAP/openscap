@@ -221,8 +221,10 @@ static int app_info(const struct oscap_action *action)
 				char * xccdf_file = NULL;
 
 		                temp_dir = oscap_acquire_temp_dir();
-		                if (temp_dir == NULL)
+		                if (temp_dir == NULL) {
+					oscap_string_iterator_free(checklist_it);
 					goto cleanup;
+				}
 
 				/* decompose */
 				ds_sds_decompose(action->file, ds_stream_index_get_id(stream), id, temp_dir, "xccdf.xml");
@@ -233,6 +235,7 @@ static int app_info(const struct oscap_action *action)
 				struct xccdf_benchmark* bench = NULL;
 		                bench = xccdf_benchmark_import(xccdf_file);
 				if(!bench) {
+					oscap_string_iterator_free(checklist_it);
 					oscap_acquire_cleanup_dir(&temp_dir);
 					goto cleanup;
 				}
