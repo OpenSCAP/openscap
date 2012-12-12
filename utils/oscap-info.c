@@ -224,6 +224,7 @@ static int app_info(const struct oscap_action *action)
 		                if (temp_dir == NULL) {
 					ds_sds_index_free(sds);
 					oscap_string_iterator_free(checklist_it);
+					ds_stream_index_iterator_free(sds_it);
 					goto cleanup;
 				}
 
@@ -239,6 +240,7 @@ static int app_info(const struct oscap_action *action)
 					ds_sds_index_free(sds);
 					oscap_string_iterator_free(checklist_it);
 					oscap_acquire_cleanup_dir(&temp_dir);
+					ds_stream_index_iterator_free(sds_it);
 					goto cleanup;
 				}
 
