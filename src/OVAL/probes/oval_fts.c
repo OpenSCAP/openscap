@@ -698,6 +698,11 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		ofts->localdevs = fsdev_init(NULL, 0);
 		if (ofts->localdevs == NULL) {
 			dE("fsdev_init() failed.\n");
+			/* One dummy read to get rid of an uninitialized
+			 * value in the FTS data before calling
+			 * fts_close() on it. */
+			fts_read(ofts->ofts_match_path_fts);
+			oval_fts_close(ofts);
 			return (NULL);
 		}
 	} else if (filesystem == OVAL_RECURSE_FS_DEFINED) {
