@@ -50,9 +50,10 @@ For XCCDF or Datastream files, info module prints out IDs of incorporated profil
 .TP
 .B \fBeval\fR [\fIoptions\fR] INPUT_FILE [\fIoval-definitions-files\fR]
 .RS
-Perform evaluation driven by XCCDF file given as INPUT_FILE and use OVAL as the checking engine. Print result of each rule to standard output. oscap returns 0 if all rules pass. If there is an error during evaluation, the return code is 1. If there is at least one rule with either fail or unknown result, oscap-scan finishes with return code 2.
+Perform evaluation of XCCDF document file given as INPUT_FILE. Print result of each rule to standard output, including rule title, rule id and security identifier(CVE, CCE). Optionally you can give a source datastream as the INPUT_FILE instead of an XCCDF file (see --dataststream-id).
 .PP
-Optionally you can give a source datastream as the INPUT_FILE instead of an XCCDF file. One of the XCCDFs inside the datastream will be used for evaluation (see --datastream-id).
+oscap returns 0 if all rules pass. If there is an error during evaluation, the return code is 1. If there is at least one rule with either fail or unknown result, oscap-scan finishes with return code 2.
+.PP
 .PP
 Unless --skip-valid is used, the INPUT_FILE is validated using XSD schemas (depending on document type of INPUT_FILE) and rejected if invalid.
 .PP
