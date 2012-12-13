@@ -12,7 +12,7 @@ $OSCAP xccdf eval --results $result $srcdir/${name}.xccdf.xml 2> $stderr
 
 echo "Stderr file = $stderr"
 echo "Result file = $result"
-[ -f $stderr ]; [ ! -s $stderr ]; rm -rf $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
 $OSCAP xccdf validate-xml $result
 
@@ -44,4 +44,4 @@ assert_exists 2 '//fix[@id="fix-restrict" and @disruption="medium"]'
 assert_exists 2 '//fix[@id="fix-restrict" and @complexity="high"]'
 assert_exists 2 '//fix[@id="fix-restrict" and @strategy="restrict"]'
 
-rm -rf $result
+rm $result

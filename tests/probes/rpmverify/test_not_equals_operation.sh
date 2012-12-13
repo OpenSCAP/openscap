@@ -22,4 +22,4 @@ echo "Testing syschar values."
 [ "$($XPATH $result 'string(/oval_results/results/system/oval_system_characteristics/collected_objects/object[@id="oval:x:obj:2"]/@flag)')" == "complete" ]
 [ "$($XPATH $result 'count(/oval_results/results/system/oval_system_characteristics/collected_objects/object[@id="oval:x:obj:2"]/reference)')" == "1" ]
 
-rm -rf $result
+rm $result

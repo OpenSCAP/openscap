@@ -17,6 +17,6 @@ $OSCAP xccdf generate --format html report --output $result $srcdir/test_report_
 echo "Stdout file = $stdout"
 echo "Stderr file = $stderr"
 echo "Result file = $result"
-[ -f $stdout ]; [ ! -s $stdout ]; rm -rf $stdout
-[ -f $result ]; [ ! -s $result ]; rm -rf $result
-[ -f $stderr ]; grep "XSLT file 'xccdf-report.xsl' not found in path" $stderr; rm -rf $stderr
+[ -f $stdout ]; [ ! -s $stdout ]; rm $stdout
+[ -f $result ]; [ ! -s $result ]; rm $result
+[ -f $stderr ]; grep "XSLT file 'xccdf-report.xsl' not found in path" $stderr; rm $stderr

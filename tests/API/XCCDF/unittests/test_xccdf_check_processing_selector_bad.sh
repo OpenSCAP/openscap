@@ -12,7 +12,7 @@ $OSCAP xccdf eval --profile xccdf_moc.elpmaxe.www_profile_1 --results $result $s
 
 echo "Stderr file = $stderr"
 echo "Result file = $result"
-[ -f $stderr ]; [ ! -s $stderr ]; rm -rf $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
 $OSCAP xccdf validate-xml $result
 
@@ -23,4 +23,4 @@ assert_exists_once '//rule-result/check'
 assert_exists_once '//rule-result/check[not(@selector)]'
 assert_exists_once '//rule-result/check[@system="http://oval.mitre.org/XMLSchema/oval-definitions-5"]'
 assert_exists_once '//rule-result/check/check-content-ref[@name="oval:moc.elpmaxe.www:def:1"]'
-rm -rf $result
+rm $result

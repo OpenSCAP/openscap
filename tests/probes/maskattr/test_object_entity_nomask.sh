@@ -26,4 +26,4 @@ echo "Testing syschar values."
 [ "$($XPATH $result 'boolean(/oval_results/results/system/oval_system_characteristics/system_data/unix-sys:file_item/unix-sys:filepath/@mask)')" == "0" ]
 [ "$($XPATH $result 'string(/oval_results/results/system/oval_system_characteristics/system_data/unix-sys:file_item/unix-sys:filepath)')" == "/etc/passwd" ]
 
-rm -rf $result
+rm $result

@@ -14,7 +14,7 @@ for args in "" "--profile xccdf_moc.elpmaxe.www_profile_1"; do
 
 	echo "Stderr file = $stderr"
 	echo "Result file = $result"
-	[ -f $stderr ]; [ ! -s $stderr ]; rm -rf $stderr
+	[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
 	$OSCAP xccdf validate-xml $result || [ $? == 2 ]
 
@@ -32,5 +32,5 @@ for args in "" "--profile xccdf_moc.elpmaxe.www_profile_1"; do
 	assert_exists_once '//rule-result/complex-check[not(@system)]'
 	assert_exists_once '//Rule/complex-check[@operator="AND"]'
 	assert_exists_once '//rule-result/complex-check[@operator="AND"]'
-	rm -rf $result
+	rm $result
 done

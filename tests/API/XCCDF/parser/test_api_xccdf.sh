@@ -33,7 +33,7 @@ function test_api_xccdf_export {
 		return 1
 	fi
 
-	rm -rf $OUTPUT
+	rm $OUTPUT
 	return 0
 }
 

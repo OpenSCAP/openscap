@@ -12,7 +12,7 @@ $OSCAP xccdf eval --results $result $srcdir/${name}.xccdf.xml 2> $stderr
 
 echo "Stderr file = $stderr"
 echo "Result file = $result"
-[ -f $stderr ]; [ ! -s $stderr ]; rm -rf $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
 $OSCAP xccdf validate-xml $result
 
@@ -31,4 +31,4 @@ assert_exists 0 '//check/@multi-check'
 assert_exists 1 '//score'
 assert_exists 1 '//score[text()="100.000000"]'
 
-rm -rf $result
+rm $result

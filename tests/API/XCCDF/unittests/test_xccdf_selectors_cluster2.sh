@@ -14,7 +14,7 @@ $OSCAP xccdf eval --profile xccdf_moc.elpmaxe.www_profile_1 --results $result $s
 
 echo "Stderr file = $stderr"
 echo "Result file = $result"
-[ -f $stderr ]; [ ! -s $stderr ]; rm -rf $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
 $OSCAP xccdf validate-xml $result
 
@@ -34,4 +34,4 @@ assert_exists 4 '//rule-result/result'
 assert_exists 4 '//rule-result/result[text()="pass"]'
 assert_exists 1 '//score'
 assert_exists 1 '//score[text()="100.000000"]'
-rm -rf $result
+rm $result

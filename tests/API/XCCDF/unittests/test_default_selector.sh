@@ -28,7 +28,7 @@ test_variable() {
 }
 
 test_variable
-rm -rf $result
+rm $result
 
 # Ensure that it works even for export-oval-variables (trac#267)
 $OSCAP xccdf export-oval-variables $srcdir/${name}.xccdf.xml 2>&1 > $stderr

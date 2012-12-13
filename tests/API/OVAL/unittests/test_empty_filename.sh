@@ -7,5 +7,5 @@ set -o pipefail
 
 $OSCAP oval eval --results $result $srcdir/empty_filename.xml
 
-rm -rf $result
+rm $result
 

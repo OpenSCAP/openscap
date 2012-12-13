@@ -14,7 +14,7 @@ echo "Stderr file = $stderr"
 echo "Result file = $result"
 [ -f $stderr ]
 [ "WARNING: Skipping $srcdir/_non_existent_.oval.xml file which is referenced from XCCDF content" == "`cat $stderr`" ]
-rm -rf $stderr
+rm $stderr
 
 $OSCAP xccdf validate-xml $result
 
@@ -30,4 +30,4 @@ assert_exists 2 '//rule-result/complex-check/check'
 assert_exists 2 '//rule-result/complex-check/check/check-content-ref'
 assert_exists 1 '//score'
 assert_exists 1 '//score[text()="0.000000"]'
-rm -rf $result
+rm $result

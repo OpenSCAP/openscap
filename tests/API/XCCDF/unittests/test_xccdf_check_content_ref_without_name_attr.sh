@@ -10,7 +10,7 @@ $OSCAP xccdf eval --results $result $srcdir/test_xccdf_check_content_ref_without
 
 echo "Stderr file = $stderr"
 echo "Result file = $result"
-[ -f $stderr ]; [ ! -s $stderr ]; rm -rf $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
 $OSCAP xccdf validate-xml $result
 
@@ -21,4 +21,4 @@ $OSCAP xccdf validate-xml $result
 [ $($XPATH $result 'count(//rule-result/check/check-content-ref[not(@name)])') == "1" ]
 [ $($XPATH $result 'count(//check[@multi-check])') == "0" ]
 [ $($XPATH $result '/Benchmark/TestResult/score[@system="urn:xccdf:scoring:default"]/text()') == "0.000000" ]
-rm -rf $result
+rm $result

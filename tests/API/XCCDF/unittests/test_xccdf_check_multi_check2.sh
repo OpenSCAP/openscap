@@ -14,10 +14,10 @@ $OSCAP xccdf eval --results $result $srcdir/${name}.xccdf.xml > $stdout 2> $stde
 echo "Stdout file = $stdout"
 echo "Stderr file = $stderr"
 echo "Result file = $result"
-[ -f $stderr ]; [ ! -s $stderr ]; rm -rf $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 grep '^Result.*pass$' $stdout
 grep '^Result.*fail$' $stdout
-rm -rf $stdout
+rm $stdout
 
 $OSCAP xccdf validate-xml $result
 
@@ -39,4 +39,4 @@ assert_exists_once '//rule-result/check/check-content-ref[@name="oval:moc.elpmax
 assert_exists_once '//rule-result[result/text()="fail"]/check/check-content-ref[@name="oval:moc.elpmaxe.www:def:2"]'
 assert_exists_once '//rule-result/check/check-content-ref[@name="oval:moc.elpmaxe.www:def:1"]'
 assert_exists_once '//rule-result[result/text()="pass"]/check/check-content-ref[@name="oval:moc.elpmaxe.www:def:1"]'
-rm -rf $result
+rm $result

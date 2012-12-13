@@ -14,9 +14,9 @@ $OSCAP xccdf eval --results $result $srcdir/${name}.xccdf.xml > $stdout 2> $stde
 echo "Stdout file = $stdout"
 echo "Stderr file = $stderr"
 echo "Result file = $result"
-[ -f $stderr ]; [ "`cat $stderr`" == "WARNING: Skipping $srcdir/nonexistent-file file which is referenced from XCCDF content" ]; rm -rf $stderr
+[ -f $stderr ]; [ "`cat $stderr`" == "WARNING: Skipping $srcdir/nonexistent-file file which is referenced from XCCDF content" ]; rm $stderr
 grep '^Result.*notchecked$' $stdout
-rm -rf $stdout
+rm $stdout
 
 $OSCAP xccdf validate-xml $result
 
@@ -43,4 +43,4 @@ assert_exists_twice '/Benchmark/TestResult/score/@*'
 assert_exists_once '/Benchmark/TestResult/score[@maximum="100.000000"]'
 assert_exists_once '/Benchmark/TestResult/score[text()="0.000000"]'
 
-rm -rf $result
+rm $result

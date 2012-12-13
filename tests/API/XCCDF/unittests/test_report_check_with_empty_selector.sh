@@ -19,16 +19,16 @@ $OSCAP xccdf generate --format html report --output $result $srcdir/${name}.xccd
 
 	# Workaround
 	if [ -L "$oval" ]; then
-		rm -rf $oval
+		rm $oval
 	fi
 	unset oval
 	# Workaround end
 
 echo "Stderr file = $stderr"
 echo "Result file = $result"
-[ -f $stderr ]; [ ! -s $stderr ]; rm -rf $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
 grep '<div class="oval-results">' $result
 grep 'Testing file permissions of /etc/shadow' $result
 grep '<code>--------- </code>' $result
-rm -rf $result
+rm $result

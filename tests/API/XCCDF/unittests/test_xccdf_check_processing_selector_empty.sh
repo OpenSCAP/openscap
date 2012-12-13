@@ -12,7 +12,7 @@ $OSCAP xccdf eval --profile xccdf_moc.elpmaxe.www_profile_1 --results $result $s
 
 echo "Stderr file = $stderr"
 echo "Result file = $result"
-[ -f $stderr ]; [ ! -s $stderr ]; rm -rf $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
 $OSCAP xccdf validate-xml $result
 
@@ -25,4 +25,4 @@ assert_exists_once '//rule-result/message'
 assert_exists_once '//rule-result/message[@severity="info"]'
 assert_exists_once '//rule-result/message[text()="No candidate or applicable check found."]'
 assert_exists_twice '//rule-result/*'
-rm -rf $result
+rm $result

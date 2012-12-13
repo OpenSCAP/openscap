@@ -123,7 +123,7 @@ function test_eval_complex()
 
 	# Ensure basic correctness of the ARF
 	$OSCAP ds rds-validate $arf 2>&1 > $stderr
-	[ -f $srderr ]; [ ! -s $stderr ]; rm -rf $stderr
+	[ -f $srderr ]; [ ! -s $stderr ]; rm $stderr
 	assert_correct_xlinks $arf
 
 	# Ensure that results are there

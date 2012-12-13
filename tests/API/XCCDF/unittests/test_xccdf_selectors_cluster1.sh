@@ -12,7 +12,7 @@ $OSCAP xccdf eval --profile xccdf_moc.elpmaxe.www_profile_1 --results $result $s
 
 echo "Output file = $output"
 echo "Result file = $result"
-[ -f $output ]; [ "`cat $output`" == "XCCDF Results are exported correctly." ]; rm -rf $output
+[ -f $output ]; [ "`cat $output`" == "XCCDF Results are exported correctly." ]; rm $output
 
 $OSCAP xccdf validate-xml $result
 
@@ -26,4 +26,4 @@ assert_exists 1 '//rule-result/result'
 assert_exists 1 '//rule-result/result[text()="notselected"]'
 assert_exists 1 '//score'
 assert_exists 1 '//score[text()="0.000000"]'
-rm -rf $result
+rm $result
