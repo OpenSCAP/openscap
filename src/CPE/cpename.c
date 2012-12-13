@@ -259,8 +259,10 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 						// the rest are ~-encoded extended attributes
 						for (int j = 0; j < 5 && extended_attribs[1 + j] != NULL; ++j) {
 							if (!cpe_urldecode(extended_attribs[1 + j])) {
+								oscap_free(extended_attribs);
 								oscap_free(data_);
 								oscap_free(fields_);
+								cpe_name_free(cpe);
 								return NULL;
 							}
 
@@ -274,6 +276,7 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 				if (!cpe_urldecode(fields_[i])) {
 					oscap_free(data_);
 					oscap_free(fields_);
+					cpe_name_free(cpe);
 					return NULL;
 				}
 
@@ -291,6 +294,7 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 				if (!cpestring_comp_decode(fields_[i])) {
 					oscap_free(data_);
 					oscap_free(fields_);
+					cpe_name_free(cpe);
 					return NULL;
 				}
 
