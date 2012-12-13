@@ -659,7 +659,15 @@ _xccdf_policy_rule_get_applicable_check(struct xccdf_policy *policy, struct xccd
 bool
 xccdf_policy_is_item_selected(struct xccdf_policy *policy, const char *id)
 {
-	return *((const bool*) oscap_htable_get(policy->selected_final, id));
+	const bool *tmp = (const bool*) oscap_htable_get(policy->selected_final, id);
+	if (tmp	== NULL) {
+		/* This shall really never happen. All valid IDs of any
+		 * xccdf:Item shall be stored in the dictionery. However,
+		 * we shall not to segfault. */
+		assert(false);
+		return false;
+	}
+	return *tmp;
 }
 
 static struct xccdf_rule_result * _xccdf_rule_result_new_from_rule(const struct xccdf_rule *rule,
