@@ -240,6 +240,18 @@ struct ds_stream_index_iterator* ds_sds_index_get_streams(struct ds_sds_index* s
  */
 struct ds_sds_index *ds_sds_index_import(const char* file);
 
+/**
+ * @brief chooses datastream and checklist id combination given the IDs
+ *
+ * @param datastream_id has to point to an allocated char*, selected datastream ID will be filled into it
+ * @param component_id has to point to an allocated char*, selected xccdf ID will be filled into it
+ *
+ * datastream_id and component_id must not point to the same memory! However,
+ * the pointers pointed to may be NULL (which means any ID will do).
+ */
+int ds_sds_index_select_checklist(struct ds_sds_index* s,
+		const char** datastream_id, const char** component_id);
+
 /** 
  * @struct ds_stream_index_iterator
  * @see oscap_iterator

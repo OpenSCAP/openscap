@@ -303,6 +303,54 @@ struct ds_sds_index *ds_sds_index_import(const char* file)
 	return ret;
 }
 
+int ds_sds_index_select_checklist(struct ds_sds_index* s,
+		const char** datastream_id, const char** component_id)
+{
+	// The following convoluted and complex code looks for a pair of
+	// datastream and checklist inside it that satisfies conditions
+	// (if any) of having specific IDs.
+	//
+	// It is possible to just pass xccdf-id in which case we have to
+	// search through all the datastreams.
+	//
+	// It is also possible to just pass datastream-id in which case we
+	// take the first checklist in given datastream.
+	//
+	// In case datastream-id is not passed AND xccdf-id is also not passed,
+	// we look for the first datastream (topdown in XML) that has any
+	// checklist. Taking the first checklist in such a datastream in this case.
+
+	int ret = 1;
+
+	struct ds_stream_index_iterator* streams_it = ds_sds_index_get_streams(s);
+	while (ds_stream_index_iterator_has_more(streams_it))
+	{
+		struct ds_stream_index* stream_idx = ds_stream_index_iterator_next(streams_it);
+		const char* stream_id = ds_stream_index_get_id(stream_idx);
+
+		if (!*datastream_id || strcmp(stream_id, *datastream_id) == 0)
+		{
+			struct oscap_string_iterator* checklists_it = ds_stream_index_get_checklists(stream_idx);
+			while (oscap_string_iterator_has_more(checklists_it))
+			{
+				const char* checklist_id = oscap_string_iterator_next(checklists_it);
+
+				if (!*component_id || strcmp(checklist_id, *component_id) == 0)
+				{
+					*component_id = checklist_id;
+					*datastream_id = ds_stream_index_get_id(stream_idx);
+					ret = 0;
+					break;
+				}
+			}
+			oscap_string_iterator_free(checklists_it);
+		}
+	}
+	ds_stream_index_iterator_free(streams_it);
+
+	return ret;
+}
+
 struct ds_stream_index *ds_stream_index_iterator_next(struct ds_stream_index_iterator *it)
 {
 	return (struct ds_stream_index*)(oscap_iterator_next((struct oscap_iterator*)it));

@@ -517,8 +517,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	oscap_document_type_t doc_type = 0;
 
 	const bool sds_likely = oscap_determine_document_type(action->f_xccdf, &doc_type) == 0 && doc_type == OSCAP_DOCUMENT_SDS;
-	const char* f_datastream_id = NULL;
-	const char* f_component_id = NULL;
+	const char* f_datastream_id = action->f_datastream_id;
+	const char* f_component_id = action->f_xccdf_id;
 
 	if (sds_likely)
 	{
@@ -539,50 +539,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 		sds_idx = ds_sds_index_import(action->f_xccdf);
 
-		// The following convoluted and complex code looks for a pair of
-		// datastream and checklist inside it that satisfies conditions
-		// (if any) of having specific IDs.
-		//
-		// It is possible to just pass xccdf-id in which case we have to
-		// search through all the datastreams.
-		//
-		// It is also possible to just pass datastream-id in which case we
-		// take the checklist in given datastream.
-		//
-		// In case datastream-id is not passed AND xccdf-id is also not passed,
-		// we look for the first datastream (topdown in XML) that has any
-		// checklist.
-
-		f_datastream_id = action->f_datastream_id;
-		f_component_id = action->f_xccdf_id;
-
-		struct ds_stream_index_iterator* streams_it = ds_sds_index_get_streams(sds_idx);
-		while (ds_stream_index_iterator_has_more(streams_it) && (!f_datastream_id || !f_component_id))
-		{
-			struct ds_stream_index* stream_idx = ds_stream_index_iterator_next(streams_it);
-			const char* stream_id = ds_stream_index_get_id(stream_idx);
-
-			if (action->f_datastream_id == NULL || strcmp(stream_id, action->f_datastream_id) == 0)
-			{
-				struct oscap_string_iterator* checklists_it = ds_stream_index_get_checklists(stream_idx);
-				while (oscap_string_iterator_has_more(checklists_it))
-				{
-					const char* checklist_id = oscap_string_iterator_next(checklists_it);
-
-					if (action->f_xccdf_id == NULL || strcmp(checklist_id, action->f_xccdf_id) == 0)
-					{
-						f_component_id = checklist_id;
-						f_datastream_id = ds_stream_index_get_id(stream_idx);
-						break;
-					}
-				}
-				oscap_string_iterator_free(checklists_it);
-			}
-		}
-		ds_stream_index_iterator_free(streams_it);
-
-		if (f_datastream_id == NULL || f_component_id == NULL)
-		{
+		if (ds_sds_index_select_checklist(sds_idx, &f_datastream_id, &f_component_id) != 0) {
 			fprintf(stdout, "Failed to locate a datastream with ID matching '%s' ID "
 			                "and checklist inside matching '%s' ID.\n",
 			                action->f_datastream_id == NULL ? "<any>" : action->f_datastream_id,
