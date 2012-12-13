@@ -166,6 +166,7 @@ static int app_info(const struct oscap_action *action)
 		}
 		print_time(action->file);
 		printf("Resolved: %s\n", xccdf_benchmark_get_resolved(bench) ? "true" : "false");
+
 		struct xccdf_profile_iterator * prof_it = xccdf_benchmark_get_profiles(bench);
 		printf("Profiles:\n");
 		struct xccdf_profile * prof = NULL;
@@ -173,8 +174,19 @@ static int app_info(const struct oscap_action *action)
 			prof = xccdf_profile_iterator_next(prof_it);
 			printf("\t%s\n", xccdf_profile_get_id(prof));
 		}
-		free(doc_version);
 		xccdf_profile_iterator_free(prof_it);
+
+		struct xccdf_result_iterator * res_it = xccdf_benchmark_get_results(bench);
+		if (xccdf_result_iterator_has_more(res_it))
+			printf("Test Results:\n");
+		struct xccdf_result * test_result = NULL;
+		while (xccdf_result_iterator_has_more(res_it)) {
+			test_result = xccdf_result_iterator_next(res_it);
+			printf("\t%s\n", xccdf_result_get_id(test_result));
+		}
+		xccdf_result_iterator_free(res_it);
+
+		free(doc_version);
 		xccdf_benchmark_free(bench);
 	}
 	break;
