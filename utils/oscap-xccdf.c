@@ -1352,13 +1352,53 @@ static int xccdf_gen_report(const char *infile, const char *id, const char *outf
 	return app_xslt(infile, "xccdf-report.xsl", outfile, params);
 }
 
+static bool _some_oval_result_exists(const char *filename)
+{
+	struct xccdf_benchmark *benchmark = NULL;
+	struct xccdf_policy_model *policy_model = NULL;
+	struct oscap_file_entry_list *files = NULL;
+	struct oscap_file_entry_iterator *files_it = NULL;
+	char *oval_result = NULL;
+	bool result = false;
+
+	benchmark = xccdf_benchmark_import(filename);
+	if (benchmark == NULL)
+		return false;
+
+	policy_model = xccdf_policy_model_new(benchmark);
+	files = xccdf_policy_model_get_systems_and_files(policy_model);
+	files_it = oscap_file_entry_list_get_files(files);
+	oval_result = malloc(PATH_MAX * sizeof(char));
+	while (oscap_file_entry_iterator_has_more(files_it)) {
+		struct oscap_file_entry *file_entry = (struct oscap_file_entry *) oscap_file_entry_iterator_next(files_it);;
+		struct stat sb;
+		if (strcmp(oscap_file_entry_get_system(file_entry), "http://oval.mitre.org/XMLSchema/oval-definitions-5"))
+			continue;
+		snprintf(oval_result, PATH_MAX, "./%s.result.xml", oscap_file_entry_get_file(file_entry));
+		if (stat(oval_result, &sb) == 0) {
+			result = true;
+			break;
+		}
+	}
+	free(oval_result);
+	oscap_file_entry_iterator_free(files_it);
+	oscap_file_entry_list_free(files);
+	xccdf_policy_model_free(policy_model);
+	return result;
+}
+
 int app_xccdf_xslt(const struct oscap_action *action)
 {
 	const char *oval_template = action->oval_template;
 
-	/* If generating the report and the option is missing -> use defaults */
 	if (action->module == &XCCDF_GEN_REPORT && oval_template == NULL) {
-		oval_template = "%.result.xml";
+		/* If generating the report and the option is missing -> use defaults */
+		if (_some_oval_result_exists(action->f_xccdf))
+			/* We want to define default template because we strive to serve user the
+			 * best. However, we must not offer a template, if there is a risk it might
+			 * be incorrect. Otherwise, libxml2 will throw a lot of misleading messages
+			 * to stderr. */
+			oval_template = "%.result.xml";
 	}
 
 	if (action->module == &XCCDF_GEN_CUSTOM) {
