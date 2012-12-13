@@ -70,6 +70,8 @@ EXTRA_DIST += \
 	test_report_check_with_empty_selector.oval.xml.result.xml \
 	test_report_check_with_empty_selector.sh \
 	test_report_check_with_empty_selector.xccdf.xml.result.xml \
+	test_report_without_oval_poses_no_errors.sh \
+	test_report_without_oval_poses_no_errors.xccdf.xml.result.xml \
 	test_report_without_xsl_fails_gracefully.sh \
 	test_xccdf_fix_attr_export.sh \
 	test_xccdf_fix_attr_export.xccdf.xml \
