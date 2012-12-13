@@ -56,6 +56,7 @@ struct ds_stream_index* ds_stream_index_new(void)
 	ret->check_components = oscap_stringlist_new();
 	ret->checklist_components = oscap_stringlist_new();
 	ret->dictionary_components = oscap_stringlist_new();
+	ret->extended_components = oscap_stringlist_new();
 
 	return ret;
 }
@@ -69,6 +70,7 @@ void ds_stream_index_free(struct ds_stream_index* s)
 	oscap_stringlist_free(s->check_components);
 	oscap_stringlist_free(s->checklist_components);
 	oscap_stringlist_free(s->dictionary_components);
+	oscap_stringlist_free(s->extended_components);
 
 	oscap_free(s);
 }
@@ -166,17 +168,17 @@ static struct ds_stream_index* ds_stream_index_parse(xmlTextReaderPtr reader)
 		         node_type == 1)
 		{
 			// sanity check
-			if (cref_target == NULL)
-			{
+			if (cref_target == NULL) {
 				oscap_seterr(OSCAP_EFAMILY_XML,
 				             "Encountered <ds:component-ref> but it is either not inside "
 				             "any container element or container elements interleave. "
 				             "Please make sure the datastream is valid!");
 			}
-
-			xmlChar* id_attr = xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-			oscap_stringlist_add_string(cref_target, (const char*)id_attr);
-			xmlFree(id_attr);
+			else {
+				xmlChar* id_attr = xmlTextReaderGetAttribute(reader, BAD_CAST "id");
+				oscap_stringlist_add_string(cref_target, (const char*)id_attr);
+				xmlFree(id_attr);
+			}
 		}
 	}
 
