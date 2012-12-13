@@ -55,8 +55,14 @@ static struct oscap_module DS_SDS_SPLIT_MODULE = {
 	.name = "sds-split",
 	.parent = &OSCAP_DS_MODULE,
 	.summary = "Split given SourceDataStream into separate files",
-	.usage = "sds.xml target_directory/",
-	.help = NULL,
+	.usage = "[options] SDS TARGET_DIRECTORY",
+	.help =
+		"SDS - Source data stream that will be split into multiple files.\n"
+		"TARGET_DIRECTORY - Directory of the resulting files.\n"
+		"\n"
+		"Options:\n"
+		"   --datastream-id <id> \r\t\t\t\t - ID of the datastream in the collection to use.\n"
+		"   --xccdf-id <id> \r\t\t\t\t - ID of XCCDF in the datastream that should be evaluated.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_sds_split
 };
@@ -110,16 +116,42 @@ static struct oscap_module* DS_SUBMODULES[] = {
 	NULL
 };
 
-bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
+enum ds_opt {
+	DS_OPT_DATASTREAM_ID = 1,
+	DS_OPT_XCCDF_ID,
+};
 
-	if( (action->module == &DS_SDS_SPLIT_MODULE) ) {
-		if(  argc != 5 ) {
+bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
+	action->doctype = OSCAP_DOCUMENT_SDS;
+
+	/* Command-options */
+	const struct option long_options[] = {
+	// options
+		{"datastream-id",		required_argument, NULL, DS_OPT_DATASTREAM_ID},
+		{"xccdf-id",		required_argument, NULL, DS_OPT_XCCDF_ID},
+	// end
+		{0, 0, 0, 0}
+	};
+
+	int c;
+	while ((c = getopt_long(argc, argv, "o:i:", long_options, NULL)) != -1) {
+
+		switch (c) {
+		case DS_OPT_DATASTREAM_ID:	action->f_datastream_id = optarg;	break;
+		case DS_OPT_XCCDF_ID:	action->f_xccdf_id = optarg; break;
+		case 0: break;
+		default: return oscap_module_usage(action->module, stderr, NULL);
+		}
+	}
+
+	if (action->module == &DS_SDS_SPLIT_MODULE) {
+		if (optind + 2 != argc) {
 			oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
 			return false;
 		}
 		action->ds_action = malloc(sizeof(struct ds_action));
-		action->ds_action->file = argv[3];
-		action->ds_action->target = argv[4];
+		action->ds_action->file = argv[optind];
+		action->ds_action->target = argv[optind + 1];
 	}
 	else if( (action->module == &DS_SDS_COMPOSE_MODULE) ) {
 		if(  argc != 5 ) {
@@ -163,6 +195,9 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 
 int app_ds_sds_split(const struct oscap_action *action) {
 	int ret;
+	struct ds_sds_index* sds_idx = NULL;
+	const char* f_datastream_id = action->f_datastream_id;
+	const char* f_component_id = action->f_xccdf_id;
 
 	/* Validate */
 	if (action->validate)
@@ -178,7 +213,18 @@ int app_ds_sds_split(const struct oscap_action *action) {
 		}
 	}
 
-	if (ds_sds_decompose(action->ds_action->file, NULL, NULL, action->ds_action->target, NULL) != 0)
+	sds_idx = ds_sds_index_import(action->ds_action->file);
+
+	if (ds_sds_index_select_checklist(sds_idx, &f_datastream_id, &f_component_id) != 0) {
+		fprintf(stdout, "Failed to locate a datastream with ID matching '%s' ID "
+				"and checklist inside matching '%s' ID.\n",
+				action->f_datastream_id == NULL ? "<any>" : action->f_datastream_id,
+				action->f_xccdf_id == NULL ? "<any>" : action->f_xccdf_id);
+		ret = OSCAP_ERROR;
+		goto cleanup;
+	}
+
+	if (ds_sds_decompose(action->ds_action->file, f_datastream_id, f_component_id, action->ds_action->target, NULL) != 0)
 	{
 		fprintf(stdout, "Failed to split given source datastream '%s'.\n", action->ds_action->file);
 		ret = OSCAP_ERROR;
@@ -191,7 +237,9 @@ cleanup:
 	if (oscap_err())
 		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 
+	ds_sds_index_free(sds_idx);
 	free(action->ds_action);
+
 	return ret;
 }
 

@@ -389,9 +389,15 @@ AR:[ND|L|M|H]         E   Availability requirement: Not Defined, Low, Medium, Hi
 Creates a source datastream from the XCCDF file given in SOURCE_XCCDF and stores the result in TARGET_SDS. Dependencies like OVAL files are automatically detected and bundled in target source datastream.
 .RE
 .TP
-.B \fBsds-split\fR SOURCE_DS TARGET_DIR
+.B \fBsds-split\fR [\fIoptions\fR] SOURCE_DS TARGET_DIR
 .RS
 Splits given source datastream into multiple files and stores all the files in TARGET_DIR.
+.TP
+\fB\-\-datastream-id DATASTREAM_ID\fR
+Uses a datastream with that particular ID from the given datastream collection. If not given the first datastream is used.
+.TP
+\fB\-\-xccdf-id XCCDF_ID\fR
+Takes component ref with given ID from checklists. This allows to select a particular XCCDF component even in cases where there are 2 XCCDFs in one datastream.
 .RE
 .TP
 .B \fBsds-validate\fR SOURCE_DS
