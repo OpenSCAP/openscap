@@ -955,7 +955,7 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 			dI("handling varrefs in object\n");
 
 			if (probe_varref_create_ctx(probe_in, varrefs, &ctx) != 0) {
-				SEXP_vfree(varrefs, pctx.filters, probe_in, NULL);
+				SEXP_vfree(varrefs, pctx.filters, probe_in, mask, NULL);
 				*ret = PROBE_EUNKNOWN;
 				return (NULL);
 			}
