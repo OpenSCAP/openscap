@@ -70,8 +70,9 @@ Requires:       libcurl >= 7.12.0
 BuildRequires:  libcurl-devel >= 7.12.0
 
 %description    utils
-The %{name}-utils package contains various utilities based on %{name} library.
-
+The %{name}-utils package contains oscap command-line tool. The oscap
+is configuration and vulnerability scanner, capable of performing
+compliance checking using SCAP content.
 
 %package        content
 Summary:        SCAP content
