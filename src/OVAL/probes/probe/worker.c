@@ -156,6 +156,8 @@ struct probe_varref_ctx_ent {
 	unsigned int next_val_idx;
 };
 
+static void probe_varref_destroy_ctx(struct probe_varref_ctx *ctx);
+
 static int probe_varref_create_ctx(const SEXP_t *probe_in, SEXP_t *varrefs, struct probe_varref_ctx **octx)
 {
 	unsigned int i, ent_cnt, val_cnt;
@@ -205,6 +207,7 @@ static int probe_varref_create_ctx(const SEXP_t *probe_in, SEXP_t *varrefs, stru
 		if (varref == NULL) {
 			dE("Unexpected error: variable id \"%s\" not found in varrefs.", SEXP_string_cstr(vid));
 			SEXP_vfree(vid, ent_name, vidx_name, vidx_val, NULL);
+			probe_varref_destroy_ctx(ctx);
 			return -1;
 		}
 
