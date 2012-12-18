@@ -98,12 +98,12 @@
 <axsl:template match="oval-res:definition[@result='true' and oval-res:criteria]" priority="1011" mode="M13">
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_true/@reported=true())                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_true/@reported=true())"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_true/@reported=true())                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_true/@reported=true())"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of TRUE should not be included (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose>
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_true/@content='full')                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_true/@content='full')"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_true/@content='full')                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_true/@content='full')"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of TRUE should contain THIN content (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose><axsl:apply-templates select="@*|*" mode="M13"/></axsl:template>
 
@@ -111,12 +111,12 @@
 <axsl:template match="oval-res:definition[@result='true' and not(oval-res:criteria)]" priority="1010" mode="M13">
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_true/@reported=true())                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_true/@reported=true())"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_true/@reported=true())                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_true/@reported=true())"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of TRUE should not be included (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose>
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_true/@content='thin')                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_true/@content='thin')"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_true/@content='thin')                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_true/@content='thin')"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of TRUE should contain FULL content (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose><axsl:apply-templates select="@*|*" mode="M13"/></axsl:template>
 
@@ -124,12 +124,12 @@
 <axsl:template match="oval-res:definition[@result='false' and oval-res:criteria]" priority="1009" mode="M13">
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_false/@reported=true())                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_false/@reported=true())"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_false/@reported=true())                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_false/@reported=true())"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of FALSE should not be included (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose>
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_false/@content='full')                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_false/@content='full')"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_false/@content='full')                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_false/@content='full')"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of FALSE should contain THIN content (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose><axsl:apply-templates select="@*|*" mode="M13"/></axsl:template>
 
@@ -137,12 +137,12 @@
 <axsl:template match="oval-res:definition[@result='false' and not(oval-res:criteria)]" priority="1008" mode="M13">
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_false/@reported=true())                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_false/@reported=true())"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_false/@reported=true())                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_false/@reported=true())"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of FALSE should not be included (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose>
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_false/@content='thin')                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_false/@content='thin')"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_false/@content='thin')                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_false/@content='thin')"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of FALSE should contain FULL content (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose><axsl:apply-templates select="@*|*" mode="M13"/></axsl:template>
 
@@ -150,12 +150,12 @@
 <axsl:template match="oval-res:definition[@result='unknown' and oval-res:criteria]" priority="1007" mode="M13">
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_unknown/@reported=true())                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_unknown/@reported=true())"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_unknown/@reported=true())                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_unknown/@reported=true())"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of UNKNOWN should not be included (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose>
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_unknown/@content='full')                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_unknown/@content='full')"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_unknown/@content='full')                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_unknown/@content='full')"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of UNKNOWN should contain THIN content (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose><axsl:apply-templates select="@*|*" mode="M13"/></axsl:template>
 
@@ -163,12 +163,12 @@
 <axsl:template match="oval-res:definition[@result='unknown' and not(oval-res:criteria)]" priority="1006" mode="M13">
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_unknown/@reported=true())                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_unknown/@reported=true())"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_unknown/@reported=true())                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_unknown/@reported=true())"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of UNKNOWN should not be included (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose>
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_unknown/@content='thin')                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_unknown/@content='thin')"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_unknown/@content='thin')                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_unknown/@content='thin')"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of UNKNOWN should contain FULL content (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose><axsl:apply-templates select="@*|*" mode="M13"/></axsl:template>
 
@@ -176,12 +176,12 @@
 <axsl:template match="oval-res:definition[@result='error' and oval-res:criteria]" priority="1005" mode="M13">
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_error/@reported=true())                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_error/@reported=true())"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_error/@reported=true())                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_error/@reported=true())"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of ERROR should not be included (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose>
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_error/@content='full')                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_error/@content='full')"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_error/@content='full')                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_error/@content='full')"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of ERROR should contain THIN content (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose><axsl:apply-templates select="@*|*" mode="M13"/></axsl:template>
 
@@ -189,12 +189,12 @@
 <axsl:template match="oval-res:definition[@result='error' and not(oval-res:criteria)]" priority="1004" mode="M13">
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_error/@reported=true())                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_unknown/@reported=true())"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_error/@reported=true())                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_unknown/@reported=true())"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of ERROR should not be included (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose>
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_error/@content='thin')                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_error/@content='thin')"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_error/@content='thin')                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_error/@content='thin')"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of ERROR should contain FULL content (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose><axsl:apply-templates select="@*|*" mode="M13"/></axsl:template>
 
@@ -202,12 +202,12 @@
 <axsl:template match="oval-res:definition[@result='not evaluated' and oval-res:criteria]" priority="1003" mode="M13">
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_evaluated/@reported=true())                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_evaluated/@reported=true())"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_evaluated/@reported=true())                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_evaluated/@reported=true())"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of NOT EVALUATED should not be included (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose>
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_evaluated/@content='full')                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_evaluated/@content='full')"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_evaluated/@content='full')                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_evaluated/@content='full')"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of NOT EVALUATED should contain THIN content (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose><axsl:apply-templates select="@*|*" mode="M13"/></axsl:template>
 
@@ -215,12 +215,12 @@
 <axsl:template match="oval-res:definition[@result='not evaluated' and not(oval-res:criteria)]" priority="1002" mode="M13">
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_evaluated/@reported=true())                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_evaluated/@reported=true())"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_evaluated/@reported=true())                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_evaluated/@reported=true())"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of NOT EVALUATED should not be included (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose>
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_evaluated/@content='thin')                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_evaluated/@content='thin')"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_evaluated/@content='thin')                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_evaluated/@content='thin')"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of NOT EVALUATED should contain FULL content (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose><axsl:apply-templates select="@*|*" mode="M13"/></axsl:template>
 
@@ -228,12 +228,12 @@
 <axsl:template match="oval-res:definition[@result='not applicable' and oval-res:criteria]" priority="1001" mode="M13">
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_applicable/@reported=true())                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_applicable/@reported=true())"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_applicable/@reported=true())                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_applicable/@reported=true())"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of NOT APPLICABLE should not be included (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose>
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_applicable/@content='full')                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_applicable/@content='full')"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_applicable/@content='full')                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_applicable/@content='full')"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of NOT APPLICABLE should contain THIN content (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose><axsl:apply-templates select="@*|*" mode="M13"/></axsl:template>
 
@@ -241,12 +241,12 @@
 <axsl:template match="oval-res:definition[@result='not applicable' and not(oval-res:criteria)]" priority="1000" mode="M13">
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_applicable/@reported=true())                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_applicable/@reported=true())"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_applicable/@reported=true())                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_applicable/@reported=true())"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of NOT APPLICABLE should not be included (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose>
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_applicable/@content='thin')                                    and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_applicable/@content='thin')"/><axsl:otherwise>
+<axsl:choose><axsl:when test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_applicable/@content='thin')                                    and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_applicable/@content='thin')"/><axsl:otherwise>
                                    <axsl:text/><axsl:value-of select="@definition_id"/><axsl:text/> - definitions with a result of NOT APPLICABLE should contain FULL content (see directives)
                               <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose><axsl:apply-templates select="@*|*" mode="M13"/></axsl:template><axsl:template match="text()" priority="-1" mode="M13"/><axsl:template match="@*|node()" priority="-2" mode="M13"><axsl:apply-templates select="@*|*" mode="M13"/></axsl:template>
 
