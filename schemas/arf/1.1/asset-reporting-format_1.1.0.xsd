@@ -19,7 +19,7 @@
                     <!-- <sch:let name="arf-namespace" value="string('http://scap.nist.gov/vocabulary/arf/relationships/1.0#')"/> -->
                     <sch:let name="arf-namespace" value="string('http://scap.nist.gov/specifications/arf/vocabulary/relationships/1.0#')"/>
                     <sch:rule context="core:relationship[fn:resolve-QName(@type, current()) eq fn:QName($arf-namespace,'isAbout' )]">
-                        <sch:assert test="exists(ancestor::arf:asset-report-collection/arf:reports/arf:report[@id eq current()/@subject])">
+                        <sch:assert test="boolean(ancestor::arf:asset-report-collection/arf:reports/arf:report[@id eq current()/@subject])">
                             <sch:value-of select="xcf:controlled-vocab-error-domain(current(),'report')"/>
                         </sch:assert>
                         <sch:assert test="every $m in core:ref satisfies current()/ancestor::arf:asset-report-collection/arf:assets/arf:asset[@id eq $m]">
@@ -27,7 +27,7 @@
                         </sch:assert>
                     </sch:rule>
                     <sch:rule context="core:relationship[fn:resolve-QName(@type, current()) eq fn:QName($arf-namespace,'retrievedFrom' )]">
-                        <sch:assert test="exists(ancestor::arf:asset-report-collection/arf:reports/arf:report[@id eq current()/@subject])">
+                        <sch:assert test="boolean(ancestor::arf:asset-report-collection/arf:reports/arf:report[@id eq current()/@subject])">
                             <sch:value-of select="xcf:controlled-vocab-error-domain(current(),'report')"/>
                         </sch:assert>
                         <sch:assert test="every $m in core:ref satisfies current()/ancestor::arf:asset-report-collection/arf:assets/arf:asset[@id eq $m]">
@@ -35,7 +35,7 @@
                         </sch:assert>
                     </sch:rule>
                     <sch:rule context="core:relationship[fn:resolve-QName(@type, current()) eq fn:QName($arf-namespace,'createdBy' )]">
-                        <sch:assert test="exists(ancestor::arf:asset-report-collection/arf:reports/arf:report[@id eq current()/@subject])">
+                        <sch:assert test="boolean(ancestor::arf:asset-report-collection/arf:reports/arf:report[@id eq current()/@subject])">
                             <sch:value-of select="xcf:controlled-vocab-error-domain(current(),'report')"/>
                         </sch:assert>
                         <sch:assert test="every $m in core:ref satisfies current()/ancestor::arf:asset-report-collection/arf:assets/arf:asset[@id eq $m]">
@@ -43,7 +43,7 @@
                         </sch:assert>
                     </sch:rule>
                     <sch:rule context="core:relationship[fn:resolve-QName(@type, current()) eq fn:QName($arf-namespace,'hasSource' )]">
-                        <sch:assert test="exists(ancestor::arf:asset-report-collection/arf:reports/arf:report[@id eq current()/@subject])">
+                        <sch:assert test="boolean(ancestor::arf:asset-report-collection/arf:reports/arf:report[@id eq current()/@subject])">
                             <sch:value-of select="xcf:controlled-vocab-error-domain(current(),'report')"/>
                         </sch:assert>
                         <sch:assert test="every $m in core:ref satisfies current()/ancestor::arf:asset-report-collection/arf:assets/arf:asset[@id eq $m]">
@@ -51,7 +51,7 @@
                         </sch:assert>
                     </sch:rule>
                     <sch:rule context="core:relationship[fn:resolve-QName(@type, current()) eq fn:QName($arf-namespace,'recordedBy' )]">
-                        <sch:assert test="exists(ancestor::arf:asset-report-collection/arf:reports/arf:report[@id eq current()/@subject])">
+                        <sch:assert test="boolean(ancestor::arf:asset-report-collection/arf:reports/arf:report[@id eq current()/@subject])">
                             <sch:value-of select="xcf:controlled-vocab-error-domain(current(),'report')"/>
                         </sch:assert>
                         <sch:assert test="every $m in core:ref satisfies current()/ancestor::arf:asset-report-collection/arf:assets/arf:asset[@id eq $m]">
@@ -59,7 +59,7 @@
                         </sch:assert>
                     </sch:rule>
                     <sch:rule context="core:relationship[fn:resolve-QName(@type, current()) eq fn:QName($arf-namespace,'initiatedBy' )]">
-                        <sch:assert test="exists(ancestor::arf:asset-report-collection/arf:reports/arf:report[@id eq current()/@subject])">
+                        <sch:assert test="boolean(ancestor::arf:asset-report-collection/arf:reports/arf:report[@id eq current()/@subject])">
                             <sch:value-of select="xcf:controlled-vocab-error-domain(current(),'report')"/>
                         </sch:assert>
                         <sch:assert test="every $m in core:ref satisfies current()/ancestor::arf:asset-report-collection/arf:assets/arf:asset[@id eq $m]">
@@ -67,7 +67,7 @@
                         </sch:assert>
                     </sch:rule>
                     <sch:rule context="core:relationship[fn:resolve-QName(@type, current()) eq fn:QName($arf-namespace,'createdFor' )]">
-                        <sch:assert test="exists(ancestor::arf:asset-report-collection/arf:reports/arf:report[@id eq current()/@subject])">
+                        <sch:assert test="boolean(ancestor::arf:asset-report-collection/arf:reports/arf:report[@id eq current()/@subject])">
                             <sch:value-of select="xcf:controlled-vocab-error-domain(current(),'report')"/>
                         </sch:assert>
                         <sch:assert test="every $m in core:ref satisfies current()/ancestor::arf:asset-report-collection/arf:report-requests/arf:report-request[@id eq $m]">
@@ -75,7 +75,7 @@
                         </sch:assert>
                     </sch:rule>
                     <sch:rule context="core:relationship[fn:resolve-QName(@type, current()) eq fn:QName($arf-namespace,'hasMetadata' )]">
-                        <sch:assert test="exists(ancestor::arf:asset-report-collection/arf:reports/arf:report[@id eq current()/@subject])">
+                        <sch:assert test="boolean(ancestor::arf:asset-report-collection/arf:reports/arf:report[@id eq current()/@subject])">
                             <sch:value-of select="xcf:controlled-vocab-error-domain(current(),'report')"/>
                         </sch:assert>
                         <sch:assert test="every $m in core:ref satisfies current()/ancestor::arf:asset-report-collection/arf:reports/arf:report[@id eq $m]">

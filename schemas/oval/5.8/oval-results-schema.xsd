@@ -236,12 +236,12 @@
                               <!-- Check that the global directives say to report this and that there are no class directives for this class (to override the global directive),
                                    or that the class directive for this class says to report this. -->
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_true/@reported=true())
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_true/@reported=true())">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of TRUE should not be included (see directives)
                               </sch:assert>
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_true/@content='full')
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_true/@content='full')">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of TRUE should contain THIN content (see directives)
                               </sch:assert>
@@ -250,12 +250,12 @@
                          <!-- Check definition_true reported='true' and content='thin' -->                         
                          <sch:rule context="oval-res:definition[@result='true' and not(oval-res:criteria)]">
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_true/@reported=true())
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_true/@reported=true())">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of TRUE should not be included (see directives)
                               </sch:assert>
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_true/@content='thin')
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_true/@content='thin')">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of TRUE should contain FULL content (see directives)
                               </sch:assert>
@@ -264,12 +264,12 @@
                          <!-- Check definition_false reported='true' and content='full' -->
                          <sch:rule context="oval-res:definition[@result='false' and oval-res:criteria]">
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_false/@reported=true())
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_false/@reported=true())">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of FALSE should not be included (see directives)
                               </sch:assert>
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_false/@content='full')
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_false/@content='full')">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of FALSE should contain THIN content (see directives)
                               </sch:assert>
@@ -278,12 +278,12 @@
                          <!-- Check definition_false reported='true' and content='thin' -->                         
                          <sch:rule context="oval-res:definition[@result='false' and not(oval-res:criteria)]">
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_false/@reported=true())
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_false/@reported=true())">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of FALSE should not be included (see directives)
                               </sch:assert>
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_false/@content='thin')
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_false/@content='thin')">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of FALSE should contain FULL content (see directives)
                               </sch:assert>
@@ -292,12 +292,12 @@
                          <!-- Check definition_unknown reported='true' and content='full' -->
                          <sch:rule context="oval-res:definition[@result='unknown' and oval-res:criteria]">
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_unknown/@reported=true())
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_unknown/@reported=true())">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of UNKNOWN should not be included (see directives)
                               </sch:assert>
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_unknown/@content='full')
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_unknown/@content='full')">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of UNKNOWN should contain THIN content (see directives)
                               </sch:assert>
@@ -306,12 +306,12 @@
                          <!-- Check definition_unknown reported='true' and content='thin' -->                         
                          <sch:rule context="oval-res:definition[@result='unknown' and not(oval-res:criteria)]">
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_unknown/@reported=true())
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_unknown/@reported=true())">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of UNKNOWN should not be included (see directives)
                               </sch:assert>
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_unknown/@content='thin')
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_unknown/@content='thin')">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of UNKNOWN should contain FULL content (see directives)
                               </sch:assert>
@@ -320,12 +320,12 @@
                          <!-- Check definition_error reported='true' and content='full' -->
                          <sch:rule context="oval-res:definition[@result='error' and oval-res:criteria]">
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_error/@reported=true())
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_error/@reported=true())">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of ERROR should not be included (see directives)
                               </sch:assert>
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_error/@content='full')
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_error/@content='full')">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of ERROR should contain THIN content (see directives)
                               </sch:assert>
@@ -334,12 +334,12 @@
                          <!-- Check definition_error reported='true' and content='thin' -->                         
                          <sch:rule context="oval-res:definition[@result='error' and not(oval-res:criteria)]">
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_error/@reported=true())
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_unknown/@reported=true())">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of ERROR should not be included (see directives)
                               </sch:assert>
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_error/@content='thin')
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_error/@content='thin')">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of ERROR should contain FULL content (see directives)
                               </sch:assert>
@@ -348,12 +348,12 @@
                          <!-- Check definition_not_evaluated reported='true' and content='full' -->
                          <sch:rule context="oval-res:definition[@result='not evaluated' and oval-res:criteria]">
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_evaluated/@reported=true())
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_evaluated/@reported=true())">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of NOT EVALUATED should not be included (see directives)
                               </sch:assert>
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_evaluated/@content='full')
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_evaluated/@content='full')">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of NOT EVALUATED should contain THIN content (see directives)
                               </sch:assert>
@@ -362,12 +362,12 @@
                          <!-- Check definition_not_evaluated reported='true' and content='thin' -->                         
                          <sch:rule context="oval-res:definition[@result='not evaluated' and not(oval-res:criteria)]">
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_evaluated/@reported=true())
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_evaluated/@reported=true())">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of NOT EVALUATED should not be included (see directives)
                               </sch:assert>
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_evaluated/@content='thin')
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_evaluated/@content='thin')">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of NOT EVALUATED should contain FULL content (see directives)
                               </sch:assert>
@@ -376,12 +376,12 @@
                          <!-- Check definition_not_applicable reported='true' and content='full' -->
                          <sch:rule context="oval-res:definition[@result='not applicable' and oval-res:criteria]">
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_applicable/@reported=true())
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_applicable/@reported=true())">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of NOT APPLICABLE should not be included (see directives)
                               </sch:assert>
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_applicable/@content='full')
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_applicable/@content='full')">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of NOT APPLICABLE should contain THIN content (see directives)
                               </sch:assert>
@@ -390,12 +390,12 @@
                          <!-- Check definition_not_applicable reported='true' and content='thin' -->                         
                          <sch:rule context="oval-res:definition[@result='not applicable' and not(oval-res:criteria)]">
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_applicable/@reported=true())
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_applicable/@reported=true())">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of NOT APPLICABLE should not be included (see directives)
                               </sch:assert>
                               <sch:assert test="((/oval-res:oval_results/oval-res:directives/oval-res:definition_not_applicable/@content='thin')
-                                   and not(exists(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
+                                   and not(boolean(/oval-res:oval_results/oval-res:class_directives[@class = ./@class])))
                                    or (/oval-res:oval_results/oval-res:class_directives[@class = ./@class]/oval-res:definition_not_applicable/@content='thin')">
                                    <sch:value-of select="@definition_id"/> - definitions with a result of NOT APPLICABLE should contain FULL content (see directives)
                               </sch:assert>
