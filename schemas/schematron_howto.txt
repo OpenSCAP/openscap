@@ -17,6 +17,8 @@ Creating a validation XSL file
 2. use xsltproc to generate target .xsl, which will be used to validate documents
   $ xsltproc iso_schematron_skeleton_for_xslt1.xsl oval-definitions-schematron.sch >oval/${OVAL_VERSION}/oval-definitions-schematron.xsl
 
+3. Make sure you do not override workarounds we carry on. (You can use git-merge).
+
 
 Validating an document without oscap tool
 
