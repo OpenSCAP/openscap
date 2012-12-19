@@ -885,7 +885,7 @@ void xccdf_setvalue_free(struct xccdf_setvalue *sv);
  * Release library internal caches.
  * @deprecated Use @ref oscap_cleanup() instead.
  */
-void xccdf_cleanup(void);
+OSCAP_DEPRECATED(void xccdf_cleanup(void));
 
 /**
  * Create a group and append it to the benchmark.

@@ -36,9 +36,9 @@
 #ifndef OVAL_AGENT_XCCDF_API_H_
 #define OVAL_AGENT_XCCDF_API_H_
 
+#include <oscap.h>
 #include "oval_agent_api.h"
 #include "xccdf_policy.h"
-
 
 /**
  * @param policy XCCDF Policy that is being evaluated
@@ -106,7 +106,7 @@ bool xccdf_policy_model_register_engine_oval(struct xccdf_policy_model * model, 
  * @param session OVAL Agent session
  * @param ritem XCCDF Result
  */
-void oval_agent_export_sysinfo_to_xccdf_result(struct oval_agent_session * session, struct xccdf_result * ritem);
+OSCAP_DEPRECATED(void oval_agent_export_sysinfo_to_xccdf_result(struct oval_agent_session * session, struct xccdf_result * ritem));
 
 /**
  * @} END OVALDEF
