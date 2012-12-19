@@ -168,7 +168,7 @@ bool xccdf_policy_model_add_cpe_autodetect(struct xccdf_policy_model *model, con
  * @memberof xccdf_policy_model
  * @return true if callback registered succesfully, false otherwise
  *
- * @deprecated This function is deprecated by xccdf_policy_model_register_engine_and_query_callback
+ * @deprecated This function is deprecated by @ref xccdf_policy_model_register_engine_and_query_callback
  * and might be dropped from future releases.
  */
 OSCAP_DEPRECATED(bool xccdf_policy_model_register_engine_callback(struct xccdf_policy_model * model, char * sys, void * func, void * usr));
@@ -364,7 +364,7 @@ bool xccdf_policy_add_select(struct xccdf_policy *, struct xccdf_select *);
  * Set a new selector to the Policy structure
  * @memberof xccdf_policy
  * @return true if rule has been added succesfully
- * @deprecated This function is deprecated by xccdf_policy_add_select
+ * @deprecated This function is deprecated by @ref xccdf_policy_add_select
  * and might be dropped from future releases.
  */
 OSCAP_DEPRECATED(

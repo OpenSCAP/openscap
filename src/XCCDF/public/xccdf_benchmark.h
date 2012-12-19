@@ -883,7 +883,7 @@ void xccdf_setvalue_free(struct xccdf_setvalue *sv);
 
 /**
  * Release library internal caches.
- * @deprecated Use oscap_cleanup() instead.
+ * @deprecated Use @ref oscap_cleanup() instead.
  */
 void xccdf_cleanup(void);
 

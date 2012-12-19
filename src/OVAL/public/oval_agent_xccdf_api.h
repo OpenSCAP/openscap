@@ -101,7 +101,7 @@ bool xccdf_policy_model_register_engine_oval(struct xccdf_policy_model * model, 
 /**
  * @deprecated
  * Transform OVAL Sysinfo into XCCDF Test Result
- * This function has been deprecated, please use xccdf_result_fill_sysinfo(..) instead
+ * This function has been deprecated, please use @ref xccdf_result_fill_sysinfo() instead
  *
  * @param session OVAL Agent session
  * @param ritem XCCDF Result
