@@ -49,9 +49,6 @@ static void __oscap_err_check(void *m)
 void *__oscap_alloc(size_t s)
 {
 	void *m;
-#if defined(OSCAP_ALLOC_STRICT)
-	assume_d (s > 0, NULL);
-#endif
 	m = malloc(s);
 	__oscap_err_check(m);
 #if defined(OSCAP_ALLOC_EXIT)
