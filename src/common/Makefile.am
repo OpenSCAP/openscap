@@ -9,16 +9,24 @@ liboscapcommon_la_SOURCES = \
 	error.c _error.h \
 	list.c list.h \
 	memusage.c memusage.h \
+	oscap_acquire.c \
 	oscapxml.c \
 	reference.c reference_priv.h \
 	text.c text_priv.h \
 	tsort.c tsort.h \
 	util.c util.h
 
-liboscapcommon_la_CPPFLAGS  = @xml2_CFLAGS@ @xslt_CFLAGS@ @exslt_CFLAGS@ -I$(srcdir)/public -I$(top_srcdir)/src/OVAL/probes/SEAP/public -I$(top_srcdir)/src
-liboscapcommon_la_LIBADD = @xml2_LIBS@ @xslt_LIBS@ @exslt_LIBS@ @pthread_LIBS@
+liboscapcommon_la_CPPFLAGS  = \
+	@curl_CFLAGS@ \
+	@xml2_CFLAGS@ @xslt_CFLAGS@ @exslt_CFLAGS@ \
+	-I$(srcdir)/public -I$(top_srcdir)/src/OVAL/probes/SEAP/public -I$(top_srcdir)/src
+
+liboscapcommon_la_LIBADD = \
+	@curl_LIBS@ \
+	@xml2_LIBS@ @xslt_LIBS@ @exslt_LIBS@ @pthread_LIBS@
 
 pkginclude_HEADERS =\
+	public/oscap_acquire.h \
 	public/oscap_error.h \
 	public/oscap.h \
 	public/oscap_reference.h \

@@ -35,8 +35,4 @@ oscap_CPPFLAGS  += -DENABLE_SCE
 oscap_CPPFLAGS  += -I$(top_srcdir)/src/SCE/public
 endif
 
-oscap_SOURCES	+= oscap_acquire.c
-EXTRA_DIST	+= oscap_acquire.h
-oscap_CPPFLAGS	+= @curl_CFLAGS@
-oscap_LDADD	+= @curl_LIBS@
 endif

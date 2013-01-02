@@ -29,13 +29,13 @@
 #include <oval_agent_api.h>
 #include <oval_results.h>
 #include <oval_variables.h>
+#include <oscap_acquire.h>
 #include <assert.h>
 #include <limits.h>
 #include <ftw.h>
 
 #include "oscap-tool.h"
 #include "scap_ds.h"
-#include "oscap_acquire.h"
 
 static int app_collect_oval(const struct oscap_action *action);
 static int app_evaluate_oval(const struct oscap_action *action);

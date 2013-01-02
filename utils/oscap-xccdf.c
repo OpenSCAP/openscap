@@ -33,6 +33,7 @@
 #include <scap_ds.h>
 #include <xccdf_benchmark.h>
 #include <xccdf_policy.h>
+#include <oscap_acquire.h>
 
 #include <cpe_dict.h>
 #include <cpe_lang.h>
@@ -50,7 +51,6 @@
 
 #include "oscap-tool.h"
 #include "oscap.h"
-#include "oscap_acquire.h"
 
 static int app_evaluate_xccdf(const struct oscap_action *action);
 static int app_xccdf_validate(const struct oscap_action *action);
@@ -439,8 +439,18 @@ xccdf_policy_get_oval_resources(struct xccdf_policy_model *policy_model, bool al
 						return NULL;
 					}
 
+					printf("Downloading: %s ... ", printable_path);
+					fflush(stdout);
 					char *file = oscap_acquire_url_download(*temp_dir, printable_path);
-					if (file != NULL) {
+					if (file == NULL) {
+						printf("error\n");
+						if (oscap_err()) {
+							fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+							oscap_clearerr();
+						}
+					}
+					else {
+						printf("ok\n");
 						resources[idx] = malloc(sizeof(struct oscap_content_resource));
 						resources[idx]->href = strdup(printable_path);
 						resources[idx]->filename = file;
@@ -1052,8 +1062,10 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 
 cleanup:
-	if (oscap_err())
+	if (oscap_err()) {
 		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+		oscap_clearerr();
+	}
 
 	/* syslog message */
 	syslog(priority, "Evaluation finnished. Return code: %d, Base score %f.", result, base_score);
@@ -1090,6 +1102,8 @@ cleanup:
 		ds_sds_index_free(sds_idx);
 
 	oscap_acquire_cleanup_dir(&temp_dir);
+	if (oscap_err())
+		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 
 	if (oval_result_files)
 	{
@@ -1244,8 +1258,10 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	result = OSCAP_OK;
 
  cleanup:
-	if (oscap_err())
+	if (oscap_err()) {
 		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+		oscap_clearerr();
+	}
 
 	if (doc_version)
 		free(doc_version);
@@ -1265,6 +1281,8 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 		xccdf_policy_model_free(policy_model);
 
 	oscap_acquire_cleanup_dir(&temp_dir);
+	if (oscap_err())
+		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 
 	return result;
 }
