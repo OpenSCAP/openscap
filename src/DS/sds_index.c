@@ -236,9 +236,15 @@ struct ds_stream_index_iterator* ds_sds_index_get_streams(struct ds_sds_index* s
 
 static struct ds_sds_index* ds_sds_index_parse(xmlTextReaderPtr reader)
 {
-	struct ds_sds_index* ret = ds_sds_index_new();
+	if (!oscap_to_start_element(reader, 0)) {
+		oscap_seterr(OSCAP_EFAMILY_XML,
+		             "Expected to to have start of <ds:data-stream-collection> at document root, "
+		             "no elements were found! I refuse to parse!");
 
-	oscap_to_start_element(reader, 0);
+		return NULL;
+	}
+
+	struct ds_sds_index* ret = ds_sds_index_new();
 
 	if (xmlTextReaderNodeType(reader) != 1 ||
 	    strcmp((const char*)xmlTextReaderConstLocalName(reader), "data-stream-collection") != 0)
