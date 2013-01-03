@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Benchmark xmlns="http://checklists.nist.gov/xccdf/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="scap-rhel5-benchmark" resolved="0">
   <status date="2008-03-27">accepted</status>
+  <status date="2007-03-27">draft</status>
   <title xml:lang="en">SCAP: Guide To The Secure Configuration of Red Hat Enterprise Linux 5</title>
   <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en">This guide has been created to assist IT professionals, in effectively securing systems with Red Hat Enterprise Linux 5.</description>
   <notice xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en" id="terms_of_use">Do not attempt to implement any of the settings in this guide without first testing them in a non-operational environment. NIST assumes no responsibility whatsoever for its use by other parties, and makes no guarantees, expressed or implied, about its quality, reliability, or any other characteristic. NIST would appreciate acknowledgement if the document and template are used.</notice>

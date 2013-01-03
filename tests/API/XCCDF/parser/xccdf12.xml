@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="xccdf_org.open-scap_benchmark_scap-rhel5-benchmark" resolved="0" xml:lang="en">
+  <status date="2007-03-27">draft</status>
   <status date="2008-03-27">accepted</status>
   <dc-status xmlns:dc="http://purl.org/dc/elements/1.1/">
     <dc:title>Test</dc:title>

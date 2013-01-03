@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Benchmark xmlns="http://checklists.nist.gov/xccdf/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="RHEL-6" resolved="1" xml:lang="en-US">
   <status date="2012-11-06">draft</status>
+  <status date="2012-12-06">accepted</status>
   <title xml:lang="en-US">Title</title>
   <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">Description.</description>
   <notice xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" id="terms_of_use">Notice.</notice>
