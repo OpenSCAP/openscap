@@ -52,7 +52,7 @@ Supported version: 5
 
 Common Platform Enumeration.
 
-Supported version: 2.2
+Supported version: 2.3 and lower
 
 @defgroup CVE
 
@@ -76,7 +76,7 @@ enables user to use system checking mechanism. This mechanism probe
 the OS and gather OVAL System characteristics that can be later used to
 create OVAL Results.
 
-Supported version: 5.5
+Supported version: 5.10.1 and lower
 
 OVAL Definition supported schemas: 
 
@@ -103,7 +103,7 @@ OVAL Results supported schemas:
 
 Extensible Configuration Checklist Description Format.
 
-Supported version: 1.1.4
+Supported version: 1.2 and lower
 
 @defgroup XCCDF_POLICY
 
