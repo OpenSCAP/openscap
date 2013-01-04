@@ -14,7 +14,8 @@ libxccdf_la_SOURCES = \
 	elements.h \
 	helpers.h \
 	unused.h \
-	xccdf_impl.h
+	xccdf_impl.h \
+	xccdf_session.c
 
 libxccdf_la_CPPFLAGS  = @xml2_CFLAGS@ \
 			-I$(top_srcdir)/src \
@@ -25,5 +26,7 @@ libxccdf_la_CPPFLAGS  = @xml2_CFLAGS@ \
 
 libxccdf_la_LDFLAGS = @xml2_LIBS@
 
-pkginclude_HEADERS  = public/xccdf_benchmark.h
+pkginclude_HEADERS  =\
+	public/xccdf_benchmark.h \
+	public/xccdf_session.h
 
