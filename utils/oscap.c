@@ -175,7 +175,7 @@ void validation_failed(const char *xmlfile, oscap_document_type_t doc_type, cons
 		doc_name = "OVAL Results";
                 break;
         case OSCAP_DOCUMENT_OVAL_SYSCHAR:
-		doc_name = "OVAL Definitions";
+		doc_name = "OVAL System Characteristics";
                 break;
         case OSCAP_DOCUMENT_OVAL_VARIABLES:
 		doc_name = "OVAL Variables";
