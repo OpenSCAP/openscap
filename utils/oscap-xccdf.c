@@ -505,7 +505,6 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	struct xccdf_session *session = NULL;
 
 	struct xccdf_policy *policy = NULL;
-	struct xccdf_benchmark *benchmark = NULL;
 	struct xccdf_policy_model *policy_model = NULL;
 	char * xccdf_pathcopy = NULL;
         void **def_models = NULL;
@@ -514,11 +513,6 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	int idx = 0;
 	char* f_results = NULL;
 
-	char* temp_dir = NULL;
-
-	char* xccdf_file = NULL;
-	struct ds_sds_index* sds_idx = NULL;
-	char* xccdf_doc_version = NULL;
 	char** oval_result_files = NULL;
 	int result = OSCAP_ERROR;
 	float base_score = 0;
@@ -535,74 +529,17 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		goto cleanup;
 	xccdf_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
 
-	const char* f_datastream_id = action->f_datastream_id;
-	const char* f_component_id = action->f_xccdf_id;
-
-	if (xccdf_session_is_sds(session))
-	{
-		if (session->validate)
-		{
-			int ret;
-			if ((ret = oscap_validate_document(session->filename, OSCAP_DOCUMENT_SDS, "1.2", reporter, (void*)action) != 0))
-			{
-				if (ret==1)
-					validation_failed(session->filename, OSCAP_DOCUMENT_SDS, "1.2");
-				goto cleanup;
-			}
-		}
-
-		temp_dir = oscap_acquire_temp_dir();
-		if (temp_dir == NULL)
-			goto cleanup;
-
-		sds_idx = ds_sds_index_import(session->filename);
-
-		if (ds_sds_index_select_checklist(sds_idx, &f_datastream_id, &f_component_id) != 0) {
-			fprintf(stdout, "Failed to locate a datastream with ID matching '%s' ID "
-			                "and checklist inside matching '%s' ID.\n",
-			                action->f_datastream_id == NULL ? "<any>" : action->f_datastream_id,
-			                action->f_xccdf_id == NULL ? "<any>" : action->f_xccdf_id);
-			goto cleanup;
-		}
-
-		if (ds_sds_decompose(session->filename, f_datastream_id, f_component_id, temp_dir, "xccdf.xml") != 0)
-		{
-			fprintf(stdout, "Failed to decompose source datastream in '%s'\n", session->filename);
-			goto cleanup;
-		}
-
-		xccdf_file = malloc(PATH_MAX * sizeof(char));
-		snprintf(xccdf_file, PATH_MAX, "%s/%s", temp_dir, "xccdf.xml");
-	}
-	else
-	{
-		xccdf_file = strdup(session->filename);
-	}
-
 	int ret;
 
-	/* Validate documents */
-	if (session->validate && (!xccdf_session_is_sds(session) || session->full_validation)) {
-		xccdf_doc_version = xccdf_detect_version(xccdf_file);
-		if (!xccdf_doc_version)
-			goto cleanup;
-
-		if ((ret=oscap_validate_document(xccdf_file, OSCAP_DOCUMENT_XCCDF, xccdf_doc_version, reporter, (void*) action))) {
-			if (ret==1)
-				validation_failed(xccdf_file, OSCAP_DOCUMENT_XCCDF, xccdf_doc_version);
-			goto cleanup;
-		}
+	if (xccdf_session_is_sds(session)) {
+		xccdf_session_set_datastream_id(session, action->f_datastream_id);
+		xccdf_session_set_component_id(session, action->f_xccdf_id);
 	}
 
-	/* Load XCCDF model and XCCDF Policy model */
-	benchmark = xccdf_benchmark_import(xccdf_file);
-	if (benchmark == NULL) {
-		fprintf(stderr, "Failed to import the XCCDF content from '%s'.\n", xccdf_file);
+	if (xccdf_session_load_xccdf(session) != 0)
 		goto cleanup;
-	}
 
-	/* Create policy model */
-	policy_model = xccdf_policy_model_new(benchmark);
+	policy_model = xccdf_session_get_policy_model(session);
 
 	/* Select profile */
 	policy = xccdf_policy_model_get_policy_by_id(policy_model, action->profile);
@@ -650,7 +587,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	if (xccdf_session_is_sds(session))
 	{
-		struct ds_stream_index* stream_idx = ds_sds_index_get_stream(sds_idx, f_datastream_id);
+		struct ds_stream_index* stream_idx = ds_sds_index_get_stream(session->ds.sds_idx, session->ds.datastream_id);
 		struct oscap_string_iterator* cpe_it = ds_stream_index_get_dictionaries(stream_idx);
 
 		// This potentially allows us to skip yet another decompose if we are sure
@@ -660,11 +597,11 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			// FIXME: Decomposing means that the source datastream will be parsed
 			//        into DOM even though it has already been parsed once when the
 			//        XCCDF was split from it. We should optimize this out someday!
-			if (ds_sds_decompose_custom(session->filename, f_datastream_id, temp_dir,
+			if (ds_sds_decompose_custom(session->filename, session->ds.datastream_id, session->temp_dir,
 			                            "dictionaries", NULL, NULL) != 0)
 			{
 				fprintf(stderr, "Can't decompose CPE dictionaries from datastream '%s' from file '%s'!\n",
-						f_datastream_id, session->filename);
+						session->ds.datastream_id, session->filename);
 				goto cleanup;
 			}
 
@@ -673,7 +610,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 				const char* cpe_filename = oscap_string_iterator_next(cpe_it);
 
 				char* full_cpe_filename = malloc(PATH_MAX * sizeof(char));
-				snprintf(full_cpe_filename, PATH_MAX, "%s/%s", temp_dir, cpe_filename);
+				snprintf(full_cpe_filename, PATH_MAX, "%s/%s", session->temp_dir, cpe_filename);
 
 				if (session->full_validation) {
 					oscap_document_type_t cpe_doc_type;
@@ -730,10 +667,10 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	/* Use OVAL files from policy model */
 	if (action->f_ovals == NULL) {
-		char * pathcopy =  strdup(xccdf_file);
+		char * pathcopy =  strdup(session->xccdf.file);
 		char * path = dirname(pathcopy);
 
-		contents = xccdf_policy_get_oval_resources(policy_model, action->remote_resources, path, &temp_dir);
+		contents = xccdf_policy_get_oval_resources(policy_model, action->remote_resources, path, &(session->temp_dir));
 		free(pathcopy);
 
 		if (contents == NULL)
@@ -799,7 +736,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	unsigned int oval_session_count = (idx - 1) + 1;
 
 	// register sce system
-	xccdf_pathcopy =  strdup(xccdf_file);
+	xccdf_pathcopy =  strdup(session->xccdf.file);
 
 #ifdef ENABLE_SCE
 	sce_parameters = sce_parameters_new();
@@ -828,7 +765,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	xccdf_result_fill_sysinfo(ritem);
 
-	struct xccdf_model_iterator *model_it = xccdf_benchmark_get_models(benchmark);
+	struct xccdf_model_iterator *model_it = xccdf_benchmark_get_models(xccdf_policy_model_get_benchmark(session->xccdf.policy_model));
 	while (xccdf_model_iterator_has_more(model_it)) {
 		struct xccdf_model *model = xccdf_model_iterator_next(model_it);
 		const char *score_model = xccdf_model_get_system(model);
@@ -859,12 +796,12 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			}
 			else
 			{
-				if (!temp_dir)
-					temp_dir = oscap_acquire_temp_dir();
-				if (temp_dir == NULL)
+				if (!session->temp_dir)
+					session->temp_dir = oscap_acquire_temp_dir();
+				if (session->temp_dir == NULL)
 					goto cleanup;
 
-				oval_results_directory = temp_dir;
+				oval_results_directory = session->temp_dir;
 			}
 
 			char *escaped_url = NULL;
@@ -938,25 +875,26 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	f_results = action->f_results ? strdup(action->f_results) : NULL;
 	if (!f_results && (action->f_report != NULL || action->f_results_arf != NULL))
 	{
-		if (!temp_dir)
-			temp_dir = oscap_acquire_temp_dir();
-		if (temp_dir == NULL)
+		if (!session->temp_dir)
+			session->temp_dir = oscap_acquire_temp_dir();
+		if (session->temp_dir == NULL)
 			goto cleanup;
 
 		f_results = malloc(PATH_MAX * sizeof(char));
-		snprintf(f_results, PATH_MAX, "%s/xccdf-result.xml", temp_dir);
+		snprintf(f_results, PATH_MAX, "%s/xccdf-result.xml", session->temp_dir);
 	}
 
 	/* Export results */
 	if (f_results != NULL) {
-		xccdf_benchmark_add_result(benchmark, xccdf_result_clone(ritem));
-		xccdf_benchmark_export(benchmark, f_results);
+		xccdf_benchmark_add_result(xccdf_policy_model_get_benchmark(session->xccdf.policy_model),
+				xccdf_result_clone(ritem));
+		xccdf_benchmark_export(xccdf_policy_model_get_benchmark(session->xccdf.policy_model), f_results);
 
 		/* validate XCCDF Results */
 		if (session->validate && session->full_validation) {
 			/* we assume there is a same xccdf doc_version on input and output */
-			if (oscap_validate_document(f_results, OSCAP_DOCUMENT_XCCDF, xccdf_doc_version, reporter, (void*) action)) {
-				validation_failed(f_results, OSCAP_DOCUMENT_XCCDF, xccdf_doc_version);
+			if (oscap_validate_document(f_results, OSCAP_DOCUMENT_XCCDF, session->xccdf.doc_version, reporter, (void*) action)) {
+				validation_failed(f_results, OSCAP_DOCUMENT_XCCDF, session->xccdf.doc_version);
 				goto cleanup;
 			}
 			fprintf(stdout, "XCCDF Results are exported correctly.\n");
@@ -1026,13 +964,13 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		}
 		else
 		{
-			if (!temp_dir)
-				temp_dir = oscap_acquire_temp_dir();
-			if (temp_dir == NULL)
+			if (!session->temp_dir)
+				session->temp_dir = oscap_acquire_temp_dir();
+			if (session->temp_dir == NULL)
 				goto cleanup;
 
 			sds_path =  malloc(PATH_MAX * sizeof(char));
-			snprintf(sds_path, PATH_MAX, "%s/sds.xml", temp_dir);
+			snprintf(sds_path, PATH_MAX, "%s/sds.xml", session->temp_dir);
 			ds_sds_compose_from_xccdf(session->filename, sds_path);
 		}
 
@@ -1064,16 +1002,11 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 
 cleanup:
-	if (oscap_err()) {
+	if (oscap_err())
 		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
-		oscap_clearerr();
-	}
 
 	/* syslog message */
 	syslog(priority, "Evaluation finnished. Return code: %d, Base score %f.", result, base_score);
-
-	if (xccdf_doc_version)
-		free(xccdf_doc_version);
 
 #ifdef ENABLE_SCE
 	sce_parameters_free(sce_parameters);
@@ -1097,16 +1030,6 @@ cleanup:
 	/* OVAL and SCE files */
 	oscap_content_resources_free(contents);
 
-	if (policy_model)
-		xccdf_policy_model_free(policy_model);
-
-	if (sds_idx != NULL)
-		ds_sds_index_free(sds_idx);
-
-	oscap_acquire_cleanup_dir(&temp_dir);
-	if (oscap_err())
-		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
-
 	if (oval_result_files)
 	{
 		for(idx = 0; oval_result_files[idx] != NULL; idx++)
@@ -1118,7 +1041,6 @@ cleanup:
 	}
 
 	free(f_results);
-	free(xccdf_file);
 
 	if (session != NULL)
 		xccdf_session_free(session);

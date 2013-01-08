@@ -40,6 +40,19 @@ struct xccdf_session {
 	// Note this has been made public only for refactoring purposes.
 	// It will be removed later on.
 	const char *filename;			///< File name of SCAP (SDS or XCCDF) file for this session.
+	char *temp_dir;					///< Temp directory used for decomposed component files.
+	struct {
+		char *file;				///< Path to XCCDF File (shall differ from the filename for sds).
+		struct xccdf_policy_model *policy_model;///< Active policy model.
+		char *doc_version;			///< Version of parsed XCCDF file
+	} xccdf;
+	struct {
+		struct ds_sds_index *sds_idx;		///< Index of Source DataStream (only applicable for sds).
+		char *user_datastream_id;		///< Datastream id requested by user (only applicable for sds).
+		char *user_component_id;		///< Component id requested by user (only applicable for sds).
+		char *datastream_id;			///< Datastream id used (only applicable for sds).
+		char *component_id;			///< Component id used (only applicable for sds).
+	} ds;
 	oscap_document_type_t doc_type;		///< Document type of the session file (see filename member) used.
 	bool validate;				///< False value indicates to skip any XSD validation.
 	bool full_validation;			///< True value indicates that every possible step will be validated by XSD.
@@ -75,6 +88,45 @@ bool xccdf_session_is_sds(const struct xccdf_session *session);
  * @param full_validation True value indicates that every possible step will be validated by XSD.
  */
 void xccdf_session_set_validation(struct xccdf_session *session, bool validate, bool full_validation);
+
+/**
+ * Set requested datastream_id for this session. This datastream_id is later
+ * passed down to @ref ds_sds_index_select_checklist to determine target component.
+ * This function is applicable only for sessions based on a DataStream.
+ * @memberof xccdf_session
+ * @param datastream_id requested datastream_id for this session.
+ */
+void xccdf_session_set_datastream_id(struct xccdf_session *session, const char *datastream_id);
+
+/**
+ * Set requested component_id for this session. This component_id is later
+ * pased down to @ref ds_sds_index_select_checklist to determine target component.
+ * This function is applicable only for sessions based on a DataStream.
+ * @memberof xccdf_session
+ * @param component_id requested component_id for this session.
+ */
+void xccdf_session_set_component_id(struct xccdf_session *session, const char *component_id);
+
+/**
+ * Load and parse XCCDF file. If the file upon which is based this session is
+ * Source DataStream use functions @ref xccdf_session_set_datastream_id and
+ * @ref xccdf_session_set_component_id to select particular component within
+ * that DataStream to parse. This function is reentrant meaning that it allows
+ * user to change i.e. component_id and load_xccdf again in the very same session.
+ * However in such case, previous xccdf structures will be deallocated from session
+ * and pointers to it become invalid.
+ * @memberof xccdf_session
+ * @returns zero on success
+ */
+int xccdf_session_load_xccdf(struct xccdf_session *session);
+
+/**
+ * Get policy_model of the session. The @ref xccdf_session_load_xccdf shall be run
+ * before this to parse XCCDF file to the policy_model.
+ * @memberof xccdf_session
+ * @returns XCCDF Policy Model or NULL in case of failure.
+ */
+struct xccdf_policy_model *xccdf_session_get_policy_model(const struct xccdf_session *session);
 
 /// @}
 /// @}
