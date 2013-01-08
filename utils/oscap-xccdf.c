@@ -33,6 +33,7 @@
 #include <scap_ds.h>
 #include <xccdf_benchmark.h>
 #include <xccdf_policy.h>
+#include <xccdf_session.h>
 #include <oscap_acquire.h>
 
 #include <cpe_dict.h>
@@ -501,6 +502,7 @@ command_line_get_oval_resources(char **oval_filenames)
  */
 int app_evaluate_xccdf(const struct oscap_action *action)
 {
+	struct xccdf_session *session = NULL;
 
 	struct xccdf_policy *policy = NULL;
 	struct xccdf_benchmark *benchmark = NULL;
@@ -528,9 +530,11 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	/* syslog message */
 	syslog(priority, "Evaluation started. Content: %s, Profile: %s.", action->f_xccdf, action->profile);
 
-	oscap_document_type_t doc_type = 0;
+	session = xccdf_session_new(action->f_xccdf);
+	if (session == NULL)
+		goto cleanup;
 
-	const bool sds_likely = oscap_determine_document_type(action->f_xccdf, &doc_type) == 0 && doc_type == OSCAP_DOCUMENT_SDS;
+	const bool sds_likely = session->doc_type == OSCAP_DOCUMENT_SDS;
 	const char* f_datastream_id = action->f_datastream_id;
 	const char* f_component_id = action->f_xccdf_id;
 
@@ -539,10 +543,10 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		if (action->validate)
 		{
 			int ret;
-			if ((ret = oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_SDS, "1.2", reporter, (void*)action) != 0))
+			if ((ret = oscap_validate_document(session->filename, OSCAP_DOCUMENT_SDS, "1.2", reporter, (void*)action) != 0))
 			{
 				if (ret==1)
-					validation_failed(action->f_xccdf, OSCAP_DOCUMENT_SDS, "1.2");
+					validation_failed(session->filename, OSCAP_DOCUMENT_SDS, "1.2");
 				goto cleanup;
 			}
 		}
@@ -551,7 +555,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		if (temp_dir == NULL)
 			goto cleanup;
 
-		sds_idx = ds_sds_index_import(action->f_xccdf);
+		sds_idx = ds_sds_index_import(session->filename);
 
 		if (ds_sds_index_select_checklist(sds_idx, &f_datastream_id, &f_component_id) != 0) {
 			fprintf(stdout, "Failed to locate a datastream with ID matching '%s' ID "
@@ -561,9 +565,9 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			goto cleanup;
 		}
 
-		if (ds_sds_decompose(action->f_xccdf, f_datastream_id, f_component_id, temp_dir, "xccdf.xml") != 0)
+		if (ds_sds_decompose(session->filename, f_datastream_id, f_component_id, temp_dir, "xccdf.xml") != 0)
 		{
-			fprintf(stdout, "Failed to decompose source datastream in '%s'\n", action->f_xccdf);
+			fprintf(stdout, "Failed to decompose source datastream in '%s'\n", session->filename);
 			goto cleanup;
 		}
 
@@ -572,7 +576,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 	else
 	{
-		xccdf_file = strdup(action->f_xccdf);
+		xccdf_file = strdup(session->filename);
 	}
 
 	int ret;
@@ -658,11 +662,11 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			// FIXME: Decomposing means that the source datastream will be parsed
 			//        into DOM even though it has already been parsed once when the
 			//        XCCDF was split from it. We should optimize this out someday!
-			if (ds_sds_decompose_custom(action->f_xccdf, f_datastream_id, temp_dir,
+			if (ds_sds_decompose_custom(session->filename, f_datastream_id, temp_dir,
 			                            "dictionaries", NULL, NULL) != 0)
 			{
 				fprintf(stderr, "Can't decompose CPE dictionaries from datastream '%s' from file '%s'!\n",
-						f_datastream_id, action->f_xccdf);
+						f_datastream_id, session->filename);
 				goto cleanup;
 			}
 
@@ -680,7 +684,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 					if (oscap_determine_document_type(full_cpe_filename, &cpe_doc_type) != 0) {
 						fprintf(stderr, "Can't determine document type of '%s'. This file was "
 								"embedded in SDS '%s' and was split into that file as a CPE resource.\n",
-						        full_cpe_filename, action->f_xccdf);
+						        full_cpe_filename, session->filename);
 						goto cleanup;
 					}
 
@@ -693,7 +697,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 					else {
 						fprintf(stderr, "Document '%s' that was split from SDS '%s' and passed as a CPE "
 						        "resource was not detected to be of type CPE dictionary or CPE language.\n",
-						        full_cpe_filename, action->f_xccdf);
+						        full_cpe_filename, session->filename);
 						goto cleanup;
 					}
 
@@ -814,7 +818,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 
 	/* Write results into XCCDF Test Result model */
-	xccdf_result_set_benchmark_uri(ritem, action->f_xccdf);
+	xccdf_result_set_benchmark_uri(ritem, session->filename);
 	struct oscap_text *title = oscap_text_new();
 	oscap_text_set_text(title, "OSCAP Scan Result");
 	xccdf_result_add_title(ritem, title);
@@ -1020,7 +1024,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 		if (sds_likely)
 		{
-			sds_path = strdup(action->f_xccdf);
+			sds_path = strdup(session->filename);
 		}
 		else
 		{
@@ -1031,7 +1035,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 			sds_path =  malloc(PATH_MAX * sizeof(char));
 			snprintf(sds_path, PATH_MAX, "%s/sds.xml", temp_dir);
-			ds_sds_compose_from_xccdf(action->f_xccdf, sds_path);
+			ds_sds_compose_from_xccdf(session->filename, sds_path);
 		}
 
 		ds_rds_create(sds_path, f_results, (const char**)oval_result_files, action->f_results_arf);
@@ -1117,6 +1121,9 @@ cleanup:
 
 	free(f_results);
 	free(xccdf_file);
+
+	if (session != NULL)
+		xccdf_session_free(session);
 
 	return result;
 }
