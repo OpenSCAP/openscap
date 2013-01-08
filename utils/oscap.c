@@ -162,51 +162,11 @@ static int print_versions(const struct oscap_action *action)
 
 void validation_failed(const char *xmlfile, oscap_document_type_t doc_type, const char *version) {
 
-	char *doc_name;
-
-	switch (doc_type) {
-        case OSCAP_DOCUMENT_OVAL_DEFINITIONS:
-		doc_name = "OVAL Definition";
-                break;
-        case OSCAP_DOCUMENT_OVAL_DIRECTIVES:
-		doc_name = "OVAL Directives";
-                break;
-        case OSCAP_DOCUMENT_OVAL_RESULTS:
-		doc_name = "OVAL Results";
-                break;
-        case OSCAP_DOCUMENT_OVAL_SYSCHAR:
-		doc_name = "OVAL System Characteristics";
-                break;
-        case OSCAP_DOCUMENT_OVAL_VARIABLES:
-		doc_name = "OVAL Variables";
-                break;
-        case OSCAP_DOCUMENT_SDS:
-		doc_name = "SCAP Source Datastream";
-                break;
-        case OSCAP_DOCUMENT_XCCDF:
-		doc_name = "XCCDF Checklist";
-                break;
-        case OSCAP_DOCUMENT_SCE_RESULT:
-		doc_name = "SCE Results";
-                break;
-        case OSCAP_DOCUMENT_CPE_DICTIONARY:
-		doc_name = "CPE Dictionary";
-                break;
-        case OSCAP_DOCUMENT_CPE_LANGUAGE:
-		doc_name = "CPE Language";
-                break;
-        case OSCAP_DOCUMENT_ARF:
-		doc_name = "ARF Result Datastream";
-                break;
-        case OSCAP_DOCUMENT_CVE_FEED:
-		doc_name = "CVE NVD Feed";
-                break;
-        default:
-		fprintf(stdout, "Unrecognized document type.\n");
-		return;
-	}
-
-	fprintf(stderr, "Invalid %s content(%s) in %s.\n", doc_name, version, xmlfile);
+	const char *doc_name = oscap_document_type_to_string(doc_type);
+	if (doc_name == NULL)
+		fprintf(stderr, "Unrecognized document type.\n");
+	else
+		fprintf(stderr, "Invalid %s content(%s) in %s.\n", doc_name, version, xmlfile);
 }
 
 int reporter(const char *file, int line, const char *msg, void *arg) {

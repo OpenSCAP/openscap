@@ -96,6 +96,16 @@ typedef enum oscap_document_type {
 	OSCAP_DOCUMENT_ARF                    ///< Result Data Stream file
 } oscap_document_type_t;
 
+/**
+ * Convert @ref oscap_document_type_t constant to human readable (english)
+ * representation.
+ * @param type OpenSCAP Document Type
+ * @returns English string describing document type.
+ * @retval Returned value might be pointer to static memory and must not be modified.
+ * @retval NULL in case of unrecognized document type
+ */
+const char *oscap_document_type_to_string(oscap_document_type_t type);
+
 typedef int (*xml_reporter)(const char *file, int line, const char *msg, void *arg);
 
 /**
