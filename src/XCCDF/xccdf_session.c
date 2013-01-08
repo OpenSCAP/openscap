@@ -36,6 +36,7 @@ struct xccdf_session *xccdf_session_new(const char *filename)
 		xccdf_session_free(session);
 		return NULL;
 	}
+	session->validate = true;
 	return session;
 }
 
@@ -48,4 +49,10 @@ void xccdf_session_free(struct xccdf_session *session)
 bool xccdf_session_is_sds(const struct xccdf_session *session)
 {
 	return session->doc_type == OSCAP_DOCUMENT_SDS;
+}
+
+void xccdf_session_set_validation(struct xccdf_session *session, bool validate, bool full_validation)
+{
+	session->validate = validate;
+	session->full_validation = full_validation;
 }

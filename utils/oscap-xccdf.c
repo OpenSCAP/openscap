@@ -533,13 +533,14 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	session = xccdf_session_new(action->f_xccdf);
 	if (session == NULL)
 		goto cleanup;
+	xccdf_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
 
 	const char* f_datastream_id = action->f_datastream_id;
 	const char* f_component_id = action->f_xccdf_id;
 
 	if (xccdf_session_is_sds(session))
 	{
-		if (action->validate)
+		if (session->validate)
 		{
 			int ret;
 			if ((ret = oscap_validate_document(session->filename, OSCAP_DOCUMENT_SDS, "1.2", reporter, (void*)action) != 0))
@@ -580,10 +581,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	int ret;
 
-	const char* full_validation = getenv("OSCAP_FULL_VALIDATION");
-
 	/* Validate documents */
-	if (action->validate && (!xccdf_session_is_sds(session) || full_validation)) {
+	if (session->validate && (!xccdf_session_is_sds(session) || session->full_validation)) {
 		xccdf_doc_version = xccdf_detect_version(xccdf_file);
 		if (!xccdf_doc_version)
 			goto cleanup;
@@ -676,7 +675,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 				char* full_cpe_filename = malloc(PATH_MAX * sizeof(char));
 				snprintf(full_cpe_filename, PATH_MAX, "%s/%s", temp_dir, cpe_filename);
 
-				if (full_validation) {
+				if (session->full_validation) {
 					oscap_document_type_t cpe_doc_type;
 					char* cpe_doc_version = NULL;
 
@@ -746,7 +745,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	/* Validate OVAL files */
 	// we will only validate if the file doesn't come from a datastream
 	// or if full validation was explicitly requested
-	if (action->validate && (!xccdf_session_is_sds(session) || full_validation)) {
+	if (session->validate && (!xccdf_session_is_sds(session) || session->full_validation)) {
 		for (idx=0; contents[idx]; idx++) {
 			char *doc_version;
 
@@ -888,7 +887,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			}
 
 			/* validate OVAL Results */
-			if (action->validate && full_validation) {
+			if (session->validate && session->full_validation) {
 				char *doc_version;
 
 				doc_version = oval_determine_document_schema_version((const char *) name, OSCAP_DOCUMENT_OVAL_RESULTS);
@@ -923,7 +922,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			snprintf(target, sizeof(target), "./%s.result.xml", sce_check_result_get_basename(check_result));
 			sce_check_result_export(check_result, target);
 
-			if (action->validate && full_validation) {
+			if (session->validate && session->full_validation) {
 				if (oscap_validate_document(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0", reporter, (void*)action)) {
 					validation_failed(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0");
 					sce_check_result_iterator_free(it);
@@ -954,7 +953,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		xccdf_benchmark_export(benchmark, f_results);
 
 		/* validate XCCDF Results */
-		if (action->validate && full_validation) {
+		if (session->validate && session->full_validation) {
 			/* we assume there is a same xccdf doc_version on input and output */
 			if (oscap_validate_document(f_results, OSCAP_DOCUMENT_XCCDF, xccdf_doc_version, reporter, (void*) action)) {
 				validation_failed(f_results, OSCAP_DOCUMENT_XCCDF, xccdf_doc_version);
@@ -1040,7 +1039,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		ds_rds_create(sds_path, f_results, (const char**)oval_result_files, action->f_results_arf);
 		free(sds_path);
 
-		if (full_validation)
+		if (session->full_validation)
 		{
 			if (oscap_validate_document(action->f_results_arf, OSCAP_DOCUMENT_ARF, "1.1", reporter, (void*)action))
 			{

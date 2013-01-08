@@ -41,6 +41,8 @@ struct xccdf_session {
 	// It will be removed later on.
 	const char *filename;			///< File name of SCAP (SDS or XCCDF) file for this session.
 	oscap_document_type_t doc_type;		///< Document type of the session file (see filename member) used.
+	bool validate;				///< False value indicates to skip any XSD validation.
+	bool full_validation;			///< True value indicates that every possible step will be validated by XSD.
 };
 
 /**
@@ -65,6 +67,14 @@ void xccdf_session_free(struct xccdf_session *session);
  * @returns true if the session is based on Source Datastream
  */
 bool xccdf_session_is_sds(const struct xccdf_session *session);
+
+/**
+ * Set XSD validation level.
+ * @memberof xccdf_session
+ * @param validate False value indicates to skip any XSD validation.
+ * @param full_validation True value indicates that every possible step will be validated by XSD.
+ */
+void xccdf_session_set_validation(struct xccdf_session *session, bool validate, bool full_validation);
 
 /// @}
 /// @}
