@@ -44,3 +44,8 @@ void xccdf_session_free(struct xccdf_session *session)
 	oscap_free(session->filename);
 	oscap_free(session);
 }
+
+bool xccdf_session_is_sds(const struct xccdf_session *session)
+{
+	return session->doc_type == OSCAP_DOCUMENT_SDS;
+}

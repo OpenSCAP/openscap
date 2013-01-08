@@ -534,11 +534,10 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	if (session == NULL)
 		goto cleanup;
 
-	const bool sds_likely = session->doc_type == OSCAP_DOCUMENT_SDS;
 	const char* f_datastream_id = action->f_datastream_id;
 	const char* f_component_id = action->f_xccdf_id;
 
-	if (sds_likely)
+	if (xccdf_session_is_sds(session))
 	{
 		if (action->validate)
 		{
@@ -584,7 +583,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	const char* full_validation = getenv("OSCAP_FULL_VALIDATION");
 
 	/* Validate documents */
-	if (action->validate && (!sds_likely || full_validation)) {
+	if (action->validate && (!xccdf_session_is_sds(session) || full_validation)) {
 		xccdf_doc_version = xccdf_detect_version(xccdf_file);
 		if (!xccdf_doc_version)
 			goto cleanup;
@@ -650,7 +649,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		xccdf_policy_model_add_cpe_autodetect(policy_model, action->cpe);
 	}
 
-	if (sds_likely)
+	if (xccdf_session_is_sds(session))
 	{
 		struct ds_stream_index* stream_idx = ds_sds_index_get_stream(sds_idx, f_datastream_id);
 		struct oscap_string_iterator* cpe_it = ds_stream_index_get_dictionaries(stream_idx);
@@ -747,7 +746,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	/* Validate OVAL files */
 	// we will only validate if the file doesn't come from a datastream
 	// or if full validation was explicitly requested
-	if (action->validate && (!sds_likely || full_validation)) {
+	if (action->validate && (!xccdf_session_is_sds(session) || full_validation)) {
 		for (idx=0; contents[idx]; idx++) {
 			char *doc_version;
 
@@ -1022,7 +1021,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	{
 		char* sds_path = 0;
 
-		if (sds_likely)
+		if (xccdf_session_is_sds(session))
 		{
 			sds_path = strdup(session->filename);
 		}

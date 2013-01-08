@@ -59,6 +59,13 @@ struct xccdf_session *xccdf_session_new(const char *filename);
  */
 void xccdf_session_free(struct xccdf_session *session);
 
+/**
+ * Query if the session is based on Source DataStream.
+ * @memberof xccdf_session
+ * @returns true if the session is based on Source Datastream
+ */
+bool xccdf_session_is_sds(const struct xccdf_session *session);
+
 /// @}
 /// @}
 #endif
