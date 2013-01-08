@@ -389,8 +389,8 @@ static void xccdf_policy_resolve_item(struct xccdf_policy * policy, struct xccdf
         __attribute__nonnull__(policy);
         __attribute__nonnull__(item);
 
-	static bool TRUE = true;
-	static bool FALSE = false;
+	static bool TRUE0= true;
+	static bool FALSE0 = false;
 	bool result;
 
 	oscap_htable_detach(policy->selected_final, xccdf_item_get_id(item));
@@ -408,7 +408,7 @@ static void xccdf_policy_resolve_item(struct xccdf_policy * policy, struct xccdf
 		xccdf_item_iterator_free(child_it);
 	}
 
-	assume_ex(oscap_htable_add(policy->selected_final, xccdf_item_get_id(item), result ? &TRUE : &FALSE), NULL);
+	assume_ex(oscap_htable_add(policy->selected_final, xccdf_item_get_id(item), result ? &TRUE0 : &FALSE0), NULL);
 }
 
 /**
