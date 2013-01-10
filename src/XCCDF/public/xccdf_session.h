@@ -53,6 +53,7 @@ struct xccdf_session {
 		char *datastream_id;			///< Datastream id used (only applicable for sds).
 		char *component_id;			///< Component id used (only applicable for sds).
 	} ds;
+	char *user_cpe;					///< Path to CPE dictionary required by user
 	oscap_document_type_t doc_type;		///< Document type of the session file (see filename member) used.
 	bool validate;				///< False value indicates to skip any XSD validation.
 	bool full_validation;			///< True value indicates that every possible step will be validated by XSD.
@@ -108,6 +109,14 @@ void xccdf_session_set_datastream_id(struct xccdf_session *session, const char *
 void xccdf_session_set_component_id(struct xccdf_session *session, const char *component_id);
 
 /**
+ * Set path to custom CPE dictionary for the session. This function is applicable
+ * only before session loads. It has no effect if run afterwards.
+ * @memberof xccdf_session
+ * @param user_cpe File path to user defined cpe dictionary.
+ */
+void xccdf_session_set_user_cpe(struct xccdf_session *session, const char *user_cpe);
+
+/**
  * Load and parse XCCDF file. If the file upon which is based this session is
  * Source DataStream use functions @ref xccdf_session_set_datastream_id and
  * @ref xccdf_session_set_component_id to select particular component within
@@ -119,6 +128,14 @@ void xccdf_session_set_component_id(struct xccdf_session *session, const char *c
  * @returns zero on success
  */
 int xccdf_session_load_xccdf(struct xccdf_session *session);
+
+/**
+ * Load and parse CPE dictionaries. Function xccdf_session_set_user_cpe
+ * might be called before this to set custom CPE dictionary.
+ * @memberof xccdf_session
+ * @returns zero on success
+ */
+int xccdf_session_load_cpe(struct xccdf_session *session);
 
 /**
  * Get policy_model of the session. The @ref xccdf_session_load_xccdf shall be run

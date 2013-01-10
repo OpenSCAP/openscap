@@ -26,6 +26,7 @@
 
 #include <oscap.h>
 #include <oscap_acquire.h>
+#include <cpe_lang.h>
 #include <common/alloc.h>
 #include "common/util.h"
 #include "common/_error.h"
@@ -87,6 +88,12 @@ void xccdf_session_set_component_id(struct xccdf_session *session, const char *c
 		oscap_free(session->ds.user_component_id);
 	session->ds.user_component_id = oscap_strdup(component_id);
 	session->ds.component_id = session->ds.user_component_id;
+}
+
+void xccdf_session_set_user_cpe(struct xccdf_session *session, const char *user_cpe)
+{
+	oscap_free(session->user_cpe);
+	session->user_cpe = oscap_strdup(user_cpe);
 }
 
 /**
@@ -198,4 +205,115 @@ cleanup:
 	return session->xccdf.policy_model != NULL ? 0 : 1;
 }
 
+int xccdf_session_load_cpe(struct xccdf_session *session)
+{
+	int ret;
+	if (session == NULL || session->xccdf.policy_model == NULL)
+		return 1;
+
+	/* Use custom CPE dict if given */
+	if (session->user_cpe != NULL) {
+		oscap_document_type_t cpe_doc_type;
+		char* cpe_doc_version = NULL;
+
+		if (oscap_determine_document_type(session->user_cpe, &cpe_doc_type) != 0) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot determine document type of '%s'.", session->user_cpe);
+			return 1;
+		}
+
+		if (cpe_doc_type == OSCAP_DOCUMENT_CPE_DICTIONARY) {
+			cpe_doc_version = cpe_dict_detect_version(session->user_cpe);
+		}
+		else if (cpe_doc_type == OSCAP_DOCUMENT_CPE_LANGUAGE) {
+			cpe_doc_version = cpe_lang_model_detect_version(session->user_cpe);
+		}
+		else {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Document '%s' passed "
+				"as a CPE resource was not detected to be of type"
+				" CPE dictionary or CPE language.\n", session->user_cpe);
+			return 1;
+		}
+
+		if ((ret = oscap_validate_document(session->user_cpe, cpe_doc_type, cpe_doc_version, _reporter, NULL))) {
+			if (ret == 1)
+				_validation_failed(session->user_cpe, cpe_doc_type, cpe_doc_version);
+			free(cpe_doc_version);
+			return 1;
+		}
+		free(cpe_doc_version);
+
+		xccdf_policy_model_add_cpe_autodetect(session->xccdf.policy_model, session->user_cpe);
+	}
+
+	if (xccdf_session_is_sds(session)) {
+		struct ds_stream_index* stream_idx = ds_sds_index_get_stream(session->ds.sds_idx, session->ds.datastream_id);
+		struct oscap_string_iterator* cpe_it = ds_stream_index_get_dictionaries(stream_idx);
+
+		// This potentially allows us to skip yet another decompose if we are sure
+		// there are no CPE dictionaries or language models inside the datastream.
+		if (oscap_string_iterator_has_more(cpe_it)) {
+			/* FIXME: Decomposing means that the source datastream will be parsed
+			 *        into DOM even though it has already been parsed once when the
+			 *        XCCDF was split from it. We should optimize this out someday!
+			 */
+			if (ds_sds_decompose_custom(session->filename, session->ds.datastream_id,
+					session->temp_dir, "dictionaries", NULL, NULL) != 0) {
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't decompose CPE dictionaries from datastream '%s' "
+						"from file '%s'!\n", session->ds.datastream_id, session->filename);
+				return 1;
+			}
+
+			while (oscap_string_iterator_has_more(cpe_it)) {
+				const char* cpe_filename = oscap_string_iterator_next(cpe_it);
+
+				char* full_cpe_filename = malloc(PATH_MAX * sizeof(char));
+				snprintf(full_cpe_filename, PATH_MAX, "%s/%s", session->temp_dir, cpe_filename);
+
+				if (session->full_validation) {
+					oscap_document_type_t cpe_doc_type;
+					char* cpe_doc_version = NULL;
+
+					if (oscap_determine_document_type(full_cpe_filename, &cpe_doc_type) != 0) {
+						oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't determine document type of '%s'. "
+							"This file was embedded in SDS '%s' and was split into that file as "
+							"a CPE resource.\n", full_cpe_filename, session->filename);
+						free(full_cpe_filename);
+						oscap_string_iterator_free(cpe_it);
+						return 1;
+					}
+
+					if (cpe_doc_type == OSCAP_DOCUMENT_CPE_DICTIONARY) {
+						cpe_doc_version = cpe_dict_detect_version(full_cpe_filename);
+					} else if (cpe_doc_type == OSCAP_DOCUMENT_CPE_LANGUAGE) {
+						cpe_doc_version = cpe_lang_model_detect_version(full_cpe_filename);
+					} else {
+						oscap_seterr(OSCAP_EFAMILY_OSCAP, "Document '%s' that was split from SDS "
+							"'%s' and passed as a CPE resource was not detected to be of type "
+							"CPE dictionary or CPE language.\n", full_cpe_filename, session->filename);
+						free(full_cpe_filename);
+						oscap_string_iterator_free(cpe_it);
+						return 1;
+					}
+
+					if ((ret = oscap_validate_document(full_cpe_filename, cpe_doc_type, cpe_doc_version, _reporter, NULL))) {
+						if (ret == 1)
+							_validation_failed(full_cpe_filename, cpe_doc_type, cpe_doc_version);
+						free(cpe_doc_version);
+						free(full_cpe_filename);
+						oscap_string_iterator_free(cpe_it);
+						return 1;
+					}
+					free(cpe_doc_version);
+				}
+
+				xccdf_policy_model_add_cpe_autodetect(session->xccdf.policy_model, full_cpe_filename);
+				free(full_cpe_filename);
+			}
+		}
+		oscap_string_iterator_free(cpe_it);
+	}
+	return 0;
+}
+
 OSCAP_GENERIC_GETTER(struct xccdf_policy_model *, xccdf_session, policy_model, xccdf.policy_model)
+
