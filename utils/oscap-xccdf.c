@@ -384,6 +384,16 @@ oscap_content_resources_free(struct oscap_content_resource **resources)
 	}
 }
 
+static void _download_reporting_callback(bool warning, const char *format, ...)
+{
+	FILE *dest = warning ? stderr : stdout;
+	va_list argptr;
+	va_start(argptr, format);
+	vfprintf(dest, format, argptr);
+	va_end(argptr);
+	fflush(dest);
+}
+
 static struct oscap_content_resource **
 xccdf_policy_get_oval_resources(struct xccdf_policy_model *policy_model, bool allow_remote_resources, const char *path, char **temp_dir)
 {
@@ -437,18 +447,17 @@ xccdf_policy_get_oval_resources(struct xccdf_policy_model *policy_model, bool al
 						return NULL;
 					}
 
-					printf("Downloading: %s ... ", printable_path);
-					fflush(stdout);
+					_download_reporting_callback(false, "Downloading: %s ... ", printable_path);
 					char *file = oscap_acquire_url_download(*temp_dir, printable_path);
 					if (file == NULL) {
-						printf("error\n");
+						_download_reporting_callback(false, "error\n");
 						if (oscap_err()) {
 							fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 							oscap_clearerr();
 						}
 					}
 					else {
-						printf("ok\n");
+						_download_reporting_callback(false, "ok\n");
 						resources[idx] = malloc(sizeof(struct oscap_content_resource));
 						resources[idx]->href = strdup(printable_path);
 						resources[idx]->filename = file;
@@ -460,13 +469,13 @@ xccdf_policy_get_oval_resources(struct xccdf_policy_model *policy_model, bool al
 					}
 				}
 				else if (!fetch_option_suggested) {
-					printf("This content points out to the remote resources. Use `--fetch-remote-resources' option to download them.\n");
+					_download_reporting_callback(false, "This content points out to the remote resources. Use `--fetch-remote-resources' option to download them.\n");
 					fetch_option_suggested = true;
 				}
 			}
 			else
 				printable_path = tmp_path;
-			fprintf(stderr, "WARNING: Skipping %s file which is referenced from XCCDF content\n", printable_path);
+			_download_reporting_callback(true, "WARNING: Skipping %s file which is referenced from XCCDF content\n", printable_path);
 			free(tmp_path);
 		}
 	}
