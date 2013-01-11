@@ -1032,7 +1032,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			if (oscap_validate_document(action->f_results_arf, OSCAP_DOCUMENT_ARF, "1.1", reporter, (void*)action))
 			{
 				validation_failed(action->f_results_arf, OSCAP_DOCUMENT_ARF, "1.1");
-				ret = OSCAP_ERROR;
+				result = OSCAP_ERROR;
 				goto cleanup;
 			}
 			fprintf(stdout, "Result DataStream exported correctly.\n");
