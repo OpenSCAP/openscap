@@ -109,6 +109,10 @@ static struct oscap_module XCCDF_EXPORT_OVAL_VARIABLES = {
     .usage = "[options] <xccdf benchmark file> [oval definitions files]",
     .opt_parser = getopt_xccdf,
     .func = app_xccdf_export_oval_variables,
+	.help =	"Options:\n"
+		"   --profile <name>\r\t\t\t\t - The name of Profile to be evaluated.\n"
+		"   --skip-valid \r\t\t\t\t - Skip validation.\n"
+		"   --fetch-remote-resources \r\t\t\t\t - Download remote content referenced by XCCDF.\n",
 };
 
 static struct oscap_module XCCDF_EVAL = {
