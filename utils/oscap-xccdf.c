@@ -110,7 +110,11 @@ static struct oscap_module XCCDF_EXPORT_OVAL_VARIABLES = {
 	.help =	"Options:\n"
 		"   --profile <name>\r\t\t\t\t - The name of Profile to be evaluated.\n"
 		"   --skip-valid \r\t\t\t\t - Skip validation.\n"
-		"   --fetch-remote-resources \r\t\t\t\t - Download remote content referenced by XCCDF.\n",
+		"   --fetch-remote-resources \r\t\t\t\t - Download remote content referenced by XCCDF.\n"
+		"   --datastream-id <id> \r\t\t\t\t - ID of the datastream in the collection to use.\n"
+		"                        \r\t\t\t\t   (only applicable for source datastreams)\n"
+		"   --xccdf-id <id> \r\t\t\t\t - ID of XCCDF in the datastream that should be evaluated.\n"
+		"                   \r\t\t\t\t   (only applicable for source datastreams)",
 };
 
 static struct oscap_module XCCDF_EVAL = {
@@ -983,6 +987,11 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 		goto cleanup;
 
 	xccdf_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
+
+	if (xccdf_session_is_sds(session)) {
+		xccdf_session_set_datastream_id(session, action->f_datastream_id);
+		xccdf_session_set_component_id(session, action->f_xccdf_id);
+	}
 
 	if (xccdf_session_load_xccdf(session) != 0)
 		goto cleanup;
