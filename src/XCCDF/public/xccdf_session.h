@@ -33,6 +33,18 @@
 #define XCCDF_SESSION_H_
 
 /**
+ * Type of the function used to report progress of download.
+ * @param warning indicates whether the message is rather warning or notice
+ * @param format printf-like format string
+ */
+typedef void (*download_progress_calllback_t) (bool warning, const char * format, ...);
+
+struct oval_content_resource {
+	char *href;		///< Coresponds with xccdf:check-content-ref/@href.
+	char *filename;		///< Points to the filename on the filesystem.
+};
+
+/**
  * @struct xccdf_session
  * A structure encapsuling the context of XCCDF operations.
  */
@@ -53,6 +65,12 @@ struct xccdf_session {
 		char *datastream_id;			///< Datastream id used (only applicable for sds).
 		char *component_id;			///< Component id used (only applicable for sds).
 	} ds;
+	struct {
+		bool fetch_remote_resources;		///< Allows download of remote resources (not applicable when user sets custom oval files)
+		download_progress_calllback_t progress;	///< Callback to report progress of download.
+		struct oval_content_resource **custom_resources;///< OVAL files required by user
+		struct oval_content_resource **resources;///< OVAL files referenced from XCCDF
+	} oval;
 	char *user_cpe;					///< Path to CPE dictionary required by user
 	oscap_document_type_t doc_type;		///< Document type of the session file (see filename member) used.
 	bool validate;				///< False value indicates to skip any XSD validation.
@@ -117,6 +135,24 @@ void xccdf_session_set_component_id(struct xccdf_session *session, const char *c
 void xccdf_session_set_user_cpe(struct xccdf_session *session, const char *user_cpe);
 
 /**
+ * Set properties of remote content.
+ * @memberof xccdf_session
+ * @param allow is download od remote resources allowed in this session (defaults to false)
+ * @param callback used to notify user about download proceeds. This might be safely set
+ * to NULL -- ignoring user notification.
+ */
+void xccdf_session_set_remote_resources(struct xccdf_session *session, bool allowed, download_progress_calllback_t callback);
+
+/**
+ * Set custom oval files for this session
+ * @memberof xccdf_session
+ * @param oval_filenames - Array of paths to custom OVAL files. If the array is empty
+ * no OVAL file will be used for the session. If this parameter is NULL then OVAL
+ * files will be find automatically, as defined in XCCDF (which is default).
+ */
+void xccdf_session_set_custom_oval_files(struct xccdf_session *session, char **oval_filenames);
+
+/**
  * Load and parse XCCDF file. If the file upon which is based this session is
  * Source DataStream use functions @ref xccdf_session_set_datastream_id and
  * @ref xccdf_session_set_component_id to select particular component within
@@ -136,6 +172,12 @@ int xccdf_session_load_xccdf(struct xccdf_session *session);
  * @returns zero on success
  */
 int xccdf_session_load_cpe(struct xccdf_session *session);
+
+/**
+ * Load and parse OVAL definitions files for the XCCDF session.
+ * @memberof xccdf_session
+ */
+int xccdf_session_load_oval(struct xccdf_session *session);
 
 /**
  * Get policy_model of the session. The @ref xccdf_session_load_xccdf shall be run

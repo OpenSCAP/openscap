@@ -24,6 +24,9 @@
 #include <config.h>
 #endif
 
+#include <libgen.h>
+#include <sys/stat.h>
+
 #include <oscap.h>
 #include <oscap_acquire.h>
 #include <cpe_lang.h>
@@ -33,6 +36,8 @@
 #include "DS/public/scap_ds.h"
 #include "XCCDF_POLICY/public/xccdf_policy.h"
 #include "public/xccdf_session.h"
+
+static void _oval_content_resources_free(struct oval_content_resource **resources);
 
 struct xccdf_session *xccdf_session_new(const char *filename)
 {
@@ -49,6 +54,8 @@ struct xccdf_session *xccdf_session_new(const char *filename)
 
 void xccdf_session_free(struct xccdf_session *session)
 {
+	_oval_content_resources_free(session->oval.custom_resources);
+	_oval_content_resources_free(session->oval.resources);
 	oscap_free(session->xccdf.doc_version);
 	oscap_free(session->xccdf.file);
 	if (session->xccdf.policy_model != NULL)
@@ -94,6 +101,12 @@ void xccdf_session_set_user_cpe(struct xccdf_session *session, const char *user_
 {
 	oscap_free(session->user_cpe);
 	session->user_cpe = oscap_strdup(user_cpe);
+}
+
+void xccdf_session_set_remote_resources(struct xccdf_session *session, bool allowed, download_progress_calllback_t callback)
+{
+	session->oval.fetch_remote_resources = allowed;
+	session->oval.progress = callback;
 }
 
 /**
@@ -311,6 +324,149 @@ int xccdf_session_load_cpe(struct xccdf_session *session)
 			}
 		}
 		oscap_string_iterator_free(cpe_it);
+	}
+	return 0;
+}
+
+static void _oval_content_resources_free(struct oval_content_resource **resources)
+{
+	if (resources) {
+		for (int i=0; resources[i]; i++) {
+			free(resources[i]->filename);
+			free(resources[i]->href);
+			free(resources[i]);
+		}
+		free(resources);
+	}
+}
+
+void xccdf_session_set_custom_oval_files(struct xccdf_session *session, char **oval_filenames)
+{
+	_oval_content_resources_free(session->oval.custom_resources);
+	session->oval.custom_resources = NULL;
+	if (oval_filenames == NULL)
+		return;
+
+	struct oval_content_resource **resources = malloc(sizeof(struct oval_content_resource *));
+	resources[0] = NULL;
+
+	for (int i = 0; oval_filenames[i];) {
+		resources[i] = malloc(sizeof(struct oval_content_resource));
+		resources[i]->href = strdup(basename(oval_filenames[i]));
+		resources[i]->filename = strdup(oval_filenames[i]);
+		i++;
+		resources = realloc(resources, (i + 1) * sizeof(struct oval_content_resource *));
+		resources[i] = NULL;
+	}
+	session->oval.custom_resources = resources;
+}
+
+static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
+{
+	struct oval_content_resource **resources = NULL;
+	struct oscap_file_entry_list *files = NULL;
+	struct oscap_file_entry_iterator *files_it = NULL;
+	int idx = 0;
+	char *tmp_path;
+	char *printable_path;
+	bool fetch_option_suggested = false;
+	char *xccdf_path_cpy = NULL;
+	char *dir_path = NULL;
+
+	xccdf_path_cpy = strdup(session->xccdf.file);
+	dir_path = dirname(xccdf_path_cpy);
+
+	resources = malloc(sizeof(struct oval_content_resource *));
+	resources[idx] = NULL;
+
+	files = xccdf_policy_model_get_systems_and_files(session->xccdf.policy_model);
+	files_it = oscap_file_entry_list_get_files(files);
+	while (oscap_file_entry_iterator_has_more(files_it)) {
+		struct oscap_file_entry *file_entry;
+		struct stat sb;
+
+		file_entry = (struct oscap_file_entry *) oscap_file_entry_iterator_next(files_it);
+
+		// we only care about OVAL referenced files
+		if (strcmp(oscap_file_entry_get_system(file_entry), "http://oval.mitre.org/XMLSchema/oval-definitions-5"))
+			continue;
+
+		tmp_path = malloc(PATH_MAX * sizeof(char));
+		snprintf(tmp_path, PATH_MAX, "%s/%s", dir_path, oscap_file_entry_get_file(file_entry));
+
+		if (stat(tmp_path, &sb) == 0) {
+			resources[idx] = malloc(sizeof(struct oval_content_resource));
+			resources[idx]->href = strdup(oscap_file_entry_get_file(file_entry));
+			resources[idx]->filename = tmp_path;
+			idx++;
+			resources = realloc(resources, (idx + 1) * sizeof(struct oval_content_resource *));
+			resources[idx] = NULL;
+		}
+		else {
+			if (oscap_acquire_url_is_supported(oscap_file_entry_get_file(file_entry))) {
+				// Strip out the 'path' for printing the url.
+				printable_path = (char *) oscap_file_entry_get_file(file_entry);
+
+				if (session->oval.fetch_remote_resources) {
+					if (session->temp_dir == NULL)
+						session->temp_dir = oscap_acquire_temp_dir();
+					if (session->temp_dir == NULL) {
+						oscap_file_entry_iterator_free(files_it);
+						oscap_file_entry_list_free(files);
+						free(tmp_path);
+						_oval_content_resources_free(resources);
+						free(xccdf_path_cpy);
+						return 1;
+					}
+
+					if (session->oval.progress != NULL)
+						session->oval.progress(false, "Downloading: %s ... ", printable_path);
+					char *file = oscap_acquire_url_download(session->temp_dir, printable_path);
+					if (file == NULL) {
+						if (session->oval.progress != NULL)
+							session->oval.progress(false, "error\n");
+					}
+					else {
+						if (session->oval.progress != NULL)
+							session->oval.progress(false, "ok\n");
+						resources[idx] = malloc(sizeof(struct oval_content_resource));
+						resources[idx]->href = strdup(printable_path);
+						resources[idx]->filename = file;
+						idx++;
+						resources = realloc(resources, (idx + 1) * sizeof(struct oval_content_resource *));
+						resources[idx] = NULL;
+						free(tmp_path);
+						continue;
+					}
+				}
+				else if (!fetch_option_suggested) {
+					if (session->oval.progress != NULL)
+						session->oval.progress(false, "This content points out to the remote resources. "
+								"Use `--fetch-remote-resources' option to download them.\n");
+					fetch_option_suggested = true;
+				}
+			}
+			else
+				printable_path = tmp_path;
+			if (session->oval.progress != NULL)
+				session->oval.progress(true, "WARNING: Skipping %s file which is referenced from XCCDF content\n", printable_path);
+			free(tmp_path);
+		}
+	}
+	oscap_file_entry_iterator_free(files_it);
+	oscap_file_entry_list_free(files);
+	free(xccdf_path_cpy);
+	session->oval.resources = resources;
+	return 0;
+}
+
+int xccdf_session_load_oval(struct xccdf_session *session)
+{
+	/* Locate all OVAL files */
+	if (session->oval.custom_resources == NULL) {
+		/* Use OVAL files from policy model */
+		if (_xccdf_session_get_oval_from_model(session) != 0)
+			return 1;
 	}
 	return 0;
 }
