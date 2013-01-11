@@ -414,8 +414,6 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		goto cleanup;
 	xccdf_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
 
-	int ret;
-
 	if (xccdf_session_is_sds(session)) {
 		xccdf_session_set_datastream_id(session, action->f_datastream_id);
 		xccdf_session_set_component_id(session, action->f_xccdf_id);
@@ -459,26 +457,6 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		goto cleanup;
 
 	contents = session->oval.custom_resources != NULL ? session->oval.custom_resources : session->oval.resources;
-
-	/* Validate OVAL files */
-	// we will only validate if the file doesn't come from a datastream
-	// or if full validation was explicitly requested
-	if (session->validate && (!xccdf_session_is_sds(session) || session->full_validation)) {
-		for (idx=0; contents[idx]; idx++) {
-			char *doc_version;
-
-			doc_version = oval_determine_document_schema_version((const char *) contents[idx]->filename, OSCAP_DOCUMENT_OVAL_DEFINITIONS);
-			if ((ret=oscap_validate_document(contents[idx]->filename, OSCAP_DOCUMENT_OVAL_DEFINITIONS,
-				(const char *) doc_version, reporter, (void *) action))) {
-
-				if (ret==1)
-					validation_failed(contents[idx]->filename, OSCAP_DOCUMENT_OVAL_DEFINITIONS, doc_version);
-				free(doc_version);
-				goto cleanup;
-			}
-			free(doc_version);
-		}
-	}
 
 	/* Register checking engines */
 	for (idx=0; contents[idx]; idx++) {

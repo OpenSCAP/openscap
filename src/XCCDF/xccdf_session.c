@@ -462,11 +462,34 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 
 int xccdf_session_load_oval(struct xccdf_session *session)
 {
+	struct oval_content_resource **contents = NULL;
 	/* Locate all OVAL files */
 	if (session->oval.custom_resources == NULL) {
 		/* Use OVAL files from policy model */
 		if (_xccdf_session_get_oval_from_model(session) != 0)
 			return 1;
+	}
+
+	contents = session->oval.custom_resources != NULL ? session->oval.custom_resources : session->oval.resources;
+
+	/* Validate OVAL files. Only validate if the file doesn't come from a datastream
+	 * or if full validation was explicitly requested.
+	 */
+	if (session->validate && (!xccdf_session_is_sds(session) || session->full_validation)) {
+		int ret;
+		for (int idx=0; contents[idx]; idx++) {
+			char *doc_version;
+
+			doc_version = oval_determine_document_schema_version((const char *) contents[idx]->filename, OSCAP_DOCUMENT_OVAL_DEFINITIONS);
+			if ((ret = oscap_validate_document(contents[idx]->filename, OSCAP_DOCUMENT_OVAL_DEFINITIONS,
+					(const char *) doc_version, _reporter, NULL))) {
+				if (ret == 1)
+					_validation_failed(contents[idx]->filename, OSCAP_DOCUMENT_OVAL_DEFINITIONS, doc_version);
+				free(doc_version);
+				return 1;
+			}
+			free(doc_version);
+		}
 	}
 	return 0;
 }
