@@ -969,8 +969,6 @@ static xccdf_test_result_type_t resolve_variables_wrapper(struct xccdf_policy *p
 // todo: consolidate with app_evaluate_xccdf()
 static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 {
-	struct xccdf_benchmark *benchmark;
-	struct xccdf_policy_model *policy_model = NULL;
 	struct xccdf_policy *policy = NULL;
 	struct oval_definition_model **def_mod_lst = NULL;
 	struct oval_agent_session **ag_ses_lst = NULL;
@@ -986,18 +984,11 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 
 	xccdf_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
 
-	/* import the XCCDF document */
-	benchmark = xccdf_benchmark_import(action->f_xccdf);
-	if (benchmark == NULL) {
-		fprintf(stderr, "Failed to import the XCCDF document from '%s'.\n", action->f_xccdf);
+	if (xccdf_session_load_xccdf(session) != 0)
 		goto cleanup;
-	}
-
-	/* create the policy model */
-	policy_model = xccdf_policy_model_new(benchmark);
 
 	/* select a profile */
-	policy = xccdf_policy_model_get_policy_by_id(policy_model, action->profile);
+	policy = xccdf_policy_model_get_policy_by_id(xccdf_session_get_policy_model(session), action->profile);
 	if (policy == NULL) {
 		if (action->profile != NULL)
 			fprintf(stderr, "Profile \"%s\" was not found.\n", action->profile);
@@ -1014,7 +1005,7 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 		xccdf_path_cpy = strdup(action->f_xccdf);
 		dir_path = dirname(xccdf_path_cpy);
 
-		oval_resources = xccdf_policy_get_oval_resources(policy_model, action->remote_resources, dir_path, &(session->temp_dir));
+		oval_resources = xccdf_policy_get_oval_resources(session->xccdf.policy_model, action->remote_resources, dir_path, &(session->temp_dir));
 		free(xccdf_path_cpy);
 
 		if (oval_resources == NULL)
@@ -1043,7 +1034,7 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 			goto cleanup;
 		}
 
-		xccdf_policy_model_register_engine_and_query_callback(policy_model,
+		xccdf_policy_model_register_engine_and_query_callback(session->xccdf.policy_model,
 			"http://oval.mitre.org/XMLSchema/oval-definitions-5",
 			resolve_variables_wrapper, ag_ses_lst[i], NULL);
 	}
@@ -1098,9 +1089,6 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	}
 
 	oscap_content_resources_free(oval_resources);
-
-	if (policy_model)
-		xccdf_policy_model_free(policy_model);
 
 	if (session != NULL)
 		xccdf_session_free(session);
