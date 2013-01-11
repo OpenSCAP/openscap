@@ -227,6 +227,13 @@ struct xccdf_value;
  */
 struct xccdf_result;
 
+/**
+ * @struct xccdf_tailoring
+ * Stores content from xccdf:Tailoring element which can be loaded from
+ * a separate file.
+ */
+struct xccdf_tailoring;
+
 /*--------------------*\
 |  Support structures  |
 \*--------------------*/
@@ -2609,7 +2616,16 @@ const char *xccdf_instance_get_context(const struct xccdf_instance *item);
 const char *xccdf_instance_get_parent_context(const struct xccdf_instance *item);
 /// @memberof xccdf_instance
 const char *xccdf_instance_get_content(const struct xccdf_instance *item);
-
+/// @memberof xccdf_tailoring
+const char *xccdf_tailoring_get_version(const struct xccdf_tailoring *tailoring);
+/// @memberof xccdf_tailoring
+const char *xccdf_tailoring_get_version_update(const struct xccdf_tailoring *tailoring);
+/// @memberof xccdf_tailoring
+const char *xccdf_tailoring_get_version_time(const struct xccdf_tailoring *tailoring);
+/// @memberof xccdf_tailoring
+struct oscap_string_iterator *xccdf_tailoring_get_metadata(const struct xccdf_tailoring *tailoring);
+/// @memberof xccdf_tailoring
+struct xccdf_profile_iterator *xccdf_tailoring_get_profiles(const struct xccdf_tailoring *tailoring);
 
 /************************************************************
  ** @} End of Getters group */
