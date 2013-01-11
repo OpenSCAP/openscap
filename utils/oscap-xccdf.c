@@ -976,27 +976,15 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	struct oval_agent_session **ag_ses_lst = NULL;
 	struct xccdf_result *xres;
 	struct oscap_content_resource **oval_resources = NULL;
-	int of_cnt = 0, i, ret;
+	int of_cnt = 0, i;
 	int result = OSCAP_ERROR;
-	char *doc_version = NULL;
 	struct xccdf_session *session = NULL;
 
 	session = xccdf_session_new(action->f_xccdf);
 	if (session == NULL)
 		goto cleanup;
 
-	/* validate the XCCDF document */
-	if (action->validate) {
-		doc_version = xccdf_detect_version(action->f_xccdf);
-	        if (!doc_version)
-        	        goto cleanup;
-
-		if ((ret=oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version, reporter, (void*)action))) {
-			if (ret==1)
-				validation_failed(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version);
-			goto cleanup;
-		}
-	}
+	xccdf_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
 
 	/* import the XCCDF document */
 	benchmark = xccdf_benchmark_import(action->f_xccdf);
@@ -1099,9 +1087,6 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
  cleanup:
 	if (oscap_err())
 		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
-
-	if (doc_version)
-		free(doc_version);
 
 	if (def_mod_lst != NULL) {
 		for (i = 0; i < of_cnt; i++) {
