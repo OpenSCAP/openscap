@@ -979,7 +979,11 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	int of_cnt = 0, i, ret;
 	int result = OSCAP_ERROR;
 	char *doc_version = NULL;
-	char *temp_dir = NULL;
+	struct xccdf_session *session = NULL;
+
+	session = xccdf_session_new(action->f_xccdf);
+	if (session == NULL)
+		goto cleanup;
 
 	/* validate the XCCDF document */
 	if (action->validate) {
@@ -1022,7 +1026,7 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 		xccdf_path_cpy = strdup(action->f_xccdf);
 		dir_path = dirname(xccdf_path_cpy);
 
-		oval_resources = xccdf_policy_get_oval_resources(policy_model, action->remote_resources, dir_path, &temp_dir);
+		oval_resources = xccdf_policy_get_oval_resources(policy_model, action->remote_resources, dir_path, &(session->temp_dir));
 		free(xccdf_path_cpy);
 
 		if (oval_resources == NULL)
@@ -1093,10 +1097,8 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	result = OSCAP_OK;
 
  cleanup:
-	if (oscap_err()) {
+	if (oscap_err())
 		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
-		oscap_clearerr();
-	}
 
 	if (doc_version)
 		free(doc_version);
@@ -1115,9 +1117,8 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	if (policy_model)
 		xccdf_policy_model_free(policy_model);
 
-	oscap_acquire_cleanup_dir(&temp_dir);
-	if (oscap_err())
-		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+	if (session != NULL)
+		xccdf_session_free(session);
 
 	return result;
 }
