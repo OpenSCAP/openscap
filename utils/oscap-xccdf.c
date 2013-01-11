@@ -120,6 +120,7 @@ static struct oscap_module XCCDF_EVAL = {
 		"INPUT_FILE - XCCDF file or a source data stream file\n\n"
         "Options:\n"
         "   --profile <name>\r\t\t\t\t - The name of Profile to be evaluated.\n"
+        "   --tailoring <name>\r\t\t\t\t - Use given XCCDF Tailoring file.\n"
         "   --cpe <name>\r\t\t\t\t - Use given CPE dictionary or language (autodetected)\n"
         "               \r\t\t\t\t   for applicability checks.\n"
         "   --oval-results\r\t\t\t\t - Save OVAL results as well.\n"
@@ -584,6 +585,12 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		fprintf(stderr, "Failed to import the XCCDF content from '%s'.\n", xccdf_file);
 		goto cleanup;
 	}
+
+	struct xccdf_tailoring *tailoring = NULL;
+	if (action->tailoring) {
+		tailoring = xccdf_tailoring_import(action->tailoring, benchmark);
+	}
+	// FIXME: Use the tailoring in policy model
 
 	/* Create policy model */
 	policy_model = xccdf_policy_model_new(benchmark);
@@ -1459,6 +1466,7 @@ enum oval_opt {
     XCCDF_OPT_SCE_TEMPLATE,
 #endif
     XCCDF_OPT_FILE_VERSION,
+    XCCDF_OPT_TAILORING,
     XCCDF_OPT_CPE,
     XCCDF_OPT_CPE_DICT,
     XCCDF_OPT_OUTPUT = 'o',
@@ -1487,6 +1495,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"format", 		required_argument, NULL, XCCDF_OPT_FORMAT},
 		{"oval-template", 	required_argument, NULL, XCCDF_OPT_OVAL_TEMPLATE},
 		{"stylesheet",	required_argument, NULL, XCCDF_OPT_STYLESHEET_FILE},
+		{"tailoring", required_argument, NULL, XCCDF_OPT_TAILORING},
 		{"cpe",	required_argument, NULL, XCCDF_OPT_CPE},
 		{"cpe-dict",	required_argument, NULL, XCCDF_OPT_CPE_DICT}, // DEPRECATED!
 #ifdef ENABLE_SCE
@@ -1526,6 +1535,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		/* we use realpath to get an absolute path to given XSLT to prevent openscap from looking
 		   into /usr/share/openscap/xsl instead of CWD */
 		case XCCDF_OPT_STYLESHEET_FILE: realpath(optarg, custom_stylesheet_path); action->stylesheet = custom_stylesheet_path; break;
+		case XCCDF_OPT_TAILORING:	action->tailoring = optarg; break;
 		case XCCDF_OPT_CPE:			action->cpe = optarg; break;
 		case XCCDF_OPT_CPE_DICT:
 			{

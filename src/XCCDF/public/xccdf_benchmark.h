@@ -2617,6 +2617,8 @@ const char *xccdf_instance_get_parent_context(const struct xccdf_instance *item)
 /// @memberof xccdf_instance
 const char *xccdf_instance_get_content(const struct xccdf_instance *item);
 /// @memberof xccdf_tailoring
+struct xccdf_tailoring *xccdf_tailoring_import(const char *file, struct xccdf_benchmark *benchmark);
+/// @memberof xccdf_tailoring
 const char *xccdf_tailoring_get_version(const struct xccdf_tailoring *tailoring);
 /// @memberof xccdf_tailoring
 const char *xccdf_tailoring_get_version_update(const struct xccdf_tailoring *tailoring);

@@ -94,8 +94,6 @@ struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xc
 	int depth = oscap_element_depth(reader) + 1;
 
 	while (oscap_to_start_element(reader, depth)) {
-		struct xccdf_model *parsed_model;
-
 		switch (xccdf_element_get(reader)) {
 		case XCCDFE_STATUS: {
 			const char *date = xccdf_attribute_get(reader, XCCDFA_DATE);
@@ -131,11 +129,30 @@ struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xc
 			oscap_list_add(tailoring->profiles, xccdf_profile_parse(reader, benchmark));
 			break;
 		default:
-			if (!xccdf_item_process_element(benchmark, reader))
-				dW("Encountered an unknown element '%s' while parsing XCCDF benchmark.",
-				   xmlTextReaderConstLocalName(reader));
+			dW("Encountered an unknown element '%s' while parsing XCCDF Tailoring element.",
+				xmlTextReaderConstLocalName(reader));
 		}
 		xmlTextReaderRead(reader);
+	}
+
+	return tailoring;
+}
+
+struct xccdf_tailoring *xccdf_tailoring_import(const char *file, struct xccdf_benchmark *benchmark)
+{
+	xmlTextReaderPtr reader = xmlReaderForFile(file, NULL, 0);
+	if (!reader) {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
+		return NULL;
+	}
+	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != 1) ;
+	struct xccdf_tailoring *tailoring = xccdf_tailoring_parse(reader, XITEM(benchmark));
+	xmlFreeTextReader(reader);
+
+	if (!tailoring) { // parsing fatal error
+		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to parse '%s'.", file);
+		xccdf_tailoring_free(tailoring);
+		return NULL;
 	}
 
 	return tailoring;
