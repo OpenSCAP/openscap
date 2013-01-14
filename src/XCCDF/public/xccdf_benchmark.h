@@ -2628,6 +2628,10 @@ const char *xccdf_tailoring_get_version_time(const struct xccdf_tailoring *tailo
 struct oscap_string_iterator *xccdf_tailoring_get_metadata(const struct xccdf_tailoring *tailoring);
 /// @memberof xccdf_tailoring
 struct xccdf_profile_iterator *xccdf_tailoring_get_profiles(const struct xccdf_tailoring *tailoring);
+/// @memberof xccdf_tailoring
+struct xccdf_status_iterator *xccdf_tailoring_get_statuses(const struct xccdf_tailoring *tailoring);
+/// @memberof xccdf_tailoring
+struct oscap_reference_iterator *xccdf_tailoring_get_dc_statuses(const struct xccdf_tailoring *tailoring);
 
 /************************************************************
  ** @} End of Getters group */

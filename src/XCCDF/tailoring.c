@@ -150,7 +150,7 @@ xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr d
 	xmlNode *tailoring_node = NULL;
 	tailoring_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "Tailoring", NULL);
 
-	/*struct xccdf_status_iterator *statuses = xccdf_tailoring_get_statuses(tailoring);
+	struct xccdf_status_iterator *statuses = xccdf_tailoring_get_statuses(tailoring);
 	while (xccdf_status_iterator_has_more(statuses)) {
 		struct xccdf_status *status = xccdf_status_iterator_next(statuses);
 		xccdf_status_to_dom(status, doc, tailoring_node, version_info);
@@ -162,7 +162,7 @@ xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr d
 		struct oscap_reference *ref = oscap_reference_iterator_next(dc_statuses);
 		oscap_reference_to_dom(ref, tailoring_node, doc, "dc-status");
 	}
-	oscap_reference_iterator_free(dc_statuses);*/
+	oscap_reference_iterator_free(dc_statuses);
 
 	/* version and attributes */
 	const char *version = xccdf_tailoring_get_version(tailoring);
@@ -221,3 +221,12 @@ struct xccdf_profile_iterator *xccdf_tailoring_get_profiles(const struct xccdf_t
 	return (struct xccdf_profile_iterator*) oscap_iterator_new(tailoring->profiles);
 }
 
+struct xccdf_status_iterator *xccdf_tailoring_get_statuses(const struct xccdf_tailoring *tailoring)
+{
+	return (struct xccdf_status_iterator*) oscap_iterator_new(tailoring->statuses);
+}
+
+struct oscap_reference_iterator *xccdf_tailoring_get_dc_statuses(const struct xccdf_tailoring *tailoring)
+{
+	return (struct oscap_reference_iterator*) oscap_iterator_new(tailoring->dc_statuses);
+}
