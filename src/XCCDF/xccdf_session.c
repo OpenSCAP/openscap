@@ -37,6 +37,9 @@
 #include "common/_error.h"
 #include "DS/public/scap_ds.h"
 #include "XCCDF_POLICY/public/xccdf_policy.h"
+#ifdef ENABLE_SCE
+#include <sce_engine_api.h>
+#endif
 #include "public/xccdf_session.h"
 
 static void _oval_content_resources_free(struct oval_content_resource **resources);
@@ -59,6 +62,10 @@ struct xccdf_session *xccdf_session_new(const char *filename)
 
 void xccdf_session_free(struct xccdf_session *session)
 {
+#ifdef ENABLE_SCE
+	if (session->sce.parameters != NULL)
+		sce_parameters_free(session->sce.parameters);
+#endif
 	oscap_free(session->oval.product_cpe);
 	_xccdf_session_free_oval_agents(session);
 	_oval_content_resources_free(session->oval.custom_resources);
@@ -562,6 +569,23 @@ int xccdf_session_load_oval(struct xccdf_session *session)
 			xccdf_policy_model_register_engine_oval(session->xccdf.policy_model, tmp_sess);
 	}
 	return 0;
+}
+
+int xccdf_session_load_sce(struct xccdf_session *session)
+{
+#ifdef ENABLE_SCE
+	char *xccdf_pathcopy;
+	if (session->sce.parameters != NULL)
+		sce_parameters_free(session->sce.parameters);
+
+	session->sce.parameters = sce_parameters_new();
+	xccdf_pathcopy = oscap_strdup(session->xccdf.file);
+	sce_parameters_set_xccdf_directory(session->sce.parameters, dirname(xccdf_pathcopy));
+	oscap_free(xccdf_pathcopy);
+	return !xccdf_policy_model_register_engine_sce(session->xccdf.policy_model, session->sce.parameters);
+#else
+	return 0;
+#endif
 }
 
 OSCAP_GENERIC_GETTER(struct xccdf_policy_model *, xccdf_session, policy_model, xccdf.policy_model)

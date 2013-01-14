@@ -74,6 +74,11 @@ struct xccdf_session {
 		xccdf_policy_engine_eval_fn user_eval_fn;///< Custom OVAL engine callback
 		char *product_cpe;			///< CPE of scanner product.
 	} oval;
+#ifdef ENABLE_SCE
+	struct {
+		struct sce_parameters *parameters;	///< Script Check Engine parameters
+	} sce;
+#endif
 	char *user_cpe;					///< Path to CPE dictionary required by user
 	oscap_document_type_t doc_type;		///< Document type of the session file (see filename member) used.
 	bool validate;				///< False value indicates to skip any XSD validation.
@@ -199,6 +204,14 @@ int xccdf_session_load_cpe(struct xccdf_session *session);
  * @memberof xccdf_session
  */
 int xccdf_session_load_oval(struct xccdf_session *session);
+
+/**
+ * Load Script Check Engine (if available) to the XCCDF session.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @returns zero on success
+ */
+int xccdf_session_load_sce(struct xccdf_session *session);
 
 /**
  * Get policy_model of the session. The @ref xccdf_session_load_xccdf shall be run

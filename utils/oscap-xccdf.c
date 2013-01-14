@@ -391,15 +391,11 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	struct xccdf_policy *policy = NULL;
 	struct xccdf_policy_model *policy_model = NULL;
-	char * xccdf_pathcopy = NULL;
 	char* f_results = NULL;
 
 	char** oval_result_files = NULL;
 	int result = OSCAP_ERROR;
 	float base_score = 0;
-#ifdef ENABLE_SCE
-	struct sce_parameters* sce_parameters = 0;
-#endif
 	int priority = LOG_NOTICE;
 
 	/* syslog message */
@@ -453,16 +449,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	if (xccdf_session_load_oval(session) != 0)
 		goto cleanup;
 
-	// register sce system
-	xccdf_pathcopy =  strdup(session->xccdf.file);
-
-#ifdef ENABLE_SCE
-	sce_parameters = sce_parameters_new();
-	sce_parameters_set_xccdf_directory(sce_parameters, dirname(xccdf_pathcopy));
-	sce_parameters_allocate_session(sce_parameters);
-
-	xccdf_policy_model_register_engine_sce(policy_model, sce_parameters);
-#endif
+	if (xccdf_session_load_sce(session) != 0)
+		goto cleanup;
 
 	/* Perform evaluation */
 	struct xccdf_result *ritem = xccdf_policy_evaluate(policy);
@@ -568,7 +556,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 #ifdef ENABLE_SCE
 	/* Export SCE results */
 	if (action->sce_results == true) {
-		struct sce_check_result_iterator * it = sce_session_get_check_results(sce_parameters_get_session(sce_parameters));
+		struct sce_check_result_iterator * it = sce_session_get_check_results(sce_parameters_get_session(session->sce.parameters));
 
 		while(sce_check_result_iterator_has_more(it))
 		{
@@ -725,11 +713,6 @@ cleanup:
 
 	/* syslog message */
 	syslog(priority, "Evaluation finnished. Return code: %d, Base score %f.", result, base_score);
-
-#ifdef ENABLE_SCE
-	sce_parameters_free(sce_parameters);
-#endif
-	free(xccdf_pathcopy);
 
 	if (oval_result_files)
 	{
