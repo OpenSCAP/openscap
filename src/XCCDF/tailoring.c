@@ -230,3 +230,22 @@ struct oscap_reference_iterator *xccdf_tailoring_get_dc_statuses(const struct xc
 {
 	return (struct oscap_reference_iterator*) oscap_iterator_new(tailoring->dc_statuses);
 }
+
+struct xccdf_profile *
+xccdf_tailoring_get_profile_by_id(const struct xccdf_tailoring *tailoring, const char *profile_id)
+{
+	struct xccdf_profile_iterator *profit = xccdf_tailoring_get_profiles(tailoring);
+	while (xccdf_profile_iterator_has_more(profit)) {
+		struct xccdf_profile *profile = xccdf_profile_iterator_next(profit);
+		if (profile == NULL) {
+			assert(profile != NULL);
+			continue;
+		}
+		if (oscap_streq(xccdf_profile_get_id(profile), profile_id)) {
+			xccdf_profile_iterator_free(profit);
+			return profile;
+		}
+	}
+	xccdf_profile_iterator_free(profit);
+	return NULL;
+}

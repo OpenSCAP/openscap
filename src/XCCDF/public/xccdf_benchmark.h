@@ -2632,6 +2632,14 @@ struct xccdf_profile_iterator *xccdf_tailoring_get_profiles(const struct xccdf_t
 struct xccdf_status_iterator *xccdf_tailoring_get_statuses(const struct xccdf_tailoring *tailoring);
 /// @memberof xccdf_tailoring
 struct oscap_reference_iterator *xccdf_tailoring_get_dc_statuses(const struct xccdf_tailoring *tailoring);
+/**
+ * @param profile_id id of the profile that should be returned or NULL for default profile
+ * @note
+ * Unlike in XCCDF Benchmark, the default profile from Tailoring element needn't
+ * match the "selected" attribute from each individual XCCDF Item.
+ * @memberof xccdf_tailoring
+ */
+struct xccdf_profile *xccdf_tailoring_get_profile_by_id(const struct xccdf_tailoring *tailoring, const char *profile_id);
 
 /************************************************************
  ** @} End of Getters group */

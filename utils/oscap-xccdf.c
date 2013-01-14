@@ -594,6 +594,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	/* Create policy model */
 	policy_model = xccdf_policy_model_new(benchmark);
+	/* Assign the Tailoring (if any) */
+	xccdf_policy_model_set_tailoring(policy_model, tailoring);
 
 	/* Select profile */
 	policy = xccdf_policy_model_get_policy_by_id(policy_model, action->profile);
