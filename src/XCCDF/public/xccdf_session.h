@@ -73,12 +73,17 @@ struct xccdf_session {
 		struct oval_agent_session **agents;	///< OVAL Agent Session
 		xccdf_policy_engine_eval_fn user_eval_fn;///< Custom OVAL engine callback
 		char *product_cpe;			///< CPE of scanner product.
+		char **result_files;			///< Path to exported OVAL Result files
 	} oval;
 #ifdef ENABLE_SCE
 	struct {
 		struct sce_parameters *parameters;	///< Script Check Engine parameters
 	} sce;
 #endif
+	struct {
+		char *arf_file;				///< Path to ARF file to export
+		bool oval_results;			///< Shall be the OVAL results files exported?
+	} export;					///< Settings of Session export
 	char *user_cpe;					///< Path to CPE dictionary required by user
 	oscap_document_type_t doc_type;		///< Document type of the session file (see filename member) used.
 	bool validate;				///< False value indicates to skip any XSD validation.
@@ -179,6 +184,23 @@ void xccdf_session_set_custom_oval_eval_fn(struct xccdf_session *session, xccdf_
 bool xccdf_session_set_product_cpe(struct xccdf_session *session, const char *product_cpe);
 
 /**
+ * Set whether the OVAL result files shall be exported.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param to_export_oval_results whether to export results or not.
+ */
+void xccdf_session_set_oval_results_export(struct xccdf_session *session, bool to_export_oval_results);
+
+/**
+ * Set where to export ARF file. NULL value means to not export at all.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param arf_file path to ARF file
+ * @returns true on success
+ */
+bool xccdf_session_set_arf_export(struct xccdf_session *session, const char *arf_file);
+
+/**
  * Load and parse all XCCDF structures needed to evaluate this session. This is
  * only a placeholder for load_xccdf, load_cpe, load_oval and load_sce functions.
  * @memberof xccdf_session
@@ -221,6 +243,14 @@ int xccdf_session_load_oval(struct xccdf_session *session);
  * @returns zero on success
  */
 int xccdf_session_load_sce(struct xccdf_session *session);
+
+/**
+ * Export OVAL (result) files.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @returns zero on success
+ */
+int xccdf_session_export_oval(struct xccdf_session *session);
 
 /**
  * Get policy_model of the session. The @ref xccdf_session_load_xccdf shall be run

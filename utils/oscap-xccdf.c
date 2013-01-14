@@ -393,7 +393,6 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	struct xccdf_policy_model *policy_model = NULL;
 	char* f_results = NULL;
 
-	char** oval_result_files = NULL;
 	int result = OSCAP_ERROR;
 	float base_score = 0;
 	int priority = LOG_NOTICE;
@@ -474,72 +473,14 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 	xccdf_model_iterator_free(model_it);
 
-	oval_result_files = malloc((xccdf_session_get_oval_agents_count(session) + 1) * sizeof(char*));
-	oval_result_files[0] = NULL;
+	xccdf_session_set_oval_results_export(session, action->oval_results);
+	xccdf_session_set_arf_export(session, action->f_results_arf);
 
-	/* Export OVAL results */
-	if ((action->oval_results == true || action->f_results_arf) && session->oval.agents) {
-		int i;
-		for (i=0; session->oval.agents[i]; i++) {
-			/* get result model and session name*/
-			struct oval_results_model *res_model = oval_agent_get_results_model(session->oval.agents[i]);
-			const char* oval_results_directory = NULL;
-			char *name = NULL;
-
-			if (action->oval_results == true)
-			{
-				oval_results_directory = ".";
-			}
-			else
-			{
-				if (!session->temp_dir)
-					session->temp_dir = oscap_acquire_temp_dir();
-				if (session->temp_dir == NULL)
-					goto cleanup;
-
-				oval_results_directory = session->temp_dir;
-			}
-
-			char *escaped_url = NULL;
-			const char *filename = oval_agent_get_filename(session->oval.agents[i]);
-			if (oscap_acquire_url_is_supported(filename)) {
-				escaped_url = oscap_acquire_url_to_filename(filename);
-				if (escaped_url == NULL)
-					goto cleanup;
-			}
-
-			name = malloc(PATH_MAX * sizeof(char));
-			snprintf(name, PATH_MAX, "%s/%s.result.xml", oval_results_directory, escaped_url != NULL ? escaped_url : filename);
-			if (escaped_url != NULL)
-				free(escaped_url);
-
-			/* export result model to XML */
-			if (oval_results_model_export(res_model, NULL, name) == -1) {
-				free(name);
-				goto cleanup;
-			}
-
-			/* validate OVAL Results */
-			if (session->validate && session->full_validation) {
-				char *doc_version;
-
-				doc_version = oval_determine_document_schema_version((const char *) name, OSCAP_DOCUMENT_OVAL_RESULTS);
-				if (oscap_validate_document(name, OSCAP_DOCUMENT_OVAL_RESULTS, (const char *) doc_version,
-							    reporter, (void*)action)) {
-					validation_failed(name, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version);
-					free(name);
-					free(doc_version);
-					goto cleanup;
-				}
-				free(doc_version);
-				fprintf(stdout, "OVAL Results are exported correctly.\n");
-			}
-
-			oval_result_files[i] = name;
-		}
-
-		oval_result_files[i] = NULL;
-	}
+	if (xccdf_session_export_oval(session) != 0)
+		goto cleanup;
+	else if (action->validate && getenv("OSCAP_FULL_VALIDATION") != NULL &&
+		(action->oval_results == true || action->f_results_arf))
+		fprintf(stdout, "OVAL Results are exported correctly.\n");
 
 #ifdef ENABLE_SCE
 	/* Export SCE results */
@@ -668,7 +609,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			ds_sds_compose_from_xccdf(session->filename, sds_path);
 		}
 
-		ds_rds_create(sds_path, f_results, (const char**)oval_result_files, action->f_results_arf);
+		ds_rds_create(sds_path, f_results, (const char**)(session->oval.result_files), action->f_results_arf);
 		free(sds_path);
 
 		if (session->full_validation)
@@ -701,16 +642,6 @@ cleanup:
 
 	/* syslog message */
 	syslog(priority, "Evaluation finnished. Return code: %d, Base score %f.", result, base_score);
-
-	if (oval_result_files)
-	{
-		for(int idx = 0; oval_result_files[idx] != NULL; idx++)
-		{
-			free(oval_result_files[idx]);
-		}
-
-		free(oval_result_files);
-	}
 
 	free(f_results);
 
