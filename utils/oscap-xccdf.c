@@ -410,8 +410,21 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		xccdf_session_set_datastream_id(session, action->f_datastream_id);
 		xccdf_session_set_component_id(session, action->f_xccdf_id);
 	}
+	xccdf_session_set_user_cpe(session, action->cpe);
+	xccdf_session_set_remote_resources(session, action->remote_resources, _download_reporting_callback);
+	xccdf_session_set_custom_oval_files(session, action->f_ovals);
+	xccdf_session_set_product_cpe(session, OSCAP_PRODUCTNAME);
 
 	if (xccdf_session_load_xccdf(session) != 0)
+		goto cleanup;
+
+	if (xccdf_session_load_cpe(session) != 0)
+		goto cleanup;
+
+	if (xccdf_session_load_oval(session) != 0)
+		goto cleanup;
+
+	if (xccdf_session_load_sce(session) != 0)
 		goto cleanup;
 
 	policy_model = xccdf_session_get_policy_model(session);
@@ -426,10 +439,6 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		goto cleanup;
 	}
 
-	xccdf_session_set_user_cpe(session, action->cpe);
-	if (xccdf_session_load_cpe(session) != 0)
-		goto cleanup;
-
 	/* Register callbacks */
 	if (action->progress) {
 		xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule_progress, (void *) policy);
@@ -441,16 +450,6 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 
 	/* xccdf_policy_model_register_output_callback(policy_model, callback_syslog_result, NULL); */
-
-	xccdf_session_set_remote_resources(session, action->remote_resources, _download_reporting_callback);
-	xccdf_session_set_custom_oval_files(session, action->f_ovals);
-	xccdf_session_set_product_cpe(session, OSCAP_PRODUCTNAME);
-
-	if (xccdf_session_load_oval(session) != 0)
-		goto cleanup;
-
-	if (xccdf_session_load_sce(session) != 0)
-		goto cleanup;
 
 	/* Perform evaluation */
 	struct xccdf_result *ritem = xccdf_policy_evaluate(policy);
@@ -760,8 +759,14 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 		xccdf_session_set_datastream_id(session, action->f_datastream_id);
 		xccdf_session_set_component_id(session, action->f_xccdf_id);
 	}
+	xccdf_session_set_remote_resources(session, action->remote_resources, _download_reporting_callback);
+	xccdf_session_set_custom_oval_files(session, action->f_ovals);
+	xccdf_session_set_custom_oval_eval_fn(session, resolve_variables_wrapper);
 
 	if (xccdf_session_load_xccdf(session) != 0)
+		goto cleanup;
+
+	if (xccdf_session_load_oval(session) != 0)
 		goto cleanup;
 
 	/* select a profile */
@@ -773,13 +778,6 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 			fprintf(stderr, "No Policy was found for default profile.\n");
 		goto cleanup;
 	}
-
-	xccdf_session_set_remote_resources(session, action->remote_resources, _download_reporting_callback);
-	xccdf_session_set_custom_oval_files(session, action->f_ovals);
-	xccdf_session_set_custom_oval_eval_fn(session, resolve_variables_wrapper);
-
-	if (xccdf_session_load_oval(session) != 0)
-		goto cleanup;
 
 	/* perform evaluation */
 	xres = xccdf_policy_evaluate(policy);
