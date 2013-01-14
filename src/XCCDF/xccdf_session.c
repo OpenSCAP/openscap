@@ -143,6 +143,11 @@ void xccdf_session_set_oval_results_export(struct xccdf_session *session, bool t
 	session->export.oval_results = to_export_oval_results;
 }
 
+void xccdf_session_set_oval_variables_export(struct xccdf_session *session, bool to_export_oval_variables)
+{
+	session->export.oval_variables = to_export_oval_variables;
+}
+
 bool xccdf_session_set_arf_export(struct xccdf_session *session, const char *arf_file)
 {
 	oscap_free(session->export.arf_file);
@@ -689,6 +694,39 @@ int xccdf_session_export_oval(struct xccdf_session *session)
 			session->oval.result_files[i] = name;
 		}
 		session->oval.result_files[i] = NULL;
+	}
+
+	/* Export variables */
+	if (session->export.oval_variables && session->oval.agents != NULL) {
+		for (int i = 0; session->oval.agents[i]; ++i) {
+			int j;
+			char *sname;
+			struct oval_definition_model *defmod;
+			struct oval_variable_model_iterator *varmod_itr;
+			char *escaped_url = NULL;
+
+			sname = (char *) oval_agent_get_filename(session->oval.agents[i]);
+			if (oscap_acquire_url_is_supported(sname)) {
+				escaped_url = oscap_acquire_url_to_filename(sname);
+				if (escaped_url == NULL)
+					return 1;
+				sname = escaped_url;
+			}
+			defmod = oval_agent_get_definition_model(session->oval.agents[i]);
+			j = 0;
+			varmod_itr = oval_definition_model_get_variable_models(defmod);
+			while (oval_variable_model_iterator_has_more(varmod_itr)) {
+				char fname[strlen(sname) + 32];
+				struct oval_variable_model *varmod;
+
+				varmod = oval_variable_model_iterator_next(varmod_itr);
+				snprintf(fname, sizeof(fname), "%s-%d.variables-%d.xml", sname, i, j++);
+				oval_variable_model_export(varmod, fname);
+			}
+			if (escaped_url != NULL)
+				free(escaped_url);
+			oval_variable_model_iterator_free(varmod_itr);
+		}
 	}
 	return 0;
 }
