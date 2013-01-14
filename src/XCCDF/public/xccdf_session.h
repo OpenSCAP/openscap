@@ -179,6 +179,15 @@ void xccdf_session_set_custom_oval_eval_fn(struct xccdf_session *session, xccdf_
 bool xccdf_session_set_product_cpe(struct xccdf_session *session, const char *product_cpe);
 
 /**
+ * Load and parse all XCCDF structures needed to evaluate this session. This is
+ * only a placeholder for load_xccdf, load_cpe, load_oval and load_sce functions.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @returns zero on success
+ */
+int xccdf_session_load(struct xccdf_session *session);
+
+/**
  * Load and parse XCCDF file. If the file upon which is based this session is
  * Source DataStream use functions @ref xccdf_session_set_datastream_id and
  * @ref xccdf_session_set_component_id to select particular component within

@@ -151,6 +151,19 @@ static inline struct ds_sds_index *_xccdf_session_get_sds_idx(struct xccdf_sessi
 	return session->ds.sds_idx;
 }
 
+int xccdf_session_load(struct xccdf_session *session)
+{
+	int ret = 0;
+
+	if ((ret = xccdf_session_load_xccdf(session)) != 0)
+		return ret;
+	if ((ret = xccdf_session_load_cpe(session)) != 0)
+		return ret;
+	if ((ret = xccdf_session_load_oval(session)) != 0)
+		return ret;
+	return xccdf_session_load_sce(session);
+}
+
 static int _reporter(const char *file, int line, const char *msg, void *arg)
 {
 	oscap_seterr(OSCAP_EFAMILY_OSCAP, "File '%s' line %d: %s", file, line, msg);

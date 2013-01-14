@@ -415,16 +415,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);
 	xccdf_session_set_product_cpe(session, OSCAP_PRODUCTNAME);
 
-	if (xccdf_session_load_xccdf(session) != 0)
-		goto cleanup;
-
-	if (xccdf_session_load_cpe(session) != 0)
-		goto cleanup;
-
-	if (xccdf_session_load_oval(session) != 0)
-		goto cleanup;
-
-	if (xccdf_session_load_sce(session) != 0)
+	if (xccdf_session_load(session) != 0)
 		goto cleanup;
 
 	policy_model = xccdf_session_get_policy_model(session);
