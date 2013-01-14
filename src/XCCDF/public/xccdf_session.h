@@ -70,6 +70,9 @@ struct xccdf_session {
 		download_progress_calllback_t progress;	///< Callback to report progress of download.
 		struct oval_content_resource **custom_resources;///< OVAL files required by user
 		struct oval_content_resource **resources;///< OVAL files referenced from XCCDF
+		struct oval_agent_session **agents;	///< OVAL Agent Session
+		xccdf_policy_engine_eval_fn user_eval_fn;///< Custom OVAL engine callback
+		char *product_cpe;			///< CPE of scanner product.
 	} oval;
 	char *user_cpe;					///< Path to CPE dictionary required by user
 	oscap_document_type_t doc_type;		///< Document type of the session file (see filename member) used.
@@ -153,6 +156,24 @@ void xccdf_session_set_remote_resources(struct xccdf_session *session, bool allo
 void xccdf_session_set_custom_oval_files(struct xccdf_session *session, char **oval_filenames);
 
 /**
+ * Set custom OVAL eval function to register with each OVAL session. This function shall
+ * be called before OVAL files are parsed.
+ * @memberof xccdf_session
+ * @param session XCCDF Session.
+ * @param eval_fn Callback - pointer to function called by XCCDF Policy for each evaluated rule.
+ */
+void xccdf_session_set_custom_oval_eval_fn(struct xccdf_session *session, xccdf_policy_engine_eval_fn eval_fn);
+
+/**
+ * Set custom product CPE name.
+ * @memberof xccdf_session
+ * @param session XCCDF Session.
+ * @param product_cpe Name of the scanner product.
+ * @returns true on success
+ */
+bool xccdf_session_set_product_cpe(struct xccdf_session *session, const char *product_cpe);
+
+/**
  * Load and parse XCCDF file. If the file upon which is based this session is
  * Source DataStream use functions @ref xccdf_session_set_datastream_id and
  * @ref xccdf_session_set_component_id to select particular component within
@@ -186,6 +207,14 @@ int xccdf_session_load_oval(struct xccdf_session *session);
  * @returns XCCDF Policy Model or NULL in case of failure.
  */
 struct xccdf_policy_model *xccdf_session_get_policy_model(const struct xccdf_session *session);
+
+/**
+ * Get count of OVAL agent sessions in the xccdf_session.
+ * @memberof xccdf_session
+ * @param xccdf_session XCCDF Session
+ * @returns number of OVAL agents.
+ */
+unsigned int xccdf_session_get_oval_agents_count(const struct xccdf_session *session);
 
 /// @}
 /// @}

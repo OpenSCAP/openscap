@@ -392,10 +392,6 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	struct xccdf_policy *policy = NULL;
 	struct xccdf_policy_model *policy_model = NULL;
 	char * xccdf_pathcopy = NULL;
-        void **def_models = NULL;
-        void **sessions = NULL;
-	struct oval_content_resource **contents = NULL;
-	int idx = 0;
 	char* f_results = NULL;
 
 	char** oval_result_files = NULL;
@@ -452,47 +448,10 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	xccdf_session_set_remote_resources(session, action->remote_resources, _download_reporting_callback);
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);
+	xccdf_session_set_product_cpe(session, OSCAP_PRODUCTNAME);
 
 	if (xccdf_session_load_oval(session) != 0)
 		goto cleanup;
-
-	contents = session->oval.custom_resources != NULL ? session->oval.custom_resources : session->oval.resources;
-
-	/* Register checking engines */
-	for (idx=0; contents[idx]; idx++) {
-		/* file -> def_model */
-		struct oval_definition_model *tmp_def_model = oval_definition_model_import(contents[idx]->filename);
-		if (tmp_def_model == NULL) {
-			fprintf(stderr, "Failed to create OVAL definition model from: '%s'.\n", contents[idx]->filename);
-			goto cleanup;
-		}
-
-		/* def_model -> session */
-                struct oval_agent_session *tmp_sess = oval_agent_new_session(tmp_def_model, contents[idx]->href);
-		if (tmp_sess == NULL) {
-			fprintf(stderr, "Failed to create new OVAL agent session for: '%s'.\n", contents[idx]->href);
-			goto cleanup;
-		}
-
-		/* store our name in the generated documents */
-		oval_agent_set_product_name(tmp_sess, OSCAP_PRODUCTNAME);
-
-		/* remember def_models */
-		def_models = realloc(def_models, (idx + 2) * sizeof(struct oval_definition_model *));
-		def_models[idx] = tmp_def_model;
-		def_models[idx+1] = NULL;
-
-		/* remember sessions */
-		sessions = realloc(sessions, (idx + 2) * sizeof(struct oval_agent_session *));
-		sessions[idx] = tmp_sess;
-		sessions[idx+1] = NULL;
-
-		/* register session */
-	        xccdf_policy_model_register_engine_oval(policy_model, tmp_sess);
-	}
-	// -1 because we are counting the last NULL too, +1 because of conversion
-	// from indices to array lengths
-	unsigned int oval_session_count = (idx - 1) + 1;
 
 	// register sce system
 	xccdf_pathcopy =  strdup(session->xccdf.file);
@@ -537,15 +496,15 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 	xccdf_model_iterator_free(model_it);
 
-	oval_result_files = malloc((oval_session_count + 1) * sizeof(char*));
+	oval_result_files = malloc((xccdf_session_get_oval_agents_count(session) + 1) * sizeof(char*));
 	oval_result_files[0] = NULL;
 
 	/* Export OVAL results */
-	if ((action->oval_results == true || action->f_results_arf) && sessions) {
+	if ((action->oval_results == true || action->f_results_arf) && session->oval.agents) {
 		int i;
-		for (i=0; sessions[i]; i++) {
+		for (i=0; session->oval.agents[i]; i++) {
 			/* get result model and session name*/
-			struct oval_results_model *res_model = oval_agent_get_results_model(sessions[i]);
+			struct oval_results_model *res_model = oval_agent_get_results_model(session->oval.agents[i]);
 			const char* oval_results_directory = NULL;
 			char *name = NULL;
 
@@ -564,7 +523,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			}
 
 			char *escaped_url = NULL;
-			const char *filename = oval_agent_get_filename(sessions[i]);
+			const char *filename = oval_agent_get_filename(session->oval.agents[i]);
 			if (oscap_acquire_url_is_supported(filename)) {
 				escaped_url = oscap_acquire_url_to_filename(filename);
 				if (escaped_url == NULL)
@@ -676,10 +635,10 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 
 	/* Export variables */
-	if (action->export_variables && sessions) {
+	if (action->export_variables && session->oval.agents) {
 		int i;
 
-		for (i = 0; sessions[i]; ++i) {
+		for (i = 0; session->oval.agents[i]; ++i) {
 			int j;
 			char *sname;
 			struct oval_results_model *resmod;
@@ -687,14 +646,14 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			struct oval_variable_model_iterator *varmod_itr;
 			char *escaped_url = NULL;
 
-			sname = (char *) oval_agent_get_filename(sessions[i]);
+			sname = (char *) oval_agent_get_filename(session->oval.agents[i]);
 			if (oscap_acquire_url_is_supported(sname)) {
 				escaped_url = oscap_acquire_url_to_filename(sname);
 				if (escaped_url == NULL)
 					goto cleanup;
 				sname = escaped_url;
 			}
-			resmod = oval_agent_get_results_model(sessions[i]);
+			resmod = oval_agent_get_results_model(session->oval.agents[i]);
 			defmod = oval_results_model_get_definition_model(resmod);
 
 			j = 0;
@@ -772,23 +731,9 @@ cleanup:
 #endif
 	free(xccdf_pathcopy);
 
-	/* Definition Models */
-	if (def_models) {
-		for (int i=0; def_models[i]; i++)
-			oval_definition_model_free(def_models[i]);
-		free(def_models);
-	}
-
-	/* Sessions */
-	if (sessions) {
-		for (int i=0; sessions[i]; i++)
-			oval_agent_destroy_session(sessions[i]);
-		free(sessions);
-	}
-
 	if (oval_result_files)
 	{
-		for(idx = 0; oval_result_files[idx] != NULL; idx++)
+		for(int idx = 0; oval_result_files[idx] != NULL; idx++)
 		{
 			free(oval_result_files[idx]);
 		}
@@ -818,11 +763,7 @@ static xccdf_test_result_type_t resolve_variables_wrapper(struct xccdf_policy *p
 static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 {
 	struct xccdf_policy *policy = NULL;
-	struct oval_definition_model **def_mod_lst = NULL;
-	struct oval_agent_session **ag_ses_lst = NULL;
 	struct xccdf_result *xres;
-	struct oval_content_resource **oval_resources = NULL;
-	int of_cnt = 0, i;
 	int result = OSCAP_ERROR;
 	struct xccdf_session *session = NULL;
 
@@ -852,53 +793,24 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 
 	xccdf_session_set_remote_resources(session, action->remote_resources, _download_reporting_callback);
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);
+	xccdf_session_set_custom_oval_eval_fn(session, resolve_variables_wrapper);
 
 	if (xccdf_session_load_oval(session) != 0)
 		goto cleanup;
-
-	oval_resources = session->oval.custom_resources != NULL ? session->oval.custom_resources : session->oval.resources;
-
-	for (of_cnt = 0; oval_resources[of_cnt]; of_cnt++);
-
-	if (oval_resources[0] == NULL) {
-		fprintf(stderr, "No OVAL definition files present, aborting.\n");
-		goto cleanup;
-	}
-
-	def_mod_lst = calloc(of_cnt, sizeof(struct oval_definition_model *));
-	ag_ses_lst = calloc(of_cnt, sizeof(struct oval_agent_session *));
-
-	for (i = 0; i < of_cnt; i++) {
-		def_mod_lst[i] = oval_definition_model_import(oval_resources[i]->filename);
-		if (def_mod_lst[i] == NULL) {
-			fprintf(stderr, "Failed to import definitions model from '%s'.\n", oval_resources[i]->filename);
-			goto cleanup;
-		}
-
-		ag_ses_lst[i] = oval_agent_new_session(def_mod_lst[i], oval_resources[i]->href);
-		if (ag_ses_lst[i] == NULL) {
-			fprintf(stderr, "Failed to create new agent session for '%s'.\n", oval_resources[i]->href);
-			goto cleanup;
-		}
-
-		xccdf_policy_model_register_engine_and_query_callback(session->xccdf.policy_model,
-			"http://oval.mitre.org/XMLSchema/oval-definitions-5",
-			resolve_variables_wrapper, ag_ses_lst[i], NULL);
-	}
 
 	/* perform evaluation */
 	xres = xccdf_policy_evaluate(policy);
 	if (xres == NULL)
 		goto cleanup;
 
-	for (i = 0; i < of_cnt; i++) {
+	for (unsigned int i = 0; i < xccdf_session_get_oval_agents_count(session); i++) {
 		int j;
 		char *ses_name;
 		struct oval_variable_model_iterator *var_mod_itr;
 
 		j = 0;
 		char *escaped_url = NULL;
-		ses_name = (char *) oval_agent_get_filename(ag_ses_lst[i]);
+		ses_name = (char *) oval_agent_get_filename(session->oval.agents[i]);
 		if (oscap_acquire_url_is_supported(ses_name)) {
 			escaped_url = oscap_acquire_url_to_filename(ses_name);
 			if (escaped_url == NULL)
@@ -906,7 +818,8 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 			ses_name = escaped_url;
 		}
 
-		var_mod_itr = oval_definition_model_get_variable_models(def_mod_lst[i]);
+		struct oval_definition_model *def_model = oval_agent_get_definition_model(session->oval.agents[i]);
+		var_mod_itr = oval_definition_model_get_variable_models(def_model);
 		while (oval_variable_model_iterator_has_more(var_mod_itr)) {
 			struct oval_variable_model *var_mod;
 			char fname[strlen(ses_name) + 32];
@@ -925,15 +838,6 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
  cleanup:
 	if (oscap_err())
 		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
-
-	if (def_mod_lst != NULL) {
-		for (i = 0; i < of_cnt; i++) {
-			oval_agent_destroy_session(ag_ses_lst[i]);
-			oval_definition_model_free(def_mod_lst[i]);
-		}
-		free(ag_ses_lst);
-		free(def_mod_lst);
-	}
 
 	if (session != NULL)
 		xccdf_session_free(session);
