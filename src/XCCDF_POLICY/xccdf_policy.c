@@ -2415,8 +2415,8 @@ void xccdf_policy_model_free(struct xccdf_policy_model * model) {
 
 	oscap_list_free(model->policies, (oscap_destruct_func) xccdf_policy_free);
 	oscap_list_free(model->callbacks, (oscap_destruct_func) oscap_free);
-        xccdf_benchmark_free(model->benchmark);
 	xccdf_tailoring_free(model->tailoring);
+        xccdf_benchmark_free(model->benchmark);
 	oscap_list_free(model->cpe_dicts, (oscap_destruct_func) cpe_dict_model_free);
 	oscap_list_free(model->cpe_lang_models, (oscap_destruct_func) cpe_lang_model_free);
 	oscap_htable_free(model->cpe_oval_sessions, (oscap_destruct_func) _xccdf_policy_destroy_cpe_oval_session);
