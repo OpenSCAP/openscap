@@ -588,6 +588,18 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	struct xccdf_tailoring *tailoring = NULL;
 	if (action->tailoring) {
+		if (action->validate) {
+			char *xccdf_tailoring_version = xccdf_detect_version(action->tailoring);
+			if ((ret=oscap_validate_document(action->tailoring, OSCAP_DOCUMENT_XCCDF_TAILORING, xccdf_tailoring_version, reporter, (void*) action))) {
+				if (ret==1)
+					validation_failed(action->tailoring, OSCAP_DOCUMENT_XCCDF_TAILORING, xccdf_tailoring_version);
+				free(xccdf_tailoring_version);
+				goto cleanup;
+			}
+
+			free(xccdf_tailoring_version);
+		}
+
 		tailoring = xccdf_tailoring_import(action->tailoring, benchmark);
 	}
 
