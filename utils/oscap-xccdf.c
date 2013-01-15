@@ -590,7 +590,6 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	if (action->tailoring) {
 		tailoring = xccdf_tailoring_import(action->tailoring, benchmark);
 	}
-	// FIXME: Use the tailoring in policy model
 
 	/* Create policy model */
 	policy_model = xccdf_policy_model_new(benchmark);

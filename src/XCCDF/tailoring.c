@@ -77,6 +77,9 @@ struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xc
 
 	int depth = oscap_element_depth(reader) + 1;
 
+	// Read to the inside of Tailoring.
+	xmlTextReaderRead(reader);
+
 	while (oscap_to_start_element(reader, depth)) {
 		switch (xccdf_element_get(reader)) {
 		case XCCDFE_STATUS: {
