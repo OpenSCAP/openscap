@@ -279,6 +279,8 @@ struct oscap_schema_table_entry OSCAP_SCHEMAS_TABLE[] = {
 	{OSCAP_DOCUMENT_SCE_RESULT,		"1.0",	"sce/1.0/sce-result-schema.xsd"},
 	{OSCAP_DOCUMENT_XCCDF,			"1.2",	"xccdf/1.2/xccdf_1.2.xsd"},
 	{OSCAP_DOCUMENT_XCCDF,			"1.1",	"xccdf/1.1/xccdf-schema.xsd"},
+	{OSCAP_DOCUMENT_XCCDF_TAILORING,	"1.2",	"xccdf/1.2/xccdf_1.2.xsd"},
+	{OSCAP_DOCUMENT_XCCDF_TAILORING,	"1.1",	"xccdf/1.1/xccdf-schema.xsd"},
 	{OSCAP_DOCUMENT_SDS,                "1.2",  "sds/1.2/scap-source-data-stream_1.2.xsd"},
 	{OSCAP_DOCUMENT_ARF,                "1.1",  "arf/1.1/asset-reporting-format_1.1.0.xsd"},
 	{OSCAP_DOCUMENT_CPE_DICTIONARY,		"2.0", "cpe/2.0/cpe-dictionary_2.0.xsd"},
@@ -593,6 +595,9 @@ int oscap_determine_document_type(const char *document, oscap_document_type_t *d
         else if (!strcmp("Benchmark", elm_name)) {
                 *doc_type = OSCAP_DOCUMENT_XCCDF;
         }
+		else if (!strcmp("Tailoring", elm_name)) {
+			*doc_type = OSCAP_DOCUMENT_XCCDF_TAILORING;
+		}
         else if (!strcmp("cpe-list", elm_name)) {
                 *doc_type = OSCAP_DOCUMENT_CPE_DICTIONARY;
         }
