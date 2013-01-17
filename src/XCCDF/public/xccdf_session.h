@@ -57,6 +57,9 @@ struct xccdf_session {
 		char *file;				///< Path to XCCDF File (shall differ from the filename for sds).
 		struct xccdf_policy_model *policy_model;///< Active policy model.
 		char *doc_version;			///< Version of parsed XCCDF file
+		char *profile_id;			///< Last selected profile.
+		struct xccdf_result *result;		///< XCCDF Result model.
+		float base_score;			///< Basec score of the latest evaluation.
 	} xccdf;
 	struct {
 		struct ds_sds_index *sds_idx;		///< Index of Source DataStream (only applicable for sds).
@@ -219,6 +222,15 @@ void xccdf_session_set_oval_variables_export(struct xccdf_session *session, bool
 bool xccdf_session_set_arf_export(struct xccdf_session *session, const char *arf_file);
 
 /**
+ * Select XCCDF Profile for evaluation.
+ * @memberof xccdf_session
+ * @param session XCCD Session
+ * @param profile_id ID of profile to set
+ * @returns true on success
+ */
+bool xccdf_session_set_profile_id(struct xccdf_session *session, const char *profile_id);
+
+/**
  * Load and parse all XCCDF structures needed to evaluate this session. This is
  * only a placeholder for load_xccdf, load_cpe, load_oval and load_sce functions.
  * @memberof xccdf_session
@@ -263,6 +275,14 @@ int xccdf_session_load_oval(struct xccdf_session *session);
 int xccdf_session_load_sce(struct xccdf_session *session);
 
 /**
+ * Evaluate XCCDF Policy.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @returns zero on success
+ */
+int xccdf_session_evaluate(struct xccdf_session *session);
+
+/**
  * Export OVAL (result and variables) files.
  * @memberof xccdf_session
  * @param session XCCDF Session
@@ -285,6 +305,22 @@ int xccdf_session_export_sce(struct xccdf_session *session);
  * @returns XCCDF Policy Model or NULL in case of failure.
  */
 struct xccdf_policy_model *xccdf_session_get_policy_model(const struct xccdf_session *session);
+
+/**
+ * Get xccdf_policy of the session.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @returns XCCDF Policy or NULL in case of failure.
+ */
+struct xccdf_policy *xccdf_session_get_xccdf_policy(const struct xccdf_session *session);
+
+/**
+ * Get the base score of the latest XCCDF evaluation in the session.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @returns the score
+ */
+float xccdf_session_get_base_score(const struct xccdf_session *session);
 
 /**
  * Get count of OVAL agent sessions in the xccdf_session.

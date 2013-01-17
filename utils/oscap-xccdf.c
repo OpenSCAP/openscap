@@ -385,12 +385,10 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 {
 	struct xccdf_session *session = NULL;
 
-	struct xccdf_policy *policy = NULL;
 	struct xccdf_policy_model *policy_model = NULL;
 	char* f_results = NULL;
 
 	int result = OSCAP_ERROR;
-	float base_score = 0;
 	int priority = LOG_NOTICE;
 
 	/* syslog message */
@@ -416,8 +414,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	policy_model = xccdf_session_get_policy_model(session);
 
 	/* Select profile */
-	policy = xccdf_policy_model_get_policy_by_id(policy_model, action->profile);
-	if (policy == NULL) {
+	if (!xccdf_session_set_profile_id(session, action->profile)) {
 		if (action->profile != NULL)
 			fprintf(stderr, "Profile \"%s\" was not found.\n", action->profile);
 		else
@@ -427,47 +424,21 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	/* Register callbacks */
 	if (action->progress) {
-		xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule_progress, (void *) policy);
+		xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule_progress,
+				(void *) xccdf_session_get_xccdf_policy(session));
 		xccdf_policy_model_register_output_callback(policy_model, callback_scr_result_progress, NULL);
 	}
 	else {
-		xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule, (void *) policy);
+		xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule,
+				(void *) xccdf_session_get_xccdf_policy(session));
 		xccdf_policy_model_register_output_callback(policy_model, callback_scr_result, NULL);
 	}
 
 	/* xccdf_policy_model_register_output_callback(policy_model, callback_syslog_result, NULL); */
 
 	/* Perform evaluation */
-	struct xccdf_result *ritem = xccdf_policy_evaluate(policy);
-        if (ritem == NULL) {
+	if (xccdf_session_evaluate(session) != 0)
 		goto cleanup;
-	}
-
-	/* Write results into XCCDF Test Result model */
-	xccdf_result_set_benchmark_uri(ritem, session->filename);
-	struct oscap_text *title = oscap_text_new();
-	oscap_text_set_text(title, "OSCAP Scan Result");
-	xccdf_result_add_title(ritem, title);
-	if (policy != NULL) {
-		const char *id = xccdf_policy_get_id(policy);
-		if (id != NULL)
-			xccdf_result_set_profile(ritem, id);
-	}
-
-	xccdf_result_fill_sysinfo(ritem);
-
-	struct xccdf_model_iterator *model_it = xccdf_benchmark_get_models(xccdf_policy_model_get_benchmark(session->xccdf.policy_model));
-	while (xccdf_model_iterator_has_more(model_it)) {
-		struct xccdf_model *model = xccdf_model_iterator_next(model_it);
-		const char *score_model = xccdf_model_get_system(model);
-		struct xccdf_score *score = xccdf_policy_get_score(policy, ritem, score_model);
-		xccdf_result_add_score(ritem, score);
-
-		/* record default base score for later use */
-		if (!strcmp(score_model, "urn:xccdf:scoring:default"))
-			base_score = xccdf_score_get_score(score);
-	}
-	xccdf_model_iterator_free(model_it);
 
 	xccdf_session_set_oval_results_export(session, action->oval_results);
 	xccdf_session_set_oval_variables_export(session, action->export_variables);
@@ -500,7 +471,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	/* Export results */
 	if (f_results != NULL) {
 		xccdf_benchmark_add_result(xccdf_policy_model_get_benchmark(session->xccdf.policy_model),
-				xccdf_result_clone(ritem));
+				xccdf_result_clone(session->xccdf.result));
 		xccdf_benchmark_export(xccdf_policy_model_get_benchmark(session->xccdf.policy_model), f_results);
 
 		/* validate XCCDF Results */
@@ -516,7 +487,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		/* generate report */
 		if (action->f_report != NULL)
 			xccdf_gen_report(f_results,
-			                 xccdf_result_get_id(ritem),
+			                 xccdf_result_get_id(session->xccdf.result),
 			                 action->f_report,
 			                 "",
 			                 (action->oval_results ? "%.result.xml" : ""),
@@ -566,7 +537,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
 	result = OSCAP_OK;
-	struct xccdf_rule_result_iterator *res_it = xccdf_result_get_rule_results(ritem);
+	struct xccdf_rule_result_iterator *res_it = xccdf_result_get_rule_results(session->xccdf.result);
 	while (xccdf_rule_result_iterator_has_more(res_it)) {
 		struct xccdf_rule_result *res = xccdf_rule_result_iterator_next(res_it);
 		xccdf_test_result_type_t rule_result = xccdf_rule_result_get_result(res);
@@ -581,7 +552,7 @@ cleanup:
 		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 
 	/* syslog message */
-	syslog(priority, "Evaluation finnished. Return code: %d, Base score %f.", result, base_score);
+	syslog(priority, "Evaluation finnished. Return code: %d, Base score %f.", result, xccdf_session_get_base_score(session));
 
 	free(f_results);
 

@@ -63,6 +63,7 @@ struct xccdf_session *xccdf_session_new(const char *filename)
 
 void xccdf_session_free(struct xccdf_session *session)
 {
+	oscap_free(session->xccdf.profile_id);
 	oscap_free(session->export.arf_file);
 	_xccdf_session_free_oval_result_files(session);
 #ifdef ENABLE_SCE
@@ -157,6 +158,15 @@ bool xccdf_session_set_arf_export(struct xccdf_session *session, const char *arf
 {
 	oscap_free(session->export.arf_file);
 	session->export.arf_file = oscap_strdup(arf_file);
+	return true;
+}
+
+bool xccdf_session_set_profile_id(struct xccdf_session *session, const char *profile_id)
+{
+	if (xccdf_policy_model_get_policy_by_id(session->xccdf.policy_model, profile_id) == NULL)
+		return false;
+	oscap_free(session->xccdf.profile_id);
+	session->xccdf.profile_id = oscap_strdup(profile_id);
 	return true;
 }
 
@@ -626,6 +636,44 @@ int xccdf_session_load_sce(struct xccdf_session *session)
 #endif
 }
 
+int xccdf_session_evaluate(struct xccdf_session *session)
+{
+	struct xccdf_policy *policy = xccdf_session_get_xccdf_policy(session);
+	if (policy == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot build xccdf_policy.");
+		return 1;
+	}
+
+	session->xccdf.result = xccdf_policy_evaluate(policy);
+	if (session->xccdf.result == NULL)
+		return 1;
+
+	/* Write results into XCCDF Test Result model */
+	xccdf_result_set_benchmark_uri(session->xccdf.result, session->filename);
+	struct oscap_text *title = oscap_text_new();
+	oscap_text_set_text(title, "OSCAP Scan Result");
+	xccdf_result_add_title(session->xccdf.result, title);
+	const char *id = xccdf_policy_get_id(policy);
+	if (id != NULL)
+		xccdf_result_set_profile(session->xccdf.result, id);
+
+	xccdf_result_fill_sysinfo(session->xccdf.result);
+
+	struct xccdf_model_iterator *model_it = xccdf_benchmark_get_models(xccdf_policy_model_get_benchmark(session->xccdf.policy_model));
+	while (xccdf_model_iterator_has_more(model_it)) {
+		struct xccdf_model *model = xccdf_model_iterator_next(model_it);
+		const char *score_model = xccdf_model_get_system(model);
+		struct xccdf_score *score = xccdf_policy_get_score(policy, session->xccdf.result, score_model);
+		xccdf_result_add_score(session->xccdf.result, score);
+
+		/* record default base score for later use */
+		if (!strcmp(score_model, "urn:xccdf:scoring:default"))
+			session->xccdf.base_score = xccdf_score_get_score(score);
+	}
+	xccdf_model_iterator_free(model_it);
+	return 0;
+}
+
 static void _xccdf_session_free_oval_result_files(struct xccdf_session *session)
 {
 	if (session->oval.result_files != NULL) {
@@ -766,6 +814,16 @@ int xccdf_session_export_sce(struct xccdf_session *session)
 }
 
 OSCAP_GENERIC_GETTER(struct xccdf_policy_model *, xccdf_session, policy_model, xccdf.policy_model)
+OSCAP_GENERIC_GETTER(float, xccdf_session, base_score, xccdf.base_score);
+
+struct xccdf_policy *xccdf_session_get_xccdf_policy(const struct xccdf_session *session)
+{
+	if (session->xccdf.policy_model == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot build xccdf_policy.");
+		return NULL;
+	}
+	return xccdf_policy_model_get_policy_by_id(session->xccdf.policy_model, session->xccdf.profile_id);
+}
 
 unsigned int xccdf_session_get_oval_agents_count(const struct xccdf_session *session)
 {
