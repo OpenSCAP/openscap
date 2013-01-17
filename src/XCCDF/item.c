@@ -1067,6 +1067,7 @@ void xccdf_profile_item_clone(struct xccdf_profile_item *clone, const struct xcc
 	clone->setvalues = oscap_list_clone(item->setvalues, (oscap_clone_func) xccdf_setvalue_clone);
 	clone->refine_values = oscap_list_clone(item->refine_values, (oscap_clone_func) xccdf_refine_value_clone);
 	clone->refine_rules = oscap_list_clone(item->refine_rules, (oscap_clone_func) xccdf_refine_rule_clone);
+	clone->tailoring = item->tailoring;
 }
 
 struct xccdf_benchmark_item * xccdf_benchmark_item_clone(struct xccdf_item *parent, const struct xccdf_benchmark * bench)

@@ -19,8 +19,6 @@ function test_api_xccdf_tailoring {
         return 1
     fi
 
-    cat $TMP_RESULTS
-
     local PASS_COUNT=$($XPATH $TMP_RESULTS 'count(//result[text()="pass"])')
     rm -f $TMP_RESULTS
 
