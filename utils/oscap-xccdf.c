@@ -535,9 +535,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 				fprintf(stdout, "OVAL Results are exported correctly.\n");
 			}
 
-			oval_result_files[i] = strdup(name);
-
-			free(name);
+			oval_result_files[i] = name;
 		}
 
 		oval_result_files[i] = NULL;
