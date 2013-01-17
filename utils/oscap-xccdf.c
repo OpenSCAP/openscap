@@ -52,7 +52,6 @@ static int app_xccdf_resolve(const struct oscap_action *action);
 static int app_xccdf_export_oval_variables(const struct oscap_action *action);
 static bool getopt_xccdf(int argc, char **argv, struct oscap_action *action);
 static bool getopt_generate(int argc, char **argv, struct oscap_action *action);
-static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show, const char *oval_template, const char* sce_template, const char* profile);
 static int app_xccdf_xslt(const struct oscap_action *action);
 
 static struct oscap_module* XCCDF_SUBMODULES[];
@@ -456,49 +455,13 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		goto cleanup;
 #endif
 
-	f_results = action->f_results ? strdup(action->f_results) : NULL;
-	if (!f_results && (action->f_report != NULL || action->f_results_arf != NULL))
-	{
-		if (!session->temp_dir)
-			session->temp_dir = oscap_acquire_temp_dir();
-		if (session->temp_dir == NULL)
-			goto cleanup;
-
-		f_results = malloc(PATH_MAX * sizeof(char));
-		snprintf(f_results, PATH_MAX, "%s/xccdf-result.xml", session->temp_dir);
-	}
-
-	/* Export results */
-	if (f_results != NULL) {
-		xccdf_benchmark_add_result(xccdf_policy_model_get_benchmark(session->xccdf.policy_model),
-				xccdf_result_clone(session->xccdf.result));
-		xccdf_benchmark_export(xccdf_policy_model_get_benchmark(session->xccdf.policy_model), f_results);
-
-		/* validate XCCDF Results */
-		if (session->validate && session->full_validation) {
-			/* we assume there is a same xccdf doc_version on input and output */
-			if (oscap_validate_document(f_results, OSCAP_DOCUMENT_XCCDF, session->xccdf.doc_version, reporter, (void*) action)) {
-				validation_failed(f_results, OSCAP_DOCUMENT_XCCDF, session->xccdf.doc_version);
-				goto cleanup;
-			}
-			fprintf(stdout, "XCCDF Results are exported correctly.\n");
-		}
-
-		/* generate report */
-		if (action->f_report != NULL)
-			xccdf_gen_report(f_results,
-			                 xccdf_result_get_id(session->xccdf.result),
-			                 action->f_report,
-			                 "",
-			                 (action->oval_results ? "%.result.xml" : ""),
-#ifdef ENABLE_SCE
-			                 (action->sce_results  ? "%.result.xml" : ""),
-#else
-			                 "",
-#endif
-			                 action->profile == NULL ? "" : action->profile
-			);
-	}
+	xccdf_session_set_xccdf_export(session, action->f_results);
+	xccdf_session_set_report_export(session, action->f_report);
+	if (xccdf_session_export_xccdf(session) != 0)
+		goto cleanup;
+	else if (action->validate && getenv("OSCAP_FULL_VALIDATION") != NULL &&
+		(action->f_results || action->f_report || action->f_results_arf))
+		fprintf(stdout, "XCCDF Results are exported correctly.\n");
 
 	if (action->f_results_arf != NULL)
 	{
@@ -700,21 +663,6 @@ cleanup:
 		free(doc_version);
 
 	return ret;
-}
-
-static int xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show, const char *oval_template, const char *sce_template, const char* profile)
-{
-	const char *params[] = {
-		"result-id",         id,
-		"show",              show,
-		"profile",           profile,
-		"oval-template",     oval_template,
-		"sce-template",      sce_template,
-		"verbosity",         "",
-		"hide-profile-info", NULL,
-		NULL };
-
-	return app_xslt(infile, "xccdf-report.xsl", outfile, params);
 }
 
 static bool _some_oval_result_exists(const char *filename)

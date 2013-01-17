@@ -26,6 +26,7 @@
 
 #include <libgen.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 #include <oscap.h>
 #include <oscap_acquire.h>
@@ -158,6 +159,20 @@ bool xccdf_session_set_arf_export(struct xccdf_session *session, const char *arf
 {
 	oscap_free(session->export.arf_file);
 	session->export.arf_file = oscap_strdup(arf_file);
+	return true;
+}
+
+bool xccdf_session_set_xccdf_export(struct xccdf_session *session, const char *xccdf_file)
+{
+	oscap_free(session->export.xccdf_file);
+	session->export.xccdf_file = oscap_strdup(xccdf_file);
+	return true;
+}
+
+bool xccdf_session_set_report_export(struct xccdf_session *session, const char *report_file)
+{
+	oscap_free(session->export.report_file);
+	session->export.report_file = oscap_strdup(report_file);
 	return true;
 }
 
@@ -671,6 +686,95 @@ int xccdf_session_evaluate(struct xccdf_session *session)
 			session->xccdf.base_score = xccdf_score_get_score(score);
 	}
 	xccdf_model_iterator_free(model_it);
+	return 0;
+}
+
+static size_t _paramlist_size(const char **p) { size_t s = 0; if (!p) return s; while (p[s]) s += 2; return s; }
+
+static size_t _paramlist_cpy(const char **to, const char **p) {
+	size_t s = 0;
+	if (!p) return s;
+	for (;p && p[s]; s += 2) to[s] = p[s], to[s+1] = p[s+1];
+	to[s] = p[s];
+	return s;
+}
+
+static int _app_xslt(const char *infile, const char *xsltfile, const char *outfile, const char **params)
+{
+	char pwd[PATH_MAX];
+
+	if (getcwd(pwd, sizeof(pwd)) == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Getcwd() failed: %s\n", strerror(errno));
+		return 1;
+	}
+
+	/* add params oscap-version & pwd */
+	const char *stdparams[] = { "oscap-version", oscap_get_version(), "pwd", pwd, NULL };
+	const char *par[_paramlist_size(params) + _paramlist_size(stdparams) + 1];
+	size_t s = _paramlist_cpy(par, params);
+	s += _paramlist_cpy(par + s, stdparams);
+
+	return oscap_apply_xslt(infile, xsltfile, outfile, par) == -1;
+}
+
+static inline int _xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show, const char *oval_template, const char* sce_template, const char* profile)
+{
+	const char *params[] = {
+		"result-id",		id,
+		"show",			show,
+		"profile",		profile,
+		"oval-template",	oval_template,
+		"sce-template",		sce_template,
+		"verbosity",		"",
+		"hide-profile-info",	NULL,
+		NULL};
+
+	return _app_xslt(infile, "xccdf-report.xsl", outfile, params);
+}
+
+int xccdf_session_export_xccdf(struct xccdf_session *session)
+{
+	if (session->export.xccdf_file == NULL && (session->export.report_file != NULL || session->export.arf_file != NULL))
+	{
+		if (!session->temp_dir)
+			session->temp_dir = oscap_acquire_temp_dir();
+		if (session->temp_dir == NULL)
+			return 1;
+
+		session->export.xccdf_file = malloc(PATH_MAX * sizeof(char));
+		snprintf(session->export.xccdf_file, PATH_MAX, "%s/xccdf-result.xml", session->temp_dir);
+	}
+
+	/* Export results */
+	if (session->export.xccdf_file != NULL) {
+		xccdf_benchmark_add_result(xccdf_policy_model_get_benchmark(session->xccdf.policy_model),
+				xccdf_result_clone(session->xccdf.result));
+		xccdf_benchmark_export(xccdf_policy_model_get_benchmark(session->xccdf.policy_model), session->export.xccdf_file);
+
+		/* validate XCCDF Results */
+		if (session->validate && session->full_validation) {
+			/* we assume there is a same xccdf doc_version on input and output */
+			if (oscap_validate_document(session->export.xccdf_file, OSCAP_DOCUMENT_XCCDF, session->xccdf.doc_version, _reporter, NULL)) {
+				_validation_failed(session->export.xccdf_file, OSCAP_DOCUMENT_XCCDF, session->xccdf.doc_version);
+				return 1;
+			}
+		}
+
+		/* generate report */
+		if (session->export.report_file != NULL)
+			_xccdf_gen_report(session->export.xccdf_file,
+					xccdf_result_get_id(session->xccdf.result),
+					session->export.report_file,
+					"",
+					(session->export.oval_results ? "%.result.xml" : ""),
+#ifdef ENABLE_SCE
+					 (session->export.sce_results ? "%.result.xml" : ""),
+#else
+					 "",
+#endif
+					 session->xccdf.profile_id == NULL ? "" : session->xccdf.profile_id
+			);
+	}
 	return 0;
 }
 

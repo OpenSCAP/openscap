@@ -85,6 +85,8 @@ struct xccdf_session {
 #endif
 	struct {
 		char *arf_file;				///< Path to ARF file to export
+		char *xccdf_file;			///< Path to XCCDF file to export
+		char *report_file;			///< Path to HTML file to eport
 		bool oval_results;			///< Shall be the OVAL results files exported?
 		bool oval_variables;			///< Shall be the OVAL variable files exported?
 		bool sce_results;			///< Shall be the SCE results exported?
@@ -213,6 +215,15 @@ void xccdf_session_set_sce_results_export(struct xccdf_session *session, bool to
 void xccdf_session_set_oval_variables_export(struct xccdf_session *session, bool to_export_oval_variables);
 
 /**
+ * Set where to export XCCDF file. NULL value means to not export at all.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param xccdf_file path to XCCDF file
+ * @returns true on success
+ */
+bool xccdf_session_set_xccdf_export(struct xccdf_session *session, const char *xccdf_file);
+
+/**
  * Set where to export ARF file. NULL value means to not export at all.
  * @memberof xccdf_session
  * @param session XCCDF Session
@@ -222,9 +233,18 @@ void xccdf_session_set_oval_variables_export(struct xccdf_session *session, bool
 bool xccdf_session_set_arf_export(struct xccdf_session *session, const char *arf_file);
 
 /**
+ * Set where to export HTML Report file. NULL value means to not export at all.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param report_file
+ * @retunrs true on success
+ */
+bool xccdf_session_set_report_export(struct xccdf_session *session, const char *report_file);
+
+/**
  * Select XCCDF Profile for evaluation.
  * @memberof xccdf_session
- * @param session XCCD Session
+ * @param session XCCDF Session
  * @param profile_id ID of profile to set
  * @returns true on success
  */
@@ -281,6 +301,14 @@ int xccdf_session_load_sce(struct xccdf_session *session);
  * @returns zero on success
  */
 int xccdf_session_evaluate(struct xccdf_session *session);
+
+/**
+ * Export XCCDF file.
+ * @member xccdf_session
+ * @param session XCCDF Session
+ * @returns zero on success
+ */
+int xccdf_session_export_xccdf(struct xccdf_session *session);
 
 /**
  * Export OVAL (result and variables) files.
