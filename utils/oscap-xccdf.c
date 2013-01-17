@@ -34,7 +34,6 @@
 #include <xccdf_benchmark.h>
 #include <xccdf_policy.h>
 #include <xccdf_session.h>
-#include <oscap_acquire.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -385,7 +384,6 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	struct xccdf_session *session = NULL;
 
 	struct xccdf_policy_model *policy_model = NULL;
-	char* f_results = NULL;
 
 	int result = OSCAP_ERROR;
 	int priority = LOG_NOTICE;
@@ -463,40 +461,10 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		(action->f_results || action->f_report || action->f_results_arf))
 		fprintf(stdout, "XCCDF Results are exported correctly.\n");
 
-	if (action->f_results_arf != NULL)
-	{
-		char* sds_path = 0;
-
-		if (xccdf_session_is_sds(session))
-		{
-			sds_path = strdup(session->filename);
-		}
-		else
-		{
-			if (!session->temp_dir)
-				session->temp_dir = oscap_acquire_temp_dir();
-			if (session->temp_dir == NULL)
-				goto cleanup;
-
-			sds_path =  malloc(PATH_MAX * sizeof(char));
-			snprintf(sds_path, PATH_MAX, "%s/sds.xml", session->temp_dir);
-			ds_sds_compose_from_xccdf(session->filename, sds_path);
-		}
-
-		ds_rds_create(sds_path, f_results, (const char**)(session->oval.result_files), action->f_results_arf);
-		free(sds_path);
-
-		if (session->full_validation)
-		{
-			if (oscap_validate_document(action->f_results_arf, OSCAP_DOCUMENT_ARF, "1.1", reporter, (void*)action))
-			{
-				validation_failed(action->f_results_arf, OSCAP_DOCUMENT_ARF, "1.1");
-				result = OSCAP_ERROR;
-				goto cleanup;
-			}
-			fprintf(stdout, "Result DataStream exported correctly.\n");
-		}
-	}
+	if (xccdf_session_export_arf(session) != 0)
+		goto cleanup;
+	else if (action->f_results_arf && getenv("OSCAP_FULL_VALIDATION") != NULL)
+		fprintf(stdout, "Result DataStream exported correctly.\n");
 
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
 	result = OSCAP_OK;
@@ -516,8 +484,6 @@ cleanup:
 
 	/* syslog message */
 	syslog(priority, "Evaluation finnished. Return code: %d, Base score %f.", result, xccdf_session_get_base_score(session));
-
-	free(f_results);
 
 	if (session != NULL)
 		xccdf_session_free(session);

@@ -327,6 +327,14 @@ int xccdf_session_export_oval(struct xccdf_session *session);
 int xccdf_session_export_sce(struct xccdf_session *session);
 
 /**
+ * Export ARF (if enabled by @ref xccdf_session_set_arf_export).
+ * @memberof xccdf_session
+ * @param seesion XCCDF Session
+ * @returns zero on success
+ */
+int xccdf_session_export_arf(struct xccdf_session *session);
+
+/**
  * Get policy_model of the session. The @ref xccdf_session_load_xccdf shall be run
  * before this to parse XCCDF file to the policy_model.
  * @memberof xccdf_session

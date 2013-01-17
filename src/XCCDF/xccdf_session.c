@@ -917,6 +917,38 @@ int xccdf_session_export_sce(struct xccdf_session *session)
 	return 0;
 }
 
+int xccdf_session_export_arf(struct xccdf_session *session)
+{
+	if (session->export.arf_file != NULL) {
+		char* sds_path = 0;
+
+		if (xccdf_session_is_sds(session)) {
+			sds_path = strdup(session->filename);
+		}
+		else {
+			if (!session->temp_dir)
+				session->temp_dir = oscap_acquire_temp_dir();
+			if (session->temp_dir == NULL)
+				return 1;
+
+			sds_path = malloc(PATH_MAX * sizeof(char));
+			snprintf(sds_path, PATH_MAX, "%s/sds.xml", session->temp_dir);
+			ds_sds_compose_from_xccdf(session->filename, sds_path);
+		}
+
+		ds_rds_create(sds_path, session->export.xccdf_file, (const char**)(session->oval.result_files), session->export.arf_file);
+		free(sds_path);
+
+		if (session->full_validation) {
+			if (oscap_validate_document(session->export.arf_file, OSCAP_DOCUMENT_ARF, "1.1", _reporter, NULL)) {
+				_validation_failed(session->export.arf_file, OSCAP_DOCUMENT_ARF, "1.1");
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
+
 OSCAP_GENERIC_GETTER(struct xccdf_policy_model *, xccdf_session, policy_model, xccdf.policy_model)
 OSCAP_GENERIC_GETTER(float, xccdf_session, base_score, xccdf.base_score);
 
