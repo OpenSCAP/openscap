@@ -2433,6 +2433,8 @@ const char *xccdf_profile_get_version_update(const struct xccdf_profile *profile
 /// @memberof xccdf_profile
 const char *xccdf_profile_get_version_time(const struct xccdf_profile *profile);
 /// @memberof xccdf_profile
+bool xccdf_profile_get_tailoring(const struct xccdf_profile *profile);
+/// @memberof xccdf_profile
 const char *xccdf_profile_get_note_tag(const struct xccdf_profile *profile);
 
 /// @memberof xccdf_rule
@@ -2717,6 +2719,8 @@ bool xccdf_profile_set_version(struct xccdf_profile *item, const char *newval);
 bool xccdf_profile_set_version_time(struct xccdf_profile *item, const char *newval);
 /// @memberof xccdf_profile
 bool xccdf_profile_set_version_update(struct xccdf_profile *item, const char *newval);
+/// @memberof xccdf_profile
+bool xccdf_profile_set_tailoring(struct xccdf_profile *item, bool tailoring);
 /// @memberof xccdf_profile
 bool xccdf_profile_add_metadata(struct xccdf_profile* item, const char* metadata);
 

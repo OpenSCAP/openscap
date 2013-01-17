@@ -112,9 +112,12 @@ struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xc
 			oscap_free(xml);
 			break;
 		}
-		case XCCDFE_PROFILE:
-			oscap_list_add(tailoring->profiles, xccdf_profile_parse(reader, benchmark));
+		case XCCDFE_PROFILE: {
+			struct xccdf_item *item = xccdf_profile_parse(reader, benchmark);
+			xccdf_profile_set_tailoring(XPROFILE(item), true);
+			oscap_list_add(tailoring->profiles, item);
 			break;
+		}
 		default:
 			dW("Encountered an unknown element '%s' while parsing XCCDF Tailoring element.",
 				xmlTextReaderConstLocalName(reader));

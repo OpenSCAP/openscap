@@ -163,6 +163,7 @@ struct xccdf_profile_item {
 	struct oscap_list *setvalues;
 	struct oscap_list *refine_values;
 	struct oscap_list *refine_rules;
+	bool tailoring;
 };
 
 struct xccdf_tailoring {
