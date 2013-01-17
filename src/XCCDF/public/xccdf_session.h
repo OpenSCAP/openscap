@@ -40,7 +40,7 @@
 typedef void (*download_progress_calllback_t) (bool warning, const char * format, ...);
 
 struct oval_content_resource {
-	char *href;		///< Coresponds with xccdf:check-content-ref/@href.
+	char *href;		///< Coresponds with xccdf:check-content-ref/\@href.
 	char *filename;		///< Points to the filename on the filesystem.
 };
 
@@ -116,6 +116,7 @@ void xccdf_session_free(struct xccdf_session *session);
 /**
  * Query if the session is based on Source DataStream.
  * @memberof xccdf_session
+ * @param session XCCDF Session
  * @returns true if the session is based on Source Datastream
  */
 bool xccdf_session_is_sds(const struct xccdf_session *session);
@@ -123,6 +124,7 @@ bool xccdf_session_is_sds(const struct xccdf_session *session);
 /**
  * Set XSD validation level.
  * @memberof xccdf_session
+ * @param session XCCDF Session
  * @param validate False value indicates to skip any XSD validation.
  * @param full_validation True value indicates that every possible step will be validated by XSD.
  */
@@ -133,6 +135,7 @@ void xccdf_session_set_validation(struct xccdf_session *session, bool validate, 
  * passed down to @ref ds_sds_index_select_checklist to determine target component.
  * This function is applicable only for sessions based on a DataStream.
  * @memberof xccdf_session
+ * @param session XCCDF Session
  * @param datastream_id requested datastream_id for this session.
  */
 void xccdf_session_set_datastream_id(struct xccdf_session *session, const char *datastream_id);
@@ -142,6 +145,7 @@ void xccdf_session_set_datastream_id(struct xccdf_session *session, const char *
  * pased down to @ref ds_sds_index_select_checklist to determine target component.
  * This function is applicable only for sessions based on a DataStream.
  * @memberof xccdf_session
+ * @param session XCCDF Session
  * @param component_id requested component_id for this session.
  */
 void xccdf_session_set_component_id(struct xccdf_session *session, const char *component_id);
@@ -150,6 +154,7 @@ void xccdf_session_set_component_id(struct xccdf_session *session, const char *c
  * Set path to custom CPE dictionary for the session. This function is applicable
  * only before session loads. It has no effect if run afterwards.
  * @memberof xccdf_session
+ * @param session XCCDF Session
  * @param user_cpe File path to user defined cpe dictionary.
  */
 void xccdf_session_set_user_cpe(struct xccdf_session *session, const char *user_cpe);
@@ -157,7 +162,8 @@ void xccdf_session_set_user_cpe(struct xccdf_session *session, const char *user_
 /**
  * Set properties of remote content.
  * @memberof xccdf_session
- * @param allow is download od remote resources allowed in this session (defaults to false)
+ * @param session XCCDF Session
+ * @param allowed Whether is download od remote resources allowed in this session (defaults to false)
  * @param callback used to notify user about download proceeds. This might be safely set
  * to NULL -- ignoring user notification.
  */
@@ -166,6 +172,7 @@ void xccdf_session_set_remote_resources(struct xccdf_session *session, bool allo
 /**
  * Set custom oval files for this session
  * @memberof xccdf_session
+ * @param session XCCDF Session
  * @param oval_filenames - Array of paths to custom OVAL files. If the array is empty
  * no OVAL file will be used for the session. If this parameter is NULL then OVAL
  * files will be find automatically, as defined in XCCDF (which is default).
@@ -237,7 +244,7 @@ bool xccdf_session_set_arf_export(struct xccdf_session *session, const char *arf
  * @memberof xccdf_session
  * @param session XCCDF Session
  * @param report_file
- * @retunrs true on success
+ * @returns true on success
  */
 bool xccdf_session_set_report_export(struct xccdf_session *session, const char *report_file);
 
@@ -268,6 +275,7 @@ int xccdf_session_load(struct xccdf_session *session);
  * However in such case, previous xccdf structures will be deallocated from session
  * and pointers to it become invalid.
  * @memberof xccdf_session
+ * @param session XCCDF Session
  * @returns zero on success
  */
 int xccdf_session_load_xccdf(struct xccdf_session *session);
@@ -276,6 +284,7 @@ int xccdf_session_load_xccdf(struct xccdf_session *session);
  * Load and parse CPE dictionaries. Function xccdf_session_set_user_cpe
  * might be called before this to set custom CPE dictionary.
  * @memberof xccdf_session
+ * @param session XCCDF Session
  * @returns zero on success
  */
 int xccdf_session_load_cpe(struct xccdf_session *session);
@@ -283,6 +292,8 @@ int xccdf_session_load_cpe(struct xccdf_session *session);
 /**
  * Load and parse OVAL definitions files for the XCCDF session.
  * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @returns zero on success
  */
 int xccdf_session_load_oval(struct xccdf_session *session);
 
@@ -304,7 +315,7 @@ int xccdf_session_evaluate(struct xccdf_session *session);
 
 /**
  * Export XCCDF file.
- * @member xccdf_session
+ * @memberof xccdf_session
  * @param session XCCDF Session
  * @returns zero on success
  */
@@ -329,7 +340,7 @@ int xccdf_session_export_sce(struct xccdf_session *session);
 /**
  * Export ARF (if enabled by @ref xccdf_session_set_arf_export).
  * @memberof xccdf_session
- * @param seesion XCCDF Session
+ * @param session XCCDF Session
  * @returns zero on success
  */
 int xccdf_session_export_arf(struct xccdf_session *session);
@@ -338,6 +349,7 @@ int xccdf_session_export_arf(struct xccdf_session *session);
  * Get policy_model of the session. The @ref xccdf_session_load_xccdf shall be run
  * before this to parse XCCDF file to the policy_model.
  * @memberof xccdf_session
+ * @param session XCCDF Session
  * @returns XCCDF Policy Model or NULL in case of failure.
  */
 struct xccdf_policy_model *xccdf_session_get_policy_model(const struct xccdf_session *session);
@@ -361,7 +373,7 @@ float xccdf_session_get_base_score(const struct xccdf_session *session);
 /**
  * Get count of OVAL agent sessions in the xccdf_session.
  * @memberof xccdf_session
- * @param xccdf_session XCCDF Session
+ * @param session XCCDF Session
  * @returns number of OVAL agents.
  */
 unsigned int xccdf_session_get_oval_agents_count(const struct xccdf_session *session);
@@ -369,7 +381,7 @@ unsigned int xccdf_session_get_oval_agents_count(const struct xccdf_session *ses
 /**
  * Query if the result of evaluation contains FAL or UNKNOWN rule-result elements.
  * @memberof xccdf_session
- * @param xccdf_session XCCDF Session
+ * @param session XCCDF Session
  * @returns Exists such rule-result r . r = FAIL | r = UNKNOWN rule-result
  */
 bool xccdf_session_contains_fail_result(const struct xccdf_session *session);
