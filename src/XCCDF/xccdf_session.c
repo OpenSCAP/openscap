@@ -148,6 +148,11 @@ void xccdf_session_set_oval_variables_export(struct xccdf_session *session, bool
 	session->export.oval_variables = to_export_oval_variables;
 }
 
+void xccdf_session_set_sce_results_export(struct xccdf_session *session, bool to_export_sce_results)
+{
+	session->export.sce_results = to_export_sce_results;
+}
+
 bool xccdf_session_set_arf_export(struct xccdf_session *session, const char *arf_file)
 {
 	oscap_free(session->export.arf_file);
@@ -728,6 +733,35 @@ int xccdf_session_export_oval(struct xccdf_session *session)
 			oval_variable_model_iterator_free(varmod_itr);
 		}
 	}
+	return 0;
+}
+
+int xccdf_session_export_sce(struct xccdf_session *session)
+{
+#ifdef ENABLE_SCE
+	/* Export SCE results */
+	if (session->export.sce_results == true) {
+		struct sce_check_result_iterator * it = sce_session_get_check_results(sce_parameters_get_session(session->sce.parameters));
+
+		while(sce_check_result_iterator_has_more(it))
+		{
+			struct sce_check_result * check_result = sce_check_result_iterator_next(it);
+			char target[2 + strlen(sce_check_result_get_basename(check_result)) + 11 + 1];
+			snprintf(target, sizeof(target), "./%s.result.xml", sce_check_result_get_basename(check_result));
+			sce_check_result_export(check_result, target);
+
+			if (session->validate && session->full_validation) {
+				if (oscap_validate_document(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0", _reporter, NULL)) {
+					_validation_failed(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0");
+					sce_check_result_iterator_free(it);
+					return 1;
+				}
+			}
+		}
+
+		sce_check_result_iterator_free(it);
+	}
+#endif
 	return 0;
 }
 

@@ -36,10 +36,6 @@
 #include <xccdf_session.h>
 #include <oscap_acquire.h>
 
-#ifdef ENABLE_SCE
-#include <sce_engine_api.h>
-#endif
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <assert.h>
@@ -484,28 +480,9 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		fprintf(stdout, "OVAL Results are exported correctly.\n");
 
 #ifdef ENABLE_SCE
-	/* Export SCE results */
-	if (action->sce_results == true) {
-		struct sce_check_result_iterator * it = sce_session_get_check_results(sce_parameters_get_session(session->sce.parameters));
-
-		while(sce_check_result_iterator_has_more(it))
-		{
-			struct sce_check_result * check_result = sce_check_result_iterator_next(it);
-			char target[2 + strlen(sce_check_result_get_basename(check_result)) + 11 + 1];
-			snprintf(target, sizeof(target), "./%s.result.xml", sce_check_result_get_basename(check_result));
-			sce_check_result_export(check_result, target);
-
-			if (session->validate && session->full_validation) {
-				if (oscap_validate_document(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0", reporter, (void*)action)) {
-					validation_failed(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0");
-					sce_check_result_iterator_free(it);
-					goto cleanup;
-				}
-			}
-		}
-
-		sce_check_result_iterator_free(it);
-	}
+	xccdf_session_set_sce_results_export(session, action->sce_results);
+	if (xccdf_session_export_sce(session) != 0)
+		goto cleanup;
 #endif
 
 	f_results = action->f_results ? strdup(action->f_results) : NULL;

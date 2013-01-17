@@ -84,6 +84,7 @@ struct xccdf_session {
 		char *arf_file;				///< Path to ARF file to export
 		bool oval_results;			///< Shall be the OVAL results files exported?
 		bool oval_variables;			///< Shall be the OVAL variable files exported?
+		bool sce_results;			///< Shall be the SCE results exported?
 	} export;					///< Settings of Session export
 	char *user_cpe;					///< Path to CPE dictionary required by user
 	oscap_document_type_t doc_type;		///< Document type of the session file (see filename member) used.
@@ -193,6 +194,14 @@ bool xccdf_session_set_product_cpe(struct xccdf_session *session, const char *pr
 void xccdf_session_set_oval_results_export(struct xccdf_session *session, bool to_export_oval_results);
 
 /**
+ * Set that SCE reult files shall be exported.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param to_export_sce_results whether to export SCE results or not.
+ */
+void xccdf_session_set_sce_results_export(struct xccdf_session *session, bool to_export_sce_results);
+
+/**
  * Set whether the OVAL variables files shall be exported.
  * @memberof xccdf_session
  * @param session XCCDF Session
@@ -260,6 +269,14 @@ int xccdf_session_load_sce(struct xccdf_session *session);
  * @returns zero on success
  */
 int xccdf_session_export_oval(struct xccdf_session *session);
+
+/**
+ * Export SCE files (if enabled by @ref xccdf_session_set_sce_results_export).
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @returns zero on success
+ */
+int xccdf_session_export_sce(struct xccdf_session *session);
 
 /**
  * Get policy_model of the session. The @ref xccdf_session_load_xccdf shall be run
