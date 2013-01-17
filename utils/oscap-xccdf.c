@@ -467,16 +467,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		fprintf(stdout, "Result DataStream exported correctly.\n");
 
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
-	result = OSCAP_OK;
-	struct xccdf_rule_result_iterator *res_it = xccdf_result_get_rule_results(session->xccdf.result);
-	while (xccdf_rule_result_iterator_has_more(res_it)) {
-		struct xccdf_rule_result *res = xccdf_rule_result_iterator_next(res_it);
-		xccdf_test_result_type_t rule_result = xccdf_rule_result_get_result(res);
-		if ((rule_result == XCCDF_RESULT_FAIL) || (rule_result == XCCDF_RESULT_UNKNOWN))
-			result = OSCAP_FAIL;
-	}
-	xccdf_rule_result_iterator_free(res_it);
-
+	result = xccdf_session_contains_fail_result(session) ? OSCAP_FAIL : OSCAP_OK;
 
 cleanup:
 	if (oscap_err())

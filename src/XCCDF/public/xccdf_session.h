@@ -366,6 +366,14 @@ float xccdf_session_get_base_score(const struct xccdf_session *session);
  */
 unsigned int xccdf_session_get_oval_agents_count(const struct xccdf_session *session);
 
+/**
+ * Query if the result of evaluation contains FAL or UNKNOWN rule-result elements.
+ * @memberof xccdf_session
+ * @param xccdf_session XCCDF Session
+ * @returns Exists such rule-result r . r = FAIL | r = UNKNOWN rule-result
+ */
+bool xccdf_session_contains_fail_result(const struct xccdf_session *session);
+
 /// @}
 /// @}
 #endif
