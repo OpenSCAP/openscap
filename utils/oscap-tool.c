@@ -34,6 +34,7 @@
 #include <stdarg.h>
 #include <errno.h>
 #include <limits.h>
+#include <ftw.h>
 #include <cvss_score.h>
 
 #ifndef PATH_MAX
@@ -367,4 +368,38 @@ cleanup:
     return ret;
 }
 
+#ifndef P_tmpdir
+#define P_tmpdir "/tmp"
+#endif
+
+#define TEMP_DIR_TEMPLATE P_tmpdir "/oscap.XXXXXX"
+#define TEMP_URL_TEMPLATE "downloaded.XXXXXX"
+
+char *oscap_acquire_temp_dir()
+{
+	char *temp_dir = strdup(TEMP_DIR_TEMPLATE);
+	if (mkdtemp(temp_dir) == NULL) {
+		free(temp_dir);
+		fprintf(stderr, "Could not create temp directory " TEMP_DIR_TEMPLATE ". %s", strerror(errno));
+		return NULL;
+	}
+	return temp_dir;
+}
+
+static int __unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)
+{
+	int rv = remove(fpath);
+	if (rv)
+		fprintf(stderr, "Could not remove %s. %s", fpath, strerror(errno));
+	return rv;
+}
+
+void oscap_acquire_cleanup_dir(char **dir_path)
+{
+	if (*dir_path != NULL) {
+		nftw(*dir_path, __unlink_cb, 64, FTW_DEPTH | FTW_PHYS | FTW_MOUNT);
+		free(*dir_path);
+		*dir_path = NULL;
+	}
+}
 

@@ -37,7 +37,6 @@
 #include <linux/limits.h>
 
 #include <oscap.h>
-#include <oscap_acquire.h>
 #include <oval_results.h>
 #include <oval_variables.h>
 #include <oval_system_characteristics.h>
