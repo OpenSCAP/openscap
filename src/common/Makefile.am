@@ -9,7 +9,7 @@ liboscapcommon_la_SOURCES = \
 	error.c _error.h \
 	list.c list.h \
 	memusage.c memusage.h \
-	oscap_acquire.c \
+	oscap_acquire.c oscap_acquire.h \
 	oscapxml.c \
 	reference.c reference_priv.h \
 	text.c text_priv.h \
@@ -26,7 +26,6 @@ liboscapcommon_la_LIBADD = \
 	@xml2_LIBS@ @xslt_LIBS@ @exslt_LIBS@ @pthread_LIBS@
 
 pkginclude_HEADERS =\
-	public/oscap_acquire.h \
 	public/oscap_error.h \
 	public/oscap.h \
 	public/oscap_reference.h \

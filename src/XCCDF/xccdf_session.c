@@ -29,10 +29,10 @@
 #include <unistd.h>
 
 #include <oscap.h>
-#include <oscap_acquire.h>
 #include <cpe_lang.h>
 #include <OVAL/public/oval_agent_api.h>
 #include <OVAL/public/oval_agent_xccdf_api.h>
+#include "common/oscap_acquire.h"
 #include <common/alloc.h>
 #include "common/util.h"
 #include "common/_error.h"
