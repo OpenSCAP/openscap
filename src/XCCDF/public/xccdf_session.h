@@ -39,63 +39,11 @@
  */
 typedef void (*download_progress_calllback_t) (bool warning, const char * format, ...);
 
-struct oval_content_resource {
-	char *href;		///< Coresponds with xccdf:check-content-ref/\@href.
-	char *filename;		///< Points to the filename on the filesystem.
-};
-
 /**
  * @struct xccdf_session
  * A structure encapsuling the context of XCCDF operations.
  */
-struct xccdf_session {
-	// Note this has been made public only for refactoring purposes.
-	// It will be removed later on.
-	const char *filename;			///< File name of SCAP (SDS or XCCDF) file for this session.
-	char *temp_dir;					///< Temp directory used for decomposed component files.
-	struct {
-		char *file;				///< Path to XCCDF File (shall differ from the filename for sds).
-		struct xccdf_policy_model *policy_model;///< Active policy model.
-		char *doc_version;			///< Version of parsed XCCDF file
-		char *profile_id;			///< Last selected profile.
-		struct xccdf_result *result;		///< XCCDF Result model.
-		float base_score;			///< Basec score of the latest evaluation.
-	} xccdf;
-	struct {
-		struct ds_sds_index *sds_idx;		///< Index of Source DataStream (only applicable for sds).
-		char *user_datastream_id;		///< Datastream id requested by user (only applicable for sds).
-		char *user_component_id;		///< Component id requested by user (only applicable for sds).
-		char *datastream_id;			///< Datastream id used (only applicable for sds).
-		char *component_id;			///< Component id used (only applicable for sds).
-	} ds;
-	struct {
-		bool fetch_remote_resources;		///< Allows download of remote resources (not applicable when user sets custom oval files)
-		download_progress_calllback_t progress;	///< Callback to report progress of download.
-		struct oval_content_resource **custom_resources;///< OVAL files required by user
-		struct oval_content_resource **resources;///< OVAL files referenced from XCCDF
-		struct oval_agent_session **agents;	///< OVAL Agent Session
-		xccdf_policy_engine_eval_fn user_eval_fn;///< Custom OVAL engine callback
-		char *product_cpe;			///< CPE of scanner product.
-		char **result_files;			///< Path to exported OVAL Result files
-	} oval;
-#ifdef ENABLE_SCE
-	struct {
-		struct sce_parameters *parameters;	///< Script Check Engine parameters
-	} sce;
-#endif
-	struct {
-		char *arf_file;				///< Path to ARF file to export
-		char *xccdf_file;			///< Path to XCCDF file to export
-		char *report_file;			///< Path to HTML file to eport
-		bool oval_results;			///< Shall be the OVAL results files exported?
-		bool oval_variables;			///< Shall be the OVAL variable files exported?
-		bool sce_results;			///< Shall be the SCE results exported?
-	} export;					///< Settings of Session export
-	char *user_cpe;					///< Path to CPE dictionary required by user
-	oscap_document_type_t doc_type;		///< Document type of the session file (see filename member) used.
-	bool validate;				///< False value indicates to skip any XSD validation.
-	bool full_validation;			///< True value indicates that every possible step will be validated by XSD.
-};
+struct xccdf_session;
 
 /**
  * Costructor of xccdf_session. It attempts to recognize type of the filename.
