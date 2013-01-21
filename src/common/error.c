@@ -58,6 +58,13 @@ static struct oscap_err_t *oscap_err_new(oscap_errfamily_t family, const char *d
 	return (err);
 }
 
+static void oscap_err_free(struct oscap_err_t *err)
+{
+	if (err->desc != NULL)
+		oscap_free(err->desc);
+	oscap_free(err);
+}
+
 void __oscap_setxmlerr(const char *file, uint32_t line, const char *func, xmlErrorPtr error)
 {
 
@@ -112,11 +119,8 @@ void oscap_clearerr(void)
 	err = pthread_getspecific(__key);
 	(void)pthread_setspecific(__key, NULL);
 
-	if (err != NULL) {
-		if (err->desc != NULL)
-			oscap_free(err->desc);
-		oscap_free(err);
-	}
+	if (err != NULL)
+		oscap_err_free(err);
 
 	return;
 }
