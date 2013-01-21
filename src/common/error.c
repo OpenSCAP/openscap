@@ -31,6 +31,7 @@
 #include "alloc.h"
 #include "util.h"
 #include "_error.h"
+#include "err_queue.h"
 #include "debug_priv.h"
 
 static pthread_key_t __key;
@@ -65,6 +66,17 @@ static void oscap_err_free(struct oscap_err_t *err)
 	oscap_free(err);
 }
 
+static inline void _push_err(struct oscap_err_t *err)
+{
+	struct err_queue *q = pthread_getspecific(__key);
+	if (q == NULL) {
+		q = err_queue_new();
+		assert(q != NULL);
+		(void)pthread_setspecific(__key, q);
+	}
+	(void)err_queue_push(q, err);
+}
+
 void __oscap_setxmlerr(const char *file, uint32_t line, const char *func, xmlErrorPtr error)
 {
 
@@ -80,10 +92,7 @@ void __oscap_setxmlerr(const char *file, uint32_t line, const char *func, xmlErr
 	if( error->message[len-1] == '\n' )
 		error->message[len-1] = 0;
 	err = oscap_err_new(OSCAP_EFAMILY_XML, error->message, func, line, file);
-	(void)pthread_setspecific(__key, err);
-
-	return;
-
+	_push_err(err);
 }
 
 void __oscap_seterr(const char *file, uint32_t line, const char *func, oscap_errfamily_t family, ...)
@@ -105,48 +114,47 @@ void __oscap_seterr(const char *file, uint32_t line, const char *func, oscap_err
 	err = oscap_err_new(family, msg, func, line, file);
 
 	oscap_free(msg);
-	(void)pthread_setspecific(__key, err);
-
-	return;
+	_push_err(err);
 }
 
 void oscap_clearerr(void)
 {
-	struct oscap_err_t *err;
+	struct err_queue *q;
 
 	(void)pthread_once(&__once, oscap_errkey_init);
 
-	err = pthread_getspecific(__key);
+	q = pthread_getspecific(__key);
 	(void)pthread_setspecific(__key, NULL);
-
-	if (err != NULL)
-		oscap_err_free(err);
-
-	return;
+	err_queue_free(q, (oscap_destruct_func) oscap_err_free);
 }
 
 bool oscap_err(void)
 {
 	(void)pthread_once(&__once, oscap_errkey_init);
-	return (pthread_getspecific(__key) != NULL);
+	struct err_queue *q = pthread_getspecific(__key);
+	return (q != NULL && !err_queue_is_empty(q));
 }
 
 oscap_errfamily_t oscap_err_family(void)
 {
-	struct oscap_err_t *err;
+	struct err_queue *q;
 
 	(void)pthread_once(&__once, oscap_errkey_init);
-	err = pthread_getspecific(__key);
+	q = pthread_getspecific(__key);
 
-	return (err == NULL ? 0 : err->family);
+	if (q == NULL || err_queue_is_empty(q))
+		return 0;
+	return err_queue_get_last(q)->family;
 }
 
 const char *oscap_err_desc(void)
 {
-	struct oscap_err_t *err;
+	struct err_queue *q;
 
 	(void)pthread_once(&__once, oscap_errkey_init);
-	err = pthread_getspecific(__key);
+	q = pthread_getspecific(__key);
 
-	return (err == NULL ? 0 : (const char *)err->desc);
+	if (q == NULL || err_queue_is_empty(q))
+		return 0;
+	return (const char *) err_queue_get_last(q)->desc;
 }

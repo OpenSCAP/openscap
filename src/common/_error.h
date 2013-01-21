@@ -43,6 +43,7 @@ struct oscap_err_t {
 	const char *func;
 	const char *file;
 	uint32_t line;
+	struct oscap_err_t *next;
 };
 
 /**

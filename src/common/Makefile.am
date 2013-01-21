@@ -6,6 +6,7 @@ liboscapcommon_la_SOURCES = \
 	bfind.c bfind.h \
 	debug.c debug_priv.h \
 	elements.c elements.h \
+	err_queue.c err_queue.h \
 	error.c _error.h \
 	list.c list.h \
 	memusage.c memusage.h \
