@@ -123,6 +123,7 @@ void xccdf_session_free(struct xccdf_session *session)
 	if (session->sce.parameters != NULL)
 		sce_parameters_free(session->sce.parameters);
 #endif
+	oscap_free(session->user_cpe);
 	oscap_free(session->oval.product_cpe);
 	_xccdf_session_free_oval_agents(session);
 	_oval_content_resources_free(session->oval.custom_resources);
