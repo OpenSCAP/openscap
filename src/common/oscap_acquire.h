@@ -21,7 +21,10 @@
 #ifndef OSCAP_ACQUIRE_H_
 #define OSCAP_ACQUIRE_H_
 
+#include "util.h"
 #include <stdbool.h>
+
+OSCAP_HIDDEN_START;
 
 /**
  * Create an oscap temp dir. (While ideally all the operations are being
@@ -60,5 +63,7 @@ bool oscap_acquire_url_is_supported(const char *url);
  * @return escaped url or NULL
  */
 char *oscap_acquire_url_to_filename(const char *url);
+
+OSCAP_HIDDEN_END;
 
 #endif

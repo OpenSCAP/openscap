@@ -140,6 +140,26 @@ Collect all the XCCDF values that would be used by OVAL during evaluation of a c
 .RS
 Select a particular profile from XCCDF document.
 .RE
+.TP
+\fB\-\-fetch-remote-resources\fR
+.RS
+Allow download of remote OVAL content referenced from XCCDF by check-content-ref/@href.
+.RE
+.TP
+\fB\-\-skip-valid\fR
+.RS
+Do not validate input/output files.
+.RE
+.TP
+\fB\-\-datastream-id ID\fR
+.RS
+Uses a datastream with that particular ID from the given datastream collection. If not given the first datastream is used. Only applies if you give source datastream in place of an XCCDF file.
+.RE
+.TP
+\fB\-\-xccdf-id ID\fR
+.RS
+Takes component ref with given ID from checklists. This allows to select a particular XCCDF component even in cases where there are 2 XCCDFs in one datastream.
+.RE
 .RE
 .TP
 .B \fBgenerate\fR [\fIoptions\fR] <submodule> [submodule-specific-options]

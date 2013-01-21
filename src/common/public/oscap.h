@@ -97,6 +97,16 @@ typedef enum oscap_document_type {
 	OSCAP_DOCUMENT_XCCDF_TAILORING        ///< XCCDF tailoring file
 } oscap_document_type_t;
 
+/**
+ * Convert @ref oscap_document_type_t constant to human readable (english)
+ * representation.
+ * @param type OpenSCAP Document Type
+ * @returns English string describing document type.
+ * @retval Returned value might be pointer to static memory and must not be modified.
+ * @retval NULL in case of unrecognized document type
+ */
+const char *oscap_document_type_to_string(oscap_document_type_t type);
+
 typedef int (*xml_reporter)(const char *file, int line, const char *msg, void *arg);
 
 /**
@@ -111,7 +121,7 @@ typedef int (*xml_reporter)(const char *file, int line, const char *msg, void *a
  * @param xmlfile File to be validated.
  * @param doctype Document type represented by the file.
  * @param version Version of the document, use NULL for library's default.
- * @param reporetr A reporter to by notified of encountered issues. Can be NULL, if a binary document validates / does not validate answer is satisfactonary.
+ * @param reporter A reporter to by notified of encountered issues. Can be NULL, if a binary document validates / does not validate answer is satisfactonary.
  * @param arg Argument for the reporter.
  * @return 0 on pass; -1 error; 1 fail
  */

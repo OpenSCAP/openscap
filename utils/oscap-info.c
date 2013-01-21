@@ -44,7 +44,6 @@
 #include <scap_ds.h>
 
 #include "oscap-tool.h"
-#include "oscap_acquire.h"
 
 static bool getopt_info(int argc, char **argv, struct oscap_action *action);
 static int app_info(const struct oscap_action *action);
@@ -266,6 +265,12 @@ static int app_info(const struct oscap_action *action)
 				xccdf_benchmark_free(bench);
 
 				oscap_acquire_cleanup_dir(&temp_dir);
+				if (oscap_err()) {
+					/* This might have set error, when some of the removals failed.
+					   No need to abort this operation, we can safely procceed. */
+					fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+					oscap_clearerr();
+				}
 				free(xccdf_file);
 			}
 			oscap_string_iterator_free(checklist_it);

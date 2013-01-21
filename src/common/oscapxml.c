@@ -628,3 +628,34 @@ int oscap_determine_document_type(const char *document, oscap_document_type_t *d
         return 0;
 }
 
+const char *oscap_document_type_to_string(oscap_document_type_t type)
+{
+	switch (type) {
+	case OSCAP_DOCUMENT_OVAL_DEFINITIONS:
+		return "OVAL Definition";
+	case OSCAP_DOCUMENT_OVAL_DIRECTIVES:
+		return "OVAL Directives";
+	case OSCAP_DOCUMENT_OVAL_RESULTS:
+		return "OVAL Results";
+	case OSCAP_DOCUMENT_OVAL_SYSCHAR:
+		return "OVAL System Characteristics";
+	case OSCAP_DOCUMENT_OVAL_VARIABLES:
+		return "OVAL Variables";
+	case OSCAP_DOCUMENT_SDS:
+		return "SCAP Source Datastream";
+	case OSCAP_DOCUMENT_XCCDF:
+		return "XCCDF Checklist";
+	case OSCAP_DOCUMENT_SCE_RESULT:
+		return "SCE Results";
+	case OSCAP_DOCUMENT_CPE_DICTIONARY:
+		return "CPE Dictionary";
+	case OSCAP_DOCUMENT_CPE_LANGUAGE:
+		return "CPE Language";
+	case OSCAP_DOCUMENT_ARF:
+		return "ARF Result Datastream";
+	case OSCAP_DOCUMENT_CVE_FEED:
+		return "CVE NVD Feed";
+	default:
+		return NULL;
+	}
+}

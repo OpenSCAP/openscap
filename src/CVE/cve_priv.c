@@ -53,7 +53,7 @@
  * */
 
 /**
- * @structure cve_list
+ * @struct cve_list
  * cve_list is the top level element of the CVE List provided by MITRE. 
  * It represents holds all CVE Items.
  */
