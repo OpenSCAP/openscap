@@ -402,6 +402,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		xccdf_session_set_component_id(session, action->f_xccdf_id);
 	}
 	xccdf_session_set_user_cpe(session, action->cpe);
+	xccdf_session_set_user_tailoring(session, action->tailoring);
 	xccdf_session_set_remote_resources(session, action->remote_resources, _download_reporting_callback);
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);
 	xccdf_session_set_product_cpe(session, OSCAP_PRODUCTNAME);
@@ -409,28 +410,6 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	if (xccdf_session_load(session) != 0)
 		goto cleanup;
 
-	// TODO: port to xccdf_session
-/*
-	struct xccdf_tailoring *tailoring = NULL;
-	if (action->tailoring) {
-		if (action->validate) {
-			char *xccdf_tailoring_version = xccdf_detect_version(action->tailoring);
-			if ((ret=oscap_validate_document(action->tailoring, OSCAP_DOCUMENT_XCCDF_TAILORING, xccdf_tailoring_version, reporter, (void*) action))) {
-				if (ret==1)
-					validation_failed(action->tailoring, OSCAP_DOCUMENT_XCCDF_TAILORING, xccdf_tailoring_version);
-				free(xccdf_tailoring_version);
-				goto cleanup;
-			}
-
-			free(xccdf_tailoring_version);
-		}
-
-		tailoring = xccdf_tailoring_import(action->tailoring, benchmark);
-	}
-
-	policy_model = xccdf_policy_model_new(benchmark);
-	xccdf_policy_model_set_tailoring(policy_model, tailoring);
-*/
 	policy_model = xccdf_session_get_policy_model(session);
 
 	/* Select profile */
