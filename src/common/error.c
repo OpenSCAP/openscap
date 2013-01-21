@@ -86,7 +86,6 @@ void __oscap_setxmlerr(const char *file, uint32_t line, const char *func, xmlErr
 	struct oscap_err_t *err;
 	(void)pthread_once(&__once, oscap_errkey_init);
 
-	oscap_clearerr();
 	/* get rid of a newline that was pass by xmlGetLastError() */
 	int len = strlen(error->message);
 	if( error->message[len-1] == '\n' )
@@ -103,8 +102,6 @@ void __oscap_seterr(const char *file, uint32_t line, const char *func, oscap_err
 	const char *fmt;
 
 	(void)pthread_once(&__once, oscap_errkey_init);
-
-	oscap_clearerr();
 
 	va_start(ap, family);
 	fmt = va_arg(ap, const char *);
