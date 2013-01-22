@@ -729,8 +729,7 @@ int xccdf_session_load_tailoring(struct xccdf_session *session)
 	if (session->user_tailoring_file != NULL) {
 		tailoring_path = oscap_strdup(session->user_tailoring_file);
 	}
-
-	if (session->user_tailoring_cid != NULL) {
+	else if (session->user_tailoring_cid != NULL) {
 		static const char *TAILORING_XML = "tailoring.xml";
 
 		if (!xccdf_session_is_sds(session)) {
@@ -748,6 +747,7 @@ int xccdf_session_load_tailoring(struct xccdf_session *session)
 		}
 
 		tailoring_path = oscap_sprintf("%s/%s", session->temp_dir, TAILORING_XML);
+		from_sds = true;
 	}
 
 	// TODO: We should warn if has a XCCDF tailoring-file hint and user isn't
