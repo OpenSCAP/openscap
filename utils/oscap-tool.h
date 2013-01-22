@@ -123,6 +123,8 @@ struct oscap_action {
         char *cvss_vector;
         int hide_profile_info;
         char *stylesheet;
+	char *tailoring_file;
+	char *tailoring_id;
 	char *cpe;
 
         struct cvss_impact *cvss_impact;

@@ -193,6 +193,7 @@ struct xccdf_item *xccdf_profile_new_internal(struct xccdf_item *bench)
 	prof->sub.profile.setvalues = oscap_list_new();
 	prof->sub.profile.refine_values = oscap_list_new();
 	prof->sub.profile.refine_rules = oscap_list_new();
+	prof->sub.profile.tailoring = false;
 	return prof;
 }
 
@@ -432,6 +433,7 @@ void xccdf_profile_free(struct xccdf_item *prof)
 
 XCCDF_STATUS_CURRENT(profile)
 XCCDF_ACCESSOR_STRING(profile, note_tag)
+XCCDF_ACCESSOR_SIMPLE(profile, bool, tailoring)
 XCCDF_LISTMANIP(profile, select, selects)
 XCCDF_LISTMANIP(profile, setvalue, setvalues)
 XCCDF_LISTMANIP(profile, refine_value, refine_values)

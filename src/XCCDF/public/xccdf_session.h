@@ -108,6 +108,24 @@ void xccdf_session_set_component_id(struct xccdf_session *session, const char *c
 void xccdf_session_set_user_cpe(struct xccdf_session *session, const char *user_cpe);
 
 /**
+ * Set path to custom Tailoring file for the session. This function is applicable
+ * only before session loads. It has no effect if run afterwards.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param user_tailoring_file File path to user defined tailoring file.
+ */
+void xccdf_session_set_user_tailoring_file(struct xccdf_session *session, const char *user_tailoring_file);
+
+/**
+ * Set ID of Tailoring component for the session. This function is applicable
+ * only before session loads. It has no effect if run afterwards.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param user_tailoring_cid ID of component with a tailoring file.
+ */
+void xccdf_session_set_user_tailoring_cid(struct xccdf_session *session, const char *user_tailoring_cid);
+
+/**
  * Set properties of remote content.
  * @memberof xccdf_session
  * @param session XCCDF Session
@@ -252,6 +270,14 @@ int xccdf_session_load_oval(struct xccdf_session *session);
  * @returns zero on success
  */
 int xccdf_session_load_sce(struct xccdf_session *session);
+
+/**
+ * Load Tailoring file (if applicable) to the XCCDF session.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @returns zero on success
+ */
+int xccdf_session_load_tailoring(struct xccdf_session *session);
 
 /**
  * Evaluate XCCDF Policy.

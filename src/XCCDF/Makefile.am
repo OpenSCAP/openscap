@@ -10,6 +10,7 @@ libxccdf_la_SOURCES = \
 	resolve.c \
 	result.c \
 	rule.c \
+	tailoring.c \
 	item.h \
 	elements.h \
 	helpers.h \

@@ -67,6 +67,16 @@ You may specify OVAL Definition files as the last parameter, XCCDF evaluation wi
 Select a particular profile from XCCDF document.
 .RE
 .TP
+\fB\-\-tailoring-file TAILORING_FILE\fR
+.RS
+Use given file for XCCDF tailoring. If both --tailoring-file and --tailoring-id are specified, --tailoring files takes priority!
+.RE
+.TP
+\fB\-\-tailoring-id COMPONENT_ID\fR
+.RS
+Use component of given ID (in input source datastream) for XCCDF tailoring. If both --tailoring-file and --tailoring-id are specified, --tailoring files takes priority!
+.RE
+.TP
 \fB\-\-cpe CPE_FILE\fR
 .RS
 Use given CPE dictionary or language (autodetected) for applicability checks. (Some CPE names are provided by openscap, see oscap --version for Inbuilt CPE names)

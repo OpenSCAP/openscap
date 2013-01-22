@@ -93,7 +93,8 @@ typedef enum oscap_document_type {
 	OSCAP_DOCUMENT_CVE_FEED,	      ///< CVE NVD feed
 	OSCAP_DOCUMENT_SCE_RESULT,            ///< SCE result file
 	OSCAP_DOCUMENT_SDS,                   ///< Source Data Stream file
-	OSCAP_DOCUMENT_ARF                    ///< Result Data Stream file
+	OSCAP_DOCUMENT_ARF,                   ///< Result Data Stream file
+	OSCAP_DOCUMENT_XCCDF_TAILORING        ///< XCCDF tailoring file
 } oscap_document_type_t;
 
 /**

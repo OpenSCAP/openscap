@@ -103,6 +103,9 @@ typedef xccdf_test_result_type_t (*xccdf_policy_engine_eval_fn) (struct xccdf_po
  * Constructor of Policy Model structure
  * @param benchmark Struct xccdf_benchmark with benchmark model
  * @return new xccdf_policy_model
+ * @note
+ * The policy model will take ownership of given benchmark and free it
+ * when it's being destructed!
  * @memberof xccdf_policy_model
  */
 struct xccdf_policy_model *xccdf_policy_model_new(struct xccdf_benchmark *benchmark);
@@ -139,6 +142,29 @@ void xccdf_policy_free(struct xccdf_policy *);
  * @memberof xccdf_value_binding
  */
 void xccdf_value_binding_free(struct xccdf_value_binding *);
+
+/**
+ * Sets the Tailoring element to use in the policy.
+ *
+ * Profiles from the Benchmark *may* be shadowed by profiles in the given
+ * Tailoring element! Calling this function will affect the results of
+ * xccdf_policy_model_get_policy_by_id calls.
+ *
+ * @important This does INVALIDATE preexisting xccdf_policy pointers in
+ * this xccdf_policy_model! It is recommended to call this function before
+ * policy for any profile is queried.
+ *
+ * @note
+ * The policy model will take ownership of given tailoring and free it
+ * when it's being destructed or when new tailoring is being set.
+ */
+bool xccdf_policy_model_set_tailoring(struct xccdf_policy_model *model, struct xccdf_tailoring *tailoring);
+
+/**
+ * Retrieves the Tailoring element used in this policy.
+ * @memberof xccdf_policy_model
+ */
+struct xccdf_tailoring *xccdf_policy_model_get_tailoring(struct xccdf_policy_model *model);
 
 /**
  * Registers an additional CPE dictionary for applicability testing

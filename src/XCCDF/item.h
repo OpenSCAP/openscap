@@ -163,6 +163,24 @@ struct xccdf_profile_item {
 	struct oscap_list *setvalues;
 	struct oscap_list *refine_values;
 	struct oscap_list *refine_rules;
+	bool tailoring;
+};
+
+struct xccdf_tailoring {
+	// The ref is "just informative" according to the spec, we never
+	// interpret it and just load and save it as a string.
+	char *benchmark_ref;
+
+	struct oscap_list *statuses;
+	struct oscap_list *dc_statuses;
+
+	char *version;
+	char *version_update;
+	char *version_time;
+
+	struct oscap_list *metadata;
+
+	struct oscap_list *profiles;
 };
 
 struct xccdf_benchmark_item {
@@ -418,6 +436,11 @@ bool xccdf_benchmark_rename_item(struct xccdf_item *item, const char *newid);
 char *xccdf_benchmark_gen_id(struct xccdf_benchmark *benchmark, xccdf_type_t type, const char *prefix);
 struct xccdf_profile *xccdf_benchmark_get_profile_by_id(struct xccdf_benchmark *benchmark, const char *profile_id);
 bool xccdf_add_item(struct oscap_list *list, struct xccdf_item *parent, struct xccdf_item *item, const char *prefix);
+
+struct xccdf_tailoring *xccdf_tailoring_new(void);
+void xccdf_tailoring_free(struct xccdf_tailoring *tailoring);
+struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xccdf_item* benchmark);
+xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr doc, xmlNodePtr parent, const struct xccdf_version_info *version_info);
 
 struct xccdf_item *xccdf_profile_new_internal(struct xccdf_item *bench);
 struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_item *bench);

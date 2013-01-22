@@ -81,6 +81,7 @@ typedef struct callback_out_t {
 struct xccdf_policy_model {
 
         struct xccdf_benchmark  * benchmark;    ///< Benchmark element (root element of XML file)
+	struct xccdf_tailoring * tailoring;     ///< Tailoring element
 	struct oscap_list       * policies;     ///< List of xccdf_policy structures
         struct oscap_list       * callbacks;    ///< Callbacks for checking engines (see callback_t)
         struct oscap_list       * cpe_dicts; ///< All CPE dictionaries except the one embedded in XCCDF
@@ -1657,6 +1658,24 @@ struct oscap_stringlist * xccdf_item_get_files(struct xccdf_item * item)
 /* Public functions.
  */
 
+bool xccdf_policy_model_set_tailoring(struct xccdf_policy_model *model, struct xccdf_tailoring *tailoring)
+{
+	// Clear cached policies, because we (might) have to resolve differently
+	// with Tailoring element in place.
+	oscap_list_free(model->policies, (oscap_destruct_func) xccdf_policy_free);
+	model->policies = oscap_list_new();
+
+	xccdf_tailoring_free(model->tailoring);
+	model->tailoring = tailoring;
+
+	return true;
+}
+
+struct xccdf_tailoring *xccdf_policy_model_get_tailoring(struct xccdf_policy_model *model)
+{
+	return model->tailoring;
+}
+
 bool xccdf_policy_model_add_cpe_dict(struct xccdf_policy_model *model, const char * cpe_dict)
 {
 		__attribute__nonnull__(model);
@@ -1802,6 +1821,7 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
 	memset(model, 0, sizeof(struct xccdf_policy_model));
 
 	model->benchmark = benchmark;
+	model->tailoring = NULL;
 	model->policies  = oscap_list_new();
         model->callbacks = oscap_list_new();
 	model->cpe_dicts = oscap_list_new();
@@ -2008,23 +2028,32 @@ struct xccdf_policy * xccdf_policy_model_get_policy_by_id(struct xccdf_policy_mo
     xccdf_policy_iterator_free(policy_it);
 
 	struct xccdf_profile *profile = NULL;
-	if (id == NULL) {
-		profile = xccdf_profile_new();
-		xccdf_profile_set_id(profile, NULL);
-		struct oscap_text * title = oscap_text_new();
-		oscap_text_set_text(title, "No profile (default benchmark)");
-		oscap_text_set_lang(title, "en");
-		xccdf_profile_add_title(profile, title);
+	struct xccdf_tailoring *tailoring = xccdf_policy_model_get_tailoring(policy_model);
+
+	// Tailoring profiles take precedence over Benchmark profiles.
+	if (tailoring) {
+		profile = xccdf_tailoring_get_profile_by_id(tailoring, id);
 	}
-	else {
-		struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(policy_model);
-		if (benchmark == NULL) {
-			assert(benchmark != NULL);
-			return NULL;
+
+	if (!profile) {
+		if (id == NULL) {
+			profile = xccdf_profile_new();
+			xccdf_profile_set_id(profile, NULL);
+			struct oscap_text * title = oscap_text_new();
+			oscap_text_set_text(title, "No profile (default benchmark)");
+			oscap_text_set_lang(title, "en");
+			xccdf_profile_add_title(profile, title);
 		}
-		profile = xccdf_benchmark_get_profile_by_id(benchmark, id);
-		if (profile == NULL)
-			return NULL;
+		else {
+			struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(policy_model);
+			if (benchmark == NULL) {
+				assert(benchmark != NULL);
+				return NULL;
+			}
+			profile = xccdf_benchmark_get_profile_by_id(benchmark, id);
+			if (profile == NULL)
+				return NULL;
+		}
 	}
 
 	policy = xccdf_policy_new(policy_model, profile);
@@ -2386,6 +2415,7 @@ void xccdf_policy_model_free(struct xccdf_policy_model * model) {
 
 	oscap_list_free(model->policies, (oscap_destruct_func) xccdf_policy_free);
 	oscap_list_free(model->callbacks, (oscap_destruct_func) oscap_free);
+	xccdf_tailoring_free(model->tailoring);
         xccdf_benchmark_free(model->benchmark);
 	oscap_list_free(model->cpe_dicts, (oscap_destruct_func) cpe_dict_model_free);
 	oscap_list_free(model->cpe_lang_models, (oscap_destruct_func) cpe_lang_model_free);

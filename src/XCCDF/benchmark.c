@@ -681,6 +681,15 @@ bool xccdf_benchmark_register_item(struct xccdf_benchmark *benchmark, struct xcc
 	if (benchmark == NULL || item == NULL || xccdf_item_get_id(item) == NULL)
 		return false;
 
+	if (xccdf_item_get_type(item) == XCCDF_PROFILE) {
+		struct xccdf_profile *profile = XPROFILE(item);
+
+		// If the profile is a tailoring profile (== comes from Tailoring element),
+		// we cannot register it to the Benchmark!
+		if (xccdf_profile_get_tailoring(profile))
+			return;
+	}
+
 	const char *id = xccdf_item_get_id(item);
 	struct xccdf_item *found = xccdf_benchmark_get_member(benchmark, xccdf_item_get_type(item), id);
 	if (found != NULL) return found == item; // already registered
@@ -702,6 +711,15 @@ bool xccdf_benchmark_unregister_item(struct xccdf_item *item)
 
 	struct xccdf_benchmark *bench = xccdf_item_get_benchmark(item);
 	if (bench == NULL) return false;
+
+	if (xccdf_item_get_type(item) == XCCDF_PROFILE) {
+		struct xccdf_profile *profile = XPROFILE(item);
+
+		// If the profile is a tailoring profile (== comes from Tailoring element),
+		// we cannot unregister it from the Benchmark as it was never there!
+		if (xccdf_profile_get_tailoring(profile))
+			return;
+	}
 
 	assert(xccdf_benchmark_get_member(bench, xccdf_item_get_type(item), xccdf_item_get_id(item)) == item);
 

@@ -227,6 +227,13 @@ struct xccdf_value;
  */
 struct xccdf_result;
 
+/**
+ * @struct xccdf_tailoring
+ * Stores content from xccdf:Tailoring element which can be loaded from
+ * a separate file.
+ */
+struct xccdf_tailoring;
+
 /*--------------------*\
 |  Support structures  |
 \*--------------------*/
@@ -2426,6 +2433,8 @@ const char *xccdf_profile_get_version_update(const struct xccdf_profile *profile
 /// @memberof xccdf_profile
 const char *xccdf_profile_get_version_time(const struct xccdf_profile *profile);
 /// @memberof xccdf_profile
+bool xccdf_profile_get_tailoring(const struct xccdf_profile *profile);
+/// @memberof xccdf_profile
 const char *xccdf_profile_get_note_tag(const struct xccdf_profile *profile);
 
 /// @memberof xccdf_rule
@@ -2609,7 +2618,30 @@ const char *xccdf_instance_get_context(const struct xccdf_instance *item);
 const char *xccdf_instance_get_parent_context(const struct xccdf_instance *item);
 /// @memberof xccdf_instance
 const char *xccdf_instance_get_content(const struct xccdf_instance *item);
-
+/// @memberof xccdf_tailoring
+struct xccdf_tailoring *xccdf_tailoring_import(const char *file, struct xccdf_benchmark *benchmark);
+/// @memberof xccdf_tailoring
+const char *xccdf_tailoring_get_version(const struct xccdf_tailoring *tailoring);
+/// @memberof xccdf_tailoring
+const char *xccdf_tailoring_get_version_update(const struct xccdf_tailoring *tailoring);
+/// @memberof xccdf_tailoring
+const char *xccdf_tailoring_get_version_time(const struct xccdf_tailoring *tailoring);
+/// @memberof xccdf_tailoring
+struct oscap_string_iterator *xccdf_tailoring_get_metadata(const struct xccdf_tailoring *tailoring);
+/// @memberof xccdf_tailoring
+struct xccdf_profile_iterator *xccdf_tailoring_get_profiles(const struct xccdf_tailoring *tailoring);
+/// @memberof xccdf_tailoring
+struct xccdf_status_iterator *xccdf_tailoring_get_statuses(const struct xccdf_tailoring *tailoring);
+/// @memberof xccdf_tailoring
+struct oscap_reference_iterator *xccdf_tailoring_get_dc_statuses(const struct xccdf_tailoring *tailoring);
+/**
+ * @param profile_id id of the profile that should be returned or NULL for default profile
+ * @note
+ * Unlike in XCCDF Benchmark, the default profile from Tailoring element needn't
+ * match the "selected" attribute from each individual XCCDF Item.
+ * @memberof xccdf_tailoring
+ */
+struct xccdf_profile *xccdf_tailoring_get_profile_by_id(const struct xccdf_tailoring *tailoring, const char *profile_id);
 
 /************************************************************
  ** @} End of Getters group */
@@ -2687,6 +2719,8 @@ bool xccdf_profile_set_version(struct xccdf_profile *item, const char *newval);
 bool xccdf_profile_set_version_time(struct xccdf_profile *item, const char *newval);
 /// @memberof xccdf_profile
 bool xccdf_profile_set_version_update(struct xccdf_profile *item, const char *newval);
+/// @memberof xccdf_profile
+bool xccdf_profile_set_tailoring(struct xccdf_profile *item, bool tailoring);
 /// @memberof xccdf_profile
 bool xccdf_profile_add_metadata(struct xccdf_profile* item, const char* metadata);
 
