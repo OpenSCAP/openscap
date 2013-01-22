@@ -155,3 +155,20 @@ const char *oscap_err_desc(void)
 		return 0;
 	return (const char *) err_queue_get_last(q)->desc;
 }
+
+char *oscap_err_get_full_error(void)
+{
+	struct err_queue *q;
+	char *res = NULL;
+
+	(void)pthread_once(&__once, oscap_errkey_init);
+	q = pthread_getspecific(__key);
+	if (q == NULL || err_queue_is_empty(q))
+		return NULL;
+	if (err_queue_to_string(q, &res) != 0)
+		return NULL;
+
+	(void)pthread_setspecific(__key, NULL);
+	err_queue_free(q, (oscap_destruct_func) oscap_err_free);
+	return res;
+}

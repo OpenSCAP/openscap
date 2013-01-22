@@ -82,6 +82,15 @@ oscap_errfamily_t oscap_err_family(void);
  */
 const char *oscap_err_desc(void);
 
+/**
+ * Get the full description for all the errors which has occured in this
+ * thread since the last call of this function or \ref oscap_clearerr.
+ * This function is destructive. Subsequent call shall return NULL.
+ * @returns zero terminated string describing these errors, which shall
+ * be disposed by caller.
+ * @retval NULL if there are no errors.
+ */
+char *oscap_err_get_full_error(void);
 
 /// @}
 /// @}

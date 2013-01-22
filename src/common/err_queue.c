@@ -21,6 +21,7 @@
 #include "_error.h"
 #include "err_queue.h"
 #include <stdlib.h>
+#include <string.h>
 
 struct err_queue {
 	struct oscap_err_t *first;
@@ -92,5 +93,44 @@ void err_queue_free(struct err_queue *q, oscap_destruct_func destructor)
 		while (!err_queue_is_empty(q))
 			destructor(err_queue_pop_first(q));
 	free(q);
+}
+
+int err_queue_to_string(struct err_queue *q, char **result)
+{
+	if (q == NULL || result == NULL) {
+		assert(false);
+		return 1;
+	}
+
+	size_t size = 0;
+	struct oscap_err_t *err = q->first;
+	while (err != NULL) {
+		if (err->desc != NULL) {
+			int pom = strlen(err->desc);
+			if (pom != 0)
+				size += pom + 1;
+		}
+		err = err->next;
+	}
+	if (size == 0) {
+		*result = NULL;
+		return 0;
+	}
+
+	*result = (char *) malloc(size + 1);
+	if (*result == NULL)
+		return 1;
+	char *pos = *result;
+	pos[0] = '\0';
+	err = q->first;
+	while (err != NULL) {
+		if (err->desc != NULL) {
+			pos = stpcpy(pos, err->desc);
+			pos = stpcpy(pos, "\n");
+		}
+		err = err->next;
+	}
+	(*result)[size-1] = '\0';
+	return 0;
 }
 

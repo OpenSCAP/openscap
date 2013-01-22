@@ -86,6 +86,17 @@ const struct oscap_err_t *err_queue_get_last(struct err_queue *q);
  */
 void err_queue_free(struct err_queue *q, oscap_destruct_func destructor);
 
+/**
+ * Get all the errors in the queue as a single string.
+ * @memberof err_queue
+ * @param q Internal Error Queue
+ * @param result pointer, where to store the resulting string. Newly
+ * allocated mmory will be assigned with this. And shall be disposed
+ * by caller.
+ * @returns zero on success
+ */
+int err_queue_to_string(struct err_queue *q, char **result);
+
 OSCAP_HIDDEN_END;
 
 #endif
