@@ -15,4 +15,5 @@ EXTRA_DIST = \
 	all.sh \
 	simple-xccdf.xml \
 	simple-oval.xml \
-	simple-tailoring.xml
+	simple-tailoring.xml \
+	simple-ds.xml
