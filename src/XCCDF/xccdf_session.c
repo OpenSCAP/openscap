@@ -111,6 +111,7 @@ struct xccdf_session *xccdf_session_new(const char *filename)
 		return NULL;
 	}
 	session->validate = true;
+	session->xccdf.base_score = 0;
 	return session;
 }
 
