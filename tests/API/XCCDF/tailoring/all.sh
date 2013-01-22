@@ -14,7 +14,7 @@ function test_api_xccdf_tailoring {
     local EXPECTED_PASS=$4
 
     local TMP_RESULTS=`mktemp`
-    $OSCAP xccdf eval --tailoring $TAILORING --profile $PROFILE --results $TMP_RESULTS $INPUT
+    $OSCAP xccdf eval --tailoring-file $TAILORING --profile $PROFILE --results $TMP_RESULTS $INPUT
     if [ "$?" != "0" ]; then
         return 1
     fi

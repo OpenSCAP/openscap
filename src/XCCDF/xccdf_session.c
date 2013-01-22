@@ -90,7 +90,8 @@ struct xccdf_session {
 		bool sce_results;			///< Shall be the SCE results exported?
 	} export;					///< Settings of Session export
 	char *user_cpe;					///< Path to CPE dictionary required by user
-	char *user_tailoring;           ///< Path to Tailoring file requested by the user
+	char *user_tailoring_file;      ///< Path to Tailoring file requested by the user
+	char *user_tailoring_cid;       ///< Component ID of the Tailoring file requested by the user
 	oscap_document_type_t doc_type;			///< Document type of the session file (see filename member) used.
 	bool validate;					///< False value indicates to skip any XSD validation.
 	bool full_validation;				///< True value indicates that every possible step will be validated by XSD.
@@ -139,7 +140,8 @@ void xccdf_session_free(struct xccdf_session *session)
 	if (session->temp_dir != NULL)
 		oscap_acquire_cleanup_dir((char **) &(session->temp_dir));
 	oscap_free(session->filename);
-	oscap_free(session->user_tailoring);
+	oscap_free(session->user_tailoring_file);
+	oscap_free(session->user_tailoring_cid);
 	oscap_free(session);
 }
 
@@ -176,10 +178,16 @@ void xccdf_session_set_user_cpe(struct xccdf_session *session, const char *user_
 	session->user_cpe = oscap_strdup(user_cpe);
 }
 
-void xccdf_session_set_user_tailoring(struct xccdf_session *session, const char *user_tailoring)
+void xccdf_session_set_user_tailoring_file(struct xccdf_session *session, const char *user_tailoring_file)
 {
-	oscap_free(session->user_tailoring);
-	session->user_tailoring = oscap_strdup(user_tailoring);
+	oscap_free(session->user_tailoring_file);
+	session->user_tailoring_file = oscap_strdup(user_tailoring_file);
+}
+
+void xccdf_session_set_user_tailoring_cid(struct xccdf_session *session, const char *user_tailoring_cid)
+{
+	oscap_free(session->user_tailoring_cid);
+	session->user_tailoring_cid = oscap_strdup(user_tailoring_cid);
 }
 
 void xccdf_session_set_remote_resources(struct xccdf_session *session, bool allowed, download_progress_calllback_t callback)
@@ -718,12 +726,32 @@ int xccdf_session_load_tailoring(struct xccdf_session *session)
 	bool from_sds = false;
 	char *tailoring_path = NULL;
 
-	if (session->user_tailoring != NULL) {
-		tailoring_path = session->user_tailoring;
+	if (session->user_tailoring_file != NULL) {
+		tailoring_path = oscap_strdup(session->user_tailoring_file);
 	}
 
-	// TODO: XCCDF tailoring-file hint
-	// TODO: datastream Tailoring files
+	if (session->user_tailoring_cid != NULL) {
+		static const char *TAILORING_XML = "tailoring.xml";
+
+		if (!xccdf_session_is_sds(session)) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't use given tailoring component ID because file isn't a source datastream.");
+			return 1;
+		}
+
+		// TODO: Is the "checklists" container the right one?
+		if (ds_sds_decompose_custom(session->filename, session->ds.datastream_id,
+				session->temp_dir, "checklists", session->user_tailoring_cid,
+				TAILORING_XML) != 0) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to split component of id '%s' from the source datastream.",
+				session->user_tailoring_cid);
+			return 1;
+		}
+
+		tailoring_path = oscap_sprintf("%s/%s", session->temp_dir, TAILORING_XML);
+	}
+
+	// TODO: We should warn if has a XCCDF tailoring-file hint and user isn't
+	//       using that particular tailoring.
 
 	if (tailoring_path == NULL)
 		return 0; // nothing to do
@@ -736,13 +764,18 @@ int xccdf_session_load_tailoring(struct xccdf_session *session)
 			if (ret==1)
 				_validation_failed(tailoring_path, OSCAP_DOCUMENT_XCCDF_TAILORING, xccdf_tailoring_version);
 			free(xccdf_tailoring_version);
+			free(tailoring_path);
 			return 1;
 		}
 
 		free(xccdf_tailoring_version);
 	}
 
-	struct xccdf_tailoring *tailoring = xccdf_tailoring_import(tailoring_path, xccdf_policy_model_get_benchmark(session->xccdf.policy_model));
+	struct xccdf_tailoring *tailoring = xccdf_tailoring_import(tailoring_path,
+		xccdf_policy_model_get_benchmark(session->xccdf.policy_model));
+
+	free(tailoring_path);
+
 	if (tailoring == NULL)
 		return 1;
 

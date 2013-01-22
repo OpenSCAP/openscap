@@ -112,9 +112,18 @@ void xccdf_session_set_user_cpe(struct xccdf_session *session, const char *user_
  * only before session loads. It has no effect if run afterwards.
  * @memberof xccdf_session
  * @param session XCCDF Session
- * @param user_tailoring File path to user defined tailoring file.
+ * @param user_tailoring_file File path to user defined tailoring file.
  */
-void xccdf_session_set_user_tailoring(struct xccdf_session *session, const char *user_tailoring);
+void xccdf_session_set_user_tailoring_file(struct xccdf_session *session, const char *user_tailoring_file);
+
+/**
+ * Set ID of Tailoring component for the session. This function is applicable
+ * only before session loads. It has no effect if run afterwards.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param user_tailoring_cid ID of component with a tailoring file.
+ */
+void xccdf_session_set_user_tailoring_cid(struct xccdf_session *session, const char *user_tailoring_cid);
 
 /**
  * Set properties of remote content.

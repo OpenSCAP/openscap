@@ -120,7 +120,8 @@ static struct oscap_module XCCDF_EVAL = {
 		"INPUT_FILE - XCCDF file or a source data stream file\n\n"
         "Options:\n"
         "   --profile <name>\r\t\t\t\t - The name of Profile to be evaluated.\n"
-        "   --tailoring <name>\r\t\t\t\t - Use given XCCDF Tailoring file.\n"
+        "   --tailoring-file <file>\r\t\t\t\t - Use given XCCDF Tailoring file.\n"
+        "   --tailoring-id <component-id>\r\t\t\t\t - Use given DS component as XCCDF Tailoring file.\n"
         "   --cpe <name>\r\t\t\t\t - Use given CPE dictionary or language (autodetected)\n"
         "               \r\t\t\t\t   for applicability checks.\n"
         "   --oval-results\r\t\t\t\t - Save OVAL results as well.\n"
@@ -402,7 +403,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		xccdf_session_set_component_id(session, action->f_xccdf_id);
 	}
 	xccdf_session_set_user_cpe(session, action->cpe);
-	xccdf_session_set_user_tailoring(session, action->tailoring);
+	xccdf_session_set_user_tailoring_file(session, action->tailoring_file);
+	xccdf_session_set_user_tailoring_cid(session, action->tailoring_id);
 	xccdf_session_set_remote_resources(session, action->remote_resources, _download_reporting_callback);
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);
 	xccdf_session_set_product_cpe(session, OSCAP_PRODUCTNAME);
@@ -731,7 +733,8 @@ enum oval_opt {
     XCCDF_OPT_SCE_TEMPLATE,
 #endif
     XCCDF_OPT_FILE_VERSION,
-    XCCDF_OPT_TAILORING,
+	XCCDF_OPT_TAILORING_FILE,
+	XCCDF_OPT_TAILORING_ID,
     XCCDF_OPT_CPE,
     XCCDF_OPT_CPE_DICT,
     XCCDF_OPT_OUTPUT = 'o',
@@ -760,7 +763,8 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"format", 		required_argument, NULL, XCCDF_OPT_FORMAT},
 		{"oval-template", 	required_argument, NULL, XCCDF_OPT_OVAL_TEMPLATE},
 		{"stylesheet",	required_argument, NULL, XCCDF_OPT_STYLESHEET_FILE},
-		{"tailoring", required_argument, NULL, XCCDF_OPT_TAILORING},
+		{"tailoring-file", required_argument, NULL, XCCDF_OPT_TAILORING_FILE},
+		{"tailoring-id", required_argument, NULL, XCCDF_OPT_TAILORING_ID},
 		{"cpe",	required_argument, NULL, XCCDF_OPT_CPE},
 		{"cpe-dict",	required_argument, NULL, XCCDF_OPT_CPE_DICT}, // DEPRECATED!
 #ifdef ENABLE_SCE
@@ -800,7 +804,8 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		/* we use realpath to get an absolute path to given XSLT to prevent openscap from looking
 		   into /usr/share/openscap/xsl instead of CWD */
 		case XCCDF_OPT_STYLESHEET_FILE: realpath(optarg, custom_stylesheet_path); action->stylesheet = custom_stylesheet_path; break;
-		case XCCDF_OPT_TAILORING:	action->tailoring = optarg; break;
+		case XCCDF_OPT_TAILORING_FILE:	action->tailoring_file = optarg; break;
+		case XCCDF_OPT_TAILORING_ID:	action->tailoring_id = optarg; break;
 		case XCCDF_OPT_CPE:			action->cpe = optarg; break;
 		case XCCDF_OPT_CPE_DICT:
 			{
