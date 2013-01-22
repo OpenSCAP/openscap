@@ -474,7 +474,8 @@ cleanup:
 		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 
 	/* syslog message */
-	syslog(priority, "Evaluation finnished. Return code: %d, Base score %f.", result, xccdf_session_get_base_score(session));
+	syslog(priority, "Evaluation finnished. Return code: %d, Base score %f.", result,
+		session == NULL ? 0 : xccdf_session_get_base_score(session));
 
 	if (session != NULL)
 		xccdf_session_free(session);
