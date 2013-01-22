@@ -470,8 +470,11 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	result = xccdf_session_contains_fail_result(session) ? OSCAP_FAIL : OSCAP_OK;
 
 cleanup:
-	if (oscap_err())
-		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+	if (oscap_err()) {
+		char *err = oscap_err_get_full_error();
+		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, err);
+		free(err);
+	}
 
 	/* syslog message */
 	syslog(priority, "Evaluation finnished. Return code: %d, Base score %f.", result,
@@ -542,8 +545,11 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	result = OSCAP_OK;
 
  cleanup:
-	if (oscap_err())
-		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+	if (oscap_err()) {
+		char *err = oscap_err_get_full_error();
+		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, err);
+		free(err);
+	}
 
 	if (session != NULL)
 		xccdf_session_free(session);
