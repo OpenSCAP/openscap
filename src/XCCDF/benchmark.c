@@ -687,7 +687,7 @@ bool xccdf_benchmark_register_item(struct xccdf_benchmark *benchmark, struct xcc
 		// If the profile is a tailoring profile (== comes from Tailoring element),
 		// we cannot register it to the Benchmark!
 		if (xccdf_profile_get_tailoring(profile))
-			return;
+			return false;
 	}
 
 	const char *id = xccdf_item_get_id(item);
@@ -718,7 +718,7 @@ bool xccdf_benchmark_unregister_item(struct xccdf_item *item)
 		// If the profile is a tailoring profile (== comes from Tailoring element),
 		// we cannot unregister it from the Benchmark as it was never there!
 		if (xccdf_profile_get_tailoring(profile))
-			return;
+			return false;
 	}
 
 	assert(xccdf_benchmark_get_member(bench, xccdf_item_get_type(item), xccdf_item_get_id(item)) == item);
