@@ -1325,9 +1325,6 @@ char* oscap_text_xccdf_substitute(const char *text, xccdf_substitution_func cb, 
                 const char *id = (const char *) xmlGetProp(cur, BAD_CAST "idref");
                 if (id) sub = cb(XCCDF_SUBST_SUB, id, arg);
             }
-            else if (oscap_streq((const char *) cur->name, "instance")) {
-                // TODO
-            }
         }
 
         // do the substitution
