@@ -1,6 +1,8 @@
 noinst_LTLIBRARIES = libxccdf_policy.la
 
-libxccdf_policy_la_SOURCES = xccdf_policy.c
+libxccdf_policy_la_SOURCES = \
+	xccdf_policy.c \
+	xccdf_policy_substitute.c
 
 
 libxccdf_policy_la_CFLAGS = \
