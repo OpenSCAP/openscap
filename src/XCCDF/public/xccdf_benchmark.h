@@ -3348,8 +3348,10 @@ typedef enum xccdf_subst_type {
  * @param id   ID of the object to be substituted
  * @param arg  arbitrary user-defined argument
  * @return     newly allocated substitution string (will be free'd)
+ * @deprecated This callback has been deprecated. It cannot be applied on XCCDF 1.2+ documents
+ * given the xccdf:sub/@use parameter.
  */
-typedef char*(*xccdf_substitution_func)(xccdf_subst_type_t type, const char *id, void *arg);
+OSCAP_DEPRECATED(typedef char*(*xccdf_substitution_func)(xccdf_subst_type_t type, const char *id, void *arg));
 
 
 /**
@@ -3359,8 +3361,10 @@ typedef char*(*xccdf_substitution_func)(xccdf_subst_type_t type, const char *id,
  * @param cb substitution callback
  * @param arg arbitrary argument to be passed to he callback
  * @return substituted string (it is up to the caller to free it)
+ * @deprecated This function has been deprecated. It cannot be applied on XCCDF 1.2+ documents
+ * given the xccdf:sub/@use parameter.
  */
-char* oscap_text_xccdf_substitute(const char *text, xccdf_substitution_func cb, void *arg);
+OSCAP_DEPRECATED(char* oscap_text_xccdf_substitute(const char *text, xccdf_substitution_func cb, void *arg));
 
 /************************************************************/
 /** @} End of XCCDF group */
