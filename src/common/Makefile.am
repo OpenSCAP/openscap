@@ -15,7 +15,8 @@ liboscapcommon_la_SOURCES = \
 	reference.c reference_priv.h \
 	text.c text_priv.h \
 	tsort.c tsort.h \
-	util.c util.h
+	util.c util.h \
+	xml_iterate.c xml_iterate.h
 
 liboscapcommon_la_CPPFLAGS  = \
 	@curl_CFLAGS@ \
