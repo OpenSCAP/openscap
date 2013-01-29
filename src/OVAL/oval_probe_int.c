@@ -148,7 +148,7 @@ static int oval_probe_variable_eval(oval_probe_session_t *sess, struct oval_sysc
 		char msg[100];
 
 		snprintf(msg, sizeof(msg), "There was a problem processing referenced variable (%s).", oval_variable_get_id(var));
-		dW(msg);
+		dW("%s\n", msg);
 		oval_syschar_add_new_message(syschar, msg, OVAL_MESSAGE_LEVEL_WARNING);
 		oval_syschar_set_flag(syschar, SYSCHAR_FLAG_ERROR);
 		return(1);

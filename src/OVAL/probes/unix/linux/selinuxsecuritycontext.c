@@ -78,7 +78,7 @@ static void split_range(const char *range, char **l_s, char **l_c, char **h_s, c
 	const char *range_split;
 
 	if (range == NULL) {
-		dW("%s: range is NULL", __func__);
+		dW("%s: range is NULL\n", __func__);
 		*l_s = *l_c = *h_s = *h_c = NULL;
 		return;
 	}

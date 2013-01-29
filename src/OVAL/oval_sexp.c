@@ -188,7 +188,7 @@ static int oval_varref_attr_to_sexp(void *sess, struct oval_entity *entity, stru
 	}
 
 	if (ret) {
-		dW(msg);
+		dW("%s\n", msg);
 		oval_syschar_add_new_message(syschar, msg, OVAL_MESSAGE_LEVEL_WARNING);
 		oval_syschar_set_flag(syschar, SYSCHAR_FLAG_DOES_NOT_EXIST);
 		return ret;

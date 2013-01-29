@@ -285,7 +285,7 @@ int oval_sysinfo_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 	if (is_ovalsys) {
 		return_code = oval_parser_parse_tag(reader, context, &_oval_sysinfo_parse_tag, sysinfo);
 	} else {
-		dW("Expected <system_info>, got <%s:%s>", namespace, tagname);
+		dW("Expected <system_info>, got <%s:%s>\n", namespace, tagname);
 		oval_parser_skip_tag(reader, context);
 	}
 
