@@ -32,6 +32,8 @@
 #ifndef XCCDF_SESSION_H_
 #define XCCDF_SESSION_H_
 
+#include "xccdf_policy.h"
+
 /**
  * Type of the function used to report progress of download.
  * @param warning indicates whether the message is rather warning or notice
