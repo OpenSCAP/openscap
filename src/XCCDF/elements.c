@@ -74,6 +74,16 @@ static const struct xccdf_version_info XCCDF_VERSION_MAP[] = {
 	{NULL, NULL, NULL}
 };
 
+static const struct xccdf_version_info *_namespace_get_xccdf_version_info(const char *namespace_uri)
+{
+	const struct xccdf_version_info *mapptr;
+	for (mapptr = XCCDF_VERSION_MAP; mapptr->version != 0; ++mapptr) {
+		if (!strcmp(mapptr->namespace_uri, namespace_uri))
+			return mapptr;
+	}
+	return NULL;
+}
+
 const struct xccdf_version_info* xccdf_detect_version_parser(xmlTextReaderPtr reader)
 {
 	const struct xccdf_version_info *mapptr;
@@ -84,13 +94,10 @@ const struct xccdf_version_info* xccdf_detect_version_parser(xmlTextReaderPtr re
                 return NULL;
 	}
 
-	for (mapptr = XCCDF_VERSION_MAP; mapptr->version != 0; ++mapptr) {
-		if (!strcmp(mapptr->namespace_uri, namespace_uri))
-			return mapptr;
-	}
-
-	oscap_seterr(OSCAP_EFAMILY_XML, "This is not known XCCDF namespace: %s.", namespace_uri);
-	return NULL;
+	mapptr = _namespace_get_xccdf_version_info(namespace_uri);
+	if (mapptr == NULL)
+		oscap_seterr(OSCAP_EFAMILY_XML, "This is not known XCCDF namespace: %s.", namespace_uri);
+	return mapptr;
 }
 
 char * xccdf_detect_version(const char* file)
