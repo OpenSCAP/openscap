@@ -100,6 +100,12 @@ const struct xccdf_version_info* xccdf_detect_version_parser(xmlTextReaderPtr re
 	return mapptr;
 }
 
+bool xccdf_is_supported_namespace(xmlNs *ns)
+{
+	return ns != NULL && ns->href != NULL &&
+		_namespace_get_xccdf_version_info((const char *) ns->href) != NULL;
+}
+
 char * xccdf_detect_version(const char* file)
 {
 	const struct xccdf_version_info *ver_info;
