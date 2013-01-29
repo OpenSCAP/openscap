@@ -43,7 +43,7 @@ typedef void (*download_progress_calllback_t) (bool warning, const char * format
 
 /**
  * @struct xccdf_session
- * A structure encapsuling the context of XCCDF operations.
+ * A structure encapsulating the context of XCCDF operations.
  */
 struct xccdf_session;
 
