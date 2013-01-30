@@ -1701,7 +1701,7 @@ found:
                                 b_enc = _b_enc;
                                 b_encfree = false;
                         } else {
-                                b_enc = sm_alloc (sizeof (char *) * (dsc->p_explen));
+                                b_enc = sm_alloc (sizeof (char) * (dsc->p_explen));
                                 b_encfree = true;
                         }
 
@@ -1767,7 +1767,7 @@ __PARSE_RT SEXP_parse_kl_string_b64 (__PARSE_PT(dsc))
                         b_enc = _b_enc;
                         b_encfree = false;
                 } else {
-                        b_enc = sm_alloc (sizeof (char *) * (dsc->p_explen));
+                        b_enc = sm_alloc (sizeof (char) * (dsc->p_explen));
                         b_encfree = true;
                 }
 

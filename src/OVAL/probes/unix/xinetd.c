@@ -556,7 +556,7 @@ static int xiconf_add_cfile(xiconf_t *xiconf, const char *path, int depth)
 	}
 
 	xifile->depth = depth;
-	xiconf->cfile = oscap_realloc(xiconf->cfile, sizeof(xiconf_file_t) * ++xiconf->count);
+	xiconf->cfile = oscap_realloc(xiconf->cfile, sizeof(xiconf_file_t *) * ++xiconf->count);
 	xiconf->cfile[xiconf->count - 1] = xifile;
 
 	dI("Added new file to the cfile queue: %s; fi=%zu\n", path, xiconf->count - 1);
@@ -1131,7 +1131,7 @@ finish_section:
 
 			st = oscap_talloc (xiconf_strans_t);
 			st->cnt = 1;
-			st->srv = oscap_alloc (sizeof (xiconf_service_t) * 1);
+			st->srv = oscap_alloc (sizeof (xiconf_service_t *));
 			st->srv[0] = scur;
 
 			if (rbt_str_add (xiconf->ttree, strdup(st_key), st) != 0) {
@@ -1143,7 +1143,7 @@ finish_section:
 			dI("adding new strans record to an exiting one: k=%s, cnt=%u+1\n",
 			   st_key, st->cnt);
 
-			st->srv = oscap_realloc(st->srv, sizeof (xiconf_service_t) * ++(st->cnt));
+			st->srv = oscap_realloc(st->srv, sizeof (xiconf_service_t *) * ++(st->cnt));
 			st->srv[st->cnt - 1] = scur;
 		}
 
