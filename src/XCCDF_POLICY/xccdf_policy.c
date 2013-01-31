@@ -2298,39 +2298,38 @@ static struct xccdf_refine_rule * xccdf_policy_get_refine_rules_by_rule(struct x
 
 static const char * xccdf_policy_get_value_of_item(struct xccdf_policy * policy, struct xccdf_item * item)
 {
-    struct xccdf_refine_value * r_value = NULL;
-    struct xccdf_setvalue * s_value = NULL;
-    const char * selector = NULL;
     struct xccdf_profile * profile = xccdf_policy_get_profile(policy);
-    if (profile == NULL) return NULL;
+	const char *selector = NULL;
 
-    /* Get set_value for this item */
-    struct xccdf_setvalue_iterator * s_value_it = xccdf_profile_get_setvalues(profile);
-    while (xccdf_setvalue_iterator_has_more(s_value_it)) {
-        s_value = xccdf_setvalue_iterator_next(s_value_it);
-        if (!strcmp(xccdf_setvalue_get_item(s_value), xccdf_value_get_id((struct xccdf_value *) item)))
-            break;
-        else s_value = NULL;
-    }
-    xccdf_setvalue_iterator_free(s_value_it);
-    if (s_value != NULL) return xccdf_setvalue_get_value(s_value);
+	if (profile != NULL) {
+		/* Get set_value for this item */
+		struct xccdf_setvalue *s_value = NULL;
+		struct xccdf_setvalue_iterator *s_value_it = xccdf_profile_get_setvalues(profile);
+		while (xccdf_setvalue_iterator_has_more(s_value_it)) {
+			s_value = xccdf_setvalue_iterator_next(s_value_it);
+			if (!strcmp(xccdf_setvalue_get_item(s_value), xccdf_value_get_id((struct xccdf_value *) item)))
+				break;
+			else
+				s_value = NULL;
+		}
+		xccdf_setvalue_iterator_free(s_value_it);
+		if (s_value != NULL)
+			return xccdf_setvalue_get_value(s_value);
 
-    /* We don't have set-value in profile, look for refine-value */
-    struct xccdf_refine_value_iterator * r_value_it = xccdf_profile_get_refine_values(profile);
-    while (xccdf_refine_value_iterator_has_more(r_value_it)) {
-        r_value = xccdf_refine_value_iterator_next(r_value_it);
-        if (!strcmp(xccdf_refine_value_get_item(r_value), xccdf_value_get_id((struct xccdf_value *) item)))
-            break;
-        else r_value = NULL;
-    }
-    xccdf_refine_value_iterator_free(r_value_it);
-    if (r_value != NULL) {
-        selector = xccdf_refine_value_get_selector(r_value);
-        struct xccdf_value_instance * instance = xccdf_value_get_instance_by_selector((struct xccdf_value *) item, selector);
-        return xccdf_value_instance_get_value(instance);
-    }
+		/* We don't have set-value in profile, look for refine-value */
+		struct xccdf_refine_value_iterator *r_value_it = xccdf_profile_get_refine_values(profile);
+		while (xccdf_refine_value_iterator_has_more(r_value_it)) {
+			struct xccdf_refine_value *r_value = xccdf_refine_value_iterator_next(r_value_it);
+			if (!strcmp(xccdf_refine_value_get_item(r_value), xccdf_value_get_id((struct xccdf_value *) item))) {
+				selector = xccdf_refine_value_get_selector(r_value);
+				break;
+			}
+		}
+		xccdf_refine_value_iterator_free(r_value_it);
+	}
 
-    return NULL;
+	struct xccdf_value_instance *instance = xccdf_value_get_instance_by_selector((struct xccdf_value *) item, selector);
+	return xccdf_value_instance_get_value(instance);
 }
 
 static int xccdf_policy_get_refine_value_oper(struct xccdf_policy * policy, struct xccdf_item * item)
