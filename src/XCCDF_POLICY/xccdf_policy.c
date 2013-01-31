@@ -33,6 +33,7 @@
 #include <time.h> /* For timestamps in rule results and TestResult */
 #include <libgen.h>
 
+#include "xccdf_policy_priv.h"
 #include "public/xccdf_policy.h"
 #include "public/xccdf_benchmark.h"
 #include "public/oscap_text.h"
@@ -2296,7 +2297,7 @@ static struct xccdf_refine_rule * xccdf_policy_get_refine_rules_by_rule(struct x
     return r_rule;
 }
 
-static const char * xccdf_policy_get_value_of_item(struct xccdf_policy * policy, struct xccdf_item * item)
+const char *xccdf_policy_get_value_of_item(struct xccdf_policy * policy, struct xccdf_item * item)
 {
     struct xccdf_profile * profile = xccdf_policy_get_profile(policy);
 	const char *selector = NULL;
