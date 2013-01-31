@@ -26,14 +26,14 @@
 #include "xml_iterate.h"
 
 
-static int xml_element_dfs_callback(xmlNode *node, xml_iterate_callback user_fn, void *user_data)
+static int xml_element_dfs_callback(xmlNode **node, xml_iterate_callback user_fn, void *user_data)
 {
 	int result = user_fn(node, user_data);
 	if (result == 1)
 		return result;
-	xmlNodePtr child = node->children;
+	xmlNode *child = (*node)->children;
 	while (child != NULL) {
-		int res = xml_element_dfs_callback(child, user_fn, user_data);
+		int res = xml_element_dfs_callback(&child, user_fn, user_data);
 		if (res == 1)
 			return res;
 		if (result == 0)
@@ -67,7 +67,7 @@ int xml_iterate_dfs(const char *input_text, char **output_text, xml_iterate_call
 	}
 	free(input_document);
 
-	res = xml_element_dfs_callback(root, user_fn, user_data);
+	res = xml_element_dfs_callback(&root, user_fn, user_data);
 	if (output_text != NULL) {
 		// We cannot simply xmlDumpMemory, because we need to skip the upper <x/> ellement.
 		if ((root = xmlDocGetRootElement(doc)) == NULL) {
