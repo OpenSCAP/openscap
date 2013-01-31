@@ -30,6 +30,7 @@
 #include "assume.h"
 #include "_error.h"
 #include "XCCDF/elements.h"
+#include "XCCDF/xccdf_impl.h"
 #include "xccdf_policy_priv.h"
 #include "public/xccdf_policy.h"
 
@@ -41,7 +42,13 @@ struct _xccdf_text_substitution_data {
 		_ASSESSMENT_TYPE = 4
 	} processing_type;		// Defines behaviour for fix/@use="legacy"
 	// TODO: this shall carry also the @xml:lang.
+	// TODO: This shall carry also xccdf:TestResult for xccdf:fact resolution
 };
+
+static bool _xhtml_is_supported_namespace(xmlNs *ns)
+{
+	return ns != NULL && oscap_streq((const char *) ns->href, (const char *) XCCDF_XHTML_NAMESPACE);
+}
 
 static int _xccdf_text_substitution_cb(xmlNode **node, void *user_data)
 {
@@ -109,8 +116,60 @@ static int _xccdf_text_substitution_cb(xmlNode **node, void *user_data)
 		xmlFreeNode(*node);
 		*node = new_node;
 		return 0;
+	} else if (oscap_streq((const char *) (*node)->name, "object") && _xhtml_is_supported_namespace((*node)->ns)) {
+		char *object_data = (char *) xmlGetProp(*node, BAD_CAST "data");
+		if (object_data == NULL || strncmp(object_data, "#xccdf:", strlen("#xccdf:")) != 0) {
+			free(object_data);
+			return 0; // Not an error, unless it shall be resolved by XCCDF
+		}
+
+		struct xccdf_policy *policy = data->policy;
+		assume_ex(policy != NULL, 1);
+		struct xccdf_policy_model *model = xccdf_policy_get_model(policy);
+		assume_ex(model != NULL, 1);
+		struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(model);
+		assume_ex(benchmark != NULL, 1);
+
+		const char *result = NULL;
+		if (strncmp(object_data, "#xccdf:value:", strlen("#xccdf:value:")) == 0) {
+			const char *value_id = object_data + strlen("#xccdf:value:");
+
+			struct xccdf_item *item = xccdf_benchmark_get_item(benchmark, value_id);
+			if (item != NULL && xccdf_item_get_type(item) == XCCDF_VALUE) {
+				result = xccdf_policy_get_value_of_item(policy, item);
+			} else {
+				result = xccdf_benchmark_get_plain_text(benchmark, value_id);
+				if (result == NULL) {
+					dW("Text substitution for xccdf:fact is not supported!\n"); // TODO.
+				}
+			}
+		}
+		else if (strncmp(object_data, "#xccdf:title:", strlen("#xccdf:title:")) == 0) {
+			const char *title_id = object_data + strlen("#xccdf:title:");
+
+			struct xccdf_item *item = xccdf_benchmark_get_item(benchmark, title_id);
+			if (item != NULL) {
+				// TODO: @xml:lang
+				struct oscap_text_iterator *title_it = xccdf_item_get_title(item);
+				if (oscap_text_iterator_has_more(title_it))
+					result = oscap_text_get_text(oscap_text_iterator_next(title_it));
+				oscap_text_iterator_free(title_it);
+			}
+		}
+		else {
+			// Let's not consider this as an error. Since in similar cases NISTIR-7275r4
+			// suggests to retain the <object> element.
+			dW("Unsupported XCCDF uri: xhtml:object/@data='%s'\n", object_data);
+			free(object_data);
+			return 0;
+		}
+		free(object_data);
+		xmlNode *new_node = xmlNewText(BAD_CAST result);
+		xmlReplaceNode(*node, new_node);
+		xmlFreeNode(*node);
+		*node = new_node;
+		return 0;
 	} else {
-		// TODO: <object> elements
 		// TODO: <instance> elements
 		return 0;
 	}
