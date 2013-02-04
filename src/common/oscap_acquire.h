@@ -43,6 +43,17 @@ char *oscap_acquire_temp_dir(void);
 void oscap_acquire_cleanup_dir(char **dir_path);
 
 /**
+ * Create new temp file within given directory. With filename
+ * corresponding with the template.
+ * @param dir directory to create file in
+ * @param template scheme for newly created file name
+ * @param filename name of newly created temp_file. The caller
+ * is responsible for disposing it.
+ * @returns file descriptors or a negative number to indicate failure.
+ */
+int oscap_acquire_temp_file(const char *dir, const char *template, char **filename);
+
+/**
  * Download the given url to a random file in the given directory.
  * @param temp_dir Directory to store the result in.
  * @param url The url to acquire.

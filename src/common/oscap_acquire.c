@@ -74,6 +74,29 @@ oscap_acquire_cleanup_dir(char **dir_path)
 	}
 }
 
+int
+oscap_acquire_temp_file(const char *dir, const char *template, char **filename)
+{
+	mode_t old_mode;
+	int fd;
+
+	if (dir == NULL || template == NULL || filename == NULL)
+		return -1;
+
+	*filename = malloc(PATH_MAX * sizeof(char));
+	snprintf(*filename, PATH_MAX, "%s/%s", dir, template);
+
+	old_mode = umask(077); /* Override unusual umask. Ensure 0700 permissions. */
+	fd = mkstemp(*filename);
+	(void) umask(old_mode);
+	if (fd < 1) {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "mkstemp failed, %s", strerror(errno));
+		free(*filename);
+		*filename = NULL;
+	}
+	return fd;
+}
+
 char *
 oscap_acquire_url_download(const char *temp_dir, const char *url)
 {
@@ -86,17 +109,9 @@ oscap_acquire_url_download(const char *temp_dir, const char *url)
 	FILE *fp;
 	CURL *curl;
 	CURLcode res;
-	mode_t old_mode;
 
-	output_filename = malloc(PATH_MAX * sizeof(char));
-	snprintf(output_filename, PATH_MAX, "%s/%s", temp_dir, TEMP_URL_TEMPLATE);
-
-	old_mode = umask(077);  /* Override unusual umask. Ensure 0700 permissions. */
-	output_fd = mkstemp(output_filename);
-	(void) umask(old_mode);
+	output_fd = oscap_acquire_temp_file(temp_dir, TEMP_DIR_TEMPLATE, &output_filename);
 	if (output_fd == -1) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "mkstemp failed, %s", strerror(errno));
-		free(output_filename);
 		return NULL;
 	}
 
