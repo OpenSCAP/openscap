@@ -119,6 +119,8 @@ struct xccdf_session *xccdf_session_new(const char *filename)
 
 void xccdf_session_free(struct xccdf_session *session)
 {
+	if (session == NULL)
+		return;
 	oscap_free(session->xccdf.profile_id);
 	oscap_free(session->export.arf_file);
 	_xccdf_session_free_oval_result_files(session);
