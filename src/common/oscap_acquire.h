@@ -75,6 +75,14 @@ bool oscap_acquire_url_is_supported(const char *url);
  */
 char *oscap_acquire_url_to_filename(const char *url);
 
+/**
+ * Read characters from pipe, escape '&' and store result
+ * in the C string buffer.
+ * @param fd File descriptor to read. It will be closed afterwards
+ * @returns buffer allocated on heap.
+ */
+char *oscap_acquire_pipe_to_string(int fd);
+
 OSCAP_HIDDEN_END;
 
 #endif

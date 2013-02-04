@@ -33,6 +33,7 @@
 #include "common/_error.h"
 #include "common/util.h"
 #include "common/list.h"
+#include "common/oscap_acquire.h"
 #include "sce_engine_api.h"
 
 #include <stdlib.h>
@@ -475,47 +476,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			// we won't write to the pipe, so close the writing fd
 			close(pipefd[1]);
 
-			char* stdout_buffer = malloc(sizeof(char) * 128);
-			size_t stdout_buffer_size = 128;
-			size_t read_bytes = 0;
-
-			char readbuf;
-			// FIXME: Read by larger chunks in the future
-			while (read(pipefd[0], &readbuf, 1) > 0)
-			{
-				// & is a special case, we have to "escape" it manually
-				// (all else will eventually get handled by libxml)
-				if (readbuf == '&')
-					read_bytes += 5; // we have to write "&amp;" instead of just &
-				else
-					read_bytes += 1;
-
-				// + 1 because we want to add \0 at the end
-				if (read_bytes + 1 > stdout_buffer_size)
-				{
-					// we simply double the buffer when we blow it
-					stdout_buffer_size *= 2;
-					stdout_buffer = realloc(stdout_buffer, sizeof(char) * stdout_buffer_size);
-				}
-
-				// write the escaped "&amp;" to the stdout buffer
-				if (readbuf == '&')
-				{
-					stdout_buffer[read_bytes - 5] = '&';
-					stdout_buffer[read_bytes - 4] = 'a';
-					stdout_buffer[read_bytes - 3] = 'm';
-					stdout_buffer[read_bytes - 2] = 'p';
-					stdout_buffer[read_bytes - 1] = ';';
-				}
-				else
-				{
-					// index from 0 onwards, first byte ends up on index 0
-					stdout_buffer[read_bytes - 1] = readbuf;
-				}
-			}
-			stdout_buffer[read_bytes] = '\0';
-
-			close(pipefd[0]);
+			char* stdout_buffer = oscap_acquire_pipe_to_string(pipefd[0]);
 
 			// we are the parent process
 			int wstatus;

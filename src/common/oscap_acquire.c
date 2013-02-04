@@ -184,3 +184,45 @@ oscap_acquire_url_to_filename(const char *url)
 	curl_easy_cleanup(curl);
 	return filename;
 }
+
+char *
+oscap_acquire_pipe_to_string(int fd)
+{
+	char* pipe_buffer = malloc(sizeof(char) * 128);
+	size_t pipe_buffer_size = 128;
+	size_t read_bytes = 0;
+
+	char readbuf;
+	// FIXME: Read by larger chunks in the future
+	while (read(fd, &readbuf, 1) > 0) {
+		// & is a special case, we have to "escape" it manually
+		// (all else will eventually get handled by libxml)
+		if (readbuf == '&')
+			read_bytes += 5; // we have to write "&amp;" instead of just &
+		else
+			read_bytes += 1;
+
+		// + 1 because we want to add \0 at the end
+		if (read_bytes + 1 > pipe_buffer_size) {
+			// we simply double the buffer when we blow it
+			pipe_buffer_size *= 2;
+			pipe_buffer = realloc(pipe_buffer, sizeof(char) * pipe_buffer_size);
+		}
+
+		// write the escaped "&amp;" to the stdout buffer
+		if (readbuf == '&') {
+			pipe_buffer[read_bytes - 5] = '&';
+			pipe_buffer[read_bytes - 4] = 'a';
+			pipe_buffer[read_bytes - 3] = 'm';
+			pipe_buffer[read_bytes - 2] = 'p';
+			pipe_buffer[read_bytes - 1] = ';';
+		} else {
+			// index from 0 onwards, first byte ends up on index 0
+			pipe_buffer[read_bytes - 1] = readbuf;
+		}
+	}
+	pipe_buffer[read_bytes] = '\0';
+
+	close(fd);
+	return pipe_buffer;
+}
