@@ -31,6 +31,17 @@
 OSCAP_HIDDEN_START;
 
 /**
+ * Resolve text substitution in given fix element. Use given xccdf_policy settings
+ * for resolving.
+ * @memberof xccdf_policy
+ * @param policy XCCDF policy used for substitution
+ * @param fix a fix element to modify
+ * @param test_resut the TestResult for xccdf:fact resolution
+ * @returns 0 on success, 1 on failure, other value indicate warning
+ */
+int xccdf_policy_resolve_fix_substitution(struct xccdf_policy *policy, struct xccdf_fix *fix, struct xccdf_result *test_result);
+
+/**
  * Get value of given value item in context of given policy
  * @memberof xccdf_policy
  * @param policy XCCDF policy

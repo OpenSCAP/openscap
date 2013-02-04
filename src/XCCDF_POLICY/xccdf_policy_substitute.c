@@ -175,6 +175,20 @@ static int _xccdf_text_substitution_cb(xmlNode **node, void *user_data)
 	}
 }
 
+int xccdf_policy_resolve_fix_substitution(struct xccdf_policy *policy, struct xccdf_fix *fix, struct xccdf_result *test_result)
+{
+	struct _xccdf_text_substitution_data data;
+	data.policy = policy;
+	data.processing_type = _DOCUMENT_GENERATION_TYPE | _ASSESSMENT_TYPE;
+
+	char *result = NULL;
+	int res = xml_iterate_dfs(xccdf_fix_get_content(fix), &result, _xccdf_text_substitution_cb, &data);
+	if (res == 0)
+		xccdf_fix_set_content(fix, result);
+	oscap_free(result);
+	return res;
+}
+
 char* xccdf_policy_substitute(const char *text, struct xccdf_policy *policy) {
 	struct _xccdf_text_substitution_data data;
 	data.policy = policy;
