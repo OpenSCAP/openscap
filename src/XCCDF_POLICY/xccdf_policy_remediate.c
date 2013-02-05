@@ -190,6 +190,9 @@ int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf
 {
 	if (policy == NULL || rr == NULL)
 		return 1;
+	if (xccdf_rule_result_get_result(rr) != XCCDF_RESULT_FAIL)
+		return 0;
+
 	if (fix == NULL) {
 		fix = _find_suitable_fix(policy, rr);
 		if (fix == NULL)

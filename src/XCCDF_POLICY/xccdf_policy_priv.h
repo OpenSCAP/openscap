@@ -58,9 +58,9 @@ const char * xccdf_policy_get_value_of_item(struct xccdf_policy * policy, struct
  * @param rr rule-result element
  * @param fix fix element to execute or NULL
  * @param test_result TestResult element for xccdf:fact resolution.
- * @returns 0 on success. Note that in special case when no fix element is suplied and
- * no fix element is find it is also considered success. This case is inidicated by
- * rr by not adding any fix to the rule-result.
+ * @returns 0 on success. Note that there are 2 special cases, when success is indicated
+ * even though remediation was issued. (1) When rule-result/@result != FAIL and (2) when
+ * no fix element is suplied and no fix element is find.
  */
 int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf_rule_result *rr, struct xccdf_fix *fix, struct xccdf_result *test_result);
 
