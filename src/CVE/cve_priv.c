@@ -623,7 +623,8 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 				oscap_list_add(ret->summaries, summary);
                         }
 		} else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element in CVE entry");
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element in CVE entry: %s",
+				(const char*) xmlTextReaderConstLocalName(reader));
 		}
 
 		/* get the next node */
