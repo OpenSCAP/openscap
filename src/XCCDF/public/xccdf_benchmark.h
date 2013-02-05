@@ -3333,7 +3333,11 @@ void xccdf_target_fact_iterator_reset(struct xccdf_target_fact_iterator *it);
 
 // textual substitution interface
 
-/// Type of textual substitution
+/**
+ * Type of textual substitution
+ * @deprecated This type is deprecated. It is not flexible enough to be applied on XCCDF 1.2+
+ * documents. Please use @ref xml_iterate module instead.
+ */
 typedef enum xccdf_subst_type {
     XCCDF_SUBST_NONE,
     XCCDF_SUBST_SUB,       ///< substitute cdf:sub element
