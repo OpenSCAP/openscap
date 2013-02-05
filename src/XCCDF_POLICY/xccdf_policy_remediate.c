@@ -159,7 +159,7 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 				NULL
 			};
 
-			execv(interpret, argvp);
+			execve(interpret, argvp, NULL);
 			/* Wow, execve returned. In this special case, we failed to execute the fix
 			 * and we return 0 from function. At least the following error message will
 			 * indicate the problem in xccdf:message. */
