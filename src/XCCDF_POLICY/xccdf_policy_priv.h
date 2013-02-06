@@ -64,6 +64,15 @@ const char * xccdf_policy_get_value_of_item(struct xccdf_policy * policy, struct
  */
 int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf_rule_result *rr, struct xccdf_fix *fix, struct xccdf_result *test_result);
 
+/**
+ * Evaluate the XCCDF check.
+ * @param policy XCCDF Policy
+ * @param check the check to evaluate
+ * returns result of the checking engine. Positive number indicates xccdf_test_result_type_t.
+ * Negative indicates an error.
+ */
+int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccdf_check * check);
+
 OSCAP_HIDDEN_END;
 
 #endif

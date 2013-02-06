@@ -545,11 +545,7 @@ static struct oscap_list * xccdf_policy_check_get_value_bindings(struct xccdf_po
 
 }
 
-/** 
- * Evaluate the XCCDF check. 
- * Name collision with xccdf_check -> changed to xccdf_policy_check 
- */
-static int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccdf_check * check)
+int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccdf_check * check)
 {
     struct xccdf_check_iterator             * child_it;
     struct xccdf_check                      * child;
