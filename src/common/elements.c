@@ -29,6 +29,8 @@
 #endif
 
 #include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 #include "public/oscap.h"
 #include "util.h"
@@ -164,7 +166,6 @@ const char *oscap_strlist_find_value(char ** const kvalues, const char *key)
 int
 oscap_xml_save_filename(const char *filename, xmlDocPtr doc)
 {
-	FILE *f;
 	xmlOutputBufferPtr buff;
 	int xmlCode;
 
@@ -172,15 +173,16 @@ oscap_xml_save_filename(const char *filename, xmlDocPtr doc)
 		xmlCode = xmlSaveFormatFileEnc(filename, doc, "UTF-8", 1);
 	}
 	else {
-		f = fopen(filename, "w");
-		if (f == NULL) {
+		int fd = open(filename, O_CREAT|O_TRUNC|O_WRONLY|O_CLOEXEC,
+				S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
+		if (fd < 1) {
 			oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), filename);
 			return -1;
 		}
 
-		buff = xmlOutputBufferCreateFile(f, NULL);
+		buff = xmlOutputBufferCreateFd(fd, NULL);
 		if (buff == NULL) {
-			fclose(f);
+			close(fd);
 			oscap_setxmlerr(xmlGetLastError());
 			oscap_dlprintf(DBG_W, "xmlOutputBufferCreateFile() failed.\n");
 			return -1;
