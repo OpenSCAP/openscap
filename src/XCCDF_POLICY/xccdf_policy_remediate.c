@@ -223,6 +223,24 @@ int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf
 	}
 
 	/* Verify applied fix by calling OVAL again */
-	// TODO.
-	return -666;
+	struct xccdf_check *check = NULL;
+	struct xccdf_check_iterator *check_it = xccdf_rule_result_get_checks(rr);
+	while (xccdf_check_iterator_has_more(check_it))
+		check = xccdf_check_iterator_next(check_it);
+	xccdf_check_iterator_free(check_it);
+	if (check == NULL) {
+		xccdf_rule_result_set_result(rr, XCCDF_RESULT_ERROR);
+		_rule_add_info_message(rr, "Failed to verify applied fix: Missing xccdf:check.");
+		return 0;
+	}
+
+	int new_result = xccdf_policy_check_evaluate(policy, check);
+	if (new_result == XCCDF_RESULT_PASS)
+		xccdf_rule_result_set_result(rr, XCCDF_RESULT_FIXED);
+	else {
+		xccdf_rule_result_set_result(rr, XCCDF_RESULT_ERROR);
+		_rule_add_info_message(rr, "Failed to verify applied fix: Checking engine returns: %s",
+			new_result <= 0 ? "internal error" : xccdf_test_result_type_get_text(new_result));
+	}
+	return 0;
 }
