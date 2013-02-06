@@ -728,14 +728,6 @@ static struct xccdf_rule_result * _xccdf_rule_result_new_from_rule(const struct 
 		 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
 	xccdf_rule_result_set_time(rule_ritem, timestamp);
 
-	/* --Fix --*/
-	struct xccdf_fix_iterator *fix_it = xccdf_rule_get_fixes(rule);
-	while (xccdf_fix_iterator_has_more(fix_it)) {
-		struct xccdf_fix *fix = xccdf_fix_iterator_next(fix_it);
-		xccdf_rule_result_add_fix(rule_ritem, xccdf_fix_clone(fix));
-	}
-	xccdf_fix_iterator_free(fix_it);
-
 	/* --Ident-- */
 	struct xccdf_ident_iterator * ident_it = xccdf_rule_get_idents(rule);
 	while (xccdf_ident_iterator_has_more(ident_it)){

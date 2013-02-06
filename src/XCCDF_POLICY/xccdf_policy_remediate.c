@@ -92,7 +92,13 @@ static inline struct xccdf_fix *_find_suitable_fix(struct xccdf_policy *policy, 
 	 * 	- choose the first fix
 	 */
 	struct xccdf_fix *fix = NULL;
-	struct xccdf_fix_iterator *fix_it = xccdf_rule_result_get_fixes(rr);
+	const struct xccdf_policy_model *model = xccdf_policy_get_model(policy);
+	assume_ex(model != NULL, NULL);
+	const struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(model);
+	assume_ex(model != NULL, NULL);
+	const struct xccdf_item *rule = xccdf_benchmark_get_item(benchmark, xccdf_rule_result_get_idref(rr));
+	assume_ex(rule != NULL, NULL);
+	struct xccdf_fix_iterator *fix_it = xccdf_rule_get_fixes((const struct xccdf_rule *) rule);
 	if (xccdf_fix_iterator_has_more(fix_it))
 		fix = xccdf_fix_iterator_next(fix_it);
 	xccdf_fix_iterator_free(fix_it);
