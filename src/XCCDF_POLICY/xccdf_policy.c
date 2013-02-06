@@ -549,7 +549,7 @@ static struct oscap_list * xccdf_policy_check_get_value_bindings(struct xccdf_po
  * Evaluate the XCCDF check. 
  * Name collision with xccdf_check -> changed to xccdf_policy_check 
  */
-static int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccdf_check * check, char * rule_id)
+static int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccdf_check * check)
 {
     struct xccdf_check_iterator             * child_it;
     struct xccdf_check                      * child;
@@ -568,7 +568,7 @@ static int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccd
             child_it = xccdf_check_get_children(check);
             while (xccdf_check_iterator_has_more(child_it)) {
                 child = xccdf_check_iterator_next(child_it);
-                ret2 = xccdf_policy_check_evaluate(policy, child, rule_id);
+                ret2 = xccdf_policy_check_evaluate(policy, child);
                 if (ret2 == -1) {
                     xccdf_check_iterator_free(child_it);
                     return -1;
@@ -595,7 +595,7 @@ static int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccd
                 href = xccdf_check_content_ref_get_href(content);
 
                 struct xccdf_check_import_iterator * check_import_it = xccdf_check_get_imports(check);
-                ret = xccdf_policy_evaluate_cb(policy, system_name, content_name, href, rule_id, bindings, check_import_it);
+                ret = xccdf_policy_evaluate_cb(policy, system_name, content_name, href, NULL, bindings, check_import_it);
                 // the evaluation has filled check imports at this point, we can simply free the iterator
                 xccdf_check_import_iterator_free(check_import_it);
 
@@ -1046,7 +1046,7 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 	// we need to clone the check to avoid changing the original content
 	struct xccdf_check *check = xccdf_check_clone(orig_check);
 	if (xccdf_check_get_complex(check))
-		return _xccdf_policy_report_rule_result(policy, result, rule, check, xccdf_policy_check_evaluate(policy, check, NULL), NULL);
+		return _xccdf_policy_report_rule_result(policy, result, rule, check, xccdf_policy_check_evaluate(policy, check), NULL);
 
 	// Now we are evaluating single simple xccdf:check within xccdf:rule.
 	// Since the fact that a check will yield multi-check is not predictable in general
@@ -1091,7 +1091,7 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 					const char *name = oscap_string_iterator_next(name_it);
 					struct xccdf_check *cloned_check = xccdf_check_clone(check);
 					xccdf_check_inject_content_ref(cloned_check, content, name);
-					int inner_ret = xccdf_policy_check_evaluate(policy, cloned_check, NULL);
+					int inner_ret = xccdf_policy_check_evaluate(policy, cloned_check);
 					if (inner_ret == -1) {
 						xccdf_check_free(cloned_check);
 						report = inner_ret;
