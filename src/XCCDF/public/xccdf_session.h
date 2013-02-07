@@ -64,6 +64,12 @@ struct xccdf_session *xccdf_session_new(const char *filename);
 void xccdf_session_free(struct xccdf_session *session);
 
 /**
+ * Retrieves the filename the session was created with
+ * @memberof xccdf_session
+ */
+const char *xccdf_session_get_filename(const struct xccdf_session *session);
+
+/**
  * Query if the session is based on Source DataStream.
  * @memberof xccdf_session
  * @param session XCCDF Session
@@ -91,6 +97,13 @@ void xccdf_session_set_validation(struct xccdf_session *session, bool validate, 
 void xccdf_session_set_datastream_id(struct xccdf_session *session, const char *datastream_id);
 
 /**
+ * Retrieves the datastream id
+ * @see xccdf_session_set_datastream_id
+ * @memberof xccdf_session
+ */
+const char *xccdf_session_get_datastream_id(struct xccdf_session *session);
+
+/**
  * Set requested component_id for this session. This component_id is later
  * pased down to @ref ds_sds_index_select_checklist to determine target component.
  * This function is applicable only for sessions based on a DataStream.
@@ -99,6 +112,13 @@ void xccdf_session_set_datastream_id(struct xccdf_session *session, const char *
  * @param component_id requested component_id for this session.
  */
 void xccdf_session_set_component_id(struct xccdf_session *session, const char *component_id);
+
+/**
+ * Retrieves the component id
+ * @see xccdf_session_set_component_id
+ * @memberof xccdf_session
+ */
+const char *xccdf_session_get_component_id(struct xccdf_session *session);
 
 /**
  * Set path to custom CPE dictionary for the session. This function is applicable
@@ -224,6 +244,22 @@ bool xccdf_session_set_report_export(struct xccdf_session *session, const char *
  * @returns true on success
  */
 bool xccdf_session_set_profile_id(struct xccdf_session *session, const char *profile_id);
+
+/**
+ * Retrieves ID of the profile that we will evaluate with, or NULL.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ */
+const char *xccdf_session_get_profile_id(struct xccdf_session *session);
+
+/**
+ * Get Source DataStream index of the session.
+ * @memberof xccdf_session
+ * @warning This is applicable only on sessions which are SDS. NULL is returned
+ * otherwise.
+ * @return sds index
+ */
+struct ds_sds_index *xccdf_session_get_sds_idx(struct xccdf_session *session);
 
 /**
  * Load and parse all XCCDF structures needed to evaluate this session. This is

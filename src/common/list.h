@@ -271,6 +271,15 @@ const char *oscap_htable_iterator_next_key(struct oscap_htable_iterator *hit);
 void *oscap_htable_iterator_next_value(struct oscap_htable_iterator *hit);
 
 /**
+ * Get the key and value of next item from the iterator. The behavior is undefined
+ * if the prior call of oscap_htable_iterator_has_more returns false.
+ * @param hit iterator
+ * @param key pointer to pointer that will point towards the key pointer
+ * @param value pointer to pointer that will point towards the value pointer
+ */
+void oscap_htable_iterator_next_kv(struct oscap_htable_iterator *hit, const char **key, void **value);
+
+/**
  * Reset the hashtable iterator to the begin
  * @param hit iterator
  */

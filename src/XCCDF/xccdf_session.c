@@ -147,6 +147,11 @@ void xccdf_session_free(struct xccdf_session *session)
 	oscap_free(session);
 }
 
+const char *xccdf_session_get_filename(const struct xccdf_session *session)
+{
+	return session->filename;
+}
+
 bool xccdf_session_is_sds(const struct xccdf_session *session)
 {
 	return session->doc_type == OSCAP_DOCUMENT_SDS;
@@ -166,12 +171,22 @@ void xccdf_session_set_datastream_id(struct xccdf_session *session, const char *
 	session->ds.datastream_id = session->ds.user_datastream_id;
 }
 
+const char *xccdf_session_get_datastream_id(struct xccdf_session *session)
+{
+	return session->ds.datastream_id;
+}
+
 void xccdf_session_set_component_id(struct xccdf_session *session, const char *component_id)
 {
 	if (session->ds.user_component_id != NULL)
 		oscap_free(session->ds.user_component_id);
 	session->ds.user_component_id = oscap_strdup(component_id);
 	session->ds.component_id = session->ds.user_component_id;
+}
+
+const char *xccdf_session_get_component_id(struct xccdf_session *session)
+{
+	return session->ds.datastream_id;
 }
 
 void xccdf_session_set_user_cpe(struct xccdf_session *session, const char *user_cpe)
@@ -255,17 +270,22 @@ bool xccdf_session_set_profile_id(struct xccdf_session *session, const char *pro
 	return true;
 }
 
+const char *xccdf_session_get_profile_id(struct xccdf_session *session)
+{
+	return session->xccdf.profile_id;
+}
+
 /**
  * Get Source DataStream index of the session.
  * @memberof xccdf_session
  * @warning This is applicable only on sessions which are SDS.
  * @return sds index
  */
-static inline struct ds_sds_index *_xccdf_session_get_sds_idx(struct xccdf_session *session)
+struct ds_sds_index *xccdf_session_get_sds_idx(struct xccdf_session *session)
 {
-	/* If you want to make this symbol public to allow users interactively
-	 * select datastream and component id. Please make sure to handle validation
-	 * and is_sds() check first. */
+	if (!xccdf_session_is_sds(session))
+		return NULL;
+
 	if (session->ds.sds_idx == NULL)
 		session->ds.sds_idx = ds_sds_index_import(session->filename);
 	return session->ds.sds_idx;
@@ -329,7 +349,7 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 		if (session->temp_dir == NULL)
 			goto cleanup;
 
-		if (ds_sds_index_select_checklist(_xccdf_session_get_sds_idx(session),
+		if (ds_sds_index_select_checklist(xccdf_session_get_sds_idx(session),
 				(const char **) &(session->ds.datastream_id),
 				(const char **) &(session->ds.component_id)) != 0) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to locate a datastream with ID matching "

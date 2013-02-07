@@ -416,6 +416,13 @@ bool xccdf_policy_add_value(struct xccdf_policy *, struct xccdf_value_binding *)
  * @return true if the item is selected
  */
 bool xccdf_policy_is_item_selected(struct xccdf_policy *policy, const char *id);
+
+/**
+ * Retrieves number of selected items in the policy
+ * @note This is meant to be used to estimate scanning progress for example.
+ */
+int xccdf_policy_get_selected_rules_count(struct xccdf_policy *policy);
+
 /**
  * Get select from policy by specified ID of XCCDF Item
  * @memberof xccdf_policy

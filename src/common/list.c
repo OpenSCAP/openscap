@@ -594,6 +594,16 @@ oscap_htable_iterator_next_value(struct oscap_htable_iterator *hit)
 	return (item == NULL) ? NULL : item->value;
 }
 
+void oscap_htable_iterator_next_kv(struct oscap_htable_iterator *hit, const char **key, void **value)
+{
+	const struct oscap_htable_item *item = oscap_htable_iterator_next(hit);
+	if (item == NULL)
+		return;
+
+	*key = item->key;
+	*value = item->value;
+}
+
 void
 oscap_htable_iterator_reset(struct oscap_htable_iterator *hit)
 {

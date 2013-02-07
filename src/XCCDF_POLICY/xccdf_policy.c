@@ -671,6 +671,38 @@ xccdf_policy_is_item_selected(struct xccdf_policy *policy, const char *id)
 	return *tmp;
 }
 
+int xccdf_policy_get_selected_rules_count(struct xccdf_policy *policy)
+{
+	int ret = 0;
+	struct xccdf_policy_model *model = xccdf_policy_get_model(policy);
+	struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(model);
+	struct oscap_htable_iterator *it = oscap_htable_iterator_new(policy->selected_final);
+
+	while (oscap_htable_iterator_has_more(it)) {
+		const char *key = NULL;
+		const bool *value = NULL;
+
+		oscap_htable_iterator_next_kv(it, &key, (void**)&value);
+
+		if (!value || !*value)
+			continue;
+
+		if (!key)
+			continue;
+
+		struct xccdf_item *item = xccdf_benchmark_get_member(benchmark, XCCDF_ITEM, key);
+
+		if (!item)
+			continue;
+
+		if (xccdf_item_get_type(item) == XCCDF_RULE)
+			++ret;
+	}
+
+	oscap_htable_iterator_free(it);
+	return ret;
+}
+
 static struct xccdf_rule_result * _xccdf_rule_result_new_from_rule(const struct xccdf_rule *rule,
 								  struct xccdf_check *check,
 								  xccdf_test_result_type_t eval_result,
