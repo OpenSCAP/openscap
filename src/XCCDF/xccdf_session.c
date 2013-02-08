@@ -102,6 +102,7 @@ static void _xccdf_session_free_oval_agents(struct xccdf_session *session);
 static void _xccdf_session_free_oval_result_files(struct xccdf_session *session);
 
 static const char *oscap_productname = "cpe:/a:open-scap:oscap";
+static const char *oval_sysname = "http://oval.mitre.org/XMLSchema/oval-definitions-5";
 
 struct xccdf_session *xccdf_session_new(const char *filename)
 {
@@ -572,7 +573,7 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 		file_entry = (struct oscap_file_entry *) oscap_file_entry_iterator_next(files_it);
 
 		// we only care about OVAL referenced files
-		if (strcmp(oscap_file_entry_get_system(file_entry), "http://oval.mitre.org/XMLSchema/oval-definitions-5"))
+		if (strcmp(oscap_file_entry_get_system(file_entry), oval_sysname))
 			continue;
 
 		tmp_path = malloc(PATH_MAX * sizeof(char));
@@ -720,8 +721,7 @@ int xccdf_session_load_oval(struct xccdf_session *session)
 		/* register session */
 		if (session->oval.user_eval_fn != NULL)
 			xccdf_policy_model_register_engine_and_query_callback(
-					session->xccdf.policy_model,
-					"http://oval.mitre.org/XMLSchema/oval-definitions-5",
+					session->xccdf.policy_model, (char *) oval_sysname,
 					session->oval.user_eval_fn, tmp_sess, NULL);
 		else
 			xccdf_policy_model_register_engine_oval(session->xccdf.policy_model, tmp_sess);
