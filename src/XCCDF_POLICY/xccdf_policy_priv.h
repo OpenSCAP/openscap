@@ -81,6 +81,14 @@ int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccdf_check
  */
 void xccdf_policy_model_unregister_callbacks(struct xccdf_policy_model *model, const char *sys);
 
+/**
+ * Remediate all rule-results in the given result, with settings of given policy.
+ * @memberof xccdf_policy
+ * @param policy XCCDF Policy
+ * @param result TestResult containing rule-results to remediate
+ */
+int xccdf_policy_remediate(struct xccdf_policy *policy, struct xccdf_result *result);
+
 OSCAP_HIDDEN_END;
 
 #endif

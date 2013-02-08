@@ -248,3 +248,15 @@ int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf
 	}
 	return 0;
 }
+
+int xccdf_policy_remediate(struct xccdf_policy *policy, struct xccdf_result *result)
+{
+	__attribute__nonnull__(result);
+	struct xccdf_rule_result_iterator *rr_it = xccdf_result_get_rule_results(result);
+	while (xccdf_rule_result_iterator_has_more(rr_it)) {
+		struct xccdf_rule_result *rr = xccdf_rule_result_iterator_next(rr_it);
+		xccdf_policy_rule_result_remediate(policy, rr, NULL, result);
+	}
+	xccdf_rule_result_iterator_free(rr_it);
+	return 0;
+}
