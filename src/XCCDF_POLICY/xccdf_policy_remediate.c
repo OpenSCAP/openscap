@@ -206,6 +206,15 @@ int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf
 			return 0;
 	}
 
+	struct xccdf_check *check = NULL;
+	struct xccdf_check_iterator *check_it = xccdf_rule_result_get_checks(rr);
+	while (xccdf_check_iterator_has_more(check_it))
+		check = xccdf_check_iterator_next(check_it);
+	xccdf_check_iterator_free(check_it);
+	if (check != NULL && xccdf_check_get_multicheck(check))
+		// Do not try to apply fix for multi-check.
+		return 0;
+
 	/* Initialize the fix. */
 	struct xccdf_fix *cfix = xccdf_fix_clone(fix);
 	int res = xccdf_policy_resolve_fix_substitution(policy, cfix, test_result);
@@ -223,11 +232,6 @@ int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf
 	}
 
 	/* Verify applied fix by calling OVAL again */
-	struct xccdf_check *check = NULL;
-	struct xccdf_check_iterator *check_it = xccdf_rule_result_get_checks(rr);
-	while (xccdf_check_iterator_has_more(check_it))
-		check = xccdf_check_iterator_next(check_it);
-	xccdf_check_iterator_free(check_it);
 	if (check == NULL) {
 		xccdf_rule_result_set_result(rr, XCCDF_RESULT_ERROR);
 		_rule_add_info_message(rr, "Failed to verify applied fix: Missing xccdf:check.");
