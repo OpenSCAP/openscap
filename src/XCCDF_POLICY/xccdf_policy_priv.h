@@ -73,6 +73,14 @@ int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf
  */
 int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccdf_check * check);
 
+/**
+ * Remove all engine callbacks for given system from xccdf_policy_model
+ * @memberof xccdf_policy_model
+ * @param model XCCDF Policy Model
+ * @param sys sytem name of the callback
+ */
+void xccdf_policy_model_unregister_callbacks(struct xccdf_policy_model *model, const char *sys);
+
 OSCAP_HIDDEN_END;
 
 #endif

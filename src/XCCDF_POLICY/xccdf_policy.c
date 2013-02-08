@@ -1772,6 +1772,27 @@ xccdf_policy_model_register_engine_and_query_callback(struct xccdf_policy_model 
         return oscap_list_add(model->callbacks, cb);
 }
 
+void xccdf_policy_model_unregister_callbacks(struct xccdf_policy_model *model, const char *sys)
+{
+	__attribute__nonnull__(model);
+	if (sys == NULL)
+		oscap_list_free(model->callbacks, (oscap_destruct_func) oscap_free);
+	else {
+		struct oscap_list *rest = oscap_list_new();
+		struct oscap_iterator *cb_it = oscap_iterator_new(model->callbacks);
+		while (oscap_iterator_has_more(cb_it)) {
+			callback *cb = oscap_iterator_next(cb_it);
+			if (oscap_streq(cb->system, sys))
+				oscap_free(cb);
+			else
+				oscap_list_add(rest, cb);
+		}
+		oscap_iterator_free(cb_it);
+		oscap_list_free0(model->callbacks);
+		model->callbacks = rest;
+	}
+}
+
 bool xccdf_policy_model_register_start_callback(struct xccdf_policy_model * model, policy_reporter_start func, void * usr)
 {
 
@@ -2434,7 +2455,7 @@ static void _xccdf_policy_destroy_cpe_oval_session(void* ptr)
 void xccdf_policy_model_free(struct xccdf_policy_model * model) {
 
 	oscap_list_free(model->policies, (oscap_destruct_func) xccdf_policy_free);
-	oscap_list_free(model->callbacks, (oscap_destruct_func) oscap_free);
+	xccdf_policy_model_unregister_callbacks(model, NULL);
 	xccdf_tailoring_free(model->tailoring);
         xccdf_benchmark_free(model->benchmark);
 	oscap_list_free(model->cpe_dicts, (oscap_destruct_func) cpe_dict_model_free);
