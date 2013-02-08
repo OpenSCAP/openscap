@@ -38,6 +38,7 @@
 #include "common/_error.h"
 #include "DS/public/scap_ds.h"
 #include "XCCDF_POLICY/public/xccdf_policy.h"
+#include "XCCDF_POLICY/xccdf_policy_priv.h"
 #ifdef ENABLE_SCE
 #include <sce_engine_api.h>
 #endif
@@ -1139,4 +1140,17 @@ bool xccdf_session_contains_fail_result(const struct xccdf_session *session)
 	}
 	xccdf_rule_result_iterator_free(res_it);
 	return false;
+}
+
+int xccdf_session_remediate(struct xccdf_session *session)
+{
+	int res = 0;
+	if (session == NULL || session->xccdf.policy_model == NULL ||
+			xccdf_session_get_xccdf_policy(session) == NULL ||
+			session->xccdf.result == NULL)
+		return 1;
+	xccdf_policy_model_unregister_callbacks(session->xccdf.policy_model, oval_sysname);
+	if ((res = xccdf_session_load_oval(session)) != 0)
+		return res;
+	return xccdf_policy_remediate(xccdf_session_get_xccdf_policy(session), session->xccdf.result);
 }

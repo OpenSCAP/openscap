@@ -398,6 +398,16 @@ unsigned int xccdf_session_get_oval_agents_count(const struct xccdf_session *ses
  */
 bool xccdf_session_contains_fail_result(const struct xccdf_session *session);
 
+/**
+ * Run XCCDF Remediation. It uses XCCDF Policy and XCCDF TestResult from the session
+ * and modifies the TestResult. This also drops and recreate OVAL Agent Session, thus
+ * users are advised to run @ref xccdf_session_export_oval first.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @returns zero on success
+ */
+int xccdf_session_remediate(struct xccdf_session *session);
+
 /// @}
 /// @}
 #endif
