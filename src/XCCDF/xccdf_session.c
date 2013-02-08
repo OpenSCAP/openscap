@@ -186,7 +186,7 @@ void xccdf_session_set_component_id(struct xccdf_session *session, const char *c
 
 const char *xccdf_session_get_component_id(struct xccdf_session *session)
 {
-	return session->ds.datastream_id;
+	return session->ds.component_id;
 }
 
 void xccdf_session_set_user_cpe(struct xccdf_session *session, const char *user_cpe)
