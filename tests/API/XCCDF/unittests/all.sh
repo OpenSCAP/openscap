@@ -4,6 +4,8 @@ set -e -o pipefail
 
 . $srcdir/../../../test_common.sh
 
+assert_exists() { [ $($XPATH \$result 'count('"$2"')') == "$1" ]; }
+
 test_init test_api_xccdf_unittests.log
 #
 # API C Tests
@@ -43,6 +45,11 @@ test_run "Multiple oval files with the same basename." $srcdir/test_multiple_ova
 test_run "Unsupported Check System" $srcdir/test_xccdf_check_unsupported_check_system.sh
 test_run "default selector for xccdf value" $srcdir/test_default_selector.sh
 test_run "inherit selector for xccdf value" $srcdir/test_inherit_selector.sh
+
+#
+# Tests for XCCDF Remediation and substitution
+#
+test_run "XCCDF Remediation Simple Test" $srcdir/test_remediation_simple.sh
 
 #
 # Tests for XCCDF report
