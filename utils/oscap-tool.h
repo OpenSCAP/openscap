@@ -140,6 +140,7 @@ struct oscap_action {
 	int remote_resources;
 	int progress;
 	int oval_results;
+	int remediate;
 #ifdef ENABLE_SCE
 	char *sce_template;
 	int sce_results;

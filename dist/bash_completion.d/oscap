@@ -30,7 +30,7 @@ function _oscap {
     opts[oscap:oval:analyse]="--variables --directives"
     opts[oscap:oval:collect]="--variables"
     opts[oscap:oval:generate:report]="-o --output"
-    opts[oscap:xccdf:eval]="--skip-valid --profile --results --report --oval-results --export-variables --fetch-remote-resources"
+    opts[oscap:xccdf:eval]="--skip-valid --profile --results --report --oval-results --export-variables --fetch-remote-resources --remediate"
     opts[oscap:xccdf:validate]=""
     opts[oscap:xccdf:export-oval-variables]="--profile"
     opts[oscap:xccdf:resolve]="-o --output -f --force"

@@ -139,7 +139,9 @@ static struct oscap_module XCCDF_EVAL = {
         "   --datastream-id <id> \r\t\t\t\t - ID of the datastream in the collection to use.\n"
         "                        \r\t\t\t\t   (only applicable for source datastreams)\n"
         "   --xccdf-id <id> \r\t\t\t\t - ID of XCCDF in the datastream that should be evaluated.\n"
-        "                   \r\t\t\t\t   (only applicable for source datastreams)",
+	"                   \r\t\t\t\t   (only applicable for source datastreams)\n"
+	"   --remediate \r\t\t\t\t - Automatically execute XCCDF fix elements for failed rules.\n"
+	"               \r\t\t\t\t   Use of this option is always at your own risk.",
     .opt_parser = getopt_xccdf,
     .func = app_evaluate_xccdf
 };
@@ -456,6 +458,13 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	if (xccdf_session_export_sce(session) != 0)
 		goto cleanup;
 #endif
+
+	if (action->remediate) {
+		printf("Starting Remediation: ... ");
+		fflush(stdout);
+		xccdf_session_remediate(session);
+		printf("Done.\n");
+	}
 
 	xccdf_session_set_xccdf_export(session, action->f_results);
 	xccdf_session_set_report_export(session, action->f_report);
@@ -786,6 +795,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"skip-valid",		no_argument, &action->validate, 0},
 		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},
 		{"progress", no_argument, &action->progress, 1},
+		{"remediate", no_argument, &action->remediate, 1},
 		{"hide-profile-info",	no_argument, &action->hide_profile_info, 1},
 		{"export-variables",	no_argument, &action->export_variables, 1},
 	// end
