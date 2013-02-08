@@ -559,6 +559,8 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 	char *xccdf_path_cpy = NULL;
 	char *dir_path = NULL;
 
+	_oval_content_resources_free(session->oval.resources);
+
 	xccdf_path_cpy = strdup(session->xccdf.file);
 	dir_path = dirname(xccdf_path_cpy);
 
