@@ -178,7 +178,8 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 			int wstatus;
 			waitpid(fork_result, &wstatus, 0);
 			_rule_add_info_message(rr, "Fix execution comleted and returned: %d", WEXITSTATUS(wstatus));
-			_rule_add_info_message(rr, stdout_buff);
+			if (stdout_buff != NULL && stdout_buff[0] != '\0')
+				_rule_add_info_message(rr, stdout_buff);
 			oscap_free(stdout_buff);
 			/* We return zero to indicate success. Rather than returning the exit code. */
 			result = 0;
