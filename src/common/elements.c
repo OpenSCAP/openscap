@@ -189,6 +189,7 @@ oscap_xml_save_filename(const char *filename, xmlDocPtr doc)
 		}
 
 		xmlCode = xmlSaveFormatFileTo(buff, doc, "UTF-8", 1);
+		close(fd);
 	}
 	if (xmlCode <= 0) {
 		oscap_setxmlerr(xmlGetLastError());
