@@ -16,8 +16,8 @@ $OSCAP xccdf validate-xml $result
 
 [ $($XPATH $result 'count(//complex-check)') == "0" ]
 
-assert_exists_once() { [ $($XPATH $result 'count('$1')') == "1" ]; }
-assert_exists_once '//Rule/check[@negate="true"]'
-assert_exists_once '//rule-result/check[@negate="true"]'
-assert_exists_once '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_1"]/result[text()="pass"]'
+assert_exists() { [ $($XPATH $result 'count('"$2"')') == "$1" ]; }
+assert_exists 1 '//Rule/check[@negate="true"]'
+assert_exists 1 '//rule-result/check[@negate="true"]'
+assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_1"]/result[text()="pass"]'
 rm $result

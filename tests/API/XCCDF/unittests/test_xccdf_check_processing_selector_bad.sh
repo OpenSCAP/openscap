@@ -16,11 +16,11 @@ echo "Result file = $result"
 
 $OSCAP xccdf validate-xml $result
 
-assert_exists_once() { [ $($XPATH $result 'count('$1')') == "1" ]; }
-assert_exists_once '//rule-result'
-assert_exists_once '//rule-result/result[text()="pass"]'
-assert_exists_once '//rule-result/check'
-assert_exists_once '//rule-result/check[not(@selector)]'
-assert_exists_once '//rule-result/check[@system="http://oval.mitre.org/XMLSchema/oval-definitions-5"]'
-assert_exists_once '//rule-result/check/check-content-ref[@name="oval:moc.elpmaxe.www:def:1"]'
+assert_exists() { [ $($XPATH $result 'count('"$2"')') == "$1" ]; }
+assert_exists 1 '//rule-result'
+assert_exists 1 '//rule-result/result[text()="pass"]'
+assert_exists 1 '//rule-result/check'
+assert_exists 1 '//rule-result/check[not(@selector)]'
+assert_exists 1 '//rule-result/check[@system="http://oval.mitre.org/XMLSchema/oval-definitions-5"]'
+assert_exists 1 '//rule-result/check/check-content-ref[@name="oval:moc.elpmaxe.www:def:1"]'
 rm $result

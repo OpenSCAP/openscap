@@ -16,13 +16,12 @@ echo "Result file = $result"
 
 $OSCAP xccdf validate-xml $result
 
-assert_exists_once() { [ $($XPATH $result 'count('"$1"')') == "1" ]; }
-assert_exists_twice() { [ $($XPATH $result 'count('"$1"')') == "2" ]; }
-assert_exists_once '//rule-result'
-assert_exists_once '//rule-result/result'
-assert_exists_once '//rule-result/result[text()="notchecked"]'
-assert_exists_once '//rule-result/message'
-assert_exists_once '//rule-result/message[@severity="info"]'
-assert_exists_once '//rule-result/message[text()="No candidate or applicable check found."]'
-assert_exists_twice '//rule-result/*'
+assert_exists() { [ $($XPATH $result 'count('"$2"')') == "$1" ]; }
+assert_exists 1 '//rule-result'
+assert_exists 1 '//rule-result/result'
+assert_exists 1 '//rule-result/result[text()="notchecked"]'
+assert_exists 1 '//rule-result/message'
+assert_exists 1 '//rule-result/message[@severity="info"]'
+assert_exists 1 '//rule-result/message[text()="No candidate or applicable check found."]'
+assert_exists 2 '//rule-result/*'
 rm $result

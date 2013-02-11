@@ -12,6 +12,6 @@ echo "Stderr file = $stderr"
 
 $OSCAP xccdf validate-xml $result
 
-assert_exists_once() { [ $($XPATH $result 'count('$1')') == "1" ]; }
-assert_exists_once '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_1"]/result[text()="notchecked"]'
+assert_exists() { [ $($XPATH $result 'count('"$2"')') == "$1" ]; }
+assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_1"]/result[text()="notchecked"]'
 rm $result
