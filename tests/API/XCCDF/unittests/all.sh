@@ -4,7 +4,8 @@ set -e -o pipefail
 
 . $srcdir/../../../test_common.sh
 
-assert_exists() { [ $($XPATH \$result 'count('"$2"')') == "$1" ]; }
+assert_exists() { [ $($XPATH $result 'count('"$2"')') == "$1" ]; }
+export -f assert_exists
 
 test_init test_api_xccdf_unittests.log
 #

@@ -18,7 +18,6 @@ echo "Result file = $result"
 
 $OSCAP xccdf validate-xml $result
 
-assert_exists() { [ $($XPATH $result 'count('$2')') == "$1" ]; }
 assert_exists 1 '//Benchmark'
 assert_exists 1 '//Benchmark[@resolved="1"]'
 assert_exists 3 '//Profile'
@@ -33,7 +32,7 @@ assert_exists 1 '//Profile[@id="xccdf_moc.elpmaxe.www_profile_2"]/select[3][@idr
 assert_exists 1 '//Profile[@id="xccdf_moc.elpmaxe.www_profile_3"]'
 assert_exists 3 '//Profile[@id="xccdf_moc.elpmaxe.www_profile_3"]/select'
 assert_exists 1 '//Profile[@id="xccdf_moc.elpmaxe.www_profile_3"]/select[1][@idref="my-disabled-cluster" and @selected="false"]'
-assert_exists 1 '//Profile[@id="xccdf_moc.elpmaxe.www_profile_3"]/select[2][@idref="xccdf_moc.elpmaxe.www_rule_3" and selected="false"]'
+assert_exists 1 '//Profile[@id="xccdf_moc.elpmaxe.www_profile_3"]/select[2][@idref="xccdf_moc.elpmaxe.www_rule_3" and @selected="false"]'
 assert_exists 1 '//Profile[@id="xccdf_moc.elpmaxe.www_profile_3"]/select[3][@idref="my-enabled-cluster" and @selected="true"]'
 assert_exists 3 '//rule-result'
 assert_exists 3 '//rule-result/result'

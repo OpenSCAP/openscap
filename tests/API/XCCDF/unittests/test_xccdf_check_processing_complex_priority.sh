@@ -18,7 +18,6 @@ for args in "" "--profile xccdf_moc.elpmaxe.www_profile_1"; do
 
 	$OSCAP xccdf validate-xml $result || [ $? == 2 ]
 
-	assert_exists() { [ $($XPATH $result 'count('"$2"')') == "$1" ]; }
 	assert_exists 1 '//rule-result'
 	assert_exists 1 '//rule-result/result[text()="pass"]'
 	assert_exists 1 '//rule-result[not(check)]'

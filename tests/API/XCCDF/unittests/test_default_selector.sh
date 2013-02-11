@@ -14,7 +14,6 @@ echo "Stderr file = $stderr"
 echo "Result file = $result"
 [ -f $stderr ]; [ ! -s $stderr ]
 
-assert_exists() { [ $($XPATH $result 'count('$2')') == "$1" ]; }
 test_variable() {
 	assert_exists 3 '/oval_variables/variables/variable'
 	assert_exists 3 '//variable'

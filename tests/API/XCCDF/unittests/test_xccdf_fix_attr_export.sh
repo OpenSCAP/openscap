@@ -16,8 +16,6 @@ echo "Result file = $result"
 
 $OSCAP xccdf validate-xml $result
 
-assert_exists() { [ "$($XPATH $result 'count('"$2"')')" == "$1" ]; }
-
 assert_exists 3 '//fix'
 assert_exists 3 '//fix/@id'
 assert_exists 3 '//Rule/fix'
