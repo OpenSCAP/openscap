@@ -40,6 +40,7 @@
 #define XCCDF_SUPPORTED "1.2"
 
 static struct oscap_htable *xccdf_benchmark_find_target_htable(const struct xccdf_benchmark *, xccdf_type_t);
+static xmlNode *xccdf_plain_text_to_dom(const struct xccdf_plain_text *ptext, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info);
 
 struct xccdf_backref {
 	struct xccdf_item **ptr;	// pointer to a pointer that is supposed to be pointing to an item with id 'id'
@@ -269,6 +270,14 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 	const char *style_href = xccdf_benchmark_get_style_href(benchmark);
 	if (style_href)
 		xmlNewProp(root_node, BAD_CAST "style-href", BAD_CAST style_href);
+
+	// Export plain-text elements
+	struct xccdf_plain_text_iterator *plain_text_it = xccdf_benchmark_get_plain_texts(benchmark);
+	while (xccdf_plain_text_iterator_has_more(plain_text_it)) {
+		struct xccdf_plain_text *plain_text = xccdf_plain_text_iterator_next(plain_text_it);
+		xccdf_plain_text_to_dom(plain_text, doc, root_node, xccdf_benchmark_get_schema_version(benchmark));
+	}
+	xccdf_plain_text_iterator_free(plain_text_it);
 
 	/* In spec but not in OpenSCAP
 	const char *lang = xccdf_benchmark_get_lang(benchmark);
@@ -781,6 +790,17 @@ struct xccdf_plain_text *xccdf_plain_text_new_fill(const char *id, const char *t
     plain->id = oscap_strdup(id);
     plain->text = oscap_strdup(text);
     return plain;
+}
+
+static xmlNode *xccdf_plain_text_to_dom(const struct xccdf_plain_text *ptext, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
+{
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
+			(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+	xmlNode *ptext_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "plain-text",
+			BAD_CAST (ptext->text == NULL ? "" : ptext->text));
+	if (ptext->id != NULL)
+		xmlNewProp(ptext_node, BAD_CAST "id", BAD_CAST ptext->id);
+	return ptext_node;
 }
 
 struct xccdf_plain_text * xccdf_plain_text_clone(const struct xccdf_plain_text * pt)
