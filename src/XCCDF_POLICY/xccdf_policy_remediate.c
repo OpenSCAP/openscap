@@ -143,7 +143,7 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 	if (close(fd) != 0)
 		_rule_add_info_message(rr, "Could not close temp file: %s", strerror(errno));
 
-	int pipefd[1];
+	int pipefd[2];
 	if (pipe(pipefd) == -1) {
 		_rule_add_info_message(rr, "Could not create pipe: %s", strerror(errno));
 		goto cleanup;
