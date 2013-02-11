@@ -50,6 +50,7 @@ test_run "inherit selector for xccdf value" $srcdir/test_inherit_selector.sh
 # Tests for XCCDF Remediation and substitution
 #
 test_run "XCCDF Remediation Simple Test" $srcdir/test_remediation_simple.sh
+test_run "XCCDF Remediation Bad Fix Fails to Remedy" $srcdir/test_remediation_bad_fix.sh
 
 #
 # Tests for XCCDF report
