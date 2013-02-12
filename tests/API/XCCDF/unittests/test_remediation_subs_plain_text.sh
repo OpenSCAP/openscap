@@ -20,6 +20,7 @@ echo "Result file = $result"
 
 $OSCAP xccdf validate-xml $result
 
+assert_exists 1 '/Benchmark/plain-text'
 assert_exists 1 '/Benchmark/Rule'
 assert_exists 1 '/Benchmark/Rule/fix'
 assert_exists 2 '/Benchmark/Rule/fix/sub'
@@ -36,6 +37,7 @@ $OSCAP xccdf eval --remediate --results $result $srcdir/${name}.xccdf.xml 2> $st
 
 $OSCAP xccdf validate-xml $result
 
+assert_exists 1 '/Benchmark/plain-text'
 assert_exists 1 '/Benchmark/Rule'
 assert_exists 1 '/Benchmark/Rule/fix'
 assert_exists 2 '/Benchmark/Rule/fix/sub'
