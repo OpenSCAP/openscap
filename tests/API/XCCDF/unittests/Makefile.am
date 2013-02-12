@@ -74,6 +74,8 @@ EXTRA_DIST += \
 	test_remediation_simple.xccdf.xml \
 	test_remediation_subs_plain_text.sh \
 	test_remediation_subs_plain_text.xccdf.xml \
+	test_remediation_subs_plain_text_empty.sh \
+	test_remediation_subs_plain_text_empty.xccdf.xml \
 	test_report_check_with_empty_selector.oval.xml.result.xml \
 	test_report_check_with_empty_selector.sh \
 	test_report_check_with_empty_selector.xccdf.xml.result.xml \

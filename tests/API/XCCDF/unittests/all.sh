@@ -53,6 +53,7 @@ test_run "inherit selector for xccdf value" $srcdir/test_inherit_selector.sh
 test_run "XCCDF Remediation Simple Test" $srcdir/test_remediation_simple.sh
 test_run "XCCDF Remediation Bad Fix Fails to Remedy" $srcdir/test_remediation_bad_fix.sh
 test_run "XCCDF Remediation Substitute Simple plain-text" $srcdir/test_remediation_subs_plain_text.sh
+test_run "XCCDF Remediation Substitute Empty plain-text" $srcdir/test_remediation_subs_plain_text_empty.sh
 
 #
 # Tests for XCCDF report
