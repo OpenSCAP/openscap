@@ -26,12 +26,12 @@ function test_init {
     [ $# -eq 1 ] && log="$1"
     exec 2>$log
     echo ""
-    echo "--------------------------------------------------"
+    echo "----------------------------------------------------------------------"
 }
 
 # Execute test and report its results.
 function test_run {    
-    printf "+ %-40s" "$1";
+    printf "+ %-60s" "$1";
     echo -e "TEST: $1" >&2; 
     shift
     ( exec 1>&2 ; eval "$@" )
