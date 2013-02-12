@@ -55,6 +55,7 @@ test_run "XCCDF Remediation Bad Fix Fails to Remedy" $srcdir/test_remediation_ba
 test_run "XCCDF Remediation Substitute Simple plain-text" $srcdir/test_remediation_subs_plain_text.sh
 test_run "XCCDF Remediation Substitute Empty plain-text" $srcdir/test_remediation_subs_plain_text_empty.sh
 test_run "XCCDF Remediation Substitute Value by refine-value" $srcdir/test_remediation_subs_value_refine_value.sh
+test_run "XCCDF Remediation Substitute Value by first value" $srcdir/test_remediation_subs_value_take_first.sh
 
 #
 # Tests for XCCDF report
