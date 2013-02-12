@@ -2,7 +2,7 @@
 
 set -e
 set -o pipefail
-set -x
+
 name=$(basename $0 .sh)
 
 result=$(mktemp -t ${name}.output.XXXXXX)
