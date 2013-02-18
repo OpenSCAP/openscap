@@ -86,6 +86,8 @@ EXTRA_DIST += \
 	test_remediation_subs_value_title.xccdf.xml \
 	test_remediation_subs_value_without_selector.sh \
 	test_remediation_subs_value_without_selector.xccdf.xml \
+	test_remediation_xml_comments.sh \
+	test_remediation_xml_comments.xccdf.xml \
 	test_report_check_with_empty_selector.oval.xml.result.xml \
 	test_report_check_with_empty_selector.sh \
 	test_report_check_with_empty_selector.xccdf.xml.result.xml \
