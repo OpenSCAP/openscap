@@ -27,6 +27,8 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include <libxml/tree.h>
+
 #include "common/assume.h"
 #include "common/debug_priv.h"
 #include "common/oscap_acquire.h"
@@ -105,11 +107,50 @@ static inline struct xccdf_fix *_find_suitable_fix(struct xccdf_policy *policy, 
 	return fix; // TODO: implement the procedure described above
 }
 
+static inline int _xccdf_fix_decode_xml(struct xccdf_fix *fix, char **result)
+{
+	/* We need to decode &amp; and similar sequences. That is a process reverse
+	 * to the xmlEncodeSpecialChars()). Further we need to drop XML commentaries
+	 * and expand CDATA blobs.
+	 */
+	*result = NULL;
+	char *str = oscap_sprintf("<x xmlns:xhtml='http://www.w3.org/1999/xhtml'>%s</x>",
+		xccdf_fix_get_content(fix));
+        xmlDoc *doc = xmlReadMemory(str, strlen(str), NULL, NULL, XML_PARSE_RECOVER |
+		XML_PARSE_NOERROR | XML_PARSE_NOWARNING | XML_PARSE_NONET | XML_PARSE_NSCLEAN);
+	oscap_free(str);
+
+        xmlBuffer *buff = xmlBufferCreate();
+	xmlNodePtr child = xmlDocGetRootElement(doc)->children;
+	while (child != NULL) {
+		switch (child->type) {
+		case XML_ELEMENT_NODE:{
+			/* Remaining child elements are suspicious. Perhaps it is an unresolved
+			 * substitution element The execution would be dangerous, i.e. bash could
+			 * interpret < and > characters of the element as pipe commands. */
+			xmlFreeDoc(doc);
+			xmlBufferFree(buff);
+			return 1;
+			}; break;
+		default:{
+			xmlNodeBufGetContent(buff, child);
+			}; break;
+		}
+		child = child->next;
+        }
+	xmlFreeDoc(doc);
+	*result = oscap_strdup((char *)xmlBufferContent(buff));
+	xmlBufferFree(buff);
+	dI("Following script will be executed: '''%s'''\n", str);
+	return 0;
+}
+
 static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_fix *fix)
 {
 	const char *interpret = NULL;
 	char *temp_dir = NULL;
 	char *temp_file = NULL;
+	char *fix_text = NULL;
 	int fd;
 	int result = 1;
 	if (fix == NULL || rr == NULL || oscap_streq(xccdf_fix_get_content(fix), NULL))
@@ -118,6 +159,11 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 	if ((interpret = _get_interpret(xccdf_fix_get_system(fix))) == NULL) {
 		_rule_add_info_message(rr, "Not supported xccdf:fix/@system='%s' or missing interpreter.",
 				xccdf_fix_get_system(fix) == NULL ? "" : xccdf_fix_get_system(fix));
+		return 1;
+	}
+
+	if (_xccdf_fix_decode_xml(fix, &fix_text) != 0) {
+		_rule_add_info_message(rr, "Fix element contains unresolved child elements.");
 		return 1;
 	}
 
@@ -133,12 +179,14 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 		goto cleanup;
 	}
 
-	int err = write(fd, xccdf_fix_get_content(fix), strlen(xccdf_fix_get_content(fix)));
+	int err = write(fd, fix_text, strlen(fix_text));
 	if (err < 1) {
 		_rule_add_info_message(rr, "Could not write to the temp file: %s", strerror(errno));
+		oscap_free(fix_text);
 		(void) close(fd);
 		goto cleanup;
 	}
+	oscap_free(fix_text);
 
 	if (close(fd) != 0)
 		_rule_add_info_message(rr, "Could not close temp file: %s", strerror(errno));
