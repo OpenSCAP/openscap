@@ -132,6 +132,9 @@ static inline int _xccdf_fix_decode_xml(struct xccdf_fix *fix, char **result)
 			xmlBufferFree(buff);
 			return 1;
 			}; break;
+		case XML_COMMENT_NODE:{
+			/* Skip xml comments, otherwise they would apear as regular text. */
+			}; break;
 		default:{
 			xmlNodeBufGetContent(buff, child);
 			}; break;
