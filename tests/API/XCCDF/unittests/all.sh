@@ -58,6 +58,7 @@ test_run "XCCDF Remediation Substitute Value by refine-value" $srcdir/test_remed
 test_run "XCCDF Remediation Substitute Value by first value" $srcdir/test_remediation_subs_value_take_first.sh
 test_run "XCCDF Remediation Substitute Value by empty selector" $srcdir/test_remediation_subs_value_without_selector.sh
 test_run "XCCDF Remediation Substitute Value by its title" $srcdir/test_remediation_subs_value_title.sh
+test_run "XCCDF Remediation &amp; decoding" $srcdir/test_remediation_amp_escaping.sh
 
 #
 # Tests for XCCDF report
