@@ -71,6 +71,8 @@ EXTRA_DIST += \
 	test_remediation_amp_escaping.xccdf.xml \
 	test_remediation_bad_fix.sh \
 	test_remediation_bad_fix.xccdf.xml \
+	test_remediation_cdata.sh \
+	test_remediation_cdata.xccdf.xml \
 	test_remediation_simple.oval.xml \
 	test_remediation_simple.sh \
 	test_remediation_simple.xccdf.xml \

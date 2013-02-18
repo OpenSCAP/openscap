@@ -60,6 +60,7 @@ test_run "XCCDF Remediation Substitute Value by empty selector" $srcdir/test_rem
 test_run "XCCDF Remediation Substitute Value by its title" $srcdir/test_remediation_subs_value_title.sh
 test_run "XCCDF Remediation &amp; decoding" $srcdir/test_remediation_amp_escaping.sh
 test_run "XCCDF Remediation bypass XML Comments" $srcdir/test_remediation_xml_comments.sh
+test_run "XCCDF Remediation understands <[CDATA[." $srcdir/test_remediation_cdata.sh
 
 #
 # Tests for XCCDF report
