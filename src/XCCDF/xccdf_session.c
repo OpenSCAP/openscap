@@ -114,6 +114,12 @@ struct xccdf_session *xccdf_session_new(const char *filename)
 		xccdf_session_free(session);
 		return NULL;
 	}
+	if (session->doc_type != OSCAP_DOCUMENT_XCCDF && session->doc_type != OSCAP_DOCUMENT_SDS) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP,
+			"Session input file was determined but it isn't an XCCDF file or a source datastream.");
+		xccdf_session_free(session);
+		return NULL;
+	}
 	session->validate = true;
 	session->xccdf.base_score = 0;
 	return session;
