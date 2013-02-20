@@ -80,6 +80,8 @@ EXTRA_DIST += \
 	test_remediation_subs_plain_text.xccdf.xml \
 	test_remediation_subs_plain_text_empty.sh \
 	test_remediation_subs_plain_text_empty.xccdf.xml \
+	test_remediation_subs_unresolved.sh \
+	test_remediation_subs_unresolved.xccdf.xml \
 	test_remediation_subs_value_refine_value.sh \
 	test_remediation_subs_value_refine_value.xccdf.xml \
 	test_remediation_subs_value_take_first.sh \

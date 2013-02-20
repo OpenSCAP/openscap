@@ -61,6 +61,7 @@ test_run "XCCDF Remediation Substitute Value by its title" $srcdir/test_remediat
 test_run "XCCDF Remediation &amp; decoding" $srcdir/test_remediation_amp_escaping.sh
 test_run "XCCDF Remediation bypass XML Comments" $srcdir/test_remediation_xml_comments.sh
 test_run "XCCDF Remediation understands <[CDATA[." $srcdir/test_remediation_cdata.sh
+test_run "XCCDF Remediation Aborts on unresolved element." $srcdir/test_remediation_subs_unresolved.sh
 
 #
 # Tests for XCCDF report
