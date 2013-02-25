@@ -631,8 +631,7 @@ int app_xccdf_resolve(const struct oscap_action *action)
 	}
 
 cleanup:
-	if (oscap_err())
-		fprintf(stderr, "Error: %s\n", oscap_err_desc());
+	_print_oscap_error();
 	if (bench)
 		xccdf_benchmark_free(bench);
 	if (doc_version)
@@ -899,8 +898,7 @@ int app_xccdf_validate(const struct oscap_action *action) {
 		validation_failed(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version);
 
 cleanup:
-        if (oscap_err())
-                fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+	_print_oscap_error();
 
         if (doc_version)
 		free(doc_version);
