@@ -44,6 +44,7 @@ test_run "Deriving XCCDF Check Results from OVAL without definition." $srcdir/te
 test_run "Deriving XCCDF Check Results from OVAL Definition Results + multi-check" $srcdir/test_deriving_xccdf_result_from_oval_multicheck.sh
 test_run "Multiple oval files with the same basename." $srcdir/test_multiple_oval_files_with_same_basename.sh
 test_run "Unsupported Check System" $srcdir/test_xccdf_check_unsupported_check_system.sh
+test_run "Multiple xccdf:TestResult elements" $srcdir/test_xccdf_multiple_testresults.sh
 test_run "default selector for xccdf value" $srcdir/test_default_selector.sh
 test_run "inherit selector for xccdf value" $srcdir/test_inherit_selector.sh
 

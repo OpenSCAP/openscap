@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="xccdf_moc.elpmaxe.www_benchmark_test" resolved="1">
+  <status>accepted</status>
+  <version>1.0</version>
+  <Rule id="xccdf_moc.elpmaxe.www_rule_1" selected="true">
+    <title>Ensure that file exists and it is not executable</title>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref name="oval:moc.elpmaxe.www:def:1" href="non_existent.oval.xml"/>
+    </check>
+  </Rule>
+</Benchmark>
