@@ -1860,7 +1860,7 @@ struct xccdf_item *xccdf_benchmark_get_item(const struct xccdf_benchmark *benchm
 /**
  * Get a registered member of xccdf_benchmakr by ID.
  * @memberof xccdf_benchmark
- * @param type of member: either XCCDF_ITEM, XCCDF_PROFILE, or XCCDF_TESTRESULT
+ * @param type of member: either XCCDF_ITEM, XCCDF_PROFILE, or XCCDF_RESULT
  * @return xccdf_item with given ID and type
  * @return NULL if no such member exists
  */
