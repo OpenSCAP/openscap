@@ -639,6 +639,8 @@ bool xccdf_add_item(struct oscap_list *list, struct xccdf_item *parent, struct x
 			item->item.parent = parent;
 			return oscap_list_add(list, item);
 		}
+		else
+			assert(false);
 	}
 	else return true;
 
