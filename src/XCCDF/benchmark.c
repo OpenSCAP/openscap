@@ -435,6 +435,19 @@ XCCDF_ITEM_ADDER_REG(benchmark, profile, profiles)
 
 bool xccdf_benchmark_add_result(struct xccdf_benchmark *benchmark, struct xccdf_result *item)
 {
+	const char *id = xccdf_result_get_id(item);
+	if (id != NULL) {
+		// Resolve possible conflicts of the IDs in the list of TestResults.
+		struct xccdf_item *found = xccdf_benchmark_get_member(benchmark, XCCDF_RESULT, id);
+	        if (found != NULL) {
+			if (found == XITEM(item))
+				return true;
+			// Here is conflict. Generate a new id.
+			char *new_id = xccdf_benchmark_gen_id(benchmark, XCCDF_RESULT, id);
+			xccdf_result_set_id(item, new_id);
+			oscap_free(new_id);
+		}
+	}
 	return xccdf_add_item(
 		((struct xccdf_item*)benchmark)->sub.benchmark.results,
 		((struct xccdf_item*)benchmark),
