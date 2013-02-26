@@ -625,21 +625,29 @@ struct xccdf_rule *xccdf_benchmark_append_new_rule(struct xccdf_benchmark *bench
     return rule;
 }
 
-static const size_t XCCDF_ID_SIZE = 32;
-
 char *xccdf_benchmark_gen_id(struct xccdf_benchmark *benchmark, xccdf_type_t type, const char *prefix)
 {
 	assert(prefix != NULL);
 
-	char buff[XCCDF_ID_SIZE];
-	memset(buff, 0, XCCDF_ID_SIZE);
+	const char *fmt = "%s%03d";
+	char foo[2];
+	int length = snprintf(foo, 1, fmt, prefix, 0);
+	if (length < 0)
+		return NULL;
+	length++;
+	char *buff = (char *) oscap_calloc(length, sizeof(char));
+	int ret;
 	int i = 0;
 
 	do {
-		snprintf(buff, XCCDF_ID_SIZE - 1, "%s%03d", prefix, ++i);
+		ret = snprintf(buff, length, fmt, prefix, ++i);
+		if (ret < 0 || ret > length) {
+			oscap_free(buff);
+			return NULL;
+		}
 	} while (xccdf_benchmark_get_member(benchmark, type, buff) != NULL);
 
-	return oscap_strdup(buff);
+	return buff;
 }
 
 bool xccdf_add_item(struct oscap_list *list, struct xccdf_item *parent, struct xccdf_item *item, const char *prefix)
