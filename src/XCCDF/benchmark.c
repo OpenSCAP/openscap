@@ -428,11 +428,19 @@ XCCDF_STATUS_CURRENT(benchmark)
 OSCAP_ITERATOR_GEN(xccdf_plain_text)
 OSCAP_ITERATOR_REMOVE_F(xccdf_plain_text)
 
-XCCDF_ITEM_ADDER_REG(benchmark, result, results)
 XCCDF_ITEM_ADDER_REG(benchmark, rule, content)
 XCCDF_ITEM_ADDER_REG(benchmark, group, content)
 XCCDF_ITEM_ADDER_REG(benchmark, value, values)
 XCCDF_ITEM_ADDER_REG(benchmark, profile, profiles)
+
+bool xccdf_benchmark_add_result(struct xccdf_benchmark *benchmark, struct xccdf_result *item)
+{
+	return xccdf_add_item(
+		((struct xccdf_item*)benchmark)->sub.benchmark.results,
+		((struct xccdf_item*)benchmark),
+		((struct xccdf_item*)item),
+		"result" "-");
+}
 
 struct xccdf_profile *
 xccdf_benchmark_get_profile_by_id(struct xccdf_benchmark *benchmark, const char *profile_id)
