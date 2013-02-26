@@ -240,6 +240,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libexecdir}/openscap/probe_gconf
 
 %changelog
+* Tue Feb 26 2013 Petr Lautrbach <plautrba@redhat.com> 0.9.4-1
+- upgrade
+
 * Mon Dec 17 2012 Petr Lautrbach <plautrba@redhat.com> 0.9.3-1
 - upgrade
 

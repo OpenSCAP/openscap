@@ -1,3 +1,16 @@
+openscap-0.9.4							26-02-2013
+ - high Level API
+ - improved Text Substitution Processing
+ - technical Preview of Online Remediation Execution
+   (the oscap xccdf eval --remediate)
+ - improved Library Internal Error Reporting.
+ - the oscap xccd export-oval-variables now support DataStreams.
+ - improved documentation
+ - improved schema files.
+ - tailoring file support
+ - profile shadowing support
+ - bug Fixes
+
 openscap-0.9.3							17-12-2012
 - Embedded CPE dictionary (allows users to ommit --cpe argument)
 - improvements of DataStream and CPE processing on RHEL5
