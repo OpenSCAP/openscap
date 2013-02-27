@@ -49,6 +49,7 @@ static int app_evaluate_xccdf(const struct oscap_action *action);
 static int app_xccdf_validate(const struct oscap_action *action);
 static int app_xccdf_resolve(const struct oscap_action *action);
 static int app_xccdf_export_oval_variables(const struct oscap_action *action);
+static int app_xccdf_remediate(const struct oscap_action *action);
 static bool getopt_xccdf(int argc, char **argv, struct oscap_action *action);
 static bool getopt_generate(int argc, char **argv, struct oscap_action *action);
 static int app_xccdf_xslt(const struct oscap_action *action);
@@ -146,6 +147,19 @@ static struct oscap_module XCCDF_EVAL = {
     .func = app_evaluate_xccdf
 };
 
+static struct oscap_module XCCDF_REMEDIATE = {
+	.name =		"remediate",
+	.parent =	&OSCAP_XCCDF_MODULE,
+	.summary =	"Perform remediation driven by XCCDF TestResult file or ARF.",
+	.usage =	"[options] INPUT_FILE [oval-definitions-files]",
+	.help =		"INPUT_FILE - XCCDF TestResult file or ARF\n\n"
+			"Options:\n"
+			"  --result-id\r\t\t\t\t - TestResult ID to be processed. Default is the most recent one.\n"
+	,
+	.opt_parser = getopt_xccdf,
+	.func = app_xccdf_remediate
+};
+
 #define GEN_OPTS \
         "Generate options:\n" \
         "   --profile <profile-id>\r\t\t\t\t - Tailor XCCDF file with respect to a profile.\n" \
@@ -236,6 +250,7 @@ static struct oscap_module* XCCDF_SUBMODULES[] = {
     &XCCDF_VALIDATE_XML,
     &XCCDF_EXPORT_OVAL_VARIABLES,
     &XCCDF_GENERATE,
+	&XCCDF_REMEDIATE,
     NULL
 };
 
@@ -566,6 +581,30 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	if (session != NULL)
 		xccdf_session_free(session);
 
+	return result;
+}
+
+int app_xccdf_remediate(const struct oscap_action *action)
+{
+	struct xccdf_session *session = NULL;
+	int result = OSCAP_ERROR;
+	session = xccdf_session_new(action->f_xccdf);
+	if (session == NULL)
+		goto cleanup;
+	if (xccdf_session_load(session) != 0)
+		goto cleanup;
+
+	if (xccdf_session_build_policy_from_testresult(session, action->id) != 0)
+		goto cleanup;
+
+	printf("Starting Remediation: ... ");
+	fflush(stdout);
+	xccdf_session_remediate(session);
+	printf("Done.\n");
+
+cleanup:
+	_print_oscap_error();
+	xccdf_session_free(session);
 	return result;
 }
 
