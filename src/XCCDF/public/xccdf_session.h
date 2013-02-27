@@ -6,7 +6,7 @@
  *
  * @file xccdf_session.h
  * High Level API for OpenSCAP XCCDF operations.
- * @author Simon Lukasik <slukasik@redhat.com>i
+ * @author Simon Lukasik <slukasik@redhat.com>
  */
 
 /*
