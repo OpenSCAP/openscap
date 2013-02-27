@@ -833,9 +833,6 @@ int xccdf_session_evaluate(struct xccdf_session *session)
 	struct oscap_text *title = oscap_text_new();
 	oscap_text_set_text(title, "OSCAP Scan Result");
 	xccdf_result_add_title(session->xccdf.result, title);
-	const char *id = xccdf_policy_get_id(policy);
-	if (id != NULL)
-		xccdf_result_set_profile(session->xccdf.result, id);
 
 	xccdf_result_fill_sysinfo(session->xccdf.result);
 
