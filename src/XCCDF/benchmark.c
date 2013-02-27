@@ -474,6 +474,20 @@ xccdf_benchmark_get_profile_by_id(struct xccdf_benchmark *benchmark, const char 
 	return NULL;
 }
 
+struct xccdf_result *xccdf_benchmark_get_result_by_id(struct xccdf_benchmark *benchmark, const char *testresult_id)
+{
+	struct xccdf_result *result = NULL;
+	if (testresult_id == NULL) {
+		struct xccdf_result_iterator * results_it = xccdf_benchmark_get_results(benchmark);
+		while (xccdf_result_iterator_has_more(results_it))
+			result = xccdf_result_iterator_next(results_it);
+		xccdf_result_iterator_free(results_it);
+	} else {
+		result = XRESULT(xccdf_benchmark_get_member(benchmark, XCCDF_RESULT, testresult_id));
+	}
+	return result;
+}
+
 bool xccdf_benchmark_add_content(struct xccdf_benchmark *bench, struct xccdf_item *item)
 {
 	if (item == NULL) return false;
