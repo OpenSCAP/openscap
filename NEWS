@@ -1,3 +1,6 @@
+openscap-0.9.4.1						28-02-2013
+ - fix soname version
+
 openscap-0.9.4							26-02-2013
  - high Level API
  - improved Text Substitution Processing
