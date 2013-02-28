@@ -51,7 +51,7 @@ assert_exists 1 '//rule-result/fix/instance'
 assert_exists 2 '//rule-result/message'
 assert_exists 2 '//rule-result/message[@severity="info"]'
 assert_exists 1 '//rule-result/message[text()="Fix element contains unresolved child elements."]'
-assert_exists 1 '//rule-result/message[text()="Fix execution was aborted."]'
+assert_exists 1 '//rule-result/message[text()="Fix was not executed. Execution was aborted."]'
 assert_exists 1 '//score'
 assert_exists 1 '//score[text()="0.000000"]'
 

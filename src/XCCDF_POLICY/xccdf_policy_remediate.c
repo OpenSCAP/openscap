@@ -279,7 +279,7 @@ int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf
 	/* Execute the fix. */
 	res = _xccdf_fix_execute(rr, cfix);
 	if (res != 0) {
-		_rule_add_info_message(rr, "Fix execution was aborted.");
+		_rule_add_info_message(rr, "Fix was not executed. Execution was aborted.");
 		return res;
 	}
 
