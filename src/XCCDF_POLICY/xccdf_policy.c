@@ -764,7 +764,7 @@ static int _xccdf_policy_report_rule_result(struct xccdf_policy *policy,
 	} else
 		xccdf_check_free(check);
 
-	ret = xccdf_policy_report_cb(policy, "urn:xccdf:system:callback:output", (void *) rule_result);
+	ret = xccdf_policy_report_cb(policy, XCCDF_POLICY_OUTCB_END, (void *) rule_result);
 	return ret;
 }
 
@@ -1023,7 +1023,7 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 	const bool is_selected = xccdf_policy_is_item_selected(policy, xccdf_rule_get_id(rule));
 	const char *message = NULL;
 
-	int report = xccdf_policy_report_cb(policy, "urn:xccdf:system:callback:start", (void *) rule);
+	int report = xccdf_policy_report_cb(policy, XCCDF_POLICY_OUTCB_START, (void *) rule);
 	if (report)
 		return report;
 
@@ -1096,7 +1096,7 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 					if ((report = _xccdf_policy_report_rule_result(policy, result, rule, cloned_check, inner_ret, NULL)) != 0)
 						break;
 					if (oscap_string_iterator_has_more(name_it))
-						if ((report = xccdf_policy_report_cb(policy, "urn:xccdf:system:callback:start", (void *) rule)) != 0)
+						if ((report = xccdf_policy_report_cb(policy, XCCDF_POLICY_OUTCB_START, (void *) rule)) != 0)
 							break;
 				}
 				oscap_string_iterator_free(name_it);
@@ -1800,7 +1800,7 @@ bool xccdf_policy_model_register_start_callback(struct xccdf_policy_model * mode
         callback_out * cb = oscap_alloc(sizeof(callback_out));
         if (cb == NULL) return false;
 
-        cb->system   = "urn:xccdf:system:callback:start";
+	cb->system = XCCDF_POLICY_OUTCB_START;
         cb->callback = (void*)func;
         cb->usr      = usr;
 
@@ -1814,7 +1814,7 @@ bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * mod
         callback_out * cb = oscap_alloc(sizeof(callback_out));
         if (cb == NULL) return false;
 
-        cb->system   = "urn:xccdf:system:callback:output";
+	cb->system = XCCDF_POLICY_OUTCB_END;
         cb->callback = (void*)func;
         cb->usr      = usr;
 

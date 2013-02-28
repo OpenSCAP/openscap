@@ -30,6 +30,9 @@
 
 OSCAP_HIDDEN_START;
 
+#define XCCDF_POLICY_OUTCB_START "urn:xccdf:system:callback:start"
+#define XCCDF_POLICY_OUTCB_END "urn:xccdf:system:callback:output"
+
 /**
  * Resolve text substitution in given fix element. Use given xccdf_policy settings
  * for resolving.
