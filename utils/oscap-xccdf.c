@@ -158,6 +158,7 @@ static struct oscap_module XCCDF_REMEDIATE = {
 			"  --skip-valid\r\t\t\t\t - Skip validation.\n"
 			"  --fetch-remote-resources\r\t\t\t\t - Download remote content referenced by XCCDF.\n"
 			"  --results <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
+			"  --results-arf <file>\r\t\t\t\t - Write ARF (result data stream) into file.\n"
 			"  --report <file>\r\t\t\t\t - Write HTML report into file.\n"
 			"  --oval-results\r\t\t\t\t - Save OVAL results.\n"
 			"  --export-variables\r\t\t\t\t - Export OVAL external variables provided by XCCDF.\n"
@@ -615,6 +616,7 @@ int app_xccdf_remediate(const struct oscap_action *action)
 
 	xccdf_session_set_oval_results_export(session, action->oval_results);
 	xccdf_session_set_oval_variables_export(session, action->export_variables);
+	xccdf_session_set_arf_export(session, action->f_results_arf);
 	xccdf_session_set_xccdf_export(session, action->f_results);
 	xccdf_session_set_report_export(session, action->f_report);
 
@@ -627,6 +629,8 @@ int app_xccdf_remediate(const struct oscap_action *action)
 		goto cleanup;
 #endif
 	if (xccdf_session_export_xccdf(session) != 0)
+		goto cleanup;
+	if (xccdf_session_export_arf(session) != 0)
 		goto cleanup;
 
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
