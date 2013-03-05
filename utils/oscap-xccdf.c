@@ -155,6 +155,8 @@ static struct oscap_module XCCDF_REMEDIATE = {
 	.help =		"INPUT_FILE - XCCDF TestResult file or ARF\n\n"
 			"Options:\n"
 			"  --result-id\r\t\t\t\t - TestResult ID to be processed. Default is the most recent one.\n"
+			"  --progress \r\t\t\t\t - Switch to sparse output suitable for progress reporting.\n"
+			"             \r\t\t\t\t   Format is \"$rule_id:$result\\n\".\n"
 	,
 	.opt_parser = getopt_xccdf,
 	.func = app_xccdf_remediate
@@ -483,10 +485,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 #endif
 
 	if (action->remediate) {
-		printf("Starting Remediation: ... ");
-		fflush(stdout);
+		printf("\n --- Starting Remediation ---\n");
 		xccdf_session_remediate(session);
-		printf("Done.\n");
 	}
 
 	xccdf_session_set_xccdf_export(session, action->f_results);
@@ -597,10 +597,9 @@ int app_xccdf_remediate(const struct oscap_action *action)
 	if (xccdf_session_build_policy_from_testresult(session, action->id) != 0)
 		goto cleanup;
 
-	printf("Starting Remediation: ... ");
-	fflush(stdout);
+	_register_progress_callback(session, action->progress);
+
 	xccdf_session_remediate(session);
-	printf("Done.\n");
 
 cleanup:
 	_print_oscap_error();

@@ -29,6 +29,7 @@
 
 #include <libxml/tree.h>
 
+#include "common/_error.h"
 #include "common/assume.h"
 #include "common/debug_priv.h"
 #include "common/oscap_acquire.h"
@@ -291,22 +292,35 @@ int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf
 		return res;
 	}
 
+	/* We report rule during remediation only when the fix was actually executed */
+	int report = 0;
+	struct xccdf_item *rule = _lookup_rule_for_rule_result(policy, rr);
+	if (rule == NULL) {
+		// Sadly, we cannot handle this since b9d123d53140c6e369b7f2206e4e3e63dc556fd1.
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find xccdf:Rule/@id=%s.", xccdf_rule_result_get_idref(rr));
+	}
+	else {
+		xccdf_policy_report_cb(policy, XCCDF_POLICY_OUTCB_START, (void *) rule);
+		if (report != 0)
+			return report;
+	}
+
 	/* Verify applied fix by calling OVAL again */
 	if (check == NULL) {
 		xccdf_rule_result_set_result(rr, XCCDF_RESULT_ERROR);
 		_rule_add_info_message(rr, "Failed to verify applied fix: Missing xccdf:check.");
-		return 0;
+	} else {
+		int new_result = xccdf_policy_check_evaluate(policy, check);
+		if (new_result == XCCDF_RESULT_PASS)
+			xccdf_rule_result_set_result(rr, XCCDF_RESULT_FIXED);
+		else {
+			xccdf_rule_result_set_result(rr, XCCDF_RESULT_ERROR);
+			_rule_add_info_message(rr, "Failed to verify applied fix: Checking engine returns: %s",
+				new_result <= 0 ? "internal error" : xccdf_test_result_type_get_text(new_result));
+		}
 	}
 
-	int new_result = xccdf_policy_check_evaluate(policy, check);
-	if (new_result == XCCDF_RESULT_PASS)
-		xccdf_rule_result_set_result(rr, XCCDF_RESULT_FIXED);
-	else {
-		xccdf_rule_result_set_result(rr, XCCDF_RESULT_ERROR);
-		_rule_add_info_message(rr, "Failed to verify applied fix: Checking engine returns: %s",
-			new_result <= 0 ? "internal error" : xccdf_test_result_type_get_text(new_result));
-	}
-	return 0;
+	return rule == NULL ? 0 : xccdf_policy_report_cb(policy, XCCDF_POLICY_OUTCB_END, (void *) rr);
 }
 
 int xccdf_policy_remediate(struct xccdf_policy *policy, struct xccdf_result *result)
