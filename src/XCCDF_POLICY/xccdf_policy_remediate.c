@@ -83,6 +83,15 @@ static const char *_get_interpret(const char *sys)
 	return _file_exists(interpret) ? interpret : NULL;
 }
 
+static inline struct xccdf_item *_lookup_rule_for_rule_result(const struct xccdf_policy *policy, const struct xccdf_rule_result *rr)
+{
+	const struct xccdf_policy_model *model = xccdf_policy_get_model(policy);
+	assume_ex(model != NULL, NULL);
+	const struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(model);
+	assume_ex(model != NULL, NULL);
+	return xccdf_benchmark_get_item(benchmark, xccdf_rule_result_get_idref(rr));
+}
+
 static inline struct xccdf_fix *_find_suitable_fix(struct xccdf_policy *policy, struct xccdf_rule_result *rr)
 {
 	/* In XCCDF 1.2, there is nothing like a default fix. However we use
@@ -94,11 +103,7 @@ static inline struct xccdf_fix *_find_suitable_fix(struct xccdf_policy *policy, 
 	 * 	- choose the first fix
 	 */
 	struct xccdf_fix *fix = NULL;
-	const struct xccdf_policy_model *model = xccdf_policy_get_model(policy);
-	assume_ex(model != NULL, NULL);
-	const struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(model);
-	assume_ex(model != NULL, NULL);
-	const struct xccdf_item *rule = xccdf_benchmark_get_item(benchmark, xccdf_rule_result_get_idref(rr));
+	const struct xccdf_item *rule = _lookup_rule_for_rule_result(policy, rr);
 	assume_ex(rule != NULL, NULL);
 	struct xccdf_fix_iterator *fix_it = xccdf_rule_get_fixes((const struct xccdf_rule *) rule);
 	if (xccdf_fix_iterator_has_more(fix_it))
