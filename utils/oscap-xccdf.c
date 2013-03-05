@@ -157,6 +157,7 @@ static struct oscap_module XCCDF_REMEDIATE = {
 			"  --result-id\r\t\t\t\t - TestResult ID to be processed. Default is the most recent one.\n"
 			"  --skip-valid\r\t\t\t\t - Skip validation.\n"
 			"  --fetch-remote-resources\r\t\t\t\t - Download remote content referenced by XCCDF.\n"
+			"  --results <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
 			"  --oval-results\r\t\t\t\t - Save OVAL results.\n"
 			"  --export-variables\r\t\t\t\t - Export OVAL external variables provided by XCCDF.\n"
 #ifdef ENABLE_SCE
@@ -613,6 +614,7 @@ int app_xccdf_remediate(const struct oscap_action *action)
 
 	xccdf_session_set_oval_results_export(session, action->oval_results);
 	xccdf_session_set_oval_variables_export(session, action->export_variables);
+	xccdf_session_set_xccdf_export(session, action->f_results);
 
 	if (xccdf_session_export_oval(session) != 0)
 		goto cleanup;
@@ -622,6 +624,8 @@ int app_xccdf_remediate(const struct oscap_action *action)
 	if (xccdf_session_export_sce(session) != 0)
 		goto cleanup;
 #endif
+	if (xccdf_session_export_xccdf(session) != 0)
+		goto cleanup;
 
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
 	result = xccdf_session_contains_fail_result(session) ? OSCAP_FAIL : OSCAP_OK;
