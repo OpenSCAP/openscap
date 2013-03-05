@@ -487,6 +487,11 @@ Validate given CVE data feed.
 Find given CVE in data feed and report base score, vector string and vulnerable software list.
 .RE
 
+.SH EXIT STATUS
+.TP
+\fBNormally, the exit status is 0 when operation finished successfully and 1 otherwise. In cases when oscap performs evaluation of the system it may return 2 indicating success of the operation but incompliance of the assessed system.
+.RE
+
 .SH CONTENT
 .TP
 \fB National Vulnerability Database\fR - \fIhttp://web.nvd.nist.gov/view/ncp/repository\fR
