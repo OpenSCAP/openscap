@@ -133,6 +133,16 @@ Execute XCCDF remediatation in the process of XCCDF evaluation. This option auto
 .RE
 .RE
 .TP
+.B remediate\fR [\fIoptions\fR] INPUT_FILE
+.RS
+This module provides post-scan remediation. It assumes that the INPUT_FILE is result of `oscap xccdf eval` operation. The input file must contain TestResult element. This module executes XCCDF fix elements for failed rule-result contained in the given TestResult. Use of this option is always at your own risk and it shall be avoided unless for trusted content.
+.TP
+\fB\-\-result-id ID
+.RS
+ID of the XCCDF TestResult element which shall be remediated. If this option is missing the last TestResult (in top-down processing) will be remediated.
+.RE
+.RE
+.TP
 .B resolve\fR -o output-file xccdf-file
 .RS
 Resolve an XCCDF file as described in the XCCDF specification. It will flatten inheritance hierarchy of XCCDF profiles, groups, rules, and values. Result is another XCCDF document, which will be written to \fIoutput-file\fR.
