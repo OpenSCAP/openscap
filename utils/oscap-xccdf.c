@@ -156,6 +156,7 @@ static struct oscap_module XCCDF_REMEDIATE = {
 			"Options:\n"
 			"  --result-id\r\t\t\t\t - TestResult ID to be processed. Default is the most recent one.\n"
 			"  --skip-valid\r\t\t\t\t - Skip validation.\n"
+			"  --fetch-remote-resources\r\t\t\t\t - Download remote content referenced by XCCDF.\n"
 			"  --progress \r\t\t\t\t - Switch to sparse output suitable for progress reporting.\n"
 			"             \r\t\t\t\t   Format is \"$rule_id:$result\\n\".\n"
 	,
@@ -592,6 +593,7 @@ int app_xccdf_remediate(const struct oscap_action *action)
 	if (session == NULL)
 		goto cleanup;
 	xccdf_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
+	xccdf_session_set_remote_resources(session, action->remote_resources, _download_reporting_callback);
 
 	if (xccdf_session_load(session) != 0)
 		goto cleanup;
