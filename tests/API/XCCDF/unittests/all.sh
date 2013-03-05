@@ -49,7 +49,7 @@ test_run "default selector for xccdf value" $srcdir/test_default_selector.sh
 test_run "inherit selector for xccdf value" $srcdir/test_inherit_selector.sh
 
 #
-# Tests for XCCDF Remediation and substitution
+# Tests for 'oscap xccdf eval --remediate' and substitution
 #
 test_run "XCCDF Remediation Simple Test" $srcdir/test_remediation_simple.sh
 test_run "XCCDF Remediation Bad Fix Fails to Remedy" $srcdir/test_remediation_bad_fix.sh
@@ -63,6 +63,10 @@ test_run "XCCDF Remediation &amp; decoding" $srcdir/test_remediation_amp_escapin
 test_run "XCCDF Remediation bypass XML Comments" $srcdir/test_remediation_xml_comments.sh
 test_run "XCCDF Remediation understands <[CDATA[." $srcdir/test_remediation_cdata.sh
 test_run "XCCDF Remediation Aborts on unresolved element." $srcdir/test_remediation_subs_unresolved.sh
+#
+# Tests for 'oscap xccdf remediate'
+#
+test_run "XCCDF Remediate" $srcdir/test_remediate_simple.sh
 
 #
 # Tests for XCCDF report
