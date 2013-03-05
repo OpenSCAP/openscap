@@ -159,6 +159,9 @@ static struct oscap_module XCCDF_REMEDIATE = {
 			"  --fetch-remote-resources\r\t\t\t\t - Download remote content referenced by XCCDF.\n"
 			"  --oval-results\r\t\t\t\t - Save OVAL results.\n"
 			"  --export-variables\r\t\t\t\t - Export OVAL external variables provided by XCCDF.\n"
+#ifdef ENABLE_SCE
+			"  --sce-results\r\t\t\t\t - Save SCE results.\n"
+#endif
 			"  --progress \r\t\t\t\t - Switch to sparse output suitable for progress reporting.\n"
 			"             \r\t\t\t\t   Format is \"$rule_id:$result\\n\".\n"
 	,
@@ -613,6 +616,12 @@ int app_xccdf_remediate(const struct oscap_action *action)
 
 	if (xccdf_session_export_oval(session) != 0)
 		goto cleanup;
+
+#ifdef ENABLE_SCE
+	xccdf_session_set_sce_results_export(session, action->sce_results);
+	if (xccdf_session_export_sce(session) != 0)
+		goto cleanup;
+#endif
 
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
 	result = xccdf_session_contains_fail_result(session) ? OSCAP_FAIL : OSCAP_OK;
