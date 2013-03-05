@@ -529,7 +529,6 @@ static xccdf_test_result_type_t resolve_variables_wrapper(struct xccdf_policy *p
 	return XCCDF_RESULT_PASS;
 }
 
-// todo: consolidate with app_evaluate_xccdf()
 static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 {
 	struct xccdf_policy *policy = NULL;
