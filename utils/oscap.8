@@ -159,6 +159,11 @@ Allow download of remote OVAL content referenced from XCCDF by check-content-ref
 .RS
 Generate OVAL Result file for each OVAL session used for evaluation. File with name '\fIoriginal-oval-definitions-filename\fR.result.xml' will be generated for each referenced OVAL file. This option (with conjunction with the \fB\-\-report\fR option) also enables inclusion of additional OVAL information in the XCCDF report.
 .RE
+.TP
+\fB\-\-export-variables\fR
+.RS
+Generate OVAL Variables documents which contain external variables' values that were provided to the OVAL checking engine during evaluation. The filename format is '\fIoriginal-oval-definitions-filename\fR-\fIsession-index\fR.variables-\fIvariables-index\fR.xml'.
+.RE
 .RE
 .TP
 .B resolve\fR -o output-file xccdf-file

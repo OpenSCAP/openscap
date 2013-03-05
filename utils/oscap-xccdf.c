@@ -158,6 +158,7 @@ static struct oscap_module XCCDF_REMEDIATE = {
 			"  --skip-valid\r\t\t\t\t - Skip validation.\n"
 			"  --fetch-remote-resources\r\t\t\t\t - Download remote content referenced by XCCDF.\n"
 			"  --oval-results\r\t\t\t\t - Save OVAL results.\n"
+			"  --export-variables\r\t\t\t\t - Export OVAL external variables provided by XCCDF.\n"
 			"  --progress \r\t\t\t\t - Switch to sparse output suitable for progress reporting.\n"
 			"             \r\t\t\t\t   Format is \"$rule_id:$result\\n\".\n"
 	,
@@ -608,6 +609,7 @@ int app_xccdf_remediate(const struct oscap_action *action)
 	xccdf_session_remediate(session);
 
 	xccdf_session_set_oval_results_export(session, action->oval_results);
+	xccdf_session_set_oval_variables_export(session, action->export_variables);
 
 	if (xccdf_session_export_oval(session) != 0)
 		goto cleanup;
