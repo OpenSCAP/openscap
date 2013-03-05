@@ -594,6 +594,7 @@ int app_xccdf_remediate(const struct oscap_action *action)
 		goto cleanup;
 	xccdf_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
 	xccdf_session_set_remote_resources(session, action->remote_resources, _download_reporting_callback);
+	xccdf_session_set_custom_oval_files(session, action->f_ovals);
 
 	if (xccdf_session_load(session) != 0)
 		goto cleanup;
