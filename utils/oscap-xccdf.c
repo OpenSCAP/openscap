@@ -401,6 +401,22 @@ static void _download_reporting_callback(bool warning, const char *format, ...)
 	fflush(dest);
 }
 
+static void _register_progress_callback(struct xccdf_session *session, bool progress)
+{
+	struct xccdf_policy_model *policy_model = xccdf_session_get_policy_model(session);
+	if (progress) {
+		xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule_progress,
+				(void *) xccdf_session_get_xccdf_policy(session));
+		xccdf_policy_model_register_output_callback(policy_model, callback_scr_result_progress, NULL);
+	}
+	else {
+		xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule,
+				(void *) xccdf_session_get_xccdf_policy(session));
+		xccdf_policy_model_register_output_callback(policy_model, callback_scr_result, NULL);
+	}
+	/* xccdf_policy_model_register_output_callback(policy_model, callback_syslog_result, NULL); */
+}
+
 /**
  * XCCDF Processing fucntion
  * @param action OSCAP Action structure
@@ -409,8 +425,6 @@ static void _download_reporting_callback(bool warning, const char *format, ...)
 int app_evaluate_xccdf(const struct oscap_action *action)
 {
 	struct xccdf_session *session = NULL;
-
-	struct xccdf_policy_model *policy_model = NULL;
 
 	int result = OSCAP_ERROR;
 	int priority = LOG_NOTICE;
@@ -437,8 +451,6 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	if (xccdf_session_load(session) != 0)
 		goto cleanup;
 
-	policy_model = xccdf_session_get_policy_model(session);
-
 	/* Select profile */
 	if (!xccdf_session_set_profile_id(session, action->profile)) {
 		if (action->profile != NULL)
@@ -448,19 +460,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		goto cleanup;
 	}
 
-	/* Register callbacks */
-	if (action->progress) {
-		xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule_progress,
-				(void *) xccdf_session_get_xccdf_policy(session));
-		xccdf_policy_model_register_output_callback(policy_model, callback_scr_result_progress, NULL);
-	}
-	else {
-		xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule,
-				(void *) xccdf_session_get_xccdf_policy(session));
-		xccdf_policy_model_register_output_callback(policy_model, callback_scr_result, NULL);
-	}
-
-	/* xccdf_policy_model_register_output_callback(policy_model, callback_syslog_result, NULL); */
+	_register_progress_callback(session, action->progress);
 
 	/* Perform evaluation */
 	if (xccdf_session_evaluate(session) != 0)
