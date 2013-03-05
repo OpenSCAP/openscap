@@ -67,13 +67,7 @@ static int _xccdf_text_substitution_cb(xmlNode **node, void *user_data)
 		}
 		// Sub element may refer to xccdf:Value or to xccdf:plain-text
 
-		struct xccdf_policy *policy = data->policy;
-		if (policy == NULL)
-			return 1;
-		struct xccdf_policy_model *model = xccdf_policy_get_model(policy);
-		if (model == NULL)
-			return 1;
-		struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(model);
+		struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(data->policy);
 		if (benchmark == NULL)
 			return 1;
 		struct xccdf_item *value = xccdf_benchmark_get_item(benchmark, sub_idref);
@@ -100,7 +94,7 @@ static int _xccdf_text_substitution_cb(xmlNode **node, void *user_data)
 			} else {
 				if (!oscap_streq(sub_use, "value"))
 					dW("xccdf:sub/@idref='%s' has incorrect @use='%s'! Using @use='value' instead.\n", sub_idref, sub_use);
-				result = xccdf_policy_get_value_of_item(policy, value);
+				result = xccdf_policy_get_value_of_item(data->policy, value);
 			}
 			oscap_free(sub_use);
 		} else { // This xccdf:sub probably refers to the xccdf:plain-text
@@ -126,13 +120,7 @@ static int _xccdf_text_substitution_cb(xmlNode **node, void *user_data)
 			return 0; // Not an error, unless it shall be resolved by XCCDF
 		}
 
-		struct xccdf_policy *policy = data->policy;
-		if (policy == NULL)
-			return 1;
-		struct xccdf_policy_model *model = xccdf_policy_get_model(policy);
-		if (model == NULL)
-			return 1;
-		struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(model);
+		struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(data->policy);
 		if (benchmark == NULL)
 			return 1;
 
@@ -142,7 +130,7 @@ static int _xccdf_text_substitution_cb(xmlNode **node, void *user_data)
 
 			struct xccdf_item *item = xccdf_benchmark_get_item(benchmark, value_id);
 			if (item != NULL && xccdf_item_get_type(item) == XCCDF_VALUE) {
-				result = xccdf_policy_get_value_of_item(policy, item);
+				result = xccdf_policy_get_value_of_item(data->policy, item);
 			} else {
 				result = xccdf_benchmark_get_plain_text(benchmark, value_id);
 				if (result == NULL) {

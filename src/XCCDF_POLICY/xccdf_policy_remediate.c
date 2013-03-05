@@ -86,10 +86,7 @@ static const char *_get_interpret(const char *sys)
 
 static inline struct xccdf_item *_lookup_rule_for_rule_result(const struct xccdf_policy *policy, const struct xccdf_rule_result *rr)
 {
-	const struct xccdf_policy_model *model = xccdf_policy_get_model(policy);
-	if (model == NULL)
-		return NULL;
-	const struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(model);
+	const struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(policy);
 	if (benchmark == NULL)
 		return NULL;
 	return xccdf_benchmark_get_item(benchmark, xccdf_rule_result_get_idref(rr));

@@ -2446,6 +2446,16 @@ struct oscap_stringlist * xccdf_policy_model_get_files(struct xccdf_policy_model
     return xccdf_item_get_files((struct xccdf_item *) xccdf_policy_model_get_benchmark(policy_model));
 }
 
+struct xccdf_benchmark *xccdf_policy_get_benchmark(const struct xccdf_policy *policy)
+{
+	if (policy == NULL)
+		return NULL;
+        const struct xccdf_policy_model *model = xccdf_policy_get_model(policy);
+        if (model == NULL)
+                return NULL;
+        return xccdf_policy_model_get_benchmark(model);
+}
+
 static void _xccdf_policy_destroy_cpe_oval_session(void* ptr)
 {
 	struct oval_agent_session* session = (struct oval_agent_session*)ptr;

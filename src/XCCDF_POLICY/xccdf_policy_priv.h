@@ -102,6 +102,14 @@ int xccdf_policy_remediate(struct xccdf_policy *policy, struct xccdf_result *res
  */
 int xccdf_policy_report_cb(struct xccdf_policy *policy, const char *sysname, void *rule);
 
+/**
+ * Get XCCDF Benchmark for given policy
+ * @memberof xccdf_policy
+ * @param policy XCCDF Policy
+ * @returns the benchmark element or NULL.
+ */
+struct xccdf_benchmark *xccdf_policy_get_benchmark(const struct xccdf_policy *policy);
+
 OSCAP_HIDDEN_END;
 
 #endif
