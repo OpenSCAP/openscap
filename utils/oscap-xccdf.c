@@ -157,6 +157,7 @@ static struct oscap_module XCCDF_REMEDIATE = {
 			"  --result-id\r\t\t\t\t - TestResult ID to be processed. Default is the most recent one.\n"
 			"  --skip-valid\r\t\t\t\t - Skip validation.\n"
 			"  --fetch-remote-resources\r\t\t\t\t - Download remote content referenced by XCCDF.\n"
+			"  --oval-results\r\t\t\t\t - Save OVAL results.\n"
 			"  --progress \r\t\t\t\t - Switch to sparse output suitable for progress reporting.\n"
 			"             \r\t\t\t\t   Format is \"$rule_id:$result\\n\".\n"
 	,
@@ -605,6 +606,11 @@ int app_xccdf_remediate(const struct oscap_action *action)
 	_register_progress_callback(session, action->progress);
 
 	xccdf_session_remediate(session);
+
+	xccdf_session_set_oval_results_export(session, action->oval_results);
+
+	if (xccdf_session_export_oval(session) != 0)
+		goto cleanup;
 
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
 	result = xccdf_session_contains_fail_result(session) ? OSCAP_FAIL : OSCAP_OK;
