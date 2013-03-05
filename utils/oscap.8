@@ -144,6 +144,11 @@ This module provides post-scan remediation. It assumes that the INPUT_FILE is re
 .RS
 ID of the XCCDF TestResult element which shall be remediated. If this option is missing the last TestResult (in top-down processing) will be remediated.
 .RE
+.TP
+\fB\-\-skip-valid\fR
+.RS
+Do not validate input/output files.
+.RE
 .RE
 .TP
 .B resolve\fR -o output-file xccdf-file
