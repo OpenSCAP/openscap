@@ -606,6 +606,8 @@ int app_xccdf_remediate(const struct oscap_action *action)
 
 	xccdf_session_remediate(session);
 
+	/* Get the result from TestResult model and decide if end with error or with correct return code */
+	result = xccdf_session_contains_fail_result(session) ? OSCAP_FAIL : OSCAP_OK;
 cleanup:
 	_print_oscap_error();
 	xccdf_session_free(session);

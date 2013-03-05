@@ -1139,7 +1139,9 @@ bool xccdf_session_contains_fail_result(const struct xccdf_session *session)
 	while (xccdf_rule_result_iterator_has_more(res_it)) {
 		struct xccdf_rule_result *res = xccdf_rule_result_iterator_next(res_it);
 		xccdf_test_result_type_t rule_result = xccdf_rule_result_get_result(res);
-		if ((rule_result == XCCDF_RESULT_FAIL) || (rule_result == XCCDF_RESULT_UNKNOWN)) {
+		if (rule_result == XCCDF_RESULT_FAIL ||
+				rule_result == XCCDF_RESULT_UNKNOWN ||
+				rule_result == XCCDF_RESULT_ERROR) {
 			xccdf_rule_result_iterator_free(res_it);
 			return true;
 		}
