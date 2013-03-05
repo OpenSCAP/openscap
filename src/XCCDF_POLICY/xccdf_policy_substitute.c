@@ -68,11 +68,14 @@ static int _xccdf_text_substitution_cb(xmlNode **node, void *user_data)
 		// Sub element may refer to xccdf:Value or to xccdf:plain-text
 
 		struct xccdf_policy *policy = data->policy;
-		assume_ex(policy != NULL, 1);
+		if (policy == NULL)
+			return 1;
 		struct xccdf_policy_model *model = xccdf_policy_get_model(policy);
-		assume_ex(model != NULL, 1);
+		if (model == NULL)
+			return 1;
 		struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(model);
-		assume_ex(benchmark != NULL, 1);
+		if (benchmark == NULL)
+			return 1;
 		struct xccdf_item *value = xccdf_benchmark_get_item(benchmark, sub_idref);
 
 		const char *result = NULL;
@@ -124,11 +127,14 @@ static int _xccdf_text_substitution_cb(xmlNode **node, void *user_data)
 		}
 
 		struct xccdf_policy *policy = data->policy;
-		assume_ex(policy != NULL, 1);
+		if (policy == NULL)
+			return 1;
 		struct xccdf_policy_model *model = xccdf_policy_get_model(policy);
-		assume_ex(model != NULL, 1);
+		if (model == NULL)
+			return 1;
 		struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(model);
-		assume_ex(benchmark != NULL, 1);
+		if (benchmark == NULL)
+			return 1;
 
 		const char *result = NULL;
 		if (strncmp(object_data, "#xccdf:value:", strlen("#xccdf:value:")) == 0) {

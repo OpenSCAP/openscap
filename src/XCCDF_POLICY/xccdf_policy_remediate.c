@@ -86,9 +86,11 @@ static const char *_get_interpret(const char *sys)
 static inline struct xccdf_item *_lookup_rule_for_rule_result(const struct xccdf_policy *policy, const struct xccdf_rule_result *rr)
 {
 	const struct xccdf_policy_model *model = xccdf_policy_get_model(policy);
-	assume_ex(model != NULL, NULL);
+	if (model == NULL)
+		return NULL;
 	const struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(model);
-	assume_ex(model != NULL, NULL);
+	if (benchmark == NULL)
+		return NULL;
 	return xccdf_benchmark_get_item(benchmark, xccdf_rule_result_get_idref(rr));
 }
 
@@ -104,7 +106,8 @@ static inline struct xccdf_fix *_find_suitable_fix(struct xccdf_policy *policy, 
 	 */
 	struct xccdf_fix *fix = NULL;
 	const struct xccdf_item *rule = _lookup_rule_for_rule_result(policy, rr);
-	assume_ex(rule != NULL, NULL);
+	if (rule == NULL)
+		return NULL;
 	struct xccdf_fix_iterator *fix_it = xccdf_rule_get_fixes((const struct xccdf_rule *) rule);
 	if (xccdf_fix_iterator_has_more(fix_it))
 		fix = xccdf_fix_iterator_next(fix_it);
