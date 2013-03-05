@@ -13,12 +13,13 @@ function _oscap {
 
 	# commands for individual modules
     local -A cmds=()
-    cmds[oscap]="oval xccdf cpe cvss cve"
+    cmds[oscap]="info oval xccdf ds cpe cvss cve"
     cmds[oscap:oval]="collect eval analyse validate generate"
     cmds[oscap:oval:generate]="report"
     cmds[oscap:cvss]="score describe"
     cmds[oscap:xccdf]="eval remediate resolve validate export-oval-variables generate"
     cmds[oscap:xccdf:generate]="report guide"
+    cmds[oscap:ds]="sds-compose sds-split sds-validate rds-create rds-validate"
     cmds[oscap:cpe]="check match"
     cmds[oscap:cve]="validate find"
 
@@ -26,13 +27,13 @@ function _oscap {
     local -A opts=()
 	opts[oscap]="--version --quiet --help -V -q -h"
     opts[oscap:oval:validate]="--version --definitions --variables --syschar --results --directives --schematron"
-    opts[oscap:oval:eval]="--id --variables --directives --results --report --skip-valid"
+    opts[oscap:oval:eval]="--datastream-id --oval-id --id --variables --directives --results --report --skip-valid"
     opts[oscap:oval:analyse]="--variables --directives"
     opts[oscap:oval:collect]="--variables"
     opts[oscap:oval:generate:report]="-o --output"
-    opts[oscap:xccdf:eval]="--skip-valid --profile --results --report --oval-results --export-variables --fetch-remote-resources --remediate"
+    opts[oscap:xccdf:eval]="--skip-valid --datastream-id --xccdf-id --profile --results --results-arf --report --oval-results --export-variables --fetch-remote-resources --remediate"
     opts[oscap:xccdf:validate]=""
-    opts[oscap:xccdf:export-oval-variables]="--profile"
+    opts[oscap:xccdf:export-oval-variables]="--datastream-id --xccdf-id --profile"
     opts[oscap:xccdf:remediate]="--result-id"
     opts[oscap:xccdf:resolve]="-o --output -f --force"
     opts[oscap:xccdf:generate]="--profile --format"
@@ -40,6 +41,7 @@ function _oscap {
     opts[oscap:xccdf:generate:guide]="-o --output --hide-profile-info --profile --format"
     opts[oscap:xccdf:generate:fix]="-o --output --template --profile --result-id --profile"
     opts[oscap:xccdf:generate:custom]="-o --output --stylesheet"
+    opts[oscap:ds:sds-split]="--datastream-id --xccdf-id"
     opts[oscap:cvss:score]=""
     opts[oscap:cvss:describe]=""
 
