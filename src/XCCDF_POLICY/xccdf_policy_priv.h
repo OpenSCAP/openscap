@@ -92,6 +92,16 @@ void xccdf_policy_model_unregister_callbacks(struct xccdf_policy_model *model, c
  */
 int xccdf_policy_remediate(struct xccdf_policy *policy, struct xccdf_result *result);
 
+/**
+ * Report given "rule" to all callbacks with given sysname registered with the policy.
+ * @memberof xccdf_policy
+ * @param policy XCCDF Policy
+ * @param sysname identifier of the reporting callback
+ * @param rule pointer to xccdf:Rule or xccdf:rule-result
+ * @returns zero on success. Non zero value may indicate user interuption or error.
+ */
+int xccdf_policy_report_cb(struct xccdf_policy *policy, const char *sysname, void *rule);
+
 OSCAP_HIDDEN_END;
 
 #endif

@@ -464,7 +464,7 @@ _xccdf_policy_get_namesfor_href(struct xccdf_policy *policy, const char *sysname
 	return result;
 }
 
-static int xccdf_policy_report_cb(struct xccdf_policy * policy, const char * sysname, void *rule)
+int xccdf_policy_report_cb(struct xccdf_policy *policy, const char *sysname, void *rule)
 {
     int retval = 0;
     struct oscap_iterator * cb_it = _xccdf_policy_get_callbacks_by_sysname(policy, sysname);
