@@ -20,7 +20,7 @@ function _oscap {
     cmds[oscap:xccdf]="eval remediate resolve validate export-oval-variables generate"
     cmds[oscap:xccdf:generate]="report guide"
     cmds[oscap:ds]="sds-compose sds-split sds-validate rds-create rds-validate"
-    cmds[oscap:cpe]="check match"
+    cmds[oscap:cpe]="check match validate"
     cmds[oscap:cve]="validate find"
 
     # command options
@@ -31,7 +31,7 @@ function _oscap {
     opts[oscap:oval:analyse]="--variables --directives"
     opts[oscap:oval:collect]="--variables"
     opts[oscap:oval:generate:report]="-o --output"
-    opts[oscap:xccdf:eval]="--skip-valid --datastream-id --xccdf-id --profile --results --results-arf --report --oval-results --export-variables --fetch-remote-resources --remediate"
+    opts[oscap:xccdf:eval]="--skip-valid --datastream-id --xccdf-id --profile --results --results-arf --report --oval-results --export-variables --fetch-remote-resources --remediate --cpe"
     opts[oscap:xccdf:validate]=""
     opts[oscap:xccdf:export-oval-variables]="--datastream-id --xccdf-id --profile"
     opts[oscap:xccdf:remediate]="--result-id"
