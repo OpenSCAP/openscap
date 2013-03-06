@@ -512,7 +512,8 @@ static int ds_sds_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, co
 		char* buffer = oscap_alloc(length + 1);
 		fread(buffer, length, 1, f);
 		buffer[length] = '\0';
-		xmlNewTextChild(component, NULL, BAD_CAST "plain-text", BAD_CAST buffer);
+		xmlNsPtr esds_ns = xmlNewNs(component, BAD_CAST "http://open-scap.org/extended-datastream", BAD_CAST "oscap-esds");
+		xmlNewTextChild(component, esds_ns, BAD_CAST "plain-text", BAD_CAST buffer);
 		oscap_free(buffer);
 		fclose(f);
 	}
