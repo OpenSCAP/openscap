@@ -1,0 +1,7 @@
+There is no XML here, move along!
+
+><>><
+<fake-xml></fake-xml>
+<!CDATA[[ fake CDATA ]]>
+
+&amp;&;
