@@ -172,35 +172,55 @@ static int ds_sds_dump_component(const char* component_id, xmlDocPtr doc, const 
 		return -1;
 	}
 
-	xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
+	// If the inner root is plain-text, we have to treat it in a special way
+	if (strcmp((const char*)inner_root->name, "plain-text") == 0) {
+		// TODO: should we check whether the component is extended?
+		xmlChar* text_contents = xmlNodeGetContent(inner_root);
+		FILE* output_file = fopen(filename, "w");
+		if (output_file == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_XML, "Error while dumping plain-text component (id='%s') to file '%s'.", component_id, filename);
+			xmlFree(text_contents);
+			return -1;
+		}
+		// TODO: error checking, fprintf should return strlen((const char*)text_contents)
+		fprintf(output_file, "%s", text_contents);
+		fclose(output_file);
+		xmlFree(text_contents);
+	}
+	// Otherwise we create a new XML doc we will dump the contents to.
+	// We can't just dump node "innerXML" because namespaces have to be
+	// handled.
+	else {
+		xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
 
-	xmlDocPtr new_doc = xmlNewDoc(BAD_CAST "1.0");
-	xmlNodePtr res_node = NULL;
-	if (xmlDOMWrapCloneNode(wrap_ctxt, doc, inner_root, &res_node, new_doc, NULL, 1, 0) != 0)
-	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Error when cloning node while dumping component (id='%s').", component_id);
+		xmlDocPtr new_doc = xmlNewDoc(BAD_CAST "1.0");
+		xmlNodePtr res_node = NULL;
+		if (xmlDOMWrapCloneNode(wrap_ctxt, doc, inner_root, &res_node, new_doc, NULL, 1, 0) != 0)
+		{
+			oscap_seterr(OSCAP_EFAMILY_XML, "Error when cloning node while dumping component (id='%s').", component_id);
+			xmlFreeDoc(new_doc);
+			xmlDOMWrapFreeCtxt(wrap_ctxt);
+			return -1;
+		}
+		xmlDocSetRootElement(new_doc, res_node);
+		if (xmlDOMWrapReconcileNamespaces(wrap_ctxt, res_node, 0) != 0)
+		{
+			oscap_seterr(OSCAP_EFAMILY_XML, "Internal libxml error when reconciling namespaces while dumping component (id='%s').", component_id);
+			xmlFreeDoc(new_doc);
+			xmlDOMWrapFreeCtxt(wrap_ctxt);
+			return -1;
+		}
+		if (xmlSaveFileEnc(filename, new_doc, "utf-8") == -1)
+		{
+			oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error when saving resulting DOM to file '%s' while dumping component (id='%s').", filename, component_id);
+			xmlFreeDoc(new_doc);
+			xmlDOMWrapFreeCtxt(wrap_ctxt);
+			return -1;
+		}
 		xmlFreeDoc(new_doc);
-		xmlDOMWrapFreeCtxt(wrap_ctxt);
-		return -1;
-	}
-	xmlDocSetRootElement(new_doc, res_node);
-	if (xmlDOMWrapReconcileNamespaces(wrap_ctxt, res_node, 0) != 0)
-	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Internal libxml error when reconciling namespaces while dumping component (id='%s').", component_id);
-		xmlFreeDoc(new_doc);
-		xmlDOMWrapFreeCtxt(wrap_ctxt);
-		return -1;
-	}
-	if (xmlSaveFileEnc(filename, new_doc, "utf-8") == -1)
-	{
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error when saving resulting DOM to file '%s' while dumping component (id='%s').", filename, component_id);
-		xmlFreeDoc(new_doc);
-		xmlDOMWrapFreeCtxt(wrap_ctxt);
-		return -1;
-	}
-	xmlFreeDoc(new_doc);
 
-	xmlDOMWrapFreeCtxt(wrap_ctxt);
+		xmlDOMWrapFreeCtxt(wrap_ctxt);
+	}
 
 	return 0;
 }
@@ -474,44 +494,63 @@ static int ds_sds_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, co
 
 	if (!component_doc)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Could not read/parse XML of given input file at path '%s'.", filepath);
-		xmlFreeNode(component);
-		return -1;
+		if (!extended) {
+			oscap_seterr(OSCAP_EFAMILY_XML, "Could not read/parse XML of given input file at path '%s'.", filepath);
+			xmlFreeNode(component);
+			return -1;
+		}
+
+		FILE* f = fopen(filepath, "r");
+		if (f == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_GLIBC, "Can't read plain text from file '%s'.", filepath);
+			return -1;
+		}
+
+		fseek(f, 0, SEEK_END);
+		int length = ftell(f);
+		fseek(f, 0, SEEK_SET);
+		char* buffer = oscap_alloc(length + 1);
+		fread(buffer, length, 1, f);
+		buffer[length] = '\0';
+		xmlNewTextChild(component, NULL, BAD_CAST "plain-text", BAD_CAST buffer);
+		oscap_free(buffer);
+		fclose(f);
 	}
+	else {
+		xmlNodePtr component_root = xmlDocGetRootElement(component_doc);
 
-	xmlNodePtr component_root = xmlDocGetRootElement(component_doc);
+		xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
 
-	xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
+		xmlNodePtr res_component_root = NULL;
+		if (xmlDOMWrapCloneNode(wrap_ctxt, component_doc, component_root, &res_component_root, doc, NULL, 1, 0) != 0)
+		{
+			oscap_seterr(OSCAP_EFAMILY_XML,
+					"Cannot clone node when adding component from file '%s' with id '%s' while "
+					"creating source datastream.", filepath, comp_id);
 
-	xmlNodePtr res_component_root = NULL;
-	if (xmlDOMWrapCloneNode(wrap_ctxt, component_doc, component_root, &res_component_root, doc, NULL, 1, 0) != 0)
-	{
-		oscap_seterr(OSCAP_EFAMILY_XML,
-				"Cannot clone node when adding component from file '%s' with id '%s' while "
-				"creating source datastream.", filepath, comp_id);
+			xmlDOMWrapFreeCtxt(wrap_ctxt);
+			xmlFreeDoc(component_doc);
+			xmlFreeNode(component);
+
+			return -1;
+		}
+		if (xmlDOMWrapReconcileNamespaces(wrap_ctxt, res_component_root, 0) != 0)
+		{
+			oscap_seterr(OSCAP_EFAMILY_XML,
+					"Cannot reconcile namespaces when adding component from file '%s' with id '%s' while "
+					"creating source datastream.", filepath, comp_id);
+
+			xmlDOMWrapFreeCtxt(wrap_ctxt);
+			xmlFreeDoc(component_doc);
+			xmlFreeNode(component);
+
+			return -1;
+		}
+
+		xmlAddChild(component, res_component_root);
 
 		xmlDOMWrapFreeCtxt(wrap_ctxt);
-		xmlFreeDoc(component_doc);
-		xmlFreeNode(component);
-
-		return -1;
 	}
-	if (xmlDOMWrapReconcileNamespaces(wrap_ctxt, res_component_root, 0) != 0)
-	{
-		oscap_seterr(OSCAP_EFAMILY_XML,
-				"Cannot reconcile namespaces when adding component from file '%s' with id '%s' while "
-				"creating source datastream.", filepath, comp_id);
-
-		xmlDOMWrapFreeCtxt(wrap_ctxt);
-		xmlFreeDoc(component_doc);
-		xmlFreeNode(component);
-
-		return -1;
-	}
-
-	xmlAddChild(component, res_component_root);
-
-	xmlDOMWrapFreeCtxt(wrap_ctxt);
 
 	xmlNodePtr doc_root = xmlDocGetRootElement(doc);
 
