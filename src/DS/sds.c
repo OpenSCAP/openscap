@@ -174,8 +174,8 @@ static int ds_sds_dump_component(const char* component_id, xmlDocPtr doc, const 
 
 	// If the inner root is plain-text, we have to treat it in a special way
 	if (strcmp((const char*)inner_root->name, "plain-text") == 0) {
-		// TODO: should we check whether the component is extended?
 		if (inner_root->children) {
+			// TODO: should we check whether the component is extended?
 			xmlChar* text_contents = xmlNodeGetContent(inner_root->children);
 			FILE* output_file = fopen(filename, "w");
 			if (output_file == NULL) {
@@ -514,14 +514,20 @@ static int ds_sds_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, co
 		}
 
 		fseek(f, 0, SEEK_END);
-		int length = ftell(f);
+		long int length = ftell(f);
 		fseek(f, 0, SEEK_SET);
-		char* buffer = oscap_alloc(length + 1);
-		fread(buffer, length, 1, f);
-		buffer[length] = '\0';
-		xmlNsPtr esds_ns = xmlNewNs(component, BAD_CAST "http://open-scap.org/extended-datastream", BAD_CAST "oscap-esds");
-		xmlNewTextChild(component, esds_ns, BAD_CAST "plain-text", BAD_CAST buffer);
-		oscap_free(buffer);
+		if (length >= 0) {
+			char* buffer = oscap_alloc((length + 1) * sizeof(char));
+			fread(buffer, length, 1, f);
+			buffer[length] = '\0';
+			xmlNsPtr esds_ns = xmlNewNs(component, BAD_CAST "http://open-scap.org/extended-datastream", BAD_CAST "oscap-esds");
+			xmlNewTextChild(component, esds_ns, BAD_CAST "plain-text", BAD_CAST buffer);
+			oscap_free(buffer);
+		}
+		else {
+			oscap_seterr(OSCAP_EFAMILY_GLIBC, "No data read from file '%s'.", filepath);
+			return -1;
+		}
 		fclose(f);
 	}
 	else {
