@@ -510,6 +510,7 @@ static int ds_sds_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, co
 		FILE* f = fopen(filepath, "r");
 		if (f == NULL) {
 			oscap_seterr(OSCAP_EFAMILY_GLIBC, "Can't read plain text from file '%s'.", filepath);
+			fclose(f);
 			return -1;
 		}
 
@@ -518,7 +519,12 @@ static int ds_sds_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, co
 		fseek(f, 0, SEEK_SET);
 		if (length >= 0) {
 			char* buffer = oscap_alloc((length + 1) * sizeof(char));
-			fread(buffer, length, 1, f);
+			if (fread(buffer, length, 1, f) != 1) {
+				oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error while reading from file '%s'.", filepath);
+				fclose(f);
+				return -1;
+			}
+			fclose(f);
 			buffer[length] = '\0';
 			xmlNsPtr esds_ns = xmlNewNs(component, BAD_CAST "http://open-scap.org/extended-datastream", BAD_CAST "oscap-esds");
 			xmlNewTextChild(component, esds_ns, BAD_CAST "plain-text", BAD_CAST buffer);
@@ -526,9 +532,9 @@ static int ds_sds_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, co
 		}
 		else {
 			oscap_seterr(OSCAP_EFAMILY_GLIBC, "No data read from file '%s'.", filepath);
+			fclose(f);
 			return -1;
 		}
-		fclose(f);
 	}
 	else {
 		xmlNodePtr component_root = xmlDocGetRootElement(component_doc);
