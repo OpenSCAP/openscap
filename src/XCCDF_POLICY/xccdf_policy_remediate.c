@@ -297,7 +297,7 @@ int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find xccdf:Rule/@id=%s.", xccdf_rule_result_get_idref(rr));
 	}
 	else {
-		xccdf_policy_report_cb(policy, XCCDF_POLICY_OUTCB_START, (void *) rule);
+		report = xccdf_policy_report_cb(policy, XCCDF_POLICY_OUTCB_START, (void *) rule);
 		if (report != 0)
 			return report;
 	}
