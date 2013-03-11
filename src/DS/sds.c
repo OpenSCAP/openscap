@@ -175,17 +175,24 @@ static int ds_sds_dump_component(const char* component_id, xmlDocPtr doc, const 
 	// If the inner root is plain-text, we have to treat it in a special way
 	if (strcmp((const char*)inner_root->name, "plain-text") == 0) {
 		// TODO: should we check whether the component is extended?
-		xmlChar* text_contents = xmlNodeGetContent(inner_root);
-		FILE* output_file = fopen(filename, "w");
-		if (output_file == NULL) {
-			oscap_seterr(OSCAP_EFAMILY_XML, "Error while dumping plain-text component (id='%s') to file '%s'.", component_id, filename);
+		if (inner_root->children) {
+			xmlChar* text_contents = xmlNodeGetContent(inner_root->children);
+			FILE* output_file = fopen(filename, "w");
+			if (output_file == NULL) {
+				oscap_seterr(OSCAP_EFAMILY_XML, "Error while dumping plain-text component (id='%s') to file '%s'.", component_id, filename);
+				xmlFree(text_contents);
+				return -1;
+			}
+			// TODO: error checking, fprintf should return strlen((const char*)text_contents)
+			fprintf(output_file, "%s", text_contents);
+			fclose(output_file);
 			xmlFree(text_contents);
+		}
+		else {
+			oscap_seterr(OSCAP_EFAMILY_XML, "Error while dumping plain-text component (id='%s') to file '%s'. "
+				"The plain-text element was empty!", component_id, filename);
 			return -1;
 		}
-		// TODO: error checking, fprintf should return strlen((const char*)text_contents)
-		fprintf(output_file, "%s", text_contents);
-		fclose(output_file);
-		xmlFree(text_contents);
 	}
 	// Otherwise we create a new XML doc we will dump the contents to.
 	// We can't just dump node "innerXML" because namespaces have to be
