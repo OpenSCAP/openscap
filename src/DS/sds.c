@@ -54,6 +54,7 @@
 static const char* datastream_ns_uri = "http://scap.nist.gov/schema/scap/source/1.2";
 static const char* xlink_ns_uri = "http://www.w3.org/1999/xlink";
 static const char* cat_ns_uri = "urn:oasis:names:tc:entity:xmlns:xml:catalog";
+static const char* sce_xccdf_ns_uri = "http://open-scap.org/page/SCE_xccdf_stream";
 
 static int mkdir_p(const char* path)
 {
@@ -172,14 +173,14 @@ static int ds_sds_dump_component(const char* component_id, xmlDocPtr doc, const 
 		return -1;
 	}
 
-	// If the inner root is plain-text, we have to treat it in a special way
-	if (strcmp((const char*)inner_root->name, "plain-text") == 0) {
+	// If the inner root is script, we have to treat it in a special way
+	if (strcmp((const char*)inner_root->name, "script") == 0) {
 		if (inner_root->children) {
 			// TODO: should we check whether the component is extended?
 			xmlChar* text_contents = xmlNodeGetContent(inner_root->children);
 			FILE* output_file = fopen(filename, "w");
 			if (output_file == NULL) {
-				oscap_seterr(OSCAP_EFAMILY_XML, "Error while dumping plain-text component (id='%s') to file '%s'.", component_id, filename);
+				oscap_seterr(OSCAP_EFAMILY_XML, "Error while dumping script component (id='%s') to file '%s'.", component_id, filename);
 				xmlFree(text_contents);
 				return -1;
 			}
@@ -189,8 +190,8 @@ static int ds_sds_dump_component(const char* component_id, xmlDocPtr doc, const 
 			xmlFree(text_contents);
 		}
 		else {
-			oscap_seterr(OSCAP_EFAMILY_XML, "Error while dumping plain-text component (id='%s') to file '%s'. "
-				"The plain-text element was empty!", component_id, filename);
+			oscap_seterr(OSCAP_EFAMILY_XML, "Error while dumping script component (id='%s') to file '%s'. "
+				"The script element was empty!", component_id, filename);
 			return -1;
 		}
 	}
@@ -526,8 +527,8 @@ static int ds_sds_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, co
 			}
 			fclose(f);
 			buffer[length] = '\0';
-			xmlNsPtr esds_ns = xmlNewNs(component, BAD_CAST "http://open-scap.org/extended-datastream", BAD_CAST "oscap-esds");
-			xmlNewTextChild(component, esds_ns, BAD_CAST "plain-text", BAD_CAST buffer);
+			xmlNsPtr local_ns = xmlNewNs(component, BAD_CAST sce_xccdf_ns_uri, BAD_CAST "oscap-sce-xccdf-steam");
+			xmlNewTextChild(component, local_ns, BAD_CAST "script", BAD_CAST buffer);
 			oscap_free(buffer);
 		}
 		else {
