@@ -187,6 +187,9 @@ static int ds_sds_dump_component(const char* component_id, xmlDocPtr doc, const 
 			// TODO: error checking, fprintf should return strlen((const char*)text_contents)
 			fprintf(output_file, "%s", text_contents ? (char*)text_contents : "");
 			fclose(output_file);
+			if (chmod(filename, strtol("0700", 0, 8)) != 0) {
+				oscap_seterr(OSCAP_EFAMILY_XML, "Failed to set executable permission on script (id='%s') that was split to '%s'.", component_id, filename);
+			}
 			xmlFree(text_contents);
 		}
 		else {
@@ -527,7 +530,7 @@ static int ds_sds_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, co
 			}
 			fclose(f);
 			buffer[length] = '\0';
-			xmlNsPtr local_ns = xmlNewNs(component, BAD_CAST sce_xccdf_ns_uri, BAD_CAST "oscap-sce-xccdf-steam");
+			xmlNsPtr local_ns = xmlNewNs(component, BAD_CAST sce_xccdf_ns_uri, BAD_CAST "oscap-sce-xccdf-stream");
 			xmlNewTextChild(component, local_ns, BAD_CAST "script", BAD_CAST buffer);
 			oscap_free(buffer);
 		}
