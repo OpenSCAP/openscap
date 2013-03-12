@@ -184,7 +184,7 @@ static int ds_sds_dump_component(const char* component_id, xmlDocPtr doc, const 
 				return -1;
 			}
 			// TODO: error checking, fprintf should return strlen((const char*)text_contents)
-			fprintf(output_file, "%s", text_contents);
+			fprintf(output_file, "%s", text_contents ? (char*)text_contents : "");
 			fclose(output_file);
 			xmlFree(text_contents);
 		}
