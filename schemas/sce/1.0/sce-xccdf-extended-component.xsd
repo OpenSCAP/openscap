@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://open-scap.org/page/SCE_xccdf_stream"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:stream="http://open-scap.org/page/SCE_xccdf_stream"
+    elementFormDefault="qualified">
+    <xs:annotation>
+        <xs:documentation>
+            Describes the form of the ScriptCheckEngine SCAP 1.2 datastream component data type.
+        </xs:documentation>
+    </xs:annotation>
+    <xs:element name="script" type="stream:ScriptDataType"></xs:element>
+    <xs:complexType name="ScriptDataType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="lang" type="stream:LangEnumeration" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:simpleType name="LangEnumeration">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="AppleScript"/>
+            <xs:enumeration value="Jython"/>
+            <xs:enumeration value="Perl"/>
+            <xs:enumeration value="Powershell"/>
+            <xs:enumeration value="Python"/>
+            <xs:enumeration value="Ruby"/>
+            <xs:enumeration value="Shell"/>
+            <xs:enumeration value="Tcl"/>
+            <xs:enumeration value="Visual Basic"/>
+            <xs:enumeration value="Windows Batch"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
