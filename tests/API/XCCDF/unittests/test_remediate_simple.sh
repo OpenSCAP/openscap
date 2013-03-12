@@ -16,6 +16,7 @@ stderr=$(mktemp -t ${name}.out.XXXXXX)
 tmpdir=$(mktemp -d -t ${name}.out.XXXXXX)
 oval=test_remediation_simple.oval.xml
 cp $srcdir/$oval $tmpdir # Accomodate scanning by xccdf placed in the same temp dir.
+chmod u+w $tmpdir/$oval
 result=$(mktemp --tmpdir=$tmpdir ${name}.out.XXXXXX)
 echo "Stderr file = $stderr"
 echo "Result file = $stderr"
