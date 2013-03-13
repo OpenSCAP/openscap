@@ -512,9 +512,8 @@ static int ds_sds_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, co
 		}
 
 		FILE* f = fopen(filepath, "r");
-		if (f == NULL) {
+		if (!f) {
 			oscap_seterr(OSCAP_EFAMILY_GLIBC, "Can't read plain text from file '%s'.", filepath);
-			fclose(f);
 			return -1;
 		}
 
