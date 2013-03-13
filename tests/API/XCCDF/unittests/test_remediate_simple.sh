@@ -4,14 +4,6 @@ set -e
 set -o pipefail
 
 name=$(basename $0 .sh)
-
-# Check the input data.
-result=$srcdir/${name}.xccdf.xml
-assert_exists 3 '//TestResult'
-assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]'
-assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]'
-assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile002"]'
-
 stderr=$(mktemp -t ${name}.out.XXXXXX)
 tmpdir=$(mktemp -d -t ${name}.out.XXXXXX)
 oval=test_remediation_simple.oval.xml
@@ -73,6 +65,35 @@ assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profil
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile003"]/rule-result/fix'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile003"]/rule-result/message'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile003"]/rule-result/message[text()="Fix execution comleted and returned: 0"]'
+
+
+# Assert that input data was not modified.
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/title'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/title[text()="OSCAP Scan Result"]'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/target'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/target[text()="x.x.example.com"]'
+assert_exists 2 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/target-address'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/target-address[text()="127.0.0.1"]'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/target-address[text()="::1"]'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/target-facts'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/target-facts/fact'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/rule-result'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/rule-result/result'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/rule-result/result[text()="fail"]'
+assert_exists 0 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/rule-result/fix'
+assert_exists 0 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/rule-result/message'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/result'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/result[text()="fail"]'
+assert_exists 0 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/message'
+assert_exists 0 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile002"]'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile002"]/rule-result'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile002"]/rule-result/result'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile002"]/rule-result/result[text()="notchecked"]'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile002"]/rule-result/message'
+assert_exists 0 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile002"]/rule-result/fix'
 
 rm $result
 rm $tmpdir/$oval
