@@ -125,6 +125,20 @@ XCCDF_LISTMANIP(result, score, scores)
 OSCAP_ITERATOR_GEN(xccdf_result)
 OSCAP_ITERATOR_REMOVE_F(xccdf_result)
 
+static inline void _xccdf_result_fill_scanner(struct xccdf_result *result)
+{
+	struct xccdf_target_fact *fact = NULL;
+	fact = xccdf_target_fact_new();
+	xccdf_target_fact_set_name(fact, "urn:xccdf:fact:scanner:name");
+	xccdf_target_fact_set_string(fact, "OpenSCAP");
+	xccdf_result_add_target_fact(result, fact);
+
+	fact = xccdf_target_fact_new();
+	xccdf_target_fact_set_name(fact, "urn:xccdf:fact:scanner:version");
+	xccdf_target_fact_set_string(fact, oscap_get_version());
+	xccdf_result_add_target_fact(result, fact);
+}
+
 void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 {
 	struct utsname sname;
@@ -136,6 +150,7 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 
 	/* store target name */
 	xccdf_result_add_target(result, sname.nodename);
+	_xccdf_result_fill_scanner(result);
 
 #if defined(__linux__)
 
