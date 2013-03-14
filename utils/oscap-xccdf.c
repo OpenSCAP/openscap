@@ -495,7 +495,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 #endif
 
 	if (action->remediate) {
-		printf("\n --- Starting Remediation ---\n");
+		if (!action->progress)
+			printf("\n --- Starting Remediation ---\n");
 		xccdf_session_remediate(session);
 	}
 
