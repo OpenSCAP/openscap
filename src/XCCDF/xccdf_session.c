@@ -1160,6 +1160,7 @@ int xccdf_session_remediate(struct xccdf_session *session)
 	xccdf_policy_model_unregister_callbacks(session->xccdf.policy_model, oval_sysname);
 	if ((res = xccdf_session_load_oval(session)) != 0)
 		return res;
+	xccdf_result_fill_sysinfo(session->xccdf.result);
 	return xccdf_policy_remediate(xccdf_session_get_xccdf_policy(session), session->xccdf.result);
 }
 

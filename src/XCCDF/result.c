@@ -150,6 +150,20 @@ static inline void _xccdf_result_fill_identity(struct xccdf_result *result)
 	xccdf_result_add_identity(result, id);
 }
 
+static inline void _xccdf_result_clear_metadata(struct xccdf_item *result)
+{
+	oscap_list_free(result->sub.result.targets, oscap_free);
+	oscap_list_free(result->sub.result.target_addresses, oscap_free);
+	oscap_list_free(result->sub.result.target_facts, (oscap_destruct_func) xccdf_target_fact_free);
+	oscap_list_free(result->sub.result.identities, (oscap_destruct_func) xccdf_identity_free);
+	oscap_create_lists(
+		&result->sub.result.targets,
+		&result->sub.result.target_addresses,
+		&result->sub.result.target_facts,
+		&result->sub.result.identities,
+		NULL);
+}
+
 void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 {
 	struct utsname sname;
@@ -159,6 +173,7 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 	if (uname(&sname) == -1)
 		return;
 
+	_xccdf_result_clear_metadata(XITEM(result));
 	/* store target name */
 	xccdf_result_add_target(result, sname.nodename);
 	_xccdf_result_fill_scanner(result);
