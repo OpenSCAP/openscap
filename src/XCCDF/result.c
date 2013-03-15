@@ -139,6 +139,17 @@ static inline void _xccdf_result_fill_scanner(struct xccdf_result *result)
 	xccdf_result_add_target_fact(result, fact);
 }
 
+static inline void _xccdf_result_fill_identity(struct xccdf_result *result)
+{
+	struct xccdf_identity *id = xccdf_identity_new();
+	// Reasoning here is that OpenSCAP does not authenticate user
+	// nor it grants she any additional privileges
+	xccdf_identity_set_authenticated(id, 0);
+	xccdf_identity_set_privileged(id, 0);
+	xccdf_identity_set_name(id, getlogin());
+	xccdf_result_add_identity(result, id);
+}
+
 void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 {
 	struct utsname sname;
@@ -151,6 +162,7 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 	/* store target name */
 	xccdf_result_add_target(result, sname.nodename);
 	_xccdf_result_fill_scanner(result);
+	_xccdf_result_fill_identity(result);
 
 #if defined(__linux__)
 
