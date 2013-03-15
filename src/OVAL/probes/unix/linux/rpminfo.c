@@ -57,6 +57,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <regex.h>
 
 /* RPM headers */
 #include <rpm/rpmdb.h>
@@ -110,6 +111,8 @@ struct rpminfo_global {
 };
 
 static struct rpminfo_global g_rpm;
+static const char g_keyid_regex_string[] = "Key ID [a-fA-F0-9]{16}";
+static regex_t g_keyid_regex;
 
 static void __rpminfo_rep_free (struct rpminfo_rep *ptr)
 {
@@ -127,6 +130,7 @@ static void pkgh2rep (Header h, struct rpminfo_rep *r)
         errmsg_t rpmerr;
         char *str, *sid;
         size_t len;
+	regmatch_t keyid_match[1];
 
         assume_d (h != NULL, /* void */);
         assume_d (r != NULL, /* void */);
@@ -159,8 +163,25 @@ static void pkgh2rep (Header h, struct rpminfo_rep *r)
         r->evr = str;
 
         str = headerFormat (h, "%|SIGGPG?{%{SIGGPG:pgpsig}}:{%{SIGPGP:pgpsig}}|", &rpmerr);
-        sid = strrchr (str, ' ');
-        r->signature_keyid = (sid != NULL ? strdup (sid+1) : strdup ("0"));
+
+	if (regexec(&g_keyid_regex, str, 1, keyid_match, 0) != 0) {
+		sid = NULL;
+		dW("Failed to extract the Key ID value: regex=\"%s\", string=\"%s\"\n",
+		   g_keyid_regex_string, str);
+	} else {
+		size_t keyid_start, keyid_length;
+
+		if (keyid_match[0].rm_so < 0 || keyid_match[0].rm_eo < 0)
+			sid = NULL;
+		else {
+			keyid_start = keyid_match[0].rm_so + strlen("Key ID ");
+			keyid_length = keyid_match[0].rm_eo - keyid_start;
+			sid = str + keyid_start;
+			sid[keyid_length] = '\0';
+		}
+	}
+
+        r->signature_keyid = strdup(sid != NULL ? sid : "0");
         oscap_free (str);
 }
 
@@ -272,8 +293,12 @@ void *probe_init (void)
         }
 
         g_rpm.rpmts = rpmtsCreate();
-
         pthread_mutex_init (&(g_rpm.mutex), NULL);
+
+	if (regcomp(&g_keyid_regex, g_keyid_regex_string, REG_EXTENDED) != 0) {
+		dE("regcomp(%s) failed.\n");
+		return NULL;
+	}
 
         return ((void *)&g_rpm);
 }
@@ -288,6 +313,7 @@ void probe_fini (void *ptr)
         rpmFreeMacros(NULL);
         rpmlogClose();
         pthread_mutex_destroy (&(r->mutex));
+	regfree(&g_keyid_regex);
 
         return;
 }
