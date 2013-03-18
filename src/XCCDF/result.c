@@ -1198,4 +1198,29 @@ void xccdf_result_dump(struct xccdf_result *res, int depth)
 	}
 }
 
+/*
+ * @returns pointer to text representation of the current local time
+ * and NULL on failure. The string is statically allocated and might
+ * be overwritten on subsequent calls to this function
+ */
+static inline const char *_get_timestamp(void)
+{
+	static char timestamp[] = "yyyy-mm-ddThh:mm:ss";
+	time_t tm;
+	struct tm *lt;
 
+	tm = time(NULL);
+	lt = localtime(&tm);
+	snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
+		1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday,
+		lt->tm_hour, lt->tm_min, lt->tm_sec);
+	return timestamp;
+}
+
+#define XCCDF_CURRENT_TIME_SETTER(TYPE, BOUND) \
+	int xccdf_##TYPE##_set##BOUND##time_current(struct xccdf_##TYPE *r) \
+	{ return xccdf_##TYPE##_set##BOUND##time(r, _get_timestamp()); }
+
+XCCDF_CURRENT_TIME_SETTER(rule_result,_)
+XCCDF_CURRENT_TIME_SETTER(result,_start_)
+XCCDF_CURRENT_TIME_SETTER(result,_end_)

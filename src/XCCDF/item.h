@@ -475,6 +475,9 @@ struct xccdf_model *xccdf_model_new_xml(xmlTextReaderPtr reader);
 void xccdf_cstring_dump(const char *data, int depth);
 void xccdf_result_dump(struct xccdf_result *res, int depth);
 struct xccdf_result *xccdf_result_new_parse(xmlTextReaderPtr reader);
+int xccdf_rule_result_set_time_current(struct xccdf_rule_result *item);
+int xccdf_result_set_start_time_current(struct xccdf_result *item);
+int xccdf_result_set_end_time_current(struct xccdf_result *item);
 
 
 struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader);

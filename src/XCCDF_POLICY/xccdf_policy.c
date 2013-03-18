@@ -30,7 +30,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h> /* For isnan() */
-#include <time.h> /* For timestamps in rule results and TestResult */
 #include <libgen.h>
 
 #include "xccdf_policy_priv.h"
@@ -706,9 +705,6 @@ static struct xccdf_rule_result * _xccdf_rule_result_new_from_rule(const struct 
 								  const char *message)
 {
 	struct xccdf_rule_result *rule_ritem = xccdf_rule_result_new();
-	struct tm *lt;
-	time_t tm;
-	char timestamp[] = "yyyy-mm-ddThh:mm:ss";
 
 	/* --Set rule-- */
         xccdf_rule_result_set_result(rule_ritem, eval_result);
@@ -718,11 +714,7 @@ static struct xccdf_rule_result * _xccdf_rule_result_new_from_rule(const struct 
 	xccdf_rule_result_set_severity(rule_ritem, xccdf_rule_get_severity(rule));
 	xccdf_rule_result_set_role(rule_ritem, xccdf_rule_get_role(rule));
 
-	tm = time(NULL);
-	lt = localtime(&tm);
-	snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
-		 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
-	xccdf_rule_result_set_time(rule_ritem, timestamp);
+	xccdf_rule_result_set_time_current(rule_ritem);
 
 	/* --Ident-- */
 	struct xccdf_ident_iterator * ident_it = xccdf_rule_get_idents(rule);
@@ -2172,20 +2164,13 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
     struct xccdf_benchmark          * benchmark;
     int                               ret       = -1;
     const char			    * doc_version = NULL;
-    struct tm			    * lt;
-    time_t			    tm;
-    char			    timestamp[] = "yyyy-mm-ddThh:mm:ss";
 
     __attribute__nonnull__(policy);
 
     /* Add result to policy */
     struct xccdf_result * result = xccdf_result_new();
 
-    tm = time(NULL);
-    lt = localtime(&tm);
-    snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
-	     1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
-    xccdf_result_set_start_time(result, timestamp);
+	xccdf_result_set_start_time_current(result);
 
     /** Set ID of TestResult */
     const char * id = NULL;
@@ -2238,12 +2223,7 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
 
     xccdf_policy_add_result(policy, result);
 
-    tm = time(NULL);
-    lt = localtime(&tm);
-    snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
-	     1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
-
-    xccdf_result_set_end_time(result, timestamp);
+	xccdf_result_set_end_time_current(result);
 
     return result;
 }
