@@ -1188,6 +1188,7 @@ int xccdf_session_build_policy_from_testresult(struct xccdf_session *session, co
 	if (xccdf_policy == NULL)
 		return 1;
 	session->xccdf.result = xccdf_result_clone(result);
+	xccdf_result_set_start_time_current(session->xccdf.result);
 	xccdf_policy_add_result(xccdf_policy, session->xccdf.result);
 	return 0;
 }

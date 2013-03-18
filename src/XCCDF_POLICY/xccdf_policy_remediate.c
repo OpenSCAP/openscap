@@ -29,6 +29,7 @@
 
 #include <libxml/tree.h>
 
+#include "XCCDF/item.h"
 #include "common/_error.h"
 #include "common/assume.h"
 #include "common/debug_priv.h"
@@ -317,6 +318,7 @@ int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf
 		}
 	}
 
+	xccdf_rule_result_set_time_current(rr);
 	return rule == NULL ? 0 : xccdf_policy_report_cb(policy, XCCDF_POLICY_OUTCB_END, (void *) rr);
 }
 
@@ -329,5 +331,6 @@ int xccdf_policy_remediate(struct xccdf_policy *policy, struct xccdf_result *res
 		xccdf_policy_rule_result_remediate(policy, rr, NULL, result);
 	}
 	xccdf_rule_result_iterator_free(rr_it);
+	xccdf_result_set_end_time_current(result);
 	return 0;
 }
