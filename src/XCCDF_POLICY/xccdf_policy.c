@@ -979,7 +979,7 @@ bool xccdf_policy_model_platforms_are_applicable(struct xccdf_policy_model *mode
 	return false;
 }
 
-static bool xccdf_policy_model_item_is_applicable(struct xccdf_policy_model* model, struct xccdf_item* item)
+bool xccdf_policy_model_item_is_applicable(struct xccdf_policy_model *model, struct xccdf_item *item)
 {
 	struct xccdf_item* parent = xccdf_item_get_parent(item);
 	if (!parent || xccdf_policy_model_item_is_applicable(model, parent))

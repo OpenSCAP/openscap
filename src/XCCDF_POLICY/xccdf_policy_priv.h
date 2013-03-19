@@ -120,6 +120,15 @@ struct xccdf_benchmark *xccdf_policy_get_benchmark(const struct xccdf_policy *po
  */
 bool xccdf_policy_model_platforms_are_applicable(struct xccdf_policy_model *model, struct oscap_string_iterator *platforms);
 
+/**
+ * Query whether the given  item is applicable within given policy
+ * @memberof xccdf_policy_model
+ * @param model XCCDF Policy Model
+ * @param item XCCDF Item
+ * @returns true if the given item is applicable
+ */
+bool xccdf_policy_model_item_is_applicable(struct xccdf_policy_model *model, struct xccdf_item *item);
+
 OSCAP_HIDDEN_END;
 
 #endif
