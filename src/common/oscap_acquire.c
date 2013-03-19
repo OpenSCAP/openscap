@@ -90,7 +90,7 @@ oscap_acquire_temp_file(const char *dir, const char *template, char **filename)
 	fd = mkstemp(*filename);
 	(void) umask(old_mode);
 	if (fd < 1) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "mkstemp failed, %s", strerror(errno));
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "mkstemp for %s failed: %s", *filename, strerror(errno));
 		free(*filename);
 		*filename = NULL;
 	}
