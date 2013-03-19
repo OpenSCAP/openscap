@@ -859,10 +859,8 @@ static bool _xccdf_policy_cpe_dict_cb(struct cpe_name* name, void* usr)
 	return ret;
 }
 
-static bool xccdf_policy_model_item_is_applicable_dict(struct xccdf_policy_model* model, struct cpe_dict_model* dict, struct xccdf_item* item)
+static bool xccdf_policy_model_platforms_are_applicable_dict(struct xccdf_policy_model *model, struct cpe_dict_model *dict, struct oscap_string_iterator *platforms)
 {
-	struct oscap_string_iterator* platforms = xccdf_item_get_platforms(item);
-
 	// at this point we know that the item has 1 or more platforms specified
 	bool ret = false;
 
@@ -891,15 +889,13 @@ static bool xccdf_policy_model_item_is_applicable_dict(struct xccdf_policy_model
 			break;
 		}
 	}
-	oscap_string_iterator_free(platforms);
+	oscap_string_iterator_reset(platforms);
 
 	return ret;
 }
 
-static bool xccdf_policy_model_item_is_applicable_lang_model(struct xccdf_policy_model* model, struct cpe_lang_model* lang_model, struct xccdf_item* item)
+static bool xccdf_policy_model_platforms_are_applicable_lang_model(struct xccdf_policy_model *model, struct cpe_lang_model *lang_model, struct oscap_string_iterator *platforms)
 {
-	struct oscap_string_iterator* platforms = xccdf_item_get_platforms(item);
-
 	// at this point we know that the item has 1 or more platforms specified
 	bool ret = false;
 
@@ -931,7 +927,7 @@ static bool xccdf_policy_model_item_is_applicable_lang_model(struct xccdf_policy
 			break;
 		}
 	}
-	oscap_string_iterator_free(platforms);
+	oscap_string_iterator_reset(platforms);
 
 	return ret;
 }
@@ -947,7 +943,6 @@ static bool xccdf_policy_model_item_is_applicable(struct xccdf_policy_model* mod
 		// it should be applicable to all platforms
 		struct oscap_string_iterator* platforms = xccdf_item_get_platforms(item);
 		bool has_platforms = oscap_string_iterator_has_more(platforms);
-		oscap_string_iterator_free(platforms);
 
 		bool ret = true;
 
@@ -964,7 +959,7 @@ static bool xccdf_policy_model_item_is_applicable(struct xccdf_policy_model* mod
 
 			struct cpe_lang_model* embedded_lang_model = xccdf_benchmark_get_cpe_lang_model(benchmark);
 			if (embedded_lang_model != NULL) {
-				ret = xccdf_policy_model_item_is_applicable_lang_model(model, embedded_lang_model, item);
+				ret = xccdf_policy_model_platforms_are_applicable_lang_model(model, embedded_lang_model, platforms);
 			}
 			if (ret)
 				break;
@@ -972,7 +967,7 @@ static bool xccdf_policy_model_item_is_applicable(struct xccdf_policy_model* mod
 			struct oscap_iterator* lang_models = oscap_iterator_new(model->cpe_lang_models);
 			while (!ret && oscap_iterator_has_more(lang_models)) {
 				struct cpe_lang_model *lang_model = (struct cpe_lang_model*)oscap_iterator_next(lang_models);
-				ret = xccdf_policy_model_item_is_applicable_lang_model(model, lang_model, item);
+				ret = xccdf_policy_model_platforms_are_applicable_lang_model(model, lang_model, platforms);
 			}
 			oscap_iterator_free(lang_models);
 			if (ret)
@@ -980,7 +975,7 @@ static bool xccdf_policy_model_item_is_applicable(struct xccdf_policy_model* mod
 
 			struct cpe_dict_model* embedded_dict = xccdf_benchmark_get_cpe_list(benchmark);
 			if (embedded_dict != NULL) {
-				ret = xccdf_policy_model_item_is_applicable_dict(model, embedded_dict, item);
+				ret = xccdf_policy_model_platforms_are_applicable_dict(model, embedded_dict, platforms);
 			}
 			if (ret)
 				break;
@@ -988,11 +983,12 @@ static bool xccdf_policy_model_item_is_applicable(struct xccdf_policy_model* mod
 			struct oscap_iterator* dicts = oscap_iterator_new(model->cpe_dicts);
 			while (!ret && oscap_iterator_has_more(dicts)) {
 				struct cpe_dict_model *dict = (struct cpe_dict_model*)oscap_iterator_next(dicts);
-				ret = xccdf_policy_model_item_is_applicable_dict(model, dict, item);
+				ret = xccdf_policy_model_platforms_are_applicable_dict(model, dict, platforms);
 			}
 			oscap_iterator_free(dicts);
 			break;
 		}
+		oscap_string_iterator_free(platforms);
 
 		return ret;
 	}
