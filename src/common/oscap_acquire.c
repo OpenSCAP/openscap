@@ -110,7 +110,7 @@ oscap_acquire_url_download(const char *temp_dir, const char *url)
 	CURL *curl;
 	CURLcode res;
 
-	output_fd = oscap_acquire_temp_file(temp_dir, TEMP_DIR_TEMPLATE, &output_filename);
+	output_fd = oscap_acquire_temp_file(temp_dir, TEMP_URL_TEMPLATE, &output_filename);
 	if (output_fd == -1) {
 		return NULL;
 	}
