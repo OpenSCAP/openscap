@@ -1,3 +1,11 @@
+openscap-0.9.5							19-03-2013
+ - oscap xccdf remediate (new oscap module which introduces offline
+   remediation; the remediation based on existing xccdf:TestResult file)
+ - added support for SCE into DataStream (SCE scripts can now be
+   embedded into the DataStream file similarly as OVAL can)
+ - improved bash completion and documentation
+ - bug fixes
+
 openscap-0.9.4							26-02-2013
  - high Level API
  - improved Text Substitution Processing
