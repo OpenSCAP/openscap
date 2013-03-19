@@ -110,6 +110,16 @@ int xccdf_policy_report_cb(struct xccdf_policy *policy, const char *sysname, voi
  */
 struct xccdf_benchmark *xccdf_policy_get_benchmark(const struct xccdf_policy *policy);
 
+/**
+ * Query whether the given list platforms qualifies as 'applicable'. When considering
+ * policy_model CPE settings in the given policy model
+ * @memberof xccdf_policy_model
+ * @param model XCCDF Policy Model
+ * @param platfroms list of CPE platform identifiers
+ * @returns true if the list of platforms qualifies as 'applicable'
+ */
+bool xccdf_policy_model_platforms_are_applicable(struct xccdf_policy_model *model, struct oscap_string_iterator *platforms);
+
 OSCAP_HIDDEN_END;
 
 #endif

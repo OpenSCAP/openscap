@@ -932,62 +932,60 @@ static bool xccdf_policy_model_platforms_are_applicable_lang_model(struct xccdf_
 	return ret;
 }
 
+bool xccdf_policy_model_platforms_are_applicable(struct xccdf_policy_model *model, struct oscap_string_iterator *platforms)
+{
+	// we have to check whether the item has any platforms at all, if it has none
+	// it should be applicable to all platforms
+	if (!oscap_string_iterator_has_more(platforms))
+		return true;
+
+	// We do not check whether the platform entries are valid platform refs
+	// or CPE names. We let the policy_model methods do that instead.
+	// Therefore we check all 4 (!) places where a platform may match.
+	// CPE2 takes precedence over CPE1 in this implementation. This is not
+	// dictated by the specification, it's an arbitrary choice.
+	struct xccdf_benchmark* benchmark = xccdf_policy_model_get_benchmark(model);
+	struct cpe_lang_model *embedded_lang_model = xccdf_benchmark_get_cpe_lang_model(benchmark);
+	if (embedded_lang_model != NULL) {
+		if (xccdf_policy_model_platforms_are_applicable_lang_model(model, embedded_lang_model, platforms))
+			return true;
+	}
+
+	struct oscap_iterator *lang_models = oscap_iterator_new(model->cpe_lang_models);
+	while (oscap_iterator_has_more(lang_models)) {
+		struct cpe_lang_model *lang_model = (struct cpe_lang_model *) oscap_iterator_next(lang_models);
+		if (xccdf_policy_model_platforms_are_applicable_lang_model(model, lang_model, platforms)) {
+			oscap_iterator_free(lang_models);
+			return true;
+		}
+	}
+	oscap_iterator_free(lang_models);
+
+	struct cpe_dict_model *embedded_dict = xccdf_benchmark_get_cpe_list(benchmark);
+	if (embedded_dict != NULL) {
+		if (xccdf_policy_model_platforms_are_applicable_dict(model, embedded_dict, platforms))
+			return true;
+	}
+
+	struct oscap_iterator *dicts = oscap_iterator_new(model->cpe_dicts);
+	while (oscap_iterator_has_more(dicts)) {
+		struct cpe_dict_model *dict = (struct cpe_dict_model *) oscap_iterator_next(dicts);
+		if (xccdf_policy_model_platforms_are_applicable_dict(model, dict, platforms)) {
+			oscap_iterator_free(dicts);
+			return true;
+		}
+	}
+	oscap_iterator_free(dicts);
+	return false;
+}
+
 static bool xccdf_policy_model_item_is_applicable(struct xccdf_policy_model* model, struct xccdf_item* item)
 {
-	struct xccdf_benchmark* benchmark = xccdf_item_get_benchmark(item);
-
 	struct xccdf_item* parent = xccdf_item_get_parent(item);
 	if (!parent || xccdf_policy_model_item_is_applicable(model, parent))
 	{
-		// we have to check whether the item has any platforms at all, if it has none
-		// it should be applicable to all platforms
 		struct oscap_string_iterator* platforms = xccdf_item_get_platforms(item);
-		bool has_platforms = oscap_string_iterator_has_more(platforms);
-
-		bool ret = true;
-
-		// while is used just because of the break "early outs"
-		while (has_platforms)
-		{
-			ret = false;
-
-			// We do not check whether the platform entries are valid platform refs
-			// or CPE names. We let the policy_model methods do that instead.
-			// Therefore we check all 4 (!) places where a platform may match.
-			// CPE2 takes precedence over CPE1 in this implementation. This is not
-			// dictated by the specification, it's an arbitrary choice.
-
-			struct cpe_lang_model* embedded_lang_model = xccdf_benchmark_get_cpe_lang_model(benchmark);
-			if (embedded_lang_model != NULL) {
-				ret = xccdf_policy_model_platforms_are_applicable_lang_model(model, embedded_lang_model, platforms);
-			}
-			if (ret)
-				break;
-
-			struct oscap_iterator* lang_models = oscap_iterator_new(model->cpe_lang_models);
-			while (!ret && oscap_iterator_has_more(lang_models)) {
-				struct cpe_lang_model *lang_model = (struct cpe_lang_model*)oscap_iterator_next(lang_models);
-				ret = xccdf_policy_model_platforms_are_applicable_lang_model(model, lang_model, platforms);
-			}
-			oscap_iterator_free(lang_models);
-			if (ret)
-				break;
-
-			struct cpe_dict_model* embedded_dict = xccdf_benchmark_get_cpe_list(benchmark);
-			if (embedded_dict != NULL) {
-				ret = xccdf_policy_model_platforms_are_applicable_dict(model, embedded_dict, platforms);
-			}
-			if (ret)
-				break;
-
-			struct oscap_iterator* dicts = oscap_iterator_new(model->cpe_dicts);
-			while (!ret && oscap_iterator_has_more(dicts)) {
-				struct cpe_dict_model *dict = (struct cpe_dict_model*)oscap_iterator_next(dicts);
-				ret = xccdf_policy_model_platforms_are_applicable_dict(model, dict, platforms);
-			}
-			oscap_iterator_free(dicts);
-			break;
-		}
+		bool ret = xccdf_policy_model_platforms_are_applicable(model, platforms);
 		oscap_string_iterator_free(platforms);
 
 		return ret;
