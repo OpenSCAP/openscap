@@ -10,7 +10,8 @@ License:        LGPLv2+
 URL:            http://www.open-scap.org/
 Source0:        http://fedorahosted.org/releases/o/p/openscap/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires:  swig libxml2-devel libxslt-devel m4 perl-XML-Parser
+BuildRequires:  libxml2-devel >= 2.6.26-2.1.21.el5_9.2
+BuildRequires:  swig libxslt-devel m4 perl-XML-Parser
 BuildRequires:  rpm-devel
 BuildRequires:  libgcrypt-devel
 BuildRequires:  pcre-devel
@@ -29,7 +30,7 @@ for the expression of Computer Network Defense related information.
 Summary:        Development files for %{name}
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-Requires:       libxml2-devel
+Requires:       libxml2-devel >= 2.6.26-2.1.21.el5_9.2
 Requires:       pkgconfig
 
 %description    devel
