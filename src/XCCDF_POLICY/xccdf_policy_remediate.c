@@ -93,6 +93,37 @@ static inline struct xccdf_item *_lookup_rule_for_rule_result(const struct xccdf
 	return xccdf_benchmark_get_item(benchmark, xccdf_rule_result_get_idref(rr));
 }
 
+static inline bool _is_platform_applicable(struct xccdf_policy *policy, const char *platform)
+{
+	if (oscap_streq("", platform))
+		return true;
+	struct oscap_stringlist *platform_list = oscap_stringlist_new();
+	assume_ex(oscap_stringlist_add_string(platform_list, platform), false);
+	struct oscap_string_iterator *platform_it = oscap_stringlist_get_strings(platform_list);
+	bool ret = xccdf_policy_model_platforms_are_applicable(xccdf_policy_get_model(policy), platform_it);
+	oscap_string_iterator_free(platform_it);
+	oscap_stringlist_free(platform_list);
+	return ret;
+}
+
+static struct oscap_list *_filter_fixes_by_applicability(struct xccdf_policy *policy, const struct xccdf_rule *rule)
+{
+	/* Filters out the fixes which are not applicable */
+	struct oscap_list *result = oscap_list_new();
+	if (!xccdf_policy_model_item_is_applicable(xccdf_policy_get_model(policy), (struct xccdf_item *) rule))
+		/* The fix element is applicable only when the all the parent elements are. */
+		return result;
+	struct xccdf_fix_iterator *fix_it = xccdf_rule_get_fixes(rule);
+	while (xccdf_fix_iterator_has_more(fix_it)) {
+		struct xccdf_fix *fix = xccdf_fix_iterator_next(fix_it);
+		const char *platform = xccdf_fix_get_platform(fix);
+		if (_is_platform_applicable(policy, platform))
+			oscap_list_add(result, fix);
+	}
+	xccdf_fix_iterator_free(fix_it);
+	return result;
+}
+
 static inline struct xccdf_fix *_find_suitable_fix(struct xccdf_policy *policy, struct xccdf_rule_result *rr)
 {
 	/* In XCCDF 1.2, there is nothing like a default fix. However we use
@@ -107,10 +138,12 @@ static inline struct xccdf_fix *_find_suitable_fix(struct xccdf_policy *policy, 
 	const struct xccdf_item *rule = _lookup_rule_for_rule_result(policy, rr);
 	if (rule == NULL)
 		return NULL;
-	struct xccdf_fix_iterator *fix_it = xccdf_rule_get_fixes((const struct xccdf_rule *) rule);
+	struct oscap_list *applicable_fixes = _filter_fixes_by_applicability(policy, rule);
+	struct xccdf_fix_iterator *fix_it = oscap_iterator_new(applicable_fixes);
 	if (xccdf_fix_iterator_has_more(fix_it))
 		fix = xccdf_fix_iterator_next(fix_it);
 	xccdf_fix_iterator_free(fix_it);
+	oscap_list_free0(applicable_fixes);
 	return fix; // TODO: implement the procedure described above
 }
 
