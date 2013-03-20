@@ -63,25 +63,33 @@ static inline bool _file_exists(const char *file)
 	return file != NULL && stat(file, &sb) == 0;
 }
 
-static const char *_get_interpret(const char *sys)
-{
-	const char *interpret = NULL;
-	if (oscap_streq(sys, NULL) ||
-			oscap_streq(sys, "urn:xccdf:fix:commands") ||
-			oscap_streq(sys, "urn:xccdf:fix:script:sh")) {
-		interpret = "/bin/bash";
-	} else if (oscap_streq(sys, "urn:xccdf:fix:script:csh")) {
-		interpret = "/bin/csh";
-	} else if (oscap_streq(sys, "urn:xccdf:fix:script:perl")) {
-		interpret = "/usr/bin/perl";
-	} else if (oscap_streq(sys, "urn:xccdf:fix:script:python")) {
-		interpret = "/usr/bin/python";
-	} else if (oscap_streq(sys, "urn:xccdf:fix:script:tclsh")) {
-		interpret = "/usr/bin/tclsh";
-	} else if (oscap_streq(sys, "urn:xccdf:fix:script:javascript")) {
-		interpret = "/usr/bin/js";
-	}
+struct _interpret_map {
+	const char *sys;
+	const char *interpret;
+};
 
+static const char *_search_interpret_map(const char *sys, const struct _interpret_map *map)
+{
+	const struct _interpret_map *mapptr;
+	for (mapptr = map; mapptr->sys != NULL; ++mapptr)
+		if (oscap_streq(mapptr->sys, sys))
+			return mapptr->interpret;
+	return NULL;
+}
+
+static const char *_get_supported_interpret(const char *sys, const struct _interpret_map *unused)
+{
+	static const struct _interpret_map _openscap_supported_interprets[] = {
+		{"urn:xccdf:fix:commands",		"/bin/bash"},
+		{"urn:xccdf:fix:script:sh",		"/bin/bash"},
+		{"urn:xccdf:fix:script:perl",		"/usr/bin/perl"},
+		{"urn:xccdf:fix:script:python",		"/usr/bin/python"},
+		{"urn:xccdf:fix:script:csh",		"/bin/csh"},
+		{"urn:xccdf:fix:script:tclsh",		"/usr/bin/tclsh"},
+		{"urn:xccdf:fix:script:javascript",	"/usr/bin/js"},
+		{NULL,					NULL}
+	};
+	const char *interpret = _search_interpret_map(sys, _openscap_supported_interprets);
 	return _file_exists(interpret) ? interpret : NULL;
 }
 
@@ -199,7 +207,7 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 	if (fix == NULL || rr == NULL || oscap_streq(xccdf_fix_get_content(fix), NULL))
 		return 1;
 
-	if ((interpret = _get_interpret(xccdf_fix_get_system(fix))) == NULL) {
+	if ((interpret = _get_supported_interpret(xccdf_fix_get_system(fix), NULL)) == NULL) {
 		_rule_add_info_message(rr, "Not supported xccdf:fix/@system='%s' or missing interpreter.",
 				xccdf_fix_get_system(fix) == NULL ? "" : xccdf_fix_get_system(fix));
 		return 1;
