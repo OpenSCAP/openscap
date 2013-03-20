@@ -156,6 +156,8 @@ static struct oscap_module XCCDF_REMEDIATE = {
 			"Options:\n"
 			"  --result-id\r\t\t\t\t - TestResult ID to be processed. Default is the most recent one.\n"
 			"  --skip-valid\r\t\t\t\t - Skip validation.\n"
+			"  --cpe <name>\r\t\t\t\t - Use given CPE dictionary or language (autodetected)\n"
+			"              \r\t\t\t\t   for applicability checks.\n"
 			"  --fetch-remote-resources\r\t\t\t\t - Download remote content referenced by XCCDF.\n"
 			"  --results <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
 			"  --results-arf <file>\r\t\t\t\t - Write ARF (result data stream) into file.\n"
@@ -602,6 +604,7 @@ int app_xccdf_remediate(const struct oscap_action *action)
 	if (session == NULL)
 		goto cleanup;
 	xccdf_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
+	xccdf_session_set_user_cpe(session, action->cpe);
 	xccdf_session_set_remote_resources(session, action->remote_resources, _download_reporting_callback);
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);
 
