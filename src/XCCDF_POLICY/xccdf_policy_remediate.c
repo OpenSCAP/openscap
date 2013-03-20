@@ -85,12 +85,12 @@ static const char *_get_interpret(const char *sys)
 	return _file_exists(interpret) ? interpret : NULL;
 }
 
-static inline struct xccdf_item *_lookup_rule_for_rule_result(const struct xccdf_policy *policy, const struct xccdf_rule_result *rr)
+static inline struct xccdf_rule *_lookup_rule_by_rule_result(const struct xccdf_policy *policy, const struct xccdf_rule_result *rr)
 {
 	const struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(policy);
 	if (benchmark == NULL)
 		return NULL;
-	return xccdf_benchmark_get_item(benchmark, xccdf_rule_result_get_idref(rr));
+	return (struct xccdf_rule *) xccdf_benchmark_get_item(benchmark, xccdf_rule_result_get_idref(rr));
 }
 
 static inline bool _is_platform_applicable(struct xccdf_policy *policy, const char *platform)
@@ -135,7 +135,7 @@ static inline struct xccdf_fix *_find_suitable_fix(struct xccdf_policy *policy, 
 	 * 	- choose the first fix
 	 */
 	struct xccdf_fix *fix = NULL;
-	const struct xccdf_item *rule = _lookup_rule_for_rule_result(policy, rr);
+	const struct xccdf_rule *rule = _lookup_rule_by_rule_result(policy, rr);
 	if (rule == NULL)
 		return NULL;
 	struct oscap_list *applicable_fixes = _filter_fixes_by_applicability(policy, rule);
@@ -325,7 +325,7 @@ int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf
 
 	/* We report rule during remediation only when the fix was actually executed */
 	int report = 0;
-	struct xccdf_item *rule = _lookup_rule_for_rule_result(policy, rr);
+	struct xccdf_rule *rule = _lookup_rule_by_rule_result(policy, rr);
 	if (rule == NULL) {
 		// Sadly, we cannot handle this since b9d123d53140c6e369b7f2206e4e3e63dc556fd1.
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find xccdf:Rule/@id=%s.", xccdf_rule_result_get_idref(rr));
