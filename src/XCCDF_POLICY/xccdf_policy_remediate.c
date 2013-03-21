@@ -149,6 +149,34 @@ static struct oscap_list *_filter_fixes_by_system(struct oscap_list *fixes, _sea
 	return fixes;
 }
 
+static struct oscap_list *_filter_fixes_by_distruption_and_reboot(struct oscap_list *fixes)
+{
+	bool reboot = true;	// Let's assuming worse case and flip when fix/@rebot=false is found
+	xccdf_level_t disruption = XCCDF_HIGH;
+
+	struct oscap_iterator *fix_it = oscap_iterator_new(fixes);
+	while (oscap_iterator_has_more(fix_it)) {
+		struct xccdf_fix *fix = (struct xccdf_fix *) oscap_iterator_next(fix_it);
+		if (!xccdf_fix_get_reboot(fix))
+			reboot = false;
+		xccdf_level_t dis = xccdf_fix_get_disruption(fix);
+		if (dis == XCCDF_MEDIUM || dis == XCCDF_LOW)
+			// Preferring "medium" and "low" over any other
+			disruption = dis;
+	}
+	oscap_iterator_reset(fix_it);
+	while (oscap_iterator_has_more(fix_it)) {
+		struct xccdf_fix *fix = (struct xccdf_fix *) oscap_iterator_next(fix_it);
+		if (reboot == false && xccdf_fix_get_reboot(fix))
+			oscap_iterator_detach(fix_it);
+		if ((disruption == XCCDF_MEDIUM || disruption == XCCDF_LOW) &&
+				disruption != xccdf_fix_get_disruption(fix))
+			oscap_iterator_detach(fix_it);
+	}
+	oscap_iterator_free(fix_it);
+	return fixes;
+}
+
 static inline struct xccdf_fix *_find_suitable_fix(struct xccdf_policy *policy, struct xccdf_rule_result *rr)
 {
 	/* In XCCDF 1.2, there is nothing like a default fix. However we use
@@ -165,12 +193,13 @@ static inline struct xccdf_fix *_find_suitable_fix(struct xccdf_policy *policy, 
 		return NULL;
 	struct oscap_list *fixes = _filter_fixes_by_applicability(policy, rule);
 	fixes = _filter_fixes_by_system(fixes, _get_supported_interpret, NULL);
+	fixes = _filter_fixes_by_distruption_and_reboot(fixes);
 	struct xccdf_fix_iterator *fix_it = oscap_iterator_new(fixes);
 	if (xccdf_fix_iterator_has_more(fix_it))
 		fix = xccdf_fix_iterator_next(fix_it);
 	xccdf_fix_iterator_free(fix_it);
 	oscap_list_free0(fixes);
-	return fix; // TODO: implement the procedure described above
+	return fix;
 }
 
 static inline int _xccdf_fix_decode_xml(struct xccdf_fix *fix, char **result)
