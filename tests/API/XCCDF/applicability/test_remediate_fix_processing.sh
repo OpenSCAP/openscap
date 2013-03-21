@@ -60,10 +60,15 @@ assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profil
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/result'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/result[text()="fixed"]'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix'
-
+assert_exists 3 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix/@*'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix[@platform]'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix[@platform="cpe:/o:example:applicable:5"]'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix[@system]'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix[@system="urn:xccdf:fix:script:sh"]'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix[@disruption]'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix[@disruption="low"]'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/message'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/message[text()="Fix execution comleted and returned: 0"]'
 
 # Assert that input data was not modified.
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]'
