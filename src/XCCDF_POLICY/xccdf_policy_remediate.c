@@ -63,6 +63,20 @@ static inline bool _file_exists(const char *file)
 	return file != NULL && stat(file, &sb) == 0;
 }
 
+static int _write_text_to_fd_and_free(int output_fd, const char *text)
+{
+	ssize_t len = strlen(text);
+	ssize_t written = 0;
+	while (written < len) {
+		ssize_t w = write(output_fd, text + written, len - written);
+		if (w < 0)
+			break;
+		written += w;
+	}
+	oscap_free(text);
+	return written != len;
+}
+
 struct _interpret_map {
 	const char *sys;
 	const char *interpret;
@@ -421,4 +435,108 @@ int xccdf_policy_remediate(struct xccdf_policy *policy, struct xccdf_result *res
 	xccdf_rule_result_iterator_free(rr_it);
 	xccdf_result_set_end_time_current(result);
 	return 0;
+}
+
+/* --- Follows functions for generating XCCDF:Fix script --- */
+static const struct xccdf_fix *_find_fix_for_template(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template)
+{
+	struct xccdf_fix *fix = NULL;
+	struct oscap_list *fixes = _filter_fixes_by_applicability(policy, rule);
+	const struct _interpret_map map[] = {
+		{template, "Cloud!"},
+		{NULL, NULL}
+	};
+	fixes = _filter_fixes_by_system(fixes, _search_interpret_map, map);
+	fixes = _filter_fixes_by_distruption_and_reboot(fixes);
+	struct xccdf_fix_iterator *fix_it = oscap_iterator_new(fixes);
+	if (xccdf_fix_iterator_has_more(fix_it))
+		fix = xccdf_fix_iterator_next(fix_it);
+	xccdf_fix_iterator_free(fix_it);
+	oscap_list_free0(fixes);
+	return fix;
+}
+
+static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, int output_fd)
+{
+	// Ensure that given Rule is selected and applicable (CPE).
+	const bool is_selected = xccdf_policy_is_item_selected(policy, xccdf_rule_get_id(rule));
+	if (!is_selected)
+		return 0;
+	const bool is_applicable = true;//xccdf_policy_model_item_is_applicable(xccdf_policy_get_model(policy), (struct xccdf_item*)rule);
+	if (!is_applicable)
+		return 0;
+	// Find the most suitable fix.
+	const struct xccdf_fix *fix = _find_fix_for_template(policy, rule, template);
+	if (fix == NULL)
+		return 0;
+	// Process Text Substitute within the fix
+	struct xccdf_fix *cfix = xccdf_fix_clone(fix);
+	int res = xccdf_policy_resolve_fix_substitution(policy, cfix, NULL);
+	if (res != 0) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "A fix was skipped: Text substitution failed.");
+		xccdf_fix_free(cfix);
+		return res == 1; // Value 2 indicates warning.
+	}
+	// Refine. Resolve XML comments, CDATA and remaining elements
+	char *fix_text = NULL;
+	if (_xccdf_fix_decode_xml(cfix, &fix_text) != 0) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "A fix element contains unresolved child elements.");
+		xccdf_fix_free(cfix);
+		return 1;
+	}
+	xccdf_fix_free(cfix);
+
+	// Print-out the fix to the output_fd
+	if (_write_text_to_fd_and_free(output_fd, fix_text) != 0) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "write of the fix to fd=%d failed: %s", output_fd, strerror(errno));
+		return 1;
+	}
+	return 0;
+}
+
+static int _xccdf_policy_item_generate_fix(struct xccdf_policy *policy, struct xccdf_item *item, const char *template, int output_fd)
+{
+	int ret = 0;
+	switch (xccdf_item_get_type(item)) {
+	case XCCDF_GROUP:{
+		struct xccdf_item_iterator *child_it = xccdf_group_get_content((struct xccdf_group *) item);
+		while (xccdf_item_iterator_has_more(child_it)) {
+			struct xccdf_item *child = xccdf_item_iterator_next(child_it);
+			ret = _xccdf_policy_item_generate_fix(policy, child, template, output_fd);
+			if (ret != 0)
+				break;
+		}
+		xccdf_item_iterator_free(child_it);
+		} break;
+	case XCCDF_RULE:{
+		ret = _xccdf_policy_rule_generate_fix(policy, (struct xccdf_rule *) item, template, output_fd);
+		} break;
+	default:
+		break;
+	}
+	return ret;
+}
+
+int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *result, const char *template, int output_fd)
+{
+	__attribute__nonnull__(policy);
+
+	if (result == NULL) {
+		// No TestResult is available. Generate fix from the stock profile.
+		int ret = 0;
+		struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(policy);
+		struct xccdf_item_iterator *item_it = xccdf_benchmark_get_content(benchmark);
+		while (xccdf_item_iterator_has_more(item_it)) {
+			struct xccdf_item *item = xccdf_item_iterator_next(item_it);
+			ret = _xccdf_policy_item_generate_fix(policy, item, template, output_fd);
+			if (ret != 0)
+				break;
+		}
+		xccdf_item_iterator_free(item_it);
+		return ret;
+	}
+	else {
+		// TODO.
+		return 1;
+	}
 }

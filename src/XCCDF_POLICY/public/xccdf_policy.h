@@ -470,6 +470,18 @@ struct xccdf_result *  xccdf_policy_evaluate(struct xccdf_policy * policy);
 bool xccdf_policy_resolve(struct xccdf_policy * policy);
 
 /**
+ * Generate remediation prescription (presumably a remediation script).
+ * @memberof xccdf_policy
+ * @param policy XCCDF Policy
+ * @param result XCCDF TestResult. This may be omitted to generate the prescription
+ * based solely on the XCCDF Policy (xccdf:Profile).
+ * @param template Consider only those fixes that have @system attribute equal this.
+ * @param output_fd write prescription to this file descriptor
+ * @returns zero on success, non-zero indicate partial (incomplete) output.
+ */
+int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *result, const char *template, int output_fd);
+
+/**
  * Clone the item and tailor it against given policy (profile)
  * @param policy Policy with profile
  * @param item XCCDF item to be tailored
