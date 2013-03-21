@@ -68,6 +68,8 @@ struct _interpret_map {
 	const char *interpret;
 };
 
+typedef const char * (*_search_interpret_map_fn) (const char *, const struct _interpret_map *);
+
 static const char *_search_interpret_map(const char *sys, const struct _interpret_map *map)
 {
 	const struct _interpret_map *mapptr;
@@ -132,6 +134,21 @@ static struct oscap_list *_filter_fixes_by_applicability(struct xccdf_policy *po
 	return result;
 }
 
+static struct oscap_list *_filter_fixes_by_system(struct oscap_list *fixes, _search_interpret_map_fn filter, const struct _interpret_map *allowed_systems)
+{
+	struct oscap_iterator *fix_it = oscap_iterator_new(fixes);
+	while (oscap_iterator_has_more(fix_it)) {
+		struct xccdf_fix *fix = (struct xccdf_fix *) oscap_iterator_next(fix_it);
+		const char *sys = xccdf_fix_get_system(fix);
+		if (sys == NULL)
+			sys = "";
+		if (filter(sys, allowed_systems) == NULL)
+			oscap_iterator_detach(fix_it);
+	}
+	oscap_iterator_free(fix_it);
+	return fixes;
+}
+
 static inline struct xccdf_fix *_find_suitable_fix(struct xccdf_policy *policy, struct xccdf_rule_result *rr)
 {
 	/* In XCCDF 1.2, there is nothing like a default fix. However we use
@@ -146,12 +163,13 @@ static inline struct xccdf_fix *_find_suitable_fix(struct xccdf_policy *policy, 
 	const struct xccdf_rule *rule = _lookup_rule_by_rule_result(policy, rr);
 	if (rule == NULL)
 		return NULL;
-	struct oscap_list *applicable_fixes = _filter_fixes_by_applicability(policy, rule);
-	struct xccdf_fix_iterator *fix_it = oscap_iterator_new(applicable_fixes);
+	struct oscap_list *fixes = _filter_fixes_by_applicability(policy, rule);
+	fixes = _filter_fixes_by_system(fixes, _get_supported_interpret, NULL);
+	struct xccdf_fix_iterator *fix_it = oscap_iterator_new(fixes);
 	if (xccdf_fix_iterator_has_more(fix_it))
 		fix = xccdf_fix_iterator_next(fix_it);
 	xccdf_fix_iterator_free(fix_it);
-	oscap_list_free0(applicable_fixes);
+	oscap_list_free0(fixes);
 	return fix; // TODO: implement the procedure described above
 }
 
