@@ -53,6 +53,7 @@ static int app_xccdf_remediate(const struct oscap_action *action);
 static bool getopt_xccdf(int argc, char **argv, struct oscap_action *action);
 static bool getopt_generate(int argc, char **argv, struct oscap_action *action);
 static int app_xccdf_xslt(const struct oscap_action *action);
+static int app_generate_fix(const struct oscap_action *action);
 
 static struct oscap_module* XCCDF_SUBMODULES[];
 static struct oscap_module* XCCDF_GEN_SUBMODULES[];
@@ -232,7 +233,7 @@ static struct oscap_module XCCDF_GEN_FIX = {
         "   --template <id|filename>\r\t\t\t\t - Fix template. (default: bash)\n",
     .opt_parser = getopt_xccdf,
     .user = "fix.xsl",
-    .func = app_xccdf_xslt
+    .func = app_generate_fix
 };
 
 static struct oscap_module XCCDF_GEN_CUSTOM = {
@@ -749,6 +750,40 @@ static bool _some_oval_result_exists(const char *filename)
 	oscap_file_entry_list_free(files);
 	xccdf_policy_model_free(policy_model);
 	return result;
+}
+
+int app_generate_fix(const struct oscap_action *action)
+{
+	if (action->id != NULL) {
+		// Unless we generate fix elements from the stock Profile
+		// Make use the XSLT as it has always been so.
+		return app_xccdf_xslt(action);
+	}
+	/* Otherwise, we better use internal solver instead of XSLT
+	 * Mainly because of Text Substitution */
+	int ret = OSCAP_ERROR;
+	struct xccdf_session *session = xccdf_session_new(action->f_xccdf);
+	if (session == NULL)
+		goto cleanup;
+	if (xccdf_session_load_xccdf(session) != 0)
+		goto cleanup;
+
+	// TODO: We may need CPE dict for CPE applicability
+	if (!xccdf_session_set_profile_id(session, action->profile)) {
+		fprintf(stderr, "Profile \"%s\" was not found.\n", action->profile);
+		goto cleanup;
+	}
+
+	struct xccdf_policy *policy = xccdf_session_get_xccdf_policy(session);
+	int output_fd = 1;
+	if (xccdf_policy_generate_fix(policy, NULL, action->tmpl, output_fd) != 0)
+		goto cleanup;
+	close(output_fd);
+	ret = OSCAP_OK;
+cleanup:
+	_print_oscap_error();
+	xccdf_session_free(session);
+	return ret;
 }
 
 int app_xccdf_xslt(const struct oscap_action *action)
