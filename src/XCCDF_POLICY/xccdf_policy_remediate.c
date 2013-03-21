@@ -291,14 +291,11 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 		goto cleanup;
 	}
 
-	int err = write(fd, fix_text, strlen(fix_text));
-	if (err < 1) {
+	if (_write_text_to_fd_and_free(fd, fix_text) != 0) {
 		_rule_add_info_message(rr, "Could not write to the temp file: %s", strerror(errno));
-		oscap_free(fix_text);
 		(void) close(fd);
 		goto cleanup;
 	}
-	oscap_free(fix_text);
 
 	if (close(fd) != 0)
 		_rule_add_info_message(rr, "Could not close temp file: %s", strerror(errno));
