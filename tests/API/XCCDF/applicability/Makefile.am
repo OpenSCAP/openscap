@@ -25,4 +25,6 @@ EXTRA_DIST = \
 	cpe2-or-rule-embedded-xccdf.xml \
 	nonexistant-platforms-rule-xccdf.xml \
 	test_remediate_fix_notapplicable.sh \
-	test_remediate_fix_notapplicable.xccdf.xml
+	test_remediate_fix_notapplicable.xccdf.xml \
+	test_remediate_fix_processing.sh \
+	test_remediate_fix_processing.xccdf.xml
