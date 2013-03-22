@@ -75,4 +75,5 @@ test_run "XCCDF Remediate" $srcdir/test_remediate_simple.sh
 test_run 'generate report: xccdf:check/@selector=""' $srcdir/test_report_check_with_empty_selector.sh
 test_run "generate report: missing xsl shall not segfault" $srcdir/test_report_without_xsl_fails_gracefully.sh
 test_run "generate report: avoid warnings from libxml" $srcdir/test_report_without_oval_poses_no_errors.sh
+test_run "generate fix: just as the anaconda does" $srcdir/test_report_anaconda_fixes.sh
 test_exit

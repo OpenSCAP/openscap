@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    id="xccdf_moc.elpmaxe.www_benchmark_test" resolved="1">
+  <status>accepted</status>
+  <version>1.0</version>
+  <model system="urn:xccdf:scoring:default"/>
+  <Profile id="xccdf_moc.elpmaxe.www_profile_1">
+    <title>Some arbitrary hardening profile for anaconda testing</title>
+    <select idref="xccdf_moc.elpmaxe.www_group_1" selected="true"/>
+    <select idref="xccdf_moc.elpmaxe.www_rule_3" selected="true"/>
+    <refine-value idref="xccdf_moc.elpmaxe.www_value_1" selector="len14"/>
+  </Profile>
+  <Rule id="xccdf_moc.elpmaxe.www_rule_1" selected="true">
+    <title>Ensure /tmp Located On Separate Partition</title>
+    <ident system="http://cce.mitre.org">CCE-14161-4</ident>
+    <fix id="partition_for_tmp_fix_anaconda_pre" system="urn:redhat:anaconda:pre">
+      <!--the system attribute identifies that this fix is for anaconda before installation-->
+      part /tmp
+    </fix>
+  </Rule>
+  <Rule id="xccdf_moc.elpmaxe.www_rule_2" selected="true">
+    <title>Add nodev Option to /tmp</title>
+    <ident system="http://cce.mitre.org">CCE-14412-1</ident>
+    <fix id="mount_option_tmp_fix_anaconda_pre" system="urn:redhat:anaconda:pre">
+      part /tmp --mountoptions=nodev
+    </fix>
+    <fix id="mount_option_tmp_fix" system="urn:xccdf:script:sh">
+      <!--should run either post-install or during firstboot-->
+      grep -e '^[^#].*/tmp.*nodev' /etc/fstab
+      if [ "$?" -ne 0 ]; then
+          new_fstab=$(cat /etc/fstab | sed -e 's%^[^#]([^ ]+)\s+/tmp([^ ]+)\s+([^ ]+)\s+(\d)\s+(\d)%\1\t/tmp\2\t\3,nodev\t\4 \5'
+          echo $new_fstab > /etc/fstab
+      fi
+    </fix>
+  </Rule>
+  <Group id="xccdf_moc.elpmaxe.www_group_1" selected="false">
+    <Value id="xccdf_moc.elpmaxe.www_value_1">
+      <title>Minimal password length</title>
+      <value selector="len8">8</value>
+      <value selector="len14">14</value>
+      <value selector="len18">18</value>
+    </Value>
+    <Rule id="xccdf_moc.elpmaxe.www_rule_3">
+      <title>Set Password Minimum Length in login.defs</title>
+      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" system="urn:redhat:anaconda:pre">
+        <!--effect passwords created during installation-->
+        passwd --minlen=<sub idref="xccdf_moc.elpmaxe.www_value_1"/>
+      </fix>
+      <fix id="password_min_len_fix" system="urn:xccdf:script:python">
+        <!--should run either post-install or during firstboot-->
+        <!--python script to set
+                PASS_MIN_LEN=<sub idref="xccdf_moc.elpmaxe.www_value_1"/> in /etc/login.defs
+            and
+                minlen=<sub idref="xccdf_moc.elpmaxe.www_value_1"/> in /etc/security/pwquality.conf
+         -->
+      </fix>
+    </Rule>
+  </Group>
+</Benchmark>
