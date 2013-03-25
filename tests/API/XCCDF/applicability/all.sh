@@ -83,7 +83,7 @@ test_run "test_api_xccdf_applicability_cpe2_or_embedded_rule" test_api_xccdf_emb
 
 assert_exists() { [ $($XPATH $result 'count('"$2"')') == "$1" ]; }
 export -f assert_exists
-test_run "xccdf:fix not applicable and notapplicibile" $srcdir/test_remediate_fix_notapplicable.sh
+test_run "xccdf:fix applicable and notapplicable" $srcdir/test_remediate_fix_notapplicable.sh
 test_run "Complex selection of xccdf:fix based multiple factors" $srcdir/test_remediate_fix_processing.sh
 
 test_exit
