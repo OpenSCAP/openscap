@@ -459,7 +459,7 @@ static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, s
 	const bool is_selected = xccdf_policy_is_item_selected(policy, xccdf_rule_get_id(rule));
 	if (!is_selected)
 		return 0;
-	const bool is_applicable = true;//xccdf_policy_model_item_is_applicable(xccdf_policy_get_model(policy), (struct xccdf_item*)rule);
+	const bool is_applicable = xccdf_policy_model_item_is_applicable(xccdf_policy_get_model(policy), (struct xccdf_item*)rule);
 	if (!is_applicable)
 		return 0;
 	// Find the most suitable fix.
