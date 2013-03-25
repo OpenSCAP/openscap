@@ -514,7 +514,7 @@ static int _xccdf_policy_item_generate_fix(struct xccdf_policy *policy, struct x
 	return ret;
 }
 
-int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *result, const char *template, int output_fd)
+int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, int output_fd)
 {
 	__attribute__nonnull__(policy);
 
@@ -525,7 +525,7 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 		struct xccdf_item_iterator *item_it = xccdf_benchmark_get_content(benchmark);
 		while (xccdf_item_iterator_has_more(item_it)) {
 			struct xccdf_item *item = xccdf_item_iterator_next(item_it);
-			ret = _xccdf_policy_item_generate_fix(policy, item, template, output_fd);
+			ret = _xccdf_policy_item_generate_fix(policy, item, sys, output_fd);
 			if (ret != 0)
 				break;
 		}
