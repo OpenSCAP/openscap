@@ -676,11 +676,11 @@ int xccdf_policy_get_selected_rules_count(struct xccdf_policy *policy)
 
 	while (oscap_htable_iterator_has_more(it)) {
 		const char *key = NULL;
-		const bool *value = NULL;
+		void *value = NULL;
 
-		oscap_htable_iterator_next_kv(it, &key, (void**)&value);
+		oscap_htable_iterator_next_kv(it, &key, &value);
 
-		if (!value || !*value)
+		if (!value || !*(bool*)value)
 			continue;
 
 		if (!key)
