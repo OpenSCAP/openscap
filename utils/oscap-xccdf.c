@@ -767,6 +767,10 @@ int app_generate_fix(const struct oscap_action *action)
 	struct xccdf_session *session = xccdf_session_new(action->f_xccdf);
 	if (session == NULL)
 		goto cleanup;
+	if (xccdf_session_is_sds(session)) {
+		xccdf_session_set_datastream_id(session, action->f_datastream_id);
+		xccdf_session_set_component_id(session, action->f_xccdf_id);
+	}
 	xccdf_session_set_user_cpe(session, action->cpe);
 	if (xccdf_session_load_xccdf(session) != 0)
 		goto cleanup;
