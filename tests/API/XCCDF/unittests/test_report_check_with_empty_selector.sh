@@ -31,4 +31,8 @@ echo "Result file = $result"
 grep '<div class="oval-results">' $result
 grep 'Testing file permissions of /etc/shadow' $result
 grep '<code>--------- </code>' $result
+echo $result
+if [ -f /usr/bin/perl ]; then
+  /usr/bin/perl -w -0777 -p -e 's|<a href=".*">OpenSCAP</a>\s*\([0-9\.]+\)|XXMATCHEDXX|g' $result | grep XXMATCHEDXX
+fi
 rm $result
