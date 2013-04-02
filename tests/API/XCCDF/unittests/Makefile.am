@@ -98,6 +98,7 @@ EXTRA_DIST += \
 	test_remediation_xml_comments.xccdf.xml \
 	test_report_anaconda_fixes.sh \
 	test_report_anaconda_fixes.xccdf.xml \
+	test_report_anaconda_fixes_ds.sh \
 	test_report_check_with_empty_selector.oval.xml.result.xml \
 	test_report_check_with_empty_selector.sh \
 	test_report_check_with_empty_selector.xccdf.xml.result.xml \

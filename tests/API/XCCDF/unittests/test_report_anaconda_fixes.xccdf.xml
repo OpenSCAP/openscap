@@ -17,6 +17,9 @@
       <!--the system attribute identifies that this fix is for anaconda before installation-->
       part /tmp
     </fix>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="oval_without_definitions.oval.xml"/>
+    </check>
   </Rule>
   <Rule id="xccdf_moc.elpmaxe.www_rule_2" selected="true">
     <title>Add nodev Option to /tmp</title>
