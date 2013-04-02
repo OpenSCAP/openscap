@@ -68,6 +68,7 @@ test_run "XCCDF Remediation requires fix/@system attribute" $srcdir/test_remedia
 # Tests for 'oscap xccdf remediate'
 #
 test_run "XCCDF Remediate" $srcdir/test_remediate_simple.sh
+test_run "XCCDF Remediate + python fix" $srcdir/test_remediate_python.sh
 
 #
 # Tests for XCCDF report
