@@ -85,5 +85,6 @@ assert_exists() { [ $($XPATH $result 'count('"$2"')') == "$1" ]; }
 export -f assert_exists
 test_run "xccdf:fix applicable and notapplicable" $srcdir/test_remediate_fix_notapplicable.sh
 test_run "Complex selection of xccdf:fix based multiple factors" $srcdir/test_remediate_fix_processing.sh
+test_run "Complex selection of xccdf:fix + DataStream" $srcdir/test_remediate_fix_processing_ds.sh
 
 test_exit

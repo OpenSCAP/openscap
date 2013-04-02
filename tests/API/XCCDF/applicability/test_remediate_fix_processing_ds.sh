@@ -4,29 +4,34 @@ set -e
 set -o pipefail
 
 name=$(basename $0 .sh)
+sds=$(mktemp -t ${name}.sds.XXXXXX)
+xccdf=test_remediate_fix_processing.xccdf.xml
 stderr=$(mktemp -t ${name}.out.XXXXXX)
-tmpdir=$(mktemp -d -t ${name}.out.XXXXXX)
-result=$(mktemp -p $tmpdir ${name}.out.XXXXXX)
-echo "Stderr file = $stderr"
-echo "Result file = $stderr"
-rm -f test_file test_file_cpe_na
-rm -f wrong_test_file
+resultx=$(mktemp -t ${name}.xccdf.XXXXXX)
+arf=$(mktemp -t ${name}.arf.XXXXXX)
+echo "sds file: $sds"
+echo "stderr file: $stderr"
+echo "results file: $result"
+rm -f test_file test_file_cpe_na wrong_test_file
 
-#
-# First, try without CPE, it should select different fix.
-#
+$OSCAP ds sds-compose $srcdir/$xccdf $sds 2>&1 > $stderr
+[ -f $stderr ]; [ ! -s $stderr ]
+$OSCAP ds sds-validate $sds
+
+# First, try to apply a wrong fix due to missing CPE.
 ret=0
-$OSCAP xccdf remediate --results $result $srcdir/${name}.xccdf.xml 2> $stderr || ret=$?
+$OSCAP xccdf eval --remediate --results $resultx --results-arf $arf $sds 2> $stderr || ret=$?
 [ $ret -eq 2 ]
-[ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
+[ -f $stderr ]; [ ! -s $stderr ]
 [ ! -f test_file ]
 [ ! -f wrong_test_file ]
-[ -f test_file_cpe_na ]
+[ -f test_file_cpe_na ]; rm test_file_cpe_na
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate $resultx
+$OSCAP ds rds-validate $arf
 
+result=$resultx
 assert_exists 2 '//TestResult'
-assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/result'
@@ -41,50 +46,46 @@ assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profil
 assert_exists 2 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/message'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/message[text()="Fix execution comleted and returned: 0"]'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/message[text()="Failed to verify applied fix: Checking engine returns: fail"]'
-rm test_file_cpe_na
-
-#
-# Second, try with CPE and asser that result is different
-#
-:> $result
-$OSCAP xccdf remediate --cpe $srcdir/cpe-dict.xml --results $result $srcdir/${name}.xccdf.xml 2> $stderr
-[ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
-[ -f test_file ]; rm test_file
-[ ! -f test_file_cpe_na ]
-[ ! -f wrong_test_file ]
-$OSCAP xccdf validate $result
-assert_exists 2 '//TestResult'
+result=$arf
+assert_exists 3 '//TestResult'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/result'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/result[text()="error"]'
+
+:> $result
+:> $arf
+$OSCAP xccdf eval --cpe $srcdir/cpe-dict.xml --remediate --results $resultx --results-arf $arf $sds 2> $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
+[ -f test_file ]; rm test_file
+[ ! -f wrong_test_file ]
+[ ! -f test_file_cpe_na ]
+
+$OSCAP xccdf validate $resultx
+$OSCAP ds rds-validate $arf
+
+result=$resultx
+assert_exists 2 '//TestResult'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/result'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/result[text()="fixed"]'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix'
 assert_exists 3 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix/@*'
-assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix[@platform]'
-assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix[@platform="cpe:/o:example:applicable:5"]'
-assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix[@system]'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix/@system'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix[@system="urn:xccdf:fix:script:sh"]'
-assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix[@disruption]'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix/@disruption'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix[@disruption="low"]'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix/@platform'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix[@platform="cpe:/o:example:applicable:5"]'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix/text()[contains(., "touch test_file")]'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/message'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/message[text()="Fix execution comleted and returned: 0"]'
+result=$arf
+assert_exists 3 '//TestResult'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/result'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/result[text()="fixed"]'
 
-# Assert that input data was not modified.
-assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]'
-assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/title'
-assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/title[text()="OSCAP Scan Result"]'
-assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/target'
-assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/target[text()="x.x.example.com"]'
-assert_exists 2 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/target-address'
-assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/target-address[text()="127.0.0.1"]'
-assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/target-address[text()="::1"]'
-assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/target-facts'
-assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/target-facts/fact'
-assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/rule-result'
-assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/rule-result/result'
-assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/rule-result/result[text()="fail"]'
-assert_exists 0 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/rule-result/fix'
-assert_exists 0 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]/rule-result/message'
-
-rm $result
+rm $resultx $arf $sds
