@@ -478,6 +478,9 @@ struct xccdf_result *xccdf_benchmark_get_result_by_id(struct xccdf_benchmark *be
 {
 	struct xccdf_result *result = NULL;
 	if (testresult_id == NULL) {
+		/* Take the latest TestResult by default. It may turn out to be
+		 * a good idea to not change that, since the SCAP-Workbench project
+		 * is assuming thissemantics. */
 		struct xccdf_result_iterator * results_it = xccdf_benchmark_get_results(benchmark);
 		while (xccdf_result_iterator_has_more(results_it))
 			result = xccdf_result_iterator_next(results_it);
