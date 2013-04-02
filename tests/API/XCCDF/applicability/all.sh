@@ -86,5 +86,6 @@ export -f assert_exists
 test_run "xccdf:fix applicable and notapplicable" $srcdir/test_remediate_fix_notapplicable.sh
 test_run "Complex selection of xccdf:fix based multiple factors" $srcdir/test_remediate_fix_processing.sh
 test_run "Complex selection of xccdf:fix + DataStream" $srcdir/test_remediate_fix_processing_ds.sh
+test_run "Generate fix just as the Anaconda does + CPE" $srcdir/test_report_anaconda_fixes.sh
 
 test_exit

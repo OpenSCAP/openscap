@@ -28,4 +28,7 @@ EXTRA_DIST = \
 	test_remediate_fix_notapplicable.xccdf.xml \
 	test_remediate_fix_processing.sh \
 	test_remediate_fix_processing.xccdf.xml \
-	test_remediate_fix_processing_ds.sh
+	test_remediate_fix_processing_ds.sh \
+	test_report_anaconda_fixes.sh \
+	test_report_anaconda_fixes.xccdf.xml
+
