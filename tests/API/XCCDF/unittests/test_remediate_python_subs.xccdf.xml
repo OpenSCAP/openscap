@@ -13,10 +13,10 @@ def touch(fname, times=None):
     <value>test_file</value>
   </Value>
   <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_1">
-    <title>Ensure that file exists and it is not executable</title>
-    <fix system="urn:xccdf:fix:script:python">
-<sub idref="touch_definition"/>
-touch('<sub idref="xccdf_moc.elpmaxe.www_value_1"/>')
+    <title>touch</title>
+    <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" system="urn:xccdf:fix:script:python">
+<xhtml:object data="#xccdf:value:touch_definition"/>
+<xhtml:object data="#xccdf:title:xccdf_moc.elpmaxe.www_rule_1"/>('<xhtml:object data="#xccdf:value:xccdf_moc.elpmaxe.www_value_1"/>')
     </fix>
     <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
       <check-content-ref href="test_remediation_simple.oval.xml" name="oval:moc.elpmaxe.www:def:1"/>
