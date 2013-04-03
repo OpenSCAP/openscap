@@ -69,6 +69,8 @@ EXTRA_DIST += \
 	test_oval_without_definition.xccdf.xml \
 	test_remediate_python.sh \
 	test_remediate_python.xccdf.xml \
+	test_remediate_python_subs.sh \
+	test_remediate_python_subs.xccdf.xml \
 	test_remediate_simple.sh \
 	test_remediate_simple.xccdf.xml \
 	test_remediation_amp_escaping.sh \
