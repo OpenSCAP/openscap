@@ -371,7 +371,7 @@ CPPFLAGS="$CPPFLAGS  $(pkg-config libapt-pkg --cflags) $(pkg-config blkid --cfla
 
 echo
 echo ' * Checking presence of required headers for the system_info probe'
-AC_CHECK_HEADERS([arpa/inet.h errno.h ifaddrs.h netdb.h net/if.h stdlib.h string.h sys/ioctl.h sys/socket.h sys/utsname.h unistd.h ],[],[probe_system_info_req_deps_ok=no; probe_system_info_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([arpa/inet.h errno.h ifaddrs.h net/if.h netdb.h stdlib.h string.h sys/ioctl.h sys/socket.h sys/utsname.h unistd.h ],[],[probe_system_info_req_deps_ok=no; probe_system_info_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the family probe'
@@ -475,7 +475,7 @@ AC_CHECK_HEADERS([stdio_ext.h ],[],[probe_uname_opt_deps_ok=no],[-])
 
 echo
 echo ' * Checking presence of required headers for the interface probe'
-AC_CHECK_HEADERS([arpa/inet.h ifaddrs.h netdb.h net/if_arp.h net/if.h stdio.h string.h sys/ioctl.h sys/socket.h unistd.h ],[],[probe_interface_req_deps_ok=no; probe_interface_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([arpa/inet.h ifaddrs.h net/if.h net/if_arp.h netdb.h stdio.h string.h sys/ioctl.h sys/socket.h unistd.h ],[],[probe_interface_req_deps_ok=no; probe_interface_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the xinetd probe'
@@ -487,7 +487,7 @@ AC_CHECK_HEADERS([ctype.h errno.h limits.h stdio.h string.h ],[],[probe_sysctl_r
 
 echo
 echo ' * Checking presence of required headers for the routingtable probe'
-AC_CHECK_HEADERS([arpa/inet.h byteswap.h endian.h errno.h netinet/in.h netinet/ip6.h netinet/ip.h net/route.h stdio.h stdlib.h string.h ],[],[probe_routingtable_req_deps_ok=no; probe_routingtable_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([arpa/inet.h byteswap.h endian.h errno.h net/route.h netinet/in.h netinet/ip.h netinet/ip6.h stdio.h stdlib.h string.h ],[],[probe_routingtable_req_deps_ok=no; probe_routingtable_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the gconf probe'
@@ -495,7 +495,7 @@ AC_CHECK_HEADERS([gconf/gconf.h limits.h pcre.h stdint.h stdlib.h string.h ],[],
 
 echo
 echo ' * Checking presence of required headers for the isainfo probe'
-AC_CHECK_HEADERS([arpa/inet.h dirent.h errno.h fcntl.h netdb.h regex.h stdio_ext.h stdio.h stdlib.h string.h sys/systeminfo.h ],[],[probe_isainfo_req_deps_ok=no; probe_isainfo_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([arpa/inet.h dirent.h errno.h fcntl.h netdb.h regex.h stdio.h stdio_ext.h stdlib.h string.h sys/systeminfo.h ],[],[probe_isainfo_req_deps_ok=no; probe_isainfo_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the partition probe'
@@ -507,11 +507,11 @@ AC_CHECK_HEADERS([blkid/blkid.h linux/magic.h ],[],[probe_partition_opt_deps_ok=
 
 echo
 echo ' * Checking presence of required headers for the inetlisteningservers probe'
-AC_CHECK_HEADERS([arpa/inet.h dirent.h errno.h fcntl.h netdb.h regex.h stdio_ext.h stdio.h stdlib.h string.h ],[],[probe_inetlisteningservers_req_deps_ok=no; probe_inetlisteningservers_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([arpa/inet.h dirent.h errno.h fcntl.h netdb.h regex.h stdio.h stdio_ext.h stdlib.h string.h ],[],[probe_inetlisteningservers_req_deps_ok=no; probe_inetlisteningservers_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the iflisteners probe'
-AC_CHECK_HEADERS([arpa/inet.h dirent.h errno.h fcntl.h netdb.h regex.h stdio_ext.h stdio.h stdlib.h string.h ],[],[probe_iflisteners_req_deps_ok=no; probe_iflisteners_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([arpa/inet.h dirent.h errno.h fcntl.h netdb.h regex.h stdio.h stdio_ext.h stdlib.h string.h ],[],[probe_iflisteners_req_deps_ok=no; probe_iflisteners_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the selinuxboolean probe'
@@ -523,7 +523,7 @@ AC_CHECK_HEADERS([dirent.h errno.h fcntl.h limits.h pthread.h selinux/context.h 
 
 echo
 echo ' * Checking presence of required headers for the rpminfo probe'
-AC_CHECK_HEADERS([assert.h errno.h fcntl.h rpm/header.h rpm/rpmdb.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_rpminfo_req_deps_ok=no; probe_rpminfo_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([assert.h errno.h fcntl.h regex.h rpm/header.h rpm/rpmdb.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_rpminfo_req_deps_ok=no; probe_rpminfo_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the rpmverify probe'
