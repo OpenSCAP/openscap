@@ -373,7 +373,6 @@ cleanup:
 #endif
 
 #define TEMP_DIR_TEMPLATE P_tmpdir "/oscap.XXXXXX"
-#define TEMP_URL_TEMPLATE "downloaded.XXXXXX"
 
 char *oscap_acquire_temp_dir()
 {
