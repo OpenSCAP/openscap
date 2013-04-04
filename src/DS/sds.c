@@ -940,6 +940,39 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 	return 0;
 }
 
+int ds_sds_compose_add_component(const char *target_datastream, const char *datastream_id, const char *new_component, bool extended)
+{
+	xmlDocPtr doc = xmlReadFile(target_datastream, NULL, 0);
+	xmlNodePtr datastream = _lookup_datastream_in_collection(doc, datastream_id);
+	if (datastream == NULL) {
+		const char* error = id ?
+			oscap_sprintf("Could not find any datastream of id '%s'", id) :
+			oscap_sprintf("Could not find any datastream inside the file");
+
+		oscap_seterr(OSCAP_EFAMILY_XML, error);
+		oscap_free(error);
+		xmlFreeDoc(doc);
+		return 1;
+	}
+
+	char* mangled_path = ds_sds_mangle_filepath(new_component);
+
+	char* cref_id = oscap_sprintf("scap_org.open-scap_cref_%s", mangled_path);
+	if (ds_sds_compose_add_component_with_ref(doc, datastream, new_component, cref_id) != 0) {
+		oscap_free(cref_id);
+		return 1;
+	}
+	oscap_free(cref_id);
+
+	if (xmlSaveFileEnc(target_datastream, doc, "utf-8") == -1)
+	{
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error saving source datastream to '%s'.", target_datastream);
+		xmlFreeDoc(doc);
+		return 1;
+	}
+	return 0;
+}
+
 int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastream)
 {
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");

@@ -105,6 +105,24 @@ int ds_sds_decompose_custom(const char* input_file, const char* id, const char* 
 int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastream);
 
 /**
+ * @brief append a new given component to the existing source datastream
+ *
+ * @param target_datastream
+ * 	Path of the existing source datastream into which the new component
+ * 	shall be added.
+ *
+ * @param datastream_id
+ * 	ID of the datastream into which the component shall be added.
+ * 	Null value indicates the very first datastream in the collection.
+ *
+ * @param new_component
+ * 	Path to the new component file (XCCDF, OVAL, or CPE Dictionary).
+ *
+ * @returns 0 in case of success
+ */
+int ds_sds_compose_add_component(const char *target_datastream, const char *datastream_id, const char *new_component, bool extended);
+
+/**
  * @brief takes given source data stream and XCCDF result file and makes a result data stream
  *
  * @param sds_file

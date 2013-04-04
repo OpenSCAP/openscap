@@ -40,6 +40,7 @@ static struct oscap_module* DS_SUBMODULES[];
 bool getopt_ds(int argc, char **argv, struct oscap_action *action);
 int app_ds_sds_split(const struct oscap_action *action);
 int app_ds_sds_compose(const struct oscap_action *action);
+int app_ds_sds_add(const struct oscap_action *action);
 int app_ds_sds_validate(const struct oscap_action *action);
 int app_ds_rds_create(const struct oscap_action *action);
 int app_ds_rds_validate(const struct oscap_action *action);
@@ -77,6 +78,18 @@ static struct oscap_module DS_SDS_COMPOSE_MODULE = {
 	.func = app_ds_sds_compose
 };
 
+static struct oscap_module DS_SDS_ADD_MODULE = {
+	.name = "sds-add",
+	.parent = &OSCAP_DS_MODULE,
+	.summary = "Add a component to the existing SourceDataStream",
+	.usage = "[options] new-component.xml existing_datastream.xml",
+	.help =	"Options:\n"
+		"   --datastream-id <id> \r\t\t\t\t - ID of the datastream in the collection for adding to.\n"
+		,
+	.opt_parser = getopt_ds,
+	.func = app_ds_sds_add
+};
+
 static struct oscap_module DS_SDS_VALIDATE_MODULE = {
 	.name = "sds-validate",
 	.parent = &OSCAP_DS_MODULE,
@@ -110,6 +123,7 @@ static struct oscap_module DS_RDS_VALIDATE_MODULE = {
 static struct oscap_module* DS_SUBMODULES[] = {
 	&DS_SDS_SPLIT_MODULE,
 	&DS_SDS_COMPOSE_MODULE,
+	&DS_SDS_ADD_MODULE,
 	&DS_SDS_VALIDATE_MODULE,
 	&DS_RDS_CREATE_MODULE,
 	&DS_RDS_VALIDATE_MODULE,
@@ -153,7 +167,7 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 		action->ds_action->file = argv[optind];
 		action->ds_action->target = argv[optind + 1];
 	}
-	else if( (action->module == &DS_SDS_COMPOSE_MODULE) ) {
+	else if ((action->module == &DS_SDS_COMPOSE_MODULE) || action->module == &DS_SDS_ADD_MODULE) {
 		if(  argc != 5 ) {
 			oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
 			return false;
@@ -295,6 +309,22 @@ cleanup:
 		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 
 	free(action->ds_action);
+	return ret;
+}
+
+int app_ds_sds_add(const struct oscap_action *action)
+{
+	int ret = OSCAP_ERROR;
+	// TODO: chdir to the directory of the component (same as when composing new sds)
+	ret = ds_sds_compose_add_component(action->ds_action->target, action->f_datastream_id, action->ds_action->file, false);
+	// TODO: validate
+cleanup:
+	if (oscap_err()) {
+		char *err = oscap_err_get_full_error();
+		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, err);
+		free(err);
+	}
+
 	return ret;
 }
 
