@@ -248,8 +248,7 @@ int app_ds_sds_split(const struct oscap_action *action) {
 	ret = OSCAP_OK;
 
 cleanup:
-	if (oscap_err())
-		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+	oscap_print_error();
 
 	ds_sds_index_free(sds_idx);
 	free(action->ds_action);
@@ -305,8 +304,7 @@ int app_ds_sds_compose(const struct oscap_action *action) {
 	ret = OSCAP_OK;
 
 cleanup:
-	if (oscap_err())
-		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+	oscap_print_error();
 
 	free(action->ds_action);
 	return ret;
@@ -319,11 +317,7 @@ int app_ds_sds_add(const struct oscap_action *action)
 	ret = ds_sds_compose_add_component(action->ds_action->target, action->f_datastream_id, action->ds_action->file, false);
 	// TODO: validate
 cleanup:
-	if (oscap_err()) {
-		char *err = oscap_err_get_full_error();
-		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, err);
-		free(err);
-	}
+	oscap_print_error();
 
 	return ret;
 }
@@ -344,8 +338,7 @@ int app_ds_sds_validate(const struct oscap_action *action) {
 	ret = OSCAP_OK;
 
 cleanup:
-	if (oscap_err())
-		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+	oscap_print_error();
 
 	free(action->ds_action);
 	return ret;
@@ -441,8 +434,7 @@ int app_ds_rds_create(const struct oscap_action *action) {
 	ret = OSCAP_OK;
 
 cleanup:
-	if (oscap_err())
-		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+	oscap_print_error();
 
 	free(action->ds_action);
 	return ret;
@@ -464,8 +456,7 @@ int app_ds_rds_validate(const struct oscap_action *action) {
 	ret = OSCAP_OK;
 
 cleanup:
-	if (oscap_err())
-		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+	oscap_print_error();
 
 	free(action->ds_action);
 	return ret;
