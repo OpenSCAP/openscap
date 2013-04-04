@@ -370,6 +370,35 @@ static int ds_sds_dump_component_ref(xmlNodePtr component_ref, xmlDocPtr doc, xm
 	return result;
 }
 
+static xmlNodePtr _lookup_datastream_in_collection(xmlDocPtr doc, const char *datastream_id)
+{
+	xmlNodePtr root = xmlDocGetRootElement(doc);
+
+	xmlNodePtr datastream = NULL;
+	xmlNodePtr candidate_datastream = root->children;
+
+	for (; candidate_datastream != NULL; candidate_datastream = candidate_datastream->next)
+	{
+		if (candidate_datastream->type != XML_ELEMENT_NODE)
+			continue;
+		if (strcmp((const char*)(candidate_datastream->name), "data-stream") != 0)
+			continue;
+
+		// at this point it is sure to be a <data-stream> element
+
+		char* candidate_id = (char*)xmlGetProp(candidate_datastream, BAD_CAST "id");
+		if (datastream_id == NULL || oscap_streq(datastream_id, candidate_id)) {
+			datastream = candidate_datastream;
+			xmlFree(candidate_id);
+			break;
+		}
+		xmlFree(candidate_id);
+	}
+
+	return datastream;
+}
+
+
 int ds_sds_decompose_custom(const char* input_file, const char* id, const char* target_dir,
 		const char* container_name, const char* component_id, const char* target_filename)
 {
@@ -381,31 +410,7 @@ int ds_sds_decompose_custom(const char* input_file, const char* id, const char* 
 		return -1;
 	}
 
-	xmlNodePtr root = xmlDocGetRootElement(doc);
-
-	xmlNodePtr datastream = NULL;
-	xmlNodePtr candidate_datastream = root->children;
-
-	for (; candidate_datastream != NULL; candidate_datastream = candidate_datastream->next)
-	{
-		if (candidate_datastream->type != XML_ELEMENT_NODE)
-			continue;
-
-		if (strcmp((const char*)(candidate_datastream->name), "data-stream") != 0)
-			continue;
-
-		// at this point it is sure to be a <data-stream> element
-
-		char* candidate_id = (char*)xmlGetProp(candidate_datastream, BAD_CAST "id");
-		if (id == NULL || (candidate_id != NULL && strcmp(id, candidate_id) == 0))
-		{
-			datastream = candidate_datastream;
-			xmlFree(candidate_id);
-			break;
-		}
-		xmlFree(candidate_id);
-	}
-
+	xmlNodePtr datastream = _lookup_datastream_in_collection(doc, id);
 	if (!datastream)
 	{
 		const char* error = id ?
