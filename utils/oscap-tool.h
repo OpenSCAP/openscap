@@ -157,6 +157,8 @@ int oscap_module_process(struct oscap_module *module, int argc, char **argv);
 bool oscap_module_usage(struct oscap_module *module, FILE *out, const char *err, ...);
 int oscap_module_call(struct oscap_action *action);
 
+void oscap_print_error(void);
+
 char *oscap_acquire_temp_dir(void);
 void oscap_acquire_cleanup_dir(char **dir_path);
 

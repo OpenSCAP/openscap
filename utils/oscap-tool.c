@@ -368,6 +368,15 @@ cleanup:
     return ret;
 }
 
+void oscap_print_error(void)
+{
+	if (oscap_err()) {
+		char *err = oscap_err_get_full_error();
+		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, err);
+		free(err);
+	}
+}
+
 #ifndef P_tmpdir
 #define P_tmpdir "/tmp"
 #endif

@@ -399,15 +399,6 @@ static int callback_syslog_result(struct xccdf_rule_result *rule_result, void *a
 }
 */
 
-static void _print_oscap_error(void)
-{
-	if (oscap_err()) {
-		char *err = oscap_err_get_full_error();
-		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, err);
-		free(err);
-	}
-}
-
 static void _download_reporting_callback(bool warning, const char *format, ...)
 {
 	FILE *dest = warning ? stderr : stdout;
@@ -522,7 +513,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	result = xccdf_session_contains_fail_result(session) ? OSCAP_FAIL : OSCAP_OK;
 
 cleanup:
-	_print_oscap_error();
+	oscap_print_error();
 
 	/* syslog message */
 	syslog(priority, "Evaluation finnished. Return code: %d, Base score %f.", result,
@@ -592,7 +583,7 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	result = OSCAP_OK;
 
  cleanup:
-	_print_oscap_error();
+	oscap_print_error();
 	if (session != NULL)
 		xccdf_session_free(session);
 
@@ -643,7 +634,7 @@ int app_xccdf_remediate(const struct oscap_action *action)
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
 	result = xccdf_session_contains_fail_result(session) ? OSCAP_FAIL : OSCAP_OK;
 cleanup:
-	_print_oscap_error();
+	oscap_print_error();
 	xccdf_session_free(session);
 	return result;
 }
@@ -710,7 +701,7 @@ int app_xccdf_resolve(const struct oscap_action *action)
 	}
 
 cleanup:
-	_print_oscap_error();
+	oscap_print_error();
 	if (bench)
 		xccdf_benchmark_free(bench);
 	if (doc_version)
@@ -795,7 +786,7 @@ int app_generate_fix(const struct oscap_action *action)
 	close(output_fd);
 	ret = OSCAP_OK;
 cleanup:
-	_print_oscap_error();
+	oscap_print_error();
 	xccdf_session_free(session);
 	return ret;
 }
@@ -1023,7 +1014,7 @@ int app_xccdf_validate(const struct oscap_action *action) {
 		validation_failed(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version);
 
 cleanup:
-	_print_oscap_error();
+	oscap_print_error();
 
         if (doc_version)
 		free(doc_version);
