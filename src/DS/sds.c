@@ -488,7 +488,7 @@ static bool strendswith(const char* str, const char* suffix)
 	return strcmp(str + str_shift * sizeof(char), suffix) == 0;
 }
 
-static int ds_sds_compose_add_component(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* comp_id, bool extended)
+static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* comp_id, bool extended)
 {
 	xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST datastream_ns_uri);
 	if (!ds_ns)
@@ -911,7 +911,7 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 		extended_component ? "e" : "", mangled_filepath);
 	oscap_free(mangled_filepath);
 
-	ds_sds_compose_add_component(doc, datastream, filepath, comp_id, extended_component);
+	ds_sds_compose_add_component_internal(doc, datastream, filepath, comp_id, extended_component);
 
 	xmlNodePtr cref = xmlNewNode(ds_ns, BAD_CAST "component-ref");
 	xmlAddChild(cref, cref_catalog);
