@@ -551,6 +551,7 @@ static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datas
 			if (fread(buffer, length, 1, f) != 1) {
 				oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error while reading from file '%s'.", filepath);
 				fclose(f);
+				oscap_free(buffer);
 				return -1;
 			}
 			fclose(f);
@@ -1035,6 +1036,7 @@ int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastr
 	{
 		// oscap_seterr already called
 		oscap_free(cref_id);
+		oscap_free(mangled_xccdf_file);
 		return -1;
 	}
 	oscap_free(cref_id);
