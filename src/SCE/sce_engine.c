@@ -432,12 +432,18 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 	env_values[env_value_count] = NULL;
 
 	// We open a pipe for communication with the forked process
-    int pipefd[2];
-    if (pipe(pipefd) == -1)
-    {
-        perror("pipe");
-        return XCCDF_RESULT_ERROR;
-    }
+	int pipefd[2];
+	if (pipe(pipefd) == -1)
+	{
+		perror("pipe");
+		// the first 9 values (0 to 8) are compiled in
+		for (size_t i = 9; i < env_value_count; ++i)
+		{
+			oscap_free(env_values[i]);
+		}
+		oscap_free(env_values);
+		return XCCDF_RESULT_ERROR;
+	}
 
 	// FIXME: We definitely want to impose security restrictions in the forked child process in the future.
 	//        This would prevent scripts from writing to files or deleting them.
