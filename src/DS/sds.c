@@ -770,6 +770,14 @@ static int ds_sds_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datas
 
 				char* mangled_path = ds_sds_mangle_filepath(real_path);
 				char* cref_id = oscap_sprintf("scap_org.open-scap_cref_%s", mangled_path);
+
+				xmlNodePtr component_ref = NULL;
+				int counter = 0;
+				while ((component_ref = ds_sds_find_component_ref(datastream, cref_id)) != NULL) {
+					// While the given component ID already exists in the document.
+					oscap_free(cref_id);
+					cref_id = oscap_sprintf("scap_org.open-scap_cref_%s%03d", mangled_path, counter++);
+				}
 				oscap_free(mangled_path);
 
 				char* uri = oscap_sprintf("#%s", cref_id);
