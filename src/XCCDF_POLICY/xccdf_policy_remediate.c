@@ -341,9 +341,10 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 			/* We return zero to indicate success. Rather than returning the exit code. */
 			result = 0;
 		}
-	}
-	else
+	} else {
 		_rule_add_info_message(rr, "Failed to fork. %s", strerror(errno));
+		oscap_free(temp_file);
+	}
 
 cleanup:
 	oscap_acquire_cleanup_dir(&temp_dir);
