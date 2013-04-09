@@ -216,7 +216,8 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 		xccdf_result_add_target_address(result, hostip);
 
 		memset(&ifr, 0, sizeof(ifr));
-		strcpy(ifr.ifr_name, ifa->ifa_name);
+		strncpy(ifr.ifr_name, ifa->ifa_name, IFNAMSIZ);
+		ifr.ifr_name[IFNAMSIZ - 1] = 0;
 		if (ioctl(fd, SIOCGIFHWADDR, &ifr) >= 0) {
 			struct xccdf_target_fact *fact;
 			unsigned char mac[6];
