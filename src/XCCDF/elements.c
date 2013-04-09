@@ -130,7 +130,7 @@ char * xccdf_detect_version(const char* file)
 	return doc_version;
 }
 
-bool
+int
 xccdf_version_cmp(const struct xccdf_version_info *actual, const char *desired)
 {
 	/* Since the "unknown" value is strdup-ed during clone, we cannot just use common strcmp.

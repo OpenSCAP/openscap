@@ -44,7 +44,7 @@ const struct xccdf_version_info* xccdf_detect_version_parser(xmlTextReaderPtr re
  * Return true if the given namespace is supported XCCDF namespace.
  */
 bool xccdf_is_supported_namespace(xmlNs *ns);
-bool xccdf_version_cmp(const struct xccdf_version_info *actual, const char *desired);
+int xccdf_version_cmp(const struct xccdf_version_info *actual, const char *desired);
 
 typedef enum {
 	XCCDFE_ERROR = -1,
