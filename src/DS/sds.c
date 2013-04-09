@@ -945,8 +945,8 @@ int ds_sds_compose_add_component(const char *target_datastream, const char *data
 	xmlDocPtr doc = xmlReadFile(target_datastream, NULL, 0);
 	xmlNodePtr datastream = _lookup_datastream_in_collection(doc, datastream_id);
 	if (datastream == NULL) {
-		const char* error = id ?
-			oscap_sprintf("Could not find any datastream of id '%s'", id) :
+		const char* error = datastream_id ?
+			oscap_sprintf("Could not find any datastream of id '%s'", datastream_id) :
 			oscap_sprintf("Could not find any datastream inside the file");
 
 		oscap_seterr(OSCAP_EFAMILY_XML, error);
