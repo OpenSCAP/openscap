@@ -101,7 +101,7 @@ static xmlNodePtr node_get_child_element(xmlNodePtr parent, const char* name)
 	return NULL;
 }
 
-static xmlNodePtr ds_sds_find_component_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* id)
+static xmlNodePtr ds_sds_find_component_ref(xmlNodePtr datastream, const char* id)
 {
 	/* This searches for a ds:component-ref (XLink) element with a given id.
 	 * It returns a first such element in a given ds:data-stream.
@@ -326,7 +326,7 @@ static int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc,
 
 			// the pointer arithmetics simply skips the first character which is '#'
 			assert(str_uri[0] == '#');
-			xmlNodePtr cat_component_ref = ds_sds_find_component_ref(doc, datastream, str_uri + 1 * sizeof(char));
+			xmlNodePtr cat_component_ref = ds_sds_find_component_ref(datastream, str_uri + 1 * sizeof(char));
 
 			if (!cat_component_ref)
 			{
