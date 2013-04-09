@@ -281,6 +281,7 @@ static int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc,
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error making directory '%s' while dumping component to file '%s'.", target_dir, filename);
 		xmlFree(cref_id);
 		xmlFree(xlink_href);
+		oscap_free(target_filename_dirname);
 		oscap_free(filename_cpy);
 		return -1;
 	}
@@ -309,6 +310,7 @@ static int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc,
 				oscap_seterr(OSCAP_EFAMILY_XML, "No 'name' attribute for a component referenced in the catalog of component '%s'.", component_id);
 				xmlFree(cref_id);
 				xmlFree(xlink_href);
+				oscap_free(target_filename_dirname);
 				return -1;
 			}
 
@@ -321,6 +323,7 @@ static int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc,
 				xmlFree(name);
 				xmlFree(cref_id);
 				xmlFree(xlink_href);
+				oscap_free(target_filename_dirname);
 				return -1;
 			}
 
@@ -335,12 +338,19 @@ static int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc,
 				xmlFree(name);
 				xmlFree(cref_id);
 				xmlFree(xlink_href);
+				oscap_free(target_filename_dirname);
 				return -1;
 			}
 			xmlFree(str_uri);
 
 			if (ds_sds_dump_component_ref_as(cat_component_ref, doc, datastream, target_filename_dirname, name) != 0)
+			{
+				xmlFree(name);
+				xmlFree(cref_id);
+				xmlFree(xlink_href);
+				oscap_free(target_filename_dirname);
 				return -1; // no need to call oscap_seterr here, it's already set
+			}
 
 			xmlFree(name);
 		}
