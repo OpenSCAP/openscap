@@ -175,7 +175,7 @@ oscap_xml_save_filename(const char *filename, xmlDocPtr doc)
 	else {
 		int fd = open(filename, O_CREAT|O_TRUNC|O_WRONLY,
 				S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
-		if (fd < 1) {
+		if (fd < 0) {
 			oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), filename);
 			return -1;
 		}
