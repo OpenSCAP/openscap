@@ -112,8 +112,6 @@ struct oscap_string_iterator* ds_stream_index_get_extended_components(struct ds_
 
 static struct ds_stream_index* ds_stream_index_parse(xmlTextReaderPtr reader)
 {
-	struct ds_stream_index* ret = ds_stream_index_new();
-
 	// sanity check
 	if (xmlTextReaderNodeType(reader) != 1 ||
 	    strcmp((const char*)xmlTextReaderConstLocalName(reader), "data-stream") != 0)
@@ -125,6 +123,8 @@ static struct ds_stream_index* ds_stream_index_parse(xmlTextReaderPtr reader)
 
 		return NULL;
 	}
+
+	struct ds_stream_index* ret = ds_stream_index_new();
 
 	ret->id = (char*)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	ret->timestamp = (char*)xmlTextReaderGetAttribute(reader, BAD_CAST "timestamp");
