@@ -136,7 +136,7 @@ static xmlNodePtr ds_sds_find_component_ref(xmlNodePtr datastream, const char* i
 	return NULL;
 }
 
-static int ds_sds_dump_component(const char* component_id, xmlDocPtr doc, const char* filename)
+static xmlNodePtr _lookup_component_in_collection(xmlDocPtr doc, const char *component_id)
 {
 	xmlNodePtr root = xmlDocGetRootElement(doc);
 	xmlNodePtr component = NULL;
@@ -160,7 +160,12 @@ static int ds_sds_dump_component(const char* component_id, xmlDocPtr doc, const 
 		}
 		xmlFree(candidate_id);
 	}
+	return component;
+}
 
+static int ds_sds_dump_component(const char* component_id, xmlDocPtr doc, const char* filename)
+{
+	xmlNodePtr component = _lookup_component_in_collection(doc, component_id);
 	if (component == NULL)
 	{
 		oscap_seterr(OSCAP_EFAMILY_XML, "Component of given id '%s' was not found in the document.", component_id);
