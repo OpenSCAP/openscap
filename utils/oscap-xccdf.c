@@ -774,17 +774,22 @@ int app_generate_fix(const struct oscap_action *action)
 	}
 
 	struct xccdf_policy *policy = xccdf_session_get_xccdf_policy(session);
-	int output_fd = 1;
+	int output_fd = STDOUT_FILENO;
 	if (action->f_results != NULL) {
 		if ((output_fd = open(action->f_results, O_CREAT|O_TRUNC|O_NOFOLLOW|O_WRONLY, 700)) < 0) {
 			fprintf(stderr, "Could not open %s: %s", action->f_results, strerror(errno));
 			goto cleanup;
 		}
 	}
-	if (xccdf_policy_generate_fix(policy, NULL, action->tmpl, output_fd) != 0)
+	if (xccdf_policy_generate_fix(policy, NULL, action->tmpl, output_fd) != 0) {
+		if (output_fd != STDOUT_FILENO)
+			close(output_fd);
 		goto cleanup;
-	close(output_fd);
+	}
+	if (output_fd != STDOUT_FILENO)
+		close(output_fd);
 	ret = OSCAP_OK;
+
 cleanup:
 	oscap_print_error();
 	xccdf_session_free(session);
