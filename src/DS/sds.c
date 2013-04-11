@@ -33,6 +33,7 @@
 #include "common/alloc.h"
 #include "common/_error.h"
 #include "common/util.h"
+#include "common/list.h"
 
 #include <sys/stat.h>
 #include <time.h>
@@ -757,6 +758,7 @@ static int ds_sds_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datas
 	xmlNodeSetPtr nodeset = xpathObj->nodesetval;
 	if (nodeset != NULL)
 	{
+		struct oscap_htable *exported = oscap_htable_new();
 		char* filepath_cpy = oscap_strdup(filepath);
 		const char* dir = dirname(filepath_cpy);
 
@@ -770,6 +772,12 @@ static int ds_sds_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datas
 			if (xmlHasProp(node, BAD_CAST "href"))
 			{
 				char* href = (char*)xmlGetProp(node, BAD_CAST "href");
+				if (oscap_htable_get(exported, href) != NULL) {
+					// This path has been already exported. Do not export duplicate.
+					xmlFree(href);
+					continue;
+				}
+				oscap_htable_add(exported, href, "");
 				char* real_path = (strcmp(dir, "") == 0 || strcmp(dir, ".") == 0) ?
 					oscap_strdup(href) : oscap_sprintf("%s/%s", dir, href);
 
@@ -805,6 +813,7 @@ static int ds_sds_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datas
 					oscap_free(uri);
 					oscap_free(cref_id);
 					oscap_free(real_path);
+					oscap_htable_free0(exported);
 					xmlFree(href);
 					return -1;
 				}
@@ -815,13 +824,13 @@ static int ds_sds_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datas
 				xmlSetProp(catalog_uri, BAD_CAST "uri", BAD_CAST uri);
 
 				oscap_free(uri);
-				oscap_free(real_path);
 				xmlFree(href);
 
 				xmlAddChild(catalog, catalog_uri);
 			}
 		}
 
+		oscap_htable_free0(exported);
 		oscap_free(filepath_cpy);
 	}
 
