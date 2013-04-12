@@ -947,6 +947,15 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 	// a different element name than "normal" components
 	char* comp_id = oscap_sprintf("scap_org.open-scap_%scomp_%s",
 		extended_component ? "e" : "", mangled_filepath);
+
+	int counter = 0;
+	while (_lookup_component_in_collection(doc, comp_id) != NULL) {
+		// While a component of the given ID already exists, generate a new one
+		oscap_free(comp_id);
+		comp_id = oscap_sprintf("scap_org.open-scap_%scomp_%s%03d",
+			extended_component ? "e" : "", mangled_filepath, counter++);
+	}
+
 	oscap_free(mangled_filepath);
 
 	ds_sds_compose_add_component_internal(doc, datastream, filepath, comp_id, extended_component);
