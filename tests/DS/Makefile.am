@@ -42,6 +42,8 @@ EXTRA_DIST += test_ds.sh \
 		sds_extended_component_plain_text_whitespace/check.txt \
 		sds_extended_component_plain_text_whitespace/fake-check-xccdf.xml \
 		sds_extended_component_plain_text_whitespace/scap-fedora14-oval.xml \
+		sds_missing_oval/first-oval.xml \
+		sds_missing_oval/multiple-oval-xccdf.xml \
 		sds_multiple_oval/first-oval.xml \
 		sds_multiple_oval/second-oval.xml \
 		sds_multiple_oval/multiple-oval-xccdf.xml \

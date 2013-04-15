@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+            <generator>
+                <oval:product_name>vim, emacs</oval:product_name>
+                <oval:schema_version>5.5</oval:schema_version>
+                <oval:timestamp>2010-08-30T12:00:00-04:00</oval:timestamp>
+            </generator>
+            <definitions>
+                <definition class="compliance" id="oval:org.open-scap.f14:def:20000" version="1">
+                    <metadata>
+                        <title>Ensure that /tmp has its own partition or logical volume</title>
+                        <reference ref_id="TBD" source="CCE"/>
+                        <description>The /tmp directory is a world-writable directory used for temporary ﬁle storage. Verify that it has its own partition or logical volume.</description>
+                    </metadata>
+                    <criteria>
+                        <criterion comment="Check in /etc/fstab for a /tmp mount point" test_ref="oval:org.open-scap.f14:tst:20000"/>
+                    </criteria>
+                </definition>
+            </definitions>
+            <tests>
+                <ind-def:textfilecontent54_test check="only one" check_existence="at_least_one_exists" comment="look for /tmp partition or logical volume in /etc/fstab" id="oval:org.open-scap.f14:tst:20000" version="1">
+                    <ind-def:object object_ref="oval:org.open-scap.f14:obj:20000"/>
+                    <ind-def:state state_ref="oval:org.open-scap.f14:ste:20000"/>
+                </ind-def:textfilecontent54_test>
+            </tests>
+            <objects>
+                <ind-def:textfilecontent54_object comment="look for the partition mount point in /etc/fstab" id="oval:org.open-scap.f14:obj:20000" version="1">
+                    <ind-def:path>/etc</ind-def:path>
+                    <ind-def:filename>fstab</ind-def:filename>
+                    <ind-def:pattern operation="pattern match">^[[:space:]]*[^[:space:]]+[[:space:]]+([^[:space:]]+)[[:space:]]+[^[:space:]]+[[:space:]]+[^[:space:]]+[[:space:]]+[^[:space:]]+[[:space:]]+[^[:space:]]+</ind-def:pattern>
+                    <!--                 <ind-def:pattern operation="pattern match">^[\s]*[\S]+[\s]+([\S]+)[\s]+[\S]+[\s]+[\S]+[\s]+[\S]+[\s]+[\S]+</ind-def:pattern> -->
+                    <ind-def:instance datatype="int" operation="greater than or equal">1</ind-def:instance>
+                </ind-def:textfilecontent54_object>
+            </objects>
+            <states>
+                <ind-def:textfilecontent54_state comment="/tmp mount point is defined" id="oval:org.open-scap.f14:ste:20000" version="1">
+                    <ind-def:subexpression datatype="string" entity_check="all" operation="equals">/tmp</ind-def:subexpression>
+                </ind-def:textfilecontent54_state>
+            </states>
+</oval_definitions>
