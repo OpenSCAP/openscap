@@ -822,12 +822,12 @@ static int ds_sds_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datas
 
 				oscap_free(cref_id);
 				oscap_free(uri);
+				oscap_free(real_path);
 				xmlFree(href);
 
 				if (ret < 0) {
 					// oscap_seterr has already been called
 					xmlFreeDoc(component_doc);
-					oscap_free(real_path);
 					oscap_htable_free0(exported);
 					return -1;
 				}
