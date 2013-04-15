@@ -812,28 +812,26 @@ static int ds_sds_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datas
 					continue;
 				}
 
-				if (ds_sds_compose_add_component_with_ref(doc, datastream, real_path, cref_id) != 0)
-				{
-					// oscap_seterr has already been called
-
-					xmlFreeDoc(component_doc);
-					oscap_free(uri);
-					oscap_free(cref_id);
-					oscap_free(real_path);
-					oscap_htable_free0(exported);
-					xmlFree(href);
-					return -1;
+				int ret = ds_sds_compose_add_component_with_ref(doc, datastream, real_path, cref_id);
+				if (ret == 0) {
+					xmlNodePtr catalog_uri = xmlNewNode(cat_ns, BAD_CAST "uri");
+					xmlSetProp(catalog_uri, BAD_CAST "name", BAD_CAST href);
+					xmlSetProp(catalog_uri, BAD_CAST "uri", BAD_CAST uri);
+					xmlAddChild(catalog, catalog_uri);
 				}
+
 				oscap_free(cref_id);
-
-				xmlNodePtr catalog_uri = xmlNewNode(cat_ns, BAD_CAST "uri");
-				xmlSetProp(catalog_uri, BAD_CAST "name", BAD_CAST href);
-				xmlSetProp(catalog_uri, BAD_CAST "uri", BAD_CAST uri);
-
 				oscap_free(uri);
 				xmlFree(href);
 
-				xmlAddChild(catalog, catalog_uri);
+				if (ret < 0) {
+					// oscap_seterr has already been called
+					xmlFreeDoc(component_doc);
+					oscap_free(real_path);
+					oscap_htable_free0(exported);
+					return -1;
+				}
+
 			}
 		}
 
