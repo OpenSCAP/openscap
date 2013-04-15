@@ -22,10 +22,7 @@ DISTCLEANFILES = *.log *.out*
 CLEANFILES = *.log *.out*
 
 TESTS_ENVIRONMENT = \
-	LD_LIBRARY_PATH=$(top_builddir)/src/.libs \
-	LD_PRELOAD=$(top_builddir)/src/.libs/libopenscap_testing.so \
-	OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes \
-	$(SHELL) -x
+		$(top_builddir)/run $(SHELL) -x
 TESTS = all.sh
 check_PROGRAMS = test_api_probes_smoke oval_fts_list
 

@@ -17,6 +17,7 @@ ltmain.sh
 install-sh
 missing
 .dirstamp
+/run
 stamp-*
 .deps/
 .libs/

@@ -6,12 +6,9 @@ DISTCLEANFILES = \
 CLEANFILES = $(DISTCLEANFILES)
 
 TESTS_ENVIRONMENT = \
-	LD_LIBRARY_PATH=$(top_builddir)/src/.libs \
-	LD_PRELOAD=$(top_builddir)/src/.libs/libopenscap_testing.so \
-	builddir=$(top_builddir) \
-	OSCAP_SCHEMA_PATH=$(top_srcdir)/schemas \
-	OSCAP_FULL_VALIDATION=1 \
-	OVAL_PROBE_DIR=$(top_builddir)/src/OVAL/probes
+		builddir=$(top_builddir) \
+		OSCAP_FULL_VALIDATION=1 \
+		$(top_builddir)/run
 
 if WANT_PROBES_UNIX
 if probe_file_enabled
