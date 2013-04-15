@@ -200,8 +200,10 @@ struct ds_sds_index* ds_sds_index_new(void)
 
 void ds_sds_index_free(struct ds_sds_index* s)
 {
-	oscap_list_free(s->streams, (oscap_destruct_func)ds_stream_index_free);
-	oscap_free(s);
+	if (s != NULL) {
+		oscap_list_free(s->streams, (oscap_destruct_func)ds_stream_index_free);
+		oscap_free(s);
+	}
 }
 
 static void ds_sds_index_add_stream(struct ds_sds_index* s, struct ds_stream_index* stream)
