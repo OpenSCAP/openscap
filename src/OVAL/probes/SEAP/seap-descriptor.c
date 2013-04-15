@@ -73,6 +73,9 @@ int SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate,
                 sd_dsc->next_cid = 0;
                 sd_dsc->cmd_c_table = SEAP_cmdtbl_new ();
                 sd_dsc->cmd_w_table = SEAP_cmdtbl_new ();
+		sd_dsc->msg_queue = NULL;
+		sd_dsc->err_queue = rbt_i32_new();
+		sd_dsc->cmd_queue = NULL;
 
 		SEAP_packetq_init(&sd_dsc->pck_queue);
 
@@ -118,6 +121,11 @@ int SEAP_desc_del (SEAP_desctable_t *sd_table, int sd)
         return (0);
 }
 
+static void __SEAP_desc_errqueue_free_cb(struct rbt_i32_node *n)
+{
+    SEAP_error_free(n->data);
+}
+
 void SEAP_desc_free(SEAP_desc_t *dsc)
 {
         SEAP_cmdtbl_free(dsc->cmd_c_table);
@@ -125,6 +133,7 @@ void SEAP_desc_free(SEAP_desc_t *dsc)
 	SEAP_packetq_free(&dsc->pck_queue);
         pthread_mutex_destroy(&(dsc->r_lock));
         pthread_mutex_destroy(&(dsc->w_lock));
+	rbt_i32_free_cb(dsc->err_queue, __SEAP_desc_errqueue_free_cb);
         sm_free(dsc);
 }
 

@@ -470,7 +470,7 @@ static int SEAP_packet_sexp2err (SEXP_t *sexp_err, SEAP_err_t *seap_err)
                         if (SEXP_strcmp (member, ":orig_id") == 0) {
                                 SEXP_t *val;
 
-                                val = SEXP_list_nth (member, ++n);
+                                val = SEXP_list_nth (sexp_err, ++n);
 
                                 if (!SEXP_numberp (val)) {
                                         dI("Invalid type of :orig_id value\n");
@@ -489,19 +489,25 @@ static int SEAP_packet_sexp2err (SEXP_t *sexp_err, SEAP_err_t *seap_err)
                         } else if (SEXP_strcmp (member, ":type") == 0) {
                                 SEXP_t *val;
 
-                                val = SEXP_list_nth (member, ++n);
+                                val = SEXP_list_nth (sexp_err, ++n);
+				seap_err->type = SEXP_number_getu_32(val);
 
-                                if (SEXP_strcmp (val, "int") == 0)
-                                        seap_err->type = SEAP_ETYPE_INT;
-                                else if (SEXP_strcmp (val, "usr") == 0)
-                                        seap_err->type = SEAP_ETYPE_USER;
-                                else {
-                                        dI("Invalid value of :type attribute\n");
+				if (!SEXP_numberp(val)) {
+                                        dI("Invalid type of the :type attribute\n");
                                         SEXP_free (val);
                                         SEXP_free (member);
                                         errno = EINVAL;
                                         return (-1);
                                 }
+
+                                if (!(seap_err->type == SEAP_ETYPE_INT ||
+				      seap_err->type == SEAP_ETYPE_USER)) {
+					dI("Invalid value of the :type attribute\n");
+					SEXP_free(val);
+					SEXP_free(member);
+					errno = EINVAL;
+					return -1;
+				}
 
                                 SEXP_free (val);
                         } else {
