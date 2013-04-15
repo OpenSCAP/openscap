@@ -12,6 +12,11 @@ set -e -o pipefail
 function assert_correct_xlinks()
 {
 	local DS=$1
+	local stderr=$(mktemp)
+	$OSCAP info $DS 2> $stderr
+	diff $stderr /dev/null
+	rm $stderr
+
 	# First of all make sure that there is at least one ds:component-ref.
 	[ "$($XPATH $DS 'count(//*[local-name()="component-ref"])')" != "0" ]
 	# We want to catch cases when this element has different namespace.
