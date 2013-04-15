@@ -516,7 +516,8 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 							codemsg = "Unknown error";
 						}
 
-						oscap_seterr(OSCAP_EFAMILY_OVAL, "Probe at sd=%d reported an error: %s", pd->sd, codemsg);
+						oscap_seterr(OSCAP_EFAMILY_OVAL, "Probe at sd=%d (%s) reported an error: %s",
+							     pd->sd, oval_subtype_to_str(pd->subtype), codemsg);
 						break;
 					}
 					case SEAP_ETYPE_INT:
