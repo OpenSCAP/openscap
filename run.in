@@ -28,8 +28,10 @@
 
 #----------------------------------------------------------------------
 
-# Find this script.
+# Build directory
 b=@abs_builddir@
+# Top source directory
+s=@abs_top_srcdir@
 
 # Preload testing library.
 export LD_PRELOAD=$b/src/.libs/libopenscap_testing.so${LD_PRELOAD:+:$LD_PRELOAD}
@@ -39,9 +41,9 @@ export LD_LIBRARY_PATH=$b/src/.libs:$b/swig/.libs${LD_LIBRARY_PATH:+:$LD_LIBRARY
 
 # Set paths to probes, schemas, transformations and cpes.
 export OVAL_PROBE_DIR=$b/src/OVAL/probes${OVAL_PROBE_DIR:+:$OVAL_PROBE_DIR}
-export OSCAP_SCHEMA_PATH=$b/schemas${OSCAP_SCHEMA_PATH:+:$OSCAP_SCHEMA_PATH}
-export OSCAP_XSLT_PATH=$b/xsl${OSCAP_XSLT_PATH:+:$OSCAP_XSLT_PATH}
-export OSCAP_CPE_PATH=$b/cpe${OSCAP_CPE_PATH:+:$OSCAP_CPE_PATH}
+export OSCAP_SCHEMA_PATH=$s/schemas${OSCAP_SCHEMA_PATH:+:$OSCAP_SCHEMA_PATH}
+export OSCAP_XSLT_PATH=$s/xsl${OSCAP_XSLT_PATH:+:$OSCAP_XSLT_PATH}
+export OSCAP_CPE_PATH=$s/cpe${OSCAP_CPE_PATH:+:$OSCAP_CPE_PATH}
 
 # For SWIG bindings.
 export PERL5LIB=$b/swig:$b/swig/.libs${PERL5LIB:+:$PERL5LIB}
