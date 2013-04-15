@@ -14,6 +14,8 @@ Makefile.in
 *.a
 *.la
 
+oscap_debug.log.*
+
 /ChangeLog
 /aclocal.m4
 /autom4te.cache
@@ -58,7 +60,6 @@ Makefile.in
 /lib/unistd.h
 /lib/warn-on-use.h
 /lib/wchar.h
-/oscap_debug.log.*
 /tests/API/CPE/dict/dict.xml.out
 /tests/API/CPE/dict/test_api_cpe_dict
 /tests/API/CPE/dict/test_api_cpe_dict.log
@@ -235,4 +236,6 @@ Makefile.in
 /tests/probes/uname/test_probes_uname.xml
 /tests/probes/xinetd/test_probe_xinetd
 /tests/probes/xinetd/test_probe_xinetd.log
+/tests/sce/sce_xccdf.xml.results
+/tests/sce/test_sce.log
 /tests/schemas/test_schemas.log
