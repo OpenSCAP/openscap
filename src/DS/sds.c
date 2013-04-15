@@ -965,18 +965,20 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 
 	oscap_free(mangled_filepath);
 
-	ds_sds_compose_add_component_internal(doc, datastream, filepath, comp_id, extended_component);
+	result = ds_sds_compose_add_component_internal(doc, datastream, filepath, comp_id, extended_component);
+	if (result == 0) {
+		xmlNodePtr cref = xmlNewNode(ds_ns, BAD_CAST "component-ref");
+		xmlAddChild(cref, cref_catalog);
+		xmlSetProp(cref, BAD_CAST "id", BAD_CAST cref_id);
 
-	xmlNodePtr cref = xmlNewNode(ds_ns, BAD_CAST "component-ref");
-	xmlAddChild(cref, cref_catalog);
-	xmlSetProp(cref, BAD_CAST "id", BAD_CAST cref_id);
+		const char* xlink_href = oscap_sprintf("#%s", comp_id);
+		xmlSetNsProp(cref, xlink_ns, BAD_CAST "href", BAD_CAST xlink_href);
+		oscap_free(xlink_href);
 
-	const char* xlink_href = oscap_sprintf("#%s", comp_id);
+		xmlAddChild(cref_parent, cref);
+	}
+
 	oscap_free(comp_id);
-
-	xmlSetNsProp(cref, xlink_ns, BAD_CAST "href", BAD_CAST xlink_href);
-	oscap_free(xlink_href);
-
 	// the source data stream XSD requires either no catalog or a non-empty one
 	if (cref_catalog->children == NULL)
 	{
@@ -984,9 +986,7 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 		xmlFreeNode(cref_catalog);
 	}
 
-	xmlAddChild(cref_parent, cref);
-
-	return 0;
+	return result;
 }
 
 int ds_sds_compose_add_component(const char *target_datastream, const char *datastream_id, const char *new_component, bool extended)
