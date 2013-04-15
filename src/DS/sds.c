@@ -521,16 +521,23 @@ static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datas
 		return -1;
 	}
 
-	xmlNodePtr component = xmlNewNode(ds_ns, BAD_CAST (extended ? "extended-component" : "component"));
-	xmlSetProp(component, BAD_CAST "id", BAD_CAST comp_id);
-
 	char file_timestamp[32];
 	strcpy(file_timestamp, "0000-00-00T00:00:00");
 
 	struct stat file_stat;
 	if (stat(filepath, &file_stat) == 0)
 		strftime(file_timestamp, 32, "%Y-%m-%dT%H:%M:%S", localtime(&file_stat.st_mtime));
+	else {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Could not found file %s: %s.", filepath, strerror(errno));
+		// Return positive number, indicating less severe problem.
+		// Rationale: When an OVAL file is missing during a scan it it not considered
+		// to be deal breaker (it shall have 'notchecked' result), thus we shall allow
+		// detastreams with missing OVAL
+		return 1;
+	}
 
+	xmlNodePtr component = xmlNewNode(ds_ns, BAD_CAST (extended ? "extended-component" : "component"));
+	xmlSetProp(component, BAD_CAST "id", BAD_CAST comp_id);
 	xmlSetProp(component, BAD_CAST "timestamp", BAD_CAST file_timestamp);
 
 	xmlDocPtr component_doc = xmlReadFile(filepath, NULL, 0);
