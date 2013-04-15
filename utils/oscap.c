@@ -132,26 +132,28 @@ static int print_versions(const struct oscap_action *action)
 	char default_cpe_path[PATH_MAX];
 	snprintf(default_cpe_path, PATH_MAX, "%s/openscap-cpe-dict.xml", oscap_path_to_cpe());
 	struct cpe_dict_model* cpe_dict = cpe_dict_model_import(default_cpe_path);
+	if (cpe_dict != NULL) {
 
-	struct cpe_item_iterator* cpe_items = cpe_dict_model_get_items(cpe_dict);
-	while (cpe_item_iterator_has_more(cpe_items))
-	{
-		struct cpe_item* cpe_item = cpe_item_iterator_next(cpe_items);
+		struct cpe_item_iterator* cpe_items = cpe_dict_model_get_items(cpe_dict);
+		while (cpe_item_iterator_has_more(cpe_items))
+		{
+			struct cpe_item* cpe_item = cpe_item_iterator_next(cpe_items);
 
-		struct oscap_text_iterator* titles = cpe_item_get_titles(cpe_item);
-		char* str_title = oscap_textlist_get_preferred_plaintext(titles, NULL);
-		oscap_text_iterator_free(titles);
+			struct oscap_text_iterator* titles = cpe_item_get_titles(cpe_item);
+			char* str_title = oscap_textlist_get_preferred_plaintext(titles, NULL);
+			oscap_text_iterator_free(titles);
 
-		struct cpe_name* name = cpe_item_get_name(cpe_item);
-		char * str_name = cpe_name_get_as_format(name, CPE_FORMAT_URI);
+			struct cpe_name* name = cpe_item_get_name(cpe_item);
+			char * str_name = cpe_name_get_as_format(name, CPE_FORMAT_URI);
 
-		printf("%s - %s\n", str_title, str_name);
+			printf("%s - %s\n", str_title, str_name);
 
-		free(str_name);
-		free(str_title);
+			free(str_name);
+			free(str_title);
+		}
+		cpe_item_iterator_free(cpe_items);
+		cpe_dict_model_free(cpe_dict);
 	}
-	cpe_item_iterator_free(cpe_items);
-	cpe_dict_model_free(cpe_dict);
 	printf("\n");
 
 	printf("==== Supported OVAL objects and associated OpenSCAP probes ====\n");
