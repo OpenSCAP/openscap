@@ -318,7 +318,7 @@ void probe_fini (void *ptr)
         return;
 }
 
-static int collect_rpm_files(SEXP_t *item, struct rpminfo_rep rep) {
+static int collect_rpm_files(SEXP_t *item, const struct rpminfo_rep *rep) {
 	SEXP_t *value;
 	rpmdbMatchIterator ts;
 	Header pkgh;
@@ -331,23 +331,23 @@ static int collect_rpm_files(SEXP_t *item, struct rpminfo_rep rep) {
 		return -1;
 	}
 
-	if (rpmdbSetIteratorRE(ts, RPMTAG_NAME, RPMMIRE_STRCMP, rep.name) != 0) {
+	if (rpmdbSetIteratorRE(ts, RPMTAG_NAME, RPMMIRE_STRCMP, rep->name) != 0) {
 		ret = -1;
 		goto cleanup;
 	}
-	if (rpmdbSetIteratorRE(ts, RPMTAG_EPOCH, RPMMIRE_STRCMP, rep.epoch) != 0) {
+	if (rpmdbSetIteratorRE(ts, RPMTAG_EPOCH, RPMMIRE_STRCMP, rep->epoch) != 0) {
 		ret = -1;
 		goto cleanup;
 	}
-	if (rpmdbSetIteratorRE(ts, RPMTAG_VERSION, RPMMIRE_STRCMP, rep.version) != 0) {
+	if (rpmdbSetIteratorRE(ts, RPMTAG_VERSION, RPMMIRE_STRCMP, rep->version) != 0) {
 		ret = -1;
 		goto cleanup;
 	}
-	if (rpmdbSetIteratorRE(ts, RPMTAG_RELEASE, RPMMIRE_STRCMP, rep.release) != 0) {
+	if (rpmdbSetIteratorRE(ts, RPMTAG_RELEASE, RPMMIRE_STRCMP, rep->release) != 0) {
 		ret = -1;
 		goto cleanup;
 	}
-	if (rpmdbSetIteratorRE(ts, RPMTAG_ARCH, RPMMIRE_STRCMP, rep.arch) != 0) {
+	if (rpmdbSetIteratorRE(ts, RPMTAG_ARCH, RPMMIRE_STRCMP, rep->arch) != 0) {
 		ret = -1;
 		goto cleanup;
 	}
@@ -512,7 +512,7 @@ int probe_main (probe_ctx *ctx, void *arg)
 						if (bh_value != NULL) {
 							if (SEXP_strcmp(bh_value, "true") == 0) {
 								/* collect package files */
-								collect_rpm_files(item, reply_st[i]);
+								collect_rpm_files(item, &reply_st[i]);
 
 							}
 							SEXP_free(bh_value);
