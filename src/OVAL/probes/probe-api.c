@@ -470,8 +470,10 @@ oval_version_t probe_obj_get_schema_version(const SEXP_t *obj)
 		return OVAL_VERSION_INVALID;
 	sexp_ver = probe_obj_getattrval(obj, "oval_version");
 
-	if (!SEXP_numberp(sexp_ver))
+	if (!SEXP_numberp(sexp_ver)) {
+		SEXP_free(sexp_ver);
 		return OVAL_VERSION_INVALID;
+	}
 
 	ver = SEXP_number_getu_32(sexp_ver);
 	SEXP_free(sexp_ver);
