@@ -109,6 +109,7 @@ retry_list:
 
         if (xattr_count < 0) {
                 dI("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s.\n", errno, strerror(errno));
+                return 0;
         }
 
         /* allocate space for xattr names */
