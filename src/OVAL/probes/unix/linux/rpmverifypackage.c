@@ -171,7 +171,6 @@ static int rpmverify_collect(probe_ctx *ctx,
 {
 	rpmdbMatchIterator match;
 	Header pkgh;
-	pcre *re = NULL;
 	int  ret = -1;
 	unsigned int i, j, rpmcli_argc = 0;
 	const char * rpmcli_argv[10];
@@ -300,9 +299,6 @@ static int rpmverify_collect(probe_ctx *ctx,
 	match = rpmdbFreeIterator (match);
 	ret   = 0;
 ret:
-	if (re != NULL)
-		pcre_free(re);
-
 	RPMVERIFY_UNLOCK;
 	return (ret);
 }
