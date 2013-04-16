@@ -476,6 +476,10 @@ int probe_main (probe_ctx *ctx, void *arg)
 	}
 
 	SEXP_free(name_ent);
+	SEXP_free(epoch_ent);
+	SEXP_free(version_ent);
+	SEXP_free(release_ent);
+	SEXP_free(arch_ent);
 
 	return 0;
 }
