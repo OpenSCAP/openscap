@@ -9,9 +9,25 @@ Get fresh sources from repository:
   $ ./autogen.sh
 
 You are OK with tarball from official release
-  - requirements: swig libxml2-devel libxslt-devel m4 perl-XML-Parser
-                  rpm-devel libgcrypt-devel pcre-devel libacl-devel
-                  libselinux-devel libblkid-devel libnl-devel
+  - requirements:
+    (some of these can be turned off via configure)
+    libacl-devel
+    libcap-devel
+    libcurl-devel
+    libgcrypt-devel
+    libselinux-devel
+    libxml2-devel
+    libxslt-devel
+    make
+    openldap-devel
+    pcre-devel
+    perl-XML-Parser
+    perl-XML-XPath
+    perl-devel
+    python-devel
+    rpm-devel
+    swig
+
   $ ./configure
   $ make
   $ make check
