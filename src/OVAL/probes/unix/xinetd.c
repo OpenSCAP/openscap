@@ -761,7 +761,6 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 					for (;;) {
 						if (readdir_r (dirfp, &dent, &dentp) != 0) {
 							dW("Can't read directory: %s; %d, %s.\n", inclarg, errno, strerror (errno));
-							closedir (dirfp);
 							break;
 						}
 
