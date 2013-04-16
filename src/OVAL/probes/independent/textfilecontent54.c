@@ -436,7 +436,6 @@ int probe_main(probe_ctx *ctx, void *arg)
 		probe_cobj_add_msg(probe_ctx_getresult(pfd.ctx), msg);
 		SEXP_free(msg);
 		probe_cobj_set_flag(probe_ctx_getresult(pfd.ctx), SYSCHAR_FLAG_ERROR);
-		ret = PROBE_EFATAL;
 		goto cleanup;
 	}
 #elif defined USE_REGEX_POSIX
@@ -456,7 +455,6 @@ int probe_main(probe_ctx *ctx, void *arg)
 		probe_cobj_add_msg(probe_ctx_getresult(pfd.ctx), msg);
 		SEXP_free(msg);
 		probe_cobj_set_flag(probe_ctx_getresult(pfd.ctx), SYSCHAR_FLAG_ERROR);
-		ret = PROBE_EFATAL;
 		goto cleanup;
 	}
 #endif
