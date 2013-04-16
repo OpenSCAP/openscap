@@ -3,7 +3,8 @@ noinst_LTLIBRARIES = libds.la
 
 libds_la_SOURCES = sds.c \
 		   sds_index.c \
-		   rds.c
+		   rds.c \
+		   rds_index.c
 
 libds_la_CPPFLAGS  = @xml2_CFLAGS@ \
 		     -I$(top_srcdir)/src \

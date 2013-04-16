@@ -283,8 +283,96 @@ bool ds_stream_index_iterator_has_more(struct ds_stream_index_iterator *it);
 /// @memberof ds_stream_index_iterator
 void ds_stream_index_iterator_free(struct ds_stream_index_iterator *it);
 
+/**
+ * @struct rds_report_request_index
+ */
+struct rds_report_request_index;
+
+struct rds_report_request_index* rds_report_request_index_new(void);
+void rds_report_request_index_free(struct rds_report_request_index* s);
+const char* rds_report_request_index_get_id(struct rds_report_request_index* s);
+
+/**
+ * @struct rds_asset_index
+ */
+struct rds_asset_index;
+
+struct rds_asset_index* rds_asset_index_new(void);
+void rds_asset_index_free(struct rds_asset_index* s);
+const char* rds_asset_index_get_id(struct rds_asset_index* s);
+
+/**
+ * @struct rds_report_index
+ */
+struct rds_report_index;
+
+struct rds_report_index* rds_report_index_new(void);
+void rds_report_index_free(struct rds_report_index* s);
+const char* rds_report_index_get_id(struct rds_report_index* s);
+
+/**
+ * @struct rds_report_request_index_iterator
+ * @see oscap_iterator
+ */
+struct rds_report_request_index_iterator;
+
+/// @memberof rds_report_request_index_iterator
+struct rds_report_request_index *rds_report_request_index_iterator_next(struct rds_report_request_index_iterator *it);
+/// @memberof rds_report_request_index_iterator
+bool rds_report_request_index_iterator_has_more(struct rds_report_request_index_iterator *it);
+/// @memberof rds_report_request_index_iterator
+void rds_report_request_index_iterator_free(struct rds_report_request_index_iterator *it);
+
+/**
+ * @struct rds_asset_index_iterator
+ * @see oscap_iterator
+ */
+struct rds_asset_index_iterator;
+
+/// @memberof rds_asset_index_iterator
+struct rds_asset_index *rds_asset_index_iterator_next(struct rds_asset_index_iterator *it);
+/// @memberof rds_asset_index_iterator
+bool rds_asset_index_iterator_has_more(struct rds_asset_index_iterator *it);
+/// @memberof rds_asset_index_iterator
+void rds_asset_index_iterator_free(struct rds_asset_index_iterator *it);
+
+/**
+ * @struct rds_report_index_iterator
+ * @see oscap_iterator
+ */
+struct rds_report_index_iterator;
+
+/// @memberof rds_report_index_iterator
+struct rds_report_index *rds_report_index_iterator_next(struct rds_report_index_iterator *it);
+/// @memberof rds_report_index_iterator
+bool rds_report_index_iterator_has_more(struct rds_report_index_iterator *it);
+/// @memberof rds_report_index_iterator
+void rds_report_index_iterator_free(struct rds_report_index_iterator *it);
+
+/**
+ * @struct rds_index
+ *
+ * Represents <asset-report-collection> element - the root element of each
+ * result datastream in Asset Reporting Format = ARF.
+ *
+ * Indexes assets and report-requests.
+ */
+struct rds_index;
+
+struct rds_index* rds_index_new(void);
+void rds_index_free(struct rds_index* s);
+
+struct rds_report_request_index_iterator* rds_index_get_report_requests(struct rds_index* s);
+struct rds_asset_index_iterator* rds_index_get_assets(struct rds_index* s);
+struct rds_report_index_iterator* rds_index_get_reports(struct rds_index* s);
+
+struct rds_report_request_index* rds_index_get_report_request(struct rds_index* rds, const char* id);
+struct rds_asset_index* rds_index_get_asset(struct rds_index* rds, const char* id);
+struct rds_report_index* rds_index_get_report(struct rds_index* rds, const char* id);
+
+struct rds_index *rds_index_import(const char* file);
+
 /************************************************************/
 /** @} End of DS group */
 
 #endif
-

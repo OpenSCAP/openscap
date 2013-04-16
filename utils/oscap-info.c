@@ -302,6 +302,17 @@ static int app_info(const struct oscap_action *action)
 	break;
 	case OSCAP_DOCUMENT_ARF: {
 		printf("Document type: Result Data Stream\n");
+		struct rds_index *rds = rds_index_import(action->file);
+		if (!rds)
+			goto cleanup;
+
+		struct rds_asset_index_iterator* asset_it = rds_index_get_assets(rds);
+		while (rds_asset_index_iterator_has_more(asset_it)) {
+			struct rds_asset_index* asset = rds_asset_index_iterator_next(asset_it);
+			printf("\nAsset: %s\n", rds_asset_index_get_id(asset));
+		}
+		rds_asset_index_iterator_free(asset_it);
+		rds_index_free(rds);
 	}
 	break;
 	default:

@@ -246,12 +246,9 @@ static struct ds_sds_index* ds_sds_index_parse(xmlTextReaderPtr reader)
 		return NULL;
 	}
 
-	struct ds_sds_index* ret = ds_sds_index_new();
-
 	if (xmlTextReaderNodeType(reader) != 1 ||
 	    strcmp((const char*)xmlTextReaderConstLocalName(reader), "data-stream-collection") != 0)
 	{
-		ds_sds_index_free(ret);
 		oscap_seterr(OSCAP_EFAMILY_XML,
 		             "Expected to to have start of <ds:data-stream-collection> at document root, "
 		             "the current event is '%i' at '%s' instead. I refuse to parse!",
@@ -262,10 +259,11 @@ static struct ds_sds_index* ds_sds_index_parse(xmlTextReaderPtr reader)
 
 	if (xmlTextReaderRead(reader) != 1)
 	{
-		ds_sds_index_free(ret);
 		oscap_setxmlerr(xmlGetLastError());
 		return NULL;
 	}
+
+	struct ds_sds_index* ret = ds_sds_index_new();
 
 	while (oscap_to_start_element(reader, 1))
 	{
