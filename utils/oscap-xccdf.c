@@ -578,9 +578,8 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 		goto cleanup;
 
 	xccdf_session_set_oval_variables_export(session, true);
-	xccdf_session_export_oval(session);
-
-	result = OSCAP_OK;
+	if (xccdf_session_export_oval(session) == 0)
+		result = OSCAP_OK;
 
  cleanup:
 	oscap_print_error();
