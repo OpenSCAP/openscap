@@ -81,7 +81,8 @@ static char *get_mac(const struct ifaddrs *ifa)
        static char mac_buf[20];
 
        memset(&ifr, 0, sizeof(struct ifreq));
-       strcpy(ifr.ifr_name, ifa->ifa_name);
+       strncpy(ifr.ifr_name, ifa->ifa_name, IFNAMSIZ);
+       ifr.ifr_name[IFNAMSIZ-1] = 0;
        if (ioctl(fd, SIOCGIFHWADDR, &ifr) >= 0) {
                memcpy(mac, ifr.ifr_hwaddr.sa_data, sizeof(mac));
                snprintf(mac_buf, sizeof(mac_buf),

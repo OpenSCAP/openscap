@@ -641,6 +641,7 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 
 					if (bufidx >= l_size) {
 						tmpbuf_free(buffer);
+						xiconf_free(xiconf);
 						return (NULL);
 					}
 
@@ -649,6 +650,7 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 
 					if (bufidx >= l_size) {
 						tmpbuf_free(buffer);
+						xiconf_free(xiconf);
 						return (NULL);
 					}
 
@@ -656,6 +658,7 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 
 					if (xiconf_parse_section (xiconf, xifile, XICONF_SECTION_SERVICE, buffer + bufidx) != 0) {
 						tmpbuf_free(buffer);
+						xiconf_free(xiconf);
 						return (NULL);
 					}
 				}
@@ -664,6 +667,7 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 				if (strcmp("efaults", buffer + bufidx + 1) == 0) {
 					if (xiconf_parse_section (xiconf, xifile, XICONF_SECTION_DEFAULTS, buffer + bufidx) != 0) {
 						tmpbuf_free(buffer);
+						xiconf_free(xiconf);
 						return (NULL);
 					}
 				}
@@ -757,7 +761,6 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 					for (;;) {
 						if (readdir_r (dirfp, &dent, &dentp) != 0) {
 							dW("Can't read directory: %s; %d, %s.\n", inclarg, errno, strerror (errno));
-							closedir (dirfp);
 							break;
 						}
 

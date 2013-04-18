@@ -228,6 +228,11 @@ Uses a datastream with that particular ID from the given datastream collection. 
 .RS
 Takes component ref with given ID from checklists. This allows to select a particular XCCDF component even in cases where there are 2 XCCDFs in one datastream.
 .RE
+.TP
+\fB\-\-cpe CPE_FILE\fR
+.RS
+Use given CPE dictionary or language (autodetected) for applicability checks. The variables documents are created only for xccdf:Rules which are applicable.
+.RE
 .RE
 .TP
 .B \fBgenerate\fR [\fIoptions\fR] <submodule> [submodule-specific-options]

@@ -112,7 +112,10 @@ static struct oscap_module XCCDF_EXPORT_OVAL_VARIABLES = {
 		"   --datastream-id <id> \r\t\t\t\t - ID of the datastream in the collection to use.\n"
 		"                        \r\t\t\t\t   (only applicable for source datastreams)\n"
 		"   --xccdf-id <id> \r\t\t\t\t - ID of XCCDF in the datastream that should be evaluated.\n"
-		"                   \r\t\t\t\t   (only applicable for source datastreams)",
+		"                   \r\t\t\t\t   (only applicable for source datastreams)"
+		"   --cpe <name>\r\t\t\t\t - Use given CPE dictionary or language (autodetected)\n"
+		"               \r\t\t\t\t   for applicability checks.\n"
+	,
 };
 
 static struct oscap_module XCCDF_EVAL = {
@@ -552,14 +555,12 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 		xccdf_session_set_datastream_id(session, action->f_datastream_id);
 		xccdf_session_set_component_id(session, action->f_xccdf_id);
 	}
+	xccdf_session_set_user_cpe(session, action->cpe);
 	xccdf_session_set_remote_resources(session, action->remote_resources, _download_reporting_callback);
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);
 	xccdf_session_set_custom_oval_eval_fn(session, resolve_variables_wrapper);
 
-	if (xccdf_session_load_xccdf(session) != 0)
-		goto cleanup;
-
-	if (xccdf_session_load_oval(session) != 0)
+	if (xccdf_session_load(session) != 0)
 		goto cleanup;
 
 	/* select a profile */
@@ -578,9 +579,8 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 		goto cleanup;
 
 	xccdf_session_set_oval_variables_export(session, true);
-	xccdf_session_export_oval(session);
-
-	result = OSCAP_OK;
+	if (xccdf_session_export_oval(session) == 0)
+		result = OSCAP_OK;
 
  cleanup:
 	oscap_print_error();
