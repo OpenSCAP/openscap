@@ -297,18 +297,20 @@ const char* rds_report_request_index_get_id(struct rds_report_request_index* s);
  */
 struct rds_asset_index;
 
-struct rds_asset_index* rds_asset_index_new(void);
-void rds_asset_index_free(struct rds_asset_index* s);
-const char* rds_asset_index_get_id(struct rds_asset_index* s);
-
 /**
  * @struct rds_report_index
  */
 struct rds_report_index;
 
+struct rds_asset_index* rds_asset_index_new(void);
+void rds_asset_index_free(struct rds_asset_index* s);
+const char* rds_asset_index_get_id(struct rds_asset_index* s);
+void rds_asset_index_add_report_ref(struct rds_asset_index* s, struct rds_report_index* report);
+
 struct rds_report_index* rds_report_index_new(void);
 void rds_report_index_free(struct rds_report_index* s);
 const char* rds_report_index_get_id(struct rds_report_index* s);
+void rds_report_index_set_request(struct rds_report_index* s, struct rds_report_request_index *request);
 
 /**
  * @struct rds_report_request_index_iterator
