@@ -535,6 +535,21 @@ Find given CVE in data feed and report base score, vector string and vulnerable 
 \fBNormally, the exit status is 0 when operation finished successfully and 1 otherwise. In cases when oscap performs evaluation of the system it may return 2 indicating success of the operation but incompliance of the assessed system.
 .RE
 
+.SH EXAMPLES
+Evaluate XCCDF content using CPE disctionary and produce html report. In this case we use United States Government Configuration Baseline (USGCB) for Red Hat Enterprise Linux 5 Desktop.
+.PP
+.nf
+.RS
+\& oscap xccdf eval \-\-fetch-remote-resources \-\-oval-results \e
+\&         \-\-profile united_states_government_configuration_baseline \e
+\&         \-\-report usgcb-rhel5desktop.report.html \e
+\&         \-\-results usgcb-rhel5desktop-xccdf.xml.result.xml \e
+\&         \-\-cpe usgcb-rhel5desktop-cpe-dictionary.xml \e
+\&         usgcb-rhel5desktop-xccdf.xml
+.RE
+.fi
+.PP
+
 .SH CONTENT
 .TP
 \fB National Vulnerability Database\fR - \fIhttp://web.nvd.nist.gov/view/ncp/repository\fR
@@ -542,5 +557,9 @@ Find given CVE in data feed and report base score, vector string and vulnerable 
 \fB Red Hat content repository\fR - \fIhttp://www.redhat.com/security/data/oval/\fR
 
 
-.SH AUTHOR
+.SH AUTHORS
+.nf
 Peter Vrabec <pvrabec@redhat.com>
+Šimon Lukašík
+Martin Preisler <mpreisle@redhat.com>
+.fi
