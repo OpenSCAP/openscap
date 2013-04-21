@@ -973,7 +973,10 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 		xmlSetNsProp(cref, xlink_ns, BAD_CAST "href", BAD_CAST xlink_href);
 		oscap_free(xlink_href);
 
-		xmlAddChild(cref_parent, cref);
+		if (xmlAddChild(cref_parent, cref) == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_XML, "Failed to add component-ref/@id='%s' to the DataStream.", cref_id);
+			result = 1;
+		}
 	}
 
 	oscap_free(comp_id);
