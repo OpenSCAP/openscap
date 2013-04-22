@@ -725,7 +725,16 @@ static char* ds_sds_mangle_filepath(const char* filepath)
 
 static int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id);
 
-static int ds_sds_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, xmlNodePtr catalog)
+static inline const char *_get_dep_xpath_for_type(int document_type)
+{
+	static const char *xccdf_xpath = "//*[local-name() = 'check-content-ref']";
+	static const char *cpe_xpath = "//*[local-name() = 'check']";
+	if (document_type == OSCAP_DOCUMENT_CPE_DICTIONARY)
+		return cpe_xpath;
+	return xccdf_xpath;
+}
+
+static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, xmlNodePtr catalog, int component_type)
 {
 	xmlDocPtr component_doc = xmlReadFile(filepath, NULL, 0);
 	if (component_doc == NULL)
@@ -748,9 +757,8 @@ static int ds_sds_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datas
 	xmlXPathObjectPtr xpathObj = xmlXPathEvalExpression(
 			// we want robustness and support for future versions, this expression
 			// retrieves check-content-refs from any namespace
-			BAD_CAST "//*[local-name() = 'check-content-ref']",
+			BAD_CAST _get_dep_xpath_for_type(component_type),
 			xpathCtx);
-
 	if (xpathObj == NULL)
 	{
 		oscap_seterr(OSCAP_EFAMILY_XML, "Error: Unable to evalute XPath expression.");
@@ -926,7 +934,7 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 	if (doc_type_result == 0 && doc_type == OSCAP_DOCUMENT_XCCDF)
 	{
 		cref_parent = node_get_child_element(datastream, "checklists");
-		if (ds_sds_compose_add_xccdf_dependencies(doc, datastream, filepath, cref_catalog) != 0)
+		if (ds_sds_compose_add_component_dependencies(doc, datastream, filepath, cref_catalog, doc_type) != 0)
 		{
 			// oscap_seterr has already been called
 			return -1;
@@ -935,6 +943,21 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 	else if (doc_type_result == 0 && (doc_type == OSCAP_DOCUMENT_CPE_DICTIONARY || doc_type == OSCAP_DOCUMENT_CPE_LANGUAGE))
 	{
 		cref_parent = node_get_child_element(datastream, "dictionaries");
+		if (cref_parent == NULL) {
+			cref_parent = xmlNewNode(ds_ns, BAD_CAST "dictionaries");
+			// The <ds:dictionaries element must as the first child of the datastream
+			xmlNodePtr first_child = datastream->xmlChildrenNode;
+			xmlNodePtr new_node = (first_child == NULL) ?
+				xmlAddChild(datastream, cref_parent) : xmlAddPrevSibling(first_child, cref_parent);
+			if (new_node == NULL) {
+				oscap_seterr(OSCAP_EFAMILY_XML, "Failed to add dictionaries element to the DataStream.");
+				xmlFreeNode(cref_parent);
+				cref_parent = NULL;
+			}
+		}
+		if (ds_sds_compose_add_component_dependencies(doc, datastream, filepath, cref_catalog, doc_type) != 0) {
+			return -1;
+		}
 	}
 	else if (doc_type_result == 0 && doc_type == OSCAP_DOCUMENT_OVAL_DEFINITIONS)
 	{
@@ -973,7 +996,10 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 		xmlSetNsProp(cref, xlink_ns, BAD_CAST "href", BAD_CAST xlink_href);
 		oscap_free(xlink_href);
 
-		xmlAddChild(cref_parent, cref);
+		if (xmlAddChild(cref_parent, cref) == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_XML, "Failed to add component-ref/@id='%s' to the DataStream.", cref_id);
+			result = 1;
+		}
 	}
 
 	oscap_free(comp_id);
@@ -990,6 +1016,10 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 int ds_sds_compose_add_component(const char *target_datastream, const char *datastream_id, const char *new_component, bool extended)
 {
 	xmlDocPtr doc = xmlReadFile(target_datastream, NULL, 0);
+	if (doc == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "Could not read/parse XML of given input file at path '%s'.", target_datastream);
+		return 1;
+	}
 	xmlNodePtr datastream = _lookup_datastream_in_collection(doc, datastream_id);
 	if (datastream == NULL) {
 		const char* error = datastream_id ?
@@ -1005,6 +1035,7 @@ int ds_sds_compose_add_component(const char *target_datastream, const char *data
 	char* mangled_path = ds_sds_mangle_filepath(new_component);
 
 	char* cref_id = oscap_sprintf("scap_org.open-scap_cref_%s", mangled_path);
+	oscap_free(mangled_path);
 	if (ds_sds_compose_add_component_with_ref(doc, datastream, new_component, cref_id) != 0) {
 		oscap_free(cref_id);
 		return 1;
@@ -1017,6 +1048,7 @@ int ds_sds_compose_add_component(const char *target_datastream, const char *data
 		xmlFreeDoc(doc);
 		return 1;
 	}
+	xmlFreeDoc(doc);
 	return 0;
 }
 

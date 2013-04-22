@@ -29,6 +29,71 @@ function assert_correct_xlinks()
 	[ "`$XPATH $DS  \"count(//${ns}component-ref[substring(@xlink:href, 2, 10000) != (//${ns}component/@${ns}id | //${ns}extended-component/@${ns}id)])\"`" == "0" ]
 }
 
+sds_add_multiple_twice(){
+	local DIR="${srcdir}/sds_multiple_oval"
+	local XCCDF_FILE="multiple-oval-xccdf.xml"
+	local DS_TARGET_DIR="$(mktemp -d)"
+	local DS_FILE="$DS_TARGET_DIR/sds.xml"
+	local stderr=$(mktemp -t sds_add.out.XXXXXX)
+
+	# Create DS from scratch
+	pushd "$DIR"
+	$OSCAP ds sds-compose "$XCCDF_FILE" "$DS_FILE" 2>&1 > $stderr
+	diff $stderr /dev/null
+	popd
+
+	# Add the very same XXCDF file again with two OVAL files
+	local ADD_DIR="$(mktemp -d)"
+	cp ${DIR}/*.xml ${ADD_DIR}
+	chmod u+w ${ADD_DIR}/* # distcheck shall be able to unlink these files (without --force)
+	local XCCDF2="$ADD_DIR/$XCCDF_FILE"
+	pushd ${ADD_DIR}
+	$OSCAP ds sds-add "$XCCDF2" "$DS_FILE" 2>&1 > $stderr
+	local ifiles=$(ls *.xml)
+	popd
+	diff $stderr /dev/null
+	rm $XCCDF2 ${ADD_DIR}/*-oval.xml
+	rm -f ${ADD_DIR}/oscap_debug.log.*
+	rmdir ${ADD_DIR}
+
+	$OSCAP ds sds-validate "$DS_FILE" 2>&1 > $stderr
+	diff $stderr /dev/null
+	assert_correct_xlinks "$DS_FILE"
+	$OSCAP info "$DS_FILE" 2> $stderr
+	diff $stderr /dev/null
+
+	local result=$DS_FILE
+	assert_exists() { [ "$($XPATH $result 'count('"$2"')')" == "$1" ]; }
+	assert_exists 1 '/ds:data-stream-collection/ds:data-stream'
+	assert_exists 2 '/ds:data-stream-collection/ds:data-stream/*'
+	assert_exists 1 '/ds:data-stream-collection/ds:data-stream/ds:checklists'
+	assert_exists 2 '/ds:data-stream-collection/ds:data-stream/ds:checklists/*'
+	assert_exists 2 '/ds:data-stream-collection/ds:data-stream/ds:checklists/ds:component-ref'
+	assert_exists 1 '/ds:data-stream-collection/ds:data-stream/ds:checks'
+	assert_exists 4 '/ds:data-stream-collection/ds:data-stream/ds:checks/*'
+	assert_exists 4 '/ds:data-stream-collection/ds:data-stream/ds:checks/ds:component-ref'
+	assert_exists 6 '/ds:data-stream-collection/ds:component'
+	assert_exists 4 '/ds:data-stream-collection/ds:component/oval_definitions'
+	assert_exists 2 '/ds:data-stream-collection/ds:component/xccdf:Benchmark'
+
+	# split the SDS and verify the content
+	pushd "$DS_TARGET_DIR"
+	$OSCAP ds sds-split "`basename $DS_FILE`" "$DS_TARGET_DIR"
+	[ ! -f multiple-oval-xccdf.xml ]
+	mv scap_org.open-scap_cref_multiple-oval-xccdf.xml multiple-oval-xccdf.xml
+	popd
+	local f
+	for f in second-oval.xml first-oval.xml multiple-oval-xccdf.xml; do
+		$OSCAP info ${DS_TARGET_DIR}/$f 2> $stderr
+		diff $stderr /dev/null
+		diff ${DS_TARGET_DIR}/$f ${DIR}/$f
+		rm ${DS_TARGET_DIR}/$f
+	done
+	rm $DS_FILE
+	rmdir $DS_TARGET_DIR
+	rm $stderr
+}
+
 function test_sds {
 
     local ret_val=0;
@@ -233,6 +298,7 @@ test_run "rds_simple" test_rds rds_simple/sds.xml rds_simple/results-xccdf.xml r
 test_run "rds_testresult" test_rds rds_testresult/sds.xml rds_testresult/results-xccdf.xml rds_testresult/results-oval.xml
 test_run "rds_index_simple" test_rds_index rds_index_simple/arf.xml "asset0 asset1"
 test_run "test_eval_complex" test_eval_complex
+test_run "sds_add_multiple_oval_twice_in_row" sds_add_multiple_twice
 
 test_exit
 
