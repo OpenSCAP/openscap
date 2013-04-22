@@ -310,6 +310,16 @@ static int app_info(const struct oscap_action *action)
 		while (rds_asset_index_iterator_has_more(asset_it)) {
 			struct rds_asset_index* asset = rds_asset_index_iterator_next(asset_it);
 			printf("\nAsset: %s\n", rds_asset_index_get_id(asset));
+
+			struct rds_report_index_iterator* report_it = rds_asset_index_get_reports(asset);
+			while (rds_report_index_iterator_has_more(report_it)) {
+				struct rds_report_index* report = rds_report_index_iterator_next(report_it);
+				struct rds_report_request_index* request = rds_report_index_get_request(report);
+
+				printf(" - %s -> %s\n",
+					rds_report_request_index_get_id(request),
+					rds_report_index_get_id(report));
+			}
 		}
 		rds_asset_index_iterator_free(asset_it);
 		rds_index_free(rds);

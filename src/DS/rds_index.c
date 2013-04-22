@@ -111,6 +111,11 @@ void rds_asset_index_add_report_ref(struct rds_asset_index* s, struct rds_report
 	oscap_list_add(s->reports, report);
 }
 
+struct rds_report_index_iterator* rds_asset_index_get_reports(struct rds_asset_index* s)
+{
+	return (struct rds_report_index_iterator*)oscap_iterator_new(s->reports);
+}
+
 static struct rds_asset_index* rds_asset_index_parse(xmlTextReaderPtr reader)
 {
 	// sanity check
@@ -160,6 +165,11 @@ const char* rds_report_index_get_id(struct rds_report_index* s)
 void rds_report_index_set_request(struct rds_report_index* s, struct rds_report_request_index *request)
 {
 	s->request = request;
+}
+
+struct rds_report_request_index *rds_report_index_get_request(struct rds_report_index* s)
+{
+	return s->request;
 }
 
 static struct rds_report_index* rds_report_index_parse(xmlTextReaderPtr reader)
