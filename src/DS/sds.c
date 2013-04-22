@@ -935,6 +935,14 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 	else if (doc_type_result == 0 && (doc_type == OSCAP_DOCUMENT_CPE_DICTIONARY || doc_type == OSCAP_DOCUMENT_CPE_LANGUAGE))
 	{
 		cref_parent = node_get_child_element(datastream, "dictionaries");
+		if (cref_parent == NULL) {
+			cref_parent = xmlNewNode(ds_ns, BAD_CAST "dictionaries");
+			if (xmlAddChild(datastream, cref_parent) == NULL) {
+				oscap_seterr(OSCAP_EFAMILY_XML, "Failed to add dictionaries element to the DataStream.");
+				xmlFreeNode(cref_parent);
+				cref_parent = NULL;
+			}
+		}
 	}
 	else if (doc_type_result == 0 && doc_type == OSCAP_DOCUMENT_OVAL_DEFINITIONS)
 	{
