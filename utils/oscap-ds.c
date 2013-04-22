@@ -315,7 +315,12 @@ int app_ds_sds_add(const struct oscap_action *action)
 	int ret = OSCAP_ERROR;
 	// TODO: chdir to the directory of the component (same as when composing new sds)
 	ret = ds_sds_compose_add_component(action->ds_action->target, action->f_datastream_id, action->ds_action->file, false);
-	// TODO: validate
+	if (action->validate) {
+		if (oscap_validate_document(action->ds_action->target, OSCAP_DOCUMENT_SDS, "1.2", reporter, (void*) action) != 0) {
+			validation_failed(action->ds_action->target, OSCAP_DOCUMENT_SDS, "1.2");
+			ret = OSCAP_ERROR;
+		}
+	}
 cleanup:
 	oscap_print_error();
 
