@@ -993,6 +993,10 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 int ds_sds_compose_add_component(const char *target_datastream, const char *datastream_id, const char *new_component, bool extended)
 {
 	xmlDocPtr doc = xmlReadFile(target_datastream, NULL, 0);
+	if (doc == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "Could not read/parse XML of given input file at path '%s'.", target_datastream);
+		return 1;
+	}
 	xmlNodePtr datastream = _lookup_datastream_in_collection(doc, datastream_id);
 	if (datastream == NULL) {
 		const char* error = datastream_id ?
