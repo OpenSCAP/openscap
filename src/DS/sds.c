@@ -1020,6 +1020,7 @@ int ds_sds_compose_add_component(const char *target_datastream, const char *data
 	char* mangled_path = ds_sds_mangle_filepath(new_component);
 
 	char* cref_id = oscap_sprintf("scap_org.open-scap_cref_%s", mangled_path);
+	oscap_free(mangled_path);
 	if (ds_sds_compose_add_component_with_ref(doc, datastream, new_component, cref_id) != 0) {
 		oscap_free(cref_id);
 		return 1;
