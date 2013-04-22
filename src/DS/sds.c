@@ -1032,6 +1032,7 @@ int ds_sds_compose_add_component(const char *target_datastream, const char *data
 		xmlFreeDoc(doc);
 		return 1;
 	}
+	xmlFreeDoc(doc);
 	return 0;
 }
 
