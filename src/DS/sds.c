@@ -937,7 +937,11 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 		cref_parent = node_get_child_element(datastream, "dictionaries");
 		if (cref_parent == NULL) {
 			cref_parent = xmlNewNode(ds_ns, BAD_CAST "dictionaries");
-			if (xmlAddChild(datastream, cref_parent) == NULL) {
+			// The <ds:dictionaries element must as the first child of the datastream
+			xmlNodePtr first_child = datastream->xmlChildrenNode;
+			xmlNodePtr new_node = (first_child == NULL) ?
+				xmlAddChild(datastream, cref_parent) : xmlAddPrevSibling(first_child, cref_parent);
+			if (new_node == NULL) {
 				oscap_seterr(OSCAP_EFAMILY_XML, "Failed to add dictionaries element to the DataStream.");
 				xmlFreeNode(cref_parent);
 				cref_parent = NULL;
