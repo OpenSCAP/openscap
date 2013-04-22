@@ -14,6 +14,7 @@ xsl_DATA =   security-guide.xsl \
              fix.xsl \
              fixtpl-bash.xml \
              xccdf_1.1_to_1.2.xsl \
+			xccdf_1.1_remove_dangling_sub.xsl \
              xccdf-tailor.xsl \
              xccdf-substitute.xsl \
              xccdf-share.xsl
@@ -30,6 +31,7 @@ EXTRA_DIST = security-guide.xsl \
              fix.xsl \
              fixtpl-bash.xml \
              xccdf_1.1_to_1.2.xsl \
+			xccdf_1.1_remove_dangling_sub.xsl \
              oscap-share.xsl \
              xccdf-tailor.xsl \
              xccdf-substitute.xsl \
