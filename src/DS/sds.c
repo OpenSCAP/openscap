@@ -725,7 +725,16 @@ static char* ds_sds_mangle_filepath(const char* filepath)
 
 static int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id);
 
-static int ds_sds_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, xmlNodePtr catalog)
+static inline const char *_get_dep_xpath_for_type(int document_type)
+{
+	static const char *xccdf_xpath = "//*[local-name() = 'check-content-ref']";
+	static const char *cpe_xpath = "//*[local-name() = 'check']";
+	if (document_type == OSCAP_DOCUMENT_CPE_DICTIONARY)
+		return cpe_xpath;
+	return xccdf_xpath;
+}
+
+static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, xmlNodePtr catalog, int component_type)
 {
 	xmlDocPtr component_doc = xmlReadFile(filepath, NULL, 0);
 	if (component_doc == NULL)
@@ -748,9 +757,8 @@ static int ds_sds_compose_add_xccdf_dependencies(xmlDocPtr doc, xmlNodePtr datas
 	xmlXPathObjectPtr xpathObj = xmlXPathEvalExpression(
 			// we want robustness and support for future versions, this expression
 			// retrieves check-content-refs from any namespace
-			BAD_CAST "//*[local-name() = 'check-content-ref']",
+			BAD_CAST _get_dep_xpath_for_type(component_type),
 			xpathCtx);
-
 	if (xpathObj == NULL)
 	{
 		oscap_seterr(OSCAP_EFAMILY_XML, "Error: Unable to evalute XPath expression.");
@@ -926,7 +934,7 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 	if (doc_type_result == 0 && doc_type == OSCAP_DOCUMENT_XCCDF)
 	{
 		cref_parent = node_get_child_element(datastream, "checklists");
-		if (ds_sds_compose_add_xccdf_dependencies(doc, datastream, filepath, cref_catalog) != 0)
+		if (ds_sds_compose_add_component_dependencies(doc, datastream, filepath, cref_catalog, doc_type) != 0)
 		{
 			// oscap_seterr has already been called
 			return -1;
@@ -946,6 +954,9 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 				xmlFreeNode(cref_parent);
 				cref_parent = NULL;
 			}
+		}
+		if (ds_sds_compose_add_component_dependencies(doc, datastream, filepath, cref_catalog, doc_type) != 0) {
+			return -1;
 		}
 	}
 	else if (doc_type_result == 0 && doc_type == OSCAP_DOCUMENT_OVAL_DEFINITIONS)
