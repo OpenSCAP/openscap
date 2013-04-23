@@ -556,6 +556,9 @@ AC_CONFIG_FILES([Makefile
                  src/SCE/Makefile
                  tests/sce/Makefile])
 
+AC_CONFIG_FILES([run],
+                [chmod +x,-w run])
+
 AC_OUTPUT
 
 echo "******************************************************"
