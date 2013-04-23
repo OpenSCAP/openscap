@@ -1,3 +1,10 @@
+openscap-0.9.6							23-04-2013
+ - new command-line module added as preview: "oscap ds sds-add"
+ - improved xccdf:fix processing (support of DataStreams and CPE)
+ - internal selinux policy preview
+ - added Fedora 19 to default CPE dictionary
+ - bug fixes
+
 openscap-0.9.5							19-03-2013
  - oscap xccdf remediate (new oscap module which introduces offline
    remediation; the remediation based on existing xccdf:TestResult file)
