@@ -22,7 +22,7 @@ DISTCLEANFILES = *.log *.out*
 CLEANFILES = *.log *.out*
 
 TESTS_ENVIRONMENT = \
-		$(top_builddir)/run $(SHELL) -x
+		$(top_builddir)/run
 TESTS = all.sh
 check_PROGRAMS = test_api_probes_smoke oval_fts_list
 
