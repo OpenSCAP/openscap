@@ -42,11 +42,202 @@
 #include <libxml/xpath.h>
 #include <libxml/xpathInternals.h>
 
-
 static const char* arf_ns_uri = "http://scap.nist.gov/schema/asset-reporting-format/1.1";
 static const char* core_ns_uri = "http://scap.nist.gov/schema/reporting-core/1.1";
 static const char* arfvocab_ns_uri = "http://scap.nist.gov/vocabulary/arf/relationships/1.0#";
 static const char* ai_ns_uri = "http://scap.nist.gov/schema/asset-identification/1.1";
+
+static xmlNodePtr _lookup_container_in_arf(xmlDocPtr doc, const char *container_name)
+{
+	xmlNodePtr root = xmlDocGetRootElement(doc);
+	xmlNodePtr ret = NULL;
+	xmlNodePtr candidate = root->children;
+
+	for (; candidate != NULL; candidate = candidate->next)
+	{
+		if (candidate->type != XML_ELEMENT_NODE)
+			continue;
+
+		if (strcmp((const char*)(candidate->name), container_name) == 0) {
+			ret = candidate;
+			break;
+		}
+	}
+
+	return ret;
+}
+
+static xmlNodePtr _lookup_report_in_arf(xmlDocPtr doc, const char *report_id)
+{
+	xmlNodePtr container = _lookup_container_in_arf(doc, "reports");
+	xmlNodePtr component = NULL;
+	xmlNodePtr candidate = container->children;
+
+	for (; candidate != NULL; candidate = candidate->next)
+	{
+		if (candidate->type != XML_ELEMENT_NODE)
+			continue;
+
+		if (strcmp((const char*)(candidate->name), "report") != 0)
+			continue;
+
+		char* candidate_id = (char*)xmlGetProp(candidate, BAD_CAST "id");
+		if (strcmp(candidate_id, report_id) == 0)
+		{
+			component = candidate;
+			xmlFree(candidate_id);
+			break;
+		}
+		xmlFree(candidate_id);
+	}
+
+	return component;
+}
+
+static xmlNodePtr _lookup_request_in_arf(xmlDocPtr doc, const char *request_id)
+{
+	xmlNodePtr container = _lookup_container_in_arf(doc, "report-requests");
+	xmlNodePtr component = NULL;
+	xmlNodePtr candidate = container->children;
+
+	for (; candidate != NULL; candidate = candidate->next)
+	{
+		if (candidate->type != XML_ELEMENT_NODE)
+			continue;
+
+		if (strcmp((const char*)(candidate->name), "report-request") != 0)
+			continue;
+
+		char* candidate_id = (char*)xmlGetProp(candidate, BAD_CAST "id");
+		if (strcmp(candidate_id, request_id) == 0)
+		{
+			component = candidate;
+			xmlFree(candidate_id);
+			break;
+		}
+		xmlFree(candidate_id);
+	}
+
+	return component;
+}
+
+static int ds_rds_dump_arf_content(xmlDocPtr doc, xmlNodePtr parent_node, const char* target_file)
+{
+	xmlNodePtr candidate = parent_node->children;
+	xmlNodePtr content_node = NULL;
+
+	for (; candidate != NULL; candidate = candidate->next)
+	{
+		if (candidate->type != XML_ELEMENT_NODE)
+			continue;
+
+		if (strcmp((const char*)(candidate->name), "content") == 0) {
+			content_node = candidate;
+			break;
+		}
+	}
+
+	if (!content_node) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "Given ARF node has no 'arf:content' node inside!");
+		return -1;
+	}
+
+	candidate = content_node->children;
+	xmlNodePtr inner_root = NULL;
+
+	for (; candidate != NULL; candidate = candidate->next)
+	{
+		if (candidate->type != XML_ELEMENT_NODE)
+			continue;
+
+		if (inner_root) {
+			oscap_seterr(OSCAP_EFAMILY_XML, "There are multiple nodes inside an 'arf:content' node. "
+				"Only the last one will be used!");
+		}
+
+		inner_root = candidate;
+	}
+
+	// We assume that arf:content is XML. This is reasonable because both
+	// reports and report requests are XML documents.
+
+	xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
+
+	xmlDocPtr new_doc = xmlNewDoc(BAD_CAST "1.0");
+	xmlNodePtr res_node = NULL;
+	if (xmlDOMWrapCloneNode(wrap_ctxt, doc, inner_root, &res_node, new_doc, NULL, 1, 0) != 0)
+	{
+		oscap_seterr(OSCAP_EFAMILY_XML, "Error when cloning node while dumping arf content.");
+		xmlFreeDoc(new_doc);
+		xmlDOMWrapFreeCtxt(wrap_ctxt);
+		return -1;
+	}
+	xmlDocSetRootElement(new_doc, res_node);
+	if (xmlDOMWrapReconcileNamespaces(wrap_ctxt, res_node, 0) != 0)
+	{
+		oscap_seterr(OSCAP_EFAMILY_XML, "Internal libxml error when reconciling namespaces while dumping arf content.");
+		xmlFreeDoc(new_doc);
+		xmlDOMWrapFreeCtxt(wrap_ctxt);
+		return -1;
+	}
+	if (xmlSaveFileEnc(target_file, new_doc, "utf-8") == -1)
+	{
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error when saving resulting DOM to file '%s' while dumping arf content.", target_file);
+		xmlFreeDoc(new_doc);
+		xmlDOMWrapFreeCtxt(wrap_ctxt);
+		return -1;
+	}
+	xmlFreeDoc(new_doc);
+
+	xmlDOMWrapFreeCtxt(wrap_ctxt);
+
+	return 0;
+}
+
+int ds_rds_decompose(const char* input_file, const char* report_id, const char* request_id, const char* target_dir)
+{
+	xmlDocPtr doc = xmlReadFile(input_file, NULL, 0);
+
+	if (!doc) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "Could not read/parse XML of given input file at path '%s'.", input_file);
+		return -1;
+	}
+
+	xmlNodePtr report_node = _lookup_report_in_arf(doc, report_id);
+	if (!report_node) {
+		const char* error = report_id ?
+			oscap_sprintf("Could not find any report of id '%s'", report_id) :
+			oscap_sprintf("Could not find any report inside the file");
+
+		oscap_seterr(OSCAP_EFAMILY_XML, error);
+		oscap_free(error);
+		xmlFreeDoc(doc);
+		return -1;
+	}
+
+	char *target_report_file = oscap_sprintf("%s/%s", target_dir, "report.xml");
+	ds_rds_dump_arf_content(doc, report_node, target_report_file);
+	oscap_free(target_report_file);
+
+	xmlNodePtr request_node = _lookup_request_in_arf(doc, request_id);
+	if (!request_node) {
+		const char* error = request_id ?
+			oscap_sprintf("Could not find any request of id '%s'", request_id) :
+			oscap_sprintf("Could not find any request inside the file");
+
+		oscap_seterr(OSCAP_EFAMILY_XML, error);
+		oscap_free(error);
+		xmlFreeDoc(doc);
+		return -1;
+	}
+
+	char *target_request_file = oscap_sprintf("%s/%s", target_dir, "report-request.xml");
+	ds_rds_dump_arf_content(doc, request_node, target_request_file);
+	oscap_free(target_request_file);
+
+	xmlFreeDoc(doc);
+	return 0;
+}
 
 static xmlNodePtr ds_rds_create_report(xmlDocPtr target_doc, xmlNodePtr reports_node, xmlDocPtr source_doc, const char* report_id)
 {

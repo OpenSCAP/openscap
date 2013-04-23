@@ -42,6 +42,7 @@ int app_ds_sds_split(const struct oscap_action *action);
 int app_ds_sds_compose(const struct oscap_action *action);
 int app_ds_sds_add(const struct oscap_action *action);
 int app_ds_sds_validate(const struct oscap_action *action);
+int app_ds_rds_split(const struct oscap_action *action);
 int app_ds_rds_create(const struct oscap_action *action);
 int app_ds_rds_validate(const struct oscap_action *action);
 
@@ -100,6 +101,18 @@ static struct oscap_module DS_SDS_VALIDATE_MODULE = {
 	.func = app_ds_sds_validate
 };
 
+static struct oscap_module DS_RDS_SPLIT_MODULE = {
+	.name = "rds-split",
+	.parent = &OSCAP_DS_MODULE,
+	.summary = "Splits a ResultDataStream. Creating source datastream and report in target directory.",
+	.usage = "[OPTIONS] rds.xml TARGET_DIRECTORY",
+	.help =	"Options:\n"
+		"   --report-id <id> \r\t\t\t\t - ID of report inside ARF that should be split.\n"
+		,
+	.opt_parser = getopt_ds,
+	.func = app_ds_rds_split
+};
+
 static struct oscap_module DS_RDS_CREATE_MODULE = {
 	.name = "rds-create",
 	.parent = &OSCAP_DS_MODULE,
@@ -125,6 +138,7 @@ static struct oscap_module* DS_SUBMODULES[] = {
 	&DS_SDS_COMPOSE_MODULE,
 	&DS_SDS_ADD_MODULE,
 	&DS_SDS_VALIDATE_MODULE,
+	&DS_RDS_SPLIT_MODULE,
 	&DS_RDS_CREATE_MODULE,
 	&DS_RDS_VALIDATE_MODULE,
 	NULL
@@ -133,6 +147,7 @@ static struct oscap_module* DS_SUBMODULES[] = {
 enum ds_opt {
 	DS_OPT_DATASTREAM_ID = 1,
 	DS_OPT_XCCDF_ID,
+	DS_OPT_REPORT_ID,
 };
 
 bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
@@ -143,6 +158,7 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 	// options
 		{"datastream-id",		required_argument, NULL, DS_OPT_DATASTREAM_ID},
 		{"xccdf-id",		required_argument, NULL, DS_OPT_XCCDF_ID},
+		{"report-id",		required_argument, NULL, DS_OPT_REPORT_ID},
 	// end
 		{0, 0, 0, 0}
 	};
@@ -153,6 +169,7 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 		switch (c) {
 		case DS_OPT_DATASTREAM_ID:	action->f_datastream_id = optarg;	break;
 		case DS_OPT_XCCDF_ID:	action->f_xccdf_id = optarg; break;
+		case DS_OPT_REPORT_ID:	action->f_report_id = optarg; break;
 		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
@@ -183,6 +200,15 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 		}
 		action->ds_action = malloc(sizeof(struct ds_action));
 		action->ds_action->file = argv[3];
+	}
+	else if (action->module == &DS_RDS_SPLIT_MODULE) {
+		if (optind + 2 != argc) {
+			oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
+			return false;
+		}
+		action->ds_action = malloc(sizeof(struct ds_action));
+		action->ds_action->file = argv[optind];
+		action->ds_action->target = argv[optind + 1];
 	}
 	else if( (action->module == &DS_RDS_CREATE_MODULE) ) {
 		if(  argc < 6 ) {
@@ -347,6 +373,55 @@ cleanup:
 	oscap_print_error();
 
 	free(action->ds_action);
+	return ret;
+}
+
+int app_ds_rds_split(const struct oscap_action *action) {
+	int ret;
+	struct rds_index *rds_idx = NULL;
+
+	if (action->validate)
+	{
+		int valret;
+		if ((valret = oscap_validate_document(action->ds_action->file, OSCAP_DOCUMENT_ARF, "1.1", reporter, (void*) action)))
+		{
+			if (valret == 1)
+				validation_failed(action->ds_action->file, OSCAP_DOCUMENT_ARF, "1.1");
+
+			ret = OSCAP_ERROR;
+			goto cleanup;
+		}
+	}
+
+	rds_idx = rds_index_import(action->ds_action->file);
+
+	const char* f_report_id = action->f_report_id;
+	if (rds_index_select_report(rds_idx, &f_report_id) != 0) {
+		fprintf(stdout, "Failed to locate a report with ID matching '%s' ID.",
+				action->f_report_id == NULL ? "<any>" : action->f_report_id);
+		ret = OSCAP_ERROR;
+		goto cleanup;
+	}
+
+	struct rds_report_index *report = rds_index_get_report(rds_idx, f_report_id);
+	struct rds_report_request_index *request = rds_report_index_get_request(report);
+	const char *request_id = request ? rds_report_request_index_get_id(request) : NULL;
+
+	if (ds_rds_decompose(action->ds_action->file, f_report_id, request_id, action->ds_action->target) != 0)
+	{
+		fprintf(stdout, "Failed to split given result datastream '%s'.\n", action->ds_action->file);
+		ret = OSCAP_ERROR;
+		goto cleanup;
+	}
+
+	ret = OSCAP_OK;
+
+cleanup:
+	oscap_print_error();
+
+	rds_index_free(rds_idx);
+	free(action->ds_action);
+
 	return ret;
 }
 

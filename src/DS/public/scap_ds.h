@@ -122,6 +122,8 @@ int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastr
  */
 int ds_sds_compose_add_component(const char *target_datastream, const char *datastream_id, const char *new_component, bool extended);
 
+int ds_rds_decompose(const char* input_file, const char* report_id, const char* request_id, const char* target_dir);
+
 /**
  * @brief takes given source data stream and XCCDF result file and makes a result data stream
  *
@@ -375,6 +377,8 @@ struct rds_asset_index* rds_index_get_asset(struct rds_index* rds, const char* i
 struct rds_report_index* rds_index_get_report(struct rds_index* rds, const char* id);
 
 struct rds_index *rds_index_import(const char* file);
+
+int rds_index_select_report(struct rds_index* s, const char** report_id);
 
 /************************************************************/
 /** @} End of DS group */

@@ -566,3 +566,25 @@ void rds_report_index_iterator_free(struct rds_report_index_iterator *it)
 {
 	oscap_iterator_free((struct oscap_iterator*)it);
 }
+
+int rds_index_select_report(struct rds_index* s, const char** report_id)
+{
+	int ret = 1;
+
+	struct rds_report_index_iterator* reports_it = rds_index_get_reports(s);
+	while (rds_report_index_iterator_has_more(reports_it))
+	{
+		struct rds_report_index* report_idx = rds_report_index_iterator_next(reports_it);
+		const char* report_idx_id = rds_report_index_get_id(report_idx);
+
+		if (!*report_id || strcmp(report_idx_id, *report_id) == 0)
+		{
+			*report_id = report_idx_id;
+			ret = 0;
+			break;
+		}
+	}
+	rds_report_index_iterator_free(reports_it);
+
+	return ret;
+}
