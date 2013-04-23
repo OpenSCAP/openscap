@@ -82,6 +82,20 @@
                         <criterion comment="Fedora 18 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:18"/>
                   </criteria>
             </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.fedora:def:19" version="1">
+                  <metadata>
+                        <title>Fedora 19</title>
+                        <affected family="unix">
+                            <platform>Fedora 19</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:fedoraproject:fedora:19" source="CPE"/>
+                        <description>The operating system installed on the system is Fedora 19</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
+                        <criterion comment="Fedora 19 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:19"/>
+                  </criteria>
+            </definition>
       </definitions>
       <tests>
             <family_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:1" version="1" check="only one" 
@@ -114,6 +128,11 @@
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <object object_ref="oval:org.open-scap.cpe.fedora-release:obj:2"/>
                   <state state_ref="oval:org.open-scap.cpe.fedora:ste:18"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.fedora:tst:19" version="1" check="at least one" comment="fedora-release is version Fedora 19"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.fedora-release:obj:2"/>
+                  <state state_ref="oval:org.open-scap.cpe.fedora:ste:19"/>
             </rpminfo_test>
       </tests>
       <objects>
@@ -154,6 +173,9 @@
             </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:18" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <version operation="pattern match">^18$</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:19" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^19$</version>
             </rpminfo_state>
       </states>
 </oval_definitions>
