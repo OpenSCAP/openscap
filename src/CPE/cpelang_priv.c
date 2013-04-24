@@ -305,8 +305,8 @@ static bool cpe_validate_xml(const char *filename)
 	doc = xmlCtxtReadFile(ctxt, filename, NULL, XML_PARSE_DTDATTR);
 	/* check if parsing suceeded */
 	if (doc == NULL) {
-		xmlFreeParserCtxt(ctxt);
 		oscap_setxmlerr(xmlCtxtGetLastError(ctxt));
+		xmlFreeParserCtxt(ctxt);
 		return false;
 	}
 	/* check if validation suceeded */
