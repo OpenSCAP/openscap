@@ -1,6 +1,8 @@
 
 AUTOMAKE_OPTIONS = foreign
 
+EXTRA_DIST = oscap.if oscap.fc oscap.te
+
 if WANT_SELINUX_POLICY
 
 oscap.pp: oscap.fc  oscap.if  oscap.te
