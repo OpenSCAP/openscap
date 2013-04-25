@@ -1056,7 +1056,10 @@ int xccdf_session_export_sce(struct xccdf_session *session)
 #ifdef ENABLE_SCE
 	/* Export SCE results */
 	if (session->export.sce_results == true) {
-		struct sce_check_result_iterator * it = sce_session_get_check_results(sce_parameters_get_session(session->sce.parameters));
+		struct sce_session *sce_session = sce_parameters_get_session(session->sce.parameters);
+		if (sce_session == NULL)
+			return 1;
+		struct sce_check_result_iterator * it = sce_session_get_check_results(sce_session);
 
 		while(sce_check_result_iterator_has_more(it))
 		{
