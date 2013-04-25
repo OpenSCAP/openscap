@@ -749,7 +749,7 @@ int xccdf_session_load_sce(struct xccdf_session *session)
 	session->sce.parameters = sce_parameters_new();
 	xccdf_pathcopy = oscap_strdup(session->xccdf.file);
 	sce_parameters_set_xccdf_directory(session->sce.parameters, dirname(xccdf_pathcopy));
-	sce_parameters_allocate_session(session->sce_parameters);
+	sce_parameters_allocate_session(session->sce.parameters);
 	oscap_free(xccdf_pathcopy);
 	return !xccdf_policy_model_register_engine_sce(session->xccdf.policy_model, session->sce.parameters);
 #else
