@@ -286,6 +286,48 @@ function test_rds_index
     return "$ret_val"
 }
 
+function test_rds_split {
+
+    local ret_val=0;
+
+    local DIR="${srcdir}/$1"
+    local SDS_FILE="$2"
+    local REPORT_FILE="$3"
+    local SKIP_DIFF="$4"
+    local DS_TARGET_DIR="`mktemp -d`"
+    local DS_FILE="$DS_TARGET_DIR/arf.xml"
+
+    pushd "$DIR"
+
+    $OSCAP ds rds-create "$SDS_FILE" "$DS_FILE" "$REPORT_FILE"
+
+    assert_correct_xlinks $DS_FILE
+    popd
+
+    pushd "$DS_TARGET_DIR"
+
+    $OSCAP ds rds-split "`basename $DS_FILE`" "$DS_TARGET_DIR"
+
+    rm "$DS_FILE"
+    popd
+
+    if [ "$SKIP_DIFF" != "1" ]; then
+        DIFFERENCE=$(diff --exclude "oscap_debug.log.*" "$DIR" "$DS_TARGET_DIR")
+
+        if [ $? -ne 0 ]; then
+            echo "The files are different after going through result data stream! diff follows:"
+            echo "$DIFFERENCE"
+            echo
+
+            ret_val=1
+        fi
+    fi
+
+    rm -r "$DS_TARGET_DIR"
+
+    return "$ret_val"
+}
+
 # Testing.
 test_init "test_ds.log"
 
@@ -312,6 +354,8 @@ test_run "eval_cpe" test_eval eval_cpe/sds.xml
 test_run "rds_simple" test_rds rds_simple/sds.xml rds_simple/results-xccdf.xml rds_simple/results-oval.xml
 test_run "rds_testresult" test_rds rds_testresult/sds.xml rds_testresult/results-xccdf.xml rds_testresult/results-oval.xml
 test_run "rds_index_simple" test_rds_index rds_index_simple/arf.xml "asset0 asset1" "report0" "collection0"
+test_run "rds_split_simple" test_rds_split rds_split_simple report-request.xml report.xml 0
+
 test_run "test_eval_complex" test_eval_complex
 test_run "sds_add_multiple_oval_twice_in_row" sds_add_multiple_twice
 
