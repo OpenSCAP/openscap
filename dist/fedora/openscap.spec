@@ -1,6 +1,9 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
+%define relabel_files() \
+restorecon -R /usr/bin/oscap /usr/libexec/openscap; \
+
 Name:           openscap
 Version:        0.9.7
 Release:        1%{?dist}
@@ -104,6 +107,17 @@ BuildRequires:  GConf2-devel
 The %{name}-extra-probes package contains additional probes that are not
 commonly used and require additional dependencies.
 
+%package        selinux
+Summary:        SELinux policy module for openscap
+Group:          System Environment/Base
+Requires:       %{name}-utils = %{version}-%{release}
+Requires:       policycoreutils, libselinux-utils
+Requires(post): selinux-policy-base >= %{selinux_policyver}, policycoreutils
+Requires(postun): policycoreutils
+BuildArch:      noarch
+
+%description    selinux
+This package installs and sets up the  SELinux policy security module for openscap.
 
 %prep
 %setup -q
@@ -118,7 +132,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fpie"
 export LDFLAGS="-pie -Wl,-z,relro -Wl,-z,now"
 %endif
 
-%configure --enable-sce --enable-perl
+%configure --enable-sce --enable-perl --enable-selinux_policy
 
 make %{?_smp_mflags}
 # Remove shebang from bash-completion script
@@ -154,8 +168,25 @@ rm -rf $RPM_BUILD_ROOT
 
 %post -p /sbin/ldconfig
 
+%post selinux
+semodule -n -i %{_datadir}/selinux/packages/oscap.pp
+if /usr/sbin/selinuxenabled ; then
+    /usr/sbin/load_policy
+    %relabel_files
+fi;
+exit 0
+
 %postun -p /sbin/ldconfig
 
+%postun selinux
+if [ $1 -eq 0 ]; then
+    semodule -n -r oscap
+    if /usr/sbin/selinuxenabled ; then
+       /usr/sbin/load_policy
+       %relabel_files
+    fi;
+fi;
+exit 0
 
 %files
 %defattr(-,root,root,-)
@@ -238,6 +269,11 @@ rm -rf $RPM_BUILD_ROOT
 %files extra-probes
 %{_libexecdir}/openscap/probe_ldap57
 %{_libexecdir}/openscap/probe_gconf
+
+%files selinux
+%attr(0600,root,root) %{_datadir}/selinux/packages/oscap.pp
+%{_datadir}/selinux/devel/include/contrib/oscap.if
+# %{_mandir}/man8/openscap_selinux.8.*
 
 %changelog
 * Tue Apr 23 2013 Petr Lautrbach <plautrba@redhat.com> 0.9.6-1
