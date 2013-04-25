@@ -228,7 +228,7 @@ xmlNode *oval_state_content_to_dom(struct oval_state_content * content, xmlDoc *
 	oval_record_field_iterator_free(rf_itr);
 
 	oval_check_t var_check = oval_state_content_get_var_check(content);
-	if (var_check != OVAL_CHECK_ALL)
+	if (var_check != OVAL_CHECK_ALL || xmlHasProp(content_node, BAD_CAST "var_ref"))
 		xmlNewProp(content_node, BAD_CAST "var_check", BAD_CAST oval_check_get_text(var_check));
 
 	oval_check_t ent_check = oval_state_content_get_ent_check(content);
