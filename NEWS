@@ -1,3 +1,6 @@
+openscap-0.9.7							26-04-2013
+ - bug fixes
+
 openscap-0.9.6							23-04-2013
  - new command-line module added as preview: "oscap ds sds-add"
  - improved xccdf:fix processing (support of DataStreams and CPE)
