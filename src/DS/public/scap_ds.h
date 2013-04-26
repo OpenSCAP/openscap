@@ -365,20 +365,30 @@ void rds_report_index_iterator_free(struct rds_report_index_iterator *it);
  */
 struct rds_index;
 
+/// @memberof rds_index
 struct rds_index* rds_index_new(void);
-void rds_index_free(struct rds_index* s);
+/// @memberof rds_index
+void rds_index_free(struct rds_index *s);
 
-struct rds_report_request_index_iterator* rds_index_get_report_requests(struct rds_index* s);
-struct rds_asset_index_iterator* rds_index_get_assets(struct rds_index* s);
-struct rds_report_index_iterator* rds_index_get_reports(struct rds_index* s);
+/// @memberof rds_index
+struct rds_report_request_index_iterator *rds_index_get_report_requests(struct rds_index *s);
+/// @memberof rds_index
+struct rds_asset_index_iterator *rds_index_get_assets(struct rds_index *s);
+/// @memberof rds_index
+struct rds_report_index_iterator *rds_index_get_reports(struct rds_index *s);
 
-struct rds_report_request_index* rds_index_get_report_request(struct rds_index* rds, const char* id);
-struct rds_asset_index* rds_index_get_asset(struct rds_index* rds, const char* id);
-struct rds_report_index* rds_index_get_report(struct rds_index* rds, const char* id);
+/// @memberof rds_index
+struct rds_report_request_index *rds_index_get_report_request(struct rds_index *rds, const char *id);
+/// @memberof rds_index
+struct rds_asset_index *rds_index_get_asset(struct rds_index *rds, const char *id);
+/// @memberof rds_index
+struct rds_report_index *rds_index_get_report(struct rds_index *rds, const char *id);
 
-struct rds_index *rds_index_import(const char* file);
+/// @memberof rds_index
+struct rds_index *rds_index_import(const char *file);
 
-int rds_index_select_report(struct rds_index* s, const char** report_id);
+/// @memberof rds_index
+int rds_index_select_report(struct rds_index *s, const char **report_id);
 
 /************************************************************/
 /** @} End of DS group */
