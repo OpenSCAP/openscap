@@ -53,6 +53,10 @@ void  *OSCAP_GSYM(probe_arg)          = NULL;
 bool   OSCAP_GSYM(varref_handling)    = true;
 char **OSCAP_GSYM(no_varref_ents)     = NULL;
 size_t OSCAP_GSYM(no_varref_ents_cnt) = 0;
+bool OSCAP_GSYM(offline_mode) = false;
+bool OSCAP_GSYM(offline_mode_supported) = false;
+int OSCAP_GSYM(offline_mode_cobjflag) = SYSCHAR_FLAG_UNKNOWN;
+
 pthread_barrier_t OSCAP_GSYM(th_barrier);
 
 extern probe_ncache_t *OSCAP_GSYM(ncache);
@@ -118,6 +122,7 @@ int main(int argc, char *argv[])
 	pthread_attr_t th_attr;
 	sigset_t       sigmask;
 	probe_t        probe;
+	char *rootdir = NULL;
 
 	if ((errno = pthread_barrier_init(&OSCAP_GSYM(th_barrier), NULL,
 	                                  1 + // signal thread
@@ -195,6 +200,28 @@ int main(int argc, char *argv[])
 		fail(errno, "pthread_create(probe_signal_handler)", __LINE__ - 1);
 
 	pthread_attr_destroy(&th_attr);
+
+	/*
+	 * Change root directory for probes, if requested
+	 */
+	if ((rootdir = getenv("OSCAP_PROBE_ROOT")) != NULL) {
+		if(strlen(rootdir) > 0) {
+			if (chdir(rootdir) != 0) {
+				fail(errno, "chdir", __LINE__ -1);
+			}
+			if (chroot(rootdir) != 0) {
+				fail(errno, "chroot", __LINE__ - 1);
+			}
+			/* NOTE: We're running in a different root directory.
+			 * Unless /proc, /sys are somehow emulated for the new
+			 * environment, they are not relevant and so are other
+			 * runtime only things (e.g. getenv, uname, ...).
+			 * Switch to offline mode. We may add a separate
+			 * mechanism to control this behaviour in the future.
+			 */
+			OSCAP_GSYM(offline_mode) = true;
+		}
+	}
 
 	/*
 	 * Create input handler (detached)

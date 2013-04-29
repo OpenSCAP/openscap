@@ -75,5 +75,8 @@ struct probe_ctx {
 };
 
 extern pthread_barrier_t OSCAP_GSYM(th_barrier);
+extern bool OSCAP_GSYM(offline_mode);
+extern bool OSCAP_GSYM(offline_mode_supported);
+extern int OSCAP_GSYM(offline_mode_cobjflag);
 
 #endif /* PROBE_H */

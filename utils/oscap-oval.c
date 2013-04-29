@@ -111,7 +111,8 @@ static struct oscap_module OVAL_EVAL = {
         "   --datastream-id <id> \r\t\t\t\t - ID of the datastream in the collection to use.\n"
         "                        \r\t\t\t\t   (only applicable for source datastreams)\n"
         "   --oval-id <id> \r\t\t\t\t - ID of the OVAL component ref in the datastream to use.\n"
-        "                  \r\t\t\t\t   (only applicable for source datastreams)",
+        "                  \r\t\t\t\t   (only applicable for source datastreams)\n"
+	"   --probe-root <dir>\r\t\t\t\t - Change the root directory before scanning the system.\n",
     .opt_parser = getopt_oval_eval,
     .func = app_evaluate_oval
 };
@@ -349,6 +350,13 @@ int app_evaluate_oval(const struct oscap_action *action)
 
 	char* temp_dir = NULL;
 	char* oval_file = NULL;
+
+	if (action->probe_root) {
+		if (setenv("OSCAP_PROBE_ROOT", action->probe_root, 1) != 0) {
+			fprintf(stderr, "Failed to set the OSCAP_PROBE_ROOT environment variable.\n");
+			goto cleanup;
+		}
+	}
 
 	/* validate inputs */
 	if (action->validate) {
@@ -604,12 +612,14 @@ enum oval_opt {
     OVAL_OPT_DIRECTIVES,
     OVAL_OPT_DATASTREAM_ID,
     OVAL_OPT_OVAL_ID,
-    OVAL_OPT_OUTPUT = 'o'
+    OVAL_OPT_OUTPUT = 'o',
+    OVAL_OPT_PROBE_ROOT
 };
 
 bool getopt_oval_eval(int argc, char **argv, struct oscap_action *action)
 {
 	action->doctype = OSCAP_DOCUMENT_OVAL_DEFINITIONS;
+	action->probe_root = NULL;
 
 	/* Command-options */
 	struct option long_options[] = {
@@ -621,6 +631,7 @@ bool getopt_oval_eval(int argc, char **argv, struct oscap_action *action)
 		{ "datastream-id",required_argument, NULL, OVAL_OPT_DATASTREAM_ID},
 		{ "oval-id",    required_argument, NULL, OVAL_OPT_OVAL_ID},
 		{ "skip-valid",	no_argument, &action->validate, 0 },
+		{ "probe-root", required_argument, NULL, OVAL_OPT_PROBE_ROOT},
 		{ 0, 0, 0, 0 }
 	};
 
@@ -634,6 +645,7 @@ bool getopt_oval_eval(int argc, char **argv, struct oscap_action *action)
 		case OVAL_OPT_DIRECTIVES: action->f_directives = optarg; break;
 		case OVAL_OPT_DATASTREAM_ID: action->f_datastream_id = optarg;	break;
 		case OVAL_OPT_OVAL_ID: action->f_oval_id = optarg;	break;
+		case OVAL_OPT_PROBE_ROOT: action->probe_root = optarg; break;
 		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
