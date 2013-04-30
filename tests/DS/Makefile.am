@@ -22,6 +22,9 @@ EXTRA_DIST += test_ds.sh \
 		rds_simple/results-oval.xml \
 		rds_simple/results-xccdf.xml \
 		rds_simple/sds.xml \
+		rds_index_simple/arf.xml \
+		rds_split_simple/report-request.xml \
+		rds_split_simple/report.xml \
 		rds_testresult/results-oval.xml \
 		rds_testresult/results-xccdf.xml \
 		rds_testresult/sds.xml \

@@ -251,6 +251,83 @@ function test_rds
     return "$ret_val"
 }
 
+function test_rds_index
+{
+    local ret_val=0;
+
+    local RDS_FILE="${srcdir}/$1"
+    local ASSETS="$2"
+    local REPORTS="$3"
+    local REQUESTS="$4"
+
+    INDEX=$($OSCAP info "$RDS_FILE")
+
+    for asset in "$ASSETS"; do
+        if ! echo $INDEX | grep --quiet "$asset"; then
+            ret_val=1
+            echo "Asset $asset expected in index"
+        fi
+    done
+
+    for report in "$REPORTS"; do
+        if ! echo $INDEX | grep --quiet "$report"; then
+            ret_val=1
+            echo "Report $report expected in index"
+        fi
+    done
+
+    for requests in "$REQUESTS"; do
+        if ! echo $INDEX | grep --quiet "$request"; then
+            ret_val=1
+            echo "Report request $request expected in index"
+        fi
+    done
+
+    return "$ret_val"
+}
+
+function test_rds_split {
+
+    local ret_val=0;
+
+    local DIR="${srcdir}/$1"
+    local SDS_FILE="$2"
+    local REPORT_FILE="$3"
+    local SKIP_DIFF="$4"
+    local DS_TARGET_DIR="`mktemp -d`"
+    local DS_FILE="$DS_TARGET_DIR/arf.xml"
+
+    pushd "$DIR"
+
+    $OSCAP ds rds-create "$SDS_FILE" "$DS_FILE" "$REPORT_FILE"
+
+    assert_correct_xlinks $DS_FILE
+    popd
+
+    pushd "$DS_TARGET_DIR"
+
+    $OSCAP ds rds-split "`basename $DS_FILE`" "$DS_TARGET_DIR"
+
+    rm "$DS_FILE"
+    popd
+
+    if [ "$SKIP_DIFF" != "1" ]; then
+        DIFFERENCE=$(diff --exclude "oscap_debug.log.*" "$DIR" "$DS_TARGET_DIR")
+
+        if [ $? -ne 0 ]; then
+            echo "The files are different after going through result data stream! diff follows:"
+            echo "$DIFFERENCE"
+            echo
+
+            ret_val=1
+        fi
+    fi
+
+    rm -r "$DS_TARGET_DIR"
+
+    return "$ret_val"
+}
+
 # Testing.
 test_init "test_ds.log"
 
@@ -276,6 +353,9 @@ test_run "eval_cpe" test_eval eval_cpe/sds.xml
 
 test_run "rds_simple" test_rds rds_simple/sds.xml rds_simple/results-xccdf.xml rds_simple/results-oval.xml
 test_run "rds_testresult" test_rds rds_testresult/sds.xml rds_testresult/results-xccdf.xml rds_testresult/results-oval.xml
+test_run "rds_index_simple" test_rds_index rds_index_simple/arf.xml "asset0 asset1" "report0" "collection0"
+test_run "rds_split_simple" test_rds_split rds_split_simple report-request.xml report.xml 0
+
 test_run "test_eval_complex" test_eval_complex
 test_run "sds_add_multiple_oval_twice_in_row" sds_add_multiple_twice
 

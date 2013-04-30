@@ -1,0 +1,1591 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TestResult xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_org.open-scap_testresult_default-profile" start-time="2012-07-17T15:50:44" end-time="2012-07-17T15:50:44">
+          <title>OSCAP Scan Result</title>
+          <target>some.target.somewhere.org</target>
+          <target-address>127.0.0.1</target-address>
+          <target-address>aaa::aaa:11ba:a:1</target-address>
+          <target-facts>
+            <fact name="urn:xccdf:fact:ethernet:MAC" type="string">00:00:00:00:00:00</fact>
+          </target-facts>
+          <rule-result idref="xccdf_cdf_rule_rule-2.1.1.1.1.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.1.1.1.1.b" time="2012-07-17T15:50:44" weight="2.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.1.1.1.2.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.1.1.1.2.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.1.1.1.3.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.1.1.1.4.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.1.1.1.5.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.1.2.1.1.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.1.2.3.2.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4218-4</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig yum-updatesd off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.1.2.3.2.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo -e "/usr/bin/yum -R 120 -e 0 -d 0 -y update yum\n/usr/bin/yum -R 10 -e 0 -d 0 -y update" &gt; /etc/cron.weekly/yum.cron</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.1.2.3.3.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.1.2.3.4.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.1.2.3.5.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.1.2.3.6.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.1.3.1.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4209-3</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">yum install aide</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.1.3.1.4.a" role="full" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo -e "/usr/sbin/aide --check" &gt; /etc/cron.daily/aide.cron</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.1.3.2.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.1.1.a" role="full" time="2012-07-17T15:50:44" severity="unknown" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4249-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.1.2.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3522-0</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.1.2.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4275-4</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.1.2.c" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4042-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.2.1.1.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4187-1</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo -e "\nblacklist usb_storage" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.2.1.2.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4006-3</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">rm /lib/modules/2.6.*/kernel/drivers/usb/storage/usb-storage.ko</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.2.1.3.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4173-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.2.1.4.a" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3944-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.2.2.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4072-5</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">chkconfig autofs off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.2.3.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4231-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.2.4.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist cramfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.2.4.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist freevxfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.2.4.c" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist jffs2" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.2.4.d" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist hfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.2.4.e" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist hfsplus" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.2.4.f" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist squashfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.2.4.g" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist udf" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.3.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3918-0</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.3.1.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3988-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.3.1.c" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3276-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.3.1.d" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3883-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.3.1.e" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4210-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.3.1.f" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4064-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.3.1.g" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3958-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.3.1.h" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3495-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.3.1.i" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4130-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.3.1.j" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3967-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.3.1.k" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3932-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.3.1.l" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3566-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.3.2.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3399-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.3.3.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3795-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.3.4.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4178-0</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.3.4.b" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3324-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.3.5.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4223-4</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.3.5.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3573-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.3.6.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.4.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4220-0</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.4.2.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4225-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.4.2.b" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4247-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.4.3.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4168-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.4.3.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4146-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.2.4.4.2.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4177-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.1.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3820-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.1.1.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3485-0</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.1.1.c" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4111-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.1.1.d" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4256-4</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.1.2.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.1.2.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.1.3.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4044-4</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "%wheel ALL=(ALL) ALL" &gt;&gt; /etc/sudoers</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.1.4.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3987-5</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.1.5.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4238-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.1.5.2.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.1.6.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4009-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.1.7.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4154-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.1.7.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4180-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.1.7.c" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4092-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.1.7.d" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4097-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.1.8.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.1.8.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.1.8.c" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4114-5</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.3.1.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3762-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.3.1.2.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3762-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.3.2.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3410-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.3.2.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.3.2.c" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.3.4.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4185-5</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chgrp usergroup /usr/sbin/userhelper</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.3.4.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3952-9</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chmod 4710 /usr/sbin/userhelper</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.3.5.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">/usr/sbin/authconfig --passalgo=sha512 --update</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.3.6.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.4.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3301-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.4.1.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.4.2.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4090-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.4.4.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3844-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.4.4.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4227-5</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.4.5.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">rm .netrc</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.5.2.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4144-2</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">chown root /boot/grub/grub.conf</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.5.2.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4197-0</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">chown :root /boot/grub/grub.conf</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.5.2.c" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3923-0</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">chmod 600 /boot/grub/grub.conf</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.5.2.d" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3818-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.5.3.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4241-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.5.4.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4245-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.5.5.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3689-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.5.5.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3707-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.5.6.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3315-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.5.6.1.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.5.6.1.c" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.5.6.1.d" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.5.6.2.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3910-7</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">yum install vlock</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.7.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4060-0</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.3.7.2.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4188-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.4.2.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.4.2.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3977-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.4.2.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.4.2.c" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.4.2.d" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3624-4</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.4.3.1.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4148-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.4.3.1.b" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4254-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.4.3.2.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3668-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.4.3.3.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4129-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.4.5.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.1.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4151-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.1.1.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4155-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.1.1.c" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3561-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.1.2.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4236-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.1.2.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4217-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.1.2.c" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3472-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.1.2.d" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4320-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.1.2.e" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4091-5</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.1.2.f" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4186-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.1.2.g" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3339-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.1.2.h" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3644-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.1.2.i" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4133-5</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.1.2.j" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4265-5</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.1.2.k" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4080-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.1.2.l" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3840-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.2.2.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3628-5</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.2.2.2.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4276-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.2.2.3.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4170-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.3.1.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3562-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.3.1.2.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3381-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.3.1.2.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3377-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.3.1.2.c" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4296-0</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.3.2.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4269-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.3.2.1.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4291-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.3.2.1.c" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4313-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.3.2.1.d" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4198-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.3.2.3.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3842-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.3.2.5.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4159-0</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.3.2.5.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4221-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.3.2.5.c" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4058-4</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.3.2.5.d" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4128-5</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.3.2.5.e" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4287-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.3.2.5.f" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3895-0</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.3.2.5.g" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4137-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.5.1.a" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4167-3</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">chkconfig ip6tables on</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.5.1.b" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4189-7</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">chkconfig iptables on</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.5.3.1.a" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.5.3.1.b" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.7.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.7.2.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.7.3.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.5.7.4.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3679-8</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">chkconfig rsyslog on</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.1.2.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4366-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.1.2.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3701-0</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.1.2.c" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4233-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.1.3.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4260-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.1.4.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3382-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.1.5.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4182-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.1.6.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4323-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.2.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4292-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.2.3.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.2.4.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.2.4.2.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.2.4.3.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.2.4.4.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.2.4.5.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.2.4.6.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.2.4.7.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.2.4.8.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.2.4.9.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.2.4.10.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.2.4.11.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.2.4.12.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.2.4.13.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-2.6.2.4.14.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">cp /usr/share/doc/audit-version/stig.rules /etc/audit/audit.rules</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.2.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4234-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.2.1.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4252-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.2.1.c" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4023-8</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># yum erase inetd</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.2.1.d" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4164-0</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># yum erase xinetd</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.2.2.1.a" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># yum erase telnet</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.2.2.1.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># yum erase rsh-server</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.2.2.a" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4330-7</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># yum erase telnet-server</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.2.2.b" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3390-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.2.3.1.a" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4308-3</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># yum erase rsh-server</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.2.3.1.b" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3974-3</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig rcp off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.2.3.1.c" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4141-8</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig rsh off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.2.3.1.d" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3537-8</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig rlogin off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.2.3.2.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.2.3.3.a" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># yum erase rsh</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.2.4.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4348-9</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># yum erase ypserv</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.2.4.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3705-1</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig ypbind off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.2.5.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3916-4</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># yum erase tftp-server</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.2.5.b" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4273-9</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig tftp off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.3.1.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3412-4</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig firstboot off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.3.2.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4229-1</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig gpm off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.3.3.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4123-6</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig irqbalance off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.3.4.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4286-1</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig isdn off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.3.5.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3425-6</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig kdump off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.3.6.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4211-9</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig kudzu off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.3.7.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3854-7</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig mdmonitor off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.3.8.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4356-2</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig microcode ctl off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.3.9.1.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4369-5</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig network off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.3.9.2.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># rm /etc/sysconfig/network-scripts/ifcfg-interface</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.3.9.3.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4369-5</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.3.10.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4100-4</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig pcscd off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.3.11.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3455-3</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig smartd off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.3.12.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4421-4</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig readahead early off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.3.12.b" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4302-6</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig readahead later off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.3.13.1.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3822-4</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig messagebus off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.3.13.2.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4364-6</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig haldaemon off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.3.14.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4355-4</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig bluetooth off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.3.14.2.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4377-8</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig hidd off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.3.14.3.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.3.15.1.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4289-5</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig apmd off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.3.15.2.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4298-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.3.15.3.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4051-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.a" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4324-0</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.1.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4406-5</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.1.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4428-9</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># yum erase anacron</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3626-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.1.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3851-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.1.c" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4388-5</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.2.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3604-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.2.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4379-4</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.2.c" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4304-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.3.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4054-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.3.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3481-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.3.c" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4331-5</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.3.d" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4322-4</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.3.e" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4212-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.3.f" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3983-4</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.3.g" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4022-0</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.3.h" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3833-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.3.i" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4441-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.3.j" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4380-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.3.k" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4106-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.3.l" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4450-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.3.m" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4203-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.3.n" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4251-5</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.3.o" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4250-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.4.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.4.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.2.4.c" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.3.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.3.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.4.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">rm /etc/cron.deny</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.4.4.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">rm /etc/at.deny</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.5.1.1.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4268-9</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig sshd off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.5.1.1.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4272-1</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># yum erase openssh-server</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.5.1.2.a" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4295-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.5.1.2.b" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.5.2.1.a" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4325-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.5.2.3.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3845-5</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.5.2.3.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.5.2.4.a" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4475-0</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.5.2.5.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4370-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.5.2.6.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4387-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.5.2.7.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3660-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.5.2.8.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4431-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.5.2.9.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.5.2.10.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.6.1.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4462-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.6.1.2.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4422-2</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># yum groupremove "X Window System"</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.6.1.3.2.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4074-1</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "exec X :0 -nolisten tcp $@" &gt; /etc/X11/xinit/xserverrc</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.6.2.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3717-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.7.1.1.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4365-3</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig avahi-daemon off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.7.2.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4136-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.7.2.1.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4409-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.7.2.2.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4426-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.7.2.3.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4193-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.7.2.4.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4444-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.7.2.5.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4352-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.7.2.5.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4433-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.7.2.5.c" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4451-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.7.2.5.d" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4341-4</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.7.2.5.e" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4358-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.8.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4112-9</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig cups off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.8.2.a" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3649-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.8.2.b" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.8.3.1.1.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4420-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.8.3.1.1.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4407-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.8.4.1.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4425-5</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.9.1.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4191-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.9.3.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4336-4</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig dhcpd off</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.9.3.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4464-4</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># yum erase dhcp</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.9.4.1.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4257-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.9.4.2.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4403-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.9.4.3.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4345-5</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.9.4.4.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3724-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.9.4.4.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4243-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.9.4.4.c" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4389-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.9.4.4.d" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3913-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.9.4.4.e" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4169-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.9.4.4.f" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4318-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.9.4.4.g" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4319-0</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.9.4.5.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3733-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.10.2.2.1.a" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4376-0</ident>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown"># chkconfig ntpd on</fix>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.10.2.2.2.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4134-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.10.2.2.3.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4385-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.10.3.1.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4032-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.10.3.2.1.a" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4424-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.10.3.2.2.a" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3487-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.11.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4416-4</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.11.2.1.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4293-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.12.2.2.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.12.3.1.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3501-4</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.12.3.7.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4484-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.12.3.7.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4502-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.13.1.1.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4396-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.13.1.1.b" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3535-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.13.1.1.c" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3568-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.13.1.2.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4533-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.13.1.3.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4550-0</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.13.2.3.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4559-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.13.2.3.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4015-4</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.13.2.3.c" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3667-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.13.2.3.d" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4310-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.13.2.3.e" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4438-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.13.2.3.f" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3579-0</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.13.3.1.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4473-5</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.13.3.1.b" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4491-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.13.3.2.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4368-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.13.3.2.b" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4024-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.13.3.2.c" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4526-0</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.13.4.1.2.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4544-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.13.4.1.3.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4465-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.13.4.1.4.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4350-5</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.14.1.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3578-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.14.1.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4219-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.14.3.2.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3985-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.14.3.2.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4258-0</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.14.3.2.c" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4487-5</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.14.4.5.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4399-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.15.1.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3919-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.15.1.b" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3919-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.15.3.1.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4549-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.15.3.2.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4554-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.15.3.3.1.a" time="2012-07-17T15:50:44" severity="high" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4443-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.15.3.4.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4461-0</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.16.1.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4338-0</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.16.1.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4514-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.16.3.1.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4474-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.16.3.1.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3756-4</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.16.5.1.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4509-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.16.5.1.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4386-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.16.5.1.c" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4029-5</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.16.5.1.d" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3581-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.16.5.1.e" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4574-0</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.17.1.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3847-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.17.1.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4239-0</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.17.2.1.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4384-4</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.17.2.1.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3887-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.17.2.1.c" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4530-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.17.2.1.d" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4547-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.17.2.2.4.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4552-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.17.2.3.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4371-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.17.2.3.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4410-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.18.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4551-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.18.2.3.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.18.2.10.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4556-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.18.2.11.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4556-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.1.a" time="2012-07-17T15:50:44" severity="low" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4556-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.1.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4076-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.2.2.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4454-5</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.2.2.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4459-4</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.2.2.c" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4503-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.2.2.d" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4353-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.2.2.e" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4419-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.2.2.f" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3692-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.2.2.g" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4476-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.2.2.h" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3585-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.2.3.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4344-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.2.3.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4494-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.2.3.c" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4181-4</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.2.3.d" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4577-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.2.5.a" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4511-2</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.2.5.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4529-4</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.2.5.c" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3610-3</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.2.5.d" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4466-9</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.2.5.e" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4607-8</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.2.5.f" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4255-6</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.2.5.g" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4127-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.2.5.h" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4519-5</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.2.5.i" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4413-1</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.19.2.5.j" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4373-7</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.20.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-3765-5</ident>
+          </rule-result>
+          <rule-result idref="xccdf_cdf_rule_rule-3.20.1.b" time="2012-07-17T15:50:44" weight="10.000000">
+            <result>notselected</result>
+            <ident system="http://cce.mitre.org">CCE-4404-0</ident>
+          </rule-result>
+          <score system="urn:xccdf:scoring:default" maximum="100.000000">0.000000</score>
+          <score system="urn:xccdf:scoring:flat" maximum="0.000000">0.000000</score>
+        </TestResult>

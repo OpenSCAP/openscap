@@ -414,7 +414,6 @@ static xmlNodePtr _lookup_datastream_in_collection(xmlDocPtr doc, const char *da
 	return datastream;
 }
 
-
 int ds_sds_decompose_custom(const char* input_file, const char* id, const char* target_dir,
 		const char* container_name, const char* component_id, const char* target_filename)
 {
