@@ -216,9 +216,11 @@
 %module openscap
 %{
  #include "../src/XCCDF/public/xccdf_benchmark.h"
+ #include "../src/XCCDF/public/xccdf_session.h"
  #include "../src/XCCDF_POLICY/public/xccdf_policy.h"
 %}
 %include "../src/XCCDF/public/xccdf_benchmark.h"
+%include "../src/XCCDF/public/xccdf_session.h"
 %include "../src/XCCDF_POLICY/public/xccdf_policy.h"
 
 
