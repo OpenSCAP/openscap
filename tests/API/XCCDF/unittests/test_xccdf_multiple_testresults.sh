@@ -11,11 +11,12 @@ cp $srcdir/${name}.xccdf.xml $result
 
 echo "Stderr file = $stderr"
 echo "Result and input file = $result"
+tmpdir=$(dirname $result)
 
 for i in {1..5}; do
 	$OSCAP xccdf eval --results $result $result 2> $stderr
 	[ -f $stderr ]
-	[ "`cat $stderr`" == "WARNING: Skipping /tmp/non_existent.oval.xml file which is referenced from XCCDF content" ]
+	[ "`cat $stderr`" == "WARNING: Skipping $tmpdir/non_existent.oval.xml file which is referenced from XCCDF content" ]
 	:> $stderr
 
 	$OSCAP xccdf validate-xml $result
