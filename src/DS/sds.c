@@ -61,22 +61,30 @@ static const char* sce_xccdf_ns_uri = "http://open-scap.org/page/SCE_xccdf_strea
 
 static int mkdir_p(const char* path)
 {
-	if (strlen(path) > MAXPATHLEN)
-	{
+	// NOTE: This assumes a UNIX VFS path, C:\\folder\\folder would break it!
+
+	if (strlen(path) > MAXPATHLEN) {
 		return -1;
 	}
-	else
-	{
+	else {
 		char temp[MAXPATHLEN + 1]; // +1 for \0
 		unsigned int i;
 
-		for (i = 0; i <= strlen(path); i++)
-		{
-			if (path[i] == '/' || path[i] == '\0')
-			{
+		for (i = 0; i <= strlen(path); i++) {
+			if (path[i] == '/' || path[i] == '\0') {
 				strncpy(temp, path, i);
 				temp[i] = '\0';
-				mkdir(temp, S_IRWXU);
+
+				// skip leading '/', we will never be creating the root anyway
+				if (strlen(temp) == 0)
+					continue;
+
+				if (mkdir(temp, S_IRWXU) != 0 && errno != EEXIST) {
+					oscap_seterr(OSCAP_EFAMILY_GLIBC,
+						"Error making directory '%s', while doing recursive mkdir for '%s', error was '%s'.",
+						temp, path, strerror(errno));
+					return -1;
+				}
 			}
 		}
 
