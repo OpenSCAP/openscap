@@ -104,7 +104,7 @@ static struct oscap_module DS_SDS_VALIDATE_MODULE = {
 static struct oscap_module DS_RDS_SPLIT_MODULE = {
 	.name = "rds-split",
 	.parent = &OSCAP_DS_MODULE,
-	.summary = "Splits a ResultDataStream. Creating source datastream and report in target directory.",
+	.summary = "Splits a ResultDataStream. Creating source datastream (from report-request) and report in target directory.",
 	.usage = "[OPTIONS] rds.xml TARGET_DIRECTORY",
 	.help =	"Options:\n"
 		"   --report-id <id> \r\t\t\t\t - ID of report inside ARF that should be split.\n"
