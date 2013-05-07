@@ -30,6 +30,8 @@
 #include "public/oscap.h"
 #include "public/oscap_text.h"
 
+#include "ds_common.h"
+
 #include "common/alloc.h"
 #include "common/_error.h"
 #include "common/util.h"
@@ -49,7 +51,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-
 #ifndef MAXPATHLEN
 #   define MAXPATHLEN 1024
 #endif
@@ -58,39 +59,6 @@ static const char* datastream_ns_uri = "http://scap.nist.gov/schema/scap/source/
 static const char* xlink_ns_uri = "http://www.w3.org/1999/xlink";
 static const char* cat_ns_uri = "urn:oasis:names:tc:entity:xmlns:xml:catalog";
 static const char* sce_xccdf_ns_uri = "http://open-scap.org/page/SCE_xccdf_stream";
-
-static int mkdir_p(const char* path)
-{
-	// NOTE: This assumes a UNIX VFS path, C:\\folder\\folder would break it!
-
-	if (strlen(path) > MAXPATHLEN) {
-		return -1;
-	}
-	else {
-		char temp[MAXPATHLEN + 1]; // +1 for \0
-		unsigned int i;
-
-		for (i = 0; i <= strlen(path); i++) {
-			if (path[i] == '/' || path[i] == '\0') {
-				strncpy(temp, path, i);
-				temp[i] = '\0';
-
-				// skip leading '/', we will never be creating the root anyway
-				if (strlen(temp) == 0)
-					continue;
-
-				if (mkdir(temp, S_IRWXU) != 0 && errno != EEXIST) {
-					oscap_seterr(OSCAP_EFAMILY_GLIBC,
-						"Error making directory '%s', while doing recursive mkdir for '%s', error was '%s'.",
-						temp, path, strerror(errno));
-					return -1;
-				}
-			}
-		}
-
-		return 0;
-	}
-}
 
 static xmlNodePtr node_get_child_element(xmlNodePtr parent, const char* name)
 {
@@ -290,7 +258,7 @@ static int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc,
 	const char* file_basename = basename((char*)filename);
 
 	const char* target_filename_dirname = oscap_sprintf("%s/%s", target_dir, file_reldir);
-	if (mkdir_p(target_filename_dirname) == -1)
+	if (ds_common_mkdir_p(target_filename_dirname) == -1)
 	{
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error making directory '%s' while dumping component to file '%s'.", target_dir, filename);
 		xmlFree(cref_id);
