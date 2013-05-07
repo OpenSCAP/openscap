@@ -32,6 +32,8 @@
 #include "common/_error.h"
 #include "common/util.h"
 
+#include "ds_common.h"
+
 #include <sys/stat.h>
 #include <time.h>
 #include <libgen.h>
@@ -211,6 +213,15 @@ int ds_rds_decompose(const char* input_file, const char* report_id, const char* 
 
 		oscap_seterr(OSCAP_EFAMILY_XML, error);
 		oscap_free(error);
+		xmlFreeDoc(doc);
+		return -1;
+	}
+
+	// make absolutely sure that the target dir exists
+	// NOTE: if target dir already exists, this function returns 0
+	if (ds_common_mkdir_p(target_dir) != 0) {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Can't decompose RDS '%s' to target directory '%s'. "
+			"Failed to create given directory!", input_file, target_dir);
 		xmlFreeDoc(doc);
 		return -1;
 	}
