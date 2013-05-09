@@ -42,6 +42,7 @@
 #include "signal_handler.h"
 #include "input_handler.h"
 #include "probe-api.h"
+#include "option.h"
 
 static int fail(int err, const char *who, int line)
 {
@@ -81,11 +82,14 @@ static SEXP_t *probe_reset(SEXP_t *arg0, void *arg1)
         return(NULL);
 }
 
-static int probe_opthandler_varref(int option, va_list args)
+static int probe_opthandler_varref(int option, int op, va_list args)
 {
 	bool  o_switch;
 	char *o_name;
 	char *o_temp;
+
+	if (op == PROBE_OPTION_GET)
+		return -1;
 
 	o_switch = va_arg(args, int);
 	o_name   = va_arg(args, char *);
@@ -112,9 +116,36 @@ static int probe_opthandler_varref(int option, va_list args)
 	return (0);
 }
 
-static int probe_opthandler_rcache(int option, va_list args)
+static int probe_opthandler_rcache(int option, int op, va_list args)
 {
 	return (0);
+}
+
+static int probe_opthandler_offlinemode(int option, int op, va_list args)
+{
+	if (op == PROBE_OPTION_SET) {
+		bool o_offline_mode = OSCAP_GSYM(offline_mode_supported);
+		int o_cobjflag = OSCAP_GSYM(offline_mode_cobjflag);
+
+		o_offline_mode = va_arg(args, int);
+		if (!o_offline_mode) {
+			/*
+			 * If the probe doesn't support offline mode, then probe_main()
+			 * won't be called in offline modee and a collected object with
+			 * the following flag will be generated for all queries.
+			 */
+			o_cobjflag = va_arg(args, int);
+		}
+		OSCAP_GSYM(offline_mode_supported) = o_offline_mode;
+		OSCAP_GSYM(offline_mode_cobjflag) = o_cobjflag;
+	} else if (op == PROBE_OPTION_GET) {
+		int *offline_mode_supported = va_arg(args, int *);
+		int *offline_mode = va_arg(args, int *);
+
+		*offline_mode_supported = OSCAP_GSYM(offline_mode_supported);
+		*offline_mode = OSCAP_GSYM(offline_mode);
+	}
+	return 0;
 }
 
 int main(int argc, char *argv[])
@@ -178,15 +209,20 @@ int main(int argc, char *argv[])
 	/*
 	 * Initialize probe option handlers
 	 */
-#define PROBE_OPTION_INITCOUNT 2
+#define PROBE_OPTION_INITCOUNT 3
 
 	probe.option = oscap_alloc(sizeof(probe_option_t) * PROBE_OPTION_INITCOUNT);
 	probe.optcnt = PROBE_OPTION_INITCOUNT;
 
-        probe.option[0].option  = PROBE_VARREF_HANDLING;
-        probe.option[0].handler = &probe_opthandler_varref;
-        probe.option[1].option  = PROBE_RESULT_CACHING;
-        probe.option[1].handler = &probe_opthandler_rcache;
+	probe.option[0].option  = PROBEOPT_VARREF_HANDLING;
+	probe.option[0].handler = &probe_opthandler_varref;
+	probe.option[1].option  = PROBEOPT_RESULT_CACHING;
+	probe.option[1].handler = &probe_opthandler_rcache;
+	probe.option[2].option  = PROBEOPT_OFFLINE_MODE_SUPPORTED;
+	probe.option[2].handler = &probe_opthandler_offlinemode;
+
+	OSCAP_GSYM(probe_optdef) = probe.option;
+	OSCAP_GSYM(probe_optdef_count) = probe.optcnt;
 
 	/*
 	 * Create signal handler

@@ -33,11 +33,8 @@
 #include "rcache.h"
 #include "icache.h"
 #include "probe-common.h"
-
-typedef struct {
-	int option;
-	int (*handler)(int, va_list);
-} probe_option_t;
+#include "option.h"
+#include "common/util.h"
 
 typedef struct {
 	pthread_rwlock_t rwlock;
