@@ -142,8 +142,12 @@ static int probe_opthandler_offlinemode(int option, int op, va_list args)
 		int *offline_mode_supported = va_arg(args, int *);
 		int *offline_mode = va_arg(args, int *);
 
-		*offline_mode_supported = OSCAP_GSYM(offline_mode_supported);
-		*offline_mode = OSCAP_GSYM(offline_mode);
+		if (offline_mode_supported != NULL) {
+		  *offline_mode_supported = OSCAP_GSYM(offline_mode_supported);
+		}
+		if (offline_mode != NULL) {
+		  *offline_mode = OSCAP_GSYM(offline_mode);
+		}
 	}
 	return 0;
 }
