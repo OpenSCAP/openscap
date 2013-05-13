@@ -51,6 +51,14 @@
 #include <seap.h>
 #include <string.h>
 #include <probe-api.h>
+#include <probe/option.h>
+
+void *probe_init(void)
+{
+	/* XXX: Well, not really... */
+	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, true);
+	return NULL;
+}
 
 int probe_main(probe_ctx *ctx, void *arg)
 {

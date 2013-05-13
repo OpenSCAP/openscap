@@ -83,6 +83,7 @@
 /* SEAP */
 #include <seap.h>
 #include <probe-api.h>
+#include <probe/option.h>
 #include "probe/entcmp.h"
 #include <alloc.h>
 #include <common/assume.h>
@@ -299,6 +300,8 @@ void *probe_init (void)
 		dE("regcomp(%s) failed.\n");
 		return NULL;
 	}
+
+	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, true);
 
         return ((void *)&g_rpm);
 }
