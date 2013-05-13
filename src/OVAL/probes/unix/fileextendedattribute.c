@@ -43,6 +43,7 @@
 #include <sys/types.h>
 #include <attr/xattr.h>
 
+#include <probe/option.h>
 #include "probe/entcmp.h"
 #include "oval_fts.h"
 #include "common/debug_priv.h"
@@ -208,6 +209,7 @@ void *probe_init (void)
 	probe_setoption(PROBEOPT_VARREF_HANDLING, false, "path");
 	probe_setoption(PROBEOPT_VARREF_HANDLING, false, "filename");
 #endif
+		probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, true);
         return (NULL);
 }
 
