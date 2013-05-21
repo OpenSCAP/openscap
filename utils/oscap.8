@@ -50,19 +50,19 @@ any-scap-file.xml
 .RS
 This module prints information about SCAP content in a file specified on a command line. It determines SCAP content type, specification version, date of creation, date of import and so on. Info module doesn't require any additional opperation switch.
 
-For XCCDF or Datastream files, info module prints out IDs of incorporated profiles, components, and datastreams. These IDs can be used to specify the target for evaluation. Use options --profile, --xccdf-id (or --oval-id), and --datastream-id respectivelly.
+For XCCDF or Datastream files, info module prints out IDs of incorporated profiles, components, and datastreams. These IDs can be used to specify the target for evaluation. Use options --profile, --xccdf-id (or --oval-id), and --datastream-id respectively.
 .SH XCCDF OPERATIONS
 .TP
 .B \fBeval\fR [\fIoptions\fR] INPUT_FILE [\fIoval-definitions-files\fR]
 .RS
-Perform evaluation of XCCDF document file given as INPUT_FILE. Print result of each rule to standard output, including rule title, rule id and security identifier(CVE, CCE). Optionally you can give a source datastream as the INPUT_FILE instead of an XCCDF file (see --dataststream-id).
+Perform evaluation of XCCDF document file given as INPUT_FILE. Print result of each rule to standard output, including rule title, rule id and security identifier(CVE, CCE). Optionally you can give a source datastream as the INPUT_FILE instead of an XCCDF file (see --datastream-id).
 .PP
 oscap returns 0 if all rules pass. If there is an error during evaluation, the return code is 1. If there is at least one rule with either fail or unknown result, oscap-scan finishes with return code 2.
 .PP
 .PP
 Unless --skip-valid is used, the INPUT_FILE is validated using XSD schemas (depending on document type of INPUT_FILE) and rejected if invalid.
 .PP
-You may specify OVAL Definition files as the last parameter, XCCDF evaluation will then proceed only with those specified files. Otherwise, when \fIoval-definitions-files\fR parameter is missing, oscap tool will try to load all OVAL Definition files referenced from XCCDF automaticaly (search in the same path as XCCDF).
+You may specify OVAL Definition files as the last parameter, XCCDF evaluation will then proceed only with those specified files. Otherwise, when \fIoval-definitions-files\fR parameter is missing, oscap tool will try to load all OVAL Definition files referenced from XCCDF automatically (search in the same path as XCCDF).
 .PP
 .TP
 \fB\-\-profile PROFILE\fR
@@ -82,7 +82,7 @@ Use component of given ID (in input source datastream) for XCCDF tailoring. If b
 .TP
 \fB\-\-cpe CPE_FILE\fR
 .RS
-Use given CPE dictionary or language (autodetected) for applicability checks. (Some CPE names are provided by openscap, see oscap --version for Inbuilt CPE names)
+Use given CPE dictionary or language (auto-detected) for applicability checks. (Some CPE names are provided by openscap, see oscap --version for Inbuilt CPE names)
 .RE
 .TP
 \fB\-\-results FILE\fR
@@ -157,7 +157,7 @@ Allow download of remote OVAL content referenced from XCCDF by check-content-ref
 .TP
 \fB\-\-cpe CPE_FILE\fR
 .RS
-Use given CPE dictionary or language (autodetected) for applicability checks.
+Use given CPE dictionary or language (auto-detected) for applicability checks.
 .RE
 .TP
 \fB\-\-results FILE\fR
@@ -231,7 +231,7 @@ Takes component ref with given ID from checklists. This allows to select a parti
 .TP
 \fB\-\-cpe CPE_FILE\fR
 .RS
-Use given CPE dictionary or language (autodetected) for applicability checks. The variables documents are created only for xccdf:Rules which are applicable.
+Use given CPE dictionary or language (auto-detected) for applicability checks. The variables documents are created only for xccdf:Rules which are applicable.
 .RE
 .RE
 .TP
@@ -243,7 +243,7 @@ Generate another document form an XCCDF file such as security guide or result re
 Apply profile with given ID to the Benchmark before further processing takes place.
 .TP
 \fB\-\-format FMT\fR
-Specify output format. This option applies only on document generators (i.e. guide, report). Avalable formats: \fIhtml\fR (default), \fIdocbook\fR.
+Specify output format. This option applies only on document generators (i.e. guide, report). Available formats: \fIhtml\fR (default), \fIdocbook\fR.
 .TP
 Available submodules:
 .TP
@@ -541,7 +541,7 @@ Find given CVE in data feed and report base score, vector string and vulnerable 
 .RE
 
 .SH EXAMPLES
-Evaluate XCCDF content using CPE disctionary and produce html report. In this case we use United States Government Configuration Baseline (USGCB) for Red Hat Enterprise Linux 5 Desktop.
+Evaluate XCCDF content using CPE dictionary and produce html report. In this case we use United States Government Configuration Baseline (USGCB) for Red Hat Enterprise Linux 5 Desktop.
 .PP
 .nf
 .RS
