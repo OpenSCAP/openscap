@@ -215,9 +215,9 @@ void rds_index_free(struct rds_index *s)
 	oscap_free(s);
 }
 
-static void rds_index_add_report_request(struct rds_index *s, struct rds_report_request_index *index)
+static void rds_index_add_report_request(struct rds_index *s, struct rds_report_request_index *rr_index)
 {
-	oscap_list_add(s->report_requests, index);
+	oscap_list_add(s->report_requests, rr_index);
 }
 
 struct rds_report_request_index_iterator *rds_index_get_report_requests(struct rds_index *s)
@@ -225,9 +225,9 @@ struct rds_report_request_index_iterator *rds_index_get_report_requests(struct r
 	return (struct rds_report_request_index_iterator*)oscap_iterator_new(s->report_requests);
 }
 
-static void rds_index_add_asset(struct rds_index *s, struct rds_asset_index *index)
+static void rds_index_add_asset(struct rds_index *s, struct rds_asset_index *a_index)
 {
-	oscap_list_add(s->assets, index);
+	oscap_list_add(s->assets, a_index);
 }
 
 struct rds_asset_index_iterator *rds_index_get_assets(struct rds_index *s)
@@ -235,9 +235,9 @@ struct rds_asset_index_iterator *rds_index_get_assets(struct rds_index *s)
 	return (struct rds_asset_index_iterator*)oscap_iterator_new(s->assets);
 }
 
-static void rds_index_add_report(struct rds_index* s, struct rds_report_index *index)
+static void rds_index_add_report(struct rds_index* s, struct rds_report_index *r_index)
 {
-	oscap_list_add(s->reports, index);
+	oscap_list_add(s->reports, r_index);
 }
 
 struct rds_report_index_iterator *rds_index_get_reports(struct rds_index* s)
@@ -252,9 +252,9 @@ struct rds_report_request_index* rds_index_get_report_request(struct rds_index* 
 	struct rds_report_request_index_iterator* it = rds_index_get_report_requests(rds);
 	while (rds_report_request_index_iterator_has_more(it))
 	{
-		struct rds_report_request_index* index = rds_report_request_index_iterator_next(it);
-		if (strcmp(rds_report_request_index_get_id(index), id) == 0) {
-			ret = index;
+		struct rds_report_request_index* rr_index = rds_report_request_index_iterator_next(it);
+		if (strcmp(rds_report_request_index_get_id(rr_index), id) == 0) {
+			ret = rr_index;
 			break;
 		}
 
@@ -271,9 +271,9 @@ struct rds_asset_index* rds_index_get_asset(struct rds_index *rds, const char *i
 	struct rds_asset_index_iterator *it = rds_index_get_assets(rds);
 	while (rds_asset_index_iterator_has_more(it))
 	{
-		struct rds_asset_index *index = rds_asset_index_iterator_next(it);
-		if (strcmp(rds_asset_index_get_id(index), id) == 0) {
-			ret = index;
+		struct rds_asset_index *a_index = rds_asset_index_iterator_next(it);
+		if (strcmp(rds_asset_index_get_id(a_index), id) == 0) {
+			ret = a_index;
 			break;
 		}
 
@@ -290,9 +290,9 @@ struct rds_report_index *rds_index_get_report(struct rds_index *rds, const char 
 	struct rds_report_index_iterator *it = rds_index_get_reports(rds);
 	while (rds_report_index_iterator_has_more(it))
 	{
-		struct rds_report_index *index = rds_report_index_iterator_next(it);
-		if (strcmp(rds_report_index_get_id(index), id) == 0) {
-			ret = index;
+		struct rds_report_index *r_index = rds_report_index_iterator_next(it);
+		if (strcmp(rds_report_index_get_id(r_index), id) == 0) {
+			ret = r_index;
 			break;
 		}
 
@@ -372,8 +372,8 @@ static struct rds_index *rds_index_parse(xmlTextReaderPtr reader)
 					continue;
 				}
 
-				struct rds_report_request_index* index = rds_report_request_index_parse(reader);
-				rds_index_add_report_request(ret, index);
+				struct rds_report_request_index* rr_index = rds_report_request_index_parse(reader);
+				rds_index_add_report_request(ret, rr_index);
 
 				if (xmlTextReaderRead(reader) != 1) {
 					oscap_setxmlerr(xmlGetLastError());
@@ -393,8 +393,8 @@ static struct rds_index *rds_index_parse(xmlTextReaderPtr reader)
 					continue;
 				}
 
-				struct rds_asset_index* index = rds_asset_index_parse(reader);
-				rds_index_add_asset(ret, index);
+				struct rds_asset_index* a_index = rds_asset_index_parse(reader);
+				rds_index_add_asset(ret, a_index);
 
 				if (xmlTextReaderRead(reader) != 1) {
 					oscap_setxmlerr(xmlGetLastError());
@@ -414,8 +414,8 @@ static struct rds_index *rds_index_parse(xmlTextReaderPtr reader)
 					continue;
 				}
 
-				struct rds_report_index* index = rds_report_index_parse(reader);
-				rds_index_add_report(ret, index);
+				struct rds_report_index* r_index = rds_report_index_parse(reader);
+				rds_index_add_report(ret, r_index);
 
 				if (xmlTextReaderRead(reader) != 1) {
 					oscap_setxmlerr(xmlGetLastError());
