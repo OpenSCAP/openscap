@@ -475,15 +475,6 @@ int ds_sds_decompose(const char* input_file, const char* id, const char* xccdf_i
 	return ds_sds_decompose_custom(input_file, id, target_dir, "checklists", xccdf_id, xccdf_filename);
 }
 
-static bool strendswith(const char* str, const char* suffix)
-{
-	int str_shift = strlen(str) - strlen(suffix);
-	if (str_shift < 0)
-		return false;
-
-	return strcmp(str + str_shift * sizeof(char), suffix) == 0;
-}
-
 static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* comp_id, bool extended)
 {
 	xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST datastream_ns_uri);
