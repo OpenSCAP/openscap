@@ -550,6 +550,7 @@ AC_CONFIG_FILES([Makefile
                  tests/API/XCCDF/progress/Makefile
                  tests/API/XCCDF/report/Makefile
                  tests/API/XCCDF/tailoring/Makefile
+                 tests/API/XCCDF/variable_instance/Makefile
 
                  tests/schemas/Makefile
 

@@ -8,5 +8,6 @@ SUBDIRS = \
 	progress \
 	report \
 	tailoring \
-	unittests
+	unittests \
+	variable_instance
 

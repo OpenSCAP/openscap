@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix"
+			xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
+			xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux"
+			xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+			xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix	unix-definitions-schema.xsd
+				http://oval.mitre.org/XMLSchema/oval-definitions-5#independent 		independent-definitions-schema.xsd
+				http://oval.mitre.org/XMLSchema/oval-definitions-5#linux 		linux-definitions-schema.xsd
+				http://oval.mitre.org/XMLSchema/oval-definitions-5 			oval-definitions-schema.xsd
+				http://oval.mitre.org/XMLSchema/oval-common-5 				oval-common-schema.xsd">
+	<generator>
+		<oval:product_name>Šimon Lukašík</oval:product_name>
+		<oval:schema_version>5.10.1</oval:schema_version>
+		<oval:timestamp>2013-06-01T12:00:00+02:00</oval:timestamp>
+	</generator>
+	<definitions>
+		<definition class="compliance" id="oval:com.example.www:def:20100" version="1">
+			<metadata>
+				<title>Lookup correct value set in an XML file</title>
+				<affected family="unix">
+					<platform>Red Hat Enterprise Linux X</platform>
+				</affected>
+				<reference ref_id="CCE-3315-9" source="CCE"/>
+				<description>This description is self explanatory.</description>
+			</metadata>
+			<criteria>
+				<criterion test_ref="oval:com.example.www:tst:1"/>
+			</criteria>
+		</definition>
+	</definitions>
+	<tests>
+		<ind-def:xmlfilecontent_test id="oval:com.example.www:tst:1" version="1" check="at least one" comment="File shall contain both values">
+			<ind-def:object object_ref="oval:com.example.www:obj:1"/>
+			<ind-def:state state_ref="oval:com.example.www:ste:1"/>
+		</ind-def:xmlfilecontent_test>
+	</tests>
+	<objects>
+		<ind-def:xmlfilecontent_object id="oval:com.example.www:obj:1" version="1">
+			<ind-def:filepath>./testing_file_300.xml</ind-def:filepath>
+			<ind-def:xpath>/root/object/@value</ind-def:xpath>
+		</ind-def:xmlfilecontent_object>
+	</objects>
+	<states>
+		<ind-def:xmlfilecontent_state id="oval:com.example.www:ste:1" version="1" comment="our dummy content of the file">
+			<ind-def:value_of datatype="string" operation="equals" var_check="all" var_ref="oval:com.example.www:var:1"/>
+		</ind-def:xmlfilecontent_state>
+	</states>
+	<variables>
+		<external_variable id="oval:com.example.www:var:1" version="1" datatype="string" comment="External variable"/>
+	</variables>
+</oval_definitions>
