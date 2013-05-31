@@ -1,3 +1,12 @@
 
-SUBDIRS = applicability default_cpe unittests parser fix report guide progress tailoring
+SUBDIRS = \
+	applicability \
+	default_cpe \
+	fix \
+	guide \
+	parser \
+	progress \
+	report \
+	tailoring \
+	unittests
 
