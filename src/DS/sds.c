@@ -759,6 +759,15 @@ static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr d
 					continue;
 				}
 				oscap_htable_add(exported, href, "");
+
+				if (oscap_acquire_url_is_supported(href)) {
+					/* If the referenced component is remote one, do not include
+					 * it within the DataStream. Such component shall only be
+					 * downloaded once the scan is run. */
+					xmlFree(href);
+					continue;
+				}
+
 				char* real_path = (strcmp(dir, "") == 0 || strcmp(dir, ".") == 0) ?
 					oscap_strdup(href) : oscap_sprintf("%s/%s", dir, href);
 
