@@ -494,11 +494,11 @@ static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datas
 	if (stat(filepath, &file_stat) == 0)
 		strftime(file_timestamp, 32, "%Y-%m-%dT%H:%M:%S", localtime(&file_stat.st_mtime));
 	else {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Could not found file %s: %s.", filepath, strerror(errno));
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Could not find file %s: %s.", filepath, strerror(errno));
 		// Return positive number, indicating less severe problem.
 		// Rationale: When an OVAL file is missing during a scan it it not considered
 		// to be deal breaker (it shall have 'notchecked' result), thus we shall allow
-		// detastreams with missing OVAL
+		// DataStreams with missing OVAL.
 		return 1;
 	}
 
