@@ -81,6 +81,9 @@ test_run "test_api_xccdf_applicability_cpe2_negated_applicable_embedded_rule" te
 test_run "test_api_xccdf_applicability_cpe2_and_embedded_rule" test_api_xccdf_embedded_cpe_eval cpe2-and-rule-embedded-xccdf.xml 2
 test_run "test_api_xccdf_applicability_cpe2_or_embedded_rule" test_api_xccdf_embedded_cpe_eval cpe2-or-rule-embedded-xccdf.xml 0
 
+test_run "test_api_xccdf_applicability_cpe2_applicable_embedded_rule_with_cpe_dict" test_api_xccdf_cpe_eval cpe2-applicable-rule-embedded-xccdf-combined.xml cpe-dict.xml 0
+test_run "test_api_xccdf_applicability_cpe2_not_applicable_embedded_rule_with_cpe_dict" test_api_xccdf_cpe_eval cpe2-notapplicable-rule-embedded-xccdf-combined.xml cpe-dict.xml 1
+
 assert_exists() { [ $($XPATH $result 'count('"$2"')') == "$1" ]; }
 export -f assert_exists
 test_run "xccdf:fix applicable and notapplicable" $srcdir/test_remediate_fix_notapplicable.sh
