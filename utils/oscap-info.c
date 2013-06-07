@@ -37,6 +37,7 @@
 #include <linux/limits.h>
 
 #include <oscap.h>
+#include <xccdf_policy.h>
 #include <oval_results.h>
 #include <oval_variables.h>
 #include <oval_system_characteristics.h>
@@ -177,6 +178,21 @@ static int app_info(const struct oscap_action *action)
 		}
 		xccdf_profile_iterator_free(prof_it);
 
+		struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
+		struct oscap_file_entry_list *referenced_files = xccdf_policy_model_get_systems_and_files(policy_model);
+		struct oscap_file_entry_iterator *files_it = oscap_file_entry_list_get_files(referenced_files);
+		printf("Referenced check files:\n");
+		while (oscap_file_entry_iterator_has_more(files_it)) {
+			struct oscap_file_entry *file_entry;
+
+			file_entry = (struct oscap_file_entry *) oscap_file_entry_iterator_next(files_it);
+
+			printf("\t%s\n", oscap_file_entry_get_file(file_entry));
+			printf("\t\tsystem: %s\n", oscap_file_entry_get_system(file_entry));
+		}
+		oscap_file_entry_iterator_free(files_it);
+		oscap_file_entry_list_free(referenced_files);
+
 		struct xccdf_result_iterator * res_it = xccdf_benchmark_get_results(bench);
 		if (xccdf_result_iterator_has_more(res_it))
 			printf("Test Results:\n");
@@ -188,7 +204,10 @@ static int app_info(const struct oscap_action *action)
 		xccdf_result_iterator_free(res_it);
 
 		free(doc_version);
-		xccdf_benchmark_free(bench);
+
+		xccdf_policy_model_free(policy_model);
+		// already freed by policy!
+		//xccdf_benchmark_free(bench);
 	}
 	break;
 	case OSCAP_DOCUMENT_CPE_LANGUAGE: {
@@ -259,12 +278,30 @@ static int app_info(const struct oscap_action *action)
 
 				/* print profiles */
 				struct xccdf_profile_iterator * prof_it = xccdf_benchmark_get_profiles(bench);
+				printf("\t\tProfiles:\n");
 				while (xccdf_profile_iterator_has_more(prof_it)) {
 					struct xccdf_profile * prof = xccdf_profile_iterator_next(prof_it);
-					printf("\t\tProfile: %s\n", xccdf_profile_get_id(prof));
+					printf("\t\t\t%s\n", xccdf_profile_get_id(prof));
 				}
 				xccdf_profile_iterator_free(prof_it);
-				xccdf_benchmark_free(bench);
+
+				struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
+				struct oscap_file_entry_list *referenced_files = xccdf_policy_model_get_systems_and_files(policy_model);
+				struct oscap_file_entry_iterator *files_it = oscap_file_entry_list_get_files(referenced_files);
+				printf("\t\tReferenced check files:\n");
+				while (oscap_file_entry_iterator_has_more(files_it)) {
+					struct oscap_file_entry *file_entry;
+
+					file_entry = (struct oscap_file_entry *) oscap_file_entry_iterator_next(files_it);
+
+					printf("\t\t\t%s\n", oscap_file_entry_get_file(file_entry));
+					printf("\t\t\t\tsystem: %s\n", oscap_file_entry_get_system(file_entry));
+				}
+				oscap_file_entry_iterator_free(files_it);
+				oscap_file_entry_list_free(referenced_files);
+				xccdf_policy_model_free(policy_model);
+				// already freed by policy!
+				//xccdf_benchmark_free(bench);
 
 				oscap_acquire_cleanup_dir(&temp_dir);
 				if (oscap_err()) {
