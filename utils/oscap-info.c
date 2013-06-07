@@ -299,6 +299,17 @@ static int app_info(const struct oscap_action *action)
 				}
 				oscap_file_entry_iterator_free(files_it);
 				oscap_file_entry_list_free(referenced_files);
+
+				struct xccdf_result_iterator * res_it = xccdf_benchmark_get_results(bench);
+				if (xccdf_result_iterator_has_more(res_it))
+					printf("\t\tTest Results:\n");
+				struct xccdf_result * test_result = NULL;
+				while (xccdf_result_iterator_has_more(res_it)) {
+					test_result = xccdf_result_iterator_next(res_it);
+					printf("\t\t\t%s\n", xccdf_result_get_id(test_result));
+				}
+				xccdf_result_iterator_free(res_it);
+
 				xccdf_policy_model_free(policy_model);
 				// already freed by policy!
 				//xccdf_benchmark_free(bench);
