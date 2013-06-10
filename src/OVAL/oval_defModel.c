@@ -235,7 +235,7 @@ int oval_definition_model_merge(struct oval_definition_model *model, const char 
 	context.user_data = NULL;
 	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
 	/* jump into oval_definitions */
-	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != 1) ;
+	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) ;
 	/* start parsing */
 	ret = oval_definition_model_parse(reader, &context);
 	xmlFreeTextReader(reader);

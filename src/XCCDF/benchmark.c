@@ -55,7 +55,7 @@ struct xccdf_benchmark *xccdf_benchmark_import(const char *file)
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
 		return NULL;
 	}
-	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != 1) ;
+	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) ;
 	struct xccdf_benchmark *benchmark = xccdf_benchmark_new();
 	const bool parse_result = xccdf_benchmark_parse(XITEM(benchmark), reader);
 	xmlFreeTextReader(reader);

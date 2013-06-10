@@ -52,7 +52,6 @@ bool oscap_to_start_element(xmlTextReaderPtr reader, int depth)
 	//int olddepth = xmlTextReaderDepth(reader);
 	while (xmlTextReaderDepth(reader) >= depth) {
 		switch (xmlTextReaderNodeType(reader)) {
-			//TODO: change int values to macros XML_ELEMENT_TYPE_*
 		case XML_READER_TYPE_ELEMENT:
 			if (xmlTextReaderDepth(reader) == depth)
 				return true;
@@ -83,7 +82,8 @@ char *oscap_element_string_copy(xmlTextReaderPtr reader)
 
 const char *oscap_element_string_get(xmlTextReaderPtr reader)
 {
-	if (xmlTextReaderNodeType(reader) == 1 || xmlTextReaderNodeType(reader) == 2)
+	if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT ||
+			xmlTextReaderNodeType(reader) == XML_READER_TYPE_ATTRIBUTE)
 		xmlTextReaderRead(reader);
 	if (xmlTextReaderHasValue(reader))
 		return (const char *)xmlTextReaderConstValue(reader);
@@ -94,9 +94,9 @@ int oscap_element_depth(xmlTextReaderPtr reader)
 {
 	int depth = xmlTextReaderDepth(reader);
 	switch (xmlTextReaderNodeType(reader)) {
-	case 2:
-	case 5:
-	case 3:
+	case XML_READER_TYPE_ATTRIBUTE:
+	case XML_READER_TYPE_TEXT:
+	case XML_READER_TYPE_ENTITY_REFERENCE:
 		return depth - 1;
 	default:
 		return depth;

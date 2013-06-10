@@ -61,7 +61,7 @@ const char *rds_report_request_index_get_id(struct rds_report_request_index *s)
 static struct rds_report_request_index *rds_report_request_index_parse(xmlTextReaderPtr reader)
 {
 	// sanity check
-	if (xmlTextReaderNodeType(reader) != 1 ||
+	if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT ||
 	    strcmp((const char*)xmlTextReaderConstLocalName(reader), "report-request") != 0) {
 		oscap_seterr(OSCAP_EFAMILY_XML,
 		             "Expected to have xmlTextReader at start of <arf:report-request>, "
@@ -118,7 +118,7 @@ struct rds_report_index_iterator *rds_asset_index_get_reports(struct rds_asset_i
 static struct rds_asset_index *rds_asset_index_parse(xmlTextReaderPtr reader)
 {
 	// sanity check
-	if (xmlTextReaderNodeType(reader) != 1 ||
+	if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT ||
 	    strcmp((const char*)xmlTextReaderConstLocalName(reader), "asset") != 0) {
 		oscap_seterr(OSCAP_EFAMILY_XML,
 		             "Expected to have xmlTextReader at start of <arf:report>, "
@@ -173,7 +173,7 @@ struct rds_report_request_index *rds_report_index_get_request(struct rds_report_
 static struct rds_report_index *rds_report_index_parse(xmlTextReaderPtr reader)
 {
 	// sanity check
-	if (xmlTextReaderNodeType(reader) != 1 ||
+	if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT ||
 	    strcmp((const char*)xmlTextReaderConstLocalName(reader), "report") != 0) {
 		oscap_seterr(OSCAP_EFAMILY_XML,
 		             "Expected to have xmlTextReader at start of <arf:report>, "
@@ -338,7 +338,7 @@ static struct rds_index *rds_index_parse(xmlTextReaderPtr reader)
 		return NULL;
 	}
 
-	if (xmlTextReaderNodeType(reader) != 1 ||
+	if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT ||
 	    strcmp((const char*)xmlTextReaderConstLocalName(reader), "asset-report-collection") != 0) {
 		oscap_seterr(OSCAP_EFAMILY_XML,
 		             "Expected to to have start of <arf:asset-report-collection> at document root, "
@@ -493,7 +493,7 @@ struct rds_index *rds_index_import(const char *file)
 		return NULL;
 	}
 
-	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != 1);
+	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
 	struct rds_index *ret = rds_index_parse(reader);
 	xmlFreeTextReader(reader);
 

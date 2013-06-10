@@ -116,7 +116,7 @@ char * xccdf_detect_version(const char* file)
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
 		return NULL;
 	}
-	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != 1);
+	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
 	ver_info = xccdf_detect_version_parser(reader);
 
 	if(!ver_info) {
@@ -242,7 +242,7 @@ static const struct xccdf_element_spec XCCDF_ELEMENT_MAP[] = {
 
 xccdf_element_t xccdf_element_get(xmlTextReaderPtr reader)
 {
-	if (xmlTextReaderNodeType(reader) != 1)
+	if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT)
 		return XCCDFE_ERROR;
 
 	const struct xccdf_element_spec *mapptr;

@@ -113,7 +113,7 @@ struct oscap_string_iterator* ds_stream_index_get_extended_components(struct ds_
 static struct ds_stream_index* ds_stream_index_parse(xmlTextReaderPtr reader)
 {
 	// sanity check
-	if (xmlTextReaderNodeType(reader) != 1 ||
+	if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT ||
 	    strcmp((const char*)xmlTextReaderConstLocalName(reader), "data-stream") != 0)
 	{
 		oscap_seterr(OSCAP_EFAMILY_XML,
@@ -140,7 +140,7 @@ static struct ds_stream_index* ds_stream_index_parse(xmlTextReaderPtr reader)
 		int node_type = xmlTextReaderNodeType(reader);
 		const char* local_name = (const char*)xmlTextReaderConstLocalName(reader);
 
-		if (node_type == 15 && // 15 == end element
+		if (node_type == XML_READER_TYPE_END_ELEMENT && // 15 == end element
 		    strcmp(local_name, "data-stream") == 0)
 		{
 			// we are done reading
@@ -149,23 +149,23 @@ static struct ds_stream_index* ds_stream_index_parse(xmlTextReaderPtr reader)
 		// the following code switches where we push component refs
 		else if (strcmp(local_name, "checklists") == 0)
 		{
-			cref_target = node_type == 1 ? ret->checklist_components : NULL;
+			cref_target = node_type == XML_READER_TYPE_ELEMENT ? ret->checklist_components : NULL;
 		}
 		else if (strcmp(local_name, "checks") == 0)
 		{
-			cref_target = node_type == 1 ? ret->check_components : NULL;
+			cref_target = node_type == XML_READER_TYPE_ELEMENT ? ret->check_components : NULL;
 		}
 		else if (strcmp(local_name, "dictionaries") == 0)
 		{
-			cref_target = node_type == 1 ? ret->dictionary_components : NULL;
+			cref_target = node_type == XML_READER_TYPE_ELEMENT ? ret->dictionary_components : NULL;
 		}
 		else if (strcmp(local_name, "extended-components") == 0)
 		{
-			cref_target = node_type == 1 ? ret->extended_components : NULL;
+			cref_target = node_type == XML_READER_TYPE_ELEMENT ? ret->extended_components : NULL;
 		}
 		// reading of the component refs, we only care about their ID
 		else if (strcmp(local_name, "component-ref") == 0 &&
-		         node_type == 1)
+		         node_type == XML_READER_TYPE_ELEMENT)
 		{
 			// sanity check
 			if (cref_target == NULL) {
@@ -246,7 +246,7 @@ static struct ds_sds_index* ds_sds_index_parse(xmlTextReaderPtr reader)
 		return NULL;
 	}
 
-	if (xmlTextReaderNodeType(reader) != 1 ||
+	if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT ||
 	    strcmp((const char*)xmlTextReaderConstLocalName(reader), "data-stream-collection") != 0)
 	{
 		oscap_seterr(OSCAP_EFAMILY_XML,
@@ -302,7 +302,7 @@ struct ds_sds_index *ds_sds_index_import(const char* file)
 		return NULL;
 	}
 
-	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != 1);
+	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
 	struct ds_sds_index* ret = ds_sds_index_parse(reader);
 	xmlFreeTextReader(reader);
 
