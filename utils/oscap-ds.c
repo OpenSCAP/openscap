@@ -347,7 +347,6 @@ int app_ds_sds_add(const struct oscap_action *action)
 			ret = OSCAP_ERROR;
 		}
 	}
-cleanup:
 	oscap_print_error();
 
 	free(action->ds_action);
