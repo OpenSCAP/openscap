@@ -409,9 +409,12 @@ int app_evaluate_oval(const struct oscap_action *action)
 	oval_agent_set_product_name(sess, OSCAP_PRODUCTNAME);
 
 	/* Evaluation */
-	if (action->id)
+	if (action->id) {
 		oval_agent_eval_definition(sess, action->id);
-	else
+		oval_result_t result = OVAL_RESULT_NOT_EVALUATED;
+		oval_agent_get_definition_result(sess, action->id, &result);
+		printf("Definition %s: %s\n", action->id, oval_result_get_text(result));
+	} else
 		oval_agent_eval_system(sess, app_oval_callback, NULL);
 
 	if (oscap_err())
