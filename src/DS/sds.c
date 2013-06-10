@@ -36,6 +36,7 @@
 #include "common/_error.h"
 #include "common/util.h"
 #include "common/list.h"
+#include "common/oscap_acquire.h"
 
 #include <sys/stat.h>
 #include <time.h>
