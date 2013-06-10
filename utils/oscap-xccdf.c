@@ -288,8 +288,8 @@ static int callback_scr_rule(struct xccdf_rule *rule, void *arg)
 	const char * rule_id = xccdf_rule_get_id(rule);
 
 	/* is rule selected? we print only selected rules */
-	bool selected = xccdf_policy_is_item_selected((struct xccdf_policy *) arg, rule_id);
-        if (!selected)
+	const bool selected = xccdf_policy_is_item_selected((struct xccdf_policy *) arg, rule_id);
+	if (!selected)
 		return 0;
 
 	/* get the first title */
@@ -299,22 +299,21 @@ static int callback_scr_rule(struct xccdf_rule *rule, void *arg)
 		title = oscap_text_get_text(oscap_text_iterator_next(title_it));
 	oscap_text_iterator_free(title_it);
 
-	/* get the first ident */
-	const char * ident_id = NULL;
-	struct xccdf_ident_iterator *idents = xccdf_rule_get_idents(rule);
-	if (xccdf_ident_iterator_has_more(idents)) {
-		const struct xccdf_ident *ident = xccdf_ident_iterator_next(idents);
-		ident_id = xccdf_ident_get_id(ident);
-	}
-	xccdf_ident_iterator_free(idents);
-
 	/* print */
 	if (isatty(1))
 		printf("Title\r\t\033[1m%s\033[0;0m\n", title);
 	else
 		printf("Title\r\t%s\n", title);
 	printf("Rule\r\t%s\n", rule_id);
-	printf("Ident\r\t%s\n", ident_id);
+
+	struct xccdf_ident_iterator *idents = xccdf_rule_get_idents(rule);
+	while (xccdf_ident_iterator_has_more(idents)) {
+		const struct xccdf_ident *ident = xccdf_ident_iterator_next(idents);
+		const char *ident_id = xccdf_ident_get_id(ident);
+		printf("Ident\r\t%s\n", ident_id);
+	}
+	xccdf_ident_iterator_free(idents);
+
 	printf("Result\r\t");
 	fflush(stdout);
 
