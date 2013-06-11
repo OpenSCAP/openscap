@@ -69,7 +69,7 @@ int xml_iterate_dfs(const char *input_text, char **output_text, xml_iterate_call
 
 	res = xml_element_dfs_callback(&root, user_fn, user_data);
 	if (output_text != NULL) {
-		// We cannot simply xmlDumpMemory, because we need to skip the upper <x/> ellement.
+		// We cannot simply xmlDumpMemory, because we need to skip the upper <x/> element.
 		if ((root = xmlDocGetRootElement(doc)) == NULL) {
 			dW("Could not get xmlDocGetRootElement of result document.\n");
 			xmlFreeDoc(doc);

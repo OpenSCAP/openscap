@@ -33,11 +33,11 @@ OSCAP_HIDDEN_START;
 /**
  * A callback function to be called on each xmlNode. Note that the node
  * can be modified or replaced.
- * @param node the current xml node
+ * @param node the current XML node
  * @param user_data
  * @returns the result of operation
  * @retval 0 indicates success of callback call
- * @retval 1 indicates hard failure of callback call and process is immediatelly terminated
+ * @retval 1 indicates hard failure of callback call and process is immediately terminated
  * @retval else idicates warn and walking through tree continues
  */
 typedef int (*xml_iterate_callback) (xmlNode **node, void *user_data);
@@ -48,7 +48,7 @@ typedef int (*xml_iterate_callback) (xmlNode **node, void *user_data);
  * is allowed to modify the minidom tree.
  * @param input_text the string which shall be parsed
  * @param output_text the output document after tree walking. This attribute
- * might be NULL to skip the export (which might be usefull in case when
+ * might be NULL to skip the export (which might be useful in case when
  * user_fn does not modify the tree). The caller shall dispose *output_text.
  * @param user_fn Function which is called on each node
  * @param user_data Data supplied to the user_fn
