@@ -92,7 +92,36 @@ function xccdf_export_2_multiset(){
 	rm $variables1
 }
 
+#
+# Export a single value from XCCDF to a single OVAL variable twice.
+#
+function xccdf_export_3_twice_same(){
+	local variables0="requires_both-oval.xml-0.variables-0.xml"
+	local variables1="requires_both-oval.xml-0.variables-1.xml"
+	local stderr=$(mktemp -t ${FUNCNAME}.err.XXXXXX)
+	echo "Stderr file = $stderr"
+
+	[ ! -f $variables0 ] || rm $variables0
+	[ ! -f $variables1 ] || rm $variables1
+	$OSCAP xccdf export-oval-variables --profile xccdf_moc.elpmaxe.www_profile_3 \
+		$srcdir/test_xccdf_variable_instance.xccdf.xml 2>&1 > $stderr
+	[ -f $stderr ]; [ ! -s $stderr ]
+	[ -f $variables0 ]
+	[ ! -f $variables1 ]
+	local result="$variables0"
+	assert_exists 1 '/oval_variables'
+	assert_exists 1 '/oval_variables/variables'
+	assert_exists 1 '/oval_variables/variables/variable'
+	assert_exists 1 '/oval_variables/variables/variable[@id="oval:com.example.www:var:1"]'
+	assert_exists 1 '/oval_variables/variables/variable[@datatype="string"]'
+	assert_exists 1 '/oval_variables/variables/variable/value'
+	assert_exists 1 '/oval_variables/variables/variable/value[text()="300"]'
+	rm $stderr
+	rm $variables0
+}
+
 test_init test_api_xccdf_variable_instance.log
 test_run "Export from XCCDF to variables: 1x2 values (multival)" xccdf_export_1_multival
 test_run "Export from XCCDF to variables: 2x1 values (multiset)" xccdf_export_2_multiset
+test_run "Export from XCCDF to variables: 2x1 same value (none)" xccdf_export_3_twice_same
 test_exit
