@@ -132,7 +132,7 @@ function xccdf_export_4_two_same(){
 
 	[ ! -f $variables0 ] || rm $variables0
 	[ ! -f $variables1 ] || rm $variables1
-	$OSCAP xccdf export-oval-variables --profile xccdf_moc.elpmaxe.www_profile_3 \
+	$OSCAP xccdf export-oval-variables --profile xccdf_moc.elpmaxe.www_profile_4 \
 		$srcdir/test_xccdf_variable_instance.xccdf.xml 2>&1 > $stderr
 	[ -f $stderr ]; [ ! -s $stderr ]
 	[ -f $variables0 ]
