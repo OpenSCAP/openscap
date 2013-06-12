@@ -182,6 +182,21 @@ struct oval_value_iterator *oval_variable_get_values(struct oval_variable *varia
 		(struct oval_value_iterator *) oval_collection_iterator_new();
 }
 
+bool oval_variable_contains_value(struct oval_variable *variable, const char* o_value_text)
+{
+	if (variable == NULL)
+		return false;
+	struct oval_value_iterator *value_it = oval_variable_get_values(variable);
+	bool found = false;
+	while (!found && oval_value_iterator_has_more(value_it)) {
+		struct oval_value *value = oval_value_iterator_next(value_it);
+		if (oscap_streq(oval_value_get_text(value), o_value_text))
+			found = true;
+	}
+	oval_value_iterator_free(value_it);
+	return found;
+}
+
 oval_syschar_collection_flag_t oval_variable_get_collection_flag(struct oval_variable *variable) {
 	__attribute__nonnull__(variable);
 

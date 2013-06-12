@@ -174,6 +174,7 @@ void oval_definition_model_set_schema(struct oval_definition_model *model, const
 /* variable model */
 struct oval_collection *oval_variable_model_get_values_ref(struct oval_variable_model *, char *);
 int oval_variable_bind_ext_var(struct oval_variable *, struct oval_variable_model *, char *);
+bool oval_variable_contains_value(struct oval_variable *variable, const char* o_value_text);
 
 //Synthetic object subtype for probing system info.
 #define  OVAL_INDEPENDENT_SYSCHAR_SUBTYPE 7999
