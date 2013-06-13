@@ -148,6 +148,7 @@ struct oscap_action {
 #endif
 	int export_variables;
         int list_dynamic;
+	char *probe_root;
 };
 
 int app_xslt(const char *infile, const char *xsltfile, const char *outfile, const char **params);

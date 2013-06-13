@@ -52,6 +52,7 @@
 #include <seap.h>
 #include <probe-api.h>
 #include <probe/entcmp.h>
+#include <probe/option.h>
 #include <oval_fts.h>
 #include <alloc.h>
 #include "common/assume.h"
@@ -326,6 +327,12 @@ static int process_file(const char *path, const char *file, void *arg)
 		oscap_free(whole_path);
 
 	return ret;
+}
+
+void *probe_init(void)
+{
+  probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, true);
+  return NULL;
 }
 
 int probe_main(probe_ctx *ctx, void *arg)

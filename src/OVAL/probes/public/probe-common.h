@@ -2,12 +2,6 @@
 #define PROBE_COMMON_H
 
 /**
- * probe option IDs
- */
-#define PROBE_VARREF_HANDLING 0
-#define PROBE_RESULT_CACHING  1
-
-/**
  * probe errors (send by probes in SEAP error packets)
  */
 #define PROBE_ESUCCESS       0

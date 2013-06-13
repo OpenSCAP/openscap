@@ -475,11 +475,6 @@ typedef struct probe_ctx probe_ctx;
 
 int probe_main(probe_ctx *, void *) __attribute__ ((nonnull(1)));
 
-#define PROBE_VARREF_HANDLING 0
-#define PROBE_RESULT_CACHING  1
-
-int probe_setoption(int option, ...);
-
 bool probe_item_filtered(const SEXP_t *item, const SEXP_t *filters);
 
 int probe_result_additem(SEXP_t *result, SEXP_t *item);

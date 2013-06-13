@@ -63,6 +63,7 @@
 #include <seap.h>
 #include <probe-api.h>
 #include <probe/entcmp.h>
+#include <probe/option.h>
 #include <alloc.h>
 #include "common/debug_priv.h"
 
@@ -350,6 +351,12 @@ static int get_runlevel (struct runlevel_req *req, struct runlevel_rep **rep)
 #else
 # error "Sorry, your OS isn't supported."
 #endif
+
+void *probe_init(void)
+{
+  probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, true);
+  return NULL;
+}
 
 int probe_main (probe_ctx *ctx, void *arg)
 {

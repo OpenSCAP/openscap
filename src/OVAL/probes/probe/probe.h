@@ -33,11 +33,8 @@
 #include "rcache.h"
 #include "icache.h"
 #include "probe-common.h"
-
-typedef struct {
-	int option;
-	int (*handler)(int, va_list);
-} probe_option_t;
+#include "option.h"
+#include "common/util.h"
 
 typedef struct {
 	pthread_rwlock_t rwlock;
@@ -75,5 +72,8 @@ struct probe_ctx {
 };
 
 extern pthread_barrier_t OSCAP_GSYM(th_barrier);
+extern bool OSCAP_GSYM(offline_mode);
+extern bool OSCAP_GSYM(offline_mode_supported);
+extern int OSCAP_GSYM(offline_mode_cobjflag);
 
 #endif /* PROBE_H */

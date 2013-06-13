@@ -25,7 +25,9 @@ libprobe_la_SOURCES=	fini.c			\
 			entcmp.c		\
 			entcmp.h		\
 			icache.c		\
-			icache.h
+			icache.h		\
+			option.c		\
+			option.h
 
 libprobe_la_LDFLAGS=	$(top_builddir)/src/libopenscap.la	\
 			@pthread_LIBS@

@@ -44,11 +44,14 @@
 #include "assume.h"
 #include "oval_probe_impl.h"
 #include "probe/entcmp.h"
+#include "probe/probe.h"
 #include "SEAP/generic/strto.h"
 
 extern probe_rcache_t  *OSCAP_GSYM(pcache);
 extern probe_ncache_t  *OSCAP_GSYM(ncache);
 extern struct id_desc_t OSCAP_GSYM(id_desc);
+extern probe_option_t *OSCAP_GSYM(probe_optdef);
+extern size_t OSCAP_GSYM(probe_optdef_count);
 
 /*
  * items

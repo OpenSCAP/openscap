@@ -45,10 +45,17 @@
 #include <stdio.h>
 #include <errno.h>
 
+#include <probe/option.h>
 #include "seap.h"
 #include "probe-api.h"
 #include "probe/entcmp.h"
 #include "alloc.h"
+
+void *probe_init(void)
+{
+  probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, true);
+  return NULL;
+}
 
 int probe_main(probe_ctx *ctx, void *arg)
 {

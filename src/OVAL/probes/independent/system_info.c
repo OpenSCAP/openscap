@@ -56,11 +56,13 @@
 
 #include <seap.h>
 #include <probe-api.h>
+#include <probe/option.h>
 
 #include <sys/utsname.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <errno.h>
 
 #if defined(__linux__)
@@ -178,36 +180,99 @@ static int get_ifs(SEXP_t *item)
 }
 #endif
 
+/*
+ * If no forbidden chars are found, returns the trimmed length
+ * of the input string. Otherwise a negative number is returned
+ */
+static ssize_t __sysinfo_saneval(const char *s)
+{
+	size_t i, space_count, real_length;
+
+	real_length = space_count = i = 0;
+
+	for (; i < strlen(s); ++i) {
+		/* check for space */
+		if (isspace(s[i])) {
+			if (real_length > 0) {
+				++space_count;
+				continue;
+			}
+		}
+		/* check for printable */
+		if (!isprint(s[i])) {
+			return -1;
+		}
+		/* check for forbidden chars */
+		switch(s[i]) {
+		  case '\'':
+		  case '"':
+		  case '<':
+		  case '>':
+			return -1;
+		}
+		/* Allowed character found */
+		real_length += 1 + space_count;
+		space_count = 0;
+	}
+	return (ssize_t)real_length;
+}
+
+void *probe_init(void)
+{
+	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, true);
+	return NULL;
+}
+
 int probe_main(probe_ctx *ctx, void *arg)
 {
-	SEXP_t *item;
-        char *os_name, *os_version, *architecture, *hname;
-        struct utsname sname;
+	SEXP_t* item;
+	char* os_name, *os_version, *architecture, *hname;
+	struct utsname sname;
+	bool offline_mode = false;
+	(void)arg;
 
-        (void)arg;
+	probe_getoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, NULL, &offline_mode);
 
-        if (uname(&sname) == -1) {
-		return PROBE_EUNKNOWN;
-        }
+	if (!offline_mode) {
+		if (uname(&sname) == -1) {
+			return PROBE_EUNKNOWN;
+		}
+		os_name = sname.sysname;
+		os_version = sname.version;
+		architecture = sname.machine;
+		hname = sname.nodename;
+	} else {
+		os_name = getenv("OSCAP_PROBE_OS_NAME");
+		os_version = getenv("OSCAP_PROBE_OS_VERSION");
+		architecture = getenv("OSCAP_PROBE_ARCHITECTURE");
+		hname = getenv("OSCAP_PROBE_PRIMARY_HOST_NAME");
 
-        os_name = sname.sysname;
-        os_version = sname.version;
-        architecture = sname.machine;
-	hname = sname.nodename;
-
-        item = probe_item_create(OVAL_SUBTYPE_SYSINFO, NULL,
-                                 "os_name",           OVAL_DATATYPE_STRING, os_name,
-                                 "os_version",        OVAL_DATATYPE_STRING, os_version,
-                                 "os_architecture",   OVAL_DATATYPE_STRING, architecture,
-                                 "primary_host_name", OVAL_DATATYPE_STRING, hname,
-                                 NULL);
-
-        if (get_ifs(item)) {
-		SEXP_free(item);
-		return PROBE_EUNKNOWN;
+		/* All four elements are required */
+		if (!os_name || !os_version || !architecture || !hname) {
+			return PROBE_ENOVAL;
+		}
+		if (__sysinfo_saneval(os_name) < 1 ||
+			__sysinfo_saneval(os_version) < 1 ||
+			__sysinfo_saneval(architecture) < 1 ||
+			__sysinfo_saneval(hname) < 1) {
+			return PROBE_EINVAL;
+		}
 	}
 
-        probe_item_collect(ctx, item);
+	item = probe_item_create(OVAL_SUBTYPE_SYSINFO, NULL,
+	                         "os_name",           OVAL_DATATYPE_STRING, os_name,
+	                         "os_version",        OVAL_DATATYPE_STRING, os_version,
+	                         "os_architecture",   OVAL_DATATYPE_STRING, architecture,
+	                         "primary_host_name", OVAL_DATATYPE_STRING, hname,
+	                         NULL);
+
+	if (!offline_mode) {
+		if (get_ifs(item)) {
+			SEXP_free(item);
+			return PROBE_EUNKNOWN;
+		}
+	}
+	probe_item_collect(ctx, item);
 
 	return (0);
 }

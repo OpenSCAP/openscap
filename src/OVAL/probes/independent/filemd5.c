@@ -45,6 +45,7 @@
 #include <pthread.h>
 #include <errno.h>
 #include <crapi/crapi.h>
+#include <probe/option.h>
 
 #include "oval_fts.h"
 
@@ -171,6 +172,8 @@ void *probe_init (void)
         default:
                 dI("Can't initialize mutex: errno=%u, %s.\n", errno, strerror (errno));
         }
+
+        probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, true);
 
         return (NULL);
 }
