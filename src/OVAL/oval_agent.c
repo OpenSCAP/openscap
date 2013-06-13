@@ -25,6 +25,7 @@
  *
  * Authors:
  *      "Peter Vrabec" <pvrabec@redhat.com>
+ *      Šimon Lukašík
  */
 
 #ifdef HAVE_CONFIG_H
@@ -43,6 +44,7 @@
 #include "oval_system_characteristics_impl.h"
 #include "oval_probe_impl.h"
 #include "oval_results_impl.h"
+#include "common/list.h"
 #include "common/util.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
@@ -320,52 +322,81 @@ static xccdf_test_result_type_t xccdf_get_result_from_oval(oval_definition_class
 	return XCCDF_RESULT_UNKNOWN;
 }
 
+/**
+ * Transform the value_bindings to intermediary mapping.
+ * @param it XCCDF value binding iterator
+ * @return dict structure which for each OVAL variable name contains a list of binded values
+ */
+static struct oscap_htable *_binding_iterator_to_dict(struct xccdf_value_binding_iterator *it)
+{
+	struct oscap_htable *dict = oscap_htable_new();
+	while (xccdf_value_binding_iterator_has_more(it)) {
+		struct xccdf_value_binding *binding = xccdf_value_binding_iterator_next(it);
+		const char *var_name = xccdf_value_binding_get_name(binding);
+		const char *var_val = xccdf_value_binding_get_setvalue(binding);
+		if (var_val == NULL)
+			var_val = xccdf_value_binding_get_value(binding);
+		struct oscap_stringlist *list = (struct oscap_stringlist *) oscap_htable_get(dict, var_name);
+		if (list == NULL) {
+			list = oscap_stringlist_new();
+			oscap_htable_add(dict, var_name, list);
+		}
+
+		if (!oscap_list_contains((struct oscap_list *) list, (char *) var_val, (oscap_cmp_func) oscap_streq)) {
+			oscap_stringlist_add_string(list, var_val);
+		}
+	}
+	xccdf_value_binding_iterator_reset(it);
+	return dict;
+}
+
+/**
+ * Ensure that the newly binded values do not pose conflict with existing value set.
+ * The lists should be equal or the existing must be empty.
+ */
+static bool _stringlist_conflicts_with_value_it(struct oscap_stringlist *slist, struct oval_value_iterator *val_it)
+{
+	int multival_count = 0;
+	if (!oval_value_iterator_has_more(val_it))
+		return false;
+	while (oval_value_iterator_has_more(val_it)) {
+		struct oval_value *o_value = oval_value_iterator_next(val_it);
+		char *o_value_text = oval_value_get_text(o_value);
+
+		if (!oscap_list_contains((struct oscap_list *) slist, o_value_text, (oscap_cmp_func) oscap_streq))
+			return true;
+		multival_count++;
+	}
+	// It is conflict if the numbers do not match
+	return oscap_list_get_itemcount((struct oscap_list *) slist) != multival_count;
+}
+
+/**
+ * Finds out, if the new batch of variable bindings compel new variable model
+ * (so-called multiset). Creates new variable model if needed.
+ */
 static void _oval_agent_resolve_variables_conflict(struct oval_agent_session *session, struct xccdf_value_binding_iterator *it)
 {
-    bool conflict = false;
-    struct oval_value_iterator * value_it;
+	const char *var_name = NULL;
+	struct oscap_stringlist *value_list = NULL;
+	bool conflict = false;
+	struct oscap_htable *dict = _binding_iterator_to_dict(it);
+	struct oscap_htable_iterator *hit = oscap_htable_iterator_new(dict);
+	struct oval_definition_model *def_model =
+			oval_results_model_get_definition_model(oval_agent_get_results_model(session));
+	while (!conflict && oscap_htable_iterator_has_more(hit)) {
+		oscap_htable_iterator_next_kv(hit, &var_name, (void*) &value_list);
+		struct oval_variable *variable = oval_definition_model_get_variable(def_model, var_name);
+		if (variable != NULL) {
+			struct oval_value_iterator *value_it = oval_variable_get_values(variable);
+			if (_stringlist_conflicts_with_value_it(value_list, value_it))
+				conflict = true;
+			oval_value_iterator_free(value_it);
+		}
+	}
+	oscap_htable_iterator_free(hit);
+	oscap_htable_free(dict, (oscap_destruct_func) oscap_stringlist_free);
 
-    /* Get the definition model from OVAL agent session */
-    struct oval_definition_model *def_model =
-        oval_results_model_get_definition_model(oval_agent_get_results_model(session));
-
-    /* Check the conflict */
-    while (xccdf_value_binding_iterator_has_more(it)) {
-        struct xccdf_value_binding *binding = xccdf_value_binding_iterator_next(it);
-        struct oval_variable *variable = oval_definition_model_get_variable(def_model, xccdf_value_binding_get_name(binding));
-        /* Do we have comflict ? */
-        if (variable != NULL) {
-            value_it = oval_variable_get_values(variable);
-
-            char * value = xccdf_value_binding_get_setvalue(binding);
-            if (value == NULL) value = xccdf_value_binding_get_value(binding);
-
-            if (oval_value_iterator_has_more(value_it)) {
-                struct oval_value * o_value = oval_value_iterator_next(value_it);
-                const char* o_value_text = oval_value_get_text(o_value);
-                if (value == NULL && o_value_text == NULL)
-                {
-                    // both are null which is not a conflict!
-                    oscap_dlprintf(DBG_W, "Variable %s has the same value (NULL), skip it.\n", xccdf_value_binding_get_name(binding));
-                }
-                else if (value == NULL || o_value_text == NULL)
-                {
-                    // only one of them is null, we have a conflict
-                    conflict = true;
-                    oscap_dlprintf(DBG_W, "Variable conflict: %s has different values, one of them is NULL", xccdf_value_binding_get_name(binding));
-                }
-                // both of them are not null, lets compare them
-                else if (strcmp(o_value_text, value)) {
-                    conflict = true;
-                    oscap_dlprintf(DBG_W, "Variable conflict: %s has different values %s != %s\n", xccdf_value_binding_get_name(binding), oval_value_get_text(o_value), value);
-                }
-                else oscap_dlprintf(DBG_W, "Variable %s has the same value, skip it.\n", xccdf_value_binding_get_name(binding));
-            }
-            oval_value_iterator_free(value_it);
-        }
-    }
-
-    xccdf_value_binding_iterator_reset(it);
     if (conflict) {
         /* We have a conflict, clear session and external variables */
         oval_agent_reset_session(session);
