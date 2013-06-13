@@ -320,14 +320,10 @@ static xccdf_test_result_type_t xccdf_get_result_from_oval(oval_definition_class
 	return XCCDF_RESULT_UNKNOWN;
 }
 
-int oval_agent_resolve_variables(struct oval_agent_session * session, struct xccdf_value_binding_iterator *it)
+static void _oval_agent_resolve_variables_conflict(struct oval_agent_session *session, struct xccdf_value_binding_iterator *it)
 {
     bool conflict = false;
-    int retval = 0;
     struct oval_value_iterator * value_it;
-
-    if (!xccdf_value_binding_iterator_has_more(it))
-        return 0;
 
     /* Get the definition model from OVAL agent session */
     struct oval_definition_model *def_model =
@@ -386,6 +382,20 @@ int oval_agent_resolve_variables(struct oval_agent_session * session, struct xcc
 			oval_generator_set_product_name(generator, session->product_name);
 	    }
     }
+}
+
+int oval_agent_resolve_variables(struct oval_agent_session * session, struct xccdf_value_binding_iterator *it)
+{
+	int retval = 0;
+
+	if (!xccdf_value_binding_iterator_has_more(it))
+		return 0;
+
+	_oval_agent_resolve_variables_conflict(session, it);
+
+	/* Get the definition model from OVAL agent session */
+	struct oval_definition_model *def_model =
+		oval_results_model_get_definition_model(oval_agent_get_results_model(session));
 
     /* Iterate through variable bindings and add variables into the variable model */
     while (xccdf_value_binding_iterator_has_more(it)) {
