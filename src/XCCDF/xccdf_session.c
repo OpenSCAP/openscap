@@ -1161,6 +1161,10 @@ int xccdf_session_remediate(struct xccdf_session *session)
 			xccdf_session_get_xccdf_policy(session) == NULL ||
 			session->xccdf.result == NULL)
 		return 1;
+	if(getenv("OSCAP_PROBE_ROOT") != NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't perform remediation in offline mode: not implemented");
+		return 1;
+	}
 	xccdf_policy_model_unregister_callbacks(session->xccdf.policy_model, oval_sysname);
 	if ((res = xccdf_session_load_oval(session)) != 0)
 		return res;
