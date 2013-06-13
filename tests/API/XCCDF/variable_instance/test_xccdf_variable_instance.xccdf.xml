@@ -41,6 +41,15 @@
     <refine-value idref="xccdf_moc.elpmaxe.www_value_3" selector="krecek"/>
     <refine-value idref="xccdf_moc.elpmaxe.www_value_4" selector="zdarma"/>
   </Profile>
+  <Profile id="xccdf_moc.elpmaxe.www_profile_7">
+    <title>is kinda compulsory</title>
+    <select idref="xccdf_moc.elpmaxe.www_rule_8" selected="true"/>
+    <select idref="xccdf_moc.elpmaxe.www_rule_9" selected="true"/>
+    <refine-value idref="xccdf_moc.elpmaxe.www_value_1" selector="300"/>
+    <refine-value idref="xccdf_moc.elpmaxe.www_value_2" selector="600"/>
+    <refine-value idref="xccdf_moc.elpmaxe.www_value_3" selector="krecek"/>
+    <refine-value idref="xccdf_moc.elpmaxe.www_value_4" selector="zdarma"/>
+  </Profile>
   <Value id="xccdf_moc.elpmaxe.www_value_1" type="number" operator="equals" abstract="false" hidden="false">
     <value selector="300">300</value>
   </Value>
@@ -96,6 +105,24 @@
     <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
       <check-export value-id="xccdf_moc.elpmaxe.www_value_3" export-name="oval:com.example.www:var:1"/>
       <check-export value-id="xccdf_moc.elpmaxe.www_value_4" export-name="oval:com.example.www:var:1"/>
+      <check-content-ref href="requires_both-oval.xml" name="oval:com.example.www:def:1"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_moc.elpmaxe.www_rule_8" selected="false">
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-export value-id="xccdf_moc.elpmaxe.www_value_1" export-name="oval:com.example.www:var:1"/>
+      <check-export value-id="xccdf_moc.elpmaxe.www_value_2" export-name="oval:com.example.www:var:1"/>
+      <check-export value-id="xccdf_moc.elpmaxe.www_value_3" export-name="oval:com.example.www:var:1"/>
+      <check-export value-id="xccdf_moc.elpmaxe.www_value_4" export-name="oval:com.example.www:var:1"/>
+      <check-content-ref href="requires_both-oval.xml" name="oval:com.example.www:def:1"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_moc.elpmaxe.www_rule_9" selected="false">
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-export value-id="xccdf_moc.elpmaxe.www_value_3" export-name="oval:com.example.www:var:1"/>
+      <check-export value-id="xccdf_moc.elpmaxe.www_value_4" export-name="oval:com.example.www:var:1"/>
+      <check-export value-id="xccdf_moc.elpmaxe.www_value_2" export-name="oval:com.example.www:var:1"/>
+      <check-export value-id="xccdf_moc.elpmaxe.www_value_1" export-name="oval:com.example.www:var:1"/>
       <check-content-ref href="requires_both-oval.xml" name="oval:com.example.www:def:1"/>
     </check>
   </Rule>
