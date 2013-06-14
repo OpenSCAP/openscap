@@ -252,6 +252,37 @@ function xccdf_export_7_shuffled_multival(){
 	rm $variables0
 }
 
+#
+# Export the very same variable sets twice (the second value-set is shuffled
+# and a different set of values is duplicated in each bunch.
+#
+function xccdf_export_8_shuffled_multival(){
+	local variables0="requires_both-oval.xml-0.variables-0.xml"
+	local variables1="requires_both-oval.xml-0.variables-1.xml"
+	local stderr=$(mktemp -t ${FUNCNAME}.err.XXXXXX)
+	echo "Stderr file = $stderr"
+
+	[ ! -f $variables0 ] || rm $variables0
+	[ ! -f $variables1 ] || rm $variables1
+	$OSCAP xccdf export-oval-variables --profile xccdf_moc.elpmaxe.www_profile_8 \
+		$srcdir/test_xccdf_variable_instance.xccdf.xml 2>&1 > $stderr
+	[ -f $stderr ]; [ ! -s $stderr ]
+	[ -f $variables0 ]
+	[ ! -f $variables1 ]
+	local result="$variables0"
+	assert_exists 1 '/oval_variables'
+	assert_exists 1 '/oval_variables/variables'
+	assert_exists 1 '/oval_variables/variables/variable'
+	assert_exists 1 '/oval_variables/variables/variable[@id="oval:com.example.www:var:1"]'
+	assert_exists 1 '/oval_variables/variables/variable[@datatype="string"]'
+	assert_exists 3 '/oval_variables/variables/variable/value'
+	assert_exists 1 '/oval_variables/variables/variable/value[text()="300"]'
+	assert_exists 1 '/oval_variables/variables/variable/value[text()="600"]'
+	assert_exists 1 '/oval_variables/variables/variable/value[text()="200"]'
+	rm $stderr
+	rm $variables0
+}
+
 test_init test_api_xccdf_variable_instance.log
 test_run "Export from XCCDF to variables: 1x2 values (multival)" xccdf_export_1_multival
 test_run "Export from XCCDF to variables: 2x1 values (multiset)" xccdf_export_2_multiset
@@ -260,4 +291,5 @@ test_run "Export from XCCDF to variables: 2x1 same value (none)" xccdf_export_3_
 test_run "Export from XCCDF to variables: 2x2 values (multiset,multival)" xccdf_export_6_multiset_multival
 test_run "Export from XCCDF to variables: 2x2 same values (multival)" xccdf_export_5_multival_twice
 test_run "Export from XCCDF to variables: 2x4 same shuffled values (multival)" xccdf_export_7_shuffled_multival
+test_run "Export from XCCDF to variables: 2x4 same shuffled repeating values (multival)" xccdf_export_8_shuffled_multival
 test_exit
