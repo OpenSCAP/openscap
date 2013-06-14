@@ -58,6 +58,15 @@
     <refine-value idref="xccdf_moc.elpmaxe.www_value_2" selector="600"/>
     <refine-value idref="xccdf_moc.elpmaxe.www_value_3" selector="krecek"/>
   </Profile>
+  <Profile id="xccdf_moc.elpmaxe.www_profile_9">
+    <title>is kinda compulsory</title>
+    <select idref="xccdf_moc.elpmaxe.www_rule_1" selected="true"/>
+    <select idref="xccdf_moc.elpmaxe.www_rule_10" selected="true"/>
+    <select idref="xccdf_moc.elpmaxe.www_rule_11" selected="true"/>
+    <refine-value idref="xccdf_moc.elpmaxe.www_value_1" selector="300"/>
+    <refine-value idref="xccdf_moc.elpmaxe.www_value_2" selector="600"/>
+    <refine-value idref="xccdf_moc.elpmaxe.www_value_3" selector="krecek"/>
+  </Profile>
   <Value id="xccdf_moc.elpmaxe.www_value_1" type="number" operator="equals" abstract="false" hidden="false">
     <value selector="300">300</value>
   </Value>
