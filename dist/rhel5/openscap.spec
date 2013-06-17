@@ -17,6 +17,7 @@ BuildRequires:  libgcrypt-devel
 BuildRequires:  pcre-devel
 BuildRequires:  libselinux-devel libcap-devel
 BuildRequires:  libacl-devel
+Requires:       libxml2 >= 2.6.26-2.1.21.el5_9.2
 Requires(post):   /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 
@@ -197,6 +198,7 @@ fi
 
 %changelog
 * Mon Jun 17 2013 Petr Lautrbach <plautrba@redhat.com> 0.9.8-1
+- openscap requires at least libxml2-2.6.26-2.1.21.el5_9.2
 - upgrade
 
 * Fri Apr 26 2013 Petr Lautrbach <plautrba@redhat.com> 0.9.7-1
