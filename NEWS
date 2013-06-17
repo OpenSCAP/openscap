@@ -1,3 +1,9 @@
+openscap-0.9.8							17-06-2013
+ - added experimental support for offline mode scanning to the OVAL
+   check engine (i.e. scanning of virtual host disk images)
+ - improved OVAL variables processing
+ - bug fixes and dead code removal
+
 openscap-0.9.7							26-04-2013
  - bug fixes
 

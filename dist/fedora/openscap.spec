@@ -276,6 +276,9 @@ exit 0
 # %{_mandir}/man8/openscap_selinux.8.*
 
 %changelog
+* Mon Jun 17 2013 Petr Lautrbach <plautrba@redhat.com> 0.9.8-1
+- upgrade
+
 * Fri Apr 26 2013 Petr Lautrbach <plautrba@redhat.com> 0.9.7-1
 - upgrade
 
