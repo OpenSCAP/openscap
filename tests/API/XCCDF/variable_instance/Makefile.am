@@ -11,4 +11,5 @@ EXTRA_DIST = \
 	$(top_srcdir)/tests/xpath.pl \
 	all.sh \
 	requires_both-oval.xml \
+	testing_file_300.xml \
 	test_xccdf_variable_instance.xccdf.xml

@@ -16,7 +16,7 @@
 		<oval:timestamp>2013-06-01T12:00:00+02:00</oval:timestamp>
 	</generator>
 	<definitions>
-		<definition class="compliance" id="oval:com.example.www:def:20100" version="1">
+		<definition class="compliance" id="oval:com.example.www:def:1" version="1">
 			<metadata>
 				<title>Lookup correct value set in an XML file</title>
 				<affected family="unix">
@@ -38,7 +38,7 @@
 	</tests>
 	<objects>
 		<ind-def:xmlfilecontent_object id="oval:com.example.www:obj:1" version="1">
-			<ind-def:filepath>./testing_file_300.xml</ind-def:filepath>
+			<ind-def:filepath>./testing_file.xml</ind-def:filepath>
 			<ind-def:xpath>/root/object/@value</ind-def:xpath>
 		</ind-def:xmlfilecontent_object>
 	</objects>

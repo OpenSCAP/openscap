@@ -369,6 +369,114 @@ function xccdf_export_A_second_subset(){
 	rm $variables1
 }
 
+#
+# Evaluate XCCDF while exporting two values from XCCDF document to a single OVAL
+# variable that it should result in multiple (two) variable sets each with a single
+# value. This tests asserts for correctly collected system characteristics.
+#
+function xccdf_eval_2_multiset(){
+	local variables0="requires_both-oval.xml-0.variables-0.xml"
+	local variables1="requires_both-oval.xml-0.variables-1.xml"
+	local variables2="requires_both-oval.xml-0.variables-2.xml"
+	local oval_result="requires_both-oval.xml.result.xml"
+	local xccdf_result=$(mktemp -t ${FUNCNAME}.xml.XXXXXX)
+	local stderr=$(mktemp -t ${FUNCNAME}.err.XXXXXX)
+	local profile="xccdf_moc.elpmaxe.www_profile_2"
+	local tested_file="testing_file.xml"
+	echo "Stderr file = $stderr"
+	cp $srcdir/testing_file_300.xml $tested_file
+
+	for f in $variables0 $variables1 $variables2 $oval_result $xccdf_result; do
+		[ ! -f $f ] || rm $f
+	done
+	local res=0
+	$OSCAP xccdf eval --profile $profile \
+		--export-variables --oval-results --results $xccdf_result \
+		$srcdir/test_xccdf_variable_instance.xccdf.xml 2> $stderr || res=$?
+	[ $res -eq 2 ]
+	[ -f $stderr ]; [ ! -s $stderr ]
+	[ -f $variables0 ]
+	[ -f $variables1 ]
+	[ ! -f $variables2 ]
+	local result="$xccdf_result"
+	assert_exists 1 '/Benchmark/TestResult'
+	assert_exists 1 '/Benchmark/TestResult/profile'
+	assert_exists 1 '/Benchmark/TestResult/profile/@*'
+	assert_exists 1 '/Benchmark/TestResult/profile[@idref="'$profile'"]'
+	assert_exists 2 '/Benchmark/TestResult/rule-result/result[text()!="notselected"]'
+	assert_exists 1 '/Benchmark/TestResult/rule-result/result[text()="pass"]'
+	assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_moc.elpmaxe.www_rule_2"]'
+	assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_moc.elpmaxe.www_rule_2"]/result[text()="pass"]'
+	assert_exists 0 '/Benchmark/TestResult/rule-result[@idref="xccdf_moc.elpmaxe.www_rule_2"]/message'
+	assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_moc.elpmaxe.www_rule_2"]/check'
+	assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_moc.elpmaxe.www_rule_2"]/check/check-export'
+	assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_moc.elpmaxe.www_rule_2"]/check/check-export[@export-name="oval:com.example.www:var:1"]'
+	assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_moc.elpmaxe.www_rule_2"]/check/check-export[@value-id="xccdf_moc.elpmaxe.www_value_1"]'
+	assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_moc.elpmaxe.www_rule_2"]/check/check-content-ref'
+	assert_exists 1 '/Benchmark/TestResult/rule-result/result[text()="fail"]'
+	assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_moc.elpmaxe.www_rule_3"]'
+	assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_moc.elpmaxe.www_rule_3"]/result[text()="fail"]'
+	assert_exists 0 '/Benchmark/TestResult/rule-result[@idref="xccdf_moc.elpmaxe.www_rule_3"]/message'
+	assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_moc.elpmaxe.www_rule_3"]/check'
+	assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_moc.elpmaxe.www_rule_3"]/check/check-export'
+	assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_moc.elpmaxe.www_rule_3"]/check/check-export[@export-name="oval:com.example.www:var:1"]'
+	assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_moc.elpmaxe.www_rule_3"]/check/check-export[@value-id="xccdf_moc.elpmaxe.www_value_2"]'
+	assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_moc.elpmaxe.www_rule_3"]/check/check-content-ref'
+	result="$variables0"
+	assert_exists 1 '/oval_variables'
+	assert_exists 1 '/oval_variables/variables'
+	assert_exists 1 '/oval_variables/variables/variable'
+	assert_exists 1 '/oval_variables/variables/variable[@id="oval:com.example.www:var:1"]'
+	assert_exists 1 '/oval_variables/variables/variable[@datatype="string"]'
+	assert_exists 1 '/oval_variables/variables/variable/value'
+	assert_exists 1 '/oval_variables/variables/variable/value[text()="300"]'
+	result="$variables1"
+	assert_exists 1 '/oval_variables'
+	assert_exists 1 '/oval_variables/variables'
+	assert_exists 1 '/oval_variables/variables/variable'
+	assert_exists 1 '/oval_variables/variables/variable[@id="oval:com.example.www:var:1"]'
+	assert_exists 1 '/oval_variables/variables/variable[@datatype="string"]'
+	assert_exists 1 '/oval_variables/variables/variable/value'
+	assert_exists 1 '/oval_variables/variables/variable/value[text()="600"]'
+	result="$oval_result"
+	assert_exists 1 '/oval_results'
+	assert_exists 1 '/oval_results/results'
+	assert_exists 1 '/oval_results/results/system'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/generator'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/system_info'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/system_data'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:xmlfilecontent_item'
+	assert_exists 5 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:xmlfilecontent_item/*'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:xmlfilecontent_item/ind-sys:filepath'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:xmlfilecontent_item/ind-sys:path'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:xmlfilecontent_item/ind-sys:filename'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:xmlfilecontent_item/ind-sys:xpath'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:xmlfilecontent_item/ind-sys:value_of'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:xmlfilecontent_item/ind-sys:value_of[text()="300"]'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/collected_objects'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/collected_objects/object'
+	assert_exists 3 '/oval_results/results/system/oval_system_characteristics/collected_objects/object/@*'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/collected_objects/object[@id="oval:com.example.www:obj:1"]'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/collected_objects/object[@version="1"]'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/collected_objects/object[@flag="complete"]'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/collected_objects/object/reference'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/collected_objects/object/reference/@*'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/collected_objects/object/reference/@item_ref'
+	assert_exists 4 '/oval_results/results/system/oval_system_characteristics/*'
+	assert_exists 1 '/oval_results/results/system/tests'
+	# TODO: OpenSCAP takes buggy behaviour, it exports only one test.
+	# While there shall be two test, the first passing and another failing.
+	assert_exists 1 '/oval_results/results/system/definitions'
+	assert_exists 3 '/oval_results/results/system/*'
+	rm $stderr
+	rm $xccdf_result
+	rm $oval_result
+	rm $variables0
+	rm $variables1
+	chmod u+w $tested_file ; rm $tested_file
+}
+
 test_init test_api_xccdf_variable_instance.log
 test_run "Export from XCCDF to variables: 1x2 values (multival)" xccdf_export_1_multival
 test_run "Export from XCCDF to variables: 2x1 values (multiset)" xccdf_export_2_multiset
@@ -380,4 +488,7 @@ test_run "Export from XCCDF to variables: 2x4 same shuffled values (multival)" x
 test_run "Export from XCCDF to variables: 2x4 same shuffled repeating values (multival)" xccdf_export_8_shuffled_multival
 test_run "Export from XCCDF to variables: 3x3 the first is subset (multiset,multival)" xccdf_export_9_first_subset
 test_run "Export from XCCDF to variables: 3x3 the last is subset (multiset,multival)" xccdf_export_A_second_subset
+
+test_run "Evaluate XCCDF: 2x1 values (multiset)" xccdf_eval_2_multiset
+
 test_exit
