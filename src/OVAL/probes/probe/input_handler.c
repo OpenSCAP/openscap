@@ -211,6 +211,7 @@ void *probe_input_handler(void *arg)
 				   errno, strerror(errno));
 
 				SEAP_msg_free(seap_request);
+				SEXP_free(probe_in);
 
 				break;
 			}
