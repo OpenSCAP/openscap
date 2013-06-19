@@ -368,6 +368,7 @@ static int app_info(const struct oscap_action *action)
 					rds_report_request_index_get_id(request),
 					rds_report_index_get_id(report));
 			}
+			rds_report_index_iterator_free(report_it);
 		}
 		rds_asset_index_iterator_free(asset_it);
 		rds_index_free(rds);
