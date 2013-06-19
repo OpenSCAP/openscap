@@ -466,6 +466,7 @@ int xccdf_session_load_cpe(struct xccdf_session *session)
 					session->temp_dir, "dictionaries", NULL, NULL) != 0) {
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't decompose CPE dictionaries from datastream '%s' "
 						"from file '%s'!\n", session->ds.datastream_id, session->filename);
+				oscap_string_iterator_free(cpe_it);
 				return 1;
 			}
 
