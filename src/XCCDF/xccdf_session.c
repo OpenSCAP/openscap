@@ -37,6 +37,7 @@
 #include "common/util.h"
 #include "common/_error.h"
 #include "DS/public/scap_ds.h"
+#include "DS/ds_common.h"
 #include "XCCDF_POLICY/public/xccdf_policy.h"
 #include "XCCDF_POLICY/xccdf_policy_priv.h"
 #include "item.h"
@@ -975,17 +976,29 @@ static char *_xccdf_session_export_oval_result_file(struct xccdf_session *sessio
 	char *escaped_url = NULL;
 	const char *filename = oval_agent_get_filename(oval_session);
 	if (oscap_acquire_url_is_supported(filename) ||
-	    (filename && filename[0] == '/') ||
-		(!session->export.oval_results && strchr(filename, '/'))) {
-
+	    (filename && filename[0] == '/')) {
 		// We need escaping if:
 		// - filename is a URL
 		// - filename is an absolute path
-		// - filename is not a basename and we are exporting to a temp dir (ARF)
 
 		escaped_url = oscap_acquire_url_to_filename(filename);
 		if (escaped_url == NULL)
 			return NULL;
+	}
+	else if (!session->export.oval_results && filename && strchr(filename, '/')) {
+		// We need recursive mkdir_p if:
+		// - filename is not a basename and we are exporting to a temp dir (ARF)
+		// (we are assuming that the dir structure exists if we are exporting to '.')
+
+		char *filename_cpy = oscap_sprintf("%s/%s", oval_results_directory, filename);
+		const char *dirname_ = dirname(filename_cpy);
+		if (ds_common_mkdir_p(dirname_) == -1) {
+			oscap_seterr(OSCAP_EFAMILY_GLIBC, "Failed to create directory '%s' for OVAL result '%s'!.", dirname_, filename);
+			oscap_free(filename_cpy);
+			return NULL;
+		}
+
+		oscap_free(filename_cpy);
 	}
 
 	name = malloc(PATH_MAX * sizeof(char));
