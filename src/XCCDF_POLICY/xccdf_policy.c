@@ -1722,6 +1722,11 @@ bool xccdf_policy_model_add_cpe_autodetect(struct xccdf_policy_model *model, con
 	return false;
 }
 
+struct oscap_htable_iterator *xccdf_policy_model_get_cpe_oval_sessions(struct xccdf_policy_model *model)
+{
+	return oscap_htable_iterator_new(model->cpe_oval_sessions);
+}
+
 /**
  * Get ID of XCCDF Profile that belongs to XCCDF Policy
  */

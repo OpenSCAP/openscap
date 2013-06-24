@@ -953,69 +953,112 @@ static void _xccdf_session_free_oval_result_files(struct xccdf_session *session)
 	}
 }
 
+static char *_xccdf_session_export_oval_result_file(struct xccdf_session *session, struct oval_agent_session *oval_session)
+{
+	/* get result model and session name */
+	struct oval_results_model *res_model = oval_agent_get_results_model(oval_session);
+	const char* oval_results_directory = NULL;
+	char *name = NULL;
+
+	if (session->export.oval_results == true) {
+		oval_results_directory = ".";
+	}
+	else {
+		if (!session->temp_dir)
+			session->temp_dir = oscap_acquire_temp_dir();
+		if (session->temp_dir == NULL)
+			return NULL;
+
+		oval_results_directory = session->temp_dir;
+	}
+
+	char *escaped_url = NULL;
+	const char *filename = oval_agent_get_filename(oval_session);
+	if (oscap_acquire_url_is_supported(filename) ||
+	    (filename && filename[0] == '/') ||
+		(!session->export.oval_results && strchr(filename, '/'))) {
+
+		// We need escaping if:
+		// - filename is a URL
+		// - filename is an absolute path
+		// - filename is not a basename and we are exporting to a temp dir (ARF)
+
+		escaped_url = oscap_acquire_url_to_filename(filename);
+		if (escaped_url == NULL)
+			return NULL;
+	}
+
+	name = malloc(PATH_MAX * sizeof(char));
+	snprintf(name, PATH_MAX, "%s/%s.result.xml", oval_results_directory, escaped_url != NULL ? escaped_url : filename);
+	if (escaped_url != NULL)
+		free(escaped_url);
+
+	/* export result model to XML */
+	if (oval_results_model_export(res_model, NULL, name) == -1) {
+		free(name);
+		return NULL;
+	}
+
+	/* validate OVAL Results */
+	if (session->validate && session->full_validation) {
+		char *doc_version;
+
+		doc_version = oval_determine_document_schema_version((const char *) name, OSCAP_DOCUMENT_OVAL_RESULTS);
+		if (oscap_validate_document(name, OSCAP_DOCUMENT_OVAL_RESULTS, (const char *) doc_version,
+					_reporter, NULL)) {
+			_validation_failed(name, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version);
+			free(name);
+			free(doc_version);
+			return NULL;
+		}
+		free(doc_version);
+	}
+
+	return name;
+}
+
 int xccdf_session_export_oval(struct xccdf_session *session)
 {
 	_xccdf_session_free_oval_result_files(session);
 
 	if ((session->export.oval_results || session->export.arf_file != NULL) && session->oval.agents) {
+
+		int xccdf_oval_agent_count = xccdf_session_get_oval_agents_count(session);
+		int cpe_oval_agent_count = xccdf_session_get_cpe_oval_agents_count(session);
+
 		/* Export OVAL results */
-		session->oval.result_files = malloc((xccdf_session_get_oval_agents_count(session) + 1) * sizeof(char*));
+		session->oval.result_files = malloc((xccdf_oval_agent_count + cpe_oval_agent_count + 1) * sizeof(char*));
 		session->oval.result_files[0] = NULL;
 		int i;
 		for (i=0; session->oval.agents[i]; i++) {
-			/* get result model and session name*/
-			struct oval_results_model *res_model = oval_agent_get_results_model(session->oval.agents[i]);
-			const char* oval_results_directory = NULL;
-			char *name = NULL;
-
-			if (session->export.oval_results == true) {
-				oval_results_directory = ".";
-			}
-			else {
-				if (!session->temp_dir)
-					session->temp_dir = oscap_acquire_temp_dir();
-				if (session->temp_dir == NULL)
-					return 1;
-
-				oval_results_directory = session->temp_dir;
-			}
-
-			char *escaped_url = NULL;
-			const char *filename = oval_agent_get_filename(session->oval.agents[i]);
-			if (oscap_acquire_url_is_supported(filename)) {
-				escaped_url = oscap_acquire_url_to_filename(filename);
-				if (escaped_url == NULL)
-					return 1;
-			}
-
-			name = malloc(PATH_MAX * sizeof(char));
-			snprintf(name, PATH_MAX, "%s/%s.result.xml", oval_results_directory, escaped_url != NULL ? escaped_url : filename);
-			if (escaped_url != NULL)
-				free(escaped_url);
-
-			/* export result model to XML */
-			if (oval_results_model_export(res_model, NULL, name) == -1) {
-				free(name);
+			char *filename = _xccdf_session_export_oval_result_file(session, session->oval.agents[i]);
+			if (filename == NULL) {
+				_xccdf_session_free_oval_result_files(session);
 				return 1;
 			}
 
-			/* validate OVAL Results */
-			if (session->validate && session->full_validation) {
-				char *doc_version;
-
-				doc_version = oval_determine_document_schema_version((const char *) name, OSCAP_DOCUMENT_OVAL_RESULTS);
-				if (oscap_validate_document(name, OSCAP_DOCUMENT_OVAL_RESULTS, (const char *) doc_version,
-						_reporter, NULL)) {
-					_validation_failed(name, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version);
-					free(name);
-					free(doc_version);
-					return 1;
-				}
-				free(doc_version);
-			}
-			session->oval.result_files[i] = name;
+			session->oval.result_files[i] = filename;
+			session->oval.result_files[i + 1] = NULL;
 		}
-		session->oval.result_files[i] = NULL;
+
+		struct oscap_htable_iterator *cpe_it = xccdf_policy_model_get_cpe_oval_sessions(session->xccdf.policy_model);
+		while (oscap_htable_iterator_has_more(cpe_it)) {
+			const char *key = NULL;
+			struct oval_agent_session *value = NULL;
+			oscap_htable_iterator_next_kv(cpe_it, &key, (void*)&value);
+
+			char *filename = _xccdf_session_export_oval_result_file(session, value);
+			if (filename == NULL) {
+				_xccdf_session_free_oval_result_files(session);
+				return 1;
+			}
+
+			session->oval.result_files[i] = filename;
+			session->oval.result_files[i + 1] = NULL;
+
+			i++;
+		}
+		oscap_htable_iterator_free(cpe_it);
 	}
 
 	/* Export variables */
@@ -1135,6 +1178,24 @@ unsigned int xccdf_session_get_oval_agents_count(const struct xccdf_session *ses
 	if (session->oval.agents != NULL)
 		while (session->oval.agents[i])
 			i++;
+	return i;
+}
+
+unsigned int xccdf_session_get_cpe_oval_agents_count(const struct xccdf_session *session)
+{
+	if (session->xccdf.policy_model == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot build xccdf_policy.");
+		return 0;
+	}
+
+	unsigned int i = 0;
+	struct oscap_htable_iterator *it = xccdf_policy_model_get_cpe_oval_sessions(session->xccdf.policy_model);
+	while (oscap_htable_iterator_has_more(it)) {
+		oscap_htable_iterator_next(it);
+		i++;
+	}
+	oscap_htable_iterator_free(it);
+
 	return i;
 }
 

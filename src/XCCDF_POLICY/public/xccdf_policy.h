@@ -186,6 +186,12 @@ bool xccdf_policy_model_add_cpe_lang_model(struct xccdf_policy_model * model, co
 bool xccdf_policy_model_add_cpe_autodetect(struct xccdf_policy_model *model, const char* filepath);
 
 /**
+ * Retrieves an iterator of all OVAL sessions created for CPE applicability evaluation
+ * key is the OVAL href, value is the OVAL session itself (type oval_agent_session*)
+ */
+struct oscap_htable_iterator *xccdf_policy_model_get_cpe_oval_sessions(struct xccdf_policy_model *model);
+
+/**
  * Function to register callback for checking system
  * @param model XCCDF Policy Model
  * @param sys String representing given checking system

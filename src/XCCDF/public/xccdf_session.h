@@ -383,12 +383,22 @@ struct xccdf_policy *xccdf_session_get_xccdf_policy(const struct xccdf_session *
 float xccdf_session_get_base_score(const struct xccdf_session *session);
 
 /**
- * Get count of OVAL agent sessions in the xccdf_session.
+ * Get count of OVAL agent sessions not used for CPE in the xccdf_session.
  * @memberof xccdf_session
  * @param session XCCDF Session
  * @returns number of OVAL agents.
  */
 unsigned int xccdf_session_get_oval_agents_count(const struct xccdf_session *session);
+
+/**
+ * Get count of OVAL agent sessions for CPE in the xccdf_session.
+ * CPE uses OVAL on demand, we do not count OVAL agents that were referenced
+ * but weren't used.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @returns number of OVAL agents for CPE.
+ */
+unsigned int xccdf_session_get_cpe_oval_agents_count(const struct xccdf_session *session);
 
 /**
  * Query if the result of evaluation contains FAIL, ERROR, or UNKNOWN rule-result elements.
