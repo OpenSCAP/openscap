@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions
+    xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+    xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
+    xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix"
+    xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux"
+    xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+    xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd
+                        http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd
+                        http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd
+                        http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd
+                        http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+    <generator>
+        <oval:product_name>Homo sapiens</oval:product_name>
+        <oval:schema_version>5.10.1</oval:schema_version>
+        <oval:timestamp>2013-06-26T00:00:00+00:00</oval:timestamp>
+    </generator>
+
+    <definitions>
+        <definition class="miscellaneous" version="1" id="oval:x:def:1">
+            <metadata>
+                <title>report-variable-values test</title>
+                <description>Check that variable values are reported correctly, see the respective all.sh script for explanation.</description>
+            </metadata>
+            <criteria comment="x">
+                <criterion test_ref="oval:x:tst:1"/>
+                <criterion test_ref="oval:x:tst:2"/>
+                <criterion test_ref="oval:x:tst:3"/>
+                <criterion test_ref="oval:x:tst:4"/>
+                <criterion test_ref="oval:x:tst:5"/>
+                <criterion test_ref="oval:x:tst:6"/>
+            </criteria>
+        </definition>
+    </definitions>
+
+    <tests>
+        <ind-def:textfilecontent54_test id="oval:x:tst:1" check="all" version="1"
+            comment="a simple object">
+            <ind-def:object object_ref="oval:x:obj:1"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test id="oval:x:tst:2" check="all" version="1"
+            comment="an object and a state with the same var_ref; possible duplicates">
+            <ind-def:object object_ref="oval:x:obj:2"/>
+            <ind-def:state state_ref="oval:x:ste:2"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test id="oval:x:tst:3" check="none satisfy" version="1"
+            comment="an object with non-matching states">
+            <ind-def:object object_ref="oval:x:obj:3"/>
+            <ind-def:state state_ref="oval:x:ste:1"/>
+            <ind-def:state state_ref="oval:x:ste:2"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test id="oval:x:tst:4" check="all" check_existence="none_exist" version="1"
+            comment="a nonexistent object, uses local_variable">
+            <ind-def:object object_ref="oval:x:obj:4"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test id="oval:x:tst:5" check="all" check_existence="any_exist" version="1"
+            comment="a nonexistent object and a state">
+            <ind-def:object object_ref="oval:x:obj:4"/>
+            <ind-def:state state_ref="oval:x:ste:2"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test id="oval:x:tst:6" check="all" version="1"
+            comment="a set object with an external variable">
+            <ind-def:object object_ref="oval:x:obj:6"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test id="oval:x:tst:7" check="all" version="1"
+            comment="unreferenced test; verify no variables are exported for it">
+            <ind-def:object object_ref="oval:x:obj:7"/>
+        </ind-def:textfilecontent54_test>
+    </tests>
+
+    <objects>
+        <ind-def:textfilecontent54_object id="oval:x:obj:1" version="1" comment="x">
+            <ind-def:filepath datatype="string" operation="equals">/etc/passwd</ind-def:filepath>
+            <ind-def:pattern datatype="string" operation="pattern match">^.*$</ind-def:pattern>
+            <ind-def:instance datatype="int" operation="equals" var_ref="oval:x:var:1" var_check="at least one"/>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:x:obj:2" version="1" comment="x">
+            <ind-def:filepath datatype="string" operation="equals">/etc/passwd</ind-def:filepath>
+            <ind-def:pattern datatype="string" operation="pattern match">^.*$</ind-def:pattern>
+            <ind-def:instance datatype="int" operation="equals" var_ref="oval:x:var:2"/>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:x:obj:3" version="1" comment="x">
+            <ind-def:filepath datatype="string" operation="equals">/etc/passwd</ind-def:filepath>
+            <ind-def:pattern datatype="string" operation="pattern match">^.*$</ind-def:pattern>
+            <ind-def:instance datatype="int" operation="equals" var_ref="oval:x:var:3"/>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:x:obj:4" version="1" comment="x">
+            <ind-def:filepath datatype="string" operation="equals">/etc/passwd</ind-def:filepath>
+            <ind-def:pattern datatype="string" operation="equals" var_ref="oval:x:var:4"/>
+            <ind-def:instance datatype="int" operation="equals" var_ref="oval:x:var:3"/>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:x:obj:5" version="1" comment="x">
+            <ind-def:filepath datatype="string" operation="equals">/etc/passwd</ind-def:filepath>
+            <ind-def:pattern datatype="string" operation="pattern match">^.*$</ind-def:pattern>
+            <ind-def:instance datatype="int" operation="equals" var_ref="oval:x:var:5" var_check="at least one"/>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:x:obj:6" version="1" comment="x">
+            <set set_operator="UNION">
+                <set set_operator="UNION">
+                    <object_reference>oval:x:obj:1</object_reference>
+                    <filter action="include">oval:x:ste:2</filter>
+                </set>
+                <set set_operator="UNION">
+                    <object_reference>oval:x:obj:5</object_reference>
+                </set>
+            </set>
+        </ind-def:textfilecontent54_object>
+        <ind-def:textfilecontent54_object id="oval:x:obj:7" version="1" comment="x">
+            <ind-def:filepath datatype="string" operation="equals">/etc/passwd</ind-def:filepath>
+            <ind-def:pattern datatype="string" operation="pattern match">^.*$</ind-def:pattern>
+            <ind-def:instance datatype="int" operation="equals" var_ref="oval:x:var:7"/>
+        </ind-def:textfilecontent54_object>
+    </objects>
+
+    <states>
+        <ind-def:textfilecontent54_state id="oval:x:ste:1" version="1" comment="x">
+            <ind-def:instance datatype="int" operation="equals" var_ref="oval:x:var:1" var_check="at least one"/>
+        </ind-def:textfilecontent54_state>
+        <ind-def:textfilecontent54_state id="oval:x:ste:2" version="1" comment="x">
+            <ind-def:instance datatype="int" operation="equals" var_ref="oval:x:var:2"/>
+        </ind-def:textfilecontent54_state>
+    </states>
+
+    <variables>
+        <constant_variable id="oval:x:var:1" version="1" datatype="int" comment="x">
+            <value>0</value>
+            <value>1</value>
+        </constant_variable>
+        <constant_variable id="oval:x:var:2" version="1" datatype="int" comment="x">
+            <value>2</value>
+        </constant_variable>
+        <constant_variable id="oval:x:var:3" version="1" datatype="int" comment="x">
+            <value>3</value>
+        </constant_variable>
+        <local_variable id="oval:x:var:4" version="1" datatype="string" comment="x">
+            <object_component object_ref="oval:x:obj:1" item_field="text"/>
+        </local_variable>
+        <external_variable id="oval:x:var:5" version="1" datatype="int" comment="x"/>
+        <constant_variable id="oval:x:var:7" version="1" datatype="int" comment="x">
+            <value>7</value>
+        </constant_variable>
+    </variables>
+</oval_definitions>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_variables
+    xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://oval.mitre.org/XMLSchema/oval-variables-5"
+    xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-results-5 oval-results-schema.xsd
+                        http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd
+                        http://oval.mitre.org/XMLSchema/oval-variables-5 oval-variables-schema.xsd">
+    <generator>
+        <oval:product_name>Homo sapiens</oval:product_name>
+        <oval:schema_version>5.10.1</oval:schema_version>
+        <oval:timestamp>2013-06-26T00:00:00+00:00</oval:timestamp>
+    </generator>
+
+    <variables>
+        <variable id="oval:x:var:5" datatype="int" comment="x">
+            <value>4</value>
+            <value>5</value>
+        </variable>
+    </variables>
+</oval_variables>
