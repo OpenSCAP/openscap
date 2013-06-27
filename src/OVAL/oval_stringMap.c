@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -25,6 +25,7 @@
  *
  * Authors:
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
+ *      Šimon Lukašík
  */
 
 #ifdef HAVE_CONFIG_H
@@ -254,6 +255,11 @@ void oval_string_map_free(struct oval_string_map *map, oscap_destruct_func destr
 	rbt_str_free_cb2((rbt_t *)map,
 			 (void(*)(struct rbt_str_node *, void *))__oval_string_map_node_free,
 			 (void *)destroy);
+}
+
+void oval_string_map_free0(struct oval_string_map *map)
+{
+	oval_string_map_free(map, NULL);
 }
 
 void oval_string_map_free_string(struct oval_string_map *map)

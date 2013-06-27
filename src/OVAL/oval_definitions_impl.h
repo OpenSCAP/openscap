@@ -171,6 +171,9 @@ void oval_definition_model_add_variable(struct oval_definition_model *, struct o
 const char * oval_definition_model_get_schema(struct oval_definition_model * model);
 void oval_definition_model_set_schema(struct oval_definition_model *model, const char *version);
 
+struct oval_string_map *oval_definition_model_build_vardef_mapping(struct oval_definition_model *model);
+struct oval_string_iterator *oval_definition_model_get_definitions_dependent_on_variable(struct oval_definition_model *model, struct oval_variable *variable);
+
 /* variable model */
 struct oval_collection *oval_variable_model_get_values_ref(struct oval_variable_model *, char *);
 int oval_variable_bind_ext_var(struct oval_variable *, struct oval_variable_model *, char *);

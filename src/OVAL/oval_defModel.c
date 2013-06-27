@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -25,6 +25,7 @@
  *
  * Authors:
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
+ *      Šimon Lukašík
  */
 
 #ifdef HAVE_CONFIG_H
@@ -55,6 +56,7 @@ typedef struct oval_definition_model {
 	struct oval_string_map *variable_map;
 	struct oval_collection *bound_variable_models;
         char *schema;
+	struct oval_string_map *vardef_map;		///< look-up table for efficient @variable_instance processing
 } oval_definition_model_t;
 
 /* failed   - NULL
@@ -74,6 +76,7 @@ struct oval_definition_model *oval_definition_model_new()
 	newmodel->variable_map = oval_string_map_new();
 	newmodel->bound_variable_models = NULL;
         newmodel->schema = strdup(OVAL_DEF_SCHEMA_LOCATION);
+	newmodel->vardef_map = NULL;
 
 	return newmodel;
 }
@@ -113,6 +116,7 @@ struct oval_definition_model *oval_definition_model_clone(struct oval_definition
 	_oval_definition_model_clone
 	    (oldmodel->variable_map, newmodel, (_oval_clone_func) oval_variable_clone);
         newmodel->schema = oscap_strdup(oldmodel->schema);
+	newmodel->vardef_map = NULL;
 	return newmodel;
 }
 
@@ -125,6 +129,8 @@ void oval_definition_model_free(struct oval_definition_model *model)
 	oval_string_map_free(model->state_map, (oscap_destruct_func) oval_state_free);
 	oval_string_map_free(model->test_map, (oscap_destruct_func) oval_test_free);
 	oval_string_map_free(model->variable_map, (oscap_destruct_func) oval_variable_free);
+	if (model->vardef_map != NULL)
+		oval_string_map_free(model->vardef_map, (oscap_destruct_func) oval_string_map_free0);
 	if (model->bound_variable_models)
 		oval_collection_free_items(model->bound_variable_models,
 					   (oscap_destruct_func) oval_variable_model_free);
@@ -341,6 +347,19 @@ struct oval_definition_iterator *oval_definition_model_get_definitions(struct ov
 	    (struct oval_definition_iterator *)oval_string_map_values(model->definition_map);
 
 	return iterator;
+}
+
+struct oval_string_iterator *oval_definition_model_get_definitions_dependent_on_variable(struct oval_definition_model *model, struct oval_variable *variable)
+{
+	__attribute__nonnull__(model);
+	__attribute__nonnull__(variable);
+
+	if (model->vardef_map == NULL)
+		model->vardef_map = oval_definition_model_build_vardef_mapping(model);
+
+	struct oval_string_map *def_list = (struct oval_string_map *) oval_string_map_get_value(model->vardef_map, oval_variable_get_id(variable));
+	return (struct oval_string_iterator *) (def_list != NULL ?
+		oval_string_map_keys(def_list) : oval_collection_iterator_new());
 }
 
 struct oval_test_iterator *oval_definition_model_get_tests(struct oval_definition_model *model)

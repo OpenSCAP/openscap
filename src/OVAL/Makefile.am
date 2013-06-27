@@ -75,6 +75,7 @@ common_oval_sources = \
 	fts_sun.c 		\
 	fts_sun.h 		\
 	oval_probe_meta.h	\
+	oval_vardefMapping.c	\
 	oval_version.c		\
 	probes/probe-api.c 	\
 	probes/_probe-api.h	\
