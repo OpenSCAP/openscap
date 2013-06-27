@@ -45,6 +45,7 @@ common_oval_sources = \
 	oval_reference.c \
 	oval_resultCriteriaNode.c \
 	oval_resultDefinition.c \
+	oval_resultDefinitionIterator.c \
 	oval_resultItem.c \
 	oval_resultSystem.c \
 	oval_resultTest.c \

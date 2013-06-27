@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -26,6 +26,7 @@
  * Authors:
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
  *      "Peter Vrabec" <pvrabec@redhat.com>
+ *      Šimon Lukašík
  */
 
 #ifdef HAVE_CONFIG_H
@@ -49,7 +50,7 @@
 
 typedef struct oval_result_system {
 	struct oval_results_model *model;
-	struct oval_string_map *definitions;
+	struct oval_string_map *definitions;		///< Map contains lists of oval_result_definition
 	struct oval_string_map *tests;
 	struct oval_syschar_model *syschar_model;
 } oval_result_system_t;
@@ -131,6 +132,17 @@ static void _oval_result_system_clone
 	oval_string_iterator_free(keys);
 }
 
+static void _oval_collection_of_result_definitions_clone(struct oval_result_system *new_system, struct oval_collection *result_definitions)
+{
+	struct oval_iterator *def_it = oval_collection_iterator(result_definitions);
+	while (oval_collection_iterator_has_more(def_it)) {
+		// TODO: This one seems to leak, but it did so from day 0
+		struct oval_result_definition *definition = oval_collection_iterator_next(def_it);
+		oval_result_definition_clone(new_system, definition);
+	}
+	oval_collection_iterator_free(def_it);
+}
+
 struct oval_result_system *oval_result_system_clone(struct oval_results_model *new_model,
 						    struct oval_result_system *old_system)
 {
@@ -140,7 +152,7 @@ struct oval_result_system *oval_result_system_clone(struct oval_results_model *n
 	    oval_result_system_new(new_model, oval_result_system_get_syschar_model(old_system));
 
 	_oval_result_system_clone
-	    (old_system->definitions, new_system, (_oval_result_system_clone_func) oval_result_definition_clone);
+	    (old_system->definitions, new_system, (_oval_result_system_clone_func) _oval_collection_of_result_definitions_clone);
 
 	_oval_result_system_clone
 	    (old_system->tests, new_system, (_oval_result_system_clone_func) oval_result_test_clone);
@@ -148,11 +160,16 @@ struct oval_result_system *oval_result_system_clone(struct oval_results_model *n
 	return new_system;
 }
 
+static void _oval_collection_of_result_definitions_free(struct oval_collection *result_definitions)
+{
+	oval_collection_free_items(result_definitions, (oscap_destruct_func) oval_result_definition_free);
+}
+
 void oval_result_system_free(struct oval_result_system *sys)
 {
 	__attribute__nonnull__(sys);
 
-	oval_string_map_free(sys->definitions, (oscap_destruct_func) oval_result_definition_free);
+	oval_string_map_free(sys->definitions, (oscap_destruct_func) _oval_collection_of_result_definitions_free);
 	oval_string_map_free(sys->tests, (oscap_destruct_func) oval_result_test_free);
 
 	sys->definitions = NULL;
@@ -178,9 +195,7 @@ void oval_result_system_iterator_free(struct oval_result_system_iterator *sys) {
 struct oval_result_definition_iterator *oval_result_system_get_definitions(struct oval_result_system *sys) {
 	__attribute__nonnull__(sys);
 
-	struct oval_result_definition_iterator *iterator = (struct oval_result_definition_iterator *)
-	    oval_string_map_values(sys->definitions);
-	return iterator;
+	return oval_result_definition_iterator_new(sys->definitions);
 }
 
 struct oval_result_test_iterator *oval_result_system_get_tests(struct oval_result_system *sys) {
@@ -194,9 +209,18 @@ struct oval_result_test_iterator *oval_result_system_get_tests(struct oval_resul
 struct oval_result_definition *oval_result_system_get_definition(struct oval_result_system *sys, const char *id) {
 	__attribute__nonnull__(sys);
 
-	return (struct oval_result_definition *)
-	    oval_string_map_get_value(sys->definitions, id);
-
+	// Previously, this structure used to hold only one result_definition per given ID.
+	// Now we need to return the very last one from a list.
+	struct oval_collection *col = (struct oval_collection *) oval_string_map_get_value(sys->definitions, id);
+	if (col == NULL)
+		return NULL;
+	struct oval_iterator *rdef_it = oval_collection_iterator(col);
+	struct oval_result_definition *rdef = NULL;
+	while (oval_collection_iterator_has_more(rdef_it)) {
+		rdef = oval_collection_iterator_next(rdef_it);
+	}
+	oval_collection_iterator_free(rdef_it);
+	return rdef;
 }
 
 struct oval_result_test *oval_result_system_get_test(struct oval_result_system *sys, char *id) {
@@ -256,7 +280,13 @@ void oval_result_system_add_definition(struct oval_result_system *sys, struct ov
 	if (definition) {
 		struct oval_definition *ovaldef = oval_result_definition_get_definition(definition);
 		char *id = oval_definition_get_id(ovaldef);
-		oval_string_map_put(sys->definitions, id, definition);
+
+		struct oval_collection *rdef_col = (struct oval_collection *) oval_string_map_get_value(sys->definitions, id);
+		if (rdef_col == NULL) {
+			rdef_col = oval_collection_new();
+			oval_string_map_put(sys->definitions, id, rdef_col);
+		}
+		oval_collection_add(rdef_col, definition);
 	}
 }
 

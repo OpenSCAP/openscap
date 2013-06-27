@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -49,20 +49,6 @@ typedef struct oval_result_definition {
 	struct oval_collection *messages;
 	int instance;
 } oval_result_definition_t;
-
-
-bool oval_result_definition_iterator_has_more(struct oval_result_definition_iterator *definitions) {
-	return oval_collection_iterator_has_more((struct oval_iterator *)definitions);
-}
-
-struct oval_result_definition *oval_result_definition_iterator_next(struct oval_result_definition_iterator *definitions) {
-	return (struct oval_result_definition *)
-	    oval_collection_iterator_next((struct oval_iterator *)definitions);
-}
-
-void oval_result_definition_iterator_free(struct oval_result_definition_iterator *definitions) {
-	oval_collection_iterator_free((struct oval_iterator *)definitions);
-}
 
 struct oval_result_definition *oval_result_definition_new(struct oval_result_system *sys, char *definition_id) {
 	oval_result_definition_t *definition = (oval_result_definition_t *)

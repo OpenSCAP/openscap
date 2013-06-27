@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -25,6 +25,7 @@
  *
  * Authors:
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
+ *      Šimon Lukašík
  */
 
 #ifndef OVAL_RESULTS_IMPL_H_
@@ -84,6 +85,8 @@ oval_result_t ores_get_result_bychk(struct oresults *ores, oval_check_t check);
 oval_result_t ores_get_result_byopr(struct oresults *ores, oval_operator_t op);
 
 void oval_results_model_add_system(struct oval_results_model *, struct oval_result_system *);
+
+struct oval_result_definition_iterator *oval_result_definition_iterator_new(struct oval_string_map *mapping);
 
 OSCAP_HIDDEN_END;
 
