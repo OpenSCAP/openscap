@@ -49,6 +49,8 @@ int oval_result_definition_parse_tag(xmlTextReaderPtr, struct oval_parser_contex
 struct oval_result_definition *make_result_definition_from_oval_definition(struct oval_result_system *,
 									   struct oval_definition *);
 xmlNode *oval_result_definition_to_dom(struct oval_result_definition *, oval_result_directive_content_t, xmlDocPtr, xmlNode *);
+int oval_result_definition_get_variable_instance_hint(const struct oval_result_definition *definition);
+void oval_result_definition_set_variable_instance_hint(struct oval_result_definition *definition, int new_hint_value);
 
 struct oval_result_test *make_result_test_from_oval_test(struct oval_result_system *system, struct oval_test *oval_test);
 

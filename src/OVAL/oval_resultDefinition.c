@@ -48,6 +48,7 @@ typedef struct oval_result_definition {
 	struct oval_result_criteria_node *criteria;
 	struct oval_collection *messages;
 	int instance;
+	int variable_instance_hint;			///< A next possible variable_instance attribute
 } oval_result_definition_t;
 
 struct oval_result_definition *oval_result_definition_new(struct oval_result_system *sys, char *definition_id) {
@@ -63,6 +64,7 @@ struct oval_result_definition *oval_result_definition_new(struct oval_result_sys
 	definition->result = OVAL_RESULT_NOT_EVALUATED;
 	definition->criteria = NULL;
 	definition->messages = oval_collection_new();
+	definition->variable_instance_hint = 1;
 	definition->instance = 1;
 	return definition;
 }
@@ -89,6 +91,7 @@ struct oval_result_definition *oval_result_definition_clone
 
 	oval_result_definition_set_result(new_definition, oval_result_definition_get_result(old_definition));
 	oval_result_definition_set_instance(new_definition, oval_result_definition_get_instance(old_definition));
+	oval_result_definition_set_variable_instance_hint(new_definition, oval_result_definition_get_variable_instance_hint(old_definition));
 	return new_definition;
 }
 
@@ -184,6 +187,8 @@ void oval_result_definition_set_instance(struct oval_result_definition *definiti
 {
 	__attribute__nonnull__(definition);
 	definition->instance = instance;
+	// When a new variable_instance is set, we usually want to reset the hint
+	definition->variable_instance_hint = instance;
 }
 
 void oval_result_definition_set_criteria(struct oval_result_definition *definition, struct oval_result_criteria_node *criteria) 
@@ -311,4 +316,24 @@ xmlNode *oval_result_definition_to_dom
 	}
 
 	return definition_node;
+}
+
+/**
+ * Get the value of the variable_instance hint.
+ * @memberof oval_result_definition
+ */
+int oval_result_definition_get_variable_instance_hint(const struct oval_result_definition *definition)
+{
+	return definition->variable_instance_hint;
+}
+
+/**
+ * This sets counter on next possible variable instance. The hint is later used
+ * to decide whether instanciate a new result_definition, and what variable_instance
+ * attribute assign to it.
+ * @memberof oval_result_definition
+ */
+void oval_result_definition_set_variable_instance_hint(struct oval_result_definition *definition, int new_hint_value)
+{
+	definition->variable_instance_hint = new_hint_value;
 }
