@@ -275,6 +275,22 @@ struct ds_sds_index *ds_sds_index_import(const char* file);
 int ds_sds_index_select_checklist(struct ds_sds_index* s,
 		const char** datastream_id, const char** component_id);
 
+/**
+ * @brief chooses datastream and checklist component ref ID combination, given benchmark ID
+ *
+ * @param benchmark_id Which XCCDF Benchmark ID are we looking for?
+ * Parameters are similar to ds_sds_index_select_checklist, except for benchmark_id.
+ * @see ds_sds_index_select_checklist
+ *
+ * This function looks through to datastream index to find the first component-ref (top-down)
+ * which satisfies the following condition:
+ * "it does point to a component which contains XCCDF Benchmark with id
+ * exactly the same as given benchmark_id".
+ *
+ * Please note that datastream_id AND component_ref_id are pointers to pointers and they
+ * will be overwritten if 0 is returned. The values are never used, unlike with
+ * ds_sds_index_select_checklist.
+ */
 int ds_sds_index_select_checklist_by_benchmark_id(struct ds_sds_index* s,
 		const char *benchmark_id, const char **datastream_id, const char **component_ref_id);
 

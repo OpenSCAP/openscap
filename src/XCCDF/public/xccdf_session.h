@@ -120,7 +120,19 @@ void xccdf_session_set_component_id(struct xccdf_session *session, const char *c
  */
 const char *xccdf_session_get_component_id(struct xccdf_session *session);
 
+/**
+ * Sets requested benchmark_od for this session. It is only used when no component_id
+ * and no datastream_id are requested. Benchmark ID selects the @id attribute of Benchmark
+ * element inside a component that is referenced with a checklist component-ref.
+ * @memberof xccdf_session
+ */
 void xccdf_session_set_benchmark_id(struct xccdf_session *session, const char *benchmark_id);
+
+/**
+ * Retrieves the benchmark_id
+ * @see xccdf_session_set_benchmark_id
+ * @memberof xccdf_session
+ */
 const char *xccdf_session_get_benchmark_id(struct xccdf_session *session);
 
 /**
