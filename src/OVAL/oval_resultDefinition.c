@@ -301,7 +301,8 @@ xmlNode *oval_result_definition_to_dom
 	xmlNewProp(definition_node, BAD_CAST "version", BAD_CAST version_att);
 
 	int instance = oval_result_definition_get_instance(definition);
-	if (instance != 1) {
+	if (instance != 1 ||
+			oval_result_definition_get_variable_instance_hint(definition) != instance) {
 		char instance_att[10] = "";
 		snprintf(instance_att, sizeof(instance_att), "%d", instance);
 		xmlNewProp(definition_node, BAD_CAST "variable_instance", BAD_CAST instance_att);
