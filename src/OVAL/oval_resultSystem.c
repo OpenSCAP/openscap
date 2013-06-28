@@ -502,9 +502,24 @@ xmlNode *oval_result_system_to_dom(struct oval_result_system * sys,
 		class_dirs = oval_directives_model_get_classdir(directives_model, def_class);
 		directives = class_dirs ? class_dirs : def_dirs;
 
-		struct oval_result_definition *rslt_definition = oval_result_system_get_new_definition(sys, oval_definition, 0);
-		if (rslt_definition) {
-			_oval_result_definition_to_dom_based_on_directives(rslt_definition, directives, doc, definitions_node, tstmap);
+		struct oval_collection *rslt_definitions = oval_string_map_get_value(sys->definitions, oval_definition_get_id(oval_definition));
+		bool exported = false;
+		if (rslt_definitions != NULL) {
+			struct oval_iterator *rslt_definitions_it = oval_collection_iterator(rslt_definitions);
+			if (oval_collection_iterator_has_more(rslt_definitions_it)) {
+				while (oval_collection_iterator_has_more(rslt_definitions_it)) {
+					struct oval_result_definition *rslt_definition = oval_collection_iterator_next(rslt_definitions_it);
+					_oval_result_definition_to_dom_based_on_directives(rslt_definition, directives, doc, definitions_node, tstmap);
+					exported = true;
+				}
+			}
+			oval_collection_iterator_free(rslt_definitions_it);
+		}
+		if (!exported) {
+			struct oval_result_definition *rslt_definition = oval_result_system_get_new_definition(sys, oval_definition, 1);
+			if (rslt_definition) {
+				_oval_result_definition_to_dom_based_on_directives(rslt_definition, directives, doc, definitions_node, tstmap);
+			}
 		}
 	}
 	oval_definition_iterator_free(oval_definitions);
