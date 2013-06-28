@@ -66,6 +66,7 @@ struct xccdf_session {
 		struct ds_sds_index *sds_idx;		///< Index of Source DataStream (only applicable for sds).
 		char *user_datastream_id;		///< Datastream id requested by user (only applicable for sds).
 		char *user_component_id;		///< Component id requested by user (only applicable for sds).
+		char *user_benchmark_id;		///< Benchmark id requested by user (only applicable for sds).
 		char *datastream_id;			///< Datastream id used (only applicable for sds).
 		char *component_id;			///< Component id used (only applicable for sds).
 	} ds;
@@ -150,6 +151,7 @@ void xccdf_session_free(struct xccdf_session *session)
 		xccdf_policy_model_free(session->xccdf.policy_model);
 	oscap_free(session->ds.user_datastream_id);
 	oscap_free(session->ds.user_component_id);
+	oscap_free(session->ds.user_benchmark_id);
 	if (session->ds.sds_idx != NULL)
 		ds_sds_index_free(session->ds.sds_idx);
 	if (session->temp_dir != NULL)
@@ -200,6 +202,18 @@ void xccdf_session_set_component_id(struct xccdf_session *session, const char *c
 const char *xccdf_session_get_component_id(struct xccdf_session *session)
 {
 	return session->ds.component_id;
+}
+
+void xccdf_session_set_benchmark_id(struct xccdf_session *session, const char *benchmark_id)
+{
+	if (session->ds.user_benchmark_id != NULL)
+		oscap_free(session->ds.user_benchmark_id);
+	session->ds.user_benchmark_id = oscap_strdup(benchmark_id);
+}
+
+const char *xccdf_session_get_benchmark_id(struct xccdf_session *session)
+{
+	return session->ds.user_benchmark_id;
 }
 
 void xccdf_session_set_user_cpe(struct xccdf_session *session, const char *user_cpe)
@@ -362,15 +376,37 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 		if (session->temp_dir == NULL)
 			goto cleanup;
 
-		if (ds_sds_index_select_checklist(xccdf_session_get_sds_idx(session),
+		// We only use benchmark ID if datastream ID and/or component ID were NOT supplied.
+		if (!session->ds.user_datastream_id && !session->ds.user_component_id && session->ds.user_benchmark_id) {
+			if (ds_sds_index_select_checklist_by_benchmark_id(xccdf_session_get_sds_idx(session),
+				session->ds.user_benchmark_id,
 				(const char **) &(session->ds.datastream_id),
 				(const char **) &(session->ds.component_id)) != 0) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to locate a datastream with ID matching "
-					"'%s' ID and checklist inside matching '%s' ID.",
-					session->ds.user_datastream_id == NULL ? "<any>" : session->ds.user_datastream_id,
-					session->ds.user_component_id == NULL ? "<any>" : session->ds.user_component_id);
-			goto cleanup;
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to locate a datastream with component-ref "
+					"that points to a component containing Benchmark with ID '%s'.", session->ds.user_benchmark_id);
+				goto cleanup;
+			}
 		}
+		else {
+			if (session->ds.user_benchmark_id) {
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Not using benchmark ID ('%s') for component-ref lookup, "
+					"datastream ID ('%s') and/or component-ref ID ('%s') were supplied, using them instead.",
+					session->ds.user_benchmark_id,
+					session->ds.user_datastream_id,
+					session->ds.user_component_id);
+			}
+
+			if (ds_sds_index_select_checklist(xccdf_session_get_sds_idx(session),
+				(const char **) &(session->ds.datastream_id),
+				(const char **) &(session->ds.component_id)) != 0) {
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to locate a datastream with ID matching "
+						"'%s' ID and checklist inside matching '%s' ID.",
+						session->ds.user_datastream_id == NULL ? "<any>" : session->ds.user_datastream_id,
+						session->ds.user_component_id == NULL ? "<any>" : session->ds.user_component_id);
+				goto cleanup;
+			}
+		}
+
 		if (ds_sds_decompose(session->filename, session->ds.datastream_id, session->ds.component_id, session->temp_dir, XCCDF_XML) != 0) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to decompose source datastream in '%s'.", session->filename);
 			goto cleanup;

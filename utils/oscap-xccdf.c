@@ -111,8 +111,11 @@ static struct oscap_module XCCDF_EXPORT_OVAL_VARIABLES = {
 		"   --fetch-remote-resources \r\t\t\t\t - Download remote content referenced by XCCDF.\n"
 		"   --datastream-id <id> \r\t\t\t\t - ID of the datastream in the collection to use.\n"
 		"                        \r\t\t\t\t   (only applicable for source datastreams)\n"
-		"   --xccdf-id <id> \r\t\t\t\t - ID of XCCDF in the datastream that should be evaluated.\n"
-		"                   \r\t\t\t\t   (only applicable for source datastreams)"
+		"   --xccdf-id <id> \r\t\t\t\t - ID of component-ref with XCCDF in the datastream that should be evaluated.\n"
+		"                   \r\t\t\t\t   (only applicable for source datastreams)\n"
+		"   --benchmark-id <id> \r\t\t\t\t - ID of XCCDF Benchmark in some component in the datastream that should be evaluated.\n"
+		"                   \r\t\t\t\t   (only applicable for source datastreams)\n"
+		"                   \r\t\t\t\t   (only applicable when datastream-id AND xccdf-id are not specified)\n"
 		"   --cpe <name>\r\t\t\t\t - Use given CPE dictionary or language (autodetected)\n"
 		"               \r\t\t\t\t   for applicability checks.\n"
 	,
@@ -143,10 +146,13 @@ static struct oscap_module XCCDF_EVAL = {
 	"   --fetch-remote-resources \r\t\t\t\t - Download remote content referenced by XCCDF.\n"
 	"   --progress \r\t\t\t\t - Switch to sparse output suitable for progress reporting.\n"
 	"              \r\t\t\t\t   Format is \"$rule_id:$result\\n\".\n"
-        "   --datastream-id <id> \r\t\t\t\t - ID of the datastream in the collection to use.\n"
-        "                        \r\t\t\t\t   (only applicable for source datastreams)\n"
-        "   --xccdf-id <id> \r\t\t\t\t - ID of XCCDF in the datastream that should be evaluated.\n"
+	"   --datastream-id <id> \r\t\t\t\t - ID of the datastream in the collection to use.\n"
+	"                        \r\t\t\t\t   (only applicable for source datastreams)\n"
+	"   --xccdf-id <id> \r\t\t\t\t - ID of component-ref with XCCDF in the datastream that should be evaluated.\n"
 	"                   \r\t\t\t\t   (only applicable for source datastreams)\n"
+	"   --benchmark-id <id> \r\t\t\t\t - ID of XCCDF Benchmark in some component in the datastream that should be evaluated.\n"
+	"                   \r\t\t\t\t   (only applicable for source datastreams)\n"
+	"                   \r\t\t\t\t   (only applicable when datastream-id AND xccdf-id are not specified)\n"
 	"   --remediate \r\t\t\t\t - Automatically execute XCCDF fix elements for failed rules.\n"
 	"               \r\t\t\t\t   Use of this option is always at your own risk.",
     .opt_parser = getopt_xccdf,
@@ -450,6 +456,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	if (xccdf_session_is_sds(session)) {
 		xccdf_session_set_datastream_id(session, action->f_datastream_id);
 		xccdf_session_set_component_id(session, action->f_xccdf_id);
+		xccdf_session_set_benchmark_id(session, action->f_benchmark_id);
 	}
 	xccdf_session_set_user_cpe(session, action->cpe);
 	xccdf_session_set_user_tailoring_file(session, action->tailoring_file);
@@ -553,6 +560,7 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	if (xccdf_session_is_sds(session)) {
 		xccdf_session_set_datastream_id(session, action->f_datastream_id);
 		xccdf_session_set_component_id(session, action->f_xccdf_id);
+		xccdf_session_set_benchmark_id(session, action->f_benchmark_id);
 	}
 	xccdf_session_set_user_cpe(session, action->cpe);
 	xccdf_session_set_remote_resources(session, action->remote_resources, _download_reporting_callback);
@@ -760,6 +768,7 @@ int app_generate_fix(const struct oscap_action *action)
 	if (xccdf_session_is_sds(session)) {
 		xccdf_session_set_datastream_id(session, action->f_datastream_id);
 		xccdf_session_set_component_id(session, action->f_xccdf_id);
+		xccdf_session_set_benchmark_id(session, action->f_benchmark_id);
 	}
 	xccdf_session_set_user_cpe(session, action->cpe);
 	if (xccdf_session_load_xccdf(session) != 0)
@@ -856,6 +865,7 @@ enum oval_opt {
     XCCDF_OPT_RESULT_FILE_ARF,
     XCCDF_OPT_DATASTREAM_ID,
     XCCDF_OPT_XCCDF_ID,
+    XCCDF_OPT_BENCHMARK_ID,
     XCCDF_OPT_PROFILE,
     XCCDF_OPT_REPORT_FILE,
     XCCDF_OPT_SHOW,
@@ -889,6 +899,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"results-arf",		required_argument, NULL, XCCDF_OPT_RESULT_FILE_ARF},
 		{"datastream-id",		required_argument, NULL, XCCDF_OPT_DATASTREAM_ID},
 		{"xccdf-id",		required_argument, NULL, XCCDF_OPT_XCCDF_ID},
+		{"benchmark-id",		required_argument, NULL, XCCDF_OPT_BENCHMARK_ID},
 		{"profile", 		required_argument, NULL, XCCDF_OPT_PROFILE},
 		{"result-id",		required_argument, NULL, XCCDF_OPT_RESULT_ID},
 		{"report", 		required_argument, NULL, XCCDF_OPT_REPORT_FILE},
@@ -929,6 +940,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		case XCCDF_OPT_RESULT_FILE_ARF:	action->f_results_arf = optarg;	break;
 		case XCCDF_OPT_DATASTREAM_ID:	action->f_datastream_id = optarg;	break;
 		case XCCDF_OPT_XCCDF_ID:	action->f_xccdf_id = optarg; break;
+		case XCCDF_OPT_BENCHMARK_ID:	action->f_benchmark_id = optarg; break;
 		case XCCDF_OPT_PROFILE:		action->profile = optarg;	break;
 		case XCCDF_OPT_RESULT_ID:	action->id = optarg;		break;
 		case XCCDF_OPT_REPORT_FILE:	action->f_report = optarg; 	break;

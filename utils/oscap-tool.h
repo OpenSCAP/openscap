@@ -105,6 +105,7 @@ struct oscap_action {
 	char *f_datastream_id;
 	char *f_xccdf_id;
 	char *f_oval_id;
+	char *f_benchmark_id;
 	char *f_report_id;
         char *f_oval;
         char **f_ovals;

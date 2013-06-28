@@ -268,9 +268,15 @@ struct ds_sds_index *ds_sds_index_import(const char* file);
  *
  * datastream_id and component_id must not point to the same memory! However,
  * the pointers pointed to may be NULL (which means any ID will do).
+ *
+ * component_id is actually a component-ref ID, the reason is that we need the component-ref
+ * to know which other components are in the catalog and thus needed when splitting.
  */
 int ds_sds_index_select_checklist(struct ds_sds_index* s,
 		const char** datastream_id, const char** component_id);
+
+int ds_sds_index_select_checklist_by_benchmark_id(struct ds_sds_index* s,
+		const char *benchmark_id, const char **datastream_id, const char **component_ref_id);
 
 /** 
  * @struct ds_stream_index_iterator

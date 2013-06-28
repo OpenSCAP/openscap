@@ -120,6 +120,9 @@ void xccdf_session_set_component_id(struct xccdf_session *session, const char *c
  */
 const char *xccdf_session_get_component_id(struct xccdf_session *session);
 
+void xccdf_session_set_benchmark_id(struct xccdf_session *session, const char *benchmark_id);
+const char *xccdf_session_get_benchmark_id(struct xccdf_session *session);
+
 /**
  * Set path to custom CPE dictionary for the session. This function is applicable
  * only before session loads. It has no effect if run afterwards.
