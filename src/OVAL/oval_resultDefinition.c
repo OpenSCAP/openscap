@@ -72,9 +72,8 @@ struct oval_result_definition *oval_result_definition_new(struct oval_result_sys
 
 struct oval_result_definition *oval_result_definition_clone
     (struct oval_result_system *new_system, struct oval_result_definition *old_definition) {
-	struct oval_definition *ovaldef = oval_result_definition_get_definition(old_definition);
-	struct oval_result_definition *new_definition =
-	    oval_result_definition_new(new_system, oval_definition_get_id(ovaldef));
+	const char *id = oval_result_definition_get_id(old_definition);
+	struct oval_result_definition *new_definition = oval_result_definition_new(new_system, (char *) id);
 
 	struct oval_result_criteria_node *old_crit = oval_result_definition_get_criteria(old_definition);
 	if (old_crit) {
@@ -342,4 +341,11 @@ int oval_result_definition_get_variable_instance_hint(const struct oval_result_d
 void oval_result_definition_set_variable_instance_hint(struct oval_result_definition *definition, int new_hint_value)
 {
 	definition->variable_instance_hint = new_hint_value;
+}
+
+const char *oval_result_definition_get_id(const struct oval_result_definition *rslt_definition)
+{
+	__attribute__nonnull__(rslt_definition);
+	struct oval_definition *def = oval_result_definition_get_definition(rslt_definition);
+	return (def == NULL) ? NULL : oval_definition_get_id(def);
 }

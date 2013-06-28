@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2010--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -18,6 +18,7 @@
  *
  * Authors:
  *      Maros Barabas <mbarabas@redhat.com>
+ *      Šimon Lukašík
  */
 
 #ifdef HAVE_CONFIG_H
@@ -202,10 +203,9 @@ static int oval_gen_report(const char *infile, const char *outfile)
 
 static int app_oval_callback(const struct oval_result_definition * res_def, void *arg)
 {
-	struct oval_definition *oval_def = oval_result_definition_get_definition(res_def);
 	oval_result_t result =  oval_result_definition_get_result(res_def);
 
-	printf("Definition %s: %s\n", oval_definition_get_id(oval_def), oval_result_get_text(result));
+	printf("Definition %s: %s\n", oval_result_definition_get_id(res_def), oval_result_get_text(result));
 
 	return 0;
 }

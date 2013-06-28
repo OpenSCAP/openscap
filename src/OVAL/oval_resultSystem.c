@@ -318,8 +318,7 @@ void oval_result_system_add_definition(struct oval_result_system *sys, struct ov
 {
 	__attribute__nonnull__(sys);
 	if (definition) {
-		struct oval_definition *ovaldef = oval_result_definition_get_definition(definition);
-		char *id = oval_definition_get_id(ovaldef);
+		const char *id = oval_result_definition_get_id(definition);
 
 		struct oval_collection *rdef_col = (struct oval_collection *) oval_string_map_get_value(sys->definitions, id);
 		if (rdef_col == NULL) {

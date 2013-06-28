@@ -17,7 +17,7 @@
 
 
 /*
- * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009-2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -36,6 +36,7 @@
  *
  * Authors:
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
+ *      Šimon Lukašík
  */
 
 
@@ -340,6 +341,11 @@ void oval_result_definition_add_message(struct oval_result_definition *, struct 
  * @memberof oval_result_definition
  */
 struct oval_definition *oval_result_definition_get_definition(const struct oval_result_definition *);
+/**
+ * Returns the @idref attribute of a given result definition
+ * @memberof oval_result_definition
+ */
+const char *oval_result_definition_get_id(const struct oval_result_definition *rslt_definition);
 /**
  * @memberof oval_result_definition
  */
