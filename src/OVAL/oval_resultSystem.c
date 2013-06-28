@@ -458,6 +458,25 @@ int oval_result_system_eval_definition(struct oval_result_system *sys, const cha
 	return 0;
 }
 
+static void _oval_result_definition_to_dom_based_on_directives(struct oval_result_definition *rslt_definition,
+						   struct oval_result_directives * directives,
+						   xmlDocPtr doc,
+						   xmlNode *definitions_node,
+						   struct oval_string_map *tstmap)
+{
+	oval_result_t result = oval_result_definition_get_result(rslt_definition);
+	if (oval_result_directives_get_reported(directives, result)) {
+		oval_result_directive_content_t content = oval_result_directives_get_content(directives, result);
+		/* report definition according to directives settings */
+		oval_result_definition_to_dom(rslt_definition, content, doc, definitions_node);
+		if (content == OVAL_DIRECTIVE_CONTENT_FULL) {
+			struct oval_result_criteria_node *criteria = oval_result_definition_get_criteria(rslt_definition);
+			/* collect the tests that are referenced from reported definitions */
+			if (criteria)
+				_oval_result_system_scan_criteria_for_references(criteria, tstmap);
+		}
+	}
+}
 
 xmlNode *oval_result_system_to_dom(struct oval_result_system * sys,
 				   struct oval_results_model * results_model,
@@ -485,20 +504,7 @@ xmlNode *oval_result_system_to_dom(struct oval_result_system * sys,
 
 		struct oval_result_definition *rslt_definition = oval_result_system_get_new_definition(sys, oval_definition, 0);
 		if (rslt_definition) {
-			oval_result_t result = oval_result_definition_get_result(rslt_definition);			
-			if (oval_result_directives_get_reported(directives, result)) {
-				oval_result_directive_content_t content
-				    = oval_result_directives_get_content(directives, result);
-				/* report definition according to directives settings */
-				oval_result_definition_to_dom(rslt_definition, content, doc, definitions_node);
-				if (content == OVAL_DIRECTIVE_CONTENT_FULL) {
-					struct oval_result_criteria_node *criteria
-					    = oval_result_definition_get_criteria(rslt_definition);
-					/* collect the tests that are referenced from reported definitions */
-					if (criteria)
-						_oval_result_system_scan_criteria_for_references(criteria, tstmap);
-				}
-			}
+			_oval_result_definition_to_dom_based_on_directives(rslt_definition, directives, doc, definitions_node, tstmap);
 		}
 	}
 	oval_definition_iterator_free(oval_definitions);
