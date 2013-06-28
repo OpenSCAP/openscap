@@ -139,10 +139,21 @@ void oval_agent_set_product_name(oval_agent_session_t *ag_sess, char * product_n
 	oval_generator_set_product_name(generator, product_name);
 }
 
+static struct oval_result_system *_oval_agent_get_first_result_system(oval_agent_session_t *ag_sess)
+{
+	struct oval_results_model *rmodel = oval_agent_get_results_model(ag_sess);
+	struct oval_result_system_iterator *rsystem_it = oval_results_model_get_systems(rmodel);
+	struct oval_result_system *rsystem = NULL;
+	if (oval_result_system_iterator_has_more(rsystem_it)) {
+		rsystem = oval_result_system_iterator_next(rsystem_it);
+	}
+	oval_result_system_iterator_free(rsystem_it);
+	return rsystem;
+}
+
 int oval_agent_eval_definition(oval_agent_session_t *ag_sess, const char *id)
 {
 	int ret;
-	struct oval_result_system_iterator *rsystem_it;
 	struct oval_result_system *rsystem;
 
 	/* probe */
@@ -150,10 +161,7 @@ int oval_agent_eval_definition(oval_agent_session_t *ag_sess, const char *id)
 	if (ret == -1)
 		return ret;
 
-	/* take the first system */
-	rsystem_it = oval_results_model_get_systems(ag_sess->res_model);
-	rsystem = oval_result_system_iterator_next(rsystem_it);
-        oval_result_system_iterator_free(rsystem_it);
+	rsystem = _oval_agent_get_first_result_system(ag_sess);
 	/* eval */
 	ret = oval_result_system_eval_definition(rsystem, id);
 
@@ -162,21 +170,15 @@ int oval_agent_eval_definition(oval_agent_session_t *ag_sess, const char *id)
 
 int oval_agent_get_definition_result(oval_agent_session_t *ag_sess, const char *id, oval_result_t * result)
 {
-	struct oval_results_model *rmodel;
-	struct oval_result_system_iterator *rsystem_it;
 	struct oval_result_system *rsystem;
 	struct oval_result_definition *rdef;
 
-	rmodel = oval_agent_get_results_model(ag_sess);
-	rsystem_it = oval_results_model_get_systems(rmodel);
-	if (!oval_result_system_iterator_has_more(rsystem_it)) {
-		oval_result_system_iterator_free(rsystem_it);
+	rsystem = _oval_agent_get_first_result_system(ag_sess);
+	if (rsystem == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "No results system in agent session.");
                 return -1;
 	}
 
-	rsystem = oval_result_system_iterator_next(rsystem_it);
-	oval_result_system_iterator_free(rsystem_it);
 	rdef = oval_result_system_get_definition(rsystem, id);
         if (rdef == NULL) {
                 oscap_seterr(OSCAP_EFAMILY_OSCAP, "No definition with ID: %s in result model.", id);
@@ -189,20 +191,13 @@ int oval_agent_get_definition_result(oval_agent_session_t *ag_sess, const char *
 }
 
 struct oval_result_definition * oval_agent_get_result_definition(oval_agent_session_t *ag_sess, const char *id) {
-	struct oval_results_model *rmodel;
-	struct oval_result_system_iterator *rsystem_it;
 	struct oval_result_system *rsystem;
 	struct oval_result_definition *rdef;
 
-	rmodel = oval_agent_get_results_model(ag_sess);
-	rsystem_it = oval_results_model_get_systems(rmodel);
-	if (!oval_result_system_iterator_has_more(rsystem_it)) {
-		oval_result_system_iterator_free(rsystem_it);
-                return NULL;
-	}
+	rsystem = _oval_agent_get_first_result_system(ag_sess);
+	if (rsystem == NULL)
+		return NULL;
 
-	rsystem = oval_result_system_iterator_next(rsystem_it);
-	oval_result_system_iterator_free(rsystem_it);
 	rdef = oval_result_system_get_definition(rsystem, id);
 
 	return rdef;
@@ -412,13 +407,9 @@ static void _oval_agent_resolve_variables_conflict(struct oval_agent_session *se
 				// @variable_instance attribute. And each result-definition refers to different
 				// set of tests. These tests might have same @id but differ in @variable_instance
 				// attribute. Further, some of these tests will differ in tested_variable element.
-				struct oval_result_system_iterator *rsystem_it = oval_results_model_get_systems(session->res_model);
-				if (!oval_result_system_iterator_has_more(rsystem_it)) {
-					oval_result_system_iterator_free(rsystem_it);
+				struct oval_result_system *r_system = _oval_agent_get_first_result_system(session);
+				if (r_system == NULL)
 					continue;
-				}
-				struct oval_result_system *r_system = oval_result_system_iterator_next(rsystem_it);
-			        oval_result_system_iterator_free(rsystem_it);
 
 				struct oval_string_iterator *def_it =
 					oval_definition_model_get_definitions_dependent_on_variable(def_model, variable);
