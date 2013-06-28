@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -215,9 +215,8 @@ int oval_agent_reset_session(oval_agent_session_t * ag_sess) {
 	/* Reset syschar model */
 	oval_syschar_model_reset(ag_sess->sys_model);
 
-	/* Replace result model */
-	oval_results_model_free(ag_sess->res_model);
-	ag_sess->res_model = oval_results_model_new(ag_sess->def_model, ag_sess->sys_models);
+	/* We intentionally do not flush out the results model which should
+	 * be able to encompass results from multiple evaluations */
 
 	/* Apply product name to new results_model */
 	if (ag_sess->product_name) {
@@ -389,8 +388,56 @@ static void _oval_agent_resolve_variables_conflict(struct oval_agent_session *se
 		struct oval_variable *variable = oval_definition_model_get_variable(def_model, var_name);
 		if (variable != NULL) {
 			struct oval_value_iterator *value_it = oval_variable_get_values(variable);
-			if (_stringlist_conflicts_with_value_it(value_list, value_it))
+			if (_stringlist_conflicts_with_value_it(value_list, value_it)) {
+				// You don't want to touch this code. There are also other means to waste your
+				// life. Now please proceed by reading the previous line again.
+				//
+				// Now, we have found that the variable we are trying to bind into the session
+				// is already there with different values. This is the rise of concept which
+				// is often referred as variable_instance or simply multiset.
+				//
+				// As per OVAL 5.10.1, the Variable Schema does not allow multisets. Therefore,
+				// we will later create new variable model and export multiple variables docs.
 				conflict = true;
+				// Next, in the results model, there might be already some definitions, tests
+				// states, or objects. These might be dependent on the previous value of the
+				// given variable.
+				//
+				// The 'latest' result-definition for each such definition (whose result depends
+				// on the value) needs to be marked by 'variable_instance_hint'. The hint has
+				// meaning that any possible future evaluation of the given definition needs
+				// to create new result-definition and not re-use the old one.
+				//
+				// Both (or all) such result-definitions are then distinguished by different
+				// @variable_instance attribute. And each result-definition refers to different
+				// set of tests. These tests might have same @id but differ in @variable_instance
+				// attribute. Further, some of these tests will differ in tested_variable element.
+				struct oval_result_system_iterator *rsystem_it = oval_results_model_get_systems(session->res_model);
+				if (!oval_result_system_iterator_has_more(rsystem_it)) {
+					oval_result_system_iterator_free(rsystem_it);
+					continue;
+				}
+				struct oval_result_system *r_system = oval_result_system_iterator_next(rsystem_it);
+			        oval_result_system_iterator_free(rsystem_it);
+
+				struct oval_string_iterator *def_it =
+					oval_definition_model_get_definitions_dependent_on_variable(def_model, variable);
+				while (oval_string_iterator_has_more(def_it)) {
+					char *definition_id = oval_string_iterator_next(def_it);
+
+					struct oval_result_definition *r_definition = oval_result_system_get_definition(r_system, definition_id);
+					if (r_definition != NULL) {
+						// Here we simply increase the variable_instance_hint, however
+						// in future we might want to do better and have a single session wide
+						// counter and set the variable_instance_hints to this given counter.
+						// That would allow the one-to-one mapping of variable_instance attributes
+						// to the oval_variable files.
+						int instance = oval_result_definition_get_instance(r_definition);
+						oval_result_definition_set_variable_instance_hint(r_definition, instance + 1);
+					}
+				}
+				oval_string_iterator_free(def_it);
+			}
 			oval_value_iterator_free(value_it);
 		}
 	}

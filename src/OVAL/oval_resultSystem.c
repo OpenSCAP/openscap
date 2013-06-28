@@ -270,6 +270,12 @@ struct oval_result_definition *oval_result_system_get_new_definition
 				variable_instance ? variable_instance : 1);
 			oval_result_system_add_definition(sys, rslt_definition);
 		}
+		else if (oval_result_definition_get_variable_instance_hint(rslt_definition) != oval_result_definition_get_instance(rslt_definition)) {
+			int hint = oval_result_definition_get_variable_instance_hint(rslt_definition);
+			dI("Creating another result-definition for id=%s based on variable_instance: %d\n", id, hint);
+			rslt_definition = make_result_definition_from_oval_definition(sys, oval_definition, hint);
+			oval_result_system_add_definition(sys, rslt_definition);
+		}
 	}
 	return rslt_definition;
 }
@@ -279,6 +285,11 @@ struct oval_result_test *oval_result_system_get_new_test(struct oval_result_syst
 	struct oval_result_test *rslt_testtest = oval_result_system_get_test(sys, id);
 	if (rslt_testtest == NULL) {
 		//test = oval_result_test_new(sys, id);
+		rslt_testtest = make_result_test_from_oval_test(sys, oval_test, variable_instance);
+		oval_result_system_add_test(sys, rslt_testtest);
+	}
+	else if (variable_instance != 0 && oval_result_test_get_instance(rslt_testtest) != variable_instance) {
+		dI("Creating another result-test for id=%s based on variable_instance: %d\n", id, variable_instance);
 		rslt_testtest = make_result_test_from_oval_test(sys, oval_test, variable_instance);
 		oval_result_system_add_test(sys, rslt_testtest);
 	}
@@ -435,6 +446,12 @@ int oval_result_system_eval_definition(struct oval_result_system *sys, const cha
 		rslt_definition = make_result_definition_from_oval_definition(sys, oval_definition, 1);
                 oval_result_system_add_definition(sys, rslt_definition);
         }
+	else if (oval_result_definition_get_variable_instance_hint(rslt_definition) != oval_result_definition_get_instance(rslt_definition)) {
+		int hint = oval_result_definition_get_variable_instance_hint(rslt_definition);
+		dI("Creating another result-definition for id=%s based on variable_instance: %d\n", id, hint);
+		rslt_definition = make_result_definition_from_oval_definition(sys, oval_definition, hint);
+		oval_result_system_add_definition(sys, rslt_definition);
+	}
 
 	oval_result_definition_eval(rslt_definition);
 
