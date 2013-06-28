@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -25,6 +25,7 @@
  *
  * Authors:
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
+ *      Šimon Lukašík
  */
 
 #ifdef HAVE_CONFIG_H
@@ -233,7 +234,7 @@ void oval_result_criteria_node_free(struct oval_result_criteria_node *node)
 }
 
 struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_node
-    (struct oval_result_system *sys, struct oval_criteria_node *oval_node) {
+    (struct oval_result_system *sys, struct oval_criteria_node *oval_node, int variable_instance) {
 	struct oval_result_criteria_node *rslt_node = NULL;
 	if (oval_node) {
 		oval_criteria_node_type_t type = oval_criteria_node_get_type(oval_node);
@@ -253,14 +254,14 @@ struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_n
 					struct oval_criteria_node *oval_subnode
 					    = oval_criteria_node_iterator_next(oval_subnodes);
 					struct oval_result_criteria_node *rslt_subnode
-					    = make_result_criteria_node_from_oval_criteria_node(sys, oval_subnode);
+					    = make_result_criteria_node_from_oval_criteria_node(sys, oval_subnode, variable_instance);
 					oval_result_criteria_node_add_subnode(rslt_node, rslt_subnode);
 				}
 				oval_criteria_node_iterator_free(oval_subnodes);
 			} break;
 		case OVAL_NODETYPE_CRITERION:{
 				struct oval_test *oval_test = oval_criteria_node_get_test(oval_node);
-				struct oval_result_test *rslt_test = oval_result_system_get_new_test(sys, oval_test);
+				struct oval_result_test *rslt_test = oval_result_system_get_new_test(sys, oval_test, variable_instance);
 				rslt_node = oval_result_criteria_node_new(sys,
 									  type,
 									  negate,
@@ -270,7 +271,7 @@ struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_n
 		case OVAL_NODETYPE_EXTENDDEF:{
 				struct oval_definition *oval_definition = oval_criteria_node_get_definition(oval_node);
 				struct oval_result_definition *rslt_definition
-				    = oval_result_system_get_new_definition(sys, oval_definition);
+				    = oval_result_system_get_new_definition(sys, oval_definition, variable_instance);
 				rslt_node = oval_result_criteria_node_new(sys,
 									  type,
 									  negate,
@@ -534,7 +535,7 @@ int oval_result_criteria_node_parse(xmlTextReaderPtr reader,
 		struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
 		struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
 		struct oval_test *oval_test = oval_definition_model_get_new_test(definition_model, (char *)test_ref);
-		struct oval_result_test *rslt_test = oval_result_system_get_new_test(sys, oval_test);
+		struct oval_result_test *rslt_test = oval_result_system_get_new_test(sys, oval_test, variable_instance);
 
 		node = oval_result_criteria_node_new(sys,
 						     OVAL_NODETYPE_CRITERION,
@@ -551,7 +552,7 @@ int oval_result_criteria_node_parse(xmlTextReaderPtr reader,
 		struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
 		struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
 		struct oval_definition *oval_definition = oval_definition_model_get_new_definition(definition_model, (char *)definition_ref);
-		struct oval_result_definition *rslt_definition = oval_result_system_get_new_definition(sys, oval_definition);
+		struct oval_result_definition *rslt_definition = oval_result_system_get_new_definition(sys, oval_definition, variable_instance);
 		node = oval_result_criteria_node_new(sys,
 						     OVAL_NODETYPE_EXTENDDEF,
 						     negate,

@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009-2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -26,6 +26,7 @@
  * Authors:
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
  *      "Peter Vrabec" <pvrabec@redhat.com>
+ *      Šimon Lukašík
  */
 
 #ifdef HAVE_CONFIG_H
@@ -251,9 +252,11 @@ struct oval_result_test *oval_result_test_clone
 	return new_test;
 }
 
-struct oval_result_test *make_result_test_from_oval_test(struct oval_result_system *sys, struct oval_test *oval_test) {
+struct oval_result_test *make_result_test_from_oval_test(struct oval_result_system *sys, struct oval_test *oval_test, int variable_instance) {
 	char *test_id = oval_test_get_id(oval_test);
-	return oval_result_test_new(sys, test_id);
+	struct oval_result_test *test = oval_result_test_new(sys, test_id);
+	oval_result_test_set_instance(test, variable_instance);
+	return test;
 }
 
 void oval_result_test_free(struct oval_result_test *test)
@@ -1740,13 +1743,13 @@ int oval_result_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_conte
 
 	dmod = context->definition_model;
 	dtst = oval_definition_model_get_new_test(dmod, (char *) test_id);
-	test = oval_result_system_get_new_test(sys, dtst);
+	oval_result_t result = oval_result_parse(reader, "result", 0);
+	int variable_instance = oval_parser_int_attribute(reader, "variable_instance", 1);
+
+	test = oval_result_system_get_new_test(sys, dtst, variable_instance);
 	if (test == NULL)
 		return -1;
-
-	oval_result_t result = oval_result_parse(reader, "result", 0);
 	oval_result_test_set_result(test, result);
-	int variable_instance = oval_parser_int_attribute(reader, "variable_instance", 1);
 	oval_result_test_set_instance(test, variable_instance);
 
 	struct oval_test *ovaltst = oval_result_test_get_test(test);

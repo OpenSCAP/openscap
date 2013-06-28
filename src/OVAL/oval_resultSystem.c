@@ -232,25 +232,31 @@ struct oval_result_test *oval_result_system_get_test(struct oval_result_system *
 }
 
 struct oval_result_definition *oval_result_system_get_new_definition
-    (struct oval_result_system *sys, struct oval_definition *oval_definition) {
+    (struct oval_result_system *sys, struct oval_definition *oval_definition, int variable_instance) {
+	// This function is used from multiple different places which might not be sustainable.
+	// variable_instance=0 means that caller has no special preference for variable_instance
+	// 	and the very last definition shall be returned. Additionally, we should create
+	// 	new result_definition when the variable_instance_hint does not match.
+	// variable_instance!=0 means that we should find result_definition with given instance
 	struct oval_result_definition *rslt_definition = NULL;
 	if (oval_definition) {
 		char *id = oval_definition_get_id(oval_definition);
 		rslt_definition = oval_result_system_get_definition(sys, id);
 		if (rslt_definition == NULL) {
-			rslt_definition = make_result_definition_from_oval_definition(sys, oval_definition);
+			rslt_definition = make_result_definition_from_oval_definition(sys, oval_definition,
+				variable_instance ? variable_instance : 1);
 			oval_result_system_add_definition(sys, rslt_definition);
 		}
 	}
 	return rslt_definition;
 }
 
-struct oval_result_test *oval_result_system_get_new_test(struct oval_result_system *sys, struct oval_test *oval_test) {
+struct oval_result_test *oval_result_system_get_new_test(struct oval_result_system *sys, struct oval_test *oval_test, int variable_instance) {
 	char *id = oval_test_get_id(oval_test);
 	struct oval_result_test *rslt_testtest = oval_result_system_get_test(sys, id);
 	if (rslt_testtest == NULL) {
 		//test = oval_result_test_new(sys, id);
-		rslt_testtest = make_result_test_from_oval_test(sys, oval_test);
+		rslt_testtest = make_result_test_from_oval_test(sys, oval_test, variable_instance);
 		oval_result_system_add_test(sys, rslt_testtest);
 	}
 	return rslt_testtest;
@@ -372,7 +378,7 @@ int oval_result_system_eval(struct oval_result_system *sys)
 		struct oval_result_definition *rslt_definition;
 
 		definition = oval_definition_iterator_next(definitions_itr);
-		rslt_definition = oval_result_system_get_new_definition(sys, definition);
+		rslt_definition = oval_result_system_get_new_definition(sys, definition, 0);
 		oval_result_definition_eval(rslt_definition);
 	}
 
@@ -397,7 +403,7 @@ int oval_result_system_eval_definition(struct oval_result_system *sys, const cha
 
         rslt_definition = oval_result_system_get_definition(sys, id);
         if (rslt_definition == NULL) {
-        	rslt_definition = make_result_definition_from_oval_definition(sys, oval_definition);
+		rslt_definition = make_result_definition_from_oval_definition(sys, oval_definition, 1);
                 oval_result_system_add_definition(sys, rslt_definition);
         }
 
@@ -431,7 +437,7 @@ xmlNode *oval_result_system_to_dom(struct oval_result_system * sys,
 		class_dirs = oval_directives_model_get_classdir(directives_model, def_class);
 		directives = class_dirs ? class_dirs : def_dirs;
 
-		struct oval_result_definition *rslt_definition = oval_result_system_get_new_definition(sys, oval_definition);
+		struct oval_result_definition *rslt_definition = oval_result_system_get_new_definition(sys, oval_definition, 0);
 		if (rslt_definition) {
 			oval_result_t result = oval_result_definition_get_result(rslt_definition);			
 			if (oval_result_directives_get_reported(directives, result)) {

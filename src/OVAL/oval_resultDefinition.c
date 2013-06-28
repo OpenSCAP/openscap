@@ -25,6 +25,7 @@
  *
  * Authors:
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
+ *      Šimon Lukašík
  */
 
 #ifdef HAVE_CONFIG_H
@@ -113,12 +114,13 @@ void oval_result_definition_free(struct oval_result_definition *definition)
 }
 
 struct oval_result_definition *make_result_definition_from_oval_definition
-    (struct oval_result_system *sys, struct oval_definition *oval_definition) {
+    (struct oval_result_system *sys, struct oval_definition *oval_definition, int variable_instance) {
 	char *defid = oval_definition_get_id(oval_definition);
 	struct oval_result_definition *rslt_definition = oval_result_definition_new(sys, defid);
+	oval_result_definition_set_instance(rslt_definition, variable_instance);
 	struct oval_criteria_node *oval_criteria = oval_definition_get_criteria(oval_definition);
 	struct oval_result_criteria_node *rslt_criteria = 
-		make_result_criteria_node_from_oval_criteria_node(sys, oval_criteria);
+		make_result_criteria_node_from_oval_criteria_node(sys, oval_criteria, variable_instance);
 	if (rslt_criteria)
 		oval_result_definition_set_criteria(rslt_definition, rslt_criteria);
 	return rslt_definition;
@@ -249,7 +251,7 @@ int oval_result_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parser
 
 	dmod = context->definition_model;
 	ddef = oval_definition_model_get_new_definition(dmod, (char *) definition_id);
-	definition = oval_result_system_get_new_definition(sys, ddef);
+	definition = oval_result_system_get_new_definition(sys, ddef, instance);
 	if (definition == NULL)
 		return -1;
 
@@ -258,6 +260,9 @@ int oval_result_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parser
 		dW("Definition versions don't match: definition id: %s, ovaldef vsn: %d, resdef vsn: %d.\n", definition_id, defvsn, resvsn);
 	}
 	oval_definition_set_version(definition->definition, resvsn);
+	// The following _set_instance() might be overabundant, since it should be already set
+	// by oval_result_system_get_new_definition() Let's see if the assert agrees over time:
+	assert(oval_result_definition_get_instance(definition) == instance);
 	oval_result_definition_set_instance(definition, instance);
 	
 
