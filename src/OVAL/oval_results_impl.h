@@ -93,6 +93,8 @@ void oval_results_model_add_system(struct oval_results_model *, struct oval_resu
 struct oval_result_definition_iterator *oval_result_definition_iterator_new(struct oval_string_map *mapping);
 struct oval_result_test_iterator *oval_result_test_iterator_new(struct oval_string_map *mapping);
 
+const char *oval_result_test_get_id(const struct oval_result_test *test);
+
 OSCAP_HIDDEN_END;
 
 #endif				/* OVAL_RESULTS_IMPL_H_ */

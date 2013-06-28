@@ -334,8 +334,7 @@ void oval_result_system_add_test(struct oval_result_system *sys, struct oval_res
 {
 	__attribute__nonnull__(sys);
 	if (test) {
-		struct oval_test *ovaldef = oval_result_test_get_test(test);
-		char *id = oval_test_get_id(ovaldef);
+		const char *id = oval_result_test_get_id(test);
 
 		struct oval_collection *rtest_col = (struct oval_collection *) oval_string_map_get_value(sys->tests, id);
 		if (rtest_col == NULL) {
@@ -601,8 +600,7 @@ static void _oval_result_system_scan_criteria_for_references
 	oval_result_criteria_node_iterator_free(subnodes);
 	struct oval_result_test *result_test = oval_result_criteria_node_get_test(node);
 	if (result_test) {
-		struct oval_test *oval_test = oval_result_test_get_test(result_test);
-		char *testid = oval_test_get_id(oval_test);
+		const char *testid = oval_result_test_get_id(result_test);
 		void *value = oval_string_map_get_value(testmap, testid);
 		if (value == NULL) {
 			oval_string_map_put(testmap, testid, result_test);

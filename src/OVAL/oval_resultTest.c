@@ -219,9 +219,8 @@ struct oval_result_test *oval_result_test_clone
     (struct oval_result_system *new_system, struct oval_result_test *old_test) {
 	__attribute__nonnull__(old_test);
 
-	struct oval_test *oval_test = oval_result_test_get_test(old_test);
-	char *testid = oval_test_get_id(oval_test);
-	struct oval_result_test *new_test = oval_result_test_new(new_system, testid);
+	const char *testid = oval_result_test_get_id(old_test);
+	struct oval_result_test *new_test = oval_result_test_new(new_system, (char *) testid);
 	struct oval_result_item_iterator *old_items = oval_result_test_get_items(old_test);
 	while (oval_result_item_iterator_has_more(old_items)) {
 		struct oval_result_item *old_item = oval_result_item_iterator_next(old_items);
@@ -1588,7 +1587,7 @@ oval_result_t oval_result_test_eval(struct oval_result_test *rtest)
 			rtest->result = OVAL_RESULT_UNKNOWN;
 	}
 
-        dI("\t%s => %s\n", oval_test_get_id(oval_result_test_get_test(rtest)), oval_result_get_text(rtest->result));
+        dI("\t%s => %s\n", oval_result_test_get_id(rtest), oval_result_get_text(rtest->result));
 
 	return rtest->result;
 }
@@ -1835,4 +1834,11 @@ xmlNode *oval_result_test_to_dom(struct oval_result_test *rslt_test, xmlDocPtr d
 	}
 
 	return test_node;
+}
+
+const char *oval_result_test_get_id(const struct oval_result_test *rslt_test)
+{
+	__attribute__nonnull__(rslt_test);
+	struct oval_test *test = oval_result_test_get_test((struct oval_result_test *) rslt_test);
+	return (test == NULL) ? NULL : oval_test_get_id(test);
 }
