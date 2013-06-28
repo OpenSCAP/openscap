@@ -281,30 +281,6 @@ void oval_result_test_free(struct oval_result_test *test)
 	oscap_free(test);
 }
 
-bool oval_result_test_iterator_has_more(struct oval_result_test_iterator
-					*oc_result_test)
-{
-	return oval_collection_iterator_has_more((struct oval_iterator *)
-						 oc_result_test);
-}
-
-struct oval_result_test *oval_result_test_iterator_next(struct
-							oval_result_test_iterator
-							*oc_result_test)
-{
-	return (struct oval_result_test *)
-	    oval_collection_iterator_next((struct oval_iterator *)
-					  oc_result_test);
-}
-
-void oval_result_test_iterator_free(struct
-				    oval_result_test_iterator
-				    *oc_result_test)
-{
-	oval_collection_iterator_free((struct oval_iterator *)
-				      oc_result_test);
-}
-
 struct oval_result_system *oval_result_test_get_system(struct oval_result_test *rtest)
 {
 	__attribute__nonnull__(rtest);
