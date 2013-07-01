@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -36,6 +36,7 @@
 #include <stddef.h>
 
 #include "public/oval_agent_api.h"
+#include "oval_agent_api_impl.h"
 #include "oval_parser_impl.h"
 #include "oval_definitions_impl.h"
 #include "common/util.h"
