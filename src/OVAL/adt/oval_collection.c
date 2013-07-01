@@ -34,8 +34,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "public/oval_adt.h"
-#include "adt/oval_collection_impl.h"
+#include "oval_adt.h"
+#include "oval_collection_impl.h"
 #include "common/util.h"
 #include "common/debug_priv.h"
 
@@ -252,5 +252,3 @@ void oval_string_iterator_free(struct oval_string_iterator *iterator)
 {
 	oval_collection_iterator_free((struct oval_iterator *)iterator);
 }
-
-

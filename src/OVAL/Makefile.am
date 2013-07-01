@@ -25,7 +25,6 @@ common_oval_sources = \
 	oval_affected.c \
 	oval_agent_api_impl.h \
 	oval_behavior.c \
-	oval_collection.c \
 	adt/oval_collection_impl.h \
 	oval_component.c \
 	oval_criteriaNode.c \
@@ -148,8 +147,10 @@ oval_testing_ext_probe.c: Makefile
 	(echo '#define OVAL_PROBEDIR_ENV 1'; \
 	 echo '#include <oval_probe_ext.c>' ) >$@
 
-SUBDIRS = probes/SEAP
-liboval_la_LIBADD  += probes/SEAP/libseap.la
+SUBDIRS = probes/SEAP adt
+liboval_la_LIBADD  += \
+	adt/libovaladt.la \
+	probes/SEAP/libseap.la
 
 
 CLEANFILES = $(nodist_liboval_testing_la_SOURCES)
