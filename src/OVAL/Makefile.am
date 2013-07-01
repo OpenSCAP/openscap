@@ -125,7 +125,9 @@ liboval_la_LIBADD =	@xml2_LIBS@ \
 			@pcre_LIBS@
 liboval_testing_la_LIBADD = $(liboval_la_LIBADD)
 
-pkginclude_HEADERS  =	public/oval_agent_api.h \
+pkginclude_HEADERS  = \
+			public/oval_adt.h \
+			public/oval_agent_api.h \
 			public/oval_definitions.h \
 			public/oval_system_characteristics.h \
 			public/oval_results.h \

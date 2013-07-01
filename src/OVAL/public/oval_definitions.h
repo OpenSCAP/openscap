@@ -14,7 +14,7 @@
  */
 
 /*
- * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009-2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -39,6 +39,7 @@
 #ifndef OVAL_DEFINITIONS
 #define OVAL_DEFINITIONS
 
+#include "oval_adt.h"
 #include "oval_types.h"
 #include "oval_version.h"
 #include <stdbool.h>
@@ -567,16 +568,6 @@ struct oval_component;
  * @see oval_component_get_function_components
  */
 struct oval_component_iterator;
-/**
- * @struct oval_string_iterator
- * @see oval_definition_get_notes
- * @see oval_test_get_notes
- * @see oval_object_get_notes
- * @see oval_state_get_notes
- * @see oval_affected_get_platforms
- * @see oval_affected_get_products
- */
-struct oval_string_iterator;
 
 /**
  * @struct oval_generator
@@ -3146,32 +3137,6 @@ int oval_component_iterator_remaining(struct oval_component_iterator *);
  * @name Evaluators
  * @{
  */
-/** @} */
-
-/**
- * @name Iterators
- * @{
- */
-/**
- * Returns <b>true</b> if the iterator is not exhausted.
- * @memberof oval_string_iterator
- */
-bool oval_string_iterator_has_more(struct oval_string_iterator *);
-/**
- * Returns the next instance of char *.
- * @memberof oval_string_iterator
- */
-char *oval_string_iterator_next(struct oval_string_iterator *);
-/**
- * Return number for remaining char * elements
- * @memberof oval_string_iterator
- */
-int oval_string_iterator_remaining(struct oval_string_iterator *);
-/**
- * Frees the iterator.
- * @memberof oval_string_iterator
- */
-void oval_string_iterator_free(struct oval_string_iterator *);
 /** @} */
 
 /**
