@@ -30,7 +30,7 @@
 #ifndef OVAL_STRING_MAP_IMPL_H_
 #define OVAL_STRING_MAP_IMPL_H_
 
-#include "adt/oval_collection_impl.h"
+#include "oval_collection_impl.h"
 #include "../common/util.h"
 
 OSCAP_HIDDEN_START;
