@@ -36,7 +36,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "adt/oval_string_map_impl.h"
+#include "oval_string_map_impl.h"
 #include "common/util.h"
 #include "common/debug_priv.h"
 
@@ -53,8 +53,8 @@ typedef struct oval_string_map {
 	struct _oval_string_map_entry *entries;
 } oval_string_map_t;
 
-/* failed   - NULL 
- * success  - oval_definition_model 
+/* failed   - NULL
+ * success  - oval_definition_model
  * */
 struct oval_string_map *oval_string_map_new()
 {
