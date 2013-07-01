@@ -207,11 +207,16 @@ int oval_agent_reset_session(oval_agent_session_t * ag_sess) {
 	ag_sess->cur_var_model = NULL;
 	oval_definition_model_clear_external_variables(ag_sess->def_model);
 
-	/* Reset syschar model */
-	oval_syschar_model_reset(ag_sess->sys_model);
-
 	/* We intentionally do not flush out the results model which should
 	 * be able to encompass results from multiple evaluations */
+
+	/* Here we temporarily do not flush out the system characteristics model
+	 * because there might be tests in the results model which refer to this
+	 * sys char (via @tested_item attribute). Later we will need a mechanism
+	 * to selectivelly invalidate some of the system characteristics cached
+	 * objects (similar to the concept of variable_instance_hint from the
+	 * results model. Hooray corner cases! */
+	//oval_syschar_model_reset(ag_sess->sys_model);
 
 	/* Apply product name to new results_model */
 	if (ag_sess->product_name) {
