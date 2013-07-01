@@ -37,6 +37,7 @@
 #include <stdarg.h>
 #include <string.h>
 
+#include "oval_agent_api_impl.h"
 #include "oval_results_impl.h"
 #include "oval_collection_impl.h"
 #include "common/util.h"

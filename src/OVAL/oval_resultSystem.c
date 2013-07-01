@@ -39,6 +39,7 @@
 
 #include "oval_definitions.h"
 #include "oval_agent_api.h"
+#include "oval_agent_api_impl.h"
 #include "oval_results_impl.h"
 #include "oval_collection_impl.h"
 #include "oval_string_map_impl.h"
