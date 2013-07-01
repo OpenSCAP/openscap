@@ -26,7 +26,7 @@ common_oval_sources = \
 	oval_agent_api_impl.h \
 	oval_behavior.c \
 	oval_collection.c \
-	oval_collection_impl.h \
+	adt/oval_collection_impl.h \
 	oval_component.c \
 	oval_criteriaNode.c \
 	oval_definition.c \
@@ -108,6 +108,7 @@ AM_CPPFLAGS =	@xml2_CFLAGS@ \
 		-I$(top_srcdir)/src \
 		-I$(top_srcdir)/src/common \
 		-I$(top_srcdir)/src/common/public \
+		-I$(srcdir)/adt \
 		-I$(srcdir)/probes \
 		-I$(srcdir)/probes/public \
 		-I$(srcdir)/probes/SEAP/public \

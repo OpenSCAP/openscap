@@ -7,7 +7,7 @@
  */
 
 /*
- * Copyright 2011 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2011--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -38,7 +38,7 @@
 #include <string.h>
 
 #include "oval_directives_impl.h"
-#include "oval_collection_impl.h"
+#include "adt/oval_collection_impl.h"
 #include "oval_parser_impl.h"
 
 #include "common/assume.h"

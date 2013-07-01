@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -35,7 +35,7 @@
 #include <stdio.h>
 
 #include "public/oval_adt.h"
-#include "oval_collection_impl.h"
+#include "adt/oval_collection_impl.h"
 #include "common/util.h"
 #include "common/debug_priv.h"
 

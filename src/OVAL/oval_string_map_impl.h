@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -30,7 +30,7 @@
 #ifndef OVAL_STRING_MAP_IMPL_H_
 #define OVAL_STRING_MAP_IMPL_H_
 
-#include "oval_collection_impl.h"
+#include "adt/oval_collection_impl.h"
 #include "../common/util.h"
 
 OSCAP_HIDDEN_START;
