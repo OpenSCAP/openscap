@@ -2,7 +2,8 @@ noinst_LTLIBRARIES = libovaladt.la
 
 libovaladt_la_SOURCES = \
 	oval_collection.c \
-	oval_collection_impl.h
+	oval_collection_impl.h \
+	oval_string_map_impl.h
 
 libovaladt_la_CPPFLAGS  = \
 	@xml2_CFLAGS@ \

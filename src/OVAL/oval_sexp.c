@@ -9,7 +9,7 @@
  * @{
  */
 /*
- * Copyright 2009-2011 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -47,7 +47,7 @@
 #include "probes/public/probe-api.h"
 #include "oval_definitions_impl.h"
 #include "oval_system_characteristics_impl.h"
-#include "oval_string_map_impl.h"
+#include "adt/oval_string_map_impl.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "public/oval_version.h"

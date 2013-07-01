@@ -26,7 +26,7 @@
 
 #include "collectVarRefs_impl.h"
 #include "oval_definitions_impl.h"
-#include "oval_string_map_impl.h"
+#include "adt/oval_string_map_impl.h"
 
 static void _var_collect_var_refs(struct oval_variable *var, struct oval_string_map *vm);
 

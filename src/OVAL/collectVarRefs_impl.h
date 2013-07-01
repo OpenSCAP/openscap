@@ -25,7 +25,7 @@
 
 #include "public/oval_definitions.h"
 #include "oval_definitions_impl.h"
-#include "oval_string_map_impl.h"
+#include "adt/oval_string_map_impl.h"
 
 OSCAP_HIDDEN_START;
 

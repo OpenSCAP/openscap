@@ -37,7 +37,7 @@
 
 #include "oval_definitions_impl.h"
 #include "adt/oval_collection_impl.h"
-#include "oval_string_map_impl.h"
+#include "adt/oval_string_map_impl.h"
 
 #include "common/util.h"
 #include "common/debug_priv.h"

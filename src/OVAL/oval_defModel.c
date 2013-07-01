@@ -38,7 +38,7 @@
 #include "oval_definitions_impl.h"
 #include "oval_agent_api_impl.h"
 #include "oval_parser_impl.h"
-#include "oval_string_map_impl.h"
+#include "adt/oval_string_map_impl.h"
 #include "oval_system_characteristics_impl.h"
 #include "oval_probe_impl.h"
 #include "oval_results_impl.h"

@@ -42,7 +42,7 @@
 #include "common/alloc.h"
 #include "public/oval_results.h"
 #include "oval_results_impl.h"
-#include "oval_string_map_impl.h"
+#include "adt/oval_string_map_impl.h"
 
 struct oval_result_definition_iterator {
 	struct oval_collection *master_col;		///< list of lists

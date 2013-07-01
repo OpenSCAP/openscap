@@ -56,7 +56,6 @@ common_oval_sources = \
 	oval_state.c \
 	oval_stateContent.c \
 	oval_stringMap.c \
-	oval_string_map_impl.h \
 	oval_sysEnt.c \
 	oval_sysInfo.c \
 	oval_sysInterface.c \

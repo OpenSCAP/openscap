@@ -36,7 +36,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "oval_string_map_impl.h"
+#include "adt/oval_string_map_impl.h"
 #include "common/util.h"
 #include "common/debug_priv.h"
 
