@@ -360,6 +360,7 @@ test_run "eval_xccdf_id1" test_eval_id eval_xccdf_id/sds.xml scap_org.open-scap_
 test_run "eval_xccdf_id2" test_eval_id eval_xccdf_id/sds.xml scap_org.open-scap_datastream_tst scap_org.open-scap_cref_second-xccdf.xml second
 test_run "eval_benchmark_id1" test_eval_benchmark_id eval_xccdf_id/sds.xml xccdf_moc.elpmaxe.www_benchmark_first first
 test_run "eval_benchmark_id2" test_eval_benchmark_id eval_xccdf_id/sds.xml xccdf_moc.elpmaxe.www_benchmark_second second
+test_run "eval_benchmark_id_conflict" test_eval_benchmark_id eval_benchmark_id_conflict/sds.xml xccdf_moc.elpmaxe.www_benchmark_first first
 test_run "eval_just_oval" test_oval_eval eval_just_oval/sds.xml
 test_run "eval_oval_id1" test_oval_eval_id eval_oval_id/sds.xml scap_org.open-scap_datastream_just_oval scap_org.open-scap_cref_scap-oval1.xml "oval:x:def:1"
 test_run "eval_oval_id2" test_oval_eval_id eval_oval_id/sds.xml scap_org.open-scap_datastream_just_oval scap_org.open-scap_cref_scap-oval2.xml "oval:x:def:2"

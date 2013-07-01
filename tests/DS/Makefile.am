@@ -17,6 +17,7 @@ EXTRA_DIST += test_ds.sh \
 		eval_just_oval/sds.xml \
 		eval_xccdf_id/sds.xml \
 		eval_xccdf_id/sds-complex.xml \
+		eval_benchmark_id_conflict/sds.xml \
 		eval_oval_id/sds.xml \
 		eval_cpe/sds.xml \
 		rds_simple/results-oval.xml \
