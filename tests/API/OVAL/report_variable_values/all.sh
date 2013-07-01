@@ -10,8 +10,9 @@
 set -e -o pipefail
 
 assert_exists() {
-	if [ "$($XPATH $result 'count('"$2"')' 2>/dev/null )" != "$1" ]; then
-		echo "Failed: count: $1, xpath: '$2'"
+	real_cnt="$($XPATH $result 'count('"$2"')' 2>/dev/null )"
+	if [ "$real_cnt" != "$1" ]; then
+		echo "Failed: expected count: $1, real count: $real_cnt, xpath: '$2'"
 		return 1
 	fi
 }
