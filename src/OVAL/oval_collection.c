@@ -34,7 +34,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "oval_definitions_impl.h"
+#include "public/oval_adt.h"
 #include "oval_collection_impl.h"
 #include "common/util.h"
 #include "common/debug_priv.h"
