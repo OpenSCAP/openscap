@@ -1,4 +1,4 @@
-DISTCLEANFILES =
+DISTCLEANFILES = *.log
 CLEANFILES =
 TESTS_ENVIRONMENT = \
 	builddir=$(top_builddir) \
