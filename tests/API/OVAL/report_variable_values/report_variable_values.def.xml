@@ -32,6 +32,7 @@
                 <criterion test_ref="oval:x:tst:5"/>
                 <criterion test_ref="oval:x:tst:6"/>
                 <criterion test_ref="oval:x:tst:8"/>
+                <criterion test_ref="oval:x:tst:9"/>
             </criteria>
         </definition>
     </definitions>
@@ -72,6 +73,10 @@
         <ind-def:textfilecontent54_test id="oval:x:tst:8" check="all" version="1"
             comment="a variable_object">
             <ind-def:object object_ref="oval:x:obj:8"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test id="oval:x:tst:9" check="all" version="1"
+            comment="an object with a filter">
+            <ind-def:object object_ref="oval:x:obj:9"/>
         </ind-def:textfilecontent54_test>
     </tests>
 
@@ -120,6 +125,12 @@
         <ind-def:variable_object id="oval:x:obj:8" version="1" comment="x">
 	    <ind-def:var_ref>oval:x:var:2</ind-def:var_ref>
         </ind-def:variable_object>
+        <ind-def:textfilecontent54_object id="oval:x:obj:9" version="1" comment="x">
+            <ind-def:filepath datatype="string" operation="equals">/etc/passwd</ind-def:filepath>
+            <ind-def:pattern datatype="string" operation="pattern match">^.*$</ind-def:pattern>
+            <ind-def:instance datatype="int" operation="less than or equal">3</ind-def:instance>
+            <filter action="exclude">oval:x:ste:2</filter>
+        </ind-def:textfilecontent54_object>
     </objects>
 
     <states>
