@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2011--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -24,6 +24,7 @@
 # include <config.h>
 #endif
 
+#include "oval_definitions_impl.h"
 #include "oval_agent_api_impl.h"
 #include "oval_system_characteristics_impl.h"
 #include "oval_collection_impl.h"
