@@ -39,7 +39,7 @@ function report_variable_values() {
 	assert_exists 1 '/oval_results/results/system/definitions'
 	assert_exists 1 '/oval_results/results/system/definitions/definition[@result="true"]'
 	assert_exists 1 '/oval_results/results/system/tests'
-	assert_exists 6 '/oval_results/results/system/tests/test'
+	assert_exists 7 '/oval_results/results/system/tests/test'
 
 	assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:x:tst:1" and @result="true"]'
 	assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:x:tst:1"]/tested_item'
@@ -88,9 +88,14 @@ function report_variable_values() {
 
 	assert_exists 0 '/oval_results/results/system/tests/test[@test_id="oval:x:tst:7"]'
 
+	assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:x:tst:8" and @result="true"]'
+	assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:x:tst:8"]/tested_item'
+	assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:x:tst:8"]/tested_variable'
+	assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:x:tst:8"]/tested_variable[@variable_id="oval:x:var:2" and text()="2"]'
+
 	assert_exists 1 '/oval_results/results/system/oval_system_characteristics'
 	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/collected_objects'
-	assert_exists 5 '/oval_results/results/system/oval_system_characteristics/collected_objects/object'
+	assert_exists 6 '/oval_results/results/system/oval_system_characteristics/collected_objects/object'
 	CO='/oval_results/results/system/oval_system_characteristics/collected_objects'
 
 	assert_exists 1 "$CO"'/object[@id="oval:x:obj:1" and @flag="complete"]'
@@ -129,6 +134,12 @@ function report_variable_values() {
 	assert_exists 1 "$CO"'/object[@id="oval:x:obj:6"]/variable_value[@variable_id="oval:x:var:5" and text()="5"]'
 
 	assert_exists 0 "$CO"'/object[@id="oval:x:obj:7"]'
+
+	assert_exists 1 "$CO"'/object[@id="oval:x:obj:8" and @flag="complete"]'
+	assert_exists 1 "$CO"'/object[@id="oval:x:obj:8"]/reference[@item_ref]'
+	assert_exists 1 "$CO"'/object[@id="oval:x:obj:8"]/variable_value'
+	assert_exists 1 "$CO"'/object[@id="oval:x:obj:8"]/variable_value[@variable_id="oval:x:var:2" and text()="2"]'
+
 	rm $resxml
 	rm $stderr
 }

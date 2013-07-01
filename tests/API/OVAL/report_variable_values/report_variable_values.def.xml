@@ -31,6 +31,7 @@
                 <criterion test_ref="oval:x:tst:4"/>
                 <criterion test_ref="oval:x:tst:5"/>
                 <criterion test_ref="oval:x:tst:6"/>
+                <criterion test_ref="oval:x:tst:8"/>
             </criteria>
         </definition>
     </definitions>
@@ -67,6 +68,10 @@
         <ind-def:textfilecontent54_test id="oval:x:tst:7" check="all" version="1"
             comment="unreferenced test; verify no variables are exported for it">
             <ind-def:object object_ref="oval:x:obj:7"/>
+        </ind-def:textfilecontent54_test>
+        <ind-def:textfilecontent54_test id="oval:x:tst:8" check="all" version="1"
+            comment="a variable_object">
+            <ind-def:object object_ref="oval:x:obj:8"/>
         </ind-def:textfilecontent54_test>
     </tests>
 
@@ -112,6 +117,9 @@
             <ind-def:pattern datatype="string" operation="pattern match">^.*$</ind-def:pattern>
             <ind-def:instance datatype="int" operation="equals" var_ref="oval:x:var:7"/>
         </ind-def:textfilecontent54_object>
+        <ind-def:variable_object id="oval:x:obj:8" version="1" comment="x">
+	    <ind-def:var_ref>oval:x:var:2</ind-def:var_ref>
+        </ind-def:variable_object>
     </objects>
 
     <states>
