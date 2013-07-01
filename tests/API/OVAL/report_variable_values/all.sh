@@ -128,6 +128,8 @@ function report_variable_values() {
 	assert_exists 1 "$CO"'/object[@id="oval:x:obj:6"]/variable_value[@variable_id="oval:x:var:5" and text()="5"]'
 
 	assert_exists 0 "$CO"'/object[@id="oval:x:obj:7"]'
+	rm $resxml
+	rm $stderr
 }
 
 test_init report_variable_values.log
