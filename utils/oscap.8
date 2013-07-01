@@ -120,6 +120,11 @@ Uses a datastream with that particular ID from the given datastream collection. 
 Takes component ref with given ID from checklists. This allows to select a particular XCCDF component even in cases where there are 2 XCCDFs in one datastream.
 .RE
 .TP
+\fB\-\-benchmark-id ID\fR
+.RS
+Selects a component ref from any datastream that references a component with XCCDF Benchmark such that its @id attribute matches given string exactly. Please note that this is not the recommended way of selecting a component-ref. You are advised to use --xccdf-id AND/OR --datastream-id for more precision. --benchmark-id is only used when both --xccdf-id and --datastream-id are not present on the command line!
+.RE
+.TP
 \fB\-\-skip-valid\fR
 .RS
 Do not validate input/output files.
