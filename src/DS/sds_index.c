@@ -43,6 +43,8 @@ struct ds_stream_index
 	struct oscap_stringlist* checklist_components;
 	struct oscap_stringlist* dictionary_components;
 	struct oscap_stringlist* extended_components;
+
+	struct oscap_htable *component_id_to_component_ref_id;
 };
 
 struct ds_stream_index* ds_stream_index_new(void)
@@ -58,6 +60,8 @@ struct ds_stream_index* ds_stream_index_new(void)
 	ret->dictionary_components = oscap_stringlist_new();
 	ret->extended_components = oscap_stringlist_new();
 
+	ret->component_id_to_component_ref_id = oscap_htable_new();
+
 	return ret;
 }
 
@@ -71,6 +75,8 @@ void ds_stream_index_free(struct ds_stream_index* s)
 	oscap_stringlist_free(s->checklist_components);
 	oscap_stringlist_free(s->dictionary_components);
 	oscap_stringlist_free(s->extended_components);
+
+	oscap_htable_free(s->component_id_to_component_ref_id, (oscap_destruct_func)oscap_free);
 
 	oscap_free(s);
 }
@@ -175,9 +181,26 @@ static struct ds_stream_index* ds_stream_index_parse(xmlTextReaderPtr reader)
 				             "Please make sure the datastream is valid!");
 			}
 			else {
-				xmlChar* id_attr = xmlTextReaderGetAttribute(reader, BAD_CAST "id");
+				xmlChar *id_attr = xmlTextReaderGetAttribute(reader, BAD_CAST "id");
+				xmlChar *href_attr = xmlTextReaderGetAttributeNs(reader, BAD_CAST "href", BAD_CAST "http://www.w3.org/1999/xlink");
+
+				// this copies the id_attr string
 				oscap_stringlist_add_string(cref_target, (const char*)id_attr);
-				xmlFree(id_attr);
+
+				// because of the leading '#' in the href preceding the component id
+				const char *component_id = (const char*)(href_attr && href_attr[0] ? (href_attr + 1 * sizeof(char)) : NULL);
+				if (!component_id || !oscap_htable_add(ret->component_id_to_component_ref_id, component_id, (char*)id_attr)) {
+					if (component_id) {
+						oscap_seterr(OSCAP_EFAMILY_XML,
+				             "There is already a mapping from component id '%s' to component-ref id '%s'. "
+							 "Having multiple mappings is legal in a datastream but it may prove problematic "
+							 "when selecting component-refs using XCCDF Benchmark IDs.");
+					}
+
+					xmlFree(id_attr);
+				}
+
+				xmlFree(href_attr);
 			}
 		}
 	}
@@ -187,13 +210,17 @@ static struct ds_stream_index* ds_stream_index_parse(xmlTextReaderPtr reader)
 
 struct ds_sds_index
 {
-	struct oscap_list* streams;
+	struct oscap_list *streams;
+
+	struct oscap_htable *benchmark_id_to_component_id;
 };
 
 struct ds_sds_index* ds_sds_index_new(void)
 {
 	struct ds_sds_index* ret = oscap_alloc(sizeof(struct ds_sds_index));
 	ret->streams = oscap_list_new();
+
+	ret->benchmark_id_to_component_id = oscap_htable_new();
 
 	return ret;
 }
@@ -202,6 +229,9 @@ void ds_sds_index_free(struct ds_sds_index* s)
 {
 	if (s != NULL) {
 		oscap_list_free(s->streams, (oscap_destruct_func)ds_stream_index_free);
+
+		oscap_htable_free(s->benchmark_id_to_component_id, (oscap_destruct_func)oscap_free);
+
 		oscap_free(s);
 	}
 }
@@ -236,6 +266,50 @@ struct ds_stream_index_iterator* ds_sds_index_get_streams(struct ds_sds_index* s
 	return (struct ds_stream_index_iterator*)oscap_iterator_new(s->streams);
 }
 
+static char *ds_sds_component_dig_benchmark_id(xmlTextReaderPtr reader)
+{
+	// sanity check
+	if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT ||
+	    strcmp((const char*)xmlTextReaderConstLocalName(reader), "component") != 0)
+	{
+		oscap_seterr(OSCAP_EFAMILY_XML,
+		             "Expected to have xmlTextReader at start of <ds:component>, "
+		             "the current event is '%i' at '%s' instead. I refuse to parse!",
+		             xmlTextReaderNodeType(reader), (const char*)xmlTextReaderConstLocalName(reader));
+
+		return NULL;
+	}
+
+	char *ret = NULL;
+	while (xmlTextReaderRead(reader) == 1)
+	{
+		int node_type = xmlTextReaderNodeType(reader);
+		const char* local_name = (const char*)xmlTextReaderConstLocalName(reader);
+
+		if (node_type == XML_READER_TYPE_END_ELEMENT &&
+		    strcmp(local_name, "component") == 0) {
+			// we are done reading
+			break;
+		}
+		else if (node_type == XML_READER_TYPE_ELEMENT &&
+				 strcmp(local_name, "Benchmark") == 0) {
+			if (ret) {
+				oscap_seterr(OSCAP_EFAMILY_XML,
+		             "Found 2 Benchmark elements inside a single sds:component element! "
+					 "Please make sure your datastream is valid. Skipping the second Benchmark.");
+			}
+			else {
+				ret = (char*)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
+			}
+		}
+		else {
+			// ignore
+		}
+	}
+
+	return ret;
+}
+
 static struct ds_sds_index* ds_sds_index_parse(xmlTextReaderPtr reader)
 {
 	if (!oscap_to_start_element(reader, 0)) {
@@ -268,23 +342,55 @@ static struct ds_sds_index* ds_sds_index_parse(xmlTextReaderPtr reader)
 	while (oscap_to_start_element(reader, 1))
 	{
 		const char* name = (const char *)xmlTextReaderConstLocalName(reader);
-		if (strcmp(name, "component") == 0)
+		/*if (strcmp(name, "component") == 0)
 		{
 			// XSD of source datastream dictates that no ds:data-stream elements
 			// follow after ds:component element. We can safely stop reading here.
 			break;
-		}
+		}*/
 
-		if (strcmp(name, "data-stream") == 0)
-		{
+		if (strcmp(name, "data-stream") == 0) {
 			struct ds_stream_index* s = ds_stream_index_parse(reader);
 			// NULL means error happened, the ds_stream_index_parse already set the error
 			// in that case
 			if (s != NULL)
 				ds_sds_index_add_stream(ret, s);
 		}
-		else
-		{
+		else if (strcmp(name, "component") == 0) {
+			char *component_id = (char*)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
+			char *benchmark_id = ds_sds_component_dig_benchmark_id(reader);
+
+			if (benchmark_id == NULL) {
+				oscap_free(component_id);
+			}
+			else {
+				if (!oscap_htable_add(ret->benchmark_id_to_component_id, benchmark_id, component_id)) {
+					// This benchmark ID was already in the map, therefore there must be 2 components
+					// with Benchmarks in them that have the same IDs. In this case, all bets are off
+					// when it comes to selecting a component-ref using Benchmark ID.
+					//
+					// To establish a well defined behavior, we don't "overwrite" it with the newly
+					// found benchmark but instead use the first benchmark with such ID there.
+
+					// TODO: Warning?
+					/*oscap_seterr(OSCAP_EFAMILY_XML, "There are at least two components containing "
+						"an XCCDF Benchmark with exactly the same ID ('%s'). Selecting a component-ref "
+						"using Benchmark ID will use the first component encountered and ignore "
+						"the subsequent ones with the same ID.", benchmark_id);*/
+
+					oscap_free(component_id);
+				}
+
+				oscap_free(benchmark_id);
+			}
+
+			// we are going to free the component_id string later (in ds_sds_index_free)
+		}
+		else if (strcmp(name, "extended-component") == 0) {
+			// ignore, extended-component can't be an XCCDF, therefore we are sure
+			// not to be able to dig any Benchmark @id from it
+		}
+		else {
 			oscap_seterr(OSCAP_EFAMILY_XML, "Unknown element '%s' encountered while parsing Source DataStream to ds_sds_index, skipping...", name);
 		}
 
@@ -350,6 +456,39 @@ int ds_sds_index_select_checklist(struct ds_sds_index* s,
 				}
 			}
 			oscap_string_iterator_free(checklists_it);
+		}
+	}
+	ds_stream_index_iterator_free(streams_it);
+
+	return ret;
+}
+
+int ds_sds_index_select_checklist_by_benchmark_id(struct ds_sds_index* s,
+		const char *benchmark_id, const char **datastream_id, const char **component_ref_id)
+{
+	const char *mapped_component_id = (const char*)oscap_htable_get(s->benchmark_id_to_component_id, benchmark_id);
+	if (!mapped_component_id) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "Can't map benchmark ID '%s' to any component ID.", benchmark_id);
+		return 1;
+	}
+
+	int ret = 1;
+
+	struct ds_stream_index_iterator* streams_it = ds_sds_index_get_streams(s);
+	while (ds_stream_index_iterator_has_more(streams_it))
+	{
+		struct ds_stream_index *stream_idx = ds_stream_index_iterator_next(streams_it);
+		const char *stream_id = ds_stream_index_get_id(stream_idx);
+
+		if (!*datastream_id || strcmp(stream_id, *datastream_id) == 0)
+		{
+			const char *candidate_component_ref_id = (const char*)oscap_htable_get(stream_idx->component_id_to_component_ref_id, mapped_component_id);
+			if (candidate_component_ref_id) {
+				*datastream_id = stream_id;
+				*component_ref_id = candidate_component_ref_id;
+				ret = 0;
+				break;
+			}
 		}
 	}
 	ds_stream_index_iterator_free(streams_it);
