@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright 2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2010--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -37,6 +37,7 @@
 
 #include "common/util.h"
 #include "common/debug_priv.h"
+#include "oval_agent_api_impl.h"
 #include "oval_definitions_impl.h"
 
 struct oval_generator {
