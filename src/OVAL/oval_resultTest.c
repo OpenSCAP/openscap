@@ -1514,7 +1514,48 @@ static void _oval_result_test_initialize_bindings(struct oval_result_test *rslt_
 	__attribute__nonnull__(rslt_test);
 
 	struct oval_test *oval_test = oval_result_test_get_test(rslt_test);
+	struct oval_string_map *vm;
+	struct oval_state_iterator *ste_itr;
+	struct oval_iterator *var_itr;
 
+	vm = oval_string_map_new();
+
+	/* Gather bindings pertaining to the referenced states */
+	/* TODO: cache bindings collected for each state */
+	ste_itr = oval_test_get_states(oval_test);
+	while (oval_state_iterator_has_more(ste_itr)) {
+		struct oval_state *ste;
+
+		ste = oval_state_iterator_next(ste_itr);
+		oval_ste_collect_var_refs(ste, vm);
+	}
+	oval_state_iterator_free(ste_itr);
+
+	var_itr = oval_string_map_values(vm);
+	while (oval_collection_iterator_has_more(var_itr)) {
+		struct oval_variable *var;
+		struct oval_value_iterator *val_itr;
+		struct oval_variable_binding *binding;
+
+		var = oval_collection_iterator_next(var_itr);
+		binding = oval_variable_binding_new(var, NULL);
+
+		val_itr = oval_variable_get_values(var);
+		while (oval_value_iterator_has_more(val_itr)) {
+			struct oval_value *val;
+			char *txt;
+
+			val = oval_value_iterator_next(val_itr);
+			txt = oval_value_get_text(val);
+			txt = oscap_strdup(txt);
+			oval_variable_binding_add_value(binding, txt);
+		}
+		oval_value_iterator_free(val_itr);
+		oval_result_test_add_binding(rslt_test, binding);
+	}
+	oval_collection_iterator_free(var_itr);
+
+	/* Gather bindings pertaining to the collected object */
 	struct oval_object *oval_object = oval_test_get_object(oval_test);
 	if (oval_object) {
 		char *object_id = oval_object_get_id(oval_object);
@@ -1525,12 +1566,26 @@ static void _oval_result_test_initialize_bindings(struct oval_result_test *rslt_
 		if(syschar) {
 			struct oval_variable_binding_iterator *bindings = oval_syschar_get_variable_bindings(syschar);
 			while (oval_variable_binding_iterator_has_more(bindings)) {
+				struct oval_variable *var;
+				char *var_id;
 				struct oval_variable_binding *binding = oval_variable_binding_iterator_next(bindings);
-				oval_result_test_add_binding(rslt_test, binding);
+
+				var = oval_variable_binding_get_variable(binding);
+				var_id = oval_variable_get_id(var);
+				/* Don't add bindings that were already
+				 * collected from states. Assumtion is made
+				 * that object's own bindings don't contain
+				 * duplicates.
+				 */
+				if (oval_string_map_get_value(vm, var_id) == NULL)
+					oval_result_test_add_binding(rslt_test, binding);
 			}
 			oval_variable_binding_iterator_free(bindings);
 		}
 	}
+
+	oval_string_map_free(vm, NULL);
+
 	rslt_test->bindings_initialized = true;
 	rslt_test->bindings_clearable = false;	//bindings are shared from syschar model.
 }
