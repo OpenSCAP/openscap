@@ -85,7 +85,11 @@ static void _var_collect_var_refs(struct oval_variable *var, struct oval_string_
 
 static void _ent_collect_var_refs(struct oval_entity *ent, struct oval_string_map *vm)
 {
-	if (oval_entity_get_varref_type(ent) == OVAL_ENTITY_VARREF_ATTRIBUTE) {
+	oval_entity_varref_type_t vrt;
+
+	vrt = oval_entity_get_varref_type(ent);
+	if (vrt == OVAL_ENTITY_VARREF_ATTRIBUTE
+	    || vrt == OVAL_ENTITY_VARREF_ELEMENT) {
 		struct oval_variable *var;
 
 		var = oval_entity_get_variable(ent);
