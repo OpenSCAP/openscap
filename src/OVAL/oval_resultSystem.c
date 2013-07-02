@@ -53,7 +53,7 @@
 typedef struct oval_result_system {
 	struct oval_results_model *model;
 	struct oval_smc *definitions;			///< Map contains lists of oval_result_definition
-	struct oval_string_map *tests;			///< Map contains lists of oval_result_test
+	struct oval_smc *tests;				///< Map contains lists of oval_result_test
 	struct oval_syschar_model *syschar_model;
 } oval_result_system_t;
 
@@ -112,37 +112,13 @@ struct oval_result_system *oval_result_system_new(struct oval_results_model *mod
 		return NULL;
 
 	sys->definitions = oval_smc_new();
-	sys->tests = oval_string_map_new();
+	sys->tests = oval_smc_new();
 	sys->syschar_model = syschar_model;
 	sys->model = model;
 
 	oval_results_model_add_system(model, sys);
 
 	return sys;
-}
-
-typedef void (*_oval_result_system_clone_func) (struct oval_result_system *, void *);
-
-static void _oval_result_system_clone
-    (struct oval_string_map *oldmap, struct oval_result_system *new_system, _oval_result_system_clone_func cloner) {
-	struct oval_string_iterator *keys = (struct oval_string_iterator *)oval_string_map_keys(oldmap);
-	while (oval_string_iterator_has_more(keys)) {
-		char *key = oval_string_iterator_next(keys);
-		void *old_item = oval_string_map_get_value(oldmap, key);
-		(*cloner) (new_system, old_item);
-	}
-	oval_string_iterator_free(keys);
-}
-
-static void _oval_collection_of_result_tests_clone(struct oval_result_system *new_system, struct oval_collection *result_tests)
-{
-	struct oval_iterator *test_it = oval_collection_iterator(result_tests);
-	while (oval_collection_iterator_has_more(test_it)) {
-		// TODO: This one seems to leak, but it did so from day 0
-		struct oval_result_test *test = oval_collection_iterator_next(test_it);
-		oval_result_test_clone(new_system, test);
-	}
-	oval_collection_iterator_free(test_it);
 }
 
 struct oval_result_system *oval_result_system_clone(struct oval_results_model *new_model,
@@ -155,16 +131,9 @@ struct oval_result_system *oval_result_system_clone(struct oval_results_model *n
 
 	// TODO: This one seems to leak, but it did so from day 0
 	oval_smc_clone_user(old_system->definitions, (oval_smc_user_clone_func) oval_result_definition_clone, new_system);
-
-	_oval_result_system_clone
-	    (old_system->tests, new_system, (_oval_result_system_clone_func) _oval_collection_of_result_tests_clone);
+	oval_smc_clone_user(old_system->tests, (oval_smc_user_clone_func) oval_result_test_clone, new_system);
 
 	return new_system;
-}
-
-static void _oval_collection_of_result_tests_free(struct oval_collection *result_tests)
-{
-	oval_collection_free_items(result_tests, (oscap_destruct_func) oval_result_test_free);
 }
 
 void oval_result_system_free(struct oval_result_system *sys)
@@ -172,7 +141,7 @@ void oval_result_system_free(struct oval_result_system *sys)
 	__attribute__nonnull__(sys);
 
 	oval_smc_free(sys->definitions, (oscap_destruct_func) oval_result_definition_free);
-	oval_string_map_free(sys->tests, (oscap_destruct_func) _oval_collection_of_result_tests_free);
+	oval_smc_free(sys->tests, (oscap_destruct_func) oval_result_test_free);
 
 	sys->definitions = NULL;
 	sys->syschar_model = NULL;
@@ -203,7 +172,7 @@ struct oval_result_definition_iterator *oval_result_system_get_definitions(struc
 struct oval_result_test_iterator *oval_result_system_get_tests(struct oval_result_system *sys) {
 	__attribute__nonnull__(sys);
 
-	return oval_result_test_iterator_new(sys->tests);
+	return oval_result_test_iterator_new((struct oval_string_map *) sys->tests);
 }
 
 struct oval_result_definition *oval_result_system_get_definition(struct oval_result_system *sys, const char *id) {
@@ -219,16 +188,7 @@ struct oval_result_test *oval_result_system_get_test(struct oval_result_system *
 
 	// Previously, this structure used to hold only one result_test per given ID.
 	// Now we need to return the very last one from a list.
-	struct oval_collection *col = (struct oval_collection *) oval_string_map_get_value(sys->tests, id);
-	if (col == NULL)
-		return NULL;
-	struct oval_iterator *rtest_it = oval_collection_iterator(col);
-	struct oval_result_test *rtest = NULL;
-	while (oval_collection_iterator_has_more(rtest_it)) {
-		rtest = oval_collection_iterator_next(rtest_it);
-	}
-	oval_collection_iterator_free(rtest_it);
-	return rtest;
+	return oval_smc_get_last(sys->tests, id);
 }
 
 struct oval_result_definition *oval_result_system_get_new_definition
@@ -305,13 +265,7 @@ void oval_result_system_add_test(struct oval_result_system *sys, struct oval_res
 	__attribute__nonnull__(sys);
 	if (test) {
 		const char *id = oval_result_test_get_id(test);
-
-		struct oval_collection *rtest_col = (struct oval_collection *) oval_string_map_get_value(sys->tests, id);
-		if (rtest_col == NULL) {
-			rtest_col = oval_collection_new();
-			oval_string_map_put(sys->tests, id, rtest_col);
-		}
-		oval_collection_add(rtest_col, test);
+		oval_smc_put_last(sys->tests, id, test);
 	}
 }
 
