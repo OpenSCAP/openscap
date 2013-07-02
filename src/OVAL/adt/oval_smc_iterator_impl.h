@@ -29,12 +29,14 @@
  * never empty.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#ifndef OVAL_SMC_ITERATOR_H
+#define OVAL_SMC_ITERATOR_H
 
 #include <stdbool.h>
 #include "oval_string_map_impl.h"
+#include "common/util.h"
+
+OSCAP_HIDDEN_START;
 
 struct oval_smc_iterator;
 
@@ -45,3 +47,7 @@ void oval_smc_iterator_free(struct oval_smc_iterator *it);
 bool oval_smc_iterator_has_more(struct oval_smc_iterator *it);
 
 void *oval_smc_iterator_next(struct oval_smc_iterator *it);
+
+OSCAP_HIDDEN_END;
+
+#endif
