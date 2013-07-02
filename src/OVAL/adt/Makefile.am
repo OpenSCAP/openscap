@@ -3,6 +3,8 @@ noinst_LTLIBRARIES = libovaladt.la
 libovaladt_la_SOURCES = \
 	oval_collection.c \
 	oval_collection_impl.h \
+	oval_smc.c \
+	oval_smc_impl.h \
 	oval_smc_iterator.c \
 	oval_smc_iterator_impl.h \
 	oval_string_map.c \
