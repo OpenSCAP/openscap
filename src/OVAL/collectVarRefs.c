@@ -164,6 +164,8 @@ void oval_obj_collect_var_refs(struct oval_object *obj, struct oval_string_map *
 		struct oval_object_content *cont;
 		struct oval_entity *ent;
 		struct oval_setobject *set;
+		struct oval_filter *flt;
+		struct oval_state *ste;
 
 		cont = oval_object_content_iterator_next(cont_itr);
 
@@ -175,6 +177,11 @@ void oval_obj_collect_var_refs(struct oval_object *obj, struct oval_string_map *
 		case OVAL_OBJECTCONTENT_SET:
 			set = oval_object_content_get_setobject(cont);
 			_set_collect_var_refs(set, vm);
+			break;
+		case OVAL_OBJECTCONTENT_FILTER:
+			flt = oval_object_content_get_filter(cont);
+			ste = oval_filter_get_state(flt);
+			oval_ste_collect_var_refs(ste, vm);
 			break;
 		default:
 			break;
