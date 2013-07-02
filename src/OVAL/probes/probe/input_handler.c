@@ -110,7 +110,11 @@ void *probe_input_handler(void *arg)
 			SEXP_VALIDATE(oid);
 			probe_out = probe_rcache_sexp_get(probe->rcache, oid);
 
-			if (OSCAP_GSYM(offline_mode) && !OSCAP_GSYM(offline_mode_supported)) {
+			dI("offline_mode=%08x\n", OSCAP_GSYM(offline_mode));
+			dI("offline_supp=%08x\n", OSCAP_GSYM(offline_mode_supported));
+
+			if ((OSCAP_GSYM(offline_mode) != PROBE_OFFLINE_NONE) &&
+			    !(OSCAP_GSYM(offline_mode) & OSCAP_GSYM(offline_mode_supported))) {
 				probe_out = probe_cobj_new(OSCAP_GSYM(offline_mode_cobjflag), NULL, NULL, NULL);
 				if (probe_rcache_sexp_add(probe->rcache, oid, probe_out) != 0) {
 					abort();

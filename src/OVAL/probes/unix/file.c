@@ -48,6 +48,7 @@
 # include <acl/libacl.h>
 #endif
 
+#include <probe/probe.h>
 #include <probe/option.h>
 #include "oval_fts.h"
 #include "SEAP/generic/rbt/rbt.h"
@@ -385,7 +386,7 @@ void *probe_init (void)
 	probe_setoption(PROBEOPT_VARREF_HANDLING, false, "path");
 	probe_setoption(PROBEOPT_VARREF_HANDLING, false, "filename");
 #endif
-		probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, true);
+		probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
         return (NULL);
 }
 

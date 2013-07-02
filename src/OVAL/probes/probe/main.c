@@ -54,8 +54,8 @@ void  *OSCAP_GSYM(probe_arg)          = NULL;
 bool   OSCAP_GSYM(varref_handling)    = true;
 char **OSCAP_GSYM(no_varref_ents)     = NULL;
 size_t OSCAP_GSYM(no_varref_ents_cnt) = 0;
-bool OSCAP_GSYM(offline_mode) = false;
-bool OSCAP_GSYM(offline_mode_supported) = false;
+probe_offline_flags OSCAP_GSYM(offline_mode) = PROBE_OFFLINE_NONE;
+probe_offline_flags OSCAP_GSYM(offline_mode_supported) = PROBE_OFFLINE_NONE;
 int OSCAP_GSYM(offline_mode_cobjflag) = SYSCHAR_FLAG_NOT_APPLICABLE;
 
 pthread_barrier_t OSCAP_GSYM(th_barrier);
@@ -124,11 +124,11 @@ static int probe_opthandler_rcache(int option, int op, va_list args)
 static int probe_opthandler_offlinemode(int option, int op, va_list args)
 {
 	if (op == PROBE_OPTION_SET) {
-		bool o_offline_mode = OSCAP_GSYM(offline_mode_supported);
+		probe_offline_flags o_offline_mode;
 		int o_cobjflag = OSCAP_GSYM(offline_mode_cobjflag);
 
 		o_offline_mode = va_arg(args, int);
-		if (!o_offline_mode) {
+		if (o_offline_mode != PROBE_OFFLINE_ALL) {
 			/*
 			 * If the probe doesn't support offline mode, then probe_main()
 			 * won't be called in offline modee and a collected object with
@@ -242,7 +242,7 @@ int main(int argc, char *argv[])
 	pthread_attr_destroy(&th_attr);
 
 	/*
-	 * Change root directory for probes, if requested
+	 * Setup offline mode(s)
 	 */
 	if ((rootdir = getenv("OSCAP_PROBE_ROOT")) != NULL) {
 		if(strlen(rootdir) > 0) {
@@ -259,8 +259,11 @@ int main(int argc, char *argv[])
 			 * Switch to offline mode. We may add a separate
 			 * mechanism to control this behaviour in the future.
 			 */
-			OSCAP_GSYM(offline_mode) = true;
+			OSCAP_GSYM(offline_mode) |= PROBE_OFFLINE_CHROOT;
 		}
+	}
+	if (getenv("OSCAP_PROBE_RPMDB_PATH") != NULL) {
+		OSCAP_GSYM(offline_mode) |= PROBE_OFFLINE_RPMDB;
 	}
 
 	/*

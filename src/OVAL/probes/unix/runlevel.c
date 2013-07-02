@@ -62,6 +62,7 @@
 
 #include <seap.h>
 #include <probe-api.h>
+#include <probe/probe.h>
 #include <probe/entcmp.h>
 #include <probe/option.h>
 #include <alloc.h>
@@ -354,7 +355,7 @@ static int get_runlevel (struct runlevel_req *req, struct runlevel_rep **rep)
 
 void *probe_init(void)
 {
-  probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, true);
+  probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
   return NULL;
 }
 

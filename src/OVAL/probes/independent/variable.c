@@ -45,6 +45,7 @@
 #include <stdio.h>
 #include <errno.h>
 
+#include <probe/probe.h>
 #include <probe/option.h>
 #include "seap.h"
 #include "probe-api.h"
@@ -53,7 +54,7 @@
 
 void *probe_init(void)
 {
-  probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, true);
+  probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_ALL);
   return NULL;
 }
 

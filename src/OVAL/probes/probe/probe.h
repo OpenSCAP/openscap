@@ -71,9 +71,16 @@ struct probe_ctx {
         probe_icache_t *icache;    /**< item cache */
 };
 
+typedef enum {
+	PROBE_OFFLINE_NONE = 0x00,
+	PROBE_OFFLINE_CHROOT = 0x01,
+	PROBE_OFFLINE_RPMDB = 0x02,
+	PROBE_OFFLINE_ALL = 0x0f
+} probe_offline_flags;
+
 extern pthread_barrier_t OSCAP_GSYM(th_barrier);
-extern bool OSCAP_GSYM(offline_mode);
-extern bool OSCAP_GSYM(offline_mode_supported);
+extern probe_offline_flags OSCAP_GSYM(offline_mode);
+extern probe_offline_flags OSCAP_GSYM(offline_mode_supported);
 extern int OSCAP_GSYM(offline_mode_cobjflag);
 
 #endif /* PROBE_H */

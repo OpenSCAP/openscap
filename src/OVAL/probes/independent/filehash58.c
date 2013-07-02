@@ -46,6 +46,7 @@
 #include <pthread.h>
 #include <errno.h>
 #include <crapi/crapi.h>
+#include <probe/probe.h>
 #include <probe/option.h>
 
 #include "common/debug_priv.h"
@@ -215,7 +216,7 @@ void *probe_init (void)
 		dI("Can't initialize mutex: errno=%u, %s.\n", errno, strerror (errno));
 	}
 
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, true);
+	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
 
 	return (NULL);
 }

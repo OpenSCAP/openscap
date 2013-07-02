@@ -56,6 +56,7 @@
 
 #include <seap.h>
 #include <probe-api.h>
+#include <probe/probe.h>
 #include <probe/option.h>
 
 #include <sys/utsname.h>
@@ -219,7 +220,7 @@ static ssize_t __sysinfo_saneval(const char *s)
 
 void *probe_init(void)
 {
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, true);
+	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_ALL);
 	return NULL;
 }
 
@@ -228,12 +229,12 @@ int probe_main(probe_ctx *ctx, void *arg)
 	SEXP_t* item;
 	char* os_name, *os_version, *architecture, *hname;
 	struct utsname sname;
-	bool offline_mode = false;
+	probe_offline_flags offline_mode = PROBE_OFFLINE_NONE;
 	(void)arg;
 
 	probe_getoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, NULL, &offline_mode);
 
-	if (!offline_mode) {
+	if (offline_mode == PROBE_OFFLINE_NONE) {
 		if (uname(&sname) == -1) {
 			return PROBE_EUNKNOWN;
 		}

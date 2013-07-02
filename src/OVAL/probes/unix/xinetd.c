@@ -32,6 +32,7 @@
 #endif
 
 #include <probe-api.h>
+#include <probe/probe.h>
 #include <probe/entcmp.h>
 #include <probe/option.h>
 #include <errno.h>
@@ -1526,7 +1527,7 @@ int op_assign_enabled(void *var, char *val)
 #ifndef XINETD_TEST
 void *probe_init(void)
 {
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, true);
+	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
 	return xiconf_parse(XINETD_CONFPATH, XINETD_CONFDEPTH);
 }
 

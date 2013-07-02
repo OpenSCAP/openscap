@@ -64,6 +64,7 @@
 
 #include <seap.h>
 #include <probe-api.h>
+#include <probe/probe.h>
 #include <probe/option.h>
 #include <oval_fts.h>
 #include <common/debug_priv.h>
@@ -86,7 +87,7 @@ void *probe_init(void)
 	//LIBXML_TEST_VERSION;
 	xmlInitParser();
 	xmlSetGenericErrorFunc(NULL, dummy_err_func);
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, true);
+	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
 
 	return NULL;
 }
