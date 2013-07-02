@@ -36,6 +36,7 @@
 #include "common/alloc.h"
 #include "oval_smc_iterator_impl.h"
 #include "oval_string_map_impl.h"
+#include "oval_smc_impl.h"
 
 struct oval_smc_iterator {
 	struct oval_collection *master_col;		///< list of lists
@@ -43,14 +44,14 @@ struct oval_smc_iterator {
 	struct oval_iterator *slave_it;			///< iterating through a single item of master_col
 };
 
-struct oval_smc_iterator *oval_smc_iterator_new(struct oval_string_map *mapping)
+struct oval_smc_iterator *oval_smc_iterator_new(struct oval_smc *mapping)
 {
 	if (mapping == NULL)
 		return NULL;
 
 	struct oval_smc_iterator *it = oscap_calloc(1, sizeof(struct oval_smc_iterator));
 
-	it->master_col = oval_string_map_collect_values(mapping, NULL);
+	it->master_col = oval_string_map_collect_values((struct oval_string_map *) mapping, NULL);
 	it->master_it = oval_collection_iterator(it->master_col);
 	it->slave_it = NULL;
 	return it;

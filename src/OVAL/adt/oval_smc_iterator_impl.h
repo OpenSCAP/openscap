@@ -33,14 +33,14 @@
 #define OVAL_SMC_ITERATOR_H
 
 #include <stdbool.h>
-#include "oval_string_map_impl.h"
+#include "oval_smc_impl.h"
 #include "common/util.h"
 
 OSCAP_HIDDEN_START;
 
 struct oval_smc_iterator;
 
-struct oval_smc_iterator *oval_smc_iterator_new(struct oval_string_map *mapping);
+struct oval_smc_iterator *oval_smc_iterator_new(struct oval_smc *mapping);
 
 void oval_smc_iterator_free(struct oval_smc_iterator *it);
 

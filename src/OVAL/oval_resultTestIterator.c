@@ -38,11 +38,11 @@
 
 #include "public/oval_results.h"
 #include "oval_results_impl.h"
-#include "adt/oval_string_map_impl.h"
+#include "adt/oval_smc_impl.h"
 #include "adt/oval_smc_iterator_impl.h"
 
 
-struct oval_result_test_iterator *oval_result_test_iterator_new(struct oval_string_map *mapping)
+struct oval_result_test_iterator *oval_result_test_iterator_new(struct oval_smc *mapping)
 {
 	return (struct oval_result_test_iterator *) oval_smc_iterator_new(mapping);
 }

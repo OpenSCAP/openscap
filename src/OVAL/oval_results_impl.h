@@ -35,6 +35,7 @@
 
 #include "oval_definitions_impl.h"
 #include "oval_system_characteristics_impl.h"
+#include "adt/oval_smc_impl.h"
 
 #include "common/util.h"
 
@@ -90,8 +91,8 @@ oval_result_t ores_get_result_byopr(struct oresults *ores, oval_operator_t op);
 
 void oval_results_model_add_system(struct oval_results_model *, struct oval_result_system *);
 
-struct oval_result_definition_iterator *oval_result_definition_iterator_new(struct oval_string_map *mapping);
-struct oval_result_test_iterator *oval_result_test_iterator_new(struct oval_string_map *mapping);
+struct oval_result_definition_iterator *oval_result_definition_iterator_new(struct oval_smc *mapping);
+struct oval_result_test_iterator *oval_result_test_iterator_new(struct oval_smc *mapping);
 
 const char *oval_result_test_get_id(const struct oval_result_test *test);
 

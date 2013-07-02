@@ -166,13 +166,13 @@ void oval_result_system_iterator_free(struct oval_result_system_iterator *sys) {
 struct oval_result_definition_iterator *oval_result_system_get_definitions(struct oval_result_system *sys) {
 	__attribute__nonnull__(sys);
 
-	return oval_result_definition_iterator_new((struct oval_string_map *) sys->definitions);
+	return oval_result_definition_iterator_new(sys->definitions);
 }
 
 struct oval_result_test_iterator *oval_result_system_get_tests(struct oval_result_system *sys) {
 	__attribute__nonnull__(sys);
 
-	return oval_result_test_iterator_new((struct oval_string_map *) sys->tests);
+	return oval_result_test_iterator_new(sys->tests);
 }
 
 struct oval_result_definition *oval_result_system_get_definition(struct oval_result_system *sys, const char *id) {
