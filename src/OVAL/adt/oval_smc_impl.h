@@ -45,6 +45,10 @@ void oval_smc_free0(struct oval_smc *map);
 
 void oval_smc_free(struct oval_smc *map, oscap_destruct_func destructor);
 
+typedef void *(*oval_smc_user_clone_func) (void *user_data, void *item);
+
+struct oval_smc *oval_smc_clone_user(struct oval_smc *oldmap, oval_smc_user_clone_func cloner, void *user_data);
+
 OSCAP_HIDDEN_END;
 
 #endif

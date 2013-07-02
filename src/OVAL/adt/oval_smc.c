@@ -31,6 +31,7 @@
 #include "oval_smc_impl.h"
 #include "oval_string_map_impl.h"
 #include "common/util.h"
+#include "oval_adt.h"
 
 struct oval_smc *oval_smc_new(void)
 {
@@ -89,4 +90,37 @@ void oval_smc_free(struct oval_smc *map, oscap_destruct_func destructor)
 	}
 	oval_collection_iterator_free(map_it);
 	oval_string_map_free((struct oval_string_map *) map, NULL);
+}
+
+static inline struct oval_collection *_oval_collection_clone(struct oval_collection *oldcol, oval_smc_user_clone_func cloner, void *user_data)
+{
+	if (oldcol == NULL || cloner == NULL)
+		return NULL;
+
+	struct oval_collection *newcol = oval_collection_new();
+	struct oval_iterator *col_it = oval_collection_iterator(oldcol);
+        while (oval_collection_iterator_has_more(col_it)) {
+		void *item = oval_collection_iterator_next(col_it);
+		void *new_item = (*cloner) (user_data, item);
+		oval_collection_add(newcol, new_item);
+	}
+	oval_collection_iterator_free(col_it);
+	return newcol;
+}
+
+struct oval_smc *oval_smc_clone_user(struct oval_smc *oldmap, oval_smc_user_clone_func cloner, void *user_data)
+{
+	if (oldmap == NULL || cloner == NULL)
+		return NULL;
+
+	struct oval_smc *newmap = oval_smc_new();
+	struct oval_string_iterator *key_it = (struct oval_string_iterator *) oval_string_map_keys((struct oval_string_map *) oldmap);
+	while (oval_string_iterator_has_more(key_it)) {
+		const char *key = oval_string_iterator_next(key_it);
+		struct oval_collection *list_col = _oval_smc_get_all(oldmap, key);
+		struct oval_collection *cloned = _oval_collection_clone(list_col, cloner, user_data);
+		oval_string_map_put((struct oval_string_map *) newmap, key, cloned);
+	}
+	oval_string_iterator_free(key_it);
+	return newmap;
 }
