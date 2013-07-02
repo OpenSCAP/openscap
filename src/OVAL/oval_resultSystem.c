@@ -42,6 +42,7 @@
 #include "oval_agent_api_impl.h"
 #include "oval_results_impl.h"
 #include "adt/oval_collection_impl.h"
+#include "adt/oval_smc_impl.h"
 #include "adt/oval_string_map_impl.h"
 #include "oval_parser_impl.h"
 
@@ -51,7 +52,7 @@
 
 typedef struct oval_result_system {
 	struct oval_results_model *model;
-	struct oval_string_map *definitions;		///< Map contains lists of oval_result_definition
+	struct oval_smc *definitions;			///< Map contains lists of oval_result_definition
 	struct oval_string_map *tests;			///< Map contains lists of oval_result_test
 	struct oval_syschar_model *syschar_model;
 } oval_result_system_t;
@@ -110,7 +111,7 @@ struct oval_result_system *oval_result_system_new(struct oval_results_model *mod
 	if (sys == NULL)
 		return NULL;
 
-	sys->definitions = oval_string_map_new();
+	sys->definitions = oval_smc_new();
 	sys->tests = oval_string_map_new();
 	sys->syschar_model = syschar_model;
 	sys->model = model;
@@ -133,17 +134,6 @@ static void _oval_result_system_clone
 	oval_string_iterator_free(keys);
 }
 
-static void _oval_collection_of_result_definitions_clone(struct oval_result_system *new_system, struct oval_collection *result_definitions)
-{
-	struct oval_iterator *def_it = oval_collection_iterator(result_definitions);
-	while (oval_collection_iterator_has_more(def_it)) {
-		// TODO: This one seems to leak, but it did so from day 0
-		struct oval_result_definition *definition = oval_collection_iterator_next(def_it);
-		oval_result_definition_clone(new_system, definition);
-	}
-	oval_collection_iterator_free(def_it);
-}
-
 static void _oval_collection_of_result_tests_clone(struct oval_result_system *new_system, struct oval_collection *result_tests)
 {
 	struct oval_iterator *test_it = oval_collection_iterator(result_tests);
@@ -163,18 +153,13 @@ struct oval_result_system *oval_result_system_clone(struct oval_results_model *n
 	struct oval_result_system *new_system =
 	    oval_result_system_new(new_model, oval_result_system_get_syschar_model(old_system));
 
-	_oval_result_system_clone
-	    (old_system->definitions, new_system, (_oval_result_system_clone_func) _oval_collection_of_result_definitions_clone);
+	// TODO: This one seems to leak, but it did so from day 0
+	oval_smc_clone_user(old_system->definitions, (oval_smc_user_clone_func) oval_result_definition_clone, new_system);
 
 	_oval_result_system_clone
 	    (old_system->tests, new_system, (_oval_result_system_clone_func) _oval_collection_of_result_tests_clone);
 
 	return new_system;
-}
-
-static void _oval_collection_of_result_definitions_free(struct oval_collection *result_definitions)
-{
-	oval_collection_free_items(result_definitions, (oscap_destruct_func) oval_result_definition_free);
 }
 
 static void _oval_collection_of_result_tests_free(struct oval_collection *result_tests)
@@ -186,7 +171,7 @@ void oval_result_system_free(struct oval_result_system *sys)
 {
 	__attribute__nonnull__(sys);
 
-	oval_string_map_free(sys->definitions, (oscap_destruct_func) _oval_collection_of_result_definitions_free);
+	oval_smc_free(sys->definitions, (oscap_destruct_func) oval_result_definition_free);
 	oval_string_map_free(sys->tests, (oscap_destruct_func) _oval_collection_of_result_tests_free);
 
 	sys->definitions = NULL;
@@ -212,7 +197,7 @@ void oval_result_system_iterator_free(struct oval_result_system_iterator *sys) {
 struct oval_result_definition_iterator *oval_result_system_get_definitions(struct oval_result_system *sys) {
 	__attribute__nonnull__(sys);
 
-	return oval_result_definition_iterator_new(sys->definitions);
+	return oval_result_definition_iterator_new((struct oval_string_map *) sys->definitions);
 }
 
 struct oval_result_test_iterator *oval_result_system_get_tests(struct oval_result_system *sys) {
@@ -226,16 +211,7 @@ struct oval_result_definition *oval_result_system_get_definition(struct oval_res
 
 	// Previously, this structure used to hold only one result_definition per given ID.
 	// Now we need to return the very last one from a list.
-	struct oval_collection *col = (struct oval_collection *) oval_string_map_get_value(sys->definitions, id);
-	if (col == NULL)
-		return NULL;
-	struct oval_iterator *rdef_it = oval_collection_iterator(col);
-	struct oval_result_definition *rdef = NULL;
-	while (oval_collection_iterator_has_more(rdef_it)) {
-		rdef = oval_collection_iterator_next(rdef_it);
-	}
-	oval_collection_iterator_free(rdef_it);
-	return rdef;
+	return oval_smc_get_last(sys->definitions, id);
 }
 
 struct oval_result_test *oval_result_system_get_test(struct oval_result_system *sys, char *id) {
@@ -320,13 +296,7 @@ void oval_result_system_add_definition(struct oval_result_system *sys, struct ov
 	__attribute__nonnull__(sys);
 	if (definition) {
 		const char *id = oval_result_definition_get_id(definition);
-
-		struct oval_collection *rdef_col = (struct oval_collection *) oval_string_map_get_value(sys->definitions, id);
-		if (rdef_col == NULL) {
-			rdef_col = oval_collection_new();
-			oval_string_map_put(sys->definitions, id, rdef_col);
-		}
-		oval_collection_add(rdef_col, definition);
+		oval_smc_put_last(sys->definitions, id, definition);
 	}
 }
 
@@ -501,16 +471,13 @@ xmlNode *oval_result_system_to_dom(struct oval_result_system * sys,
 		class_dirs = oval_directives_model_get_classdir(directives_model, def_class);
 		directives = class_dirs ? class_dirs : def_dirs;
 
-		struct oval_collection *rslt_definitions = oval_string_map_get_value(sys->definitions, oval_definition_get_id(oval_definition));
 		bool exported = false;
-		if (rslt_definitions != NULL) {
-			struct oval_iterator *rslt_definitions_it = oval_collection_iterator(rslt_definitions);
-			if (oval_collection_iterator_has_more(rslt_definitions_it)) {
-				while (oval_collection_iterator_has_more(rslt_definitions_it)) {
-					struct oval_result_definition *rslt_definition = oval_collection_iterator_next(rslt_definitions_it);
-					_oval_result_definition_to_dom_based_on_directives(rslt_definition, directives, doc, definitions_node, tstmap);
-					exported = true;
-				}
+		struct oval_iterator *rslt_definitions_it = oval_smc_get_all_it(sys->definitions, oval_definition_get_id(oval_definition));
+		if (rslt_definitions_it != NULL) {
+			while (oval_collection_iterator_has_more(rslt_definitions_it)) {
+				struct oval_result_definition *rslt_definition = oval_collection_iterator_next(rslt_definitions_it);
+				_oval_result_definition_to_dom_based_on_directives(rslt_definition, directives, doc, definitions_node, tstmap);
+				exported = true;
 			}
 			oval_collection_iterator_free(rslt_definitions_it);
 		}
