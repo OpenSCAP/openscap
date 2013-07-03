@@ -1011,8 +1011,9 @@ static char *_xccdf_session_export_oval_result_file(struct xccdf_session *sessio
 
 	char *escaped_url = NULL;
 	const char *filename = oval_agent_get_filename(oval_session);
-	if (oscap_acquire_url_is_supported(filename) ||
-	    (filename && filename[0] == '/')) {
+	if (filename &&
+		(oscap_acquire_url_is_supported(filename) ||
+		 filename[0] == '/')) {
 		// We need escaping if:
 		// - filename is a URL
 		// - filename is an absolute path
