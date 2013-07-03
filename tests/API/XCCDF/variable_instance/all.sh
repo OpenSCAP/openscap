@@ -30,15 +30,19 @@ export -f assert_exists
 #
 function xccdf_export_1_multival() {
 	local name=$FUNCNAME
-	local variables="requires_both-oval.xml-0.variables-0.xml"
-	local result="$variables"
+	local variables0="requires_both-oval.xml-0.variables-0.xml"
+	local variables1="requires_both-oval.xml-0.variables-1.xml"
+	local result="$variables0"
 	local stderr=$(mktemp -t ${FUNCNAME}.err.XXXXXX)
 	echo "Stderr file = $stderr"
 
-	[ ! -f $result ] || rm $result
+	[ ! -f $variables0 ] || rm $variables0
+	[ ! -f $variables1 ] || rm $variables1
 	$OSCAP xccdf export-oval-variables --profile xccdf_moc.elpmaxe.www_profile_1 \
 		$srcdir/test_xccdf_variable_instance.xccdf.xml 2>&1 > $stderr
 	[ -f $stderr ]; [ ! -s $stderr ]
+	[ -f $variables0 ]
+	[ ! -f $variables1 ]
 	assert_exists 1 '/oval_variables'
 	assert_exists 1 '/oval_variables/variables'
 	assert_exists 1 '/oval_variables/variables/variable'
@@ -47,7 +51,7 @@ function xccdf_export_1_multival() {
 	assert_exists 2 '/oval_variables/variables/variable/value'
 	assert_exists 1 '/oval_variables/variables/variable/value[text()="300"]'
 	assert_exists 1 '/oval_variables/variables/variable/value[text()="600"]'
-	rm $variables
+	rm $variables0
 	rm $stderr
 }
 
