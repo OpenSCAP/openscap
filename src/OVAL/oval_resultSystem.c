@@ -43,6 +43,7 @@
 #include "oval_results_impl.h"
 #include "adt/oval_collection_impl.h"
 #include "adt/oval_smc_impl.h"
+#include "adt/oval_smc_iterator_impl.h"
 #include "adt/oval_string_map_impl.h"
 #include "oval_parser_impl.h"
 
@@ -59,7 +60,7 @@ typedef struct oval_result_system {
 
 
 static void _oval_result_system_scan_criteria_for_references(struct oval_result_criteria_node *node, 
-							     struct oval_string_map *testmap);
+							     struct oval_smc *testmap);
 
 static void _oval_result_system_scan_entity_for_references(struct oval_syschar_model *syschar_model, 
 							   struct oval_entity *entity,
@@ -385,7 +386,7 @@ static void _oval_result_definition_to_dom_based_on_directives(struct oval_resul
 						   struct oval_result_directives * directives,
 						   xmlDocPtr doc,
 						   xmlNode *definitions_node,
-						   struct oval_string_map *tstmap)
+						   struct oval_smc *tstmap)
 {
 	oval_result_t result = oval_result_definition_get_result(rslt_definition);
 	if (oval_result_directives_get_reported(directives, result)) {
@@ -413,7 +414,7 @@ xmlNode *oval_result_system_to_dom(struct oval_result_system * sys,
 	xmlNs *ns_results = xmlSearchNsByHref(doc, parent, OVAL_RESULTS_NAMESPACE);
 	xmlNode *system_node = xmlNewTextChild(parent, ns_results, BAD_CAST "system", NULL);
 
-	struct oval_string_map *tstmap = oval_string_map_new();
+	struct oval_smc *tstmap = oval_smc_new();
 
 	xmlNode *definitions_node = xmlNewTextChild(system_node, ns_results, BAD_CAST "definitions", NULL);
 	struct oval_definition_model *definition_model = oval_results_model_get_definition_model(results_model);
@@ -450,12 +451,12 @@ xmlNode *oval_result_system_to_dom(struct oval_result_system * sys,
 	struct oval_string_map *sttmap = oval_string_map_new();
 	struct oval_string_map *varmap = oval_string_map_new();
 
-	struct oval_iterator *result_tests = oval_string_map_values(tstmap);
-	if (oval_collection_iterator_has_more(result_tests)) {
+	struct oval_smc_iterator *result_tests = oval_smc_iterator_new(tstmap);
+	if (oval_smc_iterator_has_more(result_tests)) {
 		xmlNode *tests_node = xmlNewTextChild(system_node, ns_results, BAD_CAST "tests", NULL);
-		while (oval_collection_iterator_has_more(result_tests)) {
+		while (oval_smc_iterator_has_more(result_tests)) {
 			struct oval_state_iterator *ste_itr;
-			struct oval_result_test *result_test = oval_collection_iterator_next(result_tests);
+			struct oval_result_test *result_test = oval_smc_iterator_next(result_tests);
 			/* report the test */
 			oval_result_test_to_dom(result_test, doc, tests_node);
 			struct oval_test *oval_test = oval_result_test_get_test(result_test);
@@ -493,7 +494,7 @@ xmlNode *oval_result_system_to_dom(struct oval_result_system * sys,
 			oval_state_iterator_free(ste_itr);
 		}
 	}
-	oval_collection_iterator_free(result_tests);
+	oval_smc_iterator_free(result_tests);
 
 	oval_syschar_model_to_dom(syschar_model, doc, system_node, 
 				  (oval_syschar_resolver *) _oval_result_system_resolve_syschar, sysmap);
@@ -502,7 +503,7 @@ xmlNode *oval_result_system_to_dom(struct oval_result_system * sys,
 	oval_string_map_free(objmap, NULL);
 	oval_string_map_free(sttmap, NULL);
 	oval_string_map_free(varmap, NULL);
-	oval_string_map_free(tstmap, NULL);
+	oval_smc_free0(tstmap);
 
 	return system_node;
 }
@@ -512,7 +513,7 @@ xmlNode *oval_result_system_to_dom(struct oval_result_system * sys,
 
 
 static void _oval_result_system_scan_criteria_for_references
-    (struct oval_result_criteria_node *node, struct oval_string_map *testmap) {
+    (struct oval_result_criteria_node *node, struct oval_smc *testmap) {
 	struct oval_result_criteria_node_iterator *subnodes = oval_result_criteria_node_get_subnodes(node);
 	while (subnodes && oval_result_criteria_node_iterator_has_more(subnodes)) {
 		struct oval_result_criteria_node *subnode = oval_result_criteria_node_iterator_next(subnodes);
@@ -522,10 +523,7 @@ static void _oval_result_system_scan_criteria_for_references
 	struct oval_result_test *result_test = oval_result_criteria_node_get_test(node);
 	if (result_test) {
 		const char *testid = oval_result_test_get_id(result_test);
-		void *value = oval_string_map_get_value(testmap, testid);
-		if (value == NULL) {
-			oval_string_map_put(testmap, testid, result_test);
-		}
+		oval_smc_put_last_if_not_exists(testmap, testid, result_test);
 	}
 }
 
