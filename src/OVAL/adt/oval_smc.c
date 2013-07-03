@@ -57,6 +57,31 @@ void oval_smc_put_last(struct oval_smc *map, const char *key, void *item)
 	}
 }
 
+void oval_smc_put_last_if_not_exists(struct oval_smc *map, const char *key, void *item)
+{
+	__attribute__nonnull__(map);
+
+	if (item != NULL) {
+		struct oval_collection *list_col = _oval_smc_get_all(map, key);
+		if (list_col == NULL) {
+			list_col = oval_collection_new();
+			oval_string_map_put((struct oval_string_map *) map, key, list_col);
+		}
+
+		struct oval_iterator *list_it = oval_collection_iterator(list_col);
+		bool found = false;
+		while (!found && oval_collection_iterator_has_more(list_it)) {
+			if (item == oval_collection_iterator_next(list_it)) {
+				found = true;
+			}
+		}
+		oval_collection_iterator_free(list_it);
+		if (!found) {
+			oval_collection_add(list_col, item);
+		}
+	}
+}
+
 struct oval_iterator *oval_smc_get_all_it(struct oval_smc *map, const char *key)
 {
 	struct oval_collection *col = _oval_smc_get_all(map, key);

@@ -37,6 +37,8 @@ struct oval_smc *oval_smc_new(void);
 
 void oval_smc_put_last(struct oval_smc *map, const char *key, void *item);
 
+void oval_smc_put_last_if_not_exists(struct oval_smc *map, const char *key, void *item);
+
 struct oval_iterator *oval_smc_get_all_it(struct oval_smc *map, const char *key);
 
 void *oval_smc_get_last(struct oval_smc *map, const char *key);
