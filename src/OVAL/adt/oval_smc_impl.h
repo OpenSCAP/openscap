@@ -24,7 +24,7 @@
  * oval_string_map and oval_collection.
  */
 
-#ifndef OVAL_SCM_H
+#ifndef OVAL_SMC_H
 #define OVAL_SMC_H
 
 #include "common/util.h"
