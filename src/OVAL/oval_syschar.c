@@ -49,9 +49,9 @@ typedef struct oval_syschar {
 	oval_syschar_collection_flag_t flag;
 	struct oval_collection *messages;
 	struct oval_object *object;
-	struct oval_collection *variable_bindings;
-	struct oval_collection *sysitem;
-} oval_syschar_t;
+	struct oval_collection *variable_bindings;	///< Represents <variable_value> elements
+	struct oval_collection *sysitem;		///< Represents <reference> elements
+} oval_syschar_t;					///< Represents a single collected <object> element
 
 bool oval_syschar_iterator_has_more(struct oval_syschar_iterator *oc_syschar)
 {

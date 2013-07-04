@@ -50,7 +50,7 @@ typedef struct oval_sysitem {
 	struct oval_collection *messages;
 	struct oval_collection *sysents;
 	oval_syschar_status_t status;
-} oval_sysitem_t;
+} oval_sysitem_t;				///< Represents a single <*_item> element
 
 struct oval_sysitem *oval_sysitem_new(struct oval_syschar_model *model, const char *id)
 {

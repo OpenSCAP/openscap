@@ -51,10 +51,10 @@ typedef struct oval_syschar_model {
 	struct oval_generator *generator;
 	struct oval_sysinfo *sysinfo;
 	struct oval_definition_model *definition_model;
-	struct oval_string_map *syschar_map;
-	struct oval_string_map *sysitem_map;
+	struct oval_string_map *syschar_map;			///< Represents objects within <collected_objects> element
+	struct oval_string_map *sysitem_map;			///< Represents items within <system_data> element
         char *schema;
-} oval_syschar_model_t;
+} oval_syschar_model_t;						///< Represents <oval_system_characteristics> element
 
 
 /* failed   - NULL
