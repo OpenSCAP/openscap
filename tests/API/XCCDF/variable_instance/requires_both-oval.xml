@@ -29,11 +29,24 @@
 				<criterion test_ref="oval:com.example.www:tst:1"/>
 			</criteria>
 		</definition>
+		<definition class="compliance" id="oval:com.example.www:def:2" version="1">
+			<metadata>
+				<title>Lookup correct value in an XML file determined by OVAL variable</title>
+				<description>Everyone needs a description</description>
+			</metadata>
+			<criteria>
+				<criterion test_ref="oval:com.example.www:tst:2"/>
+			</criteria>
+		</definition>
 	</definitions>
 	<tests>
 		<ind-def:xmlfilecontent_test id="oval:com.example.www:tst:1" version="1" check="at least one" comment="File shall contain both values">
 			<ind-def:object object_ref="oval:com.example.www:obj:1"/>
 			<ind-def:state state_ref="oval:com.example.www:ste:1"/>
+		</ind-def:xmlfilecontent_test>
+		<ind-def:xmlfilecontent_test id="oval:com.example.www:tst:2" version="1" check="at least one" comment="It is better to be roughly right, then precisely wrong.">
+			<ind-def:object object_ref="oval:com.example.www:obj:2"/>
+			<ind-def:state state_ref="oval:com.example.www:ste:2"/>
 		</ind-def:xmlfilecontent_test>
 	</tests>
 	<objects>
@@ -41,13 +54,21 @@
 			<ind-def:filepath>./testing_file.xml</ind-def:filepath>
 			<ind-def:xpath>/root/object/@value</ind-def:xpath>
 		</ind-def:xmlfilecontent_object>
+		<ind-def:xmlfilecontent_object id="oval:com.example.www:obj:2" version="1">
+			<ind-def:filepath datatype="string" operation="equals" var_ref="oval:com.example.www:var:2"/>
+			<ind-def:xpath>/root/object/@value</ind-def:xpath>
+		</ind-def:xmlfilecontent_object>
 	</objects>
 	<states>
 		<ind-def:xmlfilecontent_state id="oval:com.example.www:ste:1" version="1" comment="our dummy content of the file">
 			<ind-def:value_of datatype="string" operation="equals" var_check="all" var_ref="oval:com.example.www:var:1"/>
 		</ind-def:xmlfilecontent_state>
+		<ind-def:xmlfilecontent_state id="oval:com.example.www:ste:2" version="1" comment="our dummy content of the file">
+			<ind-def:value_of datatype="string" operation="equals" var_check="all" var_ref="oval:com.example.www:var:1"/>
+		</ind-def:xmlfilecontent_state>
 	</states>
 	<variables>
 		<external_variable id="oval:com.example.www:var:1" version="1" datatype="string" comment="External variable"/>
+		<external_variable id="oval:com.example.www:var:2" version="1" datatype="string" comment="External variable"/>
 	</variables>
 </oval_definitions>
