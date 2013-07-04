@@ -130,9 +130,10 @@ struct oval_result_system *oval_result_system_clone(struct oval_results_model *n
 	struct oval_result_system *new_system =
 	    oval_result_system_new(new_model, oval_result_system_get_syschar_model(old_system));
 
-	// TODO: This one seems to leak, but it did so from day 0
-	oval_smc_clone_user(old_system->definitions, (oval_smc_user_clone_func) oval_result_definition_clone, new_system);
-	oval_smc_clone_user(old_system->tests, (oval_smc_user_clone_func) oval_result_test_clone, new_system);
+	oval_smc_free0(new_system->definitions);
+	oval_smc_free0(new_system->tests);
+	new_system->definitions = oval_smc_clone_user(old_system->definitions, (oval_smc_user_clone_func) oval_result_definition_clone, new_system);
+	new_system->tests = oval_smc_clone_user(old_system->tests, (oval_smc_user_clone_func) oval_result_test_clone, new_system);
 
 	return new_system;
 }
