@@ -1011,9 +1011,13 @@ static char *_xccdf_session_export_oval_result_file(struct xccdf_session *sessio
 
 	char *escaped_url = NULL;
 	const char *filename = oval_agent_get_filename(oval_session);
-	if (filename &&
-		(oscap_acquire_url_is_supported(filename) ||
-		 filename[0] == '/')) {
+	if (!filename) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Given oval_session doesn't have a valid filename. "
+			"Can't deduce destination where we should be exporting it!");
+		return NULL;
+	}
+
+	if (oscap_acquire_url_is_supported(filename) || filename[0] == '/') {
 		// We need escaping if:
 		// - filename is a URL
 		// - filename is an absolute path
@@ -1022,7 +1026,7 @@ static char *_xccdf_session_export_oval_result_file(struct xccdf_session *sessio
 		if (escaped_url == NULL)
 			return NULL;
 	}
-	else if (!session->export.oval_results && filename && strchr(filename, '/')) {
+	else if (!session->export.oval_results && strchr(filename, '/')) {
 		// We need recursive mkdir_p if:
 		// - filename is not a basename and we are exporting to a temp dir (ARF)
 		// (we are assuming that the dir structure exists if we are exporting to '.')
