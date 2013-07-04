@@ -117,7 +117,7 @@ void oval_smc_free(struct oval_smc *map, oscap_destruct_func destructor)
 	oval_string_map_free((struct oval_string_map *) map, NULL);
 }
 
-static inline struct oval_collection *_oval_collection_clone(struct oval_collection *oldcol, oval_smc_user_clone_func cloner, void *user_data)
+static inline struct oval_collection *_oval_collection_clone_user(struct oval_collection *oldcol, oval_smc_user_clone_func cloner, void *user_data)
 {
 	if (oldcol == NULL || cloner == NULL)
 		return NULL;
@@ -143,7 +143,7 @@ struct oval_smc *oval_smc_clone_user(struct oval_smc *oldmap, oval_smc_user_clon
 	while (oval_string_iterator_has_more(key_it)) {
 		const char *key = oval_string_iterator_next(key_it);
 		struct oval_collection *list_col = _oval_smc_get_all(oldmap, key);
-		struct oval_collection *cloned = _oval_collection_clone(list_col, cloner, user_data);
+		struct oval_collection *cloned = _oval_collection_clone_user(list_col, cloner, user_data);
 		oval_string_map_put((struct oval_string_map *) newmap, key, cloned);
 	}
 	oval_string_iterator_free(key_it);
