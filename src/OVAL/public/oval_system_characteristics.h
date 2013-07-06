@@ -14,7 +14,7 @@
  */
 
 /*
- * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -33,6 +33,7 @@
  *
  * Authors:
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
+ *      Šimon Lukašík
  */
 
 
@@ -425,6 +426,19 @@ void oval_syschar_set_flag(struct oval_syschar *model, oval_syschar_collection_f
  * @memberof oval_syschar
  */
 void oval_syschar_set_object(struct oval_syschar *, struct oval_object *);
+/**
+ * Gets the variable_instance attribute of the syschar.
+ * @memberof oval_syschar
+ * @returns currect variable_instance attribute assigned
+ */
+int oval_syschar_get_variable_instance(const struct oval_syschar *syschar);
+/**
+ * Sets the variable_instance attribute of the syschar.
+ * @memberof oval_syschar
+ * @param syschar collected object
+ * @param variable_instance_in new settings of variable_instance attribute
+ */
+void oval_syschar_set_variable_instance(struct oval_syschar *syschar, int variable_instance_in);
 /**
  * @memberof oval_syschar
  */
