@@ -829,7 +829,7 @@ bool getopt_oval_validate(int argc, char **argv, struct oscap_action *action)
 
 	/* we should have OVAL content here */
 	if (optind >= argc)
-		return oscap_module_usage(action->module, stderr, "Definitions file needs to be specified!");
+		return oscap_module_usage(action->module, stderr, "OVAL file needs to be specified!");
 	action->f_oval = argv[optind];
 
 	return true;
