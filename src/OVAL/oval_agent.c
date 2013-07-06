@@ -430,6 +430,12 @@ static void _oval_agent_resolve_variables_conflict(struct oval_agent_session *se
 						// to the oval_variable files.
 						int instance = oval_result_definition_get_instance(r_definition);
 						oval_result_definition_set_variable_instance_hint(r_definition, instance + 1);
+						struct oval_definition *definition = oval_result_definition_get_definition(r_definition);
+						oval_probe_hint_definition(session->psess, definition, instance + 1);
+					}
+					else {
+						// TODO: We really need oval_agent_session wide variable_instance attribute
+						// to be able to correctly handle syschars even when there is no result-definition.
 					}
 				}
 				oval_string_iterator_free(def_it);
