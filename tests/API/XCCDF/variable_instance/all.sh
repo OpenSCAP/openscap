@@ -43,6 +43,7 @@ function xccdf_export_1_multival() {
 	[ -f $stderr ]; [ ! -s $stderr ]
 	[ -f $variables0 ]
 	[ ! -f $variables1 ]
+	$OSCAP oval validate-xml --schematron $variables0
 	assert_exists 1 '/oval_variables'
 	assert_exists 1 '/oval_variables/variables'
 	assert_exists 1 '/oval_variables/variables/variable'
@@ -75,6 +76,8 @@ function xccdf_export_2_multiset(){
 	[ -f $variables0 ]
 	[ -f $variables1 ]
 	[ ! -f $variables2 ]
+	$OSCAP oval validate-xml --schematron $variables0
+	$OSCAP oval validate-xml --schematron $variables1
 	local result="$variables0"
 	assert_exists 1 '/oval_variables'
 	assert_exists 1 '/oval_variables/variables'
@@ -112,6 +115,7 @@ function xccdf_export_3_twice_same(){
 	[ -f $stderr ]; [ ! -s $stderr ]
 	[ -f $variables0 ]
 	[ ! -f $variables1 ]
+	$OSCAP oval validate-xml --schematron $variables0
 	local result="$variables0"
 	assert_exists 1 '/oval_variables'
 	assert_exists 1 '/oval_variables/variables'
@@ -141,6 +145,7 @@ function xccdf_export_4_two_same(){
 	[ -f $stderr ]; [ ! -s $stderr ]
 	[ -f $variables0 ]
 	[ ! -f $variables1 ]
+	$OSCAP oval validate-xml --schematron $variables0
 	local result="$variables0"
 	assert_exists 1 '/oval_variables'
 	assert_exists 1 '/oval_variables/variables'
@@ -169,6 +174,7 @@ function xccdf_export_5_multival_twice(){
 	[ -f $stderr ]; [ ! -s $stderr ]
 	[ -f $variables0 ]
 	[ ! -f $variables1 ]
+	$OSCAP oval validate-xml --schematron $variables0
 	local result="$variables0"
 	assert_exists 1 '/oval_variables'
 	assert_exists 1 '/oval_variables/variables'
@@ -201,6 +207,8 @@ function xccdf_export_6_multiset_multival(){
 	[ -f $variables0 ]
 	[ -f $variables1 ]
 	[ ! -f $variables2 ]
+	$OSCAP oval validate-xml --schematron $variables0
+	$OSCAP oval validate-xml --schematron $variables1
 	local result="$variables0"
 	assert_exists 1 '/oval_variables'
 	assert_exists 1 '/oval_variables/variables'
@@ -241,6 +249,7 @@ function xccdf_export_7_shuffled_multival(){
 	[ -f $stderr ]; [ ! -s $stderr ]
 	[ -f $variables0 ]
 	[ ! -f $variables1 ]
+	$OSCAP oval validate-xml --schematron $variables0
 	local result="$variables0"
 	assert_exists 1 '/oval_variables'
 	assert_exists 1 '/oval_variables/variables'
@@ -273,6 +282,7 @@ function xccdf_export_8_shuffled_multival(){
 	[ -f $stderr ]; [ ! -s $stderr ]
 	[ -f $variables0 ]
 	[ ! -f $variables1 ]
+	$OSCAP oval validate-xml --schematron $variables0
 	local result="$variables0"
 	assert_exists 1 '/oval_variables'
 	assert_exists 1 '/oval_variables/variables'
@@ -306,6 +316,8 @@ function xccdf_export_9_first_subset(){
 	[ -f $variables0 ]
 	[ -f $variables1 ]
 	[ ! -f $variables2 ]
+	$OSCAP oval validate-xml --schematron $variables0
+	$OSCAP oval validate-xml --schematron $variables1
 	local result="$variables0"
 	assert_exists 1 '/oval_variables'
 	assert_exists 1 '/oval_variables/variables'
@@ -349,6 +361,8 @@ function xccdf_export_A_second_subset(){
 	[ -f $variables0 ]
 	[ -f $variables1 ]
 	[ ! -f $variables2 ]
+	$OSCAP oval validate-xml --schematron $variables0
+	$OSCAP oval validate-xml --schematron $variables1
 	local result="$variables0"
 	assert_exists 1 '/oval_variables'
 	assert_exists 1 '/oval_variables/variables'
@@ -402,6 +416,9 @@ function xccdf_eval_2_multiset(){
 	[ -f $variables0 ]
 	[ -f $variables1 ]
 	[ ! -f $variables2 ]
+	$OSCAP oval validate-xml --schematron $variables0
+	$OSCAP oval validate-xml --schematron $variables1
+	$OSCAP oval validate-xml --schematron $oval_result
 	local result="$xccdf_result"
 	assert_exists 1 '/Benchmark/TestResult'
 	assert_exists 1 '/Benchmark/TestResult/profile'
