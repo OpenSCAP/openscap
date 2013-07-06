@@ -53,25 +53,6 @@ typedef struct oval_syschar {
 	struct oval_collection *sysitem;		///< Represents <reference> elements
 } oval_syschar_t;					///< Represents a single collected <object> element
 
-bool oval_syschar_iterator_has_more(struct oval_syschar_iterator *oc_syschar)
-{
-	return oval_collection_iterator_has_more((struct oval_iterator *)
-						 oc_syschar);
-}
-
-struct oval_syschar *oval_syschar_iterator_next(struct oval_syschar_iterator
-						*oc_syschar)
-{
-	return (struct oval_syschar *)
-	    oval_collection_iterator_next((struct oval_iterator *)oc_syschar);
-}
-
-void oval_syschar_iterator_free(struct oval_syschar_iterator
-				*oc_syschar)
-{
-	oval_collection_iterator_free((struct oval_iterator *)oc_syschar);
-}
-
 oval_syschar_collection_flag_t oval_syschar_get_flag(struct oval_syschar
 						     *syschar)
 {

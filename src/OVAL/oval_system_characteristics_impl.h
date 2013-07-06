@@ -33,6 +33,7 @@
 
 #include "public/oval_system_characteristics.h"
 #include "oval_parser_impl.h"
+#include "adt/oval_smc_impl.h"
 #include "../common/util.h"
 
 OSCAP_HIDDEN_START;
@@ -75,6 +76,8 @@ void oval_syschar_model_add_sysitem(struct oval_syschar_model *model, struct ova
 
 void oval_syschar_model_set_schema(struct oval_syschar_model *model, const char * schema);
 const char * oval_syschar_model_get_schema(struct oval_syschar_model * model);
+
+struct oval_syschar_iterator *oval_syschar_iterator_new(struct oval_smc *mapping);
 
 OSCAP_HIDDEN_END;
 

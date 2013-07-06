@@ -25,6 +25,7 @@
  *
  * Authors:
  *      "David Niemoller" <David.Niemoller@g2-inc.com>
+ *      Šimon Lukašík
  */
 
 #ifdef HAVE_CONFIG_H
@@ -38,6 +39,8 @@
 #include "oval_agent_api_impl.h"
 #include "oval_parser_impl.h"
 #include "adt/oval_string_map_impl.h"
+#include "adt/oval_smc_impl.h"
+#include "adt/oval_smc_iterator_impl.h"
 #include "oval_system_characteristics_impl.h"
 #include "oval_probe_impl.h"
 #include "oval_results_impl.h"
@@ -51,7 +54,7 @@ typedef struct oval_syschar_model {
 	struct oval_generator *generator;
 	struct oval_sysinfo *sysinfo;
 	struct oval_definition_model *definition_model;
-	struct oval_string_map *syschar_map;			///< Represents objects within <collected_objects> element
+	struct oval_smc *syschar_map;				///< Represents objects within <collected_objects> element
 	struct oval_string_map *sysitem_map;			///< Represents items within <system_data> element
         char *schema;
 } oval_syschar_model_t;						///< Represents <oval_system_characteristics> element
@@ -73,7 +76,7 @@ struct oval_syschar_model *oval_syschar_model_new(struct oval_definition_model *
 
 	newmodel->sysinfo = NULL;
 	newmodel->definition_model = definition_model;
-	newmodel->syschar_map = oval_string_map_new();
+	newmodel->syschar_map = oval_smc_new();
 	newmodel->sysitem_map = oval_string_map_new();
         newmodel->schema = oscap_strdup(OVAL_SYS_SCHEMA_LOCATION);
 
@@ -101,6 +104,16 @@ static void _oval_syschar_model_clone(struct oval_string_map *oldmap,
 	oval_string_iterator_free(keys);
 }
 
+static void _oval_syschar_model_clone_helper(struct oval_smc *oldmap, struct oval_syschar_model *newmodel, _oval_clone_func cloner)
+{
+	struct oval_smc_iterator *it = oval_smc_iterator_new(oldmap);
+	while (oval_smc_iterator_has_more(it)) {
+		void *olditem = oval_smc_iterator_next(it);
+		(*cloner) (newmodel, olditem);
+	}
+	oval_smc_iterator_free(it);
+}
+
 struct oval_syschar_model *oval_syschar_model_clone(struct oval_syschar_model *old_model)
 {
 
@@ -108,8 +121,7 @@ struct oval_syschar_model *oval_syschar_model_clone(struct oval_syschar_model *o
 
 	struct oval_syschar_model *new_model = oval_syschar_model_new(old_model->definition_model);
 
-	_oval_syschar_model_clone(old_model->syschar_map, new_model,
-				  (_oval_clone_func) oval_syschar_clone);
+	_oval_syschar_model_clone_helper(old_model->syschar_map, new_model, (_oval_clone_func) oval_syschar_clone);
 	_oval_syschar_model_clone(old_model->sysitem_map, new_model,
 				  (_oval_clone_func) oval_sysitem_clone);
 
@@ -129,7 +141,7 @@ void oval_syschar_model_free(struct oval_syschar_model *model)
 	if (model->sysinfo)
 		oval_sysinfo_free(model->sysinfo);
 	if (model->syschar_map)
-		oval_string_map_free(model->syschar_map, (oscap_destruct_func) oval_syschar_free);
+		oval_smc_free(model->syschar_map, (oscap_destruct_func) oval_syschar_free);
 	if (model->sysitem_map)
 		oval_string_map_free(model->sysitem_map, (oscap_destruct_func) oval_sysitem_free);
         if (model->schema)
@@ -149,10 +161,10 @@ void oval_syschar_model_free(struct oval_syschar_model *model)
 void oval_syschar_model_reset(struct oval_syschar_model *model) 
 {
         if (model->syschar_map)
-                oval_string_map_free(model->syschar_map, (oscap_destruct_func) oval_syschar_free);
+                oval_smc_free(model->syschar_map, (oscap_destruct_func) oval_syschar_free);
         if (model->sysitem_map)
                 oval_string_map_free(model->sysitem_map, (oscap_destruct_func) oval_sysitem_free);
-        model->syschar_map = oval_string_map_new();
+        model->syschar_map = oval_smc_new();
         model->sysitem_map = oval_string_map_new();
 }
 
@@ -178,9 +190,7 @@ struct oval_syschar_iterator *oval_syschar_model_get_syschars(struct oval_syscha
 {
 	__attribute__nonnull__(model);
 
-	struct oval_syschar_iterator *iterator =
-	    (struct oval_syschar_iterator *)oval_string_map_values(model->syschar_map);
-	return iterator;
+	return oval_syschar_iterator_new(model->syschar_map);
 }
 
 struct oval_sysinfo *oval_syschar_model_get_sysinfo(struct oval_syschar_model *model)
@@ -218,7 +228,7 @@ void oval_syschar_model_add_syschar(struct oval_syschar_model *model, struct ova
 	struct oval_object *object = oval_syschar_get_object(syschar);
 	if (object != NULL) {
 		char *id = oval_object_get_id(object);
-		oval_string_map_put(model->syschar_map, id, syschar);
+		oval_smc_put_last(model->syschar_map, id, syschar);
 	}
 }
 
@@ -286,7 +296,7 @@ struct oval_syschar *oval_syschar_model_get_syschar(struct oval_syschar_model *m
 {
 	__attribute__nonnull__(model);
 
-	return (struct oval_syschar *)oval_string_map_get_value(model->syschar_map, object_id);
+	return (struct oval_syschar *)oval_smc_get_last(model->syschar_map, object_id);
 }
 
 struct oval_sysitem *oval_syschar_model_get_sysitem(struct oval_syschar_model *model, const char *id)
@@ -350,18 +360,19 @@ xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model, xm
         /* Report sysinfo */
 	oval_sysinfo_to_dom(oval_syschar_model_get_sysinfo(syschar_model), doc, root_node);
 
-	struct oval_collection *collection = NULL;
+	struct oval_smc *resolved_smc = NULL;
 	struct oval_syschar_iterator *syschars = oval_syschar_model_get_syschars(syschar_model);
 	if (resolver) {
-		collection = oval_collection_new();
+		resolved_smc = oval_smc_new();
 		while (oval_syschar_iterator_has_more(syschars)) {
 			struct oval_syschar *syschar = oval_syschar_iterator_next(syschars);
 			if ((*resolver) (syschar, user_arg)) {
-				oval_collection_add(collection, syschar);
+				struct oval_object *object = oval_syschar_get_object(syschar);
+				oval_smc_put_last(resolved_smc, oval_object_get_id(object), syschar);
 			}
 		}
 		oval_syschar_iterator_free(syschars);
-		syschars = (struct oval_syschar_iterator *)oval_collection_iterator(collection);
+		syschars = oval_syschar_iterator_new(resolved_smc);
 	}
 
 	struct oval_string_map *sysitem_map = oval_string_map_new();
@@ -383,7 +394,7 @@ xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model, xm
 			oval_sysitem_iterator_free(sysitems);
 		}
 	}
-	oval_collection_free(collection);
+	oval_smc_free0(resolved_smc);
 	oval_syschar_iterator_free(syschars);
 
 	struct oval_iterator *sysitems = oval_string_map_values(sysitem_map);
