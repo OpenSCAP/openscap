@@ -53,6 +53,7 @@ typedef struct oval_syschar {
 	struct oval_collection *variable_bindings;	///< Represents <variable_value> elements
 	struct oval_collection *sysitem;		///< Represents <reference> elements
 	int variable_instance;				///< Represents variable_instance attribute
+	int variable_instance_hint;			///< Internal hint of the next possible variable_instance attribute
 } oval_syschar_t;					///< Represents a single collected <object> element
 
 oval_syschar_collection_flag_t oval_syschar_get_flag(struct oval_syschar
@@ -151,6 +152,7 @@ struct oval_syschar *oval_syschar_new(struct oval_syschar_model *model, struct o
 
 	syschar->flag = SYSCHAR_FLAG_UNKNOWN;
 	syschar->variable_instance = 1;
+	syschar->variable_instance_hint = 1;
 	syschar->object = object;
 	syschar->messages = oval_collection_new();
 	syschar->sysitem = oval_collection_new();
@@ -177,6 +179,7 @@ struct oval_syschar *oval_syschar_clone(struct oval_syschar_model *new_model, st
 	oval_syschar_set_flag(new_syschar, flag);
 	int variable_instance = oval_syschar_get_variable_instance(old_syschar);
 	oval_syschar_set_variable_instance(new_syschar, variable_instance);
+	oval_syschar_set_variable_instance_hint(new_syschar, variable_instance);
 
 	struct oval_message_iterator *old_messages = oval_syschar_get_messages(old_syschar);
 	while (oval_message_iterator_has_more(old_messages)) {
@@ -373,4 +376,16 @@ void oval_syschar_set_variable_instance(struct oval_syschar *syschar, int variab
 {
 	__attribute__nonnull__(syschar);
 	syschar->variable_instance = variable_instance_in;
+}
+
+int oval_syschar_get_variable_instance_hint(const struct oval_syschar *syschar)
+{
+	__attribute__nonnull__(syschar);
+	return syschar->variable_instance_hint;
+}
+
+void oval_syschar_set_variable_instance_hint(struct oval_syschar *syschar, int variable_instance_hint_in)
+{
+	__attribute__nonnull__(syschar);
+	syschar->variable_instance_hint = variable_instance_hint_in;
 }
