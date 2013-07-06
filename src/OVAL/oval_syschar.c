@@ -336,6 +336,14 @@ void oval_syschar_to_dom(struct oval_syschar *syschar, xmlDoc * doc, xmlNode * t
 			xmlNewProp(tag_syschar, BAD_CAST "version", BAD_CAST version);
 			oval_syschar_collection_flag_t flag = oval_syschar_get_flag(syschar);
 			xmlNewProp(tag_syschar, BAD_CAST "flag", BAD_CAST oval_syschar_collection_flag_get_text(flag));
+
+			int instance = oval_syschar_get_variable_instance(syschar);
+			if (instance != 1 ||
+				oval_syschar_get_variable_instance_hint(syschar) != instance) {
+				char instance_att[10] = "";
+				snprintf(instance_att, sizeof(instance_att), "%d", instance);
+				xmlNewProp(tag_syschar, BAD_CAST "variable_instance", BAD_CAST instance_att);
+			}
 		}
 		{		/*messages */
 			struct oval_message_iterator *messages = oval_syschar_get_messages(syschar);
