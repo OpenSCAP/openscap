@@ -241,16 +241,25 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
 
 	sysc = oval_syschar_model_get_syschar(model, oid);
 	if (sysc != NULL) {
-		oval_syschar_collection_flag_t sc_flg;
+		int variable_instance_hint = oval_syschar_get_variable_instance_hint(sysc);
+		if (oval_syschar_get_variable_instance_hint(sysc) != oval_syschar_get_variable_instance(sysc)) {
+			dI("Creating another syschar for variable_instance=%d)\n", variable_instance_hint);
+			sysc = oval_syschar_new(model, object);
+			oval_syschar_set_variable_instance(sysc, variable_instance_hint);
+			oval_syschar_set_variable_instance_hint(sysc, variable_instance_hint);
+		}
+		else {
+			oval_syschar_collection_flag_t sc_flg;
 
-		sc_flg = oval_syschar_get_flag(sysc);
+			sc_flg = oval_syschar_get_flag(sysc);
 
-		dI("Syschar already exists, flag: %u, '%s'.\n", sc_flg, oval_syschar_collection_flag_get_text(sc_flg));
+			dI("Syschar already exists, flag: %u, '%s'.\n", sc_flg, oval_syschar_collection_flag_get_text(sc_flg));
 
-		if (sc_flg != SYSCHAR_FLAG_UNKNOWN || (flags & OVAL_PDFLAG_NOREPLY)) {
-			if (out_syschar)
-				*out_syschar = sysc;
-			return 0;
+			if (sc_flg != SYSCHAR_FLAG_UNKNOWN || (flags & OVAL_PDFLAG_NOREPLY)) {
+				if (out_syschar)
+					*out_syschar = sysc;
+				return 0;
+			}
 		}
 	} else
 		sysc = oval_syschar_new(model, object);
