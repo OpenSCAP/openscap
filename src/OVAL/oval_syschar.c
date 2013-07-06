@@ -389,3 +389,10 @@ void oval_syschar_set_variable_instance_hint(struct oval_syschar *syschar, int v
 	__attribute__nonnull__(syschar);
 	syschar->variable_instance_hint = variable_instance_hint_in;
 }
+
+const char *oval_syschar_get_id(const struct oval_syschar *syschar)
+{
+	__attribute__nonnull__(syschar);
+	struct oval_object *obj = oval_syschar_get_object((struct oval_syschar *) syschar);
+	return (obj == NULL) ? NULL : oval_object_get_id(obj);
+}

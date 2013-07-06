@@ -671,8 +671,7 @@ static void _oval_result_system_scan_set_for_references
 }
 
 static bool _oval_result_system_resolve_syschar(struct oval_syschar *syschar, struct oval_string_map *sysmap) {
-	struct oval_object *object = oval_syschar_get_object(syschar);
-	char *objid = oval_object_get_id(object);
+	const char *objid = oval_syschar_get_id(syschar);
 	return oval_string_map_get_value(sysmap, objid) != NULL;
 }
 

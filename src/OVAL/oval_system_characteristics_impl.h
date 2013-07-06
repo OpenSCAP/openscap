@@ -80,6 +80,7 @@ const char * oval_syschar_model_get_schema(struct oval_syschar_model * model);
 struct oval_syschar_iterator *oval_syschar_iterator_new(struct oval_smc *mapping);
 int oval_syschar_get_variable_instance_hint(const struct oval_syschar *syschar);
 void oval_syschar_set_variable_instance_hint(struct oval_syschar *syschar, int variable_instance_hint_in);
+const char *oval_syschar_get_id(const struct oval_syschar *syschar);
 
 OSCAP_HIDDEN_END;
 

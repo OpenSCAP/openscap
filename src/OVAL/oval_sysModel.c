@@ -225,11 +225,9 @@ void oval_syschar_model_set_schema(struct oval_syschar_model *model, const char 
 void oval_syschar_model_add_syschar(struct oval_syschar_model *model, struct oval_syschar *syschar)
 {
 	__attribute__nonnull__(model);
-	struct oval_object *object = oval_syschar_get_object(syschar);
-	if (object != NULL) {
-		char *id = oval_object_get_id(object);
+	const char *id = oval_syschar_get_id(syschar);
+	if (id != NULL)
 		oval_smc_put_last(model->syschar_map, id, syschar);
-	}
 }
 
 void oval_syschar_model_add_sysitem(struct oval_syschar_model *model, struct oval_sysitem *sysitem)
@@ -367,8 +365,7 @@ xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model, xm
 		while (oval_syschar_iterator_has_more(syschars)) {
 			struct oval_syschar *syschar = oval_syschar_iterator_next(syschars);
 			if ((*resolver) (syschar, user_arg)) {
-				struct oval_object *object = oval_syschar_get_object(syschar);
-				oval_smc_put_last(resolved_smc, oval_object_get_id(object), syschar);
+				oval_smc_put_last(resolved_smc, oval_syschar_get_id(syschar), syschar);
 			}
 		}
 		oval_syschar_iterator_free(syschars);
