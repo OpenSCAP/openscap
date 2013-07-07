@@ -12,4 +12,5 @@ EXTRA_DIST = \
 	all.sh \
 	requires_both-oval.xml \
 	testing_file_300.xml \
+	testing_file_600.xml \
 	test_xccdf_variable_instance.xccdf.xml

@@ -546,7 +546,131 @@ function xccdf_eval_2_multiset(){
 	chmod u+w $tested_file ; rm $tested_file
 }
 
+#
+# Evaluate XCCDF while exporting two values from XCCDF document to a single OVAL
+# variable that it should result in multiple (two) variable sets each with a single
+# value. This tests asserts for correctly collected system characteristics.
+#
+function xccdf_eval_1_multiset_syschar(){
+	local variables0="requires_both-oval.xml-0.variables-0.xml"
+	local variables1="requires_both-oval.xml-0.variables-1.xml"
+	local variables2="requires_both-oval.xml-0.variables-2.xml"
+	local oval_result="requires_both-oval.xml.result.xml"
+	local xccdf_result=$(mktemp -t ${FUNCNAME}.xml.XXXXXX)
+	local stderr=$(mktemp -t ${FUNCNAME}.err.XXXXXX)
+	local profile="xccdf_moc.elpmaxe.www_profile_11"
+	local file300="testing_file_300x.xml"
+	local file600="testing_file_600x.xml"
+	echo "Stderr file = $stderr"
+
+	cp $srcdir/testing_file_300.xml $file300
+	cp $srcdir/testing_file_600.xml $file600
+	for f in $variables0 $variables1 $variables2 $oval_result $xccdf_result; do
+		[ ! -f $f ] || rm $f
+	done
+
+	# Creating files in ./ directory for distcheck
+	$OSCAP xccdf eval --profile $profile \
+		--export-variables --oval-results --results $xccdf_result \
+		$srcdir/test_xccdf_variable_instance.xccdf.xml 2> $stderr
+	[ -f $stderr ]; [ ! -s $stderr ]
+	[ -f $variables0 ]
+	[ -f $variables1 ]
+	[ ! -f $variables2 ]
+	$OSCAP oval validate-xml --schematron $variables0
+	$OSCAP oval validate-xml --schematron $variables1
+	$OSCAP oval validate-xml --schematron $oval_result
+	result="$variables0"
+	assert_exists 1 '/oval_variables'
+	assert_exists 1 '/oval_variables/variables'
+	assert_exists 2 '/oval_variables/variables/variable'
+	assert_exists 2 '/oval_variables/variables/variable[@datatype="string"]'
+	assert_exists 1 '/oval_variables/variables/variable[@id="oval:com.example.www:var:1"]'
+	assert_exists 1 '/oval_variables/variables/variable[@id="oval:com.example.www:var:1"]/value'
+	assert_exists 1 '/oval_variables/variables/variable[@id="oval:com.example.www:var:1"]/value[text()="300"]'
+	assert_exists 1 '/oval_variables/variables/variable[@id="oval:com.example.www:var:2"]'
+	assert_exists 1 '/oval_variables/variables/variable[@id="oval:com.example.www:var:2"]/value'
+	assert_exists 1 '/oval_variables/variables/variable[@id="oval:com.example.www:var:2"]/value[text()="./'$file300'"]'
+	result="$variables1"
+	assert_exists 1 '/oval_variables'
+	assert_exists 1 '/oval_variables/variables'
+	assert_exists 2 '/oval_variables/variables/variable'
+	assert_exists 2 '/oval_variables/variables/variable[@datatype="string"]'
+	assert_exists 1 '/oval_variables/variables/variable[@id="oval:com.example.www:var:1"]'
+	assert_exists 1 '/oval_variables/variables/variable[@id="oval:com.example.www:var:1"]/value'
+	assert_exists 1 '/oval_variables/variables/variable[@id="oval:com.example.www:var:1"]/value[text()="600"]'
+	assert_exists 1 '/oval_variables/variables/variable[@id="oval:com.example.www:var:2"]'
+	assert_exists 1 '/oval_variables/variables/variable[@id="oval:com.example.www:var:2"]/value'
+	assert_exists 1 '/oval_variables/variables/variable[@id="oval:com.example.www:var:2"]/value[text()="./'$file600'"]'
+	result="$oval_result"
+	assert_exists 1 '/oval_results'
+	assert_exists 1 '/oval_results/results'
+	assert_exists 1 '/oval_results/results/system'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/generator'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/system_info'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/system_data'
+	assert_exists 2 '/oval_results/results/system/oval_system_characteristics/system_data/*'
+	assert_exists 2 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:xmlfilecontent_item'
+	assert_exists 2 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:xmlfilecontent_item[count(*) = 5]'
+	assert_exists 2 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:xmlfilecontent_item[count(@*) = 2]'
+	assert_exists 2 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:xmlfilecontent_item[@status="exists"]'
+	assert_exists 2 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:xmlfilecontent_item/ind-sys:filepath'
+	assert_exists 2 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:xmlfilecontent_item/ind-sys:path'
+	assert_exists 2 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:xmlfilecontent_item/ind-sys:filename'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:xmlfilecontent_item/ind-sys:filename[text()="'$file600'"]'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:xmlfilecontent_item/ind-sys:filename[text()="'$file300'"]'
+	assert_exists 2 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:xmlfilecontent_item/ind-sys:xpath'
+	assert_exists 2 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:xmlfilecontent_item/ind-sys:value_of'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:xmlfilecontent_item/ind-sys:value_of[text()="300"]'
+	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:xmlfilecontent_item/ind-sys:value_of[text()="600"]'
+	assert_exists 1 '/oval_results/results/system/tests'
+	assert_exists 3 '/oval_results/results/system/tests/test'
+	assert_exists 3 '/oval_results/results/system/tests/test[@version="1"]'
+	assert_exists 3 '/oval_results/results/system/tests/test[@check="at least one"]'
+	assert_exists 2 '/oval_results/results/system/tests/test[count(*) = 3]'
+
+	assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:com.example.www:tst:1"]'
+	assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:com.example.www:tst:1" and @result="not evaluated"]'
+	assert_exists 0 '/oval_results/results/system/tests/test[@test_id="oval:com.example.www:tst:1"]/*'
+	assert_exists 2 '/oval_results/results/system/tests/test[@test_id="oval:com.example.www:tst:2"]'
+	assert_exists 2 '/oval_results/results/system/tests/test[@test_id="oval:com.example.www:tst:2"][tested_item]'
+	assert_exists 2 '/oval_results/results/system/tests/test[@test_id="oval:com.example.www:tst:2"][tested_item/@result = "true"]'
+	assert_exists 2 '/oval_results/results/system/tests/test[@test_id="oval:com.example.www:tst:2" and @result="true"]'
+	assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:com.example.www:tst:2" and not(@variable_instance)]'
+	assert_exists 2 '/oval_results/results/system/tests/test[@test_id="oval:com.example.www:tst:2" and not(@variable_instance)]/tested_variable'
+	assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:com.example.www:tst:2" and not(@variable_instance)]/tested_variable[@variable_id="oval:com.example.www:var:1"]'
+	assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:com.example.www:tst:2" and not(@variable_instance)]/tested_variable[@variable_id="oval:com.example.www:var:1" and text() = "300"]'
+	assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:com.example.www:tst:2" and not(@variable_instance)]/tested_variable[@variable_id="oval:com.example.www:var:2"]'
+	assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:com.example.www:tst:2" and not(@variable_instance)]/tested_variable[@variable_id="oval:com.example.www:var:2" and text() = "./'$file300'"]'
+	assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:com.example.www:tst:2" and @variable_instance="2"]'
+	assert_exists 2 '/oval_results/results/system/tests/test[@test_id="oval:com.example.www:tst:2" and @variable_instance="2"]/tested_variable'
+	assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:com.example.www:tst:2" and @variable_instance="2"]/tested_variable[@variable_id="oval:com.example.www:var:1"]'
+	assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:com.example.www:tst:2" and @variable_instance="2"]/tested_variable[@variable_id="oval:com.example.www:var:1" and text() = "600"]'
+	assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:com.example.www:tst:2" and @variable_instance="2"]/tested_variable[@variable_id="oval:com.example.www:var:2" and text() = "./'$file600'"]'
+	assert_exists 1 '/oval_results/results/system/definitions'
+	assert_exists 3 '/oval_results/results/system/definitions/*'
+	assert_exists 3 '/oval_results/results/system/definitions/definition'
+	assert_exists 1 '/oval_results/results/system/definitions/definition[@definition_id="oval:com.example.www:def:1"]'
+	assert_exists 1 '/oval_results/results/system/definitions/definition[@definition_id="oval:com.example.www:def:1" and not(@variable_instance)]'
+	assert_exists 1 '/oval_results/results/system/definitions/definition[@definition_id="oval:com.example.www:def:1" and @result="not evaluated"]'
+	assert_exists 2 '/oval_results/results/system/definitions/definition[@definition_id="oval:com.example.www:def:2"]'
+	assert_exists 2 '/oval_results/results/system/definitions/definition[@definition_id="oval:com.example.www:def:2" and @result="true"]'
+	assert_exists 1 '/oval_results/results/system/definitions/definition[@definition_id="oval:com.example.www:def:2" and @variable_instance="1"]'
+	assert_exists 1 '/oval_results/results/system/definitions/definition[@definition_id="oval:com.example.www:def:2" and @variable_instance="2"]'
+	assert_exists 3 '/oval_results/results/system/*'
+	rm $stderr
+	rm $xccdf_result
+	rm $oval_result
+	rm $variables0
+	rm $variables1
+	for f in $file300 $file600; do
+		chmod u+w $f ; rm $f
+	done
+}
+
 test_init test_api_xccdf_variable_instance.log
+
 test_run "Export from XCCDF to variables: 1x2 values (multival)" xccdf_export_1_multival
 test_run "Export from XCCDF to variables: 2x1 values (multiset)" xccdf_export_2_multiset
 test_run "Export from XCCDF to variables: 1x2 same vales (none)" xccdf_export_4_two_same
@@ -559,5 +683,6 @@ test_run "Export from XCCDF to variables: 3x3 the first is subset (multiset,mult
 test_run "Export from XCCDF to variables: 3x3 the last is subset (multiset,multival)" xccdf_export_A_second_subset
 
 test_run "Evaluate XCCDF: 2x1 values (multiset)" xccdf_eval_2_multiset
+test_run "Evaluate XCCDF: 2x1 values (multiset) in syschar" xccdf_eval_1_multiset_syschar
 
 test_exit
