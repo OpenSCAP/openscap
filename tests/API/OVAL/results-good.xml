@@ -3423,1213 +3423,1213 @@
           </interfaces>
         </system_info>
         <collected_objects>
-          <object id="oval:gov.irs.rhel5:obj:99" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:98" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:97" version="1" flag="not collected">
+          <object id="oval:gov.irs.rhel5:obj:1" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:10" version="1" flag="not collected">
             <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
           </object>
-          <object id="oval:gov.irs.rhel5:obj:96" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          <object id="oval:gov.irs.rhel5:obj:100" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:10000" version="1" flag="does not exist">
+            <reference item_ref="1"/>
           </object>
-          <object id="oval:gov.irs.rhel5:obj:95" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          <object id="oval:gov.irs.rhel5:obj:10001" version="1" flag="complete">
+            <reference item_ref="2"/>
           </object>
-          <object id="oval:gov.irs.rhel5:obj:94" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          <object id="oval:gov.irs.rhel5:obj:101" version="1" flag="does not exist">
+            <reference item_ref="20"/>
           </object>
-          <object id="oval:gov.irs.rhel5:obj:93" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:92" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:91" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:90" version="1" flag="complete">
-            <reference item_ref="19"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:9" version="1" flag="does not exist">
-            <reference item_ref="7"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:89" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:88" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:87" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:86" version="1" flag="error">
+          <object id="oval:gov.irs.rhel5:obj:102" version="1" flag="error">
             <message level="fatal">Unsupported behavior: recurse</message>
           </object>
-          <object id="oval:gov.irs.rhel5:obj:85" version="1" flag="complete">
-            <reference item_ref="18"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:84" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:83" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:82" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:81" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:80" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:8" version="1" flag="complete">
-            <reference item_ref="6"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:79" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:78" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:77" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:76" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:75" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:74" version="1" flag="not collected">
-            <message level="info">ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:gov.irs.rhel5:obj:71</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:73" version="1" flag="not collected">
-            <message level="info">ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:gov.irs.rhel5:obj:71</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:72" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:71" version="1" flag="not collected"/>
-          <object id="oval:gov.irs.rhel5:obj:70" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:7" version="1" flag="complete">
-            <reference item_ref="5"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:69" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:68" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:67" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:66" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:65" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:64" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:63" version="1" flag="does not exist">
-            <reference item_ref="17"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:62" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:61" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:60" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:6" version="1" flag="complete">
-            <reference item_ref="4"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:59" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:58" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:57" version="1" flag="error">
-            <message level="fatal">Unsupported behavior: recurse</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:56" version="1" flag="error"/>
-          <object id="oval:gov.irs.rhel5:obj:55" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:54" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:53" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:52" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:51" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:50" version="1" flag="error">
-            <message level="fatal">Unsupported behavior: recurse</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:5" version="1" flag="complete">
-            <reference item_ref="3"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:49" version="1" flag="error">
-            <message level="info">AbsObjectCollector::Run() - Error while parsing object: oval:gov.irs.rhel5:obj:49 VariableFactory::GetVariable() - Error while parsing variable: oval:gov.irs.rhel5:var:1 Unknown Error</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:48" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:478" version="1" flag="does not exist">
-            <reference item_ref="188"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:477" version="1" flag="complete">
-            <reference item_ref="187"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:476" version="1" flag="complete">
-            <reference item_ref="186"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:475" version="1" flag="complete">
-            <reference item_ref="185"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:474" version="1" flag="complete">
-            <reference item_ref="184"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:473" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:472" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:471" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:470" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:47" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:469" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:468" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:467" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:466" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:465" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:464" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:463" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:462" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:461" version="1" flag="does not exist">
-            <reference item_ref="183"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:460" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:46" version="1" flag="complete">
-            <reference item_ref="16"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:459" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:458" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:457" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:456" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:455" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:454" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:453" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:452" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:451" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:450" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:45" version="1" flag="complete"/>
-          <object id="oval:gov.irs.rhel5:obj:449" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:448" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:447" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:446" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:445" version="1" flag="does not exist">
-            <reference item_ref="182"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:444" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:443" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:442" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:441" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:440" version="1" flag="complete">
-            <reference item_ref="181"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:44" version="1" flag="complete">
-            <reference item_ref="15"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:439" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:438" version="1" flag="complete">
-            <reference item_ref="180"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:437" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:436" version="1" flag="complete">
-            <reference item_ref="179"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:435" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:434" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:433" version="1" flag="complete">
-            <reference item_ref="178"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:432" version="1" flag="complete">
-            <reference item_ref="177"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:431" version="1" flag="complete">
-            <reference item_ref="176"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:430" version="1" flag="complete">
-            <reference item_ref="175"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:43" version="1" flag="complete">
-            <reference item_ref="14"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:429" version="1" flag="complete">
-            <reference item_ref="174"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:428" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:427" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:426" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:425" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:424" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:423" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:422" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:421" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:420" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:42" version="1" flag="complete">
-            <reference item_ref="13"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:419" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:418" version="1" flag="does not exist">
-            <reference item_ref="173"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:417" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:416" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:415" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:414" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:413" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:412" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:411" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:410" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:41" version="1" flag="complete">
-            <reference item_ref="12"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:409" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:408" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:407" version="1" flag="complete">
-            <reference item_ref="172"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:406" version="1" flag="complete">
-            <reference item_ref="171"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:405" version="1" flag="complete">
-            <reference item_ref="170"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:404" version="1" flag="complete">
-            <reference item_ref="169"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:403" version="1" flag="complete">
-            <reference item_ref="168"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:402" version="1" flag="complete">
-            <reference item_ref="167"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:401" version="1" flag="complete">
-            <reference item_ref="166"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:400" version="1" flag="complete">
-            <reference item_ref="165"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:40" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:4" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:399" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:398" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:397" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:396" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:395" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:394" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:393" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:392" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:391" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:390" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:39" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:389" version="1" flag="complete">
-            <reference item_ref="164"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:388" version="1" flag="complete">
-            <reference item_ref="163"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:387" version="1" flag="complete">
-            <reference item_ref="162"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:386" version="1" flag="complete">
-            <reference item_ref="161"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:385" version="1" flag="complete">
-            <reference item_ref="160"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:384" version="1" flag="complete">
-            <reference item_ref="159"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:383" version="1" flag="complete">
-            <reference item_ref="158"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:382" version="1" flag="complete">
-            <reference item_ref="157"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:381" version="1" flag="complete">
-            <reference item_ref="156"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:380" version="1" flag="complete">
-            <reference item_ref="155"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:38" version="1" flag="complete">
-            <reference item_ref="11"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:379" version="1" flag="complete">
-            <reference item_ref="154"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:378" version="1" flag="complete">
-            <reference item_ref="153"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:377" version="1" flag="complete">
-            <reference item_ref="152"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:376" version="1" flag="complete">
-            <reference item_ref="151"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:375" version="1" flag="complete">
-            <reference item_ref="150"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:374" version="1" flag="complete">
-            <reference item_ref="149"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:373" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:372" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:371" version="1" flag="complete">
-            <reference item_ref="148"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:370" version="1" flag="complete">
-            <reference item_ref="147"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:37" version="1" flag="complete">
-            <reference item_ref="10"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:369" version="1" flag="complete">
-            <reference item_ref="146"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:368" version="1" flag="complete">
-            <reference item_ref="145"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:367" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:366" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:365" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:364" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:363" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:362" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:361" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:360" version="1" flag="complete">
-            <reference item_ref="144"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:36" version="1" flag="complete">
-            <reference item_ref="9"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:359" version="1" flag="complete">
-            <reference item_ref="143"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:358" version="1" flag="complete">
-            <reference item_ref="142"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:357" version="1" flag="complete">
-            <reference item_ref="141"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:356" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:355" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:354" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:353" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:352" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:351" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:350" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:35" version="1" flag="complete">
-            <reference item_ref="8"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:349" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:348" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:347" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:346" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:345" version="1" flag="does not exist">
-            <reference item_ref="140"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:344" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:343" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:342" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:341" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:340" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:34" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:339" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:338" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:337" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:336" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:335" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:334" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:333" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:332" version="1" flag="complete">
-            <reference item_ref="139"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:331" version="1" flag="complete">
-            <reference item_ref="138"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:330" version="1" flag="complete">
-            <reference item_ref="137"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:33" version="1" flag="error">
-            <message level="fatal">An unknown error occured while collecting data.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:329" version="1" flag="complete">
-            <reference item_ref="136"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:328" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:327" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:326" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:325" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:324" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:323" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:322" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:321" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:320" version="1" flag="complete">
-            <reference item_ref="135"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:32" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:319" version="1" flag="complete">
-            <reference item_ref="134"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:318" version="1" flag="complete">
-            <reference item_ref="133"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:317" version="1" flag="complete">
-            <reference item_ref="132"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:316" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:315" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:314" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:313" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:312" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:311" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:310" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:31" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:309" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:308" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:307" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:306" version="1" flag="complete">
-            <reference item_ref="131"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:305" version="1" flag="complete">
-            <reference item_ref="130"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:304" version="1" flag="complete">
-            <reference item_ref="129"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:303" version="1" flag="complete">
-            <reference item_ref="128"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:302" version="1" flag="complete">
-            <reference item_ref="127"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:301" version="1" flag="error">
-            <message level="fatal">Unsupported behavior: recurse</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:300" version="1" flag="error">
-            <message level="fatal">Unsupported behavior: recurse</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:30" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:3" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:299" version="1" flag="error">
-            <message level="fatal">Unsupported behavior: recurse</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:298" version="1" flag="complete">
-            <reference item_ref="126"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:297" version="1" flag="complete">
-            <reference item_ref="125"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:296" version="1" flag="complete">
-            <reference item_ref="124"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:295" version="1" flag="complete">
-            <reference item_ref="123"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:294" version="1" flag="complete">
-            <reference item_ref="122"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:293" version="1" flag="complete">
-            <reference item_ref="121"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:292" version="1" flag="complete">
-            <reference item_ref="120"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:291" version="1" flag="complete">
-            <reference item_ref="119"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:290" version="1" flag="complete">
-            <reference item_ref="118"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:29" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:289" version="1" flag="complete">
-            <reference item_ref="117"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:288" version="1" flag="complete">
-            <reference item_ref="116"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:287" version="1" flag="complete">
-            <reference item_ref="115"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:286" version="1" flag="complete">
-            <reference item_ref="114"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:285" version="1" flag="complete">
-            <reference item_ref="113"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:284" version="1" flag="complete">
-            <reference item_ref="112"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:283" version="1" flag="complete">
-            <reference item_ref="111"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:282" version="1" flag="complete">
-            <reference item_ref="110"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:281" version="1" flag="complete">
-            <reference item_ref="109"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:280" version="1" flag="complete">
-            <reference item_ref="108"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:279" version="1" flag="complete">
-            <reference item_ref="107"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:278" version="1" flag="complete">
-            <reference item_ref="106"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:277" version="1" flag="complete">
-            <reference item_ref="105"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:276" version="1" flag="complete">
-            <reference item_ref="104"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:275" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:274" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:273" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:272" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:271" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:270" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:27" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:269" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:268" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:267" version="1" flag="complete">
-            <reference item_ref="103"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:266" version="1" flag="complete">
-            <reference item_ref="102"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:265" version="1" flag="complete">
-            <reference item_ref="101"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:264" version="1" flag="complete">
-            <reference item_ref="100"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:263" version="1" flag="complete">
-            <reference item_ref="99"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:262" version="1" flag="complete">
-            <reference item_ref="98"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:261" version="1" flag="complete">
-            <reference item_ref="97"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:260" version="1" flag="complete">
-            <reference item_ref="96"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:26" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:259" version="1" flag="complete">
-            <reference item_ref="95"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:258" version="1" flag="complete">
-            <reference item_ref="94"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:257" version="1" flag="complete">
-            <reference item_ref="93"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:256" version="1" flag="complete">
-            <reference item_ref="92"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:255" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:254" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:253" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:252" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:251" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:250" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:25" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:249" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:248" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:247" version="1" flag="complete">
-            <reference item_ref="91"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:246" version="1" flag="complete">
-            <reference item_ref="90"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:245" version="1" flag="complete">
-            <reference item_ref="89"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:244" version="1" flag="complete">
-            <reference item_ref="88"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:243" version="1" flag="complete">
-            <reference item_ref="87"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:242" version="1" flag="complete">
-            <reference item_ref="86"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:241" version="1" flag="complete">
-            <reference item_ref="85"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:240" version="1" flag="complete">
-            <reference item_ref="84"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:24" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:239" version="1" flag="complete">
-            <reference item_ref="83"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:238" version="1" flag="complete">
-            <reference item_ref="82"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:237" version="1" flag="complete">
-            <reference item_ref="81"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:236" version="1" flag="complete">
-            <reference item_ref="80"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:235" version="1" flag="complete">
-            <reference item_ref="79"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:234" version="1" flag="complete">
-            <reference item_ref="78"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:233" version="1" flag="complete">
-            <reference item_ref="77"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:232" version="1" flag="complete">
-            <reference item_ref="76"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:231" version="1" flag="complete">
-            <reference item_ref="75"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:230" version="1" flag="complete">
-            <reference item_ref="74"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:23" version="1" flag="not collected"/>
-          <object id="oval:gov.irs.rhel5:obj:229" version="1" flag="complete">
-            <reference item_ref="73"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:228" version="1" flag="complete">
-            <reference item_ref="72"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:227" version="1" flag="complete">
-            <reference item_ref="71"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:226" version="1" flag="complete">
-            <reference item_ref="70"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:225" version="1" flag="complete">
-            <reference item_ref="69"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:224" version="1" flag="complete">
-            <reference item_ref="68"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:223" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:222" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:221" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:220" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:219" version="1" flag="complete">
-            <reference item_ref="67"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:218" version="1" flag="complete">
-            <reference item_ref="66"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:217" version="1" flag="complete">
-            <reference item_ref="65"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:216" version="1" flag="complete">
-            <reference item_ref="64"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:215" version="1" flag="complete">
-            <reference item_ref="63"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:214" version="1" flag="complete">
-            <reference item_ref="62"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:213" version="1" flag="complete">
-            <reference item_ref="61"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:212" version="1" flag="complete">
-            <reference item_ref="60"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:211" version="1" flag="complete">
-            <reference item_ref="59"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:210" version="1" flag="complete">
-            <reference item_ref="58"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:21" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:209" version="1" flag="complete">
-            <reference item_ref="57"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:208" version="1" flag="complete">
-            <reference item_ref="56"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:207" version="1" flag="complete">
-            <reference item_ref="55"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:206" version="1" flag="complete">
-            <reference item_ref="54"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:205" version="1" flag="complete">
-            <reference item_ref="53"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:204" version="1" flag="complete">
-            <reference item_ref="52"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:203" version="1" flag="does not exist">
-            <reference item_ref="51"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:202" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:201" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:200" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:20" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:2" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:199" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:198" version="1" flag="does not exist">
-            <reference item_ref="50"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:197" version="1" flag="complete">
-            <reference item_ref="49"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:196" version="1" flag="complete">
-            <reference item_ref="48"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:195" version="1" flag="complete">
-            <reference item_ref="47"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:194" version="1" flag="complete">
-            <reference item_ref="46"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:193" version="1" flag="complete">
-            <reference item_ref="45"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:192" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:191" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:190" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:19" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:189" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:188" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:187" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:186" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:185" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:184" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:183" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:182" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:181" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:180" version="1" flag="does not exist">
-            <reference item_ref="44"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:18" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:179" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:178" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:177" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:176" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:175" version="1" flag="does not exist">
-            <reference item_ref="43"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:174" version="1" flag="does not exist">
-            <reference item_ref="42"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:173" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:172" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:171" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:170" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:17" version="1" flag="not collected"/>
-          <object id="oval:gov.irs.rhel5:obj:169" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:168" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:167" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:166" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:165" version="1" flag="complete">
-            <reference item_ref="41"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:164" version="1" flag="complete">
-            <reference item_ref="40"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:163" version="1" flag="complete">
-            <reference item_ref="39"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:162" version="1" flag="complete">
-            <reference item_ref="38"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:161" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:160" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:159" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:158" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:157" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:156" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:155" version="1" flag="complete">
-            <reference item_ref="37"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:154" version="1" flag="complete">
-            <reference item_ref="36"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:153" version="1" flag="complete">
-            <reference item_ref="35"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:152" version="1" flag="complete">
-            <reference item_ref="34"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:151" version="1" flag="complete">
-            <reference item_ref="33"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:150" version="1" flag="complete">
-            <reference item_ref="32"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:15" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:149" version="1" flag="complete">
-            <reference item_ref="31"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:148" version="1" flag="complete">
-            <reference item_ref="30"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:147" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:146" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:145" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:144" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:143" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:142" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:141" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:140" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:14" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:139" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:138" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:137" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:136" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:135" version="1" flag="error">
-            <message level="fatal">An unknown error occured while collecting data.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:134" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:133" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:132" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:131" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:130" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:13" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:129" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:128" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:127" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:126" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:125" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:124" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:123" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:122" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:121" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:120" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:12" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:119" version="1" flag="complete">
-            <reference item_ref="29"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:118" version="1" flag="complete">
-            <reference item_ref="28"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:117" version="1" flag="complete">
-            <reference item_ref="27"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:116" version="1" flag="complete">
-            <reference item_ref="26"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:115" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:114" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:113" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:112" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:111" version="1" flag="complete">
-            <reference item_ref="25"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:110" version="1" flag="complete">
-            <reference item_ref="24"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:11" version="1" flag="not collected"/>
-          <object id="oval:gov.irs.rhel5:obj:109" version="1" flag="complete">
-            <reference item_ref="23"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:108" version="1" flag="complete">
-            <reference item_ref="22"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:107" version="1" flag="complete">
-            <reference item_ref="21"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:106" version="1" flag="not collected">
-            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:105" version="1" flag="not collected">
+          <object id="oval:gov.irs.rhel5:obj:103" version="1" flag="not collected">
             <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
           </object>
           <object id="oval:gov.irs.rhel5:obj:104" version="1" flag="not collected">
             <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
           </object>
-          <object id="oval:gov.irs.rhel5:obj:103" version="1" flag="not collected">
+          <object id="oval:gov.irs.rhel5:obj:105" version="1" flag="not collected">
             <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
           </object>
-          <object id="oval:gov.irs.rhel5:obj:102" version="1" flag="error">
+          <object id="oval:gov.irs.rhel5:obj:106" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:107" version="1" flag="complete">
+            <reference item_ref="21"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:108" version="1" flag="complete">
+            <reference item_ref="22"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:109" version="1" flag="complete">
+            <reference item_ref="23"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:11" version="1" flag="not collected"/>
+          <object id="oval:gov.irs.rhel5:obj:110" version="1" flag="complete">
+            <reference item_ref="24"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:111" version="1" flag="complete">
+            <reference item_ref="25"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:112" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:113" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:114" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:115" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:116" version="1" flag="complete">
+            <reference item_ref="26"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:117" version="1" flag="complete">
+            <reference item_ref="27"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:118" version="1" flag="complete">
+            <reference item_ref="28"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:119" version="1" flag="complete">
+            <reference item_ref="29"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:12" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:120" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:121" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:122" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:123" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:124" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:125" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:126" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:127" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:128" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:129" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:13" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:130" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:131" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:132" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:133" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:134" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:135" version="1" flag="error">
+            <message level="fatal">An unknown error occured while collecting data.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:136" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:137" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:138" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:139" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:14" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:140" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:141" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:142" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:143" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:144" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:145" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:146" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:147" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:148" version="1" flag="complete">
+            <reference item_ref="30"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:149" version="1" flag="complete">
+            <reference item_ref="31"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:15" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:150" version="1" flag="complete">
+            <reference item_ref="32"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:151" version="1" flag="complete">
+            <reference item_ref="33"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:152" version="1" flag="complete">
+            <reference item_ref="34"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:153" version="1" flag="complete">
+            <reference item_ref="35"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:154" version="1" flag="complete">
+            <reference item_ref="36"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:155" version="1" flag="complete">
+            <reference item_ref="37"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:156" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:157" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:158" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:159" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:160" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:161" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:162" version="1" flag="complete">
+            <reference item_ref="38"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:163" version="1" flag="complete">
+            <reference item_ref="39"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:164" version="1" flag="complete">
+            <reference item_ref="40"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:165" version="1" flag="complete">
+            <reference item_ref="41"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:166" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:167" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:168" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:169" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:17" version="1" flag="not collected"/>
+          <object id="oval:gov.irs.rhel5:obj:170" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:171" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:172" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:173" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:174" version="1" flag="does not exist">
+            <reference item_ref="42"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:175" version="1" flag="does not exist">
+            <reference item_ref="43"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:176" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:177" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:178" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:179" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:18" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:180" version="1" flag="does not exist">
+            <reference item_ref="44"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:181" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:182" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:183" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:184" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:185" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:186" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:187" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:188" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:189" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:19" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:190" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:191" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:192" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:193" version="1" flag="complete">
+            <reference item_ref="45"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:194" version="1" flag="complete">
+            <reference item_ref="46"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:195" version="1" flag="complete">
+            <reference item_ref="47"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:196" version="1" flag="complete">
+            <reference item_ref="48"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:197" version="1" flag="complete">
+            <reference item_ref="49"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:198" version="1" flag="does not exist">
+            <reference item_ref="50"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:199" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:2" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:20" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:200" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:201" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:202" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:203" version="1" flag="does not exist">
+            <reference item_ref="51"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:204" version="1" flag="complete">
+            <reference item_ref="52"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:205" version="1" flag="complete">
+            <reference item_ref="53"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:206" version="1" flag="complete">
+            <reference item_ref="54"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:207" version="1" flag="complete">
+            <reference item_ref="55"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:208" version="1" flag="complete">
+            <reference item_ref="56"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:209" version="1" flag="complete">
+            <reference item_ref="57"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:21" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:210" version="1" flag="complete">
+            <reference item_ref="58"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:211" version="1" flag="complete">
+            <reference item_ref="59"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:212" version="1" flag="complete">
+            <reference item_ref="60"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:213" version="1" flag="complete">
+            <reference item_ref="61"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:214" version="1" flag="complete">
+            <reference item_ref="62"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:215" version="1" flag="complete">
+            <reference item_ref="63"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:216" version="1" flag="complete">
+            <reference item_ref="64"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:217" version="1" flag="complete">
+            <reference item_ref="65"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:218" version="1" flag="complete">
+            <reference item_ref="66"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:219" version="1" flag="complete">
+            <reference item_ref="67"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:220" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:221" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:222" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:223" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:224" version="1" flag="complete">
+            <reference item_ref="68"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:225" version="1" flag="complete">
+            <reference item_ref="69"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:226" version="1" flag="complete">
+            <reference item_ref="70"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:227" version="1" flag="complete">
+            <reference item_ref="71"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:228" version="1" flag="complete">
+            <reference item_ref="72"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:229" version="1" flag="complete">
+            <reference item_ref="73"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:23" version="1" flag="not collected"/>
+          <object id="oval:gov.irs.rhel5:obj:230" version="1" flag="complete">
+            <reference item_ref="74"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:231" version="1" flag="complete">
+            <reference item_ref="75"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:232" version="1" flag="complete">
+            <reference item_ref="76"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:233" version="1" flag="complete">
+            <reference item_ref="77"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:234" version="1" flag="complete">
+            <reference item_ref="78"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:235" version="1" flag="complete">
+            <reference item_ref="79"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:236" version="1" flag="complete">
+            <reference item_ref="80"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:237" version="1" flag="complete">
+            <reference item_ref="81"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:238" version="1" flag="complete">
+            <reference item_ref="82"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:239" version="1" flag="complete">
+            <reference item_ref="83"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:24" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:240" version="1" flag="complete">
+            <reference item_ref="84"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:241" version="1" flag="complete">
+            <reference item_ref="85"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:242" version="1" flag="complete">
+            <reference item_ref="86"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:243" version="1" flag="complete">
+            <reference item_ref="87"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:244" version="1" flag="complete">
+            <reference item_ref="88"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:245" version="1" flag="complete">
+            <reference item_ref="89"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:246" version="1" flag="complete">
+            <reference item_ref="90"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:247" version="1" flag="complete">
+            <reference item_ref="91"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:248" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:249" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:25" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:250" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:251" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:252" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:253" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:254" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:255" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:256" version="1" flag="complete">
+            <reference item_ref="92"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:257" version="1" flag="complete">
+            <reference item_ref="93"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:258" version="1" flag="complete">
+            <reference item_ref="94"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:259" version="1" flag="complete">
+            <reference item_ref="95"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:26" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:260" version="1" flag="complete">
+            <reference item_ref="96"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:261" version="1" flag="complete">
+            <reference item_ref="97"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:262" version="1" flag="complete">
+            <reference item_ref="98"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:263" version="1" flag="complete">
+            <reference item_ref="99"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:264" version="1" flag="complete">
+            <reference item_ref="100"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:265" version="1" flag="complete">
+            <reference item_ref="101"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:266" version="1" flag="complete">
+            <reference item_ref="102"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:267" version="1" flag="complete">
+            <reference item_ref="103"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:268" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:269" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:27" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:270" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:271" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:272" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:273" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:274" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:275" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:276" version="1" flag="complete">
+            <reference item_ref="104"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:277" version="1" flag="complete">
+            <reference item_ref="105"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:278" version="1" flag="complete">
+            <reference item_ref="106"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:279" version="1" flag="complete">
+            <reference item_ref="107"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:280" version="1" flag="complete">
+            <reference item_ref="108"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:281" version="1" flag="complete">
+            <reference item_ref="109"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:282" version="1" flag="complete">
+            <reference item_ref="110"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:283" version="1" flag="complete">
+            <reference item_ref="111"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:284" version="1" flag="complete">
+            <reference item_ref="112"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:285" version="1" flag="complete">
+            <reference item_ref="113"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:286" version="1" flag="complete">
+            <reference item_ref="114"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:287" version="1" flag="complete">
+            <reference item_ref="115"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:288" version="1" flag="complete">
+            <reference item_ref="116"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:289" version="1" flag="complete">
+            <reference item_ref="117"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:29" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:290" version="1" flag="complete">
+            <reference item_ref="118"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:291" version="1" flag="complete">
+            <reference item_ref="119"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:292" version="1" flag="complete">
+            <reference item_ref="120"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:293" version="1" flag="complete">
+            <reference item_ref="121"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:294" version="1" flag="complete">
+            <reference item_ref="122"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:295" version="1" flag="complete">
+            <reference item_ref="123"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:296" version="1" flag="complete">
+            <reference item_ref="124"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:297" version="1" flag="complete">
+            <reference item_ref="125"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:298" version="1" flag="complete">
+            <reference item_ref="126"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:299" version="1" flag="error">
             <message level="fatal">Unsupported behavior: recurse</message>
           </object>
-          <object id="oval:gov.irs.rhel5:obj:101" version="1" flag="does not exist">
-            <reference item_ref="20"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:10001" version="1" flag="complete">
-            <reference item_ref="2"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:10000" version="1" flag="does not exist">
-            <reference item_ref="1"/>
-          </object>
-          <object id="oval:gov.irs.rhel5:obj:100" version="1" flag="does not exist"/>
-          <object id="oval:gov.irs.rhel5:obj:10" version="1" flag="not collected">
+          <object id="oval:gov.irs.rhel5:obj:3" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:30" version="1" flag="not collected">
             <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
           </object>
-          <object id="oval:gov.irs.rhel5:obj:1" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:300" version="1" flag="error">
+            <message level="fatal">Unsupported behavior: recurse</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:301" version="1" flag="error">
+            <message level="fatal">Unsupported behavior: recurse</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:302" version="1" flag="complete">
+            <reference item_ref="127"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:303" version="1" flag="complete">
+            <reference item_ref="128"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:304" version="1" flag="complete">
+            <reference item_ref="129"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:305" version="1" flag="complete">
+            <reference item_ref="130"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:306" version="1" flag="complete">
+            <reference item_ref="131"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:307" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:308" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:309" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:31" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:310" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:311" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:312" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:313" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:314" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:315" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:316" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:317" version="1" flag="complete">
+            <reference item_ref="132"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:318" version="1" flag="complete">
+            <reference item_ref="133"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:319" version="1" flag="complete">
+            <reference item_ref="134"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:32" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:320" version="1" flag="complete">
+            <reference item_ref="135"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:321" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:322" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:323" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:324" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:325" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:326" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:327" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:328" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:329" version="1" flag="complete">
+            <reference item_ref="136"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:33" version="1" flag="error">
+            <message level="fatal">An unknown error occured while collecting data.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:330" version="1" flag="complete">
+            <reference item_ref="137"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:331" version="1" flag="complete">
+            <reference item_ref="138"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:332" version="1" flag="complete">
+            <reference item_ref="139"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:333" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:334" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:335" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:336" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:337" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:338" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:339" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:34" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:340" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:341" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:342" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:343" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:344" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:345" version="1" flag="does not exist">
+            <reference item_ref="140"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:346" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:347" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:348" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:349" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:35" version="1" flag="complete">
+            <reference item_ref="8"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:350" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:351" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:352" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:353" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:354" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:355" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:356" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:357" version="1" flag="complete">
+            <reference item_ref="141"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:358" version="1" flag="complete">
+            <reference item_ref="142"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:359" version="1" flag="complete">
+            <reference item_ref="143"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:36" version="1" flag="complete">
+            <reference item_ref="9"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:360" version="1" flag="complete">
+            <reference item_ref="144"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:361" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:362" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:363" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:364" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:365" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:366" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:367" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:368" version="1" flag="complete">
+            <reference item_ref="145"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:369" version="1" flag="complete">
+            <reference item_ref="146"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:37" version="1" flag="complete">
+            <reference item_ref="10"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:370" version="1" flag="complete">
+            <reference item_ref="147"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:371" version="1" flag="complete">
+            <reference item_ref="148"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:372" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:373" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:374" version="1" flag="complete">
+            <reference item_ref="149"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:375" version="1" flag="complete">
+            <reference item_ref="150"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:376" version="1" flag="complete">
+            <reference item_ref="151"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:377" version="1" flag="complete">
+            <reference item_ref="152"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:378" version="1" flag="complete">
+            <reference item_ref="153"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:379" version="1" flag="complete">
+            <reference item_ref="154"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:38" version="1" flag="complete">
+            <reference item_ref="11"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:380" version="1" flag="complete">
+            <reference item_ref="155"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:381" version="1" flag="complete">
+            <reference item_ref="156"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:382" version="1" flag="complete">
+            <reference item_ref="157"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:383" version="1" flag="complete">
+            <reference item_ref="158"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:384" version="1" flag="complete">
+            <reference item_ref="159"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:385" version="1" flag="complete">
+            <reference item_ref="160"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:386" version="1" flag="complete">
+            <reference item_ref="161"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:387" version="1" flag="complete">
+            <reference item_ref="162"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:388" version="1" flag="complete">
+            <reference item_ref="163"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:389" version="1" flag="complete">
+            <reference item_ref="164"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:39" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:390" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:391" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:392" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:393" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:394" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:395" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:396" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:397" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:398" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:399" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:4" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:40" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:400" version="1" flag="complete">
+            <reference item_ref="165"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:401" version="1" flag="complete">
+            <reference item_ref="166"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:402" version="1" flag="complete">
+            <reference item_ref="167"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:403" version="1" flag="complete">
+            <reference item_ref="168"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:404" version="1" flag="complete">
+            <reference item_ref="169"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:405" version="1" flag="complete">
+            <reference item_ref="170"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:406" version="1" flag="complete">
+            <reference item_ref="171"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:407" version="1" flag="complete">
+            <reference item_ref="172"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:408" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:409" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:41" version="1" flag="complete">
+            <reference item_ref="12"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:410" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:411" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:412" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:413" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:414" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:415" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:416" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:417" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:418" version="1" flag="does not exist">
+            <reference item_ref="173"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:419" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:42" version="1" flag="complete">
+            <reference item_ref="13"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:420" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:421" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:422" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:423" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:424" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:425" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:426" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:427" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:428" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:429" version="1" flag="complete">
+            <reference item_ref="174"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:43" version="1" flag="complete">
+            <reference item_ref="14"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:430" version="1" flag="complete">
+            <reference item_ref="175"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:431" version="1" flag="complete">
+            <reference item_ref="176"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:432" version="1" flag="complete">
+            <reference item_ref="177"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:433" version="1" flag="complete">
+            <reference item_ref="178"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:434" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:435" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:436" version="1" flag="complete">
+            <reference item_ref="179"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:437" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:438" version="1" flag="complete">
+            <reference item_ref="180"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:439" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:44" version="1" flag="complete">
+            <reference item_ref="15"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:440" version="1" flag="complete">
+            <reference item_ref="181"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:441" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:442" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:443" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:444" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:445" version="1" flag="does not exist">
+            <reference item_ref="182"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:446" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:447" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:448" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:449" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:45" version="1" flag="complete"/>
+          <object id="oval:gov.irs.rhel5:obj:450" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:451" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:452" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:453" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:454" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:455" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:456" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:457" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:458" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:459" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:46" version="1" flag="complete">
+            <reference item_ref="16"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:460" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:461" version="1" flag="does not exist">
+            <reference item_ref="183"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:462" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:463" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:464" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:465" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:466" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:467" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:468" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:469" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:47" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:470" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:471" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:472" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:473" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:474" version="1" flag="complete">
+            <reference item_ref="184"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:475" version="1" flag="complete">
+            <reference item_ref="185"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:476" version="1" flag="complete">
+            <reference item_ref="186"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:477" version="1" flag="complete">
+            <reference item_ref="187"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:478" version="1" flag="does not exist">
+            <reference item_ref="188"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:48" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:49" version="1" flag="error">
+            <message level="info">AbsObjectCollector::Run() - Error while parsing object: oval:gov.irs.rhel5:obj:49 VariableFactory::GetVariable() - Error while parsing variable: oval:gov.irs.rhel5:var:1 Unknown Error</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:5" version="1" flag="complete">
+            <reference item_ref="3"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:50" version="1" flag="error">
+            <message level="fatal">Unsupported behavior: recurse</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:51" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:52" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:53" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:54" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:55" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:56" version="1" flag="error"/>
+          <object id="oval:gov.irs.rhel5:obj:57" version="1" flag="error">
+            <message level="fatal">Unsupported behavior: recurse</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:58" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:59" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:6" version="1" flag="complete">
+            <reference item_ref="4"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:60" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:61" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:62" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:63" version="1" flag="does not exist">
+            <reference item_ref="17"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:64" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:65" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:66" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:67" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:68" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:69" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:7" version="1" flag="complete">
+            <reference item_ref="5"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:70" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:71" version="1" flag="not collected"/>
+          <object id="oval:gov.irs.rhel5:obj:72" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:73" version="1" flag="not collected">
+            <message level="info">ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:gov.irs.rhel5:obj:71</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:74" version="1" flag="not collected">
+            <message level="info">ObjectComponent::ComputeValue() - Unable to compute variable value. No items found for the specified object_component id: oval:gov.irs.rhel5:obj:71</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:75" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:76" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:77" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:78" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:79" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:8" version="1" flag="complete">
+            <reference item_ref="6"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:80" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:81" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:82" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:83" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:84" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:85" version="1" flag="complete">
+            <reference item_ref="18"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:86" version="1" flag="error">
+            <message level="fatal">Unsupported behavior: recurse</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:87" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:88" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:89" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:9" version="1" flag="does not exist">
+            <reference item_ref="7"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:90" version="1" flag="complete">
+            <reference item_ref="19"/>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:91" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:92" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:93" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:94" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:95" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:96" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:97" version="1" flag="not collected">
+            <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
+          </object>
+          <object id="oval:gov.irs.rhel5:obj:98" version="1" flag="does not exist"/>
+          <object id="oval:gov.irs.rhel5:obj:99" version="1" flag="does not exist"/>
         </collected_objects>
         <system_data>
           <unix-sys:runlevel_item id="99" status="exists">
