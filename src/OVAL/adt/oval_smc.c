@@ -103,11 +103,15 @@ void *oval_smc_get_last(struct oval_smc *map, const char *key)
 
 void oval_smc_free0(struct oval_smc *map)
 {
+	if (map == NULL)
+		return;
 	oval_string_map_free((struct oval_string_map *) map, (oscap_destruct_func) oval_collection_free);
 }
 
 void oval_smc_free(struct oval_smc *map, oscap_destruct_func destructor)
 {
+	if (map == NULL)
+		return;
 	struct oval_iterator *map_it = oval_string_map_values((struct oval_string_map *) map);
 	while (oval_collection_iterator_has_more(map_it)) {
 		struct oval_collection *list_col = (struct oval_collection *) oval_collection_iterator_next(map_it);
