@@ -87,6 +87,7 @@ int _oval_probe_hint_criteria(oval_probe_session_t *sess, struct oval_criteria_n
 		return -1;
 	}
 	}
+	return -1;
 }
 
 int _oval_probe_hint_object(oval_probe_session_t *psess, struct oval_object *object, int variable_instance_hint)
