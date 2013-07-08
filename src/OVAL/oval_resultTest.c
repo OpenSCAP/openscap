@@ -193,7 +193,6 @@ typedef struct oval_result_test {
 	struct oval_collection *bindings;
 	int instance;
 	bool bindings_initialized;
-	bool bindings_clearable;
 } oval_result_test_t;
 
 struct oval_result_test *oval_result_test_new(struct oval_result_system *sys, char *tstid)
@@ -213,7 +212,6 @@ struct oval_result_test *oval_result_test_new(struct oval_result_system *sys, ch
 	test->items = oval_collection_new();
 	test->bindings = oval_collection_new();
 	test->bindings_initialized = false;
-	test->bindings_clearable = false;
 	return test;
 }
 
@@ -266,11 +264,7 @@ void oval_result_test_free(struct oval_result_test *test)
 
 	oval_collection_free_items(test->messages, (oscap_destruct_func) oval_message_free);
 	oval_collection_free_items(test->items, (oscap_destruct_func) oval_result_item_free);
-	if (test->bindings_clearable)
-		oval_collection_free_items(test->bindings, (oscap_destruct_func) oval_variable_binding_free);
-	else {
-		oval_collection_free(test->bindings);	/* avoid leaks - remove collection but not bindings. Bindings are part of syschar model */
-	}
+	oval_collection_free_items(test->bindings, (oscap_destruct_func) oval_variable_binding_free);
 
 	test->system = NULL;
 	test->test = NULL;
@@ -1570,7 +1564,6 @@ static void _oval_result_test_initialize_bindings(struct oval_result_test *rslt_
 	oval_string_map_free(vm, NULL);
 
 	rslt_test->bindings_initialized = true;
-	rslt_test->bindings_clearable = true;	//bindings are shared from syschar model.
 }
 
 oval_result_t oval_result_test_eval(struct oval_result_test *rtest)
@@ -1763,7 +1756,6 @@ int oval_result_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_conte
 	return_code = oval_parser_parse_tag(reader, context, (oval_xml_tag_parser) _oval_result_test_parse, args);
 	oval_string_map_free(itemmap, NULL);
 	test->bindings_initialized = true;
-	test->bindings_clearable = true;
 
 	oscap_free(test_id);
 	return return_code;
