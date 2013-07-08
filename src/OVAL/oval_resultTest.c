@@ -1557,8 +1557,11 @@ static void _oval_result_test_initialize_bindings(struct oval_result_test *rslt_
 				 * that object's own bindings don't contain
 				 * duplicates.
 				 */
-				if (oval_string_map_get_value(vm, var_id) == NULL)
-					oval_result_test_add_binding(rslt_test, binding);
+				if (oval_string_map_get_value(vm, var_id) == NULL) {
+					struct oval_definition_model *definition_model = oval_syschar_model_get_definition_model(syschar_model);
+					struct oval_variable_binding *binding_copy = oval_variable_binding_clone(binding, definition_model);
+					oval_result_test_add_binding(rslt_test, binding_copy);
+				}
 			}
 			oval_variable_binding_iterator_free(bindings);
 		}
@@ -1567,7 +1570,7 @@ static void _oval_result_test_initialize_bindings(struct oval_result_test *rslt_
 	oval_string_map_free(vm, NULL);
 
 	rslt_test->bindings_initialized = true;
-	rslt_test->bindings_clearable = false;	//bindings are shared from syschar model.
+	rslt_test->bindings_clearable = true;	//bindings are shared from syschar model.
 }
 
 oval_result_t oval_result_test_eval(struct oval_result_test *rtest)
