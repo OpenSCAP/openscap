@@ -1527,6 +1527,7 @@ static void _oval_result_test_initialize_bindings(struct oval_result_test *rslt_
 
 			val = oval_value_iterator_next(val_itr);
 			txt = oval_value_get_text(val);
+			txt = oscap_strdup(txt);
 			oval_variable_binding_add_value(binding, txt);
 		}
 		oval_value_iterator_free(val_itr);
