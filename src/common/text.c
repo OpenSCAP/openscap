@@ -199,25 +199,33 @@ bool oscap_textlist_export(struct oscap_text_iterator *texts, xmlTextWriter *wri
 	return true;
 }
 
-char* oscap_textlist_get_preferred_plaintext(struct oscap_text_iterator* texts, const char* preferred_lang)
+char *oscap_textlist_get_preferred_plaintext(struct oscap_text_iterator *texts, const char *preferred_lang)
 {
 	if (preferred_lang == NULL)
 		preferred_lang = OSCAP_LANG_DEFAULT;
 
 	oscap_text_iterator_reset(texts);
 
-	while (oscap_text_iterator_has_more(texts))
-	{
-		struct oscap_text* text = oscap_text_iterator_next(texts);
-		if (strcmp(oscap_text_get_lang(text), preferred_lang) == 0)
+	while (oscap_text_iterator_has_more(texts)) {
+		struct oscap_text *text = oscap_text_iterator_next(texts);
+		const char *lang = oscap_text_get_lang(text);
+		if (lang && strcmp(lang, preferred_lang) == 0)
 			return oscap_text_get_plaintext(text);
 	}
 
-	// not found in preferred language, fallback to any language
+	// not found as exact match in preferred language, try to find implicit match
 	oscap_text_iterator_reset(texts);
-	while (oscap_text_iterator_has_more(texts))
-	{
-		struct oscap_text* text = oscap_text_iterator_next(texts);
+	while (oscap_text_iterator_has_more(texts)) {
+		struct oscap_text *text = oscap_text_iterator_next(texts);
+		const char *lang = oscap_text_get_lang(text);
+		if (lang == NULL)
+			return oscap_text_get_plaintext(text);
+	}
+
+	// fallback to any language
+	oscap_text_iterator_reset(texts);
+	while (oscap_text_iterator_has_more(texts)) {
+		struct oscap_text *text = oscap_text_iterator_next(texts);
 		return oscap_text_get_plaintext(text);
 	}
 
