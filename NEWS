@@ -1,3 +1,16 @@
+openscap-0.9.9							10-07-2013
+ - --oval-results also exports CPE OVAL results
+ - added --benchmark-id to select a component-ref by ID of Benchmark it's pointing to
+ - OVAL variable_instance processing (or so called value multiset) and the processing
+   of @variable_instance attribute to OVAL Result Definition, OVAL Result Test and
+   Collected Objects.
+ - improved test coverage of OVAL variable processing
+ - introduced new internal data type: oval_smc
+ - added support for evaluating OVAL definitions against an RPM database, a.k.a. rpm
+   database offline mode
+ - bug fixes and dead code removal
+
+
 openscap-0.9.8							17-06-2013
  - added experimental support for offline mode scanning to the OVAL
    check engine (i.e. scanning of virtual host disk images)

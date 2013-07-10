@@ -197,6 +197,9 @@ fi
 %{_libexecdir}/openscap/probe_gconf
 
 %changelog
+* Wed Jul 10 2013 Petr Lautrbach <plautrba@redhat.com> 0.9.9-1
+- upgrade
+
 * Mon Jun 17 2013 Petr Lautrbach <plautrba@redhat.com> 0.9.8-1
 - openscap requires at least libxml2-2.6.26-2.1.21.el5_9.2
 - upgrade
