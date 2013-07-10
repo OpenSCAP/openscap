@@ -16,4 +16,5 @@ EXTRA_DIST = \
 	fedora19-xccdf.xml \
 	rhel5-xccdf.xml \
 	rhel6-xccdf.xml \
+	rhel7-xccdf.xml \
 	cpe-oval.xml

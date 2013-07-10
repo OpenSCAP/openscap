@@ -100,5 +100,6 @@ test_run "test_api_xccdf_default_cpe_fedora18" test_fedora 18
 test_run "test_api_xccdf_default_cpe_fedora19" test_fedora 19
 test_run "test_api_xccdf_default_cpe_rhel5" test_rhel 5
 test_run "test_api_xccdf_default_cpe_rhel6" test_rhel 6
+test_run "test_api_xccdf_default_cpe_rhel7" test_rhel 7
 
 test_exit
