@@ -22,7 +22,7 @@ CLEANFILES = *.log *.out*
 
 TESTS_ENVIRONMENT= \
 		OSCAP_FULL_VALIDATION=1 \
-		$(top_builddir)/run $(SHELL) -x
+		$(top_builddir)/run
 
 TESTS = test_xinetd_probe.sh
 check_PROGRAMS = test_probe_xinetd
