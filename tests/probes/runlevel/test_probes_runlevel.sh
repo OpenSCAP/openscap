@@ -87,6 +87,10 @@ function test_probes_runlevel_B {
     local SERVICE_A=`get_services_matching 3 on | head -1`
     local SERVICE_B=`get_services_matching 3 off | head -1`
 
+    if [ -z "$SERVICE_A" -o -z "$SERVICE_B" ]; then
+        return 255   #SKIPPED
+    fi
+
     bash ${srcdir}/test_probes_runlevel_B.xml.sh $SERVICE_A $SERVICE_B > $DF
     $OSCAP oval eval --results $RF $DF
         
