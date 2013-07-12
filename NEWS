@@ -1,3 +1,6 @@
+openscap-0.9.10							12-07-2013
+ - bug fixes
+
 openscap-0.9.9							10-07-2013
  - --oval-results also exports CPE OVAL results
  - added --benchmark-id to select a component-ref by ID of Benchmark it's pointing to
@@ -9,7 +12,6 @@ openscap-0.9.9							10-07-2013
  - added support for evaluating OVAL definitions against an RPM database, a.k.a. rpm
    database offline mode
  - bug fixes and dead code removal
-
 
 openscap-0.9.8							17-06-2013
  - added experimental support for offline mode scanning to the OVAL
