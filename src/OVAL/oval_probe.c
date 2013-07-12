@@ -457,53 +457,47 @@ const oval_probe_meta_t * const oval_probe_meta_get(void)
 
 void oval_probe_meta_list(FILE *output, int flags)
 {
-    register size_t i;
-    const char *probe_dir;
-    char probe_path[PATH_MAX];
-    size_t probe_dirlen;
-    oval_probe_meta_t *meta = OSCAP_GSYM(__probe_meta);
+	register size_t i;
+	const char *probe_dir;
+	oval_probe_meta_t *meta = OSCAP_GSYM(__probe_meta);
+	size_t probe_dirlen;
+	char probe_path[PATH_MAX+1];
 
-    if (output == NULL)
-	output = stdout;
-#if 0
-    fprintf(output, "#\n# %-24s %-30s %s", "object", "probe name", "flags");
+	if (output == NULL)
+		output = stdout;
 
-    if (flags & OVAL_PROBEMETA_LIST_VERBOSE) {
-	fprintf(output, " %-5s %s\n#\n", "type", "path");
-    } else
-	fprintf(output, "\n#\n");
-#endif
-    probe_dir = oval_probe_ext_getdir();
-    assume_d(probe_dir != NULL, /* void */);
-    probe_dirlen = strlen(probe_dir);
-    assume_r(probe_dirlen + 1 < sizeof probe_path - 1, /* void */);
-    strncpy(probe_path, probe_dir, sizeof probe_path - 1);
+	probe_dir = oval_probe_ext_getdir();
+	assume_d(probe_dir != NULL, /* void */);
+	probe_dirlen = strlen(probe_dir);
+	assume_r(probe_dirlen + 1 <= PATH_MAX, /* void */);
 
-    probe_path[probe_dirlen  ] = '/';
-    probe_path[probe_dirlen+1] = '\0';
+	for (i = 0; i < OSCAP_GSYM(__probe_meta_count); ++i) {
+		if (meta[i].flags & OVAL_PROBEMETA_EXTERNAL) {
+			strncpy(probe_path, probe_dir, PATH_MAX);
+			probe_path[probe_dirlen] = '/';
+			probe_path[probe_dirlen+1] = '\0';
+			strncat(probe_path, meta[i].pname, PATH_MAX - strlen(probe_dir) - 1);
 
-    for (i = 0; i < OSCAP_GSYM(__probe_meta_count); ++i) {
-	if (meta[i].flags & OVAL_PROBEMETA_EXTERNAL) {
-	    strncpy(probe_path + probe_dirlen + 1,
-		    meta[i].pname,
-		    sizeof probe_path - probe_dirlen + 1);
-
-	    if (flags & OVAL_PROBEMETA_LIST_DYNAMIC) {
-		dI("Checking access to \"%s\"\n", probe_path);
-		if (access(probe_path, X_OK) != 0) {
-		    dW("access: errno=%d, %s\n", errno, strerror(errno));
-		    continue;
+			if (flags & OVAL_PROBEMETA_LIST_DYNAMIC) {
+				dI("Checking access to \"%s\"\n", probe_path);
+				if (access(probe_path, X_OK) != 0) {
+					dW("access: errno=%d, %s\n", errno, strerror(errno));
+					continue;
+				}
+			}
 		}
-	    }
+
+		fprintf(output, "%-28s %-28s", meta[i].stype, meta[i].pname);
+
+		if (flags & OVAL_PROBEMETA_LIST_VERBOSE) {
+			if (meta[i].flags & OVAL_PROBEMETA_EXTERNAL) {
+				fprintf(output, " %-5u %s\n", meta[i].otype, probe_path);
+			} else {
+				fprintf(output, " %-5u\n", meta[i].otype);
+			}
+		} else
+			fprintf(output, "\n");
 	}
 
-	fprintf(output, "%-28s %-28s", meta[i].stype, meta[i].pname);
-
-	if (flags & OVAL_PROBEMETA_LIST_VERBOSE) {
-	    fprintf(output, " %-5u %s\n", meta[i].otype, probe_path);
-	} else
-	    fprintf(output, "\n");
-    }
-
-    return;
+	return;
 }
