@@ -79,6 +79,19 @@ static void ncache_libinit(void)
 
 static void oval_probe_session_libinit(void)
 {
+	/* HACK: Make sure S-exps are initialized before we initialize anything else
+	 * that uses them. This is needed only if the S-exp library is compiled without
+	 * atomic builtins. In that case it uses a fallback locking mechanism that uses
+	 * a mutex array which needs to be initialized before S-exp are used and freed
+	 * at exit(3). The later is done by registering an atexit(3) function.
+	 * The ncache_libinit function also registers an atexit(3) function and we need
+	 * to make sure that the S-exps are not deinitialized before the ncache atexit
+	 * handler is called.
+	 * TODO: Implement SEXP_libinit() and call it from oscap_init()?
+	 */
+	volatile SEXP_t *exp = SEXP_string_new("magic", 5);
+	SEXP_free((SEXP_t *)exp);
+
         ncache_libinit();
         oval_probe_tblinit();
 }
