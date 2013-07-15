@@ -111,7 +111,7 @@ static xmlNodePtr _lookup_request_in_arf(xmlDocPtr doc, const char *request_id)
 			continue;
 
 		char* candidate_id = (char*)xmlGetProp(candidate, BAD_CAST "id");
-		if (strcmp(candidate_id, request_id) == 0)
+		if (request_id == NULL || strcmp(candidate_id, request_id) == 0)
 		{
 			component = candidate;
 			xmlFree(candidate_id);
