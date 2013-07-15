@@ -104,7 +104,7 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 			dE("Can't open \"%s\": errno=%d, %s.\n", env_file, errno, strerror (errno));
 			item = probe_item_create(
 					OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE58, NULL,
-					"pid", OVAL_DATATYPE_INTEGER, pid,
+					"pid", OVAL_DATATYPE_INTEGER, (int64_t)pid,
 					NULL
 			);
 
@@ -161,7 +161,7 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 				if (probe_entobj_cmp(name_ent, env_name) == OVAL_RESULT_TRUE) {
 					item = probe_item_create(
 						OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE58, NULL,
-						"pid", OVAL_DATATYPE_INTEGER, pid,
+						"pid", OVAL_DATATYPE_INTEGER, (int64_t)pid,
 						"name",  OVAL_DATATYPE_SEXP, env_name,
 						"value", OVAL_DATATYPE_SEXP, env_value,
 					      NULL);

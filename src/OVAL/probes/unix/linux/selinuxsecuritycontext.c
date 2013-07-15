@@ -144,7 +144,7 @@ static int selinuxsecuritycontext_process_cb (SEXP_t *pid_ent, probe_ctx *ctx) {
 			if (range != NULL) {
 				split_range(range, &l_sensitivity, &l_category, &h_sensitivity, &h_category);
 				item = probe_item_create(OVAL_LINUX_SELINUXSECURITYCONTEXT, NULL,
-					"pid",     OVAL_DATATYPE_INTEGER, pid_number,
+					"pid",     OVAL_DATATYPE_INTEGER, (int64_t)pid_number,
 					"user",     OVAL_DATATYPE_STRING, user,
 					"role",     OVAL_DATATYPE_STRING, role,
 					"type",     OVAL_DATATYPE_STRING, type,
@@ -156,7 +156,7 @@ static int selinuxsecuritycontext_process_cb (SEXP_t *pid_ent, probe_ctx *ctx) {
 			}
 			else {
 				item = probe_item_create(OVAL_LINUX_SELINUXSECURITYCONTEXT, NULL,
-					"pid",     OVAL_DATATYPE_INTEGER, pid_number,
+					"pid",     OVAL_DATATYPE_INTEGER, (int64_t)pid_number,
 					"user",     OVAL_DATATYPE_STRING, user,
 					"role",     OVAL_DATATYPE_STRING, role,
 					"type",     OVAL_DATATYPE_STRING, type,
