@@ -1086,10 +1086,6 @@ AC_ARG_ENABLE([selinux_policy],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-selinux_policy]) ;;
      esac],[selinux_policy=no])
 
-if test "x${selinux_policy}" = xyes; then
-  AC_DEFINE([ENABLE_SCE], [1], [SELinux policy enabled])
-fi
-
 
 AM_CONDITIONAL([probe_system_info_enabled], test "$probe_system_info_req_deps_ok" = yes)
 probe_system_info_enabled=$probe_system_info_req_deps_ok

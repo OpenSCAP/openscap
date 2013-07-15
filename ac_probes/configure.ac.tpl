@@ -435,10 +435,6 @@ AC_ARG_ENABLE([selinux_policy],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-selinux_policy]) ;;
      esac],[selinux_policy=no])
 
-if test "x${selinux_policy}" = xyes; then
-  AC_DEFINE([ENABLE_SCE], [1], [SELinux policy enabled])
-fi
-
 @@@@PROBE_EVAL@@@@
 
 AM_CONDITIONAL([WANT_CCE],  test "$cce"  = yes)
