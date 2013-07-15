@@ -531,7 +531,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
 				SEXP_free(___r);		\
 				invalid_exp			\
 			}					\
-			if (SEXP_string_length(___r) == 0) {	\
+			else if (SEXP_string_length(___r) == 0) { \
 				SEXP_free(___r);		\
 				zerolen_exp			\
 			} else {				\
