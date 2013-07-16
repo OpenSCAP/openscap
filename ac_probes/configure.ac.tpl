@@ -5,7 +5,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.59)
-AC_INIT([openscap], [0.9.10], [open-scap-list@redhat.com])
+AC_INIT([openscap], [0.9.11], [open-scap-list@redhat.com])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
@@ -42,7 +42,7 @@ AC_PROG_SWIG([])
 LT_CURRENT=6
 
 ## increment any time the source changes; set 0 to if you increment CURRENT
-LT_REVISION=2
+LT_REVISION=3
 
 ## increment if any interfaces have been added; set to 0
 ## if any interfaces have been changed or removed. removal has
