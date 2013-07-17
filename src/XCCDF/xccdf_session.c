@@ -1104,6 +1104,7 @@ int xccdf_session_export_oval(struct xccdf_session *session)
 			char *filename = _xccdf_session_export_oval_result_file(session, value);
 			if (filename == NULL) {
 				_xccdf_session_free_oval_result_files(session);
+				oscap_htable_iterator_free(cpe_it);
 				return 1;
 			}
 
