@@ -197,7 +197,7 @@ fi
 %{_libexecdir}/openscap/probe_gconf
 
 %changelog
-* Tue Jul 16 2013 Petr Lautrbach <plautrba@redhat.com> 0.9.11-1
+* Wed Jul 17 2013 Petr Lautrbach <plautrba@redhat.com> 0.9.11-1
 - upgrade
 
 * Fri Jul 12 2013 Petr Lautrbach <plautrba@redhat.com> 0.9.10-1
