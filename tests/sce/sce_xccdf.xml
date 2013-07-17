@@ -3,31 +3,24 @@
   <status date="2011-12-08">draft</status>
   <title xml:lang="en-US">Sample XCCDF using SCE test engine</title>
   <description xml:lang="en-US">abcd</description>
-  <!--<platform idref="cpe:/o:redhat:enterprise_linux:6"/> -->
   <version>0.1</version>
   <model system="urn:xccdf:scoring:default"/>
   <model system="urn:xccdf:scoring:flat"/>
   <Profile id="default">
-    <title xml:lang="en-US">RHEL 6 Profile For Default Installation</title>
-    <description xml:lang="en-US">XCCDF profile for evaluation of RHEL 6 updates.
-			This profile is designed for evaluation of default configuration of a 
-			fresh installation of RHEL 6 system. It should be executed for every 
-			RHEL 6 update. Additional security hardening of the system should be 
-			done prior to deploying it in a production environment.
-			All enabled XCCDF rules should pass.
-		</description>
+    <title xml:lang="en-US">Profile For Default Installation</title>
+    <description xml:lang="en-US">abcd</description>
     <select idref="rule-1000" selected="true"/>
     <select idref="rule-1001" selected="true"/>
     <select idref="rule-1002" selected="true"/>
     <select idref="rule-1003" selected="true"/>
   </Profile>
-  <Group id="unconfined-daemons" hidden="false">
-    <title xml:lang="en-US">Daemons unconfined by SELINUX</title>
+  <Group id="bash-passer" hidden="false">
+    <title xml:lang="en-US">Check in bash that always passes</title>
     <description xml:lang="en-US">abcd</description>
     <Rule id="rule-1000" selected="false" weight="10.000000">
-      <title xml:lang="en-US">Check that there are no unconfined daemons (SELINUX)</title>
+      <title xml:lang="en-US">Always passes (bash)</title>
       <check system="http://open-scap.org/page/SCE">
-        <check-content-ref href="unconfined_daemons.sh"/>
+        <check-content-ref href="bash_passer.sh"/>
       </check>
     </Rule>
   </Group>
