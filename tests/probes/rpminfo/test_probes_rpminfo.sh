@@ -27,8 +27,8 @@ function test_probes_rpminfo {
 
     [ -f $RF ] && rm -f $RF
 
-    local RPM_A_NAME=`rpm --qf "%{NAME}\n" -qa | sort -u | sed -n '1p'`
-    local RPM_B_NAME=`rpm --qf "%{NAME}\n" -qa | sort -u | sed -n '2p'`
+    local RPM_A_NAME=`rpm --qf "%{NAME}\n" -qa | sort | uniq -u | sed -n '1p'`
+    local RPM_B_NAME=`rpm --qf "%{NAME}\n" -qa | sort | uniq -u | sed -n '2p'`
     
     bash ${srcdir}/test_probes_rpminfo.xml.sh $RPM_A_NAME $RPM_B_NAME > $DF
     $OSCAP oval eval --results $RF $DF
