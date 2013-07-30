@@ -4816,7 +4816,7 @@
     <target>some.machine.somewhere.out.there.org</target>
     <target-address>127.0.0.1</target-address>
     <target-address>192.168.1.123</target-address>
-    <target-address>::1</target-address>
+    <target-address>0:0:0:0:0:0:0:1</target-address>
     <target-facts>
       <fact name="urn:xccdf:fact:ethernet:MAC" type="string">00:00:00:00:00:00</fact>
     </target-facts>

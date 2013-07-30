@@ -768,7 +768,19 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 	struct oscap_string_iterator *target_addresses = xccdf_result_get_target_addresses(result);
 	while (oscap_string_iterator_has_more(target_addresses)) {
 		const char *target_address = oscap_string_iterator_next(target_addresses);
-		xmlNewTextChild(result_node, ns_xccdf, BAD_CAST "target-address", BAD_CAST target_address);
+		if (strchr(target_address, ':') != NULL) { // a very simplistic check for IPv6
+			char *expanded_ipv6 = oscap_expand_ipv6(target_address);
+			// Not all but a lot of datastream or even XCCDF test result schematrons
+			// require a fully expanded IPv6. It doesn't hurt anything to expand it
+			// here. All tools should be able to consume both shorthand and
+			// expanded IPv6 addresses.
+
+			xmlNewTextChild(result_node, ns_xccdf, BAD_CAST "target-address", BAD_CAST expanded_ipv6);
+			oscap_free(expanded_ipv6);
+		}
+		else {
+			xmlNewTextChild(result_node, ns_xccdf, BAD_CAST "target-address", BAD_CAST target_address);
+		}
 	}
 	oscap_string_iterator_free(target_addresses);
 

@@ -38,7 +38,7 @@
     <title>OSCAP Scan Result</title>
     <target>x.x.example.com</target>
     <target-address>127.0.0.1</target-address>
-    <target-address>::1</target-address>
+    <target-address>0:0:0:0:0:0:0:1</target-address>
     <target-facts>
       <fact name="urn:xccdf:fact:ethernet:MAC" type="string">00:00:00:00:00:00</fact>
     </target-facts>

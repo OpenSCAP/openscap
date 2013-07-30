@@ -66,8 +66,8 @@
     <target-address>192.168.1.116</target-address>
     <target-address>192.168.122.1</target-address>
     <target-address>10.36.5.11</target-address>
-    <target-address>::1</target-address>
-    <target-address>fe80::224:d7ff:fe8f:3e38</target-address>
+    <target-address>0:0:0:0:0:0:0:1</target-address>
+    <target-address>fe80:0:0:0:224:d7ff:fe8f:3e38</target-address>
     <target-facts>
       <fact name="urn:xccdf:fact:ethernet:MAC" type="string">00:00:00:00:00:00</fact>
       <fact name="urn:xccdf:fact:ethernet:MAC" type="string">00:24:D7:8F:3E:38</fact>
