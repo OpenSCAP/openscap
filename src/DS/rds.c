@@ -290,82 +290,6 @@ static void ds_rds_add_relationship(xmlDocPtr doc, xmlNodePtr relationships,
 	xmlAddChild(relationships, relationship);
 }
 
-// Asset Identification specification requires fully expanded IPv6 addresses.
-// Despite this being greatly discouraged by RFC 5952 we have to comply and
-// expand given IPv6, otherwise the resulting AI content would be invalid.
-static char* ds_rds_expand_ip_v6(const char* input)
-{
-	// we have to do a double pass because we need to know the number of
-	// specified components, :: will fill up to a total of 8 if encountered
-
-	const char* input_it = input;
-	unsigned short component_count = 1; // fencepost, we start with 1
-	while (*input_it)
-	{
-		if (*input_it == ':')
-		{
-			// don't count ::1 as 2 components
-			if (input_it != input)
-				component_count++;
-
-			// the next character is either a part of a component or another ':'
-			// in any case we don't want to count it
-			input_it++;
-		}
-
-		input_it++;
-	}
-
-	// IPv6 is at most eight 4-tuples of [0-9a-f] with 7 separators, plus \0
-	char* ret = oscap_alloc(8 * 4 * sizeof(char) + 7 + 1);
-	char* output_it = ret;
-
-	input_it = input;
-	while (*input_it)
-	{
-		// signifies that we have finished writing a component this iteration
-		bool closed_component = false;
-
-		if (*input_it == ':')
-		{
-			const char next = *(input_it + 1 * sizeof(char));
-			if (next == ':')
-			{
-				// skip one extra char to skip over the whole ::
-				input_it++;
-
-				for (unsigned short i = component_count; i < 8; ++i)
-				{
-					// don't add leading separators
-					if (output_it != ret)
-						*output_it++ = ':';
-
-					*output_it++ = '0';
-					closed_component = true;
-				}
-			}
-			else
-			{
-				closed_component = true;
-			}
-		}
-		else
-		{
-			*output_it++ = *input_it;
-		}
-
-		input_it++;
-
-		// if this was not the last char of the input add a separator
-		if (closed_component && *input_it)
-			*output_it++ = ':';
-	}
-
-	*output_it = '\0';
-
-	return ret;
-}
-
 static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr assets,
 		xmlDocPtr xccdf_result_doc)
 {
@@ -448,7 +372,7 @@ static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr ass
 			else // IPv6 has semicolons instead of dots
 			{
 				// lets expand the IPv6 to conform to the AI XSD and specification
-				char* expanded_ipv6 = ds_rds_expand_ip_v6((const char*)content);
+				char *expanded_ipv6 = oscap_expand_ipv6((const char*)content);
 				xmlNewTextChild(ip_address, ai_ns, BAD_CAST "ip-v6", BAD_CAST expanded_ipv6);
 				oscap_free(expanded_ipv6);
 			}

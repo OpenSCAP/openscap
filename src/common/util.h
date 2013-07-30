@@ -387,6 +387,18 @@ int oscap_validate_xml(const char *xmlfile, const char *schemafile, xml_reporter
  */
 char *oscap_find_file(const char *filename, int mode, const char *pathvar, const char *path);
 
+/**
+ * A helper function to expand given shorthand IPv6
+ *
+ * example:
+ * oscap_expand_ipv6("::1") returns "0:0:0:0:0:0:0:1"
+ *
+ * @par
+ * Asset Identification specification requires fully expanded IPv6 addresses.
+ * Despite this being greatly discouraged by RFC 5952 we have to comply and
+ * expand given IPv6, otherwise the resulting AI content would be invalid.
+ */
+char *oscap_expand_ipv6(const char *input);
 
 #ifndef OSCAP_CONCAT
 # define OSCAP_CONCAT1(a,b) a ## b
