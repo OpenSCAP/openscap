@@ -700,6 +700,7 @@ int xccdf_result_export(struct xccdf_result *result, const char *file)
 void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlDoc *doc, xmlNode *parent)
 {
         xmlNs *ns_xccdf = NULL;
+	const char *benchmark_ref_uri = xccdf_result_get_benchmark_uri(result);
 	const struct xccdf_version_info* version_info = xccdf_item_get_schema_version(XITEM(result));
 	if (parent) {
 	        ns_xccdf = xmlSearchNsByHref(doc, parent,
@@ -709,6 +710,53 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
                 ns_xccdf = xmlNewNs(result_node,
                 		(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info), NULL);
 		xmlDocSetRootElement(doc, result_node);
+
+		// TestResult is the root element, we have to provide reference to
+		// the benchmark that was the source of this test result
+
+		if (benchmark_ref_uri == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_XCCDF,
+				"Exporting TestResult as root element with no benchmark URI available. "
+				"Specification requires us to provide a reference to the Benchmark in this "
+				"case, this will result in XML file that won't be valid!");
+		}
+	}
+
+	if (benchmark_ref_uri) {
+		// We need to prepend this previous to the "title" element
+		// to satisfy the specification.
+
+		xmlNodePtr title_node = NULL;
+		xmlNodePtr title_node_candidate = result_node->children;
+		while (title_node_candidate) {
+			if (title_node_candidate->type == XML_ELEMENT_NODE &&
+				strcmp((const char*)title_node_candidate->name, "title") == 0) {
+				title_node = title_node_candidate;
+				break;
+			}
+
+			title_node_candidate = title_node_candidate->next;
+		}
+
+		if (title_node == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_XCCDF,
+				"Can't find title node in the exported TestResult. This is most likely "
+				"an internal issue with openscap, please report the bug!");
+		}
+		else {
+			xmlNodePtr benchmark_ref = xmlNewNode(ns_xccdf, BAD_CAST "benchmark");
+			xmlNewProp(benchmark_ref, BAD_CAST "href", BAD_CAST benchmark_ref_uri);
+
+			// @id is disallowed in XCCDF 1.1 and optional in XCCDF 1.2
+			if (xccdf_version_cmp(xccdf_item_get_schema_version(XITEM(result)), "1.2") >= 0) {
+				struct xccdf_benchmark *associated_benchmark = xccdf_result_get_benchmark(result);
+				if (associated_benchmark) {
+					xmlNewProp(benchmark_ref, BAD_CAST "id", BAD_CAST xccdf_benchmark_get_id(associated_benchmark));
+				}
+			}
+
+			xmlAddPrevSibling(title_node, benchmark_ref);
+		}
 	}
 
 	/* Handle attributes */
