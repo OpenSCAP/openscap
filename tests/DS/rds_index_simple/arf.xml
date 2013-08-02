@@ -25809,6 +25809,7 @@ purposes.</xccdf:description>
           <target-facts>
             <fact name="urn:xccdf:fact:ethernet:MAC" type="string">00:00:00:00:00:00</fact>
           </target-facts>
+          <target-id-ref system="http://scap.nist.gov/schema/asset-identification/1.1" name="asset0" href=""/>
           <rule-result idref="xccdf_cdf_rule_rule-2.1.1.1.1.a" time="2012-07-17T15:50:44" weight="10.000000">
             <result>notselected</result>
           </rule-result>
