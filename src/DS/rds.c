@@ -490,24 +490,29 @@ static int ds_rds_report_inject_ai_target_id_ref(xmlDocPtr doc, xmlNodePtr repor
 		return -1;
 	}
 
+	// We have to make sure we are not injecting a target-id-ref that is there
+	// already. if there is any duplicate, it has to come right after prev_sibling.
 	xmlNodePtr duplicate_candidate = prev_sibling->next;
 	while (duplicate_candidate) {
-		if (duplicate_candidate->type == XML_ELEMENT_NODE &&
-			strcmp((const char*)duplicate_candidate->name, "target-id-ref") == 0) {
+		if (duplicate_candidate->type == XML_ELEMENT_NODE) {
+			if (strcmp((const char*)duplicate_candidate->name, "target-id-ref") == 0) {
+				xmlChar* system_attr = xmlGetProp(duplicate_candidate, BAD_CAST "system");
+				xmlChar* name_attr = xmlGetProp(duplicate_candidate, BAD_CAST "name");
 
-			xmlChar* system_attr = xmlGetProp(duplicate_candidate, BAD_CAST "system");
-			xmlChar* name_attr = xmlGetProp(duplicate_candidate, BAD_CAST "name");
+				if (strcmp((const char*)system_attr, ai_ns_uri) == 0 &&
+					strcmp((const char*)name_attr, asset_id) == 0) {
 
-			if (strcmp((const char*)system_attr, ai_ns_uri) == 0 &&
-				strcmp((const char*)name_attr, asset_id) == 0) {
+					xmlFree(system_attr);
+					xmlFree(name_attr);
+					return 0;
+				}
 
 				xmlFree(system_attr);
 				xmlFree(name_attr);
-				return 0;
 			}
-
-			xmlFree(system_attr);
-			xmlFree(name_attr);
+			else {
+				break;
+			}
 		}
 		duplicate_candidate = duplicate_candidate->next;
 	}
