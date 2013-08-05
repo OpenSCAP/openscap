@@ -16,16 +16,16 @@
 
      * Redistributions of source code must retain the above copyright notice, this list
        of conditions and the following disclaimer.
-     * Redistributions in binary form must reproduce the above copyright notice, this 
+     * Redistributions in binary form must reproduce the above copyright notice, this
        list of conditions and the following disclaimer in the documentation and/or other
        materials provided with the distribution.
      * Neither the name of The MITRE Corporation nor the names of its contributors may be
-       used to endorse or promote products derived from this software without specific 
+       used to endorse or promote products derived from this software without specific
        prior written permission.
 
- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY 
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT 
+ OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
  SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
  OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
@@ -34,16 +34,16 @@
  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ****************************************************************************************
-	
-	AUTHOR:Matt Burton, The Mitre Corporation 
-	DATE: 02 May 2005 
-	
+
+	AUTHOR:Matt Burton, The Mitre Corporation
+	DATE: 02 May 2005
+
 	Modified by Loren Bandiera, MMG Security
    	   * Updating for v5 results
 	DATE: 10 May 2006
-	
-	Reimplemented by Jon Baker, The Mitre Corporation 
-	DATE: 12 October 2006 
+
+	Reimplemented by Jon Baker, The Mitre Corporation
+	DATE: 12 October 2006
 
 	Modified by Vladimir Giszpenc, DSCI Contractor Supporting CERDEC S&TCD IAD
    	   * Allowing for references other than CVE such as Red Hat patches
@@ -52,19 +52,23 @@
 	Modified by Vladimir Giszpenc, DSCI Contractor Supporting CERDEC S&TCD IAD
    	   * Added some aggregate data in the Systems Analysed section
 	DATE: 20 Aug 2007
-	
+
 	Modified by David Rothenberg, The Mitre Corporation
 		* Updated CSS style, updated groupings based on positive/negative implication rather than OVAL result enumeration
 	DATE: 24 September 2012
 
+	Modified by Simon Lukasik, Red Hat, Inc.
+		* Removed overabundant whitespaces
+	DATE: 05 August 2013
+
 	The results_to_html stylesheet converts an OVAL Results document into a more readable html format.
 	General information about the source of the OVAL Definitions being reported on, and the OVAL Results
-	producer is displayed. Next general information about each system analyzed is presented including a 
+	producer is displayed. Next general information about each system analyzed is presented including a
 	table or result information. The table displays true results then all other results sorted in
 	descending order by result. If the OVAL Results document has results for multiple systems a set
-	of links will be generated near the top of the resulting html to allow users to easily jump to the 
+	of links will be generated near the top of the resulting html to allow users to easily jump to the
 	each system's results.
-	
+
 -->
 <xsl:stylesheet version="1.1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
 	xmlns:oval-res="http://oval.mitre.org/XMLSchema/oval-results-5" xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"
@@ -85,17 +89,17 @@
             .SmallLabel { font-family: Geneva, Arial, Helvetica, sans-serif; color: #000000; font-size: 9pt; font-weight: bold; white-space: nowrap;}
             .SmallText { font-family: Geneva, Arial, Helvetica, sans-serif; color: #000000; font-size: 9pt;}
             .Label { font-family: Geneva, Arial, Helvetica, sans-serif; color: #000000; font-size: 10pt; font-weight: bold; white-space: nowrap;}
-            .TitleLabel { font-family: Geneva, Arial, Helvetica, sans-serif; color: #ffffff; font-size: 10pt; font-weight: bold; white-space: nowrap;}            
+            .TitleLabel { font-family: Geneva, Arial, Helvetica, sans-serif; color: #ffffff; font-size: 10pt; font-weight: bold; white-space: nowrap;}
             .Text { font-family: Geneva, Arial, Helvetica, sans-serif; color: #000000; font-size: 10pt;}
             .Title { color: #FFFFFF; background-color: #706c60; padding: 0px 4px 1px 4px; font-size: 10pt; border-bottom: 1px solid #000000;}
             .Center { text-align: center;}
-            
+
             a { color:#676c63;}
             a.Hover:hover { color:#7b0e0e; text-decoration:underline;}
-            
+
             .LightRow { background-color: #FFFFFF;}
             .DarkRow { background-color: #DDDDD8;}
-            
+
             .resultbadA{background-color: #FFBC8F;}
             .resultbadB{background-color: #FFE0CC;}
             .resultgoodA{background-color: #ACD685;}
@@ -106,7 +110,7 @@
             .errorB{background-color: #FFECB3;}
             .otherA{background-color: #EEEEEE;}
             .otherB{background-color: #FFFFFF;}
-            
+
             .Classcompliance{background-color: #93C572;}
             .Classinventory{background-color: #AEC6CF;}
             .Classmiscellaneous{background-color: #9966CC;}
@@ -115,7 +119,7 @@
             .ColorBox{width: 2px;}
 		</style>
 	</xsl:template>
-	
+
 	<!-- Render the legend used to determine what row colors represent -->
 	<xsl:template name="ResultColorTable">
 		<table class="noborder nomargin" style="width:auto;">
@@ -183,7 +187,7 @@
 	misc        |-|-|B|Y|- |- |
 	patch       |R|G|B|Y|- |- |
 	vuln        |R|G|B|Y|- |- |
-	
+
 	R = red
 	G = green
 	B = blue
@@ -214,7 +218,7 @@
 					</tr>
 				</table>
 				<hr />
-				<!-- 
+				<!--
 					create anchors to each system in the results file
 					if only one system leave out the anchors
 				-->
@@ -239,7 +243,7 @@
 							<tr>
 								<xsl:choose>
 									<xsl:when test="position() mod 2 = 1">
-										<xsl:attribute name="class">DarkRow</xsl:attribute>	
+										<xsl:attribute name="class">DarkRow</xsl:attribute>
 									</xsl:when>
 									<xsl:when test="position() mod 2 = 0">
 										<xsl:attribute name="class">LightRow</xsl:attribute>
@@ -276,7 +280,7 @@
 					<br/>
 				</xsl:if>
 
-				<!-- 
+				<!--
 					for each system in the results file
 					 - display system info
 					 - display the sc generator
@@ -306,7 +310,7 @@
 	<!-- Get the system_info and put it into a table. -->
 	<xsl:template name="SystemInfo">
 		<xsl:param name="sysInfoElm"/>
-		<!-- Create page anchor to this system, will be used if multiple systems present --> 
+		<!-- Create page anchor to this system, will be used if multiple systems present -->
 		<a class="Hover" name="{concat('a_',position())}" id="{concat('a_',position())}" style="text-decoration:none;"/>
 		<table border="1">
 			<tr class="Title">
@@ -445,10 +449,10 @@
                 <xsl:text>:</xsl:text>
                 <!-- minute -->
                 <xsl:value-of select="substring($MessyNumber, 18, 2)"/> <!-- second -->
-            </td>       
+            </td>
         </tr>
     </xsl:template>
-    
+
 	<!-- Add rows to the OVAL Definitions generator to supply aggregate data. -->
     <xsl:template name="GeneratorDefTotals">
         <xsl:param name="definitionsElm"/>
@@ -488,7 +492,7 @@
             </td>
         </tr>
     </xsl:template>
-    
+
 	<!-- Add rows to the OVAL Results generator to supply aggregate data. -->
     <xsl:template name="GeneratorResTotals">
         <xsl:param name="resultsElm"/>
@@ -519,7 +523,7 @@
 			<tr class="DarkRow">
 				<td colspan="5"><xsl:call-template name="ResultColorTable"/></td>
 			</tr>
-			
+
 			<tr class="TitleLabel">
 				<td class="Title" align="center">ID</td>
 				<td class="Title" align="center">Result</td>
@@ -527,7 +531,7 @@
 				<td class="Title" align="center">Reference ID</td>
 				<td class="Title" align="center">Title</td>
 			</tr>
-			
+
 			<!-- process Non-Compliant/Vulnerable/Unpatched results -->
 			<xsl:for-each select="$definitionsElm/oval-res:definition[@result='true'][key('definition-index', ./@definition_id)[@class='patch' or @class='vulnerability']]|$definitionsElm/oval-res:definition[@result='false'][key('definition-index', ./@definition_id)[@class='compliance']]">
 				<xsl:sort select="@id" data-type="text" order="descending"/>
@@ -535,7 +539,7 @@
 					<xsl:with-param name="definitionElm" select="."/>
 				</xsl:call-template>
 			</xsl:for-each>
-			
+
 			<!-- process unknown results -->
 			<xsl:for-each select="$definitionsElm/oval-res:definition[@result='unknown']">
 				<xsl:sort select="@id" data-type="text" order="descending"/>
@@ -543,7 +547,7 @@
 					<xsl:with-param name="definitionElm" select="."/>
 				</xsl:call-template>
 			</xsl:for-each>
-			
+
 			<!-- process error results -->
 			<xsl:for-each select="$definitionsElm/oval-res:definition[@result='error']">
 				<xsl:sort select="@id" data-type="text" order="descending"/>
@@ -551,7 +555,7 @@
 					<xsl:with-param name="definitionElm" select="."/>
 				</xsl:call-template>
 			</xsl:for-each>
-			
+
 			<!-- process other results -->
 			<xsl:for-each select="$definitionsElm/oval-res:definition[@result='not applicable' or @result='not evaluated']|$definitionsElm/oval-res:definition[@result='true' or @result='false'][key('definition-index', ./@definition_id)[@class='inventory' or @class='miscellaneous']]">
 				<xsl:sort select="@id" data-type="text" order="descending"/>
@@ -559,7 +563,7 @@
 					<xsl:with-param name="definitionElm" select="."/>
 				</xsl:call-template>
 			</xsl:for-each>
-			
+
 			<!-- process Compliant/Non-Vulnerable/Patched results -->
 			<xsl:for-each select="$definitionsElm/oval-res:definition[@result='false'][key('definition-index', ./@definition_id)[@class='patch' or @class='vulnerability']]|$definitionsElm/oval-res:definition[@result='true'][key('definition-index', ./@definition_id)[@class='compliance']]">
 				<xsl:sort select="@id" data-type="text" order="descending"/>
@@ -592,9 +596,9 @@
 					<xsl:otherwise>B</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
-			
+
 			<xsl:attribute name="class"><xsl:value-of select="concat($class_prefix,$classMod2)"/></xsl:attribute>
-			
+
 			<!-- id -->
 			<td class="Text" align="center">
 				<xsl:choose>
