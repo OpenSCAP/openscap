@@ -41,8 +41,12 @@ struct xccdf_item *xccdf_value_new_internal(struct xccdf_item *parent, xccdf_val
 {
 	struct xccdf_item *val = xccdf_item_new(XCCDF_VALUE, parent);
 	val->sub.value.type = type;
+	val->sub.value.interface_hint = 0;
+	val->sub.value.oper = 0;
+
 	val->sub.value.instances = oscap_list_new();
 	val->sub.value.sources = oscap_list_new();
+
 	return val;
 }
 
