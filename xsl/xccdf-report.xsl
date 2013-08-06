@@ -134,7 +134,7 @@ Authors:
         id='{@id}'
     >
     <info>
-        <title>XCCDF test result</title>
+        <title>XCCDF Test Result</title>
         <xsl:call-template name='footerinfo'/>
     </info>
 
