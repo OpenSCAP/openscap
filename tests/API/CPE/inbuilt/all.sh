@@ -33,8 +33,27 @@ function ensure_oscap_version(){
 	rm $stdout
 }
 
+function _get_inbuilt_cpe_dir(){
+	$OSCAP --version | awk -F: '/^Default CPE files: / {$1=""; print}'
+}
+
+function _get_inbuilt_cpe_path(){
+	echo "$(_get_inbuilt_cpe_dir)/openscap-cpe-dict.xml"
+}
+
+function validate_inbuilt_dict(){
+	local name=$FUNCNAME
+	local path=$(_get_inbuilt_cpe_path)
+	local output=$(mktemp -t ${name}.out.XXXXXX)
+	[ -f $path ]
+	$OSCAP cpe validate $path 2>&1 > $output
+	[ -f $output ]; [ ! -s $output ]
+	rm $output
+}
+
 test_init test_api_cpe_inbuilt.log
 
 test_run "ensure_oscap_version" ensure_oscap_version
+test_run "validate_inbuilt_dict" validate_inbuilt_dict
 
 test_exit
