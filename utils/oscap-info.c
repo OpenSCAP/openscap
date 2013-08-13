@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2010--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -221,8 +221,10 @@ static int app_info(const struct oscap_action *action)
 		if (!dict_model)
 			goto cleanup;
 		struct cpe_generator *gen = cpe_dict_model_get_generator(dict_model);
-		printf("CPE version: %s\n", cpe_generator_get_schema_version(gen));
-		printf("Generated: %s\n", cpe_generator_get_timestamp(gen));
+		if (gen != NULL) {
+			printf("CPE version: %s\n", cpe_generator_get_schema_version(gen));
+			printf("Generated: %s\n", cpe_generator_get_timestamp(gen));
+		}
 		print_time(action->file);
 		cpe_dict_model_free(dict_model);
 	}
