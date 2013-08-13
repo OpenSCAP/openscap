@@ -53,9 +53,20 @@ function validate_inbuilt_dict(){
 	rm $output
 }
 
+function info_inbuilt_dict(){
+	local name=$FUNCNAME
+	local path=$(_get_inbuilt_cpe_path)
+	local stderr=$(mktemp -t ${name}.err.XXXXXX)
+	[ -f $path ]
+	$OSCAP info $path 2> $stderr
+	[ -f $stderr ]; [ ! -s $stderr ];
+	rm $stderr
+}
+
 test_init test_api_cpe_inbuilt.log
 
 test_run "ensure_oscap_version" ensure_oscap_version
 test_run "validate_inbuilt_dict" validate_inbuilt_dict
+test_run "info_inbuilt_dict" info_inbuilt_dict
 
 test_exit
