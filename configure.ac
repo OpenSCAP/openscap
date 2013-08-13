@@ -1257,6 +1257,7 @@ AC_CONFIG_FILES([Makefile
                  tests/API/CPE/name/Makefile
                  tests/API/CPE/lang/Makefile
                  tests/API/CPE/dict/Makefile
+                 tests/API/CPE/inbuilt/Makefile
 
                  src/CCE/Makefile
                  tests/API/CCE/Makefile

@@ -1,1 +1,5 @@
-SUBDIRS = dict name lang
+SUBDIRS = \
+	dict \
+	inbuilt \
+	lang \
+	name
