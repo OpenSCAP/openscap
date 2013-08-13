@@ -48,6 +48,8 @@ function validate_inbuilt_dict(){
 	[ -f $path ]
 	$OSCAP cpe validate $path 2>&1 > $output
 	[ -f $output ]; [ ! -s $output ]
+	$OSCAP cpe validate-xml $path 2>&1 > $output
+	[ -f $output ]; [ ! -s $output ]
 	rm $output
 }
 
