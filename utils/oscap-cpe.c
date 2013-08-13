@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2010--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -119,7 +119,7 @@ bool getopt_cpe(int argc, char **argv, struct oscap_action *action) {
 		action->cpe_action->name=argv[3];
 	}
 
-	if( (action->module == &CPE_VALIDATE)) {
+	if ((action->module == &CPE_VALIDATE) || action->module == &CPE_VALIDATE_XML) {
 		if( argc != 4 ) {
 			oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
 			return false;
