@@ -159,10 +159,6 @@ struct xccdf_element_spec {
 };
 
 #define XCCDF_XMLNS_PREFIX "http://checklists.nist.gov/xccdf"
-/// CPE version 2 Language XML namespace
-#define CPE2L_XMLNS "http://cpe.mitre.org/language/2.0"
-/// CPE version 1 dictionary XML namespace
-#define CPE1D_XMLNS "http://cpe.mitre.org/XMLSchema/cpe/1.0"
 
 /// Mapping of the element names to the symbolic constants
 static const struct xccdf_element_spec XCCDF_ELEMENT_MAP[] = {
@@ -182,7 +178,7 @@ static const struct xccdf_element_spec XCCDF_ELEMENT_MAP[] = {
 	{XCCDFE_CHOICE, XCCDF_XMLNS_PREFIX, "choice"},
 	{XCCDFE_COMPLEX_CHECK, XCCDF_XMLNS_PREFIX, "complex-check"},
 	{XCCDFE_CONFLICTS, XCCDF_XMLNS_PREFIX, "conflicts"},
-	{XCCDFE_CPE_LIST, CPE1D_XMLNS, "cpe-list"},
+	{XCCDFE_CPE_LIST, XMLNS_CPE1D, "cpe-list"},
 	{XCCDFE_DC_STATUS, XCCDF_XMLNS_PREFIX, "dc-status"},
 	{XCCDFE_DEFAULT, XCCDF_XMLNS_PREFIX, "default"},
 	{XCCDFE_DESCRIPTION, XCCDF_XMLNS_PREFIX, "description"},
@@ -207,7 +203,7 @@ static const struct xccdf_element_spec XCCDF_ELEMENT_MAP[] = {
 	{XCCDFE_PARAM, XCCDF_XMLNS_PREFIX, "param"},
 	{XCCDFE_PLAIN_TEXT, XCCDF_XMLNS_PREFIX, "plain-text"},
 	{XCCDFE_PLATFORM, XCCDF_XMLNS_PREFIX, "platform"},
-	{XCCDFE_CPE2_PLATFORMSPEC, CPE2L_XMLNS, "platform-specification"},
+	{XCCDFE_CPE2_PLATFORMSPEC, XMLNS_CPE2L, "platform-specification"},
 	{XCCDFE_RESULT_PROFILE, XCCDF_XMLNS_PREFIX, "profile"},
 	{XCCDFE_PROFILE_NOTE, XCCDF_XMLNS_PREFIX, "profile-note"},
 	{XCCDFE_QUESTION, XCCDF_XMLNS_PREFIX, "question"},
