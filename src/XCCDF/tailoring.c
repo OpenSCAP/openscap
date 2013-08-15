@@ -69,6 +69,12 @@ void xccdf_tailoring_free(struct xccdf_tailoring *tailoring)
 	}
 }
 
+bool xccdf_tailoring_add_profile(struct xccdf_tailoring *tailoring, struct xccdf_profile *profile)
+{
+	xccdf_profile_set_tailoring(profile, true);
+	return oscap_list_add(tailoring->profiles, XITEM(profile));
+}
+
 struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xccdf_item *benchmark)
 {
 	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_TAILORING);
@@ -114,8 +120,9 @@ struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xc
 		}
 		case XCCDFE_PROFILE: {
 			struct xccdf_item *item = xccdf_profile_parse(reader, benchmark);
-			xccdf_profile_set_tailoring(XPROFILE(item), true);
-			oscap_list_add(tailoring->profiles, item);
+			if (!xccdf_tailoring_add_profile(tailoring, XPROFILE(item))) {
+				dW("Failed to add profile to tailoring while parsing!");
+			}
 			break;
 		}
 		default:

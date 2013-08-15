@@ -3023,6 +3023,9 @@ bool xccdf_instance_set_parent_context(struct xccdf_instance *obj, const char *n
 /// @memberof xccdf_instance
 bool xccdf_instance_set_content(struct xccdf_instance *obj, const char *newval);
 
+/// @memberof xccdf_tailoring
+bool xccdf_tailoring_add_profile(struct xccdf_tailoring *tailoring, struct xccdf_profile *profile);
+
 // @memberof xccdf_ident
 void xccdf_ident_set_id(struct xccdf_ident * ident, const char *id);
 // @memberof xccdf_ident
