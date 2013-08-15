@@ -44,6 +44,7 @@
 #include "common/text_priv.h"
 #include "common/elements.h"
 #include "common/_error.h"
+#include "common/xmlns_priv.h"
 
 /***************************************************************************/
 /* Variable definitions
@@ -102,7 +103,6 @@ OSCAP_GETTER(const struct cpe_testexpr*, cpe_platform, expr)
 #define VAL_OR_STR      BAD_CAST "OR"
 #define VAL_FALSE_STR   BAD_CAST "false"
 #define VAL_TRUE_STR    BAD_CAST "true"
-#define CPELANG_NS      BAD_CAST "http://cpe.mitre.org/language/2.0"
 /* End of XML string variables definitions
  * */
 /***************************************************************************/
@@ -606,7 +606,7 @@ void cpe_lang_export(const struct cpe_lang_model *spec, xmlTextWriterPtr writer)
 	__attribute__nonnull__(spec);
 	__attribute__nonnull__(writer);
 
-	xmlTextWriterStartElementNS(writer, NULL, TAG_PLATFORM_SPEC_STR, CPELANG_NS);
+	xmlTextWriterStartElementNS(writer, NULL, TAG_PLATFORM_SPEC_STR, BAD_CAST XMLNS_CPE2L);
 		OSCAP_FOREACH(cpe_platform, p, cpe_lang_model_get_platforms(spec),
 			      // dump its contents to XML tree
 			      cpe_platform_export(p, writer);)
@@ -651,7 +651,7 @@ void cpe_testexpr_export(const struct cpe_testexpr *expr, xmlTextWriterPtr write
 		xmlTextWriterEndElement(writer);
 	}
 	else {
-		xmlTextWriterStartElementNS(writer, NULL, TAG_LOGICAL_TEST_STR, CPELANG_NS);
+		xmlTextWriterStartElementNS(writer, NULL, TAG_LOGICAL_TEST_STR, BAD_CAST XMLNS_CPE2L);
 
 		if (expr->oper == CPE_LANG_OPER_AND) {
 			xmlTextWriterWriteAttribute(writer, ATTR_OPERATOR_STR, VAL_AND_STR);
