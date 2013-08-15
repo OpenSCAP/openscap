@@ -791,6 +791,12 @@ static struct cpe23_item *cpe23_item_parse(xmlTextReaderPtr reader)
 				xmlTextReaderConstLocalName(reader), TAG_CPE23_ITEM_STR);
 		return NULL;
 	}
+	const xmlChar* nsuri = xmlTextReaderConstNamespaceUri(reader);
+	if (nsuri && xmlStrcmp(nsuri, BAD_CAST XMLNS_CPE2D3_EXTENSION) != 0) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Found '%s' namespace when expecting: '%s'!",
+				nsuri, XMLNS_CPE2D3_EXTENSION);
+		return NULL;
+	}
 
 	struct cpe23_item *item = cpe23_item_new();
 	item->name = (char *) xmlTextReaderGetAttribute(reader, ATTR_NAME_STR);
