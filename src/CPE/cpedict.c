@@ -38,6 +38,7 @@
 #include "common/list.h"
 #include "common/util.h"
 #include "common/_error.h"
+#include "common/xmlns_priv.h"
 #include <string.h>
 
 #define CPE_DICT_SUPPORTED "2.3"
@@ -239,7 +240,7 @@ char * cpe_dict_detect_version(const char* file)
 		}
 	}
 	else {
-		if (strcmp(ns_uri, "http://cpe.mitre.org/dictionary/2.0") == 0) {
+		if (strcmp(ns_uri, XMLNS_CPE2D) == 0) {
 			// return the newest 2.x version we support
 			version = oscap_strdup("2.3");
 		}
