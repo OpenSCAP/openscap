@@ -36,6 +36,7 @@
 #include "common/elements.h"
 #include "common/_error.h"
 #include "common/debug_priv.h"
+#include "common/xmlns_priv.h"
 
 struct xccdf_version_info {
 	const char* version; ///< MAJOR.MINOR, for example "1.1" or "1.2"
