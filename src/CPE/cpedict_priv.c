@@ -57,6 +57,10 @@ const char *PART_TO_CHAR[] = { NULL, "h", "o", "a" };
  * CPE-List structures
  * ***************************************/
 
+struct cpe23_item {				///< <cpe23-item> node
+	char *name;				///< @name attribute
+};
+
 /* <cpe-item>
  * */
 struct cpe_item {		// the node <cpe-item>
@@ -71,6 +75,7 @@ struct cpe_item {		// the node <cpe-item>
 	struct oscap_list *checks;	// list of checks
 	struct oscap_list *notes;	// list of notes - it's the same structure as titles
 	struct cpe_item_metadata *metadata;	// element <meta:item-metadata>
+	struct cpe23_item *cpe23_item;		///< element <cpe23-item>
 };
 OSCAP_GETTER(struct cpe_name *, cpe_item, name)
 OSCAP_GETTER(struct cpe_name *, cpe_item, deprecated)
@@ -216,6 +221,7 @@ OSCAP_ACCESSOR_STRING(cpe_language, value)
 #define TAG_NOTE_STR                BAD_CAST "note"
 #define TAG_TITLE_STR               BAD_CAST "title"
 #define TAG_CPE_ITEM_STR            BAD_CAST "cpe-item"
+#define TAG_CPE23_ITEM_STR          BAD_CAST "cpe23-item"
 #define ATTR_DEPRECATION_DATE_STR   BAD_CAST "deprecation_date"
 #define ATTR_DEPRECATED_BY_STR      BAD_CAST "deprecated_by"
 #define ATTR_DEPRECATED_STR         BAD_CAST "deprecated"
@@ -450,6 +456,11 @@ struct cpe_item *cpe_item_new()
 	item->titles = oscap_list_new();
 
 	return item;
+}
+
+static struct cpe23_item *cpe23_item_new()
+{
+	return oscap_calloc(1, sizeof(struct cpe23_item));
 }
 
 struct cpe_check *cpe_check_new()
@@ -773,6 +784,22 @@ struct cpe_generator *cpe_generator_parse(xmlTextReaderPtr reader)
 
 }
 
+static struct cpe23_item *cpe23_item_parse(xmlTextReaderPtr reader)
+{
+	__attribute__nonnull__(reader);
+
+	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CPE23_ITEM_STR) != 0 ||
+			xmlTextReaderNodeType(reader) != 1) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Found '%s' node when expecting: '%s'!",
+				xmlTextReaderConstLocalName(reader), TAG_CPE23_ITEM_STR);
+		return NULL;
+	}
+
+	struct cpe23_item *item = cpe23_item_new();
+	item->name = (char *) xmlTextReaderGetAttribute(reader, ATTR_NAME_STR);
+	return item;
+}
+
 struct cpe_item *cpe_item_parse(xmlTextReaderPtr reader)
 {
 
@@ -872,7 +899,8 @@ struct cpe_item *cpe_item_parse(xmlTextReaderPtr reader)
 					   TAG_REFERENCES_STR) == 0) ||
 				(xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_NOTES_STR) == 0)) {
 				// we just need to jump over this element
-
+			} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CPE23_ITEM_STR) == 0) {
+				ret->cpe23_item = cpe23_item_parse(reader);
 			} else {
 				return ret;	// <-- we need to return here, because we don't want to jump to next element 
 			}
@@ -1340,6 +1368,8 @@ void cpe_dict_model_free(struct cpe_dict_model *dict)
 	oscap_free(dict);
 }
 
+static void cpe23_item_free(struct cpe23_item *item);
+
 void cpe_item_free(struct cpe_item *item)
 {
 
@@ -1353,6 +1383,12 @@ void cpe_item_free(struct cpe_item *item)
 	oscap_list_free(item->notes, (oscap_destruct_func) oscap_text_free);
 	oscap_list_free(item->titles, (oscap_destruct_func) oscap_text_free);
 	cpe_itemmetadata_free(item->metadata);
+	cpe23_item_free(item->cpe23_item);
+	oscap_free(item);
+}
+
+void cpe23_item_free(struct cpe23_item *item)
+{
 	oscap_free(item);
 }
 
