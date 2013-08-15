@@ -833,7 +833,15 @@ struct cpe_item *cpe_item_parse(xmlTextReaderPtr reader)
 		if (data != NULL) {	// we have a deprecation here !
 			oscap_free(data);
 			data = (char *)xmlTextReaderGetAttribute(reader, ATTR_DEPRECATED_BY_STR);
-			if (data == NULL || (ret->deprecated = cpe_name_new(data)) == NULL) {
+			if (data != NULL) {
+				if ((ret->deprecated = cpe_name_new(data)) == NULL) {
+					oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to initialize CPE name with '%s'", data);
+					oscap_free(data);
+					oscap_free(ret);
+					return NULL;
+				}
+			}
+			else {
 				oscap_free(ret);
 				oscap_free(data);
 				return NULL;
