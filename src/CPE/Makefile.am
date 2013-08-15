@@ -3,6 +3,8 @@ noinst_LTLIBRARIES = libcpe.la
 libcpe_la_SOURCES =	cpedict.c \
 			cpelang.c \
 			cpename.c \
+			cpe_ctx_priv.c \
+			cpe_ctx_priv.h \
 			cpelang_priv.c \
 			cpedict_priv.c \
 			cpelang_priv.h \

@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -25,6 +25,7 @@
  *
  * Authors:
  *      Maros Barabas <mbarabas@redhat.com>
+ *      Šimon Lukašík
  */
 
 #ifdef HAVE_CONFIG_H
@@ -41,6 +42,7 @@
 #include "public/cpe_dict.h"
 #include "public/cpe_name.h"
 #include "cpedict_priv.h"
+#include "cpe_ctx_priv.h"
 
 #include "common/list.h"
 #include "common/elements.h"
@@ -621,20 +623,17 @@ struct cpe_dict_model *cpe_dict_model_parse_xml(const char *file)
 
 	__attribute__nonnull__(file);
 
-	xmlTextReaderPtr reader;
 	struct cpe_dict_model *dict = NULL;
 
 	if (!cpe_validate_xml(file))
 		return NULL;
 
-	reader = xmlReaderForFile(file, NULL, 0);
-	if (reader != NULL) {
-		xmlTextReaderNextNode(reader);
-		dict = cpe_dict_model_parse(reader);
-	} else {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
+	struct cpe_parser_ctx *ctx = cpe_parser_ctx_new(file);
+	if (ctx) {
+		xmlTextReaderNextNode(cpe_parser_ctx_get_reader(ctx));
+		dict = cpe_dict_model_parse(cpe_parser_ctx_get_reader(ctx));
 	}
-	xmlFreeTextReader(reader);
+	cpe_parser_ctx_free(ctx);
 	return dict;
 }
 
