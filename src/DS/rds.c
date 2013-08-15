@@ -423,6 +423,12 @@ static int ds_rds_report_inject_ai_target_id_ref(xmlDocPtr doc, xmlNodePtr repor
 		test_result_candidate = test_result_candidate->next;
 	}
 
+	if (!inner_element_node) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "Given report doesn't contain any XML element! "
+			"Can't inject AI asset target id ref");
+		return -1;
+	}
+
 	if (!test_result_node) {
 		// TestResult may not be the top level element in the report.
 		// While that is very unusual it is legitimate, lets check child elements.
