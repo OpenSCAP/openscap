@@ -33,6 +33,8 @@ OSCAP_HIDDEN_START;
 #define XMLNS_CPE1D		"http://cpe.mitre.org/XMLSchema/cpe/1.0"
 /// CPE version 2 dictionary XML namespace
 #define XMLNS_CPE2D		"http://cpe.mitre.org/dictionary/2.0"
+/// CPE version 2 dictionary metadata XML namespace
+#define XMLNS_CPE2D_METADATA	"http://scap.nist.gov/schema/cpe-dictionary-metadata/0.2"
 
 OSCAP_HIDDEN_END;
 

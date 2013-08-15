@@ -46,6 +46,7 @@
 #include "common/elements.h"
 #include "common/text_priv.h"
 #include "common/_error.h"
+#include "common/xmlns_priv.h"
 
 /***************************************************************************/
 /* Variable definitions
@@ -247,10 +248,6 @@ OSCAP_ACCESSOR_STRING(cpe_language, value)
 #define NS_META_STR         BAD_CAST "meta"
 #define ATTR_XML_LANG_STR   BAD_CAST "xml:lang"
 #define VAL_TRUE_STR        BAD_CAST "true"
-/* Namespaces */
-#define CPE_1_DICT_NS BAD_CAST "http://cpe.mitre.org/XMLSchema/cpe/1.0"
-#define CPE_2_DICT_NS BAD_CAST "http://cpe.mitre.org/dictionary/2.0"
-#define CPEMETA_NS BAD_CAST "http://scap.nist.gov/schema/cpe-dictionary-metadata/0.2"
 /* End of XML string variables definitions
  * */
 /***************************************************************************/
@@ -673,11 +670,11 @@ struct cpe_dict_model *cpe_dict_model_parse(xmlTextReaderPtr reader)
 	// let us figure out the base version based on the namespace of cpe-list
 	const xmlChar* nsuri = xmlTextReaderConstNamespaceUri(reader);
 
-	if (nsuri && !xmlStrcmp(nsuri, CPE_1_DICT_NS))
+	if (nsuri && !xmlStrcmp(nsuri, BAD_CAST XMLNS_CPE1D))
 	{
 		cpe_dict_model_set_base_version(ret, 1);
 	}
-	else if (nsuri && !xmlStrcmp(nsuri, CPE_2_DICT_NS)) {
+	else if (nsuri && !xmlStrcmp(nsuri, BAD_CAST XMLNS_CPE2D)) {
 		cpe_dict_model_set_base_version(ret, 2);
 	}
 	else
@@ -1084,10 +1081,10 @@ void cpe_dict_export(const struct cpe_dict_model *dict, xmlTextWriterPtr writer)
 
 	switch (base_version) {
 		case 1:
-			xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_LIST_STR, CPE_1_DICT_NS);
+			xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_LIST_STR, BAD_CAST XMLNS_CPE1D);
 			break;
 		case 2:
-			xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_LIST_STR, CPE_2_DICT_NS);
+			xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_LIST_STR, BAD_CAST XMLNS_CPE2D);
 			break;
 		default:
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown CPE base version '%i'.", base_version);
@@ -1095,11 +1092,11 @@ void cpe_dict_export(const struct cpe_dict_model *dict, xmlTextWriterPtr writer)
 			break;
 	}
 
-	xmlTextWriterWriteAttribute(writer, BAD_CAST "xmlns:meta", CPEMETA_NS);
+	xmlTextWriterWriteAttribute(writer, BAD_CAST "xmlns:meta", BAD_CAST XMLNS_CPE2D_METADATA);
 	xmlTextWriterWriteAttribute(writer, BAD_CAST "xmlns:xsi", BAD_CAST "http://www.w3.org/2001/XMLSchema-instance");
 	xmlTextWriterWriteAttribute(writer, BAD_CAST "xsi:schemaLocation", BAD_CAST
-			"http://scap.nist.gov/schema/cpe-dictionary-metadata/0.2 http://nvd.nist.gov/schema/cpe-dictionary-metadata_0.2.xsd "
-			"http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd");
+			XMLNS_CPE2D_METADATA " http://nvd.nist.gov/schema/cpe-dictionary-metadata_0.2.xsd "
+			XMLNS_CPE2D " http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd");
 
 	if (dict->generator) cpe_generator_export(dict->generator, writer);
 	OSCAP_FOREACH(cpe_item, item, cpe_dict_model_get_items(dict),
@@ -1108,7 +1105,7 @@ void cpe_dict_export(const struct cpe_dict_model *dict, xmlTextWriterPtr writer)
 
 	if (base_version >= 2) {
 	    // TODO: NEED TO HAVE COMPONENT-TREE STRUCTURE TO GET XML-NAMESPACE 
-	    xmlTextWriterStartElementNS(writer, NULL, TAG_COMPONENT_TREE_STR, CPEMETA_NS);
+	    xmlTextWriterStartElementNS(writer, NULL, TAG_COMPONENT_TREE_STR, BAD_CAST XMLNS_CPE2D_METADATA);
 		OSCAP_FOREACH(cpe_vendor, vendor, cpe_dict_model_get_vendors(dict), cpe_vendor_export(vendor, writer);)
 	    xmlTextWriterEndElement(writer);	//</component-tree>
 	}
@@ -1162,10 +1159,10 @@ void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer, int b
 
 	switch (base_version) {
 		case 1:
-			xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_ITEM_STR, CPE_1_DICT_NS);
+			xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_ITEM_STR, BAD_CAST XMLNS_CPE1D);
 			break;
 		case 2:
-			xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_ITEM_STR, CPE_2_DICT_NS);
+			xmlTextWriterStartElementNS(writer, NULL, TAG_CPE_ITEM_STR, BAD_CAST XMLNS_CPE2D);
 			break;
 		default:
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown CPE base version '%i'.", base_version);
