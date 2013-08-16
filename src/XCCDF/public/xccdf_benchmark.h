@@ -888,6 +888,9 @@ void xccdf_refine_value_free(struct xccdf_refine_value *rv);
 
 void xccdf_setvalue_free(struct xccdf_setvalue *sv);
 
+/// @memberof xccdf_tailoring
+struct xccdf_tailoring *xccdf_tailoring_new(void);
+
 /**
  * Release library internal caches.
  * @deprecated Use @ref oscap_cleanup() instead.
