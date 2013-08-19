@@ -34,9 +34,14 @@ struct cpe_parser_ctx {
 	xmlTextReaderPtr reader;
 };
 
+static inline struct cpe_parser_ctx *_cpe_parser_ctx_new()
+{
+	return oscap_calloc(1, sizeof(struct cpe_parser_ctx));
+}
+
 struct cpe_parser_ctx *cpe_parser_ctx_new(const char *filename)
 {
-	struct cpe_parser_ctx *ctx = oscap_calloc(1, sizeof(struct cpe_parser_ctx));
+	struct cpe_parser_ctx *ctx = _cpe_parser_ctx_new();
 	ctx->reader = xmlReaderForFile(filename, NULL, 0);
 	if (ctx->reader == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", filename);
