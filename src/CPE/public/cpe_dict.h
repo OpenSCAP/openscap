@@ -11,7 +11,7 @@
  */
 
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -31,6 +31,7 @@
  * Authors:
  *      Maros Barabas <mbarabas@redhat.com>
  *      Lukas Kuklinek <lkuklinek@redhat.com>
+ *      Šimon Lukašík
  */
 
 #ifndef CPEDICT_H_
@@ -175,11 +176,11 @@ const char *cpe_reference_get_content(const struct cpe_reference *item);
  */
 struct cpe_name *cpe_item_get_name(const struct cpe_item *item);
 
-/** cpe_item functions to get variable member deprecated
+/** cpe_item functions to get variable member deprecated_by
  * @memberof cpe_item
  * @param item CPE item
  */
-struct cpe_name *cpe_item_get_deprecated(const struct cpe_item *item);
+struct cpe_name *cpe_item_get_deprecated_by(const struct cpe_item *item);
 
 /** cpe_item functions to get variable member date
  * @memberof cpe_item

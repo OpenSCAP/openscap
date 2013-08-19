@@ -71,7 +71,7 @@ struct cpe_item {		// the node <cpe-item>
 	struct cpe_name *name;	// CPE name as CPE URI
 	struct oscap_list *titles;	// titles of cpe-item (can be in various languages)
 
-	struct cpe_name *deprecated;	// CPE that deprecated this one (or NULL)
+	struct cpe_name *deprecated_by;		///< deprecated_by attribute, the CPE name that deprecated this
 	char *deprecation_date;	// date of deprecation
 
 	struct oscap_list *references;	// list of references
@@ -81,7 +81,7 @@ struct cpe_item {		// the node <cpe-item>
 	struct cpe23_item *cpe23_item;		///< element <cpe23-item>
 };
 OSCAP_GETTER(struct cpe_name *, cpe_item, name)
-OSCAP_GETTER(struct cpe_name *, cpe_item, deprecated)
+OSCAP_GETTER(struct cpe_name *, cpe_item, deprecated_by)
 OSCAP_ACCESSOR_STRING(cpe_item, deprecation_date)
 OSCAP_GETTER(struct cpe_item_metadata *, cpe_item, metadata)
 OSCAP_IGETINS_GEN(cpe_reference, cpe_item, references, reference)
@@ -838,7 +838,7 @@ struct cpe_item *cpe_item_parse(struct cpe_parser_ctx *ctx)
 			oscap_free(data);
 			data = (char *)xmlTextReaderGetAttribute(reader, ATTR_DEPRECATED_BY_STR);
 			if (data != NULL) {
-				if ((ret->deprecated = cpe_name_new(data)) == NULL) {
+				if ((ret->deprecated_by = cpe_name_new(data)) == NULL) {
 					oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to initialize CPE name with '%s'", data);
 					oscap_free(data);
 					oscap_free(ret);
@@ -1201,8 +1201,8 @@ void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer, int b
 		xmlTextWriterWriteAttribute(writer, ATTR_NAME_STR, BAD_CAST temp);
 		oscap_free(temp);
 	}
-	if (item->deprecated != NULL) {
-		temp = cpe_name_get_as_format(item->deprecated, CPE_FORMAT_URI);
+	if (item->deprecated_by != NULL) {
+		temp = cpe_name_get_as_format(item->deprecated_by, CPE_FORMAT_URI);
 		xmlTextWriterWriteAttribute(writer, ATTR_DEPRECATED_STR, VAL_TRUE_STR);
 		xmlTextWriterWriteAttribute(writer, ATTR_DEPRECATION_DATE_STR, BAD_CAST item->deprecation_date);
 		xmlTextWriterWriteAttribute(writer, ATTR_DEPRECATED_BY_STR, BAD_CAST temp);
@@ -1399,7 +1399,7 @@ void cpe_item_free(struct cpe_item *item)
 	if (item == NULL)
 		return;
 	cpe_name_free(item->name);
-	cpe_name_free(item->deprecated);
+	cpe_name_free(item->deprecated_by);
 	oscap_free(item->deprecation_date);
 	oscap_list_free(item->references, (oscap_destruct_func) cpe_reference_free);
 	oscap_list_free(item->checks, (oscap_destruct_func) cpe_check_free);
