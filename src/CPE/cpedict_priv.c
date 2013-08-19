@@ -38,6 +38,7 @@
 #include <ctype.h>
 // for functins memset, strcpy
 #include <string.h>
+#include <stdbool.h>
 
 #include "public/cpe_dict.h"
 #include "public/cpe_name.h"
@@ -47,6 +48,7 @@
 #include "common/list.h"
 #include "common/elements.h"
 #include "common/text_priv.h"
+#include "common/util.h"
 #include "common/_error.h"
 #include "common/xmlns_priv.h"
 
@@ -71,6 +73,7 @@ struct cpe_item {		// the node <cpe-item>
 	struct cpe_name *name;	// CPE name as CPE URI
 	struct oscap_list *titles;	// titles of cpe-item (can be in various languages)
 
+	bool deprecated;			///< deprecated attribute
 	struct cpe_name *deprecated_by;		///< deprecated_by attribute, the CPE name that deprecated this
 	char *deprecation_date;	// date of deprecation
 
@@ -835,39 +838,22 @@ struct cpe_item *cpe_item_parse(struct cpe_parser_ctx *ctx)
 		// ************************************************************************************
 		data = (char *)xmlTextReaderGetAttribute(reader, ATTR_DEPRECATED_STR);
 		if (data != NULL) {	// we have a deprecation here !
+			ret->deprecated = oscap_string_to_enum(OSCAP_BOOL_MAP, data);
 			oscap_free(data);
-			data = (char *)xmlTextReaderGetAttribute(reader, ATTR_DEPRECATED_BY_STR);
-			if (data != NULL) {
-				if ((ret->deprecated_by = cpe_name_new(data)) == NULL) {
-					oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to initialize CPE name with '%s'", data);
-					oscap_free(data);
-					oscap_free(ret);
-					return NULL;
-				}
-			}
-			else {
-				/* CPE 2.2 bounds @deprecated_by attribute. We used to cosider it's absence
-				 * to be an error. The CPE 2.3 may use cpe2-item/deprecation/deprecated-by
-				 * element instead. */
-				if (!cpe_parser_ctx_version_gt(ctx, "2.2")) {
-					oscap_seterr(OSCAP_EFAMILY_OSCAP, "Expected 'deprecated_by' attribute when "
-							"processing 'deprecated' attribute for cpe-item/@name='%s'",
-							cpe_name_get_as_str(ret->name));
-					oscap_free(ret);
-					oscap_free(data);
-					return NULL;
-				}
-			}
-			oscap_free(data);
-
-			data = (char *)xmlTextReaderGetAttribute(reader, ATTR_DEPRECATION_DATE_STR);
-			if (data == NULL || (ret->deprecation_date = oscap_alloc(strlen(data) + 1)) == NULL) {
-				oscap_free(ret);
+		}
+		data = (char *)xmlTextReaderGetAttribute(reader, ATTR_DEPRECATED_BY_STR);
+		if (data != NULL) {
+			if ((ret->deprecated_by = cpe_name_new(data)) == NULL) {
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to initialize CPE name with '%s'", data);
 				oscap_free(data);
+				oscap_free(ret);
 				return NULL;
 			}
-			strcpy(ret->deprecation_date, (char *)data);
 		}
+		oscap_free(data);
+
+		data = (char *)xmlTextReaderGetAttribute(reader, ATTR_DEPRECATION_DATE_STR);
+		ret->deprecation_date = oscap_strdup(data);
 		oscap_free(data);
 		// ************************************************************************************
 
