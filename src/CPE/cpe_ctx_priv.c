@@ -24,6 +24,7 @@
 #include <config.h>
 #endif
 
+#include <string.h>
 #include <libxml/xmlreader.h>
 
 #include "cpe_ctx_priv.h"
@@ -69,6 +70,25 @@ void cpe_parser_ctx_free(struct cpe_parser_ctx *ctx)
 			xmlFreeTextReader(ctx->reader);
 		oscap_free(ctx);
 	}
+}
+
+static inline const char *_cpe_parser_ctx_get_schema_version(struct cpe_parser_ctx *ctx)
+{
+	return (ctx->schema_version == NULL) ? "2.3" : ctx->schema_version;
+}
+
+static int _cpe_parser_ctx_version_cmp(struct cpe_parser_ctx *ctx, const char *version)
+{
+#ifdef __USE_GNU
+        return strverscmp(_cpe_parser_ctx_get_schema_version(ctx), version);
+#else
+        return strcmp(_cpe_parser_ctx_get_schema_version(ctx), version);
+#endif
+}
+
+bool cpe_parser_ctx_version_gt(struct cpe_parser_ctx *ctx, const char *version)
+{
+	return _cpe_parser_ctx_version_cmp(ctx, version) > 0;
 }
 
 OSCAP_GETTER(xmlTextReaderPtr, cpe_parser_ctx, reader);

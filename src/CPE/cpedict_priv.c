@@ -846,9 +846,14 @@ struct cpe_item *cpe_item_parse(struct cpe_parser_ctx *ctx)
 				}
 			}
 			else {
-				oscap_free(ret);
-				oscap_free(data);
-				return NULL;
+				/* CPE 2.2 bounds @deprecated_by attribute. We used to cosider it's absence
+				 * to be an error. The CPE 2.3 may use cpe2-item/deprecation/deprecated-by
+				 * element instead. */
+				if (!cpe_parser_ctx_version_gt(ctx, "2.2")) {
+					oscap_free(ret);
+					oscap_free(data);
+					return NULL;
+				}
 			}
 			oscap_free(data);
 
