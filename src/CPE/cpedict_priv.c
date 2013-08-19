@@ -696,7 +696,7 @@ struct cpe_dict_model *cpe_dict_model_parse(struct cpe_parser_ctx *ctx)
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GENERATOR_STR)) {	// <generator> | count = 1
 			ret->generator = cpe_generator_parse(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CPE_ITEM_STR)) {	// <cpe-item> | cout = 0-n
-			if ((item = cpe_item_parse(reader)) == NULL) {
+			if ((item = cpe_item_parse(ctx)) == NULL) {
 				// something bad happend, let's try to recover and continue
 				// add here some bad nodes list to write it to stdout after parsing is done
 				// get the next node
@@ -803,8 +803,10 @@ static struct cpe23_item *cpe23_item_parse(xmlTextReaderPtr reader)
 	return item;
 }
 
-struct cpe_item *cpe_item_parse(xmlTextReaderPtr reader)
+struct cpe_item *cpe_item_parse(struct cpe_parser_ctx *ctx)
 {
+	__attribute__nonnull__(ctx);
+	xmlTextReaderPtr reader = cpe_parser_ctx_get_reader(ctx);
 
 	struct cpe_item *ret = NULL;
 	struct cpe_check *check = NULL;

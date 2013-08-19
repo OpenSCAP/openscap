@@ -129,11 +129,11 @@ struct cpe_generator *cpe_generator_parse(xmlTextReaderPtr reader);
 
 /**
  * New dictionary item from XML
- * @param reader xmlTextReaderPtr representing XML model
+ * @param ctx CPE parser's context
  * @return new dictionary item
  * @retval NULL on failure
  */
-struct cpe_item *cpe_item_parse(xmlTextReaderPtr reader);
+struct cpe_item *cpe_item_parse(struct cpe_parser_ctx *ctx);
 
 /**
  * Parsing function to parse vendors of CPE dictionary
