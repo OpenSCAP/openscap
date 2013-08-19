@@ -694,7 +694,7 @@ struct cpe_dict_model *cpe_dict_model_parse(struct cpe_parser_ctx *ctx)
 		}
 
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GENERATOR_STR)) {	// <generator> | count = 1
-			ret->generator = cpe_generator_parse(reader);
+			ret->generator = cpe_generator_parse(ctx);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CPE_ITEM_STR)) {	// <cpe-item> | cout = 0-n
 			if ((item = cpe_item_parse(ctx)) == NULL) {
 				// something bad happend, let's try to recover and continue
@@ -728,10 +728,11 @@ struct cpe_dict_model *cpe_dict_model_parse(struct cpe_parser_ctx *ctx)
 	return ret;
 }
 
-struct cpe_generator *cpe_generator_parse(xmlTextReaderPtr reader)
+struct cpe_generator *cpe_generator_parse(struct cpe_parser_ctx *ctx)
 {
 
-	__attribute__nonnull__(reader);
+	__attribute__nonnull__(ctx);
+	xmlTextReaderPtr reader = cpe_parser_ctx_get_reader(ctx);
 
 	struct cpe_generator *ret = NULL;
 

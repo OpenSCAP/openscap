@@ -122,10 +122,10 @@ struct cpe_dict_model *cpe_dict_model_parse_xml(const char *file);
 
 /**
  * Parse generator part of CPE dictionary XML file
- * @param reader xmlTextReaderPtr representing XML model
+ * @param ctx CPE Parser's context
  * @return new structure cpe_generator
  */
-struct cpe_generator *cpe_generator_parse(xmlTextReaderPtr reader);
+struct cpe_generator *cpe_generator_parse(struct cpe_parser_ctx *ctx);
 
 /**
  * New dictionary item from XML
