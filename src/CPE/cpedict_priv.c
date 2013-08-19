@@ -850,6 +850,9 @@ struct cpe_item *cpe_item_parse(struct cpe_parser_ctx *ctx)
 				 * to be an error. The CPE 2.3 may use cpe2-item/deprecation/deprecated-by
 				 * element instead. */
 				if (!cpe_parser_ctx_version_gt(ctx, "2.2")) {
+					oscap_seterr(OSCAP_EFAMILY_OSCAP, "Expected 'deprecated_by' attribute when "
+							"processing 'deprecated' attribute for cpe-item/@name='%s'",
+							cpe_name_get_as_str(ret->name));
 					oscap_free(ret);
 					oscap_free(data);
 					return NULL;
