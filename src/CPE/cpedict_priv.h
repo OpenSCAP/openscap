@@ -35,6 +35,7 @@
 #include <stdlib.h>
 
 #include "cpe_name.h"
+#include "cpe_ctx_priv.h"
 
 #include "../common/public/oscap.h"
 #include "../common/util.h"
@@ -143,11 +144,11 @@ struct cpe_vendor *cpe_vendor_parse(xmlTextReaderPtr reader);
 
 /**
  * Load new CPE dictionary from XML node
- * @param reader xmlTextReaderPtr representing XML model
+ * @param ctx CPE parser context
  * @return new dictionary
  * @retval NULL on failure
  */
-struct cpe_dict_model *cpe_dict_model_parse(xmlTextReaderPtr reader);
+struct cpe_dict_model *cpe_dict_model_parse(struct cpe_parser_ctx *ctx);
 
 /**
  * Export function for CPE dictionary model

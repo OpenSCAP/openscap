@@ -32,6 +32,7 @@
 
 struct cpe_parser_ctx {
 	xmlTextReaderPtr reader;
+	bool owns_reader;
 };
 
 static inline struct cpe_parser_ctx *_cpe_parser_ctx_new()
@@ -48,13 +49,22 @@ struct cpe_parser_ctx *cpe_parser_ctx_new(const char *filename)
 		cpe_parser_ctx_free(ctx);
 		return NULL;
 	}
+	ctx->owns_reader = true;
+	return ctx;
+}
+
+struct cpe_parser_ctx *cpe_parser_ctx_from_reader(xmlTextReaderPtr reader)
+{
+	struct cpe_parser_ctx *ctx = _cpe_parser_ctx_new();
+	ctx->reader = reader;
+	ctx->owns_reader = false;
 	return ctx;
 }
 
 void cpe_parser_ctx_free(struct cpe_parser_ctx *ctx)
 {
 	if (ctx) {
-		if (ctx->reader != NULL)
+		if (ctx->reader != NULL && ctx->owns_reader)
 			xmlFreeTextReader(ctx->reader);
 		oscap_free(ctx);
 	}

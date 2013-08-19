@@ -631,16 +631,17 @@ struct cpe_dict_model *cpe_dict_model_parse_xml(const char *file)
 	struct cpe_parser_ctx *ctx = cpe_parser_ctx_new(file);
 	if (ctx) {
 		xmlTextReaderNextNode(cpe_parser_ctx_get_reader(ctx));
-		dict = cpe_dict_model_parse(cpe_parser_ctx_get_reader(ctx));
+		dict = cpe_dict_model_parse(ctx);
 	}
 	cpe_parser_ctx_free(ctx);
 	return dict;
 }
 
-struct cpe_dict_model *cpe_dict_model_parse(xmlTextReaderPtr reader)
+struct cpe_dict_model *cpe_dict_model_parse(struct cpe_parser_ctx *ctx)
 {
 
-	__attribute__nonnull__(reader);
+	__attribute__nonnull__(ctx);
+	xmlTextReaderPtr reader = cpe_parser_ctx_get_reader(ctx);
 
 	struct cpe_dict_model *ret = NULL;
 	struct cpe_item *item = NULL;

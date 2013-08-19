@@ -36,6 +36,7 @@
 
 #include "CPE/cpedict_priv.h"
 #include "CPE/cpelang_priv.h"
+#include "CPE/cpe_ctx_priv.h"
 
 #define XCCDF_SUPPORTED "1.2"
 
@@ -183,9 +184,12 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 							data == NULL ? "" : data));
 				break;
 			}
-		case XCCDFE_CPE_LIST:
-			xccdf_benchmark_set_cpe_list(XBENCHMARK(benchmark), cpe_dict_model_parse(reader));
+		case XCCDFE_CPE_LIST:{
+			struct cpe_parser_ctx *ctx = cpe_parser_ctx_from_reader(reader);
+			xccdf_benchmark_set_cpe_list(XBENCHMARK(benchmark), cpe_dict_model_parse(ctx));
+			cpe_parser_ctx_free(ctx);
 			break;
+			}
 		case XCCDFE_CPE2_PLATFORMSPEC:
 			xccdf_benchmark_set_cpe_lang_model(XBENCHMARK(benchmark), cpe_lang_model_parse(reader));
 			break;

@@ -41,6 +41,13 @@ struct cpe_parser_ctx;
 struct cpe_parser_ctx *cpe_parser_ctx_new(const char *filename);
 
 /**
+ * Construct cpe_parser_ctx from existing xmlTextReader
+ * @param reader existing XML reader
+ * @param parser's context
+ */
+struct cpe_parser_ctx *cpe_parser_ctx_from_reader(xmlTextReaderPtr reader);
+
+/**
  * Destructor for cpe_parser_ctx
  * @param parser's context to dispose
  */
