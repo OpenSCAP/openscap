@@ -763,6 +763,7 @@ struct cpe_generator *cpe_generator_parse(struct cpe_parser_ctx *ctx)
 					   TAG_SCHEMA_VERSION_STR) == 0) &&
 				(xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)) {
 				ret->schema_version = (char *)xmlTextReaderReadString(reader);
+				cpe_parser_ctx_set_schema_version(ctx, ret->schema_version);
 			} else
 			    if ((xmlStrcmp(xmlTextReaderConstLocalName(reader),
 					   TAG_TIMESTAMP_STR) == 0) &&

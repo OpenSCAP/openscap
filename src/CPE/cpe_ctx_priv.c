@@ -33,6 +33,7 @@
 struct cpe_parser_ctx {
 	xmlTextReaderPtr reader;
 	bool owns_reader;
+	char *schema_version;
 };
 
 static inline struct cpe_parser_ctx *_cpe_parser_ctx_new()
@@ -71,3 +72,4 @@ void cpe_parser_ctx_free(struct cpe_parser_ctx *ctx)
 }
 
 OSCAP_GETTER(xmlTextReaderPtr, cpe_parser_ctx, reader);
+OSCAP_SETTER_GENERIC(cpe_parser_ctx, const char *, schema_version, oscap_free, oscap_strdup);

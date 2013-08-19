@@ -59,6 +59,13 @@ void cpe_parser_ctx_free(struct cpe_parser_ctx *ctx);
  */
 xmlTextReaderPtr cpe_parser_ctx_get_reader(const struct cpe_parser_ctx *ctx);
 
+/**
+ * Sets the schema_version property of the context
+ * @param schema_version new version to set
+ * @returns true on success
+ */
+OSCAP_SETTER_HEADER(cpe_parser_ctx, const char *, schema_version);
+
 OSCAP_HIDDEN_END;
 
 #endif
