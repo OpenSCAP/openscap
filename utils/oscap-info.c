@@ -384,8 +384,7 @@ static int app_info(const struct oscap_action *action)
 	result=OSCAP_OK;
 
 cleanup:
-	if (oscap_err())
-		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+	oscap_print_error();
 
 	return result;
 }
