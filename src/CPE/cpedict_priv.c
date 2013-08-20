@@ -822,10 +822,14 @@ struct cpe_item *cpe_item_parse(struct cpe_parser_ctx *ctx)
 	char *data;
 
 	__attribute__nonnull__(reader);
-
-	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CPE_ITEM_STR) &&
-	    xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-
+	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CPE_ITEM_STR) != 0 ||
+			xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Found '%s'(%d) node when expecting: '%s'(%d)!",
+				xmlTextReaderConstLocalName(reader), xmlTextReaderNodeType(reader),
+				TAG_CPE_ITEM_STR, XML_READER_TYPE_ELEMENT);
+		return NULL;
+	}
+	else {
 		// we are on "<cpe-item>" element, let's alloc structure
 		ret = cpe_item_new();
 		if (ret == NULL)
@@ -888,6 +892,9 @@ struct cpe_item *cpe_item_parse(struct cpe_parser_ctx *ctx)
 			} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ITEM_METADATA_STR) == 0) {
 				data = (char *)xmlTextReaderGetAttribute(reader, ATTR_MODIFICATION_DATE_STR);
 				if ((data == NULL) || ((ret->metadata = cpe_item_metadata_new()) == NULL)) {
+					oscap_seterr(OSCAP_EFAMILY_OSCAP,
+							"Failed to parse item-metadata element within cpe-item/@name='%s'",
+							cpe_name_get_as_str(ret->name));
 					cpe_item_free(ret);
 					oscap_free(data);
 					return NULL;
