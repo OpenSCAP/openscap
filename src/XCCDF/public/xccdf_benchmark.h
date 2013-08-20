@@ -890,6 +890,8 @@ void xccdf_setvalue_free(struct xccdf_setvalue *sv);
 
 /// @memberof xccdf_tailoring
 struct xccdf_tailoring *xccdf_tailoring_new(void);
+/// @memberof xccdf_tailoring
+int xccdf_tailoring_export(struct xccdf_tailoring *tailoring, const char *file, const struct xccdf_version_info *version_info);
 
 /**
  * Release library internal caches.

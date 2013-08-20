@@ -161,7 +161,10 @@ xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr d
 				(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
 
 	xmlNode *tailoring_node = NULL;
-	tailoring_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "Tailoring", NULL);
+	tailoring_node = xmlNewNode(ns_xccdf, BAD_CAST "Tailoring");
+
+	if (parent)
+		xmlAddChild(parent, tailoring_node);
 
 	struct xccdf_status_iterator *statuses = xccdf_tailoring_get_statuses(tailoring);
 	while (xccdf_status_iterator_has_more(statuses)) {
@@ -209,6 +212,22 @@ xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr d
 	return tailoring_node;
 }
 
+int xccdf_tailoring_export(struct xccdf_tailoring *tailoring, const char *file, const struct xccdf_version_info *version_info)
+{
+	__attribute__nonnull__(file);
+
+	LIBXML_TEST_VERSION;
+
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+	if (doc == NULL) {
+		oscap_setxmlerr(xmlGetLastError());
+		return -1;
+	}
+
+	xccdf_tailoring_to_dom(tailoring, doc, NULL, version_info);
+
+	return oscap_xml_save_filename(file, doc);
+}
 const char *xccdf_tailoring_get_version(const struct xccdf_tailoring *tailoring)
 {
 	return tailoring->version;
