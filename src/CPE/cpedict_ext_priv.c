@@ -34,14 +34,49 @@
 #include "common/xmlns_priv.h"
 
 #define ATTR_NAME_STR				"name"
+#define ATTR_DATE_STR				"date"
+#define TAG_CPE_EXT_DEPRECATION_STR		"deprecation"
+
+struct cpe_ext_deprecation {			///< <cpe_dict_ext:deprecation> node
+	char *date;				///< @date attribute
+};
 
 struct cpe23_item {				///< <cpe23-item> node
 	char *name;				///< @name attribute
+	struct oscap_list *deprecations;	///< <deprecation> sub-nodes
 };
+
+static struct cpe_ext_deprecation_new()
+{
+	return oscap_calloc(1, sizeof(struct cpe_ext_deprecation));
+}
 
 static struct cpe23_item *cpe23_item_new()
 {
-	return oscap_calloc(1, sizeof(struct cpe23_item));
+	struct cpe23_item *item = oscap_calloc(1, sizeof(struct cpe23_item));
+	item->deprecations = oscap_list_new();
+	return item;
+}
+
+struct cpe_ext_deprecation cpe_ext_deprecation_parse(xmlTextReaderPtr reader)
+{
+	__attribute__nonnull__(reader);
+
+	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST TAG_CPE_EXT_DEPRECATION_STR) != 0 ||
+			xmlTextReaderNodeType(reader) != 1) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Found '%s' node when expecting: '%s'!",
+				xmlTextReaderConstLocalName(reader), TAG_CPE_EXT_DEPRECATION_STR);
+	}
+	const xmlChar* nsuri = xmlTextReaderConstNamespaceUri(reader);
+	if (nsuri && xmlStrcmp(nsuri, BAD_CAST XMLNS_CPE2D3_EXTENSION) != 0) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Found '%s' namespace when expecting: '%s'!",
+				nsuri, XMLNS_CPE2D3_EXTENSION);
+		return NULL;
+	}
+
+	struct cpe_ext_deprecation *deprecation = cpe_ext_deprecation_new();
+	deprecation->date = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST ATTR_DATE_STR);
+	return deprecation;
 }
 
 struct cpe23_item *cpe23_item_parse(xmlTextReaderPtr reader)
@@ -63,10 +98,48 @@ struct cpe23_item *cpe23_item_parse(xmlTextReaderPtr reader)
 
 	struct cpe23_item *item = cpe23_item_new();
 	item->name = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST ATTR_NAME_STR);
+	if (xmlTextReaderIsEmptyElement(reader) == 0) { // the element contains child nodes
+		xmlTextReaderNextNode(reader);
+		while (xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST TAG_CPE23_ITEM_STR) != 0) {
+			if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
+				xmlTextReaderNextNode(reader);
+				continue;
+			}
+
+			if (xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST TAG_CPE_EXT_DEPRECATION_STR) == 0) {
+				struct cpe_ext_deprecation *deprecation = cpe_ext_deprecation_parse(reader);
+				if (deprecation == NULL) {
+					cpe23_item_free(item);
+					return NULL;
+				}
+				oscap_list_add(item->deprecations, deprecation);
+			}
+			else {
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unexpected element within cpe23-item[@name='%s']: '%s'",
+						item->name, xmlTextReaderConstLocalName(reader));
+				cpe23_item_free(item);
+				return NULL;
+			}
+			xmlTextReaderNextNode(reader);
+		}
+	}
+
 	return item;
+}
+
+static void cpe_ext_deprecation_free(struct cpe_ext_deprecation *deprecation)
+{
+	if (deprecation != NULL) {
+		oscap_free(deprecation->date);
+		oscap_free(deprecation);
+	}
 }
 
 void cpe23_item_free(struct cpe23_item *item)
 {
-	oscap_free(item);
+	if (item != NULL) {
+		oscap_list_free(item->deprecations, (oscap_destruct_func) cpe_ext_deprecation_free);
+		oscap_free(item);
+	}
 }
+
