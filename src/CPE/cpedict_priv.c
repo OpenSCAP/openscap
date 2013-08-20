@@ -51,6 +51,7 @@
 #include "common/util.h"
 #include "common/_error.h"
 #include "common/xmlns_priv.h"
+#include "common/xmltext_priv.h"
 
 /***************************************************************************/
 /* Variable definitions
@@ -264,7 +265,6 @@ OSCAP_ACCESSOR_STRING(cpe_language, value)
  * These function shoud not be called from outside. For exporting these elements
  * has to call parent element's 
  */
-static int xmlTextReaderNextElement(xmlTextReaderPtr reader);
 static bool cpe_dict_model_add_item(struct cpe_dict_model *dict, struct cpe_item *item);
 
 static struct cpe_reference *cpe_reference_parse(xmlTextReaderPtr reader);
@@ -296,29 +296,6 @@ static bool cpe_dict_model_add_item(struct cpe_dict_model *dict, struct cpe_item
 
 	oscap_list_add(dict->items, item);
 	return true;
-}
-
-/* Function that jump to next XML starting element.
- * */
-static int xmlTextReaderNextElement(xmlTextReaderPtr reader)
-{
-
-	__attribute__nonnull__(reader);
-
-	int ret;
-	do {
-		ret = xmlTextReaderRead(reader);
-		// if end of file
-		if (ret < 1)
-			break;
-	} while (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
-
-	if (ret == -1) {
-		oscap_setxmlerr(xmlCtxtGetLastError(reader));
-		/* TODO: Should we end here as fatal ? */
-	}
-
-	return ret;
 }
 
 /* Function that jump to next XML starting element.

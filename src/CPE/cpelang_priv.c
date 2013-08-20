@@ -45,6 +45,7 @@
 #include "common/elements.h"
 #include "common/_error.h"
 #include "common/xmlns_priv.h"
+#include "common/xmltext_priv.h"
 
 /***************************************************************************/
 /* Variable definitions
@@ -111,7 +112,6 @@ OSCAP_GETTER(const struct cpe_testexpr*, cpe_platform, expr)
  * These function shoud not be called from outside. For exporting these elements
  * has to call parent element's 
  */
-static int xmlTextReaderNextElement(xmlTextReaderPtr reader);
 static char *parse_text_element(xmlTextReaderPtr reader, char *name);
 static bool cpe_validate_xml(const char *filename);
 static int xmlTextReaderNextNode(xmlTextReaderPtr reader);
@@ -129,29 +129,6 @@ static int xmlTextReaderNextNode(xmlTextReaderPtr reader)
 
 	int ret;
 	ret = xmlTextReaderRead(reader);
-	if (ret == -1) {
-		oscap_setxmlerr(xmlCtxtGetLastError(reader));
-		/* TODO: Should we end here as fatal ? */
-	}
-
-	return ret;
-}
-
-/* Function that jump to next XML starting element.
- */
-static int xmlTextReaderNextElement(xmlTextReaderPtr reader)
-{
-
-	__attribute__nonnull__(reader);
-
-	int ret;
-	do {
-		ret = xmlTextReaderRead(reader);
-		// if end of file
-		if (ret < 1)
-			break;
-	} while (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
-
 	if (ret == -1) {
 		oscap_setxmlerr(xmlCtxtGetLastError(reader));
 		/* TODO: Should we end here as fatal ? */

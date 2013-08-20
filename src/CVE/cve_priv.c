@@ -43,6 +43,7 @@
 
 #include "common/list.h"
 #include "common/_error.h"
+#include "common/xmltext_priv.h"
 
 #include "CPE/cpelang_priv.h"
 #include "CVSS/cvss_priv.h"
@@ -388,7 +389,6 @@ struct cve_model * cve_model_clone(struct cve_model * old_model)
  * has to call parent element's
  */
 
-static int xmlTextReaderNextElement(xmlTextReaderPtr reader);
 static int xmlTextReaderNextNode(xmlTextReaderPtr reader);
 
 /* End of static declarations
@@ -406,29 +406,6 @@ static int xmlTextReaderNextNode(xmlTextReaderPtr reader)
 	ret = xmlTextReaderRead(reader);
 	if (ret == -1)
 		oscap_setxmlerr(xmlGetLastError());
-
-	return ret;
-}
-
-/* Function that jump to next XML starting element.
- */
-static int xmlTextReaderNextElement(xmlTextReaderPtr reader)
-{
-
-	__attribute__nonnull__(reader);
-
-	int ret;
-	do {
-		ret = xmlTextReaderRead(reader);
-		/* if end of file */
-		if (ret < 1)
-			break;
-	} while (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
-
-	if (ret == -1) {
-		oscap_setxmlerr(xmlCtxtGetLastError(reader));
-		/* TODO: Should we end here as fatal ? */
-	}
 
 	return ret;
 }
