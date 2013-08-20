@@ -703,11 +703,9 @@ struct cpe_dict_model *cpe_dict_model_parse(struct cpe_parser_ctx *ctx)
 			ret->generator = cpe_generator_parse(ctx);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CPE_ITEM_STR)) {	// <cpe-item> | cout = 0-n
 			if ((item = cpe_item_parse(ctx)) == NULL) {
-				// something bad happend, let's try to recover and continue
-				// add here some bad nodes list to write it to stdout after parsing is done
-				// get the next node
-				next_ret = xmlTextReaderNextElementWE(reader, TAG_CPE_LIST_STR);
-				continue;
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to parse cpe-item");
+				cpe_dict_model_free(ret);
+				return NULL;
 			}
 			// We got an item !
 			if (!cpe_dict_model_add_item(ret, item)) {
