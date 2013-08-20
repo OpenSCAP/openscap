@@ -82,6 +82,9 @@ struct cpe_item {		// the node <cpe-item>
 	struct oscap_list *notes;	// list of notes - it's the same structure as titles
 	struct cpe_item_metadata *metadata;	// element <meta:item-metadata>
 	struct cpe23_item *cpe23_item;		///< element <cpe23-item>
+	struct {
+		bool deprecated:1;		///< Is the deprecated atrtribute specified in XML?
+	} export;
 };
 OSCAP_GETTER(struct cpe_name *, cpe_item, name)
 OSCAP_GETTER(struct cpe_name *, cpe_item, deprecated_by)
@@ -839,6 +842,7 @@ struct cpe_item *cpe_item_parse(struct cpe_parser_ctx *ctx)
 		data = (char *)xmlTextReaderGetAttribute(reader, ATTR_DEPRECATED_STR);
 		if (data != NULL) {	// we have a deprecation here !
 			ret->deprecated = oscap_string_to_enum(OSCAP_BOOL_MAP, data);
+			ret->export.deprecated = true;
 			oscap_free(data);
 		}
 		data = (char *)xmlTextReaderGetAttribute(reader, ATTR_DEPRECATED_BY_STR);
@@ -1187,12 +1191,17 @@ void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer, int b
 		xmlTextWriterWriteAttribute(writer, ATTR_NAME_STR, BAD_CAST temp);
 		oscap_free(temp);
 	}
+	if (item->export.deprecated == true) {
+		xmlTextWriterWriteAttribute(writer, ATTR_DEPRECATED_STR,
+			BAD_CAST oscap_enum_to_string(OSCAP_BOOL_MAP, item->deprecated));
+	}
 	if (item->deprecated_by != NULL) {
 		temp = cpe_name_get_as_format(item->deprecated_by, CPE_FORMAT_URI);
-		xmlTextWriterWriteAttribute(writer, ATTR_DEPRECATED_STR, VAL_TRUE_STR);
-		xmlTextWriterWriteAttribute(writer, ATTR_DEPRECATION_DATE_STR, BAD_CAST item->deprecation_date);
 		xmlTextWriterWriteAttribute(writer, ATTR_DEPRECATED_BY_STR, BAD_CAST temp);
 		oscap_free(temp);
+	}
+	if (item->deprecation_date != NULL) {
+		xmlTextWriterWriteAttribute(writer, ATTR_DEPRECATION_DATE_STR, BAD_CAST item->deprecation_date);
 	}
 
 	oscap_textlist_export(cpe_item_get_titles(item), writer, "title");
