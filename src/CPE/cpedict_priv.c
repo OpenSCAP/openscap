@@ -715,7 +715,6 @@ struct cpe_dict_model *cpe_dict_model_parse(struct cpe_parser_ctx *ctx)
 				cpe_dict_model_free(ret);
 				return NULL;
 			}
-			continue;
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VENDOR_STR)) {	// <vendor> | count = 0-n
 			vendor = cpe_vendor_parse(reader);
 			if (vendor)
