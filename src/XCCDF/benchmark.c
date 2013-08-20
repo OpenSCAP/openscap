@@ -284,11 +284,6 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 	}
 	xccdf_plain_text_iterator_free(plain_text_it);
 
-	/* In spec but not in OpenSCAP
-	const char *lang = xccdf_benchmark_get_lang(benchmark);
-	if (lang)
-		xmlNewProp(root_node, BAD_CAST "xml:lang", BAD_CAST lang);*/
-
 	/* Handle children */
 	if (xccdf_benchmark_get_cpe_list(benchmark)) {
 		// CPE API can only export via xmlTextWriter, we export via DOM
