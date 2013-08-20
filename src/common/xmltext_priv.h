@@ -44,6 +44,15 @@ int xmlTextReaderNextElement(xmlTextReaderPtr reader);
  */
 int xmlTextReaderNextNode(xmlTextReaderPtr reader);
 
+/**
+ * Function that jump to next XML starting element. This function makes sure
+ * we don't go past end tag of given element.
+ * @param reader xmlTextReader to move with
+ * @param end_tag name of the end element
+ * @returns zero on success
+ */
+int xmlTextReaderNextElementWE(xmlTextReaderPtr reader, xmlChar* end_tag);
+
 OSCAP_HIDDEN_END;
 
 #endif

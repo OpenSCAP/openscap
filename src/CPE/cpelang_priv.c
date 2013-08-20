@@ -119,38 +119,6 @@ static bool cpe_validate_xml(const char *filename);
  * */
 /***************************************************************************/
 
-/* Function that jump to next XML starting element.
- *
- * This function makes sure we don't go past end tag of given element
- * */
-static int xmlTextReaderNextElementWE(xmlTextReaderPtr reader, xmlChar* end_tag)
-{
-
-	__attribute__nonnull__(reader);
-
-	int ret;
-	do {
-		ret = xmlTextReaderRead(reader);
-		// if end of file
-		if (ret < 1)
-			break;
-
-		if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_END_ELEMENT) {
-			if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), end_tag)) {
-				ret = 0;
-				break;
-			}
-		}
-	} while (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
-
-	if (ret == -1) {
-		oscap_setxmlerr(xmlCtxtGetLastError(reader));
-		/* TODO: Should we end here as fatal ? */
-	}
-
-	return ret;
-}
-
 const struct cpe_testexpr *cpe_testexpr_get_next(const struct cpe_testexpr *expr)
 {
 
