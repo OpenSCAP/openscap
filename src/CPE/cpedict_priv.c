@@ -813,7 +813,10 @@ struct cpe_item *cpe_item_parse(struct cpe_parser_ctx *ctx)
 				(xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_NOTES_STR) == 0)) {
 				// we just need to jump over this element
 			} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST TAG_CPE23_ITEM_STR) == 0) {
-				ret->cpe23_item = cpe23_item_parse(reader);
+				if ((ret->cpe23_item = cpe23_item_parse(reader)) == NULL) {
+					cpe_item_free(ret);
+					return NULL;
+				}
 			} else {
 				return ret;	// <-- we need to return here, because we don't want to jump to next element 
 			}
