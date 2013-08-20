@@ -279,7 +279,6 @@ static void cpe_check_export(const struct cpe_check *check, xmlTextWriterPtr wri
 static void cpe_reference_export(const struct cpe_reference *ref, xmlTextWriterPtr writer);
 
 static bool cpe_validate_xml(const char *filename);
-static int xmlTextReaderNextNode(xmlTextReaderPtr reader);
 /***************************************************************************/
 
 /* Add item to dictionary. Function that just check both variables
@@ -322,23 +321,6 @@ static int xmlTextReaderNextElementWE(xmlTextReaderPtr reader, xmlChar* end_tag)
 		}
 	} while (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
 
-	if (ret == -1) {
-		oscap_setxmlerr(xmlCtxtGetLastError(reader));
-		/* TODO: Should we end here as fatal ? */
-	}
-
-	return ret;
-}
-
-/* Function testing reader function 
- */
-static int xmlTextReaderNextNode(xmlTextReaderPtr reader)
-{
-
-	__attribute__nonnull__(reader);
-
-	int ret;
-	ret = xmlTextReaderRead(reader);
 	if (ret == -1) {
 		oscap_setxmlerr(xmlCtxtGetLastError(reader));
 		/* TODO: Should we end here as fatal ? */

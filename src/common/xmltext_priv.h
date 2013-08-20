@@ -37,6 +37,13 @@ OSCAP_HIDDEN_START;
  */
 int xmlTextReaderNextElement(xmlTextReaderPtr reader);
 
+/**
+ * Function testing reader function
+ * @param reader xmlTextReader
+ * @returns zero on success
+ */
+int xmlTextReaderNextNode(xmlTextReaderPtr reader);
+
 OSCAP_HIDDEN_END;
 
 #endif

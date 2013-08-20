@@ -114,28 +114,10 @@ OSCAP_GETTER(const struct cpe_testexpr*, cpe_platform, expr)
  */
 static char *parse_text_element(xmlTextReaderPtr reader, char *name);
 static bool cpe_validate_xml(const char *filename);
-static int xmlTextReaderNextNode(xmlTextReaderPtr reader);
 
 /* End of static declarations 
  * */
 /***************************************************************************/
-
-/* Function testing reader function 
- */
-static int xmlTextReaderNextNode(xmlTextReaderPtr reader)
-{
-
-	__attribute__nonnull__(reader);
-
-	int ret;
-	ret = xmlTextReaderRead(reader);
-	if (ret == -1) {
-		oscap_setxmlerr(xmlCtxtGetLastError(reader));
-		/* TODO: Should we end here as fatal ? */
-	}
-
-	return ret;
-}
 
 /* Function that jump to next XML starting element.
  *

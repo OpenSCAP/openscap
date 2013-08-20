@@ -45,3 +45,14 @@ int xmlTextReaderNextElement(xmlTextReaderPtr reader)
 
 	return ret;
 }
+
+int xmlTextReaderNextNode(xmlTextReaderPtr reader)
+{
+	__attribute__nonnull__(reader);
+
+	int ret = xmlTextReaderRead(reader);
+	if (ret == -1)
+		oscap_setxmlerr(xmlGetLastError());
+
+	return ret;
+}

@@ -384,33 +384,6 @@ struct cve_model * cve_model_clone(struct cve_model * old_model)
 /***************************************************************************/
 
 /***************************************************************************/
-/* Declaration of static (private to this file) functions
- * These function shoud not be called from outside. For exporting these elements
- * has to call parent element's
- */
-
-static int xmlTextReaderNextNode(xmlTextReaderPtr reader);
-
-/* End of static declarations
- * */
-/***************************************************************************/
-
-/* Function testing reader function
- */
-static int xmlTextReaderNextNode(xmlTextReaderPtr reader)
-{
-
-	__attribute__nonnull__(reader);
-
-	int ret;
-	ret = xmlTextReaderRead(reader);
-	if (ret == -1)
-		oscap_setxmlerr(xmlGetLastError());
-
-	return ret;
-}
-
-/***************************************************************************/
 /* Private parsing functions cve_*<structure>*_parse( xmlTextReaderPtr )
  * More info in representive header file.
  * returns the type of <structure>
