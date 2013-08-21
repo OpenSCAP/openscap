@@ -691,7 +691,9 @@ struct cpe_generator *cpe_generator_parse(struct cpe_parser_ctx *ctx)
 				(xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)) {
 				ret->timestamp = (char *)xmlTextReaderReadString(reader);
 			} else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element in CPE dictionary generator");
+				oscap_seterr(OSCAP_EFAMILY_OSCAP,
+						"Unknown XML element in CPE dictionary generator, local name is '%s'.",
+						xmlTextReaderConstLocalName(reader));
 			}
 			// element saved. Let's jump on the very next one node (not element, because we need to 
 			// find XML_READER_TYPE_END_ELEMENT node, see "while" condition and the condition below "while"
@@ -917,6 +919,7 @@ struct cpe_vendor *cpe_vendor_parse(xmlTextReaderPtr reader)
 				else if (strcasecmp((const char *)data, "a") == 0)
 				    product->part = CPE_PART_APP;
 				else {
+					oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown attribute value of vendor/@part='%s'", data);
 				    oscap_free(ret);
 				    oscap_free(data);
 				    return NULL;
@@ -947,6 +950,9 @@ struct cpe_vendor *cpe_vendor_parse(xmlTextReaderPtr reader)
 			language = cpe_language_new();
 			language->value = (char *)xmlTextReaderGetAttribute(reader, ATTR_VALUE_STR);
 			oscap_list_add(edition->languages, language);
+		} else {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element withinin CPE vendor element, local name is '%s'.",
+				xmlTextReaderConstLocalName(reader));
 		}
 		xmlTextReaderNextNode(reader);
 	}
