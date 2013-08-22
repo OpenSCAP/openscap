@@ -35,6 +35,8 @@ struct xccdf_tailoring *xccdf_tailoring_new(void)
 {
 	struct xccdf_tailoring *tailoring = oscap_calloc(1, sizeof(struct xccdf_tailoring));
 
+	tailoring->id = NULL;
+
 	tailoring->benchmark_ref = NULL;
 
 	tailoring->statuses = oscap_list_new();
@@ -53,6 +55,8 @@ struct xccdf_tailoring *xccdf_tailoring_new(void)
 void xccdf_tailoring_free(struct xccdf_tailoring *tailoring)
 {
 	if (tailoring) {
+		oscap_free(tailoring->id);
+
 		oscap_free(tailoring->benchmark_ref);
 
 		oscap_list_free(tailoring->statuses, (oscap_destruct_func) xccdf_status_free);
@@ -80,6 +84,9 @@ struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xc
 	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_TAILORING);
 
 	struct xccdf_tailoring *tailoring = xccdf_tailoring_new();
+
+	const char *id = xccdf_attribute_get(reader, XCCDFA_ID);
+	xccdf_tailoring_set_id(tailoring, id);
 
 	int depth = oscap_element_depth(reader) + 1;
 
@@ -177,6 +184,10 @@ xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr d
 	else
 		xmlDocSetRootElement(doc, tailoring_node);
 
+	if (tailoring->id) {
+		xmlNewProp(tailoring_node, BAD_CAST "id", BAD_CAST tailoring->id);
+	}
+
 	struct xccdf_status_iterator *statuses = xccdf_tailoring_get_statuses(tailoring);
 	while (xccdf_status_iterator_has_more(statuses)) {
 		struct xccdf_status *status = xccdf_status_iterator_next(statuses);
@@ -240,6 +251,11 @@ int xccdf_tailoring_export(struct xccdf_tailoring *tailoring, const char *file, 
 	return oscap_xml_save_filename(file, doc);
 }
 
+const char *xccdf_tailoring_get_id(const struct xccdf_tailoring *tailoring)
+{
+	return tailoring->id;
+}
+
 const char *xccdf_tailoring_get_version(const struct xccdf_tailoring *tailoring)
 {
 	return tailoring->version;
@@ -253,6 +269,15 @@ const char *xccdf_tailoring_get_version_update(const struct xccdf_tailoring *tai
 const char *xccdf_tailoring_get_version_time(const struct xccdf_tailoring *tailoring)
 {
 	return tailoring->version_time;
+}
+
+bool xccdf_tailoring_set_id(struct xccdf_tailoring *tailoring, const char* newval)
+{
+	if (tailoring->id)
+		oscap_free(tailoring->id);
+
+	tailoring->id = oscap_strdup(newval);
+	return true;
 }
 
 bool xccdf_tailoring_set_version(struct xccdf_tailoring *tailoring, const char *newval)

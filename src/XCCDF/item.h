@@ -167,6 +167,9 @@ struct xccdf_profile_item {
 };
 
 struct xccdf_tailoring {
+	// optional, only relevant when Tailoring is saved as a root element
+	char *id;
+
 	// The ref is "just informative" according to the spec, we never
 	// interpret it and just load and save it as a string.
 	char *benchmark_ref;

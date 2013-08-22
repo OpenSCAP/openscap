@@ -2626,6 +2626,8 @@ const char *xccdf_instance_get_content(const struct xccdf_instance *item);
 /// @memberof xccdf_tailoring
 struct xccdf_tailoring *xccdf_tailoring_import(const char *file, struct xccdf_benchmark *benchmark);
 /// @memberof xccdf_tailoring
+const char *xccdf_tailoring_get_id(const struct xccdf_tailoring *tailoring);
+/// @memberof xccdf_tailoring
 const char *xccdf_tailoring_get_version(const struct xccdf_tailoring *tailoring);
 /// @memberof xccdf_tailoring
 const char *xccdf_tailoring_get_version_update(const struct xccdf_tailoring *tailoring);
@@ -3028,6 +3030,8 @@ bool xccdf_instance_set_parent_context(struct xccdf_instance *obj, const char *n
 /// @memberof xccdf_instance
 bool xccdf_instance_set_content(struct xccdf_instance *obj, const char *newval);
 
+/// @memberof xccdf_tailoring
+bool xccdf_tailoring_set_id(struct xccdf_tailoring *tailoring, const char* newval);
 /// @memberof xccdf_tailoring
 bool xccdf_tailoring_set_version(struct xccdf_tailoring *tailoring, const char* newval);
 /// @memberof xccdf_tailoring
