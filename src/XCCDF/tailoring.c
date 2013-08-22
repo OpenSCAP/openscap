@@ -158,13 +158,24 @@ struct xccdf_tailoring *xccdf_tailoring_import(const char *file, struct xccdf_be
 xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr doc, xmlNodePtr parent, const struct xccdf_version_info *version_info)
 {
 	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
-				(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+				BAD_CAST xccdf_version_info_get_namespace_uri(version_info));
 
 	xmlNode *tailoring_node = NULL;
 	tailoring_node = xmlNewNode(ns_xccdf, BAD_CAST "Tailoring");
 
+	if (!ns_xccdf) {
+		// In cases where tailoring ends up being the root node we have to create
+		// a namespace at the node itself.
+		ns_xccdf = xmlNewNs(tailoring_node,
+			BAD_CAST xccdf_version_info_get_namespace_uri(version_info),
+			BAD_CAST "xccdf");
+		xmlSetNs(tailoring_node, ns_xccdf);
+	}
+
 	if (parent)
 		xmlAddChild(parent, tailoring_node);
+	else
+		xmlDocSetRootElement(doc, tailoring_node);
 
 	struct xccdf_status_iterator *statuses = xccdf_tailoring_get_statuses(tailoring);
 	while (xccdf_status_iterator_has_more(statuses)) {
