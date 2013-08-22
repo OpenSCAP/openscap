@@ -40,8 +40,8 @@
 #include "list.h"
 
 const char * const OSCAP_LANG_ENGLISH    = "en";
-const char * const OSCAP_LANG_ENGLISH_US = "en_US";
-const char * const OSCAP_LANG_DEFAULT    = "en_US";
+const char * const OSCAP_LANG_ENGLISH_US = "en-US";
+const char * const OSCAP_LANG_DEFAULT    = "en-US";
 
 const struct oscap_text_traits OSCAP_TEXT_TRAITS_PLAIN = { .html = false };
 const struct oscap_text_traits OSCAP_TEXT_TRAITS_HTML  = { .html = true };
