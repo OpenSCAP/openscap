@@ -773,8 +773,6 @@ struct cpe_item *cpe_item_parse(struct cpe_parser_ctx *ctx)
 			if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TITLE_STR) == 0) {
 				oscap_list_add(ret->titles, oscap_text_new_parse(OSCAP_TEXT_TRAITS_PLAIN, reader));
 			} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_NOTE_STR) == 0) {
-				// it's OK to use title varible here, because note is the same structure,
-				// not the reason to make a new same one
 				oscap_list_add(ret->notes, oscap_text_new_parse(OSCAP_TEXT_TRAITS_PLAIN, reader));
 			} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CHECK_STR) == 0) {
 				check = cpe_check_parse(reader);
