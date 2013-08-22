@@ -59,6 +59,23 @@ function test_api_cpe_dict_import_utf8_xml {
     ./test_api_cpe_dict --list-cpe-names $srcdir/dict.xml "UTF8"
 }
 
+function test_api_cpe_dict_import_official_v22(){
+	set -e -o pipefail
+	local name="official-cpe-dictionary_v2.2.xml"
+	local dict="$srcdir/$name"
+	local out=$(mktemp -t $name.out.XXXXXX)
+
+	./test_api_cpe_dict --list $dict "UTF-8" > $out
+	grep 'National Vulnerability Database (NVD)' $out
+	[ "`cat $out | wc -l`" == "1" ]
+
+	./test_api_cpe_dict --list-cpe-names $dict "UTF-8" > $out
+	grep 'cpe:/a:acronis:backup_%26_recovery_agent:10.0.11639' $out
+	[ "`cat $out | wc -l`" == "7" ]
+
+	rm $out
+}
+
 # Testing.
 
 test_init "test_api_cpe_dict.log"
@@ -75,5 +92,6 @@ test_run "test_api_cpe_dict_export_xml"  test_api_cpe_dict_export_xml
 #test_run "test_api_cpe_dict_import_cp1250_xml" \
 #    test_api_cpe_dict_import_cp1250_xml   
 test_run "test_api_cpe_dict_import_utf8_xml" test_api_cpe_dict_import_utf8_xml
+test_run "test_api_cpe_dict_import_official_v22" test_api_cpe_dict_import_official_v22
 
 test_exit

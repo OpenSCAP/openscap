@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<cpe-list xmlns:ns6="http://scap.nist.gov/schema/scap-core/0.1" xmlns:scap-core="http://scap.nist.gov/schema/scap-core/0.3" xmlns:config="http://scap.nist.gov/schema/configuration/0.1" xmlns:meta="http://scap.nist.gov/schema/cpe-dictionary-metadata/0.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://cpe.mitre.org/dictionary/2.0" xsi:schemaLocation="http://scap.nist.gov/schema/cpe-dictionary-metadata/0.2 http://nvd.nist.gov/schema/cpe-dictionary-metadata_0.2.xsd http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd">
+    <generator>
+        <product_name>National Vulnerability Database (NVD)</product_name>
+        <product_version>2.18.0-SNAPSHOT (PRODUCTION)</product_version>
+        <schema_version>2.2</schema_version>
+        <timestamp>2012-07-18T03:50:00.172Z</timestamp>
+    </generator>
+    <cpe-item name="cpe:/a:1024cms:1024_cms:0.7">
+        <title xml:lang="en-US">1024cms.org 1024 CMS 0.7</title>
+        <meta:item-metadata modification-date="2010-12-14T19:38:32.197Z" status="DRAFT" nvd-id="121218"/>
+    </cpe-item>
+    <cpe-item name="cpe:/a:3com:3c15100d">
+        <title xml:lang="ja-JP">スリーコム Network Supervisor</title>
+        <title xml:lang="en-US">3Com Network Supervisor</title>
+        <meta:item-metadata modification-date="2011-01-12T14:35:43.020Z" status="DRAFT" nvd-id="44" />
+    </cpe-item>
+    <cpe-item name="cpe:/a:3com:tippingpoint_ips" deprecated="true" deprecated_by="cpe:/h:3com:tippingpoint_ips" deprecation_date="2010-12-28T17:35:59.023Z" >
+        <title xml:lang="en-US">3Com TippingPoint IPS</title>
+        <meta:item-metadata modification-date="2010-12-28T17:35:59.023Z" status="DRAFT" nvd-id="111" deprecated-by-nvd-id="109"/>
+    </cpe-item>
+    <cpe-item name="cpe:/a:acronis:backup_%26_recovery_agent:10.0.11639">
+        <title xml:lang="en-US">Acronis Backup &amp; Recovery Agent 10.0.11639</title>
+        <meta:item-metadata modification-date="2012-04-24T23:20:23.603Z" status="DRAFT" nvd-id="164891" />
+    </cpe-item>
+    <cpe-item name="cpe:/a:hp:workload_manager:a.02.01">
+        <title xml:lang="en-US">HP Workload Manager A.02.01</title>
+        <notes xml:lang="en-us">
+            <note>??</note>
+        </notes>
+        <meta:item-metadata modification-date="2007-09-14T17:36:49.090Z" status="DRAFT" nvd-id="30201" />
+    </cpe-item>
+    <cpe-item name="cpe:/a:microsoft:.net_framework:1.0:beta2">
+        <title xml:lang="en-US">Microsoft .NET Framework Version 1.0, Beta 2</title>
+        <notes xml:lang="en-us">
+            <note>version 1.0.2914.0</note>
+        </notes>
+        <meta:item-metadata modification-date="2008-04-15T22:38:43.933Z" status="FINAL" nvd-id="67286" />
+    </cpe-item>
+    <cpe-item name="cpe:/a:microsoft:.net_framework:2.0">
+        <title xml:lang="en-US">Microsoft .NET Framework 2.0</title>
+        <check href="http://oval.mitre.org/repository/data/DownloadDefinition?id=oval:org.mitre.oval:def:310" system="http://oval.mitre.org/XMLSchema/oval-definitions-5">oval:org.mitre.oval:def:310</check>
+        <meta:item-metadata modification-date="2008-04-15T23:55:43.797Z" status="FINAL" nvd-id="61877" />
+    </cpe-item>
+</cpe-list>
