@@ -25,6 +25,7 @@
 #endif
 
 #include <libxml/xmlreader.h>
+#include <libxml/xmlwriter.h>
 
 #include "public/cpe_name.h"
 #include "cpe_ctx_priv.h"
@@ -32,6 +33,7 @@
 
 #include "common/_error.h"
 #include "common/list.h"
+#include "common/util.h"
 #include "common/xmlns_priv.h"
 #include "common/xmltext_priv.h"
 
@@ -69,8 +71,23 @@ static const struct oscap_string_map CPE_EXT_DEPRECATION_MAP[] = {
 	{0, NULL}
 };
 
+struct cpe_ext_deprecatedby_iterator;
+static bool cpe_ext_deprecatedby_iterator_has_more(struct cpe_ext_deprecatedby_iterator *it);
+static struct cpe_ext_deprecatedby *cpe_ext_deprecatedby_iterator_next(struct cpe_ext_deprecatedby_iterator *it);
+static void cpe_ext_deprecatedby_iterator_free(struct cpe_ext_deprecatedby_iterator *it);
+void cpe_ext_deprecatedby_iterator_reset(struct cpe_ext_deprecatedby_iterator *it);
 static void cpe_ext_deprecatedby_free(struct cpe_ext_deprecatedby *deprecatedby);
+struct cpe_ext_deprecatedby_iterator *cpe_ext_deprecation_get_deprecatedbys(const struct cpe_ext_deprecation *deprecation);
+bool cpe_ext_deprecation_add_deprecatedby(struct cpe_ext_deprecation *deprecation, struct cpe_ext_deprecatedby *deprecatedby);
+
+struct cpe_ext_deprecation_iterator;
+static bool cpe_ext_deprecation_iterator_has_more(struct cpe_ext_deprecation_iterator *it);
+static struct cpe_ext_deprecation *cpe_ext_deprecation_iterator_next(struct cpe_ext_deprecation_iterator *it);
+static void cpe_ext_deprecation_iterator_free(struct cpe_ext_deprecation_iterator *it);
+void cpe_ext_deprecation_iterator_reset(struct cpe_ext_deprecation_iterator *it);
 static void cpe_ext_deprecation_free(struct cpe_ext_deprecation *deprecation);
+struct cpe_ext_deprecation_iterator *cpe23_item_get_deprecations(const struct cpe23_item *item);
+bool cpe23_item_add_deprecation(struct cpe23_item *item, struct cpe_ext_deprecation *deprecation);
 
 static struct cpe_ext_deprecatedby *cpe_ext_deprecatedby_new()
 {
@@ -120,6 +137,27 @@ static struct cpe_ext_deprecatedby *cpe_ext_deprecatedby_parse(xmlTextReaderPtr 
 	return deprecatedby;
 }
 
+static int cpe_ext_deprecatedby_export(const struct cpe_ext_deprecatedby *deprecatedby, xmlTextWriterPtr writer)
+{
+	__attribute__nonnull__(writer);
+	__attribute__nonnull__(deprecatedby);
+
+	xmlTextWriterStartElementNS(writer, NULL, BAD_CAST TAG_CPE_EXT_DEPRECATEDBY_STR,
+			BAD_CAST XMLNS_CPE2D3_EXTENSION);
+
+	if (deprecatedby->name != NULL) {
+		xmlTextWriterWriteAttribute(writer, BAD_CAST ATTR_NAME_STR, BAD_CAST deprecatedby->name);
+	}
+	if (deprecatedby->type != 0) {
+		xmlTextWriterWriteAttribute(writer, BAD_CAST ATTR_TYPE_STR,
+				BAD_CAST oscap_enum_to_string(CPE_EXT_DEPRECATION_MAP, deprecatedby->type));
+	}
+	xmlTextWriterEndElement(writer);
+	if (xmlGetLastError() != NULL)
+		oscap_setxmlerr(xmlGetLastError());
+	return 0;
+}
+
 static struct cpe_ext_deprecation *cpe_ext_deprecation_parse(xmlTextReaderPtr reader)
 {
 	__attribute__nonnull__(reader);
@@ -164,6 +202,25 @@ static struct cpe_ext_deprecation *cpe_ext_deprecation_parse(xmlTextReaderPtr re
 		}
 	}
 	return deprecation;
+}
+
+static int cpe_ext_deprecation_export(const struct cpe_ext_deprecation *deprecation, xmlTextWriterPtr writer)
+{
+	__attribute__nonnull__(writer);
+	__attribute__nonnull__(deprecation);
+
+	xmlTextWriterStartElementNS(writer, NULL, BAD_CAST TAG_CPE_EXT_DEPRECATION_STR,
+			BAD_CAST XMLNS_CPE2D3_EXTENSION);
+
+	if (deprecation->date != NULL) {
+		xmlTextWriterWriteAttribute(writer, BAD_CAST ATTR_DATE_STR, BAD_CAST deprecation->date);
+	}
+	OSCAP_FOREACH(cpe_ext_deprecatedby, d, oscap_iterator_new(deprecation->deprecatedbys),
+			cpe_ext_deprecatedby_export(d, writer););
+	xmlTextWriterEndElement(writer);
+	if (xmlGetLastError() != NULL)
+		oscap_setxmlerr(xmlGetLastError());
+	return 0;
 }
 
 struct cpe23_item *cpe23_item_parse(xmlTextReaderPtr reader)
@@ -214,6 +271,25 @@ struct cpe23_item *cpe23_item_parse(xmlTextReaderPtr reader)
 	return item;
 }
 
+int cpe23_item_export(const struct cpe23_item *item, xmlTextWriterPtr writer)
+{
+	__attribute__nonnull__(writer);
+	__attribute__nonnull__(item);
+
+	xmlTextWriterStartElementNS(writer, NULL, BAD_CAST TAG_CPE23_ITEM_STR,
+			BAD_CAST XMLNS_CPE2D3_EXTENSION);
+
+	if (item->name != NULL) {
+		xmlTextWriterWriteAttribute(writer, BAD_CAST ATTR_NAME_STR, BAD_CAST item->name);
+	}
+	OSCAP_FOREACH(cpe_ext_deprecation, d, oscap_iterator_new(item->deprecations),
+			cpe_ext_deprecation_export(d, writer););
+	xmlTextWriterEndElement(writer);
+	if (xmlGetLastError() != NULL)
+		oscap_setxmlerr(xmlGetLastError());
+	return 0;
+}
+
 static void cpe_ext_deprecatedby_free(struct cpe_ext_deprecatedby *deprecatedby)
 {
 	oscap_free(deprecatedby);
@@ -236,3 +312,5 @@ void cpe23_item_free(struct cpe23_item *item)
 	}
 }
 
+OSCAP_IGETINS_GEN(cpe_ext_deprecatedby, cpe_ext_deprecation, deprecatedbys, deprecatedby);
+OSCAP_IGETINS_GEN(cpe_ext_deprecation, cpe23_item, deprecations, deprecation);

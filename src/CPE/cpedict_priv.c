@@ -1141,7 +1141,9 @@ void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer, int b
 	oscap_textlist_export(cpe_item_get_notes(item), writer, "title");
 
 	OSCAP_FOREACH(cpe_check, check, cpe_item_get_checks(item), cpe_check_export(check, writer);)
-
+	if (item->cpe23_item != NULL) {
+		cpe23_item_export(item->cpe23_item, writer);
+	}
 	    xmlTextWriterEndElement(writer);
 	if (xmlGetLastError() != NULL)
 		oscap_setxmlerr(xmlGetLastError());

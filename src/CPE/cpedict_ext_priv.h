@@ -23,6 +23,9 @@
 #ifndef _OSCAP_CPEDICT_EXT_PRIV_H_
 #define _OSCAP_CPEDICT_EXT_PRIV_H_
 
+#include <libxml/xmlreader.h>
+#include <libxml/xmlwriter.h>
+
 #include "cpe_ctx_priv.h"
 #include "common/util.h"
 
@@ -38,6 +41,14 @@ struct cpe23_item;			///< Represents <cpe_dict_ext:cpe23-item> node
  * @returns newly parser cpe23-item representation
  */
 struct cpe23_item *cpe23_item_parse(xmlTextReaderPtr reader);
+
+/**
+ * Export cpe_dict_ext:cpe23-item representation to xmlTextWriter
+ * @param item cpe23-item to export
+ * @param writer xmlTextWriter
+ * @returns zero on success
+ */
+int cpe23_item_export(const struct cpe23_item *item, xmlTextWriterPtr writer);
 
 /**
  * Dispose cpe23-item representation
