@@ -239,6 +239,7 @@ int xccdf_tailoring_export(struct xccdf_tailoring *tailoring, const char *file, 
 
 	return oscap_xml_save_filename(file, doc);
 }
+
 const char *xccdf_tailoring_get_version(const struct xccdf_tailoring *tailoring)
 {
 	return tailoring->version;
@@ -252,6 +253,33 @@ const char *xccdf_tailoring_get_version_update(const struct xccdf_tailoring *tai
 const char *xccdf_tailoring_get_version_time(const struct xccdf_tailoring *tailoring)
 {
 	return tailoring->version_time;
+}
+
+bool xccdf_tailoring_set_version(struct xccdf_tailoring *tailoring, const char *newval)
+{
+	if (tailoring->version)
+		oscap_free(tailoring->version);
+
+	tailoring->version = oscap_strdup(newval);
+	return true;
+}
+
+bool xccdf_tailoring_set_version_update(struct xccdf_tailoring *tailoring, const char *newval)
+{
+	if (tailoring->version_update)
+		oscap_free(tailoring->version_update);
+
+	tailoring->version_update = oscap_strdup(newval);
+	return true;
+}
+
+bool xccdf_tailoring_set_version_time(struct xccdf_tailoring *tailoring, const char *newval)
+{
+	if (tailoring->version_time)
+		oscap_free(tailoring->version_time);
+
+	tailoring->version_time = oscap_strdup(newval);
+	return true;
 }
 
 struct oscap_string_iterator *xccdf_tailoring_get_metadata(const struct xccdf_tailoring *tailoring)
