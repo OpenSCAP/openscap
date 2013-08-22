@@ -65,6 +65,12 @@ function test_api_cpe_dict_import_official_v22(){
 	local dict="$srcdir/$name"
 	local out=$(mktemp -t $name.out.XXXXXX)
 
+	$OSCAP info $dict 2> $out
+	[ ! -s $out ]
+
+	$OSCAP cpe validate $dict 2>&1 > $out
+	[ ! -s $out ]
+
 	./test_api_cpe_dict --list $dict "UTF-8" > $out
 	grep 'National Vulnerability Database (NVD)' $out
 	[ "`cat $out | wc -l`" == "1" ]
