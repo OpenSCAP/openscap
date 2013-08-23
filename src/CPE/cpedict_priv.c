@@ -94,6 +94,11 @@ OSCAP_IGETINS(oscap_text, cpe_item, titles, title)
 OSCAP_IGETINS(oscap_text, cpe_item, notes, note)
 OSCAP_ITERATOR_REMOVE_F(cpe_reference) OSCAP_ITERATOR_REMOVE_F(cpe_check)
 
+struct cpe_notes {				///< representation of <notes> element
+	char *lang;				///< xml:lang attribute
+	struct oscap_list *notes;		///< list of inner <note> elements
+};
+
 /* <cpe-item><item-metadata>
  * */
 struct cpe_item_metadata {
@@ -265,6 +270,7 @@ static bool cpe_dict_model_add_item(struct cpe_dict_model *dict, struct cpe_item
 
 static struct cpe_reference *cpe_reference_parse(xmlTextReaderPtr reader);
 static struct cpe_check *cpe_check_parse(xmlTextReaderPtr reader);
+static struct cpe_notes *cpe_notes_parse(xmlTextReaderPtr reader);
 
 static void cpe_product_export(const struct cpe_product *product, xmlTextWriterPtr writer);
 static void cpe_version_export(const struct cpe_version *version, xmlTextWriterPtr writer);
@@ -273,8 +279,11 @@ static void cpe_edition_export(const struct cpe_edition *edition, xmlTextWriterP
 static void cpe_language_export(const struct cpe_language *language, xmlTextWriterPtr writer);
 static void cpe_check_export(const struct cpe_check *check, xmlTextWriterPtr writer);
 static void cpe_reference_export(const struct cpe_reference *ref, xmlTextWriterPtr writer);
+static void cpe_notes_export(const struct cpe_notes *notes, xmlTextWriterPtr writer);
 
 static bool cpe_validate_xml(const char *filename);
+struct cpe_notes *cpe_notes_new(void);
+void cpe_notes_free(struct cpe_notes *notes);
 /***************************************************************************/
 
 /* Add item to dictionary. Function that just check both variables
@@ -417,6 +426,13 @@ struct cpe_reference *cpe_reference_new()
 	item->content = NULL;
 
 	return item;
+}
+
+struct cpe_notes *cpe_notes_new(void)
+{
+	struct cpe_notes *notes = oscap_calloc(1, sizeof(struct cpe_notes));
+	notes->notes = oscap_list_new();
+	return notes;
 }
 
 struct cpe_generator *cpe_generator_new()
@@ -772,8 +788,10 @@ struct cpe_item *cpe_item_parse(struct cpe_parser_ctx *ctx)
 
 			if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TITLE_STR) == 0) {
 				oscap_list_add(ret->titles, oscap_text_new_parse(OSCAP_TEXT_TRAITS_PLAIN, reader));
-			} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_NOTE_STR) == 0) {
-				oscap_list_add(ret->notes, oscap_text_new_parse(OSCAP_TEXT_TRAITS_PLAIN, reader));
+			} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_NOTES_STR) == 0) {
+				struct cpe_notes *notes = cpe_notes_parse(reader);
+				if (notes != NULL)
+					oscap_list_add(ret->notes, notes);
 			} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CHECK_STR) == 0) {
 				check = cpe_check_parse(reader);
 				if (check)
@@ -809,8 +827,7 @@ struct cpe_item *cpe_item_parse(struct cpe_parser_ctx *ctx)
 
 			} else
 			    if ((xmlStrcmp(xmlTextReaderConstLocalName(reader),
-					   TAG_REFERENCES_STR) == 0) ||
-				(xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_NOTES_STR) == 0)) {
+					   TAG_REFERENCES_STR) == 0)) {
 				// we just need to jump over this element
 			} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST TAG_CPE23_ITEM_STR) == 0) {
 				if ((ret->cpe23_item = cpe23_item_parse(reader)) == NULL) {
@@ -866,6 +883,41 @@ static struct cpe_reference *cpe_reference_parse(xmlTextReaderPtr reader)
 	ret->content = oscap_trim((char *)xmlTextReaderReadString(reader));
 
 	return ret;
+}
+
+static struct cpe_notes *cpe_notes_parse(xmlTextReaderPtr reader)
+{
+	__attribute__nonnull__(reader);
+
+	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_NOTES_STR) != 0) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Found '%s' node when expecting: '%s'!",
+				xmlTextReaderConstLocalName(reader), TAG_NOTES_STR);
+	}
+
+	struct cpe_notes *notes = cpe_notes_new();
+	notes->lang = (char *) xmlTextReaderXmlLang(reader);
+	if (xmlTextReaderIsEmptyElement(reader) == 0) { // element contains child nodes
+		xmlTextReaderNextNode(reader);
+		while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_NOTES_STR) != 0) {
+			if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
+				xmlTextReaderNextNode(reader);
+				continue;
+			}
+
+			if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_NOTE_STR) == 0) {
+				char *note_text = (char *) xmlTextReaderReadString(reader);
+				oscap_list_add(notes->notes, note_text);
+			} else {
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unexpected element within notes element: '%s'",
+						xmlTextReaderConstLocalName(reader));
+				cpe_notes_free(notes);
+				return NULL;
+			}
+			xmlTextReaderNextNode(reader);
+		}
+	}
+
+	return notes;
 }
 
 struct cpe_vendor *cpe_vendor_parse(xmlTextReaderPtr reader)
@@ -1113,6 +1165,13 @@ void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer, int b
 
 	oscap_textlist_export(cpe_item_get_titles(item), writer, "title");
 
+	it = oscap_iterator_new(item->notes);
+	if (oscap_iterator_has_more(it)) {
+		cpe_notes_export(oscap_iterator_next(it), writer);
+	}
+
+	oscap_iterator_free(it);
+
 	    if (item->metadata != NULL) {
 		xmlTextWriterStartElementNS(writer, NS_META_STR, TAG_ITEM_METADATA_STR, NULL);
 		if (item->metadata->modification_date != NULL)
@@ -1135,8 +1194,6 @@ void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer, int b
 		    xmlTextWriterEndElement(writer);
 	}
 	oscap_iterator_free(it);
-
-	oscap_textlist_export(cpe_item_get_notes(item), writer, "title");
 
 	OSCAP_FOREACH(cpe_check, check, cpe_item_get_checks(item), cpe_check_export(check, writer);)
 	if (item->cpe23_item != NULL) {
@@ -1276,6 +1333,26 @@ static void cpe_reference_export(const struct cpe_reference *ref, xmlTextWriterP
 	xmlTextWriterEndElement(writer);
 }
 
+static void cpe_notes_export(const struct cpe_notes *notes, xmlTextWriterPtr writer)
+{
+	__attribute__nonnull__(notes);
+	__attribute__nonnull__(writer);
+
+	xmlTextWriterStartElementNS(writer, NULL, TAG_NOTES_STR, NULL);
+	if (notes->lang != NULL)
+		xmlTextWriterWriteAttribute(writer, BAD_CAST "xml:lang", BAD_CAST notes->lang);
+	struct oscap_iterator *it = oscap_iterator_new(notes->notes);
+	while (oscap_iterator_has_more(it)) {
+		const char *note_text = oscap_iterator_next(it);
+		xmlTextWriterStartElementNS(writer, NULL, TAG_NOTE_STR, NULL);
+		if (note_text != NULL)
+			xmlTextWriterWriteString(writer, BAD_CAST note_text);
+		xmlTextWriterEndElement(writer);
+	}
+	oscap_iterator_free(it);
+	xmlTextWriterEndElement(writer);
+}
+
 /* End of private export functions
  * */
 /***************************************************************************/
@@ -1305,7 +1382,7 @@ void cpe_item_free(struct cpe_item *item)
 	oscap_free(item->deprecation_date);
 	oscap_list_free(item->references, (oscap_destruct_func) cpe_reference_free);
 	oscap_list_free(item->checks, (oscap_destruct_func) cpe_check_free);
-	oscap_list_free(item->notes, (oscap_destruct_func) oscap_text_free);
+	oscap_list_free(item->notes, (oscap_destruct_func) cpe_notes_free);
 	oscap_list_free(item->titles, (oscap_destruct_func) oscap_text_free);
 	cpe_itemmetadata_free(item->metadata);
 	cpe23_item_free(item->cpe23_item);
@@ -1346,6 +1423,15 @@ void cpe_reference_free(struct cpe_reference *ref)
 	oscap_free(ref->href);
 	oscap_free(ref->content);
 	oscap_free(ref);
+}
+
+void cpe_notes_free(struct cpe_notes *notes)
+{
+	if (notes != NULL) {
+		oscap_list_free(notes->notes, (oscap_destruct_func) oscap_free);
+		oscap_free(notes->lang);
+		oscap_free(notes);
+	}
 }
 
 void cpe_vendor_free(struct cpe_vendor *vendor)
