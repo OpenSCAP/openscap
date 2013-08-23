@@ -2185,7 +2185,11 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
     const struct xccdf_version_info* version_info = xccdf_benchmark_get_schema_version(benchmark);
     doc_version = xccdf_version_info_get_version(version_info);
 
+#ifdef __USE_GNU
     if (strverscmp("1.2", doc_version) >= 0)
+#else
+    if (strcmp("1.2", doc_version) >= 0)
+#endif
     {
         // we have to enforce a certain type of ids for XCCDF 1.2+
 
