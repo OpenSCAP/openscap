@@ -29,7 +29,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <math.h> /* For isnan() */
 #include <libgen.h>
 
 #include "xccdf_policy_priv.h"
