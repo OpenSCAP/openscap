@@ -42,4 +42,12 @@
         <check href="http://oval.mitre.org/repository/data/DownloadDefinition?id=oval:org.mitre.oval:def:310" system="http://oval.mitre.org/XMLSchema/oval-definitions-5">oval:org.mitre.oval:def:310</check>
         <meta:item-metadata modification-date="2008-04-15T23:55:43.797Z" status="FINAL" nvd-id="61877" />
     </cpe-item>
+    <cpe-item name="cpe:/a:microsoft:.net_framework:1.0">
+        <title xml:lang="en-US">Microsoft .NET Framework 1.0</title>
+        <notes xml:lang="en-US">
+            <note>1</note>
+            <note>2</note>
+            <note>3</note>
+        </notes>
+    </cpe-item>
 </cpe-list>

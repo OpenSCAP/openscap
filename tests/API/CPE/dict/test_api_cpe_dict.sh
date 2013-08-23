@@ -77,7 +77,7 @@ function test_api_cpe_dict_import_official_v22(){
 
 	./test_api_cpe_dict --list-cpe-names $dict "UTF-8" > $out
 	grep 'cpe:/a:acronis:backup_%26_recovery_agent:10.0.11639' $out
-	[ "`cat $out | wc -l`" == "7" ]
+	[ "`cat $out | wc -l`" == "8" ]
 
 	rm -f dict.xml.out
 	./test_api_cpe_dict --export $dict "UTF-8" dict.xml.out "UTF-8" 2>&1 > $out
