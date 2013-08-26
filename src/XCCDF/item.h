@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -411,6 +411,7 @@ struct xccdf_plain_text {
 extern const struct oscap_string_map XCCDF_LEVEL_MAP[];
 extern const struct oscap_string_map XCCDF_ROLE_MAP[];
 extern const struct oscap_string_map XCCDF_OPERATOR_MAP[];
+extern const struct oscap_string_map XCCDF_BOOLOP_MAP[];
 extern const struct oscap_string_map XCCDF_STRATEGY_MAP[];
 extern const struct oscap_string_map XCCDF_FACT_TYPE_MAP[];
 extern const struct oscap_string_map XCCDF_RESULT_MAP[];

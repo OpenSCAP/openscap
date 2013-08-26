@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
  * Copyright (C) 2010 Tresys Technology, LLC
  * All Rights Reserved.
  *
@@ -20,6 +20,7 @@
  * Authors:
  *      Lukas Kuklinek <lkuklinek@redhat.com>
  *      Josh Adams <jadams@tresys.com>
+ *      Šimon Lukašík
  */
 
 #ifdef HAVE_CONFIG_H
@@ -572,13 +573,6 @@ struct xccdf_check_content_ref *xccdf_check_content_ref_clone(const struct xccdf
 	new_ref->href = oscap_strdup(old_ref->href);
 	return new_ref;
 }
-
-
-static const struct oscap_string_map XCCDF_BOOLOP_MAP[] = {
-	{XCCDF_OPERATOR_AND, "and"}, {XCCDF_OPERATOR_AND, "AND"},
-	{XCCDF_OPERATOR_OR, "or"}, {XCCDF_OPERATOR_OR, "OR"},
-	{0, NULL}
-};
 
 struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader)
 {

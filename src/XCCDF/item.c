@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
  * Copyright (C) 2010 Tresys Technology, LLC
  * All Rights Reserved.
  *
@@ -20,6 +20,7 @@
  * Authors:
  *      Lukas Kuklinek <lkuklinek@redhat.com>
  * 	Josh Adams <jadams@tresys.com>
+ * 	Šimon Lukašík
  */
 
 #ifdef HAVE_CONFIG_H
@@ -58,6 +59,14 @@ const struct oscap_string_map XCCDF_LEVEL_MAP[] = {
 	{XCCDF_MEDIUM, "medium"},
 	{XCCDF_HIGH, "high"},
 	{XCCDF_LEVEL_NOT_DEFINED, NULL}
+};
+
+const struct oscap_string_map XCCDF_BOOLOP_MAP[] = {
+	{XCCDF_OPERATOR_AND, "AND"},
+	{XCCDF_OPERATOR_OR, "OR"},
+	{XCCDF_OPERATOR_AND, "and"},
+	{XCCDF_OPERATOR_OR, "or"},
+	{0, NULL}
 };
 
 static const struct oscap_string_map XCCDF_STATUS_MAP[] = {
@@ -600,12 +609,6 @@ xmlNode *xccdf_ident_to_dom(struct xccdf_ident *ident, xmlDoc *doc, xmlNode *par
 
 	return ident_node;
 }
-
-static const struct oscap_string_map XCCDF_BOOLOP_MAP[] = {
-	{XCCDF_OPERATOR_AND, "AND"},
-	{XCCDF_OPERATOR_OR, "OR"},
-	{0, NULL}
-};
 
 xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
 {
