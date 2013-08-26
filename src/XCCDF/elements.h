@@ -122,6 +122,7 @@ typedef enum {
 	XCCDFE_VALUE_VAL,
 	XCCDFE_VERSION,
 	XCCDFE_WARNING,
+	XCCDFE_BENCHMARK_REF,
 
 	XCCDFE_END_
 } xccdf_element_t;

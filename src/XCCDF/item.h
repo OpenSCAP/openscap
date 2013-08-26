@@ -173,6 +173,8 @@ struct xccdf_tailoring {
 	// The ref is "just informative" according to the spec, we never
 	// interpret it and just load and save it as a string.
 	char *benchmark_ref;
+	// Also just informative
+	char *benchmark_ref_version;
 
 	struct oscap_list *statuses;
 	struct oscap_list *dc_statuses;

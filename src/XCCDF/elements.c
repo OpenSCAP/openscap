@@ -234,6 +234,7 @@ static const struct xccdf_element_spec XCCDF_ELEMENT_MAP[] = {
 	{XCCDFE_VALUE_VAL, XCCDF_XMLNS_PREFIX, "value"},
 	{XCCDFE_VERSION, XCCDF_XMLNS_PREFIX, "version"},
 	{XCCDFE_WARNING, XCCDF_XMLNS_PREFIX, "warning"},
+	{XCCDFE_BENCHMARK_REF, XCCDF_XMLNS_PREFIX, "benchmark"},
 	{0, NULL, NULL}
 };
 

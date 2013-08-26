@@ -38,6 +38,7 @@ struct xccdf_tailoring *xccdf_tailoring_new(void)
 	tailoring->id = NULL;
 
 	tailoring->benchmark_ref = NULL;
+	tailoring->benchmark_ref_version = NULL;
 
 	tailoring->statuses = oscap_list_new();
 	tailoring->dc_statuses = oscap_list_new();
@@ -58,6 +59,7 @@ void xccdf_tailoring_free(struct xccdf_tailoring *tailoring)
 		oscap_free(tailoring->id);
 
 		oscap_free(tailoring->benchmark_ref);
+		oscap_free(tailoring->benchmark_ref_version);
 
 		oscap_list_free(tailoring->statuses, (oscap_destruct_func) xccdf_status_free);
 		oscap_list_free(tailoring->dc_statuses, (oscap_destruct_func) oscap_reference_free);
@@ -95,6 +97,19 @@ struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xc
 
 	while (oscap_to_start_element(reader, depth)) {
 		switch (xccdf_element_get(reader)) {
+		case XCCDFE_BENCHMARK_REF: {
+			oscap_free(tailoring->benchmark_ref_version);
+			tailoring->benchmark_ref_version = 0;
+
+			oscap_free(tailoring->benchmark_ref);
+
+			const char *ref_version = xccdf_attribute_get(reader, XCCDFA_VERSION);
+			if (ref_version)
+				tailoring->benchmark_ref_version = oscap_strdup(ref_version);
+
+			tailoring->benchmark_ref = oscap_element_string_copy(reader);
+			break;
+		}
 		case XCCDFE_STATUS: {
 			const char *date = xccdf_attribute_get(reader, XCCDFA_DATE);
 			char *str = oscap_element_string_copy(reader);
@@ -186,6 +201,13 @@ xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr d
 
 	if (tailoring->id) {
 		xmlNewProp(tailoring_node, BAD_CAST "id", BAD_CAST tailoring->id);
+	}
+
+	if (tailoring->benchmark_ref) {
+		xmlNodePtr benchmark_ref_node = xmlNewTextChild(tailoring_node, ns_xccdf, BAD_CAST "benchmark", BAD_CAST tailoring->benchmark_ref);
+
+		if (tailoring->benchmark_ref_version)
+			xmlNewProp(benchmark_ref_node, BAD_CAST "version", BAD_CAST tailoring->benchmark_ref_version);
 	}
 
 	struct xccdf_status_iterator *statuses = xccdf_tailoring_get_statuses(tailoring);
