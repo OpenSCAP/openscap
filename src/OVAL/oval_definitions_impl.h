@@ -32,6 +32,7 @@
 
 #include <libxml/xmlreader.h>
 #include "public/oval_definitions.h"
+#include "public/oval_system_characteristics.h"
 #include "oval_parser_impl.h"
 #include "adt/oval_string_map_impl.h"
 #include "../common/util.h"
