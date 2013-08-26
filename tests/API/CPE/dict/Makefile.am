@@ -32,4 +32,5 @@ EXTRA_DIST += test_api_cpe_dict.sh \
 	      dict-cp1250-dos.xml  \
               dict-damaged.xml     \
 	dict.xml				\
-	official-cpe-dictionary_v2.2.xml
+	official-cpe-dictionary_v2.2.xml	\
+	official-cpe-dictionary_v2.3.xml
