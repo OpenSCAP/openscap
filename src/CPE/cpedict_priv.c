@@ -1080,9 +1080,11 @@ void cpe_dict_export(const struct cpe_dict_model *dict, xmlTextWriterPtr writer)
 
 	if (base_version >= 2) {
 	    // TODO: NEED TO HAVE COMPONENT-TREE STRUCTURE TO GET XML-NAMESPACE 
-	    xmlTextWriterStartElementNS(writer, NULL, TAG_COMPONENT_TREE_STR, BAD_CAST XMLNS_CPE2D_METADATA);
-		OSCAP_FOREACH(cpe_vendor, vendor, cpe_dict_model_get_vendors(dict), cpe_vendor_export(vendor, writer);)
-	    xmlTextWriterEndElement(writer);	//</component-tree>
+		if (oscap_list_get_itemcount(dict->vendors) != 0) {
+			xmlTextWriterStartElementNS(writer, NULL, TAG_COMPONENT_TREE_STR, BAD_CAST XMLNS_CPE2D_METADATA);
+			OSCAP_FOREACH(cpe_vendor, vendor, cpe_dict_model_get_vendors(dict), cpe_vendor_export(vendor, writer);)
+			xmlTextWriterEndElement(writer);	//</component-tree>
+		}
 	}
 
 	xmlTextWriterEndElement(writer);
