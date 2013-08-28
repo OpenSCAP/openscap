@@ -37,6 +37,7 @@
 #ifndef CPEDICT_H_
 #define CPEDICT_H_
 
+#include "oscap.h"
 #include "cpe_name.h"
 #include "oscap_text.h"
 
@@ -215,8 +216,10 @@ struct oscap_text_iterator *cpe_item_get_titles(const struct cpe_item *item);
 /** cpe_item functions to get CPE notes
  * @memberof cpe_item
  * @param item CPE item
+ * @deprecated This function has been deprecated and it may be dropped from later
+ * versions of the library. (Please see upstream ticket #339 for further details).
  */
-struct oscap_text_iterator *cpe_item_get_notes(const struct cpe_item *item);
+OSCAP_DEPRECATED(struct oscap_text_iterator *cpe_item_get_notes(const struct cpe_item *item));
 
 /** cpe_generator functions to get product name
  * @memberof cpe_generator
@@ -501,8 +504,12 @@ bool cpe_item_add_check(struct cpe_item *item, struct cpe_check *new_check);
 /// @memberof cpe_item
 bool cpe_item_add_title(struct cpe_item *item, struct oscap_text *new_title);
 
-/// @memberof cpe_item
-bool cpe_item_add_note(struct cpe_item *item, struct oscap_text *new_title);
+/**
+ * @memberof cpe_item
+ * @deprecated This function has been deprecated and it may be dropped from later
+ * versions of the library. (Please see upstream ticket #339 for further details).
+ */
+OSCAP_DEPRECATED(bool cpe_item_add_note(struct cpe_item *item, struct oscap_text *new_title));
 
 /// @memberof cpe_dict_model
 bool cpe_dict_model_add_vendor(struct cpe_dict_model *dict, struct cpe_vendor *new_vendor);
