@@ -2634,6 +2634,10 @@ const char *xccdf_tailoring_get_version_update(const struct xccdf_tailoring *tai
 /// @memberof xccdf_tailoring
 const char *xccdf_tailoring_get_version_time(const struct xccdf_tailoring *tailoring);
 /// @memberof xccdf_tailoring
+const char *xccdf_tailoring_get_benchmark_ref(const struct xccdf_tailoring *tailoring);
+/// @memberof xccdf_tailoring
+const char *xccdf_tailoring_get_benchmark_ref_version(const struct xccdf_tailoring *tailoring);
+/// @memberof xccdf_tailoring
 struct oscap_string_iterator *xccdf_tailoring_get_metadata(const struct xccdf_tailoring *tailoring);
 /// @memberof xccdf_tailoring
 struct xccdf_profile_iterator *xccdf_tailoring_get_profiles(const struct xccdf_tailoring *tailoring);
@@ -3038,6 +3042,10 @@ bool xccdf_tailoring_set_version(struct xccdf_tailoring *tailoring, const char* 
 bool xccdf_tailoring_set_version_update(struct xccdf_tailoring *tailoring, const char *newval);
 /// @memberof xccdf_tailoring
 bool xccdf_tailoring_set_version_time(struct xccdf_tailoring *tailoring, const char *newval);
+/// @memberof xccdf_tailoring
+bool xccdf_tailoring_set_benchmark_ref(struct xccdf_tailoring *tailoring, const char *newval);
+/// @memberof xccdf_tailoring
+bool xccdf_tailoring_set_benchmark_ref_version(struct xccdf_tailoring *tailoring, const char *newval);
 
 /// @memberof xccdf_tailoring
 bool xccdf_tailoring_add_profile(struct xccdf_tailoring *tailoring, struct xccdf_profile *profile);

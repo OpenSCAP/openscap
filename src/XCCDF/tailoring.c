@@ -293,6 +293,16 @@ const char *xccdf_tailoring_get_version_time(const struct xccdf_tailoring *tailo
 	return tailoring->version_time;
 }
 
+const char *xccdf_tailoring_get_benchmark_ref(const struct xccdf_tailoring *tailoring)
+{
+	return tailoring->benchmark_ref;
+}
+
+const char *xccdf_tailoring_get_benchmark_ref_version(const struct xccdf_tailoring *tailoring)
+{
+	return tailoring->benchmark_ref_version;
+}
+
 bool xccdf_tailoring_set_id(struct xccdf_tailoring *tailoring, const char* newval)
 {
 	if (tailoring->id)
@@ -326,6 +336,24 @@ bool xccdf_tailoring_set_version_time(struct xccdf_tailoring *tailoring, const c
 		oscap_free(tailoring->version_time);
 
 	tailoring->version_time = oscap_strdup(newval);
+	return true;
+}
+
+bool xccdf_tailoring_set_benchmark_ref(struct xccdf_tailoring *tailoring, const char *newval)
+{
+	if (tailoring->benchmark_ref)
+		oscap_free(tailoring->benchmark_ref);
+
+	tailoring->benchmark_ref = oscap_strdup(newval);
+	return true;
+}
+
+bool xccdf_tailoring_set_benchmark_ref_version(struct xccdf_tailoring *tailoring, const char *newval)
+{
+	if (tailoring->benchmark_ref_version)
+		oscap_free(tailoring->benchmark_ref_version);
+
+	tailoring->benchmark_ref_version = oscap_strdup(newval);
 	return true;
 }
 
