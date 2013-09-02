@@ -24,6 +24,8 @@
 #include <config.h>
 #endif
 
+#include <string.h>
+
 #include "item.h"
 #include "helpers.h"
 #include "xccdf_impl.h"
@@ -182,8 +184,36 @@ xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr d
 	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
 				BAD_CAST xccdf_version_info_get_namespace_uri(version_info));
 
-	xmlNode *tailoring_node = NULL;
-	tailoring_node = xmlNewNode(ns_xccdf, BAD_CAST "Tailoring");
+	xmlNs *ns_tailoring = NULL;
+
+	xmlNode *tailoring_node = xmlNewNode(ns_xccdf, BAD_CAST "Tailoring");
+
+	const char *xccdf_version = xccdf_version_info_get_version(version_info);
+	if (strverscmp(xccdf_version, "1.1") >= 0 && strverscmp(xccdf_version, "1.2") < 0) {
+		// XCCDF 1.1 does not support Tailoring!
+		// However we will allow Tailoring export if it is done to an external
+		// file. The namespace will be our custom xccdf-1.1-tailoring extension
+		// namespace.
+
+		if (parent != NULL) {
+			oscap_seterr(OSCAP_EFAMILY_XML, "XCCDF 1.1 does not support embedded Tailoring elements!");
+			xmlFreeNode(tailoring_node);
+			return NULL;
+		}
+
+		ns_tailoring = xmlNewNs(tailoring_node,
+			BAD_CAST "http://open-scap.org/page/Xccdf-1.1-tailoring",
+			BAD_CAST "cdf-11-tailoring"
+		);
+	}
+	else if (strverscmp(xccdf_version, "1.1") < 0) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "XCCDF Tailoring isn't supported in XCCDF version '%s',"
+			"nor does openscap have a custom extension for this scenario. "
+			"XCCDF Tailoring requires XCCDF 1.1 and higher, 1.2 is recommended.");
+
+		xmlFreeNode(tailoring_node);
+		return NULL;
+	}
 
 	if (!ns_xccdf) {
 		// In cases where tailoring ends up being the root node we have to create
@@ -191,8 +221,15 @@ xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr d
 		ns_xccdf = xmlNewNs(tailoring_node,
 			BAD_CAST xccdf_version_info_get_namespace_uri(version_info),
 			BAD_CAST "xccdf");
-		xmlSetNs(tailoring_node, ns_xccdf);
 	}
+
+	if (!ns_tailoring)
+		ns_tailoring = ns_xccdf;
+
+	// We intentionally set the wrong namespace here since children of tailoring
+	// will reuse it and we want them to have the xccdf namespace, the namespace
+	// is set to the proper namespace before returning the tailoring.
+	xmlSetNs(tailoring_node, ns_xccdf);
 
 	if (parent)
 		xmlAddChild(parent, tailoring_node);
@@ -227,7 +264,7 @@ xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr d
 	/* version and attributes */
 	const char *version = xccdf_tailoring_get_version(tailoring);
 	if (version) {
-		xmlNode* version_node = xmlNewTextChild(tailoring_node, ns_xccdf, BAD_CAST "version", BAD_CAST version);
+		xmlNode* version_node = xmlNewTextChild(tailoring_node, ns_tailoring, BAD_CAST "version", BAD_CAST version);
 
 		const char *version_update = xccdf_tailoring_get_version_update(tailoring);
 		if (version_update)
@@ -252,6 +289,8 @@ xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr d
 		xccdf_item_to_dom(XITEM(profile), doc, tailoring_node);
 	}
 	xccdf_profile_iterator_free(profiles);
+
+	xmlSetNs(tailoring_node, ns_tailoring);
 
 	return tailoring_node;
 }

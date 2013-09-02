@@ -9,6 +9,7 @@ oval510dir = $(pkgdatadir)/schemas/oval/5.10/
 oval5101dir = $(pkgdatadir)/schemas/oval/5.10.1/
 sce10dir = $(pkgdatadir)/schemas/sce/1.0/
 xccdf11dir = $(pkgdatadir)/schemas/xccdf/1.1/
+xccdf11tailoringdir = $(pkgdatadir)/schemas/xccdf/1.1-tailoring/
 xccdf12dir = $(pkgdatadir)/schemas/xccdf/1.2/
 sds12dir = $(pkgdatadir)/schemas/sds/1.2/
 arf11dir = $(pkgdatadir)/schemas/arf/1.1/
@@ -33,6 +34,7 @@ oval5101_DATA = $(wildcard oval/5.10.1/*.xsd oval/5.10.1/*.xsl)
 sce10_DATA = sce/1.0/sce-result-schema.xsd
 
 xccdf11_DATA = $(wildcard xccdf/1.1/*.xsd xccdf/1.1/*.dtd)
+xccdf11tailoring_DATA = $(wildcard xccdf/1.1-tailoring/*.xsd xccdf/1.1-tailoring/*.dtd)
 xccdf12_DATA = $(wildcard xccdf/1.2/*.xsd xccdf/1.2/*.dtd)
 
 sds12_DATA = $(wildcard sds/1.2/*.xsd sds/1.2/*.dtd)
@@ -60,6 +62,7 @@ EXTRA_DIST = \
 	$(oval5101_DATA) \
 	$(sce10_DATA) \
 	$(xccdf11_DATA) \
+	$(xccdf11tailoring_DATA) \
 	$(xccdf12_DATA) \
 	$(sds12_DATA) \
 	$(arf11_DATA) \

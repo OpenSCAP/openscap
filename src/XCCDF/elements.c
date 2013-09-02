@@ -72,6 +72,7 @@ const char* xccdf_version_info_get_cpe_version(const struct xccdf_version_info* 
 static const struct xccdf_version_info XCCDF_VERSION_MAP[] = {
 	{"1.2", "http://checklists.nist.gov/xccdf/1.2", "2.3"},
 	{"1.1", "http://checklists.nist.gov/xccdf/1.1", "2.0"},
+	{"1.1", "http://open-scap.org/page/Xccdf-1.1-tailoring", "2.0"},
 	{NULL, NULL, NULL}
 };
 
@@ -160,6 +161,7 @@ struct xccdf_element_spec {
 };
 
 #define XCCDF_XMLNS_PREFIX "http://checklists.nist.gov/xccdf"
+#define XCCDF_OR_TAILORING_EXTENSION_XMLNS "http://open-scap.org/page/Xccdf-1.1-tailoring"
 
 /// Mapping of the element names to the symbolic constants
 static const struct xccdf_element_spec XCCDF_ELEMENT_MAP[] = {
@@ -224,7 +226,7 @@ static const struct xccdf_element_spec XCCDF_ELEMENT_MAP[] = {
 	{XCCDFE_SOURCE, XCCDF_XMLNS_PREFIX, "source"},
 	{XCCDFE_STATUS, XCCDF_XMLNS_PREFIX, "status"},
 	{XCCDFE_SUB, XCCDF_XMLNS_PREFIX, "sub"},
-	{XCCDFE_TAILORING, XCCDF_XMLNS_PREFIX, "Tailoring"},
+	{XCCDFE_TAILORING, XCCDF_OR_TAILORING_EXTENSION_XMLNS, "Tailoring"},
 	{XCCDFE_TARGET, XCCDF_XMLNS_PREFIX, "target"},
 	{XCCDFE_TARGET_ADDRESS, XCCDF_XMLNS_PREFIX, "target-address"},
 	{XCCDFE_TARGET_FACTS, XCCDF_XMLNS_PREFIX, "target-facts"},
@@ -232,7 +234,7 @@ static const struct xccdf_element_spec XCCDF_ELEMENT_MAP[] = {
 	{XCCDFE_TITLE, XCCDF_XMLNS_PREFIX, "title"},
 	{XCCDFE_UPPER_BOUND, XCCDF_XMLNS_PREFIX, "upper-bound"},
 	{XCCDFE_VALUE_VAL, XCCDF_XMLNS_PREFIX, "value"},
-	{XCCDFE_VERSION, XCCDF_XMLNS_PREFIX, "version"},
+	{XCCDFE_VERSION, XCCDF_OR_TAILORING_EXTENSION_XMLNS, "version"},
 	{XCCDFE_WARNING, XCCDF_XMLNS_PREFIX, "warning"},
 	{XCCDFE_BENCHMARK_REF, XCCDF_XMLNS_PREFIX, "benchmark"},
 	{0, NULL, NULL}
@@ -259,14 +261,19 @@ xccdf_element_t xccdf_element_get(xmlTextReaderPtr reader)
 				// namespace exists and matches the table
 				return mapptr->id;
 
-			if (nsuri && strcmp(mapptr->ns, XCCDF_XMLNS_PREFIX) == 0 &&
-			    strncmp(mapptr->ns, nsuri, strlen(mapptr->ns)) == 0)
+			if (nsuri && (strcmp(mapptr->ns, XCCDF_XMLNS_PREFIX) == 0 || strcmp(mapptr->ns, XCCDF_OR_TAILORING_EXTENSION_XMLNS) == 0) &&
+			    strncmp(XCCDF_XMLNS_PREFIX, nsuri, strlen(XCCDF_XMLNS_PREFIX)) == 0)
 				// Namespace exists and XCCDF version-less namespace prefix matches
 				// it. This is done to support multiple XCCDF versions.
 				//
 				// XSD schema will make sure there is no XCCDF version mixing in
 				// the document. The only thing we are solving here is making sure
 				// the element is some kind of an XCCDF element.
+				return mapptr->id;
+
+			if (nsuri && strcmp(mapptr->ns, XCCDF_OR_TAILORING_EXTENSION_XMLNS) == 0 &&
+			    strcmp(XCCDF_OR_TAILORING_EXTENSION_XMLNS, nsuri) == 0)
+				// In case we are supposed to accept XCCDF tailoring extension
 				return mapptr->id;
 		}
 	}

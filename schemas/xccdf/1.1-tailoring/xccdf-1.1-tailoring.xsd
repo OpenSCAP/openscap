@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:cdf           = "http://checklists.nist.gov/xccdf/1.1"
+    xmlns:cdf-tailoring = "http://open-scap.org/page/Xccdf-1.1-tailoring"
+    targetNamespace     = "http://open-scap.org/page/Xccdf-1.1-tailoring"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+
+    <xsd:annotation>
+        <xsd:documentation xml:lang="en">
+            XCCDF 1.1.x has no support for Tailoring in external files.
+            This namespace provides such facility. Keep in mind that
+            this is an unofficial extension!
+        </xsd:documentation>
+        <xsd:appinfo>
+            <schema>XCCDF 1.1 tailoring extension</schema>
+            <author>Martin Preisler</author>
+            <version>1.1</version>
+            <date>2013-08-30</date>
+        </xsd:appinfo>
+    </xsd:annotation>
+
+    <!-- Import base XML namespace -->
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../common/xml.xsd">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en"> Import the XML namespace because this schema uses the
+                @xml:lang and @xml:base attributes. </xsd:documentation>
+        </xsd:annotation>
+    </xsd:import>
+
+    <!-- Import XCCDF 1.1 namespace -->
+    <xsd:import namespace="http://checklists.nist.gov/xccdf/1.1" schemaLocation="../1.1/xccdf-schema.xsd">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                TODO
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:import>
+
+    <xsd:element name="Tailoring" type="cdf-tailoring:tailoringType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">The &lt;xccdf:Tailoring&gt; element holds one or more
+                &lt;xccdf:Profile&gt; elements. These &lt;xccdf:Profile&gt; elements record
+                additional tailoring activities that apply to a given &lt;xccdf:Benchmark&gt;.
+                &lt;xccdf:Tailoring&gt; elements are separate from &lt;xccdf:Benchmark&gt;
+                documents, but each &lt;xccdf:Tailoring&gt; element is associated with a specific
+                &lt;xccdf:Benchmark&gt; document. By defining these tailoring actions separately
+                from the &lt;xccdf:Benchmark&gt; document to which they apply, these actions can be
+                recorded without affecting the integrity of the source itself.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:simpleType name="tailoringIdType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en"> The format required for the @id property of
+                &lt;xccdf:Tailoring&gt; elements. xccdf_N_tailoring_S, where N is a reverse-DNS
+                style namespace and S is an NCName-compatible string. </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:NCName">
+            <xsd:pattern value="xccdf_[^_]+_tailoring_.+"/> <!-- TODO: Should we enforce this ID or not -->
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="tailoringType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">Data type for the &lt;xccdf:Tailoring&gt; element. The
+                &lt;xccdf:Tailoring&gt; element allows named tailorings (i.e., &lt;xccdf:Profile&gt;
+                elements) of an &lt;xccdf:Benchmark&gt; to be defined separately from the
+                &lt;xccdf:Benchmark&gt; itself. The &lt;xccdf:Profile&gt; elements in an
+                &lt;xccdf:Tailoring&gt; element can be used in two ways: First, an organization
+                might wish to pre-define a set of tailoring actions to be applied on top of or
+                instead of the tailoring performed by an &lt;xccdf:Benchmark&gt; element's
+                &lt;xccdf:Profile&gt; elements. Second, an &lt;xccdf:Tailoring&gt; element can be
+                used to record manual tailoring actions performed during the course of an
+                assessment. </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="benchmark" minOccurs="0" maxOccurs="1"
+                type="cdf-tailoring:tailoringBenchmarkReferenceType">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">Identifies the &lt;xccdf:Benchmark&gt; to which
+                        this tailoring applies. A &lt;xccdf:Tailoring&gt; document is only
+                        applicable to a single &lt;xccdf:Benchmark&gt;. Note, however, that this is
+                        a purely informative field. </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element ref="cdf:status" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">Status of the tailoring and date at which it
+                        attained that status. Authors may use this element to record the maturity or
+                        consensus level of an &lt;xccdf:Tailoring&gt; element.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="version" minOccurs="1" maxOccurs="1" type="cdf-tailoring:tailoringVersionType">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">The version of this &lt;xccdf:Tailoring&gt;
+                        element, with a required @time attribute that records when the
+                        &lt;xccdf:Tailoring&gt; element was created. This timestamp is necessary
+                        because, under some circumstances, a copy of an &lt;xccdf:Tailoring&gt;
+                        document might be automatically generated. Without the version and
+                        timestamp, tracking of these automatically created &lt;xccdf:Tailoring&gt;
+                        documents could become problematic. </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="metadata" type="cdf:metadataType" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">XML metadata for the &lt;xccdf:Tailoring&gt;
+                        element. </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element ref="cdf:Profile" minOccurs="1" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en">&lt;xccdf:Profile&gt; elements that reference
+                        and customize sets of items in an &lt;xccdf:Benchmark&gt;.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="id" type="cdf-tailoring:tailoringIdType" use="required">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en">Unique identifier for this
+                    element.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="benchmarkReferenceType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">Type for a reference to the &lt;xccdf:Benchmark&gt;
+                document. </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="href" type="xsd:anyURI" use="required">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en">The URI of the &lt;xccdf:Benchmark&gt; document.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="id" type="xsd:NCName" use="optional">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en">The value of that &lt;xccdf:Benchmark&gt; element's
+                    @id attribute. </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="tailoringBenchmarkReferenceType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">Identifies the &lt;xccdf:Benchmark&gt; to which an
+                &lt;xccdf:Tailoring&gt; element applies. </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="cdf-tailoring:benchmarkReferenceType">
+                <xsd:attribute name="version" type="xsd:string" use="optional">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">Identifies the version of the referenced
+                            &lt;xccdf:Benchmark&gt;. </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="tailoringVersionType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">Type for version information about an
+                &lt;xccdf:Tailoring&gt; element. </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="time" type="xsd:dateTime" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">The time when this version of the
+                            &lt;xccdf:Tailoring&gt; document was completed. </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+</xsd:schema>
