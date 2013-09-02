@@ -91,6 +91,7 @@ is for testing purposes only.
 Summary:        Sectool content
 Group:          Applications/System
 Requires:       %{name} = %{version}-%{release}
+BuildArch       noarch
 
 %description    content-sectool
 SCAP/SCE content that conforms to sectool checks.
