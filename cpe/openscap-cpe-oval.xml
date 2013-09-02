@@ -12,6 +12,20 @@
             <oval:timestamp>2012-11-22T15:00:00+01:00</oval:timestamp>
       </generator>
       <definitions>
+            <definition class="inventory" id="oval:org.open-scap.cpe.rhel:def:1" version="1">
+                  <metadata>
+                        <title>Red Hat Enterprise Linux</title>
+                        <affected family="unix">
+                              <platform>Red Hat Enterprise Linux</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:redhat:enterprise_linux" source="CPE"/>
+                        <description>The operating system installed on the system is Red Hat Enterprise Linux</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
+                        <criterion comment="Red Hat Enterprise Linux is installed" test_ref="oval:org.open-scap.cpe.rhel:tst:2"/>
+                  </criteria>
+            </definition>
             <definition class="inventory" id="oval:org.open-scap.cpe.rhel:def:5" version="1">
                   <metadata>
                         <title>Red Hat Enterprise Linux 5</title>
@@ -118,6 +132,11 @@
                   <object object_ref="oval:org.open-scap.cpe.unix:obj:1"/>
                   <state state_ref="oval:org.open-scap.cpe.unix:ste:1"/>
             </family_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:2" version="1" check="at least one" comment="/etc/redhat-release is provided by redhat-release package"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:3"/>
+                  <state state_ref="oval:org.open-scap.cpe.rhel:ste:2"/>
+            </rpminfo_test>
             <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:5" version="1" check="at least one" comment="redhat-release is version 5"
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:1"/>
@@ -177,6 +196,9 @@
             <family_state id="oval:org.open-scap.cpe.unix:ste:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
                   <family>unix</family>
             </family_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.rhel:ste:2" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <name operation="pattern match">^redhat-release</name>
+            </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.rhel:ste:5" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <version operation="pattern match">^5[^\d]</version>
             </rpminfo_state>
