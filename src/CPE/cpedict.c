@@ -152,7 +152,7 @@ bool cpe_name_applicable_dict(struct cpe_name *cpe, struct cpe_dict_model *dict,
 		struct cpe_item* item = cpe_item_iterator_next(items);
 		struct cpe_name* name = cpe_item_get_name(item);
 
-		if (cpe_name_match_one(name, cpe)) {
+		if (cpe_name_match_one(cpe, name)) {
 			if (cpe_item_is_applicable(item, cb, usr)) {
 				ret = true;
 				break;
