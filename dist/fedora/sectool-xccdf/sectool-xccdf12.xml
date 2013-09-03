@@ -9,7 +9,6 @@
   <reference href="http://open-scap.org/page/SCE"/>
   <reference href="http://open-scap.org/page/SCE_result_file"/>
   <reference href="http://fedorahosted.org/sectool"/>
-  <platform idref="cpe:/o:redhat:enterprise_linux:6"/>
   <version>0.1</version>
 
   <model system="urn:xccdf:scoring:default"/>
