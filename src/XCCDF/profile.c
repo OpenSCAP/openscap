@@ -326,12 +326,42 @@ void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, 
         }   
         oscap_string_iterator_free(platforms);
 
+	// Internally, we allow selects with the same ID and we let them override each
+	// other. This is required for inheritance to work and there is no reason to
+	// artificially disallow that in a single Profile.
+	//
+	// However the XCCDF specification explicitly prohibits clashing selectors
+	// in one Profile so we have to make sure we only export the "final" one.
+	//
+	// We construct a hashmap that contains just the final selectors and then
+	// export everything that is in the hashmap.
+
+	struct oscap_htable *final_selects = oscap_htable_new();
 	struct xccdf_select_iterator *selects = xccdf_profile_get_selects(profile);
 	while (xccdf_select_iterator_has_more(selects)) {
-		struct xccdf_select *sel = xccdf_select_iterator_next(selects);
-		xmlNode *select_node = xmlNewTextChild(profile_node, ns_xccdf, BAD_CAST "select", NULL);
-		
+		const struct xccdf_select *sel = xccdf_select_iterator_next(selects);
 		const char *idref = xccdf_select_get_item(sel);
+
+		if (!idref)
+			continue;
+
+		oscap_htable_detach(final_selects, idref);
+		oscap_htable_add(final_selects, idref, (void*)sel);
+	}
+	xccdf_select_iterator_free(selects);
+
+	// We still have to iterate through selects in the profile to maintain
+	// order in which the selects were loaded.
+	selects = xccdf_profile_get_selects(profile);
+	while (xccdf_select_iterator_has_more(selects)) {
+		const struct xccdf_select *sel = xccdf_select_iterator_next(selects);
+		const char *idref = xccdf_select_get_item(sel);
+
+		if (idref && oscap_htable_get(final_selects, idref) != sel)
+			continue;
+
+		xmlNode *select_node = xmlNewTextChild(profile_node, ns_xccdf, BAD_CAST "select", NULL);
+
 		if (idref)
 			xmlNewProp(select_node, BAD_CAST "idref", BAD_CAST idref);
 
@@ -343,6 +373,7 @@ void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, 
 		xccdf_texts_to_dom(xccdf_select_get_remarks(sel), select_node, "remark");
 	}
 	xccdf_select_iterator_free(selects);
+	oscap_htable_free0(final_selects);
 
 	struct xccdf_setvalue_iterator *setvalues = xccdf_profile_get_setvalues(profile);
 	while (xccdf_setvalue_iterator_has_more(setvalues)) {
