@@ -80,6 +80,7 @@ test_init "test_api_xccdf_tailoring.log"
 test_run "test_api_xccdf_tailoring_default" test_api_xccdf_tailoring simple-xccdf.xml simple-tailoring.xml xccdf_org.open-scap_profile_default 1
 test_run "test_api_xccdf_tailoring_unselecting" test_api_xccdf_tailoring simple-xccdf.xml simple-tailoring.xml xccdf_org.open-scap_profile_unselecting 0
 test_run "test_api_xccdf_tailoring_override" test_api_xccdf_tailoring simple-xccdf.xml simple-tailoring.xml xccdf_org.open-scap_profile_override 1
+test_run "test_api_xccdf_tailoring_unselecting_noop" test_api_xccdf_tailoring simple-xccdf.xml simple-tailoring.xml xccdf_org.open-scap_profile_unselecting_noop 0
 test_run "test_api_xccdf_tailoring_ds_default" test_api_xccdf_tailoring_ds simple-ds.xml scap_org.open-scap_cref_simple-tailoring.xml xccdf_org.open-scap_profile_default 1
 test_run "test_api_xccdf_tailoring_ds_unselecting" test_api_xccdf_tailoring_ds simple-ds.xml scap_org.open-scap_cref_simple-tailoring.xml xccdf_org.open-scap_profile_unselecting 0
 test_run "test_api_xccdf_tailoring_ds_override" test_api_xccdf_tailoring_ds simple-ds.xml scap_org.open-scap_cref_simple-tailoring.xml xccdf_org.open-scap_profile_override 1

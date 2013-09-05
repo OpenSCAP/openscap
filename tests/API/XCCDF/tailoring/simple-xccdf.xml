@@ -6,6 +6,10 @@
     <title>Override</title>
     <select idref="xccdf_moc.elpmaxe.www_rule_1" selected="false"/>
   </Profile>
+  <Profile id="xccdf_org.open-scap_profile_unselecting">
+    <title>Unselecting</title>
+    <select idref="xccdf_moc.elpmaxe.www_rule_1" selected="false"/>
+  </Profile>
   <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_1">
     <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
       <check-content-ref href="simple-oval.xml" name="oval:x:def:1"/>

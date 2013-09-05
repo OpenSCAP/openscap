@@ -13,4 +13,7 @@
     <title>Override</title>
     <select idref="xccdf_moc.elpmaxe.www_rule_1" selected="true"/>
   </Profile>
+  <Profile id="xccdf_org.open-scap_profile_unselecting_noop" extends="xccdf_org.open-scap_profile_unselecting">
+    <title>Unselecting NOOP</title>
+  </Profile>
 </Tailoring>

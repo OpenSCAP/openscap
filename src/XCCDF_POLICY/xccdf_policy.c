@@ -1937,6 +1937,45 @@ xccdf_policy_add_select(struct xccdf_policy *policy, struct xccdf_select *sel)
 	return _xccdf_policy_add_selector_internal(policy, benchmark, sel, true);
 }
 
+static void _xccdf_policy_add_profile_selectors(struct xccdf_policy* policy, struct xccdf_benchmark *benchmark, struct xccdf_profile *profile) {
+	if (!profile)
+		return;
+
+	const char *parent_profile_id = xccdf_profile_get_extends(profile);
+	struct xccdf_profile *parent_profile = NULL;
+
+	if (parent_profile_id != NULL) {
+		if (strcmp(parent_profile_id, xccdf_profile_get_id(profile)) == 0) {
+			// We are shadowing a profile, we need to get the original profile from
+			// benchmark directly to avoid an endless loop.
+			parent_profile = xccdf_benchmark_get_profile_by_id(benchmark, parent_profile_id);
+		}
+		else {
+			struct xccdf_policy *parent_profile_policy = xccdf_policy_model_get_policy_by_id(xccdf_policy_get_model(policy), parent_profile_id);
+			parent_profile = parent_profile_policy != NULL ? xccdf_policy_get_profile(parent_profile_policy) : NULL;
+		}
+	}
+
+	// Add selectors from parent profile if any, these selectors should be added
+	// before selectors from the "real" policy profile are added so that they
+	// can be overridden.
+	if (parent_profile)
+		_xccdf_policy_add_profile_selectors(policy, benchmark, parent_profile);
+
+	struct xccdf_select_iterator *sel_it = xccdf_profile_get_selects(profile);
+	/* Iterate through selects in profile */
+	while (xccdf_select_iterator_has_more(sel_it)) {
+		struct xccdf_select *sel = xccdf_select_iterator_next(sel_it);
+		if (sel == NULL) {
+			assert(false);
+			continue;
+		}
+
+		struct xccdf_select *clone = xccdf_select_clone(sel);
+		_xccdf_policy_add_selector_internal(policy, benchmark, clone, false);
+	}
+	xccdf_select_iterator_free(sel_it);
+}
 
 /**
  * Constructor for structure XCCDF Policy. Create the structure and resolve all rules
@@ -1948,11 +1987,9 @@ xccdf_policy_add_select(struct xccdf_policy *policy, struct xccdf_select *sel)
 struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct xccdf_profile * profile) {
 
 	struct xccdf_policy             * policy;
-        struct xccdf_benchmark          * benchmark;
-        struct xccdf_item_iterator      * item_it;
-        struct xccdf_item               * item;
-        struct xccdf_select             * sel;
-        struct xccdf_select_iterator    * sel_it = NULL;
+	struct xccdf_benchmark          * benchmark;
+	struct xccdf_item_iterator      * item_it;
+	struct xccdf_item               * item;
 
 	policy = oscap_alloc(sizeof(struct xccdf_policy));
 	if (policy == NULL)
@@ -1962,27 +1999,16 @@ struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct
 	policy->profile = profile;
 	policy->selects = oscap_list_new();
 	policy->values  = oscap_list_new();
-        policy->results = oscap_list_new();
+	policy->results = oscap_list_new();
 
 	policy->selected_internal = oscap_htable_new();
 	policy->selected_final = oscap_htable_new();
-        policy->model = model;
+	policy->model = model;
 
-        benchmark = xccdf_policy_model_get_benchmark(model);
-        if (profile != NULL)
-            sel_it = xccdf_profile_get_selects(profile);
-        /* Iterate through selects in profile */
-        while (xccdf_select_iterator_has_more(sel_it)) {
+	benchmark = xccdf_policy_model_get_benchmark(model);
 
-            sel = xccdf_select_iterator_next(sel_it);
-		if (sel == NULL) {
-			assert(false);
-			continue;
-		}
-		struct xccdf_select *clone = xccdf_select_clone(sel);
-		_xccdf_policy_add_selector_internal(policy, benchmark, clone, false);
-        }
-        xccdf_select_iterator_free(sel_it);
+	if (profile)
+		_xccdf_policy_add_profile_selectors(policy, benchmark, profile);
 
         /* Iterate through items in benchmark and resolve rules */
         item_it = xccdf_benchmark_get_content(benchmark);
