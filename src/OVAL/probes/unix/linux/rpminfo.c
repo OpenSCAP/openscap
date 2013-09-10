@@ -112,6 +112,26 @@ struct rpminfo_global {
         pthread_mutex_t mutex;
 };
 
+#define RPMINFO_LOCK	  \
+	do { \
+		int prev_cancel_state = -1; \
+		if (pthread_mutex_lock(&g_rpm.mutex) != 0) { \
+			dE("Can't lock mutex\n"); \
+			return (-1); \
+		} \
+		pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &prev_cancel_state); \
+	} while(0)
+
+#define RPMINFO_UNLOCK	  \
+	do { \
+		int prev_cancel_state = -1; \
+		if (pthread_mutex_unlock(&g_rpm.mutex) != 0) { \
+			dE("Can't unlock mutex. Aborting...\n"); \
+			abort(); \
+		} \
+		pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &prev_cancel_state); \
+	} while(0)
+
 static struct rpminfo_global g_rpm;
 static const char g_keyid_regex_string[] = "Key ID [a-fA-F0-9]{16}";
 static regex_t g_keyid_regex;
@@ -202,7 +222,7 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
 	Header pkgh;
 	int ret = 0, i;
 
-        pthread_mutex_lock (&(g_rpm.mutex));
+        RPMINFO_LOCK;
 
         ret = -1;
 
@@ -283,7 +303,7 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
 
 	match = rpmdbFreeIterator (match);
 ret:
-        pthread_mutex_unlock (&(g_rpm.mutex));
+        RPMINFO_UNLOCK;
         return (ret);
 }
 
