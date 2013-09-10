@@ -60,7 +60,7 @@ void *probe_input_handler(void *arg)
         if (pthread_attr_init(&pth_attr))
                 return (NULL);
 
-        if (pthread_attr_setdetachstate(&pth_attr, PTHREAD_CREATE_DETACHED)) {
+        if (pthread_attr_setdetachstate(&pth_attr, PTHREAD_CREATE_JOINABLE)) {
                 pthread_attr_destroy(&pth_attr);
                 return (NULL);
         }

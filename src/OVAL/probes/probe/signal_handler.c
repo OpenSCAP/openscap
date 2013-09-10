@@ -120,9 +120,37 @@ void *probe_signal_handler(void *arg)
 			/* collect IDs and cancel threads */
 			rbt_walk_inorder2(probe->workers, __abort_cb, &coll, 0);
 
-			/* reply to all messages with an error */
+			/*
+			 * Wait till all threads are canceled (they may temporarily disable
+			 * cancelability), but at most 60 seconds per thread.
+			 */
 			for (; coll.cnt > 0; --coll.cnt) {
-				/* SEAP_replyerr(probe->SEAP_ctx, probe->sd, coll.thr[coll.cnt - 1]->msg, PROBE_ECONNABORTED); */
+#if defined(HAVE_PTHREAD_TIMEDJOIN_NP) && defined(HAVE_CLOCK_GETTIME)
+				struct timespec j_tm;
+				probe_worker_t *thr = coll.thr[coll.cnt - 1];
+
+				if (clock_gettime(CLOCK_REALTIME, &j_tm) == -1) {
+					dE("clock_gettime(CLOCK_REALTIME): %d, %s.\n", errno, strerror(errno));
+					continue;
+				}
+
+				j_tm.tv_sec += 60;
+
+				if ((errno = pthread_timedjoin_np(thr->tid, NULL, &j_tm)) != 0) {
+					dE("[%llu] pthread_timedjoin_np: %d, %s.\n", (uint64_t)thr->sid, errno, strerror(errno));
+					/*
+					 * Memory will be leaked here by continuing to the next thread. However, we are in the
+					 * process of shutting down the whole probe. We're just nice and gave the probe_main()
+					 * thread a chance to finish it's critical section which shouldn't take that long...
+					 */
+					continue;
+				}
+#else
+				if ((errno = pthread_join(thr->tid, NULL)) != 0) {
+					dE("pthread_join: %d, %s.\n", errno, strerror(errno));
+					continue;
+				}
+#endif
 				SEAP_msg_free(coll.thr[coll.cnt - 1]->msg);
                                 oscap_free(coll.thr[coll.cnt - 1]);
 			}

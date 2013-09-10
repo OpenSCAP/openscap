@@ -128,6 +128,7 @@ void *probe_worker_runfn(void *arg)
         SEAP_msg_free(pair->pth->msg);
         oscap_free(pair->pth);
 	oscap_free(pair);
+	pthread_detach(pthread_self());
 
 	return (NULL);
 }
