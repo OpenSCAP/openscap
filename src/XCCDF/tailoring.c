@@ -100,16 +100,20 @@ struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xc
 	while (oscap_to_start_element(reader, depth)) {
 		switch (xccdf_element_get(reader)) {
 		case XCCDFE_BENCHMARK_REF: {
+			oscap_free(tailoring->benchmark_ref);
+			tailoring->benchmark_ref = 0;
+
 			oscap_free(tailoring->benchmark_ref_version);
 			tailoring->benchmark_ref_version = 0;
 
-			oscap_free(tailoring->benchmark_ref);
+			const char *ref = xccdf_attribute_get(reader, XCCDFA_HREF);
+			if (ref)
+				tailoring->benchmark_ref = oscap_strdup(ref);
 
 			const char *ref_version = xccdf_attribute_get(reader, XCCDFA_VERSION);
 			if (ref_version)
 				tailoring->benchmark_ref_version = oscap_strdup(ref_version);
 
-			tailoring->benchmark_ref = oscap_element_string_copy(reader);
 			break;
 		}
 		case XCCDFE_STATUS: {
@@ -240,8 +244,11 @@ xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr d
 		xmlNewProp(tailoring_node, BAD_CAST "id", BAD_CAST tailoring->id);
 	}
 
-	if (tailoring->benchmark_ref) {
-		xmlNodePtr benchmark_ref_node = xmlNewTextChild(tailoring_node, ns_xccdf, BAD_CAST "benchmark", BAD_CAST tailoring->benchmark_ref);
+	if (tailoring->benchmark_ref || tailoring->benchmark_ref_version) {
+		xmlNodePtr benchmark_ref_node = xmlNewChild(tailoring_node, ns_xccdf, BAD_CAST "benchmark", NULL);
+
+		if (tailoring->benchmark_ref)
+			xmlNewProp(benchmark_ref_node, BAD_CAST "href", BAD_CAST tailoring->benchmark_ref);
 
 		if (tailoring->benchmark_ref_version)
 			xmlNewProp(benchmark_ref_node, BAD_CAST "version", BAD_CAST tailoring->benchmark_ref_version);
