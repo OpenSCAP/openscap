@@ -245,7 +245,7 @@ xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr d
 	}
 
 	if (tailoring->benchmark_ref || tailoring->benchmark_ref_version) {
-		xmlNodePtr benchmark_ref_node = xmlNewChild(tailoring_node, ns_xccdf, BAD_CAST "benchmark", NULL);
+		xmlNodePtr benchmark_ref_node = xmlNewChild(tailoring_node, ns_tailoring, BAD_CAST "benchmark", NULL);
 
 		if (tailoring->benchmark_ref)
 			xmlNewProp(benchmark_ref_node, BAD_CAST "href", BAD_CAST tailoring->benchmark_ref);
