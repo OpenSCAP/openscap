@@ -183,6 +183,15 @@ struct cpe_name *cpe_item_get_name(const struct cpe_item *item);
  */
 struct cpe_name *cpe_item_get_deprecated_by(const struct cpe_item *item);
 
+/** cpe_item functions to get variable member deprecated_by
+ * @memberof cpe_item
+ * @param item CPE item
+ * @returns deprecated_by attribute
+ * @deprecated This function has been deprecated by @ref cpe_item_get_deprecated_by.
+ * This function may be dropped from later versions of the library.
+ */
+OSCAP_DEPRECATED(struct cpe_name *cpe_item_get_deprecated(const struct cpe_item *item));
+
 /** cpe_item functions to get variable member date
  * @memberof cpe_item
  * @param item CPE item
