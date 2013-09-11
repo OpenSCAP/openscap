@@ -444,7 +444,6 @@ struct xccdf_profile *xccdf_benchmark_get_profile_by_id(struct xccdf_benchmark *
 struct xccdf_result *xccdf_benchmark_get_result_by_id(struct xccdf_benchmark *benchmark, const char *testresult_id);
 bool xccdf_add_item(struct oscap_list *list, struct xccdf_item *parent, struct xccdf_item *item, const char *prefix);
 
-void xccdf_tailoring_free(struct xccdf_tailoring *tailoring);
 struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xccdf_item* benchmark);
 xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr doc, xmlNodePtr parent, const struct xccdf_version_info *version_info);
 
