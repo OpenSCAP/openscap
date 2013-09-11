@@ -5,7 +5,7 @@
 restorecon -R /usr/bin/oscap /usr/libexec/openscap; \
 
 Name:           openscap
-Version:        0.9.11
+Version:        0.9.12
 Release:        1%{?dist}
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 Group:          System Environment/Libraries
@@ -277,6 +277,9 @@ exit 0
 # %{_mandir}/man8/openscap_selinux.8.*
 
 %changelog
+* Wed Sep 11 2013 Šimon Lukašík <slukasik@redhat.com> 0.9.12-1
+- upgrade
+
 * Wed Jul 17 2013 Petr Lautrbach <plautrba@redhat.com> 0.9.11-1
 - upgrade
 
