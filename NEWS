@@ -1,3 +1,20 @@
+openscap-0.9.12							12-09-2013
+ - tailoring improvements (@id, version, and benchmark ref attributes)
+ - XCCDF 1.1 tailoring extension
+ - improved robustness of CPE dictionary parser and exporter
+   - and added misc CPE 2.3 elements
+ - added Fedora 20 to internal CPE dictionary
+ - updated OVAL's results_to_html stylesheet from Mitre Corporation.
+ - profiles with duplicate selects (same @idref) now export correctly
+ - test improvements
+ - bug fixes
+   - fixed IPv6 export in TestResult/target-address
+   - consistently inject target-id-ref into TestResult in ARFs
+   - improved rpmdb manipulation (rhbz#999903)
+   - solaris build fixes
+   - spelling of name of default language fixed (oscap_text related)
+   - fixed CPE names matching (generalization vs. specialization)
+
 openscap-0.9.11							17-07-2013
  - bug fixes
 
