@@ -113,8 +113,9 @@ Summary:        SELinux policy module for openscap
 Group:          System Environment/Base
 Requires:       %{name}-utils = %{version}-%{release}
 Requires:       policycoreutils, libselinux-utils
-Requires(post): selinux-policy-base >= %{selinux_policyver}, policycoreutils
+Requires(post): selinux-policy-base, policycoreutils
 Requires(postun): policycoreutils
+BuildRequires:  selinux-policy-devel
 BuildArch:      noarch
 
 %description    selinux
