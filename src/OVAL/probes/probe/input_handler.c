@@ -108,97 +108,97 @@ void *probe_input_handler(void *arg)
 
 		if (oid != NULL) {
 			SEXP_VALIDATE(oid);
-			probe_out = probe_rcache_sexp_get(probe->rcache, oid);
 
 			dI("offline_mode=%08x\n", OSCAP_GSYM(offline_mode));
 			dI("offline_supp=%08x\n", OSCAP_GSYM(offline_mode_supported));
 
 			if ((OSCAP_GSYM(offline_mode) != PROBE_OFFLINE_NONE) &&
 			    !(OSCAP_GSYM(offline_mode) & OSCAP_GSYM(offline_mode_supported))) {
+				/* We do not offline_mode requested but not supported. Return a dummy. */
 				probe_out = probe_cobj_new(OSCAP_GSYM(offline_mode_cobjflag), NULL, NULL, NULL);
-				if (probe_rcache_sexp_add(probe->rcache, oid, probe_out) != 0) {
-					abort();
-				}
 			}
+			else {
+				probe_out = probe_rcache_sexp_get(probe->rcache, oid);
 
-			if (probe_out == NULL) { /* cache miss */
-				SEXP_t *skip_flag, *obj_mask;
+				if (probe_out == NULL) { /* cache miss */
+					SEXP_t *skip_flag, *obj_mask;
 
-				skip_flag = probe_obj_getattrval(probe_in, "skip_eval");
-                                obj_mask  = probe_obj_getmask(probe_in);
-				SEXP_free(probe_in);
+					skip_flag = probe_obj_getattrval(probe_in, "skip_eval");
+	                                obj_mask  = probe_obj_getmask(probe_in);
+					SEXP_free(probe_in);
 
-				if (skip_flag != NULL) {
-					oval_syschar_collection_flag_t cobj_flag;
+					if (skip_flag != NULL) {
+						oval_syschar_collection_flag_t cobj_flag;
 
-					cobj_flag = SEXP_number_geti_32(skip_flag);
-					probe_out = probe_cobj_new(cobj_flag, NULL, NULL, obj_mask);
+						cobj_flag = SEXP_number_geti_32(skip_flag);
+						probe_out = probe_cobj_new(cobj_flag, NULL, NULL, obj_mask);
 
-					if (probe_rcache_sexp_add(probe->rcache, oid, probe_out) != 0) {
-						/* TODO */
-						abort();
-					}
+						if (probe_rcache_sexp_add(probe->rcache, oid, probe_out) != 0) {
+							/* TODO */
+							abort();
+						}
 
-					probe_ret = 0;
-					SEXP_free(oid);
-                                        SEXP_free(skip_flag);
-                                        SEXP_free(obj_mask);
-				} else {
-					probe_pwpair_t *pair;
-
-                                        SEXP_free(oid);
-					SEXP_free(skip_flag);
-					SEXP_free(obj_mask);
-
-                                        pair = oscap_talloc(probe_pwpair_t);
-					pair->probe = probe;
-					pair->pth   = probe_worker_new();
-					pair->pth->sid = SEAP_msg_id(seap_request);
-					pair->pth->msg = seap_request;
-					pair->pth->msg_handler = &probe_worker;
-
-					if (rbt_i32_add(probe->workers, pair->pth->sid, pair->pth, NULL) != 0) {
-						/*
-						 * Getting here means that there is already a
-						 * thread handling the message with the given
-						 * ID.
-						 */
-						dW("Attempt to evaluate an object "
-						   "(ID=%u) " // TODO: 64b IDs
-						   "which is already being evaluated by an other thread.\n", pair->pth->sid);
-
-						oscap_free(pair->pth);
-						oscap_free(pair);
-						SEAP_msg_free(seap_request);
+						probe_ret = 0;
+						SEXP_free(oid);
+	                                        SEXP_free(skip_flag);
+	                                        SEXP_free(obj_mask);
 					} else {
-						/* OK */
+						probe_pwpair_t *pair;
 
-						if (pthread_create(&pair->pth->tid, &pth_attr, &probe_worker_runfn, pair))
-						{
-							dE("Cannot start a new worker thread: %d, %s.\n", errno, strerror(errno));
+	                                        SEXP_free(oid);
+						SEXP_free(skip_flag);
+						SEXP_free(obj_mask);
 
-							if (rbt_i32_del(probe->workers, pair->pth->sid, NULL) != 0)
-								dE("rbt_i32_del: failed to remove worker thread (ID=%u)\n", pair->pth->sid);
+	                                        pair = oscap_talloc(probe_pwpair_t);
+						pair->probe = probe;
+						pair->pth   = probe_worker_new();
+						pair->pth->sid = SEAP_msg_id(seap_request);
+						pair->pth->msg = seap_request;
+						pair->pth->msg_handler = &probe_worker;
 
-							SEAP_msg_free(pair->pth->msg);
+						if (rbt_i32_add(probe->workers, pair->pth->sid, pair->pth, NULL) != 0) {
+							/*
+							 * Getting here means that there is already a
+							 * thread handling the message with the given
+							 * ID.
+							 */
+							dW("Attempt to evaluate an object "
+							   "(ID=%u) " // TODO: 64b IDs
+							   "which is already being evaluated by an other thread.\n", pair->pth->sid);
+
 							oscap_free(pair->pth);
 							oscap_free(pair);
+							SEAP_msg_free(seap_request);
+						} else {
+							/* OK */
 
-							probe_ret = PROBE_EUNKNOWN;
-							probe_out = NULL;
+							if (pthread_create(&pair->pth->tid, &pth_attr, &probe_worker_runfn, pair))
+							{
+								dE("Cannot start a new worker thread: %d, %s.\n", errno, strerror(errno));
 
-							goto __error_reply;
+								if (rbt_i32_del(probe->workers, pair->pth->sid, NULL) != 0)
+									dE("rbt_i32_del: failed to remove worker thread (ID=%u)\n", pair->pth->sid);
+
+								SEAP_msg_free(pair->pth->msg);
+								oscap_free(pair->pth);
+								oscap_free(pair);
+
+								probe_ret = PROBE_EUNKNOWN;
+								probe_out = NULL;
+
+								goto __error_reply;
+							}
 						}
-					}
 
-					seap_request = NULL;
-					continue;
+						seap_request = NULL;
+						continue;
+					}
+				} else {
+					/* cache hit */
+					SEXP_free(oid);
+					SEXP_free(probe_in);
+					probe_ret = 0;
 				}
-			} else {
-				/* cache hit */
-				SEXP_free(oid);
-				SEXP_free(probe_in);
-				probe_ret = 0;
 			}
 		} else {
                         /* the `id' was not found in the input object */
