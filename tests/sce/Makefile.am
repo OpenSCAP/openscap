@@ -13,4 +13,5 @@ EXTRA_DIST +=	test_sce.sh \
 		sce_xccdf.xml \
 		bash_passer.sh \
 		lua_passer.lua \
-		python_passer.py
+		python_passer.py \
+		python_is16.py
