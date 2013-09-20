@@ -3,6 +3,13 @@
 set -e
 set -o pipefail
 
+function time_hack(){
+	if [ $(date +%s) -gt 56 ]; then
+		# yes, let's risk leap seconds ;-)
+		sleep 3;
+	fi
+}
+
 name=$(basename $0 .sh)
 stderr=$(mktemp -t ${name}.out.XXXXXX)
 tmpdir=$(mktemp -d -t ${name}.out.XXXXXX)
@@ -14,8 +21,9 @@ echo "Stderr file = $stderr"
 echo "Result file = $result"
 rm -f test_file
 
+time_hack
 $OSCAP xccdf remediate --results $result  $srcdir/${name}.xccdf.xml 2> $stderr
-daytime="$(date +%Y-%m-%d)T$(date +%H:)" # Format like '2013-02-27T15:01:57'
+daytime="$(date +%Y-%m-%d)T$(date +%H:%M)" # Format like '2013-02-27T15:01:57'
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
 [ ! -f test_file ]
 $OSCAP xccdf validate $result
@@ -27,7 +35,7 @@ assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profil
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile002001"]/rule-result/result'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile002001"]/rule-result/result[text()="notchecked"]'
 
-
+time_hack
 $OSCAP xccdf remediate --result-id xccdf_org.open-scap_testresult_default-profile002 --results $result $result 2> $stderr
 daytime="$(date +%Y-%m-%d)T$(date +%H:%M)" # Format like '2013-02-27T15:01:57'
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
@@ -43,6 +51,7 @@ assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profil
 
 
 ret=0
+time_hack
 $OSCAP xccdf remediate --result-id xccdf_org.open-scap_testresult_default-profile001 --results $result $result 2> $stderr || ret=$?
 daytime="$(date +%Y-%m-%d)T$(date +%H:%M)" # Format like '2013-02-27T15:01:57'
 [ $ret -eq 2 ]
@@ -62,6 +71,7 @@ assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profil
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001001"]/rule-result/message[text()="Failed to verify applied fix: Checking engine returns: notchecked"]'
 
 
+time_hack
 $OSCAP xccdf remediate --result-id xccdf_org.open-scap_testresult_default-profile --results $result $result 2> $stderr
 daytime="$(date +%Y-%m-%d)T$(date +%H:%M)" # Format like '2013-02-27T15:01:57'
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
