@@ -11,7 +11,7 @@ cp $srcdir/$oval $tmpdir # Accomodate scanning by xccdf placed in the same temp 
 chmod u+w $tmpdir/$oval
 result=$(mktemp -p $tmpdir ${name}.out.XXXXXX)
 echo "Stderr file = $stderr"
-echo "Result file = $stderr"
+echo "Result file = $result"
 rm -f test_file
 
 $OSCAP xccdf remediate --results $result  $srcdir/${name}.xccdf.xml 2> $stderr
