@@ -629,7 +629,7 @@ static struct oval_record_field *oval_record_field_ITEM_from_sexp(SEXP_t *sexp)
 
 	rf = oval_record_field_new(OVAL_RECORD_FIELD_ITEM);
 	oval_record_field_set_name(rf, oscap_strdup(oval_sysent_get_name(sysent)));
-	oval_record_field_set_value(rf, oscap_strdup(oval_sysent_get_value(sysent)));
+	oval_record_field_set_value(rf, oval_sysent_get_value(sysent));
 	oval_record_field_set_datatype(rf, oval_sysent_get_datatype(sysent));
 	oval_record_field_set_mask(rf, oval_sysent_get_mask(sysent));
 	oval_record_field_set_status(rf, oval_sysent_get_status(sysent));

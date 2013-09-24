@@ -193,7 +193,7 @@ void oval_record_field_set_name(struct oval_record_field *rf, char *name)
 
 void oval_record_field_set_value(struct oval_record_field *rf, char *value)
 {
-	rf->value = value;
+	rf->value = oscap_strdup(value);
 }
 
 void oval_record_field_set_datatype(struct oval_record_field *rf, oval_datatype_t dt)
