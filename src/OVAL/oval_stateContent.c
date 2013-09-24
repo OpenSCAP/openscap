@@ -112,7 +112,7 @@ struct oval_state_content *oval_state_content_new(struct oval_definition_model *
 		return NULL;
 
 	content->entity = NULL;
-	content->record_fields = NULL;
+	content->record_fields = oval_collection_new();
 	content->ent_check = OVAL_CHECK_UNKNOWN;
 	content->var_check = OVAL_CHECK_UNKNOWN;
 	content->model = model;
