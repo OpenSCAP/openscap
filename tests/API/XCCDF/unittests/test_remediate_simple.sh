@@ -4,9 +4,9 @@ set -e
 set -o pipefail
 
 function time_hack(){
-	if [ $(date +%s) -gt 56 ]; then
+	if [ $(date +%s) -gt 58 ]; then
 		# yes, let's risk leap seconds ;-)
-		sleep 3;
+		sleep 1;
 	fi
 }
 
