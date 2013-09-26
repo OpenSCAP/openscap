@@ -188,7 +188,7 @@ void oval_record_field_free(struct oval_record_field *rf)
 
 void oval_record_field_set_name(struct oval_record_field *rf, char *name)
 {
-	rf->name = name;
+	rf->name = oscap_strdup(name);
 }
 
 void oval_record_field_set_value(struct oval_record_field *rf, char *value)
@@ -354,6 +354,7 @@ int oval_record_field_parse_tag(xmlTextReaderPtr reader, struct oval_parser_cont
 	mask = oval_parser_boolean_attribute(reader, "mask", 0);
 
 	oval_record_field_set_name(rf, name);
+	xmlFree(name);
 	oval_record_field_set_datatype(rf, datatype);
 	oval_record_field_set_mask(rf, mask);
 
