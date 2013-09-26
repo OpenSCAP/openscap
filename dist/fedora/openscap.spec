@@ -102,11 +102,21 @@ Group:          Applications/System
 Requires:       %{name} = %{version}-%{release}
 BuildRequires:  openldap-devel
 BuildRequires:  GConf2-devel
-#BuildRequires:  opendbx - for sql
 
 %description    extra-probes
 The %{name}-extra-probes package contains additional probes that are not
 commonly used and require additional dependencies.
+
+%package        extra-probes-sql
+Summary:        SCAP probes for Database
+Group:          Applications/System
+Requires:       %{name} = %{version}-%{release}
+BuildRequires:  opendbx-devel
+
+%description    extra-probes-sql
+The %{name}-extra-probes-sql package contains additional OpenSCAP probes
+for querying database objects. Users are advised to install appropriate
+opendbx backend package along this one.
 
 %package        selinux
 Summary:        SELinux policy module for openscap
@@ -272,12 +282,19 @@ exit 0
 %{_libexecdir}/openscap/probe_ldap57
 %{_libexecdir}/openscap/probe_gconf
 
+%files extra-probes-sql
+%{_libexecdir}/openscap/probe_sql
+%{_libexecdir}/openscap/probe_sql57
+
 %files selinux
 %attr(0600,root,root) %{_datadir}/selinux/packages/oscap.pp
 %{_datadir}/selinux/devel/include/contrib/oscap.if
 # %{_mandir}/man8/openscap_selinux.8.*
 
 %changelog
+* Thu Sep 26 2013 Šimon Lukašík <slukasik@redhat.com> 0.9.12-2
+- Start building SQL probes for Fedora
+
 * Wed Sep 11 2013 Šimon Lukašík <slukasik@redhat.com> 0.9.12-1
 - upgrade
 
