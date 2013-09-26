@@ -802,7 +802,10 @@ static struct oval_sysent *oval_sexp_to_sysent(struct oval_syschar_model *model,
 	oval_sysent_set_name(ent, key);
 	oval_sysent_set_status(ent, status);
 	oval_sysent_set_datatype(ent, dt);
-	oval_sysent_set_mask(ent, oval_string_map_get_value(mask_map, key) == NULL ? 0 : 1);
+	if (mask_map == NULL || oval_string_map_get_value(mask_map, key) == NULL)
+		oval_sysent_set_mask(ent, 0);
+	else
+		oval_sysent_set_mask(ent, 1);
 
 	if (status != SYSCHAR_STATUS_EXISTS)
 		return ent;
