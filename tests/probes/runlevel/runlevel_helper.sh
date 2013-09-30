@@ -1,4 +1,3 @@
-
 if [  -x "`which chkconfig`" ] ; then
 	HAVE_CHKCONFIG=y
 else
@@ -9,7 +8,7 @@ fi
 # Otherwise produces the same information in another way
 get_services_list() {
 	if [ "$HAVE_CHKCONFIG" = "y" ] ; then
-		chkconfig --list | awk '{print $1}' | sort | uniq
+		LC_ALL=C chkconfig --list | awk '{print $1}' | sort | uniq
 	else
 		ls /etc/init.d/ | egrep -v "(README|PRESERVE)" | xargs
 	fi
@@ -22,7 +21,7 @@ get_service_runlevels() {
 	local SRV=$1
 
 	if [ "$HAVE_CHKCONFIG" = "y" ] ; then
-		chkconfig $SRV --list | awk '{print $2 " " $3 " " $4 " " $5 " " $6 " " $7 " " $8}'
+		LC_ALL=C chkconfig $SRV --list | awk '{print $2 " " $3 " " $4 " " $5 " " $6 " " $7 " " $8}'
 	else
 		for RC in 0 1 2 3 4 5 6; do
 			RCDIR=/etc/rc$RC.d
