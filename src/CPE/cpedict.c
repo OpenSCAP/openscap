@@ -39,6 +39,7 @@
 #include "common/util.h"
 #include "common/_error.h"
 #include "common/xmlns_priv.h"
+#include "common/elements.h"
 #include <string.h>
 
 #define CPE_DICT_SUPPORTED "2.3"
@@ -204,6 +205,7 @@ char * cpe_dict_detect_version(const char* file)
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
 		return NULL;
 	}
+	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
 
 	/* find root element */
 	while (xmlTextReaderRead(reader) == 1

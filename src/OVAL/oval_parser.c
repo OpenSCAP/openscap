@@ -81,6 +81,8 @@ char *oval_determine_document_schema_version(const char *document, oscap_documen
 		return NULL;
 	}
 
+	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
+
 	/* find root element */
 	while (xmlTextReaderRead(reader) == 1
 	       && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);

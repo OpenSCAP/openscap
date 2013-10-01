@@ -32,6 +32,7 @@
 #include "common/alloc.h"
 #include "common/_error.h"
 #include "common/debug_priv.h"
+#include "common/elements.h"
 
 struct xccdf_tailoring *xccdf_tailoring_new(void)
 {
@@ -170,6 +171,9 @@ struct xccdf_tailoring *xccdf_tailoring_import(const char *file, struct xccdf_be
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
 		return NULL;
 	}
+
+	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
+
 	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) ;
 	struct xccdf_tailoring *tailoring = xccdf_tailoring_parse(reader, XITEM(benchmark));
 	xmlFreeTextReader(reader);

@@ -33,6 +33,7 @@
 #include "common/_error.h"
 #include "common/debug_priv.h"
 #include "common/assume.h"
+#include "common/elements.h"
 
 #include "CPE/cpedict_priv.h"
 #include "CPE/cpelang_priv.h"
@@ -56,6 +57,9 @@ struct xccdf_benchmark *xccdf_benchmark_import(const char *file)
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
 		return NULL;
 	}
+
+	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
+
 	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) ;
 	struct xccdf_benchmark *benchmark = xccdf_benchmark_new();
 	const bool parse_result = xccdf_benchmark_parse(XITEM(benchmark), reader);

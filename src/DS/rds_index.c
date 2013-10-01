@@ -496,6 +496,8 @@ struct rds_index *rds_index_import(const char *file)
 		return NULL;
 	}
 
+	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
+
 	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
 	struct rds_index *ret = rds_index_parse(reader);
 	xmlFreeTextReader(reader);

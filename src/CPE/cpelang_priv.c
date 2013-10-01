@@ -260,6 +260,7 @@ struct cpe_lang_model *cpe_lang_model_parse_xml(const char *file)
 
 	reader = xmlReaderForFile(file, NULL, 0);
 	if (reader != NULL) {
+		xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
 		xmlTextReaderNextNode(reader);
 		ret = cpe_lang_model_parse(reader);
 	} else {

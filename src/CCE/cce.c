@@ -36,6 +36,7 @@
 #include "cce_priv.h"
 
 #include "common/public/oscap.h"
+#include "common/elements.h"
 
 #define CCE_SUPPORTED "5"
 
@@ -83,6 +84,7 @@ static void cce_parse(const char *docname, struct cce *cce)
 	int ret;
 	reader = xmlNewTextReaderFilename(docname);
 	if (reader != NULL) {
+		xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
 		ret = xmlTextReaderRead(reader);
 		while (ret == 1) {
 			process_node(reader, cce);

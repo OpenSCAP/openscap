@@ -30,6 +30,7 @@
 #include "cpe_ctx_priv.h"
 #include "common/alloc.h"
 #include "common/_error.h"
+#include "common/elements.h"
 
 struct cpe_parser_ctx {
 	xmlTextReaderPtr reader;
@@ -51,6 +52,7 @@ struct cpe_parser_ctx *cpe_parser_ctx_new(const char *filename)
 		cpe_parser_ctx_free(ctx);
 		return NULL;
 	}
+	xmlTextReaderSetErrorHandler(ctx->reader, &libxml_error_handler, NULL);
 	ctx->owns_reader = true;
 	return ctx;
 }

@@ -118,6 +118,9 @@ char * xccdf_detect_version(const char* file)
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
 		return NULL;
 	}
+
+	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
+
 	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
 	ver_info = xccdf_detect_version_parser(reader);
 

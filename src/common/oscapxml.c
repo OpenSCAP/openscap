@@ -566,6 +566,8 @@ int oscap_determine_document_type(const char *document, oscap_document_type_t *d
                 return -1;
         }
 
+	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
+
         /* find root element */
         while (xmlTextReaderRead(reader) == 1
                && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);

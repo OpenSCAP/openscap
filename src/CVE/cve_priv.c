@@ -44,6 +44,7 @@
 #include "common/list.h"
 #include "common/_error.h"
 #include "common/xmltext_priv.h"
+#include "common/elements.h"
 
 #include "CPE/cpelang_priv.h"
 #include "CVSS/cvss_priv.h"
@@ -403,6 +404,7 @@ struct cve_model *cve_model_parse_xml(const char *file)
 		return NULL;
 	}
 
+	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
 	rc = xmlTextReaderNextNode(reader);
 	if (rc == -1) {
 		xmlFreeTextReader(reader);

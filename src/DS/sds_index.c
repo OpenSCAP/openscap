@@ -408,6 +408,8 @@ struct ds_sds_index *ds_sds_index_import(const char* file)
 		return NULL;
 	}
 
+	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
+
 	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
 	struct ds_sds_index* ret = ds_sds_index_parse(reader);
 	xmlFreeTextReader(reader);
