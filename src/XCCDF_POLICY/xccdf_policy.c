@@ -1045,7 +1045,7 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 	struct xccdf_check_content_ref *content;
 	const char *content_name;
 	const char *href;
-	int ret;
+	int ret = XCCDF_RESULT_NOT_CHECKED; // initialized for the case of no check-content-refs present
 	while (xccdf_check_content_ref_iterator_has_more(content_it)) {
 		message = NULL;
 		content = xccdf_check_content_ref_iterator_next(content_it);
