@@ -88,7 +88,7 @@ void __oscap_setxmlerr(const char *file, uint32_t line, const char *func, xmlErr
 
 	/* get rid of a newline that was pass by xmlGetLastError() */
 	int len = strlen(error->message);
-	if( error->message[len-1] == '\n' )
+	if (len != 0 && error->message[len - 1] == '\n')
 		error->message[len-1] = 0;
 	err = oscap_err_new(OSCAP_EFAMILY_XML, error->message, func, line, file);
 	_push_err(err);
