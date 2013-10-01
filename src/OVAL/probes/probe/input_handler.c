@@ -116,6 +116,7 @@ void *probe_input_handler(void *arg)
 			    !(OSCAP_GSYM(offline_mode) & OSCAP_GSYM(offline_mode_supported))) {
 				/* We do not offline_mode requested but not supported. Return a dummy. */
 				probe_out = probe_cobj_new(OSCAP_GSYM(offline_mode_cobjflag), NULL, NULL, NULL);
+				probe_ret = 0;
 			}
 			else {
 				probe_out = probe_rcache_sexp_get(probe->rcache, oid);
