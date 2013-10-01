@@ -1,3 +1,7 @@
+# Some of the tests rely on the "C" locale and would fail with some locales.
+LC_ALL = C
+export LC_ALL
+
 PROBE_SUBDIRS = probes mitre
 
 if WANT_SCE
