@@ -200,3 +200,7 @@ oscap_xml_save_filename(const char *filename, xmlDocPtr doc)
 	return (xmlCode >= 1) ? 1 : -1;
 }
 
+void libxml_error_handler(void *user, const char *message, xmlParserSeverities severity, xmlTextReaderLocatorPtr locator)
+{
+	oscap_setxmlerr(xmlGetLastError());
+}

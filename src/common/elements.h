@@ -62,4 +62,13 @@ xmlNode *oscap_xmlstr_to_dom(xmlNode *parent, const char *elname, const char *co
  */
 int oscap_xml_save_filename(const char *filename, xmlDocPtr doc);
 
+/**
+ * Callback for handling libxml errors. It can be registered by xmlTextReaderSetErrorHandler
+ * @param user the user argument
+ * @param message the message
+ * @param severity the severity of the error
+ * @param locator a locator indicating where the error occured
+ */
+void libxml_error_handler(void *user, const char *message, xmlParserSeverities severity, xmlTextReaderLocatorPtr locator);
+
 #endif

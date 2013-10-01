@@ -45,11 +45,6 @@
 #include "common/elements.h"
 #include "common/public/oscap.h"
 
-void libxml_error_handler(void *user, const char *message, xmlParserSeverities severity, xmlTextReaderLocatorPtr locator)
-{
-	oscap_setxmlerr(xmlGetLastError());
-}
-
 /**
  * -1 error; 0 OK; 1 warning
  */

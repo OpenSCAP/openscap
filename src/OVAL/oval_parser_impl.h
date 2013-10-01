@@ -56,8 +56,6 @@ int oval_definition_model_parse(xmlTextReaderPtr, struct oval_parser_context *);
 int oval_syschar_model_parse(xmlTextReaderPtr, struct oval_parser_context *);
 int oval_results_model_parse(xmlTextReaderPtr , struct oval_parser_context *);
 
-void libxml_error_handler(void *, const char *, xmlParserSeverities severity, xmlTextReaderLocatorPtr locator);
-
 int oval_parser_boolean_attribute(xmlTextReaderPtr reader, char *attname, int defval);
 int oval_parser_int_attribute(xmlTextReaderPtr reader, char *attname, int defval);
 typedef void (*oval_xml_value_consumer) (char *, void *);
