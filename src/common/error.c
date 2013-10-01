@@ -90,6 +90,16 @@ void __oscap_setxmlerr(const char *file, uint32_t line, const char *func, xmlErr
 	int len = strlen(error->message);
 	if (len != 0 && error->message[len - 1] == '\n')
 		error->message[len-1] = 0;
+	if (error->file != NULL) {
+		char *msg = oscap_sprintf("%s [%s:%d]", error->message, error->file, error->line);
+		if (msg != NULL) {
+			err = oscap_err_new(OSCAP_EFAMILY_XML, msg, func, line, file);
+			oscap_free(msg);
+			_push_err(err);
+			return;
+		}
+	}
+
 	err = oscap_err_new(OSCAP_EFAMILY_XML, error->message, func, line, file);
 	_push_err(err);
 }
