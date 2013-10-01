@@ -58,6 +58,8 @@ EXTRA_DIST += \
 	test_inherit_selector.oval.xml \
 	test_inherit_selector.sh \
 	test_inherit_selector.xccdf.xml \
+	test_unfinished.sh \
+	test_unfinished.xccdf.xml \
 	test_multiple_oval_files_with_same_basename.sh \
 	test_multiple_oval_files_with_same_basename.xccdf.xml \
 	test_oval_without_definition.oval.xml \

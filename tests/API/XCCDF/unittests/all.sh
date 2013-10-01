@@ -54,6 +54,8 @@ test_run "Multiple xccdf:TestResult elements" $srcdir/test_xccdf_multiple_testre
 test_run "default selector for xccdf value" $srcdir/test_default_selector.sh
 test_run "inherit selector for xccdf value" $srcdir/test_inherit_selector.sh
 
+test_run "libxml errors handled correctly" $srcdir/test_unfinished.sh
+
 #
 # Tests for 'oscap xccdf eval --remediate' and substitution
 #
