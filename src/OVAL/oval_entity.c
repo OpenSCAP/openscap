@@ -58,6 +58,7 @@ struct oval_entity {
 	char *name;
 	struct oval_variable *variable;
 	struct oval_value *value;
+	bool xsi_nil;				///< @xsi:nil boolean attribute
 };
 
 struct oval_consume_varref_context {
@@ -69,6 +70,9 @@ struct oval_consume_varref_context {
 /* End of variable definitions
  * */
 /***************************************************************************/
+static inline bool oval_entity_get_xsi_nil(const struct oval_entity *entity);
+static inline void oval_entity_set_xsi_nil(struct oval_entity *entity, bool xsi_nil);
+
 
 bool oval_entity_iterator_has_more(struct oval_entity_iterator *oc_entity)
 {
@@ -124,6 +128,12 @@ int oval_entity_get_mask(struct oval_entity *entity)
 	return entity->mask;
 }
 
+static inline bool oval_entity_get_xsi_nil(const struct oval_entity *entity)
+{
+	__attribute__nonnull__(entity);
+	return entity->xsi_nil;
+}
+
 oval_entity_varref_type_t oval_entity_get_varref_type(struct oval_entity * entity)
 {
 	__attribute__nonnull__(entity);
@@ -153,6 +163,7 @@ struct oval_entity *oval_entity_new(struct oval_definition_model *model)
 
 	entity->datatype = OVAL_DATATYPE_UNKNOWN;
 	entity->mask = 0;
+	entity->xsi_nil = 0;
 	entity->operation = OVAL_OPERATION_UNKNOWN;
 	entity->type = OVAL_ENTITY_TYPE_UNKNOWN;
 	entity->name = NULL;
@@ -168,6 +179,8 @@ struct oval_entity *oval_entity_clone(struct oval_definition_model *new_model, s
 	oval_entity_set_datatype(new_entity, datatype);
 	int mask = oval_entity_get_mask(old_entity);
 	oval_entity_set_mask(new_entity, mask);
+	bool xsi_nil = oval_entity_get_xsi_nil(old_entity);
+	oval_entity_set_xsi_nil(new_entity, xsi_nil);
 	char *name = oval_entity_get_name(old_entity);
 	oval_entity_set_name(new_entity, name);
 	oval_operation_t operation = oval_entity_get_operation(old_entity);
@@ -226,6 +239,12 @@ void oval_entity_set_mask(struct oval_entity *entity, int mask)
 	entity->mask = mask;
 }
 
+static inline void oval_entity_set_xsi_nil(struct oval_entity *entity, bool xsi_nil)
+{
+	__attribute__nonnull__(entity);
+	entity->xsi_nil = xsi_nil;
+}
+
 void oval_entity_set_varref_type(struct oval_entity *entity, oval_entity_varref_type_t type)
 {
 	__attribute__nonnull__(entity);
@@ -279,6 +298,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	oval_datatype_t datatype = oval_datatype_parse(reader, "datatype", OVAL_DATATYPE_STRING);
 	oval_operation_t operation = oval_operation_parse(reader, "operation", OVAL_OPERATION_EQUALS);
 	int mask = oval_parser_boolean_attribute(reader, "mask", 0);
+	int xsi_nil = oval_parser_boolean_attribute(reader, "xsi:nil", 0);
 	oval_entity_type_t type = OVAL_ENTITY_TYPE_UNKNOWN;
 	//The value of the type field vs. the complexity of extracting type is arguable
 	char *varref = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "var_ref");
@@ -327,6 +347,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	oval_entity_set_varref_type(entity, varref_type);
 	oval_entity_set_variable(entity, variable);
 	oval_entity_set_value(entity, value);
+	oval_entity_set_xsi_nil(entity, xsi_nil);
 	(*consumer) (entity, user);
 
 	if (return_code != 0) {
@@ -366,6 +387,10 @@ xmlNode *oval_entity_to_dom(struct oval_entity *entity, xmlDoc * doc, xmlNode * 
 		oval_operation_t operation = oval_entity_get_operation(entity);
 		if (operation != OVAL_OPERATION_EQUALS)
 			xmlNewProp(entity_node, BAD_CAST "operation", BAD_CAST oval_operation_get_text(operation));
+		if (oscap_streq(content, "") && oval_entity_get_xsi_nil(entity)) {
+			// Export @xsi:nil="true" only if it was imported and the content is still empty
+			xmlNewProp(entity_node, BAD_CAST "xsi:nil", BAD_CAST "true");
+		}
 	}
 
 	oval_datatype_t datatype = oval_entity_get_datatype(entity);
