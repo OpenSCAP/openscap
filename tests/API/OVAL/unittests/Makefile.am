@@ -24,6 +24,8 @@ EXTRA_DIST += \
 	oval-def_count_function.xml \
 	test_oval_empty_variable_evaluation.sh \
 	test_oval_empty_variable_evaluation.xml \
+	test_xsinil_envv58_pid.oval.xml \
+	test_xsinil_envv58_pid.sh \
 	test_item_not_exist.sh \
 	item_not_exist.xml \
 	anyxmlsyschar.xml \
