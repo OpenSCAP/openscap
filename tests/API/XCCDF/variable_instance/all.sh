@@ -21,9 +21,6 @@ set -e -o pipefail
 
 . $srcdir/../../../test_common.sh
 
-assert_exists() { [ $($XPATH $result 'count('"$2"')') == "$1" ]; }
-export -f assert_exists
-
 #
 # Export two values from XCCDF to a single OVAL variable as a part
 # of single rule. Result is a single varible set with multiple values.

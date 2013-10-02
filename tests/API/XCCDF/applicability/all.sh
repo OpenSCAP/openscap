@@ -84,8 +84,6 @@ test_run "test_api_xccdf_applicability_cpe2_or_embedded_rule" test_api_xccdf_emb
 test_run "test_api_xccdf_applicability_cpe2_applicable_embedded_rule_with_cpe_dict" test_api_xccdf_cpe_eval cpe2-applicable-rule-embedded-xccdf-combined.xml cpe-dict.xml 0
 test_run "test_api_xccdf_applicability_cpe2_not_applicable_embedded_rule_with_cpe_dict" test_api_xccdf_cpe_eval cpe2-notapplicable-rule-embedded-xccdf-combined.xml cpe-dict.xml 1
 
-assert_exists() { [ $($XPATH $result 'count('"$2"')') == "$1" ]; }
-export -f assert_exists
 test_run "xccdf:fix applicable and notapplicable" $srcdir/test_remediate_fix_notapplicable.sh
 test_run "Complex selection of xccdf:fix based multiple factors" $srcdir/test_remediate_fix_processing.sh
 test_run "Complex selection of xccdf:fix + DataStream" $srcdir/test_remediate_fix_processing_ds.sh

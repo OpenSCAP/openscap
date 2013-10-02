@@ -9,15 +9,6 @@
 
 set -e -o pipefail
 
-assert_exists() {
-	real_cnt="$($XPATH $result 'count('"$2"')' 2>/dev/null )"
-	if [ "$real_cnt" != "$1" ]; then
-		echo "Failed: expected count: $1, real count: $real_cnt, xpath: '$2'"
-		return 1
-	fi
-}
-export -f assert_exists
-
 function report_variable_values() {
 	name="report_variable_values"
 	defxml=${name}.def.xml

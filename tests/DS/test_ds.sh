@@ -63,7 +63,6 @@ sds_add_multiple_twice(){
 	diff $stderr /dev/null
 
 	local result=$DS_FILE
-	assert_exists() { [ "$($XPATH $result 'count('"$2"')')" == "$1" ]; }
 	assert_exists 1 '/ds:data-stream-collection/ds:data-stream'
 	assert_exists 2 '/ds:data-stream-collection/ds:data-stream/*'
 	assert_exists 1 '/ds:data-stream-collection/ds:data-stream/ds:checklists'
@@ -209,7 +208,7 @@ function test_eval_complex()
 	assert_correct_xlinks $arf
 
 	# Ensure that results are there
-	assert_exists() { [ "$($XPATH $arf 'count('"$2"')')" == "$1" ]; }
+	local result="$arf"
 	assert_exists 1 '//rule-result'
 	assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_second"]'
 	assert_exists 1 '//rule-result/result'
