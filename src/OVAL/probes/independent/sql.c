@@ -357,7 +357,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 	do {								\
 		SEXP_t *__sval;						\
 									\
-		__sval = probe_obj_getentval (obj, #ent_name, 1);	\
+		__sval = probe_obj_getentval (obj, ent_name, 1);	\
 									\
 		if (__sval == NULL) {					\
 			dE("Missing entity or value: obj=%p, ent=%s\n", obj, #ent_name); \
