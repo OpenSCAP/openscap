@@ -279,11 +279,13 @@ static int dbSQL_eval(const char *engine, const char *version,
 			goto __exit;
 		}
 
-		if (odbx_init (&sql_dbh, sql_dbe->b_engine,
-			       uriInfo.host, uriInfo.port) != ODBX_ERR_SUCCESS)
-		{
-			dE("odbx_init failed: e=%s, h=%s:%s\n",
-			   sql_dbe->b_engine, uriInfo.host, uriInfo.port);
+		int odbx_res = odbx_init (&sql_dbh, sql_dbe->b_engine,
+				uriInfo.host, uriInfo.port);
+		if (odbx_res != ODBX_ERR_SUCCESS) {
+			const char *error_msg = odbx_error(NULL, odbx_res);
+			dE("odbx_init failed: e=%s, h=%s:%s msg=%s\n",
+				sql_dbe->b_engine, uriInfo.host, uriInfo.port,
+				error_msg != NULL ? error_msg : "(none)");
 			goto __exit;
 		}
 
