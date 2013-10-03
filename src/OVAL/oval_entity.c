@@ -300,7 +300,11 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	oval_datatype_t datatype = oval_datatype_parse(reader, "datatype", OVAL_DATATYPE_STRING);
 	oval_operation_t operation = oval_operation_parse(reader, "operation", OVAL_OPERATION_EQUALS);
 	int mask = oval_parser_boolean_attribute(reader, "mask", 0);
-	int xsi_nil = oval_parser_boolean_attribute(reader, "xsi:nil", 0);
+
+	char *nil_attr = (char *) xmlTextReaderGetAttributeNs(reader, BAD_CAST "nil", OVAL_XMLNS_XSI);
+	int xsi_nil = oscap_streq(nil_attr, "true") != 0;
+	xmlFree(nil_attr);
+
 	oval_entity_type_t type = OVAL_ENTITY_TYPE_UNKNOWN;
 	//The value of the type field vs. the complexity of extracting type is arguable
 	char *varref = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "var_ref");
@@ -328,7 +332,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 		if (datatype == OVAL_DATATYPE_RECORD) {
 			value = NULL;
 		} else {
-			if (oval_parser_boolean_attribute(reader, "xsi:nil", 0))
+			if (xsi_nil)
 				value = NULL;
 			else
 				return_code = oval_value_parse_tag(reader, context, &oval_consume_value, &value);
