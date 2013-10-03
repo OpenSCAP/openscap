@@ -91,11 +91,11 @@ dbEngineMap_t engine_map[] = {
 
 #define ENGINE_MAP_COUNT (sizeof engine_map / sizeof (dbEngineMap_t))
 
-static int engine_cmp (const dbEngineMap_t *a, const dbEngineMap_t *b)
+static int engine_cmp (const char *a, const dbEngineMap_t *b)
 {
 	assume_d(a != NULL, -1);
 	assume_d(b != NULL, -1);
-	return strcmp(a->o_engine, b->o_engine);
+	return strcmp(a, b->o_engine);
 }
 
 typedef struct {
