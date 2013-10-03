@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -286,6 +286,11 @@ static int dbSQL_eval(const char *engine, const char *version,
 			dE("odbx_init failed: e=%s, h=%s:%s msg=%s\n",
 				sql_dbe->b_engine, uriInfo.host, uriInfo.port,
 				error_msg != NULL ? error_msg : "(none)");
+			if (odbx_res == -ODBX_ERR_NOTEXIST) {
+				fprintf(stderr, "Could not connect to the database. "
+					"Please install the opendbx %s backend.\n",
+					sql_dbe->b_engine);
+			}
 			goto __exit;
 		}
 
