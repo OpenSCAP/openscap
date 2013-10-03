@@ -395,6 +395,11 @@ int probe_main(probe_ctx *ctx, void *arg)
 	 */
 	err = dbSQL_eval(engine, version, conn, sqlexp, ctx);
 __exit:
+	if (engine != NULL) {
+		__clearmem(conn, strlen(engine));
+		oscap_free(engine);
+	}
+
 	if (sqlexp != NULL) {
 		__clearmem(sqlexp, strlen(sqlexp));
 		oscap_free(sqlexp);
