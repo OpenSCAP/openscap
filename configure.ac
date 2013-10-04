@@ -1225,6 +1225,7 @@ AC_CONFIG_FILES([Makefile
                  tests/probes/fileextendedattribute/Makefile
                  tests/probes/uname/Makefile
                  tests/probes/shadow/Makefile
+		tests/probes/sql57/Makefile
                  tests/probes/family/Makefile
                  tests/probes/process/Makefile
                  tests/probes/sysinfo/Makefile

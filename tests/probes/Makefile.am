@@ -21,6 +21,9 @@ endif
 if probe_system_info_enabled
 INDEPENDENT_SUBDIRS += sysinfo
 endif
+if probe_sql57_enabled
+INDEPENDENT_SUBDIRS += sql57
+endif
 endif
 
 if WANT_PROBES_UNIX
