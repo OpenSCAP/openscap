@@ -469,8 +469,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 
 	/* clean up */
 cleanup:
-	if(oscap_err())
-		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+	oscap_print_error();
 
 	if (sess) oval_agent_destroy_session(sess);
 	if (def_model) oval_definition_model_free(def_model);
