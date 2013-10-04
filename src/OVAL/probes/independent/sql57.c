@@ -271,11 +271,23 @@ static int dbSQL_eval(const char *engine, const char *version,
 				       (int(*)(void *, void *))&engine_cmp);
 
 		if (sql_dbe == NULL) {
+			SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+				"DB engine not found: %s", engine);
+			probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
+			SEXP_free(msg);
+			probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
+			err = 0;
 			dE("DB engine not found: %s\n", engine);
 			goto __exit;
 		}
 
 		if (sql_dbe->b_engine == NULL) {
+			SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+				"DB engine not supported: %s", engine);
+			probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
+			SEXP_free(msg);
+			probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
+			err = 0;
 			dE("DB engine not supported: %s\n", engine);
 			goto __exit;
 		}
@@ -288,6 +300,12 @@ static int dbSQL_eval(const char *engine, const char *version,
 				sql_dbe->b_engine, uriInfo.host, uriInfo.port,
 				error_msg != NULL ? error_msg : "(none)");
 			if (odbx_res == -ODBX_ERR_NOTEXIST) {
+				SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+					"odbx_init failed. Please install the opendbx %s backend", engine);
+				probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
+				SEXP_free(msg);
+				probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
+				err = 0;
 				fprintf(stderr, "Could not connect to the database. "
 					"Please install the opendbx %s backend.\n",
 					sql_dbe->b_engine);
