@@ -314,6 +314,51 @@ static SEXP_t *oval_probe_cmd_ste_fetch(SEXP_t *sexp, void *arg)
 	return (ste_list);
 }
 
+static inline const char *_probe_strerror(uint32_t error_code)
+{
+	const char *codemsg;
+
+	/*
+	 * Errors of type USER should all be from the probe "namespace" (i.e. only codes
+	 * defined at public/probe-api.h.
+	 */
+	switch (error_code) {
+	case PROBE_EINVAL: codemsg = "Invalid type, value or format";
+		break;
+	case PROBE_ENOELM: codemsg = "Missing element";
+		break;
+	case PROBE_ENOVAL: codemsg = "Missing value";
+		break;
+	case PROBE_ENOATTR: codemsg = "Missing attribute";
+		break;
+	case PROBE_EINIT: codemsg = "Initialization failed";
+		break;
+	case PROBE_ENOMEM: codemsg = "Insufficient memory";
+		break;
+	case PROBE_EOPNOTSUPP: codemsg = "Operation not supported";
+		break;
+	case PROBE_ERANGE: codemsg = "Value out of range";
+		break;
+	case PROBE_EDOM: codemsg = "Value out of domain";
+		break;
+	case PROBE_EFAULT: codemsg = "Memory fault or NULL value";
+		break;
+	case PROBE_EACCESS: codemsg = "Operation not permitted";
+		break;
+	case PROBE_ESETEVAL: codemsg = "Set evaluation failed";
+		break;
+	case PROBE_ENOENT: codemsg = "Missing entity";
+		break;
+	case PROBE_EFATAL: codemsg = "Unrecoverable error";
+		break;
+	case PROBE_EUNKNOWN:
+	default:
+		codemsg = "Unknown error";
+	}
+
+	return codemsg;
+}
+
 static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj, int flags, SEXP_t **out_sexp)
 {
 	int retry, ret;
@@ -476,48 +521,8 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 					switch (err->type) {
 					case SEAP_ETYPE_USER:
 					{
-						char * codemsg;
-
-						/*
-						 * Errors of type USER should all be from the probe "namespace" (i.e. only codes
-						 * defined at public/probe-api.h.
-						 */
-						switch (err->code) {
-						case PROBE_EINVAL: codemsg = "Invalid type, value or format";
-							break;
-						case PROBE_ENOELM: codemsg = "Missing element";
-							break;
-						case PROBE_ENOVAL: codemsg = "Missing value";
-							break;
-						case PROBE_ENOATTR: codemsg = "Missing attribute";
-							break;
-						case PROBE_EINIT: codemsg = "Initialization failed";
-							break;
-						case PROBE_ENOMEM: codemsg = "Insufficient memory";
-							break;
-						case PROBE_EOPNOTSUPP: codemsg = "Operation not supported";
-							break;
-						case PROBE_ERANGE: codemsg = "Value out of range";
-							break;
-						case PROBE_EDOM: codemsg = "Value out of domain";
-							break;
-						case PROBE_EFAULT: codemsg = "Memory fault or NULL value";
-							break;
-						case PROBE_EACCESS: codemsg = "Operation not permitted";
-							break;
-						case PROBE_ESETEVAL: codemsg = "Set evaluation failed";
-							break;
-						case PROBE_ENOENT: codemsg = "Missing entity";
-							break;
-						case PROBE_EFATAL: codemsg = "Unrecoverable error";
-							break;
-						case PROBE_EUNKNOWN:
-						default:
-							codemsg = "Unknown error";
-						}
-
 						oscap_seterr(OSCAP_EFAMILY_OVAL, "Probe at sd=%d (%s) reported an error: %s",
-							     pd->sd, oval_subtype_to_str(pd->subtype), codemsg);
+							     pd->sd, oval_subtype_to_str(pd->subtype), _probe_strerror(err->code));
 						break;
 					}
 					case SEAP_ETYPE_INT:
