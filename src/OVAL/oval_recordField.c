@@ -24,6 +24,8 @@
 # include <config.h>
 #endif
 
+#include <libxml/tree.h>
+
 #include "oval_definitions_impl.h"
 #include "oval_agent_api_impl.h"
 #include "oval_system_characteristics_impl.h"
@@ -434,7 +436,11 @@ xmlNode *oval_record_field_to_dom(struct oval_record_field *rf, bool parent_mask
 		masked = false;
 	}
 
-	node = xmlNewTextChild(parent, NULL, BAD_CAST "field", BAD_CAST value);
+	xmlNsPtr oval_def = xmlSearchNsByHref(doc, xmlDocGetRootElement(doc), OVAL_DEFINITIONS_NAMESPACE);
+	if (oval_def == NULL) {
+		oval_def = xmlNewNs(xmlDocGetRootElement(doc), OVAL_DEFINITIONS_NAMESPACE, BAD_CAST "oval-def");
+	}
+	node = xmlNewTextChild(parent, oval_def, BAD_CAST "field", BAD_CAST value);
 	xmlNewProp(node, BAD_CAST "name", BAD_CAST name);
 	datatype = oval_record_field_get_datatype(rf);
 	if (datatype != OVAL_DATATYPE_STRING)
