@@ -2107,7 +2107,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC_rec(st
 		} else if (dt == OVAL_DATATYPE_FLOAT) {
 			new_val = (double) oval_value_get_float(ov);
 		} else {
-			oscap_seterr(OSCAP_EFAMILY_OVAL, "Unexpected value type: %s.\n", oval_datatype_get_text(dt));
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "Unexpected value type: %s.", oval_datatype_get_text(dt));
 			oval_value_iterator_free(val_itr);
 			return SYSCHAR_FLAG_ERROR;
 		}
@@ -2117,7 +2117,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC_rec(st
 		} else if (op == OVAL_ARITHMETIC_MULTIPLY) {
 			new_val *= val;
 		} else {
-			oscap_seterr(OSCAP_EFAMILY_OVAL, "Unexpected arithmetic operation: %s.\n", oval_arithmetic_operation_get_text(op));
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "Unexpected arithmetic operation: %s.", oval_arithmetic_operation_get_text(op));
 			oval_value_iterator_free(val_itr);
 			return SYSCHAR_FLAG_ERROR;
 		}
@@ -2143,7 +2143,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC(oval_a
 
 	op = oval_component_get_arithmetic_operation(component);
 	if (op != OVAL_ARITHMETIC_ADD && op != OVAL_ARITHMETIC_MULTIPLY) {
-		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unexpected arithmetic operation: %s.\n", oval_arithmetic_operation_get_text(op));
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unexpected arithmetic operation: %s.", oval_arithmetic_operation_get_text(op));
 		return SYSCHAR_FLAG_ERROR;
 	}
 
@@ -2177,7 +2177,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC(oval_a
 		} else if (datatype == OVAL_DATATYPE_FLOAT) {
 			val = (double) oval_value_get_float(ov);
 		} else {
-			oscap_seterr(OSCAP_EFAMILY_OVAL, "Unexpected value type: %s.\n", oval_datatype_get_text(datatype));
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "Unexpected value type: %s.", oval_datatype_get_text(datatype));
 			flag = SYSCHAR_FLAG_ERROR;
 			goto cleanup;
 		}
@@ -2234,7 +2234,7 @@ static oval_syschar_collection_flag_t oval_component_eval_common(oval_argu_t *ar
 	if (evaluator) {
 		flag = (*evaluator) (argu, component, value_collection);
 	} else {
-		oscap_seterr(OSCAP_EFAMILY_OVAL, "Component type %d not supported.\n", type);
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Component type %d not supported.", type);
 	}
 	return flag;
 }

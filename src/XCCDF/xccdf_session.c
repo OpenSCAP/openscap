@@ -345,7 +345,7 @@ static void _validation_failed(const char *xmlfile, oscap_document_type_t doc_ty
 	if (doc_name == NULL)
 		oscap_seterr(OSCAP_EFAMILY_XML, "Unrecognized document type in %s.", xmlfile);
 	else
-		oscap_seterr(OSCAP_EFAMILY_XML, "Invalid %s (%s) content in %s.\n", doc_name, version, xmlfile);
+		oscap_seterr(OSCAP_EFAMILY_XML, "Invalid %s (%s) content in %s.", doc_name, version, xmlfile);
 }
 
 int xccdf_session_load_xccdf(struct xccdf_session *session)
@@ -745,14 +745,14 @@ int xccdf_session_load_oval(struct xccdf_session *session)
 		/* file -> def_model */
 		struct oval_definition_model *tmp_def_model = oval_definition_model_import(contents[idx]->filename);
 		if (tmp_def_model == NULL) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to create OVAL definition model from: '%s'.\n", contents[idx]->filename);
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to create OVAL definition model from: '%s'.", contents[idx]->filename);
 			return 1;
 		}
 
 		/* def_model -> session */
 		struct oval_agent_session *tmp_sess = oval_agent_new_session(tmp_def_model, contents[idx]->href);
 		if (tmp_sess == NULL) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to create new OVAL agent session for: '%s'.\n", contents[idx]->href);
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to create new OVAL agent session for: '%s'.", contents[idx]->href);
 			oval_definition_model_free(tmp_def_model);
 			return 2;
 		}
@@ -906,7 +906,7 @@ static int _app_xslt(const char *infile, const char *xsltfile, const char *outfi
 	char pwd[PATH_MAX];
 
 	if (getcwd(pwd, sizeof(pwd)) == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Getcwd() failed: %s\n", strerror(errno));
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Getcwd() failed: %s", strerror(errno));
 		return 1;
 	}
 

@@ -692,14 +692,14 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const cha
 	xmlDocPtr sds_doc = xmlReadFile(sds_file, NULL, 0);
 	if (!sds_doc)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to read source datastream from '%s'.\n", sds_file);
+		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to read source datastream from '%s'.", sds_file);
 		return -1;
 	}
 
 	xmlDocPtr result_file_doc = xmlReadFile(xccdf_result_file, NULL, 0);
 	if (!result_file_doc)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to read XCCDF result file document from '%s'.\n", xccdf_result_file);
+		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to read XCCDF result file document from '%s'.", xccdf_result_file);
 		xmlFreeDoc(sds_doc);
 		return -1;
 	}
@@ -718,7 +718,7 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const cha
 			oval_result_docs[oval_result_docs_count] = xmlReadFile(*oval_result_files, NULL, 0);
 			if (!oval_result_docs[oval_result_docs_count])
 			{
-				oscap_seterr(OSCAP_EFAMILY_XML, "Failed to read OVAL result file document from '%s'.\n", *oval_result_files);
+				oscap_seterr(OSCAP_EFAMILY_XML, "Failed to read OVAL result file document from '%s'.", *oval_result_files);
 				result = -1;
 				continue;
 			}
@@ -737,7 +737,7 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const cha
 	// we won't even try to save the file if error happened when creating the DOM
 	if (result == 0 && xmlSaveFileEnc(target_file, rds_doc, "utf-8") == -1)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to save the result datastream to '%s'.\n", target_file);
+		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to save the result datastream to '%s'.", target_file);
 		result = -1;
 	}
 	xmlFreeDoc(rds_doc);

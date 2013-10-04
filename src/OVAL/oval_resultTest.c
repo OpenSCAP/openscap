@@ -783,7 +783,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		return OVAL_RESULT_NOT_EVALUATED;
 	}
 
-        oscap_seterr(OSCAP_EFAMILY_OVAL, "Ivalid OVAL data type: %d.\n", state_data_type);
+	oscap_seterr(OSCAP_EFAMILY_OVAL, "Ivalid OVAL data type: %d.", state_data_type);
         return OVAL_RESULT_ERROR;
 }
 
@@ -809,7 +809,7 @@ int ores_add_res(struct oresults *ores, oval_result_t res)
 			ores->notappl_cnt++;
 			break;
 		default:
-        	        oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid oval result type: %d.\n", res);
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid oval result type: %d.", res);
 			return 1;
 		}
 
@@ -1323,7 +1323,7 @@ static oval_result_t eval_check_existence(oval_existence_t check_existence, int 
 		}
 		break;
 	default:
-                oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid check_existence value: %d.\n", check_existence);
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid check_existence value: %d.", check_existence);
                 result = OVAL_RESULT_ERROR;
 		break;
 	}
@@ -1445,7 +1445,7 @@ _oval_result_test_evaluate_items(struct oval_test *test, struct oval_syschar *sy
 		}
 		break;
 	default:
-		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown syschar flag: %d.\n", oval_syschar_get_flag(syschar_object));
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown syschar flag: %d.", oval_syschar_get_flag(syschar_object));
 		return OVAL_RESULT_ERROR;
 	}
 
