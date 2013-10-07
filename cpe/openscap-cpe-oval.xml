@@ -128,7 +128,7 @@
                   <metadata>
                         <title>Fedora 20</title>
                         <affected family="unix">
-                            <platform>Fedora 19</platform>
+                            <platform>Fedora 20</platform>
                         </affected>
                         <reference ref_id="cpe:/o:fedoraproject:fedora:20" source="CPE"/>
                         <description>The operating system installed on the system is Fedora 20</description>
