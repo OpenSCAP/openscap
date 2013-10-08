@@ -783,7 +783,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		return OVAL_RESULT_NOT_EVALUATED;
 	}
 
-	oscap_seterr(OSCAP_EFAMILY_OVAL, "Ivalid OVAL data type: %d.", state_data_type);
+	oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid OVAL data type: %d.", state_data_type);
         return OVAL_RESULT_ERROR;
 }
 
