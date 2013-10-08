@@ -314,10 +314,17 @@ static int dbSQL_eval(const char *engine, const char *version,
 		}
 
 		/* set options */
-
-		if (odbx_bind (sql_dbh, uriInfo.db, uriInfo.user, uriInfo.pass,
-			       ODBX_BIND_SIMPLE) != ODBX_ERR_SUCCESS)
+		odbx_res = odbx_bind(sql_dbh, uriInfo.db, uriInfo.user, uriInfo.pass, ODBX_BIND_SIMPLE);
+		if (odbx_res != ODBX_ERR_SUCCESS)
 		{
+			const char *error_msg = odbx_error(sql_dbh, odbx_res);
+			SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+				"odbx_bind failed. Could not connect to the database '%s': %s",
+				uriInfo.db, error_msg != NULL ? error_msg : "(none)");
+			probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
+			SEXP_free(msg);
+			probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
+			err = 0;
 			dE("odbx_bind failed: db=%s, u=%s, p=%s\n",
 			   uriInfo.db, uriInfo.user, uriInfo.pass);
 			odbx_finish(sql_dbh);
