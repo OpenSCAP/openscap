@@ -320,6 +320,7 @@ static int dbSQL_eval(const char *engine, const char *version,
 		{
 			dE("odbx_bind failed: db=%s, u=%s, p=%s\n",
 			   uriInfo.db, uriInfo.user, uriInfo.pass);
+			odbx_finish(sql_dbh);
 			goto __exit;
 		}
 
