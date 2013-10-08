@@ -191,6 +191,7 @@ static int dbURIInfo_parse(dbURIInfo_t *info, const char *conn)
 			if (*(tok) != '=') goto __fail;		\
 			else (dst) = strdup((tok) + 1);		\
 		}						\
+		else dE("Unrecognized token: '%s'", (tok)-1);		\
 	while(0)
 
 #define matchitem2(tok, first, rest1, dst1, rest2, dst2)		\
@@ -207,6 +208,7 @@ static int dbURIInfo_parse(dbURIInfo_t *info, const char *conn)
 			if (*(tok) != '=') goto __fail;			\
 			else (dst2) = strdup((tok) + 1);		\
 		}							\
+		else dE("Unrecognized token: '%s'", (tok));		\
 		while(0)
 
 	tmp = NULL;
@@ -233,6 +235,12 @@ static int dbURIInfo_parse(dbURIInfo_t *info, const char *conn)
 
 				oscap_free(tmp);
 			}
+			break;
+
+		case '\0':
+			break;
+		default:
+			dE("Unrecognized token: '%s'", (tok));
 			break;
 		}
 	}
