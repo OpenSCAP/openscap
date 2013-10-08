@@ -175,8 +175,9 @@ static void dbURIInfo_clear(dbURIInfo_t *ui)
 
 static int dbURIInfo_parse(dbURIInfo_t *info, const char *conn)
 {
-	char *tmp, *tok, *copy = strdup(conn);
-
+	char *tmp, *tok, *copy;
+	char *conn_copy = strdup(conn);
+	copy = conn_copy;
 	if (copy == NULL)
 		return (-1);
 
@@ -235,10 +236,10 @@ static int dbURIInfo_parse(dbURIInfo_t *info, const char *conn)
 		}
 	}
 
-	oscap_free(copy);
+	oscap_free(conn_copy);
 	return (0);
 __fail:
-	oscap_free(copy);
+	oscap_free(conn_copy);
 	return (-1);
 }
 
