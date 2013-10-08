@@ -195,13 +195,13 @@ static int dbURIInfo_parse(dbURIInfo_t *info, const char *conn)
 
 #define matchitem2(tok, first, rest1, dst1, rest2, dst2)		\
 	case first:							\
-		if (strcasecmp((rest1), (tok)+1) == 0) {		\
+		if (strncasecmp((rest1), (tok)+1, strlen(rest1)) == 0) {	\
 			tok += 1+strlen(rest1);				\
 			skipspace(tok);					\
 			if (*(tok) != '=') goto __fail;			\
 			else (dst1) = strdup((tok) + 1);		\
 		}							\
-		else if (strcasecmp((rest2), (tok)+1) == 0) {		\
+		else if (strncasecmp((rest2), (tok)+1, strlen(rest2)) == 0) {	\
 			tok += 1+strlen(rest2);				\
 			skipspace(tok);					\
 			if (*(tok) != '=') goto __fail;			\
