@@ -104,6 +104,7 @@ void *probe_worker_runfn(void *arg)
 			/* FIXME */
 			exit(ret);
 		}
+		SEXP_free(probe_res);
 	} else {
 		SEAP_msg_t *seap_reply;
 		/*
