@@ -1068,6 +1068,23 @@ static inline oval_result_t _evaluate_sysent_with_variable(struct oval_syschar_m
 	return ent_val_res;
 }
 
+static inline oval_result_t _evaluate_sysent(struct oval_syschar_model *syschar_model, struct oval_sysent *item_entity, struct oval_variable *state_entity_var, char *state_entity_val_text, oval_operation_t state_entity_operation, oval_check_t var_check, oval_datatype_t state_entity_val_datatype)
+{
+	if (oval_sysent_get_status(item_entity) == SYSCHAR_STATUS_DOES_NOT_EXIST) {
+		return OVAL_RESULT_FALSE;
+	} else if (state_entity_var != NULL) {
+		return _evaluate_sysent_with_variable(syschar_model,
+				state_entity_var, item_entity, state_entity_val_text,
+				state_entity_operation, var_check);
+	} else {
+		return evaluate(oval_sysent_get_value(item_entity),
+				       state_entity_val_text,
+				       oval_sysent_get_datatype(item_entity),
+				       state_entity_val_datatype,
+				       state_entity_operation);
+	}
+}
+
 static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct oval_sysitem *cur_sysitem, struct oval_state *state)
 {
 	struct oval_state_content_iterator *state_contents_itr;
@@ -1156,22 +1173,14 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 			if (oval_entity_get_mask(state_entity))
 				oval_sysent_set_mask(item_entity,1);
 
-			if (oval_sysent_get_status(item_entity) == SYSCHAR_STATUS_DOES_NOT_EXIST) {
-				ent_val_res = OVAL_RESULT_FALSE;
-			} else if (state_entity_var != NULL) {
-				ent_val_res = _evaluate_sysent_with_variable(syschar_model,
-						state_entity_var, item_entity, state_entity_val_text,
-						state_entity_operation, var_check);
-				if (((signed) ent_val_res) == -1) {
-					goto fail;
-				}
-			} else {
-				ent_val_res = evaluate(oval_sysent_get_value(item_entity),
-						       state_entity_val_text,
-						       oval_sysent_get_datatype(item_entity),
-						       state_entity_val_datatype,
-						       state_entity_operation);
+			ent_val_res = _evaluate_sysent(syschar_model, item_entity, state_entity_var,
+					state_entity_val_text, state_entity_operation, var_check,
+					state_entity_val_datatype);
+			if (((signed) ent_val_res) == -1) {
+				oval_sysent_iterator_free(item_entities_itr);
+				goto fail;
 			}
+
 			ores_add_res(&ent_ores, ent_val_res);
 		}
 		oval_sysent_iterator_free(item_entities_itr);
