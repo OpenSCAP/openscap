@@ -1012,6 +1012,62 @@ oval_result_t ores_get_result_byopr(struct oresults *ores, oval_operator_t op)
 	return result;
 }
 
+static inline oval_result_t _evaluate_sysent_with_variable(struct oval_syschar_model *syschar_model, struct oval_variable *state_entity_var, struct oval_sysent *item_entity, char *state_entity_val_text, oval_operation_t state_entity_operation, oval_check_t var_check)
+{
+	oval_syschar_collection_flag_t flag;
+	oval_result_t ent_val_res;
+
+	if (0 != oval_syschar_model_compute_variable(syschar_model, state_entity_var)) {
+		return -1;
+	}
+
+	flag = oval_variable_get_collection_flag(state_entity_var);
+	switch (flag) {
+	case SYSCHAR_FLAG_COMPLETE:
+	case SYSCHAR_FLAG_INCOMPLETE:{
+		struct oresults var_ores;
+		struct oval_value_iterator *val_itr;
+
+		ores_clear(&var_ores);
+
+		val_itr = oval_variable_get_values(state_entity_var);
+		while (oval_value_iterator_has_more(val_itr)) {
+			struct oval_value *var_val;
+			oval_result_t var_val_res;
+
+			var_val = oval_value_iterator_next(val_itr);
+			state_entity_val_text = oval_value_get_text(var_val);
+			if (state_entity_val_text == NULL) {
+				dE("Found NULL variable value text.\n");
+				ores_add_res(&var_ores, OVAL_RESULT_ERROR);
+				break;
+			}
+			oval_datatype_t state_entity_val_datatype = oval_value_get_datatype(var_val);
+
+			var_val_res = evaluate(oval_sysent_get_value(item_entity),
+					state_entity_val_text,
+					oval_sysent_get_datatype(item_entity),
+					state_entity_val_datatype,
+					state_entity_operation);
+			ores_add_res(&var_ores, var_val_res);
+		}
+		oval_value_iterator_free(val_itr);
+
+		ent_val_res = ores_get_result_bychk(&var_ores, var_check);
+		} break;
+	case SYSCHAR_FLAG_ERROR:
+	case SYSCHAR_FLAG_DOES_NOT_EXIST:
+	case SYSCHAR_FLAG_NOT_COLLECTED:
+	case SYSCHAR_FLAG_NOT_APPLICABLE:
+		ent_val_res = OVAL_RESULT_ERROR;
+		break;
+	default:
+		ent_val_res = -1;
+	}
+
+	return ent_val_res;
+}
+
 static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct oval_sysitem *cur_sysitem, struct oval_state *state)
 {
 	struct oval_state_content_iterator *state_contents_itr;
@@ -1103,57 +1159,12 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 			if (oval_sysent_get_status(item_entity) == SYSCHAR_STATUS_DOES_NOT_EXIST) {
 				ent_val_res = OVAL_RESULT_FALSE;
 			} else if (state_entity_var != NULL) {
-				struct oresults var_ores;
-				struct oval_value_iterator *val_itr;
-				oval_syschar_collection_flag_t flag;
-
-				if (0 != oval_syschar_model_compute_variable(syschar_model, state_entity_var)) {
-					oval_sysent_iterator_free(item_entities_itr);
+				ent_val_res = _evaluate_sysent_with_variable(syschar_model,
+						state_entity_var, item_entity, state_entity_val_text,
+						state_entity_operation, var_check);
+				if (((signed) ent_val_res) == -1) {
 					goto fail;
 				}
-
-				flag = oval_variable_get_collection_flag(state_entity_var);
-				switch (flag) {
-				case SYSCHAR_FLAG_COMPLETE:
-				case SYSCHAR_FLAG_INCOMPLETE:
-					ores_clear(&var_ores);
-
-					val_itr = oval_variable_get_values(state_entity_var);
-					while (oval_value_iterator_has_more(val_itr)) {
-						struct oval_value *var_val;
-						oval_result_t var_val_res;
-
-						var_val = oval_value_iterator_next(val_itr);
-						state_entity_val_text = oval_value_get_text(var_val);
-						if (state_entity_val_text == NULL) {
-							dE("Found NULL variable value text.\n");
-							ores_add_res(&var_ores, OVAL_RESULT_ERROR);
-							break;
-						}
-						state_entity_val_datatype = oval_value_get_datatype(var_val);
-
-						var_val_res = evaluate(oval_sysent_get_value(item_entity),
-								       state_entity_val_text,
-								       oval_sysent_get_datatype(item_entity),
-								       state_entity_val_datatype,
-								       state_entity_operation);
-						ores_add_res(&var_ores, var_val_res);
-					}
-					oval_value_iterator_free(val_itr);
-
-					ent_val_res = ores_get_result_bychk(&var_ores, var_check);
-					break;
-				case SYSCHAR_FLAG_ERROR:
-				case SYSCHAR_FLAG_DOES_NOT_EXIST:
-				case SYSCHAR_FLAG_NOT_COLLECTED:
-				case SYSCHAR_FLAG_NOT_APPLICABLE:
-					ent_val_res = OVAL_RESULT_ERROR;
-					break;
-				default:
-					oval_sysent_iterator_free(item_entities_itr);
-					goto fail;
-				}
-
 			} else {
 				ent_val_res = evaluate(oval_sysent_get_value(item_entity),
 						       state_entity_val_text,
