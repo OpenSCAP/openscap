@@ -1012,7 +1012,7 @@ oval_result_t ores_get_result_byopr(struct oresults *ores, oval_operator_t op)
 	return result;
 }
 
-static inline oval_result_t _evaluate_sysent_with_variable(struct oval_syschar_model *syschar_model, struct oval_entity *state_entity, struct oval_sysent *item_entity, char *state_entity_val_text, oval_operation_t state_entity_operation, oval_check_t var_check)
+static inline oval_result_t _evaluate_sysent_with_variable(struct oval_syschar_model *syschar_model, struct oval_entity *state_entity, struct oval_sysent *item_entity, char *state_entity_val_text, oval_operation_t state_entity_operation, struct oval_state_content *content)
 {
 	oval_syschar_collection_flag_t flag;
 	oval_result_t ent_val_res;
@@ -1059,6 +1059,7 @@ static inline oval_result_t _evaluate_sysent_with_variable(struct oval_syschar_m
 		}
 		oval_value_iterator_free(val_itr);
 
+		oval_check_t var_check = oval_state_content_get_var_check(content);
 		ent_val_res = ores_get_result_bychk(&var_ores, var_check);
 		} break;
 	case SYSCHAR_FLAG_ERROR:
@@ -1074,7 +1075,7 @@ static inline oval_result_t _evaluate_sysent_with_variable(struct oval_syschar_m
 	return ent_val_res;
 }
 
-static inline oval_result_t _evaluate_sysent(struct oval_syschar_model *syschar_model, struct oval_sysent *item_entity, struct oval_entity *state_entity, char *state_entity_val_text, oval_operation_t state_entity_operation, oval_check_t var_check, oval_datatype_t state_entity_val_datatype)
+static inline oval_result_t _evaluate_sysent(struct oval_syschar_model *syschar_model, struct oval_sysent *item_entity, struct oval_entity *state_entity, char *state_entity_val_text, oval_operation_t state_entity_operation, struct oval_state_content *content, oval_datatype_t state_entity_val_datatype)
 {
 	if (oval_sysent_get_status(item_entity) == SYSCHAR_STATUS_DOES_NOT_EXIST) {
 		return OVAL_RESULT_FALSE;
@@ -1082,7 +1083,7 @@ static inline oval_result_t _evaluate_sysent(struct oval_syschar_model *syschar_
 
 		return _evaluate_sysent_with_variable(syschar_model,
 				state_entity, item_entity, state_entity_val_text,
-				state_entity_operation, var_check);
+				state_entity_operation, content);
 	} else {
 		return evaluate(oval_sysent_get_value(item_entity),
 				       state_entity_val_text,
@@ -1111,7 +1112,6 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 		oval_datatype_t state_entity_val_datatype = OVAL_DATATYPE_UNKNOWN;
 		oval_operation_t state_entity_operation;
 		oval_check_t entity_check;
-		oval_check_t var_check = OVAL_CHECK_UNKNOWN;
 		oval_result_t ste_ent_res;
 		struct oval_sysent_iterator *item_entities_itr;
 		struct oresults ent_ores;
@@ -1133,9 +1133,7 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 		entity_check = oval_state_content_get_ent_check(content);
 		state_entity_operation = oval_entity_get_operation(state_entity);
 
-		if (oval_entity_get_varref_type(state_entity) == OVAL_ENTITY_VARREF_ATTRIBUTE) {
-			var_check = oval_state_content_get_var_check(content);
-		} else {
+		if (oval_entity_get_varref_type(state_entity) != OVAL_ENTITY_VARREF_ATTRIBUTE) {
 			if ((state_entity_val = oval_entity_get_value(state_entity)) == NULL) {
 				oscap_seterr(OSCAP_EFAMILY_OVAL, "OVAL internal error: found NULL entity value");
 				goto fail;
@@ -1174,7 +1172,7 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 				oval_sysent_set_mask(item_entity,1);
 
 			ent_val_res = _evaluate_sysent(syschar_model, item_entity, state_entity,
-					state_entity_val_text, state_entity_operation, var_check,
+					state_entity_val_text, state_entity_operation, content,
 					state_entity_val_datatype);
 			if (((signed) ent_val_res) == -1) {
 				oval_sysent_iterator_free(item_entities_itr);
