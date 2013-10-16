@@ -38,32 +38,82 @@ AC_DEFUN([gl_EARLY],
   m4_pattern_allow([^gl_LIBOBJS$])dnl a variable
   m4_pattern_allow([^gl_LTLIBOBJS$])dnl a variable
   AC_REQUIRE([gl_PROG_AR_RANLIB])
+  AC_REQUIRE([AM_PROG_CC_C_O])
   # Code from module absolute-header:
   # Code from module alloca-opt:
+  # Code from module chdir:
+  # Code from module close:
+  # Code from module closedir:
+  # Code from module dirent:
+  # Code from module dirfd:
+  # Code from module dirname-lgpl:
+  # Code from module dosname:
+  # Code from module double-slash-root:
+  # Code from module dup2:
   # Code from module errno:
   # Code from module extensions:
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
   # Code from module extern-inline:
+  # Code from module fchdir:
+  # Code from module fcntl:
+  # Code from module fcntl-h:
+  # Code from module fd-hook:
+  # Code from module filename:
+  # Code from module filenamecat-lgpl:
   # Code from module float:
+  # Code from module fstat:
+  # Code from module getcwd-lgpl:
   # Code from module getdelim:
+  # Code from module getdtablesize:
   # Code from module getline:
+  # Code from module gettimeofday:
+  # Code from module havelib:
   # Code from module include_next:
+  # Code from module largefile:
+  AC_REQUIRE([AC_SYS_LARGEFILE])
+  # Code from module lock:
+  # Code from module lstat:
+  # Code from module malloc-posix:
   # Code from module memchr:
+  # Code from module msvc-inval:
+  # Code from module msvc-nothrow:
   # Code from module multiarch:
+  # Code from module open:
+  # Code from module opendir:
+  # Code from module pathmax:
+  # Code from module pthread_sigmask:
+  # Code from module raise:
+  # Code from module random:
+  # Code from module random_r:
+  # Code from module readdir:
   # Code from module realloc-posix:
+  # Code from module signal-h:
+  # Code from module sigprocmask:
   # Code from module size_max:
   # Code from module snippet/_Noreturn:
   # Code from module snippet/arg-nonnull:
   # Code from module snippet/c++defs:
   # Code from module snippet/warn-on-use:
   # Code from module ssize_t:
+  # Code from module stat:
+  # Code from module stdbool:
   # Code from module stddef:
   # Code from module stdint:
   # Code from module stdio:
   # Code from module stdlib:
+  # Code from module stpcpy:
+  # Code from module strdup-posix:
+  # Code from module strerror-override:
+  # Code from module strerror_r-posix:
   # Code from module string:
   # Code from module strsep:
+  # Code from module sys_stat:
+  # Code from module sys_time:
   # Code from module sys_types:
+  # Code from module sys_uio:
+  # Code from module threadlib:
+  gl_THREADLIB_EARLY
+  # Code from module time:
   # Code from module unistd:
   # Code from module vasnprintf:
   # Code from module vasprintf:
@@ -87,8 +137,43 @@ AC_DEFUN([gl_INIT],
   gl_COMMON
   gl_source_base='lib'
   gl_FUNC_ALLOCA
+  gl_UNISTD_MODULE_INDICATOR([chdir])
+  gl_FUNC_CLOSE
+  if test $REPLACE_CLOSE = 1; then
+    AC_LIBOBJ([close])
+  fi
+  gl_UNISTD_MODULE_INDICATOR([close])
+  gl_FUNC_CLOSEDIR
+  if test $HAVE_CLOSEDIR = 0 || test $REPLACE_CLOSEDIR = 1; then
+    AC_LIBOBJ([closedir])
+  fi
+  gl_DIRENT_MODULE_INDICATOR([closedir])
+  gl_DIRENT_H
+  gl_FUNC_DIRFD
+  if test $ac_cv_func_dirfd = no && test $gl_cv_func_dirfd_macro = no; then
+    AC_LIBOBJ([dirfd])
+    gl_PREREQ_DIRFD
+  fi
+  gl_DIRENT_MODULE_INDICATOR([dirfd])
+  gl_DIRNAME_LGPL
+  gl_DOUBLE_SLASH_ROOT
+  gl_FUNC_DUP2
+  if test $HAVE_DUP2 = 0 || test $REPLACE_DUP2 = 1; then
+    AC_LIBOBJ([dup2])
+    gl_PREREQ_DUP2
+  fi
+  gl_UNISTD_MODULE_INDICATOR([dup2])
   gl_HEADER_ERRNO_H
   AC_REQUIRE([gl_EXTERN_INLINE])
+  gl_FUNC_FCHDIR
+  gl_UNISTD_MODULE_INDICATOR([fchdir])
+  gl_FUNC_FCNTL
+  if test $HAVE_FCNTL = 0 || test $REPLACE_FCNTL = 1; then
+    AC_LIBOBJ([fcntl])
+  fi
+  gl_FCNTL_MODULE_INDICATOR([fcntl])
+  gl_FCNTL_H
+  gl_FILE_NAME_CONCAT_LGPL
   gl_FLOAT_H
   if test $REPLACE_FLOAT_LDBL = 1; then
     AC_LIBOBJ([float])
@@ -96,36 +181,160 @@ AC_DEFUN([gl_INIT],
   if test $REPLACE_ITOLD = 1; then
     AC_LIBOBJ([itold])
   fi
+  gl_FUNC_FSTAT
+  if test $REPLACE_FSTAT = 1; then
+    AC_LIBOBJ([fstat])
+    gl_PREREQ_FSTAT
+  fi
+  gl_SYS_STAT_MODULE_INDICATOR([fstat])
+  gl_FUNC_GETCWD_LGPL
+  if test $REPLACE_GETCWD = 1; then
+    AC_LIBOBJ([getcwd-lgpl])
+  fi
+  gl_UNISTD_MODULE_INDICATOR([getcwd])
   gl_FUNC_GETDELIM
   if test $HAVE_GETDELIM = 0 || test $REPLACE_GETDELIM = 1; then
     AC_LIBOBJ([getdelim])
     gl_PREREQ_GETDELIM
   fi
   gl_STDIO_MODULE_INDICATOR([getdelim])
+  gl_FUNC_GETDTABLESIZE
+  if test $HAVE_GETDTABLESIZE = 0 || test $REPLACE_GETDTABLESIZE = 1; then
+    AC_LIBOBJ([getdtablesize])
+    gl_PREREQ_GETDTABLESIZE
+  fi
+  gl_UNISTD_MODULE_INDICATOR([getdtablesize])
   gl_FUNC_GETLINE
   if test $REPLACE_GETLINE = 1; then
     AC_LIBOBJ([getline])
     gl_PREREQ_GETLINE
   fi
   gl_STDIO_MODULE_INDICATOR([getline])
+  gl_FUNC_GETTIMEOFDAY
+  if test $HAVE_GETTIMEOFDAY = 0 || test $REPLACE_GETTIMEOFDAY = 1; then
+    AC_LIBOBJ([gettimeofday])
+    gl_PREREQ_GETTIMEOFDAY
+  fi
+  gl_SYS_TIME_MODULE_INDICATOR([gettimeofday])
+  AC_REQUIRE([gl_LARGEFILE])
+  gl_LOCK
+  gl_MODULE_INDICATOR([lock])
+  gl_FUNC_LSTAT
+  if test $REPLACE_LSTAT = 1; then
+    AC_LIBOBJ([lstat])
+    gl_PREREQ_LSTAT
+  fi
+  gl_SYS_STAT_MODULE_INDICATOR([lstat])
+  gl_FUNC_MALLOC_POSIX
+  if test $REPLACE_MALLOC = 1; then
+    AC_LIBOBJ([malloc])
+  fi
+  gl_STDLIB_MODULE_INDICATOR([malloc-posix])
   gl_FUNC_MEMCHR
   if test $HAVE_MEMCHR = 0 || test $REPLACE_MEMCHR = 1; then
     AC_LIBOBJ([memchr])
     gl_PREREQ_MEMCHR
   fi
   gl_STRING_MODULE_INDICATOR([memchr])
+  gl_MSVC_INVAL
+  if test $HAVE_MSVC_INVALID_PARAMETER_HANDLER = 1; then
+    AC_LIBOBJ([msvc-inval])
+  fi
+  gl_MSVC_NOTHROW
+  if test $HAVE_MSVC_INVALID_PARAMETER_HANDLER = 1; then
+    AC_LIBOBJ([msvc-nothrow])
+  fi
   gl_MULTIARCH
+  gl_FUNC_OPEN
+  if test $REPLACE_OPEN = 1; then
+    AC_LIBOBJ([open])
+    gl_PREREQ_OPEN
+  fi
+  gl_FCNTL_MODULE_INDICATOR([open])
+  gl_FUNC_OPENDIR
+  if test $HAVE_OPENDIR = 0 || test $REPLACE_OPENDIR = 1; then
+    AC_LIBOBJ([opendir])
+  fi
+  gl_DIRENT_MODULE_INDICATOR([opendir])
+  gl_PATHMAX
+  gl_FUNC_PTHREAD_SIGMASK
+  if test $HAVE_PTHREAD_SIGMASK = 0 || test $REPLACE_PTHREAD_SIGMASK = 1; then
+    AC_LIBOBJ([pthread_sigmask])
+    gl_PREREQ_PTHREAD_SIGMASK
+  fi
+  gl_SIGNAL_MODULE_INDICATOR([pthread_sigmask])
+  gl_FUNC_RAISE
+  if test $HAVE_RAISE = 0 || test $REPLACE_RAISE = 1; then
+    AC_LIBOBJ([raise])
+    gl_PREREQ_RAISE
+  fi
+  gl_SIGNAL_MODULE_INDICATOR([raise])
+  gl_FUNC_RANDOM
+  if test $HAVE_RANDOM = 0; then
+    AC_LIBOBJ([random])
+    gl_PREREQ_RANDOM
+  fi
+  gl_STDLIB_MODULE_INDICATOR([random])
+  gl_FUNC_RANDOM_R
+  if test $HAVE_RANDOM_R = 0 || test $REPLACE_RANDOM_R = 1; then
+    AC_LIBOBJ([random_r])
+    gl_PREREQ_RANDOM_R
+  fi
+  gl_STDLIB_MODULE_INDICATOR([random_r])
+  gl_FUNC_READDIR
+  if test $HAVE_READDIR = 0; then
+    AC_LIBOBJ([readdir])
+  fi
+  gl_DIRENT_MODULE_INDICATOR([readdir])
   gl_FUNC_REALLOC_POSIX
   if test $REPLACE_REALLOC = 1; then
     AC_LIBOBJ([realloc])
   fi
   gl_STDLIB_MODULE_INDICATOR([realloc-posix])
+  gl_SIGNAL_H
+  gl_SIGNALBLOCKING
+  if test $HAVE_POSIX_SIGNALBLOCKING = 0; then
+    AC_LIBOBJ([sigprocmask])
+    gl_PREREQ_SIGPROCMASK
+  fi
+  gl_SIGNAL_MODULE_INDICATOR([sigprocmask])
   gl_SIZE_MAX
   gt_TYPE_SSIZE_T
+  gl_FUNC_STAT
+  if test $REPLACE_STAT = 1; then
+    AC_LIBOBJ([stat])
+    gl_PREREQ_STAT
+  fi
+  gl_SYS_STAT_MODULE_INDICATOR([stat])
+  AM_STDBOOL_H
   gl_STDDEF_H
   gl_STDINT_H
   gl_STDIO_H
   gl_STDLIB_H
+  gl_FUNC_STPCPY
+  if test $HAVE_STPCPY = 0; then
+    AC_LIBOBJ([stpcpy])
+    gl_PREREQ_STPCPY
+  fi
+  gl_STRING_MODULE_INDICATOR([stpcpy])
+  gl_FUNC_STRDUP_POSIX
+  if test $ac_cv_func_strdup = no || test $REPLACE_STRDUP = 1; then
+    AC_LIBOBJ([strdup])
+    gl_PREREQ_STRDUP
+  fi
+  gl_STRING_MODULE_INDICATOR([strdup])
+  AC_REQUIRE([gl_HEADER_ERRNO_H])
+  AC_REQUIRE([gl_FUNC_STRERROR_0])
+  if test -n "$ERRNO_H" || test $REPLACE_STRERROR_0 = 1; then
+    AC_LIBOBJ([strerror-override])
+    gl_PREREQ_SYS_H_WINSOCK2
+  fi
+  gl_FUNC_STRERROR_R
+  if test $HAVE_DECL_STRERROR_R = 0 || test $REPLACE_STRERROR_R = 1; then
+    AC_LIBOBJ([strerror_r])
+    gl_PREREQ_STRERROR_R
+  fi
+  gl_STRING_MODULE_INDICATOR([strerror_r])
   gl_HEADER_STRING_H
   gl_FUNC_STRSEP
   if test $HAVE_STRSEP = 0; then
@@ -133,8 +342,16 @@ AC_DEFUN([gl_INIT],
     gl_PREREQ_STRSEP
   fi
   gl_STRING_MODULE_INDICATOR([strsep])
+  gl_HEADER_SYS_STAT_H
+  AC_PROG_MKDIR_P
+  gl_HEADER_SYS_TIME_H
+  AC_PROG_MKDIR_P
   gl_SYS_TYPES_H
   AC_PROG_MKDIR_P
+  gl_HEADER_SYS_UIO
+  AC_PROG_MKDIR_P
+  gl_THREADLIB
+  gl_HEADER_TIME_H
   gl_UNISTD_H
   gl_FUNC_VASNPRINTF
   gl_FUNC_VASPRINTF
@@ -280,6 +497,7 @@ AC_DEFUN([gltests_LIBSOURCES], [
 # This macro records the list of files which have been installed by
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl_FILE_LIST], [
+  build-aux/config.rpath
   build-aux/snippet/_Noreturn.h
   build-aux/snippet/arg-nonnull.h
   build-aux/snippet/c++defs.h
@@ -287,28 +505,81 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/alloca.in.h
   lib/asnprintf.c
   lib/asprintf.c
+  lib/basename-lgpl.c
+  lib/close.c
+  lib/closedir.c
+  lib/dirent-private.h
+  lib/dirent.in.h
+  lib/dirfd.c
+  lib/dirname-lgpl.c
+  lib/dirname.h
+  lib/dosname.h
+  lib/dup2.c
   lib/errno.in.h
+  lib/fchdir.c
+  lib/fcntl.c
+  lib/fcntl.in.h
+  lib/fd-hook.c
+  lib/fd-hook.h
+  lib/filename.h
+  lib/filenamecat-lgpl.c
+  lib/filenamecat.h
   lib/float+.h
   lib/float.c
   lib/float.in.h
+  lib/fstat.c
+  lib/getcwd-lgpl.c
   lib/getdelim.c
+  lib/getdtablesize.c
   lib/getline.c
+  lib/gettimeofday.c
+  lib/glthread/lock.c
+  lib/glthread/lock.h
+  lib/glthread/threadlib.c
   lib/itold.c
+  lib/lstat.c
+  lib/malloc.c
   lib/memchr.c
   lib/memchr.valgrind
+  lib/msvc-inval.c
+  lib/msvc-inval.h
+  lib/msvc-nothrow.c
+  lib/msvc-nothrow.h
+  lib/open.c
+  lib/opendir.c
+  lib/pathmax.h
   lib/printf-args.c
   lib/printf-args.h
   lib/printf-parse.c
   lib/printf-parse.h
+  lib/pthread_sigmask.c
+  lib/raise.c
+  lib/random.c
+  lib/random_r.c
+  lib/readdir.c
   lib/realloc.c
+  lib/signal.in.h
+  lib/sigprocmask.c
   lib/size_max.h
+  lib/stat.c
+  lib/stdbool.in.h
   lib/stddef.in.h
   lib/stdint.in.h
   lib/stdio.in.h
   lib/stdlib.in.h
+  lib/stpcpy.c
+  lib/strdup.c
+  lib/strerror-override.c
+  lib/strerror-override.h
+  lib/strerror_r.c
   lib/string.in.h
+  lib/stripslash.c
   lib/strsep.c
+  lib/sys_stat.in.h
+  lib/sys_time.in.h
   lib/sys_types.in.h
+  lib/sys_uio.in.h
+  lib/time.in.h
   lib/unistd.c
   lib/unistd.in.h
   lib/vasnprintf.c
@@ -321,37 +592,84 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/00gnulib.m4
   m4/absolute-header.m4
   m4/alloca.m4
+  m4/close.m4
+  m4/closedir.m4
+  m4/dirent_h.m4
+  m4/dirfd.m4
+  m4/dirname.m4
+  m4/double-slash-root.m4
+  m4/dup2.m4
   m4/errno_h.m4
   m4/exponentd.m4
   m4/extensions.m4
   m4/extern-inline.m4
+  m4/fchdir.m4
+  m4/fcntl-o.m4
+  m4/fcntl.m4
+  m4/fcntl_h.m4
+  m4/filenamecat.m4
   m4/float_h.m4
+  m4/fstat.m4
+  m4/getcwd.m4
   m4/getdelim.m4
+  m4/getdtablesize.m4
   m4/getline.m4
+  m4/gettimeofday.m4
   m4/gnulib-common.m4
   m4/include_next.m4
   m4/intmax_t.m4
   m4/inttypes_h.m4
+  m4/largefile.m4
+  m4/lib-ld.m4
+  m4/lib-link.m4
+  m4/lib-prefix.m4
+  m4/lock.m4
   m4/longlong.m4
+  m4/lstat.m4
   m4/malloc.m4
   m4/math_h.m4
   m4/memchr.m4
   m4/mmap-anon.m4
+  m4/mode_t.m4
+  m4/msvc-inval.m4
+  m4/msvc-nothrow.m4
   m4/multiarch.m4
   m4/off_t.m4
   m4/onceonly.m4
+  m4/open.m4
+  m4/opendir.m4
+  m4/pathmax.m4
   m4/printf.m4
+  m4/pthread_sigmask.m4
+  m4/raise.m4
+  m4/random.m4
+  m4/random_r.m4
+  m4/readdir.m4
   m4/realloc.m4
+  m4/signal_h.m4
+  m4/signalblocking.m4
   m4/size_max.m4
   m4/ssize_t.m4
+  m4/stat.m4
+  m4/stdbool.m4
   m4/stddef_h.m4
   m4/stdint.m4
   m4/stdint_h.m4
   m4/stdio_h.m4
   m4/stdlib_h.m4
+  m4/stpcpy.m4
+  m4/strdup.m4
+  m4/strerror.m4
+  m4/strerror_r.m4
   m4/string_h.m4
   m4/strsep.m4
+  m4/sys_socket_h.m4
+  m4/sys_stat_h.m4
+  m4/sys_time_h.m4
   m4/sys_types_h.m4
+  m4/sys_uio_h.m4
+  m4/threadlib.m4
+  m4/time_h.m4
   m4/unistd_h.m4
   m4/vasnprintf.m4
   m4/vasprintf.m4

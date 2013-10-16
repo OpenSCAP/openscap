@@ -5179,18 +5179,21 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
                         /* SNPRINTF or sprintf failed.  Save and use the errno
                            that it has set, if any.  */
                         int saved_errno = errno;
+                        if (saved_errno == 0)
+                          {
+                            if (dp->conversion == 'c' || dp->conversion == 's')
+                              saved_errno = EILSEQ;
+                            else
+                              saved_errno = EINVAL;
+                          }
 
                         if (!(result == resultbuf || result == NULL))
                           free (result);
                         if (buf_malloced != NULL)
                           free (buf_malloced);
-                        errno =
-                          (saved_errno != 0
-                           ? saved_errno
-                           : (dp->conversion == 'c' || dp->conversion == 's'
-                              ? EILSEQ
-                              : EINVAL));
                         CLEANUP ();
+
+                        errno = saved_errno;
                         return NULL;
                       }
 

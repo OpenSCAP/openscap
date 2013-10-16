@@ -27,13 +27,27 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=config --lgpl --no-conditional-dependencies --libtool --macro-prefix=gl getline strsep vasprintf
+#   gnulib-tool --import --dir=. --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=config --lgpl --no-conditional-dependencies --libtool --macro-prefix=gl close closedir errno fchdir getline lstat open opendir pthread_sigmask random readdir srandom stpcpy strerror_r-posix strsep sys_uio vasprintf
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])
 gl_MODULES([
+  close
+  closedir
+  errno
+  fchdir
   getline
+  lstat
+  open
+  opendir
+  pthread_sigmask
+  random
+  readdir
+  srandom
+  stpcpy
+  strerror_r-posix
   strsep
+  sys_uio
   vasprintf
 ])
 gl_AVOID([])
