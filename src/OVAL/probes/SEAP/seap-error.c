@@ -20,8 +20,7 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
-#include "config.h"
-
+#include <config.h>
 #include "public/sexp.h"
 #include "public/sm_alloc.h"
 #include "_seap-error.h"

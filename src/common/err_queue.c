@@ -18,6 +18,7 @@
  *
  */
 
+#include <config.h>
 #include "_error.h"
 #include "err_queue.h"
 #include <stdlib.h>

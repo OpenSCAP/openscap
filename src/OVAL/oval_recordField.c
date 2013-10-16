@@ -20,12 +20,8 @@
  *      Tomas Heinrich <theinric@redhat.com>
  */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
+#include <config.h>
 #include <libxml/tree.h>
-
 #include "oval_definitions_impl.h"
 #include "oval_agent_api_impl.h"
 #include "oval_system_characteristics_impl.h"
