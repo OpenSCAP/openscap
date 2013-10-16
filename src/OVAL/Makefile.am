@@ -95,6 +95,7 @@ AM_CPPFLAGS =	@xml2_CFLAGS@ \
 		@pcre_CFLAGS@ \
 		@rpm_CFLAGS@ \
 		-I$(srcdir)/public \
+		-I$(top_srcdir)/lib \
 		-I$(top_srcdir)/src \
 		-I$(top_srcdir)/src/common \
 		-I$(top_srcdir)/src/common/public \

@@ -26,7 +26,8 @@ liboscapcommon_la_CPPFLAGS  = \
 	-I$(srcdir)/public \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/src/OVAL/probes/SEAP/public \
-	-I$(top_srcdir)/src/source/public
+	-I$(top_srcdir)/src/source/public \
+	-I$(top_srcdir)/lib
 
 liboscapcommon_la_LIBADD = \
 	@curl_LIBS@ \

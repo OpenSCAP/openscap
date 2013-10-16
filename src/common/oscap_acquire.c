@@ -18,6 +18,7 @@
  *
  */
 
+#include <config.h>
 #include <stdio.h> // for P_tmpdir macro
 #include <string.h>
 #include <stdlib.h>
