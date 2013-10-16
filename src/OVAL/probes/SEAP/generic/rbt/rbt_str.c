@@ -25,10 +25,10 @@
 #endif
 
 #include <string.h>
+#include <stdlib.h>
 #include <errno.h>
 #include <assume.h>
 
-#include "sm_alloc.h"
 #include "rbt_common.h"
 #include "rbt_str.h"
 
@@ -51,7 +51,7 @@ static struct rbt_node *rbt_str_node_alloc(void)
 static void rbt_str_node_free(struct rbt_node *n)
 {
         if (n != NULL)
-                sm_free(rbt_node_ptr(n));
+                free(rbt_node_ptr(n));
 }
 
 rbt_t *rbt_str_new (void)
@@ -61,7 +61,7 @@ rbt_t *rbt_str_new (void)
 
 static void rbt_str_free_callback(struct rbt_str_node *n)
 {
-        sm_free(n->key);
+        free(n->key);
         /* node memory is freed by rbt_free */
 }
 

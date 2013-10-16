@@ -27,7 +27,6 @@
 #include <errno.h>
 #include <assume.h>
 #include <stdlib.h>
-#include "sm_alloc.h"
 #include "rbt_common.h"
 #include "rbt_i32.h"
 
@@ -48,7 +47,7 @@ static struct rbt_node *rbt_i32_node_alloc(void)
 static void rbt_i32_node_free(struct rbt_node *n)
 {
         if (n != NULL)
-                sm_free(rbt_node_ptr(n));
+                free(rbt_node_ptr(n));
 }
 
 rbt_t *rbt_i32_new (void)
