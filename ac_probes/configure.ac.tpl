@@ -279,6 +279,9 @@ AC_ARG_ENABLE([probes],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes]) ;;
      esac],[probes=yes])
 
+AC_CHECK_HEADERS([syslog.h ftw.h])
+AC_CHECK_FUNCS([posix_memalign memalign])
+
 AC_CHECK_FUNCS([fts_open posix_memalign memalign])
 AC_CHECK_FUNC(sigwaitinfo, [sigwaitinfo_LIBS=""], [sigwaitinfo_LIBS="-lrt"])
 AC_SUBST(sigwaitinfo_LIBS)
