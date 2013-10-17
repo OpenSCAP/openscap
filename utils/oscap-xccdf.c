@@ -42,7 +42,9 @@
 #include <assert.h>
 #include <limits.h>
 #include <unistd.h>
+#if defined(HAVE_SYSLOG_H)
 #include <syslog.h>
+#endif
 
 #include "oscap-tool.h"
 #include "oscap.h"
@@ -450,11 +452,12 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	struct xccdf_session *session = NULL;
 
 	int result = OSCAP_ERROR;
+#if defined(HAVE_SYSLOG_H)
 	int priority = LOG_NOTICE;
 
 	/* syslog message */
 	syslog(priority, "Evaluation started. Content: %s, Profile: %s.", action->f_xccdf, action->profile);
-
+#endif
 	session = xccdf_session_new(action->f_xccdf);
 	if (session == NULL)
 		goto cleanup;
@@ -533,8 +536,10 @@ cleanup:
 	oscap_print_error();
 
 	/* syslog message */
+#if defined(HAVE_SYSLOG_H)
 	syslog(priority, "Evaluation finished. Return code: %d, Base score %f.", result,
 		session == NULL ? 0 : xccdf_session_get_base_score(session));
+#endif
 
 	if (session != NULL)
 		xccdf_session_free(session);
