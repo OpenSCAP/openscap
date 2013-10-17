@@ -40,8 +40,10 @@
 #include "oval_parser_impl.h"
 #include "adt/oval_string_map_impl.h"
 #include "oval_system_characteristics_impl.h"
-#include "oval_probe_impl.h"
 #include "results/oval_results_impl.h"
+#if defined(OVAL_PROBES_ENABLED)
+# include "oval_probe_impl.h"
+#endif
 #include "oval_directives_impl.h"
 
 #include "common/util.h"

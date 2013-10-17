@@ -2,7 +2,11 @@ if ENABLE_VALGRIND_TESTS
   export ENABLE_VALGRIND_TESTS=1
 endif
 
+if WANT_PROBES
 PROBE_SUBDIRS = probes mitre
+else
+PROBE_SUBDIRS =
+endif
 
 if WANT_SCE
 SCE_SUBDIRS = sce

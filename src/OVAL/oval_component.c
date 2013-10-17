@@ -44,7 +44,10 @@
 #include "adt/oval_string_map_impl.h"
 #include "oval_agent_api_impl.h"
 #include "oval_parser_impl.h"
+#if defined(OVAL_PROBES_ENABLED)
+#include "oval_probe.h"
 #include "oval_probe_session.h"
+#endif
 #include "common/util.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
@@ -106,7 +109,9 @@ typedef struct {
 	} mode;
 	union {
 		struct oval_syschar_model *sysmod;
+#if defined(OVAL_PROBES_ENABLED)
 		oval_probe_session_t *sess;
+#endif
 	} u;
 } oval_argu_t;
 
@@ -1262,8 +1267,12 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 		return flag;
 
 	if (argu->mode == OVAL_MODE_QUERY) {
+#if defined(OVAL_PROBES_ENABLED)
 		if (oval_probe_query_object(argu->u.sess, object, 0, &syschar) != 0)
 			return flag;
+#else
+		return SYSCHAR_FLAG_ERROR;
+#endif
 	} else {
 		char *obj_id;
 
@@ -1351,8 +1360,12 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_VARREF(oval_argu_
 	}
 
 	if (argu->mode == OVAL_MODE_QUERY) {
+#if defined(OVAL_PROBES_ENABLED)
 		if (oval_probe_query_variable(argu->u.sess, variable) != 0)
 			return flag;
+#else
+		return SYSCHAR_FLAG_ERROR;
+#endif
 	} else {
 		if (oval_syschar_model_compute_variable(argu->u.sysmod, variable) != 0)
 			return flag;
@@ -2250,7 +2263,7 @@ oval_syschar_collection_flag_t oval_component_compute(struct oval_syschar_model 
 
 	return oval_component_eval_common(&argu, component, value_collection);
 }
-
+#if defined(OVAL_PROBES_ENABLED)
 oval_syschar_collection_flag_t oval_component_query(oval_probe_session_t *sess,
 						    struct oval_component *component,
 						    struct oval_collection *value_collection)
@@ -2262,3 +2275,4 @@ oval_syschar_collection_flag_t oval_component_query(oval_probe_session_t *sess,
 
 	return oval_component_eval_common(&argu, component, value_collection);
 }
+#endif /* OVAL_PROBES_ENABLED */

@@ -1,5 +1,3 @@
-PROBES_SUBDIR = probes
-
 if WANT_CCE
 CCE_SUBDIR = CCE
 endif
@@ -10,13 +8,13 @@ CVSS_SUBDIR = CVSS
 OVAL_SUBDIR = OVAL
 XCCDF_SUBDIR = XCCDF
 
-SUBDIRS = SEAP \
-          crypt \
-          $(CCE_SUBDIR) \
+SUBDIRS = $(CCE_SUBDIR) \
           $(CVE_SUBDIR) \
           $(CPE_SUBDIR) \
           $(CVSS_SUBDIR) \
           $(OVAL_SUBDIR) \
-          $(XCCDF_SUBDIR) \
-          $(PROBES_SUBDIR)
+          $(XCCDF_SUBDIR)
 
+if WANT_PROBES
+SUBDIRS += SEAP crypt probes
+endif
