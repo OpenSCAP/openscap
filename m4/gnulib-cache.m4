@@ -27,7 +27,7 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=config --lgpl --no-conditional-dependencies --libtool --macro-prefix=gl arpa_inet close closedir errno fchdir getline lstat mkdtemp mkstemp open opendir pthread_sigmask random readdir stpcpy strerror_r-posix strptime strsep sys_uio sys_utsname sys_wait vasprintf
+#   gnulib-tool --import --dir=. --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=config --lgpl --no-conditional-dependencies --libtool --macro-prefix=gl arpa_inet close closedir errno fchdir getline getlogin inet_pton lstat mkdtemp mkstemp net_if netdb open opendir pthread_sigmask random readdir stpcpy strerror_r-posix strptime strsep sys_uio sys_utsname sys_wait uname vasprintf
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])
@@ -38,9 +38,13 @@ gl_MODULES([
   errno
   fchdir
   getline
+  getlogin
+  inet_pton
   lstat
   mkdtemp
   mkstemp
+  net_if
+  netdb
   open
   opendir
   pthread_sigmask
@@ -53,6 +57,7 @@ gl_MODULES([
   sys_uio
   sys_utsname
   sys_wait
+  uname
   vasprintf
 ])
 gl_AVOID([])

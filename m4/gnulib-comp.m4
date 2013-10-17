@@ -42,6 +42,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module absolute-header:
   # Code from module alloca-opt:
   # Code from module arpa_inet:
+  # Code from module c-ctype:
   # Code from module chdir:
   # Code from module close:
   # Code from module closedir:
@@ -66,10 +67,13 @@ AC_DEFUN([gl_EARLY],
   # Code from module getcwd-lgpl:
   # Code from module getdelim:
   # Code from module getdtablesize:
+  # Code from module gethostname:
   # Code from module getline:
+  # Code from module getlogin:
   # Code from module gettimeofday:
   # Code from module havelib:
   # Code from module include_next:
+  # Code from module inet_pton:
   # Code from module largefile:
   AC_REQUIRE([AC_SYS_LARGEFILE])
   # Code from module lock:
@@ -81,6 +85,9 @@ AC_DEFUN([gl_EARLY],
   # Code from module msvc-inval:
   # Code from module msvc-nothrow:
   # Code from module multiarch:
+  # Code from module net_if:
+  # Code from module netdb:
+  # Code from module netinet_in:
   # Code from module open:
   # Code from module opendir:
   # Code from module pathmax:
@@ -98,6 +105,8 @@ AC_DEFUN([gl_EARLY],
   # Code from module snippet/arg-nonnull:
   # Code from module snippet/c++defs:
   # Code from module snippet/warn-on-use:
+  # Code from module socketlib:
+  # Code from module sockets:
   # Code from module socklen:
   # Code from module ssize_t:
   # Code from module stat:
@@ -128,6 +137,7 @@ AC_DEFUN([gl_EARLY],
   gl_THREADLIB_EARLY
   # Code from module time:
   # Code from module time_r:
+  # Code from module uname:
   # Code from module unistd:
   # Code from module vasnprintf:
   # Code from module vasprintf:
@@ -220,18 +230,35 @@ AC_DEFUN([gl_INIT],
     gl_PREREQ_GETDTABLESIZE
   fi
   gl_UNISTD_MODULE_INDICATOR([getdtablesize])
+  gl_FUNC_GETHOSTNAME
+  if test $HAVE_GETHOSTNAME = 0; then
+    AC_LIBOBJ([gethostname])
+    gl_PREREQ_GETHOSTNAME
+  fi
+  gl_UNISTD_MODULE_INDICATOR([gethostname])
   gl_FUNC_GETLINE
   if test $REPLACE_GETLINE = 1; then
     AC_LIBOBJ([getline])
     gl_PREREQ_GETLINE
   fi
   gl_STDIO_MODULE_INDICATOR([getline])
+  gl_FUNC_GETLOGIN
+  if test $HAVE_GETLOGIN = 0; then
+    AC_LIBOBJ([getlogin])
+  fi
+  gl_UNISTD_MODULE_INDICATOR([getlogin])
   gl_FUNC_GETTIMEOFDAY
   if test $HAVE_GETTIMEOFDAY = 0 || test $REPLACE_GETTIMEOFDAY = 1; then
     AC_LIBOBJ([gettimeofday])
     gl_PREREQ_GETTIMEOFDAY
   fi
   gl_SYS_TIME_MODULE_INDICATOR([gettimeofday])
+  gl_FUNC_INET_PTON
+  if test $HAVE_INET_PTON = 0 || test $REPLACE_INET_NTOP = 1; then
+    AC_LIBOBJ([inet_pton])
+    gl_PREREQ_INET_PTON
+  fi
+  gl_ARPA_INET_MODULE_INDICATOR([inet_pton])
   AC_REQUIRE([gl_LARGEFILE])
   gl_LOCK
   gl_MODULE_INDICATOR([lock])
@@ -273,6 +300,11 @@ AC_DEFUN([gl_INIT],
     AC_LIBOBJ([msvc-nothrow])
   fi
   gl_MULTIARCH
+  gl_HEADER_NET_IF
+  AC_PROG_MKDIR_P
+  gl_HEADER_NETDB
+  gl_HEADER_NETINET_IN
+  AC_PROG_MKDIR_P
   gl_FUNC_OPEN
   if test $REPLACE_OPEN = 1; then
     AC_LIBOBJ([open])
@@ -333,6 +365,8 @@ AC_DEFUN([gl_INIT],
   fi
   gl_SIGNAL_MODULE_INDICATOR([sigprocmask])
   gl_SIZE_MAX
+  AC_REQUIRE([gl_SOCKETLIB])
+  AC_REQUIRE([gl_SOCKETS])
   gl_TYPE_SOCKLEN_T
   gt_TYPE_SSIZE_T
   gl_FUNC_STAT
@@ -417,6 +451,12 @@ AC_DEFUN([gl_INIT],
     gl_PREREQ_TIME_R
   fi
   gl_TIME_MODULE_INDICATOR([time_r])
+  gl_FUNC_UNAME
+  if test $HAVE_UNAME = 0; then
+    AC_LIBOBJ([uname])
+    gl_PREREQ_UNAME
+  fi
+  gl_SYS_UTSNAME_MODULE_INDICATOR([uname])
   gl_UNISTD_H
   gl_FUNC_VASNPRINTF
   gl_FUNC_VASPRINTF
@@ -572,6 +612,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/asnprintf.c
   lib/asprintf.c
   lib/basename-lgpl.c
+  lib/c-ctype.c
+  lib/c-ctype.h
   lib/close.c
   lib/closedir.c
   lib/dirent-private.h
@@ -597,11 +639,14 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/getcwd-lgpl.c
   lib/getdelim.c
   lib/getdtablesize.c
+  lib/gethostname.c
   lib/getline.c
+  lib/getlogin.c
   lib/gettimeofday.c
   lib/glthread/lock.c
   lib/glthread/lock.h
   lib/glthread/threadlib.c
+  lib/inet_pton.c
   lib/itold.c
   lib/lstat.c
   lib/malloc.c
@@ -613,6 +658,9 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/msvc-inval.h
   lib/msvc-nothrow.c
   lib/msvc-nothrow.h
+  lib/net_if.in.h
+  lib/netdb.in.h
+  lib/netinet_in.in.h
   lib/open.c
   lib/opendir.c
   lib/pathmax.h
@@ -630,6 +678,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/signal.in.h
   lib/sigprocmask.c
   lib/size_max.h
+  lib/sockets.c
+  lib/sockets.h
   lib/stat.c
   lib/stdalign.in.h
   lib/stdbool.in.h
@@ -661,12 +711,14 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/tempname.h
   lib/time.in.h
   lib/time_r.c
+  lib/uname.c
   lib/unistd.c
   lib/unistd.in.h
   lib/vasnprintf.c
   lib/vasnprintf.h
   lib/vasprintf.c
   lib/verify.h
+  lib/w32sock.h
   lib/wchar.in.h
   lib/xsize.c
   lib/xsize.h
@@ -695,10 +747,13 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/getcwd.m4
   m4/getdelim.m4
   m4/getdtablesize.m4
+  m4/gethostname.m4
   m4/getline.m4
+  m4/getlogin.m4
   m4/gettimeofday.m4
   m4/gnulib-common.m4
   m4/include_next.m4
+  m4/inet_pton.m4
   m4/intmax_t.m4
   m4/inttypes_h.m4
   m4/largefile.m4
@@ -718,6 +773,9 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/msvc-inval.m4
   m4/msvc-nothrow.m4
   m4/multiarch.m4
+  m4/net_if_h.m4
+  m4/netdb_h.m4
+  m4/netinet_in_h.m4
   m4/off_t.m4
   m4/onceonly.m4
   m4/open.m4
@@ -734,6 +792,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/signal_h.m4
   m4/signalblocking.m4
   m4/size_max.m4
+  m4/socketlib.m4
+  m4/sockets.m4
   m4/socklen.m4
   m4/sockpfaf.m4
   m4/ssize_t.m4
@@ -766,6 +826,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/time_h.m4
   m4/time_r.m4
   m4/tm_gmtoff.m4
+  m4/uname.m4
   m4/unistd_h.m4
   m4/vasnprintf.m4
   m4/vasprintf.m4
