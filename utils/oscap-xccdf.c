@@ -525,7 +525,7 @@ cleanup:
 	oscap_print_error();
 
 	/* syslog message */
-	syslog(priority, "Evaluation finnished. Return code: %d, Base score %f.", result,
+	syslog(priority, "Evaluation finished. Return code: %d, Base score %f.", result,
 		session == NULL ? 0 : xccdf_session_get_base_score(session));
 
 	if (session != NULL)
