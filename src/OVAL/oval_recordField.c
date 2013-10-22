@@ -409,7 +409,7 @@ int oval_record_field_parse_tag(xmlTextReaderPtr reader, struct oval_parser_cont
 	return ret;
 }
 
-xmlNode *oval_record_field_to_dom(struct oval_record_field *rf, bool parent_mask, xmlDoc *doc, xmlNode *parent)
+xmlNode *oval_record_field_to_dom(struct oval_record_field *rf, bool parent_mask, xmlDoc *doc, xmlNode *parent, xmlNs *namespace)
 {
 	char *name, *value;
 	bool rf_mask, masked;
@@ -436,11 +436,7 @@ xmlNode *oval_record_field_to_dom(struct oval_record_field *rf, bool parent_mask
 		masked = false;
 	}
 
-	xmlNsPtr oval_def = xmlSearchNsByHref(doc, xmlDocGetRootElement(doc), OVAL_DEFINITIONS_NAMESPACE);
-	if (oval_def == NULL) {
-		oval_def = xmlNewNs(xmlDocGetRootElement(doc), OVAL_DEFINITIONS_NAMESPACE, BAD_CAST "oval-def");
-	}
-	node = xmlNewTextChild(parent, oval_def, BAD_CAST "field", BAD_CAST value);
+	node = xmlNewTextChild(parent, namespace, BAD_CAST "field", BAD_CAST value);
 	xmlNewProp(node, BAD_CAST "name", BAD_CAST name);
 	datatype = oval_record_field_get_datatype(rf);
 	if (datatype != OVAL_DATATYPE_STRING)

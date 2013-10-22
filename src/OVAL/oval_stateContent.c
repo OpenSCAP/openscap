@@ -219,11 +219,19 @@ xmlNode *oval_state_content_to_dom(struct oval_state_content * content, xmlDoc *
 	parent_mask = oval_entity_get_mask(content->entity);
 
 	rf_itr = oval_state_content_get_record_fields(content);
-	while (oval_record_field_iterator_has_more(rf_itr)) {
-		struct oval_record_field *rf;
+	if (oval_record_field_iterator_has_more(rf_itr)) {
+		xmlNsPtr field_ns = NULL;
+		field_ns = xmlSearchNsByHref(doc, xmlDocGetRootElement(doc), OVAL_DEFINITIONS_NAMESPACE);
+		if (field_ns == NULL) {
+			field_ns = xmlNewNs(xmlDocGetRootElement(doc), OVAL_DEFINITIONS_NAMESPACE, BAD_CAST "oval-def");
+		}
 
-		rf = oval_record_field_iterator_next(rf_itr);
-		oval_record_field_to_dom(rf, parent_mask, doc, content_node);
+		while (oval_record_field_iterator_has_more(rf_itr)) {
+			struct oval_record_field *rf;
+
+			rf = oval_record_field_iterator_next(rf_itr);
+			oval_record_field_to_dom(rf, parent_mask, doc, content_node, field_ns);
+		}
 	}
 	oval_record_field_iterator_free(rf_itr);
 
