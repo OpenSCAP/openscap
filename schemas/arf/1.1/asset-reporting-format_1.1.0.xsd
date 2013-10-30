@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:arf="http://scap.nist.gov/schema/asset-reporting-format/1.1" xmlns:ai="http://scap.nist.gov/schema/asset-identification/1.1" xmlns:core="http://scap.nist.gov/schema/reporting-core/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" targetNamespace="http://scap.nist.gov/schema/asset-reporting-format/1.1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1.1">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:arf="http://scap.nist.gov/schema/asset-reporting-format/1.1"
+    xmlns:ai="http://scap.nist.gov/schema/asset-identification/1.1"
+    xmlns:core="http://scap.nist.gov/schema/reporting-core/1.1" xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:dsig="http://www.w3.org/2000/09/xmldsig#"
+    targetNamespace="http://scap.nist.gov/schema/asset-reporting-format/1.1" elementFormDefault="qualified"
+    attributeFormDefault="unqualified" version="1.1.1">
     <xs:annotation>
         <xs:appinfo>
             <schema>Asset Reporting Format</schema>
