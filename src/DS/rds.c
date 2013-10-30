@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2012--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -46,7 +46,7 @@
 
 static const char* arf_ns_uri = "http://scap.nist.gov/schema/asset-reporting-format/1.1";
 static const char* core_ns_uri = "http://scap.nist.gov/schema/reporting-core/1.1";
-static const char* arfvocab_ns_uri = "http://scap.nist.gov/vocabulary/arf/relationships/1.0#";
+static const char* arfvocab_ns_uri = "http://scap.nist.gov/specifications/arf/vocabulary/relationships/1.0#";
 static const char* ai_ns_uri = "http://scap.nist.gov/schema/asset-identification/1.1";
 
 static xmlNodePtr _lookup_container_in_arf(xmlDocPtr doc, const char *container_name)
