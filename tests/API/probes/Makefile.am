@@ -18,8 +18,8 @@ EXTRA_DIST = \
 	$(top_srcdir)/tests/assume.h \
 	$(top_srcdir)/tests/test_common.sh
 
-DISTCLEANFILES = *.log *.out*
-CLEANFILES = *.log *.out*
+DISTCLEANFILES = *.log *.out* oscap_debug.log.*
+CLEANFILES = *.log *.out* oscap_debug.log.*
 
 TESTS_ENVIRONMENT = \
 		$(top_builddir)/run

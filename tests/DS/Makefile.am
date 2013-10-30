@@ -1,7 +1,9 @@
 EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
 
-DISTCLEANFILES = *.log *.results oscap_debug.log.*
-CLEANFILES = *.log *.results oscap_debug.log.*
+DISTCLEANFILES = *.log *.results \
+	oscap_debug.log.* */oscap_debug.log.* sds_subdir/subdir/oscap_debug.log.*
+CLEANFILES = *.log *.results \
+	oscap_debug.log.* */oscap_debug.log.* sds_subdir/subdir/oscap_debug.log.*
 
 TESTS_ENVIRONMENT= \
 		builddir=$(top_builddir) \

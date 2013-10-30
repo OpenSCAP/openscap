@@ -22,8 +22,8 @@ check_DATA = not_executable
 not_executable:
 	touch not_executable
 
-DISTCLEANFILES = *.log *.out* $(check_DATA)
-CLEANFILES = *.log *.out* $(check_DATA)
+DISTCLEANFILES = *.log *.out* oscap_debug.log.* $(check_DATA)
+CLEANFILES = *.log *.out* oscap_debug.log.* $(check_DATA)
 
 
 TESTS_ENVIRONMENT= \

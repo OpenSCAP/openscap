@@ -1,7 +1,7 @@
 EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
 
-DISTCLEANFILES = *.log *.xml
-CLEANFILES = *.log *.xml
+DISTCLEANFILES = *.log *.xml oscap_debug.log.*
+CLEANFILES = *.log *.xml oscap_debug.log.*
 
 check_PROGRAMS = test_probes_interface
 test_probes_interface_SOURCES = test_probes_interface.c

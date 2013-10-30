@@ -2,6 +2,7 @@ EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
 
 DISTCLEANFILES = \
 	*.log \
+	oscap_debug.log.* \
 	*.out.??????
 CLEANFILES = $(DISTCLEANFILES)
 

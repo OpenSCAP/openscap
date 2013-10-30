@@ -1,8 +1,12 @@
 EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
 
-DISTCLEANFILES = *.log results.xml
+DISTCLEANFILES = \
+	*.log \
+	oscap_debug.log.* \
+	results.xml
 CLEANFILES = \
 	*.log \
+	oscap_debug.log.* \
 	*results.xml
 
 TESTS_ENVIRONMENT = \

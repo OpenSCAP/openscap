@@ -15,8 +15,8 @@ LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
 
 EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
 
-DISTCLEANFILES = *.log *.out*
-CLEANFILES = *.log *.out*
+DISTCLEANFILES = *.log *.out* oscap_debug.log.*
+CLEANFILES = *.log *.out* oscap_debug.log.*
 
 TESTS = test_api_cpe_dict.sh
 check_PROGRAMS = test_api_cpe_dict

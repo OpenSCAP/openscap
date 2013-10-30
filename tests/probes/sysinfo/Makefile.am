@@ -16,8 +16,8 @@ LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
 EXTRA_DIST = $(top_srcdir)/tests/test_common.sh \
              $(top_srcdir)/tests/assume.h
 
-DISTCLEANFILES = *.log
-CLEANFILES = *.log
+DISTCLEANFILES = *.log oscap_debug.log.*
+CLEANFILES = *.log oscap_debug.log.*
 
 TESTS_ENVIRONMENT= \
 		OSCAP_FULL_VALIDATION=1 \
