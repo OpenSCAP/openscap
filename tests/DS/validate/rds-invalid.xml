@@ -1,5 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<arf:aset-report-collection xmlns:arf="http://scap.nist.gov/schema/asset-reporting-format/1.1" xmlns:core="http://scap.nist.gov/schema/reporting-core/1.1" xmlns:ai="http://scap.nist.gov/schema/asset-identification/1.1"><core:relationships xmlns:arfvocab="http://scap.nist.gov/vocabulary/arf/relationships/1.0#"><core:relationship type="arfvocab:createdFor" subject="xccdf1"><core:ref>collection1</core:ref></core:relationship><core:relationship type="arfvocab:isAbout" subject="xccdf1"><core:ref>asset0</core:ref></core:relationship></core:relationships><arf:report-requests><arf:report-request id="collection1"><arf:content><data-stream-collection xmlns="http://scap.nist.gov/schema/scap/source/1.2" xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="scap_cdf_collection_fedora.zip" schematron-version="1.0" xsi:schemaLocation="http://scap.nist.gov/schema/scap/source/1.2 http://scap.nist.gov/schema/scap/1.2/scap-source-data-stream_1.2-draft.xsd">
+<arf:aset-report-collection
+    xmlns:arf="http://scap.nist.gov/schema/asset-reporting-format/1.1"
+    xmlns:core="http://scap.nist.gov/schema/reporting-core/1.1"
+    xmlns:ai="http://scap.nist.gov/schema/asset-identification/1.1">
+    <core:relationships xmlns:arfvocab="http://scap.nist.gov/vocabulary/arf/relationships/1.0#">
+        <core:relationship type="arfvocab:createdFor" subject="xccdf1">
+            <core:ref>collection1</core:ref>
+        </core:relationship>
+        <core:relationship type="arfvocab:isAbout" subject="xccdf1">
+            <core:ref>asset0</core:ref>
+        </core:relationship>
+    </core:relationships>
+    <arf:report-requests>
+        <arf:report-request id="collection1">
+            <arf:content>
+<data-stream-collection
+    xmlns="http://scap.nist.gov/schema/scap/source/1.2"
+    xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    id="scap_cdf_collection_fedora.zip" schematron-version="1.0"
+    xsi:schemaLocation="http://scap.nist.gov/schema/scap/source/1.2 http://scap.nist.gov/schema/scap/1.2/scap-source-data-stream_1.2-draft.xsd">
     <data-stream id="scap_cdf_datastream_fedora.zip" scap-version="1.2" timestamp="2012-06-05T07:33:31" use-case="OVAL_ONLY">
         <dictionaries>
             <component-ref id="scap_cdf_cref_null" xlink:href="#scap_cdf_comp_null"/>
