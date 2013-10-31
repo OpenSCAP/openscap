@@ -4,7 +4,7 @@
  *
  * @image html cve.png "Class diagram"
  *  
- * @file cve.h
+ * @file cve_nvd.h
  * @brief Interface to Common Vulnerability and Exposure dictionary
  */
 
