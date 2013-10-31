@@ -599,7 +599,8 @@ struct cpe_dict_model *cpe_dict_model_parse(struct cpe_parser_ctx *ctx)
 		next_ret = xmlTextReaderNextElement(reader);
 		// There is no "<cpe-list>" element :(( and we are at the end of file !
 		if (next_ret == 0) {
-			fprintf(stderr, "There is no \"cpe-list\" element in the provided xml tree !\n");
+			oscap_seterr(OSCAP_EFAMILY_OSCAP,
+					"There is no \"cpe-list\" element in the provided xml tree !\n");
 			return NULL;
 		}
 	}
