@@ -39,7 +39,7 @@ OSCAP_HIDDEN_START;
  * @memberof xccdf_policy
  * @param policy XCCDF policy used for substitution
  * @param fix a fix element to modify
- * @param test_resut the TestResult for xccdf:fact resolution
+ * @param test_result the TestResult for xccdf:fact resolution
  * @returns 0 on success, 1 on failure, other value indicate warning
  */
 int xccdf_policy_resolve_fix_substitution(struct xccdf_policy *policy, struct xccdf_fix *fix, struct xccdf_result *test_result);
@@ -115,7 +115,7 @@ struct xccdf_benchmark *xccdf_policy_get_benchmark(const struct xccdf_policy *po
  * policy_model CPE settings in the given policy model
  * @memberof xccdf_policy_model
  * @param model XCCDF Policy Model
- * @param platfroms list of CPE platform identifiers
+ * @param platforms list of CPE platform identifiers
  * @returns true if the list of platforms qualifies as 'applicable'
  */
 bool xccdf_policy_model_platforms_are_applicable(struct xccdf_policy_model *model, struct oscap_string_iterator *platforms);
