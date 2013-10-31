@@ -39,6 +39,7 @@
 #include "oval_system_characteristics_impl.h"
 #include "oval_results_impl.h"
 #include "common/util.h"
+#include "common/_error.h"
 #include "common/debug_priv.h"
 
 const char _invalid[] = "**INVALID**";
@@ -694,7 +695,7 @@ const char *oval_subtype_get_text(oval_subtype_t subtype)
 	if (map) {
 		return oval_enumeration_get_text(map, subtype);
 	} else {
-		fprintf(stderr, "WARNING: ZERO FAMILY INDEX\n    %s(%d)\n", __FILE__, __LINE__);
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Warning: Zero family index");
 		return _invalid;
 	}
 }
