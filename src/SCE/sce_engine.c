@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright 2011 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2011--2013 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -321,7 +321,8 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 
 		// the script hasn't been found, perhaps another sce instance
 		// with a different XCCDF directory can find it?
-		printf("SCE couldn't find script file '%s'. Expected location: '%s'.\n", href, tmp_href);
+		oscap_seterr(OSCAP_EFAMILY_SCE, "SCE couldn't find script file '%s'. "
+				"Expected location: '%s'.\n", href, tmp_href);
 		oscap_free(tmp_href);
 		return XCCDF_RESULT_NOT_CHECKED;
 	}
@@ -329,7 +330,8 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 	if (access(tmp_href, F_OK | X_OK))
 	{
 		// again, only to provide helpful error message
-		printf("SCE has found script file '%s' at '%s' but it isn't executable!\n", href, tmp_href);
+		oscap_seterr(OSCAP_EFAMILY_SCE, "SCE has found script file '%s' at '%s' "
+				"but it isn't executable!\n", href, tmp_href);
 		oscap_free(tmp_href);
 		return XCCDF_RESULT_ERROR;
 	}
