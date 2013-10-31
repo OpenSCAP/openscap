@@ -360,8 +360,15 @@ bool oscap_streq(const char *s1, const char *s2);
 char *oscap_trim(char *str);
 /// Print to a newly allocated string using a va_list.
 char *oscap_vsprintf(const char *fmt, va_list ap);
+
+// FIXME: This is there because of the SCE engine using this particular function
+OSCAP_HIDDEN_END;
+
 /// Print to a newly allocated string using varialbe arguments.
 char *oscap_sprintf(const char *fmt, ...);
+
+OSCAP_HIDDEN_START;
+
 /// In a list of key-value pairs (odd indicies are keys, even values), find a value for given key
 const char *oscap_strlist_find_value(char ** const kvalues, const char *key);
 /// Right trim @a ch characters (modifies its first argument!)

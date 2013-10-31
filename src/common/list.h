@@ -57,6 +57,9 @@ struct oscap_list {
 	size_t itemcount;
 };
 
+// FIXME: SCE engine uses these
+OSCAP_HIDDEN_END;
+
 struct oscap_list *oscap_list_new(void);
 void oscap_create_lists(struct oscap_list **first, ...);
 bool oscap_list_add(struct oscap_list *list, void *value);
@@ -70,6 +73,8 @@ int oscap_list_get_itemcount(struct oscap_list *list);
 bool oscap_list_contains(struct oscap_list *list, void *what, oscap_cmp_func compare);
 struct oscap_list *oscap_list_destructive_join(struct oscap_list *list1, struct oscap_list *list2);
 
+OSCAP_HIDDEN_START;
+
 
 /* Linked List iterator. */
 
@@ -82,6 +87,9 @@ struct oscap_iterator {
 	void *user_data;
 };
 
+// FIXME: SCE engine uses these
+OSCAP_HIDDEN_END;
+
 void *oscap_iterator_new(struct oscap_list *list);
 void *oscap_iterator_new_filter(struct oscap_list *list, oscap_filter_func filter, void *user_data);
 void *oscap_iterator_next(struct oscap_iterator *it);
@@ -90,6 +98,8 @@ bool oscap_iterator_has_more(struct oscap_iterator *it);
 void oscap_iterator_reset(struct oscap_iterator *it);
 void *oscap_iterator_detach(struct oscap_iterator *it);
 void oscap_iterator_free(struct oscap_iterator *it);
+
+OSCAP_HIDDEN_START;
 
 void *oscap_list_find(struct oscap_list *list, void *what, oscap_cmp_func compare);
 

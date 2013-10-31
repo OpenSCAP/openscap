@@ -92,7 +92,7 @@ void sce_check_result_set_href(struct sce_check_result* v, const char* href)
 	if (v->href)
 		oscap_free(v->href);
 
-	v->href = oscap_strdup(href);
+	v->href = strdup(href);
 }
 
 const char* sce_check_result_get_href(struct sce_check_result* v)
@@ -105,7 +105,7 @@ void sce_check_result_set_basename(struct sce_check_result* v, const char* base_
 	if (v->basename)
 		oscap_free(v->basename);
 
-	v->basename = oscap_strdup(base_name);
+	v->basename = strdup(base_name);
 }
 
 const char* sce_check_result_get_basename(struct sce_check_result* v)
@@ -118,7 +118,7 @@ void sce_check_result_set_stdout(struct sce_check_result* v, const char* _stdout
 	if (v->stdout)
 		oscap_free(v->stdout);
 
-	v->stdout = oscap_strdup(_stdout);
+	v->stdout = strdup(_stdout);
 }
 
 const char* sce_check_result_get_stdout(struct sce_check_result* v)
@@ -274,7 +274,7 @@ void sce_parameters_set_xccdf_directory(struct sce_parameters* v, const char* va
 	if (v->xccdf_directory)
 		oscap_free(v->xccdf_directory);
 
-	v->xccdf_directory = value == NULL ? NULL : oscap_strdup(value);
+	v->xccdf_directory = value == NULL ? NULL : strdup(value);
 }
 
 const char* sce_parameters_get_xccdf_directory(struct sce_parameters* v)
