@@ -602,9 +602,9 @@ cpe_format_t cpe_name_get_format_of_str(const char *str)
 
 	// The regex was taken from the official XSD at
 	// http://scap.nist.gov/schema/cpe/2.3/cpe-naming_2.3.xsd
+	// [c] was replaced with [cC] here and in the schemas
 
-	// FIXME: I think [c] is a bug and it should be been [cC] instead, not sure though.
-	re = pcre_compile("^[c][pP][eE]:/[AHOaho]?(:[A-Za-z0-9\\._\\-~%]*){0,6}$", 0, &error, &erroffset, NULL);
+	re = pcre_compile("^[cC][pP][eE]:/[AHOaho]?(:[A-Za-z0-9\\._\\-~%]*){0,6}$", 0, &error, &erroffset, NULL);
 	rc = pcre_exec(re, NULL, str, strlen(str), 0, 0, ovector, 30);
 	pcre_free(re);
 

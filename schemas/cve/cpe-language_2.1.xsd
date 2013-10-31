@@ -95,7 +95,7 @@
                   <xsd:documentation xml:lang="en">Define the format for acceptable CPE Names. A URN format is used with the id starting with the word cpe followed by :/ and then some number of individual  components separated by colons.</xsd:documentation>
             </xsd:annotation>
             <xsd:restriction base="xsd:anyURI">
-                  <xsd:pattern value="[c][pP][eE]:/[AHOaho]?(:[A-Za-z0-9\._\-~%]*){0,6}"/>
+                  <xsd:pattern value="[cC][pP][eE]:/[AHOaho]?(:[A-Za-z0-9\._\-~%]*){0,6}"/>
             </xsd:restriction>
       </xsd:simpleType>
 </xsd:schema>

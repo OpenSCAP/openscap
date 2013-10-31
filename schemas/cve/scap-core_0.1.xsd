@@ -97,7 +97,7 @@
                   <xsd:documentation xml:lang="en">Define the format for acceptable CPE Names. An urn format is used with the id starting with the word oval followed by a unique string, followed by the three letter code 'def', and ending with an integer.</xsd:documentation>
             </xsd:annotation>
             <xsd:restriction base="xsd:anyURI">
-                  <xsd:pattern value="[c][pP][eE]:/[AHOaho]?(:[A-Za-z0-9\\._\\-~]*){0,6}"/>
+                  <xsd:pattern value="[cC][pP][eE]:/[AHOaho]?(:[A-Za-z0-9\\._\\-~]*){0,6}"/>
             </xsd:restriction>
       </xsd:simpleType>
       
@@ -109,7 +109,7 @@
                         wildcard.</xsd:documentation>
             </xsd:annotation>
             <xsd:restriction base="xsd:anyURI">
-                  <xsd:pattern value="[c][pP][eE]:/[AHOaho]?(:[A-Za-z0-9\\._\\-~*]*){0,6}"/>
+                  <xsd:pattern value="[cC][pP][eE]:/[AHOaho]?(:[A-Za-z0-9\\._\\-~*]*){0,6}"/>
             </xsd:restriction>
       </xsd:simpleType>
       
