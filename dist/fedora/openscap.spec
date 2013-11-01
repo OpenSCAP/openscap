@@ -312,6 +312,7 @@ exit 0
 
 * Fri Apr 26 2013 Petr Lautrbach <plautrba@redhat.com> 0.9.7-1
 - upgrade
+- add openscap-selinux sub-package
 
 * Tue Apr 23 2013 Petr Lautrbach <plautrba@redhat.com> 0.9.6-1
 - upgrade
@@ -329,7 +330,7 @@ exit 0
 - upgrade
 
 * Mon Oct 22 2012 Petr Lautrbach <plautrba@redhat.com> 0.9.1-1
-- release
+- upgrade
 
 * Tue Sep 25 2012 Peter Vrabec <pvrabec@redhat.com> 0.9.0-1
 - upgrade
