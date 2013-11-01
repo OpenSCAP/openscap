@@ -10,7 +10,7 @@ oscap.pp: oscap.fc  oscap.if  oscap.te
 
 all: oscap.pp
 
-install:
+install: oscap.pp
 	mkdir -p $(DESTDIR)$(datadir)/selinux/packages $(DESTDIR)$(datadir)/selinux/devel/include/contrib/
 	install -m 644 oscap.pp $(DESTDIR)$(datadir)/selinux/packages
 	install -m 644 oscap.if $(DESTDIR)$(datadir)/selinux/devel/include/contrib/
