@@ -40,6 +40,9 @@ userdom_use_inherited_user_ptys(oscap_t)
 
 miscfiles_read_localization(oscap_t)
 
+# Allow to fill sysinfo into XCCDF Result
+allow oscap_t self:unix_dgram_socket create_socket_perms;
+
 # Allow networking for --fetch-remote-resources option
 allow oscap_t self:udp_socket create_socket_perms;
 allow oscap_t self:tcp_socket create_stream_socket_perms;
