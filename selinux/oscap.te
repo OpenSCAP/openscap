@@ -40,6 +40,12 @@ userdom_use_inherited_user_ptys(oscap_t)
 
 miscfiles_read_localization(oscap_t)
 
+# Allow networking for --fetch-remote-resources option
+allow oscap_t self:udp_socket create_socket_perms;
+allow oscap_t self:tcp_socket create_stream_socket_perms;
+sysnet_read_config(oscap_t)
+corenet_tcp_connect_all_ports(oscap_t)
+
 # run unconfined_oscap_probe_t process unconfined
 optional_policy(`
 	unconfined_domain(unconfined_oscap_probe_t)
