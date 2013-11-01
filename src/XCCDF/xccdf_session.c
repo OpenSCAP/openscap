@@ -328,7 +328,7 @@ int xccdf_session_load(struct xccdf_session *session)
 		return ret;
 	if ((ret = xccdf_session_load_oval(session)) != 0)
 		return ret;
-	if ((ret = xccdf_session_load_sce(session)) != 0)
+	if ((ret = xccdf_session_load_extra_check_engines(session)) != 0)
 		return ret;
 	return xccdf_session_load_tailoring(session);
 }
@@ -777,7 +777,7 @@ int xccdf_session_load_oval(struct xccdf_session *session)
 	return 0;
 }
 
-int xccdf_session_load_sce(struct xccdf_session *session)
+int xccdf_session_load_extra_check_engines(struct xccdf_session *session)
 {
 #ifdef ENABLE_SCE
 	char *xccdf_pathcopy;
@@ -793,6 +793,11 @@ int xccdf_session_load_sce(struct xccdf_session *session)
 #else
 	return 0;
 #endif
+}
+
+int xccdf_session_load_sce(struct xccdf_session *session)
+{
+	return xccdf_session_load_extra_check_engines(session);
 }
 
 int xccdf_session_load_tailoring(struct xccdf_session *session)

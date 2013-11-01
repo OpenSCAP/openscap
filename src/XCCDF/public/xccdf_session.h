@@ -278,7 +278,7 @@ struct ds_sds_index *xccdf_session_get_sds_idx(struct xccdf_session *session);
 
 /**
  * Load and parse all XCCDF structures needed to evaluate this session. This is
- * only a placeholder for load_xccdf, load_cpe, load_oval and load_sce functions.
+ * only a placeholder for load_xccdf, load_cpe, load_oval and load_extra_check_engines functions.
  * @memberof xccdf_session
  * @param session XCCDF Session
  * @returns zero on success
@@ -317,12 +317,23 @@ int xccdf_session_load_cpe(struct xccdf_session *session);
 int xccdf_session_load_oval(struct xccdf_session *session);
 
 /**
- * Load Script Check Engine (if available) to the XCCDF session.
+ * Load extra check engiens (if any are available) to the XCCDF session.
+ *
+ * Extra check engines are in loadable shared objects and this function
+ * searches if any such are available and loads them if they are.
+ *
  * @memberof xccdf_session
  * @param session XCCDF Session
  * @returns zero on success
  */
-int xccdf_session_load_sce(struct xccdf_session *session);
+int xccdf_session_load_extra_check_engines(struct xccdf_session *session);
+
+/**
+ * @deprecated
+ * SCE is no longer part of the main openscap library,
+ * use xccdf_session_load_extra_check_engines instead.
+ */
+OSCAP_DEPRECATED(int xccdf_session_load_sce(struct xccdf_session *session));
 
 /**
  * Load Tailoring file (if applicable) to the XCCDF session.
