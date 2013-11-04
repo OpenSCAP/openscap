@@ -41,10 +41,9 @@
 #include "XCCDF_POLICY/public/xccdf_policy.h"
 #include "XCCDF_POLICY/xccdf_policy_priv.h"
 #include "item.h"
-#ifdef ENABLE_SCE
-#include <sce_engine_api.h>
-#endif
 #include "public/xccdf_session.h"
+
+#include <dlfcn.h>
 
 struct oval_content_resource {
 	char *href;					///< Coresponds with xccdf:check-content-ref/\@href.
@@ -80,11 +79,6 @@ struct xccdf_session {
 		char *product_cpe;			///< CPE of scanner product.
 		char **result_files;			///< Path to exported OVAL Result files
 	} oval;
-#ifdef ENABLE_SCE
-	struct {
-		struct sce_parameters *parameters;	///< Script Check Engine parameters
-	} sce;
-#endif
 	struct {
 		char *arf_file;				///< Path to ARF file to export
 		char *xccdf_file;			///< Path to XCCDF file to export
@@ -136,10 +130,10 @@ void xccdf_session_free(struct xccdf_session *session)
 	oscap_free(session->export.xccdf_file);
 	oscap_free(session->export.arf_file);
 	_xccdf_session_free_oval_result_files(session);
-#ifdef ENABLE_SCE
-	if (session->sce.parameters != NULL)
-		sce_parameters_free(session->sce.parameters);
-#endif
+//#ifdef ENABLE_SCE
+//	if (session->sce.parameters != NULL)
+//		sce_parameters_free(session->sce.parameters);
+//#endif
 	oscap_free(session->user_cpe);
 	oscap_free(session->oval.product_cpe);
 	_xccdf_session_free_oval_agents(session);
@@ -777,22 +771,50 @@ int xccdf_session_load_oval(struct xccdf_session *session)
 	return 0;
 }
 
+#define STRINGIZE_NX(A) #A
+#define STRINGIZE(A) STRINGIZE_NX(A)
+
+static int load_extra_check_engine(struct xccdf_session *session, const char* path)
+{
+	// Clear any pre-existing dlerrors
+	dlerror();
+
+	void *handle = dlopen(path, RTLD_NOW | RTLD_GLOBAL);
+
+	if (!handle) {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC,
+			"Failed to load extra check engine from '%s'. Details: '%s'.",
+			path, dlerror());
+		return -1;
+	}
+
+	// Clear any pre-existing dlerrors
+	dlerror();
+
+	extra_check_engine_entry_fn entry_fn = NULL;
+	*(void **)(&entry_fn) = dlsym(handle, STRINGIZE(OPENSCAP_EXTRA_CHECK_ENGINE_ENTRY));
+	dlsym(handle, "sce_engine_eval_rule");
+
+	char *error = NULL;
+	if ((error = dlerror()) != NULL) {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC,
+			"Failed to retrieve module entry '%s' from loaded extra check engine '%s'. Details: '%s'.",
+			STRINGIZE(OPENSCAP_EXTRA_CHECK_ENGINE_ENTRY), path, dlerror());
+
+		dlclose(handle);
+		return -1;
+	}
+
+	int ret = (*entry_fn)(session->xccdf.policy_model, path);
+	dlclose(handle);
+
+	return ret;
+}
+
 int xccdf_session_load_extra_check_engines(struct xccdf_session *session)
 {
-#ifdef ENABLE_SCE
-	char *xccdf_pathcopy;
-	if (session->sce.parameters != NULL)
-		sce_parameters_free(session->sce.parameters);
-
-	session->sce.parameters = sce_parameters_new();
-	xccdf_pathcopy = oscap_strdup(session->xccdf.file);
-	sce_parameters_set_xccdf_directory(session->sce.parameters, dirname(xccdf_pathcopy));
-	sce_parameters_allocate_session(session->sce.parameters);
-	oscap_free(xccdf_pathcopy);
-	return !xccdf_policy_model_register_engine_sce(session->xccdf.policy_model, session->sce.parameters);
-#else
-	return 0;
-#endif
+	// FIXME: This is temporarily hardcoded
+	return load_extra_check_engine(session, "libopenscap_sce.so");
 }
 
 int xccdf_session_load_sce(struct xccdf_session *session)
@@ -974,11 +996,11 @@ int xccdf_session_export_xccdf(struct xccdf_session *session)
 					session->export.report_file,
 					"",
 					(session->export.oval_results ? "%.result.xml" : ""),
-#ifdef ENABLE_SCE
+//#ifdef ENABLE_SCE
 					 (session->export.sce_results ? "%.result.xml" : ""),
-#else
-					 "",
-#endif
+//#else
+//					 "",
+//#endif
 					 session->xccdf.profile_id == NULL ? "" : session->xccdf.profile_id
 			);
 	}
@@ -1158,9 +1180,8 @@ int xccdf_session_export_oval(struct xccdf_session *session)
 
 int xccdf_session_export_sce(struct xccdf_session *session)
 {
-#ifdef ENABLE_SCE
 	/* Export SCE results */
-	if (session->export.sce_results == true) {
+	/*if (session->export.sce_results == true) {
 		struct sce_session *sce_session = sce_parameters_get_session(session->sce.parameters);
 		if (sce_session == NULL)
 			return 1;
@@ -1183,8 +1204,8 @@ int xccdf_session_export_sce(struct xccdf_session *session)
 		}
 
 		sce_check_result_iterator_free(it);
-	}
-#endif
+	}*/
+
 	return 0;
 }
 

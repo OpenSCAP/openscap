@@ -47,10 +47,3 @@ libopenscap_testing_la_LIBADD += XCCDF/libxccdf.la
 SUBDIRS += XCCDF_POLICY
 libopenscap_la_LIBADD += XCCDF_POLICY/libxccdf_policy.la
 libopenscap_testing_la_LIBADD += XCCDF_POLICY/libxccdf_policy.la
-
-if WANT_SCE
-SUBDIRS += SCE
-#libopenscap_la_LIBADD += SCE/libsce.la
-#libopenscap_testing_la_LIBADD += SCE/libsce.la
-endif
-

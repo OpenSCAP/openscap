@@ -557,8 +557,13 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 	}
 }
 
+//char* sce_name = "http://open-scap.org/page/SCE";
+
 bool xccdf_policy_model_register_engine_sce(struct xccdf_policy_model * model, struct sce_parameters *parameters)
 {
+	// FIXME: This leaks!
+	char* sce_name = strdup("http://open-scap.org/page/SCE");
+
 	return xccdf_policy_model_register_engine_and_query_callback(model,
-		"http://open-scap.org/page/SCE", sce_engine_eval_rule, (void*)parameters, NULL);
+		sce_name, sce_engine_eval_rule, (void*)parameters, NULL);
 }

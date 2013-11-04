@@ -97,6 +97,13 @@ typedef void *(*xccdf_policy_engine_query_fn) (void *, xccdf_policy_engine_query
  */
 typedef xccdf_test_result_type_t (*xccdf_policy_engine_eval_fn) (struct xccdf_policy *policy, const char *rule_id, const char *definition_id, const char *href_if, struct xccdf_value_binding_iterator *value_binding_it, struct xccdf_check_import_iterator *check_imports_it, void *user_data);
 
+/**
+ * This is the entry point of shared objects implementing extra check engines
+ */
+typedef int (*extra_check_engine_entry_fn) (struct xccdf_policy_model *, const char*);
+
+#define OPENSCAP_EXTRA_CHECK_ENGINE_ENTRY openscap_extra_check_engine_entry
+
 /************************************************************/
 
 /**
