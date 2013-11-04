@@ -40,6 +40,15 @@ userdom_use_inherited_user_ptys(oscap_t)
 
 miscfiles_read_localization(oscap_t)
 
+# Allow to send a message to syslog
+require {
+	type devlog_t;
+	type kernel_t;
+}
+allow oscap_t devlog_t:sock_file write;
+allow oscap_t kernel_t:unix_dgram_socket sendto;
+allow oscap_t self:netlink_route_socket { bind create getattr nlmsg_read };
+
 # Allow to fill sysinfo into XCCDF Result
 allow oscap_t self:unix_dgram_socket create_socket_perms;
 
