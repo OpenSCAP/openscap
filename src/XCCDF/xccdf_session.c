@@ -42,8 +42,7 @@
 #include "XCCDF_POLICY/xccdf_policy_priv.h"
 #include "item.h"
 #include "public/xccdf_session.h"
-
-#include <dlfcn.h>
+#include "XCCDF_POLICY/public/check_engine_plugin.h"
 
 struct oval_content_resource {
 	char *href;					///< Coresponds with xccdf:check-content-ref/\@href.
@@ -322,7 +321,7 @@ int xccdf_session_load(struct xccdf_session *session)
 		return ret;
 	if ((ret = xccdf_session_load_oval(session)) != 0)
 		return ret;
-	if ((ret = xccdf_session_load_extra_check_engines(session)) != 0)
+	if ((ret = xccdf_session_load_check_engine_plugins(session)) != 0)
 		return ret;
 	return xccdf_session_load_tailoring(session);
 }
@@ -771,55 +770,29 @@ int xccdf_session_load_oval(struct xccdf_session *session)
 	return 0;
 }
 
-#define STRINGIZE_NX(A) #A
-#define STRINGIZE(A) STRINGIZE_NX(A)
-
-static int load_extra_check_engine(struct xccdf_session *session, const char* path)
+int xccdf_session_load_check_engine_plugin(struct xccdf_session *session, const char *plugin_name)
 {
-	// Clear any pre-existing dlerrors
-	dlerror();
+	struct check_engine_plugin_def *plugin = check_engine_plugin_load(plugin_name);
 
-	void *handle = dlopen(path, RTLD_LAZY);
+	if (!plugin)
+		return -1; // error already set
 
-	if (!handle) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC,
-			"Failed to load extra check engine from '%s'. Details: '%s'.",
-			path, dlerror());
-		return -1;
-	}
+	// FIXME: Path hint
+	check_engine_plugin_register(plugin, session->xccdf.policy_model, session->xccdf.file);
 
-	// Clear any pre-existing dlerrors
-	dlerror();
-
-	extra_check_engine_entry_fn entry_fn = NULL;
-	*(void **)(&entry_fn) = dlsym(handle, STRINGIZE(OPENSCAP_EXTRA_CHECK_ENGINE_ENTRY));
-	dlsym(handle, "sce_engine_eval_rule");
-
-	char *error = NULL;
-	if ((error = dlerror()) != NULL) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC,
-			"Failed to retrieve module entry '%s' from loaded extra check engine '%s'. Details: '%s'.",
-			STRINGIZE(OPENSCAP_EXTRA_CHECK_ENGINE_ENTRY), path, dlerror());
-
-		dlclose(handle);
-		return -1;
-	}
-
-	int ret = (*entry_fn)(session->xccdf.policy_model, path);
-	//dlclose(handle);
-
-	return ret;
+	// FIXME: Plugin leaks!
+	return 0;
 }
 
-int xccdf_session_load_extra_check_engines(struct xccdf_session *session)
+int xccdf_session_load_check_engine_plugins(struct xccdf_session *session)
 {
 	// FIXME: This is temporarily hardcoded
-	return load_extra_check_engine(session, "libopenscap_sce.so");
+	return xccdf_session_load_check_engine_plugin(session, "libopenscap_sce.so");
 }
 
 int xccdf_session_load_sce(struct xccdf_session *session)
 {
-	return xccdf_session_load_extra_check_engines(session);
+	return xccdf_session_load_check_engine_plugins(session);
 }
 
 int xccdf_session_load_tailoring(struct xccdf_session *session)

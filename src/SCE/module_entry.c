@@ -30,23 +30,44 @@
 #endif
 
 #include "sce_engine_api.h"
+#include "XCCDF_POLICY/public/check_engine_plugin.h"
 
 #include <libgen.h>
 #include <string.h>
 
-int OPENSCAP_EXTRA_CHECK_ENGINE_ENTRY (struct xccdf_policy_model *model, const char *xccdf_path);
-
-int OPENSCAP_EXTRA_CHECK_ENGINE_ENTRY (struct xccdf_policy_model *model, const char *xccdf_path)
+static int sce_engine_register(struct xccdf_policy_model *model, const char *path_hint, void** user_data)
 {
-	//if (session->sce.parameters != NULL)
-	//	sce_parameters_free(session->sce.parameters);
+	struct sce_parameters *parameters = (struct sce_parameters*) *user_data;
+	if (parameters != NULL)
+		sce_parameters_free(parameters);
 
-	// FIXME: This leaks memory!
-	struct sce_parameters *parameters = sce_parameters_new();
-	char *xccdf_pathcopy = strdup(xccdf_path);
+	parameters = sce_parameters_new();
+	char *xccdf_pathcopy = strdup(path_hint);
 	sce_parameters_set_xccdf_directory(parameters, dirname(xccdf_pathcopy));
 	sce_parameters_allocate_session(parameters);
 	free(xccdf_pathcopy);
 
+	*user_data = (void*)parameters; // This way the data will get freed later
+
 	return !xccdf_policy_model_register_engine_sce(model, parameters);
+}
+
+static int sce_engine_cleanup(struct xccdf_policy_model *model, void** user_data)
+{
+	struct sce_parameters *parameters = (struct sce_parameters*) *user_data;
+	if (parameters != NULL)
+		sce_parameters_free(parameters);
+
+	// FIXME: Unregister SCE?
+	return 0;
+}
+
+int OPENSCAP_CHECK_ENGINE_PLUGIN_ENTRY (struct check_engine_plugin_def *plugin);
+
+int OPENSCAP_CHECK_ENGINE_PLUGIN_ENTRY (struct check_engine_plugin_def *plugin)
+{
+	plugin->register_fn = sce_engine_register;
+	plugin->cleanup_fn = sce_engine_cleanup;
+
+	return 0;
 }

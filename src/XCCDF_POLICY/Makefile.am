@@ -4,8 +4,8 @@ libxccdf_policy_la_SOURCES = \
 	xccdf_policy.c \
 	xccdf_policy_priv.h \
 	xccdf_policy_remediate.c \
-	xccdf_policy_substitute.c
-
+	xccdf_policy_substitute.c \
+	check_engine_plugin.c
 
 libxccdf_policy_la_CFLAGS = \
 	@xml2_CFLAGS@ \
@@ -20,5 +20,6 @@ libxccdf_policy_la_CFLAGS = \
 
 libxccdf_policy_la_LDFLAGS = @xml2_LIBS@
 
-pkginclude_HEADERS  = public/xccdf_policy.h
+pkginclude_HEADERS  = public/xccdf_policy.h \
+	public/check_engine_plugin.h
 
