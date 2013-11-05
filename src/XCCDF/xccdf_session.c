@@ -779,7 +779,7 @@ static int load_extra_check_engine(struct xccdf_session *session, const char* pa
 	// Clear any pre-existing dlerrors
 	dlerror();
 
-	void *handle = dlopen(path, RTLD_NOW | RTLD_GLOBAL);
+	void *handle = dlopen(path, RTLD_LAZY);
 
 	if (!handle) {
 		oscap_seterr(OSCAP_EFAMILY_GLIBC,
@@ -806,7 +806,7 @@ static int load_extra_check_engine(struct xccdf_session *session, const char* pa
 	}
 
 	int ret = (*entry_fn)(session->xccdf.policy_model, path);
-	dlclose(handle);
+	//dlclose(handle);
 
 	return ret;
 }
