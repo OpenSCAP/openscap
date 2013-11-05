@@ -35,6 +35,7 @@
 #include "common/oscap_acquire.h"
 #include <common/alloc.h>
 #include "common/util.h"
+#include "common/list.h"
 #include "common/_error.h"
 #include "DS/public/scap_ds.h"
 #include "DS/ds_common.h"
@@ -92,6 +93,8 @@ struct xccdf_session {
 	oscap_document_type_t doc_type;			///< Document type of the session file (see filename member) used.
 	bool validate;					///< False value indicates to skip any XSD validation.
 	bool full_validation;				///< True value indicates that every possible step will be validated by XSD.
+
+	struct oscap_list *check_engine_plugins; ///< Extra non-OVAL check engines that may or may not have been loaded
 };
 
 static void _oval_content_resources_free(struct oval_content_resource **resources);
@@ -118,8 +121,12 @@ struct xccdf_session *xccdf_session_new(const char *filename)
 	}
 	session->validate = true;
 	session->xccdf.base_score = 0;
+	session->check_engine_plugins = oscap_list_new();
+
 	return session;
 }
+
+static void xccdf_session_unload_check_engine_plugins(struct xccdf_session *session);
 
 void xccdf_session_free(struct xccdf_session *session)
 {
@@ -129,10 +136,8 @@ void xccdf_session_free(struct xccdf_session *session)
 	oscap_free(session->export.xccdf_file);
 	oscap_free(session->export.arf_file);
 	_xccdf_session_free_oval_result_files(session);
-//#ifdef ENABLE_SCE
-//	if (session->sce.parameters != NULL)
-//		sce_parameters_free(session->sce.parameters);
-//#endif
+	xccdf_session_unload_check_engine_plugins(session);
+	oscap_list_free0(session->check_engine_plugins);
 	oscap_free(session->user_cpe);
 	oscap_free(session->oval.product_cpe);
 	_xccdf_session_free_oval_agents(session);
@@ -777,17 +782,34 @@ int xccdf_session_load_check_engine_plugin(struct xccdf_session *session, const 
 	if (!plugin)
 		return -1; // error already set
 
-	// FIXME: Path hint
-	check_engine_plugin_register(plugin, session->xccdf.policy_model, session->xccdf.file);
+	oscap_list_add(session->check_engine_plugins, plugin);
 
-	// FIXME: Plugin leaks!
-	return 0;
+	return check_engine_plugin_register(plugin, session->xccdf.policy_model, session->xccdf.file);
 }
 
 int xccdf_session_load_check_engine_plugins(struct xccdf_session *session)
 {
+	xccdf_session_unload_check_engine_plugins(session);
+
 	// FIXME: This is temporarily hardcoded
 	return xccdf_session_load_check_engine_plugin(session, "libopenscap_sce.so");
+}
+
+static void xccdf_session_unload_check_engine_plugins(struct xccdf_session *session)
+{
+	struct oscap_iterator *it = oscap_iterator_new(session->check_engine_plugins);
+
+	while (oscap_iterator_has_more(it)) {
+		struct check_engine_plugin_def *plugin = (struct check_engine_plugin_def *)oscap_iterator_next(it);
+
+		check_engine_plugin_cleanup(plugin, session->xccdf.policy_model);
+		check_engine_plugin_unload(plugin);
+	}
+
+	oscap_iterator_free(it);
+
+	oscap_list_free0(session->check_engine_plugins);
+	session->check_engine_plugins = oscap_list_new();
 }
 
 int xccdf_session_load_sce(struct xccdf_session *session)
