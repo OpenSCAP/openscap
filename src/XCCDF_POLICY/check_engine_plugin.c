@@ -131,7 +131,7 @@ int check_engine_plugin_cleanup(struct check_engine_plugin_def *plugin, struct x
 		return -1;
 	}
 
-	if (!plugin->register_fn) {
+	if (!plugin->cleanup_fn) {
 		oscap_seterr(OSCAP_EFAMILY_GLIBC,
 			"Plugin seems to have been loaded but its cleanup_fn member hasn't been filled. Bad plugin entry function implementation suspected.");
 
