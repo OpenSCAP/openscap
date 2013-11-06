@@ -798,7 +798,8 @@ int xccdf_session_load_check_engine_plugins(struct xccdf_session *session)
 
 	// We do not report failure when SCE doesn't load properly, that's because SCE
 	// is optional and we don't know if it's not there or if it just failed to load.
-	xccdf_session_load_check_engine_plugin(session, "libopenscap_sce.so");
+	if (xccdf_session_load_check_engine_plugin(session, "libopenscap_sce.so") != 0)
+		oscap_clearerr();
 
 	return 0;
 }
