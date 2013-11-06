@@ -37,7 +37,10 @@ s=@abs_top_srcdir@
 export LD_PRELOAD=$b/src/.libs/libopenscap_testing.so${LD_PRELOAD:+:$LD_PRELOAD}
 
 # Set library.
-export LD_LIBRARY_PATH=$b/src/.libs:$b/src/SCE/.libs:$b/swig/.libs${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=$b/src/.libs:$b/swig/.libs${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+
+# This is used for SCE check engine (if it is built and enabled)
+export OSCAP_CHECK_ENGINE_PLUGIN_DIR=$b/src/SCE/.libs
 
 # Set paths to probes, schemas, transformations and cpes.
 export OVAL_PROBE_DIR=$b/src/OVAL/probes

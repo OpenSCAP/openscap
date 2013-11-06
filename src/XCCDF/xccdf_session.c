@@ -796,8 +796,11 @@ int xccdf_session_load_check_engine_plugins(struct xccdf_session *session)
 {
 	xccdf_session_unload_check_engine_plugins(session);
 
-	// FIXME: This is temporarily hardcoded
-	return xccdf_session_load_check_engine_plugin(session, "libopenscap_sce.so");
+	// We do not report failure when SCE doesn't load properly, that's because SCE
+	// is optional and we don't know if it's not there or if it just failed to load.
+	xccdf_session_load_check_engine_plugin(session, "libopenscap_sce.so");
+
+	return 0;
 }
 
 static void xccdf_session_unload_check_engine_plugins(struct xccdf_session *session)

@@ -54,7 +54,10 @@ struct check_engine_plugin_def *check_engine_plugin_load(const char* path)
 	// Clear any pre-existing dlerrors
 	dlerror();
 
-	ret->module_handle = dlopen(path, RTLD_LAZY);
+	const char *path_prefix = getenv("OSCAP_CHECK_ENGINE_PLUGIN_DIR");
+	char *full_path = path_prefix ? oscap_sprintf("%s/%s", path_prefix, path) : oscap_strdup(path);
+	ret->module_handle = dlopen(full_path, RTLD_LAZY);
+	oscap_free(full_path);
 
 	if (!ret->module_handle) {
 		oscap_seterr(OSCAP_EFAMILY_GLIBC,
