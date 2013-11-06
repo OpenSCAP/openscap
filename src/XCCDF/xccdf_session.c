@@ -85,7 +85,7 @@ struct xccdf_session {
 		char *report_file;			///< Path to HTML file to eport
 		bool oval_results;			///< Shall be the OVAL results files exported?
 		bool oval_variables;			///< Shall be the OVAL variable files exported?
-		bool sce_results;			///< Shall be the SCE results exported?
+		bool check_engine_plugins_results; ///< Shall the check engine plugins results be exported?
 	} export;					///< Settings of Session export
 	char *user_cpe;					///< Path to CPE dictionary required by user
 	char *user_tailoring_file;      ///< Path to Tailoring file requested by the user
@@ -260,9 +260,14 @@ void xccdf_session_set_oval_variables_export(struct xccdf_session *session, bool
 	session->export.oval_variables = to_export_oval_variables;
 }
 
+void xccdf_session_set_check_engine_plugins_results_export(struct xccdf_session *session, bool to_export_results)
+{
+	session->export.check_engine_plugins_results = to_export_results;
+}
+
 void xccdf_session_set_sce_results_export(struct xccdf_session *session, bool to_export_sce_results)
 {
-	session->export.sce_results = to_export_sce_results;
+	xccdf_session_set_check_engine_plugins_results_export(session, to_export_sce_results);
 }
 
 bool xccdf_session_set_arf_export(struct xccdf_session *session, const char *arf_file)
@@ -991,12 +996,8 @@ int xccdf_session_export_xccdf(struct xccdf_session *session)
 					session->export.report_file,
 					"",
 					(session->export.oval_results ? "%.result.xml" : ""),
-//#ifdef ENABLE_SCE
-					 (session->export.sce_results ? "%.result.xml" : ""),
-//#else
-//					 "",
-//#endif
-					 session->xccdf.profile_id == NULL ? "" : session->xccdf.profile_id
+					(session->export.check_engine_plugins_results ? "%.result.xml" : ""),
+					session->xccdf.profile_id == NULL ? "" : session->xccdf.profile_id
 			);
 	}
 	return 0;
@@ -1173,35 +1174,33 @@ int xccdf_session_export_oval(struct xccdf_session *session)
 	return 0;
 }
 
+int xccdf_session_export_check_engine_plugins(struct xccdf_session *session)
+{
+	if (!session->export.check_engine_plugins_results)
+		return 0;
+
+	struct oscap_iterator *it = oscap_iterator_new(session->check_engine_plugins);
+
+	int ret = 0;
+	while (oscap_iterator_has_more(it)) {
+		struct check_engine_plugin_def *plugin = (struct check_engine_plugin_def *)oscap_iterator_next(it);
+
+		if (check_engine_plugin_export_results(
+				plugin,
+				session->xccdf.policy_model,
+				session->validate && session->full_validation,
+				session->xccdf.file) != 0)
+			ret = 1;
+	}
+
+	oscap_iterator_free(it);
+
+	return ret;
+}
+
 int xccdf_session_export_sce(struct xccdf_session *session)
 {
-	/* Export SCE results */
-	/*if (session->export.sce_results == true) {
-		struct sce_session *sce_session = sce_parameters_get_session(session->sce.parameters);
-		if (sce_session == NULL)
-			return 1;
-		struct sce_check_result_iterator * it = sce_session_get_check_results(sce_session);
-
-		while(sce_check_result_iterator_has_more(it))
-		{
-			struct sce_check_result * check_result = sce_check_result_iterator_next(it);
-			char target[2 + strlen(sce_check_result_get_basename(check_result)) + 11 + 1];
-			snprintf(target, sizeof(target), "./%s.result.xml", sce_check_result_get_basename(check_result));
-			sce_check_result_export(check_result, target);
-
-			if (session->validate && session->full_validation) {
-				if (oscap_validate_document(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0", _reporter, NULL)) {
-					_validation_failed(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0");
-					sce_check_result_iterator_free(it);
-					return 1;
-				}
-			}
-		}
-
-		sce_check_result_iterator_free(it);
-	}*/
-
-	return 0;
+	return xccdf_session_export_check_engine_plugins(session);
 }
 
 int xccdf_session_export_arf(struct xccdf_session *session)

@@ -140,3 +140,22 @@ int check_engine_plugin_cleanup(struct check_engine_plugin_def *plugin, struct x
 
 	return (plugin->cleanup_fn)(model, &plugin->user_data);
 }
+
+int check_engine_plugin_export_results(struct check_engine_plugin_def *plugin, struct xccdf_policy_model *model, bool validate, const char *path_hint)
+{
+	if (!plugin->module_handle) {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC,
+			"Failed to export results from this check engine plugin, the plugin hasn't been loaded!");
+
+		return -1;
+	}
+
+	if (!plugin->export_results_fn) {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC,
+			"Plugin seems to have been loaded but its export_results_fn member hasn't been filled. Bad plugin entry function implementation suspected.");
+
+		return -1;
+	}
+
+	return (plugin->export_results_fn)(model, validate, path_hint, &plugin->user_data);
+}
