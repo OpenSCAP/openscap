@@ -98,6 +98,11 @@ static int sce_engine_export_results(struct xccdf_policy_model *model, bool vali
 	return 0;
 }
 
+const char *sce_engine_get_capabilities(void **user_data)
+{
+	return "SCE: 1.0";
+}
+
 int OPENSCAP_CHECK_ENGINE_PLUGIN_ENTRY (struct check_engine_plugin_def *plugin);
 
 int OPENSCAP_CHECK_ENGINE_PLUGIN_ENTRY (struct check_engine_plugin_def *plugin)

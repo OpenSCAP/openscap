@@ -35,10 +35,9 @@
 
 struct check_engine_plugin_def
 {
-	void *module_handle;
-
 	int _reserved; // FIXME: version checking?
 
+	void *module_handle;
 	void *user_data;
 
 	// NB: path hint is the input file path, can be used for relative path resolution
@@ -49,6 +48,8 @@ struct check_engine_plugin_def
 	int (*cleanup_fn)(struct xccdf_policy_model *, void**);
 	// first arg: policy model, second arg: validate, third arg: path hint, fourth arg: user data
 	int (*export_results_fn)(struct xccdf_policy_model *, bool, const char*, void**);
+	// first arg: user data
+	const char *(*get_capabilities_fn)(void**);
 };
 
 struct check_engine_plugin_def *check_engine_plugin_load(const char* path);
@@ -57,6 +58,7 @@ void check_engine_plugin_unload(struct check_engine_plugin_def *plugin);
 int check_engine_plugin_register(struct check_engine_plugin_def *plugin, struct xccdf_policy_model *model, const char *path_hint);
 int check_engine_plugin_cleanup(struct check_engine_plugin_def *plugin, struct xccdf_policy_model *model);
 int check_engine_plugin_export_results(struct check_engine_plugin_def *plugin, struct xccdf_policy_model *model, bool validate, const char *path_hint);
+const char *check_engine_plugin_get_capabilities(struct check_engine_plugin_def *plugin);
 
 /**
  * This is the entry point of shared objects implementing extra check engines

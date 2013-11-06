@@ -53,6 +53,7 @@ struct check_engine_plugin_def *check_engine_plugin_load(const char* path)
 
 	const char *path_prefix = getenv("OSCAP_CHECK_ENGINE_PLUGIN_DIR");
 	char *full_path = path_prefix ? oscap_sprintf("%s/%s", path_prefix, path) : oscap_strdup(path);
+	// NB: valgrind reports a leak on the next line, I have confirmed this to be a false positive
 	ret->module_handle = dlopen(full_path, RTLD_LAZY);
 	oscap_free(full_path);
 
@@ -163,4 +164,23 @@ int check_engine_plugin_export_results(struct check_engine_plugin_def *plugin, s
 	}
 
 	return (plugin->export_results_fn)(model, validate, path_hint, &plugin->user_data);
+}
+
+const char *check_engine_plugin_get_capabilities(struct check_engine_plugin_def *plugin)
+{
+	if (!plugin->module_handle) {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC,
+			"Failed to get capabilities of this check engine plugin, the plugin hasn't been loaded!");
+
+		return NULL;
+	}
+
+	if (!plugin->get_capabilities_fn) {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC,
+			"Plugin seems to have been loaded but its get_capabilities_fn member hasn't been filled. Bad plugin entry function implementation suspected.");
+
+		return NULL;
+	}
+
+	return (plugin->get_capabilities_fn)(&plugin->user_data);
 }
