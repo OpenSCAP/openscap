@@ -34,6 +34,7 @@
 #include <limits.h>
 
 #include "oscap-tool.h"
+#include "check_engine_plugin.h"
 
 static bool getopt_root(int argc, char **argv, struct oscap_action *action);
 static int print_versions(const struct oscap_action*);
@@ -117,9 +118,29 @@ static int print_versions(const struct oscap_action *action)
 	printf("CVE Version: %s\n", cve_model_supported());
 	printf("Asset Identification Version: %s\n", "1.1");
 	printf("Asset Reporting Format Version: %s\n", "1.1");
-#ifdef ENABLE_SCE
-	printf("Script check engine: %s\n", "1.0");
-#endif
+	printf("\n");
+
+	printf("==== Capabilities added by auto-loaded plugins ====\n");
+
+	const char * const *known_plugins = check_engine_plugin_get_known_plugins();
+	bool known_plugin_found = false;
+	while (*known_plugins) {
+		struct check_engine_plugin_def *plugin = check_engine_plugin_load(*known_plugins);
+		if (plugin) {
+			printf("%s: %s\n", *known_plugins, check_engine_plugin_get_capabilities(plugin));
+			check_engine_plugin_unload(plugin);
+			known_plugin_found = true;
+		}
+		known_plugins++;
+	}
+
+	if (!known_plugin_found)
+		printf("No plugins have been auto-loaded...\n");
+
+	// We do not report failure when a known plugin doesn't load properly, that's because they
+	// are optional and we don't know if it's not there or if it just failed to load.
+	oscap_clearerr();
+
 	printf("\n");
 
 	printf("==== Paths ====\n");

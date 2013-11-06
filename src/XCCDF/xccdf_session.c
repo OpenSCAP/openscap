@@ -796,10 +796,18 @@ int xccdf_session_load_check_engine_plugins(struct xccdf_session *session)
 {
 	xccdf_session_unload_check_engine_plugins(session);
 
-	// We do not report failure when SCE doesn't load properly, that's because SCE
-	// is optional and we don't know if it's not there or if it just failed to load.
-	if (xccdf_session_load_check_engine_plugin(session, "libopenscap_sce.so") != 0)
-		oscap_clearerr();
+	const char * const *known_plugins = check_engine_plugin_get_known_plugins();
+
+	while (*known_plugins) {
+		// We do not report failure when a known plugin doesn't load properly, that's because they
+		// are optional and we don't know if it's not there or if it just failed to load.
+		if (xccdf_session_load_check_engine_plugin(session, *known_plugins) != 0)
+			oscap_clearerr();
+
+		printf("'%s'\n", *known_plugins);
+
+		known_plugins++;
+	}
 
 	return 0;
 }

@@ -65,7 +65,6 @@ struct check_engine_plugin_def *check_engine_plugin_load(const char* path)
 			"Failed to load extra check engine from '%s'. Details: '%s'.",
 			path, error);
 
-		free(error);
 		check_engine_plugin_def_free(ret);
 		return NULL;
 	}
@@ -78,7 +77,6 @@ struct check_engine_plugin_def *check_engine_plugin_load(const char* path)
 			"Failed to retrieve module entry '%s' from loaded extra check engine '%s'. Details: '%s'.",
 			STRINGIZE(OPENSCAP_CHECK_ENGINE_PLUGIN_ENTRY), path, error);
 
-		free(error);
 		dlclose(ret->module_handle);
 		check_engine_plugin_def_free(ret);
 		return NULL;
@@ -183,4 +181,11 @@ const char *check_engine_plugin_get_capabilities(struct check_engine_plugin_def 
 	}
 
 	return (plugin->get_capabilities_fn)(&plugin->user_data);
+}
+
+const char * const known_plugins[] = {"libopenscap_sce.so", NULL};
+
+const char * const *check_engine_plugin_get_known_plugins(void)
+{
+	return known_plugins;
 }

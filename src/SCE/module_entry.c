@@ -98,7 +98,7 @@ static int sce_engine_export_results(struct xccdf_policy_model *model, bool vali
 	return 0;
 }
 
-const char *sce_engine_get_capabilities(void **user_data)
+static const char *sce_engine_get_capabilities(void **user_data)
 {
 	return "SCE: 1.0";
 }
@@ -110,6 +110,7 @@ int OPENSCAP_CHECK_ENGINE_PLUGIN_ENTRY (struct check_engine_plugin_def *plugin)
 	plugin->register_fn = sce_engine_register;
 	plugin->cleanup_fn = sce_engine_cleanup;
 	plugin->export_results_fn = sce_engine_export_results;
+	plugin->get_capabilities_fn = sce_engine_get_capabilities;
 
 	return 0;
 }

@@ -67,6 +67,13 @@ typedef int (*check_engine_plugin_entry_fn) (struct check_engine_plugin_def*);
 
 #define OPENSCAP_CHECK_ENGINE_PLUGIN_ENTRY OPENSCAP_CHECK_ENGINE_PLUGIN_ENTRY
 
+/**
+ * @brief Retrieves list of plugin names that are known to OpenSCAP
+ *
+ * Loading of these will be attempted automatically
+ */
+const char * const *check_engine_plugin_get_known_plugins(void);
+
 /// @}
 /// @}
 #endif
