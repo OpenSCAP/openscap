@@ -58,6 +58,8 @@ static int sce_engine_cleanup(struct xccdf_policy_model *model, void **user_data
 	if (parameters != NULL)
 		sce_parameters_free(parameters);
 
+	*user_data = NULL;
+
 	// FIXME: Unregister SCE?
 	return 0;
 }

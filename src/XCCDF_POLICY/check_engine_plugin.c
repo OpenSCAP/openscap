@@ -41,8 +41,8 @@ static struct check_engine_plugin_def *check_engine_plugin_def_new(void)
 
 static void check_engine_plugin_def_free(struct check_engine_plugin_def *plugin)
 {
-	if (plugin->module_handle)
-		check_engine_plugin_unload(plugin);
+	//if (plugin->module_handle)
+	// FIXME: Warning?
 
 	oscap_free(plugin);
 }
@@ -51,35 +51,34 @@ struct check_engine_plugin_def *check_engine_plugin_load(const char* path)
 {
 	struct check_engine_plugin_def *ret = check_engine_plugin_def_new();
 
-	// Clear any pre-existing dlerrors
-	dlerror();
-
 	const char *path_prefix = getenv("OSCAP_CHECK_ENGINE_PLUGIN_DIR");
 	char *full_path = path_prefix ? oscap_sprintf("%s/%s", path_prefix, path) : oscap_strdup(path);
 	ret->module_handle = dlopen(full_path, RTLD_LAZY);
 	oscap_free(full_path);
 
+	char *error = NULL;
 	if (!ret->module_handle) {
+		error = dlerror();
+
 		oscap_seterr(OSCAP_EFAMILY_GLIBC,
 			"Failed to load extra check engine from '%s'. Details: '%s'.",
-			path, dlerror());
+			path, error);
 
+		free(error);
 		check_engine_plugin_def_free(ret);
 		return NULL;
 	}
 
-	// Clear any pre-existing dlerrors
-	dlerror();
-
 	check_engine_plugin_entry_fn entry_fn = NULL;
 	*(void **)(&entry_fn) = dlsym(ret->module_handle, STRINGIZE(OPENSCAP_CHECK_ENGINE_PLUGIN_ENTRY));
 
-	char *error = NULL;
 	if ((error = dlerror()) != NULL) {
 		oscap_seterr(OSCAP_EFAMILY_GLIBC,
 			"Failed to retrieve module entry '%s' from loaded extra check engine '%s'. Details: '%s'.",
-			STRINGIZE(OPENSCAP_CHECK_ENGINE_PLUGIN_ENTRY), path, dlerror());
+			STRINGIZE(OPENSCAP_CHECK_ENGINE_PLUGIN_ENTRY), path, error);
 
+		free(error);
+		dlclose(ret->module_handle);
 		check_engine_plugin_def_free(ret);
 		return NULL;
 	}
@@ -88,6 +87,7 @@ struct check_engine_plugin_def *check_engine_plugin_load(const char* path)
 		oscap_seterr(OSCAP_EFAMILY_GLIBC,
 			"Failed to fill check_engine_plugin_def when loading check engine plugin '%s'.", path);
 
+		dlclose(ret->module_handle);
 		check_engine_plugin_def_free(ret);
 		return NULL;
 	}
@@ -104,6 +104,8 @@ void check_engine_plugin_unload(struct check_engine_plugin_def *plugin)
 
 	dlclose(plugin->module_handle);
 	plugin->module_handle = NULL;
+
+	check_engine_plugin_def_free(plugin);
 }
 
 int check_engine_plugin_register(struct check_engine_plugin_def *plugin, struct xccdf_policy_model *model, const char* path_hint)
