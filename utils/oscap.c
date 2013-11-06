@@ -127,7 +127,7 @@ static int print_versions(const struct oscap_action *action)
 	while (*known_plugins) {
 		struct check_engine_plugin_def *plugin = check_engine_plugin_load(*known_plugins);
 		if (plugin) {
-			printf("%s: %s\n", *known_plugins, check_engine_plugin_get_capabilities(plugin));
+			printf("%s (from %s)\n", check_engine_plugin_get_capabilities(plugin), *known_plugins);
 			check_engine_plugin_unload(plugin);
 			known_plugin_found = true;
 		}
