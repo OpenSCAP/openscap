@@ -270,6 +270,7 @@ static int app_info(const struct oscap_action *action)
 				snprintf(xccdf_file, PATH_MAX, "%s/%s", temp_dir, "xccdf.xml");
 				struct xccdf_benchmark* bench = NULL;
 		                bench = xccdf_benchmark_import(xccdf_file);
+				free(xccdf_file);
 				if(!bench) {
 					ds_sds_index_free(sds);
 					oscap_string_iterator_free(checklist_it);
@@ -323,7 +324,6 @@ static int app_info(const struct oscap_action *action)
 					fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 					oscap_clearerr();
 				}
-				free(xccdf_file);
 			}
 			oscap_string_iterator_free(checklist_it);
 
