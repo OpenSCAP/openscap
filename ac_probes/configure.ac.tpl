@@ -403,6 +403,14 @@ AC_ARG_ENABLE([util-oscap],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-util-oscap]) ;;
      esac],[util_oscap=yes])
 
+AC_ARG_ENABLE([util-scap-as-rpm],
+     [AC_HELP_STRING([--enable-util-scap-as-rpm], [enable compilation of the scap-as-rpm utility (default=yes)])],
+     [case "${enableval}" in
+       yes) util_scap_as_rpm=yes ;;
+       no)  util_scap_as_rpm=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-util-scap-as-rpm]) ;;
+     esac],[util_scap_as_rpm=yes])
+
 if test "$vgdebug" = "yes"; then
  if test "$HAVE_VALGRIND" = "yes"; then
    vgcheck="yes"
@@ -446,6 +454,7 @@ AM_CONDITIONAL([WANT_PROBES_SOLARIS], test "$probes_solaris" = yes)
 
 AM_CONDITIONAL([WANT_SCE], test "$sce" = yes)
 AM_CONDITIONAL([WANT_UTIL_OSCAP], test "$util_oscap" = yes)
+AM_CONDITIONAL([WANT_UTIL_SCAP_AS_RPM], test "$util_scap_as_rpm" = yes)
 AM_CONDITIONAL([WANT_PYTHON], test "$python_bind" = yes)
 AM_CONDITIONAL([WANT_PERL], test "$perl_bind" = yes)
 AM_CONDITIONAL([ENABLE_VALGRIND_TESTS], test "$vgcheck" = yes)
@@ -566,6 +575,7 @@ echo "******************************************************"
 echo "OpenSCAP will be compiled with the following settings:"
 echo
 echo "oscap tool:                    $util_oscap"
+echo "scap-as-rpm tool:              $util_scap_as_rpm"
 echo "python bindings enabled:       $python_bind"
 echo "perl bindings enabled:         $perl_bind"
 echo "use POSIX regex:               $regex_posix"
