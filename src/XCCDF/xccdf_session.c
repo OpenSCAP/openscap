@@ -804,8 +804,6 @@ int xccdf_session_load_check_engine_plugins(struct xccdf_session *session)
 		if (xccdf_session_load_check_engine_plugin(session, *known_plugins) != 0)
 			oscap_clearerr();
 
-		printf("'%s'\n", *known_plugins);
-
 		known_plugins++;
 	}
 
