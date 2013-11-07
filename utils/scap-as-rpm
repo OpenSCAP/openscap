@@ -1,0 +1,324 @@
+#!/usr/bin/python2
+# Copyright 2013 Red Hat Inc., Durham, North Carolina.
+# All Rights Reserved.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful, 
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software 
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+# Authors:
+#      Martin Preisler <mpreisle@redhat.com>
+#      Vratislav Podzimek <vpodzime@redhat.com>
+
+import locale
+# We shall always behave the same, regardless of locale
+locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+
+import sys
+
+try:
+    import argparse
+    ParserClass = argparse.ArgumentParser
+except ImportError:
+    # XXX: get rid of this block once any old Python not having argparse by
+    # default needs to be supported
+    import optparse
+
+    class ArgOptParserShim(optparse.OptionParser):
+        """
+        A shim class allowing usage of an OptionParser instance as an
+        ArgumentParser instance as far as the needs of this script go.
+
+        """
+
+        def __init__(self, *args, **kwargs):
+            optparse.OptionParser.__init__(self, *args, **kwargs)
+
+            # name of the attribute to store args in
+            self._args_name = None
+            self._args_spec = ""
+            self._args_description = ""
+
+        def add_argument(self, argument, *args, **kwargs):
+            # get and remove the "metavar" argument
+            metavar = kwargs.pop("metavar", "ARG")
+
+            # we don't care about nargs
+            kwargs.pop("nargs", None)
+
+            if argument.startswith("--"):
+                return self.add_option(argument, *args, **kwargs)
+            else:
+                self._args_name = argument
+                self._args_spec = "{0} [{0}...]".format(metavar)
+                self._args_description = "  %s" % self._args_spec
+                desc = kwargs.get("help")
+                if desc:
+                    self._args_description += "\t%s" % desc
+
+        def parse_args(self, args=None, values=None):
+            opts, args = optparse.OptionParser.parse_args(self, args, values)
+            if self._args_spec:
+                if not args:
+                    print "Missing arguments: %s" % self._args_spec
+                    self.print_help()
+
+                setattr(opts, self._args_name, args)
+
+            return opts
+
+        def print_help(self, fobj=None):
+            if self._args_spec:
+                self.usage = self.usage + " " + self._args_spec
+
+            optparse.OptionParser.print_help(self, fobj)
+
+            if self._args_spec:
+                if fobj:
+                    fobj.write("%s\n" % self._args_description)
+                else:
+                    print self._args_description
+
+    ParserClass = ArgOptParserShim
+
+import string
+import os.path
+import shutil
+import datetime
+import tempfile
+import subprocess
+
+class CannotContinueError(Exception):
+    """Exception class for cases where processing cannot continue."""
+
+    pass
+
+if subprocess.call(["rpmbuild", "--version"], stdout = sys.stdout, stderr = sys.stderr) != 0:
+    sys.stderr.write("Could not execute `rpmbuild --version`. "
+        "Please make sure it's installed (often packaged as 'rpm-build').\n")
+    sys.exit(1)
+
+def get_rpmbuild_paths():
+    sources = subprocess.check_output(["rpm", "--eval", "%{_sourcedir}"]).strip()
+
+    if not os.path.exists(sources):
+        if subprocess.call(["rpmdev-setuptree"], stdout = sys.stdout, stderr = sys.stderr) != 0:
+            sys.stderr.write("Failed to setup rpmbuild tree. Please make sure you have rpmdev-setuptree "
+                "installed, or set it up manually. The SOURCES directory (%%{_sourcedir}) was expected at "
+                "'%s'\n" % (sources))
+            raise CannotContinueError()
+
+    rpm = subprocess.check_output(["rpm", "--eval", "%{_rpmdir}"]).strip()
+    srpm = subprocess.check_output(["rpm", "--eval", "%{_srcrpmdir}"]).strip()
+
+    if not os.path.exists(rpm) or not os.path.exists(srpm):
+        sys.stderr.write("The SOURCES rpmbuild directory exists but RPM or SRPM do not. Please make "
+            "sure your rpmbuild tree is setup correctly. Delete it and it will be created automatically.\n")
+
+    return sources, rpm, srpm
+
+def copy_sources_to_rpmbuild(rpmbuild_sources_path, files):
+    for f in files:
+        shutil.copyfile(f.name, "%s/%s" % (rpmbuild_sources_path, os.path.basename(f.name)))
+
+def make_sources_list(files):
+    ret = ""
+
+    for (i, f) in enumerate(files):
+        ret += "Source%i: %s\n" % (i, os.path.basename(f.name))
+
+    return ret
+
+def make_installer(scap_location, files):
+    prepper = ""
+    installer = ""
+    installed_files = ""
+
+    for (i, f) in enumerate(files):
+        prepper += "cp %%SOURCE%i .\n" % (i)
+
+        installer += "cp %s $RPM_BUILD_ROOT/%s/%%{name}/\n" % (os.path.basename(f.name), scap_location)
+        installed_files += "%s/%%{name}/%s\n" % (scap_location, os.path.basename(f.name))
+
+    return prepper, installer, installed_files
+
+def create_spec(template_path, name,
+        version, release, summary, license,
+        scap_location, files,
+        target_file):
+
+    spec_template = """
+# __ prefixed varibles in the form of ${__*} will get replaced by Python's string.Template
+
+Name:           ${__package_name}
+Version:        ${__package_version}
+Release:        ${__package_release}
+Summary:        ${__package_summary}
+License:        ${__package_license}
+
+${__package_sources}
+
+BuildArch:      noarch
+
+#BuildRequires:  openscap-utils >= ${__package_openscap_version}
+#Requires:       openscap-utils >= ${__package_openscap_version}
+
+%description
+asdf
+
+%prep
+${__package_prepper}
+
+%build
+
+%install
+mkdir -p $RPM_BUILD_ROOT/${__package_scap_location}/%{name}
+${__package_installer}
+
+%files
+${__package_installed_files}
+
+%changelog
+* ${__changelog_date} save-as-rpm - ${__package_version}-${__package_release}
+- Autogenerated
+"""
+
+    template = string.Template(spec_template)
+
+    sources_list = make_sources_list(files)
+    prepper, installer, installed_files = make_installer(scap_location, files)
+
+    spec_source = template.safe_substitute(
+        __package_name = name,
+
+        __package_version = version,
+        __package_release = release,
+        __package_summary = summary,
+        __package_license = license,
+
+        __package_scap_location = scap_location,
+
+        __package_sources = sources_list,
+        __package_openscap_version = "0.9.12", # FIXME
+        __package_prepper = prepper,
+        __package_installer = installer,
+        __package_installed_files = installed_files,
+        __changelog_date = datetime.date.today().strftime("%a %b %d %Y")
+    )
+
+    target_file.write(spec_source)
+
+def main():
+    parser = ParserClass(
+        description = "Takes given SCAP input(s) and makes an RPM package that contains them. "
+                      "The result RPM can be installed using # yum install ./package-name-1-1.rpm "
+                      "which will put the contents into /usr/share/scap. No dependency on openscap "
+                      "or scap-workbench is enforced in the output package so you can use any "
+                      "SCAP-capable scanner to evaluate the content.")
+
+    # we choose name automatically if its missing
+    parser.add_argument("--pkg-name", dest = "pkg_name", default = None,
+            help = "Name of the RPM package, if none is provided the basename of the first SCAP input is used. Ex.: xyz-security-guide")
+    parser.add_argument("--pkg-version", dest = "pkg_version", default = "1")
+    parser.add_argument("--pkg-release", dest = "pkg_release", default = "1")
+    parser.add_argument("--pkg-summary", dest = "pkg_summary", default = "stub",
+        help = "Optional short description of the package.")
+    parser.add_argument("--pkg-license", dest = "pkg_license", default = "Unknown",
+        help = "Short name of the license that you want to publish the package under. Ex.: GPLv2+, BSD, ...")
+
+    parser.add_argument("--pkg-scap-location", dest = "pkg_scap_location", default = "%{_datadir}/scap",
+        help = "Folder where SCAP files are supposed to be installed. Each package will have its own folder "
+               "inside this folder. RPM variables can be used and will be expanded as usual. It is "
+               "recommended to keep the default settings.")
+
+    parser.add_argument("--rpm-destination", dest = "rpm_destination", default = ".",
+        help = "The folder (absolute or relative to CWD) where the result RPM shall be saved.")
+    parser.add_argument("--srpm-destination", dest = "srpm_destination", default = None,
+        help = "The folder (absolute or relative to CWD) where the result SRPM shall be saved.")
+    parser.add_argument("files", metavar="FILE", nargs="+",
+        help = "List of files that should be put into the result package. "
+               "These should be SCAP XML files but such requirement is not enforced.")
+
+    args = parser.parse_args()
+
+    if not args.rpm_destination:
+        print("--rpm-destination has to be specified")
+        parser.print_help()
+        return 1
+
+    if not os.path.isdir(args.rpm_destination):
+        print("'%s' does not seem like a directory or isn't accessible!" % args.rpm_destination)
+        parser.print_help()
+        return 1
+
+    if args.srpm_destination is not None and not os.path.isdir(args.srpm_destination):
+        print("'%s' does not seem like a directory or isn't accessible!" % args.srpm_destination)
+        parser.print_help()
+        return 1
+
+    for fpath in args.files:
+        if not os.path.exists(fpath):
+            print("File '%s' does not exist or isn't accessible!" % fpath)
+            parser.print_help()
+            return 1
+
+    args.files = [open(fpath, "r") for fpath in args.files]
+
+    rpmbuild_sources_path, rpmbuild_rpm_path, rpmbuild_srpm_path = get_rpmbuild_paths()
+
+    copy_sources_to_rpmbuild(rpmbuild_sources_path, args.files)
+
+    name = args.pkg_name
+    if name is None:
+        name, _ = os.path.splitext(os.path.basename(args.files[0].name))
+
+    temp_dir = tempfile.mkdtemp()
+    spec_file = open("%s/%s.spec" % (temp_dir, name), "w")
+    try:
+        create_spec("templates/package.spec",
+            name,
+            args.pkg_version, args.pkg_release, args.pkg_summary, args.pkg_license,
+            args.pkg_scap_location, args.files,
+            spec_file)
+        spec_file_path = spec_file.name
+        spec_file.close()
+
+        ret = subprocess.call(["rpmbuild", "-ba", spec_file_path], stdout = sys.stdout)
+        if ret != 0:
+            raise RuntimeError("Failed to build RPM and SRPM for %s" % spec_file_path)
+
+    finally:
+        shutil.rmtree(temp_dir)
+
+    rpm_basename = "%s-%s-%s.noarch.rpm" % (name, args.pkg_version, args.pkg_release)
+    srpm_basename = "%s-%s-%s.src.rpm" % (name, args.pkg_version, args.pkg_release)
+
+    shutil.copy(os.path.join(rpmbuild_rpm_path, "noarch", rpm_basename), os.path.join(args.rpm_destination, rpm_basename))
+    if args.srpm_destination is not None:
+        shutil.copy(os.path.join(rpmbuild_srpm_path, srpm_basename), os.path.join(args.srpm_destination, rpm_basename))
+
+    print("")
+    print("Resulting RPM:\t'%s'" % (os.path.join(args.rpm_destination, rpm_basename)))
+    if args.srpm_destination is not None:
+        print("Resulting SRPM:\t'%s'" % (os.path.join(args.srpm_destination, srpm_basename)))
+    print("")
+    print("Finished!")
+
+    return 0
+
+if __name__ == "__main__":
+    try:
+        ret = main()
+        sys.exit(ret)
+    except CannotContinueError:
+        sys.exit(1)
