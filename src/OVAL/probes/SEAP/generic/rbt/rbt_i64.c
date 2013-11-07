@@ -114,8 +114,8 @@ int rbt_i64_add(rbt_t *rbt, int64_t key, void *data, void **coll)
                          */
                         h[0] = rbt_i64_node_alloc ();
 
-                        rbt_i64_node_key(h[0])  = key;
-                        rbt_i64_node_data(h[0]) = data;
+                        rbt_i64_node(h[0])->key  = key;
+                        rbt_i64_node(h[0])->data = data;
 
                         /*
                          * Set the new node as the child of the last node we've
@@ -170,7 +170,7 @@ int rbt_i64_add(rbt_t *rbt, int64_t key, void *data, void **coll)
                         rbt_redfix(h, dvec, rbt_node_ptr(h[3])->_chld[(dvec >> 2)&1]);
                 }
 
-                n_key = rbt_i64_node_key(h[0]);
+                n_key = rbt_i64_node(h[0])->key;
 
                 if (u_key < n_key) {
                         rbt_hpush4(h, rbt_node_ptr(h[0])->_chld[RBT_NODE_SL]);
@@ -182,8 +182,8 @@ int rbt_i64_add(rbt_t *rbt, int64_t key, void *data, void **coll)
 			int r;
 
 			if (coll != NULL) {
-				*coll = rbt_i64_node_data(h[0]);
-				rbt_i64_node_data(h[0]) = data;
+				*coll = rbt_i64_node(h[0])->data;
+				rbt_i64_node(h[0])->data = data;
 				r = 0;
 			} else
 				r = 1;
@@ -247,7 +247,7 @@ int rbt_i64_del(rbt_t *rbt, int64_t key, void **n)
                         break;
 
                 rbt_hpush4(h, rbt_node_ptr(h[0])->_chld[dvec & 1]);
-                n_key = rbt_i64_node_key(h[0]);
+                n_key = rbt_i64_node(h[0])->key;
 
                 if (u_key < n_key) {
                         dvec = (dvec << 1) | RBT_NODE_SL;
@@ -333,10 +333,10 @@ int rbt_i64_del(rbt_t *rbt, int64_t key, void **n)
                  */
                 assume_d(rbt_node_ptr(fake._chld[RBT_NODE_SR]) == h[0] || rbt_node_getcolor(h[0]) == RBT_NODE_CR, -1);
                 if (n != NULL)
-                        *n = rbt_i64_node_data(save);
+                        *n = rbt_i64_node(save)->data;
 
-                rbt_i64_node_data(save) = rbt_i64_node_data(h[0]);
-                rbt_i64_node_key(save)  = rbt_i64_node_key(h[0]);
+                rbt_i64_node(save)->data = rbt_i64_node(h[0])->data;
+                rbt_i64_node(save)->key  = rbt_i64_node(h[0])->key;
 
                 dvec = rbt_node_ptr(rbt_node_ptr(h[1])->_chld[1]) == h[0];
 
@@ -376,7 +376,7 @@ int rbt_i64_get(rbt_t *rbt, int64_t key, void **data)
         n = rbt_node_ptr(rbt->root);
 
         while (n != NULL) {
-                n_key = rbt_i64_node_key(n);
+                n_key = rbt_i64_node(n)->key;
 
                 if (u_key < n_key)
                         n = rbt_node_ptr(n->_chld[RBT_NODE_SL]);
@@ -384,7 +384,7 @@ int rbt_i64_get(rbt_t *rbt, int64_t key, void **data)
                         n = rbt_node_ptr(n->_chld[RBT_NODE_SR]);
                 else {
                         r = 0;
-                        *data = rbt_i64_node_data(n);
+                        *data = rbt_i64_node(n)->data;
                         break;
                 }
         }

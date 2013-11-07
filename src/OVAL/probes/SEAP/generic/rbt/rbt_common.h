@@ -71,7 +71,13 @@ struct rbt_node {
 #define RBT_NODE_SL 0
 #define RBT_NODE_SR 1
 
-#define rbt_node_ptr(np) ((struct rbt_node *)((uintptr_t)(np)&(UINTPTR_MAX << 1)))
+__attribute__((pure)) static inline struct rbt_node *rbt_node_ptr(const struct rbt_node *nodep)
+{
+	register uintptr_t nodep_uint = (uintptr_t)(nodep);
+	nodep_uint &= UINTPTR_MAX << 1;
+	return (struct rbt_node *)(nodep_uint);
+}
+
 #define rbt_node_setptr(dst,src) (dst) = (struct rbt_node *)((uintptr_t)rbt_node_ptr(src)|((uintptr_t)(dst)&1))
 
 #define rbt_node_setcolor(np, cb)                                       \

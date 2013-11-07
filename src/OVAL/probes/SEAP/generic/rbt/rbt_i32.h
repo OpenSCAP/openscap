@@ -31,8 +31,11 @@ struct rbt_i32_node {
 
 typedef struct rbt_i32_node rbt_i32_node_t;
 
-#define rbt_i32_node_key(np) (((struct rbt_i32_node *)(rbt_node_ptr(np)->_node))->key)
-#define rbt_i32_node_data(np) (((struct rbt_i32_node *)(rbt_node_ptr(np)->_node))->data)
+static inline struct rbt_i32_node *rbt_i32_node(const struct rbt_node *np)
+{
+	struct rbt_i32_node *i32_node = (struct rbt_i32_node *)(rbt_node_ptr(np)->_node);
+	return i32_node;
+}
 
 rbt_t *rbt_i32_new (void);
 void rbt_i32_free (rbt_t *rbt);

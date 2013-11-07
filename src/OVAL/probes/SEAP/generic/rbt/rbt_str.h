@@ -31,8 +31,11 @@ struct rbt_str_node {
 
 typedef struct rbt_str_node rbt_str_node_t;
 
-#define rbt_str_node_key(np) (((struct rbt_str_node *)(rbt_node_ptr(np)->_node))->key)
-#define rbt_str_node_data(np) (((struct rbt_str_node *)(rbt_node_ptr(np)->_node))->data)
+static inline struct rbt_str_node *rbt_str_node(const struct rbt_node *np)
+{
+	struct rbt_str_node *str_node = (struct rbt_str_node *)(rbt_node_ptr(np)->_node);
+	return str_node;
+}
 
 rbt_t *rbt_str_new (void);
 void rbt_str_free (rbt_t *rbt);

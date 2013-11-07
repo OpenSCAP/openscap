@@ -117,8 +117,8 @@ int rbt_str_add(rbt_t *rbt, char *key, void *data)
                          */
                         h[0] = rbt_str_node_alloc ();
 
-                        rbt_str_node_key(h[0])  = key;
-                        rbt_str_node_data(h[0]) = data;
+                        rbt_str_node(h[0])->key = key;
+                        rbt_str_node(h[0])->data = data;
 
                         /*
                          * Set the new node as the child of the last node we've
@@ -173,7 +173,7 @@ int rbt_str_add(rbt_t *rbt, char *key, void *data)
                         rbt_redfix(h, dvec, rbt_node_ptr(h[3])->_chld[(dvec >> 2)&1]);
                 }
 
-                n_key = rbt_str_node_key(h[0]);
+                n_key = rbt_str_node(h[0])->key;
                 cmp   = strcmp(u_key, n_key);
 
                 if (cmp < 0) {
@@ -243,7 +243,7 @@ int rbt_str_del(rbt_t *rbt, const char *key, void **n)
                         break;
 
                 rbt_hpush4(h, rbt_node_ptr(h[0])->_chld[dvec & 1]);
-                n_key = rbt_str_node_key(h[0]);
+                n_key = rbt_str_node(h[0])->key;
                 cmp   = strcmp(u_key, n_key);
 
                 if (cmp < 0) {
@@ -330,10 +330,10 @@ int rbt_str_del(rbt_t *rbt, const char *key, void **n)
                  */
                 assume_d(rbt_node_ptr(fake._chld[RBT_NODE_SR]) == h[0] || rbt_node_getcolor(h[0]) == RBT_NODE_CR, -1);
                 if (n != NULL)
-                        *n = rbt_str_node_data(save);
+                        *n = rbt_str_node(save)->data;
 
-                rbt_str_node_data(save) = rbt_str_node_data(h[0]);
-                rbt_str_node_key(save)  = rbt_str_node_key(h[0]);
+                rbt_str_node(save)->data = rbt_str_node(h[0])->data;
+                rbt_str_node(save)->key  = rbt_str_node(h[0])->key;
 
                 dvec = rbt_node_ptr(rbt_node_ptr(h[1])->_chld[1]) == h[0];
 
@@ -374,7 +374,7 @@ int rbt_str_getnode(rbt_t *rbt, const char *key, struct rbt_str_node **node)
         n = rbt_node_ptr(rbt->root);
 
         while (n != NULL) {
-                n_key = rbt_str_node_key(n);
+                n_key = rbt_str_node(n)->key;
                 cmp   = strcmp(u_key, n_key);
 
                 if (cmp < 0)

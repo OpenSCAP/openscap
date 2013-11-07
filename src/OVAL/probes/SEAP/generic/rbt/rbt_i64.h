@@ -31,8 +31,11 @@ struct rbt_i64_node {
 
 typedef struct rbt_i64_node rbt_i64_node_t;
 
-#define rbt_i64_node_key(np) (((struct rbt_i64_node *)(rbt_node_ptr(np)->_node))->key)
-#define rbt_i64_node_data(np) (((struct rbt_i64_node *)(rbt_node_ptr(np)->_node))->data)
+static inline struct rbt_i64_node *rbt_i64_node(const struct rbt_node *np)
+{
+	struct rbt_i64_node *i64_node = (struct rbt_i64_node *)(rbt_node_ptr(np)->_node);
+	return i64_node;
+}
 
 rbt_t *rbt_i64_new (void);
 void rbt_i64_free (rbt_t *rbt);
