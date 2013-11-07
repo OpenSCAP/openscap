@@ -217,7 +217,6 @@ static int rpmverify_collect(probe_ctx *ctx,
 		  while (rpmfiNext(fi) != -1) {
 		    SEXP_t *filepath_sexp;
 
-		    res.file   = strdup(rpmfiFN(fi));
 		    res.fflags = rpmfiFFlags(fi);
 		    res.oflags = omit;
 
@@ -225,9 +224,12 @@ static int rpmverify_collect(probe_ctx *ctx,
 			((res.fflags & RPMFILE_GHOST)  && (flags & RPMVERIFY_SKIP_GHOST)))
 		      continue;
 
+		    res.file   = strdup(rpmfiFN(fi));
+
 		    filepath_sexp = SEXP_string_newf("%s", res.file);
 		    if (probe_entobj_cmp(filepath_ent, filepath_sexp) != OVAL_RESULT_TRUE) {
 		      SEXP_free(filepath_sexp);
+		      oscap_free(res.file);
 		      continue;
 		    }
 		    SEXP_free(filepath_sexp);
