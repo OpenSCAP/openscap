@@ -100,9 +100,10 @@ void check_engine_plugin_unload(struct check_engine_plugin_def *plugin)
 		oscap_seterr(OSCAP_EFAMILY_GLIBC,
 			"Failed to unload this check engine plugin. It seems the plugin hasn't been loaded!");
 	}
-
-	dlclose(plugin->module_handle);
-	plugin->module_handle = NULL;
+	else {
+		dlclose(plugin->module_handle);
+		plugin->module_handle = NULL;
+	}
 
 	check_engine_plugin_def_free(plugin);
 }
