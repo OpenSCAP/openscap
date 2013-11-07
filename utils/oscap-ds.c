@@ -477,6 +477,7 @@ int app_ds_rds_create(const struct oscap_action *action) {
 
 				ret = OSCAP_ERROR;
 				free(doc_version);
+				free(oval_result_files);
 				goto cleanup;
 			}
 			free(doc_version);
