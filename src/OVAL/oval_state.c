@@ -178,7 +178,7 @@ struct oval_state *oval_state_clone(struct oval_definition_model *new_model, str
 		struct oval_string_iterator *notes = oval_state_get_notes(old_state);
 		while (oval_string_iterator_has_more(notes)) {
 			char *note = oval_string_iterator_next(notes);
-			oval_state_add_note(new_state, strdup(note));
+			oval_state_add_note(new_state, note);
 		}
 		oval_string_iterator_free(notes);
 		struct oval_state_content_iterator *contents = oval_state_get_contents(old_state);
