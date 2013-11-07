@@ -105,6 +105,11 @@ Write HTML report into FILE. You also have to specify --result for this feature 
 Generate OVAL Result file for each OVAL session used for evaluation. File with name '\fIoriginal-oval-definitions-filename\fR.result.xml' will be generated for each referenced OVAL file. This option (with conjunction with the \fB\-\-report\fR option) also enables inclusion of additional OVAL information in the XCCDF report.
 .RE
 .TP
+\fB\-\-check-engine-results\fR
+.RS
+After evaluation is finished, each loaded check engine plugin is asked to export its results. The export itself is plugin specific, please refer to documentation of the plugin for more details.
+.RE
+.TP
 \fB\-\-export-variables\fR
 .RS
 Generate OVAL Variables documents which contain external variables' values that were provided to the OVAL checking engine during evaluation. The filename format is '\fIoriginal-oval-definitions-filename\fR-\fIsession-index\fR.variables-\fIvariables-index\fR.xml'.
@@ -183,6 +188,11 @@ Write HTML report into FILE. You also have to specify --result for this feature 
 \fB\-\-oval-results\fR
 .RS
 Generate OVAL Result file for each OVAL session used for evaluation. File with name '\fIoriginal-oval-definitions-filename\fR.result.xml' will be generated for each referenced OVAL file. This option (with conjunction with the \fB\-\-report\fR option) also enables inclusion of additional OVAL information in the XCCDF report.
+.RE
+.TP
+\fB\-\-check-engine-results\fR
+.RS
+After evaluation is finished, each loaded check engine plugin is asked to export its results. The export itself is plugin specific, please refer to documentation of the plugin for more details.
 .RE
 .TP
 \fB\-\-export-variables\fR

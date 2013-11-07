@@ -16,6 +16,8 @@ endif
 endif
 
 if WANT_SCE
+SUBDIRS += src/SCE
+
 sectoolscedir= $(pkgdatadir)/sectool-sce
 
 sectoolsce_SCRIPTS = dist/fedora/sectool-xccdf/00_integrity.sh \

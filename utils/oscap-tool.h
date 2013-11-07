@@ -143,10 +143,8 @@ struct oscap_action {
 	int progress;
 	int oval_results;
 	int remediate;
-#ifdef ENABLE_SCE
 	char *sce_template;
-	int sce_results;
-#endif
+	int check_engine_results;
 	int export_variables;
         int list_dynamic;
 	char *probe_root;

@@ -36,12 +36,6 @@ libopenscap_la_LIBADD += CCE/libcce.la
 libopenscap_testing_la_LIBADD += CCE/libcce.la
 endif
 
-if WANT_SCE
-SUBDIRS += SCE
-libopenscap_la_LIBADD += SCE/libsce.la
-libopenscap_testing_la_LIBADD += SCE/libsce.la
-endif
-
 SUBDIRS += CVSS
 libopenscap_la_LIBADD += CVSS/libcvss.la
 libopenscap_testing_la_LIBADD += CVSS/libcvss.la
@@ -53,5 +47,3 @@ libopenscap_testing_la_LIBADD += XCCDF/libxccdf.la
 SUBDIRS += XCCDF_POLICY
 libopenscap_la_LIBADD += XCCDF_POLICY/libxccdf_policy.la
 libopenscap_testing_la_LIBADD += XCCDF_POLICY/libxccdf_policy.la
-
-

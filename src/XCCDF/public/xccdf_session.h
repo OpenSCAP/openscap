@@ -209,12 +209,20 @@ bool xccdf_session_set_product_cpe(struct xccdf_session *session, const char *pr
 void xccdf_session_set_oval_results_export(struct xccdf_session *session, bool to_export_oval_results);
 
 /**
+ * Set that check engine plugin's result files shall be exported.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param to_export_results whether to export results from check engine plugins or not.
+ */
+void xccdf_session_set_check_engine_plugins_results_export(struct xccdf_session *session, bool to_export_results);
+
+/**
  * Set that SCE reult files shall be exported.
  * @memberof xccdf_session
  * @param session XCCDF Session
  * @param to_export_sce_results whether to export SCE results or not.
  */
-void xccdf_session_set_sce_results_export(struct xccdf_session *session, bool to_export_sce_results);
+OSCAP_DEPRECATED(void xccdf_session_set_sce_results_export(struct xccdf_session *session, bool to_export_sce_results));
 
 /**
  * Set whether the OVAL variables files shall be exported.
@@ -278,7 +286,7 @@ struct ds_sds_index *xccdf_session_get_sds_idx(struct xccdf_session *session);
 
 /**
  * Load and parse all XCCDF structures needed to evaluate this session. This is
- * only a placeholder for load_xccdf, load_cpe, load_oval and load_sce functions.
+ * only a placeholder for load_xccdf, load_cpe, load_oval and load_check_engine_plugins functions.
  * @memberof xccdf_session
  * @param session XCCDF Session
  * @returns zero on success
@@ -317,12 +325,37 @@ int xccdf_session_load_cpe(struct xccdf_session *session);
 int xccdf_session_load_oval(struct xccdf_session *session);
 
 /**
- * Load Script Check Engine (if available) to the XCCDF session.
+ * Load extra check engine from a plugin of given name to the XCCDF session.
+ *
+ * Extra check engines are in loadable shared objects. This function is
+ * designed to be called !after! xccdf_session_load has been called.
+ * XCCDF has to have already been loaded for this to work because the callbacks
+ * are registered as part of this function!
+ *
  * @memberof xccdf_session
  * @param session XCCDF Session
  * @returns zero on success
  */
-int xccdf_session_load_sce(struct xccdf_session *session);
+int xccdf_session_load_check_engine_plugin(struct xccdf_session *session, const char* plugin_name);
+
+/**
+ * Load extra check engines (if any are available) to the XCCDF session.
+ *
+ * Extra check engines are in loadable shared objects and this function
+ * searches if any such are available and loads them if they are.
+ *
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @returns zero on success
+ */
+int xccdf_session_load_check_engine_plugins(struct xccdf_session *session);
+
+/**
+ * @deprecated
+ * SCE is no longer part of the main openscap library,
+ * use xccdf_session_load_check_engine_plugins instead.
+ */
+OSCAP_DEPRECATED(int xccdf_session_load_sce(struct xccdf_session *session));
 
 /**
  * Load Tailoring file (if applicable) to the XCCDF session.
@@ -357,12 +390,24 @@ int xccdf_session_export_xccdf(struct xccdf_session *session);
 int xccdf_session_export_oval(struct xccdf_session *session);
 
 /**
- * Export SCE files (if enabled by @ref xccdf_session_set_sce_results_export).
+ * Export results (if any) from any check engine plugins that are loaded
+ *
+ * Only applicable if enabled by @ref xccdf_session_set_check_engine_plugins_results_export).
  * @memberof xccdf_session
  * @param session XCCDF Session
  * @returns zero on success
  */
-int xccdf_session_export_sce(struct xccdf_session *session);
+int xccdf_session_export_check_engine_plugins(struct xccdf_session *session);
+
+/**
+ * Export SCE files (if enabled by @ref xccdf_session_set_sce_results_export).
+ *
+ * @deprecated Please use xccdf_session_export_check_engine_plugins instead.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @returns zero on success
+ */
+OSCAP_DEPRECATED(int xccdf_session_export_sce(struct xccdf_session *session));
 
 /**
  * Export ARF (if enabled by @ref xccdf_session_set_arf_export).

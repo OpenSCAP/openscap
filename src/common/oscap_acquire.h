@@ -75,6 +75,9 @@ bool oscap_acquire_url_is_supported(const char *url);
  */
 char *oscap_acquire_url_to_filename(const char *url);
 
+// FIXME: SCE engine uses this particular function
+OSCAP_HIDDEN_END;
+
 /**
  * Read characters from pipe, escape '&' and store result
  * in the C string buffer.
@@ -82,6 +85,8 @@ char *oscap_acquire_url_to_filename(const char *url);
  * @returns buffer allocated on heap.
  */
 char *oscap_acquire_pipe_to_string(int fd);
+
+OSCAP_HIDDEN_START;
 
 OSCAP_HIDDEN_END;
 

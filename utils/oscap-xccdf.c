@@ -135,9 +135,8 @@ static struct oscap_module XCCDF_EVAL = {
         "   --cpe <name>\r\t\t\t\t - Use given CPE dictionary or language (autodetected)\n"
         "               \r\t\t\t\t   for applicability checks.\n"
         "   --oval-results\r\t\t\t\t - Save OVAL results as well.\n"
-#ifdef ENABLE_SCE
-        "   --sce-results\r\t\t\t\t - Save SCE results as well.\n"
-#endif
+        "   --sce-results\r\t\t\t\t - Save SCE results as well. (DEPRECATED! use --check-engine-results)\n"
+        "   --check-engine-results\r\t\t\t\t - Save results from check engines loaded from plugins as well.\n"
         "   --export-variables\r\t\t\t\t - Export OVAL external variables provided by XCCDF.\n"
         "   --results <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
         "   --results-arf <file>\r\t\t\t\t - Write ARF (result data stream) into file.\n"
@@ -176,9 +175,8 @@ static struct oscap_module XCCDF_REMEDIATE = {
 			"  --report <file>\r\t\t\t\t - Write HTML report into file.\n"
 			"  --oval-results\r\t\t\t\t - Save OVAL results.\n"
 			"  --export-variables\r\t\t\t\t - Export OVAL external variables provided by XCCDF.\n"
-#ifdef ENABLE_SCE
-			"  --sce-results\r\t\t\t\t - Save SCE results.\n"
-#endif
+			"  --sce-results\r\t\t\t\t - Save SCE results. (DEPRECATED! use --check-engine-results)\n"
+			"  --check-engine-results\r\t\t\t\t - Save results from check engines loaded from plugins as well.\n"
 			"  --progress \r\t\t\t\t - Switch to sparse output suitable for progress reporting.\n"
 			"             \r\t\t\t\t   Format is \"$rule_id:$result\\n\".\n"
 	,
@@ -493,11 +491,9 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		(action->oval_results == true || action->f_results_arf))
 		fprintf(stdout, "OVAL Results are exported correctly.\n");
 
-#ifdef ENABLE_SCE
-	xccdf_session_set_sce_results_export(session, action->sce_results);
-	if (xccdf_session_export_sce(session) != 0)
+	xccdf_session_set_check_engine_plugins_results_export(session, action->check_engine_results);
+	if (xccdf_session_export_check_engine_plugins(session) != 0)
 		goto cleanup;
-#endif
 
 	if (action->remediate) {
 		if (!action->progress)
@@ -628,11 +624,10 @@ int app_xccdf_remediate(const struct oscap_action *action)
 	if (xccdf_session_export_oval(session) != 0)
 		goto cleanup;
 
-#ifdef ENABLE_SCE
-	xccdf_session_set_sce_results_export(session, action->sce_results);
-	if (xccdf_session_export_sce(session) != 0)
+	xccdf_session_set_check_engine_plugins_results_export(session, action->check_engine_results);
+	if (xccdf_session_export_check_engine_plugins(session) != 0)
 		goto cleanup;
-#endif
+
 	if (xccdf_session_export_xccdf(session) != 0)
 		goto cleanup;
 	if (xccdf_session_export_arf(session) != 0)
@@ -829,9 +824,7 @@ int app_xccdf_xslt(const struct oscap_action *action)
 		"template",          action->tmpl,
 		"format",            action->format,
 		"oval-template",     oval_template,
-#ifdef ENABLE_SCE
 		"sce-template",      action->sce_template,
-#endif
 		"verbosity",         "",
 		"hide-profile-info", action->hide_profile_info ? "yes" : NULL,
 		NULL
@@ -873,9 +866,7 @@ enum oval_opt {
     XCCDF_OPT_FORMAT,
     XCCDF_OPT_OVAL_TEMPLATE,
     XCCDF_OPT_STYLESHEET_FILE,
-#ifdef ENABLE_SCE
     XCCDF_OPT_SCE_TEMPLATE,
-#endif
     XCCDF_OPT_FILE_VERSION,
 	XCCDF_OPT_TAILORING_FILE,
 	XCCDF_OPT_TAILORING_ID,
@@ -912,15 +903,12 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"tailoring-id", required_argument, NULL, XCCDF_OPT_TAILORING_ID},
 		{"cpe",	required_argument, NULL, XCCDF_OPT_CPE},
 		{"cpe-dict",	required_argument, NULL, XCCDF_OPT_CPE_DICT}, // DEPRECATED!
-#ifdef ENABLE_SCE
 		{"sce-template", 	required_argument, NULL, XCCDF_OPT_SCE_TEMPLATE},
-#endif
 	// flags
 		{"force",		no_argument, &action->force, 1},
 		{"oval-results",	no_argument, &action->oval_results, 1},
-#ifdef ENABLE_SCE
-		{"sce-results",	no_argument, &action->sce_results, 1},
-#endif
+		{"sce-results",	no_argument, &action->check_engine_results, 1},
+		{"check-engine-results", no_argument, &action->check_engine_results, 1},
 		{"skip-valid",		no_argument, &action->validate, 0},
 		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},
 		{"progress", no_argument, &action->progress, 1},
@@ -959,9 +947,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 				fprintf(stdout, "Warning: --cpe-dict is a deprecated option. Please use --cpe instead!\n\n");
 				action->cpe = optarg; break;
 			}
-#ifdef ENABLE_SCE
 		case XCCDF_OPT_SCE_TEMPLATE:	action->sce_template = optarg; break;
-#endif
 		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}

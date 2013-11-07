@@ -35,16 +35,15 @@
 #include "common/oscap_acquire.h"
 #include <common/alloc.h>
 #include "common/util.h"
+#include "common/list.h"
 #include "common/_error.h"
 #include "DS/public/scap_ds.h"
 #include "DS/ds_common.h"
 #include "XCCDF_POLICY/public/xccdf_policy.h"
 #include "XCCDF_POLICY/xccdf_policy_priv.h"
 #include "item.h"
-#ifdef ENABLE_SCE
-#include <sce_engine_api.h>
-#endif
 #include "public/xccdf_session.h"
+#include "XCCDF_POLICY/public/check_engine_plugin.h"
 
 struct oval_content_resource {
 	char *href;					///< Coresponds with xccdf:check-content-ref/\@href.
@@ -80,18 +79,13 @@ struct xccdf_session {
 		char *product_cpe;			///< CPE of scanner product.
 		char **result_files;			///< Path to exported OVAL Result files
 	} oval;
-#ifdef ENABLE_SCE
-	struct {
-		struct sce_parameters *parameters;	///< Script Check Engine parameters
-	} sce;
-#endif
 	struct {
 		char *arf_file;				///< Path to ARF file to export
 		char *xccdf_file;			///< Path to XCCDF file to export
 		char *report_file;			///< Path to HTML file to eport
 		bool oval_results;			///< Shall be the OVAL results files exported?
 		bool oval_variables;			///< Shall be the OVAL variable files exported?
-		bool sce_results;			///< Shall be the SCE results exported?
+		bool check_engine_plugins_results; ///< Shall the check engine plugins results be exported?
 	} export;					///< Settings of Session export
 	char *user_cpe;					///< Path to CPE dictionary required by user
 	char *user_tailoring_file;      ///< Path to Tailoring file requested by the user
@@ -99,6 +93,8 @@ struct xccdf_session {
 	oscap_document_type_t doc_type;			///< Document type of the session file (see filename member) used.
 	bool validate;					///< False value indicates to skip any XSD validation.
 	bool full_validation;				///< True value indicates that every possible step will be validated by XSD.
+
+	struct oscap_list *check_engine_plugins; ///< Extra non-OVAL check engines that may or may not have been loaded
 };
 
 static void _oval_content_resources_free(struct oval_content_resource **resources);
@@ -125,8 +121,12 @@ struct xccdf_session *xccdf_session_new(const char *filename)
 	}
 	session->validate = true;
 	session->xccdf.base_score = 0;
+	session->check_engine_plugins = oscap_list_new();
+
 	return session;
 }
+
+static void xccdf_session_unload_check_engine_plugins(struct xccdf_session *session);
 
 void xccdf_session_free(struct xccdf_session *session)
 {
@@ -136,10 +136,8 @@ void xccdf_session_free(struct xccdf_session *session)
 	oscap_free(session->export.xccdf_file);
 	oscap_free(session->export.arf_file);
 	_xccdf_session_free_oval_result_files(session);
-#ifdef ENABLE_SCE
-	if (session->sce.parameters != NULL)
-		sce_parameters_free(session->sce.parameters);
-#endif
+	xccdf_session_unload_check_engine_plugins(session);
+	oscap_list_free0(session->check_engine_plugins);
 	oscap_free(session->user_cpe);
 	oscap_free(session->oval.product_cpe);
 	_xccdf_session_free_oval_agents(session);
@@ -262,9 +260,14 @@ void xccdf_session_set_oval_variables_export(struct xccdf_session *session, bool
 	session->export.oval_variables = to_export_oval_variables;
 }
 
+void xccdf_session_set_check_engine_plugins_results_export(struct xccdf_session *session, bool to_export_results)
+{
+	session->export.check_engine_plugins_results = to_export_results;
+}
+
 void xccdf_session_set_sce_results_export(struct xccdf_session *session, bool to_export_sce_results)
 {
-	session->export.sce_results = to_export_sce_results;
+	xccdf_session_set_check_engine_plugins_results_export(session, to_export_sce_results);
 }
 
 bool xccdf_session_set_arf_export(struct xccdf_session *session, const char *arf_file)
@@ -328,7 +331,7 @@ int xccdf_session_load(struct xccdf_session *session)
 		return ret;
 	if ((ret = xccdf_session_load_oval(session)) != 0)
 		return ret;
-	if ((ret = xccdf_session_load_sce(session)) != 0)
+	if ((ret = xccdf_session_load_check_engine_plugins(session)) != 0)
 		return ret;
 	return xccdf_session_load_tailoring(session);
 }
@@ -777,22 +780,56 @@ int xccdf_session_load_oval(struct xccdf_session *session)
 	return 0;
 }
 
+int xccdf_session_load_check_engine_plugin(struct xccdf_session *session, const char *plugin_name)
+{
+	struct check_engine_plugin_def *plugin = check_engine_plugin_load(plugin_name);
+
+	if (!plugin)
+		return -1; // error already set
+
+	oscap_list_add(session->check_engine_plugins, plugin);
+
+	return check_engine_plugin_register(plugin, session->xccdf.policy_model, session->xccdf.file);
+}
+
+int xccdf_session_load_check_engine_plugins(struct xccdf_session *session)
+{
+	xccdf_session_unload_check_engine_plugins(session);
+
+	const char * const *known_plugins = check_engine_plugin_get_known_plugins();
+
+	while (*known_plugins) {
+		// We do not report failure when a known plugin doesn't load properly, that's because they
+		// are optional and we don't know if it's not there or if it just failed to load.
+		if (xccdf_session_load_check_engine_plugin(session, *known_plugins) != 0)
+			oscap_clearerr();
+
+		known_plugins++;
+	}
+
+	return 0;
+}
+
+static void xccdf_session_unload_check_engine_plugins(struct xccdf_session *session)
+{
+	struct oscap_iterator *it = oscap_iterator_new(session->check_engine_plugins);
+
+	while (oscap_iterator_has_more(it)) {
+		struct check_engine_plugin_def *plugin = (struct check_engine_plugin_def *)oscap_iterator_next(it);
+
+		check_engine_plugin_cleanup(plugin, session->xccdf.policy_model);
+		check_engine_plugin_unload(plugin);
+	}
+
+	oscap_iterator_free(it);
+
+	oscap_list_free0(session->check_engine_plugins);
+	session->check_engine_plugins = oscap_list_new();
+}
+
 int xccdf_session_load_sce(struct xccdf_session *session)
 {
-#ifdef ENABLE_SCE
-	char *xccdf_pathcopy;
-	if (session->sce.parameters != NULL)
-		sce_parameters_free(session->sce.parameters);
-
-	session->sce.parameters = sce_parameters_new();
-	xccdf_pathcopy = oscap_strdup(session->xccdf.file);
-	sce_parameters_set_xccdf_directory(session->sce.parameters, dirname(xccdf_pathcopy));
-	sce_parameters_allocate_session(session->sce.parameters);
-	oscap_free(xccdf_pathcopy);
-	return !xccdf_policy_model_register_engine_sce(session->xccdf.policy_model, session->sce.parameters);
-#else
-	return 0;
-#endif
+	return xccdf_session_load_check_engine_plugins(session);
 }
 
 int xccdf_session_load_tailoring(struct xccdf_session *session)
@@ -969,12 +1006,8 @@ int xccdf_session_export_xccdf(struct xccdf_session *session)
 					session->export.report_file,
 					"",
 					(session->export.oval_results ? "%.result.xml" : ""),
-#ifdef ENABLE_SCE
-					 (session->export.sce_results ? "%.result.xml" : ""),
-#else
-					 "",
-#endif
-					 session->xccdf.profile_id == NULL ? "" : session->xccdf.profile_id
+					(session->export.check_engine_plugins_results ? "%.result.xml" : ""),
+					session->xccdf.profile_id == NULL ? "" : session->xccdf.profile_id
 			);
 	}
 	return 0;
@@ -1151,36 +1184,33 @@ int xccdf_session_export_oval(struct xccdf_session *session)
 	return 0;
 }
 
+int xccdf_session_export_check_engine_plugins(struct xccdf_session *session)
+{
+	if (!session->export.check_engine_plugins_results)
+		return 0;
+
+	struct oscap_iterator *it = oscap_iterator_new(session->check_engine_plugins);
+
+	int ret = 0;
+	while (oscap_iterator_has_more(it)) {
+		struct check_engine_plugin_def *plugin = (struct check_engine_plugin_def *)oscap_iterator_next(it);
+
+		if (check_engine_plugin_export_results(
+				plugin,
+				session->xccdf.policy_model,
+				session->validate && session->full_validation,
+				session->xccdf.file) != 0)
+			ret = 1;
+	}
+
+	oscap_iterator_free(it);
+
+	return ret;
+}
+
 int xccdf_session_export_sce(struct xccdf_session *session)
 {
-#ifdef ENABLE_SCE
-	/* Export SCE results */
-	if (session->export.sce_results == true) {
-		struct sce_session *sce_session = sce_parameters_get_session(session->sce.parameters);
-		if (sce_session == NULL)
-			return 1;
-		struct sce_check_result_iterator * it = sce_session_get_check_results(sce_session);
-
-		while(sce_check_result_iterator_has_more(it))
-		{
-			struct sce_check_result * check_result = sce_check_result_iterator_next(it);
-			char target[2 + strlen(sce_check_result_get_basename(check_result)) + 11 + 1];
-			snprintf(target, sizeof(target), "./%s.result.xml", sce_check_result_get_basename(check_result));
-			sce_check_result_export(check_result, target);
-
-			if (session->validate && session->full_validation) {
-				if (oscap_validate_document(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0", _reporter, NULL)) {
-					_validation_failed(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0");
-					sce_check_result_iterator_free(it);
-					return 1;
-				}
-			}
-		}
-
-		sce_check_result_iterator_free(it);
-	}
-#endif
-	return 0;
+	return xccdf_session_export_check_engine_plugins(session);
 }
 
 int xccdf_session_export_arf(struct xccdf_session *session)
