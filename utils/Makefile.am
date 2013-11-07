@@ -11,8 +11,6 @@ man_MANS += oscap.8
 oscap_SOURCES	= oscap.c oscap-tool.h oscap-tool.c oscap-ds.c
 oscap_CPPFLAGS	= -I$(top_srcdir)/src/common/public -I$(top_srcdir)/src/DS/public
 oscap_LDADD	+= $(top_builddir)/src/libopenscap.la
-EXTRA_DIST	= $(man_MANS)
-
 
 oscap_CPPFLAGS	+= -DOVAL_PROBE_DIR='"$(probe_dir)"'
 oscap_SOURCES	+= oscap-oval.c
@@ -33,10 +31,11 @@ oscap_CPPFLAGS  += -I$(top_srcdir)/src/CVE/public
 
 oscap_SOURCES   += oscap-info.c
 oscap_CPPFLAGS  += -I$(top_srcdir)/src/CVE/public
-
 endif
 
 if WANT_UTIL_SCAP_AS_RPM
 bin_SCRIPTS += scap-as-rpm
 man_MANS += scap-as-rpm.8
 endif
+
+EXTRA_DIST	= $(bin_SCRIPTS) $(man_MANS)
