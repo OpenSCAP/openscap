@@ -222,7 +222,7 @@ def main():
     parser = ParserClass(
         description = "Takes given SCAP input(s) and makes an RPM package that contains them. "
                       "The result RPM can be installed using # yum install ./package-name-1-1.rpm "
-                      "which will put the contents into /usr/share/scap. No dependency on openscap "
+                      "which will put the contents into /usr/share/xml/scap. No dependency on openscap "
                       "or scap-workbench is enforced in the output package so you can use any "
                       "SCAP-capable scanner to evaluate the content.")
 
@@ -236,7 +236,7 @@ def main():
     parser.add_argument("--pkg-license", dest = "pkg_license", default = "Unknown",
         help = "Short name of the license that you want to publish the package under. Ex.: GPLv2+, BSD, ...")
 
-    parser.add_argument("--pkg-scap-location", dest = "pkg_scap_location", default = "%{_datadir}/scap",
+    parser.add_argument("--pkg-scap-location", dest = "pkg_scap_location", default = "%{_datadir}/xml/scap",
         help = "Folder where SCAP files are supposed to be installed. Each package will have its own folder "
                "inside this folder. RPM variables can be used and will be expanded as usual. It is "
                "recommended to keep the default settings.")
