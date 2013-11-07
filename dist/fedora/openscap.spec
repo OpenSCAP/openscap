@@ -91,6 +91,7 @@ is for testing purposes only.
 Summary:        Sectool content
 Group:          Applications/System
 Requires:       %{name} = %{version}-%{release}
+Requires:       %{name}-engine-sce
 BuildArch:      noarch
 
 %description    content-sectool
@@ -117,6 +118,16 @@ BuildRequires:  opendbx-devel
 The %{name}-extra-probes-sql package contains additional OpenSCAP probes
 for querying database objects. Users are advised to install appropriate
 opendbx backend package along this one.
+
+%package        engine-sce
+Summary:	Script Check Engine plug-in for OpenSCAP
+Group:          Applications/System
+Requires:       %{name} = %{version}-%{release}
+
+%description    engine-sce
+The Script Check Engine is non-standard extension to SCAP protocol. This
+engine allows content authors to avoid OVAL language and write their assessment
+commands using a scripting language (Bash, Perl, Python, Ruby, ...).
 
 %package        selinux
 Summary:        SELinux policy module for openscap
@@ -203,7 +214,7 @@ exit 0
 %files
 %defattr(-,root,root,-)
 %doc AUTHORS COPYING ChangeLog NEWS README
-%{_libdir}/*.so.*
+%{_libdir}/libopenscap.so.*
 %{_libexecdir}/openscap/probe_dnscache
 %{_libexecdir}/openscap/probe_environmentvariable
 %{_libexecdir}/openscap/probe_environmentvariable58
@@ -285,6 +296,9 @@ exit 0
 %files extra-probes-sql
 %{_libexecdir}/openscap/probe_sql
 %{_libexecdir}/openscap/probe_sql57
+
+%files engine-sce
+%{_libdir}/libopenscap_sce.so.*
 
 %files selinux
 %attr(0600,root,root) %{_datadir}/selinux/packages/oscap.pp
