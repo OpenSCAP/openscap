@@ -178,11 +178,11 @@ static int ds_sds_dump_component(const char* component_id, xmlDocPtr doc, const 
 			}
 			// TODO: error checking, fprintf should return strlen((const char*)text_contents)
 			fprintf(output_file, "%s", text_contents ? (char*)text_contents : "");
-#ifdef ENABLE_SCE
+			// NB: This code is for SCE scripts
 			if (fchmod(fd, 0700) != 0) {
 				oscap_seterr(OSCAP_EFAMILY_XML, "Failed to set executable permission on script (id='%s') that was split to '%s'.", component_id, filename);
 			}
-#endif
+
 			fclose(output_file);
 			xmlFree(text_contents);
 		}

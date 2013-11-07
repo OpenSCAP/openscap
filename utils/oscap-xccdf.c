@@ -824,9 +824,7 @@ int app_xccdf_xslt(const struct oscap_action *action)
 		"template",          action->tmpl,
 		"format",            action->format,
 		"oval-template",     oval_template,
-#ifdef ENABLE_SCE
 		"sce-template",      action->sce_template,
-#endif
 		"verbosity",         "",
 		"hide-profile-info", action->hide_profile_info ? "yes" : NULL,
 		NULL
@@ -868,9 +866,7 @@ enum oval_opt {
     XCCDF_OPT_FORMAT,
     XCCDF_OPT_OVAL_TEMPLATE,
     XCCDF_OPT_STYLESHEET_FILE,
-#ifdef ENABLE_SCE
     XCCDF_OPT_SCE_TEMPLATE,
-#endif
     XCCDF_OPT_FILE_VERSION,
 	XCCDF_OPT_TAILORING_FILE,
 	XCCDF_OPT_TAILORING_ID,
@@ -951,9 +947,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 				fprintf(stdout, "Warning: --cpe-dict is a deprecated option. Please use --cpe instead!\n\n");
 				action->cpe = optarg; break;
 			}
-#ifdef ENABLE_SCE
 		case XCCDF_OPT_SCE_TEMPLATE:	action->sce_template = optarg; break;
-#endif
 		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
