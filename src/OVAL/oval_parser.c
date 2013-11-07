@@ -143,7 +143,7 @@ char *oval_determine_document_schema_version(const char *document, oscap_documen
 	}
 
 	xmlFreeTextReader(reader);
-	char* ret = strdup((const char*)version);
+	char* ret = oscap_strdup((const char*)version);
 	xmlFree(version);
 
 	return ret;
