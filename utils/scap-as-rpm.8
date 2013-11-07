@@ -1,0 +1,57 @@
+.TH scap-as-rpm "8" "November 2013" "scap-as-rpm" "System Administration Utilities"
+.SH NAME
+scap-as-rpm \- manual page for scap-as-rpm
+.SH DESCRIPTION
+usage: scap\-as\-rpm [\-h] [\-\-pkg\-name PKG_NAME] [\-\-pkg\-version PKG_VERSION]
+.IP
+[\-\-pkg\-release PKG_RELEASE] [\-\-pkg\-summary PKG_SUMMARY]
+[\-\-pkg\-license PKG_LICENSE]
+[\-\-pkg\-scap\-location PKG_SCAP_LOCATION]
+[\-\-rpm\-destination RPM_DESTINATION]
+[\-\-srpm\-destination SRPM_DESTINATION]
+FILE [FILE ...]
+.PP
+Takes given SCAP input(s) and makes an RPM package that contains them. The
+result RPM can be installed using # yum install ./package\-name\-1\-1.rpm which
+will put the contents into \fI/usr/share/scap\fP. No dependency on openscap or scapworkbench is enforced in the output package so you can use any SCAP\-capable
+scanner to evaluate the content.
+.SS "positional arguments:"
+.TP
+FILE
+List of files that should be put into the result
+package. These should be SCAP XML files but such
+requirement is not enforced.
+.SS "optional arguments:"
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+show this help message and exit
+.TP
+\fB\-\-pkg\-name\fR PKG_NAME
+Name of the RPM package, if none is provided the
+basename of the first SCAP input is used. Ex.: xyzsecurity\-guide
+.HP
+\fB\-\-pkg\-version\fR PKG_VERSION
+.HP
+\fB\-\-pkg\-release\fR PKG_RELEASE
+.TP
+\fB\-\-pkg\-summary\fR PKG_SUMMARY
+Optional short description of the package.
+.TP
+\fB\-\-pkg\-license\fR PKG_LICENSE
+Short name of the license that you want to publish the
+package under. Ex.: GPLv2+, BSD, ...
+.TP
+\fB\-\-pkg\-scap\-location\fR PKG_SCAP_LOCATION
+Folder where SCAP files are supposed to be installed.
+Each package will have its own folder inside this
+folder. RPM variables can be used and will be expanded
+as usual. It is recommended to keep the default
+settings.
+.TP
+\fB\-\-rpm\-destination\fR RPM_DESTINATION
+The folder (absolute or relative to CWD) where the
+result RPM shall be saved.
+.TP
+\fB\-\-srpm\-destination\fR SRPM_DESTINATION
+The folder (absolute or relative to CWD) where the
+result SRPM shall be saved.

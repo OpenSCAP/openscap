@@ -38,5 +38,5 @@ endif
 
 if WANT_UTIL_SCAP_AS_RPM
 bin_SCRIPTS += scap-as-rpm
-#man_MANS = scap-as-rpm.8
+man_MANS += scap-as-rpm.8
 endif
