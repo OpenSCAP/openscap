@@ -70,6 +70,7 @@ Summary:        Openscap utilities
 Group:          Applications/System
 Requires:       %{name} = %{version}-%{release}
 Requires:       libcurl >= 7.12.0
+Requires:       rpmdev-setuptree rpmbuild
 BuildRequires:  libcurl-devel >= 7.12.0
 
 %description    utils
