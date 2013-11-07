@@ -39,10 +39,6 @@ if WANT_CCE
 WANT_MODULE += -DWANT_CCE
 AM_CPPFLAGS += -I$(top_srcdir)/src/CCE/public
 endif
-if WANT_SCE
-WANT_MODULE += -DWANT_SCE
-AM_CPPFLAGS += -I$(top_srcdir)/src/SCE/public -DENABLE_SCE
-endif
 
 ##beware of: http://www.gnu.org/software/automake/manual/html_node/Multiple-Outputs.html
 
