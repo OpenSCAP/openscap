@@ -1,3 +1,23 @@
+openscap-0.9.13							08-11-2013
+ - Moved SCE to separate shared library (libopenscap_sce.so)
+ - Introduction of scap-as-rpm tool
+ - Improvements of sql and sql57 probes
+ - Improvements of SELinux policy
+ - Amendments based on SCAP 1.2 Errata (sp800-126r2-errata-20120409.pdf)
+ - Minor improvements in state_entity processing
+ - Introduction of CPE name for Fedora 21 to the internal dictionary
+ - Added support for ind-def:pid/@xsi:nil (rhbz#1013011)
+ - Improved error reporting
+ - Bug fixes
+   - Changed CPE name regex to be more permissive
+   - avoided reports from the library to the stdout and stderr
+   - plugged several memory leaks
+   - improved xccdf:check-content-refs processing
+   - misspelling in syslog message (rhbz#1021695)
+   - fixed OVAL's <field> element processing
+   - fixes based on static analysers
+   - test suite is locale independent
+
 openscap-0.9.12							12-09-2013
  - tailoring improvements (@id, version, and benchmark ref attributes)
  - XCCDF 1.1 tailoring extension
