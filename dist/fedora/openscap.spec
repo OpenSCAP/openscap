@@ -6,7 +6,7 @@ restorecon -R /usr/bin/oscap /usr/libexec/openscap; \
 
 Name:           openscap
 Version:        0.9.13
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 Group:          System Environment/Libraries
 License:        LGPLv2+
@@ -25,6 +25,7 @@ BuildRequires:  perl-XML-XPath
 %endif
 Requires(post):   /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
+Obsoletes:      openscap-content
 
 %description
 OpenSCAP is a set of open source libraries providing an easier path
@@ -77,16 +78,6 @@ BuildRequires:  libcurl-devel >= 7.12.0
 The %{name}-utils package contains oscap command-line tool. The oscap
 is configuration and vulnerability scanner, capable of performing
 compliance checking using SCAP content.
-
-%package        content
-Summary:        SCAP content
-Group:          Applications/System
-Requires:       %{name} = %{version}-%{release}
-BuildArch:      noarch
-
-%description    content
-Example of SCAP content for Fedora. Please note that this content
-is for testing purposes only.
 
 %package        content-sectool
 Summary:        Sectool content
@@ -173,13 +164,11 @@ rm -rf $RPM_BUILD_ROOT
 
 make install INSTALL='install -p' DESTDIR=$RPM_BUILD_ROOT
 
-# create symlinks to default content
-ln -s  %{_datadir}/openscap/scap-fedora14-oval.xml $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-oval.xml
-ln -s  %{_datadir}/openscap/scap-fedora14-xccdf.xml $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-xccdf.xml
-
 # remove content for another OS
 rm $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-rhel6-oval.xml
 rm $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-rhel6-xccdf.xml
+rm $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-fedora14-oval.xml
+rm $RPM_BUILD_ROOT/%{_datadir}/openscap/scap-fedora14-xccdf.xml
 
 # bash-completion script
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/bash_completion.d
@@ -279,13 +268,6 @@ exit 0
 %{_bindir}/*
 %{_sysconfdir}/bash_completion.d
 
-%files content
-%defattr(-,root,root,-)
-%{_datadir}/openscap/scap-oval.xml
-%{_datadir}/openscap/scap-xccdf.xml
-%{_datadir}/openscap/scap-fedora14-oval.xml
-%{_datadir}/openscap/scap-fedora14-xccdf.xml
-
 %files content-sectool
 %defattr(-,root,root,-)
 %{_datadir}/openscap/sectool-sce
@@ -307,6 +289,12 @@ exit 0
 # %{_mandir}/man8/openscap_selinux.8.*
 
 %changelog
+* Fri Nov 08 2013 Šimon Lukašík <slukasik@redhat.com> 0.9.13-2
+- drop openscap-content package (use scap-security-guide instead)
+
+* Fri Nov 08 2013 Šimon Lukašík <slukasik@redhat.com> 0.9.13-1
+- upgrade
+
 * Thu Sep 26 2013 Šimon Lukašík <slukasik@redhat.com> 0.9.12-2
 - Start building SQL probes for Fedora
 
