@@ -6,7 +6,7 @@ restorecon -R /usr/bin/oscap /usr/libexec/openscap; \
 
 Name:           openscap
 Version:        0.9.13
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 Group:          System Environment/Libraries
 License:        LGPLv2+
@@ -37,6 +37,7 @@ for the expression of Computer Network Defense related information.
 Summary:        Development files for %{name}
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
+Requires:       %{name}-engine-sce = %{version}-%{release}
 Requires:       libxml2-devel
 Requires:       pkgconfig
 
@@ -289,6 +290,9 @@ exit 0
 # %{_mandir}/man8/openscap_selinux.8.*
 
 %changelog
+* Fri Nov 08 2013 Šimon Lukašík <slukasik@redhat.com> 0.9.13-4
+- specify dependency between engine and devel sub-package
+
 * Fri Nov 08 2013 Šimon Lukašík <slukasik@redhat.com> 0.9.13-3
 - correct openscap-utils dependencies
 
