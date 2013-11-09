@@ -6,7 +6,7 @@ restorecon -R /usr/bin/oscap /usr/libexec/openscap; \
 
 Name:           openscap
 Version:        0.9.13
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 Group:          System Environment/Libraries
 License:        LGPLv2+
@@ -71,7 +71,7 @@ Summary:        Openscap utilities
 Group:          Applications/System
 Requires:       %{name} = %{version}-%{release}
 Requires:       libcurl >= 7.12.0
-Requires:       rpmdev-setuptree rpmbuild
+Requires:       rpmdevtools rpm-build
 BuildRequires:  libcurl-devel >= 7.12.0
 
 %description    utils
@@ -289,6 +289,9 @@ exit 0
 # %{_mandir}/man8/openscap_selinux.8.*
 
 %changelog
+* Fri Nov 08 2013 Šimon Lukašík <slukasik@redhat.com> 0.9.13-3
+- correct openscap-utils dependencies
+
 * Fri Nov 08 2013 Šimon Lukašík <slukasik@redhat.com> 0.9.13-2
 - drop openscap-content package (use scap-security-guide instead)
 
