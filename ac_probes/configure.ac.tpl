@@ -202,6 +202,20 @@ AC_CHECK_FUNCS([fts_open posix_memalign memalign])
 AC_CHECK_FUNC(sigwaitinfo, [sigwaitinfo_LIBS=""], [sigwaitinfo_LIBS="-lrt"])
 AC_SUBST(sigwaitinfo_LIBS)
 
+# libopenscap links against librpm if found. Otherwise we carry own implementation of rpmvercmp.
+echo
+echo '* Checking for rpm library  (optional dependency of libopenscap) '
+PKG_CHECK_MODULES([rpm], [rpm >= 4.4],[
+	SAVE_LIBS=$LIBS
+	AC_DEFINE([HAVE_RPMVERCMP], [1], [Define to 1 if there is rpmvercmp available.])
+	AC_SUBST([rpm_CFLAGS])
+	AC_SUBST([rpm_LIBS])
+	LIBS=$SAVE_LIBS
+],[
+	AC_MSG_NOTICE([!!! librpm not found. The rpmvercmp function will be emulated. !!!])
+])
+
+
 @@@@PROBE_HEADERS@@@@
 
 @@@@PROBE_LIBRARIES@@@@

@@ -105,6 +105,7 @@ common_oval_sources = \
 AM_CPPFLAGS =	@xml2_CFLAGS@ \
 		@pthread_CFLAGS@ \
 		@pcre_CFLAGS@ \
+		@rpm_CFLAGS@ \
 		-I$(srcdir)/public \
 		-I$(top_srcdir)/src \
 		-I$(top_srcdir)/src/common \
@@ -124,7 +125,8 @@ AM_CPPFLAGS =	@xml2_CFLAGS@ \
 # -l or -L options go to LIBADD (or LDADD), not to LDFLAGS
 liboval_la_LIBADD =	@xml2_LIBS@ \
 			@pthread_LIBS@ \
-			@pcre_LIBS@
+			@pcre_LIBS@ \
+			@rpm_LIBS@
 liboval_testing_la_LIBADD = $(liboval_la_LIBADD)
 
 pkginclude_HEADERS  = \

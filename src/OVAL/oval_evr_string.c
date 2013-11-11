@@ -32,17 +32,22 @@
 #include <ctype.h>
 #include "oval_evr_string_impl.h"
 
+#ifdef HAVE_RPMVERCMP
+#include <rpm/rpmlib.h>
+#else
 #if !defined(__FreeBSD__)
 #include <alloca.h>
 #endif
-
 static int rpmvercmp(const char *a, const char *b);
+#endif
 
 int oval_evr_string_cmp(const char *a, const char *b)
 {
 	return rpmvercmp(a, b);
 }
 
+
+#ifndef HAVE_RPMVERCMP
 /*
  * code from http://rpm.org/api/4.4.2.2/rpmvercmp_8c-source.html
  */
@@ -167,3 +172,5 @@ static int rpmvercmp(const char *a, const char *b)
 	else
 		return 1;
 }
+#endif
+
