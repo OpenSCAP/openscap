@@ -369,6 +369,10 @@ static const struct oscap_string_map OVAL_FAMILY_MAP[] = {
 oval_family_t oval_family_parse(xmlTextReaderPtr reader)
 {
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
+	if (namespace == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "Could not find namespace definition for prefix '%s'", (char *) xmlTextReaderConstPrefix(reader));
+		return OVAL_FAMILY_UNKNOWN;
+	}
 	char *family_text = strrchr(namespace, '#');
 	if (family_text == NULL) {
 		dW("No OVAL family for namespace: %s\n", namespace);
