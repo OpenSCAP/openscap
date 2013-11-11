@@ -113,7 +113,7 @@ for querying database objects. Users are advised to install appropriate
 opendbx backend package along this one.
 
 %package        engine-sce
-Summary:	Script Check Engine plug-in for OpenSCAP
+Summary:        Script Check Engine plug-in for OpenSCAP
 Group:          Applications/System
 Requires:       %{name} = %{version}-%{release}
 
