@@ -110,6 +110,43 @@ static int match_fs(const char *fsname, const char **fs_arr, size_t fs_cnt)
 #define DEVID_ARRAY_SIZE 16
 #define DEVID_ARRAY_ADD  8
 
+
+static int
+is_local_fs(struct mntent *ment)
+{
+// todo: would it be usefull to provide the choice during build-time?
+#if 1
+	char *s;
+
+	s = ment->mnt_fsname;
+	/* If the fsname begins with "//", it is probably CIFS. */
+	if (s[0] == '/' && s[1] == '/')
+		return 0;
+
+	/* If there's a ':' in the fsname and it occurs before any
+	 * '/', then this is probably NFS and the file system is
+	 * considered "remote".
+	 */
+	s = strpbrk(s, "/:");
+	if (s && *s == ':')
+		return 0;
+
+	return 1;
+#else
+	struct stat st;
+
+	/* If the file system is not backed-up by a real file, it is
+	   considered remote. A notable exception is "tmpfs" to allow
+	   traversal of /tmp et al. */
+	if (strcmp(ment->mnt_fsname, "tmpfs") != 0
+	    && (stat(ment->mnt_fsname, &st) != 0
+		|| !(S_ISBLK(st.st_mode))))
+		return 0;
+	else
+		return 1;
+#endif
+}
+
 static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 {
 	int e;
@@ -141,9 +178,7 @@ static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 
 	while ((ment = getmntent(fp)) != NULL) {
 		if (fs == NULL) {
-			if (strcmp(ment->mnt_fsname, "tmpfs") != 0
-			    && (stat(ment->mnt_fsname, &st) != 0
-				|| !(S_ISBLK(st.st_mode))))
+			if (!is_local_fs(ment))
 				continue;
 		} else if (!match_fs(ment->mnt_type, fs, fs_cnt)) {
 				continue;
