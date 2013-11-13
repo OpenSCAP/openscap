@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:red-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
+  <generator>
+    <oval:product_name>Red Hat OVAL Patch Definition Merger</oval:product_name>
+    <oval:product_version>2</oval:product_version>
+    <oval:schema_version>5.3</oval:schema_version>
+    <oval:timestamp>2013-11-07T13:56:02</oval:timestamp>
+  </generator>
+<definitions>
+  <definition id="oval:com.redhat.rhsa:def:20100449" version="502" class="patch">
+      <metadata>
+        <title>RHSA-2010:0449: rhn-client-tools security update (Moderate)</title>
+    <affected family="unix">
+            <platform>Red Hat Enterprise Linux 5</platform>
+         </affected>
+    <reference source="RHSA" ref_id="RHSA-2010:0449-01" ref_url="https://rhn.redhat.com/errata/RHSA-2010-0449.html" />
+          <reference source="CVE" ref_id="CVE-2010-1439" ref_url="https://www.redhat.com/security/data/cve/CVE-2010-1439.html" />
+
+    <description>Red Hat Network Client Tools provide programs and libraries that allow your
+system to receive software updates from the Red Hat Network (RHN).
+
+It was discovered that rhn-client-tools set insecure permissions on the
+loginAuth.pkl file, used to store session credentials for authenticating
+connections to Red Hat Network servers. A local, unprivileged user could
+use these credentials to download packages from the Red Hat Network. They
+could also manipulate package or action lists associated with the system's
+profile. (CVE-2010-1439)
+
+Users of rhn-client-tools are advised to upgrade to these updated packages,
+which contain a backported patch to correct this issue.</description>
+
+</metadata>
+      <criteria operator="AND">
+         <criterion test_ref="oval:com.redhat.rhsa:tst:20100449002" comment="pokus is earlier than 0:0.4.20-33.el5_5.2" />
+      </criteria>
+  </definition>
+</definitions>
+
+<tests>
+      <lin-def:rpminfo_test id="oval:com.redhat.rhsa:tst:20100449002" version="502" check="at least one" comment="pokus is earlier than 0:0.4.20-33.el5_5.2">
+        <lin-def:object object_ref="oval:com.redhat.rhsa:obj:20100449002"/>
+        <lin-def:state state_ref="oval:com.redhat.rhsa:ste:20100449003"/>
+      </lin-def:rpminfo_test>
+</tests>
+
+<objects>
+      <lin-def:rpminfo_object id="oval:com.redhat.rhsa:obj:20100449002" version="502">
+        <lin-def:name>pokus</lin-def:name>
+      </lin-def:rpminfo_object>
+</objects>
+
+<states>
+      <lin-def:rpminfo_state id="oval:com.redhat.rhsa:ste:20100449003" version="502">
+        <lin-def:evr operation="less than" datatype="evr_string">0:0.4.20-33.el5_5.2</lin-def:evr>
+      </lin-def:rpminfo_state>
+</states>
+
+</oval_definitions>
