@@ -6,7 +6,6 @@ name=$(basename $0 .sh)
 stderr=$(mktemp ${name}.err.XXXXXX)
 echo "stderr file: $stderr"
 
-echo "Evaluating content."
 res=0
 $OSCAP info $srcdir/${name}.oval.xml 2> $stderr || res=$?
 [ $res -eq 1 ]
