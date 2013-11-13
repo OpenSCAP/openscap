@@ -57,7 +57,13 @@
 # include <alloca.h>
 #endif
 
+static int oval_evr_string_cmp(const char *a, const char *b);
 static int rpmvercmp(const char *a, const char *b);	// don't really feel like creating a new header file just for this
+
+static int oval_evr_string_cmp(const char *a, const char *b)
+{
+	return rpmvercmp(a, b);
+}
 
 /*
  * code from http://rpm.org/api/4.4.2.2/rpmvercmp_8c-source.html
@@ -690,7 +696,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		}
 	} else if (state_data_type == OVAL_DATATYPE_EVR_STRING) {
 		int result;
-		result = rpmvercmp(sys_data, state_data);
+		result = oval_evr_string_cmp(sys_data, state_data);
 		if (operation == OVAL_OPERATION_EQUALS) {
 			return ((result == 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
 		} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
