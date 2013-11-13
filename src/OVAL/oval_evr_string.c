@@ -41,11 +41,85 @@
 static int rpmvercmp(const char *a, const char *b);
 #endif
 
+static int compare_values(const char *str1, const char *str2);
+static void parseEVR(char *evr, const char **ep, const char **vp, const char **rp);
+
 int oval_evr_string_cmp(const char *a, const char *b)
 {
-	return rpmvercmp(a, b);
+	/* This mimics rpmevrcmp which is not exported by rpmlib version 4.
+	 * Code inspired by rpm.labelCompare() from rpm4/python/header-py.c
+	 */
+	const char *a_epoch, *a_version, *a_release;
+	const char *b_epoch, *b_version, *b_release;
+	char *a_copy, *b_copy;
+	int result;
+
+	a_copy = oscap_strdup(a);
+	b_copy = oscap_strdup(b);
+	parseEVR(a_copy, &a_epoch, &a_version, &a_release);
+	parseEVR(b_copy, &b_epoch, &b_version, &b_release);
+
+	result = compare_values(a_epoch, b_epoch);
+	if (!result) {
+		result = compare_values(a_version, b_version);
+		if (!result)
+			result = compare_values(a_release, b_release);
+	}
+
+	oscap_free(a_copy);
+	oscap_free(b_copy);
+	return result;
 }
 
+static int compare_values(const char *str1, const char *str2)
+{
+	/*
+	 * Code copied from rpm4/python/header-py.c
+	 */
+	if (!str1 && !str2)
+		return 0;
+	else if (str1 && !str2)
+		return 1;
+	else if (!str1 && str2)
+		return -1;
+	return rpmvercmp(str1, str2);
+}
+
+static void parseEVR(char *evr, const char **ep, const char **vp, const char **rp)
+{
+	/*
+	 * Code copied from rpm4/lib/rpmds.c
+	 */
+	const char *epoch;
+	const char *version;			/* assume only version is present */
+	const char *release;
+	char *s, *se;
+
+	s = evr;
+	while (*s && risdigit(*s)) s++;		/* s points to epoch terminator */
+	se = strrchr(s, '-');			/* se points to version terminator */
+
+	if (*s == ':') {
+		epoch = evr;
+		*s++ = '\0';
+		version = s;
+		if (*epoch == '\0')
+			epoch = "0";
+	} else {
+		epoch = NULL;			/* XXX disable epoch compare if missing */
+		version = evr;
+	}
+	if (se) {
+		*se++ = '\0';
+		release = se;
+	} else {
+		release = NULL;
+	}
+
+	if (ep) *ep = epoch;
+	if (vp) *vp = version;
+	if (rp) *rp = release;
+}
 
 #ifndef HAVE_RPMVERCMP
 /*
