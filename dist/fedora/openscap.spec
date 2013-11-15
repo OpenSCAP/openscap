@@ -6,7 +6,7 @@ restorecon -R /usr/bin/oscap /usr/libexec/openscap; \
 
 Name:           openscap
 Version:        0.9.13
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 Group:          System Environment/Libraries
 License:        LGPLv2+
@@ -25,7 +25,6 @@ BuildRequires:  perl-XML-XPath
 %endif
 Requires(post):   /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
-Obsoletes:      openscap-content
 
 %description
 OpenSCAP is a set of open source libraries providing an easier path
@@ -290,6 +289,10 @@ exit 0
 # %{_mandir}/man8/openscap_selinux.8.*
 
 %changelog
+* Fri Nov 15 2013 Šimon Lukašík <slukasik@redhat.com> - 0.9.13-7
+- do not obsolete openscap-conten just drop it (#1028706)
+  scap-security-guide will bring the Obsoletes tag
+
 * Thu Nov 14 2013 Šimon Lukašík <slukasik@redhat.com> - 0.9.13-6
 - only non-noarch packages should be requiring specific architecture
 
