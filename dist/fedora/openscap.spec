@@ -6,7 +6,7 @@ restorecon -R /usr/bin/oscap /usr/libexec/openscap; \
 
 Name:           openscap
 Version:        0.9.13
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 Group:          System Environment/Libraries
 License:        LGPLv2+
@@ -36,8 +36,8 @@ for the expression of Computer Network Defense related information.
 %package        devel
 Summary:        Development files for %{name}
 Group:          Development/Libraries
-Requires:       %{name} = %{version}-%{release}
-Requires:       %{name}-engine-sce = %{version}-%{release}
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       %{name}-engine-sce%{?_isa} = %{version}-%{release}
 Requires:       libxml2-devel
 Requires:       pkgconfig
 
@@ -48,7 +48,7 @@ developing applications that use %{name}.
 %package        python
 Summary:        Python bindings for %{name}
 Group:          Development/Libraries
-Requires:       %{name} = %{version}-%{release}
+Requires:       %{name}%{?_isa} = %{version}-%{release}
 BuildRequires:  python-devel
 
 %description    python
@@ -58,7 +58,7 @@ libraries can be used by python.
 %package        perl
 Summary:        Perl bindings for %{name}
 Group:          Development/Libraries
-Requires:       %{name} = %{version}-%{release}
+Requires:       %{name}%{?_isa} = %{version}-%{release}
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 BuildRequires:  perl-devel
 
@@ -70,7 +70,7 @@ libraries can be used by perl.
 %package        utils
 Summary:        Openscap utilities
 Group:          Applications/System
-Requires:       %{name} = %{version}-%{release}
+Requires:       %{name}%{?_isa} = %{version}-%{release}
 Requires:       libcurl >= 7.12.0
 Requires:       rpmdevtools rpm-build
 BuildRequires:  libcurl-devel >= 7.12.0
@@ -83,8 +83,8 @@ compliance checking using SCAP content.
 %package        content-sectool
 Summary:        Sectool content
 Group:          Applications/System
-Requires:       %{name} = %{version}-%{release}
-Requires:       %{name}-engine-sce
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       %{name}-engine-sce%{?_isa}
 BuildArch:      noarch
 
 %description    content-sectool
@@ -93,7 +93,7 @@ SCAP/SCE content that conforms to sectool checks.
 %package        extra-probes
 Summary:        SCAP probes
 Group:          Applications/System
-Requires:       %{name} = %{version}-%{release}
+Requires:       %{name}%{?_isa} = %{version}-%{release}
 BuildRequires:  openldap-devel
 BuildRequires:  GConf2-devel
 
@@ -104,7 +104,7 @@ commonly used and require additional dependencies.
 %package        extra-probes-sql
 Summary:        SCAP probes for Database
 Group:          Applications/System
-Requires:       %{name} = %{version}-%{release}
+Requires:       %{name}%{?_isa} = %{version}-%{release}
 BuildRequires:  opendbx-devel
 
 %description    extra-probes-sql
@@ -115,7 +115,7 @@ opendbx backend package along this one.
 %package        engine-sce
 Summary:        Script Check Engine plug-in for OpenSCAP
 Group:          Applications/System
-Requires:       %{name} = %{version}-%{release}
+Requires:       %{name}%{?_isa} = %{version}-%{release}
 
 %description    engine-sce
 The Script Check Engine is non-standard extension to SCAP protocol. This
@@ -290,6 +290,9 @@ exit 0
 # %{_mandir}/man8/openscap_selinux.8.*
 
 %changelog
+* Sat Nov 09 2013 Šimon Lukašík <slukasik@redhat.com> 0.9.13-5
+- specify architecture when requiring base package
+
 * Fri Nov 08 2013 Šimon Lukašík <slukasik@redhat.com> 0.9.13-4
 - specify dependency between engine and devel sub-package
 
