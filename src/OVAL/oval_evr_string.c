@@ -39,6 +39,10 @@
 #include <alloca.h>
 #endif
 static int rpmvercmp(const char *a, const char *b);
+static int risdigit(int c) {
+	// locale independent
+	return (c >= '0' && c <= '9');
+}
 #endif
 
 static int compare_values(const char *str1, const char *str2);
