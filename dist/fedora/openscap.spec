@@ -6,7 +6,7 @@ restorecon -R /usr/bin/oscap /usr/libexec/openscap; \
 
 Name:           openscap
 Version:        0.9.13
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 Group:          System Environment/Libraries
 License:        LGPLv2+
@@ -83,8 +83,8 @@ compliance checking using SCAP content.
 %package        content-sectool
 Summary:        Sectool content
 Group:          Applications/System
-Requires:       %{name}%{?_isa} = %{version}-%{release}
-Requires:       %{name}-engine-sce%{?_isa}
+Requires:       %{name} = %{version}-%{release}
+Requires:       %{name}-engine-sce
 BuildArch:      noarch
 
 %description    content-sectool
@@ -290,6 +290,9 @@ exit 0
 # %{_mandir}/man8/openscap_selinux.8.*
 
 %changelog
+* Thu Nov 14 2013 Šimon Lukašík <slukasik@redhat.com> - 0.9.13-6
+- only non-noarch packages should be requiring specific architecture
+
 * Sat Nov 09 2013 Šimon Lukašík <slukasik@redhat.com> 0.9.13-5
 - specify architecture when requiring base package
 
