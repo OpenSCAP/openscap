@@ -1,6 +1,7 @@
 noinst_LTLIBRARIES = libovalresults.la
 
 libovalresults_la_SOURCES = \
+	oval_resultCriteriaNode.c \
 	oval_resultDefinition.c \
 	oval_resultDefinitionIterator.c \
 	oval_results_impl.h
