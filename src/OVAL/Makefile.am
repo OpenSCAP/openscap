@@ -21,7 +21,6 @@ common_oval_sources = \
 	oval_agent.c \
 	oval_defModel.c \
 	oval_sysModel.c \
-	oval_resModel.c \
 	oval_affected.c \
 	oval_agent_api_impl.h \
 	oval_behavior.c \

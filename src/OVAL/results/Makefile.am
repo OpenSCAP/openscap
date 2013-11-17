@@ -1,6 +1,7 @@
 noinst_LTLIBRARIES = libovalresults.la
 
 libovalresults_la_SOURCES = \
+	oval_resModel.c \
 	oval_resultCriteriaNode.c \
 	oval_resultDefinition.c \
 	oval_resultDefinitionIterator.c \
@@ -16,7 +17,10 @@ libovalresults_la_CPPFLAGS  = \
 	-I$(top_srcdir)/src/common \
 	-I$(top_srcdir)/src/common/public \
 	-I$(top_srcdir)/src/OVAL/public \
-	-I$(top_srcdir)/src/OVAL
+	-I$(top_srcdir)/src/OVAL \
+	-I$(top_srcdir)/src/OVAL/probes/SEAP/public \
+	-DSEAP_MSGID_BITS=32 \
+	-DSEAP_THREAD_SAFE
 
 libovalresults_la_LIBADD = \
 	@xml2_LIBS@
