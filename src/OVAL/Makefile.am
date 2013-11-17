@@ -25,7 +25,6 @@ common_oval_sources = \
 	oval_affected.c \
 	oval_agent_api_impl.h \
 	oval_behavior.c \
-	adt/oval_collection_impl.h \
 	oval_component.c \
 	oval_criteriaNode.c \
 	oval_definition.c \
