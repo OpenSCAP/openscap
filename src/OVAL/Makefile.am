@@ -45,13 +45,11 @@ common_oval_sources = \
 	oval_recordField.c \
 	oval_reference.c \
 	oval_resultCriteriaNode.c \
-	oval_resultDefinition.c \
 	oval_resultDefinitionIterator.c \
 	oval_resultItem.c \
 	oval_resultSystem.c \
 	oval_resultTest.c \
 	oval_resultTestIterator.c \
-	results/oval_results_impl.h \
 	oval_directives.c \
 	oval_directives_impl.h \
 	oval_set.c \
@@ -133,7 +131,6 @@ pkginclude_HEADERS  = \
 			public/oval_agent_api.h \
 			public/oval_definitions.h \
 			public/oval_system_characteristics.h \
-			public/oval_results.h \
 			public/oval_variables.h \
 			public/oval_directives.h \
 			public/oval_types.h \
@@ -150,10 +147,15 @@ oval_testing_ext_probe.c: Makefile
 	(echo '#define OVAL_PROBEDIR_ENV 1'; \
 	 echo '#include <oval_probe_ext.c>' ) >$@
 
-SUBDIRS = probes/SEAP adt
+SUBDIRS = \
+	adt \
+	probes/SEAP \
+	results
+
 liboval_la_LIBADD  += \
 	adt/libovaladt.la \
-	probes/SEAP/libseap.la
+	probes/SEAP/libseap.la \
+	results/libovalresults.la
 
 
 CLEANFILES = $(nodist_liboval_testing_la_SOURCES)
