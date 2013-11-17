@@ -4,6 +4,7 @@ libovalresults_la_SOURCES = \
 	oval_resultCriteriaNode.c \
 	oval_resultDefinition.c \
 	oval_resultDefinitionIterator.c \
+	oval_resultItem.c \
 	oval_results_impl.h \
 	oval_resultTest.c \
 	oval_resultTestIterator.c
