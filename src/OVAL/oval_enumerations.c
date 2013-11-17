@@ -631,10 +631,14 @@ oval_subtype_t oval_subtype_parse(xmlTextReaderPtr reader)
 		goto cleanup;
 	}
 
-	subtype = oscap_string_to_enum(map, tagname);
-
-	if (subtype == OVAL_ENUMERATION_INVALID)
+	int subtype_s = oscap_string_to_enum(map, tagname);
+	if (subtype < 0) {
 		dW("Unknown OVAL family subtype: %s\n", tagname);
+		subtype = OVAL_ENUMERATION_INVALID;
+	}
+	else {
+		subtype = subtype_s;
+	}
 
  cleanup:
 	oscap_free(tagname);
