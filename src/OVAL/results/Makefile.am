@@ -6,6 +6,7 @@ libovalresults_la_SOURCES = \
 	oval_resultDefinitionIterator.c \
 	oval_resultItem.c \
 	oval_results_impl.h \
+	oval_resultSystem.c \
 	oval_resultTest.c \
 	oval_resultTestIterator.c
 
