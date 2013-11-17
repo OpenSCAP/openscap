@@ -75,8 +75,8 @@ struct oval_result_definition *oval_result_system_get_new_definition(struct oval
 								     int variable_instance);
 struct oval_result_test *oval_result_system_get_test(struct oval_result_system *, char *);
 
-struct oresults { 
-	int true_cnt; 
+struct oresults {
+	int true_cnt;
 	int false_cnt;
 	int unknown_cnt;
 	int error_cnt;

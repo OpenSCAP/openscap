@@ -37,7 +37,7 @@
 #endif
 
 #include "public/oval_results.h"
-#include "oval_results_impl.h"
+#include "results/oval_results_impl.h"
 #include "adt/oval_smc_impl.h"
 #include "adt/oval_smc_iterator_impl.h"
 

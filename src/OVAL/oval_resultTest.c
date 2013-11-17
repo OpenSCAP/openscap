@@ -45,7 +45,7 @@
 #endif
 #include <ctype.h>
 #include "oval_agent_api_impl.h"
-#include "oval_results_impl.h"
+#include "results/oval_results_impl.h"
 #include "oval_evr_string_impl.h"
 #include "adt/oval_collection_impl.h"
 #include "adt/oval_string_map_impl.h"
