@@ -5,7 +5,8 @@ libovalresults_la_SOURCES = \
 	oval_resultDefinition.c \
 	oval_resultDefinitionIterator.c \
 	oval_results_impl.h \
-	oval_resultTest.c
+	oval_resultTest.c \
+	oval_resultTestIterator.c
 
 libovalresults_la_CPPFLAGS  = \
 	@xml2_CFLAGS@ \
