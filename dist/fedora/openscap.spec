@@ -36,7 +36,6 @@ for the expression of Computer Network Defense related information.
 Summary:        Development files for %{name}
 Group:          Development/Libraries
 Requires:       %{name}%{?_isa} = %{version}-%{release}
-Requires:       %{name}-engine-sce%{?_isa} = %{version}-%{release}
 Requires:       libxml2-devel
 Requires:       pkgconfig
 
@@ -120,6 +119,17 @@ Requires:       %{name}%{?_isa} = %{version}-%{release}
 The Script Check Engine is non-standard extension to SCAP protocol. This
 engine allows content authors to avoid OVAL language and write their assessment
 commands using a scripting language (Bash, Perl, Python, Ruby, ...).
+
+%package        engine-sce-devel
+Summary:        Development files for %{name}-engine-sce
+Group:          Development/Libraries
+Requires:       %{name}-devel%{?_isa} = %{version}-%{release}
+Requires:       %{name}-engine-sce%{?_isa} = %{version}-%{release}
+Requires:       pkgconfig
+
+%description    engine-sce-devel
+The %{name}-engine-sce-devel package contains libraries and header files
+for developing applications that use %{name}-engine-sce.
 
 %package        selinux
 Summary:        SELinux policy module for openscap
@@ -257,9 +267,15 @@ exit 0
 %files devel
 %defattr(-,root,root,-)
 %doc docs/{html,examples}/
-%{_includedir}/*
-%{_libdir}/*.so
+%{_libdir}/libopenscap.so
 %{_libdir}/pkgconfig/*.pc
+%{_includedir}/openscap
+%exclude %{_includedir}/openscap/sce_engine_api.h
+
+%files engine-sce-devel
+%defattr(-,root,root,-)
+%{_libdir}/libopenscap_sce.so
+%{_includedir}/openscap/sce_engine_api.h
 
 %files utils
 %defattr(-,root,root,-)
