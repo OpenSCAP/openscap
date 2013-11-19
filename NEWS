@@ -1,3 +1,10 @@
+openscap-1.0.0							19-11-2013
+ - Improved heuristic to distinguish 'local' and 'remote' file systems
+ - Improved comparison of EntityStateEVRStringType (trac#355)
+ - Link against librpm (if available) to include rpmvercmp
+   (on other platforms we fall back to the build-in rpmvercmp)
+ - Bug fixes
+
 openscap-0.9.13							08-11-2013
  - Moved SCE to separate shared library (libopenscap_sce.so)
  - Introduction of scap-as-rpm tool
