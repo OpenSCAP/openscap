@@ -9,7 +9,7 @@ COUNT=0
 #for all devices
 for dev in `ip link show | sed '/^\s\+/d; s/^[^ ]\+ \([^ ]*\):.*/\1/'`; do
 	#find ipv4 addresses
-	for line in `ip -4 addr show dev $dev | awk '/'$dev': <.*BROADCAST.*>/ { printf "SHOW_BROADCAST=yes;"} /\W+inet / {printf "D_IPADDR="$2";D_BRDC="$4;}'`; do
+	for line in `ip -4 addr show dev $dev | awk '/'$dev': <.*BROADCAST.*>/ { printf "SHOW_BROADCAST=yes;"} /\W+inet [^ ]* brd / {printf "D_IPADDR="$2";D_BRDC="$4;} //\W+inet [^ ]* scope / {printf "D_IPADDR="$2";D_BRDC="$2;}'`; do
 		SHOW_BROADCAST=
 		eval $line
 		eval `ipcalc --netmask $D_IPADDR`
