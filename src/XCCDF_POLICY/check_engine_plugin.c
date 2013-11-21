@@ -184,7 +184,7 @@ const char *check_engine_plugin_get_capabilities(struct check_engine_plugin_def 
 	return (plugin->get_capabilities_fn)(&plugin->user_data);
 }
 
-const char * const known_plugins[] = {"libopenscap_sce.so", NULL};
+const char * const known_plugins[] = {"libopenscap_sce.so." STRINGIZE(LT_CURRENT_MINUS_AGE), NULL};
 
 const char * const *check_engine_plugin_get_known_plugins(void)
 {
