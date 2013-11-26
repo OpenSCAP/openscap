@@ -1,5 +1,5 @@
-# printf.m4 serial 49
-dnl Copyright (C) 2003, 2007-2012 Free Software Foundation, Inc.
+# printf.m4 serial 50
+dnl Copyright (C) 2003, 2007-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -63,7 +63,7 @@ changequote(,)dnl
                                  # Guess yes on FreeBSD >= 5.
            freebsd[1-4]*)        gl_cv_func_printf_sizes_c99="guessing no";;
            freebsd* | kfreebsd*) gl_cv_func_printf_sizes_c99="guessing yes";;
-                                 # Guess yes on MacOS X >= 10.3.
+                                 # Guess yes on Mac OS X >= 10.3.
            darwin[1-6].*)        gl_cv_func_printf_sizes_c99="guessing no";;
            darwin*)              gl_cv_func_printf_sizes_c99="guessing yes";;
                                  # Guess yes on OpenBSD >= 3.9.
@@ -222,7 +222,7 @@ changequote(,)dnl
                                  # Guess yes on FreeBSD >= 6.
            freebsd[1-5]*)        gl_cv_func_printf_infinite="guessing no";;
            freebsd* | kfreebsd*) gl_cv_func_printf_infinite="guessing yes";;
-                                 # Guess yes on MacOS X >= 10.3.
+                                 # Guess yes on Mac OS X >= 10.3.
            darwin[1-6].*)        gl_cv_func_printf_infinite="guessing no";;
            darwin*)              gl_cv_func_printf_infinite="guessing yes";;
                                  # Guess yes on HP-UX >= 11.
@@ -507,14 +507,14 @@ int main ()
   if (sprintf (buf, "%010a %d", 1.0 / zero, 33, 44, 55) < 0
       || buf[0] == '0')
     result |= 8;
-  /* This catches a MacOS X 10.3.9 (Darwin 7.9) bug.  */
+  /* This catches a Mac OS X 10.3.9 (Darwin 7.9) bug.  */
   if (sprintf (buf, "%.1a", 1.999) < 0
       || (strcmp (buf, "0x1.0p+1") != 0
           && strcmp (buf, "0x2.0p+0") != 0
           && strcmp (buf, "0x4.0p-1") != 0
           && strcmp (buf, "0x8.0p-2") != 0))
     result |= 16;
-  /* This catches the same MacOS X 10.3.9 (Darwin 7.9) bug and also a
+  /* This catches the same Mac OS X 10.3.9 (Darwin 7.9) bug and also a
      glibc 2.4 bug <http://sourceware.org/bugzilla/show_bug.cgi?id=2908>.  */
   if (sprintf (buf, "%.1La", 1.999L) < 0
       || (strcmp (buf, "0x1.0p+1") != 0
@@ -590,7 +590,7 @@ changequote(,)dnl
                                  # Guess yes on FreeBSD >= 6.
            freebsd[1-5]*)        gl_cv_func_printf_directive_f="guessing no";;
            freebsd* | kfreebsd*) gl_cv_func_printf_directive_f="guessing yes";;
-                                 # Guess yes on MacOS X >= 10.3.
+                                 # Guess yes on Mac OS X >= 10.3.
            darwin[1-6].*)        gl_cv_func_printf_directive_f="guessing no";;
            darwin*)              gl_cv_func_printf_directive_f="guessing yes";;
                                  # Guess yes on Solaris >= 2.10.
@@ -1044,7 +1044,7 @@ changequote([,])dnl
           fi
           rm -fr conftest*
         else
-          dnl A universal build on Apple MacOS X platforms.
+          dnl A universal build on Apple Mac OS X platforms.
           dnl The result would be 'no' in 32-bit mode and 'yes' in 64-bit mode.
           dnl But we need a configuration result that is valid in both modes.
           gl_cv_func_printf_enomem="guessing no"
@@ -1138,7 +1138,7 @@ changequote(,)dnl
                                  # Guess yes on FreeBSD >= 5.
            freebsd[1-4]*)        gl_cv_func_snprintf_truncation_c99="guessing no";;
            freebsd* | kfreebsd*) gl_cv_func_snprintf_truncation_c99="guessing yes";;
-                                 # Guess yes on MacOS X >= 10.3.
+                                 # Guess yes on Mac OS X >= 10.3.
            darwin[1-6].*)        gl_cv_func_snprintf_truncation_c99="guessing no";;
            darwin*)              gl_cv_func_snprintf_truncation_c99="guessing yes";;
                                  # Guess yes on OpenBSD >= 3.9.
@@ -1237,7 +1237,7 @@ changequote(,)dnl
                                  # Guess yes on FreeBSD >= 5.
            freebsd[1-4]*)        gl_cv_func_snprintf_retval_c99="guessing no";;
            freebsd* | kfreebsd*) gl_cv_func_snprintf_retval_c99="guessing yes";;
-                                 # Guess yes on MacOS X >= 10.3.
+                                 # Guess yes on Mac OS X >= 10.3.
            darwin[1-6].*)        gl_cv_func_snprintf_retval_c99="guessing no";;
            darwin*)              gl_cv_func_snprintf_retval_c99="guessing yes";;
                                  # Guess yes on OpenBSD >= 3.9.
@@ -1318,7 +1318,7 @@ changequote(,)dnl
                                  # Guess yes on FreeBSD >= 5.
            freebsd[1-4]*)        gl_cv_func_snprintf_directive_n="guessing no";;
            freebsd* | kfreebsd*) gl_cv_func_snprintf_directive_n="guessing yes";;
-                                 # Guess yes on MacOS X >= 10.3.
+                                 # Guess yes on Mac OS X >= 10.3.
            darwin[1-6].*)        gl_cv_func_snprintf_directive_n="guessing no";;
            darwin*)              gl_cv_func_snprintf_directive_n="guessing yes";;
                                  # Guess yes on Solaris >= 2.6.
@@ -1460,7 +1460,7 @@ changequote(,)dnl
                                  # Guess yes on FreeBSD >= 5.
            freebsd[1-4]*)        gl_cv_func_vsnprintf_zerosize_c99="guessing no";;
            freebsd* | kfreebsd*) gl_cv_func_vsnprintf_zerosize_c99="guessing yes";;
-                                 # Guess yes on MacOS X >= 10.3.
+                                 # Guess yes on Mac OS X >= 10.3.
            darwin[1-6].*)        gl_cv_func_vsnprintf_zerosize_c99="guessing no";;
            darwin*)              gl_cv_func_vsnprintf_zerosize_c99="guessing yes";;
                                  # Guess yes on Cygwin.
@@ -1540,8 +1540,8 @@ dnl                                  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
 dnl   glibc 2.5                      .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
 dnl   glibc 2.3.6                    .  .  .  .  #  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
 dnl   FreeBSD 5.4, 6.1               .  .  .  .  #  .  .  .  .  .  .  #  .  #  .  .  .  .  .  .
-dnl   MacOS X 10.5.8                 .  .  .  #  #  .  .  .  .  .  .  #  .  .  .  .  .  .  .  .
-dnl   MacOS X 10.3.9                 .  .  .  .  #  .  .  .  .  .  .  #  .  #  .  .  .  .  .  .
+dnl   Mac OS X 10.5.8                .  .  .  #  #  .  .  .  .  .  .  #  .  .  .  .  .  .  .  .
+dnl   Mac OS X 10.3.9                .  .  .  .  #  .  .  .  .  .  .  #  .  #  .  .  .  .  .  .
 dnl   OpenBSD 3.9, 4.0               .  .  #  #  #  #  .  #  .  #  .  #  .  #  .  .  .  .  .  .
 dnl   Cygwin 1.7.0 (2009)            .  .  .  #  .  .  .  ?  .  .  .  .  .  ?  .  .  .  .  .  .
 dnl   Cygwin 1.5.25 (2008)           .  .  .  #  #  .  .  #  .  .  .  .  .  #  .  .  .  .  .  .

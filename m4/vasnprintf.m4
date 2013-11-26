@@ -1,5 +1,5 @@
-# vasnprintf.m4 serial 35
-dnl Copyright (C) 2002-2004, 2006-2012 Free Software Foundation, Inc.
+# vasnprintf.m4 serial 36
+dnl Copyright (C) 2002-2004, 2006-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -55,7 +55,6 @@ AC_DEFUN([gl_PREREQ_PRINTF_PARSE],
 # Prerequisites of lib/vasnprintf.c.
 AC_DEFUN_ONCE([gl_PREREQ_VASNPRINTF],
 [
-  AC_REQUIRE([AC_C_INLINE])
   AC_REQUIRE([AC_FUNC_ALLOCA])
   AC_REQUIRE([AC_TYPE_LONG_LONG_INT])
   AC_REQUIRE([gt_TYPE_WCHAR_T])

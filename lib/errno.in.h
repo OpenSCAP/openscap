@@ -1,6 +1,6 @@
 /* A POSIX-like <errno.h>.
 
-   Copyright (C) 2008-2012 Free Software Foundation, Inc.
+   Copyright (C) 2008-2013 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as published by
@@ -268,6 +268,11 @@
 #  endif
 #  define GNULIB_defined_EOWNERDEAD 1
 #  define GNULIB_defined_ENOTRECOVERABLE 1
+# endif
+
+# ifndef EILSEQ
+#  define EILSEQ 2015
+#  define GNULIB_defined_EILSEQ 1
 # endif
 
 #endif /* _@GUARD_PREFIX@_ERRNO_H */

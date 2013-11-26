@@ -1,5 +1,5 @@
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
-# Copyright (C) 2002-2012 Free Software Foundation, Inc.
+# Copyright (C) 2002-2013 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module errno:
   # Code from module extensions:
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
+  # Code from module extern-inline:
   # Code from module float:
   # Code from module getdelim:
   # Code from module getline:
@@ -84,63 +85,64 @@ AC_DEFUN([gl_INIT],
   m4_pushdef([gl_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='lib'
-gl_FUNC_ALLOCA
-gl_HEADER_ERRNO_H
-gl_FLOAT_H
-if test $REPLACE_FLOAT_LDBL = 1; then
-  AC_LIBOBJ([float])
-fi
-if test $REPLACE_ITOLD = 1; then
-  AC_LIBOBJ([itold])
-fi
-gl_FUNC_GETDELIM
-if test $HAVE_GETDELIM = 0 || test $REPLACE_GETDELIM = 1; then
-  AC_LIBOBJ([getdelim])
-  gl_PREREQ_GETDELIM
-fi
-gl_STDIO_MODULE_INDICATOR([getdelim])
-gl_FUNC_GETLINE
-if test $REPLACE_GETLINE = 1; then
-  AC_LIBOBJ([getline])
-  gl_PREREQ_GETLINE
-fi
-gl_STDIO_MODULE_INDICATOR([getline])
-gl_FUNC_MEMCHR
-if test $HAVE_MEMCHR = 0 || test $REPLACE_MEMCHR = 1; then
-  AC_LIBOBJ([memchr])
-  gl_PREREQ_MEMCHR
-fi
-gl_STRING_MODULE_INDICATOR([memchr])
-gl_MULTIARCH
-gl_FUNC_REALLOC_POSIX
-if test $REPLACE_REALLOC = 1; then
-  AC_LIBOBJ([realloc])
-fi
-gl_STDLIB_MODULE_INDICATOR([realloc-posix])
-gl_SIZE_MAX
-gt_TYPE_SSIZE_T
-gl_STDDEF_H
-gl_STDINT_H
-gl_STDIO_H
-gl_STDLIB_H
-gl_HEADER_STRING_H
-gl_FUNC_STRSEP
-if test $HAVE_STRSEP = 0; then
-  AC_LIBOBJ([strsep])
-  gl_PREREQ_STRSEP
-fi
-gl_STRING_MODULE_INDICATOR([strsep])
-gl_SYS_TYPES_H
-AC_PROG_MKDIR_P
-gl_UNISTD_H
-gl_FUNC_VASNPRINTF
-gl_FUNC_VASPRINTF
-gl_STDIO_MODULE_INDICATOR([vasprintf])
-m4_ifdef([AM_XGETTEXT_OPTION],
-  [AM_][XGETTEXT_OPTION([--flag=asprintf:2:c-format])
-   AM_][XGETTEXT_OPTION([--flag=vasprintf:2:c-format])])
-gl_WCHAR_H
-gl_XSIZE
+  gl_FUNC_ALLOCA
+  gl_HEADER_ERRNO_H
+  AC_REQUIRE([gl_EXTERN_INLINE])
+  gl_FLOAT_H
+  if test $REPLACE_FLOAT_LDBL = 1; then
+    AC_LIBOBJ([float])
+  fi
+  if test $REPLACE_ITOLD = 1; then
+    AC_LIBOBJ([itold])
+  fi
+  gl_FUNC_GETDELIM
+  if test $HAVE_GETDELIM = 0 || test $REPLACE_GETDELIM = 1; then
+    AC_LIBOBJ([getdelim])
+    gl_PREREQ_GETDELIM
+  fi
+  gl_STDIO_MODULE_INDICATOR([getdelim])
+  gl_FUNC_GETLINE
+  if test $REPLACE_GETLINE = 1; then
+    AC_LIBOBJ([getline])
+    gl_PREREQ_GETLINE
+  fi
+  gl_STDIO_MODULE_INDICATOR([getline])
+  gl_FUNC_MEMCHR
+  if test $HAVE_MEMCHR = 0 || test $REPLACE_MEMCHR = 1; then
+    AC_LIBOBJ([memchr])
+    gl_PREREQ_MEMCHR
+  fi
+  gl_STRING_MODULE_INDICATOR([memchr])
+  gl_MULTIARCH
+  gl_FUNC_REALLOC_POSIX
+  if test $REPLACE_REALLOC = 1; then
+    AC_LIBOBJ([realloc])
+  fi
+  gl_STDLIB_MODULE_INDICATOR([realloc-posix])
+  gl_SIZE_MAX
+  gt_TYPE_SSIZE_T
+  gl_STDDEF_H
+  gl_STDINT_H
+  gl_STDIO_H
+  gl_STDLIB_H
+  gl_HEADER_STRING_H
+  gl_FUNC_STRSEP
+  if test $HAVE_STRSEP = 0; then
+    AC_LIBOBJ([strsep])
+    gl_PREREQ_STRSEP
+  fi
+  gl_STRING_MODULE_INDICATOR([strsep])
+  gl_SYS_TYPES_H
+  AC_PROG_MKDIR_P
+  gl_UNISTD_H
+  gl_FUNC_VASNPRINTF
+  gl_FUNC_VASPRINTF
+  gl_STDIO_MODULE_INDICATOR([vasprintf])
+  m4_ifdef([AM_XGETTEXT_OPTION],
+    [AM_][XGETTEXT_OPTION([--flag=asprintf:2:c-format])
+     AM_][XGETTEXT_OPTION([--flag=vasprintf:2:c-format])])
+  gl_WCHAR_H
+  gl_XSIZE
   # End of code from modules
   m4_ifval(gl_LIBSOURCES_LIST, [
     m4_syscmd([test ! -d ]m4_defn([gl_LIBSOURCES_DIR])[ ||
@@ -284,7 +286,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/alloca.in.h
   lib/asnprintf.c
   lib/asprintf.c
-  lib/dummy.c
   lib/errno.in.h
   lib/float+.h
   lib/float.c
@@ -307,18 +308,21 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/string.in.h
   lib/strsep.c
   lib/sys_types.in.h
+  lib/unistd.c
   lib/unistd.in.h
   lib/vasnprintf.c
   lib/vasnprintf.h
   lib/vasprintf.c
   lib/verify.h
   lib/wchar.in.h
+  lib/xsize.c
   lib/xsize.h
   m4/00gnulib.m4
   m4/alloca.m4
   m4/errno_h.m4
   m4/exponentd.m4
   m4/extensions.m4
+  m4/extern-inline.m4
   m4/float_h.m4
   m4/getdelim.m4
   m4/getline.m4
