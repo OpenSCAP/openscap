@@ -184,6 +184,10 @@ const char *check_engine_plugin_get_capabilities(struct check_engine_plugin_def 
 	return (plugin->get_capabilities_fn)(&plugin->user_data);
 }
 
+#ifndef LT_CURRENT_MINUS_AGE
+#error "LT_CURRENT_MINUS_AGE has not been defined! It is necessary to figure out plugin paths to load."
+#endif
+
 const char * const known_plugins[] = {"libopenscap_sce.so." STRINGIZE(LT_CURRENT_MINUS_AGE), NULL};
 
 const char * const *check_engine_plugin_get_known_plugins(void)
