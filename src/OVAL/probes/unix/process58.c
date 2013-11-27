@@ -71,22 +71,24 @@
 #include <selinux/selinux.h>
 #include <selinux/context.h>
 #endif
-#ifdef HAVE_LIBCAP
+#ifdef HAVE_SYS_CAPABILITY_H
 #include <ctype.h>
 #include <sys/types.h>
 
-#if LIBCAP_VERSION == 1
+#ifndef HAVE_CAP_GET_PID // we don't have cap_get_pid => assume libcap version == 1
 #undef _POSIX_SOURCE
+#define LIBCAP_VERSION 1
 #include <sys/capability.h>
 #define CAP_LAST_CAP CAP_AUDIT_CONTROL
 extern char const *_cap_names[];
 #else
+#define LIBCAP_VERSION 2
 #include <sys/capability.h>
 #endif
 
 #include "util.h"
 #include "process58-capability.h"
-#endif
+#endif /* HAVE_SYS_CAPABILITY_H */
 
 #include "seap.h"
 #include "probe-api.h"
@@ -255,7 +257,7 @@ static char *get_selinux_label(int pid) {
 }
 
 static char **get_posix_capability(int pid) {
-#ifdef HAVE_LIBCAP
+#ifdef HAVE_SYS_CAPABILITY_H
 	cap_t pid_caps;
 	char *cap_name, **ret = NULL;
 	unsigned cap_value, ret_index = 0;

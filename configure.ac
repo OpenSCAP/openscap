@@ -641,6 +641,7 @@ AC_CHECK_FUNCS([cap_init], [], [
 probe_process58_req_deps_ok=no;
 probe_process58_req_deps_missing+=", $ac_func func";
 ])
+AC_CHECK_FUNCS([cap_get_pid capgetp],[],[])
 LIBS=$SAVE_LIBS
 echo
 echo '* Checking for gconf2 library used by: gconf '
