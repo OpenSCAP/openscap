@@ -67,7 +67,7 @@
 #include <fcntl.h>
 #include <sched.h>
 #include <time.h>
-#ifdef HAVE_SELINUX
+#ifdef HAVE_SELINUX_SELINUX_H
 #include <selinux/selinux.h>
 #include <selinux/context.h>
 #endif
@@ -235,7 +235,7 @@ static char *convert_time(unsigned long long t, char *tbuf, int tb_size)
 }
 
 static char *get_selinux_label(int pid) {
-#ifdef HAVE_SELINUX
+#ifdef HAVE_SELINUX_SELINUX_H
 	char *selinux_label;
 	security_context_t pid_context;
 	context_t context;
@@ -253,7 +253,7 @@ static char *get_selinux_label(int pid) {
 
 #else
 	return NULL;
-#endif
+#endif /* HAVE_SELINUX_SELINUX_H */
 }
 
 static char **get_posix_capability(int pid) {
