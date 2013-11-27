@@ -246,7 +246,7 @@ static char *get_selinux_label(int pid) {
 		return NULL;
 	}
 	context = context_new(pid_context);
-	selinux_label = strdup(context_str(context));
+	selinux_label = strdup(context_type_get(context));
 	context_free(context);
 	freecon(pid_context);
 	return selinux_label;
