@@ -276,19 +276,19 @@ int app_collect_oval(const struct oscap_action *action)
 			fprintf(stderr, "Object ID(%s) does not exist in '%s'.\n", action->id, action->f_oval);
 			goto cleanup;
 		}
-		fprintf(stderr, "Collected: \"%s\" : ", oval_object_get_id(object));
+		printf("Collected: \"%s\" : ", oval_object_get_id(object));
 		oval_probe_query_object(pb_sess, object, 0, &syschar);
 		sc_flg = oval_syschar_get_flag(syschar);
-		fprintf(stderr, "%s\n", oval_syschar_collection_flag_get_text(sc_flg));
+		printf("%s\n", oval_syschar_collection_flag_get_text(sc_flg));
 	}
 	else {
 	        struct oval_object_iterator *objects = oval_definition_model_get_objects(def_model);
 		while (oval_object_iterator_has_more(objects)) {
 			object = oval_object_iterator_next(objects);
-			fprintf(stderr, "Collected: \"%s\" : ", oval_object_get_id(object));
+			printf("Collected: \"%s\" : ", oval_object_get_id(object));
 			oval_probe_query_object(pb_sess, object, 0, &syschar);
 			sc_flg = oval_syschar_get_flag(syschar);
-			fprintf(stderr, "%s\n", oval_syschar_collection_flag_get_text(sc_flg));
+			printf("%s\n", oval_syschar_collection_flag_get_text(sc_flg));
 		}
 		oval_object_iterator_free(objects);
 	}
