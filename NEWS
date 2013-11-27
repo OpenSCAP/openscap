@@ -1,3 +1,13 @@
+openscap-1.0.1                                                  28-11-2013
+ - versioned interface is used to handle internal SCE plug-in
+ - build-in gnulib package was updated to current version
+ - bugfixes
+    - selinux_domain_label and posix_capability properties
+      were reintroduced to OVAL system characteristics model
+    - selinux_domain_label now collects the domain/type (not the context)
+    - oscap oval collect reports progress on stdout (not on the stderr)
+    - typo in the manual page (rhbz#1032537), and another small clarification
+
 openscap-1.0.0							19-11-2013
  - Improved heuristic to distinguish 'local' and 'remote' file systems
  - Improved comparison of EntityStateEVRStringType (trac#355)
