@@ -524,6 +524,7 @@ AC_CONFIG_FILES([Makefile
 		tests/probes/sql57/Makefile
                  tests/probes/family/Makefile
                  tests/probes/process/Makefile
+                 tests/probes/process58/Makefile
                  tests/probes/sysinfo/Makefile
                  tests/probes/rpminfo/Makefile
 		 tests/probes/rpmverify/Makefile

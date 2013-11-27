@@ -39,6 +39,9 @@ endif
 if probe_process_enabled
 UNIX_SUBDIRS += process
 endif
+if probe_process58_enabled
+UNIX_SUBDIRS += process58
+endif
 if probe_password_enabled
 UNIX_SUBDIRS += password
 endif
