@@ -5,7 +5,7 @@
 restorecon -R /usr/bin/oscap /usr/libexec/openscap; \
 
 Name:           openscap
-Version:        1.0.0
+Version:        1.0.1
 Release:        1%{?dist}
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 Group:          System Environment/Libraries
@@ -305,6 +305,20 @@ exit 0
 # %{_mandir}/man8/openscap_selinux.8.*
 
 %changelog
+* Thu Nov 28 2013 Šimon Lukašík <slukasik@redhat.com> - 1.0.1-1
+- upgrade
+
+* Tue Nov 26 2013 Šimon Lukašík <slukasik@redhat.com> - 1.0.0-3
+- expand LT_CURRENT_MINUS_AGE correctly
+
+* Thu Nov 21 2013 Šimon Lukašík <slukasik@redhat.com> - 1.0.0-2
+- dlopen libopenscap_sce.so.{current-age} explicitly
+  That allows for SCE to work without openscap-engine-sce-devel
+
+* Tue Nov 19 2013 Šimon Lukašík <slukasik@redhat.com> - 1.0.0-1
+- upgrade
+- package openscap-engine-sce-devel separately
+
 * Fri Nov 15 2013 Šimon Lukašík <slukasik@redhat.com> - 0.9.13-7
 - do not obsolete openscap-conten just drop it (#1028706)
   scap-security-guide will bring the Obsoletes tag
