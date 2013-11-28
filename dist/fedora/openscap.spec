@@ -5,7 +5,7 @@
 restorecon -R /usr/bin/oscap /usr/libexec/openscap; \
 
 Name:           openscap
-Version:        1.0.1
+Version:        1.0.2
 Release:        1%{?dist}
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 Group:          System Environment/Libraries
