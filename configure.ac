@@ -578,6 +578,7 @@ LIBS=$SAVE_LIBS
 SAVE_LIBS=$LIBS
 LIBS=$acl_LIBS
 AC_CHECK_FUNCS([acl_init], [], [])
+AC_CHECK_FUNCS([acl_extended_file],[],[])
 LIBS=$SAVE_LIBS
 echo
 echo '* Checking for apt_pkg library used by: dpkginfo '
@@ -620,7 +621,7 @@ LIBS=$SAVE_LIBS
 ])
 SAVE_LIBS=$LIBS
 LIBS=$blkid_LIBS
-AC_CHECK_FUNCS([blkid_get_cache], [], [])
+AC_CHECK_FUNCS([blkid_get_cache blkid_get_tag_value], [], [])
 LIBS=$SAVE_LIBS
 echo
 echo '* Checking for cap library used by: process58 '
