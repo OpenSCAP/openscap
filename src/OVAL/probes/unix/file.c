@@ -43,7 +43,7 @@
 #include <errno.h>
 #include <limits.h>
 
-#if defined(HAVE_LIBACL)
+#if defined(HAVE_ACL_LIBACL_H)
 # include <sys/types.h>
 # include <acl/libacl.h>
 #endif
@@ -281,7 +281,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
 		} else
 			SEXP_string_new_r(&gr_lastpath, p, strlen(p));
 
-#if defined(HAVE_LIBACL)
+#if defined(HAVE_ACL_EXTENDED_FILE)
 		if (oval_version_cmp(over, OVAL_VERSION(5.7)) < 0) {
 			se_acl = NULL;
 		} else {
