@@ -22,6 +22,9 @@ EXTRA_DIST += \
 	deprecated_def.xml \
 	test_count_function.sh \
 	oval-def_count_function.xml \
+	test_envvar_insensitive_equals.oval.xml \
+	test_envvar_insensitive_equals.sh \
+	test_envvar_insensitive_equals.syschar.xml \
 	test_evr_string_missing_epoch.oval.xml \
 	test_evr_string_missing_epoch.sh \
 	test_evr_string_missing_epoch.syschar.xml \

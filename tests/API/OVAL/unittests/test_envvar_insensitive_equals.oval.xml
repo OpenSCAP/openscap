@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+    <generator>
+      <oval:product_name>cpe:/a:open-scap:oscap</oval:product_name>
+      <oval:schema_version>5.8</oval:schema_version>
+      <oval:timestamp>2013-12-04T09:39:11</oval:timestamp>
+    </generator>
+    <definitions>
+      <definition id="oval:x:def:1" version="1" class="compliance">
+        <metadata>
+          <title>test case insensitive equal</title>
+          <description>Make sure the name entity properly supports the case insensitive equals operation.</description>
+        </metadata>
+        <criteria>
+          <criterion test_ref="oval:x:tst:1" comment="Test."/>
+        </criteria>
+      </definition>
+    </definitions>
+    <tests>
+      <ind-def:environmentvariable_test id="oval:x:tst:1" version="1" check="all" comment="Test.">
+        <ind-def:object object_ref="oval:x:obj:1"/>
+        <ind-def:state state_ref="oval:x:ste:1"/>
+      </ind-def:environmentvariable_test>
+    </tests>
+    <objects>
+      <ind-def:environmentvariable_object id="oval:x:obj:1" version="1">
+        <ind-def:name>temp</ind-def:name>
+      </ind-def:environmentvariable_object>
+    </objects>
+    <states>
+      <ind-def:environmentvariable_state id="oval:x:ste:1" version="1">
+        <ind-def:name operation="case insensitive equals">temPX</ind-def:name>
+      </ind-def:environmentvariable_state>
+    </states>
+</oval_definitions>
