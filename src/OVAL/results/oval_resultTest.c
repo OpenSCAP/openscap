@@ -47,6 +47,7 @@
 #include "oval_agent_api_impl.h"
 #include "results/oval_results_impl.h"
 #include "oval_evr_string_impl.h"
+#include "oval_ip_address_impl.h"
 #include "adt/oval_collection_impl.h"
 #include "adt/oval_string_map_impl.h"
 #include "collectVarRefs_impl.h"
@@ -244,7 +245,7 @@ static int cmp_float(float a, float b)
 	return r;
 }
 
-static oval_result_t ipv4addr_cmp(char *s1, char *s2, oval_operation_t op)
+oval_result_t ipv4addr_cmp(char *s1, char *s2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 	char *s, *pfx;
@@ -371,7 +372,7 @@ static void mask_v6_addrs(struct in6_addr *addr1, int p1len, struct in6_addr *ad
 	}
 }
 
-static oval_result_t ipv6addr_cmp(char *s1, char *s2, oval_operation_t op)
+oval_result_t ipv6addr_cmp(char *s1, char *s2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 	char *s, *pfx;

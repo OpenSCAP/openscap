@@ -3,6 +3,7 @@ noinst_LTLIBRARIES = libovalresults.la
 libovalresults_la_SOURCES = \
 	oval_evr_string.c \
 	oval_evr_string_impl.h \
+	oval_ip_address_impl.h \
 	oval_resModel.c \
 	oval_resultCriteriaNode.c \
 	oval_resultDefinition.c \
