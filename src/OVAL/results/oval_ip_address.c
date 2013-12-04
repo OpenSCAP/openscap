@@ -226,11 +226,23 @@ oval_result_t ipv6addr_cmp(char *s1, char *s2, oval_operation_t op)
 			result = OVAL_RESULT_FALSE;
 		break;
 	case OVAL_OPERATION_SUPERSET_OF:
-		if (p1len >= p2len) {
+		/* This asserts that every IP address in the set of IP addresses defined in
+		 * the stated entity (addr1, p1len) is present in the set of IP addresses
+		 * on the system (addr2, p2len). */
+		if (p1len < p2len) {
+			/* The lesser is the prefix-length of CIDR -> the more IP addresses
+			 * there are in the range. */
 			result = OVAL_RESULT_FALSE;
 			break;
 		}
-		/* FALLTHROUGH */
+
+		/* Otherwise, compare the first p2len (!) bytes. */
+		mask_v6_addrs(&addr1, p2len, &addr2, p2len);
+		if (memcmp(&addr1, &addr2, sizeof(struct in6_addr)) == 0)
+			result = OVAL_RESULT_TRUE;
+		else
+			result = OVAL_RESULT_FALSE;
+		break;
 	case OVAL_OPERATION_LESS_THAN:
 		mask_v6_addrs(&addr1, p1len, &addr2, p2len);
 		if (memcmp(&addr1, &addr2, sizeof(struct in6_addr)) < 0)
