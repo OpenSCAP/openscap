@@ -30,7 +30,7 @@
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
-#include "results/oval_evr_string_impl.h"
+#include "oval_evr_string_impl.h"
 
 #ifdef HAVE_RPMVERCMP
 #include <rpm/rpmlib.h>
@@ -251,4 +251,3 @@ static int rpmvercmp(const char *a, const char *b)
 		return 1;
 }
 #endif
-
