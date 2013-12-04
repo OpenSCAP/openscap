@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+    <generator>
+      <oval:product_name>cpe:/a:open-scap:oscap</oval:product_name>
+      <oval:schema_version>5.8</oval:schema_version>
+      <oval:timestamp>2013-12-04T11:55:04</oval:timestamp>
+    </generator>
+    <definitions>
+      <definition id="oval:x:def:1" version="1" class="compliance">
+        <metadata>
+          <title>Test the value entity with the superset of operation</title>
+          <description>.</description>
+        </metadata>
+        <criteria>
+          <criterion test_ref="oval:x:tst:1" comment="."/>
+        </criteria>
+      </definition>
+    </definitions>
+    <tests>
+      <ind-def:variable_test id="oval:x:tst:1" version="1" check="all" comment=".">
+        <ind-def:object object_ref="oval:x:obj:1"/>
+        <ind-def:state state_ref="oval:x:ste:1"/>
+      </ind-def:variable_test>
+    </tests>
+    <objects>
+      <ind-def:variable_object id="oval:x:obj:1" version="1">
+        <ind-def:var_ref>oval:x:var:1</ind-def:var_ref>
+      </ind-def:variable_object>
+    </objects>
+    <states>
+      <ind-def:variable_state id="oval:x:ste:1" version="1">
+        <ind-def:value operation="superset of" datatype="ipv6_address">700:1a7e:70:face:b055::f1ee:f1ee</ind-def:value>
+      </ind-def:variable_state>
+    </states>
+    <variables>
+      <constant_variable id="oval:x:var:1" version="1" datatype="ipv6_address" comment=".">
+        <value>700:1a7e:70:face:b055::f1ee:f1ee</value>
+      </constant_variable>
+    </variables>
+</oval_definitions>
