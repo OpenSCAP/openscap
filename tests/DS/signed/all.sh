@@ -15,4 +15,5 @@ function test_verify {
 test_init test_signed.log
 test_run "signed-sds-no-verification" test_eval_no_verify sds-signed.xml
 #test_run "signed-sds-verify" test_verify sds-signed.xml sds-signed-key.pub
+test_run "signed-sds-fake-x509-no-verification" test_eval_no_verify sds-signed-fake-x509.xml
 test_exit

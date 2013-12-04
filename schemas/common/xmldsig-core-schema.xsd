@@ -185,10 +185,23 @@
   </sequence>
 </complexType>
 
+<!-- BEGIN OPENSCAP CHANGE -->
+<!-- see https://bugzilla.gnome.org/show_bug.cgi?id=350248 for the rationale -->
+<simpleType name="X509SerialNumberType">
+  <restriction base="string">
+    <!-- emulation of an unbounded xs:integer which libxml2 does not support -->
+    <pattern value="[+-]?[0-9]+" />
+  </restriction>
+</simpleType>
+<!-- END OPENSCAP CHANGE -->
+
 <complexType name="X509IssuerSerialType">
   <sequence>
     <element name="X509IssuerName" type="string"/>
-    <element name="X509SerialNumber" type="integer"/>
+<!-- BEGIN OPENSCAP CHANGE -->
+    <!-- <element name="X509SerialNumber" type="integer"/> -->
+    <element name="X509SerialNumber" type="ds:X509SerialNumberType"/>
+<!-- END OPENSCAP CHANGE -->
   </sequence>
 </complexType>
 

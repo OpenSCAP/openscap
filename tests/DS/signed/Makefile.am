@@ -13,4 +13,5 @@ TESTS = all.sh
 EXTRA_DIST += all.sh \
 			  sds-signed.xml \
 			  sds-signed-key.pem \
-			  sds-signed-key.pub
+			  sds-signed-key.pub \
+			  sds-signed-fake-x509.xml
