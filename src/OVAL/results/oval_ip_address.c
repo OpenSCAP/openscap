@@ -149,6 +149,29 @@ oval_result_t ipv4addr_cmp(char *s1, char *s2, oval_operation_t op)
 	return result;
 }
 
+static int ipv6addr_parse(char *oval_ipv6_string, int *len_out, struct in6_addr *ip_out)
+{
+	char *s, *pfx;
+	int result = -1;
+
+	s = strdup(oval_ipv6_string);
+	pfx = strchr(s, '/');
+	if (pfx) {
+		*pfx++ = '\0';
+		*len_out = strtol(pfx, NULL, 10);
+	} else {
+		*len_out = 128;
+	}
+
+	if (inet_pton(AF_INET6, s, ip_out) <= 0)
+		dW("inet_pton() failed.\n");
+	else
+		result = 0;
+
+	oscap_free(s);
+	return result;
+}
+
 static void mask_v6_addrs(struct in6_addr *addr1, int p1len, struct in6_addr *addr2, int p2len)
 {
 	int i;
@@ -162,35 +185,11 @@ static void mask_v6_addrs(struct in6_addr *addr1, int p1len, struct in6_addr *ad
 oval_result_t ipv6addr_cmp(char *s1, char *s2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
-	char *s, *pfx;
 	int p1len, p2len;
 	struct in6_addr addr1, addr2;
 
-	s = strdup(s1);
-	pfx = strchr(s, '/');
-	if (pfx) {
-		*pfx++ = '\0';
-		p1len = strtol(pfx, NULL, 10);
-	} else {
-		p1len = 128;
-	}
-	if (inet_pton(AF_INET6, s, &addr1) <= 0) {
-		dW("inet_pton() failed.\n");
-		goto cleanup;
-	}
-
-	oscap_free(s);
-	s = strdup(s2);
-	pfx = strchr(s, '/');
-	if (pfx) {
-		*pfx++ = '\0';
-		p2len = strtol(pfx, NULL, 10);
-	} else {
-		p2len = 128;
-	}
-	if (inet_pton(AF_INET6, s, &addr2) <= 0) {
-		dW("inet_pton() failed.\n");
-		goto cleanup;
+	if (ipv6addr_parse(s1, &p1len, &addr1) || ipv6addr_parse(s2, &p2len, &addr2)) {
+		return result;
 	}
 
 	switch (op) {
@@ -250,8 +249,6 @@ oval_result_t ipv6addr_cmp(char *s1, char *s2, oval_operation_t op)
 		dE("Unexpected compare operation: %d.\n", op);
 	}
 
- cleanup:
-	oscap_free(s);
-
 	return result;
 }
+
