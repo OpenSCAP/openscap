@@ -44,54 +44,45 @@
 #include "common/debug_priv.h"
 #include "results/oval_ip_address_impl.h"
 
+static int ipv4addr_parse(char *oval_ipv4_string, int *netmask_out, struct in_addr *ip_out)
+{
+	char *s, *pfx;
+	int result = -1;
+
+	s = strdup(oval_ipv4_string);
+	pfx = strchr(s, '/');
+	if (pfx) {
+		int cnt;
+		char nm[4];
+
+		*pfx++ = '\0';
+		cnt = sscanf(pfx, "%hhu.%hhu.%hhu.%hhu", &nm[0], &nm[1], &nm[2], &nm[3]);
+		if (cnt > 1) { /* netmask */
+			*netmask_out = (nm[0] << 24) + (nm[1] << 16) + (nm[2] << 8) + nm[3];
+		} else { /* prefix */
+			*netmask_out = (~0) << (32 - nm[0]);
+		}
+	} else {
+		*netmask_out = ~0;
+	}
+
+	if (inet_pton(AF_INET, s, ip_out) <= 0)
+		dW("inet_pton() failed.\n");
+	else
+		result = 0;
+
+	oscap_free(s);
+	return result;
+}
+
 oval_result_t ipv4addr_cmp(char *s1, char *s2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
-	char *s, *pfx;
 	int nm1, nm2;
 	struct in_addr addr1, addr2;
 
-	s = strdup(s1);
-	pfx = strchr(s, '/');
-	if (pfx) {
-		int cnt;
-		char nm[4];
-
-		*pfx++ = '\0';
-		cnt = sscanf(pfx, "%hhu.%hhu.%hhu.%hhu", &nm[0], &nm[1], &nm[2], &nm[3]);
-		if (cnt > 1) { /* netmask */
-			nm1 = (nm[0] << 24) + (nm[1] << 16) + (nm[2] << 8) + nm[3];
-		} else { /* prefix */
-			nm1 = (~0) << (32 - nm[0]);
-		}
-	} else {
-		nm1 = ~0;
-	}
-	if (inet_pton(AF_INET, s, &addr1) <= 0) {
-		dW("inet_pton() failed.\n");
-		goto cleanup;
-	}
-
-	oscap_free(s);
-	s = strdup(s2);
-	pfx = strchr(s, '/');
-	if (pfx) {
-		int cnt;
-		char nm[4];
-
-		*pfx++ = '\0';
-		cnt = sscanf(pfx, "%hhu.%hhu.%hhu.%hhu", &nm[0], &nm[1], &nm[2], &nm[3]);
-		if (cnt > 1) { /* netmask */
-			nm2 = (nm[0] << 24) + (nm[1] << 16) + (nm[2] << 8) + nm[3];
-		} else { /* prefix */
-			nm2 = (~0) << (32 - nm[0]);
-		}
-	} else {
-		nm2 = ~0;
-	}
-	if (inet_pton(AF_INET, s, &addr2) <= 0) {
-		dW("inet_pton() failed.\n");
-		goto cleanup;
+	if (ipv4addr_parse(s1, &nm1, &addr1) || ipv4addr_parse(s2, &nm2, &addr2)) {
+		return result;
 	}
 
 	switch (op) {
@@ -154,9 +145,6 @@ oval_result_t ipv4addr_cmp(char *s1, char *s2, oval_operation_t op)
 	default:
 		dE("Unexpected compare operation: %d.\n", op);
 	}
-
- cleanup:
-	oscap_free(s);
 
 	return result;
 }
