@@ -30,7 +30,7 @@
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
-#include "oval_evr_string_impl.h"
+#include "results/oval_evr_string_impl.h"
 
 #ifdef HAVE_RPMVERCMP
 #include <rpm/rpmlib.h>

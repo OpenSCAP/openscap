@@ -31,7 +31,6 @@ common_oval_sources = \
 	oval_entity.c \
 	oval_enumerations.c \
 	oval_evr_string.c \
-	oval_evr_string_impl.h \
 	oval_filter.c \
 	oval_generator.c \
 	oval_message.c \
