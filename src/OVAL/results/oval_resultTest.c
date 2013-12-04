@@ -163,14 +163,11 @@ struct oval_test *oval_result_test_get_test(struct oval_result_test *rtest)
 
 static int istrcmp(char *st1, char *st2)
 {
-	int comp_idx, ret_val;
-
-	if ((!st1) || (!st2))
-		return (1);	// if either or both is null, you stink
-	for (comp_idx = 0, ret_val = 0; ((!ret_val) && (st1[comp_idx]) && (st2[comp_idx])); ++comp_idx) {
-		ret_val = tolower(st2[comp_idx]) - tolower(st1[comp_idx]);
-	}
-	return (ret_val);
+	if (st1 == NULL)
+		st1 = "";
+	if (st2 == NULL)
+		st2 = "";
+	return strcasecmp(st1, st2);
 }
 
 static oval_result_t strregcomp(char *pattern, char *test_str)
