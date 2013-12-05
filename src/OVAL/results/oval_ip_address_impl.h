@@ -38,9 +38,9 @@
 
 OSCAP_HIDDEN_START;
 
-oval_result_t ipv4addr_cmp(char *s1, char *s2, oval_operation_t op);
+oval_result_t ipv4addr_cmp(const char *s1, const char *s2, oval_operation_t op);
 
-oval_result_t ipv6addr_cmp(char *s1, char *s2, oval_operation_t op);
+oval_result_t ipv6addr_cmp(const char *s1, const char *s2, oval_operation_t op);
 
 OSCAP_HIDDEN_END;
 

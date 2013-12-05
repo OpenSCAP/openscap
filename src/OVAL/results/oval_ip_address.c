@@ -44,7 +44,7 @@
 #include "common/debug_priv.h"
 #include "results/oval_ip_address_impl.h"
 
-static int ipv4addr_parse(char *oval_ipv4_string, int *netmask_out, struct in_addr *ip_out)
+static int ipv4addr_parse(const char *oval_ipv4_string, int *netmask_out, struct in_addr *ip_out)
 {
 	char *s, *pfx;
 	int result = -1;
@@ -75,7 +75,7 @@ static int ipv4addr_parse(char *oval_ipv4_string, int *netmask_out, struct in_ad
 	return result;
 }
 
-oval_result_t ipv4addr_cmp(char *s1, char *s2, oval_operation_t op)
+oval_result_t ipv4addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 	int nm1, nm2;
@@ -149,7 +149,7 @@ oval_result_t ipv4addr_cmp(char *s1, char *s2, oval_operation_t op)
 	return result;
 }
 
-static int ipv6addr_parse(char *oval_ipv6_string, int *len_out, struct in6_addr *ip_out)
+static int ipv6addr_parse(const char *oval_ipv6_string, int *len_out, struct in6_addr *ip_out)
 {
 	char *s, *pfx;
 	int result = -1;
@@ -182,7 +182,7 @@ static void mask_v6_addrs(struct in6_addr *addr1, int p1len, struct in6_addr *ad
 	}
 }
 
-oval_result_t ipv6addr_cmp(char *s1, char *s2, oval_operation_t op)
+oval_result_t ipv6addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 	int p1len, p2len;
