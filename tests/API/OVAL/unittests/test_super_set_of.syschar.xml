@@ -35,6 +35,10 @@
       <variable_value variable_id="oval:x:var:4">700:1a7e::1a57:b007:1057:a11:da7a/32</variable_value>
       <reference item_ref="1187281"/>
     </object>
+    <object id="oval:x:obj:5" version="1" flag="complete">
+      <variable_value variable_id="oval:x:var:5">700:1a7e::1a57:b007:1057:a11:da7a/120</variable_value>
+      <reference item_ref="1318591"/>
+    </object>
   </collected_objects>
   <system_data>
     <ind-sys:variable_item id="1139081" status="exists">
@@ -52,6 +56,10 @@
     <ind-sys:variable_item id="1187281" status="exists">
       <ind-sys:var_ref>oval:x:var:4</ind-sys:var_ref>
       <ind-sys:value>700:1a7e::1a57:b007:1057:a11:da7a/32</ind-sys:value>
+    </ind-sys:variable_item>
+    <ind-sys:variable_item id="1318591" status="exists">
+      <ind-sys:var_ref>oval:x:var:5</ind-sys:var_ref>
+      <ind-sys:value>700:1a7e::1a57:b007:1057:a11:da7a/120</ind-sys:value>
     </ind-sys:variable_item>
   </system_data>
 </oval_system_characteristics>
