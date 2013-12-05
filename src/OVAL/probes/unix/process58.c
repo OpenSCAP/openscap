@@ -131,7 +131,7 @@ static void report_finding(struct result_info *res, probe_ctx *ctx)
                                  "tty",          OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_tty_mem, "%d", res->tty),
                                  "user_id",      OVAL_DATATYPE_INTEGER, (int64_t)res->user_id,
                                  "exec_shield",  OVAL_DATATYPE_BOOLEAN, (int64_t)res->exec_shield,
-                                 "loginuid",     OVAL_DATATYPE_INTEGER, (int64_t)res->user_id,
+                                 "loginuid",     OVAL_DATATYPE_INTEGER, (int64_t)res->loginuid,
 				 "posix_capability", OVAL_DATATYPE_STRING_M, res->posix_capability,
 				 "selinux_domain_label", OVAL_DATATYPE_STRING, res->selinux_domain_label,
                                  "session_id", OVAL_DATATYPE_INTEGER, (int64_t)res->session_id,
