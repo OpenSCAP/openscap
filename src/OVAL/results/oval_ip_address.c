@@ -188,12 +188,6 @@ static void ipv6addr_mask(struct in6_addr *addr, int prefix_len)
 	}
 }
 
-static void mask_v6_addrs(struct in6_addr *addr1, int p1len, struct in6_addr *addr2, int p2len)
-{
-	ipv6addr_mask(addr1, p1len);
-	ipv6addr_mask(addr2, p2len);
-}
-
 oval_result_t ipv6addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
@@ -224,14 +218,16 @@ oval_result_t ipv6addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 		}
 		/* FALLTHROUGH */
 	case OVAL_OPERATION_GREATER_THAN:
-		mask_v6_addrs(&addr1, p1len, &addr2, p2len);
+		ipv6addr_mask(&addr1, p1len);
+		ipv6addr_mask(&addr2, p2len);
 		if (memcmp(&addr1, &addr2, sizeof(struct in6_addr)) > 0)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
 	case OVAL_OPERATION_GREATER_THAN_OR_EQUAL:
-		mask_v6_addrs(&addr1, p1len, &addr2, p2len);
+		ipv6addr_mask(&addr1, p1len);
+		ipv6addr_mask(&addr2, p2len);
 		if (memcmp(&addr1, &addr2, sizeof(struct in6_addr)) >= 0)
 			result = OVAL_RESULT_TRUE;
 		else
@@ -249,21 +245,24 @@ oval_result_t ipv6addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 		}
 
 		/* Otherwise, compare the first p2len (!) bytes. */
-		mask_v6_addrs(&addr1, p2len, &addr2, p2len);
+		ipv6addr_mask(&addr1, p2len);
+		ipv6addr_mask(&addr2, p2len);
 		if (memcmp(&addr1, &addr2, sizeof(struct in6_addr)) == 0)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
 	case OVAL_OPERATION_LESS_THAN:
-		mask_v6_addrs(&addr1, p1len, &addr2, p2len);
+		ipv6addr_mask(&addr1, p1len);
+		ipv6addr_mask(&addr2, p2len);
 		if (memcmp(&addr1, &addr2, sizeof(struct in6_addr)) < 0)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
 	case OVAL_OPERATION_LESS_THAN_OR_EQUAL:
-		mask_v6_addrs(&addr1, p1len, &addr2, p2len);
+		ipv6addr_mask(&addr1, p1len);
+		ipv6addr_mask(&addr2, p2len);
 		if (memcmp(&addr1, &addr2, sizeof(struct in6_addr)) <= 0)
 			result = OVAL_RESULT_TRUE;
 		else
