@@ -42,6 +42,16 @@
           <criterion test_ref="oval:x:tst:4" comment="."/>
         </criteria>
       </definition>
+      <definition id="oval:x:def:5" version="1" class="compliance">
+        <metadata>
+          <title>Superset: Compare different ipv6 addresses. The address on system has shorter prefix length (32);
+                 both addresses match on first 32b. Thus state is 'superset of' syschar. We expect 'true' result.</title>
+          <description>.</description>
+        </metadata>
+        <criteria>
+          <criterion test_ref="oval:x:tst:5" comment="."/>
+        </criteria>
+      </definition>
     </definitions>
     <tests>
       <ind-def:variable_test id="oval:x:tst:1" version="1" check="all" comment=".">
@@ -60,6 +70,10 @@
         <ind-def:object object_ref="oval:x:obj:3"/>
         <ind-def:state state_ref="oval:x:ste:2"/>
       </ind-def:variable_test>
+      <ind-def:variable_test id="oval:x:tst:5" version="1" check="all" comment=".">
+        <ind-def:object object_ref="oval:x:obj:4"/>
+        <ind-def:state state_ref="oval:x:ste:2"/>
+      </ind-def:variable_test>
     </tests>
     <objects>
       <ind-def:variable_object id="oval:x:obj:1" version="1">
@@ -70,6 +84,9 @@
       </ind-def:variable_object>
       <ind-def:variable_object id="oval:x:obj:3" version="1">
         <ind-def:var_ref>oval:x:var:3</ind-def:var_ref>
+      </ind-def:variable_object>
+      <ind-def:variable_object id="oval:x:obj:4" version="1">
+        <ind-def:var_ref>oval:x:var:4</ind-def:var_ref>
       </ind-def:variable_object>
     </objects>
     <states>
@@ -89,6 +106,9 @@
       </constant_variable>
       <constant_variable id="oval:x:var:3" version="1" datatype="ipv6_address" comment=".">
         <value>700:1a7e::1a57:b007:1057:a11:da7a</value>
+      </constant_variable>
+      <constant_variable id="oval:x:var:4" version="1" datatype="ipv6_address" comment=".">
+        <value>700:1a7e::1a57:b007:1057:a11:da7a/32</value>
       </constant_variable>
     </variables>
 </oval_definitions>
