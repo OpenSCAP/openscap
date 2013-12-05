@@ -174,12 +174,8 @@ static int ipv6addr_parse(const char *oval_ipv6_string, int *len_out, struct in6
 
 static void mask_v6_addrs(struct in6_addr *addr1, int p1len, struct in6_addr *addr2, int p2len)
 {
-	int i;
-
-	for (i = 0; i < 128; ++i) {
-		addr1->s6_addr[i / 8] &= (((i < p1len) ? 1 : 0) << (i % 8));
-		addr2->s6_addr[i / 8] &= (((i < p2len) ? 1 : 0) << (i % 8));
-	}
+	memset(addr1, 0, 128/8);
+	memset(addr2, 0, 128/8);
 }
 
 oval_result_t ipv6addr_cmp(const char *s1, const char *s2, oval_operation_t op)
