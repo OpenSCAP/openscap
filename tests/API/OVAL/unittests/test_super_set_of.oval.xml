@@ -8,11 +8,20 @@
     <definitions>
       <definition id="oval:x:def:1" version="1" class="compliance">
         <metadata>
-          <title>Test the value entity with the superset of operation</title>
+          <title>Superset: State and system contains the same address. We expect 'true' result.</title>
           <description>.</description>
         </metadata>
         <criteria>
           <criterion test_ref="oval:x:tst:1" comment="."/>
+        </criteria>
+      </definition>
+      <definition id="oval:x:def:2" version="1" class="compliance">
+        <metadata>
+          <title>Superset: Set of ipv6 addresses defined by state has greater cardinality. We expect 'false' result.</title>
+          <description>.</description>
+        </metadata>
+        <criteria>
+          <criterion test_ref="oval:x:tst:2" comment="."/>
         </criteria>
       </definition>
     </definitions>
@@ -20,6 +29,10 @@
       <ind-def:variable_test id="oval:x:tst:1" version="1" check="all" comment=".">
         <ind-def:object object_ref="oval:x:obj:1"/>
         <ind-def:state state_ref="oval:x:ste:1"/>
+      </ind-def:variable_test>
+      <ind-def:variable_test id="oval:x:tst:2" version="1" check="all" comment=".">
+        <ind-def:object object_ref="oval:x:obj:1"/>
+        <ind-def:state state_ref="oval:x:ste:2"/>
       </ind-def:variable_test>
     </tests>
     <objects>
@@ -30,6 +43,9 @@
     <states>
       <ind-def:variable_state id="oval:x:ste:1" version="1">
         <ind-def:value operation="superset of" datatype="ipv6_address">700:1a7e:70:face:b055::f1ee:f1ee</ind-def:value>
+      </ind-def:variable_state>
+      <ind-def:variable_state id="oval:x:ste:2" version="1">
+        <ind-def:value operation="superset of" datatype="ipv6_address">700:1a7e:70:face:b055::f1ee:0000/120</ind-def:value>
       </ind-def:variable_state>
     </states>
     <variables>
