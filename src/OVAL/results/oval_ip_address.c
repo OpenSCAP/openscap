@@ -172,10 +172,26 @@ static int ipv6addr_parse(const char *oval_ipv6_string, int *len_out, struct in6
 	return result;
 }
 
+static void ipv6addr_mask(struct in6_addr *addr, int prefix_len)
+{
+	assert(128 >= prefix_len);
+
+	uint8_t mask = (~0) << (8 - (prefix_len % 8));
+
+	/* First n (prefix_len/8 - 1) bytes are left untouched. */
+	for (int i = prefix_len/8; i < 128/8; i++)
+	{
+		/* The (n+1) byte is masked according to the prefix_len */
+		addr->s6_addr[i] &= mask;
+		/* The rest will be zeroed. */
+		mask = 0;
+	}
+}
+
 static void mask_v6_addrs(struct in6_addr *addr1, int p1len, struct in6_addr *addr2, int p2len)
 {
-	memset(addr1, 0, 128/8);
-	memset(addr2, 0, 128/8);
+	ipv6addr_mask(addr1, p1len);
+	ipv6addr_mask(addr2, p2len);
 }
 
 oval_result_t ipv6addr_cmp(const char *s1, const char *s2, oval_operation_t op)
