@@ -223,9 +223,9 @@ static oval_result_t strregcomp(char *pattern, char *test_str)
 	return result;
 }
 
-static int cmp_float(float a, float b)
+static int cmp_float(double a, double b)
 {
-	float relative_err;
+	double relative_err;
 	int r;
 
 	if (a == b)
