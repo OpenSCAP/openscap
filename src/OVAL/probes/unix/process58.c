@@ -134,7 +134,7 @@ static void report_finding(struct result_info *res, probe_ctx *ctx)
                                  "loginuid",     OVAL_DATATYPE_INTEGER, (int64_t)res->user_id,
 				 "posix_capability", OVAL_DATATYPE_STRING_M, res->posix_capability,
 				 "selinux_domain_label", OVAL_DATATYPE_STRING, res->selinux_domain_label,
-				 "session_id", OVAL_DATATYPE_INTEGER, 0,
+                                 "session_id", OVAL_DATATYPE_INTEGER, (int64_t)res->session_id,
                                  NULL);
 
         probe_item_collect(ctx, item);
