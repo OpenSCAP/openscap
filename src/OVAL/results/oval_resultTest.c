@@ -33,6 +33,7 @@
 #include <config.h>
 #endif
 
+#include <inttypes.h>
 #include <math.h>
 #include <string.h>
 #include <arpa/inet.h>
@@ -243,6 +244,52 @@ static int cmp_float(float a, float b)
 	return r;
 }
 
+__attribute__((nonnull(1,2))) static bool cstr_to_intmax(const char *cstr, intmax_t *result)
+{
+	char *endptr = NULL;
+
+	errno = 0;
+	*result = strtoimax(cstr, &endptr, 10);
+	// Check for underflow/overflow, strtoimax sets ERANGE in such case
+	if (errno == ERANGE) {
+		return false;
+	}
+	// Check whether there were some digits in the string
+	if (endptr == cstr) {
+		errno = EINVAL;
+		return false;
+	}
+	// Check whether the function used the whole string
+	if (*endptr != '\0') {
+		errno = EINVAL;
+		return false;
+	}
+	return true;
+}
+
+__attribute__((nonnull(1,2))) static bool cstr_to_double(const char *cstr, double *result)
+{
+	char *endptr = NULL;
+
+	errno = 0;
+	*result = strtod(cstr, &endptr);
+	// Check for underflow/overflow, strtoimax sets ERANGE in such case
+	if (errno == ERANGE) {
+		return false;
+	}
+	// Check whether there were some digits in the string
+	if (endptr == cstr) {
+		errno = EINVAL;
+		return false;
+	}
+	// Check whether the function used the whole string
+	if (*endptr != '\0') {
+		errno = EINVAL;
+		return false;
+	}
+	return true;
+}
+
 // finally, we have gotten to the point of comparing system data with a state
 static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t sys_data_type,
 			      oval_datatype_t state_data_type, oval_operation_t operation)
@@ -265,9 +312,22 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 			return OVAL_RESULT_ERROR;
 		}
 	} else if (state_data_type == OVAL_DATATYPE_INTEGER) {
-		int state_val, syschar_val;
-		state_val = atoi(state_data);
-		syschar_val = atoi(sys_data);
+		intmax_t state_val, syschar_val;
+
+		if (!cstr_to_intmax(state_data, &state_val)) {
+			oscap_seterr(OSCAP_EFAMILY_OVAL,
+			             "Conversion of the string \"%s\" to an integer (%u bits) failed: %s",
+			             state_data, sizeof(intmax_t)*8, strerror(errno));
+			return OVAL_RESULT_ERROR;
+		}
+
+		if (!cstr_to_intmax(sys_data, &syschar_val)) {
+			oscap_seterr(OSCAP_EFAMILY_OVAL,
+			             "Conversion of the string \"%s\" to an integer (%u bits) failed: %s",
+			             sys_data, sizeof(intmax_t)*8, strerror(errno));
+			return OVAL_RESULT_ERROR;
+		}
+
 		if (operation == OVAL_OPERATION_EQUALS) {
 			return ((state_val == syschar_val) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
 		} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
@@ -289,10 +349,22 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 			return OVAL_RESULT_ERROR;
 		}
 	} else if (state_data_type == OVAL_DATATYPE_FLOAT) {
-		float state_val, sys_val;
+		double state_val, sys_val;
 
-		state_val = atof(state_data);
-		sys_val = atof(sys_data);
+		if (!cstr_to_double(state_data, &state_val)) {
+			oscap_seterr(OSCAP_EFAMILY_OVAL,
+			             "Conversion of the string \"%s\" to a floating type (double) failed: %s",
+			             state_data, strerror(errno));
+			return OVAL_RESULT_ERROR;
+		}
+
+		if (!cstr_to_double(sys_data, &sys_val)) {
+			oscap_seterr(OSCAP_EFAMILY_OVAL,
+			             "Conversion of the string \"%s\" to a floating type (double) failed: %s",
+			             sys_data, strerror(errno));
+			return OVAL_RESULT_ERROR;
+		}
+
 		if (operation == OVAL_OPERATION_EQUALS) {
 			return ((cmp_float(sys_val, state_val) == 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
 		} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
