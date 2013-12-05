@@ -33,8 +33,8 @@
 
 #include "common/util.h"
 
-#include "public/oval_definitions.h"
-#include "public/oval_types.h"
+#include "oval_definitions.h"
+#include "oval_types.h"
 
 OSCAP_HIDDEN_START;
 

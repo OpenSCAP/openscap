@@ -46,6 +46,7 @@
 #include "common/debug_priv.h"
 #include "entcmp.h"
 #include "../_probe-api.h"
+#include "../../results/oval_ip_address_impl.h"
 
 oval_result_t probe_ent_cmp_binary(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
 {
@@ -597,110 +598,16 @@ static oval_result_t probe_ent_cmp_ipv4addr(SEXP_t *val1, SEXP_t *val2, oval_ope
 	return (result);
 }
 
-static void mask_v6_addrs(struct in6_addr *addr1, int p1len, struct in6_addr *addr2, int p2len)
-{
-	int i;
-
-	for (i = 0; i < 128; ++i) {
-		addr1->s6_addr[i / 8] &= (((i < p1len) ? 1 : 0) << (i % 8));
-		addr2->s6_addr[i / 8] &= (((i < p2len) ? 1 : 0) << (i % 8));
-	}
-}
-
 static oval_result_t probe_ent_cmp_ipv6addr(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
-	char *s, *pfx;
-	int p1len, p2len;
-	struct in6_addr addr1, addr2;
+	char *addr1 = SEXP_string_cstr(val1);
+	char *addr2 = SEXP_string_cstr(val2);
 
-	s = SEXP_string_cstr(val1);
-	pfx = strchr(s, '/');
-	if (pfx) {
-		*pfx++ = '\0';
-		p1len = strtol(pfx, NULL, 10);
-	} else {
-		p1len = 128;
-	}
-	if (inet_pton(AF_INET6, s, &addr1) <= 0) {
-		dW("inet_pton() failed.\n");
-		goto cleanup;
-	}
+	result = ipv6addr_cmp(addr1, addr2, op);
 
-	oscap_free(s);
-	s = SEXP_string_cstr(val2);
-	pfx = strchr(s, '/');
-	if (pfx) {
-		*pfx++ = '\0';
-		p2len = strtol(pfx, NULL, 10);
-	} else {
-		p2len = 128;
-	}
-	if (inet_pton(AF_INET6, s, &addr2) <= 0) {
-		dW("inet_pton() failed.\n");
-		goto cleanup;
-	}
-
-	switch (op) {
-	case OVAL_OPERATION_EQUALS:
-		if (!memcmp(&addr1, &addr2, sizeof(struct in6_addr)) && p1len == p2len)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_NOT_EQUAL:
-		if (memcmp(&addr1, &addr2, sizeof(struct in6_addr)) || p1len != p2len)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_SUBSET_OF:
-		if (p1len <= p2len) {
-			result = OVAL_RESULT_FALSE;
-			break;
-		}
-		/* FALLTHROUGH */
-	case OVAL_OPERATION_GREATER_THAN:
-		mask_v6_addrs(&addr1, p1len, &addr2, p2len);
-		if (memcmp(&addr1, &addr2, sizeof(struct in6_addr)) > 0)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_GREATER_THAN_OR_EQUAL:
-		mask_v6_addrs(&addr1, p1len, &addr2, p2len);
-		if (memcmp(&addr1, &addr2, sizeof(struct in6_addr)) >= 0)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_SUPERSET_OF:
-		if (p1len >= p2len) {
-			result = OVAL_RESULT_FALSE;
-			break;
-		}
-		/* FALLTHROUGH */
-	case OVAL_OPERATION_LESS_THAN:
-		mask_v6_addrs(&addr1, p1len, &addr2, p2len);
-		if (memcmp(&addr1, &addr2, sizeof(struct in6_addr)) < 0)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_LESS_THAN_OR_EQUAL:
-		mask_v6_addrs(&addr1, p1len, &addr2, p2len);
-		if (memcmp(&addr1, &addr2, sizeof(struct in6_addr)) <= 0)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	default:
-		dE("Unexpected compare operation: %d.\n", op);
-	}
-
- cleanup:
-	oscap_free(s);
-
+	oscap_free(addr1);
+	oscap_free(addr2);
 	return result;
 }
 
