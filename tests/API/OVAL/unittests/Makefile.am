@@ -22,6 +22,9 @@ EXTRA_DIST += \
 	deprecated_def.xml \
 	test_count_function.sh \
 	oval-def_count_function.xml \
+	test_ipv4_super_set_of.oval.xml \
+	test_ipv4_super_set_of.sh \
+	test_ipv4_super_set_of.syschar.xml \
 	test_envvar_insensitive_equals.oval.xml \
 	test_envvar_insensitive_equals.sh \
 	test_envvar_insensitive_equals.syschar.xml \
