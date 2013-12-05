@@ -121,11 +121,24 @@ oval_result_t ipv4addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 			result = OVAL_RESULT_FALSE;
 		break;
 	case OVAL_OPERATION_SUPERSET_OF:
-		if (nm1 >= nm2) {
+		/* This means that every IP address in the set of IP addresses defined in
+		 * the stated entity (addr1, nm1) is present in the set of IP addresses
+		 * on the system. (addr2, nm2). */
+
+		if (nm1 < nm2) {
+			/* The lesser is the prefix-length of CIDR -> the more IP addresses
+			 * there are in the range */
 			result = OVAL_RESULT_FALSE;
-			break;
 		}
-		/* FALLTHROUGH */
+
+		/* Otherwise, compare the first nm2 (!) bits. */
+		addr1.s_addr &= nm1;
+		addr2.s_addr &= nm2;
+		if (memcmp(&addr1, &addr2, sizeof(struct in_addr)) == 0)
+			result = OVAL_RESULT_TRUE;
+		else
+			result = OVAL_RESULT_FALSE;
+		break;
 	case OVAL_OPERATION_LESS_THAN:
 		addr1.s_addr &= nm1;
 		addr2.s_addr &= nm2;
@@ -244,7 +257,7 @@ oval_result_t ipv6addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 			break;
 		}
 
-		/* Otherwise, compare the first p2len (!) bytes. */
+		/* Otherwise, compare the first p2len (!) bits. */
 		ipv6addr_mask(&addr1, p2len);
 		ipv6addr_mask(&addr2, p2len);
 		if (memcmp(&addr1, &addr2, sizeof(struct in6_addr)) == 0)
