@@ -44,6 +44,16 @@
 #include "common/debug_priv.h"
 #include "results/oval_ip_address_impl.h"
 
+static inline int ipaddr_cmp(int af, const void *addr1, const void *addr2)
+{
+	if (af == AF_INET)
+		return memcmp(addr1, addr2, sizeof(struct in_addr));
+	if (af == AF_INET6)
+		return memcmp(addr1, addr2, sizeof(struct in6_addr));
+
+	assert(false);
+}
+
 static int ipv4addr_parse(const char *oval_ipv4_string, uint32_t *netmask_out, struct in_addr *ip_out)
 {
 	char *s, *pfx;
@@ -92,13 +102,13 @@ oval_result_t ipv4addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 
 	switch (op) {
 	case OVAL_OPERATION_EQUALS:
-		if (!memcmp(&addr1, &addr2, sizeof(struct in_addr)) && nm1 == nm2)
+		if (!ipaddr_cmp(AF_INET, &addr1, &addr2) && nm1 == nm2)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
 	case OVAL_OPERATION_NOT_EQUAL:
-		if (memcmp(&addr1, &addr2, sizeof(struct in_addr)) || nm1 != nm2)
+		if (ipaddr_cmp(AF_INET, &addr1, &addr2) || nm1 != nm2)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
@@ -112,7 +122,7 @@ oval_result_t ipv4addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 	case OVAL_OPERATION_GREATER_THAN:
 		ipv4addr_mask(&addr1, nm1);
 		ipv4addr_mask(&addr2, nm2);
-		if (memcmp(&addr1, &addr2, sizeof(struct in_addr)) > 0)
+		if (ipaddr_cmp(AF_INET, &addr1, &addr2) > 0)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
@@ -120,7 +130,7 @@ oval_result_t ipv4addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 	case OVAL_OPERATION_GREATER_THAN_OR_EQUAL:
 		ipv4addr_mask(&addr1, nm1);
 		ipv4addr_mask(&addr2, nm2);
-		if (memcmp(&addr1, &addr2, sizeof(struct in_addr)) >= 0)
+		if (ipaddr_cmp(AF_INET, &addr1, &addr2) >= 0)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
@@ -138,7 +148,7 @@ oval_result_t ipv4addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 		/* Otherwise, compare the first bits defined by nm2 */
 		ipv4addr_mask(&addr1, nm2);
 		ipv4addr_mask(&addr2, nm2);
-		if (memcmp(&addr1, &addr2, sizeof(struct in_addr)) == 0)
+		if (ipaddr_cmp(AF_INET, &addr1, &addr2) == 0)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
@@ -146,7 +156,7 @@ oval_result_t ipv4addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 	case OVAL_OPERATION_LESS_THAN:
 		ipv4addr_mask(&addr1, nm1);
 		ipv4addr_mask(&addr2, nm2);
-		if (memcmp(&addr1, &addr2, sizeof(struct in_addr)) < 0)
+		if (ipaddr_cmp(AF_INET, &addr1, &addr2) < 0)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
@@ -154,7 +164,7 @@ oval_result_t ipv4addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 	case OVAL_OPERATION_LESS_THAN_OR_EQUAL:
 		ipv4addr_mask(&addr1, nm1);
 		ipv4addr_mask(&addr2, nm2);
-		if (memcmp(&addr1, &addr2, sizeof(struct in_addr)) <= 0)
+		if (ipaddr_cmp(AF_INET, &addr1, &addr2) <= 0)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
@@ -217,13 +227,13 @@ oval_result_t ipv6addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 
 	switch (op) {
 	case OVAL_OPERATION_EQUALS:
-		if (!memcmp(&addr1, &addr2, sizeof(struct in6_addr)) && p1len == p2len)
+		if (!ipaddr_cmp(AF_INET6, &addr1, &addr2) && p1len == p2len)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
 	case OVAL_OPERATION_NOT_EQUAL:
-		if (memcmp(&addr1, &addr2, sizeof(struct in6_addr)) || p1len != p2len)
+		if (ipaddr_cmp(AF_INET6, &addr1, &addr2) || p1len != p2len)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
@@ -237,7 +247,7 @@ oval_result_t ipv6addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 	case OVAL_OPERATION_GREATER_THAN:
 		ipv6addr_mask(&addr1, p1len);
 		ipv6addr_mask(&addr2, p2len);
-		if (memcmp(&addr1, &addr2, sizeof(struct in6_addr)) > 0)
+		if (ipaddr_cmp(AF_INET6, &addr1, &addr2) > 0)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
@@ -245,7 +255,7 @@ oval_result_t ipv6addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 	case OVAL_OPERATION_GREATER_THAN_OR_EQUAL:
 		ipv6addr_mask(&addr1, p1len);
 		ipv6addr_mask(&addr2, p2len);
-		if (memcmp(&addr1, &addr2, sizeof(struct in6_addr)) >= 0)
+		if (ipaddr_cmp(AF_INET6, &addr1, &addr2) >= 0)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
@@ -264,7 +274,7 @@ oval_result_t ipv6addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 		/* Otherwise, compare the first p2len (!) bits. */
 		ipv6addr_mask(&addr1, p2len);
 		ipv6addr_mask(&addr2, p2len);
-		if (memcmp(&addr1, &addr2, sizeof(struct in6_addr)) == 0)
+		if (ipaddr_cmp(AF_INET6, &addr1, &addr2) == 0)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
@@ -272,7 +282,7 @@ oval_result_t ipv6addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 	case OVAL_OPERATION_LESS_THAN:
 		ipv6addr_mask(&addr1, p1len);
 		ipv6addr_mask(&addr2, p2len);
-		if (memcmp(&addr1, &addr2, sizeof(struct in6_addr)) < 0)
+		if (ipaddr_cmp(AF_INET6, &addr1, &addr2) < 0)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
@@ -280,7 +290,7 @@ oval_result_t ipv6addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 	case OVAL_OPERATION_LESS_THAN_OR_EQUAL:
 		ipv6addr_mask(&addr1, p1len);
 		ipv6addr_mask(&addr2, p2len);
-		if (memcmp(&addr1, &addr2, sizeof(struct in6_addr)) <= 0)
+		if (ipaddr_cmp(AF_INET6, &addr1, &addr2) <= 0)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
