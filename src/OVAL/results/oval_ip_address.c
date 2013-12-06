@@ -44,7 +44,7 @@
 #include "common/debug_priv.h"
 #include "results/oval_ip_address_impl.h"
 
-static int ipv4addr_parse(const char *oval_ipv4_string, int *netmask_out, struct in_addr *ip_out)
+static int ipv4addr_parse(const char *oval_ipv4_string, uint32_t *netmask_out, struct in_addr *ip_out)
 {
 	char *s, *pfx;
 	int result = -1;
@@ -78,7 +78,7 @@ static int ipv4addr_parse(const char *oval_ipv4_string, int *netmask_out, struct
 oval_result_t ipv4addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
-	int nm1, nm2;
+	uint32_t nm1, nm2;
 	struct in_addr addr1, addr2;
 
 	if (ipv4addr_parse(s1, &nm1, &addr1) || ipv4addr_parse(s2, &nm2, &addr2)) {
