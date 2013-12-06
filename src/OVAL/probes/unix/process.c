@@ -286,11 +286,16 @@ static int read_process(SEXP_t *cmd_ent, probe_ctx *ctx)
 			proc = localtime(&s_time);
 
 			// Select format based on how long we've been running
-			fmt = "%H:%M";
-			if (tday != proc->tm_yday)
+			//
+			// FROM THE SPEC:
+			// "This is the time of day the process started formatted in HH:MM:SS if
+			// the same day the process started or formatted as MMM_DD (Ex.: Feb_5)
+			// if process started the previous day or further in the past."
+			//
+			if (tday != proc->tm_yday || tyear != proc->tm_year)
 				fmt = "%b_%d";
-			if (tyear != proc->tm_year)
-				fmt = "%Y";
+			else
+				fmt = "%H:%M:%S";
 			strftime(sbuf, sizeof(sbuf), fmt, proc);
 
 			r.command = cmd;
@@ -420,22 +425,17 @@ static int read_process(SEXP_t *cmd_ent, probe_ctx *ctx)
 			proc = localtime(&s_time);
 
 			// Select format based on how long we've been running
-			fixfmt_year = 0;
-			fmt = "%H:%M";
-			if (tday != proc->tm_yday)
-				fmt = "%b%d";
-			if (tyear != proc->tm_year)
-				fmt = "%Y";
-				fixfmt_year = 1;
+			//
+			// FROM THE SPEC:
+			// "This is the time of day the process started formatted in HH:MM:SS if
+			// the same day the process started or formatted as MMM_DD (Ex.: Feb_5)
+			// if process started the previous day or further in the past."
+			//
+			if (tday != proc->tm_yday || tyear != proc->tm_year)
+				fmt = "%b_%d";
+			else
+				fmt = "%H:%M:%S";
 			strftime(sbuf, sizeof(sbuf), fmt, proc);
-
-			/* Fixing format from MMMYY to MMM_YY */
-			if (fixfmt_year == 1) {
-				sbuf[6] = '\0';
-				sbuf[5] = sbuf[4];
-				sbuf[4] = sbuf[3];
-				sbuf[3] = '_';
-			}
 
 			r.command = psinfo->pr_fname;
 			r.exec_time = convert_time(psinfo->pr_time.tv_sec, tbuf, sizeof(tbuf));
