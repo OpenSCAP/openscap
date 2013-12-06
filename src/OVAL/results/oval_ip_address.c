@@ -77,7 +77,7 @@ static int ipv4addr_parse(const char *oval_ipv4_string, uint32_t *netmask_out, s
 
 static inline void ipv4addr_mask(struct in_addr *ip_addr, uint32_t netmask)
 {
-	ip_addr->s_addr &= netmask;
+	ip_addr->s_addr &= htonl(netmask);
 }
 
 oval_result_t ipv4addr_cmp(const char *s1, const char *s2, oval_operation_t op)
