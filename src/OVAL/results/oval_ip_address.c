@@ -75,6 +75,11 @@ static int ipv4addr_parse(const char *oval_ipv4_string, uint32_t *netmask_out, s
 	return result;
 }
 
+static inline void ipv4addr_mask(struct in_addr *ip_addr, uint32_t netmask)
+{
+	ip_addr->s_addr &= netmask;
+}
+
 oval_result_t ipv4addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
@@ -105,16 +110,16 @@ oval_result_t ipv4addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 		}
 		/* FALLTHROUGH */
 	case OVAL_OPERATION_GREATER_THAN:
-		addr1.s_addr &= nm1;
-		addr2.s_addr &= nm2;
+		ipv4addr_mask(&addr1, nm1);
+		ipv4addr_mask(&addr2, nm2);
 		if (memcmp(&addr1, &addr2, sizeof(struct in_addr)) > 0)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
 	case OVAL_OPERATION_GREATER_THAN_OR_EQUAL:
-		addr1.s_addr &= nm1;
-		addr2.s_addr &= nm2;
+		ipv4addr_mask(&addr1, nm1);
+		ipv4addr_mask(&addr2, nm2);
 		if (memcmp(&addr1, &addr2, sizeof(struct in_addr)) >= 0)
 			result = OVAL_RESULT_TRUE;
 		else
@@ -131,25 +136,25 @@ oval_result_t ipv4addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 			result = OVAL_RESULT_FALSE;
 		}
 
-		/* Otherwise, compare the first nm2 (!) bits. */
-		addr1.s_addr &= nm1;
-		addr2.s_addr &= nm2;
+		/* Otherwise, compare the first bits defined by nm2 */
+		ipv4addr_mask(&addr1, nm2);
+		ipv4addr_mask(&addr2, nm2);
 		if (memcmp(&addr1, &addr2, sizeof(struct in_addr)) == 0)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
 	case OVAL_OPERATION_LESS_THAN:
-		addr1.s_addr &= nm1;
-		addr2.s_addr &= nm2;
+		ipv4addr_mask(&addr1, nm1);
+		ipv4addr_mask(&addr2, nm2);
 		if (memcmp(&addr1, &addr2, sizeof(struct in_addr)) < 0)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
 		break;
 	case OVAL_OPERATION_LESS_THAN_OR_EQUAL:
-		addr1.s_addr &= nm1;
-		addr2.s_addr &= nm2;
+		ipv4addr_mask(&addr1, nm1);
+		ipv4addr_mask(&addr2, nm2);
 		if (memcmp(&addr1, &addr2, sizeof(struct in_addr)) <= 0)
 			result = OVAL_RESULT_TRUE;
 		else
