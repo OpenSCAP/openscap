@@ -45,7 +45,7 @@
       <definition id="oval:x:def:5" version="1" class="compliance">
         <metadata>
           <title>Superset: Compare different ipv6 addresses. The address on system has shorter prefix length (32);
-                 both addresses match on first 32b. Thus state is 'superset of' syschar. We expect 'true' result.</title>
+                 both addresses match on first 32b. Thus state is 'subset of' syschar. We expect 'true' result.</title>
           <description>.</description>
         </metadata>
         <criteria>

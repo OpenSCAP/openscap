@@ -25,6 +25,9 @@ EXTRA_DIST += \
 	test_ipv4_super_set_of.oval.xml \
 	test_ipv4_super_set_of.sh \
 	test_ipv4_super_set_of.syschar.xml \
+	test_ipv6_super_set_of.oval.xml \
+	test_ipv6_super_set_of.sh \
+	test_ipv6_super_set_of.syschar.xml \
 	test_envvar_insensitive_equals.oval.xml \
 	test_envvar_insensitive_equals.sh \
 	test_envvar_insensitive_equals.syschar.xml \
@@ -36,9 +39,6 @@ EXTRA_DIST += \
 	test_evr_string_comparison.syschar.xml \
 	test_oval_empty_variable_evaluation.sh \
 	test_oval_empty_variable_evaluation.xml \
-	test_super_set_of.oval.xml \
-	test_super_set_of.sh \
-	test_super_set_of.syschar.xml \
 	test_xmlns_missing.oval.xml \
 	test_xmlns_missing.sh \
 	test_xsinil_envv58_pid.oval.xml \
