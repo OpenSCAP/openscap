@@ -129,11 +129,10 @@ oval_result_t ipv4addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 		/* This means that every IP address in the set of IP addresses defined in
 		 * the stated entity (addr1, nm1) is present in the set of IP addresses
 		 * on the system. (addr2, nm2). */
-
 		if (nm1 < nm2) {
-			/* The lesser is the prefix-length of CIDR -> the more IP addresses
-			 * there are in the range */
+			/* The smaller the netmask is the more IP addresses there are in the range */
 			result = OVAL_RESULT_FALSE;
+			break;
 		}
 
 		/* Otherwise, compare the first bits defined by nm2 */
