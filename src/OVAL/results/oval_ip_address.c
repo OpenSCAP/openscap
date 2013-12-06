@@ -46,8 +46,11 @@
 
 static inline int ipaddr_cmp(int af, const void *addr1, const void *addr2)
 {
-	if (af == AF_INET)
-		return memcmp(addr1, addr2, sizeof(struct in_addr));
+	if (af == AF_INET) {
+		uint32_t ip1 = ntohl(((const struct in_addr *) addr1)->s_addr);
+		uint32_t ip2 = ntohl(((const struct in_addr *) addr2)->s_addr);
+		return memcmp(&ip1, &ip2, sizeof(uint32_t));
+	}
 	if (af == AF_INET6)
 		return memcmp(addr1, addr2, sizeof(struct in6_addr));
 
