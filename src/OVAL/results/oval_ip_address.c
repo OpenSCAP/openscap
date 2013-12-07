@@ -109,11 +109,24 @@ oval_result_t oval_ipaddr_cmp(int af, const char *s1, const char *s2, oval_opera
 			result = OVAL_RESULT_FALSE;
 		break;
 	case OVAL_OPERATION_SUBSET_OF:
-		if (mask1 <= mask2) {
+		/* This asserts that every IP address in the set of IP addresses
+		 * on the system (add2, mask2) must be present in the set of IP
+		 * addresses defined in the stated entity (addr1, mask1). */
+		if (mask1 > mask2) {
+			/* The bigger the netmask (IPv4) or prefix-length (IPv6) is
+			 * the less IP addresses there are in the range. */
 			result = OVAL_RESULT_FALSE;
 			break;
 		}
-		/* FALLTHROUGH */
+
+		/* Otherwise, compare the first bits defined by mask1 */
+		ipaddr_mask(af, &addr1, mask1);
+		ipaddr_mask(af, &addr2, mask1);
+		if (ipaddr_cmp(af, &addr1, &addr2) == 0)
+			result = OVAL_RESULT_TRUE;
+		else
+			result = OVAL_RESULT_FALSE;
+		break;
 	case OVAL_OPERATION_GREATER_THAN:
 		ipaddr_mask(af, &addr1, mask1);
 		ipaddr_mask(af, &addr2, mask2);
