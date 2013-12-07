@@ -84,6 +84,94 @@ static inline int ipaddr_parse(int af, const char *oval_ip_string, uint32_t *mas
 	assert(false);
 }
 
+oval_result_t oval_ipaddr_cmp(int af, const char *s1, const char *s2, oval_operation_t op)
+{
+	oval_result_t result = OVAL_RESULT_ERROR;
+	uint32_t mask1, mask2;
+	char addr1[INET6_ADDRSTRLEN];
+	char addr2[INET6_ADDRSTRLEN];
+
+	if (ipaddr_parse(af, s1, &mask1, &addr1) || ipaddr_parse(af, s2, &mask2, &addr2)) {
+		return result;
+	}
+
+	switch (op) {
+	case OVAL_OPERATION_EQUALS:
+		if (!ipaddr_cmp(af, &addr1, &addr2) && mask1 == mask2)
+			result = OVAL_RESULT_TRUE;
+		else
+			result = OVAL_RESULT_FALSE;
+		break;
+	case OVAL_OPERATION_NOT_EQUAL:
+		if (ipaddr_cmp(af, &addr1, &addr2) || mask1 != mask2)
+			result = OVAL_RESULT_TRUE;
+		else
+			result = OVAL_RESULT_FALSE;
+		break;
+	case OVAL_OPERATION_SUBSET_OF:
+		if (mask1 <= mask2) {
+			result = OVAL_RESULT_FALSE;
+			break;
+		}
+		/* FALLTHROUGH */
+	case OVAL_OPERATION_GREATER_THAN:
+		ipaddr_mask(af, &addr1, mask1);
+		ipaddr_mask(af, &addr2, mask2);
+		if (ipaddr_cmp(af, &addr1, &addr2) > 0)
+			result = OVAL_RESULT_TRUE;
+		else
+			result = OVAL_RESULT_FALSE;
+		break;
+	case OVAL_OPERATION_GREATER_THAN_OR_EQUAL:
+		ipaddr_mask(af, &addr1, mask1);
+		ipaddr_mask(af, &addr2, mask2);
+		if (ipaddr_cmp(af, &addr1, &addr2) >= 0)
+			result = OVAL_RESULT_TRUE;
+		else
+			result = OVAL_RESULT_FALSE;
+		break;
+	case OVAL_OPERATION_SUPERSET_OF:
+		/* This asserts that every IP address in the set of IP addresses defined in
+		 * the stated entity (addr1, mask1) is present in the set of IP addresses
+		 * on the system. (addr2, mask2). */
+		if (mask1 < mask2) {
+			/* The smaller the netmask (IPv4) or prefix-length (IPv6) is
+			 * the more IP addresses there are in the range */
+			result = OVAL_RESULT_FALSE;
+			break;
+		}
+
+		/* Otherwise, compare the first bits defined by mask2 */
+		ipaddr_mask(af, &addr1, mask2);
+		ipaddr_mask(af, &addr2, mask2);
+		if (ipaddr_cmp(af, &addr1, &addr2) == 0)
+			result = OVAL_RESULT_TRUE;
+		else
+			result = OVAL_RESULT_FALSE;
+		break;
+	case OVAL_OPERATION_LESS_THAN:
+		ipaddr_mask(af, &addr1, mask1);
+		ipaddr_mask(af, &addr2, mask2);
+		if (ipaddr_cmp(af, &addr1, &addr2) < 0)
+			result = OVAL_RESULT_TRUE;
+		else
+			result = OVAL_RESULT_FALSE;
+		break;
+	case OVAL_OPERATION_LESS_THAN_OR_EQUAL:
+		ipaddr_mask(af, &addr1, mask1);
+		ipaddr_mask(af, &addr2, mask2);
+		if (ipaddr_cmp(af, &addr1, &addr2) <= 0)
+			result = OVAL_RESULT_TRUE;
+		else
+			result = OVAL_RESULT_FALSE;
+		break;
+	default:
+		dE("Unexpected compare operation: %d.\n", op);
+	}
+
+	return result;
+}
+
 static inline int ipv4addr_parse(const char *oval_ipv4_string, uint32_t *netmask_out, struct in_addr *ip_out)
 {
 	char *s, *pfx;
@@ -118,92 +206,6 @@ static inline int ipv4addr_parse(const char *oval_ipv4_string, uint32_t *netmask
 static inline void ipv4addr_mask(struct in_addr *ip_addr, uint32_t netmask)
 {
 	ip_addr->s_addr &= htonl(netmask);
-}
-
-oval_result_t ipv4addr_cmp(const char *s1, const char *s2, oval_operation_t op)
-{
-	oval_result_t result = OVAL_RESULT_ERROR;
-	uint32_t nm1, nm2;
-	struct in_addr addr1, addr2;
-
-	if (ipaddr_parse(AF_INET, s1, &nm1, &addr1) || ipaddr_parse(AF_INET, s2, &nm2, &addr2)) {
-		return result;
-	}
-
-	switch (op) {
-	case OVAL_OPERATION_EQUALS:
-		if (!ipaddr_cmp(AF_INET, &addr1, &addr2) && nm1 == nm2)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_NOT_EQUAL:
-		if (ipaddr_cmp(AF_INET, &addr1, &addr2) || nm1 != nm2)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_SUBSET_OF:
-		if (nm1 <= nm2) {
-			result = OVAL_RESULT_FALSE;
-			break;
-		}
-		/* FALLTHROUGH */
-	case OVAL_OPERATION_GREATER_THAN:
-		ipaddr_mask(AF_INET, &addr1, nm1);
-		ipaddr_mask(AF_INET, &addr2, nm2);
-		if (ipaddr_cmp(AF_INET, &addr1, &addr2) > 0)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_GREATER_THAN_OR_EQUAL:
-		ipaddr_mask(AF_INET, &addr1, nm1);
-		ipaddr_mask(AF_INET, &addr2, nm2);
-		if (ipaddr_cmp(AF_INET, &addr1, &addr2) >= 0)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_SUPERSET_OF:
-		/* This means that every IP address in the set of IP addresses defined in
-		 * the stated entity (addr1, nm1) is present in the set of IP addresses
-		 * on the system. (addr2, nm2). */
-		if (nm1 < nm2) {
-			/* The smaller the netmask is the more IP addresses there are in the range */
-			result = OVAL_RESULT_FALSE;
-			break;
-		}
-
-		/* Otherwise, compare the first bits defined by nm2 */
-		ipaddr_mask(AF_INET, &addr1, nm2);
-		ipaddr_mask(AF_INET, &addr2, nm2);
-		if (ipaddr_cmp(AF_INET, &addr1, &addr2) == 0)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_LESS_THAN:
-		ipaddr_mask(AF_INET, &addr1, nm1);
-		ipaddr_mask(AF_INET, &addr2, nm2);
-		if (ipaddr_cmp(AF_INET, &addr1, &addr2) < 0)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_LESS_THAN_OR_EQUAL:
-		ipaddr_mask(AF_INET, &addr1, nm1);
-		ipaddr_mask(AF_INET, &addr2, nm2);
-		if (ipaddr_cmp(AF_INET, &addr1, &addr2) <= 0)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	default:
-		dE("Unexpected compare operation: %d.\n", op);
-	}
-
-	return result;
 }
 
 static inline int ipv6addr_parse(const char *oval_ipv6_string, uint32_t *len_out, struct in6_addr *ip_out)
@@ -243,92 +245,5 @@ static inline void ipv6addr_mask(struct in6_addr *addr, int prefix_len)
 		/* The rest will be zeroed. */
 		mask = 0;
 	}
-}
-
-oval_result_t ipv6addr_cmp(const char *s1, const char *s2, oval_operation_t op)
-{
-	oval_result_t result = OVAL_RESULT_ERROR;
-	uint32_t p1len, p2len;
-	struct in6_addr addr1, addr2;
-
-	if (ipaddr_parse(AF_INET6, s1, &p1len, &addr1) || ipaddr_parse(AF_INET6, s2, &p2len, &addr2)) {
-		return result;
-	}
-
-	switch (op) {
-	case OVAL_OPERATION_EQUALS:
-		if (!ipaddr_cmp(AF_INET6, &addr1, &addr2) && p1len == p2len)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_NOT_EQUAL:
-		if (ipaddr_cmp(AF_INET6, &addr1, &addr2) || p1len != p2len)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_SUBSET_OF:
-		if (p1len <= p2len) {
-			result = OVAL_RESULT_FALSE;
-			break;
-		}
-		/* FALLTHROUGH */
-	case OVAL_OPERATION_GREATER_THAN:
-		ipaddr_mask(AF_INET6, &addr1, p1len);
-		ipaddr_mask(AF_INET6, &addr2, p2len);
-		if (ipaddr_cmp(AF_INET6, &addr1, &addr2) > 0)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_GREATER_THAN_OR_EQUAL:
-		ipaddr_mask(AF_INET6, &addr1, p1len);
-		ipaddr_mask(AF_INET6, &addr2, p2len);
-		if (ipaddr_cmp(AF_INET6, &addr1, &addr2) >= 0)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_SUPERSET_OF:
-		/* This asserts that every IP address in the set of IP addresses defined in
-		 * the stated entity (addr1, p1len) is present in the set of IP addresses
-		 * on the system (addr2, p2len). */
-		if (p1len < p2len) {
-			/* The lesser is the prefix-length of CIDR -> the more IP addresses
-			 * there are in the range. */
-			result = OVAL_RESULT_FALSE;
-			break;
-		}
-
-		/* Otherwise, compare the first p2len (!) bits. */
-		ipaddr_mask(AF_INET6, &addr1, p2len);
-		ipaddr_mask(AF_INET6, &addr2, p2len);
-		if (ipaddr_cmp(AF_INET6, &addr1, &addr2) == 0)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_LESS_THAN:
-		ipaddr_mask(AF_INET6, &addr1, p1len);
-		ipaddr_mask(AF_INET6, &addr2, p2len);
-		if (ipaddr_cmp(AF_INET6, &addr1, &addr2) < 0)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_LESS_THAN_OR_EQUAL:
-		ipaddr_mask(AF_INET6, &addr1, p1len);
-		ipaddr_mask(AF_INET6, &addr2, p2len);
-		if (ipaddr_cmp(AF_INET6, &addr1, &addr2) <= 0)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	default:
-		dE("Unexpected compare operation: %d.\n", op);
-	}
-
-	return result;
 }
 

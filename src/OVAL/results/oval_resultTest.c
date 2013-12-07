@@ -489,9 +489,9 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 			return (OVAL_RESULT_TRUE);
 		}		// we have already filtered out the invalid ones
 	} else if (state_data_type == OVAL_DATATYPE_IPV4ADDR) {
-		return ipv4addr_cmp(state_data, sys_data, operation);
+		return oval_ipaddr_cmp(AF_INET, state_data, sys_data, operation);
 	} else if (state_data_type == OVAL_DATATYPE_IPV6ADDR) {
-		return ipv6addr_cmp(state_data, sys_data, operation);
+		return oval_ipaddr_cmp(AF_INET6, state_data, sys_data, operation);
 	} else if (state_data_type == OVAL_DATATYPE_FILESET_REVISION
 		   || state_data_type == OVAL_DATATYPE_IOS_VERSION) {
 		dW("Unsupported data type: %s.\n", oval_datatype_get_text(state_data_type));

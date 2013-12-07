@@ -484,7 +484,7 @@ static oval_result_t probe_ent_cmp_ipv4addr(SEXP_t *val1, SEXP_t *val2, oval_ope
 	char *addr1 = SEXP_string_cstr(val1);
 	char *addr2 = SEXP_string_cstr(val2);
 
-	result = ipv4addr_cmp(addr1, addr2, op);
+	result = oval_ipaddr_cmp(AF_INET, addr1, addr2, op);
 
 	oscap_free(addr1);
 	oscap_free(addr2);
@@ -497,7 +497,7 @@ static oval_result_t probe_ent_cmp_ipv6addr(SEXP_t *val1, SEXP_t *val2, oval_ope
 	char *addr1 = SEXP_string_cstr(val1);
 	char *addr2 = SEXP_string_cstr(val2);
 
-	result = ipv6addr_cmp(addr1, addr2, op);
+	result = oval_ipaddr_cmp(AF_INET6, addr1, addr2, op);
 
 	oscap_free(addr1);
 	oscap_free(addr2);

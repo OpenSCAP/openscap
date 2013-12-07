@@ -39,26 +39,16 @@
 OSCAP_HIDDEN_START;
 
 /**
- * Compare two IPv4 address or address sets (CIDR). The format of input string
+ * Compare two IP address or address sets (CIDR). The format of input string
  * shall conform to ipv4_address types from oval:SimpleDatatypeEnumeration.
  * This operation is not commutative, be aware of the order of operands.
+ * @param af Internet address family (AF_INET or AF_INET6)
  * @param s1 ipv4 address as defined by state element
  * @param s2 ipv4 address as captured from system (from syschar object)
  * @param op type of comaprison operation
  * @returns result of comparison as defined by OVAL specification
  */
-oval_result_t ipv4addr_cmp(const char *s1, const char *s2, oval_operation_t op);
-
-/**
- * Compare two IPv6 address or address sets (CIDR). The format of input string
- * shall conform to ipv6_address types from oval:SimpleDatatypeEnumeration.
- * This operation is not commutative, be aware of the order of operands.
- * @param s1 ipv6 address as defined by state element
- * @param s2 ipv6 address as captured from system (from syschar object)
- * @param op type of comaprison operation
- * @returns result of comparison as defined by OVAL specification
- */
-oval_result_t ipv6addr_cmp(const char *s1, const char *s2, oval_operation_t op);
+oval_result_t oval_ipaddr_cmp(int af, const char *s1, const char *s2, oval_operation_t op);
 
 OSCAP_HIDDEN_END;
 
