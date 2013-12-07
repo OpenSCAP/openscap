@@ -15,6 +15,7 @@ test_run "evr_string comparison is superior to rpmvercmp" $srcdir/test_evr_strin
 test_run "evr_string comparison regards missing epoch in content" $srcdir/test_evr_string_missing_epoch.sh
 test_run "insensitive_equals on properties" $srcdir/test_envvar_insensitive_equals.sh
 test_run "ipv6_address: 'superset of' operation" $srcdir/test_ipv6_super_set_of.sh
+test_run "ipv6_address: 'subset of' operation" $srcdir/test_ipv6_subset_of.sh
 test_run "ipv4_address: 'superset of' operation" $srcdir/test_ipv4_super_set_of.sh
 test_run "ipv4_address: comparison" $srcdir/test_ipv4_comparison.sh
 test_run "anyxml element" $srcdir/test_anyxml.sh

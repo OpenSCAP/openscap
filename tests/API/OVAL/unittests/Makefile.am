@@ -28,6 +28,9 @@ EXTRA_DIST += \
 	test_ipv4_super_set_of.oval.xml \
 	test_ipv4_super_set_of.sh \
 	test_ipv4_super_set_of.syschar.xml \
+	test_ipv6_subset_of.oval.xml \
+	test_ipv6_subset_of.sh \
+	test_ipv6_subset_of.syschar.xml \
 	test_ipv6_super_set_of.oval.xml \
 	test_ipv6_super_set_of.sh \
 	test_ipv6_super_set_of.syschar.xml \
