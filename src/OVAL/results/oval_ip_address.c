@@ -47,7 +47,7 @@
 static inline void ipv4addr_mask(struct in_addr *ip_addr, uint32_t netmask);
 static inline void ipv6addr_mask(struct in6_addr *addr, int prefix_len);
 static inline int ipv4addr_parse(const char *oval_ipv4_string, uint32_t *netmask_out, struct in_addr *ip_out);
-static inline int ipv6addr_parse(const char *oval_ipv6_string, int *len_out, struct in6_addr *ip_out);
+static inline int ipv6addr_parse(const char *oval_ipv6_string, uint32_t *len_out, struct in6_addr *ip_out);
 
 
 static inline int ipaddr_cmp(int af, const void *addr1, const void *addr2)
@@ -206,7 +206,7 @@ oval_result_t ipv4addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 	return result;
 }
 
-static inline int ipv6addr_parse(const char *oval_ipv6_string, int *len_out, struct in6_addr *ip_out)
+static inline int ipv6addr_parse(const char *oval_ipv6_string, uint32_t *len_out, struct in6_addr *ip_out)
 {
 	char *s, *pfx;
 	int result = -1;
@@ -248,7 +248,7 @@ static inline void ipv6addr_mask(struct in6_addr *addr, int prefix_len)
 oval_result_t ipv6addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
-	int p1len, p2len;
+	uint32_t p1len, p2len;
 	struct in6_addr addr1, addr2;
 
 	if (ipaddr_parse(AF_INET6, s1, &p1len, &addr1) || ipaddr_parse(AF_INET6, s2, &p2len, &addr2)) {
