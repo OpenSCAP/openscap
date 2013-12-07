@@ -478,26 +478,13 @@ oval_result_t probe_ent_cmp_string(SEXP_t * val1, SEXP_t * val2, oval_operation_
 	return result;
 }
 
-static oval_result_t probe_ent_cmp_ipv4addr(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
+static oval_result_t probe_ent_cmp_ipaddr(int af, SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
 	char *addr1 = SEXP_string_cstr(val1);
 	char *addr2 = SEXP_string_cstr(val2);
 
-	result = oval_ipaddr_cmp(AF_INET, addr1, addr2, op);
-
-	oscap_free(addr1);
-	oscap_free(addr2);
-	return result;
-}
-
-static oval_result_t probe_ent_cmp_ipv6addr(SEXP_t *val1, SEXP_t *val2, oval_operation_t op)
-{
-	oval_result_t result = OVAL_RESULT_ERROR;
-	char *addr1 = SEXP_string_cstr(val1);
-	char *addr2 = SEXP_string_cstr(val2);
-
-	result = oval_ipaddr_cmp(AF_INET6, addr1, addr2, op);
+	result = oval_ipaddr_cmp(af, addr1, addr2, op);
 
 	oscap_free(addr1);
 	oscap_free(addr2);
@@ -579,10 +566,10 @@ static oval_result_t probe_ent_cmp(SEXP_t * ent, SEXP_t * val2)
 			ores = probe_ent_cmp_string(val1, val2, op);
 			break;
 		case OVAL_DATATYPE_IPV4ADDR:
-			ores = probe_ent_cmp_ipv4addr(val1, val2, op);
+			ores = probe_ent_cmp_ipaddr(AF_INET, val1, val2, op);
 			break;
 		case OVAL_DATATYPE_IPV6ADDR:
-			ores = probe_ent_cmp_ipv6addr(val1, val2, op);
+			ores = probe_ent_cmp_ipaddr(AF_INET6, val1, val2, op);
 			break;
 		default:
 			ores = OVAL_RESULT_ERROR;
