@@ -180,6 +180,7 @@ oval_result_t oval_ipaddr_cmp(int af, const char *s1, const char *s2, oval_opera
 		break;
 	default:
 		dE("Unexpected compare operation: %d.\n", op);
+		assert(false);
 	}
 
 	return result;
