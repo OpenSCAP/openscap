@@ -46,6 +46,9 @@
 
 static inline void ipv4addr_mask(struct in_addr *ip_addr, uint32_t netmask);
 static inline void ipv6addr_mask(struct in6_addr *addr, int prefix_len);
+static inline int ipv4addr_parse(const char *oval_ipv4_string, uint32_t *netmask_out, struct in_addr *ip_out);
+static inline int ipv6addr_parse(const char *oval_ipv6_string, int *len_out, struct in6_addr *ip_out);
+
 
 static inline int ipaddr_cmp(int af, const void *addr1, const void *addr2)
 {
@@ -71,7 +74,17 @@ static inline void ipaddr_mask(int af, const void *ip_addr, uint32_t mask)
 
 }
 
-static int ipv4addr_parse(const char *oval_ipv4_string, uint32_t *netmask_out, struct in_addr *ip_out)
+static inline int ipaddr_parse(int af, const char *oval_ip_string, uint32_t *mask_out, void * ip_out)
+{
+	if (af == AF_INET)
+		return ipv4addr_parse(oval_ip_string, mask_out, ip_out);
+	if (af == AF_INET6)
+		return ipv6addr_parse(oval_ip_string, mask_out, ip_out);
+
+	assert(false);
+}
+
+static inline int ipv4addr_parse(const char *oval_ipv4_string, uint32_t *netmask_out, struct in_addr *ip_out)
 {
 	char *s, *pfx;
 	int result = -1;
@@ -113,7 +126,7 @@ oval_result_t ipv4addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 	uint32_t nm1, nm2;
 	struct in_addr addr1, addr2;
 
-	if (ipv4addr_parse(s1, &nm1, &addr1) || ipv4addr_parse(s2, &nm2, &addr2)) {
+	if (ipaddr_parse(AF_INET, s1, &nm1, &addr1) || ipaddr_parse(AF_INET, s2, &nm2, &addr2)) {
 		return result;
 	}
 
@@ -193,7 +206,7 @@ oval_result_t ipv4addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 	return result;
 }
 
-static int ipv6addr_parse(const char *oval_ipv6_string, int *len_out, struct in6_addr *ip_out)
+static inline int ipv6addr_parse(const char *oval_ipv6_string, int *len_out, struct in6_addr *ip_out)
 {
 	char *s, *pfx;
 	int result = -1;
@@ -238,7 +251,7 @@ oval_result_t ipv6addr_cmp(const char *s1, const char *s2, oval_operation_t op)
 	int p1len, p2len;
 	struct in6_addr addr1, addr2;
 
-	if (ipv6addr_parse(s1, &p1len, &addr1) || ipv6addr_parse(s2, &p2len, &addr2)) {
+	if (ipaddr_parse(AF_INET6, s1, &p1len, &addr1) || ipaddr_parse(AF_INET6, s2, &p2len, &addr2)) {
 		return result;
 	}
 
