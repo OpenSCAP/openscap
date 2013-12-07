@@ -113,6 +113,8 @@ assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:x:tst:5"
 assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:x:tst:5"]/tested_variable/@*'
 assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:x:tst:5"]/tested_variable[@variable_id="oval:x:var:4"]'
 assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:x:tst:5"]/tested_variable[text()="192.168.99.1/16"]'
+assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:x:tst:6"]'
+assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:x:tst:6"][@result="false"]'
 assert_exists 2 '/oval_results/results/system/tests/test[@test_id="oval:x:tst:6"]/*'
 assert_exists 1 '/oval_results/results/system/tests/test[@test_id="oval:x:tst:6"]/tested_item'
 assert_exists 2 '/oval_results/results/system/tests/test[@test_id="oval:x:tst:6"]/tested_item/@*'

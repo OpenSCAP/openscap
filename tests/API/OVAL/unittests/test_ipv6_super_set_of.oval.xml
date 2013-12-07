@@ -86,7 +86,7 @@
       </ind-def:variable_test>
       <ind-def:variable_test id="oval:x:tst:6" version="1" check="all" comment=".">
         <ind-def:object object_ref="oval:x:obj:5"/>
-        <ind-def:state state_ref="oval:x:ste:2"/>
+        <ind-def:state state_ref="oval:x:ste:3"/>
       </ind-def:variable_test>
     </tests>
     <objects>
@@ -112,6 +112,9 @@
       </ind-def:variable_state>
       <ind-def:variable_state id="oval:x:ste:2" version="1">
         <ind-def:value operation="superset of" datatype="ipv6_address">700:1a7e:70:face:b055::f1ee:0000/120</ind-def:value>
+      </ind-def:variable_state>
+      <ind-def:variable_state id="oval:x:ste:3" version="1">
+        <ind-def:value operation="superset of" datatype="ipv6_address">700:1a7e:70:face:b055::f1ee:0000/32</ind-def:value>
       </ind-def:variable_state>
     </states>
     <variables>
