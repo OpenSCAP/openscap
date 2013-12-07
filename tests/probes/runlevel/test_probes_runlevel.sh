@@ -17,6 +17,7 @@
 . ${srcdir}/runlevel_helper.sh
 
 # Test Cases.
+set -e -o pipefail
 
 function test_probes_runlevel_A {
 
@@ -104,11 +105,34 @@ function test_probes_runlevel_B {
     return $ret_val
 }
 
+function test_probes_runlevel_C {
+    probecheck "runlevel" || return 255
+
+    local ret_val=0;
+    local definition="test_probes_runlevel_C.xml"
+    declare -x result="results_C.xml"
+
+    local SERVICE_A=`get_services_matching 3 on | head -1`
+    local SERVICE_B=`get_services_matching 3 off | head -1`
+
+    if [ -z "$SERVICE_A" -o -z "$SERVICE_B" ]; then
+        return 255 # SKIPPED
+    fi
+
+    bash ${srcdir}/test_probes_runlevel_C.xml.sh $SERVICE_A $SERVICE_B > $definition
+    $OSCAP oval eval --results $result $definition
+
+    assert_exists 2 '/oval_results/results/system/oval_system_characteristics/system_data/unix-sys:runlevel_item'
+
+    return $ret_val
+}
+
 # Testing.
 
 test_init "test_probes_runlevel.log"
 
 test_run "test_probes_runlevel_A" test_probes_runlevel_A
 test_run "test_probes_runlevel_B" test_probes_runlevel_B
+test_run "test_probes_runlevel_C" test_probes_runlevel_C
 
 test_exit

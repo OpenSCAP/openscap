@@ -13,4 +13,5 @@ TESTS = test_probes_runlevel.sh
 EXTRA_DIST += test_probes_runlevel.sh \
               runlevel_helper.sh \
               test_probes_runlevel_A.xml.sh \
-              test_probes_runlevel_B.xml.sh
+              test_probes_runlevel_B.xml.sh \
+              test_probes_runlevel_C.xml.sh
