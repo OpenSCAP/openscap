@@ -93,38 +93,41 @@ static int get_runlevel_sysv (struct runlevel_req *req, struct runlevel_rep **re
 	const char *init_path = "/etc/init.d";
 #endif
 	const char *rc_path = "/etc/rc%c.d";
-        char pathbuf[PATH_MAX];
-        DIR *init_dir, *rc_dir;
-        struct dirent *init_dp, *rc_dp;
+	char pathbuf[PATH_MAX];
+	DIR *init_dir, *rc_dir;
+	struct dirent *init_dp, *rc_dp;
 	struct stat init_st, rc_st;
 	struct runlevel_rep *rep_lst = NULL;
 
-        _A(req != NULL);
-        _A(rep != NULL);
+	_A(req != NULL);
+	_A(rep != NULL);
 
-        init_dir = opendir(init_path);
-        if (init_dir == NULL) {
-                dI("Can't open directory \"%s\": errno=%d, %s.\n",
-                   init_path, errno, strerror (errno));
-                return (-1);
-        }
-	if (chdir(init_path) != 0) {
-                dI("Can't fchdir to \"%s\": errno=%d, %s.\n",
-                   init_path, errno, strerror (errno));
-                closedir(init_dir);
-                return (-1);
-        }
+	init_dir = opendir(init_path);
+	if (init_dir == NULL) {
+		dI("Can't open directory \"%s\": errno=%d, %s.\n",
+		   init_path, errno, strerror (errno));
+		return (-1);
+	}
 
-        while ((init_dp = readdir(init_dir)) != NULL) {
+	while ((init_dp = readdir(init_dir)) != NULL) {
 		char *service_name;
 		unsigned int i;
 		SEXP_t *r0;
 
-                if (stat(init_dp->d_name, &init_st) != 0) {
-                        dI("Can't stat file %s/%s: errno=%d, %s.\n",
-                           init_path, init_dp->d_name, errno, strerror(errno));
-                        continue;
-                }
+		// Ensure that we are in the expected directory before
+		// touching relative paths
+		if (fchdir(dirfd(init_dir)) != 0) {
+			dI("Can't fchdir to \"%s\": errno=%d, %s.\n",
+			   init_path, errno, strerror (errno));
+			closedir(init_dir);
+			return -1;
+		}
+
+		if (stat(init_dp->d_name, &init_st) != 0) {
+			dI("Can't stat file %s/%s: errno=%d, %s.\n",
+			   init_path, init_dp->d_name, errno, strerror(errno));
+			continue;
+		}
 
 		r0 = SEXP_string_newf("%s", init_dp->d_name);
 		if (probe_entobj_cmp(req->service_name_ent, r0) != OVAL_RESULT_TRUE) {
@@ -197,10 +200,10 @@ static int get_runlevel_sysv (struct runlevel_req *req, struct runlevel_rep **re
 			rep_lst->kill = kill;
 			rep_lst->next = NULL;
 		}
-        }
+	}
 	closedir(init_dir);
 
-        return (1);
+	return (1);
 }
 
 static int get_runlevel_debian (struct runlevel_req *req, struct runlevel_rep **rep)
