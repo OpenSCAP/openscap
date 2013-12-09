@@ -45,7 +45,7 @@ OSCAP_HIDDEN_START;
  * @param af Internet address family (AF_INET or AF_INET6)
  * @param s1 ipv4 address as defined by state element
  * @param s2 ipv4 address as captured from system (from syschar object)
- * @param op type of comaprison operation
+ * @param op type of comparison operation
  * @returns result of comparison as defined by OVAL specification
  */
 oval_result_t oval_ipaddr_cmp(int af, const char *s1, const char *s2, oval_operation_t op);
