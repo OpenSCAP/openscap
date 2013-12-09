@@ -25,6 +25,9 @@ EXTRA_DIST += \
 	test_ipv4_comparison.oval.xml \
 	test_ipv4_comparison.sh \
 	test_ipv4_comparison.syschar.xml \
+	test_ipv4_subset_of.oval.xml \
+	test_ipv4_subset_of.sh \
+	test_ipv4_subset_of.syschar.xml \
 	test_ipv4_super_set_of.oval.xml \
 	test_ipv4_super_set_of.sh \
 	test_ipv4_super_set_of.syschar.xml \
