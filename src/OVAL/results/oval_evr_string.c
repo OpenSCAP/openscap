@@ -31,6 +31,10 @@
 #include <string.h>
 #include <ctype.h>
 #include "oval_evr_string_impl.h"
+#include "oval_definitions.h"
+#include "oval_types.h"
+
+#include "common/_error.h"
 
 #ifdef HAVE_RPMVERCMP
 #include <rpm/rpmlib.h>
@@ -45,10 +49,33 @@ static int risdigit(int c) {
 }
 #endif
 
+static inline int rpmevrcmp(const char *a, const char *b);
 static int compare_values(const char *str1, const char *str2);
 static void parseEVR(char *evr, const char **ep, const char **vp, const char **rp);
 
-int oval_evr_string_cmp(const char *a, const char *b)
+oval_result_t oval_evr_string_cmp(const char *state, const char *sys, oval_operation_t operation)
+{
+	int result = rpmevrcmp(sys, state);
+
+	if (operation == OVAL_OPERATION_EQUALS) {
+		return ((result == 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+	} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
+		return ((result != 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+	} else if (operation == OVAL_OPERATION_GREATER_THAN) {
+		return ((result == 1) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+	} else if (operation == OVAL_OPERATION_GREATER_THAN_OR_EQUAL) {
+		return ((result != -1) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+	} else if (operation == OVAL_OPERATION_LESS_THAN) {
+		return ((result == -1) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+	} else if (operation == OVAL_OPERATION_LESS_THAN_OR_EQUAL) {
+		return ((result != 1) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+	}
+
+	oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in rpm version comparison: %d.", operation);
+	return OVAL_RESULT_ERROR;
+}
+
+static inline int rpmevrcmp(const char *a, const char *b)
 {
 	/* This mimics rpmevrcmp which is not exported by rpmlib version 4.
 	 * Code inspired by rpm.labelCompare() from rpm4/python/header-py.c

@@ -32,9 +32,21 @@
 
 #include "../common/util.h"
 
+#include "oval_definitions.h"
+#include "oval_types.h"
+
 OSCAP_HIDDEN_START;
 
-int oval_evr_string_cmp(const char *a, const char *b);
+/**
+ * Compare two EVR (Epoch:Version-Release) strings. The format of input types shall
+ * conform to EntityStateEVRStringType. Comparisons involving this datatype follow
+ * the algorithm of librpm's rpmvercmp() function.
+ * @param state evr_string as defined by state element
+ * @param sys evr_string as captured from system (from syschar object)
+ * @param operation type of comparison operation
+ * @returns result of comparison
+ */
+oval_result_t oval_evr_string_cmp(const char *state, const char *sys, oval_operation_t operation);
 
 OSCAP_HIDDEN_END;
 

@@ -404,24 +404,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 			return OVAL_RESULT_ERROR;
 		}
 	} else if (state_data_type == OVAL_DATATYPE_EVR_STRING) {
-		int result;
-		result = oval_evr_string_cmp(sys_data, state_data);
-		if (operation == OVAL_OPERATION_EQUALS) {
-			return ((result == 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
-			return ((result != 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_GREATER_THAN) {
-			return ((result == 1) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_GREATER_THAN_OR_EQUAL) {
-			return ((result != -1) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_LESS_THAN) {
-			return ((result == -1) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_LESS_THAN_OR_EQUAL) {
-			return ((result != 1) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else {
-			oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in rpm version comparison: %d.", operation);
-			return OVAL_RESULT_ERROR;
-		}
+		return oval_evr_string_cmp(state_data, sys_data, operation);
 	} else if (state_data_type == OVAL_DATATYPE_VERSION) {
 		int state_idx = 0;
 		int sys_idx = 0;
