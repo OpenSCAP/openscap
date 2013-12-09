@@ -52,11 +52,8 @@ static inline int ipv6addr_parse(const char *oval_ipv6_string, uint32_t *len_out
 
 static inline int ipaddr_cmp(int af, const void *addr1, const void *addr2)
 {
-	if (af == AF_INET) {
-		uint32_t ip1 = ntohl(((const struct in_addr *) addr1)->s_addr);
-		uint32_t ip2 = ntohl(((const struct in_addr *) addr2)->s_addr);
-		return memcmp(&ip1, &ip2, sizeof(uint32_t));
-	}
+	if (af == AF_INET)
+		return memcmp(addr1, addr2, sizeof(struct in_addr));
 	if (af == AF_INET6)
 		return memcmp(addr1, addr2, sizeof(struct in6_addr));
 
@@ -130,7 +127,7 @@ oval_result_t oval_ipaddr_cmp(int af, const char *s1, const char *s2, oval_opera
 	case OVAL_OPERATION_GREATER_THAN:
 		ipaddr_mask(af, &addr1, mask1);
 		ipaddr_mask(af, &addr2, mask2);
-		if (ipaddr_cmp(af, &addr1, &addr2) > 0)
+		if (ipaddr_cmp(af, &addr1, &addr2) < 0)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
@@ -138,7 +135,7 @@ oval_result_t oval_ipaddr_cmp(int af, const char *s1, const char *s2, oval_opera
 	case OVAL_OPERATION_GREATER_THAN_OR_EQUAL:
 		ipaddr_mask(af, &addr1, mask1);
 		ipaddr_mask(af, &addr2, mask2);
-		if (ipaddr_cmp(af, &addr1, &addr2) >= 0)
+		if (ipaddr_cmp(af, &addr1, &addr2) <= 0)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
@@ -165,7 +162,7 @@ oval_result_t oval_ipaddr_cmp(int af, const char *s1, const char *s2, oval_opera
 	case OVAL_OPERATION_LESS_THAN:
 		ipaddr_mask(af, &addr1, mask1);
 		ipaddr_mask(af, &addr2, mask2);
-		if (ipaddr_cmp(af, &addr1, &addr2) < 0)
+		if (ipaddr_cmp(af, &addr1, &addr2) > 0)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
@@ -173,7 +170,7 @@ oval_result_t oval_ipaddr_cmp(int af, const char *s1, const char *s2, oval_opera
 	case OVAL_OPERATION_LESS_THAN_OR_EQUAL:
 		ipaddr_mask(af, &addr1, mask1);
 		ipaddr_mask(af, &addr2, mask2);
-		if (ipaddr_cmp(af, &addr1, &addr2) <= 0)
+		if (ipaddr_cmp(af, &addr1, &addr2) >= 0)
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
