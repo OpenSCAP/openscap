@@ -42,7 +42,7 @@
 
 #include "common/util.h"
 #include "common/debug_priv.h"
-#include "results/oval_ip_address_impl.h"
+#include "oval_ip_address_impl.h"
 
 static inline void ipv4addr_mask(struct in_addr *ip_addr, uint32_t netmask);
 static inline void ipv6addr_mask(struct in6_addr *addr, int prefix_len);

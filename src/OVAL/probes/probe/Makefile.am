@@ -30,5 +30,5 @@ libprobe_la_SOURCES=	fini.c			\
 			option.h
 
 libprobe_la_LDFLAGS=	$(top_builddir)/src/libopenscap.la	\
-			$(top_builddir)/src/OVAL/results/libovalresults.la \
+			$(top_builddir)/src/OVAL/results/libovalcmp.la \
 			@pthread_LIBS@

@@ -1,10 +1,14 @@
-noinst_LTLIBRARIES = libovalresults.la
+noinst_LTLIBRARIES = \
+	libovalcmp.la \
+	libovalresults.la
 
-libovalresults_la_SOURCES = \
+libovalcmp_la_SOURCES = \
 	oval_evr_string.c \
 	oval_evr_string_impl.h \
 	oval_ip_address.c \
-	oval_ip_address_impl.h \
+	oval_ip_address_impl.h
+
+libovalresults_la_SOURCES = \
 	oval_resModel.c \
 	oval_resultCriteriaNode.c \
 	oval_resultDefinition.c \
@@ -14,6 +18,13 @@ libovalresults_la_SOURCES = \
 	oval_resultSystem.c \
 	oval_resultTest.c \
 	oval_resultTestIterator.c
+
+libovalcmp_la_CPPFLAGS = \
+	@xml2_CFLAGS@ \
+	-I$(top_srcdir)/src \
+	-I$(top_srcdir)/src/common \
+	-I$(top_srcdir)/src/common/public \
+	-I$(top_srcdir)/src/OVAL/public
 
 libovalresults_la_CPPFLAGS  = \
 	@xml2_CFLAGS@ \
@@ -27,6 +38,7 @@ libovalresults_la_CPPFLAGS  = \
 	-DSEAP_THREAD_SAFE
 
 libovalresults_la_LIBADD = \
-	@xml2_LIBS@
+	@xml2_LIBS@ \
+	libovalcmp.la
 
 pkginclude_HEADERS = $(top_srcdir)/src/OVAL/public/oval_results.h
