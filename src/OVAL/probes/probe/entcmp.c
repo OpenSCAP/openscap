@@ -46,6 +46,7 @@
 #include "common/debug_priv.h"
 #include "entcmp.h"
 #include "../_probe-api.h"
+#include "../../results/oval_evr_string_impl.h"
 #include "../../results/oval_ip_address_impl.h"
 
 oval_result_t probe_ent_cmp_binary(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
@@ -110,9 +111,13 @@ oval_result_t probe_ent_cmp_bool(SEXP_t * val1, SEXP_t * val2, oval_operation_t 
 oval_result_t probe_ent_cmp_evr(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
+	char *s1 = SEXP_string_cstr(val1);
+	char *s2 = SEXP_string_cstr(val2);
 
-	// todo:
+	result = oval_evr_string_cmp(s1, s2, op);
 
+	oscap_free(s1);
+	oscap_free(s2);
 	return result;
 }
 
