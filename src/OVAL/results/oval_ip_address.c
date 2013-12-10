@@ -75,10 +75,8 @@ static inline int ipaddr_parse(int af, const char *oval_ip_string, uint32_t *mas
 {
 	if (af == AF_INET)
 		return ipv4addr_parse(oval_ip_string, mask_out, ip_out);
-	if (af == AF_INET6)
-		return ipv6addr_parse(oval_ip_string, mask_out, ip_out);
-
-	assert(false);
+	assert (af == AF_INET6);
+	return ipv6addr_parse(oval_ip_string, mask_out, ip_out);
 }
 
 oval_result_t oval_ipaddr_cmp(int af, const char *s1, const char *s2, oval_operation_t op)
