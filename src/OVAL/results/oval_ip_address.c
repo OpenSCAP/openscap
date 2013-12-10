@@ -82,7 +82,7 @@ static inline int ipaddr_parse(int af, const char *oval_ip_string, uint32_t *mas
 oval_result_t oval_ipaddr_cmp(int af, const char *s1, const char *s2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
-	uint32_t mask1, mask2;
+	uint32_t mask1 = 0, mask2 = 0;
 	char addr1[INET6_ADDRSTRLEN];
 	char addr2[INET6_ADDRSTRLEN];
 
