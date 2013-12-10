@@ -383,7 +383,7 @@ void oscap_print_error(void)
 
 #define TEMP_DIR_TEMPLATE P_tmpdir "/oscap.XXXXXX"
 
-char *oscap_acquire_temp_dir()
+char *oscap_acquire_temp_dir_bundled()
 {
 	char *temp_dir = strdup(TEMP_DIR_TEMPLATE);
 	if (mkdtemp(temp_dir) == NULL) {
@@ -402,7 +402,7 @@ static int __unlink_cb(const char *fpath, const struct stat *sb, int typeflag, s
 	return rv;
 }
 
-void oscap_acquire_cleanup_dir(char **dir_path)
+void oscap_acquire_cleanup_dir_bundled(char **dir_path)
 {
 	if (*dir_path != NULL) {
 		nftw(*dir_path, __unlink_cb, 64, FTW_DEPTH | FTW_PHYS | FTW_MOUNT);

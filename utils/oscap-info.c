@@ -254,7 +254,7 @@ static int app_info(const struct oscap_action *action)
 				char * temp_dir = NULL;
 				char * xccdf_file = NULL;
 
-		                temp_dir = oscap_acquire_temp_dir();
+		                temp_dir = oscap_acquire_temp_dir_bundled();
 		                if (temp_dir == NULL) {
 					ds_sds_index_free(sds);
 					oscap_string_iterator_free(checklist_it);
@@ -274,7 +274,7 @@ static int app_info(const struct oscap_action *action)
 				if(!bench) {
 					ds_sds_index_free(sds);
 					oscap_string_iterator_free(checklist_it);
-					oscap_acquire_cleanup_dir(&temp_dir);
+					oscap_acquire_cleanup_dir_bundled(&temp_dir);
 					ds_stream_index_iterator_free(sds_it);
 					goto cleanup;
 				}
@@ -317,7 +317,7 @@ static int app_info(const struct oscap_action *action)
 				// already freed by policy!
 				//xccdf_benchmark_free(bench);
 
-				oscap_acquire_cleanup_dir(&temp_dir);
+				oscap_acquire_cleanup_dir_bundled(&temp_dir);
 				if (oscap_err()) {
 					/* This might have set error, when some of the removals failed.
 					   No need to abort this operation, we can safely procceed. */

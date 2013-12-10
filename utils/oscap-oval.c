@@ -368,7 +368,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 	oscap_document_type_t doc_type = 0;
 	if (oscap_determine_document_type(action->f_oval, &doc_type) == 0 && doc_type == OSCAP_DOCUMENT_SDS)
 	{
-		temp_dir = oscap_acquire_temp_dir();
+		temp_dir = oscap_acquire_temp_dir_bundled();
 		if (temp_dir == NULL)
 			goto cleanup;
 
