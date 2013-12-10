@@ -13,4 +13,5 @@ EXTRA_DIST = \
 	simple-xccdf.xml \
 	simple-oval.xml \
 	simple-tailoring.xml \
+	simple-tailoring11.xml \
 	simple-ds.xml

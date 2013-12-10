@@ -376,6 +376,15 @@ static int app_info(const struct oscap_action *action)
 		rds_index_free(rds);
 	}
 	break;
+	case OSCAP_DOCUMENT_XCCDF_TAILORING:
+		printf("Document type: XCCDF Tailoring\n");
+
+		// XCCDF Tailoring is not trivial to parse and interpret without
+		// knowing which content file it is supposed to be used with.
+		//
+		// Since we don't have this info when `oscap info` is called, we
+		// can't list profiles the tailoring file adds.
+	break;
 	default:
 		printf("Document type not handled yet\n");
 		break;

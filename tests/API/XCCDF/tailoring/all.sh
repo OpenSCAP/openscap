@@ -5,7 +5,7 @@
 
 . $srcdir/../../../test_common.sh
 
-set -e -o pipefail
+#set -e -o pipefail
 
 function test_api_xccdf_tailoring {
     local INPUT=$srcdir/$1
@@ -73,6 +73,20 @@ function test_api_xccdf_tailoring_ds_hybrid {
     return 1
 }
 
+function test_api_xccdf_tailoring_oscap_info {
+    local INPUT=$srcdir/$1
+
+    local INFO_RESULTS=`$OSCAP info $INPUT`
+    if [ "$?" != "0" ]; then
+        return 1
+    fi
+
+    echo "$INFO_RESULTS" | grep "XCCDF Tailoring"
+    if [ "$?" != "0" ]; then
+        return 1
+    fi
+}
+
 # Testing.
 
 test_init "test_api_xccdf_tailoring.log"
@@ -87,5 +101,7 @@ test_run "test_api_xccdf_tailoring_ds_override" test_api_xccdf_tailoring_ds simp
 test_run "test_api_xccdf_tailoring_ds_hybrid_default" test_api_xccdf_tailoring_ds_hybrid simple-ds.xml simple-tailoring.xml xccdf_org.open-scap_profile_default 1
 test_run "test_api_xccdf_tailoring_ds_hybrid_unselecting" test_api_xccdf_tailoring_ds_hybrid simple-ds.xml simple-tailoring.xml xccdf_org.open-scap_profile_unselecting 0
 test_run "test_api_xccdf_tailoring_ds_hybrid_override" test_api_xccdf_tailoring_ds_hybrid simple-ds.xml simple-tailoring.xml xccdf_org.open-scap_profile_override 1
+test_run "test_api_xccdf_tailoring_oscap_info_11" test_api_xccdf_tailoring_oscap_info simple-tailoring11.xml 1
+test_run "test_api_xccdf_tailoring_oscap_info_12" test_api_xccdf_tailoring_oscap_info simple-tailoring.xml 1
 
 test_exit
