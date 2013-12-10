@@ -103,15 +103,15 @@ typedef struct {
 	 */
 	char    *id;
 	char    *type;
-	char    *flags;
+	char    **flags;
 	char    *socket_type;
 	char    *name;
 	char    *protocol;
 	char    *user;
 	char    *server;
 	char    *server_args;
-	char    *only_from;
-	char    *no_access;
+	char    **only_from;
+	char    **no_access;
 
 	uint16_t port;
 
@@ -216,8 +216,8 @@ int op_assign_enabled(void *var, char *val);
 # define STR(s) #s
 #endif
 
-#define XICONF_ATTR(name, op_a, op_r, op_i) \
-	{ STR(name), offsetof(xiconf_service_t, name), (op_a), (op_r), (op_i) }
+#define XICONF_ATTR(name, op_a, op_i, op_r) \
+	{ STR(name), offsetof(xiconf_service_t, name), (op_a), (op_i), (op_r) }
 
 /*
  * Service only attribute.
@@ -229,8 +229,8 @@ int op_assign_enabled(void *var, char *val);
  * corresponding xiconf_service_t structure item pointer (using
  * offsetof) as their first argument.
  */
-#define XICONF_SO_ATTR(name, op_a, op_r, op_i, op_c, op_m)		\
-	{ STR(name), offsetof(xiconf_service_t, name), (op_a), (op_r), (op_i), (op_c), (op_m), XIATTR_SECTION_SRV, XIATTR_OPARG_LOCAL }
+#define XICONF_SO_ATTR(name, op_a, op_i, op_r, op_c, op_m)		\
+	{ STR(name), offsetof(xiconf_service_t, name), (op_a), (op_i), (op_r), (op_c), (op_m), XIATTR_SECTION_SRV, XIATTR_OPARG_LOCAL }
 
 /*
  * Defaults only attribute.
@@ -244,8 +244,8 @@ int op_assign_enabled(void *var, char *val);
  *   XIATTR_OPTARG_LOCAL  - ptr(service + offsetof(attr_name))
  *   XIATTR_OPTARG_GLOBAL - pointer to the xiconf_t structure
  */
-#define XICONF_DO_ATTR(name, op_a, op_r, op_i, op_c, op_m, off, arg)	\
-	{ STR(name), (off), (op_a), (op_r), (op_i), (op_c), (op_m), XIATTR_SECTION_DEF, (arg) }
+#define XICONF_DO_ATTR(name, op_a, op_i, op_r, op_c, op_m, off, arg)	\
+	{ STR(name), (off), (op_a), (op_i), (op_r), (op_c), (op_m), XIATTR_SECTION_DEF, (arg) }
 
 /*
  * Service attribute which default attribute can be specified
@@ -259,8 +259,8 @@ int op_assign_enabled(void *var, char *val);
  * corresponding xiconf_service_t structure item pointer (using
  * offsetof) as their first argument.
  */
-#define XICONF_SD_ATTR(name, op_a, op_r, op_i, op_c, op_m)		\
-	{ STR(name), offsetof(xiconf_service_t, name), (op_a), (op_r), (op_i), (op_c), (op_m), XIATTR_SECTION_SRV|XIATTR_SECTION_DEF, XIATTR_OPARG_LOCAL }
+#define XICONF_SD_ATTR(name, op_a, op_i, op_r, op_c, op_m)		\
+	{ STR(name), offsetof(xiconf_service_t, name), (op_a), (op_i), (op_r), (op_c), (op_m), XIATTR_SECTION_SRV|XIATTR_SECTION_DEF, XIATTR_OPARG_LOCAL }
 
 /*
  * Service attribute table; keep this table sorted by attribute name
@@ -306,9 +306,9 @@ struct xiconf_attr xiattr_table[] = {
 	//XICONF_ATTR(nice, NULL, NULL, NULL),
 
 	XICONF_SD_ATTR(no_access,
-		       &op_assign_strl, &op_remove_strl, &op_insert_strl, NULL, NULL),
+		       &op_assign_strl, &op_insert_strl, &op_remove_strl, NULL, NULL),
 	XICONF_SD_ATTR(only_from,
-		       &op_assign_strl, &op_remove_strl, &op_insert_strl, NULL, NULL),
+		       &op_assign_strl, &op_insert_strl, &op_remove_strl, NULL, NULL),
 
 	//XICONF_ATTR(passenv, NULL, NULL, NULL),
 	//XICONF_ATTR(per_source, NULL, NULL, NULL),
@@ -1309,125 +1309,145 @@ int op_merge_str(void *dst, void *src, int type)
 	return (0);
 }
 
-typedef struct {
-	char **str; /**< strings */
-	size_t cnt; /**< number of strings */
-	size_t tot; /**< sum of string lengths */
-} xiconf_strl_t;
-
 int op_assign_strl(void *var, char *val)
 {
-	xiconf_strl_t **strl = (xiconf_strl_t **)var;
+	char ***aptr = (char ***)var;
+	char **string_array = *aptr;
 	char *tok, *str;
+	size_t string_array_size = 0;
 
-	if (*strl == NULL) {
-		*strl = oscap_talloc(xiconf_strl_t);
-		(*strl)->str = NULL;
-		(*strl)->cnt = 0;
-		(*strl)->tot = 0;
-	} else {
-		dW("string list not empty: freeing\n");
-		for (; (*strl)->cnt > 0; --((*strl)->cnt))
-			oscap_free ((*strl)->str[(*strl)->cnt - 1]);
-
-		oscap_free ((*strl)->str);
-		(*strl)->str = NULL;
+	if (string_array != NULL) {
+		// Destroy previous array state
+		while(string_array[string_array_size]) {
+			oscap_free(string_array[string_array_size]);
+			++string_array_size;
+		}
+		oscap_free(string_array);
+		string_array = NULL;
+		string_array_size = 0;
 	}
-
-	assume_d((*strl)->cnt == 0,    -1);
-	assume_d((*strl)->tot == 0,    -1);
-	assume_d((*strl)->str == NULL, -1);
-
 	str = val;
-
-	while ((tok = strsep (&str, " ")) != NULL) {
-		while (isspace(*tok))
+	while ((tok = strsep(&str, " ")) != NULL) {
+		while(isspace(*tok)) {
 			++tok;
-		if (*tok == '\0')
+		}
+		if (*tok == '\0') {
 			continue;
-
-		(*strl)->str = oscap_realloc ((*strl)->str, sizeof (char *) * ++(*strl)->cnt);
-		(*strl)->str[(*strl)->cnt - 1] = strdup (tok);
-		(*strl)->tot += strlen(tok);
+		}
+		dI("Adding new member to string array: %s\n", tok);
+		string_array = oscap_realloc(string_array, sizeof(char *) * (++string_array_size + 1));
+		string_array[string_array_size-1] = strdup(tok);
+		string_array[string_array_size] = NULL;
 	}
-
-	return (0);
+	*aptr = string_array;
+	return 0;
 }
 
 int op_insert_strl(void *var, char *val)
 {
-	xiconf_strl_t **strl = (xiconf_strl_t **)var;
+	char ***aptr = (char ***)var;
+	char **string_array = *aptr;
 	char *tok, *str;
+	size_t string_array_size = 0;
 
-	if (*strl == NULL) {
-		*strl = oscap_talloc(xiconf_strl_t);
-		(*strl)->str = NULL;
-		(*strl)->cnt = 0;
-		(*strl)->tot = 0;
+	if (string_array != NULL) {
+		// Count the number of items in the array
+		while(string_array[string_array_size]) {
+			++string_array_size;
+		}
+		dI("String array has %zu members\n", string_array_size);
 	}
-
 	str = val;
-
-	while ((tok = strsep (&str, " ")) != NULL) {
-		while (isspace(*tok))
+	while ((tok = strsep(&str, " ")) != NULL) {
+		while(isspace(*tok)) {
 			++tok;
-		if (*tok == '\0')
+		}
+		if (*tok == '\0') {
 			continue;
-
-		(*strl)->str = oscap_realloc ((*strl)->str, sizeof (char *) * ++(*strl)->cnt);
-		(*strl)->str[(*strl)->cnt - 1] = strdup (tok);
-		(*strl)->tot += strlen(tok);
+		}
+		dI("Adding new member to string array: %s\n", tok);
+		string_array = oscap_realloc(string_array, sizeof(char *) * (++string_array_size + 1));
+		string_array[string_array_size-1] = strdup(tok);
+		string_array[string_array_size] = NULL;
 	}
-
-	return (0);
+	*aptr = string_array;
+	return 0;
 }
 
 int op_remove_strl(void *var, char *val)
 {
-	xiconf_strl_t **strl = (xiconf_strl_t **)var;
+	char ***aptr = (char ***)var;
+	char **string_array = *aptr, **valstr_array;
+	char **newstr_array;
 	char *tok, *str;
-	register unsigned int i;
+	size_t string_array_size = 0, valstr_array_size;
+	size_t string_array_pos, valstr_array_pos;
+	size_t newstr_array_size;
 
-	if (*strl == NULL) {
-		dW("Attempt to delete from an uninitialized string list! val=%s\n", val);
-		return (0);
+	if (string_array != NULL) {
+		// Count the number of items in the array
+		while(string_array[string_array_size]) {
+			++string_array_size;
+		}
+		dI("String array has %zu members\n", string_array_size);
 	}
 
-	if ((*strl)->cnt == 0) {
-		dW("Attempt to delete from an empty string list (%p)! val=%s\n", *strl, val);
-		return (0);
+	if (string_array_size < 1) {
+		// Nothing to remove here
+		return 0;
+	} else {
+		// Allocate the new string array
+		newstr_array = oscap_alloc(sizeof(char *) * (string_array_size + 1));
 	}
 
+	// Create an array of strings to be removed from the array
+	valstr_array = NULL;
+	valstr_array_size = 0;
 	str = val;
-
-	while ((tok = strsep (&str, " ")) != NULL) {
-		while (isspace(*tok))
+	while ((tok = strsep(&str, " ")) != NULL) {
+		while(isspace(*tok)) {
 			++tok;
-		if (*tok == '\0')
+		}
+		if (*tok == '\0') {
 			continue;
+		}
+		dI("Adding new member to string array: %s\n", tok);
+		valstr_array = oscap_realloc(valstr_array, sizeof(char *) * (++valstr_array_size + 1));
+		valstr_array[valstr_array_size-1] = tok;
+		valstr_array[valstr_array_size] = NULL;
+	}
 
-		/* this is not very effective... but it probably doesn't matter here anyway */
-		for (i = 0; i < (*strl)->cnt; ++i) {
-			if (strcmp ((*strl)->str[i], tok) == 0) {
-				oscap_free ((*strl)->str[i]);
-				memmove ((*strl)->str + i, (*strl)->str + i + 1,
-					 sizeof (char *) * ((*strl)->cnt - (i + 1)));
-				--((*strl)->cnt);
+	// Remove the insersection from the string array
+	newstr_array_size = 0;
+	for (string_array_pos = 0; string_array_pos < string_array_size; ++string_array_pos) {
+		char *string_array_val = string_array[string_array_pos];
 
-				goto _succ;
+		for (valstr_array_pos = 0; valstr_array[valstr_array_pos]; ++valstr_array_pos) {
+			char *delete_val = valstr_array[valstr_array_pos];
+			dI("Removing: %s\n", delete_val);
+			// Destroy the string if it matches a string from the value string array
+			// Otherwise move it to the new string array
+			dI("cmp: %s ?= %s\n", string_array_val, delete_val);
+			if (strcmp(string_array_val, delete_val) == 0) {
+				oscap_free(string_array_val);
+				string_array_val = NULL;
+				break;
 			}
 		}
-
-		dW("Value to be deleted not found in the string list: val=%s\n", tok);
-		continue;
-	_succ:
-		dI("Deleted: val=%s\n", tok);
-		continue;
+		// If the value wasn't removed, move it to the new string array
+		if (string_array_val != NULL) {
+			newstr_array[newstr_array_size] = string_array_val;
+			++newstr_array_size;
+		}
+		string_array[string_array_pos] = NULL;
 	}
 
-	(*strl)->str = oscap_realloc ((*strl)->str, sizeof (char *) * (*strl)->cnt);
-
-	return (0);
+	newstr_array[newstr_array_size] = NULL;
+	oscap_free(string_array);
+	oscap_free(valstr_array);
+	newstr_array = oscap_realloc(newstr_array, sizeof(char*) * (newstr_array_size + 1));
+	*aptr = newstr_array;
+	return 0;
 }
 
 int op_assign_disabled(void *var, char *val)
@@ -1614,9 +1634,9 @@ int probe_main(probe_ctx *ctx, void *arg)
 				item = probe_item_create(OVAL_UNIX_XINETD, NULL,
 						"protocol",         OVAL_DATATYPE_STRING,  xres->srv[l]->protocol,
 						"service_name",     OVAL_DATATYPE_STRING,  xres->srv[l]->name,
-						"flags",            OVAL_DATATYPE_STRING,  xres->srv[l]->flags,
-						"no_access",        OVAL_DATATYPE_STRING,  xres->srv[l]->no_access,
-						"only_from",        OVAL_DATATYPE_STRING,  xres->srv[l]->only_from,
+						"flags",            OVAL_DATATYPE_STRING_M, xres->srv[l]->flags,
+						"no_access",        OVAL_DATATYPE_STRING_M, xres->srv[l]->no_access,
+						"only_from",        OVAL_DATATYPE_STRING_M, xres->srv[l]->only_from,
                                                 "port",             OVAL_DATATYPE_INTEGER, (int64_t)xres->srv[l]->port,
 						"server",           OVAL_DATATYPE_STRING,  xres->srv[l]->server,
 						"server_arguments", OVAL_DATATYPE_STRING,  xres->srv[l]->server_args,
