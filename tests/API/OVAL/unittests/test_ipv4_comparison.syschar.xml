@@ -23,11 +23,19 @@
       <variable_value variable_id="oval:x:var:1">192.192.1.1</variable_value>
       <reference item_ref="1325841"/>
     </object>
+    <object id="oval:x:obj:2" version="1" flag="complete">
+      <variable_value variable_id="oval:x:var:2">42.42.42.42</variable_value>
+      <reference item_ref="1127081"/>
+    </object>
   </collected_objects>
   <system_data>
     <ind-sys:variable_item id="1325841" status="exists">
       <ind-sys:var_ref>oval:x:var:1</ind-sys:var_ref>
       <ind-sys:value>192.192.1.1</ind-sys:value>
+    </ind-sys:variable_item>
+    <ind-sys:variable_item id="1127081" status="exists">
+      <ind-sys:var_ref>oval:x:var:2</ind-sys:var_ref>
+      <ind-sys:value>42.42.42.42</ind-sys:value>
     </ind-sys:variable_item>
   </system_data>
 </oval_system_characteristics>

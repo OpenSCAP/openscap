@@ -15,26 +15,48 @@
           <criterion test_ref="oval:x:tst:1" comment="."/>
         </criteria>
       </definition>
+      <definition id="oval:x:def:2" version="1" class="compliance">
+        <metadata>
+          <title>.</title>
+          <description>.</description>
+        </metadata>
+        <criteria>
+          <criterion test_ref="oval:x:tst:2" comment="."/>
+        </criteria>
+      </definition>
     </definitions>
     <tests>
       <ind-def:variable_test id="oval:x:tst:1" version="1" check="all" comment=".">
         <ind-def:object object_ref="oval:x:obj:1"/>
         <ind-def:state state_ref="oval:x:ste:1"/>
       </ind-def:variable_test>
+      <ind-def:variable_test id="oval:x:tst:2" version="1" check="all" comment=".">
+        <ind-def:object object_ref="oval:x:obj:2"/>
+        <ind-def:state state_ref="oval:x:ste:2"/>
+      </ind-def:variable_test>
     </tests>
     <objects>
       <ind-def:variable_object id="oval:x:obj:1" version="1">
         <ind-def:var_ref>oval:x:var:1</ind-def:var_ref>
+      </ind-def:variable_object>
+      <ind-def:variable_object id="oval:x:obj:2" version="1">
+        <ind-def:var_ref>oval:x:var:2</ind-def:var_ref>
       </ind-def:variable_object>
     </objects>
     <states>
       <ind-def:variable_state id="oval:x:ste:1" version="1">
         <ind-def:value operation="greater than" datatype="ipv4_address">1.1.192.192</ind-def:value>
       </ind-def:variable_state>
+      <ind-def:variable_state id="oval:x:ste:2" version="1">
+        <ind-def:value operation="greater than" datatype="ipv4_address">1.1.1.1</ind-def:value>
+      </ind-def:variable_state>
     </states>
     <variables>
       <constant_variable id="oval:x:var:1" version="1" datatype="ipv4_address" comment=".">
         <value>192.192.1.1</value>
+      </constant_variable>
+      <constant_variable id="oval:x:var:2" version="1" datatype="ipv4_address" comment=".">
+        <value>42.42.42.42</value>
       </constant_variable>
     </variables>
 </oval_definitions>
