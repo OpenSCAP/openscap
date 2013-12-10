@@ -62,10 +62,20 @@ function test_probe_xinetd_parser {
     return $ret_val
 }
 
+function test_probe_xinetd_regression_stringlist {
+    output=$(./test_probe_xinetd "${srcdir}/xinetd_G.conf" rsync tcp | sed -n 's|.*only_from:[[:space:]]*\(only_this_is_allowed\)[[:space:]]*$|\1|p')
+
+    if [ "$output" = "only_this_is_allowed" ]; then
+	return 0
+    fi
+    return 1
+}
+
 # Testing.
 
 test_init "test_probe_xinetd.log"
 
 test_run "test_probe_xinetd_parser" test_probe_xinetd_parser
+test_run "xinetd parser regression test: string list" test_probe_xinetd_regression_stringlist
 
 test_exit
