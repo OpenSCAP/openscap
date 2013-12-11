@@ -46,6 +46,9 @@ EXTRA_DIST += \
 	test_evr_string_comparison.oval.xml \
 	test_evr_string_comparison.sh \
 	test_evr_string_comparison.syschar.xml \
+	test_filecontent_line.oval.xml \
+	test_filecontent_line.sh \
+	test_filecontent_line.syschar.xml \
 	test_oval_empty_variable_evaluation.sh \
 	test_oval_empty_variable_evaluation.xml \
 	test_xmlns_missing.oval.xml \

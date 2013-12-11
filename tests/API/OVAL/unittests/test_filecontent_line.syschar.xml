@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_system_characteristics xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:unix-sys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix" xmlns:ind-sys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent" xmlns:lin-sys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5 oval-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent independent-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix unix-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux linux-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+  <generator>
+    <oval:product_name>cpe:/a:open-scap:oscap</oval:product_name>
+    <oval:schema_version>5.8</oval:schema_version>
+    <oval:timestamp>2013-12-11T11:06:55</oval:timestamp>
+  </generator>
+  <system_info>
+    <os_name>Linux</os_name>
+    <os_version>#1 SMP Wed Nov 20 21:22:24 UTC 2013</os_version>
+    <architecture>x86_64</architecture>
+    <primary_host_name>you.dont.know.it</primary_host_name>
+    <interfaces>
+      <interface>
+        <interface_name>lo</interface_name>
+        <ip_address>127.0.0.1</ip_address>
+        <mac_address>00:00:00:00:00:00</mac_address>
+      </interface>
+    </interfaces>
+  </system_info>
+  <collected_objects>
+    <object id="oval:x:obj:1" version="1" flag="complete">
+      <reference item_ref="1049291"/>
+      <reference item_ref="1049292"/>
+      <reference item_ref="1049293"/>
+    </object>
+  </collected_objects>
+  <system_data>
+    <ind-sys:textfilecontent_item id="1049293" status="exists">
+      <ind-sys:filepath>/rad/ost/na.txt</ind-sys:filepath>
+      <ind-sys:path>/rad/ost</ind-sys:path>
+      <ind-sys:filename>na.txt</ind-sys:filename>
+      <ind-sys:pattern>.*</ind-sys:pattern>
+      <ind-sys:instance datatype="int">1</ind-sys:instance>
+      <ind-sys:line>.*</ind-sys:line>
+      <ind-sys:text>od ledna</ind-sys:text>
+    </ind-sys:textfilecontent_item>
+    <ind-sys:textfilecontent_item id="1049292" status="exists">
+      <ind-sys:filepath>/rad/ost/ny.txt</ind-sys:filepath>
+      <ind-sys:path>/rad/ost</ind-sys:path>
+      <ind-sys:filename>ny.txt</ind-sys:filename>
+      <ind-sys:pattern>.*</ind-sys:pattern>
+      <ind-sys:instance datatype="int">1</ind-sys:instance>
+      <ind-sys:line>.*</ind-sys:line>
+      <ind-sys:text>hophop</ind-sys:text>
+    </ind-sys:textfilecontent_item>
+    <ind-sys:textfilecontent_item id="1049291" status="exists">
+      <ind-sys:filepath>/rad/ost/ni.txt</ind-sys:filepath>
+      <ind-sys:path>/rad/ost</ind-sys:path>
+      <ind-sys:filename>ni.txt</ind-sys:filename>
+      <ind-sys:pattern>.*</ind-sys:pattern>
+      <ind-sys:instance datatype="int">1</ind-sys:instance>
+      <ind-sys:line>.*</ind-sys:line>
+      <ind-sys:text>tak zari</ind-sys:text>
+    </ind-sys:textfilecontent_item>
+  </system_data>
+</oval_system_characteristics>

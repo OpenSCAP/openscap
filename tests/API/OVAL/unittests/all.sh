@@ -19,5 +19,6 @@ test_run "ipv6_address: 'subset of' operation" $srcdir/test_ipv6_subset_of.sh
 test_run "ipv4_address: 'superset of' operation" $srcdir/test_ipv4_super_set_of.sh
 test_run "ipv4_address: 'subset of' operation" $srcdir/test_ipv4_subset_of.sh
 test_run "ipv4_address: comparison" $srcdir/test_ipv4_comparison.sh
+test_run "textfilecontent: 'line' comparison" $srcdir/test_filecontent_line.sh
 test_run "anyxml element" $srcdir/test_anyxml.sh
 test_exit
