@@ -1096,19 +1096,25 @@ finish_section:
 			scur = snew;
 
 			if (scur->protocol == NULL) {
-
-				struct servent *service;
-
+				struct servent *service = getservbyname(scur->name, NULL);
 				dI("protocol is empty, trying to guess from /etc/services for %s\n", scur->name);
-				if ((service = getservbyname(scur->name, NULL)) != NULL) {
+				if (service != NULL) {
 					scur->protocol = strdup(service->s_proto);
 					dI("service %s has default protocol=%s\n", scur->name, scur->protocol);
-					endservent();
 				}
-				if (scur->protocol == NULL) {
-					dW("FIXME: protocol == NULL!\n");
-					scur->protocol = strdup("foo");
+				endservent();
+			}
+			if (scur->port == 0) {
+				struct servent *service = getservbyname(scur->name, scur->protocol);
+				dI("port not set, trying to guess from /etc/services for %s\n", scur->name);
+				if (service != NULL) {
+					if (service->s_port > 0 && service->s_port < 65536) {
+						scur->port = ntohs((uint16_t)service->s_port);
+						dI("service %s has default port=%hu/%s\n",
+						   scur->name, scur->port, scur->protocol);
+					}
 				}
+				endservent();
 			}
 		} else {
 			dI("Merge(%p, %p)\n", scur, snew);
