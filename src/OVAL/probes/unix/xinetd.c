@@ -332,7 +332,7 @@ struct xiconf_attr xiattr_table[] = {
 	XICONF_SO_ATTR(server_args,
 		       &op_assign_str, NULL, NULL, NULL, &op_merge_str),
 	XICONF_SO_ATTR(socket_type,
-		       NULL, NULL, NULL, NULL, NULL),
+		       &op_assign_str, NULL, NULL, NULL, NULL),
 	XICONF_SO_ATTR(type,
 		       NULL, NULL, NULL, NULL, NULL),
 
