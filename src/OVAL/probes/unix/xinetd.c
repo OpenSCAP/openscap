@@ -334,7 +334,7 @@ struct xiconf_attr xiattr_table[] = {
 	XICONF_SO_ATTR(socket_type,
 		       &op_assign_str, NULL, NULL, NULL, NULL),
 	XICONF_SO_ATTR(type,
-		       NULL, NULL, NULL, NULL, NULL),
+		       &op_assign_str, NULL, NULL, NULL, NULL),
 
 	//XICONF_ATTR(umask, NULL, NULL, NULL),
 
@@ -1115,6 +1115,25 @@ finish_section:
 					}
 				}
 				endservent();
+			}
+			if (scur->type != 0) {
+				// Check that the type is one of the allowed values by OVAL.
+				// The xinetd configuration acually allows any combination of
+				// the values. In such case, we set the type to an empty string.
+				const char *type_enum[] = { "RPC", "INTERNAL", "UNLISTED", "TCPMUX", "TCPMUXPLUS", NULL };
+				bool type_enum_match = false;
+				size_t i;
+				for (i = 0; type_enum[i]; ++i) {
+					if (strcmp(scur->type, type_enum[i]) == 0) {
+						type_enum_match = true;
+						break;
+					}
+				}
+				if (!type_enum_match) {
+					dE("The value of the type setting does not match"
+					   " any of the allowed values by OVAL: %s\n", scur->type);
+					scur->type = "";
+				}
 			}
 		} else {
 			dI("Merge(%p, %p)\n", scur, snew);
