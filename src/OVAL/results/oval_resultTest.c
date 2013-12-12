@@ -840,6 +840,21 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 			goto fail;
 		}
 
+		if (oscap_streq(state_entity_name, "line") &&
+			oval_state_get_subtype(state) == (oval_subtype_t) OVAL_INDEPENDENT_TEXT_FILE_CONTENT) {
+			/* Hack: textfilecontent_state/line shall be compared against textfilecontent_item/text.
+			 *
+			 * textfilecontent_test and textfilecontent54_test share the same syschar
+			 * (textfilecontent_item). In OVAL 5.3 and below this syschar did not hold any usable
+			 * information ('text' ent). In OVAL 5.4 textfilecontent_test was deprecated. But the
+			 * 'text' ent has been added to textfilecontent_item, making it potentially usable. */
+			oval_version_t over = oval_state_get_schema_version(state);
+			if (oval_version_cmp(over, OVAL_VERSION(5.4)) >= 0) {
+				/* The OVAL-5.3 does not have textfilecontent_item/text */
+				state_entity_name = "text";
+			}
+		}
+
 		entity_check = oval_state_content_get_ent_check(content);
 		state_entity_operation = oval_entity_get_operation(state_entity);
 
