@@ -253,6 +253,18 @@ void oval_state_add_content(struct oval_state *state, struct oval_state_content 
 	oval_collection_add(state->contents, content);
 }
 
+oval_version_t oval_state_get_schema_version(const struct oval_state *state)
+{
+	__attribute__nonnull__(state);
+
+	if (state->model == NULL)
+		return OVAL_VERSION_INVALID;
+
+	struct oval_generator *gen = oval_definition_model_get_generator(state->model);
+	const char *ver_str = oval_generator_get_schema_version(gen);
+	return oval_version_from_cstr(ver_str);
+}
+
 static void _oval_note_consumer(char *text, void *state)
 {
 	oval_state_add_note(state, text);
