@@ -345,18 +345,20 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 	};
 
 	// bound values in KEY=VALUE form, ready to be passed as environment variables
-	char ** env_values = oscap_alloc(9 * sizeof(char * ));
-	size_t env_value_count = 9;
+	char ** env_values = oscap_alloc(10 * sizeof(char * ));
+	size_t env_value_count = 10;
 
-	env_values[0] = "XCCDF_RESULT_PASS=101";
-	env_values[1] = "XCCDF_RESULT_FAIL=102";
-	env_values[2] = "XCCDF_RESULT_ERROR=103";
-	env_values[3] = "XCCDF_RESULT_UNKNOWN=104";
-	env_values[4] = "XCCDF_RESULT_NOT_APPLICABLE=105";
-	env_values[5] = "XCCDF_RESULT_NOT_CHECKED=106";
-	env_values[6] = "XCCDF_RESULT_NOT_SELECTED=107";
-	env_values[7] = "XCCDF_RESULT_INFORMATIONAL=108";
-	env_values[8] = "XCCDF_RESULT_FIXED=109";
+	env_values[0] = "PATH=/bin:/sbin:/usr/bin:/usr/sbin";
+
+	env_values[1] = "XCCDF_RESULT_PASS=101";
+	env_values[2] = "XCCDF_RESULT_FAIL=102";
+	env_values[3] = "XCCDF_RESULT_ERROR=103";
+	env_values[4] = "XCCDF_RESULT_UNKNOWN=104";
+	env_values[5] = "XCCDF_RESULT_NOT_APPLICABLE=105";
+	env_values[6] = "XCCDF_RESULT_NOT_CHECKED=106";
+	env_values[7] = "XCCDF_RESULT_NOT_SELECTED=107";
+	env_values[8] = "XCCDF_RESULT_INFORMATIONAL=108";
+	env_values[9] = "XCCDF_RESULT_FIXED=109";
 
 	while (xccdf_value_binding_iterator_has_more(value_binding_it))
 	{
@@ -516,8 +518,8 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 				sce_session_add_check_result(session, check_result);
 			}
 
-			// the first 9 values (0 to 8) are compiled in
-			for (size_t i = 9; i < env_value_count; ++i)
+			// the first 10 values (0 to 9) are compiled in
+			for (size_t i = 10; i < env_value_count; ++i)
 			{
 				oscap_free(env_values[i]);
 			}
