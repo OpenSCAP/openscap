@@ -750,8 +750,31 @@ static bool _some_oval_result_exists(const char *filename)
 int app_generate_fix(const struct oscap_action *action)
 {
 	if (action->id != NULL) {
-		// Unless we generate fix elements from the stock Profile
-		// Make use the XSLT as it has always been so.
+		/* Listen very carefully -- I shall say this only once. This is temporaly
+		 * fallback mode. Which may be dropped from future OpenSCAP releases.
+		 *
+		 * Previously, the OpenSCAP used XSLT to generate fixes from XCCDF files.
+		 * That is no longer viable as XSLT cannot support Text substitution, CPE
+		 * processing, DataStreams, or Tailoring.
+		 *
+		 * The XSLT used to print out <fix> elements from TestResult (if supplied)
+		 * or from a profile (otherwise). We keep the former untouched (XSLT) and
+		 * later was rewritten using C.
+		 *
+		 * When scanning OpenSCAP used to copy all the <fix> elements from Profile
+		 * to the TestResult. That was not of much value. Now OpenSCAP includes in
+		 * TestResult only those <fix> elements which were executed on a given
+		 * system.
+		 *
+		 * Thus, this mode is usefull to review which fixes has been executed as a part
+		 * of given scan (TestResult)
+		 *
+		 * TODO: Once this legacy is dropped, we need to document --cpe and --datastream
+		 * support in man pages.
+		 */
+		fprintf(stderr, "#Warning: OpenSCAP will now use fallback mode (XSLT) to generate fixes. "
+			"Some of the functionality might be missing (Text substitution, CPE processing, DataStream support, and tailoring). "
+			"Please ommit --result-id option to trigger advanced processing.\n");
 		return app_xccdf_xslt(action);
 	}
 	/* Otherwise, we better use internal solver instead of XSLT
