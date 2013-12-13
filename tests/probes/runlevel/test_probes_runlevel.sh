@@ -17,7 +17,6 @@
 . ${srcdir}/runlevel_helper.sh
 
 # Test Cases.
-set -e -o pipefail
 
 function test_probes_runlevel_A {
 
@@ -123,6 +122,7 @@ function test_probes_runlevel_C {
     $OSCAP oval eval --results $result $definition
 
     assert_exists 2 '/oval_results/results/system/oval_system_characteristics/system_data/unix-sys:runlevel_item'
+    ret_val=$?
 
     return $ret_val
 }
