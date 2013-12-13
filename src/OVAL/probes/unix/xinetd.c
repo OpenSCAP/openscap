@@ -115,8 +115,8 @@ typedef struct {
 
 	uint16_t port;
 
-	int disable;
-	int wait;
+	bool disable;
+	bool wait;
 	int def_disabled;
 	int def_enabled;
 
@@ -1290,9 +1290,23 @@ int op_assign_bool(void *var, char *val)
 {
 	assume_d(var != NULL, -1);
 
-	*((bool *)(var)) = (bool) strtol (val, NULL, 2);
-
-	return ((errno == EINVAL || errno == ERANGE) ? -1 : 0);
+	if (strcmp(val, "yes") == 0) {
+		*((bool *)(var)) = true;
+	} else if (strcmp(val, "no") == 0) {
+		*((bool *)(var)) = false;
+	} else {
+		char *endptr = NULL;
+		*((bool *)(var)) = (bool) strtol (val, &endptr, 2);
+		if (errno == EINVAL || errno == ERANGE) {
+			return -1;
+		}
+		if (endptr != NULL) {
+			if (*endptr != '\0' || endptr == val) {
+				return -1;
+			}
+		}
+	}
+	return 0;
 }
 
 int op_assign_u16(void *var, char *val)
