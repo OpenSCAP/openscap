@@ -287,7 +287,7 @@ struct xiconf_attr xiattr_table[] = {
 	//XICONF_ATTR(env, NULL, NULL, NULL),
 
 	XICONF_SO_ATTR(flags,
-		       NULL, NULL, NULL, NULL, NULL),
+		       &op_assign_strl, &op_insert_strl, &op_remove_strl, NULL, NULL),
 
 	//XICONF_ATTR(group, NULL, NULL, NULL),
 	//XICONF_ATTR(groups, NULL, NULL, NULL),
