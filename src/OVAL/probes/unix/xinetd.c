@@ -1096,13 +1096,27 @@ finish_section:
 			scur = snew;
 
 			if (scur->protocol == NULL) {
-				struct servent *service = getservbyname(scur->name, NULL);
-				dI("protocol is empty, trying to guess from /etc/services for %s\n", scur->name);
-				if (service != NULL) {
-					scur->protocol = strdup(service->s_proto);
-					dI("service %s has default protocol=%s\n", scur->name, scur->protocol);
+				// First try to guess the protocol from the socket_type setting
+				if (scur->socket_type != NULL) {
+					// dgram => udp
+					if (strcmp(scur->socket_type, "dgram") == 0) {
+						scur->protocol = strdup("udp");
+					}
+					// stream => tcp
+					else if (strcmp(scur->socket_type, "stream") == 0) {
+						scur->protocol = strdup("tcp");
+					}
 				}
-				endservent();
+				// If we still don't know the protocol, then get the default from /etc/services
+				if (scur->protocol == NULL) {
+					struct servent *service = getservbyname(scur->name, NULL);
+					dI("protocol is empty, trying to guess from /etc/services for %s\n", scur->name);
+					if (service != NULL) {
+						scur->protocol = strdup(service->s_proto);
+						dI("service %s has default protocol=%s\n", scur->name, scur->protocol);
+					}
+					endservent();
+				}
 			}
 			if (scur->port == 0) {
 				struct servent *service = getservbyname(scur->name, scur->protocol);
