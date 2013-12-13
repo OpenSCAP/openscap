@@ -129,7 +129,7 @@ static SEXP_t *parse_enc_mth(const char *pwd)
 		if (*pwd != '$')
 			goto fail;
 
-		return SEXP_string_newf(mth_str);
+		return SEXP_string_newf("%s", mth_str);
 	default:
 		return SEXP_string_newf("DES");
 	}
