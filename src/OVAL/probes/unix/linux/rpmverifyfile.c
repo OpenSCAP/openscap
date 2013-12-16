@@ -232,8 +232,6 @@ static int rpmverify_collect(probe_ctx *ctx,
 		COMPARE_ENT(name);
 
 		res.epoch = headerFormat(pkgh, "%{EPOCH}", &rpmerr);
-		if (strcmp(res.epoch, "(none)") == 0)
-			res.epoch = "0";
 		COMPARE_ENT(epoch);
 
 		res.version = headerFormat(pkgh, "%{VERSION}", &rpmerr);
@@ -242,7 +240,9 @@ static int rpmverify_collect(probe_ctx *ctx,
 		COMPARE_ENT(release);
 		res.arch = headerFormat(pkgh, "%{ARCH}", &rpmerr);
 		COMPARE_ENT(arch);
-		snprintf(res.extended_name, 1024, "%s-%s:%s-%s.%s", res.name, res.epoch, res.version, res.release, res.arch);
+		snprintf(res.extended_name, 1024, "%s-%s:%s-%s.%s", res.name,
+			oscap_streq(res.epoch, "(none)") ? "0" : res.epoch,
+			res.version, res.release, res.arch);
 
 		/*
 		 * Inspect package files & directories

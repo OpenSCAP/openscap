@@ -151,6 +151,7 @@ static void pkgh2rep (Header h, struct rpminfo_rep *r)
 {
         errmsg_t rpmerr;
         char *str, *sid;
+	char *epoch_override = NULL;
         size_t len;
 	regmatch_t keyid_match[1];
 
@@ -159,26 +160,19 @@ static void pkgh2rep (Header h, struct rpminfo_rep *r)
 
         r->name = headerFormat (h, "%{NAME}", &rpmerr);
         r->arch = headerFormat (h, "%{ARCH}", &rpmerr);
-        str     = headerFormat (h, "%{EPOCH}", &rpmerr);
-
-        if (strcmp (str, "(none)") == 0) {
-                str    = oscap_realloc (str, sizeof (char) * 2);
-                str[0] = '0';
-                str[1] = '\0';
-        }
-
-        r->epoch   = str;
+        r->epoch = headerFormat (h, "%{EPOCH}", &rpmerr);
         r->release = headerFormat (h, "%{RELEASE}", &rpmerr);
         r->version = headerFormat (h, "%{VERSION}", &rpmerr);
-	snprintf(r->extended_name, 1024, "%s-%s:%s-%s.%s", r->name, r->epoch, r->version, r->release, r->arch);
+	epoch_override = oscap_streq(r->epoch, "(none)") ? "0" : r->epoch;
+	snprintf(r->extended_name, 1024, "%s-%s:%s-%s.%s", r->name, epoch_override, r->version, r->release, r->arch);
 
-        len = (strlen (r->epoch)   +
+	len = (strlen(epoch_override) +
                strlen (r->release) +
                strlen (r->version) + 2);
 
         str = oscap_alloc (sizeof (char) * (len + 1));
         snprintf (str, len + 1, "%s:%s-%s",
-                  r->epoch,
+		epoch_override,
                   r->version,
                   r->release);
 
