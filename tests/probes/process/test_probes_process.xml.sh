@@ -11,7 +11,10 @@ IFS=$'\n'
 # the '=' is there to remove the header
 ps=( $(ps -A -o etime= -o pid= -o ppid= -o class= -o uid= -o comm= -o start= | \
 # replace spaces in 'etime' with '-' to enable sorting
-sed 'h;s/.\{2,9\}:.. / /;x;s/\(.\{2,9\}:..\) .*/\1/;s/ /-/g;G;s/\n//') )
+sed 'h;s/.\{2,9\}:.. / /;x;s/\(.\{2,9\}:..\) .*/\1/;s/ /-/g;G;s/\n//' | \
+# replace 'Dec 16' to 'Dec_16'
+sed 's/\([A-Z][a-z]\{2\}\) \([0-9]\{1,2\}\)$/\1_\2/'
+) )
 IFS=$' \t\n'
 
 for l in "${ps[@]}"; do
@@ -143,7 +146,7 @@ while [ $I -lt "${#PROCS[@]}" ]; do
       <pid datatype="int">`getField 'pid' ${PROCS[$I]}`</pid>
       <ppid datatype="int">`getField 'ppid' ${PROCS[$I]}`</ppid>
       <scheduling_class>`getField 'class' ${PROCS[$I]}`</scheduling_class>
-      <start_time>`getField 'start' ${PROCS[$I]} | sed 's/\([A-Z][a-z]\{2\}\)\([0-9]\{1,2\}\)/\1_\2/'`</start_time>
+      <start_time>`getField 'start' ${PROCS[$I]}`</start_time>
       <user_id datatype="int">`getField 'uid' ${PROCS[$I]}`</user_id>
     </process_state>
 EOF
