@@ -132,9 +132,15 @@ xmlNode *oscap_text_to_dom(struct oscap_text *text, xmlNode *parent, const char 
 
 	xmlNode *text_node = NULL;
 
-	if (text->traits.html || text->traits.can_substitute)
+	if (text->traits.html || text->traits.can_substitute) {
 		text_node = oscap_xmlstr_to_dom(parent, elname, text->text);
-	else text_node = xmlNewTextChild(parent, NULL, BAD_CAST elname, BAD_CAST text->text);
+		// make sure we use parent's namespace
+		xmlSetNs(text_node, parent->ns);
+	}
+	else {
+		// NULL as ns here means that namespace is inherited from parent
+		text_node = xmlNewTextChild(parent, NULL, BAD_CAST elname, BAD_CAST text->text);
+	}
 
 	if (text_node == NULL) return NULL;
 
