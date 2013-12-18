@@ -806,7 +806,7 @@ int app_generate_fix(const struct oscap_action *action)
 	struct xccdf_policy *policy = xccdf_session_get_xccdf_policy(session);
 	int output_fd = STDOUT_FILENO;
 	if (action->f_results != NULL) {
-		if ((output_fd = open(action->f_results, O_CREAT|O_TRUNC|O_NOFOLLOW|O_WRONLY, 700)) < 0) {
+		if ((output_fd = open(action->f_results, O_CREAT|O_TRUNC|O_NOFOLLOW|O_WRONLY, 0700)) < 0) {
 			fprintf(stderr, "Could not open %s: %s", action->f_results, strerror(errno));
 			goto cleanup;
 		}
