@@ -789,9 +789,13 @@ int app_generate_fix(const struct oscap_action *action)
 		xccdf_session_set_benchmark_id(session, action->f_benchmark_id);
 	}
 	xccdf_session_set_user_cpe(session, action->cpe);
+	xccdf_session_set_user_tailoring_file(session, action->tailoring_file);
+	xccdf_session_set_user_tailoring_cid(session, action->tailoring_id);
 	if (xccdf_session_load_xccdf(session) != 0)
 		goto cleanup;
 	if (xccdf_session_load_cpe(session) != 0)
+		goto cleanup;
+	if (xccdf_session_load_tailoring(session) != 0)
 		goto cleanup;
 
 	if (!xccdf_session_set_profile_id(session, action->profile)) {
