@@ -811,15 +811,11 @@ int app_generate_fix(const struct oscap_action *action)
 			goto cleanup;
 		}
 	}
-	if (xccdf_policy_generate_fix(policy, NULL, action->tmpl, output_fd) != 0) {
-		if (output_fd != STDOUT_FILENO)
-			close(output_fd);
-		goto cleanup;
-	}
+	if (xccdf_policy_generate_fix(policy, NULL, action->tmpl, output_fd) == 0)
+		ret = OSCAP_OK;
+
 	if (output_fd != STDOUT_FILENO)
 		close(output_fd);
-	ret = OSCAP_OK;
-
 cleanup:
 	oscap_print_error();
 	xccdf_session_free(session);
