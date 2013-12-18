@@ -520,6 +520,7 @@ static int _xccdf_policy_item_generate_fix(struct xccdf_policy *policy, struct x
 		ret = _xccdf_policy_rule_generate_fix(policy, (struct xccdf_rule *) item, template, output_fd);
 		} break;
 	default:
+		assert(false);
 		break;
 	}
 	return ret;
