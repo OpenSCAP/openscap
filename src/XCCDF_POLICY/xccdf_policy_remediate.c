@@ -173,19 +173,26 @@ static struct oscap_list *_filter_fixes_by_distruption_and_reboot(struct oscap_l
 		struct xccdf_fix *fix = (struct xccdf_fix *) oscap_iterator_next(fix_it);
 		if (!xccdf_fix_get_reboot(fix))
 			reboot = false;
-		xccdf_level_t dis = xccdf_fix_get_disruption(fix);
-		if (dis == XCCDF_MEDIUM || dis == XCCDF_LOW)
-			// Preferring "medium" and "low" over any other
-			disruption = dis;
 	}
 	oscap_iterator_reset(fix_it);
 	while (oscap_iterator_has_more(fix_it)) {
 		struct xccdf_fix *fix = (struct xccdf_fix *) oscap_iterator_next(fix_it);
-		if (reboot == false && xccdf_fix_get_reboot(fix))
+		if (reboot == false && xccdf_fix_get_reboot(fix)) {
 			oscap_iterator_detach(fix_it);
-		if ((disruption == XCCDF_MEDIUM || disruption == XCCDF_LOW) &&
-				disruption != xccdf_fix_get_disruption(fix))
-			oscap_iterator_detach(fix_it);
+		} else {
+			xccdf_level_t dis = xccdf_fix_get_disruption(fix);
+			if (dis == XCCDF_MEDIUM || dis == XCCDF_LOW)
+				// Preferring "medium" and "low" over any other
+				disruption = dis;
+		}
+	}
+	if (disruption == XCCDF_MEDIUM || disruption == XCCDF_LOW) {
+		oscap_iterator_reset(fix_it);
+		while (oscap_iterator_has_more(fix_it)) {
+			struct xccdf_fix *fix = (struct xccdf_fix *) oscap_iterator_next(fix_it);
+			if (disruption != xccdf_fix_get_disruption(fix))
+				oscap_iterator_detach(fix_it);
+		}
 	}
 	oscap_iterator_free(fix_it);
 	return fixes;
