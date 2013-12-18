@@ -80,5 +80,6 @@ test_run "generate report: missing xsl shall not segfault" $srcdir/test_report_w
 test_run "generate report: avoid warnings from libxml" $srcdir/test_report_without_oval_poses_no_errors.sh
 test_run "generate fix: just as the anaconda does" $srcdir/test_report_anaconda_fixes.sh
 test_run "generate fix: just as the anaconda does + DataStream" $srcdir/test_report_anaconda_fixes_ds.sh
+test_run "generate fix: ensure filtering drop fixes" $srcdir/test_fix_filtering.sh
 
 test_exit
