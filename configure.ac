@@ -386,7 +386,7 @@ PKG_CHECK_MODULES([rpm], [rpm >= 4.4],[
 
 
 SAVE_CPPFLAGS="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS  $(pkg-config libapt-pkg --cflags) $(pkg-config blkid --cflags) $(pkg-config gconf-2.0 --cflags) $(pkg-config libpcre --cflags) $(pkg-config rpm --cflags) $(pkg-config libselinux --cflags) $(pkg-config libxml-2.0 --cflags) $(pkg-config libxslt --cflags) "
+CPPFLAGS="$CPPFLAGS  $(pkg-config libapt-pkg --cflags) $(pkg-config blkid --cflags) $(pkg-config gconf-2.0 --cflags) $(pkg-config libpcre --cflags) $(pkg-config libprocps --cflags) $(pkg-config rpm --cflags) $(pkg-config libselinux --cflags) $(pkg-config libxml-2.0 --cflags) $(pkg-config libxslt --cflags) "
 
 echo
 echo ' * Checking presence of required headers for the system_info probe'
@@ -478,7 +478,7 @@ AC_CHECK_HEADERS([dirent.h errno.h fcntl.h sched.h stdio.h stdlib.h string.h sys
 
 echo
 echo ' * Checking presence of optional headers for the process58 probe'
-AC_CHECK_HEADERS([ctype.h selinux/context.h selinux/selinux.h stdio_ext.h sys/capability.h sys/types.h ],[],[probe_process58_opt_deps_ok=no],[-])
+AC_CHECK_HEADERS([ctype.h proc/devname.h selinux/context.h selinux/selinux.h stdio_ext.h sys/capability.h sys/types.h ],[],[probe_process58_opt_deps_ok=no],[-])
 
 echo
 echo ' * Checking presence of required headers for the shadow probe'
@@ -762,6 +762,25 @@ probe_textfilecontent_req_deps_missing+=", $ac_func func";
 probe_partition_req_deps_ok=no;
 probe_partition_req_deps_missing+=", $ac_func func";
 ])
+LIBS=$SAVE_LIBS
+echo
+echo '* Checking for procps library used by:  process58'
+PKG_CHECK_MODULES([procps], [libprocps >= 0.0],[],[
+SAVE_LIBS=$LIBS
+AC_SEARCH_LIBS([],[procps-ng],[
+procps_CFLAGS=;
+procps_LIBS=-lprocps-ng;
+],[
+probe_process58_opt_deps_ok=no;
+probe_process58_opt_deps_missing+=', procps';
+],[])
+AC_SUBST([procps_CFLAGS])
+AC_SUBST([procps_LIBS])
+LIBS=$SAVE_LIBS
+])
+SAVE_LIBS=$LIBS
+LIBS=$procps_LIBS
+AC_CHECK_FUNCS([dev_to_tty],[],[])
 LIBS=$SAVE_LIBS
 echo
 echo '* Checking for rpm library used by: rpminfo rpmverify rpmverifyfile rpmverifypackage '

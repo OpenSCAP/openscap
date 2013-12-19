@@ -132,9 +132,9 @@ endif
 
 if probe_process58_enabled
 pkglibexec_PROGRAMS += probe_process58
-probe_process58_SOURCES= unix/process58.c unix/process58-capability.h
-probe_process58_CFLAGS= @selinux_CFLAGS@ @cap_CFLAGS@
-probe_process58_LDFLAGS= @selinux_LIBS@ @cap_LIBS@ ../../common/liboscapcommon.la
+probe_process58_SOURCES= unix/process58.c unix/process58-capability.h unix/process58-devname.c unix/process58-devname.h
+probe_process58_CFLAGS= @selinux_CFLAGS@ @cap_CFLAGS@ @procps_CFLAGS@
+probe_process58_LDFLAGS= @selinux_LIBS@ @cap_LIBS@ @procps_LIBS@ ../../common/liboscapcommon.la
 endif
 
 if probe_shadow_enabled

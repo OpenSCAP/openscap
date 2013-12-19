@@ -67,6 +67,13 @@
 #include <fcntl.h>
 #include <sched.h>
 #include <time.h>
+
+#ifdef HAVE_PROC_DEVNAME_H
+ #include <proc/devname.h>
+#else
+ #include "process58-devname.h"
+#endif
+
 #ifdef HAVE_SELINUX_SELINUX_H
 #include <selinux/selinux.h>
 #include <selinux/context.h>
@@ -106,7 +113,7 @@ struct result_info {
 	int ruid;
         const char *scheduling_class;
         const char *start_time;
-        int tty;
+        const char *tty;
 	int user_id;
 	int exec_shield;
 	int loginuid;
@@ -117,7 +124,7 @@ struct result_info {
 
 static void report_finding(struct result_info *res, probe_ctx *ctx)
 {
-        SEXP_t *item, se_tty_mem;
+        SEXP_t *item;
 
         item = probe_item_create(OVAL_UNIX_PROCESS58, NULL,
                                  "command_line", OVAL_DATATYPE_STRING, res->command_line,
@@ -128,7 +135,7 @@ static void report_finding(struct result_info *res, probe_ctx *ctx)
 				 "ruid",         OVAL_DATATYPE_INTEGER, (int64_t) res->ruid,
                                  "scheduling_class", OVAL_DATATYPE_STRING, res->scheduling_class,
                                  "start_time",   OVAL_DATATYPE_STRING, res->start_time,
-                                 "tty",          OVAL_DATATYPE_SEXP, SEXP_string_newf_r(&se_tty_mem, "%d", res->tty),
+                                 "tty",          OVAL_DATATYPE_STRING, res->tty,
                                  "user_id",      OVAL_DATATYPE_INTEGER, (int64_t)res->user_id,
                                  "exec_shield",  OVAL_DATATYPE_BOOLEAN, (int64_t)res->exec_shield,
                                  "loginuid",     OVAL_DATATYPE_INTEGER, (int64_t)res->loginuid,
@@ -138,8 +145,6 @@ static void report_finding(struct result_info *res, probe_ctx *ctx)
                                  NULL);
 
         probe_item_collect(ctx, item);
-
-        SEXP_free_r(&se_tty_mem);
 }
 
 #if defined(__linux__)
@@ -369,7 +374,7 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 	while (( ent = readdir(d) )) {
 		int fd, len;
 		char buf[256];
-		char *tmp, cmd[16], state;
+		char *tmp, cmd[16], state, tty_dev[128];
 		int pid, ppid, pgrp, session, tty_nr, tpgid;
 		unsigned flags, sched_policy;
 		unsigned long minflt, cminflt, majflt, cmajflt, uutime, ustime;
@@ -483,7 +488,10 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 			r.ppid = ppid;
 			r.priority = priority;
 			r.start_time = sbuf;
-			r.tty = tty_nr;
+
+			dev_to_tty(tty_dev, sizeof(tty_dev), (dev_t) tty_nr, pid, ABBREV_DEV);
+			r.tty = tty_dev;
+
 			r.exec_shield = (get_exec_shield_status(pid) > 0);
 
 			selinux_domain_label = get_selinux_label(pid);
@@ -645,7 +653,7 @@ static int read_process(SEXP_t *cmd_ent, probe_ctx *ctx)
 			r.priority = (psinfo->pr_lwp).pr_pri;
 			r.ruid = psinfo->pr_uid;
 			r.start_time = sbuf;
-			r.tty = psinfo->pr_ttydev;
+			r.tty = oscap_sprintf("%s", psinfo->pr_ttydev);
 			r.user_id = psinfo->pr_euid;
 			report_finding(&r, ctx);
 		}

@@ -13,4 +13,6 @@ TESTS = all.sh
 EXTRA_DIST += \
 	all.sh \
 	selinux_domain_label.oval.xml \
-	selinux_domain_label.sh
+	selinux_domain_label.sh \
+	dev_to_tty.oval.xml \
+	dev_to_tty.sh

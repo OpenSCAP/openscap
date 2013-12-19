@@ -20,6 +20,7 @@ BuildRequires:  pcre-devel
 BuildRequires:  libacl-devel
 BuildRequires:  libselinux-devel libcap-devel
 BuildRequires:  libblkid-devel
+BuildRequires:  procps-ng-devel
 %if %{?_with_check:1}%{!?_with_check:0}
 BuildRequires:  perl-XML-XPath
 %endif
