@@ -32,3 +32,25 @@ grep "$line3" $result
 grep -v "$line1" $result | grep -v "$line2" | grep -v "$line3"
 [ "`grep -v "$line1" $result | grep -v "$line2" | grep -v "$line3" | sed 's/\W//g'`"x == x ]
 rm $result
+
+
+# And Now For Something Completely Different -- Tailoring:
+$OSCAP xccdf generate fix --template urn:redhat:anaconda:pre \
+	--tailoring-file $srcdir/${name}.tailoring.xml \
+	--profile xccdf_org.open-scap_profile_unselecting \
+	--output $result \
+	$srcdir/${name}.xccdf.xml 2>&1 > $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
+[ "`cat $result | sed 's/\W//g'`"x == x ]
+rm $result
+
+line4='^\W*passwd --minlen=8$'
+$OSCAP xccdf generate fix --template urn:redhat:anaconda:pre \
+	--tailoring-file $srcdir/${name}.tailoring.xml \
+	--profile xccdf_org.open-scap_profile_override \
+	--output $result \
+	$srcdir/${name}.xccdf.xml 2>&1 > $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
+grep "$line4" $result
+[ "`grep -v $line4 $result | sed 's/\W//g'`"x == x ]
+rm $result
