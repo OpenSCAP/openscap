@@ -9,7 +9,7 @@ declare -A dups
 
 IFS=$'\n'
 # the '=' is there to remove the header
-ps=( $(ps -A -o etime= -o pid= -o ppid= -o class= -o uid= -o comm= -o start= | \
+ps=( $(ps -A -o etime= -o pid= -o ppid= -o class= -o uid= -o comm= -o tty= -o start= | \
 # replace spaces in 'etime' with '-' to enable sorting
 sed 'h;s/.\{2,9\}:.. / /;x;s/\(.\{2,9\}:..\) .*/\1/;s/ /-/g;G;s/\n//' | \
 # replace 'Dec 16' to 'Dec_16'
@@ -59,6 +59,9 @@ function getField {
             echo "${a[4]}"
             ;;
         start)
+            echo "${a[7]}"
+            ;;
+        tty)
             echo "${a[6]}"
             ;;
         *)
@@ -147,6 +150,7 @@ while [ $I -lt "${#PROCS[@]}" ]; do
       <ppid datatype="int">`getField 'ppid' ${PROCS[$I]}`</ppid>
       <scheduling_class>`getField 'class' ${PROCS[$I]}`</scheduling_class>
       <start_time>`getField 'start' ${PROCS[$I]}`</start_time>
+      <tty>`getField 'tty' ${PROCS[$I]}`</tty>
       <user_id datatype="int">`getField 'uid' ${PROCS[$I]}`</user_id>
     </process_state>
 EOF

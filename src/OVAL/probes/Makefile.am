@@ -127,7 +127,9 @@ endif
 
 if probe_process_enabled
 pkglibexec_PROGRAMS += probe_process
-probe_process_SOURCES= unix/process.c
+probe_process_SOURCES= unix/process.c unix/process58-devname.c unix/process58-devname.h
+probe_process_CFLAGS= @procps_CFLAGS@
+probe_process_LDFLAGS= @procps_LIBS@
 endif
 
 if probe_process58_enabled

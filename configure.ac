@@ -466,19 +466,19 @@ AC_CHECK_HEADERS([errno.h lastlog.h paths.h pwd.h stdio.h stdlib.h string.h ],[]
 
 echo
 echo ' * Checking presence of required headers for the process probe'
-AC_CHECK_HEADERS([dirent.h errno.h fcntl.h sched.h stdio.h stdlib.h string.h sys/stat.h time.h unistd.h ],[],[probe_process_req_deps_ok=no; probe_process_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([dirent.h errno.h sched.h time.h ],[],[probe_process_req_deps_ok=no; probe_process_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of optional headers for the process probe'
-AC_CHECK_HEADERS([stdio_ext.h ],[],[probe_process_opt_deps_ok=no],[-])
+AC_CHECK_HEADERS([fcntl.h proc/devname.h stdio_ext.h stdio.h stdlib.h string.h sys/stat.h sys/sysmacros.h sys/types.h unistd.h ],[],[probe_process_opt_deps_ok=no],[-])
 
 echo
 echo ' * Checking presence of required headers for the process58 probe'
-AC_CHECK_HEADERS([dirent.h errno.h fcntl.h sched.h stdio.h stdlib.h string.h sys/stat.h time.h unistd.h ],[],[probe_process58_req_deps_ok=no; probe_process58_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([dirent.h errno.h sched.h time.h ],[],[probe_process58_req_deps_ok=no; probe_process58_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of optional headers for the process58 probe'
-AC_CHECK_HEADERS([ctype.h proc/devname.h selinux/context.h selinux/selinux.h stdio_ext.h sys/capability.h sys/types.h ],[],[probe_process58_opt_deps_ok=no],[-])
+AC_CHECK_HEADERS([ctype.h fcntl.h proc/devname.h selinux/context.h selinux/selinux.h stdio_ext.h stdio.h stdlib.h string.h sys/capability.h sys/stat.h sys/sysmacros.h sys/types.h unistd.h ],[],[probe_process58_opt_deps_ok=no],[-])
 
 echo
 echo ' * Checking presence of required headers for the shadow probe'
@@ -764,7 +764,7 @@ probe_partition_req_deps_missing+=", $ac_func func";
 ])
 LIBS=$SAVE_LIBS
 echo
-echo '* Checking for procps library used by:  process58'
+echo '* Checking for procps library used by:  process58 process'
 PKG_CHECK_MODULES([procps], [libprocps >= 0.0],[],[
 SAVE_LIBS=$LIBS
 AC_SEARCH_LIBS([],[procps-ng],[
@@ -773,6 +773,8 @@ procps_LIBS=-lprocps-ng;
 ],[
 probe_process58_opt_deps_ok=no;
 probe_process58_opt_deps_missing+=', procps';
+probe_process_opt_deps_ok=no;
+probe_process_opt_deps_missing+=', procps';
 ],[])
 AC_SUBST([procps_CFLAGS])
 AC_SUBST([procps_LIBS])
