@@ -116,7 +116,7 @@ struct result_info {
         const char *tty;
 	int user_id;
 	int exec_shield;
-	int loginuid;
+	unsigned loginuid;
 	char **posix_capability;
 	const char *selinux_domain_label;
 	int session_id;
