@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
-Copyright 2010 Red Hat Inc., Durham, North Carolina.
+Copyright 2010-2013 Red Hat Inc., Durham, North Carolina.
 All Rights Reserved.
 
 This library is free software; you can redistribute it and/or
@@ -348,7 +348,9 @@ Authors:
     <xsl:call-template name='idents'/>
     <!-- overrides (n) -->
     <!-- messages (n) -->
-    <xsl:apply-templates select='$rule/cdf:fixtext[1]'/>
+    <xsl:if test='cdf:result[text()!="pass"]'>
+      <xsl:apply-templates select='$rule/cdf:fixtext[1]'/>
+    </xsl:if>
     <xsl:apply-templates select='($rule/cdf:fix|cdf:fix)[last()]'/>
     <xsl:apply-templates select='.' mode='engine-results'/>
     <xsl:call-template name='references'/>
