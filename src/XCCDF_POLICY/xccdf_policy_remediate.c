@@ -234,6 +234,7 @@ static inline int _xccdf_fix_decode_xml(struct xccdf_fix *fix, char **result)
 		xccdf_fix_get_content(fix));
         xmlDoc *doc = xmlReadMemory(str, strlen(str), NULL, NULL, XML_PARSE_RECOVER |
 		XML_PARSE_NOERROR | XML_PARSE_NOWARNING | XML_PARSE_NONET | XML_PARSE_NSCLEAN);
+	dI("Following script will be executed: '''%s'''\n", str);
 	oscap_free(str);
 
         xmlBuffer *buff = xmlBufferCreate();
@@ -260,7 +261,6 @@ static inline int _xccdf_fix_decode_xml(struct xccdf_fix *fix, char **result)
 	xmlFreeDoc(doc);
 	*result = oscap_strdup((char *)xmlBufferContent(buff));
 	xmlBufferFree(buff);
-	dI("Following script will be executed: '''%s'''\n", str);
 	return 0;
 }
 
