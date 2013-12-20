@@ -1892,7 +1892,11 @@ _xccdf_policy_add_selector_internal(struct xccdf_policy *policy, struct xccdf_be
 		result &= oscap_htable_add(policy->selected_internal, xccdf_select_get_item(sel), sel);
 		if (resolve) {
 			const struct xccdf_item *parent = xccdf_item_get_parent(item);
-			xccdf_policy_resolve_item(policy, item, (parent == NULL) ? true : xccdf_policy_is_item_selected(policy, xccdf_item_get_id(parent)));
+			/* If we are adding a selector to a top-level XCCDF Group (its parent is the Benchmark),
+			we have to consider the parent selected even though it is not in
+			the final selected hashmap. XCCDF Benchmark can't be unselected. */
+			xccdf_policy_resolve_item(policy, item, (parent == NULL || xccdf_item_get_type(parent) == XCCDF_BENCHMARK) ?
+				true : xccdf_policy_is_item_selected(policy, xccdf_item_get_id(parent)));
 		}
 		return result;
 	}
@@ -1923,7 +1927,8 @@ _xccdf_policy_add_selector_internal(struct xccdf_policy *policy, struct xccdf_be
 			if (item == NULL)
 				continue;
 			const struct xccdf_item *parent = xccdf_item_get_parent(item);
-			xccdf_policy_resolve_item(policy, item, (parent == NULL) ? true : xccdf_policy_is_item_selected(policy, xccdf_item_get_id(parent)));
+			xccdf_policy_resolve_item(policy, item, (parent == NULL || xccdf_item_get_type(parent) == XCCDF_BENCHMARK) ?
+				true : xccdf_policy_is_item_selected(policy, xccdf_item_get_id(parent)));
 		}
 	}
 	oscap_htable_iterator_free(hit);
