@@ -17,5 +17,7 @@ EXTRA_DIST += \
 	dev_to_tty.oval.xml \
 	dev_to_tty.sh \
 	loginuid.oval.xml \
-	loginuid.sh
+	loginuid.sh \
+	sessionid.oval.xml \
+	sessionid.sh
 

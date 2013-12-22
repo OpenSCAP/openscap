@@ -211,12 +211,15 @@ static int get_uids(int pid, struct result_info *r)
 		fclose(sf);
 	}
 
+	/* we get session id from /pros/id/stat (same as ps) */
+	/*
 	snprintf(buf, sizeof(buf), "/proc/%d/sessionid", pid);
 	sf = fopen(buf, "rt");
 	if (sf) {
 		fscanf(sf, "%d", &r->session_id);
 		fclose(sf);
 	}
+	*/
 
 	return 0;
 }
@@ -499,6 +502,8 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 
 			posix_capabilities = get_posix_capability(pid);
 			r.posix_capability = posix_capabilities;
+
+			r.session_id = session;
 
 			get_uids(pid, &r);
 			report_finding(&r, ctx);
