@@ -218,6 +218,9 @@ Authors:
       <!--<xsl:when test="starts-with(@system, 'http://cce.mitre.org')">
         <phrase xlink:href='http://open-scap.org/cce_view/?id={$ident}'><xsl:value-of select="$ident"/></phrase>
       </xsl:when>-->
+      <xsl:when test="starts-with(@system, 'https://rhn.redhat.com/errata')">
+        <phrase xlink:href='https://rhn.redhat.com/errata/{$ident}.html'><xsl:value-of select="$ident"/></phrase>
+      </xsl:when>
       <xsl:otherwise>
         <phrase><xsl:value-of select="$ident"/></phrase>
       </xsl:otherwise>
