@@ -64,6 +64,8 @@ canonical_wrap
 # Compiler flags
 CFLAGS="$CFLAGS -pipe -std=c99 -W -Wall -Wnonnull -Wshadow -Wformat -Wundef -Wno-unused-parameter -Wmissing-prototypes -Wno-unknown-pragmas -D_GNU_SOURCE -DOSCAP_THREAD_SAFE -D_POSIX_C_SOURCE=200112L"
 
+CFLAGS="$CFLAGS -Werror=format-security"
+
 case $host in
   *solaris*) :
     CFLAGS="$CFLAGS -D__EXTENSIONS__" ;;
