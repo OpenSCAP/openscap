@@ -212,6 +212,8 @@ function ac_gen_probe_librarycheck() {
 
 	unset functions_opt
 	unset functions_req
+	unset probes_opt
+	unset probes_req
     done
 }
 
