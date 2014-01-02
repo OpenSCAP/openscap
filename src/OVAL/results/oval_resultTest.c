@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -36,11 +36,6 @@
 #include <inttypes.h>
 #include <string.h>
 #include <arpa/inet.h>
-#if defined USE_REGEX_PCRE
-#include <pcre.h>
-#elif defined USE_REGEX_POSIX
-#include <regex.h>
-#endif
 #include <ctype.h>
 #include "oval_agent_api_impl.h"
 #include "results/oval_results_impl.h"
@@ -170,59 +165,6 @@ static int istrcmp(char *st1, char *st2)
 	return strcasecmp(st1, st2);
 }
 
-static oval_result_t strregcomp(char *pattern, char *test_str)
-{
-	int ret;
-	oval_result_t result = OVAL_RESULT_ERROR;
-#if defined USE_REGEX_PCRE
-	pcre *re;
-	const char *err;
-	int errofs;
-
-	re = pcre_compile(pattern, PCRE_UTF8, &err, &errofs, NULL);
-	if (re == NULL) {
-		oscap_dlprintf(DBG_E, "Unable to compile regex pattern, "
-			       "pcre_compile() returned error (offset: %d): '%s'.\n", errofs, err);
-		return OVAL_RESULT_ERROR;
-	}
-
-	ret = pcre_exec(re, NULL, test_str, strlen(test_str), 0, 0, NULL, 0);
-	if (ret > -1 ) {
-		result = OVAL_RESULT_TRUE;
-	} else if (ret == -1) {
-		result = OVAL_RESULT_FALSE;
-	} else {
-		oscap_dlprintf(DBG_E, "Unable to match regex pattern, "
-			       "pcre_exec() returned error: %d.\n", ret);
-		result = OVAL_RESULT_ERROR;
-	}
-
-	pcre_free(re);
-#elif defined USE_REGEX_POSIX
-	regex_t re;
-
-	ret = regcomp(&re, pattern, REG_EXTENDED);
-	if (ret != 0) {
-		oscap_dlprintf(DBG_E, "Unable to compile regex pattern, "
-			       "regcomp() returned error: %d.\n", ret);
-		return OVAL_RESULT_ERROR;
-	}
-
-	ret = regexec(&re, test_str, 0, NULL, 0);
-	if (ret == 0) {
-		result = OVAL_RESULT_TRUE;
-	} else if (ret == REG_NOMATCH) {
-		result = OVAL_RESULT_FALSE;
-	} else {
-		oscap_dlprintf(DBG_E, "Unable to match regex pattern: %d.\n", ret);
-		result = OVAL_RESULT_ERROR;
-	}
-
-	regfree(&re);
-#endif
-	return result;
-}
-
 __attribute__((nonnull(1,2))) static bool cstr_to_intmax(const char *cstr, intmax_t *result)
 {
 	char *endptr = NULL;
@@ -276,20 +218,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 	// todo: cast values to a common type
 
 	if (state_data_type == OVAL_DATATYPE_STRING) {
-		if (operation == OVAL_OPERATION_EQUALS) {
-			return ((oscap_strcmp(state_data, sys_data)) ? OVAL_RESULT_FALSE : OVAL_RESULT_TRUE);
-		} else if (operation == OVAL_OPERATION_CASE_INSENSITIVE_EQUALS) {
-			return ((istrcmp(state_data, sys_data)) ? OVAL_RESULT_FALSE : OVAL_RESULT_TRUE);
-		} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
-			return ((oscap_strcmp(state_data, sys_data)) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_CASE_INSENSITIVE_NOT_EQUAL) {
-			return ((istrcmp(state_data, sys_data)) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_PATTERN_MATCH) {
-			return strregcomp(state_data, sys_data);
-		} else {
-			oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in string evaluation: %d.", operation);
-			return OVAL_RESULT_ERROR;
-		}
+		return oval_string_cmp(state_data, sys_data, operation);
 	} else if (state_data_type == OVAL_DATATYPE_INTEGER) {
 		intmax_t state_val, syschar_val;
 
