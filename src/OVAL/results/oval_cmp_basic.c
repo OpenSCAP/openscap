@@ -38,12 +38,10 @@ static inline int cmp_float(double a, double b)
 
 	if (a == b)
 		return 0;
-
+	r = (a > b) ? 1 : -1;
 	if (fabs(a) > fabs(b)) {
-		r = 1;
 		relative_err = fabs((a - b) / a);
 	} else {
-		r = -1;
 		relative_err = fabs((a - b) / b);
 	}
 	if (relative_err <= 0.000000001)
