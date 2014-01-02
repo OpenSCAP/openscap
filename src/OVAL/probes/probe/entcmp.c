@@ -46,6 +46,7 @@
 #include "common/debug_priv.h"
 #include "entcmp.h"
 #include "../_probe-api.h"
+#include "../../results/oval_cmp_basic_impl.h"
 #include "../../results/oval_evr_string_impl.h"
 #include "../../results/oval_ip_address_impl.h"
 
@@ -132,54 +133,12 @@ oval_result_t probe_ent_cmp_filesetrev(SEXP_t * val1, SEXP_t * val2, oval_operat
 
 oval_result_t probe_ent_cmp_float(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
 {
-	oval_result_t result = OVAL_RESULT_ERROR;
 	double v1, v2;
 
 	v1 = SEXP_number_getf(val1);
 	v2 = SEXP_number_getf(val2);
 
-	switch (op) {
-	case OVAL_OPERATION_EQUALS:
-		if (v1 == v2)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_NOT_EQUAL:
-		if (v1 != v2)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_GREATER_THAN:
-		if (v1 < v2)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_LESS_THAN:
-		if (v1 > v2)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_GREATER_THAN_OR_EQUAL:
-		if (v1 <= v2)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_LESS_THAN_OR_EQUAL:
-		if (v1 >= v2)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	default:
-		dI("Unexpected compare operation: %d\n", op);
-	}
-
-	return result;
+	return oval_float_cmp(v1, v2, op);
 }
 
 oval_result_t probe_ent_cmp_int(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
