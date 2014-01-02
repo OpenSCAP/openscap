@@ -243,6 +243,25 @@ static int cmp_float(double a, double b)
 
 	return r;
 }
+static oval_result_t oval_float_cmp(const double state_val, const double sys_val, oval_operation_t operation)
+{
+	if (operation == OVAL_OPERATION_EQUALS) {
+		return ((cmp_float(sys_val, state_val) == 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+	} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
+		return ((cmp_float(sys_val, state_val) != 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+	} else if (operation == OVAL_OPERATION_GREATER_THAN) {
+		return ((cmp_float(sys_val, state_val) == 1) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+	} else if (operation == OVAL_OPERATION_GREATER_THAN_OR_EQUAL) {
+		return ((cmp_float(sys_val, state_val) >= 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+	} else if (operation == OVAL_OPERATION_LESS_THAN) {
+		return ((cmp_float(sys_val, state_val) == -1) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+	} else if (operation == OVAL_OPERATION_LESS_THAN_OR_EQUAL) {
+		return ((cmp_float(sys_val, state_val) <= 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+	} else {
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in float evaluation: %s.", oval_operation_get_text(operation));
+		return OVAL_RESULT_ERROR;
+	}
+}
 
 __attribute__((nonnull(1,2))) static bool cstr_to_intmax(const char *cstr, intmax_t *result)
 {
@@ -364,23 +383,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 			             sys_data, strerror(errno));
 			return OVAL_RESULT_ERROR;
 		}
-
-		if (operation == OVAL_OPERATION_EQUALS) {
-			return ((cmp_float(sys_val, state_val) == 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
-			return ((cmp_float(sys_val, state_val) != 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_GREATER_THAN) {
-			return ((cmp_float(sys_val, state_val) == 1) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_GREATER_THAN_OR_EQUAL) {
-			return ((cmp_float(sys_val, state_val) >= 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_LESS_THAN) {
-			return ((cmp_float(sys_val, state_val) == -1) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_LESS_THAN_OR_EQUAL) {
-			return ((cmp_float(sys_val, state_val) <= 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else {
-			oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in float evaluation: %s.", oval_operation_get_text(operation));
-			return OVAL_RESULT_ERROR;
-		}
+                return oval_float_cmp(state_val, sys_val, operation);
 	} else if (state_data_type == OVAL_DATATYPE_BOOLEAN) {
 		int state_int;
 		int sys_int;
