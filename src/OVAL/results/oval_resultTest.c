@@ -34,7 +34,6 @@
 #endif
 
 #include <inttypes.h>
-#include <math.h>
 #include <string.h>
 #include <arpa/inet.h>
 #if defined USE_REGEX_PCRE
@@ -47,6 +46,7 @@
 #include "results/oval_results_impl.h"
 #include "oval_evr_string_impl.h"
 #include "oval_ip_address_impl.h"
+#include "oval_cmp_basic_impl.h"
 #include "adt/oval_collection_impl.h"
 #include "adt/oval_string_map_impl.h"
 #include "collectVarRefs_impl.h"
@@ -221,46 +221,6 @@ static oval_result_t strregcomp(char *pattern, char *test_str)
 	regfree(&re);
 #endif
 	return result;
-}
-
-static int cmp_float(double a, double b)
-{
-	double relative_err;
-	int r;
-
-	if (a == b)
-		return 0;
-
-	if (fabs(a) > fabs(b)) {
-		r = 1;
-		relative_err = fabs((a - b) / a);
-	} else {
-		r = -1;
-		relative_err = fabs((a - b) / b);
-	}
-	if (relative_err <= 0.000000001)
-		return 0;
-
-	return r;
-}
-static oval_result_t oval_float_cmp(const double state_val, const double sys_val, oval_operation_t operation)
-{
-	if (operation == OVAL_OPERATION_EQUALS) {
-		return ((cmp_float(sys_val, state_val) == 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-	} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
-		return ((cmp_float(sys_val, state_val) != 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-	} else if (operation == OVAL_OPERATION_GREATER_THAN) {
-		return ((cmp_float(sys_val, state_val) == 1) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-	} else if (operation == OVAL_OPERATION_GREATER_THAN_OR_EQUAL) {
-		return ((cmp_float(sys_val, state_val) >= 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-	} else if (operation == OVAL_OPERATION_LESS_THAN) {
-		return ((cmp_float(sys_val, state_val) == -1) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-	} else if (operation == OVAL_OPERATION_LESS_THAN_OR_EQUAL) {
-		return ((cmp_float(sys_val, state_val) <= 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-	} else {
-		oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in float evaluation: %s.", oval_operation_get_text(operation));
-		return OVAL_RESULT_ERROR;
-	}
 }
 
 __attribute__((nonnull(1,2))) static bool cstr_to_intmax(const char *cstr, intmax_t *result)
