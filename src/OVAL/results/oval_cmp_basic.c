@@ -38,6 +38,19 @@
 #include "common/debug_priv.h"
 #include "oval_cmp_basic_impl.h"
 
+oval_result_t oval_boolean_cmp(const bool state, const bool syschar, oval_operation_t operation)
+{
+	switch (operation) {
+	case OVAL_OPERATION_EQUALS:
+		return state == syschar ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE;
+	case OVAL_OPERATION_NOT_EQUAL:
+		return state != syschar ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE;
+	default:
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in boolean evaluation: %d.", operation);
+	}
+	return OVAL_RESULT_ERROR;
+}
+
 oval_result_t oval_int_cmp(const int state, const int syschar, oval_operation_t operation)
 {
 	switch (operation) {

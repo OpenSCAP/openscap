@@ -249,14 +249,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 		int sys_int;
 		state_int = (((strcmp(state_data, "true")) == 0) || ((strcmp(state_data, "1")) == 0)) ? 1 : 0;
 		sys_int = (((strcmp(sys_data, "true")) == 0) || ((strcmp(sys_data, "1")) == 0)) ? 1 : 0;
-		if (operation == OVAL_OPERATION_EQUALS) {
-			return ((state_int == sys_int) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
-			return ((state_int != sys_int) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else {
-			oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in boolean evaluation: %d.", operation);
-			return OVAL_RESULT_ERROR;
-		}
+		return oval_boolean_cmp(state_int, sys_int, operation);
 	} else if (state_data_type == OVAL_DATATYPE_BINARY) {
 		return oval_binary_cmp(state_data, sys_data, operation);
 	} else if (state_data_type == OVAL_DATATYPE_EVR_STRING) {
