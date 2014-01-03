@@ -156,15 +156,6 @@ struct oval_test *oval_result_test_get_test(struct oval_result_test *rtest)
 	return ((struct oval_result_test *)rtest)->test;
 }
 
-static int istrcmp(char *st1, char *st2)
-{
-	if (st1 == NULL)
-		st1 = "";
-	if (st2 == NULL)
-		st2 = "";
-	return strcasecmp(st1, st2);
-}
-
 __attribute__((nonnull(1,2))) static bool cstr_to_intmax(const char *cstr, intmax_t *result)
 {
 	char *endptr = NULL;
@@ -286,15 +277,8 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 			oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in boolean evaluation: %d.", operation);
 			return OVAL_RESULT_ERROR;
 		}
-	} else if (state_data_type == OVAL_DATATYPE_BINARY) {	// I'm going to use case insensitive compare here - don't know if it's necessary
-		if (operation == OVAL_OPERATION_EQUALS) {
-			return ((istrcmp(state_data, sys_data) == 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
-			return ((istrcmp(state_data, sys_data) != 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else {
-			oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in binary evaluation: %d.", operation);
-			return OVAL_RESULT_ERROR;
-		}
+	} else if (state_data_type == OVAL_DATATYPE_BINARY) {
+		return oval_binary_cmp(state_data, sys_data, operation);
 	} else if (state_data_type == OVAL_DATATYPE_EVR_STRING) {
 		return oval_evr_string_cmp(state_data, sys_data, operation);
 	} else if (state_data_type == OVAL_DATATYPE_VERSION) {

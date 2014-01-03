@@ -33,6 +33,8 @@ oval_result_t oval_float_cmp(const double state_val, const double sys_val, oval_
 
 oval_result_t oval_string_cmp(const char *state, const char *syschar, oval_operation_t operation);
 
+oval_result_t oval_binary_cmp(const char *state, const char *syschar, oval_operation_t operation);
+
 OSCAP_HIDDEN_END;
 
 #endif

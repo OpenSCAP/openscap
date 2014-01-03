@@ -157,3 +157,17 @@ oval_result_t oval_string_cmp(const char *state, const char *syschar, oval_opera
 	}
 	return OVAL_RESULT_ERROR;
 }
+
+oval_result_t oval_binary_cmp(const char *state, const char *syschar, oval_operation_t operation)
+{
+	// I'm going to use case insensitive compare here - don't know if it's necessary
+	switch (operation) {
+	case OVAL_OPERATION_EQUALS:
+		return istrcmp(state, syschar) == 0 ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE;
+	case OVAL_OPERATION_NOT_EQUAL:
+		return istrcmp(state, syschar) != 0 ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE;
+	default:
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in binary evaluation: %d.", operation);
+	}
+	return OVAL_RESULT_ERROR;
+}
