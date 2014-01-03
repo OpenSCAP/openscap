@@ -58,22 +58,7 @@ oval_result_t probe_ent_cmp_binary(SEXP_t * val1, SEXP_t * val2, oval_operation_
 	s1 = SEXP_string_cstr(val1);
 	s2 = SEXP_string_cstr(val2);
 
-	switch (op) {
-	case OVAL_OPERATION_EQUALS:
-		if (!strcasecmp(s1, s2))
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_NOT_EQUAL:
-		if (strcasecmp(s1, s2))
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	default:
-		dI("Unexpected compare operation: %d\n", op);
-	}
+	result = oval_binary_cmp(s1, s2, op);
 
         oscap_free(s1);
         oscap_free(s2);
