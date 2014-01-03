@@ -383,7 +383,7 @@ oval_result_t probe_ent_cmp_string(SEXP_t * val1, SEXP_t * val2, oval_operation_
 			result = OVAL_RESULT_FALSE;
 		break;
 	case OVAL_OPERATION_CASE_INSENSITIVE_NOT_EQUAL:
-		if (!strcasecmp(s1, s2))
+		if (strcasecmp(s1, s2))
 			result = OVAL_RESULT_TRUE;
 		else
 			result = OVAL_RESULT_FALSE;
