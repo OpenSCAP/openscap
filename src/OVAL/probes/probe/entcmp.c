@@ -134,58 +134,7 @@ oval_result_t probe_ent_cmp_int(SEXP_t * val1, SEXP_t * val2, oval_operation_t o
 	v1 = SEXP_number_geti_64(val1);
 	v2 = SEXP_number_geti_64(val2);
 
-	switch (op) {
-	case OVAL_OPERATION_EQUALS:
-		if (v1 == v2)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_NOT_EQUAL:
-		if (v1 != v2)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_GREATER_THAN:
-		if (v1 < v2)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_LESS_THAN:
-		if (v1 > v2)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_GREATER_THAN_OR_EQUAL:
-		if (v1 <= v2)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_LESS_THAN_OR_EQUAL:
-		if (v1 >= v2)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_BITWISE_AND:
-		if ((v1 & v2) == v1)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_BITWISE_OR:
-		if ((v1 | v2) == v1)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	default:
-		dI("Unexpected compare operation: %d\n", op);
-	}
+	result = oval_int_cmp(v1, v2, op);
 
 	return result;
 }
