@@ -29,6 +29,8 @@
 
 OSCAP_HIDDEN_START;
 
+oval_result_t oval_int_cmp(const int state, const int syschar, oval_operation_t operation);
+
 oval_result_t oval_float_cmp(const double state_val, const double sys_val, oval_operation_t operation);
 
 oval_result_t oval_string_cmp(const char *state, const char *syschar, oval_operation_t operation);

@@ -226,27 +226,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 			             sys_data, sizeof(intmax_t)*8, strerror(errno));
 			return OVAL_RESULT_ERROR;
 		}
-
-		if (operation == OVAL_OPERATION_EQUALS) {
-			return ((state_val == syschar_val) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
-			return ((state_val != syschar_val) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_GREATER_THAN) {
-			return ((syschar_val > state_val) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_GREATER_THAN_OR_EQUAL) {
-			return ((syschar_val >= state_val) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_LESS_THAN) {
-			return ((syschar_val < state_val) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_LESS_THAN_OR_EQUAL) {
-			return ((syschar_val <= state_val) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_BITWISE_AND) {
-			return (((syschar_val & state_val) == state_val) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_BITWISE_OR) {
-			return (((syschar_val | state_val) == state_val) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
-		} else {
-			oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in integer evaluation: %d.", operation);
-			return OVAL_RESULT_ERROR;
-		}
+		return oval_int_cmp(state_val, syschar_val, operation);
 	} else if (state_data_type == OVAL_DATATYPE_FLOAT) {
 		double state_val, sys_val;
 

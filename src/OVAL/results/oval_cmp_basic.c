@@ -38,6 +38,31 @@
 #include "common/debug_priv.h"
 #include "oval_cmp_basic_impl.h"
 
+oval_result_t oval_int_cmp(const int state, const int syschar, oval_operation_t operation)
+{
+	switch (operation) {
+	case OVAL_OPERATION_EQUALS:
+		return state == syschar ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE;
+	case OVAL_OPERATION_NOT_EQUAL:
+		return state != syschar ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE;
+	case OVAL_OPERATION_GREATER_THAN:
+		return syschar > state ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE;
+	case OVAL_OPERATION_GREATER_THAN_OR_EQUAL:
+		return syschar >= state ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE;
+	case OVAL_OPERATION_LESS_THAN:
+		return syschar < state ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE;
+	case OVAL_OPERATION_LESS_THAN_OR_EQUAL:
+		return syschar <= state ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE;
+	case OVAL_OPERATION_BITWISE_AND:
+		return (syschar & state) == state ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE;
+	case OVAL_OPERATION_BITWISE_OR:
+		return (syschar | state) == state ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE;
+	default:
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in integer evaluation: %d.", operation);
+	}
+	return OVAL_RESULT_ERROR;
+}
+
 static inline int cmp_float(double a, double b)
 {
 	double relative_err;
