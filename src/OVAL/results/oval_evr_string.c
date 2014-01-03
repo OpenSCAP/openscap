@@ -348,5 +348,7 @@ oval_result_t oval_versiontype_cmp(const char *state, const char *syschar, oval_
 	} else if (operation == OVAL_OPERATION_LESS_THAN_OR_EQUAL) {
 		return (OVAL_RESULT_TRUE);
 	}		// we have already filtered out the invalid ones
+	assert(0);
+	return OVAL_RESULT_ERROR;
 
 }
