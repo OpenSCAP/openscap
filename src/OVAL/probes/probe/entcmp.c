@@ -363,78 +363,7 @@ oval_result_t probe_ent_cmp_string(SEXP_t * val1, SEXP_t * val2, oval_operation_
 	s1 = SEXP_string_cstr(val1);
 	s2 = SEXP_string_cstr(val2);
 
-	switch (op) {
-	case OVAL_OPERATION_EQUALS:
-		if (!strcmp(s1, s2))
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_NOT_EQUAL:
-		if (strcmp(s1, s2))
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_CASE_INSENSITIVE_EQUALS:
-		if (!strcasecmp(s1, s2))
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_CASE_INSENSITIVE_NOT_EQUAL:
-		if (strcasecmp(s1, s2))
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_PATTERN_MATCH:
-		{
-#if defined USE_REGEX_PCRE
-			int erroffset = -1, rc;
-			const char *error;
-			pcre *re = NULL;
-
-			re = pcre_compile(s1, PCRE_UTF8, &error, &erroffset, NULL);
-			if (re == NULL) {
-                                oscap_free(s1);
-                                oscap_free(s2);
-				return OVAL_RESULT_ERROR;
-			}
-
-			rc = pcre_exec(re, NULL, s2, strlen(s2), 0, 0, NULL, 0);
-			pcre_free(re);
-
-			if (rc == 0) {
-				result = OVAL_RESULT_TRUE;
-			} else if (rc == -1) {
-				result = OVAL_RESULT_FALSE;
-			} else {
-				result = OVAL_RESULT_ERROR;
-			}
-#elif defined USE_REGEX_POSIX
-			regex_t re;
-
-			if (regcomp(&re, s1, REG_EXTENDED) != 0) {
-                                oscap_free(s1);
-                                oscap_free(s2);
-
-				return OVAL_RESULT_ERROR;
-			}
-
-			if (regexec(&re, s2, 0, NULL, 0) == REG_NOMATCH) {
-				result = OVAL_RESULT_FALSE;
-			} else {
-				result = OVAL_RESULT_TRUE;
-			}
-
-			regfree(&re);
-#endif
-		}
-		break;
-	default:
-		dI("Unexpected compare operation: %d\n", op);
-	}
+	result = oval_string_cmp(s1, s2, op);
 
         oscap_free(s1);
         oscap_free(s2);
