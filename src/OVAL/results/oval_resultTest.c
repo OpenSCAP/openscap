@@ -255,71 +255,7 @@ static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t 
 	} else if (state_data_type == OVAL_DATATYPE_EVR_STRING) {
 		return oval_evr_string_cmp(state_data, sys_data, operation);
 	} else if (state_data_type == OVAL_DATATYPE_VERSION) {
-		int state_idx = 0;
-		int sys_idx = 0;
-		int result = -1;
-		/* int is_equal = 1; */
-		for (state_idx = 0, sys_idx = 0; (((state_data[state_idx]) || (sys_data[sys_idx])) && (result == -1));) {	// keep going as long as there is data in either the state or sysitem
-			int tmp_state_int, tmp_sys_int;
-			tmp_state_int = atoi(&state_data[state_idx]);	// look at the current data field (if we're at the end, atoi should return 0)
-			tmp_sys_int = atoi(&sys_data[sys_idx]);
-                        /* o rly?
-			if (tmp_state_int != tmp_sys_int)
-				is_equal = 0;	// we might need this later (if we don't terminate early)
-                        */
-			if (operation == OVAL_OPERATION_EQUALS) {
-				if (tmp_state_int != tmp_sys_int)
-					return (OVAL_RESULT_FALSE);
-			} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
-				if (tmp_state_int != tmp_sys_int)
-					return (OVAL_RESULT_TRUE);
-			} else if ((operation == OVAL_OPERATION_GREATER_THAN)
-				   || (operation == OVAL_OPERATION_GREATER_THAN_OR_EQUAL)) {
-				if (tmp_sys_int > tmp_state_int)
-					return (OVAL_RESULT_TRUE);
-				if (tmp_sys_int < tmp_state_int)
-					return (OVAL_RESULT_FALSE);
-			} else if ((operation == OVAL_OPERATION_LESS_THAN)
-				   || (operation == OVAL_OPERATION_LESS_THAN_OR_EQUAL)) {
-				if (tmp_sys_int < tmp_state_int)
-					return (OVAL_RESULT_TRUE);
-				if (tmp_sys_int > tmp_state_int)
-					return (OVAL_RESULT_FALSE);
-			} else {
-				oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in version comparison: %d.", operation);
-				return OVAL_RESULT_ERROR;
-			}
-
-			if (state_data[state_idx])
-				++state_idx;
-			/* move to the next field within the version string (if there is one) */
-			while ((state_data[state_idx]) && (isdigit(state_data[state_idx])))
-				++state_idx;
-			if ((state_data[state_idx]) && (!isdigit(state_data[state_idx])))
-				++state_idx;
-
-			if (sys_data[sys_idx])
-				++sys_idx;
-			/* move to the next field within the version string (if there is one) */
-			while ((sys_data[sys_idx]) && (isdigit(sys_data[sys_idx])))
-				++sys_idx;
-			if ((sys_data[sys_idx]) && (!isdigit(sys_data[sys_idx])))
-				++sys_idx;
-		}
-		// OK, we did not terminate early, and we're out of data, so we now know what to return
-		if (operation == OVAL_OPERATION_EQUALS) {
-			return (OVAL_RESULT_TRUE);
-		} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
-			return (OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_GREATER_THAN) {
-			return (OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_GREATER_THAN_OR_EQUAL) {
-			return (OVAL_RESULT_TRUE);
-		} else if (operation == OVAL_OPERATION_LESS_THAN) {
-			return (OVAL_RESULT_FALSE);
-		} else if (operation == OVAL_OPERATION_LESS_THAN_OR_EQUAL) {
-			return (OVAL_RESULT_TRUE);
-		}		// we have already filtered out the invalid ones
+		return oval_versiontype_cmp(state_data, sys_data, operation);
 	} else if (state_data_type == OVAL_DATATYPE_IPV4ADDR) {
 		return oval_ipaddr_cmp(AF_INET, state_data, sys_data, operation);
 	} else if (state_data_type == OVAL_DATATYPE_IPV6ADDR) {

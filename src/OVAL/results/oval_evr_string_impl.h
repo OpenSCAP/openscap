@@ -48,6 +48,8 @@ OSCAP_HIDDEN_START;
  */
 oval_result_t oval_evr_string_cmp(const char *state, const char *sys, oval_operation_t operation);
 
+oval_result_t oval_versiontype_cmp(const char *state, const char *syschar, oval_operation_t operation);
+
 OSCAP_HIDDEN_END;
 
 #endif

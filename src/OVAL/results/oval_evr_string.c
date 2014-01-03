@@ -278,3 +278,75 @@ static int rpmvercmp(const char *a, const char *b)
 		return 1;
 }
 #endif
+
+
+oval_result_t oval_versiontype_cmp(const char *state, const char *syschar, oval_operation_t operation)
+{
+	int state_idx = 0;
+	int sys_idx = 0;
+	int result = -1;
+	/* int is_equal = 1; */
+	for (state_idx = 0, sys_idx = 0; (((state[state_idx]) || (syschar[sys_idx])) && (result == -1));) {	// keep going as long as there is data in either the state or sysitem
+		int tmp_state_int, tmp_sys_int;
+		tmp_state_int = atoi(&state[state_idx]);	// look at the current data field (if we're at the end, atoi should return 0)
+		tmp_sys_int = atoi(&syschar[sys_idx]);
+                /* o rly?
+		if (tmp_state_int != tmp_sys_int)
+			is_equal = 0;	// we might need this later (if we don't terminate early)
+                */
+		if (operation == OVAL_OPERATION_EQUALS) {
+			if (tmp_state_int != tmp_sys_int)
+				return (OVAL_RESULT_FALSE);
+		} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
+			if (tmp_state_int != tmp_sys_int)
+				return (OVAL_RESULT_TRUE);
+		} else if ((operation == OVAL_OPERATION_GREATER_THAN)
+			   || (operation == OVAL_OPERATION_GREATER_THAN_OR_EQUAL)) {
+			if (tmp_sys_int > tmp_state_int)
+				return (OVAL_RESULT_TRUE);
+			if (tmp_sys_int < tmp_state_int)
+				return (OVAL_RESULT_FALSE);
+		} else if ((operation == OVAL_OPERATION_LESS_THAN)
+			   || (operation == OVAL_OPERATION_LESS_THAN_OR_EQUAL)) {
+			if (tmp_sys_int < tmp_state_int)
+				return (OVAL_RESULT_TRUE);
+			if (tmp_sys_int > tmp_state_int)
+				return (OVAL_RESULT_FALSE);
+		} else {
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in version comparison: %d.", operation);
+			return OVAL_RESULT_ERROR;
+		}
+
+		if (state[state_idx])
+			++state_idx;
+		/* move to the next field within the version string (if there is one) */
+		while ((state[state_idx]) && (isdigit(state[state_idx])))
+			++state_idx;
+		if ((state[state_idx]) && (!isdigit(state[state_idx])))
+			++state_idx;
+
+		if (syschar[sys_idx])
+			++sys_idx;
+		/* move to the next field within the version string (if there is one) */
+		while ((syschar[sys_idx]) && (isdigit(syschar[sys_idx])))
+			++sys_idx;
+		if ((syschar[sys_idx]) && (!isdigit(syschar[sys_idx])))
+			++sys_idx;
+	}
+
+	// OK, we did not terminate early, and we're out of data, so we now know what to return
+	if (operation == OVAL_OPERATION_EQUALS) {
+		return (OVAL_RESULT_TRUE);
+	} else if (operation == OVAL_OPERATION_NOT_EQUAL) {
+		return (OVAL_RESULT_FALSE);
+	} else if (operation == OVAL_OPERATION_GREATER_THAN) {
+		return (OVAL_RESULT_FALSE);
+	} else if (operation == OVAL_OPERATION_GREATER_THAN_OR_EQUAL) {
+		return (OVAL_RESULT_TRUE);
+	} else if (operation == OVAL_OPERATION_LESS_THAN) {
+		return (OVAL_RESULT_FALSE);
+	} else if (operation == OVAL_OPERATION_LESS_THAN_OR_EQUAL) {
+		return (OVAL_RESULT_TRUE);
+	}		// we have already filtered out the invalid ones
+
+}
