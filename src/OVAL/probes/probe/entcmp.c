@@ -68,30 +68,12 @@ oval_result_t probe_ent_cmp_binary(SEXP_t * val1, SEXP_t * val2, oval_operation_
 
 oval_result_t probe_ent_cmp_bool(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
 {
-	oval_result_t result = OVAL_RESULT_ERROR;
 	int v1, v2;
 
 	v1 = SEXP_number_geti_32(val1);
 	v2 = SEXP_number_geti_32(val2);
 
-	switch (op) {
-	case OVAL_OPERATION_EQUALS:
-		if (v1 == v2)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	case OVAL_OPERATION_NOT_EQUAL:
-		if (v1 != v2)
-			result = OVAL_RESULT_TRUE;
-		else
-			result = OVAL_RESULT_FALSE;
-		break;
-	default:
-		dI("Unexpected compare operation: %d\n", op);
-	}
-
-	return result;
+	return oval_boolean_cmp(v1, v2, op);
 }
 
 oval_result_t probe_ent_cmp_evr(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
