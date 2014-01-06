@@ -416,10 +416,10 @@ static inline oval_result_t _evaluate_sysent_with_variable(struct oval_syschar_m
 			}
 			oval_datatype_t state_entity_val_datatype = oval_value_get_datatype(var_val);
 
-			var_val_res = evaluate(oval_sysent_get_value(item_entity),
+			var_val_res = evaluate(
 					state_entity_val_text,
-					oval_sysent_get_datatype(item_entity),
 					state_entity_val_datatype,
+					item_entity,
 					state_entity_operation);
 			ores_add_res(&var_ores, var_val_res);
 		}
@@ -465,10 +465,10 @@ static inline oval_result_t _evaluate_sysent(struct oval_syschar_model *syschar_
 		}
 		state_entity_val_datatype = oval_value_get_datatype(state_entity_val);
 
-		return evaluate(oval_sysent_get_value(item_entity),
+		return evaluate(
 				       state_entity_val_text,
-				       oval_sysent_get_datatype(item_entity),
 				       state_entity_val_datatype,
+				       item_entity,
 				       state_entity_operation);
 	}
 }

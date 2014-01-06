@@ -33,6 +33,7 @@
 #include <arpa/inet.h>
 
 #include "oval_types.h"
+#include "oval_system_characteristics.h"
 #include "common/_error.h"
 #include "common/debug_priv.h"
 
@@ -88,10 +89,12 @@ __attribute__((nonnull(1,2))) static bool cstr_to_double(const char *cstr, doubl
 }
 
 
-oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t sys_data_type, oval_datatype_t state_data_type, oval_operation_t operation)
+oval_result_t evaluate(char *state_data, oval_datatype_t state_data_type, struct oval_sysent *sysent, oval_operation_t operation)
 {
 	// finally, we have gotten to the point of comparing system data with a state
 	// todo: cast values to a common type
+
+	const char *sys_data = oval_sysent_get_value(sysent);
 
 	if (state_data_type == OVAL_DATATYPE_STRING) {
 		return oval_string_cmp(state_data, sys_data, operation);

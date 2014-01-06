@@ -26,10 +26,11 @@
 #include "../common/util.h"
 #include "oval_definitions.h"
 #include "oval_types.h"
+#include "oval_system_characteristics.h"
 
 OSCAP_HIDDEN_START;
 
-oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t sys_data_type, oval_datatype_t state_data_type, oval_operation_t operation);
+oval_result_t evaluate(char *state_data, oval_datatype_t state_data_type, struct oval_sysent *sysent, oval_operation_t operation);
 
 OSCAP_HIDDEN_END;
 
