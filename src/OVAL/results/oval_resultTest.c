@@ -39,8 +39,8 @@
 #include <ctype.h>
 #include "oval_agent_api_impl.h"
 #include "results/oval_results_impl.h"
-#include "oval_evr_string_impl.h"
-#include "oval_ip_address_impl.h"
+#include "oval_cmp_evr_string_impl.h"
+#include "oval_cmp_ip_address_impl.h"
 #include "oval_cmp_basic_impl.h"
 #include "adt/oval_collection_impl.h"
 #include "adt/oval_string_map_impl.h"

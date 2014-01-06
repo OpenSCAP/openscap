@@ -1,5 +1,5 @@
 /**
- * @file oval_evr_string_impl.h
+ * @file oval_cmp_evr_string_impl.h
  * \brief Open Vulnerability and Assessment Language
  *
  * See more details at http://oval.mitre.org/

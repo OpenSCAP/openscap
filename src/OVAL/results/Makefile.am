@@ -5,10 +5,10 @@ noinst_LTLIBRARIES = \
 libovalcmp_la_SOURCES = \
 	oval_cmp_basic.c \
 	oval_cmp_basic_impl.h \
-	oval_evr_string.c \
-	oval_evr_string_impl.h \
-	oval_ip_address.c \
-	oval_ip_address_impl.h
+	oval_cmp_evr_string.c \
+	oval_cmp_evr_string_impl.h \
+	oval_cmp_ip_address.c \
+	oval_cmp_ip_address_impl.h
 
 libovalresults_la_SOURCES = \
 	oval_resModel.c \
