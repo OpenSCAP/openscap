@@ -33,15 +33,11 @@
 #include <config.h>
 #endif
 
-#include <inttypes.h>
 #include <string.h>
-#include <arpa/inet.h>
 #include <ctype.h>
 #include "oval_agent_api_impl.h"
 #include "results/oval_results_impl.h"
-#include "oval_cmp_evr_string_impl.h"
-#include "oval_cmp_ip_address_impl.h"
-#include "oval_cmp_basic_impl.h"
+#include "oval_cmp_impl.h"
 #include "adt/oval_collection_impl.h"
 #include "adt/oval_string_map_impl.h"
 #include "collectVarRefs_impl.h"
@@ -154,120 +150,6 @@ struct oval_test *oval_result_test_get_test(struct oval_result_test *rtest)
 	__attribute__nonnull__(rtest);
 
 	return ((struct oval_result_test *)rtest)->test;
-}
-
-__attribute__((nonnull(1,2))) static bool cstr_to_intmax(const char *cstr, intmax_t *result)
-{
-	char *endptr = NULL;
-
-	errno = 0;
-	*result = strtoimax(cstr, &endptr, 10);
-	// Check for underflow/overflow, strtoimax sets ERANGE in such case
-	if (errno == ERANGE) {
-		return false;
-	}
-	// Check whether there were some digits in the string
-	if (endptr == cstr) {
-		errno = EINVAL;
-		return false;
-	}
-	// Check whether the function used the whole string
-	if (*endptr != '\0') {
-		errno = EINVAL;
-		return false;
-	}
-	return true;
-}
-
-__attribute__((nonnull(1,2))) static bool cstr_to_double(const char *cstr, double *result)
-{
-	char *endptr = NULL;
-
-	errno = 0;
-	*result = strtod(cstr, &endptr);
-	// Check for underflow/overflow, strtoimax sets ERANGE in such case
-	if (errno == ERANGE) {
-		return false;
-	}
-	// Check whether there were some digits in the string
-	if (endptr == cstr) {
-		errno = EINVAL;
-		return false;
-	}
-	// Check whether the function used the whole string
-	if (*endptr != '\0') {
-		errno = EINVAL;
-		return false;
-	}
-	return true;
-}
-
-// finally, we have gotten to the point of comparing system data with a state
-static oval_result_t evaluate(char *sys_data, char *state_data, oval_datatype_t sys_data_type,
-			      oval_datatype_t state_data_type, oval_operation_t operation)
-{
-	// todo: cast values to a common type
-
-	if (state_data_type == OVAL_DATATYPE_STRING) {
-		return oval_string_cmp(state_data, sys_data, operation);
-	} else if (state_data_type == OVAL_DATATYPE_INTEGER) {
-		intmax_t state_val, syschar_val;
-
-		if (!cstr_to_intmax(state_data, &state_val)) {
-			oscap_seterr(OSCAP_EFAMILY_OVAL,
-			             "Conversion of the string \"%s\" to an integer (%u bits) failed: %s",
-			             state_data, sizeof(intmax_t)*8, strerror(errno));
-			return OVAL_RESULT_ERROR;
-		}
-
-		if (!cstr_to_intmax(sys_data, &syschar_val)) {
-			oscap_seterr(OSCAP_EFAMILY_OVAL,
-			             "Conversion of the string \"%s\" to an integer (%u bits) failed: %s",
-			             sys_data, sizeof(intmax_t)*8, strerror(errno));
-			return OVAL_RESULT_ERROR;
-		}
-		return oval_int_cmp(state_val, syschar_val, operation);
-	} else if (state_data_type == OVAL_DATATYPE_FLOAT) {
-		double state_val, sys_val;
-
-		if (!cstr_to_double(state_data, &state_val)) {
-			oscap_seterr(OSCAP_EFAMILY_OVAL,
-			             "Conversion of the string \"%s\" to a floating type (double) failed: %s",
-			             state_data, strerror(errno));
-			return OVAL_RESULT_ERROR;
-		}
-
-		if (!cstr_to_double(sys_data, &sys_val)) {
-			oscap_seterr(OSCAP_EFAMILY_OVAL,
-			             "Conversion of the string \"%s\" to a floating type (double) failed: %s",
-			             sys_data, strerror(errno));
-			return OVAL_RESULT_ERROR;
-		}
-                return oval_float_cmp(state_val, sys_val, operation);
-	} else if (state_data_type == OVAL_DATATYPE_BOOLEAN) {
-		int state_int;
-		int sys_int;
-		state_int = (((strcmp(state_data, "true")) == 0) || ((strcmp(state_data, "1")) == 0)) ? 1 : 0;
-		sys_int = (((strcmp(sys_data, "true")) == 0) || ((strcmp(sys_data, "1")) == 0)) ? 1 : 0;
-		return oval_boolean_cmp(state_int, sys_int, operation);
-	} else if (state_data_type == OVAL_DATATYPE_BINARY) {
-		return oval_binary_cmp(state_data, sys_data, operation);
-	} else if (state_data_type == OVAL_DATATYPE_EVR_STRING) {
-		return oval_evr_string_cmp(state_data, sys_data, operation);
-	} else if (state_data_type == OVAL_DATATYPE_VERSION) {
-		return oval_versiontype_cmp(state_data, sys_data, operation);
-	} else if (state_data_type == OVAL_DATATYPE_IPV4ADDR) {
-		return oval_ipaddr_cmp(AF_INET, state_data, sys_data, operation);
-	} else if (state_data_type == OVAL_DATATYPE_IPV6ADDR) {
-		return oval_ipaddr_cmp(AF_INET6, state_data, sys_data, operation);
-	} else if (state_data_type == OVAL_DATATYPE_FILESET_REVISION
-		   || state_data_type == OVAL_DATATYPE_IOS_VERSION) {
-		dW("Unsupported data type: %s.\n", oval_datatype_get_text(state_data_type));
-		return OVAL_RESULT_NOT_EVALUATED;
-	}
-
-	oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid OVAL data type: %d.", state_data_type);
-        return OVAL_RESULT_ERROR;
 }
 
 int ores_add_res(struct oresults *ores, oval_result_t res)
