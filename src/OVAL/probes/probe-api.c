@@ -257,20 +257,24 @@ bool probe_item_filtered(const SEXP_t *item, const SEXP_t *filters)
 				SEXP_free(r0);
 			}
 
-			oscap_free(elm_name);
-			r0 = probe_ent_getattrval(felm, "entity_check");
+			if (SEXP_list_length(elm_res) > 0) {
+				oscap_free(elm_name);
+				r0 = probe_ent_getattrval(felm, "entity_check");
 
-			if (r0 == NULL)
-				ochk = OVAL_CHECK_ALL;
-			else
-				ochk = SEXP_number_geti_32(r0);
+				if (r0 == NULL)
+					ochk = OVAL_CHECK_ALL;
+				else
+					ochk = SEXP_number_geti_32(r0);
 
-			SEXP_free(r0);
+				SEXP_free(r0);
 
-			ores = probe_ent_result_bychk(elm_res, ochk);
+				ores = probe_ent_result_bychk(elm_res, ochk);
+				SEXP_free(elm_res);
+			} else {
+				ores = OVAL_RESULT_FALSE;
+			}
 			SEXP_list_add(ste_res, r0 = SEXP_number_newi_32(ores));
 			SEXP_free(r0);
-			SEXP_free(elm_res);
 		}
 
 		r0 = probe_ent_getattrval(ste, "operator");
