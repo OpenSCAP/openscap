@@ -156,9 +156,6 @@ static int collect_item(probe_ctx *ctx, oval_version_t over, struct mntent *mnt_
          */
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
         uuid = blkid_get_tag_value(blkcache, "UUID", mnt_ent->mnt_fsname);
-        if (uuid == NULL) {
-	        uuid = "";
-        }
 #endif
         /*
          * Create a NULL-terminated array from the mount options
