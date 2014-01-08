@@ -25,6 +25,7 @@
 //#endif
 
 #include <stdint.h>
+#include <string.h>
 
 #include "_sexp-atomic.h"
 #include "_sexp-value.h"
@@ -557,4 +558,23 @@ void SEXP_rawval_lblk_free1 (uintptr_t lblkp, void (*func) (SEXP_t *))
         }
 
         return;
+}
+
+uintptr_t SEXP_rawval_copy(uintptr_t s_valp)
+{
+	uintptr_t uptr;
+	SEXP_val_t v_dsc;
+	SEXP_val_dsc(&v_dsc, s_valp);
+
+	if (v_dsc.type != SEXP_VALTYPE_LIST) {
+		SEXP_val_t v_dsc_copy;
+		if (SEXP_val_new(&v_dsc_copy, v_dsc.hdr->size, v_dsc.type) != 0) {
+			return ((uintptr_t)NULL);
+		}
+		memcpy(v_dsc_copy.mem, v_dsc.mem, v_dsc.hdr->size);
+		uptr = SEXP_val_ptr(&v_dsc_copy);
+	} else {
+		uptr = SEXP_rawval_list_copy(s_valp);
+	}
+	return uptr;
 }

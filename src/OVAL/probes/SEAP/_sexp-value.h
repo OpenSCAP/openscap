@@ -122,6 +122,8 @@ void      SEXP_rawval_lblk_free1 (uintptr_t lblkp, void (*func) (SEXP_t *));
 
 #define SEXP_VALP_LBLK(valp) ((struct SEXP_val_lblk *)((uintptr_t)(valp) & SEXP_LBLKP_MASK))
 
+uintptr_t SEXP_rawval_copy(uintptr_t s_valp);
+
 OSCAP_HIDDEN_END;
 
 #endif /* _SEXP_VALUE_H */
