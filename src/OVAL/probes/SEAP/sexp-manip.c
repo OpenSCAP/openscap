@@ -1672,41 +1672,32 @@ SEXP_t *SEXP_unref (SEXP_t *s_exp_o)
 
 SEXP_t *SEXP_softref (SEXP_t *s_exp_o)
 {
-        SEXP_t *s_exp_r;
-        SEXP_val_t v_dsc;
+	SEXP_t *s_exp_r;
+	SEXP_val_t v_dsc;
 
-        SEXP_VALIDATE(s_exp_o);
+	SEXP_VALIDATE(s_exp_o);
 
-        s_exp_r = SEXP_new ();
-        s_exp_r->s_type = s_exp_o->s_type;
-        s_exp_r->s_valp = s_exp_o->s_valp;
+	s_exp_r = SEXP_new ();
+	s_exp_r->s_type = s_exp_o->s_type;
+	s_exp_r->s_valp = s_exp_o->s_valp;
 
-        SEXP_val_dsc (&v_dsc, s_exp_r->s_valp);
+	SEXP_val_dsc (&v_dsc, s_exp_r->s_valp);
 
-        if (v_dsc.hdr->refs > 1) {
-		if (v_dsc.type == SEXP_VALTYPE_LIST) {
-			uintptr_t uptr;
-
-			uptr = SEXP_rawval_list_copy (s_exp_r->s_valp);
-
-			if (SEXP_rawval_decref (s_exp_r->s_valp)) {
-				/* TODO: handle this */
-				abort();
-			}
-
-			s_exp_r->s_valp = uptr;
-                        s_exp_o->s_valp = uptr;
-		} else {
-                        /* TODO: handle types other than lists */
+	if (v_dsc.hdr->refs > 1) {
+		uintptr_t uptr = SEXP_rawval_copy(s_exp_r->s_valp);
+		if (SEXP_rawval_decref(s_exp_r->s_valp)) {
+			/* cannot happen -- refs > 1 */
 			abort();
 		}
-        }
+		s_exp_r->s_valp = uptr;
+		s_exp_o->s_valp = uptr;
+	}
 
 	s_exp_r->s_type = SEXP_rawptr_safemergeT(SEXP_datatypePtr_t, s_exp_r->s_type,
-						 1<<1, SEXP_DATATYPEPTR_MASK);
-        SEXP_VALIDATE(s_exp_r);
+	                                         1<<1, SEXP_DATATYPEPTR_MASK);
+	SEXP_VALIDATE(s_exp_r);
 
-        return (s_exp_r);
+	return (s_exp_r);
 }
 
 bool SEXP_softrefp(const SEXP_t *s_exp)
