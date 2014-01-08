@@ -156,6 +156,9 @@ static int collect_item(probe_ctx *ctx, oval_version_t over, struct mntent *mnt_
          */
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
         uuid = blkid_get_tag_value(blkcache, "UUID", mnt_ent->mnt_fsname);
+        if (uuid == NULL) {
+	        uuid = "";
+        }
 #endif
         /*
          * Create a NULL-terminated array from the mount options
@@ -194,6 +197,15 @@ static int collect_item(probe_ctx *ctx, oval_version_t over, struct mntent *mnt_
                                  "space_used",    OVAL_DATATYPE_INTEGER, (int64_t)(stvfs.f_blocks - stvfs.f_bfree),
                                  "space_left",    OVAL_DATATYPE_INTEGER, (int64_t)stvfs.f_bfree,
                                  NULL);
+
+        /*
+         * If the partition doesn't have an UUID assigned, set the uuid entity status to
+         * "does not exist" which means that the value was collected but does not exist
+         * on the system.
+         */
+        if (strcmp(uuid, "") == 0) {
+	        probe_itement_setstatus(item, "uuid", 1, SYSCHAR_STATUS_DOES_NOT_EXIST);
+        }
 
         probe_item_collect(ctx, item);
         oscap_free(mnt_opts);
