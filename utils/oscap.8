@@ -97,12 +97,12 @@ Writes results to a given FILE in Asset Reporting Format. It is recommended to u
 .TP
 \fB\-\-report FILE\fR
 .RS
-Write HTML report into FILE. You also have to specify --results for this feature to work.
+Write HTML report into FILE. You also have to specify --results for this feature to work. Please see --oval-results to enable additional information in the report.
 .RE
 .TP
 \fB\-\-oval-results\fR
 .RS
-Generate OVAL Result file for each OVAL session used for evaluation. File with name '\fIoriginal-oval-definitions-filename\fR.result.xml' will be generated for each referenced OVAL file. This option (with conjunction with the \fB\-\-report\fR option) also enables inclusion of additional OVAL information in the XCCDF report.
+Generate OVAL Result file for each OVAL session used for evaluation. File with name '\fIoriginal-oval-definitions-filename\fR.result.xml' will be generated for each referenced OVAL file in current working directory. This option (in conjunction with the \fB\-\-report\fR option) also enables inclusion of additional OVAL information in the XCCDF report. To change the directory where OVAL files are generated change the CWD using the `cd` command.
 .RE
 .TP
 \fB\-\-check-engine-results\fR
