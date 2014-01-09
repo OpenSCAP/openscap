@@ -416,11 +416,7 @@ static inline oval_result_t _evaluate_sysent_with_variable(struct oval_syschar_m
 			}
 			oval_datatype_t state_entity_val_datatype = oval_value_get_datatype(var_val);
 
-			var_val_res = evaluate(
-					state_entity_val_text,
-					state_entity_val_datatype,
-					item_entity,
-					state_entity_operation);
+			var_val_res = oval_ent_cmp_str(state_entity_val_text, state_entity_val_datatype, item_entity, state_entity_operation);
 			ores_add_res(&var_ores, var_val_res);
 		}
 		oval_value_iterator_free(val_itr);
@@ -465,11 +461,7 @@ static inline oval_result_t _evaluate_sysent(struct oval_syschar_model *syschar_
 		}
 		state_entity_val_datatype = oval_value_get_datatype(state_entity_val);
 
-		return evaluate(
-				       state_entity_val_text,
-				       state_entity_val_datatype,
-				       item_entity,
-				       state_entity_operation);
+		return oval_ent_cmp_str(state_entity_val_text, state_entity_val_datatype, item_entity, state_entity_operation);
 	}
 }
 

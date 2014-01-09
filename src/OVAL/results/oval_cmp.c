@@ -89,7 +89,7 @@ __attribute__((nonnull(1,2))) static bool cstr_to_double(const char *cstr, doubl
 }
 
 
-oval_result_t evaluate(char *state_data, oval_datatype_t state_data_type, struct oval_sysent *sysent, oval_operation_t operation)
+oval_result_t oval_ent_cmp_str(char *state_data, oval_datatype_t state_data_type, struct oval_sysent *sysent, oval_operation_t operation)
 {
 	// finally, we have gotten to the point of comparing system data with a state
 	// todo: cast values to a common type
