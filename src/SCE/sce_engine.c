@@ -45,6 +45,7 @@
 #include <assert.h>
 #include <fcntl.h>
 #include <sys/types.h>
+#include <sys/prctl.h>
 #include <limits.h>
 #include <unistd.h>
 
@@ -470,6 +471,15 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			// one now, stdout and stderr will be closed properly after the execved
 			// script/executable finishes
 			close(pipefd[1]);
+
+			// before we execute the script, lets make sure we get SIGTERM when
+			// oscap is killed, crashes or otherwise terminates
+#ifdef PR_SET_PDEATHSIG
+			// requires Linux 2.1.57 or later
+			prctl(PR_SET_PDEATHSIG, SIGTERM);
+#else
+			// TODO: Please provide alternatives
+#endif
 
 			// we are the child process
 			execve(tmp_href, argvp, env_values);
