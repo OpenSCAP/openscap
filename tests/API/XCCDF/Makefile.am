@@ -7,6 +7,7 @@ SUBDIRS = \
 	parser \
 	progress \
 	report \
+	result_files \
 	tailoring \
 	unittests \
 	variable_instance
