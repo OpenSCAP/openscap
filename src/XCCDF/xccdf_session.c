@@ -1023,25 +1023,43 @@ static void _xccdf_session_free_oval_result_files(struct xccdf_session *session)
 	}
 }
 
-static char *_xccdf_session_export_oval_result_file(struct xccdf_session *session, struct oval_agent_session *oval_session)
+static bool _real_paths_equal(const char *path1, const char *path2)
 {
-	/* get result model and session name */
-	struct oval_results_model *res_model = oval_agent_get_results_model(oval_session);
-	const char* oval_results_directory = NULL;
-	char *name = NULL;
+	// Assumption of this function: path1 points to an existing file!
 
-	if (session->export.oval_results == true) {
-		oval_results_directory = ".";
+	// Can't use stat because one of the paths may not exist at this point.
+	// The point of all this code is to prevent collisions, not to detect them.
+
+	char *path1_rp = malloc(PATH_MAX * sizeof(char));
+	char *path2_rp = malloc(PATH_MAX * sizeof(char));
+
+	bool ret = false;
+
+	char *path1_rp_ret = realpath(path1, path1_rp);
+	char *path2_rp_ret = realpath(path2, path2_rp);
+
+	if (path1_rp_ret != path1_rp) {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC,
+			"Unfortunately, realpath for '%s' didn't yield results usable for path comparison!", path1);
+		goto cleanup;
 	}
-	else {
-		if (!session->temp_dir)
-			session->temp_dir = oscap_acquire_temp_dir();
-		if (session->temp_dir == NULL)
-			return NULL;
 
-		oval_results_directory = session->temp_dir;
+	// We assume the first file exists, if the second file doesn't they can't be equal.
+	if (path2_rp_ret != path2_rp) {
+		goto cleanup;
 	}
 
+	ret = strcmp(path1_rp, path2_rp) == 0;
+
+cleanup:
+	free(path1_rp);
+	free(path2_rp);
+
+	return ret;
+}
+
+static char *_xccdf_session_get_unique_oval_result_filename(struct xccdf_session *session, struct oval_agent_session *oval_session, const char *oval_results_directory)
+{
 	char *escaped_url = NULL;
 	const char *filename = oval_agent_get_filename(oval_session);
 	if (!filename) {
@@ -1075,30 +1093,93 @@ static char *_xccdf_session_export_oval_result_file(struct xccdf_session *sessio
 		oscap_free(filename_cpy);
 	}
 
-	name = malloc(PATH_MAX * sizeof(char));
-	snprintf(name, PATH_MAX, "%s/%s.result.xml", oval_results_directory, escaped_url != NULL ? escaped_url : filename);
+	char *name = NULL;
+	unsigned int suffix = 1;
+	while (suffix < UINT_MAX)
+	{
+		name = malloc(PATH_MAX * sizeof(char));
+		if (suffix == 1)
+			snprintf(name, PATH_MAX, "%s/%s.result.xml", oval_results_directory, escaped_url != NULL ? escaped_url : filename);
+		else
+			snprintf(name, PATH_MAX, "%s/%s.result%i.xml", oval_results_directory, escaped_url != NULL ? escaped_url : filename, suffix);
+
+		// Check if this export name conflicts with any other exported OVAL result.
+		//
+		// One example where a conflict can easily happen is if we have the
+		// same OVAL file used for CPE platform evaluation and check evaluation.
+		//
+		// openscap will create 2 OVAL sessions for the same file and will try
+		// to export 2 different OVAL result files to the same path.
+
+		bool conflict_found = false;
+		int i;
+		for (i=0; session->oval.result_files[i]; i++) {
+
+			// result_files[i] has to be first here, _real_paths_equal assumes
+			// the first argument points to an existing file
+			if (_real_paths_equal(session->oval.result_files[i], name)) {
+				conflict_found = true;
+				break;
+			}
+		}
+
+		if (!conflict_found)
+			break;
+
+		free(name);
+		++suffix;
+	}
+
 	if (escaped_url != NULL)
 		free(escaped_url);
 
-	/* export result model to XML */
-	if (oval_results_model_export(res_model, NULL, name) == -1) {
-		free(name);
-		return NULL;
+	return name;
+}
+
+static char *_xccdf_session_export_oval_result_file(struct xccdf_session *session, struct oval_agent_session *oval_session)
+{
+	/* get result model and session name */
+	struct oval_results_model *res_model = oval_agent_get_results_model(oval_session);
+	const char* oval_results_directory = NULL;
+
+	if (session->export.oval_results == true) {
+		oval_results_directory = ".";
+	}
+	else {
+		if (!session->temp_dir)
+			session->temp_dir = oscap_acquire_temp_dir();
+		if (session->temp_dir == NULL)
+			return NULL;
+
+		oval_results_directory = session->temp_dir;
 	}
 
-	/* validate OVAL Results */
-	if (session->validate && session->full_validation) {
-		char *doc_version;
+	char *name = _xccdf_session_get_unique_oval_result_filename(session, oval_session, oval_results_directory);
 
-		doc_version = oval_determine_document_schema_version((const char *) name, OSCAP_DOCUMENT_OVAL_RESULTS);
-		if (oscap_validate_document(name, OSCAP_DOCUMENT_OVAL_RESULTS, (const char *) doc_version,
-					_reporter, NULL)) {
-			_validation_failed(name, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version);
+	if (name == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't figure out the right filename for OVAL result file. Can't export that file!");
+	}
+	else {
+		/* export result model to XML */
+		if (oval_results_model_export(res_model, NULL, name) == -1) {
 			free(name);
-			free(doc_version);
 			return NULL;
 		}
-		free(doc_version);
+
+		/* validate OVAL Results */
+		if (session->validate && session->full_validation) {
+			char *doc_version;
+
+			doc_version = oval_determine_document_schema_version((const char *) name, OSCAP_DOCUMENT_OVAL_RESULTS);
+			if (oscap_validate_document(name, OSCAP_DOCUMENT_OVAL_RESULTS, (const char *) doc_version,
+						_reporter, NULL)) {
+				_validation_failed(name, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version);
+				free(name);
+				free(doc_version);
+				return NULL;
+			}
+			free(doc_version);
+		}
 	}
 
 	return name;
