@@ -171,6 +171,42 @@ static oval_result_t probe_ent_cmp_ipaddr(int af, SEXP_t *val1, SEXP_t *val2, ov
 	return result;
 }
 
+static inline oval_result_t probe_ent_cmp_single(SEXP_t *state_ent, oval_datatype_t state_data_type, SEXP_t *sysent, oval_operation_t op)
+{
+	// This compares a single entity of a state with a single entity of a sysitem
+	// This is very similar to oval_ent_cmp_str, we hope to get a rid of this soon
+
+	switch (state_data_type) {
+	case OVAL_DATATYPE_BINARY:
+		return probe_ent_cmp_binary(state_ent, sysent, op);
+	case OVAL_DATATYPE_BOOLEAN:
+		return probe_ent_cmp_bool(state_ent, sysent, op);
+	case OVAL_DATATYPE_EVR_STRING:
+		return probe_ent_cmp_evr(state_ent, sysent, op);
+	case OVAL_DATATYPE_FILESET_REVISION:
+		return probe_ent_cmp_filesetrev(state_ent, sysent, op);
+	case OVAL_DATATYPE_FLOAT:
+		return probe_ent_cmp_float(state_ent, sysent, op);
+	case OVAL_DATATYPE_IOS_VERSION:
+		return probe_ent_cmp_ios(state_ent, sysent, op);
+	case OVAL_DATATYPE_VERSION:
+		return probe_ent_cmp_version(state_ent, sysent, op);
+	case OVAL_DATATYPE_INTEGER:
+		return probe_ent_cmp_int(state_ent, sysent, op);
+	case OVAL_DATATYPE_STRING:
+		return probe_ent_cmp_string(state_ent, sysent, op);
+	case OVAL_DATATYPE_IPV4ADDR:
+		return probe_ent_cmp_ipaddr(AF_INET, state_ent, sysent, op);
+	case OVAL_DATATYPE_IPV6ADDR:
+		return probe_ent_cmp_ipaddr(AF_INET6, state_ent, sysent, op);
+	default:
+		dI("Unexpected data type: %d\n", state_data_type);
+		break;
+	}
+
+	return OVAL_RESULT_ERROR;
+}
+
 static oval_result_t probe_ent_cmp(SEXP_t * ent, SEXP_t * val2)
 {
 	oval_operation_t op;
@@ -217,44 +253,7 @@ static oval_result_t probe_ent_cmp(SEXP_t * ent, SEXP_t * val2)
 			return OVAL_RESULT_ERROR;
 		}
 
-		switch (dtype) {
-		case OVAL_DATATYPE_BINARY:
-			ores = probe_ent_cmp_binary(val1, val2, op);
-			break;
-		case OVAL_DATATYPE_BOOLEAN:
-			ores = probe_ent_cmp_bool(val1, val2, op);
-			break;
-		case OVAL_DATATYPE_EVR_STRING:
-			ores = probe_ent_cmp_evr(val1, val2, op);
-			break;
-		case OVAL_DATATYPE_FILESET_REVISION:
-			ores = probe_ent_cmp_filesetrev(val1, val2, op);
-			break;
-		case OVAL_DATATYPE_FLOAT:
-			ores = probe_ent_cmp_float(val1, val2, op);
-			break;
-		case OVAL_DATATYPE_IOS_VERSION:
-			ores = probe_ent_cmp_ios(val1, val2, op);
-			break;
-		case OVAL_DATATYPE_VERSION:
-			ores = probe_ent_cmp_version(val1, val2, op);
-			break;
-		case OVAL_DATATYPE_INTEGER:
-			ores = probe_ent_cmp_int(val1, val2, op);
-			break;
-		case OVAL_DATATYPE_STRING:
-			ores = probe_ent_cmp_string(val1, val2, op);
-			break;
-		case OVAL_DATATYPE_IPV4ADDR:
-			ores = probe_ent_cmp_ipaddr(AF_INET, val1, val2, op);
-			break;
-		case OVAL_DATATYPE_IPV6ADDR:
-			ores = probe_ent_cmp_ipaddr(AF_INET6, val1, val2, op);
-			break;
-		default:
-			ores = OVAL_RESULT_ERROR;
-			dI("Unexpected data type: %d\n", dtype);
-		}
+		ores = probe_ent_cmp_single(val1, dtype, val2, op);
 
 		SEXP_list_add(res_lst, r0 = SEXP_number_newi_32(ores));
                 SEXP_free(r0);
