@@ -769,7 +769,7 @@ echo
 echo '* Checking for procps library used by:  process58 process'
 PKG_CHECK_MODULES([procps], [libprocps >= 0.0],[],[
 SAVE_LIBS=$LIBS
-AC_SEARCH_LIBS([],[procps-ng],[
+AC_SEARCH_LIBS([dev_to_tty],[procps-ng],[
 procps_CFLAGS=;
 procps_LIBS=-lprocps-ng;
 ],[
@@ -784,7 +784,7 @@ LIBS=$SAVE_LIBS
 ])
 SAVE_LIBS=$LIBS
 LIBS=$procps_LIBS
-AC_CHECK_FUNCS([dev_to_tty],[],[])
+AC_CHECK_FUNCS([dev_to_tty], [], [])
 LIBS=$SAVE_LIBS
 echo
 echo '* Checking for rpm library used by: rpminfo rpmverify rpmverifyfile rpmverifypackage '
