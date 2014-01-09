@@ -130,144 +130,15 @@ oval_result_t probe_ent_cmp_ios(SEXP_t * val1, SEXP_t * val2, oval_operation_t o
 	return result;
 }
 
-static SEXP_t *version_parser(char *version)
-{
-	long long int token;
-	size_t len, nbr_len;
-	char *s, *v_dup = NULL;
-	const char *ac = "0123456789";
-	SEXP_t *version_tokens = NULL, *r0;
-
-	len = strlen(version);
-	if (len == 0)
-		goto fail;
-
-	nbr_len = strspn(version, ac);
-	if (nbr_len == 0)
-		/* version string starts with a delimiter */
-		goto fail;
-
-	s = v_dup = strdup(version);
-	version_tokens = SEXP_list_new(NULL);
-
-	while (len > 0) {
-		nbr_len = strspn(s, ac);
-		if (nbr_len == 0)
-			/* consecutive delimiters */
-			goto fail;
-		s[nbr_len] = '\0';
-		token = atoll(s);
-		SEXP_list_add(version_tokens, r0 = SEXP_number_newi_64(token));
-		s += nbr_len + 1;
-		len -= nbr_len + 1;
-                SEXP_free(r0);
-	}
-	if (len == 0)
-		/* trailing delimiter */
-		goto fail;
-
-	if (v_dup != NULL)
-		free(v_dup);
-
-	return version_tokens;
- fail:
-	if (v_dup != NULL)
-		free(v_dup);
-	if (version_tokens != NULL)
-		SEXP_free(version_tokens);
-
-	return NULL;
-}
-
 oval_result_t probe_ent_cmp_version(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
 {
-	oval_result_t result = OVAL_RESULT_ERROR;
-	SEXP_t *v1_tkns = NULL, *v2_tkns = NULL, *stmp, *r0;
-	char *vtmp;
-	size_t len, i;
-	int lendif;
-	long long int v1, v2;
+	const char *state_version = SEXP_string_cstr(val1);
+	const char *sys_version = SEXP_string_cstr(val2);
 
-	switch (op) {
-	case OVAL_OPERATION_EQUALS:
-	case OVAL_OPERATION_GREATER_THAN_OR_EQUAL:
-	case OVAL_OPERATION_LESS_THAN_OR_EQUAL:
-		result = OVAL_RESULT_TRUE;
-		break;
-	case OVAL_OPERATION_NOT_EQUAL:
-	case OVAL_OPERATION_GREATER_THAN:
-	case OVAL_OPERATION_LESS_THAN:
-		result = OVAL_RESULT_FALSE;
-		break;
-	default:
-		dI("Unexpected compare operation: %d\n", op);
-		goto fail;
-	}
+	oval_result_t result = oval_versiontype_cmp(state_version, sys_version, op);
 
-	vtmp = SEXP_string_cstr(val1);
-	v1_tkns = version_parser(vtmp);
-	free(vtmp);
-	if (v1_tkns == NULL)
-		goto fail;
-
-	vtmp = SEXP_string_cstr(val2);
-	v2_tkns = version_parser(vtmp);
-	free(vtmp);
-	if (v2_tkns == NULL)
-		goto fail;
-
-	/* align token counts */
-	lendif = SEXP_list_length(v1_tkns) - SEXP_list_length(v2_tkns);
-	if (lendif < 0) {
-		lendif = -lendif;
-		stmp = v1_tkns;
-	} else if (lendif > 0) {
-		stmp = v2_tkns;
-	}
-	for (; lendif > 0; --lendif) {
-		SEXP_list_add(stmp, r0 = SEXP_number_newi_64(0));
-                SEXP_free(r0);
-	}
-
-	len = SEXP_list_length(v1_tkns);
-	for (i = 1; i <= len; ++i) {
-		v1 = SEXP_number_geti_64(r0 = SEXP_list_nth(v1_tkns, i));
-                SEXP_free(r0);
-		v2 = SEXP_number_geti_64(r0 = SEXP_list_nth(v2_tkns, i));
-                SEXP_free(r0);
-
-		if (op == OVAL_OPERATION_EQUALS) {
-			if (v1 != v2) {
-				result = OVAL_RESULT_FALSE;
-				break;
-			}
-		} else if (op == OVAL_OPERATION_NOT_EQUAL) {
-			if (v1 != v2) {
-				result = OVAL_RESULT_TRUE;
-				break;
-			}
-		} else if ((op == OVAL_OPERATION_GREATER_THAN) || (op == OVAL_OPERATION_GREATER_THAN_OR_EQUAL)) {
-			if (v1 < v2) {
-				result = OVAL_RESULT_TRUE;
-				break;
-			} else if (v1 > v2) {
-				result = OVAL_RESULT_FALSE;
-				break;
-			}
-		} else if ((op == OVAL_OPERATION_LESS_THAN) || (op == OVAL_OPERATION_LESS_THAN_OR_EQUAL)) {
-			if (v1 > v2) {
-				result = OVAL_RESULT_TRUE;
-				break;
-			} else if (v1 < v2) {
-				result = OVAL_RESULT_FALSE;
-				break;
-			}
-		}
-	}
-
- fail:
-	SEXP_free(v1_tkns);
-	SEXP_free(v2_tkns);
+	oscap_free(state_version);
+	oscap_free(sys_version);
 	return result;
 }
 
