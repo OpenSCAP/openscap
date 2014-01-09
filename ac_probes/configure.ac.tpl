@@ -64,8 +64,6 @@ canonical_wrap
 # Compiler flags
 CFLAGS="$CFLAGS -pipe -std=c99 -W -Wall -Wnonnull -Wshadow -Wformat -Wundef -Wno-unused-parameter -Wmissing-prototypes -Wno-unknown-pragmas -D_GNU_SOURCE -DOSCAP_THREAD_SAFE -D_POSIX_C_SOURCE=200112L"
 
-CFLAGS="$CFLAGS -Werror=format-security"
-
 case $host in
   *solaris*) :
     CFLAGS="$CFLAGS -D__EXTENSIONS__" ;;
@@ -74,6 +72,17 @@ esac
 CFLAGS_OPTIMIZED="-O2 -finline-functions"
 CFLAGS_DEBUGGING="-fno-inline-functions -O0 -g3"
 CFLAGS_NODEBUG="-Wno-unused-function"
+
+my_save_cflags="$CFLAGS"
+CFLAGS="$CFLAGS -Werror=format-security"
+AC_MSG_CHECKING([whether CC supports -Werror=format-security])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+    [AC_MSG_RESULT([yes])]
+    [AM_CFLAGS="-Werror=format-security"],
+    [AC_MSG_RESULT([no])]
+)
+CFLAGS="$my_save_cflags"
+AC_SUBST([AM_CFLAGS])
 
 @@@@PROBE_DECL@@@@
 
