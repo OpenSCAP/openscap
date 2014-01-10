@@ -190,7 +190,7 @@ static inline int ipv4addr_parse(const char *oval_ipv4_string, uint32_t *netmask
 	pfx = strchr(s, '/');
 	if (pfx) {
 		int cnt;
-		char nm[4];
+		unsigned char nm[4];
 
 		*pfx++ = '\0';
 		cnt = sscanf(pfx, "%hhu.%hhu.%hhu.%hhu", &nm[0], &nm[1], &nm[2], &nm[3]);
