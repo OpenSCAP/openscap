@@ -1127,6 +1127,7 @@ static char *_xccdf_session_get_unique_oval_result_filename(struct xccdf_session
 			break;
 
 		free(name);
+		name = NULL;
 		++suffix;
 	}
 
