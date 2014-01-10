@@ -271,6 +271,7 @@ bool probe_item_filtered(const SEXP_t *item, const SEXP_t *filters)
 				ores = probe_ent_result_bychk(elm_res, ochk);
 				SEXP_free(elm_res);
 			} else {
+				SEXP_free(elm_res);
 				ores = OVAL_RESULT_FALSE;
 			}
 			SEXP_list_add(ste_res, r0 = SEXP_number_newi_32(ores));
