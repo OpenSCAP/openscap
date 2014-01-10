@@ -1,4 +1,4 @@
-To be released:
+openscap-1.0.2                                                  10-01-2014
  - XCCDF generate fix now supports tailoring file
  - XCCDF bug fixes
     - Generate guide points to RHSA pages (rhbz#1018291)
@@ -15,12 +15,18 @@ To be released:
     - rpm*_item/epoch is reported as '(none)' when needed
     - Fixed dozen of flaws in ipv4 and ipv6_address comparison (CIDR handling)
     - Made integer and floating type number parsing much stricter
+    - Fixed floating point numbers comparisons (trac#366)
     - Fixed case-insensitive comparisons
+    - Item filtering fixes in probes
+    - Consolidated some of comparisons in results model and probes (trac#367)
  - Other bug fixes:
     - Workaround libxml2 bug handling x509 xmldsig (gnomebz#350248)
     - Fixed static build (--disable-shared)
+    - Format assertions (-Werror=format-security) turned on by default
+    - SCE scripts are notified when parent (oscap) is killed
     - oscap info now recognizes all the document types (adeded: tailoring & CVE)
-    - Handful of minor fixes
+    - Documentation improvements
+    - Handful of other minor fixes
 
 openscap-1.0.1                                                  28-11-2013
  - versioned interface is used to handle internal SCE plug-in
