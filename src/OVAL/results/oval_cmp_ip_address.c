@@ -55,7 +55,7 @@ static inline int ipaddr_cmp(int af, const void *addr1, const void *addr2)
 	if (af == AF_INET)
 		return memcmp(addr1, addr2, sizeof(struct in_addr));
 	else {
-		assert(af == AF_INET6)
+		assert(af == AF_INET6);
 		return memcmp(addr1, addr2, sizeof(struct in6_addr));
 	}
 }
