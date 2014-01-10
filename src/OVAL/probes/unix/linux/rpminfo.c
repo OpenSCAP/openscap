@@ -551,8 +551,10 @@ int probe_main (probe_ctx *ctx, void *arg)
 				SEXP_free(name);
                                 __rpminfo_rep_free (&(reply_st[i]));
 
-				if (probe_item_collect(ctx, item))
+				if (probe_item_collect(ctx, item)) {
+					SEXP_vfree(ent, NULL);
 					return 1;
+				}
                         }
 
                         oscap_free (reply_st);
