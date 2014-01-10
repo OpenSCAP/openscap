@@ -310,7 +310,8 @@ int __SEAP_recvmsg_process_cmd (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
 static int __SEAP_recvmsg_process_err (SEAP_CTX_t *ctx, int sd, SEAP_err_t *err)
 {
 	SEAP_desc_t *sd_desc;
-	SEAP_err_t  *cloned_err, *prev_err;
+	SEAP_err_t  *cloned_err;
+	void *prev_err;
 
 	sd_desc = SEAP_desc_get(ctx->sd_table, sd);
 
@@ -333,7 +334,7 @@ static int __SEAP_recvmsg_process_err (SEAP_CTX_t *ctx, int sd, SEAP_err_t *err)
 
 	if (prev_err != NULL) {
 		/* XXX: log this */
-		SEAP_error_free(prev_err);
+		SEAP_error_free((SEAP_err_t*)prev_err);
 	}
 
         return (0);
