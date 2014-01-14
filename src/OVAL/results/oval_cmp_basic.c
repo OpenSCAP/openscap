@@ -51,7 +51,7 @@ oval_result_t oval_boolean_cmp(const bool state, const bool syschar, oval_operat
 	return OVAL_RESULT_ERROR;
 }
 
-oval_result_t oval_int_cmp(const int state, const int syschar, oval_operation_t operation)
+oval_result_t oval_int_cmp(const intmax_t state, const intmax_t syschar, oval_operation_t operation)
 {
 	switch (operation) {
 	case OVAL_OPERATION_EQUALS:
