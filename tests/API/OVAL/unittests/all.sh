@@ -11,6 +11,7 @@ test_run "partial matches"  $srcdir/test_item_not_exist.sh
 test_run "empty variable evaluation" $srcdir/test_oval_empty_variable_evaluation.sh
 test_run "export of xsi:nil on pid entity of env.var.58_object" $srcdir/test_xsinil_envv58_pid.sh
 test_run "Import content without proper namespaces" $srcdir/test_xmlns_missing.sh
+test_run "int comparison - intmax_t" $srcdir/test_int_comparison.sh
 test_run "evr_string comparison is superior to rpmvercmp" $srcdir/test_evr_string_comparison.sh
 test_run "evr_string comparison regards missing epoch in content" $srcdir/test_evr_string_missing_epoch.sh
 test_run "float comparison" $srcdir/test_float_comparison.sh
