@@ -38,4 +38,5 @@ EXTRA_DIST += test_xinetd_probe.sh \
                    xinetd_D.conf \
                    xinetd_E.conf \
                    xinetd_F.conf \
-                   xinetd_G.conf
+                   xinetd_G.conf \
+                   xinetd_H.conf

@@ -71,11 +71,21 @@ function test_probe_xinetd_regression_stringlist {
     return 1
 }
 
+function test_probe_xinetd_duplicates {
+    output=$(./test_probe_xinetd "${srcdir}/xinetd_H.conf" telnet tcp | grep 'xiconf_service_t(telnet)' | wc -l)
+
+    if [ "$output" = "3" ]; then
+	return 0
+    fi
+    return 1
+}
+
 # Testing.
 
 test_init "test_probe_xinetd.log"
 
 test_run "test_probe_xinetd_parser" test_probe_xinetd_parser
 test_run "xinetd parser regression test: string list" test_probe_xinetd_regression_stringlist
+test_run "test_probe_xinetd_duplicates" test_probe_xinetd_duplicates
 
 test_exit
