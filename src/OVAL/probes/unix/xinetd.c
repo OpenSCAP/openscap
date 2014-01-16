@@ -97,7 +97,7 @@ struct xiconf_attr {
 #define OPRES_EFAULT  3 /* Invalid memory access */
 #define OPRES_ELIMIT  4 /* Limit reached */
 
-typedef struct {
+typedef struct xiconf_service {
 	/*
 	 * Attributes needed by the xinetd probe
 	 */
@@ -123,6 +123,8 @@ typedef struct {
 	bool internal;
 	bool unlisted;
 	bool rpc;
+
+	struct xiconf_service *next;
 
 #if 0 /* Unused attributes; Maybe we will need them in some future version. */
 	bool groups;
@@ -397,6 +399,8 @@ static xiconf_service_t *xiconf_service_new(void)
 	service->unlisted = 0;
 	service->rpc      = 0;
 
+	service->next = NULL;
+
 	return (service);
 }
 
@@ -420,6 +424,11 @@ static void xiconf_service_free(xiconf_service_t *service)
         NONNULL_FREE(server_args);
         NONNULL_FREE(only_from);
         NONNULL_FREE(no_access);
+
+	if (service->next != NULL) {
+		xiconf_service_free(service->next);
+	}
+
 	oscap_free(service);
 }
 
@@ -1092,74 +1101,69 @@ finish_section:
 				xiconf_service_free(snew);
 				return (-1);
 			}
-
-			scur = snew;
-
-			if (scur->protocol == NULL) {
-				// First try to guess the protocol from the socket_type setting
-				if (scur->socket_type != NULL) {
-					// dgram => udp
-					if (strcmp(scur->socket_type, "dgram") == 0) {
-						scur->protocol = strdup("udp");
-					}
-					// stream => tcp
-					else if (strcmp(scur->socket_type, "stream") == 0) {
-						scur->protocol = strdup("tcp");
-					}
+		} else {
+			if (scur->next == NULL) {
+				scur->next = snew;
+			} else {
+				snew->next = scur->next;
+				scur->next = snew;
+			}
+		}
+		scur = snew;
+		if (scur->protocol == NULL) {
+			// First try to guess the protocol from the socket_type setting
+			if (scur->socket_type != NULL) {
+				// dgram => udp
+				if (strcmp(scur->socket_type, "dgram") == 0) {
+					scur->protocol = strdup("udp");
 				}
-				// If we still don't know the protocol, then get the default from /etc/services
-				if (scur->protocol == NULL) {
-					struct servent *service = getservbyname(scur->name, NULL);
-					dI("protocol is empty, trying to guess from /etc/services for %s\n", scur->name);
-					if (service != NULL) {
-						scur->protocol = strdup(service->s_proto);
-						dI("service %s has default protocol=%s\n", scur->name, scur->protocol);
-					}
-					endservent();
+				// stream => tcp
+				else if (strcmp(scur->socket_type, "stream") == 0) {
+					scur->protocol = strdup("tcp");
 				}
 			}
-			if (scur->port == 0) {
-				struct servent *service = getservbyname(scur->name, scur->protocol);
-				dI("port not set, trying to guess from /etc/services for %s\n", scur->name);
+			// If we still don't know the protocol, then get the default from /etc/services
+			if (scur->protocol == NULL) {
+				struct servent *service = getservbyname(scur->name, NULL);
+				dI("protocol is empty, trying to guess from /etc/services for %s\n", scur->name);
 				if (service != NULL) {
-					if (service->s_port > 0 && service->s_port < 65536) {
-						scur->port = ntohs((uint16_t)service->s_port);
-						dI("service %s has default port=%hu/%s\n",
-						   scur->name, scur->port, scur->protocol);
-					}
+					scur->protocol = strdup(service->s_proto);
+					dI("service %s has default protocol=%s\n", scur->name, scur->protocol);
 				}
 				endservent();
 			}
-			if (scur->type != 0) {
-				// Check that the type is one of the allowed values by OVAL.
-				// The xinetd configuration acually allows any combination of
-				// the values. In such case, we set the type to an empty string.
-				const char *type_enum[] = { "RPC", "INTERNAL", "UNLISTED", "TCPMUX", "TCPMUXPLUS", NULL };
-				bool type_enum_match = false;
-				size_t i;
-				for (i = 0; type_enum[i]; ++i) {
-					if (strcmp(scur->type, type_enum[i]) == 0) {
-						type_enum_match = true;
-						break;
-					}
-				}
-				if (!type_enum_match) {
-					dE("The value of the type setting does not match"
-					   " any of the allowed values by OVAL: %s\n", scur->type);
-					scur->type = "";
+		}
+		if (scur->port == 0) {
+			struct servent *service = getservbyname(scur->name, scur->protocol);
+			dI("port not set, trying to guess from /etc/services for %s\n", scur->name);
+			if (service != NULL) {
+				if (service->s_port > 0 && service->s_port < 65536) {
+					scur->port = ntohs((uint16_t)service->s_port);
+					dI("service %s has default port=%hu/%s\n",
+					   scur->name, scur->port, scur->protocol);
 				}
 			}
-		} else {
-			dI("Merge(%p, %p)\n", scur, snew);
-
-			if (xiconf_service_merge_and_free(scur, snew) != 0) {
-				dE("Failed to merge service tree records %p and %p (id=%s)\n",
-				   scur, snew, snew->id);
-				xiconf_service_free(snew);
-				return (-1);
+			endservent();
+		}
+		if (scur->type != 0) {
+			// Check that the type is one of the allowed values by OVAL.
+			// The xinetd configuration acually allows any combination of
+			// the values. In such case, we set the type to an empty string.
+			const char *type_enum[] = { "RPC", "INTERNAL", "UNLISTED", "TCPMUX", "TCPMUXPLUS", NULL };
+			bool type_enum_match = false;
+			size_t i;
+			for (i = 0; type_enum[i]; ++i) {
+				if (strcmp(scur->type, type_enum[i]) == 0) {
+					type_enum_match = true;
+					break;
+				}
+			}
+			if (!type_enum_match) {
+				dE("The value of the type setting does not match"
+				   " any of the allowed values by OVAL: %s\n", scur->type);
+				scur->type = "";
 			}
 		}
-
 		/*
 		 * Add entry to the ttree for (name, protocol) -> (id) translation
 		 * (in case it's not already there)
@@ -1598,6 +1602,37 @@ int op_assign_enabled(void *var, char *val)
 #endif
 
 #ifndef XINETD_TEST
+static void xiservice_process_query(probe_ctx *ctx, SEXP_t *service_name, SEXP_t *protocol, const xiconf_service_t *xsrv)
+{
+	SEXP_t *xres_service_name, *xres_protocol, *item;
+
+	xres_service_name = SEXP_string_new(xsrv->name, strlen(xsrv->name));
+	xres_protocol = SEXP_string_new(xsrv->protocol, strlen(xsrv->protocol));
+	if (probe_entobj_cmp(service_name, xres_service_name) == OVAL_RESULT_TRUE &&
+	    probe_entobj_cmp(protocol, xres_protocol) == OVAL_RESULT_TRUE
+		) {
+		item = probe_item_create(OVAL_UNIX_XINETD, NULL,
+					 "protocol",         OVAL_DATATYPE_STRING,  xsrv->protocol,
+					 "service_name",     OVAL_DATATYPE_STRING,  xsrv->name,
+					 "flags",            OVAL_DATATYPE_STRING_M, xsrv->flags,
+					 "no_access",        OVAL_DATATYPE_STRING_M, xsrv->no_access,
+					 "only_from",        OVAL_DATATYPE_STRING_M, xsrv->only_from,
+					 "port",             OVAL_DATATYPE_INTEGER, (int64_t)xsrv->port,
+					 "server",           OVAL_DATATYPE_STRING,  xsrv->server,
+					 "server_arguments", OVAL_DATATYPE_STRING,  xsrv->server_args,
+					 "socket_type",      OVAL_DATATYPE_STRING,  xsrv->socket_type,
+					 "type",             OVAL_DATATYPE_STRING,  xsrv->type,
+					 "user",             OVAL_DATATYPE_STRING,  xsrv->user,
+					 "wait",             OVAL_DATATYPE_BOOLEAN, xsrv->wait,
+					 "disabled",         OVAL_DATATYPE_BOOLEAN, xsrv->disable,
+					 NULL);
+
+		probe_item_collect(ctx, item);
+	}
+	SEXP_free(xres_service_name);
+	SEXP_free(xres_protocol);
+}
+
 void *probe_init(void)
 {
 	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
@@ -1617,6 +1652,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 	char    srv_prot[256];
 	int     err;
 
+	xiconf_service_t *xsrv;
 	xiconf_strans_t  *xres;
 	xiconf_t         *xcfg = (xiconf_t *)arg;
 
@@ -1675,35 +1711,14 @@ int probe_main(probe_ctx *ctx, void *arg)
 	xres = xiconf_dump(xcfg);
 
 	if (xres != NULL) {
-		SEXP_t *item, *xres_service_name, *xres_protocol;
 		register unsigned int l;
 
 		for (l = 0; l < xres->cnt; ++l) {
-			xres_service_name = SEXP_string_new( xres->srv[l]->name, strlen( xres->srv[l]->name));
-			xres_protocol = SEXP_string_new( xres->srv[l]->protocol, strlen( xres->srv[l]->protocol));
-			if (probe_entobj_cmp(service_name, xres_service_name) == OVAL_RESULT_TRUE &&
-			    probe_entobj_cmp(protocol, xres_protocol) == OVAL_RESULT_TRUE
-			   ) {
-				item = probe_item_create(OVAL_UNIX_XINETD, NULL,
-						"protocol",         OVAL_DATATYPE_STRING,  xres->srv[l]->protocol,
-						"service_name",     OVAL_DATATYPE_STRING,  xres->srv[l]->name,
-						"flags",            OVAL_DATATYPE_STRING_M, xres->srv[l]->flags,
-						"no_access",        OVAL_DATATYPE_STRING_M, xres->srv[l]->no_access,
-						"only_from",        OVAL_DATATYPE_STRING_M, xres->srv[l]->only_from,
-                                                "port",             OVAL_DATATYPE_INTEGER, (int64_t)xres->srv[l]->port,
-						"server",           OVAL_DATATYPE_STRING,  xres->srv[l]->server,
-						"server_arguments", OVAL_DATATYPE_STRING,  xres->srv[l]->server_args,
-						"socket_type",      OVAL_DATATYPE_STRING,  xres->srv[l]->socket_type,
-						"type",             OVAL_DATATYPE_STRING,  xres->srv[l]->type,
-						"user",             OVAL_DATATYPE_STRING,  xres->srv[l]->user,
-						"wait",             OVAL_DATATYPE_BOOLEAN, xres->srv[l]->wait,
-						"disabled",         OVAL_DATATYPE_BOOLEAN, xres->srv[l]->disable,
-						NULL);
-
-				probe_item_collect(ctx, item);
+			xsrv = xres->srv[l];
+			while (xsrv != NULL) {
+				xiservice_process_query(ctx, service_name, protocol, xsrv);
+				xsrv = xsrv->next;
 			}
-			SEXP_free(xres_service_name);
-			SEXP_free(xres_protocol);
 		}
 		oscap_free(xres->srv);
 		oscap_free(xres);
