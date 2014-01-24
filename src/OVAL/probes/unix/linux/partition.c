@@ -141,7 +141,7 @@ static int collect_item(probe_ctx *ctx, oval_version_t over, struct mntent *mnt_
 #endif
 {
         SEXP_t *item;
-        char   *uuid = NULL, *tok, *save = NULL, **mnt_opts;
+        char   *uuid = "", *tok, *save = NULL, **mnt_opts;
         uint8_t mnt_ocnt;
         struct statvfs stvfs;
 
@@ -198,6 +198,7 @@ static int collect_item(probe_ctx *ctx, oval_version_t over, struct mntent *mnt_
                                  "space_left",    OVAL_DATATYPE_INTEGER, (int64_t)stvfs.f_bfree,
                                  NULL);
 
+#if defined(HAVE_BLKID_GET_TAG_VALUE)
         /*
          * If the partition doesn't have an UUID assigned, set the uuid entity status to
          * "does not exist" which means that the value was collected but does not exist
@@ -206,6 +207,10 @@ static int collect_item(probe_ctx *ctx, oval_version_t over, struct mntent *mnt_
         if (strcmp(uuid, "") == 0) {
 	        probe_itement_setstatus(item, "uuid", 1, SYSCHAR_STATUS_DOES_NOT_EXIST);
         }
+#else
+	/* Compiled without blkid library, we don't collect UUID */
+	probe_itement_setstatus(item, "uuid", 1, SYSCHAR_STATUS_NOT_COLLECTED);
+#endif /* HAVE_BLKID_GET_TAG_VALUE */
 
         probe_item_collect(ctx, item);
         oscap_free(mnt_opts);
