@@ -137,7 +137,7 @@ static void report_finding(struct result_info *res, probe_ctx *ctx)
                                  "start_time",   OVAL_DATATYPE_STRING, res->start_time,
                                  "tty",          OVAL_DATATYPE_STRING, res->tty,
                                  "user_id",      OVAL_DATATYPE_INTEGER, (int64_t)res->user_id,
-                                 "exec_shield",  OVAL_DATATYPE_BOOLEAN, (int64_t)res->exec_shield,
+                                 "exec_shield",  OVAL_DATATYPE_BOOLEAN, (bool)res->exec_shield,
                                  "loginuid",     OVAL_DATATYPE_INTEGER, (int64_t)res->loginuid,
 				 "posix_capability", OVAL_DATATYPE_STRING_M, res->posix_capability,
 				 "selinux_domain_label", OVAL_DATATYPE_STRING, res->selinux_domain_label,
