@@ -84,6 +84,42 @@ bool xccdf_tailoring_add_profile(struct xccdf_tailoring *tailoring, struct xccdf
 	return oscap_list_add(tailoring->profiles, XITEM(profile));
 }
 
+static bool _list_ptreq_cmp(void *a, void *b)
+{
+	return a == b;
+}
+
+bool xccdf_tailoring_remove_profile(struct xccdf_tailoring *tailoring, struct xccdf_profile *profile)
+{
+	assert(xccdf_profile_get_tailoring(profile));
+
+	// We have to make sure there is no other profile in tailoring that inherits
+	// the profile we are about to remove.
+
+	const char *profile_id = xccdf_profile_get_id(profile);
+
+	struct xccdf_profile_iterator* it = xccdf_tailoring_get_profiles(tailoring);
+	while (xccdf_profile_iterator_has_more(it)) {
+		struct xccdf_profile* prof = xccdf_profile_iterator_next(it);
+
+		if (prof == profile)
+			continue;
+
+		const char *extends = xccdf_profile_get_extends(prof);
+		if (oscap_strcmp(profile_id, extends) == 0) {
+			oscap_seterr(OSCAP_EFAMILY_XML,
+				"Can't remove given profile '%s' from tailoring. Other profiles are inheriting from it!",
+				profile_id);
+
+			return false;
+			xccdf_profile_iterator_free(it);
+		}
+	}
+	xccdf_profile_iterator_free(it);
+
+	return oscap_list_remove(tailoring->profiles, XITEM(profile), (oscap_cmp_func)_list_ptreq_cmp, NULL);
+}
+
 struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xccdf_item *benchmark)
 {
 	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_TAILORING);

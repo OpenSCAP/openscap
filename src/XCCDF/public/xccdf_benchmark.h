@@ -3056,6 +3056,19 @@ bool xccdf_tailoring_set_benchmark_ref_version(struct xccdf_tailoring *tailoring
 
 /// @memberof xccdf_tailoring
 bool xccdf_tailoring_add_profile(struct xccdf_tailoring *tailoring, struct xccdf_profile *profile);
+/**
+ * Removes given profile from tailoring.
+ *
+ * The profile must not be an ancestor of any other profile in tailoring.
+ * If it is this function will fail to remove the profile and signal the error.
+ *
+ * This function does NOT notify xccdf_session, xccdf_policy or xccdf_policy_model
+ * of this change. You are responsible for refreshing the higher-level structures yourself!
+ *
+ * @note User is responsible for freeing the profile!
+ * @memberof xccdf_tailoring
+ */
+bool xccdf_tailoring_remove_profile(struct xccdf_tailoring *tailoring, struct xccdf_profile *profile);
 
 // @memberof xccdf_ident
 void xccdf_ident_set_id(struct xccdf_ident * ident, const char *id);
