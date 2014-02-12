@@ -229,6 +229,87 @@ static void _test_hit_multiple_items1(void)
 	oscap_htable_free0(h);
 }
 
+static bool _test_list_remove_ptreq(void *a, void *b)
+{
+	return a == b;
+}
+
+static void _test_list_check_sanity(struct oscap_list *list)
+{
+	struct oscap_list_item *cur = list->first;//, *prev = NULL;
+
+	int count = list->first == NULL ? 0 : 1;
+	while (cur != list->last) {
+		//prev = cur;
+		cur = cur->next;
+		++count;
+	}
+
+	// we already do this in the loop
+	//assume(prev->next == list->last);
+	assume(oscap_list_get_itemcount(list) == count);
+	assume(list->last->next == NULL);
+	assume(count > 0 || list->first == NULL);
+}
+
+static void _test_list_remove(void)
+{
+	void *a = (void*)1;
+	void *b = (void*)2;
+	void *c = (void*)3;
+	void *d = (void*)4;
+
+	struct oscap_list *list = oscap_list_new();
+
+	// desired fail
+	assume(!oscap_list_remove(list, a, (oscap_cmp_func)_test_list_remove_ptreq, NULL));
+
+	// three important special cases to test
+	// 1) removing front item
+	// 2) removing back item (last item)
+	// 3) removing middle item
+
+	// two items front remove
+	assume(oscap_list_add(list, a));
+	assume(oscap_list_add(list, b));
+	_test_list_check_sanity(list);
+	oscap_list_remove(list, b, (oscap_cmp_func)_test_list_remove_ptreq, NULL);
+	_test_list_check_sanity(list);
+	assume(oscap_list_get_itemcount(list) == 1);
+	assume(oscap_list_contains(list, a, (oscap_cmp_func)_test_list_remove_ptreq));
+	assume(!oscap_list_contains(list, b, (oscap_cmp_func)_test_list_remove_ptreq));
+	// one item remove
+	assume(oscap_list_remove(list, a, (oscap_cmp_func)_test_list_remove_ptreq, NULL));
+	assume(oscap_list_get_itemcount(list) == 0);
+	assume(!oscap_list_contains(list, a, (oscap_cmp_func)_test_list_remove_ptreq));
+
+	// three items back remove
+	assume(oscap_list_add(list, a));
+	assume(oscap_list_add(list, b));
+	assume(oscap_list_add(list, c));
+	_test_list_check_sanity(list);
+	assume(oscap_list_remove(list, c, (oscap_cmp_func)_test_list_remove_ptreq, NULL));
+	_test_list_check_sanity(list);
+	assume(oscap_list_contains(list, a, (oscap_cmp_func)_test_list_remove_ptreq));
+	assume(oscap_list_contains(list, b, (oscap_cmp_func)_test_list_remove_ptreq));
+	assume(!oscap_list_contains(list, c, (oscap_cmp_func)_test_list_remove_ptreq));
+
+	// four items middle remove
+	assume(oscap_list_add(list, c));
+	assume(oscap_list_add(list, d));
+	_test_list_check_sanity(list);
+	assume(oscap_list_get_itemcount(list) == 4);
+	assume(oscap_list_remove(list, b, (oscap_cmp_func)_test_list_remove_ptreq, NULL));
+	_test_list_check_sanity(list);
+	assume(oscap_list_contains(list, a, (oscap_cmp_func)_test_list_remove_ptreq));
+	assume(!oscap_list_contains(list, b, (oscap_cmp_func)_test_list_remove_ptreq));
+	assume(oscap_list_contains(list, c, (oscap_cmp_func)_test_list_remove_ptreq));
+	assume(oscap_list_contains(list, d, (oscap_cmp_func)_test_list_remove_ptreq));
+	assume(oscap_list_get_itemcount(list) == 3);
+
+	oscap_list_free(list, NULL);
+}
+
 int main(int argc, char *argv[])
 {
 	_test_first_item_is_not_skipped();
@@ -242,5 +323,8 @@ int main(int argc, char *argv[])
 	_test_hit_empty1();
 	_test_hit_single_item1();
 	_test_hit_multiple_items1();
+
+	_test_list_remove();
+
 	return 0;
 }
