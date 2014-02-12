@@ -93,6 +93,35 @@ bool oscap_list_pop(struct oscap_list *list, oscap_destruct_func destructor)
 	return true;
 }
 
+bool oscap_list_remove(struct oscap_list *list, void *value, oscap_cmp_func compare, oscap_destruct_func destructor)
+{
+	if (list == NULL || list->first == NULL) return false;
+	struct oscap_list_item *cur = list->first, *prev = NULL;
+
+	while (cur != list->last && !compare(cur->data, value)) {
+		prev = cur;
+		cur = cur->next;
+	}
+
+	if (compare(cur->data, value)) {
+		if (prev)
+			prev->next = cur->next;
+		else
+			list->first = cur->next;
+
+		if (cur == list->last)
+			list->last = prev;
+
+		if (destructor) destructor(cur->data);
+		oscap_free(cur);
+
+		--list->itemcount;
+		return true;
+	}
+
+	return false;
+}
+
 struct oscap_list * oscap_list_clone(const struct oscap_list * list, oscap_clone_func cloner)
 {
         if (list == NULL) 
