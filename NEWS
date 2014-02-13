@@ -1,3 +1,7 @@
+openscap-1.0.4                                                  13-02-2014
+ - Introduced xccdf_tailoring_remove_profile to API
+ - OVAL bug fixes
+
 openscap-1.0.3                                                  14-01-2014
  - bug fixes
     - a few coverity issues
