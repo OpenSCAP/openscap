@@ -817,51 +817,6 @@ int xiconf_update(xiconf_t *xiconf)
 	return (0);
 }
 
-static int xiconf_service_merge_and_free(xiconf_service_t *dst, xiconf_service_t *src)
-{
-	register size_t i;
-
-	for (i = 0; i < XIATTR_TABLE_COUNT; ++i) {
-		if (xiattr_table[i].pass_arg == XIATTR_OPARG_LOCAL &&
-		    xiattr_table[i].sections  & XIATTR_SECTION_SRV &&
-		    xiattr_table[i].op_merge != NULL)
-		{
-			if (xiattr_table[i].op_merge (xiattr_ptr(dst, xiattr_table[i].offset),
-						      xiattr_ptr(src, xiattr_table[i].offset), 0) != 0)
-			{
-				dE("Merge failed. Merge operation returned a non-zero value.\n");
-				    return (-1);
-			}
-		}
-	}
-
-	/*
-	 * Merge service names. If there are already assigned names in dst and src, they must be equal.
-	 */
-	if (src->name != NULL) {
-		if (dst->name != NULL) {
-			if (strcmp(src->name, dst->name) != 0) {
-				dE("Merge not possible: different service names: %s (dst) != %s (src)\n",
-				   dst->name, src->name);
-				return (-1);
-			}
-
-			if (dst->id != src->name)
-				oscap_free(src->name);
-		} else
-			dst->name = src->name;
-	}
-
-	dst->def_disabled |= src->def_disabled;
-	dst->def_enabled  |= src->def_enabled;
-	dst->internal     |= src->internal;
-	dst->unlisted     |= src->unlisted;
-	dst->rpc          |= src->rpc;
-
-	oscap_free(src);
-	return (0);
-}
-
 static int xiconf_service_merge_defaults(xiconf_service_t *dst, xiconf_service_t *def)
 {
 	register size_t i;
