@@ -60,20 +60,6 @@ static int read_common_sizet(void *szp, char *strval)
 	return (0);
 }
 
-static int read_common_ulong(void *ulp, char *strval)
-{
-	assume_d(ulp    != NULL, -1);
-	assume_d(strval != NULL, -1);
-
-	*(unsigned long *)ulp = strtoul(strval, NULL, 10);
-
-	if (errno == EINVAL ||
-	    errno == ERANGE)
-		return (-1);
-
-	return (0);
-}
-
 struct stat_parser {
 	char *keyword;
 	int (*storval)(void *, char *);
