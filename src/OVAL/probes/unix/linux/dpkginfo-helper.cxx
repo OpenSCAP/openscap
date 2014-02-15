@@ -71,11 +71,15 @@ struct dpkginfo_reply_t * dpkginfo_get_by_name(const char *name, int *err)
         string epoch, version, release;
         string::size_type version_start = 0, version_stop;
         string::size_type pos;
+        string evr_str;
 
         pos = evr.find_first_of(":");
         if (pos != string::npos) {
                 epoch = evr.substr(0, pos);
                 version_start = pos+1;
+        } else
+        {
+		    epoch = "0";
         }
 
         pos = evr.find_first_of("-");
@@ -83,9 +87,13 @@ struct dpkginfo_reply_t * dpkginfo_get_by_name(const char *name, int *err)
                 version = evr.substr(version_start, pos-version_start);
                 version_stop = pos+1;
                 release = evr.substr(version_stop, evr.length()-version_stop);
+                evr_str = epoch + ":" + version + "-" + release;
+
+
         } else { /* no release number, probably a native package */
                 version = evr.substr(version_start, evr.length()-version_start);
                 release = "";
+                evr_str = epoch + ":" + version;
         }
 
         reply = new(struct dpkginfo_reply_t);
@@ -95,7 +103,7 @@ struct dpkginfo_reply_t * dpkginfo_get_by_name(const char *name, int *err)
         reply->epoch = strdup(epoch.c_str());
         reply->release = strdup(release.c_str());
         reply->version = strdup(version.c_str());
-        reply->evr = strdup(evr.c_str());
+        reply->evr = strdup(evr_str.c_str());
 
         return reply;
 }
