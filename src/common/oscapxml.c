@@ -79,9 +79,13 @@ const char * oscap_path_to_schemas() {
 	return oscap_path_to("OSCAP_SCHEMA_PATH", OSCAP_SCHEMA_PATH);
 }
 
+static inline const char *oscap_path_to_xslt(void)
+{
+	return oscap_path_to("OSCAP_XSLT_PATH", OSCAP_XSLT_PATH);
+}
 
 const char * oscap_path_to_schematron() {
-	return oscap_path_to("OSCAP_XSLT_PATH", OSCAP_XSLT_PATH);
+	return oscap_path_to_xslt();
 }
 
 const char * oscap_path_to_cpe() {
