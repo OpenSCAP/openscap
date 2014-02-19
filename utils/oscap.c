@@ -145,7 +145,6 @@ static int print_versions(const struct oscap_action *action)
 
 	printf("==== Paths ====\n");
 	printf("Schema files: %s\n", oscap_path_to_schemas());
-	printf("Schematron files: %s\n", oscap_path_to_schematron());
 	printf("Default CPE files: %s\n", oscap_path_to_cpe());
 	printf("Probes: %s\n", oval_probe_ext_getdir());
 	printf("\n");
