@@ -813,7 +813,7 @@ bool getopt_oval_validate(int argc, char **argv, struct oscap_action *action)
 		{ "results",		no_argument, &action->doctype, OSCAP_DOCUMENT_OVAL_RESULTS     },
 		{ "directives",		no_argument, &action->doctype, OSCAP_DOCUMENT_OVAL_DIRECTIVES  },
 		// force schematron validation
-		{ "schematron",		no_argument, &action->force, 1 },
+		{ "schematron",		no_argument, &action->schematron, 1 },
         // end
 		{ 0, 0, 0, 0 }
 	};
@@ -937,7 +937,7 @@ static int app_oval_validate(const struct oscap_action *action) {
 	/* schematron-based validation requested
 	   We can only do schematron validation if the file isn't a source datastream
 	*/
-	if (action->force && doc_type != OSCAP_DOCUMENT_SDS) {
+	if (action->schematron && doc_type != OSCAP_DOCUMENT_SDS) {
 		ret=oscap_schematron_validate_document(action->f_oval, doc_type, doc_version, NULL);
 		if (ret==-1) {
 			result=OSCAP_ERROR;
