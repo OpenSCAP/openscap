@@ -74,3 +74,5 @@ EXTRA_DIST = \
 	$(common_DATA) \
 	$(cve_DATA)
 
+CLEANFILES = \
+	build/*

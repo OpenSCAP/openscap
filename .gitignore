@@ -46,6 +46,7 @@ oscap_debug.log.*
 selinux/oscap.pp
 /src/OVAL/oval_testing_ext_probe.c
 /src/OVAL/probes/probe_*
+/schemas/build/
 /swig/openscap.pm
 /swig/openscap.py
 /swig/openscap_pm_wrap.c
