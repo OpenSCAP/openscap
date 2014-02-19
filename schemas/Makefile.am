@@ -35,7 +35,7 @@ sce10_DATA = sce/1.0/sce-result-schema.xsd
 
 xccdf11_DATA = $(wildcard xccdf/1.1/*.xsd xccdf/1.1/*.dtd)
 xccdf11tailoring_DATA = $(wildcard xccdf/1.1-tailoring/*.xsd xccdf/1.1-tailoring/*.dtd)
-xccdf12_DATA = $(wildcard xccdf/1.2/*.xsd xccdf/1.2/*.dtd)
+xccdf12_DATA = $(wildcard xccdf/1.2/*.xsd xccdf/1.2/*.dtd xccdf/1.2/*.xsl)
 
 sds12_DATA = $(wildcard sds/1.2/*.xsd sds/1.2/*.dtd)
 arf11_DATA = $(wildcard arf/1.1/*.xsd)
