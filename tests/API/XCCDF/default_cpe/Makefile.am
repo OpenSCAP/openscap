@@ -8,7 +8,6 @@ TESTS_ENVIRONMENT= \
 TESTS = all.sh
 
 EXTRA_DIST = \
-	$(top_srcdir)/tests/xpath.pl \
 	all.sh \
 	fedora16-xccdf.xml \
 	fedora17-xccdf.xml \

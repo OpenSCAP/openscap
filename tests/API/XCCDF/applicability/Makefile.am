@@ -8,7 +8,6 @@ TESTS_ENVIRONMENT= \
 TESTS = all.sh
 
 EXTRA_DIST = \
-	$(top_srcdir)/tests/xpath.pl \
 	all.sh \
 	applicable-rule-xccdf.xml \
 	applicable-rule-embedded-xccdf.xml \

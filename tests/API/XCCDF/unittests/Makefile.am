@@ -42,7 +42,6 @@ test_oscap_common_CPPFLAGS = $(AM_CPPFLAGS) -DNDEBUG
 test_xccdf_shall_pass_SOURCES = test_xccdf_shall_pass.c unit_helper.c
 
 EXTRA_DIST += \
-	$(top_srcdir)/tests/xpath.pl \
 	all.sh \
 	test_default_selector.oval.xml \
 	test_default_selector.sh \

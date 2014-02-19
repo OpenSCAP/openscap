@@ -11,9 +11,13 @@
 # Normalized path.
 PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 
-export XPATH=$(cd $(dirname $BASH_SOURCE); pwd)/xpath.pl
 [ -z "$builddir" ] || export OSCAP=$(cd $builddir/utils/.libs; pwd)/oscap
 export XMLDIFF=$(cd $(dirname $BASH_SOURCE); pwd)/xmldiff.pl
+if ! XPATH=`command -v xpath 2>&1`; then
+  echo "I require xpath tool but it's not installed. Aborting." >&2
+  exit 1
+fi
+export XPATH
 
 # Overall test result.
 result=0

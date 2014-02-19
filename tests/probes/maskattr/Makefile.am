@@ -20,7 +20,6 @@ endif
 check_SCRIPTS = test_object_entity_mask.sh test_object_entity_nomask.sh
 
 EXTRA_DIST += \
-	$(top_srcdir)/tests/xpath.pl \
 	all.sh \
 	test_object_entity_mask.sh \
 	test_object_entity_mask.xml \

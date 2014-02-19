@@ -20,7 +20,6 @@ endif
 check_SCRIPTS = test_not_equals_operation.sh
 
 EXTRA_DIST += \
-	$(top_srcdir)/tests/xpath.pl \
 	all.sh \
 	test_not_equals_operation.sh \
 	test_not_equals_operation.xml

@@ -12,7 +12,6 @@ TESTS_ENVIRONMENT= \
 TESTS = all.sh
 
 EXTRA_DIST += \
-	$(top_srcdir)/tests/xpath.pl \
 	all.sh \
 	test_applicability_check.sh \
 	applicability_check.xml \
