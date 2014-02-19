@@ -556,7 +556,7 @@ int oscap_schematron_validate_document(const char *xmlfile, oscap_document_type_
 
 int oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params)
 {
-	return oscap_apply_xslt_path(xmlfile, xsltfile, outfile, params, oscap_path_to_schematron());
+	return oscap_apply_xslt_path(xmlfile, xsltfile, outfile, params, oscap_path_to_xslt());
 }
 
 int oscap_determine_document_type(const char *document, oscap_document_type_t *doc_type) {
