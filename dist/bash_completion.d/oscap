@@ -32,7 +32,7 @@ function _oscap {
     opts[oscap:oval:collect]="--variables"
     opts[oscap:oval:generate:report]="-o --output"
     opts[oscap:xccdf:eval]="--skip-valid --datastream-id --xccdf-id --profile --results --results-arf --report --oval-results --export-variables --fetch-remote-resources --remediate --cpe"
-    opts[oscap:xccdf:validate]=""
+    opts[oscap:xccdf:validate]="--schematron"
     opts[oscap:xccdf:export-oval-variables]="--datastream-id --xccdf-id --profile --skip-valid --fetch-remote-resources --cpe"
     opts[oscap:xccdf:remediate]="--result-id --skip-valid --fetch-remote-resources --results --results-arf --report --oval-results --export-variables --cpe"
     opts[oscap:xccdf:resolve]="-o --output -f --force"

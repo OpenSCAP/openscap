@@ -212,6 +212,9 @@ Force resolving XCCDF document even if it is already marked as resolved.
 .B validate\fR [\fIoptions\fR] xccdf-file
 .RS
 Validate given XCCDF file against a XML schema. Every found error is printed to the standard error. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the XCCDF document is not valid.
+.TP
+\fB\-\-schematron\fR
+Turn on Schematron-based validation. It is able to find more errors and inconsistencies but is much slower. Schematron is available only for XCCDF version 1.2.
 .RE
 .TP
 .B export-oval-variables\fR [\fIoptions\fR] xccdf-file [\fIoval-definitions-files\fR]

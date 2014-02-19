@@ -515,7 +515,8 @@ struct oscap_schema_table_entry OSCAP_SCHEMATRON_TABLE[] = {
         {OSCAP_DOCUMENT_OVAL_DIRECTIVES,	"5.8",		"oval/5.8/oval-directives-schematron.xsl"},
         {OSCAP_DOCUMENT_OVAL_DIRECTIVES,	"5.9",		"oval/5.9/oval-directives-schematron.xsl"},
         {OSCAP_DOCUMENT_OVAL_DIRECTIVES,	"5.10",		"oval/5.10/oval-directives-schematron.xsl"},
-        {OSCAP_DOCUMENT_OVAL_DIRECTIVES,	"5.10.1",	"oval/5.10.1/oval-directives-schematron.xsl"}
+	{OSCAP_DOCUMENT_OVAL_DIRECTIVES,        "5.10.1",       "oval/5.10.1/oval-directives-schematron.xsl"},
+	{OSCAP_DOCUMENT_XCCDF,                  "1.2",          "xccdf/1.2/xccdf_1.2-schematron.xsl"},
 };
 
 int oscap_schematron_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, const char *outfile) {

@@ -86,7 +86,10 @@ static struct oscap_module XCCDF_VALIDATE_XML = {
     .summary = "Validate XCCDF XML content",
     .usage = "xccdf-file.xml",
     .opt_parser = getopt_xccdf,
-    .func = app_xccdf_validate
+	.func = app_xccdf_validate,
+	.help = "Options:\n"
+		"   --schematron\r\t\t\t\t - Use schematron-based validation in addition to XML Schema\n"
+	,
 };
 
 static struct oscap_module XCCDF_VALIDATE = {
@@ -95,7 +98,10 @@ static struct oscap_module XCCDF_VALIDATE = {
     .summary = "Validate XCCDF XML content",
     .usage = "xccdf-file.xml",
     .opt_parser = getopt_xccdf,
-    .func = app_xccdf_validate
+	.func = app_xccdf_validate,
+	.help = "Options:\n"
+		"   --schematron\r\t\t\t\t - Use schematron-based validation in addition to XML Schema\n"
+	,
 };
 
 static struct oscap_module XCCDF_EXPORT_OVAL_VARIABLES = {
@@ -938,6 +944,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"remediate", no_argument, &action->remediate, 1},
 		{"hide-profile-info",	no_argument, &action->hide_profile_info, 1},
 		{"export-variables",	no_argument, &action->export_variables, 1},
+		{"schematron",          no_argument, &action->schematron, 1},
 	// end
 		{0, 0, 0, 0}
 	};
@@ -1034,6 +1041,15 @@ int app_xccdf_validate(const struct oscap_action *action) {
         }
         else
                 result=OSCAP_OK;
+
+	if (action->schematron) {
+		ret = oscap_schematron_validate_document(action->f_xccdf, action->doctype, doc_version, NULL);
+		if (ret == -1) {
+			result = OSCAP_ERROR;
+		} else if (ret > 0) {
+			result = OSCAP_FAIL;
+		}
+	}
 
         if (result==OSCAP_FAIL)
 		validation_failed(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version);
