@@ -1,5 +1,9 @@
-DISTCLEANFILES = *.log oscap_debug.log.*
-CLEANFILES = oscap_debug.log.*
+DISTCLEANFILES = \
+	*.log \
+	oscap_debug.log.* \
+	*\.stderr\.* \
+	*\.res\.*\.xml
+CLEANFILES = $(DISTCLEANFILES)
 TESTS_ENVIRONMENT = \
 	builddir=$(top_builddir) \
 		$(top_builddir)/run
