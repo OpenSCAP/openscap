@@ -142,6 +142,8 @@ EXTRA_DIST += \
 	test_xccdf_check_unsupported_check_system.xml \
 	test_xccdf_multiple_testresults.sh \
 	test_xccdf_multiple_testresults.xccdf.xml \
+	test_xccdf_notchecked_has_check.sh \
+	test_xccdf_notchecked_has_check.xccdf.xml \
 	test_xccdf_overlaping_IDs.xccdf.xml \
 	test_xccdf_refine_rule.sh \
 	test_xccdf_refine_rule.xccdf.xml \

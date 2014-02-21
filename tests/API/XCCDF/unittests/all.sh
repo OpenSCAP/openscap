@@ -33,6 +33,7 @@ test_run "Check Processing Algorithm -- complex-check priority" $srcdir/test_xcc
 test_run "Check Processing Algorithm -- bad refine must select check without @selector" $srcdir/test_xccdf_check_processing_selector_bad.sh
 test_run "Check Processing Algorithm -- none selected for candidate" $srcdir/test_xccdf_check_processing_selector_empty.sh
 test_run "Check Processing Algorithm -- none check-content-ref resolvable." $srcdir/test_xccdf_check_processing_invalid_content_refs.sh
+test_run "Check Processing Algorithm -- always include xccdf:check" $srcdir/test_xccdf_notchecked_has_check.sh
 test_run "xccdf:select and @cluster-id -- disable group" $srcdir/test_xccdf_selectors_cluster1.sh
 test_run "xccdf:select and @cluster-id -- enable a set of items" $srcdir/test_xccdf_selectors_cluster2.sh
 test_run "xccdf:select and @cluster-id -- complex example" $srcdir/test_xccdf_selectors_cluster3.sh
