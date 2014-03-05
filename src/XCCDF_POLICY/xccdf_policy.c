@@ -1747,7 +1747,7 @@ void xccdf_policy_model_unregister_callbacks(struct xccdf_policy_model *model, c
 		struct oscap_iterator *cb_it = oscap_iterator_new(model->callbacks);
 		while (oscap_iterator_has_more(cb_it)) {
 			callback *cb = oscap_iterator_next(cb_it);
-			if (oscap_streq(cb->system, sys))
+			if (xccdf_policy_engine_filter(cb, sys))
 				oscap_free(cb);
 			else
 				oscap_list_add(rest, cb);
