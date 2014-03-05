@@ -54,14 +54,13 @@ bool xccdf_policy_engine_filter(callback *cb, const char *sysname);
  * @memberof callback
  * @param engine Checking engine
  * @param policy XCCDF Policy
- * @param rule_id unused
  * @param definition_id ID of definition to evaluate
  * @param href_id The @href attribute of check-content-ref
  * @param value_bindings Value binding
  * @param check_import_it Check imports
  * @returns result of checking engine evaluation
  */
-xccdf_test_result_type_t xccdf_policy_engine_eval(callback *engine, struct xccdf_policy *policy, const char *rule_id, const char *definition_id, const char *href_id, struct oscap_list *value_bindings, struct xccdf_check_import_iterator *check_import_it);
+xccdf_test_result_type_t xccdf_policy_engine_eval(callback *engine, struct xccdf_policy *policy, const char *definition_id, const char *href_id, struct oscap_list *value_bindings, struct xccdf_check_import_iterator *check_import_it);
 
 OSCAP_HIDDEN_END;
 

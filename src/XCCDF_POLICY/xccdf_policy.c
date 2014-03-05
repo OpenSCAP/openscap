@@ -400,7 +400,7 @@ xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * sysname, con
     struct oscap_iterator * cb_it = _xccdf_policy_get_callbacks_by_sysname(policy, sysname);
     while (oscap_iterator_has_more(cb_it)) {
         callback * cb = (callback *) oscap_iterator_next(cb_it);
-	retval = xccdf_policy_engine_eval(cb, policy, NULL, content, href, bindings, check_import_it);
+	retval = xccdf_policy_engine_eval(cb, policy, content, href, bindings, check_import_it);
         if (retval != XCCDF_RESULT_NOT_CHECKED) break;
     }
     oscap_iterator_free(cb_it);
