@@ -33,6 +33,7 @@
 
 #include "xccdf_policy_priv.h"
 #include "xccdf_policy_model_priv.h"
+#include "xccdf_policy_engine_priv.h"
 #include "public/xccdf_policy.h"
 #include "public/xccdf_benchmark.h"
 #include "public/oscap_text.h"
@@ -46,20 +47,6 @@
 #include "common/_error.h"
 #include "common/debug_priv.h"
 #include "common/assume.h"
-
-/**
- * Typedef of callback structure with system identificator, callback function and usr data (optional) 
- * On evaluation action will be selected checking system and appropriate callback registred by tool
- * for that system.
- */
-typedef struct callback_t {
-
-    char * system;                              ///< Identificator of checking engine
-	xccdf_policy_engine_eval_fn callback;	///< format of callback function
-    void * usr;                                 ///< User data structure
-    xccdf_policy_engine_query_fn query_fn;      ///< query callback function
-
-} callback;
 
 /**
  * Typedef of callback structure with callback function and usr data (optional)
