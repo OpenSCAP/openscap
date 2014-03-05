@@ -399,8 +399,8 @@ xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * sysname, con
     xccdf_test_result_type_t retval = XCCDF_RESULT_NOT_CHECKED;
     struct oscap_iterator * cb_it = _xccdf_policy_get_callbacks_by_sysname(policy, sysname);
     while (oscap_iterator_has_more(cb_it)) {
-        callback * cb = (callback *) oscap_iterator_next(cb_it);
-	retval = xccdf_policy_engine_eval(cb, policy, content, href, bindings, check_import_it);
+        struct xccdf_policy_engine *engine = (struct xccdf_policy_engine *) oscap_iterator_next(cb_it);
+	retval = xccdf_policy_engine_eval(engine, policy, content, href, bindings, check_import_it);
         if (retval != XCCDF_RESULT_NOT_CHECKED) break;
     }
     oscap_iterator_free(cb_it);
@@ -419,10 +419,10 @@ _xccdf_policy_get_namesfor_href(struct xccdf_policy *policy, const char *sysname
 	struct oscap_iterator *cb_it = _xccdf_policy_get_callbacks_by_sysname(policy, sysname);
 	struct oscap_stringlist *result = NULL;
 	while (oscap_iterator_has_more(cb_it) && result == NULL) {
-		callback *cb = (callback *) oscap_iterator_next(cb_it);
-		if (cb == NULL)
+		struct xccdf_policy_engine *engine = (struct xccdf_policy_engine *) oscap_iterator_next(cb_it);
+		if (engine == NULL)
 			break;
-		result = xccdf_policy_engine_query(cb, POLICY_ENGINE_QUERY_NAMES_FOR_HREF, (void *) href);
+		result = xccdf_policy_engine_query(engine, POLICY_ENGINE_QUERY_NAMES_FOR_HREF, (void *) href);
 	}
 	oscap_iterator_free(cb_it);
 	return result;
@@ -1733,7 +1733,7 @@ bool
 xccdf_policy_model_register_engine_and_query_callback(struct xccdf_policy_model *model, char *sys, xccdf_policy_engine_eval_fn eval_fn, void *usr, xccdf_policy_engine_query_fn query_fn)
 {
         __attribute__nonnull__(model);
-	callback *engine = xccdf_policy_engine_new(sys, eval_fn, usr, query_fn);
+	struct xccdf_policy_engine *engine = xccdf_policy_engine_new(sys, eval_fn, usr, query_fn);
 	return oscap_list_add(model->callbacks, engine);
 }
 
@@ -1746,11 +1746,11 @@ void xccdf_policy_model_unregister_callbacks(struct xccdf_policy_model *model, c
 		struct oscap_list *rest = oscap_list_new();
 		struct oscap_iterator *cb_it = oscap_iterator_new(model->callbacks);
 		while (oscap_iterator_has_more(cb_it)) {
-			callback *cb = oscap_iterator_next(cb_it);
-			if (xccdf_policy_engine_filter(cb, sys))
-				oscap_free(cb);
+			struct xccdf_policy_engine *engine = oscap_iterator_next(cb_it);
+			if (xccdf_policy_engine_filter(engine, sys))
+				oscap_free(engine);
 			else
-				oscap_list_add(rest, cb);
+				oscap_list_add(rest, engine);
 		}
 		oscap_iterator_free(cb_it);
 		oscap_list_free0(model->callbacks);

@@ -30,9 +30,9 @@
 #include "public/xccdf_policy.h"
 #include "xccdf_policy_engine_priv.h"
 
-callback *xccdf_policy_engine_new(char *sys, xccdf_policy_engine_eval_fn eval_fn, void *usr, xccdf_policy_engine_query_fn query_fn)
+struct xccdf_policy_engine *xccdf_policy_engine_new(char *sys, xccdf_policy_engine_eval_fn eval_fn, void *usr, xccdf_policy_engine_query_fn query_fn)
 {
-	callback *engine = oscap_alloc(sizeof(callback));
+	struct xccdf_policy_engine *engine = oscap_alloc(sizeof(struct xccdf_policy_engine));
         if (engine != NULL) {
 		engine->system = sys;
 		engine->callback = eval_fn;
@@ -42,12 +42,12 @@ callback *xccdf_policy_engine_new(char *sys, xccdf_policy_engine_eval_fn eval_fn
 	return engine;
 }
 
-bool xccdf_policy_engine_filter(callback *engine, const char *sysname)
+bool xccdf_policy_engine_filter(struct xccdf_policy_engine *engine, const char *sysname)
 {
 	return oscap_strcmp(engine->system, sysname) == 0;
 }
 
-xccdf_test_result_type_t xccdf_policy_engine_eval(callback *engine, struct xccdf_policy *policy, const char *definition_id, const char *href_id, struct oscap_list *value_bindings, struct xccdf_check_import_iterator *check_import_it)
+xccdf_test_result_type_t xccdf_policy_engine_eval(struct xccdf_policy_engine *engine, struct xccdf_policy *policy, const char *definition_id, const char *href_id, struct oscap_list *value_bindings, struct xccdf_check_import_iterator *check_import_it)
 {
 	xccdf_test_result_type_t ret = XCCDF_RESULT_NOT_CHECKED;
 	if (engine == NULL) {
@@ -62,7 +62,7 @@ xccdf_test_result_type_t xccdf_policy_engine_eval(callback *engine, struct xccdf
 	return ret;
 }
 
-struct oscap_stringlist *xccdf_policy_engine_query(callback *engine, xccdf_policy_engine_query_t query_type, void *query_data)
+struct oscap_stringlist *xccdf_policy_engine_query(struct xccdf_policy_engine *engine, xccdf_policy_engine_query_t query_type, void *query_data)
 {
 	if (engine->query_fn == NULL)
 		return NULL;

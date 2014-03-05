@@ -36,7 +36,7 @@ OSCAP_HIDDEN_START;
  * On evaluation action will be selected checking system and appropriate callback registred by tool
  * for that system.
  */
-typedef struct callback_t {
+typedef struct xccdf_policy_engine {
 	char *system;                           ///< Identificator of checking engine
 	xccdf_policy_engine_eval_fn callback;   ///< format of callback function
 	void * usr;                             ///< User data structure
@@ -51,17 +51,17 @@ typedef struct callback_t {
  * @param query_fn The query function of newly created checking engine
  * @returns newly created checking engine
  */
-callback *xccdf_policy_engine_new(char *sys, xccdf_policy_engine_eval_fn eval_fn, void *usr, xccdf_policy_engine_query_fn query_fn);
+struct xccdf_policy_engine *xccdf_policy_engine_new(char *sys, xccdf_policy_engine_eval_fn eval_fn, void *usr, xccdf_policy_engine_query_fn query_fn);
 
 /**
  * Filter function returning true if given callback is for the given checking engine,
  * false otherwise.
  */
-bool xccdf_policy_engine_filter(callback *cb, const char *sysname);
+bool xccdf_policy_engine_filter(struct xccdf_policy_engine *cb, const char *sysname);
 
 /**
  * Execute the eval function of the given checking engine
- * @memberof callback
+ * @memberof xccdf_policy_engine
  * @param engine Checking engine
  * @param policy XCCDF Policy
  * @param definition_id ID of definition to evaluate
@@ -70,17 +70,17 @@ bool xccdf_policy_engine_filter(callback *cb, const char *sysname);
  * @param check_import_it Check imports
  * @returns result of checking engine evaluation
  */
-xccdf_test_result_type_t xccdf_policy_engine_eval(callback *engine, struct xccdf_policy *policy, const char *definition_id, const char *href_id, struct oscap_list *value_bindings, struct xccdf_check_import_iterator *check_import_it);
+xccdf_test_result_type_t xccdf_policy_engine_eval(struct xccdf_policy_engine *engine, struct xccdf_policy *policy, const char *definition_id, const char *href_id, struct oscap_list *value_bindings, struct xccdf_check_import_iterator *check_import_it);
 
 /**
  * Execute the query function of the given checking engine
- * @memberof callback
+ * @memberof xccdf_policy_engine
  * @param engine Checking Engine
  * @param query_type Type of a query over checking engine data.
  * @param query_data Additional data for the checking engine query.
  * @returns list of query results
  */
-struct oscap_stringlist *xccdf_policy_engine_query(callback *engine, xccdf_policy_engine_query_t query_type, void *query_data);
+struct oscap_stringlist *xccdf_policy_engine_query(struct xccdf_policy_engine *engine, xccdf_policy_engine_query_t query_type, void *query_data);
 
 OSCAP_HIDDEN_END;
 
