@@ -49,3 +49,10 @@ xccdf_test_result_type_t xccdf_policy_engine_eval(callback *engine, struct xccdf
 	}
 	return ret;
 }
+
+struct oscap_stringlist *xccdf_policy_engine_query(callback *engine, xccdf_policy_engine_query_t query_type, void *query_data)
+{
+	if (engine->query_fn == NULL)
+		return NULL;
+	return (struct oscap_stringlist *) engine->query_fn(engine->usr, query_type, query_data);
+}

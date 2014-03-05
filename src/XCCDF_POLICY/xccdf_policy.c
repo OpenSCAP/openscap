@@ -422,9 +422,7 @@ _xccdf_policy_get_namesfor_href(struct xccdf_policy *policy, const char *sysname
 		callback *cb = (callback *) oscap_iterator_next(cb_it);
 		if (cb == NULL)
 			break;
-		if (cb->query_fn == NULL)
-			continue;
-		result = (struct oscap_stringlist *) cb->query_fn(cb->usr, POLICY_ENGINE_QUERY_NAMES_FOR_HREF, (void *)href);
+		result = xccdf_policy_engine_query(cb, POLICY_ENGINE_QUERY_NAMES_FOR_HREF, (void *) href);
 	}
 	oscap_iterator_free(cb_it);
 	return result;

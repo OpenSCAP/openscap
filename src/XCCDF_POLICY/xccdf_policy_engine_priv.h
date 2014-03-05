@@ -62,6 +62,16 @@ bool xccdf_policy_engine_filter(callback *cb, const char *sysname);
  */
 xccdf_test_result_type_t xccdf_policy_engine_eval(callback *engine, struct xccdf_policy *policy, const char *definition_id, const char *href_id, struct oscap_list *value_bindings, struct xccdf_check_import_iterator *check_import_it);
 
+/**
+ * Execute the query function of the given checking engine
+ * @memberof callback
+ * @param engine Checking Engine
+ * @param query_type Type of a query over checking engine data.
+ * @param query_data Additional data for the checking engine query.
+ * @returns list of query results
+ */
+struct oscap_stringlist *xccdf_policy_engine_query(callback *engine, xccdf_policy_engine_query_t query_type, void *query_data);
+
 OSCAP_HIDDEN_END;
 
 #endif
