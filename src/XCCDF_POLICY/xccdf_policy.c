@@ -394,13 +394,13 @@ static void xccdf_policy_resolve_item(struct xccdf_policy * policy, struct xccdf
  */
 static int
 xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * sysname, const char * content, const char * href,
-        const char * rule_id, struct oscap_list * bindings, struct xccdf_check_import_iterator * check_import_it)
+		struct oscap_list * bindings, struct xccdf_check_import_iterator * check_import_it)
 {
     xccdf_test_result_type_t retval = XCCDF_RESULT_NOT_CHECKED;
     struct oscap_iterator * cb_it = _xccdf_policy_get_callbacks_by_sysname(policy, sysname);
     while (oscap_iterator_has_more(cb_it)) {
         callback * cb = (callback *) oscap_iterator_next(cb_it);
-	retval = xccdf_policy_engine_eval(cb, policy, rule_id, content, href, bindings, check_import_it);
+	retval = xccdf_policy_engine_eval(cb, policy, NULL, content, href, bindings, check_import_it);
         if (retval != XCCDF_RESULT_NOT_CHECKED) break;
     }
     oscap_iterator_free(cb_it);
@@ -557,7 +557,7 @@ int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccdf_check
                 href = xccdf_check_content_ref_get_href(content);
 
                 struct xccdf_check_import_iterator * check_import_it = xccdf_check_get_imports(check);
-                ret = xccdf_policy_evaluate_cb(policy, system_name, content_name, href, NULL, bindings, check_import_it);
+                ret = xccdf_policy_evaluate_cb(policy, system_name, content_name, href, bindings, check_import_it);
                 // the evaluation has filled check imports at this point, we can simply free the iterator
                 xccdf_check_import_iterator_free(check_import_it);
 
@@ -1080,7 +1080,7 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 		}
 
 		struct xccdf_check_import_iterator *check_import_it = xccdf_check_get_imports(check);
-		ret = xccdf_policy_evaluate_cb(policy, system_name, content_name, href, NULL, bindings, check_import_it);
+		ret = xccdf_policy_evaluate_cb(policy, system_name, content_name, href, bindings, check_import_it);
 		// the evaluation has filled check imports at this point, we can simply free the iterator
 		xccdf_check_import_iterator_free(check_import_it);
 
