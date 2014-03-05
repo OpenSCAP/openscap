@@ -1733,15 +1733,8 @@ bool
 xccdf_policy_model_register_engine_and_query_callback(struct xccdf_policy_model *model, char *sys, xccdf_policy_engine_eval_fn eval_fn, void *usr, xccdf_policy_engine_query_fn query_fn)
 {
         __attribute__nonnull__(model);
-        callback * cb = oscap_alloc(sizeof(callback));
-        if (cb == NULL) return false;
-
-        cb->system   = sys;
-        cb->callback = eval_fn;
-        cb->usr      = usr;
-	cb->query_fn = query_fn;
-
-        return oscap_list_add(model->callbacks, cb);
+	callback *engine = xccdf_policy_engine_new(sys, eval_fn, usr, query_fn);
+	return oscap_list_add(model->callbacks, engine);
 }
 
 void xccdf_policy_model_unregister_callbacks(struct xccdf_policy_model *model, const char *sys)

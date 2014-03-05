@@ -30,6 +30,18 @@
 #include "public/xccdf_policy.h"
 #include "xccdf_policy_engine_priv.h"
 
+callback *xccdf_policy_engine_new(char *sys, xccdf_policy_engine_eval_fn eval_fn, void *usr, xccdf_policy_engine_query_fn query_fn)
+{
+	callback *engine = oscap_alloc(sizeof(callback));
+        if (engine != NULL) {
+		engine->system = sys;
+		engine->callback = eval_fn;
+		engine->usr = usr;
+		engine->query_fn = query_fn;
+	}
+	return engine;
+}
+
 bool xccdf_policy_engine_filter(callback *engine, const char *sysname)
 {
 	return oscap_strcmp(engine->system, sysname) == 0;

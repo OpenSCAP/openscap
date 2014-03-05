@@ -44,6 +44,16 @@ typedef struct callback_t {
 } callback;
 
 /**
+ * Create new checking engine structure
+ * @param sys System name of the checking engine
+ * @param eval_fn The eval function of newly created checking engine
+ * @param usr User data structure
+ * @param query_fn The query function of newly created checking engine
+ * @returns newly created checking engine
+ */
+callback *xccdf_policy_engine_new(char *sys, xccdf_policy_engine_eval_fn eval_fn, void *usr, xccdf_policy_engine_query_fn query_fn);
+
+/**
  * Filter function returning true if given callback is for the given checking engine,
  * false otherwise.
  */
