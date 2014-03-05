@@ -400,17 +400,7 @@ xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * sysname, con
     struct oscap_iterator * cb_it = _xccdf_policy_get_callbacks_by_sysname(policy, sysname);
     while (oscap_iterator_has_more(cb_it)) {
         callback * cb = (callback *) oscap_iterator_next(cb_it);
-        if (cb == NULL) { /* No callback found - checking system not registered */
-            oscap_seterr(OSCAP_EFAMILY_XCCDF, "Unknown callback for given checking system. Set callback first");
-            oscap_iterator_free(cb_it);
-            return XCCDF_RESULT_NOT_CHECKED;
-        }
-
-        struct xccdf_value_binding_iterator * binding_it = (struct xccdf_value_binding_iterator *) oscap_iterator_new(bindings);
-
-        retval = cb->callback(policy, rule_id, content, href, binding_it, check_import_it, cb->usr);
-
-        if (binding_it != NULL) xccdf_value_binding_iterator_free(binding_it);
+	retval = xccdf_policy_engine_eval(cb, policy, rule_id, content, href, bindings, check_import_it);
         if (retval != XCCDF_RESULT_NOT_CHECKED) break;
     }
     oscap_iterator_free(cb_it);
