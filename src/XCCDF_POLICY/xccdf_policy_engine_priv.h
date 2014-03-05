@@ -42,6 +42,12 @@ typedef struct callback_t {
 	xccdf_policy_engine_query_fn query_fn;  ///< query callback function
 } callback;
 
+/**
+ * Filter function returning true if given callback is for the given checking engine,
+ * false otherwise.
+ */
+bool xccdf_policy_engine_filter(callback *cb, const char *sysname);
+
 OSCAP_HIDDEN_END;
 
 #endif

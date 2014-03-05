@@ -2,6 +2,7 @@ noinst_LTLIBRARIES = libxccdf_policy.la
 
 libxccdf_policy_la_SOURCES = \
 	xccdf_policy.c \
+	xccdf_policy_engine.c \
 	xccdf_policy_engine_priv.h \
 	xccdf_policy_model_priv.h \
 	xccdf_policy_priv.h \

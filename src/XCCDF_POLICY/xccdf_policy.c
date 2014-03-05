@@ -181,23 +181,13 @@ static bool xccdf_policy_filter_selected(void *item, void *policy)
 }
 
 /**
- * Filter function returning true if given callback is for the given checking engine,
- * false otherwise.
- */
-static bool
-_xccdf_policy_filter_callback(callback *cb, const char *sysname)
-{
-	return oscap_strcmp(cb->system, sysname) == 0;
-}
-
-/**
  * Get callbacks that match sysname. Call this function to get iterator over list of callbacks
  * that have the same system name
  */
 static struct oscap_iterator *
 _xccdf_policy_get_callbacks_by_sysname(struct xccdf_policy * policy, const char * sysname)
 {
-	return oscap_iterator_new_filter( policy->model->callbacks, (oscap_filter_func) _xccdf_policy_filter_callback, (void *) sysname);
+	return oscap_iterator_new_filter( policy->model->callbacks, (oscap_filter_func) xccdf_policy_engine_filter, (void *) sysname);
 }
 
 /**
@@ -600,7 +590,7 @@ int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccdf_check
 static inline bool
 _xccdf_policy_is_engine_registered(struct xccdf_policy *policy, char *sysname)
 {
-	return oscap_list_contains(policy->model->callbacks, (void *) sysname, (oscap_cmp_func) _xccdf_policy_filter_callback);
+	return oscap_list_contains(policy->model->callbacks, (void *) sysname, (oscap_cmp_func) xccdf_policy_engine_filter);
 }
 
 static struct xccdf_check *
