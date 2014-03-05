@@ -35,6 +35,7 @@
 #include "common/debug_priv.h"
 #include "common/oscap_acquire.h"
 #include "xccdf_policy_priv.h"
+#include "xccdf_policy_model_priv.h"
 #include "public/xccdf_policy.h"
 
 static int _rule_add_info_message(struct xccdf_rule_result *rr, ...)

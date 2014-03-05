@@ -41,6 +41,7 @@
 #include "DS/ds_common.h"
 #include "XCCDF_POLICY/public/xccdf_policy.h"
 #include "XCCDF_POLICY/xccdf_policy_priv.h"
+#include "XCCDF_POLICY/xccdf_policy_model_priv.h"
 #include "item.h"
 #include "public/xccdf_session.h"
 #include "XCCDF_POLICY/public/check_engine_plugin.h"

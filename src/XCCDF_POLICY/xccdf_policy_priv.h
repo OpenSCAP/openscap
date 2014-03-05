@@ -30,9 +30,6 @@
 
 OSCAP_HIDDEN_START;
 
-#define XCCDF_POLICY_OUTCB_START "urn:xccdf:system:callback:start"
-#define XCCDF_POLICY_OUTCB_END "urn:xccdf:system:callback:output"
-
 /**
  * Resolve text substitution in given fix element. Use given xccdf_policy settings
  * for resolving.
@@ -77,14 +74,6 @@ int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf
 int xccdf_policy_check_evaluate(struct xccdf_policy * policy, struct xccdf_check * check);
 
 /**
- * Remove all engine callbacks for given system from xccdf_policy_model
- * @memberof xccdf_policy_model
- * @param model XCCDF Policy Model
- * @param sys sytem name of the callback
- */
-void xccdf_policy_model_unregister_callbacks(struct xccdf_policy_model *model, const char *sys);
-
-/**
  * Remediate all rule-results in the given result, with settings of given policy.
  * @memberof xccdf_policy
  * @param policy XCCDF Policy
@@ -109,25 +98,6 @@ int xccdf_policy_report_cb(struct xccdf_policy *policy, const char *sysname, voi
  * @returns the benchmark element or NULL.
  */
 struct xccdf_benchmark *xccdf_policy_get_benchmark(const struct xccdf_policy *policy);
-
-/**
- * Query whether the given list platforms qualifies as 'applicable'. When considering
- * policy_model CPE settings in the given policy model
- * @memberof xccdf_policy_model
- * @param model XCCDF Policy Model
- * @param platforms list of CPE platform identifiers
- * @returns true if the list of platforms qualifies as 'applicable'
- */
-bool xccdf_policy_model_platforms_are_applicable(struct xccdf_policy_model *model, struct oscap_string_iterator *platforms);
-
-/**
- * Query whether the given  item is applicable within given policy
- * @memberof xccdf_policy_model
- * @param model XCCDF Policy Model
- * @param item XCCDF Item
- * @returns true if the given item is applicable
- */
-bool xccdf_policy_model_item_is_applicable(struct xccdf_policy_model *model, struct xccdf_item *item);
 
 OSCAP_HIDDEN_END;
 

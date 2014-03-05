@@ -32,6 +32,7 @@
 #include <libgen.h>
 
 #include "xccdf_policy_priv.h"
+#include "xccdf_policy_model_priv.h"
 #include "public/xccdf_policy.h"
 #include "public/xccdf_benchmark.h"
 #include "public/oscap_text.h"
