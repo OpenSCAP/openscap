@@ -34,6 +34,7 @@
 #include "xccdf_policy_priv.h"
 #include "xccdf_policy_model_priv.h"
 #include "xccdf_policy_engine_priv.h"
+#include "reporter_priv.h"
 #include "public/xccdf_policy.h"
 #include "public/xccdf_benchmark.h"
 #include "public/oscap_text.h"
@@ -47,18 +48,6 @@
 #include "common/_error.h"
 #include "common/debug_priv.h"
 #include "common/assume.h"
-
-/**
- * Typedef of callback structure with callback function and usr data (optional)
- * After rule evaluation action will be called the callback with user data.
- */
-typedef struct callback_out_t {
-
-    char * system;                              ///< Identificator of checking engine (output engine)
-    int (*callback)(void*,void*);             	///< policy report callback {output,start}
-    void * usr;                                 ///< User data structure
-
-} callback_out;
 
 /**
  * XCCDF policy model structure contains xccdf_benchmark as reference
