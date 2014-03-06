@@ -1778,7 +1778,7 @@ bool xccdf_policy_model_register_start_callback(struct xccdf_policy_model * mode
         cb->callback = (void*)func;
         cb->usr      = usr;
 
-        return oscap_list_add(model->callbacks, (callback *) cb);
+        return oscap_list_add(model->callbacks, (callback_out *) cb);
 }
 
 bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * model, policy_reporter_output func, void * usr)
@@ -1792,7 +1792,7 @@ bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * mod
         cb->callback = (void*)func;
         cb->usr      = usr;
 
-        return oscap_list_add(model->callbacks, (callback *) cb);
+        return oscap_list_add(model->callbacks, (callback_out *) cb);
 }
 
 struct xccdf_result * xccdf_policy_get_result_by_id(struct xccdf_policy * policy, const char * id) {
