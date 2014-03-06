@@ -433,8 +433,7 @@ int xccdf_policy_report_cb(struct xccdf_policy *policy, const char *sysname, voi
     while (oscap_iterator_has_more(cb_it)) {
         callback_out * cb = (callback_out *) oscap_iterator_next(cb_it);
 
-        /* Report */
-	retval = cb->callback(rule, cb->usr);
+	retval = reporter_send_simple(cb, rule);
 
         /* We still want to stop evaluation if user cancel it
          * TODO: We should have a way to stop evaluation of current item
