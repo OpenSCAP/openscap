@@ -34,12 +34,12 @@ OSCAP_HIDDEN_START;
 #define XCCDF_POLICY_OUTCB_END "urn:xccdf:system:callback:output"
 
 /**
- * Remove all engine callbacks for given system from xccdf_policy_model
+ * Remove checking engines with given system from xccdf_policy_model
  * @memberof xccdf_policy_model
  * @param model XCCDF Policy Model
  * @param sys sytem name of the callback
  */
-void xccdf_policy_model_unregister_callbacks(struct xccdf_policy_model *model, const char *sys);
+void xccdf_policy_model_unregister_engines(struct xccdf_policy_model *model, const char *sys);
 
 /**
  * Query whether the given list platforms qualifies as 'applicable'. When considering

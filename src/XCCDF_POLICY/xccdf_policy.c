@@ -1737,7 +1737,7 @@ xccdf_policy_model_register_engine_and_query_callback(struct xccdf_policy_model 
 	return oscap_list_add(model->callbacks, engine);
 }
 
-void xccdf_policy_model_unregister_callbacks(struct xccdf_policy_model *model, const char *sys)
+void xccdf_policy_model_unregister_engines(struct xccdf_policy_model *model, const char *sys)
 {
 	__attribute__nonnull__(model);
 	if (sys == NULL)
@@ -2455,7 +2455,7 @@ static void _xccdf_policy_destroy_cpe_oval_session(void* ptr)
 void xccdf_policy_model_free(struct xccdf_policy_model * model) {
 
 	oscap_list_free(model->policies, (oscap_destruct_func) xccdf_policy_free);
-	xccdf_policy_model_unregister_callbacks(model, NULL);
+	xccdf_policy_model_unregister_engines(model, NULL);
 	xccdf_tailoring_free(model->tailoring);
         xccdf_benchmark_free(model->benchmark);
 	oscap_list_free(model->cpe_dicts, (oscap_destruct_func) cpe_dict_model_free);
