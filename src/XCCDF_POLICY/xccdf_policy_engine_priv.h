@@ -36,12 +36,7 @@ OSCAP_HIDDEN_START;
  * On evaluation action will be selected checking system and appropriate callback registred by tool
  * for that system.
  */
-struct xccdf_policy_engine {
-	char *system;                           ///< Identificator of checking engine
-	xccdf_policy_engine_eval_fn callback;   ///< format of callback function
-	void * usr;                             ///< User data structure
-	xccdf_policy_engine_query_fn query_fn;  ///< query callback function
-};
+struct xccdf_policy_engine;
 
 /**
  * Create new checking engine structure

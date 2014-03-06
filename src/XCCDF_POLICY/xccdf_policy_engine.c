@@ -30,6 +30,13 @@
 #include "public/xccdf_policy.h"
 #include "xccdf_policy_engine_priv.h"
 
+struct xccdf_policy_engine {
+	char *system;                           ///< Identificator of checking engine
+	xccdf_policy_engine_eval_fn callback;   ///< format of callback function
+	void * usr;                             ///< User data structure
+	xccdf_policy_engine_query_fn query_fn;  ///< query callback function
+};
+
 struct xccdf_policy_engine *xccdf_policy_engine_new(char *sys, xccdf_policy_engine_eval_fn eval_fn, void *usr, xccdf_policy_engine_query_fn query_fn)
 {
 	struct xccdf_policy_engine *engine = oscap_alloc(sizeof(struct xccdf_policy_engine));
