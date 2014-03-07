@@ -1326,7 +1326,7 @@
 			</description>
 		</metadata>
 		<criteria>
-			<criterion comment="SYSLOGD_OPTIONS in /etc/sysconfig/rsyslog specify level 4" test_ref="oval:org.open-scap.rhel6:tst:11251"/>
+			<criterion comment="SYSLOGD_OPTIONS in /etc/sysconfig/rsyslog specify level 5" test_ref="oval:org.open-scap.rhel6:tst:11251"/>
 		</criteria>
 	</definition>
 	<definition class="compliance" id="oval:org.open-scap.rhel6:def:1126" version="1">
@@ -2268,7 +2268,7 @@
                   <ind-def:object object_ref="oval:org.open-scap.rhel6:obj:112411"/>
         </ind-def:textfilecontent54_test>
         <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:org.open-scap.rhel6:tst:11251" version="1" check="all"
-					comment="/etc/sysconfig/rsyslog defines -c 4 in SYSLOGD_OPTIONS">
+					comment="/etc/sysconfig/rsyslog defines -c 5 in SYSLOGD_OPTIONS">
                   <ind-def:object object_ref="oval:org.open-scap.rhel6:obj:112511"/>
         </ind-def:textfilecontent54_test>
         <ind-def:textfilecontent54_test check_existence="at_least_one_exists" id="oval:org.open-scap.rhel6:tst:11261" version="1" check="all"
@@ -3200,9 +3200,9 @@
                 <ind-def:pattern operation="pattern match">^[[:space:]]*\*\.\*[[:space:]]+(@|:omrelp)</ind-def:pattern>
                 <ind-def:instance datatype="int">1</ind-def:instance>
         </ind-def:textfilecontent54_object>
-        <ind-def:textfilecontent54_object id="oval:org.open-scap.rhel6:obj:112511" version="1" comment="/etc/sysconfig/rsyslog defines -c 4 in SYSLOGD_OPTIONS">
+        <ind-def:textfilecontent54_object id="oval:org.open-scap.rhel6:obj:112511" version="1" comment="/etc/sysconfig/rsyslog defines -c 5 in SYSLOGD_OPTIONS">
                 <ind-def:filepath>/etc/sysconfig/rsyslog</ind-def:filepath>
-                <ind-def:pattern operation="pattern match">^[[:space:]]*SYSLOGD_OPTIONS=.*-c[[:space:]]*4</ind-def:pattern>
+                <ind-def:pattern operation="pattern match">^[[:space:]]*SYSLOGD_OPTIONS=.*-c[[:space:]]*5</ind-def:pattern>
                 <ind-def:instance datatype="int">1</ind-def:instance>
         </ind-def:textfilecontent54_object>
         <ind-def:textfilecontent54_object id="oval:org.open-scap.rhel6:obj:112611" version="1" comment="The /etc/logrotate.d/syslog line that defines which files to look for">
