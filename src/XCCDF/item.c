@@ -736,7 +736,7 @@ bool xccdf_item_process_element(struct xccdf_item * item, xmlTextReaderPtr reade
 
 	switch (el) {
 	case XCCDFE_TITLE:
-        oscap_list_add(item->item.title, oscap_text_new_parse(XCCDF_TEXT_PLAIN, reader));
+        oscap_list_add(item->item.title, oscap_text_new_parse(XCCDF_TEXT_PLAINSUB, reader));
 		return true;
 	case XCCDFE_DESCRIPTION:
         oscap_list_add(item->item.description, oscap_text_new_parse(XCCDF_TEXT_HTMLSUB, reader));
