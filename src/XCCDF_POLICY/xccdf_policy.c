@@ -1,7 +1,7 @@
 /*
  * xccdf_policy.c
  *
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -186,6 +186,14 @@ _xccdf_policy_get_callbacks_by_sysname(struct xccdf_policy * policy, const char 
 static struct oscap_iterator *_xccdf_policy_get_engines_by_sysname(struct xccdf_policy *policy, const char *sysname)
 {
 	return oscap_iterator_new_filter(policy->model->engines, (oscap_filter_func) xccdf_policy_engine_filter, (void *) sysname);
+}
+
+char *xccdf_policy_get_readable_item_title(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang)
+{
+	struct oscap_text_iterator *title_it = xccdf_item_get_title(item);
+	const char *unresolved = oscap_textlist_get_preferred_plaintext(title_it, preferred_lang);
+	oscap_text_iterator_free(title_it);
+	return xccdf_policy_substitute(unresolved, policy);
 }
 
 /**

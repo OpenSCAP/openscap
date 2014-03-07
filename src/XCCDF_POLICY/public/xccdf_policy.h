@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -165,6 +165,17 @@ bool xccdf_policy_model_set_tailoring(struct xccdf_policy_model *model, struct x
  * @memberof xccdf_policy_model
  */
 struct xccdf_tailoring *xccdf_policy_model_get_tailoring(struct xccdf_policy_model *model);
+
+/**
+ * Get human readable title of given XCCDF Item. This finds title with best matching language
+ * and resolves <xccdf:sub> substitution in accordance with the given XCCDF Policy.
+ * @memberof xccdf_policy
+ * @param policy XCCDF Policy
+ * @param item XCCDF Item to query title from
+ * @param preferred_lang Language of your choice, Null value for the default.
+ * @returns plaintext C string which must be freed by caller
+ */
+char *xccdf_policy_get_readable_item_title(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang);
 
 /**
  * Registers an additional CPE dictionary for applicability testing

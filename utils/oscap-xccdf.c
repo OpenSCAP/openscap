@@ -1,5 +1,5 @@
 /*
- * Copyright 2010,2011 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2010--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -302,18 +302,14 @@ static int callback_scr_rule(struct xccdf_rule *rule, void *arg)
 	if (!selected)
 		return 0;
 
-	/* get the first title */
-	const char * title = NULL;
-	struct oscap_text_iterator * title_it = xccdf_rule_get_title(rule);
-	if (oscap_text_iterator_has_more(title_it))
-		title = oscap_text_get_text(oscap_text_iterator_next(title_it));
-	oscap_text_iterator_free(title_it);
+	const char *title = xccdf_policy_get_readable_item_title((struct xccdf_policy *)arg, (struct xccdf_item *) rule, NULL);
 
 	/* print */
 	if (isatty(1))
 		printf("Title\r\t\033[1m%s\033[0;0m\n", title);
 	else
 		printf("Title\r\t%s\n", title);
+	free((char *)title);
 	printf("Rule\r\t%s\n", rule_id);
 
 	struct xccdf_ident_iterator *idents = xccdf_rule_get_idents(rule);
