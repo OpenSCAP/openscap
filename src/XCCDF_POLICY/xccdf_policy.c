@@ -431,7 +431,7 @@ int xccdf_policy_report_cb(struct xccdf_policy *policy, const char *sysname, voi
     int retval = 0;
     struct oscap_iterator * cb_it = _xccdf_policy_get_callbacks_by_sysname(policy, sysname);
     while (oscap_iterator_has_more(cb_it)) {
-        callback_out * cb = (callback_out *) oscap_iterator_next(cb_it);
+        struct reporter *cb = (struct reporter *) oscap_iterator_next(cb_it);
 
 	retval = reporter_send_simple(cb, rule);
 
@@ -1759,7 +1759,7 @@ bool xccdf_policy_model_register_start_callback(struct xccdf_policy_model * mode
 {
 
         __attribute__nonnull__(model);
-	callback_out *reporter = reporter_new(XCCDF_POLICY_OUTCB_START, func, usr);
+	struct reporter *reporter = reporter_new(XCCDF_POLICY_OUTCB_START, func, usr);
         return oscap_list_add(model->callbacks, reporter);
 }
 
@@ -1767,7 +1767,7 @@ bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * mod
 {
 
         __attribute__nonnull__(model);
-	callback_out *reporter = reporter_new(XCCDF_POLICY_OUTCB_END, func, usr);
+	struct reporter *reporter = reporter_new(XCCDF_POLICY_OUTCB_END, func, usr);
         return oscap_list_add(model->callbacks, reporter);
 }
 

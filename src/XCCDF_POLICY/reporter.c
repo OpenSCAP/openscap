@@ -25,14 +25,18 @@
 #endif
 
 #include "common/util.h"
-//#include "common/list.h"
-//#include "common/_error.h"
 #include "public/xccdf_policy.h"
 #include "reporter_priv.h"
 
-callback_out *reporter_new(char *report_type, void *output_func, void *usr)
+struct reporter {
+	char * system;                 ///< Identificator of checking engine (output engine)
+	int (*callback)(void*,void*);  ///< policy report callback {output,start}
+	void * usr;                    ///< User data structure
+};
+
+struct reporter *reporter_new(char *report_type, void *output_func, void *usr)
 {
-	callback_out *reporter = oscap_alloc(sizeof(callback_out));
+	struct reporter *reporter = oscap_alloc(sizeof(struct reporter));
 	if (reporter != NULL) {
 		reporter->system = report_type;
 		reporter->callback = output_func;
@@ -41,7 +45,7 @@ callback_out *reporter_new(char *report_type, void *output_func, void *usr)
 	return reporter;
 }
 
-int reporter_send_simple(callback_out *reporter, void *data)
+int reporter_send_simple(struct reporter *reporter, void *data)
 {
 	return reporter->callback(data, reporter->usr);
 }

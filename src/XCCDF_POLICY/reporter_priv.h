@@ -31,18 +31,14 @@
 OSCAP_HIDDEN_START;
 
 /**
- * Typedef of callback structure with callback function and usr data (optional)
+ * Callback structure with callback function and usr data (optional)
  * After rule evaluation action will be called the callback with user data.
  */
-typedef struct callback_out_t {
-	char * system;                 ///< Identificator of checking engine (output engine)
-	int (*callback)(void*,void*);  ///< policy report callback {output,start}
-	void * usr;                    ///< User data structure
-} callback_out;
+struct reporter;
 
-callback_out *reporter_new(char *report_type, void *output_func, void *usr);
+struct reporter *reporter_new(char *report_type, void *output_func, void *usr);
 
-int reporter_send_simple(callback_out *reporter, void *data);
+int reporter_send_simple(struct reporter *reporter, void *data);
 
 OSCAP_HIDDEN_END;
 
