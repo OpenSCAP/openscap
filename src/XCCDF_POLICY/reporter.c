@@ -30,6 +30,17 @@
 #include "public/xccdf_policy.h"
 #include "reporter_priv.h"
 
+callback_out *reporter_new(char *report_type, void *output_func, void *usr)
+{
+	callback_out *reporter = oscap_alloc(sizeof(callback_out));
+	if (reporter != NULL) {
+		reporter->system = report_type;
+		reporter->callback = output_func;
+		reporter->usr = usr;
+	}
+	return reporter;
+}
+
 int reporter_send_simple(callback_out *reporter, void *data)
 {
 	return reporter->callback(data, reporter->usr);

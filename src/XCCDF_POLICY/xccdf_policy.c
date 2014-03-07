@@ -1759,28 +1759,16 @@ bool xccdf_policy_model_register_start_callback(struct xccdf_policy_model * mode
 {
 
         __attribute__nonnull__(model);
-        callback_out * cb = oscap_alloc(sizeof(callback_out));
-        if (cb == NULL) return false;
-
-	cb->system = XCCDF_POLICY_OUTCB_START;
-        cb->callback = (void*)func;
-        cb->usr      = usr;
-
-        return oscap_list_add(model->callbacks, (callback_out *) cb);
+	callback_out *reporter = reporter_new(XCCDF_POLICY_OUTCB_START, func, usr);
+        return oscap_list_add(model->callbacks, reporter);
 }
 
 bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * model, policy_reporter_output func, void * usr)
 {
 
         __attribute__nonnull__(model);
-        callback_out * cb = oscap_alloc(sizeof(callback_out));
-        if (cb == NULL) return false;
-
-	cb->system = XCCDF_POLICY_OUTCB_END;
-        cb->callback = (void*)func;
-        cb->usr      = usr;
-
-        return oscap_list_add(model->callbacks, (callback_out *) cb);
+	callback_out *reporter = reporter_new(XCCDF_POLICY_OUTCB_END, func, usr);
+        return oscap_list_add(model->callbacks, reporter);
 }
 
 struct xccdf_result * xccdf_policy_get_result_by_id(struct xccdf_policy * policy, const char * id) {

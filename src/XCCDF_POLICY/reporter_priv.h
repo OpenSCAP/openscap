@@ -40,6 +40,8 @@ typedef struct callback_out_t {
 	void * usr;                    ///< User data structure
 } callback_out;
 
+callback_out *reporter_new(char *report_type, void *output_func, void *usr);
+
 int reporter_send_simple(callback_out *reporter, void *data);
 
 OSCAP_HIDDEN_END;
