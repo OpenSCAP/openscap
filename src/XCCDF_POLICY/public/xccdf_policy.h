@@ -178,6 +178,18 @@ struct xccdf_tailoring *xccdf_policy_model_get_tailoring(struct xccdf_policy_mod
 char *xccdf_policy_get_readable_item_title(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang);
 
 /**
+ * Get human readable description of given XCCDF Item. This function searches for description
+ * with the best matching language and resolves any inner <xccdf:sub> substitution (in accordance
+ * with the given XCCDF Policy.
+ * @memberof xccdf_policy
+ * @param policy XCCDF Policy
+ * @param item XCCDF Item to query description from
+ * @param preferred_lang Language of your choice, Null value for the default.
+ * @returns plaintext C string which must be freed by caller
+ */
+char *xccdf_policy_get_readable_item_description(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang);
+
+/**
  * Registers an additional CPE dictionary for applicability testing
  * The one embedded in the evaluated XCCDF take precedence!
  */

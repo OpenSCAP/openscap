@@ -196,6 +196,14 @@ char *xccdf_policy_get_readable_item_title(struct xccdf_policy *policy, struct x
 	return xccdf_policy_substitute(unresolved, policy);
 }
 
+char *xccdf_policy_get_readable_item_description(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang)
+{
+	struct oscap_text_iterator *description_it = xccdf_item_get_description(item);
+	const char *unresolved = oscap_textlist_get_preferred_plaintext(description_it, preferred_lang);
+	oscap_text_iterator_free(description_it);
+	return xccdf_policy_substitute(unresolved, policy);
+}
+
 /**
  * Get last setvalue from policy that match specified id
  */
