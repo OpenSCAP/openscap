@@ -199,8 +199,9 @@ char *xccdf_policy_get_readable_item_title(struct xccdf_policy *policy, struct x
 char *xccdf_policy_get_readable_item_description(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang)
 {
 	struct oscap_text_iterator *description_it = xccdf_item_get_description(item);
-	const char *unresolved = oscap_textlist_get_preferred_plaintext(description_it, preferred_lang);
+	struct oscap_text *unresolved_text = oscap_textlist_get_preferred_text(description_it, preferred_lang);
 	oscap_text_iterator_free(description_it);
+	const char *unresolved = oscap_text_get_text(unresolved_text);
 	return xccdf_policy_substitute(unresolved, policy);
 }
 
