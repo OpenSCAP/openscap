@@ -74,6 +74,8 @@ xmlNode *oscap_text_to_dom(struct oscap_text *text, xmlNode *parent, const char 
 bool oscap_text_export(struct oscap_text *text, xmlTextWriter *writer, const char *elname);
 bool oscap_textlist_export(struct oscap_text_iterator *texts, xmlTextWriter *writer, const char *elname);
 
+struct oscap_text *oscap_textlist_get_preferred_text(struct oscap_text_iterator *texts, const char *preferred_lang);
+
 OSCAP_HIDDEN_END;
 
 #endif
