@@ -76,6 +76,8 @@ bool oscap_textlist_export(struct oscap_text_iterator *texts, xmlTextWriter *wri
 
 struct oscap_text *oscap_textlist_get_preferred_text(struct oscap_text_iterator *texts, const char *preferred_lang);
 
+char *_xhtml_to_plaintext(const char *xhtml_in);
+
 OSCAP_HIDDEN_END;
 
 #endif

@@ -173,26 +173,35 @@ bool oscap_text_export(struct oscap_text *text, xmlTextWriter *writer, const cha
 	return true;
 }
 
+char *_xhtml_to_plaintext(const char *xhtml_in)
+{
+	char *out = NULL;
+	char *str = oscap_sprintf("<x xmlns='http://www.w3.org/1999/xhtml'>%s</x>", xhtml_in);
+	xmlDoc *doc = xmlParseMemory(str, strlen(str));
+	if (doc == NULL) {
+		goto cleanup;
+	}
+	xmlNode *root = xmlDocGetRootElement(doc);
+	if (root == NULL) {
+		goto cleanup;
+	}
+
+	// TODO: better HTML -> plaintext conversion
+	// (perhaps use xml_iterate)
+	out = (char*) xmlNodeGetContent(root);
+	xmlFreeDoc(doc);
+cleanup:
+	oscap_free(str);
+	return out;
+}
+
 char *oscap_text_get_plaintext(const struct oscap_text *text)
 {
     if (text == NULL) return NULL;
 
     if (!text->traits.html) return oscap_strdup(text->text);
 
-    char *out = NULL;
-    char *str = oscap_sprintf("<x xmlns='http://www.w3.org/1999/xhtml'>%s</x>", text->text);
-    xmlDoc *doc = xmlParseMemory(str, strlen(str));
-    if (doc == NULL) goto cleanup;
-    xmlNode *root = xmlDocGetRootElement(doc);
-    if (root == NULL) goto cleanup;
-
-    // TODO: better HTML -> plaintext conversion
-    out = (char*) xmlNodeGetContent(root);
-    xmlFreeDoc(doc);
-
-cleanup:
-    oscap_free(str);
-    return out;
+	return _xhtml_to_plaintext(text->text);
 }
 
 bool oscap_textlist_export(struct oscap_text_iterator *texts, xmlTextWriter *writer, const char *elname)
