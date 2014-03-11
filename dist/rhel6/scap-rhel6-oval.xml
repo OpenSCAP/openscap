@@ -3787,7 +3787,6 @@
 		<value>/sbin/mount.nfs</value>
 		<value>/sbin/pam_timestamp_check</value>
 		<value>/sbin/unix_chkpwd</value>
-		<value>/usr/bin/abrt-action-install-debuginfo-to-abrt-cache</value>
 		<value>/usr/bin/at</value>
 		<value>/usr/bin/chage</value>
 		<value>/usr/bin/chfn</value>
@@ -3827,6 +3826,7 @@
 		<value>/usr/libexec/polkit-1/polkit-agent-helper-1</value>
 		<value>/usr/libexec/pt_chown</value>
 		<value>/usr/libexec/pulse/proximity-helper</value>
+		<value>/usr/libexec/abrt-action-install-debuginfo-to-abrt-cache</value>
 		<value>/usr/lib/nspluginwrapper/plugin-config</value>
 		<value>/usr/sbin/amcheck</value>
 		<value>/usr/sbin/seunshare</value>
