@@ -179,18 +179,19 @@ char *_xhtml_to_plaintext(const char *xhtml_in)
 	char *str = oscap_sprintf("<x xmlns='http://www.w3.org/1999/xhtml'>%s</x>", xhtml_in);
 	xmlDoc *doc = xmlParseMemory(str, strlen(str));
 	if (doc == NULL) {
-		goto cleanup;
+		oscap_free(str);
+		return NULL;
 	}
 	xmlNode *root = xmlDocGetRootElement(doc);
 	if (root == NULL) {
-		goto cleanup;
+		oscap_free(str);
+		return out;
 	}
 
 	// TODO: better HTML -> plaintext conversion
 	// (perhaps use xml_iterate)
 	out = (char*) xmlNodeGetContent(root);
 	xmlFreeDoc(doc);
-cleanup:
 	oscap_free(str);
 	return out;
 }
