@@ -3741,6 +3741,7 @@
 	<variables>
 	<constant_variable id="oval:org.open-scap.rhel6:var:1024112" version="1" datatype="string" comment="sgid whitelist">
 		<value>/bin/cgexec</value>
+		<value>/bin/cgclassify</value>
 		<value>/sbin/netreport</value>
 		<value>/usr/bin/crontab</value>
 		<value>/usr/bin/gnomine</value>
