@@ -1251,6 +1251,7 @@ void xccdf_result_item_clone(struct xccdf_result_item *clone, const struct xccdf
 	clone->target_addresses = oscap_list_clone(item->target_addresses, (oscap_clone_func) oscap_strdup);
 	clone->target_facts = oscap_list_clone(item->target_facts, (oscap_clone_func) xccdf_target_fact_clone);
 	clone->target_id_refs = oscap_list_clone(item->target_id_refs, (oscap_clone_func) xccdf_target_identifier_clone);
+	clone->applicable_platforms = oscap_list_clone(item->applicable_platforms, (oscap_clone_func) oscap_strdup);
 	clone->setvalues = oscap_list_clone(item->setvalues, (oscap_clone_func) xccdf_setvalue_clone);
 	clone->rule_results = oscap_list_clone(item->rule_results, (oscap_clone_func) xccdf_rule_result_clone);
 	clone->scores = oscap_list_clone(item->scores, (oscap_clone_func) xccdf_score_clone);

@@ -65,7 +65,7 @@ struct xccdf_result *xccdf_result_new(void)
 	struct xccdf_item *result = xccdf_item_new(XCCDF_RESULT, NULL);
 	oscap_create_lists(&result->sub.result.identities, &result->sub.result.targets,
 		&result->sub.result.remarks, &result->sub.result.target_addresses,
-		&result->sub.result.target_facts, &result->sub.result.target_id_refs,
+		&result->sub.result.target_facts, &result->sub.result.target_id_refs, &result->sub.result.applicable_platforms,
 		&result->sub.result.setvalues, &result->sub.result.organizations,
 		&result->sub.result.rule_results, &result->sub.result.scores, NULL);
 	return XRESULT(result);
@@ -93,8 +93,9 @@ static inline void xccdf_result_free_impl(struct xccdf_item *result)
 		oscap_list_free(result->sub.result.identities, (oscap_destruct_func) xccdf_identity_free);
 		oscap_list_free(result->sub.result.target_facts, (oscap_destruct_func) xccdf_target_fact_free);
 		oscap_list_free(result->sub.result.target_id_refs, (oscap_destruct_func) xccdf_target_identifier_free);
-		oscap_list_free(result->sub.result.scores, (oscap_destruct_func) xccdf_score_free);
+		oscap_list_free(result->sub.result.applicable_platforms, oscap_free);
 		oscap_list_free(result->sub.result.targets, oscap_free);
+		oscap_list_free(result->sub.result.scores, (oscap_destruct_func) xccdf_score_free);
 		oscap_list_free(result->sub.result.remarks, (oscap_destruct_func) oscap_text_free);
 		oscap_list_free(result->sub.result.target_addresses, oscap_free);
 		oscap_list_free(result->sub.result.setvalues, (oscap_destruct_func) xccdf_setvalue_free);
@@ -119,6 +120,7 @@ XCCDF_LISTMANIP_STRING(result, organization, organizations)
 XCCDF_LISTMANIP_TEXT(result, remark, remarks)
 XCCDF_LISTMANIP(result, target_fact, target_facts)
 XCCDF_LISTMANIP(result, target_identifier, target_id_refs)
+XCCDF_LISTMANIP_STRING(result, applicable_platform, applicable_platforms)
 XCCDF_LISTMANIP(result, setvalue, setvalues)
 XCCDF_LISTMANIP(result, rule_result, rule_results)
 XCCDF_LISTMANIP(result, score, scores)
@@ -857,6 +859,14 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 		xccdf_target_identifier_to_dom(target_identifier, doc, result_node, version_info);
 	}
 	xccdf_target_identifier_iterator_free(target_id_refs);
+
+	struct oscap_string_iterator *applicable_platforms = xccdf_result_get_applicable_platforms(result);
+	while (oscap_string_iterator_has_more(applicable_platforms)) {
+		const char *platform = oscap_string_iterator_next(applicable_platforms);
+		xmlNode *platform_element = xmlNewTextChild(result_node, ns_xccdf, BAD_CAST "platform", NULL);
+		xmlNewProp(platform_element, BAD_CAST "idref", BAD_CAST platform);
+	}
+	oscap_string_iterator_free(applicable_platforms);
 
 	struct xccdf_rule_result_iterator *rule_results = xccdf_result_get_rule_results(result);
 	while (xccdf_rule_result_iterator_has_more(rule_results)) {

@@ -152,6 +152,7 @@ struct xccdf_result_item {
 	struct oscap_list *target_addresses;
 	struct oscap_list *target_facts;
 	struct oscap_list *target_id_refs;
+	struct oscap_list *applicable_platforms;
 	struct oscap_list *setvalues;
 	struct oscap_list *rule_results;
 	struct oscap_list *scores;
