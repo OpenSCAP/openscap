@@ -21,6 +21,7 @@ function test_probes_process {
     probecheck "process" || return 255
     require "grep" || return 255
     require "ps" || return 255
+    declare -A mytest || return 255
 
     local ret_val=0;
     local DF="test_probes_process.xml"
