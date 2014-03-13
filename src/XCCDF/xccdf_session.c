@@ -892,7 +892,6 @@ int xccdf_session_load_tailoring(struct xccdf_session *session)
 	if (tailoring == NULL)
 		return 1;
 
-	xccdf_tailoring_resolve(tailoring, benchmark);
 	return xccdf_policy_model_set_tailoring(session->xccdf.policy_model, tailoring) ? 0 : 1;
 }
 
