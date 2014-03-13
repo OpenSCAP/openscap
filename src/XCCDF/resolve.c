@@ -32,7 +32,7 @@
 
 typedef void (*xccdf_textresolve_func)(void *child, void *parent);
 
-static void xccdf_resolve_item(struct xccdf_item *item);
+static void xccdf_resolve_item(struct xccdf_item *item, struct xccdf_tailoring *tailoring);
 static void xccdf_resolve_cleanup(struct xccdf_item *item);
 
 static struct oscap_list *xccdf_benchmark_resolve_dependencies(void *itemptr, void *userdata)
@@ -74,7 +74,7 @@ bool xccdf_benchmark_resolve(struct xccdf_benchmark *benchmark)
 	
 	if (oscap_tsort(root_nodes, &resolve_order, xccdf_benchmark_resolve_dependencies, NULL, NULL)) {
 		OSCAP_FOR(xccdf_item, item, oscap_iterator_new(resolve_order))
-			xccdf_resolve_item(item);
+			xccdf_resolve_item(item, NULL);
 		ret = true;
 	}
 
@@ -100,6 +100,18 @@ static void xccdf_resolve_warning(void *w1, void *w2) {
 		xccdf_warning_set_category(w1, xccdf_warning_get_category(w2));
 }
 
+static struct xccdf_profile *_xccdf_tailoring_profile_get_real_parent(struct xccdf_tailoring *tailoring, struct xccdf_profile *profile)
+{
+	const char *extends = xccdf_profile_get_extends(profile);
+	struct xccdf_profile *parent_from_tailoring = xccdf_tailoring_get_profile_by_id(tailoring, extends);
+	if (parent_from_tailoring != NULL && parent_from_tailoring != profile) {
+		return parent_from_tailoring;
+	}
+	else {
+		return XPROFILE(xccdf_benchmark_get_member(xccdf_profile_get_benchmark(profile), XCCDF_PROFILE, extends));
+	}
+}
+
 /*
 This macro will look for flags that both undefined in the item AND defined
 in the ancestor/base item. If such a case occurs we define the flag in our
@@ -120,7 +132,7 @@ exported without the result being invalid! (e.g. Profile/@hidden)
 	} \
 } while (false)
 
-static void xccdf_resolve_item(struct xccdf_item *item)
+static void xccdf_resolve_item(struct xccdf_item *item, struct xccdf_tailoring *tailoring)
 {
 	assert(item != NULL);
 
@@ -130,7 +142,13 @@ static void xccdf_resolve_item(struct xccdf_item *item)
 	}
 
 	assert(!xccdf_item_get_extends(item) || xccdf_item_get_type(item) & (XCCDF_PROFILE | XCCDF_ITEM));
-	struct xccdf_item *parent = xccdf_benchmark_get_member(xccdf_item_get_benchmark(item), xccdf_item_get_type(item), xccdf_item_get_extends(item));
+	struct xccdf_item *parent = NULL;
+	if (xccdf_item_get_type(item) == XCCDF_PROFILE && tailoring != NULL) {
+		parent = XITEM(_xccdf_tailoring_profile_get_real_parent(tailoring, XPROFILE(item)));
+	}
+	else {
+		parent = xccdf_benchmark_get_member(xccdf_item_get_benchmark(item), xccdf_item_get_type(item), xccdf_item_get_extends(item));
+	}
 	if (parent == NULL) return;
 	if (xccdf_item_get_type(item) != xccdf_item_get_type(parent)) return;
 	if (xccdf_item_get_type(item) == XCCDF_GROUP && xccdf_version_cmp(xccdf_item_get_schema_version(item), "1.2") >= 0)
@@ -388,3 +406,39 @@ static void xccdf_resolve_cleanup(struct xccdf_item *item)
             xccdf_value_iterator_remove(val_iter);
 }
 
+static struct oscap_list *xccdf_tailoring_resolve_dependencies(void *itemptr, void *userdata)
+{
+	struct xccdf_tailoring *tailoring = (struct xccdf_tailoring*)userdata;
+	assert(xccdf_item_get_type(XITEM(itemptr) == XCCDF_PROFILE));
+	struct xccdf_profile *profile = XPROFILE(itemptr);
+
+	struct oscap_list *ret = oscap_list_new();
+	oscap_list_add(ret, _xccdf_tailoring_profile_get_real_parent(tailoring, profile));
+	return ret;
+}
+
+bool xccdf_tailoring_resolve(struct xccdf_tailoring *tailoring, struct xccdf_benchmark *benchmark)
+{
+	struct oscap_list *resolve_order = NULL;
+	struct oscap_list *profiles = oscap_list_new();
+
+	struct xccdf_profile_iterator *it = xccdf_tailoring_get_profiles(tailoring);
+	while (xccdf_profile_iterator_has_more(it)) {
+		struct xccdf_profile *profile = xccdf_profile_iterator_next(it);
+		oscap_list_add(profiles, profile);
+	}
+	xccdf_profile_iterator_free(it);
+
+	bool ret = false;
+
+	if (oscap_tsort(profiles, &resolve_order, xccdf_tailoring_resolve_dependencies, NULL, tailoring)) {
+		OSCAP_FOR(xccdf_profile, profile, oscap_iterator_new(resolve_order))
+			xccdf_resolve_item(XITEM(profile), tailoring);
+		ret = true;
+	}
+
+	oscap_list_free(profiles, NULL);
+	oscap_list_free(resolve_order, NULL);
+
+	return ret;
+}

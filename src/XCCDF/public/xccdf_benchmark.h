@@ -3071,6 +3071,8 @@ bool xccdf_tailoring_add_profile(struct xccdf_tailoring *tailoring, struct xccdf
  * @memberof xccdf_tailoring
  */
 bool xccdf_tailoring_remove_profile(struct xccdf_tailoring *tailoring, struct xccdf_profile *profile);
+/// @memberof xccdf_tailoring
+bool xccdf_tailoring_resolve(struct xccdf_tailoring *tailoring, struct xccdf_benchmark *benchmark);
 
 // @memberof xccdf_ident
 void xccdf_ident_set_id(struct xccdf_ident * ident, const char *id);

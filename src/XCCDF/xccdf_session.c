@@ -883,14 +883,16 @@ int xccdf_session_load_tailoring(struct xccdf_session *session)
 		free(xccdf_tailoring_version);
 	}
 
+	struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(session->xccdf.policy_model);
 	struct xccdf_tailoring *tailoring = xccdf_tailoring_import(tailoring_path,
-		xccdf_policy_model_get_benchmark(session->xccdf.policy_model));
+		benchmark);
 
 	free(tailoring_path);
 
 	if (tailoring == NULL)
 		return 1;
 
+	xccdf_tailoring_resolve(tailoring, benchmark);
 	return xccdf_policy_model_set_tailoring(session->xccdf.policy_model, tailoring) ? 0 : 1;
 }
 
