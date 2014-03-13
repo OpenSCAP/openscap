@@ -58,6 +58,7 @@ EXTRA_DIST += \
 	test_fix_filtering.sh \
 	test_inherit_selector.oval.xml \
 	test_inherit_selector.sh \
+	test_inherit_selector.tailoring.xml \
 	test_inherit_selector.xccdf.xml \
 	test_unfinished.sh \
 	test_unfinished.xccdf.xml \
