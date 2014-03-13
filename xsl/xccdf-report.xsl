@@ -231,9 +231,22 @@ Authors:
             <xsl:if test='/cdf:Benchmark/cdf:platform or cdf:platform'>
               <entry valign="top">
                 <itemizedlist>
-                  <title>Platforms</title>
-                  <xsl:apply-templates select='/cdf:Benchmark/cdf:platform'/>
-                  <xsl:apply-templates select='cdf:platform'/>
+                  <title>Applicable platforms</title>
+                  <xsl:variable name="testresult" select="."/>
+                  <xsl:for-each select='/cdf:Benchmark/cdf:platform'>
+                    <xsl:variable name="idref" select="@idref"/>
+
+                    <xsl:if test="$testresult/cdf:platform[@idref=$idref]">
+                      <listitem><emphasis role="strong"><xsl:value-of select="$idref"/></emphasis></listitem>
+                    </xsl:if>
+                  </xsl:for-each>
+                  <xsl:for-each select='cdf:platform'>
+                    <xsl:variable name="idref" select="@idref"/>
+
+                    <xsl:if test="not(/cdf:Benchmark/cdf:platform[@idref=$idref])">
+                      <listitem><emphasis role="italic"><xsl:value-of select="$idref"/></emphasis></listitem>
+                    </xsl:if>
+                  </xsl:for-each>
                 </itemizedlist>
               </entry>
             </xsl:if>
