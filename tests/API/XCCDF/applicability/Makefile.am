@@ -9,6 +9,7 @@ TESTS = all.sh
 
 EXTRA_DIST = \
 	all.sh \
+	applicable-benchmark-xccdf.xml \
 	applicable-rule-xccdf.xml \
 	applicable-rule-embedded-xccdf.xml \
 	cpe-dict.xml \
