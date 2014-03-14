@@ -409,7 +409,7 @@ static void xccdf_resolve_cleanup(struct xccdf_item *item)
 static struct oscap_list *xccdf_tailoring_resolve_dependencies(void *itemptr, void *userdata)
 {
 	struct xccdf_tailoring *tailoring = (struct xccdf_tailoring*)userdata;
-	assert(xccdf_item_get_type(XITEM(itemptr) == XCCDF_PROFILE));
+	assert(xccdf_item_get_type(XITEM(itemptr)) == XCCDF_PROFILE);
 	struct xccdf_profile *profile = XPROFILE(itemptr);
 
 	struct oscap_list *ret = oscap_list_new();
