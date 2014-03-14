@@ -36,9 +36,6 @@ endif
 if probe_shadow_enabled
 UNIX_SUBDIRS += shadow
 endif
-if probe_process_enabled
-UNIX_SUBDIRS += process
-endif
 if probe_process58_enabled
 UNIX_SUBDIRS += process58
 endif
