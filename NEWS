@@ -1,3 +1,17 @@
+openscap-1.0.5                                                  14-03-2014
+ - XCCDF titles and description support xccdf:sub resolution
+ - HTML Report lists only applicable cpe platforms
+ - TestResult element contains applicable cpe platforms
+ - Introduced XCCDF 1.2 schematron validation
+ - XCCDF bug fixes
+    - tailoring profiles shall regards inherited refine-values (trac#373)
+    - rule-result now always includes at least one check
+ - Other bug fixes:
+    - Dpkginfo probe collects epoch in evr
+    - Updated examplary openscap-content based on the latest facts from
+      Red Hat Enterprise Linux 6
+    - Minor changes
+
 openscap-1.0.4                                                  13-02-2014
  - Introduced xccdf_tailoring_remove_profile to API
  - OVAL bug fixes
