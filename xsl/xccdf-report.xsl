@@ -448,25 +448,25 @@ Authors:
     </xsl:choose>
   </xsl:variable>
   <xsl:variable name='percent' select='number(.) div number($max)'/>
-  <xsl:variable name='format' select="'#.00'"/>
+  <xsl:variable name='format' select="'0.00'"/>
 
   <row id='score-{translate(@system, ":", "-")}'>
     <entry role='score-sys'><xsl:value-of select='@system' /></entry>
     <entry role='score-val'><xsl:value-of select='format-number(string(.), $format)' /></entry>
     <entry role='score-max'><xsl:value-of select='format-number($max, $format)' /></entry>
-    <entry role='score-percent'><xsl:value-of select="format-number($percent, '#.00%')"/></entry>
+    <entry role='score-percent'><xsl:value-of select="format-number($percent, '0.00%')"/></entry>
     <entry role='score-bar'>
       <inlinemediaobject role='score-bar'>
         <imageobject>
           <imagedata format='SVG'>
-            <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" version="1.1" baseProfile="full">
+            <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" version="1.1">
               <rect width="100%" height="100%" fill="red"/>
-              <rect height="100%" width="{format-number($percent, '#.00%')}" fill="green"/>
-              <rect height="100%" x="{format-number($percent, '#.00%')}" width="2" fill="black"/>
+              <rect height="100%" width="{format-number($percent, '0.00%')}" fill="green"/>
+              <rect height="100%" x="{format-number($percent, '0.00%')}" width="2" fill="black"/>
             </svg>
           </imagedata>
         </imageobject>
-        <textobject><phrase><xsl:value-of select='format-number($percent, "#.0%")'/></phrase></textobject>
+        <textobject><phrase><xsl:value-of select='format-number($percent, "0.00%")'/></phrase></textobject>
       </inlinemediaobject>
     </entry>
   </row>
