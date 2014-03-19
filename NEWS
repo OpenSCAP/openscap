@@ -1,3 +1,6 @@
+openscap-1.0.6                                                  19-03-2014
+ - fix process58 loginuid integer handling on 32bit
+
 openscap-1.0.5                                                  14-03-2014
  - XCCDF titles and description support xccdf:sub resolution
  - HTML Report lists only applicable cpe platforms
