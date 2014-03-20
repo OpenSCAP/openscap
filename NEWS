@@ -1,3 +1,7 @@
+openscap-1.0.7                                                  20-03-2014
+ - fix namespaces for attributes in ARF relationship element
+ - Avoid ".00" as the score in HTML report when score is 0.
+
 openscap-1.0.6                                                  19-03-2014
  - fix process58 loginuid integer handling on 32bit
 
