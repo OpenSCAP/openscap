@@ -394,7 +394,126 @@ static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr ass
 	return asset;
 }
 
-static int ds_rds_report_inject_ai_target_id_ref(xmlDocPtr doc, xmlNodePtr report, const char *asset_id)
+static int ds_rds_report_inject_ai_target_id_ref(xmlDocPtr doc, xmlNodePtr test_result_node, const char *asset_id)
+{
+	// Now we need to find the right place to inject the target-id-ref element.
+	// It has to come after target, target-address and target-facts elements.
+	// However target-address and target-fact are both optional.
+
+	xmlNodePtr prev_sibling = NULL;
+	xmlNodePtr prev_sibling_candidate = test_result_node->children;
+
+	while (prev_sibling_candidate) {
+		if (prev_sibling_candidate->type == XML_ELEMENT_NODE) {
+			if (strcmp((const char*)prev_sibling_candidate->name, "target") == 0 ||
+				strcmp((const char*)prev_sibling_candidate->name, "target-address") == 0 ||
+				strcmp((const char*)prev_sibling_candidate->name, "target-facts") == 0) {
+
+				prev_sibling = prev_sibling_candidate;
+			}
+		}
+
+		prev_sibling_candidate = prev_sibling_candidate->next;
+	}
+
+	if (!prev_sibling) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "No target element was found in TestResult. "
+			"The most likely reason is that the content is not valid! "
+			"(XCCDF spec states 'target' element as required)");
+		return -1;
+	}
+
+	// We have to make sure we are not injecting a target-id-ref that is there
+	// already. if there is any duplicate, it has to come right after prev_sibling.
+	xmlNodePtr duplicate_candidate = prev_sibling->next;
+	while (duplicate_candidate) {
+		if (duplicate_candidate->type == XML_ELEMENT_NODE) {
+			if (strcmp((const char*)duplicate_candidate->name, "target-id-ref") == 0) {
+				xmlChar* system_attr = xmlGetProp(duplicate_candidate, BAD_CAST "system");
+				xmlChar* name_attr = xmlGetProp(duplicate_candidate, BAD_CAST "name");
+
+				if (strcmp((const char*)system_attr, ai_ns_uri) == 0 &&
+					strcmp((const char*)name_attr, asset_id) == 0) {
+
+					xmlFree(system_attr);
+					xmlFree(name_attr);
+					return 0;
+				}
+
+				xmlFree(system_attr);
+				xmlFree(name_attr);
+			}
+			else {
+				break;
+			}
+		}
+		duplicate_candidate = duplicate_candidate->next;
+	}
+
+	xmlNodePtr target_id_ref = xmlNewNode(prev_sibling->ns, BAD_CAST "target-id-ref");
+	xmlNewProp(target_id_ref, BAD_CAST "system", BAD_CAST ai_ns_uri);
+	xmlNewProp(target_id_ref, BAD_CAST "name", BAD_CAST asset_id);
+	// @href is a required attribute by the XSD! The spec advocates filling it
+	// blank when it's not needed.
+	xmlNewProp(target_id_ref, BAD_CAST "href", BAD_CAST "");
+
+	xmlAddNextSibling(prev_sibling, target_id_ref);
+
+	return 0;
+}
+
+static void ds_rds_report_inject_rule_result_check_refs(xmlDocPtr doc, xmlNodePtr rule_result, char *desired_href)
+{
+	xmlNodePtr child = rule_result->children;
+
+	while (child) {
+		if (child->type == XML_ELEMENT_NODE) {
+			if (strcmp((const char*)child->name, "check") == 0) {
+				xmlNodePtr check_content_ref = child->children;
+
+				while (check_content_ref) {
+					if (check_content_ref->type == XML_ELEMENT_NODE) {
+						if (strcmp((const char*)check_content_ref->name, "check-content-ref") == 0) {
+							xmlSetProp(check_content_ref, BAD_CAST "href", BAD_CAST desired_href);
+						}
+					}
+
+					check_content_ref = check_content_ref->next;
+				}
+			}
+		}
+
+		child = child->next;
+	}
+}
+
+/*
+ * This function replaces all check-content-ref/@href with "#" + id of ancestor arf:report.
+ * Doing this replaces potentially valuable data with a value easily calculated from the XML.
+ *
+ * The only reason we do this is to pass requirement 370-1.
+ *
+ * TODO: Consider dropping this functionality if 370-1 is changed / clarified.
+ */
+static void ds_rds_report_inject_rule_result_refs(xmlDocPtr doc, xmlNodePtr test_result_node, char *report_id)
+{
+	char *desired_href = oscap_sprintf("#%s", report_id);
+
+	xmlNodePtr child = test_result_node->children;
+	while (child) {
+		if (child->type == XML_ELEMENT_NODE) {
+			if (strcmp((const char*)child->name, "rule-result") == 0) {
+				ds_rds_report_inject_rule_result_check_refs(doc, child, desired_href);
+			}
+		}
+
+		child = child->next;
+	}
+
+	oscap_free(desired_href);
+}
+
+static int ds_rds_report_inject_refs(xmlDocPtr doc, xmlNodePtr report, const char *asset_id)
 {
 	xmlNodePtr content_node = ds_rds_get_inner_content(doc, report);
 
@@ -470,70 +589,13 @@ static int ds_rds_report_inject_ai_target_id_ref(xmlDocPtr doc, xmlNodePtr repor
 		return -1;
 	}
 
-	// Now we need to find the right place to inject the target-id-ref element.
-	// It has to come after target, target-address and target-facts elements.
-	// However target-address and target-fact are both optional.
+	int ret = ds_rds_report_inject_ai_target_id_ref(doc, test_result_node, asset_id);
 
-	xmlNodePtr prev_sibling = NULL;
-	xmlNodePtr prev_sibling_candidate = test_result_node->children;
+	char *report_id = (char*)xmlGetProp(report, BAD_CAST "id");
+	ds_rds_report_inject_rule_result_refs(doc, test_result_node, report_id);
+	xmlFree(report_id);
 
-	while (prev_sibling_candidate) {
-		if (prev_sibling_candidate->type == XML_ELEMENT_NODE) {
-			if (strcmp((const char*)prev_sibling_candidate->name, "target") == 0 ||
-				strcmp((const char*)prev_sibling_candidate->name, "target-address") == 0 ||
-				strcmp((const char*)prev_sibling_candidate->name, "target-facts") == 0) {
-
-				prev_sibling = prev_sibling_candidate;
-			}
-		}
-
-		prev_sibling_candidate = prev_sibling_candidate->next;
-	}
-
-	if (!prev_sibling) {
-		oscap_seterr(OSCAP_EFAMILY_XML, "No target element was found in TestResult. "
-			"The most likely reason is that the content is not valid! "
-			"(XCCDF spec states 'target' element as required)");
-		return -1;
-	}
-
-	// We have to make sure we are not injecting a target-id-ref that is there
-	// already. if there is any duplicate, it has to come right after prev_sibling.
-	xmlNodePtr duplicate_candidate = prev_sibling->next;
-	while (duplicate_candidate) {
-		if (duplicate_candidate->type == XML_ELEMENT_NODE) {
-			if (strcmp((const char*)duplicate_candidate->name, "target-id-ref") == 0) {
-				xmlChar* system_attr = xmlGetProp(duplicate_candidate, BAD_CAST "system");
-				xmlChar* name_attr = xmlGetProp(duplicate_candidate, BAD_CAST "name");
-
-				if (strcmp((const char*)system_attr, ai_ns_uri) == 0 &&
-					strcmp((const char*)name_attr, asset_id) == 0) {
-
-					xmlFree(system_attr);
-					xmlFree(name_attr);
-					return 0;
-				}
-
-				xmlFree(system_attr);
-				xmlFree(name_attr);
-			}
-			else {
-				break;
-			}
-		}
-		duplicate_candidate = duplicate_candidate->next;
-	}
-
-	xmlNodePtr target_id_ref = xmlNewNode(prev_sibling->ns, BAD_CAST "target-id-ref");
-	xmlNewProp(target_id_ref, BAD_CAST "system", BAD_CAST ai_ns_uri);
-	xmlNewProp(target_id_ref, BAD_CAST "name", BAD_CAST asset_id);
-	// @href is a required attribute by the XSD! The spec advocates filling it
-	// blank when it's not needed.
-	xmlNewProp(target_id_ref, BAD_CAST "href", BAD_CAST "");
-
-	xmlAddNextSibling(prev_sibling, target_id_ref);
-
-	return 0;
+	return ret;
 }
 
 static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
@@ -559,9 +621,9 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 				"xccdf1", asset_id);
 		xmlFree(asset_id);
 
-		// We deliberately don't act on errors in inject ai target-id-ref as
+		// We deliberately don't act on errors in inject refs as
 		// these aren't fatal errors.
-		ds_rds_report_inject_ai_target_id_ref(doc, report, asset_id);
+		ds_rds_report_inject_refs(doc, report, asset_id);
 	}
 
 	// 2) the root element is a Benchmark, TestResults are embedded within
@@ -601,9 +663,9 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 			ds_rds_add_relationship(doc, relationships, "arfrel:isAbout",
 					report_id, asset_id);
 
-			// We deliberately don't act on errors in inject ai target-id-ref as
+			// We deliberately don't act on errors in inject ref as
 			// these aren't fatal errors.
-			ds_rds_report_inject_ai_target_id_ref(doc, report, asset_id);
+			ds_rds_report_inject_refs(doc, report, asset_id);
 
 			xmlFree(asset_id);
 
