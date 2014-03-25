@@ -411,6 +411,32 @@ static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr ass
 			}
 			xmlFree(content);
 		}
+		else if (strcmp((const char*)(test_result_child->name), "target-facts") == 0)
+		{
+			xmlNodePtr target_fact_child = test_result_child->children;
+
+			for (; target_fact_child != NULL; target_fact_child = target_fact_child->next)
+			{
+				if (target_fact_child->type != XML_ELEMENT_NODE)
+					continue;
+
+				if (strcmp((const char*)(target_fact_child->name), "fact") != 0)
+					continue;
+
+				xmlChar *name = xmlGetProp(target_fact_child, BAD_CAST "name");
+				if (!name || strcmp((const char*)name, "urn:xccdf:fact:ethernet:MAC") != 0) {
+					xmlFree(name);
+					continue;
+				}
+				xmlFree(name);
+
+				xmlChar *content = xmlNodeGetContent(target_fact_child);
+				xmlNodePtr connection = xmlNewNode(ai_ns, BAD_CAST "connection");
+				xmlAddChild(connections, connection);
+				xmlNewTextChild(connection, ai_ns, BAD_CAST "mac-address", content);
+				xmlFree(content);
+			}
+		}
 	}
 
 	return asset;
