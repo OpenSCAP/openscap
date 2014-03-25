@@ -360,11 +360,33 @@ static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr ass
 		if (test_result_child->type != XML_ELEMENT_NODE)
 			continue;
 
+		// Order for the output to be valid:
+		// 1) All fqdn-s
+		// 2) All hostnames
+		xmlNodePtr last_fqdn = NULL;
 		if (strcmp((const char*)(test_result_child->name), "target") == 0)
 		{
-			xmlChar* content = xmlNodeGetContent(test_result_child);
-			xmlNewTextChild(computing_device, ai_ns, BAD_CAST "fqdn", content);
-			xmlFree(content);
+			// content is a full copy
+			char *content = (char*)xmlNodeGetContent(test_result_child);
+			xmlNodePtr fqdn = xmlNewNode(ai_ns, BAD_CAST "fqdn");
+			xmlNodeSetContent(fqdn, BAD_CAST content);
+
+			if (!last_fqdn) {
+				xmlAddChild(computing_device, fqdn);
+			}
+			else {
+				xmlAddNextSibling(last_fqdn, fqdn);
+			}
+			last_fqdn = fqdn;
+
+			// now we need to change content so that it represents just the hostname part of FQDN
+			char *delimiter = strchr(content, '.');
+			if (delimiter)
+				*delimiter = '\0';
+
+			xmlNewTextChild(computing_device, ai_ns, BAD_CAST "hostname", BAD_CAST content);
+
+			free(content);
 		}
 		else if (strcmp((const char*)(test_result_child->name), "target-address") == 0)
 		{
