@@ -1,3 +1,9 @@
+openscap-1.0.8                                                  26-03-2014
+ - fixes related to Asset Reporting Format
+   - Inject arf:report/@id into nested rule-result/check/check-content-ref/@href
+   - Add hostname for each fqdn when generating ARF asset identification data
+   - Add all MAC addresses from target-facts to ARF as asset identification data
+
 openscap-1.0.7                                                  20-03-2014
  - fix namespaces for attributes in ARF relationship element
  - Avoid ".00" as the score in HTML report when score is 0.
