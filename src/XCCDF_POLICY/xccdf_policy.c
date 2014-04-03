@@ -823,6 +823,11 @@ static bool _xccdf_policy_cpe_check_cb(const char* sys, const char* href, const 
 		}
 
 		session = oval_agent_new_session(oval_model, prefixed_href);
+		if (session == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot create OVAL session for '%s' for CPE applicability checking", prefixed_href);
+			oscap_free(prefixed_href);
+			return false;
+		}
 		oscap_htable_add(model->cpe_oval_sessions, prefixed_href, session);
 	}
 	oscap_free(prefixed_href);
