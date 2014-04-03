@@ -667,6 +667,16 @@ void xccdf_value_binding_iterator_reset(struct xccdf_value_binding_iterator *it)
 struct xccdf_score * xccdf_policy_get_score(struct xccdf_policy * policy, struct xccdf_result * test_result, const char * system);
 
 /**
+ * Get value of given value item in context of given policy
+ * @memberof xccdf_policy
+ * @param policy XCCDF policy
+ * @param item the xccdf:Value to resolve
+ * @returns string representation of resolved value_instance.
+ * @retval NULL indicates failure
+ */
+const char *xccdf_policy_get_value_of_item(struct xccdf_policy * policy, struct xccdf_item * item);
+
+/**
  * Perform textual substitution of cdf:sub elements with respect to given XCCDF policy.
  * @param text text to be substituted
  * @param policy policy to be used
