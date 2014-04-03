@@ -390,6 +390,9 @@ static struct ds_sds_index* ds_sds_index_parse(xmlTextReaderPtr reader)
 			// ignore, extended-component can't be an XCCDF, therefore we are sure
 			// not to be able to dig any Benchmark @id from it
 		}
+		else if (strcmp(name, "Signature") == 0) {
+			// ignore, Signatures are to be checked externally, we don't load them in
+		}
 		else {
 			oscap_seterr(OSCAP_EFAMILY_XML, "Unknown element '%s' encountered while parsing Source DataStream to ds_sds_index, skipping...", name);
 		}
