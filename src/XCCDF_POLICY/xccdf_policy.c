@@ -2338,17 +2338,16 @@ const char *xccdf_policy_get_value_of_item(struct xccdf_policy * policy, struct 
 	if (profile != NULL) {
 		/* Get set_value for this item */
 		struct xccdf_setvalue *s_value = NULL;
+		struct xccdf_setvalue *last_s_value = NULL;
 		struct xccdf_setvalue_iterator *s_value_it = xccdf_profile_get_setvalues(profile);
 		while (xccdf_setvalue_iterator_has_more(s_value_it)) {
 			s_value = xccdf_setvalue_iterator_next(s_value_it);
-			if (!strcmp(xccdf_setvalue_get_item(s_value), xccdf_value_get_id((struct xccdf_value *) item)))
-				break;
-			else
-				s_value = NULL;
+			if (strcmp(xccdf_setvalue_get_item(s_value), xccdf_value_get_id((struct xccdf_value *) item)) == 0)
+				last_s_value = s_value;
 		}
 		xccdf_setvalue_iterator_free(s_value_it);
-		if (s_value != NULL)
-			return xccdf_setvalue_get_value(s_value);
+		if (last_s_value != NULL)
+			return xccdf_setvalue_get_value(last_s_value);
 
 		/* We don't have set-value in profile, look for refine-value */
 		struct xccdf_refine_value_iterator *r_value_it = xccdf_profile_get_refine_values(profile);
