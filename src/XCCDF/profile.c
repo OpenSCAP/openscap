@@ -375,12 +375,34 @@ void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, 
 	xccdf_select_iterator_free(selects);
 	oscap_htable_free0(final_selects);
 
+	// More or less the same situation as with selects, let us only serialize
+	// the last effective setvalue.
+	struct oscap_htable *final_setvalues = oscap_htable_new();
 	struct xccdf_setvalue_iterator *setvalues = xccdf_profile_get_setvalues(profile);
 	while (xccdf_setvalue_iterator_has_more(setvalues)) {
+		const struct xccdf_setvalue *setvalue = xccdf_setvalue_iterator_next(setvalues);
+		const char *idref = xccdf_setvalue_get_item(setvalue);
+
+		if (!idref)
+			continue;
+
+		oscap_htable_detach(final_setvalues, idref);
+		oscap_htable_add(final_setvalues, idref, (void*)setvalue);
+	}
+	xccdf_setvalue_iterator_free(setvalues);
+
+	setvalues = xccdf_profile_get_setvalues(profile);
+	while (xccdf_setvalue_iterator_has_more(setvalues)) {
 		struct xccdf_setvalue *setvalue = xccdf_setvalue_iterator_next(setvalues);
+		const char *idref = xccdf_setvalue_get_item(setvalue);
+
+		if (idref && oscap_htable_get(final_setvalues, idref) != setvalue)
+			continue;
+
 		xccdf_setvalue_to_dom(setvalue, doc, profile_node, version_info);
 	}
 	xccdf_setvalue_iterator_free(setvalues);
+	oscap_htable_free0(final_setvalues);
 
 	struct xccdf_refine_value_iterator *refine_values = xccdf_profile_get_refine_values(profile);
 	while (xccdf_refine_value_iterator_has_more(refine_values)) {
