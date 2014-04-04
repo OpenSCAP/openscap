@@ -801,13 +801,6 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 		xmlNewProp(prof_node, BAD_CAST "idref", BAD_CAST profile);
 	}
 
-	struct xccdf_setvalue_iterator *setvalues = xccdf_result_get_setvalues(result);
-	while (xccdf_setvalue_iterator_has_more(setvalues)) {
-		struct xccdf_setvalue *setvalue = xccdf_setvalue_iterator_next(setvalues);
-		xccdf_setvalue_to_dom(setvalue, doc, result_node, version_info);
-	}
-	xccdf_setvalue_iterator_free(setvalues);
-
 	struct oscap_string_iterator *targets = xccdf_result_get_targets(result);
 	while (oscap_string_iterator_has_more(targets)) {
 		const char *target = oscap_string_iterator_next(targets);
@@ -867,6 +860,13 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 		xmlNewProp(platform_element, BAD_CAST "idref", BAD_CAST platform);
 	}
 	oscap_string_iterator_free(applicable_platforms);
+
+	struct xccdf_setvalue_iterator *setvalues = xccdf_result_get_setvalues(result);
+	while (xccdf_setvalue_iterator_has_more(setvalues)) {
+		struct xccdf_setvalue *setvalue = xccdf_setvalue_iterator_next(setvalues);
+		xccdf_setvalue_to_dom(setvalue, doc, result_node, version_info);
+	}
+	xccdf_setvalue_iterator_free(setvalues);
 
 	struct xccdf_rule_result_iterator *rule_results = xccdf_result_get_rule_results(result);
 	while (xccdf_rule_result_iterator_has_more(rule_results)) {
