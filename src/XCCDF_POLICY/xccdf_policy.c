@@ -2183,6 +2183,61 @@ bool xccdf_policy_resolve(struct xccdf_policy * policy)
     return true;
 }
 
+static void xccdf_policy_add_final_setvalue(struct xccdf_policy *policy, struct xccdf_value *value, struct xccdf_result *result)
+{
+	const char *idref = xccdf_value_get_id(value);
+	const char *content = xccdf_policy_get_value_of_item(policy, xccdf_value_to_item(value));
+
+	struct xccdf_setvalue *setvalue = xccdf_setvalue_new();
+	xccdf_setvalue_set_item(setvalue, idref);
+	xccdf_setvalue_set_value(setvalue, content);
+
+	xccdf_result_add_setvalue(result, setvalue);
+}
+
+static void xccdf_policy_add_final_setvalues(struct xccdf_policy *policy, struct xccdf_item *item, struct xccdf_result *result)
+{
+	struct xccdf_item_iterator *child_it = NULL;
+	struct xccdf_value_iterator *value_it = NULL;
+
+	xccdf_type_t itype = xccdf_item_get_type(item);
+	switch (itype) {
+		case XCCDF_GROUP:
+			value_it = xccdf_group_get_values(xccdf_item_to_group(item));
+			while (xccdf_value_iterator_has_more(value_it)) {
+				struct xccdf_value *value = xccdf_value_iterator_next(value_it);
+				xccdf_policy_add_final_setvalue(policy, value, result);
+			}
+			xccdf_value_iterator_free(value_it);
+
+			child_it = xccdf_group_get_content(xccdf_item_to_group(item));
+			while (xccdf_item_iterator_has_more(child_it)) {
+				struct xccdf_item *child = xccdf_item_iterator_next(child_it);
+				xccdf_policy_add_final_setvalues(policy, child, result);
+			}
+			xccdf_item_iterator_free(child_it);
+			break;
+		case XCCDF_BENCHMARK:
+			value_it = xccdf_benchmark_get_values(xccdf_item_to_benchmark(item));
+			while (xccdf_value_iterator_has_more(value_it)) {
+				struct xccdf_value *value = xccdf_value_iterator_next(value_it);
+				xccdf_policy_add_final_setvalue(policy, value, result);
+			}
+			xccdf_value_iterator_free(value_it);
+
+			child_it = xccdf_benchmark_get_content(xccdf_item_to_benchmark(item));
+			while (xccdf_item_iterator_has_more(child_it)) {
+				struct xccdf_item *child = xccdf_item_iterator_next(child_it);
+				xccdf_policy_add_final_setvalues(policy, child, result);
+			}
+			xccdf_item_iterator_free(child_it);
+			break;
+
+		default:
+			break;
+	}
+}
+
 /**
  * Evaluate XCCDF Policy
  * Iterate through Benchmark items and evalute one by one by calling 
@@ -2255,6 +2310,8 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
 			break;
 	}
 	xccdf_item_iterator_free(item_it);
+
+	xccdf_policy_add_final_setvalues(policy, xccdf_benchmark_to_item(benchmark), result);
 
 	struct oscap_htable_iterator *it = oscap_htable_iterator_new(policy->model->cpe_applicable_platforms);
 	while (oscap_htable_iterator_has_more(it)) {
