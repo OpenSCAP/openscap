@@ -92,8 +92,12 @@ int read_sysinfo(probe_ctx *ctx) {
 	if (sysinfo(SI_ARCHITECTURE_K, result.kernel_isa, MAX_STR_RESULT) == -1) {
 		return err;
 	}
-
+#if defined(__SVR4) && defined(__sun)
+	if ((sysinfo(SI_ARCHITECTURE_32, result.application_isa, MAX_STR_RESULT) == -1) &&
+	   (sysinfo(SI_ARCHITECTURE_64, result.application_isa, MAX_STR_RESULT) == -1)) {
+#else
 	if (sysinfo(SI_ARCHITECTURE_NATIVE, result.application_isa, MAX_STR_RESULT) == -1) {
+#endif
 		return err;
 	}
 

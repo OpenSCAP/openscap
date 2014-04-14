@@ -233,7 +233,11 @@ xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr d
 	xmlNode *tailoring_node = xmlNewNode(ns_xccdf, BAD_CAST "Tailoring");
 
 	const char *xccdf_version = xccdf_version_info_get_version(version_info);
+#ifdef __USE_GNU
 	if (strverscmp(xccdf_version, "1.1") >= 0 && strverscmp(xccdf_version, "1.2") < 0) {
+#else
+	if (strcmp(xccdf_version, "1.1") >= 0 && strcmp(xccdf_version, "1.2") < 0) {
+#endif
 		// XCCDF 1.1 does not support Tailoring!
 		// However we will allow Tailoring export if it is done to an external
 		// file. The namespace will be our custom xccdf-1.1-tailoring extension
@@ -250,7 +254,11 @@ xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr d
 			BAD_CAST "cdf-11-tailoring"
 		);
 	}
+#ifdef __USE_GNU
 	else if (strverscmp(xccdf_version, "1.1") < 0) {
+#else
+	else if (strcmp(xccdf_version, "1.1") < 0) {
+#endif
 		oscap_seterr(OSCAP_EFAMILY_XML, "XCCDF Tailoring isn't supported in XCCDF version '%s',"
 			"nor does openscap have a custom extension for this scenario. "
 			"XCCDF Tailoring requires XCCDF 1.1 and higher, 1.2 is recommended.");
