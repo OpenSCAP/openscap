@@ -34,7 +34,7 @@
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <linux/limits.h>
+#include <limits.h>
 
 #include <oscap.h>
 #include <xccdf_policy.h>
