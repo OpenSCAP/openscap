@@ -47,6 +47,7 @@
 #include <arpa/inet.h>
 #include <regex.h>
 #include <sys/systeminfo.h>
+#include "../../../../common/debug_priv.h"
 
 /* man sysinfo (2) recommends using 257 for this size */
 #define MAX_STR_RESULT 257
