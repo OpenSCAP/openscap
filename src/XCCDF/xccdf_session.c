@@ -988,6 +988,11 @@ int xccdf_session_export_xccdf(struct xccdf_session *session)
 
 	/* Export results */
 	if (session->export.xccdf_file != NULL) {
+		if (session->xccdf.result == NULL) {
+			// Attempt to export session before evaluation
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "No XCCDF results to export.");
+			return 1;
+		}
 		xccdf_benchmark_add_result(xccdf_policy_model_get_benchmark(session->xccdf.policy_model),
 				xccdf_result_clone(session->xccdf.result));
 		xccdf_benchmark_export(xccdf_policy_model_get_benchmark(session->xccdf.policy_model), session->export.xccdf_file);
