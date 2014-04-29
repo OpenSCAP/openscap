@@ -80,6 +80,10 @@
 # error "Sorry, your OS isn't supported."
 #endif
 
+#if defined(OS_SOLARIS)
+# include <sys/acl.h>
+#endif
+
 oval_version_t over;
 
 static SEXP_t *gr_true   = NULL, *gr_false  = NULL, *gr_t_reg  = NULL;
@@ -240,6 +244,17 @@ static SEXP_t *get_size(struct stat *st, SEXP_t *sexp)
 
 #define MODEP(statp, bit) ((statp)->st_mode & (bit) ? gr_true : gr_false)
 
+static SEXP_t *has_extended_acl(const char *path)
+{
+#if defined(HAVE_ACL_EXTENDED_FILE)
+	return acl_extended_file(path) ? gr_true : gr_false;
+#elif defined(OS_SOLARIS)
+	return acl_trivial(st_path) ? gr_true : gr_false;
+#else
+	return NULL;
+#endif
+}
+
 static int file_cb (const char *p, const char *f, void *ptr)
 {
         char path_buffer[PATH_MAX];
@@ -281,15 +296,11 @@ static int file_cb (const char *p, const char *f, void *ptr)
 		} else
 			SEXP_string_new_r(&gr_lastpath, p, strlen(p));
 
-#if defined(HAVE_ACL_EXTENDED_FILE)
 		if (oval_version_cmp(over, OVAL_VERSION(5.7)) < 0) {
 			se_acl = NULL;
 		} else {
-			se_acl = acl_extended_file(st_path) ? gr_true : gr_false;
+			se_acl = has_extended_acl(st_path);
 		}
-#else
-		se_acl = NULL;
-#endif
 
                 item = probe_item_create(OVAL_UNIX_FILE, NULL,
                                          "filepath", OVAL_DATATYPE_SEXP, se_filepath,
