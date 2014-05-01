@@ -90,6 +90,9 @@ static SEXP_t *gr_true   = NULL, *gr_false  = NULL, *gr_t_reg  = NULL;
 static SEXP_t *gr_t_dir  = NULL, *gr_t_lnk  = NULL, *gr_t_blk  = NULL;
 static SEXP_t *gr_t_fifo = NULL, *gr_t_sock = NULL, *gr_t_char = NULL;
 static SEXP_t  gr_lastpath;
+#if defined(OS_SOLARIS)
+static SEXP_t *gr_t_door = NULL, *gr_t_port = NULL;
+#endif
 
 static SEXP_t *se_filetype (mode_t mode)
 {
@@ -101,6 +104,10 @@ static SEXP_t *se_filetype (mode_t mode)
         case S_IFIFO:  return (gr_t_fifo);
         case S_IFSOCK: return (gr_t_sock);
         case S_IFCHR:  return (gr_t_char);
+#if defined(OS_SOLARIS)
+	case S_IFDOOR: return (gr_t_door);
+	case S_IFPORT: return (gr_t_port);
+#endif
         default:
                 abort ();
         }
@@ -368,6 +375,10 @@ void *probe_init (void)
 #define STR_SOCKET    "socket"
 #define STR_CHARSPEC  "character special"
 #define STRLEN_PAIR(str) (str), strlen(str)
+#if defined(OS_SOLARIS)
+#define	STR_DOOR	"door"
+#define	STR_PORT	"port"
+#endif
 
         gr_t_reg  = SEXP_string_new (STRLEN_PAIR(STR_REGULAR));
         gr_t_dir  = SEXP_string_new (STRLEN_PAIR(STR_DIRECTORY));
@@ -376,6 +387,10 @@ void *probe_init (void)
         gr_t_fifo = SEXP_string_new (STRLEN_PAIR(STR_FIFO));
         gr_t_sock = SEXP_string_new (STRLEN_PAIR(STR_SOCKET));
         gr_t_char = SEXP_string_new (STRLEN_PAIR(STR_CHARSPEC));
+#if defined(OS_SOLARIS)
+        gr_t_door = SEXP_string_new (STRLEN_PAIR(STR_DOOR));
+        gr_t_port = SEXP_string_new (STRLEN_PAIR(STR_PORT));
+#endif
 
 	SEXP_init(&gr_lastpath);
 
