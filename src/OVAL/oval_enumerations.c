@@ -485,6 +485,8 @@ static const struct oscap_string_map OVAL_SUBTYPE_LINUX_MAP[] = {
         {OVAL_LINUX_RPMVERIFYPACKAGE, "rpmverifypackage"},
         {OVAL_LINUX_SELINUXBOOLEAN, "selinuxboolean"},
         {OVAL_LINUX_SELINUXSECURITYCONTEXT, "selinuxsecuritycontext"},
+        {OVAL_LINUX_SYSTEMDUNITPROPERTY, "systemdunitproperty"},
+        {OVAL_LINUX_SYSTEMDUNITDEPENDENCY, "systemdunitdependency"},
 	{OVAL_SUBTYPE_UNKNOWN, NULL}
 };
 

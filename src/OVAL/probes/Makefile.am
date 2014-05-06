@@ -276,5 +276,20 @@ probe_dpkginfo_CFLAGS= @apt_pkg_CFLAGS@
 probe_dpkginfo_CXXFLAGS= @apt_pkg_CFLAGS@
 probe_dpkginfo_LDFLAGS= @apt_pkg_LIBS@
 endif
+
+if probe_systemdunitproperty_enabled
+pkglibexec_PROGRAMS += probe_systemdunitproperty
+probe_systemdunitproperty_SOURCES= unix/linux/systemdunitproperty.c
+probe_systemdunitproperty_CFLAGS=
+probe_systemdunitproperty_LDFLAGS=
+endif
+
+if probe_systemdunitdependency_enabled
+pkglibexec_PROGRAMS += probe_systemdunitdependency
+probe_systemdunitdependency_SOURCES= unix/linux/systemdunitdependency.c
+probe_systemdunitdependency_CFLAGS=
+probe_systemdunitdependency_LDFLAGS=
+endif
+
 endif
 endif

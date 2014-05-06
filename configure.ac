@@ -249,6 +249,14 @@ probe_dpkginfo_req_deps_ok=yes
 probe_dpkginfo_req_deps_missing=
 probe_dpkginfo_opt_deps_ok=yes
 probe_dpkginfo_opt_deps_missing=
+probe_systemdunitproperty_req_deps_ok=yes
+probe_systemdunitproperty_req_deps_missing=
+probe_systemdunitproperty_opt_deps_ok=yes
+probe_systemdunitproperty_opt_deps_missing=
+probe_systemdunitdependency_req_deps_ok=yes
+probe_systemdunitdependency_req_deps_missing=
+probe_systemdunitdependency_opt_deps_ok=yes
+probe_systemdunitdependency_opt_deps_missing=
 
 #
 # env
@@ -461,7 +469,7 @@ AC_CHECK_HEADERS([assert.h dirent.h errno.h limits.h stdbool.h stdio.h string.h 
 
 echo
 echo ' * Checking presence of required headers for the file probe'
-AC_CHECK_HEADERS([errno.h limits.h pthread.h stdlib.h string.h sys/stat.h ],[],[probe_file_req_deps_ok=no; probe_file_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([errno.h limits.h pthread.h stdlib.h string.h sys/acl.h sys/stat.h ],[],[probe_file_req_deps_ok=no; probe_file_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of optional headers for the file probe'
@@ -1230,6 +1238,10 @@ AM_CONDITIONAL([probe_rpmverifypackage_enabled], test "$probe_rpmverifypackage_r
 probe_rpmverifypackage_enabled=$probe_rpmverifypackage_req_deps_ok
 AM_CONDITIONAL([probe_dpkginfo_enabled], test "$probe_dpkginfo_req_deps_ok" = yes)
 probe_dpkginfo_enabled=$probe_dpkginfo_req_deps_ok
+AM_CONDITIONAL([probe_systemdunitproperty_enabled], test "$probe_systemdunitproperty_req_deps_ok" = yes)
+probe_systemdunitproperty_enabled=$probe_systemdunitproperty_req_deps_ok
+AM_CONDITIONAL([probe_systemdunitdependency_enabled], test "$probe_systemdunitdependency_req_deps_ok" = yes)
+probe_systemdunitdependency_enabled=$probe_systemdunitdependency_req_deps_ok
 
 AM_CONDITIONAL([WANT_CCE],  test "$cce"  = yes)
 
@@ -1619,6 +1631,18 @@ else
   probe_dpkginfo_table_result="NO (missing: $probe_dpkginfo_req_deps_missing)"
 fi
 printf "  %-28s %s\n" "dpkginfo:" "$probe_dpkginfo_table_result"
+if test "$probe_systemdunitproperty_req_deps_ok" = "yes"; then
+  probe_systemdunitproperty_table_result="yes"
+else
+  probe_systemdunitproperty_table_result="NO (missing: $probe_systemdunitproperty_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "systemdunitproperty:" "$probe_systemdunitproperty_table_result"
+if test "$probe_systemdunitdependency_req_deps_ok" = "yes"; then
+  probe_systemdunitdependency_table_result="yes"
+else
+  probe_systemdunitdependency_table_result="NO (missing: $probe_systemdunitdependency_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "systemdunitdependency:" "$probe_systemdunitdependency_table_result"
 echo
 echo "  === configuration ==="
 echo "  probe directory set to:      $probe_dir"
