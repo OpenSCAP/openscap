@@ -461,7 +461,7 @@ AC_CHECK_HEADERS([assert.h dirent.h errno.h limits.h stdbool.h stdio.h string.h 
 
 echo
 echo ' * Checking presence of required headers for the file probe'
-AC_CHECK_HEADERS([errno.h limits.h pthread.h stdlib.h string.h sys/stat.h ],[],[probe_file_req_deps_ok=no; probe_file_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([errno.h limits.h pthread.h stdlib.h string.h sys/acl.h sys/stat.h ],[],[probe_file_req_deps_ok=no; probe_file_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of optional headers for the file probe'
