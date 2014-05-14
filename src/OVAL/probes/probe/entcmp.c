@@ -433,7 +433,7 @@ oval_result_t probe_entobj_cmp(SEXP_t * ent_obj, SEXP_t * val)
 
 	ores = probe_ent_cmp(ent_obj, val);
 #if defined(OSCAP_VERBOSE_DEBUG)
-	dI("ores: %d, '%s'.\n", ores, oval_result_get_text(ores));
+	dI("Result of entobj comparison: %s.\n", oval_result_get_text(ores));
 #endif
 	if (ores == OVAL_RESULT_NOT_EVALUATED)
 		return OVAL_RESULT_FALSE;
