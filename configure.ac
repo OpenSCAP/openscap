@@ -501,7 +501,7 @@ AC_CHECK_HEADERS([string.h sys/utsname.h ],[],[probe_uname_req_deps_ok=no; probe
 
 echo
 echo ' * Checking presence of optional headers for the uname probe'
-AC_CHECK_HEADERS([stdio_ext.h ],[],[probe_uname_opt_deps_ok=no],[-])
+AC_CHECK_HEADERS([stdio_ext.h sys/systeminfo.h ],[],[probe_uname_opt_deps_ok=no],[-])
 
 echo
 echo ' * Checking presence of required headers for the interface probe'

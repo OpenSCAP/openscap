@@ -50,7 +50,7 @@
 #endif
 #include <string.h>
 #include <sys/utsname.h>
-#if defined (__SVR4) && defined (__sun)
+#if defined HAVE_SYS_SYSTEMINFO_H && defined (__SVR4) && defined (__sun)
 #include <sys/systeminfo.h>
 #endif
 
