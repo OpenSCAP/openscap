@@ -48,6 +48,10 @@
 # include <acl/libacl.h>
 #endif
 
+#if defined(HAVE_SYS_ACL_H) && defined(OS_SOLARIS)
+# include <sys/acl.h>
+#endif
+
 #include <probe/probe.h>
 #include <probe/option.h>
 #include "oval_fts.h"
@@ -78,10 +82,6 @@
 # define OS_WINDOWS
 #else
 # error "Sorry, your OS isn't supported."
-#endif
-
-#if defined(OS_SOLARIS)
-# include <sys/acl.h>
 #endif
 
 oval_version_t over;
