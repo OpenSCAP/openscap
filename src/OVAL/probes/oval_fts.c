@@ -44,6 +44,7 @@
 #include "oval_fts.h"
 #if defined(__SVR4) && defined(__sun)
 #include "fts_sun.h"
+#include <sys/mntent.h>
 #else
 #include <fts.h>
 #endif
@@ -130,14 +131,73 @@ static void OVAL_FTSENT_free(OVAL_FTSENT *ofts_ent)
 	return;
 }
 
+#if defined(__SVR4) && defined(__sun)
+#ifndef MNTTYPE_SMB
+#define MNTTYPE_SMB	"smb"
+#endif
+#ifndef MNTTYPE_PROC
+#define MNTTYPE_PROC	"proc"
+#endif
+
+static bool valid_remote_fs(char *fstype)
+{
+	if (strcmp(fstype, MNTTYPE_NFS) == 0 ||
+	    strcmp(fstype, MNTTYPE_SMBFS) == 0 ||
+	    strcmp(fstype, MNTTYPE_SMB) == 0)
+		return (true);
+	return (false);
+}
+
+static bool valid_local_fs(char *fstype)
+{
+	if (strcmp(fstype, MNTTYPE_SWAP) == 0 ||
+	    strcmp(fstype, MNTTYPE_MNTFS) == 0 ||
+	    strcmp(fstype, MNTTYPE_CTFS) == 0 ||
+	    strcmp(fstype, MNTTYPE_OBJFS) == 0 ||
+	    strcmp(fstype, MNTTYPE_SHAREFS) == 0 ||
+	    strcmp(fstype, MNTTYPE_PROC) == 0 ||
+	    strcmp(fstype, MNTTYPE_LOFS) == 0 ||
+	    strcmp(fstype, MNTTYPE_AUTOFS) == 0)
+		return (false);
+	return (true);
+}
+#endif
+
 static bool OVAL_FTS_localp(OVAL_FTS *ofts, const char *path, void *id)
 {
+#if defined(__SVR4) && defined(__sun)
+	if (id != NULL && (*(char*)id) != '\0') {
+		/* if not a valid local fs skip */
+		if (valid_local_fs((char*)id)) {
+			/* if recurse is local , skip remote fs */
+			if (ofts->filesystem == OVAL_RECURSE_FS_LOCAL) {
+				return (!valid_remote_fs((char*)id));
+			}
+			return (true);
+		}
+		return (false);
+	} else if (path != NULL) {
+		/* id was not set, because fts_read failed to stat the node */
+		struct stat sb;
+		if ((stat(path, &sb) == 0) && (valid_local_fs(sb.st_fstype))) {
+			/* if recurse is local , skip remote fs */
+			if (ofts->filesystem == OVAL_RECURSE_FS_LOCAL) {
+				return (!valid_remote_fs(sb.st_fstype));
+			}
+			return (true);
+		}
+		return (false);
+	} else {
+		return (false);
+	}
+#else
 	if (id != NULL)
 		return (fsdev_search(ofts->localdevs, id) == 1 ? true : false);
 	else if (path != NULL)
 		return (fsdev_path(ofts->localdevs, path) == 1 ? true : false);
 	else
 		return (false);
+#endif
 }
 
 static char *__regex_locate(char *str)
@@ -492,6 +552,7 @@ static int process_pattern_match(const char *path, pcre **regex_out)
 	return 0;
 }
 
+
 #undef TEST_PATH1
 #undef TEST_PATH2
 
@@ -695,6 +756,9 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	}
 
 	if (filesystem == OVAL_RECURSE_FS_LOCAL) {
+#if   defined(__SVR4) && defined(__sun)
+		ofts->localdevs = NULL;
+#else
 		ofts->localdevs = fsdev_init(NULL, 0);
 		if (ofts->localdevs == NULL) {
 			dE("fsdev_init() failed.\n");
@@ -705,6 +769,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 			oval_fts_close(ofts);
 			return (NULL);
 		}
+#endif
 	} else if (filesystem == OVAL_RECURSE_FS_DEFINED) {
 		/* store the device id for future comparison */
 		FTSENT *fts_ent;
@@ -733,6 +798,24 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	return (ofts);
 }
 
+static inline int _oval_fts_is_local(OVAL_FTS *ofts, FTSENT *fts_ent) {
+# if defined (__SVR4) && defined(__sun)
+	/* pseudo filesystems will be skipped */
+	/* don't recurse into remote fs if local is specified */
+	return ((fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)
+	    && (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
+	    (fts_ent->fts_statp != NULL) ?
+	    &fts_ent->fts_statp->st_fstype : NULL)));
+#else
+	/* don't recurse into non-local filesystems */
+	return (ofts->filesystem == OVAL_RECURSE_FS_LOCAL
+	    && (fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)
+	    && (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
+				 (fts_ent->fts_statp != NULL) ?
+				 &fts_ent->fts_statp->st_dev : NULL)));
+#endif
+}
+
 /* find the first matching path or filepath */
 static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 {
@@ -745,7 +828,6 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 		fts_ent = fts_read(ofts->ofts_match_path_fts);
 		if (fts_ent == NULL)
 			return NULL;
-
 		switch (fts_ent->fts_info) {
 		case FTS_DP:
 			continue;
@@ -769,13 +851,7 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 			fts_set(ofts->ofts_match_path_fts, fts_ent, FTS_FOLLOW);
 			continue;
 		}
-
-		/* don't recurse into non-local filesystems */
-		if (ofts->filesystem == OVAL_RECURSE_FS_LOCAL
-		    && (fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)
-		    && (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
-					 (fts_ent->fts_statp != NULL) ?
-					 &fts_ent->fts_statp->st_dev : NULL))) {
+		if (_oval_fts_is_local(ofts, fts_ent)) {
 			dI("Don't recurse into non-local filesystems, skipping '%s'.\n", fts_ent->fts_path);
 			fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
 			continue;
@@ -964,13 +1040,7 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 					continue;
 				}
 			}
-
-			/* don't recurse into non-local filesystems */
-			if (ofts->filesystem == OVAL_RECURSE_FS_LOCAL
-			    && (fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)
-			    && (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
-					(fts_ent->fts_statp != NULL) ?
-					&fts_ent->fts_statp->st_dev : NULL))) {
+			if (_oval_fts_is_local(ofts, fts_ent)) {
 				fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
 				continue;
 			}
@@ -1039,12 +1109,18 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 				if (ofts->ofts_recurse_path_curdepth == 0)
 					ofts->ofts_recurse_path_devid = fts_ent->fts_statp->st_dev;
 				*/
-
+#if   defined(__SVR4) && defined(__sun)
+				if ((!OVAL_FTS_localp(ofts, fts_ent->fts_path,
+				    (fts_ent->fts_statp != NULL) ?
+				    &fts_ent->fts_statp->st_fstype : NULL)))
+				       break;
+#else
 				if (ofts->filesystem == OVAL_RECURSE_FS_LOCAL
 				    && (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
 						(fts_ent->fts_statp != NULL) ?
 						&fts_ent->fts_statp->st_dev : NULL)))
 					break;
+#endif
 				if (ofts->filesystem == OVAL_RECURSE_FS_DEFINED
 				    && ofts->ofts_recurse_path_devid != fts_ent->fts_statp->st_dev)
 					break;
