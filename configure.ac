@@ -579,6 +579,10 @@ echo
 echo ' * Checking presence of required headers for the dpkginfo probe'
 AC_CHECK_HEADERS([assert.h errno.h stdio.h string.h ],[],[probe_dpkginfo_req_deps_ok=no; probe_dpkginfo_req_deps_missing='header files'],[-])
 
+echo
+echo ' * Checking presence of required headers for the systemdunitproperty probe'
+AC_CHECK_HEADERS([assert.h errno.h fcntl.h limits.h dbus/dbus.h ],[],[probe_systemdunitproperty_req_deps_ok=no; probe_systemdunitproperty_req_deps_missing='header files'],[-])
+
 CPPFLAGS="$SAVE_CPPFLAGS"
 
 echo

@@ -280,8 +280,11 @@ endif
 if probe_systemdunitproperty_enabled
 pkglibexec_PROGRAMS += probe_systemdunitproperty
 probe_systemdunitproperty_SOURCES= unix/linux/systemdunitproperty.c
-probe_systemdunitproperty_CFLAGS=
-probe_systemdunitproperty_LDFLAGS=
+#probe_systemdunitproperty_CFLAGS= @dbus_pkg_CFLAGS@
+#probe_systemdunitproperty_CXXFLAGS = @dbus_pkg_CFLAGS@
+#probe_systemdunitproperty_LDFLAGS= @dbus_pkg_LIBS@
+probe_systemdunitproperty_CFLAGS= -I/usr/include/dbus-1.0 -I/usr/lib64/dbus-1.0/include/
+probe_systemdunitproperty_LDFLAGS= -ldbus-1
 endif
 
 if probe_systemdunitdependency_enabled
