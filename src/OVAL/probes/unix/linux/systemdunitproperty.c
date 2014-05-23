@@ -247,11 +247,11 @@ cleanup:
 	return ret;
 }
 
-static char *get_all_properties_by_unit_path(DBusConnection *conn, const char *unit_path)
+static int get_all_properties_by_unit_path(DBusConnection *conn, const char *unit_path)
 {
+	int ret = 1;
 	DBusMessage *msg = NULL;
 	DBusPendingCall *pending = NULL;
-	char *ret = NULL;
 
 	msg = dbus_message_new_method_call(
 		"org.freedesktop.systemd1",
@@ -335,6 +335,7 @@ static char *get_all_properties_by_unit_path(DBusConnection *conn, const char *u
 	while (dbus_message_iter_next(&property_iter));
 
 	dbus_message_unref(msg); msg = NULL;
+	ret = 0;
 
 cleanup:
 	if (pending != NULL)
