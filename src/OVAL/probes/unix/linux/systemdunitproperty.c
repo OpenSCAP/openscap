@@ -108,7 +108,7 @@ cleanup:
 
 static char *dbus_value_to_string(DBusMessageIter *iter)
 {
-	int arg_type = dbus_message_iter_get_arg_type(iter);
+	const int arg_type = dbus_message_iter_get_arg_type(iter);
 	if (dbus_type_is_basic(arg_type)) {
 		DBusBasicValue value;
 		dbus_message_iter_get_basic(iter, &value);
@@ -162,7 +162,7 @@ static char *dbus_value_to_string(DBusMessageIter *iter)
 		}
 	}
 
-	return oscap_strdup("");
+	return NULL;
 }
 
 static char *get_property_by_unit_path(DBusConnection *conn, const char *unit_path, const char *property)
@@ -328,8 +328,11 @@ static int get_all_properties_by_unit_path(DBusConnection *conn, const char *uni
 		dbus_message_iter_recurse(&dict_entry, &value_variant);
 		char *property_value = dbus_value_to_string(&value_variant);
 
-		dI("property '%s' = '%s'\n", property_name, property_value);
-		oscap_free(property_value);
+		if (property_value != NULL) {
+			printf("property '%s' = '%s'\n", property_name, property_value);
+			oscap_free(property_value);
+		}
+
 		oscap_free(property_name);
 	}
 	while (dbus_message_iter_next(&property_iter));
