@@ -222,9 +222,6 @@ static char *get_property_by_unit_path(DBusConnection *conn, const char *unit_pa
 		goto cleanup;
 	}
 
-	ret = dbus_value_to_string(&args);
-
-/*
 	if (dbus_message_iter_get_arg_type(&args) != DBUS_TYPE_VARIANT)
 	{
 		dI("Expected variant argument in reply. Instead received: %s.\n", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&args)));
@@ -232,9 +229,8 @@ static char *get_property_by_unit_path(DBusConnection *conn, const char *unit_pa
 	}
 
 	dbus_message_iter_recurse(&args, &value_iter);
-	dbus_message_iter_get_basic(&value_iter, &value);
-	ret = dbus_basic_value_to_string(&value, dbus_message_iter_get_arg_type(&value_iter));
-*/
+	ret = dbus_value_to_string(&value_iter);
+
 	dbus_message_unref(msg); msg = NULL;
 
 cleanup:
