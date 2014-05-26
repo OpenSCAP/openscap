@@ -185,11 +185,11 @@ static char *get_property_by_unit_path(DBusConnection *conn, const char *unit_pa
 
 	DBusMessageIter args, value_iter;
 
-	const char *dummy = "";
+	const char *interface = "org.freedesktop.systemd1.Unit";
 
 	dbus_message_iter_init_append(msg, &args);
-	if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &dummy)) {
-		dI("Failed to append dummy interface '' string parameter to dbus message!\n");
+	if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &interface)) {
+		dI("Failed to append interface '%s' string parameter to dbus message!\n", interface);
 		goto cleanup;
 	}
 	if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &property)) {
@@ -266,11 +266,11 @@ static int get_all_properties_by_unit_path(DBusConnection *conn, const char *uni
 
 	DBusMessageIter args, property_iter;
 
-	const char *dummy = "";
+	const char *interface = "org.freedesktop.systemd1.Unit";
 
 	dbus_message_iter_init_append(msg, &args);
-	if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &dummy)) {
-		dI("Failed to append dummy interface '' string parameter to dbus message!\n");
+	if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &interface)) {
+		dI("Failed to append interface '%s' string parameter to dbus message!\n", interface);
 		goto cleanup;
 	}
 
