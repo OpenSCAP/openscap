@@ -161,6 +161,32 @@ static char *dbus_value_to_string(DBusMessageIter *iter)
 				return oscap_strdup("error, unknown basic type!");
 		}
 	}
+	else if (arg_type == DBUS_TYPE_ARRAY) {
+		DBusMessageIter array;
+		dbus_message_iter_recurse(iter, &array);
+
+		char *ret = NULL;
+		do {
+			char *element = dbus_value_to_string(&array);
+
+			char *old_ret = ret;
+			if (old_ret == NULL)
+				ret = oscap_sprintf("%s", element);
+			else
+				ret = oscap_sprintf("%s, %s", old_ret, element);
+
+			oscap_free(old_ret);
+			oscap_free(element);
+		}
+		while (dbus_message_iter_next(&array));
+
+		return ret;
+	}/*
+	else if (arg_type == DBUS_TYPE_VARIANT) {
+		DBusMessageIter inner;
+		dbus_message_iter_recurse(iter, &inner);
+		return dbus_value_to_string(&inner);
+	}*/
 
 	return NULL;
 }
