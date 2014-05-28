@@ -1316,8 +1316,11 @@ int xccdf_session_export_arf(struct xccdf_session *session)
 			ds_sds_compose_from_xccdf(session->filename, sds_path);
 		}
 
-		ds_rds_create(sds_path, session->export.xccdf_file, (const char**)(session->oval.result_files), session->export.arf_file);
+		int res = ds_rds_create(sds_path, session->export.xccdf_file, (const char**)(session->oval.result_files), session->export.arf_file);
 		free(sds_path);
+		if (res != 0) {
+			return res;
+		}
 
 		if (session->full_validation) {
 			if (oscap_validate_document(session->export.arf_file, OSCAP_DOCUMENT_ARF, "1.1", _reporter, NULL)) {
