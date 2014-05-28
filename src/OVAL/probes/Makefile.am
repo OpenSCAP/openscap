@@ -279,7 +279,8 @@ endif
 
 if probe_systemdunitproperty_enabled
 pkglibexec_PROGRAMS += probe_systemdunitproperty
-probe_systemdunitproperty_SOURCES= unix/linux/systemdunitproperty.c
+probe_systemdunitproperty_SOURCES= unix/linux/systemdunitproperty.c \
+       unix/linux/systemdshared.h
 #probe_systemdunitproperty_CFLAGS= @dbus_pkg_CFLAGS@
 #probe_systemdunitproperty_CXXFLAGS = @dbus_pkg_CFLAGS@
 #probe_systemdunitproperty_LDFLAGS= @dbus_pkg_LIBS@
@@ -289,7 +290,8 @@ endif
 
 if probe_systemdunitdependency_enabled
 pkglibexec_PROGRAMS += probe_systemdunitdependency
-probe_systemdunitdependency_SOURCES= unix/linux/systemdunitdependency.c
+probe_systemdunitdependency_SOURCES= unix/linux/systemdunitdependency.c \
+       unix/linux/systemdshared.h
 probe_systemdunitdependency_CFLAGS=
 probe_systemdunitdependency_LDFLAGS=
 endif
