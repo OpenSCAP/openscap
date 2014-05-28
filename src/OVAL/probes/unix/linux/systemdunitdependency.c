@@ -31,6 +31,8 @@
 #endif
 
 #include <probe-api.h>
+#include "systemdshared.h"
+#include "common/list.h"
 
 int probe_main(probe_ctx *ctx, void *probe_arg)
 {
@@ -52,4 +54,78 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
 	probe_item_collect(ctx, item);
 */
         return (0);
+}
+
+static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit, struct oscap_htable *receiver, bool include_requires, bool include_wants)
+{
+	if (!unit || strcmp(unit, "(null)") == 0)
+		return;
+
+	char *path = get_path_by_unit(conn, unit);
+
+	if (include_requires) {
+		char *requires_s = get_property_by_unit_path(conn, path, "Requires");
+		char **requires = oscap_split(requires_s, ", ");
+		for (int i = 0; requires[i] != NULL; ++i) {
+			if (oscap_strcmp(requires[i], "") == 0)
+				continue;
+
+			if (oscap_htable_add(receiver, requires[i], NULL)) {
+				printf("requires: %s\n", requires[i]);
+				get_all_dependencies_by_unit(conn, requires[i], receiver, include_requires, include_wants);
+			}
+		}
+		oscap_free(requires);
+		oscap_free(requires_s);
+	}
+
+	if (include_wants) {
+		char *wants_s = get_property_by_unit_path(conn, path, "Wants");
+		char **wants = oscap_split(wants_s, ", ");
+		for (int i = 0; wants[i] != NULL; ++i) {
+			if (oscap_strcmp(wants[i], "") == 0)
+				continue;
+
+			if (oscap_htable_add(receiver, wants[i], NULL)) {
+				printf("wants: %s\n", wants[i]);
+				get_all_dependencies_by_unit(conn, wants[i], receiver, include_requires, include_wants);
+			}
+		}
+		oscap_free(wants);
+		oscap_free(wants_s);
+	}
+
+	oscap_free(path);
+}
+
+// temporary testing function
+int test_systemd(void)
+{
+	int ret = 1;
+	char *path = NULL;
+
+	DBusError err;
+	dbus_error_init(&err);
+
+	DBusConnection *conn = connect_dbus();
+	if (!conn)
+		goto cleanup;
+
+	const char *unit = "multi-user.target";
+
+	{
+		struct oscap_htable *table = oscap_htable_new();
+		get_all_dependencies_by_unit(conn, unit, table, true, true);
+		oscap_htable_free0(table);
+	}
+
+cleanup:
+	dbus_error_free(&err);
+
+	if (path != NULL)
+		oscap_free(path);
+
+	disconnect_dbus(conn);
+
+	return ret;
 }

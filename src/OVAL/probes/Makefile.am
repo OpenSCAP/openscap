@@ -292,8 +292,11 @@ if probe_systemdunitdependency_enabled
 pkglibexec_PROGRAMS += probe_systemdunitdependency
 probe_systemdunitdependency_SOURCES= unix/linux/systemdunitdependency.c \
        unix/linux/systemdshared.h
-probe_systemdunitdependency_CFLAGS=
-probe_systemdunitdependency_LDFLAGS=
+#probe_systemdunitdependency_CFLAGS= @dbus_pkg_CFLAGS@
+#probe_systemdunitdependency_CXXFLAGS = @dbus_pkg_CFLAGS@
+#probe_systemdunitdependency_LDFLAGS= @dbus_pkg_LIBS@
+probe_systemdunitdependency_CFLAGS= -I/usr/include/dbus-1.0 -I/usr/lib64/dbus-1.0/include/
+probe_systemdunitdependency_LDFLAGS= -ldbus-1
 endif
 
 endif
