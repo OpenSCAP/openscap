@@ -77,6 +77,12 @@ static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit,
 	if (!unit || strcmp(unit, "(null)") == 0)
 		return;
 
+	printf("%s\n", unit);
+
+	// systemctl list-dependencies only recurses into target units
+	if (!is_unit_name_a_target(unit))
+		return;
+
 	char *path = get_path_by_unit(conn, unit);
 
 	if (include_requires) {
@@ -87,10 +93,7 @@ static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit,
 				continue;
 
 			if (oscap_htable_add(receiver, requires[i], NULL)) {
-				printf("%s\n", requires[i]);
-				// systemctl list-dependencies only recurses into target units
-				if (is_unit_name_a_target(requires[i]))
-					get_all_dependencies_by_unit(conn, requires[i], receiver, include_requires, include_wants);
+				get_all_dependencies_by_unit(conn, requires[i], receiver, include_requires, include_wants);
 			}
 		}
 		oscap_free(requires);
@@ -105,9 +108,7 @@ static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit,
 				continue;
 
 			if (oscap_htable_add(receiver, wants[i], NULL)) {
-				printf("%s\n", wants[i]);
-				if (is_unit_name_a_target(wants[i]))
-					get_all_dependencies_by_unit(conn, wants[i], receiver, include_requires, include_wants);
+				get_all_dependencies_by_unit(conn, wants[i], receiver, include_requires, include_wants);
 			}
 		}
 		oscap_free(wants);
