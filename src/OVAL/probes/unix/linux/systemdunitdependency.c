@@ -33,6 +33,7 @@
 #include <probe-api.h>
 #include "systemdshared.h"
 #include "common/list.h"
+#include <string.h>
 
 int probe_main(probe_ctx *ctx, void *probe_arg)
 {
@@ -56,6 +57,21 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
         return (0);
 }
 
+static bool is_unit_name_a_target(const char *unit)
+{
+	const char *suffix = ".target";
+	const size_t suffix_len = strlen(suffix);
+
+	if (!unit)
+		return false;
+
+	const size_t len = strlen(unit);
+	if (suffix_len >  len)
+		return false;
+
+	return strncmp(unit + len - suffix_len, suffix, suffix_len) == 0;
+}
+
 static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit, struct oscap_htable *receiver, bool include_requires, bool include_wants)
 {
 	if (!unit || strcmp(unit, "(null)") == 0)
@@ -71,8 +87,10 @@ static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit,
 				continue;
 
 			if (oscap_htable_add(receiver, requires[i], NULL)) {
-				printf("requires: %s\n", requires[i]);
-				get_all_dependencies_by_unit(conn, requires[i], receiver, include_requires, include_wants);
+				printf("%s\n", requires[i]);
+				// systemctl list-dependencies only recurses into target units
+				if (is_unit_name_a_target(requires[i]))
+					get_all_dependencies_by_unit(conn, requires[i], receiver, include_requires, include_wants);
 			}
 		}
 		oscap_free(requires);
@@ -87,8 +105,9 @@ static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit,
 				continue;
 
 			if (oscap_htable_add(receiver, wants[i], NULL)) {
-				printf("wants: %s\n", wants[i]);
-				get_all_dependencies_by_unit(conn, wants[i], receiver, include_requires, include_wants);
+				printf("%s\n", wants[i]);
+				if (is_unit_name_a_target(wants[i]))
+					get_all_dependencies_by_unit(conn, wants[i], receiver, include_requires, include_wants);
 			}
 		}
 		oscap_free(wants);
