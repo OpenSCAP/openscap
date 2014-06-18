@@ -583,6 +583,10 @@ echo
 echo ' * Checking presence of required headers for the systemdunitproperty probe'
 AC_CHECK_HEADERS([assert.h errno.h fcntl.h limits.h dbus/dbus.h ],[],[probe_systemdunitproperty_req_deps_ok=no; probe_systemdunitproperty_req_deps_missing='header files'],[-])
 
+echo
+echo ' * Checking presence of required headers for the systemdunitdependency probe'
+AC_CHECK_HEADERS([assert.h errno.h fcntl.h limits.h dbus/dbus.h ],[],[probe_systemdunitdependency=no; probe_systemdunitdependency_req_deps_missing='header files'],[-])
+
 CPPFLAGS="$SAVE_CPPFLAGS"
 
 echo
@@ -1242,10 +1246,6 @@ AM_CONDITIONAL([probe_rpmverifypackage_enabled], test "$probe_rpmverifypackage_r
 probe_rpmverifypackage_enabled=$probe_rpmverifypackage_req_deps_ok
 AM_CONDITIONAL([probe_dpkginfo_enabled], test "$probe_dpkginfo_req_deps_ok" = yes)
 probe_dpkginfo_enabled=$probe_dpkginfo_req_deps_ok
-AM_CONDITIONAL([probe_systemdunitproperty_enabled], test "$probe_systemdunitproperty_req_deps_ok" = yes)
-probe_systemdunitproperty_enabled=$probe_systemdunitproperty_req_deps_ok
-AM_CONDITIONAL([probe_systemdunitdependency_enabled], test "$probe_systemdunitdependency_req_deps_ok" = yes)
-probe_systemdunitdependency_enabled=$probe_systemdunitdependency_req_deps_ok
 
 AM_CONDITIONAL([WANT_CCE],  test "$cce"  = yes)
 
@@ -1310,6 +1310,8 @@ AC_CONFIG_FILES([Makefile
                  tests/probes/sysinfo/Makefile
                  tests/probes/rpminfo/Makefile
 		 tests/probes/rpmverify/Makefile
+                 tests/probes/systemdunitproperty/Makefile
+                 tests/probes/systemdunitdependency/Makefile
                  tests/probes/runlevel/Makefile
                  tests/probes/filehash/Makefile
                  tests/probes/filehash58/Makefile

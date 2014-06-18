@@ -538,6 +538,8 @@ AC_CONFIG_FILES([Makefile
                  tests/probes/sysinfo/Makefile
                  tests/probes/rpminfo/Makefile
 		 tests/probes/rpmverify/Makefile
+                 tests/probes/systemdunitproperty/Makefile
+                 tests/probes/systemdunitdependency/Makefile
                  tests/probes/runlevel/Makefile
                  tests/probes/filehash/Makefile
                  tests/probes/filehash58/Makefile
