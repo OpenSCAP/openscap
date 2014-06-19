@@ -18,5 +18,5 @@ TESTS = all.sh
 
 EXTRA_DIST += \
 	all.sh \
-	test_probes_systemdunitproperty.sh \
-	test_probes_systemdunitproperty.xml
+	test_probes_systemdunitdependency.sh \
+	test_probes_systemdunitdependency.xml

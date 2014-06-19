@@ -469,7 +469,7 @@ AC_CHECK_HEADERS([assert.h dirent.h errno.h limits.h stdbool.h stdio.h string.h 
 
 echo
 echo ' * Checking presence of required headers for the file probe'
-AC_CHECK_HEADERS([errno.h limits.h pthread.h stdlib.h string.h sys/acl.h sys/stat.h ],[],[probe_file_req_deps_ok=no; probe_file_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([errno.h limits.h pthread.h stdlib.h string.h sys/stat.h ],[],[probe_file_req_deps_ok=no; probe_file_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of optional headers for the file probe'
@@ -581,11 +581,11 @@ AC_CHECK_HEADERS([assert.h errno.h stdio.h string.h ],[],[probe_dpkginfo_req_dep
 
 echo
 echo ' * Checking presence of required headers for the systemdunitproperty probe'
-AC_CHECK_HEADERS([assert.h errno.h fcntl.h limits.h dbus/dbus.h ],[],[probe_systemdunitproperty_req_deps_ok=no; probe_systemdunitproperty_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([dbus/dbus.h ],[],[probe_systemdunitproperty_req_deps_ok=no; probe_systemdunitproperty_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the systemdunitdependency probe'
-AC_CHECK_HEADERS([assert.h errno.h fcntl.h limits.h dbus/dbus.h ],[],[probe_systemdunitdependency=no; probe_systemdunitdependency_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([dbus/dbus.h string.h ],[],[probe_systemdunitdependency_req_deps_ok=no; probe_systemdunitdependency_req_deps_missing='header files'],[-])
 
 CPPFLAGS="$SAVE_CPPFLAGS"
 
@@ -1246,6 +1246,10 @@ AM_CONDITIONAL([probe_rpmverifypackage_enabled], test "$probe_rpmverifypackage_r
 probe_rpmverifypackage_enabled=$probe_rpmverifypackage_req_deps_ok
 AM_CONDITIONAL([probe_dpkginfo_enabled], test "$probe_dpkginfo_req_deps_ok" = yes)
 probe_dpkginfo_enabled=$probe_dpkginfo_req_deps_ok
+AM_CONDITIONAL([probe_systemdunitproperty_enabled], test "$probe_systemdunitproperty_req_deps_ok" = yes)
+probe_systemdunitproperty_enabled=$probe_systemdunitproperty_req_deps_ok
+AM_CONDITIONAL([probe_systemdunitdependency_enabled], test "$probe_systemdunitdependency_req_deps_ok" = yes)
+probe_systemdunitdependency_enabled=$probe_systemdunitdependency_req_deps_ok
 
 AM_CONDITIONAL([WANT_CCE],  test "$cce"  = yes)
 
