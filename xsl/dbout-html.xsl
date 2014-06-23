@@ -389,6 +389,12 @@ Authors:
   </xsl:for-each>
 </xsl:template>
 
+<xsl:template mode='dbout.html' match='db:mediaobject'>
+  <xsl:for-each select='(db:audioobject|db:imageobject|db:imageobjectco|db:textobject|db:videoobject)[1]'>
+    <div class='media'><xsl:apply-templates mode='dbout.html'/></div>
+  </xsl:for-each>
+</xsl:template>
+
 <xsl:template mode='dbout.html' match='db:imagedata'>
   <xsl:apply-templates mode='dbout.html'/>
 </xsl:template>
