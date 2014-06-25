@@ -105,7 +105,7 @@ cleanup:
 	return ret;
 }
 
-static int get_all_systemd_units(DBusConnection* conn)
+static int get_all_systemd_units(DBusConnection* conn, int(*callback)(const char *, void *), void *cbarg)
 {
 	DBusMessage *msg = NULL;
 	DBusPendingCall *pending = NULL;
@@ -175,9 +175,11 @@ static int get_all_systemd_units(DBusConnection* conn)
 		DBusBasicValue value;
 		dbus_message_iter_get_basic(&unit_name, &value);
 		char *unit_name_s = oscap_strdup(value.str);
-		printf("%s\n", unit_name_s);
-
+		int cbret = callback(unit_name_s, cbarg);
 		oscap_free(unit_name_s);
+		if (cbret != 0) {
+			goto cleanup;
+		}
 	}
 	while (dbus_message_iter_next(&unit_iter));
 
