@@ -77,8 +77,6 @@ static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit,
 	if (!unit || strcmp(unit, "(null)") == 0)
 		return;
 
-	printf("%s\n", unit);
-
 	// systemctl list-dependencies only recurses into target units
 	if (!is_unit_name_a_target(unit))
 		return;
