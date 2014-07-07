@@ -34,7 +34,6 @@
 
     <systemdunitdependency_object version="1" id="oval:0:obj:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <unit>boot.mount</unit>
-      <pattern operation="pattern match">-.mount</pattern>
     </systemdunitdependency_object>
 
   </objects>

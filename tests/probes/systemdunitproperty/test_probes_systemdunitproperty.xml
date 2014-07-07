@@ -39,13 +39,11 @@
     <systemdunitproperty_object version="1" id="oval:0:obj:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <unit>boot.mount</unit>
       <property>LoadState</property>
-      <pattern operation="pattern match">loaded</pattern>
     </systemdunitproperty_object>
 
     <systemdunitproperty_object version="1" id="oval:0:obj:2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <unit>boot.mount</unit>
       <property>Requires</property>
-      <pattern operation="pattern match">-.mount</pattern>
     </systemdunitproperty_object>
 
   </objects>
