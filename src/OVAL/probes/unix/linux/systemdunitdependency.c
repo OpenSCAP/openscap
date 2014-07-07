@@ -31,31 +31,16 @@
 #endif
 
 #include <probe-api.h>
+#include "probe/entcmp.h"
 #include "systemdshared.h"
 #include "common/list.h"
 #include <string.h>
 
-int probe_main(probe_ctx *ctx, void *probe_arg)
-{
-	SEXP_t *unit_entity, *probe_in;
-	oval_version_t oval_version;
-
-	probe_in = probe_ctx_getobject(ctx);
-	oval_version = probe_obj_get_schema_version(probe_in);
-
-	if (oval_version_cmp(oval_version, OVAL_VERSION(5.11)) < 0) {
-		// OVAL 5.10 and less
-		return PROBE_EOPNOTSUPP;
-	}
-
-	unit_entity = probe_obj_getent(probe_in, "unit", 1);
-	SEXP_free(unit_entity);
-/*
-	SEXP_t *item = probe_item_create(OVAL_LINUX_SYSTEMDUNITDEPENDENCY, ...);
-	probe_item_collect(ctx, item);
-*/
-        return (0);
-}
+struct unit_callback_vars {
+	DBusConnection *dbus_conn;
+	probe_ctx *ctx;
+	SEXP_t *unit_entity;
+};
 
 static bool is_unit_name_a_target(const char *unit)
 {
@@ -72,7 +57,7 @@ static bool is_unit_name_a_target(const char *unit)
 	return strncmp(unit + len - suffix_len, suffix, suffix_len) == 0;
 }
 
-static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit, struct oscap_htable *receiver, bool include_requires, bool include_wants)
+static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit, int(*callback)(const char *, void *), void *cbarg, bool include_requires, bool include_wants)
 {
 	if (!unit || strcmp(unit, "(null)") == 0)
 		return;
@@ -90,8 +75,15 @@ static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit,
 			if (oscap_strcmp(requires[i], "") == 0)
 				continue;
 
-			if (oscap_htable_add(receiver, requires[i], NULL)) {
-				get_all_dependencies_by_unit(conn, requires[i], receiver, include_requires, include_wants);
+			if (callback(requires[i], cbarg) == 0) {
+				get_all_dependencies_by_unit(conn, requires[i],
+							     callback, cbarg,
+							     include_requires, include_wants);
+			} else {
+				oscap_free(requires);
+				oscap_free(requires_s);
+				oscap_free(path);
+				return;
 			}
 		}
 		oscap_free(requires);
@@ -105,8 +97,15 @@ static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit,
 			if (oscap_strcmp(wants[i], "") == 0)
 				continue;
 
-			if (oscap_htable_add(receiver, wants[i], NULL)) {
-				get_all_dependencies_by_unit(conn, wants[i], receiver, include_requires, include_wants);
+			if (callback(wants[i], cbarg)) {
+				get_all_dependencies_by_unit(conn, wants[i],
+							     callback, cbarg,
+							     include_requires, include_wants);
+			} else {
+				oscap_free(wants);
+				oscap_free(wants_s);
+				oscap_free(path);
+				return;
 			}
 		}
 		oscap_free(wants);
@@ -116,34 +115,75 @@ static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit,
 	oscap_free(path);
 }
 
-// temporary testing function
-int test_systemd(void)
+static int dependency_callback(const char *dependency, void *cbarg)
 {
-	int ret = 1;
-	char *path = NULL;
+	SEXP_t *item = (SEXP_t *)cbarg;
+	SEXP_t *se_dependency = SEXP_string_new(dependency, strlen(dependency));
+	probe_item_ent_add(item, "dependency", NULL, se_dependency);
+	return 0;
+}
 
-	DBusError err;
-	dbus_error_init(&err);
+static int unit_callback(const char *unit, void *cbarg)
+{
+	struct unit_callback_vars *vars = (struct unit_callback_vars *)cbarg;
+	SEXP_t *se_unit = SEXP_string_new(unit, strlen(unit));
 
-	DBusConnection *conn = connect_dbus();
-	if (!conn)
-		goto cleanup;
-
-	const char *unit = "multi-user.target";
-
-	{
-		struct oscap_htable *table = oscap_htable_new();
-		get_all_dependencies_by_unit(conn, unit, table, true, true);
-		oscap_htable_free0(table);
+	if (probe_entobj_cmp(vars->unit_entity, se_unit) != OVAL_RESULT_TRUE) {
+		/* Do nothing, continue with the next unit */
+		SEXP_free(se_unit);
+		return 0;
 	}
 
-cleanup:
-	dbus_error_free(&err);
+	SEXP_t *item = probe_item_create(OVAL_LINUX_SYSTEMDUNITDEPENDENCY, NULL,
+					 "unit", OVAL_DATATYPE_SEXP, se_unit,
+					 NULL);
 
-	if (path != NULL)
-		oscap_free(path);
+	get_all_dependencies_by_unit(vars->dbus_conn, unit,
+				     dependency_callback, item, true, true);
 
-	disconnect_dbus(conn);
+	probe_item_collect(vars->ctx, item);
+	SEXP_free(se_unit);
 
-	return ret;
+	return 0;
+}
+
+int probe_main(probe_ctx *ctx, void *probe_arg)
+{
+	SEXP_t *unit_entity, *probe_in;
+	oval_version_t oval_version;
+
+	probe_in = probe_ctx_getobject(ctx);
+	oval_version = probe_obj_get_schema_version(probe_in);
+
+	if (oval_version_cmp(oval_version, OVAL_VERSION(5.11)) < 0) {
+		// OVAL 5.10 and less
+		return PROBE_EOPNOTSUPP;
+	}
+
+	DBusError dbus_error;
+	DBusConnection *dbus_conn;
+
+	dbus_error_init(&dbus_error);
+	dbus_conn = connect_dbus();
+
+	if (dbus_conn == NULL) {
+		dbus_error_free(&dbus_error);
+		return PROBE_ESYSTEM;
+	}
+
+	unit_entity = probe_obj_getent(probe_in, "unit", 1);
+
+	struct unit_callback_vars vars;
+
+	vars.dbus_conn = dbus_conn;
+	vars.ctx = ctx;
+	vars.unit_entity = unit_entity;
+
+	get_all_systemd_units(dbus_conn, unit_callback, &vars);
+
+	SEXP_free(unit_entity);
+	dbus_error_free(&dbus_error);
+	disconnect_dbus(dbus_conn);
+
+        return 0;
 }
