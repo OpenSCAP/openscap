@@ -260,6 +260,9 @@ static char *dbus_value_to_string(DBusMessageIter *iter)
 		do {
 			char *element = dbus_value_to_string(&array);
 
+			if (element == NULL)
+				continue;
+
 			char *old_ret = ret;
 			if (old_ret == NULL)
 				ret = oscap_sprintf("%s", element);
