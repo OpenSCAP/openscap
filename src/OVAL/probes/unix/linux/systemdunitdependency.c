@@ -97,7 +97,7 @@ static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit,
 			if (oscap_strcmp(wants[i], "") == 0)
 				continue;
 
-			if (callback(wants[i], cbarg)) {
+			if (callback(wants[i], cbarg) == 0) {
 				get_all_dependencies_by_unit(conn, wants[i],
 							     callback, cbarg,
 							     include_requires, include_wants);
