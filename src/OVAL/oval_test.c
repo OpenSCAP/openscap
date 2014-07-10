@@ -398,7 +398,9 @@ int oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *con
 	oval_test_set_deprecated(test, deprecated);
 
 	version = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "version");
-	oval_test_set_version(test, atoi(version));
+	if (version != NULL) {
+		oval_test_set_version(test, atoi(version));
+	}
 
 
 	ret = oval_parser_parse_tag(reader, context, &_oval_test_parse_tag, test);

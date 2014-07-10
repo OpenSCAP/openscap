@@ -4,6 +4,7 @@
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
                 xmlns:fo="http://www.w3.org/1999/XSL/Format" 
                 xmlns:html="http://www.w3.org/1999/xhtml" 
+                xmlns:svg="http://www.w3.org/2000/svg"
                 xmlns:exsl="http://exslt.org/common"
                 exclude-result-prefixes="xsl fo html exsl">
 
@@ -268,6 +269,23 @@
   </xsl:call-template>
  </xsl:variable>
  <xsl:value-of select="$graphics_location"/><xsl:value-of select="$name_only"/>
+</xsl:template>
+
+<xsl:template mode='h2db' match="svg:svg">
+ <xsl:variable name="tag_name">
+  <xsl:choose>
+   <xsl:when test="boolean(parent::html:p) and
+        boolean(normalize-space(parent::html:p/text()))">
+    <xsl:text>inlinemediaobject</xsl:text>
+   </xsl:when>
+   <xsl:otherwise>mediaobject</xsl:otherwise>
+  </xsl:choose>
+ </xsl:variable>
+ <xsl:element name="{$tag_name}">
+  <imageobject>
+    <xsl:copy-of select="."/>
+  </imageobject>
+ </xsl:element>
 </xsl:template>
 
 <xsl:template mode='h2db' match="html:ul[count(*) = 0]">
