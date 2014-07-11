@@ -11,13 +11,31 @@
   <definitions>
 
     <definition class="compliance" version="1" id="oval:0:def:1"> <!-- comment="true" -->
-      <metadata>
-        <title></title>
-        <description></description>
-      </metadata>
+      <metadata><title></title><description></description></metadata>
       <criteria operator="AND">
         <criterion test_ref="oval:0:tst:1"/>
         <criterion test_ref="oval:0:tst:2"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:2"> <!-- comment="true" -->
+      <metadata><title></title><description></description></metadata>
+      <criteria>
+        <criterion test_ref="oval:0:tst:3" commnent="at least one service unit loaded or not-found"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:3"> <!-- comment="true" -->
+      <metadata><title></title><description></description></metadata>
+      <criteria>
+        <criterion test_ref="oval:0:tst:4" comment="at least one service unit loaded excluding not-found ones"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:4"> <!-- comment="true" -->
+      <metadata><title></title><description></description></metadata>
+      <criteria>
+        <criterion test_ref="oval:0:tst:5" comment="at least one service conflicting the shutdown.target"/>
       </criteria>
     </definition>
 
@@ -30,6 +48,21 @@
     </systemdunitproperty_test>
     <systemdunitproperty_test check_existence="at_least_one_exist" version="1" id="oval:0:tst:2" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:0:obj:2"/>
+    </systemdunitproperty_test>
+
+    <systemdunitproperty_test id="oval:0:tst:3" check="at least one" check_existence="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="test if there's at least one service unit having LoadState equal to 'loaded' or 'not-found'" version="1">
+      <object object_ref="oval:0:obj:3"/>
+      <state state_ref="oval:0:ste:1"/>
+    </systemdunitproperty_test>
+
+    <systemdunitproperty_test id="oval:0:tst:4" check="at least one" check_existence="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="test if there's at least one service unit having LoadState equal to 'loaded' excluding those with LoadState 'not-found'" version="1">
+      <object object_ref="oval:0:obj:4"/>
+      <state state_ref="oval:0:ste:1"/>
+    </systemdunitproperty_test>
+
+    <systemdunitproperty_test id="oval:0:tst:5" check="at least one" check_existence="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="test if there's at least one service conflicting the shutdown.target" version="1">
+      <object object_ref="oval:0:obj:5"/>
+      <state state_ref="oval:0:ste:3"/>
     </systemdunitproperty_test>
 
   </tests>
@@ -46,6 +79,38 @@
       <property>Requires</property>
     </systemdunitproperty_object>
 
+    <systemdunitproperty_object id="oval:0:obj:3" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <unit operation="pattern match">.*\.service</unit>
+      <property>LoadState</property>
+    </systemdunitproperty_object>
+
+    <systemdunitproperty_object id="oval:0:obj:4" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <unit operation="pattern match">.*\.service</unit>
+      <property>LoadState</property>
+      <filter action="exclude">oval:0:ste:2</filter>
+    </systemdunitproperty_object>
+
+    <systemdunitproperty_object id="oval:0:obj:5" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <unit operation="pattern match">.*\.service</unit>
+      <property>Conflicts</property>
+    </systemdunitproperty_object>
+
   </objects>
+
+  <states>
+
+    <systemdunitproperty_state id="oval:0:ste:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <value operation="pattern match">(loaded|not-found)</value>
+    </systemdunitproperty_state>
+
+    <systemdunitproperty_state id="oval:0:ste:2" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <value operation="equals">not-found</value>
+    </systemdunitproperty_state>
+
+    <systemdunitproperty_state id="oval:0:ste:3" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <value operation="pattern match">(?i)shutdown.target(?-i)</value>
+    </systemdunitproperty_state>
+
+  </states>
 
 </oval_definitions>
