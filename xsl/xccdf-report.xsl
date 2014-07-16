@@ -314,17 +314,19 @@ Authors:
     <xsl:param name="testresult"/>
     <xsl:param name="item"/>
 
+    <xsl:variable name="ruleresult" select="$testresult/cdf:rule-result[@idref = $item/@id]"/>
+
     <tr data-tt-id="{$item/@id}">
         <xsl:attribute name="data-tt-parent-id">
             <xsl:value-of select="$item/parent::cdf:*/@id"/>
         </xsl:attribute>
 
         <td><xsl:value-of select="$item/cdf:title/text()"/></td>
-        <td>
-            <xsl:variable name="result" select="$testresult/cdf:rule-result[@idref = $item/@id]/cdf:result/text()"/>
+        <td style="text-align: center"><xsl:value-of select="$ruleresult/@severity"/></td>
+        <td style="text-align: center">
+            <xsl:variable name="result" select="$ruleresult/cdf:result/text()"/>
 
             <!-- TODO: provide tooltips and better differentiation -->
-            <!-- TODO: add severity -->
             <xsl:choose>
                 <xsl:when test="$result = 'fail' or $result = 'error' or $result = 'unknown'">
                     <span class="label label-danger"><xsl:value-of select="$result"/></span>
@@ -340,9 +342,36 @@ Authors:
     </tr>
 </xsl:template>
 
+<xsl:template name="rule-overview-count-results">
+    <xsl:param name="testresult"/>
+    <xsl:param name="item"/>
+    <xsl:param name="result"/>
+
+    <xsl:variable name="count" select="0"/>
+
+    <xsl:for-each select="$item/cdf:Group">
+        <xsl:variable name="inner_count">
+            <xsl:call-template name="rule-overview-count-results">
+                <xsl:with-param name="testresult" select="$testresult"/>
+                <xsl:with-param name="item" select="."/>
+                <xsl:with-param name="result" select="$result"/>
+            </xsl:call-template>
+        </xsl:variable>
+
+        <xsl:variable name="count" select="$count + $inner_count"/>
+    </xsl:for-each>
+
+    <xsl:value-of select="$count"/>
+</xsl:template>
+
 <xsl:template name="rule-overview-inner-node">
     <xsl:param name="testresult"/>
     <xsl:param name="item"/>
+
+    <xsl:variable name="contained_rules_fail" select="count($item/descendant::cdf:Rule[@id = $testresult/cdf:rule-result[cdf:result/text() = 'fail']/@idref])"/>
+    <xsl:variable name="contained_rules_error" select="count($item/descendant::cdf:Rule[@id = $testresult/cdf:rule-result[cdf:result/text() = 'error']/@idref])"/>
+    <xsl:variable name="contained_rules_unknown" select="count($item/descendant::cdf:Rule[@id = $testresult/cdf:rule-result[cdf:result/text() = 'unknown']/@idref])"/>
+    <xsl:variable name="contained_rules_need_attention" select="$contained_rules_fail + $contained_rules_error + $contained_rules_unknown"/>
 
     <tr data-tt-id="{$item/@id}">
         <xsl:if test="$item/parent::cdf:Group or $item/parent::cdf:Benchmark">
@@ -351,8 +380,34 @@ Authors:
             </xsl:attribute>
         </xsl:if>
 
-        <td><xsl:value-of select="$item/cdf:title/text()"/></td>
-        <td></td>
+        <td colspan="3">
+            <xsl:choose>
+                <xsl:when test="$contained_rules_need_attention > 0">
+                    <strong><xsl:value-of select="$item/cdf:title/text()"/></strong>
+
+                    <xsl:if test="$contained_rules_fail > 0">
+                        <span class="badge"><xsl:value-of select="$contained_rules_fail"/>x fail</span>
+                    </xsl:if>
+                    <xsl:if test="$contained_rules_error > 0">
+                        <span class="badge"><xsl:value-of select="$contained_rules_error"/>x error</span>
+                    </xsl:if>
+                    <xsl:if test="$contained_rules_unknown > 0">
+                        <span class="badge"><xsl:value-of select="$contained_rules_unknown"/>x unknown</span>
+                    </xsl:if>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="$item/cdf:title/text()"/>
+                    <script>
+                        <xsl:comment>
+                         // group doesn't contain any rules that need attention, collapse it
+                         $(document).ready( function() {
+                             $('.treetable').treetable("collapseNode", "<xsl:value-of select="$item/@id"/>");
+                         });
+                        </xsl:comment>
+                    </script>
+                </xsl:otherwise>
+            </xsl:choose>
+        </td>
     </tr>
 
     <xsl:for-each select="$item/cdf:Group">
@@ -384,7 +439,8 @@ Authors:
             <thead>
                 <tr>
                     <th>Title</th>
-                    <th style="width: 35%">Result</th>
+                    <th style="width: 120px; text-align: center">Severity</th>
+                    <th style="width: 120px; text-align: center">Result</th>
                 </tr>
             </thead>
             <tbody>
@@ -501,7 +557,7 @@ Authors:
     <script><xsl:comment>
       // Initialize treetable
       $(document).ready( function() {
-        $('.treetable').treetable({ expandable: true, initialState : 'expanded' });
+        $('.treetable').treetable({ expandable: true, initialState : 'expanded',  clickableNodeNames : true });
       });
 
       // Initialize Datatables
