@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+
 <!--
-Copyright 2010-2013 Red Hat Inc., Durham, North Carolina.
+Copyright 2010-2014 Red Hat Inc., Durham, North Carolina.
 All Rights Reserved.
 
 This library is free software; you can redistribute it and/or
@@ -18,30 +19,29 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 
 Authors:
-     Lukas Kuklinek <lkuklinek@redhat.com>
      Martin Preisler <mpreisle@redhat.com>
+     Lukas Kuklinek <lkuklinek@redhat.com>
 -->
 
-
 <xsl:stylesheet version="1.1"
+	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	xmlns:cdf="http://checklists.nist.gov/xccdf/1.1"
+	xmlns:cdf="http://checklists.nist.gov/xccdf/1.2"
     xmlns:exsl="http://exslt.org/common"
-	xmlns:db="http://docbook.org/ns/docbook"
     xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns="http://docbook.org/ns/docbook"
     xmlns:s="http://open-scap.org/"
-    exclude-result-prefixes="xsl cdf db s exsl"
+    xmlns:db="http://open-scap.org/"
+    exclude-result-prefixes="xsl cdf s exsl"
     xmlns:ovalres="http://oval.mitre.org/XMLSchema/oval-results-5"
-    xmlns:sceres="http://open-scap.org/page/SCE_result_file"
-    >
+    xmlns:sceres="http://open-scap.org/page/SCE_result_file">
 
-<!--<xsl:include href="xccdf-common.xsl" />-->
-<xsl:import href="security-guide.xsl" />
-<xsl:import href="oval-report.xsl" />
-<xsl:import href="sce-report.xsl" />
+<xsl:include href="xccdf-share.xsl" />
 
-<xsl:output method="xml" encoding="UTF-8" indent="yes"/>
+<xsl:output
+    method="html"
+    encoding="utf-8"
+    indent="yes"
+    omit-xml-declaration="yes"/>
 
 <!-- parameters -->
 <xsl:param name="result-id"/>
@@ -113,10 +113,8 @@ Authors:
       <xsl:message terminate='yes'>This benchmark does not contain any test results.</xsl:message>
     </xsl:when>
     <xsl:when test='$result'>
-      <xsl:if test='$verbosity'>
-        <xsl:message>TestResult ID: <xsl:value-of select='$final-result-id'/></xsl:message>
-        <xsl:message>Profile: <xsl:choose><xsl:when test='$profile'><xsl:value-of select="$profile"/></xsl:when><xsl:otherwise>(Default)</xsl:otherwise></xsl:choose></xsl:message>
-      </xsl:if>
+      <xsl:message>TestResult ID: <xsl:value-of select='$final-result-id'/></xsl:message>
+      <xsl:message>Profile: <xsl:choose><xsl:when test='$profile'><xsl:value-of select="$profile"/></xsl:when><xsl:otherwise>(Default)</xsl:otherwise></xsl:choose></xsl:message>
       <xsl:apply-templates select='$result'/>
     </xsl:when>
     <xsl:when test='$result-id'>
@@ -128,406 +126,460 @@ Authors:
   </xsl:choose>
 </xsl:template>
 
-<xsl:template match='cdf:TestResult'>
-  <book xmlns='http://docbook.org/ns/docbook' version='5.0'
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-        id='{@id}'
-    >
-    <info>
-        <title>Scan Report</title>
-        <xsl:call-template name='footerinfo'/>
-    </info>
+<xsl:template name="characteristics">
+    <!-- we can later easily turn this into a param -->
+    <xsl:variable name="testresult" select="."/>
 
-    <xsl:call-template name='intro'/>
-    <xsl:call-template name='rr'/>
-  </book>
+    <div id="characteristics"><a name="characteristics"></a>
+        <h2>Characteristics</h2>
+        <div class="row">
+            <div class="col-md-5 well well-lg">
+                <p>
+                    <xsl:choose>
+                        <!-- cdf:identity is optional and will appear at most once -->
+                        <xsl:when test="$testresult/cdf:identity">
+                            <xsl:choose>
+                                <xsl:when test="$testresult/cdf:identity/@authenticated[text() = 'true' or text() = '1']">
+                                    <i>Authenticated</i> and
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <i>Unauthenticated</i> and
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            <xsl:choose>
+                                <xsl:when test="$testresult/cdf:identity/@privileged[text() = 'true' or text() = '1']">
+                                    <i>privileged</i>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <i>unprivileged</i>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            user <strong><xsl:value-of select="$testresult/cdf:identity/text()"/></strong>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            Unknown user
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    started the evaluation
+                    <xsl:choose>
+                        <xsl:when test="$testresult/@start-time">
+                            at <strong><xsl:value-of select="$testresult/@start-time"/></strong>.
+                        </xsl:when>
+                        <xsl:otherwise>
+                            .
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    Evaluation finished at <strong><xsl:value-of select="$testresult/@end-time"/></strong>.
+                    The target machine was called <strong><xsl:value-of select="$testresult/cdf:target/text()"/></strong>.
+                </p>
+                <xsl:if test="$testresult/cdf:benchmark">
+                    <p>
+                        Benchmark from <strong><xsl:value-of select="$testresult/cdf:benchmark/@href"/></strong>
+                        <xsl:if test="$testresult/cdf:benchmark/@id">
+                            with ID <strong><xsl:value-of select="$testresult/cdf:benchmark/@id"/></strong>
+                        </xsl:if>
+                        was used.
+                        <xsl:if test="$testresult/cdf:profile">
+                            Profile <strong><xsl:value-of select="/cdf:Benchmark/cdf:Profile[@id = $testresult/cdf:profile/@idref]/cdf:title"/></strong> was selected.
+                        </xsl:if>
+                    </p>
+                </xsl:if>
+            </div>
+            <div class="col-md-3">
+                <h4>CPE Platforms</h4>
+                <ul class="list-group">
+                    <!-- all the applicable platforms first -->
+                    <xsl:for-each select="/cdf:Benchmark/cdf:platform">
+                        <xsl:variable name="idref" select="@idref"/>
+                        <xsl:if test="$testresult/cdf:platform[@idref=$idref]">
+                            <li class="list-group-item">
+                                <span class="label label-success"><xsl:value-of select="@idref"/></span>
+                            </li>
+                        </xsl:if>
+                    </xsl:for-each>
+                    <!-- then the rest -->
+                    <xsl:for-each select="/cdf:Benchmark/cdf:platform">
+                        <xsl:variable name="idref" select="@idref"/>
+                        <xsl:if test="not($testresult/cdf:platform[@idref=$idref])">
+                            <li class="list-group-item">
+                                <span class="label label-default"><xsl:value-of select="@idref"/></span>
+                            </li>
+                        </xsl:if>
+                    </xsl:for-each>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h4>Addresses</h4>
+                <ul class="list-group">
+                    <!-- the second predicate ensures that we don't print duplicates -->
+                    <xsl:for-each select="$testresult/cdf:target-address[not(. = preceding::cdf:target-address)]">
+                        <li class="list-group-item">
+                            <xsl:choose>
+                                <xsl:when test="contains(text(), ':')">
+                                    <span class="label label-info">IPv6</span>
+                                </xsl:when>
+                                <xsl:when test="contains(text(), '.')">
+                                    <span class="label label-primary">IPv4</span>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            <!-- #160 is nbsp -->
+                            &#160;<xsl:value-of select="text()"/>
+                        </li>
+                    </xsl:for-each>
+                    <!-- the second predicate ensures that we don't print duplicates -->
+                    <xsl:for-each select="$testresult/cdf:target-facts/cdf:fact[@name = 'urn:xccdf:fact:ethernet:MAC'][not(. = preceding::cdf:fact)]">
+                        <li class="list-group-item">
+                            <span class="label label-default">MAC</span>
+                            <xsl:value-of select="text()"/>
+                        </li>
+                    </xsl:for-each>
+                </ul>
+            </div>
+        </div>
+    </div>
 </xsl:template>
 
-<xsl:template name='intro'>
-  <chapter id="intro">
-    <title>Introduction</title>
+<xsl:template name="compliance-and-scoring">
+    <!-- we can later easily turn this into a param -->
+    <xsl:variable name="testresult" select="."/>
 
-    <section>
-      <title>Test Result</title>
-      <table id="test-result-summary">
-        <thead>
-          <row>
-            <entry>Result ID</entry>
-            <entry>Profile</entry>
-            <entry>Start time</entry>
-            <entry>End time</entry>
-            <entry>Benchmark</entry>
-            <entry>Benchmark version</entry>
-          </row>
-        </thead>
-        <tbody>
-          <row>
-            <entry align="center"><xsl:value-of select="@id"/></entry>
-            <entry align="center">
-              <xsl:choose>
-                <xsl:when test="cdf:profile">
-                  <xsl:value-of select="cdf:profile/@idref"/>
-                </xsl:when>
-                <xsl:otherwise>
-                  (Default profile)
-                </xsl:otherwise>
-              </xsl:choose>
-            </entry>
-            <entry align="center"><date><xsl:value-of select="@start-time"/></date></entry>
-            <entry align="center"><date><xsl:value-of select="@end-time"/></date></entry>
-            <entry align="center">
-              <xsl:choose>
-                <xsl:when test="@href"><phrase xlink:href="{@href}"><xsl:value-of select="@href"/></phrase></xsl:when>
-                <xsl:otherwise><phrase>embedded</phrase></xsl:otherwise>
-              </xsl:choose>
-            </entry>
-            <entry align="center">
-              <xsl:choose>
-                <xsl:when test="/cdf:Benchmark/cdf:version">
-                  <xsl:value-of select="/cdf:Benchmark/cdf:version/text()"/>
-                </xsl:when>
-                <xsl:otherwise>
-                  Unknown
-                </xsl:otherwise>
-              </xsl:choose>
-            </entry>
-          </row>
-        </tbody>
-      </table>
-    </section>
-    <xsl:apply-templates select='cdf:identity'/>
-    <section>
-      <title>Target info</title>
-      <table role="raw">
-        <tbody>
-          <row>
-            <entry valign="top">
-              <xsl:call-template name='list'>
-                <xsl:with-param name='nodes' select='cdf:target' />
-                <xsl:with-param name='title' select='"Targets"' />
-              </xsl:call-template>
-            </entry>
+    <div id="compliance-and-scoring"><a name="compliance-and-scoring"></a>
+        <h2>Compliance and Scoring</h2>
+        <xsl:choose>
+            <xsl:when test="$testresult/cdf:rule-result/cdf:result[text() = 'fail' or text() = 'error' or text() = 'unknown']">
+                <div class="alert alert-warning">
+                    <span class="pficon-layered">
+                        <span class="pficon pficon-warning-triangle"></span>
+                        <span class="pficon pficon-warning-exclamation"></span>
+                    </span>
+                    <strong>The system is not compliant!</strong> Please review rule results and consider applying remediation.
+                </div>
+            </xsl:when>
+            <xsl:otherwise>
+                <div class="alert alert-success">
+                    <span class="pficon pficon-ok"></span>
+                    <strong>The system is fully compliant!</strong> No action is necessary.
+                </div>
+            </xsl:otherwise>
+        </xsl:choose>
 
-            <entry valign="top">
-              <xsl:call-template name='list'>
-                <xsl:with-param name='nodes' select='cdf:target-address' />
-                <xsl:with-param name='title' select='"Addresses"' />
-              </xsl:call-template>
-            </entry>
+        <xsl:variable name="total_rules_count" select="count($testresult/cdf:rule-result[cdf:result])"/>
+        <xsl:variable name="passed_rules_count" select="count($testresult/cdf:rule-result[cdf:result/text() = 'pass'])"/>
+        <xsl:variable name="failed_rules_count" select="count($testresult/cdf:rule-result[cdf:result/text() = 'fail'])"/>
 
-            <xsl:if test="$with-target-facts">
-              <entry valign="top">
-                <xsl:apply-templates select='cdf:target-facts' mode='result' />
-              </entry>
-            </xsl:if>
+        <div class="progress">
+            <div class="progress-bar progress-bar-success" style="width: {$passed_rules_count div $total_rules_count * 100}%">
+                <xsl:value-of select="$passed_rules_count"/> passed
+            </div>
+            <div class="progress-bar progress-bar-danger" style="width: {$failed_rules_count div $total_rules_count * 100}%">
+                <xsl:value-of select="$failed_rules_count"/> failed
+            </div>
+            <div class="progress-bar progress-bar-warning" style="width: {(1 - ($passed_rules_count + $failed_rules_count) div $total_rules_count) * 100}%">
+                <xsl:value-of select="$total_rules_count - $passed_rules_count - $failed_rules_count"/> other
+            </div>
+        </div>
 
-            <entry>
-              <xsl:call-template name='list'>
-                <xsl:with-param name='nodes' select='cdf:remark' />
-                <xsl:with-param name='title' select='"Remarks"' />
-              </xsl:call-template>
-            </entry>
-
-            <xsl:if test='/cdf:Benchmark/cdf:platform or cdf:platform'>
-              <entry valign="top">
-                <itemizedlist>
-                  <title>Applicable platforms</title>
-                  <xsl:variable name="testresult" select="."/>
-                  <xsl:for-each select='/cdf:Benchmark/cdf:platform'>
-                    <xsl:variable name="idref" select="@idref"/>
-
-                    <xsl:if test="$testresult/cdf:platform[@idref=$idref]">
-                      <listitem><emphasis role="strong"><xsl:value-of select="$idref"/></emphasis></listitem>
-                    </xsl:if>
-                  </xsl:for-each>
-                  <xsl:for-each select='cdf:platform'>
-                    <xsl:variable name="idref" select="@idref"/>
-
-                    <xsl:if test="not(/cdf:Benchmark/cdf:platform[@idref=$idref])">
-                      <listitem><emphasis role="italic"><xsl:value-of select="$idref"/></emphasis></listitem>
-                    </xsl:if>
-                  </xsl:for-each>
-                </itemizedlist>
-              </entry>
-            </xsl:if>
-
-            <xsl:if test='cdf:set-value'>
-              <entry valign="top">
-                <table>
-                  <title>Values</title>
-                  <tgroup>
-                    <thead><row><entry>Name</entry><entry>Value</entry></row></thead>
-                    <tbody><xsl:apply-templates select='cdf:set-value'/></tbody>
-                  </tgroup>
-                </table>
-              </entry>
-            </xsl:if>
-
-            <entry valign="top">
-              <xsl:call-template name='list'>
-                <xsl:with-param name='nodes' select='cdf:organization' />
-                <xsl:with-param name='title' select='"Organization"' />
-              </xsl:call-template>
-            </entry>
-          </row>
-        </tbody>
-      </table>
-    </section>
-    <section>
-      <title>Score</title>
-      <xsl:choose>
-        <xsl:when test='cdf:score'><xsl:call-template name='score.table'/></xsl:when>
-        <xsl:otherwise><para role='unknown'>No score results.</para></xsl:otherwise>
-      </xsl:choose>
-    </section>
-  </chapter>
-</xsl:template>
-
-<xsl:template name='score.table'>
-  <table>
-    <tgroup>
-      <thead><row><entry>system</entry><entry>score</entry><entry>max</entry><entry>%</entry><entry>bar</entry></row></thead>
-      <tbody><xsl:apply-templates select='cdf:score'/></tbody>
-    </tgroup>
-  </table>
-</xsl:template>
-
-<xsl:template name='rr'>
-  <xsl:variable name='results' select='cdf:rule-result[contains($toshow, concat(",",cdf:result,",")) and not(contains($toshow, concat(",-",cdf:result,",")))]'/>
-
-  <chapter id='results-overview'>
-    <title>Results overview</title>
-    <xsl:choose>
-      <xsl:when test='$results'>
-        <table id="rule-results-summary">
-          <title>Rule Results Summary</title>
-          <tgroup>
+        <table class="table table-striped table-bordered">
             <thead>
-              <row>
-                <entry>pass</entry>
-                <entry>fixed</entry>
-                <entry>fail</entry>
-                <entry>error</entry>
-                <entry>not selected</entry>
-                <entry>not checked</entry>
-                <entry>not applicable</entry>
-                <entry>informational</entry>
-                <entry>unknown</entry>
-                <entry>total</entry>
-              </row>
+                <tr>
+                    <th>Scoring system</th>
+                    <th class="text-center">Score</th>
+                    <th class="text-center">Maximum</th>
+                    <th class="text-center" style="width: 40%">%</th>
+                </tr>
             </thead>
             <tbody>
-              <row role="result-legend">
-                <entry align="center" role="result-pass"><emphasis role="strong"><xsl:value-of select='count(cdf:rule-result[cdf:result="pass"])'/></emphasis></entry>
-                <entry align="center" role="result-fixed"><emphasis role="strong"><xsl:value-of select='count(cdf:rule-result[cdf:result="fixed"])'/></emphasis></entry>
-                <entry align="center" role="result-fail"><emphasis role="strong"><xsl:value-of select='count(cdf:rule-result[cdf:result="fail"])'/></emphasis></entry>
-                <entry align="center" role="result-error"><emphasis role="strong"><xsl:value-of select='count(cdf:rule-result[cdf:result="error"])'/></emphasis></entry>
-                <entry align="center" role="result-notselected"><emphasis role="strong"><xsl:value-of select='count(cdf:rule-result[cdf:result="notselected"])'/></emphasis></entry>
-                <entry align="center" role="result-notchecked"><emphasis role="strong"><xsl:value-of select='count(cdf:rule-result[cdf:result="notchecked"])'/></emphasis></entry>
-                <entry align="center" role="result-notapplicable"><emphasis role="strong"><xsl:value-of select='count(cdf:rule-result[cdf:result="notapplicable"])'/></emphasis></entry>
-                <entry align="center" role="result-informational"><emphasis role="strong"><xsl:value-of select='count(cdf:rule-result[cdf:result="informational"])'/></emphasis></entry>
-                <entry align="center" role="result-unknown"><emphasis role="strong"><xsl:value-of select='count(cdf:rule-result[cdf:result="unknown"])'/></emphasis></entry>
-                <entry align="center"><emphasis role="strong"><xsl:value-of select='count(cdf:rule-result)'/></emphasis></entry>
-              </row>
+                <xsl:for-each select="$testresult/cdf:score">
+                    <xsl:variable name="percent" select="(text() div @maximum) * 100"/>
+                    <tr>
+                        <td><xsl:value-of select="@system"/></td>
+                        <td class="text-center"><xsl:value-of select="text()"/></td>
+                        <td class="text-center"><xsl:value-of select="@maximum"/></td>
+                        <td>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-success" style="width: {$percent}%"><xsl:value-of select="$percent"/>%</div>
+                                <div class="progress-bar progress-bar-danger" style="width: {100 - $percent}%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                </xsl:for-each>
             </tbody>
-          </tgroup>
         </table>
-
-        <xsl:apply-templates select='.' mode='rr.table'><xsl:with-param name='results' select='$results'/></xsl:apply-templates>
-      </xsl:when>
-      <xsl:otherwise><para role='unknown'>No rule results.</para></xsl:otherwise>
-    </xsl:choose>
-  </chapter>
-  <chapter id='results-details'>
-    <title>Results details</title>
-    <xsl:apply-templates select='$results'/>
-  </chapter>
+    </div>
 </xsl:template>
 
-<xsl:template match='cdf:rule-result'>
-  <xsl:variable name='rule' select="key('items',@idref)"/>
+<xsl:template name="rule-overview-leaf">
+    <xsl:param name="testresult"/>
+    <xsl:param name="item"/>
 
-  <section id='ruleresult-{generate-id(.)}' role='result-detail'>
-    <title>Result for <xsl:value-of select='($rule/cdf:title[1]|@idref)[1]'/></title>
-    <para role="result-{normalize-space(cdf:result)}">Result: <emphasis role='strong'><xsl:value-of select="cdf:result"/></emphasis></para>
-    <para>Rule ID: <emphasis role='strong'><xsl:value-of select="@idref"/></emphasis></para>
+    <tr data-tt-id="{$item/@id}">
+        <xsl:attribute name="data-tt-parent-id">
+            <xsl:value-of select="$item/parent::cdf:*/@id"/>
+        </xsl:attribute>
 
-    <xsl:apply-templates select='@time'/>
-    <xsl:apply-templates select='@severity'/>
-    <xsl:call-template name='rr.instance'/>
-    <xsl:apply-templates select='$rule/cdf:description[1]'/>
-    <xsl:apply-templates select='$rule/cdf:warning[1]'/>
-    <xsl:apply-templates select='$rule/cdf:rationale[1]'/>
-    <xsl:call-template name='idents'/>
-    <!-- overrides (n) -->
-    <!-- messages (n) -->
-    <xsl:if test='cdf:result[text()!="pass"]'>
-      <xsl:apply-templates select='$rule/cdf:fixtext[1]'/>
-    </xsl:if>
-    <xsl:apply-templates select='($rule/cdf:fix|cdf:fix)[last()]'/>
-    <xsl:apply-templates select='.' mode='engine-results'/>
-    <xsl:call-template name='references'/>
-  </section>
+        <td><xsl:value-of select="$item/cdf:title/text()"/></td>
+        <td>
+            <xsl:variable name="result" select="$testresult/cdf:rule-result[@idref = $item/@id]/cdf:result/text()"/>
+
+            <!-- TODO: provide tooltips and better differentiation -->
+            <!-- TODO: add severity -->
+            <xsl:choose>
+                <xsl:when test="$result = 'fail' or $result = 'error' or $result = 'unknown'">
+                    <span class="label label-danger"><xsl:value-of select="$result"/></span>
+                </xsl:when>
+                <xsl:when test="$result = 'pass'">
+                    <span class="label label-success"><xsl:value-of select="$result"/></span>
+                </xsl:when>
+                <xsl:otherwise>
+                    <span class="label label-default"><xsl:value-of select="$result"/></span>
+                </xsl:otherwise>
+            </xsl:choose>
+        </td>
+    </tr>
 </xsl:template>
 
-<xsl:template mode='rr.table' match='cdf:TestResult'>
-  <xsl:param name='results'/>
-  <table>
-    <title role='hidden'>Rule results summary</title>
-    <tgroup>
-      <thead><row><entry>Title</entry><entry>Result</entry><entry>Severity</entry><entry>Weight</entry></row></thead>
-      <tbody><xsl:apply-templates select='$results' mode='rr.table'/></tbody>
-    </tgroup>
-  </table>
+<xsl:template name="rule-overview-inner-node">
+    <xsl:param name="testresult"/>
+    <xsl:param name="item"/>
+
+    <tr data-tt-id="{$item/@id}">
+        <xsl:if test="$item/parent::cdf:Group or $item/parent::cdf:Benchmark">
+            <xsl:attribute name="data-tt-parent-id">
+                <xsl:value-of select="$item/parent::cdf:*/@id"/>
+            </xsl:attribute>
+        </xsl:if>
+
+        <td><xsl:value-of select="$item/cdf:title/text()"/></td>
+        <td></td>
+    </tr>
+
+    <xsl:for-each select="$item/cdf:Group">
+        <xsl:call-template name="rule-overview-inner-node">
+            <xsl:with-param name="testresult" select="$testresult"/>
+            <xsl:with-param name="item" select="."/>
+        </xsl:call-template>
+    </xsl:for-each>
+
+    <xsl:for-each select="$item/cdf:Rule">
+        <xsl:call-template name="rule-overview-leaf">
+            <xsl:with-param name="testresult" select="$testresult"/>
+            <xsl:with-param name="item" select="."/>
+        </xsl:call-template>
+    </xsl:for-each>
 </xsl:template>
 
-<xsl:template mode='rr.table' match='cdf:rule-result'>
-  <row role='result-{normalize-space(cdf:result)}'>
-    <entry role='id'    ><phrase xlink:href='#ruleresult-{generate-id(.)}'><xsl:value-of select='(key("items",@idref)/cdf:title[1]|@idref)[1]'/></phrase></entry>
-    <entry role='result'><emphasis role='strong'><xsl:value-of select='normalize-space(cdf:result)'/></emphasis></entry>
-    <entry role='severity'><xsl:value-of select='normalize-space(@severity)'/></entry>
-    <entry role='weight'><xsl:value-of select='normalize-space(@weight)'/></entry>
-  </row>
+<xsl:template name="rule-overview">
+    <!-- we can later easily turn this into a param -->
+    <xsl:variable name="testresult" select="."/>
+    <!-- we can later easily turn this into a param -->
+    <xsl:variable name="benchmark" select="/cdf:Benchmark"/>
+
+    <div id="rule-overview"><a name="rule-overview"></a>
+        <h2>Rule Overview</h2>
+
+        <table class="treetable table table-striped table-bordered">
+            <caption>TODO</caption>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th style="width: 35%">Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                <xsl:call-template name="rule-overview-inner-node">
+                    <xsl:with-param name="testresult" select="$testresult"/>
+                    <xsl:with-param name="item" select="$benchmark"/>
+                </xsl:call-template>
+            </tbody>
+        </table>
+    </div>
 </xsl:template>
 
-<xsl:template name='rr.instance'>
-  <xsl:if test='cdf:instance'>
-    <itemizedlist><title>Instance</title><xsl:apply-templates select='cdf:instance'/></itemizedlist>
-  </xsl:if>
+<xsl:template name="result-details-leaf">
+    <xsl:param name="testresult"/>
+    <xsl:param name="item"/>
+
+    <xsl:variable name="ruleresult" select="$testresult/cdf:rule-result[@idref = $item/@id]"/>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><xsl:value-of select="$item/cdf:title/text()"/></h3><a name="rule-123"></a>
+        </div>
+        <div class="panel-body">
+            <table class="table table-striped table-bordered">
+                <tbody>
+                    <tr><td>Result</td><td><xsl:value-of select="$ruleresult/cdf:result/text()"/></td></tr>
+                    <tr><td>Rule ID</td><td><xsl:value-of select="$item/@id"/></td></tr>
+                    <tr><td>Time</td><td><xsl:value-of select="$ruleresult/@time"/></td></tr>
+                    <tr><td>Severity</td><td><xsl:value-of select="$ruleresult/@severity"/></td></tr>
+                    <tr><td colspan="2">
+                        <p>
+                            <xsl:copy-of select="$item/cdf:description/node()"/>
+                        </p>
+                    </td></tr>
+                    <xsl:if test="$item/cdf:fix">
+                        <tr><td colspan="2">
+                            Remediation script:
+                            <pre>
+                                <xsl:copy-of select="$item/cdf:fix/node()"/>
+                            </pre>
+                        </td></tr>
+                    </xsl:if>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </xsl:template>
 
-<xsl:template match='cdf:instance'>
-  <listitem><simpara><xsl:value-of select='.'/>
-         <xsl:if test='@context'> [context: <xsl:value-of select='@context'/>]</xsl:if>
-         <xsl:if test='@parentContext'> [parent context: <xsl:value-of select='@parentContext'/>]</xsl:if>
-  </simpara></listitem>
+<xsl:template name="result-details-inner-node">
+    <xsl:param name="testresult"/>
+    <xsl:param name="item"/>
+
+    <xsl:for-each select="$item/cdf:Group">
+        <xsl:call-template name="result-details-inner-node">
+            <xsl:with-param name="testresult" select="$testresult"/>
+            <xsl:with-param name="item" select="."/>
+        </xsl:call-template>
+    </xsl:for-each>
+
+    <xsl:for-each select="$item/cdf:Rule">
+        <xsl:call-template name="result-details-leaf">
+            <xsl:with-param name="testresult" select="$testresult"/>
+            <xsl:with-param name="item" select="."/>
+        </xsl:call-template>
+    </xsl:for-each>
 </xsl:template>
 
-<xsl:template match='cdf:test-result/cdf:status'>
-  <para>
-    <xsl:text>Status: </xsl:text><emphasis role='strong'><xsl:value-of select='normalize-space(.)'/></emphasis>
-    <xsl:if test='@date'>(as of <phrase role='date'><xsl:value-of select='@date'/></phrase>)</xsl:if>
-  </para>
+<xsl:template name="result-details">
+    <!-- we can later easily turn this into a param -->
+    <xsl:variable name="testresult" select="."/>
+    <!-- we can later easily turn this into a param -->
+    <xsl:variable name="benchmark" select="/cdf:Benchmark"/>
+
+    <div id="result-details"><a name="result-details"></a>
+        <h2>Result Details</h2>
+
+        <xsl:call-template name="result-details-inner-node">
+            <xsl:with-param name="testresult" select="$testresult"/>
+            <xsl:with-param name="item" select="$benchmark"/>
+        </xsl:call-template>
+    </div>
 </xsl:template>
 
-<xsl:template match='@severity'>
-    <para>Severity: <emphasis role='strong'><xsl:value-of select='.'/></emphasis></para>
+<xsl:template match='cdf:TestResult'>
+<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html></xsl:text>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title><xsl:value-of select="@id"/> | OpenSCAP Evaluation Report</title>
+
+    <!-- Bootstrap -->
+    <link href="css/patternfly.css" rel="stylesheet"/>
+    <link href="css/jquery.treetable.css" rel="stylesheet"/>
+    <link href="css/jquery.treetable.theme.patternfly.css" rel="stylesheet"/>
+    <style>
+    </style>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="js/jquery-1.11.1.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <!-- jquery.dataTables.js must load before patternfly.min.js -->
+    <script src="js/jquery.dataTables.min.js"></script>
+    <script src="js/jquery.treetable.js"></script>
+    <script src="js/patternfly.min.js"></script>
+    <script><xsl:comment>
+      // Initialize treetable
+      $(document).ready( function() {
+        $('.treetable').treetable({ expandable: true, initialState : 'expanded' });
+      });
+
+      // Initialize Datatables
+      $(document).ready( function() {
+        $('.datatable').dataTable({
+          "fnDrawCallback": function( oSettings ) {
+            // if .sidebar-pf exists, call sidebar() after the data table is drawn
+            if ($('.sidebar-pf').length > 0) {
+              sidebar();
+            }
+          }
+        });
+      });
+     </xsl:comment></script>
+</head>
+
+<body>
+<nav class="navbar navbar-default navbar-pf" role="navigation">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-3">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">
+            <img src="img/brand.svg" alt="OpenSCAP" />
+        </a>
+        <div style="padding-left: 240px !important"><h1 style="color: #fff">Evaluation Report</h1></div>
+    </div>
+    <div class="collapse navbar-collapse navbar-collapse-3">
+        <ul class="nav navbar-nav navbar-utility">
+            <li>
+                <a href="#">1.1.0</a>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-primary">
+            <li>
+                <a href="#characteristics">Characteristics</a>
+            </li>
+            <li>
+                <a href="#compliance-and-scoring">Compliance and Scoring</a>
+            </li>
+            <li>
+                <a href="#rule-overview">Rule Overview</a>
+            </li>
+            <li>
+                <a href="#result-details">Result Details</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container"><div id="content">
+    <xsl:call-template name="characteristics"/>
+    <xsl:call-template name="compliance-and-scoring"/>
+    <xsl:call-template name="rule-overview"/>
+    <xsl:call-template name="result-details"/>
+
+</div></div>
+<footer role="contentinfo">
+    <div id="inner-footer" class="clearfix row">
+        <div id="widget-footer" class="clearfix">
+            <hr />
+            <div id="text-2" class="widget col-sm-6 col-md-6 widget_text">
+                <div class="textwidget">
+                    <p>Generated using <a href="http://open-scap.org">OpenSCAP 1.1.0</a></p>
+                </div>
+            </div>
+        </div>
+        <nav class="clearfix">
+        </nav>
+    </div>
+</footer>
+
+</body>
+</html>
+
 </xsl:template>
-
-<xsl:template match='@time'>
-    <para>Time: <emphasis role='strong'><phrase role='date'><xsl:apply-templates mode='date' select='.'/></phrase></emphasis></para>
-</xsl:template>
-
-<xsl:template match='cdf:profile'>
-    <para>Profile: <emphasis role='strong'><xsl:value-of select='@idref'/></emphasis></para>
-</xsl:template>
-
-<xsl:template match='cdf:target-facts'>
-  <table>
-    <title>Target facts</title>
-    <tgroup>
-      <thead><row><entry>Fact</entry><entry>Value</entry></row></thead>
-      <tbody>
-        <xsl:apply-templates select='cdf:fact'/>
-      </tbody>
-    </tgroup>
-  </table>
-</xsl:template>
-
-<xsl:template match='cdf:fact'>
-  <row><entry><xsl:value-of select='@name'/></entry><entry><xsl:value-of select='.'/></entry></row>
-</xsl:template>
-
-<xsl:template match='cdf:set-value'>
-  <row><entry><xsl:value-of select='(key("items",@idref)/cdf:title[1]|@idref)[1]'/></entry><entry><xsl:value-of select='.'/></entry></row>
-</xsl:template>
-
-<xsl:template match='cdf:score'>
-  <xsl:variable name='max'>
-    <xsl:choose>
-      <xsl:when test='@maximum'><xsl:value-of select='@maximum'/></xsl:when>
-      <xsl:otherwise>100</xsl:otherwise>
-    </xsl:choose>
-  </xsl:variable>
-  <xsl:variable name='percent' select='number(.) div number($max)'/>
-  <xsl:variable name='format' select="'0.00'"/>
-
-  <row id='score-{translate(@system, ":", "-")}'>
-    <entry role='score-sys'><xsl:value-of select='@system' /></entry>
-    <entry role='score-val'><xsl:value-of select='format-number(string(.), $format)' /></entry>
-    <entry role='score-max'><xsl:value-of select='format-number($max, $format)' /></entry>
-    <entry role='score-percent'><xsl:value-of select="format-number($percent, '0.00%')"/></entry>
-    <entry role='score-bar'>
-      <inlinemediaobject role='score-bar'>
-        <imageobject>
-          <imagedata format='SVG'>
-            <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" version="1.1">
-              <rect width="100%" height="100%" fill="red"/>
-              <rect height="100%" width="{format-number($percent, '0.00%')}" fill="green"/>
-              <rect height="100%" x="{format-number($percent, '0.00%')}" width="2" fill="black"/>
-            </svg>
-          </imagedata>
-        </imageobject>
-        <textobject><phrase><xsl:value-of select='format-number($percent, "0.00%")'/></phrase></textobject>
-      </inlinemediaobject>
-    </entry>
-  </row>
-</xsl:template>
-
-<!-- TOC adjustment (switch off) -->
-<xsl:template mode='dbout.html.toc' match='db:chapter'/>
-
-
-<!-- checking engine results related templates -->
-<xsl:template match='cdf:rule-result' mode='engine-results'>
-  <xsl:if test='contains(",fail,error,unknown,informational,", concat(",", normalize-space(cdf:result), ","))'>
-    <xsl:apply-templates mode='engine-results' select='cdf:check'/>
-  </xsl:if>
-</xsl:template>
-
-<xsl:template match='cdf:check[starts-with(@system, "http://oval.mitre.org/XMLSchema/oval")]' mode='engine-results'>
-  <xsl:apply-templates mode='oval-engine-results' select='cdf:check-content-ref[1]'/>
-</xsl:template>
-
-<xsl:template match='cdf:check-content-ref[@name]' mode='oval-engine-results'>
-  <xsl:variable name='filename'>
-    <xsl:choose>
-      <xsl:when test='contains($oval-tmpl, "%")'><xsl:value-of select='concat(substring-before($oval-tmpl, "%"), @href, substring-after($oval-tmpl, "%"))'/></xsl:when>
-      <xsl:otherwise><xsl:value-of select='$oval-tmpl'/></xsl:otherwise>
-    </xsl:choose>
-  </xsl:variable>
-
-  <xsl:if test='$oval-tmpl'>
-    <xsl:apply-templates select='document($filename)/ovalres:oval_results' mode='brief'>
-      <xsl:with-param name='definition-id' select='@name'/>
-    </xsl:apply-templates>
-  </xsl:if>
-</xsl:template>
-
-<xsl:template match='cdf:check[starts-with(@system, "http://open-scap.org/page/SCE")]' mode='engine-results'>
-   <xsl:apply-templates mode='sce-engine-results' select='cdf:check-content-ref[1]'/>
-</xsl:template>
-
-<xsl:template match='cdf:check-content-ref' mode='sce-engine-results'>
-  <xsl:variable name='stdout-check-imports' select='../cdf:check-import[@import-name="stdout"]'/>
-  
-  <xsl:apply-templates select='$stdout-check-imports' mode='brief' />
-  
-<xsl:if test='not($stdout-check-imports)'>
-  <!-- fallback that looks for SCE result files -->  
-  <xsl:variable name='filename'>
-    <xsl:choose>
-      <xsl:when test='contains($sce-tmpl, "%")'><xsl:value-of select='concat(substring-before($sce-tmpl, "%"), @href, substring-after($sce-tmpl, "%"))'/></xsl:when>
-      <xsl:otherwise><xsl:value-of select='$sce-tmpl'/></xsl:otherwise>
-    </xsl:choose>
-  </xsl:variable>
-
-  <xsl:if test='$sce-tmpl'>
-    <xsl:apply-templates select='document($filename)/sceres:sce_results' mode='brief' />
-  </xsl:if>
-</xsl:if>
-</xsl:template>
-
-<xsl:template match='node()' mode='engine-results'/>
 
 </xsl:stylesheet>
