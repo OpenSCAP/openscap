@@ -328,7 +328,9 @@ Authors:
         <td><a href="#result-detail-{generate-id($ruleresult)}"><xsl:value-of select="$item/cdf:title/text()"/></a></td>
         <td style="text-align: center"><xsl:value-of select="$ruleresult/@severity"/></td>
         <td class="rule-result rule-result-{$result}">
-            <xsl:value-of select="$result"/>
+            <div>
+                <xsl:value-of select="$result"/>
+            </div>
             <!-- TODO: provide tooltips and better differentiation -->
         </td>
     </tr>
@@ -532,12 +534,12 @@ Authors:
     <link href="css/jquery.treetable.theme.patternfly.css" rel="stylesheet"/>
     <style>
         tr.rule-overview-needs-attention { border-left: 3px solid red !important }
-        td.rule-result { text-align: center; font-weight: bold; color: #fff; background: #808080 !important }
-        td.rule-result-fail { background: #c90813 !important }
-        td.rule-result-error { background: #c90813 !important }
-        td.rule-result-unknown { background: #eb7720 !important }
-        td.rule-result-pass { background: #5cb75c !important }
-        td.rule-result-fixed { background: #5cb75c !important }
+        td.rule-result div { text-align: center; font-weight: bold; color: #fff; background: #808080 }
+        td.rule-result-fail div { background: #c90813 }
+        td.rule-result-error div { background: #c90813 }
+        td.rule-result-unknown div { background: #eb7720 }
+        td.rule-result-pass div { background: #5cb75c }
+        td.rule-result-fixed div { background: #5cb75c }
     </style>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
