@@ -53,6 +53,13 @@
       </criteria>
     </definition>
 
+    <definition class="compliance" version="1" id="oval:0:def:7"> <!-- comment="true" -->
+      <metadata><title></title><description></description></metadata>
+      <criteria>
+        <criterion test_ref="oval:0:tst:8"/>
+      </criteria>
+    </definition>
+
   </definitions>
 
   <tests>
@@ -86,6 +93,11 @@
     <systemdunitproperty_test id="oval:0:tst:7" check="all" check_existence="at_least_one_exists" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="check if there is at least one systemd-journald.service unit it has value of Conflicts property equal to empty string" version="1">
       <object object_ref="oval:0:obj:6"/>
       <state state_ref="oval:0:ste:4"/>
+    </systemdunitproperty_test>
+
+    <systemdunitproperty_test id="oval:0:tst:8" check="all" check_existence="at_least_one_exists" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="check if default.target unit has value of UnitFileState property (case-insensitively) equal to 'enabled'" version="1">
+      <object object_ref="oval:0:obj:7"/>
+      <state state_ref="oval:0:ste:5"/>
     </systemdunitproperty_test>
 
   </tests>
@@ -123,6 +135,11 @@
       <property>Conflicts</property>
     </systemdunitproperty_object>
 
+    <systemdunitproperty_object id="oval:0:obj:7" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <unit>default.target</unit>
+      <property>UnitFileState</property>
+    </systemdunitproperty_object>
+
   </objects>
 
   <states>
@@ -141,6 +158,10 @@
 
     <systemdunitproperty_state id="oval:0:ste:4" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <value operation="pattern match">^$</value>
+    </systemdunitproperty_state>
+
+    <systemdunitproperty_state id="oval:0:ste:5" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <value operation="equals">(?i)enabled(?-i)</value>
     </systemdunitproperty_state>
 
   </states>
