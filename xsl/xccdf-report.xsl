@@ -321,7 +321,7 @@ Authors:
             <xsl:value-of select="$item/parent::cdf:*/@id"/>
         </xsl:attribute>
 
-        <td><xsl:value-of select="$item/cdf:title/text()"/></td>
+        <td><a href="#result-detail-{generate-id($ruleresult)}"><xsl:value-of select="$item/cdf:title/text()"/></a></td>
         <td style="text-align: center"><xsl:value-of select="$ruleresult/@severity"/></td>
         <td style="text-align: center">
             <xsl:variable name="result" select="$ruleresult/cdf:result/text()"/>
@@ -461,7 +461,8 @@ Authors:
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title"><xsl:value-of select="$item/cdf:title/text()"/></h3><a name="rule-123"></a>
+            <a name="result-detail-{generate-id($ruleresult)}"></a>
+            <h3 class="panel-title"><xsl:value-of select="$item/cdf:title/text()"/></h3>
         </div>
         <div class="panel-body">
             <table class="table table-striped table-bordered">
