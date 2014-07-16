@@ -39,6 +39,13 @@
       </criteria>
     </definition>
 
+    <definition class="compliance" version="1" id="oval:0:def:5"> <!-- comment="true" -->
+      <metadata><title></title><description></description></metadata>
+      <criteria>
+        <criterion test_ref="oval:0:tst:6"/>
+      </criteria>
+    </definition>
+
   </definitions>
 
   <tests>
@@ -63,6 +70,10 @@
     <systemdunitproperty_test id="oval:0:tst:5" check="at least one" check_existence="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="test if there's at least one service conflicting the shutdown.target" version="1">
       <object object_ref="oval:0:obj:5"/>
       <state state_ref="oval:0:ste:3"/>
+    </systemdunitproperty_test>
+
+    <systemdunitproperty_test id="oval:0:tst:6" check="all" check_existence="none_exist" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="check that there doesn't exist systemd-journald.service unit with valid Conflicts property" version="1">
+      <object object_ref="oval:0:obj:6"/>
     </systemdunitproperty_test>
 
   </tests>
@@ -92,6 +103,11 @@
 
     <systemdunitproperty_object id="oval:0:obj:5" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <unit operation="pattern match">.*\.service</unit>
+      <property>Conflicts</property>
+    </systemdunitproperty_object>
+
+    <systemdunitproperty_object id="oval:0:obj:6" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <unit>systemd-journald.service</unit>
       <property>Conflicts</property>
     </systemdunitproperty_object>
 
