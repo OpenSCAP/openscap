@@ -315,29 +315,21 @@ Authors:
     <xsl:param name="item"/>
 
     <xsl:variable name="ruleresult" select="$testresult/cdf:rule-result[@idref = $item/@id]"/>
+    <xsl:variable name="result" select="$ruleresult/cdf:result/text()"/>
 
     <tr data-tt-id="{$item/@id}">
         <xsl:attribute name="data-tt-parent-id">
             <xsl:value-of select="$item/parent::cdf:*/@id"/>
         </xsl:attribute>
+        <xsl:if test="$result = 'fail' or $result = 'error' or $result = 'unknown'">
+            <xsl:attribute name="class">rule-overview-needs-attention</xsl:attribute>
+        </xsl:if>
 
         <td><a href="#result-detail-{generate-id($ruleresult)}"><xsl:value-of select="$item/cdf:title/text()"/></a></td>
         <td style="text-align: center"><xsl:value-of select="$ruleresult/@severity"/></td>
-        <td style="text-align: center">
-            <xsl:variable name="result" select="$ruleresult/cdf:result/text()"/>
-
+        <td class="rule-result rule-result-{$result}">
+            <xsl:value-of select="$result"/>
             <!-- TODO: provide tooltips and better differentiation -->
-            <xsl:choose>
-                <xsl:when test="$result = 'fail' or $result = 'error' or $result = 'unknown'">
-                    <span class="label label-danger"><xsl:value-of select="$result"/></span>
-                </xsl:when>
-                <xsl:when test="$result = 'pass'">
-                    <span class="label label-success"><xsl:value-of select="$result"/></span>
-                </xsl:when>
-                <xsl:otherwise>
-                    <span class="label label-default"><xsl:value-of select="$result"/></span>
-                </xsl:otherwise>
-            </xsl:choose>
         </td>
     </tr>
 </xsl:template>
@@ -539,6 +531,13 @@ Authors:
     <link href="css/jquery.treetable.css" rel="stylesheet"/>
     <link href="css/jquery.treetable.theme.patternfly.css" rel="stylesheet"/>
     <style>
+        tr.rule-overview-needs-attention { border-left: 3px solid red !important }
+        td.rule-result { text-align: center; font-weight: bold; color: #fff; background: #808080 !important }
+        td.rule-result-fail { background: #c90813 !important }
+        td.rule-result-error { background: #c90813 !important }
+        td.rule-result-unknown { background: #eb7720 !important }
+        td.rule-result-pass { background: #5cb75c !important }
+        td.rule-result-fixed { background: #5cb75c !important }
     </style>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -551,26 +550,12 @@ Authors:
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="js/jquery-1.11.1.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <!-- jquery.dataTables.js must load before patternfly.min.js -->
-    <script src="js/jquery.dataTables.min.js"></script>
     <script src="js/jquery.treetable.js"></script>
     <script src="js/patternfly.min.js"></script>
     <script><xsl:comment>
       // Initialize treetable
       $(document).ready( function() {
-        $('.treetable').treetable({ expandable: true, initialState : 'expanded',  clickableNodeNames : true });
-      });
-
-      // Initialize Datatables
-      $(document).ready( function() {
-        $('.datatable').dataTable({
-          "fnDrawCallback": function( oSettings ) {
-            // if .sidebar-pf exists, call sidebar() after the data table is drawn
-            if ($('.sidebar-pf').length > 0) {
-              sidebar();
-            }
-          }
-        });
+        $('.treetable').treetable({ column: 0, expandable: true, initialState : 'expanded',  clickableNodeNames : true });
       });
      </xsl:comment></script>
 </head>
