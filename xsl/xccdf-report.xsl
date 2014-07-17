@@ -193,7 +193,7 @@ Authors:
                         <xsl:variable name="idref" select="@idref"/>
                         <xsl:if test="$testresult/cdf:platform[@idref=$idref]">
                             <li class="list-group-item">
-                                <span class="label label-success"><xsl:value-of select="@idref"/></span>
+                                <span class="label label-success" title="CPE platform {@idref} was found applicable on the evaluated machine"><xsl:value-of select="@idref"/></span>
                             </li>
                         </xsl:if>
                     </xsl:for-each>
@@ -202,7 +202,7 @@ Authors:
                         <xsl:variable name="idref" select="@idref"/>
                         <xsl:if test="not($testresult/cdf:platform[@idref=$idref])">
                             <li class="list-group-item">
-                                <span class="label label-default"><xsl:value-of select="@idref"/></span>
+                                <span class="label label-default" title="This CPE platform was not applicable on the evaluated machine"><xsl:value-of select="@idref"/></span>
                             </li>
                         </xsl:if>
                     </xsl:for-each>
@@ -571,7 +571,7 @@ Authors:
 
                 //<![CDATA[
                 var closebutton = $('<button type="button" class="close" data-dismiss="modal" aria-hidden="true" title="Close">×</button>');
-                var modal = $('<div id="result-detail-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-body"></div></div>');//]]>
+                var modal = $('<div id="result-detail-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"><div id="result-detail-modal-body" class="modal-body"></div></div>');//]]>
 
                 $("body").prepend(modal);
 
@@ -579,7 +579,7 @@ Authors:
                 resultclone.attr("id", "");
                 resultclone.children(".panel-heading").append(closebutton);
                 closebutton.css( { marginTop: '-=17px' } );
-                $("#result-detail-modal .modal-body").append(resultclone);
+                $("#result-detail-modal-body").append(resultclone);
 
                 $("#result-detail-modal").modal();
 
@@ -604,7 +604,7 @@ Authors:
             <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="#"><img src="img/brand.svg" alt="OpenSCAP" /></a>
-        <div style="padding-left: 78px !important"><h1>OpenSCAP Evaluation Report</h1></div>
+        <div style="padding-left: 270px !important"><h1>Evaluation Report</h1></div>
     </div>
     <div class="collapse navbar-collapse navbar-collapse-3">
         <ul class="nav navbar-nav">
