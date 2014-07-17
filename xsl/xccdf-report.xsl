@@ -314,6 +314,7 @@ Authors:
 <xsl:template name="rule-overview-leaf">
     <xsl:param name="testresult"/>
     <xsl:param name="item"/>
+    <xsl:param name="indent"/>
 
     <xsl:variable name="ruleresult" select="$testresult/cdf:rule-result[@idref = $item/@id]"/>
     <xsl:variable name="result" select="$ruleresult/cdf:result/text()"/>
@@ -326,7 +327,7 @@ Authors:
             <xsl:attribute name="class">rule-overview-needs-attention</xsl:attribute>
         </xsl:if>
 
-        <td><a href="#result-detail-{generate-id($ruleresult)}" onclick="return openRuleDetailsDialog('{generate-id($ruleresult)}')">
+        <td style="padding-left: {$indent * 19}px"><a href="#result-detail-{generate-id($ruleresult)}" onclick="return openRuleDetailsDialog('{generate-id($ruleresult)}')">
             <xsl:value-of select="$item/cdf:title/text()"/>
         </a></td>
         <td style="text-align: center"><xsl:value-of select="$ruleresult/@severity"/></td>
@@ -364,6 +365,7 @@ Authors:
 <xsl:template name="rule-overview-inner-node">
     <xsl:param name="testresult"/>
     <xsl:param name="item"/>
+    <xsl:param name="indent"/>
 
     <xsl:variable name="contained_rules_fail" select="count($item/descendant::cdf:Rule[@id = $testresult/cdf:rule-result[cdf:result/text() = 'fail']/@idref])"/>
     <xsl:variable name="contained_rules_error" select="count($item/descendant::cdf:Rule[@id = $testresult/cdf:rule-result[cdf:result/text() = 'error']/@idref])"/>
@@ -377,19 +379,19 @@ Authors:
             </xsl:attribute>
         </xsl:if>
 
-        <td colspan="3">
+        <td colspan="3" style="padding-left: {$indent * 19}px">
             <xsl:choose>
                 <xsl:when test="$contained_rules_need_attention > 0">
                     <strong><xsl:value-of select="$item/cdf:title/text()"/></strong>
 
                     <xsl:if test="$contained_rules_fail > 0">
-                        <span class="badge"><xsl:value-of select="$contained_rules_fail"/>x fail</span>
+                        &#160;<span class="badge"><xsl:value-of select="$contained_rules_fail"/>x fail</span>
                     </xsl:if>
                     <xsl:if test="$contained_rules_error > 0">
-                        <span class="badge"><xsl:value-of select="$contained_rules_error"/>x error</span>
+                        &#160;<span class="badge"><xsl:value-of select="$contained_rules_error"/>x error</span>
                     </xsl:if>
                     <xsl:if test="$contained_rules_unknown > 0">
-                        <span class="badge"><xsl:value-of select="$contained_rules_unknown"/>x unknown</span>
+                        &#160;<span class="badge"><xsl:value-of select="$contained_rules_unknown"/>x unknown</span>
                     </xsl:if>
                 </xsl:when>
                 <xsl:otherwise>
@@ -411,6 +413,7 @@ Authors:
         <xsl:call-template name="rule-overview-inner-node">
             <xsl:with-param name="testresult" select="$testresult"/>
             <xsl:with-param name="item" select="."/>
+            <xsl:with-param name="indent" select="$indent + 1"/>
         </xsl:call-template>
     </xsl:for-each>
 
@@ -418,6 +421,7 @@ Authors:
         <xsl:call-template name="rule-overview-leaf">
             <xsl:with-param name="testresult" select="$testresult"/>
             <xsl:with-param name="item" select="."/>
+            <xsl:with-param name="indent" select="$indent + 1"/>
         </xsl:call-template>
     </xsl:for-each>
 </xsl:template>
@@ -444,6 +448,7 @@ Authors:
                 <xsl:call-template name="rule-overview-inner-node">
                     <xsl:with-param name="testresult" select="$testresult"/>
                     <xsl:with-param name="item" select="$benchmark"/>
+                    <xsl:with-param name="indent" select="0"/>
                 </xsl:call-template>
             </tbody>
         </table>
@@ -565,7 +570,7 @@ Authors:
                 $("#result-detail-modal").remove();
 
                 //<![CDATA[
-                var closebutton = $('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>');
+                var closebutton = $('<button type="button" class="close" data-dismiss="modal" aria-hidden="true" title="Close">×</button>');
                 var modal = $('<div id="result-detail-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-body"></div></div>');//]]>
 
                 $("body").prepend(modal);
@@ -583,7 +588,7 @@ Authors:
 
             // Initialize treetable
             $(document).ready( function() {
-                $('.treetable').treetable({ column: 0, expandable: true, initialState : 'expanded',  clickableNodeNames : true });
+                $('.treetable').treetable({ column: 0, expandable: true, initialState : 'expanded',  clickableNodeNames : true, indent : 0 });
             });
         </xsl:comment>
     </script>
