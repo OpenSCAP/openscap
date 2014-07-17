@@ -267,18 +267,19 @@ Authors:
         </xsl:choose>
 
         <xsl:variable name="total_rules_count" select="count($testresult/cdf:rule-result[cdf:result])"/>
-        <xsl:variable name="passed_rules_count" select="count($testresult/cdf:rule-result[cdf:result/text() = 'pass'])"/>
+        <xsl:variable name="ignored_rules_count" select="count($testresult/cdf:rule-result[cdf:result/text() = 'notselected' or cdf:result/text() = 'notapplicable'])"/>
+        <xsl:variable name="passed_rules_count" select="count($testresult/cdf:rule-result[cdf:result/text() = 'pass' or cdf:result/text() = 'fixed'])"/>
         <xsl:variable name="failed_rules_count" select="count($testresult/cdf:rule-result[cdf:result/text() = 'fail'])"/>
 
         <div class="progress">
-            <div class="progress-bar progress-bar-success" style="width: {$passed_rules_count div $total_rules_count * 100}%">
+            <div class="progress-bar progress-bar-success" style="width: {$passed_rules_count div ($total_rules_count - $ignored_rules_count) * 100}%">
                 <xsl:value-of select="$passed_rules_count"/> passed
             </div>
-            <div class="progress-bar progress-bar-danger" style="width: {$failed_rules_count div $total_rules_count * 100}%">
+            <div class="progress-bar progress-bar-danger" style="width: {$failed_rules_count div ($total_rules_count - $ignored_rules_count) * 100}%">
                 <xsl:value-of select="$failed_rules_count"/> failed
             </div>
-            <div class="progress-bar progress-bar-warning" style="width: {(1 - ($passed_rules_count + $failed_rules_count) div $total_rules_count) * 100}%">
-                <xsl:value-of select="$total_rules_count - $passed_rules_count - $failed_rules_count"/> other
+            <div class="progress-bar progress-bar-warning" style="width: {(1 - ($passed_rules_count + $failed_rules_count) div ($total_rules_count - $ignored_rules_count)) * 100}%">
+                <xsl:value-of select="$total_rules_count - $ignored_rules_count - $passed_rules_count - $failed_rules_count"/> other
             </div>
         </div>
 
@@ -300,7 +301,7 @@ Authors:
                         <td class="text-center"><xsl:value-of select="@maximum"/></td>
                         <td>
                             <div class="progress">
-                                <div class="progress-bar progress-bar-success" style="width: {$percent}%"><xsl:value-of select="$percent"/>%</div>
+                                <div class="progress-bar progress-bar-success" style="width: {$percent}%"><xsl:value-of select="round($percent * 100) div 100"/>%</div>
                                 <div class="progress-bar progress-bar-danger" style="width: {100 - $percent}%"></div>
                             </div>
                         </td>
