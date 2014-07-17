@@ -320,12 +320,12 @@ Authors:
     <xsl:variable name="ruleresult" select="$testresult/cdf:rule-result[@idref = $item/@id]"/>
     <xsl:variable name="result" select="$ruleresult/cdf:result/text()"/>
 
-    <tr data-tt-id="{$item/@id}" class="rule-overview-leaf-{$result}">
+    <tr data-tt-id="{$item/@id}" class="rule-overview-leaf rule-overview-leaf-{$result}" id="rule-overview-leaf-{generate-id($ruleresult)}">
         <xsl:attribute name="data-tt-parent-id">
             <xsl:value-of select="$item/parent::cdf:*/@id"/>
         </xsl:attribute>
         <xsl:if test="$result = 'fail' or $result = 'error' or $result = 'unknown'">
-            <xsl:attribute name="class">rule-overview-leaf-<xsl:value-of select="$result"/> rule-overview-needs-attention</xsl:attribute>
+            <xsl:attribute name="class">rule-overview-leaf rule-overview-leaf-<xsl:value-of select="$result"/> rule-overview-needs-attention</xsl:attribute>
         </xsl:if>
 
         <td style="padding-left: {$indent * 19}px"><a href="#result-detail-{generate-id($ruleresult)}" onclick="return openRuleDetailsDialog('{generate-id($ruleresult)}')">
@@ -446,6 +446,9 @@ Authors:
                         <div class="checkbox">
                             <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay('fixed', this)" checked="checked"/>fixed</label>
                         </div>
+                        <div class="checkbox">
+                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay('informational', this)" checked="checked"/>informational</label>
+                        </div>
                     </div>
 
                     <div class="col-sm-2 toggle-rule-display-danger">
@@ -473,13 +476,18 @@ Authors:
                     </div>
                 </div>
                 <div class="col-sm-6">
-                    <!--<input type="search" placeholder="ASDASD"/>-->
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search through XCCDF rules" id="search-input" oninput="ruleSearch()"/>
+
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" onclick="ruleSearch()"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <table class="treetable table table-striped table-bordered">
-            <caption>TODO</caption>
             <thead>
                 <tr>
                     <th>Title</th>
@@ -505,7 +513,11 @@ Authors:
     <xsl:variable name="ruleresult" select="$testresult/cdf:rule-result[@idref = $item/@id]"/>
     <xsl:variable name="result" select="$ruleresult/cdf:result/text()"/>
 
-    <div class="panel panel-default result-detail-{$result}" id="result-detail-{generate-id($ruleresult)}" title="{$item/cdf:title/text()}">
+    <div class="panel panel-default result-detail result-detail-{$result}" id="result-detail-{generate-id($ruleresult)}" title="{$item/cdf:title/text()}">
+        <div class="keywords sr-only">
+            <xsl:value-of select="$item/cdf:title/text()"/> <xsl:value-of select="$item/@id"/>
+            <!-- TODO: identifiers -->
+        </div>
         <div class="panel-heading">
             <a name="result-detail-{generate-id($ruleresult)}"></a>
             <h3 class="panel-title"><xsl:value-of select="$item/cdf:title/text()"/></h3>
@@ -517,13 +529,13 @@ Authors:
                     <tr><td>Rule ID</td><td><xsl:value-of select="$item/@id"/></td></tr>
                     <tr><td>Time</td><td><xsl:value-of select="$ruleresult/@time"/></td></tr>
                     <tr><td>Severity</td><td><xsl:value-of select="$ruleresult/@severity"/></td></tr>
-                    <tr><td colspan="2">
+                    <tr><td colspan="2" class="description">
                         <p>
                             <xsl:copy-of select="$item/cdf:description/node()"/>
                         </p>
                     </td></tr>
                     <xsl:if test="$item/cdf:fix">
-                        <tr><td colspan="2">
+                        <tr><td colspan="2" class="remediation">
                             Remediation script:
                             <pre>
                                 <xsl:copy-of select="$item/cdf:fix/node()"/>
@@ -596,6 +608,9 @@ Authors:
         td.rule-result-fixed div { background: #5cb75c }
 
         .js-only { display: none }
+
+        .rule-result-filtered, .rule-result-filtered > * { display: none !important }
+        .search-no-match, .search-no-match > * { display: none !important }
     </style>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -637,14 +652,61 @@ Authors:
             {
                 if (checkbox.checked)
                 {
-                    $(".rule-overview-leaf-" + result).show();
-                    $(".result-detail-" + result).show();
+                    $(".rule-overview-leaf-" + result).removeClass("rule-result-filtered");
+                    $(".result-detail-" + result).removeClass("rule-result-filtered");
                 }
                 else
                 {
-                    $(".rule-overview-leaf-" + result).hide();
-                    $(".result-detail-" + result).hide();
+                    $(".rule-overview-leaf-" + result).addClass("rule-result-filtered");
+                    $(".result-detail-" + result).addClass("rule-result-filtered");
                 }
+            }
+
+            function ruleSearchMatches(detail_leaf, keywords)
+            {
+                //<![CDATA[
+                if (keywords.length == 0)
+                    return true;
+
+                var match = false;
+                var checked_keywords = detail_leaf.children(".keywords").text().toLowerCase();
+
+                var index;
+                for (index = 0; index < keywords.length; ++index)
+                {
+                    if (checked_keywords.indexOf(keywords[index].toLowerCase()) >= 0)
+                    {
+                        match = true;
+                        break;
+                    }
+                }
+
+                return match;
+                //]]>
+            }
+
+            function ruleSearch()
+            {
+                keywords = $("#search-input").val().split(/[\s,\.;]+/);
+
+                $(".result-detail").each(function(){
+                    // result-result-rrid, that's offset 14
+                    var rrid = $(this).attr("id").substring(14);
+
+                    var overview_leaf = $("#rule-overview-leaf-" + rrid);
+                    var detail_leaf = $(this);
+
+                    if (ruleSearchMatches(detail_leaf, keywords))
+                    {
+                        overview_leaf.removeClass("search-no-match");
+                        detail_leaf.removeClass("search-no-match");
+                    }
+                    else
+                    {
+                        overview_leaf.addClass("search-no-match");
+                        detail_leaf.addClass("search-no-match");
+                    }
+                });
             }
 
             $(document).ready( function() {
