@@ -232,7 +232,8 @@ Authors:
                     <xsl:for-each select="$testresult/cdf:target-facts/cdf:fact[@name = 'urn:xccdf:fact:ethernet:MAC'][not(. = preceding::cdf:fact)]">
                         <li class="list-group-item">
                             <span class="label label-default">MAC</span>
-                            <xsl:value-of select="text()"/>
+                            <!-- #160 is nbsp -->
+                            &#160;<xsl:value-of select="text()"/>
                         </li>
                     </xsl:for-each>
                 </ul>
@@ -325,7 +326,9 @@ Authors:
             <xsl:attribute name="class">rule-overview-needs-attention</xsl:attribute>
         </xsl:if>
 
-        <td><a href="#result-detail-{generate-id($ruleresult)}"><xsl:value-of select="$item/cdf:title/text()"/></a></td>
+        <td><a href="#result-detail-{generate-id($ruleresult)}" onclick="return openRuleDetailsDialog('{generate-id($ruleresult)}')">
+            <xsl:value-of select="$item/cdf:title/text()"/>
+        </a></td>
         <td style="text-align: center"><xsl:value-of select="$ruleresult/@severity"/></td>
         <td class="rule-result rule-result-{$result}">
             <div>
@@ -453,7 +456,7 @@ Authors:
 
     <xsl:variable name="ruleresult" select="$testresult/cdf:rule-result[@idref = $item/@id]"/>
 
-    <div class="panel panel-default">
+    <div class="panel panel-default" id="result-detail-{generate-id($ruleresult)}" title="{$item/cdf:title/text()}">
         <div class="panel-heading">
             <a name="result-detail-{generate-id($ruleresult)}"></a>
             <h3 class="panel-title"><xsl:value-of select="$item/cdf:title/text()"/></h3>
@@ -528,10 +531,11 @@ Authors:
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title><xsl:value-of select="@id"/> | OpenSCAP Evaluation Report</title>
 
-    <!-- Bootstrap -->
-    <link href="css/patternfly.css" rel="stylesheet"/>
     <link href="css/jquery.treetable.css" rel="stylesheet"/>
     <link href="css/jquery.treetable.theme.patternfly.css" rel="stylesheet"/>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet"/>
+
     <style>
         tr.rule-overview-needs-attention { border-left: 3px solid red !important }
         td.rule-result div { text-align: center; font-weight: bold; color: #fff; background: #808080 }
@@ -550,20 +554,43 @@ Authors:
         <![endif]-->
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="js/jquery-1.11.1.min.js"></script>
+    <script src="js/jquery.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/jquery.treetable.js"></script>
-    <script src="js/patternfly.min.js"></script>
-    <script><xsl:comment>
-      // Initialize treetable
-      $(document).ready( function() {
-        $('.treetable').treetable({ column: 0, expandable: true, initialState : 'expanded',  clickableNodeNames : true });
-      });
-     </xsl:comment></script>
+    <script src="js/bootstrap.js"></script>
+    <script>
+        <xsl:comment>
+            function openRuleDetailsDialog(rule_result_id)
+            {
+                $("#result-detail-modal").remove();
+
+                //<![CDATA[
+                var closebutton = $('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>');
+                var modal = $('<div id="result-detail-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-body"></div></div>');//]]>
+
+                $("body").prepend(modal);
+
+                var resultclone = $("#result-detail-" + rule_result_id).clone();
+                resultclone.attr("id", "");
+                resultclone.children(".panel-heading").append(closebutton);
+                closebutton.css( { marginTop: '-=17px' } );
+                $("#result-detail-modal .modal-body").append(resultclone);
+
+                $("#result-detail-modal").modal();
+
+                return false;
+            }
+
+            // Initialize treetable
+            $(document).ready( function() {
+                $('.treetable').treetable({ column: 0, expandable: true, initialState : 'expanded',  clickableNodeNames : true });
+            });
+        </xsl:comment>
+    </script>
 </head>
 
 <body>
-<nav class="navbar navbar-default navbar-pf" role="navigation">
+<nav class="navbar navbar-default" role="navigation">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-3">
             <span class="sr-only">Toggle navigation</span>
@@ -571,18 +598,11 @@ Authors:
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">
-            <img src="img/brand.svg" alt="OpenSCAP" />
-        </a>
-        <div style="padding-left: 240px !important"><h1 style="color: #fff">Evaluation Report</h1></div>
+        <a class="navbar-brand" href="#"><img src="img/brand.svg" alt="OpenSCAP" /></a>
+        <div style="padding-left: 78px !important"><h1>OpenSCAP Evaluation Report</h1></div>
     </div>
     <div class="collapse navbar-collapse navbar-collapse-3">
-        <ul class="nav navbar-nav navbar-utility">
-            <li>
-                <a href="#">1.1.0</a>
-            </li>
-        </ul>
-        <ul class="nav navbar-nav navbar-primary">
+        <ul class="nav navbar-nav">
             <li>
                 <a href="#characteristics">Characteristics</a>
             </li>
