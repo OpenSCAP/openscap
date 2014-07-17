@@ -320,12 +320,12 @@ Authors:
     <xsl:variable name="ruleresult" select="$testresult/cdf:rule-result[@idref = $item/@id]"/>
     <xsl:variable name="result" select="$ruleresult/cdf:result/text()"/>
 
-    <tr data-tt-id="{$item/@id}">
+    <tr data-tt-id="{$item/@id}" class="rule-overview-leaf-{$result}">
         <xsl:attribute name="data-tt-parent-id">
             <xsl:value-of select="$item/parent::cdf:*/@id"/>
         </xsl:attribute>
         <xsl:if test="$result = 'fail' or $result = 'error' or $result = 'unknown'">
-            <xsl:attribute name="class">rule-overview-needs-attention</xsl:attribute>
+            <xsl:attribute name="class">rule-overview-leaf-<xsl:value-of select="$result"/> rule-overview-needs-attention</xsl:attribute>
         </xsl:if>
 
         <td style="padding-left: {$indent * 19}px"><a href="#result-detail-{generate-id($ruleresult)}" onclick="return openRuleDetailsDialog('{generate-id($ruleresult)}')">
@@ -436,6 +436,48 @@ Authors:
     <div id="rule-overview"><a name="rule-overview"></a>
         <h2>Rule Overview</h2>
 
+        <div class="form-group js-only">
+            <div class="row">
+                <div title="Filter rules by their XCCDF result">
+                    <div class="col-sm-2 toggle-rule-display-success">
+                        <div class="checkbox">
+                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay('pass', this)" checked="checked"/>pass</label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay('fixed', this)" checked="checked"/>fixed</label>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2 toggle-rule-display-danger">
+                        <div class="checkbox">
+                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay('fail', this)" checked="checked"/>fail</label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay('error', this)" checked="checked"/>error</label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay('unknown', this)" checked="checked"/>unknown</label>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2 toggle-rule-display-other">
+                        <div class="checkbox">
+                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay('notchecked', this)" checked="checked"/>notchecked</label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay('notselected', this)" checked="checked"/>notselected</label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay('notapplicable', this)" checked="checked"/>notapplicable</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <!--<input type="search" placeholder="ASDASD"/>-->
+                </div>
+            </div>
+        </div>
+
         <table class="treetable table table-striped table-bordered">
             <caption>TODO</caption>
             <thead>
@@ -461,8 +503,9 @@ Authors:
     <xsl:param name="item"/>
 
     <xsl:variable name="ruleresult" select="$testresult/cdf:rule-result[@idref = $item/@id]"/>
+    <xsl:variable name="result" select="$ruleresult/cdf:result/text()"/>
 
-    <div class="panel panel-default" id="result-detail-{generate-id($ruleresult)}" title="{$item/cdf:title/text()}">
+    <div class="panel panel-default result-detail-{$result}" id="result-detail-{generate-id($ruleresult)}" title="{$item/cdf:title/text()}">
         <div class="panel-heading">
             <a name="result-detail-{generate-id($ruleresult)}"></a>
             <h3 class="panel-title"><xsl:value-of select="$item/cdf:title/text()"/></h3>
@@ -470,7 +513,7 @@ Authors:
         <div class="panel-body">
             <table class="table table-striped table-bordered">
                 <tbody>
-                    <tr><td>Result</td><td><xsl:value-of select="$ruleresult/cdf:result/text()"/></td></tr>
+                    <tr><td>Result</td><td><xsl:value-of select="$result"/></td></tr>
                     <tr><td>Rule ID</td><td><xsl:value-of select="$item/@id"/></td></tr>
                     <tr><td>Time</td><td><xsl:value-of select="$ruleresult/@time"/></td></tr>
                     <tr><td>Severity</td><td><xsl:value-of select="$ruleresult/@severity"/></td></tr>
@@ -551,6 +594,8 @@ Authors:
         td.rule-result-unknown div { background: #eb7720 }
         td.rule-result-pass div { background: #5cb75c }
         td.rule-result-fixed div { background: #5cb75c }
+
+        .js-only { display: none }
     </style>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -588,9 +633,25 @@ Authors:
                 return false;
             }
 
-            // Initialize treetable
+            function toggleRuleDisplay(result, checkbox)
+            {
+                if (checkbox.checked)
+                {
+                    $(".rule-overview-leaf-" + result).show();
+                    $(".result-detail-" + result).show();
+                }
+                else
+                {
+                    $(".rule-overview-leaf-" + result).hide();
+                    $(".result-detail-" + result).hide();
+                }
+            }
+
             $(document).ready( function() {
-                $('.treetable').treetable({ column: 0, expandable: true, initialState : 'expanded',  clickableNodeNames : true, indent : 0 });
+                $(".js-only").show();
+                $(".toggle-rule-display").checked = true;
+
+                $(".treetable").treetable({ column: 0, expandable: true, initialState : "expanded",  clickableNodeNames : true, indent : 0 });
             });
         </xsl:comment>
     </script>
