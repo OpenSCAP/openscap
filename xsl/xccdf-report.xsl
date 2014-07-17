@@ -542,7 +542,8 @@ Authors:
     <link href="css/bootstrap.min.css" rel="stylesheet"/>
 
     <style>
-        tr.rule-overview-needs-attention { border-left: 3px solid red !important }
+        tr.rule-overview-needs-attention td a { color: #c90813 }
+
         td.rule-result div { text-align: center; font-weight: bold; color: #fff; background: #808080 }
         td.rule-result-fail div { background: #c90813 }
         td.rule-result-error div { background: #c90813 }
