@@ -60,6 +60,13 @@
       </criteria>
     </definition>
 
+    <definition class="compliance" version="1" id="oval:0:def:8"> <!-- comment="true" -->
+      <metadata><title></title><description></description></metadata>
+      <criteria>
+        <criterion test_ref="oval:0:tst:9"/>
+      </criteria>
+    </definition>
+
   </definitions>
 
   <tests>
@@ -99,6 +106,11 @@
       <object object_ref="oval:0:obj:7"/>
       <state state_ref="oval:0:ste:5"/>
     </systemdunitproperty_test>
+
+    <variable_test id="oval:0:tst:9" check="all" check_existence="at_least_one_exists" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" comment="check if sockets.target unit has two or more values of Wants property" version="1">
+      <object object_ref="oval:0:obj:8"/>
+      <state state_ref="oval:0:ste:6"/>
+    </variable_test>
 
   </tests>
 
@@ -140,6 +152,15 @@
       <property>UnitFileState</property>
     </systemdunitproperty_object>
 
+    <variable_object id="oval:0:obj:8" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:0:var:1</var_ref>
+    </variable_object>
+
+    <systemdunitproperty_object id="oval:0:obj:9" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <unit>sockets.target</unit>
+      <property>Wants</property>
+    </systemdunitproperty_object>
+
   </objects>
 
   <states>
@@ -164,6 +185,20 @@
       <value operation="equals">(?i)enabled(?-i)</value>
     </systemdunitproperty_state>
 
+    <variable_state id="oval:0:ste:6" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value operation="greater than or equal" datatype="int">2</value>
+    </variable_state>
+
   </states>
+
+  <variables>
+
+    <local_variable id="oval:0:var:1" datatype="int" comment="count of items in the value of Wants property of the sockets.target unit" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <count>
+        <object_component object_ref="oval:0:obj:9" item_field="value"/>
+      </count>
+    </local_variable>
+
+  </variables>
 
 </oval_definitions>
