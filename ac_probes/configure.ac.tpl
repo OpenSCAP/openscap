@@ -540,6 +540,7 @@ AC_CONFIG_FILES([Makefile
 		 selinux/Makefile
                  libopenscap.pc
                  src/common/Makefile
+		src/source/Makefile
                  tests/Makefile
                  tests/API/Makefile
 
