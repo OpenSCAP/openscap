@@ -74,7 +74,7 @@ static int property_callback(const char *property, const char *value, void *cbar
 	if (probe_entobj_cmp(vars->property_entity, se_property) != OVAL_RESULT_TRUE) {
 		SEXP_free(se_property);
 		return 0;
-	} 
+	}
 
 	vars->se_property = se_property;
 	vars->item = probe_item_create(OVAL_LINUX_SYSTEMDUNITPROPERTY, NULL,

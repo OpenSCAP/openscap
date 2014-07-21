@@ -365,9 +365,32 @@ static int get_all_properties_by_unit_path(DBusConnection *conn, const char *uni
 
 		dbus_message_iter_recurse(&dict_entry, &value_variant);
 
-		char *property_value = dbus_value_to_string(&value_variant);
-		int cbret = callback(property_name, property_value, cbarg);
-		oscap_free(property_value);
+		int cbret = 0;
+		const int arg_type = dbus_message_iter_get_arg_type(&value_variant);
+		// DBUS_TYPE_ARRAY is a special case, we report each element as one value entry
+		if (arg_type == DBUS_TYPE_ARRAY) {
+			DBusMessageIter array;
+			dbus_message_iter_recurse(&value_variant, &array);
+
+			do {
+				char *element = dbus_value_to_string(&array);
+				if (element == NULL)
+					continue;
+
+				const int elementcbret = callback(property_name, element, cbarg);
+				if (elementcbret > cbret)
+					cbret = elementcbret;
+
+				oscap_free(element);
+			}
+			while (dbus_message_iter_next(&array));
+		}
+		else {
+			char *property_value = dbus_value_to_string(&value_variant);
+			cbret = callback(property_name, property_value, cbarg);
+			oscap_free(property_value);
+		}
+
 		oscap_free(property_name);
 		if (cbret != 0) {
 			goto cleanup;
