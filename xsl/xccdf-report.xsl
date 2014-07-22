@@ -668,15 +668,15 @@ Authors:
                 if (keywords.length == 0)
                     return true;
 
-                var match = false;
+                var match = true;
                 var checked_keywords = detail_leaf.children(".keywords").text().toLowerCase();
 
                 var index;
                 for (index = 0; index < keywords.length; ++index)
                 {
-                    if (checked_keywords.indexOf(keywords[index].toLowerCase()) >= 0)
+                    if (checked_keywords.indexOf(keywords[index].toLowerCase()) < 0)
                     {
-                        match = true;
+                        match = false;
                         break;
                     }
                 }
