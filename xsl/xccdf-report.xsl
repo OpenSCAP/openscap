@@ -567,6 +567,9 @@ Authors:
     <!-- we can later easily turn this into a param -->
     <xsl:variable name="benchmark" select="/cdf:Benchmark"/>
 
+    <div class="js-only">
+        <button type="button" class="btn btn-info" onclick="return toggleResultDetails(this)">Show all result details</button>
+    </div>
     <div id="result-details"><a name="result-details"></a>
         <h2>Result Details</h2>
 
@@ -658,6 +661,24 @@ Authors:
                 }
             }
 
+            function toggleResultDetails(button)
+            {
+                var result_details = $("#result-details");
+
+                if (result_details.is(":visible"))
+                {
+                    result_details.hide();
+                    $(button).html("Show all result details");
+                }
+                else
+                {
+                    result_details.show();
+                    $(button).html("Hide all result details");
+                }
+
+                return false;
+            }
+
             function ruleSearchMatches(detail_leaf, keywords)
             {
                 //<![CDATA[
@@ -706,6 +727,7 @@ Authors:
             }
 
             $(document).ready( function() {
+                $("#result-details").hide();
                 $(".js-only").show();
                 $(".toggle-rule-display").each(function(){
                     toggleRuleDisplay(this);
