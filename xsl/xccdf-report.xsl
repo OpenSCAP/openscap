@@ -164,7 +164,7 @@ Authors:
                         </xsl:if>
                         was used.
                         <xsl:if test="$testresult/cdf:profile">
-                            Profile <strong><xsl:value-of select="/cdf:Benchmark/cdf:Profile[@id = $testresult/cdf:profile/@idref]/cdf:title"/></strong> was selected.
+                            Profile <strong><xsl:value-of select="/cdf:Benchmark/cdf:Profile[@id = $testresult/cdf:profile/@idref]/cdf:title/text()"/></strong> was selected.
                         </xsl:if>
                     </p>
                 </xsl:if>
