@@ -138,23 +138,7 @@ Authors:
                     <xsl:choose>
                         <!-- cdf:identity is optional and will appear at most once -->
                         <xsl:when test="$testresult/cdf:identity">
-                            <xsl:choose>
-                                <xsl:when test="$testresult/cdf:identity/@authenticated[text() = 'true' or text() = '1']">
-                                    <i>Authenticated</i> and
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <i>Unauthenticated</i> and
-                                </xsl:otherwise>
-                            </xsl:choose>
-                            <xsl:choose>
-                                <xsl:when test="$testresult/cdf:identity/@privileged[text() = 'true' or text() = '1']">
-                                    <i>privileged</i>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <i>unprivileged</i>
-                                </xsl:otherwise>
-                            </xsl:choose>
-                            user <strong><xsl:value-of select="$testresult/cdf:identity/text()"/></strong>
+                            User <strong><xsl:value-of select="$testresult/cdf:identity/text()"/></strong>
                         </xsl:when>
                         <xsl:otherwise>
                             Unknown user
