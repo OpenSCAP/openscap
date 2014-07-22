@@ -425,37 +425,37 @@ Authors:
                 <div title="Filter rules by their XCCDF result">
                     <div class="col-sm-2 toggle-rule-display-success">
                         <div class="checkbox">
-                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay('pass', this)" checked="checked"/>pass</label>
+                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay(this)" checked="checked" value="pass"/>pass</label>
                         </div>
                         <div class="checkbox">
-                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay('fixed', this)" checked="checked"/>fixed</label>
+                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay(this)" checked="checked" value="fixed"/>fixed</label>
                         </div>
                         <div class="checkbox">
-                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay('informational', this)" checked="checked"/>informational</label>
+                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay(this)" checked="checked" value="informational"/>informational</label>
                         </div>
                     </div>
 
                     <div class="col-sm-2 toggle-rule-display-danger">
                         <div class="checkbox">
-                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay('fail', this)" checked="checked"/>fail</label>
+                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay(this)" checked="checked" value="fail"/>fail</label>
                         </div>
                         <div class="checkbox">
-                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay('error', this)" checked="checked"/>error</label>
+                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay(this)" checked="checked" value="error"/>error</label>
                         </div>
                         <div class="checkbox">
-                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay('unknown', this)" checked="checked"/>unknown</label>
+                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay(this)" checked="checked" value="unknown"/>unknown</label>
                         </div>
                     </div>
 
                     <div class="col-sm-2 toggle-rule-display-other">
                         <div class="checkbox">
-                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay('notchecked', this)" checked="checked"/>notchecked</label>
+                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay(this)" checked="checked" value="notchecked"/>notchecked</label>
                         </div>
                         <div class="checkbox">
-                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay('notselected', this)" checked="checked"/>notselected</label>
+                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay(this)" value="notselected"/>notselected</label>
                         </div>
                         <div class="checkbox">
-                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay('notapplicable', this)" checked="checked"/>notapplicable</label>
+                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay(this)" checked="checked" value="notapplicable"/>notapplicable</label>
                         </div>
                     </div>
                 </div>
@@ -632,8 +632,10 @@ Authors:
                 return false;
             }
 
-            function toggleRuleDisplay(result, checkbox)
+            function toggleRuleDisplay(checkbox)
             {
+                var result = checkbox.value;
+
                 if (checkbox.checked)
                 {
                     $(".rule-overview-leaf-" + result).removeClass("rule-result-filtered");
@@ -695,7 +697,9 @@ Authors:
 
             $(document).ready( function() {
                 $(".js-only").show();
-                $(".toggle-rule-display").checked = true;
+                $(".toggle-rule-display").each(function(){
+                    toggleRuleDisplay(this);
+                });
 
                 $(".treetable").treetable({ column: 0, expandable: true, initialState : "expanded",  clickableNodeNames : true, indent : 0 });
             });
