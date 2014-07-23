@@ -476,6 +476,7 @@ Authors:
                             <button class="btn btn-default" onclick="ruleSearch()"><i class="glyphicon glyphicon-search"></i></button>
                         </div>
                     </div>
+                    <p id="search-matches"></p>
                 </div>
             </div>
         </div>
@@ -706,7 +707,9 @@ Authors:
 
             function ruleSearch()
             {
-                keywords = $("#search-input").val().split(/[\s,\.;]+/);
+                var search_input = $("#search-input").val();
+                var keywords = search_input.split(/[\s,\.;]+/);
+                var matches = 0;
 
                 $(".result-detail").each(function(){
                     // result-result-rrid, that's offset 14
@@ -719,6 +722,7 @@ Authors:
                     {
                         overview_leaf.removeClass("search-no-match");
                         detail_leaf.removeClass("search-no-match");
+                        ++matches;
                     }
                     else
                     {
@@ -726,6 +730,13 @@ Authors:
                         detail_leaf.addClass("search-no-match");
                     }
                 });
+
+                if (!search_input)
+                    $("#search-matches").html("");
+                else if (matches > 0)
+                    $("#search-matches").html(matches.toString() + " rules match.");
+                else
+                    $("#search-matches").html("No rules match your search criteria!");
             }
 
             $(document).ready( function() {
