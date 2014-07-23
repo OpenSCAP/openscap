@@ -40,7 +40,7 @@ Authors:
 <xsl:output
     method="html"
     encoding="utf-8"
-    indent="yes"
+    indent="no"
     omit-xml-declaration="yes"/>
 
 <!-- parameters -->
