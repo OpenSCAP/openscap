@@ -608,6 +608,8 @@ Authors:
 
         .rule-result-filtered, .rule-result-filtered > * { display: none !important }
         .search-no-match, .search-no-match > * { display: none !important }
+
+        #footer { text-align: center; margin-top: 50px }
     </style>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -776,18 +778,12 @@ Authors:
     <xsl:call-template name="result-details"/>
 
 </div></div>
-<footer role="contentinfo">
-    <div id="inner-footer" class="clearfix row">
-        <div id="widget-footer" class="clearfix">
-            <hr />
-            <div id="text-2" class="widget col-sm-6 col-md-6 widget_text">
-                <div class="textwidget">
-                    <p>Generated using <a href="http://open-scap.org">OpenSCAP 1.1.0</a></p>
-                </div>
-            </div>
-        </div>
-        <nav class="clearfix">
-        </nav>
+
+<footer id="footer">
+    <div class="container">
+        <p class="muted credit">
+            <p>Generated using <a href="http://open-scap.org">OpenSCAP 1.1.0</a></p>
+        </p>
     </div>
 </footer>
 
