@@ -510,8 +510,10 @@ Authors:
 
     <div class="panel panel-default result-detail result-detail-{$result}" id="result-detail-{generate-id($ruleresult)}" title="{$item/cdf:title/text()}">
         <div class="keywords sr-only">
-            <xsl:value-of select="$item/cdf:title/text()"/> <xsl:value-of select="$item/@id"/>
-            <!-- TODO: identifiers -->
+            <xsl:value-of select="concat($item/cdf:title/text(), ' ')"/><xsl:value-of select="concat($item/@id, ' ')"/>
+            <xsl:for-each select="$ruleresult/cdf:ident">
+                <xsl:value-of select="concat(text(), ' ')"/>
+            </xsl:for-each>
         </div>
         <div class="panel-heading">
             <a name="result-detail-{generate-id($ruleresult)}"></a>
@@ -521,9 +523,16 @@ Authors:
             <table class="table table-striped table-bordered">
                 <tbody>
                     <tr><td>Result</td><td><xsl:value-of select="$result"/></td></tr>
-                    <tr><td>Rule ID</td><td><xsl:value-of select="$item/@id"/></td></tr>
+                    <tr><td>Rule ID</td><td class="rule-id"><xsl:value-of select="$item/@id"/></td></tr>
                     <tr><td>Time</td><td><xsl:value-of select="$ruleresult/@time"/></td></tr>
                     <tr><td>Severity</td><td><xsl:value-of select="$ruleresult/@severity"/></td></tr>
+                    <tr><td>Identifiers</td><td class="identifiers">
+                        <ul>
+                        <xsl:for-each select="$ruleresult/cdf:ident">
+                            <li><xsl:value-of select="text()"/></li>
+                        </xsl:for-each>
+                        </ul>
+                    </td></tr>
                     <tr><td colspan="2" class="description">
                         <p>
                             <xsl:copy-of select="$item/cdf:description/node()"/>
