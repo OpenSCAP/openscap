@@ -313,15 +313,6 @@ Authors:
         <td style="padding-left: {$indent * 19}px"><a href="#result-detail-{generate-id($ruleresult)}" onclick="return openRuleDetailsDialog('{generate-id($ruleresult)}')">
             <xsl:value-of select="$item/cdf:title/text()"/>
         </a></td>
-        <td>
-            <xsl:if test="$ruleresult/cdf:ident">
-                <ul>
-                <xsl:for-each select="$ruleresult/cdf:ident">
-                    <li><xsl:value-of select="text()"/></li>
-                </xsl:for-each>
-                </ul>
-            </xsl:if>
-        </td>
         <td style="text-align: center"><xsl:value-of select="$ruleresult/@severity"/></td>
         <td class="rule-result rule-result-{$result}">
             <xsl:variable name="result_tooltip">
@@ -332,7 +323,6 @@ Authors:
             <div>
                 <abbr title="{$result_tooltip}"><xsl:value-of select="$result"/></abbr>
             </div>
-            <!-- TODO: provide tooltips and better differentiation -->
         </td>
     </tr>
 </xsl:template>
@@ -376,7 +366,7 @@ Authors:
             </xsl:attribute>
         </xsl:if>
 
-        <td colspan="4" style="padding-left: {$indent * 19}px">
+        <td colspan="3" style="padding-left: {$indent * 19}px">
             <xsl:choose>
                 <xsl:when test="$contained_rules_need_attention > 0">
                     <strong><xsl:value-of select="$item/cdf:title/text()"/></strong>
@@ -488,7 +478,6 @@ Authors:
             <thead>
                 <tr>
                     <th>Title</th>
-                    <th style="width: 120px; text-align: center">Identifiers</th>
                     <th style="width: 120px; text-align: center">Severity</th>
                     <th style="width: 120px; text-align: center">Result</th>
                 </tr>
