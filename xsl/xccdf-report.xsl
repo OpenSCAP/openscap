@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 
 <!--
 Copyright 2010-2014 Red Hat Inc., Durham, North Carolina.
@@ -233,16 +233,13 @@ Authors:
         <xsl:choose>
             <xsl:when test="$testresult/cdf:rule-result/cdf:result[text() = 'fail' or text() = 'error' or text() = 'unknown']">
                 <div class="alert alert-warning">
-                    <span class="pficon-layered">
-                        <span class="pficon pficon-warning-triangle"></span>
-                        <span class="pficon pficon-warning-exclamation"></span>
-                    </span>
+                    <span class="glyphicon glyphicon-exclamation-sign"></span>&#160;
                     <strong>The system is not compliant!</strong> Please review rule results and consider applying remediation.
                 </div>
             </xsl:when>
             <xsl:otherwise>
                 <div class="alert alert-success">
-                    <span class="pficon pficon-ok"></span>
+                    <span class="glyphicon glyphicon-ok-sign"></span>&#160;
                     <strong>The system is fully compliant!</strong> No action is necessary.
                 </div>
             </xsl:otherwise>
