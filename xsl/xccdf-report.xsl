@@ -28,12 +28,10 @@ Authors:
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:cdf="http://checklists.nist.gov/xccdf/1.2"
     xmlns:exsl="http://exslt.org/common"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:s="http://open-scap.org/"
-    xmlns:db="http://open-scap.org/"
-    exclude-result-prefixes="xsl cdf s exsl"
     xmlns:ovalres="http://oval.mitre.org/XMLSchema/oval-results-5"
-    xmlns:sceres="http://open-scap.org/page/SCE_result_file">
+    xmlns:sceres="http://open-scap.org/page/SCE_result_file"
+    exclude-result-prefixes="xsl cdf s exsl ovalres sceres">
 
 <xsl:include href="xccdf-share.xsl" />
 
@@ -326,8 +324,13 @@ Authors:
         </td>
         <td style="text-align: center"><xsl:value-of select="$ruleresult/@severity"/></td>
         <td class="rule-result rule-result-{$result}">
+            <xsl:variable name="result_tooltip">
+                <xsl:call-template name="rule-result-tooltip">
+                    <xsl:with-param name="ruleresult" select="$result"/>
+                </xsl:call-template>
+            </xsl:variable>
             <div>
-                <xsl:value-of select="$result"/>
+                <abbr title="{$result_tooltip}"><xsl:value-of select="$result"/></abbr>
             </div>
             <!-- TODO: provide tooltips and better differentiation -->
         </td>
