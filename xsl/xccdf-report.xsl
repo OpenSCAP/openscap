@@ -606,20 +606,7 @@ Authors:
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title><xsl:value-of select="@id"/> | OpenSCAP Evaluation Report</title>
 
-    <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet"/>
-
     <style><xsl:call-template name="css-sources"/></style>
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-        <![endif]-->
-
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="js/jquery.js"></script>
     <script><xsl:call-template name="js-sources"/></script>
 </head>
 
