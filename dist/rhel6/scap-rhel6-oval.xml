@@ -2588,6 +2588,7 @@
 			<object_reference>oval:org.open-scap.rhel6:obj:1023111</object_reference>
 			<filter>oval:org.open-scap.rhel6:ste:1022111</filter>
 			<filter>oval:org.open-scap.rhel6:ste:1023111</filter>
+			<filter action="exclude">oval:org.open-scap.rhel6:ste:1023112</filter>
 		</set>
 	</unix-def:file_object>
 	<unix-def:file_object id="oval:org.open-scap.rhel6:obj:1023111" version="1" comment="all local files">
@@ -3325,6 +3326,9 @@
 	</unix-def:file_state>
 	<unix-def:file_state id="oval:org.open-scap.rhel6:ste:1023111" version="1" comment="not regular file">
 		<unix-def:type datatype="string" operation="not equal">regular</unix-def:type>
+	</unix-def:file_state>
+	<unix-def:file_state id="oval:org.open-scap.rhel6:ste:1023112" version="1" comment="not /proc/*">
+		<unix-def:filepath operation="pattern match">^/proc/.*$</unix-def:filepath>
 	</unix-def:file_state>
 	<unix-def:file_state id="oval:org.open-scap.rhel6:ste:1024111" version="1" comment="g-s">
 		<unix-def:sgid datatype="boolean">0</unix-def:sgid>
