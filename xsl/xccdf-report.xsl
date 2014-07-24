@@ -33,6 +33,7 @@ Authors:
     xmlns:sceres="http://open-scap.org/page/SCE_result_file"
     exclude-result-prefixes="xsl cdf s exsl ovalres sceres">
 
+<xsl:include href="xccdf-branding.xsl" />
 <xsl:include href="xccdf-share.xsl" />
 
 <xsl:output
@@ -769,50 +770,16 @@ Authors:
 </head>
 
 <body>
-<nav class="navbar navbar-default" role="navigation">
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-3">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="#"><img src="img/brand.svg" alt="OpenSCAP" /></a>
-        <div style="padding-left: 270px !important"><h1>Evaluation Report</h1></div>
-    </div>
-    <div class="collapse navbar-collapse navbar-collapse-3">
-        <ul class="nav navbar-nav">
-            <li>
-                <a href="#characteristics">Characteristics</a>
-            </li>
-            <li>
-                <a href="#compliance-and-scoring">Compliance and Scoring</a>
-            </li>
-            <li>
-                <a href="#rule-overview">Rule Overview</a>
-            </li>
-            <li>
-                <a href="#result-details">Result Details</a>
-            </li>
-        </ul>
-    </div>
-</nav>
+<xsl:call-template name="xccdf-report-header"/>
 
 <div class="container"><div id="content">
     <xsl:call-template name="characteristics"/>
     <xsl:call-template name="compliance-and-scoring"/>
     <xsl:call-template name="rule-overview"/>
     <xsl:call-template name="result-details"/>
-
 </div></div>
 
-<footer id="footer">
-    <div class="container">
-        <p class="muted credit">
-            <p>Generated using <a href="http://open-scap.org">OpenSCAP 1.1.0</a></p>
-        </p>
-    </div>
-</footer>
+<xsl:call-template name="xccdf-report-footer"/>
 
 </body>
 </html>
