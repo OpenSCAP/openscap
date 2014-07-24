@@ -621,6 +621,8 @@ Authors:
         .rule-result-filtered, .rule-result-filtered > * { display: none !important }
         .search-no-match, .search-no-match > * { display: none !important }
 
+        .result-detail-fail, .result-detail-error, .result-detail-unknown { border: 2px solid red }
+
         #footer { text-align: center; margin-top: 50px }
     </style>
 
