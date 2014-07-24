@@ -231,10 +231,16 @@ Authors:
     <div id="compliance-and-scoring"><a name="compliance-and-scoring"></a>
         <h2>Compliance and Scoring</h2>
         <xsl:choose>
-            <xsl:when test="$testresult/cdf:rule-result/cdf:result[text() = 'fail' or text() = 'error' or text() = 'unknown']">
-                <div class="alert alert-warning">
+            <xsl:when test="$testresult/cdf:rule-result/cdf:result[text() = 'fail' or text() = 'error']">
+                <div class="alert alert-danger">
                     <span class="glyphicon glyphicon-exclamation-sign"></span>&#160;
                     <strong>The system is not compliant!</strong> Please review rule results and consider applying remediation.
+                </div>
+            </xsl:when>
+            <xsl:when test="$testresult/cdf:rule-result/cdf:result[text() = 'unknown']">
+                <div class="alert alert-warning">
+                    <span class="glyphicon glyphicon-question-sign"></span>&#160;
+                    <strong>The system could be not compliant!</strong> Results from one or more rules could not be interpreted.
                 </div>
             </xsl:when>
             <xsl:otherwise>
