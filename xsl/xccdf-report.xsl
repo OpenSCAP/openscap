@@ -514,8 +514,18 @@ Authors:
         <div class="panel-body">
             <table class="table table-striped table-bordered">
                 <tbody>
-                    <tr><td>Result</td><td><xsl:value-of select="$result"/></td></tr>
                     <tr><td>Rule ID</td><td class="rule-id"><xsl:value-of select="$item/@id"/></td></tr>
+                    <tr><td>Result</td>
+                    <td class="rule-result rule-result-{$result}">
+                        <xsl:variable name="result_tooltip">
+                            <xsl:call-template name="rule-result-tooltip">
+                                <xsl:with-param name="ruleresult" select="$result"/>
+                            </xsl:call-template>
+                        </xsl:variable>
+                        <div>
+                            <abbr title="{$result_tooltip}"><xsl:value-of select="$result"/></abbr>
+                        </div>
+                    </td></tr>
                     <tr><td>Time</td><td><xsl:value-of select="$ruleresult/@time"/></td></tr>
                     <tr><td>Severity</td><td><xsl:value-of select="$ruleresult/@severity"/></td></tr>
                     <tr><td>Identifiers</td><td class="identifiers">
