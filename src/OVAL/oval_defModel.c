@@ -230,12 +230,15 @@ static inline int _oval_definition_model_merge_source(struct oval_definition_mod
 struct oval_definition_model * oval_definition_model_import(const char *file)
 {
         struct oval_definition_model *model = oval_definition_model_new();
-        int ret = oval_definition_model_merge(model,file);
+	struct oscap_source *source = oscap_source_new_from_file(file);
+
+	int ret = _oval_definition_model_merge_source(model, source);
         if (ret == -1 ) {
 		oscap_dlprintf(DBG_E, "Failed to merge the definition model from: %s.\n", file);
                 oval_definition_model_free(model);
                 model = NULL;
         }
+	oscap_source_free(source);
 
         return model;
 }
