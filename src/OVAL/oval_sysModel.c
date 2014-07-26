@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -47,6 +47,7 @@
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "common/elements.h"
+#include "source/oscap_source_priv.h"
 
 
 typedef struct oval_syschar_model {
@@ -246,28 +247,28 @@ int oval_syschar_model_import(struct oval_syschar_model *model, const char *file
 
 	int ret;
 
-	xmlTextReader *reader = xmlNewTextReaderFilename(file);
-	if (reader == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), file);
-                return -1;
-	}
+	struct oscap_source *source = oscap_source_new_from_file(file);
 
 	/* setup context */
         struct oval_parser_context context;
-        context.reader = reader;
+        context.reader = oscap_source_get_xmlTextReader(source);
+	if (context.reader == NULL) {
+		oscap_source_free(source);
+		return -1;
+	}
         context.definition_model = oval_syschar_model_get_definition_model(model);
         context.syschar_model = model;
         context.user_data = NULL;
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
+	xmlTextReaderSetErrorHandler(context.reader, &libxml_error_handler, &context);
 	/* jump into oval_system_characteristics */
-	xmlTextReaderRead(reader);
+	xmlTextReaderRead(context.reader);
 	/* make sure this is syschar */
-	char *tagname = (char *)xmlTextReaderLocalName(reader);
-	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
+	char *tagname = (char *)xmlTextReaderLocalName(context.reader);
+	char *namespace = (char *)xmlTextReaderNamespaceUri(context.reader);
 	int is_ovalsys = strcmp((const char *)OVAL_SYSCHAR_NAMESPACE, namespace) == 0;
 	/* start parsing */
 	if (is_ovalsys && (strcmp(tagname, OVAL_ROOT_ELM_SYSCHARS) == 0)) {
-		ret = oval_syschar_model_parse(reader, &context);
+		ret = oval_syschar_model_parse(context.reader, &context);
 	} else {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Missing \"oval_system_characteristics\" element");
 		dE("Unprocessed tag: <%s:%s>.\n", namespace, tagname);
@@ -276,7 +277,7 @@ int oval_syschar_model_import(struct oval_syschar_model *model, const char *file
 
 	oscap_free(tagname);
 	oscap_free(namespace);
-	xmlFreeTextReader(reader);
+	oscap_source_free(source);
 
 	return ret;
 }
