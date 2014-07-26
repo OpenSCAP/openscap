@@ -40,6 +40,7 @@
 #define OVAL_DEFINITIONS
 
 #include "oscap.h"
+#include "oscap_source.h"
 #include "oval_adt.h"
 #include "oval_types.h"
 #include "oval_version.h"
@@ -592,6 +593,15 @@ void oval_generator_set_timestamp(struct oval_generator *generator, char *timest
  * @memberof oval_definition_model
  */
 struct oval_definition_model *oval_definition_model_new(void);
+
+/**
+ * Import the content of the oscap_source into the oval_definition_model
+ * @memberof oval_definition_model
+ * @param source The oscap_source to import from
+ * @returns newly build oval_definition_model, or NULL if something went wrong
+ */
+struct oval_definition_model *oval_definition_model_import_source(struct oscap_source *source);
+
 /**
  * Import the content from the file into an oval_definition_model.
  * @param file filename

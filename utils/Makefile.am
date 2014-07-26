@@ -9,7 +9,11 @@ if WANT_UTIL_OSCAP
 bin_PROGRAMS += oscap
 man_MANS += oscap.8
 oscap_SOURCES	= oscap.c oscap-tool.h oscap-tool.c oscap-ds.c
-oscap_CPPFLAGS	= -I$(top_srcdir)/src/common/public -I$(top_srcdir)/src/DS/public
+oscap_CPPFLAGS	= \
+	-I$(top_srcdir)/src/common/public \
+	-I$(top_srcdir)/src/DS/public \
+	-I$(top_srcdir)/src/source/public
+
 oscap_LDADD	+= $(top_builddir)/src/libopenscap.la
 
 oscap_CPPFLAGS	+= -DOVAL_PROBE_DIR='"$(probe_dir)"'
