@@ -75,6 +75,16 @@ void oscap_source_free(struct oscap_source *source)
 }
 
 /**
+ * This attempts to builds a new xmlTextReader based on the information within the oscap_source.
+ * Note that we tend to double/triple open as we need to determine document type, then to valide
+ * it, then again to parse it.
+ */
+static inline xmlTextReader *_build_new_xmlTextReader(struct oscap_source *source)
+{
+	return xmlNewTextReaderFilename(source->origin.filepath);
+}
+
+/**
  * Returns human readable description of oscap_source origin
  */
 static inline const char *_readable_origin(const struct oscap_source *source)
@@ -85,7 +95,7 @@ static inline const char *_readable_origin(const struct oscap_source *source)
 xmlTextReader *oscap_source_get_xmlTextReader(struct oscap_source *source)
 {
 	if (source->xml.text_reader == NULL) {
-		source->xml.text_reader = xmlNewTextReaderFilename(source->origin.filepath);
+		source->xml.text_reader = _build_new_xmlTextReader(source);
 	}
 	if (source->xml.text_reader == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_XML, "%s '%s'", strerror(errno), _readable_origin(source));
