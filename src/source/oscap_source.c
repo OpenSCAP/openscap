@@ -24,7 +24,11 @@
 #include <config.h>
 #endif
 
+#include <string.h>
+#include <libxml/xmlreader.h>
+
 #include "common/alloc.h"
+#include "common/_error.h"
 #include "common/public/oscap.h"
 #include "common/util.h"
 #include "oscap_source_priv.h"
@@ -43,6 +47,9 @@ struct oscap_source {
 		oscap_source_type_t type;               ///< Internal type of the oscap_source
 		const char *filepath;                   ///< Filepath (if originated from file)
 	} origin;                                       ///
+	struct {
+		xmlTextReader *text_reader;		/// xmlTextReader assigned to read this source
+	} xml;
 };
 
 struct oscap_source *oscap_source_new_from_file(const char *filepath)
@@ -60,6 +67,20 @@ void oscap_source_free(struct oscap_source *source)
 {
 	if (source != NULL) {
 		oscap_free(source->origin.filepath);
+		if (source->xml.text_reader != NULL) {
+			xmlFreeTextReader(source->xml.text_reader);
+		}
 		oscap_free(source);
 	}
+}
+
+xmlTextReader *oscap_source_get_xmlTextReader(struct oscap_source *source)
+{
+	if (source->xml.text_reader == NULL) {
+		source->xml.text_reader = xmlNewTextReaderFilename(source->origin.filepath);
+	}
+	if (source->xml.text_reader == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "%s '%s'", strerror(errno), source->origin.filepath);
+	}
+	return source->xml.text_reader;
 }
