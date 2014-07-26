@@ -28,7 +28,7 @@
 
 #include <libxml/xmlreader.h>
 
-#include "common/public/oscap.h"
+#include "oscap.h"
 
 /**
  * The oscap_source is low-level structure. The oscap_source shall hold

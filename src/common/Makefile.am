@@ -23,7 +23,10 @@ liboscapcommon_la_SOURCES = \
 liboscapcommon_la_CPPFLAGS  = \
 	@curl_CFLAGS@ \
 	@xml2_CFLAGS@ @xslt_CFLAGS@ @exslt_CFLAGS@ \
-	-I$(srcdir)/public -I$(top_srcdir)/src/OVAL/probes/SEAP/public -I$(top_srcdir)/src
+	-I$(srcdir)/public \
+	-I$(top_srcdir)/src \
+	-I$(top_srcdir)/src/OVAL/probes/SEAP/public \
+	-I$(top_srcdir)/src/source/public
 
 liboscapcommon_la_LIBADD = \
 	@curl_LIBS@ \

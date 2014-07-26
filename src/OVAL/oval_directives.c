@@ -46,7 +46,7 @@
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "common/elements.h"
-#include "source/oscap_source_priv.h"
+#include "oscap_source.h"
 
 #define NUMBER_OF_RESULTS 6
 #define NUMBER_OF_CLASSES 5

@@ -45,7 +45,7 @@
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "common/elements.h"
-#include "source/oscap_source_priv.h"
+#include "oscap_source.h"
 
 typedef struct oval_definition_model {
 	struct oval_generator *generator;

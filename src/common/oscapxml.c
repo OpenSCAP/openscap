@@ -43,7 +43,7 @@
 #include "elements.h"
 #include "assume.h"
 #include "debug_priv.h"
-#include "source/oscap_source_priv.h"
+#include "oscap_source.h"
 
 #ifndef OSCAP_DEFAULT_SCHEMA_PATH
 const char * const OSCAP_SCHEMA_PATH = "/usr/local/share/openscap/schemas";

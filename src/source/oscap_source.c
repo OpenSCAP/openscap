@@ -33,7 +33,7 @@
 #include "common/public/oscap.h"
 #include "common/util.h"
 #include "doc_type_priv.h"
-#include "oscap_source_priv.h"
+#include "oscap_source.h"
 
 typedef enum oscap_source_type {
 	OSCAP_SRC_FROM_USER_XML_FILE = 1,               ///< The source originated from XML supplied by user
