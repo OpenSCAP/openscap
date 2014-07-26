@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -45,6 +45,7 @@
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "common/elements.h"
+#include "source/oscap_source_priv.h"
 
 typedef struct oval_definition_model {
 	struct oval_generator *generator;
@@ -227,23 +228,24 @@ int oval_definition_model_merge(struct oval_definition_model *model, const char 
 
 	int ret;
 
-	xmlTextReader *reader = xmlNewTextReaderFilename(file);
-	if (reader == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), file);
-		return -1;
-	}
+	struct oscap_source *source = oscap_source_new_from_file(file);
 
 	/* setup context */
 	struct oval_parser_context context;
-	context.reader = reader;
+	context.reader = oscap_source_get_xmlTextReader(source);
+	if (context.reader == NULL) {
+		oscap_source_free(source);
+		return -1;
+	}
 	context.definition_model = model;
 	context.user_data = NULL;
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
+	xmlTextReaderSetErrorHandler(context.reader, &libxml_error_handler, &context);
 	/* jump into oval_definitions */
-	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) ;
+	while (xmlTextReaderRead(context.reader) == 1
+		&& xmlTextReaderNodeType(context.reader) != XML_READER_TYPE_ELEMENT) ;
 	/* start parsing */
-	ret = oval_definition_model_parse(reader, &context);
-	xmlFreeTextReader(reader);
+	ret = oval_definition_model_parse(context.reader, &context);
+	oscap_source_free(source);
 
 	return ret;
 }
