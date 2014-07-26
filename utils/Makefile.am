@@ -34,7 +34,6 @@ oscap_SOURCES   += oscap-cve.c
 oscap_CPPFLAGS  += -I$(top_srcdir)/src/CVE/public
 
 oscap_SOURCES   += oscap-info.c
-oscap_CPPFLAGS  += -I$(top_srcdir)/src/CVE/public
 endif
 
 if WANT_UTIL_SCAP_AS_RPM
