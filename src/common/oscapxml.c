@@ -1,5 +1,5 @@
 /*
- * Copyright 2009,2010,2011 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -565,18 +565,10 @@ int oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outf
 	return oscap_apply_xslt_path(xmlfile, xsltfile, outfile, params, oscap_path_to_xslt());
 }
 
-int oscap_determine_document_type(const char *document, oscap_document_type_t *doc_type) {
-        xmlTextReaderPtr reader;
+static int _oscap_determine_document_type_reader(xmlTextReader *reader, oscap_document_type_t *doc_type)
+{
         const char* elm_name = NULL;
         *doc_type = 0;
-
-        reader = xmlReaderForFile(document, NULL, 0);
-        if (!reader) {
-                oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", document);
-                return -1;
-        }
-
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
 
         /* find root element */
         while (xmlTextReaderRead(reader) == 1
@@ -586,7 +578,6 @@ int oscap_determine_document_type(const char *document, oscap_document_type_t *d
         elm_name = (const char *) xmlTextReaderConstLocalName(reader);
         if (!elm_name) {
                 oscap_setxmlerr(xmlGetLastError());
-                xmlFreeTextReader(reader);
                 return -1;
         }
         else if (!strcmp("oval_definitions", elm_name)) {
@@ -629,15 +620,30 @@ int oscap_determine_document_type(const char *document, oscap_document_type_t *d
                 *doc_type = OSCAP_DOCUMENT_SCE_RESULT;
         }
 	else {
-                oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown document type: '%s'", document);
-                xmlFreeTextReader(reader);
                 return -1;
         }
 
         dI("Identified document type: %s\n", elm_name);
 
-        xmlFreeTextReader(reader);
         return 0;
+}
+
+int oscap_determine_document_type(const char *document, oscap_document_type_t *doc_type) {
+        xmlTextReaderPtr reader;
+        reader = xmlReaderForFile(document, NULL, 0);
+        if (!reader) {
+                oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", document);
+                return -1;
+        }
+
+	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
+
+	int res = _oscap_determine_document_type_reader(reader, doc_type);
+        xmlFreeTextReader(reader);
+	if (res == -1) {
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown document type: '%s'", document);
+	}
+	return res;
 }
 
 const char *oscap_document_type_to_string(oscap_document_type_t type)
