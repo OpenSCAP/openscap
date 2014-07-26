@@ -1,6 +1,8 @@
 noinst_LTLIBRARIES = liboscapsource.la
 
 liboscapsource_la_SOURCES = \
+	doc_type.c \
+	doc_type_priv.h \
 	oscap_source.c \
 	oscap_source_priv.h
 
