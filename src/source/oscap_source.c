@@ -28,9 +28,11 @@
 #include <libxml/xmlreader.h>
 
 #include "common/alloc.h"
+#include "common/elements.h"
 #include "common/_error.h"
 #include "common/public/oscap.h"
 #include "common/util.h"
+#include "doc_type_priv.h"
 #include "oscap_source_priv.h"
 
 typedef enum oscap_source_type {
@@ -101,4 +103,21 @@ xmlTextReader *oscap_source_get_xmlTextReader(struct oscap_source *source)
 		oscap_seterr(OSCAP_EFAMILY_XML, "%s '%s'", strerror(errno), _readable_origin(source));
 	}
 	return source->xml.text_reader;
+}
+
+oscap_document_type_t oscap_source_get_scap_type(struct oscap_source *source)
+{
+	if (source->scap_type == 0) {
+		xmlTextReader *reader = _build_new_xmlTextReader(source);
+		if (reader == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", _readable_origin(source));
+			return 0;
+		}
+		xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
+		if (oscap_determine_document_type_reader(reader, &(source->scap_type)) == -1) {
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown document type: '%s'", _readable_origin(source));
+		}
+		xmlFreeTextReader(reader);
+	}
+	return source->scap_type;
 }

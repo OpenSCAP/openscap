@@ -28,6 +28,8 @@
 
 #include <libxml/xmlreader.h>
 
+#include "common/public/oscap.h"
+
 /**
  * The oscap_source is low-level structure. The oscap_source shall hold
  * information regarding SCAP file/node needed for further processing by
@@ -68,6 +70,14 @@ struct oscap_source *oscap_source_new_from_file(const char *filepath);
  * @param source Resource to dispose
  */
 void oscap_source_free(struct oscap_source *source);
+
+/**
+ * Get SCAP document type of the given resource
+ * @memberof oscap_source
+ * @param source
+ * @returns determined document type
+ */
+oscap_document_type_t oscap_source_get_scap_type(struct oscap_source *source);
 
 /**
  * Get an xmlTextReader assigned with this resource. The reader is still

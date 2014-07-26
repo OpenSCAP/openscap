@@ -43,7 +43,7 @@
 #include "elements.h"
 #include "assume.h"
 #include "debug_priv.h"
-#include "source/doc_type_priv.h"
+#include "source/oscap_source_priv.h"
 
 #ifndef OSCAP_DEFAULT_SCHEMA_PATH
 const char * const OSCAP_SCHEMA_PATH = "/usr/local/share/openscap/schemas";
@@ -567,21 +567,10 @@ int oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outf
 }
 
 int oscap_determine_document_type(const char *document, oscap_document_type_t *doc_type) {
-        xmlTextReaderPtr reader;
-        reader = xmlReaderForFile(document, NULL, 0);
-        if (!reader) {
-                oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", document);
-                return -1;
-        }
-
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
-
-	int res = oscap_determine_document_type_reader(reader, doc_type);
-        xmlFreeTextReader(reader);
-	if (res == -1) {
-		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown document type: '%s'", document);
-	}
-	return res;
+	struct oscap_source *source = oscap_source_new_from_file(document);
+	*doc_type = oscap_source_get_scap_type(source);
+	oscap_source_free(source);
+	return (*doc_type == 0) ? -1 : 0;
 }
 
 const char *oscap_document_type_to_string(oscap_document_type_t type)
