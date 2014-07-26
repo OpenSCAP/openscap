@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -43,6 +43,7 @@
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "common/elements.h"
+#include "source/oscap_source_priv.h"
 
 typedef struct _oval_variable_model_frame {
 	char *id;
@@ -303,9 +304,10 @@ struct oval_variable_model * oval_variable_model_import(const char *file)
 	int ret;
 	struct oval_variable_model * model;
 
-	xmlTextReader *reader = xmlNewTextReaderFilename(file);
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	xmlTextReader *reader = oscap_source_get_xmlTextReader(source);
 	if (reader == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), file);
+		oscap_source_free(source);
                 return NULL;
 	}
 
@@ -316,7 +318,7 @@ struct oval_variable_model * oval_variable_model_import(const char *file)
 		oval_variable_model_free(model);
 		model = NULL;
 	}
-	xmlFreeTextReader(reader);
+	oscap_source_free(source);
 
 	return model;
 }
