@@ -49,6 +49,7 @@
 #include "common/_error.h"
 #include "common/elements.h"
 #include "oscap_source.h"
+#include "source/oscap_source_priv.h"
 
 struct oval_results_model {
 	struct oval_generator *generator;

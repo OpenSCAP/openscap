@@ -44,6 +44,7 @@
 #include "common/_error.h"
 #include "common/elements.h"
 #include "oscap_source.h"
+#include "source/oscap_source_priv.h"
 
 typedef struct _oval_variable_model_frame {
 	char *id;

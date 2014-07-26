@@ -38,6 +38,7 @@
 #include "common/public/oscap.h"
 #include "common/elements.h"
 #include "oscap_source.h"
+#include "source/oscap_source_priv.h"
 
 #define CCE_SUPPORTED "5"
 

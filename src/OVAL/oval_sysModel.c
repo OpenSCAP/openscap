@@ -48,6 +48,7 @@
 #include "common/_error.h"
 #include "common/elements.h"
 #include "oscap_source.h"
+#include "source/oscap_source_priv.h"
 
 
 typedef struct oval_syschar_model {

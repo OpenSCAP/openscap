@@ -26,8 +26,6 @@
 #include <config.h>
 #endif
 
-#include <libxml/xmlreader.h>
-
 #include "oscap.h"
 
 /**
@@ -78,14 +76,5 @@ void oscap_source_free(struct oscap_source *source);
  * @returns determined document type
  */
 oscap_document_type_t oscap_source_get_scap_type(struct oscap_source *source);
-
-/**
- * Get an xmlTextReader assigned with this resource. The reader is still
- * owned by oscap_source.
- * @memberof oscap_source
- * @param source Resource to dispose
- * @returns xmlTextReader structure to read the content
- */
-xmlTextReader *oscap_source_get_xmlTextReader(struct oscap_source *source);
 
 #endif
