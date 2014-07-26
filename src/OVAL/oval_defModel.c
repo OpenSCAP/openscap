@@ -209,6 +209,24 @@ void oval_definition_model_add_variable(struct oval_definition_model *model, str
 	oval_string_map_put(model->variable_map, key, (void *)variable);
 }
 
+static inline int _oval_definition_model_merge_source(struct oval_definition_model *model, struct oscap_source *source)
+{
+	/* setup context */
+	struct oval_parser_context context;
+	context.reader = oscap_source_get_xmlTextReader(source);
+	if (context.reader == NULL) {
+		oscap_source_free(source);
+		return -1;
+	}
+	context.definition_model = model;
+	context.user_data = NULL;
+	/* jump into oval_definitions */
+	while (xmlTextReaderRead(context.reader) == 1
+		&& xmlTextReaderNodeType(context.reader) != XML_READER_TYPE_ELEMENT) ;
+	/* start parsing */
+	return oval_definition_model_parse(context.reader, &context);
+}
+
 struct oval_definition_model * oval_definition_model_import(const char *file)
 {
         struct oval_definition_model *model = oval_definition_model_new();
@@ -229,21 +247,8 @@ int oval_definition_model_merge(struct oval_definition_model *model, const char 
 	int ret;
 
 	struct oscap_source *source = oscap_source_new_from_file(file);
+	ret = _oval_definition_model_merge_source(model, source);
 
-	/* setup context */
-	struct oval_parser_context context;
-	context.reader = oscap_source_get_xmlTextReader(source);
-	if (context.reader == NULL) {
-		oscap_source_free(source);
-		return -1;
-	}
-	context.definition_model = model;
-	context.user_data = NULL;
-	/* jump into oval_definitions */
-	while (xmlTextReaderRead(context.reader) == 1
-		&& xmlTextReaderNodeType(context.reader) != XML_READER_TYPE_ELEMENT) ;
-	/* start parsing */
-	ret = oval_definition_model_parse(context.reader, &context);
 	oscap_source_free(source);
 
 	return ret;
