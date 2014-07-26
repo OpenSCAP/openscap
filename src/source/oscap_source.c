@@ -74,13 +74,21 @@ void oscap_source_free(struct oscap_source *source)
 	}
 }
 
+/**
+ * Returns human readable description of oscap_source origin
+ */
+static inline const char *_readable_origin(const struct oscap_source *source)
+{
+	return source->origin.filepath;
+}
+
 xmlTextReader *oscap_source_get_xmlTextReader(struct oscap_source *source)
 {
 	if (source->xml.text_reader == NULL) {
 		source->xml.text_reader = xmlNewTextReaderFilename(source->origin.filepath);
 	}
 	if (source->xml.text_reader == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_XML, "%s '%s'", strerror(errno), source->origin.filepath);
+		oscap_seterr(OSCAP_EFAMILY_XML, "%s '%s'", strerror(errno), _readable_origin(source));
 	}
 	return source->xml.text_reader;
 }
