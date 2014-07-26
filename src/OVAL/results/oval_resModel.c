@@ -167,7 +167,6 @@ int oval_results_model_import(struct oval_results_model *model, const char *file
 	context.definition_model = oval_results_model_get_definition_model(model);
 	context.user_data = NULL;
 	oscap_setxmlerr(xmlGetLastError());
-	xmlTextReaderSetErrorHandler(context.reader, &libxml_error_handler, NULL);
 	/* jump into document */
 	xmlTextReaderRead(context.reader);
 	/* make sure these are results */

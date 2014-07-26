@@ -98,6 +98,9 @@ xmlTextReader *oscap_source_get_xmlTextReader(struct oscap_source *source)
 {
 	if (source->xml.text_reader == NULL) {
 		source->xml.text_reader = _build_new_xmlTextReader(source);
+		if (source->xml.text_reader != NULL) {
+			xmlTextReaderSetErrorHandler(source->xml.text_reader, &libxml_error_handler, NULL);
+		}
 	}
 	if (source->xml.text_reader == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_XML, "%s '%s'", strerror(errno), _readable_origin(source));
