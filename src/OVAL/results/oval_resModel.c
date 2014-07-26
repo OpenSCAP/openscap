@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -48,6 +48,7 @@
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "common/elements.h"
+#include "source/oscap_source_priv.h"
 
 struct oval_results_model {
 	struct oval_generator *generator;
@@ -153,39 +154,37 @@ int oval_results_model_import(struct oval_results_model *model, const char *file
 	char *tagname = NULL;
 	char *namespace = NULL;
 
-	xmlTextReader *reader = xmlNewTextReaderFilename(file);
-	if (reader == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), file);
-                ret = -1;
-		goto cleanup;
-	}
+	struct oscap_source *source = oscap_source_new_from_file(file);
 
 	/* setup context */
 	struct oval_parser_context context;
-	context.reader = reader;
+	context.reader = oscap_source_get_xmlTextReader(source);
+	if (context.reader == NULL) {
+		oscap_source_free(source);
+		return -1;
+	}
 	context.results_model = model;
 	context.definition_model = oval_results_model_get_definition_model(model);
 	context.user_data = NULL;
 	oscap_setxmlerr(xmlGetLastError());
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
+	xmlTextReaderSetErrorHandler(context.reader, &libxml_error_handler, &context);
 	/* jump into document */
-	xmlTextReaderRead(reader);
+	xmlTextReaderRead(context.reader);
 	/* make sure these are results */
-	tagname = (char *)xmlTextReaderLocalName(reader);
-	namespace = (char *)xmlTextReaderNamespaceUri(reader);
+	tagname = (char *)xmlTextReaderLocalName(context.reader);
+	namespace = (char *)xmlTextReaderNamespaceUri(context.reader);
 	int is_ovalres = strcmp((const char *)OVAL_RESULTS_NAMESPACE, namespace) == 0;
 	/* star parsing */
 	if (is_ovalres && (strcmp(tagname, OVAL_ROOT_ELM_RESULTS) == 0)) {
-		ret = oval_results_model_parse(reader, &context);
+		ret = oval_results_model_parse(context.reader, &context);
 	} else {
                 oscap_seterr(OSCAP_EFAMILY_OSCAP, "Missing \"oval_results\" element");
 		ret = -1;
 	}
 
-cleanup:
         oscap_free(tagname);
         oscap_free(namespace);
-	xmlFreeTextReader(reader);
+	oscap_source_free(source);
 
 	return ret;
 }
