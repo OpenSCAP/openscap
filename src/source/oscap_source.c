@@ -83,7 +83,11 @@ void oscap_source_free(struct oscap_source *source)
  */
 static inline xmlTextReader *_build_new_xmlTextReader(struct oscap_source *source)
 {
-	return xmlNewTextReaderFilename(source->origin.filepath);
+	xmlTextReader *reader = xmlNewTextReaderFilename(source->origin.filepath);
+	if (reader != NULL) {
+		xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
+	}
+	return reader;
 }
 
 /**
@@ -98,9 +102,6 @@ xmlTextReader *oscap_source_get_xmlTextReader(struct oscap_source *source)
 {
 	if (source->xml.text_reader == NULL) {
 		source->xml.text_reader = _build_new_xmlTextReader(source);
-		if (source->xml.text_reader != NULL) {
-			xmlTextReaderSetErrorHandler(source->xml.text_reader, &libxml_error_handler, NULL);
-		}
 	}
 	if (source->xml.text_reader == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_XML, "%s '%s'", strerror(errno), _readable_origin(source));
@@ -116,7 +117,6 @@ oscap_document_type_t oscap_source_get_scap_type(struct oscap_source *source)
 			oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", _readable_origin(source));
 			return 0;
 		}
-		xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
 		if (oscap_determine_document_type_reader(reader, &(source->scap_type)) == -1) {
 			oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown document type: '%s'", _readable_origin(source));
 		}
