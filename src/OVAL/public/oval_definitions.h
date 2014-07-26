@@ -14,7 +14,7 @@
  */
 
 /*
- * Copyright 2009-2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009-2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -39,6 +39,7 @@
 #ifndef OVAL_DEFINITIONS
 #define OVAL_DEFINITIONS
 
+#include "oscap.h"
 #include "oval_adt.h"
 #include "oval_types.h"
 #include "oval_version.h"
@@ -606,8 +607,10 @@ struct oval_definition_model * oval_definition_model_import(const char *file);
  * @param file filename 
  * @return -1 if an error occurred
  * @memberof oval_definition_model
+ * @deprecated This function has been deprecated and it may be dropped from later
+ * OpenSCAP releases.
  */
-int oval_definition_model_merge(struct oval_definition_model *model, const char *file);
+OSCAP_DEPRECATED(int oval_definition_model_merge(struct oval_definition_model *model, const char *file));
 
 /**
  * Copy an oval_definition_model.
