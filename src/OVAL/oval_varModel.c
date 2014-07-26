@@ -283,7 +283,7 @@ static int _oval_variable_model_parse(struct oval_variable_model *model, xmlText
 	context.variable_model = model;
 	context.reader = reader;
 	context.user_data = user_param;
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
+	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
 	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 	bool is_variables = (strcmp(NAMESPACE_VARIABLES, namespace) == 0) && (strcmp(OVAL_ROOT_ELM_VARIABLES, tagname) == 0);

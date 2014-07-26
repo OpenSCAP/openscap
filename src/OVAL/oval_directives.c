@@ -120,7 +120,7 @@ int oval_directives_model_import(struct oval_directives_model * model, char *fil
 	}
         context.directives_model = model;
         context.user_data = NULL;
-        xmlTextReaderSetErrorHandler(context.reader, &libxml_error_handler, &context);
+        xmlTextReaderSetErrorHandler(context.reader, &libxml_error_handler, NULL);
         /* jump into oval_system_characteristics */
         xmlTextReaderRead(context.reader);
 
