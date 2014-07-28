@@ -235,19 +235,16 @@ Authors:
         <xsl:choose>
             <xsl:when test="$testresult/cdf:rule-result/cdf:result[text() = 'fail' or text() = 'error']">
                 <div class="alert alert-danger">
-                    <span class="glyphicon glyphicon-exclamation-sign"></span>&#160;
                     <strong>The system is not compliant!</strong> Please review rule results and consider applying remediation.
                 </div>
             </xsl:when>
             <xsl:when test="$testresult/cdf:rule-result/cdf:result[text() = 'unknown']">
                 <div class="alert alert-warning">
-                    <span class="glyphicon glyphicon-question-sign"></span>&#160;
                     <strong>The system could be not compliant!</strong> Results from one or more rules could not be interpreted.
                 </div>
             </xsl:when>
             <xsl:otherwise>
                 <div class="alert alert-success">
-                    <span class="glyphicon glyphicon-ok-sign"></span>&#160;
                     <strong>The system is fully compliant!</strong> No action is necessary.
                 </div>
             </xsl:otherwise>
@@ -456,7 +453,7 @@ Authors:
                         <input type="text" class="form-control" placeholder="Search through XCCDF rules" id="search-input" oninput="ruleSearch()"/>
 
                         <div class="input-group-btn">
-                            <button class="btn btn-default" onclick="ruleSearch()"><i class="glyphicon glyphicon-search"></i></button>
+                            <button class="btn btn-default" onclick="ruleSearch()">Search</button>
                         </div>
                     </div>
                     <p id="search-matches"></p>
