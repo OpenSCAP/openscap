@@ -375,27 +375,12 @@ Authors:
             <xsl:choose>
                 <xsl:when test="$contained_rules_need_attention > 0">
                     <strong><xsl:value-of select="$item/cdf:title/text()"/></strong>
-
-                    <xsl:if test="$contained_rules_fail > 0">
-                        &#160;<span class="badge"><xsl:value-of select="$contained_rules_fail"/>x fail</span>
-                    </xsl:if>
-                    <xsl:if test="$contained_rules_error > 0">
-                        &#160;<span class="badge"><xsl:value-of select="$contained_rules_error"/>x error</span>
-                    </xsl:if>
-                    <xsl:if test="$contained_rules_unknown > 0">
-                        &#160;<span class="badge"><xsl:value-of select="$contained_rules_unknown"/>x unknown</span>
-                    </xsl:if>
+                    <xsl:if test="$contained_rules_fail > 0">&#160;<span class="badge"><xsl:value-of select="$contained_rules_fail"/>x fail</span></xsl:if>
+                    <xsl:if test="$contained_rules_error > 0">&#160;<span class="badge"><xsl:value-of select="$contained_rules_error"/>x error</span></xsl:if>
+                    <xsl:if test="$contained_rules_unknown > 0">&#160;<span class="badge"><xsl:value-of select="$contained_rules_unknown"/>x unknown</span></xsl:if>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="$item/cdf:title/text()"/>
-                    <script>
-                        <xsl:comment>
-                         // group doesn't contain any rules that need attention, collapse it
-                         $(document).ready( function() {
-                             $('.treetable').treetable("collapseNode", "<xsl:value-of select="$item/@id"/>");
-                         });
-                        </xsl:comment>
-                    </script>
+                    <xsl:value-of select="$item/cdf:title/text()"/><script>$(document).ready(function(){$('.treetable').treetable("collapseNode","<xsl:value-of select="$item/@id"/>");});</script>
                 </xsl:otherwise>
             </xsl:choose>
         </td>
