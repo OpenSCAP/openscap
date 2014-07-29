@@ -66,6 +66,12 @@ endif
 if probe_selinuxboolean_enabled
 LINUX_SUBDIRS += selinuxboolean
 endif
+if probe_systemdunitproperty_enabled
+LINUX_SUBDIRS += systemdunitproperty
+endif
+if probe_systemdunitdependency_enabled
+LINUX_SUBDIRS += systemdunitdependency
+endif
 endif
 
 if WANT_PROBES_SOLARIS
