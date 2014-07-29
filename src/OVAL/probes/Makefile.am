@@ -281,22 +281,18 @@ if probe_systemdunitproperty_enabled
 pkglibexec_PROGRAMS += probe_systemdunitproperty
 probe_systemdunitproperty_SOURCES= unix/linux/systemdunitproperty.c \
        unix/linux/systemdshared.h
-#probe_systemdunitproperty_CFLAGS= @dbus_pkg_CFLAGS@
-#probe_systemdunitproperty_CXXFLAGS = @dbus_pkg_CFLAGS@
-#probe_systemdunitproperty_LDFLAGS= @dbus_pkg_LIBS@
-probe_systemdunitproperty_CFLAGS= -I/usr/include/dbus-1.0 -I/usr/lib64/dbus-1.0/include/
-probe_systemdunitproperty_LDFLAGS= -ldbus-1
+probe_systemdunitproperty_CFLAGS= @dbus1_CFLAGS@
+probe_systemdunitproperty_CXXFLAGS = @dbus1_CFLAGS@
+probe_systemdunitproperty_LDFLAGS= @dbus1_LIBS@
 endif
 
 if probe_systemdunitdependency_enabled
 pkglibexec_PROGRAMS += probe_systemdunitdependency
 probe_systemdunitdependency_SOURCES= unix/linux/systemdunitdependency.c \
        unix/linux/systemdshared.h
-#probe_systemdunitdependency_CFLAGS= @dbus_pkg_CFLAGS@
-#probe_systemdunitdependency_CXXFLAGS = @dbus_pkg_CFLAGS@
-#probe_systemdunitdependency_LDFLAGS= @dbus_pkg_LIBS@
-probe_systemdunitdependency_CFLAGS= -I/usr/include/dbus-1.0 -I/usr/lib64/dbus-1.0/include/
-probe_systemdunitdependency_LDFLAGS= -ldbus-1
+probe_systemdunitdependency_CFLAGS= @dbus1_CFLAGS@
+probe_systemdunitdependency_CXXFLAGS = @dbus1_CFLAGS@
+probe_systemdunitdependency_LDFLAGS= @dbus1_LIBS@
 endif
 
 endif

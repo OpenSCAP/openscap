@@ -405,7 +405,7 @@ PKG_CHECK_MODULES([rpm], [rpm >= 4.4],[
 
 
 SAVE_CPPFLAGS="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS  $(pkg-config libapt-pkg --cflags) $(pkg-config blkid --cflags) $(pkg-config gconf-2.0 --cflags) $(pkg-config libpcre --cflags) $(pkg-config libprocps --cflags) $(pkg-config rpm --cflags) $(pkg-config libselinux --cflags) $(pkg-config libxml-2.0 --cflags) $(pkg-config libxslt --cflags) "
+CPPFLAGS="$CPPFLAGS  $(pkg-config libapt-pkg --cflags) $(pkg-config blkid --cflags) $(pkg-config dbus-1 --cflags) $(pkg-config gconf-2.0 --cflags) $(pkg-config libpcre --cflags) $(pkg-config libprocps --cflags) $(pkg-config rpm --cflags) $(pkg-config libselinux --cflags) $(pkg-config libxml-2.0 --cflags) $(pkg-config libxslt --cflags) "
 
 echo
 echo ' * Checking presence of required headers for the system_info probe'
@@ -670,6 +670,33 @@ probe_process58_req_deps_ok=no;
 probe_process58_req_deps_missing+=", $ac_func func";
 ])
 AC_CHECK_FUNCS([cap_get_pid capgetp],[],[])
+LIBS=$SAVE_LIBS
+echo
+echo '* Checking for dbus1 library used by: systemdunitproperty systemdunitproperty '
+PKG_CHECK_MODULES([dbus1], [dbus-1 >= 0.0],[],[
+SAVE_LIBS=$LIBS
+AC_SEARCH_LIBS([dbus_bus_get],[dbus1],[
+dbus1_CFLAGS=;
+dbus1_LIBS=-ldbus1;
+],[
+probe_systemdunitproperty_req_deps_ok=no;
+probe_systemdunitproperty_req_deps_missing+=', dbus1';
+probe_systemdunitproperty_req_deps_ok=no;
+probe_systemdunitproperty_req_deps_missing+=', dbus1';
+],[])
+AC_SUBST([dbus1_CFLAGS])
+AC_SUBST([dbus1_LIBS])
+LIBS=$SAVE_LIBS
+])
+SAVE_LIBS=$LIBS
+LIBS=$dbus1_LIBS
+AC_CHECK_FUNCS([dbus_bus_get], [], [
+probe_systemdunitproperty_req_deps_ok=no;
+probe_systemdunitproperty_req_deps_missing+=", $ac_func func";
+
+probe_systemdunitproperty_req_deps_ok=no;
+probe_systemdunitproperty_req_deps_missing+=", $ac_func func";
+])
 LIBS=$SAVE_LIBS
 echo
 echo '* Checking for gconf2 library used by: gconf '

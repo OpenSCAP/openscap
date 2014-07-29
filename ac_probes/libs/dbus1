@@ -1,0 +1,7 @@
+name=dbus1
+pkgconfig=yes
+pkgconfig_name=dbus-1
+functions_req=(dbus_bus_get)
+functions_opt=
+probes_req=(systemdunitproperty systemdunitproperty)
+probes_opt=
