@@ -268,8 +268,8 @@ static char *dbus_value_to_string(DBusMessageIter *iter)
 			//case DBUS_TYPE_DICT_ENTRY:
 			//case DBUS_TYPE_VARIANT:
 
-			case DBUS_TYPE_UNIX_FD:
-				return oscap_sprintf("%i", value.fd);
+			//case DBUS_TYPE_UNIX_FD:
+			//	return oscap_sprintf("%i", value.fd);
 
 			default:
 				dI("Encountered unknown dbus basic type!\n");
