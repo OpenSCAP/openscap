@@ -70,45 +70,50 @@ static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit,
 
 	if (include_requires) {
 		char *requires_s = get_property_by_unit_path(conn, path, "Requires");
-		char **requires = oscap_split(requires_s, ", ");
-		for (int i = 0; requires[i] != NULL; ++i) {
-			if (oscap_strcmp(requires[i], "") == 0)
-				continue;
+		if (requires_s) {
+			char **requires = oscap_split(requires_s, ", ");
+			for (int i = 0; requires[i] != NULL; ++i) {
+				if (oscap_strcmp(requires[i], "") == 0)
+					continue;
 
-			if (callback(requires[i], cbarg) == 0) {
-				get_all_dependencies_by_unit(conn, requires[i],
-							     callback, cbarg,
-							     include_requires, include_wants);
-			} else {
-				oscap_free(requires);
-				oscap_free(requires_s);
-				oscap_free(path);
-				return;
+				if (callback(requires[i], cbarg) == 0) {
+					get_all_dependencies_by_unit(conn, requires[i],
+									callback, cbarg,
+									include_requires, include_wants);
+				} else {
+					oscap_free(requires);
+					oscap_free(requires_s);
+					oscap_free(path);
+					return;
+				}
 			}
+			oscap_free(requires);
 		}
-		oscap_free(requires);
 		oscap_free(requires_s);
 	}
 
 	if (include_wants) {
 		char *wants_s = get_property_by_unit_path(conn, path, "Wants");
-		char **wants = oscap_split(wants_s, ", ");
-		for (int i = 0; wants[i] != NULL; ++i) {
-			if (oscap_strcmp(wants[i], "") == 0)
-				continue;
+		if (wants_s)
+		{
+			char **wants = oscap_split(wants_s, ", ");
+			for (int i = 0; wants[i] != NULL; ++i) {
+				if (oscap_strcmp(wants[i], "") == 0)
+					continue;
 
-			if (callback(wants[i], cbarg) == 0) {
-				get_all_dependencies_by_unit(conn, wants[i],
-							     callback, cbarg,
-							     include_requires, include_wants);
-			} else {
-				oscap_free(wants);
-				oscap_free(wants_s);
-				oscap_free(path);
-				return;
+				if (callback(wants[i], cbarg) == 0) {
+					get_all_dependencies_by_unit(conn, wants[i],
+									callback, cbarg,
+									include_requires, include_wants);
+				} else {
+					oscap_free(wants);
+					oscap_free(wants_s);
+					oscap_free(path);
+					return;
+				}
 			}
+			oscap_free(wants);
 		}
-		oscap_free(wants);
 		oscap_free(wants_s);
 	}
 
