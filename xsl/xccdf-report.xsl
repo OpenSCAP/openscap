@@ -524,14 +524,14 @@ Authors:
                     </td></tr>
                     <tr><td colspan="2" class="description">
                         <p>
-                            <xsl:copy-of select="$item/cdf:description/node()"/>
+                            <xsl:apply-templates mode="sub" select="$item/cdf:description"/>
                         </p>
                     </td></tr>
                     <xsl:if test="$item/cdf:fix">
                         <tr><td colspan="2" class="remediation">
                             Remediation script:
                             <pre>
-                                <xsl:copy-of select="$item/cdf:fix/node()"/>
+                                <xsl:apply-templates mode="sub" select="$item/cdf:fix"/>
                             </pre>
                         </td></tr>
                     </xsl:if>

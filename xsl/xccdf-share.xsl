@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 
 Authors:
      Martin Preisler <mpreisle@redhat.com>
+     Lukas Kuklinek <lkuklinek@redhat.com>
 -->
 
 <xsl:stylesheet version="1.1"
@@ -43,6 +44,85 @@ Authors:
         <xsl:when test="$ruleresult = 'notselected'">The Rule was not selected in the evaluation. This may be caused by the rule not being selected by default in the benchmark or by the profile unselecting it.</xsl:when>
         <xsl:when test="$ruleresult = 'notapplicable'">The Rule was not applicable to the target of the test. For example, the Rule might have been specific to a different version of the target OS, or it might have been a test against a platform feature that was not installed.</xsl:when>
     </xsl:choose>
+</xsl:template>
+
+<!-- templates in mode "text", for processing text with
+     markup and substitutions.
+ -->
+
+<!-- text nodes -->
+<xsl:template match="text()" mode='sub'>
+    <xsl:value-of select="."/>
+</xsl:template>
+
+<!-- substitute cdf:instance -->
+<xsl:template match="cdf:fix//cdf:instance" mode='sub'>
+    <xsl:variable name='ctx' select='@context'/>
+  <xsl:choose>
+    <xsl:when test='ancestor::cdf:rule-result'>
+        <abbr class='replace' title='context: {$ctx}'><xsl:value-of select='ancestor::cdf:rule-result/cdf:instance[@context=$ctx]'/></abbr>
+    </xsl:when>
+    <xsl:otherwise><abbr class='cdf-sub-context' title='replace with actual {$ctx} context'><xsl:value-of select='$ctx'/></abbr></xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+<!-- substitute cdf:sub -->
+<xsl:template match="cdf:sub" mode='sub'>
+    <xsl:variable name="subid" select="./@idref"/>
+    <xsl:variable name="plain" select="ancestor::cdf:Benchmark/cdf:plain-text[@id=$subid]"/>
+    <xsl:variable name="val" select="ancestor::cdf:Benchmark//cdf:Value[@id=$subid]"/>
+  <xsl:choose>
+    <xsl:when test='$plain'><abbr class='xccdf-plain-text' title="text: {$subid}"><xsl:value-of select="$plain"/></abbr></xsl:when>
+    <xsl:otherwise><abbr class='cdf-sub-value' title="value: {$subid} ({$val/cdf:title})"><xsl:value-of select="$val/cdf:value"/></abbr></xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+<!-- substitute object with #xccdf:value -->
+<xsl:template match='object[starts-with(@data, "#xccdf:value:")]' mode='sub'>
+    <xsl:variable name='id' value='substring(@data, 13)'/>
+    <xsl:variable name='sub' select='ancestor::cdf:TestResult/cdf:target-facts/cdf:fact[@name=$id]/text()|ancestor::cdf:Benchmark//cdf:Value[@id=$id]/cdf:value[1]/text()|ancestor::cdf:Benchmark/cdf:plain-text[@id=$id][1]/text()'/>
+  <xsl:choose>
+    <xsl:when test='$sub'><xsl:value-of select='$sub[1]'/></xsl:when>
+    <xsl:otherwise><xsl:value-of select='.'/></xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+<!-- substitute object with #xccdf:title -->
+<xsl:template match='object[starts-with(@data, "#xccdf:title:")]' mode='sub'>
+    <xsl:variable name='id' value='substring(@data, 13)'/>
+    <xsl:variable name='sub' select='ancestor::cdf:Benchmark//cdf:Group/cdf:title|ancestor::cdf:Benchmark//cdf:Rule/cdf:title|ancestor::cdf:Benchmark//cdf:Value/cdf:title'/>
+  <xsl:choose>
+    <xsl:when test='$sub'><xsl:value-of select='$sub[1]'/></xsl:when>
+    <xsl:otherwise><xsl:value-of select='.'/></xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+<!-- substitute a with #xccdf:link -->
+<xsl:template match='a[starts-with(@href, "#xccdf:link:")]' mode='sub'>
+    <xsl:variable name='id' value='substring(@href, 12)'/>
+  <xsl:copy>
+    <xsl:copy-of select='@*'/>
+    <xsl:attribute name='href'><xsl:apply-templates select='@href' mode='sub'><xsl:with-param name='id' select='$id'/></xsl:apply-templates></xsl:attribute>
+    <xsl:apply-templates select="node()" mode='sub'/>
+  </xsl:copy>
+</xsl:template>
+
+<!-- default link-generating code -->
+<xsl:template match='@href' mode='sub'><xsl:param name='id'/>#item-<xsl:value-of select='$id'/></xsl:template>
+
+<!-- identity transform for the rest of HTML -->
+<xsl:template match="*" mode='sub'>
+    <xsl:element name="{local-name()}">
+        <xsl:copy-of select="@*"/>
+        <xsl:apply-templates select="./text() | ./*" mode='sub'/>
+  </xsl:element>
+</xsl:template>
+
+<!-- support for direct call of the stylesheet -->
+<xsl:template match='node()|@*' mode='sub'><xsl:copy><xsl:copy-of select='@*'/><xsl:apply-templates select='node()' mode='sub'/></xsl:copy></xsl:template>
+
+<xsl:template match='cdf:description|cdf:fix|cdf:fixtext|cdf:front-matter|cdf:rear-matter|cdf:rationale|cdf:warning' mode='sub'>
+  <xsl:copy><xsl:copy-of select='@*'/><xsl:apply-templates select='node()' mode='sub'/></xsl:copy>
 </xsl:template>
 
 </xsl:stylesheet>
