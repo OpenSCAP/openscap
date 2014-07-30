@@ -10,7 +10,8 @@ function openRuleDetailsDialog(rule_result_id)
     var resultclone = $("#result-detail-" + rule_result_id).clone();
     resultclone.attr("id", "");
     resultclone.children(".panel-heading").append(closebutton);
-    closebutton.css( { marginTop: '-=17px' } );
+    closebutton.css( { "float" : "right" } );
+    closebutton.css( { "margin-top" : "-=20px" } );
     $("#result-detail-modal-body").append(resultclone);
 
     $("#result-detail-modal").modal();
