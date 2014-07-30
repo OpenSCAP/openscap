@@ -33,11 +33,33 @@
 #include <dbus/dbus.h>
 #include "common/debug_priv.h"
 
+// Old versions of libdbus API don't have DBusBasicValue as a public typedef.
+// This exact typedef was copied from libdbus 1.8 branch, see
+// http://cgit.freedesktop.org/dbus/dbus/tree/dbus/dbus-types.h?h=dbus-1.8#n137
+typedef union
+{
+	unsigned char bytes[8]; /**< as 8 individual bytes */
+	dbus_int16_t  i16;   /**< as int16 */
+	dbus_uint16_t u16;   /**< as int16 */
+	dbus_int32_t  i32;   /**< as int32 */
+	dbus_uint32_t u32;   /**< as int32 */
+	dbus_bool_t   bool_val; /**< as boolean */
+#ifdef DBUS_HAVE_INT64
+	dbus_int64_t  i64;   /**< as int64 */
+	dbus_uint64_t u64;   /**< as int64 */
+#endif
+	DBus8ByteStruct eight; /**< as 8-byte struct */
+	double dbl;          /**< as double */
+	unsigned char byt;   /**< as byte */
+	char *str;           /**< as char* (string, object path or signature) */
+	int fd;              /**< as Unix file descriptor */
+} _DBusBasicValue;
+
 static char *get_path_by_unit(DBusConnection *conn, const char *unit)
 {
 	DBusMessage *msg = NULL;
 	DBusPendingCall *pending = NULL;
-	DBusBasicValue path;
+	_DBusBasicValue path;
 	char *ret = NULL;
 
 	msg = dbus_message_new_method_call(
@@ -172,7 +194,7 @@ static int get_all_systemd_units(DBusConnection* conn, int(*callback)(const char
 			goto cleanup;
 		}
 
-		DBusBasicValue value;
+		_DBusBasicValue value;
 		dbus_message_iter_get_basic(&unit_name, &value);
 		char *unit_name_s = oscap_strdup(value.str);
 		int cbret = callback(unit_name_s, cbarg);
@@ -201,7 +223,7 @@ static char *dbus_value_to_string(DBusMessageIter *iter)
 {
 	const int arg_type = dbus_message_iter_get_arg_type(iter);
 	if (dbus_type_is_basic(arg_type)) {
-		DBusBasicValue value;
+		_DBusBasicValue value;
 		dbus_message_iter_get_basic(iter, &value);
 
 		switch (arg_type)
@@ -352,7 +374,7 @@ static int get_all_properties_by_unit_path(DBusConnection *conn, const char *uni
 			goto cleanup;
 		}
 
-		DBusBasicValue value;
+		_DBusBasicValue value;
 		dbus_message_iter_get_basic(&dict_entry, &value);
 		char *property_name = oscap_strdup(value.str);
 
