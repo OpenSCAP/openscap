@@ -1,20 +1,20 @@
 function openRuleDetailsDialog(rule_result_id)
 {
-    $("#result-detail-modal").remove();
+    $("#detail-modal").remove();
 
     var closebutton = $('<button type="button" class="close" data-dismiss="modal" aria-hidden="true" title="Close">×</button>');
-    var modal = $('<div id="result-detail-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"><div id="result-detail-modal-body" class="modal-body"></div></div>');
+    var modal = $('<div id="detail-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"><div id="detail-modal-body" class="modal-body"></div></div>');
 
     $("body").prepend(modal);
 
-    var resultclone = $("#result-detail-" + rule_result_id).clone();
-    resultclone.attr("id", "");
-    resultclone.children(".panel-heading").append(closebutton);
+    var clone = $("#rule-detail-" + rule_result_id).clone();
+    clone.attr("id", "");
+    clone.children(".panel-heading").append(closebutton);
     closebutton.css( { "float" : "right" } );
     closebutton.css( { "margin-top" : "-=20px" } );
-    $("#result-detail-modal-body").append(resultclone);
+    $("#detail-modal-body").append(clone);
 
-    $("#result-detail-modal").modal();
+    $("#detail-modal").modal();
 
     return false;
 }
@@ -26,12 +26,12 @@ function toggleRuleDisplay(checkbox)
     if (checkbox.checked)
     {
         $(".rule-overview-leaf-" + result).removeClass("rule-result-filtered");
-        $(".result-detail-" + result).removeClass("rule-result-filtered");
+        $(".rule-detail-" + result).removeClass("rule-result-filtered");
     }
     else
     {
         $(".rule-overview-leaf-" + result).addClass("rule-result-filtered");
-        $(".result-detail-" + result).addClass("rule-result-filtered");
+        $(".rule-detail-" + result).addClass("rule-result-filtered");
     }
 }
 
@@ -80,7 +80,7 @@ function ruleSearch()
     var keywords = search_input.split(/[\s,\.;]+/);
     var matches = 0;
 
-    $(".result-detail").each(function(){
+    $(".rule-detail").each(function(){
         // result-result-rrid, that's offset 14
         var rrid = $(this).attr("id").substring(14);
 
@@ -88,16 +88,16 @@ function ruleSearch()
         var detail_leaf = $(this);
 
         if (ruleSearchMatches(detail_leaf, keywords))
-    {
-        overview_leaf.removeClass("search-no-match");
-        detail_leaf.removeClass("search-no-match");
-        ++matches;
-    }
-        else
-    {
-        overview_leaf.addClass("search-no-match");
-        detail_leaf.addClass("search-no-match");
-    }
+        {
+            overview_leaf.removeClass("search-no-match");
+            detail_leaf.removeClass("search-no-match");
+            ++matches;
+        }
+            else
+        {
+            overview_leaf.addClass("search-no-match");
+            detail_leaf.addClass("search-no-match");
+        }
     });
 
     if (!search_input)
@@ -115,5 +115,5 @@ $(document).ready( function() {
         toggleRuleDisplay(this);
     });
 
-    $(".treetable").treetable({ column: 0, expandable: true, initialState : "expanded",  clickableNodeNames : true, indent : 0 });
+    $(".treetable").treetable({ column: 0, expandable: true, initialState : "expanded", indent : 0 });
 });

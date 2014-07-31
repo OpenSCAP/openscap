@@ -127,6 +127,94 @@ Authors:
     </div>
 </xsl:template>
 
+<xsl:template name="rule-overview-leaf">
+    <xsl:param name="item"/>
+    <xsl:param name="indent"/>
+
+    <tr data-tt-id="{$item/@id}" class="rule-overview-leaf" id="rule-overview-leaf-{generate-id($item)}">
+        <xsl:attribute name="data-tt-parent-id">
+            <xsl:value-of select="$item/parent::cdf:*/@id"/>
+        </xsl:attribute>
+
+        <td style="padding-left: {$indent * 19}px"><a href="#rule-detail-{generate-id($item)}" onclick="return openRuleDetailsDialog('{generate-id($item)}')">
+            <xsl:value-of select="$item/cdf:title/text()"/>
+        </a></td>
+        <td style="text-align: center">a</td>
+        <td class="rule-result"></td>
+    </tr>
+</xsl:template>
+
+<xsl:template name="rule-overview-inner-node">
+    <xsl:param name="item"/>
+    <xsl:param name="indent"/>
+
+    <tr data-tt-id="{$item/@id}">
+        <xsl:if test="$item/parent::cdf:Group or $item/parent::cdf:Benchmark">
+            <xsl:attribute name="data-tt-parent-id">
+                <xsl:value-of select="$item/parent::cdf:*/@id"/>
+            </xsl:attribute>
+        </xsl:if>
+
+        <td colspan="3" style="padding-left: {$indent * 19}px"><a href="#rule-detail-{generate-id($item)}" onclick="return openRuleDetailsDialog('{generate-id($item)}')">
+            <xsl:value-of select="$item/cdf:title/text()"/>
+        </a></td>
+    </tr>
+
+    <xsl:for-each select="$item/cdf:Group">
+        <xsl:call-template name="rule-overview-inner-node">
+            <xsl:with-param name="item" select="."/>
+            <xsl:with-param name="indent" select="$indent + 1"/>
+        </xsl:call-template>
+    </xsl:for-each>
+
+    <xsl:for-each select="$item/cdf:Rule">
+        <xsl:call-template name="rule-overview-leaf">
+            <xsl:with-param name="item" select="."/>
+            <xsl:with-param name="indent" select="$indent + 1"/>
+        </xsl:call-template>
+    </xsl:for-each>
+</xsl:template>
+
+<xsl:template name="rule-overview">
+    <!-- we can later easily turn this into a param -->
+    <xsl:variable name="benchmark" select="."/>
+
+    <div id="rule-overview"><a name="rule-overview"></a>
+        <h2>Rule Overview</h2>
+
+        <div class="form-group js-only">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search through XCCDF rules" id="search-input" oninput="ruleSearch()"/>
+
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" onclick="ruleSearch()">Search</button>
+                        </div>
+                    </div>
+                    <p id="search-matches"></p>
+                </div>
+            </div>
+        </div>
+
+        <table class="treetable table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th style="width: 120px; text-align: center">Severity</th>
+                    <th style="width: 120px; text-align: center">Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                <xsl:call-template name="rule-overview-inner-node">
+                    <xsl:with-param name="item" select="$benchmark"/>
+                    <xsl:with-param name="indent" select="0"/>
+                </xsl:call-template>
+            </tbody>
+        </table>
+    </div>
+</xsl:template>
+
 <xsl:template name="rear-matter">
     <!-- we can later easily turn this into a param -->
     <xsl:variable name="benchmark" select="."/>
@@ -162,8 +250,11 @@ Authors:
 <xsl:call-template name="xccdf-guide-header"/>
 
 <div class="container"><div id="content">
+
 <xsl:call-template name="introduction"/>
+<xsl:call-template name="rule-overview"/>
 <xsl:call-template name="rear-matter"/>
+
 </div></div>
 
 <xsl:call-template name="xccdf-guide-footer"/>

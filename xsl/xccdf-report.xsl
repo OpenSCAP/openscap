@@ -312,7 +312,7 @@ Authors:
             <xsl:attribute name="class">rule-overview-leaf rule-overview-leaf-<xsl:value-of select="$result"/> rule-overview-needs-attention</xsl:attribute>
         </xsl:if>
 
-        <td style="padding-left: {$indent * 19}px"><a href="#result-detail-{generate-id($ruleresult)}" onclick="return openRuleDetailsDialog('{generate-id($ruleresult)}')">
+        <td style="padding-left: {$indent * 19}px"><a href="#rule-detail-{generate-id($ruleresult)}" onclick="return openRuleDetailsDialog('{generate-id($ruleresult)}')">
             <xsl:value-of select="$item/cdf:title/text()"/>
         </a></td>
         <td style="text-align: center"><xsl:value-of select="$ruleresult/@severity"/></td>
@@ -487,7 +487,7 @@ Authors:
     <xsl:variable name="ruleresult" select="$testresult/cdf:rule-result[@idref = $item/@id]"/>
     <xsl:variable name="result" select="$ruleresult/cdf:result/text()"/>
 
-    <div class="panel panel-default result-detail result-detail-{$result}" id="result-detail-{generate-id($ruleresult)}" title="{$item/cdf:title/text()}">
+    <div class="panel panel-default rule-detail rule-detail-{$result}" id="rule-detail-{generate-id($ruleresult)}" title="{$item/cdf:title/text()}">
         <div class="keywords sr-only">
             <xsl:value-of select="concat($item/cdf:title/text(), ' ')"/><xsl:value-of select="concat($item/@id, ' ')"/>
             <xsl:for-each select="$ruleresult/cdf:ident">
@@ -495,7 +495,7 @@ Authors:
             </xsl:for-each>
         </div>
         <div class="panel-heading">
-            <a name="result-detail-{generate-id($ruleresult)}"></a>
+            <a name="rule-detail-{generate-id($ruleresult)}"></a>
             <h3 class="panel-title"><xsl:value-of select="$item/cdf:title/text()"/></h3>
         </div>
         <div class="panel-body">
