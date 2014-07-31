@@ -33,9 +33,16 @@
 #include <dbus/dbus.h>
 #include "common/debug_priv.h"
 
-// Old versions of libdbus API don't have DBusBasicValue as a public typedef.
-// This exact typedef was copied from libdbus 1.8 branch, see
+// Old versions of libdbus API don't have DBusBasicValue and DBus8ByteStruct
+// as a public typedefs.
+// These two typedefs were copied from libdbus 1.8 branch, see
 // http://cgit.freedesktop.org/dbus/dbus/tree/dbus/dbus-types.h?h=dbus-1.8#n137
+typedef struct
+{
+	dbus_uint32_t first32;
+	dbus_uint32_t second32;
+} _DBus8ByteStruct;
+
 typedef union
 {
 	unsigned char bytes[8]; /**< as 8 individual bytes */
@@ -48,7 +55,7 @@ typedef union
 	dbus_int64_t  i64;   /**< as int64 */
 	dbus_uint64_t u64;   /**< as int64 */
 #endif
-	DBus8ByteStruct eight; /**< as 8-byte struct */
+	_DBus8ByteStruct eight; /**< as 8-byte struct */
 	double dbl;          /**< as double */
 	unsigned char byt;   /**< as byte */
 	char *str;           /**< as char* (string, object path or signature) */
