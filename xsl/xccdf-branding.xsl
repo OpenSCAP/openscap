@@ -88,4 +88,38 @@ logo to the HTML report / guide header.
     </footer>
 </xsl:template>
 
+<xsl:template name="xccdf-guide-header">
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-3">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">
+                <xsl:call-template name="xccdf-branding-logo"/>
+            </a>
+            <div style="padding-left: 270px !important"><h1>Security Guide</h1></div>
+        </div>
+        <div class="collapse navbar-collapse navbar-collapse-3">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="#characteristics">Characteristics</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</xsl:template>
+
+<xsl:template name="xccdf-guide-footer">
+    <footer id="footer">
+        <div class="container">
+            <p class="muted credit">
+                <p>Generated using <a href="http://open-scap.org">OpenSCAP</a></p>
+            </p>
+        </div>
+    </footer>
+</xsl:template>
+
 </xsl:stylesheet>
