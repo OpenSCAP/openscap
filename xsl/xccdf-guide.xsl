@@ -47,14 +47,45 @@ Authors:
     indent="no"
     omit-xml-declaration="yes"/>
 
-<xsl:param name='clean-profile-notes' select='1'/>
-<xsl:param name='hide-profile-info'/>
-<xsl:param name='hide-rules' select='false'/>
+<xsl:param name="benchmark_id"/>
+<xsl:param name="profile_id"/>
+
+<!-- main(..) -->
+<xsl:template match="/">
+    <xsl:choose>
+        <xsl:when test="$benchmark_id">
+            <xsl:variable name="benchmark" select="//cdf:Benchmark[@id = $benchmark_id][1]"/>
+            <xsl:choose>
+                <xsl:when test="not($benchmark)">
+                    <xsl:message>Can't find benchmark of ID '<xsl:value-of select="$benchmark_id"/>'!</xsl:message>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:call-template name="generate-guide">
+                        <xsl:with-param name="benchmark" select="$benchmark"/>
+                    </xsl:call-template>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:message>The 'benchmark_id' parameter was not supplied. Using the first cdf:Benchmark found!</xsl:message>
+            <xsl:variable name="benchmark" select="//cdf:Benchmark[1]"/>
+            <xsl:choose>
+                <xsl:when test="not($benchmark)">
+                    <xsl:message>Can't find any cdf:Benchmark elements!</xsl:message>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:call-template name="generate-guide">
+                        <xsl:with-param name="benchmark" select="$benchmark"/>
+                    </xsl:call-template>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:otherwise>
+    </xsl:choose>
+</xsl:template>
 
 <xsl:template name="introduction">
-    <!-- we can later easily turn this into a param -->
-    <xsl:variable name="benchmark" select="."/>
-    <xsl:variable name="profile" select="."/>
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
 
     <div id="introduction"><a name="introduction"></a>
         <div class="row">
@@ -197,8 +228,8 @@ Authors:
 </xsl:template>
 
 <xsl:template name="rule-overview">
-    <!-- we can later easily turn this into a param -->
-    <xsl:variable name="benchmark" select="."/>
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
 
     <div id="rule-overview"><a name="rule-overview"></a>
         <h2>Rule Overview</h2>
@@ -230,9 +261,8 @@ Authors:
 </xsl:template>
 
 <xsl:template name="rear-matter">
-    <!-- we can later easily turn this into a param -->
-    <xsl:variable name="benchmark" select="."/>
-    <xsl:variable name="profile" select="."/>
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
 
     <div id="rear-matter"><a name="rear-matter"></a>
         <div class="row">
@@ -247,34 +277,48 @@ Authors:
     </div>
 </xsl:template>
 
-<xsl:template match="cdf:Benchmark">
-<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html></xsl:text>
-<html lang="en">
-<head>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title><xsl:value-of select="@id"/> | OpenSCAP Security Guide</title>
+<xsl:template name="generate-guide">
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile_id"/>
 
-    <style><xsl:call-template name="css-sources"/></style>
-    <script><xsl:call-template name="js-sources"/></script>
-</head>
+    <xsl:variable name="profile" select="$benchmark/cdf:Profile[@id = $profile_id][1]"/>
 
-<body>
-<xsl:call-template name="xccdf-guide-header"/>
+    <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html></xsl:text>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title><xsl:value-of select="$benchmark/@id"/> | OpenSCAP Security Guide</title>
 
-<div class="container"><div id="content">
+        <style><xsl:call-template name="css-sources"/></style>
+        <script><xsl:call-template name="js-sources"/></script>
+    </head>
 
-<xsl:call-template name="introduction"/>
-<xsl:call-template name="rule-overview"/>
-<xsl:call-template name="rear-matter"/>
+    <body>
+    <xsl:call-template name="xccdf-guide-header"/>
 
-</div></div>
+    <div class="container"><div id="content">
 
-<xsl:call-template name="xccdf-guide-footer"/>
+    <xsl:call-template name="introduction">
+        <xsl:with-param name="benchmark" select="$benchmark"/>
+        <xsl:with-param name="profile" select="$profile"/>
+    </xsl:call-template>
+    <xsl:call-template name="rule-overview">
+        <xsl:with-param name="benchmark" select="$benchmark"/>
+        <xsl:with-param name="profile" select="$profile"/>
+    </xsl:call-template>
+    <xsl:call-template name="rear-matter">
+        <xsl:with-param name="benchmark" select="$benchmark"/>
+        <xsl:with-param name="profile" select="$profile"/>
+    </xsl:call-template>
 
-</body>
-</html>
+    </div></div>
+
+    <xsl:call-template name="xccdf-guide-footer"/>
+
+    </body>
+    </html>
 </xsl:template>
 
 </xsl:stylesheet>
