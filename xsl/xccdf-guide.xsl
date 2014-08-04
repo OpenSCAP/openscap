@@ -57,7 +57,7 @@ Authors:
             <xsl:variable name="benchmark" select="//cdf:Benchmark[@id = $benchmark_id][1]"/>
             <xsl:choose>
                 <xsl:when test="not($benchmark)">
-                    <xsl:message>Can't find benchmark of ID '<xsl:value-of select="$benchmark_id"/>'!</xsl:message>
+                    <xsl:message terminate="yes">Can't find benchmark of ID '<xsl:value-of select="$benchmark_id"/>'!</xsl:message>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:call-template name="generate-guide">
@@ -71,7 +71,7 @@ Authors:
             <xsl:variable name="benchmark" select="//cdf:Benchmark[1]"/>
             <xsl:choose>
                 <xsl:when test="not($benchmark)">
-                    <xsl:message>Can't find any cdf:Benchmark elements!</xsl:message>
+                    <xsl:message terminate="yes">Can't find any cdf:Benchmark elements!</xsl:message>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:call-template name="generate-guide">

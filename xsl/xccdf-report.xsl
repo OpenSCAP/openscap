@@ -44,9 +44,7 @@ Authors:
     omit-xml-declaration="yes"/>
 
 <!-- parameters -->
-<xsl:param name="result-id"/>
-<xsl:param name="with-target-facts"/>
-<xsl:param name="show"/>
+<xsl:param name="testresult_id"/>
 
 <!-- OVAL and SCE result parameters -->
 <xsl:param name='pwd'/>
@@ -69,66 +67,54 @@ Authors:
   </xsl:choose>
 </xsl:variable>
 
-<xsl:variable name='toshow'>
-  <xsl:choose>
-    <xsl:when test='substring($show, 1, 1) = "="'>,<xsl:value-of select='substring($show, 2)'/>,</xsl:when>
-    <xsl:otherwise>,pass,fixed,notchecked,informational,unknown,error,fail,<xsl:value-of select='$show'/>,</xsl:otherwise>
-  </xsl:choose>
-</xsl:variable>
-
 <!-- keys -->
 <xsl:key name="items" match="cdf:Group|cdf:Rule|cdf:Value" use="@id"/>
 <xsl:key name="profiles" match="cdf:Profile" use="@id"/>
 
-<!-- top-level template -->
-<xsl:template match='cdf:Benchmark'>
-  <xsl:variable name='end-times'>
-    <s:times>
-    <xsl:for-each select='cdf:TestResult/@end-time'>
-      <xsl:sort order='descending'/>
-      <s:t t='{.}'/>
-    </xsl:for-each>
-    </s:times>
-  </xsl:variable>
+<!-- main(..) -->
+<xsl:template match="/">
+    <xsl:variable name='end_times'>
+        <s:times>
+            <xsl:for-each select='//cdf:TestResult/@end-time'>
+                <xsl:sort order='descending'/>
+                <s:t t='{.}'/>
+            </xsl:for-each>
+        </s:times>
+    </xsl:variable>
 
-  <xsl:variable name='last-test-time' select='exsl:node-set($end-times)/s:times/s:t[1]/@t'/>
+    <xsl:variable name='last_test_time' select='exsl:node-set($end_times)/s:times/s:t[1]/@t'/>
 
-  <xsl:variable name='final-result-id'>
+    <xsl:variable name='final_result_id'>
+        <xsl:choose>
+            <xsl:when test="$testresult_id">
+                <xsl:value-of select="$testresult_id"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="//cdf:TestResult[@end-time=$last_test_time][last()]/@id"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+
+    <xsl:variable name="testresult" select="//cdf:TestResult[@id=$final_result_id]"/>
+
     <xsl:choose>
-      <xsl:when test="$result-id">
-        <xsl:value-of select='$result-id'/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select='cdf:TestResult[@end-time=$last-test-time][last()]/@id'/>
-      </xsl:otherwise>
+        <xsl:when test="$testresult">
+            <xsl:message>TestResult ID: <xsl:value-of select="$final_result_id"/></xsl:message>
+            <xsl:call-template name="generate-report">
+                <xsl:with-param name="testresult" select="$testresult"/>
+            </xsl:call-template>
+        </xsl:when>
+        <xsl:when test="$testresult_id">
+            <xsl:message terminate="yes">No such result exists.</xsl:message>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:message terminate="yes">No result ID specified.</xsl:message>
+        </xsl:otherwise>
     </xsl:choose>
-  </xsl:variable>
-
-  <xsl:variable name='result' select='cdf:TestResult[@id=$final-result-id]'/>
-
-  <xsl:variable name='profile' select='cdf:TestResult[@id=$result-id][1]/cdf:profile/@idref'/>
-
-  <xsl:choose>
-    <xsl:when test='count(cdf:TestResult) = 0'>
-      <xsl:message terminate='yes'>This benchmark does not contain any test results.</xsl:message>
-    </xsl:when>
-    <xsl:when test='$result'>
-      <xsl:message>TestResult ID: <xsl:value-of select='$final-result-id'/></xsl:message>
-      <xsl:message>Profile: <xsl:choose><xsl:when test='$profile'><xsl:value-of select="$profile"/></xsl:when><xsl:otherwise>(Default)</xsl:otherwise></xsl:choose></xsl:message>
-      <xsl:apply-templates select='$result'/>
-    </xsl:when>
-    <xsl:when test='$result-id'>
-      <xsl:message terminate='yes'>No such result exists.</xsl:message>
-    </xsl:when>
-    <xsl:otherwise>
-      <xsl:message terminate='yes'>No result ID specified.</xsl:message>
-    </xsl:otherwise>
-  </xsl:choose>
 </xsl:template>
 
 <xsl:template name="characteristics">
-    <!-- we can later easily turn this into a param -->
-    <xsl:variable name="testresult" select="."/>
+    <xsl:param name="testresult"/>
 
     <div id="characteristics"><a name="characteristics"></a>
         <h2>Characteristics</h2>
@@ -227,8 +213,7 @@ Authors:
 </xsl:template>
 
 <xsl:template name="compliance-and-scoring">
-    <!-- we can later easily turn this into a param -->
-    <xsl:variable name="testresult" select="."/>
+    <xsl:param name="testresult"/>
 
     <div id="compliance-and-scoring"><a name="compliance-and-scoring"></a>
         <h2>Compliance and Scoring</h2>
@@ -401,8 +386,7 @@ Authors:
 </xsl:template>
 
 <xsl:template name="rule-overview">
-    <!-- we can later easily turn this into a param -->
-    <xsl:variable name="testresult" select="."/>
+    <xsl:param name="testresult"/>
     <!-- we can later easily turn this into a param -->
     <xsl:variable name="benchmark" select="/cdf:Benchmark"/>
 
@@ -561,8 +545,7 @@ Authors:
 </xsl:template>
 
 <xsl:template name="result-details">
-    <!-- we can later easily turn this into a param -->
-    <xsl:variable name="testresult" select="."/>
+    <xsl:param name="testresult"/>
     <!-- we can later easily turn this into a param -->
     <xsl:variable name="benchmark" select="/cdf:Benchmark"/>
 
@@ -579,33 +562,43 @@ Authors:
     </div>
 </xsl:template>
 
-<xsl:template match='cdf:TestResult'>
-<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html></xsl:text>
-<html lang="en">
-<head>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title><xsl:value-of select="@id"/> | OpenSCAP Evaluation Report</title>
+<xsl:template name="generate-report">
+    <xsl:param name="testresult"/>
 
-    <style><xsl:call-template name="css-sources"/></style>
-    <script><xsl:call-template name="js-sources"/></script>
-</head>
+    <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html></xsl:text>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title><xsl:value-of select="$testresult/@id"/> | OpenSCAP Evaluation Report</title>
 
-<body>
-<xsl:call-template name="xccdf-report-header"/>
+        <style><xsl:call-template name="css-sources"/></style>
+        <script><xsl:call-template name="js-sources"/></script>
+    </head>
 
-<div class="container"><div id="content">
-    <xsl:call-template name="characteristics"/>
-    <xsl:call-template name="compliance-and-scoring"/>
-    <xsl:call-template name="rule-overview"/>
-    <xsl:call-template name="result-details"/>
-</div></div>
+    <body>
+    <xsl:call-template name="xccdf-report-header"/>
 
-<xsl:call-template name="xccdf-report-footer"/>
+    <div class="container"><div id="content">
+        <xsl:call-template name="characteristics">
+            <xsl:with-param name="testresult" select="$testresult"/>
+        </xsl:call-template>
+        <xsl:call-template name="compliance-and-scoring">
+            <xsl:with-param name="testresult" select="$testresult"/>
+        </xsl:call-template>
+        <xsl:call-template name="rule-overview">
+            <xsl:with-param name="testresult" select="$testresult"/>
+        </xsl:call-template>
+        <xsl:call-template name="result-details">
+            <xsl:with-param name="testresult" select="$testresult"/>
+        </xsl:call-template>
+    </div></div>
 
-</body>
-</html>
+    <xsl:call-template name="xccdf-report-footer"/>
+
+    </body>
+    </html>
 </xsl:template>
 
 </xsl:stylesheet>
