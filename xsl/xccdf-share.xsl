@@ -46,6 +46,53 @@ Authors:
     </xsl:choose>
 </xsl:template>
 
+<xsl:template match="cdf:ident" mode="ident">
+    <abbr title="{concat(@system, concat(': ', text()))}"><xsl:value-of select="text()"/></abbr>
+</xsl:template>
+
+<xsl:template match="cdf:reference" mode="reference">
+    <xsl:choose>
+        <xsl:when test="@href">
+            <a href="{@href}">
+                <xsl:choose>
+                    <xsl:when test="text()">
+                        <xsl:value-of select="text()"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@href"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </a>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:value-of select="text()"/>
+        </xsl:otherwise>
+    </xsl:choose>
+</xsl:template>
+
+<xsl:template name="item-idents-refs">
+    <xsl:param name="item"/>
+
+    <xsl:if test="$item/cdf:ident">
+        <p>
+            <span class="label label-info">identifiers:</span>&#160;
+            <xsl:for-each select="$item/cdf:ident">
+                <xsl:if test="position() > 1">, </xsl:if>
+                <xsl:apply-templates mode="ident" select="."/>
+            </xsl:for-each>
+        </p>
+    </xsl:if>
+    <xsl:if test="$item/cdf:reference">
+        <p>
+            <span class="label label-default">references:</span>&#160;
+            <xsl:for-each select="$item/cdf:reference">
+                <xsl:if test="position() > 1">, </xsl:if>
+                <xsl:apply-templates mode="reference" select="."/>
+            </xsl:for-each>
+        </p>
+    </xsl:if>
+</xsl:template>
+
 <!-- templates in mode "text", for processing text with
      markup and substitutions.
  -->

@@ -518,7 +518,7 @@ Authors:
                     <tr><td>Identifiers</td><td class="identifiers">
                         <ul>
                         <xsl:for-each select="$ruleresult/cdf:ident">
-                            <li><xsl:value-of select="text()"/></li>
+                            <li><xsl:apply-templates select="." mode="ident"/></li>
                         </xsl:for-each>
                         </ul>
                     </td></tr>
@@ -530,9 +530,9 @@ Authors:
                     <xsl:if test="$item/cdf:fix">
                         <tr><td colspan="2" class="remediation">
                             Remediation script:
-                            <pre>
+                            <pre><code>
                                 <xsl:apply-templates mode="sub" select="$item/cdf:fix"/>
-                            </pre>
+                            </code></pre>
                         </td></tr>
                     </xsl:if>
                 </tbody>

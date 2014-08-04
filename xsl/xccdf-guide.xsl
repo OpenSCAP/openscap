@@ -136,11 +136,24 @@ Authors:
             <xsl:value-of select="$item/parent::cdf:*/@id"/>
         </xsl:attribute>
 
-        <td style="padding-left: {$indent * 19}px"><a href="#rule-detail-{generate-id($item)}" onclick="return openRuleDetailsDialog('{generate-id($item)}')">
-            <xsl:value-of select="$item/cdf:title/text()"/>
-        </a></td>
-        <td style="text-align: center">a</td>
-        <td class="rule-result"></td>
+        <td style="padding-left: {$indent * 19}px">
+            <h4><xsl:value-of select="$item/cdf:title/text()"/></h4>
+
+            <p>
+                <xsl:apply-templates mode="sub" select="$item/cdf:description"/>
+            </p>
+
+            <xsl:call-template name="item-idents-refs">
+                <xsl:with-param name="item" select="$item"/>
+            </xsl:call-template>
+
+            <xsl:if test="$item/cdf:fix">
+                <span class="label label-success">Remediation script:</span>
+                <pre><code>
+                    <xsl:apply-templates mode="sub" select="$item/cdf:fix"/>
+                </code></pre>
+            </xsl:if>
+        </td>
     </tr>
 </xsl:template>
 
@@ -155,9 +168,17 @@ Authors:
             </xsl:attribute>
         </xsl:if>
 
-        <td colspan="3" style="padding-left: {$indent * 19}px"><a href="#rule-detail-{generate-id($item)}" onclick="return openRuleDetailsDialog('{generate-id($item)}')">
-            <xsl:value-of select="$item/cdf:title/text()"/>
-        </a></td>
+        <td style="padding-left: {$indent * 19}px">
+            <h3><xsl:value-of select="$item/cdf:title/text()"/></h3>
+
+            <p>
+                <xsl:apply-templates mode="sub" select="$item/cdf:description"/>
+            </p>
+
+            <xsl:call-template name="item-idents-refs">
+                <xsl:with-param name="item" select="$item"/>
+            </xsl:call-template>
+        </td>
     </tr>
 
     <xsl:for-each select="$item/cdf:Group">
@@ -198,13 +219,6 @@ Authors:
         </div>
 
         <table class="treetable table table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th style="width: 120px; text-align: center">Severity</th>
-                    <th style="width: 120px; text-align: center">Result</th>
-                </tr>
-            </thead>
             <tbody>
                 <xsl:call-template name="rule-overview-inner-node">
                     <xsl:with-param name="item" select="$benchmark"/>

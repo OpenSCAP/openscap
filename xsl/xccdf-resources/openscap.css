@@ -15,3 +15,10 @@ td.rule-result-fixed div { background: #5cb75c }
 .rule-detail-fail, .rule-detail-error, .rule-detail-unknown { border: 2px solid red }
 
 #footer { text-align: center; margin-top: 50px }
+
+pre
+{
+    overflow: auto !important;
+    word-wrap: normal !important;
+    white-space: pre;
+}
