@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2013--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -29,6 +29,7 @@
 #include <unistd.h>
 
 #include <oscap.h>
+#include "oscap_source.h"
 #include <cpe_lang.h>
 #include <OVAL/public/oval_agent_api.h>
 #include <OVAL/public/oval_agent_xccdf_api.h>
@@ -747,7 +748,9 @@ int xccdf_session_load_oval(struct xccdf_session *session)
 
 	for (int idx=0; contents[idx]; idx++) {
 		/* file -> def_model */
-		struct oval_definition_model *tmp_def_model = oval_definition_model_import(contents[idx]->filename);
+		struct oscap_source *source = oscap_source_new_from_file(contents[idx]->filename);
+		struct oval_definition_model *tmp_def_model = oval_definition_model_import_source(source);
+		oscap_source_free(source);
 		if (tmp_def_model == NULL) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to create OVAL definition model from: '%s'.", contents[idx]->filename);
 			return 1;

@@ -37,6 +37,7 @@
 #include <limits.h>
 
 #include <oscap.h>
+#include "oscap_source.h"
 #include <xccdf_policy.h>
 #include <oval_results.h>
 #include <oval_variables.h>
@@ -81,7 +82,9 @@ static int app_info(const struct oscap_action *action)
 	switch (doc_type) {
 	case OSCAP_DOCUMENT_OVAL_DEFINITIONS: {
 		printf("Document type: OVAL Definitions\n");
-		struct oval_definition_model * def_model = oval_definition_model_import(action->file);
+		struct oscap_source *source = oscap_source_new_from_file(action->file);
+		struct oval_definition_model *def_model = oval_definition_model_import_source(source);
+		oscap_source_free(source);
 		if(!def_model)
 			goto cleanup;
 		struct oval_generator *gen = oval_definition_model_get_generator(def_model);

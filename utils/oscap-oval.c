@@ -26,6 +26,7 @@
 #endif
 
 /* OVAL & OSCAP common */
+#include "oscap_source.h"
 #include <oval_probe.h>
 #include <oval_agent_api.h>
 #include <oval_results.h>
@@ -228,7 +229,9 @@ int app_collect_oval(const struct oscap_action *action)
 	}
 
 	/* import definitions */
-	def_model = oval_definition_model_import(action->f_oval);
+	struct oscap_source *source = oscap_source_new_from_file(action->f_oval);
+	def_model = oval_definition_model_import_source(source);
+	oscap_source_free(source);
 	if (def_model == NULL) {
 		fprintf(stderr, "Failed to import the OVAL Definitions from '%s'.\n", action->f_oval);
 		goto cleanup;
@@ -387,7 +390,9 @@ int app_evaluate_oval(const struct oscap_action *action)
 	}
 
 	/* import OVAL Definitions */
-	def_model = oval_definition_model_import(oval_file);
+	struct oscap_source *source = oscap_source_new_from_file(oval_file);
+	def_model = oval_definition_model_import_source(source);
+	oscap_source_free(source);
 	if (def_model == NULL) {
 		fprintf(stderr, "Failed to import the OVAL Definitions from '%s'.\n", oval_file);
 		goto cleanup;
@@ -505,7 +510,9 @@ static int app_analyse_oval(const struct oscap_action *action) {
 	}
 
 	/* load defnitions */
-	def_model = oval_definition_model_import(action->f_oval);
+	struct oscap_source *source = oscap_source_new_from_file(action->f_oval);
+	def_model = oval_definition_model_import_source(source);
+	oscap_source_free(source);
         if (def_model == NULL) {
                 fprintf(stderr, "Failed to import the OVAL Definitions from '%s'.\n", action->f_oval);
 		goto cleanup;
