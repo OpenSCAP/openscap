@@ -96,12 +96,15 @@ Authors:
     </xsl:variable>
 
     <xsl:variable name="testresult" select="//cdf:TestResult[@id=$final_result_id]"/>
+    <!-- TODO: TEMPORARY! Only works in trivial cases. -->
+    <xsl:variable name="benchmark" select="/cdf:Benchmark"/>
 
     <xsl:choose>
         <xsl:when test="$testresult">
             <xsl:message>TestResult ID: <xsl:value-of select="$final_result_id"/></xsl:message>
             <xsl:call-template name="generate-report">
                 <xsl:with-param name="testresult" select="$testresult"/>
+                <xsl:with-param name="benchmark" select="$benchmark"/>
             </xsl:call-template>
         </xsl:when>
         <xsl:when test="$testresult_id">
@@ -115,6 +118,7 @@ Authors:
 
 <xsl:template name="characteristics">
     <xsl:param name="testresult"/>
+    <xsl:param name="benchmark"/>
 
     <div id="characteristics"><a name="characteristics"></a>
         <h2>Characteristics</h2>
@@ -150,7 +154,7 @@ Authors:
                         </xsl:if>
                         was used.
                         <xsl:if test="$testresult/cdf:profile">
-                            Profile <strong><xsl:value-of select="/cdf:Benchmark/cdf:Profile[@id = $testresult/cdf:profile/@idref]/cdf:title/text()"/></strong> was selected.
+                            Profile <strong><xsl:value-of select="$benchmark/cdf:Profile[@id = $testresult/cdf:profile/@idref]/cdf:title/text()"/></strong> was selected.
                         </xsl:if>
                     </p>
                 </xsl:if>
@@ -159,7 +163,7 @@ Authors:
                 <h4>CPE Platforms</h4>
                 <ul class="list-group">
                     <!-- all the applicable platforms first -->
-                    <xsl:for-each select="/cdf:Benchmark/cdf:platform">
+                    <xsl:for-each select="$benchmark/cdf:platform">
                         <xsl:variable name="idref" select="@idref"/>
                         <xsl:if test="$testresult/cdf:platform[@idref=$idref]">
                             <li class="list-group-item">
@@ -168,7 +172,7 @@ Authors:
                         </xsl:if>
                     </xsl:for-each>
                     <!-- then the rest -->
-                    <xsl:for-each select="/cdf:Benchmark/cdf:platform">
+                    <xsl:for-each select="$benchmark/cdf:platform">
                         <xsl:variable name="idref" select="@idref"/>
                         <xsl:if test="not($testresult/cdf:platform[@idref=$idref])">
                             <li class="list-group-item">
@@ -387,8 +391,7 @@ Authors:
 
 <xsl:template name="rule-overview">
     <xsl:param name="testresult"/>
-    <!-- we can later easily turn this into a param -->
-    <xsl:variable name="benchmark" select="/cdf:Benchmark"/>
+    <xsl:param name="benchmark"/>
 
     <div id="rule-overview"><a name="rule-overview"></a>
         <h2>Rule Overview</h2>
@@ -546,8 +549,7 @@ Authors:
 
 <xsl:template name="result-details">
     <xsl:param name="testresult"/>
-    <!-- we can later easily turn this into a param -->
-    <xsl:variable name="benchmark" select="/cdf:Benchmark"/>
+    <xsl:param name="benchmark"/>
 
     <div class="js-only">
         <button type="button" class="btn btn-info" onclick="return toggleResultDetails(this)">Show all result details</button>
@@ -564,6 +566,7 @@ Authors:
 
 <xsl:template name="generate-report">
     <xsl:param name="testresult"/>
+    <xsl:param name="benchmark"/>
 
     <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html></xsl:text>
     <html lang="en">
@@ -583,15 +586,19 @@ Authors:
     <div class="container"><div id="content">
         <xsl:call-template name="characteristics">
             <xsl:with-param name="testresult" select="$testresult"/>
+            <xsl:with-param name="benchmark" select="$benchmark"/>
         </xsl:call-template>
         <xsl:call-template name="compliance-and-scoring">
             <xsl:with-param name="testresult" select="$testresult"/>
+            <xsl:with-param name="benchmark" select="$benchmark"/>
         </xsl:call-template>
         <xsl:call-template name="rule-overview">
             <xsl:with-param name="testresult" select="$testresult"/>
+            <xsl:with-param name="benchmark" select="$benchmark"/>
         </xsl:call-template>
         <xsl:call-template name="result-details">
             <xsl:with-param name="testresult" select="$testresult"/>
+            <xsl:with-param name="benchmark" select="$benchmark"/>
         </xsl:call-template>
     </div></div>
 
