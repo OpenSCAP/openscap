@@ -147,21 +147,19 @@ void oval_results_model_add_system(struct oval_results_model *model, struct oval
 		oval_collection_add(model->systems, sys);
 }
 
-int oval_results_model_import(struct oval_results_model *model, const char *file)
+int oval_results_model_import_source(struct oval_results_model *model, struct oscap_source *source)
 {
 	__attribute__nonnull__(model);
+	__attribute__nonnull__(source);
 
 	int ret = 0;
 	char *tagname = NULL;
 	char *namespace = NULL;
 
-	struct oscap_source *source = oscap_source_new_from_file(file);
-
 	/* setup context */
 	struct oval_parser_context context;
 	context.reader = oscap_source_get_xmlTextReader(source);
 	if (context.reader == NULL) {
-		oscap_source_free(source);
 		return -1;
 	}
 	context.results_model = model;
@@ -184,6 +182,17 @@ int oval_results_model_import(struct oval_results_model *model, const char *file
 
         oscap_free(tagname);
         oscap_free(namespace);
+	return ret;
+}
+
+int oval_results_model_import(struct oval_results_model *model, const char *file)
+{
+	__attribute__nonnull__(model);
+
+	int ret = 0;
+
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	ret = oval_results_model_import_source(model, source);
 	oscap_source_free(source);
 
 	return ret;
