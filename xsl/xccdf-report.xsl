@@ -154,7 +154,7 @@ Authors:
                         </xsl:if>
                         was used.
                         <xsl:if test="$testresult/cdf:profile">
-                            Profile <strong><xsl:value-of select="$benchmark/cdf:Profile[@id = $testresult/cdf:profile/@idref]/cdf:title/text()"/></strong> was selected.
+                            Profile <strong><xsl:value-of select="$testresult/cdf:profile/@idref"/></strong> was selected.
                         </xsl:if>
                     </p>
                 </xsl:if>
