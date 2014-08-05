@@ -607,8 +607,10 @@ struct oval_definition_model *oval_definition_model_import_source(struct oscap_s
  * @param file filename
  * @return new oval_definition_model, or NULL if an error occurred
  * @memberof oval_definition_model
+ * @deprecated This function has been deprecated and it may be dropped from later
+ * OpenSCAP releases. Please use oval_definition_model_import_source instead.
  */
-struct oval_definition_model * oval_definition_model_import(const char *file);
+OSCAP_DEPRECATED(struct oval_definition_model *oval_definition_model_import(const char *file));
 
 /**
  * Merge the content from the file with specified oval_definition_model.
