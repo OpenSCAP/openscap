@@ -244,7 +244,7 @@ Authors:
         <xsl:variable name="passed_rules_count" select="count($testresult/cdf:rule-result[cdf:result/text() = 'pass' or cdf:result/text() = 'fixed'])"/>
         <xsl:variable name="failed_rules_count" select="count($testresult/cdf:rule-result[cdf:result/text() = 'fail'])"/>
 
-        <div class="progress">
+        <div class="progress" title="breakdown by rule result">
             <div class="progress-bar progress-bar-success" style="width: {$passed_rules_count div ($total_rules_count - $ignored_rules_count) * 100}%">
                 <xsl:value-of select="$passed_rules_count"/> passed
             </div>
@@ -253,6 +253,26 @@ Authors:
             </div>
             <div class="progress-bar progress-bar-warning" style="width: {(1 - ($passed_rules_count + $failed_rules_count) div ($total_rules_count - $ignored_rules_count)) * 100}%">
                 <xsl:value-of select="$total_rules_count - $ignored_rules_count - $passed_rules_count - $failed_rules_count"/> other
+            </div>
+        </div>
+
+        <xsl:variable name="failed_rules_high_severity" select="count($testresult/cdf:rule-result[(cdf:result/text() = 'fail') and (@severity = 'high')])"/>
+        <xsl:variable name="failed_rules_medium_severity" select="count($testresult/cdf:rule-result[(cdf:result/text() = 'fail') and (@severity = 'medium')])"/>
+        <xsl:variable name="failed_rules_low_severity" select="count($testresult/cdf:rule-result[(cdf:result/text() = 'fail') and (@severity = 'low')])"/>
+        <xsl:variable name="failed_rules_other_severity" select="$failed_rules_count - $failed_rules_high_severity - $failed_rules_medium_severity - $failed_rules_low_severity"/>
+
+        <div class="progress" title="failed rules breakdown by severity">
+            <div class="progress-bar progress-bar-danger" style="width: {$failed_rules_high_severity div $failed_rules_count * 100}%">
+                <xsl:value-of select="$failed_rules_high_severity"/> high
+            </div>
+            <div class="progress-bar progress-bar-warning" style="width: {$failed_rules_medium_severity div $failed_rules_count * 100}%">
+                <xsl:value-of select="$failed_rules_medium_severity"/> medium
+            </div>
+            <div class="progress-bar progress-bar-info" style="width: {$failed_rules_low_severity div $failed_rules_count * 100}%">
+                <xsl:value-of select="$failed_rules_low_severity"/> low
+            </div>
+            <div class="progress-bar progress-bar-success" style="width: {$failed_rules_other_severity div $failed_rules_count * 100}%">
+                <xsl:value-of select="$failed_rules_other_severity"/> other
             </div>
         </div>
 
