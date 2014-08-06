@@ -241,7 +241,7 @@ int app_collect_oval(const struct oscap_action *action)
 	if(action->f_variables) {
 		var_model = oval_variable_model_import(action->f_variables);
 		if (var_model == NULL) {
-			fprintf(stderr, "Failed to import the OVAL Variables from '%s'.\n", action->f_oval);
+			fprintf(stderr, "Failed to import the OVAL Variables from '%s'.\n", action->f_variables);
 			goto cleanup;
 		}
 
@@ -402,7 +402,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 	if(action->f_variables) {
 		var_model = oval_variable_model_import(action->f_variables);
 		if (var_model == NULL) {
-			fprintf(stderr, "Failed to import the OVAL Variables from '%s'.\n", oval_file);
+			fprintf(stderr, "Failed to import the OVAL Variables from '%s'.\n", action->f_variables);
 			goto cleanup;
 		}
 
@@ -522,7 +522,7 @@ static int app_analyse_oval(const struct oscap_action *action) {
 	if(action->f_variables) {
 		var_model = oval_variable_model_import(action->f_variables);
 		if (var_model == NULL) {
-			fprintf(stderr, "Failed to import the OVAL Variables from '%s'.\n", action->f_oval);
+			fprintf(stderr, "Failed to import the OVAL Variables from '%s'.\n", action->f_variables);
 			goto cleanup;
 		}
 
