@@ -240,26 +240,19 @@ void oval_syschar_model_add_sysitem(struct oval_syschar_model *model, struct ova
 	}
 }
 
-
-/* -1 error; 0 OK; 1 warning */
-int oval_syschar_model_import(struct oval_syschar_model *model, const char *file)
+int oval_syschar_model_import_source(struct oval_syschar_model *model, struct oscap_source *source)
 {
-	__attribute__nonnull__(model);
-
-	int ret;
-
-	struct oscap_source *source = oscap_source_new_from_file(file);
-
+	int ret = 0;
 	/* setup context */
         struct oval_parser_context context;
         context.reader = oscap_source_get_xmlTextReader(source);
 	if (context.reader == NULL) {
-		oscap_source_free(source);
 		return -1;
 	}
         context.definition_model = oval_syschar_model_get_definition_model(model);
         context.syschar_model = model;
         context.user_data = NULL;
+
 	/* jump into oval_system_characteristics */
 	xmlTextReaderRead(context.reader);
 	/* make sure this is syschar */
@@ -277,6 +270,16 @@ int oval_syschar_model_import(struct oval_syschar_model *model, const char *file
 
 	oscap_free(tagname);
 	oscap_free(namespace);
+	return ret;
+}
+
+/* -1 error; 0 OK; 1 warning */
+int oval_syschar_model_import(struct oval_syschar_model *model, const char *file)
+{
+	__attribute__nonnull__(model);
+
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	int ret = oval_syschar_model_import_source(model, source);
 	oscap_source_free(source);
 
 	return ret;

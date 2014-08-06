@@ -14,7 +14,7 @@
  */
 
 /*
- * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -40,6 +40,7 @@
 #ifndef OVAL_SYSTEM_CHARACTERISTICS
 #define OVAL_SYSTEM_CHARACTERISTICS
 
+#include "oscap_source.h"
 #include "oval_types.h"
 #include "oval_definitions.h"
 
@@ -193,6 +194,16 @@ struct oval_variable_binding_iterator;
  * @memberof oval_syschar_model
  */
 struct oval_syschar_model *oval_syschar_model_new(struct oval_definition_model *definition_model);
+
+/**
+ * Import the content from the oscap_source into an oval_syschar_model.
+ * If imported content specifies a model entity that is already registered within the model its content is overwritten.
+ * @param model the merge target model
+ * @param source The oscap_source to import data from.
+ * @return zero on success or non zero value if an error occurred
+ * @memberof oval_syschar_model
+ */
+int oval_syschar_model_import_source(struct oval_syschar_model *model, struct oscap_source *source);
 
 /**
  * Import the content from the file into an oval_syschar_model.
