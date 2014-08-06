@@ -40,6 +40,7 @@
 #ifndef OVAL_SYSTEM_CHARACTERISTICS
 #define OVAL_SYSTEM_CHARACTERISTICS
 
+#include "oscap.h"
 #include "oscap_source.h"
 #include "oval_types.h"
 #include "oval_definitions.h"
@@ -212,8 +213,11 @@ int oval_syschar_model_import_source(struct oval_syschar_model *model, struct os
  * @param file filename
  * @return zero on success or non zero value if an error occurred
  * @memberof oval_syschar_model
+ * @deprecated This function has been deprecated and it may be dropped from later
+ * OpenSCAP releases. Please use oval_syschar_model_import_source instead.
+ *
  */
-int oval_syschar_model_import(struct oval_syschar_model *model, const char *file);
+OSCAP_DEPRECATED(int oval_syschar_model_import(struct oval_syschar_model *model, const char *file));
 /**
  * Copy an oval_syschar_model.
  * @return A copy of the specified @ref oval_syschar_model.
