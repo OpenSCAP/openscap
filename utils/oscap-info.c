@@ -138,7 +138,9 @@ static int app_info(const struct oscap_action *action)
 		printf("Document type: OVAL Results\n");
 		struct oval_definition_model * def_model=oval_definition_model_new();
 		struct oval_results_model * res_model = oval_results_model_new(def_model,NULL);
-		int ret = oval_results_model_import(res_model, action->file);
+		struct oscap_source *source = oscap_source_new_from_file(action->file);
+		int ret = oval_results_model_import_source(res_model, source);
+		oscap_source_free(source);
 		if(ret)
 			goto cleanup;
 		struct oval_generator *gen = oval_results_model_get_generator(res_model);
