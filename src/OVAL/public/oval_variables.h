@@ -12,7 +12,7 @@
  */ 
 
 /*
- * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009-2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -37,18 +37,28 @@
 #define OVAL_VARIABLES_H_
     
 #include "oval_types.h"
+#include "oscap_source.h"
 
 /**
  * Create a new empty OVAL variable model
  * @memberof oval_variable_model
  */ 
 struct oval_variable_model *oval_variable_model_new(void);
+
+/**
+ * Import the content from the oscap_source into a new oval_variable_model.
+ * @param source The oscap_source to import from.
+ * @return new oval_variable_model, or NULL if an error occurred
+ * @memberof oval_variable_model
+ */
+struct oval_variable_model *oval_variable_model_import_source(struct oscap_source *source);
+
 /**
  * Import the content from the file into a new oval_variable_model.
  * @param file filename
  * @return new oval_variable_model, or NULL if an error occurred
  * @memberof oval_variable_model
- */ 
+ */
 struct oval_variable_model * oval_variable_model_import(const char *file);
 /**
  * Clone an OVAL variable model
