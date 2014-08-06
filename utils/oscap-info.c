@@ -111,7 +111,9 @@ static int app_info(const struct oscap_action *action)
 	case OSCAP_DOCUMENT_OVAL_DIRECTIVES: {
 		printf("Document type: OVAL Directives\n");
 		struct oval_directives_model *dir_model = oval_directives_model_new();
-		int ret = oval_directives_model_import(dir_model, action->file);
+		struct oscap_source *source = oscap_source_new_from_file(action->file);
+		int ret = oval_directives_model_import_source(dir_model, source);
+		oscap_source_free(source);
 		if(ret)
 			goto cleanup;
 		struct oval_generator *gen = oval_directives_model_get_generator(dir_model);

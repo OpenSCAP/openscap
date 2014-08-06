@@ -447,7 +447,9 @@ int app_evaluate_oval(const struct oscap_action *action)
 		/* import directives */
 		if (action->f_directives != NULL) {
 			dir_model = oval_directives_model_new();
-			oval_directives_model_import(dir_model, action->f_directives);
+			struct oscap_source *dir_source = oscap_source_new_from_file(action->f_directives);
+			oval_directives_model_import_source(dir_model, dir_source);
+			oscap_source_free(dir_source);
 		}
 
 		/* export result model to XML */
@@ -564,7 +566,9 @@ static int app_analyse_oval(const struct oscap_action *action) {
 		/* import directives */
 		if (action->f_directives != NULL) {
 			dir_model = oval_directives_model_new();
-			oval_directives_model_import(dir_model, action->f_directives);
+			struct oscap_source *dir_source = oscap_source_new_from_file(action->f_directives);
+			oval_directives_model_import_source(dir_model, dir_source);
+			oscap_source_free(dir_source);
 		}
 
 		/* export result model to XML */
