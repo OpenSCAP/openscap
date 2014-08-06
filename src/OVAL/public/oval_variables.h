@@ -37,6 +37,7 @@
 #define OVAL_VARIABLES_H_
     
 #include "oval_types.h"
+#include "oscap.h"
 #include "oscap_source.h"
 
 /**
@@ -58,8 +59,12 @@ struct oval_variable_model *oval_variable_model_import_source(struct oscap_sourc
  * @param file filename
  * @return new oval_variable_model, or NULL if an error occurred
  * @memberof oval_variable_model
+ * @deprecated This function has been deprecated and it may be dropped from later
+ * OpenSCAP releases. Please use oval_variable_model_import_source instead.
+ *
  */
-struct oval_variable_model * oval_variable_model_import(const char *file);
+OSCAP_DEPRECATED(struct oval_variable_model *oval_variable_model_import(const char *file));
+
 /**
  * Clone an OVAL variable model
  * @return A copy of the specified @ref oval_variable_model.
