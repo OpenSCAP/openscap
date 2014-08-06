@@ -1,5 +1,5 @@
 /*
- * Copyright 2010--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2010--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -125,7 +125,9 @@ static int app_info(const struct oscap_action *action)
 		printf("Document type: OVAL System Characteristics\n");
 		struct oval_definition_model * def_model = oval_definition_model_new();
 		struct oval_syschar_model * sys_model = oval_syschar_model_new(def_model);
-		int ret = oval_syschar_model_import(sys_model, action->file);
+		struct oscap_source *source = oscap_source_new_from_file(action->file);
+		int ret = oval_syschar_model_import_source(sys_model, source);
+		oscap_source_free(source);
 		if(ret)
 			goto cleanup;
 		struct oval_generator *gen = oval_syschar_model_get_generator(sys_model);

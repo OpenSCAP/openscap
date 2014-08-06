@@ -540,10 +540,13 @@ static int app_analyse_oval(const struct oscap_action *action) {
 
 	/* load system characteristics */
 	sys_model = oval_syschar_model_new(def_model);
-        if (oval_syschar_model_import(sys_model, action->f_syschar) ==  -1 ) {
+	source = oscap_source_new_from_file(action->f_syschar);
+	if (oval_syschar_model_import_source(sys_model, source) ==  -1 ) {
                 fprintf(stderr, "Failed to import the System Characteristics from '%s'.\n", action->f_syschar);
+		oscap_source_free(source);
                 goto cleanup;
         }
+	oscap_source_free(source);
 
 	/* evaluate */
 	sys_models[0] = sys_model;
