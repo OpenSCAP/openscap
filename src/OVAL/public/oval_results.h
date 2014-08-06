@@ -43,6 +43,7 @@
 #ifndef OVAL_RESULTS_H_
 #define OVAL_RESULTS_H_
 
+#include "oscap.h"
 #include "oscap_source.h"
 #include "oval_types.h"
 #include "oval_system_characteristics.h"
@@ -136,8 +137,10 @@ int oval_results_model_import_source(struct oval_results_model *model, struct os
  * @param file filename
  * @return -1 if an error occurred
  * @memberof oval_results_model
+ * @deprecated This function has been deprecated and it may be dropped from later
+ * OpenSCAP releases. Please use oval_results_model_import_source instead.
  */
-int oval_results_model_import(struct oval_results_model *model, const char *file);
+OSCAP_DEPRECATED(int oval_results_model_import(struct oval_results_model *model, const char *file));
 /**
  * Copy an oval_results_model.
  * @return A copy of the specified @ref oval_results_model.
