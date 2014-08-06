@@ -26,6 +26,7 @@
 #include <config.h>
 #endif
 
+#include <libxml/parser.h>
 #include <libxml/xmlreader.h>
 
 #include "common/util.h"
@@ -38,10 +39,19 @@ OSCAP_HIDDEN_START;
  * Get an xmlTextReader assigned with this resource. The reader is still
  * owned by oscap_source.
  * @memberof oscap_source
- * @param source Resource to dispose
+ * @param source Resource to read the content
  * @returns xmlTextReader structure to read the content
  */
 xmlTextReader *oscap_source_get_xmlTextReader(struct oscap_source *source);
+
+/**
+ * Get a DOM representation of this resource. The document ins still owned
+ * by oscap_source.
+ * @memberof oscap_source
+ * @param source Resource to build DOM representation from
+ * @returns xmlDoc structure to read the content
+ */
+xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source);
 
 OSCAP_HIDDEN_END;
 

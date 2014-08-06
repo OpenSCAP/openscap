@@ -25,6 +25,7 @@
 #endif
 
 #include <string.h>
+#include <libxml/parser.h>
 #include <libxml/xmlreader.h>
 
 #include "common/alloc.h"
@@ -52,6 +53,7 @@ struct oscap_source {
 	} origin;                                       ///
 	struct {
 		xmlTextReader *text_reader;		/// xmlTextReader assigned to read this source
+		xmlDoc *doc;                            /// DOM
 	} xml;
 };
 
@@ -72,6 +74,9 @@ void oscap_source_free(struct oscap_source *source)
 		oscap_free(source->origin.filepath);
 		if (source->xml.text_reader != NULL) {
 			xmlFreeTextReader(source->xml.text_reader);
+		}
+		if (source->xml.doc != NULL) {
+			xmlFreeDoc(source->xml.doc);
 		}
 		oscap_free(source);
 	}
@@ -124,4 +129,15 @@ oscap_document_type_t oscap_source_get_scap_type(struct oscap_source *source)
 		xmlFreeTextReader(reader);
 	}
 	return source->scap_type;
+}
+
+xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
+{
+	if (source->xml.doc == NULL) {
+		source->xml.doc = xmlReadFile(source->origin.filepath, NULL, 0);
+		if (source->xml.doc == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_XML, "Unable to parse XML at: '%s' (%s)", _readable_origin(source), strerror(errno));
+		}
+	}
+	return source->xml.doc;
 }
