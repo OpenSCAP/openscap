@@ -104,19 +104,16 @@ void oval_directives_model_free(struct oval_directives_model *model) {
 	oscap_free(model);
 }
 
-int oval_directives_model_import(struct oval_directives_model * model, char *file) {
-
-	int ret=0;
+int oval_directives_model_import_source(struct oval_directives_model *model, struct oscap_source *source)
+{
+	int ret = 0;
 	char *tagname = NULL;
 	char *namespace = NULL;
 
-	/* open file */
-	struct oscap_source *source = oscap_source_new_from_file(file);
         /* setup context */
         struct oval_parser_context context;
         context.reader = oscap_source_get_xmlTextReader(source);
 	if (context.reader == NULL) {
-		oscap_source_free(source);
 		return -1;
 	}
         context.directives_model = model;
@@ -138,6 +135,13 @@ int oval_directives_model_import(struct oval_directives_model * model, char *fil
 
         oscap_free(tagname);
         oscap_free(namespace);
+	return ret;
+}
+
+int oval_directives_model_import(struct oval_directives_model * model, char *file) {
+	/* open file */
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	int ret = oval_directives_model_import_source(model, source);
         oscap_source_free(source);
 
 	return ret;
