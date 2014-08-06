@@ -1,5 +1,5 @@
 /*
- * Copyright 2010--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2010--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -239,7 +239,9 @@ int app_collect_oval(const struct oscap_action *action)
 
 	/* bind external variables */
 	if(action->f_variables) {
-		var_model = oval_variable_model_import(action->f_variables);
+		struct oscap_source *var_source = oscap_source_new_from_file(action->f_variables);
+		var_model = oval_variable_model_import_source(var_source);
+		oscap_source_free(var_source);
 		if (var_model == NULL) {
 			fprintf(stderr, "Failed to import the OVAL Variables from '%s'.\n", action->f_variables);
 			goto cleanup;
@@ -400,7 +402,9 @@ int app_evaluate_oval(const struct oscap_action *action)
 
 	/* bind external variables */
 	if(action->f_variables) {
-		var_model = oval_variable_model_import(action->f_variables);
+		struct oscap_source *var_source = oscap_source_new_from_file(action->f_variables);
+		var_model = oval_variable_model_import_source(var_source);
+		oscap_source_free(var_source);
 		if (var_model == NULL) {
 			fprintf(stderr, "Failed to import the OVAL Variables from '%s'.\n", action->f_variables);
 			goto cleanup;
@@ -520,7 +524,9 @@ static int app_analyse_oval(const struct oscap_action *action) {
 
 	/* bind external variables */
 	if(action->f_variables) {
-		var_model = oval_variable_model_import(action->f_variables);
+		struct oscap_source *var_source = oscap_source_new_from_file(action->f_variables);
+		var_model = oval_variable_model_import_source(var_source);
+		oscap_source_free(var_source);
 		if (var_model == NULL) {
 			fprintf(stderr, "Failed to import the OVAL Variables from '%s'.\n", action->f_variables);
 			goto cleanup;

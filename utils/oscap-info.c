@@ -96,7 +96,9 @@ static int app_info(const struct oscap_action *action)
 	break;
 	case OSCAP_DOCUMENT_OVAL_VARIABLES: {
 		printf("Document type: OVAL Variables\n");
-		struct oval_variable_model * var_model = oval_variable_model_import(action->file);
+		struct oscap_source *source = oscap_source_new_from_file(action->file);
+		struct oval_variable_model *var_model = oval_variable_model_import_source(source);
+		oscap_source_free(source);
 		if(!var_model)
 			goto cleanup;
 		struct oval_generator *gen = oval_variable_model_get_generator(var_model);
