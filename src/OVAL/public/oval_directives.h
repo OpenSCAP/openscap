@@ -37,6 +37,7 @@
 #ifndef OVAL_DIRECTIVES_H_
 #define OVAL_DIRECTIVES_H_
 
+#include "oscap.h"
 #include "oscap_source.h"
 #include "oval_types.h"
 
@@ -74,8 +75,11 @@ int oval_directives_model_import_source(struct oval_directives_model *model, str
 
 /**
  * @memberof oval_directives_model
+ * @deprecated This function has been deprecated and it may be dropped from later
+ * OpenSCAP releases. Please use oval_directives_model_import_source instead.
  */
-int oval_directives_model_import(struct oval_directives_model *, char *);
+OSCAP_DEPRECATED(int oval_directives_model_import(struct oval_directives_model *, char *));
+
 /**
  * @memberof oval_directives_model
  */
