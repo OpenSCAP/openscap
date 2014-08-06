@@ -44,6 +44,7 @@
 #include "assume.h"
 #include "debug_priv.h"
 #include "oscap_source.h"
+#include "source/validate_priv.h"
 
 #ifndef OSCAP_DEFAULT_SCHEMA_PATH
 const char * const OSCAP_SCHEMA_PATH = "/usr/local/share/openscap/schemas";
@@ -111,124 +112,6 @@ void oscap_cleanup(void)
 }
 
 const char *oscap_get_version(void) { return VERSION; }
-
-struct ctxt {
-	xml_reporter reporter;
-	void *arg; 
-	void *user;
-};
-
-static void oscap_xml_validity_handler(void *user, xmlErrorPtr error)
-{
-	struct ctxt * context = (struct ctxt *) user;
-
-	if (context == NULL || context->reporter == NULL) 
-		return;
-
-	if (error == NULL) 
-		error = xmlGetLastError();
-
-        if (error->code == 3083) {
-                /*
-                libxml2 outputs a warning for something that is completely harmless
-                and happens very often, clogging the screen and making real issues
-                hard to spot.
-
-                The message of the warning is:
-
-                Skipping import of schema located at ...  for the namespace ...,
-                since this namespace was already imported with the schema located at ..."
-
-                We can't prevent this with the schemas because they are interdependent
-                and it is not a good idea to alter XSD schemas comming from standard
-                bodies anyways.
-                */
-
-                // ignore the warning as if it never existed
-                return;
-        }
-
-	const char *file = error->file;
-	if (file == NULL) 
-		file = context->user;
-
-	context->reporter(file, error->line, error->message, context->arg);
-}
-
-int oscap_validate_xml(const char *xmlfile, const char *schemafile, xml_reporter reporter, void *arg)
-{
-	int result = -1;
-	xmlSchemaParserCtxtPtr parser_ctxt = NULL;
-	xmlSchemaPtr schema = NULL;
-	xmlSchemaValidCtxtPtr ctxt = NULL;
-	xmlDocPtr doc = NULL;
-	struct ctxt context = { reporter, arg, (void*) xmlfile };
-
-        if (xmlfile == NULL) {
-                oscap_seterr(OSCAP_EFAMILY_OSCAP, "'xmlfile' == NULL");
-                return -1;
-        }
-
-        if (schemafile == NULL) {
-                oscap_seterr(OSCAP_EFAMILY_OSCAP, "'schemafile' == NULL");
-                return -1;
-        }
-
-	char * schemapath = oscap_sprintf("%s%s%s", oscap_path_to_schemas(), "/", schemafile);
-	if (access(schemapath, R_OK)) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Schema file '%s' not found in path '%s' when trying to validate '%s'", schemafile, oscap_path_to_schemas(), xmlfile);
-		goto cleanup;
-	}
-
-	parser_ctxt = xmlSchemaNewParserCtxt(schemapath);
-	if (parser_ctxt == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_XML, "Could not create parser context for validation");
-		goto cleanup;
-	}
-
-	xmlSchemaSetParserStructuredErrors(parser_ctxt, oscap_xml_validity_handler, &context);
-
-	schema = xmlSchemaParse(parser_ctxt);
-	if (schema == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_XML, "Could not parse XML schema");
-		goto cleanup;
-	}
-
-	ctxt = xmlSchemaNewValidCtxt(schema);
-	if (ctxt == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_XML, "Could not create validation context");
-		goto cleanup;
-	}
-
-	xmlSchemaSetValidStructuredErrors(ctxt, oscap_xml_validity_handler, &context);
-
-	doc = xmlReadFile(xmlfile, NULL, 0);
-	if (!doc)
-		goto cleanup;
-
-	result = xmlSchemaValidateDoc(ctxt, doc);
-
-	/*
-	 * xmlSchemaValidateFile() returns "-1" if document is not well formed
-	 * thefore we ignore libxml internal errors here and map return code to
-	 * either pass or fail.
-	 */
-	if (result != 0)
-		result = 1;
-	/* This would be nicer
-	 * if (result ==  -1)
-	 *	oscap_setxmlerr(xmlGetLastError());
-	*/
-
-cleanup:
-	if (doc) xmlFreeDoc(doc);
-	if (ctxt)        xmlSchemaFreeValidCtxt(ctxt);
-	if (schema)      xmlSchemaFree(schema);
-	if (parser_ctxt) xmlSchemaFreeParserCtxt(parser_ctxt);
-	oscap_free(schemapath);
-
-	return result;
-}
 
 struct oscap_schema_table_entry {
 	oscap_document_type_t doc_type;
