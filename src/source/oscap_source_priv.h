@@ -53,6 +53,14 @@ xmlTextReader *oscap_source_get_xmlTextReader(struct oscap_source *source);
  */
 xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source);
 
+/**
+ * Returns human readable description of oscap_source origin
+ * @memberof oscap_source
+ * @param source The oscap_source to get readable source from.
+ * @returns human readable description
+ */
+const char *oscap_source_readable_origin(const struct oscap_source *source);
+
 OSCAP_HIDDEN_END;
 
 #endif
