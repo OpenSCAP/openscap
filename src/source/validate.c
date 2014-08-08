@@ -37,7 +37,7 @@
 struct ctxt {
 	xml_reporter reporter;
 	void *arg;
-	void *user;
+	char *filename;
 };
 
 static void oscap_xml_validity_handler(void *user, xmlErrorPtr error)
@@ -72,7 +72,7 @@ static void oscap_xml_validity_handler(void *user, xmlErrorPtr error)
 
 	const char *file = error->file;
 	if (file == NULL)
-		file = context->user;
+		file = context->filename;
 
 	context->reporter(file, error->line, error->message, context->arg);
 }
