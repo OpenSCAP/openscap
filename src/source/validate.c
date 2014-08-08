@@ -30,6 +30,8 @@
 #include "common/_error.h"
 #include "common/util.h"
 #include "oscap.h"
+#include "oscap_source.h"
+#include "source/oscap_source_priv.h"
 #include "source/validate_priv.h"
 
 struct ctxt {
@@ -82,12 +84,14 @@ int oscap_validate_xml(const char *xmlfile, const char *schemafile, xml_reporter
 	xmlSchemaPtr schema = NULL;
 	xmlSchemaValidCtxtPtr ctxt = NULL;
 	xmlDocPtr doc = NULL;
-	struct ctxt context = { reporter, arg, (void*) xmlfile };
 
 	if (xmlfile == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "'xmlfile' == NULL");
 		return -1;
 	}
+
+	struct oscap_source *source = oscap_source_new_from_file(xmlfile);
+	struct ctxt context = { reporter, arg, (void*) oscap_source_readable_origin(source)};
 
 	if (schemafile == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "'schemafile' == NULL");
@@ -96,7 +100,8 @@ int oscap_validate_xml(const char *xmlfile, const char *schemafile, xml_reporter
 
 	char * schemapath = oscap_sprintf("%s%s%s", oscap_path_to_schemas(), "/", schemafile);
 	if (access(schemapath, R_OK)) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Schema file '%s' not found in path '%s' when trying to validate '%s'", schemafile, oscap_path_to_schemas(), xmlfile);
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Schema file '%s' not found in path '%s' when trying to validate '%s'",
+				schemafile, oscap_path_to_schemas(), oscap_source_readable_origin(source));
 		goto cleanup;
 	}
 
@@ -122,7 +127,7 @@ int oscap_validate_xml(const char *xmlfile, const char *schemafile, xml_reporter
 
 	xmlSchemaSetValidStructuredErrors(ctxt, oscap_xml_validity_handler, &context);
 
-	doc = xmlReadFile(xmlfile, NULL, 0);
+	doc = oscap_source_get_xmlDoc(source);
 	if (!doc)
 		goto cleanup;
 
@@ -141,14 +146,14 @@ int oscap_validate_xml(const char *xmlfile, const char *schemafile, xml_reporter
 	*/
 
 cleanup:
-	if (doc)
-		xmlFreeDoc(doc);
 	if (ctxt)
 		xmlSchemaFreeValidCtxt(ctxt);
 	if (schema)
 		xmlSchemaFree(schema);
 	if (parser_ctxt)
 		xmlSchemaFreeParserCtxt(parser_ctxt);
+	if (source)
+		oscap_source_free(source);
 	oscap_free(schemapath);
 
 	return result;
