@@ -208,7 +208,10 @@ int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, 
 			continue;
 
 		/* validate */
-		return oscap_validate_xml(xmlfile, entry->schema_path, reporter, arg);
+		struct oscap_source *source = oscap_source_new_from_file(xmlfile);
+		int ret = oscap_validate_xml(source, entry->schema_path, reporter, arg);
+		oscap_source_free(source);
+		return ret;
 	}
 
 	/* schema not found */

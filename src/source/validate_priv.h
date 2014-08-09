@@ -27,6 +27,7 @@
 
 #include "common/public/oscap.h"
 #include "common/util.h"
+#include "source/public/oscap_source.h"
 
 OSCAP_HIDDEN_START;
 
@@ -35,7 +36,7 @@ OSCAP_HIDDEN_START;
  * @return 0 on pass; -1 error; 1 fail
  */
 
-int oscap_validate_xml(const char *xmlfile, const char *schemafile, xml_reporter reporter, void *arg);
+int oscap_validate_xml(struct oscap_source *source, const char *schemafile, xml_reporter reporter, void *arg);
 
 OSCAP_HIDDEN_END;
 #endif

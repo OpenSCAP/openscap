@@ -77,7 +77,7 @@ static void oscap_xml_validity_handler(void *user, xmlErrorPtr error)
 	context->reporter(file, error->line, error->message, context->arg);
 }
 
-int oscap_validate_xml(const char *xmlfile, const char *schemafile, xml_reporter reporter, void *arg)
+int oscap_validate_xml(struct oscap_source *source, const char *schemafile, xml_reporter reporter, void *arg)
 {
 	int result = -1;
 	xmlSchemaParserCtxtPtr parser_ctxt = NULL;
@@ -85,12 +85,6 @@ int oscap_validate_xml(const char *xmlfile, const char *schemafile, xml_reporter
 	xmlSchemaValidCtxtPtr ctxt = NULL;
 	xmlDocPtr doc = NULL;
 
-	if (xmlfile == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "'xmlfile' == NULL");
-		return -1;
-	}
-
-	struct oscap_source *source = oscap_source_new_from_file(xmlfile);
 	struct ctxt context = { reporter, arg, (void*) oscap_source_readable_origin(source)};
 
 	if (schemafile == NULL) {
@@ -152,8 +146,6 @@ cleanup:
 		xmlSchemaFree(schema);
 	if (parser_ctxt)
 		xmlSchemaFreeParserCtxt(parser_ctxt);
-	if (source)
-		oscap_source_free(source);
 	oscap_free(schemapath);
 
 	return result;
