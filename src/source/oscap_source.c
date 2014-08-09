@@ -33,9 +33,12 @@
 #include "common/_error.h"
 #include "common/public/oscap.h"
 #include "common/util.h"
+#include "CPE/public/cpe_lang.h"
 #include "doc_type_priv.h"
 #include "oscap_source.h"
 #include "oscap_source_priv.h"
+#include "OVAL/public/oval_definitions.h"
+#include "XCCDF/public/xccdf_benchmark.h"
 
 typedef enum oscap_source_type {
 	OSCAP_SRC_FROM_USER_XML_FILE = 1,               ///< The source originated from XML supplied by user
@@ -49,6 +52,7 @@ struct oscap_source {
 	oscap_document_type_t scap_type;                ///< Type of SCAP document (XCCDF, OVAL, ...)
         struct {
 		oscap_source_type_t type;               ///< Internal type of the oscap_source
+		char *version;                          ///< Version of the particular document type
 		const char *filepath;                   ///< Filepath (if originated from file)
 	} origin;                                       ///
 	struct {
@@ -78,6 +82,7 @@ void oscap_source_free(struct oscap_source *source)
 		if (source->xml.doc != NULL) {
 			xmlFreeDoc(source->xml.doc);
 		}
+		oscap_free(source->origin.version);
 		oscap_free(source);
 	}
 }
@@ -140,4 +145,47 @@ xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
 		}
 	}
 	return source->xml.doc;
+}
+
+const char *oscap_source_get_schema_version(struct oscap_source *source)
+{
+	if (source->origin.version == NULL) {
+		switch (oscap_source_get_scap_type(source)) {
+			case OSCAP_DOCUMENT_SDS:
+				source->origin.version = strdup("1.2");
+				break;
+			case OSCAP_DOCUMENT_ARF:
+				source->origin.version = strdup("1.1");
+			case OSCAP_DOCUMENT_OVAL_DEFINITIONS:
+			case OSCAP_DOCUMENT_OVAL_VARIABLES:
+			case OSCAP_DOCUMENT_OVAL_DIRECTIVES:
+			case OSCAP_DOCUMENT_OVAL_SYSCHAR:
+			case OSCAP_DOCUMENT_OVAL_RESULTS:
+				source->origin.version = oval_determine_document_schema_version(
+					source->origin.filepath, oscap_source_get_scap_type(source));
+				break;
+			case OSCAP_DOCUMENT_XCCDF:
+			case OSCAP_DOCUMENT_XCCDF_TAILORING:
+				source->origin.version = xccdf_detect_version(source->origin.filepath);
+				break;
+			case OSCAP_DOCUMENT_CPE_DICTIONARY:
+				source->origin.version = cpe_dict_detect_version(source->origin.filepath);
+				break;
+			case OSCAP_DOCUMENT_CPE_LANGUAGE:
+				source->origin.version = cpe_lang_model_detect_version(source->origin.filepath);
+				break;
+			case OSCAP_DOCUMENT_CVE_FEED:
+				source->origin.version = strdup("2.0");
+				break;
+			case OSCAP_DOCUMENT_SCE_RESULT:
+				source->origin.version = strdup("1.0");
+				break;
+			default:
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not determine origin.version for document %s: Unknown type: %s",
+					oscap_source_readable_origin(source),
+					oscap_document_type_to_string(oscap_source_get_scap_type(source)));
+				break;
+		}
+	}
+	return source->origin.version;
 }

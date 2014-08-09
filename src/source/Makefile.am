@@ -13,6 +13,7 @@ liboscapsource_la_CPPFLAGS  = \
 	@xml2_CFLAGS@ @xslt_CFLAGS@ @exslt_CFLAGS@ \
 	-I$(srcdir)/public \
 	-I$(top_srcdir)/src \
+	-I$(top_srcdir)/src/CPE/public \
 	-I$(top_srcdir)/src/OVAL/probes/SEAP/public \
 	-I$(top_srcdir)/src/common/public
 
