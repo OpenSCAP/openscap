@@ -73,14 +73,11 @@ static void print_time(const char *file) {
 
 static int app_info(const struct oscap_action *action)
 {
-	oscap_document_type_t doc_type;
         int result = OSCAP_ERROR;
 
 	struct oscap_source *source = oscap_source_new_from_file(action->file);
-	if(oscap_determine_document_type(action->file, &doc_type))
-		goto cleanup;
 
-	switch (doc_type) {
+	switch (oscap_source_get_scap_type(source)) {
 	case OSCAP_DOCUMENT_OVAL_DEFINITIONS: {
 		printf("Document type: OVAL Definitions\n");
 		struct oval_definition_model *def_model = oval_definition_model_import_source(source);
@@ -396,7 +393,8 @@ static int app_info(const struct oscap_action *action)
 		// Currently, we do not have any SCE result file parsing capabilities.
 	break;
 	default:
-		printf("Document type not handled yet\n");
+		printf("Could not dermine document type\n");
+		goto cleanup;
 		break;
 	}
 
