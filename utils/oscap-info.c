@@ -76,15 +76,14 @@ static int app_info(const struct oscap_action *action)
 	oscap_document_type_t doc_type;
         int result = OSCAP_ERROR;
 
+	struct oscap_source *source = oscap_source_new_from_file(action->file);
 	if(oscap_determine_document_type(action->file, &doc_type))
 		goto cleanup;
 
 	switch (doc_type) {
 	case OSCAP_DOCUMENT_OVAL_DEFINITIONS: {
 		printf("Document type: OVAL Definitions\n");
-		struct oscap_source *source = oscap_source_new_from_file(action->file);
 		struct oval_definition_model *def_model = oval_definition_model_import_source(source);
-		oscap_source_free(source);
 		if(!def_model)
 			goto cleanup;
 		struct oval_generator *gen = oval_definition_model_get_generator(def_model);
@@ -96,9 +95,7 @@ static int app_info(const struct oscap_action *action)
 	break;
 	case OSCAP_DOCUMENT_OVAL_VARIABLES: {
 		printf("Document type: OVAL Variables\n");
-		struct oscap_source *source = oscap_source_new_from_file(action->file);
 		struct oval_variable_model *var_model = oval_variable_model_import_source(source);
-		oscap_source_free(source);
 		if(!var_model)
 			goto cleanup;
 		struct oval_generator *gen = oval_variable_model_get_generator(var_model);
@@ -111,9 +108,7 @@ static int app_info(const struct oscap_action *action)
 	case OSCAP_DOCUMENT_OVAL_DIRECTIVES: {
 		printf("Document type: OVAL Directives\n");
 		struct oval_directives_model *dir_model = oval_directives_model_new();
-		struct oscap_source *source = oscap_source_new_from_file(action->file);
 		int ret = oval_directives_model_import_source(dir_model, source);
-		oscap_source_free(source);
 		if(ret)
 			goto cleanup;
 		struct oval_generator *gen = oval_directives_model_get_generator(dir_model);
@@ -127,9 +122,7 @@ static int app_info(const struct oscap_action *action)
 		printf("Document type: OVAL System Characteristics\n");
 		struct oval_definition_model * def_model = oval_definition_model_new();
 		struct oval_syschar_model * sys_model = oval_syschar_model_new(def_model);
-		struct oscap_source *source = oscap_source_new_from_file(action->file);
 		int ret = oval_syschar_model_import_source(sys_model, source);
-		oscap_source_free(source);
 		if(ret)
 			goto cleanup;
 		struct oval_generator *gen = oval_syschar_model_get_generator(sys_model);
@@ -144,9 +137,7 @@ static int app_info(const struct oscap_action *action)
 		printf("Document type: OVAL Results\n");
 		struct oval_definition_model * def_model=oval_definition_model_new();
 		struct oval_results_model * res_model = oval_results_model_new(def_model,NULL);
-		struct oscap_source *source = oscap_source_new_from_file(action->file);
 		int ret = oval_results_model_import_source(res_model, source);
-		oscap_source_free(source);
 		if(ret)
 			goto cleanup;
 		struct oval_generator *gen = oval_results_model_get_generator(res_model);
@@ -412,6 +403,7 @@ static int app_info(const struct oscap_action *action)
 	result=OSCAP_OK;
 
 cleanup:
+	oscap_source_free(source);
 	oscap_print_error();
 
 	return result;
