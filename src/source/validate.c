@@ -78,7 +78,7 @@ static void oscap_xml_validity_handler(void *user, xmlErrorPtr error)
 	context->reporter(file, error->line, error->message, context->arg);
 }
 
-int oscap_validate_xml(struct oscap_source *source, const char *schemafile, xml_reporter reporter, void *arg)
+static inline int oscap_validate_xml(struct oscap_source *source, const char *schemafile, xml_reporter reporter, void *arg)
 {
 	int result = -1;
 	xmlSchemaParserCtxtPtr parser_ctxt = NULL;
