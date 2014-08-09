@@ -528,7 +528,7 @@ int app_ds_rds_validate(const struct oscap_action *action) {
 	if ((valret = oscap_validate_document(action->ds_action->file, OSCAP_DOCUMENT_ARF, "1.1", reporter, (void*) action)))
 	{
 		if (valret == 1)
-			validation_failed(action->ds_action->file, OSCAP_DOCUMENT_ARF, "1.2");
+			validation_failed(action->ds_action->file, OSCAP_DOCUMENT_ARF, "1.1");
 
 		ret = OSCAP_ERROR;
 		goto cleanup;
