@@ -25,6 +25,7 @@
 #include <libxml/parser.h>
 #include <libxml/xmlerror.h>
 #include <libxml/xmlschemas.h>
+#include <string.h>
 #include <unistd.h>
 
 #include "common/_error.h"
@@ -149,4 +150,86 @@ cleanup:
 	oscap_free(schemapath);
 
 	return result;
+}
+
+// TODO do not hardcode versions... (duplicities)
+// patch version fragments are intentionally left out, we strive to ship
+// schemas of the newest patch versions of that particular minor.major version
+// todo: ugly
+// FIXME: we ship OCIL schemes but they aren't supported in openscap
+//        and aren't in this list
+struct oscap_schema_table_entry OSCAP_SCHEMAS_TABLE[] = {
+	{OSCAP_DOCUMENT_OVAL_DEFINITIONS,	"5.3",	"oval/5.3/oval-definitions-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_DEFINITIONS,	"5.4",	"oval/5.4/oval-definitions-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_DEFINITIONS,	"5.5",	"oval/5.5/oval-definitions-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_DEFINITIONS,	"5.6",	"oval/5.6/oval-definitions-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_DEFINITIONS,	"5.7",	"oval/5.7/oval-definitions-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_DEFINITIONS,	"5.8",	"oval/5.8/oval-definitions-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_DEFINITIONS,	"5.9",	"oval/5.9/oval-definitions-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_DEFINITIONS,	"5.10",	"oval/5.10/oval-definitions-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_DEFINITIONS,	"5.10.1","oval/5.10.1/oval-definitions-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_DIRECTIVES,	"5.8",	"oval/5.8/oval-directives-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_DIRECTIVES,	"5.9",	"oval/5.9/oval-directives-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_DIRECTIVES,	"5.10",	"oval/5.10/oval-directives-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_DIRECTIVES,	"5.10.1","oval/5.10.1/oval-directives-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_RESULTS,		"5.3",	"oval/5.3/oval-results-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_RESULTS,		"5.4",	"oval/5.4/oval-results-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_RESULTS,		"5.5",	"oval/5.5/oval-results-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_RESULTS,		"5.6",	"oval/5.6/oval-results-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_RESULTS,		"5.7",	"oval/5.7/oval-results-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_RESULTS,		"5.8",	"oval/5.8/oval-results-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_RESULTS,		"5.9",	"oval/5.9/oval-results-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_RESULTS,		"5.10",	"oval/5.10/oval-results-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_RESULTS,		"5.10.1","oval/5.10.1/oval-results-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_SYSCHAR,		"5.3",	"oval/5.3/oval-system-characteristics-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_SYSCHAR,		"5.4",	"oval/5.4/oval-system-characteristics-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_SYSCHAR,		"5.5",	"oval/5.5/oval-system-characteristics-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_SYSCHAR,		"5.6",	"oval/5.6/oval-system-characteristics-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_SYSCHAR,		"5.7",	"oval/5.7/oval-system-characteristics-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_SYSCHAR,		"5.8",	"oval/5.8/oval-system-characteristics-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_SYSCHAR,		"5.9",	"oval/5.9/oval-system-characteristics-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_SYSCHAR,		"5.10",	"oval/5.10/oval-system-characteristics-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_SYSCHAR,		"5.10.1","oval/5.10.1/oval-system-characteristics-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_VARIABLES,		"5.3",	"oval/5.3/oval-variables-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_VARIABLES,		"5.4",	"oval/5.4/oval-variables-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_VARIABLES,		"5.5",	"oval/5.5/oval-variables-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_VARIABLES,		"5.6",	"oval/5.6/oval-variables-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_VARIABLES,		"5.7",	"oval/5.7/oval-variables-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_VARIABLES,		"5.8",	"oval/5.8/oval-variables-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_VARIABLES,		"5.9",	"oval/5.9/oval-variables-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_VARIABLES,		"5.10",	"oval/5.10/oval-variables-schema.xsd"},
+	{OSCAP_DOCUMENT_OVAL_VARIABLES,		"5.10.1","oval/5.10.1/oval-variables-schema.xsd"},
+	{OSCAP_DOCUMENT_SCE_RESULT,		"1.0",	"sce/1.0/sce-result-schema.xsd"},
+	{OSCAP_DOCUMENT_XCCDF,			"1.2",	"xccdf/1.2/xccdf_1.2.xsd"},
+	{OSCAP_DOCUMENT_XCCDF,			"1.1",	"xccdf/1.1/xccdf-schema.xsd"},
+	{OSCAP_DOCUMENT_XCCDF_TAILORING,	"1.2",	"xccdf/1.2/xccdf_1.2.xsd"},
+	{OSCAP_DOCUMENT_XCCDF_TAILORING,	"1.1",	"xccdf/1.1-tailoring/xccdf-1.1-tailoring.xsd"}, // unofficial openscap extension!
+	{OSCAP_DOCUMENT_SDS,                "1.2",  "sds/1.2/scap-source-data-stream_1.2.xsd"},
+	{OSCAP_DOCUMENT_ARF,                "1.1",  "arf/1.1/asset-reporting-format_1.1.0.xsd"},
+	{OSCAP_DOCUMENT_CPE_DICTIONARY,		"2.0", "cpe/2.0/cpe-dictionary_2.0.xsd"},
+	{OSCAP_DOCUMENT_CPE_DICTIONARY,		"2.1", "cpe/2.1/cpe-dictionary_2.1.xsd"},
+	{OSCAP_DOCUMENT_CPE_DICTIONARY,		"2.2", "cpe/2.2/cpe-dictionary_2.2.xsd"},
+	{OSCAP_DOCUMENT_CPE_DICTIONARY,		"2.3", "cpe/2.3/cpe-dictionary_2.3.xsd"},
+	{OSCAP_DOCUMENT_CPE_LANGUAGE,		"2.3", "cpe/2.3/cpe-language_2.3.xsd"},
+	{OSCAP_DOCUMENT_CVE_FEED,		"2.0", "cve/nvd-cve-feed_2.0.xsd"},
+	{0, NULL, NULL }
+};
+
+int oscap_source_validate_priv(struct oscap_source *source, oscap_document_type_t doc_type, const char *version, xml_reporter reporter, void *user)
+{
+	if (version == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not determine version for file: %s", oscap_source_readable_origin(source));
+		return -1;
+	}
+
+	/* find a right schema file */
+	for (struct oscap_schema_table_entry *entry = OSCAP_SCHEMAS_TABLE; entry->doc_type != 0; ++entry) {
+		if (entry->doc_type != doc_type || strcmp(entry->schema_version, version))
+			continue;
+
+		return oscap_validate_xml(source, entry->schema_path, reporter, user);
+	}
+
+	oscap_seterr(OSCAP_EFAMILY_OSCAP, "Schema file not found when trying to validate '%s'", oscap_source_readable_origin(source));
+	return -1;
 }

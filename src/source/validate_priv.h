@@ -31,12 +31,20 @@
 
 OSCAP_HIDDEN_START;
 
+struct oscap_schema_table_entry {
+	oscap_document_type_t doc_type;
+	const char *schema_version;
+	const char *schema_path;
+};
+
 /**
  * validate given XML file
  * @return 0 on pass; -1 error; 1 fail
  */
 
 int oscap_validate_xml(struct oscap_source *source, const char *schemafile, xml_reporter reporter, void *arg);
+
+int oscap_source_validate_priv(struct oscap_source *source, oscap_document_type_t doc_type, const char *version, xml_reporter reporter, void *user);
 
 OSCAP_HIDDEN_END;
 #endif
