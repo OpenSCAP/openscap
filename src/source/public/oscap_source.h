@@ -77,4 +77,12 @@ void oscap_source_free(struct oscap_source *source);
  */
 oscap_document_type_t oscap_source_get_scap_type(struct oscap_source *source);
 
+/**
+ * Validate the SCAP document against particular XML schema definition.
+ * @memberof oscap_source
+ * @param source The oscap_source to validate
+ * @returns 0 on pass; 1 on fail, and -1 on internall error
+ */
+int oscap_source_validate(struct oscap_source *source, xml_reporter reporter, void *user);
+
 #endif

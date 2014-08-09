@@ -38,6 +38,7 @@
 #include "oscap_source.h"
 #include "oscap_source_priv.h"
 #include "OVAL/public/oval_definitions.h"
+#include "source/validate_priv.h"
 #include "XCCDF/public/xccdf_benchmark.h"
 
 typedef enum oscap_source_type {
@@ -145,6 +146,12 @@ xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
 		}
 	}
 	return source->xml.doc;
+}
+
+int oscap_source_validate(struct oscap_source *source, xml_reporter reporter, void *user)
+{
+	return oscap_source_validate_priv(source, oscap_source_get_scap_type(source),
+			oscap_source_get_schema_version(source), reporter, user);
 }
 
 const char *oscap_source_get_schema_version(struct oscap_source *source)
