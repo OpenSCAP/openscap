@@ -48,32 +48,10 @@ logo to the HTML report / guide header.
 <xsl:template name="xccdf-report-header">
     <nav class="navbar navbar-default" role="navigation">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-3">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
             <a class="navbar-brand" href="#">
                 <xsl:call-template name="xccdf-branding-logo"/>
             </a>
             <div style="padding-left: 270px !important"><h1>Evaluation Report</h1></div>
-        </div>
-        <div class="collapse navbar-collapse navbar-collapse-3">
-            <ul class="nav navbar-nav">
-                <li>
-                    <a href="#characteristics">Characteristics</a>
-                </li>
-                <li>
-                    <a href="#compliance-and-scoring">Compliance and Scoring</a>
-                </li>
-                <li>
-                    <a href="#rule-overview">Rule Overview</a>
-                </li>
-                <li>
-                    <a href="#result-details">Result Details</a>
-                </li>
-            </ul>
         </div>
     </nav>
 </xsl:template>
@@ -91,23 +69,10 @@ logo to the HTML report / guide header.
 <xsl:template name="xccdf-guide-header">
     <nav class="navbar navbar-default" role="navigation">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-3">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
             <a class="navbar-brand" href="#">
                 <xsl:call-template name="xccdf-branding-logo"/>
             </a>
             <div style="padding-left: 270px !important"><h1>Security Guide</h1></div>
-        </div>
-        <div class="collapse navbar-collapse navbar-collapse-3">
-            <ul class="nav navbar-nav">
-                <li>
-                    <a href="#characteristics">Characteristics</a>
-                </li>
-            </ul>
         </div>
     </nav>
 </xsl:template>
