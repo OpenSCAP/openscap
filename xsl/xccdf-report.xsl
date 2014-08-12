@@ -244,7 +244,8 @@ Authors:
         <xsl:variable name="passed_rules_count" select="count($testresult/cdf:rule-result[cdf:result/text() = 'pass' or cdf:result/text() = 'fixed'])"/>
         <xsl:variable name="failed_rules_count" select="count($testresult/cdf:rule-result[cdf:result/text() = 'fail'])"/>
 
-        <div class="progress" title="breakdown by rule result">
+        <h3>Rule result breakdown</h3>
+        <div class="progress">
             <div class="progress-bar progress-bar-success" style="width: {$passed_rules_count div ($total_rules_count - $ignored_rules_count) * 100}%">
                 <xsl:value-of select="$passed_rules_count"/> passed
             </div>
@@ -261,7 +262,8 @@ Authors:
         <xsl:variable name="failed_rules_low_severity" select="count($testresult/cdf:rule-result[(cdf:result/text() = 'fail') and (@severity = 'low')])"/>
         <xsl:variable name="failed_rules_other_severity" select="$failed_rules_count - $failed_rules_high_severity - $failed_rules_medium_severity - $failed_rules_low_severity"/>
 
-        <div class="progress" title="failed rules breakdown by severity">
+        <h3>Failed rules by severity breakdown</h3>
+        <div class="progress">
             <div class="progress-bar progress-bar-danger" style="width: {$failed_rules_high_severity div $failed_rules_count * 100}%">
                 <xsl:value-of select="$failed_rules_high_severity"/> high
             </div>
@@ -276,6 +278,7 @@ Authors:
             </div>
         </div>
 
+        <h3>Score</h3>
         <table class="table table-striped table-bordered">
             <thead>
                 <tr>
