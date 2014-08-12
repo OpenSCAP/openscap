@@ -37,7 +37,7 @@ Authors:
 <xsl:include href="xccdf-resources.xsl" />
 <xsl:include href="xccdf-share.xsl" />
 
-<xsl:include href="oval-report.xsl" />
+<xsl:include href="xccdf-report-oval-details.xsl" />
 
 <xsl:output
     method="html"

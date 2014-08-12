@@ -1,11 +1,13 @@
 xsldir = $(pkgdatadir)/xsl
 
 xsl_DATA =   xccdf-share.xsl \
+			 \
              xccdf-guide.xsl \
+			 \
              xccdf-report.xsl \
+             xccdf-report-oval-details.xsl \
              \
              oval-results-report.xsl \
-             oval-report.xsl \
              \
              fix.xsl \
              fixtpl-bash.xml \
@@ -14,11 +16,13 @@ xsl_DATA =   xccdf-share.xsl \
              xccdf_1.1_remove_dangling_sub.xsl
 
 EXTRA_DIST = xccdf-share.xsl \
+			 \
              xccdf-guide.xsl \
+			 \
              xccdf-report.xsl \
+             xccdf-report-oval-details.xsl \
              \
              oval-results-report.xsl \
-             oval-report.xsl \
              \
              fix.xsl \
              fixtpl-bash.xml \
