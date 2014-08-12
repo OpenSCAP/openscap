@@ -37,6 +37,8 @@ Authors:
 <xsl:include href="xccdf-resources.xsl" />
 <xsl:include href="xccdf-share.xsl" />
 
+<xsl:include href="oval-report.xsl" />
+
 <xsl:output
     method="html"
     encoding="utf-8"
@@ -490,6 +492,78 @@ Authors:
     </div>
 </xsl:template>
 
+<xsl:template name="check-system-details-oval5">
+    <xsl:param name="check"/>
+    <xsl:param name="oval-tmpl"/>
+
+    <xsl:variable name="filename">
+        <xsl:choose>
+            <xsl:when test='contains($oval-tmpl, "%")'><xsl:value-of select='concat(substring-before($oval-tmpl, "%"), $check/cdf:check-content-ref/@href, substring-after($oval-tmpl, "%"))'/></xsl:when>
+            <xsl:otherwise><xsl:value-of select='$oval-tmpl'/></xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+
+    <xsl:if test="$filename != ''">
+        OVAL details (from "<xsl:value-of select="$filename"/>"):
+        <xsl:apply-templates select="document($filename)/ovalres:oval_results" mode="brief">
+            <xsl:with-param name='definition-id' select='$check/cdf:check-content-ref/@name'/>
+        </xsl:apply-templates>
+    </xsl:if>
+</xsl:template>
+
+<xsl:template name="check-system-details-sce">
+    <xsl:param name="check"/>
+    <xsl:param name="sce-tmpl"/>
+
+    <xsl:choose>
+        <xsl:when test="$check/cdf:check-import[@import-name = 'stdout']">
+            SCE stdout (from check-import):
+            <pre><code>
+                <xsl:value-of select="$check/cdf:check-import[@import-name = 'stdout']/text()"/>
+            </code></pre>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:variable name="filename">
+                <xsl:choose>
+                    <xsl:when test='contains($sce-tmpl, "%")'><xsl:value-of select='concat(substring-before($sce-tmpl, "%"), $check/@href, substring-after($sce-tmpl, "%"))'/></xsl:when>
+                    <xsl:otherwise><xsl:value-of select='$sce-tmpl'/></xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
+
+            <xsl:if test="$filename != ''">
+                SCE stdout (from "<xsl:value-of select="$filename"/>"):
+                <pre><code>
+                    <xsl:value-of select="document($filename)/sceres:sce_results/sceres:stdout/text()"/>
+                </code></pre>
+            </xsl:if>
+        </xsl:otherwise>
+    </xsl:choose>
+</xsl:template>
+
+<xsl:template name="check-system-details">
+    <xsl:param name="check"/>
+    <xsl:param name="oval-tmpl"/>
+    <xsl:param name="sce-tmpl"/>
+
+    <xsl:choose>
+        <xsl:when test="$check/@system = 'http://oval.mitre.org/XMLSchema/oval-definitions-5'">
+            <xsl:call-template name="check-system-details-oval5">
+                <xsl:with-param name="check" select="$check"/>
+                <xsl:with-param name="oval-tmpl" select="$oval-tmpl"/>
+            </xsl:call-template>
+        </xsl:when>
+        <xsl:when test="$check/@system = 'http://open-scap.org/page/SCE'">
+            <xsl:call-template name="check-system-details-sce">
+                <xsl:with-param name="check" select="$check"/>
+                <xsl:with-param name="sce-tmpl" select="$sce-tmpl"/>
+            </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+        </xsl:otherwise>
+    </xsl:choose>
+
+</xsl:template>
+
 <xsl:template name="result-details-leaf">
     <xsl:param name="testresult"/>
     <xsl:param name="item"/>
@@ -536,6 +610,13 @@ Authors:
                         <p>
                             <xsl:apply-templates mode="sub" select="$item/cdf:description"/>
                         </p>
+                    </td></tr>
+                    <tr><td colspan="2">
+                        <xsl:call-template name="check-system-details">
+                            <xsl:with-param name="check" select="$ruleresult/cdf:check"/>
+                            <xsl:with-param name="oval-tmpl" select="$oval-tmpl"/>
+                            <xsl:with-param name="sce-tmpl" select="$sce-tmpl"/>
+                        </xsl:call-template>
                     </td></tr>
                     <xsl:if test="$item/cdf:fix">
                         <tr><td colspan="2" class="remediation">
