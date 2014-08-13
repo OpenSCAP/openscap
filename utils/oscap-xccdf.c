@@ -232,7 +232,7 @@ static struct oscap_module XCCDF_GEN_GUIDE = {
         "   --output <file>\r\t\t\t\t - Write the document into file.\n"
         "   --hide-profile-info\r\t\t\t\t - Do not output additional information about selected profile.\n",
     .opt_parser = getopt_xccdf,
-    .user = "security-guide.xsl",
+    .user = "xccdf-guide.xsl",
     .func = app_xccdf_xslt
 };
 
