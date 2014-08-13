@@ -41,12 +41,6 @@ stylesheet only.
 
 <xsl:include href="xccdf-report-impl.xsl" />
 
-<xsl:output
-    method="html"
-    encoding="utf-8"
-    indent="no"
-    omit-xml-declaration="yes"/>
-
 <!-- parameters -->
 <xsl:param name="testresult_id"/>
 <xsl:param name="benchmark_id"/>
