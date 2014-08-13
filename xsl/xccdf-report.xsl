@@ -49,6 +49,7 @@ stylesheet only.
 
 <!-- parameters -->
 <xsl:param name="testresult_id"/>
+<xsl:param name="benchmark_id"/>
 
 <!-- OVAL and SCE result parameters -->
 <xsl:param name='pwd'/>
@@ -56,19 +57,19 @@ stylesheet only.
 <xsl:param name='sce-template'/>
 
 <xsl:variable name='oval-tmpl'>
-  <xsl:choose>
-    <xsl:when test='not($oval-template)' />
-    <xsl:when test='substring($oval-template, 1, 1) = "/"'><xsl:value-of select='$oval-template'/></xsl:when>
-    <xsl:otherwise><xsl:value-of select='concat($pwd, "/", $oval-template)'/></xsl:otherwise>
-  </xsl:choose>
+    <xsl:choose>
+        <xsl:when test='not($oval-template)' />
+        <xsl:when test='substring($oval-template, 1, 1) = "/"'><xsl:value-of select='$oval-template'/></xsl:when>
+        <xsl:otherwise><xsl:value-of select='concat($pwd, "/", $oval-template)'/></xsl:otherwise>
+    </xsl:choose>
 </xsl:variable>
 
 <xsl:variable name='sce-tmpl'>
-  <xsl:choose>
-    <xsl:when test='not($sce-template)' />
-    <xsl:when test='substring($sce-template, 1, 1) = "/"'><xsl:value-of select='$sce-template'/></xsl:when>
-    <xsl:otherwise><xsl:value-of select='concat($pwd, "/", $sce-template)'/></xsl:otherwise>
-  </xsl:choose>
+    <xsl:choose>
+        <xsl:when test='not($sce-template)' />
+        <xsl:when test='substring($sce-template, 1, 1) = "/"'><xsl:value-of select='$sce-template'/></xsl:when>
+        <xsl:otherwise><xsl:value-of select='concat($pwd, "/", $sce-template)'/></xsl:otherwise>
+    </xsl:choose>
 </xsl:variable>
 
 <!-- keys -->
@@ -86,9 +87,9 @@ stylesheet only.
         </s:times>
     </xsl:variable>
 
-    <xsl:variable name='last_test_time' select='exsl:node-set($end_times)/s:times/s:t[1]/@t'/>
+    <xsl:variable name="last_test_time" select="exsl:node-set($end_times)/s:times/s:t[1]/@t"/>
 
-    <xsl:variable name='final_result_id'>
+    <xsl:variable name="final_result_id">
         <xsl:choose>
             <xsl:when test="$testresult_id">
                 <xsl:value-of select="$testresult_id"/>
@@ -99,25 +100,48 @@ stylesheet only.
         </xsl:choose>
     </xsl:variable>
 
+    <xsl:variable name="final_benchmark_id">
+        <xsl:choose>
+            <xsl:when test="$benchmark_id">
+                <xsl:value-of select="$benchmark_id"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="//cdf:TestResult[@id=$final_result_id][last()]/cdf:benchmark/@id"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+
     <xsl:variable name="testresult" select="//cdf:TestResult[@id=$final_result_id]"/>
-    <!-- TODO: TEMPORARY! Only works in trivial cases. -->
-    <xsl:variable name="benchmark" select="/cdf:Benchmark"/>
+    <xsl:variable name="benchmark" select="//cdf:Benchmark[@id=$final_benchmark_id]"/>
 
     <xsl:choose>
         <xsl:when test="$testresult">
             <xsl:message>TestResult ID: <xsl:value-of select="$final_result_id"/></xsl:message>
-            <xsl:call-template name="generate-report">
-                <xsl:with-param name="testresult" select="$testresult"/>
-                <xsl:with-param name="benchmark" select="$benchmark"/>
-            </xsl:call-template>
         </xsl:when>
         <xsl:when test="$testresult_id">
-            <xsl:message terminate="yes">No such result exists.</xsl:message>
+            <xsl:message terminate="yes">No such cdf:TestResult exists (with ID = "<xsl:value-of select="$testresult_id"/>")</xsl:message>
         </xsl:when>
         <xsl:otherwise>
-            <xsl:message terminate="yes">No result ID specified.</xsl:message>
+            <xsl:message terminate="yes">No cdf:TestResult ID specified and no suitable candidate was autodetected.</xsl:message>
         </xsl:otherwise>
     </xsl:choose>
+
+    <xsl:choose>
+        <xsl:when test="$benchmark">
+            <xsl:message>Benchmark ID: <xsl:value-of select="$final_benchmark_id"/></xsl:message>
+        </xsl:when>
+        <xsl:when test="$benchmark_id">
+            <xsl:message terminate="yes">No such cdf:Benchmark exists (with ID = "<xsl:value-of select="$benchmark_id"/>")</xsl:message>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:message terminate="yes">No cdf:Benchmark ID specified and no suitable candidate was autodetected.</xsl:message>
+        </xsl:otherwise>
+    </xsl:choose>
+
+    <xsl:call-template name="generate-report">
+        <xsl:with-param name="testresult" select="$testresult"/>
+        <xsl:with-param name="benchmark" select="$benchmark"/>
+    </xsl:call-template>
 </xsl:template>
 
 </xsl:stylesheet>
