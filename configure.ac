@@ -1032,12 +1032,20 @@ AC_ARG_ENABLE([cce],
      esac],[cce=no])
 
 AC_ARG_ENABLE([python],
-     [AC_HELP_STRING([--enable-python], [enable compilation of python bindings (default=yes)])],
+     [AC_HELP_STRING([--enable-python], [enable compilation of python2 bindings (default=yes)])],
      [case "${enableval}" in
        yes) python_bind=yes ;;
        no)  python_bind=no  ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-python]) ;;
      esac],[python_bind=yes])
+
+AC_ARG_ENABLE([python3],
+	[AC_HELP_STRING([--enable-python3], [enable compilation of python3 bindings (default=yes)])],
+	[case "${enableval}" in
+		yes) python3_bind=yes ;;
+		no) python3_bind=no ;;
+		*) AC_MSG_ERROR([bad value ${enableval} for --enable-python3]);;
+	esac],[python3_bind=yes])
 
 AC_ARG_ENABLE([perl],
      [AC_HELP_STRING([--enable-perl], [enable compilation of perl bindings (default=no)])],
@@ -1182,6 +1190,32 @@ if test "x${perl_bind}" = xyes; then
 	CPPFLAGS="$save_CPPFLAGS"
 fi
 
+# (AM_PATH_PYTHON) cannot be used for multiple Python version at once
+if test "x${python3_bind}" = xyes; then
+	AC_PATH_PROG([PYTHON3], [python3])
+	AC_PATH_PROG([PYTHON3_CONFIG], [python3-config], [no])
+		[if test "$PYTHON3_CONFIG" = "no"]
+		[then]
+			[echo "The python3-config program was not found in the search path. Please ensure"]
+			[echo "that it is installed and its directory is included in the search path."]
+			[echo "Then run configure again before attempting to build OpenSCAP."]
+			[exit 1]
+		[fi]
+	PYTHON3_CFLAGS=`python3-config --cflags 2> /dev/null`
+	PYTHON3_LIBS=`python3-config --libs 2> /dev/null`
+	PYTHON3_INCLUDES=`python3-config --includes 2> /dev/null`
+	PYTHON3_DIR=`$PYTHON3 -c "import distutils.sysconfig; \
+		print(distutils.sysconfig.get_python_lib(0,0))"`
+	PYTHON3_EXECDIR=`$PYTHON3 -c "import distutils.sysconfig; \
+		print(distutils.sysconfig.get_python_lib(1,0))"`
+
+	AC_SUBST(PYTHON3_CFLAGS)
+	AC_SUBST(PYTHON3_LIBS)
+	AC_SUBST(PYTHON3_INCLUDES)
+	AC_SUBST(python3dir, $PYTHON3_DIR)
+	AC_SUBST(py3execdir, $PYTHON3_EXECDIR)
+fi
+
 AC_ARG_ENABLE([selinux_policy],
      [AC_HELP_STRING([--enable-selinux_policy], [enable SELinux policy (default=no)])],
      [case "${enableval}" in
@@ -1289,6 +1323,7 @@ AM_CONDITIONAL([WANT_SCE], test "$sce" = yes)
 AM_CONDITIONAL([WANT_UTIL_OSCAP], test "$util_oscap" = yes)
 AM_CONDITIONAL([WANT_UTIL_SCAP_AS_RPM], test "$util_scap_as_rpm" = yes)
 AM_CONDITIONAL([WANT_PYTHON], test "$python_bind" = yes)
+AM_CONDITIONAL([WANT_PYTHON3], test "$python3_bind" = yes)
 AM_CONDITIONAL([WANT_PERL], test "$perl_bind" = yes)
 AM_CONDITIONAL([ENABLE_VALGRIND_TESTS], test "$vgcheck" = yes)
 
@@ -1415,7 +1450,8 @@ echo "OpenSCAP will be compiled with the following settings:"
 echo
 echo "oscap tool:                    $util_oscap"
 echo "scap-as-rpm tool:              $util_scap_as_rpm"
-echo "python bindings enabled:       $python_bind"
+echo "python2 bindings enabled:      $python_bind"
+echo "python3 bindings enabled:      $python3_bind"
 echo "perl bindings enabled:         $perl_bind"
 echo "use POSIX regex:               $regex_posix"
 echo "SCE enabled                    $sce"
