@@ -31,11 +31,7 @@ Authors:
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:cdf="http://checklists.nist.gov/xccdf/1.2"
-    xmlns:exsl="http://exslt.org/common"
-    xmlns:s="http://open-scap.org/"
-    xmlns:ovalres="http://oval.mitre.org/XMLSchema/oval-results-5"
-    xmlns:sceres="http://open-scap.org/page/SCE_result_file"
-    exclude-result-prefixes="xsl cdf s exsl ovalres sceres">
+    exclude-result-prefixes="xsl cdf">
 
 <xsl:include href="xccdf-branding.xsl" />
 <xsl:include href="xccdf-resources.xsl" />
