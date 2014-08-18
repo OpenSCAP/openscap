@@ -36,6 +36,83 @@
 #include "common/list.h"
 #include <string.h>
 
+static char *get_property_by_unit_path(DBusConnection *conn, const char *unit_path, const char *property)
+{
+	DBusMessage *msg = NULL;
+	DBusPendingCall *pending = NULL;
+	char *ret = NULL;
+
+	msg = dbus_message_new_method_call(
+		"org.freedesktop.systemd1",
+		unit_path,
+		"org.freedesktop.DBus.Properties",
+		"Get"
+	);
+	if (msg == NULL) {
+		dI("Failed to create dbus_message via dbus_message_new_method_call!\n");
+		goto cleanup;
+	}
+
+	DBusMessageIter args, value_iter;
+
+	const char *interface = "org.freedesktop.systemd1.Unit";
+
+	dbus_message_iter_init_append(msg, &args);
+	if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &interface)) {
+		dI("Failed to append interface '%s' string parameter to dbus message!\n", interface);
+		goto cleanup;
+	}
+	if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &property)) {
+		dI("Failed to append property '%s' string parameter to dbus message!\n", property);
+		goto cleanup;
+	}
+
+	if (!dbus_connection_send_with_reply(conn, msg, &pending, -1)) {
+		dI("Failed to send message via dbus!\n");
+		goto cleanup;
+	}
+	if (pending == NULL) {
+		dI("Invalid dbus pending call!\n");
+		goto cleanup;
+	}
+
+	dbus_connection_flush(conn);
+	dbus_message_unref(msg); msg = NULL;
+
+	dbus_pending_call_block(pending);
+	msg = dbus_pending_call_steal_reply(pending);
+	if (msg == NULL) {
+		dI("Failed to steal dbus pending call reply.\n");
+		goto cleanup;
+	}
+	dbus_pending_call_unref(pending); pending = NULL;
+
+	if (!dbus_message_iter_init(msg, &args)) {
+		dI("Failed to initialize iterator over received dbus message.\n");
+		goto cleanup;
+	}
+
+	if (dbus_message_iter_get_arg_type(&args) != DBUS_TYPE_VARIANT)
+	{
+		dI("Expected variant argument in reply. Instead received: %s.\n", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&args)));
+		goto cleanup;
+	}
+
+	dbus_message_iter_recurse(&args, &value_iter);
+	ret = dbus_value_to_string(&value_iter);
+
+	dbus_message_unref(msg); msg = NULL;
+
+cleanup:
+	if (pending != NULL)
+		dbus_pending_call_unref(pending);
+
+	if (msg != NULL)
+		dbus_message_unref(msg);
+
+	return ret;
+}
+
 struct unit_callback_vars {
 	DBusConnection *dbus_conn;
 	probe_ctx *ctx;
