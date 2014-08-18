@@ -8,8 +8,8 @@
 . ${srcdir}/../../test_common.sh
 
 function test_probes_systemdunitproperty {
-
     probecheck "systemdunitproperty" || return 255
+    pidof systemd > /dev/null || return 255
 
     local DF="${srcdir}/test_probes_systemdunitproperty.xml"
     local RF="results.xml"

@@ -9,6 +9,7 @@
 
 function test_probes_systemdunitdependency {
     probecheck "systemdunitdependency" || return 255
+    pidof systemd > /dev/null || return 255
 
     local DF="${srcdir}/test_probes_systemdunitdependency.xml"
     local RF="results.xml"
