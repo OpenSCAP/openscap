@@ -53,7 +53,7 @@
       </criteria>
     </definition>
 
-    <definition class="compliance" version="1" id="oval:0:def:7"> <!-- comment="true" -->
+    <definition class="compliance" version="1" id="oval:0:def:7"> <!-- comment="false" -->
       <metadata><title></title><description></description></metadata>
       <criteria>
         <criterion test_ref="oval:0:tst:8"/>
@@ -78,36 +78,44 @@
       <object object_ref="oval:0:obj:2"/>
     </systemdunitproperty_test>
 
-    <systemdunitproperty_test id="oval:0:tst:3" check="at least one" check_existence="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="test if there's at least one service unit having LoadState equal to 'loaded' or 'not-found'" version="1">
+    <!-- test if there's at least one service unit having LoadState equal to 'loaded' or 'not-found' -->
+    <systemdunitproperty_test id="oval:0:tst:3" check="at least one" check_existence="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="true" version="1">
       <object object_ref="oval:0:obj:3"/>
       <state state_ref="oval:0:ste:1"/>
     </systemdunitproperty_test>
 
-    <systemdunitproperty_test id="oval:0:tst:4" check="at least one" check_existence="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="test if there's at least one service unit having LoadState equal to 'loaded' excluding those with LoadState 'not-found'" version="1">
+    <!-- test if there's at least one service unit having LoadState equal to 'loaded' excluding those with LoadState 'not-found' -->
+    <systemdunitproperty_test id="oval:0:tst:4" check="at least one" check_existence="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="true" version="1">
       <object object_ref="oval:0:obj:4"/>
       <state state_ref="oval:0:ste:1"/>
     </systemdunitproperty_test>
 
-    <systemdunitproperty_test id="oval:0:tst:5" check="at least one" check_existence="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="test if there's at least one service conflicting the shutdown.target" version="1">
+    <!-- test if there's at least one service conflicting the shutdown.target -->
+    <systemdunitproperty_test id="oval:0:tst:5" check="at least one" check_existence="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="true" version="1">
       <object object_ref="oval:0:obj:5"/>
       <state state_ref="oval:0:ste:3"/>
     </systemdunitproperty_test>
 
-    <systemdunitproperty_test id="oval:0:tst:6" check="all" check_existence="none_exist" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="check that there doesn't exist systemd-journald.service unit with valid Conflicts property" version="1">
+    <!-- check that there doesn't exist systemd-journald.service unit with valid Conflicts property -->
+    <systemdunitproperty_test id="oval:0:tst:6" check="all" check_existence="none_exist" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="true" version="1">
       <object object_ref="oval:0:obj:6"/>
     </systemdunitproperty_test>
 
-    <systemdunitproperty_test id="oval:0:tst:7" check="all" check_existence="at_least_one_exists" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="check if there is at least one systemd-journald.service unit it has value of Conflicts property equal to empty string" version="1">
+    <!-- check if there is at least one systemd-journald.service unit it has value of Conflicts property equal to empty string -->
+    <systemdunitproperty_test id="oval:0:tst:7" check="all" check_existence="at_least_one_exists" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="false" version="1">
       <object object_ref="oval:0:obj:6"/>
       <state state_ref="oval:0:ste:4"/>
     </systemdunitproperty_test>
 
-    <systemdunitproperty_test id="oval:0:tst:8" check="all" check_existence="at_least_one_exists" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="check if default.target unit has value of UnitFileState property (case-insensitively) equal to 'enabled'" version="1">
+    <!-- check if abcdefghijklmnopqrstuvwxyz.target unit has value of UnitFileState property (case-insensitively) equal to 'enabled' -->
+    <!-- made up unit name, should fail -->
+    <systemdunitproperty_test id="oval:0:tst:8" check="all" check_existence="at_least_one_exists" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="false" version="1">
       <object object_ref="oval:0:obj:7"/>
       <state state_ref="oval:0:ste:5"/>
     </systemdunitproperty_test>
 
-    <variable_test id="oval:0:tst:9" check="all" check_existence="at_least_one_exists" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" comment="check if sockets.target unit has two or more values of Wants property" version="1">
+    <!-- check if sockets.target unit has two or more values of Wants property -->
+    <variable_test id="oval:0:tst:9" check="all" check_existence="at_least_one_exists" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" comment="true" version="1">
       <object object_ref="oval:0:obj:8"/>
       <state state_ref="oval:0:ste:6"/>
     </variable_test>
@@ -148,7 +156,7 @@
     </systemdunitproperty_object>
 
     <systemdunitproperty_object id="oval:0:obj:7" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-      <unit>default.target</unit>
+      <unit>abcdefghijklmnopqrstuvwxyz.target</unit>
       <property>UnitFileState</property>
     </systemdunitproperty_object>
 
