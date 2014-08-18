@@ -125,13 +125,13 @@
   <objects>
 
     <systemdunitproperty_object version="1" id="oval:0:obj:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-      <unit>boot.mount</unit>
+      <unit>-.mount</unit>
       <property>LoadState</property>
     </systemdunitproperty_object>
 
     <systemdunitproperty_object version="1" id="oval:0:obj:2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-      <unit>boot.mount</unit>
-      <property>Requires</property>
+      <unit>-.mount</unit>
+      <property>Wants</property>
     </systemdunitproperty_object>
 
     <systemdunitproperty_object id="oval:0:obj:3" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">

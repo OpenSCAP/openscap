@@ -54,7 +54,7 @@
   <objects>
 
     <systemdunitdependency_object version="1" id="oval:0:obj:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-      <unit>boot.mount</unit>
+      <unit>-.mount</unit>
     </systemdunitdependency_object>
 
     <systemdunitdependency_object id="oval:0:obj:2" comment="list of dependencies of sysinit.target" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
