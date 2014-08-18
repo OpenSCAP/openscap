@@ -112,8 +112,9 @@ function verify_results {
     ID=1
     while [ $ID -le $COUNT ]; do
 	
-	CON_ITEM=`grep "id=\"oval:1:${TYPE}:${ID}\"" $CONTENT`
-	RES_ITEM=`grep "${FULLTYPE}_id=\"oval:1:${TYPE}:${ID}\"" $RESULTS`	
+	CON_ITEM=`grep "id=\"oval:[[:digit:]]\+:${TYPE}:${ID}\"" $CONTENT`
+	RES_ITEM=`grep "${FULLTYPE}_id=\"oval:[[:digit:]]\+:${TYPE}:${ID}\"" $RESULTS`
+	OVAL_ID=`echo ${CON_ITEM} | grep -o "oval:[[:digit:]]\+:${TYPE}:${ID}"`
 	if (echo $RES_ITEM | grep "result=\"true\"") >/dev/null; then
 	    RES="TRUE"
 	elif (echo $RES_ITEM | grep "result=\"false\"" >/dev/null); then
@@ -131,7 +132,7 @@ function verify_results {
 	fi
 	
 	if [ ! $RES = $CMT ]; then
-	    echo "Result of oval:1:${TYPE}:${ID} should be ${CMT} and is ${RES}" 
+	    echo "Result of ${OVAL_ID} should be ${CMT} and is ${RES}"
 	    ret_val=$[$ret_val + 1]
 	fi
 	

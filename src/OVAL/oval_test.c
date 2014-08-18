@@ -363,7 +363,7 @@ int oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *con
 
 	char *id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
         if (id == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OVAL, "Foud test element without id attribute.");
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Found test element without id attribute.");
 		return -1;
 	}
 	struct oval_test *test = oval_definition_model_get_new_test(model, id);

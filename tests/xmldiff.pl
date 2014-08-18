@@ -26,6 +26,9 @@
 # Copyright (c) 2000 Kip Hampton. All rights reserved. This program is
 # free software; you can redistribute it and/or modify it under the same terms
 # as Perl itself.
+#
+# openscap changes:
+# 1) mpreisle - removed Digest::MD5 and Encode dependencies at the expense of performance
 
 package SemanticDiff;
 
@@ -388,10 +391,6 @@ package SemanticDiff::PathFinder::Obj;
 
 use strict;
 
-use Digest::MD5  qw(md5_base64);
-
-use Encode qw(encode_utf8);
-
 foreach my $accessor (qw(descendents char_accumulator doc
     opts xml_context PI_position_index))
 {
@@ -482,7 +481,10 @@ sub EndTag {
     }
     $text ||= 'o';
     
-    $self->doc()->{"$test_context"}->{TextChecksum} = md5_base64(encode_utf8("$text"));
+    # The following used to set TextChecksum to md5_base64 of utf8 encoded $text
+    # for performance reasons. Since we don't care about performance so much
+    # and want to avoid dependencies we just compare text character by character.
+    $self->doc()->{"$test_context"}->{TextChecksum} = $text;
     if ($self->opts()->{keepdata}) {
         $self->doc()->{"$test_context"}->{CData} = $text;
     }
