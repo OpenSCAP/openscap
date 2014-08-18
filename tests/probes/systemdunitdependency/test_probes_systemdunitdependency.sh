@@ -20,7 +20,7 @@ function test_probes_systemdunitdependency {
     $OSCAP oval eval --skip-valid --results $RF $DF
 
     if [ -f $RF ]; then
-        verify_results "def" $DF $RF 13 && verify_results "tst" $DF $RF 16
+        verify_results "def" $DF $RF 3 && verify_results "tst" $DF $RF 3
         ret_val=$?
     else
         ret_val=1
