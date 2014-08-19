@@ -413,7 +413,7 @@ static int oscap_apply_xslt_path(const char *xmlfile, const char *xsltfile,
 		}
 
 		if (strcmp(xsltfile, "xccdf-report.xsl") == 0 ||
-				strcmp(xsltfile, "fix.xsl") == 0 ||
+				strcmp(xsltfile, "legacy-fix.xsl") == 0 ||
 				strcmp(xsltfile, "xccdf-guide.xsl") == 0)
 			ns_workaround = true;
 	}

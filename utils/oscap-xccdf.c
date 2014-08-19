@@ -247,7 +247,7 @@ static struct oscap_module XCCDF_GEN_FIX = {
         "   --result-id <id>\r\t\t\t\t - Fixes will be generated for failed rule-results of the specified TestResult.\n"
         "   --template <id|filename>\r\t\t\t\t - Fix template. (default: bash)\n",
     .opt_parser = getopt_xccdf,
-    .user = "fix.xsl",
+    .user = "legacy-fix.xsl",
     .func = app_generate_fix
 };
 

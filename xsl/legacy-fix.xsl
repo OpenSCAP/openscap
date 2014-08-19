@@ -27,7 +27,7 @@ FIX TEMPLATE WRITING GUIDE
 **************************
 
 This XSL uses a simple template engine to generate fix files.
-Take a look at fixtpl-bash.xml file for an example.
+Take a look at legacy-fixtpl-bash.xml file for an example.
 All elements in such a file reside in the 'http://open-scap.org/xml/fixtemplate#' namespace.
 
 Element hierarchy:
@@ -66,10 +66,10 @@ $val        - actual XCCDF fix text value (substitutions already performed, <fix
     xmlns:tpl="http://open-scap.org/xml/fixtemplate#"
     xmlns:dyn="http://exslt.org/dynamic"
 	xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:cdf="http://checklists.nist.gov/xccdf/1.1"
+	xmlns:cdf="http://checklists.nist.gov/xccdf/1.2"
 	>
 
-<xsl:import href="xccdf-share.xsl" />
+<xsl:import href="legacy-xccdf-share.xsl" />
 
 <xsl:output method="text" encoding="UTF-8"/>
 
@@ -80,11 +80,12 @@ $val        - actual XCCDF fix text value (substitutions already performed, <fix
 
 <!-- variables -->
 <xsl:variable name='tplfile'>
+  <xsl:message>legacy-fix.xsl has been deprecated!</xsl:message>
   <xsl:choose>
     <xsl:when test='contains($template, ".")'>
       <xsl:if test='not(contains($template, "://") or starts-with($template, "/")) and $pwd'><xsl:value-of select='$pwd'/>/</xsl:if><xsl:value-of select='$template'/>
     </xsl:when>
-    <xsl:otherwise>fixtpl-<xsl:value-of select='$template'/>.xml</xsl:otherwise>
+    <xsl:otherwise>legacy-fixtpl-<xsl:value-of select='$template'/>.xml</xsl:otherwise>
   </xsl:choose>
 </xsl:variable>
 

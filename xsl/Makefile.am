@@ -9,8 +9,9 @@ xsl_DATA =   xccdf-share.xsl \
              \
              oval-results-report.xsl \
              \
-             fix.xsl \
-             fixtpl-bash.xml \
+             legacy-fix.xsl \
+             legacy-fixtpl-bash.xml \
+             legacy-xccdf-share.xsl \
              \
              xccdf_1.1_to_1.2.xsl \
              xccdf_1.1_remove_dangling_sub.xsl
@@ -24,8 +25,9 @@ EXTRA_DIST = xccdf-share.xsl \
              \
              oval-results-report.xsl \
              \
-             fix.xsl \
-             fixtpl-bash.xml \
+             legacy-fix.xsl \
+             legacy-fixtpl-bash.xml \
+             legacy-xccdf-share.xsl \
              \
              xccdf_1.1_to_1.2.xsl \
              xccdf_1.1_remove_dangling_sub.xsl
