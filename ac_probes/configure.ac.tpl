@@ -507,6 +507,7 @@ AC_CONFIG_FILES([Makefile
                  tests/API/Makefile
 
                  swig/Makefile
+		swig/perl/Makefile
 		swig/python2/Makefile
 
                  utils/Makefile
