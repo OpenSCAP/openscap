@@ -26,8 +26,7 @@ $OSCAP xccdf generate --format html report --output $result $srcdir/${name}.xccd
 
 echo "Stderr file = $stderr"
 echo "Result file = $result"
-# stderr contains which benchmark and which testresult was used, it's harmless
-[ -f $stderr ]; #[ ! -s $stderr ]; rm $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
 grep 'Testing file permissions of /etc/shadow' $result
 grep '<code>---------' $result

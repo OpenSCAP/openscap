@@ -28,6 +28,8 @@ Authors:
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:cdf="http://checklists.nist.gov/xccdf/1.2">
 
+<xsl:param name="verbosity"/>
+
 <xsl:template name="rule-result-tooltip">
     <xsl:param name="ruleresult"/>
     <!-- The texts are sourced from XCCDF 1.2 specification with minor modifications -->

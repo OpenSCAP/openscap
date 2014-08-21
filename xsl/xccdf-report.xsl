@@ -117,7 +117,9 @@ stylesheet only.
 
     <xsl:choose>
         <xsl:when test="$testresult">
-            <xsl:message>TestResult ID: <xsl:value-of select="$final_result_id"/></xsl:message>
+            <xsl:if test="$verbosity">
+                <xsl:message>TestResult ID: <xsl:value-of select="$final_result_id"/></xsl:message>
+            </xsl:if>
         </xsl:when>
         <xsl:when test="$testresult_id">
             <xsl:message terminate="yes">No such cdf:TestResult exists (with ID = "<xsl:value-of select="$testresult_id"/>")</xsl:message>
@@ -129,7 +131,9 @@ stylesheet only.
 
     <xsl:choose>
         <xsl:when test="$benchmark">
-            <xsl:message>Benchmark ID: <xsl:value-of select="$final_benchmark_id"/></xsl:message>
+            <xsl:if test="$verbosity">
+                <xsl:message>Benchmark ID: <xsl:value-of select="$final_benchmark_id"/></xsl:message>
+            </xsl:if>
         </xsl:when>
         <xsl:when test="$benchmark_id">
             <xsl:message terminate="yes">No such cdf:Benchmark exists (with ID = "<xsl:value-of select="$benchmark_id"/>")</xsl:message>
