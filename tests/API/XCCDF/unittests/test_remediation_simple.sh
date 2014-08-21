@@ -38,7 +38,7 @@ assert_exists 1 '//rule-result/result[text()="fixed"]'
 assert_exists 1 '//rule-result/fix'
 assert_exists 1 '//rule-result/message'
 assert_exists 1 '//rule-result/message[@severity="info"]'
-assert_exists 1 '//rule-result/message[text()="Fix execution comleted and returned: 0"]'
+assert_exists 1 '//rule-result/message[text()="Fix execution completed and returned: 0"]'
 assert_exists 1 '//score'
 assert_exists 1 '//score[text()="0.000000"]'
 

@@ -48,7 +48,7 @@ grep '<!-- exit 9 -->' $result
 assert_exists 1 '//rule-result/fix/text()[contains(., "chmod a-x test_file")]' # note that comment breaks text() into two nodes
 assert_exists 1 '//rule-result/message'
 assert_exists 1 '//rule-result/message[@severity="info"]'
-assert_exists 1 '//rule-result/message[text()="Fix execution comleted and returned: 0"]'
+assert_exists 1 '//rule-result/message[text()="Fix execution completed and returned: 0"]'
 assert_exists 1 '//score'
 assert_exists 1 '//score[text()="0.000000"]'
 

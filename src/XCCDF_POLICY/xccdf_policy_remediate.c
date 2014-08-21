@@ -342,7 +342,7 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 			const char *stdout_buff = oscap_acquire_pipe_to_string(pipefd[0]);
 			int wstatus;
 			waitpid(fork_result, &wstatus, 0);
-			_rule_add_info_message(rr, "Fix execution comleted and returned: %d", WEXITSTATUS(wstatus));
+			_rule_add_info_message(rr, "Fix execution completed and returned: %d", WEXITSTATUS(wstatus));
 			if (stdout_buff != NULL && stdout_buff[0] != '\0')
 				_rule_add_info_message(rr, stdout_buff);
 			oscap_free(stdout_buff);

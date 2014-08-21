@@ -48,7 +48,7 @@ grep 'true &amp;&amp;touch test_file' $result
 assert_exists 1 '//rule-result/fix[contains(text(), "chmod a-x test_file")]'
 assert_exists 1 '//rule-result/message'
 assert_exists 1 '//rule-result/message[@severity="info"]'
-assert_exists 1 '//rule-result/message[text()="Fix execution comleted and returned: 0"]'
+assert_exists 1 '//rule-result/message[text()="Fix execution completed and returned: 0"]'
 assert_exists 1 '//score'
 assert_exists 1 '//score[text()="0.000000"]'
 
