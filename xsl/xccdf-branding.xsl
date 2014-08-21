@@ -33,6 +33,8 @@ logo to the HTML report / guide header.
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:cdf="http://checklists.nist.gov/xccdf/1.2">
 
+<xsl:param name="oscap-version"/>
+
 <xsl:template name="xccdf-branding-logo">
     <!--
     This is the openscap logo SVG.
@@ -60,7 +62,10 @@ logo to the HTML report / guide header.
     <footer id="footer">
         <div class="container">
             <p class="muted credit">
-                <p>Generated using <a href="http://open-scap.org">OpenSCAP</a></p>
+                Generated using <a href="http://open-scap.org">OpenSCAP</a>
+                <xsl:if test="$oscap-version">
+                    <xsl:value-of select="concat(' ', $oscap-version)"/>
+                </xsl:if>
             </p>
         </div>
     </footer>
@@ -81,7 +86,10 @@ logo to the HTML report / guide header.
     <footer id="footer">
         <div class="container">
             <p class="muted credit">
-                <p>Generated using <a href="http://open-scap.org">OpenSCAP</a></p>
+                Generated using <a href="http://open-scap.org">OpenSCAP</a>
+                <xsl:if test="$oscap-version">
+                    <xsl:value-of select="concat(' ', $oscap-version)"/>
+                </xsl:if>
             </p>
         </div>
     </footer>
