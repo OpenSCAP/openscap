@@ -544,6 +544,7 @@ AC_CONFIG_FILES([Makefile
                  swig/Makefile
 		swig/perl/Makefile
 		swig/python2/Makefile
+		swig/python3/Makefile
 
                  utils/Makefile
 
