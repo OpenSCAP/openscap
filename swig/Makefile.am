@@ -43,8 +43,8 @@ endif
 ##beware of: http://www.gnu.org/software/automake/manual/html_node/Multiple-Outputs.html
 
 if WANT_PYTHON
-openscap_py_wrap.c: ${srcdir}/openscap.i
-	$(SWIG) -o openscap_py_wrap.c -python -module openscap_py ${INCLUDES} ${WANT_MODULE} ${srcdir}/openscap.i
+openscap_py_wrap.c: ${srcdir}/src/openscap.i
+	$(SWIG) -o openscap_py_wrap.c -python -module openscap_py ${INCLUDES} ${WANT_MODULE} ${srcdir}/src/openscap.i
 	mv openscap_py.py openscap.py
 
 openscap.py: openscap_py_wrap.c
@@ -55,8 +55,8 @@ openscap.py: openscap_py_wrap.c
 endif
 
 if WANT_PERL
-openscap_pm_wrap.c: ${srcdir}/openscap.i
-	$(SWIG) -o openscap_pm_wrap.c -perl5 -module openscap_pm ${INCLUDES} ${WANT_MODULE} ${srcdir}/openscap.i
+openscap_pm_wrap.c: ${srcdir}/src/openscap.i
+	$(SWIG) -o openscap_pm_wrap.c -perl5 -module openscap_pm ${INCLUDES} ${WANT_MODULE} ${srcdir}/src/openscap.i
 	mv openscap_pm.pm openscap.pm
 
 openscap.pm: openscap_pm_wrap.c
@@ -67,5 +67,5 @@ openscap.pm: openscap_pm_wrap.c
 endif
 
 CLEANFILES = openscap.py openscap_py_wrap.c openscap.pyc openscap_pm_wrap.c openscap.pm
-EXTRA_DIST = openscap.i openscap_api.py
+EXTRA_DIST = src/openscap.i openscap_api.py
 

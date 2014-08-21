@@ -4,7 +4,7 @@
  */
 
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -98,7 +98,7 @@
 
 %typemap(in) struct cpe_name ** {
 
-    int i; 
+    int i;
     int a_size = 0;
     int res_o = 0;
     a_size = (int) PySequence_Length($input);
@@ -130,7 +130,7 @@
 }
 %typemap(in) struct oval_syschar_model ** {
 
-    int i; 
+    int i;
     int a_size = 0;
     int res_o = 0;
     a_size = (int) PySequence_Length($input);
@@ -166,91 +166,91 @@
 
 %module openscap
 %{
- #include "../src/common/public/oscap.h"
- #include "../src/common/public/oscap_error.h"
- #include "../src/common/public/oscap_text.h"
+ #include "../../src/common/public/oscap.h"
+ #include "../../src/common/public/oscap_error.h"
+ #include "../../src/common/public/oscap_text.h"
 
- #include "../src/DS/public/scap_ds.h"
+ #include "../../src/DS/public/scap_ds.h"
 %}
 
-%include "../src/common/public/oscap.h"
-%include "../src/common/public/oscap_error.h"
-%include "../src/common/public/oscap_text.h"
-%include "../src/common/public/oscap_reference.h"
+%include "../../src/common/public/oscap.h"
+%include "../../src/common/public/oscap_error.h"
+%include "../../src/common/public/oscap_text.h"
+%include "../../src/common/public/oscap_reference.h"
 
-%include "../src/DS/public/scap_ds.h"
+%include "../../src/DS/public/scap_ds.h"
 
 #ifdef WANT_CCE
 %module openscap
 %{
- #include "../src/CCE/public/cce.h"
+ #include "../../src/CCE/public/cce.h"
 %}
-%include "../src/CCE/public/cce.h"
+%include "../../src/CCE/public/cce.h"
 #endif
 
 
 %module openscap
 %{
- #include "../src/CPE/public/cpe_name.h"
- #include "../src/CPE/public/cpe_dict.h"
- #include "../src/CPE/public/cpe_lang.h"
+ #include "../../src/CPE/public/cpe_name.h"
+ #include "../../src/CPE/public/cpe_dict.h"
+ #include "../../src/CPE/public/cpe_lang.h"
 %}
-%include "../src/CPE/public/cpe_name.h"
-%include "../src/CPE/public/cpe_dict.h"
-%include "../src/CPE/public/cpe_lang.h"
+%include "../../src/CPE/public/cpe_name.h"
+%include "../../src/CPE/public/cpe_dict.h"
+%include "../../src/CPE/public/cpe_lang.h"
 
 
 %module openscap
 %{
- #include "../src/CVE/public/cve_nvd.h"
+ #include "../../src/CVE/public/cve_nvd.h"
 %}
-%include "../src/CVE/public/cve_nvd.h"
+%include "../../src/CVE/public/cve_nvd.h"
 
 
 %module openscap
 %{
- #include "../src/CVSS/public/cvss_score.h"
+ #include "../../src/CVSS/public/cvss_score.h"
 %}
-%include "../src/CVSS/public/cvss_score.h"
+%include "../../src/CVSS/public/cvss_score.h"
 
 %module openscap
 %{
- #include "../src/XCCDF/public/xccdf_benchmark.h"
- #include "../src/XCCDF/public/xccdf_session.h"
- #include "../src/XCCDF_POLICY/public/xccdf_policy.h"
+ #include "../../src/XCCDF/public/xccdf_benchmark.h"
+ #include "../../src/XCCDF/public/xccdf_session.h"
+ #include "../../src/XCCDF_POLICY/public/xccdf_policy.h"
 %}
-%include "../src/XCCDF/public/xccdf_benchmark.h"
-%include "../src/XCCDF/public/xccdf_session.h"
-%include "../src/XCCDF_POLICY/public/xccdf_policy.h"
+%include "../../src/XCCDF/public/xccdf_benchmark.h"
+%include "../../src/XCCDF/public/xccdf_session.h"
+%include "../../src/XCCDF_POLICY/public/xccdf_policy.h"
 
 
 %module openscap
 %{
- #include "../src/OVAL/public/oval_agent_api.h"
- #include "../src/OVAL/public/oval_definitions.h"
- #include "../src/OVAL/public/oval_system_characteristics.h"
- #include "../src/OVAL/public/oval_results.h"
- #include "../src/OVAL/public/oval_types.h"
- #include "../src/OVAL/public/oval_variables.h"
- #include "../src/OVAL/public/oval_probe.h"
- #include "../src/OVAL/public/oval_probe_handler.h"
- #include "../src/OVAL/public/oval_probe_session.h"
+ #include "../../src/OVAL/public/oval_agent_api.h"
+ #include "../../src/OVAL/public/oval_definitions.h"
+ #include "../../src/OVAL/public/oval_system_characteristics.h"
+ #include "../../src/OVAL/public/oval_results.h"
+ #include "../../src/OVAL/public/oval_types.h"
+ #include "../../src/OVAL/public/oval_variables.h"
+ #include "../../src/OVAL/public/oval_probe.h"
+ #include "../../src/OVAL/public/oval_probe_handler.h"
+ #include "../../src/OVAL/public/oval_probe_session.h"
 %}
-%include "../src/OVAL/public/oval_agent_api.h"
-%include "../src/OVAL/public/oval_definitions.h"
-%include "../src/OVAL/public/oval_system_characteristics.h"
-%include "../src/OVAL/public/oval_results.h"
-%include "../src/OVAL/public/oval_types.h"
-%include "../src/OVAL/public/oval_variables.h"
-%include "../src/OVAL/public/oval_probe.h"
-%include "../src/OVAL/public/oval_probe_handler.h"
-%include "../src/OVAL/public/oval_probe_session.h"
+%include "../../src/OVAL/public/oval_agent_api.h"
+%include "../../src/OVAL/public/oval_definitions.h"
+%include "../../src/OVAL/public/oval_system_characteristics.h"
+%include "../../src/OVAL/public/oval_results.h"
+%include "../../src/OVAL/public/oval_types.h"
+%include "../../src/OVAL/public/oval_variables.h"
+%include "../../src/OVAL/public/oval_probe.h"
+%include "../../src/OVAL/public/oval_probe_handler.h"
+%include "../../src/OVAL/public/oval_probe_session.h"
 
 %module openscap
 %{
- #include "../src/OVAL/public/oval_agent_xccdf_api.h"
+ #include "../../src/OVAL/public/oval_agent_xccdf_api.h"
 %}
-%include "../src/OVAL/public/oval_agent_xccdf_api.h"
+%include "../../src/OVAL/public/oval_agent_xccdf_api.h"
 
 /*%typemap(in) value[ANY] {
 
@@ -495,7 +495,7 @@ bool xccdf_policy_model_register_output_callback_py(struct xccdf_policy_model *m
 
     new_usrdata->func = func;
     new_usrdata->usr = usr;
-  
+
     return xccdf_policy_model_register_output_callback(model, rule_result_output_callback_wrapper, (void *)new_usrdata);
 }
 
@@ -509,7 +509,7 @@ bool xccdf_policy_model_register_start_callback_py(struct xccdf_policy_model *mo
 
     new_usrdata->func = func;
     new_usrdata->usr = usr;
-  
+
     return xccdf_policy_model_register_start_callback(model, rule_start_callback_wrapper, (void *)new_usrdata);
 }
 
@@ -551,7 +551,7 @@ char * oscap_text_xccdf_substitute_py(const char *text, PyObject *func, PyObject
 
     new_usrdata->func = func;
     new_usrdata->usr = usr;
-  
+
     return oscap_text_xccdf_substitute(text, sub_callback_wrapper, (void *)new_usrdata);
 }
 
