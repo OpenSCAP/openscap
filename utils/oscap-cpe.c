@@ -102,7 +102,7 @@ bool getopt_cpe(int argc, char **argv, struct oscap_action *action) {
 
 	if( (action->module == &CPE_MATCH_MODULE) ) {
 		if(  argc != 5 ) {
-			oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
+			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
 			return false;
 		}
 		action->cpe_action = malloc(sizeof(struct cpe_action));
@@ -112,7 +112,7 @@ bool getopt_cpe(int argc, char **argv, struct oscap_action *action) {
 
 	if( (action->module == &CPE_CHECK_MODULE)) {
 		if( argc != 4 ) {
-			oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
+			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
 			return false;
 		}
 		action->cpe_action = malloc(sizeof(struct cpe_action));
@@ -121,7 +121,7 @@ bool getopt_cpe(int argc, char **argv, struct oscap_action *action) {
 
 	if ((action->module == &CPE_VALIDATE) || action->module == &CPE_VALIDATE_XML) {
 		if( argc != 4 ) {
-			oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
+			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
 			return false;
 		}
 

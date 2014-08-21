@@ -409,7 +409,7 @@ cleanup:
 bool getopt_info(int argc, char **argv, struct oscap_action *action)
 {
 	if(  argc != 3) {
-		oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
+		oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
 		return false;
 	}
 	action->file = argv[2];
