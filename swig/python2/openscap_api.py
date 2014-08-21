@@ -75,7 +75,7 @@ class OSCAP_List(list):
         except NameError:
             raise Exception, "Removing %s items throught oscap list is not allowed. Please use appropriate function." \
                         % (self.iterator.object[:self.iterator.object.find("_iterator")],)
-    
+
     def __del__(self):
         """Free the list structure"""
         self.iterator.free()
@@ -181,7 +181,7 @@ class OSCAP_Object(object):
                                 raise TypeError("Wrong number of arguments in function %s" % (func.__name__,))
                     else: raise TypeError("%s: No instance or wrong number of parameters" % (func.__name__))
 
-            if retobj == None: 
+            if retobj == None:
                 return None
             elif retobj.__str__().find("iterator") != -1:
                 # We have an iterator here
@@ -190,17 +190,17 @@ class OSCAP_Object(object):
                 list.object = self.object
                 return list
             return OSCAP_Object.new(retobj)
-        
+
         return __getter_wrapper
 
     def __getattr__(self, name):
-        """ Called when an attribute lookup has not found the attribute in the usual places (i.e. 
-        it is not an instance attribute nor is it found in the class tree for self). name is 
+        """ Called when an attribute lookup has not found the attribute in the usual places (i.e.
+        it is not an instance attribute nor is it found in the class tree for self). name is
         the attribute name."""
 
         if name == "export" and self.object == "xccdf_policy": return self.policy_export
 
-        if self.__dict__.has_key(name): 
+        if self.__dict__.has_key(name):
             return self.__dict__[name]
 
         # If attribute is not in a local dictionary, look for it in a library
@@ -209,7 +209,7 @@ class OSCAP_Object(object):
 
         """ Looking for function object_subject() """
         obj = OSCAP.__dict__.get(self.object+"_"+name)
-        if obj != None: 
+        if obj != None:
             if callable(obj):
                 return self.__func_wrapper(obj)
 
@@ -226,25 +226,25 @@ class OSCAP_Object(object):
 
     def __dir__(self):
         """Lists all attributes inside this object.
-        
+
         This is mainly used by auto-completion and for dir(obj) in interactive prompt.
         (only available in Python 2.6 and newer but doesn't hurt anything in older Pythons)
         """
-        
+
         ret = list()
         ret.extend(dir(type(self)))
         ret.extend(list(self.__dict__))
-        
+
         # we intentionally don't add all functions from the library, having
         # them in getattr has IMO not been the right call, they would just
         # clutter everything...
-        
+
         for key in OSCAP.__dict__.iterkeys():
             if key.startswith(self.object + "_"):
                 # the getattr wrapper only deals with callables
                 if callable(OSCAP.__dict__[key]):
                     ret.append(key[len(self.object) + 1:])
-                    
+
         # we also don't add the object_get_{name} methods as {name}, it IMO
         # only allows bugs to pass as working code
 
@@ -264,13 +264,13 @@ class OSCAP_Object(object):
         else: raise NameError("name '"+self.object+"' is not defined")
 
     def __setattr__(self, name, value):
-        if self.__dict__.has_key(name): 
+        if self.__dict__.has_key(name):
             return self.__dict__[name]
 
         obj = OSCAP.__dict__.get(self.object+"_set_"+name)
         if obj == None:
-            obj = OSCAP.__dict__.get(self.object+"_add_"+name) 
-        if obj == None: 
+            obj = OSCAP.__dict__.get(self.object+"_add_"+name)
+        if obj == None:
             return None
 
         if isinstance(value, OSCAP_Object):
@@ -377,7 +377,7 @@ class OSCAP_Object(object):
         if check != None:
             if check.complex:
                 # This check is complext so there is more checks within
-                for child in check.children: 
+                for child in check.children:
                     values.extend(self.get_values_by_rule_id(id, check=child))
             else:
                 for export in check.exports:
@@ -391,7 +391,7 @@ class OSCAP_Object(object):
         for check in rule.checks:
             if check.complex:
                 # This check is complext so there is more checks within
-                for child in check.children: 
+                for child in check.children:
                     values.extend(self.get_values_by_rule_id(id, check=child))
             else:
                 for export in check.exports:
@@ -400,7 +400,7 @@ class OSCAP_Object(object):
         for value in self.model.benchmark.get_all_values():
             if value.id in values:
                 items.append(self.__parse_value(value))
-            
+
         return items
 
     def __parse_value(self, value):
@@ -414,7 +414,7 @@ class OSCAP_Object(object):
         # Titles / Questions
         if len(value.question):
             for question in value.question: item["titles"][question.lang] = question.text
-        else: 
+        else:
             for title in value.title: item["titles"][title.lang] = title.text
         if item["lang"] not in item["titles"]: item["titles"][item["lang"]] = ""
         # Descriptions
@@ -572,9 +572,9 @@ class OSCAP_Object(object):
         # Set new role of the rule
         if role != None:
             refine.role = role
-        
+
         self.profile.add_refine_rule(refine)
-        
+
 
     def get_all_rules(self):
         """xccdf_policy.get_all_rules() -- Get all rules/selectors and titles from benchmark
@@ -614,17 +614,17 @@ class OSCAP_Object(object):
         Provides standard initialization of OPENScap library.
         Parameter 'path' is the path to XCCDF File.
         Parameter 'paths' is dictionary where key is file identificator and value path to the file.
-        
+
         Initialization has next steps:
          - Parse oscap configuration file with path to XML files
          - Import default XCCDF document as specified in configuration file
          - Import all definitions files that are required for XCCDF evaluation
-        
+
         Function returns dictionary with keys:
             "policy_model"   - XCCDF Policy Model loaded from XCCDF file
             "def_models"     - list of OVAL Definitions models from OVAL files
             "sessions"       - dictionary of OVAL Agent sessions provided by OVAL Definitions models
-            
+
         All returned objects have to be freed by user. Use functions:
             retval["policy_model"].free()
             for model in retval["def_models"]:
@@ -633,7 +633,7 @@ class OSCAP_Object(object):
                 sess.free()
         """
 
-        if path == None: 
+        if path == None:
             return None
 
         OSCAP.oscap_init()
@@ -654,7 +654,7 @@ class OSCAP_Object(object):
             if file in paths:
                 f_OVAL = paths[file]
             else: f_OVAL = os.path.join(dirname, file)
-            if os.path.exists(f_OVAL): 
+            if os.path.exists(f_OVAL):
                 def_model = oval.definition_model_import(f_OVAL)
                 if def_model.instance == None:
                     if OSCAP.oscap_err(): desc = OSCAP.oscap_err_desc()
@@ -685,14 +685,14 @@ class OSCAP_Object(object):
         #        could potentially take a lot of time to complete.
         #        A better solution would be to add the result, export and then remove the result
         #        (with appropriate exception safety of course) or even better, allow export with custom result list.
-        
+
         result_clone = result.clone()
         result_clone.benchmark_uri = path or "benchmark.xml"
         o_title = common.text()
         o_title.text = title
         result_clone.title = o_title
         result_clone.fill_sysinfo()
-        
+
         files = [filename]
 
         benchmark_clone = self.model.benchmark.clone()
@@ -703,7 +703,7 @@ class OSCAP_Object(object):
         benchmark_clone.add_result(result_clone)
 
         benchmark_clone.export(filename)
-        
+
         dirname = os.path.dirname(filename)
         for path in sessions.keys():
             sess = sessions[path]
@@ -719,7 +719,7 @@ class OSCAP_Object(object):
                     files.append(vfile)
 
         return files
-    
+
     def destroy(self, sdir):
 
         OSCAP.oscap_cleanup()
@@ -763,7 +763,7 @@ class XCCDF_Class(OSCAP_Object):
     def __repr__(self):
         return "<Oscap Object of type 'XCCDF Class' at %s>" % (hex(id(self)),)
 
-    """ Import XCCDF Benchmark 
+    """ Import XCCDF Benchmark
     """
     def benchmark_import(self, path):
         return _XCCDF_Benchmark_Class(path)
@@ -809,8 +809,8 @@ class CPE_Class(OSCAP_Object):
 
     def __init__(self):
         dict.__setattr__(self, "object", "cpe")
-        dict.__setattr__(self, "version", "CPE Lang: %s; CPE Dict: %s; CPE Name: %s" 
-                % (OSCAP.cpe_lang_model_supported(), 
+        dict.__setattr__(self, "version", "CPE Lang: %s; CPE Dict: %s; CPE Name: %s"
+                % (OSCAP.cpe_lang_model_supported(),
                     OSCAP.cpe_dict_model_supported(),
                     OSCAP.cpe_name_supported()))
         pass
@@ -886,4 +886,3 @@ cpe   = CPE_Class()
 cvss  = CVSS_Class()
 sce   = SCE_Class()
 common = OSCAP_Object("oscap")
-

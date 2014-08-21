@@ -48,10 +48,10 @@ selinux/oscap.pp
 /src/OVAL/probes/probe_*
 /schemas/build/
 /swig/openscap.pm
-/swig/openscap.py
 /swig/openscap_pm_wrap.c
-/swig/openscap_py_wrap.c
-/swig/openscap_api.pyc
+/swig/python2/openscap.py
+/swig/python2/openscap_py_wrap.c
+/swig/python2/openscap_api.pyc
 /config/py-compile
 /lib/alloca.h
 /lib/arg-nonnull.h

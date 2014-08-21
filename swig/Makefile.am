@@ -1,6 +1,8 @@
 
+SUBDIRS = \
+	python2
+
 AM_CFLAGS = -fPIC
-PYLIBVER ?= python$(PYTHON_VERSION)
 
 AM_CPPFLAGS =	@xml2_CFLAGS@ \
 		-I$(top_srcdir)/src/CPE/public \
@@ -25,15 +27,6 @@ _openscap_pm_la_LIBADD  = ${top_builddir}/src/libopenscap.la
 nodist__openscap_pm_la_SOURCES = openscap_pm_wrap.c
 endif
 
-if WANT_PYTHON
-AM_CPPFLAGS += $(PYTHON_INCLUDES)
-nodist_pyexec_PYTHON = openscap.py openscap_api.py
-pyexec_LTLIBRARIES = _openscap_py.la
-_openscap_py_la_LDFLAGS = -module -avoid-version
-_openscap_py_la_LIBADD  = ${top_builddir}/src/libopenscap.la
-nodist__openscap_py_la_SOURCES = openscap_py_wrap.c
-endif
-
 WANT_MODULE=
 if WANT_CCE
 WANT_MODULE += -DWANT_CCE
@@ -41,18 +34,6 @@ AM_CPPFLAGS += -I$(top_srcdir)/src/CCE/public
 endif
 
 ##beware of: http://www.gnu.org/software/automake/manual/html_node/Multiple-Outputs.html
-
-if WANT_PYTHON
-openscap_py_wrap.c: ${srcdir}/src/openscap.i
-	$(SWIG) -o openscap_py_wrap.c -python -module openscap_py ${INCLUDES} ${WANT_MODULE} ${srcdir}/src/openscap.i
-	mv openscap_py.py openscap.py
-
-openscap.py: openscap_py_wrap.c
-	@if test -f $@; then :; else \
-		rm -f openscap_py_wrap.c; \
-		$(MAKE) $(AM_MAKEFLAGS) openscap_py_wrap.c; \
-	fi
-endif
 
 if WANT_PERL
 openscap_pm_wrap.c: ${srcdir}/src/openscap.i
@@ -66,6 +47,6 @@ openscap.pm: openscap_pm_wrap.c
 	fi
 endif
 
-CLEANFILES = openscap.py openscap_py_wrap.c openscap.pyc openscap_pm_wrap.c openscap.pm
-EXTRA_DIST = src/openscap.i openscap_api.py
+CLEANFILES = openscap.pm openscap_pm_wrap.c
+EXTRA_DIST = src/openscap.i
 
