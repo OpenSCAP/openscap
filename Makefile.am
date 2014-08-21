@@ -1,19 +1,13 @@
 ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = lib src src/OVAL/probes utils tests xsl schemas cpe selinux
+SUBDIRS += swig
 
 dist_pkgdata_DATA = dist/fedora/scap-fedora14-oval.xml \
                     dist/fedora/scap-fedora14-xccdf.xml \
                     dist/rhel6/scap-rhel6-oval.xml \
                     dist/rhel6/scap-rhel6-xccdf.xml
 
-if WANT_PYTHON
-  SUBDIRS += swig
-else
-if WANT_PERL
-    SUBDIRS += swig
-endif
-endif
 
 if WANT_SCE
 SUBDIRS += src/SCE
