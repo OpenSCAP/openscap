@@ -29,7 +29,8 @@ Authors:
 	xmlns:cdf="http://checklists.nist.gov/xccdf/1.2"
     xmlns:ovalres="http://oval.mitre.org/XMLSchema/oval-results-5"
     xmlns:sceres="http://open-scap.org/page/SCE_result_file"
-    exclude-result-prefixes="xsl cdf ovalres sceres">
+    xmlns:exsl="http://exslt.org/common"
+    exclude-result-prefixes="xsl cdf ovalres sceres exsl">
 
 <xsl:include href="xccdf-branding.xsl" />
 <xsl:include href="xccdf-resources.xsl" />
@@ -238,6 +239,7 @@ Authors:
 <xsl:template name="rule-overview-leaf">
     <xsl:param name="testresult"/>
     <xsl:param name="item"/>
+    <xsl:param name="profile"/>
     <xsl:param name="indent"/>
 
     <xsl:variable name="ruleresult" select="$testresult/cdf:rule-result[@idref = $item/@id]"/>
@@ -252,7 +254,11 @@ Authors:
         </xsl:if>
 
         <td style="padding-left: {$indent * 19}px"><a href="#rule-detail-{generate-id($ruleresult)}" onclick="return openRuleDetailsDialog('{generate-id($ruleresult)}')">
-            <xsl:value-of select="$item/cdf:title/text()"/>
+            <xsl:apply-templates mode="sub-testresult" select="$item/cdf:title">
+                <xsl:with-param name="testresult" select="$testresult"/>
+                <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                <xsl:with-param name="profile" select="$profile"/>
+            </xsl:apply-templates>
         </a></td>
         <td style="text-align: center"><xsl:value-of select="$ruleresult/@severity"/></td>
         <td class="rule-result rule-result-{$result}">
@@ -293,6 +299,7 @@ Authors:
 <xsl:template name="rule-overview-inner-node">
     <xsl:param name="testresult"/>
     <xsl:param name="item"/>
+    <xsl:param name="profile"/>
     <xsl:param name="indent"/>
 
     <xsl:variable name="contained_rules_fail" select="count($item/descendant::cdf:Rule[@id = $testresult/cdf:rule-result[cdf:result/text() = 'fail']/@idref])"/>
@@ -310,13 +317,24 @@ Authors:
         <td colspan="3" style="padding-left: {$indent * 19}px">
             <xsl:choose>
                 <xsl:when test="$contained_rules_need_attention > 0">
-                    <strong><xsl:value-of select="$item/cdf:title/text()"/></strong>
+                    <strong>
+                        <xsl:apply-templates mode="sub-testresult" select="$item/cdf:title">
+                            <xsl:with-param name="testresult" select="$testresult"/>
+                            <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                            <xsl:with-param name="profile" select="$profile"/>
+                        </xsl:apply-templates>
+                    </strong>
                     <xsl:if test="$contained_rules_fail > 0">&#160;<span class="badge"><xsl:value-of select="$contained_rules_fail"/>x fail</span></xsl:if>
                     <xsl:if test="$contained_rules_error > 0">&#160;<span class="badge"><xsl:value-of select="$contained_rules_error"/>x error</span></xsl:if>
                     <xsl:if test="$contained_rules_unknown > 0">&#160;<span class="badge"><xsl:value-of select="$contained_rules_unknown"/>x unknown</span></xsl:if>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="$item/cdf:title/text()"/><script>$(document).ready(function(){$('.treetable').treetable("collapseNode","<xsl:value-of select="$item/@id"/>");});</script>
+                    <xsl:apply-templates mode="sub-testresult" select="$item/cdf:title">
+                        <xsl:with-param name="testresult" select="$testresult"/>
+                        <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                        <xsl:with-param name="profile" select="$profile"/>
+                    </xsl:apply-templates>
+                    <script>$(document).ready(function(){$('.treetable').treetable("collapseNode","<xsl:value-of select="$item/@id"/>");});</script>
                 </xsl:otherwise>
             </xsl:choose>
         </td>
@@ -326,6 +344,7 @@ Authors:
         <xsl:call-template name="rule-overview-inner-node">
             <xsl:with-param name="testresult" select="$testresult"/>
             <xsl:with-param name="item" select="."/>
+            <xsl:with-param name="profile" select="$profile"/>
             <xsl:with-param name="indent" select="$indent + 1"/>
         </xsl:call-template>
     </xsl:for-each>
@@ -334,6 +353,7 @@ Authors:
         <xsl:call-template name="rule-overview-leaf">
             <xsl:with-param name="testresult" select="$testresult"/>
             <xsl:with-param name="item" select="."/>
+            <xsl:with-param name="profile" select="$profile"/>
             <xsl:with-param name="indent" select="$indent + 1"/>
         </xsl:call-template>
     </xsl:for-each>
@@ -342,6 +362,7 @@ Authors:
 <xsl:template name="rule-overview">
     <xsl:param name="testresult"/>
     <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
 
     <div id="rule-overview"><a name="rule-overview"></a>
         <h2>Rule Overview</h2>
@@ -410,6 +431,7 @@ Authors:
                 <xsl:call-template name="rule-overview-inner-node">
                     <xsl:with-param name="testresult" select="$testresult"/>
                     <xsl:with-param name="item" select="$benchmark"/>
+                    <xsl:with-param name="profile" select="$profile"/>
                     <xsl:with-param name="indent" select="0"/>
                 </xsl:call-template>
             </tbody>
@@ -492,20 +514,32 @@ Authors:
 <xsl:template name="result-details-leaf">
     <xsl:param name="testresult"/>
     <xsl:param name="item"/>
+    <xsl:param name="profile"/>
 
     <xsl:variable name="ruleresult" select="$testresult/cdf:rule-result[@idref = $item/@id]"/>
     <xsl:variable name="result" select="$ruleresult/cdf:result/text()"/>
 
-    <div class="panel panel-default rule-detail rule-detail-{$result}" id="rule-detail-{generate-id($ruleresult)}" title="{$item/cdf:title/text()}">
+    <div class="panel panel-default rule-detail rule-detail-{$result}" id="rule-detail-{generate-id($ruleresult)}">
         <div class="keywords sr-only">
-            <xsl:value-of select="concat($item/cdf:title/text(), ' ')"/><xsl:value-of select="concat($item/@id, ' ')"/>
+            <xsl:apply-templates mode="sub-testresult" select="$item/cdf:title">
+                <xsl:with-param name="testresult" select="$testresult"/>
+                <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                <xsl:with-param name="profile" select="$profile"/>
+            </xsl:apply-templates>
+            <xsl:value-of select="concat($item/@id, ' ')"/>
             <xsl:for-each select="$ruleresult/cdf:ident">
                 <xsl:value-of select="concat(text(), ' ')"/>
             </xsl:for-each>
         </div>
         <div class="panel-heading">
             <a name="rule-detail-{generate-id($ruleresult)}"></a>
-            <h3 class="panel-title"><xsl:value-of select="$item/cdf:title/text()"/></h3>
+            <h3 class="panel-title">
+                <xsl:apply-templates mode="sub-testresult" select="$item/cdf:title">
+                    <xsl:with-param name="testresult" select="$testresult"/>
+                    <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                    <xsl:with-param name="profile" select="$profile"/>
+                </xsl:apply-templates>
+            </h3>
         </div>
         <div class="panel-body">
             <table class="table table-striped table-bordered">
@@ -533,7 +567,11 @@ Authors:
                     </td></tr>
                     <tr><td colspan="2" class="description">
                         <p>
-                            <xsl:apply-templates mode="sub" select="$item/cdf:description"/>
+                            <xsl:apply-templates mode="sub-testresult" select="$item/cdf:description">
+                                <xsl:with-param name="testresult" select="$testresult"/>
+                                <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                                <xsl:with-param name="profile" select="$profile"/>
+                            </xsl:apply-templates>
                         </p>
                     </td></tr>
                     <tr><td colspan="2">
@@ -547,7 +585,11 @@ Authors:
                         <tr><td colspan="2" class="remediation">
                             Remediation script:
                             <pre><code>
-                                <xsl:apply-templates mode="sub" select="$item/cdf:fix"/>
+                                <xsl:apply-templates mode="sub-testresult" select="$item/cdf:fix">
+                                    <xsl:with-param name="testresult" select="$testresult"/>
+                                    <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                                    <xsl:with-param name="profile" select="$profile"/>
+                                </xsl:apply-templates>
                             </code></pre>
                         </td></tr>
                     </xsl:if>
@@ -560,11 +602,13 @@ Authors:
 <xsl:template name="result-details-inner-node">
     <xsl:param name="testresult"/>
     <xsl:param name="item"/>
+    <xsl:param name="profile"/>
 
     <xsl:for-each select="$item/cdf:Group">
         <xsl:call-template name="result-details-inner-node">
             <xsl:with-param name="testresult" select="$testresult"/>
             <xsl:with-param name="item" select="."/>
+            <xsl:with-param name="profile" select="$profile"/>
         </xsl:call-template>
     </xsl:for-each>
 
@@ -572,6 +616,7 @@ Authors:
         <xsl:call-template name="result-details-leaf">
             <xsl:with-param name="testresult" select="$testresult"/>
             <xsl:with-param name="item" select="."/>
+            <xsl:with-param name="profile" select="$profile"/>
         </xsl:call-template>
     </xsl:for-each>
 </xsl:template>
@@ -579,6 +624,7 @@ Authors:
 <xsl:template name="result-details">
     <xsl:param name="testresult"/>
     <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
 
     <div class="js-only">
         <button type="button" class="btn btn-info" onclick="return toggleResultDetails(this)">Show all result details</button>
@@ -589,6 +635,7 @@ Authors:
         <xsl:call-template name="result-details-inner-node">
             <xsl:with-param name="testresult" select="$testresult"/>
             <xsl:with-param name="item" select="$benchmark"/>
+            <xsl:with-param name="profile" select="$profile"/>
         </xsl:call-template>
     </div>
 </xsl:template>
@@ -596,6 +643,8 @@ Authors:
 <xsl:template name="generate-report">
     <xsl:param name="testresult"/>
     <xsl:param name="benchmark"/>
+
+    <xsl:variable name="profile" select="$benchmark/cdf:Profile[@id = $testresult/cdf:profile/@idref]"/>
 
     <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html></xsl:text>
     <html lang="en">
@@ -616,18 +665,22 @@ Authors:
         <xsl:call-template name="characteristics">
             <xsl:with-param name="testresult" select="$testresult"/>
             <xsl:with-param name="benchmark" select="$benchmark"/>
+            <xsl:with-param name="profile" select="$profile"/>
         </xsl:call-template>
         <xsl:call-template name="compliance-and-scoring">
             <xsl:with-param name="testresult" select="$testresult"/>
             <xsl:with-param name="benchmark" select="$benchmark"/>
+            <xsl:with-param name="profile" select="$profile"/>
         </xsl:call-template>
         <xsl:call-template name="rule-overview">
             <xsl:with-param name="testresult" select="$testresult"/>
             <xsl:with-param name="benchmark" select="$benchmark"/>
+            <xsl:with-param name="profile" select="$profile"/>
         </xsl:call-template>
         <xsl:call-template name="result-details">
             <xsl:with-param name="testresult" select="$testresult"/>
             <xsl:with-param name="benchmark" select="$benchmark"/>
+            <xsl:with-param name="profile" select="$profile"/>
         </xsl:call-template>
     </div></div>
 

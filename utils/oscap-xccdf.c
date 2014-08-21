@@ -845,7 +845,7 @@ int app_xccdf_xslt(const struct oscap_action *action)
 	const char *params[] = {
 		"result-id",         action->id,
 		"show",              action->show,
-		"profile",           action->profile,
+		"profile_id",        action->profile,
 		"template",          action->tmpl,
 		"format",            action->format,
 		"oval-template",     oval_template,

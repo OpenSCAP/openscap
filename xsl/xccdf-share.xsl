@@ -24,9 +24,9 @@ Authors:
 -->
 
 <xsl:stylesheet version="1.1"
-	xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	xmlns:cdf="http://checklists.nist.gov/xccdf/1.2">
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:cdf="http://checklists.nist.gov/xccdf/1.2">
 
 <xsl:template name="rule-result-tooltip">
     <xsl:param name="ruleresult"/>
@@ -93,83 +93,108 @@ Authors:
     </xsl:if>
 </xsl:template>
 
-<!-- templates in mode "text", for processing text with
-     markup and substitutions.
- -->
+<!-- substitution for testresults, used in HTML report -->
+<xsl:template mode="sub-testresult" match="text()">
+    <xsl:param name="testresult"/>
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
 
-<!-- text nodes -->
-<xsl:template match="text()" mode='sub'>
     <xsl:value-of select="."/>
 </xsl:template>
 
-<!-- substitute cdf:instance -->
-<xsl:template match="cdf:fix//cdf:instance" mode='sub'>
+<xsl:template mode="sub-testresult" match="cdf:fix//cdf:instance">
+    <xsl:param name="testresult"/>
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
+
     <xsl:variable name='ctx' select='@context'/>
-  <xsl:choose>
-    <xsl:when test='ancestor::cdf:rule-result'>
-        <abbr class='replace' title='context: {$ctx}'><xsl:value-of select='ancestor::cdf:rule-result/cdf:instance[@context=$ctx]'/></abbr>
-    </xsl:when>
-    <xsl:otherwise><abbr class='cdf-sub-context' title='replace with actual {$ctx} context'><xsl:value-of select='$ctx'/></abbr></xsl:otherwise>
-  </xsl:choose>
+
+    <xsl:choose>
+        <xsl:when test="$testresult/cdf:rule-result/cdf:instance[@context=$ctx]">
+            <abbr title="context: {$ctx}"><xsl:value-of select="$testresult/cdf:rule-result/cdf:instance[@context=$ctx]"/></abbr>
+        </xsl:when>
+        <xsl:otherwise>
+            <abbr class="cdf-sub-context" title="replace with actual {$ctx} context"><xsl:value-of select="$ctx"/></abbr>
+        </xsl:otherwise>
+    </xsl:choose>
 </xsl:template>
 
-<!-- substitute cdf:sub -->
-<xsl:template match="cdf:sub" mode='sub'>
+<xsl:template mode="sub-testresult" match="cdf:sub">
+    <xsl:param name="testresult"/>
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
+
     <xsl:variable name="subid" select="./@idref"/>
-    <xsl:variable name="plain" select="ancestor::cdf:Benchmark/cdf:plain-text[@id=$subid]"/>
-    <xsl:variable name="val" select="ancestor::cdf:Benchmark//cdf:Value[@id=$subid]"/>
-  <xsl:choose>
-    <xsl:when test='$plain'><abbr class='xccdf-plain-text' title="text: {$subid}"><xsl:value-of select="$plain"/></abbr></xsl:when>
-    <xsl:otherwise><abbr class='cdf-sub-value' title="value: {$subid} ({$val/cdf:title})"><xsl:value-of select="$val/cdf:value"/></abbr></xsl:otherwise>
-  </xsl:choose>
+
+    <xsl:choose>
+        <xsl:when test="$testresult and $testresult/cdf:set-value[@idref = $subid]">
+            <abbr title="from TestResult: {$subid}"><xsl:value-of select="$testresult/cdf:set-value[@idref = $subid][last()]"/></abbr>
+        </xsl:when>
+        <xsl:when test="$profile and $profile/cdf:refine-value[@idref = $subid]">
+            <xsl:variable name="selector" select="$profile/cdf:refine-value[@idref = $subid][last()]/@selector"/>
+            <abbr title="from Profile/refine-value: {$subid}"><xsl:value-of select="$benchmark/cdf:Value/cdf:value[@selector = $selector][last()]/text()"/></abbr>
+        </xsl:when>
+        <xsl:when test="$profile and $profile/cdf:set-value[@idref = $subid]">
+            <abbr title="from Profile/set-value: {$subid}"><xsl:value-of select="$profile/cdf:set-value[@idref = $subid][last()]/text()"/></abbr>
+        </xsl:when>
+        <xsl:when test="$benchmark/cdf:Value[@id = $subid]/cdf:value[not(@selector)]">
+            <abbr title="from Benchmark/Value: {$subid}"><xsl:value-of select="$benchmark/cdf:Value[@id = $subid]/cdf:value[not(@selector)][last()]"/></abbr>
+        </xsl:when>
+        <xsl:otherwise>
+            <abbr title="Substitution failed: {$subid}">(N/A)</abbr>
+        </xsl:otherwise>
+    </xsl:choose>
 </xsl:template>
 
-<!-- substitute object with #xccdf:value -->
-<xsl:template match='object[starts-with(@data, "#xccdf:value:")]' mode='sub'>
-    <xsl:variable name='id' value='substring(@data, 13)'/>
-    <xsl:variable name='sub' select='ancestor::cdf:TestResult/cdf:target-facts/cdf:fact[@name=$id]/text()|ancestor::cdf:Benchmark//cdf:Value[@id=$id]/cdf:value[1]/text()|ancestor::cdf:Benchmark/cdf:plain-text[@id=$id][1]/text()'/>
-  <xsl:choose>
-    <xsl:when test='$sub'><xsl:value-of select='$sub[1]'/></xsl:when>
-    <xsl:otherwise><xsl:value-of select='.'/></xsl:otherwise>
-  </xsl:choose>
-</xsl:template>
+<xsl:template mode="sub-testresult" match="*">
+    <xsl:param name="testresult"/>
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
 
-<!-- substitute object with #xccdf:title -->
-<xsl:template match='object[starts-with(@data, "#xccdf:title:")]' mode='sub'>
-    <xsl:variable name='id' value='substring(@data, 13)'/>
-    <xsl:variable name='sub' select='ancestor::cdf:Benchmark//cdf:Group/cdf:title|ancestor::cdf:Benchmark//cdf:Rule/cdf:title|ancestor::cdf:Benchmark//cdf:Value/cdf:title'/>
-  <xsl:choose>
-    <xsl:when test='$sub'><xsl:value-of select='$sub[1]'/></xsl:when>
-    <xsl:otherwise><xsl:value-of select='.'/></xsl:otherwise>
-  </xsl:choose>
-</xsl:template>
-
-<!-- substitute a with #xccdf:link -->
-<xsl:template match='a[starts-with(@href, "#xccdf:link:")]' mode='sub'>
-    <xsl:variable name='id' value='substring(@href, 12)'/>
-  <xsl:copy>
-    <xsl:copy-of select='@*'/>
-    <xsl:attribute name='href'><xsl:apply-templates select='@href' mode='sub'><xsl:with-param name='id' select='$id'/></xsl:apply-templates></xsl:attribute>
-    <xsl:apply-templates select="node()" mode='sub'/>
-  </xsl:copy>
-</xsl:template>
-
-<!-- default link-generating code -->
-<xsl:template match='@href' mode='sub'><xsl:param name='id'/>#item-<xsl:value-of select='$id'/></xsl:template>
-
-<!-- identity transform for the rest of HTML -->
-<xsl:template match="*" mode='sub'>
     <xsl:element name="{local-name()}">
         <xsl:copy-of select="@*"/>
-        <xsl:apply-templates select="./text() | ./*" mode='sub'/>
-  </xsl:element>
+        <xsl:apply-templates select="./text() | ./*" mode="sub-testresult">
+            <xsl:with-param name="testresult" select="$testresult"/>
+            <xsl:with-param name="benchmark" select="$benchmark"/>
+            <xsl:with-param name="profile" select="$profile"/>
+        </xsl:apply-templates>
+    </xsl:element>
 </xsl:template>
 
-<!-- support for direct call of the stylesheet -->
-<xsl:template match='node()|@*' mode='sub'><xsl:copy><xsl:copy-of select='@*'/><xsl:apply-templates select='node()' mode='sub'/></xsl:copy></xsl:template>
+<xsl:template mode="sub-testresult" match="node() | @*">
+    <xsl:param name="testresult"/>
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
 
-<xsl:template match='cdf:description|cdf:fix|cdf:fixtext|cdf:front-matter|cdf:rear-matter|cdf:rationale|cdf:warning' mode='sub'>
-  <xsl:copy><xsl:copy-of select='@*'/><xsl:apply-templates select='node()' mode='sub'/></xsl:copy>
+    <xsl:copy>
+        <xsl:copy-of select="@*"/>
+
+        <xsl:apply-templates select="node()" mode="sub-testresult">
+            <xsl:with-param name="testresult" select="$testresult"/>
+            <xsl:with-param name="benchmark" select="$benchmark"/>
+            <xsl:with-param name="profile" select="$profile"/>
+        </xsl:apply-templates>
+    </xsl:copy>
+</xsl:template>
+
+<xsl:template mode="sub-testresult" match="cdf:title | cdf:description | cdf:fix | cdf:fixtext | cdf:front-matter | cdf:rear-matter | cdf:rationale | cdf:warning">
+    <xsl:param name="testresult"/>
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
+
+    <xsl:apply-templates select="node()" mode="sub-testresult">
+        <xsl:with-param name="testresult" select="$testresult"/>
+        <xsl:with-param name="benchmark" select="$benchmark"/>
+        <xsl:with-param name="profile" select="$profile"/>
+    </xsl:apply-templates>
+</xsl:template>
+
+<xsl:template name="warn-unresolved">
+    <xsl:param name="benchmark"/>
+
+    <xsl:if test="$benchmark[not(@resolved=1)][not(@resolved='true')]">
+        <xsl:message>WARNING: Processing an unresolved XCCDF document. This may have unexpected results.</xsl:message>
+    </xsl:if>
 </xsl:template>
 
 </xsl:stylesheet>

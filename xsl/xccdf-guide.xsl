@@ -60,6 +60,7 @@ Authors:
                 <xsl:otherwise>
                     <xsl:call-template name="generate-guide">
                         <xsl:with-param name="benchmark" select="$benchmark"/>
+                        <xsl:with-param name="profile_id" select="$profile_id"/>
                     </xsl:call-template>
                 </xsl:otherwise>
             </xsl:choose>
