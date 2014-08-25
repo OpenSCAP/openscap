@@ -35,37 +35,50 @@ Authors:
 
 <!-- main(..) -->
 <xsl:template match="/">
-    <xsl:choose>
-        <xsl:when test="$benchmark_id">
-            <xsl:variable name="benchmark" select="//cdf:Benchmark[@id = $benchmark_id][1]"/>
-            <xsl:choose>
-                <xsl:when test="not($benchmark)">
-                    <xsl:message terminate="yes">Can't find benchmark of ID '<xsl:value-of select="$benchmark_id"/>'!</xsl:message>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:call-template name="generate-guide">
-                        <xsl:with-param name="benchmark" select="$benchmark"/>
-                        <xsl:with-param name="profile_id" select="$profile_id"/>
-                    </xsl:call-template>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:when>
-        <xsl:otherwise>
-            <xsl:message>The 'benchmark_id' parameter was not supplied. Using the first cdf:Benchmark found!</xsl:message>
-            <xsl:variable name="benchmark" select="//cdf:Benchmark[1]"/>
-            <xsl:choose>
-                <xsl:when test="not($benchmark)">
-                    <xsl:message terminate="yes">Can't find any cdf:Benchmark elements!</xsl:message>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:call-template name="generate-guide">
-                        <xsl:with-param name="benchmark" select="$benchmark"/>
-                        <xsl:with-param name="profile_id" select="$profile_id"/>
-                    </xsl:call-template>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:otherwise>
-    </xsl:choose>
+    <xsl:variable name="final_benchmark_id">
+        <xsl:choose>
+            <xsl:when test="$benchmark_id">
+                <xsl:value-of select="$benchmark_id"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:if test="$verbosity">
+                    <xsl:message>The 'benchmark_id' parameter was not supplied. Using the first cdf:Benchmark found!</xsl:message>
+                </xsl:if>
+                <xsl:value-of select="//cdf:Benchmark[1]/@id"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+
+    <xsl:variable name="benchmark" select="//cdf:Benchmark[@id = $final_benchmark_id][1]"/>
+    <!-- Empty $profile_id is a valid use case! It's the default profile. -->
+
+    <xsl:if test="not($benchmark)">
+        <xsl:choose>
+            <xsl:when test="$benchmark_id">
+                <xsl:message terminate="yes">No such cdf:Benchmark exists (with @id = "<xsl:value-of select="$benchmark_id"/>")</xsl:message>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">No cdf:Benchmark ID specified and no suitable candidate has been autodetected.</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:if>
+
+    <xsl:if test="$verbosity">
+        <xsl:message>Benchmark ID: <xsl:value-of select="$final_benchmark_id"/></xsl:message>
+        <xsl:choose>
+            <xsl:when test="$profile_id">
+                <xsl:message>Profile ID: <xsl:value-of select="$profile_id"/></xsl:message>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message>Profile: (default)</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:if>
+
+    <xsl:call-template name="generate-guide">
+        <xsl:with-param name="benchmark" select="$benchmark"/>
+        <xsl:with-param name="profile_id" select="$profile_id"/>
+    </xsl:call-template>
 </xsl:template>
 
 </xsl:stylesheet>

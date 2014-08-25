@@ -115,33 +115,32 @@ stylesheet only.
     <xsl:variable name="testresult" select="//cdf:TestResult[@id=$final_result_id]"/>
     <xsl:variable name="benchmark" select="//cdf:Benchmark[@id=$final_benchmark_id]"/>
 
-    <xsl:choose>
-        <xsl:when test="$testresult">
-            <xsl:if test="$verbosity">
-                <xsl:message>TestResult ID: <xsl:value-of select="$final_result_id"/></xsl:message>
-            </xsl:if>
-        </xsl:when>
-        <xsl:when test="$testresult_id">
-            <xsl:message terminate="yes">No such cdf:TestResult exists (with ID = "<xsl:value-of select="$testresult_id"/>")</xsl:message>
-        </xsl:when>
-        <xsl:otherwise>
-            <xsl:message terminate="yes">No cdf:TestResult ID specified and no suitable candidate was autodetected.</xsl:message>
-        </xsl:otherwise>
-    </xsl:choose>
+    <xsl:if test="not($testresult)">
+        <xsl:choose>
+            <xsl:when test="$testresult_id">
+                <xsl:message terminate="yes">No such cdf:TestResult exists (with @id = "<xsl:value-of select="$testresult_id"/>")</xsl:message>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">No cdf:TestResult ID specified and no suitable candidate was autodetected.</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:if>
 
-    <xsl:choose>
-        <xsl:when test="$benchmark">
-            <xsl:if test="$verbosity">
-                <xsl:message>Benchmark ID: <xsl:value-of select="$final_benchmark_id"/></xsl:message>
-            </xsl:if>
-        </xsl:when>
-        <xsl:when test="$benchmark_id">
-            <xsl:message terminate="yes">No such cdf:Benchmark exists (with ID = "<xsl:value-of select="$benchmark_id"/>")</xsl:message>
-        </xsl:when>
-        <xsl:otherwise>
-            <xsl:message terminate="yes">No cdf:Benchmark ID specified and no suitable candidate was autodetected.</xsl:message>
-        </xsl:otherwise>
-    </xsl:choose>
+    <xsl:if test="not($benchmark)">
+        <xsl:choose>
+            <xsl:when test="$benchmark_id">
+                <xsl:message terminate="yes">No such cdf:Benchmark exists (with @id = "<xsl:value-of select="$benchmark_id"/>")</xsl:message>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">No cdf:Benchmark ID specified and no suitable candidate has been autodetected.</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:if>
+
+    <xsl:if test="$verbosity">
+        <xsl:message>TestResult ID: <xsl:value-of select="$final_result_id"/></xsl:message>
+        <xsl:message>Benchmark ID: <xsl:value-of select="$final_benchmark_id"/></xsl:message>
+    </xsl:if>
 
     <xsl:call-template name="generate-report">
         <xsl:with-param name="testresult" select="$testresult"/>
