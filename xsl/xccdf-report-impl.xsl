@@ -274,28 +274,6 @@ Authors:
     </tr>
 </xsl:template>
 
-<xsl:template name="rule-overview-count-results">
-    <xsl:param name="testresult"/>
-    <xsl:param name="item"/>
-    <xsl:param name="result"/>
-
-    <xsl:variable name="count" select="0"/>
-
-    <xsl:for-each select="$item/cdf:Group">
-        <xsl:variable name="inner_count">
-            <xsl:call-template name="rule-overview-count-results">
-                <xsl:with-param name="testresult" select="$testresult"/>
-                <xsl:with-param name="item" select="."/>
-                <xsl:with-param name="result" select="$result"/>
-            </xsl:call-template>
-        </xsl:variable>
-
-        <xsl:variable name="count" select="$count + $inner_count"/>
-    </xsl:for-each>
-
-    <xsl:value-of select="$count"/>
-</xsl:template>
-
 <xsl:template name="rule-overview-inner-node">
     <xsl:param name="testresult"/>
     <xsl:param name="item"/>

@@ -150,7 +150,7 @@ Authors:
     </xsl:choose>
 </xsl:template>
 
-<xsl:template name="rule-overview-leaf">
+<xsl:template name="guide-tree-leaf">
     <xsl:param name="item"/>
     <xsl:param name="profile"/>
     <xsl:param name="indent"/>
@@ -163,9 +163,9 @@ Authors:
     </xsl:variable>
 
     <xsl:if test="$selected_final = 'true'">
-        <tr data-tt-id="{$item/@id}" class="rule-overview-leaf" id="rule-overview-leaf-{generate-id($item)}">
+        <tr data-tt-id="{$item/@id}" class="guide-tree-leaf" id="guide-tree-leaf-{generate-id($item)}">
             <xsl:attribute name="data-tt-parent-id">
-                <xsl:value-of select="$item/parent::cdf:*/@id"/>
+                <xsl:value-of select="concat('children-', $item/parent::cdf:*/@id)"/>
             </xsl:attribute>
 
             <td style="padding-left: {$indent * 19}px">
@@ -201,7 +201,83 @@ Authors:
     </xsl:if>
 </xsl:template>
 
-<xsl:template name="rule-overview-inner-node">
+<xsl:template name="substring-count">
+    <xsl:param name="string"/>
+    <xsl:param name="substr"/>
+    <xsl:choose>
+        <xsl:when test="contains($string, $substr) and $string and $substr">
+            <xsl:variable name="rest">
+                <xsl:call-template name="substring-count">
+                    <xsl:with-param name="string" select="substring-after($string, $substr)"/>
+                    <xsl:with-param name="substr" select="$substr"/>
+                </xsl:call-template>
+            </xsl:variable>
+            <xsl:value-of select="$rest + 1"/>
+        </xsl:when>
+        <xsl:otherwise>0</xsl:otherwise>
+    </xsl:choose>
+</xsl:template>
+
+<xsl:template name="guide-count-contained-selected-rules-impl">
+    <xsl:param name="item"/>
+    <xsl:param name="profile"/>
+
+    <xsl:variable name="selected_final">
+        <xsl:call-template name="is-item-selected-final">
+            <xsl:with-param name="item" select="$item"/>
+            <xsl:with-param name="profile" select="$profile"/>
+        </xsl:call-template>
+    </xsl:variable>
+
+    <xsl:if test="$selected_final = 'true'">
+        <xsl:for-each select="$item/cdf:Group">
+            <xsl:call-template name="guide-count-contained-selected-rules-impl">
+                <xsl:with-param name="item" select="."/>
+                <xsl:with-param name="profile" select="$profile"/>
+            </xsl:call-template>
+        </xsl:for-each>
+
+        <xsl:for-each select="$item/cdf:Rule">
+            <xsl:variable name="rule" select="."/>
+
+            <xsl:variable name="rule_selected_final">
+                <xsl:call-template name="is-item-selected-final">
+                    <xsl:with-param name="item" select="$rule"/>
+                    <xsl:with-param name="profile" select="$profile"/>
+                </xsl:call-template>
+            </xsl:variable>
+
+            <xsl:if test="$rule_selected_final = 'true'">
+                RULE
+            </xsl:if>
+        </xsl:for-each>
+    </xsl:if>
+</xsl:template>
+
+<xsl:template name="guide-count-contained-selected-rules">
+    <!-- XSLT is a functional language, you cannot "update"
+         variables. That's why we recursivelly build a huge
+         string containing 'RULE' for each selected RULE.
+         We then cound the number of RULES to get the number
+         we need. -->
+
+    <xsl:param name="item"/>
+    <xsl:param name="profile"/>
+
+    <xsl:variable name="impl-ret">
+        <xsl:call-template name="guide-count-contained-selected-rules-impl">
+            <xsl:with-param name="item" select="$item"/>
+            <xsl:with-param name="profile" select="$profile"/>
+        </xsl:call-template>
+    </xsl:variable>
+
+    <xsl:call-template name="substring-count">
+        <xsl:with-param name="string" select="$impl-ret"/>
+        <xsl:with-param name="substr" select="'RULE'"/>
+    </xsl:call-template>
+</xsl:template>
+
+<xsl:template name="guide-tree-inner-node">
     <xsl:param name="item"/>
     <xsl:param name="profile"/>
     <xsl:param name="indent"/>
@@ -217,7 +293,7 @@ Authors:
         <tr data-tt-id="{$item/@id}">
             <xsl:if test="$item/parent::cdf:Group or $item/parent::cdf:Benchmark">
                 <xsl:attribute name="data-tt-parent-id">
-                    <xsl:value-of select="$item/parent::cdf:*/@id"/>
+                    <xsl:value-of select="concat('children-', $item/parent::cdf:*/@id)"/>
                 </xsl:attribute>
             </xsl:if>
 
@@ -242,8 +318,36 @@ Authors:
             </td>
         </tr>
 
+        <xsl:variable name="contained_rules">
+            <xsl:call-template name="guide-count-contained-selected-rules">
+                <xsl:with-param name="item" select="$item"/>
+                <xsl:with-param name="profile" select="$profile"/>
+            </xsl:call-template>
+        </xsl:variable>
+
+        <tr data-tt-id="children-{$item/@id}">
+            <xsl:if test="$item/parent::cdf:Group or $item/parent::cdf:Benchmark">
+                <xsl:attribute name="data-tt-parent-id">
+                    <xsl:value-of select="concat('children-', $item/parent::cdf:*/@id)"/>
+                </xsl:attribute>
+            </xsl:if>
+
+            <td style="padding-left: {$indent * 19}px">
+                <xsl:choose>
+                    <xsl:when test="$contained_rules > 1">
+                        <small>contains <xsl:value-of select="$contained_rules"/> rules</small>
+                    </xsl:when>
+                    <xsl:when test="$contained_rules = 1">
+                        <small>contains <xsl:value-of select="$contained_rules"/> rule</small>
+                    </xsl:when>
+                    <xsl:otherwise>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </td>
+        </tr>
+
         <xsl:for-each select="$item/cdf:Group">
-            <xsl:call-template name="rule-overview-inner-node">
+            <xsl:call-template name="guide-tree-inner-node">
                 <xsl:with-param name="item" select="."/>
                 <xsl:with-param name="profile" select="$profile"/>
                 <xsl:with-param name="indent" select="$indent + 1"/>
@@ -251,7 +355,7 @@ Authors:
         </xsl:for-each>
 
         <xsl:for-each select="$item/cdf:Rule">
-            <xsl:call-template name="rule-overview-leaf">
+            <xsl:call-template name="guide-tree-leaf">
                 <xsl:with-param name="item" select="."/>
                 <xsl:with-param name="profile" select="$profile"/>
                 <xsl:with-param name="indent" select="$indent + 1"/>
@@ -260,31 +364,16 @@ Authors:
     </xsl:if>
 </xsl:template>
 
-<xsl:template name="rule-overview">
+<xsl:template name="guide-tree">
     <xsl:param name="benchmark"/>
     <xsl:param name="profile"/>
 
-    <div id="rule-overview"><a name="rule-overview"></a>
-        <h2>Rule Overview</h2>
+    <div id="guide-tree"><a name="guide-tree"></a>
+        <h2>Checklist</h2>
 
-        <div class="form-group js-only">
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search through XCCDF rules" id="search-input" oninput="ruleSearch()"/>
-
-                        <div class="input-group-btn">
-                            <button class="btn btn-default" onclick="ruleSearch()">Search</button>
-                        </div>
-                    </div>
-                    <p id="search-matches"></p>
-                </div>
-            </div>
-        </div>
-
-        <table class="treetable table table-striped table-bordered">
+        <table class="treetable table table-bordered">
             <tbody>
-                <xsl:call-template name="rule-overview-inner-node">
+                <xsl:call-template name="guide-tree-inner-node">
                     <xsl:with-param name="item" select="$benchmark"/>
                     <xsl:with-param name="profile" select="$profile"/>
                     <xsl:with-param name="indent" select="0"/>
@@ -346,7 +435,7 @@ Authors:
         <xsl:with-param name="benchmark" select="$benchmark"/>
         <xsl:with-param name="profile" select="$profile"/>
     </xsl:call-template>
-    <xsl:call-template name="rule-overview">
+    <xsl:call-template name="guide-tree">
         <xsl:with-param name="benchmark" select="$benchmark"/>
         <xsl:with-param name="profile" select="$profile"/>
     </xsl:call-template>
