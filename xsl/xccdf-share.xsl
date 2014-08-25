@@ -49,7 +49,14 @@ Authors:
 </xsl:template>
 
 <xsl:template match="cdf:ident" mode="ident">
-    <abbr title="{concat(@system, concat(': ', text()))}"><xsl:value-of select="text()"/></abbr>
+    <xsl:choose>
+        <xsl:when test="starts-with(@system, 'http://cve.mitre.org')">
+            <a href="{concat('https://cve.mitre.org/cgi-bin/cvename.cgi?name=', text())}"><abbr title="{concat(@system, concat(': ', text()))}"><xsl:value-of select="text()"/></abbr></a>
+        </xsl:when>
+        <xsl:otherwise>
+            <abbr title="{concat(@system, concat(': ', text()))}"><xsl:value-of select="text()"/></abbr>
+        </xsl:otherwise>
+    </xsl:choose>
 </xsl:template>
 
 <xsl:template match="cdf:reference" mode="reference">
@@ -79,8 +86,8 @@ Authors:
         <p>
             <span class="label label-info">identifiers:</span>&#160;
             <xsl:for-each select="$item/cdf:ident">
-                <xsl:if test="position() > 1">, </xsl:if>
                 <xsl:apply-templates mode="ident" select="."/>
+                <xsl:if test="position() != last()">, </xsl:if>
             </xsl:for-each>
         </p>
     </xsl:if>
@@ -88,8 +95,8 @@ Authors:
         <p>
             <span class="label label-default">references:</span>&#160;
             <xsl:for-each select="$item/cdf:reference">
-                <xsl:if test="position() > 1">, </xsl:if>
                 <xsl:apply-templates mode="reference" select="."/>
+                <xsl:if test="position() != last()">, </xsl:if>
             </xsl:for-each>
         </p>
     </xsl:if>
