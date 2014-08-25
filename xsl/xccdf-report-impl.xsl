@@ -460,8 +460,12 @@ Authors:
         </xsl:variable>
 
         <xsl:if test="normalize-space($details)">
-            <abbr title="OVAL details taken from '{$filename}'">OVAL details</abbr>:
-            <xsl:copy-of select="$details"/>
+            <span class="label label-default"><abbr title="OVAL details taken from '{$filename}'">OVAL details</abbr></span>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <xsl:copy-of select="$details"/>
+                </div>
+            </div>
         </xsl:if>
     </xsl:if>
 </xsl:template>
@@ -472,7 +476,7 @@ Authors:
 
     <xsl:choose>
         <xsl:when test="$check/cdf:check-import[@import-name = 'stdout']/text()">
-            <abbr title="Script Check Engine stdout taken from check-import">SCE stdout</abbr>:
+            <span class="label label-default"><abbr title="Script Check Engine stdout taken from check-import">SCE stdout</abbr></span>
             <pre><code>
                 <xsl:value-of select="$check/cdf:check-import[@import-name = 'stdout']/text()"/>
             </code></pre>
@@ -489,7 +493,7 @@ Authors:
                 <xsl:variable name="stdout" select="document($filename)/sceres:sce_results/sceres:stdout/text()"/>
 
                 <xsl:if test="normalize-space($stdout)">
-                    <abbr title="Script Check Engine stdout taken from '{$filename}'">SCE stdout</abbr>:
+                    <span class="label label-default"><abbr title="Script Check Engine stdout taken from '{$filename}'">SCE stdout</abbr></span>
                     <pre><code>
                         <xsl:copy-of select="$stdout"/>
                     </code></pre>
@@ -602,7 +606,7 @@ Authors:
                         </xsl:if>
                         <xsl:if test="$item/cdf:fix">
                             <tr><td colspan="2" class="remediation">
-                                Remediation script:
+                                <span class="label label-success">Remediation script:</span>
                                 <pre><code>
                                     <xsl:apply-templates mode="sub-testresult" select="$item/cdf:fix">
                                         <xsl:with-param name="testresult" select="$testresult"/>
