@@ -443,6 +443,8 @@ Authors:
     <xsl:param name="check"/>
     <xsl:param name="oval-tmpl"/>
 
+    <!-- TODO: Look into ARF OVAL results as well -->
+
     <xsl:variable name="filename">
         <xsl:choose>
             <xsl:when test='contains($oval-tmpl, "%")'><xsl:value-of select='concat(substring-before($oval-tmpl, "%"), $check/cdf:check-content-ref/@href, substring-after($oval-tmpl, "%"))'/></xsl:when>
@@ -451,10 +453,16 @@ Authors:
     </xsl:variable>
 
     <xsl:if test="$filename != ''">
-        OVAL details (from "<xsl:value-of select="$filename"/>"):
-        <xsl:apply-templates select="document($filename)/ovalres:oval_results" mode="brief">
-            <xsl:with-param name='definition-id' select='$check/cdf:check-content-ref/@name'/>
-        </xsl:apply-templates>
+        <xsl:variable name="details">
+            <xsl:apply-templates select="document($filename)/ovalres:oval_results" mode="brief">
+                <xsl:with-param name='definition-id' select='$check/cdf:check-content-ref/@name'/>
+            </xsl:apply-templates>
+        </xsl:variable>
+
+        <xsl:if test="normalize-space($details)">
+            <abbr title="OVAL details taken from '{$filename}'">OVAL details</abbr>:
+            <xsl:copy-of select="$details"/>
+        </xsl:if>
     </xsl:if>
 </xsl:template>
 
@@ -463,8 +471,8 @@ Authors:
     <xsl:param name="sce-tmpl"/>
 
     <xsl:choose>
-        <xsl:when test="$check/cdf:check-import[@import-name = 'stdout']">
-            SCE stdout (from check-import):
+        <xsl:when test="$check/cdf:check-import[@import-name = 'stdout']/text()">
+            <abbr title="Script Check Engine stdout taken from check-import">SCE stdout</abbr>:
             <pre><code>
                 <xsl:value-of select="$check/cdf:check-import[@import-name = 'stdout']/text()"/>
             </code></pre>
@@ -478,10 +486,14 @@ Authors:
             </xsl:variable>
 
             <xsl:if test="$filename != ''">
-                SCE stdout (from "<xsl:value-of select="$filename"/>"):
-                <pre><code>
-                    <xsl:value-of select="document($filename)/sceres:sce_results/sceres:stdout/text()"/>
-                </code></pre>
+                <xsl:variable name="stdout" select="document($filename)/sceres:sce_results/sceres:stdout/text()"/>
+
+                <xsl:if test="normalize-space($stdout)">
+                    <abbr title="Script Check Engine stdout taken from '{$filename}'">SCE stdout</abbr>:
+                    <pre><code>
+                        <xsl:copy-of select="$stdout"/>
+                    </code></pre>
+                </xsl:if>
             </xsl:if>
         </xsl:otherwise>
     </xsl:choose>
@@ -575,13 +587,19 @@ Authors:
                         </p>
                     </td></tr>
                     <xsl:if test="$result = 'fail' or $result = 'error' or $result = 'unknown'">
-                        <tr><td colspan="2">
+                        <xsl:variable name="check_system_details_ret">
                             <xsl:call-template name="check-system-details">
                                 <xsl:with-param name="check" select="$ruleresult/cdf:check"/>
                                 <xsl:with-param name="oval-tmpl" select="$oval-tmpl"/>
                                 <xsl:with-param name="sce-tmpl" select="$sce-tmpl"/>
                             </xsl:call-template>
-                        </td></tr>
+                        </xsl:variable>
+
+                        <xsl:if test="normalize-space($check_system_details_ret)">
+                            <tr><td colspan="2">
+                                <xsl:copy-of select="$check_system_details_ret"/>
+                            </td></tr>
+                        </xsl:if>
                         <xsl:if test="$item/cdf:fix">
                             <tr><td colspan="2" class="remediation">
                                 Remediation script:
