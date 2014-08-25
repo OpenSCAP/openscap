@@ -174,6 +174,7 @@ Authors:
                         <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                         <xsl:with-param name="profile" select="$profile"/>
                     </xsl:apply-templates>
+                    <span class="label label-default pull-right">rule</span>
                 </h4>
 
                 <p>
@@ -303,6 +304,7 @@ Authors:
                         <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                         <xsl:with-param name="profile" select="$profile"/>
                     </xsl:apply-templates>
+                    <span class="label label-default pull-right">group</span>
                 </h3>
 
                 <p>
