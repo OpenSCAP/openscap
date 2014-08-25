@@ -574,24 +574,26 @@ Authors:
                             </xsl:apply-templates>
                         </p>
                     </td></tr>
-                    <tr><td colspan="2">
-                        <xsl:call-template name="check-system-details">
-                            <xsl:with-param name="check" select="$ruleresult/cdf:check"/>
-                            <xsl:with-param name="oval-tmpl" select="$oval-tmpl"/>
-                            <xsl:with-param name="sce-tmpl" select="$sce-tmpl"/>
-                        </xsl:call-template>
-                    </td></tr>
-                    <xsl:if test="$item/cdf:fix">
-                        <tr><td colspan="2" class="remediation">
-                            Remediation script:
-                            <pre><code>
-                                <xsl:apply-templates mode="sub-testresult" select="$item/cdf:fix">
-                                    <xsl:with-param name="testresult" select="$testresult"/>
-                                    <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
-                                    <xsl:with-param name="profile" select="$profile"/>
-                                </xsl:apply-templates>
-                            </code></pre>
+                    <xsl:if test="$result = 'fail' or $result = 'error' or $result = 'unknown'">
+                        <tr><td colspan="2">
+                            <xsl:call-template name="check-system-details">
+                                <xsl:with-param name="check" select="$ruleresult/cdf:check"/>
+                                <xsl:with-param name="oval-tmpl" select="$oval-tmpl"/>
+                                <xsl:with-param name="sce-tmpl" select="$sce-tmpl"/>
+                            </xsl:call-template>
                         </td></tr>
+                        <xsl:if test="$item/cdf:fix">
+                            <tr><td colspan="2" class="remediation">
+                                Remediation script:
+                                <pre><code>
+                                    <xsl:apply-templates mode="sub-testresult" select="$item/cdf:fix">
+                                        <xsl:with-param name="testresult" select="$testresult"/>
+                                        <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                                        <xsl:with-param name="profile" select="$profile"/>
+                                    </xsl:apply-templates>
+                                </code></pre>
+                            </td></tr>
+                        </xsl:if>
                     </xsl:if>
                 </tbody>
             </table>
