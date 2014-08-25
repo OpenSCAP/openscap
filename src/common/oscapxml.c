@@ -341,22 +341,22 @@ int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, 
 #define XCCDF12_NS "http://checklists.nist.gov/xccdf/1.2"
 
 /*
- * Goes through the tree (DFS) and changes namespace of all XCCDF 1.2 elements
- * to XCCDF 1.1 namespace URI. This ensures that the XCCDF works fine with
+ * Goes through the tree (DFS) and changes namespace of all XCCDF 1.1 elements
+ * to XCCDF 1.2 namespace URI. This ensures that the XCCDF works fine with
  * XSLTs provided in openscap.
  */
 static int xccdf_ns_xslt_workaround(xmlDocPtr doc, xmlNodePtr node)
 {
-	if (node == NULL || node->ns == NULL || strcmp((const char*)node->ns->href, XCCDF12_NS) != 0) {
-		// nothing to do, this part of the document isn't XCCDF 1.2
+	if (node == NULL || node->ns == NULL || strcmp((const char*)node->ns->href, XCCDF11_NS) != 0) {
+		// nothing to do, this part of the document isn't XCCDF 1.1
 		return 0;
 	}
 
-	xmlNsPtr xccdf11 = xmlNewNs(node,
-			BAD_CAST XCCDF11_NS,
-			BAD_CAST "cdf11");
+	xmlNsPtr xccdf12 = xmlNewNs(node,
+			BAD_CAST XCCDF12_NS,
+			BAD_CAST "cdf12");
 
-	xmlSetNs(node, xccdf11);
+	xmlSetNs(node, xccdf12);
 
 	xmlNodePtr child = node->children;
 
@@ -364,7 +364,7 @@ static int xccdf_ns_xslt_workaround(xmlDocPtr doc, xmlNodePtr node)
 		if (child->type != XML_ELEMENT_NODE)
 			continue;
 
-		int res = xccdf_ns_xslt_workaround(doc, child);
+		const int res = xccdf_ns_xslt_workaround(doc, child);
 		if (res != 0)
 			return res;
 	}
@@ -413,8 +413,8 @@ static int oscap_apply_xslt_path(const char *xmlfile, const char *xsltfile,
 		}
 
 		if (strcmp(xsltfile, "xccdf-report.xsl") == 0 ||
-				strcmp(xsltfile, "fix.xsl") == 0 ||
-				strcmp(xsltfile, "security-guide.xsl") == 0)
+				strcmp(xsltfile, "legacy-fix.xsl") == 0 ||
+				strcmp(xsltfile, "xccdf-guide.xsl") == 0)
 			ns_workaround = true;
 	}
 

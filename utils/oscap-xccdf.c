@@ -232,7 +232,7 @@ static struct oscap_module XCCDF_GEN_GUIDE = {
         "   --output <file>\r\t\t\t\t - Write the document into file.\n"
         "   --hide-profile-info\r\t\t\t\t - Do not output additional information about selected profile.\n",
     .opt_parser = getopt_xccdf,
-    .user = "security-guide.xsl",
+    .user = "xccdf-guide.xsl",
     .func = app_xccdf_xslt
 };
 
@@ -247,7 +247,7 @@ static struct oscap_module XCCDF_GEN_FIX = {
         "   --result-id <id>\r\t\t\t\t - Fixes will be generated for failed rule-results of the specified TestResult.\n"
         "   --template <id|filename>\r\t\t\t\t - Fix template. (default: bash)\n",
     .opt_parser = getopt_xccdf,
-    .user = "fix.xsl",
+    .user = "legacy-fix.xsl",
     .func = app_generate_fix
 };
 
@@ -845,7 +845,7 @@ int app_xccdf_xslt(const struct oscap_action *action)
 	const char *params[] = {
 		"result-id",         action->id,
 		"show",              action->show,
-		"profile",           action->profile,
+		"profile_id",        action->profile,
 		"template",          action->tmpl,
 		"format",            action->format,
 		"oval-template",     oval_template,

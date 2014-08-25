@@ -20,10 +20,10 @@ $OSCAP xccdf eval \
 cat $stdout | grep "This title is variable: No profile"; :> $stdout
 $OSCAP xccdf validate-xml $result; :> $result
 grep 'This description is substituted according to the selected policy:.*No profile' $report
-grep 'This title is variable: No profile' $report
+grep 'This title is variable:.*No profile' $report
 grep 'sub ' $report || x=1; [ "x$x" == "x1" ]; unset x; :> $report
-$OSCAP xccdf generate guide --output $report $srcdir/${name}.xccdf.xml
-grep 'This title is variable: No profile' $report
+$OSCAP xccdf generate guide --output $report $srcdir/${name}.xccdf.xml > $stdout 2> $stderr
+grep 'This title is variable:.*No profile' $report
 grep 'sub ' $report || x=1; [ "x$x" == "x1" ]; unset x; :> $report
 
 
@@ -33,22 +33,22 @@ $OSCAP xccdf eval --profile xccdf_moc.elpmaxe.www_profile_1 \
 cat $stdout | grep "This title is variable: The First Profile"; :> $stdout
 $OSCAP xccdf validate-xml $result; :> $result
 grep 'This description is substituted according to the selected policy:.*The First Profile' $report
-grep 'This title is variable: The First Profile' $report
+grep 'This title is variable:.*The First Profile' $report
 grep 'sub ' $report || x=1; [ "x$x" == "x1" ]; unset x; :> $report
 $OSCAP xccdf generate guide --profile xccdf_moc.elpmaxe.www_profile_1 \
 	--output $report $srcdir/${name}.xccdf.xml
-grep 'This title is variable: The First Profile' $report
+grep 'This title is variable:.*The First Profile' $report
 grep 'sub ' $report || x=1; [ "x$x" == "x1" ]; unset x; :> $report
 
 $OSCAP xccdf eval --profile xccdf_moc.elpmaxe.www_profile_2 \
 	--results $result --report $report $srcdir/${name}.xccdf.xml > $stdout 2> $stderr
-[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
+[ -f $stderr ]; [ ! -s $stderr ]
 cat $stdout | grep "This title is variable: The Second Profile"; rm $stdout
 $OSCAP xccdf validate-xml $result; rm $result
 grep 'This description is substituted according to the selected policy:.*The Second Profile' $report
-grep 'This title is variable: The Second Profile' $report
+grep 'This title is variable:.*The Second Profile' $report
 grep 'sub ' $report || x=1; [ "x$x" == "x1" ]; unset x; rm $report
 $OSCAP xccdf generate guide --profile xccdf_moc.elpmaxe.www_profile_2 \
 	--output $report $srcdir/${name}.xccdf.xml
-grep 'This title is variable: The Second Profile' $report
+grep 'This title is variable:.*The Second Profile' $report
 grep 'sub ' $report || x=1; [ "x$x" == "x1" ]; unset x; :> $report

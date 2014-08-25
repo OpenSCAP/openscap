@@ -1,0 +1,24 @@
+tr.rule-overview-needs-attention td a { color: #c90813 }
+
+td.rule-result div { text-align: center; font-weight: bold; color: #fff; background: #808080 }
+td.rule-result-fail div { background: #c90813 }
+td.rule-result-error div { background: #c90813 }
+td.rule-result-unknown div { background: #eb7720 }
+td.rule-result-pass div { background: #5cb75c }
+td.rule-result-fixed div { background: #5cb75c }
+
+.js-only { display: none }
+
+.rule-result-filtered, .rule-result-filtered > * { display: none !important }
+.search-no-match, .search-no-match > * { display: none !important }
+
+.rule-detail-fail, .rule-detail-error, .rule-detail-unknown { border: 2px solid red }
+
+#footer { text-align: center; margin-top: 50px }
+
+pre
+{
+    overflow: auto !important;
+    word-wrap: normal !important;
+    white-space: pre;
+}
