@@ -487,10 +487,12 @@ if test "x${python3_bind}" = xyes; then
 	PYTHON3_CFLAGS=`python3-config --cflags 2> /dev/null`
 	PYTHON3_LIBS=`python3-config --libs 2> /dev/null`
 	PYTHON3_INCLUDES=`python3-config --includes 2> /dev/null`
+
+	# the string concatenation below is just a trick to prevent substitution
 	PYTHON3_DIR=`$PYTHON3 -c "import distutils.sysconfig; \
-		print(distutils.sysconfig.get_python_lib(0,0))"`
+		print(distutils.sysconfig.get_python_lib(0,0,prefix='$' '{prefix}'))"`
 	PYTHON3_EXECDIR=`$PYTHON3 -c "import distutils.sysconfig; \
-		print(distutils.sysconfig.get_python_lib(1,0))"`
+		print(distutils.sysconfig.get_python_lib(1,0,prefix='$' '{exec_prefix}'))"`
 
 	AC_SUBST(PYTHON3_CFLAGS)
 	AC_SUBST(PYTHON3_LIBS)
