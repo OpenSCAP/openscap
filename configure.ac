@@ -1040,12 +1040,12 @@ AC_ARG_ENABLE([python],
      esac],[python_bind=yes])
 
 AC_ARG_ENABLE([python3],
-	[AC_HELP_STRING([--enable-python3], [enable compilation of python3 bindings (default=yes)])],
+	[AC_HELP_STRING([--enable-python3], [enable compilation of python3 bindings (default=no)])],
 	[case "${enableval}" in
 		yes) python3_bind=yes ;;
 		no) python3_bind=no ;;
 		*) AC_MSG_ERROR([bad value ${enableval} for --enable-python3]);;
-	esac],[python3_bind=yes])
+	esac],[python3_bind=no])
 
 AC_ARG_ENABLE([perl],
      [AC_HELP_STRING([--enable-perl], [enable compilation of perl bindings (default=no)])],
