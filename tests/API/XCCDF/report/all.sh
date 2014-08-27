@@ -59,5 +59,7 @@ test_run "test_api_xccdf_report_xccdf12" test_generate_report results-xccdf12.xm
 # (see xccdf_ns_xslt_workaround(..) for details) is not used when using custom stylesheets.
 #test_run "test_api_xccdf_report_custom_xccdf11" test_generate_report_custom results-xccdf11.xml xccdf_moc.elpmaxe.www_rule_1
 test_run "test_api_xccdf_report_custom_xccdf12" test_generate_report_custom results-xccdf12.xml xccdf_moc.elpmaxe.www_rule_1
+test_run "test_api_xccdf_report_idents" test_generate_report results-idents-refs.xml identidentident
+test_run "test_api_xccdf_report_refs" test_generate_report results-idents-refs.xml referencereferencereference
 
 test_exit

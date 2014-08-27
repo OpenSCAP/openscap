@@ -555,12 +555,13 @@ Authors:
                     </td></tr>
                     <tr><td>Time</td><td><xsl:value-of select="$ruleresult/@time"/></td></tr>
                     <tr><td>Severity</td><td><xsl:value-of select="$ruleresult/@severity"/></td></tr>
-                    <tr><td>Identifiers</td><td class="identifiers">
-                        <ul>
-                        <xsl:for-each select="$ruleresult/cdf:ident">
-                            <li><xsl:apply-templates select="." mode="ident"/></li>
-                        </xsl:for-each>
-                        </ul>
+                    <tr><td>Identifiers and References</td><td class="identifiers">
+                        <!-- XCCDF 1.2 spec says that idents in rule-result should be copied from
+                             the Rule itself. That means that we can just use the same code as guide
+                             and just use idents from Rule. -->
+                        <xsl:call-template name="item-idents-refs">
+                            <xsl:with-param name="item" select="$item"/>
+                        </xsl:call-template>
                     </td></tr>
                     <tr><td colspan="2" class="description">
                         <p>
