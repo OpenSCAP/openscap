@@ -79,6 +79,24 @@ Authors:
     </xsl:choose>
 </xsl:template>
 
+<xsl:template name="item-title">
+    <xsl:param name="item"/>
+    <xsl:param name="profile"/>
+
+    <xsl:choose>
+        <xsl:when test="$item/cdf:title">
+            <xsl:apply-templates mode="sub-testresult" select="$item/cdf:title">
+                <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                <xsl:with-param name="profile" select="$profile"/>
+            </xsl:apply-templates>
+        </xsl:when>
+        <xsl:otherwise>
+            ID: <xsl:value-of select="$item/@id"/>
+        </xsl:otherwise>
+    </xsl:choose>
+
+</xsl:template>
+
 <xsl:template name="item-idents-refs">
     <xsl:param name="item"/>
 

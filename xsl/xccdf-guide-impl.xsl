@@ -170,10 +170,10 @@ Authors:
 
             <td style="padding-left: {$indent * 19}px">
                 <h4>
-                    <xsl:apply-templates mode="sub-testresult" select="$item/cdf:title">
-                        <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                    <xsl:call-template name="item-title">
+                        <xsl:with-param name="item" select="$item"/>
                         <xsl:with-param name="profile" select="$profile"/>
-                    </xsl:apply-templates>
+                    </xsl:call-template>
                     <span class="label label-default pull-right">rule</span>
                 </h4>
 
@@ -300,10 +300,10 @@ Authors:
 
             <td style="padding-left: {$indent * 19}px">
                 <h3>
-                    <xsl:apply-templates mode="sub-testresult" select="$item/cdf:title">
-                        <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                    <xsl:call-template name="item-title">
+                        <xsl:with-param name="item" select="$item"/>
                         <xsl:with-param name="profile" select="$profile"/>
-                    </xsl:apply-templates>
+                    </xsl:call-template>
                     <span class="label label-default pull-right">group</span>
                 </h3>
 
@@ -418,10 +418,10 @@ Authors:
         <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <title>
-            <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:title">
-                <xsl:with-param name="benchmark" select="$benchmark"/>
+            <xsl:call-template name="item-title">
+                <xsl:with-param name="item" select="$benchmark"/>
                 <xsl:with-param name="profile" select="$profile"/>
-            </xsl:apply-templates> | OpenSCAP Security Guide
+            </xsl:call-template> | OpenSCAP Security Guide
         </title>
 
         <style><xsl:call-template name="css-sources"/></style>

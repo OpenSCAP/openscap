@@ -254,11 +254,11 @@ Authors:
         </xsl:if>
 
         <td style="padding-left: {$indent * 19}px"><a href="#rule-detail-{generate-id($ruleresult)}" onclick="return openRuleDetailsDialog('{generate-id($ruleresult)}')">
-            <xsl:apply-templates mode="sub-testresult" select="$item/cdf:title">
+            <xsl:call-template name="item-title">
+                <xsl:with-param name="item" select="$item"/>
                 <xsl:with-param name="testresult" select="$testresult"/>
-                <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                 <xsl:with-param name="profile" select="$profile"/>
-            </xsl:apply-templates>
+            </xsl:call-template>
         </a></td>
         <td style="text-align: center"><xsl:value-of select="$ruleresult/@severity"/></td>
         <td class="rule-result rule-result-{$result}">
@@ -296,22 +296,22 @@ Authors:
             <xsl:choose>
                 <xsl:when test="$contained_rules_need_attention > 0">
                     <strong>
-                        <xsl:apply-templates mode="sub-testresult" select="$item/cdf:title">
+                        <xsl:call-template name="item-title">
+                            <xsl:with-param name="item" select="$item"/>
                             <xsl:with-param name="testresult" select="$testresult"/>
-                            <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                             <xsl:with-param name="profile" select="$profile"/>
-                        </xsl:apply-templates>
+                        </xsl:call-template>
                     </strong>
                     <xsl:if test="$contained_rules_fail > 0">&#160;<span class="badge"><xsl:value-of select="$contained_rules_fail"/>x fail</span></xsl:if>
                     <xsl:if test="$contained_rules_error > 0">&#160;<span class="badge"><xsl:value-of select="$contained_rules_error"/>x error</span></xsl:if>
                     <xsl:if test="$contained_rules_unknown > 0">&#160;<span class="badge"><xsl:value-of select="$contained_rules_unknown"/>x unknown</span></xsl:if>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:apply-templates mode="sub-testresult" select="$item/cdf:title">
+                    <xsl:call-template name="item-title">
+                        <xsl:with-param name="item" select="$item"/>
                         <xsl:with-param name="testresult" select="$testresult"/>
-                        <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                         <xsl:with-param name="profile" select="$profile"/>
-                    </xsl:apply-templates>
+                    </xsl:call-template>
                     <script>$(document).ready(function(){$('.treetable').treetable("collapseNode","<xsl:value-of select="$item/@id"/>");});</script>
                 </xsl:otherwise>
             </xsl:choose>
@@ -515,24 +515,27 @@ Authors:
 
     <div class="panel panel-default rule-detail rule-detail-{$result}" id="rule-detail-{generate-id($ruleresult)}">
         <div class="keywords sr-only">
-            <xsl:apply-templates mode="sub-testresult" select="$item/cdf:title">
+            <xsl:call-template name="item-title">
+                <xsl:with-param name="item" select="$item"/>
                 <xsl:with-param name="testresult" select="$testresult"/>
-                <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                 <xsl:with-param name="profile" select="$profile"/>
-            </xsl:apply-templates>
+            </xsl:call-template>
             <xsl:value-of select="concat($item/@id, ' ')"/>
             <xsl:for-each select="$ruleresult/cdf:ident">
+                <xsl:value-of select="concat(text(), ' ')"/>
+            </xsl:for-each>
+            <xsl:for-each select="$ruleresult/cdf:reference">
                 <xsl:value-of select="concat(text(), ' ')"/>
             </xsl:for-each>
         </div>
         <div class="panel-heading">
             <a name="rule-detail-{generate-id($ruleresult)}"></a>
             <h3 class="panel-title">
-                <xsl:apply-templates mode="sub-testresult" select="$item/cdf:title">
+                <xsl:call-template name="item-title">
+                    <xsl:with-param name="item" select="$item"/>
                     <xsl:with-param name="testresult" select="$testresult"/>
-                    <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                     <xsl:with-param name="profile" select="$profile"/>
-                </xsl:apply-templates>
+                </xsl:call-template>
             </h3>
         </div>
         <div class="panel-body">
