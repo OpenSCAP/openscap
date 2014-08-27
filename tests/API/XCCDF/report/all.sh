@@ -61,5 +61,7 @@ test_run "test_api_xccdf_report_xccdf12" test_generate_report results-xccdf12.xm
 test_run "test_api_xccdf_report_custom_xccdf12" test_generate_report_custom results-xccdf12.xml xccdf_moc.elpmaxe.www_rule_1
 test_run "test_api_xccdf_report_idents" test_generate_report results-idents-refs.xml identidentident
 test_run "test_api_xccdf_report_refs" test_generate_report results-idents-refs.xml referencereferencereference
+test_run "test_api_xccdf_report_no_title" test_generate_report results-xccdf12.xml "ID: xccdf_moc.elpmaxe.www_rule_1"
+test_run "test_api_xccdf_report_title" test_generate_report results-title.xml "RULETITLE"
 
 test_exit
