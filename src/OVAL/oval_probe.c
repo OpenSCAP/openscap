@@ -439,6 +439,11 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
         case OVAL_NODETYPE_EXTENDDEF:{
                         struct oval_definition *oval_def = oval_criteria_node_get_definition(cnode);
 			struct oval_criteria_node *node =  oval_definition_get_criteria(oval_def);
+			if (node == NULL) {
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find extended definition: %s.",
+					oval_definition_get_id(oval_def));
+				return -1;
+			}
                         return oval_probe_query_criteria(sess, node);
                 }
                 break;
