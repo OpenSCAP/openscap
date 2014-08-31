@@ -487,8 +487,12 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 	 * */
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVE_STR) != 0) {
 
-		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABLE_CONFIGURATION_STR) &&
-		    xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+		if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
+			xmlTextReaderNextNode(reader);
+			continue;
+		}
+
+		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABLE_CONFIGURATION_STR)) {
 
 			conf = oscap_alloc(sizeof(struct cve_configuration));
 
@@ -498,9 +502,7 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 
 			oscap_list_add(ret->configurations, conf);
                         continue;
-		} else
-		    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABLE_SOFTWARE_LIST_STR) &&
-			xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABLE_SOFTWARE_LIST_STR)) {
 			/* this will be list of products */
 			xmlTextReaderNextNode(reader);
 			while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABLE_SOFTWARE_LIST_STR) != 0) {
@@ -515,33 +517,19 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 				}
 				xmlTextReaderNextNode(reader);
 			}
-		} else
-		    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVE_ID_STR) &&
-			xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVE_ID_STR)) {
 			ret->cve_id = (char *)xmlTextReaderReadString(reader);
-		} else
-		    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PUBLISHED_DATETIME_STR) &&
-			xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PUBLISHED_DATETIME_STR)) {
 			ret->published = (char *)xmlTextReaderReadString(reader);
-		} else
-		    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_LAST_MODIFIED_DATETIME_STR) &&
-			xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_LAST_MODIFIED_DATETIME_STR)) {
 			ret->modified = (char *)xmlTextReaderReadString(reader);
-		} else
-		    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVSS_STR) &&
-			xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVSS_STR)) {
 		    if (ret->cvss == NULL) ret->cvss = cvss_impact_new_from_xml(reader);
-		} else
-		    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_SECURITY_PROTECTION_STR) &&
-			xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_SECURITY_PROTECTION_STR)) {
 			ret->sec_protection = (char *)xmlTextReaderReadString(reader);
-		} else
-		    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CWE_STR) &&
-			xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CWE_STR)) {
 			ret->cwe = (char *)xmlTextReaderGetAttribute(reader, ATTR_CVE_ID_STR);
-		} else
-		    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REFERENCES_STR) &&
-			xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REFERENCES_STR)) {
 			refer = cve_reference_new();
 
 			if (refer) {
@@ -565,16 +553,14 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 			    }
 			    oscap_list_add(ret->references, refer);
 			}
-		} else
-		    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_SUMMARY_STR) &&
-			xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_SUMMARY_STR)) {
 			summary = cve_summary_new();
 
                         if (summary) {
                                 summary->summary = (char *)xmlTextReaderReadString(reader);
 				oscap_list_add(ret->summaries, summary);
                         }
-		} else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+		} else {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element in CVE entry: %s",
 				(const char*) xmlTextReaderConstLocalName(reader));
 			cve_entry_free(ret);
