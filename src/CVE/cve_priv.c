@@ -783,6 +783,7 @@ void cve_model_free(struct cve_model *cve_model)
 		return;
 
 	oscap_list_free(cve_model->entries, (oscap_destruct_func) cve_entry_free);
+	oscap_free(cve_model->pub_date);
 	oscap_free(cve_model->nvd_xml_version);
 	oscap_free(cve_model);
 }
