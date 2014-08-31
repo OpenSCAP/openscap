@@ -577,6 +577,8 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 		} else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element in CVE entry: %s",
 				(const char*) xmlTextReaderConstLocalName(reader));
+			cve_entry_free(ret);
+			return NULL;
 		}
 
 		/* get the next node */
