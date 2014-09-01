@@ -49,43 +49,67 @@ Authors:
     <xsl:param name="benchmark"/>
 
     <div id="characteristics"><a name="characteristics"></a>
-        <h2>Characteristics</h2>
+        <h2>Evaluation Characteristics</h2>
         <div class="row">
             <div class="col-md-5 well well-lg">
-                <p>
-                    <xsl:choose>
-                        <!-- cdf:identity is optional and will appear at most once -->
-                        <xsl:when test="$testresult/cdf:identity">
-                            User <strong><xsl:value-of select="$testresult/cdf:identity/text()"/></strong>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            Unknown user
-                        </xsl:otherwise>
-                    </xsl:choose>
-                    started the evaluation
-                    <xsl:choose>
-                        <xsl:when test="$testresult/@start-time">
-                            at <strong><xsl:value-of select="$testresult/@start-time"/></strong>.
-                        </xsl:when>
-                        <xsl:otherwise>
-                            .
-                        </xsl:otherwise>
-                    </xsl:choose>
-                    Evaluation finished at <strong><xsl:value-of select="$testresult/@end-time"/></strong>.
-                    The target machine was called <strong><xsl:value-of select="$testresult/cdf:target/text()"/></strong>.
-                </p>
-                <xsl:if test="$testresult/cdf:benchmark">
-                    <p>
-                        Benchmark from <strong><xsl:value-of select="$testresult/cdf:benchmark/@href"/></strong>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Target machine</th>
+                        <td>
+                            <xsl:value-of select="$testresult/cdf:target/text()"/>
+                        </td>
+                    </tr>
+                    <xsl:if test="$testresult/cdf:benchmark">
+                        <tr>
+                            <th>Benchmark URL</th>
+                            <td><xsl:value-of select="$testresult/cdf:benchmark/@href"/></td>
+                        </tr>
                         <xsl:if test="$testresult/cdf:benchmark/@id">
-                            with ID <strong><xsl:value-of select="$testresult/cdf:benchmark/@id"/></strong>
+                            <tr>
+                                <th>Benchmark ID</th>
+                                <td><xsl:value-of select="$testresult/cdf:benchmark/@id"/></td>
+                            </tr>
                         </xsl:if>
-                        was used.
-                        <xsl:if test="$testresult/cdf:profile">
-                            Profile <strong><xsl:value-of select="$testresult/cdf:profile/@idref"/></strong> was selected.
-                        </xsl:if>
-                    </p>
-                </xsl:if>
+                    </xsl:if>
+                    <xsl:if test="$testresult/cdf:profile">
+                        <tr>
+                            <th>Profile ID</th>
+                            <td><xsl:value-of select="$testresult/cdf:profile/@idref"/></td>
+                        </tr>
+                    </xsl:if>
+                    <tr>
+                        <th>Started at</th>
+                        <td>
+                            <xsl:choose>
+                                <xsl:when test="$testresult/@start-time">
+                                    <xsl:value-of select="$testresult/@start-time"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    unknown time
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Finished at</th>
+                        <td>
+                            <xsl:value-of select="$testresult/@end-time"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Performed by</th>
+                        <td>
+                            <xsl:choose>
+                                <xsl:when test="$testresult/cdf:identity">
+                                    <xsl:value-of select="$testresult/cdf:identity/text()"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    unknown user
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </td>
+                    </tr>
+                </table>
             </div>
             <div class="col-md-3">
                 <h4>CPE Platforms</h4>
