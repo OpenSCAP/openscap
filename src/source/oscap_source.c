@@ -150,8 +150,18 @@ xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
 
 int oscap_source_validate(struct oscap_source *source, xml_reporter reporter, void *user)
 {
-	return oscap_source_validate_priv(source, oscap_source_get_scap_type(source),
+	int ret = oscap_source_validate_priv(source, oscap_source_get_scap_type(source),
 			oscap_source_get_schema_version(source), reporter, user);
+	if (ret != 0) {
+		const char *type_name = oscap_document_type_to_string(oscap_source_get_scap_type(source));
+		if (type_name == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unrecognized document type for: ", oscap_source_readable_origin(source));
+		} else {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid %s (%s) content in %s.\n", type_name,
+				oscap_source_get_schema_version(source), oscap_source_readable_origin(source));
+		}
+	}
+	return ret;
 }
 
 const char *oscap_source_get_schema_version(struct oscap_source *source)
