@@ -23,4 +23,4 @@ pre
     white-space: pre;
 }
 
-div.check-system-details, div.remediation { display: inline-block; width: 0; min-width: 100%; overflow-x: auto }
+div.check-system-details, div.remediation, div.description { display: inline-block; width: 0; min-width: 100%; overflow-x: auto }

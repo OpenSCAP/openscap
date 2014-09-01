@@ -587,7 +587,7 @@ Authors:
                             <xsl:with-param name="item" select="$item"/>
                         </xsl:call-template>
                     </td></tr>
-                    <tr><td colspan="2" class="description">
+                    <tr><td colspan="2"><div class="description">
                         <p>
                             <xsl:apply-templates mode="sub-testresult" select="$item/cdf:description">
                                 <xsl:with-param name="testresult" select="$testresult"/>
@@ -595,7 +595,7 @@ Authors:
                                 <xsl:with-param name="profile" select="$profile"/>
                             </xsl:apply-templates>
                         </p>
-                    </td></tr>
+                    </div></td></tr>
                     <xsl:if test="$result = 'fail' or $result = 'error' or $result = 'unknown'">
                         <xsl:variable name="check_system_details_ret">
                             <xsl:call-template name="check-system-details">
