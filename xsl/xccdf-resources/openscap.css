@@ -1,18 +1,18 @@
-tr.rule-overview-needs-attention td a { color: #c90813 }
+tr.rule-overview-needs-attention td a { color: #d9534f }
 
 td.rule-result div { text-align: center; font-weight: bold; color: #fff; background: #808080 }
-td.rule-result-fail div { background: #c90813 }
-td.rule-result-error div { background: #c90813 }
-td.rule-result-unknown div { background: #eb7720 }
-td.rule-result-pass div { background: #5cb75c }
-td.rule-result-fixed div { background: #5cb75c }
+td.rule-result-fail div { background: #d9534f }
+td.rule-result-error div { background: #d9534f }
+td.rule-result-unknown div { background: #f0ad4e }
+td.rule-result-pass div { background: #5cb85c }
+td.rule-result-fixed div { background: #5cb85c }
 
 .js-only { display: none }
 
 .rule-result-filtered, .rule-result-filtered > * { display: none !important }
 .search-no-match, .search-no-match > * { display: none !important }
 
-.rule-detail-fail, .rule-detail-error, .rule-detail-unknown { border: 2px solid red }
+.rule-detail-fail, .rule-detail-error, .rule-detail-unknown { border: 2px solid #d9534f }
 
 #footer { text-align: center; margin-top: 50px }
 
