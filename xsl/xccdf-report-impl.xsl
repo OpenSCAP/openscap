@@ -606,9 +606,9 @@ Authors:
                         </xsl:variable>
 
                         <xsl:if test="normalize-space($check_system_details_ret)">
-                            <tr><td colspan="2">
+                            <tr><td colspan="2"><div class="check-system-details">
                                 <xsl:copy-of select="$check_system_details_ret"/>
-                            </td></tr>
+                            </div></td></tr>
                         </xsl:if>
                         <xsl:if test="$item/cdf:fix">
                             <tr><td colspan="2" class="remediation">
