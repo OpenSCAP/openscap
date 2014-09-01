@@ -307,16 +307,13 @@ int app_collect_oval(const struct oscap_action *action)
 
 		/* validate OVAL System Characteristics */
 		if (action->validate && full_validation) {
-			char *doc_version;
-
-			doc_version = oval_determine_document_schema_version((const char *) action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR);
-			if (oscap_validate_document(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, doc_version, reporter, (void*) action)) {
-				validation_failed(action->f_syschar, OSCAP_DOCUMENT_OVAL_SYSCHAR, doc_version);
-				free(doc_version);
+			struct oscap_source *syschar_source = oscap_source_new_from_file(action->f_syschar);
+			if (oscap_source_validate(syschar_source, reporter, (void *)action)) {
+				oscap_source_free(syschar_source);
 				goto cleanup;
 			}
 			fprintf(stdout, "OVAL System Characteristics are exported correctly.\n");
-			free(doc_version);
+			oscap_source_free(syschar_source);
 		}
 	}
 
