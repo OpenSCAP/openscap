@@ -291,41 +291,43 @@ Authors:
     </xsl:variable>
 
     <xsl:if test="$selected_final = 'true'">
-        <tr data-tt-id="{$item/@id}">
-            <xsl:if test="$item/parent::cdf:Group or $item/parent::cdf:Benchmark">
-                <xsl:attribute name="data-tt-parent-id">
-                    <xsl:value-of select="concat('children-', $item/parent::cdf:*/@id)"/>
-                </xsl:attribute>
-            </xsl:if>
-
-            <td style="padding-left: {$indent * 19}px">
-                <h3>
-                    <xsl:call-template name="item-title">
-                        <xsl:with-param name="item" select="$item"/>
-                        <xsl:with-param name="profile" select="$profile"/>
-                    </xsl:call-template>
-                    <span class="label label-default pull-right">group</span>
-                </h3>
-
-                <p>
-                    <xsl:apply-templates mode="sub-testresult" select="$item/cdf:description">
-                        <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
-                        <xsl:with-param name="profile" select="$profile"/>
-                    </xsl:apply-templates>
-                </p>
-
-                <xsl:call-template name="item-idents-refs">
-                    <xsl:with-param name="item" select="$item"/>
-                </xsl:call-template>
-            </td>
-        </tr>
-
         <xsl:variable name="contained_rules">
             <xsl:call-template name="guide-count-contained-selected-rules">
                 <xsl:with-param name="item" select="$item"/>
                 <xsl:with-param name="profile" select="$profile"/>
             </xsl:call-template>
         </xsl:variable>
+
+        <xsl:if test="not($item/self::cdf:Benchmark)">
+            <tr data-tt-id="{$item/@id}">
+                <xsl:if test="$item/parent::cdf:Group or $item/parent::cdf:Benchmark">
+                    <xsl:attribute name="data-tt-parent-id">
+                        <xsl:value-of select="concat('children-', $item/parent::cdf:*/@id)"/>
+                    </xsl:attribute>
+                </xsl:if>
+
+                <td style="padding-left: {$indent * 19}px">
+                    <h3>
+                        <xsl:call-template name="item-title">
+                            <xsl:with-param name="item" select="$item"/>
+                            <xsl:with-param name="profile" select="$profile"/>
+                        </xsl:call-template>
+                        <span class="label label-default pull-right">group</span>
+                    </h3>
+
+                    <p>
+                        <xsl:apply-templates mode="sub-testresult" select="$item/cdf:description">
+                            <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                            <xsl:with-param name="profile" select="$profile"/>
+                        </xsl:apply-templates>
+                    </p>
+
+                    <xsl:call-template name="item-idents-refs">
+                        <xsl:with-param name="item" select="$item"/>
+                    </xsl:call-template>
+                </td>
+            </tr>
+        </xsl:if>
 
         <tr data-tt-id="children-{$item/@id}">
             <xsl:if test="$item/parent::cdf:Group or $item/parent::cdf:Benchmark">
