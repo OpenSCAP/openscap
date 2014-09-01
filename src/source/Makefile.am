@@ -6,7 +6,9 @@ liboscapsource_la_SOURCES = \
 	oscap_source.c \
 	oscap_source_priv.h \
 	validate.c \
-	validate_priv.h
+	validate_priv.h \
+	xslt.c \
+	xslt_priv.h
 
 liboscapsource_la_CPPFLAGS  = \
 	@curl_CFLAGS@ \
