@@ -611,7 +611,7 @@ Authors:
                             </div></td></tr>
                         </xsl:if>
                         <xsl:if test="$item/cdf:fix">
-                            <tr><td colspan="2" class="remediation">
+                            <tr><td colspan="2"><div class="remediation">
                                 <span class="label label-success">Remediation script:</span>
                                 <pre><code>
                                     <xsl:apply-templates mode="sub-testresult" select="$item/cdf:fix">
@@ -620,7 +620,7 @@ Authors:
                                         <xsl:with-param name="profile" select="$profile"/>
                                     </xsl:apply-templates>
                                 </code></pre>
-                            </td></tr>
+                            </div></td></tr>
                         </xsl:if>
                     </xsl:if>
                 </tbody>
