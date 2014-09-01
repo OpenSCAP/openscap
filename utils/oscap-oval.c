@@ -456,16 +456,13 @@ int app_evaluate_oval(const struct oscap_action *action)
 
 		/* validate OVAL Results */
 		if (action->validate && full_validation) {
-			char *doc_version;
-
-			doc_version = oval_determine_document_schema_version((const char *) action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS);
-			if (oscap_validate_document(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version, reporter, (void*)action)) {
-				validation_failed(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version);
-				free(doc_version);
+			struct oscap_source *result_source = oscap_source_new_from_file(action->f_results);
+			if (oscap_source_validate(result_source, reporter, (void *) action)) {
+				oscap_source_free(result_source);
 				goto cleanup;
 			}
 			fprintf(stdout, "OVAL Results are exported correctly.\n");
-			free(doc_version);
+			oscap_source_free(result_source);
 		}
 
 		/* generate report */
@@ -575,16 +572,13 @@ static int app_analyse_oval(const struct oscap_action *action) {
 
 		/* validate OVAL Results */
 		if (action->validate && full_validation) {
-			char *doc_version;
-
-			doc_version = oval_determine_document_schema_version((const char *) action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS);
-			if (oscap_validate_document(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version, reporter, (void*)action)) {
-				validation_failed(action->f_results, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version);
-				free(doc_version);
+			struct oscap_source *result_source = oscap_source_new_from_file(action->f_results);
+			if (oscap_source_validate(result_source, reporter, (void *) action)) {
+				oscap_source_free(result_source);
 				goto cleanup;
 			}
 			fprintf(stdout, "OVAL Results are exported correctly.\n");
-			free(doc_version);
+			oscap_source_free(result_source);
 		}
 	}
 
