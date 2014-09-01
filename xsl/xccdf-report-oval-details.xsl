@@ -99,14 +99,16 @@ Authors:
 
     <!-- if there are items to display, go ahead -->
     <xsl:if test='$items'>
-        <table class="table table-striped table-bordered">
-            <caption>
+        <h4>
+            Items violating <span class="label label-primary">
                 <xsl:choose>
                     <xsl:when test='$title'><xsl:value-of select='$title'/></xsl:when>
                     <xsl:otherwise>OVAL test <xsl:value-of select='@test_id'/></xsl:otherwise>
                 </xsl:choose>
-            </caption>
+            </span>:
+        </h4>
 
+        <table class="table table-striped table-bordered">
             <!-- table head (possibly item-type-specific) -->
             <thead>
                 <xsl:apply-templates mode='item-head' select='key("oval-items", $items[1]/@item_id)'/>
