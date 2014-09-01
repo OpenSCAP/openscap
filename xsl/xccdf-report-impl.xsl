@@ -541,7 +541,7 @@ Authors:
         <div class="panel-body">
             <table class="table table-striped table-bordered">
                 <tbody>
-                    <tr><td>Rule ID</td><td class="rule-id"><xsl:value-of select="$item/@id"/></td></tr>
+                    <tr><td class="col-md-3">Rule ID</td><td class="rule-id col-md-9"><xsl:value-of select="$item/@id"/></td></tr>
                     <tr><td>Result</td>
                     <td class="rule-result rule-result-{$result}">
                         <xsl:variable name="result_tooltip">
