@@ -132,20 +132,6 @@ int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, 
 	return ret;
 }
 
-/*
- * Apply stylesheet on XML file.
- * If xsltfile is an absolute path to the stylesheet, path_to_xslt will not be used.
- *
- */
-static int oscap_apply_xslt_path(const char *xmlfile, const char *xsltfile,
-				 const char *outfile, const char **params, const char *path_to_xslt)
-{
-	struct oscap_source *source = oscap_source_new_from_file(xmlfile);
-	int ret = oscap_source_apply_xslt_path(source, xsltfile, outfile, params, path_to_xslt);
-	oscap_source_free(source);
-	return ret;
-}
-
 struct oscap_schema_table_entry OSCAP_SCHEMATRON_TABLE[] = {
         {OSCAP_DOCUMENT_OVAL_DEFINITIONS,       "5.3",		"oval/5.3/oval-definitions-schematron.xsl"},
         {OSCAP_DOCUMENT_OVAL_DEFINITIONS,       "5.4",  	"oval/5.4/oval-definitions-schematron.xsl"},
@@ -216,7 +202,10 @@ int oscap_schematron_validate_document(const char *xmlfile, oscap_document_type_
 			continue;
 
 		/* validate */
-                return oscap_apply_xslt_path(xmlfile, entry->schema_path, NULL, params, oscap_path_to_schemas());
+		struct oscap_source *source = oscap_source_new_from_file(xmlfile);
+		int ret = oscap_source_apply_xslt_path(source, entry->schema_path, NULL, params, oscap_path_to_schemas());
+		oscap_source_free(source);
+		return ret;
 	}
 
 	/* schematron not found */
@@ -231,7 +220,10 @@ int oscap_schematron_validate_document(const char *xmlfile, oscap_document_type_
 
 int oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params)
 {
-	return oscap_apply_xslt_path(xmlfile, xsltfile, outfile, params, oscap_path_to_xslt());
+	struct oscap_source *source = oscap_source_new_from_file(xmlfile);
+	int ret = oscap_source_apply_xslt_path(source, xsltfile, outfile, params, oscap_path_to_xslt());
+	oscap_source_free(source);
+	return ret;
 }
 
 int oscap_determine_document_type(const char *document, oscap_document_type_t *doc_type) {
