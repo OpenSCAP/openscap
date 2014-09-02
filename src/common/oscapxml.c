@@ -347,16 +347,18 @@ int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, 
  */
 static int xccdf_ns_xslt_workaround(xmlDocPtr doc, xmlNodePtr node)
 {
-	if (node == NULL || node->ns == NULL || strcmp((const char*)node->ns->href, XCCDF11_NS) != 0) {
+	if (node == NULL) {
 		// nothing to do, this part of the document isn't XCCDF 1.1
 		return 0;
 	}
 
-	xmlNsPtr xccdf12 = xmlNewNs(node,
-			BAD_CAST XCCDF12_NS,
-			BAD_CAST "cdf12");
+	if (node->ns != NULL && strcmp((const char*)node->ns->href, XCCDF11_NS) == 0) {
+		xmlNsPtr xccdf12 = xmlNewNs(node,
+				BAD_CAST XCCDF12_NS,
+				BAD_CAST "cdf12");
 
-	xmlSetNs(node, xccdf12);
+		xmlSetNs(node, xccdf12);
+	}
 
 	xmlNodePtr child = node->children;
 
