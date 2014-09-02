@@ -24,7 +24,7 @@ Authors:
 -->
 
 <xsl:stylesheet version="1.1"
-	xmlns="http://www.w3.org/1999/xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:ovalres="http://oval.mitre.org/XMLSchema/oval-results-5"
     xmlns:ovalsys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"
