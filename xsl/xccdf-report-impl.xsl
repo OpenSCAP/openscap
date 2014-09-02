@@ -173,28 +173,35 @@ Authors:
 
     <div id="compliance-and-scoring"><a name="compliance-and-scoring"></a>
         <h2>Compliance and Scoring</h2>
-        <xsl:choose>
-            <xsl:when test="$testresult/cdf:rule-result/cdf:result[text() = 'fail' or text() = 'error']">
-                <div class="alert alert-danger">
-                    <strong>The system is not compliant!</strong> Please review rule results and consider applying remediation.
-                </div>
-            </xsl:when>
-            <xsl:when test="$testresult/cdf:rule-result/cdf:result[text() = 'unknown']">
-                <div class="alert alert-warning">
-                    <strong>The system could be not compliant!</strong> Results from one or more rules could not be interpreted.
-                </div>
-            </xsl:when>
-            <xsl:otherwise>
-                <div class="alert alert-success">
-                    <strong>The system is fully compliant!</strong> No action is necessary.
-                </div>
-            </xsl:otherwise>
-        </xsl:choose>
 
         <xsl:variable name="total_rules_count" select="count($testresult/cdf:rule-result[cdf:result])"/>
         <xsl:variable name="ignored_rules_count" select="count($testresult/cdf:rule-result[cdf:result/text() = 'notselected' or cdf:result/text() = 'notapplicable'])"/>
         <xsl:variable name="passed_rules_count" select="count($testresult/cdf:rule-result[cdf:result/text() = 'pass' or cdf:result/text() = 'fixed'])"/>
-        <xsl:variable name="failed_rules_count" select="count($testresult/cdf:rule-result[cdf:result/text() = 'fail' or cdf:result/text() = 'error'])"/>
+        <xsl:variable name="failed_rules_count" select="count($testresult/cdf:rule-result[cdf:result/text() = 'fail'])"/>
+        <xsl:variable name="uncertain_rules_count" select="count($testresult/cdf:rule-result[cdf:result/text() = 'error' or cdf:result/text() = 'unknown'])"/>
+
+        <xsl:choose>
+            <xsl:when test="$failed_rules_count > 0">
+                <div class="alert alert-danger">
+                    <strong>The target system did not satisfy conditions of <xsl:value-of select="$failed_rules_count"/> rules!</strong>
+                    <xsl:if test="$uncertain_rules_count > 0">
+                        Furthermore, the results of <xsl:value-of select="$uncertain_rules_count"/> rules were inconclusive.
+                    </xsl:if>
+                    Please review rule results and consider applying remediation.
+                </div>
+            </xsl:when>
+            <xsl:when test="$uncertain_rules_count > 0">
+                <div class="alert alert-warning">
+                    <strong>There were no failed rules, but the results of <xsl:value-of select="$uncertain_rules_count"/> rules were inconclusive!</strong>
+                    Please review rule results and consider applying remediation.
+                </div>
+            </xsl:when>
+            <xsl:otherwise>
+                <div class="alert alert-success">
+                    <strong>There were no failed or uncertain rules.</strong> It seems that no action is necessary.
+                </div>
+            </xsl:otherwise>
+        </xsl:choose>
 
         <h3>Rule result breakdown</h3>
         <div class="progress" title="Displays proportion of passed/fixed, failed/error, and other rules (in that order). There were {$total_rules_count - $ignored_rules_count} rules taken into account.">
