@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 
 <!--
 Copyright 2011 Red Hat Inc., Durham, North Carolina.

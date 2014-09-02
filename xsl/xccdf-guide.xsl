@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <!--
 Copyright 2010-2014 Red Hat Inc., Durham, North Carolina.
 All Rights Reserved.
@@ -23,9 +23,9 @@ Authors:
 -->
 
 <xsl:stylesheet version="1.1"
-	xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	xmlns:cdf="http://checklists.nist.gov/xccdf/1.2"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:cdf="http://checklists.nist.gov/xccdf/1.2"
     exclude-result-prefixes="xsl cdf">
 
 <xsl:include href="xccdf-guide-impl.xsl" />
