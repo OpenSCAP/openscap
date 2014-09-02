@@ -177,7 +177,7 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 
 	if (action->module == &DS_SDS_SPLIT_MODULE) {
 		if (optind + 2 != argc) {
-			oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
+			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
 			return false;
 		}
 		action->ds_action = malloc(sizeof(struct ds_action));
@@ -186,7 +186,7 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 	}
 	else if ((action->module == &DS_SDS_COMPOSE_MODULE) || action->module == &DS_SDS_ADD_MODULE) {
 		if(  argc != 5 ) {
-			oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
+			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
 			return false;
 		}
 		action->ds_action = malloc(sizeof(struct ds_action));
@@ -195,7 +195,7 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 	}
 	else if( (action->module == &DS_SDS_VALIDATE_MODULE) ) {
 		if(  argc != 4 ) {
-			oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
+			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
 			return false;
 		}
 		action->ds_action = malloc(sizeof(struct ds_action));
@@ -203,7 +203,7 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 	}
 	else if (action->module == &DS_RDS_SPLIT_MODULE) {
 		if (optind + 2 != argc) {
-			oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
+			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
 			return false;
 		}
 		action->ds_action = malloc(sizeof(struct ds_action));
@@ -212,7 +212,7 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 	}
 	else if( (action->module == &DS_RDS_CREATE_MODULE) ) {
 		if(  argc < 6 ) {
-			oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
+			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
 			return false;
 		}
 		action->ds_action = malloc(sizeof(struct ds_action));
@@ -224,7 +224,7 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 	}
 	else if( (action->module == &DS_RDS_VALIDATE_MODULE) ) {
 		if(  argc != 4 ) {
-			oscap_module_usage(action->module, stderr, "Wrong number of parameteres.\n");
+			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
 			return false;
 		}
 		action->ds_action = malloc(sizeof(struct ds_action));
