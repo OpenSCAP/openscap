@@ -140,8 +140,10 @@ int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, 
  * @param version Version of the document, use NULL for library's default.
  * @param outfile Report from schematron validation is written into the outfile. If NULL, stdou will be used.
  * @return 0 on pass; <0 error; >0 fail
+ * @deprecated This function has been deprecated and it may be dropped from later
+ * OpenSCAP releases. Please use oscap_source_validate_schematron instead.
  */
-int oscap_schematron_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, const char *outfile);
+OSCAP_DEPRECATED(int oscap_schematron_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, const char *outfile));
 
 /**
  * Apply a XSLT stylesheet to a XML file.
