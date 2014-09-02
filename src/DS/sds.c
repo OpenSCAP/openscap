@@ -31,6 +31,7 @@
 #include "public/oscap_text.h"
 
 #include "ds_common.h"
+#include "sds_priv.h"
 
 #include "common/alloc.h"
 #include "common/_error.h"
@@ -363,7 +364,7 @@ static int ds_sds_dump_component_ref(xmlNodePtr component_ref, xmlDocPtr doc, xm
 	return result;
 }
 
-static xmlNodePtr _lookup_datastream_in_collection(xmlDocPtr doc, const char *datastream_id)
+xmlNodePtr ds_sds_lookup_datastream_in_collection(xmlDocPtr doc, const char *datastream_id)
 {
 	xmlNodePtr root = xmlDocGetRootElement(doc);
 
@@ -402,7 +403,7 @@ int ds_sds_decompose_custom(const char* input_file, const char* id, const char* 
 		return -1;
 	}
 
-	xmlNodePtr datastream = _lookup_datastream_in_collection(doc, id);
+	xmlNodePtr datastream = ds_sds_lookup_datastream_in_collection(doc, id);
 	if (!datastream)
 	{
 		const char* error = id ?
@@ -995,7 +996,7 @@ int ds_sds_compose_add_component(const char *target_datastream, const char *data
 		oscap_seterr(OSCAP_EFAMILY_XML, "Could not read/parse XML of given input file at path '%s'.", target_datastream);
 		return 1;
 	}
-	xmlNodePtr datastream = _lookup_datastream_in_collection(doc, datastream_id);
+	xmlNodePtr datastream = ds_sds_lookup_datastream_in_collection(doc, datastream_id);
 	if (datastream == NULL) {
 		const char* error = datastream_id ?
 			oscap_sprintf("Could not find any datastream of id '%s'", datastream_id) :
