@@ -906,46 +906,22 @@ static bool valid_inputs(const struct oscap_action *action) {
 
 static int app_oval_validate(const struct oscap_action *action) {
 	int ret;
-	char *doc_version = NULL;
 	int result = OSCAP_ERROR;
-	oscap_document_type_t doc_type = 0;
 
-	/* find out what we want to validate */
-	if (oscap_determine_document_type(action->f_oval, &doc_type) == 0 && doc_type == OSCAP_DOCUMENT_SDS) {
-		doc_type = OSCAP_DOCUMENT_SDS;
-		doc_version = strdup("1.2");
-	}
-	else {
-		if (!action->doctype) {
-			if(oscap_determine_document_type(action->f_oval, &doc_type))
-				goto cleanup;
-		}
-		else
-			doc_type = action->doctype;
-
-		doc_version = oval_determine_document_schema_version(action->f_oval, doc_type);
-		if (!doc_version)
-			goto cleanup;
-
-	}
-
-	ret=oscap_validate_document(action->f_oval, doc_type, doc_version, reporter, (void*) action);
-
-	if (ret==-1) {
-		result=OSCAP_ERROR;
+	struct oscap_source *source = oscap_source_new_from_file(action->f_oval);
+	ret = oscap_source_validate(source, reporter, (void *) action);
+	if (ret == -1) {
+		result = OSCAP_ERROR;
 		goto cleanup;
 	}
-	else if (ret==1) {
-		result=OSCAP_FAIL;
+	else {
+		result = ret == 1 ? OSCAP_FAIL : OSCAP_OK;
 	}
-	else
-		result=OSCAP_OK;
 
 	/* schematron-based validation requested
 	   We can only do schematron validation if the file isn't a source datastream
 	*/
-	struct oscap_source *source = oscap_source_new_from_file(action->f_oval);
-	if (action->schematron && doc_type != OSCAP_DOCUMENT_SDS) {
+	if (action->schematron && oscap_source_get_scap_type(source) != OSCAP_DOCUMENT_SDS) {
 		ret = oscap_source_validate_schematron(source, NULL);
 		if (ret==-1) {
 			result=OSCAP_ERROR;
@@ -954,17 +930,11 @@ static int app_oval_validate(const struct oscap_action *action) {
 			result=OSCAP_FAIL;
 		}
 	}
-	oscap_source_free(source);
-
-	if (result==OSCAP_FAIL)
-		validation_failed(action->f_oval, doc_type, doc_version);
 
 cleanup:
+	oscap_source_free(source);
 	if (oscap_err())
 		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
-
-	if (doc_version)
-		free(doc_version);
 
 	return result;
 
