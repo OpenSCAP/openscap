@@ -85,4 +85,13 @@ oscap_document_type_t oscap_source_get_scap_type(struct oscap_source *source);
  */
 int oscap_source_validate(struct oscap_source *source, xml_reporter reporter, void *user);
 
+/**
+ * Validate the SCAP document against schematron assertions
+ * @memberof oscap_source
+ * @param source The oscap_source to validate
+ * @param outfile path to out file containing errors, NULL for stdout
+ * @returns 0 on pass; 1 on fail, and -1 on internall error
+ */
+int oscap_source_validate_schematron(struct oscap_source *source, const char *outfile);
+
 #endif
