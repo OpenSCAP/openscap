@@ -5,6 +5,8 @@ liboscapsource_la_SOURCES = \
 	doc_type_priv.h \
 	oscap_source.c \
 	oscap_source_priv.h \
+	schematron.c \
+	schematron_priv.h \
 	validate.c \
 	validate_priv.h \
 	xslt.c \
