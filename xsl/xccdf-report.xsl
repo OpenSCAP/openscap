@@ -105,7 +105,7 @@ stylesheet only.
                         <xsl:value-of select="//cdf:TestResult[@id=$final_result_id][last()]/cdf:benchmark/@id"/>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="/cdf:Benchmark/@id"/>
+                        <xsl:value-of select="//cdf:Benchmark[1]/@id"/>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:otherwise>
