@@ -3,6 +3,7 @@ noinst_LTLIBRARIES = libds.la
 
 libds_la_SOURCES = ds_common.c \
 		   ds_common.h \
+		   ds_sds_registry.c \
 		   sds.c \
 		   sds_priv.h \
 		   sds_index.c \
@@ -23,5 +24,7 @@ libds_la_CPPFLAGS  = @xml2_CFLAGS@ \
 
 libds_la_LDFLAGS = @xml2_LIBS@
 
-pkginclude_HEADERS  = public/scap_ds.h
+pkginclude_HEADERS = \
+	public/ds_sds_registry.h \
+	public/scap_ds.h
 

@@ -63,8 +63,7 @@ struct oscap_source;
 struct oscap_source *oscap_source_new_from_file(const char *filepath);
 
 /**
- * Dispose oscap_source structure. This will dispose all the
- * children oscap_sources as well.
+ * Dispose oscap_source structure.
  * @param source Resource to dispose
  */
 void oscap_source_free(struct oscap_source *source);
