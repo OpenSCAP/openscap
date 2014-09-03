@@ -4,7 +4,7 @@ COMPILATION
 -----------
 
 Get fresh sources from repository:
-  $ git clone git://git.fedorahosted.org/git/openscap.git (git)
+  $ git clone https://github.com/OpenSCAP/openscap.git
   - requirements: autoconf automake libtool
   $ ./autogen.sh
 
