@@ -270,6 +270,20 @@ static xmlNode *oval_results_to_dom(struct oval_results_model *results_model,
 	return root_node;
 }
 
+struct oscap_source *oval_results_model_export_source(struct oval_results_model *results_model, struct oval_directives_model *directives_model, const char *name)
+{
+	__attribute__nonnull__(results_model);
+
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+	if (doc == NULL) {
+		oscap_setxmlerr(xmlGetLastError());
+		return NULL;
+	}
+
+	oval_results_to_dom(results_model, directives_model, doc, NULL);
+	return oscap_source_new_from_xmlDoc(doc, name);
+}
+
 int oval_results_model_export(struct oval_results_model *results_model,
 			      struct oval_directives_model *directives_model,
 			      const char *file)
