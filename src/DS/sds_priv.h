@@ -33,5 +33,7 @@ OSCAP_HIDDEN_START;
 
 xmlNodePtr ds_sds_lookup_datastream_in_collection(xmlDocPtr doc, const char *datastream_id);
 
+xmlNodePtr node_get_child_element(xmlNodePtr parent, const char* name);
+
 OSCAP_HIDDEN_END;
 #endif

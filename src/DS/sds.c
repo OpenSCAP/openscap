@@ -62,7 +62,7 @@ static const char* xlink_ns_uri = "http://www.w3.org/1999/xlink";
 static const char* cat_ns_uri = "urn:oasis:names:tc:entity:xmlns:xml:catalog";
 static const char* sce_xccdf_ns_uri = "http://open-scap.org/page/SCE_xccdf_stream";
 
-static xmlNodePtr node_get_child_element(xmlNodePtr parent, const char* name)
+xmlNodePtr node_get_child_element(xmlNodePtr parent, const char* name)
 {
 	xmlNodePtr candidate = parent->children;
 
