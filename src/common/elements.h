@@ -60,7 +60,7 @@ xmlNode *oscap_xmlstr_to_dom(xmlNode *parent, const char *elname, const char *co
  * @param doc the XML document content
  * @return 1 on success, -1 on failure (oscap_seterr is set appropriatly).
  */
-int oscap_xml_save_filename(const char *filename, xmlDocPtr doc);
+int oscap_xml_save_filename_free(const char *filename, xmlDocPtr doc);
 
 /**
  * Callback for handling libxml errors. It can be registered by xmlTextReaderSetErrorHandler

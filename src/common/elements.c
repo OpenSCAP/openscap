@@ -164,7 +164,7 @@ const char *oscap_strlist_find_value(char ** const kvalues, const char *key)
 }
 
 int
-oscap_xml_save_filename(const char *filename, xmlDocPtr doc)
+oscap_xml_save_filename_free(const char *filename, xmlDocPtr doc)
 {
 	xmlOutputBufferPtr buff;
 	int xmlCode;

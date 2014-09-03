@@ -696,7 +696,7 @@ int xccdf_result_export(struct xccdf_result *result, const char *file)
 
 	xccdf_result_to_dom(result, NULL, doc, NULL);
 
-	return oscap_xml_save_filename(file, doc);
+	return oscap_xml_save_filename_free(file, doc);
 }
 
 void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlDoc *doc, xmlNode *parent)

@@ -426,6 +426,6 @@ int oval_syschar_model_export(struct oval_syschar_model *model, const char *file
 	}
 
 	oval_syschar_model_to_dom(model, doc, NULL, NULL, NULL);
-	return oscap_xml_save_filename(file, doc);
+	return oscap_xml_save_filename_free(file, doc);
 }
 

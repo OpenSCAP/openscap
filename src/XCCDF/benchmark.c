@@ -235,7 +235,7 @@ int xccdf_benchmark_export(struct xccdf_benchmark *benchmark, const char *file)
 
 	xccdf_benchmark_to_dom(benchmark, doc, NULL, NULL);
 
-	return oscap_xml_save_filename(file, doc);
+	return oscap_xml_save_filename_free(file, doc);
 }
 
 xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc,

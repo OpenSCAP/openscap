@@ -397,7 +397,7 @@ int oval_variable_model_export(struct oval_variable_model *model, const char *fi
 	}
 
 	oval_variable_model_to_dom(model, doc, NULL, NULL);
-	return oscap_xml_save_filename(file, doc);
+	return oscap_xml_save_filename_free(file, doc);
 }
 
 bool oval_variable_model_has_variable(struct oval_variable_model *model, const char * id)

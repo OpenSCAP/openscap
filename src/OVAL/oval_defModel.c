@@ -568,7 +568,7 @@ int oval_definition_model_export(struct oval_definition_model *model, const char
 	}
 
 	oval_definition_model_to_dom(model, doc, NULL);
-	return oscap_xml_save_filename(file, doc);
+	return oscap_xml_save_filename_free(file, doc);
 }
 
 static void _fp_set_recurse(struct oval_definition_model *model, struct oval_setobject *set, char *set_id)

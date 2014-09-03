@@ -364,7 +364,7 @@ int xccdf_tailoring_export(struct xccdf_tailoring *tailoring, const char *file, 
 
 	xccdf_tailoring_to_dom(tailoring, doc, NULL, version_info);
 
-	return oscap_xml_save_filename(file, doc);
+	return oscap_xml_save_filename_free(file, doc);
 }
 
 const char *xccdf_tailoring_get_id(const struct xccdf_tailoring *tailoring)

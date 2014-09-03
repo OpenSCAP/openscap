@@ -159,7 +159,7 @@ int oval_directives_model_export(struct oval_directives_model *model, const char
         }
 
         oval_directives_model_to_dom(model, doc, NULL);
-	return oscap_xml_save_filename(file, doc);
+	return oscap_xml_save_filename_free(file, doc);
 }
 
 

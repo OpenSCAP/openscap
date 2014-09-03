@@ -300,7 +300,7 @@ int oval_results_model_export(struct oval_results_model *results_model,
 
 	oval_results_to_dom(results_model, directives_model, doc, NULL);
 
-	return oscap_xml_save_filename(file, doc);
+	return oscap_xml_save_filename_free(file, doc);
 }
 
 int oval_results_model_parse(xmlTextReaderPtr reader, struct oval_parser_context *context) {
