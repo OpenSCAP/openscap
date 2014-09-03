@@ -1,3 +1,4 @@
+/* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* Provide a more complete sys/types.h.
 
    Copyright (C) 2011-2014 Free Software Foundation, Inc.
@@ -16,22 +17,22 @@
    along with this program; if not, see <http://www.gnu.org/licenses/>.  */
 
 #if __GNUC__ >= 3
-@PRAGMA_SYSTEM_HEADER@
+#pragma GCC system_header
 #endif
-@PRAGMA_COLUMNS@
 
-#ifndef _@GUARD_PREFIX@_SYS_TYPES_H
+
+#ifndef _GL_SYS_TYPES_H
 
 /* The include_next requires a split double-inclusion guard.  */
 # define _GL_INCLUDING_SYS_TYPES_H
-#@INCLUDE_NEXT@ @NEXT_SYS_TYPES_H@
+#include_next <sys/types.h>
 # undef _GL_INCLUDING_SYS_TYPES_H
 
-#ifndef _@GUARD_PREFIX@_SYS_TYPES_H
-#define _@GUARD_PREFIX@_SYS_TYPES_H
+#ifndef _GL_SYS_TYPES_H
+#define _GL_SYS_TYPES_H
 
 /* Override off_t if Large File Support is requested on native Windows.  */
-#if @WINDOWS_64_BIT_OFF_T@
+#if 0
 /* Same as int64_t in <stdint.h>.  */
 # if defined _MSC_VER
 #  define off_t __int64
@@ -49,5 +50,5 @@
 # include <stddef.h>
 #endif
 
-#endif /* _@GUARD_PREFIX@_SYS_TYPES_H */
-#endif /* _@GUARD_PREFIX@_SYS_TYPES_H */
+#endif /* _GL_SYS_TYPES_H */
+#endif /* _GL_SYS_TYPES_H */
