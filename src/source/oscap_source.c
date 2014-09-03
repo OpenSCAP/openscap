@@ -44,6 +44,7 @@
 
 typedef enum oscap_source_type {
 	OSCAP_SRC_FROM_USER_XML_FILE = 1,               ///< The source originated from XML supplied by user
+	OSCAP_SRC_FROM_EXPORT_XML_DOM,                  ///< The source originated from our exporter
 	// TODO: node originated from DataStream
 	// TODO: originated from bzip2ed file
 	// TODO: originated from internal temp file (and this shall be later removed)
@@ -71,6 +72,15 @@ struct oscap_source *oscap_source_new_from_file(const char *filepath)
 	struct oscap_source *source = (struct oscap_source *) oscap_calloc(1, sizeof(struct oscap_source));
 	source->origin.filepath = oscap_strdup(filepath);
 	source->origin.type = OSCAP_SRC_FROM_USER_XML_FILE;
+	return source;
+}
+
+struct oscap_source *oscap_source_new_from_xmlDoc(xmlDoc *doc, const char *filepath)
+{
+	struct oscap_source *source = (struct oscap_source *) oscap_calloc(1, sizeof(struct oscap_source));
+	source->origin.type = OSCAP_SRC_FROM_EXPORT_XML_DOM;
+	source->origin.filepath = oscap_strdup(filepath ? filepath : "NONEXISTENT");
+	source->xml.doc = doc;
 	return source;
 }
 

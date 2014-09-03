@@ -36,6 +36,16 @@
 OSCAP_HIDDEN_START;
 
 /**
+ * Build new oscap_source from existing xmlDoc. The xmlDoc becomes owned
+ * by oscap_source.
+ * @memberof oscap_source
+ * @param doc XML DOM to build from
+ * @param filepath Suggested filename for the file
+ * @returns newly created oscap_source
+ */
+struct oscap_source *oscap_source_new_from_xmlDoc(xmlDoc *doc, const char *filepath);
+
+/**
  * Get an xmlTextReader assigned with this resource. The reader is still
  * owned by oscap_source.
  * @memberof oscap_source
