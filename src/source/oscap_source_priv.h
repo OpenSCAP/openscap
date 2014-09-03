@@ -79,6 +79,16 @@ const char *oscap_source_readable_origin(const struct oscap_source *source);
  */
 const char *oscap_source_get_schema_version(struct oscap_source *source);
 
+/**
+ * Store the resource represented by oscap_source to the file.
+ * @memberof oscap_source
+ * @param source The oscap_source to save
+ * @param filename The filename or NULL, the previously supplied name will
+ * be used if filename is NULL.
+ * @returns -1 on error, 1 on success
+ */
+int oscap_source_save_as(struct oscap_source *source, const char *filename);
+
 OSCAP_HIDDEN_END;
 
 #endif

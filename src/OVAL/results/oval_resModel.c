@@ -288,19 +288,13 @@ int oval_results_model_export(struct oval_results_model *results_model,
 			      struct oval_directives_model *directives_model,
 			      const char *file)
 {
-	__attribute__nonnull__(results_model);
-
-	LIBXML_TEST_VERSION;
-
-	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
-	if (doc == NULL) {
-		oscap_setxmlerr(xmlGetLastError());
+	struct oscap_source *source = oval_results_model_export_source(results_model, directives_model, file);
+	if (source == NULL) {
 		return -1;
 	}
-
-	oval_results_to_dom(results_model, directives_model, doc, NULL);
-
-	return oscap_xml_save_filename_free(file, doc);
+	int ret = oscap_source_save_as(source, NULL);
+	oscap_source_free(source);
+	return ret;
 }
 
 int oval_results_model_parse(xmlTextReaderPtr reader, struct oval_parser_context *context) {
