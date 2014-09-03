@@ -31,11 +31,11 @@
 #ifndef OVAL_RESULTS_IMPL_H_
 #define OVAL_RESULTS_IMPL_H_
 
-#include "public/oval_results.h"
+#include "oval_results.h"
 
-#include "oval_definitions_impl.h"
-#include "oval_system_characteristics_impl.h"
-#include "adt/oval_smc_impl.h"
+#include "OVAL/oval_definitions_impl.h"
+#include "OVAL/oval_system_characteristics_impl.h"
+#include "OVAL/adt/oval_smc_impl.h"
 
 #include "common/util.h"
 #include "source/oscap_source_priv.h"

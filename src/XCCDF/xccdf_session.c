@@ -40,6 +40,7 @@
 #include "common/_error.h"
 #include "DS/public/scap_ds.h"
 #include "DS/ds_common.h"
+#include "OVAL/results/oval_results_impl.h"
 #include "XCCDF_POLICY/public/xccdf_policy.h"
 #include "XCCDF_POLICY/xccdf_policy_priv.h"
 #include "XCCDF_POLICY/xccdf_policy_model_priv.h"
@@ -1169,30 +1170,32 @@ static char *_xccdf_session_export_oval_result_file(struct xccdf_session *sessio
 
 	if (name == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't figure out the right filename for OVAL result file. Can't export that file!");
+		return NULL;
 	}
-	else {
-		/* export result model to XML */
-		if (oval_results_model_export(res_model, NULL, name) == -1) {
-			free(name);
+
+	struct oscap_source *source = oval_results_model_export_source(res_model, NULL, name);
+	free(name);
+	if (source == NULL) {
+		return NULL;
+	}
+
+	/* validate OVAL Results */
+	if (session->validate && session->full_validation) {
+		if (oscap_source_validate(source, _reporter, NULL)) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not export OVAL Results correctly to %s",
+				oscap_source_readable_origin(source));
+			oscap_source_free(source);
 			return NULL;
 		}
-
-		/* validate OVAL Results */
-		if (session->validate && session->full_validation) {
-			char *doc_version;
-
-			doc_version = oval_determine_document_schema_version((const char *) name, OSCAP_DOCUMENT_OVAL_RESULTS);
-			if (oscap_validate_document(name, OSCAP_DOCUMENT_OVAL_RESULTS, (const char *) doc_version,
-						_reporter, NULL)) {
-				_validation_failed(name, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version);
-				free(name);
-				free(doc_version);
-				return NULL;
-			}
-			free(doc_version);
-		}
+	}
+	if (oscap_source_save_as(source, NULL) != 1) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save file: %s", oscap_source_readable_origin(source));
+		oscap_source_free(source);
+		return NULL;
 	}
 
+	name = strdup(oscap_source_readable_origin(source));
+	oscap_source_free(source);
 	return name;
 }
 
