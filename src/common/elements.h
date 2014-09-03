@@ -55,6 +55,14 @@ time_t oscap_get_datetime(const char *date);
 xmlNode *oscap_xmlstr_to_dom(xmlNode *parent, const char *elname, const char *content);
 
 /**
+ * Save XML Document to the file of the given filename.
+ * @param filename path to the file
+ * @param doc the XML document content
+ * @return 1 on success, -1 on failure (oscap_seterr is set appropriatly).
+ */
+int oscap_xml_save_filename(const char *filename, xmlDocPtr doc);
+
+/**
  * Save XML Document to the file of the given filename and dispose the document afterwards.
  * @param filename path to the file
  * @param doc the XML document content
