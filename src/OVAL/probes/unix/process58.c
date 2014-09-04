@@ -211,16 +211,6 @@ static int get_uids(int pid, struct result_info *r)
 		fclose(sf);
 	}
 
-	/* we get session id from /pros/id/stat (same as ps) */
-	/*
-	snprintf(buf, sizeof(buf), "/proc/%d/sessionid", pid);
-	sf = fopen(buf, "rt");
-	if (sf) {
-		fscanf(sf, "%d", &r->session_id);
-		fclose(sf);
-	}
-	*/
-
 	return 0;
 }
 
