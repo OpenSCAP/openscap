@@ -106,7 +106,10 @@ static int get_all_properties_by_unit_path(DBusConnection *conn, const char *uni
 		dbus_message_iter_get_basic(&dict_entry, &value);
 		char *property_name = oscap_strdup(value.str);
 
-		dbus_message_iter_next(&dict_entry);
+		if (dbus_message_iter_next(&dict_entry) == false) {
+			dW("Expected another field in dict_entry.");
+			goto cleanup;
+		}
 
 		if (dbus_message_iter_get_arg_type(&dict_entry) != DBUS_TYPE_VARIANT) {
 			dI("Expected variant as value in dict_entry. Instead received: %s.\n", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&dict_entry)));
