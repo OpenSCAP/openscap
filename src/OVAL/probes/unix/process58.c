@@ -207,7 +207,9 @@ static int get_uids(int pid, struct result_info *r)
 	snprintf(buf, sizeof(buf), "/proc/%d/loginuid", pid);
 	sf = fopen(buf, "rt");
 	if (sf) {
-		fscanf(sf, "%u", &r->loginuid);
+		if (fscanf(sf, "%u", &r->loginuid) < 1) {
+			dW("fscanf failed from %s\n", buf);
+		}
 		fclose(sf);
 	}
 
