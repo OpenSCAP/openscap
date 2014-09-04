@@ -270,6 +270,8 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
 
 	if (dbus_conn == NULL) {
 		dbus_error_free(&dbus_error);
+		SEXP_free(property_entity);
+		SEXP_free(unit_entity);
 		return PROBE_ESYSTEM;
 	}
 
