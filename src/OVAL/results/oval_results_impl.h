@@ -97,8 +97,6 @@ struct oval_result_test_iterator *oval_result_test_iterator_new(struct oval_smc 
 
 const char *oval_result_test_get_id(const struct oval_result_test *test);
 
-struct oscap_source *oval_results_model_export_source(struct oval_results_model *results_model, struct oval_directives_model *directives_model, const char *name);
-
 OSCAP_HIDDEN_END;
 
 #endif				/* OVAL_RESULTS_IMPL_H_ */

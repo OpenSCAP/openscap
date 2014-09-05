@@ -163,6 +163,16 @@ void oval_results_model_free(struct oval_results_model *model);
 int oval_results_model_export(struct oval_results_model *, struct oval_directives_model *, const char *file);
 
 /**
+ * Export OVAL results into oscap_source
+ * @param results_model The OVAL Results Model to export
+ * @param directives_model The Directives Model to amend the export
+ * @param filename A suggested name (filename) to assign with the oscap_source
+ * This name may later be used when storing the oscap_source to disk drive.
+ * @returns Newly created oscap_source or NULL in case of failure
+ */
+struct oscap_source *oval_results_model_export_source(struct oval_results_model *results_model, struct oval_directives_model *directives_model, const char *name);
+
+/**
  * @name Setters
  * @{
  */
