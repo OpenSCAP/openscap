@@ -37,6 +37,7 @@
 #include "doc_type_priv.h"
 #include "oscap_source.h"
 #include "oscap_source_priv.h"
+#include "OVAL/oval_parser_impl.h"
 #include "OVAL/public/oval_definitions.h"
 #include "source/schematron_priv.h"
 #include "source/validate_priv.h"
@@ -190,6 +191,10 @@ int oscap_source_validate_schematron(struct oscap_source *source, const char *ou
 const char *oscap_source_get_schema_version(struct oscap_source *source)
 {
 	if (source->origin.version == NULL) {
+		xmlTextReader *reader = _build_new_xmlTextReader(source);
+		if (reader == NULL) {
+			return NULL;
+		}
 		switch (oscap_source_get_scap_type(source)) {
 			case OSCAP_DOCUMENT_SDS:
 				source->origin.version = strdup("1.2");
@@ -201,8 +206,8 @@ const char *oscap_source_get_schema_version(struct oscap_source *source)
 			case OSCAP_DOCUMENT_OVAL_DIRECTIVES:
 			case OSCAP_DOCUMENT_OVAL_SYSCHAR:
 			case OSCAP_DOCUMENT_OVAL_RESULTS:
-				source->origin.version = oval_determine_document_schema_version(
-					source->origin.filepath, oscap_source_get_scap_type(source));
+				source->origin.version = oval_determine_document_schema_version_priv(
+					reader, oscap_source_get_scap_type(source));
 				break;
 			case OSCAP_DOCUMENT_XCCDF:
 			case OSCAP_DOCUMENT_XCCDF_TAILORING:
@@ -226,6 +231,7 @@ const char *oscap_source_get_schema_version(struct oscap_source *source)
 					oscap_document_type_to_string(oscap_source_get_scap_type(source)));
 				break;
 		}
+		xmlFreeTextReader(reader);
 	}
 	return source->origin.version;
 }
