@@ -67,6 +67,8 @@ int oval_parser_skip_tag(xmlTextReaderPtr reader, struct oval_parser_context *co
 
 void oval_text_consumer(char *text, void *user);
 
+char *oval_determine_document_schema_version_priv(xmlTextReader *reader, oscap_document_type_t doc_type);
+
 OSCAP_HIDDEN_END;
 
 #endif				/* OVAL_PARSER_H_ */
