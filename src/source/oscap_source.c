@@ -106,9 +106,14 @@ void oscap_source_free(struct oscap_source *source)
  */
 static inline xmlTextReader *_build_new_xmlTextReader(struct oscap_source *source)
 {
-	xmlTextReader *reader = xmlNewTextReaderFilename(source->origin.filepath);
-	if (reader != NULL) {
-		xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
+	xmlDoc *doc = oscap_source_get_xmlDoc(source);
+	if (doc == NULL) {
+		return NULL;
+	}
+	xmlTextReader *reader = xmlReaderWalker(doc);
+	if (reader == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "Unable to create xmlTextReader for %s", oscap_source_readable_origin(source));
+		oscap_setxmlerr(xmlGetLastError());
 	}
 	return reader;
 }
