@@ -71,7 +71,7 @@ char *oval_determine_document_schema_version_priv(xmlTextReader *reader, oscap_d
 	const char *root_name;
 	const char* elm_name;
 	int depth;
-	xmlChar *version = NULL;
+	char *version = NULL;
 
 	/* find root element */
 	while (xmlTextReaderRead(reader) == 1
@@ -127,14 +127,12 @@ char *oval_determine_document_schema_version_priv(xmlTextReader *reader, oscap_d
 
 		elm_name = (const char *) xmlTextReaderConstLocalName(reader);
 		if (!strcmp(elm_name, "schema_version")) {
-			version = xmlTextReaderReadString(reader);
+			oval_parser_text_value(reader, NULL, oval_text_consumer, &version);
 			break;
 		}
 	}
 
-	char* ret = oscap_strdup((const char*)version);
-	xmlFree(version);
-	return ret;
+	return version;
 }
 
 
