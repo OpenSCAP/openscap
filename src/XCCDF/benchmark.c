@@ -257,9 +257,8 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 			(const xmlChar*)xccdf_version_info_get_namespace_uri(xccdf_benchmark_get_schema_version(benchmark)),
 			NULL);
 
-	xmlNs *ns_xsi = xmlNewNs(root_node, XCCDF_XSI_NAMESPACE, BAD_CAST "xsi");
+	lookup_xsi_ns(doc);
 
-	xmlSetNs(root_node, ns_xsi);
 	xmlSetNs(root_node, ns_xccdf);
 
 	/* Handle attributes */
