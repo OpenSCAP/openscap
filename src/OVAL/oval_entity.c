@@ -302,7 +302,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	oval_operation_t operation = oval_operation_parse(reader, "operation", OVAL_OPERATION_EQUALS);
 	int mask = oval_parser_boolean_attribute(reader, "mask", 0);
 
-	char *nil_attr = (char *) xmlTextReaderGetAttributeNs(reader, BAD_CAST "nil", OVAL_XMLNS_XSI);
+	char *nil_attr = (char *) xmlTextReaderGetAttributeNs(reader, BAD_CAST "nil", OSCAP_XMLNS_XSI);
 	int xsi_nil = oscap_streq(nil_attr, "true") != 0;
 	xmlFree(nil_attr);
 
