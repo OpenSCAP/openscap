@@ -233,14 +233,12 @@ static xmlNode *oval_results_to_dom(struct oval_results_model *results_model,
 		root_node = xmlNewNode(NULL, BAD_CAST OVAL_ROOT_ELM_RESULTS);
 		xmlDocSetRootElement(doc, root_node);
 	}
-	xmlNewProp(root_node, BAD_CAST "xsi:schemaLocation", BAD_CAST OVAL_RES_SCHEMA_LOCATION);
+	xmlNewNsProp(root_node, lookup_xsi_ns(doc), BAD_CAST "schemaLocation", BAD_CAST OVAL_RES_SCHEMA_LOCATION);
 
 	xmlNs *ns_common = xmlNewNs(root_node, OVAL_COMMON_NAMESPACE, BAD_CAST "oval");
-	xmlNs *ns_xsi = xmlNewNs(root_node, OVAL_XMLNS_XSI, BAD_CAST "xsi");
 	xmlNs *ns_results = xmlNewNs(root_node, OVAL_RESULTS_NAMESPACE, NULL);
 
 	xmlSetNs(root_node, ns_common);
-	xmlSetNs(root_node, ns_xsi);
 	xmlSetNs(root_node, ns_results);
 
 	/* Report generator */

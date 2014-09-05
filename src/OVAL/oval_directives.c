@@ -410,15 +410,13 @@ xmlNode *oval_directives_model_to_dom(struct oval_directives_model *model, xmlDo
 		xmlDocSetRootElement(doc, root_node);
 
 		/*schemalocation */
-		xmlNewProp(root_node, BAD_CAST "xsi:schemaLocation", BAD_CAST OVAL_DIR_SCHEMA_LOCATION);
+		xmlNewNsProp(root_node, lookup_xsi_ns(doc), BAD_CAST "schemaLocation", BAD_CAST OVAL_DIR_SCHEMA_LOCATION);
 
 		/* NS */
 		xmlNs *ns_common = xmlNewNs(root_node, OVAL_COMMON_NAMESPACE, BAD_CAST "oval");
-		xmlNs *ns_xsi = xmlNewNs(root_node, OVAL_XMLNS_XSI, BAD_CAST "xsi");
 		xmlNs *ns_results = xmlNewNs(root_node, OVAL_RESULTS_NAMESPACE, BAD_CAST "oval-res");
 		xmlNs *ns_directives = xmlNewNs(root_node, OVAL_DIRECTIVES_NAMESPACE, NULL);
 		xmlSetNs(root_node, ns_common);
-		xmlSetNs(root_node, ns_xsi);
 		xmlSetNs(root_node, ns_results);
 		xmlSetNs(root_node, ns_directives);
 
