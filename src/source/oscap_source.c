@@ -142,7 +142,7 @@ oscap_document_type_t oscap_source_get_scap_type(struct oscap_source *source)
 	if (source->scap_type == 0) {
 		xmlTextReader *reader = _build_new_xmlTextReader(source);
 		if (reader == NULL) {
-			oscap_seterr(OSCAP_EFAMILY_XML, "Unable to open file: '%s' (%s)", oscap_source_readable_origin(source), strerror(errno));
+			// the oscap error is already set
 			return 0;
 		}
 		if (oscap_determine_document_type_reader(reader, &(source->scap_type)) == -1) {
