@@ -158,7 +158,8 @@ xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
 	if (source->xml.doc == NULL) {
 		source->xml.doc = xmlReadFile(source->origin.filepath, NULL, 0);
 		if (source->xml.doc == NULL) {
-			oscap_seterr(OSCAP_EFAMILY_XML, "Unable to parse XML at: '%s' (%s)", oscap_source_readable_origin(source), strerror(errno));
+			oscap_setxmlerr(xmlGetLastError());
+			oscap_seterr(OSCAP_EFAMILY_XML, "Unable to parse XML at: '%s'", oscap_source_readable_origin(source));
 		}
 	}
 	return source->xml.doc;
