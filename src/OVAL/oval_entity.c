@@ -44,6 +44,7 @@
 
 #include "common/util.h"
 #include "common/debug_priv.h"
+#include "common/elements.h"
 #include "common/_error.h"
 
 /***************************************************************************/
@@ -394,16 +395,8 @@ xmlNode *oval_entity_to_dom(struct oval_entity *entity, xmlDoc * doc, xmlNode * 
 		if (operation != OVAL_OPERATION_EQUALS)
 			xmlNewProp(entity_node, BAD_CAST "operation", BAD_CAST oval_operation_get_text(operation));
 		if (oscap_streq(content, "") && oval_entity_get_xsi_nil(entity)) {
-			// Look-up xsi namespace pointer. We can be pretty sure that this namespace
-			// is defined in root element, because it usually carries xsi:schemaLocation
-			// attribute.
-			xmlNsPtr ns_xsi = xmlSearchNsByHref(doc, xmlDocGetRootElement(doc), OVAL_XMLNS_XSI);
-			if (ns_xsi == NULL) {
-				assert(ns_xsi != NULL); // Spot this in testing
-				ns_xsi = xmlNewNs(xmlDocGetRootElement(doc), OVAL_XMLNS_XSI, BAD_CAST "xsi");
-			}
 			// Export @xsi:nil="true" only if it was imported and the content is still empty
-			xmlNewNsProp(entity_node, ns_xsi, BAD_CAST "nil", BAD_CAST "true");
+			xmlNewNsProp(entity_node, lookup_xsi_ns(doc), BAD_CAST "nil", BAD_CAST "true");
 		}
 	}
 

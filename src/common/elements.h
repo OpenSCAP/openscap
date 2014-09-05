@@ -34,6 +34,8 @@
 #include "public/oscap.h"
 #include "util.h"
 
+#define OSCAP_XMLNS_XSI BAD_CAST "http://www.w3.org/2001/XMLSchema-instance"
+
 /// boolean to string (and vice versa) conversion map
 extern const struct oscap_string_map OSCAP_BOOL_MAP[];
 
@@ -78,5 +80,7 @@ int oscap_xml_save_filename_free(const char *filename, xmlDocPtr doc);
  * @param locator a locator indicating where the error occured
  */
 void libxml_error_handler(void *user, const char *message, xmlParserSeverities severity, xmlTextReaderLocatorPtr locator);
+
+xmlNs *lookup_xsi_ns(xmlDoc *doc);
 
 #endif

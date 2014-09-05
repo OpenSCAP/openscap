@@ -211,3 +211,15 @@ void libxml_error_handler(void *user, const char *message, xmlParserSeverities s
 {
 	oscap_setxmlerr(xmlGetLastError());
 }
+
+xmlNs *lookup_xsi_ns(xmlDoc *doc)
+{
+	// Look-up xsi namespace pointer. We can be pretty sure that this namespace
+	// is defined in root element, because it usually carries xsi:schemaLocation
+	// attribute.
+	xmlNsPtr ns_xsi = xmlSearchNsByHref(doc, xmlDocGetRootElement(doc), OSCAP_XMLNS_XSI);
+	if (ns_xsi == NULL) {
+		ns_xsi = xmlNewNs(xmlDocGetRootElement(doc), OSCAP_XMLNS_XSI, BAD_CAST "xsi");
+	}
+	return ns_xsi;
+}
