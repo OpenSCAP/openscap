@@ -1189,22 +1189,22 @@ static char *_xccdf_session_export_oval_result_file(struct xccdf_session *sessio
 		return NULL;
 	}
 	oscap_htable_add(session->oval.result_sources, name, source);
-	free(name);
 
 	/* validate OVAL Results */
 	if (session->validate && session->full_validation) {
 		if (oscap_source_validate(source, _reporter, NULL)) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not export OVAL Results correctly to %s",
 				oscap_source_readable_origin(source));
+			free(name);
 			return NULL;
 		}
 	}
 	if (oscap_source_save_as(source, NULL) != 1) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save file: %s", oscap_source_readable_origin(source));
+		free(name);
 		return NULL;
 	}
 
-	name = strdup(oscap_source_readable_origin(source));
 	return name;
 }
 
