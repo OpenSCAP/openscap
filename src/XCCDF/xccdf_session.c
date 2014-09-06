@@ -1215,50 +1215,62 @@ static char *_xccdf_session_export_oval_result_file(struct xccdf_session *sessio
 	return name;
 }
 
+static int _build_oval_result_sources(struct xccdf_session *session)
+{
+	if (session->oval.result_sources != NULL) {
+		return 0;
+	}
+	int xccdf_oval_agent_count = xccdf_session_get_oval_agents_count(session);
+	int cpe_oval_agent_count = xccdf_session_get_cpe_oval_agents_count(session);
+
+	/* Export OVAL results */
+	session->oval.result_files = malloc((xccdf_oval_agent_count + cpe_oval_agent_count + 1) * sizeof(char*));
+	session->oval.result_files[0] = NULL;
+	session->oval.result_sources = oscap_htable_new();
+	int i;
+	for (i=0; session->oval.agents[i]; i++) {
+		char *filename = _xccdf_session_export_oval_result_file(session, session->oval.agents[i]);
+		if (filename == NULL) {
+			_xccdf_session_free_oval_result_files(session);
+			_xccdf_session_free_oval_result_sources(session);
+			return 1;
+		}
+
+		session->oval.result_files[i] = filename;
+		session->oval.result_files[i + 1] = NULL;
+	}
+
+	struct oscap_htable_iterator *cpe_it = xccdf_policy_model_get_cpe_oval_sessions(session->xccdf.policy_model);
+	while (oscap_htable_iterator_has_more(cpe_it)) {
+		const char *key = NULL;
+		struct oval_agent_session *value = NULL;
+		oscap_htable_iterator_next_kv(cpe_it, &key, (void*)&value);
+
+		char *filename = _xccdf_session_export_oval_result_file(session, value);
+		if (filename == NULL) {
+			_xccdf_session_free_oval_result_files(session);
+			_xccdf_session_free_oval_result_sources(session);
+			oscap_htable_iterator_free(cpe_it);
+			return 1;
+		}
+
+		session->oval.result_files[i] = filename;
+		session->oval.result_files[i + 1] = NULL;
+
+		i++;
+	}
+	oscap_htable_iterator_free(cpe_it);
+	return 0;
+}
+
 int xccdf_session_export_oval(struct xccdf_session *session)
 {
 	_xccdf_session_free_oval_result_files(session);
 
 	if ((session->export.oval_results || session->export.arf_file != NULL) && session->oval.agents) {
-
-		int xccdf_oval_agent_count = xccdf_session_get_oval_agents_count(session);
-		int cpe_oval_agent_count = xccdf_session_get_cpe_oval_agents_count(session);
-
-		/* Export OVAL results */
-		session->oval.result_files = malloc((xccdf_oval_agent_count + cpe_oval_agent_count + 1) * sizeof(char*));
-		session->oval.result_files[0] = NULL;
-		session->oval.result_sources = oscap_htable_new();
-		int i;
-		for (i=0; session->oval.agents[i]; i++) {
-			char *filename = _xccdf_session_export_oval_result_file(session, session->oval.agents[i]);
-			if (filename == NULL) {
-				_xccdf_session_free_oval_result_files(session);
-				return 1;
-			}
-
-			session->oval.result_files[i] = filename;
-			session->oval.result_files[i + 1] = NULL;
+		if (_build_oval_result_sources(session) != 0) {
+			return 1;
 		}
-
-		struct oscap_htable_iterator *cpe_it = xccdf_policy_model_get_cpe_oval_sessions(session->xccdf.policy_model);
-		while (oscap_htable_iterator_has_more(cpe_it)) {
-			const char *key = NULL;
-			struct oval_agent_session *value = NULL;
-			oscap_htable_iterator_next_kv(cpe_it, &key, (void*)&value);
-
-			char *filename = _xccdf_session_export_oval_result_file(session, value);
-			if (filename == NULL) {
-				_xccdf_session_free_oval_result_files(session);
-				oscap_htable_iterator_free(cpe_it);
-				return 1;
-			}
-
-			session->oval.result_files[i] = filename;
-			session->oval.result_files[i + 1] = NULL;
-
-			i++;
-		}
-		oscap_htable_iterator_free(cpe_it);
 	}
 
 	/* Export variables */
