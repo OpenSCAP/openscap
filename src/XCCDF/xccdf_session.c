@@ -1206,12 +1206,6 @@ static char *_xccdf_session_export_oval_result_file(struct xccdf_session *sessio
 			return NULL;
 		}
 	}
-	if (oscap_source_save_as(source, NULL) != 1) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save file: %s", oscap_source_readable_origin(source));
-		free(name);
-		return NULL;
-	}
-
 	return name;
 }
 
@@ -1271,6 +1265,16 @@ int xccdf_session_export_oval(struct xccdf_session *session)
 		if (_build_oval_result_sources(session) != 0) {
 			return 1;
 		}
+		struct oscap_htable_iterator *hit = oscap_htable_iterator_new(session->oval.result_sources);
+		while (oscap_htable_iterator_has_more(hit)) {
+			struct oscap_source *source = oscap_htable_iterator_next_value(hit);
+			if (oscap_source_save_as(source, NULL) != 1) {
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save file: %s", oscap_source_readable_origin(source));
+				oscap_htable_iterator_free(hit);
+				return 1;
+			}
+		}
+		oscap_htable_iterator_free(hit);
 	}
 
 	/* Export variables */
