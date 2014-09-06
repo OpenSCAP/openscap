@@ -1188,7 +1188,14 @@ static char *_xccdf_session_export_oval_result_file(struct xccdf_session *sessio
 		free(name);
 		return NULL;
 	}
-	oscap_htable_add(session->oval.result_sources, name, source);
+	if (oscap_htable_add(session->oval.result_sources, name, source) == false) {
+		// The source is already there, but it shouldn't be
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal error: attempted to export file %s twice", name);
+		oscap_source_free(source);
+		free(name);
+		abort(); // Let's make this visible in debug mode
+		return NULL;
+	}
 
 	/* validate OVAL Results */
 	if (session->validate && session->full_validation) {
