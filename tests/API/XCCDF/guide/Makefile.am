@@ -10,4 +10,5 @@ TESTS = all.sh
 EXTRA_DIST = \
 	all.sh \
 	content-xccdf11.xml \
-	content-xccdf12.xml
+	content-xccdf12.xml \
+	content-value-xccdf11.xml

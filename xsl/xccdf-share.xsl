@@ -159,13 +159,13 @@ Authors:
         </xsl:when>
         <xsl:when test="$profile and $profile/cdf:refine-value[@idref = $subid]">
             <xsl:variable name="selector" select="$profile/cdf:refine-value[@idref = $subid][last()]/@selector"/>
-            <abbr title="from Profile/refine-value: {$subid}"><xsl:value-of select="$benchmark/cdf:Value/cdf:value[@selector = $selector][last()]/text()"/></abbr>
+            <abbr title="from Profile/refine-value: {$subid}"><xsl:value-of select="$benchmark//cdf:Value/cdf:value[@selector = $selector][last()]/text()"/></abbr>
         </xsl:when>
         <xsl:when test="$profile and $profile/cdf:set-value[@idref = $subid]">
             <abbr title="from Profile/set-value: {$subid}"><xsl:value-of select="$profile/cdf:set-value[@idref = $subid][last()]/text()"/></abbr>
         </xsl:when>
-        <xsl:when test="$benchmark/cdf:Value[@id = $subid]/cdf:value[not(@selector)]">
-            <abbr title="from Benchmark/Value: {$subid}"><xsl:value-of select="$benchmark/cdf:Value[@id = $subid]/cdf:value[not(@selector)][last()]"/></abbr>
+        <xsl:when test="$benchmark//cdf:Value[@id = $subid]/cdf:value[not(@selector)]">
+            <abbr title="from Benchmark/Value: {$subid}"><xsl:value-of select="$benchmark//cdf:Value[@id = $subid]/cdf:value[not(@selector)][last()]"/></abbr>
         </xsl:when>
         <xsl:otherwise>
             <abbr title="Substitution failed: {$subid}">(N/A)</abbr>
