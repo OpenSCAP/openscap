@@ -1044,39 +1044,24 @@ static void _xccdf_session_free_oval_result_sources(struct xccdf_session *sessio
 	}
 }
 
-static bool _real_paths_equal(const char *path1, const char *path2)
+static inline char *_guess_realpath(char *filepath)
 {
-	// Assumption of this function: path1 points to an existing file!
-
-	// Can't use stat because one of the paths may not exist at this point.
-	// The point of all this code is to prevent collisions, not to detect them.
-
-	char *path1_rp = malloc(PATH_MAX * sizeof(char));
-	char *path2_rp = malloc(PATH_MAX * sizeof(char));
-
-	bool ret = false;
-
-	char *path1_rp_ret = realpath(path1, path1_rp);
-	char *path2_rp_ret = realpath(path2, path2_rp);
-
-	if (path1_rp_ret != path1_rp) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC,
-			"Unfortunately, realpath for '%s' didn't yield results usable for path comparison!", path1);
-		goto cleanup;
+	char *rpath = realpath(filepath, NULL);
+	if (rpath == NULL) {
+		// file does not exists, let's try to guess realpath
+		// this is not 100% correct, but it is good enough
+		char *copy = strdup(filepath);
+		const char *real_dir = realpath(dirname(copy), NULL);
+		if (real_dir == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot export to %s, directory: %s does not exists!", filepath, real_dir);
+			oscap_free(copy);
+			return NULL;
+		}
+		rpath = oscap_sprintf("%s/%s", real_dir, basename(filepath));
+		oscap_free(real_dir);
+		oscap_free(copy);
 	}
-
-	// We assume the first file exists, if the second file doesn't they can't be equal.
-	if (path2_rp_ret != path2_rp) {
-		goto cleanup;
-	}
-
-	ret = strcmp(path1_rp, path2_rp) == 0;
-
-cleanup:
-	free(path1_rp);
-	free(path2_rp);
-
-	return ret;
+	return rpath;
 }
 
 static char *_xccdf_session_get_unique_oval_result_filename(struct xccdf_session *session, struct oval_agent_session *oval_session, const char *oval_results_directory)
@@ -1124,28 +1109,27 @@ static char *_xccdf_session_get_unique_oval_result_filename(struct xccdf_session
 		else
 			snprintf(name, PATH_MAX, "%s/%s.result%i.xml", oval_results_directory, escaped_url != NULL ? escaped_url : filename, suffix);
 
-		// Check if this export name conflicts with any other exported OVAL result.
-		//
-		// One example where a conflict can easily happen is if we have the
-		// same OVAL file used for CPE platform evaluation and check evaluation.
-		//
-		// openscap will create 2 OVAL sessions for the same file and will try
-		// to export 2 different OVAL result files to the same path.
-
-		bool conflict_found = false;
-		int i;
-		for (i=0; session->oval.result_files[i]; i++) {
-
-			// result_files[i] has to be first here, _real_paths_equal assumes
-			// the first argument points to an existing file
-			if (_real_paths_equal(session->oval.result_files[i], name)) {
-				conflict_found = true;
-				break;
-			}
+		// Try to guess how the real path will look like. This should avoid us rewriting
+		// the results files if the OVAL happens to have the same name. We allow users
+		// to shoot themselves to the foot, but it is not easy. They need to set-up
+		// file->file symlink before scanning.
+		char *final_name = _guess_realpath(name);
+		free(name);
+		name = final_name;
+		if (name == NULL) {
+			oscap_free(escaped_url);
+			return NULL;
 		}
-
-		if (!conflict_found)
+		if (oscap_htable_get(session->oval.result_sources, name) == NULL) {
+			// Check if this export name conflicts with any other exported OVAL result.
+			//
+			// One example where a conflict can easily happen is if we have the
+			// same OVAL file used for CPE platform evaluation and check evaluation.
+			//
+			// openscap will create 2 OVAL sessions for the same file and will try
+			// to export 2 different OVAL result files to the same path.
 			break;
+		}
 
 		free(name);
 		name = NULL;
