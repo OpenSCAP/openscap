@@ -455,5 +455,9 @@ xmlNs *lookup_xccdf_ns(xmlDoc *doc, xmlNode *parent, const struct xccdf_version_
 {
 	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
 		(const xmlChar *)xccdf_version_info_get_namespace_uri(version_info));
+	if (ns_xccdf == NULL) {
+		ns_xccdf = xmlNewNs(parent,
+			(const xmlChar *) xccdf_version_info_get_namespace_uri(version_info), NULL);
+	}
 	return ns_xccdf;
 }
