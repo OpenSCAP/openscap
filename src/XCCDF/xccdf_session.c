@@ -41,6 +41,7 @@
 #include "DS/public/scap_ds.h"
 #include "DS/ds_common.h"
 #include "OVAL/results/oval_results_impl.h"
+#include "XCCDF/xccdf_impl.h"
 #include "XCCDF_POLICY/public/xccdf_policy.h"
 #include "XCCDF_POLICY/xccdf_policy_priv.h"
 #include "XCCDF_POLICY/xccdf_policy_model_priv.h"
@@ -1002,7 +1003,13 @@ int xccdf_session_export_xccdf(struct xccdf_session *session)
 		}
 		xccdf_benchmark_add_result(xccdf_policy_model_get_benchmark(session->xccdf.policy_model),
 				xccdf_result_clone(session->xccdf.result));
-		xccdf_benchmark_export(xccdf_policy_model_get_benchmark(session->xccdf.policy_model), session->export.xccdf_file);
+		struct oscap_source *source = xccdf_benchmark_export_source(
+				xccdf_policy_model_get_benchmark(session->xccdf.policy_model), session->export.xccdf_file);
+		if (oscap_source_save_as(source, NULL) != 1) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save file: %s", oscap_source_readable_origin(source));
+			return -1;
+		}
+		oscap_source_free(source);
 
 		/* validate XCCDF Results */
 		if (session->validate && session->full_validation) {
