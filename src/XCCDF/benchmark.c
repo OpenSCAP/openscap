@@ -262,10 +262,6 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 	// FIXME!
 	//xmlNewProp(root_node, BAD_CAST "xsi:schemaLocation", BAD_CAST XCCDF_SCHEMA_LOCATION);
 
-	xmlNs *ns_xccdf = xmlNewNs(root_node,
-			(const xmlChar*)xccdf_version_info_get_namespace_uri(xccdf_benchmark_get_schema_version(benchmark)),
-			NULL);
-
 	lookup_xsi_ns(doc);
 
 	/* Handle attributes */
@@ -314,6 +310,8 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 		cpe_lang_export(xccdf_benchmark_get_cpe_lang_model(benchmark), writer);
 		xmlFreeTextWriter(writer);
 	}
+
+	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, root_node, xccdf_benchmark_get_schema_version(benchmark));
 
 	struct oscap_string_iterator *platforms = xccdf_benchmark_get_platforms(benchmark);
 	while (oscap_string_iterator_has_more(platforms)) {
