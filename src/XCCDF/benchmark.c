@@ -34,6 +34,8 @@
 #include "common/debug_priv.h"
 #include "common/assume.h"
 #include "common/elements.h"
+#include "source/public/oscap_source.h"
+#include "source/oscap_source_priv.h"
 
 #include "CPE/cpedict_priv.h"
 #include "CPE/cpelang_priv.h"
@@ -221,21 +223,31 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 	return true;
 }
 
+struct oscap_source *xccdf_benchmark_export_source(struct xccdf_benchmark *benchmark, const char *filename)
+{
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+	if (doc == NULL) {
+		oscap_setxmlerr(xmlGetLastError());
+		NULL;
+	}
+
+	xccdf_benchmark_to_dom(benchmark, doc, NULL, NULL);
+	return oscap_source_new_from_xmlDoc(doc, filename);
+}
+
 int xccdf_benchmark_export(struct xccdf_benchmark *benchmark, const char *file)
 {
 	__attribute__nonnull__(file);
 
 	LIBXML_TEST_VERSION;
 
-	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
-	if (doc == NULL) {
-		oscap_setxmlerr(xmlGetLastError());
+	struct oscap_source *source = xccdf_benchmark_export_source(benchmark, file);
+	if (source == NULL) {
 		return -1;
 	}
-
-	xccdf_benchmark_to_dom(benchmark, doc, NULL, NULL);
-
-	return oscap_xml_save_filename_free(file, doc);
+	int ret = oscap_source_save_as(source, NULL);
+	oscap_source_free(source);;
+	return ret;
 }
 
 xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc,
