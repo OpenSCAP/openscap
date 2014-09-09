@@ -863,8 +863,7 @@ struct xccdf_plain_text *xccdf_plain_text_new_fill(const char *id, const char *t
 
 static xmlNode *xccdf_plain_text_to_dom(const struct xccdf_plain_text *ptext, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
-			(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 	xmlNode *ptext_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "plain-text",
 			BAD_CAST (ptext->text == NULL ? "" : ptext->text));
 	if (ptext->id != NULL)

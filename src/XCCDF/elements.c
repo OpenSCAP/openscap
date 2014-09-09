@@ -451,3 +451,9 @@ void xccdf_print_max(const char *str, int max, const char *ellipsis)
 		printf("%s", ellipsis);
 }
 
+xmlNs *lookup_xccdf_ns(xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info *version_info)
+{
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
+		(const xmlChar *)xccdf_version_info_get_namespace_uri(version_info));
+	return ns_xccdf;
+}

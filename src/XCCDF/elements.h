@@ -205,6 +205,8 @@ void xccdf_print_max(const char *str, int max, const char *ellipsis);
 void xccdf_print_max_text(const struct oscap_text *txt, int max, const char *ellipsis);
 void xccdf_print_textlist(struct oscap_text_iterator *txt, int depth, int max, const char *ellipsis);
 
+xmlNs *lookup_xccdf_ns(xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info *version_info);
+
 OSCAP_HIDDEN_END;
 
 #endif
