@@ -272,8 +272,6 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 
 	lookup_xsi_ns(doc);
 
-	xmlSetNs(root_node, ns_xccdf);
-
 	/* Handle attributes */
 	if (xccdf_benchmark_get_resolved(benchmark))
 		xmlNewProp(root_node, BAD_CAST "resolved", BAD_CAST "1");
