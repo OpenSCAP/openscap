@@ -64,6 +64,7 @@ struct xccdf_session {
 		char *profile_id;			///< Last selected profile.
 		struct xccdf_result *result;		///< XCCDF Result model.
 		float base_score;			///< Basec score of the latest evaluation.
+		struct oscap_source *result_source;     ///< oscap_source for the exported XCCDF result
 	} xccdf;
 	struct {
 		struct ds_sds_index *sds_idx;		///< Index of Source DataStream (only applicable for sds).
@@ -150,6 +151,7 @@ void xccdf_session_free(struct xccdf_session *session)
 	_xccdf_session_free_oval_agents(session);
 	_oval_content_resources_free(session->oval.custom_resources);
 	_oval_content_resources_free(session->oval.resources);
+	oscap_source_free(session->xccdf.result_source);
 	oscap_free(session->xccdf.doc_version);
 	oscap_free(session->xccdf.file);
 	if (session->xccdf.policy_model != NULL)
@@ -981,8 +983,11 @@ static inline int _xccdf_gen_report(const char *infile, const char *id, const ch
 	return _app_xslt(infile, "xccdf-report.xsl", outfile, params);
 }
 
-int xccdf_session_export_xccdf(struct xccdf_session *session)
+static int _build_xccdf_result_source(struct xccdf_session *session)
 {
+	if (session->xccdf.result_source != NULL) {
+		return 0;
+	}
 	if (session->export.xccdf_file == NULL && (session->export.report_file != NULL || session->export.arf_file != NULL))
 	{
 		if (!session->temp_dir)
@@ -1003,34 +1008,42 @@ int xccdf_session_export_xccdf(struct xccdf_session *session)
 		}
 		xccdf_benchmark_add_result(xccdf_policy_model_get_benchmark(session->xccdf.policy_model),
 				xccdf_result_clone(session->xccdf.result));
-		struct oscap_source *source = xccdf_benchmark_export_source(
+		session->xccdf.result_source = xccdf_benchmark_export_source(
 				xccdf_policy_model_get_benchmark(session->xccdf.policy_model), session->export.xccdf_file);
-		if (oscap_source_save_as(source, NULL) != 1) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save file: %s", oscap_source_readable_origin(source));
+		if (oscap_source_save_as(session->xccdf.result_source, NULL) != 1) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save file: %s",
+					oscap_source_readable_origin(session->xccdf.result_source));
 			return -1;
 		}
-		oscap_source_free(source);
 
 		/* validate XCCDF Results */
 		if (session->validate && session->full_validation) {
-			if (oscap_source_validate(source, _reporter, NULL)) {
+			if (oscap_source_validate(session->xccdf.result_source, _reporter, NULL)) {
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not export OVAL Results correctly to %s",
-					oscap_source_readable_origin(source));
+					oscap_source_readable_origin(session->xccdf.result_source));
 				return 1;
 			}
 		}
-
-		/* generate report */
-		if (session->export.report_file != NULL)
-			_xccdf_gen_report(session->export.xccdf_file,
-					xccdf_result_get_id(session->xccdf.result),
-					session->export.report_file,
-					"",
-					(session->export.oval_results ? "%.result.xml" : ""),
-					(session->export.check_engine_plugins_results ? "%.result.xml" : ""),
-					session->xccdf.profile_id == NULL ? "" : session->xccdf.profile_id
-			);
 	}
+	return 0;
+}
+
+int xccdf_session_export_xccdf(struct xccdf_session *session)
+{
+	if (_build_xccdf_result_source(session)) {
+		return 1;
+	}
+
+	/* generate report */
+	if (session->export.report_file != NULL)
+		_xccdf_gen_report(session->export.xccdf_file,
+				xccdf_result_get_id(session->xccdf.result),
+				session->export.report_file,
+				"",
+				(session->export.oval_results ? "%.result.xml" : ""),
+				(session->export.check_engine_plugins_results ? "%.result.xml" : ""),
+				session->xccdf.profile_id == NULL ? "" : session->xccdf.profile_id
+		);
 	return 0;
 }
 
