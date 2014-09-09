@@ -254,12 +254,8 @@ int xccdf_benchmark_export(struct xccdf_benchmark *benchmark, const char *file)
 xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc,
 				xmlNode *parent, void *user_args)
 {
-	xmlNodePtr root_node = NULL;
-
-	if (parent) {
-		root_node = xccdf_item_to_dom(XITEM(benchmark), doc, parent);
-	} else {
-		root_node = xccdf_item_to_dom(XITEM(benchmark), doc, parent);
+	xmlNodePtr root_node = xccdf_item_to_dom(XITEM(benchmark), doc, parent);
+	if (parent == NULL) {
 		xmlDocSetRootElement(doc, root_node);
 	}
 
