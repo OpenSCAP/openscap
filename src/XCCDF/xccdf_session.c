@@ -1013,9 +1013,9 @@ int xccdf_session_export_xccdf(struct xccdf_session *session)
 
 		/* validate XCCDF Results */
 		if (session->validate && session->full_validation) {
-			/* we assume there is a same xccdf doc_version on input and output */
-			if (oscap_validate_document(session->export.xccdf_file, OSCAP_DOCUMENT_XCCDF, session->xccdf.doc_version, _reporter, NULL)) {
-				_validation_failed(session->export.xccdf_file, OSCAP_DOCUMENT_XCCDF, session->xccdf.doc_version);
+			if (oscap_source_validate(source, _reporter, NULL)) {
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not export OVAL Results correctly to %s",
+					oscap_source_readable_origin(source));
 				return 1;
 			}
 		}
