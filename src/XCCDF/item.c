@@ -347,8 +347,10 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 
 	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 	xmlNode *item_node = NULL;
-	if (parent == NULL)
+	if (parent == NULL) {
 		item_node = xmlNewNode(NULL, BAD_CAST "Item");
+		xmlSetNs(item_node, ns_xccdf);
+	}
 	else
 		item_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "Item", NULL);
 
