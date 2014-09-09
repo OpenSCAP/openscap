@@ -250,6 +250,7 @@ int xccdf_benchmark_export(struct xccdf_benchmark *benchmark, const char *file)
 	return ret;
 }
 
+#define OSCAP_XML_XSI BAD_CAST "http://www.w3.org/XML/1998/namespace"
 xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc,
 				xmlNode *parent, void *user_args)
 {
@@ -280,8 +281,13 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 		xmlNewProp(root_node, BAD_CAST "resolved", BAD_CAST "0");
 
     const char *xmllang = xccdf_benchmark_get_lang(benchmark);
-	if (xmllang)
-		xmlNewProp(root_node, BAD_CAST "xml:lang", BAD_CAST xmllang);
+	if (xmllang) {
+		xmlNs *ns_xml = xmlSearchNsByHref(doc, root_node, OSCAP_XML_XSI);
+		if (ns_xml == NULL) {
+			ns_xml = xmlNewNs(root_node, OSCAP_XML_XSI, BAD_CAST "xml");
+		}
+		xmlNewNsProp(root_node, ns_xml, BAD_CAST "lang", BAD_CAST xmllang);
+	}
 
 	const char *style = xccdf_benchmark_get_style(benchmark);
 	if (style)
