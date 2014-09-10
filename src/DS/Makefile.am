@@ -7,6 +7,7 @@ libds_la_SOURCES = ds_common.c \
 		   sds.c \
 		   sds_priv.h \
 		   sds_index.c \
+		   sds_index_priv.h \
 		   rds.c \
 		   rds_index.c
 

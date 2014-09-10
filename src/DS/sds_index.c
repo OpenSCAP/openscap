@@ -29,6 +29,7 @@
 #include "common/_error.h"
 #include "common/alloc.h"
 #include "common/elements.h"
+#include "sds_index_priv.h"
 
 #include <libxml/xmlreader.h>
 #include <string.h>
@@ -310,7 +311,7 @@ static char *ds_sds_component_dig_benchmark_id(xmlTextReaderPtr reader)
 	return ret;
 }
 
-static struct ds_sds_index* ds_sds_index_parse(xmlTextReaderPtr reader)
+struct ds_sds_index* ds_sds_index_parse(xmlTextReaderPtr reader)
 {
 	if (!oscap_to_start_element(reader, 0)) {
 		oscap_seterr(OSCAP_EFAMILY_XML,
