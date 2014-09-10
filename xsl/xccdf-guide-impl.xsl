@@ -92,6 +92,26 @@ Authors:
                         </div>
                     </xsl:for-each>
                 </xsl:if>
+
+                <h2>Selected profile</h2>
+                <table class="table table-bordered">
+                    <xsl:if test="$profile/cdf:title">
+                        <tr>
+                            <th>Title</th>
+                            <td>
+                                <xsl:apply-templates mode="sub-testresult" select="$profile/cdf:title[1]">
+                                    <xsl:with-param name="benchmark" select="$benchmark"/>
+                                    <xsl:with-param name="profile" select="$profile"/>
+                                </xsl:apply-templates>
+                            </td>
+                        </tr>
+                    </xsl:if>
+
+                    <tr>
+                        <th>ID</th>
+                        <td><xsl:value-of select="$profile/@id"/></td>
+                    </tr>
+                </table>
             </div>
             <div class="col-md-4">
                 <h2>Revision History</h2>
