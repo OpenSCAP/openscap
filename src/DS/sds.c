@@ -466,6 +466,7 @@ int ds_sds_decompose_custom(const char* input_file, const char* id, const char* 
 			xmlFreeDoc(doc);
 			return -1;
 		}
+		break;
 	}
 
 	xmlFreeDoc(doc);
