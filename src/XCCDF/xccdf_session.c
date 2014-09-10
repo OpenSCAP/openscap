@@ -39,6 +39,7 @@
 #include "common/list.h"
 #include "common/_error.h"
 #include "DS/public/scap_ds.h"
+#include "DS/public/ds_sds_registry.h"
 #include "DS/ds_common.h"
 #include "OVAL/results/oval_results_impl.h"
 #include "XCCDF/xccdf_impl.h"
@@ -68,7 +69,7 @@ struct xccdf_session {
 		struct oscap_source *result_source;     ///< oscap_source for the exported XCCDF result
 	} xccdf;
 	struct {
-		struct ds_sds_index *sds_idx;		///< Index of Source DataStream (only applicable for sds).
+		struct ds_sds_registry *registry;       ///< SDS Registry abstract structure
 		char *user_datastream_id;		///< Datastream id requested by user (only applicable for sds).
 		char *user_component_id;		///< Component id requested by user (only applicable for sds).
 		char *user_benchmark_id;		///< Benchmark id requested by user (only applicable for sds).
@@ -161,8 +162,7 @@ void xccdf_session_free(struct xccdf_session *session)
 	oscap_free(session->ds.user_datastream_id);
 	oscap_free(session->ds.user_component_id);
 	oscap_free(session->ds.user_benchmark_id);
-	if (session->ds.sds_idx != NULL)
-		ds_sds_index_free(session->ds.sds_idx);
+	ds_sds_registry_free(session->ds.registry);
 	if (session->temp_dir != NULL)
 		oscap_acquire_cleanup_dir((char **) &(session->temp_dir));
 	oscap_source_free(session->source);
@@ -328,9 +328,10 @@ struct ds_sds_index *xccdf_session_get_sds_idx(struct xccdf_session *session)
 	if (!xccdf_session_is_sds(session))
 		return NULL;
 
-	if (session->ds.sds_idx == NULL)
-		session->ds.sds_idx = ds_sds_index_import(session->filename);
-	return session->ds.sds_idx;
+	if (session->ds.registry == NULL) {
+		session->ds.registry = ds_sds_registry_new_from_source(session->source);
+	}
+	return ds_sds_registry_get_sds_idx(session->ds.registry);
 }
 
 int xccdf_session_load(struct xccdf_session *session)
