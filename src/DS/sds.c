@@ -142,6 +142,42 @@ static xmlNodePtr _lookup_component_in_collection(xmlDocPtr doc, const char *com
 	return component;
 }
 
+static int ds_sds_dump_component_sce(xmlNode *script_node, const char *component_id, const char *filename)
+{
+	if (script_node) {
+		// TODO: should we check whether the component is extended?
+		int fd;
+		xmlChar* text_contents = xmlNodeGetContent(script_node);
+		if ((fd = open(filename, O_CREAT | O_TRUNC | O_NOFOLLOW | O_WRONLY, 0700)) < 0) {
+			oscap_seterr(OSCAP_EFAMILY_XML, "Error while creating script component (id='%s') to file '%s'.", component_id, filename);
+			xmlFree(text_contents);
+			return -1;
+		}
+		FILE* output_file = fdopen(fd, "w");
+		if (output_file == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_XML, "Error while dumping script component (id='%s') to file '%s'.", component_id, filename);
+			xmlFree(text_contents);
+			close(fd);
+			return -1;
+		}
+		// TODO: error checking, fprintf should return strlen((const char*)text_contents)
+		fprintf(output_file, "%s", text_contents ? (char*)text_contents : "");
+		// NB: This code is for SCE scripts
+		if (fchmod(fd, 0700) != 0) {
+			oscap_seterr(OSCAP_EFAMILY_XML, "Failed to set executable permission on script (id='%s') that was split to '%s'.", component_id, filename);
+		}
+
+		fclose(output_file);
+		xmlFree(text_contents);
+		return 0;
+	}
+	else {
+		oscap_seterr(OSCAP_EFAMILY_XML, "Error while dumping script component (id='%s') to file '%s'. "
+			"The script element was empty!", component_id, filename);
+		return -1;
+	}
+}
+
 static int ds_sds_dump_component(const char* component_id, xmlDocPtr doc, const char* filename)
 {
 	xmlNodePtr component = _lookup_component_in_collection(doc, component_id);
@@ -161,36 +197,9 @@ static int ds_sds_dump_component(const char* component_id, xmlDocPtr doc, const 
 
 	// If the inner root is script, we have to treat it in a special way
 	if (strcmp((const char*)inner_root->name, "script") == 0) {
-		if (inner_root->children) {
-			// TODO: should we check whether the component is extended?
-			int fd;
-			xmlChar* text_contents = xmlNodeGetContent(inner_root->children);
-			if ((fd = open(filename, O_CREAT | O_TRUNC | O_NOFOLLOW | O_WRONLY, 0700)) < 0) {
-				oscap_seterr(OSCAP_EFAMILY_XML, "Error while creating script component (id='%s') to file '%s'.", component_id, filename);
-				xmlFree(text_contents);
-				return -1;
-			}
-			FILE* output_file = fdopen(fd, "w");
-			if (output_file == NULL) {
-				oscap_seterr(OSCAP_EFAMILY_XML, "Error while dumping script component (id='%s') to file '%s'.", component_id, filename);
-				xmlFree(text_contents);
-				close(fd);
-				return -1;
-			}
-			// TODO: error checking, fprintf should return strlen((const char*)text_contents)
-			fprintf(output_file, "%s", text_contents ? (char*)text_contents : "");
-			// NB: This code is for SCE scripts
-			if (fchmod(fd, 0700) != 0) {
-				oscap_seterr(OSCAP_EFAMILY_XML, "Failed to set executable permission on script (id='%s') that was split to '%s'.", component_id, filename);
-			}
-
-			fclose(output_file);
-			xmlFree(text_contents);
-		}
-		else {
-			oscap_seterr(OSCAP_EFAMILY_XML, "Error while dumping script component (id='%s') to file '%s'. "
-				"The script element was empty!", component_id, filename);
-			return -1;
+		int ret = ds_sds_dump_component_sce(inner_root->children, component_id, filename);
+		if (ret != 0) {
+			return ret;
 		}
 	}
 	// Otherwise we create a new XML doc we will dump the contents to.
