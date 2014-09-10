@@ -50,6 +50,20 @@ Authors:
     <div id="introduction"><a name="introduction"></a>
         <div class="row">
             <div class="col-md-8 well well-lg">
+                <h2>
+                    <xsl:choose>
+                        <xsl:when test="$benchmark/cdf:title">
+                            <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:title[1]">
+                                <xsl:with-param name="benchmark" select="$benchmark"/>
+                                <xsl:with-param name="profile" select="$profile"/>
+                            </xsl:apply-templates>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="$benchmark/@id"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </h2>
+
                 <xsl:if test="$benchmark/cdf:front-matter">
                     <div class="front-matter">
                         <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:front-matter[1]">
