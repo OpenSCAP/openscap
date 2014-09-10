@@ -558,7 +558,7 @@ xmlNode *xccdf_fixtext_to_dom(struct xccdf_fixtext *fixtext, xmlDoc *doc, xmlNod
 	return fixtext_node;
 }
 
-xmlNode *xccdf_fix_to_dom(struct xccdf_fix *fix, xmlDoc *doc, xmlNode *parent)
+xmlNode *xccdf_fix_to_dom(struct xccdf_fix *fix, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
 {
 	xmlNode *fix_node = oscap_xmlstr_to_dom(parent, "fix", xccdf_fix_get_content(fix));
 

@@ -1107,7 +1107,7 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 	struct xccdf_fix_iterator *fixes = xccdf_rule_result_get_fixes(result);
 	while (xccdf_fix_iterator_has_more(fixes)) {
 		struct xccdf_fix *fix = xccdf_fix_iterator_next(fixes);
-		xccdf_fix_to_dom(fix, doc, result_node);
+		xccdf_fix_to_dom(fix, doc, result_node, version_info);
 	}
 	xccdf_fix_iterator_free(fixes);
 

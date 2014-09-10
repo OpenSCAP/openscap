@@ -1013,7 +1013,7 @@ void xccdf_rule_to_dom(struct xccdf_rule *rule, xmlNode *rule_node, xmlDoc *doc,
 	struct xccdf_fix_iterator *fixes = xccdf_rule_get_fixes(rule);
 	while (xccdf_fix_iterator_has_more(fixes)) {
 		struct xccdf_fix *fix = xccdf_fix_iterator_next(fixes);
-		xccdf_fix_to_dom(fix, doc, rule_node);
+		xccdf_fix_to_dom(fix, doc, rule_node, version_info);
 	}
 	xccdf_fix_iterator_free(fixes);
 
