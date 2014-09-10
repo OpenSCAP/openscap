@@ -505,7 +505,11 @@ int xccdf_session_load_cpe(struct xccdf_session *session)
 	}
 
 	if (xccdf_session_is_sds(session)) {
-		struct ds_stream_index* stream_idx = ds_sds_index_get_stream(session->ds.sds_idx, session->ds.datastream_id);
+		struct ds_sds_index *sds_idx = xccdf_session_get_sds_idx(session);
+		if (sds_idx == NULL) {
+			return -1;
+		}
+		struct ds_stream_index* stream_idx = ds_sds_index_get_stream(sds_idx, session->ds.datastream_id);
 		struct oscap_string_iterator* cpe_it = ds_stream_index_get_dictionaries(stream_idx);
 
 		// This potentially allows us to skip yet another decompose if we are sure
