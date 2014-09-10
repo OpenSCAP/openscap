@@ -56,6 +56,7 @@ struct oval_content_resource {
 
 struct xccdf_session {
 	const char *filename;				///< File name of SCAP (SDS or XCCDF) file for this session.
+	struct oscap_source *source;                    ///< Main source assigned with the main file (SDS or XCCDF)
 	char *temp_dir;					///< Temp directory used for decomposed component files.
 	struct {
 		char *file;				///< Path to XCCDF File (shall differ from the filename for sds).
@@ -116,6 +117,7 @@ struct xccdf_session *xccdf_session_new(const char *filename)
 	struct xccdf_session *session = (struct xccdf_session *) oscap_calloc(1, sizeof(struct xccdf_session));
 	session->filename = strdup(filename);
 
+	session->source = oscap_source_new_from_file(filename);
 	if (oscap_determine_document_type(filename, &(session->doc_type)) != 0) {
 		xccdf_session_free(session);
 		return NULL;
@@ -163,6 +165,7 @@ void xccdf_session_free(struct xccdf_session *session)
 		ds_sds_index_free(session->ds.sds_idx);
 	if (session->temp_dir != NULL)
 		oscap_acquire_cleanup_dir((char **) &(session->temp_dir));
+	oscap_source_free(session->source);
 	oscap_free(session->filename);
 	oscap_free(session->user_tailoring_file);
 	oscap_free(session->user_tailoring_cid);
