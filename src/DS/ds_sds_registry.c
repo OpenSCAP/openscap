@@ -30,10 +30,13 @@
 #include "common/public/oscap.h"
 #include "common/util.h"
 #include "ds_sds_registry.h"
+#include "sds_index_priv.h"
+#include "source/oscap_source_priv.h"
 #include "source/public/oscap_source.h"
 
 struct ds_sds_registry {
-	struct oscap_source *source;
+	struct oscap_source *source;            ///< Source DataStream raw representation
+	struct ds_sds_index *index;             ///< Source DataStream index
 };
 
 struct ds_sds_registry *ds_sds_registry_new_from_source(struct oscap_source *source)
@@ -49,8 +52,21 @@ struct ds_sds_registry *ds_sds_registry_new_from_source(struct oscap_source *sou
 void ds_sds_registry_free(struct ds_sds_registry *sds_registry)
 {
 	if (sds_registry != NULL) {
+		ds_sds_index_free(sds_registry->index);
 		oscap_source_free(sds_registry->source);
 		oscap_free(sds_registry);
 	}
 }
 
+struct ds_sds_index *ds_sds_registry_get_sds_idx(struct ds_sds_registry *registry)
+{
+	if (registry->index == NULL) {
+		xmlTextReader *reader = oscap_source_get_xmlTextReader(registry->source);
+		if (reader == NULL) {
+			return NULL;
+		}
+		registry->index = ds_sds_index_parse(reader);
+		xmlFreeTextReader(reader);
+	}
+	return registry->index;
+}

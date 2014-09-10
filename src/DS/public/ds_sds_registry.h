@@ -28,6 +28,7 @@
 
 #include "oscap.h"
 #include "oscap_source.h"
+#include "scap_ds.h"
 
 /**
  * The ds_sds_registry is structure tight closely to oscap_source.
@@ -48,6 +49,14 @@ struct ds_sds_registry;
  * @returns newly created ds_sds_registry structure
  */
 struct ds_sds_registry *ds_sds_registry_new_from_source(struct oscap_source *source);
+
+/**
+ * Get Source DataStream index
+ * @memberof ds_sds_registry
+ * @param registry Registry to query SDS index from
+ * @returns source DataStream owned by registry
+ */
+struct ds_sds_index *ds_sds_registry_get_sds_idx(struct ds_sds_registry *registry);
 
 /**
  * Dispose ds_sds_registry structure.
