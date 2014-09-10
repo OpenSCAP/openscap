@@ -448,7 +448,8 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 		while (oscap_string_iterator_has_more(metadata))
 		{
 			const char* meta = oscap_string_iterator_next(metadata);
-			oscap_xmlstr_to_dom(item_node, "metadata", meta);
+			xmlNode *m = oscap_xmlstr_to_dom(item_node, "metadata", meta);
+			xmlSetNs(m, ns_xccdf);
 		}
 		oscap_string_iterator_free(metadata);
     }
