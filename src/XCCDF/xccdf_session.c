@@ -97,7 +97,6 @@ struct xccdf_session {
 	char *user_cpe;					///< Path to CPE dictionary required by user
 	char *user_tailoring_file;      ///< Path to Tailoring file requested by the user
 	char *user_tailoring_cid;       ///< Component ID of the Tailoring file requested by the user
-	oscap_document_type_t doc_type;			///< Document type of the session file (see filename member) used.
 	bool validate;					///< False value indicates to skip any XSD validation.
 	bool full_validation;				///< True value indicates that every possible step will be validated by XSD.
 
@@ -118,11 +117,12 @@ struct xccdf_session *xccdf_session_new(const char *filename)
 	session->filename = strdup(filename);
 
 	session->source = oscap_source_new_from_file(filename);
-	if (oscap_determine_document_type(filename, &(session->doc_type)) != 0) {
+	if (oscap_source_get_scap_type(session->source) == 0) {
 		xccdf_session_free(session);
 		return NULL;
 	}
-	if (session->doc_type != OSCAP_DOCUMENT_XCCDF && session->doc_type != OSCAP_DOCUMENT_SDS) {
+	if (oscap_source_get_scap_type(session->source) != OSCAP_DOCUMENT_XCCDF
+			&& oscap_source_get_scap_type(session->source) != OSCAP_DOCUMENT_SDS) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP,
 			"Session input file was determined but it isn't an XCCDF file or a source datastream.");
 		xccdf_session_free(session);
@@ -179,7 +179,7 @@ const char *xccdf_session_get_filename(const struct xccdf_session *session)
 
 bool xccdf_session_is_sds(const struct xccdf_session *session)
 {
-	return session->doc_type == OSCAP_DOCUMENT_SDS;
+	return oscap_source_get_scap_type(session->source) == OSCAP_DOCUMENT_SDS;
 }
 
 void xccdf_session_set_validation(struct xccdf_session *session, bool validate, bool full_validation)
