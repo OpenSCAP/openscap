@@ -97,11 +97,14 @@ void oscap_source_free(struct oscap_source *source)
 }
 
 /**
- * This attempts to builds a new xmlTextReader based on the information within the oscap_source.
- * Note that we tend to double/triple open as we need to determine document type, then to valide
- * it, then again to parse it.
+ * Returns human readable description of oscap_source origin
  */
-static inline xmlTextReader *_build_new_xmlTextReader(struct oscap_source *source)
+const char *oscap_source_readable_origin(const struct oscap_source *source)
+{
+	return source->origin.filepath;
+}
+
+xmlTextReader *oscap_source_get_xmlTextReader(struct oscap_source *source)
 {
 	xmlDoc *doc = oscap_source_get_xmlDoc(source);
 	if (doc == NULL) {
@@ -115,23 +118,10 @@ static inline xmlTextReader *_build_new_xmlTextReader(struct oscap_source *sourc
 	return reader;
 }
 
-/**
- * Returns human readable description of oscap_source origin
- */
-const char *oscap_source_readable_origin(const struct oscap_source *source)
-{
-	return source->origin.filepath;
-}
-
-xmlTextReader *oscap_source_get_xmlTextReader(struct oscap_source *source)
-{
-	return _build_new_xmlTextReader(source);
-}
-
 oscap_document_type_t oscap_source_get_scap_type(struct oscap_source *source)
 {
 	if (source->scap_type == 0) {
-		xmlTextReader *reader = _build_new_xmlTextReader(source);
+		xmlTextReader *reader = oscap_source_get_xmlTextReader(source);
 		if (reader == NULL) {
 			// the oscap error is already set
 			return 0;
@@ -181,7 +171,7 @@ int oscap_source_validate_schematron(struct oscap_source *source, const char *ou
 const char *oscap_source_get_schema_version(struct oscap_source *source)
 {
 	if (source->origin.version == NULL) {
-		xmlTextReader *reader = _build_new_xmlTextReader(source);
+		xmlTextReader *reader = oscap_source_get_xmlTextReader(source);
 		if (reader == NULL) {
 			return NULL;
 		}
