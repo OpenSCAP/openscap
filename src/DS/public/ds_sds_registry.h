@@ -42,8 +42,8 @@ struct ds_sds_registry;
 
 /**
  * Create new ds_sds_registry from existing oscap_source. This assumes that
- * the given oscap_source represents source DataStream. This function takes
- * over the ownership of oscap_source structure.
+ * the given oscap_source represents source DataStream. This function does
+ * not own the oscap_source, but it needs it for operation.
  * @memberof ds_sds_registry
  * @param source The oscap_source representing a source datastream
  * @returns newly created ds_sds_registry structure

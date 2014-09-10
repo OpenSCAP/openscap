@@ -53,7 +53,6 @@ void ds_sds_registry_free(struct ds_sds_registry *sds_registry)
 {
 	if (sds_registry != NULL) {
 		ds_sds_index_free(sds_registry->index);
-		oscap_source_free(sds_registry->source);
 		oscap_free(sds_registry);
 	}
 }
