@@ -111,8 +111,8 @@ bool xccdf_tailoring_remove_profile(struct xccdf_tailoring *tailoring, struct xc
 				"Can't remove given profile '%s' from tailoring. Other profiles are inheriting from it!",
 				profile_id);
 
-			return false;
 			xccdf_profile_iterator_free(it);
+			return false;
 		}
 	}
 	xccdf_profile_iterator_free(it);
