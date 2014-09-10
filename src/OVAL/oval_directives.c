@@ -135,6 +135,7 @@ int oval_directives_model_import_source(struct oval_directives_model *model, str
 
         oscap_free(tagname);
         oscap_free(namespace);
+	xmlFreeTextReader(context.reader);
 	return ret;
 }
 

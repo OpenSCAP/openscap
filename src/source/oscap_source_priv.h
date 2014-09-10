@@ -46,8 +46,8 @@ OSCAP_HIDDEN_START;
 struct oscap_source *oscap_source_new_from_xmlDoc(xmlDoc *doc, const char *filepath);
 
 /**
- * Get an xmlTextReader assigned with this resource. The reader is still
- * owned by oscap_source.
+ * Get an xmlTextReader assigned with this resource. The reader needs to be
+ * disposed by caller.
  * @memberof oscap_source
  * @param source Resource to read the content
  * @returns xmlTextReader structure to read the content

@@ -315,6 +315,7 @@ struct oval_variable_model *oval_variable_model_import_source(struct oscap_sourc
 		oval_variable_model_free(model);
 		model = NULL;
 	}
+	xmlFreeTextReader(reader);
 	return model;
 
 }

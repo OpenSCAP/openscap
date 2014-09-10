@@ -225,7 +225,9 @@ static inline int _oval_definition_model_merge_source(struct oval_definition_mod
 	while (xmlTextReaderRead(context.reader) == 1
 		&& xmlTextReaderNodeType(context.reader) != XML_READER_TYPE_ELEMENT) ;
 	/* start parsing */
-	return oval_definition_model_parse(context.reader, &context);
+	int ret = oval_definition_model_parse(context.reader, &context);
+	xmlFreeTextReader(context.reader);
+	return ret;
 }
 
 struct oval_definition_model *oval_definition_model_import_source(struct oscap_source *source)

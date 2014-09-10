@@ -60,7 +60,6 @@ struct oscap_source {
 		const char *filepath;                   ///< Filepath (if originated from file)
 	} origin;                                       ///
 	struct {
-		xmlTextReader *text_reader;		/// xmlTextReader assigned to read this source
 		xmlDoc *doc;                            /// DOM
 	} xml;
 };
@@ -89,9 +88,6 @@ void oscap_source_free(struct oscap_source *source)
 {
 	if (source != NULL) {
 		oscap_free(source->origin.filepath);
-		if (source->xml.text_reader != NULL) {
-			xmlFreeTextReader(source->xml.text_reader);
-		}
 		if (source->xml.doc != NULL) {
 			xmlFreeDoc(source->xml.doc);
 		}
@@ -129,13 +125,7 @@ const char *oscap_source_readable_origin(const struct oscap_source *source)
 
 xmlTextReader *oscap_source_get_xmlTextReader(struct oscap_source *source)
 {
-	if (source->xml.text_reader == NULL) {
-		source->xml.text_reader = _build_new_xmlTextReader(source);
-	}
-	if (source->xml.text_reader == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_XML, "Unable to open file: '%s' (%s)", oscap_source_readable_origin(source), strerror(errno));
-	}
-	return source->xml.text_reader;
+	return _build_new_xmlTextReader(source);
 }
 
 oscap_document_type_t oscap_source_get_scap_type(struct oscap_source *source)

@@ -270,6 +270,7 @@ int oval_syschar_model_import_source(struct oval_syschar_model *model, struct os
 
 	oscap_free(tagname);
 	oscap_free(namespace);
+	xmlFreeTextReader(context.reader);
 	return ret;
 }
 

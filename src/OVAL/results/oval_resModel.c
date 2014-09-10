@@ -182,6 +182,7 @@ int oval_results_model_import_source(struct oval_results_model *model, struct os
 
         oscap_free(tagname);
         oscap_free(namespace);
+	xmlFreeTextReader(context.reader);
 	return ret;
 }
 

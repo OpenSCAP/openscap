@@ -91,6 +91,7 @@ static void cce_parse(const char *docname, struct cce *cce)
 			process_node(reader, cce);
 			ret = xmlTextReaderRead(reader);
 		}
+		xmlFreeTextReader(reader);
 	}
 	oscap_source_free(source);
 }
