@@ -206,35 +206,17 @@ static int ds_sds_dump_component(const char* component_id, xmlDocPtr doc, const 
 	// We can't just dump node "innerXML" because namespaces have to be
 	// handled.
 	else {
-		xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
-
-		xmlDocPtr new_doc = xmlNewDoc(BAD_CAST "1.0");
-		xmlNodePtr res_node = NULL;
-		if (xmlDOMWrapCloneNode(wrap_ctxt, doc, inner_root, &res_node, new_doc, NULL, 1, 0) != 0)
-		{
-			oscap_seterr(OSCAP_EFAMILY_XML, "Error when cloning node while dumping component (id='%s').", component_id);
-			xmlFreeDoc(new_doc);
-			xmlDOMWrapFreeCtxt(wrap_ctxt);
-			return -1;
-		}
-		xmlDocSetRootElement(new_doc, res_node);
-		if (xmlDOMWrapReconcileNamespaces(wrap_ctxt, res_node, 0) != 0)
-		{
-			oscap_seterr(OSCAP_EFAMILY_XML, "Internal libxml error when reconciling namespaces while dumping component (id='%s').", component_id);
-			xmlFreeDoc(new_doc);
-			xmlDOMWrapFreeCtxt(wrap_ctxt);
+		xmlDoc *new_doc = ds_doc_from_foreign_node(inner_root, doc);
+		if (new_doc == NULL) {
 			return -1;
 		}
 		if (xmlSaveFileEnc(filename, new_doc, "utf-8") == -1)
 		{
 			oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error when saving resulting DOM to file '%s' while dumping component (id='%s').", filename, component_id);
 			xmlFreeDoc(new_doc);
-			xmlDOMWrapFreeCtxt(wrap_ctxt);
 			return -1;
 		}
 		xmlFreeDoc(new_doc);
-
-		xmlDOMWrapFreeCtxt(wrap_ctxt);
 	}
 
 	return 0;
