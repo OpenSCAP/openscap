@@ -204,7 +204,7 @@ Authors:
     </xsl:copy>
 </xsl:template>
 
-<xsl:template mode="sub-testresult" match="cdf:title | cdf:description | cdf:fix | cdf:fixtext | cdf:front-matter | cdf:rear-matter | cdf:rationale | cdf:warning">
+<xsl:template mode="sub-testresult" match="cdf:title | cdf:description | cdf:fix | cdf:fixtext | cdf:front-matter | cdf:rear-matter | cdf:rationale | cdf:warning | cdf:notice">
     <xsl:param name="testresult"/>
     <xsl:param name="benchmark"/>
     <xsl:param name="profile"/>
