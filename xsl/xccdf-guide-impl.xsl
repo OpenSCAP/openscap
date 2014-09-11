@@ -109,7 +109,16 @@ Authors:
 
                     <tr>
                         <th>ID</th>
-                        <td><xsl:value-of select="$profile/@id"/></td>
+                        <td>
+                            <xsl:choose>
+                                <xsl:when test="$profile/@id">
+                                    <xsl:value-of select="$profile/@id"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <abbr title="No profile was selected.">(default)</abbr>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </td>
                     </tr>
                 </table>
             </div>
