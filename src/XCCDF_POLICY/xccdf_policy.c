@@ -196,6 +196,8 @@ char *xccdf_policy_get_readable_item_title(struct xccdf_policy *policy, struct x
 	struct oscap_text_iterator *title_it = xccdf_item_get_title(item);
 	char *unresolved = oscap_textlist_get_preferred_plaintext(title_it, preferred_lang);
 	oscap_text_iterator_free(title_it);
+	if (!unresolved)
+		return oscap_strdup("");
 	char *resolved = xccdf_policy_substitute(unresolved, policy);
 	oscap_free(unresolved);
 	return resolved;
@@ -207,6 +209,8 @@ char *xccdf_policy_get_readable_item_description(struct xccdf_policy *policy, st
 	struct oscap_text_iterator *description_it = xccdf_item_get_description(item);
 	struct oscap_text *unresolved_text = oscap_textlist_get_preferred_text(description_it, preferred_lang);
 	oscap_text_iterator_free(description_it);
+	if (!unresolved_text)
+		return oscap_strdup("");
 	const char *unresolved = oscap_text_get_text(unresolved_text);
 	/* Resolve <xccdf:sub> elements */
 	const char *resolved = xccdf_policy_substitute(unresolved, policy);
