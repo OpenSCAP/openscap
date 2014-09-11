@@ -29,43 +29,43 @@
 #include "common/_error.h"
 #include "common/public/oscap.h"
 #include "common/util.h"
-#include "ds_sds_registry.h"
+#include "ds_sds_session.h"
 #include "sds_index_priv.h"
 #include "source/oscap_source_priv.h"
 #include "source/public/oscap_source.h"
 
-struct ds_sds_registry {
+struct ds_sds_session {
 	struct oscap_source *source;            ///< Source DataStream raw representation
 	struct ds_sds_index *index;             ///< Source DataStream index
 };
 
-struct ds_sds_registry *ds_sds_registry_new_from_source(struct oscap_source *source)
+struct ds_sds_session *ds_sds_session_new_from_source(struct oscap_source *source)
 {
 	if (oscap_source_get_scap_type(source) != OSCAP_DOCUMENT_SDS) {
 		return NULL;
 	}
-	struct ds_sds_registry *sds_registry = (struct ds_sds_registry *) oscap_calloc(1, sizeof(struct ds_sds_registry));
-	sds_registry->source = source;
-	return sds_registry;
+	struct ds_sds_session *sds_session = (struct ds_sds_session *) oscap_calloc(1, sizeof(struct ds_sds_session));
+	sds_session->source = source;
+	return sds_session;
 }
 
-void ds_sds_registry_free(struct ds_sds_registry *sds_registry)
+void ds_sds_session_free(struct ds_sds_session *sds_session)
 {
-	if (sds_registry != NULL) {
-		ds_sds_index_free(sds_registry->index);
-		oscap_free(sds_registry);
+	if (sds_session != NULL) {
+		ds_sds_index_free(sds_session->index);
+		oscap_free(sds_session);
 	}
 }
 
-struct ds_sds_index *ds_sds_registry_get_sds_idx(struct ds_sds_registry *registry)
+struct ds_sds_index *ds_sds_session_get_sds_idx(struct ds_sds_session *session)
 {
-	if (registry->index == NULL) {
-		xmlTextReader *reader = oscap_source_get_xmlTextReader(registry->source);
+	if (session->index == NULL) {
+		xmlTextReader *reader = oscap_source_get_xmlTextReader(session->source);
 		if (reader == NULL) {
 			return NULL;
 		}
-		registry->index = ds_sds_index_parse(reader);
+		session->index = ds_sds_index_parse(reader);
 		xmlFreeTextReader(reader);
 	}
-	return registry->index;
+	return session->index;
 }

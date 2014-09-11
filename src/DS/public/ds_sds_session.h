@@ -19,8 +19,8 @@
  * Author:
  *     Šimon Lukašík
  */
-#ifndef DS_SDS_SOURCE_H
-#define DS_SDS_SOURCE_H
+#ifndef DS_SDS_SESSION_H
+#define DS_SDS_SESSION_H
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -31,37 +31,37 @@
 #include "scap_ds.h"
 
 /**
- * The ds_sds_registry is structure tight closely to oscap_source.
+ * The ds_sds_session is structure tight closely to oscap_source.
  *
- * The ds_sds_registry represents resource for further processing representing
- * Source DataStream (file). The ds_sds_registry can be decomposed into multiple
+ * The ds_sds_session represents resource for further processing representing
+ * Source DataStream (file). The ds_sds_session can be decomposed into multiple
  * oscap_source structures.
  *
  */
-struct ds_sds_registry;
+struct ds_sds_session;
 
 /**
- * Create new ds_sds_registry from existing oscap_source. This assumes that
+ * Create new ds_sds_session from existing oscap_source. This assumes that
  * the given oscap_source represents source DataStream. This function does
  * not own the oscap_source, but it needs it for operation.
- * @memberof ds_sds_registry
+ * @memberof ds_sds_session
  * @param source The oscap_source representing a source datastream
- * @returns newly created ds_sds_registry structure
+ * @returns newly created ds_sds_session structure
  */
-struct ds_sds_registry *ds_sds_registry_new_from_source(struct oscap_source *source);
+struct ds_sds_session *ds_sds_session_new_from_source(struct oscap_source *source);
 
 /**
  * Get Source DataStream index
- * @memberof ds_sds_registry
- * @param registry Registry to query SDS index from
- * @returns source DataStream owned by registry
+ * @memberof ds_sds_session
+ * @param session Registry to query SDS index from
+ * @returns source DataStream owned by session
  */
-struct ds_sds_index *ds_sds_registry_get_sds_idx(struct ds_sds_registry *registry);
+struct ds_sds_index *ds_sds_session_get_sds_idx(struct ds_sds_session *session);
 
 /**
- * Dispose ds_sds_registry structure.
- * @param sds_registry Registry to dispose
+ * Dispose ds_sds_session structure.
+ * @param sds_session Registry to dispose
  */
-void ds_sds_registry_free(struct ds_sds_registry *sds_registry);
+void ds_sds_session_free(struct ds_sds_session *sds_session);
 
 #endif
