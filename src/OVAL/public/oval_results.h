@@ -17,7 +17,7 @@
 
 
 /*
- * Copyright 2009-2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009-2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -43,6 +43,8 @@
 #ifndef OVAL_RESULTS_H_
 #define OVAL_RESULTS_H_
 
+#include "oscap.h"
+#include "oscap_source.h"
 #include "oval_types.h"
 #include "oval_system_characteristics.h"
 #include "oval_directives.h"
@@ -117,6 +119,17 @@ struct oval_result_criteria_node_iterator;
  */
 struct oval_results_model *oval_results_model_new(struct oval_definition_model *definition_model,
 						  struct oval_syschar_model **);
+
+/**
+ * Import the content from the oscap_source into an oval_result_model.
+ * If imported content specifies a model entity that is already registered within the model its content is overwritten.
+ * @memberof oval_results_model
+ * @param model the oval_results_model
+ * @param source The oscap_source to import from
+ * @return -1 if an error occurred
+ */
+int oval_results_model_import_source(struct oval_results_model *model, struct oscap_source *source);
+
 /**
  * Import the content from the file into an oval_result_model.
  * If imported content specifies a model entity that is already registered within the model its content is overwritten.
@@ -124,8 +137,10 @@ struct oval_results_model *oval_results_model_new(struct oval_definition_model *
  * @param file filename
  * @return -1 if an error occurred
  * @memberof oval_results_model
+ * @deprecated This function has been deprecated and it may be dropped from later
+ * OpenSCAP releases. Please use oval_results_model_import_source instead.
  */
-int oval_results_model_import(struct oval_results_model *model, const char *file);
+OSCAP_DEPRECATED(int oval_results_model_import(struct oval_results_model *model, const char *file));
 /**
  * Copy an oval_results_model.
  * @return A copy of the specified @ref oval_results_model.
@@ -146,6 +161,16 @@ void oval_results_model_free(struct oval_results_model *model);
  * @memberof oval_results_model
  */
 int oval_results_model_export(struct oval_results_model *, struct oval_directives_model *, const char *file);
+
+/**
+ * Export OVAL results into oscap_source
+ * @param results_model The OVAL Results Model to export
+ * @param directives_model The Directives Model to amend the export
+ * @param filename A suggested name (filename) to assign with the oscap_source
+ * This name may later be used when storing the oscap_source to disk drive.
+ * @returns Newly created oscap_source or NULL in case of failure
+ */
+struct oscap_source *oval_results_model_export_source(struct oval_results_model *results_model, struct oval_directives_model *directives_model, const char *name);
 
 /**
  * @name Setters

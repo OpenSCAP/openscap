@@ -174,35 +174,14 @@ static int ds_rds_dump_arf_content(xmlDocPtr doc, xmlNodePtr parent_node, const 
 	// We assume that arf:content is XML. This is reasonable because both
 	// reports and report requests are XML documents.
 
-	xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
-
-	xmlDocPtr new_doc = xmlNewDoc(BAD_CAST "1.0");
-	xmlNodePtr res_node = NULL;
-	if (xmlDOMWrapCloneNode(wrap_ctxt, doc, inner_root, &res_node, new_doc, NULL, 1, 0) != 0)
-	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Error when cloning node while dumping arf content.");
-		xmlFreeDoc(new_doc);
-		xmlDOMWrapFreeCtxt(wrap_ctxt);
-		return -1;
-	}
-	xmlDocSetRootElement(new_doc, res_node);
-	if (xmlDOMWrapReconcileNamespaces(wrap_ctxt, res_node, 0) != 0)
-	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Internal libxml error when reconciling namespaces while dumping arf content.");
-		xmlFreeDoc(new_doc);
-		xmlDOMWrapFreeCtxt(wrap_ctxt);
-		return -1;
-	}
+	xmlDoc *new_doc = ds_doc_from_foreign_node(inner_root, doc);
 	if (xmlSaveFileEnc(target_file, new_doc, "utf-8") == -1)
 	{
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error when saving resulting DOM to file '%s' while dumping arf content.", target_file);
 		xmlFreeDoc(new_doc);
-		xmlDOMWrapFreeCtxt(wrap_ctxt);
 		return -1;
 	}
 	xmlFreeDoc(new_doc);
-
-	xmlDOMWrapFreeCtxt(wrap_ctxt);
 
 	return 0;
 }

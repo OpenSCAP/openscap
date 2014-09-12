@@ -7,7 +7,7 @@
  */
 
 /*
- * Copyright 2011--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2011--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -46,6 +46,8 @@
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "common/elements.h"
+#include "oscap_source.h"
+#include "source/oscap_source_priv.h"
 
 #define NUMBER_OF_RESULTS 6
 #define NUMBER_OF_CLASSES 5
@@ -102,45 +104,46 @@ void oval_directives_model_free(struct oval_directives_model *model) {
 	oscap_free(model);
 }
 
-int oval_directives_model_import(struct oval_directives_model * model, char *file) {
-
-	int ret=0;
+int oval_directives_model_import_source(struct oval_directives_model *model, struct oscap_source *source)
+{
+	int ret = 0;
 	char *tagname = NULL;
 	char *namespace = NULL;
 
-	/* open file */
-        xmlTextReader *reader = xmlNewTextReaderFilename(file);
-        if (reader == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), file);
-		ret = -1;
-		goto cleanup;
-        }
-
         /* setup context */
         struct oval_parser_context context;
-        context.reader = reader;
+        context.reader = oscap_source_get_xmlTextReader(source);
+	if (context.reader == NULL) {
+		return -1;
+	}
         context.directives_model = model;
         context.user_data = NULL;
-        xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
         /* jump into oval_system_characteristics */
-        xmlTextReaderRead(reader);
+        xmlTextReaderRead(context.reader);
 
         /* make sure this is a right schema and tag */
-        tagname = (char *)xmlTextReaderLocalName(reader);
-        namespace = (char *)xmlTextReaderNamespaceUri(reader);
+        tagname = (char *)xmlTextReaderLocalName(context.reader);
+        namespace = (char *)xmlTextReaderNamespaceUri(context.reader);
         int is_ovaldir = strcmp((const char *)OVAL_DIRECTIVES_NAMESPACE, namespace) == 0;
         /* start parsing */
         if (is_ovaldir && (strcmp(tagname, OVAL_ROOT_ELM_DIRECTIVES) == 0)) {
-                ret = oval_directives_model_parse(reader, &context);
+                ret = oval_directives_model_parse(context.reader, &context);
         } else {
                 oscap_seterr(OSCAP_EFAMILY_OSCAP, "Missing \"oval_directives\" element");
                 ret = -1;
         }
 
-cleanup:
         oscap_free(tagname);
         oscap_free(namespace);
-        xmlFreeTextReader(reader);
+	xmlFreeTextReader(context.reader);
+	return ret;
+}
+
+int oval_directives_model_import(struct oval_directives_model * model, char *file) {
+	/* open file */
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	int ret = oval_directives_model_import_source(model, source);
+        oscap_source_free(source);
 
 	return ret;
 }
@@ -157,7 +160,7 @@ int oval_directives_model_export(struct oval_directives_model *model, const char
         }
 
         oval_directives_model_to_dom(model, doc, NULL);
-	return oscap_xml_save_filename(file, doc);
+	return oscap_xml_save_filename_free(file, doc);
 }
 
 
@@ -408,15 +411,13 @@ xmlNode *oval_directives_model_to_dom(struct oval_directives_model *model, xmlDo
 		xmlDocSetRootElement(doc, root_node);
 
 		/*schemalocation */
-		xmlNewProp(root_node, BAD_CAST "xsi:schemaLocation", BAD_CAST OVAL_DIR_SCHEMA_LOCATION);
+		xmlNewNsProp(root_node, lookup_xsi_ns(doc), BAD_CAST "schemaLocation", BAD_CAST OVAL_DIR_SCHEMA_LOCATION);
 
 		/* NS */
 		xmlNs *ns_common = xmlNewNs(root_node, OVAL_COMMON_NAMESPACE, BAD_CAST "oval");
-		xmlNs *ns_xsi = xmlNewNs(root_node, OVAL_XMLNS_XSI, BAD_CAST "xsi");
 		xmlNs *ns_results = xmlNewNs(root_node, OVAL_RESULTS_NAMESPACE, BAD_CAST "oval-res");
 		xmlNs *ns_directives = xmlNewNs(root_node, OVAL_DIRECTIVES_NAMESPACE, NULL);
 		xmlSetNs(root_node, ns_common);
-		xmlSetNs(root_node, ns_xsi);
 		xmlSetNs(root_node, ns_results);
 		xmlSetNs(root_node, ns_directives);
 

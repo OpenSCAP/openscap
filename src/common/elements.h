@@ -34,6 +34,8 @@
 #include "public/oscap.h"
 #include "util.h"
 
+#define OSCAP_XMLNS_XSI BAD_CAST "http://www.w3.org/2001/XMLSchema-instance"
+
 /// boolean to string (and vice versa) conversion map
 extern const struct oscap_string_map OSCAP_BOOL_MAP[];
 
@@ -55,12 +57,20 @@ time_t oscap_get_datetime(const char *date);
 xmlNode *oscap_xmlstr_to_dom(xmlNode *parent, const char *elname, const char *content);
 
 /**
- * Save XML Document to the file of the given filename and dispose the document afterwards.
+ * Save XML Document to the file of the given filename.
  * @param filename path to the file
  * @param doc the XML document content
  * @return 1 on success, -1 on failure (oscap_seterr is set appropriatly).
  */
 int oscap_xml_save_filename(const char *filename, xmlDocPtr doc);
+
+/**
+ * Save XML Document to the file of the given filename and dispose the document afterwards.
+ * @param filename path to the file
+ * @param doc the XML document content
+ * @return 1 on success, -1 on failure (oscap_seterr is set appropriatly).
+ */
+int oscap_xml_save_filename_free(const char *filename, xmlDocPtr doc);
 
 /**
  * Callback for handling libxml errors. It can be registered by xmlTextReaderSetErrorHandler
@@ -70,5 +80,7 @@ int oscap_xml_save_filename(const char *filename, xmlDocPtr doc);
  * @param locator a locator indicating where the error occured
  */
 void libxml_error_handler(void *user, const char *message, xmlParserSeverities severity, xmlTextReaderLocatorPtr locator);
+
+xmlNs *lookup_xsi_ns(xmlDoc *doc);
 
 #endif

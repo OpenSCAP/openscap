@@ -31,6 +31,7 @@
 #include "public/oscap_text.h"
 
 #include "ds_common.h"
+#include "sds_priv.h"
 
 #include "common/alloc.h"
 #include "common/_error.h"
@@ -61,7 +62,7 @@ static const char* xlink_ns_uri = "http://www.w3.org/1999/xlink";
 static const char* cat_ns_uri = "urn:oasis:names:tc:entity:xmlns:xml:catalog";
 static const char* sce_xccdf_ns_uri = "http://open-scap.org/page/SCE_xccdf_stream";
 
-static xmlNodePtr node_get_child_element(xmlNodePtr parent, const char* name)
+xmlNodePtr node_get_child_element(xmlNodePtr parent, const char* name)
 {
 	xmlNodePtr candidate = parent->children;
 
@@ -141,6 +142,42 @@ static xmlNodePtr _lookup_component_in_collection(xmlDocPtr doc, const char *com
 	return component;
 }
 
+static int ds_sds_dump_component_sce(xmlNode *script_node, const char *component_id, const char *filename)
+{
+	if (script_node) {
+		// TODO: should we check whether the component is extended?
+		int fd;
+		xmlChar* text_contents = xmlNodeGetContent(script_node);
+		if ((fd = open(filename, O_CREAT | O_TRUNC | O_NOFOLLOW | O_WRONLY, 0700)) < 0) {
+			oscap_seterr(OSCAP_EFAMILY_XML, "Error while creating script component (id='%s') to file '%s'.", component_id, filename);
+			xmlFree(text_contents);
+			return -1;
+		}
+		FILE* output_file = fdopen(fd, "w");
+		if (output_file == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_XML, "Error while dumping script component (id='%s') to file '%s'.", component_id, filename);
+			xmlFree(text_contents);
+			close(fd);
+			return -1;
+		}
+		// TODO: error checking, fprintf should return strlen((const char*)text_contents)
+		fprintf(output_file, "%s", text_contents ? (char*)text_contents : "");
+		// NB: This code is for SCE scripts
+		if (fchmod(fd, 0700) != 0) {
+			oscap_seterr(OSCAP_EFAMILY_XML, "Failed to set executable permission on script (id='%s') that was split to '%s'.", component_id, filename);
+		}
+
+		fclose(output_file);
+		xmlFree(text_contents);
+		return 0;
+	}
+	else {
+		oscap_seterr(OSCAP_EFAMILY_XML, "Error while dumping script component (id='%s') to file '%s'. "
+			"The script element was empty!", component_id, filename);
+		return -1;
+	}
+}
+
 static int ds_sds_dump_component(const char* component_id, xmlDocPtr doc, const char* filename)
 {
 	xmlNodePtr component = _lookup_component_in_collection(doc, component_id);
@@ -160,71 +197,26 @@ static int ds_sds_dump_component(const char* component_id, xmlDocPtr doc, const 
 
 	// If the inner root is script, we have to treat it in a special way
 	if (strcmp((const char*)inner_root->name, "script") == 0) {
-		if (inner_root->children) {
-			// TODO: should we check whether the component is extended?
-			int fd;
-			xmlChar* text_contents = xmlNodeGetContent(inner_root->children);
-			if ((fd = open(filename, O_CREAT | O_TRUNC | O_NOFOLLOW | O_WRONLY, 0700)) < 0) {
-				oscap_seterr(OSCAP_EFAMILY_XML, "Error while creating script component (id='%s') to file '%s'.", component_id, filename);
-				xmlFree(text_contents);
-				return -1;
-			}
-			FILE* output_file = fdopen(fd, "w");
-			if (output_file == NULL) {
-				oscap_seterr(OSCAP_EFAMILY_XML, "Error while dumping script component (id='%s') to file '%s'.", component_id, filename);
-				xmlFree(text_contents);
-				close(fd);
-				return -1;
-			}
-			// TODO: error checking, fprintf should return strlen((const char*)text_contents)
-			fprintf(output_file, "%s", text_contents ? (char*)text_contents : "");
-			// NB: This code is for SCE scripts
-			if (fchmod(fd, 0700) != 0) {
-				oscap_seterr(OSCAP_EFAMILY_XML, "Failed to set executable permission on script (id='%s') that was split to '%s'.", component_id, filename);
-			}
-
-			fclose(output_file);
-			xmlFree(text_contents);
-		}
-		else {
-			oscap_seterr(OSCAP_EFAMILY_XML, "Error while dumping script component (id='%s') to file '%s'. "
-				"The script element was empty!", component_id, filename);
-			return -1;
+		int ret = ds_sds_dump_component_sce(inner_root->children, component_id, filename);
+		if (ret != 0) {
+			return ret;
 		}
 	}
 	// Otherwise we create a new XML doc we will dump the contents to.
 	// We can't just dump node "innerXML" because namespaces have to be
 	// handled.
 	else {
-		xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
-
-		xmlDocPtr new_doc = xmlNewDoc(BAD_CAST "1.0");
-		xmlNodePtr res_node = NULL;
-		if (xmlDOMWrapCloneNode(wrap_ctxt, doc, inner_root, &res_node, new_doc, NULL, 1, 0) != 0)
-		{
-			oscap_seterr(OSCAP_EFAMILY_XML, "Error when cloning node while dumping component (id='%s').", component_id);
-			xmlFreeDoc(new_doc);
-			xmlDOMWrapFreeCtxt(wrap_ctxt);
-			return -1;
-		}
-		xmlDocSetRootElement(new_doc, res_node);
-		if (xmlDOMWrapReconcileNamespaces(wrap_ctxt, res_node, 0) != 0)
-		{
-			oscap_seterr(OSCAP_EFAMILY_XML, "Internal libxml error when reconciling namespaces while dumping component (id='%s').", component_id);
-			xmlFreeDoc(new_doc);
-			xmlDOMWrapFreeCtxt(wrap_ctxt);
+		xmlDoc *new_doc = ds_doc_from_foreign_node(inner_root, doc);
+		if (new_doc == NULL) {
 			return -1;
 		}
 		if (xmlSaveFileEnc(filename, new_doc, "utf-8") == -1)
 		{
 			oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error when saving resulting DOM to file '%s' while dumping component (id='%s').", filename, component_id);
 			xmlFreeDoc(new_doc);
-			xmlDOMWrapFreeCtxt(wrap_ctxt);
 			return -1;
 		}
 		xmlFreeDoc(new_doc);
-
-		xmlDOMWrapFreeCtxt(wrap_ctxt);
 	}
 
 	return 0;
@@ -363,7 +355,7 @@ static int ds_sds_dump_component_ref(xmlNodePtr component_ref, xmlDocPtr doc, xm
 	return result;
 }
 
-static xmlNodePtr _lookup_datastream_in_collection(xmlDocPtr doc, const char *datastream_id)
+xmlNodePtr ds_sds_lookup_datastream_in_collection(xmlDocPtr doc, const char *datastream_id)
 {
 	xmlNodePtr root = xmlDocGetRootElement(doc);
 
@@ -402,7 +394,7 @@ int ds_sds_decompose_custom(const char* input_file, const char* id, const char* 
 		return -1;
 	}
 
-	xmlNodePtr datastream = _lookup_datastream_in_collection(doc, id);
+	xmlNodePtr datastream = ds_sds_lookup_datastream_in_collection(doc, id);
 	if (!datastream)
 	{
 		const char* error = id ?
@@ -465,6 +457,7 @@ int ds_sds_decompose_custom(const char* input_file, const char* id, const char* 
 			xmlFreeDoc(doc);
 			return -1;
 		}
+		break;
 	}
 
 	xmlFreeDoc(doc);
@@ -995,7 +988,7 @@ int ds_sds_compose_add_component(const char *target_datastream, const char *data
 		oscap_seterr(OSCAP_EFAMILY_XML, "Could not read/parse XML of given input file at path '%s'.", target_datastream);
 		return 1;
 	}
-	xmlNodePtr datastream = _lookup_datastream_in_collection(doc, datastream_id);
+	xmlNodePtr datastream = ds_sds_lookup_datastream_in_collection(doc, datastream_id);
 	if (datastream == NULL) {
 		const char* error = datastream_id ?
 			oscap_sprintf("Could not find any datastream of id '%s'", datastream_id) :

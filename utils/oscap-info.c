@@ -1,5 +1,5 @@
 /*
- * Copyright 2010--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2010--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -37,6 +37,7 @@
 #include <limits.h>
 
 #include <oscap.h>
+#include "oscap_source.h"
 #include <xccdf_policy.h>
 #include <oval_results.h>
 #include <oval_variables.h>
@@ -72,16 +73,14 @@ static void print_time(const char *file) {
 
 static int app_info(const struct oscap_action *action)
 {
-	oscap_document_type_t doc_type;
         int result = OSCAP_ERROR;
 
-	if(oscap_determine_document_type(action->file, &doc_type))
-		goto cleanup;
+	struct oscap_source *source = oscap_source_new_from_file(action->file);
 
-	switch (doc_type) {
+	switch (oscap_source_get_scap_type(source)) {
 	case OSCAP_DOCUMENT_OVAL_DEFINITIONS: {
 		printf("Document type: OVAL Definitions\n");
-		struct oval_definition_model * def_model = oval_definition_model_import(action->file);
+		struct oval_definition_model *def_model = oval_definition_model_import_source(source);
 		if(!def_model)
 			goto cleanup;
 		struct oval_generator *gen = oval_definition_model_get_generator(def_model);
@@ -93,7 +92,7 @@ static int app_info(const struct oscap_action *action)
 	break;
 	case OSCAP_DOCUMENT_OVAL_VARIABLES: {
 		printf("Document type: OVAL Variables\n");
-		struct oval_variable_model * var_model = oval_variable_model_import(action->file);
+		struct oval_variable_model *var_model = oval_variable_model_import_source(source);
 		if(!var_model)
 			goto cleanup;
 		struct oval_generator *gen = oval_variable_model_get_generator(var_model);
@@ -106,7 +105,7 @@ static int app_info(const struct oscap_action *action)
 	case OSCAP_DOCUMENT_OVAL_DIRECTIVES: {
 		printf("Document type: OVAL Directives\n");
 		struct oval_directives_model *dir_model = oval_directives_model_new();
-		int ret = oval_directives_model_import(dir_model, action->file);
+		int ret = oval_directives_model_import_source(dir_model, source);
 		if(ret)
 			goto cleanup;
 		struct oval_generator *gen = oval_directives_model_get_generator(dir_model);
@@ -120,7 +119,7 @@ static int app_info(const struct oscap_action *action)
 		printf("Document type: OVAL System Characteristics\n");
 		struct oval_definition_model * def_model = oval_definition_model_new();
 		struct oval_syschar_model * sys_model = oval_syschar_model_new(def_model);
-		int ret = oval_syschar_model_import(sys_model, action->file);
+		int ret = oval_syschar_model_import_source(sys_model, source);
 		if(ret)
 			goto cleanup;
 		struct oval_generator *gen = oval_syschar_model_get_generator(sys_model);
@@ -135,7 +134,7 @@ static int app_info(const struct oscap_action *action)
 		printf("Document type: OVAL Results\n");
 		struct oval_definition_model * def_model=oval_definition_model_new();
 		struct oval_results_model * res_model = oval_results_model_new(def_model,NULL);
-		int ret = oval_results_model_import(res_model, action->file);
+		int ret = oval_results_model_import_source(res_model, source);
 		if(ret)
 			goto cleanup;
 		struct oval_generator *gen = oval_results_model_get_generator(res_model);
@@ -394,13 +393,15 @@ static int app_info(const struct oscap_action *action)
 		// Currently, we do not have any SCE result file parsing capabilities.
 	break;
 	default:
-		printf("Document type not handled yet\n");
+		printf("Could not dermine document type\n");
+		goto cleanup;
 		break;
 	}
 
 	result=OSCAP_OK;
 
 cleanup:
+	oscap_source_free(source);
 	oscap_print_error();
 
 	return result;

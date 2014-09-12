@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -48,6 +48,8 @@
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "common/elements.h"
+#include "oscap_source.h"
+#include "source/oscap_source_priv.h"
 
 struct oval_results_model {
 	struct oval_generator *generator;
@@ -145,47 +147,54 @@ void oval_results_model_add_system(struct oval_results_model *model, struct oval
 		oval_collection_add(model->systems, sys);
 }
 
-int oval_results_model_import(struct oval_results_model *model, const char *file)
+int oval_results_model_import_source(struct oval_results_model *model, struct oscap_source *source)
 {
 	__attribute__nonnull__(model);
+	__attribute__nonnull__(source);
 
 	int ret = 0;
 	char *tagname = NULL;
 	char *namespace = NULL;
 
-	xmlTextReader *reader = xmlNewTextReaderFilename(file);
-	if (reader == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), file);
-                ret = -1;
-		goto cleanup;
-	}
-
 	/* setup context */
 	struct oval_parser_context context;
-	context.reader = reader;
+	context.reader = oscap_source_get_xmlTextReader(source);
+	if (context.reader == NULL) {
+		return -1;
+	}
 	context.results_model = model;
 	context.definition_model = oval_results_model_get_definition_model(model);
 	context.user_data = NULL;
 	oscap_setxmlerr(xmlGetLastError());
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
 	/* jump into document */
-	xmlTextReaderRead(reader);
+	xmlTextReaderRead(context.reader);
 	/* make sure these are results */
-	tagname = (char *)xmlTextReaderLocalName(reader);
-	namespace = (char *)xmlTextReaderNamespaceUri(reader);
+	tagname = (char *)xmlTextReaderLocalName(context.reader);
+	namespace = (char *)xmlTextReaderNamespaceUri(context.reader);
 	int is_ovalres = strcmp((const char *)OVAL_RESULTS_NAMESPACE, namespace) == 0;
 	/* star parsing */
 	if (is_ovalres && (strcmp(tagname, OVAL_ROOT_ELM_RESULTS) == 0)) {
-		ret = oval_results_model_parse(reader, &context);
+		ret = oval_results_model_parse(context.reader, &context);
 	} else {
                 oscap_seterr(OSCAP_EFAMILY_OSCAP, "Missing \"oval_results\" element");
 		ret = -1;
 	}
 
-cleanup:
         oscap_free(tagname);
         oscap_free(namespace);
-	xmlFreeTextReader(reader);
+	xmlFreeTextReader(context.reader);
+	return ret;
+}
+
+int oval_results_model_import(struct oval_results_model *model, const char *file)
+{
+	__attribute__nonnull__(model);
+
+	int ret = 0;
+
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	ret = oval_results_model_import_source(model, source);
+	oscap_source_free(source);
 
 	return ret;
 }
@@ -225,14 +234,12 @@ static xmlNode *oval_results_to_dom(struct oval_results_model *results_model,
 		root_node = xmlNewNode(NULL, BAD_CAST OVAL_ROOT_ELM_RESULTS);
 		xmlDocSetRootElement(doc, root_node);
 	}
-	xmlNewProp(root_node, BAD_CAST "xsi:schemaLocation", BAD_CAST OVAL_RES_SCHEMA_LOCATION);
+	xmlNewNsProp(root_node, lookup_xsi_ns(doc), BAD_CAST "schemaLocation", BAD_CAST OVAL_RES_SCHEMA_LOCATION);
 
 	xmlNs *ns_common = xmlNewNs(root_node, OVAL_COMMON_NAMESPACE, BAD_CAST "oval");
-	xmlNs *ns_xsi = xmlNewNs(root_node, OVAL_XMLNS_XSI, BAD_CAST "xsi");
 	xmlNs *ns_results = xmlNewNs(root_node, OVAL_RESULTS_NAMESPACE, NULL);
 
 	xmlSetNs(root_node, ns_common);
-	xmlSetNs(root_node, ns_xsi);
 	xmlSetNs(root_node, ns_results);
 
 	/* Report generator */
@@ -262,23 +269,31 @@ static xmlNode *oval_results_to_dom(struct oval_results_model *results_model,
 	return root_node;
 }
 
-int oval_results_model_export(struct oval_results_model *results_model,
-			      struct oval_directives_model *directives_model,
-			      const char *file)
+struct oscap_source *oval_results_model_export_source(struct oval_results_model *results_model, struct oval_directives_model *directives_model, const char *name)
 {
 	__attribute__nonnull__(results_model);
-
-	LIBXML_TEST_VERSION;
 
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
 	if (doc == NULL) {
 		oscap_setxmlerr(xmlGetLastError());
-		return -1;
+		return NULL;
 	}
 
 	oval_results_to_dom(results_model, directives_model, doc, NULL);
+	return oscap_source_new_from_xmlDoc(doc, name);
+}
 
-	return oscap_xml_save_filename(file, doc);
+int oval_results_model_export(struct oval_results_model *results_model,
+			      struct oval_directives_model *directives_model,
+			      const char *file)
+{
+	struct oscap_source *source = oval_results_model_export_source(results_model, directives_model, file);
+	if (source == NULL) {
+		return -1;
+	}
+	int ret = oscap_source_save_as(source, NULL);
+	oscap_source_free(source);
+	return ret;
 }
 
 int oval_results_model_parse(xmlTextReaderPtr reader, struct oval_parser_context *context) {

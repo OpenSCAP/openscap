@@ -9,6 +9,7 @@ AM_CPPFLAGS =	@xml2_CFLAGS@ \
 		-I$(top_srcdir)/src/XCCDF/public \
 		-I$(top_srcdir)/src/XCCDF_POLICY/public \
 		-I${top_srcdir}/src/common/public \
+		-I${top_srcdir}/src/source/public \
 		-I$(top_srcdir)/src/CVE/public \
 		-I/usr/include -include "sys/types.h" \
 		-D_LARGEFILE64_SOURCE \

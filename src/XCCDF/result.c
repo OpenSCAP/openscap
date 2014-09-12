@@ -696,7 +696,7 @@ int xccdf_result_export(struct xccdf_result *result, const char *file)
 
 	xccdf_result_to_dom(result, NULL, doc, NULL);
 
-	return oscap_xml_save_filename(file, doc);
+	return oscap_xml_save_filename_free(file, doc);
 }
 
 void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlDoc *doc, xmlNode *parent)
@@ -705,8 +705,7 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 	const char *benchmark_ref_uri = xccdf_result_get_benchmark_uri(result);
 	const struct xccdf_version_info* version_info = xccdf_item_get_schema_version(XITEM(result));
 	if (parent) {
-	        ns_xccdf = xmlSearchNsByHref(doc, parent,
-	        		(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+	        ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 	} else {
 		if (!result_node) result_node = xccdf_item_to_dom(XITEM(result), doc, NULL);
                 ns_xccdf = xmlNewNs(result_node,
@@ -1004,8 +1003,7 @@ xmlNode *xccdf_target_identifier_to_dom(const struct xccdf_target_identifier *ti
 		return ret;
 	}
 	else {
-		xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
-				(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+		xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 
 		xmlNode *target_idref_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "target-id-ref", NULL);
 
@@ -1028,8 +1026,7 @@ xmlNode *xccdf_target_identifier_to_dom(const struct xccdf_target_identifier *ti
 
 xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
-			(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 
 	xmlNode *result_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "rule-result", NULL);
 
@@ -1110,7 +1107,7 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 	struct xccdf_fix_iterator *fixes = xccdf_rule_result_get_fixes(result);
 	while (xccdf_fix_iterator_has_more(fixes)) {
 		struct xccdf_fix *fix = xccdf_fix_iterator_next(fixes);
-		xccdf_fix_to_dom(fix, doc, result_node);
+		xccdf_fix_to_dom(fix, doc, result_node, version_info);
 	}
 	xccdf_fix_iterator_free(fixes);
 
@@ -1157,8 +1154,7 @@ static struct xccdf_override *xccdf_override_new_parse(xmlTextReaderPtr reader)
 
 xmlNode *xccdf_override_to_dom(struct xccdf_override *override, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
-			(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 
 	xmlNode *override_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "override", NULL);
 

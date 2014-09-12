@@ -15,6 +15,7 @@
 #include <oval_agent_api.h>
 #include <oval_version.h>
 #include <oscap.h>
+#include "oscap_source.h"
 #include "oscap_error.h"
 
 static int _test_error(void)
@@ -33,9 +34,9 @@ static int _test_error(void)
 
 int main(int argc, char **argv)
 {
-	struct oval_definition_model *model = NULL;
-
-	model = oval_definition_model_import(argv[1]);
+	struct oscap_source *source = oscap_source_new_from_file(argv[1]);
+	struct oval_definition_model *model = oval_definition_model_import_source(source);
+	oscap_source_free(source);
 	if (model == NULL) 
 		_test_error();
 

@@ -46,6 +46,7 @@
 
 #include "oscap-tool.h"
 #include "oscap.h"
+#include "oscap_source.h"
 
 static int app_evaluate_xccdf(const struct oscap_action *action);
 static int app_xccdf_validate(const struct oscap_action *action);
@@ -1039,12 +1040,14 @@ int app_xccdf_validate(const struct oscap_action *action) {
                 result=OSCAP_OK;
 
 	if (action->schematron) {
-		ret = oscap_schematron_validate_document(action->f_xccdf, action->doctype, doc_version, NULL);
+		struct oscap_source *source = oscap_source_new_from_file(action->f_xccdf);
+		ret = oscap_source_validate_schematron(source, NULL);
 		if (ret == -1) {
 			result = OSCAP_ERROR;
 		} else if (ret > 0) {
 			result = OSCAP_FAIL;
 		}
+		oscap_source_free(source);
 	}
 
         if (result==OSCAP_FAIL)

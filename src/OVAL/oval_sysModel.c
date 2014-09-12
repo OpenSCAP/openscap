@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -47,6 +47,8 @@
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "common/elements.h"
+#include "oscap_source.h"
+#include "source/oscap_source_priv.h"
 
 
 typedef struct oval_syschar_model {
@@ -238,36 +240,28 @@ void oval_syschar_model_add_sysitem(struct oval_syschar_model *model, struct ova
 	}
 }
 
-
-/* -1 error; 0 OK; 1 warning */
-int oval_syschar_model_import(struct oval_syschar_model *model, const char *file)
+int oval_syschar_model_import_source(struct oval_syschar_model *model, struct oscap_source *source)
 {
-	__attribute__nonnull__(model);
-
-	int ret;
-
-	xmlTextReader *reader = xmlNewTextReaderFilename(file);
-	if (reader == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), file);
-                return -1;
-	}
-
+	int ret = 0;
 	/* setup context */
         struct oval_parser_context context;
-        context.reader = reader;
+        context.reader = oscap_source_get_xmlTextReader(source);
+	if (context.reader == NULL) {
+		return -1;
+	}
         context.definition_model = oval_syschar_model_get_definition_model(model);
         context.syschar_model = model;
         context.user_data = NULL;
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
+
 	/* jump into oval_system_characteristics */
-	xmlTextReaderRead(reader);
+	xmlTextReaderRead(context.reader);
 	/* make sure this is syschar */
-	char *tagname = (char *)xmlTextReaderLocalName(reader);
-	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
+	char *tagname = (char *)xmlTextReaderLocalName(context.reader);
+	char *namespace = (char *)xmlTextReaderNamespaceUri(context.reader);
 	int is_ovalsys = strcmp((const char *)OVAL_SYSCHAR_NAMESPACE, namespace) == 0;
 	/* start parsing */
 	if (is_ovalsys && (strcmp(tagname, OVAL_ROOT_ELM_SYSCHARS) == 0)) {
-		ret = oval_syschar_model_parse(reader, &context);
+		ret = oval_syschar_model_parse(context.reader, &context);
 	} else {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Missing \"oval_system_characteristics\" element");
 		dE("Unprocessed tag: <%s:%s>.\n", namespace, tagname);
@@ -276,7 +270,18 @@ int oval_syschar_model_import(struct oval_syschar_model *model, const char *file
 
 	oscap_free(tagname);
 	oscap_free(namespace);
-	xmlFreeTextReader(reader);
+	xmlFreeTextReader(context.reader);
+	return ret;
+}
+
+/* -1 error; 0 OK; 1 warning */
+int oval_syschar_model_import(struct oval_syschar_model *model, const char *file)
+{
+	__attribute__nonnull__(model);
+
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	int ret = oval_syschar_model_import_source(model, source);
+	oscap_source_free(source);
 
 	return ret;
 }
@@ -335,17 +340,15 @@ xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model, xm
 		root_node = xmlNewNode(NULL, BAD_CAST OVAL_ROOT_ELM_SYSCHARS);
 		xmlDocSetRootElement(doc, root_node);
 	}
-	xmlNewProp(root_node, BAD_CAST "xsi:schemaLocation", BAD_CAST syschar_model->schema);
+	xmlNewNsProp(root_node, lookup_xsi_ns(doc), BAD_CAST "schemaLocation", BAD_CAST syschar_model->schema);
 
 	xmlNs *ns_common = xmlNewNs(root_node, OVAL_COMMON_NAMESPACE, BAD_CAST "oval");
-	xmlNs *ns_xsi = xmlNewNs(root_node, OVAL_XMLNS_XSI, BAD_CAST "xsi");
 	xmlNs *ns_unix = xmlNewNs(root_node, OVAL_SYSCHAR_UNIX_NS, BAD_CAST "unix-sys");
 	xmlNs *ns_ind = xmlNewNs(root_node, OVAL_SYSCHAR_IND_NS, BAD_CAST "ind-sys");
 	xmlNs *ns_lin = xmlNewNs(root_node, OVAL_SYSCHAR_LIN_NS, BAD_CAST "lin-sys");
 	xmlNs *ns_syschar = xmlNewNs(root_node, OVAL_SYSCHAR_NAMESPACE, NULL);
 
 	xmlSetNs(root_node, ns_common);
-	xmlSetNs(root_node, ns_xsi);
 	xmlSetNs(root_node, ns_unix);
 	xmlSetNs(root_node, ns_ind);
 	xmlSetNs(root_node, ns_lin);
@@ -422,6 +425,6 @@ int oval_syschar_model_export(struct oval_syschar_model *model, const char *file
 	}
 
 	oval_syschar_model_to_dom(model, doc, NULL, NULL, NULL);
-	return oscap_xml_save_filename(file, doc);
+	return oscap_xml_save_filename_free(file, doc);
 }
 

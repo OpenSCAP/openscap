@@ -225,8 +225,7 @@ struct xccdf_tailoring *xccdf_tailoring_import(const char *file, struct xccdf_be
 
 xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr doc, xmlNodePtr parent, const struct xccdf_version_info *version_info)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
-				BAD_CAST xccdf_version_info_get_namespace_uri(version_info));
+	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 
 	xmlNs *ns_tailoring = NULL;
 
@@ -334,7 +333,8 @@ xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr d
 	while (oscap_string_iterator_has_more(metadata))
 	{
 		const char* meta = oscap_string_iterator_next(metadata);
-		oscap_xmlstr_to_dom(tailoring_node, "metadata", meta);
+		xmlNode *m = oscap_xmlstr_to_dom(tailoring_node, "metadata", meta);
+		xmlSetNs(m, ns_xccdf);
 	}
 	oscap_string_iterator_free(metadata);
 
@@ -364,7 +364,7 @@ int xccdf_tailoring_export(struct xccdf_tailoring *tailoring, const char *file, 
 
 	xccdf_tailoring_to_dom(tailoring, doc, NULL, version_info);
 
-	return oscap_xml_save_filename(file, doc);
+	return oscap_xml_save_filename_free(file, doc);
 }
 
 const char *xccdf_tailoring_get_id(const struct xccdf_tailoring *tailoring)

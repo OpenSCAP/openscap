@@ -66,22 +66,12 @@ int oval_parser_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *c
 	return ret;
 }
 
-
-char *oval_determine_document_schema_version(const char *document, oscap_document_type_t doc_type)
+char *oval_determine_document_schema_version_priv(xmlTextReader *reader, oscap_document_type_t doc_type)
 {
-	xmlTextReaderPtr reader;
 	const char *root_name;
 	const char* elm_name;
 	int depth;
-	xmlChar *version = NULL;
-
-	reader = xmlReaderForFile(document, NULL, 0);
-	if (!reader) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", document);
-		return NULL;
-	}
-
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
+	char *version = NULL;
 
 	/* find root element */
 	while (xmlTextReaderRead(reader) == 1
@@ -137,15 +127,28 @@ char *oval_determine_document_schema_version(const char *document, oscap_documen
 
 		elm_name = (const char *) xmlTextReaderConstLocalName(reader);
 		if (!strcmp(elm_name, "schema_version")) {
-			version = xmlTextReaderReadString(reader);
+			oval_parser_text_value(reader, NULL, oval_text_consumer, &version);
 			break;
 		}
 	}
 
-	xmlFreeTextReader(reader);
-	char* ret = oscap_strdup((const char*)version);
-	xmlFree(version);
+	return version;
+}
 
+
+char *oval_determine_document_schema_version(const char *document, oscap_document_type_t doc_type)
+{
+	xmlTextReaderPtr reader;
+	reader = xmlReaderForFile(document, NULL, 0);
+	if (!reader) {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", document);
+		return NULL;
+	}
+
+	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
+
+	char *ret = oval_determine_document_schema_version_priv(reader, doc_type);
+	xmlFreeTextReader(reader);
 	return ret;
 }
 

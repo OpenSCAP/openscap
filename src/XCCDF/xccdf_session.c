@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2013--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -29,6 +29,7 @@
 #include <unistd.h>
 
 #include <oscap.h>
+#include "oscap_source.h"
 #include <cpe_lang.h>
 #include <OVAL/public/oval_agent_api.h>
 #include <OVAL/public/oval_agent_xccdf_api.h>
@@ -38,7 +39,10 @@
 #include "common/list.h"
 #include "common/_error.h"
 #include "DS/public/scap_ds.h"
+#include "DS/public/ds_sds_session.h"
 #include "DS/ds_common.h"
+#include "OVAL/results/oval_results_impl.h"
+#include "XCCDF/xccdf_impl.h"
 #include "XCCDF_POLICY/public/xccdf_policy.h"
 #include "XCCDF_POLICY/xccdf_policy_priv.h"
 #include "XCCDF_POLICY/xccdf_policy_model_priv.h"
@@ -53,6 +57,7 @@ struct oval_content_resource {
 
 struct xccdf_session {
 	const char *filename;				///< File name of SCAP (SDS or XCCDF) file for this session.
+	struct oscap_source *source;                    ///< Main source assigned with the main file (SDS or XCCDF)
 	char *temp_dir;					///< Temp directory used for decomposed component files.
 	struct {
 		char *file;				///< Path to XCCDF File (shall differ from the filename for sds).
@@ -61,9 +66,10 @@ struct xccdf_session {
 		char *profile_id;			///< Last selected profile.
 		struct xccdf_result *result;		///< XCCDF Result model.
 		float base_score;			///< Basec score of the latest evaluation.
+		struct oscap_source *result_source;     ///< oscap_source for the exported XCCDF result
 	} xccdf;
 	struct {
-		struct ds_sds_index *sds_idx;		///< Index of Source DataStream (only applicable for sds).
+		struct ds_sds_session *session;         ///< SDS Registry abstract structure
 		char *user_datastream_id;		///< Datastream id requested by user (only applicable for sds).
 		char *user_component_id;		///< Component id requested by user (only applicable for sds).
 		char *user_benchmark_id;		///< Benchmark id requested by user (only applicable for sds).
@@ -79,6 +85,7 @@ struct xccdf_session {
 		xccdf_policy_engine_eval_fn user_eval_fn;///< Custom OVAL engine callback
 		char *product_cpe;			///< CPE of scanner product.
 		char **result_files;			///< Path to exported OVAL Result files
+		struct oscap_htable *result_sources;    ///< mapping 'filepath' to oscap_source for OVAL results
 	} oval;
 	struct {
 		char *arf_file;				///< Path to ARF file to export
@@ -91,7 +98,6 @@ struct xccdf_session {
 	char *user_cpe;					///< Path to CPE dictionary required by user
 	char *user_tailoring_file;      ///< Path to Tailoring file requested by the user
 	char *user_tailoring_cid;       ///< Component ID of the Tailoring file requested by the user
-	oscap_document_type_t doc_type;			///< Document type of the session file (see filename member) used.
 	bool validate;					///< False value indicates to skip any XSD validation.
 	bool full_validation;				///< True value indicates that every possible step will be validated by XSD.
 
@@ -101,6 +107,7 @@ struct xccdf_session {
 static void _oval_content_resources_free(struct oval_content_resource **resources);
 static void _xccdf_session_free_oval_agents(struct xccdf_session *session);
 static void _xccdf_session_free_oval_result_files(struct xccdf_session *session);
+static void _xccdf_session_free_oval_result_sources(struct xccdf_session *session);
 
 static const char *oscap_productname = "cpe:/a:open-scap:oscap";
 static const char *oval_sysname = "http://oval.mitre.org/XMLSchema/oval-definitions-5";
@@ -110,11 +117,13 @@ struct xccdf_session *xccdf_session_new(const char *filename)
 	struct xccdf_session *session = (struct xccdf_session *) oscap_calloc(1, sizeof(struct xccdf_session));
 	session->filename = strdup(filename);
 
-	if (oscap_determine_document_type(filename, &(session->doc_type)) != 0) {
+	session->source = oscap_source_new_from_file(filename);
+	if (oscap_source_get_scap_type(session->source) == 0) {
 		xccdf_session_free(session);
 		return NULL;
 	}
-	if (session->doc_type != OSCAP_DOCUMENT_XCCDF && session->doc_type != OSCAP_DOCUMENT_SDS) {
+	if (oscap_source_get_scap_type(session->source) != OSCAP_DOCUMENT_XCCDF
+			&& oscap_source_get_scap_type(session->source) != OSCAP_DOCUMENT_SDS) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP,
 			"Session input file was determined but it isn't an XCCDF file or a source datastream.");
 		xccdf_session_free(session);
@@ -137,6 +146,7 @@ void xccdf_session_free(struct xccdf_session *session)
 	oscap_free(session->export.xccdf_file);
 	oscap_free(session->export.arf_file);
 	_xccdf_session_free_oval_result_files(session);
+	_xccdf_session_free_oval_result_sources(session);
 	xccdf_session_unload_check_engine_plugins(session);
 	oscap_list_free0(session->check_engine_plugins);
 	oscap_free(session->user_cpe);
@@ -144,6 +154,7 @@ void xccdf_session_free(struct xccdf_session *session)
 	_xccdf_session_free_oval_agents(session);
 	_oval_content_resources_free(session->oval.custom_resources);
 	_oval_content_resources_free(session->oval.resources);
+	oscap_source_free(session->xccdf.result_source);
 	oscap_free(session->xccdf.doc_version);
 	oscap_free(session->xccdf.file);
 	if (session->xccdf.policy_model != NULL)
@@ -151,10 +162,10 @@ void xccdf_session_free(struct xccdf_session *session)
 	oscap_free(session->ds.user_datastream_id);
 	oscap_free(session->ds.user_component_id);
 	oscap_free(session->ds.user_benchmark_id);
-	if (session->ds.sds_idx != NULL)
-		ds_sds_index_free(session->ds.sds_idx);
+	ds_sds_session_free(session->ds.session);
 	if (session->temp_dir != NULL)
 		oscap_acquire_cleanup_dir((char **) &(session->temp_dir));
+	oscap_source_free(session->source);
 	oscap_free(session->filename);
 	oscap_free(session->user_tailoring_file);
 	oscap_free(session->user_tailoring_cid);
@@ -168,7 +179,7 @@ const char *xccdf_session_get_filename(const struct xccdf_session *session)
 
 bool xccdf_session_is_sds(const struct xccdf_session *session)
 {
-	return session->doc_type == OSCAP_DOCUMENT_SDS;
+	return oscap_source_get_scap_type(session->source) == OSCAP_DOCUMENT_SDS;
 }
 
 void xccdf_session_set_validation(struct xccdf_session *session, bool validate, bool full_validation)
@@ -317,9 +328,10 @@ struct ds_sds_index *xccdf_session_get_sds_idx(struct xccdf_session *session)
 	if (!xccdf_session_is_sds(session))
 		return NULL;
 
-	if (session->ds.sds_idx == NULL)
-		session->ds.sds_idx = ds_sds_index_import(session->filename);
-	return session->ds.sds_idx;
+	if (session->ds.session == NULL) {
+		session->ds.session = ds_sds_session_new_from_source(session->source);
+	}
+	return ds_sds_session_get_sds_idx(session->ds.session);
 }
 
 int xccdf_session_load(struct xccdf_session *session)
@@ -368,12 +380,13 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 
 	if (xccdf_session_is_sds(session)) {
 		if (session->validate) {
-			int ret;
-			if ((ret = oscap_validate_document(session->filename, OSCAP_DOCUMENT_SDS, "1.2", _reporter, NULL)) != 0) {
-				if (ret == 1)
-					 _validation_failed(session->filename, OSCAP_DOCUMENT_SDS, "1.2");
+			if (oscap_source_validate(session->source, _reporter, NULL)) {
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid %s (%s) content in %s",
+						oscap_source_readable_origin(session->source),
+						oscap_document_type_to_string(oscap_source_get_scap_type(session->source)),
+						oscap_source_get_schema_version(session->source));
 				goto cleanup;
-				}
+			}
 		}
 		if (session->temp_dir == NULL)
 			session->temp_dir = oscap_acquire_temp_dir();
@@ -493,7 +506,11 @@ int xccdf_session_load_cpe(struct xccdf_session *session)
 	}
 
 	if (xccdf_session_is_sds(session)) {
-		struct ds_stream_index* stream_idx = ds_sds_index_get_stream(session->ds.sds_idx, session->ds.datastream_id);
+		struct ds_sds_index *sds_idx = xccdf_session_get_sds_idx(session);
+		if (sds_idx == NULL) {
+			return -1;
+		}
+		struct ds_stream_index* stream_idx = ds_sds_index_get_stream(sds_idx, session->ds.datastream_id);
 		struct oscap_string_iterator* cpe_it = ds_stream_index_get_dictionaries(stream_idx);
 
 		// This potentially allows us to skip yet another decompose if we are sure
@@ -747,7 +764,9 @@ int xccdf_session_load_oval(struct xccdf_session *session)
 
 	for (int idx=0; contents[idx]; idx++) {
 		/* file -> def_model */
-		struct oval_definition_model *tmp_def_model = oval_definition_model_import(contents[idx]->filename);
+		struct oscap_source *source = oscap_source_new_from_file(contents[idx]->filename);
+		struct oval_definition_model *tmp_def_model = oval_definition_model_import_source(source);
+		oscap_source_free(source);
 		if (tmp_def_model == NULL) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to create OVAL definition model from: '%s'.", contents[idx]->filename);
 			return 1;
@@ -973,8 +992,11 @@ static inline int _xccdf_gen_report(const char *infile, const char *id, const ch
 	return _app_xslt(infile, "xccdf-report.xsl", outfile, params);
 }
 
-int xccdf_session_export_xccdf(struct xccdf_session *session)
+static int _build_xccdf_result_source(struct xccdf_session *session)
 {
+	if (session->xccdf.result_source != NULL) {
+		return 0;
+	}
 	if (session->export.xccdf_file == NULL && (session->export.report_file != NULL || session->export.arf_file != NULL))
 	{
 		if (!session->temp_dir)
@@ -995,28 +1017,42 @@ int xccdf_session_export_xccdf(struct xccdf_session *session)
 		}
 		xccdf_benchmark_add_result(xccdf_policy_model_get_benchmark(session->xccdf.policy_model),
 				xccdf_result_clone(session->xccdf.result));
-		xccdf_benchmark_export(xccdf_policy_model_get_benchmark(session->xccdf.policy_model), session->export.xccdf_file);
+		session->xccdf.result_source = xccdf_benchmark_export_source(
+				xccdf_policy_model_get_benchmark(session->xccdf.policy_model), session->export.xccdf_file);
+		if (oscap_source_save_as(session->xccdf.result_source, NULL) != 1) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save file: %s",
+					oscap_source_readable_origin(session->xccdf.result_source));
+			return -1;
+		}
 
 		/* validate XCCDF Results */
 		if (session->validate && session->full_validation) {
-			/* we assume there is a same xccdf doc_version on input and output */
-			if (oscap_validate_document(session->export.xccdf_file, OSCAP_DOCUMENT_XCCDF, session->xccdf.doc_version, _reporter, NULL)) {
-				_validation_failed(session->export.xccdf_file, OSCAP_DOCUMENT_XCCDF, session->xccdf.doc_version);
+			if (oscap_source_validate(session->xccdf.result_source, _reporter, NULL)) {
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not export OVAL Results correctly to %s",
+					oscap_source_readable_origin(session->xccdf.result_source));
 				return 1;
 			}
 		}
-
-		/* generate report */
-		if (session->export.report_file != NULL)
-			_xccdf_gen_report(session->export.xccdf_file,
-					xccdf_result_get_id(session->xccdf.result),
-					session->export.report_file,
-					"",
-					(session->export.oval_results ? "%.result.xml" : ""),
-					(session->export.check_engine_plugins_results ? "%.result.xml" : ""),
-					session->xccdf.profile_id == NULL ? "" : session->xccdf.profile_id
-			);
 	}
+	return 0;
+}
+
+int xccdf_session_export_xccdf(struct xccdf_session *session)
+{
+	if (_build_xccdf_result_source(session)) {
+		return 1;
+	}
+
+	/* generate report */
+	if (session->export.report_file != NULL)
+		_xccdf_gen_report(session->export.xccdf_file,
+				xccdf_result_get_id(session->xccdf.result),
+				session->export.report_file,
+				"",
+				(session->export.oval_results ? "%.result.xml" : ""),
+				(session->export.check_engine_plugins_results ? "%.result.xml" : ""),
+				session->xccdf.profile_id == NULL ? "" : session->xccdf.profile_id
+		);
 	return 0;
 }
 
@@ -1030,39 +1066,31 @@ static void _xccdf_session_free_oval_result_files(struct xccdf_session *session)
 	}
 }
 
-static bool _real_paths_equal(const char *path1, const char *path2)
+static void _xccdf_session_free_oval_result_sources(struct xccdf_session *session)
 {
-	// Assumption of this function: path1 points to an existing file!
-
-	// Can't use stat because one of the paths may not exist at this point.
-	// The point of all this code is to prevent collisions, not to detect them.
-
-	char *path1_rp = malloc(PATH_MAX * sizeof(char));
-	char *path2_rp = malloc(PATH_MAX * sizeof(char));
-
-	bool ret = false;
-
-	char *path1_rp_ret = realpath(path1, path1_rp);
-	char *path2_rp_ret = realpath(path2, path2_rp);
-
-	if (path1_rp_ret != path1_rp) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC,
-			"Unfortunately, realpath for '%s' didn't yield results usable for path comparison!", path1);
-		goto cleanup;
+	if (session->oval.result_sources != NULL) {
+		oscap_htable_free(session->oval.result_sources, (oscap_destruct_func) oscap_source_free);
 	}
+}
 
-	// We assume the first file exists, if the second file doesn't they can't be equal.
-	if (path2_rp_ret != path2_rp) {
-		goto cleanup;
+static inline char *_guess_realpath(char *filepath)
+{
+	char *rpath = realpath(filepath, NULL);
+	if (rpath == NULL) {
+		// file does not exists, let's try to guess realpath
+		// this is not 100% correct, but it is good enough
+		char *copy = strdup(filepath);
+		const char *real_dir = realpath(dirname(copy), NULL);
+		if (real_dir == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot export to %s, directory: %s does not exists!", filepath, real_dir);
+			oscap_free(copy);
+			return NULL;
+		}
+		rpath = oscap_sprintf("%s/%s", real_dir, basename(filepath));
+		oscap_free(real_dir);
+		oscap_free(copy);
 	}
-
-	ret = strcmp(path1_rp, path2_rp) == 0;
-
-cleanup:
-	free(path1_rp);
-	free(path2_rp);
-
-	return ret;
+	return rpath;
 }
 
 static char *_xccdf_session_get_unique_oval_result_filename(struct xccdf_session *session, struct oval_agent_session *oval_session, const char *oval_results_directory)
@@ -1110,28 +1138,27 @@ static char *_xccdf_session_get_unique_oval_result_filename(struct xccdf_session
 		else
 			snprintf(name, PATH_MAX, "%s/%s.result%i.xml", oval_results_directory, escaped_url != NULL ? escaped_url : filename, suffix);
 
-		// Check if this export name conflicts with any other exported OVAL result.
-		//
-		// One example where a conflict can easily happen is if we have the
-		// same OVAL file used for CPE platform evaluation and check evaluation.
-		//
-		// openscap will create 2 OVAL sessions for the same file and will try
-		// to export 2 different OVAL result files to the same path.
-
-		bool conflict_found = false;
-		int i;
-		for (i=0; session->oval.result_files[i]; i++) {
-
-			// result_files[i] has to be first here, _real_paths_equal assumes
-			// the first argument points to an existing file
-			if (_real_paths_equal(session->oval.result_files[i], name)) {
-				conflict_found = true;
-				break;
-			}
+		// Try to guess how the real path will look like. This should avoid us rewriting
+		// the results files if the OVAL happens to have the same name. We allow users
+		// to shoot themselves to the foot, but it is not easy. They need to set-up
+		// file->file symlink before scanning.
+		char *final_name = _guess_realpath(name);
+		free(name);
+		name = final_name;
+		if (name == NULL) {
+			oscap_free(escaped_url);
+			return NULL;
 		}
-
-		if (!conflict_found)
+		if (oscap_htable_get(session->oval.result_sources, name) == NULL) {
+			// Check if this export name conflicts with any other exported OVAL result.
+			//
+			// One example where a conflict can easily happen is if we have the
+			// same OVAL file used for CPE platform evaluation and check evaluation.
+			//
+			// openscap will create 2 OVAL sessions for the same file and will try
+			// to export 2 different OVAL result files to the same path.
 			break;
+		}
 
 		free(name);
 		name = NULL;
@@ -1166,31 +1193,81 @@ static char *_xccdf_session_export_oval_result_file(struct xccdf_session *sessio
 
 	if (name == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't figure out the right filename for OVAL result file. Can't export that file!");
+		return NULL;
 	}
-	else {
-		/* export result model to XML */
-		if (oval_results_model_export(res_model, NULL, name) == -1) {
+
+	struct oscap_source *source = oval_results_model_export_source(res_model, NULL, name);
+	if (source == NULL) {
+		free(name);
+		return NULL;
+	}
+	if (oscap_htable_add(session->oval.result_sources, name, source) == false) {
+		// The source is already there, but it shouldn't be
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal error: attempted to export file %s twice", name);
+		oscap_source_free(source);
+		free(name);
+		abort(); // Let's make this visible in debug mode
+		return NULL;
+	}
+
+	/* validate OVAL Results */
+	if (session->validate && session->full_validation) {
+		if (oscap_source_validate(source, _reporter, NULL)) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not export OVAL Results correctly to %s",
+				oscap_source_readable_origin(source));
 			free(name);
 			return NULL;
 		}
+	}
+	return name;
+}
 
-		/* validate OVAL Results */
-		if (session->validate && session->full_validation) {
-			char *doc_version;
+static int _build_oval_result_sources(struct xccdf_session *session)
+{
+	if (session->oval.result_sources != NULL) {
+		return 0;
+	}
+	int xccdf_oval_agent_count = xccdf_session_get_oval_agents_count(session);
+	int cpe_oval_agent_count = xccdf_session_get_cpe_oval_agents_count(session);
 
-			doc_version = oval_determine_document_schema_version((const char *) name, OSCAP_DOCUMENT_OVAL_RESULTS);
-			if (oscap_validate_document(name, OSCAP_DOCUMENT_OVAL_RESULTS, (const char *) doc_version,
-						_reporter, NULL)) {
-				_validation_failed(name, OSCAP_DOCUMENT_OVAL_RESULTS, doc_version);
-				free(name);
-				free(doc_version);
-				return NULL;
-			}
-			free(doc_version);
+	/* Export OVAL results */
+	session->oval.result_files = malloc((xccdf_oval_agent_count + cpe_oval_agent_count + 1) * sizeof(char*));
+	session->oval.result_files[0] = NULL;
+	session->oval.result_sources = oscap_htable_new();
+	int i;
+	for (i=0; session->oval.agents[i]; i++) {
+		char *filename = _xccdf_session_export_oval_result_file(session, session->oval.agents[i]);
+		if (filename == NULL) {
+			_xccdf_session_free_oval_result_files(session);
+			_xccdf_session_free_oval_result_sources(session);
+			return 1;
 		}
+
+		session->oval.result_files[i] = filename;
+		session->oval.result_files[i + 1] = NULL;
 	}
 
-	return name;
+	struct oscap_htable_iterator *cpe_it = xccdf_policy_model_get_cpe_oval_sessions(session->xccdf.policy_model);
+	while (oscap_htable_iterator_has_more(cpe_it)) {
+		const char *key = NULL;
+		struct oval_agent_session *value = NULL;
+		oscap_htable_iterator_next_kv(cpe_it, &key, (void*)&value);
+
+		char *filename = _xccdf_session_export_oval_result_file(session, value);
+		if (filename == NULL) {
+			_xccdf_session_free_oval_result_files(session);
+			_xccdf_session_free_oval_result_sources(session);
+			oscap_htable_iterator_free(cpe_it);
+			return 1;
+		}
+
+		session->oval.result_files[i] = filename;
+		session->oval.result_files[i + 1] = NULL;
+
+		i++;
+	}
+	oscap_htable_iterator_free(cpe_it);
+	return 0;
 }
 
 int xccdf_session_export_oval(struct xccdf_session *session)
@@ -1198,44 +1275,19 @@ int xccdf_session_export_oval(struct xccdf_session *session)
 	_xccdf_session_free_oval_result_files(session);
 
 	if ((session->export.oval_results || session->export.arf_file != NULL) && session->oval.agents) {
-
-		int xccdf_oval_agent_count = xccdf_session_get_oval_agents_count(session);
-		int cpe_oval_agent_count = xccdf_session_get_cpe_oval_agents_count(session);
-
-		/* Export OVAL results */
-		session->oval.result_files = malloc((xccdf_oval_agent_count + cpe_oval_agent_count + 1) * sizeof(char*));
-		session->oval.result_files[0] = NULL;
-		int i;
-		for (i=0; session->oval.agents[i]; i++) {
-			char *filename = _xccdf_session_export_oval_result_file(session, session->oval.agents[i]);
-			if (filename == NULL) {
-				_xccdf_session_free_oval_result_files(session);
+		if (_build_oval_result_sources(session) != 0) {
+			return 1;
+		}
+		struct oscap_htable_iterator *hit = oscap_htable_iterator_new(session->oval.result_sources);
+		while (oscap_htable_iterator_has_more(hit)) {
+			struct oscap_source *source = oscap_htable_iterator_next_value(hit);
+			if (oscap_source_save_as(source, NULL) != 1) {
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save file: %s", oscap_source_readable_origin(source));
+				oscap_htable_iterator_free(hit);
 				return 1;
 			}
-
-			session->oval.result_files[i] = filename;
-			session->oval.result_files[i + 1] = NULL;
 		}
-
-		struct oscap_htable_iterator *cpe_it = xccdf_policy_model_get_cpe_oval_sessions(session->xccdf.policy_model);
-		while (oscap_htable_iterator_has_more(cpe_it)) {
-			const char *key = NULL;
-			struct oval_agent_session *value = NULL;
-			oscap_htable_iterator_next_kv(cpe_it, &key, (void*)&value);
-
-			char *filename = _xccdf_session_export_oval_result_file(session, value);
-			if (filename == NULL) {
-				_xccdf_session_free_oval_result_files(session);
-				oscap_htable_iterator_free(cpe_it);
-				return 1;
-			}
-
-			session->oval.result_files[i] = filename;
-			session->oval.result_files[i + 1] = NULL;
-
-			i++;
-		}
-		oscap_htable_iterator_free(cpe_it);
+		oscap_htable_iterator_free(hit);
 	}
 
 	/* Export variables */

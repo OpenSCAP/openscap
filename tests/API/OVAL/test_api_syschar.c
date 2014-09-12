@@ -14,6 +14,7 @@
 #include "oval_agent_api.h"
 #include "oscap.h"
 #include "oscap_error.h"
+#include "oscap_source.h"
 
 //typedef int (*oval_xml_error_handler) (struct oval_xml_error *, void *user_arg);
 static int _test_error(void)
@@ -36,15 +37,20 @@ int main(int argc, char **argv)
 {
 	printf("START\n");
 	if (argc > 1) {
+		struct oscap_source *source = oscap_source_new_from_file(argv[1]);
 		struct oval_definition_model *model;
 		printf("LOAD OVAL DEFINITIONS\n");
-		if ( (model = oval_definition_model_import(argv[1]) ) == NULL)
+		model = oval_definition_model_import_source(source);
+		oscap_source_free(source);
+		if (model == NULL) {
                         _test_error();
+		}
 		printf("OVAL DEFINITIONS LOADED\n");
 		if (argc > 2) {
 			printf("LOAD OVAL SYSCHAR\n");
 			struct oval_syschar_model *syschar_model = oval_syschar_model_new(model);
-			if (oval_syschar_model_import(syschar_model, argv[2]) < 1)
+			struct oscap_source *source = oscap_source_new_from_file(argv[2]);
+			if (oval_syschar_model_import_source(syschar_model, source) < 1)
                                 _test_error();
 			printf("OVAL SYSCHAR LOADED\n");
 

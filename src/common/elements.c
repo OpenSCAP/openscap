@@ -163,8 +163,7 @@ const char *oscap_strlist_find_value(char ** const kvalues, const char *key)
 	return NULL;
 }
 
-int
-oscap_xml_save_filename(const char *filename, xmlDocPtr doc)
+int oscap_xml_save_filename(const char *filename, xmlDocPtr doc)
 {
 	xmlOutputBufferPtr buff;
 	int xmlCode;
@@ -198,11 +197,29 @@ oscap_xml_save_filename(const char *filename, xmlDocPtr doc)
 		oscap_dlprintf(DBG_W, "No bytes exported: xmlCode: %d.\n", xmlCode);
 	}
 
-	xmlFreeDoc(doc);
 	return (xmlCode >= 1) ? 1 : -1;
+}
+
+int oscap_xml_save_filename_free(const char *filename, xmlDocPtr doc)
+{
+	int ret = oscap_xml_save_filename(filename, doc);
+	xmlFreeDoc(doc);
+	return ret;
 }
 
 void libxml_error_handler(void *user, const char *message, xmlParserSeverities severity, xmlTextReaderLocatorPtr locator)
 {
 	oscap_setxmlerr(xmlGetLastError());
+}
+
+xmlNs *lookup_xsi_ns(xmlDoc *doc)
+{
+	// Look-up xsi namespace pointer. We can be pretty sure that this namespace
+	// is defined in root element, because it usually carries xsi:schemaLocation
+	// attribute.
+	xmlNsPtr ns_xsi = xmlSearchNsByHref(doc, xmlDocGetRootElement(doc), OSCAP_XMLNS_XSI);
+	if (ns_xsi == NULL) {
+		ns_xsi = xmlNewNs(xmlDocGetRootElement(doc), OSCAP_XMLNS_XSI, BAD_CAST "xsi");
+	}
+	return ns_xsi;
 }

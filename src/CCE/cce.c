@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2008-2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2008-2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -37,6 +37,8 @@
 
 #include "common/public/oscap.h"
 #include "common/elements.h"
+#include "oscap_source.h"
+#include "source/oscap_source_priv.h"
 
 #define CCE_SUPPORTED "5"
 
@@ -80,11 +82,10 @@ struct cce_entry *cce_entry_new_empty(void)
 
 static void cce_parse(const char *docname, struct cce *cce)
 {
-	xmlTextReaderPtr reader;
+	struct oscap_source *source = oscap_source_new_from_file(docname);
+	xmlTextReaderPtr reader = oscap_source_get_xmlTextReader(source);
 	int ret;
-	reader = xmlNewTextReaderFilename(docname);
 	if (reader != NULL) {
-		xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
 		ret = xmlTextReaderRead(reader);
 		while (ret == 1) {
 			process_node(reader, cce);
@@ -92,6 +93,7 @@ static void cce_parse(const char *docname, struct cce *cce)
 		}
 		xmlFreeTextReader(reader);
 	}
+	oscap_source_free(source);
 }
 
 struct cce *cce_new(const char *fname)
