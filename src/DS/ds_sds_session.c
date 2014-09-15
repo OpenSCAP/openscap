@@ -39,6 +39,8 @@ struct ds_sds_session {
 	struct oscap_source *source;            ///< Source DataStream raw representation
 	struct ds_sds_index *index;             ///< Source DataStream index
 	char *temp_dir;                         ///< Temp directory used by the session
+	const char *datastream_id;              ///< ID of selected datastream
+	const char *checklist_id;               ///< ID of selected checklist
 };
 
 struct ds_sds_session *ds_sds_session_new_from_source(struct oscap_source *source)
@@ -81,4 +83,47 @@ static char *ds_sds_session_get_temp_dir(struct ds_sds_session *session)
 		session->temp_dir = oscap_acquire_temp_dir();
 	}
 	return session->temp_dir;
+}
+
+const char *ds_sds_session_get_datastream_id(const struct ds_sds_session *session)
+{
+	return session->datastream_id;
+}
+
+const char *ds_sds_session_get_checklist_id(const struct ds_sds_session *session)
+{
+	return session->checklist_id;
+}
+
+struct oscap_source *ds_sds_session_select_checklist(struct ds_sds_session *session, const char *datastream_id, const char *component_id, const char *benchmark_id)
+{
+	session->datastream_id = datastream_id;
+	session->checklist_id = component_id;
+
+	// We only use benchmark ID if datastream ID and/or component ID were NOT supplied.
+	if (!datastream_id && !component_id && benchmark_id) {
+		if (ds_sds_index_select_checklist_by_benchmark_id(ds_sds_session_get_sds_idx(session), 	benchmark_id,
+				(const char **) &(session->datastream_id), (const char **) &(session->checklist_id)) != 0) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to locate a datastream with component-ref "
+				"that points to a component containing Benchmark with ID '%s'.", benchmark_id);
+			return NULL;
+		}
+	}
+	else {
+		if (benchmark_id) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Not using benchmark ID ('%s') for component-ref lookup, "
+				"datastream ID ('%s') and/or component-ref ID ('%s') were supplied, using them instead.",
+				benchmark_id, datastream_id, component_id);
+		}
+
+		if (ds_sds_index_select_checklist(ds_sds_session_get_sds_idx(session), (const char **) &(session->datastream_id),
+				(const char **) &(session->checklist_id)) != 0) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to locate a datastream with ID matching "
+					"'%s' ID and checklist inside matching '%s' ID.",
+					datastream_id == NULL ? "<any>" : datastream_id,
+					component_id == NULL ? "<any>" : component_id);
+			return NULL;
+		}
+	}
+	return NULL;
 }

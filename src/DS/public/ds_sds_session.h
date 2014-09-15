@@ -64,4 +64,32 @@ struct ds_sds_index *ds_sds_session_get_sds_idx(struct ds_sds_session *session);
  */
 void ds_sds_session_free(struct ds_sds_session *sds_session);
 
+/**
+ * Select Checklist (XCCDF presumably) from DataStream collection. Parameters may be
+ * skipped (passing NULL) to let the ds_sds_session guess them.
+ * @memberof ds_sds_session
+ * @param session Source DataStream session to choose from
+ * @param datastream_id ID of DataStream within collection
+ * @param component_id ID of (XCCDF) checklist within datastream
+ * @param benchmark_id ID of Benchmark element within checklist
+ * @returns XCCDF checklist in form of oscap_source
+ */
+struct oscap_source *ds_sds_session_select_checklist(struct ds_sds_session *session, const char *datastream_id, const char *component_id, const char *benchmark_id);
+
+/**
+ * Return ID of currently selected DataStream within the DataStream collection.
+ * @memberof ds_sds_session
+ * @param session The Source DataStream sesssion
+ * @returns ID of selected datastream or NULL
+ */
+const char *ds_sds_session_get_datastream_id(const struct ds_sds_session *session);
+
+/**
+ * Return ID of currently selected component representing XCCDF within the DataStream
+ * @memberof ds_sds_session
+ * @param session The Source DataStream session
+ * @returns ID of selected component or NULL
+ */
+const char *ds_sds_session_get_checklist_id(const struct ds_sds_session *session);
+
 #endif

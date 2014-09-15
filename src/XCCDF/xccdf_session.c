@@ -400,36 +400,12 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 		if (session->temp_dir == NULL)
 			goto cleanup;
 
-		// We only use benchmark ID if datastream ID and/or component ID were NOT supplied.
-		if (!session->ds.user_datastream_id && !session->ds.user_component_id && session->ds.user_benchmark_id) {
-			if (ds_sds_index_select_checklist_by_benchmark_id(xccdf_session_get_sds_idx(session),
-				session->ds.user_benchmark_id,
-				(const char **) &(session->ds.datastream_id),
-				(const char **) &(session->ds.component_id)) != 0) {
-				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to locate a datastream with component-ref "
-					"that points to a component containing Benchmark with ID '%s'.", session->ds.user_benchmark_id);
-				goto cleanup;
-			}
-		}
-		else {
-			if (session->ds.user_benchmark_id) {
-				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Not using benchmark ID ('%s') for component-ref lookup, "
-					"datastream ID ('%s') and/or component-ref ID ('%s') were supplied, using them instead.",
-					session->ds.user_benchmark_id,
-					session->ds.user_datastream_id,
-					session->ds.user_component_id);
-			}
-
-			if (ds_sds_index_select_checklist(xccdf_session_get_sds_idx(session),
-				(const char **) &(session->ds.datastream_id),
-				(const char **) &(session->ds.component_id)) != 0) {
-				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to locate a datastream with ID matching "
-						"'%s' ID and checklist inside matching '%s' ID.",
-						session->ds.user_datastream_id == NULL ? "<any>" : session->ds.user_datastream_id,
-						session->ds.user_component_id == NULL ? "<any>" : session->ds.user_component_id);
-				goto cleanup;
-			}
-		}
+		ds_sds_session_select_checklist(xccdf_session_get_ds_sds_session(session), session->ds.user_datastream_id,
+				session->ds.user_component_id, session->ds.user_benchmark_id);
+		session->ds.datastream_id = ds_sds_session_get_datastream_id(session->ds.session);
+		session->ds.component_id = ds_sds_session_get_checklist_id(session->ds.session);
+		if (session->ds.datastream_id == NULL || session->ds.component_id == NULL)
+			goto cleanup;
 
 		if (ds_sds_decompose(session->filename, session->ds.datastream_id, session->ds.component_id, session->temp_dir, XCCDF_XML) != 0) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to decompose source datastream in '%s'.", session->filename);
