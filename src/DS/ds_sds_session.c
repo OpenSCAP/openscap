@@ -24,6 +24,7 @@
 #include <config.h>
 #endif
 
+#include "common/oscap_acquire.h"
 #include "common/alloc.h"
 #include "common/elements.h"
 #include "common/_error.h"
@@ -37,6 +38,7 @@
 struct ds_sds_session {
 	struct oscap_source *source;            ///< Source DataStream raw representation
 	struct ds_sds_index *index;             ///< Source DataStream index
+	char *temp_dir;                         ///< Temp directory used by the session
 };
 
 struct ds_sds_session *ds_sds_session_new_from_source(struct oscap_source *source)
@@ -53,6 +55,9 @@ void ds_sds_session_free(struct ds_sds_session *sds_session)
 {
 	if (sds_session != NULL) {
 		ds_sds_index_free(sds_session->index);
+		if (sds_session->temp_dir != NULL) {
+			oscap_acquire_cleanup_dir(&(sds_session->temp_dir));
+		}
 		oscap_free(sds_session);
 	}
 }
@@ -68,4 +73,12 @@ struct ds_sds_index *ds_sds_session_get_sds_idx(struct ds_sds_session *session)
 		xmlFreeTextReader(reader);
 	}
 	return session->index;
+}
+
+static char *ds_sds_session_get_temp_dir(struct ds_sds_session *session)
+{
+	if (session->temp_dir == NULL) {
+		session->temp_dir = oscap_acquire_temp_dir();
+	}
+	return session->temp_dir;
 }
