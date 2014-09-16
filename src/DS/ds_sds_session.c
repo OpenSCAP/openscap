@@ -28,6 +28,7 @@
 #include "common/alloc.h"
 #include "common/elements.h"
 #include "common/_error.h"
+#include "common/list.h"
 #include "common/public/oscap.h"
 #include "common/util.h"
 #include "ds_sds_session.h"
@@ -44,6 +45,7 @@ struct ds_sds_session {
 	char *temp_dir;                         ///< Temp directory used by the session
 	const char *datastream_id;              ///< ID of selected datastream
 	const char *checklist_id;               ///< ID of selected checklist
+	struct oscap_htable *component_sources;	///< oscap_source for parsed components
 };
 
 struct ds_sds_session *ds_sds_session_new_from_source(struct oscap_source *source)
@@ -55,6 +57,7 @@ struct ds_sds_session *ds_sds_session_new_from_source(struct oscap_source *sourc
 	}
 	struct ds_sds_session *sds_session = (struct ds_sds_session *) oscap_calloc(1, sizeof(struct ds_sds_session));
 	sds_session->source = source;
+	sds_session->component_sources = oscap_htable_new();
 	return sds_session;
 }
 
@@ -65,6 +68,7 @@ void ds_sds_session_free(struct ds_sds_session *sds_session)
 		if (sds_session->temp_dir != NULL) {
 			oscap_acquire_cleanup_dir(&(sds_session->temp_dir));
 		}
+		oscap_htable_free(sds_session->component_sources, (oscap_destruct_func) oscap_source_free);
 		oscap_free(sds_session);
 	}
 }
@@ -163,4 +167,14 @@ xmlNode *ds_sds_session_get_selected_datastream(struct ds_sds_session *session)
 xmlDoc *ds_sds_session_get_xmlDoc(struct ds_sds_session *session)
 {
 	return oscap_source_get_xmlDoc(session->source);
+}
+
+int ds_sds_session_register_component_source(struct ds_sds_session *session, const char *filename, struct oscap_source *component)
+{
+	if (!oscap_htable_add(session->component_sources, filename, component)) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "File %s has already been register with Source DataStream session: %s",
+			filename, oscap_source_readable_origin(session->source));
+		return -1;
+	}
+	return 0;
 }
