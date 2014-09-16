@@ -223,13 +223,13 @@ static int ds_sds_dump_component(const char* component_id, struct ds_sds_session
 		if (new_doc == NULL) {
 			return -1;
 		}
+		struct oscap_source *source = oscap_source_new_from_xmlDoc(new_doc, oscap_acquire_guess_realpath(filename));
+		ds_sds_session_register_component_source(session, oscap_source_readable_origin(source), source);
 		if (xmlSaveFileEnc(filename, new_doc, "utf-8") == -1)
 		{
 			oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error when saving resulting DOM to file '%s' while dumping component (id='%s').", filename, component_id);
-			xmlFreeDoc(new_doc);
 			return -1;
 		}
-		xmlFreeDoc(new_doc);
 	}
 
 	return 0;
