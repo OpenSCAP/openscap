@@ -83,6 +83,30 @@ xmlNodePtr node_get_child_element(xmlNodePtr parent, const char* name)
 	return NULL;
 }
 
+static xmlNode *_containter_get_component_ref_by_id(xmlNode *container, const char *component_id)
+{
+	for (xmlNode *component_ref = container->children; component_ref != NULL; component_ref = component_ref->next)
+	{
+		if (component_ref->type != XML_ELEMENT_NODE)
+			continue;
+
+		if (strcmp((const char*)(component_ref->name), "component-ref") != 0)
+			continue;
+
+		xmlChar* cref_id = xmlGetProp(component_ref, BAD_CAST "id");
+		// if cref_id is zero we have encountered a fatal error that will be handled
+		// in ds_sds_dump_component_ref
+		if (component_id && cref_id && strcmp(component_id, (char*)cref_id) != 0)
+		{
+			xmlFree(cref_id);
+			continue;
+		}
+		xmlFree(cref_id);
+		return component_ref;
+	}
+	return NULL;
+}
+
 static xmlNodePtr ds_sds_find_component_ref(xmlNodePtr datastream, const char* id)
 {
 	/* This searches for a ds:component-ref (XLink) element with a given id.
@@ -94,24 +118,9 @@ static xmlNodePtr ds_sds_find_component_ref(xmlNodePtr datastream, const char* i
 	{
 		if (cref_parent->type != XML_ELEMENT_NODE)
 			continue;
-
-		xmlNodePtr component_ref = cref_parent->children;
-
-		for (; component_ref != NULL; component_ref = component_ref->next)
-		{
-			if (component_ref->type != XML_ELEMENT_NODE)
-				continue;
-
-			if (strcmp((const char*)(component_ref->name), "component-ref") != 0)
-				continue;
-
-			char* cref_id = (char*)xmlGetProp(component_ref, BAD_CAST "id");
-			if (strcmp(cref_id, id) == 0)
-			{
-				xmlFree(cref_id);
-				return component_ref;
-			}
-			xmlFree(cref_id);
+		xmlNode *component_ref = _containter_get_component_ref_by_id(cref_parent, id);
+		if (component_ref != NULL) {
+			return component_ref;
 		}
 	}
 
@@ -384,30 +393,6 @@ xmlNodePtr ds_sds_lookup_datastream_in_collection(xmlDocPtr doc, const char *dat
 	}
 
 	return datastream;
-}
-
-static xmlNode *_containter_get_component_ref_by_id(xmlNode *container, const char *component_id)
-{
-	for (xmlNode *component_ref = container->children; component_ref != NULL; component_ref = component_ref->next)
-	{
-		if (component_ref->type != XML_ELEMENT_NODE)
-			continue;
-
-		if (strcmp((const char*)(component_ref->name), "component-ref") != 0)
-			continue;
-
-		xmlChar* cref_id = xmlGetProp(component_ref, BAD_CAST "id");
-		// if cref_id is zero we have encountered a fatal error that will be handled
-		// in ds_sds_dump_component_ref
-		if (component_id && cref_id && strcmp(component_id, (char*)cref_id) != 0)
-		{
-			xmlFree(cref_id);
-			continue;
-		}
-		xmlFree(cref_id);
-		return component_ref;
-	}
-	return NULL;
 }
 
 int ds_sds_decompose_custom(const char* input_file, const char* id, const char* target_dir,
