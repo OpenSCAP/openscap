@@ -24,6 +24,7 @@
 #include <config.h>
 #endif
 
+#include "public/ds_sds_session.h"
 #include "public/scap_ds.h"
 #include "public/xccdf_benchmark.h"
 #include "public/oval_definitions.h"
@@ -412,12 +413,12 @@ int ds_sds_decompose_custom(const char* input_file, const char* id, const char* 
 		const char* container_name, const char* component_id, const char* target_filename)
 {
 	struct oscap_source *ds_source = oscap_source_new_from_file(input_file);
-	xmlDocPtr doc = oscap_source_get_xmlDoc(ds_source);
-
-	if (!doc)
-	{
+	struct ds_sds_session *session = ds_sds_session_new_from_source(ds_source);
+	if (session == NULL) {
+		oscap_source_free(ds_source);
 		return -1;
 	}
+	xmlDocPtr doc = oscap_source_get_xmlDoc(ds_source);
 
 	xmlNodePtr datastream = ds_sds_lookup_datastream_in_collection(doc, id);
 	if (!datastream)
@@ -428,6 +429,7 @@ int ds_sds_decompose_custom(const char* input_file, const char* id, const char* 
 
 		oscap_seterr(OSCAP_EFAMILY_XML, error);
 		oscap_free(error);
+		ds_sds_session_free(session);
 		oscap_source_free(ds_source);
 		return -1;
 	}
@@ -441,6 +443,7 @@ int ds_sds_decompose_custom(const char* input_file, const char* id, const char* 
 		else
 			oscap_seterr(OSCAP_EFAMILY_XML, "No '%s' container element found in file '%s' in datastream of id '%s'.", container_name, input_file, id);
 
+		ds_sds_session_free(session);
 		oscap_source_free(ds_source);
 		return -1;
 	}
@@ -461,11 +464,13 @@ int ds_sds_decompose_custom(const char* input_file, const char* id, const char* 
 		if (result != 0)
 		{
 			// oscap_seterr was already called in ds_sds_dump_component[_as]
+			ds_sds_session_free(session);
 			oscap_source_free(ds_source);
 			return -1;
 		}
 	}
 
+	ds_sds_session_free(session);
 	oscap_source_free(ds_source);
 	return 0;
 }
