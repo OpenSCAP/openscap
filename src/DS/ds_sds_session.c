@@ -46,6 +46,8 @@ struct ds_sds_session {
 struct ds_sds_session *ds_sds_session_new_from_source(struct oscap_source *source)
 {
 	if (oscap_source_get_scap_type(source) != OSCAP_DOCUMENT_SDS) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not create Source DataStream "
+				"session: File is not Source DataStream.");
 		return NULL;
 	}
 	struct ds_sds_session *sds_session = (struct ds_sds_session *) oscap_calloc(1, sizeof(struct ds_sds_session));
