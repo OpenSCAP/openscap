@@ -38,6 +38,7 @@
 #include "common/util.h"
 #include "common/list.h"
 #include "common/oscap_acquire.h"
+#include "source/oscap_source_priv.h"
 
 #include <sys/stat.h>
 #include <time.h>
@@ -410,11 +411,11 @@ static xmlNode *_containter_get_component_ref_by_id(xmlNode *container, const ch
 int ds_sds_decompose_custom(const char* input_file, const char* id, const char* target_dir,
 		const char* container_name, const char* component_id, const char* target_filename)
 {
-	xmlDocPtr doc = xmlReadFile(input_file, NULL, 0);
+	struct oscap_source *ds_source = oscap_source_new_from_file(input_file);
+	xmlDocPtr doc = oscap_source_get_xmlDoc(ds_source);
 
 	if (!doc)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Could not read/parse XML of given input file at path '%s'.", input_file);
 		return -1;
 	}
 
@@ -427,7 +428,7 @@ int ds_sds_decompose_custom(const char* input_file, const char* id, const char* 
 
 		oscap_seterr(OSCAP_EFAMILY_XML, error);
 		oscap_free(error);
-		xmlFreeDoc(doc);
+		oscap_source_free(ds_source);
 		return -1;
 	}
 
@@ -440,7 +441,7 @@ int ds_sds_decompose_custom(const char* input_file, const char* id, const char* 
 		else
 			oscap_seterr(OSCAP_EFAMILY_XML, "No '%s' container element found in file '%s' in datastream of id '%s'.", container_name, input_file, id);
 
-		xmlFreeDoc(doc);
+		oscap_source_free(ds_source);
 		return -1;
 	}
 
@@ -460,12 +461,12 @@ int ds_sds_decompose_custom(const char* input_file, const char* id, const char* 
 		if (result != 0)
 		{
 			// oscap_seterr was already called in ds_sds_dump_component[_as]
-			xmlFreeDoc(doc);
+			oscap_source_free(ds_source);
 			return -1;
 		}
 	}
 
-	xmlFreeDoc(doc);
+	oscap_source_free(ds_source);
 	return 0;
 }
 
