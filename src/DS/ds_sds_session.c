@@ -159,3 +159,8 @@ xmlNode *ds_sds_session_get_selected_datastream(struct ds_sds_session *session)
 	}
 	return datastream;
 }
+
+xmlDoc *ds_sds_session_get_xmlDoc(struct ds_sds_session *session)
+{
+	return oscap_source_get_xmlDoc(session->source);
+}

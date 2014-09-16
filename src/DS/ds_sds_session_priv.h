@@ -35,6 +35,7 @@ OSCAP_HIDDEN_START;
 
 int ds_sds_session_set_datastream_id(struct ds_sds_session *session, const char *datastream_id);
 xmlNode *ds_sds_session_get_selected_datastream(struct ds_sds_session *session);
+xmlDoc *ds_sds_session_get_xmlDoc(struct ds_sds_session *session);
 
 OSCAP_HIDDEN_END;
 #endif
