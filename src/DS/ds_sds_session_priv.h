@@ -37,6 +37,7 @@ int ds_sds_session_set_datastream_id(struct ds_sds_session *session, const char 
 xmlNode *ds_sds_session_get_selected_datastream(struct ds_sds_session *session);
 xmlDoc *ds_sds_session_get_xmlDoc(struct ds_sds_session *session);
 int ds_sds_session_register_component_source(struct ds_sds_session *session, const char *filename, struct oscap_source *component);
+int ds_sds_session_dump_component_files(struct ds_sds_session *session);
 
 OSCAP_HIDDEN_END;
 #endif

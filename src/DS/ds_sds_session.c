@@ -178,3 +178,18 @@ int ds_sds_session_register_component_source(struct ds_sds_session *session, con
 	}
 	return 0;
 }
+
+int ds_sds_session_dump_component_files(struct ds_sds_session *session)
+{
+	struct oscap_htable_iterator *hit = oscap_htable_iterator_new(session->component_sources);
+	while (oscap_htable_iterator_has_more(hit)) {
+		struct oscap_source *s = oscap_htable_iterator_next_value(hit);
+		int ret = oscap_source_save_as(s, NULL);
+		if (ret != 0) {
+			oscap_htable_iterator_free(hit);
+			return ret;
+		}
+	}
+	oscap_htable_iterator_free(hit);
+	return 0;
+}
