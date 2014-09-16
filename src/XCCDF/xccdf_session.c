@@ -317,6 +317,16 @@ const char *xccdf_session_get_profile_id(struct xccdf_session *session)
 	return session->xccdf.profile_id;
 }
 
+static struct ds_sds_session *xccdf_session_get_ds_sds_session(struct xccdf_session *session)
+{
+	if (!xccdf_session_is_sds(session))
+		return NULL;
+	if (session->ds.session == NULL) {
+		session->ds.session = ds_sds_session_new_from_source(session->source);
+	}
+	return session->ds.session;
+}
+
 /**
  * Get Source DataStream index of the session.
  * @memberof xccdf_session
@@ -328,10 +338,7 @@ struct ds_sds_index *xccdf_session_get_sds_idx(struct xccdf_session *session)
 	if (!xccdf_session_is_sds(session))
 		return NULL;
 
-	if (session->ds.session == NULL) {
-		session->ds.session = ds_sds_session_new_from_source(session->source);
-	}
-	return ds_sds_session_get_sds_idx(session->ds.session);
+	return ds_sds_session_get_sds_idx(xccdf_session_get_ds_sds_session(session));
 }
 
 int xccdf_session_load(struct xccdf_session *session)
