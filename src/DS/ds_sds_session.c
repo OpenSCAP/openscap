@@ -31,6 +31,7 @@
 #include "common/public/oscap.h"
 #include "common/util.h"
 #include "ds_sds_session.h"
+#include "ds_sds_session_priv.h"
 #include "sds_index_priv.h"
 #include "source/oscap_source_priv.h"
 #include "source/public/oscap_source.h"
@@ -85,6 +86,19 @@ static char *ds_sds_session_get_temp_dir(struct ds_sds_session *session)
 		session->temp_dir = oscap_acquire_temp_dir();
 	}
 	return session->temp_dir;
+}
+
+int ds_sds_session_set_datastream_id(struct ds_sds_session *session, const char *datastream_id)
+{
+	if (session->datastream_id == NULL) {
+		session->datastream_id = datastream_id;
+	}
+	if (oscap_streq(session->datastream_id, datastream_id)) {
+		return 0;
+	} else {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal Error: Not implemented: Could not rewrite datastream_id in the session.");
+		return 1;
+	}
 }
 
 const char *ds_sds_session_get_datastream_id(const struct ds_sds_session *session)
