@@ -190,8 +190,9 @@ static int ds_sds_dump_component_sce(xmlNode *script_node, const char *component
 	}
 }
 
-static int ds_sds_dump_component(const char* component_id, xmlDocPtr doc, const char* filename)
+static int ds_sds_dump_component(const char* component_id, struct ds_sds_session *session, const char* filename)
 {
+	xmlDoc *doc = ds_sds_session_get_xmlDoc(session);
 	xmlNodePtr component = _lookup_component_in_collection(doc, component_id);
 	if (component == NULL)
 	{
@@ -273,7 +274,7 @@ static int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, struct ds_sds_
 		return -1;
 	}
 	const char* target_filename = oscap_sprintf("%s/%s/%s", target_dir, file_reldir, file_basename);
-	ds_sds_dump_component(component_id, ds_sds_session_get_xmlDoc(session), target_filename);
+	ds_sds_dump_component(component_id, session, target_filename);
 	oscap_free(target_filename);
 	oscap_free(filename_cpy);
 
