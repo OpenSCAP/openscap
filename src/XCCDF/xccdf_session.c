@@ -1056,26 +1056,6 @@ static void _xccdf_session_free_oval_result_sources(struct xccdf_session *sessio
 	}
 }
 
-static inline char *_guess_realpath(char *filepath)
-{
-	char *rpath = realpath(filepath, NULL);
-	if (rpath == NULL) {
-		// file does not exists, let's try to guess realpath
-		// this is not 100% correct, but it is good enough
-		char *copy = strdup(filepath);
-		const char *real_dir = realpath(dirname(copy), NULL);
-		if (real_dir == NULL) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot export to %s, directory: %s does not exists!", filepath, real_dir);
-			oscap_free(copy);
-			return NULL;
-		}
-		rpath = oscap_sprintf("%s/%s", real_dir, basename(filepath));
-		oscap_free(real_dir);
-		oscap_free(copy);
-	}
-	return rpath;
-}
-
 static char *_xccdf_session_get_unique_oval_result_filename(struct xccdf_session *session, struct oval_agent_session *oval_session, const char *oval_results_directory)
 {
 	char *escaped_url = NULL;
@@ -1125,7 +1105,7 @@ static char *_xccdf_session_get_unique_oval_result_filename(struct xccdf_session
 		// the results files if the OVAL happens to have the same name. We allow users
 		// to shoot themselves to the foot, but it is not easy. They need to set-up
 		// file->file symlink before scanning.
-		char *final_name = _guess_realpath(name);
+		char *final_name = oscap_acquire_guess_realpath(name);
 		free(name);
 		name = final_name;
 		if (name == NULL) {
