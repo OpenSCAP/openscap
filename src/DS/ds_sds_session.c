@@ -33,8 +33,10 @@
 #include "ds_sds_session.h"
 #include "ds_sds_session_priv.h"
 #include "sds_index_priv.h"
+#include "sds_priv.h"
 #include "source/oscap_source_priv.h"
 #include "source/public/oscap_source.h"
+#include <libxml/tree.h>
 
 struct ds_sds_session {
 	struct oscap_source *source;            ///< Source DataStream raw representation
@@ -142,4 +144,18 @@ struct oscap_source *ds_sds_session_select_checklist(struct ds_sds_session *sess
 		}
 	}
 	return NULL;
+}
+
+xmlNode *ds_sds_session_get_selected_datastream(struct ds_sds_session *session)
+{
+	xmlDoc *doc = oscap_source_get_xmlDoc(session->source);
+	xmlNode *datastream = ds_sds_lookup_datastream_in_collection(doc, session->datastream_id);
+	if (datastream == NULL) {
+		const char* error = session->datastream_id ?
+			oscap_sprintf("Could not find any datastream of id '%s'", session->datastream_id) :
+			oscap_sprintf("Could not find any datastream inside the file");
+		oscap_seterr(OSCAP_EFAMILY_XML, error);
+		oscap_free(error);
+	}
+	return datastream;
 }

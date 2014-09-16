@@ -32,6 +32,7 @@
 #include "public/oscap_text.h"
 
 #include "ds_common.h"
+#include "ds_sds_session_priv.h"
 #include "sds_priv.h"
 
 #include "common/alloc.h"
@@ -418,17 +419,14 @@ int ds_sds_decompose_custom(const char* input_file, const char* id, const char* 
 		oscap_source_free(ds_source);
 		return -1;
 	}
-	xmlDocPtr doc = oscap_source_get_xmlDoc(ds_source);
-
-	xmlNodePtr datastream = ds_sds_lookup_datastream_in_collection(doc, id);
+	if (ds_sds_session_set_datastream_id(session, id)) {
+		ds_sds_session_free(session);
+		oscap_source_free(ds_source);
+		return -1;
+	}
+	xmlNode *datastream = ds_sds_session_get_selected_datastream(session);
 	if (!datastream)
 	{
-		const char* error = id ?
-			oscap_sprintf("Could not find any datastream of id '%s'", id) :
-			oscap_sprintf("Could not find any datastream inside the file");
-
-		oscap_seterr(OSCAP_EFAMILY_XML, error);
-		oscap_free(error);
 		ds_sds_session_free(session);
 		oscap_source_free(ds_source);
 		return -1;
@@ -452,6 +450,7 @@ int ds_sds_decompose_custom(const char* input_file, const char* id, const char* 
 	if (component_ref != NULL) {
 		int result;
 
+		xmlDocPtr doc = oscap_source_get_xmlDoc(ds_source);
 		if (target_filename == NULL)
 		{
 			result = ds_sds_dump_component_ref(component_ref, doc, datastream, strcmp(target_dir, "") == 0 ? "." : target_dir);
