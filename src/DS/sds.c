@@ -383,6 +383,30 @@ xmlNodePtr ds_sds_lookup_datastream_in_collection(xmlDocPtr doc, const char *dat
 	return datastream;
 }
 
+static xmlNode *_containter_get_component_ref_by_id(xmlNode *container, const char *component_id)
+{
+	for (xmlNode *component_ref = container->children; component_ref != NULL; component_ref = component_ref->next)
+	{
+		if (component_ref->type != XML_ELEMENT_NODE)
+			continue;
+
+		if (strcmp((const char*)(component_ref->name), "component-ref") != 0)
+			continue;
+
+		xmlChar* cref_id = xmlGetProp(component_ref, BAD_CAST "id");
+		// if cref_id is zero we have encountered a fatal error that will be handled
+		// in ds_sds_dump_component_ref
+		if (component_id && cref_id && strcmp(component_id, (char*)cref_id) != 0)
+		{
+			xmlFree(cref_id);
+			continue;
+		}
+		xmlFree(cref_id);
+		return component_ref;
+	}
+	return NULL;
+}
+
 int ds_sds_decompose_custom(const char* input_file, const char* id, const char* target_dir,
 		const char* container_name, const char* component_id, const char* target_filename)
 {
@@ -420,26 +444,8 @@ int ds_sds_decompose_custom(const char* input_file, const char* id, const char* 
 		return -1;
 	}
 
-	xmlNodePtr component_ref = container->children;
-
-	for (; component_ref != NULL; component_ref = component_ref->next)
-	{
-		if (component_ref->type != XML_ELEMENT_NODE)
-			continue;
-
-		if (strcmp((const char*)(component_ref->name), "component-ref") != 0)
-			continue;
-
-		xmlChar* cref_id = xmlGetProp(component_ref, BAD_CAST "id");
-		// if cref_id is zero we have encountered a fatal error that will be handled
-		// in ds_sds_dump_component_ref
-		if (component_id && cref_id && strcmp(component_id, (char*)cref_id) != 0)
-		{
-			xmlFree(cref_id);
-			continue;
-		}
-		xmlFree(cref_id);
-
+	xmlNode *component_ref = _containter_get_component_ref_by_id(container, component_id);
+	if (component_ref != NULL) {
 		int result;
 
 		if (target_filename == NULL)
@@ -457,7 +463,6 @@ int ds_sds_decompose_custom(const char* input_file, const char* id, const char* 
 			xmlFreeDoc(doc);
 			return -1;
 		}
-		break;
 	}
 
 	xmlFreeDoc(doc);
