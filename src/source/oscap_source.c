@@ -224,5 +224,5 @@ int oscap_source_save_as(struct oscap_source *source, const char *filename)
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save document to %s: DOM representation not available.", target);
 		return -1;
 	}
-	return oscap_xml_save_filename(target, doc);
+	return oscap_xml_save_filename(target, doc) == 1 ? 0 : -1;
 }

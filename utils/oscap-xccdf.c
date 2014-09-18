@@ -686,7 +686,7 @@ int app_xccdf_resolve(const struct oscap_action *action)
 			fprintf(stderr, "Benchmark resolving failure (probably a dependency loop)!\n");
 		else
 		{
-			if (xccdf_benchmark_export(bench, action->f_results)) {
+			if (xccdf_benchmark_export(bench, action->f_results) == 0) {
 				ret = OSCAP_OK;
 
 				/* validate exported results */

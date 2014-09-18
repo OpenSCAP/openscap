@@ -85,7 +85,7 @@ const char *oscap_source_get_schema_version(struct oscap_source *source);
  * @param source The oscap_source to save
  * @param filename The filename or NULL, the previously supplied name will
  * be used if filename is NULL.
- * @returns -1 on error, 1 on success
+ * @returns 0 on success, 1 or -1 to indicate error
  */
 int oscap_source_save_as(struct oscap_source *source, const char *filename);
 

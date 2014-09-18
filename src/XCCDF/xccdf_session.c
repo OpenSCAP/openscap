@@ -1002,7 +1002,7 @@ static int _build_xccdf_result_source(struct xccdf_session *session)
 				xccdf_result_clone(session->xccdf.result));
 		session->xccdf.result_source = xccdf_benchmark_export_source(
 				xccdf_policy_model_get_benchmark(session->xccdf.policy_model), session->export.xccdf_file);
-		if (oscap_source_save_as(session->xccdf.result_source, NULL) != 1) {
+		if (oscap_source_save_as(session->xccdf.result_source, NULL) != 0) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save file: %s",
 					oscap_source_readable_origin(session->xccdf.result_source));
 			return -1;
@@ -1244,7 +1244,7 @@ int xccdf_session_export_oval(struct xccdf_session *session)
 		struct oscap_htable_iterator *hit = oscap_htable_iterator_new(session->oval.result_sources);
 		while (oscap_htable_iterator_has_more(hit)) {
 			struct oscap_source *source = oscap_htable_iterator_next_value(hit);
-			if (oscap_source_save_as(source, NULL) != 1) {
+			if (oscap_source_save_as(source, NULL) != 0) {
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save file: %s", oscap_source_readable_origin(source));
 				oscap_htable_iterator_free(hit);
 				return 1;
