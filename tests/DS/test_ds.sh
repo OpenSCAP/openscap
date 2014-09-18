@@ -89,6 +89,7 @@ sds_add_multiple_twice(){
 		rm ${DS_TARGET_DIR}/$f
 	done
 	rm $DS_FILE
+	rm -f $DS_TARGET_DIR/oscap_debug.log.*
 	rmdir $DS_TARGET_DIR
 	rm $stderr
 }
