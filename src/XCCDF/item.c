@@ -349,6 +349,9 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 	xmlNode *item_node = NULL;
 	if (parent == NULL) {
 		item_node = xmlNewNode(ns_xccdf, BAD_CAST "Item");
+		if (item_node->nsDef == NULL) {
+			item_node->nsDef = ns_xccdf;
+		}
 	}
 	else
 		item_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "Item", NULL);
