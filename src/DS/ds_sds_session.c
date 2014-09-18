@@ -171,7 +171,17 @@ struct oscap_source *ds_sds_session_select_checklist(struct ds_sds_session *sess
 			return NULL;
 		}
 	}
-	return NULL;
+	if (ds_sds_session_register_component_with_dependencies(session, "checklists", session->checklist_id, "xccdf.xml") != 0) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not extract %s with all dependencies from datastream.", session->checklist_id);
+		return NULL;
+	}
+	char *xccdf_path = oscap_sprintf("%s/xccdf.xml", ds_sds_session_get_target_dir(session));
+	struct oscap_source *xccdf = oscap_htable_get(session->component_sources, xccdf_path);
+	if (xccdf == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal error: Could not acquire handle to %s source.\n", xccdf_path);
+	}
+	oscap_free(xccdf_path);
+	return xccdf;
 }
 
 xmlNode *ds_sds_session_get_selected_datastream(struct ds_sds_session *session)
