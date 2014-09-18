@@ -400,7 +400,6 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 		if (session->temp_dir == NULL)
 			goto cleanup;
 
-		ds_sds_session_set_target_dir(xccdf_session_get_ds_sds_session(session), session->temp_dir);
 		session->xccdf.source = ds_sds_session_select_checklist(xccdf_session_get_ds_sds_session(session), session->ds.user_datastream_id,
 				session->ds.user_component_id, session->ds.user_benchmark_id);
 		session->ds.datastream_id = ds_sds_session_get_datastream_id(session->ds.session);
