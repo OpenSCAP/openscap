@@ -314,7 +314,7 @@ static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr ass
 		{
 			suffix++;
 		}
-
+		xmlFree(id);
 		oscap_free(id_candidate);
 	}
 
