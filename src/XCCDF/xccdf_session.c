@@ -374,7 +374,6 @@ static void _validation_failed(const char *xmlfile, oscap_document_type_t doc_ty
 
 int xccdf_session_load_xccdf(struct xccdf_session *session)
 {
-	static const char *XCCDF_XML = "xccdf.xml";
 	struct xccdf_benchmark *benchmark = NULL;
 
 	if (session->xccdf.policy_model != NULL) {
