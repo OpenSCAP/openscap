@@ -40,6 +40,7 @@
 extern const struct oscap_string_map OSCAP_BOOL_MAP[];
 
 typedef void (*oscap_xml_value_consumer) (char *, void *);
+int oscap_parser_text_value(xmlTextReaderPtr reader, oscap_xml_value_consumer consumer, void *user);
 
 /// find starting element at given depth (returns false if none found)
 bool oscap_to_start_element(xmlTextReaderPtr reader, int depth);

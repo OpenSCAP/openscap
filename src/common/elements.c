@@ -64,6 +64,38 @@ bool oscap_to_start_element(xmlTextReaderPtr reader, int depth)
 	return false;
 }
 
+/* -1 error; 0 OK */
+int oscap_parser_text_value(xmlTextReaderPtr reader, oscap_xml_value_consumer consumer, void *user)
+{
+	int depth = xmlTextReaderDepth(reader);
+	bool has_value = false;
+	int ret = 0;
+
+	if (xmlTextReaderIsEmptyElement(reader)) {
+		return ret;
+	}
+
+	xmlTextReaderRead(reader);
+	while (xmlTextReaderDepth(reader) > depth) {
+		int nodetype = xmlTextReaderNodeType(reader);
+		if (nodetype == XML_READER_TYPE_CDATA || nodetype == XML_READER_TYPE_TEXT) {
+			char *value = (char *)xmlTextReaderValue(reader);
+			(*consumer) (value, user);
+			oscap_free(value);
+			has_value = true;
+		}
+		if (xmlTextReaderRead(reader) != 1) {
+			ret = -1;
+			break;
+		}
+	}
+
+	if (!has_value)
+		(*consumer) ("", user);
+
+	return ret;
+}
+
 char *oscap_element_string_copy(xmlTextReaderPtr reader)
 {
 	int t;

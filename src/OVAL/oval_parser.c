@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -127,7 +127,7 @@ char *oval_determine_document_schema_version_priv(xmlTextReader *reader, oscap_d
 
 		elm_name = (const char *) xmlTextReaderConstLocalName(reader);
 		if (!strcmp(elm_name, "schema_version")) {
-			oval_parser_text_value(reader, oval_text_consumer, &version);
+			oscap_parser_text_value(reader, oval_text_consumer, &version);
 			break;
 		}
 	}
@@ -219,38 +219,6 @@ int oval_parser_skip_tag(xmlTextReaderPtr reader, struct oval_parser_context *co
                         break;
 		}
 	}
-
-	return ret;
-}
-
-/* -1 error; 0 OK */
-int oval_parser_text_value(xmlTextReaderPtr reader, oscap_xml_value_consumer consumer, void *user)
-{
-	int depth = xmlTextReaderDepth(reader);
-	bool has_value = false;
-	int ret = 0;
-
-	if (xmlTextReaderIsEmptyElement(reader)) {
-		return ret;
-	}
-
-	xmlTextReaderRead(reader);
-	while (xmlTextReaderDepth(reader) > depth) {
-		int nodetype = xmlTextReaderNodeType(reader);
-		if (nodetype == XML_READER_TYPE_CDATA || nodetype == XML_READER_TYPE_TEXT) {
-			char *value = (char *)xmlTextReaderValue(reader);
-			(*consumer) (value, user);
-			oscap_free(value);
-			has_value = true;
-		}
-		if (xmlTextReaderRead(reader) != 1) {
-			ret = -1;
-			break;
-		}
-	}
-
-	if (!has_value)
-		(*consumer) ("", user);
 
 	return ret;
 }
