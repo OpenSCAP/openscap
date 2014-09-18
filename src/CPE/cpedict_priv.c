@@ -696,23 +696,23 @@ struct cpe_generator *cpe_generator_parse(struct cpe_parser_ctx *ctx)
 			if ((xmlStrcmp(xmlTextReaderConstLocalName(reader),
 				       TAG_PRODUCT_NAME_STR) == 0) &&
 			    (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)) {
-				ret->product_name = (char *)xmlTextReaderReadString(reader);
+				ret->product_name = oscap_element_string_copy(reader);
 			} else
 			    if ((xmlStrcmp(xmlTextReaderConstLocalName(reader),
 					   TAG_PRODUCT_VERSION_STR) == 0) &&
 				(xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)) {
-				ret->product_version = (char *)xmlTextReaderReadString(reader);
+				ret->product_version = oscap_element_string_copy(reader);
 			} else
 			    if ((xmlStrcmp(xmlTextReaderConstLocalName(reader),
 					   TAG_SCHEMA_VERSION_STR) == 0) &&
 				(xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)) {
-				ret->schema_version = (char *)xmlTextReaderReadString(reader);
+				ret->schema_version = oscap_element_string_copy(reader);
 				cpe_parser_ctx_set_schema_version(ctx, ret->schema_version);
 			} else
 			    if ((xmlStrcmp(xmlTextReaderConstLocalName(reader),
 					   TAG_TIMESTAMP_STR) == 0) &&
 				(xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)) {
-				ret->timestamp = (char *)xmlTextReaderReadString(reader);
+				ret->timestamp = oscap_element_string_copy(reader);
 			} else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 				oscap_seterr(OSCAP_EFAMILY_OSCAP,
 						"Unknown XML element in CPE dictionary generator, local name is '%s'.",
@@ -867,7 +867,7 @@ static struct cpe_check *cpe_check_parse(xmlTextReaderPtr reader)
 
 	ret->system = (char *)xmlTextReaderGetAttribute(reader, ATTR_SYSTEM_STR);
 	ret->href = (char *)xmlTextReaderGetAttribute(reader, ATTR_HREF_STR);
-	ret->identifier = oscap_trim((char *)xmlTextReaderReadString(reader));
+	ret->identifier = oscap_trim(oscap_element_string_copy(reader));
 
 	return ret;
 }
@@ -887,7 +887,7 @@ static struct cpe_reference *cpe_reference_parse(xmlTextReaderPtr reader)
 	memset(ret, 0, sizeof(struct cpe_reference));
 
 	ret->href = (char *)xmlTextReaderGetAttribute(reader, ATTR_HREF_STR);
-	ret->content = oscap_trim((char *)xmlTextReaderReadString(reader));
+	ret->content = oscap_trim(oscap_element_string_copy(reader));
 
 	return ret;
 }
@@ -912,7 +912,7 @@ static struct cpe_notes *cpe_notes_parse(xmlTextReaderPtr reader)
 			}
 
 			if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_NOTE_STR) == 0) {
-				char *note_text = (char *) xmlTextReaderReadString(reader);
+				char *note_text = oscap_element_string_copy(reader);
 				oscap_list_add(notes->notes, note_text);
 			} else {
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unexpected element within notes element: '%s'",

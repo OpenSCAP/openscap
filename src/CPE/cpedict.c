@@ -234,9 +234,7 @@ char * cpe_dict_detect_version(const char* file)
 
 			elm_name = (const char *) xmlTextReaderConstLocalName(reader);
 			if (!strcmp(elm_name, "schema_version")) {
-				xmlChar* inner = xmlTextReaderReadString(reader);
-				version = oscap_strdup((const char *)inner);
-				xmlFree(inner);
+				version = oscap_element_string_copy(reader);
 				break;
 			}
 		}
