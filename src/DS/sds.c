@@ -346,7 +346,7 @@ static int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, struct ds_sds_
 	return 0;
 }
 
-static int ds_sds_dump_component_ref(xmlNodePtr component_ref, struct ds_sds_session *session, const char* target_dir)
+static int ds_sds_dump_component_ref(xmlNodePtr component_ref, struct ds_sds_session *session)
 {
 	char* cref_id = (char*)xmlGetProp(component_ref, BAD_CAST "id");
 	if (!cref_id)
@@ -356,7 +356,7 @@ static int ds_sds_dump_component_ref(xmlNodePtr component_ref, struct ds_sds_ses
 		return -1;
 	}
 
-	int result = ds_sds_dump_component_ref_as(component_ref, session, target_dir, cref_id);
+	int result = ds_sds_dump_component_ref_as(component_ref, session, ds_sds_session_get_target_dir(session), cref_id);
 	xmlFree(cref_id);
 
 	// if result is -1, oscap_seterr was already called, no need to call it again
@@ -438,7 +438,7 @@ int ds_sds_decompose_custom(const char* input_file, const char* id, const char* 
 
 		if (target_filename == NULL)
 		{
-			result = ds_sds_dump_component_ref(component_ref, session, strcmp(target_dir, "") == 0 ? "." : target_dir);
+			result = ds_sds_dump_component_ref(component_ref, session);
 		}
 		else
 		{
