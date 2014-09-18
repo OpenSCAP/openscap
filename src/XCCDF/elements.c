@@ -108,11 +108,18 @@ bool xccdf_is_supported_namespace(xmlNs *ns)
 		_namespace_get_xccdf_version_info((const char *) ns->href) != NULL;
 }
 
+char *xccdf_detect_version_priv(xmlTextReader *reader)
+{
+	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
+	const struct xccdf_version_info *ver_info = xccdf_detect_version_parser(reader);
+	if (ver_info == NULL) {
+		return NULL;
+	}
+	return oscap_strdup(xccdf_version_info_get_version(ver_info));
+}
+
 char * xccdf_detect_version(const char* file)
 {
-	const struct xccdf_version_info *ver_info;
-	char *doc_version;
-
 	xmlTextReaderPtr reader = xmlReaderForFile(file, NULL, 0);
 	if (!reader) {
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
@@ -120,18 +127,8 @@ char * xccdf_detect_version(const char* file)
 	}
 
 	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
-
-	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
-	ver_info = xccdf_detect_version_parser(reader);
-
-	if(!ver_info) {
-		xmlFreeTextReader(reader);
-		return NULL;
-	}
-	doc_version = strdup(xccdf_version_info_get_version(ver_info));
-
+	char *doc_version = xccdf_detect_version_priv(reader);
 	xmlFreeTextReader(reader);
-
 	return doc_version;
 }
 

@@ -41,6 +41,13 @@ OSCAP_HIDDEN_START;
 const struct xccdf_version_info* xccdf_detect_version_parser(xmlTextReaderPtr reader);
 
 /**
+ * Detects version from the xmlTextReader.
+ *
+ * The reader needs to be at the start of document.
+ */
+char *xccdf_detect_version_priv(xmlTextReader *reader);
+
+/**
  * Return true if the given namespace is supported XCCDF namespace.
  */
 bool xccdf_is_supported_namespace(xmlNs *ns);
