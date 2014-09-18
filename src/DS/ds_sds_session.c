@@ -42,7 +42,8 @@
 struct ds_sds_session {
 	struct oscap_source *source;            ///< Source DataStream raw representation
 	struct ds_sds_index *index;             ///< Source DataStream index
-	char *temp_dir;                         ///< Temp directory used by the session
+	char *temp_dir;                         ///< Temp directory managed by the session
+	const char *target_dir;                 ///< Target directory for current split
 	const char *datastream_id;              ///< ID of selected datastream
 	const char *checklist_id;               ///< ID of selected checklist
 	struct oscap_htable *component_sources;	///< oscap_source for parsed components
@@ -86,12 +87,33 @@ struct ds_sds_index *ds_sds_session_get_sds_idx(struct ds_sds_session *session)
 	return session->index;
 }
 
-static char *ds_sds_session_get_temp_dir(struct ds_sds_session *session)
+static const char *ds_sds_session_get_temp_dir(struct ds_sds_session *session)
 {
 	if (session->temp_dir == NULL) {
 		session->temp_dir = oscap_acquire_temp_dir();
 	}
 	return session->temp_dir;
+}
+
+const char *ds_sds_session_get_target_dir(struct ds_sds_session *session)
+{
+	if (session->target_dir == NULL) {
+		session->target_dir = ds_sds_session_get_temp_dir(session);
+	}
+	return session->target_dir;
+}
+
+int ds_sds_session_set_target_dir(struct ds_sds_session *session, const char *target_dir)
+{
+	if (session->target_dir == NULL) {
+		session->target_dir = target_dir;
+	}
+	if (oscap_streq(session->target_dir, target_dir)) {
+		return 0;
+	} else {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal Error: Not implemented: Could reset DataStream target_session in session.");
+		return 1;
+	}
 }
 
 int ds_sds_session_set_datastream_id(struct ds_sds_session *session, const char *datastream_id)
