@@ -427,14 +427,11 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 
 	/* Validate documents */
 	if (session->validate && (!xccdf_session_is_sds(session) || session->full_validation)) {
-		session->xccdf.doc_version = xccdf_detect_version(session->xccdf.file);
-		if (!session->xccdf.doc_version)
-			goto cleanup;
-
-		int ret;
-		if ((ret = oscap_validate_document(session->xccdf.file, OSCAP_DOCUMENT_XCCDF, session->xccdf.doc_version, _reporter, NULL)) != 0) {
-			if (ret==1)
-				_validation_failed(session->xccdf.file, OSCAP_DOCUMENT_XCCDF, session->xccdf.doc_version);
+		if (oscap_source_validate(session->xccdf.source, _reporter, NULL)) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid %s (%s) content in %s",
+					oscap_source_readable_origin(session->source),
+					oscap_document_type_to_string(oscap_source_get_scap_type(session->source)),
+					oscap_source_get_schema_version(session->source));
 			goto cleanup;
 		}
 	}
