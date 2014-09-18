@@ -35,5 +35,7 @@ xmlNodePtr ds_sds_lookup_datastream_in_collection(xmlDocPtr doc, const char *dat
 
 xmlNodePtr node_get_child_element(xmlNodePtr parent, const char* name);
 
+xmlNode *containter_get_component_ref_by_id(xmlNode *container, const char *component_id);
+
 OSCAP_HIDDEN_END;
 #endif
