@@ -41,6 +41,7 @@
 #include "DS/public/scap_ds.h"
 #include "DS/public/ds_sds_session.h"
 #include "DS/ds_common.h"
+#include "DS/ds_sds_session_priv.h"
 #include "OVAL/results/oval_results_impl.h"
 #include "XCCDF/xccdf_impl.h"
 #include "XCCDF_POLICY/public/xccdf_policy.h"
@@ -155,7 +156,9 @@ void xccdf_session_free(struct xccdf_session *session)
 	_oval_content_resources_free(session->oval.custom_resources);
 	_oval_content_resources_free(session->oval.resources);
 	oscap_source_free(session->xccdf.result_source);
-	oscap_source_free(session->xccdf.source);
+	if (session->ds.session == NULL) {
+		oscap_source_free(session->xccdf.source);
+	}
 	oscap_free(session->xccdf.file);
 	if (session->xccdf.policy_model != NULL)
 		xccdf_policy_model_free(session->xccdf.policy_model);
@@ -382,8 +385,10 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 	}
 	oscap_free(session->xccdf.file);
 	session->xccdf.file = NULL;
-	oscap_source_free(session->xccdf.source);
-	session->xccdf.source = NULL;
+	if (session->ds.session == NULL) {
+		oscap_source_free(session->xccdf.source);
+		session->xccdf.source = NULL;
+	}
 
 	if (xccdf_session_is_sds(session)) {
 		if (session->validate) {
@@ -400,26 +405,25 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 		if (session->temp_dir == NULL)
 			goto cleanup;
 
-		ds_sds_session_select_checklist(xccdf_session_get_ds_sds_session(session), session->ds.user_datastream_id,
+		ds_sds_session_set_target_dir(xccdf_session_get_ds_sds_session(session), session->temp_dir);
+		session->xccdf.source = ds_sds_session_select_checklist(xccdf_session_get_ds_sds_session(session), session->ds.user_datastream_id,
 				session->ds.user_component_id, session->ds.user_benchmark_id);
 		session->ds.datastream_id = ds_sds_session_get_datastream_id(session->ds.session);
 		session->ds.component_id = ds_sds_session_get_checklist_id(session->ds.session);
-		if (session->ds.datastream_id == NULL || session->ds.component_id == NULL)
-			goto cleanup;
-
-		if (ds_sds_decompose(session->filename, session->ds.datastream_id, session->ds.component_id, session->temp_dir, XCCDF_XML) != 0) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to decompose source datastream in '%s'.", session->filename);
+		if (session->xccdf.source == NULL) {
 			goto cleanup;
 		}
-
+		if (ds_sds_session_dump_component_files(session->ds.session) != 0) {
+			goto cleanup;
+		}
 		session->xccdf.file = malloc(PATH_MAX * sizeof(char));
 		snprintf(session->xccdf.file, PATH_MAX, "%s/%s", session->temp_dir, XCCDF_XML);
 	}
 	else {
 		session->xccdf.file = strdup(session->filename);
+		session->xccdf.source = oscap_source_new_from_file(session->xccdf.file);
 	}
 
-	session->xccdf.source = oscap_source_new_from_file(session->xccdf.file);
 
 	/* Validate documents */
 	if (session->validate && (!xccdf_session_is_sds(session) || session->full_validation)) {
