@@ -41,6 +41,7 @@
 #include "OVAL/public/oval_definitions.h"
 #include "source/schematron_priv.h"
 #include "source/validate_priv.h"
+#include "XCCDF/elements.h"
 #include "XCCDF/public/xccdf_benchmark.h"
 
 typedef enum oscap_source_type {
@@ -191,7 +192,7 @@ const char *oscap_source_get_schema_version(struct oscap_source *source)
 				break;
 			case OSCAP_DOCUMENT_XCCDF:
 			case OSCAP_DOCUMENT_XCCDF_TAILORING:
-				source->origin.version = xccdf_detect_version(source->origin.filepath);
+				source->origin.version = xccdf_detect_version_priv(reader);
 				break;
 			case OSCAP_DOCUMENT_CPE_DICTIONARY:
 				source->origin.version = cpe_dict_detect_version(source->origin.filepath);
