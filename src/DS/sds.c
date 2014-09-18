@@ -223,7 +223,9 @@ static int ds_sds_dump_component(const char* component_id, struct ds_sds_session
 		if (new_doc == NULL) {
 			return -1;
 		}
-		struct oscap_source *source = oscap_source_new_from_xmlDoc(new_doc, oscap_acquire_guess_realpath(filename));
+		char *realpath = oscap_acquire_guess_realpath(filename);
+		struct oscap_source *source = oscap_source_new_from_xmlDoc(new_doc, realpath);
+		oscap_free(realpath);
 		ds_sds_session_register_component_source(session, oscap_source_readable_origin(source), source);
 	}
 
