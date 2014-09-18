@@ -186,7 +186,7 @@ int oval_value_parse_tag(xmlTextReaderPtr reader,
 	if (isNil) {
 		return_code = 0;
 	} else {
-		return_code = oval_parser_text_value(reader, context, &oval_value_parse_tag_consume_text, &text);
+		return_code = oval_parser_text_value(reader, &oval_value_parse_tag_consume_text, &text);
 	}
 	struct oval_value *value = oval_value_new(datatype, text ? text : "");
 	oscap_free(text);

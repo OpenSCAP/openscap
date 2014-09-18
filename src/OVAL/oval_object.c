@@ -307,7 +307,7 @@ static void oval_note_consume(char *text, void *object)
 static int _oval_object_parse_notes(xmlTextReaderPtr reader, struct oval_parser_context *context, void *user)
 {
 	struct oval_object *object = (struct oval_object *)user;
-	return oval_parser_text_value(reader, context, &oval_note_consume, object);
+	return oval_parser_text_value(reader, &oval_note_consume, object);
 }
 
 static void oval_behavior_consume(struct oval_behavior *behavior, void *object)

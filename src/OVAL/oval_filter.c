@@ -147,7 +147,7 @@ int oval_filter_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *c
 	filter = oval_filter_new(context->definition_model);
 	fa = oval_filter_action_parse(reader, "action", OVAL_FILTER_ACTION_EXCLUDE);
 	oval_filter_set_filter_action(filter, fa);
-	return_code = oval_parser_text_value(reader, context, &_oval_filter_consume_ste_ref, filter);
+	return_code = oval_parser_text_value(reader, &_oval_filter_consume_ste_ref, filter);
 
 	(*consumer) (filter, user);
 

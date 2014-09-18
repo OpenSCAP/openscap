@@ -176,7 +176,7 @@ int oval_variable_binding_parse_tag(xmlTextReaderPtr reader,
 	oscap_free(variableId);
 
 	/* bound value */
-	return_code = oval_parser_text_value(reader, context, &_oval_variable_binding_value_consumer, binding);
+	return_code = oval_parser_text_value(reader, &_oval_variable_binding_value_consumer, binding);
 
 	if (return_code == 0)
 		(*consumer) (binding, client);

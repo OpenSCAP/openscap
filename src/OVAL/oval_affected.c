@@ -201,14 +201,14 @@ static int _oval_affected_parse_tag(xmlTextReaderPtr reader, struct oval_parser_
 
 	if (strcmp((char *)tagname, "platform") == 0) {
 		char *platform = NULL;
-		return_code = oval_parser_text_value(reader, context, &oval_text_consumer, &platform);
+		return_code = oval_parser_text_value(reader, &oval_text_consumer, &platform);
 		if (platform != NULL) {
 			oval_affected_add_platform(affected, platform);
 			oscap_free(platform);
 		}
 	} else if (strcmp((char *)tagname, "product") == 0) {
 		char *product = NULL;
-		return_code = oval_parser_text_value(reader, context, &oval_text_consumer, &product);
+		return_code = oval_parser_text_value(reader, &oval_text_consumer, &product);
 		if (product != NULL) {
 			oval_affected_add_product(affected, product);
 			oscap_free(product);

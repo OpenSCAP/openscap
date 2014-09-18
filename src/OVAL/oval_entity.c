@@ -318,7 +318,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 			struct oval_definition_model *model = context->definition_model;
 			varref_type = OVAL_ENTITY_VARREF_ELEMENT;
 			struct oval_consume_varref_context ctx = {.model = model, .variable = &variable, .value = &value};
-			return_code = oval_parser_text_value(reader, context, &oval_consume_varref, &ctx);
+			return_code = oval_parser_text_value(reader, &oval_consume_varref, &ctx);
 		} else {
 			struct oval_definition_model *model = context->definition_model;
 			variable = oval_definition_model_get_variable(model, varref);

@@ -182,11 +182,11 @@ static int _oval_sysint_parse_tag(xmlTextReaderPtr reader, struct oval_parser_co
 
 	int is_ovalsys = strcmp((const char *)OVAL_SYSCHAR_NAMESPACE, namespace) == 0;
 	if (is_ovalsys && (strcmp(tagname, "interface_name") == 0)) {
-		return_code = oval_parser_text_value(reader, context, &oval_consume_interface_name, sysint);
+		return_code = oval_parser_text_value(reader, &oval_consume_interface_name, sysint);
 	} else if (is_ovalsys && (strcmp(tagname, "ip_address") == 0)) {
-		return_code = oval_parser_text_value(reader, context, &oval_consume_ip_address, sysint);
+		return_code = oval_parser_text_value(reader, &oval_consume_ip_address, sysint);
 	} else if (is_ovalsys && (strcmp(tagname, "mac_address") == 0)) {
-		return_code = oval_parser_text_value(reader, context, &oval_consume_mac_address, sysint);
+		return_code = oval_parser_text_value(reader, &oval_consume_mac_address, sysint);
 	} else {
 		dW("Skipping tag: <%s:%s>.\n", namespace, tagname);
 		oval_parser_skip_tag(reader, context);

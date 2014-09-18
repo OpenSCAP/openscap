@@ -59,7 +59,7 @@ int oval_results_model_parse(xmlTextReaderPtr , struct oval_parser_context *);
 int oval_parser_boolean_attribute(xmlTextReaderPtr reader, char *attname, int defval);
 int oval_parser_int_attribute(xmlTextReaderPtr reader, char *attname, int defval);
 typedef void (*oval_xml_value_consumer) (char *, void *);
-int oval_parser_text_value(xmlTextReaderPtr, struct oval_parser_context *, oval_xml_value_consumer, void *);
+int oval_parser_text_value(xmlTextReaderPtr, oval_xml_value_consumer, void *);
 
 typedef int (*oval_xml_tag_parser) (xmlTextReaderPtr, struct oval_parser_context *, void *);
 int oval_parser_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oval_xml_tag_parser, void *);

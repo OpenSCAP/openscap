@@ -127,7 +127,7 @@ char *oval_determine_document_schema_version_priv(xmlTextReader *reader, oscap_d
 
 		elm_name = (const char *) xmlTextReaderConstLocalName(reader);
 		if (!strcmp(elm_name, "schema_version")) {
-			oval_parser_text_value(reader, NULL, oval_text_consumer, &version);
+			oval_parser_text_value(reader, oval_text_consumer, &version);
 			break;
 		}
 	}
@@ -224,7 +224,7 @@ int oval_parser_skip_tag(xmlTextReaderPtr reader, struct oval_parser_context *co
 }
 
 /* -1 error; 0 OK */
-int oval_parser_text_value(xmlTextReaderPtr reader, struct oval_parser_context *context, oval_xml_value_consumer consumer, void *user)
+int oval_parser_text_value(xmlTextReaderPtr reader, oval_xml_value_consumer consumer, void *user)
 {
 	int depth = xmlTextReaderDepth(reader);
 	bool has_value = false;

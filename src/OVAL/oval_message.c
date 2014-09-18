@@ -140,7 +140,7 @@ int oval_message_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 	/* message->level */
 	oval_message_set_level(message, oval_message_level_parse(reader, "level", OVAL_MESSAGE_LEVEL_INFO));
 	/* message->text */
-	return_code = oval_parser_text_value(reader, context, &oval_message_parse_tag_consumer, message);
+	return_code = oval_parser_text_value(reader, &oval_message_parse_tag_consumer, message);
 
         if (return_code == 0)
 		(*consumer) (message, client);
