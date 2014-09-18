@@ -70,7 +70,7 @@ struct xccdf_benchmark *xccdf_benchmark_import_source(struct oscap_source *sourc
 	xmlFreeTextReader(reader);
 
 	if (!parse_result) { // parsing fatal error
-		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to parse '%s'.", oscap_source_readable_origin(source));
+		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to import XCCDF content from '%s'.", oscap_source_readable_origin(source));
 		xccdf_benchmark_free(benchmark);
 		return NULL;
 	}

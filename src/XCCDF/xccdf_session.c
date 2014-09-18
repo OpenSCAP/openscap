@@ -433,9 +433,8 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 	}
 
 	/* Load XCCDF model and XCCDF Policy model */
-	benchmark = xccdf_benchmark_import(session->xccdf.file);
+	benchmark = xccdf_benchmark_import_source(session->xccdf.source);
 	if (benchmark == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to import the XCCDF content from '%s'.", session->xccdf.file);
 		goto cleanup;
 	}
 
