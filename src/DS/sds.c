@@ -230,7 +230,7 @@ static int ds_sds_dump_component(const char* component_id, struct ds_sds_session
 	return 0;
 }
 
-static int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, struct ds_sds_session *session, const char* target_dir, const char* filename)
+int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, struct ds_sds_session *session, const char* target_dir, const char* filename)
 {
 	char* cref_id = (char*)xmlGetProp(component_ref, BAD_CAST "id");
 	if (!cref_id)
@@ -337,7 +337,7 @@ static int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, struct ds_sds_
 	return 0;
 }
 
-static int ds_sds_dump_component_ref(xmlNodePtr component_ref, struct ds_sds_session *session)
+int ds_sds_dump_component_ref(xmlNodePtr component_ref, struct ds_sds_session *session)
 {
 	char* cref_id = (char*)xmlGetProp(component_ref, BAD_CAST "id");
 	if (!cref_id)
