@@ -39,6 +39,8 @@
 /// boolean to string (and vice versa) conversion map
 extern const struct oscap_string_map OSCAP_BOOL_MAP[];
 
+typedef void (*oscap_xml_value_consumer) (char *, void *);
+
 /// find starting element at given depth (returns false if none found)
 bool oscap_to_start_element(xmlTextReaderPtr reader, int depth);
 /// get a copy of a string contained by current element

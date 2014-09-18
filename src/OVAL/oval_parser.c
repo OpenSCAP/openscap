@@ -224,7 +224,7 @@ int oval_parser_skip_tag(xmlTextReaderPtr reader, struct oval_parser_context *co
 }
 
 /* -1 error; 0 OK */
-int oval_parser_text_value(xmlTextReaderPtr reader, oval_xml_value_consumer consumer, void *user)
+int oval_parser_text_value(xmlTextReaderPtr reader, oscap_xml_value_consumer consumer, void *user)
 {
 	int depth = xmlTextReaderDepth(reader);
 	bool has_value = false;
