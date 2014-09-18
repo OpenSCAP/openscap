@@ -31,12 +31,14 @@
 #include "common/list.h"
 #include "common/public/oscap.h"
 #include "common/util.h"
+#include "ds_common.h"
 #include "ds_sds_session.h"
 #include "ds_sds_session_priv.h"
 #include "sds_index_priv.h"
 #include "sds_priv.h"
 #include "source/oscap_source_priv.h"
 #include "source/public/oscap_source.h"
+#include <libgen.h>
 #include <libxml/tree.h>
 
 struct ds_sds_session {
@@ -201,12 +203,29 @@ int ds_sds_session_register_component_source(struct ds_sds_session *session, con
 	return 0;
 }
 
+static inline int _ensure_dir(const char *filepath)
+{
+	char *filepath_cpy = oscap_strdup(filepath);
+	char *dirpath = dirname(filepath_cpy);
+	int ret = ds_common_mkdir_p(dirpath);
+	if (ret != 0) {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error making directory '%s' while dumping component to file '%s'.", dirpath, filepath);
+	}
+	oscap_free(filepath_cpy);
+	return ret;
+}
+
 int ds_sds_session_dump_component_files(struct ds_sds_session *session)
 {
 	struct oscap_htable_iterator *hit = oscap_htable_iterator_new(session->component_sources);
 	while (oscap_htable_iterator_has_more(hit)) {
 		struct oscap_source *s = oscap_htable_iterator_next_value(hit);
-		int ret = oscap_source_save_as(s, NULL);
+		int ret = _ensure_dir(oscap_source_readable_origin(s));
+		if (ret != 0) {
+			oscap_htable_iterator_free(hit);
+			return ret;
+		}
+		ret = oscap_source_save_as(s, NULL);
 		if (ret != 0) {
 			oscap_htable_iterator_free(hit);
 			return ret;
