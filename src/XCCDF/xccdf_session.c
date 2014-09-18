@@ -61,6 +61,7 @@ struct xccdf_session {
 	char *temp_dir;					///< Temp directory used for decomposed component files.
 	struct {
 		char *file;				///< Path to XCCDF File (shall differ from the filename for sds).
+		struct oscap_source *source;            ///< oscap_source representing the XCCDF file
 		struct xccdf_policy_model *policy_model;///< Active policy model.
 		char *doc_version;			///< Version of parsed XCCDF file
 		char *profile_id;			///< Last selected profile.
@@ -156,6 +157,7 @@ void xccdf_session_free(struct xccdf_session *session)
 	_oval_content_resources_free(session->oval.resources);
 	oscap_source_free(session->xccdf.result_source);
 	oscap_free(session->xccdf.doc_version);
+	oscap_source_free(session->xccdf.source);
 	oscap_free(session->xccdf.file);
 	if (session->xccdf.policy_model != NULL)
 		xccdf_policy_model_free(session->xccdf.policy_model);
@@ -384,6 +386,8 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 	session->xccdf.file = NULL;
 	oscap_free(session->xccdf.doc_version);
 	session->xccdf.doc_version = NULL;
+	oscap_source_free(session->xccdf.source);
+	session->xccdf.source = NULL;
 
 	if (xccdf_session_is_sds(session)) {
 		if (session->validate) {
@@ -418,6 +422,8 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 	else {
 		session->xccdf.file = strdup(session->filename);
 	}
+
+	session->xccdf.source = oscap_source_new_from_file(session->xccdf.file);
 
 	/* Validate documents */
 	if (session->validate && (!xccdf_session_is_sds(session) || session->full_validation)) {
