@@ -37,6 +37,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include <oscap_reference.h>
+#include <oscap_source.h>
 #include <oscap.h>
 #include "cpe_dict.h"
 
@@ -703,6 +704,14 @@ struct xccdf_result* xccdf_item_to_result(struct xccdf_item* item);
  * @retval NULL on failure
  */
 struct xccdf_benchmark* xccdf_benchmark_import(const char *file);
+
+/**
+ * Import the content from oscap_source into a benchmark
+ * @memberof xccdf_benchmark
+ * @param source The oscap_source to import from
+ * @returns newly created benchmark element or NULL
+ */
+struct xccdf_benchmark* xccdf_benchmark_import_source(struct oscap_source *source);
 
 /**
  * Export a benchmark to an XML stream

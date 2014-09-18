@@ -54,13 +54,15 @@ struct xccdf_backref {
 
 struct xccdf_benchmark *xccdf_benchmark_import(const char *file)
 {
-	xmlTextReaderPtr reader = xmlReaderForFile(file, NULL, 0);
-	if (!reader) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
-		return NULL;
-	}
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	struct xccdf_benchmark *benchmark = xccdf_benchmark_import_source(source);
+	oscap_source_free(source);
+	return benchmark;
+}
 
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
+struct xccdf_benchmark *xccdf_benchmark_import_source(struct oscap_source *source)
+{
+	xmlTextReader *reader = oscap_source_get_xmlTextReader(source);
 
 	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) ;
 	struct xccdf_benchmark *benchmark = xccdf_benchmark_new();
@@ -68,7 +70,7 @@ struct xccdf_benchmark *xccdf_benchmark_import(const char *file)
 	xmlFreeTextReader(reader);
 
 	if (!parse_result) { // parsing fatal error
-		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to parse '%s'.", file);
+		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to parse '%s'.", oscap_source_readable_origin(source));
 		xccdf_benchmark_free(benchmark);
 		return NULL;
 	}
@@ -80,16 +82,15 @@ struct xccdf_benchmark *xccdf_benchmark_import(const char *file)
 	// FIXME: Refactor and move this somewhere else
 	struct cpe_dict_model* embedded_dict = xccdf_benchmark_get_cpe_list(benchmark);
 	if (embedded_dict != NULL) {
-		cpe_dict_model_set_origin_file(embedded_dict, file);
+		cpe_dict_model_set_origin_file(embedded_dict, oscap_source_readable_origin(source));
 	}
 
 	// same situation with embedded CPE2 lang model
 	// FIXME: Refactor and move this somewhere else
 	struct cpe_lang_model* embedded_lang_model = xccdf_benchmark_get_cpe_lang_model(benchmark);
 	if (embedded_lang_model != NULL) {
-		cpe_lang_model_set_origin_file(embedded_lang_model, file);
+		cpe_lang_model_set_origin_file(embedded_lang_model, oscap_source_readable_origin(source));
 	}
-
 	return benchmark;
 }
 
