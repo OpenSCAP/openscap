@@ -421,7 +421,7 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 	}
 	else {
 		session->xccdf.file = strdup(session->filename);
-		session->xccdf.source = oscap_source_new_from_file(session->xccdf.file);
+		session->xccdf.source = oscap_source_new_from_file(session->filename);
 	}
 
 
@@ -612,7 +612,7 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 
 	_oval_content_resources_free(session->oval.resources);
 
-	xccdf_path_cpy = strdup(session->xccdf.file);
+	xccdf_path_cpy = strdup(oscap_source_readable_origin(session->xccdf.source));
 	dir_path = dirname(xccdf_path_cpy);
 
 	resources = malloc(sizeof(struct oval_content_resource *));
@@ -794,7 +794,7 @@ int xccdf_session_load_check_engine_plugin(struct xccdf_session *session, const 
 
 	oscap_list_add(session->check_engine_plugins, plugin);
 
-	return check_engine_plugin_register(plugin, session->xccdf.policy_model, session->xccdf.file);
+	return check_engine_plugin_register(plugin, session->xccdf.policy_model, oscap_source_readable_origin(session->xccdf.source));
 }
 
 int xccdf_session_load_check_engine_plugins(struct xccdf_session *session)
@@ -1305,7 +1305,7 @@ int xccdf_session_export_check_engine_plugins(struct xccdf_session *session)
 				plugin,
 				session->xccdf.policy_model,
 				session->validate && session->full_validation,
-				session->xccdf.file) != 0)
+				oscap_source_readable_origin(session->xccdf.source)) != 0)
 			ret = 1;
 	}
 
