@@ -63,7 +63,6 @@ struct xccdf_session {
 		char *file;				///< Path to XCCDF File (shall differ from the filename for sds).
 		struct oscap_source *source;            ///< oscap_source representing the XCCDF file
 		struct xccdf_policy_model *policy_model;///< Active policy model.
-		char *doc_version;			///< Version of parsed XCCDF file
 		char *profile_id;			///< Last selected profile.
 		struct xccdf_result *result;		///< XCCDF Result model.
 		float base_score;			///< Basec score of the latest evaluation.
@@ -156,7 +155,6 @@ void xccdf_session_free(struct xccdf_session *session)
 	_oval_content_resources_free(session->oval.custom_resources);
 	_oval_content_resources_free(session->oval.resources);
 	oscap_source_free(session->xccdf.result_source);
-	oscap_free(session->xccdf.doc_version);
 	oscap_source_free(session->xccdf.source);
 	oscap_free(session->xccdf.file);
 	if (session->xccdf.policy_model != NULL)
@@ -384,8 +382,6 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 	}
 	oscap_free(session->xccdf.file);
 	session->xccdf.file = NULL;
-	oscap_free(session->xccdf.doc_version);
-	session->xccdf.doc_version = NULL;
 	oscap_source_free(session->xccdf.source);
 	session->xccdf.source = NULL;
 
