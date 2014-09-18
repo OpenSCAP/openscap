@@ -61,7 +61,6 @@ struct xccdf_session {
 	struct oscap_source *source;                    ///< Main source assigned with the main file (SDS or XCCDF)
 	char *temp_dir;					///< Temp directory used for decomposed component files.
 	struct {
-		char *file;				///< Path to XCCDF File (shall differ from the filename for sds).
 		struct oscap_source *source;            ///< oscap_source representing the XCCDF file
 		struct xccdf_policy_model *policy_model;///< Active policy model.
 		char *profile_id;			///< Last selected profile.
@@ -159,7 +158,6 @@ void xccdf_session_free(struct xccdf_session *session)
 	if (session->ds.session == NULL) {
 		oscap_source_free(session->xccdf.source);
 	}
-	oscap_free(session->xccdf.file);
 	if (session->xccdf.policy_model != NULL)
 		xccdf_policy_model_free(session->xccdf.policy_model);
 	oscap_free(session->ds.user_datastream_id);
@@ -383,8 +381,6 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 		xccdf_policy_model_free(session->xccdf.policy_model);
 		session->xccdf.policy_model = NULL;
 	}
-	oscap_free(session->xccdf.file);
-	session->xccdf.file = NULL;
 	if (session->ds.session == NULL) {
 		oscap_source_free(session->xccdf.source);
 		session->xccdf.source = NULL;
@@ -416,11 +412,8 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 		if (ds_sds_session_dump_component_files(session->ds.session) != 0) {
 			goto cleanup;
 		}
-		session->xccdf.file = malloc(PATH_MAX * sizeof(char));
-		snprintf(session->xccdf.file, PATH_MAX, "%s/%s", session->temp_dir, XCCDF_XML);
 	}
 	else {
-		session->xccdf.file = strdup(session->filename);
 		session->xccdf.source = oscap_source_new_from_file(session->filename);
 	}
 
