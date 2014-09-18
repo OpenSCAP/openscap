@@ -184,11 +184,12 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 			break;
 		case XCCDFE_PLAIN_TEXT:{
 				const char *id = xccdf_attribute_get(reader, XCCDFA_ID);
-				const char *data = oscap_element_string_get(reader);
+				char *data = (char *)xmlTextReaderReadInnerXml(reader);
 				if (id)
 					oscap_list_add(benchmark->sub.benchmark.plain_texts,
 							xccdf_plain_text_new_fill(id,
 							data == NULL ? "" : data));
+				xmlFree(data);
 				break;
 			}
 		case XCCDFE_CPE_LIST:{
