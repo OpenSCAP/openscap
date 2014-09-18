@@ -127,7 +127,7 @@ char *oval_determine_document_schema_version_priv(xmlTextReader *reader, oscap_d
 
 		elm_name = (const char *) xmlTextReaderConstLocalName(reader);
 		if (!strcmp(elm_name, "schema_version")) {
-			oscap_parser_text_value(reader, oval_text_consumer, &version);
+			oscap_parser_text_value(reader, oscap_text_consumer, &version);
 			break;
 		}
 	}
@@ -251,21 +251,4 @@ int oval_parser_int_attribute(xmlTextReaderPtr reader, char *attname, int defval
 		oscap_free(string);
 	}
 	return value;
-}
-
-void oval_text_consumer(char *text, void *user)
-{
-	char *platform = *(char **)user;
-	if (platform == NULL)
-		platform = oscap_strdup(text);
-	else {
-		int size = strlen(platform) + strlen(text) + 1;
-		char *newtext = (char *) oscap_alloc(size * sizeof(char));
-		*newtext = 0;
-		strcat(newtext, platform);
-		strcat(newtext, text);
-		oscap_free(platform);
-		platform = newtext;
-	}
-	*(char **)user = platform;
 }

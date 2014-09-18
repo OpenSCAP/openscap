@@ -64,6 +64,23 @@ bool oscap_to_start_element(xmlTextReaderPtr reader, int depth)
 	return false;
 }
 
+void oscap_text_consumer(char *text, void *user)
+{
+	char *platform = *(char **)user;
+	if (platform == NULL)
+		platform = oscap_strdup(text);
+	else {
+		int size = strlen(platform) + strlen(text) + 1;
+		char *newtext = (char *) oscap_alloc(size * sizeof(char));
+		*newtext = 0;
+		strcat(newtext, platform);
+		strcat(newtext, text);
+		oscap_free(platform);
+		platform = newtext;
+	}
+	*(char **)user = platform;
+}
+
 /* -1 error; 0 OK */
 int oscap_parser_text_value(xmlTextReaderPtr reader, oscap_xml_value_consumer consumer, void *user)
 {
