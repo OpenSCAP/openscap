@@ -405,6 +405,11 @@ int ds_sds_decompose_custom(const char* input_file, const char* id, const char* 
 		oscap_source_free(ds_source);
 		return -1;
 	}
+	if (ds_sds_session_set_target_dir(session, oscap_streq(target_dir, "") ? "." : target_dir)) {
+		ds_sds_session_free(session);
+		oscap_source_free(ds_source);
+		return -1;
+	}
 	xmlNode *datastream = ds_sds_session_get_selected_datastream(session);
 	if (!datastream)
 	{
