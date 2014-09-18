@@ -401,48 +401,11 @@ int ds_sds_decompose_custom(const char* input_file, const char* id, const char* 
 		oscap_source_free(ds_source);
 		return -1;
 	}
-	xmlNode *datastream = ds_sds_session_get_selected_datastream(session);
-	if (!datastream)
-	{
+
+	if (ds_sds_session_register_component_with_dependencies(session, container_name, component_id, target_filename) != 0) {
 		ds_sds_session_free(session);
 		oscap_source_free(ds_source);
 		return -1;
-	}
-
-	xmlNodePtr container = node_get_child_element(datastream, container_name);
-
-	if (!container)
-	{
-		if (!id)
-			oscap_seterr(OSCAP_EFAMILY_XML, "No '%s' container element found in file '%s' in the first datastream.", container_name, input_file);
-		else
-			oscap_seterr(OSCAP_EFAMILY_XML, "No '%s' container element found in file '%s' in datastream of id '%s'.", container_name, input_file, id);
-
-		ds_sds_session_free(session);
-		oscap_source_free(ds_source);
-		return -1;
-	}
-
-	xmlNode *component_ref = containter_get_component_ref_by_id(container, component_id);
-	if (component_ref != NULL) {
-		int result;
-
-		if (target_filename == NULL)
-		{
-			result = ds_sds_dump_component_ref(component_ref, session);
-		}
-		else
-		{
-			result = ds_sds_dump_component_ref_as(component_ref, session, strcmp(target_dir, "") == 0 ? "." : target_dir, target_filename);
-		}
-
-		if (result != 0)
-		{
-			// oscap_seterr was already called in ds_sds_dump_component[_as]
-			ds_sds_session_free(session);
-			oscap_source_free(ds_source);
-			return -1;
-		}
 	}
 
 	int ret = ds_sds_session_dump_component_files(session);

@@ -203,6 +203,36 @@ int ds_sds_session_register_component_source(struct ds_sds_session *session, con
 	return 0;
 }
 
+int ds_sds_session_register_component_with_dependencies(struct ds_sds_session *session, const char *container_name, const char *component_id, const char *target_filename)
+{
+	xmlNode *datastream = ds_sds_session_get_selected_datastream(session);
+	if (!datastream) {
+		return -1;
+	}
+
+	xmlNodePtr container = node_get_child_element(datastream, container_name);
+	if (!container) {
+		if (ds_sds_session_get_datastream_id(session) == NULL)
+			oscap_seterr(OSCAP_EFAMILY_XML, "No '%s' container element found in file '%s' in the first datastream.",
+					container_name, oscap_source_readable_origin(session->source));
+		else
+			oscap_seterr(OSCAP_EFAMILY_XML, "No '%s' container element found in file '%s' in datastream of id '%s'.",
+					container_name, oscap_source_readable_origin(session->source), ds_sds_session_get_datastream_id(session));
+		return -1;
+	}
+
+	int res = -1;
+	xmlNode *component_ref = containter_get_component_ref_by_id(container, component_id);
+	if (component_ref != NULL) {
+		if (target_filename == NULL) {
+			res = ds_sds_dump_component_ref(component_ref, session);
+		} else {
+			res = ds_sds_dump_component_ref_as(component_ref, session, ds_sds_session_get_target_dir(session), target_filename);
+		}
+	}
+	return res;
+}
+
 static inline int _ensure_dir(const char *filepath)
 {
 	char *filepath_cpy = oscap_strdup(filepath);
