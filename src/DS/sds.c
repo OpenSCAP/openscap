@@ -225,11 +225,6 @@ static int ds_sds_dump_component(const char* component_id, struct ds_sds_session
 		}
 		struct oscap_source *source = oscap_source_new_from_xmlDoc(new_doc, oscap_acquire_guess_realpath(filename));
 		ds_sds_session_register_component_source(session, oscap_source_readable_origin(source), source);
-		if (xmlSaveFileEnc(filename, new_doc, "utf-8") == -1)
-		{
-			oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error when saving resulting DOM to file '%s' while dumping component (id='%s').", filename, component_id);
-			return -1;
-		}
 	}
 
 	return 0;
@@ -454,9 +449,10 @@ int ds_sds_decompose_custom(const char* input_file, const char* id, const char* 
 		}
 	}
 
+	int ret = ds_sds_session_dump_component_files(session);
 	ds_sds_session_free(session);
 	oscap_source_free(ds_source);
-	return 0;
+	return ret;
 }
 
 int ds_sds_decompose(const char* input_file, const char* id, const char* xccdf_id, const char* target_dir, const char* xccdf_filename)
