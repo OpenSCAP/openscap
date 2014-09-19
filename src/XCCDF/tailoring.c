@@ -216,8 +216,6 @@ struct xccdf_tailoring *xccdf_tailoring_import(const char *file, struct xccdf_be
 
 	if (!tailoring) { // parsing fatal error
 		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to parse '%s'.", file);
-		xccdf_tailoring_free(tailoring);
-		return NULL;
 	}
 
 	return tailoring;
