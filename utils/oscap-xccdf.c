@@ -433,6 +433,13 @@ static void _register_progress_callback(struct xccdf_session *session, bool prog
 	/* xccdf_policy_model_register_output_callback(policy_model, callback_syslog_result, NULL); */
 }
 
+static void report_missing_profile(const struct oscap_action *action)
+{
+	fprintf(stderr,
+		"Profile \"%s\" was not found. Get available profiles using:\n"
+		"$ oscap info \"%s\"\n", action->profile, action->f_xccdf);
+}
+
 /**
  * XCCDF Processing fucntion
  * @param action OSCAP Action structure
@@ -471,7 +478,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	/* Select profile */
 	if (!xccdf_session_set_profile_id(session, action->profile)) {
 		if (action->profile != NULL)
-			fprintf(stderr, "Profile \"%s\" was not found.\n", action->profile);
+			report_missing_profile(action);
 		else
 			fprintf(stderr, "No Policy was found for default profile.\n");
 		goto cleanup;
@@ -572,7 +579,7 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	policy = xccdf_policy_model_get_policy_by_id(xccdf_session_get_policy_model(session), action->profile);
 	if (policy == NULL) {
 		if (action->profile != NULL)
-			fprintf(stderr, "Profile \"%s\" was not found.\n", action->profile);
+			report_missing_profile(action);
 		else
 			fprintf(stderr, "No Policy was found for default profile.\n");
 		goto cleanup;
@@ -801,7 +808,7 @@ int app_generate_fix(const struct oscap_action *action)
 		goto cleanup;
 
 	if (!xccdf_session_set_profile_id(session, action->profile)) {
-		fprintf(stderr, "Profile \"%s\" was not found.\n", action->profile);
+		report_missing_profile(action);
 		goto cleanup;
 	}
 
