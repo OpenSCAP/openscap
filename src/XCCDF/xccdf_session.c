@@ -54,6 +54,7 @@
 struct oval_content_resource {
 	char *href;					///< Coresponds with xccdf:check-content-ref/\@href.
 	char *filename;					///< Points to the filename on the filesystem.
+	struct oscap_source *source;                    ///< The oscap_source representing the href resource
 };
 
 struct xccdf_session {
@@ -621,13 +622,19 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 		if (strcmp(oscap_file_entry_get_system(file_entry), oval_sysname))
 			continue;
 
+		struct oscap_source *source = NULL;
+		if (xccdf_session_get_ds_sds_session(session) != NULL) {
+			source = ds_sds_session_get_component_by_href(xccdf_session_get_ds_sds_session(session), oscap_file_entry_get_file(file_entry));
+		}
+
 		tmp_path = malloc(PATH_MAX * sizeof(char));
 		snprintf(tmp_path, PATH_MAX, "%s/%s", dir_path, oscap_file_entry_get_file(file_entry));
 
-		if (stat(tmp_path, &sb) == 0) {
+		if (source != NULL || stat(tmp_path, &sb) == 0) {
 			resources[idx] = malloc(sizeof(struct oval_content_resource));
 			resources[idx]->href = strdup(oscap_file_entry_get_file(file_entry));
 			resources[idx]->filename = tmp_path;
+			resources[idx]->source = source;
 			idx++;
 			resources = realloc(resources, (idx + 1) * sizeof(struct oval_content_resource *));
 			resources[idx] = NULL;
