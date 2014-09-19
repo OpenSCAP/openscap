@@ -873,18 +873,16 @@ int xccdf_session_load_tailoring(struct xccdf_session *session)
 		return 0; // nothing to do
 
 	if (session->validate && (!from_sds || session->full_validation)) {
-		char *xccdf_tailoring_version = xccdf_detect_version(tailoring_path);
-		int ret = 0;
-
-		if ((ret=oscap_validate_document(tailoring_path, OSCAP_DOCUMENT_XCCDF_TAILORING, xccdf_tailoring_version, _reporter, NULL))) {
-			if (ret==1)
-				_validation_failed(tailoring_path, OSCAP_DOCUMENT_XCCDF_TAILORING, xccdf_tailoring_version);
-			free(xccdf_tailoring_version);
-			free(tailoring_path);
+		struct oscap_source *tailoring_source = oscap_source_new_from_file(tailoring_path);
+		if (oscap_source_validate(tailoring_source, _reporter, NULL) != 0) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid %s (%s) content in %s",
+					oscap_document_type_to_string(oscap_source_get_scap_type(tailoring_source)),
+					oscap_source_get_schema_version(tailoring_source),
+					oscap_source_readable_origin(tailoring_source));
+			oscap_source_free(tailoring_source);
 			return 1;
 		}
-
-		free(xccdf_tailoring_version);
+		oscap_source_free(tailoring_source);
 	}
 
 	struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(session->xccdf.policy_model);
