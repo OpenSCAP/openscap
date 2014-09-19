@@ -757,9 +757,7 @@ int xccdf_session_load_oval(struct xccdf_session *session)
 
 	for (int idx=0; contents[idx]; idx++) {
 		/* file -> def_model */
-		struct oscap_source *source = oscap_source_new_from_file(contents[idx]->filename);
-		struct oval_definition_model *tmp_def_model = oval_definition_model_import_source(source);
-		oscap_source_free(source);
+		struct oval_definition_model *tmp_def_model = oval_definition_model_import_source(contents[idx]->source);
 		if (tmp_def_model == NULL) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to create OVAL definition model from: '%s'.", contents[idx]->filename);
 			return 1;
