@@ -840,40 +840,30 @@ int xccdf_session_load_sce(struct xccdf_session *session)
 int xccdf_session_load_tailoring(struct xccdf_session *session)
 {
 	bool from_sds = false;
-	char *tailoring_path = NULL;
+	struct oscap_source *tailoring_source = NULL;
 
 	if (session->user_tailoring_file != NULL) {
-		tailoring_path = oscap_strdup(session->user_tailoring_file);
+		tailoring_source = oscap_source_new_from_file(session->user_tailoring_file);
 	}
 	else if (session->user_tailoring_cid != NULL) {
-		static const char *TAILORING_XML = "tailoring.xml";
-
 		if (!xccdf_session_is_sds(session)) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't use given tailoring component ID because file isn't a source datastream.");
 			return 1;
 		}
 
-		// TODO: Is the "checklists" container the right one?
-		if (ds_sds_decompose_custom(session->filename, xccdf_session_get_datastream_id(session),
-				session->temp_dir, "checklists", session->user_tailoring_cid,
-				TAILORING_XML) != 0) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to split component of id '%s' from the source datastream.",
-				session->user_tailoring_cid);
+		tailoring_source = ds_sds_session_select_tailoring(xccdf_session_get_ds_sds_session(session), session->user_tailoring_cid);
+		if (tailoring_source == NULL) {
 			return 1;
 		}
 
-		tailoring_path = oscap_sprintf("%s/%s", session->temp_dir, TAILORING_XML);
 		from_sds = true;
 	}
 
 	// TODO: We should warn if has a XCCDF tailoring-file hint and user isn't
 	//       using that particular tailoring.
 
-	if (tailoring_path == NULL)
+	if (tailoring_source == NULL)
 		return 0; // nothing to do
-
-	struct oscap_source *tailoring_source = oscap_source_new_from_file(tailoring_path);
-	free(tailoring_path);
 
 	if (session->validate && (!from_sds || session->full_validation)) {
 		if (oscap_source_validate(tailoring_source, _reporter, NULL) != 0) {
@@ -888,7 +878,9 @@ int xccdf_session_load_tailoring(struct xccdf_session *session)
 
 	struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(session->xccdf.policy_model);
 	struct xccdf_tailoring *tailoring = xccdf_tailoring_import_source(tailoring_source, benchmark);
-	oscap_source_free(tailoring_source);
+	if (session->user_tailoring_file != NULL) {
+		oscap_source_free(tailoring_source);
+	}
 
 	if (tailoring == NULL)
 		return 1;
