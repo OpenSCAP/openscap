@@ -66,8 +66,8 @@ struct xccdf_policy_model {
 
 	struct {
 		struct oscap_list *dicts;       ///< All CPE dictionaries except the one embedded in XCCDF
+		struct oscap_list *lang_models; ///< All CPE lang models except the one embedded in XCCDF
 	} cpe;
-	struct oscap_list       * cpe_lang_models; ///< All CPE lang models except the one embedded in XCCDF
 	struct oscap_htable     * cpe_oval_sessions; ///< Caches CPE OVAL check results
 	struct oscap_htable     * cpe_applicable_platforms;
 };
@@ -974,7 +974,7 @@ bool xccdf_policy_model_platforms_are_applicable(struct xccdf_policy_model *mode
 			ret = true;
 	}
 
-	struct oscap_iterator *lang_models = oscap_iterator_new(model->cpe_lang_models);
+	struct oscap_iterator *lang_models = oscap_iterator_new(model->cpe.lang_models);
 	while (oscap_iterator_has_more(lang_models)) {
 		struct cpe_lang_model *lang_model = (struct cpe_lang_model *) oscap_iterator_next(lang_models);
 		if (xccdf_policy_model_platforms_are_applicable_lang_model(model, lang_model, platforms))
@@ -1720,7 +1720,7 @@ bool xccdf_policy_model_add_cpe_lang_model(struct xccdf_policy_model *model, con
 		__attribute__nonnull__(cpe_lang);
 
 		struct cpe_lang_model* lang_model = cpe_lang_model_import(cpe_lang);
-		return oscap_list_add(model->cpe_lang_models, lang_model);
+		return oscap_list_add(model->cpe.lang_models, lang_model);
 }
 
 bool xccdf_policy_model_add_cpe_autodetect(struct xccdf_policy_model *model, const char* filepath)
@@ -1863,7 +1863,7 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
 	model->engines = oscap_list_new();
 
 	model->cpe.dicts = oscap_list_new();
-	model->cpe_lang_models = oscap_list_new();
+	model->cpe.lang_models = oscap_list_new();
 	model->cpe_oval_sessions = oscap_htable_new();
 	model->cpe_applicable_platforms = oscap_htable_new();
 
@@ -2556,7 +2556,7 @@ void xccdf_policy_model_free(struct xccdf_policy_model * model) {
         xccdf_benchmark_free(model->benchmark);
 
 	oscap_list_free(model->cpe.dicts, (oscap_destruct_func) cpe_dict_model_free);
-	oscap_list_free(model->cpe_lang_models, (oscap_destruct_func) cpe_lang_model_free);
+	oscap_list_free(model->cpe.lang_models, (oscap_destruct_func) cpe_lang_model_free);
 	oscap_htable_free(model->cpe_oval_sessions, (oscap_destruct_func) _xccdf_policy_destroy_cpe_oval_session);
 	oscap_htable_free(model->cpe_applicable_platforms, NULL);
         oscap_free(model);
