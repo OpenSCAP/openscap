@@ -73,7 +73,6 @@ struct xccdf_session {
 		char *user_datastream_id;		///< Datastream id requested by user (only applicable for sds).
 		char *user_component_id;		///< Component id requested by user (only applicable for sds).
 		char *user_benchmark_id;		///< Benchmark id requested by user (only applicable for sds).
-		char *component_id;			///< Component id used (only applicable for sds).
 	} ds;
 	struct {
 		bool fetch_remote_resources;		///< Allows download of remote resources (not applicable when user sets custom oval files)
@@ -208,12 +207,14 @@ void xccdf_session_set_component_id(struct xccdf_session *session, const char *c
 	if (session->ds.user_component_id != NULL)
 		oscap_free(session->ds.user_component_id);
 	session->ds.user_component_id = oscap_strdup(component_id);
-	session->ds.component_id = session->ds.user_component_id;
 }
 
 const char *xccdf_session_get_component_id(struct xccdf_session *session)
 {
-	return session->ds.component_id;
+	if (session->ds.session != NULL) {
+		return ds_sds_session_get_checklist_id(session->ds.session);
+	}
+	return session->ds.user_component_id;
 }
 
 void xccdf_session_set_benchmark_id(struct xccdf_session *session, const char *benchmark_id)
@@ -403,7 +404,6 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 
 		session->xccdf.source = ds_sds_session_select_checklist(xccdf_session_get_ds_sds_session(session), session->ds.user_datastream_id,
 				session->ds.user_component_id, session->ds.user_benchmark_id);
-		session->ds.component_id = ds_sds_session_get_checklist_id(session->ds.session);
 		if (session->xccdf.source == NULL) {
 			goto cleanup;
 		}
