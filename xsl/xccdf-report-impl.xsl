@@ -30,6 +30,7 @@ Authors:
     xmlns:ovalres="http://oval.mitre.org/XMLSchema/oval-results-5"
     xmlns:sceres="http://open-scap.org/page/SCE_result_file"
     xmlns:exsl="http://exslt.org/common"
+    xmlns:arf="http://scap.nist.gov/schema/asset-reporting-format/1.1"
     exclude-result-prefixes="xsl cdf ovalres sceres exsl">
 
 <xsl:include href="xccdf-branding.xsl" />
@@ -463,21 +464,47 @@ Authors:
         </xsl:choose>
     </xsl:variable>
 
-    <xsl:if test="$filename != ''">
-        <xsl:variable name="details">
+    <xsl:variable name="details">
+        <xsl:if test="$filename != ''">
             <xsl:apply-templates select="document($filename)/ovalres:oval_results" mode="brief">
                 <xsl:with-param name='definition-id' select='$check/cdf:check-content-ref/@name'/>
             </xsl:apply-templates>
-        </xsl:variable>
-
-        <xsl:if test="normalize-space($details)">
-            <span class="label label-default"><abbr title="OVAL details taken from '{$filename}'">OVAL details</abbr></span>
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <xsl:copy-of select="$details"/>
-                </div>
-            </div>
         </xsl:if>
+
+        <!-- This is a very pragmatic solution to solve our users problem,
+             it is not guaranteed to do the right thing in all cases but
+             it does the right thing with ARFs generated from openscap.
+
+             potential problem:
+
+             ARF has tons of different assets and results in it
+               - this XSLT will source OVAL results that may or may
+                 not be related to that particular report
+
+               - there is nothing in the ARF to help us map OVAL results
+                 to XCCDF results, we have to guess!
+
+                 (You would think that check-content-ref/@href would help
+                  us locate the arf:report with the OVAL results but 370-1
+                  requirement makes the @href useless)
+
+             I believe the benefits greatly outweigh the drawbacks in this
+             case and the problem outlined will be encountered by a very
+             small group of users. Still, this needs to be fixed in future
+             versions!
+        -->
+        <xsl:apply-templates select="(/arf:asset-report-collection/arf:reports/arf:report/arf:content/ovalres:oval_results)[1]" mode="brief">
+            <xsl:with-param name='definition-id' select='$check/cdf:check-content-ref/@name'/>
+        </xsl:apply-templates>
+    </xsl:variable>
+
+    <xsl:if test="normalize-space($details)">
+        <span class="label label-default"><abbr title="OVAL details taken from '{$filename}'">OVAL details</abbr></span>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <xsl:copy-of select="$details"/>
+            </div>
+        </div>
     </xsl:if>
 </xsl:template>
 
