@@ -408,9 +408,6 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 		if (session->xccdf.source == NULL) {
 			goto cleanup;
 		}
-		if (ds_sds_session_dump_component_files(session->ds.session) != 0) {
-			goto cleanup;
-		}
 	}
 	else {
 		session->xccdf.source = oscap_source_new_from_file(session->filename);
