@@ -68,8 +68,8 @@ struct xccdf_policy_model {
 		struct oscap_list *dicts;       ///< All CPE dictionaries except the one embedded in XCCDF
 		struct oscap_list *lang_models; ///< All CPE lang models except the one embedded in XCCDF
 		struct oscap_htable *oval_sessions; ///< Caches CPE OVAL check results
+		struct oscap_htable *applicable_platforms;
 	} cpe;
-	struct oscap_htable     * cpe_applicable_platforms;
 };
 /* Macros to generate iterators, getters and setters */
 OSCAP_GETTER(struct xccdf_benchmark *, xccdf_policy_model, benchmark)
@@ -903,8 +903,8 @@ static bool xccdf_policy_model_platforms_are_applicable_dict(struct xccdf_policy
 		{
 			ret = true;
 
-			if (oscap_htable_get(model->cpe_applicable_platforms, platform) == NULL) {
-				oscap_htable_add(model->cpe_applicable_platforms, platform, 0);
+			if (oscap_htable_get(model->cpe.applicable_platforms, platform) == NULL) {
+				oscap_htable_add(model->cpe.applicable_platforms, platform, 0);
 			}
 		}
 	}
@@ -944,8 +944,8 @@ static bool xccdf_policy_model_platforms_are_applicable_lang_model(struct xccdf_
 		{
 			ret = true;
 
-			if (oscap_htable_get(model->cpe_applicable_platforms, platform) == NULL) {
-				oscap_htable_add(model->cpe_applicable_platforms, platform, 0);
+			if (oscap_htable_get(model->cpe.applicable_platforms, platform) == NULL) {
+				oscap_htable_add(model->cpe.applicable_platforms, platform, 0);
 			}
 		}
 	}
@@ -1865,7 +1865,7 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
 	model->cpe.dicts = oscap_list_new();
 	model->cpe.lang_models = oscap_list_new();
 	model->cpe.oval_sessions = oscap_htable_new();
-	model->cpe_applicable_platforms = oscap_htable_new();
+	model->cpe.applicable_platforms = oscap_htable_new();
 
 	if (!xccdf_policy_model_add_default_cpe(model))
 	{
@@ -2318,7 +2318,7 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
 
 	xccdf_policy_add_final_setvalues(policy, xccdf_benchmark_to_item(benchmark), result);
 
-	struct oscap_htable_iterator *it = oscap_htable_iterator_new(policy->model->cpe_applicable_platforms);
+	struct oscap_htable_iterator *it = oscap_htable_iterator_new(policy->model->cpe.applicable_platforms);
 	while (oscap_htable_iterator_has_more(it)) {
 		const char *key = oscap_htable_iterator_next_key(it);
 		xccdf_result_add_applicable_platform(result, key);
@@ -2558,7 +2558,7 @@ void xccdf_policy_model_free(struct xccdf_policy_model * model) {
 	oscap_list_free(model->cpe.dicts, (oscap_destruct_func) cpe_dict_model_free);
 	oscap_list_free(model->cpe.lang_models, (oscap_destruct_func) cpe_lang_model_free);
 	oscap_htable_free(model->cpe.oval_sessions, (oscap_destruct_func) _xccdf_policy_destroy_cpe_oval_session);
-	oscap_htable_free(model->cpe_applicable_platforms, NULL);
+	oscap_htable_free(model->cpe.applicable_platforms, NULL);
         oscap_free(model);
 }
 
