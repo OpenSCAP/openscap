@@ -872,8 +872,10 @@ int xccdf_session_load_tailoring(struct xccdf_session *session)
 	if (tailoring_path == NULL)
 		return 0; // nothing to do
 
+	struct oscap_source *tailoring_source = oscap_source_new_from_file(tailoring_path);
+	free(tailoring_path);
+
 	if (session->validate && (!from_sds || session->full_validation)) {
-		struct oscap_source *tailoring_source = oscap_source_new_from_file(tailoring_path);
 		if (oscap_source_validate(tailoring_source, _reporter, NULL) != 0) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid %s (%s) content in %s",
 					oscap_document_type_to_string(oscap_source_get_scap_type(tailoring_source)),
@@ -882,14 +884,11 @@ int xccdf_session_load_tailoring(struct xccdf_session *session)
 			oscap_source_free(tailoring_source);
 			return 1;
 		}
-		oscap_source_free(tailoring_source);
 	}
 
 	struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(session->xccdf.policy_model);
-	struct xccdf_tailoring *tailoring = xccdf_tailoring_import(tailoring_path,
-		benchmark);
-
-	free(tailoring_path);
+	struct xccdf_tailoring *tailoring = xccdf_tailoring_import_source(tailoring_source, benchmark);
+	oscap_source_free(tailoring_source);
 
 	if (tailoring == NULL)
 		return 1;
