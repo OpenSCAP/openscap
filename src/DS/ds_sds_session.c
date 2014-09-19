@@ -213,6 +213,17 @@ int ds_sds_session_register_component_source(struct ds_sds_session *session, con
 	return 0;
 }
 
+struct oscap_source *ds_sds_session_get_component_by_href(struct ds_sds_session *session, const char *href)
+{
+	// href is relative path from XCCDF file (= relative to target_dir)
+	char *path = oscap_sprintf("%s/%s", ds_sds_session_get_target_dir(session), href);
+	char *realpath = oscap_acquire_guess_realpath(path);
+	oscap_free(path);
+	struct oscap_source *component = oscap_htable_get(session->component_sources, realpath);
+	oscap_free(realpath);
+	return component;
+}
+
 int ds_sds_session_register_component_with_dependencies(struct ds_sds_session *session, const char *container_name, const char *component_id, const char *target_filename)
 {
 	xmlNode *datastream = ds_sds_session_get_selected_datastream(session);
