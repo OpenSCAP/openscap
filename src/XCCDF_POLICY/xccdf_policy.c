@@ -67,8 +67,8 @@ struct xccdf_policy_model {
 	struct {
 		struct oscap_list *dicts;       ///< All CPE dictionaries except the one embedded in XCCDF
 		struct oscap_list *lang_models; ///< All CPE lang models except the one embedded in XCCDF
+		struct oscap_htable *oval_sessions; ///< Caches CPE OVAL check results
 	} cpe;
-	struct oscap_htable     * cpe_oval_sessions; ///< Caches CPE OVAL check results
 	struct oscap_htable     * cpe_applicable_platforms;
 };
 /* Macros to generate iterators, getters and setters */
@@ -813,7 +813,7 @@ static bool _xccdf_policy_cpe_check_cb(const char* sys, const char* href, const 
 		oscap_free(origin_file);
 	}
 
-	struct oval_agent_session* session = (struct oval_agent_session*)oscap_htable_get(model->cpe_oval_sessions, prefixed_href);
+	struct oval_agent_session* session = (struct oval_agent_session*)oscap_htable_get(model->cpe.oval_sessions, prefixed_href);
 
 	if (session == NULL)
 	{
@@ -833,7 +833,7 @@ static bool _xccdf_policy_cpe_check_cb(const char* sys, const char* href, const 
 			oscap_free(prefixed_href);
 			return false;
 		}
-		oscap_htable_add(model->cpe_oval_sessions, prefixed_href, session);
+		oscap_htable_add(model->cpe.oval_sessions, prefixed_href, session);
 	}
 	oscap_free(prefixed_href);
 
@@ -1746,7 +1746,7 @@ bool xccdf_policy_model_add_cpe_autodetect(struct xccdf_policy_model *model, con
 
 struct oscap_htable_iterator *xccdf_policy_model_get_cpe_oval_sessions(struct xccdf_policy_model *model)
 {
-	return oscap_htable_iterator_new(model->cpe_oval_sessions);
+	return oscap_htable_iterator_new(model->cpe.oval_sessions);
 }
 
 /**
@@ -1864,7 +1864,7 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
 
 	model->cpe.dicts = oscap_list_new();
 	model->cpe.lang_models = oscap_list_new();
-	model->cpe_oval_sessions = oscap_htable_new();
+	model->cpe.oval_sessions = oscap_htable_new();
 	model->cpe_applicable_platforms = oscap_htable_new();
 
 	if (!xccdf_policy_model_add_default_cpe(model))
@@ -2557,7 +2557,7 @@ void xccdf_policy_model_free(struct xccdf_policy_model * model) {
 
 	oscap_list_free(model->cpe.dicts, (oscap_destruct_func) cpe_dict_model_free);
 	oscap_list_free(model->cpe.lang_models, (oscap_destruct_func) cpe_lang_model_free);
-	oscap_htable_free(model->cpe_oval_sessions, (oscap_destruct_func) _xccdf_policy_destroy_cpe_oval_session);
+	oscap_htable_free(model->cpe.oval_sessions, (oscap_destruct_func) _xccdf_policy_destroy_cpe_oval_session);
 	oscap_htable_free(model->cpe_applicable_platforms, NULL);
         oscap_free(model);
 }
