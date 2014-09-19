@@ -8,7 +8,7 @@
  */
 
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * Copyright (C) 2010 Tresys Technology, LLC
  * All Rights Reserved.
  *
@@ -2641,6 +2641,8 @@ const char *xccdf_instance_get_context(const struct xccdf_instance *item);
 const char *xccdf_instance_get_parent_context(const struct xccdf_instance *item);
 /// @memberof xccdf_instance
 const char *xccdf_instance_get_content(const struct xccdf_instance *item);
+/// @memberof xccdf_tailoring
+struct xccdf_tailoring *xccdf_tailoring_import_source(struct oscap_source *source, struct xccdf_benchmark *benchmark);
 /// @memberof xccdf_tailoring
 struct xccdf_tailoring *xccdf_tailoring_import(const char *file, struct xccdf_benchmark *benchmark);
 /// @memberof xccdf_tailoring

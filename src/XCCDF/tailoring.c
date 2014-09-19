@@ -202,9 +202,8 @@ struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xc
 	return tailoring;
 }
 
-struct xccdf_tailoring *xccdf_tailoring_import(const char *file, struct xccdf_benchmark *benchmark)
+struct xccdf_tailoring *xccdf_tailoring_import_source(struct oscap_source *source, struct xccdf_benchmark *benchmark)
 {
-	struct oscap_source *source = oscap_source_new_from_file(file);
 	xmlTextReaderPtr reader = oscap_source_get_xmlTextReader(source);
 	if (!reader) {
 		oscap_source_free(source);
@@ -214,12 +213,18 @@ struct xccdf_tailoring *xccdf_tailoring_import(const char *file, struct xccdf_be
 	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) ;
 	struct xccdf_tailoring *tailoring = xccdf_tailoring_parse(reader, XITEM(benchmark));
 	xmlFreeTextReader(reader);
-	oscap_source_free(source);
-
 	if (!tailoring) { // parsing fatal error
-		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to parse '%s'.", file);
+		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to parse tailoring from '%s'.", oscap_source_readable_origin(source));
 	}
+	return tailoring;
+}
 
+struct xccdf_tailoring *xccdf_tailoring_import(const char *file, struct xccdf_benchmark *benchmark)
+{
+	struct oscap_source *source = oscap_source_new_from_file(file);
+
+	struct xccdf_tailoring *tailoring = xccdf_tailoring_import_source(source, benchmark);
+	oscap_source_free(source);
 	return tailoring;
 }
 
