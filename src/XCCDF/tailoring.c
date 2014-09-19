@@ -33,6 +33,8 @@
 #include "common/_error.h"
 #include "common/debug_priv.h"
 #include "common/elements.h"
+#include "source/oscap_source_priv.h"
+#include "source/public/oscap_source.h"
 
 struct xccdf_tailoring *xccdf_tailoring_new(void)
 {
@@ -202,17 +204,17 @@ struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xc
 
 struct xccdf_tailoring *xccdf_tailoring_import(const char *file, struct xccdf_benchmark *benchmark)
 {
-	xmlTextReaderPtr reader = xmlReaderForFile(file, NULL, 0);
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	xmlTextReaderPtr reader = oscap_source_get_xmlTextReader(source);
 	if (!reader) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
+		oscap_source_free(source);
 		return NULL;
 	}
-
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
 
 	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) ;
 	struct xccdf_tailoring *tailoring = xccdf_tailoring_parse(reader, XITEM(benchmark));
 	xmlFreeTextReader(reader);
+	oscap_source_free(source);
 
 	if (!tailoring) { // parsing fatal error
 		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to parse '%s'.", file);
