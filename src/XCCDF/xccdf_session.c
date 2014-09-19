@@ -53,7 +53,6 @@
 
 struct oval_content_resource {
 	char *href;					///< Coresponds with xccdf:check-content-ref/\@href.
-	char *filename;					///< Points to the filename on the filesystem.
 	struct oscap_source *source;                    ///< The oscap_source representing the href resource
 	bool source_owned;                              ///< Indicates whether we need to dispose source property
 };
@@ -562,7 +561,6 @@ static void _oval_content_resources_free(struct oval_content_resource **resource
 {
 	if (resources) {
 		for (int i=0; resources[i]; i++) {
-			free(resources[i]->filename);
 			free(resources[i]->href);
 			if (resources[i]->source_owned) {
 				oscap_source_free(resources[i]->source);
@@ -586,7 +584,6 @@ void xccdf_session_set_custom_oval_files(struct xccdf_session *session, char **o
 	for (int i = 0; oval_filenames[i];) {
 		resources[i] = malloc(sizeof(struct oval_content_resource));
 		resources[i]->href = strdup(basename(oval_filenames[i]));
-		resources[i]->filename = strdup(oval_filenames[i]);
 		resources[i]->source = oscap_source_new_from_file(oval_filenames[i]);
 		resources[i]->source_owned = true;
 		i++;
@@ -639,7 +636,6 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 		if (source != NULL || stat(tmp_path, &sb) == 0) {
 			resources[idx] = malloc(sizeof(struct oval_content_resource));
 			resources[idx]->href = strdup(oscap_file_entry_get_file(file_entry));
-			resources[idx]->filename = tmp_path;
 			if (source == NULL) {
 				source = oscap_source_new_from_file(tmp_path);
 				resources[idx]->source_owned = true;
@@ -681,13 +677,13 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 							session->oval.progress(false, "ok\n");
 						resources[idx] = malloc(sizeof(struct oval_content_resource));
 						resources[idx]->href = strdup(printable_path);
-						resources[idx]->filename = file;
 						resources[idx]->source = oscap_source_new_from_file(file);
 						resources[idx]->source_owned = true;
 						idx++;
 						resources = realloc(resources, (idx + 1) * sizeof(struct oval_content_resource *));
 						resources[idx] = NULL;
 						free(tmp_path);
+						free(file);
 						continue;
 					}
 				}
@@ -702,8 +698,8 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 				printable_path = tmp_path;
 			if (session->oval.progress != NULL)
 				session->oval.progress(true, "WARNING: Skipping %s file which is referenced from XCCDF content\n", printable_path);
-			free(tmp_path);
 		}
+		free(tmp_path);
 	}
 	oscap_file_entry_iterator_free(files_it);
 	oscap_file_entry_list_free(files);
@@ -759,7 +755,8 @@ int xccdf_session_load_oval(struct xccdf_session *session)
 		/* file -> def_model */
 		struct oval_definition_model *tmp_def_model = oval_definition_model_import_source(contents[idx]->source);
 		if (tmp_def_model == NULL) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to create OVAL definition model from: '%s'.", contents[idx]->filename);
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to create OVAL definition model from: '%s'.",
+				oscap_source_readable_origin(contents[idx]->source));
 			return 1;
 		}
 
