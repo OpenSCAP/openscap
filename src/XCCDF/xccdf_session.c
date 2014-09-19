@@ -392,9 +392,9 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 		if (session->validate) {
 			if (oscap_source_validate(session->source, _reporter, NULL)) {
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid %s (%s) content in %s",
-						oscap_source_readable_origin(session->source),
 						oscap_document_type_to_string(oscap_source_get_scap_type(session->source)),
-						oscap_source_get_schema_version(session->source));
+						oscap_source_get_schema_version(session->source),
+						oscap_source_readable_origin(session->source));
 				goto cleanup;
 			}
 		}
@@ -421,9 +421,9 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 	if (session->validate && (!xccdf_session_is_sds(session) || session->full_validation)) {
 		if (oscap_source_validate(session->xccdf.source, _reporter, NULL)) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid %s (%s) content in %s",
-					oscap_source_readable_origin(session->source),
 					oscap_document_type_to_string(oscap_source_get_scap_type(session->source)),
-					oscap_source_get_schema_version(session->source));
+					oscap_source_get_schema_version(session->source),
+					oscap_source_readable_origin(session->source));
 			goto cleanup;
 		}
 	}
