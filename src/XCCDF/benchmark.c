@@ -230,7 +230,7 @@ struct oscap_source *xccdf_benchmark_export_source(struct xccdf_benchmark *bench
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
 	if (doc == NULL) {
 		oscap_setxmlerr(xmlGetLastError());
-		NULL;
+		return NULL;
 	}
 
 	xccdf_benchmark_to_dom(benchmark, doc, NULL, NULL);
