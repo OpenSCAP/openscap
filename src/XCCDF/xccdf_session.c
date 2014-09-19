@@ -55,6 +55,7 @@ struct oval_content_resource {
 	char *href;					///< Coresponds with xccdf:check-content-ref/\@href.
 	char *filename;					///< Points to the filename on the filesystem.
 	struct oscap_source *source;                    ///< The oscap_source representing the href resource
+	bool source_owned;                              ///< Indicates whether we need to dispose source property
 };
 
 struct xccdf_session {
@@ -563,6 +564,9 @@ static void _oval_content_resources_free(struct oval_content_resource **resource
 		for (int i=0; resources[i]; i++) {
 			free(resources[i]->filename);
 			free(resources[i]->href);
+			if (resources[i]->source_owned) {
+				oscap_source_free(resources[i]->source);
+			}
 			free(resources[i]);
 		}
 		free(resources);
@@ -583,6 +587,8 @@ void xccdf_session_set_custom_oval_files(struct xccdf_session *session, char **o
 		resources[i] = malloc(sizeof(struct oval_content_resource));
 		resources[i]->href = strdup(basename(oval_filenames[i]));
 		resources[i]->filename = strdup(oval_filenames[i]);
+		resources[i]->source = oscap_source_new_from_file(oval_filenames[i]);
+		resources[i]->source_owned = true;
 		i++;
 		resources = realloc(resources, (i + 1) * sizeof(struct oval_content_resource *));
 		resources[i] = NULL;
@@ -634,6 +640,13 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 			resources[idx] = malloc(sizeof(struct oval_content_resource));
 			resources[idx]->href = strdup(oscap_file_entry_get_file(file_entry));
 			resources[idx]->filename = tmp_path;
+			if (source == NULL) {
+				source = oscap_source_new_from_file(tmp_path);
+				resources[idx]->source_owned = true;
+			}
+			else {
+				resources[idx]->source_owned = false;
+			}
 			resources[idx]->source = source;
 			idx++;
 			resources = realloc(resources, (idx + 1) * sizeof(struct oval_content_resource *));
@@ -669,6 +682,8 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 						resources[idx] = malloc(sizeof(struct oval_content_resource));
 						resources[idx]->href = strdup(printable_path);
 						resources[idx]->filename = file;
+						resources[idx]->source = oscap_source_new_from_file(file);
+						resources[idx]->source_owned = true;
 						idx++;
 						resources = realloc(resources, (idx + 1) * sizeof(struct oval_content_resource *));
 						resources[idx] = NULL;
