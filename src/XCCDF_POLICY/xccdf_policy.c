@@ -40,6 +40,7 @@
 #include "public/oscap_text.h"
 
 #include "cpe_lang.h"
+#include "CPE/cpe_session_priv.h"
 
 #include "oscap_source.h"
 #include "oval_agent_api.h"
@@ -64,12 +65,7 @@ struct xccdf_policy_model {
 	struct oscap_list       * callbacks;    ///< Callbacks for output callbacks (see callback_out_t)
 	struct oscap_list       * engines;      ///< Callbacks for checking engines (see xccdf_policy_engine)
 
-	struct {
-		struct oscap_list *dicts;       ///< All CPE dictionaries except the one embedded in XCCDF
-		struct oscap_list *lang_models; ///< All CPE lang models except the one embedded in XCCDF
-		struct oscap_htable *oval_sessions; ///< Caches CPE OVAL check results
-		struct oscap_htable *applicable_platforms;
-	} cpe;
+	struct cpe_session cpe;
 };
 /* Macros to generate iterators, getters and setters */
 OSCAP_GETTER(struct xccdf_benchmark *, xccdf_policy_model, benchmark)

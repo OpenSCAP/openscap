@@ -10,7 +10,8 @@ libcpe_la_SOURCES =	cpedict.c \
 			cpedict_ext_priv.c \
 			cpelang_priv.h \
 			cpedict_ext_priv.h \
-			cpedict_priv.h
+			cpedict_priv.h \
+			cpe_session_priv.h
 
 libcpe_la_CPPFLAGS = @xml2_CFLAGS@ \
 			@pcre_CFLAGS@ \
