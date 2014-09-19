@@ -486,7 +486,7 @@ int xccdf_session_load_cpe(struct xccdf_session *session)
 		if (sds_idx == NULL) {
 			return -1;
 		}
-		struct ds_stream_index* stream_idx = ds_sds_index_get_stream(sds_idx, session->ds.datastream_id);
+		struct ds_stream_index* stream_idx = ds_sds_index_get_stream(sds_idx, xccdf_session_get_datastream_id(session));
 		struct oscap_string_iterator* cpe_it = ds_stream_index_get_dictionaries(stream_idx);
 
 		// This potentially allows us to skip yet another decompose if we are sure
@@ -496,10 +496,10 @@ int xccdf_session_load_cpe(struct xccdf_session *session)
 			 *        into DOM even though it has already been parsed once when the
 			 *        XCCDF was split from it. We should optimize this out someday!
 			 */
-			if (ds_sds_decompose_custom(session->filename, session->ds.datastream_id,
+			if (ds_sds_decompose_custom(session->filename, xccdf_session_get_datastream_id(session),
 					session->temp_dir, "dictionaries", NULL, NULL) != 0) {
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't decompose CPE dictionaries from datastream '%s' "
-						"from file '%s'!\n", session->ds.datastream_id, session->filename);
+						"from file '%s'!\n", xccdf_session_get_datastream_id(session), session->filename);
 				oscap_string_iterator_free(cpe_it);
 				return 1;
 			}
@@ -845,7 +845,7 @@ int xccdf_session_load_tailoring(struct xccdf_session *session)
 		}
 
 		// TODO: Is the "checklists" container the right one?
-		if (ds_sds_decompose_custom(session->filename, session->ds.datastream_id,
+		if (ds_sds_decompose_custom(session->filename, xccdf_session_get_datastream_id(session),
 				session->temp_dir, "checklists", session->user_tailoring_cid,
 				TAILORING_XML) != 0) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to split component of id '%s' from the source datastream.",
