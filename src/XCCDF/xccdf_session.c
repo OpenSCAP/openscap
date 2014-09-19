@@ -744,28 +744,13 @@ int xccdf_session_load_oval(struct xccdf_session *session)
 	 * or if full validation was explicitly requested.
 	 */
 	if (session->validate && (!xccdf_session_is_sds(session) || session->full_validation)) {
-		int ret;
 		for (int idx=0; contents[idx]; idx++) {
-			if (contents[idx]->source != NULL) {
-				if (oscap_source_validate(contents[idx]->source, _reporter, NULL) != 0) {
-					oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid %s (%s) content in %s",
-							oscap_document_type_to_string(oscap_source_get_scap_type(session->source)),
-							oscap_source_get_schema_version(session->source),
-							contents[idx]->href);
-					return 1;
-				}
-			} else {
-				char *doc_version;
-
-				doc_version = oval_determine_document_schema_version((const char *) contents[idx]->filename, OSCAP_DOCUMENT_OVAL_DEFINITIONS);
-				if ((ret = oscap_validate_document(contents[idx]->filename, OSCAP_DOCUMENT_OVAL_DEFINITIONS,
-						(const char *) doc_version, _reporter, NULL))) {
-					if (ret == 1)
-						_validation_failed(contents[idx]->filename, OSCAP_DOCUMENT_OVAL_DEFINITIONS, doc_version);
-					free(doc_version);
-					return 1;
-				}
-				free(doc_version);
+			if (oscap_source_validate(contents[idx]->source, _reporter, NULL) != 0) {
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid %s (%s) content in %s",
+						oscap_document_type_to_string(oscap_source_get_scap_type(session->source)),
+						oscap_source_get_schema_version(session->source),
+						contents[idx]->href);
+				return 1;
 			}
 		}
 	}
