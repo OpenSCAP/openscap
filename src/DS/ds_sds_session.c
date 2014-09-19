@@ -184,6 +184,21 @@ struct oscap_source *ds_sds_session_select_checklist(struct ds_sds_session *sess
 	return xccdf;
 }
 
+struct oscap_source *ds_sds_session_select_tailoring(struct ds_sds_session *session, const char *component_id)
+{
+	if (ds_sds_session_register_component_with_dependencies(session, "checklists", component_id, "tailoring.xml") != 0) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not extract %s with all dependencies from datastream.", component_id);
+		return NULL;
+	}
+	char *tailoring_path = oscap_sprintf("%s/tailoring.xml", ds_sds_session_get_target_dir(session));
+	struct oscap_source *tailoring = oscap_htable_get(session->component_sources, tailoring_path);
+	if (tailoring == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal error: Could not acquire handle to %s source.\n", tailoring_path);
+	}
+	oscap_free(tailoring_path);
+	return tailoring;
+}
+
 xmlNode *ds_sds_session_get_selected_datastream(struct ds_sds_session *session)
 {
 	xmlDoc *doc = oscap_source_get_xmlDoc(session->source);

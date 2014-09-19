@@ -77,6 +77,16 @@ void ds_sds_session_free(struct ds_sds_session *sds_session);
 struct oscap_source *ds_sds_session_select_checklist(struct ds_sds_session *session, const char *datastream_id, const char *component_id, const char *benchmark_id);
 
 /**
+ * Select XCCDF Tailoring from DataStream collection. The ds_sds_session_select_checklist
+ * needs to be called first. To determine what datastream should be used within collection.
+ * @memberof ds_sds_session
+ * @param session Source DataStream session to choose from
+ * @param component_id ID of tailoring file within checklist container
+ * @returns XCCdF tailoring in form of oscap_source
+ */
+struct oscap_source *ds_sds_session_select_tailoring(struct ds_sds_session *session, const char *component_id);
+
+/**
  * Return ID of currently selected DataStream within the DataStream collection.
  * @memberof ds_sds_session
  * @param session The Source DataStream sesssion
