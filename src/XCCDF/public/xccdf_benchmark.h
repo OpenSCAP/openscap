@@ -637,8 +637,10 @@ const char* xccdf_version_info_get_cpe_version(const struct xccdf_version_info* 
  * stops as soon as the version is found. Returned string should be
  * freed by caller. Return NULL if error occur.
  * @memberof xccdf_benchmark
+ * @deprecated This function has been deprecated by @ref oscap_source_get_schema_version.
+ * This function may be dropped from later versions of the library.
  */
-char * xccdf_detect_version(const char* file);
+OSCAP_DEPRECATED(char * xccdf_detect_version(const char* file));
 
 /************************************************************/
 
