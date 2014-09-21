@@ -34,6 +34,7 @@
 #include "common/public/oscap.h"
 #include "common/util.h"
 #include "CPE/public/cpe_lang.h"
+#include "CPE/cpedict_priv.h"
 #include "doc_type_priv.h"
 #include "oscap_source.h"
 #include "oscap_source_priv.h"
@@ -195,7 +196,7 @@ const char *oscap_source_get_schema_version(struct oscap_source *source)
 				source->origin.version = xccdf_detect_version_priv(reader);
 				break;
 			case OSCAP_DOCUMENT_CPE_DICTIONARY:
-				source->origin.version = cpe_dict_detect_version(source->origin.filepath);
+				source->origin.version = cpe_dict_detect_version_priv(reader);
 				break;
 			case OSCAP_DOCUMENT_CPE_LANGUAGE:
 				source->origin.version = cpe_lang_model_detect_version(source->origin.filepath);
