@@ -33,6 +33,7 @@
 
 /* DS */
 #include <scap_ds.h>
+#include <oscap_source.h>
 
 #include "oscap-tool.h"
 
@@ -465,22 +466,14 @@ int app_ds_rds_create(const struct oscap_action *action) {
 
 		if (action->validate)
 		{
-			char *doc_version;
-			doc_version = oval_determine_document_schema_version((const char *) oval_result_files[i],
-				OSCAP_DOCUMENT_OVAL_RESULTS);
-
-			int valret;
-			if ((valret = oscap_validate_document(oval_result_files[i], OSCAP_DOCUMENT_OVAL_RESULTS, doc_version, reporter, (void*) action)))
-			{
-				if (valret == 1)
-					validation_failed(oval_result_files[i], OSCAP_DOCUMENT_OVAL_RESULTS, doc_version);
-
+			struct oscap_source *source = oscap_source_new_from_file(oval_result_files[i]);
+			if (oscap_source_validate(source, reporter, (void *) action) != 0) {
 				ret = OSCAP_ERROR;
-				free(doc_version);
+				oscap_source_free(source);
 				free(oval_result_files);
 				goto cleanup;
 			}
-			free(doc_version);
+			oscap_source_free(source);
 		}
 	}
 	oval_result_files[i] = NULL;
