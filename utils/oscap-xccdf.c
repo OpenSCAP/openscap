@@ -1011,17 +1011,11 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 
 int app_xccdf_validate(const struct oscap_action *action) {
 	int ret;
-	char *doc_version;
 	int result;
 
 
-	doc_version = xccdf_detect_version(action->f_xccdf);
-        if (!doc_version) {
-                result = OSCAP_ERROR;
-                goto cleanup;
-        }
-
-        ret=oscap_validate_document(action->f_xccdf, action->doctype, doc_version, reporter, (void*)action);
+	struct oscap_source *source = oscap_source_new_from_file(action->f_xccdf);
+	ret = oscap_source_validate(source, reporter, (void *) action);
         if (ret==-1) {
                 result=OSCAP_ERROR;
                 goto cleanup;
@@ -1033,24 +1027,17 @@ int app_xccdf_validate(const struct oscap_action *action) {
                 result=OSCAP_OK;
 
 	if (action->schematron) {
-		struct oscap_source *source = oscap_source_new_from_file(action->f_xccdf);
 		ret = oscap_source_validate_schematron(source, NULL);
 		if (ret == -1) {
 			result = OSCAP_ERROR;
 		} else if (ret > 0) {
 			result = OSCAP_FAIL;
 		}
-		oscap_source_free(source);
 	}
-
-        if (result==OSCAP_FAIL)
-		validation_failed(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version);
+	oscap_source_free(source);
 
 cleanup:
 	oscap_print_error();
-
-        if (doc_version)
-		free(doc_version);
 
         return result;
 
