@@ -150,8 +150,7 @@ static int app_info(const struct oscap_action *action)
 		struct xccdf_benchmark* bench = xccdf_benchmark_import(action->file);
 		if(!bench)
 			goto cleanup;
-		char * doc_version =  xccdf_detect_version(action->file);
-		printf("Checklist version: %s\n", doc_version);
+		printf("Checklist version: %s\n", oscap_source_get_schema_version(source));
 		/* get current status */
 		struct xccdf_status * status = NULL;
 		status = xccdf_benchmark_get_status_current(bench);
@@ -201,8 +200,6 @@ static int app_info(const struct oscap_action *action)
 			printf("\t%s\n", xccdf_result_get_id(test_result));
 		}
 		xccdf_result_iterator_free(res_it);
-
-		free(doc_version);
 
 		xccdf_policy_model_free(policy_model);
 		// already freed by policy!
