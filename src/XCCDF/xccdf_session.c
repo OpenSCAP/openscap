@@ -466,14 +466,14 @@ int xccdf_session_load_cpe(struct xccdf_session *session)
 		// This potentially allows us to skip yet another decompose if we are sure
 		// there are no CPE dictionaries or language models inside the datastream.
 		if (oscap_string_iterator_has_more(cpe_it)) {
-			/* FIXME: Decomposing means that the source datastream will be parsed
-			 *        into DOM even though it has already been parsed once when the
-			 *        XCCDF was split from it. We should optimize this out someday!
-			 */
-			if (ds_sds_decompose_custom(session->filename, xccdf_session_get_datastream_id(session),
-					session->temp_dir, "dictionaries", NULL, NULL) != 0) {
+			if (ds_sds_session_register_component_with_dependencies(xccdf_session_get_ds_sds_session(session),
+					"dictionaries", NULL, NULL) != 0) {
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't decompose CPE dictionaries from datastream '%s' "
 						"from file '%s'!\n", xccdf_session_get_datastream_id(session), session->filename);
+				oscap_string_iterator_free(cpe_it);
+				return 1;
+			}
+			if (ds_sds_session_dump_component_files(xccdf_session_get_ds_sds_session(session)) != 0) {
 				oscap_string_iterator_free(cpe_it);
 				return 1;
 			}
@@ -482,8 +482,9 @@ int xccdf_session_load_cpe(struct xccdf_session *session)
 				const char* cpe_filename = oscap_string_iterator_next(cpe_it);
 
 				char* full_cpe_filename = malloc(PATH_MAX * sizeof(char));
-				snprintf(full_cpe_filename, PATH_MAX, "%s/%s", session->temp_dir, cpe_filename);
-				struct oscap_source *source = oscap_source_new_from_file(full_cpe_filename);
+				snprintf(full_cpe_filename, PATH_MAX, "%s/%s",
+						ds_sds_session_get_target_dir(xccdf_session_get_ds_sds_session(session)), cpe_filename);
+				struct oscap_source *source = ds_sds_session_get_component_by_href(xccdf_session_get_ds_sds_session(session), cpe_filename);
 
 				if (session->full_validation) {
 					if (oscap_source_validate(source, _reporter, NULL) != 0) {
@@ -492,11 +493,9 @@ int xccdf_session_load_cpe(struct xccdf_session *session)
 							oscap_source_get_schema_version(source),
 							oscap_source_readable_origin(source));
 						oscap_string_iterator_free(cpe_it);
-						oscap_source_free(source);
 						return 1;
 					}
 				}
-				oscap_source_free(source);
 				xccdf_policy_model_add_cpe_autodetect(session->xccdf.policy_model, full_cpe_filename);
 				free(full_cpe_filename);
 			}
