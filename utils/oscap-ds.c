@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2012--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -440,21 +440,13 @@ int app_ds_rds_create(const struct oscap_action *action) {
 			goto cleanup;
 		}
 
-		char *doc_version = NULL;
-		doc_version = xccdf_detect_version(action->ds_action->xccdf_result);
-		if (!doc_version) {
+		struct oscap_source *result = oscap_source_new_from_file(action->ds_action->xccdf_result);
+		if (oscap_source_validate(result, reporter, (void *) action) != 0) {
 			ret = OSCAP_ERROR;
+			oscap_source_free(result);
 			goto cleanup;
 		}
-		if ((valret = oscap_validate_document(action->ds_action->xccdf_result, OSCAP_DOCUMENT_XCCDF, doc_version, reporter, (void*) action))) {
-			if (valret == 1)
-				validation_failed(action->ds_action->xccdf_result, OSCAP_DOCUMENT_XCCDF, doc_version);
-
-			ret = OSCAP_ERROR;
-			free(doc_version);
-			goto cleanup;
-		}
-		free(doc_version);
+		oscap_source_free(result);
 	}
 
 	char** oval_result_files = malloc(sizeof(char*) * (action->ds_action->oval_result_count + 1));
