@@ -17,6 +17,7 @@ libcpe_la_CPPFLAGS = @xml2_CFLAGS@ \
 			@pcre_CFLAGS@ \
 			-I$(srcdir)/public \
 			-I$(top_srcdir)/src/common/public \
+			-I$(top_srcdir)/src/source/public \
 			-I$(top_srcdir)/src
 
 libcpe_la_LDFLAGS =	@xml2_LIBS@ \

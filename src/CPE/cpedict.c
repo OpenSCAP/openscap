@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -40,6 +40,8 @@
 #include "common/_error.h"
 #include "common/xmlns_priv.h"
 #include "common/elements.h"
+#include "source/oscap_source_priv.h"
+#include "source/public/oscap_source.h"
 #include <string.h>
 
 #define CPE_DICT_SUPPORTED "2.3"
@@ -241,17 +243,13 @@ char *cpe_dict_detect_version_priv(xmlTextReader *reader)
 
 char * cpe_dict_detect_version(const char* file)
 {
-	xmlTextReaderPtr reader;
 	char *version = NULL;
-
-	reader = xmlReaderForFile(file, NULL, 0);
-	if (!reader) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
-		return NULL;
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	xmlTextReaderPtr reader = oscap_source_get_xmlTextReader(source);
+	if (reader != NULL) {
+		version = cpe_dict_detect_version_priv(reader);
 	}
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
-	version = cpe_dict_detect_version_priv(reader);
 	xmlFreeTextReader(reader);
-
+	oscap_source_free(source);
 	return version;
 }
