@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -149,6 +149,13 @@ struct cpe_vendor *cpe_vendor_parse(xmlTextReaderPtr reader);
  * @retval NULL on failure
  */
 struct cpe_dict_model *cpe_dict_model_parse(struct cpe_parser_ctx *ctx);
+
+/**
+ * Get a version info from xmlTextReader
+ * @param reader xmlTextReader
+ * @returns version string that shall be disposed by caller
+ */
+char *cpe_dict_detect_version_priv(xmlTextReader *reader);
 
 /**
  * Export function for CPE dictionary model

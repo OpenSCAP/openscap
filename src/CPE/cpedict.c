@@ -195,18 +195,9 @@ const char * cpe_dict_model_supported(void)
         return CPE_DICT_SUPPORTED;
 }
 
-char * cpe_dict_detect_version(const char* file)
+char *cpe_dict_detect_version_priv(xmlTextReader *reader)
 {
-	xmlTextReaderPtr reader;
 	char *version = NULL;
-
-	reader = xmlReaderForFile(file, NULL, 0);
-	if (!reader) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
-		return NULL;
-	}
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
-
 	/* find root element */
 	while (xmlTextReaderRead(reader) == 1
 	       && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
@@ -245,7 +236,21 @@ char * cpe_dict_detect_version(const char* file)
 			version = oscap_strdup("2.3");
 		}
 	}
+	return version;
+}
 
+char * cpe_dict_detect_version(const char* file)
+{
+	xmlTextReaderPtr reader;
+	char *version = NULL;
+
+	reader = xmlReaderForFile(file, NULL, 0);
+	if (!reader) {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
+		return NULL;
+	}
+	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
+	version = cpe_dict_detect_version_priv(reader);
 	xmlFreeTextReader(reader);
 
 	return version;
