@@ -507,44 +507,20 @@ int xccdf_session_load_cpe(struct xccdf_session *session)
 
 				char* full_cpe_filename = malloc(PATH_MAX * sizeof(char));
 				snprintf(full_cpe_filename, PATH_MAX, "%s/%s", session->temp_dir, cpe_filename);
+				struct oscap_source *source = oscap_source_new_from_file(full_cpe_filename);
 
 				if (session->full_validation) {
-					oscap_document_type_t cpe_doc_type;
-					char* cpe_doc_version = NULL;
-
-					if (oscap_determine_document_type(full_cpe_filename, &cpe_doc_type) != 0) {
-						oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't determine document type of '%s'. "
-							"This file was embedded in SDS '%s' and was split into that file as "
-							"a CPE resource.\n", full_cpe_filename, session->filename);
-						free(full_cpe_filename);
+					if (oscap_source_validate(source, _reporter, NULL) != 0) {
+						oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid %s (%s) content in %s",
+							oscap_document_type_to_string(oscap_source_get_scap_type(source)),
+							oscap_source_get_schema_version(source),
+							oscap_source_readable_origin(source));
 						oscap_string_iterator_free(cpe_it);
+						oscap_source_free(source);
 						return 1;
 					}
-
-					if (cpe_doc_type == OSCAP_DOCUMENT_CPE_DICTIONARY) {
-						cpe_doc_version = cpe_dict_detect_version(full_cpe_filename);
-					} else if (cpe_doc_type == OSCAP_DOCUMENT_CPE_LANGUAGE) {
-						cpe_doc_version = cpe_lang_model_detect_version(full_cpe_filename);
-					} else {
-						oscap_seterr(OSCAP_EFAMILY_OSCAP, "Document '%s' that was split from SDS "
-							"'%s' and passed as a CPE resource was not detected to be of type "
-							"CPE dictionary or CPE language.\n", full_cpe_filename, session->filename);
-						free(full_cpe_filename);
-						oscap_string_iterator_free(cpe_it);
-						return 1;
-					}
-
-					if ((ret = oscap_validate_document(full_cpe_filename, cpe_doc_type, cpe_doc_version, _reporter, NULL))) {
-						if (ret == 1)
-							_validation_failed(full_cpe_filename, cpe_doc_type, cpe_doc_version);
-						free(cpe_doc_version);
-						free(full_cpe_filename);
-						oscap_string_iterator_free(cpe_it);
-						return 1;
-					}
-					free(cpe_doc_version);
 				}
-
+				oscap_source_free(source);
 				xccdf_policy_model_add_cpe_autodetect(session->xccdf.policy_model, full_cpe_filename);
 				free(full_cpe_filename);
 			}
