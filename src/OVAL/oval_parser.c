@@ -44,6 +44,8 @@
 #include "common/_error.h"
 #include "common/elements.h"
 #include "common/public/oscap.h"
+#include "source/public/oscap_source.h"
+#include "source/oscap_source_priv.h"
 
 /**
  * -1 error; 0 OK; 1 warning
@@ -138,17 +140,14 @@ char *oval_determine_document_schema_version_priv(xmlTextReader *reader, oscap_d
 
 char *oval_determine_document_schema_version(const char *document, oscap_document_type_t doc_type)
 {
-	xmlTextReaderPtr reader;
-	reader = xmlReaderForFile(document, NULL, 0);
-	if (!reader) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", document);
-		return NULL;
+	char *ret = NULL;
+	struct oscap_source *source = oscap_source_new_from_file(document);
+	xmlTextReaderPtr reader = oscap_source_get_xmlTextReader(source);
+	if (reader != NULL) {
+		ret = oval_determine_document_schema_version_priv(reader, doc_type);
+		xmlFreeTextReader(reader);
 	}
-
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
-
-	char *ret = oval_determine_document_schema_version_priv(reader, doc_type);
-	xmlFreeTextReader(reader);
+	oscap_source_free(source);
 	return ret;
 }
 
