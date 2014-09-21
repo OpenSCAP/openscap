@@ -692,14 +692,13 @@ int app_xccdf_resolve(const struct oscap_action *action)
 				/* validate exported results */
 				const char* full_validation = getenv("OSCAP_FULL_VALIDATION");
 				if (action->validate && full_validation) {
-					/* reuse doc_version from unresolved document
-					   it should be same in resolved one */
-					if (oscap_validate_document(action->f_results, OSCAP_DOCUMENT_XCCDF, doc_version, reporter, (void*)action)) {
-						validation_failed(action->f_results, OSCAP_DOCUMENT_XCCDF, doc_version);
+					struct oscap_source *result_source = oscap_source_new_from_file(action->f_results);
+					if (oscap_source_validate(result_source, reporter, (void *) action) != 0) {
 						ret = OSCAP_ERROR;
 					}
 					else
 						fprintf(stdout, "Resolved XCCDF has been exported correctly.\n");
+					oscap_source_free(result_source);
 				}
 			}
 		}
