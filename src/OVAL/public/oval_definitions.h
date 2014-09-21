@@ -3162,8 +3162,10 @@ int oval_component_iterator_remaining(struct oval_component_iterator *);
  * Returns the version of the schema this document should be validated against
  *
  * Deallocate the result after use with "free(..)".
+ * @deprecated This function has been deprecated by @ref oscap_source_get_schema_version.
+ * This function may be dropped from later versions of the library.
  */
-char *oval_determine_document_schema_version(const char *, oscap_document_type_t);
+OSCAP_DEPRECATED(char *oval_determine_document_schema_version(const char *, oscap_document_type_t));
 
 /**
  * @} END OVAL
