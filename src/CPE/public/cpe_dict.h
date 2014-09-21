@@ -868,8 +868,10 @@ const char * cpe_dict_model_supported(void);
  * Detects which version the given CPE file is
  *
  * Deallocate the result after use with "free(..)".
+ * @deprecated This function has been deprecated by @ref oscap_source_get_schema_version.
+ * This function may be dropped from later versions of the library.
  */
-char * cpe_dict_detect_version(const char* file);
+OSCAP_DEPRECATED(char *cpe_dict_detect_version(const char* file));
 
 /** 
  * Verify wether given CPE is known according to specified dictionary
