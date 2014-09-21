@@ -441,41 +441,17 @@ cleanup:
 
 int xccdf_session_load_cpe(struct xccdf_session *session)
 {
-	int ret;
 	if (session == NULL || session->xccdf.policy_model == NULL)
 		return 1;
 
 	/* Use custom CPE dict if given */
 	if (session->user_cpe != NULL) {
-		oscap_document_type_t cpe_doc_type;
-		char* cpe_doc_version = NULL;
-
-		if (oscap_determine_document_type(session->user_cpe, &cpe_doc_type) != 0) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot determine document type of '%s'.", session->user_cpe);
+		struct oscap_source *source = oscap_source_new_from_file(session->user_cpe);
+		if (oscap_source_validate(source, _reporter, NULL) != 0) {
+			oscap_source_free(source);
 			return 1;
 		}
-
-		if (cpe_doc_type == OSCAP_DOCUMENT_CPE_DICTIONARY) {
-			cpe_doc_version = cpe_dict_detect_version(session->user_cpe);
-		}
-		else if (cpe_doc_type == OSCAP_DOCUMENT_CPE_LANGUAGE) {
-			cpe_doc_version = cpe_lang_model_detect_version(session->user_cpe);
-		}
-		else {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Document '%s' passed "
-				"as a CPE resource was not detected to be of type"
-				" CPE dictionary or CPE language.\n", session->user_cpe);
-			return 1;
-		}
-
-		if ((ret = oscap_validate_document(session->user_cpe, cpe_doc_type, cpe_doc_version, _reporter, NULL))) {
-			if (ret == 1)
-				_validation_failed(session->user_cpe, cpe_doc_type, cpe_doc_version);
-			free(cpe_doc_version);
-			return 1;
-		}
-		free(cpe_doc_version);
-
+		oscap_source_free(source);
 		xccdf_policy_model_add_cpe_autodetect(session->xccdf.policy_model, session->user_cpe);
 	}
 
