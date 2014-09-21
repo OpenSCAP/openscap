@@ -646,7 +646,6 @@ cleanup:
 
 int app_xccdf_resolve(const struct oscap_action *action)
 {
-	char *doc_version = NULL;
 	int ret = OSCAP_ERROR;
 	struct xccdf_benchmark *bench = NULL;
 
@@ -661,15 +660,12 @@ int app_xccdf_resolve(const struct oscap_action *action)
 
 	/* validate input */
 	if (action->validate) {
-		doc_version = xccdf_detect_version(action->f_xccdf);
-		if (!doc_version) {
-			return OSCAP_ERROR;
-		}
-
-		if (oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version, reporter, (void*) action) != 0) {
-			validation_failed(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version);
+		struct oscap_source *source = oscap_source_new_from_file(action->f_xccdf);
+		if (oscap_source_validate(source, reporter, (void *) action) != 0) {
+			oscap_source_free(source);
 			goto cleanup;
 		}
+		oscap_source_free(source);
 	}
 
 	bench = xccdf_benchmark_import(action->f_xccdf);
@@ -708,8 +704,6 @@ cleanup:
 	oscap_print_error();
 	if (bench)
 		xccdf_benchmark_free(bench);
-	if (doc_version)
-		free(doc_version);
 
 	return ret;
 }
