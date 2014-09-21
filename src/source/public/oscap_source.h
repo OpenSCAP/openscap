@@ -77,6 +77,14 @@ void oscap_source_free(struct oscap_source *source);
 oscap_document_type_t oscap_source_get_scap_type(struct oscap_source *source);
 
 /**
+ * Get the version of the schema for the particular document type
+ * @memberof oscap_source
+ * @param source The oscap_source to get the schema version from.
+ * @returns the schema version
+ */
+const char *oscap_source_get_schema_version(struct oscap_source *source);
+
+/**
  * Validate the SCAP document against particular XML schema definition.
  * @memberof oscap_source
  * @param source The oscap_source to validate

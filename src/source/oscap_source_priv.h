@@ -72,14 +72,6 @@ xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source);
 const char *oscap_source_readable_origin(const struct oscap_source *source);
 
 /**
- * Get the version of the schema for the particular document type
- * @memberof oscap_source
- * @param source The oscap_source to get the schema version from.
- * @returns the schema version
- */
-const char *oscap_source_get_schema_version(struct oscap_source *source);
-
-/**
  * Store the resource represented by oscap_source to the file.
  * @memberof oscap_source
  * @param source The oscap_source to save
