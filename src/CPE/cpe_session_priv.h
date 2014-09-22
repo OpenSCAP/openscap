@@ -27,6 +27,7 @@
 
 #include "common/public/oscap.h"
 #include "common/util.h"
+#include "OVAL/public/oval_agent_api.h"
 
 OSCAP_HIDDEN_START;
 
@@ -39,6 +40,7 @@ struct cpe_session {
 
 struct cpe_session *cpe_session_new(void);
 void cpe_session_free(struct cpe_session *session);
+struct oval_agent_session *cpe_session_lookup_oval_session(struct cpe_session *cpe, const char *prefixed_href);
 
 OSCAP_HIDDEN_END;
 #endif

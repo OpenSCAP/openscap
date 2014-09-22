@@ -808,30 +808,11 @@ static bool _xccdf_policy_cpe_check_cb(const char* sys, const char* href, const 
 		prefixed_href = oscap_sprintf("%s/%s", prefix_dirname, href);
 		oscap_free(origin_file);
 	}
-
-	struct oval_agent_session* session = (struct oval_agent_session*)oscap_htable_get(model->cpe->oval_sessions, prefixed_href);
-
-	if (session == NULL)
-	{
-		struct oscap_source *source = oscap_source_new_from_file(prefixed_href);
-		struct oval_definition_model* oval_model = oval_definition_model_import_source(source);
-		oscap_source_free(source);
-		if (oval_model == NULL)
-		{
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't import OVAL definition model '%s' for CPE applicability checking", prefixed_href);
-			oscap_free(prefixed_href);
-			return false;
-		}
-
-		session = oval_agent_new_session(oval_model, prefixed_href);
-		if (session == NULL) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot create OVAL session for '%s' for CPE applicability checking", prefixed_href);
-			oscap_free(prefixed_href);
-			return false;
-		}
-		oscap_htable_add(model->cpe->oval_sessions, prefixed_href, session);
-	}
+	struct oval_agent_session *session = cpe_session_lookup_oval_session(model->cpe, prefixed_href);
 	oscap_free(prefixed_href);
+	if (session == NULL) {
+		return false;
+	}
 
 	oval_agent_eval_definition(session, name);
 	oval_result_t result = OVAL_RESULT_NOT_EVALUATED;

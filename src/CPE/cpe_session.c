@@ -62,3 +62,28 @@ void cpe_session_free(struct cpe_session *session)
 		oscap_free(session);
 	}
 }
+
+struct oval_agent_session *cpe_session_lookup_oval_session(struct cpe_session *cpe, const char *prefixed_href)
+{
+	struct oval_agent_session* session = (struct oval_agent_session*)oscap_htable_get(cpe->oval_sessions, prefixed_href);
+
+	if (session == NULL)
+	{
+		struct oscap_source *source = oscap_source_new_from_file(prefixed_href);
+		struct oval_definition_model* oval_model = oval_definition_model_import_source(source);
+		oscap_source_free(source);
+		if (oval_model == NULL)
+		{
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't import OVAL definition model '%s' for CPE applicability checking", prefixed_href);
+			return NULL;
+		}
+
+		session = oval_agent_new_session(oval_model, prefixed_href);
+		if (session == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot create OVAL session for '%s' for CPE applicability checking", prefixed_href);
+			return NULL;
+		}
+		oscap_htable_add(cpe->oval_sessions, prefixed_href, session);
+	}
+	return session;
+}
