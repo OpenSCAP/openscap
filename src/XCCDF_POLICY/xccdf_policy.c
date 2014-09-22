@@ -1696,8 +1696,10 @@ bool xccdf_policy_model_add_cpe_lang_model(struct xccdf_policy_model *model, con
 		__attribute__nonnull__(model);
 		__attribute__nonnull__(cpe_lang);
 
-		struct cpe_lang_model* lang_model = cpe_lang_model_import(cpe_lang);
-		return oscap_list_add(model->cpe->lang_models, lang_model);
+	struct oscap_source *source = oscap_source_new_from_file(cpe_lang);
+	bool ret = cpe_session_add_cpe_lang_model_source(model->cpe, source);
+	oscap_source_free(source);
+	return ret;
 }
 
 bool xccdf_policy_model_add_cpe_autodetect(struct xccdf_policy_model *model, const char* filepath)
