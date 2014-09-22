@@ -377,8 +377,10 @@ bool cpe_platform_match_cpe(struct cpe_name **cpe, size_t n, const struct cpe_pl
 /**
  * Load CPE language model from a XML document.
  * @memberof cpe_lang_model
+ * @deprecated This function has been deprecated by @ref cpe_lang_model_import_source
+ * This function may be dropped from later versions of the library.
  */
-struct cpe_lang_model *cpe_lang_model_import(const char *file);
+OSCAP_DEPRECATED(struct cpe_lang_model *cpe_lang_model_import(const char *file));
 
 /**
  * Load CPE language model from an oscap_source.
