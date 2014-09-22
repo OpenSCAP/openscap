@@ -87,3 +87,9 @@ struct oval_agent_session *cpe_session_lookup_oval_session(struct cpe_session *c
 	}
 	return session;
 }
+
+bool cpe_session_add_cpe_lang_model_source(struct cpe_session *session, struct oscap_source *source)
+{
+	struct cpe_lang_model *lang_model = cpe_lang_model_import_source(source);
+	return oscap_list_add(session->lang_models, lang_model);
+}
