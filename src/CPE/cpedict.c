@@ -71,16 +71,9 @@ struct cpe_dict_model *cpe_dict_model_import(const char *file)
 {
 	__attribute__nonnull__(file);
 
-	if (file == NULL)
-		return NULL;
-
-	struct cpe_dict_model *dict;
-
-	if ((dict = cpe_dict_model_parse_xml(file)) == NULL)
-		return NULL;
-
-	dict->origin_file = oscap_strdup(file);
-
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	struct cpe_dict_model *dict = cpe_dict_model_import_source(source);
+	oscap_source_free(source);
 	return dict;
 }
 

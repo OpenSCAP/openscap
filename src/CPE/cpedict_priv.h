@@ -115,12 +115,6 @@ struct cpe_edition;
 struct cpe_language;
 
 /**
- * Function to parse XML to CPE dictionary model
- * @param file filename
- */
-struct cpe_dict_model *cpe_dict_model_parse_xml(const char *file);
-
-/**
  * Parse generator part of CPE dictionary XML file
  * @param ctx CPE Parser's context
  * @return new structure cpe_generator

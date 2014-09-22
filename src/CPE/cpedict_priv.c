@@ -533,16 +533,6 @@ struct cpe_language *cpe_language_new()
  * More info in representive header file.
  * returns the type of <structure>
  */
-struct cpe_dict_model *cpe_dict_model_parse_xml(const char *file)
-{
-
-	__attribute__nonnull__(file);
-	struct oscap_source *source = oscap_source_new_from_file(file);
-	struct cpe_dict_model *dict = cpe_dict_model_import_source(source);
-	oscap_source_free(source);
-	return dict;
-}
-
 struct cpe_dict_model *cpe_dict_model_parse(struct cpe_parser_ctx *ctx)
 {
 
