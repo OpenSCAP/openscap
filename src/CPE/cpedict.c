@@ -40,11 +40,32 @@
 #include "common/_error.h"
 #include "common/xmlns_priv.h"
 #include "common/elements.h"
+#include "common/xmltext_priv.h"
 #include "source/oscap_source_priv.h"
 #include "source/public/oscap_source.h"
 #include <string.h>
 
 #define CPE_DICT_SUPPORTED "2.3"
+
+struct cpe_dict_model *cpe_dict_model_import_source(struct oscap_source *source)
+{
+	xmlTextReader *reader = oscap_source_get_xmlTextReader(source);
+	if (reader == NULL) {
+		return NULL;
+	}
+	struct cpe_dict_model *dict = NULL;
+	struct cpe_parser_ctx *ctx = cpe_parser_ctx_from_reader(reader);
+	if (ctx) {
+		xmlTextReaderNextNode(cpe_parser_ctx_get_reader(ctx));
+		dict = cpe_dict_model_parse(ctx);
+		if (dict != NULL) {
+			dict->origin_file = oscap_strdup(oscap_source_readable_origin(source));
+		}
+	}
+	cpe_parser_ctx_free(ctx);
+	xmlFreeTextReader(reader);
+	return dict;
+}
 
 struct cpe_dict_model *cpe_dict_model_import(const char *file)
 {

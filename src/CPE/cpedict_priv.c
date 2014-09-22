@@ -538,16 +538,7 @@ struct cpe_dict_model *cpe_dict_model_parse_xml(const char *file)
 
 	__attribute__nonnull__(file);
 	struct oscap_source *source = oscap_source_new_from_file(file);
-	xmlTextReader *reader = oscap_source_get_xmlTextReader(source);
-	struct cpe_dict_model *dict = NULL;
-
-	struct cpe_parser_ctx *ctx = cpe_parser_ctx_from_reader(reader);
-	if (ctx) {
-		xmlTextReaderNextNode(cpe_parser_ctx_get_reader(ctx));
-		dict = cpe_dict_model_parse(ctx);
-	}
-	cpe_parser_ctx_free(ctx);
-	xmlFreeTextReader(reader);
+	struct cpe_dict_model *dict = cpe_dict_model_import_source(source);
 	oscap_source_free(source);
 	return dict;
 }

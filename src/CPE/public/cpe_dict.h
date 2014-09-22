@@ -11,7 +11,7 @@
  */
 
 /*
- * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -40,6 +40,7 @@
 #include "oscap.h"
 #include "cpe_name.h"
 #include "oscap_text.h"
+#include "oscap_source.h"
 
 /**
  * @struct cpe_dict_model
@@ -925,6 +926,15 @@ void cpe_dict_model_export(const struct cpe_dict_model *dict, const char *file);
  * @retval NULL on failure
  */
 struct cpe_dict_model *cpe_dict_model_import(const char *file);
+
+/**
+ * Load new CPE dictionary from an oscap_source
+ * @memberof cpe_dict_model
+ * @param source The oscap_source to parse content from
+ * @returns new dictionary or NULL
+ */
+struct cpe_dict_model *cpe_dict_model_import_source(struct oscap_source *source);
+
 
 /**
  * Sets the origin file hint
