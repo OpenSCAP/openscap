@@ -53,6 +53,8 @@
 #include "common/_error.h"
 #include "common/xmlns_priv.h"
 #include "common/xmltext_priv.h"
+#include "source/oscap_source_priv.h"
+#include "source/public/oscap_source.h"
 
 /***************************************************************************/
 /* Variable definitions
@@ -287,7 +289,6 @@ static void cpe_check_export(const struct cpe_check *check, xmlTextWriterPtr wri
 static void cpe_reference_export(const struct cpe_reference *ref, xmlTextWriterPtr writer);
 static void cpe_notes_export(const struct cpe_notes *notes, xmlTextWriterPtr writer);
 
-static bool cpe_validate_xml(const char *filename);
 struct cpe_notes *cpe_notes_new(void);
 void cpe_notes_free(struct cpe_notes *notes);
 /***************************************************************************/
@@ -306,38 +307,6 @@ static bool cpe_dict_model_add_item(struct cpe_dict_model *dict, struct cpe_item
 
 	oscap_list_add(dict->items, item);
 	return true;
-}
-
-static bool cpe_validate_xml(const char *filename)
-{
-
-	__attribute__nonnull__(filename);
-
-	xmlParserCtxtPtr ctxt;	/* the parser context */
-	xmlDocPtr doc;		/* the resulting document tree */
-	bool ret = false;
-
-	/* create a parser context */
-	ctxt = xmlNewParserCtxt();
-	if (ctxt == NULL)
-		return false;
-	/* parse the file, activating the DTD validation option */
-	doc = xmlCtxtReadFile(ctxt, filename, NULL, XML_PARSE_DTDATTR);
-	/* check if parsing suceeded */
-	if (doc == NULL) {
-		oscap_setxmlerr(xmlCtxtGetLastError(ctxt));
-		xmlFreeParserCtxt(ctxt);
-		return false;
-	}
-	/* check if validation suceeded */
-	if (ctxt->valid)
-		ret = true;
-	else			/* set xml error */
-		oscap_setxmlerr(xmlCtxtGetLastError(ctxt));
-	xmlFreeDoc(doc);
-	/* free up the parser context */
-	xmlFreeParserCtxt(ctxt);
-	return ret;
 }
 
 /***************************************************************************/
@@ -568,18 +537,18 @@ struct cpe_dict_model *cpe_dict_model_parse_xml(const char *file)
 {
 
 	__attribute__nonnull__(file);
-
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	xmlTextReader *reader = oscap_source_get_xmlTextReader(source);
 	struct cpe_dict_model *dict = NULL;
 
-	if (!cpe_validate_xml(file))
-		return NULL;
-
-	struct cpe_parser_ctx *ctx = cpe_parser_ctx_new(file);
+	struct cpe_parser_ctx *ctx = cpe_parser_ctx_from_reader(reader);
 	if (ctx) {
 		xmlTextReaderNextNode(cpe_parser_ctx_get_reader(ctx));
 		dict = cpe_dict_model_parse(ctx);
 	}
 	cpe_parser_ctx_free(ctx);
+	xmlFreeTextReader(reader);
+	oscap_source_free(source);
 	return dict;
 }
 
