@@ -46,6 +46,8 @@
 #include "common/_error.h"
 #include "common/xmlns_priv.h"
 #include "common/xmltext_priv.h"
+#include "source/oscap_source_priv.h"
+#include "source/public/oscap_source.h"
 
 /***************************************************************************/
 /* Variable definitions
@@ -113,7 +115,6 @@ OSCAP_GETTER(const struct cpe_testexpr*, cpe_platform, expr)
  * has to call parent element's 
  */
 static char *parse_text_element(xmlTextReaderPtr reader, char *name);
-static bool cpe_validate_xml(const char *filename);
 
 /* End of static declarations 
  * */
@@ -215,59 +216,20 @@ struct cpe_platform *cpe_platform_new()
  * returns the type of <structure>
  */
 
-static bool cpe_validate_xml(const char *filename)
-{
-
-	__attribute__nonnull__(filename);
-
-	xmlParserCtxtPtr ctxt;	/* the parser context */
-	xmlDocPtr doc;		/* the resulting document tree */
-	bool ret = false;
-
-	/* create a parser context */
-	ctxt = xmlNewParserCtxt();
-	if (ctxt == NULL)
-		return false;
-	/* parse the file, activating the DTD validation option */
-	doc = xmlCtxtReadFile(ctxt, filename, NULL, XML_PARSE_DTDATTR);
-	/* check if parsing suceeded */
-	if (doc == NULL) {
-		oscap_setxmlerr(xmlCtxtGetLastError(ctxt));
-		xmlFreeParserCtxt(ctxt);
-		return false;
-	}
-	/* check if validation suceeded */
-	if (ctxt->valid)
-		ret = true;
-	else			/* set xml error */
-		oscap_setxmlerr(xmlCtxtGetLastError(ctxt));
-	xmlFreeDoc(doc);
-	/* free up the parser context */
-	xmlFreeParserCtxt(ctxt);
-	return ret;
-}
-
 struct cpe_lang_model *cpe_lang_model_parse_xml(const char *file)
 {
 
 	__attribute__nonnull__(file);
-
-	xmlTextReaderPtr reader;
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	xmlTextReaderPtr reader = oscap_source_get_xmlTextReader(source);
 	struct cpe_lang_model *ret = NULL;
 
-	if (!cpe_validate_xml(file))
-		return NULL;
-
-	reader = xmlReaderForFile(file, NULL, 0);
 	if (reader != NULL) {
-		xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
 		xmlTextReaderNextNode(reader);
 		ret = cpe_lang_model_parse(reader);
-	} else {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
 	}
 	xmlFreeTextReader(reader);
-
+	oscap_source_free(source);
 	return ret;
 }
 
