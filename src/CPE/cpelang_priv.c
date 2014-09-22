@@ -232,16 +232,6 @@ struct cpe_lang_model *cpe_lang_model_import_source(struct oscap_source *source)
 	return ret;
 }
 
-struct cpe_lang_model *cpe_lang_model_parse_xml(const char *file)
-{
-
-	__attribute__nonnull__(file);
-	struct oscap_source *source = oscap_source_new_from_file(file);
-	struct cpe_lang_model *ret = cpe_lang_model_import_source(source);
-	oscap_source_free(source);
-	return ret;
-}
-
 struct cpe_lang_model *cpe_lang_model_parse(xmlTextReaderPtr reader)
 {
 

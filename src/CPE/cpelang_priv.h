@@ -75,12 +75,6 @@ struct cpe_lang_model;
 struct cpe_platform;
 
 /**
- * Function for parsing XML CPE language file
- * @param file filename
- */
-struct cpe_lang_model *cpe_lang_model_parse_xml(const char *file);
-
-/**
  * Parse function for CPE Lang model
  * @param reader xmlTextReaderPtr structure representing XML model
  */

@@ -39,6 +39,7 @@
 #include "cpelang_priv.h"
 #include "common/util.h"
 #include "common/list.h"
+#include "source/public/oscap_source.h"
 
 #define CPE_LANG_SUPPORTED "2.2"
 
@@ -47,15 +48,9 @@ struct cpe_lang_model *cpe_lang_model_import(const char *file)
 
 	__attribute__nonnull__(file);
 
-	if (file == NULL)
-		return NULL;
-
-	struct cpe_lang_model *lang;
-
-	if ((lang = cpe_lang_model_parse_xml(file)) == NULL)
-		return NULL;
-	cpe_lang_model_set_origin_file(lang, file);
-
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	struct cpe_lang_model *lang = cpe_lang_model_import_source(source);
+	oscap_source_free(source);
 	return lang;
 }
 
