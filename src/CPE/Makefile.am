@@ -17,6 +17,7 @@ libcpe_la_SOURCES =	cpedict.c \
 libcpe_la_CPPFLAGS = @xml2_CFLAGS@ \
 			@pcre_CFLAGS@ \
 			-I$(srcdir)/public \
+			-I$(top_srcdir)/src/CPE/public \
 			-I$(top_srcdir)/src/common/public \
 			-I$(top_srcdir)/src/source/public \
 			-I$(top_srcdir)/src

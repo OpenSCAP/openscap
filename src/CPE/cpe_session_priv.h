@@ -38,6 +38,7 @@ struct cpe_session {
 };
 
 struct cpe_session *cpe_session_new(void);
+void cpe_session_free(struct cpe_session *session);
 
 OSCAP_HIDDEN_END;
 #endif

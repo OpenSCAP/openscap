@@ -2532,14 +2532,6 @@ struct xccdf_benchmark *xccdf_policy_get_benchmark(const struct xccdf_policy *po
         return xccdf_policy_model_get_benchmark(model);
 }
 
-static void _xccdf_policy_destroy_cpe_oval_session(void* ptr)
-{
-	struct oval_agent_session* session = (struct oval_agent_session*)ptr;
-	struct oval_definition_model* model = oval_agent_get_definition_model(session);
-	oval_agent_destroy_session(session);
-	oval_definition_model_free(model);
-}
-
 void xccdf_policy_model_free(struct xccdf_policy_model * model) {
 
 	oscap_list_free(model->policies, (oscap_destruct_func) xccdf_policy_free);
@@ -2547,12 +2539,7 @@ void xccdf_policy_model_free(struct xccdf_policy_model * model) {
 	oscap_list_free(model->callbacks, (oscap_destruct_func) oscap_free);
 	xccdf_tailoring_free(model->tailoring);
         xccdf_benchmark_free(model->benchmark);
-
-	oscap_list_free(model->cpe->dicts, (oscap_destruct_func) cpe_dict_model_free);
-	oscap_list_free(model->cpe->lang_models, (oscap_destruct_func) cpe_lang_model_free);
-	oscap_htable_free(model->cpe->oval_sessions, (oscap_destruct_func) _xccdf_policy_destroy_cpe_oval_session);
-	oscap_htable_free(model->cpe->applicable_platforms, NULL);
-	oscap_free(model->cpe);
+	cpe_session_free(model->cpe);
         oscap_free(model);
 }
 

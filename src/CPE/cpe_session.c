@@ -30,6 +30,9 @@
 #include "common/public/oscap.h"
 #include "common/util.h"
 #include "cpe_session_priv.h"
+#include "CPE/public/cpe_dict.h"
+#include "CPE/public/cpe_lang.h"
+#include "OVAL/public/oval_agent_api.h"
 
 struct cpe_session *cpe_session_new(void)
 {
@@ -41,4 +44,21 @@ struct cpe_session *cpe_session_new(void)
 	return cpe;
 }
 
+static inline void _xccdf_policy_destroy_cpe_oval_session(void* ptr)
+{
+	struct oval_agent_session* session = (struct oval_agent_session*)ptr;
+	struct oval_definition_model* model = oval_agent_get_definition_model(session);
+	oval_agent_destroy_session(session);
+	oval_definition_model_free(model);
+}
 
+void cpe_session_free(struct cpe_session *session)
+{
+	if (session != NULL) {
+		oscap_list_free(session->dicts, (oscap_destruct_func) cpe_dict_model_free);
+		oscap_list_free(session->lang_models, (oscap_destruct_func) cpe_lang_model_free);
+		oscap_htable_free(session->oval_sessions, (oscap_destruct_func) _xccdf_policy_destroy_cpe_oval_session);
+		oscap_htable_free(session->applicable_platforms, NULL);
+		oscap_free(session);
+	}
+}
