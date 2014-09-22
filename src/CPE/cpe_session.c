@@ -16,28 +16,29 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- *
+ * Author:
+ *     Šimon Lukašík
  */
-#ifndef OSCAP_CPE_CPE_SESSION_PRIV_H
-#define OSCAP_CPE_CPE_SESSION_PRIV_H
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
+#include "common/alloc.h"
+#include "common/_error.h"
+#include "common/list.h"
 #include "common/public/oscap.h"
 #include "common/util.h"
+#include "cpe_session_priv.h"
 
-OSCAP_HIDDEN_START;
+struct cpe_session *cpe_session_new(void)
+{
+	struct cpe_session *cpe = oscap_calloc(1, sizeof(struct cpe_session));
+	cpe->dicts = oscap_list_new();
+	cpe->lang_models = oscap_list_new();
+	cpe->oval_sessions = oscap_htable_new();
+	cpe->applicable_platforms = oscap_htable_new();
+	return cpe;
+}
 
-struct cpe_session {
-	struct oscap_list *dicts;                       ///< All CPE dictionaries except the one embedded in XCCDF
-	struct oscap_list *lang_models;                 ///< All CPE lang models except the one embedded in XCCDF
-	struct oscap_htable *oval_sessions;             ///< Caches CPE OVAL check results
-	struct oscap_htable *applicable_platforms;
-};
 
-struct cpe_session *cpe_session_new(void);
-
-OSCAP_HIDDEN_END;
-#endif

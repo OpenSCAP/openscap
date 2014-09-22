@@ -1858,11 +1858,7 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
         model->callbacks = oscap_list_new();
 	model->engines = oscap_list_new();
 
-	model->cpe = oscap_calloc(1, sizeof(struct cpe_session));
-	model->cpe->dicts = oscap_list_new();
-	model->cpe->lang_models = oscap_list_new();
-	model->cpe->oval_sessions = oscap_htable_new();
-	model->cpe->applicable_platforms = oscap_htable_new();
+	model->cpe = cpe_session_new();
 
 	if (!xccdf_policy_model_add_default_cpe(model))
 	{
