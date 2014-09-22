@@ -41,6 +41,7 @@
 #include "cpe_name.h"
 #include "oscap.h"
 #include "oscap_text.h"
+#include "oscap_source.h"
 
 /**
  * CPE language operators
@@ -378,6 +379,12 @@ bool cpe_platform_match_cpe(struct cpe_name **cpe, size_t n, const struct cpe_pl
  * @memberof cpe_lang_model
  */
 struct cpe_lang_model *cpe_lang_model_import(const char *file);
+
+/**
+ * Load CPE language model from an oscap_source.
+ * @memberof cpe_lang_model
+ */
+struct cpe_lang_model *cpe_lang_model_import_source(struct oscap_source *source);
 
 /**
  * Sets the origin file hint

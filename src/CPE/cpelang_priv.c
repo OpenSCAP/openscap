@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -216,19 +216,28 @@ struct cpe_platform *cpe_platform_new()
  * returns the type of <structure>
  */
 
-struct cpe_lang_model *cpe_lang_model_parse_xml(const char *file)
+struct cpe_lang_model *cpe_lang_model_import_source(struct oscap_source *source)
 {
-
-	__attribute__nonnull__(file);
-	struct oscap_source *source = oscap_source_new_from_file(file);
 	xmlTextReaderPtr reader = oscap_source_get_xmlTextReader(source);
 	struct cpe_lang_model *ret = NULL;
 
 	if (reader != NULL) {
 		xmlTextReaderNextNode(reader);
 		ret = cpe_lang_model_parse(reader);
+		if (ret != NULL) {
+			cpe_lang_model_set_origin_file(ret, oscap_source_readable_origin(source));
+		}
 	}
 	xmlFreeTextReader(reader);
+	return ret;
+}
+
+struct cpe_lang_model *cpe_lang_model_parse_xml(const char *file)
+{
+
+	__attribute__nonnull__(file);
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	struct cpe_lang_model *ret = cpe_lang_model_import_source(source);
 	oscap_source_free(source);
 	return ret;
 }
