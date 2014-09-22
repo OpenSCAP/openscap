@@ -61,7 +61,7 @@ int oscap_determine_document_type_reader(xmlTextReader *reader, oscap_document_t
         else if (!strcmp("oval_variables", elm_name)) {
                 *doc_type = OSCAP_DOCUMENT_OVAL_VARIABLES;
         }
-        else if (!strcmp("Benchmark", elm_name)) {
+	else if (oscap_streq("Benchmark", elm_name) || oscap_streq("TestResult", elm_name)) {
                 *doc_type = OSCAP_DOCUMENT_XCCDF;
         }
 		else if (!strcmp("Tailoring", elm_name)) {
