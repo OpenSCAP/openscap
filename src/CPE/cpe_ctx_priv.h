@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2013--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -32,13 +32,6 @@ OSCAP_HIDDEN_START;
  * Internal structure to hold information useful for CPE parser
  */
 struct cpe_parser_ctx;
-
-/**
- * Constructor for cpe_parser_ctx
- * @param filename File path to CPE file to parse
- * @returns parser's context
- */
-struct cpe_parser_ctx *cpe_parser_ctx_new(const char *filename);
 
 /**
  * Construct cpe_parser_ctx from existing xmlTextReader
