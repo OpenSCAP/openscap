@@ -93,3 +93,9 @@ bool cpe_session_add_cpe_lang_model_source(struct cpe_session *session, struct o
 	struct cpe_lang_model *lang_model = cpe_lang_model_import_source(source);
 	return oscap_list_add(session->lang_models, lang_model);
 }
+
+bool cpe_session_add_cpe_dict_source(struct cpe_session *session, struct oscap_source *source)
+{
+	struct cpe_dict_model *dict = cpe_dict_model_import_source(source);
+	return oscap_list_add(session->dicts, dict);
+}
