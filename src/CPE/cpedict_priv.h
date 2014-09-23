@@ -36,6 +36,7 @@
 
 #include "cpe_name.h"
 #include "cpe_ctx_priv.h"
+#include "cpe_dict.h"
 
 #include "../common/public/oscap.h"
 #include "../common/util.h"
@@ -46,73 +47,6 @@
  */
 OSCAP_HIDDEN_START;
  /* @endcond */
-
-/**
- * @struct cpe_check
- * Structure representing single CPE check.
- */
-struct cpe_check;
-
-/**
- * @struct cpe_reference
- * CPE dictionary item reference.
- */
-struct cpe_reference;
-
-/**
- * @struct cpe_item
- * Structure representing single CPE dictionary item.
- */
-struct cpe_item;
-
-/**
- * @struct cpe_dict_model
- * Structure representing a CPE dictionary.
- */
-struct cpe_dict_model;
-
-/**
- * @struct cpe_item_metadata
- * Structure representing metadata of CPE item
- */
-struct cpe_item_metadata;
-
-/**
- * @struct cpe_generator
- * Structure with information about document
- */
-struct cpe_generator;
-
-/**
- * @struct cpe_vendor
- * Structure with information about vendor
- */
-struct cpe_vendor;
-/**
- * @struct cpe_product
- * Product of some vendor
- */
-struct cpe_product;
-/**
- * @struct cpe_version
- * Version of product
- */
-struct cpe_version;
-/**
- * @struct cpe_update
- * Update of product version
- */
-struct cpe_update;
-/**
- * @struct cpe_edition
- * Edition of product update
- */
-struct cpe_edition;
-/**
- * @struct cpe_language
- * Language of product edition
- */
-struct cpe_language;
 
 /**
  * Parse generator part of CPE dictionary XML file
