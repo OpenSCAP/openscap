@@ -43,6 +43,7 @@ void cpe_session_free(struct cpe_session *session);
 struct oval_agent_session *cpe_session_lookup_oval_session(struct cpe_session *cpe, const char *prefixed_href);
 bool cpe_session_add_cpe_lang_model_source(struct cpe_session *session, struct oscap_source *source);
 bool cpe_session_add_cpe_dict_source(struct cpe_session *session, struct oscap_source *source);
+bool cpe_session_add_cpe_autodetect_source(struct cpe_session *session, struct oscap_source *source);
 
 OSCAP_HIDDEN_END;
 #endif

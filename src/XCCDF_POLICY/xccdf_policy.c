@@ -1706,23 +1706,10 @@ bool xccdf_policy_model_add_cpe_lang_model(struct xccdf_policy_model *model, con
 
 bool xccdf_policy_model_add_cpe_autodetect(struct xccdf_policy_model *model, const char* filepath)
 {
-	oscap_document_type_t doc_type = 0;
-	if (oscap_determine_document_type(filepath, &doc_type) != 0) {
-		oscap_seterr(OSCAP_EFAMILY_XCCDF, "Encountered issues when detecting document "
-		                                  "type of '%s'.", filepath);
-		return false;
-	}
-
-	if (doc_type == OSCAP_DOCUMENT_CPE_DICTIONARY) {
-		return xccdf_policy_model_add_cpe_dict(model, filepath);
-	}
-	else if (doc_type == OSCAP_DOCUMENT_CPE_LANGUAGE) {
-		return xccdf_policy_model_add_cpe_lang_model(model, filepath);
-	}
-
-	oscap_seterr(OSCAP_EFAMILY_XCCDF, "File '%s' wasn't detected as either CPE dictionary or "
-	                                  "CPE lang model. Can't register it to the XCCDF policy model.", filepath);
-	return false;
+	struct oscap_source *source = oscap_source_new_from_file(filepath);
+	bool ret = cpe_session_add_cpe_autodetect_source(model->cpe, source);
+	oscap_source_free(source);
+	return ret;
 }
 
 struct oscap_htable_iterator *xccdf_policy_model_get_cpe_oval_sessions(struct xccdf_policy_model *model)

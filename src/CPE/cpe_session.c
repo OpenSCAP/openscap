@@ -99,3 +99,17 @@ bool cpe_session_add_cpe_dict_source(struct cpe_session *session, struct oscap_s
 	struct cpe_dict_model *dict = cpe_dict_model_import_source(source);
 	return oscap_list_add(session->dicts, dict);
 }
+
+bool cpe_session_add_cpe_autodetect_source(struct cpe_session *session, struct oscap_source *source)
+{
+	oscap_document_type_t doc_type = oscap_source_get_scap_type(source);
+	if (doc_type == OSCAP_DOCUMENT_CPE_DICTIONARY) {
+		return cpe_session_add_cpe_dict_source(session, source);
+	} else if (doc_type == OSCAP_DOCUMENT_CPE_LANGUAGE) {
+		return cpe_session_add_cpe_lang_model_source(session, source);
+	} else {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "File '%s' wasn't detected as either CPE dictionary or "
+			"CPE lang model. Can't register it to the XCCDF policy model.", oscap_source_readable_origin(source));
+		return false;
+	}
+}
