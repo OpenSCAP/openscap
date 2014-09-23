@@ -141,6 +141,11 @@ const char *ds_sds_session_get_checklist_id(const struct ds_sds_session *session
 	return session->checklist_id;
 }
 
+struct oscap_htable *ds_sds_session_get_component_sources(struct ds_sds_session *session)
+{
+	return session->component_sources;
+}
+
 struct oscap_source *ds_sds_session_select_checklist(struct ds_sds_session *session, const char *datastream_id, const char *component_id, const char *benchmark_id)
 {
 	session->datastream_id = datastream_id;
