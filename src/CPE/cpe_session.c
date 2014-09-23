@@ -27,6 +27,7 @@
 #include "common/alloc.h"
 #include "common/_error.h"
 #include "common/list.h"
+#include "common/oscap_acquire.h"
 #include "common/public/oscap.h"
 #include "common/util.h"
 #include "cpe_session_priv.h"
@@ -78,15 +79,32 @@ void cpe_session_free(struct cpe_session *session)
 	}
 }
 
+static inline struct oscap_source *_lookup_source_in_cache(struct cpe_session *session, const char *prefixed_href)
+{
+	if (session->sources_cache == NULL) {
+		return NULL;
+	}
+	const char *realpath = oscap_acquire_guess_realpath(prefixed_href);
+	struct oscap_source *source = oscap_htable_get(session->sources_cache, realpath);
+	oscap_free(realpath);
+	return source;
+}
+
 struct oval_agent_session *cpe_session_lookup_oval_session(struct cpe_session *cpe, const char *prefixed_href)
 {
 	struct oval_agent_session* session = (struct oval_agent_session*)oscap_htable_get(cpe->oval_sessions, prefixed_href);
 
 	if (session == NULL)
 	{
-		struct oscap_source *source = oscap_source_new_from_file(prefixed_href);
-		struct oval_definition_model* oval_model = oval_definition_model_import_source(source);
+		struct oscap_source *source = NULL;
+		struct oscap_source *cached = _lookup_source_in_cache(cpe, prefixed_href);
+		if (cached == NULL) {
+			source = oscap_source_new_from_file(prefixed_href);
+			cached = source;
+		}
+		struct oval_definition_model* oval_model = oval_definition_model_import_source(cached);
 		oscap_source_free(source);
+
 		if (oval_model == NULL)
 		{
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't import OVAL definition model '%s' for CPE applicability checking", prefixed_href);
@@ -127,4 +145,9 @@ bool cpe_session_add_cpe_autodetect_source(struct cpe_session *session, struct o
 			"CPE lang model. Can't register it to the XCCDF policy model.", oscap_source_readable_origin(source));
 		return false;
 	}
+}
+
+void cpe_session_set_cache(struct cpe_session *session, struct oscap_htable *sources_cache)
+{
+	session->sources_cache = sources_cache;
 }

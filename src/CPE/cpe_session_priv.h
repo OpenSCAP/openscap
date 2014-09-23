@@ -25,6 +25,7 @@
 #include <config.h>
 #endif
 
+#include "common/list.h"
 #include "common/public/oscap.h"
 #include "common/util.h"
 #include "OVAL/public/oval_agent_api.h"
@@ -36,6 +37,7 @@ struct cpe_session {
 	struct oscap_list *lang_models;                 ///< All CPE lang models except the one embedded in XCCDF
 	struct oscap_htable *oval_sessions;             ///< Caches CPE OVAL check results
 	struct oscap_htable *applicable_platforms;
+	struct oscap_htable *sources_cache;             ///< Not owned cache [path -> oscap_source]
 };
 
 struct cpe_session *cpe_session_new(void);
@@ -44,6 +46,7 @@ struct oval_agent_session *cpe_session_lookup_oval_session(struct cpe_session *c
 bool cpe_session_add_cpe_lang_model_source(struct cpe_session *session, struct oscap_source *source);
 bool cpe_session_add_cpe_dict_source(struct cpe_session *session, struct oscap_source *source);
 bool cpe_session_add_cpe_autodetect_source(struct cpe_session *session, struct oscap_source *source);
+void cpe_session_set_cache(struct cpe_session *session, struct oscap_htable *sources_cache);
 
 OSCAP_HIDDEN_END;
 #endif
