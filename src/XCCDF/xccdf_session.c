@@ -38,6 +38,7 @@
 #include "common/util.h"
 #include "common/list.h"
 #include "common/_error.h"
+#include "CPE/cpe_session_priv.h"
 #include "DS/public/scap_ds.h"
 #include "DS/public/ds_sds_session.h"
 #include "DS/ds_common.h"
@@ -438,6 +439,12 @@ cleanup:
 		xccdf_benchmark_free(benchmark);
 	return session->xccdf.policy_model != NULL ? 0 : 1;
 }
+static inline void _connect_cpe_session_with_sds(struct xccdf_session *session)
+{
+	struct cpe_session *cpe_session = xccdf_policy_model_get_cpe_session(session->xccdf.policy_model);
+	struct oscap_htable *sources_cache = ds_sds_session_get_component_sources(xccdf_session_get_ds_sds_session(session));
+	cpe_session_set_cache(cpe_session, sources_cache);
+}
 
 int xccdf_session_load_cpe(struct xccdf_session *session)
 {
@@ -478,6 +485,7 @@ int xccdf_session_load_cpe(struct xccdf_session *session)
 				return 1;
 			}
 
+			_connect_cpe_session_with_sds(session);
 			while (oscap_string_iterator_has_more(cpe_it)) {
 				const char* cpe_filename = oscap_string_iterator_next(cpe_it);
 
