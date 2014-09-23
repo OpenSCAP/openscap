@@ -216,7 +216,6 @@ static inline int _oval_definition_model_merge_source(struct oval_definition_mod
 	struct oval_parser_context context;
 	context.reader = oscap_source_get_xmlTextReader(source);
 	if (context.reader == NULL) {
-		oscap_source_free(source);
 		return -1;
 	}
 	context.definition_model = model;

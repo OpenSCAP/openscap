@@ -97,19 +97,16 @@ char *oval_determine_document_schema_version_priv(xmlTextReader *reader, oscap_d
 		break;
 	default:
 		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown document type: %d.", doc_type);
-		xmlFreeTextReader(reader);
 		return NULL;
 	}
 	/* verify root element's name */
 	elm_name = (const char *) xmlTextReaderConstLocalName(reader);
 	if (!elm_name) {
 		oscap_setxmlerr(xmlGetLastError());
-		xmlFreeTextReader(reader);
 		return NULL;
 	}
 	if (strcmp(root_name, elm_name)) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Document type doesn't match root element's name: '%s'.", elm_name);
-		xmlFreeTextReader(reader);
 		return NULL;
 	}
 	/* find generator */
@@ -118,7 +115,6 @@ char *oval_determine_document_schema_version_priv(xmlTextReader *reader, oscap_d
 	elm_name = (const char *) xmlTextReaderConstLocalName(reader);
 	if (!elm_name || strcmp(elm_name, "generator")) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unexpected element: '%s'.", elm_name);
-		xmlFreeTextReader(reader);
 		return NULL;
 	}
 	/* find schema_version */
