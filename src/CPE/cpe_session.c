@@ -33,6 +33,18 @@
 #include "CPE/public/cpe_dict.h"
 #include "CPE/public/cpe_lang.h"
 #include "OVAL/public/oval_agent_api.h"
+#include "source/public/oscap_source.h"
+#include "source/oscap_source_priv.h"
+
+static inline bool cpe_session_add_default_cpe(struct cpe_session *session)
+{
+	char* cpe_dict_path = oscap_sprintf("%s/openscap-cpe-dict.xml", oscap_path_to_cpe());
+	struct oscap_source *source = oscap_source_new_from_file(cpe_dict_path);
+	oscap_free(cpe_dict_path);
+	const bool ret = cpe_session_add_cpe_dict_source(session, source);
+	oscap_source_free(source);
+	return ret;
+}
 
 struct cpe_session *cpe_session_new(void)
 {
@@ -41,6 +53,9 @@ struct cpe_session *cpe_session_new(void)
 	cpe->lang_models = oscap_list_new();
 	cpe->oval_sessions = oscap_htable_new();
 	cpe->applicable_platforms = oscap_htable_new();
+	if (!cpe_session_add_default_cpe(cpe)) {
+		oscap_seterr(OSCAP_EFAMILY_XCCDF, "Failed to add default CPE to newly created CPE Session.");
+	}
 	return cpe;
 }
 

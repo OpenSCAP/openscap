@@ -1806,8 +1806,6 @@ struct xccdf_result * xccdf_policy_get_result_by_id(struct xccdf_policy * policy
  * returns the type of <structure>
  */
 
-static bool xccdf_policy_model_add_default_cpe(struct xccdf_policy_model* model);
-
 /**
  * New XCCDF Policy model. Create new structure and fill the policies list with 
  * policy entries that are inherited from XCCDF benchmark Profile elements. For each 
@@ -1832,23 +1830,9 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
 
 	model->cpe = cpe_session_new();
 
-	if (!xccdf_policy_model_add_default_cpe(model))
-	{
-		oscap_seterr(OSCAP_EFAMILY_XCCDF, "Failed to add default CPE to newly created XCCDF policy model.");
-	}
-
         /* Resolve document */
         xccdf_benchmark_resolve(benchmark);
 	return model;
-}
-
-static bool xccdf_policy_model_add_default_cpe(struct xccdf_policy_model* model)
-{
-	char* cpe_dict_path = oscap_sprintf("%s/openscap-cpe-dict.xml", oscap_path_to_cpe());
-	const bool ret = xccdf_policy_model_add_cpe_dict(model, cpe_dict_path);
-	oscap_free(cpe_dict_path);
-
-	return ret;
 }
 
 static inline bool
