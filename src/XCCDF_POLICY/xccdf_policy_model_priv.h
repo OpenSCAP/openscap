@@ -26,6 +26,7 @@
 #define _OSCAP_XCCDF_POLICY_MODEL_PRIV_H
 
 #include "common/util.h"
+#include "CPE/cpe_session_priv.h"
 #include "public/xccdf_policy.h"
 
 OSCAP_HIDDEN_START;
@@ -59,6 +60,14 @@ bool xccdf_policy_model_platforms_are_applicable(struct xccdf_policy_model *mode
  * @returns true if the given item is applicable
  */
 bool xccdf_policy_model_item_is_applicable(struct xccdf_policy_model *model, struct xccdf_item *item);
+
+/**
+ * Get CPE session assigned with the XCCDF Policy Model
+ * @memberof xccdf_policy_model
+ * @param model XCCDF Policy Model
+ * @returns cpe_session or NULL
+ */
+struct cpe_session *xccdf_policy_model_get_cpe_session(struct xccdf_policy_model *model);
 
 OSCAP_HIDDEN_END;
 

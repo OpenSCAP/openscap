@@ -1717,6 +1717,11 @@ struct oscap_htable_iterator *xccdf_policy_model_get_cpe_oval_sessions(struct xc
 	return oscap_htable_iterator_new(model->cpe->oval_sessions);
 }
 
+struct cpe_session *xccdf_policy_model_get_cpe_session(struct xccdf_policy_model *model)
+{
+	return model->cpe;
+}
+
 /**
  * Get ID of XCCDF Profile that belongs to XCCDF Policy
  */
