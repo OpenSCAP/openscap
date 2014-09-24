@@ -34,6 +34,7 @@
 /* DS */
 #include <scap_ds.h>
 #include <oscap_source.h>
+#include <ds_sds_session.h>
 
 #include "oscap-tool.h"
 
@@ -247,9 +248,10 @@ static inline char *_gcwd(void)
 
 int app_ds_sds_split(const struct oscap_action *action) {
 	int ret = OSCAP_ERROR;
-	struct ds_sds_index* sds_idx = NULL;
 	const char* f_datastream_id = action->f_datastream_id;
 	const char* f_component_id = action->f_xccdf_id;
+	struct ds_sds_session *session = NULL;
+	char *cwd = NULL;
 
 	struct oscap_source *source = oscap_source_new_from_file(action->ds_action->file);
 	/* Validate */
@@ -260,21 +262,27 @@ int app_ds_sds_split(const struct oscap_action *action) {
 		}
 	}
 
-	sds_idx = ds_sds_index_import(action->ds_action->file);
-
-	if (ds_sds_index_select_checklist(sds_idx, &f_datastream_id, &f_component_id) != 0) {
+	session = ds_sds_session_new_from_source(source);
+	if (session == NULL) {
+		goto cleanup;
+	}
+	if (ds_sds_index_select_checklist(ds_sds_session_get_sds_idx(session), &f_datastream_id, &f_component_id) != 0) {
 		fprintf(stdout, "Failed to locate a datastream with ID matching '%s' ID "
 				"and checklist inside matching '%s' ID.\n",
 				action->f_datastream_id == NULL ? "<any>" : action->f_datastream_id,
 				action->f_xccdf_id == NULL ? "<any>" : action->f_xccdf_id);
-		ret = OSCAP_ERROR;
 		goto cleanup;
 	}
+	ds_sds_session_set_datastream_id(session, f_datastream_id);
 
-	if (ds_sds_decompose(action->ds_action->file, f_datastream_id, f_component_id, action->ds_action->target, NULL) != 0)
-	{
-		fprintf(stdout, "Failed to split given source datastream '%s'.\n", action->ds_action->file);
-		ret = OSCAP_ERROR;
+	if ((cwd = _gcwd()) == NULL) {
+		goto cleanup;
+	}
+	ds_sds_session_set_target_dir(session, cwd);
+	if (ds_sds_session_register_component_with_dependencies(session, "checklists", f_component_id, NULL) != 0) {
+		goto cleanup;
+	}
+	if (ds_sds_session_dump_component_files(session) != 0) {
 		goto cleanup;
 	}
 
@@ -283,8 +291,9 @@ int app_ds_sds_split(const struct oscap_action *action) {
 cleanup:
 	oscap_print_error();
 
-	ds_sds_index_free(sds_idx);
+	ds_sds_session_free(session);
 	oscap_source_free(source);
+	free(cwd);
 	free(action->ds_action);
 
 	return ret;
