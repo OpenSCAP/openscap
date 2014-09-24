@@ -658,17 +658,17 @@ int app_xccdf_resolve(const struct oscap_action *action)
 		return OSCAP_ERROR;
 	}
 
+	struct oscap_source *source = oscap_source_new_from_file(action->f_xccdf);
 	/* validate input */
 	if (action->validate) {
-		struct oscap_source *source = oscap_source_new_from_file(action->f_xccdf);
 		if (oscap_source_validate(source, reporter, (void *) action) != 0) {
 			oscap_source_free(source);
 			goto cleanup;
 		}
-		oscap_source_free(source);
 	}
 
-	bench = xccdf_benchmark_import(action->f_xccdf);
+	bench = xccdf_benchmark_import_source(source);
+	oscap_source_free(source);
 	if (!bench)
 		goto cleanup;
 
@@ -708,7 +708,7 @@ cleanup:
 	return ret;
 }
 
-static bool _some_oval_result_exists(const char *filename)
+static bool _some_oval_result_exists(struct oscap_source *xccdf_source)
 {
 	struct xccdf_benchmark *benchmark = NULL;
 	struct xccdf_policy_model *policy_model = NULL;
@@ -717,7 +717,7 @@ static bool _some_oval_result_exists(const char *filename)
 	char *oval_result = NULL;
 	bool result = false;
 
-	benchmark = xccdf_benchmark_import(filename);
+	benchmark = xccdf_benchmark_import_source(xccdf_source);
 	if (benchmark == NULL)
 		return false;
 
@@ -824,12 +824,14 @@ int app_xccdf_xslt(const struct oscap_action *action)
 
 	if (action->module == &XCCDF_GEN_REPORT && oval_template == NULL) {
 		/* If generating the report and the option is missing -> use defaults */
-		if (_some_oval_result_exists(action->f_xccdf))
+		struct oscap_source *xccdf_source = oscap_source_new_from_file(action->f_xccdf);
+		if (_some_oval_result_exists(xccdf_source))
 			/* We want to define default template because we strive to serve user the
 			 * best. However, we must not offer a template, if there is a risk it might
 			 * be incorrect. Otherwise, libxml2 will throw a lot of misleading messages
 			 * to stderr. */
 			oval_template = "%.result.xml";
+		oscap_source_free(xccdf_source);
 	}
 
 	if (action->module == &XCCDF_GEN_CUSTOM) {

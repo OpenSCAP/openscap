@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2010--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <oscap_source.h>
 #include "common/public/oscap_error.h"
 
 
@@ -37,7 +38,9 @@ int main(int argc, char **argv)
 
 	if (strcmp(argv[1], "--export") == 0) {
 		if (argc != 4) return 1;
-		struct xccdf_benchmark *bench = xccdf_benchmark_import(argv[2]);
+		struct oscap_source *source = oscap_source_new_from_file(argv[2]);
+		struct xccdf_benchmark *bench = xccdf_benchmark_import_source(source);
+		oscap_source_free(source);
 		if (bench == NULL) return 1;
 		xccdf_benchmark_export(bench, argv[3]);
 		xccdf_benchmark_free(bench);

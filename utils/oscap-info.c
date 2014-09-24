@@ -272,8 +272,10 @@ static int app_info(const struct oscap_action *action)
 		                xccdf_file = malloc(PATH_MAX * sizeof(char));
 				snprintf(xccdf_file, PATH_MAX, "%s/%s", temp_dir, "xccdf.xml");
 				struct xccdf_benchmark* bench = NULL;
-		                bench = xccdf_benchmark_import(xccdf_file);
+				struct oscap_source *xccdf_source = oscap_source_new_from_file(xccdf_file);
+		                bench = xccdf_benchmark_import_source(xccdf_source);
 				free(xccdf_file);
+				oscap_source_free(xccdf_source);
 				if(!bench) {
 					oscap_string_iterator_free(checklist_it);
 					oscap_acquire_cleanup_dir_bundled(&temp_dir);
