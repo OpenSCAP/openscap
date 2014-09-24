@@ -39,7 +39,6 @@ int ds_sds_session_register_component_source(struct ds_sds_session *session, con
 int ds_sds_session_dump_component_files(struct ds_sds_session *session);
 int ds_sds_session_set_target_dir(struct ds_sds_session *session, const char *target_dir);
 const char *ds_sds_session_get_target_dir(struct ds_sds_session *session);
-int ds_sds_session_register_component_with_dependencies(struct ds_sds_session *session, const char *container_name, const char *component_id, const char *target_filename);
 struct oscap_htable *ds_sds_session_get_component_sources(struct ds_sds_session *session);
 
 OSCAP_HIDDEN_END;
