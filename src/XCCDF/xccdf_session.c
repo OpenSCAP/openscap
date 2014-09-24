@@ -367,15 +367,6 @@ static int _reporter(const char *file, int line, const char *msg, void *arg)
 	return 0;
 }
 
-static void _validation_failed(const char *xmlfile, oscap_document_type_t doc_type, const char *version)
-{
-	const char *doc_name = oscap_document_type_to_string(doc_type);
-	if (doc_name == NULL)
-		oscap_seterr(OSCAP_EFAMILY_XML, "Unrecognized document type in %s.", xmlfile);
-	else
-		oscap_seterr(OSCAP_EFAMILY_XML, "Invalid %s (%s) content in %s.", doc_name, version, xmlfile);
-}
-
 int xccdf_session_load_xccdf(struct xccdf_session *session)
 {
 	struct xccdf_benchmark *benchmark = NULL;
@@ -1283,10 +1274,12 @@ int xccdf_session_export_arf(struct xccdf_session *session)
 		}
 
 		if (session->full_validation) {
-			if (oscap_validate_document(session->export.arf_file, OSCAP_DOCUMENT_ARF, "1.1", _reporter, NULL)) {
-				_validation_failed(session->export.arf_file, OSCAP_DOCUMENT_ARF, "1.1");
+			struct oscap_source *source = oscap_source_new_from_file(session->export.arf_file);
+			if (oscap_source_validate(source, _reporter, NULL) != 0) {
+				oscap_source_free(source);
 				return 1;
 			}
+			oscap_source_free(source);
 		}
 	}
 	return 0;
