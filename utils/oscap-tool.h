@@ -152,7 +152,6 @@ struct oscap_action {
 };
 
 int app_xslt(const char *infile, const char *xsltfile, const char *outfile, const char **params);
-void validation_failed(const char *xmlfile, oscap_document_type_t doctype, const char *version);
 int reporter(const char *file, int line, const char *msg, void *arg);
 
 int oscap_module_process(struct oscap_module *module, int argc, char **argv);

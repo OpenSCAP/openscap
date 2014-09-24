@@ -183,15 +183,6 @@ static int print_versions(const struct oscap_action *action)
 	return OSCAP_OK;
 }
 
-void validation_failed(const char *xmlfile, oscap_document_type_t doc_type, const char *version) {
-
-	const char *doc_name = oscap_document_type_to_string(doc_type);
-	if (doc_name == NULL)
-		fprintf(stderr, "Unrecognized document type.\n");
-	else
-		fprintf(stderr, "Invalid %s content(%s) in %s.\n", doc_name, version, xmlfile);
-}
-
 int reporter(const char *file, int line, const char *msg, void *arg) {
 	fprintf(stderr, "File '%s' line %d: %s", file, line, msg);
 	return 0;
