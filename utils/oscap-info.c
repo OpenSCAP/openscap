@@ -147,7 +147,7 @@ static int app_info(const struct oscap_action *action)
 	break;
 	case OSCAP_DOCUMENT_XCCDF: {
 		printf("Document type: XCCDF Checklist\n");
-		struct xccdf_benchmark* bench = xccdf_benchmark_import(action->file);
+		struct xccdf_benchmark* bench = xccdf_benchmark_import_source(source);
 		if(!bench)
 			goto cleanup;
 		printf("Checklist version: %s\n", oscap_source_get_schema_version(source));
@@ -213,7 +213,7 @@ static int app_info(const struct oscap_action *action)
 	break;
 	case OSCAP_DOCUMENT_CPE_DICTIONARY: {
 		printf("Document type: CPE Dictionary\n");
-		struct cpe_dict_model *dict_model = cpe_dict_model_import(action->file);
+		struct cpe_dict_model *dict_model = cpe_dict_model_import_source(source);
 		if (!dict_model)
 			goto cleanup;
 		struct cpe_generator *gen = cpe_dict_model_get_generator(dict_model);
