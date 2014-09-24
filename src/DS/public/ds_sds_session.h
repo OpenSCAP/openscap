@@ -138,4 +138,12 @@ struct oscap_source *ds_sds_session_get_component_by_href(struct ds_sds_session 
  */
 int ds_sds_session_register_component_with_dependencies(struct ds_sds_session *session, const char *container_name, const char *component_id, const char *target_filename);
 
+/**
+ * Store cached component files to the disc.
+ * @memberof ds_sds_session
+ * @param session The Source DataStream session
+ * @returns 0 on success
+ */
+int ds_sds_session_dump_component_files(struct ds_sds_session *session);
+
 #endif
