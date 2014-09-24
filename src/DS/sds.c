@@ -41,6 +41,7 @@
 #include "common/list.h"
 #include "common/oscap_acquire.h"
 #include "source/oscap_source_priv.h"
+#include "source/public/oscap_source.h"
 
 #include <sys/stat.h>
 #include <time.h>
@@ -846,12 +847,10 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 
 	bool extended_component = false;
 
-	oscap_document_type_t doc_type;
-	// This may as well fail to detect the content but in such case the component
-	// could be a valid extended-component content!
-	int doc_type_result = oscap_determine_document_type(filepath, &doc_type);
-
-	if (doc_type_result == 0 && doc_type == OSCAP_DOCUMENT_XCCDF)
+	struct oscap_source *component_source = oscap_source_new_from_file(filepath);
+	oscap_document_type_t doc_type = oscap_source_get_scap_type(component_source);
+	oscap_source_free(component_source);
+	if (doc_type == OSCAP_DOCUMENT_XCCDF)
 	{
 		cref_parent = node_get_child_element(datastream, "checklists");
 		if (ds_sds_compose_add_component_dependencies(doc, datastream, filepath, cref_catalog, doc_type) != 0)
@@ -860,7 +859,7 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 			return -1;
 		}
 	}
-	else if (doc_type_result == 0 && (doc_type == OSCAP_DOCUMENT_CPE_DICTIONARY || doc_type == OSCAP_DOCUMENT_CPE_LANGUAGE))
+	else if (doc_type == OSCAP_DOCUMENT_CPE_DICTIONARY || doc_type == OSCAP_DOCUMENT_CPE_LANGUAGE)
 	{
 		cref_parent = node_get_child_element(datastream, "dictionaries");
 		if (cref_parent == NULL) {
@@ -879,7 +878,7 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 			return -1;
 		}
 	}
-	else if (doc_type_result == 0 && doc_type == OSCAP_DOCUMENT_OVAL_DEFINITIONS)
+	else if (doc_type == OSCAP_DOCUMENT_OVAL_DEFINITIONS)
 	{
 		cref_parent = node_get_child_element(datastream, "checks");
 	}

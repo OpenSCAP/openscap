@@ -351,7 +351,6 @@ int app_evaluate_oval(const struct oscap_action *action)
 	int ret = OSCAP_ERROR;
 
 	char* temp_dir = NULL;
-	char* oval_file = NULL;
 
 	if (action->probe_root) {
 		if (setenv("OSCAP_PROBE_ROOT", action->probe_root, 1) != 0) {
@@ -367,33 +366,40 @@ int app_evaluate_oval(const struct oscap_action *action)
 		}
 	}
 
-	oscap_document_type_t doc_type = 0;
-	if (oscap_determine_document_type(action->f_oval, &doc_type) == 0 && doc_type == OSCAP_DOCUMENT_SDS)
+	struct oscap_source *main_source = oscap_source_new_from_file(action->f_oval);
+	struct oscap_source *oval_source = NULL;
+	if (oscap_source_get_scap_type(main_source) == OSCAP_DOCUMENT_SDS)
 	{
 		temp_dir = oscap_acquire_temp_dir_bundled();
 		if (temp_dir == NULL)
+			oscap_source_free(main_source);
 			goto cleanup;
 
 		if (ds_sds_decompose_custom(action->f_oval, action->f_datastream_id, temp_dir, "checks", action->f_oval_id, "oval.xml") != 0)
 		{
 			fprintf(stdout, "Failed to decompose source datastream in '%s'\n", action->f_oval);
+			oscap_source_free(main_source);
 			goto cleanup;
 		}
 
+		char *oval_file = NULL;
 		oval_file = malloc(PATH_MAX * sizeof(char));
 		sprintf(oval_file, "%s/%s", temp_dir, "oval.xml");
+		oval_source = oscap_source_new_from_file(oval_file);
+		free(oval_file);
 	}
 	else
 	{
-		oval_file = strdup(action->f_oval);
+		oval_source = main_source;
 	}
 
 	/* import OVAL Definitions */
-	struct oscap_source *source = oscap_source_new_from_file(oval_file);
-	def_model = oval_definition_model_import_source(source);
-	oscap_source_free(source);
+	def_model = oval_definition_model_import_source(oval_source);
 	if (def_model == NULL) {
-		fprintf(stderr, "Failed to import the OVAL Definitions from '%s'.\n", oval_file);
+		fprintf(stderr, "Failed to import the OVAL Definitions from '%s'.\n", oscap_source_readable_origin(oval_source));
+		oscap_source_free(main_source);
+		if (temp_dir != NULL)
+			oscap_source_free(oval_source);
 		goto cleanup;
 	}
 
@@ -404,16 +410,28 @@ int app_evaluate_oval(const struct oscap_action *action)
 		oscap_source_free(var_source);
 		if (var_model == NULL) {
 			fprintf(stderr, "Failed to import the OVAL Variables from '%s'.\n", action->f_variables);
+			oscap_source_free(main_source);
+			if (temp_dir != NULL)
+				oscap_source_free(oval_source);
 			goto cleanup;
 		}
 
 		if (oval_definition_model_bind_variable_model(def_model, var_model)) {
 			fprintf(stderr, "Failed to bind Variables to Definitions\n");
+			oscap_source_free(main_source);
+			if (temp_dir != NULL)
+				oscap_source_free(oval_source);
 			goto cleanup;
 		}
 	}
 
-	sess = oval_agent_new_session(def_model, basename(oval_file));
+	char *path_clone = strdup(oscap_source_readable_origin(oval_source));
+	oscap_source_free(main_source);
+	if (temp_dir != NULL)
+		oscap_source_free(oval_source);
+	sess = oval_agent_new_session(def_model, basename(path_clone));
+	free(path_clone);
+
 	if (sess == NULL) {
 		fprintf(stderr, "Failed to create new agent session.\n");
 		goto cleanup;
@@ -479,8 +497,6 @@ cleanup:
 	if (sess) oval_agent_destroy_session(sess);
 	if (def_model) oval_definition_model_free(def_model);
 	if (dir_model) oval_directives_model_free(dir_model);
-
-	free(oval_file);
 
 	if (temp_dir)
 	{
