@@ -101,4 +101,12 @@ int oscap_source_validate(struct oscap_source *source, xml_reporter reporter, vo
  */
 int oscap_source_validate_schematron(struct oscap_source *source, const char *outfile);
 
+/**
+ * Returns human readable description of oscap_source origin
+ * @memberof oscap_source
+ * @param source The oscap_source to get readable source from.
+ * @returns human readable description
+ */
+const char *oscap_source_readable_origin(const struct oscap_source *source);
+
 #endif
