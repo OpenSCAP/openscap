@@ -376,19 +376,3 @@ void oscap_print_error(void)
 	}
 }
 
-#ifndef P_tmpdir
-#define P_tmpdir "/tmp"
-#endif
-
-#define TEMP_DIR_TEMPLATE P_tmpdir "/oscap.XXXXXX"
-
-char *oscap_acquire_temp_dir_bundled()
-{
-	char *temp_dir = strdup(TEMP_DIR_TEMPLATE);
-	if (mkdtemp(temp_dir) == NULL) {
-		free(temp_dir);
-		fprintf(stderr, "Could not create temp directory " TEMP_DIR_TEMPLATE ". %s", strerror(errno));
-		return NULL;
-	}
-	return temp_dir;
-}
