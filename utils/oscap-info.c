@@ -254,31 +254,20 @@ static int app_info(const struct oscap_action *action)
 				const char * id = oscap_string_iterator_next(checklist_it);
 				printf("\tRef-Id: %s\n", id);
 
-				char * temp_dir = NULL;
-				char * xccdf_file = NULL;
-
-		                temp_dir = oscap_acquire_temp_dir_bundled();
-		                if (temp_dir == NULL) {
+				/* decompose */
+				struct oscap_source *xccdf_source = ds_sds_session_select_checklist(session, ds_stream_index_get_id(stream), id, NULL);
+				if (xccdf_source == NULL) {
 					oscap_string_iterator_free(checklist_it);
 					ds_stream_index_iterator_free(sds_it);
 					ds_sds_session_free(session);
 					goto cleanup;
 				}
 
-				/* decompose */
-				ds_sds_decompose(action->file, ds_stream_index_get_id(stream), id, temp_dir, "xccdf.xml");
-
 				/* import xccdf */
-		                xccdf_file = malloc(PATH_MAX * sizeof(char));
-				snprintf(xccdf_file, PATH_MAX, "%s/%s", temp_dir, "xccdf.xml");
 				struct xccdf_benchmark* bench = NULL;
-				struct oscap_source *xccdf_source = oscap_source_new_from_file(xccdf_file);
 		                bench = xccdf_benchmark_import_source(xccdf_source);
-				free(xccdf_file);
-				oscap_source_free(xccdf_source);
 				if(!bench) {
 					oscap_string_iterator_free(checklist_it);
-					oscap_acquire_cleanup_dir_bundled(&temp_dir);
 					ds_stream_index_iterator_free(sds_it);
 					ds_sds_session_free(session);
 					goto cleanup;
@@ -322,7 +311,6 @@ static int app_info(const struct oscap_action *action)
 				// already freed by policy!
 				//xccdf_benchmark_free(bench);
 
-				oscap_acquire_cleanup_dir_bundled(&temp_dir);
 				if (oscap_err()) {
 					/* This might have set error, when some of the removals failed.
 					   No need to abort this operation, we can safely procceed. */
