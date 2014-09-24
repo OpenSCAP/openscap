@@ -235,21 +235,16 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 }
 
 int app_ds_sds_split(const struct oscap_action *action) {
-	int ret;
+	int ret = OSCAP_ERROR;
 	struct ds_sds_index* sds_idx = NULL;
 	const char* f_datastream_id = action->f_datastream_id;
 	const char* f_component_id = action->f_xccdf_id;
 
+	struct oscap_source *source = oscap_source_new_from_file(action->ds_action->file);
 	/* Validate */
 	if (action->validate)
 	{
-		int valret;
-		if ((valret = oscap_validate_document(action->ds_action->file, OSCAP_DOCUMENT_SDS, "1.2", reporter, (void*) action)))
-		{
-			if (valret == 1)
-				validation_failed(action->ds_action->file, OSCAP_DOCUMENT_SDS, "1.2");
-
-			ret = OSCAP_ERROR;
+		if (oscap_source_validate(source, reporter, (void *) action) != 0) {
 			goto cleanup;
 		}
 	}
@@ -278,6 +273,7 @@ cleanup:
 	oscap_print_error();
 
 	ds_sds_index_free(sds_idx);
+	oscap_source_free(source);
 	free(action->ds_action);
 
 	return ret;
@@ -321,11 +317,12 @@ int app_ds_sds_compose(const struct oscap_action *action) {
 
 	if (action->validate)
 	{
-		if (oscap_validate_document(target_abs_path, OSCAP_DOCUMENT_SDS, "1.2", reporter, (void*) action) != 0)
-		{
-			validation_failed(target_abs_path, OSCAP_DOCUMENT_SDS, "1.2");
+		struct oscap_source *source = oscap_source_new_from_file(target_abs_path);
+		if (oscap_source_validate(source, reporter, (void *) action) != 0) {
+			oscap_source_free(source);
 			goto cleanup;
 		}
+		oscap_source_free(source);
 	}
 
 	ret = OSCAP_OK;
@@ -343,10 +340,11 @@ int app_ds_sds_add(const struct oscap_action *action)
 	// TODO: chdir to the directory of the component (same as when composing new sds)
 	ret = ds_sds_compose_add_component(action->ds_action->target, action->f_datastream_id, action->ds_action->file, false);
 	if (action->validate) {
-		if (oscap_validate_document(action->ds_action->target, OSCAP_DOCUMENT_SDS, "1.2", reporter, (void*) action) != 0) {
-			validation_failed(action->ds_action->target, OSCAP_DOCUMENT_SDS, "1.2");
+		struct oscap_source *source = oscap_source_new_from_file(action->ds_action->file);
+		if (oscap_source_validate(source, reporter, (void *) action) != 0) {
 			ret = OSCAP_ERROR;
 		}
+		oscap_source_free(source);
 	}
 	oscap_print_error();
 
@@ -355,15 +353,9 @@ int app_ds_sds_add(const struct oscap_action *action)
 }
 
 int app_ds_sds_validate(const struct oscap_action *action) {
-	int ret;
-
-	int valret;
-	if ((valret = oscap_validate_document(action->ds_action->file, OSCAP_DOCUMENT_SDS, "1.2", reporter, (void*) action)))
-	{
-		if (valret == 1)
-			validation_failed(action->ds_action->file, OSCAP_DOCUMENT_SDS, "1.2");
-
-		ret = OSCAP_ERROR;
+	int ret = OSCAP_ERROR;
+	struct oscap_source *source = oscap_source_new_from_file(action->ds_action->file);
+	if (oscap_source_validate(source, reporter, (void*) action) != 0) {
 		goto cleanup;
 	}
 
@@ -373,22 +365,18 @@ cleanup:
 	oscap_print_error();
 
 	free(action->ds_action);
+	oscap_source_free(source);
 	return ret;
 }
 
 int app_ds_rds_split(const struct oscap_action *action) {
-	int ret;
+	int ret = OSCAP_ERROR;
 	struct rds_index *rds_idx = NULL;
 
+	struct oscap_source *source = oscap_source_new_from_file(action->ds_action->file);
 	if (action->validate)
 	{
-		int valret;
-		if ((valret = oscap_validate_document(action->ds_action->file, OSCAP_DOCUMENT_ARF, "1.1", reporter, (void*) action)))
-		{
-			if (valret == 1)
-				validation_failed(action->ds_action->file, OSCAP_DOCUMENT_ARF, "1.1");
-
-			ret = OSCAP_ERROR;
+		if (oscap_source_validate(source, reporter, (void *) action) != 0) {
 			goto cleanup;
 		}
 	}
@@ -421,24 +409,22 @@ cleanup:
 
 	rds_index_free(rds_idx);
 	free(action->ds_action);
+	oscap_source_free(source);
 
 	return ret;
 }
 
 int app_ds_rds_create(const struct oscap_action *action) {
-	int ret;
+	int ret = OSCAP_ERROR;
 
 	if (action->validate)
 	{
-		int valret;
-		if ((valret = oscap_validate_document(action->ds_action->file, OSCAP_DOCUMENT_SDS, "1.2", reporter, (void*) action)))
-		{
-			if (valret == 1)
-				validation_failed(action->ds_action->file, OSCAP_DOCUMENT_SDS, "1.2");
-
-			ret = OSCAP_ERROR;
+		struct oscap_source *sds = oscap_source_new_from_file(action->ds_action->file);
+		if (oscap_source_validate(sds, reporter, (void *) action) != 0) {
+			oscap_source_free(sds);
 			goto cleanup;
 		}
+		oscap_source_free(sds);
 
 		struct oscap_source *result = oscap_source_new_from_file(action->ds_action->xccdf_result);
 		if (oscap_source_validate(result, reporter, (void *) action) != 0) {
@@ -486,15 +472,12 @@ int app_ds_rds_create(const struct oscap_action *action) {
 
 	if (action->validate && full_validation)
 	{
-		int valret;
-		if ((valret = oscap_validate_document(action->ds_action->target, OSCAP_DOCUMENT_ARF, "1.1", reporter, (void*) action)))
-		{
-			if (valret == 1)
-				validation_failed(action->ds_action->target, OSCAP_DOCUMENT_ARF, "1.1");
-
-			ret = OSCAP_ERROR;
+		struct oscap_source *rds = oscap_source_new_from_file(action->ds_action->target);
+		if (oscap_source_validate(rds, reporter, (void *) action) != 0) {
+			oscap_source_free(rds);
 			goto cleanup;
 		}
+		oscap_source_free(rds);
 	}
 
 	ret = OSCAP_OK;
@@ -507,17 +490,14 @@ cleanup:
 }
 
 int app_ds_rds_validate(const struct oscap_action *action) {
-	int ret;
+	int ret = OSCAP_ERROR;
 
-	int valret;
-	if ((valret = oscap_validate_document(action->ds_action->file, OSCAP_DOCUMENT_ARF, "1.1", reporter, (void*) action)))
-	{
-		if (valret == 1)
-			validation_failed(action->ds_action->file, OSCAP_DOCUMENT_ARF, "1.1");
-
-		ret = OSCAP_ERROR;
+	struct oscap_source *rds = oscap_source_new_from_file(action->ds_action->file);
+	if (oscap_source_validate(rds, reporter, (void *) action) != 0) {
+		oscap_source_free(rds);
 		goto cleanup;
 	}
+	oscap_source_free(rds);
 
 	ret = OSCAP_OK;
 
