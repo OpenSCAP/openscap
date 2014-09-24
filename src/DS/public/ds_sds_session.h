@@ -146,4 +146,13 @@ int ds_sds_session_register_component_with_dependencies(struct ds_sds_session *s
  */
 int ds_sds_session_dump_component_files(struct ds_sds_session *session);
 
+/**
+ * Set target directory for the component files
+ * @memberof ds_sds_session
+ * @param session The Source DataStream session
+ * @param target_dir Path to the target storage dir
+ * @returns 0 on success
+ */
+int ds_sds_session_set_target_dir(struct ds_sds_session *session, const char *target_dir);
+
 #endif
