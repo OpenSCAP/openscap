@@ -184,6 +184,7 @@ const char *oscap_source_get_schema_version(struct oscap_source *source)
 				break;
 			case OSCAP_DOCUMENT_ARF:
 				source->origin.version = strdup("1.1");
+				break;
 			case OSCAP_DOCUMENT_OVAL_DEFINITIONS:
 			case OSCAP_DOCUMENT_OVAL_VARIABLES:
 			case OSCAP_DOCUMENT_OVAL_DIRECTIVES:
