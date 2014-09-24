@@ -44,6 +44,7 @@
 #include <oval_system_characteristics.h>
 #include <oval_directives.h>
 #include <scap_ds.h>
+#include <ds_sds_session.h>
 
 #include "oscap-tool.h"
 
@@ -228,10 +229,16 @@ static int app_info(const struct oscap_action *action)
 	case OSCAP_DOCUMENT_SDS: {
 		printf("Document type: Source Data Stream\n");
 		print_time(action->file);
+		struct ds_sds_session *session = ds_sds_session_new_from_source(source);
+		if (session == NULL) {
+			goto cleanup;
+		}
 		/* get collection */
 		struct ds_sds_index *sds = ds_sds_index_import(action->file);
-		if (!sds)
+		if (!sds) {
+			ds_sds_session_free(session);
 			goto cleanup;
+		}
 		/* iterate over streams */
 		struct ds_stream_index_iterator* sds_it = ds_sds_index_get_streams(sds);
 		while (ds_stream_index_iterator_has_more(sds_it)) {
@@ -255,6 +262,7 @@ static int app_info(const struct oscap_action *action)
 					ds_sds_index_free(sds);
 					oscap_string_iterator_free(checklist_it);
 					ds_stream_index_iterator_free(sds_it);
+					ds_sds_session_free(session);
 					goto cleanup;
 				}
 
@@ -272,6 +280,7 @@ static int app_info(const struct oscap_action *action)
 					oscap_string_iterator_free(checklist_it);
 					oscap_acquire_cleanup_dir_bundled(&temp_dir);
 					ds_stream_index_iterator_free(sds_it);
+					ds_sds_session_free(session);
 					goto cleanup;
 				}
 
@@ -344,6 +353,7 @@ static int app_info(const struct oscap_action *action)
 		}
 		ds_stream_index_iterator_free(sds_it);
 		ds_sds_index_free(sds);
+		ds_sds_session_free(session);
 	}
 	break;
 	case OSCAP_DOCUMENT_ARF: {
