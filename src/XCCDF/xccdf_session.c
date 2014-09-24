@@ -399,11 +399,6 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 				goto cleanup;
 			}
 		}
-		if (session->temp_dir == NULL)
-			session->temp_dir = oscap_acquire_temp_dir();
-		if (session->temp_dir == NULL)
-			goto cleanup;
-
 		session->xccdf.source = ds_sds_session_select_checklist(xccdf_session_get_ds_sds_session(session), session->ds.user_datastream_id,
 				session->ds.user_component_id, session->ds.user_benchmark_id);
 		if (session->xccdf.source == NULL) {
