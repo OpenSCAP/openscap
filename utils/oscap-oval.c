@@ -31,9 +31,9 @@
 #include <oval_agent_api.h>
 #include <oval_results.h>
 #include <oval_variables.h>
+#include <ds_sds_session.h>
 #include <assert.h>
 #include <limits.h>
-#include <ftw.h>
 
 #include "oscap-tool.h"
 #include "scap_ds.h"
@@ -331,16 +331,6 @@ cleanup:
 	return ret;
 }
 
-static int __unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)
-{
-	int rv = remove(fpath);
-
-	if (rv)
-		perror(fpath);
-
-	return rv;
-}
-
 int app_evaluate_oval(const struct oscap_action *action)
 {
 
@@ -350,7 +340,9 @@ int app_evaluate_oval(const struct oscap_action *action)
 	oval_agent_session_t		*sess      = NULL;
 	int ret = OSCAP_ERROR;
 
-	char* temp_dir = NULL;
+	struct oscap_source *main_source = oscap_source_new_from_file(action->f_oval);
+	struct ds_sds_session *sds_session = NULL;
+	struct oscap_source *oval_source = NULL;
 
 	if (action->probe_root) {
 		if (setenv("OSCAP_PROBE_ROOT", action->probe_root, 1) != 0) {
@@ -366,27 +358,22 @@ int app_evaluate_oval(const struct oscap_action *action)
 		}
 	}
 
-	struct oscap_source *main_source = oscap_source_new_from_file(action->f_oval);
-	struct oscap_source *oval_source = NULL;
 	if (oscap_source_get_scap_type(main_source) == OSCAP_DOCUMENT_SDS)
 	{
-		temp_dir = oscap_acquire_temp_dir_bundled();
-		if (temp_dir == NULL)
-			oscap_source_free(main_source);
-			goto cleanup;
-
-		if (ds_sds_decompose_custom(action->f_oval, action->f_datastream_id, temp_dir, "checks", action->f_oval_id, "oval.xml") != 0)
-		{
-			fprintf(stdout, "Failed to decompose source datastream in '%s'\n", action->f_oval);
-			oscap_source_free(main_source);
+		sds_session = ds_sds_session_new_from_source(main_source);
+		if (sds_session == NULL) {
 			goto cleanup;
 		}
 
-		char *oval_file = NULL;
-		oval_file = malloc(PATH_MAX * sizeof(char));
-		sprintf(oval_file, "%s/%s", temp_dir, "oval.xml");
-		oval_source = oscap_source_new_from_file(oval_file);
-		free(oval_file);
+		ds_sds_session_set_datastream_id(sds_session, action->f_datastream_id);
+		if (ds_sds_session_register_component_with_dependencies(sds_session, "checks", action->f_oval_id, "oval.xml") != 0) {
+			goto cleanup;
+		}
+		oval_source = ds_sds_session_get_component_by_href(sds_session, "oval.xml");
+		if (oval_source == NULL) {
+			fprintf(stderr, "Internal error: OVAL file was not found in Source DataStream session cache!");
+			goto cleanup;
+		}
 	}
 	else
 	{
@@ -397,9 +384,6 @@ int app_evaluate_oval(const struct oscap_action *action)
 	def_model = oval_definition_model_import_source(oval_source);
 	if (def_model == NULL) {
 		fprintf(stderr, "Failed to import the OVAL Definitions from '%s'.\n", oscap_source_readable_origin(oval_source));
-		oscap_source_free(main_source);
-		if (temp_dir != NULL)
-			oscap_source_free(oval_source);
 		goto cleanup;
 	}
 
@@ -410,25 +394,16 @@ int app_evaluate_oval(const struct oscap_action *action)
 		oscap_source_free(var_source);
 		if (var_model == NULL) {
 			fprintf(stderr, "Failed to import the OVAL Variables from '%s'.\n", action->f_variables);
-			oscap_source_free(main_source);
-			if (temp_dir != NULL)
-				oscap_source_free(oval_source);
 			goto cleanup;
 		}
 
 		if (oval_definition_model_bind_variable_model(def_model, var_model)) {
 			fprintf(stderr, "Failed to bind Variables to Definitions\n");
-			oscap_source_free(main_source);
-			if (temp_dir != NULL)
-				oscap_source_free(oval_source);
 			goto cleanup;
 		}
 	}
 
 	char *path_clone = strdup(oscap_source_readable_origin(oval_source));
-	oscap_source_free(main_source);
-	if (temp_dir != NULL)
-		oscap_source_free(oval_source);
 	sess = oval_agent_new_session(def_model, basename(path_clone));
 	free(path_clone);
 
@@ -494,16 +469,11 @@ int app_evaluate_oval(const struct oscap_action *action)
 cleanup:
 	oscap_print_error();
 
+	ds_sds_session_free(sds_session);
+	oscap_source_free(main_source);
 	if (sess) oval_agent_destroy_session(sess);
 	if (def_model) oval_definition_model_free(def_model);
 	if (dir_model) oval_directives_model_free(dir_model);
-
-	if (temp_dir)
-	{
-		// recursively remove the directory we created for data stream split
-		nftw(temp_dir, __unlink_cb, 64, FTW_DEPTH | FTW_PHYS | FTW_MOUNT);
-		free(temp_dir);
-	}
 
 	return ret;
 }
