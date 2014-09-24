@@ -87,6 +87,16 @@ struct oscap_source *ds_sds_session_select_checklist(struct ds_sds_session *sess
 struct oscap_source *ds_sds_session_select_tailoring(struct ds_sds_session *session, const char *component_id);
 
 /**
+ * Set the ID of DataStream within collection to use. Note that
+ * ds_sds_session_select_checklist may set this automatically.
+ * @memberof ds_sds_session
+ * @param session Source DataStream session
+ * @param datastream_id DataStream ID to set
+ * @returns 0 on success
+ */
+int ds_sds_session_set_datastream_id(struct ds_sds_session *session, const char *datastream_id);
+
+/**
  * Return ID of currently selected DataStream within the DataStream collection.
  * @memberof ds_sds_session
  * @param session The Source DataStream sesssion
