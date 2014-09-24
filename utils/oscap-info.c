@@ -234,7 +234,7 @@ static int app_info(const struct oscap_action *action)
 			goto cleanup;
 		}
 		/* get collection */
-		struct ds_sds_index *sds = ds_sds_index_import(action->file);
+		struct ds_sds_index *sds = ds_sds_session_get_sds_idx(session);
 		if (!sds) {
 			ds_sds_session_free(session);
 			goto cleanup;
@@ -259,7 +259,6 @@ static int app_info(const struct oscap_action *action)
 
 		                temp_dir = oscap_acquire_temp_dir_bundled();
 		                if (temp_dir == NULL) {
-					ds_sds_index_free(sds);
 					oscap_string_iterator_free(checklist_it);
 					ds_stream_index_iterator_free(sds_it);
 					ds_sds_session_free(session);
@@ -276,7 +275,6 @@ static int app_info(const struct oscap_action *action)
 		                bench = xccdf_benchmark_import(xccdf_file);
 				free(xccdf_file);
 				if(!bench) {
-					ds_sds_index_free(sds);
 					oscap_string_iterator_free(checklist_it);
 					oscap_acquire_cleanup_dir_bundled(&temp_dir);
 					ds_stream_index_iterator_free(sds_it);
@@ -352,7 +350,6 @@ static int app_info(const struct oscap_action *action)
 			oscap_string_iterator_free(dict_it);
 		}
 		ds_stream_index_iterator_free(sds_it);
-		ds_sds_index_free(sds);
 		ds_sds_session_free(session);
 	}
 	break;
