@@ -704,8 +704,10 @@ struct xccdf_result* xccdf_item_to_result(struct xccdf_item* item);
  * @param file filename.
  * @return Pointer to the new benchmark.
  * @retval NULL on failure
+ * @deprecated This function has been deprecated by @ref xccdf_benchmark_import_source.
+ * This function may be dropped from later versions of the library.
  */
-struct xccdf_benchmark* xccdf_benchmark_import(const char *file);
+OSCAP_DEPRECATED(struct xccdf_benchmark* xccdf_benchmark_import(const char *file));
 
 /**
  * Import the content from oscap_source into a benchmark
