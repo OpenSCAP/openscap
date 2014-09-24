@@ -126,8 +126,10 @@ typedef int (*xml_reporter)(const char *file, int line, const char *msg, void *a
  * @param reporter A reporter to by notified of encountered issues. Can be NULL, if a binary document validates / does not validate answer is satisfactonary.
  * @param arg Argument for the reporter.
  * @return 0 on pass; -1 error; 1 fail
+ * @deprecated This function has been deprecated and it may be dropped from later
+ * OpenSCAP releases. Please use oscap_source_validate instead.
  */
-int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, xml_reporter reporter, void *arg);
+OSCAP_DEPRECATED(int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, xml_reporter reporter, void *arg));
 
 /**
  * Validate a SCAP document file against schematron rules.
