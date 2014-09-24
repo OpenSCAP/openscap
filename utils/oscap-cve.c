@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2010--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -33,6 +33,7 @@
 #include <math.h>
 
 #include <cve_nvd.h>
+#include <oscap_source.h>
 
 #include "oscap-tool.h"
 
@@ -79,9 +80,10 @@ static int app_cve_validate(const struct oscap_action *action)
 {
 	int ret;
         int result;
-	char *doc_version = "2.0";
 
-        ret=oscap_validate_document(action->cve_action->file, action->doctype, doc_version, reporter, (void*) action);
+	struct oscap_source *source = oscap_source_new_from_file(action->cve_action->file);
+	ret = oscap_source_validate(source, reporter, (void *) action);
+	oscap_source_free(source);
         if (ret==-1) {
                 result=OSCAP_ERROR;
                 goto cleanup;
@@ -91,9 +93,6 @@ static int app_cve_validate(const struct oscap_action *action)
         }
         else
                 result=OSCAP_OK;
-
-        if (result==OSCAP_FAIL)
-                validation_failed(action->cve_action->file, action->doctype, doc_version);
 
 cleanup:
         if (oscap_err())
