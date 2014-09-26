@@ -335,7 +335,7 @@ static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr ass
 		{
 			suffix++;
 		}
-
+		xmlFree(id);
 		oscap_free(id_candidate);
 	}
 
@@ -355,6 +355,7 @@ static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr ass
 
 	xmlNodePtr test_result_child = test_result->children;
 
+	xmlNodePtr last_fqdn = NULL;
 	for (; test_result_child != NULL; test_result_child = test_result_child->next)
 	{
 		if (test_result_child->type != XML_ELEMENT_NODE)
@@ -363,7 +364,6 @@ static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr ass
 		// Order for the output to be valid:
 		// 1) All fqdn-s
 		// 2) All hostnames
-		xmlNodePtr last_fqdn = NULL;
 		if (strcmp((const char*)(test_result_child->name), "target") == 0)
 		{
 			// content is a full copy

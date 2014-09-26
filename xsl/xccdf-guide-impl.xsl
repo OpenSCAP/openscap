@@ -50,6 +50,20 @@ Authors:
     <div id="introduction"><a name="introduction"></a>
         <div class="row">
             <div class="col-md-8 well well-lg">
+                <h2>
+                    <xsl:choose>
+                        <xsl:when test="$benchmark/cdf:title">
+                            <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:title[1]">
+                                <xsl:with-param name="benchmark" select="$benchmark"/>
+                                <xsl:with-param name="profile" select="$profile"/>
+                            </xsl:apply-templates>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="$benchmark/@id"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </h2>
+
                 <xsl:if test="$benchmark/cdf:front-matter">
                     <div class="front-matter">
                         <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:front-matter[1]">
@@ -78,6 +92,35 @@ Authors:
                         </div>
                     </xsl:for-each>
                 </xsl:if>
+
+                <h2>Selected profile</h2>
+                <table class="table table-bordered">
+                    <xsl:if test="$profile/cdf:title">
+                        <tr>
+                            <th>Title</th>
+                            <td>
+                                <xsl:apply-templates mode="sub-testresult" select="$profile/cdf:title[1]">
+                                    <xsl:with-param name="benchmark" select="$benchmark"/>
+                                    <xsl:with-param name="profile" select="$profile"/>
+                                </xsl:apply-templates>
+                            </td>
+                        </tr>
+                    </xsl:if>
+
+                    <tr>
+                        <th>ID</th>
+                        <td>
+                            <xsl:choose>
+                                <xsl:when test="$profile/@id">
+                                    <xsl:value-of select="$profile/@id"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <abbr title="No profile was selected.">(default)</abbr>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </td>
+                    </tr>
+                </table>
             </div>
             <div class="col-md-4">
                 <h2>Revision History</h2>
