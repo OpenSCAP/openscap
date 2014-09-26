@@ -1,3 +1,18 @@
+openscap-1.1.1                                                  26-09-201Variable 4
+ - Hint towards `oscap info` when profile is not found in oscap tool
+ - HTML report changes:
+   - Source OVAL results from ARF if available
+   - Highlight notchecked rules, treat them as rules that need attention
+ - HTML guide changes:
+   - Variable Substitution improvements
+   - Show benchmark title
+   - Show info about selected profile
+   - Avoid cdf12:notice, show only its contents
+ - bugfixes:
+   - improved handling of fqdn in XCCDF
+   - memory leaks
+   - static analysis fixes
+
 openscap-1.1.0                                                  03-09-2014
  - HTML report and guide redesign
  - dropped support for docbook
