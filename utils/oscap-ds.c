@@ -234,6 +234,17 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 	return true;
 }
 
+static inline char *_gcwd(void)
+{
+	char *cwd = malloc(sizeof(char) * (PATH_MAX + 1));
+	if (getcwd(cwd, PATH_MAX) == NULL) {
+		perror("Can't find out current working directory.\n");
+		free(cwd);
+		cwd = NULL;
+	}
+	return cwd;
+}
+
 int app_ds_sds_split(const struct oscap_action *action) {
 	int ret = OSCAP_ERROR;
 	struct ds_sds_index* sds_idx = NULL;
@@ -289,11 +300,8 @@ int app_ds_sds_compose(const struct oscap_action *action) {
 	// To fix this we will chdir to parent dir of the given XCCDF and chdir
 	// back after we are done.
 
-	char previous_cwd[PATH_MAX + 1];
-	if (getcwd(previous_cwd, PATH_MAX) == NULL)
-	{
-		perror("Can't find out current working directory.\n");
-
+	char *previous_cwd = _gcwd();
+	if (previous_cwd == NULL) {
 		goto cleanup;
 	}
 
@@ -314,6 +322,7 @@ int app_ds_sds_compose(const struct oscap_action *action) {
 	free(source_xccdf);
 
 	chdir(previous_cwd);
+	free(previous_cwd);
 
 	if (action->validate)
 	{
