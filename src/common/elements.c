@@ -3,7 +3,7 @@
  */
 
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -254,11 +254,6 @@ int oscap_xml_save_filename_free(const char *filename, xmlDocPtr doc)
 	int ret = oscap_xml_save_filename(filename, doc);
 	xmlFreeDoc(doc);
 	return ret;
-}
-
-void libxml_error_handler(void *user, const char *message, xmlParserSeverities severity, xmlTextReaderLocatorPtr locator)
-{
-	oscap_setxmlerr(xmlGetLastError());
 }
 
 xmlNs *lookup_xsi_ns(xmlDoc *doc)

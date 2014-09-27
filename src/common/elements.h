@@ -3,7 +3,7 @@
  */
 
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -75,15 +75,6 @@ int oscap_xml_save_filename(const char *filename, xmlDocPtr doc);
  * @return 1 on success, -1 on failure (oscap_seterr is set appropriatly).
  */
 int oscap_xml_save_filename_free(const char *filename, xmlDocPtr doc);
-
-/**
- * Callback for handling libxml errors. It can be registered by xmlTextReaderSetErrorHandler
- * @param user the user argument
- * @param message the message
- * @param severity the severity of the error
- * @param locator a locator indicating where the error occured
- */
-void libxml_error_handler(void *user, const char *message, xmlParserSeverities severity, xmlTextReaderLocatorPtr locator);
 
 xmlNs *lookup_xsi_ns(xmlDoc *doc);
 
