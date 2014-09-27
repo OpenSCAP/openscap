@@ -85,9 +85,11 @@ OSCAP_DEPRECATED(int ds_sds_decompose(const char* input_file, const char* id, co
  *     be deduced from the contents of the datastream.
  *
  * @see ds_sds_decompose
+ *
+ * @deprecated This function has been deprecated. Make a use of ds_sds_session
+ *     instread. This function may be dropped from later versions of the library.
  */
-int ds_sds_decompose_custom(const char* input_file, const char* id, const char* target_dir,
-		const char* container_name, const char* component_id, const char* target_filename);
+OSCAP_DEPRECATED(int ds_sds_decompose_custom(const char* input_file, const char* id, const char* target_dir, const char* container_name, const char* component_id, const char* target_filename));
 
 /**
  * @brief takes given xccdf file and constructs a source datastream
