@@ -292,7 +292,7 @@ int app_ds_sds_compose(const struct oscap_action *action) {
 	char previous_cwd[PATH_MAX + 1];
 	if (getcwd(previous_cwd, PATH_MAX) == NULL)
 	{
-		fprintf(stdout, "Can't find out current working directory.\n");
+		fprintf(stderr, "Can't find out current working directory.\n");
 
 		goto cleanup;
 	}
