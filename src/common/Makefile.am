@@ -11,7 +11,7 @@ liboscapcommon_la_SOURCES = \
 	list.c list.h \
 	memusage.c memusage.h \
 	oscap_acquire.c oscap_acquire.h \
-	oscapxml.c \
+	oscapxml.c oscapxml.h \
 	reference.c reference_priv.h \
 	text.c text_priv.h \
 	tsort.c tsort.h \

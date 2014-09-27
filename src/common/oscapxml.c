@@ -44,6 +44,7 @@
 #include "assume.h"
 #include "debug_priv.h"
 #include "oscap_source.h"
+#include "oscapxml.h"
 #include "source/schematron_priv.h"
 #include "source/validate_priv.h"
 #include "source/xslt_priv.h"
@@ -83,7 +84,7 @@ const char * oscap_path_to_schemas() {
 	return oscap_path_to("OSCAP_SCHEMA_PATH", OSCAP_SCHEMA_PATH);
 }
 
-static inline const char *oscap_path_to_xslt(void)
+const char *oscap_path_to_xslt(void)
 {
 	return oscap_path_to("OSCAP_XSLT_PATH", OSCAP_XSLT_PATH);
 }
