@@ -40,7 +40,7 @@ xmlNode *containter_get_component_ref_by_id(xmlNode *container, const char *comp
 
 int ds_sds_dump_component_ref(xmlNodePtr component_ref, struct ds_sds_session *session);
 
-int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, struct ds_sds_session *session, const char* target_dir, const char* filename);
+int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, struct ds_sds_session *session, const char *target_dir, const char *relative_filepath);
 
 OSCAP_HIDDEN_END;
 #endif

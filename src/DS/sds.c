@@ -233,7 +233,7 @@ static int ds_sds_dump_component(const char* component_id, struct ds_sds_session
 	return 0;
 }
 
-int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, struct ds_sds_session *session, const char* target_dir, const char* filename)
+int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, struct ds_sds_session *session, const char* target_dir, const char* relative_filepath)
 {
 	char* cref_id = (char*)xmlGetProp(component_ref, BAD_CAST "id");
 	if (!cref_id)
@@ -254,12 +254,12 @@ int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, struct ds_sds_session
 
 	assert(xlink_href[0] == '#');
 	const char* component_id = xlink_href + 1 * sizeof(char);
-	char* filename_cpy = oscap_sprintf("./%s", filename);
+	char* filename_cpy = oscap_sprintf("./%s", relative_filepath);
 	char* file_reldir = dirname(filename_cpy);
 
 	// the cast is safe to do because we are using the GNU basename, it doesn't
 	// modify the string
-	const char* file_basename = basename((char*)filename);
+	const char* file_basename = basename((char*)relative_filepath);
 
 	const char* target_filename_dirname = oscap_sprintf("%s/%s", target_dir, file_reldir);
 	const char* target_filename = oscap_sprintf("%s/%s/%s", target_dir, file_reldir, file_basename);
