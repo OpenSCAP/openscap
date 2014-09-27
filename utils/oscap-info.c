@@ -272,6 +272,7 @@ static int app_info(const struct oscap_action *action)
 					ds_sds_session_free(session);
 					goto cleanup;
 				}
+				ds_sds_session_reset(session);
 
 				/* print profiles */
 				struct xccdf_profile_iterator * prof_it = xccdf_benchmark_get_profiles(bench);
