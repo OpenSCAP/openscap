@@ -35,6 +35,7 @@
 
 #include "oscap-tool.h"
 #include "check_engine_plugin.h"
+#include "oscap_source.h"
 
 static bool getopt_root(int argc, char **argv, struct oscap_action *action);
 static int print_versions(const struct oscap_action*);
@@ -152,7 +153,9 @@ static int print_versions(const struct oscap_action *action)
 	printf("==== Inbuilt CPE names ====\n");
 	char default_cpe_path[PATH_MAX];
 	snprintf(default_cpe_path, PATH_MAX, "%s/openscap-cpe-dict.xml", oscap_path_to_cpe());
-	struct cpe_dict_model* cpe_dict = cpe_dict_model_import(default_cpe_path);
+	struct oscap_source *source = oscap_source_new_from_file(default_cpe_path);
+	struct cpe_dict_model* cpe_dict = cpe_dict_model_import_source(source);
+	oscap_source_free(source);
 	if (cpe_dict != NULL) {
 
 		struct cpe_item_iterator* cpe_items = cpe_dict_model_get_items(cpe_dict);

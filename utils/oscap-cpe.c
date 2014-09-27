@@ -1,5 +1,5 @@
 /*
- * Copyright 2010--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2010--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -165,7 +165,8 @@ int app_cpe_match(const struct oscap_action *action) {
         candidate_cpe = cpe_name_new(action->cpe_action->name);
 
         /* load dictionary */
-        if( (dict = cpe_dict_model_import (action->cpe_action->dict)) == NULL ) {
+	struct oscap_source *source = oscap_source_new_from_file(action->cpe_action->dict);
+	if( (dict = cpe_dict_model_import_source(source)) == NULL ) {
                 fprintf(stdout, "can't load CPE dictionary from: %s.\n", action->cpe_action->dict);
 		ret = OSCAP_ERROR;
                 goto clean;
@@ -186,6 +187,7 @@ clean:
         cpe_name_free(candidate_cpe);
         cpe_dict_model_free(dict);
 	free(action->cpe_action);
+	oscap_source_free(source);
 	return ret;
 }
 
