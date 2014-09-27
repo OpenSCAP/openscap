@@ -37,6 +37,7 @@
 #include <common/alloc.h>
 #include "common/util.h"
 #include "common/list.h"
+#include "common/oscapxml.h"
 #include "common/_error.h"
 #include "CPE/cpe_session_priv.h"
 #include "DS/public/scap_ds.h"
@@ -44,6 +45,7 @@
 #include "DS/ds_common.h"
 #include "DS/ds_sds_session_priv.h"
 #include "OVAL/results/oval_results_impl.h"
+#include "source/xslt_priv.h"
 #include "XCCDF/xccdf_impl.h"
 #include "XCCDF_POLICY/public/xccdf_policy.h"
 #include "XCCDF_POLICY/xccdf_policy_priv.h"
@@ -888,7 +890,10 @@ static int _app_xslt(const char *infile, const char *xsltfile, const char *outfi
 	size_t s = _paramlist_cpy(par, params);
 	s += _paramlist_cpy(par + s, stdparams);
 
-	return oscap_apply_xslt(infile, xsltfile, outfile, par) == -1;
+	struct oscap_source *source = oscap_source_new_from_file(infile);
+	int ret = oscap_source_apply_xslt_path(source, xsltfile, outfile, par, oscap_path_to_xslt())
+	oscap_source_free(source);
+	return ret == -1;
 }
 
 static inline int _xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show, const char *oval_template, const char* sce_template, const char* profile)
