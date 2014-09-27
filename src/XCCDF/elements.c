@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -37,6 +37,8 @@
 #include "common/_error.h"
 #include "common/debug_priv.h"
 #include "common/xmlns_priv.h"
+#include "source/oscap_source_priv.h"
+#include "source/public/oscap_source.h"
 
 struct xccdf_version_info {
 	const char* version; ///< MAJOR.MINOR, for example "1.1" or "1.2"
@@ -120,15 +122,16 @@ char *xccdf_detect_version_priv(xmlTextReader *reader)
 
 char * xccdf_detect_version(const char* file)
 {
-	xmlTextReaderPtr reader = xmlReaderForFile(file, NULL, 0);
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	xmlTextReader *reader = oscap_source_get_xmlTextReader(source);
 	if (!reader) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
+		oscap_source_free(source);
 		return NULL;
 	}
 
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
 	char *doc_version = xccdf_detect_version_priv(reader);
 	xmlFreeTextReader(reader);
+	oscap_source_free(source);
 	return doc_version;
 }
 
