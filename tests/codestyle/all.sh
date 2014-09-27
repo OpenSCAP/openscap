@@ -17,6 +17,10 @@ function test_illicit_function_use {
 		echo "xmlTextReaderSetErrorHandler is not allowed within OpenSCAP project. Please make a use of oscap_source facility."
 		return 1;
 	fi
+	if grep -r xmlTextReaderReadString $codebase; then
+		echo "xmlTextReaderReadString is not allowed within OpenSCAP project. Its implementation in libxml does not play well with xmlWalkerReader."
+		return 1;
+	fi
 }
 
 test_init "test_codebase.log"
